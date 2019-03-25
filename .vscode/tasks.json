@@ -1,0 +1,90 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "options": {
+        "cwd": "${workspaceRoot}"
+    },
+    "tasks": [
+        /*DEBUG*/
+        {
+            "label": "Debug - 0. Create build folder",
+            "group": "test",
+            "type": "shell",
+            "windows": {
+                "command": "rm buildDebug -r -fo; mkdir buildDebug",
+            }
+        },
+        {
+            "label": "Debug - 1. Download Dependencies",
+            "dependsOn" : "Debug - 0. Create build folder",
+            "group": "test",
+            "type": "shell",
+            "command": "conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan; conan install .. -s build_type=Debug --build missing",
+            "options": {
+                "cwd": "${workspaceRoot}/buildDebug"
+            }
+        },
+        {
+            "label": "Debug - 2a. Generate Project files",
+            "dependsOn" : "Debug - 1. Download Dependencies",
+            "group": {
+                "isDefault": true,
+                "kind" : "test"
+            },
+            "type": "shell",
+            "windows": {
+                "command": "cmake .. -G 'Visual Studio 15 2017 Win64'",
+            }
+            "options": {
+                "cwd": "${workspaceRoot}/buildDebug"
+            }
+        },
+        {
+            "label": "Debug - 3. Build",
+            "type": "shell",
+            "command": "cmake --build ./buildDebug --config Debug"
+        },
+        /*RELEASE*/
+        {
+            "label": "Release - 0. Create build folder",
+            "group": "build",
+            "type": "shell",
+            "windows": {
+                "command": "rm buildRelease -r -fo; mkdir buildRelease",
+            }
+        },
+        {
+            "label": "Release - 1. Download Dependencies",
+            "dependsOn" : "Release - 0. Create build folder",
+            "group": "build",
+            "type": "shell",
+            "command": "conan install .. -s build_type=Release --build missing",
+            "options": {
+                "cwd": "${workspaceRoot}/buildRelease"
+            }
+        },
+        {
+            "label": "Release - 2. Generate Project files",
+            "dependsOn" : "Release - 1. Download Dependencies",
+            "group": "build",
+            "type": "shell",
+            "windows": {
+                "command": "cmake .. -G 'Visual Studio 15 2017 Win64'",
+            },
+            "options": {
+                "cwd": "${workspaceRoot}/buildRelease"
+            }
+        },
+        {
+            "label": "Release - 3. Build",
+            "dependsOn" : "Release - 2. Generate Project files",   
+            "group": {
+                "isDefault": true,
+                "kind" : "build"
+            },
+            "type": "shell",
+            "command" : "cmake --build ./buildRelease --target publishPackage"
+        }
+    ]
+}

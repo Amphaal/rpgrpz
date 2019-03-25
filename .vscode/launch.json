@@ -1,0 +1,27 @@
+{
+    // Utilisez IntelliSense pour en savoir plus sur les attributs possibles.
+    // Pointez pour afficher la description des attributs existants.
+    // Pour plus d'informations, visitez : https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch",
+            "windows": {
+                "type": "cppvsdbg",
+                "program": "feedtnz.exe",
+            },
+            "osx": {
+                "MIMode": "lldb",
+                "program": "${workspaceFolder}/buildDebug/bin/FeedTNZ.app/Contents/MacOS/feedtnz",
+            },
+            "type": "cppdbg",
+            "request": "launch",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/buildDebug/bin/",
+            "environment": [],
+            "externalConsole": false,
+            "preLaunchTask": "Debug - 3. Build"
+        }
+    ]
+}

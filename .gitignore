@@ -1,0 +1,3 @@
+buildRelease
+buildDebug
+src/version.h
