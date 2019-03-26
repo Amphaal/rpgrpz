@@ -35,7 +35,7 @@
             "type": "shell",
             "windows": {
                 "command": "cmake .. -G 'Visual Studio 15 2017 Win64'",
-            }
+            },
             "options": {
                 "cwd": "${workspaceRoot}/buildDebug"
             }
