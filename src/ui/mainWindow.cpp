@@ -34,7 +34,7 @@ class MainWindow : public QMainWindow {
         }
 
         void test() {
-            this->ipHelper = new ConnectivityHelper;
+            this->ipHelper = new ConnectivityHelper(this);
         }
 
     private:

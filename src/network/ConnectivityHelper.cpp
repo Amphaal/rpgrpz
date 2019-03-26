@@ -1,25 +1,27 @@
 #include "ConnectivityHelper.h"
 
-ConnectivityHelper::ConnectivityHelper()
-{
+ConnectivityHelper::ConnectivityHelper(QObject *parent) : QObject(parent) {
+
     this->_manager = new QNetworkAccessManager(this);
 
     QObject::connect(this->_manager, &QNetworkAccessManager::finished, 
                     this, &ConnectivityHelper::gotReply);
 
+    this->networkChanged(
+        this->_manager->networkAccessible()
+    );
+
     QObject::connect(this->_manager, &QNetworkAccessManager::networkAccessibleChanged, 
                     this, &ConnectivityHelper::networkChanged);
 
-    this->extIpLabel = new QLabel(this->_getWaitingText());
-    this->localIpLabel = new QLabel(this->_getWaitingText());
-    this->upnpStateLabel = new QLabel(this->_getWaitingText());
-
-    if(this->_manager->networkAccessible()) {
-        this->getLocalAddress();
-        this->askExternalAddress();
-        this->tryNegociateUPnPPort();
-    }
 };
+
+ConnectivityHelper::~ConnectivityHelper()  {
+    if(this->_upnpThread) { 
+        delete this->_upnpThread;
+        QObject::disconnect(this->_upnpInitialized);
+    }
+}
 
 void ConnectivityHelper::tryNegociateUPnPPort() {
     
@@ -28,7 +30,7 @@ void ConnectivityHelper::tryNegociateUPnPPort() {
         QObject::disconnect(this->_upnpInitialized);
     }
 
-    this->_upnpThread = new uPnPWrapper;
+    this->_upnpThread = new uPnPWrapper("31137", "RPGRPZ");
 
     this->_upnpInitialized = QObject::connect(this->_upnpThread, &uPnPThread::initialized, 
                                               this, &ConnectivityHelper::onUPnPInitialized);
@@ -36,11 +38,13 @@ void ConnectivityHelper::tryNegociateUPnPPort() {
     this->_upnpThread->start();
 }
 
-void ConnectivityHelper::onUPnPInitialized(int errorCode) {
-    if(errorCode > 0) {
+void ConnectivityHelper::onUPnPInitialized(int errorCode, const char * negociatedPort) {
+    if(errorCode != 0) {
         this->upnpStateLabel->setText("Non");
     } else {
-        this->upnpStateLabel->setText("OK");
+        std::string out = "OK, port: ";
+        out += negociatedPort;
+        this->upnpStateLabel->setText(QString::fromStdString(out));
     }
 }
 
@@ -54,6 +58,11 @@ void ConnectivityHelper::askExternalAddress() {
 };
 
 void ConnectivityHelper::networkChanged(QNetworkAccessManager::NetworkAccessibility accessible) {
+    
+    if(!this->extIpLabel) this->extIpLabel = new QLabel(this->_getWaitingText());
+    if(!this->localIpLabel) this->localIpLabel = new QLabel(this->_getWaitingText());
+    if(!this->upnpStateLabel) this->upnpStateLabel = new QLabel(this->_getWaitingText());
+    
     if(!accessible) {
         this->extIpLabel->setText(this->_getWaitingText());
         this->localIpLabel->setText(this->_getWaitingText());

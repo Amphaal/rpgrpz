@@ -15,18 +15,19 @@ class ConnectivityHelper : public QObject
     Q_OBJECT
 
     public:
-        ConnectivityHelper();
+        ConnectivityHelper(QObject *parent = nullptr);
+        ~ConnectivityHelper();
         QString getLocalAddress();
         void askExternalAddress();
         void tryNegociateUPnPPort();
 
-        QLabel* extIpLabel;
-        QLabel* localIpLabel;
-        QLabel* upnpStateLabel;
+        QLabel* extIpLabel = 0;
+        QLabel* localIpLabel = 0;
+        QLabel* upnpStateLabel = 0;
 
     private slots:
         void gotReply(QNetworkReply* networkReply);
-        void onUPnPInitialized(int errorCode);
+        void onUPnPInitialized(int errorCode, const char * negociatedPort);
         void networkChanged(QNetworkAccessManager::NetworkAccessibility accessible);
 
     signals:

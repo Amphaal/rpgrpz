@@ -9,5 +9,5 @@ class uPnPThread : public QThread {
     Q_OBJECT
         
     signals:
-        void initialized(int errorCode);
+        void initialized(int errorCode, const char * negociatedPort);
 };
