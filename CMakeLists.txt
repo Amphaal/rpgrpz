@@ -84,10 +84,11 @@ SET(SOURCES
 ####################
 
 # Define required linked QT libs
-find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets Network)
 SET(EXT_LIBS 
     Qt5::Widgets 
     Qt5::Core
+    Qt5::Network
 )
 
 #private libs
@@ -100,6 +101,7 @@ file(GLOB_RECURSE INT_LIBS
 #mandatory explicit generation
 list(APPEND SOURCES
     src/main.cpp
+    src/network/IpAddressHelper.cpp
 )
 
 #########################

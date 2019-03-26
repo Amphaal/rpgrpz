@@ -1,5 +1,6 @@
 [requires]
 qt/5.12.2@bincrafters/stable
+miniupnpc/2.1@rhard/testing
 
 [generators]
 cmake
@@ -12,4 +13,5 @@ cmake_paths
 plugins/platforms, qwindows*.dll -> ./bin/platforms
 bin, Qt5Widgets*.dll -> ./bin 
 bin, Qt5Core*.dll -> ./bin 
-bin, Qt5Gui*.dll -> ./bin 
+bin, Qt5Gui*.dll -> ./bin
+bin, Qt5Network*.dll -> ./bin 

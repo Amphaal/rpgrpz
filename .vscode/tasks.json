@@ -20,7 +20,7 @@
             "dependsOn" : "Debug - 0. Create build folder",
             "group": "test",
             "type": "shell",
-            "command": "conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan; conan install .. -s build_type=Debug --build missing",
+            "command": "conan remote add rhard https://api.bintray.com/conan/rhard/conan; conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan; conan install .. -s build_type=Debug --build missing",
             "options": {
                 "cwd": "${workspaceRoot}/buildDebug"
             }

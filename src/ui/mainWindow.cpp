@@ -5,10 +5,21 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QMessageBox>
 
+#include <QLabel>
+#include <QStatusBar>
+#include <QHBoxLayout>
+#include <QSplitter>
+
+#include "src/network/IpAddressHelper.h"
+
 class MainWindow : public QMainWindow { 
     public:
         MainWindow() {
+            
+            //
+            this->test();
 
+            //init...
             this->_initUI();
             this->_setupAutoUpdate();
 
@@ -22,7 +33,13 @@ class MainWindow : public QMainWindow {
             this->raise();
         }
 
+        void test() {
+            this->ipHelper = new IpAddressHelper;
+        }
+
     private:
+        
+        IpAddressHelper* ipHelper;
 
         //////////////
         /// UI init //
@@ -36,6 +53,7 @@ class MainWindow : public QMainWindow {
             this->setWindowIcon(QIcon(LOCAL_ICON_PNG_PATH.c_str()));
 
             this->_initUIMenu();
+            this->_initStatusBar();
         }
 
         void _initUIMenu() {
@@ -43,6 +61,28 @@ class MainWindow : public QMainWindow {
             menuBar->addMenu(this->_getFileMenu());
             menuBar->addMenu(this->_getOptionsMenu());
             this->setMenuWidget(menuBar);
+        }
+
+        void _initStatusBar() {
+    
+            auto statusBar = new QStatusBar(this);
+
+            auto sb_widget = new QWidget;
+            auto extIpDescrLabel = new QLabel("IP externe:");
+            auto sep = new QLabel(" | ");
+            auto localIpDescrLabel = new QLabel("IP locale:");
+
+            //define statusbar content
+            sb_widget->setLayout(new QHBoxLayout);
+            sb_widget->layout()->addWidget(localIpDescrLabel);
+            sb_widget->layout()->addWidget(this->ipHelper->localIpLabel);
+            sb_widget->layout()->addWidget(sep);
+            sb_widget->layout()->addWidget(extIpDescrLabel);
+            sb_widget->layout()->addWidget(this->ipHelper->extIpLabel);
+            
+            //define statusbar
+            statusBar->addWidget(sb_widget);
+            this->setStatusBar(statusBar);
         }
 
         //////////////////

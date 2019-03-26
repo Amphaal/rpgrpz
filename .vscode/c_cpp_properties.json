@@ -5,8 +5,8 @@
             "defines": [],
             "browse": {
                 "path": [
-                    "${env:USERPROFILE}\\.conan\\data",
-                    "${env:SYSTEMDRIVE}\\.conan"
+                    "${env:USERPROFILE}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\.conan\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\data",
+                    "${env:SYSTEMDRIVE}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\.conan"
                 ]
             },
             "windowsSdkVersion": "10.0.17134.0",
@@ -16,7 +16,13 @@
             "intelliSenseMode": "msvc-x64",
             "includePath": [
                 "${default}",
-				"${workspaceFolder}",
+                "${workspaceFolder}",
+                "${workspaceRoot}",
+                "C:/.conan/2bfee4/1/include",
+                "C:/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/package/d2eed54dd60974c85a4e38a37976c95179d53fa0/include",
+                "C:/.conan/2bfee4/1/include/QtCore",
+                "C:/.conan/2bfee4/1/include/QtNetwork",
+                "C:/.conan/2bfee4/1/include/QtWidgets"
             ]
         }
     ],
