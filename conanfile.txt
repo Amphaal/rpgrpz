@@ -1,15 +1,10 @@
 [requires]
-qt/5.12.1@bincrafters/stable
+qt/5.12.2@bincrafters/stable
 
 [generators]
 cmake
 cmake_find_package
 cmake_paths
-
-[options]
-
-#useless packages
-qt:openssl=False
 
 [imports]
 

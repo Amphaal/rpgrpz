@@ -8,11 +8,7 @@
             "name": "Launch",
             "windows": {
                 "type": "cppvsdbg",
-                "program": "feedtnz.exe",
-            },
-            "osx": {
-                "MIMode": "lldb",
-                "program": "${workspaceFolder}/buildDebug/bin/FeedTNZ.app/Contents/MacOS/feedtnz",
+                "program": "rpgrpz.exe",
             },
             "type": "cppdbg",
             "request": "launch",

@@ -102,23 +102,6 @@ list(APPEND SOURCES
     src/main.cpp
 )
 
-#win specifics
-if (WIN32)
-    
-    #COM iTunes libs
-    list(APPEND SOURCES 
-        src/workers/shout/win/iTunesCOMHandler.cpp
-    )
- 
-    #COM Qt libs
-    find_package(Qt5 REQUIRED COMPONENTS AxBase AxContainer)
-    list(APPEND EXT_LIBS 
-        Qt5::AxBase
-        Qt5::AxContainer
-    )
-
-endif (WIN32)
-
 #########################
 # Executable Generation #
 #########################
