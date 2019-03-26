@@ -10,7 +10,7 @@
 #include <QHBoxLayout>
 #include <QSplitter>
 
-#include "src/network/IpAddressHelper.h"
+#include "src/network/ConnectivityHelper.h"
 
 class MainWindow : public QMainWindow { 
     public:
@@ -34,13 +34,13 @@ class MainWindow : public QMainWindow {
         }
 
         void test() {
-            this->ipHelper = new IpAddressHelper;
+            this->ipHelper = new ConnectivityHelper;
         }
 
     private:
         
-        IpAddressHelper* ipHelper;
-
+        ConnectivityHelper* ipHelper;
+        
         //////////////
         /// UI init //
         //////////////
@@ -69,16 +69,21 @@ class MainWindow : public QMainWindow {
 
             auto sb_widget = new QWidget;
             auto extIpDescrLabel = new QLabel("IP externe:");
-            auto sep = new QLabel(" | ");
+            auto sep1 = new QLabel(" | ");
             auto localIpDescrLabel = new QLabel("IP locale:");
+            auto sep2 = new QLabel(" | ");
+            auto upnpDescrLabel = new QLabel("uPnP:");
 
             //define statusbar content
             sb_widget->setLayout(new QHBoxLayout);
             sb_widget->layout()->addWidget(localIpDescrLabel);
             sb_widget->layout()->addWidget(this->ipHelper->localIpLabel);
-            sb_widget->layout()->addWidget(sep);
+            sb_widget->layout()->addWidget(sep1);
             sb_widget->layout()->addWidget(extIpDescrLabel);
             sb_widget->layout()->addWidget(this->ipHelper->extIpLabel);
+            sb_widget->layout()->addWidget(sep2);
+            sb_widget->layout()->addWidget(upnpDescrLabel);
+            sb_widget->layout()->addWidget(this->ipHelper->upnpStateLabel);
             
             //define statusbar
             statusBar->addWidget(sb_widget);
@@ -231,4 +236,4 @@ class MainWindow : public QMainWindow {
         ////////////////////////
         /// END check updates //
         ////////////////////////
-}
+};

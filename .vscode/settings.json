@@ -1,6 +1,10 @@
 {
     "files.associations": {
         "qmainwindow": "cpp",
-        "qmessagebox": "cpp"
+        "qmessagebox": "cpp",
+        "upnpc.c": "cpp",
+        "vector": "cpp",
+        "xstring": "cpp",
+        "xutility": "cpp"
     }
 }

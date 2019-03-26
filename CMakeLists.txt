@@ -95,13 +95,14 @@ SET(EXT_LIBS
 file(GLOB_RECURSE INT_LIBS
     "libs/*.c"
     "libs/*.cpp"
-    "libs/*.hpp"
 )
 
 #mandatory explicit generation
 list(APPEND SOURCES
+    src/network/uPnP/uPnPThread.h
+    src/network/uPnP/uPnPWrapper.cpp
+    src/network/ConnectivityHelper.cpp
     src/main.cpp
-    src/network/IpAddressHelper.cpp
 )
 
 #########################
