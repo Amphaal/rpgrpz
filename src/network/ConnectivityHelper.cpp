@@ -1,5 +1,27 @@
 #include "ConnectivityHelper.h"
 
+void ConnectivityHelper::_debugNetworkConfig() {
+    
+    //active...
+    auto activeConf = this->_manager->activeConfiguration();
+
+    qDebug() << "Connectivity : active configuration"
+             << ">> name:" << activeConf.name() 
+             << ", state:" << activeConf.state() 
+             << ", type:" << activeConf.type() 
+             << ", bearer:" << activeConf.bearerTypeName();
+
+    //default...
+    QNetworkConfigurationManager defManager;
+    auto defaultConf = defManager.defaultConfiguration();
+
+    qDebug() << "Connectivity : default configuration"
+            << ">> name:" << defaultConf.name() 
+            << ", state:" << defaultConf.state() 
+            << ", type:" << defaultConf.type() 
+            << ", bearer:" << defaultConf.bearerTypeName();
+}
+
 ConnectivityHelper::ConnectivityHelper(QObject *parent) : QObject(parent) {
     
     qDebug() << "Connectivity : helper starting !";
@@ -15,6 +37,8 @@ ConnectivityHelper::ConnectivityHelper(QObject *parent) : QObject(parent) {
     QObject::connect(this->_manager, &QNetworkAccessManager::networkAccessibleChanged, 
                     this, &ConnectivityHelper::networkChanged);
 
+    this->_debugNetworkConfig();
+    
 };
 
 ConnectivityHelper::~ConnectivityHelper()  {

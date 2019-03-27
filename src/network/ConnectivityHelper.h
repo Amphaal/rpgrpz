@@ -8,6 +8,7 @@
 #include <QNetworkReply>
 #include <QNetworkInterface>
 #include <QNetworkSession>
+#include <QNetworkConfigurationManager>
 
 #include "src/helpers/_const.cpp"
 
@@ -40,5 +41,6 @@ class ConnectivityHelper : public QObject
         QMetaObject::Connection _upnpInitialized;
         QString _getWaitingText();
         QString _getErrorText();
+        void _debugNetworkConfig();
         
 };
