@@ -60,7 +60,7 @@ class MainWindow : public QMainWindow {
         void _initUIMenu() {
             auto menuBar = new QMenuBar;
             menuBar->addMenu(this->_getFileMenu());
-            menuBar->addMenu(this->_getOptionsMenu());
+            menuBar->addMenu(this->_getAboutMenu());
             this->setMenuWidget(menuBar);
         }
 
@@ -104,25 +104,25 @@ class MainWindow : public QMainWindow {
         QAction *versionAction;
         QAction *cfugAction;
 
-        QMenu* _getOptionsMenu() {
+        QMenu* _getAboutMenu() {
 
-            QMenu *optionsMenuItem = new QMenu(I18n::tr()->Menu_Options().c_str());
+            QMenu *aboutMenuItem = new QMenu(I18n::tr()->Menu_About().c_str());
 
             //for checking the upgrades available
-            this->cfugAction = new QAction(I18n::tr()->Menu_CheckForUpgrades().c_str(), optionsMenuItem);
+            this->cfugAction = new QAction(I18n::tr()->Menu_CheckForUpgrades().c_str(), aboutMenuItem);
                 QObject::connect(
                 this->cfugAction, &QAction::triggered,
                 this, &MainWindow::requireUpdateCheckFromUser
             );
                     
-            this->versionAction = new QAction(APP_FULL_DENOM, optionsMenuItem);
+            this->versionAction = new QAction(APP_FULL_DENOM, aboutMenuItem);
             this->versionAction->setEnabled(false);
 
-            optionsMenuItem->addAction(this->cfugAction);
-            optionsMenuItem->addSeparator();
-            optionsMenuItem->addAction(this->versionAction);
+            aboutMenuItem->addAction(this->cfugAction);
+            aboutMenuItem->addSeparator();
+            aboutMenuItem->addAction(this->versionAction);
 
-            return optionsMenuItem;
+            return aboutMenuItem;
         }
 
         QMenu* _getFileMenu() {

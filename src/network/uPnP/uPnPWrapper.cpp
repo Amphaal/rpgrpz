@@ -74,7 +74,7 @@ class uPnPWrapper : public uPnPThread {
                     qDebug() << "UPNP Inst : List of UPNP devices found on the network :\n";
                     
                     for(device = devlist; device; device = device->pNext) {
-                        qDebug() << " desc: " << device->descURL << "\n st:" << device->st << "\n\n";
+                        qDebug() << "UPNP Inst :  desc: " << device->descURL << "\n st:" << device->st << "\n\n";
                     }
 
                 } else if(!rootdescurl) {
