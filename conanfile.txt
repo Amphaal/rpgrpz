@@ -11,6 +11,7 @@ cmake_paths
 
 #WINDOWS
 plugins/platforms, qwindows*.dll -> ./bin/platforms
+plugins/bearer, qgenericbearer*.dll -> ./bin/bearer
 bin, Qt5Widgets*.dll -> ./bin 
 bin, Qt5Core*.dll -> ./bin 
 bin, Qt5Gui*.dll -> ./bin

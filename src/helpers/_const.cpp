@@ -12,9 +12,10 @@
 #define _WINSOCKAPI_
 #include <windows.h>
 
+static const std::string DEBUG_APP_FILE_APPENDICE = IS_DEBUG_APP ? ".debug" : "";
 static const std::string LOCAL_ICON_PNG_PATH = ":/icons/rpgrpz.png";
-static const std::string LOG_FILE = "/debug.log";
-static const std::string LATEST_LOG_FILE = "/debug.latest.log";
+static const std::string LOG_FILE = "/rpgrpz" + DEBUG_APP_FILE_APPENDICE + ".log";
+static const std::string LATEST_LOG_FILE = "/rpgrpz.latest" + DEBUG_APP_FILE_APPENDICE + ".log";
 static const std::string UPNP_DEFAULT_TARGET_PORT = "31137";
 static const std::string UPNP_REQUEST_DESCRIPTION = "RPGRPZ";
 

@@ -5,21 +5,15 @@ void ConnectivityHelper::_debugNetworkConfig() {
     //active...
     auto activeConf = this->_manager->activeConfiguration();
 
-    qDebug() << "Connectivity : active configuration"
-             << ">> name:" << activeConf.name() 
-             << ", state:" << activeConf.state() 
-             << ", type:" << activeConf.type() 
-             << ", bearer:" << activeConf.bearerTypeName();
+    auto _debug = [&](std::string descr, QNetworkConfiguration &config) {
+        qDebug() << "Connectivity :" << QString::fromStdString(descr)
+                << ">> name:" << config.name() 
+                << ", state:" << config.state() 
+                << ", type:" << config.type() 
+                << ", bearer:" << config.bearerTypeName();
+    };
 
-    //default...
-    QNetworkConfigurationManager defManager;
-    auto defaultConf = defManager.defaultConfiguration();
-
-    qDebug() << "Connectivity : default configuration"
-            << ">> name:" << defaultConf.name() 
-            << ", state:" << defaultConf.state() 
-            << ", type:" << defaultConf.type() 
-            << ", bearer:" << defaultConf.bearerTypeName();
+    _debug("active configuration", activeConf);
 }
 
 ConnectivityHelper::ConnectivityHelper(QObject *parent) : QObject(parent) {
