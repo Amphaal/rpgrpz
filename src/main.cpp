@@ -24,8 +24,8 @@ int main(int argc, char** argv){
 
     //setup app
     QApplication app(argc, argv);
-    auto appName = QString(APP_NAME);
-    app.setApplicationName(appName);
+    app.setApplicationName(QString(APP_NAME));
+    app.setOrganizationName(QString(APP_PUBLISHER));
     app.setStyle(QStyleFactory::create("Fusion")); 
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 

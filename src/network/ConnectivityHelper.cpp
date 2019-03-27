@@ -49,8 +49,9 @@ void ConnectivityHelper::onUPnPInitialized(int errorCode, const char * negociate
         qWarning() << "Connectivity : uPnP failed !";
         this->upnpStateLabel->setText("Non");
     } else {
-        std::string out = "OK, port: ";
+        std::string out = "OK [port: ";
         out += negociatedPort;
+        out += "] ";
 
         qDebug() << "Connectivity : uPnP " << QString::fromStdString(out);
         this->upnpStateLabel->setText(QString::fromStdString(out));

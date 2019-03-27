@@ -9,14 +9,21 @@
 #include <QStatusBar>
 #include <QHBoxLayout>
 #include <QSplitter>
+#include <QPushButton>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QLineEdit>
+#include <QSettings>
+#include <QIntValidator>
 
 #include "src/network/ConnectivityHelper.h"
+#include "src/ui/components/ChatWidget.cpp"
 
 class MainWindow : public QMainWindow { 
     public:
         MainWindow() {
             
-            //
+            //preinit...
             this->_initConnectivity();
 
             //init...
@@ -47,14 +54,77 @@ class MainWindow : public QMainWindow {
         //////////////
 
         void _initUI() {
+            
             //values specific to this
             std::string stdTitle = IS_DEBUG_APP ? (std::string)"DEBUG - " + APP_NAME : APP_NAME;
             this->setWindowTitle(QString(stdTitle.c_str()));
             this->setMinimumSize(QSize(480, 400));
             this->setWindowIcon(QIcon(LOCAL_ICON_PNG_PATH.c_str()));
 
+            //central widget
+            auto centralW = new QWidget(this);
+            centralW->setLayout(new QVBoxLayout);
+            centralW->layout()->setAlignment(Qt::AlignTop);
+            centralW->layout()->setMargin(0);
+            this->setCentralWidget(centralW);
+
+            //specific componements
             this->_initUIMenu();
-            this->_initStatusBar();
+            this->_initUIConnectionPanel();
+            this->_initUIChat();
+            this->_initUIStatusBar();
+        }   
+
+        QLineEdit* _portTarget = 0;
+        QLineEdit* _domainTarget = 0;
+        void _initUIConnectionPanel() {
+            
+            QSettings settings;
+            settings.beginGroup("MainWindow");
+
+            auto connectionWdget = new QWidget(this);
+            connectionWdget->setLayout(new QHBoxLayout);
+            connectionWdget->layout()->setContentsMargins(10, 10, 10, 5);
+
+            this->_domainTarget = new QLineEdit(this);
+            this->_domainTarget->setPlaceholderText("IP ou domaine du serveur");
+            this->_domainTarget->setText(settings.value("domain", "").toString());
+
+            auto sep = new QLabel(this);
+            sep->setText(":");
+            sep->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+            this->_portTarget = new QLineEdit(this);
+            this->_portTarget->setValidator(new QIntValidator(0, 65535));
+            this->_portTarget->setPlaceholderText("Port");
+            this->_portTarget->setText(
+                settings.value(
+                    "port", 
+                    QString::fromStdString(UPNP_DEFAULT_TARGET_PORT)
+                ).toString()
+            );
+            this->_portTarget->setFixedSize(40, 22);
+            this->_portTarget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+            auto controlBtn = new QPushButton(this);
+            controlBtn->setText("Se connecter");
+            QObject::connect(
+                controlBtn, &QPushButton::clicked,
+                this, &MainWindow::tryConnectToServer
+            );
+
+            connectionWdget->layout()->addWidget(this->_domainTarget);
+            connectionWdget->layout()->addWidget(sep);
+            connectionWdget->layout()->addWidget(this->_portTarget);
+            connectionWdget->layout()->addWidget(controlBtn);
+
+            settings.endGroup();
+            this->centralWidget()->layout()->addWidget(connectionWdget);
+        }
+
+        void _initUIChat() {
+            auto chatWdget = new ChatWidget(this);
+            this->centralWidget()->layout()->addWidget(chatWdget);
         }
 
         void _initUIMenu() {
@@ -64,7 +134,7 @@ class MainWindow : public QMainWindow {
             this->setMenuWidget(menuBar);
         }
 
-        void _initStatusBar() {
+        void _initUIStatusBar() {
             
             qDebug() << "UI : StatusBar instantiation";
 
@@ -87,6 +157,8 @@ class MainWindow : public QMainWindow {
             sb_widget->layout()->addWidget(sep2);
             sb_widget->layout()->addWidget(upnpDescrLabel);
             sb_widget->layout()->addWidget(this->_ipHelper->upnpStateLabel);
+            
+            sb_widget->layout()->setContentsMargins(10, 5, 5, 5);
             
             //define statusbar
             statusBar->addWidget(sb_widget);
@@ -164,6 +236,27 @@ class MainWindow : public QMainWindow {
         /// END Menu components //
         //////////////////////////
         
+        ////////////////////////
+        /// Server Connection //
+        ////////////////////////
+
+        void tryConnectToServer() {
+            QSettings settings;
+            settings.beginGroup("MainWindow");
+
+            auto dt_text = this->_domainTarget->text();
+            if(!dt_text.isEmpty()) settings.setValue("domain", dt_text);
+
+            auto pt_text = this->_portTarget->text();
+            if(!pt_text.isEmpty()) settings.setValue("port", pt_text);          
+
+            settings.endGroup();
+        }
+
+        ////////////////////////////
+        /// END Server Connection //
+        ////////////////////////////
+
         ////////////////////
         /// check updates //
         ////////////////////
