@@ -19,74 +19,29 @@ class uPnPWrapper : public uPnPThread {
         const char * description = 0;
         const char * targetPort = 0;
 
-        uPnPWrapper(char * targetPort, char * description) : targetPort(targetPort), description(description)  { }
+        uPnPWrapper(const char * targetPort, const char * description) : 
+            targetPort(targetPort), 
+            description(description) { 
+            
+        }
         
         void run() override {
-
-            /*start websock*/
-            WSADATA wsaData;
-            int nResult = WSAStartup(MAKEWORD(2,2), &wsaData);
-            if(nResult != NO_ERROR) return;
             
-            /*discover*/
-            if( rootdescurl || (devlist = upnpDiscover(2000, multicastif, minissdpdpath, localport, ipv6, ttl, &error))) {
-                
-                struct UPNPDev * device;
-                
-                if(devlist) {
-
-                    qDebug() << "List of UPNP devices found on the network :\n";
-                    
-                    for(device = devlist; device; device = device->pNext) {
-                        qDebug() << " desc: " << device->descURL << "\n st:" << device->st << "\n\n";
-                    }
-
-                } else if(!rootdescurl) {
-                    qDebug() << "upnpDiscover() error code=" << error << "\n";
-                }
-
-                i = 1;
-
-                if( (rootdescurl && UPNP_GetIGDFromUrl(rootdescurl, &urls, &data, lanaddr, sizeof(lanaddr)))
-                || (i = UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr)))) {
-                    
-                    switch(i) {
-                        case 1:
-                            qDebug() << "Found valid IGD : " << urls.controlURL << "\n";
-                            break;
-                        case 2:
-                            qDebug() << "Found a (not connected?) IGD : " << urls.controlURL << "\n";
-                            qDebug() << "Trying to continue anyway\n";
-                            break;
-                        case 3:
-                            qDebug() << "UPnP device found. Is it an IGD ? : " << urls.controlURL << "\n";
-                            qDebug() << "Trying to continue anyway\n";
-                            break;
-                        default:
-                            qDebug() << "Found device (igd ?) : " << urls.controlURL << "\n";
-                            qDebug() << "Trying to continue anyway\n";
-                    }
-
-                    qDebug() << "Local LAN ip address : " << lanaddr << "\n";
-
-                }
-                else {
-                    qDebug() << "No valid UPNP Internet Gateway Device found.\n";
-                    retcode = 1;
-                }
-            }
-            else {
-                qDebug() << "No IGD UPnP Device found on the network !\n";
-                retcode = 1;
+            //init uPnP...
+            this->_initUPnP();
+            if(retcode != 0) {
+                emit initialized(retcode, this->targetPort);
+                return;
             }
 
+            //register for a redirect...
             auto result = this->SetRedirectAndTest(lanaddr, this->targetPort, this->targetPort, "TCP", "0", 0);
-
             emit initialized(result, this->targetPort);
         }
 
         ~uPnPWrapper() {
-            
+
+            //remove any redirect 
             this->RemoveRedirect(this->targetPort, "TCP", NULL);
 
             /*free*/
@@ -99,6 +54,68 @@ class uPnPWrapper : public uPnPThread {
 
 
     private:
+
+        void _initUPnP() {
+
+            /*start websock*/
+            WSADATA wsaData;
+            int nResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+            if(nResult != NO_ERROR) {
+                 qWarning() << "UPNP Inst : Cannot init socket with WSAStartup !\n";
+            };
+            
+            /*discover*/
+            if( rootdescurl || (devlist = upnpDiscover(2000, multicastif, minissdpdpath, localport, ipv6, ttl, &error))) {
+                
+                struct UPNPDev * device;
+                
+                if(devlist) {
+
+                    qDebug() << "UPNP Inst : List of UPNP devices found on the network :\n";
+                    
+                    for(device = devlist; device; device = device->pNext) {
+                        qDebug() << " desc: " << device->descURL << "\n st:" << device->st << "\n\n";
+                    }
+
+                } else if(!rootdescurl) {
+                    qWarning() << "UPNP Inst : upnpDiscover() error code=" << error << "\n";
+                }
+
+                i = 1;
+
+                if( (rootdescurl && UPNP_GetIGDFromUrl(rootdescurl, &urls, &data, lanaddr, sizeof(lanaddr)))
+                || (i = UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr)))) {
+                    
+                    switch(i) {
+                        case 1:
+                            qDebug() << "UPNP Inst : Found valid IGD : " << urls.controlURL << "\n";
+                            break;
+                        case 2:
+                            qDebug() << "UPNP Inst : Found a (not connected?) IGD : " << urls.controlURL << "\n";
+                            qDebug() << "UPNP Inst : Trying to continue anyway\n";
+                            break;
+                        case 3:
+                            qDebug() << "UPNP Inst : UPnP device found. Is it an IGD ? : " << urls.controlURL << "\n";
+                            qDebug() << "UPNP Inst : Trying to continue anyway\n";
+                            break;
+                        default:
+                            qDebug() << "UPNP Inst : Found device (igd ?) : " << urls.controlURL << "\n";
+                            qDebug() << "UPNP Inst : Trying to continue anyway\n";
+                    }
+
+                    qDebug() << "UPNP Inst : Local LAN ip address " << lanaddr << "\n";
+
+                }
+                else {
+                    qWarning() << "UPNP Inst : No valid UPNP Internet Gateway Device found.\n";
+                    retcode = 1;
+                }
+            }
+            else {
+                qWarning() << "UPNP Inst : No IGD UPnP Device found on the network !\n";
+                retcode = 1;
+            }
+        }
 
         int SetRedirectAndTest(const char * iaddr,
                         const char * iport,
@@ -116,13 +133,13 @@ class uPnPWrapper : public uPnPThread {
 
             if(!iaddr || !iport || !eport || !proto)
             {
-                fprintf(stderr, "Wrong arguments\n");
+                qWarning() << "UPNP AskRedirect : Wrong arguments\n";
                 return -1;
             }
             proto = protofix(proto);
             if(!proto)
             {
-                fprintf(stderr, "invalid protocol\n");
+                qWarning() << "UPNP AskRedirect : invalid protocol\n";
                 return -1;
             }
 
@@ -130,9 +147,9 @@ class uPnPWrapper : public uPnPThread {
                             data.first.servicetype,
                             externalIPAddress);
             if(r!=UPNPCOMMAND_SUCCESS)
-                printf("GetExternalIPAddress failed.\n");
+                qWarning() << "UPNP AskRedirect : GetExternalIPAddress failed.\n";
             else
-                printf("ExternalIPAddress = %s\n", externalIPAddress);
+                qDebug() << "UPNP AskRedirect : ExternalIPAddress = " << externalIPAddress <<"\n";
 
             if (addAny) {
                 r = UPNP_AddAnyPortMapping(urls.controlURL, data.first.servicetype,
@@ -141,17 +158,15 @@ class uPnPWrapper : public uPnPThread {
                 if(r==UPNPCOMMAND_SUCCESS)
                     eport = reservedPort;
                 else
-                    printf("AddAnyPortMapping(%s, %s, %s) failed with code %d (%s)\n",
-                        eport, iport, iaddr, r, strupnperror(r));
+                    qWarning() << "UPNP AskRedirect : AddAnyPortMapping(" << eport  <<", "<< iport <<", "<< iaddr <<") failed with code "<< r <<" ("<< strupnperror(r) <<")\n";
             } else {
                 r = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype,
                             eport, iport, iaddr, description,
                             proto, NULL/*remoteHost*/, leaseDuration);
                 if(r!=UPNPCOMMAND_SUCCESS) {
-                    printf("AddPortMapping(%s, %s, %s) failed with code %d (%s)\n",
-                        eport, iport, iaddr, r, strupnperror(r));
+                    qWarning() << "UPNP AskRedirect : AddPortMapping(" << eport  <<", "<< iport <<", "<< iaddr <<") failed with code "<< r <<" ("<< strupnperror(r) <<")\n";
                     return -2;
-            }
+                }
             }
 
             r = UPNP_GetSpecificPortMappingEntry(urls.controlURL,
@@ -160,13 +175,11 @@ class uPnPWrapper : public uPnPThread {
                                 intClient, intPort, NULL/*desc*/,
                                 NULL/*enabled*/, duration);
             if(r!=UPNPCOMMAND_SUCCESS) {
-                printf("GetSpecificPortMappingEntry() failed with code %d (%s)\n",
-                    r, strupnperror(r));
+                qWarning() << "UPNP AskRedirect : GetSpecificPortMappingEntry() failed with code "<< r <<" (" << strupnperror(r) << ")\n";
                 return -2;
             } else {
-                printf("InternalIP:Port = %s:%s\n", intClient, intPort);
-                printf("external %s:%s %s is redirected to internal %s:%s (duration=%s)\n",
-                    externalIPAddress, eport, proto, intClient, intPort, duration);
+                qDebug() << "UPNP AskRedirect : InternalIP:Port = " << intClient << ":" << intPort << "\n";
+                qDebug() << "UPNP AskRedirect : external " << externalIPAddress << ":" << eport <<" " << proto << " is redirected to internal " << intClient << ":" << intPort << " (duration=" << duration << ")\n";
             }
             return 0;
         }
@@ -177,21 +190,21 @@ class uPnPWrapper : public uPnPThread {
             int r;
             if(!proto || !eport)
             {
-                fprintf(stderr, "invalid arguments\n");
+                qWarning() << "UPNP RemoveRedirect : invalid arguments\n";
                 return -1;
             }
             proto = protofix(proto);
             if(!proto)
             {
-                fprintf(stderr, "protocol invalid\n");
+                qWarning() << "UPNP RemoveRedirect : protocol invalid\n";
                 return -1;
             }
             r = UPNP_DeletePortMapping(urls.controlURL, data.first.servicetype, eport, proto, remoteHost);
             if(r!=UPNPCOMMAND_SUCCESS) {
-                printf("UPNP_DeletePortMapping() failed with code : %d\n", r);
+                qWarning() << "UPNP RemoveRedirect : UPNP_DeletePortMapping() failed with code : " << r << "\n";
                 return -2;
             }else {
-                printf("UPNP_DeletePortMapping() returned : %d\n", r);
+                qDebug() << "UPNP RemoveRedirect : UPNP_DeletePortMapping() returned : " << r <<"\n";
             }
             return 0;
         }
@@ -209,7 +222,7 @@ class uPnPWrapper : public uPnPThread {
             char rHost[64];
             char duration[16];
 
-            qDebug() << " i protocol exPort->inAddr:inPort description remoteHost leaseTime\n";
+            qDebug() << "UPNP List : i protocol exPort->inAddr:inPort description remoteHost leaseTime\n";
 
             do {
                 snprintf(index, 6, "%d", i);
@@ -223,9 +236,9 @@ class uPnPWrapper : public uPnPThread {
                                             protocol, desc, enabled,
                                             rHost, duration);
                 if(r==0)
-                    qDebug() << i << " " << protocol << " " << extPort << "->" << intClient << ":" << intPort << " '" << desc << "' '" << rHost << "' " << duration << "\n";
+                    qDebug() << "UPNP List : " << i << " " << protocol << " " << extPort << "->" << intClient << ":" << intPort << " '" << desc << "' '" << rHost << "' " << duration << "\n";
                 else
-                    qDebug() << "GetGenericPortMappingEntry() returned " << r << " (" << strupnperror(r) << ")\n";
+                    qDebug() << "UPNP List : GetGenericPortMappingEntry() returned " << r << " (" << strupnperror(r) << ")\n";
                 i++;
             } while(r==0);
         }
@@ -242,34 +255,34 @@ class uPnPWrapper : public uPnPThread {
             if(UPNP_GetConnectionTypeInfo(urls.controlURL,
                                         data.first.servicetype,
                                         connectionType) != UPNPCOMMAND_SUCCESS)
-                qDebug() << "GetConnectionTypeInfo failed.\n";
+                qWarning() << "UPNP Info : GetConnectionTypeInfo failed.\n";
             else
-                qDebug() << "Connection Type : " << connectionType << "\n";
+                qDebug() << "UPNP Info : Connection Type : " << connectionType << "\n";
             if(UPNP_GetStatusInfo(urls.controlURL, data.first.servicetype,
                                 status, &uptime, lastconnerr) != UPNPCOMMAND_SUCCESS)
-                qDebug() << "GetStatusInfo failed.\n";
+                qWarning() << "UPNP Info : GetStatusInfo failed.\n";
             else
-                qDebug() << "Status : " << status << ", uptime=" << uptime << ", LastConnectionError : " << lastconnerr << "\n";
+                qDebug() << "UPNP Info : Status : " << status << ", uptime=" << uptime << ", LastConnectionError : " << lastconnerr << "\n";
             if(uptime > 0) {
                 timenow = time(NULL);
                 timestarted = timenow - uptime;
-                qDebug() << "  Time started : " << ctime(&timestarted);
+                qDebug() << "UPNP Info :  Time started : " << ctime(&timestarted);
             }
             if(UPNP_GetLinkLayerMaxBitRates(urls.controlURL_CIF, data.CIF.servicetype,
                                             &brDown, &brUp) != UPNPCOMMAND_SUCCESS) {
-                qDebug() << "GetLinkLayerMaxBitRates failed.\n";
+                qWarning() << "UPNP Info : GetLinkLayerMaxBitRates failed.\n";
             } else {
-                qDebug() << "MaxBitRateDown : " << brDown << " bps";
+                qDebug() << "UPNP Info : MaxBitRateDown : " << brDown << " bps";
                 if(brDown >= 1000000) {
-                    qDebug() << " (" << brDown / 1000000 << "." << (brDown / 100000) % 10 << " Mbps)";
+                    qDebug() << "UPNP Info : (" << brDown / 1000000 << "." << (brDown / 100000) % 10 << " Mbps)";
                 } else if(brDown >= 1000) {
-                    qDebug() << " (" << brDown / 1000 << " Kbps)";
+                    qDebug() << "UPNP Info : (" << brDown / 1000 << " Kbps)";
                 }
-                qDebug() << "   MaxBitRateUp " << brUp << " bps";
+                qDebug() << "UPNP Info :   MaxBitRateUp " << brUp << " bps";
                 if(brUp >= 1000000) {
-                    qDebug() << " (" << brUp / 1000000 << "." << (brUp / 100000) % 10 << " Mbps)";
+                    qDebug() << "UPNP Info : (" << brUp / 1000000 << "." << (brUp / 100000) % 10 << " Mbps)";
                 } else if(brUp >= 1000) {
-                    qDebug() << " (" << brUp / 1000 << " Kbps)";
+                    qDebug() << "UPNP Info : (" << brUp / 1000 << " Kbps)";
                 }
                 qDebug() << "\n";
             }
@@ -277,9 +290,9 @@ class uPnPWrapper : public uPnPThread {
                                     data.first.servicetype,
                                     externalIPAddress);
             if(r != UPNPCOMMAND_SUCCESS) {
-                qDebug() << "GetExternalIPAddress failed. (errorcode=" << r << ")\n";
+                qWarning() << "UPNP Info : GetExternalIPAddress failed. (errorcode=" << r << ")\n";
             } else {
-                qDebug() << "ExternalIPAddress = " << externalIPAddress << "\n";
+                qDebug() << "UPNP Info : ExternalIPAddress = " << externalIPAddress << "\n";
             }
         }
 };

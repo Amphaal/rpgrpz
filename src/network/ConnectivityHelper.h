@@ -9,6 +9,7 @@
 #include <QNetworkInterface>
 #include <QNetworkSession>
 
+#include "src/helpers/_const.cpp"
 
 class ConnectivityHelper : public QObject
 {
@@ -38,5 +39,6 @@ class ConnectivityHelper : public QObject
         uPnPWrapper* _upnpThread = 0;
         QMetaObject::Connection _upnpInitialized;
         QString _getWaitingText();
+        QString _getErrorText();
         
 };

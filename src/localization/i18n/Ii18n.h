@@ -9,6 +9,9 @@ class ITranslator {
     public:
         virtual string Menu_File() = 0;
         virtual string Menu_Options() = 0;
+        virtual string Menu_About() = 0;
+        virtual string Menu_OpenLog() = 0;
+        virtual string Menu_OpenLatestLog() = 0;
         virtual string Menu_Quit() = 0;
         virtual string Menu_CheckForUpgrades() = 0;
         virtual string Alert_UpdateAvailable_Title() = 0;

@@ -5,6 +5,7 @@
 #include <QtWidgets/QStyleFactory>
 
 #include "src/helpers/_const.cpp"
+#include "src/helpers/_messageHandler.cpp"
 
 #include "ui/mainWindow.cpp"
 
@@ -20,11 +21,16 @@ int main(int argc, char** argv){
         return 1;
     }
 
+
     //setup app
     QApplication app(argc, argv);
-    app.setApplicationName(QString(APP_NAME));
+    auto appName = QString(APP_NAME);
+    app.setApplicationName(appName);
     app.setStyle(QStyleFactory::create("Fusion")); 
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
+
+    //message handler
+    qInstallMessageHandler(msgHandler::customMO);
 
     //fetch main window
     MainWindow mw;

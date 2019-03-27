@@ -17,7 +17,7 @@ class MainWindow : public QMainWindow {
         MainWindow() {
             
             //
-            this->test();
+            this->_initConnectivity();
 
             //init...
             this->_initUI();
@@ -33,13 +33,14 @@ class MainWindow : public QMainWindow {
             this->raise();
         }
 
-        void test() {
-            this->ipHelper = new ConnectivityHelper(this);
+        void _initConnectivity() {
+            qDebug() << "UI : Connectivity instantiation";
+            this->_ipHelper = new ConnectivityHelper(this);
         }
 
     private:
         
-        ConnectivityHelper* ipHelper;
+        ConnectivityHelper* _ipHelper;
         
         //////////////
         /// UI init //
@@ -64,7 +65,9 @@ class MainWindow : public QMainWindow {
         }
 
         void _initStatusBar() {
-    
+            
+            qDebug() << "UI : StatusBar instantiation";
+
             auto statusBar = new QStatusBar(this);
 
             auto sb_widget = new QWidget;
@@ -77,13 +80,13 @@ class MainWindow : public QMainWindow {
             //define statusbar content
             sb_widget->setLayout(new QHBoxLayout);
             sb_widget->layout()->addWidget(localIpDescrLabel);
-            sb_widget->layout()->addWidget(this->ipHelper->localIpLabel);
+            sb_widget->layout()->addWidget(this->_ipHelper->localIpLabel);
             sb_widget->layout()->addWidget(sep1);
             sb_widget->layout()->addWidget(extIpDescrLabel);
-            sb_widget->layout()->addWidget(this->ipHelper->extIpLabel);
+            sb_widget->layout()->addWidget(this->_ipHelper->extIpLabel);
             sb_widget->layout()->addWidget(sep2);
             sb_widget->layout()->addWidget(upnpDescrLabel);
-            sb_widget->layout()->addWidget(this->ipHelper->upnpStateLabel);
+            sb_widget->layout()->addWidget(this->_ipHelper->upnpStateLabel);
             
             //define statusbar
             statusBar->addWidget(sb_widget);
@@ -111,7 +114,7 @@ class MainWindow : public QMainWindow {
                 this->cfugAction, &QAction::triggered,
                 this, &MainWindow::requireUpdateCheckFromUser
             );
-            
+                    
             this->versionAction = new QAction(APP_FULL_DENOM, optionsMenuItem);
             this->versionAction->setEnabled(false);
 
@@ -133,6 +136,25 @@ class MainWindow : public QMainWindow {
                 this, &MainWindow::close
             );
 
+            auto openLogAction = new QAction(I18n::tr()->Menu_OpenLog().c_str(), fileMenuItem);
+            QObject::connect(
+                openLogAction, &QAction::triggered,
+                [&]() {
+                    openFileInOS(getLogFileLocation());
+                }
+            );
+
+            auto openLatestLogAction = new QAction(I18n::tr()->Menu_OpenLatestLog().c_str(), fileMenuItem);
+            QObject::connect(
+                openLatestLogAction, &QAction::triggered,
+                [&]() {
+                    openFileInOS(getLatestLogFileLocation());
+                }
+            );
+            
+            fileMenuItem->addAction(openLogAction);
+            fileMenuItem->addAction(openLatestLogAction);
+            fileMenuItem->addSeparator();
             fileMenuItem->addAction(quitAction);
 
             return fileMenuItem;
@@ -157,6 +179,8 @@ class MainWindow : public QMainWindow {
         }
     
         void _setupAutoUpdate() {
+            
+            qDebug() << "UI : AutoUpdate instantiation";
 
             if(MAINTENANCE_TOOL_LOCATION == "") {
                 this->updater = new QtAutoUpdater::Updater(this);
