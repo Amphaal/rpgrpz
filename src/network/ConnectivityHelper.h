@@ -1,6 +1,6 @@
 #include <QString>
 #include <QLabel>
-#include "uPnP/uPnPWrapper.cpp"
+#include "uPnP/uPnPRequester.cpp"
 
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -8,6 +8,7 @@
 #include <QNetworkReply>
 #include <QNetworkInterface>
 #include <QNetworkSession>
+#include <QThread>
 #include <QNetworkConfigurationManager>
 
 #include "src/helpers/_const.cpp"
@@ -19,28 +20,29 @@ class ConnectivityHelper : public QObject
     public:
         ConnectivityHelper(QObject *parent = nullptr);
         ~ConnectivityHelper();
-        QString getLocalAddress();
-        void askExternalAddress();
-        void tryNegociateUPnPPort();
-
-        QLabel* extIpLabel = 0;
-        QLabel* localIpLabel = 0;
-        QLabel* upnpStateLabel = 0;
-
-    private slots:
-        void gotReply(QNetworkReply* networkReply);
-        void onUPnPInitialized(int errorCode, const char * negociatedPort);
-        void networkChanged(QNetworkAccessManager::NetworkAccessibility accessible);
+        void init();
 
     signals:
-        void externalAddressReceived(QString extAddress);
+        void localAddressStateChanged(std::string state);
+        void remoteAddressStateChanged(std::string state);
+        void uPnPStateChanged(std::string state);
 
     private:
         QNetworkAccessManager* _manager = 0;
-        uPnPWrapper* _upnpThread = 0;
+        uPnPRequester* _upnpThread = 0;
         QMetaObject::Connection _upnpInitialized;
-        QString _getWaitingText();
-        QString _getErrorText();
+
         void _debugNetworkConfig();
+        std::string _getWaitingText();
+        std::string _getErrorText();
+
+        void _getLocalAddress();
+        void _askExternalAddress();
+        void _tryNegociateUPnPPort();
+
+        void _onExternalAddressRequestResponse(QNetworkReply* networkReply);
+
+        void onUPnPDone(int errorCode, const char * negociatedPort);
+        void networkChanged(QNetworkAccessManager::NetworkAccessibility accessible);
         
 };

@@ -21,13 +21,15 @@ int main(int argc, char** argv){
         return 1;
     }
 
-
     //setup app
     QApplication app(argc, argv);
     app.setApplicationName(QString(APP_NAME));
     app.setOrganizationName(QString(APP_PUBLISHER));
     app.setStyle(QStyleFactory::create("Fusion")); 
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
+
+    //configure QThreads to acknowledge specific types for data exchanges
+    qRegisterMetaType<std::string>("std::string");
 
     //message handler
     qInstallMessageHandler(msgHandler::customMO);

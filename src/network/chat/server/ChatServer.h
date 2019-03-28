@@ -10,13 +10,12 @@
 #include <QTcpSocket>
 
 #include "src/helpers/_const.cpp"
+#include "ChatServerThread.h"
 
-class ChatServer : public QThread { 
-    
-    Q_OBJECT 
+class ChatServer : public ChatServerThread { 
     
     public:
-        ChatServer();
+        ChatServer(QObject * parent = nullptr);
         void run() override;
 
     private:

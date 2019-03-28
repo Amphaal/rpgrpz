@@ -1,8 +1,9 @@
 #include "ChatServer.h" 
 
-ChatServer::ChatServer() : _server(new QTcpServer) { 
-    
-    this->_server->moveToThread(this);
+ChatServer::ChatServer(QObject * parent) {};
+
+void ChatServer::run() { 
+    this->_server = new QTcpServer;
 
     qDebug() << "Chat Server : Instanciating...";
 
@@ -15,11 +16,7 @@ ChatServer::ChatServer() : _server(new QTcpServer) {
         this, &QThread::finished, 
         this, &ChatServer::_onFinished
     );
-};
 
-
-void ChatServer::run() { 
-    
     qDebug() << "Chat Server : Starting server...";
 
     auto result = this->_server->listen(QHostAddress::Any, std::stoi(UPNP_DEFAULT_TARGET_PORT));

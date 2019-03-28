@@ -1,6 +1,6 @@
 #include "uPnPThread.h"
 
-class uPnPWrapper : public uPnPThread {
+class uPnPRequester : public uPnPThread {
     
     public:
         struct UPNPUrls urls;
@@ -19,10 +19,11 @@ class uPnPWrapper : public uPnPThread {
         const char * description = 0;
         const char * targetPort = 0;
 
-        uPnPWrapper(const char * targetPort, const char * description) : 
+        uPnPRequester(const char * targetPort, const char * description, QObject * parent = nullptr) :
             targetPort(targetPort), 
             description(description) { 
             
+            this->setParent(parent);
         }
         
         void run() override {
@@ -30,16 +31,16 @@ class uPnPWrapper : public uPnPThread {
             //init uPnP...
             this->_initUPnP();
             if(retcode != 0) {
-                emit initialized(retcode, this->targetPort);
+                emit uPnPDone(retcode, this->targetPort);
                 return;
             }
 
             //register for a redirect...
             auto result = this->SetRedirectAndTest(lanaddr, this->targetPort, this->targetPort, "TCP", "0", 0);
-            emit initialized(result, this->targetPort);
+            emit uPnPDone(result, this->targetPort);
         }
 
-        ~uPnPWrapper() {
+        ~uPnPRequester() {
 
             //remove any redirect 
             this->RemoveRedirect(this->targetPort, "TCP", NULL);
