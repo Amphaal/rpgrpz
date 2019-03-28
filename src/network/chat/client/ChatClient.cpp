@@ -6,12 +6,12 @@
 
 class ChatClient : public QObject {
     public:
-        ChatClient(QString domain, QString port, QObject* parent = nullptr) : QObject(parent) {
+        ChatClient(QString domain, QString port) {
             
             qDebug() << "Chat Client : Instantiation...";
             
             //try connect...
-            this->_socket = new QTcpSocket(this);
+            this->_socket = new QTcpSocket;
             
             this->_in.setVersion(QDataStream::Qt_5_12);
             this->_in.setDevice(_socket);
@@ -20,6 +20,7 @@ class ChatClient : public QObject {
                 this->_socket, &QIODevice::readyRead, 
                 this, &ChatClient::_onRR
             );
+
             QObject::connect(
                 this->_socket, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error),
                 this, &ChatClient::_displayError

@@ -1,62 +1,49 @@
-#pragma once
+#include "LogScrollView.h"
 
-#include <QtWidgets/QLabel>
-#include <QtWidgets/QVBoxLayout>
-#include <QtCore/QList>
-#include "src/helpers/_const.cpp"
-
-class LogScrollView : public QWidget {
+LogScrollView::LogScrollView(QWidget *parent) : QWidget(parent) {
     
-    private:
-        int _maxLogMessages = 10000;
+    this->setLayout(new QVBoxLayout);
+    this->layout()->setAlignment(Qt::AlignTop);
+    this->layout()->setSpacing(0);
+    this->layout()->setMargin(0);
+}
 
-        void limitLogSize() {
-            if(this->layout()->count() > this->_maxLogMessages) {
-                auto qli = this->layout()->takeAt(0);
-                auto ltr = (QLabel*)qli->widget();
-                ltr->setParent(nullptr);
-                delete ltr;
-                delete qli;
-            }
-        }
-
-    public:
+void LogScrollView::addMessage(const std::string & newMessage, QPalette* colorPalette) {
     
-       LogScrollView(QWidget *parent = nullptr) : QWidget(parent) {
-            this->setLayout(new QVBoxLayout);
-            this->layout()->setAlignment(Qt::AlignTop);
+    auto msg = QString::fromStdString(newMessage);
+    auto label = new QLabel(msg);
+    label->setWordWrap(true);
+    label->setAutoFillBackground(true);
+    label->setContentsMargins(10, 3, 10, 3);
+    
+    if(colorPalette) {
+        label->setPalette(*colorPalette);
+    }
 
-            //set background color
-            QPalette palette = this->palette();
-            palette.setColor(this->backgroundRole(), Qt::white);
-            this->setPalette(palette);
-        }
+    this->limitLogSize();
 
-        void addMessage(const std::string & newMessage, const bool isError = false) {
-            auto msg = QString::fromStdString(newMessage);
-            auto label = new QLabel(msg);
-            label->setWordWrap(true);
-            
-            QPalette palette = label->palette();
-            auto color = isError ? Qt::red : Qt::black;
-            palette.setColor(label->foregroundRole(), color);
-            label->setPalette(palette);
+    this->layout()->addWidget(label);
+}
 
-            this->limitLogSize();
+void LogScrollView::updateLatestMessage(const std::string & newMessage) {
+    
+    auto msg = QString::fromStdString(newMessage);
+    auto i = this->layout()->count() - 1; //count items in layout
+    
+    //if no message, add message
+    if(i < 0) {
+        return this->addMessage(newMessage);
+    }
+    auto lbl = (QLabel*)this->layout()->itemAt(i)->widget();
+    lbl->setText(msg);
+}
 
-            this->layout()->addWidget(label);
-        }
-
-        void updateLatestMessage(const std::string & newMessage) {
-            
-            auto msg = QString::fromStdString(newMessage);
-            auto i = this->layout()->count() - 1; //count items in layout
-            
-            //if no message, add message
-            if(i < 0) {
-                return this->addMessage(newMessage);
-            }
-            auto lbl = (QLabel*)this->layout()->itemAt(i)->widget();
-            lbl->setText(msg);
-        }
-};
+void LogScrollView::limitLogSize() {
+    if(this->layout()->count() > this->_maxLogMessages) {
+        auto qli = this->layout()->takeAt(0);
+        auto ltr = (QLabel*)qli->widget();
+        ltr->setParent(nullptr);
+        delete ltr;
+        delete qli;
+    }
+}

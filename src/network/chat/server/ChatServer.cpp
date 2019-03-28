@@ -1,21 +1,31 @@
 #include "ChatServer.h" 
 
-ChatServer::ChatServer(QObject * parent) {};
+ChatServer::ChatServer() { };
 
-void ChatServer::run() { 
+ChatServer::~ChatServer() {
+    qDebug() << "Chat Server : Server ending !";
+
+    this->_server->close();
+};
+
+
+bool ChatServer::isStopped() {
+    bool stopped;
+    mutex.lock();
+    stopped = this->stopped;
+    mutex.unlock();
+    return stopped;
+}
+
+void ChatServer::stop() {
+    mutex.lock();
+    stopped = true;
+    mutex.unlock();
+}
+
+
+void ChatServer::start() { 
     this->_server = new QTcpServer;
-
-    qDebug() << "Chat Server : Instanciating...";
-
-    QObject::connect(
-        this->_server, &QTcpServer::newConnection,
-        this, &ChatServer::_onNewConnection
-    );
-
-    QObject::connect(
-        this, &QThread::finished, 
-        this, &ChatServer::_onFinished
-    );
 
     qDebug() << "Chat Server : Starting server...";
 
@@ -28,31 +38,33 @@ void ChatServer::run() {
         qDebug() << "Chat Server : Succesfully listening !";
     }
 
-    this->exec();
+    while (!isStopped()) {
 
+        bool connectionAvailable = this->_server->waitForNewConnection();
+        if (!connectionAvailable) continue; //no connection, rewind
+
+        //new connection,store it
+        QTcpSocket *clientConnection = this->_server->nextPendingConnection();
+        auto newIp = clientConnection->peerAddress().toString();
+
+        //signals new connection
+        emit newConnectionReceived(newIp.toStdString());
+        qDebug() << "Chat Server : New connection from " << newIp;
+
+        //auto remove socket if disconnected
+        QObject::connect(clientConnection, &QAbstractSocket::disconnected,
+                clientConnection, &QObject::deleteLater);
+
+        //send welcome message
+        QByteArray block;
+        QDataStream out(&block, QIODevice::WriteOnly);
+        out.setVersion(QDataStream::Qt_5_12);
+        out << "caca";
+        auto written = clientConnection->write(block);
+        clientConnection->disconnectFromHost();
+    }
+
+    // Self-destruct the server
+    deleteLater();
 };
 
-void ChatServer::_onFinished() {
-    qDebug() << "Chat Server : Server Thread finished !";
-
-    this->_server->close();
-};
-
-void ChatServer::_onNewConnection() {
-    
-    qDebug() << "Chat Server : New connection !";
-
-    //store connection
-    QTcpSocket *clientConnection = this->_server->nextPendingConnection();
-    QObject::connect(clientConnection, &QAbstractSocket::disconnected,
-            clientConnection, &QObject::deleteLater);
-    _clients.append(clientConnection);
-
-    //send welcome message
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_12);
-    out << "caca";
-    clientConnection->write(block);
-    //clientConnection->disconnectFromHost();
-};

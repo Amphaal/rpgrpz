@@ -27,30 +27,41 @@ class uPnPRequester : public uPnPThread {
         }
         
         void run() override {
+            try {
+
+                //init uPnP...
+                this->_initUPnP();
+                if(retcode != 0) {
+                    emit uPnPDone(retcode, this->targetPort);
+                    return;
+                }
+
+                //register for a redirect...
+                auto result = this->SetRedirectAndTest(lanaddr, this->targetPort, this->targetPort, "TCP", "0", 0);
+                emit uPnPDone(result, this->targetPort);
             
-            //init uPnP...
-            this->_initUPnP();
-            if(retcode != 0) {
-                emit uPnPDone(retcode, this->targetPort);
-                return;
+            } catch(...) { 
+                qWarning() << "UPNP run : exception caught while processing";
             }
 
-            //register for a redirect...
-            auto result = this->SetRedirectAndTest(lanaddr, this->targetPort, this->targetPort, "TCP", "0", 0);
-            emit uPnPDone(result, this->targetPort);
         }
 
         ~uPnPRequester() {
+            try {
 
-            //remove any redirect 
-            this->RemoveRedirect(this->targetPort, "TCP", NULL);
+                //remove any redirect 
+                this->RemoveRedirect(this->targetPort, "TCP", NULL);
 
-            /*free*/
-            FreeUPNPUrls(&urls);
-            freeUPNPDevlist(devlist); devlist = 0;
+                /*free*/
+                FreeUPNPUrls(&urls);
+                freeUPNPDevlist(devlist); devlist = 0;
+                
+                /*End websock*/
+                WSACleanup();
             
-            /*End websock*/
-            WSACleanup();
+            }  catch(...) {
+                qWarning() << "UPNP exiting : exception caught while exiting";
+            }
         }
 
 

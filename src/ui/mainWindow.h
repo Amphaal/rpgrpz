@@ -41,7 +41,11 @@ class MainWindow : public QMainWindow {
         QLineEdit* _portTarget = 0;
         QLineEdit* _domainTarget = 0;
         void _initUIConnectionPanel();
+        
+        ChatWidget* _cw = 0;
         void _initUIChat();
+        void onNewConnectionFromServer(std::string clientIp);
+
         void _initUIMenu();
         
         QLabel* _localIpLabel;

@@ -20,7 +20,11 @@ void MainWindow::trueShow() {
 }
 
 void MainWindow::_initConnectivity() {
-
+    
+    ////////////////////////////
+    /// Connectivity helper ! //
+    ////////////////////////////
+    
     this->_ipHelper = new ConnectivityHelper(this);
 
     QObject::connect(this->_ipHelper, &ConnectivityHelper::localAddressStateChanged, this, &MainWindow::updateIntIPLabel);
@@ -29,8 +33,39 @@ void MainWindow::_initConnectivity() {
 
     this->_ipHelper->init();
 
-    // auto cs = new ChatServer(this);
-    // cs->start();
+    ////////////////////
+    /// Chat Server ! //
+    ////////////////////
+
+    auto csThread = new QThread;
+    auto cs = new ChatServer;
+    cs->moveToThread(csThread);
+
+    QObject::connect(
+        cs, &ChatServer::newConnectionReceived, 
+        this, &MainWindow::onNewConnectionFromServer
+    );
+
+    QObject::connect(
+        csThread, &QThread::started,
+        cs, &ChatServer::start
+    );
+
+    QObject::connect(
+        this, &MainWindow::destroyed,
+        cs, &ChatServer::stop
+    );
+
+    QObject::connect(
+        cs, &ChatServer::destroyed,
+        csThread, &QThread::quit
+    );
+    
+    csThread->start();
+}
+
+void MainWindow::onNewConnectionFromServer(std::string clientIp) {
+    this->_cw->printLog(clientIp + ": Nouvelle connexion !", ChatWidget::LogType::ServerLog);
 }
 
 void MainWindow::updateUPnPLabel(std::string state) {
@@ -86,7 +121,6 @@ void MainWindow::_initUIConnectionPanel() {
 
     auto sep = new QLabel(this);
     sep->setText(":");
-    sep->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     this->_portTarget = new QLineEdit(this);
     this->_portTarget->setValidator(new QIntValidator(0, 65535));
@@ -98,7 +132,6 @@ void MainWindow::_initUIConnectionPanel() {
         ).toString()
     );
     this->_portTarget->setFixedSize(40, 22);
-    this->_portTarget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     auto controlBtn = new QPushButton(this);
     controlBtn->setText("Se connecter");
@@ -117,8 +150,8 @@ void MainWindow::_initUIConnectionPanel() {
 }
 
 void MainWindow::_initUIChat() {
-    auto chatWdget = new ChatWidget(this);
-    this->centralWidget()->layout()->addWidget(chatWdget);
+    this->_cw = new ChatWidget(this);
+    this->centralWidget()->layout()->addWidget(this->_cw);
 }
 
 void MainWindow::_initUIMenu() {
@@ -265,7 +298,7 @@ void MainWindow::tryConnectToServer() {
 
     //connect..
     if(this->_cc) delete _cc;
-    this->_cc = new ChatClient(dt_text, pt_text, this);
+    this->_cc = new ChatClient(dt_text, pt_text);
 
 }
 

@@ -8,20 +8,27 @@
 #include <QVector>
 #include <QAbstractSocket>
 #include <QTcpSocket>
+#include <QMutex>
 
 #include "src/helpers/_const.cpp"
-#include "ChatServerThread.h"
 
-class ChatServer : public ChatServerThread { 
+class ChatServer : public QObject { 
     
+    Q_OBJECT
+
     public:
-        ChatServer(QObject * parent = nullptr);
-        void run() override;
+        ChatServer();
+        ~ChatServer();
+        void stop();
+        void start();
+
+    signals:
+        void newConnectionReceived(std::string ip);
 
     private:
-        QTcpServer* _server;
-        QVector<QTcpSocket*> _clients;
+        QMutex mutex;
+        bool stopped = false;
+        bool isStopped();
 
-        void _onNewConnection();
-        void _onFinished();
+        QTcpServer* _server;
 };
