@@ -67,6 +67,13 @@
         "qhboxlayout": "cpp",
         "qregexpvalidator": "cpp",
         "qintvalidator": "cpp",
-        "future": "cpp"
+        "future": "cpp",
+        "qthread": "cpp",
+        "optional": "cpp",
+        "clocale": "cpp",
+        "array": "cpp",
+        "iostream": "cpp",
+        "shared_mutex": "cpp",
+        "string_view": "cpp"
     }
 }

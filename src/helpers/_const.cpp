@@ -7,6 +7,7 @@
 
 #include <QStandardPaths>
 #include <QString>
+#include <QDebug>
 #include <QDir>
 
 #define _WINSOCKAPI_
@@ -21,7 +22,8 @@ static const std::string UPNP_REQUEST_DESCRIPTION = "RPGRPZ";
 
 static std::string getAppDataLocation() {
     auto target = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString();
-    QDir().mkpath(QString::fromStdString(target));
+    auto qt = QString::fromStdString(target);
+    auto created = QDir().mkpath(qt);
     return target;
 }
 
@@ -29,12 +31,14 @@ static std::string getLogFileLocation() {
     return getAppDataLocation() + LOG_FILE;
 }
 
-
 static std::string getLatestLogFileLocation() {
     return getAppDataLocation() + LATEST_LOG_FILE;
 }
 
 static void openFileInOS(std::string cpURL) {
-    ShellExecuteA(NULL, "open", "notepad", cpURL.c_str(), NULL, SW_SHOWNORMAL);
+    ShellExecute(NULL, "open", cpURL.c_str(), NULL,  NULL, SW_SHOWNORMAL);
 };
 
+static void openFolderInOS(std::string cpURL) {
+    ShellExecute(NULL, "open",  cpURL.c_str(), NULL, NULL, SW_SHOWNORMAL);
+};

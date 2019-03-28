@@ -100,6 +100,8 @@ file(GLOB_RECURSE INT_LIBS
 
 #mandatory explicit generation
 list(APPEND SOURCES
+    src/network/chat/ChatServer.h
+    src/network/chat/ChatServer.cpp
     src/network/uPnP/uPnPThread.h
     src/network/uPnP/uPnPWrapper.cpp
     src/network/ConnectivityHelper.cpp

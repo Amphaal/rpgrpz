@@ -3,14 +3,15 @@
 using namespace std;
 
 class Translator_EN : public ITranslator {
-    string Menu_File() { return "File"; }
-    string Menu_Options() { return "Options"; }
-    string Menu_Quit() { return "Quit"; };
-    string Menu_About() { return "About"; }
-    string Menu_OpenLog() { return "Open full log file"; };
-    string Menu_OpenLatestLog() { return "Open the session log file"; };
-    string Menu_CheckForUpgrades() { return "Check for upgrades"; };
-    string Alert_UpdateAvailable_Title() { return "Update Available"; };
-    string Alert_UpdateAvailable_Text() { return "An update is available for " + (std::string)APP_NAME + ". Would you like to install it now ?"; };
-    string SearchingForUpdates() { return "Searching for updates...";};
+    std::string Menu_File() { return "File"; }
+    std::string Menu_Options() { return "Options"; }
+    std::string Menu_Quit() { return "Quit"; };
+    std::string Menu_About() { return "About"; }
+    std::string Menu_OpenLog() { return "Open full log file"; };
+    std::string Menu_OpenLatestLog() { return "Open the session log file"; };
+    std::string Menu_CheckForUpgrades() { return "Check for upgrades"; };
+    std::string Alert_UpdateAvailable_Title() { return "Update Available"; };
+    std::string Alert_UpdateAvailable_Text() { return "An update is available for " + (std::string)APP_NAME + ". Would you like to install it now ?"; };
+    std::string SearchingForUpdates() { return "Searching for updates...";};
+    std::string Menu_OpenDataFolder(std::string folder) { return "Open Data Folder (" + folder + ") "; };
 };

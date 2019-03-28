@@ -17,7 +17,11 @@
 #include <QIntValidator>
 
 #include "src/network/ConnectivityHelper.h"
+#include "src/network/chat/ChatServer.h"
+#include "src/network/chat/ChatClient.cpp"
+
 #include "src/ui/components/ChatWidget.cpp"
+
 
 class MainWindow : public QMainWindow { 
     public:
@@ -41,8 +45,9 @@ class MainWindow : public QMainWindow {
         }
 
         void _initConnectivity() {
-            qDebug() << "UI : Connectivity instantiation";
             this->_ipHelper = new ConnectivityHelper(this);
+            auto cs = new ChatServer();
+            cs->start();
         }
 
     private:
@@ -223,9 +228,21 @@ class MainWindow : public QMainWindow {
                     openFileInOS(getLatestLogFileLocation());
                 }
             );
-            
+
+            auto df = getAppDataLocation();
+            auto openDataFolderAction = new QAction(I18n::tr()->Menu_OpenDataFolder(df).c_str(), fileMenuItem);
+            QObject::connect(
+                openDataFolderAction, &QAction::triggered,
+                [&, df]() {
+                    openFolderInOS(df);
+                }
+            );
+
+
             fileMenuItem->addAction(openLogAction);
             fileMenuItem->addAction(openLatestLogAction);
+            fileMenuItem->addSeparator();
+            fileMenuItem->addAction(openDataFolderAction);
             fileMenuItem->addSeparator();
             fileMenuItem->addAction(quitAction);
 
@@ -240,7 +257,10 @@ class MainWindow : public QMainWindow {
         /// Server Connection //
         ////////////////////////
 
+        ChatClient* _cc = 0;
         void tryConnectToServer() {
+
+            //register default values
             QSettings settings;
             settings.beginGroup("MainWindow");
 
@@ -251,6 +271,11 @@ class MainWindow : public QMainWindow {
             if(!pt_text.isEmpty()) settings.setValue("port", pt_text);          
 
             settings.endGroup();
+
+            //connect..
+            if(this->_cc) delete _cc;
+            this->_cc = new ChatClient(dt_text, pt_text, this);
+
         }
 
         ////////////////////////////
