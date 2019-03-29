@@ -9,18 +9,18 @@ ChatServer::~ChatServer() {
 };
 
 
-bool ChatServer::isStopped() {
-    bool stopped;
-    mutex.lock();
-    stopped = this->stopped;
-    mutex.unlock();
-    return stopped;
+bool ChatServer::_isStopped() {
+    bool _stopped;
+    _mutex.lock();
+    _stopped = this->_stopped;
+    _mutex.unlock();
+    return _stopped;
 }
 
 void ChatServer::stop() {
-    mutex.lock();
-    stopped = true;
-    mutex.unlock();
+    _mutex.lock();
+    _stopped = true;
+    _mutex.unlock();
 }
 
 
@@ -38,7 +38,7 @@ void ChatServer::start() {
         qDebug() << "Chat Server : Succesfully listening !";
     }
 
-    while (!isStopped()) {
+    while (!_isStopped()) {
 
         bool connectionAvailable = this->_server->waitForNewConnection();
         if (!connectionAvailable) continue; //no connection, rewind
@@ -55,16 +55,35 @@ void ChatServer::start() {
         QObject::connect(clientConnection, &QAbstractSocket::disconnected,
                 clientConnection, &QObject::deleteLater);
 
-        //send welcome message
-        QByteArray block;
-        QDataStream out(&block, QIODevice::WriteOnly);
-        out.setVersion(QDataStream::Qt_5_12);
-        out << "caca";
-        auto written = clientConnection->write(block);
-        clientConnection->disconnectFromHost();
+        //on data received from client
+        QObject::connect(clientConnection, &QIODevice::readyRead, [&, clientConnection]() {
+            auto qq = true;
+        });
+
+        _sendWelcomeMessage(clientConnection);
     }
 
     // Self-destruct the server
     deleteLater();
 };
 
+void ChatServer::_sendWelcomeMessage(QTcpSocket* clientSocket) {
+    
+    //send welcome message
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_5_12);
+    
+    //message...
+    out << this->_messages;
+    auto written = clientSocket->write(block);
+
+    //wait end send
+    clientSocket->waitForBytesWritten();
+
+    qDebug() << "Chat Server : stored messages sent to " << clientSocket->peerAddress().toString();
+}
+
+void ChatServer::_handleIncomingMessages(QTcpSocket * clientSocket) {
+    auto i = true;
+}

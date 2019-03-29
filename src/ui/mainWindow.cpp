@@ -41,10 +41,6 @@ void MainWindow::_initConnectivity() {
     auto cs = new ChatServer;
     cs->moveToThread(csThread);
 
-    QObject::connect(
-        cs, &ChatServer::newConnectionReceived, 
-        this, &MainWindow::onNewConnectionFromServer
-    );
 
     QObject::connect(
         csThread, &QThread::started,
@@ -64,16 +60,17 @@ void MainWindow::_initConnectivity() {
     csThread->start();
 }
 
-void MainWindow::onNewConnectionFromServer(std::string clientIp) {
-    this->_cw->printLog(clientIp + ": Nouvelle connexion !", ChatWidget::LogType::ServerLog);
-}
-
 void MainWindow::updateUPnPLabel(std::string state) {
     this->_upnpStateLabel->setText(QString::fromStdString(state));
 }
 
-void MainWindow::updateExtIPLabel(std::string state) {
+void MainWindow::updateExtIPLabel(std::string state, bool isOn) {
+    
     this->_extIpLabel->setText(QString::fromStdString(state));
+
+    if(isOn) {
+        this->_extIpLabel->setText("<a href='#'>" + this->_extIpLabel->text() + "</a>");
+    }
 }
 
 void MainWindow::updateIntIPLabel(std::string state) {
@@ -107,46 +104,16 @@ void MainWindow::_initUI() {
 }   
 
 void MainWindow::_initUIConnectionPanel() {
-    
-    QSettings settings;
-    settings.beginGroup("MainWindow");
+    this->_connectWidget = new ConnectWidget();
 
-    auto connectionWdget = new QWidget(this);
-    connectionWdget->setLayout(new QHBoxLayout);
-    connectionWdget->layout()->setContentsMargins(10, 10, 10, 5);
-
-    this->_domainTarget = new QLineEdit(this);
-    this->_domainTarget->setPlaceholderText("IP ou domaine du serveur");
-    this->_domainTarget->setText(settings.value("domain", "").toString());
-
-    auto sep = new QLabel(this);
-    sep->setText(":");
-
-    this->_portTarget = new QLineEdit(this);
-    this->_portTarget->setValidator(new QIntValidator(0, 65535));
-    this->_portTarget->setPlaceholderText("Port");
-    this->_portTarget->setText(
-        settings.value(
-            "port", 
-            QString::fromStdString(UPNP_DEFAULT_TARGET_PORT)
-        ).toString()
-    );
-    this->_portTarget->setFixedSize(40, 22);
-
-    auto controlBtn = new QPushButton(this);
-    controlBtn->setText("Se connecter");
     QObject::connect(
-        controlBtn, &QPushButton::clicked,
-        this, &MainWindow::tryConnectToServer
+        this->_connectWidget, &ConnectWidget::connectionSuccessful, 
+        [&](ChatClient * cc) {
+            this->_cw->bindToChatClient(cc);
+        }
     );
 
-    connectionWdget->layout()->addWidget(this->_domainTarget);
-    connectionWdget->layout()->addWidget(sep);
-    connectionWdget->layout()->addWidget(this->_portTarget);
-    connectionWdget->layout()->addWidget(controlBtn);
-
-    settings.endGroup();
-    this->centralWidget()->layout()->addWidget(connectionWdget);
+    this->centralWidget()->layout()->addWidget(this->_connectWidget);
 }
 
 void MainWindow::_initUIChat() {
@@ -178,6 +145,18 @@ void MainWindow::_initUIStatusBar() {
     this->_localIpLabel = new QLabel(syncMsg);
     this->_extIpLabel = new QLabel(syncMsg);
     this->_upnpStateLabel = new QLabel(syncMsg);
+
+    QObject::connect(this->_extIpLabel, &QLabel::linkActivated, [&]() {
+        
+        //remove html tags
+        auto s = this->_extIpLabel->text();
+        s.remove(QRegExp("<[^>]*>"));
+        QApplication::clipboard()->setText(s);
+
+        //show tooltip
+        QToolTip::showText(QCursor::pos(), "IP copiée !");
+
+    });
 
     //define statusbar content
     sb_widget->setLayout(new QHBoxLayout);
@@ -278,33 +257,6 @@ QMenu* MainWindow::_getFileMenu() {
 /// END Menu components //
 //////////////////////////
 
-////////////////////////
-/// Server Connection //
-////////////////////////
-
-void MainWindow::tryConnectToServer() {
-
-    //register default values
-    QSettings settings;
-    settings.beginGroup("MainWindow");
-
-    auto dt_text = this->_domainTarget->text();
-    if(!dt_text.isEmpty()) settings.setValue("domain", dt_text);
-
-    auto pt_text = this->_portTarget->text();
-    if(!pt_text.isEmpty()) settings.setValue("port", pt_text);          
-
-    settings.endGroup();
-
-    //connect..
-    if(this->_cc) delete _cc;
-    this->_cc = new ChatClient(dt_text, pt_text);
-
-}
-
-////////////////////////////
-/// END Server Connection //
-////////////////////////////
 
 ////////////////////
 /// check updates //

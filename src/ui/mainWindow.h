@@ -1,26 +1,23 @@
+#pragma once
+
 #include "src/localization/i18n.cpp"
 #include "libs/qtautoupdater/autoupdatercore/updater.h"
 
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QMessageBox>
+#include <QGraphicsItem>
+#include <QClipboard>
+#include <QToolTip>
 
 #include <QLabel>
 #include <QStatusBar>
-#include <QHBoxLayout>
-#include <QSplitter>
-#include <QPushButton>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QLineEdit>
-#include <QSettings>
-#include <QIntValidator>
 
 #include "src/network/ConnectivityHelper.h"
 #include "src/network/chat/server/ChatServer.h"
-#include "src/network/chat/client/ChatClient.cpp"
+#include "src/ui/components/ConnectWidget.h"
 
-#include "src/ui/components/ChatWidget.cpp"
+#include "src/ui/components/ChatWidget.h"
 
 
 class MainWindow : public QMainWindow { 
@@ -31,15 +28,14 @@ class MainWindow : public QMainWindow {
         void trueShow();
 
         void updateUPnPLabel(std::string state);
-        void updateExtIPLabel(std::string state);
+        void updateExtIPLabel(std::string state, bool isOn);
         void updateIntIPLabel(std::string state);
 
         ConnectivityHelper* _ipHelper;
         void _initUI();
         void _initConnectivity();
 
-        QLineEdit* _portTarget = 0;
-        QLineEdit* _domainTarget = 0;
+        ConnectWidget* _connectWidget = 0;
         void _initUIConnectionPanel();
         
         ChatWidget* _cw = 0;
@@ -58,9 +54,6 @@ class MainWindow : public QMainWindow {
 
         QMenu* _getAboutMenu();
         QMenu* _getFileMenu();
-
-        ChatClient* _cc = 0;
-        void tryConnectToServer();
 
         QtAutoUpdater::Updater *updater;
         bool userNotificationOnUpdateCheck = false;

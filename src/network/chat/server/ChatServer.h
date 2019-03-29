@@ -26,9 +26,13 @@ class ChatServer : public QObject {
         void newConnectionReceived(std::string ip);
 
     private:
-        QMutex mutex;
-        bool stopped = false;
-        bool isStopped();
-
         QTcpServer* _server;
+        
+        QMutex _mutex;
+        bool _stopped = false;
+        bool _isStopped();
+
+        QVector<QString> _messages;
+        void _sendWelcomeMessage(QTcpSocket *clientSocket);
+        void _handleIncomingMessages(QTcpSocket * clientSocket);
 };

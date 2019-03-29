@@ -128,7 +128,7 @@ void ConnectivityHelper::_onExternalAddressRequestResponse(QNetworkReply* networ
     
     qDebug() << "Connectivity : ipify.org responded our external IP is " << ip;
 
-    emit remoteAddressStateChanged(ip.toStdString().c_str());
+    emit remoteAddressStateChanged(ip.toStdString().c_str(), true);
 };
 
 ///

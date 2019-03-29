@@ -74,6 +74,9 @@
         "array": "cpp",
         "iostream": "cpp",
         "shared_mutex": "cpp",
-        "string_view": "cpp"
+        "string_view": "cpp",
+        "qlineedit": "cpp",
+        "qscrollbar": "cpp",
+        "qscrollarea": "cpp"
     }
 }

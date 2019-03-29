@@ -1,3 +1,5 @@
+#pragma once
+
 #include <QString>
 #include <QLabel>
 #include "uPnP/uPnPRequester.cpp"
@@ -24,7 +26,7 @@ class ConnectivityHelper : public QObject
 
     signals:
         void localAddressStateChanged(std::string state);
-        void remoteAddressStateChanged(std::string state);
+        void remoteAddressStateChanged(std::string state, bool isOn = false);
         void uPnPStateChanged(std::string state);
 
     private:
