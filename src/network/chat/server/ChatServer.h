@@ -1,6 +1,5 @@
 #pragma once
 
-#include <QtCore/QThread>
 #include <QDebug>
 #include <QTcpServer>
 #include <QHostAddress>
@@ -10,9 +9,11 @@
 #include <QTcpSocket>
 #include <QMutex>
 
+#include "ServerThread.h"
+
 #include "src/helpers/_const.cpp"
 
-class ChatServer : public QObject { 
+class ChatServer : public ServerThread { 
     
     Q_OBJECT
 
@@ -20,10 +21,8 @@ class ChatServer : public QObject {
         ChatServer();
         ~ChatServer();
         void stop();
-        void start();
-
-    signals:
-        void newConnectionReceived(std::string ip);
+        void run() override;
+        //void start();
 
     private:
         QVector<QTcpSocket*> _clientSockets;
@@ -36,4 +35,6 @@ class ChatServer : public QObject {
         QVector<QString> _messages;
         void _sendWelcomeMessage(QTcpSocket *clientSocket);
         void _handleIncomingMessages(QTcpSocket * clientSocket);
+
+        void _onNewConnection();
 };

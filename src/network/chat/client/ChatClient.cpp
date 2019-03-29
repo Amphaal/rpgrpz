@@ -1,11 +1,12 @@
 #include "ChatClient.h"
 
-ChatClient::ChatClient(QString displayname, QString domain, QString port) : 
-                        _dn(displayname), 
+ChatClient::ChatClient(QString name, QString domain, QString port) : 
+                        _name(name), 
                         _domain(domain), 
                         _port(port), 
                         _socket(new QTcpSocket) {
     
+
     qDebug() << "Chat Client : Instantiation...";
     
     this->_in.setVersion(QDataStream::Qt_5_12);
@@ -36,8 +37,6 @@ ChatClient::ChatClient(QString displayname, QString domain, QString port) :
         this->_socket, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error),
         this, &ChatClient::_error
     );
-
-    this->_tryConnection();
 }
 
 void ChatClient::close() {
@@ -59,7 +58,16 @@ void ChatClient::sendMessage(QString messageToSend) {
     qDebug() << "Chat Client : message sent >> " << messageToSend << "<<";
 }
 
-void ChatClient::_tryConnection() {
+void ChatClient::tryConnection() {
+    
+    auto pet = this->_name.toStdString();
+
+    //prerequisites
+    if(this->_name.isEmpty()) {
+        emit error("Nom de joueur requis");
+        return;
+    }
+
     qDebug() << "Chat Client : Connecting...";    
     this->_socket->abort();
     this->_socket->connectToHost(this->_domain, this->_port.toInt());

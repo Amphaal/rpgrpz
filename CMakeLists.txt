@@ -100,6 +100,7 @@ file(GLOB_RECURSE INT_LIBS
 
 #mandatory explicit generation
 list(APPEND SOURCES
+    src/network/chat/server/ServerThread.h
     src/ui/components/LogScrollView.cpp
     src/ui/components/ChatWidget.cpp
     src/ui/components/ConnectWidget.cpp

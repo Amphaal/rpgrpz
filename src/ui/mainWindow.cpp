@@ -37,27 +37,9 @@ void MainWindow::_initConnectivity() {
     /// Chat Server ! //
     ////////////////////
 
-    auto csThread = new QThread;
+    //auto csThread = new QThread;
     auto cs = new ChatServer;
-    cs->moveToThread(csThread);
-
-
-    QObject::connect(
-        csThread, &QThread::started,
-        cs, &ChatServer::start
-    );
-
-    QObject::connect(
-        this, &MainWindow::destroyed,
-        cs, &ChatServer::stop
-    );
-
-    QObject::connect(
-        cs, &ChatServer::destroyed,
-        csThread, &QThread::quit
-    );
-    
-    csThread->start();
+    cs->start();
 }
 
 void MainWindow::updateUPnPLabel(std::string state) {

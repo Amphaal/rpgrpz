@@ -15,7 +15,8 @@ class ChatClient : public QObject {
         void close();
         QString getConnectedSocketAddress();
         void sendMessage(QString messageToSend);
-    
+        void tryConnection();
+
     signals:
         void connected();
         void error(const std::string errMessage);
@@ -26,10 +27,9 @@ class ChatClient : public QObject {
         
         QString _domain;
         QString _port;
-        QString _dn;
+        QString _name;
 
         void _onRR();
         void _error(QAbstractSocket::SocketError _socketError);
 
-        void _tryConnection();
 };

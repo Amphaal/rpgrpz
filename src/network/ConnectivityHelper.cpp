@@ -196,7 +196,7 @@ std::string ConnectivityHelper::_getErrorText() {
 void ConnectivityHelper::_debugNetworkConfig() {
     
     //active...
-    auto activeConf = this->_nam->activeConfiguration();
+    auto activeConf = this->_nam->configuration();
 
     auto _debug = [&](std::string descr, QNetworkConfiguration &config) {
         qDebug() << "Connectivity :" << QString::fromStdString(descr)

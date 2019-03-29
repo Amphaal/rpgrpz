@@ -24,7 +24,7 @@ void ChatServer::stop() {
 }
 
 
-void ChatServer::start() { 
+void ChatServer::run() { 
     this->_server = new QTcpServer;
 
     qDebug() << "Chat Server : Starting server...";
@@ -38,44 +38,12 @@ void ChatServer::start() {
         qDebug() << "Chat Server : Succesfully listening !";
     }
 
-    while (!_isStopped()) {
+    QObject::connect(this->_server, &QTcpServer::newConnection, [&](){
+        this->_onNewConnection();
+    });
 
-        bool connectionAvailable = this->_server->waitForNewConnection(-1);
-        if (!connectionAvailable) continue; //no connection, rewind
+    this->exec();
 
-        //new connection,store it
-        auto clientSocket = this->_server->nextPendingConnection();
-                //auto remove socket if disconnected
-        QObject::connect(
-            clientSocket, &QAbstractSocket::disconnected,
-            clientSocket, &QObject::deleteLater
-        );
-
-        //on data received from client
-        QObject::connect(
-            clientSocket, &QIODevice::readyRead, 
-            [
-                //&, clientSocket
-            ]() {
-                auto i = true;
-                //this->_handleIncomingMessages(clientSocket);
-            }
-        );
-        auto newIp = clientSocket->peerAddress().toString();
-
-        //signals new connection
-        emit newConnectionReceived(newIp.toStdString());
-        qDebug() << "Chat Server : New connection from " << newIp;
-
-
-
-        _sendWelcomeMessage(clientSocket);
-
-        _clientSockets << clientSocket;
-    }
-
-    // Self-destruct the server
-    deleteLater();
 };
 
 void ChatServer::_sendWelcomeMessage(QTcpSocket* clientSocket) {
@@ -96,5 +64,50 @@ void ChatServer::_sendWelcomeMessage(QTcpSocket* clientSocket) {
 }
 
 void ChatServer::_handleIncomingMessages(QTcpSocket * clientSocket) {
-    auto i = true;
+
+    QDataStream in;
+    in.setVersion(QDataStream::Qt_5_12);
+    in.setDevice(clientSocket);
+
+    in.startTransaction();
+
+    QString result; 
+    in >> result;
+    this->_messages << result;
+
+    if (!in.commitTransaction()) {
+        qWarning() << "Chat Server : issue while reading incoming message";  
+        return;
+    }
+
+    qDebug() << "Chat Server : message received from " << clientSocket->peerAddress().toString() << " >> " << result;
+}
+
+void ChatServer::_onNewConnection() {
+        
+        //new connection,store it
+        auto clientSocket = this->_server->nextPendingConnection();
+        
+        //auto remove socket if disconnected
+        QObject::connect(
+            clientSocket, &QAbstractSocket::disconnected,
+            clientSocket, &QObject::deleteLater
+        );
+
+        //on data received from client
+        QObject::connect(
+            clientSocket, &QIODevice::readyRead, 
+            [&, clientSocket]() {
+                this->_handleIncomingMessages(clientSocket);
+            }
+        );
+        auto newIp = clientSocket->peerAddress().toString();
+
+        //signals new connection
+        emit newConnectionReceived(newIp.toStdString());
+        qDebug() << "Chat Server : New connection from " << newIp;
+
+        this->_sendWelcomeMessage(clientSocket);
+
+        this->_clientSockets << clientSocket;
 }

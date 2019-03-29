@@ -25,6 +25,7 @@ class ConnectWidget : public QWidget {
     private:
         QLineEdit* _portTarget = 0;
         QLineEdit* _domainTarget = 0;
+        QLineEdit* _nameTarget = 0;
         
         QPushButton* _connectBtn = 0;
         QMetaObject::Connection _connectBtnLink;
@@ -37,4 +38,7 @@ class ConnectWidget : public QWidget {
 
         void _setConnectBtnState(bool readyForConnection = true);
         void _destroyClient();
-};
+
+        void _onChatClientError(const std::string errMsg);
+        void _onChatClientConnected();
+};  
