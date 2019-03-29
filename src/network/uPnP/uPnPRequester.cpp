@@ -47,21 +47,18 @@ class uPnPRequester : public uPnPThread {
         }
 
         ~uPnPRequester() {
-            try {
 
-                //remove any redirect 
-                this->RemoveRedirect(this->targetPort, "TCP", NULL);
+                //remove any redirect
+                if(retcode == 0) {
+                    this->RemoveRedirect(this->targetPort, "TCP", NULL);
 
-                /*free*/
-                FreeUPNPUrls(&urls);
-                freeUPNPDevlist(devlist); devlist = 0;
+                    /*free*/
+                    FreeUPNPUrls(&urls);
+                    freeUPNPDevlist(devlist); devlist = 0;
+                }
                 
                 /*End websock*/
-                WSACleanup();
-            
-            }  catch(...) {
-                qWarning() << "UPNP exiting : exception caught while exiting";
-            }
+                WSACleanup();        
         }
 
 
@@ -159,7 +156,7 @@ class uPnPRequester : public uPnPThread {
                             data.first.servicetype,
                             externalIPAddress);
             if(r!=UPNPCOMMAND_SUCCESS)
-                qWarning() << "UPNP AskRedirect : GetExternalIPAddress failed.\n";
+                qWarning() << "UPNP AskRedirect : GetExternalIPAddress No IGD UPnP Device.\n";
             else
                 qDebug() << "UPNP AskRedirect : ExternalIPAddress = " << externalIPAddress <<"\n";
 

@@ -1,40 +1,90 @@
 #include "ConnectivityHelper.h"
 
 
-ConnectivityHelper::ConnectivityHelper(QObject *parent) : QObject(parent) { 
+ConnectivityHelper::ConnectivityHelper(QObject *parent) : 
+        QObject(parent), 
+        _nam(new QNetworkAccessManager(this)), 
+        _ncm(new QNetworkConfigurationManager(this)) { 
     
     qDebug() << "Connectivity : helper starting !";
 
-    this->_manager = new QNetworkAccessManager(this);
+    this->_pickPreferedConfiguration();
 
-    QObject::connect(this->_manager, &QNetworkAccessManager::finished, 
-                    this, &ConnectivityHelper::_onExternalAddressRequestResponse);
+    QObject::connect(
+        this->_ncm, &QNetworkConfigurationManager::configurationChanged, 
+        this, &ConnectivityHelper::_mustReInit
+    );
 
-    QObject::connect(this->_manager, &QNetworkAccessManager::networkAccessibleChanged, 
-                    this, &ConnectivityHelper::networkChanged);
-
-    this->_debugNetworkConfig();
+    QObject::connect(
+        this->_nam, &QNetworkAccessManager::finished, 
+        this, &ConnectivityHelper::_onExternalAddressRequestResponse
+    );
 
 };
 
+void ConnectivityHelper::_mustReInit(QNetworkConfiguration config) {
+    
+    auto mustReInit = this->_nam->configuration() == config;
+
+    auto oldPrefConfig = this->_nam->configuration();
+    this->_pickPreferedConfiguration();
+    auto newPrefConfig = this->_nam->configuration();
+    auto mustReInit_2 = oldPrefConfig != newPrefConfig;
+
+    qDebug() << "Connectivity : Detected an alteration in network" << config.name() << ", repicking interface " << this->_nam->configuration().name();
+    
+    if(mustReInit || mustReInit_2) {
+        this->init();
+    }
+}
+
+void ConnectivityHelper::_pickPreferedConfiguration() {
+    
+    auto filter = QNetworkConfiguration::StateFlags(QNetworkConfiguration::Defined);
+    auto filteredConfs = _ncm->allConfigurations(filter);
+
+    for(auto conf : filteredConfs) {
+
+        auto purpose = conf.purpose();
+        auto type = conf.type();
+        auto name = conf.name();
+        auto pet = name.toStdString();
+
+        if(!type == QNetworkConfiguration::InternetAccessPoint) continue;
+
+        auto unauthorizedInterface = name.contains("npcap", Qt::CaseInsensitive) ||
+                             name.contains("virtualbox", Qt::CaseInsensitive) ||
+                             name.contains("bluetooth", Qt::CaseInsensitive) ||
+                             name.contains("WAN", Qt::CaseSensitive) ;
+        if(unauthorizedInterface) continue;
+        
+        //define new config
+        this->_nam->setConfiguration(conf);
+
+        this->_debugNetworkConfig();
+
+        return; 
+    }
+}
+
 void ConnectivityHelper::init() {
-    auto initAccessibilityCheck = this->_manager->networkAccessible();
+    auto initAccessibilityCheck = this->_nam->networkAccessible();
     this->networkChanged(initAccessibilityCheck);
 }
 
 ConnectivityHelper::~ConnectivityHelper()  {
+    this->_clearUPnPRequester();
+}
+
+void ConnectivityHelper::_clearUPnPRequester() {
     if(this->_upnpThread) { 
-        delete this->_upnpThread;
         QObject::disconnect(this->_upnpInitialized);
     }
 }
 
 void ConnectivityHelper::_tryNegociateUPnPPort() {
     
-    if(this->_upnpThread) { 
-        delete this->_upnpThread;
-        QObject::disconnect(this->_upnpInitialized);
-    }
+    this->_clearUPnPRequester();
 
     auto port = UPNP_DEFAULT_TARGET_PORT.c_str();
     auto descr = UPNP_REQUEST_DESCRIPTION.c_str();
@@ -70,7 +120,7 @@ void ConnectivityHelper::_askExternalAddress() {
 
     qDebug() << "Connectivity : asking ipify.org for external IP...";
 
-    this->_manager->get(request);
+    this->_nam->get(request);
 };
 
 void ConnectivityHelper::networkChanged(QNetworkAccessManager::NetworkAccessibility accessible) {
@@ -146,7 +196,7 @@ std::string ConnectivityHelper::_getErrorText() {
 void ConnectivityHelper::_debugNetworkConfig() {
     
     //active...
-    auto activeConf = this->_manager->activeConfiguration();
+    auto activeConf = this->_nam->activeConfiguration();
 
     auto _debug = [&](std::string descr, QNetworkConfiguration &config) {
         qDebug() << "Connectivity :" << QString::fromStdString(descr)

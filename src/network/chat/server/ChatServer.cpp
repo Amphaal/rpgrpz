@@ -40,27 +40,38 @@ void ChatServer::start() {
 
     while (!_isStopped()) {
 
-        bool connectionAvailable = this->_server->waitForNewConnection();
+        bool connectionAvailable = this->_server->waitForNewConnection(-1);
         if (!connectionAvailable) continue; //no connection, rewind
 
         //new connection,store it
-        QTcpSocket *clientConnection = this->_server->nextPendingConnection();
-        auto newIp = clientConnection->peerAddress().toString();
+        auto clientSocket = this->_server->nextPendingConnection();
+                //auto remove socket if disconnected
+        QObject::connect(
+            clientSocket, &QAbstractSocket::disconnected,
+            clientSocket, &QObject::deleteLater
+        );
+
+        //on data received from client
+        QObject::connect(
+            clientSocket, &QIODevice::readyRead, 
+            [
+                //&, clientSocket
+            ]() {
+                auto i = true;
+                //this->_handleIncomingMessages(clientSocket);
+            }
+        );
+        auto newIp = clientSocket->peerAddress().toString();
 
         //signals new connection
         emit newConnectionReceived(newIp.toStdString());
         qDebug() << "Chat Server : New connection from " << newIp;
 
-        //auto remove socket if disconnected
-        QObject::connect(clientConnection, &QAbstractSocket::disconnected,
-                clientConnection, &QObject::deleteLater);
 
-        //on data received from client
-        QObject::connect(clientConnection, &QIODevice::readyRead, [&, clientConnection]() {
-            auto qq = true;
-        });
 
-        _sendWelcomeMessage(clientConnection);
+        _sendWelcomeMessage(clientSocket);
+
+        _clientSockets << clientSocket;
     }
 
     // Self-destruct the server

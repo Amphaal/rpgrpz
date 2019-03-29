@@ -26,6 +26,7 @@ class ChatServer : public QObject {
         void newConnectionReceived(std::string ip);
 
     private:
+        QVector<QTcpSocket*> _clientSockets;
         QTcpServer* _server;
         
         QMutex _mutex;

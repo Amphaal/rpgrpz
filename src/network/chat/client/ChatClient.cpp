@@ -9,7 +9,7 @@ ChatClient::ChatClient(QString displayname, QString domain, QString port) :
     qDebug() << "Chat Client : Instantiation...";
     
     this->_in.setVersion(QDataStream::Qt_5_12);
-    this->_in.setDevice(_socket);
+    this->_in.setDevice(this->_socket);
 
     QObject::connect(
         this->_socket, &QIODevice::readyRead, 
@@ -48,12 +48,13 @@ void ChatClient::sendMessage(QString messageToSend) {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_12);
-    
+    out.setDevice(this->_socket);
+
     //message...
     out << messageToSend;
     auto written = this->_socket->write(block);
     
-    this->_socket->waitForBytesWritten();
+    auto i = this->_socket->waitForBytesWritten();
 
     qDebug() << "Chat Client : message sent >> " << messageToSend << "<<";
 }

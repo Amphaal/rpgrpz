@@ -68,7 +68,7 @@ void ChatWidget::printLog(const std::string &message, ChatWidget::LogType logTyp
     switch(logType) {
         case ChatWidget::LogType::ServerLog:
             colors = new QPalette();
-            colors->setColor(QPalette::Window, Qt::red);
+            colors->setColor(QPalette::Window, "#71ed55");
             colors->setColor(QPalette::WindowText, Qt::black);
             break;
         case ChatWidget::LogType::ClientMessage:
