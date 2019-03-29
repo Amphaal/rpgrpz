@@ -60,7 +60,7 @@ void ConnectWidget::_tryConnectToServer() {
 
     //connect..
     this->_destroyClient();
-    this->_cc = new ChatClient(dt_text, pt_text);
+    this->_cc = new ChatClient("", dt_text, pt_text);
     
     QObject::connect(this->_cc, &ChatClient::connected, [&]() {
         
