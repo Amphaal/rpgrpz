@@ -44,15 +44,17 @@ void ChatClient::close() {
 }
 
 void ChatClient::sendMessage(QString messageToSend) {
+    //prepare
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_12);
     out.setDevice(this->_socket);
 
     //message...
-    out << messageToSend;
-    auto written = this->_socket->write(block);
+    out << formatChatMessage(this->_name, messageToSend);
     
+    //write
+    auto written = this->_socket->write(block);
     auto i = this->_socket->waitForBytesWritten();
 
     qDebug() << "Chat Client : message sent >> " << messageToSend << "<<";
@@ -64,7 +66,7 @@ void ChatClient::tryConnection() {
 
     //prerequisites
     if(this->_name.isEmpty()) {
-        emit error("Nom de joueur requis");
+        emit error("Nom de joueur requis !");
         return;
     }
 
@@ -78,15 +80,45 @@ void ChatClient::_onRR() {
 
         _in.startTransaction();
 
-        QString result; 
-        _in >> result;
+        QByteArray block;
+        _in >> block;
 
         if (!_in.commitTransaction()) {
             qWarning() << "Chat Client : issue while reading incoming message";  
             return;
         }
         
-        qDebug() << "Chat Client : Data received from server >>" << result;    
+        _JSONTriage(block);
+
+}
+
+void ChatClient::_JSONTriage(QByteArray &potentialJSON) {
+
+    auto json = QJsonDocument::fromBinaryData(potentialJSON);
+    
+    if(json.isNull()) {
+        qWarning() << "Chat Client : Data received from server was not JSON and thus cannot be read.";
+        return;
+    }
+    
+    //triage
+    auto content = json.object();
+    auto mainKeys = content.keys();
+    
+    if(mainKeys.contains("messages_history")) {
+       auto msg_list = content["messages_history"].toArray().toVariantList();
+       for(auto msg : msg_list) {
+           auto stdmsg = msg.toString().toStdString();
+           emit receivedMessage(stdmsg);
+       }
+       emit historyReceived();
+    } else if (mainKeys.contains("new_message")) {
+        auto stdmsg = content["new_message"].toString().toStdString();
+        emit receivedMessage(stdmsg);
+    } else {
+        qDebug() << "Chat Client : Data received from server >>" << json;
+    }
+
 }
 
 void ChatClient::_error(QAbstractSocket::SocketError _socketError) {

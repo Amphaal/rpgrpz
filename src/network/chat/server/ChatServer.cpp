@@ -2,29 +2,8 @@
 
 ChatServer::ChatServer() { };
 
-ChatServer::~ChatServer() {
-    qDebug() << "Chat Server : Server ending !";
-
-    this->_server->close();
-};
-
-
-bool ChatServer::_isStopped() {
-    bool _stopped;
-    _mutex.lock();
-    _stopped = this->_stopped;
-    _mutex.unlock();
-    return _stopped;
-}
-
-void ChatServer::stop() {
-    _mutex.lock();
-    _stopped = true;
-    _mutex.unlock();
-}
-
-
 void ChatServer::run() { 
+
     this->_server = new QTcpServer;
 
     qDebug() << "Chat Server : Starting server...";
@@ -44,23 +23,50 @@ void ChatServer::run() {
 
     this->exec();
 
+    //ended server
+    qDebug() << "Chat Server : Server ending !";
+    this->_server->close();
 };
 
-void ChatServer::_sendWelcomeMessage(QTcpSocket* clientSocket) {
-    
+void ChatServer::_sendJSONtoSocket(QTcpSocket * clientSocket, QJsonDocument doc) {
+
     //send welcome message
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_5_12);
-    
-    //message...
-    out << this->_messages;
+
+    //send...
+    out << doc.toBinaryData();
     auto written = clientSocket->write(block);
 
     //wait end send
     clientSocket->waitForBytesWritten();
+}
 
-    qDebug() << "Chat Server : stored messages sent to " << clientSocket->peerAddress().toString();
+void ChatServer::_sendStoredMessages(QTcpSocket * clientSocket) {
+
+    //message...
+    auto countMsgs = this->_messages.size();
+    auto json_msgs = QJsonDocument::fromVariant(this->_messages);
+    auto msgsAsString = QString(json_msgs.toJson(QJsonDocument::Compact));
+    auto peeet = QString("{ \"messages_history\":" + msgsAsString + "}");
+    auto json_payload = QJsonDocument::fromJson(peeet.toUtf8());
+
+    this->_sendJSONtoSocket(clientSocket, json_payload);
+    
+    qDebug() << "Chat Server :" << countMsgs << " stored messages sent to " << clientSocket->peerAddress().toString();
+}
+
+void ChatServer::_broadcastMessage(QString messageToBroadcast) {
+
+    auto peeet = QString("{ \"new_message\": \"" + messageToBroadcast + "\"}");
+    auto json_payload = QJsonDocument::fromJson(peeet.toUtf8());
+
+    for(auto socket : this->_clientSockets) {
+        this->_sendJSONtoSocket(socket, json_payload);
+    }
+
+    qDebug() << "Chat Server : Broadcasted message to " << QString(this->_clientSockets.size()) << " clients";
 }
 
 void ChatServer::_handleIncomingMessages(QTcpSocket * clientSocket) {
@@ -71,27 +77,33 @@ void ChatServer::_handleIncomingMessages(QTcpSocket * clientSocket) {
 
     in.startTransaction();
 
-    QString result; 
-    in >> result;
-    this->_messages << result;
+    QString receivedMessage; 
+    in >> receivedMessage;
+    this->_messages << receivedMessage;
 
     if (!in.commitTransaction()) {
         qWarning() << "Chat Server : issue while reading incoming message";  
         return;
     }
 
-    qDebug() << "Chat Server : message received from " << clientSocket->peerAddress().toString() << " >> " << result;
+    //push to all sockets
+    this->_broadcastMessage(receivedMessage);
+
+    qDebug() << "Chat Server : message received from " << clientSocket->peerAddress().toString() << " >> " << receivedMessage;
 }
 
 void ChatServer::_onNewConnection() {
         
         //new connection,store it
         auto clientSocket = this->_server->nextPendingConnection();
-        
-        //auto remove socket if disconnected
+        this->_clientSockets.insert(clientSocket, clientSocket);
+
         QObject::connect(
             clientSocket, &QAbstractSocket::disconnected,
-            clientSocket, &QObject::deleteLater
+            [&, clientSocket]() {
+                this->_clientSockets.remove(clientSocket);
+                clientSocket->deleteLater();
+            }
         );
 
         //on data received from client
@@ -101,13 +113,12 @@ void ChatServer::_onNewConnection() {
                 this->_handleIncomingMessages(clientSocket);
             }
         );
-        auto newIp = clientSocket->peerAddress().toString();
 
         //signals new connection
+        auto newIp = clientSocket->peerAddress().toString();
         emit newConnectionReceived(newIp.toStdString());
         qDebug() << "Chat Server : New connection from " << newIp;
 
-        this->_sendWelcomeMessage(clientSocket);
+        this->_sendStoredMessages(clientSocket);
 
-        this->_clientSockets << clientSocket;
 }

@@ -24,11 +24,11 @@ void ChatWidget::bindToChatClient(ChatClient * cc) {
 
     //initial message to log
     auto socketAddr = this->_currentCC->getConnectedSocketAddress();
-    auto msg = QString("Connecté au serveur ") + socketAddr;
-    this->printLog(msg.toStdString(), ChatWidget::LogType::ServerLog);
 
     //on error from client
-    QObject::connect(this->_currentCC, &ChatClient::error, [&, socketAddr](const std::string errMsg) {
+    QObject::connect(
+        this->_currentCC, &ChatClient::error, 
+        [&, socketAddr](const std::string errMsg) {
         
         //out log
         auto nm = errMsg + " (" + socketAddr.toStdString() + ")";
@@ -36,6 +36,23 @@ void ChatWidget::bindToChatClient(ChatClient * cc) {
 
         this->_DisableUI();
     });
+    
+    //on message received
+    QObject::connect(
+        this->_currentCC, &ChatClient::receivedMessage, 
+        [&](const std::string message) {
+            this->printLog(message);
+        }
+    );
+
+    //welcome once all history have been received
+    QObject::connect(
+        this->_currentCC, &ChatClient::historyReceived, 
+        [&, socketAddr]() {
+            auto msg = QString("Connecté au serveur (") + socketAddr + ")";
+            this->printLog(msg.toStdString(), ChatWidget::LogType::ServerLog);
+        }
+    );
 
 }
 

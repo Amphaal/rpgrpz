@@ -5,6 +5,11 @@
 #include <QTcpSocket>
 #include <QDataStream>
 #include <QMessageBox>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+
+#include "src/helpers/_const.cpp"
 
 class ChatClient : public QObject {
     
@@ -19,6 +24,8 @@ class ChatClient : public QObject {
 
     signals:
         void connected();
+        void receivedMessage(const std::string message);
+        void historyReceived();
         void error(const std::string errMessage);
 
     private:
@@ -31,5 +38,6 @@ class ChatClient : public QObject {
 
         void _onRR();
         void _error(QAbstractSocket::SocketError _socketError);
+        void _JSONTriage(QByteArray &potentialJSON);
 
 };

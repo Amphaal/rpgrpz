@@ -9,6 +9,7 @@
 #include <QString>
 #include <QDebug>
 #include <QDir>
+#include <QDateTime>
 
 #define _WINSOCKAPI_
 #include <windows.h>
@@ -25,6 +26,13 @@ static std::string getAppDataLocation() {
     auto qt = QString::fromStdString(target);
     auto created = QDir().mkpath(qt);
     return target;
+}
+
+static QString formatChatMessage(QString displayName, QString message) {
+    auto ts = QString("[" + QDateTime::currentDateTime().toString("dd.MM.yyyy-hh:mm:ss") + "] ");
+    auto name = displayName + " a dit : ";
+    auto fullMsg = ts + name + "“" + message + "”";
+    return fullMsg;
 }
 
 static std::string getLogFileLocation() {

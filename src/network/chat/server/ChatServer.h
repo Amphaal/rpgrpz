@@ -5,9 +5,12 @@
 #include <QHostAddress>
 #include <QDataStream>
 #include <QVector>
-#include <QAbstractSocket>
 #include <QTcpSocket>
-#include <QMutex>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QStringList>
+#include <QMap>
 
 #include "ServerThread.h"
 
@@ -19,22 +22,18 @@ class ChatServer : public ServerThread {
 
     public:
         ChatServer();
-        ~ChatServer();
-        void stop();
         void run() override;
-        //void start();
 
     private:
-        QVector<QTcpSocket*> _clientSockets;
+        QMap<QTcpSocket*, QTcpSocket*> _clientSockets;
         QTcpServer* _server;
-        
-        QMutex _mutex;
-        bool _stopped = false;
-        bool _isStopped();
 
-        QVector<QString> _messages;
-        void _sendWelcomeMessage(QTcpSocket *clientSocket);
+        QStringList _messages;
+        void _sendStoredMessages(QTcpSocket * clientSocket);
         void _handleIncomingMessages(QTcpSocket * clientSocket);
+        void _broadcastMessage(QString messageToBroadcast);
 
+
+        void _sendJSONtoSocket(QTcpSocket * clientSocket, QJsonDocument doc);
         void _onNewConnection();
 };

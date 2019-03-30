@@ -15,7 +15,7 @@ ConnectWidget::ConnectWidget(QWidget * parent) : QWidget(parent),
 
     //name target
     this->_nameTarget->setPlaceholderText("Nom de joueur");
-    this->_domainTarget->setText(settings.value("displayname", "").toString());
+    this->_nameTarget->setText(settings.value("name", "").toString());
 
     //domain target
     this->_domainTarget->setPlaceholderText("IP ou domaine du serveur");
@@ -54,16 +54,16 @@ void ConnectWidget::_tryConnectToServer() {
 
     //register default values
     QSettings settings;
-    settings.beginGroup("MainWindow");
+    settings.beginGroup("ConnectWidget");
 
     auto dt_text = this->_domainTarget->text();
     if(!dt_text.isEmpty()) settings.setValue("domain", dt_text);
 
     auto pt_text = this->_portTarget->text();
-    if(!pt_text.isEmpty()) settings.setValue("port", pt_text);    
+    if(!pt_text.isEmpty()) settings.setValue("port", pt_text);
 
     auto nt_text = this->_nameTarget->text();
-    if(!nt_text.isEmpty()) settings.setValue("displayname", nt_text);
+    if(!nt_text.isEmpty()) settings.setValue("name", nt_text);
 
     settings.endGroup();
 
