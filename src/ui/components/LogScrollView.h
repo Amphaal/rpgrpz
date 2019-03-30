@@ -1,19 +1,21 @@
 #pragma once
 
-#include <QtWidgets/QLabel>
-#include <QtWidgets/QVBoxLayout>
-#include <QtCore/QList>
-#include "src/helpers/_const.cpp"
+#include "LogView.h"
 
-class LogScrollView : public QWidget {
+#include <QScrollArea>
+#include <QScrollBar>
+
+class LogScrollView : public QScrollArea {
 
     public:
         LogScrollView(QWidget *parent = nullptr);
-        void addMessage(const std::string & newMessage, QPalette* colorPalette = nullptr);
-        void updateLatestMessage(const std::string & newMessage);
 
-            
+        void writeAtEnd(const std::string & newMessage, QPalette* colorPalette = nullptr);
+
+        void newLog();
+
     private:
-        int _maxLogMessages = 10000;
-        void limitLogSize();
+        LogView* _log = 0;
+
+        void _scrollUpdate();
 };

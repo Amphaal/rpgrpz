@@ -33,7 +33,6 @@ class ChatServer : public ServerThread {
         void _handleIncomingMessages(QTcpSocket * clientSocket);
         void _broadcastMessage(QString messageToBroadcast);
 
-
         void _sendJSONtoSocket(QTcpSocket * clientSocket, QJsonDocument doc);
         void _onNewConnection();
 };

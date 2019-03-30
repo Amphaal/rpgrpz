@@ -2,16 +2,16 @@
 
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QBoxLayout>
-#include <QtWidgets/QPushButton>
-#include <QtWidgets/QScrollBar>
-#include <QtWidgets/QScrollArea>
+
 #include <QtGui/QWindow>
 #include <QStyle>
-#include <QLineEdit>
+
 
 #include "src/network/chat/client/ChatClient.h"
 
+#include "ChatEdit.h"
 #include "LogScrollView.h"
+
 
 class ChatWidget : public QWidget {
 
@@ -23,22 +23,22 @@ class ChatWidget : public QWidget {
         ChatWidget(QWidget *parent = nullptr);
         
         void createNewLog();
-        void printLog(const std::string &message, ChatWidget::LogType logType = ChatWidget::LogType::Default);
+        void writeInChatLog(const std::string &message, ChatWidget::LogType logType = ChatWidget::LogType::Default);
 
         void bindToChatClient(ChatClient * cc);
 
     private:
-        QPushButton *sendBtn = 0;
-        LogScrollView *lsv = 0;
-        QScrollArea *scrollArea = 0;
-        QLineEdit* msgEdit = 0;
+        LogScrollView *_chatLog = 0;
+        LogScrollView *_usersLog = 0;
+
+        ChatEdit *_chatEdit = 0;
+
         QString serverName;
 
         ChatClient* _currentCC = 0;
 
         void _sendMessage();
 
-        void _scrollUpdate();
         void _instUI();
 
         void _DisableUI();

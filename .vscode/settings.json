@@ -81,6 +81,9 @@
         "qclipboard": "cpp",
         "qtooltip": "cpp",
         "qsharedpointer": "cpp",
-        "qnetworkconfigurationmanager": "cpp"
+        "qnetworkconfigurationmanager": "cpp",
+        "qvboxlayout": "cpp",
+        "qwidget": "cpp",
+        "qmap": "cpp"
     }
 }

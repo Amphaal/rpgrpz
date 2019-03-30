@@ -102,12 +102,14 @@ file(GLOB_RECURSE INT_LIBS
 list(APPEND SOURCES
     src/network/chat/client/ClientThread.h
     src/network/chat/server/ServerThread.h
+    src/network/uPnP/uPnPThread.h
+    src/ui/components/ChatEdit.cpp
+    src/ui/components/LogView.cpp
     src/ui/components/LogScrollView.cpp
     src/ui/components/ChatWidget.cpp
     src/ui/components/ConnectWidget.cpp
     src/network/chat/client/ChatClient.cpp
     src/network/chat/server/ChatServer.cpp
-    src/network/uPnP/uPnPThread.h
     src/network/uPnP/uPnPRequester.cpp
     src/network/ConnectivityHelper.cpp
     src/main.cpp

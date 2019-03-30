@@ -1,49 +1,45 @@
 #include "LogScrollView.h"
 
-LogScrollView::LogScrollView(QWidget *parent) : QWidget(parent) {
+LogScrollView::LogScrollView(QWidget *parent) : QScrollArea(parent) {
     
-    this->setLayout(new QVBoxLayout);
-    this->layout()->setAlignment(Qt::AlignTop);
-    this->layout()->setSpacing(0);
-    this->layout()->setMargin(0);
+    this->setWidgetResizable(true);
+    this->setAutoFillBackground(true);
+    this->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
+    this->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+    auto pal = this->palette();
+    pal.setColor(QPalette::Background, Qt::white);
+    this->setPalette(pal);
+
+    //bindings...
+    QObject::connect(
+        this->verticalScrollBar(), &QScrollBar::rangeChanged,
+        this, &LogScrollView::_scrollUpdate
+    );
+
 }
 
-void LogScrollView::addMessage(const std::string & newMessage, QPalette* colorPalette) {
-    
-    auto msg = QString::fromStdString(newMessage);
-    auto label = new QLabel(msg);
-    label->setWordWrap(true);
-    label->setAutoFillBackground(true);
-    label->setContentsMargins(10, 3, 10, 3);
-    
-    if(colorPalette) {
-        label->setPalette(*colorPalette);
-    }
+void LogScrollView::writeAtEnd(const std::string & newMessage, QPalette* colorPalette) {
+    if(!this->_log) return;
 
-    this->limitLogSize();
+    this->_log->writeAtEnd(newMessage, colorPalette);
 
-    this->layout()->addWidget(label);
 }
 
-void LogScrollView::updateLatestMessage(const std::string & newMessage) {
-    
-    auto msg = QString::fromStdString(newMessage);
-    auto i = this->layout()->count() - 1; //count items in layout
-    
-    //if no message, add message
-    if(i < 0) {
-        return this->addMessage(newMessage);
+void LogScrollView::newLog() {
+
+    if(!this->_log) {
+        delete this->_log;
+        this->_log = 0;
     }
-    auto lbl = (QLabel*)this->layout()->itemAt(i)->widget();
-    lbl->setText(msg);
+
+    this->_log = new LogView;
+    this->setWidget(this->_log);
+
 }
 
-void LogScrollView::limitLogSize() {
-    if(this->layout()->count() > this->_maxLogMessages) {
-        auto qli = this->layout()->takeAt(0);
-        auto ltr = (QLabel*)qli->widget();
-        ltr->setParent(nullptr);
-        delete ltr;
-        delete qli;
-    }
+
+void LogScrollView::_scrollUpdate() {
+    //to perform heavy CPU consuming action
+    auto tabScrollBar = this->verticalScrollBar();
+    tabScrollBar->setValue(tabScrollBar->maximum());
 }
