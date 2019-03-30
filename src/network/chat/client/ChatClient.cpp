@@ -11,20 +11,18 @@ ChatClient::ChatClient(QString name, QString domain, QString port) :
 
 void ChatClient::_constructorInThread(){
     
-    this->_socket = new QTcpSocket;
-    this->_in = new QDataStream;
-    this->_in->setVersion(QDataStream::Qt_5_12);
-    this->_in->setDevice(this->_socket);
+    this->_sockWrapper = new JSONSocket("Chat Client");
+    auto qq = this->_sockWrapper->socket();
 
     QObject::connect(
-        this->_socket, &QIODevice::readyRead,
-        [&]() {
-            this->_onRR();
+        this->_sockWrapper, &JSONSocket::JSONReceived,
+        [&](JSONSocket * wrapper, QString method, QVariant data) {
+            this->_routeIncomingJSON(wrapper, method, data);
         } 
     );
 
     QObject::connect(
-        this->_socket, &QAbstractSocket::disconnected,
+        this->_sockWrapper->socket(), &QAbstractSocket::disconnected,
         [&]() {
             std::string msg = "Déconnecté du serveur";
             emit error(msg);
@@ -33,14 +31,17 @@ void ChatClient::_constructorInThread(){
     );
 
     QObject::connect(
-        this->_socket, &QAbstractSocket::connected,
+        this->_sockWrapper->socket(), &QAbstractSocket::connected,
         [&]() {
-            emit connected(this->getConnectedSocketAddress());
+            
+            //tell the server your username
+            this->_sockWrapper->sendJSON("display_name", QStringList(this->_name));
+
         }
     );
 
     QObject::connect(
-        this->_socket, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error),
+        this->_sockWrapper->socket(), QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error),
         [&](QAbstractSocket::SocketError _socketError) {
             this->_error(_socketError);
         }
@@ -49,20 +50,10 @@ void ChatClient::_constructorInThread(){
 
 
 void ChatClient::sendMessage(QString messageToSend) {
-    //prepare
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_12);
-    out.setDevice(this->_socket);
 
-    //message...
-    out << formatChatMessage(this->_name, messageToSend);
-    
-    //write
-    auto written = this->_socket->write(block);
-    auto i = this->_socket->waitForBytesWritten();
+    this->_sockWrapper->sendJSON("new_message", QStringList(messageToSend));
 
-    qDebug() << "Chat Client : message sent >> " << messageToSend << "<<";
+    qDebug() << "Chat Client : message sent >> " << messageToSend << "<<"; 
 }
 
 void ChatClient::run() {
@@ -76,10 +67,10 @@ void ChatClient::run() {
     }
 
     qDebug() << "Chat Client : Connecting...";    
-    this->_socket->abort();
-    this->_socket->connectToHost(this->_domain, this->_port.toInt());
+    this->_sockWrapper->socket()->abort();
+    this->_sockWrapper->socket()->connectToHost(this->_domain, this->_port.toInt());
     
-    auto isConnected = this->_socket->waitForConnected(3000);
+    auto isConnected = this->_sockWrapper->socket()->waitForConnected(3000);
 
     if(isConnected) {
         this->exec();
@@ -87,51 +78,28 @@ void ChatClient::run() {
         emit error("Le serveur distant n'a pas pu répondre à temps. Est-t-il disponible ?");
     }
 
-    this->_socket->close();
+    this->_sockWrapper->socket()->close();
 }
 
-//receiving data...
-void ChatClient::_onRR() {
 
-        _in->startTransaction();
-
-        QByteArray block;
-        (*_in) >> block;
-
-        if (!_in->commitTransaction()) {
-            qWarning() << "Chat Client : issue while reading incoming message";  
-            return;
-        }
-        
-        _JSONTriage(block);
-
-}
-
-void ChatClient::_JSONTriage(QByteArray &potentialJSON) {
-
-    auto json = QJsonDocument::fromBinaryData(potentialJSON);
+void ChatClient::_routeIncomingJSON(JSONSocket * wrapper, QString method, QVariant data) {
     
-    if(json.isNull()) {
-        qWarning() << "Chat Client : Data received from server was not JSON and thus cannot be read.";
-        return;
-    }
-    
-    //triage
-    auto content = json.object();
-    auto mainKeys = content.keys();
-    
-    if(mainKeys.contains("messages_history")) {
-       auto msg_list = content["messages_history"].toArray().toVariantList();
-       for(auto msg : msg_list) {
+    if(method == "messages_history") {
+       for(auto msg : data.toList()) {
            auto stdmsg = msg.toString().toStdString();
            emit receivedMessage(stdmsg);
        }
        emit historyReceived();
-    } else if (mainKeys.contains("new_message")) {
-        auto stdmsg = content["new_message"].toString().toStdString();
+    } else if(method == "logged_users") {
+        auto users = data.toList();
+        auto addr = this->getConnectedSocketAddress();
+        emit loggedUsersUpdated(users);
+        emit connected(addr);
+    } else if (method == "new_message") {
+        auto stdmsg = data.toList()[0].toString().toStdString();
         emit receivedMessage(stdmsg);
     } else {
-        qDebug() << "Chat Client : Data received from server >>" << json;
+        qWarning() << "Chat Client : unknown method from JSON !";
     }
 
 }
@@ -151,7 +119,7 @@ void ChatClient::_error(QAbstractSocket::SocketError _socketError) {
             msg = "La connexion a été refusée par l'hôte distant.";
             break;
         default:
-            msg = "L'erreur suivante s'est produite : " + this->_socket->errorString().toStdString();
+            msg = "L'erreur suivante s'est produite : " + this->_sockWrapper->socket()->errorString().toStdString();
                                    
     }
 

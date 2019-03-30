@@ -28,97 +28,91 @@ void ChatServer::run() {
     this->_server->close();
 };
 
-void ChatServer::_sendJSONtoSocket(QTcpSocket * clientSocket, QJsonDocument doc) {
 
-    //send welcome message
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_12);
-
-    //send...
-    out << doc.toBinaryData();
-    auto written = clientSocket->write(block);
-
-    //wait end send
-    clientSocket->waitForBytesWritten();
-}
-
-void ChatServer::_sendStoredMessages(QTcpSocket * clientSocket) {
+void ChatServer::_sendStoredMessages(JSONSocket * clientSocket) {
 
     //message...
     auto countMsgs = this->_messages.size();
-    auto json_msgs = QJsonDocument::fromVariant(this->_messages);
-    auto msgsAsString = QString(json_msgs.toJson(QJsonDocument::Compact));
-    auto peeet = QString("{ \"messages_history\":" + msgsAsString + "}");
-    auto json_payload = QJsonDocument::fromJson(peeet.toUtf8());
-
-    this->_sendJSONtoSocket(clientSocket, json_payload);
+    clientSocket->sendJSON("messages_history", this->_messages);
     
-    qDebug() << "Chat Server :" << countMsgs << " stored messages sent to " << clientSocket->peerAddress().toString();
+    qDebug() << "Chat Server :" << countMsgs << " stored messages sent to " << clientSocket->socket()->peerAddress().toString();
 }
 
 void ChatServer::_broadcastMessage(QString messageToBroadcast) {
 
-    auto peeet = QString("{ \"new_message\": \"" + messageToBroadcast + "\"}");
-    auto json_payload = QJsonDocument::fromJson(peeet.toUtf8());
-
     for(auto socket : this->_clientSockets) {
-        this->_sendJSONtoSocket(socket, json_payload);
+        socket->sendJSON("new_message", QStringList(messageToBroadcast));
     }
 
-    qDebug() << "Chat Server : Broadcasted message to " << QString(this->_clientSockets.size()) << " clients";
-}
-
-void ChatServer::_handleIncomingMessages(QTcpSocket * clientSocket) {
-
-    QDataStream in;
-    in.setVersion(QDataStream::Qt_5_12);
-    in.setDevice(clientSocket);
-
-    in.startTransaction();
-
-    QString receivedMessage; 
-    in >> receivedMessage;
-    this->_messages << receivedMessage;
-
-    if (!in.commitTransaction()) {
-        qWarning() << "Chat Server : issue while reading incoming message";  
-        return;
-    }
-
-    //push to all sockets
-    this->_broadcastMessage(receivedMessage);
-
-    qDebug() << "Chat Server : message received from " << clientSocket->peerAddress().toString() << " >> " << receivedMessage;
+    qDebug() << "Chat Server : Broadcasted message to " << this->_clientSockets.size() << " clients";
 }
 
 void ChatServer::_onNewConnection() {
         
         //new connection,store it
-        auto clientSocket = this->_server->nextPendingConnection();
+        auto clientSocket = new JSONSocket("Chat Server", this->_server->nextPendingConnection());
         this->_clientSockets.insert(clientSocket, clientSocket);
-
+        
+        //clear !
         QObject::connect(
-            clientSocket, &QAbstractSocket::disconnected,
+            clientSocket->socket(), &QAbstractSocket::disconnected,
             [&, clientSocket]() {
                 this->_clientSockets.remove(clientSocket);
+                this->_clientDisplayNames.remove(clientSocket);
                 clientSocket->deleteLater();
             }
         );
 
-        //on data received from client
         QObject::connect(
-            clientSocket, &QIODevice::readyRead, 
-            [&, clientSocket]() {
-                this->_handleIncomingMessages(clientSocket);
-            }
+            clientSocket, &JSONSocket::JSONReceived,
+            [&](JSONSocket * wrapper, QString method, QVariant data) {
+                this->_routeIncomingJSON(wrapper, method, data);
+            } 
         );
 
         //signals new connection
-        auto newIp = clientSocket->peerAddress().toString();
+        auto newIp = clientSocket->socket()->peerAddress().toString();
         emit newConnectionReceived(newIp.toStdString());
         qDebug() << "Chat Server : New connection from " << newIp;
 
         this->_sendStoredMessages(clientSocket);
 
+}
+
+void ChatServer::_routeIncomingJSON(JSONSocket * wrapper, QString method, QVariant data) {
+
+    if (method == "new_message") {
+        auto rawMsg = data.toList()[0].toString();
+        auto sockUN = this->_getSocketDisplayName(wrapper);
+        auto message = formatChatMessage(sockUN, rawMsg);
+
+        this->_messages << message;
+
+        //push to all sockets
+        this->_broadcastMessage(message);
+    
+    } else if (method == "display_name") {
+        
+        //bind username to socket
+        auto dn = data.toList()[0].toString();
+        this->_clientDisplayNames[wrapper] = dn;
+
+         this->_broadcastUsers();
+    
+    } else {
+        qWarning() << "Chat Server : unknown method from JSON !";
+    }
+
+}
+
+void ChatServer::_broadcastUsers() {
+    for(auto socket : this->_clientSockets) {
+        socket->sendJSON("logged_users", QStringList(this->_clientDisplayNames.values()));
+    }
+}
+
+QString ChatServer::_getSocketDisplayName(JSONSocket * clientSocket) {
+    return this->_clientDisplayNames.contains(clientSocket) ? 
+            this->_clientDisplayNames[clientSocket] : 
+            clientSocket->socket()->peerAddress().toString();
 }

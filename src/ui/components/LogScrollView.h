@@ -13,6 +13,7 @@ class LogScrollView : public QScrollArea {
         void writeAtEnd(const std::string & newMessage, QPalette* colorPalette = nullptr);
 
         void newLog();
+        void clearLog();
 
     private:
         LogView* _log = 0;

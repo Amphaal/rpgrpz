@@ -84,6 +84,9 @@
         "qnetworkconfigurationmanager": "cpp",
         "qvboxlayout": "cpp",
         "qwidget": "cpp",
-        "qmap": "cpp"
+        "qmap": "cpp",
+        "qjsondocument": "cpp",
+        "qtcpsocket": "cpp",
+        "qvariant": "cpp"
     }
 }

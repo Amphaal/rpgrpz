@@ -108,6 +108,7 @@ list(APPEND SOURCES
     src/ui/components/LogScrollView.cpp
     src/ui/components/ChatWidget.cpp
     src/ui/components/ConnectWidget.cpp
+    src/network/chat/_any/JSONSocket.cpp
     src/network/chat/client/ChatClient.cpp
     src/network/chat/server/ChatServer.cpp
     src/network/uPnP/uPnPRequester.cpp

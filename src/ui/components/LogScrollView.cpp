@@ -16,6 +16,8 @@ LogScrollView::LogScrollView(QWidget *parent) : QScrollArea(parent) {
         this, &LogScrollView::_scrollUpdate
     );
 
+    this->newLog();
+
 }
 
 void LogScrollView::writeAtEnd(const std::string & newMessage, QPalette* colorPalette) {
@@ -26,15 +28,17 @@ void LogScrollView::writeAtEnd(const std::string & newMessage, QPalette* colorPa
 }
 
 void LogScrollView::newLog() {
-
-    if(!this->_log) {
-        delete this->_log;
-        this->_log = 0;
-    }
-
+    this->clearLog();
     this->_log = new LogView;
     this->setWidget(this->_log);
 
+}
+
+void LogScrollView::clearLog() {
+    if(this->_log) {
+        delete this->_log;
+        this->_log = 0;
+    }
 }
 
 

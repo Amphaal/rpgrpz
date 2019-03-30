@@ -42,11 +42,12 @@ class ChatWidget : public QWidget {
         void _instUI();
 
         void _DisableUI();
-        void _EnableUI(QString serverAddress);
+        void _EnableUI();
 
         //
         void _onChatClientError(const std::string errMsg);
         void _onChatClientReceivedMessage(const std::string message);
         void _onChatClientReceivedHistory();
+        void _onChatClientloggedUsersUpdated(QVariantList users);
 
 };

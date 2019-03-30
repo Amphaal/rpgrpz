@@ -46,6 +46,7 @@ void ChatWidget::_instUI() {
     ////////////////
 
     this->_usersLog->setSizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Minimum);
+    this->_usersLog->setMinimumWidth(150);
     this->layout()->addWidget(this->_usersLog);
 }
 
@@ -73,9 +74,9 @@ void ChatWidget::_onChatClientReceivedHistory() {
 void ChatWidget::bindToChatClient(ChatClient * cc) {
 
     this->_currentCC = cc;
-
-    //initial message to log
-    auto socketAddr = this->_currentCC->getConnectedSocketAddress();
+    this->serverName = cc->getConnectedSocketAddress();
+    this->_usersLog->newLog();
+    this->_chatLog->newLog();
 
     //on error from client
     QObject::connect(
@@ -95,6 +96,12 @@ void ChatWidget::bindToChatClient(ChatClient * cc) {
         this, &ChatWidget::_onChatClientReceivedHistory
     );
 
+    //ss
+    QObject::connect(
+        this->_currentCC, &ChatClient::loggedUsersUpdated,
+        this, &ChatWidget::_onChatClientloggedUsersUpdated
+    );
+
     //enable UI at connection
     QObject::connect(
         this->_currentCC, &ChatClient::connected, 
@@ -111,17 +118,13 @@ void ChatWidget::bindToChatClient(ChatClient * cc) {
 }
 
 void ChatWidget::_DisableUI() {
-    this->serverName = "";
     this->_chatEdit->setEnabled(false);
     this->setEnabled(false);
 }
 
-void ChatWidget::_EnableUI(QString serverAddress) {
-    this->serverName = serverAddress;
+void ChatWidget::_EnableUI() {
     this->_chatEdit->setEnabled(true);
     this->setEnabled(true);
-    this->_usersLog->newLog();
-    this->_chatLog->newLog();
 }
 
 
@@ -141,3 +144,11 @@ void ChatWidget::writeInChatLog(const std::string &message, ChatWidget::LogType 
 
     this->_chatLog->writeAtEnd(message, colors);
 };
+
+void ChatWidget::_onChatClientloggedUsersUpdated(QVariantList users) {
+    this->_usersLog->newLog();
+    for(auto user : users) {
+        auto un = user.toString().toStdString();
+        this->_usersLog->writeAtEnd(un);
+    }
+}

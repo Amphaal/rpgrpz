@@ -9,6 +9,7 @@ class ClientThread : public QThread {
     signals:
         void connected(QString _socketAddress);
         void receivedMessage(const std::string message);
+        void loggedUsersUpdated(QVariantList users);
         void historyReceived();
         void error(const std::string errMessage);
 };
