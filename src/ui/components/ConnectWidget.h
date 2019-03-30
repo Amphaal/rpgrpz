@@ -18,6 +18,7 @@ class ConnectWidget : public QWidget {
 
     signals:
         void connectionSuccessful(ChatClient* cc);
+        void startingConnection(ChatClient* cc);
 
     public:
         ConnectWidget(QWidget * parent = nullptr);

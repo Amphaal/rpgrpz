@@ -3,18 +3,24 @@
 ChatClient::ChatClient(QString name, QString domain, QString port) : 
                         _name(name), 
                         _domain(domain), 
-                        _port(port), 
-                        _socket(new QTcpSocket) {
-    
+                        _port(port) {
 
     qDebug() << "Chat Client : Instantiation...";
+
+}
+
+void ChatClient::_constructorInThread(){
     
-    this->_in.setVersion(QDataStream::Qt_5_12);
-    this->_in.setDevice(this->_socket);
+    this->_socket = new QTcpSocket;
+    this->_in = new QDataStream;
+    this->_in->setVersion(QDataStream::Qt_5_12);
+    this->_in->setDevice(this->_socket);
 
     QObject::connect(
-        this->_socket, &QIODevice::readyRead, 
-        this, &ChatClient::_onRR
+        this->_socket, &QIODevice::readyRead,
+        [&]() {
+            this->_onRR();
+        } 
     );
 
     QObject::connect(
@@ -29,19 +35,18 @@ ChatClient::ChatClient(QString name, QString domain, QString port) :
     QObject::connect(
         this->_socket, &QAbstractSocket::connected,
         [&]() {
-            emit connected();
+            emit connected(this->getConnectedSocketAddress());
         }
     );
 
     QObject::connect(
         this->_socket, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error),
-        this, &ChatClient::_error
+        [&](QAbstractSocket::SocketError _socketError) {
+            this->_error(_socketError);
+        }
     );
 }
 
-void ChatClient::close() {
-    this->_socket->close();
-}
 
 void ChatClient::sendMessage(QString messageToSend) {
     //prepare
@@ -60,9 +65,9 @@ void ChatClient::sendMessage(QString messageToSend) {
     qDebug() << "Chat Client : message sent >> " << messageToSend << "<<";
 }
 
-void ChatClient::tryConnection() {
-    
-    auto pet = this->_name.toStdString();
+void ChatClient::run() {
+
+    this->_constructorInThread();
 
     //prerequisites
     if(this->_name.isEmpty()) {
@@ -73,17 +78,27 @@ void ChatClient::tryConnection() {
     qDebug() << "Chat Client : Connecting...";    
     this->_socket->abort();
     this->_socket->connectToHost(this->_domain, this->_port.toInt());
+    
+    auto isConnected = this->_socket->waitForConnected(3000);
+
+    if(isConnected) {
+        this->exec();
+    } else {
+        emit error("Le serveur distant n'a pas pu répondre à temps. Est-t-il disponible ?");
+    }
+
+    this->_socket->close();
 }
 
 //receiving data...
 void ChatClient::_onRR() {
 
-        _in.startTransaction();
+        _in->startTransaction();
 
         QByteArray block;
-        _in >> block;
+        (*_in) >> block;
 
-        if (!_in.commitTransaction()) {
+        if (!_in->commitTransaction()) {
             qWarning() << "Chat Client : issue while reading incoming message";  
             return;
         }
@@ -143,7 +158,7 @@ void ChatClient::_error(QAbstractSocket::SocketError _socketError) {
     emit error(msg);
     qWarning() << "Chat Client : :" << QString::fromStdString(msg);
 
-    this->close();
+    this->exit();
 }
 
 QString ChatClient::getConnectedSocketAddress() {

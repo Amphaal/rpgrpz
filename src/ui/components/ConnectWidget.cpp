@@ -17,9 +17,11 @@ ConnectWidget::ConnectWidget(QWidget * parent) : QWidget(parent),
     this->_nameTarget->setPlaceholderText("Nom de joueur");
     this->_nameTarget->setText(settings.value("name", "").toString());
 
+
     //domain target
     this->_domainTarget->setPlaceholderText("IP ou domaine du serveur");
     this->_domainTarget->setText(settings.value("domain", "localhost").toString());
+
 
     //sep
     auto sep = new QLabel(this);
@@ -35,6 +37,14 @@ ConnectWidget::ConnectWidget(QWidget * parent) : QWidget(parent),
         ).toString()
     );
     this->_portTarget->setFixedSize(40, 22);
+
+    //bind to Return Key press...
+    auto bb = [&]() {
+        this->_connectBtn->click();
+    };
+    QObject::connect(this->_nameTarget, &QLineEdit::returnPressed, bb);
+    QObject::connect(this->_domainTarget, &QLineEdit::returnPressed, bb);
+    QObject::connect(this->_portTarget, &QLineEdit::returnPressed, bb);
 
     this->_setConnectBtnState();
 
@@ -70,6 +80,7 @@ void ConnectWidget::_tryConnectToServer() {
     //connect..
     this->_destroyClient();
     this->_cc = new ChatClient(nt_text, dt_text, pt_text);
+    emit startingConnection(this->_cc);
     
     QObject::connect(
         this->_cc, &ChatClient::connected, 
@@ -81,7 +92,7 @@ void ConnectWidget::_tryConnectToServer() {
         this, &ConnectWidget::_onChatClientError
     );
 
-    this->_cc->tryConnection();
+    this->_cc->start();
 }
 
 void ConnectWidget::_onChatClientError(const std::string errMsg) {
@@ -99,8 +110,10 @@ void ConnectWidget::_onChatClientConnected() {
     emit connectionSuccessful(this->_cc);
 }
 
-void  ConnectWidget::_destroyClient() {
+void ConnectWidget::_destroyClient() {
     if(this->_cc) {
+        this->_cc->exit();
+        this->_cc->wait();
         delete this->_cc;
         this->_cc = 0;
     }
@@ -126,7 +139,7 @@ void ConnectWidget::_setConnectBtnState(bool readyForConnection) {
     } else {
         this->_connectBtnLink = QObject::connect(
             this->_connectBtn, &QPushButton::clicked,
-            this, &ConnectWidget::_tryDisconnectingFromServer
+            this, &ConnectWidget::_destroyClient
         );
 
         this->_domainTarget->setEnabled(false);
@@ -136,10 +149,4 @@ void ConnectWidget::_setConnectBtnState(bool readyForConnection) {
 
     this->setEnabled(true);
 
-}
-
-void ConnectWidget::_tryDisconnectingFromServer() {
-    if(this->_cc) {
-        this->_cc->close();
-    }
 }

@@ -80,6 +80,7 @@
         "qscrollarea": "cpp",
         "qclipboard": "cpp",
         "qtooltip": "cpp",
-        "qsharedpointer": "cpp"
+        "qsharedpointer": "cpp",
+        "qnetworkconfigurationmanager": "cpp"
     }
 }

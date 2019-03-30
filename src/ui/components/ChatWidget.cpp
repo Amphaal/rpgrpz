@@ -9,6 +9,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
         //UI...
         this->_instUI();
 
+        
         //bindings...
         QObject::connect(
             this->scrollArea->verticalScrollBar(), &QScrollBar::rangeChanged,
@@ -17,10 +18,29 @@ ChatWidget::ChatWidget(QWidget *parent) :
     
 }
 
+void ChatWidget::_onChatClientError(const std::string errMsg) {    
+    
+    //out log
+    if(!this->serverName.isEmpty()) {
+        auto nm = errMsg + " (" + this->serverName.toStdString() + ")";
+        this->printLog(nm, ChatWidget::LogType::ServerLog);
+    }
+
+    this->_DisableUI();
+
+}
+void ChatWidget::_onChatClientReceivedMessage(const std::string message) {
+    this->printLog(message);
+}
+
+void ChatWidget::_onChatClientReceivedHistory() {
+    auto msg = QString("Connecté au serveur (") + this->serverName + ")";
+    this->printLog(msg.toStdString(), ChatWidget::LogType::ServerLog);
+}
+
 void ChatWidget::bindToChatClient(ChatClient * cc) {
 
     this->_currentCC = cc;
-    this->_EnableUI();
 
     //initial message to log
     auto socketAddr = this->_currentCC->getConnectedSocketAddress();
@@ -28,40 +48,44 @@ void ChatWidget::bindToChatClient(ChatClient * cc) {
     //on error from client
     QObject::connect(
         this->_currentCC, &ChatClient::error, 
-        [&, socketAddr](const std::string errMsg) {
-        
-        //out log
-        auto nm = errMsg + " (" + socketAddr.toStdString() + ")";
-        this->printLog(nm, ChatWidget::LogType::ServerLog);
-
-        this->_DisableUI();
-    });
+        this, &ChatWidget::_onChatClientError
+    );
     
     //on message received
     QObject::connect(
         this->_currentCC, &ChatClient::receivedMessage, 
-        [&](const std::string message) {
-            this->printLog(message);
-        }
+        this, &ChatWidget::_onChatClientReceivedMessage
     );
 
     //welcome once all history have been received
     QObject::connect(
         this->_currentCC, &ChatClient::historyReceived, 
-        [&, socketAddr]() {
-            auto msg = QString("Connecté au serveur (") + socketAddr + ")";
-            this->printLog(msg.toStdString(), ChatWidget::LogType::ServerLog);
+        this, &ChatWidget::_onChatClientReceivedHistory
+    );
+
+    //enable UI at connection
+    QObject::connect(
+        this->_currentCC, &ChatClient::connected, 
+        this, &ChatWidget::_EnableUI
+    );
+
+    QObject::connect(
+        this->_currentCC, &QObject::destroyed,
+        [&]() {
+            this->_currentCC = 0;
         }
     );
 
 }
 
 void ChatWidget::_DisableUI() {
+    this->serverName = "";
     this->msgEdit->setPlaceholderText("");
     this->setEnabled(false);
 }
 
-void ChatWidget::_EnableUI() {
+void ChatWidget::_EnableUI(QString serverAddress) {
+    this->serverName = serverAddress;
     this->msgEdit->setPlaceholderText("Message à envoyer");
     this->msgEdit->setText("");
     this->setEnabled(true);
@@ -123,6 +147,12 @@ void ChatWidget::_instUI() {
         msgWdgt->setLayout(new QHBoxLayout);
         msgWdgt->layout()->setMargin(0);
         this->sendBtn->setText("Envoyer Message");
+        QObject::connect(
+            this->msgEdit, &QLineEdit::returnPressed, 
+            [&]() {
+                this->sendBtn->click();
+            }
+        );
         QObject::connect(
             this->sendBtn, &QPushButton::clicked,
             this, &ChatWidget::_sendMessage

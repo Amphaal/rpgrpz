@@ -9,27 +9,22 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
+#include "ClientThread.h"
+
 #include "src/helpers/_const.cpp"
 
-class ChatClient : public QObject {
+class ChatClient : public ClientThread {
     
     Q_OBJECT
 
     public:
         ChatClient(QString displayname, QString domain, QString port);
-        void close();
         QString getConnectedSocketAddress();
         void sendMessage(QString messageToSend);
-        void tryConnection();
-
-    signals:
-        void connected();
-        void receivedMessage(const std::string message);
-        void historyReceived();
-        void error(const std::string errMessage);
+        void run() override;
 
     private:
-        QDataStream _in;
+        QDataStream* _in = nullptr;
         QTcpSocket* _socket = nullptr;
         
         QString _domain;
@@ -39,5 +34,6 @@ class ChatClient : public QObject {
         void _onRR();
         void _error(QAbstractSocket::SocketError _socketError);
         void _JSONTriage(QByteArray &potentialJSON);
+        void _constructorInThread();
 
 };

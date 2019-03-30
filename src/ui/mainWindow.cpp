@@ -51,7 +51,7 @@ void MainWindow::updateExtIPLabel(std::string state, bool isOn) {
     this->_extIpLabel->setText(QString::fromStdString(state));
 
     if(isOn) {
-        this->_extIpLabel->setText("<a href='#'>" + this->_extIpLabel->text() + "</a>");
+        this->_extIpLabel->setText("<a href='" + this->_extIpLabel->text() + "'>" + this->_extIpLabel->text() + "</a>");
     }
 }
 
@@ -89,7 +89,7 @@ void MainWindow::_initUIConnectionPanel() {
     this->_connectWidget = new ConnectWidget();
 
     QObject::connect(
-        this->_connectWidget, &ConnectWidget::connectionSuccessful, 
+        this->_connectWidget, &ConnectWidget::startingConnection, 
         [&](ChatClient * cc) {
             this->_cw->bindToChatClient(cc);
         }

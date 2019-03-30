@@ -48,17 +48,17 @@ void ConnectivityHelper::_pickPreferedConfiguration() {
         auto purpose = conf.purpose();
         auto type = conf.type();
         auto name = conf.name();
-        auto pet = name.toStdString();
 
         if(!type == QNetworkConfiguration::InternetAccessPoint) continue;
 
         auto unauthorizedInterface = name.contains("npcap", Qt::CaseInsensitive) ||
                              name.contains("virtualbox", Qt::CaseInsensitive) ||
                              name.contains("bluetooth", Qt::CaseInsensitive) ||
-                             name.contains("WAN", Qt::CaseSensitive) ;
+                             name.contains("WAN", Qt::CaseSensitive);
         if(unauthorizedInterface) continue;
         
         //define new config
+        conf.setConnectTimeout(3000);
         this->_nam->setConfiguration(conf);
 
         this->_debugNetworkConfig();

@@ -25,7 +25,6 @@ class ChatWidget : public QWidget {
         void createNewLog();
         void printLog(const std::string &message, ChatWidget::LogType logType = ChatWidget::LogType::Default);
 
-    public slots:
         void bindToChatClient(ChatClient * cc);
 
     private:
@@ -33,6 +32,7 @@ class ChatWidget : public QWidget {
         LogScrollView *lsv = 0;
         QScrollArea *scrollArea = 0;
         QLineEdit* msgEdit = 0;
+        QString serverName;
 
         ChatClient* _currentCC = 0;
 
@@ -42,6 +42,11 @@ class ChatWidget : public QWidget {
         void _instUI();
 
         void _DisableUI();
-        void _EnableUI();
+        void _EnableUI(QString serverAddress);
+
+        //
+        void _onChatClientError(const std::string errMsg);
+        void _onChatClientReceivedMessage(const std::string message);
+        void _onChatClientReceivedHistory();
 
 };
