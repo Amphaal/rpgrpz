@@ -17,7 +17,7 @@ class MapView : public QGraphicsView {
 
             this->setBackgroundBrush(*background);
 
-            auto rect = this->_scene->addRect(QRectF(0, 0, 100, 100));
+            //auto rect = this->_scene->addRect(QRectF(0, 0, 100, 100));
             this->setScene(this->_scene);
 
         }
