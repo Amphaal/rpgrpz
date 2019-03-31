@@ -1,6 +1,6 @@
 #include "ConnectWidget.h"
 
-ConnectWidget::ConnectWidget(QWidget * parent) : QWidget(parent), 
+ConnectWidget::ConnectWidget(QWidget * parent) : QGroupBox(parent), 
                                             _nameTarget(new QLineEdit(this)),
                                             _portTarget(new QLineEdit(this)), 
                                             _domainTarget(new QLineEdit(this)),
@@ -11,7 +11,8 @@ ConnectWidget::ConnectWidget(QWidget * parent) : QWidget(parent),
 
     //this
     this->setLayout(new QHBoxLayout);
-    this->layout()->setContentsMargins(10, 10, 10, 5);
+    this->setTitle("Connexion");
+    this->setAlignment(Qt::AlignHCenter);
 
     //name target
     this->_nameTarget->setPlaceholderText("Nom de joueur");

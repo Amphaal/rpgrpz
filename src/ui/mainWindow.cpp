@@ -68,24 +68,50 @@ void MainWindow::_initUI() {
     //values specific to this
     std::string stdTitle = IS_DEBUG_APP ? (std::string)"DEBUG - " + APP_NAME : APP_NAME;
     this->setWindowTitle(QString(stdTitle.c_str()));
-    this->setMinimumSize(QSize(480, 400));
+
     this->setWindowIcon(QIcon(LOCAL_ICON_PNG_PATH.c_str()));
 
     //central widget
     auto centralW = new QWidget(this);
-    centralW->setLayout(new QVBoxLayout);
-    centralW->layout()->setAlignment(Qt::AlignTop);
-    centralW->layout()->setMargin(0);
+    centralW->setLayout(new QHBoxLayout);
     this->setCentralWidget(centralW);
+    this->centralWidget()->layout()->setContentsMargins(10, 5, 10, 10);
+    this->centralWidget()->layout()->setSpacing(15);
 
     //specific componements
     this->_initUIMenu();
-    this->_initUIConnectionPanel();
-    this->_initUIChat();
     this->_initUIStatusBar();
+
+    //init components
+    this->_initConnectionPanel();
+    this->_initChat();
+    this->_initMapView();
+
+    //place them...
+    
+    //designer
+    auto left = new QWidget();
+    left->setLayout(new QHBoxLayout);
+    left->layout()->setMargin(0);
+    left->layout()->addWidget(this->_mapView);
+    this->centralWidget()->layout()->addWidget(left);
+
+    //Chat...
+    auto right = new QWidget;
+    right->setMinimumSize(400,400);
+    right->setMaximumWidth(600);
+    right->setLayout(new QVBoxLayout);
+    right->layout()->setMargin(0);
+    right->layout()->addWidget(this->_connectWidget);
+    right->layout()->addWidget(this->_cw);
+    this->centralWidget()->layout()->addWidget(right);
 }   
 
-void MainWindow::_initUIConnectionPanel() {
+void MainWindow::_initMapView() {
+    this->_mapView = new MapView(this);
+}
+
+void MainWindow::_initConnectionPanel() {
     this->_connectWidget = new ConnectWidget();
 
     QObject::connect(
@@ -94,13 +120,10 @@ void MainWindow::_initUIConnectionPanel() {
             this->_cw->bindToChatClient(cc);
         }
     );
-
-    this->centralWidget()->layout()->addWidget(this->_connectWidget);
 }
 
-void MainWindow::_initUIChat() {
+void MainWindow::_initChat() {
     this->_cw = new ChatWidget(this);
-    this->centralWidget()->layout()->addWidget(this->_cw);
 }
 
 void MainWindow::_initUIMenu() {
@@ -141,6 +164,11 @@ void MainWindow::_initUIStatusBar() {
     });
 
     //define statusbar content
+    auto colors = statusBar->palette();
+    statusBar->setAutoFillBackground(true);
+    colors.setColor(QPalette::Background, "#DDD");
+    statusBar->setPalette(colors);
+
     sb_widget->setLayout(new QHBoxLayout);
     sb_widget->layout()->addWidget(localIpDescrLabel);
     sb_widget->layout()->addWidget(this->_localIpLabel);

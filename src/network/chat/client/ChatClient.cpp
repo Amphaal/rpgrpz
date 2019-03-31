@@ -26,7 +26,7 @@ void ChatClient::_constructorInThread(){
         [&]() {
             std::string msg = "Déconnecté du serveur";
             emit error(msg);
-            qWarning() << "Chat Client : :" << QString::fromStdString(msg);
+            qWarning() << "Chat Client : " << QString::fromStdString(msg);
         }
     );
 
@@ -53,7 +53,7 @@ void ChatClient::sendMessage(QString messageToSend) {
 
     this->_sockWrapper->sendJSON("new_message", QStringList(messageToSend));
 
-    qDebug() << "Chat Client : message sent >> " << messageToSend << "<<"; 
+    qDebug() << "Chat Client : message sent " << messageToSend; 
 }
 
 void ChatClient::run() {

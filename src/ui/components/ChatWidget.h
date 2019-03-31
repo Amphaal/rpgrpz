@@ -6,6 +6,7 @@
 #include <QtGui/QWindow>
 #include <QStyle>
 
+#include <QGroupBox>
 
 #include "src/network/chat/client/ChatClient.h"
 
@@ -13,7 +14,7 @@
 #include "LogScrollView.h"
 
 
-class ChatWidget : public QWidget {
+class ChatWidget : public QGroupBox {
 
     Q_OBJECT
 

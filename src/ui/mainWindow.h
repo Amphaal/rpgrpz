@@ -9,13 +9,18 @@
 #include <QGraphicsItem>
 #include <QClipboard>
 #include <QToolTip>
+#include <QGraphicsScene>
 
 #include <QLabel>
 #include <QStatusBar>
+#include <QGroupBox>
+#include <QApplication>
 
 #include "src/network/ConnectivityHelper.h"
 #include "src/network/chat/server/ChatServer.h"
 #include "src/ui/components/ConnectWidget.h"
+
+#include "src/ui/components/MapView.cpp"
 
 #include "src/ui/components/ChatWidget.h"
 
@@ -35,11 +40,14 @@ class MainWindow : public QMainWindow {
         void _initUI();
         void _initConnectivity();
 
+        MapView* _mapView;
+        void _initMapView();
+
         ConnectWidget* _connectWidget = 0;
-        void _initUIConnectionPanel();
+        void _initConnectionPanel();
         
         ChatWidget* _cw = 0;
-        void _initUIChat();
+        void _initChat();
         void onNewConnectionFromServer(std::string clientIp);
 
         void _initUIMenu();

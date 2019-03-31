@@ -8,11 +8,12 @@
 #include <QIntValidator>
 #include <QPushButton>
 #include <QMessageBox>
+#include <QGroupBox>
 
 #include "src/helpers/_const.cpp"
 #include "src/network/chat/client/ChatClient.h"
 
-class ConnectWidget : public QWidget {
+class ConnectWidget : public QGroupBox {
 
     Q_OBJECT
 

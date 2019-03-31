@@ -87,6 +87,8 @@
         "qmap": "cpp",
         "qjsondocument": "cpp",
         "qtcpsocket": "cpp",
-        "qvariant": "cpp"
+        "qvariant": "cpp",
+        "qglwidget": "cpp",
+        "qgroupbox": "cpp"
     }
 }
