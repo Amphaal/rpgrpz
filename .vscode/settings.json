@@ -90,6 +90,9 @@
         "qvariant": "cpp",
         "qglwidget": "cpp",
         "qgroupbox": "cpp",
-        "qudpsocket": "cpp"
+        "qudpsocket": "cpp",
+        "qtmath": "cpp",
+        "qsvgrenderer": "cpp",
+        "qtsvg": "cpp"
     }
 }

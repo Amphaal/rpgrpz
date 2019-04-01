@@ -66,7 +66,7 @@ void MainWindow::updateIntIPLabel(std::string state) {
 void MainWindow::_initUI() {
     
     //values specific to this
-    std::string stdTitle = IS_DEBUG_APP ? (std::string)"DEBUG - " + APP_NAME : APP_NAME;
+    std::string stdTitle = IS_DEBUG_APP ? (std::string)"DEBUG - " + APP_FULL_DENOM : APP_FULL_DENOM;
     this->setWindowTitle(QString(stdTitle.c_str()));
 
     this->setWindowIcon(QIcon(LOCAL_ICON_PNG_PATH.c_str()));
@@ -90,6 +90,7 @@ void MainWindow::_initUIApp() {
     this->_cw = new ChatWidget(this);
     this->_mapView = new MapView(this);
     this->_streamNotifier = new AudioStreamNotifier(this);
+    this->_assetsManager = new AssetsManager(this);
 
     QObject::connect(
         this->_connectWidget, &ConnectWidget::startingConnection, 
@@ -100,12 +101,15 @@ void MainWindow::_initUIApp() {
 
     //place them...
     
+    //assets
+    this->centralWidget()->layout()->addWidget(this->_assetsManager);
+
     //designer
-    auto left = new QWidget();
-    left->setLayout(new QHBoxLayout);
-    left->layout()->setContentsMargins(0, 5, 0, 0);
-    left->layout()->addWidget(this->_mapView);
-    this->centralWidget()->layout()->addWidget(left);
+    auto designer = new QWidget();
+    designer->setLayout(new QHBoxLayout);
+    designer->layout()->setContentsMargins(0, 5, 0, 0);
+    designer->layout()->addWidget(this->_mapView);
+    this->centralWidget()->layout()->addWidget(designer);
 
     //Chat...
     auto right = new QWidget;
@@ -122,7 +126,7 @@ void MainWindow::_initUIApp() {
 void MainWindow::_initUIMenu() {
     auto menuBar = new QMenuBar;
     menuBar->addMenu(this->_getFileMenu());
-    menuBar->addMenu(this->_getAboutMenu());
+    menuBar->addMenu(this->_getHelpMenu());
     this->setMenuWidget(menuBar);
 }
 
@@ -187,27 +191,64 @@ void MainWindow::_initUIStatusBar() {
 /// Menu components //
 //////////////////////
 
+QMenu* MainWindow::_getHelpMenu() {
 
-QMenu* MainWindow::_getAboutMenu() {
+    auto helpMenuItem = new QMenu(I18n::tr()->Menu_Help().c_str());
 
-    QMenu *aboutMenuItem = new QMenu(I18n::tr()->Menu_About().c_str());
+    //full log
+    auto openLogAction = new QAction(I18n::tr()->Menu_OpenLog().c_str(), helpMenuItem);
+    QObject::connect(
+        openLogAction, &QAction::triggered,
+        [&]() {
+            openFileInOS(getLogFileLocation());
+        }
+    );
+
+    //latest log
+    auto openLatestLogAction = new QAction(I18n::tr()->Menu_OpenLatestLog().c_str(), helpMenuItem);
+    QObject::connect(
+        openLatestLogAction, &QAction::triggered,
+        [&]() {
+            openFileInOS(getLatestLogFileLocation());
+        }
+    );
+
+    //data folder
+    auto df = getAppDataLocation();
+    auto openDataFolderAction = new QAction(I18n::tr()->Menu_OpenDataFolder(df).c_str(), helpMenuItem);
+    QObject::connect(
+        openDataFolderAction, &QAction::triggered,
+        [&, df]() {
+            openFolderInOS(df);
+        }
+    );
 
     //for checking the upgrades available
-    this->cfugAction = new QAction(I18n::tr()->Menu_CheckForUpgrades().c_str(), aboutMenuItem);
-        QObject::connect(
+    this->cfugAction = new QAction(I18n::tr()->Menu_CheckForUpgrades().c_str(), helpMenuItem);
+    QObject::connect(
         this->cfugAction, &QAction::triggered,
         this, &MainWindow::requireUpdateCheckFromUser
     );
-            
-    this->versionAction = new QAction(APP_FULL_DENOM, aboutMenuItem);
-    this->versionAction->setEnabled(false);
 
-    aboutMenuItem->addAction(this->cfugAction);
-    aboutMenuItem->addSeparator();
-    aboutMenuItem->addAction(this->versionAction);
+    //patchnote
+    auto patchnoteAction = new QAction(I18n::tr()->Menu_Patchnotes(APP_FULL_DENOM).c_str(), helpMenuItem);
+    QObject::connect(
+        patchnoteAction, &QAction::triggered,
+        [&]() {
+            QDesktopServices::openUrl(QUrl(APP_PATCHNOTE_URL));
+        }
+    );
 
-    return aboutMenuItem;
-}
+    helpMenuItem->addAction(openDataFolderAction);
+    helpMenuItem->addSeparator();
+    helpMenuItem->addAction(openLogAction);
+    helpMenuItem->addAction(openLatestLogAction);
+    helpMenuItem->addSeparator();
+    helpMenuItem->addAction(patchnoteAction);
+    helpMenuItem->addAction(this->cfugAction);
+
+    return helpMenuItem;
+};
 
 QMenu* MainWindow::_getFileMenu() {
 
@@ -220,37 +261,6 @@ QMenu* MainWindow::_getFileMenu() {
         this, &MainWindow::close
     );
 
-    auto openLogAction = new QAction(I18n::tr()->Menu_OpenLog().c_str(), fileMenuItem);
-    QObject::connect(
-        openLogAction, &QAction::triggered,
-        [&]() {
-            openFileInOS(getLogFileLocation());
-        }
-    );
-
-    auto openLatestLogAction = new QAction(I18n::tr()->Menu_OpenLatestLog().c_str(), fileMenuItem);
-    QObject::connect(
-        openLatestLogAction, &QAction::triggered,
-        [&]() {
-            openFileInOS(getLatestLogFileLocation());
-        }
-    );
-
-    auto df = getAppDataLocation();
-    auto openDataFolderAction = new QAction(I18n::tr()->Menu_OpenDataFolder(df).c_str(), fileMenuItem);
-    QObject::connect(
-        openDataFolderAction, &QAction::triggered,
-        [&, df]() {
-            openFolderInOS(df);
-        }
-    );
-
-
-    fileMenuItem->addAction(openLogAction);
-    fileMenuItem->addAction(openLatestLogAction);
-    fileMenuItem->addSeparator();
-    fileMenuItem->addAction(openDataFolderAction);
-    fileMenuItem->addSeparator();
     fileMenuItem->addAction(quitAction);
 
     return fileMenuItem;
@@ -267,9 +277,8 @@ QMenu* MainWindow::_getFileMenu() {
 
 void MainWindow::UpdateSearch_switchUI(bool isSearching) {
     this->cfugAction->setEnabled(!isSearching);
-    std::string descr = APP_FULL_DENOM;
-    if(isSearching) descr += " - " + I18n::tr()->SearchingForUpdates();
-    this->versionAction->setText(descr.c_str());
+    std::string descr = isSearching ? I18n::tr()->SearchingForUpdates() : I18n::tr()->Menu_CheckForUpgrades();
+    this->cfugAction->setText(descr.c_str());
 }
 
 void MainWindow::_setupAutoUpdate() {

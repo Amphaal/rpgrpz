@@ -9,12 +9,13 @@ cmake_minimum_required(VERSION 3.13.3)
 SET(APP_PUBLISHER "LVWL")
 SET(APP_ROOT_URL "https://zonme.to2x.ovh")
 SET(APP_MAIN_URL ${APP_ROOT_URL}/rpgrpz)
+SET(APP_PATCHNOTE_URL "https://github.com/Amphaal/rpgrpz/releases")
 SET(PEM_CERT_NAME "cacert.pem")
 
 #version
 SET(CMAKE_PROJECT_VERSION_MAJOR 0)
-SET(CMAKE_PROJECT_VERSION_MINOR 5)
-SET(CMAKE_PROJECT_VERSION_PATCH 1)
+SET(CMAKE_PROJECT_VERSION_MINOR 6)
+SET(CMAKE_PROJECT_VERSION_PATCH 0)
 
 
 #set default maintenance tool path
@@ -85,11 +86,12 @@ SET(SOURCES
 ####################
 
 # Define required linked QT libs
-find_package(Qt5 REQUIRED COMPONENTS Core Widgets Network)
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets Network Svg)
 SET(EXT_LIBS 
     Qt5::Widgets 
     Qt5::Core
     Qt5::Network
+    Qt5::Svg
 )
 
 #private libs
@@ -124,6 +126,7 @@ list(APPEND SOURCES
 
 #ui components
 list(APPEND SOURCES
+    src/ui/components/MapView.cpp
     src/ui/components/ChatEdit.cpp
     src/ui/components/LogView.cpp
     src/ui/components/LogScrollView.cpp
@@ -131,6 +134,7 @@ list(APPEND SOURCES
     src/ui/components/ConnectWidget.cpp
     src/ui/components/AudioStreamController.cpp
     src/ui/components/AudioStreamNotifier.cpp
+    src/ui/components/AssetsManager.cpp
 )
 
 #main

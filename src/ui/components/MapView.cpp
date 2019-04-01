@@ -1,27 +1,33 @@
-#pragma once
+#include "MapView.h"
 
-#include <QWidget>
-#include <QtOpenGL/QGLWidget>
-#include <QGraphicsScene>
-#include <QGraphicsView>
 
-class MapView : public QGraphicsView {
+MapView::MapView(QWidget *parent) : QGraphicsView(parent), _scene(new QGraphicsScene) {
+    
+    this->setMinimumSize(400,400);
 
-    public:
-        MapView(QWidget *parent)
-        : QGraphicsView(parent), _scene(new QGraphicsScene) {
-            
-            this->setMinimumSize(400,400);
+    auto background = new QBrush("#EEE", Qt::CrossPattern);
 
-            auto background = new QBrush("#EEE", Qt::CrossPattern);
+    this->setBackgroundBrush(*background);
 
-            this->setBackgroundBrush(*background);
+    this->setScene(this->_scene);
+    
+    //this->_scene->addItem(new QGraphicsSvgItem("C:/Users/Amphaal/Desktop/pp.svg"));
 
-            //auto rect = this->_scene->addRect(QRectF(0, 0, 100, 100));
-            this->setScene(this->_scene);
+}
 
-        }
-
-    private:
-        QGraphicsScene* _scene;
+void MapView::wheelEvent(QWheelEvent *event) {
+    this->zoomBy(qPow(1.2, event->delta() / 240.0));
 };
+
+qreal MapView::zoomFactor() const
+{
+    return this->transform().m11();
+}
+
+void MapView::zoomBy(qreal factor)
+{
+    const qreal currentZoom = this->zoomFactor();
+    if ((factor < 1 && currentZoom < 0.1) || (factor > 1 && currentZoom > 10))
+        return;
+    this->scale(factor, factor);
+}

@@ -10,6 +10,7 @@
 #include <QClipboard>
 #include <QToolTip>
 #include <QGraphicsScene>
+#include <QDesktopServices>
 
 #include <QLabel>
 #include <QStatusBar>
@@ -20,9 +21,11 @@
 #include "src/network/rpz/server/RPZServer.h"
 #include "src/ui/components/ConnectWidget.h"
 
-#include "src/ui/components/MapView.cpp"
+#include "src/ui/components/MapView.h"
 
 #include "src/ui/components/ChatWidget.h"
+
+#include "src/ui/components/AssetsManager.h"
 
 #include "src/ui/components/AudioStreamNotifier.h"
 #include "src/ui/components/AudioStreamController.h"
@@ -44,6 +47,7 @@ class MainWindow : public QMainWindow {
         ConnectWidget* _connectWidget = 0;
         AudioStreamNotifier* _streamNotifier = 0;
         ChatWidget* _cw = 0;
+        AssetsManager* _assetsManager = 0;
         void _initUIApp();
 
         /*statusbar*/
@@ -57,10 +61,10 @@ class MainWindow : public QMainWindow {
 
         /*menu*/
         void _initUIMenu();
-        QAction *versionAction;
         QAction *cfugAction;
         QMenu* _getAboutMenu();
         QMenu* _getFileMenu();
+        QMenu* _getHelpMenu();
 
         /*auto updated*/
         QtAutoUpdater::Updater *updater;

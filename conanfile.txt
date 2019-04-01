@@ -7,6 +7,9 @@ cmake
 cmake_find_package
 cmake_paths
 
+[options]
+qt:qtsvg=True
+
 [imports]
 
 #WINDOWS
@@ -16,3 +19,4 @@ bin, Qt5Widgets*.dll -> ./bin
 bin, Qt5Core*.dll -> ./bin 
 bin, Qt5Gui*.dll -> ./bin
 bin, Qt5Network*.dll -> ./bin 
+bin, Qt5Svg*.dll -> ./bin 
