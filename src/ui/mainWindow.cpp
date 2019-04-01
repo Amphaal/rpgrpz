@@ -8,12 +8,12 @@ MainWindow::MainWindow() {
     this->_setupAutoUpdate();
 
     //initial show
-    this->trueShow();
+    this->_trueShow();
 
     this->_initConnectivity();
 }
 
-void MainWindow::trueShow() {
+void MainWindow::_trueShow() {
     this->showNormal();
     this->activateWindow();
     this->raise();
@@ -37,8 +37,8 @@ void MainWindow::_initConnectivity() {
     /// Chat Server ! //
     ////////////////////
 
-    //auto csThread = new QThread;
-    auto cs = new ChatServer;
+    //auto RPZSThread = new QThread;
+    auto cs = new RPZServer;
     cs->start();
 }
 
@@ -81,18 +81,29 @@ void MainWindow::_initUI() {
     //specific componements
     this->_initUIMenu();
     this->_initUIStatusBar();
+    this->_initUIApp();
+}   
 
+void MainWindow::_initUIApp() {
     //init components
-    this->_initConnectionPanel();
-    this->_initChat();
-    this->_initMapView();
+    this->_connectWidget = new ConnectWidget(this);
+    this->_cw = new ChatWidget(this);
+    this->_mapView = new MapView(this);
+    this->_streamNotifier = new AudioStreamNotifier(this);
+
+    QObject::connect(
+        this->_connectWidget, &ConnectWidget::startingConnection, 
+        [&](RPZClient * cc) {
+            this->_cw->bindToRPZClient(cc);
+        }
+    );
 
     //place them...
     
     //designer
     auto left = new QWidget();
     left->setLayout(new QHBoxLayout);
-    left->layout()->setMargin(0);
+    left->layout()->setContentsMargins(0, 5, 0, 0);
     left->layout()->addWidget(this->_mapView);
     this->centralWidget()->layout()->addWidget(left);
 
@@ -104,26 +115,8 @@ void MainWindow::_initUI() {
     right->layout()->setMargin(0);
     right->layout()->addWidget(this->_connectWidget);
     right->layout()->addWidget(this->_cw);
+    right->layout()->addWidget(this->_streamNotifier);
     this->centralWidget()->layout()->addWidget(right);
-}   
-
-void MainWindow::_initMapView() {
-    this->_mapView = new MapView(this);
-}
-
-void MainWindow::_initConnectionPanel() {
-    this->_connectWidget = new ConnectWidget();
-
-    QObject::connect(
-        this->_connectWidget, &ConnectWidget::startingConnection, 
-        [&](ChatClient * cc) {
-            this->_cw->bindToChatClient(cc);
-        }
-    );
-}
-
-void MainWindow::_initChat() {
-    this->_cw = new ChatWidget(this);
 }
 
 void MainWindow::_initUIMenu() {

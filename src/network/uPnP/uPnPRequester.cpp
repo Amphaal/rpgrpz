@@ -32,13 +32,24 @@ class uPnPRequester : public uPnPThread {
                 //init uPnP...
                 this->_initUPnP();
                 if(retcode != 0) {
-                    emit uPnPDone(retcode, this->targetPort);
+                    emit uPnPError(retcode);
                     return;
                 }
 
-                //register for a redirect...
-                auto result = this->SetRedirectAndTest(lanaddr, this->targetPort, this->targetPort, "TCP", "0", 0);
-                emit uPnPDone(result, this->targetPort);
+                //register for a TCP redirect...
+                auto requester = [&](const char * protocol) {
+                    return this->SetRedirectAndTest(this->lanaddr, this->targetPort, this->targetPort, protocol, "0", 0);
+                };
+                
+                auto resultTCP = requester("TCP");
+                auto resultUDP = requester("UDP");
+
+                if(resultTCP != 0 || resultUDP != 0) {
+                    emit uPnPError(-999);
+                    return;
+                } else {
+                    emit uPnPSuccess("TCP+UDP", this->targetPort);
+                }
             
             } catch(...) { 
                 qWarning() << "UPNP run : exception caught while processing";

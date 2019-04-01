@@ -6,18 +6,19 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
+#include "JSONMethod.h"
+
 class JSONSocket : public QObject {
 
     Q_OBJECT
 
     public:
         JSONSocket(QString logId, QTcpSocket * wrapped = nullptr);
-        void sendJSON(QString method, QVariant data);
+        void sendJSON(JSONMethod method, QVariant data);
         QTcpSocket* socket();
-        
-    signals:
-        void JSONReceived(JSONSocket* wrapper, QString method, QVariant data);
 
+    signals:
+        void JSONReceived(JSONSocket* target, JSONMethod method, QVariant data);
 
     private:
         QString _logId;

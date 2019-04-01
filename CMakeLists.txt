@@ -98,21 +98,43 @@ file(GLOB_RECURSE INT_LIBS
     "libs/*.cpp"
 )
 
-#mandatory explicit generation
+##
+# mandatory explicit generation
+##
+
+#QThread derivatives
 list(APPEND SOURCES
-    src/network/chat/client/ClientThread.h
-    src/network/chat/server/ServerThread.h
+    src/network/rpz/client/RPZCThread.h
+    src/network/rpz/server/RPZSThread.h
+    src/network/audio/client/ACThread.h
+    src/network/audio/server/ASThread.h
     src/network/uPnP/uPnPThread.h
+)
+
+#functionnal components
+list(APPEND SOURCES
+    src/network/rpz/_any/JSONSocket.cpp
+    src/network/audio/client/AudioClient.cpp
+    src/network/audio/server/AudioServer.cpp
+    src/network/rpz/client/RPZClient.cpp
+    src/network/rpz/server/RPZServer.cpp
+    src/network/uPnP/uPnPRequester.cpp
+    src/network/ConnectivityHelper.cpp
+)
+
+#ui components
+list(APPEND SOURCES
     src/ui/components/ChatEdit.cpp
     src/ui/components/LogView.cpp
     src/ui/components/LogScrollView.cpp
     src/ui/components/ChatWidget.cpp
     src/ui/components/ConnectWidget.cpp
-    src/network/chat/_any/JSONSocket.cpp
-    src/network/chat/client/ChatClient.cpp
-    src/network/chat/server/ChatServer.cpp
-    src/network/uPnP/uPnPRequester.cpp
-    src/network/ConnectivityHelper.cpp
+    src/ui/components/AudioStreamController.cpp
+    src/ui/components/AudioStreamNotifier.cpp
+)
+
+#main
+list(APPEND SOURCES
     src/main.cpp
 )
 

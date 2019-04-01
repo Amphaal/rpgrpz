@@ -77,8 +77,12 @@ ConnectivityHelper::~ConnectivityHelper()  {
 }
 
 void ConnectivityHelper::_clearUPnPRequester() {
-    if(this->_upnpThread) { 
-        QObject::disconnect(this->_upnpInitialized);
+    if(this->_upnpThread) {
+        this->_upnpThread->exit();
+        this->_upnpThread->wait();
+        this->_upnpThread->disconnect();
+        delete this->_upnpThread;
+        this->_upnpThread = 0;
     }
 }
 
@@ -86,31 +90,39 @@ void ConnectivityHelper::_tryNegociateUPnPPort() {
     
     this->_clearUPnPRequester();
 
-    auto port = UPNP_DEFAULT_TARGET_PORT.c_str();
+    this->_requestedUPnPPort = UPNP_DEFAULT_TARGET_PORT.c_str();
     auto descr = UPNP_REQUEST_DESCRIPTION.c_str();
 
-    qDebug() << "Connectivity : trying to open uPnP port " << port << " as \"" << descr << "\" ";
+    qDebug() << "Connectivity : trying to open uPnP port " << this->_requestedUPnPPort.c_str() << " as \"" << descr << "\" ";
 
-    this->_upnpThread = new uPnPRequester(port, descr, this);
+    this->_upnpThread = new uPnPRequester(this->_requestedUPnPPort.c_str(), descr, this);
 
-    this->_upnpInitialized = QObject::connect(this->_upnpThread, &uPnPThread::uPnPDone, 
-                                              this, &ConnectivityHelper::onUPnPDone);
+    QObject::connect(
+        this->_upnpThread, &uPnPThread::uPnPSuccess, 
+        this, &ConnectivityHelper::_onUPnPSuccess
+    );
+
+    QObject::connect(
+        this->_upnpThread, &uPnPThread::uPnPError, 
+        this, &ConnectivityHelper::_onUPnPError
+    );
 
     this->_upnpThread->start();
 }
 
-void ConnectivityHelper::onUPnPDone(int errorCode, const char * negociatedPort) {
-    if(errorCode != 0) {
-        qWarning() << "Connectivity : uPnP failed !";
-        emit uPnPStateChanged("Non");
-    } else {
-        std::string out = "OK [port: ";
-        out += negociatedPort;
-        out += "] ";
+void ConnectivityHelper::_onUPnPError(int errorCode) {
+    qWarning() << "Connectivity : uPnP failed !";
+    emit uPnPStateChanged("Non");
+}
 
-        qDebug() << "Connectivity : uPnP " << QString::fromStdString(out);
-        emit uPnPStateChanged(out.c_str());
-    }
+void ConnectivityHelper::_onUPnPSuccess(const char * protocol, const char * negociatedPort) {
+    std::string out = "OK [port: ";
+    out += negociatedPort;
+    out += "] ";
+
+    qDebug() << "Connectivity : uPnP "<< protocol << " " << QString::fromStdString(out);
+    emit uPnPStateChanged(out.c_str());
+
 }
 
 void ConnectivityHelper::_askExternalAddress() {

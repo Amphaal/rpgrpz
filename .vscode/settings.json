@@ -89,6 +89,7 @@
         "qtcpsocket": "cpp",
         "qvariant": "cpp",
         "qglwidget": "cpp",
-        "qgroupbox": "cpp"
+        "qgroupbox": "cpp",
+        "qudpsocket": "cpp"
     }
 }

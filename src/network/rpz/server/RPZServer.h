@@ -12,18 +12,18 @@
 #include <QStringList>
 #include <QMap>
 
-#include "ServerThread.h"
-#include "src/network/chat/_any/JSONSocket.h"
-#include "src/network/chat/_any/JSONRouter.h"
+#include "RPZSThread.h"
+#include "src/network/rpz/_any/JSONSocket.h"
+#include "src/network/rpz/_any/JSONRouter.h"
 
 #include "src/helpers/_const.cpp"
 
-class ChatServer : public ServerThread, public JSONRouter { 
+class RPZServer : public RPZSThread, public JSONRouter { 
     
     Q_OBJECT
 
     public:
-        ChatServer();
+        RPZServer();
         void run() override;
 
     private:
@@ -39,5 +39,5 @@ class ChatServer : public ServerThread, public JSONRouter {
         void _onNewConnection();
         QString _getSocketDisplayName(JSONSocket * clientSocket);
 
-        void _routeIncomingJSON(JSONSocket * wrapper, QString method, QVariant data) override;
+        void _routeIncomingJSON(JSONSocket* target, JSONMethod method, QVariant data) override;
 };

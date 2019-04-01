@@ -9,5 +9,6 @@ class uPnPThread : public QThread {
     Q_OBJECT
         
     signals:
-        void uPnPDone(int errorCode, const char * negociatedPort);
+        void uPnPError(int errorCode);
+        void uPnPSuccess(const char * protocol, const char * negociatedPort);
 };

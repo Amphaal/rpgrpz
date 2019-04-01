@@ -1,6 +1,6 @@
-#include "ChatClient.h"
+#include "RPZClient.h"
 
-ChatClient::ChatClient(QString name, QString domain, QString port) : 
+RPZClient::RPZClient(QString name, QString domain, QString port) : 
                         _name(name), 
                         _domain(domain), 
                         _port(port) {
@@ -9,15 +9,15 @@ ChatClient::ChatClient(QString name, QString domain, QString port) :
 
 }
 
-void ChatClient::_constructorInThread(){
+void RPZClient::_constructorInThread(){
     
     this->_sockWrapper = new JSONSocket("Chat Client");
     auto qq = this->_sockWrapper->socket();
 
     QObject::connect(
         this->_sockWrapper, &JSONSocket::JSONReceived,
-        [&](JSONSocket * wrapper, QString method, QVariant data) {
-            this->_routeIncomingJSON(wrapper, method, data);
+        [&](JSONSocket* target, JSONMethod method, QVariant data) {
+            this->_routeIncomingJSON(target, method, data);
         } 
     );
 
@@ -35,7 +35,7 @@ void ChatClient::_constructorInThread(){
         [&]() {
             
             //tell the server your username
-            this->_sockWrapper->sendJSON("display_name", QStringList(this->_name));
+            this->_sockWrapper->sendJSON(JSONMethod::PlayerHasUsername, QStringList(this->_name));
 
         }
     );
@@ -49,14 +49,14 @@ void ChatClient::_constructorInThread(){
 }
 
 
-void ChatClient::sendMessage(QString messageToSend) {
+void RPZClient::sendMessage(QString messageToSend) {
 
-    this->_sockWrapper->sendJSON("new_message", QStringList(messageToSend));
+    this->_sockWrapper->sendJSON(JSONMethod::MessageFromPlayer, QStringList(messageToSend));
 
     qDebug() << "Chat Client : message sent " << messageToSend; 
 }
 
-void ChatClient::run() {
+void RPZClient::run() {
 
     this->_constructorInThread();
 
@@ -82,29 +82,37 @@ void ChatClient::run() {
 }
 
 
-void ChatClient::_routeIncomingJSON(JSONSocket * wrapper, QString method, QVariant data) {
+void RPZClient::_routeIncomingJSON(JSONSocket* target, JSONMethod method, QVariant data) {
     
-    if(method == "messages_history") {
-       for(auto msg : data.toList()) {
-           auto stdmsg = msg.toString().toStdString();
-           emit receivedMessage(stdmsg);
-       }
-       emit historyReceived();
-    } else if(method == "logged_users") {
-        auto users = data.toList();
-        auto addr = this->getConnectedSocketAddress();
-        emit loggedUsersUpdated(users);
-        emit connected(addr);
-    } else if (method == "new_message") {
-        auto stdmsg = data.toList()[0].toString().toStdString();
-        emit receivedMessage(stdmsg);
-    } else {
-        qWarning() << "Chat Client : unknown method from JSON !";
+    switch(method) {
+        case JSONMethod::ChatLogHistory:
+            for(auto msg : data.toList()) {
+                auto stdmsg = msg.toString().toStdString();
+                emit receivedMessage(stdmsg);
+            }
+            emit historyReceived();
+            break;
+        case JSONMethod::LoggedPlayersChanged:
+            {
+                auto users = data.toList();
+                emit loggedUsersUpdated(users);
+                
+                auto addr = this->getConnectedSocketAddress();
+                emit connected(addr);
+            }
+            break;
+        case JSONMethod::MessageFromPlayer:
+            {
+                auto mfp = data.toList()[0].toString().toStdString();
+                emit receivedMessage(mfp);
+            }
+            break;
+        default:
+            qWarning() << "Chat Client : unknown method from JSON !";
     }
-
 }
 
-void ChatClient::_error(QAbstractSocket::SocketError _socketError) {
+void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
     
     std::string msg;
     
@@ -129,6 +137,6 @@ void ChatClient::_error(QAbstractSocket::SocketError _socketError) {
     this->exit();
 }
 
-QString ChatClient::getConnectedSocketAddress() {
+QString RPZClient::getConnectedSocketAddress() {
     return this->_domain + ":" + this->_port;
 }

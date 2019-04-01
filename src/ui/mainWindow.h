@@ -17,12 +17,15 @@
 #include <QApplication>
 
 #include "src/network/ConnectivityHelper.h"
-#include "src/network/chat/server/ChatServer.h"
+#include "src/network/rpz/server/RPZServer.h"
 #include "src/ui/components/ConnectWidget.h"
 
 #include "src/ui/components/MapView.cpp"
 
 #include "src/ui/components/ChatWidget.h"
+
+#include "src/ui/components/AudioStreamNotifier.h"
+#include "src/ui/components/AudioStreamController.h"
 
 
 class MainWindow : public QMainWindow { 
@@ -30,39 +33,36 @@ class MainWindow : public QMainWindow {
         MainWindow();
 
     private:
-        void trueShow();
-
-        void updateUPnPLabel(std::string state);
-        void updateExtIPLabel(std::string state, bool isOn);
-        void updateIntIPLabel(std::string state);
+        void _trueShow();
+        
+        void _initUI();
 
         ConnectivityHelper* _ipHelper;
-        void _initUI();
         void _initConnectivity();
 
-        MapView* _mapView;
-        void _initMapView();
-
+        MapView* _mapView = 0;
         ConnectWidget* _connectWidget = 0;
-        void _initConnectionPanel();
-        
+        AudioStreamNotifier* _streamNotifier = 0;
         ChatWidget* _cw = 0;
-        void _initChat();
-        void onNewConnectionFromServer(std::string clientIp);
+        void _initUIApp();
 
-        void _initUIMenu();
-        
+        /*statusbar*/
         QLabel* _localIpLabel;
         QLabel* _extIpLabel;
         QLabel* _upnpStateLabel;
+        void updateUPnPLabel(std::string state);
+        void updateExtIPLabel(std::string state, bool isOn);
+        void updateIntIPLabel(std::string state);
         void _initUIStatusBar();
 
+        /*menu*/
+        void _initUIMenu();
         QAction *versionAction;
         QAction *cfugAction;
-
         QMenu* _getAboutMenu();
         QMenu* _getFileMenu();
 
+        /*auto updated*/
         QtAutoUpdater::Updater *updater;
         bool userNotificationOnUpdateCheck = false;
         void UpdateSearch_switchUI(bool isSearching);

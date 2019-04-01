@@ -9,18 +9,18 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-#include "ClientThread.h"
-#include "src/network/chat/_any/JSONSocket.h"
-#include "src/network/chat/_any/JSONRouter.h"
+#include "RPZCThread.h"
+#include "src/network/rpz/_any/JSONSocket.h"
+#include "src/network/rpz/_any/JSONRouter.h"
 
 #include "src/helpers/_const.cpp"
 
-class ChatClient : public ClientThread, public JSONRouter {
+class RPZClient : public RPZCThread, public JSONRouter {
     
     Q_OBJECT
 
     public:
-        ChatClient(QString displayname, QString domain, QString port);
+        RPZClient(QString displayname, QString domain, QString port);
         QString getConnectedSocketAddress();
         void sendMessage(QString messageToSend);
         void run() override;
@@ -35,6 +35,6 @@ class ChatClient : public ClientThread, public JSONRouter {
         void _error(QAbstractSocket::SocketError _socketError);
         void _constructorInThread();
 
-        void _routeIncomingJSON(JSONSocket * wrapper, QString method, QVariant data) override;
+        void _routeIncomingJSON(JSONSocket* target, JSONMethod method, QVariant data) override;
 
 };

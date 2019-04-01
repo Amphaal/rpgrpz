@@ -3,7 +3,7 @@
 #include <QtCore/QThread>
 #include <string>
 
-class ServerThread : public QThread { 
+class RPZSThread : public QThread { 
     
     Q_OBJECT
 

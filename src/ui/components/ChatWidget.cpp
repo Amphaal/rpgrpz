@@ -23,7 +23,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 void ChatWidget::_instUI() {
 
-    this->setTitle("Chat");
+    this->setTitle("Chat de la partie");
     this->setAlignment(Qt::AlignHCenter);
     this->setLayout(new QHBoxLayout);
     
@@ -52,7 +52,7 @@ void ChatWidget::_instUI() {
 }
 
 
-void ChatWidget::_onChatClientError(const std::string errMsg) {    
+void ChatWidget::_onRPZClientError(const std::string errMsg) {    
     
     //out log
     if(!this->serverName.isEmpty()) {
@@ -63,16 +63,16 @@ void ChatWidget::_onChatClientError(const std::string errMsg) {
     this->_DisableUI();
 
 }
-void ChatWidget::_onChatClientReceivedMessage(const std::string message) {
+void ChatWidget::_onRPZClientReceivedMessage(const std::string message) {
     this->writeInChatLog(message);
 }
 
-void ChatWidget::_onChatClientReceivedHistory() {
+void ChatWidget::_onRPZClientReceivedHistory() {
     auto msg = QString("Connecté au serveur (") + this->serverName + ")";
     this->writeInChatLog(msg.toStdString(), ChatWidget::LogType::ServerLog);
 }
 
-void ChatWidget::bindToChatClient(ChatClient * cc) {
+void ChatWidget::bindToRPZClient(RPZClient * cc) {
 
     this->_currentCC = cc;
     this->serverName = cc->getConnectedSocketAddress();
@@ -81,31 +81,31 @@ void ChatWidget::bindToChatClient(ChatClient * cc) {
 
     //on error from client
     QObject::connect(
-        this->_currentCC, &ChatClient::error, 
-        this, &ChatWidget::_onChatClientError
+        this->_currentCC, &RPZClient::error, 
+        this, &ChatWidget::_onRPZClientError
     );
     
     //on message received
     QObject::connect(
-        this->_currentCC, &ChatClient::receivedMessage, 
-        this, &ChatWidget::_onChatClientReceivedMessage
+        this->_currentCC, &RPZClient::receivedMessage, 
+        this, &ChatWidget::_onRPZClientReceivedMessage
     );
 
     //welcome once all history have been received
     QObject::connect(
-        this->_currentCC, &ChatClient::historyReceived, 
-        this, &ChatWidget::_onChatClientReceivedHistory
+        this->_currentCC, &RPZClient::historyReceived, 
+        this, &ChatWidget::_onRPZClientReceivedHistory
     );
 
     //ss
     QObject::connect(
-        this->_currentCC, &ChatClient::loggedUsersUpdated,
-        this, &ChatWidget::_onChatClientloggedUsersUpdated
+        this->_currentCC, &RPZClient::loggedUsersUpdated,
+        this, &ChatWidget::_onRPZClientloggedUsersUpdated
     );
 
     //enable UI at connection
     QObject::connect(
-        this->_currentCC, &ChatClient::connected, 
+        this->_currentCC, &RPZClient::connected, 
         this, &ChatWidget::_EnableUI
     );
 
@@ -146,7 +146,7 @@ void ChatWidget::writeInChatLog(const std::string &message, ChatWidget::LogType 
     this->_chatLog->writeAtEnd(message, colors);
 };
 
-void ChatWidget::_onChatClientloggedUsersUpdated(QVariantList users) {
+void ChatWidget::_onRPZClientloggedUsersUpdated(QVariantList users) {
     this->_usersLog->newLog();
     for(auto user : users) {
         auto un = user.toString().toStdString();

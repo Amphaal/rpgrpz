@@ -27,10 +27,10 @@ void JSONSocket::_onBytesWritten() {
     qDebug() << this->_customLog("json sent !");
 }
 
-void JSONSocket::sendJSON(QString method, QVariant data) {
+void JSONSocket::sendJSON(JSONMethod method, QVariant data) {
     
     //checks
-    if(method.isEmpty() || data.isNull()) {
+    if(data.isNull()) {
         qWarning() << this->_customLog("cannot send JSON as input values are unexpected");  
         return;
     }
@@ -106,13 +106,13 @@ void JSONSocket::_processIncomingAsJson(QByteArray data) {
     }
 
     //check value types
-    auto okTypes = content["_m"].isString();
+    auto okTypes = content["_m"].isDouble();
     if(!okTypes) {
         qWarning() << this->_customLog("JSON received has unexpected data and thus cannot be handled.");
         return;
     }
 
-    auto method = content["_m"].toString();
+    auto method = static_cast<JSONMethod>((int)content["_m"].toDouble());
     emit JSONReceived(this, method, content["_d"].toVariant());
 
     qDebug() << this->_customLog("json received >> " + method);

@@ -1,8 +1,8 @@
-#include "ChatServer.h" 
+#include "RPZServer.h" 
 
-ChatServer::ChatServer() { };
+RPZServer::RPZServer() { };
 
-void ChatServer::run() { 
+void RPZServer::run() { 
 
     this->_server = new QTcpServer;
 
@@ -29,25 +29,25 @@ void ChatServer::run() {
 };
 
 
-void ChatServer::_sendStoredMessages(JSONSocket * clientSocket) {
+void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
 
     //message...
     auto countMsgs = this->_messages.size();
-    clientSocket->sendJSON("messages_history", this->_messages);
+    clientSocket->sendJSON(JSONMethod::ChatLogHistory, this->_messages);
     
     qDebug() << "Chat Server :" << countMsgs << " stored messages sent to " << clientSocket->socket()->peerAddress().toString();
 }
 
-void ChatServer::_broadcastMessage(QString messageToBroadcast) {
+void RPZServer::_broadcastMessage(QString messageToBroadcast) {
 
     for(auto socket : this->_clientSockets) {
-        socket->sendJSON("new_message", QStringList(messageToBroadcast));
+        socket->sendJSON(JSONMethod::MessageFromPlayer, QStringList(messageToBroadcast));
     }
 
     qDebug() << "Chat Server : Broadcasted message to " << this->_clientSockets.size() << " clients";
 }
 
-void ChatServer::_onNewConnection() {
+void RPZServer::_onNewConnection() {
         
         //new connection,store it
         auto clientSocket = new JSONSocket("Chat Server", this->_server->nextPendingConnection());
@@ -65,8 +65,8 @@ void ChatServer::_onNewConnection() {
 
         QObject::connect(
             clientSocket, &JSONSocket::JSONReceived,
-            [&](JSONSocket * wrapper, QString method, QVariant data) {
-                this->_routeIncomingJSON(wrapper, method, data);
+            [&](JSONSocket* target, JSONMethod method, QVariant data) {
+                this->_routeIncomingJSON(target, method, data);
             } 
         );
 
@@ -79,39 +79,43 @@ void ChatServer::_onNewConnection() {
 
 }
 
-void ChatServer::_routeIncomingJSON(JSONSocket * wrapper, QString method, QVariant data) {
+void RPZServer::_routeIncomingJSON(JSONSocket* target, JSONMethod method, QVariant data) {
 
-    if (method == "new_message") {
-        auto rawMsg = data.toList()[0].toString();
-        auto sockUN = this->_getSocketDisplayName(wrapper);
-        auto message = formatChatMessage(sockUN, rawMsg);
+    switch(method) {
+        case JSONMethod::MessageFromPlayer:
+            {
+                auto rawMsg = data.toList()[0].toString();
+                auto sockUN = this->_getSocketDisplayName(target);
+                auto message = formatChatMessage(sockUN, rawMsg);
 
-        this->_messages << message;
+                this->_messages << message;
 
-        //push to all sockets
-        this->_broadcastMessage(message);
-    
-    } else if (method == "display_name") {
-        
-        //bind username to socket
-        auto dn = data.toList()[0].toString();
-        this->_clientDisplayNames[wrapper] = dn;
+                //push to all sockets
+                this->_broadcastMessage(message);
+            }
+            break;
+        case JSONMethod::PlayerHasUsername:
+            {   
+                //bind username to socket
+                auto dn = data.toList()[0].toString();
+                this->_clientDisplayNames[target] = dn;
 
-         this->_broadcastUsers();
-    
-    } else {
-        qWarning() << "Chat Server : unknown method from JSON !";
+                this->_broadcastUsers();
+            }
+            break;
+        default:
+            qWarning() << "Chat Server : unknown method from JSON !";
     }
 
 }
 
-void ChatServer::_broadcastUsers() {
+void RPZServer::_broadcastUsers() {
     for(auto socket : this->_clientSockets) {
-        socket->sendJSON("logged_users", QStringList(this->_clientDisplayNames.values()));
+        socket->sendJSON(JSONMethod::LoggedPlayersChanged, QStringList(this->_clientDisplayNames.values()));
     }
 }
 
-QString ChatServer::_getSocketDisplayName(JSONSocket * clientSocket) {
+QString RPZServer::_getSocketDisplayName(JSONSocket * clientSocket) {
     return this->_clientDisplayNames.contains(clientSocket) ? 
             this->_clientDisplayNames[clientSocket] : 
             clientSocket->socket()->peerAddress().toString();

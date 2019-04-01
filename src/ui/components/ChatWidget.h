@@ -8,7 +8,7 @@
 
 #include <QGroupBox>
 
-#include "src/network/chat/client/ChatClient.h"
+#include "src/network/rpz/client/RPZClient.h"
 
 #include "ChatEdit.h"
 #include "LogScrollView.h"
@@ -26,7 +26,7 @@ class ChatWidget : public QGroupBox {
         void createNewLog();
         void writeInChatLog(const std::string &message, ChatWidget::LogType logType = ChatWidget::LogType::Default);
 
-        void bindToChatClient(ChatClient * cc);
+        void bindToRPZClient(RPZClient * cc);
 
     private:
         LogScrollView *_chatLog = 0;
@@ -36,7 +36,7 @@ class ChatWidget : public QGroupBox {
 
         QString serverName;
 
-        ChatClient* _currentCC = 0;
+        RPZClient* _currentCC = 0;
 
         void _sendMessage();
 
@@ -46,9 +46,9 @@ class ChatWidget : public QGroupBox {
         void _EnableUI();
 
         //
-        void _onChatClientError(const std::string errMsg);
-        void _onChatClientReceivedMessage(const std::string message);
-        void _onChatClientReceivedHistory();
-        void _onChatClientloggedUsersUpdated(QVariantList users);
+        void _onRPZClientError(const std::string errMsg);
+        void _onRPZClientReceivedMessage(const std::string message);
+        void _onRPZClientReceivedHistory();
+        void _onRPZClientloggedUsersUpdated(QVariantList users);
 
 };

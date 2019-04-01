@@ -11,15 +11,15 @@
 #include <QGroupBox>
 
 #include "src/helpers/_const.cpp"
-#include "src/network/chat/client/ChatClient.h"
+#include "src/network/rpz/client/RPZClient.h"
 
 class ConnectWidget : public QGroupBox {
 
     Q_OBJECT
 
     signals:
-        void connectionSuccessful(ChatClient* cc);
-        void startingConnection(ChatClient* cc);
+        void connectionSuccessful(RPZClient* cc);
+        void startingConnection(RPZClient* cc);
 
     public:
         ConnectWidget(QWidget * parent = nullptr);
@@ -32,7 +32,7 @@ class ConnectWidget : public QGroupBox {
         QPushButton* _connectBtn = 0;
         QMetaObject::Connection _connectBtnLink;
 
-        ChatClient* _cc = 0;
+        RPZClient* _cc = 0;
         bool _connected = false;
         
         void _tryConnectToServer();
@@ -41,6 +41,6 @@ class ConnectWidget : public QGroupBox {
         void _setConnectBtnState(bool readyForConnection = true);
         void _destroyClient();
 
-        void _onChatClientError(const std::string errMsg);
-        void _onChatClientConnected();
+        void _onRPZClientError(const std::string errMsg);
+        void _onRPZClientConnected();
 };  

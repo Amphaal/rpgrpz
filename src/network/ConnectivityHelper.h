@@ -34,8 +34,8 @@ class ConnectivityHelper : public QObject
         QNetworkAccessManager* _nam = 0;
         QNetworkConfigurationManager* _ncm = 0;
 
+        std::string _requestedUPnPPort;
         uPnPRequester* _upnpThread = 0;
-        QMetaObject::Connection _upnpInitialized;
 
         void _debugNetworkConfig();
         std::string _getWaitingText();
@@ -50,7 +50,8 @@ class ConnectivityHelper : public QObject
 
         void _pickPreferedConfiguration();
 
-        void onUPnPDone(int errorCode, const char * negociatedPort);
+        void _onUPnPSuccess(const char * protocol, const char * negociatedPort);
+        void _onUPnPError(int errorCode);
         void networkChanged(QNetworkAccessManager::NetworkAccessibility accessible);
 
         void _mustReInit(QNetworkConfiguration config);

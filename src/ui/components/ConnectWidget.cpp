@@ -11,7 +11,7 @@ ConnectWidget::ConnectWidget(QWidget * parent) : QGroupBox(parent),
 
     //this
     this->setLayout(new QHBoxLayout);
-    this->setTitle("Connexion");
+    this->setTitle("Connexion à une session");
     this->setAlignment(Qt::AlignHCenter);
 
     //name target
@@ -80,23 +80,23 @@ void ConnectWidget::_tryConnectToServer() {
 
     //connect..
     this->_destroyClient();
-    this->_cc = new ChatClient(nt_text, dt_text, pt_text);
+    this->_cc = new RPZClient(nt_text, dt_text, pt_text);
     emit startingConnection(this->_cc);
     
     QObject::connect(
-        this->_cc, &ChatClient::connected, 
-        this, &ConnectWidget::_onChatClientConnected
+        this->_cc, &RPZClient::connected, 
+        this, &ConnectWidget::_onRPZClientConnected
     );
 
     QObject::connect(
-        this->_cc, &ChatClient::error, 
-        this, &ConnectWidget::_onChatClientError
+        this->_cc, &RPZClient::error, 
+        this, &ConnectWidget::_onRPZClientError
     );
 
     this->_cc->start();
 }
 
-void ConnectWidget::_onChatClientError(const std::string errMsg) {
+void ConnectWidget::_onRPZClientError(const std::string errMsg) {
     if(!this->_connected) {
         QMessageBox::information(this, 
             QString("Erreur lors de la connexion"), 
@@ -106,7 +106,7 @@ void ConnectWidget::_onChatClientError(const std::string errMsg) {
 
     this->_setConnectBtnState(true);
 }
-void ConnectWidget::_onChatClientConnected() {
+void ConnectWidget::_onRPZClientConnected() {
     this->_setConnectBtnState(false);
     emit connectionSuccessful(this->_cc);
 }
@@ -115,6 +115,7 @@ void ConnectWidget::_destroyClient() {
     if(this->_cc) {
         this->_cc->exit();
         this->_cc->wait();
+        this->_cc->disconnect();
         delete this->_cc;
         this->_cc = 0;
     }

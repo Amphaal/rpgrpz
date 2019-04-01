@@ -2,7 +2,7 @@
 
 #include <QThread>
 
-class ClientThread : public QThread {
+class RPZCThread : public QThread {
     
     Q_OBJECT
 
