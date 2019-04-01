@@ -38,12 +38,15 @@ void ConnectivityHelper::_mustReInit(QNetworkConfiguration config) {
     }
 }
 
+QList<QNetworkConfiguration> ConnectivityHelper::_getDefinedConfiguration() {
+    auto filter = QNetworkConfiguration::StateFlags(QNetworkConfiguration::Defined);
+    auto filteredConfs = this->_ncm->allConfigurations(filter);
+    return filteredConfs;
+}
+
 void ConnectivityHelper::_pickPreferedConfiguration() {
     
-    auto filter = QNetworkConfiguration::StateFlags(QNetworkConfiguration::Defined);
-    auto filteredConfs = _ncm->allConfigurations(filter);
-
-    for(auto conf : filteredConfs) {
+    for(auto conf : this->_getDefinedConfiguration()) {
 
         auto purpose = conf.purpose();
         auto type = conf.type();
@@ -54,6 +57,7 @@ void ConnectivityHelper::_pickPreferedConfiguration() {
         auto unauthorizedInterface = name.contains("npcap", Qt::CaseInsensitive) ||
                              name.contains("virtualbox", Qt::CaseInsensitive) ||
                              name.contains("bluetooth", Qt::CaseInsensitive) ||
+                             name.contains("pseudo", Qt::CaseInsensitive) ||
                              name.contains("WAN", Qt::CaseSensitive);
         if(unauthorizedInterface) continue;
         
@@ -207,9 +211,6 @@ std::string ConnectivityHelper::_getErrorText() {
 
 void ConnectivityHelper::_debugNetworkConfig() {
     
-    //active...
-    auto activeConf = this->_nam->configuration();
-
     auto _debug = [&](std::string descr, QNetworkConfiguration &config) {
         qDebug() << "Connectivity :" << QString::fromStdString(descr)
                 << ">> name:" << config.name() 
@@ -218,5 +219,11 @@ void ConnectivityHelper::_debugNetworkConfig() {
                 << ", bearer:" << config.bearerTypeName();
     };
 
+    for (auto config : this->_getDefinedConfiguration()) {
+        _debug("defined configuration", config);
+    }
+
+    //active...
+    auto activeConf = this->_nam->configuration();
     _debug("active configuration", activeConf);
 }

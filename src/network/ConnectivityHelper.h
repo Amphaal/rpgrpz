@@ -55,5 +55,7 @@ class ConnectivityHelper : public QObject
         void networkChanged(QNetworkAccessManager::NetworkAccessibility accessible);
 
         void _mustReInit(QNetworkConfiguration config);
+
+        QList<QNetworkConfiguration> _getDefinedConfiguration();
         
 };

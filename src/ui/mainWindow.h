@@ -37,10 +37,12 @@ class MainWindow : public QMainWindow {
 
     private:
         void _trueShow();
+        void closeEvent(QCloseEvent *event) override;
         
         void _initUI();
 
         ConnectivityHelper* _ipHelper;
+        RPZServer* _chatServer = 0;
         void _initConnectivity();
 
         MapView* _mapView = 0;
@@ -72,6 +74,6 @@ class MainWindow : public QMainWindow {
         void UpdateSearch_switchUI(bool isSearching);
         void _setupAutoUpdate();
         void onUpdateChecked(bool hasUpdate, bool hasError);
-        void requireUpdateCheckFromUser();;
+        void requireUpdateCheckFromUser();
         void checkForAppUpdates();
 };

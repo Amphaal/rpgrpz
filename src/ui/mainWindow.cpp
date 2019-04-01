@@ -19,6 +19,18 @@ void MainWindow::_trueShow() {
     this->raise();
 }
 
+//handle clean close
+void MainWindow::closeEvent(QCloseEvent *event) {
+    
+    if (this->_chatServer && this->_chatServer->isRunning()) {
+        this->_chatServer->exit();
+        this->_chatServer->wait();
+    }
+
+    event->accept();
+}
+
+
 void MainWindow::_initConnectivity() {
     
     ////////////////////////////
@@ -37,9 +49,8 @@ void MainWindow::_initConnectivity() {
     /// Chat Server ! //
     ////////////////////
 
-    //auto RPZSThread = new QThread;
-    auto cs = new RPZServer;
-    cs->start();
+    this->_chatServer = new RPZServer;
+    this->_chatServer->start();
 }
 
 void MainWindow::updateUPnPLabel(std::string state) {
