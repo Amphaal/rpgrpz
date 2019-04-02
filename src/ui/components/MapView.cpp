@@ -3,7 +3,6 @@
 
 MapView::MapView(QWidget *parent) : QGraphicsView(parent), _scene(new QGraphicsScene), _latestPosDrop(new QPoint) {
     
-    this->setMinimumSize(400,400);
     this->setAcceptDrops(true);
     this->setInteractive(true);
     this->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);

@@ -135,7 +135,6 @@ void MainWindow::_initUIApp() {
 
     //Chat...
     auto right = new QWidget;
-    right->setMinimumSize(400,400);
     right->setMaximumWidth(600);
     right->setLayout(new QVBoxLayout);
     right->layout()->setMargin(0);
