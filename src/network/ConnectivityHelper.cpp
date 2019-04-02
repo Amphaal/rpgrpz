@@ -81,6 +81,9 @@ ConnectivityHelper::~ConnectivityHelper()  {
 }
 
 void ConnectivityHelper::_clearUPnPRequester() {
+    
+    this->_upnp_extIp = "";
+    
     if(this->_upnpThread) {
         this->_upnpThread->exit();
         this->_upnpThread->wait();
@@ -111,8 +114,18 @@ void ConnectivityHelper::_tryNegociateUPnPPort() {
         this, &ConnectivityHelper::_onUPnPError
     );
 
+    QObject::connect(
+        this->_upnpThread, &uPnPThread::uPnPExtIpFound, 
+        this, &ConnectivityHelper::_onUPnPExtIpFound
+    );
+
     this->_upnpThread->start();
 }
+
+void ConnectivityHelper::_onUPnPExtIpFound(std::string extIp) {
+    this->_upnp_extIp = extIp;
+    emit remoteAddressStateChanged(extIp, true);
+};
 
 void ConnectivityHelper::_onUPnPError(int errorCode) {
     qWarning() << "Connectivity : uPnP failed !";
@@ -180,20 +193,25 @@ void ConnectivityHelper::_getLocalAddress() {
     }
 };
 
-void ConnectivityHelper::_onExternalAddressRequestResponse(QNetworkReply* networkReply)
-{   
+void ConnectivityHelper::_onExternalAddressRequestResponse(QNetworkReply* networkReply) {   
+    
+    //prepare
     auto err = networkReply->error();
     networkReply->deleteLater();
+
+    //if upnp found it already, do nothing
+    if(this->_upnp_extIp.length() > 0) return;
     
+    //if network error
     if(err) {
         qWarning() << "Connectivity : ipify.org cannot be reached !";
         emit remoteAddressStateChanged(this->_getErrorText());
         return;
     }
-    auto ip = QJsonDocument::fromJson(networkReply->readAll()).object().value("ip").toString();
-    
-    qDebug() << "Connectivity : ipify.org responded our external IP is " << ip;
 
+    //else get the ip from the response
+    auto ip = QJsonDocument::fromJson(networkReply->readAll()).object().value("ip").toString();
+    qDebug() << "Connectivity : ipify.org responded our external IP is " << ip;
     emit remoteAddressStateChanged(ip.toStdString().c_str(), true);
 };
 

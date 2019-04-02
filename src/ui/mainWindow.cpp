@@ -102,6 +102,7 @@ void MainWindow::_initUIApp() {
     this->_mapView = new MapView(this);
     this->_streamNotifier = new AudioStreamNotifier(this);
     this->_assetsManager = new AssetsManager(this);
+    this->_mapTools = new MapTools(this);
 
     QObject::connect(
         this->_connectWidget, &ConnectWidget::startingConnection, 
@@ -110,15 +111,25 @@ void MainWindow::_initUIApp() {
         }
     );
 
+    QObject::connect(
+        this->_mapTools, &QToolBar::actionTriggered,
+        this->_mapView, &MapView::toolSelectionChanged
+    );
+
     //place them...
     
     //assets
-    this->centralWidget()->layout()->addWidget(this->_assetsManager);
+    auto tabs = new QTabWidget(this);
+    tabs->addTab(this->_assetsManager, "Boite à jouets");
+    tabs->addTab(new QWidget, "Carte");
+    this->centralWidget()->layout()->addWidget(tabs);
 
     //designer
     auto designer = new QWidget();
-    designer->setLayout(new QHBoxLayout);
-    designer->layout()->setContentsMargins(0, 5, 0, 0);
+    designer->setLayout(new QVBoxLayout);
+    designer->layout()->setMargin(0);
+    designer->layout()->setSpacing(2);
+    designer->layout()->addWidget(this->_mapTools);
     designer->layout()->addWidget(this->_mapView);
     this->centralWidget()->layout()->addWidget(designer);
 

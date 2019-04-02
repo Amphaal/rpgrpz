@@ -18,6 +18,8 @@ static const std::string DEBUG_APP_FILE_APPENDICE = IS_DEBUG_APP ? ".debug" : ""
 static const std::string LOCAL_ICON_PNG_PATH = ":/icons/rpgrpz.png";
 static const std::string LOG_FILE = "/rpgrpz" + DEBUG_APP_FILE_APPENDICE + ".log";
 static const std::string LATEST_LOG_FILE = "/rpgrpz.latest" + DEBUG_APP_FILE_APPENDICE + ".log";
+static const std::string ASSETS_PATH = "/resources";
+static const std::string ASSETS_JSON_COORDINATOR_FILENAME = "/resources.json";
 static const std::string UPNP_DEFAULT_TARGET_PORT = "31137";
 static const std::string UPNP_REQUEST_DESCRIPTION = "RPGRPZ";
 
@@ -33,6 +35,14 @@ static QString formatChatMessage(QString displayName, QString message) {
     auto name = displayName + " a dit : ";
     auto fullMsg = ts + name + "“" + message + "”";
     return fullMsg;
+}
+
+static std::string getAssetsFileCoordinatorLocation() {
+    return getAppDataLocation() + ASSETS_JSON_COORDINATOR_FILENAME;
+}
+
+static std::string getAssetsFolderLocation() {
+    return getAppDataLocation() + ASSETS_PATH;
 }
 
 static std::string getLogFileLocation() {

@@ -5,8 +5,8 @@
             "defines": [],
             "browse": {
                 "path": [
-                    "${env:USERPROFILE}data",
-                    "${env:SYSTEMDRIVE}.conan"
+                    "${env:USERPROFILE}/data",
+                    "${env:SYSTEMDRIVE}/.conan"
                 ]
             },
             "windowsSdkVersion": "10.0.17134.0",

@@ -93,6 +93,12 @@
         "qudpsocket": "cpp",
         "qtmath": "cpp",
         "qsvgrenderer": "cpp",
-        "qtsvg": "cpp"
+        "qtsvg": "cpp",
+        "qtreeview": "cpp",
+        "qtreewidget": "cpp",
+        "qmimedatabase": "cpp",
+        "qdebug": "cpp",
+        "qtoolbutton": "cpp",
+        "qpushbutton": "cpp"
     }
 }

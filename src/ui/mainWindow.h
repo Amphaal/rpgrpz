@@ -11,6 +11,7 @@
 #include <QToolTip>
 #include <QGraphicsScene>
 #include <QDesktopServices>
+#include <QTabWidget>
 
 #include <QLabel>
 #include <QStatusBar>
@@ -19,16 +20,14 @@
 
 #include "src/network/ConnectivityHelper.h"
 #include "src/network/rpz/server/RPZServer.h"
+
 #include "src/ui/components/ConnectWidget.h"
-
 #include "src/ui/components/MapView.h"
-
 #include "src/ui/components/ChatWidget.h"
-
 #include "src/ui/components/AssetsManager.h"
-
 #include "src/ui/components/AudioStreamNotifier.h"
 #include "src/ui/components/AudioStreamController.h"
+#include "src/ui/components/MapTools.h"
 
 
 class MainWindow : public QMainWindow { 
@@ -50,6 +49,7 @@ class MainWindow : public QMainWindow {
         AudioStreamNotifier* _streamNotifier = 0;
         ChatWidget* _cw = 0;
         AssetsManager* _assetsManager = 0;
+        MapTools* _mapTools = 0;
         void _initUIApp();
 
         /*statusbar*/

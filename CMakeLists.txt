@@ -15,7 +15,7 @@ SET(PEM_CERT_NAME "cacert.pem")
 #version
 SET(CMAKE_PROJECT_VERSION_MAJOR 0)
 SET(CMAKE_PROJECT_VERSION_MINOR 6)
-SET(CMAKE_PROJECT_VERSION_PATCH 1)
+SET(CMAKE_PROJECT_VERSION_PATCH 3)
 
 
 #set default maintenance tool path
@@ -126,6 +126,8 @@ list(APPEND SOURCES
 
 #ui components
 list(APPEND SOURCES
+    src/ui/components/MapTools.cpp
+    src/ui/components/AssetsNavigator.cpp
     src/ui/components/MapView.cpp
     src/ui/components/ChatEdit.cpp
     src/ui/components/LogView.cpp

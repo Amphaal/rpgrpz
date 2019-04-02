@@ -125,6 +125,17 @@ class uPnPRequester : public uPnPThread {
 
                     qDebug() << "UPNP Inst : Local LAN ip address " << lanaddr << "\n";
 
+                    char externalIPAddress[40];
+                    int r = UPNP_GetExternalIPAddress(urls.controlURL,
+                        data.first.servicetype,
+                        externalIPAddress);
+                    if(r != UPNPCOMMAND_SUCCESS)
+                        qWarning() << "UPNP AskRedirect : GetExternalIPAddress No IGD UPnP Device.\n";
+                    else {
+                        qDebug() << "UPNP AskRedirect : ExternalIPAddress = " << externalIPAddress <<"\n";
+                        emit uPnPExtIpFound(externalIPAddress);
+                    }
+
                 }
                 else {
                     qWarning() << "UPNP Inst : No valid UPNP Internet Gateway Device found.\n";
@@ -168,8 +179,9 @@ class uPnPRequester : public uPnPThread {
                             externalIPAddress);
             if(r!=UPNPCOMMAND_SUCCESS)
                 qWarning() << "UPNP AskRedirect : GetExternalIPAddress No IGD UPnP Device.\n";
-            else
+            else {
                 qDebug() << "UPNP AskRedirect : ExternalIPAddress = " << externalIPAddress <<"\n";
+            }
 
             if (addAny) {
                 r = UPNP_AddAnyPortMapping(urls.controlURL, data.first.servicetype,
