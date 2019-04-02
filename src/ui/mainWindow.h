@@ -12,6 +12,7 @@
 #include <QGraphicsScene>
 #include <QDesktopServices>
 #include <QTabWidget>
+#include <QSplitter>
 
 #include <QLabel>
 #include <QStatusBar>

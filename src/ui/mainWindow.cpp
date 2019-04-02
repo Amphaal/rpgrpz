@@ -6,11 +6,11 @@ MainWindow::MainWindow() {
     //init...
     this->_initUI();
     this->_setupAutoUpdate();
+    this->_initConnectivity();
 
     //initial show
-    this->_trueShow();
-
-    this->_initConnectivity();
+    this->resize(800, 600);
+    this->showMaximized();
 }
 
 void MainWindow::_trueShow() {
@@ -83,11 +83,11 @@ void MainWindow::_initUI() {
     this->setWindowIcon(QIcon(LOCAL_ICON_PNG_PATH.c_str()));
 
     //central widget
-    auto centralW = new QWidget(this);
+    auto centralW = new QSplitter(this);
     centralW->setLayout(new QHBoxLayout);
+    centralW->setContentsMargins(10, 5, 10, 10);
     this->setCentralWidget(centralW);
-    this->centralWidget()->layout()->setContentsMargins(10, 5, 10, 10);
-    this->centralWidget()->layout()->setSpacing(15);
+
 
     //specific componements
     this->_initUIMenu();
@@ -96,6 +96,7 @@ void MainWindow::_initUI() {
 }   
 
 void MainWindow::_initUIApp() {
+    
     //init components
     this->_connectWidget = new ConnectWidget(this);
     this->_cw = new ChatWidget(this);
@@ -122,16 +123,15 @@ void MainWindow::_initUIApp() {
     auto tabs = new QTabWidget(this);
     tabs->addTab(this->_assetsManager, "Boite à jouets");
     tabs->addTab(new QWidget, "Carte");
-    this->centralWidget()->layout()->addWidget(tabs);
 
     //designer
     auto designer = new QWidget();
+    designer->setSizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Minimum);
     designer->setLayout(new QVBoxLayout);
     designer->layout()->setMargin(0);
     designer->layout()->setSpacing(2);
     designer->layout()->addWidget(this->_mapTools);
     designer->layout()->addWidget(this->_mapView);
-    this->centralWidget()->layout()->addWidget(designer);
 
     //Chat...
     auto right = new QWidget;
@@ -142,7 +142,18 @@ void MainWindow::_initUIApp() {
     right->layout()->addWidget(this->_connectWidget);
     right->layout()->addWidget(this->_cw);
     right->layout()->addWidget(this->_streamNotifier);
+
+
+    //final
+    this->centralWidget()->layout()->addWidget(tabs);
+    this->centralWidget()->layout()->addWidget(designer);
     this->centralWidget()->layout()->addWidget(right);
+    
+    auto c = (QSplitter*)this->centralWidget();
+    c->setStretchFactor(0, 0);
+    c->setStretchFactor(1, 1);
+    c->setStretchFactor(2, 0);
+
 }
 
 void MainWindow::_initUIMenu() {
