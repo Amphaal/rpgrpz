@@ -5,10 +5,19 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), _scene(new QGraphicsS
     
     this->setAcceptDrops(true);
     this->setInteractive(true);
-    this->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
+    
+    //openGL activation
+    this->setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers | QGL::DirectRendering)));
+    this->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
+    this->update();
 
+    //background
     auto background = new QBrush("#EEE", Qt::CrossPattern);
     this->setBackgroundBrush(*background);
+    this->setCacheMode(QGraphicsView::CacheBackground);
+
+    //optimisations
+    //this->setOptimizationFlags( QFlags<OptimizationFlag>(QGraphicsView::DontSavePainterState | QGraphicsView::DontAdjustForAntialiasing));
 
     //define scene
     this->setScene(this->_scene);
@@ -26,30 +35,36 @@ void MapView::toolSelectionChanged(QAction *action) {
 }
 
 //////////
-/* MOVE */
+/* TOOL */
 //////////
 
 void MapView::mouseMoveEvent(QMouseEvent *event) {
-
+    switch(this->_selectedTool) {
+        case MapTools::Actions::Draw:
+                this->_drawLineTo(this->mapToScene(event->pos()));
+            break;
+    }
 }
 
 void MapView::mousePressEvent(QMouseEvent *event) {
+    
     if (event->button() == Qt::MouseButton::MiddleButton) {
-        this->_moveMode = true;
+        this->_selectedTool = MapTools::Actions::Navigate;
         this->setCursor(Qt::SizeAllCursor);
     }
+
+    this->_lastPoint = this->mapToScene(event->pos());
 }
 
 void MapView::mouseReleaseEvent(QMouseEvent *event) {
     if (event->button() == Qt::MouseButton::MiddleButton) {
-        this->_moveMode = false;
+        this->_selectedTool = MapTools::Actions::Draw;
         this->setCursor(Qt::ArrowCursor);
     }
 }
 
-
 //////////////
-/* END MOVE */
+/* END TOOL */
 //////////////
 
 //////////
@@ -58,7 +73,7 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
 
 void MapView::wheelEvent(QWheelEvent *event) {
     auto factor = qPow(1.2, event->delta() / 240.0);
-    this->zoomBy(factor);
+    this->_zoomBy(factor);
 };
 
 qreal MapView::zoomFactor() const
@@ -66,7 +81,7 @@ qreal MapView::zoomFactor() const
     return this->transform().m11();
 }
 
-void MapView::zoomBy(qreal factor)
+void MapView::_zoomBy(qreal factor)
 {
     const qreal currentZoom = this->zoomFactor();
     this->scale(factor, factor);
@@ -76,6 +91,9 @@ void MapView::zoomBy(qreal factor)
 /* END ZOOM */
 //////////////
 
+//////////
+/* DROP */
+//////////
 
 void MapView::dropEvent(QDropEvent *event) {
     
@@ -105,4 +123,21 @@ void MapView::dragEnterEvent(QDragEnterEvent *event) {
         event->acceptProposedAction();
     }
 
+}
+
+//////////////
+/* END DROP */
+//////////////
+
+void MapView::_drawLineTo(const QPointF &endPoint)
+{
+
+    auto line = QLineF(this->_lastPoint, endPoint);
+    auto pen = QPen(this->_penColor, this->_penWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    this->_scene->addLine(line, pen);
+
+    // int rad = (this->_penWidth / 2) + 2;
+    // auto rect = QRect(this->_lastPoint, endPoint);
+    // this->_scene->update(rect.normalized().adjusted(-rad, -rad, +rad, +rad));
+    this->_lastPoint = endPoint;
 }

@@ -15,7 +15,7 @@ SET(PEM_CERT_NAME "cacert.pem")
 #version
 SET(CMAKE_PROJECT_VERSION_MAJOR 0)
 SET(CMAKE_PROJECT_VERSION_MINOR 6)
-SET(CMAKE_PROJECT_VERSION_PATCH 6)
+SET(CMAKE_PROJECT_VERSION_PATCH 7)
 
 #set default maintenance tool path
 SET(MAINTENANCE_TOOL_LOCATION "")
@@ -85,12 +85,13 @@ SET(SOURCES
 ####################
 
 # Define required linked QT libs
-find_package(Qt5 REQUIRED COMPONENTS Core Widgets Network Svg)
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets Network Svg OpenGL)
 SET(EXT_LIBS 
     Qt5::Widgets 
     Qt5::Core
     Qt5::Network
     Qt5::Svg
+    Qt5::OpenGL
 )
 
 #private libs

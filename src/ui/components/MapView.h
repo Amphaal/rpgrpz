@@ -9,6 +9,7 @@
 #include <QTreeWidgetItem>
 #include <QVariant>
 #include <QAction>
+#include <QGLWidget>
 
 #include "MapTools.h"
 #include "AssetsNavigator.h"
@@ -34,7 +35,12 @@ class MapView : public QGraphicsView {
         QGraphicsScene* _scene;
         QPoint* _latestPosDrop;
 
-        bool _moveMode = false;
+        bool _selectedTool = MapTools::Actions::Draw;
 
-        void zoomBy(qreal factor);
+        void _zoomBy(qreal factor);
+
+        QPointF _lastPoint;
+        int _penWidth = 1;
+        QColor _penColor = Qt::blue;
+        void _drawLineTo(const QPointF &endPoint);
 };
