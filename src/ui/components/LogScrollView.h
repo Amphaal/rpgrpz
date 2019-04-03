@@ -10,7 +10,7 @@ class LogScrollView : public QScrollArea {
     public:
         LogScrollView(QWidget *parent = nullptr);
 
-        void writeAtEnd(const std::string & newMessage, QPalette* colorPalette = nullptr);
+        void writeAtEnd(const std::string & newMessage, QPalette* colorPalette = nullptr, QPixmap* pixAsIcon = nullptr);
 
         void newLog();
         void clearLog();

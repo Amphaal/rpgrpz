@@ -7,22 +7,38 @@ LogView::LogView(QWidget *parent) : QWidget(parent) {
     this->layout()->setMargin(0);
 }
 
-QUuid LogView::writeAtEnd(const std::string & newMessage, QPalette* colorPalette) {
+QUuid LogView::writeAtEnd(const std::string & newMessage, QPalette* colorPalette, QPixmap* pixAsIcon) {
     
-    auto msg = QString::fromStdString(newMessage);
-    auto label = new QLabel(msg);
-    label->setWordWrap(true);
-    label->setAutoFillBackground(true);
-    label->setContentsMargins(10, 3, 10, 3);
-    
-    if(colorPalette) {
-        label->setPalette(*colorPalette);
+    //container
+    auto line = new QWidget;
+    line->setLayout(new QHBoxLayout);
+    line->layout()->setContentsMargins(10, 3, 10, 3);
+    line->setAutoFillBackground(true);
+
+    //logo part
+    if(pixAsIcon) {
+        auto icon = new QLabel; 
+        icon->setMargin(0); 
+        icon->setPixmap(pixAsIcon->scaled(14, 14));
+        icon->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+        line->layout()->addWidget(icon);
     }
 
-    //add label to layout
+    //text part
+    auto msg = QString::fromStdString(newMessage);
+    auto label = new QLabel(msg);
+    label->setMargin(0);
+    label->setWordWrap(true);
+    line->layout()->addWidget(label);
+    
+    if(colorPalette) {
+        line->setPalette(*colorPalette);
+    }
+
+    //add container to layout
     auto id = QUuid::createUuid();
-    this->_lines.insert(id, label);
-    this->layout()->addWidget(label);
+    this->_lines.insert(id, line);
+    this->layout()->addWidget(line);
 
     return id;
 }

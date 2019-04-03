@@ -20,10 +20,11 @@ LogScrollView::LogScrollView(QWidget *parent) : QScrollArea(parent) {
 
 }
 
-void LogScrollView::writeAtEnd(const std::string & newMessage, QPalette* colorPalette) {
+void LogScrollView::writeAtEnd(const std::string & newMessage, QPalette* colorPalette, QPixmap* pixAsIcon) {
+    
     if(!this->_log) return;
 
-    this->_log->writeAtEnd(newMessage, colorPalette);
+    this->_log->writeAtEnd(newMessage, colorPalette, pixAsIcon);
 
 }
 

@@ -50,6 +50,7 @@ void ChatWidget::_instUI() {
     ////////////////
 
     auto _right = [&]() {
+        this->_usersLog->setMinimumWidth(100);
         return this->_usersLog;
     };
 
@@ -165,6 +166,6 @@ void ChatWidget::_onRPZClientloggedUsersUpdated(QVariantList users) {
     this->_usersLog->newLog();
     for(auto user : users) {
         auto un = user.toString().toStdString();
-        this->_usersLog->writeAtEnd(un);
+        this->_usersLog->writeAtEnd(un, nullptr, &QPixmap(":/icons/app/user.png"));
     }
 }

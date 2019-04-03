@@ -4,6 +4,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QStyleFactory>
 #include <QSplashScreen>
+#include <QImageReader>
 
 #include "src/helpers/_const.cpp"
 #include "src/helpers/_messageHandler.cpp"
@@ -35,6 +36,9 @@ int main(int argc, char** argv){
 
     //message handler
     qInstallMessageHandler(msgHandler::customMO);
+
+    //preload log
+    qDebug() << "handled image formats " << QImageReader::supportedImageFormats();
 
     //fetch main window
     AppLoader loader;
