@@ -15,7 +15,6 @@
 #include <windows.h>
 
 static const std::string DEBUG_APP_FILE_APPENDICE = IS_DEBUG_APP ? ".debug" : "";
-static const std::string LOCAL_ICON_PNG_PATH = ":/icons/rpgrpz.png";
 static const std::string LOG_FILE = "/rpgrpz" + DEBUG_APP_FILE_APPENDICE + ".log";
 static const std::string LATEST_LOG_FILE = "/rpgrpz.latest" + DEBUG_APP_FILE_APPENDICE + ".log";
 static const std::string ASSETS_PATH = "/resources";

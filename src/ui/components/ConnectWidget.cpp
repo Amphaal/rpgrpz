@@ -13,13 +13,16 @@ ConnectWidget::ConnectWidget(QWidget * parent) : QGroupBox(parent),
     this->setLayout(new QHBoxLayout);
     this->setTitle("Connexion à une session");
     this->setAlignment(Qt::AlignHCenter);
+    this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
 
     //name target
+    this->_nameTarget->addAction(QIcon(":/icons/app/user.png"), QLineEdit::LeadingPosition);
     this->_nameTarget->setPlaceholderText("Nom de joueur");
     this->_nameTarget->setText(settings.value("name", "").toString());
 
 
     //domain target
+    this->_domainTarget->addAction(QIcon(":/icons/app/server.png"), QLineEdit::LeadingPosition);
     this->_domainTarget->setPlaceholderText("IP ou domaine du serveur");
     this->_domainTarget->setText(settings.value("domain", "localhost").toString());
 
@@ -29,6 +32,7 @@ ConnectWidget::ConnectWidget(QWidget * parent) : QGroupBox(parent),
     sep->setText(":");
 
     //port target
+    this->_portTarget->addAction(QIcon(":/icons/app/port.png"), QLineEdit::LeadingPosition);
     this->_portTarget->setValidator(new QIntValidator(0, 65535));
     this->_portTarget->setPlaceholderText("Port");
     this->_portTarget->setText(
@@ -37,7 +41,7 @@ ConnectWidget::ConnectWidget(QWidget * parent) : QGroupBox(parent),
             QString::fromStdString(UPNP_DEFAULT_TARGET_PORT)
         ).toString()
     );
-    this->_portTarget->setFixedSize(40, 22);
+    this->_portTarget->setMaximumWidth(70);
 
     //bind to Return Key press...
     auto bb = [&]() {
@@ -84,7 +88,7 @@ void ConnectWidget::_tryConnectToServer() {
     emit startingConnection(this->_cc);
     
     QObject::connect(
-        this->_cc, &RPZClient::connected, 
+        this->_cc, &RPZClient::historyReceived, 
         this, &ConnectWidget::_onRPZClientConnected
     );
 

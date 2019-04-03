@@ -3,7 +3,6 @@
 AssetsManager::AssetsManager(QWidget * parent) : QWidget(parent), _tree(new AssetsNavigator) {
     
     this->setLayout(new QVBoxLayout);
-    this->setMinimumWidth(200);
 
     this->_addAppObjectsToTree();
     this->_refreshTree();

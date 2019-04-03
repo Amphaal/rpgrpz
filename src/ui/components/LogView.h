@@ -5,6 +5,10 @@
 #include <QtCore/QList>
 #include <QMap>
 #include <QUuid>
+#include <QTextEdit>
+#include <QAction>
+#include <QBitmap>
+#include <QPixmap>
 
 #include "src/helpers/_const.cpp"
 
@@ -16,5 +20,5 @@ class LogView : public QWidget {
         void removeLine(QUuid idToRemove);
 
     private:
-        QMap<QUuid, QLabel*> _labels;
+        QMap<QUuid, QLabel*> _lines;
 };

@@ -96,9 +96,6 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, JSONMethod method, QVaria
             {
                 auto users = data.toList();
                 emit loggedUsersUpdated(users);
-                
-                auto addr = this->getConnectedSocketAddress();
-                emit connected(addr);
             }
             break;
         case JSONMethod::MessageFromPlayer:

@@ -10,7 +10,7 @@ MapTools::MapTools(QWidget* parent) : QToolBar(parent) {
 
     //draw
     auto draw = new QAction(this);
-    auto draw_icon = QIcon(":/icons/pen.png");
+    auto draw_icon = QIcon(":/icons/app/pen.png");
     draw->setIcon(draw_icon);
     draw->setData(MapTools::Actions::Draw);
     draw->setIconText("Dessiner");

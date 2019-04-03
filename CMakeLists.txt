@@ -15,7 +15,7 @@ SET(PEM_CERT_NAME "cacert.pem")
 #version
 SET(CMAKE_PROJECT_VERSION_MAJOR 0)
 SET(CMAKE_PROJECT_VERSION_MINOR 6)
-SET(CMAKE_PROJECT_VERSION_PATCH 4)
+SET(CMAKE_PROJECT_VERSION_PATCH 5)
 
 #set default maintenance tool path
 SET(MAINTENANCE_TOOL_LOCATION "")
@@ -140,6 +140,8 @@ list(APPEND SOURCES
 
 #main
 list(APPEND SOURCES
+    src/ui/AppLoader.cpp    
+    src/ui/MainWindow.cpp
     src/main.cpp
 )
 

@@ -41,7 +41,7 @@ void JSONSocket::sendJSON(JSONMethod method, QVariant data) {
     json_payload["_d"] = data.toJsonValue();
     QJsonDocument payload_doc(json_payload);
 
-    qDebug() << this->_customLog("json to be sent >> " + method);
+    qDebug() << this->_customLog("json to be sent >> " + JSONMethodAsArray[method]);
 
     //send !
     this->_sendJSONAsBinary(payload_doc.toBinaryData());
@@ -115,7 +115,7 @@ void JSONSocket::_processIncomingAsJson(QByteArray data) {
     auto method = static_cast<JSONMethod>((int)content["_m"].toDouble());
     emit JSONReceived(this, method, content["_d"].toVariant());
 
-    qDebug() << this->_customLog("json received >> " + method);
+    qDebug() << this->_customLog("json received >> " + JSONMethodAsArray[method]);
 }
 
 QTcpSocket * JSONSocket::socket() {
@@ -123,5 +123,6 @@ QTcpSocket * JSONSocket::socket() {
 }
 
 QString JSONSocket::_customLog(QString text) {
-    return QString(this->_logId + " : " + text);
+    QString temp = this->_logId + " : " + text;
+    return temp;
 }

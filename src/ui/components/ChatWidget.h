@@ -5,6 +5,7 @@
 
 #include <QtGui/QWindow>
 #include <QStyle>
+#include <QSplitter>
 
 #include <QGroupBox>
 
@@ -31,17 +32,17 @@ class ChatWidget : public QGroupBox {
     private:
         LogScrollView *_chatLog = 0;
         LogScrollView *_usersLog = 0;
-
         ChatEdit *_chatEdit = 0;
 
         QString serverName;
-
         RPZClient* _currentCC = 0;
 
         void _sendMessage();
 
+        //ui helpers
         void _instUI();
 
+        //switches
         void _DisableUI();
         void _EnableUI();
 

@@ -1,4 +1,4 @@
-#include "mainWindow.h"
+#include "MainWindow.h"
 
 
 MainWindow::MainWindow() {
@@ -80,14 +80,12 @@ void MainWindow::_initUI() {
     std::string stdTitle = IS_DEBUG_APP ? (std::string)"DEBUG - " + APP_FULL_DENOM : APP_FULL_DENOM;
     this->setWindowTitle(QString(stdTitle.c_str()));
 
-    this->setWindowIcon(QIcon(LOCAL_ICON_PNG_PATH.c_str()));
+    this->setWindowIcon(QIcon(":/icons/app/rpgrpz.png"));
 
     //central widget
-    auto centralW = new QSplitter(this);
-    centralW->setLayout(new QHBoxLayout);
+    auto centralW = new QSplitter;
     centralW->setContentsMargins(10, 5, 10, 10);
     this->setCentralWidget(centralW);
-
 
     //specific componements
     this->_initUIMenu();
@@ -126,7 +124,6 @@ void MainWindow::_initUIApp() {
 
     //designer
     auto designer = new QWidget();
-    designer->setSizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Minimum);
     designer->setLayout(new QVBoxLayout);
     designer->layout()->setMargin(0);
     designer->layout()->setSpacing(2);
@@ -135,7 +132,6 @@ void MainWindow::_initUIApp() {
 
     //Chat...
     auto right = new QWidget;
-    right->setMaximumWidth(600);
     right->setLayout(new QVBoxLayout);
     right->layout()->setMargin(0);
     right->layout()->addWidget(this->_connectWidget);
@@ -144,14 +140,13 @@ void MainWindow::_initUIApp() {
 
 
     //final
-    this->centralWidget()->layout()->addWidget(tabs);
-    this->centralWidget()->layout()->addWidget(designer);
-    this->centralWidget()->layout()->addWidget(right);
-    
-    auto c = (QSplitter*)this->centralWidget();
-    c->setStretchFactor(0, 0);
-    c->setStretchFactor(1, 1);
-    c->setStretchFactor(2, 0);
+    auto centralWidget = (QSplitter*)this->centralWidget();
+    centralWidget->addWidget(tabs);
+    centralWidget->addWidget(designer);
+    centralWidget->addWidget(right);
+    centralWidget->setStretchFactor(0, 0);
+    centralWidget->setStretchFactor(1, 1);
+    centralWidget->setStretchFactor(2, 0);
 
 }
 

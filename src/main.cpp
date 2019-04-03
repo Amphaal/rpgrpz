@@ -3,11 +3,13 @@
 #include <QtCore/QString>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QStyleFactory>
+#include <QSplashScreen>
 
 #include "src/helpers/_const.cpp"
 #include "src/helpers/_messageHandler.cpp"
 
-#include "ui/mainWindow.cpp"
+#include "ui/MainWindow.h"
+#include "ui/AppLoader.h"
 
 #include <QDir>
 #include <QLockFile>
@@ -35,7 +37,9 @@ int main(int argc, char** argv){
     qInstallMessageHandler(msgHandler::customMO);
 
     //fetch main window
+    AppLoader loader;
     MainWindow mw;
+    loader.finish(&mw);
 
     //wait for the app to close
     return app.exec();

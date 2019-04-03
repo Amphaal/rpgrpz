@@ -25,32 +25,45 @@ void ChatWidget::_instUI() {
 
     this->setTitle("Chat de la partie");
     this->setAlignment(Qt::AlignHCenter);
-    this->setLayout(new QHBoxLayout);
+    this->setLayout(new QVBoxLayout);
     
     ///////////////
     // left part //
     ///////////////
 
-    auto left = new QWidget(this);
-    left->setLayout(new QVBoxLayout);
-    left->layout()->setContentsMargins(0, 0, 0, 0);
-    
-    //chat area...
-    left->layout()->addWidget(this->_chatLog);
+    auto _left = [&]() {
+        auto left = new QWidget;
+        left->setLayout(new QVBoxLayout);
+        left->layout()->setMargin(0);
+        
+        //chat area...
+        left->layout()->addWidget(this->_chatLog);
 
-    //messaging...
-    left->layout()->addWidget(this->_chatEdit);
-    this->layout()->addWidget(left);
+        //messaging...
+        left->layout()->addWidget(this->_chatEdit);
+        
+        return left;
+    };
     
     ////////////////
     // right part //
     ////////////////
 
-    this->_usersLog->setSizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Minimum);
-    this->_usersLog->setMinimumWidth(150);
-    this->layout()->addWidget(this->_usersLog);
-}
+    auto _right = [&]() {
+        return this->_usersLog;
+    };
 
+    ////////////
+    // Fusion //
+    ////////////
+
+    auto splitter = new QSplitter;
+    splitter->addWidget(_left());
+    splitter->addWidget(_right());
+    splitter->setStretchFactor(0, 1);
+    splitter->setStretchFactor(1, 0);
+    this->layout()->addWidget(splitter);
+}
 
 void ChatWidget::_onRPZClientError(const std::string errMsg) {    
     
@@ -105,7 +118,7 @@ void ChatWidget::bindToRPZClient(RPZClient * cc) {
 
     //enable UI at connection
     QObject::connect(
-        this->_currentCC, &RPZClient::connected, 
+        this->_currentCC, &RPZClient::historyReceived, 
         this, &ChatWidget::_EnableUI
     );
 
@@ -120,12 +133,14 @@ void ChatWidget::bindToRPZClient(RPZClient * cc) {
 
 void ChatWidget::_DisableUI() {
     this->_chatEdit->setEnabled(false);
-    this->setEnabled(false);
+    this->_usersLog->setEnabled(false);
+    this->_chatLog->setEnabled(false);
 }
 
 void ChatWidget::_EnableUI() {
     this->_chatEdit->setEnabled(true);
-    this->setEnabled(true);
+    this->_usersLog->setEnabled(true);
+    this->_chatLog->setEnabled(true);
 }
 
 

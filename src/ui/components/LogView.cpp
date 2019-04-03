@@ -1,7 +1,6 @@
 #include "LogView.h"
 
 LogView::LogView(QWidget *parent) : QWidget(parent) {
-    
     this->setLayout(new QVBoxLayout);
     this->layout()->setAlignment(Qt::AlignTop);
     this->layout()->setSpacing(0);
@@ -20,19 +19,19 @@ QUuid LogView::writeAtEnd(const std::string & newMessage, QPalette* colorPalette
         label->setPalette(*colorPalette);
     }
 
-    this->layout()->addWidget(label);
-
+    //add label to layout
     auto id = QUuid::createUuid();
-    this->_labels.insert(id, label);
+    this->_lines.insert(id, label);
+    this->layout()->addWidget(label);
 
     return id;
 }
 
 void LogView::removeLine(QUuid idToRemove) {
-    if(!this->_labels.contains(idToRemove)) return;
+    if(!this->_lines.contains(idToRemove)) return;
 
-    auto lbl = this->_labels[idToRemove];
-    lbl->deleteLater();
+    auto line = this->_lines[idToRemove];
+    line->deleteLater();
 
-    this->_labels.remove(idToRemove);
+    this->_lines.remove(idToRemove);
 }

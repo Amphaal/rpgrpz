@@ -57,9 +57,15 @@ void RPZServer::_onNewConnection() {
         QObject::connect(
             clientSocket->socket(), &QAbstractSocket::disconnected,
             [&, clientSocket]() {
+                
+                //remove socket
                 this->_clientSockets.remove(clientSocket);
                 this->_clientDisplayNames.remove(clientSocket);
                 clientSocket->deleteLater();
+
+                //tell other clients that the user is gone
+                this->_broadcastUsers();
+
             }
         );
 
@@ -74,8 +80,6 @@ void RPZServer::_onNewConnection() {
         auto newIp = clientSocket->socket()->peerAddress().toString();
         emit newConnectionReceived(newIp.toStdString());
         qDebug() << "Chat Server : New connection from " << newIp;
-
-        this->_sendStoredMessages(clientSocket);
 
 }
 
@@ -100,7 +104,11 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, JSONMethod method, QVaria
                 auto dn = data.toList()[0].toString();
                 this->_clientDisplayNames[target] = dn;
 
+                //tell other users this one exists
                 this->_broadcastUsers();
+
+                //send history to the client
+                this->_sendStoredMessages(target);
             }
             break;
         default:

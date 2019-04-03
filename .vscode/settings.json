@@ -99,6 +99,7 @@
         "qmimedatabase": "cpp",
         "qdebug": "cpp",
         "qtoolbutton": "cpp",
-        "qpushbutton": "cpp"
+        "qpushbutton": "cpp",
+        "qpixmap": "cpp"
     }
 }
