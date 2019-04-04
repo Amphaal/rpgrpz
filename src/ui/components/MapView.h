@@ -13,9 +13,12 @@
 #include <QGLWidget>
 #include <QCursor>
 #include <QTimer>
+#include <QScrollBar>
+#include <QUuid>
 
 #include "MapTools.h"
 #include "AssetsNavigator.h"
+#include "src/network/rpz/_any/JSONSocket.h"
 
 class MapView : public QGraphicsView {
 
@@ -35,7 +38,10 @@ class MapView : public QGraphicsView {
 
     private:
         QGraphicsScene* _scene;
-        QPoint* _latestPosDrop;
+        // QPoint* _latestPosDrop;
+        QPoint _lastPointMousePressed;
+        QPoint _lastPointMouseClick;
+        bool _isMousePressed = false;
 
         //framerate
         double _frameRate = 0;
@@ -44,7 +50,6 @@ class MapView : public QGraphicsView {
         void _framerate_oneSecondTimeout();
 
         //tool
-        QPointF _lastPoint;
         static const MapTools::Actions _defaultTool = MapTools::Actions::Select;
         MapTools::Actions _selectedTool = MapView::_defaultTool;
         MapTools::Actions _quickTool = MapTools::Actions::None;
@@ -53,9 +58,10 @@ class MapView : public QGraphicsView {
 
         //rotating...
         QCursor * _rotateCursor = nullptr;
-        void _rotate(const QPointF &endPoint);
+        void _rotate(const QPoint &evtPoint);
 
-        //moving...
+        //scrolling...
+        void _scroll(const QPoint &evtPoint);
 
         //zooming...
         int _numScheduledScalings = 0;
@@ -64,9 +70,13 @@ class MapView : public QGraphicsView {
         void _zoomBy_animFinished();
 
         //drawing...
+        QMap<QUuid, QGraphicsPathItem*> _selfDrawings;
+        // QMap<JSONSocket*, QMap<QUuid, QGraphicsPathItem*>> _drawingsByUsers;
+        QList<QGraphicsItem*> _tempLines;
+        QPainterPath* _tempDrawing = nullptr;
+        void _drawLineTo(const QPoint &evtPoint);
         int _penWidth = 1;
         QColor _penColor = Qt::blue;
-        void _drawLineTo(const QPointF &endPoint);
-
+        QPen _getPen();
 
 };

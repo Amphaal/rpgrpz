@@ -1,8 +1,9 @@
 #include "MapView.h"
 
 
-MapView::MapView(QWidget *parent) : QGraphicsView(parent), _scene(new QGraphicsScene), _latestPosDrop(new QPoint) {
+MapView::MapView(QWidget *parent) : QGraphicsView(parent), _scene(new QGraphicsScene) {
     
+    //default
     this->setAcceptDrops(true);
     this->setInteractive(true);
 
@@ -23,6 +24,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), _scene(new QGraphicsS
     //this->setOptimizationFlags( QFlags<OptimizationFlag>(QGraphicsView::DontSavePainterState | QGraphicsView::DontAdjustForAntialiasing));
 
     //define scene
+    this->_scene->setSceneRect(35000, 35000, 35000, 35000);
     this->setScene(this->_scene);
 }
 
@@ -62,40 +64,49 @@ void MapView::toolSelectionChanged(QAction *action) {
     return this->_changeTool(tool);
 }
 
-//on movement
-void MapView::mouseMoveEvent(QMouseEvent *event) {
-
-    //pos relative to scrollarea
-    auto relPos = this->mapToScene(event->pos());
-
-    switch(this->_getCurrentTool()) {
-        case MapTools::Actions::Draw:
-            this->_drawLineTo(relPos);
-            
-            //register last position
-            this->_lastPoint = relPos;
-            break;
-        case MapTools::Actions::Rotate:
-            this->_rotate(relPos);
-            break;
-    }
-}
 
 //mouse click
 void MapView::mousePressEvent(QMouseEvent *event) {
-    
+
     switch(event->button()) {
         case Qt::MouseButton::MiddleButton:
-            this->_changeTool(MapTools::Actions::Navigate, true);
+            this->_changeTool(MapTools::Actions::Scroll, true);
             break;
         case Qt::MouseButton::RightButton:
             this->_changeTool(MapTools::Actions::Rotate, true);
             break;
+        case Qt::MouseButton::LeftButton:
+            if(this->_selectedTool == MapTools::Actions::Draw) {
+                this->_tempDrawing = new QPainterPath(this->mapToScene(event->pos()));
+            }
+            break;
     }
 
     //register last position
-    this->_lastPoint = this->mapToScene(event->pos());
+    this->_lastPointMousePressed = event->pos();
+    this->_lastPointMouseClick = event->pos();
+    this->_isMousePressed = true;
 }
+
+//on movement
+void MapView::mouseMoveEvent(QMouseEvent *event) {
+
+    switch(this->_getCurrentTool()) {
+        case MapTools::Actions::Draw:
+            this->_drawLineTo(event->pos());
+            break;
+        case MapTools::Actions::Rotate:
+            this->_rotate(event->pos());
+            break;
+        case MapTools::Actions::Scroll:
+            this->_scroll(event->pos());
+            break;
+    }
+
+    //register last position
+    this->_lastPointMousePressed = event->pos();
+}
+
 
 //mouse drop
 void MapView::mouseReleaseEvent(QMouseEvent *event) {
@@ -105,14 +116,32 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
         case Qt::MouseButton::MiddleButton:
             this->_changeTool(MapTools::Actions::None, true);
             break;
+        case Qt::MouseButton::LeftButton:
+            if(this->_selectedTool == MapTools::Actions::Draw) {
+                
+                //add definitive path
+                auto newPath = this->_scene->addPath(*this->_tempDrawing, this->_getPen());
+                this->_selfDrawings.insert(QUuid::createUuid(), newPath);
+                this->_tempDrawing = nullptr;
+                
+                //destroy temp
+                auto iGroup = this->_scene->createItemGroup(this->_tempLines);
+                this->_scene->destroyItemGroup(iGroup);
+                this->_tempLines.clear();
+
+            }
+            break;
     }
 
+    this->_isMousePressed = false;
 }
 
+//tool
 MapTools::Actions MapView::_getCurrentTool() {
     return this->_quickTool == MapTools::Actions::None ? this->_selectedTool : this->_quickTool;
 }
 
+//change tool
 void MapView::_changeTool(MapTools::Actions newTool,  bool quickChange) {
     
     if(quickChange) {
@@ -128,7 +157,7 @@ void MapView::_changeTool(MapTools::Actions newTool,  bool quickChange) {
         case MapTools::Actions::Draw:
             this->setCursor(Qt::CrossCursor);
             break;
-        case MapTools::Actions::Navigate:
+        case MapTools::Actions::Scroll:
             this->setCursor(Qt::ClosedHandCursor);
             break;
         case MapTools::Actions::Rotate:
@@ -148,6 +177,9 @@ void MapView::_changeTool(MapTools::Actions newTool,  bool quickChange) {
 //////////
 
 void MapView::wheelEvent(QWheelEvent *event) {
+
+    //make sure no button is pressed
+    if(this->_isMousePressed) return;
 
     int numDegrees = event->delta() / 8;
     int numSteps = numDegrees / 15; // see QWheelEvent documentation
@@ -188,15 +220,34 @@ void MapView::_zoomBy_animFinished() {
 /* ROTATE */
 ////////////
 
-void MapView::_rotate(const QPointF &endPoint) {
-    auto way = this->_lastPoint.y() - endPoint.y();
-    qDebug() << way;
-    auto factor =  way < 0 ? .5 : -.5;
-    this->rotate(factor);
+void MapView::_rotate(const QPoint &evtPoint) {
+    auto way = this->_lastPointMousePressed - evtPoint;
+    auto pp = ((double)way.y()) / 5;
+    this->rotate(pp);
 }
 
 ////////////////
 /* END ROTATE */
+////////////////
+
+////////////
+/* SCROLL */
+////////////
+
+void MapView::_scroll(const QPoint &evtPoint) {
+
+    QScrollBar *hBar = this->horizontalScrollBar();
+    QScrollBar *vBar = this->verticalScrollBar();
+    QPoint delta = evtPoint - this->_lastPointMousePressed;
+
+    auto h = hBar->value() + (isRightToLeft() ? delta.x() : -delta.x());
+    auto v = vBar->value() - delta.y();
+    hBar->setValue(h);
+    vBar->setValue(v);
+}
+
+////////////////
+/* END SCROLL */
 ////////////////
 
 //////////
@@ -237,15 +288,17 @@ void MapView::dragEnterEvent(QDragEnterEvent *event) {
 /* END DROP */
 //////////////
 
-void MapView::_drawLineTo(const QPointF &endPoint)
-{
+void MapView::_drawLineTo(const QPoint &evtPoint) {
 
-    auto line = QLineF(this->_lastPoint, endPoint);
-    auto pen = QPen(this->_penColor, this->_penWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-    this->_scene->addLine(line, pen);
+    //save
+    this->_tempDrawing->lineTo(this->mapToScene(evtPoint));
 
-    // int rad = (this->_penWidth / 2) + 2;
-    // auto rect = QRect(this->_lastPoint, endPoint);
-    // this->_scene->update(rect.normalized().adjusted(-rad, -rad, +rad, +rad));
+    //draw temp line
+    auto lineCoord = QLineF(this->mapToScene(this->_lastPointMousePressed), this->mapToScene(evtPoint));
+    auto tempLine = this->_scene->addLine(lineCoord, this->_getPen());
+    this->_tempLines.append(tempLine);
+}
 
+QPen MapView::_getPen() {
+    return QPen(this->_penColor, this->_penWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 }

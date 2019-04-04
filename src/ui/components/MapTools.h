@@ -10,7 +10,7 @@ class MapTools : public QToolBar {
     Q_OBJECT
 
     public:
-        enum Actions { None, Select, Navigate, Draw, Rotate };
+        enum Actions { None, Select, Scroll, Draw, Rotate };
         MapTools(QWidget * parent = nullptr); 
     
 };
