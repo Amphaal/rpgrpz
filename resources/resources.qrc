@@ -5,5 +5,6 @@
         <file>icons/app/user.png</file>
         <file>icons/app/server.png</file>
         <file>icons/app/port.png</file>
+        <file>icons/app/rotate.png</file>
     </qresource>
 </RCC>
