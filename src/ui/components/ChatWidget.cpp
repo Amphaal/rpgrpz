@@ -57,12 +57,13 @@ void ChatWidget::_instUI() {
     ////////////
     // Fusion //
     ////////////
-
-    auto splitter = new QSplitter;
+    QSettings settings;
+    auto splitter = new RestoringSplitter("ChatWidgetSplitter");
     splitter->addWidget(_left());
     splitter->addWidget(_right());
     splitter->setStretchFactor(0, 1);
     splitter->setStretchFactor(1, 0);
+    splitter->loadState();
     this->layout()->addWidget(splitter);
 }
 

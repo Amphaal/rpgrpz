@@ -17,3 +17,9 @@ MapTools::MapTools(QWidget* parent) : QToolBar(parent) {
     draw->setCheckable(true);
     this->addAction(draw);
 }
+
+void MapTools::unselectAllTools() {
+    for(auto action : this->actions()) {
+        action->setChecked(false);
+    }
+}

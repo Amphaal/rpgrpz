@@ -5,7 +5,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), _scene(new QGraphicsS
     
     //default
     this->setAcceptDrops(true);
-    this->setInteractive(true);
+    this->_changeTool(MapView::_defaultTool);
 
     //custom cursors
     this->_rotateCursor = new QCursor(QPixmap(":/icons/app/rotate.png"));
@@ -53,39 +53,28 @@ void MapView::_framerate_oneSecondTimeout() {
 /* TOOL */
 //////////
 
-void MapView::toolSelectionChanged(QAction *action) {
-    
-    //go by default tool if unchecked
-    auto state = action->isChecked();
-    if(!state) return this->_changeTool(MapView::_defaultTool);
-
-    //else select the new tool
-    auto tool = (MapTools::Actions)action->data().toInt();
-    return this->_changeTool(tool);
-}
-
-
 //mouse click
 void MapView::mousePressEvent(QMouseEvent *event) {
 
+    //register last position
+    this->_lastPointMousePressing = event->pos();
+    this->_lastPointMousePressed = event->pos();
+    this->_isMousePressed = true;
+
     switch(event->button()) {
         case Qt::MouseButton::MiddleButton:
+            this->_isMiddleToolLock = !this->_isMiddleToolLock;
             this->_changeTool(MapTools::Actions::Scroll, true);
             break;
         case Qt::MouseButton::RightButton:
             this->_changeTool(MapTools::Actions::Rotate, true);
             break;
         case Qt::MouseButton::LeftButton:
-            if(this->_selectedTool == MapTools::Actions::Draw) {
-                this->_tempDrawing = new QPainterPath(this->mapToScene(event->pos()));
-            }
+            this->_toolOnMousePress(this->_selectedTool);
             break;
     }
 
-    //register last position
-    this->_lastPointMousePressed = event->pos();
-    this->_lastPointMouseClick = event->pos();
-    this->_isMousePressed = true;
+    QGraphicsView::mousePressEvent(event);
 }
 
 //on movement
@@ -98,13 +87,12 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
         case MapTools::Actions::Rotate:
             this->_rotate(event->pos());
             break;
-        case MapTools::Actions::Scroll:
-            this->_scroll(event->pos());
-            break;
     }
 
     //register last position
-    this->_lastPointMousePressed = event->pos();
+    this->_lastPointMousePressing = event->pos();
+
+    QGraphicsView::mouseMoveEvent(event);
 }
 
 
@@ -113,30 +101,43 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
 
     switch(event->button()) {
         case Qt::MouseButton::RightButton:
-        case Qt::MouseButton::MiddleButton:
             this->_changeTool(MapTools::Actions::None, true);
             break;
-        case Qt::MouseButton::LeftButton:
-            if(this->_selectedTool == MapTools::Actions::Draw) {
-                
-                //add definitive path
-                auto newPath = this->_scene->addPath(*this->_tempDrawing, this->_getPen());
-                this->_selfDrawings.insert(QUuid::createUuid(), newPath);
-                this->_tempDrawing = nullptr;
-                
-                //destroy temp
-                auto iGroup = this->_scene->createItemGroup(this->_tempLines);
-                this->_scene->destroyItemGroup(iGroup);
-                this->_tempLines.clear();
-
+        case Qt::MouseButton::MiddleButton:
+            if(this->_isMiddleToolLock) {
+                this->_changeTool(MapTools::Actions::None, true);
             }
+            break;
+        case Qt::MouseButton::LeftButton:
+            this->_toolOnMouseRelease(this->_selectedTool);
             break;
     }
 
     this->_isMousePressed = false;
+
+    QGraphicsView::mouseReleaseEvent(event);
 }
 
-//tool
+void MapView::_toolOnMousePress(MapTools::Actions tool) {
+    switch(tool) {
+        case MapTools::Actions::Draw: {
+            this->_beginDrawing();
+        }
+        break;
+    }
+}
+
+void MapView::_toolOnMouseRelease(MapTools::Actions tool) {
+    switch(tool) {
+        case MapTools::Actions::Draw: {
+            this->_endDrawing();
+        }
+        break;
+    }
+}
+
+
+//returns tool
 MapTools::Actions MapView::_getCurrentTool() {
     return this->_quickTool == MapTools::Actions::None ? this->_selectedTool : this->_quickTool;
 }
@@ -155,17 +156,38 @@ void MapView::_changeTool(MapTools::Actions newTool,  bool quickChange) {
     
     switch(newTool) {
         case MapTools::Actions::Draw:
+            this->setInteractive(true);
+            this->setDragMode(QGraphicsView::DragMode::NoDrag);
             this->setCursor(Qt::CrossCursor);
             break;
-        case MapTools::Actions::Scroll:
-            this->setCursor(Qt::ClosedHandCursor);
-            break;
         case MapTools::Actions::Rotate:
+            this->setInteractive(false);
+            this->setDragMode(QGraphicsView::DragMode::NoDrag);
             this->setCursor(*this->_rotateCursor);
             break;
+        case MapTools::Actions::Scroll:
+            this->setInteractive(false);
+            this->setDragMode(QGraphicsView::DragMode::ScrollHandDrag);
+            this->setCursor(Qt::ClosedHandCursor);
+            break;
+        case MapTools::Actions::Select:
         default:
+            this->setInteractive(true);
+            this->setDragMode(QGraphicsView::DragMode::RubberBandDrag);
             this->setCursor(Qt::ArrowCursor);
     }
+}
+
+//on received event
+void MapView::toolSelectionChanged(QAction *action) {
+    
+    //go by default tool if unchecked
+    auto state = action->isChecked();
+    if(!state) return this->_changeTool(MapView::_defaultTool);
+
+    //else select the new tool
+    auto tool = (MapTools::Actions)action->data().toInt();
+    return this->_changeTool(tool);
 }
 
 //////////////
@@ -221,33 +243,13 @@ void MapView::_zoomBy_animFinished() {
 ////////////
 
 void MapView::_rotate(const QPoint &evtPoint) {
-    auto way = this->_lastPointMousePressed - evtPoint;
+    auto way = this->_lastPointMousePressing - evtPoint;
     auto pp = ((double)way.y()) / 5;
     this->rotate(pp);
 }
 
 ////////////////
 /* END ROTATE */
-////////////////
-
-////////////
-/* SCROLL */
-////////////
-
-void MapView::_scroll(const QPoint &evtPoint) {
-
-    QScrollBar *hBar = this->horizontalScrollBar();
-    QScrollBar *vBar = this->verticalScrollBar();
-    QPoint delta = evtPoint - this->_lastPointMousePressed;
-
-    auto h = hBar->value() + (isRightToLeft() ? delta.x() : -delta.x());
-    auto v = vBar->value() - delta.y();
-    hBar->setValue(h);
-    vBar->setValue(v);
-}
-
-////////////////
-/* END SCROLL */
 ////////////////
 
 //////////
@@ -288,13 +290,40 @@ void MapView::dragEnterEvent(QDragEnterEvent *event) {
 /* END DROP */
 //////////////
 
+/////////////
+/* DRAWING */
+/////////////
+
+void MapView::_beginDrawing() {
+    this->_tempDrawing = new QPainterPath(this->mapToScene(this->_lastPointMousePressed));
+}
+
+void MapView::_endDrawing() {
+    //add definitive path
+    auto newPath = this->_scene->addPath(*this->_tempDrawing, this->_getPen());
+    newPath->setFlags(QFlags<QGraphicsItem::GraphicsItemFlag>(
+        QGraphicsItem::GraphicsItemFlag::ItemIsSelectable |
+        QGraphicsItem::GraphicsItemFlag::ItemIsMovable
+    ));
+    this->_alterElement(MapElementEvtState::Added, newPath);
+    this->_tempDrawing = nullptr;
+    
+    //destroy temp
+    auto iGroup = this->_scene->createItemGroup(this->_tempLines);
+    for(auto i : this->_tempLines) {
+        delete i;
+    }
+    this->_scene->destroyItemGroup(iGroup);
+    this->_tempLines.clear();
+}
+
 void MapView::_drawLineTo(const QPoint &evtPoint) {
 
     //save
     this->_tempDrawing->lineTo(this->mapToScene(evtPoint));
 
     //draw temp line
-    auto lineCoord = QLineF(this->mapToScene(this->_lastPointMousePressed), this->mapToScene(evtPoint));
+    auto lineCoord = QLineF(this->mapToScene(this->_lastPointMousePressing), this->mapToScene(evtPoint));
     auto tempLine = this->_scene->addLine(lineCoord, this->_getPen());
     this->_tempLines.append(tempLine);
 }
@@ -302,3 +331,95 @@ void MapView::_drawLineTo(const QPoint &evtPoint) {
 QPen MapView::_getPen() {
     return QPen(this->_penColor, this->_penWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 }
+
+/////////////////
+/* END DRAWING */
+/////////////////
+
+//////////////
+/* ELEMENTS */
+//////////////
+
+//register actions
+QUuid MapView::_alterElementInternal(MapElementEvtState alteration, QGraphicsItem* element, JSONSocket* owner) {
+    
+    //temp
+    QUuid thisElemUuid;
+    switch(alteration) {
+        
+        //on addition
+        case MapElementEvtState::Added:
+            thisElemUuid = QUuid::createUuid();
+            if(owner) {
+                if(!this->_elementsByOwner.contains(owner)) {
+                    this->_elementsByOwner.insert(owner, QSet<QUuid>());
+                }
+                this->_elementsByOwner[owner].insert(thisElemUuid);
+            } else {
+                this->_selfElements.insert(thisElemUuid);
+            }
+            this->_elementById.insert(thisElemUuid, element);
+            this->_IdByElement.insert(element, thisElemUuid);
+            break;
+
+        //on removal
+        case MapElementEvtState::Removed:
+            thisElemUuid = this->_IdByElement[element];
+           if(owner) {
+               this->_elementsByOwner[owner].remove(thisElemUuid);
+            } else {
+                this->_selfElements.remove(thisElemUuid);
+            }
+            this->_elementById.remove(thisElemUuid);
+            this->_IdByElement.remove(element);
+            break;
+    }
+
+    return thisElemUuid;
+}
+
+void MapView::_alterElement(MapElementEvtState alteration, QGraphicsItem* element, JSONSocket* owner) {
+    QList<QGraphicsItem*> list;
+    list.append(element);
+    return this->_alterElements(alteration, list, owner);
+}
+
+void MapView::_alterElements(MapElementEvtState alteration, QList<QGraphicsItem*> elements, JSONSocket* owner) {
+    
+    QHash<QUuid, QGraphicsItem*> mapToEvt;
+
+    for(auto elem : elements) {
+        auto uuid = this->_alterElementInternal(alteration, elem, owner);
+        mapToEvt.insert(uuid, elem);
+    }
+
+    //emit event
+    emit mapElementsAltered(mapToEvt, alteration);
+}
+
+void MapView::keyPressEvent(QKeyEvent * event) {
+    
+    switch(event->key()) {
+
+        //deletion handling
+        case Qt::Key::Key_Delete:
+            if(this->_scene->selectedItems().length()) {
+                this->_alterElements(MapElementEvtState::Removed, this->_scene->selectedItems());
+                for(auto i : this->_scene->selectedItems()) {
+                    delete i;
+                }
+            }
+            break;
+        
+        //ask unselection of current tool
+        case Qt::Key::Key_Escape:
+            this->_changeTool(MapView::_defaultTool);
+            emit unselectCurrentToolAsked();
+            break;
+    }
+
+}
+
+//////////////////
+/* END ELEMENTS */
+//////////////////

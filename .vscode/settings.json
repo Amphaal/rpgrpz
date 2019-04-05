@@ -100,6 +100,9 @@
         "qdebug": "cpp",
         "qtoolbutton": "cpp",
         "qpushbutton": "cpp",
-        "qpixmap": "cpp"
+        "qpixmap": "cpp",
+        "qsettings": "cpp",
+        "qhash": "cpp",
+        "quuid": "cpp"
     }
 }

@@ -12,7 +12,7 @@
 #include <QGraphicsScene>
 #include <QDesktopServices>
 #include <QTabWidget>
-#include <QSplitter>
+
 
 #include <QLabel>
 #include <QStatusBar>
@@ -29,6 +29,7 @@
 #include "src/ui/components/AudioStreamNotifier.h"
 #include "src/ui/components/AudioStreamController.h"
 #include "src/ui/components/MapTools.h"
+#include "src/ui/components/RestoringSplitter.h"
 
 
 class MainWindow : public QMainWindow { 

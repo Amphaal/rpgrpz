@@ -3,7 +3,7 @@
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QVBoxLayout>
 #include <QtCore/QList>
-#include <QMap>
+#include <QHash>
 #include <QUuid>
 #include <QTextEdit>
 #include <QAction>
@@ -20,5 +20,5 @@ class LogView : public QWidget {
         void removeLine(QUuid idToRemove);
 
     private:
-        QMap<QUuid, QWidget*> _lines;
+        QHash<QUuid, QWidget*> _lines;
 };

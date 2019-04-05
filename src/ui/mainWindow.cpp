@@ -83,7 +83,7 @@ void MainWindow::_initUI() {
     this->setWindowIcon(QIcon(":/icons/app/rpgrpz.png"));
 
     //central widget
-    auto centralW = new QSplitter;
+    auto centralW = new RestoringSplitter("MainWindowSplitter");
     centralW->setContentsMargins(10, 5, 10, 10);
     this->setCentralWidget(centralW);
 
@@ -102,18 +102,6 @@ void MainWindow::_initUIApp() {
     this->_streamNotifier = new AudioStreamNotifier(this);
     this->_assetsManager = new AssetsManager(this);
     this->_mapTools = new MapTools(this);
-
-    QObject::connect(
-        this->_connectWidget, &ConnectWidget::startingConnection, 
-        [&](RPZClient * cc) {
-            this->_cw->bindToRPZClient(cc);
-        }
-    );
-
-    QObject::connect(
-        this->_mapTools, &QToolBar::actionTriggered,
-        this->_mapView, &MapView::toolSelectionChanged
-    );
 
     //place them...
     
@@ -140,13 +128,46 @@ void MainWindow::_initUIApp() {
 
 
     //final
-    auto centralWidget = (QSplitter*)this->centralWidget();
+    auto centralWidget = (RestoringSplitter*)this->centralWidget();
     centralWidget->addWidget(tabs);
     centralWidget->addWidget(designer);
     centralWidget->addWidget(right);
     centralWidget->setStretchFactor(0, 0);
     centralWidget->setStretchFactor(1, 1);
     centralWidget->setStretchFactor(2, 0);
+    centralWidget->loadState();
+
+    //
+    // EVENTS
+    //
+
+    //bind RPZClient to widget once a connection starts
+    QObject::connect(
+        this->_connectWidget, &ConnectWidget::startingConnection, 
+        [&](RPZClient * cc) {
+            this->_cw->bindToRPZClient(cc);
+        }
+    );
+
+    //move to map content tab when selection changed inside the map
+    QObject::connect(
+        this->_mapView->scene(), &QGraphicsScene::selectionChanged,
+        [tabs]() {
+            tabs->setCurrentIndex(1);
+        }
+    );
+
+    //unselect tools
+    QObject::connect(
+        this->_mapView, &MapView::unselectCurrentToolAsked,
+        this->_mapTools, &MapTools::unselectAllTools
+    );
+
+    //bind toolbar to mapview
+    QObject::connect(
+        this->_mapTools, &QToolBar::actionTriggered,
+        this->_mapView, &MapView::toolSelectionChanged
+    );
 
 }
 

@@ -10,7 +10,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QStringList>
-#include <QMap>
+#include <QHash>
 
 #include "RPZSThread.h"
 #include "src/network/rpz/_any/JSONSocket.h"
@@ -27,8 +27,8 @@ class RPZServer : public RPZSThread, public JSONRouter {
         void run() override;
 
     private:
-        QMap<JSONSocket*, JSONSocket*> _clientSockets;
-        QMap<JSONSocket*, QString> _clientDisplayNames;
+        QHash<JSONSocket*, JSONSocket*> _clientSockets;
+        QHash<JSONSocket*, QString> _clientDisplayNames;
         QTcpServer* _server;
 
         QStringList _messages;
