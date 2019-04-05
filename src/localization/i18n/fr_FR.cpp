@@ -4,6 +4,7 @@ using namespace std;
 
 class Translator_FR : public ITranslator {
     std::string Menu_File() { return "Fichier"; }
+    std::string Menu_Tools() { return "Outils"; }
     std::string Menu_Patchnotes(std::string version) { return version + " - Notes de publication"; }
     std::string Menu_Help() { return "Aide"; }
     std::string Menu_Options() { return "Options"; }

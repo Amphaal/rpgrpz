@@ -1,6 +1,8 @@
 #include "AssetsNavigator.h"
 
 AssetsNavigator::AssetsNavigator(QWidget * parent) : QTreeWidget(parent), _MIMEDb(new QMimeDatabase) {
+    this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+
     this->setColumnCount(2);
     this->setHeaderHidden(true);
     this->setDragDropMode(QAbstractItemView::DragDropMode::DragDrop);

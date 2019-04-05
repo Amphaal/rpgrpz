@@ -1,7 +1,6 @@
 #include "RestoringSplitter.h"
 
 RestoringSplitter::RestoringSplitter(QString id, QWidget * parent) : QSplitter(parent) {
-    this->setHandleWidth(2);
     this->_id = id;
     
     QObject::connect(this, &QSplitter::splitterMoved, [&]() {
@@ -11,4 +10,5 @@ RestoringSplitter::RestoringSplitter(QString id, QWidget * parent) : QSplitter(p
 
 void RestoringSplitter::loadState() {
     this->restoreState(this->_intSettings.value(this->_id).toByteArray());
+    this->setHandleWidth(7);
 }

@@ -1,6 +1,6 @@
 #include "AssetsManager.h"
 
-AssetsManager::AssetsManager(QWidget * parent) : QWidget(parent), _tree(new AssetsNavigator) {
+AssetsManager::AssetsManager(QWidget * parent) : QWidget(parent), _tree(new AssetsNavigator), _previewer(new AssetsPreviewer) {
     this->setLayout(new QVBoxLayout);
     this->layout()->setMargin(5);
 
@@ -9,7 +9,7 @@ AssetsManager::AssetsManager(QWidget * parent) : QWidget(parent), _tree(new Asse
 
     this->_tree->expandAll();
     this->layout()->addWidget(this->_tree);
-
+    this->layout()->addWidget(this->_previewer);
 }
 
 QJsonDocument AssetsManager::_getCoordinator() {

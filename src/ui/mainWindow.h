@@ -69,7 +69,7 @@ class MainWindow : public QMainWindow {
         /*menu*/
         void _initUIMenu();
         QAction *cfugAction;
-        QMenu* _getAboutMenu();
+        QMenu* _getToolsMenu();
         QMenu* _getFileMenu();
         QMenu* _getHelpMenu();
 

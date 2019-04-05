@@ -144,7 +144,7 @@ MapTools::Actions MapView::_getCurrentTool() {
 
 //change tool
 void MapView::_changeTool(MapTools::Actions newTool,  bool quickChange) {
-    
+
     if(quickChange) {
         this->_quickTool = newTool;
         if(newTool == MapTools::Actions::None) {
@@ -152,11 +152,12 @@ void MapView::_changeTool(MapTools::Actions newTool,  bool quickChange) {
         }   
     } else {
         this->_selectedTool = newTool;
+        this->_scene->clearSelection();
     }    
     
     switch(newTool) {
         case MapTools::Actions::Draw:
-            this->setInteractive(true);
+            this->setInteractive(false);
             this->setDragMode(QGraphicsView::DragMode::NoDrag);
             this->setCursor(Qt::CrossCursor);
             break;

@@ -10,6 +10,7 @@
 
 #include "src/helpers/_const.cpp"
 #include "AssetsNavigator.h"
+#include "AssetsPreviewer.h"
 
 class AssetsManager : public QWidget {
 
@@ -20,6 +21,7 @@ class AssetsManager : public QWidget {
 
     private:
         AssetsNavigator* _tree;
+        AssetsPreviewer* _previewer;
 
         QJsonDocument _getCoordinator();
         void _addAppObjectsToTree();

@@ -9,6 +9,8 @@
 #include <QString>
 #include <QDebug>
 #include <QHeaderView>
+#include <QLayout>
+
 
 class AssetsNavigator : public QTreeWidget {
     public:

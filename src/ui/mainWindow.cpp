@@ -99,7 +99,7 @@ void MainWindow::_initUIApp() {
     this->_connectWidget = new ConnectWidget(this);
     this->_cw = new ChatWidget(this);
     this->_mapView = new MapView(this);
-    this->_streamNotifier = new AudioStreamNotifier(this);
+    this->_streamNotifier = new AudioStreamNotifier;
     this->_assetsManager = new AssetsManager(this);
     this->_mapTools = new MapTools(this);
     this->_mlManager = new MapLayoutManager(this);
@@ -125,7 +125,7 @@ void MainWindow::_initUIApp() {
     right->layout()->setMargin(0);
     right->layout()->addWidget(this->_connectWidget);
     right->layout()->addWidget(this->_cw);
-    right->layout()->addWidget(this->_streamNotifier);
+    //right->layout()->addWidget(this->_streamNotifier);
 
 
     //final
@@ -180,6 +180,7 @@ void MainWindow::_initUIApp() {
 void MainWindow::_initUIMenu() {
     auto menuBar = new QMenuBar;
     menuBar->addMenu(this->_getFileMenu());
+    menuBar->addMenu(this->_getToolsMenu());
     menuBar->addMenu(this->_getHelpMenu());
     this->setMenuWidget(menuBar);
 }
@@ -245,12 +246,13 @@ void MainWindow::_initUIStatusBar() {
 /// Menu components //
 //////////////////////
 
-QMenu* MainWindow::_getHelpMenu() {
 
-    auto helpMenuItem = new QMenu(I18n::tr()->Menu_Help().c_str());
+QMenu* MainWindow::_getToolsMenu() {
+
+    auto toolsMenuItem = new QMenu(I18n::tr()->Menu_Tools().c_str());
 
     //full log
-    auto openLogAction = new QAction(I18n::tr()->Menu_OpenLog().c_str(), helpMenuItem);
+    auto openLogAction = new QAction(I18n::tr()->Menu_OpenLog().c_str(), toolsMenuItem);
     QObject::connect(
         openLogAction, &QAction::triggered,
         [&]() {
@@ -259,7 +261,7 @@ QMenu* MainWindow::_getHelpMenu() {
     );
 
     //latest log
-    auto openLatestLogAction = new QAction(I18n::tr()->Menu_OpenLatestLog().c_str(), helpMenuItem);
+    auto openLatestLogAction = new QAction(I18n::tr()->Menu_OpenLatestLog().c_str(), toolsMenuItem);
     QObject::connect(
         openLatestLogAction, &QAction::triggered,
         [&]() {
@@ -269,13 +271,25 @@ QMenu* MainWindow::_getHelpMenu() {
 
     //data folder
     auto df = getAppDataLocation();
-    auto openDataFolderAction = new QAction(I18n::tr()->Menu_OpenDataFolder(df).c_str(), helpMenuItem);
+    auto openDataFolderAction = new QAction(I18n::tr()->Menu_OpenDataFolder(df).c_str(), toolsMenuItem);
     QObject::connect(
         openDataFolderAction, &QAction::triggered,
         [&, df]() {
             openFolderInOS(df);
         }
     );
+
+    toolsMenuItem->addAction(openDataFolderAction);
+    toolsMenuItem->addSeparator();
+    toolsMenuItem->addAction(openLogAction);
+    toolsMenuItem->addAction(openLatestLogAction);
+
+    return toolsMenuItem;
+}
+
+QMenu* MainWindow::_getHelpMenu() {
+
+    auto helpMenuItem = new QMenu(I18n::tr()->Menu_Help().c_str());
 
     //for checking the upgrades available
     this->cfugAction = new QAction(I18n::tr()->Menu_CheckForUpgrades().c_str(), helpMenuItem);
@@ -293,12 +307,8 @@ QMenu* MainWindow::_getHelpMenu() {
         }
     );
 
-    helpMenuItem->addAction(openDataFolderAction);
-    helpMenuItem->addSeparator();
-    helpMenuItem->addAction(openLogAction);
-    helpMenuItem->addAction(openLatestLogAction);
-    helpMenuItem->addSeparator();
     helpMenuItem->addAction(patchnoteAction);
+    helpMenuItem->addSeparator();
     helpMenuItem->addAction(this->cfugAction);
 
     return helpMenuItem;
