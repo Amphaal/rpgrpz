@@ -4,6 +4,7 @@
 #include <QHBoxLayout>
 #include <QToolBar>
 #include <QToolButton>
+#include <QSpinBox>
 
 class MapTools : public QToolBar {
 
@@ -13,4 +14,8 @@ class MapTools : public QToolBar {
         enum Actions { None, Select, Scroll, Draw, Rotate };
         MapTools(QWidget * parent = nullptr); 
         void unselectAllTools();
+    
+    signals:
+        void penSizeChanged(int newSize);
+        
 };

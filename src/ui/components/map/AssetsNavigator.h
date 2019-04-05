@@ -8,6 +8,7 @@
 #include <QMimeDatabase>
 #include <QString>
 #include <QDebug>
+#include <QHeaderView>
 
 class AssetsNavigator : public QTreeWidget {
     public:

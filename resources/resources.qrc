@@ -6,5 +6,9 @@
         <file>icons/app/server.png</file>
         <file>icons/app/port.png</file>
         <file>icons/app/rotate.png</file>
+        <file>icons/app/manager/npc.png</file>
+        <file>icons/app/manager/asset.png</file>
+        <file>icons/app/manager/event.png</file>
+        <file>icons/app/manager/character.png</file>
     </qresource>
 </RCC>

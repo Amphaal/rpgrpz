@@ -3,17 +3,15 @@
 #include "src/localization/i18n.cpp"
 #include "libs/qtautoupdater/autoupdatercore/updater.h"
 
-#include <QtWidgets/QMainWindow>
-#include <QtWidgets/QMenuBar>
-#include <QtWidgets/QMessageBox>
+#include <QMainWindow>
+#include <QMenuBar>
+#include <QMessageBox>
 #include <QGraphicsItem>
 #include <QClipboard>
 #include <QToolTip>
 #include <QGraphicsScene>
 #include <QDesktopServices>
 #include <QTabWidget>
-
-
 #include <QLabel>
 #include <QStatusBar>
 #include <QGroupBox>
@@ -22,14 +20,18 @@
 #include "src/network/ConnectivityHelper.h"
 #include "src/network/rpz/server/RPZServer.h"
 
-#include "src/ui/components/ConnectWidget.h"
-#include "src/ui/components/MapView.h"
-#include "src/ui/components/ChatWidget.h"
-#include "src/ui/components/AssetsManager.h"
-#include "src/ui/components/AudioStreamNotifier.h"
-#include "src/ui/components/AudioStreamController.h"
-#include "src/ui/components/MapTools.h"
-#include "src/ui/components/RestoringSplitter.h"
+#include "src/ui/components/communication/ConnectWidget.h"
+#include "src/ui/components/communication/ChatWidget.h"
+#include "src/ui/components/communication/AudioStreamNotifier.h"
+#include "src/ui/components/communication/AudioStreamController.h"
+
+#include "src/ui/components/map/AssetsManager.h"
+#include "src/ui/components/map/MapView.h"
+#include "src/ui/components/map/MapTools.h"
+#include "src/ui/components/map/MapLayoutManager.h"
+
+#include "src/ui/components/others/RestoringSplitter.h"
+
 
 
 class MainWindow : public QMainWindow { 
@@ -52,6 +54,7 @@ class MainWindow : public QMainWindow {
         ChatWidget* _cw = 0;
         AssetsManager* _assetsManager = 0;
         MapTools* _mapTools = 0;
+        MapLayoutManager* _mlManager = 0;
         void _initUIApp();
 
         /*statusbar*/

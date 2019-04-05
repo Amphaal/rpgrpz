@@ -5,7 +5,7 @@
 
 #include <QtGui/QWindow>
 #include <QStyle>
-#include "RestoringSplitter.h"
+#include "src/ui/components/others/RestoringSplitter.h"
 
 #include <QGroupBox>
 

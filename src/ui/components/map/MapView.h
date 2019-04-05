@@ -27,7 +27,8 @@ class MapView : public QGraphicsView {
     public:
         enum MapElementEvtState { Changed, Added, Removed };
         MapView(QWidget *parent);
-        void toolSelectionChanged(QAction *action);
+        void changeToolFromAction(QAction *action);
+        void changePenSize(int newSize);
     
     signals:
         void mapElementsAltered(QHash<QUuid, QGraphicsItem*> elements, MapElementEvtState state);

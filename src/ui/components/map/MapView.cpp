@@ -179,7 +179,7 @@ void MapView::_changeTool(MapTools::Actions newTool,  bool quickChange) {
 }
 
 //on received event
-void MapView::toolSelectionChanged(QAction *action) {
+void MapView::changeToolFromAction(QAction *action) {
     
     //go by default tool if unchecked
     auto state = action->isChecked();
@@ -188,6 +188,11 @@ void MapView::toolSelectionChanged(QAction *action) {
     //else select the new tool
     auto tool = (MapTools::Actions)action->data().toInt();
     return this->_changeTool(tool);
+
+}
+
+void MapView::changePenSize(int newSize) {
+    this->_penWidth = newSize;
 }
 
 //////////////

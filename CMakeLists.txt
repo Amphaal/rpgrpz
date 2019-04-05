@@ -126,18 +126,21 @@ list(APPEND SOURCES
 
 #ui components
 list(APPEND SOURCES
-    src/ui/components/RestoringSplitter.cpp
-    src/ui/components/MapTools.cpp
-    src/ui/components/AssetsNavigator.cpp
-    src/ui/components/MapView.cpp
-    src/ui/components/ChatEdit.cpp
-    src/ui/components/LogView.cpp
-    src/ui/components/LogScrollView.cpp
-    src/ui/components/ChatWidget.cpp
-    src/ui/components/ConnectWidget.cpp
-    src/ui/components/AudioStreamController.cpp
-    src/ui/components/AudioStreamNotifier.cpp
-    src/ui/components/AssetsManager.cpp
+    src/ui/components/others/RestoringSplitter.cpp
+
+    src/ui/components/map/MapTools.cpp
+    src/ui/components/map/AssetsNavigator.cpp
+    src/ui/components/map/MapView.cpp
+    src/ui/components/map/MapLayoutManager.cpp
+    src/ui/components/map/AssetsManager.cpp
+
+    src/ui/components/communication/ChatEdit.cpp
+    src/ui/components/communication/LogView.cpp
+    src/ui/components/communication/LogScrollView.cpp
+    src/ui/components/communication/ChatWidget.cpp
+    src/ui/components/communication/ConnectWidget.cpp
+    src/ui/components/communication/AudioStreamController.cpp
+    src/ui/components/communication/AudioStreamNotifier.cpp
 )
 
 #main

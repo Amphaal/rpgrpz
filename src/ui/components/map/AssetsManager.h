@@ -5,6 +5,7 @@
 #include <QVBoxLayout>
 #include <QJsonDocument>
 #include <QDir>
+#include <QFlags>
 #include <QJsonObject>
 
 #include "src/helpers/_const.cpp"

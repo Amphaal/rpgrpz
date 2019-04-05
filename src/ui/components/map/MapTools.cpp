@@ -9,6 +9,7 @@ MapTools::MapTools(QWidget* parent) : QToolBar(parent) {
     this->setFloatable(true);
 
     //draw
+    this->addSeparator();
     auto draw = new QAction(this);
     auto draw_icon = QIcon(":/icons/app/pen.png");
     draw->setIcon(draw_icon);
@@ -16,6 +17,19 @@ MapTools::MapTools(QWidget* parent) : QToolBar(parent) {
     draw->setIconText("Dessiner");
     draw->setCheckable(true);
     this->addAction(draw);
+
+    //draw size
+    auto sizer = new QSpinBox(this);
+    sizer->setMinimum(1);
+
+    QObject::connect(
+        sizer, qOverload<int>(&QSpinBox::valueChanged),
+        [&](int i) {
+            emit penSizeChanged(i);
+        }
+    );
+    this->addWidget(sizer);
+    this->addSeparator();
 }
 
 void MapTools::unselectAllTools() {
