@@ -8,9 +8,8 @@
 class AppLoader : public QSplashScreen {
 
     public:
-        AppLoader();
+        AppLoader() : QSplashScreen(QPixmap(":/icons/app/rpgrpz.png")) {
+            this->show();
+        }
     
-    protected:
-        // void drawContents(QPainter * painter) override;
-
 };

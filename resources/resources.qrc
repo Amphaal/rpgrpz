@@ -1,6 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
     <qresource>
         <file>icons/app/rpgrpz.png</file>
+        <file>icons/app/rpgrpz_32.png</file>
         <file>icons/app/connectivity/user.png</file>
         <file>icons/app/connectivity/server.png</file>
         <file>icons/app/connectivity/port.png</file>

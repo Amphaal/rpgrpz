@@ -12,8 +12,8 @@ class msgHandler {
         static void customMO(QtMsgType type, const QMessageLogContext &context, const QString &msg) {   
             
             //default log
-            auto logFLoc = getLogFileLocation();
-            auto _fs = fopen(logFLoc.c_str(), "a+");
+            const auto logFLoc = getLogFileLocation();
+            const auto _fs = fopen(logFLoc.c_str(), "a+");
             if(!_fs) return; //error
 
             //latest log
@@ -21,8 +21,8 @@ class msgHandler {
             if(!_latest_been_inst) {
                 mod_latest = "w";
             }
-            auto logLatestFLoc = getLatestLogFileLocation();
-            auto _fsLatest = fopen(logLatestFLoc.c_str(), mod_latest);
+            const auto logLatestFLoc = getLatestLogFileLocation();
+            const auto _fsLatest = fopen(logLatestFLoc.c_str(), mod_latest);
             if(!_fsLatest) {
                 return; //error
             } else {
@@ -63,12 +63,12 @@ class msgHandler {
 
         static inline bool _latest_been_inst = false;
 
-        static void _fprtint(std::string channel, const QMessageLogContext &context, const QString &msg) {
+        static void _fprtint(const std::string &channel, const QMessageLogContext &context, const QString &msg) {
             
             auto localMsg = msg.toStdString();
             localMsg.erase(std::remove(localMsg.begin(), localMsg.end(), '\n'), localMsg.end());
 
-            auto currentTime = QDateTime::currentDateTime().toString("dd.MM.yyyy-hh:mm:ss.zzz").toStdString();
+            const auto currentTime = QDateTime::currentDateTime().toString("dd.MM.yyyy-hh:mm:ss.zzz").toStdString();
 
             fprintf(stderr, "%s %s | %s\n", 
                 currentTime.c_str(), 
@@ -77,28 +77,19 @@ class msgHandler {
             );
         }
 
-        static void _fprintf_to_file(FILE* _fs, std::string channel, const QMessageLogContext &context, const QString &msg) {
+        static void _fprintf_to_file(FILE* _fs, const std::string &channel, const QMessageLogContext &context, const QString &msg) {
 
             auto localMsg = msg.toStdString();
             localMsg.erase(std::remove(localMsg.begin(), localMsg.end(), '\n'), localMsg.end());
 
             const char * file = context.file ? context.file : "";
             const char * function = context.function ? context.function : "";
-            auto currentTime = QDateTime::currentDateTime().toString("dd.MM.yyyy-hh:mm:ss.zzz").toStdString();
+            const auto currentTime = QDateTime::currentDateTime().toString("dd.MM.yyyy-hh:mm:ss.zzz").toStdString();
 
             fprintf(_fs, "%s %s | %s\n", 
                 currentTime.c_str(), 
                 channel.c_str(), 
                 localMsg.c_str()
             );
-            
-            // fprintf(_fs, "%s %s | %s | (%s:%u, %s)\n", 
-            //     currentTime.c_str(), 
-            //     channel.c_str(), 
-            //     localMsg.c_str(), 
-            //     file, 
-            //     context.line, 
-            //     function
-            // );
         }
 };

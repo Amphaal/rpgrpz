@@ -29,7 +29,7 @@ static std::string getAppDataLocation() {
     return target;
 }
 
-static QString formatChatMessage(QString displayName, QString message) {
+static QString formatChatMessage(const QString &displayName, const QString &message) {
     auto ts = QString("[" + QDateTime::currentDateTime().toString("dd.MM.yyyy-hh:mm:ss") + "] ");
     auto name = displayName + " a dit : ";
     auto fullMsg = ts + name + "“" + message + "”";
@@ -52,10 +52,10 @@ static std::string getLatestLogFileLocation() {
     return getAppDataLocation() + LATEST_LOG_FILE;
 }
 
-static void openFileInOS(std::string cpURL) {
+static void openFileInOS(const std::string &cpURL) {
     ShellExecute(NULL, "open", cpURL.c_str(), NULL,  NULL, SW_SHOWNORMAL);
 };
 
-static void openFolderInOS(std::string cpURL) {
+static void openFolderInOS(const std::string &cpURL) {
     ShellExecute(NULL, "open",  cpURL.c_str(), NULL, NULL, SW_SHOWNORMAL);
 };

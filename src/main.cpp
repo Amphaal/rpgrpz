@@ -10,7 +10,7 @@
 #include "src/helpers/_messageHandler.hpp"
 
 #include "ui/MainWindow.h"
-#include "ui/AppLoader.h"
+#include "ui/AppLoader.hpp"
 
 #include <QDir>
 #include <QLockFile>

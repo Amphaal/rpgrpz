@@ -11,7 +11,7 @@ enum JSONMethod {
     HostMapChanged 
 };
 
-static QString JSONMethodAsArray[] = { 
+static const QString JSONMethodAsArray[] = { 
     "MessageFromPlayer", 
     "PlayerHasUsername", 
     "LoggedPlayersChanged", 

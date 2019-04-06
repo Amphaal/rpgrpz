@@ -25,7 +25,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), _scene(new QGraphicsS
     //this->setCacheMode(QGraphicsView::CacheBackground);
 
     //optimisations
-    //this->setOptimizationFlags( QFlags<OptimizationFlag>(QGraphicsView::DontSavePainterState | QGraphicsView::DontAdjustForAntialiasing));
+    this->setOptimizationFlags( QFlags<OptimizationFlag>(QGraphicsView::DontSavePainterState | QGraphicsView::DontAdjustForAntialiasing));
 
     //define scene
     this->_scene->setSceneRect(35000, 35000, 35000, 35000);

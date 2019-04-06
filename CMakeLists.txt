@@ -145,8 +145,7 @@ list(APPEND SOURCES
 )
 
 #main
-list(APPEND SOURCES
-    src/ui/AppLoader.cpp    
+list(APPEND SOURCES 
     src/ui/MainWindow.cpp
     src/main.cpp
 )

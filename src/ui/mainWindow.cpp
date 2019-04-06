@@ -80,7 +80,7 @@ void MainWindow::_initUI() {
     std::string stdTitle = IS_DEBUG_APP ? (std::string)"DEBUG - " + APP_FULL_DENOM : APP_FULL_DENOM;
     this->setWindowTitle(QString(stdTitle.c_str()));
 
-    this->setWindowIcon(QIcon(":/icons/app/rpgrpz.png"));
+    this->setWindowIcon(QIcon(":/icons/app/rpgrpz_32.png"));
 
     //central widget
     auto centralW = new RestoringSplitter("MainWindowSplitter");
