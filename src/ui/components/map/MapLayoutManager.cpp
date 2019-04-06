@@ -27,7 +27,7 @@ void MapLayoutManager::_onElementSelectionChanged() {
     emit elementsAlterationAsked(this->_extractIdsFromSelection(), MapView::MapElementEvtState::Selected);
 }
 
-void MapLayoutManager::alterTreeElements(QList<Asset> elements, MapView::MapElementEvtState state) {
+void MapLayoutManager::alterTreeElements(const QList<Asset> &elements, const MapView::MapElementEvtState &state) {
    
     this->_externalInstructionPending = true;
 
@@ -35,9 +35,9 @@ void MapLayoutManager::alterTreeElements(QList<Asset> elements, MapView::MapElem
     if(state == MapView::MapElementEvtState::Selected) this->clearSelection();
 
     //iterate through items
-    for (auto e : elements) {
+    for (auto &e : elements) {
 
-        auto key = e.id();
+        const auto key = e.id();
 
         switch(state) {
 
@@ -65,13 +65,13 @@ void MapLayoutManager::alterTreeElements(QList<Asset> elements, MapView::MapElem
     this->_externalInstructionPending = false;
 }
 
-QTreeWidgetItem* MapLayoutManager::_createTreeItem(Asset asset) {
+QTreeWidgetItem* MapLayoutManager::_createTreeItem(const Asset &asset) {
     
     auto item = new QTreeWidgetItem(this);
     item->setText(0, asset.descriptor());
     item->setData(0, Qt::UserRole, asset.id());
 
-    auto type = asset.type();
+    const auto type = asset.type();
     switch(type) {
         case AssetType::Type::Drawing:
             item->setIcon(0, QIcon(":/icons/app/manager/drawing.png"));
@@ -90,7 +90,7 @@ void MapLayoutManager::keyPressEvent(QKeyEvent * event) {
         case Qt::Key::Key_Delete:
 
             //make sure there is a selection
-            auto selectedIds = this->_extractIdsFromSelection();
+            const auto selectedIds = this->_extractIdsFromSelection();
             if(!selectedIds.length()) return;
 
             emit elementsAlterationAsked(selectedIds, MapView::MapElementEvtState::Removed);
@@ -99,12 +99,12 @@ void MapLayoutManager::keyPressEvent(QKeyEvent * event) {
 
 }
 
-QList<QUuid> MapLayoutManager::_extractIdsFromSelection() {
+QList<QUuid> MapLayoutManager::_extractIdsFromSelection() const {
     
     QList<QUuid> idList;
     
-    for(auto i : this->selectedItems()) {
-        auto innerData = i->data(0,Qt::UserRole).toUuid();
+    for(auto &i : this->selectedItems()) {
+        const auto innerData = i->data(0,Qt::UserRole).toUuid();
         idList.append(innerData);
     }
 

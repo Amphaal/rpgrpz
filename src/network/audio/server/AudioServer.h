@@ -7,9 +7,9 @@
 
 class AudioServer : public ASThread {
     public:
-        AudioServer(QString domain, QString port);
+        AudioServer(const QString &domain, const QString &port);
         void run() override;
-        void startBroadcasting(QString localPathToMusic);
+        void startBroadcasting(const QString &localPathToMusic);
 
     private:
         QString _port;

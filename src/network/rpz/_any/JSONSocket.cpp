@@ -1,6 +1,6 @@
 #include "JSONSocket.h"
 
-JSONSocket::JSONSocket(QString logId, QTcpSocket * wrapped) : _logId(logId) {
+JSONSocket::JSONSocket(const QString &logId, QTcpSocket* wrapped) : _logId(logId) {
 
     if (wrapped) {
         this->_innerSocket = wrapped;
@@ -27,7 +27,7 @@ void JSONSocket::_onBytesWritten() {
     qDebug() << this->_customLog("json sent !");
 }
 
-void JSONSocket::sendJSON(JSONMethod method, QVariant data) {
+void JSONSocket::sendJSON(const JSONMethod &method, const QVariant &data) {
     
     //checks
     if(data.isNull()) {
@@ -48,7 +48,7 @@ void JSONSocket::sendJSON(JSONMethod method, QVariant data) {
 }
 
 
-void JSONSocket::_sendJSONAsBinary(QByteArray data) {
+void JSONSocket::_sendJSONAsBinary(const QByteArray &data) {
     
     //send welcome message
     QByteArray block;
@@ -80,7 +80,7 @@ void JSONSocket::_processIncomingData() {
 
 }
 
-void JSONSocket::_processIncomingAsJson(QByteArray data) {
+void JSONSocket::_processIncomingAsJson(const QByteArray &data) {
 
     //parse to json
     auto json = QJsonDocument::fromBinaryData(data);
@@ -122,7 +122,7 @@ QTcpSocket * JSONSocket::socket() {
     return this->_innerSocket;
 }
 
-QString JSONSocket::_customLog(QString text) {
-    QString temp = this->_logId + " : " + text;
+QString JSONSocket::_customLog(const QString &text) {
+    const QString temp = this->_logId + " : " + text;
     return temp;
 }

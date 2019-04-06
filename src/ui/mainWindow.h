@@ -30,7 +30,7 @@
 #include "src/ui/components/map/MapTools.h"
 #include "src/ui/components/map/MapLayoutManager.h"
 
-#include "src/ui/components/others/RestoringSplitter.h"
+#include "src/ui/components/others/RestoringSplitter.hpp"
 
 
 

@@ -8,6 +8,6 @@ class RPZSThread : public QThread {
     Q_OBJECT
 
     signals:
-        void newConnectionReceived(std::string ip);
+        void newConnectionReceived(const std::string &ip);
 
 };

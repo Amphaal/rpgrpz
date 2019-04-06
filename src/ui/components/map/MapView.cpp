@@ -25,7 +25,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), _scene(new QGraphicsS
     //this->setCacheMode(QGraphicsView::CacheBackground);
 
     //optimisations
-    this->setOptimizationFlags( QFlags<OptimizationFlag>(QGraphicsView::DontSavePainterState | QGraphicsView::DontAdjustForAntialiasing));
+    //this->setOptimizationFlags( QFlags<OptimizationFlag>(QGraphicsView::DontSavePainterState | QGraphicsView::DontAdjustForAntialiasing));
 
     //define scene
     this->_scene->setSceneRect(35000, 35000, 35000, 35000);
@@ -36,7 +36,7 @@ void MapView::_onSceneSelectionChanged() {
     if(this->_externalInstructionPending) return;
 
     //emit event
-    auto mapToEvt = this->_fetchAssets(this->_scene->selectedItems());
+    const auto mapToEvt = this->_fetchAssets(this->_scene->selectedItems());
     emit mapElementsAltered(mapToEvt, MapElementEvtState::Selected);
 }
 
@@ -83,7 +83,7 @@ void MapView::bindToRPZClient(RPZClient * cc) {
 
 }
 
-QVariantList MapView::packageForNetworkSend(QList<Asset> assets, MapView::MapElementEvtState state) {
+QVariantList MapView::packageForNetworkSend(QList<Asset> &assets, const MapView::MapElementEvtState &state) {
     
     QVariantList toSend;
 
@@ -92,14 +92,14 @@ QVariantList MapView::packageForNetworkSend(QList<Asset> assets, MapView::MapEle
     data.insert("state", state);
 
     QVariantHash assetsContainer;
-    for(auto asset : assets) {
+    for(auto &asset : assets) {
 
         QByteArray assetData = NULL;
 
         switch(asset.type()) {
             case AssetType::Type::Drawing:
                 auto casted = (QGraphicsPathItem*)asset.graphicsItem();
-                auto path = casted->path();
+                const auto path = casted->path();
                 assetData = JSONSerializer::toBase64(path);
                 break;
         }
@@ -118,24 +118,24 @@ QVariantList MapView::packageForNetworkSend(QList<Asset> assets, MapView::MapEle
     return toSend;
 }
 
-void MapView::unpackFromNetworkReceived(QVariantList package) {
+void MapView::unpackFromNetworkReceived(const QVariantList &package) {
 
     //container
     QList<Asset> out; 
 
     //get data
-    auto data = package[0].toHash();
-    auto state = static_cast<MapElementEvtState>(data["state"].toInt());
+    const auto data = package[0].toHash();
+    const auto state = (MapElementEvtState)data["state"].toInt();
 
     //iterate through assets
-    auto assetsContainer = data["assets"].toHash();
-    for(auto key : assetsContainer.keys()) {
+    const auto assetsContainer = data["assets"].toHash();
+    for(auto &key : assetsContainer.keys()) {
 
         //get data
-        auto elemId = QUuid::fromString(key);
-        auto binder = assetsContainer[key].toHash();
-        auto binderType = static_cast<AssetType::Type>(binder["type"].toInt());
-        auto binderOwner = binder["owner"].toUuid();
+        const auto elemId = QUuid::fromString(key);
+        const auto binder = assetsContainer[key].toHash();
+        const auto binderType = (AssetType::Type)binder["type"].toInt();
+        const auto binderOwner = binder["owner"].toUuid();
 
         //build asset or fetch it
         Asset newAsset;
@@ -154,7 +154,7 @@ void MapView::unpackFromNetworkReceived(QVariantList package) {
                 
                 //drawing...
                 case AssetType::Type::Drawing:
-                    QPainterPath path = JSONSerializer::fromBase64(binder["data"]);
+                    const QPainterPath path = JSONSerializer::fromBase64(binder["data"]);
                     newItem = this->_scene->addPath(path);
                     break;
             
@@ -249,7 +249,7 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
     QGraphicsView::mouseReleaseEvent(event);
 }
 
-void MapView::_toolOnMousePress(MapTools::Actions tool) {
+void MapView::_toolOnMousePress(const MapTools::Actions &tool) {
     switch(tool) {
         case MapTools::Actions::Draw: {
             this->_beginDrawing();
@@ -258,7 +258,7 @@ void MapView::_toolOnMousePress(MapTools::Actions tool) {
     }
 }
 
-void MapView::_toolOnMouseRelease(MapTools::Actions tool) {
+void MapView::_toolOnMouseRelease(const MapTools::Actions &tool) {
     if(this->_tempDrawing)  {
         this->_endDrawing();
     }
@@ -266,12 +266,12 @@ void MapView::_toolOnMouseRelease(MapTools::Actions tool) {
 
 
 //returns tool
-MapTools::Actions MapView::_getCurrentTool() {
+MapTools::Actions MapView::_getCurrentTool() const {
     return this->_quickTool == MapTools::Actions::None ? this->_selectedTool : this->_quickTool;
 }
 
 //change tool
-void MapView::_changeTool(MapTools::Actions newTool,  bool quickChange) {
+void MapView::_changeTool(MapTools::Actions newTool, const bool quickChange) {
 
     if(quickChange) {
         this->_quickTool = newTool;
@@ -310,7 +310,7 @@ void MapView::_changeTool(MapTools::Actions newTool,  bool quickChange) {
 //on received event
 void MapView::changeToolFromAction(QAction *action) {
     
-    auto instruction = (MapTools::Actions)action->data().toInt();
+    const auto instruction = (MapTools::Actions)action->data().toInt();
     if(instruction == MapTools::Actions::RotateToNorth) {
         this->_rotateBackToNorth();
         return;
@@ -325,7 +325,7 @@ void MapView::changeToolFromAction(QAction *action) {
 
 }
 
-void MapView::changePenSize(int newSize) {
+void MapView::changePenSize(const int newSize) {
     this->_penWidth = newSize;
 }
 
@@ -360,7 +360,7 @@ void MapView::wheelEvent(QWheelEvent *event) {
 };
 
 void MapView::_zoomBy_scalingTime(qreal x) {
-    qreal factor = 1.0+ qreal(this->_numScheduledScalings) / 300.0;
+    qreal factor = 1.0 + qreal(this->_numScheduledScalings) / 300.0;
     this->scale(factor, factor);
 }
 
@@ -382,7 +382,7 @@ void MapView::_zoomBy_animFinished() {
 ////////////
 
 void MapView::_rotate(const QPoint &evtPoint) {
-    auto way = this->_lastPointMousePressing - evtPoint;
+    const auto way = this->_lastPointMousePressing - evtPoint;
     auto pp = ((double)way.y()) / 5;
     this->_degreesFromNorth += pp;
     this->rotate(pp);
@@ -455,11 +455,9 @@ void MapView::_endDrawing() {
     this->_tempDrawing = nullptr;
     
     //destroy temp
-    auto iGroup = this->_scene->createItemGroup(this->_tempLines);
-    for(auto i : this->_tempLines) {
+    for(auto &i : this->_tempLines) {
         delete i;
     }
-    this->_scene->destroyItemGroup(iGroup);
     this->_tempLines.clear();
 }
 
@@ -469,12 +467,12 @@ void MapView::_drawLineTo(const QPoint &evtPoint) {
     this->_tempDrawing->lineTo(this->mapToScene(evtPoint));
 
     //draw temp line
-    auto lineCoord = QLineF(this->mapToScene(this->_lastPointMousePressing), this->mapToScene(evtPoint));
+    const auto lineCoord = QLineF(this->mapToScene(this->_lastPointMousePressing), this->mapToScene(evtPoint));
     auto tempLine = this->_scene->addLine(lineCoord, this->_getPen());
     this->_tempLines.append(tempLine);
 }
 
-QPen MapView::_getPen() {
+QPen MapView::_getPen() const {
     return QPen(this->_penColor, this->_penWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 }
 
@@ -487,15 +485,15 @@ QPen MapView::_getPen() {
 //////////////
 
 //register actions
-QUuid MapView::_alterSceneInternal(MapElementEvtState alteration, Asset &asset) {
+QUuid MapView::_alterSceneInternal(const MapElementEvtState &alteration, Asset &asset) {
 
     //get the Uuids
-    QUuid elemId = asset.id();
+    auto elemId = asset.id();
     if(elemId.isNull()) {
         elemId = alteration == MapElementEvtState::Added ? QUuid::createUuid() : this->_idsByGraphicItem[asset.graphicsItem()];
         asset.setId(elemId);
     }
-    QUuid ownerId = asset.ownerId();
+    auto ownerId = asset.ownerId();
     
     switch(alteration) {
         
@@ -553,7 +551,7 @@ QUuid MapView::_alterSceneInternal(MapElementEvtState alteration, Asset &asset) 
 }
 
 //alter Scene
-void MapView::_alterScene(MapElementEvtState alteration, QList<Asset> assets) { 
+void MapView::_alterScene(const MapElementEvtState &alteration, QList<Asset> &assets) { 
     
     //make sure to clear selection before selecting new
     if(alteration == MapElementEvtState::Selected) {
@@ -570,25 +568,25 @@ void MapView::_alterScene(MapElementEvtState alteration, QList<Asset> assets) {
 }
 
 //helper
-void MapView::_alterScene(MapElementEvtState alteration, Asset asset) {
+void MapView::_alterScene(const MapElementEvtState &alteration, Asset &asset) {
     QList<Asset> list;
     list.append(asset);
     return this->_alterScene(alteration, list);
 }
 
 //helper
-void MapView::_alterScene(MapElementEvtState alteration, QList<QGraphicsItem*> elements) {
+void MapView::_alterScene(const MapElementEvtState &alteration, const QList<QGraphicsItem*> &elements) {
     return this->_alterScene(alteration, this->_fetchAssets(elements));
 }
 
 //helper
-void MapView::_alterScene(MapElementEvtState alteration, QList<QUuid> elementIds) {
+void MapView::_alterScene(const MapElementEvtState &alteration, const QList<QUuid> &elementIds) {
     return this->_alterScene(alteration, this->_fetchAssets(elementIds));
 }
 
 
 //from external instructions
-void MapView::alterScene(QList<QUuid> elementIds, MapView::MapElementEvtState state) {
+void MapView::alterScene(const QList<QUuid> &elementIds, const MapView::MapElementEvtState &state) {
     
     this->_externalInstructionPending = true;
 
@@ -599,10 +597,10 @@ void MapView::alterScene(QList<QUuid> elementIds, MapView::MapElementEvtState st
 }
 
 //helper
-QList<Asset> MapView::_fetchAssets(QList<QGraphicsItem*> listToFetch) {
+QList<Asset> MapView::_fetchAssets(const QList<QGraphicsItem*> &listToFetch) const {
     QList<Asset> list;
 
-    for(auto e : listToFetch) {
+    for(auto &e : listToFetch) {
         list.append(this->_assetsById[this->_idsByGraphicItem[e]]);
     }
 
@@ -610,10 +608,10 @@ QList<Asset> MapView::_fetchAssets(QList<QGraphicsItem*> listToFetch) {
 }
 
 //helper
-QList<Asset> MapView::_fetchAssets(QList<QUuid> listToFetch) {
+QList<Asset> MapView::_fetchAssets(const QList<QUuid> &listToFetch) const {
    QList<Asset> list;
 
-    for(auto e : listToFetch) {
+    for(auto &e : listToFetch) {
         list.append(this->_assetsById[e]);
     }
 

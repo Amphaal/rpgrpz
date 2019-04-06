@@ -22,7 +22,7 @@ MapTools::MapTools(QWidget* parent) : QToolBar(parent) {
     sizer->setMinimum(1);
     QObject::connect(
         sizer, qOverload<int>(&QSpinBox::valueChanged),
-        [&](int i) {
+        [&](const int i) {
             emit penSizeChanged(i);
         }
     );
@@ -39,7 +39,7 @@ MapTools::MapTools(QWidget* parent) : QToolBar(parent) {
 }
 
 void MapTools::unselectAllTools() {
-    for(auto action : this->actions()) {
+    for(auto &action : this->actions()) {
         action->setChecked(false);
     }
 }

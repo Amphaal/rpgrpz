@@ -7,7 +7,7 @@
 
 class AudioClient : public ACThread {
     public:
-        AudioClient(QString domain, QString port);
+        AudioClient(const QString &domain, const QString &port);
         void run() override;
 
     private:

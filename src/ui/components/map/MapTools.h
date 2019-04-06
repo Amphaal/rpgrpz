@@ -16,6 +16,6 @@ class MapTools : public QToolBar {
         void unselectAllTools();
     
     signals:
-        void penSizeChanged(int newSize);
+        void penSizeChanged(const int newSize);
         
 };

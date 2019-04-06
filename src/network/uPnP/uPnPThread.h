@@ -10,6 +10,6 @@ class uPnPThread : public QThread {
         
     signals:
         void uPnPError(int errorCode);
-        void uPnPExtIpFound(std::string extIP);
+        void uPnPExtIpFound(const std::string &extIP);
         void uPnPSuccess(const char * protocol, const char * negociatedPort);
 };

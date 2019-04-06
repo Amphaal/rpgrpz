@@ -5,7 +5,7 @@ class AssetType {
         enum Type { Undefined, Drawing, Brush, NPC, Event, PC };
 
         AssetType() {}
-        AssetType(AssetType::Type type) : _selfType(type) {
+        AssetType(const AssetType::Type &type) : _selfType(type) {
 
             switch(type) {
                 case Type::Drawing:
@@ -17,8 +17,8 @@ class AssetType {
 
         } 
         
-        AssetType::Type type() { return this->_selfType; }
-        virtual QString descriptor() { return this->_description; }
+        AssetType::Type type() const { return this->_selfType; }
+        virtual QString descriptor() const { return this->_description; }
 
     private:
         AssetType::Type _selfType;

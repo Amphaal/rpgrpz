@@ -22,13 +22,13 @@ ConnectivityHelper::ConnectivityHelper(QObject *parent) :
 
 };
 
-void ConnectivityHelper::_mustReInit(QNetworkConfiguration config) {
+void ConnectivityHelper::_mustReInit(const QNetworkConfiguration &config) {
     
     auto mustReInit = this->_nam->configuration() == config;
 
-    auto oldPrefConfig = this->_nam->configuration();
+    const auto oldPrefConfig = this->_nam->configuration();
     this->_pickPreferedConfiguration();
-    auto newPrefConfig = this->_nam->configuration();
+    const auto newPrefConfig = this->_nam->configuration();
     auto mustReInit_2 = oldPrefConfig != newPrefConfig;
 
     qDebug() << "Connectivity : Detected an alteration in network" << config.name() << ", repicking interface " << this->_nam->configuration().name();
@@ -46,11 +46,11 @@ QList<QNetworkConfiguration> ConnectivityHelper::_getDefinedConfiguration() {
 
 void ConnectivityHelper::_pickPreferedConfiguration() {
     
-    for(auto conf : this->_getDefinedConfiguration()) {
+    for(auto &conf : this->_getDefinedConfiguration()) {
 
-        auto purpose = conf.purpose();
-        auto type = conf.type();
-        auto name = conf.name();
+        const auto purpose = conf.purpose();
+        const auto type = conf.type();
+        const auto name = conf.name();
 
         if(!type == QNetworkConfiguration::InternetAccessPoint) continue;
 
@@ -98,7 +98,7 @@ void ConnectivityHelper::_tryNegociateUPnPPort() {
     this->_clearUPnPRequester();
 
     this->_requestedUPnPPort = UPNP_DEFAULT_TARGET_PORT.c_str();
-    auto descr = UPNP_REQUEST_DESCRIPTION.c_str();
+    const auto descr = UPNP_REQUEST_DESCRIPTION.c_str();
 
     qDebug() << "Connectivity : trying to open uPnP port " << this->_requestedUPnPPort.c_str() << " as \"" << descr << "\" ";
 
@@ -122,7 +122,7 @@ void ConnectivityHelper::_tryNegociateUPnPPort() {
     this->_upnpThread->start();
 }
 
-void ConnectivityHelper::_onUPnPExtIpFound(std::string extIp) {
+void ConnectivityHelper::_onUPnPExtIpFound(const std::string &extIp) {
     this->_upnp_extIp = extIp;
     emit remoteAddressStateChanged(extIp, true);
 };
@@ -152,7 +152,7 @@ void ConnectivityHelper::_askExternalAddress() {
     this->_nam->get(request);
 };
 
-void ConnectivityHelper::networkChanged(QNetworkAccessManager::NetworkAccessibility accessible) {
+void ConnectivityHelper::networkChanged(const QNetworkAccessManager::NetworkAccessibility accessible) {
     
     emit localAddressStateChanged(this->_getWaitingText());
     emit remoteAddressStateChanged(this->_getWaitingText());
@@ -177,7 +177,7 @@ void ConnectivityHelper::_getLocalAddress() {
     QHostAddress localhost(QHostAddress::LocalHost);
     QString rtrn;
 
-    foreach (const QHostAddress &address, QNetworkInterface::allAddresses()) {
+    for(auto &address : QNetworkInterface::allAddresses()) {
         if (address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost) {
             rtrn = address.toString();
             break;
@@ -210,7 +210,7 @@ void ConnectivityHelper::_onExternalAddressRequestResponse(QNetworkReply* networ
     }
 
     //else get the ip from the response
-    auto ip = QJsonDocument::fromJson(networkReply->readAll()).object().value("ip").toString();
+    const auto ip = QJsonDocument::fromJson(networkReply->readAll()).object().value("ip").toString();
     qDebug() << "Connectivity : ipify.org responded our external IP is " << ip;
     emit remoteAddressStateChanged(ip.toStdString().c_str(), true);
 };
@@ -229,7 +229,7 @@ std::string ConnectivityHelper::_getErrorText() {
 
 void ConnectivityHelper::_debugNetworkConfig() {
     
-    auto _debug = [&](std::string descr, QNetworkConfiguration &config) {
+    auto _debug = [&](const std::string &descr, const QNetworkConfiguration &config) {
         qDebug() << "Connectivity :" << QString::fromStdString(descr)
                 << ">> name:" << config.name() 
                 << ", state:" << config.state() 
@@ -237,7 +237,7 @@ void ConnectivityHelper::_debugNetworkConfig() {
                 << ", bearer:" << config.bearerTypeName();
     };
 
-    for (auto config : this->_getDefinedConfiguration()) {
+    for (auto &config : this->_getDefinedConfiguration()) {
         _debug("defined configuration", config);
     }
 

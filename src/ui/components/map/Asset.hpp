@@ -9,7 +9,8 @@
 class Asset : public AssetType {
     public:
         Asset() {}
-        Asset(AssetType::Type type, QGraphicsItem* assetItemOnMap, QUuid assetId = NULL, QUuid ownerId = NULL, QString ownerName = NULL) :
+        Asset(const AssetType::Type &type, QGraphicsItem* assetItemOnMap, 
+                    const QUuid &assetId = NULL, const QUuid &ownerId = NULL, const QString &ownerName = NULL) :
             AssetType(type), 
             _item(assetItemOnMap),
             _ownerId(ownerId),
@@ -19,11 +20,11 @@ class Asset : public AssetType {
         }
 
         QGraphicsItem* graphicsItem() { return _item; }
-        QUuid ownerId() { return _ownerId; }
-        QUuid id() { return _id; }
-        void setId(QUuid id) { _id = id; }
+        QUuid ownerId() const { return _ownerId; }
+        QUuid id() const { return _id; }
+        void setId(const QUuid &id) { _id = id; }
 
-        QString descriptor() override { 
+        QString descriptor() const override { 
             auto base = AssetType::descriptor();
 
             if(!this->_ownerName.isNull()) {

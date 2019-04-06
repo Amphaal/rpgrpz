@@ -1,6 +1,6 @@
 #include "RPZClient.h"
 
-RPZClient::RPZClient(QString name, QString domain, QString port) : 
+RPZClient::RPZClient(const QString &name, const QString &domain, const QString &port) : 
                         _name(name), 
                         _domain(domain), 
                         _port(port) {
@@ -16,7 +16,7 @@ void RPZClient::_constructorInThread(){
 
     QObject::connect(
         this->_sockWrapper, &JSONSocket::JSONReceived,
-        [&](JSONSocket* target, JSONMethod method, QVariant data) {
+        [&](JSONSocket* target, const JSONMethod &method, const QVariant &data) {
             this->_routeIncomingJSON(target, method, data);
         } 
     );
@@ -24,7 +24,7 @@ void RPZClient::_constructorInThread(){
     QObject::connect(
         this->_sockWrapper->socket(), &QAbstractSocket::disconnected,
         [&]() {
-            std::string msg = "Déconnecté du serveur";
+            const std::string msg = "Déconnecté du serveur";
             emit error(msg);
             qWarning() << "Chat Client : " << QString::fromStdString(msg);
         }
@@ -49,7 +49,7 @@ void RPZClient::_constructorInThread(){
 }
 
 
-void RPZClient::sendMessage(QString messageToSend) {
+void RPZClient::sendMessage(const QString &messageToSend) {
 
     this->_sockWrapper->sendJSON(JSONMethod::MessageFromPlayer, QStringList(messageToSend));
 
@@ -82,23 +82,23 @@ void RPZClient::run() {
 }
 
 
-void RPZClient::_routeIncomingJSON(JSONSocket* target, JSONMethod method, QVariant data) {
+void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) {
     
     switch(method) {
         case JSONMethod::ChatLogHistory:
-            for(auto msg : data.toList()) {
-                auto stdmsg = msg.toString().toStdString();
+            for(auto &msg : data.toList()) {
+                const auto stdmsg = msg.toString().toStdString();
                 emit receivedMessage(stdmsg);
             }
             emit logHistoryReceived();
             break;
         case JSONMethod::LoggedPlayersChanged: {
-                auto users = data.toList();
+                const auto users = data.toList();
                 emit loggedUsersUpdated(users);
             }
             break;
         case JSONMethod::MessageFromPlayer: {
-                auto mfp = data.toList()[0].toString().toStdString();
+                const auto mfp = data.toList()[0].toString().toStdString();
                 emit receivedMessage(mfp);
             }
             break;

@@ -8,5 +8,5 @@
 
 class JSONRouter {
     protected:
-       virtual void _routeIncomingJSON(JSONSocket* target, JSONMethod method, QVariant data) = 0;
+       virtual void _routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) = 0;
 };

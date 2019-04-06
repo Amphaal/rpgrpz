@@ -15,7 +15,7 @@ AssetsManager::AssetsManager(QWidget * parent) : QWidget(parent), _tree(new Asse
 QJsonDocument AssetsManager::_getCoordinator() {
     
     //read coordinator file as JSON
-    auto coordPath = QString::fromStdString(getAssetsFileCoordinatorLocation());
+    const auto coordPath = QString::fromStdString(getAssetsFileCoordinatorLocation());
     QFile jsonFile(coordPath);
     
     //helper for file creation
@@ -44,7 +44,7 @@ QJsonDocument AssetsManager::_getCoordinator() {
 
     //corrupted file, move it and create a new one
     if(coordinator.isNull()) {
-        auto errorPath = coordPath + "_error";
+        const auto errorPath = coordPath + "_error";
         QDir().remove(errorPath);
         QDir().rename(coordPath, errorPath);
         writeNewCoord(jsonFile);

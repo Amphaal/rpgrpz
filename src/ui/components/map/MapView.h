@@ -38,19 +38,19 @@ class MapView : public QGraphicsView {
         MapView(QWidget *parent);
 
         //network helpers...
-        QVariantList packageForNetworkSend(QList<Asset> assets, MapView::MapElementEvtState state);
-        void unpackFromNetworkReceived(QVariantList package);
+        QVariantList packageForNetworkSend(QList<Asset> &assets, const MapView::MapElementEvtState &state);
+        void unpackFromNetworkReceived(const QVariantList &package);
 
     public slots:
         void changeToolFromAction(QAction *action);
-        void changePenSize(int newSize);
-        void alterScene(QList<QUuid> elementIds, MapView::MapElementEvtState state);
+        void changePenSize(const int newSize);
+        void alterScene(const QList<QUuid> &elementIds, const MapView::MapElementEvtState &state);
         
         //network
         void bindToRPZClient(RPZClient * cc);
     
     signals:
-        void mapElementsAltered(QList<Asset> elements, MapElementEvtState state);
+        void mapElementsAltered(const QList<Asset> &elements, const MapElementEvtState &state);
         void unselectCurrentToolAsked();
 
     protected:
@@ -81,24 +81,24 @@ class MapView : public QGraphicsView {
             QSet<QUuid> _selfElements;
             QHash<QUuid, QSet<QUuid>> _foreignElementIdsByOwnerId;
 
-            QHash<QUuid, Asset> _fetchAssetsWithIds(QList<QGraphicsItem*> listToFetch);
-            QList<Asset> _fetchAssets(QList<QGraphicsItem*> listToFetch);
-            QList<Asset> _fetchAssets(QList<QUuid> listToFetch);
+            QHash<QUuid, Asset> _fetchAssetsWithIds(const QList<QGraphicsItem*> &listToFetch) const;
+            QList<Asset> _fetchAssets(const QList<QGraphicsItem*> &listToFetch) const;
+            QList<Asset> _fetchAssets(const QList<QUuid> &listToFetch) const;
 
-            void _alterScene(MapElementEvtState alteration, QList<QGraphicsItem*> elements);
-            void _alterScene(MapElementEvtState alteration, QList<Asset> assets);
-            void _alterScene(MapElementEvtState alteration, QList<QUuid> elementIds);
-            void _alterScene(MapElementEvtState alteration, Asset asset);
-            QUuid _alterSceneInternal(MapElementEvtState alteration, Asset &asset);
+            void _alterScene(const MapElementEvtState &alteration, const QList<QGraphicsItem*> &elements);
+            void _alterScene(const MapElementEvtState &alteration, QList<Asset> &assets);
+            void _alterScene(const MapElementEvtState &alteration, const QList<QUuid> &elementIds);
+            void _alterScene(const MapElementEvtState &alteration, Asset &asset);
+            QUuid _alterSceneInternal(const MapElementEvtState &alteration, Asset &asset);
 
         //tool
             MapTools::Actions _selectedTool;
             static const MapTools::Actions _defaultTool = MapTools::Actions::Select;
             MapTools::Actions _quickTool = MapTools::Actions::None;
-            void _changeTool(MapTools::Actions newTool, bool quickChange = false);
-            MapTools::Actions _getCurrentTool();
-            void _toolOnMousePress(MapTools::Actions tool);
-            void _toolOnMouseRelease(MapTools::Actions tool);
+            void _changeTool(MapTools::Actions newTool, const bool quickChange = false);
+            MapTools::Actions _getCurrentTool() const;
+            void _toolOnMousePress(const MapTools::Actions &tool);
+            void _toolOnMouseRelease(const MapTools::Actions &tool);
 
         //rotating...
             QCursor * _rotateCursor = nullptr;
@@ -108,8 +108,8 @@ class MapView : public QGraphicsView {
 
         //zooming...
             int _numScheduledScalings = 0;
-            void _zoomBy(qreal factor);
-            void _zoomBy_scalingTime(qreal x);
+            void _zoomBy(const qreal factor);
+            void _zoomBy_scalingTime(const qreal x);
             void _zoomBy_animFinished();
         
         //droping..
@@ -118,7 +118,7 @@ class MapView : public QGraphicsView {
         //drawing...
             int _penWidth = 1;
             QColor _penColor = Qt::blue;
-            QPen _getPen();
+            QPen _getPen() const;
 
             QList<QGraphicsItem*> _tempLines;
             QPainterPath* _tempDrawing = nullptr;

@@ -19,9 +19,9 @@ class RPZClient : public RPZCThread, public JSONRouter {
     Q_OBJECT
 
     public:
-        RPZClient(QString displayname, QString domain, QString port);
+        RPZClient(const QString &displayname, const QString &domain, const QString &port);
         QString getConnectedSocketAddress();
-        void sendMessage(QString messageToSend);
+        void sendMessage(const QString &messageToSend);
         void run() override;
 
     private:
@@ -34,6 +34,6 @@ class RPZClient : public RPZCThread, public JSONRouter {
         void _error(QAbstractSocket::SocketError _socketError);
         void _constructorInThread();
 
-        void _routeIncomingJSON(JSONSocket* target, JSONMethod method, QVariant data) override;
+        void _routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) override;
 
 };
