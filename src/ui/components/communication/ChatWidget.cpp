@@ -57,7 +57,6 @@ void ChatWidget::_instUI() {
     ////////////
     // Fusion //
     ////////////
-    QSettings settings;
     auto splitter = new RestoringSplitter("ChatWidgetSplitter");
     splitter->addWidget(_left());
     splitter->addWidget(_right());
@@ -67,23 +66,23 @@ void ChatWidget::_instUI() {
     this->layout()->addWidget(splitter);
 }
 
-void ChatWidget::_onRPZClientError(const std::string errMsg) {    
+void ChatWidget::_onRPZClientError(const std::string &errMsg) {    
     
     //out log
     if(!this->serverName.isEmpty()) {
-        auto nm = errMsg + " (" + this->serverName.toStdString() + ")";
+        const auto nm = errMsg + " (" + this->serverName.toStdString() + ")";
         this->writeInChatLog(nm, ChatWidget::LogType::ServerLog);
     }
 
     this->_DisableUI();
 
 }
-void ChatWidget::_onRPZClientReceivedMessage(const std::string message) {
+void ChatWidget::_onRPZClientReceivedMessage(const std::string &message) {
     this->writeInChatLog(message);
 }
 
 void ChatWidget::_onRPZClientReceivedHistory() {
-    auto msg = QString("Connecté au serveur (") + this->serverName + ")";
+    const auto msg = QString("Connecté au serveur (") + this->serverName + ")";
     this->writeInChatLog(msg.toStdString(), ChatWidget::LogType::ServerLog);
 }
 
@@ -146,9 +145,9 @@ void ChatWidget::_EnableUI() {
 }
 
 
-void ChatWidget::writeInChatLog(const std::string &message, ChatWidget::LogType logType) {
+void ChatWidget::writeInChatLog(const std::string &message, const ChatWidget::LogType &logType) {
     
-    QPalette* colors = 0;
+    QPalette* colors = nullptr;
 
     switch(logType) {
         case ChatWidget::LogType::ServerLog:
@@ -163,10 +162,10 @@ void ChatWidget::writeInChatLog(const std::string &message, ChatWidget::LogType 
     this->_chatLog->writeAtEnd(message, colors);
 };
 
-void ChatWidget::_onRPZClientloggedUsersUpdated(QVariantList users) {
+void ChatWidget::_onRPZClientloggedUsersUpdated(const QVariantList &users) {
     this->_usersLog->newLog();
-    for(auto user : users) {
-        auto un = user.toString().toStdString();
+    for(auto &user : users) {
+        const auto un = user.toString().toStdString();
         this->_usersLog->writeAtEnd(un, nullptr, &QPixmap(":/icons/app/connectivity/user.png"));
     }
 }

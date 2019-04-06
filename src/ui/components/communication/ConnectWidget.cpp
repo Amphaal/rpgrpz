@@ -6,8 +6,7 @@ ConnectWidget::ConnectWidget(QWidget * parent) : QGroupBox(parent),
                                             _domainTarget(new QLineEdit(this)),
                                             _connectBtn(new QPushButton(this)) {
                                                     
-    QSettings settings;
-    settings.beginGroup("ConnectWidget");
+    this->_settings.beginGroup("ConnectWidget");
 
     //this
     this->setLayout(new QHBoxLayout);
@@ -18,13 +17,13 @@ ConnectWidget::ConnectWidget(QWidget * parent) : QGroupBox(parent),
     //name target
     this->_nameTarget->addAction(QIcon(":/icons/app/connectivity/user.png"), QLineEdit::LeadingPosition);
     this->_nameTarget->setPlaceholderText("Nom de joueur");
-    this->_nameTarget->setText(settings.value("name", "").toString());
+    this->_nameTarget->setText(this->_settings.value("name", "").toString());
 
 
     //domain target
     this->_domainTarget->addAction(QIcon(":/icons/app/connectivity/server.png"), QLineEdit::LeadingPosition);
     this->_domainTarget->setPlaceholderText("IP ou domaine du serveur");
-    this->_domainTarget->setText(settings.value("domain", "localhost").toString());
+    this->_domainTarget->setText(this->_settings.value("domain", "localhost").toString());
 
 
     //sep
@@ -36,7 +35,7 @@ ConnectWidget::ConnectWidget(QWidget * parent) : QGroupBox(parent),
     this->_portTarget->setValidator(new QIntValidator(0, 65535));
     this->_portTarget->setPlaceholderText("Port");
     this->_portTarget->setText(
-        settings.value(
+        this->_settings.value(
             "port", 
             QString::fromStdString(UPNP_DEFAULT_TARGET_PORT)
         ).toString()
@@ -60,7 +59,7 @@ ConnectWidget::ConnectWidget(QWidget * parent) : QGroupBox(parent),
     this->layout()->addWidget(this->_portTarget);
     this->layout()->addWidget(this->_connectBtn);
 
-    settings.endGroup();
+    this->_settings.endGroup();
 }
 
 void ConnectWidget::_tryConnectToServer() {
@@ -68,19 +67,18 @@ void ConnectWidget::_tryConnectToServer() {
     this->setEnabled(false);
 
     //register default values
-    QSettings settings;
-    settings.beginGroup("ConnectWidget");
+    this->_settings.beginGroup("ConnectWidget");
 
-    auto dt_text = this->_domainTarget->text();
-    if(!dt_text.isEmpty()) settings.setValue("domain", dt_text);
+    const auto dt_text = this->_domainTarget->text();
+    if(!dt_text.isEmpty()) this->_settings.setValue("domain", dt_text);
 
-    auto pt_text = this->_portTarget->text();
-    if(!pt_text.isEmpty()) settings.setValue("port", pt_text);
+    const auto pt_text = this->_portTarget->text();
+    if(!pt_text.isEmpty()) this->_settings.setValue("port", pt_text);
 
-    auto nt_text = this->_nameTarget->text();
-    if(!nt_text.isEmpty()) settings.setValue("name", nt_text);
+    const auto nt_text = this->_nameTarget->text();
+    if(!nt_text.isEmpty()) this->_settings.setValue("name", nt_text);
 
-    settings.endGroup();
+    this->_settings.endGroup();
 
     //connect..
     this->_destroyClient();
@@ -100,7 +98,7 @@ void ConnectWidget::_tryConnectToServer() {
     this->_cc->start();
 }
 
-void ConnectWidget::_onRPZClientError(const std::string errMsg) {
+void ConnectWidget::_onRPZClientError(const std::string &errMsg) {
     if(!this->_connected) {
         QMessageBox::information(this, 
             QString("Erreur lors de la connexion"), 

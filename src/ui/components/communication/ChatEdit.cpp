@@ -35,7 +35,7 @@ void ChatEdit::changeEvent(QEvent *event) {
 }
 
 void ChatEdit::_sendMessage() {
-    auto msg = this->_msgEdit->text();
+    const auto msg = this->_msgEdit->text();
     if(msg.isEmpty()) return;
     this->_msgEdit->setText("");
 

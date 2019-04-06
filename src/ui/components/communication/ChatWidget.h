@@ -25,17 +25,17 @@ class ChatWidget : public QGroupBox {
         ChatWidget(QWidget *parent = nullptr);
         
         void createNewLog();
-        void writeInChatLog(const std::string &message, ChatWidget::LogType logType = ChatWidget::LogType::Default);
+        void writeInChatLog(const std::string &message, const ChatWidget::LogType &logType = ChatWidget::LogType::Default);
 
         void bindToRPZClient(RPZClient * cc);
 
     private:
-        LogScrollView *_chatLog = 0;
-        LogScrollView *_usersLog = 0;
-        ChatEdit *_chatEdit = 0;
+        LogScrollView *_chatLog = nullptr;
+        LogScrollView *_usersLog = nullptr;
+        ChatEdit *_chatEdit = nullptr;
 
         QString serverName;
-        RPZClient* _currentCC = 0;
+        RPZClient* _currentCC = nullptr;
 
         void _sendMessage();
 
@@ -47,9 +47,9 @@ class ChatWidget : public QGroupBox {
         void _EnableUI();
 
         //
-        void _onRPZClientError(const std::string errMsg);
-        void _onRPZClientReceivedMessage(const std::string message);
+        void _onRPZClientError(const std::string &errMsg);
+        void _onRPZClientReceivedMessage(const std::string &message);
         void _onRPZClientReceivedHistory();
-        void _onRPZClientloggedUsersUpdated(QVariantList users);
+        void _onRPZClientloggedUsersUpdated(const QVariantList &users);
 
 };

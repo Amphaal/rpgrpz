@@ -25,7 +25,7 @@ QUuid LogView::writeAtEnd(const std::string & newMessage, QPalette* colorPalette
     }
 
     //text part
-    auto msg = QString::fromStdString(newMessage);
+    const auto msg = QString::fromStdString(newMessage);
     auto label = new QLabel(msg);
     label->setMargin(0);
     label->setWordWrap(true);
@@ -36,18 +36,16 @@ QUuid LogView::writeAtEnd(const std::string & newMessage, QPalette* colorPalette
     }
 
     //add container to layout
-    auto id = QUuid::createUuid();
+    const auto id = QUuid::createUuid();
     this->_lines.insert(id, line);
     this->layout()->addWidget(line);
 
     return id;
 }
 
-void LogView::removeLine(QUuid idToRemove) {
+void LogView::removeLine(const QUuid &idToRemove) {
     if(!this->_lines.contains(idToRemove)) return;
 
-    auto line = this->_lines[idToRemove];
+    auto line = this->_lines.take(idToRemove);
     line->deleteLater();
-
-    this->_lines.remove(idToRemove);
 }

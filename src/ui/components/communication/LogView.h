@@ -17,7 +17,7 @@ class LogView : public QWidget {
     public:
         LogView(QWidget *parent = nullptr);
         QUuid writeAtEnd(const std::string & newMessage, QPalette* colorPalette = nullptr, QPixmap* pixAsIcon = nullptr);
-        void removeLine(QUuid idToRemove);
+        void removeLine(const QUuid &idToRemove);
 
     private:
         QHash<QUuid, QWidget*> _lines;

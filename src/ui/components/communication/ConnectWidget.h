@@ -25,22 +25,24 @@ class ConnectWidget : public QGroupBox {
         ConnectWidget(QWidget * parent = nullptr);
 
     private:
-        QLineEdit* _portTarget = 0;
-        QLineEdit* _domainTarget = 0;
-        QLineEdit* _nameTarget = 0;
+        QLineEdit* _portTarget = nullptr;
+        QLineEdit* _domainTarget = nullptr;
+        QLineEdit* _nameTarget = nullptr;
         
-        QPushButton* _connectBtn = 0;
+        QPushButton* _connectBtn = nullptr;
         QMetaObject::Connection _connectBtnLink;
 
-        RPZClient* _cc = 0;
+        QSettings _settings;
+
+        RPZClient* _cc = nullptr;
         bool _connected = false;
         
         void _tryConnectToServer();
         void _tryDisconnectingFromServer();
 
-        void _setConnectBtnState(bool readyForConnection = true);
+        void _setConnectBtnState(const bool readyForConnection = true);
         void _destroyClient();
 
-        void _onRPZClientError(const std::string errMsg);
+        void _onRPZClientError(const std::string &errMsg);
         void _onRPZClientConnected();
 };  

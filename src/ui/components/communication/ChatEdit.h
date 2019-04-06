@@ -15,14 +15,14 @@ class ChatEdit : public QWidget {
         ChatEdit(QWidget * parent = nullptr);
     
     signals:
-        void askedToSendMessage(QString msg);
+        void askedToSendMessage(const QString &msg);
     
     protected:
         void changeEvent(QEvent *event) override;
 
     private:
-        QLineEdit* _msgEdit = 0;
-        QPushButton* _sendMsgBtn = 0;
+        QLineEdit* _msgEdit = nullptr;
+        QPushButton* _sendMsgBtn = nullptr;
 
         void _sendMessage();
 };

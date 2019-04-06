@@ -7,5 +7,5 @@
 class AudioStreamNotifier : public QGroupBox {
     public:
         AudioStreamNotifier(QWidget * parent = nullptr);
-        void updatePlayedMusic(QString musicName);
+        void updatePlayedMusic(const QString &musicName);
 };
