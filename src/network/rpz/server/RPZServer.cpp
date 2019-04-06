@@ -45,7 +45,7 @@ void RPZServer::_onMapChanged(QList<Asset> elements, MapView::MapElementEvtState
 
     //send...
     for(auto socket : this->_clientSocketsById) {
-        //if(socket == this->_hostSocket) continue; //TODO reactivate
+        if(socket == this->_hostSocket) continue;
         socket->sendJSON(JSONMethod::HostMapChanged, toSend);
     }
 
