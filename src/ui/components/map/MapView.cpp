@@ -132,6 +132,7 @@ void MapView::unpackFromNetworkReceived(QVariantList package) {
     for(auto key : assetsContainer.keys()) {
 
         //get data
+        auto elemId = QUuid::fromString(key);
         auto binder = assetsContainer[key].toHash();
         auto binderType = static_cast<AssetType::Type>(binder["type"].toInt());
         auto binderOwner = binder["owner"].toUuid();
@@ -142,6 +143,9 @@ void MapView::unpackFromNetworkReceived(QVariantList package) {
         //if new element from network
         if(state == MapElementEvtState::Added) {
             
+            //elem already exists, shouldnt rewrite it!
+            if(this->_assetsById.contains(elemId)) continue;
+
             //newly created map elem
             QGraphicsItem * newItem;
 
@@ -483,7 +487,7 @@ QPen MapView::_getPen() {
 //////////////
 
 //register actions
-QUuid MapView::_alterSceneInternal(MapElementEvtState alteration, Asset asset) {
+QUuid MapView::_alterSceneInternal(MapElementEvtState alteration, Asset &asset) {
 
     //get the Uuids
     QUuid elemId = asset.id();
@@ -497,6 +501,8 @@ QUuid MapView::_alterSceneInternal(MapElementEvtState alteration, Asset asset) {
         
         //on addition
         case MapElementEvtState::Added:
+            
+            //bind to owners
             if(!ownerId.isNull()) {
                 if(!this->_foreignElementIdsByOwnerId.contains(ownerId)) {
                     this->_foreignElementIdsByOwnerId.insert(ownerId, QSet<QUuid>());
@@ -505,8 +511,12 @@ QUuid MapView::_alterSceneInternal(MapElementEvtState alteration, Asset asset) {
             } else {
                 this->_selfElements.insert(elemId);
             }
-            this->_assetsById.insert(elemId, asset);
-            this->_idsByGraphicItem.insert(asset.graphicsItem(), elemId);
+
+            //bind elem
+            if(!this->_assetsById.contains(ownerId)) {
+                this->_assetsById.insert(elemId, asset);
+                this->_idsByGraphicItem.insert(asset.graphicsItem(), elemId);
+            }
             break;
         
         //on focus
@@ -521,14 +531,18 @@ QUuid MapView::_alterSceneInternal(MapElementEvtState alteration, Asset asset) {
 
         //on removal
         case MapElementEvtState::Removed:
-           if(!ownerId.isNull()) {
+
+            //unbind from owners
+            if(!ownerId.isNull()) {
                this->_foreignElementIdsByOwnerId[ownerId].remove(elemId);
             } else {
                 this->_selfElements.remove(elemId);
             }
 
+            //remove from map
             delete asset.graphicsItem();
 
+            //update 
             this->_assetsById.remove(elemId);
             this->_idsByGraphicItem.remove(asset.graphicsItem());
             break;
@@ -547,7 +561,7 @@ void MapView::_alterScene(MapElementEvtState alteration, QList<Asset> assets) {
     }
 
     //handling
-    for(auto asset : assets) {
+    for(auto &asset : assets) {
         this->_alterSceneInternal(alteration, asset);
     }
 

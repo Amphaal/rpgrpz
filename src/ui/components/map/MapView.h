@@ -89,7 +89,7 @@ class MapView : public QGraphicsView {
             void _alterScene(MapElementEvtState alteration, QList<Asset> assets);
             void _alterScene(MapElementEvtState alteration, QList<QUuid> elementIds);
             void _alterScene(MapElementEvtState alteration, Asset asset);
-            QUuid _alterSceneInternal(MapElementEvtState alteration, Asset asset);
+            QUuid _alterSceneInternal(MapElementEvtState alteration, Asset &asset);
 
         //tool
             MapTools::Actions _selectedTool;

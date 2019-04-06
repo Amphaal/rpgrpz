@@ -32,5 +32,5 @@ class MapLayoutManager : public QTreeWidget{
         QList<QUuid> _extractIdsFromSelection();
         bool _externalInstructionPending = false;
 
-        QTreeWidgetItem* _createTreeItem(QUuid id, Asset asset);
+        QTreeWidgetItem* _createTreeItem(Asset asset);
 };

@@ -54,7 +54,7 @@ void MapLayoutManager::alterTreeElements(QList<Asset> elements, MapView::MapElem
                 break;
 
             case MapView::MapElementEvtState::Added:
-                auto item = this->_createTreeItem(key, e);
+                auto item = this->_createTreeItem(e);
                 this->_treeItemsById.insert(key, item);
                 break;
         }
@@ -65,11 +65,11 @@ void MapLayoutManager::alterTreeElements(QList<Asset> elements, MapView::MapElem
     this->_externalInstructionPending = false;
 }
 
-QTreeWidgetItem* MapLayoutManager::_createTreeItem(QUuid id, Asset asset) {
+QTreeWidgetItem* MapLayoutManager::_createTreeItem(Asset asset) {
     
     auto item = new QTreeWidgetItem(this);
     item->setText(0, asset.descriptor());
-    item->setData(0, Qt::UserRole, id);
+    item->setData(0, Qt::UserRole, asset.id());
 
     auto type = asset.type();
     switch(type) {
