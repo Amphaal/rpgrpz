@@ -2,6 +2,7 @@
 
 #include <QTreeWidget>
 #include <QHash>
+#include <QList>
 #include <QUuid>
 #include <QGraphicsItem>
 #include <QIcon>
@@ -15,7 +16,7 @@ class MapLayoutManager : public QTreeWidget{
 
     public:
         MapLayoutManager(QWidget * parent = nullptr);
-        void alterTreeElements(QHash<QUuid, Asset> elements, MapView::MapElementEvtState state);
+        void alterTreeElements(QList<Asset> elements, MapView::MapElementEvtState state);
     
     signals:
         void elementsAlterationAsked(QList<QUuid> elementIds, MapView::MapElementEvtState state);

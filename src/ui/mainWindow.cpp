@@ -49,7 +49,7 @@ void MainWindow::_initConnectivity() {
     /// Chat Server ! //
     ////////////////////
 
-    this->_chatServer = new RPZServer;
+    this->_chatServer = new RPZServer(this->_mapView);
     this->_chatServer->start();
 }
 
@@ -147,6 +147,7 @@ void MainWindow::_initUIApp() {
         this->_connectWidget, &ConnectWidget::startingConnection, 
         [&](RPZClient * cc) {
             this->_cw->bindToRPZClient(cc);
+            this->_mapView->bindToRPZClient(cc);
         }
     );
 
@@ -167,7 +168,7 @@ void MainWindow::_initUIApp() {
     //intercept alteration from layout manager
     QObject::connect(
         this->_mlManager, &MapLayoutManager::elementsAlterationAsked,
-        this->_mapView, &MapView::alterElements
+        this->_mapView, &MapView::alterScene
     );
 
     //unselect tools

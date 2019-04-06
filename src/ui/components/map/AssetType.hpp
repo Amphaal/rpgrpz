@@ -18,7 +18,7 @@ class AssetType {
         } 
         
         AssetType::Type type() { return this->_selfType; }
-        QString descriptor() { return this->_description; }
+        virtual QString descriptor() { return this->_description; }
 
     private:
         AssetType::Type _selfType;

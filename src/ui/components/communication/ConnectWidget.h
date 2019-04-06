@@ -10,7 +10,7 @@
 #include <QMessageBox>
 #include <QGroupBox>
 
-#include "src/helpers/_const.cpp"
+#include "src/helpers/_const.hpp"
 #include "src/network/rpz/client/RPZClient.h"
 
 class ConnectWidget : public QGroupBox {

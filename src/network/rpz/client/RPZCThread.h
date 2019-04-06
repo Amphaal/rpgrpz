@@ -9,6 +9,7 @@ class RPZCThread : public QThread {
     signals:
         void receivedMessage(const std::string message);
         void loggedUsersUpdated(QVariantList users);
-        void historyReceived();
+        void logHistoryReceived();
         void error(const std::string errMessage);
+        void hostMapChanged(QVariantList data);
 };

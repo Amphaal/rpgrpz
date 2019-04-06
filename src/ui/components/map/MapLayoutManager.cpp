@@ -27,36 +27,40 @@ void MapLayoutManager::_onElementSelectionChanged() {
     emit elementsAlterationAsked(this->_extractIdsFromSelection(), MapView::MapElementEvtState::Selected);
 }
 
-void MapLayoutManager::alterTreeElements(QHash<QUuid, Asset> elements, MapView::MapElementEvtState state) {
+void MapLayoutManager::alterTreeElements(QList<Asset> elements, MapView::MapElementEvtState state) {
    
-   this->_externalInstructionPending = true;
+    this->_externalInstructionPending = true;
 
-   switch(state) {
+    //special handling
+    if(state == MapView::MapElementEvtState::Selected) this->clearSelection();
 
-        case MapView::MapElementEvtState::Removed:
-            for (auto key : elements.keys()) {
+    //iterate through items
+    for (auto e : elements) {
+
+        auto key = e.id();
+
+        switch(state) {
+
+            case MapView::MapElementEvtState::Removed:
                 if(this->_treeItemsById.contains(key)) {
                     delete this->_treeItemsById.take(key);
                 }
-            }
-            break;
+                break;
 
-        case MapView::MapElementEvtState::Selected:
-            this->clearSelection();
-            for (auto key : elements.keys()) {
+            case MapView::MapElementEvtState::Selected:
                 if(this->_treeItemsById.contains(key)) {
                     this->_treeItemsById[key]->setSelected(true);
                 }
-            }
-            break;
+                break;
 
-        case MapView::MapElementEvtState::Added:
-            for (auto key : elements.keys()) {
-                auto item = _createTreeItem(key, elements[key]);
+            case MapView::MapElementEvtState::Added:
+                auto item = this->_createTreeItem(key, e);
                 this->_treeItemsById.insert(key, item);
-            }
-            break;
+                break;
+        }
     }
+
+   
 
     this->_externalInstructionPending = false;
 }

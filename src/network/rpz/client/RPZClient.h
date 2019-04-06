@@ -3,7 +3,6 @@
 #include <QtCore/QThread>
 
 #include <QTcpSocket>
-#include <QDataStream>
 #include <QMessageBox>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -13,7 +12,7 @@
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/network/rpz/_any/JSONRouter.h"
 
-#include "src/helpers/_const.cpp"
+#include "src/helpers/_const.hpp"
 
 class RPZClient : public RPZCThread, public JSONRouter {
     

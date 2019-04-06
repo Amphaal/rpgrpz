@@ -8,7 +8,7 @@
 #include <QFlags>
 #include <QJsonObject>
 
-#include "src/helpers/_const.cpp"
+#include "src/helpers/_const.hpp"
 #include "AssetsNavigator.h"
 #include "AssetsPreviewer.h"
 

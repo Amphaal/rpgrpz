@@ -103,6 +103,8 @@
         "qpixmap": "cpp",
         "qsettings": "cpp",
         "qhash": "cpp",
-        "quuid": "cpp"
+        "quuid": "cpp",
+        "qpainterpath": "cpp",
+        "qdatastream": "cpp"
     }
 }

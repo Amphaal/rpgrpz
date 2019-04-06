@@ -3,7 +3,6 @@
 #include <QDebug>
 #include <QTcpServer>
 #include <QHostAddress>
-#include <QDataStream>
 #include <QVector>
 #include <QTcpSocket>
 #include <QJsonDocument>
@@ -11,24 +10,33 @@
 #include <QJsonArray>
 #include <QStringList>
 #include <QHash>
+#include <QList>
+#include <QUuid>
 
 #include "RPZSThread.h"
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/network/rpz/_any/JSONRouter.h"
 
-#include "src/helpers/_const.cpp"
+#include "src/ui/components/map/MapView.h"
+
+#include "src/helpers/_const.hpp"
 
 class RPZServer : public RPZSThread, public JSONRouter { 
     
     Q_OBJECT
 
     public:
-        RPZServer();
+        RPZServer(MapView* mv);
         void run() override;
 
     private:
-        QHash<JSONSocket*, JSONSocket*> _clientSockets;
-        QHash<JSONSocket*, QString> _clientDisplayNames;
+        MapView* _mv;
+        void _onMapChanged(QList<Asset> elements, MapView::MapElementEvtState state);
+        void _sendMapHistory();
+
+        QHash<JSONSocket*, QUuid> _idsByClientSocket;
+        QHash<QUuid, JSONSocket*> _clientSocketsById;
+        QHash<QUuid, QString> _clientDisplayNames;
         JSONSocket* _hostSocket = nullptr;
         QTcpServer* _server;
 

@@ -17,12 +17,17 @@
 #include <QTimer>
 #include <QScrollBar>
 #include <QUuid>
+#include <QVariant>
+#include <QList>
 
 #include "MapTools.h"
 #include "AssetsNavigator.h"
 #include "Asset.hpp"
 
+#include "src/helpers/_serializer.hpp"
+
 #include "src/network/rpz/_any/JSONSocket.h"
+#include "src/network/rpz/client/RPZClient.h"
 
 class MapView : public QGraphicsView {
 
@@ -31,12 +36,21 @@ class MapView : public QGraphicsView {
     public:
         enum MapElementEvtState { Changed, Added, Removed, Selected, Focused };
         MapView(QWidget *parent);
+
+        //network helpers...
+        QVariantList packageForNetworkSend(QList<Asset> assets, MapView::MapElementEvtState state);
+        void unpackFromNetworkReceived(QVariantList package);
+
+    public slots:
         void changeToolFromAction(QAction *action);
         void changePenSize(int newSize);
-        void alterElements(QList<QUuid> elementIds, MapView::MapElementEvtState state);
+        void alterScene(QList<QUuid> elementIds, MapView::MapElementEvtState state);
+        
+        //network
+        void bindToRPZClient(RPZClient * cc);
     
     signals:
-        void mapElementsAltered(QHash<QUuid, Asset> elements, MapElementEvtState state);
+        void mapElementsAltered(QList<Asset> elements, MapElementEvtState state);
         void unselectCurrentToolAsked();
 
     protected:
@@ -50,32 +64,32 @@ class MapView : public QGraphicsView {
         void keyPressEvent(QKeyEvent * event) override;
 
     private:
+        RPZClient * _currentCC = nullptr;
         QGraphicsScene* _scene;
         bool _externalInstructionPending = false;
         void _onSceneSelectionChanged();
-        
+
         //registered points
             QPoint _lastPointMousePressing;
             QPoint _lastPointMousePressed;
             bool _isMousePressed = false;
             bool _isMiddleToolLock = false;
-            // QPoint* _latestPosDrop;
 
         //elements of map
             QHash<QUuid, Asset> _assetsById;
             QHash<QGraphicsItem*, QUuid> _idsByGraphicItem;
             QSet<QUuid> _selfElements;
-            QHash<JSONSocket*, QSet<QUuid>> _elementsByOwner;
+            QHash<QUuid, QSet<QUuid>> _foreignElementIdsByOwnerId;
 
             QHash<QUuid, Asset> _fetchAssetsWithIds(QList<QGraphicsItem*> listToFetch);
             QList<Asset> _fetchAssets(QList<QGraphicsItem*> listToFetch);
             QList<Asset> _fetchAssets(QList<QUuid> listToFetch);
 
-            void _alterScene(MapElementEvtState alteration, QList<QGraphicsItem*> elements, JSONSocket* owner = nullptr);
-            void _alterScene(MapElementEvtState alteration, QList<Asset> assets, JSONSocket* owner = nullptr);
-            void _alterScene(MapElementEvtState alteration, QList<QUuid> elementIds, JSONSocket* owner = nullptr);
-            void _alterScene(MapElementEvtState alteration, Asset asset, JSONSocket* owner = nullptr);
-            QUuid _alterSceneInternal(MapElementEvtState alteration, Asset asset, JSONSocket* owner);
+            void _alterScene(MapElementEvtState alteration, QList<QGraphicsItem*> elements);
+            void _alterScene(MapElementEvtState alteration, QList<Asset> assets);
+            void _alterScene(MapElementEvtState alteration, QList<QUuid> elementIds);
+            void _alterScene(MapElementEvtState alteration, Asset asset);
+            QUuid _alterSceneInternal(MapElementEvtState alteration, Asset asset);
 
         //tool
             MapTools::Actions _selectedTool;
@@ -97,6 +111,9 @@ class MapView : public QGraphicsView {
             void _zoomBy(qreal factor);
             void _zoomBy_scalingTime(qreal x);
             void _zoomBy_animFinished();
+        
+        //droping..
+            // QPoint* _latestPosDrop;
 
         //drawing...
             int _penWidth = 1;

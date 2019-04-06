@@ -88,7 +88,7 @@ void ConnectWidget::_tryConnectToServer() {
     emit startingConnection(this->_cc);
     
     QObject::connect(
-        this->_cc, &RPZClient::historyReceived, 
+        this->_cc, &RPZClient::logHistoryReceived, 
         this, &ConnectWidget::_onRPZClientConnected
     );
 

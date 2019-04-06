@@ -90,19 +90,21 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, JSONMethod method, QVaria
                 auto stdmsg = msg.toString().toStdString();
                 emit receivedMessage(stdmsg);
             }
-            emit historyReceived();
+            emit logHistoryReceived();
             break;
-        case JSONMethod::LoggedPlayersChanged:
-            {
+        case JSONMethod::LoggedPlayersChanged: {
                 auto users = data.toList();
                 emit loggedUsersUpdated(users);
             }
             break;
-        case JSONMethod::MessageFromPlayer:
-            {
+        case JSONMethod::MessageFromPlayer: {
                 auto mfp = data.toList()[0].toString().toStdString();
                 emit receivedMessage(mfp);
             }
+            break;
+        case JSONMethod::HostMapChanged: {
+                emit hostMapChanged(data.toList());
+            }   
             break;
         default:
             qWarning() << "Chat Client : unknown method from JSON !";

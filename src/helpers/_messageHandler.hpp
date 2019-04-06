@@ -5,7 +5,7 @@
 
 #include <algorithm>
 
-#include "_const.cpp"
+#include "_const.hpp"
 
 class msgHandler {
     public:

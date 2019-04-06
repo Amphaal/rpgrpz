@@ -108,7 +108,7 @@ void ChatWidget::bindToRPZClient(RPZClient * cc) {
 
     //welcome once all history have been received
     QObject::connect(
-        this->_currentCC, &RPZClient::historyReceived, 
+        this->_currentCC, &RPZClient::logHistoryReceived, 
         this, &ChatWidget::_onRPZClientReceivedHistory
     );
 
@@ -120,7 +120,7 @@ void ChatWidget::bindToRPZClient(RPZClient * cc) {
 
     //enable UI at connection
     QObject::connect(
-        this->_currentCC, &RPZClient::historyReceived, 
+        this->_currentCC, &RPZClient::logHistoryReceived, 
         this, &ChatWidget::_EnableUI
     );
 

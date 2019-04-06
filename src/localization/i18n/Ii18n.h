@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/helpers/_const.cpp"
+#include "src/helpers/_const.hpp"
 
 class ITranslator {
     public:

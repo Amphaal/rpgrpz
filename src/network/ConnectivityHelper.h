@@ -13,7 +13,7 @@
 #include <QThread>
 #include <QNetworkConfigurationManager>
 
-#include "src/helpers/_const.cpp"
+#include "src/helpers/_const.hpp"
 
 class ConnectivityHelper : public QObject
 {

@@ -36,7 +36,7 @@ void MapView::_onSceneSelectionChanged() {
     if(this->_externalInstructionPending) return;
 
     //emit event
-    auto mapToEvt = this->_fetchAssetsWithIds(this->_scene->selectedItems());
+    auto mapToEvt = this->_fetchAssets(this->_scene->selectedItems());
     emit mapElementsAltered(mapToEvt, MapElementEvtState::Selected);
 }
 
@@ -57,6 +57,124 @@ void MapView::keyPressEvent(QKeyEvent * event) {
     }
 
 }
+
+/////////////
+/* NETWORK */
+/////////////
+
+
+void MapView::bindToRPZClient(RPZClient * cc) {
+
+    this->_currentCC = cc;
+
+    //on map change
+    QObject::connect(
+        this->_currentCC, &RPZClient::hostMapChanged,
+        this, &MapView::unpackFromNetworkReceived
+    );
+
+    //destroy
+    QObject::connect(
+        this->_currentCC, &QObject::destroyed,
+        [&]() {
+            this->_currentCC = 0;
+        }
+    );
+
+}
+
+QVariantList MapView::packageForNetworkSend(QList<Asset> assets, MapView::MapElementEvtState state) {
+    
+    QVariantList toSend;
+
+    //parse data
+    QVariantHash data;
+    data.insert("state", state);
+
+    QVariantHash assetsContainer;
+    for(auto asset : assets) {
+
+        QByteArray assetData = NULL;
+
+        switch(asset.type()) {
+            case AssetType::Type::Drawing:
+                auto casted = (QGraphicsPathItem*)asset.graphicsItem();
+                auto path = casted->path();
+                assetData = JSONSerializer::toBase64(path);
+                break;
+        }
+
+        QVariantHash binder;
+        binder.insert("data", assetData);
+        binder.insert("type", asset.type());
+        binder.insert("owner", asset.ownerId());
+
+        assetsContainer.insert(asset.id().toString(), binder);
+    }
+
+    data.insert("assets", assetsContainer);
+    toSend.append(data);
+
+    return toSend;
+}
+
+void MapView::unpackFromNetworkReceived(QVariantList package) {
+
+    //container
+    QList<Asset> out; 
+
+    //get data
+    auto data = package[0].toHash();
+    auto state = static_cast<MapElementEvtState>(data["state"].toInt());
+
+    //iterate through assets
+    auto assetsContainer = data["assets"].toHash();
+    for(auto key : assetsContainer.keys()) {
+
+        //get data
+        auto binder = assetsContainer[key].toHash();
+        auto binderType = static_cast<AssetType::Type>(binder["type"].toInt());
+        auto binderOwner = binder["owner"].toUuid();
+
+        //build asset or fetch it
+        Asset newAsset;
+
+        //if new element from network
+        if(state == MapElementEvtState::Added) {
+            
+            //newly created map elem
+            QGraphicsItem * newItem;
+
+            //depending on assetType...
+            switch(binderType) {
+                
+                //drawing...
+                case AssetType::Type::Drawing:
+                    QPainterPath path = JSONSerializer::fromBase64(binder["data"]);
+                    newItem = this->_scene->addPath(path);
+                    break;
+            
+            }
+
+            //define
+            newAsset = Asset(binderType, newItem, key, binderOwner);
+
+        } else {
+            //fetch from stock
+            newAsset = this->_assetsById[key];
+        }
+        
+        //add it to container
+        out.append(newAsset);
+    }
+
+    //process new state
+    this->_alterScene(state, out);
+}
+
+/////////////////
+/* END NETWORK */
+/////////////////
 
 //////////
 /* TOOL */
@@ -365,25 +483,30 @@ QPen MapView::_getPen() {
 //////////////
 
 //register actions
-QUuid MapView::_alterSceneInternal(MapElementEvtState alteration, Asset asset, JSONSocket* owner) {
+QUuid MapView::_alterSceneInternal(MapElementEvtState alteration, Asset asset) {
 
-    //get the Uuid
-    QUuid thisElemUuid = alteration == MapElementEvtState::Added ? QUuid::createUuid() : this->_idsByGraphicItem[asset.graphicsItem()];
+    //get the Uuids
+    QUuid elemId = asset.id();
+    if(elemId.isNull()) {
+        elemId = alteration == MapElementEvtState::Added ? QUuid::createUuid() : this->_idsByGraphicItem[asset.graphicsItem()];
+        asset.setId(elemId);
+    }
+    QUuid ownerId = asset.ownerId();
     
     switch(alteration) {
         
         //on addition
         case MapElementEvtState::Added:
-            if(owner) {
-                if(!this->_elementsByOwner.contains(owner)) {
-                    this->_elementsByOwner.insert(owner, QSet<QUuid>());
+            if(!ownerId.isNull()) {
+                if(!this->_foreignElementIdsByOwnerId.contains(ownerId)) {
+                    this->_foreignElementIdsByOwnerId.insert(ownerId, QSet<QUuid>());
                 }
-                this->_elementsByOwner[owner].insert(thisElemUuid);
+                this->_foreignElementIdsByOwnerId[ownerId].insert(elemId);
             } else {
-                this->_selfElements.insert(thisElemUuid);
+                this->_selfElements.insert(elemId);
             }
-            this->_assetsById.insert(thisElemUuid, asset);
-            this->_idsByGraphicItem.insert(asset.graphicsItem(), thisElemUuid);
+            this->_assetsById.insert(elemId, asset);
+            this->_idsByGraphicItem.insert(asset.graphicsItem(), elemId);
             break;
         
         //on focus
@@ -398,62 +521,60 @@ QUuid MapView::_alterSceneInternal(MapElementEvtState alteration, Asset asset, J
 
         //on removal
         case MapElementEvtState::Removed:
-           if(owner) {
-               this->_elementsByOwner[owner].remove(thisElemUuid);
+           if(!ownerId.isNull()) {
+               this->_foreignElementIdsByOwnerId[ownerId].remove(elemId);
             } else {
-                this->_selfElements.remove(thisElemUuid);
+                this->_selfElements.remove(elemId);
             }
 
             delete asset.graphicsItem();
 
-            this->_assetsById.remove(thisElemUuid);
+            this->_assetsById.remove(elemId);
             this->_idsByGraphicItem.remove(asset.graphicsItem());
             break;
 
     }
 
-    return thisElemUuid;
+    return elemId;
 }
 
 //alter Scene
-void MapView::_alterScene(MapElementEvtState alteration, QList<Asset> assets, JSONSocket* owner) { 
+void MapView::_alterScene(MapElementEvtState alteration, QList<Asset> assets) { 
     
     //make sure to clear selection before selecting new
     if(alteration == MapElementEvtState::Selected) {
         this->_scene->clearSelection();
     }
 
-    //map and handling
-    QHash<QUuid, Asset> mapToEvt;
+    //handling
     for(auto asset : assets) {
-        auto uuid = this->_alterSceneInternal(alteration, asset, owner);
-        mapToEvt.insert(uuid, asset);
+        this->_alterSceneInternal(alteration, asset);
     }
 
     //emit event
-    emit mapElementsAltered(mapToEvt, alteration);
+    emit mapElementsAltered(assets, alteration);
 }
 
 //helper
-void MapView::_alterScene(MapElementEvtState alteration, Asset asset, JSONSocket* owner) {
+void MapView::_alterScene(MapElementEvtState alteration, Asset asset) {
     QList<Asset> list;
     list.append(asset);
-    return this->_alterScene(alteration, list, owner);
+    return this->_alterScene(alteration, list);
 }
 
 //helper
-void MapView::_alterScene(MapElementEvtState alteration, QList<QGraphicsItem*> elements, JSONSocket* owner) {
-    return this->_alterScene(alteration, this->_fetchAssets(elements), owner);
+void MapView::_alterScene(MapElementEvtState alteration, QList<QGraphicsItem*> elements) {
+    return this->_alterScene(alteration, this->_fetchAssets(elements));
 }
 
 //helper
-void MapView::_alterScene(MapElementEvtState alteration, QList<QUuid> elementIds, JSONSocket* owner) {
-    return this->_alterScene(alteration, this->_fetchAssets(elementIds), owner);
+void MapView::_alterScene(MapElementEvtState alteration, QList<QUuid> elementIds) {
+    return this->_alterScene(alteration, this->_fetchAssets(elementIds));
 }
 
 
 //from external instructions
-void MapView::alterElements(QList<QUuid> elementIds, MapView::MapElementEvtState state) {
+void MapView::alterScene(QList<QUuid> elementIds, MapView::MapElementEvtState state) {
     
     this->_externalInstructionPending = true;
 
@@ -485,17 +606,6 @@ QList<Asset> MapView::_fetchAssets(QList<QUuid> listToFetch) {
    return list; 
 }
 
-//helper
-QHash<QUuid, Asset> MapView::_fetchAssetsWithIds(QList<QGraphicsItem*> listToFetch) {
-    QHash<QUuid, Asset> list;
-
-    for(auto e : listToFetch) {
-        auto uuid = this->_idsByGraphicItem[e];
-        list.insert(uuid, this->_assetsById[uuid]);
-    }
-
-    return list;
-}
 
 //////////////////
 /* END ELEMENTS */

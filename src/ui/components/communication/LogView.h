@@ -10,7 +10,7 @@
 #include <QBitmap>
 #include <QPixmap>
 
-#include "src/helpers/_const.cpp"
+#include "src/helpers/_const.hpp"
 
 class LogView : public QWidget {
 

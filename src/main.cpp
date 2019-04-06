@@ -6,8 +6,8 @@
 #include <QSplashScreen>
 #include <QImageReader>
 
-#include "src/helpers/_const.cpp"
-#include "src/helpers/_messageHandler.cpp"
+#include "src/helpers/_const.hpp"
+#include "src/helpers/_messageHandler.hpp"
 
 #include "ui/MainWindow.h"
 #include "ui/AppLoader.h"

@@ -6,7 +6,16 @@ enum JSONMethod {
     MessageFromPlayer, 
     PlayerHasUsername, 
     LoggedPlayersChanged, 
-    ChatLogHistory 
+    ChatLogHistory,
+    HostMapHistory,
+    HostMapChanged 
 };
 
-static QString JSONMethodAsArray[] = { "MessageFromPlayer", "PlayerHasUsername", "LoggedPlayersChanged", "ChatLogHistory" };
+static QString JSONMethodAsArray[] = { 
+    "MessageFromPlayer", 
+    "PlayerHasUsername", 
+    "LoggedPlayersChanged", 
+    "ChatLogHistory",
+    "HostMapHistory",
+    "HostMapChanged" 
+};
