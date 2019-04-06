@@ -158,6 +158,18 @@ void MainWindow::_initUIApp() {
         }
     );
 
+    //on map alteration, update treelist
+    QObject::connect(
+        this->_mapView, &MapView::mapElementsAltered,
+        this->_mlManager, &MapLayoutManager::alterTreeElements
+    );
+
+    //intercept alteration from layout manager
+    QObject::connect(
+        this->_mlManager, &MapLayoutManager::elementsAlterationAsked,
+        this->_mapView, &MapView::alterElements
+    );
+
     //unselect tools
     QObject::connect(
         this->_mapView, &MapView::unselectCurrentToolAsked,
@@ -170,6 +182,7 @@ void MainWindow::_initUIApp() {
         this->_mapView, &MapView::changeToolFromAction
     );
 
+    //on pen size change
     QObject::connect(
         this->_mapTools, &MapTools::penSizeChanged,
         this->_mapView, &MapView::changePenSize

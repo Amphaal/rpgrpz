@@ -167,6 +167,6 @@ void ChatWidget::_onRPZClientloggedUsersUpdated(QVariantList users) {
     this->_usersLog->newLog();
     for(auto user : users) {
         auto un = user.toString().toStdString();
-        this->_usersLog->writeAtEnd(un, nullptr, &QPixmap(":/icons/app/user.png"));
+        this->_usersLog->writeAtEnd(un, nullptr, &QPixmap(":/icons/app/connectivity/user.png"));
     }
 }

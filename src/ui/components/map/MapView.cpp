@@ -6,9 +6,13 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), _scene(new QGraphicsS
     //default
     this->setAcceptDrops(true);
     this->_changeTool(MapView::_defaultTool);
+    QObject::connect(
+        this->_scene, &QGraphicsScene::selectionChanged,
+        this, &MapView::_onSceneSelectionChanged
+    );
 
     //custom cursors
-    this->_rotateCursor = new QCursor(QPixmap(":/icons/app/rotate.png"));
+    this->_rotateCursor = new QCursor(QPixmap(":/icons/app/tools/rotate.png"));
     
     //openGL activation
     this->setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers | QGL::DirectRendering)));
@@ -28,26 +32,31 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), _scene(new QGraphicsS
     this->setScene(this->_scene);
 }
 
-///////////////
-/* FRAMERATE */
-///////////////
+void MapView::_onSceneSelectionChanged() {
+    if(this->_externalInstructionPending) return;
 
-void MapView::_instFramerate() {
-    auto timer = new QTimer(this);
-    QObject::connect(timer, &QTimer::timeout, this, &MapView::_framerate_oneSecondTimeout);
-    timer->setInterval(1000);
-    timer->start();
+    //emit event
+    auto mapToEvt = this->_fetchAssetsWithIds(this->_scene->selectedItems());
+    emit mapElementsAltered(mapToEvt, MapElementEvtState::Selected);
 }
 
-void MapView::_framerate_oneSecondTimeout() {
-    this->_frameRate=(this->_frameRate + this->_numFrames)/2;
-    qInfo() << this->_frameRate;
-    this->_numFrames=0;
-}
+void MapView::keyPressEvent(QKeyEvent * event) {
+    
+    switch(event->key()) {
 
-///////////////////
-/* END FRAMERATE */
-///////////////////
+        //deletion handling
+        case Qt::Key::Key_Delete:
+            this->_alterScene(MapElementEvtState::Removed, this->_scene->selectedItems());
+            break;
+        
+        //ask unselection of current tool
+        case Qt::Key::Key_Escape:
+            this->_changeTool(MapView::_defaultTool);
+            emit unselectCurrentToolAsked();
+            break;
+    }
+
+}
 
 //////////
 /* TOOL */
@@ -182,13 +191,18 @@ void MapView::_changeTool(MapTools::Actions newTool,  bool quickChange) {
 //on received event
 void MapView::changeToolFromAction(QAction *action) {
     
+    auto instruction = (MapTools::Actions)action->data().toInt();
+    if(instruction == MapTools::Actions::RotateToNorth) {
+        this->_rotateBackToNorth();
+        return;
+    }
+
     //go by default tool if unchecked
     auto state = action->isChecked();
     if(!state) return this->_changeTool(MapView::_defaultTool);
 
     //else select the new tool
-    auto tool = (MapTools::Actions)action->data().toInt();
-    return this->_changeTool(tool);
+    return this->_changeTool(instruction);
 
 }
 
@@ -251,7 +265,14 @@ void MapView::_zoomBy_animFinished() {
 void MapView::_rotate(const QPoint &evtPoint) {
     auto way = this->_lastPointMousePressing - evtPoint;
     auto pp = ((double)way.y()) / 5;
+    this->_degreesFromNorth += pp;
     this->rotate(pp);
+}
+
+void MapView::_rotateBackToNorth() {
+    auto adjust = fmod(this->_degreesFromNorth, 360);
+    this->rotate(-this->_degreesFromNorth);
+    this->_degreesFromNorth = 0;
 }
 
 ////////////////
@@ -311,7 +332,7 @@ void MapView::_endDrawing() {
         QGraphicsItem::GraphicsItemFlag::ItemIsSelectable |
         QGraphicsItem::GraphicsItemFlag::ItemIsMovable
     ));
-    this->_alterElement(MapElementEvtState::Added, newPath);
+    this->_alterScene(MapElementEvtState::Added, Asset(AssetType::Type::Drawing, newPath));
     this->_tempDrawing = nullptr;
     
     //destroy temp
@@ -347,15 +368,15 @@ QPen MapView::_getPen() {
 //////////////
 
 //register actions
-QUuid MapView::_alterElementInternal(MapElementEvtState alteration, QGraphicsItem* element, JSONSocket* owner) {
+QUuid MapView::_alterSceneInternal(MapElementEvtState alteration, Asset asset, JSONSocket* owner) {
+
+    //get the Uuid
+    QUuid thisElemUuid = alteration == MapElementEvtState::Added ? QUuid::createUuid() : this->_idsByGraphicItem[asset.graphicsItem()];
     
-    //temp
-    QUuid thisElemUuid;
     switch(alteration) {
         
         //on addition
         case MapElementEvtState::Added:
-            thisElemUuid = QUuid::createUuid();
             if(owner) {
                 if(!this->_elementsByOwner.contains(owner)) {
                     this->_elementsByOwner.insert(owner, QSet<QUuid>());
@@ -364,66 +385,113 @@ QUuid MapView::_alterElementInternal(MapElementEvtState alteration, QGraphicsIte
             } else {
                 this->_selfElements.insert(thisElemUuid);
             }
-            this->_elementById.insert(thisElemUuid, element);
-            this->_IdByElement.insert(element, thisElemUuid);
+            this->_assetsById.insert(thisElemUuid, asset);
+            this->_idsByGraphicItem.insert(asset.graphicsItem(), thisElemUuid);
+            break;
+
+        case MapView::MapElementEvtState::Selected:
+            asset.graphicsItem()->setSelected(true);
             break;
 
         //on removal
         case MapElementEvtState::Removed:
-            thisElemUuid = this->_IdByElement[element];
            if(owner) {
                this->_elementsByOwner[owner].remove(thisElemUuid);
             } else {
                 this->_selfElements.remove(thisElemUuid);
             }
-            this->_elementById.remove(thisElemUuid);
-            this->_IdByElement.remove(element);
+
+            delete asset.graphicsItem();
+
+            this->_assetsById.remove(thisElemUuid);
+            this->_idsByGraphicItem.remove(asset.graphicsItem());
             break;
+
     }
 
     return thisElemUuid;
 }
 
-void MapView::_alterElement(MapElementEvtState alteration, QGraphicsItem* element, JSONSocket* owner) {
-    QList<QGraphicsItem*> list;
-    list.append(element);
-    return this->_alterElements(alteration, list, owner);
-}
-
-void MapView::_alterElements(MapElementEvtState alteration, QList<QGraphicsItem*> elements, JSONSocket* owner) {
+//alter Scene
+void MapView::_alterScene(MapElementEvtState alteration, QList<Asset> assets, JSONSocket* owner) { 
     
-    QHash<QUuid, QGraphicsItem*> mapToEvt;
+    //make sure to clear selection before selecting new
+    if(alteration == MapElementEvtState::Selected) {
+        this->_scene->clearSelection();
+    }
 
-    for(auto elem : elements) {
-        auto uuid = this->_alterElementInternal(alteration, elem, owner);
-        mapToEvt.insert(uuid, elem);
+    //map and handling
+    QHash<QUuid, Asset> mapToEvt;
+    for(auto asset : assets) {
+        auto uuid = this->_alterSceneInternal(alteration, asset, owner);
+        mapToEvt.insert(uuid, asset);
     }
 
     //emit event
     emit mapElementsAltered(mapToEvt, alteration);
 }
 
-void MapView::keyPressEvent(QKeyEvent * event) {
-    
-    switch(event->key()) {
+//helper
+void MapView::_alterScene(MapElementEvtState alteration, Asset asset, JSONSocket* owner) {
+    QList<Asset> list;
+    list.append(asset);
+    return this->_alterScene(alteration, list, owner);
+}
 
-        //deletion handling
-        case Qt::Key::Key_Delete:
-            if(this->_scene->selectedItems().length()) {
-                this->_alterElements(MapElementEvtState::Removed, this->_scene->selectedItems());
-                for(auto i : this->_scene->selectedItems()) {
-                    delete i;
-                }
-            }
-            break;
-        
-        //ask unselection of current tool
-        case Qt::Key::Key_Escape:
-            this->_changeTool(MapView::_defaultTool);
-            emit unselectCurrentToolAsked();
-            break;
+//helper
+void MapView::_alterScene(MapElementEvtState alteration, QList<QGraphicsItem*> elements, JSONSocket* owner) {
+    return this->_alterScene(alteration, this->_fetchAssets(elements), owner);
+}
+
+//helper
+void MapView::_alterScene(MapElementEvtState alteration, QList<QUuid> elementIds, JSONSocket* owner) {
+    return this->_alterScene(alteration, this->_fetchAssets(elementIds), owner);
+}
+
+
+//from external instructions
+void MapView::alterElements(QList<QUuid> elementIds, MapView::MapElementEvtState state) {
+    
+    this->_externalInstructionPending = true;
+
+    //update internal state
+    this->_alterScene(state, elementIds);
+
+    this->_externalInstructionPending = false;
+}
+
+//helper
+QList<Asset> MapView::_fetchAssets(QList<QGraphicsItem*> listToFetch) {
+    QList<Asset> list;
+
+    for(auto e : listToFetch) {
+        list.append(this->_assetsById[this->_idsByGraphicItem[e]]);
     }
 
+    return list;
+}
+
+//helper
+QList<Asset> MapView::_fetchAssets(QList<QUuid> listToFetch) {
+   QList<Asset> list;
+
+    for(auto e : listToFetch) {
+        list.append(this->_assetsById[e]);
+    }
+
+   return list; 
+}
+
+//helper
+QHash<QUuid, Asset> MapView::_fetchAssetsWithIds(QList<QGraphicsItem*> listToFetch) {
+    QHash<QUuid, Asset> list;
+
+    for(auto e : listToFetch) {
+        auto uuid = this->_idsByGraphicItem[e];
+        list.insert(uuid, this->_assetsById[uuid]);
+    }
+
+    return list;
 }
 
 //////////////////

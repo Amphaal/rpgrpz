@@ -1,5 +1,7 @@
 #pragma once
 
+#include <math.h>
+
 #include <QWidget>
 #include <QGraphicsScene>
 #include <QGraphicsView>
@@ -18,6 +20,8 @@
 
 #include "MapTools.h"
 #include "AssetsNavigator.h"
+#include "Asset.hpp"
+
 #include "src/network/rpz/_any/JSONSocket.h"
 
 class MapView : public QGraphicsView {
@@ -25,13 +29,14 @@ class MapView : public QGraphicsView {
     Q_OBJECT
 
     public:
-        enum MapElementEvtState { Changed, Added, Removed };
+        enum MapElementEvtState { Changed, Added, Removed, Selected };
         MapView(QWidget *parent);
         void changeToolFromAction(QAction *action);
         void changePenSize(int newSize);
+        void alterElements(QList<QUuid> elementIds, MapView::MapElementEvtState state);
     
     signals:
-        void mapElementsAltered(QHash<QUuid, QGraphicsItem*> elements, MapElementEvtState state);
+        void mapElementsAltered(QHash<QUuid, Asset> elements, MapElementEvtState state);
         void unselectCurrentToolAsked();
 
     protected:
@@ -46,6 +51,8 @@ class MapView : public QGraphicsView {
 
     private:
         QGraphicsScene* _scene;
+        bool _externalInstructionPending = false;
+        void _onSceneSelectionChanged();
         
         //registered points
             QPoint _lastPointMousePressing;
@@ -55,20 +62,20 @@ class MapView : public QGraphicsView {
             // QPoint* _latestPosDrop;
 
         //elements of map
-            QHash<QUuid, QGraphicsItem*> _elementById;
-            QHash<QGraphicsItem*, QUuid> _IdByElement;
+            QHash<QUuid, Asset> _assetsById;
+            QHash<QGraphicsItem*, QUuid> _idsByGraphicItem;
             QSet<QUuid> _selfElements;
             QHash<JSONSocket*, QSet<QUuid>> _elementsByOwner;
 
-            void _alterElements(MapElementEvtState alteration, QList<QGraphicsItem*> elements, JSONSocket* owner = nullptr);
-            void _alterElement(MapElementEvtState alteration, QGraphicsItem* element, JSONSocket* owner = nullptr);
-            QUuid _alterElementInternal(MapElementEvtState alteration, QGraphicsItem* element, JSONSocket* owner);
+            QHash<QUuid, Asset> _fetchAssetsWithIds(QList<QGraphicsItem*> listToFetch);
+            QList<Asset> _fetchAssets(QList<QGraphicsItem*> listToFetch);
+            QList<Asset> _fetchAssets(QList<QUuid> listToFetch);
 
-        //framerate
-            double _frameRate = 0;
-            double _numFrames = 0;
-            void _instFramerate();
-            void _framerate_oneSecondTimeout();
+            void _alterScene(MapElementEvtState alteration, QList<QGraphicsItem*> elements, JSONSocket* owner = nullptr);
+            void _alterScene(MapElementEvtState alteration, QList<Asset> assets, JSONSocket* owner = nullptr);
+            void _alterScene(MapElementEvtState alteration, QList<QUuid> elementIds, JSONSocket* owner = nullptr);
+            void _alterScene(MapElementEvtState alteration, Asset asset, JSONSocket* owner = nullptr);
+            QUuid _alterSceneInternal(MapElementEvtState alteration, Asset asset, JSONSocket* owner);
 
         //tool
             MapTools::Actions _selectedTool;
@@ -81,7 +88,9 @@ class MapView : public QGraphicsView {
 
         //rotating...
             QCursor * _rotateCursor = nullptr;
+            double _degreesFromNorth = 0;
             void _rotate(const QPoint &evtPoint);
+            void _rotateBackToNorth();
 
         //zooming...
             int _numScheduledScalings = 0;

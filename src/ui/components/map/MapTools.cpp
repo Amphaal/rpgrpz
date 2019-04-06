@@ -11,8 +11,7 @@ MapTools::MapTools(QWidget* parent) : QToolBar(parent) {
     //draw
     this->addSeparator();
     auto draw = new QAction(this);
-    auto draw_icon = QIcon(":/icons/app/pen.png");
-    draw->setIcon(draw_icon);
+    draw->setIcon(QIcon(":/icons/app/tools/pen.png"));
     draw->setData(MapTools::Actions::Draw);
     draw->setIconText("Dessiner");
     draw->setCheckable(true);
@@ -21,7 +20,6 @@ MapTools::MapTools(QWidget* parent) : QToolBar(parent) {
     //draw size
     auto sizer = new QSpinBox(this);
     sizer->setMinimum(1);
-
     QObject::connect(
         sizer, qOverload<int>(&QSpinBox::valueChanged),
         [&](int i) {
@@ -29,6 +27,14 @@ MapTools::MapTools(QWidget* parent) : QToolBar(parent) {
         }
     );
     this->addWidget(sizer);
+    this->addSeparator();
+
+    //to north
+    auto tonorth = new QAction(this);
+    tonorth->setIcon(QIcon(":/icons/app/tools/north.png"));
+    tonorth->setData(MapTools::Actions::RotateToNorth);
+    tonorth->setIconText("Repositionner vers le nord");
+    this->addAction(tonorth);
     this->addSeparator();
 }
 
