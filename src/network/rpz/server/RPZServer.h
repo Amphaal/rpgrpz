@@ -29,6 +29,7 @@ class RPZServer : public RPZSThread, public JSONRouter {
     private:
         QHash<JSONSocket*, JSONSocket*> _clientSockets;
         QHash<JSONSocket*, QString> _clientDisplayNames;
+        JSONSocket* _hostSocket = nullptr;
         QTcpServer* _server;
 
         QStringList _messages;

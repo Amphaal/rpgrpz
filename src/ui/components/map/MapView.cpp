@@ -79,7 +79,7 @@ void MapView::mousePressEvent(QMouseEvent *event) {
             this->_changeTool(MapTools::Actions::Rotate, true);
             break;
         case Qt::MouseButton::LeftButton:
-            this->_toolOnMousePress(this->_selectedTool);
+            this->_toolOnMousePress(this->_getCurrentTool());
             break;
     }
 
@@ -118,7 +118,7 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
             }
             break;
         case Qt::MouseButton::LeftButton:
-            this->_toolOnMouseRelease(this->_selectedTool);
+            this->_toolOnMouseRelease(this->_getCurrentTool());
             break;
     }
 
@@ -137,11 +137,8 @@ void MapView::_toolOnMousePress(MapTools::Actions tool) {
 }
 
 void MapView::_toolOnMouseRelease(MapTools::Actions tool) {
-    switch(tool) {
-        case MapTools::Actions::Draw: {
-            this->_endDrawing();
-        }
-        break;
+    if(this->_tempDrawing)  {
+        this->_endDrawing();
     }
 }
 
@@ -388,7 +385,13 @@ QUuid MapView::_alterSceneInternal(MapElementEvtState alteration, Asset asset, J
             this->_assetsById.insert(thisElemUuid, asset);
             this->_idsByGraphicItem.insert(asset.graphicsItem(), thisElemUuid);
             break;
+        
+        //on focus
+        case MapElementEvtState::Focused:
+            this->centerOn(asset.graphicsItem());
+            break;
 
+        //on selection
         case MapView::MapElementEvtState::Selected:
             asset.graphicsItem()->setSelected(true);
             break;

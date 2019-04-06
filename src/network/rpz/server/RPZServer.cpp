@@ -52,6 +52,11 @@ void RPZServer::_onNewConnection() {
         //new connection,store it
         auto clientSocket = new JSONSocket("Chat Server", this->_server->nextPendingConnection());
         this->_clientSockets.insert(clientSocket, clientSocket);
+
+        //check if host
+        if(clientSocket->socket()->localAddress() == QHostAddress::LocalHost) {
+            this->_hostSocket = clientSocket;
+        }
         
         //clear !
         QObject::connect(
@@ -62,6 +67,11 @@ void RPZServer::_onNewConnection() {
                 this->_clientSockets.remove(clientSocket);
                 this->_clientDisplayNames.remove(clientSocket);
                 clientSocket->deleteLater();
+
+                //desalocate host
+                if(this->_hostSocket == clientSocket) {
+                    this->_hostSocket = nullptr;
+                }
 
                 //tell other clients that the user is gone
                 this->_broadcastUsers();

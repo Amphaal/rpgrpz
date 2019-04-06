@@ -6,7 +6,7 @@ AssetsNavigator::AssetsNavigator(QWidget * parent) : QTreeWidget(parent), _MIMED
     this->setColumnCount(2);
     this->setHeaderHidden(true);
     this->setDragDropMode(QAbstractItemView::DragDropMode::DragDrop);
-    this->setSelectionMode(QAbstractItemView::MultiSelection);
+    this->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     this->header()->setStretchLastSection(false);
     this->header()->setMinimumSectionSize(15);

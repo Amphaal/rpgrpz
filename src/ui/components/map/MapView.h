@@ -29,7 +29,7 @@ class MapView : public QGraphicsView {
     Q_OBJECT
 
     public:
-        enum MapElementEvtState { Changed, Added, Removed, Selected };
+        enum MapElementEvtState { Changed, Added, Removed, Selected, Focused };
         MapView(QWidget *parent);
         void changeToolFromAction(QAction *action);
         void changePenSize(int newSize);

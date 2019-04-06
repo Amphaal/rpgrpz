@@ -25,6 +25,8 @@ class MapLayoutManager : public QTreeWidget{
 
     private:
         void _onElementSelectionChanged();
+        void _onElementDoubleClicked(QTreeWidgetItem * item, int column);
+
         QHash<QUuid, QTreeWidgetItem*> _treeItemsById;
         QList<QUuid> _extractIdsFromSelection();
         bool _externalInstructionPending = false;

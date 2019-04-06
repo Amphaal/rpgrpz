@@ -2,13 +2,22 @@
 
 MapLayoutManager::MapLayoutManager(QWidget * parent) : QTreeWidget(parent) {
     this->setHeaderHidden(true);
-    this->setSelectionMode(QAbstractItemView::MultiSelection);
+    this->setSelectionMode(QAbstractItemView::ExtendedSelection);
     this->setDragDropMode(QAbstractItemView::DragDropMode::NoDragDrop);
 
     QObject::connect(
         this, &QTreeWidget::itemSelectionChanged,
         this, &MapLayoutManager::_onElementSelectionChanged
     );
+
+    QObject::connect(
+        this, &QTreeWidget::itemDoubleClicked,
+        this, &MapLayoutManager::_onElementDoubleClicked
+    );
+}
+
+void MapLayoutManager::_onElementDoubleClicked(QTreeWidgetItem * item, int column) {
+    emit elementsAlterationAsked(this->_extractIdsFromSelection(), MapView::MapElementEvtState::Focused);
 }
 
 void MapLayoutManager::_onElementSelectionChanged() {
