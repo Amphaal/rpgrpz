@@ -45,25 +45,25 @@ class MainWindow : public QMainWindow {
         void _initUI();
 
         ConnectivityHelper* _ipHelper;
-        RPZServer* _chatServer = 0;
+        RPZServer* _chatServer;
         void _initConnectivity();
 
-        MapView* _mapView = 0;
-        ConnectWidget* _connectWidget = 0;
-        AudioStreamNotifier* _streamNotifier = 0;
-        ChatWidget* _cw = 0;
-        AssetsManager* _assetsManager = 0;
-        MapTools* _mapTools = 0;
-        MapLayoutManager* _mlManager = 0;
+        MapView* _mapView;
+        ConnectWidget* _connectWidget;
+        AudioStreamNotifier* _streamNotifier;
+        ChatWidget* _cw;
+        AssetsManager* _assetsManager;
+        MapTools* _mapTools;
+        MapLayoutManager* _mlManager;
         void _initUIApp();
 
         /*statusbar*/
         QLabel* _localIpLabel;
         QLabel* _extIpLabel;
         QLabel* _upnpStateLabel;
-        void updateUPnPLabel(std::string state);
-        void updateExtIPLabel(std::string state, bool isOn);
-        void updateIntIPLabel(std::string state);
+        void updateUPnPLabel(const std::string &state);
+        void updateExtIPLabel(const std::string &state, const bool isOn);
+        void updateIntIPLabel(const std::string &state);
         void _initUIStatusBar();
 
         /*menu*/
@@ -76,9 +76,9 @@ class MainWindow : public QMainWindow {
         /*auto updated*/
         QtAutoUpdater::Updater *updater;
         bool userNotificationOnUpdateCheck = false;
-        void UpdateSearch_switchUI(bool isSearching);
+        void UpdateSearch_switchUI(const bool isSearching);
         void _setupAutoUpdate();
-        void onUpdateChecked(bool hasUpdate, bool hasError);
+        void onUpdateChecked(const bool hasUpdate, const bool hasError);
         void requireUpdateCheckFromUser();
         void checkForAppUpdates();
 };

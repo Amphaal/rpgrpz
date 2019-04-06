@@ -53,11 +53,11 @@ void MainWindow::_initConnectivity() {
     this->_chatServer->start();
 }
 
-void MainWindow::updateUPnPLabel(std::string state) {
+void MainWindow::updateUPnPLabel(const std::string &state) {
     this->_upnpStateLabel->setText(QString::fromStdString(state));
 }
 
-void MainWindow::updateExtIPLabel(std::string state, bool isOn) {
+void MainWindow::updateExtIPLabel(const std::string &state, const bool isOn) {
     
     this->_extIpLabel->setText(QString::fromStdString(state));
 
@@ -66,7 +66,7 @@ void MainWindow::updateExtIPLabel(std::string state, bool isOn) {
     }
 }
 
-void MainWindow::updateIntIPLabel(std::string state) {
+void MainWindow::updateIntIPLabel(const std::string &state) {
     this->_localIpLabel->setText(QString::fromStdString(state));
 }
 
@@ -77,7 +77,7 @@ void MainWindow::updateIntIPLabel(std::string state) {
 void MainWindow::_initUI() {
     
     //values specific to this
-    std::string stdTitle = IS_DEBUG_APP ? (std::string)"DEBUG - " + APP_FULL_DENOM : APP_FULL_DENOM;
+    const std::string stdTitle = IS_DEBUG_APP ? (std::string)"DEBUG - " + APP_FULL_DENOM : APP_FULL_DENOM;
     this->setWindowTitle(QString(stdTitle.c_str()));
 
     this->setWindowIcon(QIcon(":/icons/app/rpgrpz_32.png"));
@@ -99,7 +99,7 @@ void MainWindow::_initUIApp() {
     this->_connectWidget = new ConnectWidget(this);
     this->_cw = new ChatWidget(this);
     this->_mapView = new MapView(this);
-    this->_streamNotifier = new AudioStreamNotifier;
+    //this->_streamNotifier = new AudioStreamNotifier(this);
     this->_assetsManager = new AssetsManager(this);
     this->_mapTools = new MapTools(this);
     this->_mlManager = new MapLayoutManager(this);
@@ -145,7 +145,7 @@ void MainWindow::_initUIApp() {
     //bind RPZClient to widget once a connection starts
     QObject::connect(
         this->_connectWidget, &ConnectWidget::startingConnection, 
-        [&](RPZClient * cc) {
+        [&](RPZClient* cc) {
             this->_cw->bindToRPZClient(cc);
             this->_mapView->bindToRPZClient(cc);
         }
@@ -284,7 +284,7 @@ QMenu* MainWindow::_getToolsMenu() {
     );
 
     //data folder
-    auto df = getAppDataLocation();
+    const auto df = getAppDataLocation();
     auto openDataFolderAction = new QAction(I18n::tr()->Menu_OpenDataFolder(df).c_str(), toolsMenuItem);
     QObject::connect(
         openDataFolderAction, &QAction::triggered,
@@ -353,9 +353,9 @@ QMenu* MainWindow::_getFileMenu() {
 /// check updates //
 ////////////////////
 
-void MainWindow::UpdateSearch_switchUI(bool isSearching) {
+void MainWindow::UpdateSearch_switchUI(const bool isSearching) {
     this->cfugAction->setEnabled(!isSearching);
-    std::string descr = isSearching ? I18n::tr()->SearchingForUpdates() : I18n::tr()->Menu_CheckForUpgrades();
+    const std::string descr = isSearching ? I18n::tr()->SearchingForUpdates() : I18n::tr()->Menu_CheckForUpgrades();
     this->cfugAction->setText(descr.c_str());
 }
 
@@ -370,22 +370,24 @@ void MainWindow::_setupAutoUpdate() {
         this->updater = new QtAutoUpdater::Updater(MAINTENANCE_TOOL_LOCATION, this);
     }
 
-    QObject::connect(this->updater, &QtAutoUpdater::Updater::checkUpdatesDone, 
-                    this, &MainWindow::onUpdateChecked);
+    QObject::connect(
+        this->updater, &QtAutoUpdater::Updater::checkUpdatesDone, 
+        this, &MainWindow::onUpdateChecked
+    );
 
     //start the update check
     this->checkForAppUpdates();
 }
 
 
-void MainWindow::onUpdateChecked(bool hasUpdate, bool hasError) {
+void MainWindow::onUpdateChecked(const bool hasUpdate, const bool hasError) {
 
     //if the user asks directly to check updates
     if(this->userNotificationOnUpdateCheck) {
         this->userNotificationOnUpdateCheck = false;
         
-        std::string title = (std::string)APP_NAME + " - " + I18n::tr()->Menu_CheckForUpgrades();
-        std::string content = this->updater->errorLog().toStdString();
+        const std::string title = (std::string)APP_NAME + " - " + I18n::tr()->Menu_CheckForUpgrades();
+        const std::string content = this->updater->errorLog().toStdString();
 
         if(!hasUpdate && !hasError) {
             QMessageBox::information(this, 
@@ -407,8 +409,8 @@ void MainWindow::onUpdateChecked(bool hasUpdate, bool hasError) {
     }
 
     //if has update
-    std::string title = (std::string)APP_NAME + " - " + I18n::tr()->Alert_UpdateAvailable_Title();
-    std::string content = I18n::tr()->Alert_UpdateAvailable_Text();
+    const std::string title = (std::string)APP_NAME + " - " + I18n::tr()->Alert_UpdateAvailable_Title();
+    const std::string content = I18n::tr()->Alert_UpdateAvailable_Text();
 
     auto msgboxRslt = QMessageBox::information(this, 
                 QString(title.c_str()), 

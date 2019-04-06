@@ -126,8 +126,6 @@ list(APPEND SOURCES
 
 #ui components
 list(APPEND SOURCES
-    src/ui/components/others/RestoringSplitter.cpp
-
     src/ui/components/map/MapTools.cpp
     src/ui/components/map/AssetsNavigator.cpp
     src/ui/components/map/MapView.cpp
