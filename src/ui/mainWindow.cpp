@@ -161,14 +161,14 @@ void MainWindow::_initUIApp() {
 
     //on map alteration, update treelist
     QObject::connect(
-        this->_mapView, &MapView::notifyNetwork_mapElementsAltered,
+        this->_mapView->hints(), &MapHintViewBinder::assetsAlteredForLocal,
         this->_mlManager, &MapLayoutManager::alterTreeElements
     );
 
     //intercept alteration from layout manager
     QObject::connect(
         this->_mlManager, &MapLayoutManager::elementsAlterationAsked,
-        this->_mapView, &MapView::alterScene
+        this->_mapView->hints(), &MapHintViewBinder::alterSceneFromIds
     );
 
     //unselect tools

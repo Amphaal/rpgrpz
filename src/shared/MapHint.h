@@ -24,16 +24,17 @@ class MapHint : public QObject {
             MapHint::Alteration::Added,
             MapHint::Alteration::Removed 
         };
-
+    
+    public slots:
         //network helpers...
         QVariantList packageForNetworkSend(QList<Asset> &assets, const MapHint::Alteration &state);
 
         //from external App instructions (toolBar...)
-        virtual void alterScene(const QList<QUuid> &elementIds, const MapHint::Alteration &state);
+        void alterSceneFromAsset(const MapHint::Alteration &alteration, Asset &asset);
+        void alterSceneFromIds(const MapHint::Alteration &alteration, const QList<QUuid> &assetIds); 
 
-
-    //protected:
-        void _emitAlteration(QList<Asset> &elements, const MapHint::Alteration &state);
+    protected:
+        void _emitAlteration(const MapHint::Alteration &state, QList<Asset> &elements);
 
         //assets list 
         QHash<QUuid, Asset> _assetsById;
@@ -49,12 +50,10 @@ class MapHint : public QObject {
         virtual QUuid _defineId(const Alteration &alteration, Asset &asset);
 
         //alter the inner assets lists
-        void _alterScene(const MapHint::Alteration &alteration, Asset &asset);
-        void _alterScene(const MapHint::Alteration &alteration, const QList<QUuid> &elementIds); 
         virtual void _alterSceneGlobal(const MapHint::Alteration &alteration, QList<Asset> &assets);
         virtual QUuid _alterSceneInternal(const MapHint::Alteration &alteration, Asset &asset);
 
     signals:
-        void mapElementsAltered(QList<Asset> &elements, const MapHint::Alteration &state);
-        void notifyNetwork_mapElementsAltered(QList<Asset> &elements, const MapHint::Alteration &state);
+        void assetsAlteredForLocal(const MapHint::Alteration &state, QList<Asset> &elements);
+        void assetsAlteredForNetwork(const MapHint::Alteration &state, QList<Asset> &elements);
 };

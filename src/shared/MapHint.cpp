@@ -3,12 +3,12 @@
 MapHint::MapHint() {};
 
 //handle network and local evts emission
-void MapHint::_emitAlteration(QList<Asset> &elements, const Alteration &state) {
-    
-    emit mapElementsAltered(elements, state);
+void MapHint::_emitAlteration(const Alteration &state, QList<Asset> &elements) {
+
+    emit assetsAlteredForLocal(state, elements);
 
     if(this->networkAlterations.contains(state)) {
-        emit notifyNetwork_mapElementsAltered(elements, state);
+        emit assetsAlteredForNetwork(state, elements);
     }
 
 } 
@@ -134,28 +134,21 @@ void MapHint::_alterSceneGlobal(const Alteration &alteration, QList<Asset> &asse
         this->_alterSceneInternal(alteration, asset);
     }
     //emit event
-    this->_emitAlteration(assets, alteration);
+    this->_emitAlteration(alteration, assets);
 }
 
+
 //helper
-void MapHint::_alterScene(const Alteration &alteration, Asset &asset) {
+void MapHint::alterSceneFromAsset(const Alteration &alteration, Asset &asset) {
     QList<Asset> list;
     list.append(asset);
     return this->_alterSceneGlobal(alteration, list);
 }
 
-
 //helper
-void MapHint::_alterScene(const Alteration &alteration, const QList<QUuid> &elementIds) {
+void MapHint::alterSceneFromIds(const Alteration &alteration, const QList<QUuid> &elementIds) {
     return this->_alterSceneGlobal(alteration, this->_fetchAssets(elementIds));
 }
-
-
-//from external instructions
-void MapHint::alterScene(const QList<QUuid> &elementIds, const MapHint::Alteration &state) {
-    this->_alterScene(state, elementIds);
-}
-
 
 
 //helper

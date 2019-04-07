@@ -1,8 +1,10 @@
 #include "MapView.h"
 
-MapView::MapView(QWidget *parent) : _scene(new QGraphicsScene), MapNavigator(parent) {
-    
+MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
+
     //default
+    this->setScene(new QGraphicsScene);
+    this->_hints = new MapHintViewBinder(this); //after first inst of scene
     this->setAcceptDrops(true);
     this->_changeTool(MapView::_defaultTool);
 
@@ -22,9 +24,30 @@ MapView::MapView(QWidget *parent) : _scene(new QGraphicsScene), MapNavigator(par
     //optimisations
     //this->setOptimizationFlags( QFlags<OptimizationFlag>(QGraphicsView::DontSavePainterState | QGraphicsView::DontAdjustForAntialiasing));
 
+
+    //to route from MapHints
+    QObject::connect(
+        this->_hints, &MapHint::assetsAlteredForLocal,
+        [&](const MapHint::Alteration &state, QList<Asset> &elements) {
+            emit assetsAlteredForLocal(state, elements);
+        }
+    );
+
+    //to route from MapHints
+    QObject::connect(
+        this->_hints, &MapHint::assetsAlteredForNetwork,
+        [&](const MapHint::Alteration &state, QList<Asset> &elements) {
+            emit assetsAlteredForNetwork(state, elements);
+        }
+    );
+
     //define scene
-    this->_scene->setSceneRect(35000, 35000, 35000, 35000);
-    this->setScene(this->_scene);
+    this->scene()->setSceneRect(35000, 35000, 35000, 35000);
+    this->setScene(this->scene());
+}
+
+MapHintViewBinder* MapView::hints() {
+    return this->_hints;
 }
 
 
@@ -34,7 +57,7 @@ void MapView::keyPressEvent(QKeyEvent * event) {
 
         //deletion handling
         case Qt::Key::Key_Delete:
-            this->_alterScene(MapHint::Alteration::Removed, this->_scene->selectedItems());
+            this->_hints->alterSceneFromItems(MapHint::Alteration::Removed, this->scene()->selectedItems());
             break;
         
         //ask unselection of current tool
@@ -58,7 +81,7 @@ void MapView::bindToRPZClient(RPZClient * cc) {
     //on map change
     QObject::connect(
         this->_currentCC, &RPZClient::hostMapChanged,
-        this, &MapView::unpackFromNetworkReceived
+        this->_hints, &MapHintViewBinder::unpackFromNetworkReceived
     );
 
     //destroy
@@ -171,7 +194,7 @@ void MapView::_changeTool(MapTools::Actions newTool, const bool quickChange) {
         }   
     } else {
         this->_selectedTool = newTool;
-        this->_scene->clearSelection();
+        this->scene()->clearSelection();
     }    
     
     switch(newTool) {
@@ -303,7 +326,7 @@ void MapView::dropEvent(QDropEvent *event) {
     // QPointF point = this->mapToScene(event->pos());
     // item->setPos(point);
     // auto item = new QGraphicsSvgItem("C:/Users/Amphaal/Desktop/pp.svg");
-    // this->_scene->addItem(item);
+    // this->scene()->addItem(item);
 
     // //update latest for auto inserts
     // this->_latestPosDrop->setX(this->_latestPosDrop->x() + 10);
@@ -337,14 +360,14 @@ void MapView::_beginDrawing() {
 
 void MapView::_endDrawing() {
     //add definitive path
-    auto newPath = this->_scene->addPath(*this->_tempDrawing, this->_getPen());
+    auto newPath = this->scene()->addPath(*this->_tempDrawing, this->_getPen());
     newPath->setFlags(QFlags<QGraphicsItem::GraphicsItemFlag>(
         QGraphicsItem::GraphicsItemFlag::ItemIsSelectable |
         QGraphicsItem::GraphicsItemFlag::ItemIsMovable
     ));
 
     auto newAsset = Asset(AssetBase::Type::Drawing, newPath);
-    this->_hints->_alterScene(MapHint::Alteration::Added, newAsset);
+    this->_hints->alterSceneFromAsset(MapHint::Alteration::Added, newAsset);
     this->_tempDrawing = nullptr;
     
     //destroy temp
@@ -361,7 +384,7 @@ void MapView::_drawLineTo(const QPoint &evtPoint) {
 
     //draw temp line
     const auto lineCoord = QLineF(this->mapToScene(this->_lastPointMousePressing), this->mapToScene(evtPoint));
-    auto tempLine = this->_scene->addLine(lineCoord, this->_getPen());
+    auto tempLine = this->scene()->addLine(lineCoord, this->_getPen());
     this->_tempLines.append(tempLine);
 }
 

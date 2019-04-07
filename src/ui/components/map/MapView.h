@@ -23,19 +23,20 @@
 #include "MapTools.h"
 #include "AssetsNavigator.h"
 
-#include "src/shared/MapNavigator.h"
+#include "src/shared/MapHintViewBinder.h"
 #include "src/shared/Asset.hpp"
 
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/network/rpz/client/RPZClient.h"
 
 
-class MapView : public MapNavigator {
+class MapView : public QGraphicsView {
 
     Q_OBJECT
 
     public:
         MapView(QWidget *parent);
+        MapHintViewBinder* hints();
 
     public slots:
         void changeToolFromAction(QAction *action);
@@ -46,6 +47,8 @@ class MapView : public MapNavigator {
     
     signals:
         void unselectCurrentToolAsked();
+        void assetsAlteredForLocal(const MapHint::Alteration &state, QList<Asset> &elements);
+        void assetsAlteredForNetwork(const MapHint::Alteration &state, QList<Asset> &elements);
 
     protected:
         void wheelEvent(QWheelEvent *event) override;
@@ -58,8 +61,8 @@ class MapView : public MapNavigator {
         void keyPressEvent(QKeyEvent * event) override;
 
     private:
+        MapHintViewBinder* _hints;
         RPZClient * _currentCC = nullptr;
-        QGraphicsScene* _scene;
         void _onSceneSelectionChanged();
 
         //registered points

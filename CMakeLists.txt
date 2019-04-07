@@ -128,7 +128,7 @@ list(APPEND SOURCES
 list(APPEND SOURCES
 
     src/shared/MapHint.cpp
-    src/shared/MapNavigator.cpp
+    src/shared/MapHintViewBinder.cpp
 
     src/ui/components/map/MapTools.cpp
     src/ui/components/map/AssetsNavigator.cpp

@@ -17,17 +17,17 @@ MapLayoutManager::MapLayoutManager(QWidget * parent) : QTreeWidget(parent) {
 }
 
 void MapLayoutManager::_onElementDoubleClicked(QTreeWidgetItem * item, int column) {
-    emit elementsAlterationAsked(this->_extractIdsFromSelection(), MapHint::Alteration::Focused);
+    emit elementsAlterationAsked(MapHint::Alteration::Focused, this->_extractIdsFromSelection());
 }
 
 void MapLayoutManager::_onElementSelectionChanged() {
     
     if(this->_externalInstructionPending || this->_deletionProcessing) return;
 
-    emit elementsAlterationAsked(this->_extractIdsFromSelection(), MapHint::Alteration::Selected);
+    emit elementsAlterationAsked(MapHint::Alteration::Selected, this->_extractIdsFromSelection());
 }
 
-void MapLayoutManager::alterTreeElements(QList<Asset> &elements, const MapHint::Alteration &state) {
+void MapLayoutManager::alterTreeElements(const MapHint::Alteration &state, QList<Asset> &elements) {
    
     this->_externalInstructionPending = true;
 
@@ -94,7 +94,7 @@ void MapLayoutManager::keyPressEvent(QKeyEvent * event) {
             const auto selectedIds = this->_extractIdsFromSelection();
             if(!selectedIds.length()) return;
 
-            emit elementsAlterationAsked(selectedIds, MapHint::Alteration::Removed);
+            emit elementsAlterationAsked(MapHint::Alteration::Removed, selectedIds);
             break;
     }
 

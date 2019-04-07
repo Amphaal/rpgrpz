@@ -16,10 +16,10 @@ class MapLayoutManager : public QTreeWidget{
 
     public:
         MapLayoutManager(QWidget * parent = nullptr);
-        void alterTreeElements(QList<Asset> &elements, const MapHint::Alteration &state);
+        void alterTreeElements(const MapHint::Alteration &state, QList<Asset> &elements);
     
     signals:
-        void elementsAlterationAsked(const QList<QUuid> &elementIds, const MapHint::Alteration &state);
+        void elementsAlterationAsked(const MapHint::Alteration &state, const QList<QUuid> &elementIds);
 
     protected:
         void keyPressEvent(QKeyEvent * event) override;
