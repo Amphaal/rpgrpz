@@ -41,8 +41,6 @@ void MapView::_onSceneSelectionChanged() {
 
     if(this->_externalInstructionPending || this->_deletionProcessing) return;
 
-    qDebug() << "caca";
-
     //emit event
     auto mapToEvt = this->_fetchAssets(this->_scene->selectedItems());
     this->_emitAlteration(mapToEvt, Alteration::Selected);
