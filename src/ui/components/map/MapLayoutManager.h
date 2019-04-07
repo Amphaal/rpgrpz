@@ -8,7 +8,7 @@
 #include <QIcon>
 
 #include "MapView.h"
-#include "Asset.hpp"
+#include "src/shared/Asset.hpp"
 
 class MapLayoutManager : public QTreeWidget{
 

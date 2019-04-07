@@ -22,37 +22,29 @@
 
 #include "MapTools.h"
 #include "AssetsNavigator.h"
-#include "Asset.hpp"
 
-#include "src/helpers/_serializer.hpp"
+#include "src/shared/MapHint.hpp"
+#include "src/shared/Asset.hpp"
 
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/network/rpz/client/RPZClient.h"
 
-class MapView : public QGraphicsView {
+
+class MapView : public QGraphicsView, public MapHint {
 
     Q_OBJECT
 
     public:
-        enum Alteration { Changed, Added, Removed, Selected, Focused };
-        static const QList<MapView::Alteration> networkAlterations;
         MapView(QWidget *parent);
-
-        //network helpers...
-        QVariantList packageForNetworkSend(QList<Asset> &assets, const MapView::Alteration &state);
-        void unpackFromNetworkReceived(const QVariantList &package);
 
     public slots:
         void changeToolFromAction(QAction *action);
         void changePenSize(const int newSize);
-        void alterScene(const QList<QUuid> &elementIds, const MapView::Alteration &state);
         
         //network
         void bindToRPZClient(RPZClient * cc);
     
     signals:
-        void mapElementsAltered(QList<Asset> &elements, const Alteration &state);
-        void notifyNetwork_mapElementsAltered(QList<Asset> &elements, const Alteration &state);
         void unselectCurrentToolAsked();
 
     protected:
@@ -68,32 +60,13 @@ class MapView : public QGraphicsView {
     private:
         RPZClient * _currentCC = nullptr;
         QGraphicsScene* _scene;
-        bool _externalInstructionPending = false;
-        bool _deletionProcessing = false;
         void _onSceneSelectionChanged();
-        void _emitAlteration(QList<Asset> &elements, const Alteration &state);
 
         //registered points
             QPoint _lastPointMousePressing;
             QPoint _lastPointMousePressed;
             bool _isMousePressed = false;
             bool _isMiddleToolLock = false;
-
-        //elements of map
-            QHash<QUuid, Asset> _assetsById;
-            QHash<QGraphicsItem*, QUuid> _idsByGraphicItem;
-            QSet<QUuid> _selfElements;
-            QHash<QUuid, QSet<QUuid>> _foreignElementIdsByOwnerId;
-
-            QHash<QUuid, Asset> _fetchAssetsWithIds(const QList<QGraphicsItem*> &listToFetch) const;
-            QList<Asset> _fetchAssets(const QList<QGraphicsItem*> &listToFetch) const;
-            QList<Asset> _fetchAssets(const QList<QUuid> &listToFetch) const;
-
-            void _alterScene(const Alteration &alteration, const QList<QGraphicsItem*> &elements);
-            void _alterScene(const Alteration &alteration, const QList<QUuid> &elementIds);
-            void _alterScene(const Alteration &alteration, Asset &asset);
-            void _alterSceneGlobal(const Alteration &alteration, QList<Asset> &assets);
-            QUuid _alterSceneInternal(const Alteration &alteration, Asset &asset);
 
         //tool
             MapTools::Actions _selectedTool;

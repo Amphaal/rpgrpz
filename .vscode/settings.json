@@ -106,6 +106,7 @@
         "quuid": "cpp",
         "qpainterpath": "cpp",
         "qdatastream": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "qgraphicsview": "cpp"
     }
 }

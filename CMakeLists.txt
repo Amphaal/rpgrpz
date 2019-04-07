@@ -126,6 +126,9 @@ list(APPEND SOURCES
 
 #ui components
 list(APPEND SOURCES
+
+    src/shared/MapHint.cpp
+
     src/ui/components/map/MapTools.cpp
     src/ui/components/map/AssetsNavigator.cpp
     src/ui/components/map/MapView.cpp
