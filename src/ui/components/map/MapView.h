@@ -64,6 +64,7 @@ class MapView : public QGraphicsView {
         MapHintViewBinder* _hints;
         RPZClient * _currentCC = nullptr;
         void _onSceneSelectionChanged();
+        void _sendMapHistory();
 
         //registered points
             QPoint _lastPointMousePressing;

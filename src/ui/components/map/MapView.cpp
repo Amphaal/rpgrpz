@@ -84,6 +84,11 @@ void MapView::bindToRPZClient(RPZClient * cc) {
         this->_hints, &MapHintViewBinder::unpackFromNetworkReceived
     );
 
+    QObject::connect(
+        this->_currentCC, &RPZClient::beenAskedForMapHistory,
+        this, &MapView::_sendMapHistory
+    );
+
     //destroy
     QObject::connect(
         this->_currentCC, &QObject::destroyed,
@@ -92,6 +97,14 @@ void MapView::bindToRPZClient(RPZClient * cc) {
         }
     );
 
+}
+
+void MapView::_sendMapHistory() {
+    if(!this->_currentCC) return;
+
+    auto data = this->_hints->packageForNetworkSend(MapHint::Alteration::Reset, this->_hints->fetchHistory());
+
+    this->_currentCC->sendMapHistory(data);
 }
 
 //////////

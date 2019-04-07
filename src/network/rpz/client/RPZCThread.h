@@ -12,4 +12,5 @@ class RPZCThread : public QThread {
         void logHistoryReceived();
         void error(const std::string &errMessage);
         void hostMapChanged(const QVariantList &data);
+        void beenAskedForMapHistory();
 };

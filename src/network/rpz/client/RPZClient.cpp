@@ -9,6 +9,11 @@ RPZClient::RPZClient(const QString &name, const QString &domain, const QString &
 
 }
 
+
+QString RPZClient::getConnectedSocketAddress() {
+    return this->_domain + ":" + this->_port;
+}
+
 void RPZClient::_constructorInThread(){
     
     this->_sockWrapper = new JSONSocket("Chat Client");
@@ -49,13 +54,6 @@ void RPZClient::_constructorInThread(){
 }
 
 
-void RPZClient::sendMessage(const QString &messageToSend) {
-
-    this->_sockWrapper->sendJSON(JSONMethod::MessageFromPlayer, QStringList(messageToSend));
-
-    qDebug() << "Chat Client : message sent " << messageToSend; 
-}
-
 void RPZClient::run() {
 
     this->_constructorInThread();
@@ -81,7 +79,6 @@ void RPZClient::run() {
     this->_sockWrapper->socket()->close();
 }
 
-
 void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) {
     
     switch(method) {
@@ -95,6 +92,10 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         case JSONMethod::LoggedPlayersChanged: {
                 const auto users = data.toList();
                 emit loggedUsersUpdated(users);
+            }
+            break;
+        case JSONMethod::AskForHostMapHistory: {
+                emit beenAskedForMapHistory();
             }
             break;
         case JSONMethod::MessageFromPlayer: {
@@ -136,6 +137,17 @@ void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
     this->exit();
 }
 
-QString RPZClient::getConnectedSocketAddress() {
-    return this->_domain + ":" + this->_port;
+
+void RPZClient::sendMessage(const QString &messageToSend) {
+
+    this->_sockWrapper->sendJSON(JSONMethod::MessageFromPlayer, QStringList(messageToSend));
+
+    qDebug() << "Chat Client : message sent " << messageToSend; 
+}
+
+
+void RPZClient::sendMapHistory(const QVariantList &history) {
+    this->_sockWrapper->sendJSON(JSONMethod::HostMapHistory, history);
+
+    qDebug() << "Chat Client : map history sent"; 
 }

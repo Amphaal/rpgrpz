@@ -16,9 +16,10 @@ class MapHint : public QObject {
 
     public:
         MapHint();
+        QList<Asset> fetchHistory();
 
         //enums
-        enum Alteration { Changed, Added, Removed, Selected, Focused };
+        enum Alteration { Changed, Added, Removed, Selected, Focused, Reset };
         static inline const QList<MapHint::Alteration> networkAlterations = { 
             MapHint::Alteration::Changed, 
             MapHint::Alteration::Added,
@@ -27,7 +28,7 @@ class MapHint : public QObject {
     
     public slots:
         //network helpers...
-        QVariantList packageForNetworkSend(QList<Asset> &assets, const MapHint::Alteration &state);
+        QVariantList packageForNetworkSend(const MapHint::Alteration &state, QList<Asset> &assets);
 
         //from external App instructions (toolBar...)
         void alterSceneFromAsset(const MapHint::Alteration &alteration, Asset &asset);

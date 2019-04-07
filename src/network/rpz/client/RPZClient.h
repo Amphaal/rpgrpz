@@ -7,6 +7,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QVariantList>
 
 #include "RPZCThread.h"
 #include "src/network/rpz/_any/JSONSocket.h"
@@ -21,8 +22,12 @@ class RPZClient : public RPZCThread, public JSONRouter {
     public:
         RPZClient(const QString &displayname, const QString &domain, const QString &port);
         QString getConnectedSocketAddress();
-        void sendMessage(const QString &messageToSend);
+        
         void run() override;
+    
+    public slots:
+        void sendMessage(const QString &messageToSend);
+        void sendMapHistory(const QVariantList &history);
 
     private:
         JSONSocket* _sockWrapper = nullptr;

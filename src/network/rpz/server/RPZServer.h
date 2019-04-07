@@ -30,16 +30,18 @@ class RPZServer : public RPZSThread, public JSONRouter {
         void run() override;
 
     private:
-        MapHint* _hints;
-        void _onMapChanged(QList<Asset> &elements, const MapHint::Alteration &state);
-        void _sendMapHistory();
-
         QHash<JSONSocket*, QUuid> _idsByClientSocket;
         QHash<QUuid, JSONSocket*> _clientSocketsById;
         QHash<QUuid, QString> _clientDisplayNames;
         JSONSocket* _hostSocket = nullptr;
         QTcpServer* _server;
 
+        //map assets
+        MapHint* _hints;
+        void _askHostForMapHistory();
+        void _broadcastMapChanges(const QVariantList &changes);
+        
+        //messages
         QStringList _messages;
         void _sendStoredMessages(JSONSocket * clientSocket);
         void _broadcastMessage(const QString &messageToBroadcast);

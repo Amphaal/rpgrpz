@@ -30,26 +30,6 @@ void RPZServer::run() {
     this->_server->close();
 };
 
-void RPZServer::_onMapChanged(QList<Asset> &elements, const MapHint::Alteration &state) {
-
-    if(!this->_clientSocketsById.size()) return;
-
-    auto toSend = this->_hints->packageForNetworkSend(elements, state);
-
-    //send...
-    for(auto &socket : this->_clientSocketsById) {
-        if(socket == this->_hostSocket) continue;
-        socket->sendJSON(JSONMethod::HostMapChanged, toSend);
-    }
-
-}
-
-void RPZServer::_sendMapHistory() {
-    if(!this->_clientSocketsById.size()) return;
-
-    //TODO
-}
-
 void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
 
     //message...
@@ -82,6 +62,8 @@ void RPZServer::_onNewConnection() {
         const auto la = clientSocket->socket()->localAddress();
         if(la == QHostAddress::LocalHost || la == QHostAddress::LocalHostIPv6) {
             this->_hostSocket = clientSocket;
+
+            this->_askHostForMapHistory();
         }
         
         //clear on client disconnect
@@ -137,6 +119,12 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
                 this->_broadcastMessage(message);
             }
             break;
+        case JSONMethod::HostMapHistory:
+            {
+                const auto history = data.toList();
+                this->_broadcastMapChanges(history);
+            }
+            break;
         case JSONMethod::PlayerHasUsername:
             {   
                 //bind username to socket
@@ -148,8 +136,6 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
                 //send history to the client
                 this->_sendStoredMessages(target);
-
-                this->_sendMapHistory();
             }
             break;
         default:
@@ -164,8 +150,23 @@ void RPZServer::_broadcastUsers() {
     }
 }
 
+void RPZServer::_askHostForMapHistory() {
+    this->_hostSocket->sendJSON(JSONMethod::AskForHostMapHistory, QStringList());
+}
+
 QString RPZServer::_getSocketDisplayName(JSONSocket * clientSocket) {
     return this->_idsByClientSocket.contains(clientSocket) ? 
             this->_clientDisplayNames[this->_idsByClientSocket[clientSocket]] : 
             clientSocket->socket()->peerAddress().toString();
+}
+
+
+void RPZServer::_broadcastMapChanges(const QVariantList &changes) {
+
+    //send...
+    for(auto &socket : this->_clientSocketsById) {
+        if(socket == this->_hostSocket) continue;
+        socket->sendJSON(JSONMethod::HostMapChanged, changes);
+    }
+
 }

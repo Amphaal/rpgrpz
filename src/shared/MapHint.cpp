@@ -2,6 +2,10 @@
 
 MapHint::MapHint() {};
 
+QList<Asset> MapHint::fetchHistory() {
+    return this->_assetsById.values();
+}
+
 //handle network and local evts emission
 void MapHint::_emitAlteration(const Alteration &state, QList<Asset> &elements) {
 
@@ -13,7 +17,7 @@ void MapHint::_emitAlteration(const Alteration &state, QList<Asset> &elements) {
 
 } 
 
-QVariantList MapHint::packageForNetworkSend(QList<Asset> &assets, const MapHint::Alteration &state) {
+QVariantList MapHint::packageForNetworkSend(const MapHint::Alteration &state, QList<Asset> &assets) {
     
     QVariantList toSend;
 
