@@ -17,7 +17,7 @@
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/network/rpz/_any/JSONRouter.h"
 
-#include "src/ui/components/map/MapView.h"
+#include "src/shared/MapHint.h"
 
 #include "src/helpers/_const.hpp"
 
@@ -26,12 +26,12 @@ class RPZServer : public RPZSThread, public JSONRouter {
     Q_OBJECT
 
     public:
-        RPZServer(MapView* mv);
+        RPZServer();
         void run() override;
 
     private:
-        MapView* _mv;
-        void _onMapChanged(QList<Asset> &elements, const MapView::Alteration &state);
+        MapHint* _hints;
+        void _onMapChanged(QList<Asset> &elements, const MapHint::Alteration &state);
         void _sendMapHistory();
 
         QHash<JSONSocket*, QUuid> _idsByClientSocket;

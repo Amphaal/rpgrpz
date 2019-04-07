@@ -23,14 +23,14 @@
 #include "MapTools.h"
 #include "AssetsNavigator.h"
 
-#include "src/shared/MapHint.hpp"
+#include "src/shared/MapNavigator.h"
 #include "src/shared/Asset.hpp"
 
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/network/rpz/client/RPZClient.h"
 
 
-class MapView : public QGraphicsView, public MapHint {
+class MapView : public MapNavigator {
 
     Q_OBJECT
 

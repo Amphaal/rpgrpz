@@ -1,5 +1,40 @@
 #include "MapNavigator.h"
 
+MapNavigator::MapNavigator(QWidget *parent) : QGraphicsView(parent), _hints(new MapHint) {
+    
+    //on selection
+    QObject::connect(
+        this->scene(), &QGraphicsScene::selectionChanged,
+        this, &MapNavigator::_onSceneSelectionChanged
+    );
+
+    //to route from MapHints
+    QObject::connect(
+        this->_hints, &MapHint::mapElementsAltered,
+        [&](QList<Asset> &elements, const MapHint::Alteration &state) {
+            emit mapElementsAltered(elements, state);
+        }
+    );
+
+    //to route from MapHints
+    QObject::connect(
+        this->_hints, &MapHint::notifyNetwork_mapElementsAltered,
+        [&](QList<Asset> &elements, const MapHint::Alteration &state) {
+            emit notifyNetwork_mapElementsAltered(elements, state);
+        }
+    );
+};
+
+
+void MapNavigator::_onSceneSelectionChanged() {
+
+    if(this->_externalInstructionPending || this->_deletionProcessing) return;
+
+    //emit event
+    auto mapToEvt = this->_fetchAssets(this->scene()->selectedItems());
+    this->_hints->_emitAlteration(mapToEvt, MapHint::Alteration::Selected);
+
+}
 
 void MapNavigator::unpackFromNetworkReceived(const QVariantList &package) {
 
@@ -27,7 +62,7 @@ void MapNavigator::unpackFromNetworkReceived(const QVariantList &package) {
         if(state == MapHint::Alteration::Added) {
             
             //elem already exists, shouldnt rewrite it!
-            if(this->_assetsById.contains(elemId)) continue;
+            if(this->_hints->_assetsById.contains(elemId)) continue;
 
             //newly created map elem
             QGraphicsItem * newItem;
@@ -48,7 +83,7 @@ void MapNavigator::unpackFromNetworkReceived(const QVariantList &package) {
 
         } else {
             //fetch from stock
-            newAsset = this->_assetsById[key];
+            newAsset = this->_hints->_assetsById[key];
         }
         
         //add it to container
@@ -60,7 +95,7 @@ void MapNavigator::unpackFromNetworkReceived(const QVariantList &package) {
 }
 
 //helper
-void MapNavigator::_alterScene(const Alteration &alteration, const QList<QGraphicsItem*> &elements) {
+void MapNavigator::_alterScene(const MapHint::Alteration &alteration, const QList<QGraphicsItem*> &elements) {
     return this->_alterSceneGlobal(alteration, this->_fetchAssets(elements));
 }
 
@@ -69,7 +104,7 @@ QList<Asset> MapNavigator::_fetchAssets(const QList<QGraphicsItem*> &listToFetch
     QList<Asset> list;
 
     for(auto &e : listToFetch) {
-        list.append(this->_assetsById[this->_idsByGraphicItem[e]]);
+        list.append(this->_hints->_assetsById[this->_idsByGraphicItem[e]]);
     }
 
     return list;
@@ -81,20 +116,76 @@ void MapNavigator::alterScene(const QList<QUuid> &elementIds, const MapHint::Alt
     this->_externalInstructionPending = true;
 
     //update internal state
-    MapHint::alterScene(elementIds, state);
+    this->_hints->alterScene(elementIds, state);
 
     this->_externalInstructionPending = false;
 }
 
 //alter Scene
-void MapNavigator::_alterSceneGlobal(const Alteration &alteration, QList<Asset> &assets) { 
+void MapNavigator::_alterSceneGlobal(const MapHint::Alteration &alteration, QList<Asset> &assets) { 
     
     //make sure to clear selection before selecting new
-    if(alteration == Alteration::Selected) this->scene->clearSelection();
+    if(alteration == MapHint::Alteration::Selected) this->scene()->clearSelection();
     if(alteration == MapHint::Alteration::Removed) this->_deletionProcessing = true;
 
-    MapHint::_alterSceneGlobal(alteration, assets);
+    this->_hints->_alterSceneGlobal(alteration, assets);
 
     this->_deletionProcessing = false;
 
+}
+
+QUuid MapNavigator::_defineId(const MapHint::Alteration &alteration, Asset &asset) {
+    auto elemId = asset.id();
+    if(elemId.isNull()) {
+        elemId = alteration == MapHint::Alteration::Added ? QUuid::createUuid() : this->_idsByGraphicItem[asset.graphicsItem()];
+        asset.setId(elemId);
+    }
+    return elemId;
+}
+
+
+//register actions
+QUuid MapNavigator::_alterSceneInternal(const MapHint::Alteration &alteration, Asset &asset) {
+
+    //default handling first
+    auto elemId = this->_defineId(alteration, asset); 
+    auto ownerId = asset.ownerId();
+    
+    //pass hints
+    this->_hints->_alterSceneInternal(alteration, asset);
+
+    switch(alteration) {
+        
+        //on addition
+        case MapHint::Alteration::Added:
+
+            //bind elem
+            if(!this->_hints->_assetsById.contains(elemId)) {
+                this->_idsByGraphicItem.insert(asset.graphicsItem(), elemId);
+            }
+            break;
+        
+        //on focus
+        case MapHint::Alteration::Focused:
+            this->centerOn(asset.graphicsItem());
+            break;
+
+        //on selection
+        case MapHint::Alteration::Selected:
+            asset.graphicsItem()->setSelected(true);
+            break;
+
+        //on removal
+        case MapHint::Alteration::Removed:
+
+            //remove from map
+            delete asset.graphicsItem();
+
+            //update 
+            this->_idsByGraphicItem.remove(asset.graphicsItem());
+            break;
+
+    }
+
+    return elemId;
 }

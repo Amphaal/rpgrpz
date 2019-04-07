@@ -22,9 +22,9 @@ void MainWindow::_trueShow() {
 //handle clean close
 void MainWindow::closeEvent(QCloseEvent *event) {
     
-    if (this->_chatServer && this->_chatServer->isRunning()) {
-        this->_chatServer->exit();
-        this->_chatServer->wait();
+    if (this->_rpzServer && this->_rpzServer->isRunning()) {
+        this->_rpzServer->exit();
+        this->_rpzServer->wait();
     }
 
     event->accept();
@@ -49,8 +49,8 @@ void MainWindow::_initConnectivity() {
     /// Chat Server ! //
     ////////////////////
 
-    this->_chatServer = new RPZServer(this->_mapView);
-    this->_chatServer->start();
+    this->_rpzServer = new RPZServer;
+    this->_rpzServer->start();
 }
 
 void MainWindow::updateUPnPLabel(const std::string &state) {

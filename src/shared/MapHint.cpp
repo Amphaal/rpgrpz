@@ -1,5 +1,6 @@
 #include "MapHint.h"
 
+MapHint::MapHint() {};
 
 //handle network and local evts emission
 void MapHint::_emitAlteration(QList<Asset> &elements, const Alteration &state) {
@@ -69,15 +70,20 @@ QVariantList MapHint::packageForNetworkSend(QList<Asset> &assets, const MapHint:
 /* ELEMENTS */
 //////////////
 
+QUuid MapHint::_defineId(const Alteration &alteration, Asset &asset) {
+    auto elemId = asset.id();
+    if(elemId.isNull() && alteration == Alteration::Added) {
+        elemId = QUuid::createUuid();
+        asset.setId(elemId);
+    }
+    return elemId;
+}
+
 //register actions
 QUuid MapHint::_alterSceneInternal(const Alteration &alteration, Asset &asset) {
 
     //get the Uuids
-    auto elemId = asset.id();
-    if(elemId.isNull()) {
-        elemId = alteration == Alteration::Added ? QUuid::createUuid() : this->_idsByGraphicItem[asset.graphicsItem()];
-        asset.setId(elemId);
-    }
+    auto elemId = this->_defineId(alteration, asset);
     auto ownerId = asset.ownerId();
     
     switch(alteration) {
@@ -96,22 +102,11 @@ QUuid MapHint::_alterSceneInternal(const Alteration &alteration, Asset &asset) {
             }
 
             //bind elem
-            if(!this->_assetsById.contains(ownerId)) {
+            if(!this->_assetsById.contains(elemId)) {
                 this->_assetsById.insert(elemId, asset);
-                this->_idsByGraphicItem.insert(asset.graphicsItem(), elemId);
             }
             break;
         
-        //on focus
-        case Alteration::Focused:
-            this->centerOn(asset.graphicsItem());
-            break;
-
-        //on selection
-        case MapHint::Alteration::Selected:
-            asset.graphicsItem()->setSelected(true);
-            break;
-
         //on removal
         case Alteration::Removed:
 
@@ -122,12 +117,8 @@ QUuid MapHint::_alterSceneInternal(const Alteration &alteration, Asset &asset) {
                 this->_selfElements.remove(elemId);
             }
 
-            //remove from map
-            delete asset.graphicsItem();
-
             //update 
             this->_assetsById.remove(elemId);
-            this->_idsByGraphicItem.remove(asset.graphicsItem());
             break;
 
     }
@@ -137,7 +128,7 @@ QUuid MapHint::_alterSceneInternal(const Alteration &alteration, Asset &asset) {
 
 //alter Scene
 void MapHint::_alterSceneGlobal(const Alteration &alteration, QList<Asset> &assets) { 
-    
+
     //handling
     for(auto &asset : assets) {
         this->_alterSceneInternal(alteration, asset);

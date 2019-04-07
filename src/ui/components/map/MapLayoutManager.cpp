@@ -17,23 +17,23 @@ MapLayoutManager::MapLayoutManager(QWidget * parent) : QTreeWidget(parent) {
 }
 
 void MapLayoutManager::_onElementDoubleClicked(QTreeWidgetItem * item, int column) {
-    emit elementsAlterationAsked(this->_extractIdsFromSelection(), MapView::Alteration::Focused);
+    emit elementsAlterationAsked(this->_extractIdsFromSelection(), MapHint::Alteration::Focused);
 }
 
 void MapLayoutManager::_onElementSelectionChanged() {
     
     if(this->_externalInstructionPending || this->_deletionProcessing) return;
 
-    emit elementsAlterationAsked(this->_extractIdsFromSelection(), MapView::Alteration::Selected);
+    emit elementsAlterationAsked(this->_extractIdsFromSelection(), MapHint::Alteration::Selected);
 }
 
-void MapLayoutManager::alterTreeElements(QList<Asset> &elements, const MapView::Alteration &state) {
+void MapLayoutManager::alterTreeElements(QList<Asset> &elements, const MapHint::Alteration &state) {
    
     this->_externalInstructionPending = true;
 
     //special handling
-    if(state == MapView::Alteration::Selected) this->clearSelection();
-    if(state == MapView::Alteration::Removed) this->_deletionProcessing = true;
+    if(state == MapHint::Alteration::Selected) this->clearSelection();
+    if(state == MapHint::Alteration::Removed) this->_deletionProcessing = true;
 
     //iterate through items
     for (auto &e : elements) {
@@ -42,19 +42,19 @@ void MapLayoutManager::alterTreeElements(QList<Asset> &elements, const MapView::
 
         switch(state) {
 
-            case MapView::Alteration::Removed:
+            case MapHint::Alteration::Removed:
                 if(this->_treeItemsById.contains(key)) {
                     delete this->_treeItemsById.take(key);
                 }
                 break;
 
-            case MapView::Alteration::Selected:
+            case MapHint::Alteration::Selected:
                 if(this->_treeItemsById.contains(key)) {
                     this->_treeItemsById[key]->setSelected(true);
                 }
                 break;
 
-            case MapView::Alteration::Added:
+            case MapHint::Alteration::Added:
                 auto item = this->_createTreeItem(e);
                 this->_treeItemsById.insert(key, item);
                 break;
@@ -94,7 +94,7 @@ void MapLayoutManager::keyPressEvent(QKeyEvent * event) {
             const auto selectedIds = this->_extractIdsFromSelection();
             if(!selectedIds.length()) return;
 
-            emit elementsAlterationAsked(selectedIds, MapView::Alteration::Removed);
+            emit elementsAlterationAsked(selectedIds, MapHint::Alteration::Removed);
             break;
     }
 

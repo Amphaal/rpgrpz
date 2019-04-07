@@ -1,10 +1,11 @@
 #include "RPZServer.h" 
 
-RPZServer::RPZServer(MapView* mv) : _mv(mv) { };
+RPZServer::RPZServer() { };
 
 void RPZServer::run() { 
 
     this->_server = new QTcpServer;
+    this->_hints = new MapHint;
 
     qDebug() << "Chat Server : Starting server...";
 
@@ -16,14 +17,6 @@ void RPZServer::run() {
     } else {
         qDebug() << "Chat Server : Succesfully listening !";
     }
-
-    //connect to map changes
-    QObject::connect(
-        this->_mv, &MapView::notifyNetwork_mapElementsAltered,
-        [&](QList<Asset> &elements, const MapView::Alteration &state) {
-            this->_onMapChanged(elements, state);
-        }
-    );
 
     //connect to new connections
     QObject::connect(this->_server, &QTcpServer::newConnection, [&](){
@@ -37,11 +30,11 @@ void RPZServer::run() {
     this->_server->close();
 };
 
-void RPZServer::_onMapChanged(QList<Asset> &elements, const MapView::Alteration &state) {
+void RPZServer::_onMapChanged(QList<Asset> &elements, const MapHint::Alteration &state) {
 
     if(!this->_clientSocketsById.size()) return;
 
-    auto toSend = this->_mv->packageForNetworkSend(elements, state);
+    auto toSend = this->_hints->packageForNetworkSend(elements, state);
 
     //send...
     for(auto &socket : this->_clientSocketsById) {

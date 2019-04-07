@@ -1,14 +1,10 @@
 #include "MapView.h"
 
-MapView::MapView(QWidget *parent) : QGraphicsView(parent), _scene(new QGraphicsScene) {
+MapView::MapView(QWidget *parent) : _scene(new QGraphicsScene), MapNavigator(parent) {
     
     //default
     this->setAcceptDrops(true);
     this->_changeTool(MapView::_defaultTool);
-    QObject::connect(
-        this->_scene, &QGraphicsScene::selectionChanged,
-        this, &MapView::_onSceneSelectionChanged
-    );
 
     //custom cursors
     this->_rotateCursor = new QCursor(QPixmap(":/icons/app/tools/rotate.png"));
@@ -31,15 +27,6 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), _scene(new QGraphicsS
     this->setScene(this->_scene);
 }
 
-void MapView::_onSceneSelectionChanged() {
-
-    if(this->_externalInstructionPending || this->_deletionProcessing) return;
-
-    //emit event
-    auto mapToEvt = this->_fetchAssets(this->_scene->selectedItems());
-    this->_emitAlteration(mapToEvt, Alteration::Selected);
-}
-
 
 void MapView::keyPressEvent(QKeyEvent * event) {
     
@@ -47,7 +34,7 @@ void MapView::keyPressEvent(QKeyEvent * event) {
 
         //deletion handling
         case Qt::Key::Key_Delete:
-            this->_alterScene(Alteration::Removed, this->_scene->selectedItems());
+            this->_alterScene(MapHint::Alteration::Removed, this->_scene->selectedItems());
             break;
         
         //ask unselection of current tool
@@ -355,7 +342,9 @@ void MapView::_endDrawing() {
         QGraphicsItem::GraphicsItemFlag::ItemIsSelectable |
         QGraphicsItem::GraphicsItemFlag::ItemIsMovable
     ));
-    this->_alterScene(Alteration::Added, Asset(AssetBase::Type::Drawing, newPath));
+
+    auto newAsset = Asset(AssetBase::Type::Drawing, newPath);
+    this->_hints->_alterScene(MapHint::Alteration::Added, newAsset);
     this->_tempDrawing = nullptr;
     
     //destroy temp
