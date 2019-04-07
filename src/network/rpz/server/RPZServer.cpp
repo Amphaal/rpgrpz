@@ -7,15 +7,15 @@ void RPZServer::run() {
     this->_server = new QTcpServer;
     this->_hints = new MapHint;
 
-    qDebug() << "Chat Server : Starting server...";
+    qDebug() << "RPZServer : Starting server...";
 
     auto result = this->_server->listen(QHostAddress::Any, std::stoi(UPNP_DEFAULT_TARGET_PORT));
 
     if(!result) {
-        qWarning() << "Chat Server : Error while starting to listen >> " + this->_server->errorString();
+        qWarning() << "RPZServer : Error while starting to listen >> " + this->_server->errorString();
         return;
     } else {
-        qDebug() << "Chat Server : Succesfully listening !";
+        qDebug() << "RPZServer : Succesfully listening !";
     }
 
     //connect to new connections
@@ -26,7 +26,7 @@ void RPZServer::run() {
     this->exec();
 
     //ended server
-    qDebug() << "Chat Server : Server ending !";
+    qDebug() << "RPZServer : Server ending !";
     this->_server->close();
 };
 
@@ -36,7 +36,7 @@ void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
     auto countMsgs = this->_messages.size();
     clientSocket->sendJSON(JSONMethod::ChatLogHistory, this->_messages);
     
-    qDebug() << "Chat Server :" << countMsgs << " stored messages sent to " << clientSocket->socket()->peerAddress().toString();
+    qDebug() << "RPZServer :" << countMsgs << " stored messages sent to " << clientSocket->socket()->peerAddress().toString();
 }
 
 void RPZServer::_broadcastMessage(const QString &messageToBroadcast) {
@@ -45,13 +45,13 @@ void RPZServer::_broadcastMessage(const QString &messageToBroadcast) {
         socket->sendJSON(JSONMethod::MessageFromPlayer, QStringList(messageToBroadcast));
     }
 
-    qDebug() << "Chat Server : Broadcasted message to " << this->_clientSocketsById.size() << " clients";
+    qDebug() << "RPZServer : Broadcasted message to " << this->_clientSocketsById.size() << " clients";
 }
 
 void RPZServer::_onNewConnection() {
         
         //new connection,store it
-        auto clientSocket = new JSONSocket("Chat Server", this->_server->nextPendingConnection());
+        auto clientSocket = new JSONSocket("RPZServer", this->_server->nextPendingConnection());
         
         //store it
         const auto newId = QUuid::createUuid();
@@ -100,7 +100,7 @@ void RPZServer::_onNewConnection() {
         //signals new connection
         auto newIp = clientSocket->socket()->peerAddress().toString();
         emit newConnectionReceived(newIp.toStdString());
-        qDebug() << "Chat Server : New connection from " << newIp;
+        qDebug() << "RPZServer : New connection from " << newIp;
 
 }
 
@@ -139,7 +139,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             }
             break;
         default:
-            qWarning() << "Chat Server : unknown method from JSON !";
+            qWarning() << "RPZServer : unknown method from JSON !";
     }
 
 }

@@ -5,14 +5,29 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch",
+            "name": "Launch Client (no server)",
             "windows": {
                 "type": "cppvsdbg",
                 "program": "rpgrpz.exe",
             },
             "type": "cppdbg",
             "request": "launch",
-            "args": [],
+            "args": ["noServer"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/buildDebug/bin/",
+            "environment": [],
+            "externalConsole": false,
+            "preLaunchTask": "Debug - 3. Build"
+        },
+        {
+            "name": "Launch Server",
+            "windows": {
+                "type": "cppvsdbg",
+                "program": "rpgrpz.exe",
+            },
+            "type": "cppdbg",
+            "request": "launch",
+            "args": ["serverOnly"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/buildDebug/bin/",
             "environment": [],

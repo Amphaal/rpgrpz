@@ -107,6 +107,7 @@
         "qpainterpath": "cpp",
         "qdatastream": "cpp",
         "queue": "cpp",
-        "qgraphicsview": "cpp"
+        "qgraphicsview": "cpp",
+        "qapplication": "cpp"
     }
 }

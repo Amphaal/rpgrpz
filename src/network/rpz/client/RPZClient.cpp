@@ -5,7 +5,7 @@ RPZClient::RPZClient(const QString &name, const QString &domain, const QString &
                         _domain(domain), 
                         _port(port) {
 
-    qDebug() << "Chat Client : Instantiation...";
+    qDebug() << "RPZClient : Instantiation...";
 
 }
 
@@ -16,7 +16,7 @@ QString RPZClient::getConnectedSocketAddress() {
 
 void RPZClient::_constructorInThread(){
     
-    this->_sockWrapper = new JSONSocket("Chat Client");
+    this->_sockWrapper = new JSONSocket("RPZClient");
     auto qq = this->_sockWrapper->socket();
 
     QObject::connect(
@@ -31,7 +31,7 @@ void RPZClient::_constructorInThread(){
         [&]() {
             const std::string msg = "Déconnecté du serveur";
             emit error(msg);
-            qWarning() << "Chat Client : " << QString::fromStdString(msg);
+            qWarning() << "RPZClient : " << QString::fromStdString(msg);
         }
     );
 
@@ -64,7 +64,7 @@ void RPZClient::run() {
         return;
     }
 
-    qDebug() << "Chat Client : Connecting...";    
+    qDebug() << "RPZClient : Connecting...";    
     this->_sockWrapper->socket()->abort();
     this->_sockWrapper->socket()->connectToHost(this->_domain, this->_port.toInt());
     
@@ -108,7 +108,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             }   
             break;
         default:
-            qWarning() << "Chat Client : unknown method from JSON !";
+            qWarning() << "RPZClient : unknown method from JSON !";
     }
 }
 
@@ -132,7 +132,7 @@ void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
     }
 
     emit error(msg);
-    qWarning() << "Chat Client : :" << QString::fromStdString(msg);
+    qWarning() << "RPZClient : :" << QString::fromStdString(msg);
 
     this->exit();
 }
@@ -142,12 +142,12 @@ void RPZClient::sendMessage(const QString &messageToSend) {
 
     this->_sockWrapper->sendJSON(JSONMethod::MessageFromPlayer, QStringList(messageToSend));
 
-    qDebug() << "Chat Client : message sent " << messageToSend; 
+    qDebug() << "RPZClient : message sent " << messageToSend; 
 }
 
 
 void RPZClient::sendMapHistory(const QVariantList &history) {
     this->_sockWrapper->sendJSON(JSONMethod::HostMapHistory, history);
 
-    qDebug() << "Chat Client : map history sent"; 
+    qDebug() << "RPZClient : map history sent"; 
 }

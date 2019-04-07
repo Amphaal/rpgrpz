@@ -8,6 +8,14 @@
     "tasks": [
         /*DEBUG*/
         {
+            "label": "Client+Server",
+            "type": "shell",
+            "command": "rpgrpz.exe; rpgrpz.exe -serverOnly;",
+            "options": {
+                "cwd": "${workspaceRoot}/buildDebug/bin"
+            }
+        },
+        {
             "label": "Debug - 0. Create build folder",
             "group": "test",
             "type": "shell",

@@ -46,11 +46,23 @@ void MainWindow::_initConnectivity() {
     this->_ipHelper->init();
 
     ////////////////////
-    /// Chat Server ! //
+    /// RPZServer ! //
     ////////////////////
 
-    this->_rpzServer = new RPZServer;
-    this->_rpzServer->start();
+    //start if default
+    const auto appArgs = QApplication::instance()->arguments();
+    if(appArgs.size() > 1 && appArgs.at(1) == "noServer") {    
+
+        //do nothing
+        qDebug() << "RPZServer : No server to start because the user said so.";
+
+    } else {
+        this->_rpzServer = new RPZServer;
+        this->_rpzServer->start();
+    }
+
+
+
 }
 
 void MainWindow::updateUPnPLabel(const std::string &state) {

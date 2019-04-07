@@ -45,7 +45,7 @@ class MainWindow : public QMainWindow {
         void _initUI();
 
         ConnectivityHelper* _ipHelper;
-        RPZServer* _rpzServer;
+        RPZServer* _rpzServer = nullptr;
         void _initConnectivity();
 
         MapView* _mapView;

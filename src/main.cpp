@@ -9,19 +9,32 @@
 #include "src/helpers/_const.hpp"
 #include "src/helpers/_messageHandler.hpp"
 
+#include "src/network/rpz/server/RPZServer.h"
+
 #include "ui/MainWindow.h"
 #include "ui/AppLoader.hpp"
 
 #include <QDir>
 #include <QLockFile>
 
-int main(int argc, char** argv){
+
+int serverConsole(int argc, char** argv) {
     
-    //prevent multiples instances
-    QString tmpDir = QDir::tempPath();
-    QLockFile lockFile(tmpDir + "/rpgrpz.lock");
-    if(!lockFile.tryLock(100)){
-        return 1;
+    QCoreApplication server(argc, argv);
+    auto rpz = new RPZServer;
+    rpz->start();
+    return server.exec();
+}
+
+int clientApp(int argc, char** argv) {
+    
+    if(!IS_DEBUG_APP) {
+        //prevent multiples instances
+        QString tmpDir = QDir::tempPath();
+        QLockFile lockFile(tmpDir + "/rpgrpz.lock");
+        if(!lockFile.tryLock(100)){
+            return 1;
+        }
     }
 
     //setup app
@@ -47,4 +60,20 @@ int main(int argc, char** argv){
 
     //wait for the app to close
     return app.exec();
+}
+
+int main(int argc, char** argv){
+
+    if(QString(argv[1]) == "serverOnly") {
+        
+        //as server console
+        return serverConsole(argc, argv);
+
+    } else {
+
+        //as client app
+        return clientApp(argc, argv);
+
+    }
+
 }
