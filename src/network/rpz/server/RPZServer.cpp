@@ -19,8 +19,8 @@ void RPZServer::run() {
 
     //connect to map changes
     QObject::connect(
-        this->_mv, &MapView::mapElementsAltered,
-        [&](QList<Asset> &elements, const MapView::MapElementEvtState &state) {
+        this->_mv, &MapView::notifyNetwork_mapElementsAltered,
+        [&](QList<Asset> &elements, const MapView::Alteration &state) {
             this->_onMapChanged(elements, state);
         }
     );
@@ -37,7 +37,7 @@ void RPZServer::run() {
     this->_server->close();
 };
 
-void RPZServer::_onMapChanged(QList<Asset> &elements, const MapView::MapElementEvtState &state) {
+void RPZServer::_onMapChanged(QList<Asset> &elements, const MapView::Alteration &state) {
 
     if(!this->_clientSocketsById.size()) return;
 

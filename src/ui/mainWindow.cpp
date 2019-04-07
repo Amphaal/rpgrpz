@@ -161,7 +161,7 @@ void MainWindow::_initUIApp() {
 
     //on map alteration, update treelist
     QObject::connect(
-        this->_mapView, &MapView::mapElementsAltered,
+        this->_mapView, &MapView::notifyNetwork_mapElementsAltered,
         this->_mlManager, &MapLayoutManager::alterTreeElements
     );
 

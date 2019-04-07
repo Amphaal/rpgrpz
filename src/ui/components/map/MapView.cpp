@@ -1,5 +1,10 @@
 #include "MapView.h"
 
+const QList<MapView::Alteration> MapView::networkAlterations = { 
+    MapView::Alteration::Changed, 
+    MapView::Alteration::Added,
+    MapView::Alteration::Removed 
+};
 
 MapView::MapView(QWidget *parent) : QGraphicsView(parent), _scene(new QGraphicsScene) {
     
@@ -33,11 +38,25 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), _scene(new QGraphicsS
 }
 
 void MapView::_onSceneSelectionChanged() {
-    if(this->_externalInstructionPending) return;
+
+    if(this->_externalInstructionPending || this->_deletionProcessing) return;
+
+    qDebug() << "caca";
 
     //emit event
-    const auto mapToEvt = this->_fetchAssets(this->_scene->selectedItems());
-    emit mapElementsAltered(mapToEvt, MapElementEvtState::Selected);
+    auto mapToEvt = this->_fetchAssets(this->_scene->selectedItems());
+    this->_emitAlteration(mapToEvt, Alteration::Selected);
+}
+
+//handle network and local evts emission
+void MapView::_emitAlteration(QList<Asset> &elements, const Alteration &state) {
+    
+    emit mapElementsAltered(elements, state);
+
+    if(this->networkAlterations.contains(state)) {
+        emit notifyNetwork_mapElementsAltered(elements, state);
+    }
+
 }
 
 void MapView::keyPressEvent(QKeyEvent * event) {
@@ -46,7 +65,7 @@ void MapView::keyPressEvent(QKeyEvent * event) {
 
         //deletion handling
         case Qt::Key::Key_Delete:
-            this->_alterScene(MapElementEvtState::Removed, this->_scene->selectedItems());
+            this->_alterScene(Alteration::Removed, this->_scene->selectedItems());
             break;
         
         //ask unselection of current tool
@@ -83,7 +102,7 @@ void MapView::bindToRPZClient(RPZClient * cc) {
 
 }
 
-QVariantList MapView::packageForNetworkSend(QList<Asset> &assets, const MapView::MapElementEvtState &state) {
+QVariantList MapView::packageForNetworkSend(QList<Asset> &assets, const MapView::Alteration &state) {
     
     QVariantList toSend;
 
@@ -94,18 +113,31 @@ QVariantList MapView::packageForNetworkSend(QList<Asset> &assets, const MapView:
     QVariantHash assetsContainer;
     for(auto &asset : assets) {
 
-        QByteArray assetData = NULL;
-
-        switch(asset.type()) {
-            case AssetType::Type::Drawing:
-                auto casted = (QGraphicsPathItem*)asset.graphicsItem();
-                const auto path = casted->path();
-                assetData = JSONSerializer::toBase64(path);
-                break;
-        }
-
+        //contains subdata
         QVariantHash binder;
-        binder.insert("data", assetData);
+
+        //in case when you need to bind raw data
+        if(state == MapView::Alteration::Added) {
+            
+            //raw data container
+            QByteArray assetData = NULL;
+
+            //switch on asset type
+            switch(asset.type()) {
+                
+                //drawing...
+                case AssetBase::Type::Drawing:
+                    auto casted = (QGraphicsPathItem*)asset.graphicsItem();
+                    const auto path = casted->path();
+                    assetData = JSONSerializer::toBase64(path);
+                    break;
+
+            }
+
+            binder.insert("data", assetData);
+        }   
+
+        //default data
         binder.insert("type", asset.type());
         binder.insert("owner", asset.ownerId());
 
@@ -125,7 +157,7 @@ void MapView::unpackFromNetworkReceived(const QVariantList &package) {
 
     //get data
     const auto data = package[0].toHash();
-    const auto state = (MapElementEvtState)data["state"].toInt();
+    const auto state = (Alteration)data["state"].toInt();
 
     //iterate through assets
     const auto assetsContainer = data["assets"].toHash();
@@ -134,14 +166,14 @@ void MapView::unpackFromNetworkReceived(const QVariantList &package) {
         //get data
         const auto elemId = QUuid::fromString(key);
         const auto binder = assetsContainer[key].toHash();
-        const auto binderType = (AssetType::Type)binder["type"].toInt();
+        const auto binderType = (AssetBase::Type)binder["type"].toInt();
         const auto binderOwner = binder["owner"].toUuid();
 
         //build asset or fetch it
         Asset newAsset;
 
         //if new element from network
-        if(state == MapElementEvtState::Added) {
+        if(state == Alteration::Added) {
             
             //elem already exists, shouldnt rewrite it!
             if(this->_assetsById.contains(elemId)) continue;
@@ -153,7 +185,7 @@ void MapView::unpackFromNetworkReceived(const QVariantList &package) {
             switch(binderType) {
                 
                 //drawing...
-                case AssetType::Type::Drawing:
+                case AssetBase::Type::Drawing:
                     const QPainterPath path = JSONSerializer::fromBase64(binder["data"]);
                     newItem = this->_scene->addPath(path);
                     break;
@@ -173,7 +205,7 @@ void MapView::unpackFromNetworkReceived(const QVariantList &package) {
     }
 
     //process new state
-    this->_alterScene(state, out);
+    this->_alterSceneGlobal(state, out);
 }
 
 /////////////////
@@ -451,7 +483,7 @@ void MapView::_endDrawing() {
         QGraphicsItem::GraphicsItemFlag::ItemIsSelectable |
         QGraphicsItem::GraphicsItemFlag::ItemIsMovable
     ));
-    this->_alterScene(MapElementEvtState::Added, Asset(AssetType::Type::Drawing, newPath));
+    this->_alterScene(Alteration::Added, Asset(AssetBase::Type::Drawing, newPath));
     this->_tempDrawing = nullptr;
     
     //destroy temp
@@ -485,12 +517,12 @@ QPen MapView::_getPen() const {
 //////////////
 
 //register actions
-QUuid MapView::_alterSceneInternal(const MapElementEvtState &alteration, Asset &asset) {
+QUuid MapView::_alterSceneInternal(const Alteration &alteration, Asset &asset) {
 
     //get the Uuids
     auto elemId = asset.id();
     if(elemId.isNull()) {
-        elemId = alteration == MapElementEvtState::Added ? QUuid::createUuid() : this->_idsByGraphicItem[asset.graphicsItem()];
+        elemId = alteration == Alteration::Added ? QUuid::createUuid() : this->_idsByGraphicItem[asset.graphicsItem()];
         asset.setId(elemId);
     }
     auto ownerId = asset.ownerId();
@@ -498,7 +530,7 @@ QUuid MapView::_alterSceneInternal(const MapElementEvtState &alteration, Asset &
     switch(alteration) {
         
         //on addition
-        case MapElementEvtState::Added:
+        case Alteration::Added:
             
             //bind to owners
             if(!ownerId.isNull()) {
@@ -518,17 +550,17 @@ QUuid MapView::_alterSceneInternal(const MapElementEvtState &alteration, Asset &
             break;
         
         //on focus
-        case MapElementEvtState::Focused:
+        case Alteration::Focused:
             this->centerOn(asset.graphicsItem());
             break;
 
         //on selection
-        case MapView::MapElementEvtState::Selected:
+        case MapView::Alteration::Selected:
             asset.graphicsItem()->setSelected(true);
             break;
 
         //on removal
-        case MapElementEvtState::Removed:
+        case Alteration::Removed:
 
             //unbind from owners
             if(!ownerId.isNull()) {
@@ -551,42 +583,43 @@ QUuid MapView::_alterSceneInternal(const MapElementEvtState &alteration, Asset &
 }
 
 //alter Scene
-void MapView::_alterScene(const MapElementEvtState &alteration, QList<Asset> &assets) { 
+void MapView::_alterSceneGlobal(const Alteration &alteration, QList<Asset> &assets) { 
     
     //make sure to clear selection before selecting new
-    if(alteration == MapElementEvtState::Selected) {
-        this->_scene->clearSelection();
-    }
+    if(alteration == Alteration::Selected) this->_scene->clearSelection();
+    if(alteration == MapView::Alteration::Removed) this->_deletionProcessing = true;
 
     //handling
     for(auto &asset : assets) {
         this->_alterSceneInternal(alteration, asset);
     }
 
+    this->_deletionProcessing = false;
+
     //emit event
-    emit mapElementsAltered(assets, alteration);
+    this->_emitAlteration(assets, alteration);
 }
 
 //helper
-void MapView::_alterScene(const MapElementEvtState &alteration, Asset &asset) {
+void MapView::_alterScene(const Alteration &alteration, Asset &asset) {
     QList<Asset> list;
     list.append(asset);
-    return this->_alterScene(alteration, list);
+    return this->_alterSceneGlobal(alteration, list);
 }
 
 //helper
-void MapView::_alterScene(const MapElementEvtState &alteration, const QList<QGraphicsItem*> &elements) {
-    return this->_alterScene(alteration, this->_fetchAssets(elements));
+void MapView::_alterScene(const Alteration &alteration, const QList<QGraphicsItem*> &elements) {
+    return this->_alterSceneGlobal(alteration, this->_fetchAssets(elements));
 }
 
 //helper
-void MapView::_alterScene(const MapElementEvtState &alteration, const QList<QUuid> &elementIds) {
-    return this->_alterScene(alteration, this->_fetchAssets(elementIds));
+void MapView::_alterScene(const Alteration &alteration, const QList<QUuid> &elementIds) {
+    return this->_alterSceneGlobal(alteration, this->_fetchAssets(elementIds));
 }
 
 
 //from external instructions
-void MapView::alterScene(const QList<QUuid> &elementIds, const MapView::MapElementEvtState &state) {
+void MapView::alterScene(const QList<QUuid> &elementIds, const MapView::Alteration &state) {
     
     this->_externalInstructionPending = true;
 

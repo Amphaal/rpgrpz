@@ -4,14 +4,14 @@
 #include <QString>
 #include <QUuid>
 
-#include "AssetType.hpp"
+#include "AssetBase.hpp"
 
-class Asset : public AssetType {
+class Asset : public AssetBase {
     public:
         Asset() {}
-        Asset(const AssetType::Type &type, QGraphicsItem* assetItemOnMap, 
+        Asset(const AssetBase::Type &type, QGraphicsItem* assetItemOnMap, 
                     const QUuid &assetId = NULL, const QUuid &ownerId = NULL, const QString &ownerName = NULL) :
-            AssetType(type), 
+            AssetBase(type), 
             _item(assetItemOnMap),
             _ownerId(ownerId),
             _ownerName(ownerName),
@@ -19,13 +19,13 @@ class Asset : public AssetType {
 
         }
 
-        QGraphicsItem* graphicsItem() { return _item; }
-        QUuid ownerId() const { return _ownerId; }
-        QUuid id() const { return _id; }
-        void setId(const QUuid &id) { _id = id; }
+        QGraphicsItem* graphicsItem() { return this->_item; }
+        QUuid ownerId() const { return this->_ownerId; }
+        QUuid id() const { return this->_id; }
+        void setId(const QUuid &id) { this->_id = id; }
 
         QString descriptor() const override { 
-            auto base = AssetType::descriptor();
+            auto base = AssetBase::descriptor();
 
             if(!this->_ownerName.isNull()) {
                 base += "(" + this->_ownerName + ")";

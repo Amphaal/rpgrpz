@@ -17,22 +17,23 @@ MapLayoutManager::MapLayoutManager(QWidget * parent) : QTreeWidget(parent) {
 }
 
 void MapLayoutManager::_onElementDoubleClicked(QTreeWidgetItem * item, int column) {
-    emit elementsAlterationAsked(this->_extractIdsFromSelection(), MapView::MapElementEvtState::Focused);
+    emit elementsAlterationAsked(this->_extractIdsFromSelection(), MapView::Alteration::Focused);
 }
 
 void MapLayoutManager::_onElementSelectionChanged() {
     
-    if(this->_externalInstructionPending) return;
+    if(this->_externalInstructionPending || this->_deletionProcessing) return;
 
-    emit elementsAlterationAsked(this->_extractIdsFromSelection(), MapView::MapElementEvtState::Selected);
+    emit elementsAlterationAsked(this->_extractIdsFromSelection(), MapView::Alteration::Selected);
 }
 
-void MapLayoutManager::alterTreeElements(const QList<Asset> &elements, const MapView::MapElementEvtState &state) {
+void MapLayoutManager::alterTreeElements(QList<Asset> &elements, const MapView::Alteration &state) {
    
     this->_externalInstructionPending = true;
 
     //special handling
-    if(state == MapView::MapElementEvtState::Selected) this->clearSelection();
+    if(state == MapView::Alteration::Selected) this->clearSelection();
+    if(state == MapView::Alteration::Removed) this->_deletionProcessing = true;
 
     //iterate through items
     for (auto &e : elements) {
@@ -41,19 +42,19 @@ void MapLayoutManager::alterTreeElements(const QList<Asset> &elements, const Map
 
         switch(state) {
 
-            case MapView::MapElementEvtState::Removed:
+            case MapView::Alteration::Removed:
                 if(this->_treeItemsById.contains(key)) {
                     delete this->_treeItemsById.take(key);
                 }
                 break;
 
-            case MapView::MapElementEvtState::Selected:
+            case MapView::Alteration::Selected:
                 if(this->_treeItemsById.contains(key)) {
                     this->_treeItemsById[key]->setSelected(true);
                 }
                 break;
 
-            case MapView::MapElementEvtState::Added:
+            case MapView::Alteration::Added:
                 auto item = this->_createTreeItem(e);
                 this->_treeItemsById.insert(key, item);
                 break;
@@ -61,7 +62,7 @@ void MapLayoutManager::alterTreeElements(const QList<Asset> &elements, const Map
     }
 
    
-
+    this->_deletionProcessing = false;
     this->_externalInstructionPending = false;
 }
 
@@ -73,7 +74,7 @@ QTreeWidgetItem* MapLayoutManager::_createTreeItem(const Asset &asset) {
 
     const auto type = asset.type();
     switch(type) {
-        case AssetType::Type::Drawing:
+        case AssetBase::Type::Drawing:
             item->setIcon(0, QIcon(":/icons/app/manager/drawing.png"));
             break;
     }
@@ -93,7 +94,7 @@ void MapLayoutManager::keyPressEvent(QKeyEvent * event) {
             const auto selectedIds = this->_extractIdsFromSelection();
             if(!selectedIds.length()) return;
 
-            emit elementsAlterationAsked(selectedIds, MapView::MapElementEvtState::Removed);
+            emit elementsAlterationAsked(selectedIds, MapView::Alteration::Removed);
             break;
     }
 

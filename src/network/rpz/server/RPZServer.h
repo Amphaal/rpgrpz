@@ -31,7 +31,7 @@ class RPZServer : public RPZSThread, public JSONRouter {
 
     private:
         MapView* _mv;
-        void _onMapChanged(QList<Asset> &elements, const MapView::MapElementEvtState &state);
+        void _onMapChanged(QList<Asset> &elements, const MapView::Alteration &state);
         void _sendMapHistory();
 
         QHash<JSONSocket*, QUuid> _idsByClientSocket;

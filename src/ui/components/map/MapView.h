@@ -34,23 +34,25 @@ class MapView : public QGraphicsView {
     Q_OBJECT
 
     public:
-        enum MapElementEvtState { Changed, Added, Removed, Selected, Focused };
+        enum Alteration { Changed, Added, Removed, Selected, Focused };
+        static const QList<MapView::Alteration> networkAlterations;
         MapView(QWidget *parent);
 
         //network helpers...
-        QVariantList packageForNetworkSend(QList<Asset> &assets, const MapView::MapElementEvtState &state);
+        QVariantList packageForNetworkSend(QList<Asset> &assets, const MapView::Alteration &state);
         void unpackFromNetworkReceived(const QVariantList &package);
 
     public slots:
         void changeToolFromAction(QAction *action);
         void changePenSize(const int newSize);
-        void alterScene(const QList<QUuid> &elementIds, const MapView::MapElementEvtState &state);
+        void alterScene(const QList<QUuid> &elementIds, const MapView::Alteration &state);
         
         //network
         void bindToRPZClient(RPZClient * cc);
     
     signals:
-        void mapElementsAltered(const QList<Asset> &elements, const MapElementEvtState &state);
+        void mapElementsAltered(QList<Asset> &elements, const Alteration &state);
+        void notifyNetwork_mapElementsAltered(QList<Asset> &elements, const Alteration &state);
         void unselectCurrentToolAsked();
 
     protected:
@@ -67,7 +69,9 @@ class MapView : public QGraphicsView {
         RPZClient * _currentCC = nullptr;
         QGraphicsScene* _scene;
         bool _externalInstructionPending = false;
+        bool _deletionProcessing = false;
         void _onSceneSelectionChanged();
+        void _emitAlteration(QList<Asset> &elements, const Alteration &state);
 
         //registered points
             QPoint _lastPointMousePressing;
@@ -85,11 +89,11 @@ class MapView : public QGraphicsView {
             QList<Asset> _fetchAssets(const QList<QGraphicsItem*> &listToFetch) const;
             QList<Asset> _fetchAssets(const QList<QUuid> &listToFetch) const;
 
-            void _alterScene(const MapElementEvtState &alteration, const QList<QGraphicsItem*> &elements);
-            void _alterScene(const MapElementEvtState &alteration, QList<Asset> &assets);
-            void _alterScene(const MapElementEvtState &alteration, const QList<QUuid> &elementIds);
-            void _alterScene(const MapElementEvtState &alteration, Asset &asset);
-            QUuid _alterSceneInternal(const MapElementEvtState &alteration, Asset &asset);
+            void _alterScene(const Alteration &alteration, const QList<QGraphicsItem*> &elements);
+            void _alterScene(const Alteration &alteration, const QList<QUuid> &elementIds);
+            void _alterScene(const Alteration &alteration, Asset &asset);
+            void _alterSceneGlobal(const Alteration &alteration, QList<Asset> &assets);
+            QUuid _alterSceneInternal(const Alteration &alteration, Asset &asset);
 
         //tool
             MapTools::Actions _selectedTool;
