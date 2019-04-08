@@ -22,6 +22,8 @@ class ConnectWidget : public QGroupBox {
         void startingConnection(RPZClient* cc);
 
     public:
+        enum State { NotConnected, Connecting, Connected };
+
         ConnectWidget(QWidget * parent = nullptr);
 
     private:
@@ -35,14 +37,16 @@ class ConnectWidget : public QGroupBox {
         QSettings _settings;
 
         RPZClient* _cc = nullptr;
-        bool _connected = false;
+        ConnectWidget::State _state = ConnectWidget::State::NotConnected;
         
         void _tryConnectToServer();
         void _tryDisconnectingFromServer();
 
-        void _setConnectBtnState(const bool readyForConnection = true);
+        void _changeState(ConnectWidget::State newState);
         void _destroyClient();
 
         void _onRPZClientError(const std::string &errMsg);
         void _onRPZClientConnected();
+
+        void _saveValuesAsSettings();
 };  

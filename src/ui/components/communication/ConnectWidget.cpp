@@ -25,7 +25,6 @@ ConnectWidget::ConnectWidget(QWidget * parent) : QGroupBox(parent),
     this->_domainTarget->setPlaceholderText("IP ou domaine du serveur");
     this->_domainTarget->setText(this->_settings.value("domain", "localhost").toString());
 
-
     //sep
     auto sep = new QLabel(this);
     sep->setText(":");
@@ -50,7 +49,8 @@ ConnectWidget::ConnectWidget(QWidget * parent) : QGroupBox(parent),
     QObject::connect(this->_domainTarget, &QLineEdit::returnPressed, bb);
     QObject::connect(this->_portTarget, &QLineEdit::returnPressed, bb);
 
-    this->_setConnectBtnState();
+    //default ui state
+    this->_changeState(this->_state);
 
     //adding widgets
     this->layout()->addWidget(this->_nameTarget);
@@ -62,10 +62,8 @@ ConnectWidget::ConnectWidget(QWidget * parent) : QGroupBox(parent),
     this->_settings.endGroup();
 }
 
-void ConnectWidget::_tryConnectToServer() {
-
-    this->setEnabled(false);
-
+void ConnectWidget::_saveValuesAsSettings() {
+    
     //register default values
     this->_settings.beginGroup("ConnectWidget");
 
@@ -79,10 +77,21 @@ void ConnectWidget::_tryConnectToServer() {
     if(!nt_text.isEmpty()) this->_settings.setValue("name", nt_text);
 
     this->_settings.endGroup();
+}
 
-    //connect..
+void ConnectWidget::_tryConnectToServer() {
+
+    this->_saveValuesAsSettings();
+
+    //new connection..
     this->_destroyClient();
-    this->_cc = new RPZClient(this, nt_text, dt_text, pt_text);
+    this->_cc = new RPZClient(
+        this, 
+        this->_nameTarget->text(), 
+        this->_domainTarget->text(), 
+        this->_portTarget->text()
+    );
+
     emit startingConnection(this->_cc);
     
     QObject::connect(
@@ -95,21 +104,24 @@ void ConnectWidget::_tryConnectToServer() {
         this, &ConnectWidget::_onRPZClientError
     );
 
+    this->_changeState(State::Connecting);
     this->_cc->run();
 }
 
 void ConnectWidget::_onRPZClientError(const std::string &errMsg) {
-    if(!this->_connected) {
+    
+    if(this->_state = State::Connecting) {
         QMessageBox::information(this, 
             QString("Erreur lors de la connexion"), 
             QString::fromStdString(errMsg), 
             QMessageBox::Ok, QMessageBox::Ok);
     }
 
-    this->_setConnectBtnState(true);
+    this->_changeState(State::NotConnected);
+
 }
 void ConnectWidget::_onRPZClientConnected() {
-    this->_setConnectBtnState(false);
+    this->_changeState(State::Connected);
     emit connectionSuccessful(this->_cc);
 }
 
@@ -119,36 +131,61 @@ void ConnectWidget::_destroyClient() {
         delete this->_cc;
         this->_cc = 0;
     }
+
+    this->_changeState(State::NotConnected);
 }
 
-void ConnectWidget::_setConnectBtnState(bool readyForConnection) {
+void ConnectWidget::_changeState(ConnectWidget::State newState) {
     
-    this->_connectBtn->setText(readyForConnection ? "Se connecter" : "Se déconnecter");
+    //btn text
+    QString btnText; 
+    switch(newState) {
+        case ConnectWidget::State::NotConnected:
+            btnText = "Se connecter";
+            break;
+        case ConnectWidget::State::Connecting:
+            btnText = "Annuler";
+            break;
+        case ConnectWidget::State::Connected:
+            btnText = "Se déconnecter";
+            break;
+    }
+    this->_connectBtn->setText(btnText);
 
+    //btn event
     QObject::disconnect(this->_connectBtnLink);
-    this->_connected = !readyForConnection;
-
-    if(readyForConnection) {
-        this->_connectBtnLink = QObject::connect(
-            this->_connectBtn, &QPushButton::clicked,
-            this, &ConnectWidget::_tryConnectToServer
-        );
-
-        this->_domainTarget->setEnabled(true);
-        this->_portTarget->setEnabled(true);
-        this->_nameTarget->setEnabled(true);
-
-    } else {
-        this->_connectBtnLink = QObject::connect(
-            this->_connectBtn, &QPushButton::clicked,
-            this, &ConnectWidget::_destroyClient
-        );
-
-        this->_domainTarget->setEnabled(false);
-        this->_portTarget->setEnabled(false);
-        this->_nameTarget->setEnabled(false);
+    switch(newState) {
+        case ConnectWidget::State::NotConnected:
+            this->_connectBtnLink = QObject::connect(
+                this->_connectBtn, &QPushButton::clicked,
+                this, &ConnectWidget::_tryConnectToServer
+            );
+            break;
+        case ConnectWidget::State::Connecting:
+        case ConnectWidget::State::Connected:
+            this->_connectBtnLink = QObject::connect(
+                this->_connectBtn, &QPushButton::clicked,
+                this, &ConnectWidget::_destroyClient
+            );
+            break;
     }
 
-    this->setEnabled(true);
+    //inputs state
+    switch(newState) {
+        case ConnectWidget::State::NotConnected:
+            this->_domainTarget->setEnabled(true);
+            this->_portTarget->setEnabled(true);
+            this->_nameTarget->setEnabled(true);
+            break;
+        case ConnectWidget::State::Connecting:
+        case ConnectWidget::State::Connected:
+            this->_domainTarget->setEnabled(false);
+            this->_portTarget->setEnabled(false);
+            this->_nameTarget->setEnabled(false);
+            break;
+    }
+
+    //define state
+    this->_state = newState;
 
 }
