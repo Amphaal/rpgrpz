@@ -31,6 +31,7 @@ class RPZServer : public QTcpServer, public JSONRouter {
 
     signals:
         void listening();
+        void error();
 
     private:
         QHash<JSONSocket*, QUuid> _idsByClientSocket;

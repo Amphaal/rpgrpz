@@ -23,10 +23,9 @@ class ChatWidget : public QGroupBox {
         enum LogType { Default, ServerLog, ClientMessage };
 
         ChatWidget(QWidget *parent = nullptr);
-        
-        void createNewLog();
-        void writeInChatLog(const std::string &message, const ChatWidget::LogType &logType = ChatWidget::LogType::Default);
 
+    public slots: 
+        void writeInChatLog(const std::string &message, const ChatWidget::LogType &logType = ChatWidget::LogType::Default);
         void bindToRPZClient(RPZClient * cc);
 
     private:
@@ -46,10 +45,10 @@ class ChatWidget : public QGroupBox {
         void _DisableUI();
         void _EnableUI();
 
-        //
+    private slots:
         void _onRPZClientError(const std::string &errMsg);
-        void _onRPZClientReceivedMessage(const std::string &message);
-        void _onRPZClientReceivedHistory();
-        void _onRPZClientloggedUsersUpdated(const QVariantList &users);
+        void _onReceivedMessage(const std::string &message);
+        void _onReceivedLogHistory(const QVariantList &messages);
+        void _onLoggedUsersUpdated(const QVariantHash &users);
 
 };

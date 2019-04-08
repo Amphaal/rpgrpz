@@ -16,6 +16,7 @@ void RPZServer::run() {
 
     if(!result) {
         qWarning() << "RPZServer : Error while starting to listen >> " + this->errorString();
+        emit error();
         return;
     } else {
         qDebug() << "RPZServer : Succesfully listening !";
@@ -147,13 +148,21 @@ void RPZServer::_broadcastMessage(const QString &messageToBroadcast) {
 }
 
 void RPZServer::_broadcastUsers() {
-    for(auto &socket : this->_clientSocketsById) {
-        socket->sendJSON(JSONMethod::LoggedPlayersChanged, QStringList(this->_clientDisplayNames.values()));
+
+    QVariantHash h;
+    for(const auto &key : this->_clientDisplayNames.keys()) {
+        h.insert(key.toString(), this->_clientDisplayNames[key]);
     }
+
+    for(auto &socket : this->_clientSocketsById) {
+        socket->sendJSON(JSONMethod::LoggedPlayersChanged, h);
+    }
+
+    qDebug() << "RPZServer : Now " << this->_clientSocketsById.size() << " clients logged";
 }
 
 void RPZServer::_askHostForMapHistory() {
-    this->_hostSocket->sendJSON(JSONMethod::AskForHostMapHistory, QStringList());
+    this->_hostSocket->sendJSON(JSONMethod::AskForHostMapHistory, QStringList("Please"));
 }
 
 QString RPZServer::_getSocketDisplayName(JSONSocket * clientSocket) {

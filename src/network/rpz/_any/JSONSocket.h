@@ -24,6 +24,7 @@ class JSONSocket : public QObject {
     private:
         QString _logId;
         QTcpSocket * _innerSocket = nullptr;
+        QDataStream in;
 
         void _sendJSONAsBinary(const QByteArray &data);
         void _processIncomingData();

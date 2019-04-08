@@ -14,8 +14,12 @@
 
 class LogView : public QWidget {
 
+    Q_OBJECT
+
     public:
         LogView(QWidget *parent = nullptr);
+    
+    public slots:
         QUuid writeAtEnd(const std::string & newMessage, QPalette* colorPalette = nullptr, QPixmap* pixAsIcon = nullptr);
         void removeLine(const QUuid &idToRemove);
 

@@ -31,9 +31,13 @@ RPZClient::RPZClient(QObject* parent, const QString &name, const QString &domain
 
 }
 
+RPZClient::~RPZClient() {
+    this->socket()->close();
+}
+
 void RPZClient::_onDisconnect() {
     const std::string msg = "Déconnecté du serveur";
-    //emit error(msg);
+    emit error(msg);
     qWarning() << "RPZClient : " << QString::fromStdString(msg);
 }
 
@@ -65,14 +69,10 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
     
     switch(method) {
         case JSONMethod::ChatLogHistory:
-            for(auto &msg : data.toList()) {
-                const auto stdmsg = msg.toString().toStdString();
-                emit receivedMessage(stdmsg);
-            }
-            emit logHistoryReceived();
+            emit receivedLogHistory(data.toList());
             break;
         case JSONMethod::LoggedPlayersChanged: {
-                const auto users = data.toList();
+                const auto users = data.toHash();
                 emit loggedUsersUpdated(users);
             }
             break;

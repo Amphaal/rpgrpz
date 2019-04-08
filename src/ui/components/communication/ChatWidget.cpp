@@ -5,11 +5,6 @@ ChatWidget::ChatWidget(QWidget *parent) :
             _chatLog(new LogScrollView),
             _usersLog(new LogScrollView),
             _chatEdit(new ChatEdit) {
-        
-        QObject::connect(
-            this->_chatEdit, &ChatEdit::askedToSendMessage,
-            this->_currentCC, &RPZClient::sendMessage
-        );
 
         //this...
         this->_DisableUI();
@@ -75,11 +70,16 @@ void ChatWidget::_onRPZClientError(const std::string &errMsg) {
     this->_DisableUI();
 
 }
-void ChatWidget::_onRPZClientReceivedMessage(const std::string &message) {
+void ChatWidget::_onReceivedMessage(const std::string &message) {
     this->writeInChatLog(message);
 }
 
-void ChatWidget::_onRPZClientReceivedHistory() {
+void ChatWidget::_onReceivedLogHistory(const QVariantList &messages) {
+
+    for(const auto &msg : messages) {
+        this->_onReceivedMessage(msg.toString().toStdString());
+    }
+
     const auto msg = QString("Connecté au serveur (") + this->serverName + ")";
     this->writeInChatLog(msg.toStdString(), ChatWidget::LogType::ServerLog);
 }
@@ -100,27 +100,34 @@ void ChatWidget::bindToRPZClient(RPZClient * cc) {
     //on message received
     QObject::connect(
         this->_currentCC, &RPZClient::receivedMessage, 
-        this, &ChatWidget::_onRPZClientReceivedMessage
+        this, &ChatWidget::_onReceivedMessage
     );
 
     //welcome once all history have been received
     QObject::connect(
-        this->_currentCC, &RPZClient::logHistoryReceived, 
-        this, &ChatWidget::_onRPZClientReceivedHistory
+        this->_currentCC, &RPZClient::receivedLogHistory, 
+        this, &ChatWidget::_onReceivedLogHistory
     );
 
     //ss
     QObject::connect(
         this->_currentCC, &RPZClient::loggedUsersUpdated,
-        this, &ChatWidget::_onRPZClientloggedUsersUpdated
+        this, &ChatWidget::_onLoggedUsersUpdated
     );
 
     //enable UI at connection
     QObject::connect(
-        this->_currentCC, &RPZClient::logHistoryReceived, 
+        this->_currentCC, &RPZClient::receivedLogHistory, 
         this, &ChatWidget::_EnableUI
     );
 
+    //on message typed 
+    QObject::connect(
+        this->_chatEdit, &ChatEdit::askedToSendMessage,
+        this->_currentCC, &RPZClient::sendMessage
+    );
+
+    //pass to nullptr for comparaisons
     QObject::connect(
         this->_currentCC, &QObject::destroyed,
         [&]() {
@@ -160,7 +167,7 @@ void ChatWidget::writeInChatLog(const std::string &message, const ChatWidget::Lo
     this->_chatLog->writeAtEnd(message, colors);
 };
 
-void ChatWidget::_onRPZClientloggedUsersUpdated(const QVariantList &users) {
+void ChatWidget::_onLoggedUsersUpdated(const QVariantHash &users) {
     this->_usersLog->newLog();
     for(auto &user : users) {
         const auto un = user.toString().toStdString();

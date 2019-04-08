@@ -68,6 +68,13 @@ void MainWindow::_initConnectivity() {
             }
         );
 
+        QObject::connect(
+            this->_rpzServer, &RPZServer::error,
+            [&]() {
+                this->updateServerStateLabel("Erreur");
+            }
+        );
+
         this->_rpzServer->run();
 
     }

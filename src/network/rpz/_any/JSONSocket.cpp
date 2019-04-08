@@ -5,8 +5,12 @@ JSONSocket::JSONSocket(QObject* parent, const QString &logId, QTcpSocket* wrappe
     if (wrapped) {
         this->_innerSocket = wrapped;
     } else {
-        this->_innerSocket = new QTcpSocket(nullptr);
+        this->_innerSocket = new QTcpSocket;
     }
+
+    this->in.setDevice(this->_innerSocket);
+    this->in.setVersion(QDataStream::Qt_5_12);
+
     QObject::connect(
         this->_innerSocket, &QIODevice::readyRead,
         this, &JSONSocket::_processIncomingData
@@ -62,21 +66,17 @@ void JSONSocket::_sendJSONAsBinary(const QByteArray &data) {
     out << data;
     auto written = this->_innerSocket->write(block);
 
-    this->_innerSocket->flush();
-
 }
 
 void JSONSocket::_processIncomingData() {
     
     //process incoming data
-    QDataStream in(this->_innerSocket);
-    in.setVersion(QDataStream::Qt_5_12);
-    in.startTransaction();
+    this->in.startTransaction();
 
     QByteArray block;
-    in >> block;
+    this->in >> block;
 
-    if (!in.commitTransaction()) {
+    if (!this->in.commitTransaction()) {
         qWarning() << this->_customLog("issue while reading incoming data");  
         return;
     }
@@ -117,10 +117,12 @@ void JSONSocket::_processIncomingAsJson(const QByteArray &data) {
         return;
     }
 
+    //signal
     auto method = static_cast<JSONMethod>((int)content["_m"].toDouble());
-    emit JSONReceived(this, method, content["_d"].toVariant());
-
     qDebug() << this->_customLog("json received >> " + JSONMethodAsArray[method]);
+    
+    //bind
+    emit JSONReceived(this, method, content["_d"].toVariant());
 }
 
 QTcpSocket * JSONSocket::socket() {

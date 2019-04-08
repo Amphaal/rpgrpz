@@ -95,7 +95,7 @@ void ConnectWidget::_tryConnectToServer() {
     emit startingConnection(this->_cc);
     
     QObject::connect(
-        this->_cc, &RPZClient::logHistoryReceived, 
+        this->_cc, &RPZClient::receivedLogHistory, 
         this, &ConnectWidget::_onRPZClientConnected
     );
 
@@ -127,7 +127,6 @@ void ConnectWidget::_onRPZClientConnected() {
 
 void ConnectWidget::_destroyClient() {
     if(this->_cc) {
-        this->_cc->disconnect();
         delete this->_cc;
         this->_cc = 0;
     }
