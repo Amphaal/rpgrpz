@@ -106,8 +106,6 @@ file(GLOB_RECURSE INT_LIBS
 
 #QThread derivatives
 list(APPEND SOURCES
-    src/network/rpz/client/RPZCThread.h
-    src/network/rpz/server/RPZSThread.h
     src/network/audio/client/ACThread.h
     src/network/audio/server/ASThread.h
     src/network/uPnP/uPnPThread.h

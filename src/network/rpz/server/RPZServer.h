@@ -13,7 +13,6 @@
 #include <QList>
 #include <QUuid>
 
-#include "RPZSThread.h"
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/network/rpz/_any/JSONRouter.h"
 
@@ -21,20 +20,23 @@
 
 #include "src/helpers/_const.hpp"
 
-class RPZServer : public RPZSThread, public JSONRouter { 
+class RPZServer : public QTcpServer, public JSONRouter { 
     
     Q_OBJECT
 
     public:
-        RPZServer();
-        void run() override;
+        RPZServer(QObject* parent = nullptr);
+        ~RPZServer();
+        void run();
+
+    signals:
+        void listening();
 
     private:
         QHash<JSONSocket*, QUuid> _idsByClientSocket;
         QHash<QUuid, JSONSocket*> _clientSocketsById;
         QHash<QUuid, QString> _clientDisplayNames;
         JSONSocket* _hostSocket = nullptr;
-        QTcpServer* _server;
 
         //map assets
         MapHint* _hints;
@@ -48,6 +50,8 @@ class RPZServer : public RPZSThread, public JSONRouter {
         void _broadcastUsers();
 
         void _onNewConnection();
+        void _onDisconnect();
+
         QString _getSocketDisplayName(JSONSocket * clientSocket);
 
         void _routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) override;

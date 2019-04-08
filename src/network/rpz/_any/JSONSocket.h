@@ -13,12 +13,13 @@ class JSONSocket : public QObject {
     Q_OBJECT
 
     public:
-        JSONSocket(QThread* parentThread, const QString &logId, QTcpSocket * wrapped = nullptr);
+        JSONSocket(QObject* parent, const QString &logId, QTcpSocket * wrapped = nullptr);
         void sendJSON(const JSONMethod &method, const QVariant &data);
         QTcpSocket* socket();
 
     signals:
         void JSONReceived(JSONSocket* target, const JSONMethod &method, const QVariant &data);
+        void disconnected();
 
     private:
         QString _logId;

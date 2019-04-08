@@ -1,12 +1,45 @@
 #include "RPZClient.h"
 
-RPZClient::RPZClient(const QString &name, const QString &domain, const QString &port) : 
+RPZClient::RPZClient(QObject* parent, const QString &name, const QString &domain, const QString &port) : 
+                        JSONSocket(parent, "RPZClient"),
                         _name(name), 
                         _domain(domain), 
                         _port(port) {
 
     qDebug() << "RPZClient : Instantiation...";
 
+    QObject::connect(
+        this, &JSONSocket::JSONReceived,
+        this, &RPZClient::_routeIncomingJSON
+    );
+
+    QObject::connect(
+        this->socket(), &QAbstractSocket::connected,
+        this, &RPZClient::_onConnected
+    );
+
+    QObject::connect(
+        this->socket(), &QAbstractSocket::disconnected,
+        this, &RPZClient::_onDisconnect
+    );
+
+
+    QObject::connect(
+        this->socket(), QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error),
+        this, &RPZClient::_error
+    );
+
+}
+
+void RPZClient::_onDisconnect() {
+    const std::string msg = "Déconnecté du serveur";
+    //emit error(msg);
+    qWarning() << "RPZClient : " << QString::fromStdString(msg);
+}
+
+void RPZClient::_onConnected() {
+    //tell the server your username
+    this->sendJSON(JSONMethod::PlayerHasUsername, QStringList(this->_name));
 }
 
 
@@ -14,49 +47,7 @@ QString RPZClient::getConnectedSocketAddress() {
     return this->_domain + ":" + this->_port;
 }
 
-void RPZClient::_constructorInThread(){
-    
-    this->_sockWrapper = new JSONSocket(this, "RPZClient");
-    auto qq = this->_sockWrapper->socket();
-
-    QObject::connect(
-        this->_sockWrapper, &JSONSocket::JSONReceived,
-        [&](JSONSocket* target, const JSONMethod &method, const QVariant &data) {
-            this->_routeIncomingJSON(target, method, data);
-        } 
-    );
-
-    QObject::connect(
-        this->_sockWrapper->socket(), &QAbstractSocket::disconnected,
-        [&]() {
-            const std::string msg = "Déconnecté du serveur";
-            emit error(msg);
-            qWarning() << "RPZClient : " << QString::fromStdString(msg);
-        }
-    );
-
-    QObject::connect(
-        this->_sockWrapper->socket(), &QAbstractSocket::connected,
-        [&]() {
-            
-            //tell the server your username
-            this->_sockWrapper->sendJSON(JSONMethod::PlayerHasUsername, QStringList(this->_name));
-
-        }
-    );
-
-    QObject::connect(
-        this->_sockWrapper->socket(), QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error),
-        [&](QAbstractSocket::SocketError _socketError) {
-            this->_error(_socketError);
-        }
-    );
-}
-
-
 void RPZClient::run() {
-
-    this->_constructorInThread();
 
     //prerequisites
     if(this->_name.isEmpty()) {
@@ -65,18 +56,9 @@ void RPZClient::run() {
     }
 
     qDebug() << "RPZClient : Connecting...";    
-    this->_sockWrapper->socket()->abort();
-    this->_sockWrapper->socket()->connectToHost(this->_domain, this->_port.toInt());
+    this->socket()->abort();
+    this->socket()->connectToHost(this->_domain, this->_port.toInt());
     
-    auto isConnected = this->_sockWrapper->socket()->waitForConnected(3000);
-
-    if(isConnected) {
-        this->exec();
-    } else {
-        emit error("Le serveur distant n'a pas pu répondre à temps. Est-t-il disponible ?");
-    }
-
-    this->_sockWrapper->socket()->close();
 }
 
 void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) {
@@ -127,27 +109,27 @@ void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
             msg = "La connexion a été refusée par l'hôte distant.";
             break;
         default:
-            msg = "L'erreur suivante s'est produite : " + this->_sockWrapper->socket()->errorString().toStdString();
+            msg = "L'erreur suivante s'est produite : " + this->socket()->errorString().toStdString();
                                    
     }
 
     emit error(msg);
     qWarning() << "RPZClient : :" << QString::fromStdString(msg);
 
-    this->exit();
+    this->socket()->close();
 }
 
 
 void RPZClient::sendMessage(const QString &messageToSend) {
 
-    this->_sockWrapper->sendJSON(JSONMethod::MessageFromPlayer, QStringList(messageToSend));
+    this->sendJSON(JSONMethod::MessageFromPlayer, QStringList(messageToSend));
 
     qDebug() << "RPZClient : message sent " << messageToSend; 
 }
 
 
 void RPZClient::sendMapHistory(const QVariantList &history) {
-    this->_sockWrapper->sendJSON(JSONMethod::HostMapHistory, history);
+    this->sendJSON(JSONMethod::HostMapHistory, history);
 
     qDebug() << "RPZClient : map history sent"; 
 }

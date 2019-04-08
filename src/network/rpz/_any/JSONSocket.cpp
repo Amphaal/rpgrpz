@@ -1,15 +1,12 @@
 #include "JSONSocket.h"
 
-JSONSocket::JSONSocket(QThread* parentThread, const QString &logId, QTcpSocket* wrapped) : QObject(nullptr), _logId(logId) {
+JSONSocket::JSONSocket(QObject* parent, const QString &logId, QTcpSocket* wrapped) : QObject(parent), _logId(logId) {
 
     if (wrapped) {
         this->_innerSocket = wrapped;
     } else {
-        this->_innerSocket = new QTcpSocket(this);
+        this->_innerSocket = new QTcpSocket(nullptr);
     }
-
-    this->_innerSocket->moveToThread(parentThread);
-
     QObject::connect(
         this->_innerSocket, &QIODevice::readyRead,
         this, &JSONSocket::_processIncomingData
@@ -18,6 +15,14 @@ JSONSocket::JSONSocket(QThread* parentThread, const QString &logId, QTcpSocket* 
     QObject::connect(
         this->_innerSocket, &QIODevice::bytesWritten,
         this, &JSONSocket::_onBytesWritten
+    );
+
+    //clear on client disconnect
+    QObject::connect(
+        this->_innerSocket, &QAbstractSocket::disconnected,
+        [&]() {
+            emit disconnected();
+        }
     );
 }
 

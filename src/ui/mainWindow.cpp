@@ -22,12 +22,6 @@ void MainWindow::_trueShow() {
 
 //handle clean close
 void MainWindow::closeEvent(QCloseEvent *event) {
-    
-    if (this->_rpzServer && this->_rpzServer->isRunning()) {
-        this->_rpzServer->exit();
-        this->_rpzServer->wait();
-    }
-
     event->accept();
 }
 
@@ -64,7 +58,7 @@ void MainWindow::_initConnectivity() {
     //si serveur est local et lié à l'app
     if(this->_mustLaunchServer) {    
 
-        this->_rpzServer = new RPZServer;
+        this->_rpzServer = new RPZServer(this);
 
         //tell the UI that the server is up
         QObject::connect(
@@ -74,7 +68,7 @@ void MainWindow::_initConnectivity() {
             }
         );
 
-        this->_rpzServer->start();
+        this->_rpzServer->run();
 
     }
 
@@ -251,6 +245,7 @@ void MainWindow::_initUIStatusBar() {
     this->_upnpStateLabel = new QLabel(syncMsg);
     this->_serverStateLabel = new QLabel(syncMsg);
 
+    //on click
     QObject::connect(this->_extIpLabel, &QLabel::linkActivated, [&]() {
         
         //remove html tags

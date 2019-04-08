@@ -1,18 +1,21 @@
 #include "RPZServer.h" 
 
-RPZServer::RPZServer() { };
+RPZServer::RPZServer(QObject* parent) : QTcpServer(parent), _hints(new MapHint) {  };
+
+RPZServer::~RPZServer() {
+    //ended server
+    qDebug() << "RPZServer : Server ending !";
+    this->close();
+}
 
 void RPZServer::run() { 
 
-    this->_server = new QTcpServer;
-    this->_hints = new MapHint;
-
     qDebug() << "RPZServer : Starting server...";
 
-    auto result = this->_server->listen(QHostAddress::Any, std::stoi(UPNP_DEFAULT_TARGET_PORT));
+    auto result = this->listen(QHostAddress::Any, std::stoi(UPNP_DEFAULT_TARGET_PORT));
 
     if(!result) {
-        qWarning() << "RPZServer : Error while starting to listen >> " + this->_server->errorString();
+        qWarning() << "RPZServer : Error while starting to listen >> " + this->errorString();
         return;
     } else {
         qDebug() << "RPZServer : Succesfully listening !";
@@ -20,21 +23,17 @@ void RPZServer::run() {
     }
 
     //connect to new connections
-    QObject::connect(this->_server, &QTcpServer::newConnection, [&](){
-        this->_onNewConnection();
-    });
+    QObject::connect(
+        this, &QTcpServer::newConnection, 
+        this, &RPZServer::_onNewConnection
+    );
 
-    this->exec();
-
-    //ended server
-    qDebug() << "RPZServer : Server ending !";
-    this->_server->close();
 };
 
 void RPZServer::_onNewConnection() {
         
         //new connection,store it
-        auto clientSocket = new JSONSocket(this, "RPZServer", this->_server->nextPendingConnection());
+        auto clientSocket = new JSONSocket(this, "RPZServer", this->nextPendingConnection());
         
         //store it
         const auto newId = QUuid::createUuid();
@@ -49,38 +48,40 @@ void RPZServer::_onNewConnection() {
         
         //clear on client disconnect
         QObject::connect(
-            clientSocket->socket(), &QAbstractSocket::disconnected,
-            [&, clientSocket]() {
-                
-                //remove socket
-                const auto idToRemove = this->_idsByClientSocket.take(clientSocket);
-                this->_clientSocketsById.remove(idToRemove);
-                this->_clientDisplayNames.remove(idToRemove);
-
-                //desalocate host
-                if(this->_hostSocket == clientSocket) {
-                    this->_hostSocket = nullptr;
-                }
-
-                clientSocket->deleteLater();
-
-                //tell other clients that the user is gone
-                this->_broadcastUsers();
-
-            }
+            clientSocket, &JSONSocket::disconnected,
+            this, &RPZServer::_onDisconnect
         );
 
         //on data reception
         QObject::connect(
             clientSocket, &JSONSocket::JSONReceived,
-            [&](JSONSocket* target, const JSONMethod &method, const QVariant &data) {
-                this->_routeIncomingJSON(target, method, data);
-            } 
+            this, &RPZServer::_routeIncomingJSON
         );
 
         //signals new connection
         auto newIp = clientSocket->socket()->peerAddress().toString();
         qDebug() << "RPZServer : New connection from " << newIp;
+
+}
+
+void RPZServer::_onDisconnect() {
+
+    auto clientSocket = (JSONSocket*)this->sender();
+
+    //remove socket
+    const auto idToRemove = this->_idsByClientSocket.take(clientSocket);
+    this->_clientSocketsById.remove(idToRemove);
+    this->_clientDisplayNames.remove(idToRemove);
+
+    //desalocate host
+    if(this->_hostSocket == clientSocket) {
+        this->_hostSocket = nullptr;
+    }
+
+    clientSocket->deleteLater();
+
+    //tell other clients that the user is gone
+    this->_broadcastUsers();
 
 }
 

@@ -22,7 +22,7 @@ int serverConsole(int argc, char** argv) {
     
     QCoreApplication server(argc, argv);
     auto rpz = new RPZServer;
-    rpz->start();
+    rpz->run();
     return server.exec();
 }
 

@@ -82,7 +82,7 @@ void ConnectWidget::_tryConnectToServer() {
 
     //connect..
     this->_destroyClient();
-    this->_cc = new RPZClient(nt_text, dt_text, pt_text);
+    this->_cc = new RPZClient(this, nt_text, dt_text, pt_text);
     emit startingConnection(this->_cc);
     
     QObject::connect(
@@ -95,7 +95,7 @@ void ConnectWidget::_tryConnectToServer() {
         this, &ConnectWidget::_onRPZClientError
     );
 
-    this->_cc->start();
+    this->_cc->run();
 }
 
 void ConnectWidget::_onRPZClientError(const std::string &errMsg) {
@@ -115,8 +115,6 @@ void ConnectWidget::_onRPZClientConnected() {
 
 void ConnectWidget::_destroyClient() {
     if(this->_cc) {
-        this->_cc->exit();
-        this->_cc->wait();
         this->_cc->disconnect();
         delete this->_cc;
         this->_cc = 0;

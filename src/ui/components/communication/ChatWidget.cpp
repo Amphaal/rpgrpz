@@ -8,9 +8,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
         
         QObject::connect(
             this->_chatEdit, &ChatEdit::askedToSendMessage,
-            [&](QString msg) {
-                this->_currentCC->sendMessage(msg);
-            }
+            this->_currentCC, &RPZClient::sendMessage
         );
 
         //this...
