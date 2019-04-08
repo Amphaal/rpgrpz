@@ -1,16 +1,14 @@
 #include "JSONSocket.h"
 
-JSONSocket::JSONSocket(const QString &logId, QTcpSocket* wrapped) : _logId(logId) {
+JSONSocket::JSONSocket(QThread* parentThread, const QString &logId, QTcpSocket* wrapped) : QObject(nullptr), _logId(logId) {
 
     if (wrapped) {
         this->_innerSocket = wrapped;
     } else {
-        this->_innerSocket = new QTcpSocket;
+        this->_innerSocket = new QTcpSocket(this);
     }
 
-    this->_inputBufferStream = new QDataStream;
-    this->_inputBufferStream->setVersion(QDataStream::Qt_5_12);
-    this->_inputBufferStream->setDevice(this->_innerSocket);
+    this->_innerSocket->moveToThread(parentThread);
 
     QObject::connect(
         this->_innerSocket, &QIODevice::readyRead,
@@ -66,12 +64,14 @@ void JSONSocket::_sendJSONAsBinary(const QByteArray &data) {
 void JSONSocket::_processIncomingData() {
     
     //process incoming data
-    _inputBufferStream->startTransaction();
+    QDataStream in(this->_innerSocket);
+    in.setVersion(QDataStream::Qt_5_12);
+    in.startTransaction();
 
     QByteArray block;
-    (*_inputBufferStream) >> block;
+    in >> block;
 
-    if (!_inputBufferStream->commitTransaction()) {
+    if (!in.commitTransaction()) {
         qWarning() << this->_customLog("issue while reading incoming data");  
         return;
     }

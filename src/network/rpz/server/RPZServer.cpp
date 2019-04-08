@@ -16,6 +16,7 @@ void RPZServer::run() {
         return;
     } else {
         qDebug() << "RPZServer : Succesfully listening !";
+        emit listening();
     }
 
     //connect to new connections
@@ -30,28 +31,10 @@ void RPZServer::run() {
     this->_server->close();
 };
 
-void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
-
-    //message...
-    auto countMsgs = this->_messages.size();
-    clientSocket->sendJSON(JSONMethod::ChatLogHistory, this->_messages);
-    
-    qDebug() << "RPZServer :" << countMsgs << " stored messages sent to " << clientSocket->socket()->peerAddress().toString();
-}
-
-void RPZServer::_broadcastMessage(const QString &messageToBroadcast) {
-
-    for(auto &socket : this->_clientSocketsById) {
-        socket->sendJSON(JSONMethod::MessageFromPlayer, QStringList(messageToBroadcast));
-    }
-
-    qDebug() << "RPZServer : Broadcasted message to " << this->_clientSocketsById.size() << " clients";
-}
-
 void RPZServer::_onNewConnection() {
         
         //new connection,store it
-        auto clientSocket = new JSONSocket("RPZServer", this->_server->nextPendingConnection());
+        auto clientSocket = new JSONSocket(this, "RPZServer", this->_server->nextPendingConnection());
         
         //store it
         const auto newId = QUuid::createUuid();
@@ -62,8 +45,6 @@ void RPZServer::_onNewConnection() {
         const auto la = clientSocket->socket()->localAddress();
         if(la == QHostAddress::LocalHost || la == QHostAddress::LocalHostIPv6) {
             this->_hostSocket = clientSocket;
-
-            this->_askHostForMapHistory();
         }
         
         //clear on client disconnect
@@ -99,7 +80,6 @@ void RPZServer::_onNewConnection() {
 
         //signals new connection
         auto newIp = clientSocket->socket()->peerAddress().toString();
-        emit newConnectionReceived(newIp.toStdString());
         qDebug() << "RPZServer : New connection from " << newIp;
 
 }
@@ -136,12 +116,33 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
                 //send history to the client
                 this->_sendStoredMessages(target);
+
+                //ask for host map history
+                if(target == this->_hostSocket) this->_askHostForMapHistory();
             }
             break;
         default:
             qWarning() << "RPZServer : unknown method from JSON !";
     }
 
+}
+
+void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
+
+    //message...
+    auto countMsgs = this->_messages.size();
+    clientSocket->sendJSON(JSONMethod::ChatLogHistory, this->_messages);
+    
+    qDebug() << "RPZServer :" << countMsgs << " stored messages sent to " << clientSocket->socket()->peerAddress().toString();
+}
+
+void RPZServer::_broadcastMessage(const QString &messageToBroadcast) {
+
+    for(auto &socket : this->_clientSocketsById) {
+        socket->sendJSON(JSONMethod::MessageFromPlayer, QStringList(messageToBroadcast));
+    }
+
+    qDebug() << "RPZServer : Broadcasted message to " << this->_clientSocketsById.size() << " clients";
 }
 
 void RPZServer::_broadcastUsers() {

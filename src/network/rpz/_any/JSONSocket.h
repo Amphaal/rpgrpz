@@ -13,7 +13,7 @@ class JSONSocket : public QObject {
     Q_OBJECT
 
     public:
-        JSONSocket(const QString &logId, QTcpSocket * wrapped = nullptr);
+        JSONSocket(QThread* parentThread, const QString &logId, QTcpSocket * wrapped = nullptr);
         void sendJSON(const JSONMethod &method, const QVariant &data);
         QTcpSocket* socket();
 
@@ -22,7 +22,6 @@ class JSONSocket : public QObject {
 
     private:
         QString _logId;
-        QDataStream * _inputBufferStream = nullptr;
         QTcpSocket * _innerSocket = nullptr;
 
         void _sendJSONAsBinary(const QByteArray &data);

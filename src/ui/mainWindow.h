@@ -46,6 +46,7 @@ class MainWindow : public QMainWindow {
 
         ConnectivityHelper* _ipHelper;
         RPZServer* _rpzServer = nullptr;
+        bool _mustLaunchServer = true;
         void _initConnectivity();
 
         MapView* _mapView;
@@ -61,9 +62,11 @@ class MainWindow : public QMainWindow {
         QLabel* _localIpLabel;
         QLabel* _extIpLabel;
         QLabel* _upnpStateLabel;
+        QLabel* _serverStateLabel;
         void updateUPnPLabel(const std::string &state);
         void updateExtIPLabel(const std::string &state, const bool isOn);
         void updateIntIPLabel(const std::string &state);
+        void updateServerStateLabel(const std::string &state);
         void _initUIStatusBar();
 
         /*menu*/

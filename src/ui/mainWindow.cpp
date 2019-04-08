@@ -2,9 +2,10 @@
 
 
 MainWindow::MainWindow() {
-    
+
     //init...
     this->_initUI();
+
     this->_setupAutoUpdate();
     this->_initConnectivity();
 
@@ -33,6 +34,17 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 
 void MainWindow::_initConnectivity() {
     
+    //server behavior
+    const auto appArgs = QApplication::instance()->arguments();
+    if(appArgs.size() > 1 && appArgs.at(1) == "noServer") {    
+
+        //do nothing
+        this->_mustLaunchServer = false;
+        qDebug() << "RPZServer : No server to start because the user said so.";
+        this->updateServerStateLabel("Non");
+
+    }
+
     ////////////////////////////
     /// Connectivity helper ! //
     ////////////////////////////
@@ -49,20 +61,27 @@ void MainWindow::_initConnectivity() {
     /// RPZServer ! //
     ////////////////////
 
-    //start if default
-    const auto appArgs = QApplication::instance()->arguments();
-    if(appArgs.size() > 1 && appArgs.at(1) == "noServer") {    
+    //si serveur est local et lié à l'app
+    if(this->_mustLaunchServer) {    
 
-        //do nothing
-        qDebug() << "RPZServer : No server to start because the user said so.";
-
-    } else {
         this->_rpzServer = new RPZServer;
+
+        //tell the UI that the server is up
+        QObject::connect(
+            this->_rpzServer, &RPZServer::listening,
+            [&]() {
+                this->updateServerStateLabel("OK");
+            }
+        );
+
         this->_rpzServer->start();
+
     }
 
+}
 
-
+void MainWindow::updateServerStateLabel(const std::string &state) {
+    this->_serverStateLabel->setText(QString::fromStdString(state));
 }
 
 void MainWindow::updateUPnPLabel(const std::string &state) {
@@ -218,16 +237,19 @@ void MainWindow::_initUIStatusBar() {
     auto statusBar = new QStatusBar(this);
 
     auto sb_widget = new QWidget;
+    auto serverDescrLabel = new QLabel("Serveur:");
+    auto sep = new QLabel(" | ");
     auto extIpDescrLabel = new QLabel("IP externe:");
     auto sep1 = new QLabel(" | ");
     auto localIpDescrLabel = new QLabel("IP locale:");
     auto sep2 = new QLabel(" | ");
     auto upnpDescrLabel = new QLabel("uPnP:");
 
-    auto syncMsg = "<Synchronisation...>";
+    auto syncMsg = "<En attente...>";
     this->_localIpLabel = new QLabel(syncMsg);
     this->_extIpLabel = new QLabel(syncMsg);
     this->_upnpStateLabel = new QLabel(syncMsg);
+    this->_serverStateLabel = new QLabel(syncMsg);
 
     QObject::connect(this->_extIpLabel, &QLabel::linkActivated, [&]() {
         
@@ -248,6 +270,10 @@ void MainWindow::_initUIStatusBar() {
     statusBar->setPalette(colors);
 
     sb_widget->setLayout(new QHBoxLayout);
+
+    sb_widget->layout()->addWidget(serverDescrLabel);
+    sb_widget->layout()->addWidget(this->_serverStateLabel);
+    sb_widget->layout()->addWidget(sep);
     sb_widget->layout()->addWidget(localIpDescrLabel);
     sb_widget->layout()->addWidget(this->_localIpLabel);
     sb_widget->layout()->addWidget(sep1);

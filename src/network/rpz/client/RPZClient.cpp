@@ -16,7 +16,7 @@ QString RPZClient::getConnectedSocketAddress() {
 
 void RPZClient::_constructorInThread(){
     
-    this->_sockWrapper = new JSONSocket("RPZClient");
+    this->_sockWrapper = new JSONSocket(this, "RPZClient");
     auto qq = this->_sockWrapper->socket();
 
     QObject::connect(
