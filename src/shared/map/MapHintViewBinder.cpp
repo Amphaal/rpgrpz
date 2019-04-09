@@ -16,7 +16,7 @@ void MapHintViewBinder::_onSceneSelectionChanged() {
 
     //emit event
     auto mapToEvt = this->_fetchAssets(this->_boundGv->scene()->selectedItems());
-    this->_emitAlteration(MapHint::Alteration::Selected, mapToEvt);
+    this->_emitAlteration(RPZAsset::Alteration::Selected, mapToEvt);
 
 }
 
@@ -31,18 +31,12 @@ QGraphicsPathItem* MapHintViewBinder::addDrawing(const QPainterPath &path, const
     return newPath;
 }
 
-void MapHintViewBinder::unpackFromNetworkReceived(const QVariantList &package) {
+void MapHintViewBinder::unpackFromNetworkReceived(const QVariantHash &package) {
 
-
-    //container
-    QList<RPZAsset> out; 
-
-    //get data
-    const auto data = package[0].toHash();
-    const auto state = (MapHint::Alteration)data["state"].toInt();
+    auto payload = AlterationPayload::fromVariantHash(package);
 
     //if reset
-    if(state == MapHint::Alteration::Reset) {
+    if(payload.alteration() == RPZAsset::Alteration::Reset) {
         this->_idsByGraphicItem.clear();
         for(auto item : this->_boundGv->items()) {
             delete item;
@@ -50,57 +44,37 @@ void MapHintViewBinder::unpackFromNetworkReceived(const QVariantList &package) {
     }
 
     //iterate through assets
-    const auto assetsContainer = data["assets"].toHash();
-    for(auto &key : assetsContainer.keys()) {
-
-        //get data
-        const auto elemId = QUuid::fromString(key);
-        const auto binder = assetsContainer[key].toHash();
-        const auto binderType = (AssetBase::Type)binder["type"].toInt();
-        const auto binderOwner = binder["owner"].toUuid();
-
-        //build asset or fetch it
-        RPZAsset newAsset;
+    for(auto &asset : *payload.assets()) {
 
         //if new element from network
-        if(state == MapHint::Alteration::Added || state == MapHint::Alteration::Reset) {
-            
-            //elem already exists, shouldnt rewrite it!
-            if(this->_assetsById.contains(elemId)) continue;
+        if(RPZAsset::mustParseGraphicsItem.contains(payload.alteration())) {
 
             //newly created map elem
             QGraphicsItem * newItem;
 
             //depending on assetType...
-            switch(binderType) {
+            switch(asset.type()) {
                 
                 //drawing...
                 case AssetBase::Type::Drawing:
-                    const QPainterPath path = JSONSerializer::fromBase64(binder["data"]);
+                    const QPainterPath path = JSONSerializer::fromBase64(*asset.data());
                     newItem = this->addDrawing(path, QPen());
                     break;
             
             }
 
-            //define
-            newAsset = RPZAsset(binderType, newItem, key, binderOwner);
+            asset.setGraphicsItem(newItem);
 
-        } else {
-            //fetch from stock
-            newAsset = this->_assetsById[key];
         }
-        
-        //add it to container
-        out.append(newAsset);
     }
 
     //process new state
     this->_preventNetworkAlterationEmission = true;
-    this->_alterSceneGlobal(state, out);
+    this->_alterSceneGlobal(payload.alteration(), *payload.assets());
 }
 
 //helper
-void MapHintViewBinder::alterSceneFromItems(const MapHint::Alteration &alteration, const QList<QGraphicsItem*> &elements) {
+void MapHintViewBinder::alterSceneFromItems(const RPZAsset::Alteration &alteration, const QList<QGraphicsItem*> &elements) {
     return this->_alterSceneGlobal(alteration, this->_fetchAssets(elements));
 }
 
@@ -118,13 +92,13 @@ QList<RPZAsset> MapHintViewBinder::_fetchAssets(const QList<QGraphicsItem*> &lis
 }
 
 //alter Scene
-void MapHintViewBinder::_alterSceneGlobal(const MapHint::Alteration &alteration, QList<RPZAsset> &assets) { 
+void MapHintViewBinder::_alterSceneGlobal(const RPZAsset::Alteration &alteration, QList<RPZAsset> &assets) { 
     
     this->_externalInstructionPending = true;
 
     //make sure to clear selection before selecting new
-    if(alteration == MapHint::Alteration::Selected) this->_boundGv->scene()->clearSelection();
-    if(alteration == MapHint::Alteration::Removed) this->_deletionProcessing = true;
+    if(alteration == RPZAsset::Alteration::Selected) this->_boundGv->scene()->clearSelection();
+    if(alteration == RPZAsset::Alteration::Removed) this->_deletionProcessing = true;
 
 
     MapHint::_alterSceneGlobal(alteration, assets);
@@ -135,29 +109,40 @@ void MapHintViewBinder::_alterSceneGlobal(const MapHint::Alteration &alteration,
 
 }
 
-//overwrites
-QUuid MapHintViewBinder::_defineId(const MapHint::Alteration &alteration, RPZAsset &asset) {
-    auto elemId = asset.id();
-    if(elemId.isNull()) {
-        elemId = alteration == MapHint::Alteration::Added ? QUuid::createUuid() : this->_idsByGraphicItem[asset.graphicsItem()];
-        asset.setId(elemId);
-    }
-    return elemId;
-}
-
-
 //register actions
-QUuid MapHintViewBinder::_alterSceneInternal(const MapHint::Alteration &alteration, RPZAsset &asset) {
+QUuid MapHintViewBinder::_alterSceneInternal(const RPZAsset::Alteration &alteration, RPZAsset &asset) {
 
-    //default handling first
-    auto elemId = MapHint::_alterSceneInternal(alteration, asset); 
-    auto item = asset.graphicsItem();
+    //get underlying item. If received from network, search in local cache
+    auto elemId = asset.id();
+    QGraphicsItem * item = nullptr; 
+    if(asset.graphicsItem()) {
+
+        item = asset.graphicsItem();
+
+    } else if (this->_assetsById.contains(elemId)) {
+
+        auto cachedAsset = this->_assetsById[elemId];
+
+        if(cachedAsset.graphicsItem()) {
+            
+            item = this->_assetsById[elemId].graphicsItem();
+        
+        } else {
+            qDebug() << "No graphicsItem found on cached Asset !";
+        }
+        
+    } else {
+        qDebug() << "Cannot find a graphicsItem bound to the asset !";
+    }
+    
+    //default handling last, cuz asset will be deleted first from internal list
+    MapHint::_alterSceneInternal(alteration, asset); 
 
     switch(alteration) {
         
         //on addition
-        case MapHint::Alteration::Reset:
-        case MapHint::Alteration::Added:
+        case RPZAsset::Alteration::Reset:
+        case RPZAsset::Alteration::Added:
 
             //bind elem
             if(!this->_idsByGraphicItem.contains(item)) {
@@ -166,17 +151,17 @@ QUuid MapHintViewBinder::_alterSceneInternal(const MapHint::Alteration &alterati
             break;
         
         //on focus
-        case MapHint::Alteration::Focused:
+        case RPZAsset::Alteration::Focused:
             this->_boundGv->centerOn(item);
             break;
 
         //on selection
-        case MapHint::Alteration::Selected:
+        case RPZAsset::Alteration::Selected:
             item->setSelected(true);
             break;
 
         //on removal
-        case MapHint::Alteration::Removed:
+        case RPZAsset::Alteration::Removed:
 
             //remove from map
             if(item) delete item;

@@ -27,14 +27,14 @@ class RPZClient : public JSONSocket, public JSONRouter {
     
     public slots:
         void sendMessage(const QString &messageToSend);
-        void sendMapChanges(const QVariantList &changes, bool isHistory);
+        void sendMapChanges(const QVariantHash &changes, bool isHistory);
 
     signals:
         void receivedMessage(const QVariantHash &message);
         void loggedUsersUpdated(const QVariantHash &users);
         void receivedLogHistory(const QVariantList &messages);
         void error(const std::string &errMessage);
-        void mapChanged(const QVariantList &data);
+        void mapChanged(const QVariantHash &data);
         void beenAskedForMapHistory();
 
     private:

@@ -95,7 +95,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             {
                 //get message, add corresponding user to it then store it
                 auto message = RPZMessage::fromVariantHash(data.toHash());
-                message.setUser(this->_getUser(target));
+                message.setOwnership(this->_getUser(target));
                 this->_messages.insert(message.id(), message);
 
                 //push to all sockets
@@ -105,8 +105,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         case JSONMethod::MapChanged:
         case JSONMethod::HostMapHistory:
             {
-                const auto history = data.toList();
-                this->_broadcastMapChanges(history, target);
+                this->_broadcastMapChanges(data.toHash(), target);
             }
             break;
         case JSONMethod::PlayerHasUsername:
@@ -124,6 +123,8 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
                 //ask for host map history
                 if(target == this->_hostSocket)  {
                     this->_askHostForMapHistory();
+                } else {
+                    this->_sendMapHistory(target);
                 }
             }
             break;
@@ -167,13 +168,31 @@ void RPZServer::_askHostForMapHistory() {
     this->_hostSocket->sendJSON(JSONMethod::AskForHostMapHistory, QStringList());
 }
 
-void RPZServer::_broadcastMapChanges(const QVariantList &changes, JSONSocket * senderSocket) {
+void RPZServer::_broadcastMapChanges(const QVariantHash &payload, JSONSocket * senderSocket) {
+
+    auto payloadWithOwners = AlterationPayload::fromVariantHash(payload);
+
+    //put owners on top
+    auto owner = this->_getUser(senderSocket);
+    for(auto &asset : *payloadWithOwners.assets()) {
+        asset.setOwnership(owner);
+    }
+
+    //save for history
+    this->_hints->alterSceneFromAssets(payloadWithOwners.alteration(), *payloadWithOwners.assets());
 
     //send...
     for(auto &user : this->_usersById) {
         if(user.jsonHelper() == senderSocket) continue; //prevent self send
-        user.jsonHelper()->sendJSON(JSONMethod::MapChanged, changes);
+        user.jsonHelper()->sendJSON(JSONMethod::MapChanged, payloadWithOwners.toVariantHash());
     }
+
+}
+
+void RPZServer::_sendMapHistory(JSONSocket * clientSocket) {
+    //send...
+    auto payload = AlterationPayload(RPZAsset::Alteration::Reset, this->_hints->fetchHistory());
+    clientSocket->sendJSON(JSONMethod::MapChanged, payload.toVariantHash());
 
 }
 

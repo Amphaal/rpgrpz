@@ -19,8 +19,8 @@ class JSONSerializer {
             return bArray.toBase64();
         }
 
-        static QPainterPath fromBase64(const QVariant &array) {
-            auto b64 = QByteArray::fromBase64(array.toByteArray());
+        static QPainterPath fromBase64(const QByteArray &data) {
+            auto b64 = QByteArray::fromBase64(data);
             QDataStream stream(&b64, QIODevice::ReadOnly);
             auto returned = QPainterPath();
             stream >> returned;

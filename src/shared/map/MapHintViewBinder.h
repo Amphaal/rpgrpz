@@ -3,6 +3,8 @@
 #include <QGraphicsView>
 #include <QWidget>
 
+#include "src/shared/AlterationPayload.hpp"
+
 #include "MapHint.h"
 
 class MapHintViewBinder : public MapHint {
@@ -14,10 +16,10 @@ class MapHintViewBinder : public MapHint {
 
     public slots:
         //on received data, include them into view
-        void unpackFromNetworkReceived(const QVariantList &package);
+        void unpackFromNetworkReceived(const QVariantHash &package);
 
         //add alteration from graphicitem
-        void alterSceneFromItems(const MapHint::Alteration &alteration, const QList<QGraphicsItem*> &elements);
+        void alterSceneFromItems(const RPZAsset::Alteration &alteration, const QList<QGraphicsItem*> &elements);
 
         //actions helpers
         QGraphicsPathItem* addDrawing(const QPainterPath &path, const QPen &pen);
@@ -30,12 +32,10 @@ class MapHintViewBinder : public MapHint {
 
         QHash<QGraphicsItem*, QUuid> _idsByGraphicItem;
 
-        QUuid _defineId(const MapHint::Alteration &alteration, RPZAsset &asset) override;
-
         QList<RPZAsset> _fetchAssets(const QList<QGraphicsItem*> &listToFetch) const;
         
-        void _alterSceneGlobal(const MapHint::Alteration &alteration, QList<RPZAsset> &assets) override;
-        QUuid _alterSceneInternal(const MapHint::Alteration &alteration, RPZAsset &asset) override;
+        void _alterSceneGlobal(const RPZAsset::Alteration &alteration, QList<RPZAsset> &assets) override;
+        QUuid _alterSceneInternal(const RPZAsset::Alteration &alteration, RPZAsset &asset) override;
 
         void _onSceneSelectionChanged();
 };

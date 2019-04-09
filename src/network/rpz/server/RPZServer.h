@@ -16,7 +16,8 @@
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/network/rpz/_any/JSONRouter.h"
 
-#include "src/shared/MapHint.h"
+#include "src/shared/map/MapHint.h"
+#include "src/shared/AlterationPayload.hpp"
 
 #include "src/shared/RPZMessage.hpp"
 #include "src/shared/RPZUser.hpp"
@@ -50,7 +51,8 @@ class RPZServer : public QTcpServer, public JSONRouter {
         //map assets
         MapHint* _hints;
         void _askHostForMapHistory();
-        void _broadcastMapChanges(const QVariantList &changes, JSONSocket * senderSocket);
+        void _broadcastMapChanges(const QVariantHash &payload, JSONSocket * senderSocket);
+        void _sendMapHistory(JSONSocket * clientSocket);
         
         //messages
         QHash<QUuid, RPZMessage> _messages;

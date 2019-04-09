@@ -18,7 +18,7 @@ class AssetBase {
         } 
         
         AssetBase::Type type() const { return this->_selfType; }
-        virtual QString descriptor() const { return this->_description; }
+        virtual QString descriptor() { return this->_description; }
 
     private:
         AssetBase::Type _selfType;

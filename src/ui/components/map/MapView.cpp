@@ -28,7 +28,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
     //to route from MapHints
     QObject::connect(
         this->_hints, &MapHint::assetsAlteredForLocal,
-        [&](const MapHint::Alteration &state, QList<RPZAsset> &elements) {
+        [&](const RPZAsset::Alteration &state, QList<RPZAsset> &elements) {
             emit assetsAlteredForLocal(state, elements);
         }
     );
@@ -50,7 +50,7 @@ void MapView::keyPressEvent(QKeyEvent * event) {
 
         //deletion handling
         case Qt::Key::Key_Delete:
-            this->_hints->alterSceneFromItems(MapHint::Alteration::Removed, this->scene()->selectedItems());
+            this->_hints->alterSceneFromItems(RPZAsset::Alteration::Removed, this->scene()->selectedItems());
             break;
         
         //ask unselection of current tool
@@ -90,7 +90,7 @@ void MapView::bindToRPZClient(RPZClient * cc) {
 
 }
 
-void MapView::_sendMapChanges(const MapHint::Alteration &state, QList<RPZAsset> &elements) {
+void MapView::_sendMapChanges(const RPZAsset::Alteration &state, QList<RPZAsset> &elements) {
     if(!this->_rpzClient) return;
 
     auto data = this->_hints->packageForNetworkSend(state, elements);
@@ -101,7 +101,7 @@ void MapView::_sendMapChanges(const MapHint::Alteration &state, QList<RPZAsset> 
 void MapView::_sendMapHistory() {
     if(!this->_rpzClient) return;
 
-    auto data = this->_hints->packageForNetworkSend(MapHint::Alteration::Reset, this->_hints->fetchHistory());
+    auto data = this->_hints->packageForNetworkSend(RPZAsset::Alteration::Reset, this->_hints->fetchHistory());
 
     this->_rpzClient->sendMapChanges(data, true);
 }
@@ -375,7 +375,7 @@ void MapView::_endDrawing() {
     //add definitive path
     auto drawing = this->_hints->addDrawing(*this->_tempDrawing, this->_getPen());
     auto newAsset = RPZAsset(AssetBase::Type::Drawing, drawing);
-    this->_hints->alterSceneFromAsset(MapHint::Alteration::Added, newAsset);
+    this->_hints->alterSceneFromAsset(RPZAsset::Alteration::Added, newAsset);
     this->_tempDrawing = nullptr;
     
     //destroy temp

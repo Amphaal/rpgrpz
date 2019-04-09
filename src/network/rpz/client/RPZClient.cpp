@@ -86,7 +86,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             break;
         case JSONMethod::HostMapHistory:
         case JSONMethod::MapChanged: {
-                emit mapChanged(data.toList());
+                emit mapChanged(data.toHash());
             }   
             break;
         default:
@@ -130,7 +130,7 @@ void RPZClient::sendMessage(const QString &messageToSend) {
 }
 
 
-void RPZClient::sendMapChanges(const QVariantList &changes, bool isHistory) {
+void RPZClient::sendMapChanges(const QVariantHash &changes, bool isHistory) {
     if(isHistory) {
         this->sendJSON(JSONMethod::HostMapHistory, changes);
     } else {

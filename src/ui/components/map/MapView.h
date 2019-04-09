@@ -23,7 +23,7 @@
 #include "MapTools.h"
 #include "AssetsNavigator.h"
 
-#include "src/shared/MapHintViewBinder.h"
+#include "src/shared/map/MapHintViewBinder.h"
 #include "src/shared/RPZAsset.hpp"
 #include "src/shared/ClientBindable.hpp"
 
@@ -48,8 +48,8 @@ class MapView : public QGraphicsView, public ClientBindable {
     
     signals:
         void unselectCurrentToolAsked();
-        void assetsAlteredForLocal(const MapHint::Alteration &state, QList<RPZAsset> &elements);
-        void assetsAlteredForNetwork(const MapHint::Alteration &state, QList<RPZAsset> &elements);
+        void assetsAlteredForLocal(const RPZAsset::Alteration &state, QList<RPZAsset> &elements);
+        void assetsAlteredForNetwork(const RPZAsset::Alteration &state, QList<RPZAsset> &elements);
 
     protected:
         void wheelEvent(QWheelEvent *event) override;
@@ -64,7 +64,7 @@ class MapView : public QGraphicsView, public ClientBindable {
     private:
         MapHintViewBinder* _hints;
         void _onSceneSelectionChanged();
-        void _sendMapChanges(const MapHint::Alteration &state, QList<RPZAsset> &elements);
+        void _sendMapChanges(const RPZAsset::Alteration &state, QList<RPZAsset> &elements);
         void _sendMapHistory();
 
         //registered points

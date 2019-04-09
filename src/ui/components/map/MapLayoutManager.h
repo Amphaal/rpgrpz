@@ -16,10 +16,10 @@ class MapLayoutManager : public QTreeWidget{
 
     public:
         MapLayoutManager(QWidget * parent = nullptr);
-        void alterTreeElements(const MapHint::Alteration &state, QList<RPZAsset> &elements);
+        void alterTreeElements(const RPZAsset::Alteration &state, QList<RPZAsset> &elements);
     
     signals:
-        void elementsAlterationAsked(const MapHint::Alteration &state, const QList<QUuid> &elementIds);
+        void elementsAlterationAsked(const RPZAsset::Alteration &state, const QList<QUuid> &elementIds);
 
     protected:
         void keyPressEvent(QKeyEvent * event) override;
@@ -33,5 +33,5 @@ class MapLayoutManager : public QTreeWidget{
         bool _externalInstructionPending = false;
         bool _deletionProcessing = false;
 
-        QTreeWidgetItem* _createTreeItem(const RPZAsset &asset);
+        QTreeWidgetItem* _createTreeItem(RPZAsset &asset);
 };

@@ -11,6 +11,6 @@ class Serializable {
         QUuid id() { return this->_id; };
         virtual QVariantHash toVariantHash() = 0;
 
-    protected:
+    private:
         QUuid _id;
 };
