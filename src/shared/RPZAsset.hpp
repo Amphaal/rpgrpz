@@ -6,10 +6,10 @@
 
 #include "AssetBase.hpp"
 
-class Asset : public AssetBase {
+class RPZAsset : public AssetBase {
     public:
-        Asset() {}
-        Asset(const AssetBase::Type &type, QGraphicsItem* assetItemOnMap, 
+        RPZAsset() {}
+        RPZAsset(const AssetBase::Type &type, QGraphicsItem* assetItemOnMap, 
                     const QUuid &assetId = NULL, const QUuid &ownerId = NULL, const QString &ownerName = NULL) :
             AssetBase(type), 
             _item(assetItemOnMap),

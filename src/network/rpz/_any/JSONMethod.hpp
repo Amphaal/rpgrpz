@@ -8,7 +8,7 @@ enum JSONMethod {
     LoggedPlayersChanged, 
     ChatLogHistory,
     HostMapHistory,
-    HostMapChanged,
+    MapChanged,
     AskForHostMapHistory 
 };
 
@@ -18,6 +18,6 @@ static const QString JSONMethodAsArray[] = {
     "LoggedPlayersChanged", 
     "ChatLogHistory",
     "HostMapHistory",
-    "HostMapChanged",
+    "MapChanged",
     "AskForHostMapHistory"
 };

@@ -19,6 +19,9 @@ class MapHintViewBinder : public MapHint {
         //add alteration from graphicitem
         void alterSceneFromItems(const MapHint::Alteration &alteration, const QList<QGraphicsItem*> &elements);
 
+        //actions helpers
+        QGraphicsPathItem* addDrawing(const QPainterPath &path, const QPen &pen);
+
     protected:
         QGraphicsView* _boundGv = nullptr;
 
@@ -27,12 +30,12 @@ class MapHintViewBinder : public MapHint {
 
         QHash<QGraphicsItem*, QUuid> _idsByGraphicItem;
 
-        QUuid _defineId(const MapHint::Alteration &alteration, Asset &asset) override;
+        QUuid _defineId(const MapHint::Alteration &alteration, RPZAsset &asset) override;
 
-        QList<Asset> _fetchAssets(const QList<QGraphicsItem*> &listToFetch) const;
+        QList<RPZAsset> _fetchAssets(const QList<QGraphicsItem*> &listToFetch) const;
         
-        void _alterSceneGlobal(const MapHint::Alteration &alteration, QList<Asset> &assets) override;
-        QUuid _alterSceneInternal(const MapHint::Alteration &alteration, Asset &asset) override;
+        void _alterSceneGlobal(const MapHint::Alteration &alteration, QList<RPZAsset> &assets) override;
+        QUuid _alterSceneInternal(const MapHint::Alteration &alteration, RPZAsset &asset) override;
 
         void _onSceneSelectionChanged();
 };

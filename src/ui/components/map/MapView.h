@@ -24,13 +24,14 @@
 #include "AssetsNavigator.h"
 
 #include "src/shared/MapHintViewBinder.h"
-#include "src/shared/Asset.hpp"
+#include "src/shared/RPZAsset.hpp"
+#include "src/shared/ClientBindable.hpp"
 
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/network/rpz/client/RPZClient.h"
 
 
-class MapView : public QGraphicsView {
+class MapView : public QGraphicsView, public ClientBindable {
 
     Q_OBJECT
 
@@ -43,12 +44,12 @@ class MapView : public QGraphicsView {
         void changePenSize(const int newSize);
         
         //network
-        void bindToRPZClient(RPZClient * cc);
+        void bindToRPZClient(RPZClient * cc) override;
     
     signals:
         void unselectCurrentToolAsked();
-        void assetsAlteredForLocal(const MapHint::Alteration &state, QList<Asset> &elements);
-        void assetsAlteredForNetwork(const MapHint::Alteration &state, QList<Asset> &elements);
+        void assetsAlteredForLocal(const MapHint::Alteration &state, QList<RPZAsset> &elements);
+        void assetsAlteredForNetwork(const MapHint::Alteration &state, QList<RPZAsset> &elements);
 
     protected:
         void wheelEvent(QWheelEvent *event) override;
@@ -62,8 +63,8 @@ class MapView : public QGraphicsView {
 
     private:
         MapHintViewBinder* _hints;
-        RPZClient * _currentCC = nullptr;
         void _onSceneSelectionChanged();
+        void _sendMapChanges(const MapHint::Alteration &state, QList<RPZAsset> &elements);
         void _sendMapHistory();
 
         //registered points

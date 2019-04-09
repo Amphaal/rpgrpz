@@ -8,7 +8,7 @@
 #include <QIcon>
 
 #include "MapView.h"
-#include "src/shared/Asset.hpp"
+#include "src/shared/RPZAsset.hpp"
 
 class MapLayoutManager : public QTreeWidget{
 
@@ -16,7 +16,7 @@ class MapLayoutManager : public QTreeWidget{
 
     public:
         MapLayoutManager(QWidget * parent = nullptr);
-        void alterTreeElements(const MapHint::Alteration &state, QList<Asset> &elements);
+        void alterTreeElements(const MapHint::Alteration &state, QList<RPZAsset> &elements);
     
     signals:
         void elementsAlterationAsked(const MapHint::Alteration &state, const QList<QUuid> &elementIds);
@@ -33,5 +33,5 @@ class MapLayoutManager : public QTreeWidget{
         bool _externalInstructionPending = false;
         bool _deletionProcessing = false;
 
-        QTreeWidgetItem* _createTreeItem(const Asset &asset);
+        QTreeWidgetItem* _createTreeItem(const RPZAsset &asset);
 };

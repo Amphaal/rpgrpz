@@ -28,18 +28,11 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
     //to route from MapHints
     QObject::connect(
         this->_hints, &MapHint::assetsAlteredForLocal,
-        [&](const MapHint::Alteration &state, QList<Asset> &elements) {
+        [&](const MapHint::Alteration &state, QList<RPZAsset> &elements) {
             emit assetsAlteredForLocal(state, elements);
         }
     );
 
-    //to route from MapHints
-    QObject::connect(
-        this->_hints, &MapHint::assetsAlteredForNetwork,
-        [&](const MapHint::Alteration &state, QList<Asset> &elements) {
-            emit assetsAlteredForNetwork(state, elements);
-        }
-    );
 
     //define scene
     this->scene()->setSceneRect(35000, 35000, 35000, 35000);
@@ -76,35 +69,41 @@ void MapView::keyPressEvent(QKeyEvent * event) {
 
 void MapView::bindToRPZClient(RPZClient * cc) {
 
-    this->_currentCC = cc;
+    ClientBindable::bindToRPZClient(cc);
 
     //on map change
     QObject::connect(
-        this->_currentCC, &RPZClient::hostMapChanged,
+        this->_rpzClient, &RPZClient::mapChanged,
         this->_hints, &MapHintViewBinder::unpackFromNetworkReceived
     );
 
     QObject::connect(
-        this->_currentCC, &RPZClient::beenAskedForMapHistory,
+        this->_rpzClient, &RPZClient::beenAskedForMapHistory,
         this, &MapView::_sendMapHistory
     );
 
-    //destroy
+    //to route from MapHints
     QObject::connect(
-        this->_currentCC, &QObject::destroyed,
-        [&]() {
-            this->_currentCC = 0;
-        }
+        this->_hints, &MapHint::assetsAlteredForNetwork,
+        this, &MapView::_sendMapChanges
     );
 
 }
 
+void MapView::_sendMapChanges(const MapHint::Alteration &state, QList<RPZAsset> &elements) {
+    if(!this->_rpzClient) return;
+
+    auto data = this->_hints->packageForNetworkSend(state, elements);
+
+    this->_rpzClient->sendMapChanges(data, false);
+}
+
 void MapView::_sendMapHistory() {
-    if(!this->_currentCC) return;
+    if(!this->_rpzClient) return;
 
     auto data = this->_hints->packageForNetworkSend(MapHint::Alteration::Reset, this->_hints->fetchHistory());
 
-    this->_currentCC->sendMapHistory(data);
+    this->_rpzClient->sendMapChanges(data, true);
 }
 
 //////////
@@ -372,14 +371,10 @@ void MapView::_beginDrawing() {
 }
 
 void MapView::_endDrawing() {
+    
     //add definitive path
-    auto newPath = this->scene()->addPath(*this->_tempDrawing, this->_getPen());
-    newPath->setFlags(QFlags<QGraphicsItem::GraphicsItemFlag>(
-        QGraphicsItem::GraphicsItemFlag::ItemIsSelectable |
-        QGraphicsItem::GraphicsItemFlag::ItemIsMovable
-    ));
-
-    auto newAsset = Asset(AssetBase::Type::Drawing, newPath);
+    auto drawing = this->_hints->addDrawing(*this->_tempDrawing, this->_getPen());
+    auto newAsset = RPZAsset(AssetBase::Type::Drawing, drawing);
     this->_hints->alterSceneFromAsset(MapHint::Alteration::Added, newAsset);
     this->_tempDrawing = nullptr;
     

@@ -22,6 +22,10 @@ void MainWindow::_trueShow() {
 
 //handle clean close
 void MainWindow::closeEvent(QCloseEvent *event) {
+
+    if(this->_mapView) this->_mapView->unbindRPZClient();
+    if(this->_cw) this->_cw->unbindRPZClient();
+
     event->accept();
 }
 

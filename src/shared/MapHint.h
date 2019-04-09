@@ -6,9 +6,10 @@
 #include <QList>
 #include <QVariantList>
 #include <QObject>
+#include <QDebug>
 
 #include "_serializer.hpp"
-#include "Asset.hpp"
+#include "RPZAsset.hpp"
 
 class MapHint : public QObject {
 
@@ -16,7 +17,7 @@ class MapHint : public QObject {
 
     public:
         MapHint();
-        QList<Asset> fetchHistory();
+        QList<RPZAsset> fetchHistory();
 
         //enums
         enum Alteration { Changed, Added, Removed, Selected, Focused, Reset };
@@ -28,33 +29,34 @@ class MapHint : public QObject {
     
     public slots:
         //network helpers...
-        QVariantList packageForNetworkSend(const MapHint::Alteration &state, QList<Asset> &assets);
+        QVariantList packageForNetworkSend(const MapHint::Alteration &state, QList<RPZAsset> &assets);
 
         //from external App instructions (toolBar...)
-        void alterSceneFromAsset(const MapHint::Alteration &alteration, Asset &asset);
+        void alterSceneFromAsset(const MapHint::Alteration &alteration, RPZAsset &asset);
         void alterSceneFromIds(const MapHint::Alteration &alteration, const QList<QUuid> &assetIds); 
 
     protected:
-        void _emitAlteration(const MapHint::Alteration &state, QList<Asset> &elements);
+        bool _preventNetworkAlterationEmission = false;
+        void _emitAlteration(const MapHint::Alteration &state, QList<RPZAsset> &elements);
 
         //assets list 
-        QHash<QUuid, Asset> _assetsById;
+        QHash<QUuid, RPZAsset> _assetsById;
 
         //credentials handling
         QSet<QUuid> _selfElements;
         QHash<QUuid, QSet<QUuid>> _foreignElementIdsByOwnerId;
 
         //get assets from list of asset Ids
-        QList<Asset> _fetchAssets(const QList<QUuid> &listToFetch) const;
+        QList<RPZAsset> _fetchAssets(const QList<QUuid> &listToFetch) const;
         
         //define the id on a receiving / newly Asset
-        virtual QUuid _defineId(const Alteration &alteration, Asset &asset);
+        virtual QUuid _defineId(const Alteration &alteration, RPZAsset &asset);
 
         //alter the inner assets lists
-        virtual void _alterSceneGlobal(const MapHint::Alteration &alteration, QList<Asset> &assets);
-        virtual QUuid _alterSceneInternal(const MapHint::Alteration &alteration, Asset &asset);
+        virtual void _alterSceneGlobal(const MapHint::Alteration &alteration, QList<RPZAsset> &assets);
+        virtual QUuid _alterSceneInternal(const MapHint::Alteration &alteration, RPZAsset &asset);
 
     signals:
-        void assetsAlteredForLocal(const MapHint::Alteration &state, QList<Asset> &elements);
-        void assetsAlteredForNetwork(const MapHint::Alteration &state, QList<Asset> &elements);
+        void assetsAlteredForLocal(const MapHint::Alteration &state, QList<RPZAsset> &elements);
+        void assetsAlteredForNetwork(const MapHint::Alteration &state, QList<RPZAsset> &elements);
 };

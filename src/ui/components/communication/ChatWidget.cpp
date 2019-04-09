@@ -93,53 +93,46 @@ void ChatWidget::_onReceivedLogHistory(const QVariantList &messages) {
 
 void ChatWidget::bindToRPZClient(RPZClient * cc) {
 
-    this->_currentCC = cc;
+    ClientBindable::bindToRPZClient(cc);
+    
     this->serverName = cc->getConnectedSocketAddress();
     this->_usersLog->newLog();
     this->_chatLog->newLog();
 
     //on error from client
     QObject::connect(
-        this->_currentCC, &RPZClient::error, 
+        this->_rpzClient, &RPZClient::error, 
         this, &ChatWidget::_onRPZClientError
     );
     
     //on message received
     QObject::connect(
-        this->_currentCC, &RPZClient::receivedMessage, 
+        this->_rpzClient, &RPZClient::receivedMessage, 
         this, &ChatWidget::_onReceivedMessage
     );
 
     //welcome once all history have been received
     QObject::connect(
-        this->_currentCC, &RPZClient::receivedLogHistory, 
+        this->_rpzClient, &RPZClient::receivedLogHistory, 
         this, &ChatWidget::_onReceivedLogHistory
     );
 
     //update users list
     QObject::connect(
-        this->_currentCC, &RPZClient::loggedUsersUpdated,
+        this->_rpzClient, &RPZClient::loggedUsersUpdated,
         this->_usersLog, &UsersLog::updateUsers
     );
 
     //enable UI at connection
     QObject::connect(
-        this->_currentCC, &RPZClient::receivedLogHistory, 
+        this->_rpzClient, &RPZClient::receivedLogHistory, 
         this, &ChatWidget::_EnableUI
     );
 
     //on message typed 
     QObject::connect(
         this->_chatEdit, &ChatEdit::askedToSendMessage,
-        this->_currentCC, &RPZClient::sendMessage
-    );
-
-    //pass to nullptr for comparaisons
-    QObject::connect(
-        this->_currentCC, &QObject::destroyed,
-        [&]() {
-            this->_currentCC = 0;
-        }
+        this->_rpzClient, &RPZClient::sendMessage
     );
 
 }

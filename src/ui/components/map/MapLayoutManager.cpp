@@ -27,13 +27,22 @@ void MapLayoutManager::_onElementSelectionChanged() {
     emit elementsAlterationAsked(MapHint::Alteration::Selected, this->_extractIdsFromSelection());
 }
 
-void MapLayoutManager::alterTreeElements(const MapHint::Alteration &state, QList<Asset> &elements) {
+void MapLayoutManager::alterTreeElements(const MapHint::Alteration &state, QList<RPZAsset> &elements) {
    
     this->_externalInstructionPending = true;
 
     //special handling
     if(state == MapHint::Alteration::Selected) this->clearSelection();
     if(state == MapHint::Alteration::Removed) this->_deletionProcessing = true;
+    if(state == MapHint::Alteration::Reset) {
+        
+        //empty
+        for(auto item : this->_treeItemsById) {
+            delete item;
+        }
+
+        this->_treeItemsById.clear();
+    }
 
     //iterate through items
     for (auto &e : elements) {
@@ -54,6 +63,7 @@ void MapLayoutManager::alterTreeElements(const MapHint::Alteration &state, QList
                 }
                 break;
 
+            case MapHint::Alteration::Reset:
             case MapHint::Alteration::Added:
                 auto item = this->_createTreeItem(e);
                 this->_treeItemsById.insert(key, item);
@@ -66,7 +76,7 @@ void MapLayoutManager::alterTreeElements(const MapHint::Alteration &state, QList
     this->_externalInstructionPending = false;
 }
 
-QTreeWidgetItem* MapLayoutManager::_createTreeItem(const Asset &asset) {
+QTreeWidgetItem* MapLayoutManager::_createTreeItem(const RPZAsset &asset) {
     
     auto item = new QTreeWidgetItem(this);
     item->setText(0, asset.descriptor());

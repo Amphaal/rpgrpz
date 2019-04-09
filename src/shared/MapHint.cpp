@@ -2,28 +2,30 @@
 
 MapHint::MapHint() {};
 
-QList<Asset> MapHint::fetchHistory() {
+QList<RPZAsset> MapHint::fetchHistory() {
     return this->_assetsById.values();
 }
 
 //handle network and local evts emission
-void MapHint::_emitAlteration(const Alteration &state, QList<Asset> &elements) {
+void MapHint::_emitAlteration(const Alteration &state, QList<RPZAsset> &elements) {
 
     emit assetsAlteredForLocal(state, elements);
 
-    if(this->networkAlterations.contains(state)) {
+    if(this->networkAlterations.contains(state) && !this->_preventNetworkAlterationEmission) {
         emit assetsAlteredForNetwork(state, elements);
     }
 
 } 
 
-QVariantList MapHint::packageForNetworkSend(const MapHint::Alteration &state, QList<Asset> &assets) {
+QVariantList MapHint::packageForNetworkSend(const MapHint::Alteration &state, QList<RPZAsset> &assets) {
     
     QVariantList toSend;
 
     //parse data
     QVariantHash data;
     data.insert("state", state);
+
+    qDebug() << assets.size();
 
     QVariantHash assetsContainer;
     for(auto &asset : assets) {
@@ -74,7 +76,7 @@ QVariantList MapHint::packageForNetworkSend(const MapHint::Alteration &state, QL
 /* ELEMENTS */
 //////////////
 
-QUuid MapHint::_defineId(const Alteration &alteration, Asset &asset) {
+QUuid MapHint::_defineId(const Alteration &alteration, RPZAsset &asset) {
     auto elemId = asset.id();
     if(elemId.isNull() && alteration == Alteration::Added) {
         elemId = QUuid::createUuid();
@@ -84,15 +86,16 @@ QUuid MapHint::_defineId(const Alteration &alteration, Asset &asset) {
 }
 
 //register actions
-QUuid MapHint::_alterSceneInternal(const Alteration &alteration, Asset &asset) {
+QUuid MapHint::_alterSceneInternal(const Alteration &alteration, RPZAsset &asset) {
 
     //get the Uuids
     auto elemId = this->_defineId(alteration, asset);
     auto ownerId = asset.ownerId();
     
     switch(alteration) {
-        
+
         //on addition
+        case Alteration::Reset:
         case Alteration::Added:
             
             //bind to owners
@@ -131,7 +134,13 @@ QUuid MapHint::_alterSceneInternal(const Alteration &alteration, Asset &asset) {
 }
 
 //alter Scene
-void MapHint::_alterSceneGlobal(const Alteration &alteration, QList<Asset> &assets) { 
+void MapHint::_alterSceneGlobal(const Alteration &alteration, QList<RPZAsset> &assets) { 
+
+    if(alteration == Alteration::Reset) {
+        this->_selfElements.clear();
+        this->_assetsById.clear();
+        this->_foreignElementIdsByOwnerId.clear();
+    }
 
     //handling
     for(auto &asset : assets) {
@@ -143,8 +152,8 @@ void MapHint::_alterSceneGlobal(const Alteration &alteration, QList<Asset> &asse
 
 
 //helper
-void MapHint::alterSceneFromAsset(const Alteration &alteration, Asset &asset) {
-    QList<Asset> list;
+void MapHint::alterSceneFromAsset(const Alteration &alteration, RPZAsset &asset) {
+    QList<RPZAsset> list;
     list.append(asset);
     return this->_alterSceneGlobal(alteration, list);
 }
@@ -156,8 +165,8 @@ void MapHint::alterSceneFromIds(const Alteration &alteration, const QList<QUuid>
 
 
 //helper
-QList<Asset> MapHint::_fetchAssets(const QList<QUuid> &listToFetch) const {
-   QList<Asset> list;
+QList<RPZAsset> MapHint::_fetchAssets(const QList<QUuid> &listToFetch) const {
+   QList<RPZAsset> list;
 
     for(auto &e : listToFetch) {
         list.append(this->_assetsById[e]);

@@ -102,10 +102,11 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
                 this->_broadcastMessage(message);
             }
             break;
+        case JSONMethod::MapChanged:
         case JSONMethod::HostMapHistory:
             {
                 const auto history = data.toList();
-                this->_broadcastMapChanges(history);
+                this->_broadcastMapChanges(history, target);
             }
             break;
         case JSONMethod::PlayerHasUsername:
@@ -166,12 +167,12 @@ void RPZServer::_askHostForMapHistory() {
     this->_hostSocket->sendJSON(JSONMethod::AskForHostMapHistory, QStringList());
 }
 
-void RPZServer::_broadcastMapChanges(const QVariantList &changes) {
+void RPZServer::_broadcastMapChanges(const QVariantList &changes, JSONSocket * senderSocket) {
 
     //send...
     for(auto &user : this->_usersById) {
-        if(user.jsonHelper() == this->_hostSocket) continue;
-        user.jsonHelper()->sendJSON(JSONMethod::HostMapChanged, changes);
+        if(user.jsonHelper() == senderSocket) continue; //prevent self send
+        user.jsonHelper()->sendJSON(JSONMethod::MapChanged, changes);
     }
 
 }

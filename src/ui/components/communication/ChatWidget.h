@@ -13,6 +13,7 @@
 
 #include "src/shared/RPZMessage.hpp"
 #include "src/shared/RPZUser.hpp"
+#include "src/shared/ClientBindable.hpp"
 
 #include "ChatEdit.h"
 
@@ -21,7 +22,7 @@
 
 
 
-class ChatWidget : public QGroupBox {
+class ChatWidget : public QGroupBox, public ClientBindable {
 
     Q_OBJECT
 
@@ -32,7 +33,7 @@ class ChatWidget : public QGroupBox {
 
     public slots: 
         void writeInChatLog(const std::string &message, const ChatWidget::LogType &logType = ChatWidget::LogType::Default);
-        void bindToRPZClient(RPZClient * cc);
+        void bindToRPZClient(RPZClient* cc) override;
 
     private:
         LogScrollView *_chatLog;
@@ -40,7 +41,6 @@ class ChatWidget : public QGroupBox {
         ChatEdit *_chatEdit;
 
         QString serverName;
-        RPZClient* _currentCC = nullptr;
 
         void _sendMessage();
 

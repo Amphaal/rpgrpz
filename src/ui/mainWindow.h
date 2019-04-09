@@ -49,10 +49,10 @@ class MainWindow : public QMainWindow {
         bool _mustLaunchServer = true;
         void _initConnectivity();
 
-        MapView* _mapView;
+        MapView* _mapView = nullptr;
         ConnectWidget* _connectWidget;
         AudioStreamNotifier* _streamNotifier;
-        ChatWidget* _cw;
+        ChatWidget* _cw = nullptr;;
         AssetsManager* _assetsManager;
         MapTools* _mapTools;
         MapLayoutManager* _mlManager;
