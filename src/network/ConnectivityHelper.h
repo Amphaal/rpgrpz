@@ -10,7 +10,6 @@
 #include <QNetworkReply>
 #include <QNetworkInterface>
 #include <QNetworkSession>
-#include <QThread>
 #include <QNetworkConfigurationManager>
 
 #include "src/helpers/_const.hpp"

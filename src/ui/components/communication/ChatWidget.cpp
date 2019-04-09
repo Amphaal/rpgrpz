@@ -3,7 +3,7 @@
 ChatWidget::ChatWidget(QWidget *parent) : 
             QGroupBox(parent),
             _chatLog(new LogScrollView),
-            _usersLog(new LogScrollView),
+            _usersLog(new UsersLog),
             _chatEdit(new ChatEdit) {
 
         //this...
@@ -70,18 +70,25 @@ void ChatWidget::_onRPZClientError(const std::string &errMsg) {
     this->_DisableUI();
 
 }
-void ChatWidget::_onReceivedMessage(const std::string &message) {
-    this->writeInChatLog(message);
+void ChatWidget::_onReceivedMessage(const QVariantHash &message) {
+    auto msg = RPZMessage::fromVariantHash(message);
+    auto str_msg = msg.toString().toStdString();
+    
+    //write in log
+    this->writeInChatLog(str_msg);
+
 }
 
 void ChatWidget::_onReceivedLogHistory(const QVariantList &messages) {
 
-    for(const auto &msg : messages) {
-        this->_onReceivedMessage(msg.toString().toStdString());
+    //add list of messages
+    for(auto &msg : messages) {
+        this->_onReceivedMessage(msg.toHash());
     }
 
-    const auto msg = QString("Connecté au serveur (") + this->serverName + ")";
-    this->writeInChatLog(msg.toStdString(), ChatWidget::LogType::ServerLog);
+    //welcome msg
+    const auto welcome = QString("Connecté au serveur (") + this->serverName + ")";
+    this->writeInChatLog(welcome.toStdString(), ChatWidget::LogType::ServerLog);
 }
 
 void ChatWidget::bindToRPZClient(RPZClient * cc) {
@@ -109,10 +116,10 @@ void ChatWidget::bindToRPZClient(RPZClient * cc) {
         this, &ChatWidget::_onReceivedLogHistory
     );
 
-    //ss
+    //update users list
     QObject::connect(
         this->_currentCC, &RPZClient::loggedUsersUpdated,
-        this, &ChatWidget::_onLoggedUsersUpdated
+        this->_usersLog, &UsersLog::updateUsers
     );
 
     //enable UI at connection
@@ -166,11 +173,3 @@ void ChatWidget::writeInChatLog(const std::string &message, const ChatWidget::Lo
 
     this->_chatLog->writeAtEnd(message, colors);
 };
-
-void ChatWidget::_onLoggedUsersUpdated(const QVariantHash &users) {
-    this->_usersLog->newLog();
-    for(auto &user : users) {
-        const auto un = user.toString().toStdString();
-        this->_usersLog->writeAtEnd(un, nullptr, &QPixmap(":/icons/app/connectivity/user.png"));
-    }
-}

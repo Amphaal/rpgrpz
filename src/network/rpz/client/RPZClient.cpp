@@ -60,7 +60,6 @@ void RPZClient::run() {
     }
 
     qDebug() << "RPZClient : Connecting...";    
-    this->socket()->abort();
     this->socket()->connectToHost(this->_domain, this->_port.toInt());
     
 }
@@ -81,7 +80,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             }
             break;
         case JSONMethod::MessageFromPlayer: {
-                const auto mfp = data.toList()[0].toString().toStdString();
+                const auto mfp = data.toHash();
                 emit receivedMessage(mfp);
             }
             break;
@@ -122,7 +121,9 @@ void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
 
 void RPZClient::sendMessage(const QString &messageToSend) {
 
-    this->sendJSON(JSONMethod::MessageFromPlayer, QStringList(messageToSend));
+    auto msg = RPZMessage(messageToSend);
+
+    this->sendJSON(JSONMethod::MessageFromPlayer, msg.toVariantHash());
 
     qDebug() << "RPZClient : message sent " << messageToSend; 
 }

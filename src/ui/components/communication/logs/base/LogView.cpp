@@ -7,10 +7,10 @@ LogView::LogView(QWidget *parent) : QWidget(parent) {
     this->layout()->setMargin(0);
 }
 
-QUuid LogView::writeAtEnd(const std::string & newMessage, QPalette* colorPalette, QPixmap* pixAsIcon) {
+QUuid LogView::writeAtEnd(const std::string & newMessage, QPalette* colorPalette, QPixmap* pixAsIcon, const QUuid &id) {
     
     //container
-    auto line = new QWidget;
+    auto line = new QWidget(this);
     line->setLayout(new QHBoxLayout);
     line->layout()->setContentsMargins(10, 3, 10, 3);
     line->setAutoFillBackground(true);
@@ -36,11 +36,11 @@ QUuid LogView::writeAtEnd(const std::string & newMessage, QPalette* colorPalette
     }
 
     //add container to layout
-    const auto id = QUuid::createUuid();
-    this->_lines.insert(id, line);
+    const auto widget_id = id.isNull() ? QUuid::createUuid() : id;
+    this->_lines.insert(widget_id, line);
     this->layout()->addWidget(line);
 
-    return id;
+    return widget_id;
 }
 
 void LogView::removeLine(const QUuid &idToRemove) {

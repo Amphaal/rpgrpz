@@ -1,7 +1,5 @@
 #pragma once
 
-#include <QtCore/QThread>
-
 #include <QTcpSocket>
 #include <QMessageBox>
 #include <QJsonDocument>
@@ -11,6 +9,8 @@
 
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/network/rpz/_any/JSONRouter.h"
+
+#include "src/shared/RPZMessage.hpp"
 
 #include "src/helpers/_const.hpp"
 
@@ -30,7 +30,7 @@ class RPZClient : public JSONSocket, public JSONRouter {
         void sendMapHistory(const QVariantList &history);
 
     signals:
-        void receivedMessage(const std::string &message);
+        void receivedMessage(const QVariantHash &message);
         void loggedUsersUpdated(const QVariantHash &users);
         void receivedLogHistory(const QVariantList &messages);
         void error(const std::string &errMessage);

@@ -31,21 +31,24 @@ void RPZServer::run() {
 
 };
 
+
 void RPZServer::_onNewConnection() {
         
         //new connection,store it
         auto clientSocket = new JSONSocket(this, "RPZServer", this->nextPendingConnection());
         
-        //store it
-        const auto newId = QUuid::createUuid();
-        this->_clientSocketsById.insert(newId, clientSocket);
-        this->_idsByClientSocket.insert(clientSocket, newId);
+        //create new user
+        auto user = RPZUser(clientSocket);
 
         //check if host
-        const auto la = clientSocket->socket()->localAddress();
-        if(la == QHostAddress::LocalHost || la == QHostAddress::LocalHostIPv6) {
+        if(clientSocket->socket()->localAddress().isLoopback()) {
             this->_hostSocket = clientSocket;
+            user.setRole(RPZUser::Role::Host);
         }
+
+        //add to internal lists
+        this->_usersById.insert(user.id(), user);
+        this->_idsByClientSocket.insert(clientSocket, user.id());
         
         //clear on client disconnect
         QObject::connect(
@@ -71,8 +74,7 @@ void RPZServer::_onDisconnect() {
 
     //remove socket
     const auto idToRemove = this->_idsByClientSocket.take(clientSocket);
-    this->_clientSocketsById.remove(idToRemove);
-    this->_clientDisplayNames.remove(idToRemove);
+    this->_usersById.remove(idToRemove);
 
     //desalocate host
     if(this->_hostSocket == clientSocket) {
@@ -91,11 +93,10 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
     switch(method) {
         case JSONMethod::MessageFromPlayer:
             {
-                const auto rawMsg = data.toList()[0].toString();
-                const auto sockUN = this->_getSocketDisplayName(target);
-                const auto message = formatChatMessage(sockUN, rawMsg);
-
-                this->_messages << message;
+                //get message, add corresponding user to it then store it
+                auto message = RPZMessage::fromVariantHash(data.toHash());
+                message.setUser(this->_getUser(target));
+                this->_messages.insert(message.id(), message);
 
                 //push to all sockets
                 this->_broadcastMessage(message);
@@ -111,7 +112,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             {   
                 //bind username to socket
                 const auto dn = data.toList()[0].toString();
-                this->_clientDisplayNames[this->_idsByClientSocket[target]] = dn;
+                this->_getUser(target)->setName(dn);
 
                 //tell other users this one exists
                 this->_broadcastUsers();
@@ -120,7 +121,9 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
                 this->_sendStoredMessages(target);
 
                 //ask for host map history
-                if(target == this->_hostSocket) this->_askHostForMapHistory();
+                if(target == this->_hostSocket)  {
+                    this->_askHostForMapHistory();
+                }
             }
             break;
         default:
@@ -133,51 +136,68 @@ void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
 
     //message...
     auto countMsgs = this->_messages.size();
-    clientSocket->sendJSON(JSONMethod::ChatLogHistory, this->_messages);
+    auto serialized = this->_serializeMessages();
+    clientSocket->sendJSON(JSONMethod::ChatLogHistory, serialized);
     
     qDebug() << "RPZServer :" << countMsgs << " stored messages sent to " << clientSocket->socket()->peerAddress().toString();
 }
 
-void RPZServer::_broadcastMessage(const QString &messageToBroadcast) {
+void RPZServer::_broadcastMessage(RPZMessage &messageToBroadcast) {
 
-    for(auto &socket : this->_clientSocketsById) {
-        socket->sendJSON(JSONMethod::MessageFromPlayer, QStringList(messageToBroadcast));
+    for(auto &user : this->_usersById) {
+        user.jsonHelper()->sendJSON(JSONMethod::MessageFromPlayer, messageToBroadcast.toVariantHash());
     }
 
-    qDebug() << "RPZServer : Broadcasted message to " << this->_clientSocketsById.size() << " clients";
+    qDebug() << "RPZServer : Broadcasted message to " << this->_usersById.size() << " clients";
 }
 
 void RPZServer::_broadcastUsers() {
 
-    QVariantHash h;
-    for(const auto &key : this->_clientDisplayNames.keys()) {
-        h.insert(key.toString(), this->_clientDisplayNames[key]);
+    auto serialized = this->_serializeUsers();
+
+    for(auto &user : this->_usersById) {
+        user.jsonHelper()->sendJSON(JSONMethod::LoggedPlayersChanged, serialized);
     }
 
-    for(auto &socket : this->_clientSocketsById) {
-        socket->sendJSON(JSONMethod::LoggedPlayersChanged, h);
-    }
-
-    qDebug() << "RPZServer : Now " << this->_clientSocketsById.size() << " clients logged";
+    qDebug() << "RPZServer : Now " << this->_usersById.size() << " clients logged";
 }
 
 void RPZServer::_askHostForMapHistory() {
-    this->_hostSocket->sendJSON(JSONMethod::AskForHostMapHistory, QStringList("Please"));
+    this->_hostSocket->sendJSON(JSONMethod::AskForHostMapHistory, QStringList());
 }
-
-QString RPZServer::_getSocketDisplayName(JSONSocket * clientSocket) {
-    return this->_idsByClientSocket.contains(clientSocket) ? 
-            this->_clientDisplayNames[this->_idsByClientSocket[clientSocket]] : 
-            clientSocket->socket()->peerAddress().toString();
-}
-
 
 void RPZServer::_broadcastMapChanges(const QVariantList &changes) {
 
     //send...
-    for(auto &socket : this->_clientSocketsById) {
-        if(socket == this->_hostSocket) continue;
-        socket->sendJSON(JSONMethod::HostMapChanged, changes);
+    for(auto &user : this->_usersById) {
+        if(user.jsonHelper() == this->_hostSocket) continue;
+        user.jsonHelper()->sendJSON(JSONMethod::HostMapChanged, changes);
     }
 
+}
+
+QVariantHash RPZServer::_serializeUsers() {
+    QVariantHash base;
+
+    for (auto &user : this->_usersById) {
+        base.insert(user.id().toString(), user.toVariantHash());
+    }
+
+    return base;
+}
+
+QVariantList RPZServer::_serializeMessages() {
+    QVariantList base;
+
+    for (auto &msg : this->_messages) {
+        base.append(msg.toVariantHash());
+    }
+
+    return base;
+}
+
+
+RPZUser* RPZServer::_getUser(JSONSocket* socket) {
+    const auto id = this->_idsByClientSocket[socket];
+    return &this->_usersById[id];
 }

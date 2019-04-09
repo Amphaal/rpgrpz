@@ -29,13 +29,6 @@ static std::string getAppDataLocation() {
     return target;
 }
 
-static QString formatChatMessage(const QString &displayName, const QString &message) {
-    auto ts = QString("[" + QDateTime::currentDateTime().toString("dd.MM.yyyy-hh:mm:ss") + "] ");
-    auto name = displayName + " a dit : ";
-    auto fullMsg = ts + name + "“" + message + "”";
-    return fullMsg;
-}
-
 static std::string getAssetsFileCoordinatorLocation() {
     return getAppDataLocation() + ASSETS_JSON_COORDINATOR_FILENAME;
 }

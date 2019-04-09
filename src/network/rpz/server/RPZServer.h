@@ -18,7 +18,11 @@
 
 #include "src/shared/MapHint.h"
 
+#include "src/shared/RPZMessage.hpp"
+#include "src/shared/RPZUser.hpp"
+
 #include "src/helpers/_const.hpp"
+
 
 class RPZServer : public QTcpServer, public JSONRouter { 
     
@@ -35,9 +39,13 @@ class RPZServer : public QTcpServer, public JSONRouter {
 
     private:
         QHash<JSONSocket*, QUuid> _idsByClientSocket;
-        QHash<QUuid, JSONSocket*> _clientSocketsById;
-        QHash<QUuid, QString> _clientDisplayNames;
         JSONSocket* _hostSocket = nullptr;
+        
+        //users
+        QHash<QUuid, RPZUser> _usersById;
+        QVariantHash _serializeUsers();
+        RPZUser* _getUser(JSONSocket* socket);
+        void _broadcastUsers();
 
         //map assets
         MapHint* _hints;
@@ -45,15 +53,14 @@ class RPZServer : public QTcpServer, public JSONRouter {
         void _broadcastMapChanges(const QVariantList &changes);
         
         //messages
-        QStringList _messages;
+        QHash<QUuid, RPZMessage> _messages;
+        QVariantList _serializeMessages();
         void _sendStoredMessages(JSONSocket * clientSocket);
-        void _broadcastMessage(const QString &messageToBroadcast);
-        void _broadcastUsers();
+        void _broadcastMessage(RPZMessage &messageToBroadcast);
+        
 
         void _onNewConnection();
         void _onDisconnect();
-
-        QString _getSocketDisplayName(JSONSocket * clientSocket);
 
         void _routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) override;
 };

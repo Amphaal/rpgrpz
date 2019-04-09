@@ -11,8 +11,14 @@
 
 #include "src/network/rpz/client/RPZClient.h"
 
+#include "src/shared/RPZMessage.hpp"
+#include "src/shared/RPZUser.hpp"
+
 #include "ChatEdit.h"
-#include "LogScrollView.h"
+
+#include "logs/UsersLog.hpp"
+#include "logs/base/LogScrollView.h"
+
 
 
 class ChatWidget : public QGroupBox {
@@ -29,9 +35,9 @@ class ChatWidget : public QGroupBox {
         void bindToRPZClient(RPZClient * cc);
 
     private:
-        LogScrollView *_chatLog = nullptr;
-        LogScrollView *_usersLog = nullptr;
-        ChatEdit *_chatEdit = nullptr;
+        LogScrollView *_chatLog;
+        UsersLog *_usersLog;
+        ChatEdit *_chatEdit;
 
         QString serverName;
         RPZClient* _currentCC = nullptr;
@@ -47,8 +53,7 @@ class ChatWidget : public QGroupBox {
 
     private slots:
         void _onRPZClientError(const std::string &errMsg);
-        void _onReceivedMessage(const std::string &message);
+        void _onReceivedMessage(const QVariantHash &message);
         void _onReceivedLogHistory(const QVariantList &messages);
-        void _onLoggedUsersUpdated(const QVariantHash &users);
 
 };

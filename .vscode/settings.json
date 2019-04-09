@@ -108,6 +108,10 @@
         "qdatastream": "cpp",
         "queue": "cpp",
         "qgraphicsview": "cpp",
-        "qapplication": "cpp"
+        "qapplication": "cpp",
+        "qvarianthash": "cpp",
+        "qstring": "cpp",
+        "random": "cpp",
+        "stack": "cpp"
     }
 }

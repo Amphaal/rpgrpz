@@ -5,11 +5,8 @@ JSONSocket::JSONSocket(QObject* parent, const QString &logId, QTcpSocket* wrappe
     if (wrapped) {
         this->_innerSocket = wrapped;
     } else {
-        this->_innerSocket = new QTcpSocket;
+        this->_innerSocket = new QTcpSocket(this);
     }
-
-    this->in.setDevice(this->_innerSocket);
-    this->in.setVersion(QDataStream::Qt_5_12);
 
     QObject::connect(
         this->_innerSocket, &QIODevice::readyRead,
@@ -51,44 +48,42 @@ void JSONSocket::sendJSON(const JSONMethod &method, const QVariant &data) {
     qDebug() << this->_customLog("json to be sent >> " + JSONMethodAsArray[method]);
 
     //send !
-    this->_sendJSONAsBinary(payload_doc.toBinaryData());
-}
-
-
-void JSONSocket::_sendJSONAsBinary(const QByteArray &data) {
-    
-    //send welcome message
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
+    QDataStream out(this->_innerSocket);
     out.setVersion(QDataStream::Qt_5_12);
-
-    //send...
-    out << data;
-    auto written = this->_innerSocket->write(block);
-
+    out << payload_doc.toJson(QJsonDocument::Compact);
+    
 }
 
 void JSONSocket::_processIncomingData() {
     
     //process incoming data
-    this->in.startTransaction();
-
     QByteArray block;
-    this->in >> block;
+    QDataStream in(this->_innerSocket);
+    in.setVersion(QDataStream::Qt_5_12);
+    
+    for (;;) {
 
-    if (!this->in.commitTransaction()) {
-        qWarning() << this->_customLog("issue while reading incoming data");  
-        return;
+        in.startTransaction();
+
+        in >> block;
+
+        if (in.commitTransaction()) {
+            
+            this->_processIncomingAsJson(block);
+
+        } else {
+            // the read failed, the socket goes automatically back to the state it was in before the transaction started
+            // we just exit the loop and wait for more data to become available
+            break;
+        }
     }
-
-    this->_processIncomingAsJson(block);
 
 }
 
 void JSONSocket::_processIncomingAsJson(const QByteArray &data) {
 
     //parse to json
-    auto json = QJsonDocument::fromBinaryData(data);
+    auto json = QJsonDocument::fromJson(data);
     if(json.isNull()) {
         qWarning() << this->_customLog("Data received was not JSON and thus cannot be read.");
         return;
