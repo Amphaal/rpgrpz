@@ -18,7 +18,7 @@
 #include <QScrollBar>
 #include <QUuid>
 #include <QVariant>
-#include <QList>
+#include <QVector>
 
 #include "MapTools.h"
 #include "AssetsNavigator.h"
@@ -48,8 +48,8 @@ class MapView : public QGraphicsView, public ClientBindable {
     
     signals:
         void unselectCurrentToolAsked();
-        void assetsAlteredForLocal(const RPZAsset::Alteration &state, QList<RPZAsset> &elements);
-        void assetsAlteredForNetwork(const RPZAsset::Alteration &state, QList<RPZAsset> &elements);
+        void assetsAlteredForLocal(const RPZAsset::Alteration &state, QVector<RPZAsset> &elements);
+        void assetsAlteredForNetwork(const RPZAsset::Alteration &state, QVector<RPZAsset> &elements);
 
     protected:
         void wheelEvent(QWheelEvent *event) override;
@@ -64,8 +64,11 @@ class MapView : public QGraphicsView, public ClientBindable {
     private:
         MapHintViewBinder* _hints;
         void _onSceneSelectionChanged();
-        void _sendMapChanges(const RPZAsset::Alteration &state, QList<RPZAsset> &elements);
-        void _sendMapHistory();
+        void _goToDefaultViewState();
+        
+        //network
+            void _sendMapChanges(const RPZAsset::Alteration &state, QVector<RPZAsset> &elements);
+            void _sendMapHistory();
 
         //registered points
             QPoint _lastPointMousePressing;
@@ -82,6 +85,10 @@ class MapView : public QGraphicsView, public ClientBindable {
             void _toolOnMousePress(const MapTools::Actions &tool);
             void _toolOnMouseRelease(const MapTools::Actions &tool);
 
+        //moving...
+            const int _defaultSceneSize = 36000;
+            void _goToSceneCenter();
+
         //rotating...
             QCursor * _rotateCursor = nullptr;
             double _degreesFromNorth = 0;
@@ -89,6 +96,9 @@ class MapView : public QGraphicsView, public ClientBindable {
             void _rotateBackToNorth();
 
         //zooming...
+            const double _defaultScale = 5;
+            double _currentRelScale = 1;
+            void _goToDefaultZoom();
             int _numScheduledScalings = 0;
             void _zoomBy(const qreal factor);
             void _zoomBy_scalingTime(const qreal x);
@@ -102,7 +112,7 @@ class MapView : public QGraphicsView, public ClientBindable {
             QColor _penColor = Qt::blue;
             QPen _getPen() const;
 
-            QList<QGraphicsItem*> _tempLines;
+            QVector<QGraphicsItem*> _tempLines;
             QPainterPath* _tempDrawing = nullptr;
             void _beginDrawing();
             void _endDrawing();

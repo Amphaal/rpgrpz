@@ -2,7 +2,7 @@
 
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QVBoxLayout>
-#include <QtCore/QList>
+#include <QtCore/QVector>
 #include <QHash>
 #include <QUuid>
 #include <QTextEdit>

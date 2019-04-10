@@ -79,8 +79,8 @@ void MapHintViewBinder::alterSceneFromItems(const RPZAsset::Alteration &alterati
 }
 
 //helper
-QList<RPZAsset> MapHintViewBinder::_fetchAssets(const QList<QGraphicsItem*> &listToFetch) const {
-    QList<RPZAsset> list;
+QVector<RPZAsset> MapHintViewBinder::_fetchAssets(const QList<QGraphicsItem*> &listToFetch) const {
+    QVector<RPZAsset> list;
 
     for(auto &e : listToFetch) {
         auto id = this->_idsByGraphicItem[e];
@@ -92,7 +92,7 @@ QList<RPZAsset> MapHintViewBinder::_fetchAssets(const QList<QGraphicsItem*> &lis
 }
 
 //alter Scene
-void MapHintViewBinder::_alterSceneGlobal(const RPZAsset::Alteration &alteration, QList<RPZAsset> &assets) { 
+void MapHintViewBinder::_alterSceneGlobal(const RPZAsset::Alteration &alteration, QVector<RPZAsset> &assets) { 
     
     this->_externalInstructionPending = true;
 

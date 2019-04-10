@@ -2,12 +2,12 @@
 
 MapHint::MapHint() {};
 
-QList<RPZAsset> MapHint::fetchHistory() {
-    return this->_assetsById.values();
+QVector<RPZAsset> MapHint::fetchHistory() {
+    return this->_assetsById.values().toVector();
 }
 
 //handle network and local evts emission
-void MapHint::_emitAlteration(const RPZAsset::Alteration &state, QList<RPZAsset> &elements) {
+void MapHint::_emitAlteration(const RPZAsset::Alteration &state, QVector<RPZAsset> &elements) {
 
     emit assetsAlteredForLocal(state, elements);
 
@@ -17,7 +17,7 @@ void MapHint::_emitAlteration(const RPZAsset::Alteration &state, QList<RPZAsset>
 
 } 
 
-QVariantHash MapHint::packageForNetworkSend(const RPZAsset::RPZAsset::Alteration &state, QList<RPZAsset> &assets) {
+QVariantHash MapHint::packageForNetworkSend(const RPZAsset::RPZAsset::Alteration &state, QVector<RPZAsset> &assets) {
     AlterationPayload payload(state, assets);
     return payload.toVariantHash();
 }
@@ -80,7 +80,7 @@ QUuid MapHint::_alterSceneInternal(const RPZAsset::Alteration &alteration, RPZAs
 }
 
 //alter Scene
-void MapHint::_alterSceneGlobal(const RPZAsset::Alteration &alteration, QList<RPZAsset> &assets) { 
+void MapHint::_alterSceneGlobal(const RPZAsset::Alteration &alteration, QVector<RPZAsset> &assets) { 
 
     if(alteration == RPZAsset::Alteration::Reset) {
         this->_selfElements.clear();
@@ -99,26 +99,26 @@ void MapHint::_alterSceneGlobal(const RPZAsset::Alteration &alteration, QList<RP
 
 //helper
 void MapHint::alterSceneFromAsset(const RPZAsset::Alteration &alteration, RPZAsset &asset) {
-    QList<RPZAsset> list;
+    QVector<RPZAsset> list;
     list.append(asset);
     return this->_alterSceneGlobal(alteration, list);
 }
 
 
 //helper
-void MapHint::alterSceneFromAssets(const RPZAsset::Alteration &alteration, QList<RPZAsset> &assets) {
+void MapHint::alterSceneFromAssets(const RPZAsset::Alteration &alteration, QVector<RPZAsset> &assets) {
     return this->_alterSceneGlobal(alteration, assets);
 }
 
 //helper
-void MapHint::alterSceneFromIds(const RPZAsset::Alteration &alteration, const QList<QUuid> &elementIds) {
+void MapHint::alterSceneFromIds(const RPZAsset::Alteration &alteration, const QVector<QUuid> &elementIds) {
     return this->_alterSceneGlobal(alteration, this->_fetchAssets(elementIds));
 }
 
 
 //helper
-QList<RPZAsset> MapHint::_fetchAssets(const QList<QUuid> &listToFetch) const {
-   QList<RPZAsset> list;
+QVector<RPZAsset> MapHint::_fetchAssets(const QVector<QUuid> &listToFetch) const {
+   QVector<RPZAsset> list;
 
     for(auto &e : listToFetch) {
         list.append(this->_assetsById[e]);

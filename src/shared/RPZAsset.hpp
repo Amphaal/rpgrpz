@@ -3,7 +3,7 @@
 #include <QGraphicsItem>
 #include <QString>
 #include <QUuid>
-#include <QList>
+#include <QVector>
 
 #include "Serializable.hpp"
 #include "_serializer.hpp"

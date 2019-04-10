@@ -32,9 +32,9 @@ class MapHintViewBinder : public MapHint {
 
         QHash<QGraphicsItem*, QUuid> _idsByGraphicItem;
 
-        QList<RPZAsset> _fetchAssets(const QList<QGraphicsItem*> &listToFetch) const;
+        QVector<RPZAsset> _fetchAssets(const QList<QGraphicsItem*> &listToFetch) const;
         
-        void _alterSceneGlobal(const RPZAsset::Alteration &alteration, QList<RPZAsset> &assets) override;
+        void _alterSceneGlobal(const RPZAsset::Alteration &alteration, QVector<RPZAsset> &assets) override;
         QUuid _alterSceneInternal(const RPZAsset::Alteration &alteration, RPZAsset &asset) override;
 
         void _onSceneSelectionChanged();

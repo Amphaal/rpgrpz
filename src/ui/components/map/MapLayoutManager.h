@@ -2,7 +2,7 @@
 
 #include <QTreeWidget>
 #include <QHash>
-#include <QList>
+#include <QVector>
 #include <QUuid>
 #include <QGraphicsItem>
 #include <QIcon>
@@ -16,10 +16,10 @@ class MapLayoutManager : public QTreeWidget{
 
     public:
         MapLayoutManager(QWidget * parent = nullptr);
-        void alterTreeElements(const RPZAsset::Alteration &state, QList<RPZAsset> &elements);
+        void alterTreeElements(const RPZAsset::Alteration &state, QVector<RPZAsset> &elements);
     
     signals:
-        void elementsAlterationAsked(const RPZAsset::Alteration &state, const QList<QUuid> &elementIds);
+        void elementsAlterationAsked(const RPZAsset::Alteration &state, const QVector<QUuid> &elementIds);
 
     protected:
         void keyPressEvent(QKeyEvent * event) override;
@@ -29,7 +29,7 @@ class MapLayoutManager : public QTreeWidget{
         void _onElementDoubleClicked(QTreeWidgetItem * item, int column);
 
         QHash<QUuid, QTreeWidgetItem*> _treeItemsById;
-        QList<QUuid> _extractIdsFromSelection() const;
+        QVector<QUuid> _extractIdsFromSelection() const;
         bool _externalInstructionPending = false;
         bool _deletionProcessing = false;
 

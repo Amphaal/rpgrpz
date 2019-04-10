@@ -10,7 +10,7 @@
 #include <QJsonArray>
 #include <QStringList>
 #include <QHash>
-#include <QList>
+#include <QVector>
 #include <QUuid>
 
 #include "src/network/rpz/_any/JSONSocket.h"

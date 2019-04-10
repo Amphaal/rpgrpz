@@ -8,6 +8,7 @@ class ClientBindable {
     public:
         virtual void bindToRPZClient(RPZClient* cc) {
             
+            this->unbindRPZClient();
             this->_rpzClient = cc;
 
             //pass to nullptr for comparaisons

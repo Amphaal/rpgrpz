@@ -7,7 +7,7 @@
 
 class AlterationPayload : public Serializable {
     public:
-        AlterationPayload(const RPZAsset::Alteration &alteration, QList<RPZAsset> &assets) : 
+        AlterationPayload(const RPZAsset::Alteration &alteration, QVector<RPZAsset> &assets) : 
         Serializable(NULL), 
         _alteration(alteration),
         _assets(assets) { };
@@ -27,14 +27,14 @@ class AlterationPayload : public Serializable {
             return out;
         };
 
-        QList<RPZAsset>* assets() { return &this->_assets; };
+        QVector<RPZAsset>* assets() { return &this->_assets; };
         RPZAsset::Alteration alteration() { return this->_alteration; };
 
         static AlterationPayload fromVariantHash(const QVariantHash &data) {
             
             auto state = (RPZAsset::Alteration)data["state"].toInt();
             
-            QList<RPZAsset> assets;
+            QVector<RPZAsset> assets;
             for(auto &i : data["assets"].toList()) {
                 assets.append(RPZAsset::fromVariantHash(i.toHash()));
             }
@@ -45,5 +45,5 @@ class AlterationPayload : public Serializable {
 
     private:
         RPZAsset::Alteration _alteration;
-        QList<RPZAsset> _assets;
+        QVector<RPZAsset> _assets;
 };

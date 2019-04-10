@@ -3,7 +3,15 @@
 MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
 
     //default
-    this->setScene(new QGraphicsScene);
+    this->setScene(
+        new QGraphicsScene(
+            this->_defaultSceneSize,  
+            this->_defaultSceneSize,  
+            this->_defaultSceneSize, 
+            this->_defaultSceneSize, 
+            this
+        )
+    );
     this->_hints = new MapHintViewBinder(this); //after first inst of scene
     this->setAcceptDrops(true);
     this->_changeTool(MapView::_defaultTool);
@@ -24,25 +32,43 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
     //optimisations
     //this->setOptimizationFlags( QFlags<OptimizationFlag>(QGraphicsView::DontSavePainterState | QGraphicsView::DontAdjustForAntialiasing));
 
-
     //to route from MapHints
     QObject::connect(
         this->_hints, &MapHint::assetsAlteredForLocal,
-        [&](const RPZAsset::Alteration &state, QList<RPZAsset> &elements) {
+        [&](const RPZAsset::Alteration &state, QVector<RPZAsset> &elements) {
             emit assetsAlteredForLocal(state, elements);
         }
     );
+    
+    //to route from MapHints
+    QObject::connect(
+        this->_hints, &MapHint::assetsAlteredForNetwork,
+        this, &MapView::_sendMapChanges
+    );
 
 
-    //define scene
-    this->scene()->setSceneRect(35000, 35000, 35000, 35000);
-    this->setScene(this->scene());
+    //default state
+    this->scale(this->_defaultScale, this->_defaultScale);
+    this->_goToDefaultViewState();
+    
 }
+
+void MapView::_goToDefaultViewState() {
+    this->_goToSceneCenter();
+    this->_goToDefaultZoom();
+    this->_rotateBackToNorth();
+}
+
+void MapView::_goToSceneCenter() {
+    auto center = this->scene()->sceneRect().center();
+    qDebug() << "centering on " << center;
+    this->centerOn(center);
+}
+
 
 MapHintViewBinder* MapView::hints() {
     return this->_hints;
 }
-
 
 void MapView::keyPressEvent(QKeyEvent * event) {
     
@@ -82,15 +108,9 @@ void MapView::bindToRPZClient(RPZClient * cc) {
         this, &MapView::_sendMapHistory
     );
 
-    //to route from MapHints
-    QObject::connect(
-        this->_hints, &MapHint::assetsAlteredForNetwork,
-        this, &MapView::_sendMapChanges
-    );
-
 }
 
-void MapView::_sendMapChanges(const RPZAsset::Alteration &state, QList<RPZAsset> &elements) {
+void MapView::_sendMapChanges(const RPZAsset::Alteration &state, QVector<RPZAsset> &elements) {
     if(!this->_rpzClient) return;
 
     auto data = this->_hints->packageForNetworkSend(state, elements);
@@ -161,7 +181,7 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
             this->_changeTool(MapTools::Actions::None, true);
             break;
         case Qt::MouseButton::MiddleButton:
-            if(this->_isMiddleToolLock) {
+            if(!this->_isMiddleToolLock) {
                 this->_changeTool(MapTools::Actions::None, true);
             }
             break;
@@ -236,10 +256,17 @@ void MapView::_changeTool(MapTools::Actions newTool, const bool quickChange) {
 //on received event
 void MapView::changeToolFromAction(QAction *action) {
     
+    //cast inner data to enum
     const auto instruction = (MapTools::Actions)action->data().toInt();
-    if(instruction == MapTools::Actions::RotateToNorth) {
-        this->_rotateBackToNorth();
-        return;
+    
+    //oneshot instructions switch
+    switch(instruction) {
+        case MapTools::Actions::RotateToNorth:
+            this->_rotateBackToNorth();
+            return;
+        case MapTools::Actions::ResetView:
+            this->_goToDefaultViewState();
+            return;
     }
 
     //go by default tool if unchecked
@@ -287,7 +314,15 @@ void MapView::wheelEvent(QWheelEvent *event) {
 
 void MapView::_zoomBy_scalingTime(qreal x) {
     qreal factor = 1.0 + qreal(this->_numScheduledScalings) / 300.0;
+    this->_currentRelScale = factor * this->_currentRelScale;
     this->scale(factor, factor);
+    //qDebug() << "zooming by " << factor << " (" << qreal(this->_currentRelScale) << " from initial)";
+}
+
+void MapView::_goToDefaultZoom() {
+    auto corrected = 1/(this->_currentRelScale);
+    this->scale(corrected, corrected);
+    this->_currentRelScale = 1;
 }
 
 void MapView::_zoomBy_animFinished() {
@@ -310,13 +345,21 @@ void MapView::_zoomBy_animFinished() {
 void MapView::_rotate(const QPoint &evtPoint) {
     const auto way = this->_lastPointMousePressing - evtPoint;
     auto pp = ((double)way.y()) / 5;
-    this->_degreesFromNorth += pp;
+    this->_degreesFromNorth += pp; 
     this->rotate(pp);
+
+    qDebug() << "rotating " << qreal(pp) << " deg (" << qreal(this->_degreesFromNorth) << " from north)";
 }
 
 void MapView::_rotateBackToNorth() {
+    
+    if(this->_degreesFromNorth == 0) return;
+
     auto adjust = fmod(this->_degreesFromNorth, 360);
     this->rotate(-this->_degreesFromNorth);
+    
+    qDebug() << "rotating " << qreal(-this->_degreesFromNorth) << "deg back to north)";
+    
     this->_degreesFromNorth = 0;
 }
 
@@ -372,12 +415,17 @@ void MapView::_beginDrawing() {
 
 void MapView::_endDrawing() {
     
-    //add definitive path
-    auto drawing = this->_hints->addDrawing(*this->_tempDrawing, this->_getPen());
-    auto newAsset = RPZAsset(AssetBase::Type::Drawing, drawing);
-    this->_hints->alterSceneFromAsset(RPZAsset::Alteration::Added, newAsset);
+    //if something has been drawn
+    if(this->_tempLines.size()) {
+
+        //add definitive path
+        auto drawing = this->_hints->addDrawing(*this->_tempDrawing, this->_getPen());
+        auto newAsset = RPZAsset(AssetBase::Type::Drawing, drawing);
+        this->_hints->alterSceneFromAsset(RPZAsset::Alteration::Added, newAsset);
+    }
+
     this->_tempDrawing = nullptr;
-    
+
     //destroy temp
     for(auto &i : this->_tempLines) {
         delete i;

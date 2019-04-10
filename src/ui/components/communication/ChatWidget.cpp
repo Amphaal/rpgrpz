@@ -130,6 +130,7 @@ void ChatWidget::bindToRPZClient(RPZClient * cc) {
     );
 
     //on message typed 
+    this->_chatEdit->disconnect();
     QObject::connect(
         this->_chatEdit, &ChatEdit::askedToSendMessage,
         this->_rpzClient, &RPZClient::sendMessage

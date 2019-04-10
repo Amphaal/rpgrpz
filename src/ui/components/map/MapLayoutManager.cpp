@@ -27,7 +27,7 @@ void MapLayoutManager::_onElementSelectionChanged() {
     emit elementsAlterationAsked(RPZAsset::Alteration::Selected, this->_extractIdsFromSelection());
 }
 
-void MapLayoutManager::alterTreeElements(const RPZAsset::Alteration &state, QList<RPZAsset> &elements) {
+void MapLayoutManager::alterTreeElements(const RPZAsset::Alteration &state, QVector<RPZAsset> &elements) {
    
     this->_externalInstructionPending = true;
 
@@ -110,9 +110,9 @@ void MapLayoutManager::keyPressEvent(QKeyEvent * event) {
 
 }
 
-QList<QUuid> MapLayoutManager::_extractIdsFromSelection() const {
+QVector<QUuid> MapLayoutManager::_extractIdsFromSelection() const {
     
-    QList<QUuid> idList;
+    QVector<QUuid> idList;
     
     for(auto &i : this->selectedItems()) {
         const auto innerData = i->data(0,Qt::UserRole).toUuid();

@@ -12,7 +12,7 @@ enum JSONMethod {
     AskForHostMapHistory 
 };
 
-static const QString JSONMethodAsArray[] = { 
+static const QStringList JSONMethodAsArray = { 
     "MessageFromPlayer", 
     "PlayerHasUsername", 
     "LoggedPlayersChanged", 
