@@ -9,28 +9,21 @@ class Ownable {
 
     public:
         Ownable() {};
-        Ownable(const QUuid &ownerId, const QString &ownerName) : _ownerId(ownerId), _ownerName(ownerName) {};
-        Ownable(RPZUser* user) {
+        Ownable(const RPZUser &user) {
             this->setOwnership(user);
         };
 
-        QUuid ownerId() { return this->_ownerId; };
-        QString ownerName() { return this->_ownerName; };
+        RPZUser owner() { return this->_owner; };
 
-        void setOwnership(RPZUser* user) { 
-            if(user) {
-                this->_ownerId = user->id();
-                this->_ownerName = user->name();
-            }
+        void setOwnership(const RPZUser &user) { 
+            this->_owner = user;
         };
 
     protected: 
         void injectOwnerDataToHash(QVariantHash &hash) {
-            hash.insert("oid", this->ownerId());
-            hash.insert("oname", this->ownerName());
+            hash.insert("owner", this->_owner.toVariantHash());
         }
 
     private:
-        QUuid _ownerId;
-        QString _ownerName;
+        RPZUser _owner;
 };

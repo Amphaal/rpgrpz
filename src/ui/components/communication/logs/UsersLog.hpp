@@ -1,10 +1,13 @@
 #pragma once
 
 #include <QWidget>
+#include <QPixMap>
+#include <QLabel>
 
 #include "base/LogScrollView.h"
-#include "src/shared/RPZUser.hpp"
+#include "base/ColorIndicator.hpp"
 
+#include "src/shared/RPZUser.hpp"
 
 class UsersLog : public LogScrollView {
     
@@ -36,11 +39,29 @@ class UsersLog : public LogScrollView {
                 auto icon = QPixmap(pathToIcon);
 
                 //write line
-                this->writeAtEnd(user.name().toStdString(), nullptr, &icon);
+                this->writeAtEnd(user);
             }
         };
 
     private:
         QHash<QUuid, RPZUser> _users;
+
+        void writeAtEnd(RPZUser &user) {
+            
+            auto line = LogScrollView::writeAtEnd(user.name());
+            if(!line) return;
+
+            //logo part
+            auto icon = new QLabel; 
+            icon->setMargin(0); 
+            auto pixAsIcon = QPixmap(RPZUser::IconsByRoles[(int)user.role()]);
+            icon->setPixmap(pixAsIcon.scaled(14, 14));
+            icon->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+            ((QBoxLayout*)line->layout())->insertWidget(0, icon);
+
+            //color descriptor
+            auto colorwidget = new ColorIndicator(user.color());
+            line->layout()->addWidget(colorwidget);
+        };
 
 };

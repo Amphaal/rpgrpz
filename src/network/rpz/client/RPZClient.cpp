@@ -75,6 +75,10 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
                 emit loggedUsersUpdated(users);
             }
             break;
+        case JSONMethod::AckIdentity: {
+                emit ackIdentity(data.toHash());
+            }
+            break;
         case JSONMethod::AskForHostMapHistory: {
                 emit beenAskedForMapHistory();
             }

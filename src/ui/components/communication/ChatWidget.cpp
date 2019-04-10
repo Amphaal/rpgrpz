@@ -2,7 +2,7 @@
 
 ChatWidget::ChatWidget(QWidget *parent) : 
             QGroupBox(parent),
-            _chatLog(new LogScrollView),
+            _chatLog(new MessagesLog),
             _usersLog(new UsersLog),
             _chatEdit(new ChatEdit) {
 
@@ -63,8 +63,8 @@ void ChatWidget::_onRPZClientError(const std::string &errMsg) {
     
     //out log
     if(!this->serverName.isEmpty()) {
-        const auto nm = errMsg + " (" + this->serverName.toStdString() + ")";
-        this->writeInChatLog(nm, ChatWidget::LogType::ServerLog);
+        const auto nm = QString::fromStdString(errMsg) + " (" + this->serverName + ")";
+        this->_chatLog->writeAtEnd(nm, MessagesLog::MessageType::ServerLog);
     }
 
     this->_DisableUI();
@@ -72,14 +72,16 @@ void ChatWidget::_onRPZClientError(const std::string &errMsg) {
 }
 void ChatWidget::_onReceivedMessage(const QVariantHash &message) {
     auto msg = RPZMessage::fromVariantHash(message);
-    auto str_msg = msg.toString().toStdString();
+    auto str_msg = msg.toString();
     
     //write in log
-    this->writeInChatLog(str_msg);
+    this->_chatLog->writeAtEnd(str_msg);
 
 }
 
 void ChatWidget::_onReceivedLogHistory(const QVariantList &messages) {
+
+    this->_EnableUI();
 
     //add list of messages
     for(auto &msg : messages) {
@@ -88,7 +90,7 @@ void ChatWidget::_onReceivedLogHistory(const QVariantList &messages) {
 
     //welcome msg
     const auto welcome = QString("Connecté au serveur (") + this->serverName + ")";
-    this->writeInChatLog(welcome.toStdString(), ChatWidget::LogType::ServerLog);
+    this->_chatLog->writeAtEnd(welcome, MessagesLog::MessageType::ServerLog);
 }
 
 void ChatWidget::bindToRPZClient(RPZClient * cc) {
@@ -123,12 +125,6 @@ void ChatWidget::bindToRPZClient(RPZClient * cc) {
         this->_usersLog, &UsersLog::updateUsers
     );
 
-    //enable UI at connection
-    QObject::connect(
-        this->_rpzClient, &RPZClient::receivedLogHistory, 
-        this, &ChatWidget::_EnableUI
-    );
-
     //on message typed 
     this->_chatEdit->disconnect();
     QObject::connect(
@@ -149,21 +145,3 @@ void ChatWidget::_EnableUI() {
     this->_usersLog->setEnabled(true);
     this->_chatLog->setEnabled(true);
 }
-
-
-void ChatWidget::writeInChatLog(const std::string &message, const ChatWidget::LogType &logType) {
-    
-    QPalette* colors = nullptr;
-
-    switch(logType) {
-        case ChatWidget::LogType::ServerLog:
-            colors = new QPalette();
-            colors->setColor(QPalette::Window, "#71ed55");
-            colors->setColor(QPalette::WindowText, Qt::black);
-            break;
-        case ChatWidget::LogType::ClientMessage:
-            break;
-    }
-
-    this->_chatLog->writeAtEnd(message, colors);
-};

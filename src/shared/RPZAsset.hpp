@@ -17,7 +17,6 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
     public:
         RPZAsset() {}
         
-        
         //enums
         enum Alteration { Changed, Added, Removed, Selected, Focused, Reset };
         static inline const QList<Alteration> networkAlterations = { 
@@ -31,19 +30,23 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
             Alteration::Changed
         };
 
-        RPZAsset(const QUuid &id, const AssetBase::Type &type, const QUuid &ownerId, const QString &ownerName, const QByteArray &data = NULL) : 
+        RPZAsset(const QUuid &id, const AssetBase::Type &type, const RPZUser &owner, const QByteArray &data = NULL, const QVariantHash &metadata = QVariantHash()) : 
             Serializable(id), 
             AssetBase(type), 
-            Ownable(ownerId, ownerName),
-            _data(data) { };
+            Ownable(owner),
+            _data(data),
+            _metadata(metadata) { };
 
-        RPZAsset(const AssetBase::Type &type,  QGraphicsItem* assetItemOnMap) :
+        RPZAsset(const AssetBase::Type &type,  QGraphicsItem* assetItemOnMap, const QVariantHash &metadata = QVariantHash()) :
             Serializable(QUuid::createUuid()),
             AssetBase(type), 
-            _item(assetItemOnMap) {  };
+            _item(assetItemOnMap),
+            _metadata(metadata) {  };
 
 
         QVariantHash toVariantHashWithData(const Alteration &alteration) {
+            
+            //initial
             auto out = this->toVariantHash();
             
             //if no graphics item
@@ -85,24 +88,25 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
             return RPZAsset(
                 data["id"].toUuid(),
                 (AssetBase::Type)data["type"].toInt(),
-                data["oid"].toUuid(),
-                data["oname"].toString(),
-                data.contains("data") ? data["data"].toByteArray() : NULL
+                RPZUser::fromVariantHash(data["owner"].toHash()),
+                data.contains("data") ? data["data"].toByteArray() : NULL,
+                data.contains("mdata") ? data["mdata"].toHash() : QVariantHash()
             );
         };
 
         QGraphicsItem* graphicsItem() { return this->_item; };
         void setGraphicsItem(QGraphicsItem* item) { this->_item = item; };
         QByteArray* data() { return &this->_data; };
+        QVariantHash* metadata() { return &this->_metadata; };
 
         //overrides descriptor
         QString descriptor() override { 
             auto base = AssetBase::descriptor();
 
-            if(!this->ownerName().isNull()) {
-                base += " (" + this->ownerName() + ")";
-            } else if (!this->ownerId().isNull()) {
-                base += " (" + this->ownerId().toString() + ")";
+            if(!this->owner().name().isNull()) {
+                base += " (" + this->owner().name() + ")";
+            } else if (!this->owner().id().isNull()) {
+                base += " (" + this->owner().id().toString() + ")";
             }
 
             return base;
@@ -112,12 +116,14 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
     private:
         QGraphicsItem* _item = nullptr;
         QByteArray _data;
+        QVariantHash _metadata;
 
         QVariantHash toVariantHash() override {
             QVariantHash out;
 
             out.insert("id", this->id());
             out.insert("type", (int)this->type());
+            out.insert("mdata", this->_metadata);
 
             this->injectOwnerDataToHash(out);
 

@@ -11,15 +11,14 @@
 class RPZMessage : public Serializable, public Ownable {
     public:
         RPZMessage() {};
-        RPZMessage(const QUuid &id, const QString &message, const QDateTime &dt, const QUuid &senderId, const QString &senderName) : 
+        RPZMessage(const QUuid &id, const QString &message, const QDateTime &dt, const RPZUser &owner) : 
             Serializable(id),
-            Ownable(senderId, senderName),
+            Ownable(owner),
             _message(message), 
             _dt(dt) { };
 
-        RPZMessage(const QUuid &id, const QString &message, const QDateTime &dt, RPZUser* user = nullptr) : 
+        RPZMessage(const QUuid &id, const QString &message, const QDateTime &dt) : 
             Serializable(id),
-            Ownable(user),
             _message(message), 
             _dt(dt){ };
 
@@ -33,15 +32,14 @@ class RPZMessage : public Serializable, public Ownable {
             return RPZMessage(
                 hash["id"].toUuid(), 
                 hash["msg"].toString(), 
-                hash["dt"].toDateTime(), 
-                hash["oid"].toUuid(),
-                hash["oname"].toString()
+                hash["dt"].toDateTime(),
+                RPZUser::fromVariantHash(hash["owner"].toHash())
             );
         };
 
         QString toString() {
             const auto ts = QString("[" + _dt.toString("dd.MM.yyyy-hh:mm:ss") + "] ");
-            const auto name = this->ownerName() + " a dit : ";
+            const auto name = this->owner().name() + " a dit : ";
             const auto fullMsg = ts + name + "“" + this->_message + "”";
             return fullMsg;
         };

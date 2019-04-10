@@ -136,7 +136,7 @@ list(APPEND SOURCES
     src/ui/components/map/AssetsPreviewer.cpp
 
     src/ui/components/communication/ChatEdit.cpp
-    src/ui/components/communication/logs/base/LogView.cpp
+    src/ui/components/communication/logs/base/LogContainer.cpp
     src/ui/components/communication/logs/base/LogScrollView.cpp
     src/ui/components/communication/logs/UsersLog.hpp
     src/ui/components/communication/ChatWidget.cpp

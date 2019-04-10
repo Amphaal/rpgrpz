@@ -102,7 +102,16 @@ void MapView::bindToRPZClient(RPZClient * cc) {
         this->_rpzClient, &RPZClient::mapChanged,
         this->_hints, &MapHintViewBinder::unpackFromNetworkReceived
     );
+    
+    //when self user send
+    QObject::connect(
+        this->_rpzClient, &RPZClient::ackIdentity,
+        [&](const QVariantHash &user) {
+            this->_penColor = RPZUser::fromVariantHash(user).color();
+        }
+    );
 
+    //when been asked for map content
     QObject::connect(
         this->_rpzClient, &RPZClient::beenAskedForMapHistory,
         this, &MapView::_sendMapHistory
@@ -419,8 +428,11 @@ void MapView::_endDrawing() {
     if(this->_tempLines.size()) {
 
         //add definitive path
-        auto drawing = this->_hints->addDrawing(*this->_tempDrawing, this->_getPen());
-        auto newAsset = RPZAsset(AssetBase::Type::Drawing, drawing);
+        auto currPen = this->_getPen();
+        auto drawing = this->_hints->addDrawing(*this->_tempDrawing, currPen);
+        auto metadata = QVariantHash();
+        metadata["w"] = currPen.width();
+        auto newAsset = RPZAsset(AssetBase::Type::Drawing, drawing, metadata);
         this->_hints->alterSceneFromAsset(RPZAsset::Alteration::Added, newAsset);
     }
 

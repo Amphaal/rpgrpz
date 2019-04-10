@@ -112,6 +112,8 @@
         "qvarianthash": "cpp",
         "qstring": "cpp",
         "random": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "qqueue": "cpp",
+        "qrandomgenerator": "cpp"
     }
 }

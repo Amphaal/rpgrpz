@@ -32,6 +32,7 @@ class RPZClient : public JSONSocket, public JSONRouter {
     signals:
         void receivedMessage(const QVariantHash &message);
         void loggedUsersUpdated(const QVariantHash &users);
+        void ackIdentity(const QVariantHash &user);
         void receivedLogHistory(const QVariantList &messages);
         void error(const std::string &errMessage);
         void mapChanged(const QVariantHash &data);

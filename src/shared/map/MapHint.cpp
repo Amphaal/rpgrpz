@@ -36,7 +36,7 @@ QUuid MapHint::_alterSceneInternal(const RPZAsset::Alteration &alteration, RPZAs
 
     //get the Uuids
     auto elemId = asset.id();
-    auto ownerId = asset.ownerId();
+    auto ownerId = asset.owner().id();
     
     switch(alteration) {
 

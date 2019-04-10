@@ -18,8 +18,7 @@
 #include "ChatEdit.h"
 
 #include "logs/UsersLog.hpp"
-#include "logs/base/LogScrollView.h"
-
+#include "logs/MessagesLog.hpp"
 
 
 class ChatWidget : public QGroupBox, public ClientBindable {
@@ -27,16 +26,13 @@ class ChatWidget : public QGroupBox, public ClientBindable {
     Q_OBJECT
 
     public:
-        enum LogType { Default, ServerLog, ClientMessage };
-
         ChatWidget(QWidget *parent = nullptr);
 
     public slots: 
-        void writeInChatLog(const std::string &message, const ChatWidget::LogType &logType = ChatWidget::LogType::Default);
         void bindToRPZClient(RPZClient* cc) override;
 
     private:
-        LogScrollView *_chatLog;
+        MessagesLog *_chatLog;
         UsersLog *_usersLog;
         ChatEdit *_chatEdit;
 

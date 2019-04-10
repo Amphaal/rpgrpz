@@ -58,7 +58,10 @@ void MapHintViewBinder::unpackFromNetworkReceived(const QVariantHash &package) {
                 //drawing...
                 case AssetBase::Type::Drawing:
                     const QPainterPath path = JSONSerializer::fromBase64(*asset.data());
-                    newItem = this->addDrawing(path, QPen());
+                    auto pen = QPen();
+                    pen.setColor(asset.owner().color());
+                    pen.setWidth(asset.metadata()->value("w").toInt());
+                    newItem = this->addDrawing(path, pen);
                     break;
             
             }

@@ -95,7 +95,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             {
                 //get message, add corresponding user to it then store it
                 auto message = RPZMessage::fromVariantHash(data.toHash());
-                message.setOwnership(this->_getUser(target));
+                message.setOwnership(*this->_getUser(target));
                 this->_messages.insert(message.id(), message);
 
                 //push to all sockets
@@ -117,6 +117,9 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
                 //tell other users this one exists
                 this->_broadcastUsers();
 
+                //send user object to socket
+                this->_tellUserHisIdentity(target);
+
                 //send history to the client
                 this->_sendStoredMessages(target);
 
@@ -132,6 +135,11 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             qWarning() << "RPZServer : unknown method from JSON !";
     }
 
+}
+
+void RPZServer::_tellUserHisIdentity(JSONSocket* socket) {
+    auto serialized = this->_getUser(socket)->toVariantHash();
+    socket->sendJSON(JSONMethod::AckIdentity, serialized);
 }
 
 void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
@@ -175,7 +183,7 @@ void RPZServer::_broadcastMapChanges(const QVariantHash &payload, JSONSocket * s
     //put owners on top
     auto owner = this->_getUser(senderSocket);
     for(auto &asset : *payloadWithOwners.assets()) {
-        asset.setOwnership(owner);
+        asset.setOwnership(*owner);
     }
 
     //save for history
