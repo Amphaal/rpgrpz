@@ -9,8 +9,8 @@
 #include <QJsonObject>
 
 #include "src/helpers/_const.hpp"
-#include "AssetsNavigator.h"
-#include "AssetsPreviewer.h"
+#include "base/AssetsNavigator.h"
+#include "base/AssetsPreviewer.h"
 
 class AssetsManager : public QWidget {
 

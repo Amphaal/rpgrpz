@@ -84,6 +84,30 @@ void MapView::keyPressEvent(QKeyEvent * event) {
             this->_changeTool(MapView::_defaultTool);
             emit unselectCurrentToolAsked();
             break;
+        
+        case Qt::Key::Key_PageUp:
+            this->_rotate(1);
+            break;
+
+        case Qt::Key::Key_PageDown:
+            this->_rotate(-1);
+            break;
+        
+        case Qt::Key::Key_Up:
+            this->verticalScrollBar()->setValue(this->verticalScrollBar()->value() - 10);
+            break;
+        
+        case Qt::Key::Key_Down:
+            this->verticalScrollBar()->setValue(this->verticalScrollBar()->value() + 10);
+            break;
+
+        case Qt::Key::Key_Left:
+            this->horizontalScrollBar()->setValue(this->horizontalScrollBar()->value() - 10);
+            break;
+
+        case Qt::Key::Key_Right:
+            this->horizontalScrollBar()->setValue(this->horizontalScrollBar()->value() + 10);
+            break;
     }
 
 }
@@ -171,7 +195,7 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
             this->_drawLineTo(event->pos());
             break;
         case MapTools::Actions::Rotate:
-            this->_rotate(event->pos());
+            this->_rotateFromPoint(event->pos());
             break;
     }
 
@@ -228,15 +252,28 @@ MapTools::Actions MapView::_getCurrentTool() const {
 //change tool
 void MapView::_changeTool(MapTools::Actions newTool, const bool quickChange) {
 
+    //if quick change asked
     if(quickChange) {
+
         this->_quickTool = newTool;
+
+        //if unselecting quicktool
         if(newTool == MapTools::Actions::None) {
             newTool = this->_selectedTool;
         }   
+
     } else {
+
+        //define new tool
         this->_selectedTool = newTool;
         this->scene()->clearSelection();
+
     }    
+
+    //if a quicktool is selected
+    if(this->_quickTool != MapTools::Actions::None) {
+        newTool = this->_quickTool;
+    }
     
     switch(newTool) {
         case MapTools::Actions::Draw:
@@ -259,15 +296,13 @@ void MapView::_changeTool(MapTools::Actions newTool, const bool quickChange) {
             this->setInteractive(true);
             this->setDragMode(QGraphicsView::DragMode::RubberBandDrag);
             this->setCursor(Qt::ArrowCursor);
+            this->_isMiddleToolLock = false;
     }
 }
 
 //on received event
-void MapView::changeToolFromAction(QAction *action) {
-    
-    //cast inner data to enum
-    const auto instruction = (MapTools::Actions)action->data().toInt();
-    
+void MapView::changeToolFromAction(const MapTools::Actions &instruction) {
+
     //oneshot instructions switch
     switch(instruction) {
         case MapTools::Actions::RotateToNorth:
@@ -277,10 +312,6 @@ void MapView::changeToolFromAction(QAction *action) {
             this->_goToDefaultViewState();
             return;
     }
-
-    //go by default tool if unchecked
-    auto state = action->isChecked();
-    if(!state) return this->_changeTool(MapView::_defaultTool);
 
     //else select the new tool
     return this->_changeTool(instruction);
@@ -351,13 +382,18 @@ void MapView::_zoomBy_animFinished() {
 /* ROTATE */
 ////////////
 
-void MapView::_rotate(const QPoint &evtPoint) {
+void MapView::_rotateFromPoint(const QPoint &evtPoint) {
     const auto way = this->_lastPointMousePressing - evtPoint;
     auto pp = ((double)way.y()) / 5;
-    this->_degreesFromNorth += pp; 
-    this->rotate(pp);
+    return this->_rotate(pp);
+}
 
-    qDebug() << "rotating " << qreal(pp) << " deg (" << qreal(this->_degreesFromNorth) << " from north)";
+void MapView::_rotate(double deg) {
+
+    this->_degreesFromNorth += deg; 
+    this->rotate(deg);
+
+    qDebug() << "rotating " << qreal(deg) << " deg (" << qreal(this->_degreesFromNorth) << " from north)";
 }
 
 void MapView::_rotateBackToNorth() {

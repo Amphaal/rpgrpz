@@ -3,9 +3,11 @@
 LogScrollView::LogScrollView(QWidget *parent) : QScrollArea(parent) {
     
     this->setWidgetResizable(true);
+    this->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+    
     this->setAutoFillBackground(true);
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
-    this->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+
     auto pal = this->palette();
     pal.setColor(QPalette::Background, Qt::white);
     this->setPalette(pal);

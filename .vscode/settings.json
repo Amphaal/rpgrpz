@@ -114,6 +114,7 @@
         "random": "cpp",
         "stack": "cpp",
         "qqueue": "cpp",
-        "qrandomgenerator": "cpp"
+        "qrandomgenerator": "cpp",
+        "qjsonobject": "cpp"
     }
 }

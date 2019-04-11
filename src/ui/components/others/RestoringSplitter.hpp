@@ -8,6 +8,7 @@ class RestoringSplitter : public QSplitter {
     
     public:
         RestoringSplitter(const QString &id, QWidget * parent = nullptr) : QSplitter(parent), _id(id) {   
+
             QObject::connect(this, &QSplitter::splitterMoved, [&]() {
                 this->_intSettings.setValue(this->_id, this->saveState());
             });

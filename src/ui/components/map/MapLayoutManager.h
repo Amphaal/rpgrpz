@@ -9,8 +9,9 @@
 
 #include "MapView.h"
 #include "src/shared/RPZAsset.hpp"
+#include "base/RPZTree.hpp"
 
-class MapLayoutManager : public QTreeWidget{
+class MapLayoutManager : public RPZTree {
 
     Q_OBJECT
 

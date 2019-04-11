@@ -128,12 +128,13 @@ list(APPEND SOURCES
     src/shared/map/MapHint.cpp
     src/shared/map/MapHintViewBinder.cpp
 
+    src/ui/components/map/base/AssetsNavigator.cpp
+    src/ui/components/map/base/AssetsPreviewer.cpp
     src/ui/components/map/MapTools.cpp
-    src/ui/components/map/AssetsNavigator.cpp
     src/ui/components/map/MapView.cpp
     src/ui/components/map/MapLayoutManager.cpp
     src/ui/components/map/AssetsManager.cpp
-    src/ui/components/map/AssetsPreviewer.cpp
+
 
     src/ui/components/communication/ChatEdit.cpp
     src/ui/components/communication/logs/base/LogContainer.cpp

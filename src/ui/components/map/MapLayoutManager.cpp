@@ -1,6 +1,6 @@
 #include "MapLayoutManager.h"
 
-MapLayoutManager::MapLayoutManager(QWidget * parent) : QTreeWidget(parent) {
+MapLayoutManager::MapLayoutManager(QWidget * parent) : RPZTree(parent) {
     this->setHeaderHidden(true);
     this->setSelectionMode(QAbstractItemView::ExtendedSelection);
     this->setDragDropMode(QAbstractItemView::DragDropMode::NoDragDrop);
@@ -95,6 +95,8 @@ QTreeWidgetItem* MapLayoutManager::_createTreeItem(RPZAsset &asset) {
 
 void MapLayoutManager::keyPressEvent(QKeyEvent * event) {
     
+    RPZTree::keyPressEvent(event);
+
     switch(event->key()) {
 
         //deletion handling

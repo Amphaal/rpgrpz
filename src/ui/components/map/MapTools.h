@@ -5,6 +5,7 @@
 #include <QToolBar>
 #include <QToolButton>
 #include <QSpinBox>
+#include <QActionEvent>
 
 class MapTools : public QToolBar {
 
@@ -17,5 +18,11 @@ class MapTools : public QToolBar {
     
     signals:
         void penSizeChanged(const int newSize);
-        
+        void toolSelectionChanged(const MapTools::Actions &tool);
+
+    private:
+        bool _selectableToolSelected = false;
+        void _onToolSelectionChanged(QAction *action);
+        QVector<QAction*> _selectableTools;
+        QAction* _defaultTool;
 };

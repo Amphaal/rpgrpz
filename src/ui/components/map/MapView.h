@@ -21,7 +21,7 @@
 #include <QVector>
 
 #include "MapTools.h"
-#include "AssetsNavigator.h"
+#include "base/AssetsNavigator.h"
 
 #include "src/shared/map/MapHintViewBinder.h"
 #include "src/shared/RPZAsset.hpp"
@@ -40,7 +40,7 @@ class MapView : public QGraphicsView, public ClientBindable {
         MapHintViewBinder* hints();
 
     public slots:
-        void changeToolFromAction(QAction *action);
+        void changeToolFromAction(const MapTools::Actions &instruction);
         void changePenSize(const int newSize);
         
         //network
@@ -92,7 +92,8 @@ class MapView : public QGraphicsView, public ClientBindable {
         //rotating...
             QCursor * _rotateCursor = nullptr;
             double _degreesFromNorth = 0;
-            void _rotate(const QPoint &evtPoint);
+            void _rotateFromPoint(const QPoint &evtPoint);
+            void _rotate(double deg);
             void _rotateBackToNorth();
 
         //zooming...

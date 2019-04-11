@@ -1,6 +1,6 @@
 #include "AssetsNavigator.h"
 
-AssetsNavigator::AssetsNavigator(QWidget * parent) : QTreeWidget(parent), _MIMEDb(new QMimeDatabase) {
+AssetsNavigator::AssetsNavigator(QWidget * parent) : RPZTree(parent), _MIMEDb(new QMimeDatabase) {
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
     this->setColumnCount(2);

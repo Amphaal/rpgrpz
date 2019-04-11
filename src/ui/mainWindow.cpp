@@ -127,6 +127,9 @@ void MainWindow::_initUI() {
     this->_initUIMenu();
     this->_initUIStatusBar();
     this->_initUIApp();
+
+    //default focus
+    this->_mapView->setFocus();
 }   
 
 void MainWindow::_initUIApp() {
@@ -215,7 +218,7 @@ void MainWindow::_initUIApp() {
 
     //bind toolbar to mapview
     QObject::connect(
-        this->_mapTools, &QToolBar::actionTriggered,
+        this->_mapTools, &MapTools::toolSelectionChanged,
         this->_mapView, &MapView::changeToolFromAction
     );
 

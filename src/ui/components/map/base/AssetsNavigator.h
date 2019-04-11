@@ -11,8 +11,9 @@
 #include <QHeaderView>
 #include <QLayout>
 
+#include "RPZTree.hpp"
 
-class AssetsNavigator : public QTreeWidget {
+class AssetsNavigator : public RPZTree {
     public:
         AssetsNavigator(QWidget * parent = nullptr);
     
