@@ -2,43 +2,69 @@
 
 #include <functional>
 #include <QTimeLine>
+#include <QHash>
 
 class AnimationTimeLine : public QTimeLine {
 
     Q_OBJECT
 
-    signals:
-        void stepPassed(int* stateController, const qreal step);
-
     public:
-        AnimationTimeLine(int* stateController, int stateModifier, QObject* parent) : 
-            QTimeLine(350, parent), 
-            _stateController(stateController) {
+        enum Type { Rotation, Zoom, HorizontalMove, VerticalMove };
+
+        void setStateModifier(const qreal modifier) { this->_currentModifier = modifier; };
+
+        static AnimationTimeLine* use(const AnimationTimeLine::Type &controllerType,  qreal stateModifier,  QObject* parent, std::function<void(qreal, qreal)> onValueChanged) {
             
-            //self state
-            this->setUpdateInterval(20);
+            AnimationTimeLine* handler = nullptr;
 
-            //on events
-            QObject::connect(this, &QTimeLine::valueChanged, [&](const qreal x) {
-                emit stepPassed(this->_stateController, x);
-            });
-            QObject::connect(this, &QTimeLine::finished, this, &AnimationTimeLine::_onFinished);
+            //create from animation type
+            if(!_handlers.contains(controllerType)) {
+                
+                //create
+                handler = new AnimationTimeLine(controllerType, stateModifier, parent, onValueChanged);
 
-            // if user moved the wheel in another direction, we reset previously scheduled scalings
-            *this->_stateController += stateModifier;
-            if (*this->_stateController * stateModifier < 0) {
-                *this->_stateController = stateModifier; 
+                //add
+                _handlers.insert(controllerType, handler);
+
+            } else {
+
+                //get existing one and update modifier
+                handler = _handlers[controllerType];
+                handler->setStateModifier(stateModifier);
+
             }
-        };
+
+            //start or restart handler
+            handler->start();
+            return handler;
+        }
+
+
+
 
     private:
-        int* _stateController;
-        void _onFinished() {
-            if (*this->_stateController > 0) {
-                *this->_stateController--;
-            } else {
-                *this->_stateController++;
-                this->sender()->deleteLater();
-            }
-        }
+        //static
+        static inline QHash<AnimationTimeLine::Type, AnimationTimeLine*> _handlers = QHash<AnimationTimeLine::Type, AnimationTimeLine*>();
+
+
+        //
+        AnimationTimeLine(const AnimationTimeLine::Type &controllerType, qreal stateModifier, QObject* parent, std::function<void(qreal, qreal)> onValueChanged) : 
+        QTimeLine(300, parent), 
+        _currentModifier(stateModifier) {  
+            
+            //self state, x15 animations
+            this->setUpdateInterval(20);
+
+            //bind
+            QObject::connect(
+                this, &QTimeLine::valueChanged,
+                [&, onValueChanged](qreal value) {
+                    onValueChanged(this->_currentModifier, value);
+                }
+            );
+
+        };
+
+        qreal _currentModifier = 0;
+
 };

@@ -61,6 +61,7 @@ class MapView : public QGraphicsView, public ClientBindable {
         void mouseReleaseEvent(QMouseEvent *event) override;
         void mouseMoveEvent(QMouseEvent *event) override;
         void keyPressEvent(QKeyEvent * event) override;
+        void resizeEvent(QResizeEvent * event) override;
 
     private:
         MapHintViewBinder* _hints;
@@ -87,14 +88,11 @@ class MapView : public QGraphicsView, public ClientBindable {
             void _toolOnMouseRelease(const MapTools::Actions &tool);
 
         //moving...
-            int _numScheduledMovesVertical = 0;
-            int _numScheduledMovesHorizontal = 0;
             const int _defaultSceneSize = 36000;
             void _goToSceneCenter();
             void _animatedMove(const Qt::Orientation &orientation, int correction);
 
         //rotating...
-            int _numScheduledRotations = 0;
             QCursor * _rotateCursor = nullptr;
             double _degreesFromNorth = 0;
             void _rotateFromPoint(const QPoint &evtPoint);
@@ -104,11 +102,8 @@ class MapView : public QGraphicsView, public ClientBindable {
 
         //zooming...
             const double _defaultScale = 5;
-            int _numScheduledScalings = 0;
             double _currentRelScale = 1;
             void _goToDefaultZoom();
-            void _zoomBy(const qreal factor);
-            void _zoomBy_scalingTime(int* stateController, const qreal x);
         
         //droping..
             // QPoint* _latestPosDrop;
