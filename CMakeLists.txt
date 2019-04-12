@@ -130,6 +130,7 @@ list(APPEND SOURCES
 
     src/ui/components/map/base/AssetsNavigator.cpp
     src/ui/components/map/base/AssetsPreviewer.cpp
+    src/ui/components/map/base/AnimationTimeLine.hpp
     src/ui/components/map/MapTools.cpp
     src/ui/components/map/MapView.cpp
     src/ui/components/map/MapLayoutManager.cpp

@@ -26,8 +26,7 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
         };
         static const inline QList<Alteration> mustParseGraphicsItem = {
             Alteration::Added, 
-            Alteration::Reset,
-            Alteration::Changed
+            Alteration::Reset
         };
 
         RPZAsset(const QUuid &id, const AssetBase::Type &type, const RPZUser &owner, const QByteArray &data = NULL, const QVariantHash &metadata = QVariantHash()) : 

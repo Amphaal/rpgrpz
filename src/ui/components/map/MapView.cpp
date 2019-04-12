@@ -59,13 +59,6 @@ void MapView::_goToDefaultViewState() {
     this->_rotateBackToNorth();
 }
 
-void MapView::_goToSceneCenter() {
-    auto center = this->scene()->sceneRect().center();
-    qDebug() << "centering on " << center;
-    this->centerOn(center);
-}
-
-
 MapHintViewBinder* MapView::hints() {
     return this->_hints;
 }
@@ -86,27 +79,27 @@ void MapView::keyPressEvent(QKeyEvent * event) {
             break;
         
         case Qt::Key::Key_PageUp:
-            this->_rotate(1);
+            this->_animatedRotation(.1);
             break;
 
         case Qt::Key::Key_PageDown:
-            this->_rotate(-1);
+            this->_animatedRotation(-.1);
             break;
         
         case Qt::Key::Key_Up:
-            this->verticalScrollBar()->setValue(this->verticalScrollBar()->value() - 10);
+            this->_animatedMove(Qt::Orientation::Vertical, -10);
             break;
         
         case Qt::Key::Key_Down:
-            this->verticalScrollBar()->setValue(this->verticalScrollBar()->value() + 10);
+            this->_animatedMove(Qt::Orientation::Vertical, 10);
             break;
 
         case Qt::Key::Key_Left:
-            this->horizontalScrollBar()->setValue(this->horizontalScrollBar()->value() - 10);
+            this->_animatedMove(Qt::Orientation::Horizontal, -10);
             break;
 
         case Qt::Key::Key_Right:
-            this->horizontalScrollBar()->setValue(this->horizontalScrollBar()->value() + 10);
+            this->_animatedMove(Qt::Orientation::Horizontal, 10);
             break;
     }
 
@@ -115,7 +108,6 @@ void MapView::keyPressEvent(QKeyEvent * event) {
 /////////////
 /* NETWORK */
 /////////////
-
 
 void MapView::bindToRPZClient(RPZClient * cc) {
 
@@ -158,6 +150,10 @@ void MapView::_sendMapHistory() {
 
     this->_rpzClient->sendMapChanges(data, true);
 }
+
+/////////////////
+/* END NETWORK */
+/////////////////
 
 //////////
 /* TOOL */
@@ -327,8 +323,46 @@ void MapView::changePenSize(const int newSize) {
 //////////////
 
 //////////
+/* MOVE */
+//////////
+
+void MapView::_goToSceneCenter() {
+    auto center = this->scene()->sceneRect().center();
+    qDebug() << "centering on " << center;
+    this->centerOn(center);
+}
+
+void MapView::_animatedMove(const Qt::Orientation &orientation, int correction) {
+    
+    //prepare
+    auto bar = orientation == Qt::Orientation::Vertical ? this->verticalScrollBar() : this->horizontalScrollBar();
+    auto controller = orientation == Qt::Orientation::Vertical ? &this->_numScheduledMovesVertical : &this->_numScheduledMovesHorizontal;
+
+    //anim handler
+    auto anim = new AnimationTimeLine(controller, correction, this);
+    QObject::connect(
+        anim, &AnimationTimeLine::stepPassed,
+        [bar, correction](int* stateController, qreal x) {
+            bar->setValue(bar->value() + correction);
+        }
+    );
+    anim->start();
+
+}
+
+//////////////
+/* END MOVE */
+//////////////
+
+//////////
 /* ZOOM */
 //////////
+
+void MapView::_goToDefaultZoom() {
+    auto corrected = 1/(this->_currentRelScale);
+    this->scale(corrected, corrected);
+    this->_currentRelScale = 1;
+}
 
 void MapView::wheelEvent(QWheelEvent *event) {
 
@@ -337,41 +371,21 @@ void MapView::wheelEvent(QWheelEvent *event) {
 
     int numDegrees = event->delta() / 8;
     int numSteps = numDegrees / 15; // see QWheelEvent documentation
-    this->_numScheduledScalings += numSteps;
-    
-    if (this->_numScheduledScalings * numSteps < 0) {
-        this->_numScheduledScalings = numSteps; // if user moved the wheel in another direction, we reset previously scheduled scalings
-    } 
-    
-    QTimeLine *anim = new QTimeLine(350, this);
-    anim->setUpdateInterval(20);
 
-    QObject::connect(anim, &QTimeLine::valueChanged, this, &MapView::_zoomBy_scalingTime);
-    QObject::connect(anim, &QTimeLine::finished, this, &MapView::_zoomBy_animFinished);
-    
+    //define animation handler
+    auto anim = new AnimationTimeLine(&this->_numScheduledScalings, numSteps, this);
+    QObject::connect(
+        anim, &AnimationTimeLine::stepPassed,
+        this, &MapView::_zoomBy_scalingTime
+    );
     anim->start();
 };
 
-void MapView::_zoomBy_scalingTime(qreal x) {
-    qreal factor = 1.0 + qreal(this->_numScheduledScalings) / 300.0;
+void MapView::_zoomBy_scalingTime(int* stateController, qreal x) {
+    qreal factor = 1.0 + qreal(*stateController) / 300.0;
     this->_currentRelScale = factor * this->_currentRelScale;
     this->scale(factor, factor);
     //qDebug() << "zooming by " << factor << " (" << qreal(this->_currentRelScale) << " from initial)";
-}
-
-void MapView::_goToDefaultZoom() {
-    auto corrected = 1/(this->_currentRelScale);
-    this->scale(corrected, corrected);
-    this->_currentRelScale = 1;
-}
-
-void MapView::_zoomBy_animFinished() {
-    if (this->_numScheduledScalings > 0) {
-        this->_numScheduledScalings--;
-    } else {
-        this->_numScheduledScalings++;
-        this->sender()->deleteLater();
-    }
 }
 
 //////////////
@@ -381,6 +395,20 @@ void MapView::_zoomBy_animFinished() {
 ////////////
 /* ROTATE */
 ////////////
+
+void MapView::_animatedRotation(double deg) {
+    
+    //define animation handler
+    auto anim = new AnimationTimeLine(&this->_numScheduledRotations, deg, this);
+    QObject::connect(
+        anim, &AnimationTimeLine::stepPassed,
+        [&, deg](int* stateController, qreal x) {
+            this->_rotate(deg);
+        }
+    );
+    anim->start();
+
+}
 
 void MapView::_rotateFromPoint(const QPoint &evtPoint) {
     const auto way = this->_lastPointMousePressing - evtPoint;

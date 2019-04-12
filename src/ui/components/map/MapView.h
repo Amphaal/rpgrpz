@@ -22,6 +22,7 @@
 
 #include "MapTools.h"
 #include "base/AssetsNavigator.h"
+#include "base/AnimationTimeLine.hpp"
 
 #include "src/shared/map/MapHintViewBinder.h"
 #include "src/shared/RPZAsset.hpp"
@@ -86,24 +87,28 @@ class MapView : public QGraphicsView, public ClientBindable {
             void _toolOnMouseRelease(const MapTools::Actions &tool);
 
         //moving...
+            int _numScheduledMovesVertical = 0;
+            int _numScheduledMovesHorizontal = 0;
             const int _defaultSceneSize = 36000;
             void _goToSceneCenter();
+            void _animatedMove(const Qt::Orientation &orientation, int correction);
 
         //rotating...
+            int _numScheduledRotations = 0;
             QCursor * _rotateCursor = nullptr;
             double _degreesFromNorth = 0;
             void _rotateFromPoint(const QPoint &evtPoint);
             void _rotate(double deg);
+            void _animatedRotation(double deg);
             void _rotateBackToNorth();
 
         //zooming...
             const double _defaultScale = 5;
+            int _numScheduledScalings = 0;
             double _currentRelScale = 1;
             void _goToDefaultZoom();
-            int _numScheduledScalings = 0;
             void _zoomBy(const qreal factor);
-            void _zoomBy_scalingTime(const qreal x);
-            void _zoomBy_animFinished();
+            void _zoomBy_scalingTime(int* stateController, const qreal x);
         
         //droping..
             // QPoint* _latestPosDrop;
