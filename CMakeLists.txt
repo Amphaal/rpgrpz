@@ -144,8 +144,8 @@ list(APPEND SOURCES
     src/ui/components/communication/logs/UsersLog.hpp
     src/ui/components/communication/ChatWidget.cpp
     src/ui/components/communication/ConnectWidget.cpp
-    src/ui/components/communication/AudioStreamController.cpp
-    src/ui/components/communication/AudioStreamNotifier.cpp
+    src/ui/components/communication/audio/AudioStreamController.cpp
+    src/ui/components/communication/audio/AudioStreamNotifier.cpp
 )
 
 #main

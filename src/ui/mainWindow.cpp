@@ -128,20 +128,19 @@ void MainWindow::_initUIApp() {
     this->_connectWidget = new ConnectWidget(this);
     this->_cw = new ChatWidget(this);
     this->_mapView = new MapView(this);
-    //this->_streamNotifier = new AudioStreamNotifier(this);
+    this->_streamNotifier = new AudioStreamNotifier(this);
+    this->_streamController = new AudioStreamController(this);
     this->_assetsManager = new AssetsManager(this);
     this->_mapTools = new MapTools(this);
     this->_mlManager = new MapLayoutManager(this);
-
-    //place them...
     
     //assets
-    auto tabs = new QTabWidget(this);
-    tabs->addTab(this->_assetsManager, "Boite à jouets");
-    tabs->addTab(this->_mlManager, "Elements de la carte");
+    auto assetTabs = new QTabWidget(this);
+    assetTabs->addTab(this->_assetsManager, "Boite à jouets");
+    assetTabs->addTab(this->_mlManager, "Elements de la carte");
 
     //designer
-    auto designer = new QWidget();
+    auto designer = new QWidget;
     designer->setLayout(new QVBoxLayout);
     designer->layout()->setMargin(0);
     designer->layout()->setSpacing(2);
@@ -149,17 +148,25 @@ void MainWindow::_initUIApp() {
     designer->layout()->addWidget(this->_mapView);
 
     //Chat...
+    auto audio = new QWidget;
+    audio->setLayout(new QVBoxLayout);
+    audio->setContentsMargins(0, 0, 0, 0);
+    audio->layout()->addWidget(this->_streamController);
+    audio->layout()->addWidget(this->_streamNotifier);
+    
+    auto eTabs = new QTabWidget(this);
+    eTabs->addTab(this->_cw, "Chat de la partie");
+    eTabs->addTab(audio, "Audio");
+
     auto right = new QWidget;
     right->setLayout(new QVBoxLayout);
     right->layout()->setMargin(0);
     right->layout()->addWidget(this->_connectWidget);
-    right->layout()->addWidget(this->_cw);
-    //right->layout()->addWidget(this->_streamNotifier);
-
-
+    right->layout()->addWidget(eTabs);
+    
     //final
     auto centralWidget = (RestoringSplitter*)this->centralWidget();
-    centralWidget->addWidget(tabs);
+    centralWidget->addWidget(assetTabs);
     centralWidget->addWidget(designer);
     centralWidget->addWidget(right);
     centralWidget->setStretchFactor(0, 0);
@@ -183,8 +190,8 @@ void MainWindow::_initUIApp() {
     //move to map content tab when selection changed inside the map
     QObject::connect(
         this->_mapView->scene(), &QGraphicsScene::selectionChanged,
-        [tabs]() {
-            tabs->setCurrentIndex(1);
+        [assetTabs]() {
+            assetTabs->setCurrentIndex(1);
         }
     );
 

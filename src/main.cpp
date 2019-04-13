@@ -7,7 +7,7 @@
 #include <QImageReader>
 
 #include "src/helpers/_const.hpp"
-#include "src/helpers/_messageHandler.hpp"
+#include "src/helpers/_logWriter.hpp"
 
 #include "src/network/rpz/server/RPZServer.h"
 
@@ -48,7 +48,7 @@ int clientApp(int argc, char** argv) {
     qRegisterMetaType<std::string>("std::string");
 
     //message handler
-    qInstallMessageHandler(msgHandler::customMO);
+    qInstallMessageHandler(LogWriter::customMO);
 
     //preload log
     qDebug() << "handled image formats " << QImageReader::supportedImageFormats();

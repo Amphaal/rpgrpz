@@ -1,7 +1,7 @@
 #include "ChatWidget.h"
 
 ChatWidget::ChatWidget(QWidget *parent) : 
-            QGroupBox(parent),
+            QWidget(parent),
             _chatLog(new MessagesLog),
             _usersLog(new UsersLog),
             _chatEdit(new ChatEdit) {
@@ -16,8 +16,6 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 void ChatWidget::_instUI() {
 
-    this->setTitle("Chat de la partie");
-    this->setAlignment(Qt::AlignHCenter);
     this->setLayout(new QVBoxLayout);
     
     ///////////////

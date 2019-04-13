@@ -7,7 +7,7 @@
 
 #include "_const.hpp"
 
-class msgHandler {
+class LogWriter {
     public:
         static void customMO(QtMsgType type, const QMessageLogContext &context, const QString &msg) {   
             

@@ -7,8 +7,6 @@
 #include <QStyle>
 #include "src/ui/components/others/RestoringSplitter.hpp"
 
-#include <QGroupBox>
-
 #include "src/network/rpz/client/RPZClient.h"
 
 #include "src/shared/RPZMessage.hpp"
@@ -21,7 +19,7 @@
 #include "logs/MessagesLog.hpp"
 
 
-class ChatWidget : public QGroupBox, public ClientBindable {
+class ChatWidget : public QWidget, public ClientBindable {
 
     Q_OBJECT
 

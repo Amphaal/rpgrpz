@@ -1,8 +1,8 @@
 #pragma once
 
-#include <QWidget>
+#include <QGroupBox>
 
-class AudioStreamController : public QWidget {
+class AudioStreamController : public QGroupBox {
     public:
         AudioStreamController(QWidget * parent = nullptr);
 };
