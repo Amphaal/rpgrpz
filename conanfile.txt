@@ -22,3 +22,4 @@ bin, Qt5Gui*.dll -> ./bin
 bin, Qt5Network*.dll -> ./bin 
 bin, Qt5Svg*.dll -> ./bin 
 bin, Qt5OpenGL*.dll -> ./bin 
+bin, Qt5Multimedia*.dll -> ./bin 
