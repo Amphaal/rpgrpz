@@ -9,6 +9,7 @@ cmake_paths
 
 [options]
 qt:qtsvg=True
+qt:qtmultimedia=True
 
 [imports]
 

@@ -85,13 +85,14 @@ SET(SOURCES
 ####################
 
 # Define required linked QT libs
-find_package(Qt5 REQUIRED COMPONENTS Core Widgets Network Svg OpenGL)
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets Network Svg OpenGL Multimedia)
 SET(EXT_LIBS 
     Qt5::Widgets 
     Qt5::Core
     Qt5::Network
     Qt5::Svg
     Qt5::OpenGL
+    Qt5::Multimedia
 )
 
 #private libs
@@ -106,8 +107,6 @@ file(GLOB_RECURSE INT_LIBS
 
 #QThread derivatives
 list(APPEND SOURCES
-    src/network/audio/client/ACThread.h
-    src/network/audio/server/ASThread.h
     src/network/uPnP/uPnPThread.h
 )
 
@@ -136,6 +135,8 @@ list(APPEND SOURCES
     src/ui/components/map/MapLayoutManager.cpp
     src/ui/components/map/AssetsManager.cpp
 
+    src/ui/components/others/RPZStatusBar.hpp
+    src/ui/components/others/UpdaterUIIntegrator.hpp
 
     src/ui/components/communication/ChatEdit.cpp
     src/ui/components/communication/logs/base/LogContainer.cpp

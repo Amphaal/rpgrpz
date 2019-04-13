@@ -115,6 +115,11 @@
         "stack": "cpp",
         "qqueue": "cpp",
         "qrandomgenerator": "cpp",
-        "qjsonobject": "cpp"
+        "qjsonobject": "cpp",
+        "qobject": "cpp",
+        "qmediaplayer": "cpp",
+        "qiodevice": "cpp",
+        "qfile": "cpp",
+        "qstatusbar": "cpp"
     }
 }

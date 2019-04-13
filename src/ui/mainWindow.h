@@ -1,14 +1,11 @@
 #pragma once
 
-#include "src/localization/i18n.cpp"
-#include "libs/qtautoupdater/autoupdatercore/updater.h"
+#include "src/localization/i18n.hpp"
 
 #include <QMainWindow>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QGraphicsItem>
-#include <QClipboard>
-#include <QToolTip>
 #include <QGraphicsScene>
 #include <QDesktopServices>
 #include <QTabWidget>
@@ -31,7 +28,8 @@
 #include "src/ui/components/map/MapLayoutManager.h"
 
 #include "src/ui/components/others/RestoringSplitter.hpp"
-
+#include "src/ui/components/others/UpdaterUIIntegrator.hpp"
+#include "src/ui/components/others/RPZStatusBar.hpp"
 
 
 class MainWindow : public QMainWindow { 
@@ -59,14 +57,7 @@ class MainWindow : public QMainWindow {
         void _initUIApp();
 
         /*statusbar*/
-        QLabel* _localIpLabel;
-        QLabel* _extIpLabel;
-        QLabel* _upnpStateLabel;
-        QLabel* _serverStateLabel;
-        void updateUPnPLabel(const std::string &state);
-        void updateExtIPLabel(const std::string &state, const bool isOn);
-        void updateIntIPLabel(const std::string &state);
-        void updateServerStateLabel(const std::string &state);
+        RPZStatusBar* _sb;
         void _initUIStatusBar();
 
         /*menu*/
@@ -76,12 +67,5 @@ class MainWindow : public QMainWindow {
         QMenu* _getFileMenu();
         QMenu* _getHelpMenu();
 
-        /*auto updated*/
-        QtAutoUpdater::Updater *updater;
-        bool userNotificationOnUpdateCheck = false;
-        void UpdateSearch_switchUI(const bool isSearching);
-        void _setupAutoUpdate();
-        void onUpdateChecked(const bool hasUpdate, const bool hasError);
-        void requireUpdateCheckFromUser();
-        void checkForAppUpdates();
+        UpdaterUIIntegrator* _updateIntegrator = nullptr;
 };

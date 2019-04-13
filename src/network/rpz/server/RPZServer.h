@@ -24,6 +24,8 @@
 
 #include "src/helpers/_const.hpp"
 
+#include "src/network/audio/server/AudioServer.h"
+
 
 class RPZServer : public QTcpServer, public JSONRouter { 
     
@@ -33,6 +35,7 @@ class RPZServer : public QTcpServer, public JSONRouter {
         RPZServer(QObject* parent = nullptr);
         ~RPZServer();
         void run();
+        AudioServer* audioServer();
 
     signals:
         void listening();
@@ -41,6 +44,7 @@ class RPZServer : public QTcpServer, public JSONRouter {
     private:
         QHash<JSONSocket*, QUuid> _idsByClientSocket;
         JSONSocket* _hostSocket = nullptr;
+        AudioServer* _audioServ = nullptr; 
         
         //users
         QHash<QUuid, RPZUser> _usersById;
@@ -61,9 +65,8 @@ class RPZServer : public QTcpServer, public JSONRouter {
         void _sendStoredMessages(JSONSocket * clientSocket);
         void _broadcastMessage(RPZMessage &messageToBroadcast);
         
-
+        //internal
         void _onNewConnection();
         void _onDisconnect();
-
         void _routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) override;
 };

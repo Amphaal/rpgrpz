@@ -24,12 +24,10 @@
                 "C:/.conan/2bfee4/1/include/QtNetwork",
                 "C:/.conan/2bfee4/1/include/QtWidgets",
                 "${workspaceFolder}/libs/upnpc_custom",
-                "${workspaceFolder}/libs/upnpc_custom",
                 "C:/.conan/2bfee4/1/include/QtGui",
                 "C:/.conan/2bfee4/1/include/QtOpenGL",
-                "C:/.conan/30aa3c/1/qt5/qtsvg/include/QtSvg",
-                "C:/.conan/30aa3c/1/qt5/qtsvg/include/QtSvg",
-                "C:/.conan/30aa3c/1/qt5/qtsvg/include"
+                "C:/.conan/30aa3c/1/qt5/qtsvg/include",
+                "C:/.conan/c30a5d/1/qt5/qtmultimedia/include/QtMultimedia"
             ]
         }
     ],

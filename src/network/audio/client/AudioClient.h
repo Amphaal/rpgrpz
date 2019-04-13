@@ -1,17 +1,13 @@
 #pragma once
 
-#include <QUdpSocket>
-#include <QString>
+#include "../_any/AudioBase.hpp"
 
-#include "ACThread.h"
+#include <QNetworkDatagram>
 
-class AudioClient : public ACThread {
+class AudioClient : public AudioBase { 
     public:
         AudioClient(const QString &domain, const QString &port);
-        void run() override;
 
     private:
-        QString _port;
-        QString _name;
-        QUdpSocket* _listeningSocket;
+        void _onReceivedDatagram();
 };
