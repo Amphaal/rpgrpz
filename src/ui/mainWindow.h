@@ -19,8 +19,8 @@
 
 #include "src/ui/components/communication/ConnectWidget.h"
 #include "src/ui/components/communication/ChatWidget.h"
-#include "src/ui/components/communication/audio/AudioStreamNotifier.h"
 #include "src/ui/components/communication/audio/AudioStreamController.h"
+#include "src/ui/components/communication/audio/PlaylistController.h"
 
 #include "src/ui/components/map/AssetsManager.h"
 #include "src/ui/components/map/MapView.h"
@@ -49,8 +49,8 @@ class MainWindow : public QMainWindow {
 
         MapView* _mapView = nullptr;
         ConnectWidget* _connectWidget;
-        AudioStreamNotifier* _streamNotifier;
-        AudioStreamController* _streamController;
+        AudioStreamController* _streamNotifier;
+        PlaylistController* _streamController;
         ChatWidget* _cw = nullptr;;
         AssetsManager* _assetsManager;
         MapTools* _mapTools;

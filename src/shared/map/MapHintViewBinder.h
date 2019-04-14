@@ -3,7 +3,7 @@
 #include <QGraphicsView>
 #include <QWidget>
 
-#include "src/shared/AlterationPayload.hpp"
+#include "src/shared/network/AlterationPayload.hpp"
 
 #include "MapHint.h"
 

@@ -5,8 +5,8 @@
 #include <QUuid>
 #include <QVector>
 
-#include "Serializable.hpp"
-#include "_serializer.hpp"
+#include "../Serializable.hpp"
+#include "../_serializer.hpp"
 #include "Ownable.hpp"
 
 #include "src/shared/map/MapHint.h"

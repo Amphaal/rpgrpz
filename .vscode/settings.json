@@ -120,6 +120,7 @@
         "qmediaplayer": "cpp",
         "qiodevice": "cpp",
         "qfile": "cpp",
-        "qstatusbar": "cpp"
+        "qstatusbar": "cpp",
+        "qnetworkdatagram": "cpp"
     }
 }

@@ -2,6 +2,7 @@
 
 #include "../_any/AudioBase.hpp"
 
+#include <QByteArray>
 #include <QNetworkDatagram>
 
 class AudioClient : public AudioBase { 

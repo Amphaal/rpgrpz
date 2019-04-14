@@ -1,22 +1,14 @@
 #include "AudioServer.h"
 
-AudioServer::AudioServer(const QString &port) : AudioBase(port), _kbpsTimer(new QTimer) { 
-
-    //update count buffer at every successful writing
+AudioServer::AudioServer(const QString &port) : AudioBase(port) { 
+    
+    //complete signal data
     QObject::connect(
-        this->_socket, &QIODevice::bytesWritten,
-        [&](qint64 bytes) {
-            this->_bpsCountBuffer += bytes;
+        this, &AudioBase::kbpsSent,
+        [&](double kbps) {
+            emit kbpsSent(kbps, this->_clients.size());
         }
     );
-
-    //every second, send kbps
-    QObject::connect(
-        this->_kbpsTimer, &QTimer::timeout,
-        this, &AudioServer::emitKbpsSent
-    );
-    this->_kbpsTimer->setInterval(1000);
-    this->_kbpsTimer->start();
 
 };
 
@@ -34,15 +26,6 @@ void AudioServer::addClient(JSONSocket* client) {
         }
     );
 
-}
-
-void AudioServer::emitKbpsSent() {
-    if(!this->_bpsCountBuffer == this->_lastBpsEmission) return;
-    
-    emit kbpsSent(this->_bpsCountBuffer / 1000, this->_clients.size());
-
-    this->_lastBpsEmission = this-> _bpsCountBuffer;
-    this-> _bpsCountBuffer= 0;
 }
 
 void AudioServer::sendAudio(const QString &pathToAudio) {

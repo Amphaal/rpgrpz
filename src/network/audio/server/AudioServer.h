@@ -3,9 +3,8 @@
 #include <QSet>
 #include <QHostAddress>
 #include <QFile>
-#include <QIODevice>
 #include <QByteArray>
-#include <QTimer>
+
 
 #include "../_any/AudioBase.hpp"
 #include "../../rpz/_any/JSONSocket.h"
@@ -27,8 +26,4 @@ class AudioServer : public AudioBase {
     private:
         QSet<QHostAddress> _clients;
         qint64 _maxChunkSize = 1000;
-        QTimer* _kbpsTimer;
-        qint64 _bpsCountBuffer = 0;
-        qint64 _lastBpsEmission;
-        void emitKbpsSent();
 };

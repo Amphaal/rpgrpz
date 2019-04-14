@@ -17,10 +17,9 @@
 #include "src/network/rpz/_any/JSONRouter.h"
 
 #include "src/shared/map/MapHint.h"
-#include "src/shared/AlterationPayload.hpp"
-
-#include "src/shared/RPZMessage.hpp"
-#include "src/shared/RPZUser.hpp"
+#include "src/shared/network/AlterationPayload.hpp"
+#include "src/shared/network/RPZMessage.hpp"
+#include "src/shared/network/RPZUser.hpp"
 
 #include "src/helpers/_const.hpp"
 

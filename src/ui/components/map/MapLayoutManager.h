@@ -8,7 +8,7 @@
 #include <QIcon>
 
 #include "MapView.h"
-#include "src/shared/RPZAsset.hpp"
+#include "src/shared/network/RPZAsset.hpp"
 #include "base/RPZTree.hpp"
 
 class MapLayoutManager : public RPZTree {

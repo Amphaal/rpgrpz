@@ -12,8 +12,20 @@ AudioClient::AudioClient(const QString &domain, const QString &port) : AudioBase
 }
 
 void AudioClient::_onReceivedDatagram() {
+    
+    //while datagrams waiting to be handled
     while (this->_socket->hasPendingDatagrams()) {
+
+        //receive data
         auto datagram = this->_socket->receiveDatagram();
-        //processTheDatagram(datagram);
+        if(!datagram.isValid()) continue;
+
+        //extract data, inform bps counter
+        auto data = datagram.data();
+        this->_accountBpsIn(data.size());
+
+        //TODO processTheDatagram
+
     }
+
 }

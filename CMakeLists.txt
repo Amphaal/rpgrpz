@@ -113,6 +113,7 @@ list(APPEND SOURCES
 #functionnal components
 list(APPEND SOURCES
     src/network/rpz/_any/JSONSocket.cpp
+    src/network/audio/_any/AudioBase.hpp
     src/network/audio/client/AudioClient.cpp
     src/network/audio/server/AudioServer.cpp
     src/network/rpz/client/RPZClient.cpp
@@ -144,8 +145,8 @@ list(APPEND SOURCES
     src/ui/components/communication/logs/UsersLog.hpp
     src/ui/components/communication/ChatWidget.cpp
     src/ui/components/communication/ConnectWidget.cpp
+    src/ui/components/communication/audio/PlaylistController.cpp
     src/ui/components/communication/audio/AudioStreamController.cpp
-    src/ui/components/communication/audio/AudioStreamNotifier.cpp
 )
 
 #main

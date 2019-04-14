@@ -10,7 +10,7 @@
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/network/rpz/_any/JSONRouter.h"
 
-#include "src/shared/RPZMessage.hpp"
+#include "src/shared/network/RPZMessage.hpp"
 
 #include "src/helpers/_const.hpp"
 

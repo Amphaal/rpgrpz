@@ -21,8 +21,7 @@ void MainWindow::_trueShow() {
 //handle clean close
 void MainWindow::closeEvent(QCloseEvent *event) {
 
-    if(this->_mapView) this->_mapView->unbindRPZClient();
-    if(this->_cw) this->_cw->unbindRPZClient();
+    ClientBindable::unbindAll();
 
     event->accept();
 }
@@ -128,16 +127,16 @@ void MainWindow::_initUIApp() {
     this->_connectWidget = new ConnectWidget(this);
     this->_cw = new ChatWidget(this);
     this->_mapView = new MapView(this);
-    this->_streamNotifier = new AudioStreamNotifier(this);
-    this->_streamController = new AudioStreamController(this);
+    this->_streamNotifier = new AudioStreamController(this);
+    this->_streamController = new PlaylistController(this);
     this->_assetsManager = new AssetsManager(this);
     this->_mapTools = new MapTools(this);
     this->_mlManager = new MapLayoutManager(this);
     
     //assets
     auto assetTabs = new QTabWidget(this);
-    assetTabs->addTab(this->_assetsManager, "Boite à jouets");
-    assetTabs->addTab(this->_mlManager, "Elements de la carte");
+    assetTabs->addTab(this->_assetsManager, QIcon(":/icons/app/tabs/box.png"), "Boite à jouets");
+    assetTabs->addTab(this->_mlManager, QIcon(":/icons/app/tabs/list.png"), "Elements de la carte");
 
     //designer
     auto designer = new QWidget;
@@ -155,8 +154,8 @@ void MainWindow::_initUIApp() {
     audio->layout()->addWidget(this->_streamNotifier);
     
     auto eTabs = new QTabWidget(this);
-    eTabs->addTab(this->_cw, "Chat de la partie");
-    eTabs->addTab(audio, "Audio");
+    eTabs->addTab(this->_cw, QIcon(":/icons/app/tabs/chat.png"), "Chat de la partie");
+    eTabs->addTab(audio, QIcon(":/icons/app/tabs/playlist.png"), "Audio");
 
     auto right = new QWidget;
     right->setLayout(new QVBoxLayout);
@@ -181,10 +180,7 @@ void MainWindow::_initUIApp() {
     //bind RPZClient to widget once a connection starts
     QObject::connect(
         this->_connectWidget, &ConnectWidget::startingConnection, 
-        [&](RPZClient* cc) {
-            this->_cw->bindToRPZClient(cc);
-            this->_mapView->bindToRPZClient(cc);
-        }
+        ClientBindable::bindAll
     );
 
     //move to map content tab when selection changed inside the map

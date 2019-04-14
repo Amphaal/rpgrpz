@@ -3,7 +3,7 @@
 #include "src/shared/map/MapHint.h"
 #include "RPZAsset.hpp"
 
-#include "Serializable.hpp"
+#include "../Serializable.hpp"
 
 class AlterationPayload : public Serializable {
     public:

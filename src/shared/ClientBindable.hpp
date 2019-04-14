@@ -6,6 +6,23 @@
 class ClientBindable {
     
     public:
+
+        ClientBindable() {
+            _boundWidgets.append(this);
+        }
+        
+        static void bindAll(RPZClient* cc) {
+            for(auto widget : _boundWidgets) {
+                widget->bindToRPZClient(cc);
+            }
+        }
+
+        static void unbindAll() {
+            for(auto widget : _boundWidgets) {
+                widget->unbindRPZClient();
+            }
+        }
+
         virtual void bindToRPZClient(RPZClient* cc) {
             
             this->unbindRPZClient();
@@ -29,4 +46,7 @@ class ClientBindable {
 
     protected:
         RPZClient* _rpzClient = nullptr;
+    
+    private:
+        static inline QVector<ClientBindable*> _boundWidgets = QVector<ClientBindable*>();
 };
