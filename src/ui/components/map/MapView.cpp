@@ -476,6 +476,12 @@ void MapView::dragEnterEvent(QDragEnterEvent *event) {
 /////////////
 
 void MapView::_beginDrawing() {
+    
+    if(this->_tempDrawing) {
+        delete this->_tempDrawing;
+        this->_tempDrawing = nullptr;
+    }
+
     this->_tempDrawing = new QPainterPath(this->mapToScene(this->_lastPointMousePressed));
 }
 
@@ -493,8 +499,6 @@ void MapView::_endDrawing() {
         this->_hints->alterSceneFromAsset(RPZAsset::Alteration::Added, newAsset);
     }
 
-    this->_tempDrawing = nullptr;
-
     //destroy temp
     for(auto &i : this->_tempLines) {
         delete i;
@@ -504,12 +508,17 @@ void MapView::_endDrawing() {
 
 void MapView::_drawLineTo(const QPoint &evtPoint) {
 
+    //define vector
+    auto from = this->mapToScene(this->_lastPointMousePressing);
+    auto to = this->mapToScene(evtPoint);
+    auto lineCoord = QLineF(from, to);
+
     //save
-    this->_tempDrawing->lineTo(this->mapToScene(evtPoint));
+    this->_tempDrawing->lineTo(to);
 
     //draw temp line
-    const auto lineCoord = QLineF(this->mapToScene(this->_lastPointMousePressing), this->mapToScene(evtPoint));
-    auto tempLine = this->scene()->addLine(lineCoord, this->_getPen());
+    auto currentPen = this->_getPen();
+    auto tempLine = this->scene()->addLine(lineCoord, currentPen);
     this->_tempLines.append(tempLine);
 }
 

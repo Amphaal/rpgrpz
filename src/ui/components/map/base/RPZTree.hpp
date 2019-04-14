@@ -11,11 +11,24 @@ class RPZTree : public QTreeWidget {
     
     protected:
         void keyPressEvent(QKeyEvent * event) override {
+            
+            auto key = (Qt::Key)event->key();
+            auto modifiers = event->modifiers();
 
-            switch(event->key()) {
+            //switch
+            switch(key) {
+
+                // up/down
                 case Qt::Key::Key_Up:
                 case Qt::Key::Key_Down:
-                    this->_selectNext((Qt::Key)event->key());
+                    this->_selectNext(key);
+                    break;
+
+                //CTRL + A, select all
+                case Qt::Key::Key_A:
+                    if(modifiers == Qt::Modifier::CTRL) {
+                        this->selectAll();
+                    }
                     break;
             }
         }
@@ -36,14 +49,17 @@ class RPZTree : public QTreeWidget {
                 QTreeWidgetItem* selected = nullptr;
                 int n_selector = 0;
                 switch(key) {
+
                     case Qt::Key::Key_Up:
                         selected = this->selectedItems().first();
                         n_selector = -1;
                         break;
+
                     case Qt::Key::Key_Down:
                         selected = this->selectedItems().last();
                          n_selector = 1;
                         break;
+    
                 }
 
                 //find next elem

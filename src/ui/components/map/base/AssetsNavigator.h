@@ -18,9 +18,10 @@ class AssetsNavigator : public RPZTree {
         AssetsNavigator(QWidget * parent = nullptr);
     
     private:
+        //drag and drop
         QMimeDatabase* _MIMEDb;
         void dropEvent(QDropEvent *event) override;
         void dragEnterEvent(QDragEnterEvent *event) override;
         void dragMoveEvent(QDragMoveEvent * event) override;
-        Qt::DropActions supportedDropActions() const;
+        Qt::DropActions supportedDropActions() const override;
 };

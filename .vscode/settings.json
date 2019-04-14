@@ -121,6 +121,10 @@
         "qiodevice": "cpp",
         "qfile": "cpp",
         "qstatusbar": "cpp",
-        "qnetworkdatagram": "cpp"
+        "qnetworkdatagram": "cpp",
+        "qdragenterevent": "cpp",
+        "qlistwidget": "cpp",
+        "qstringlistmodel": "cpp",
+        "qslider": "cpp"
     }
 }

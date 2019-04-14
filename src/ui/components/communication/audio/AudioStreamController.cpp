@@ -1,6 +1,6 @@
 #include "AudioStreamController.h"
 
-AudioStreamController::AudioStreamController(QWidget * parent) : QGroupBox(parent) {
+AudioStreamController::AudioStreamController(QWidget * parent) : QGroupBox(parent), _toolbar(new AudioStreamToolbar(this)) {
     this->setEnabled(false);
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     
@@ -9,6 +9,7 @@ AudioStreamController::AudioStreamController(QWidget * parent) : QGroupBox(paren
 
     this->setLayout(new QHBoxLayout);
     this->layout()->addWidget(new QLabel("Pas de musique jouée"));
+    this->layout()->addWidget(_toolbar);
 }
 
 void AudioStreamController::bindToRPZClient(RPZClient * cc) {

@@ -20,5 +20,11 @@
         <file>icons/app/tabs/playlist.png</file>
         <file>icons/app/tabs/chat.png</file>
         <file>icons/app/tabs/box.png</file>
+        <file>icons/app/audio/play.png</file>
+        <file>icons/app/audio/pause.png</file>
+        <file>icons/app/audio/rewind.png</file>
+        <file>icons/app/audio/forward.png</file>
+        <file>icons/app/audio/volume.png</file>
+        <file>icons/app/audio/mute.png</file>
     </qresource>
 </RCC>
