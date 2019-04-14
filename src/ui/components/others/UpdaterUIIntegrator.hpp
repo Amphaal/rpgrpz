@@ -35,6 +35,11 @@ class UpdaterUIIntegrator : public QObject {
             //start the update check
             this->checkForAppUpdates();
         }
+
+        void openMaintenanceTool() {
+            this->_updater->runUpdaterOnExit();
+            this->_wParent->close();
+        }
     
     public slots:
         void requireUpdateCheckFromUser() {
@@ -95,8 +100,7 @@ class UpdaterUIIntegrator : public QObject {
             );
             
             if(msgboxRslt == QMessageBox::Yes) {
-                this->_updater->runUpdaterOnExit();
-                this->_wParent->close();
+                this->openMaintenanceTool();
             } else {
                 emit stateChanged(false);
             }

@@ -5,6 +5,7 @@ using namespace std;
 class Translator_EN : public ITranslator {
     std::string Menu_File() const { return "File"; }
     std::string Menu_Tools() const { return "Tools"; }
+    std::string Menu_OpenMaintenanceTool() const { return "Open the maintenance tool"; };
     std::string Menu_Patchnotes(const std::string &version) { return version + " - Patch Notes"; }
     std::string Menu_Help() const { return "Help"; }
     std::string Menu_Options() const { return "Options"; }

@@ -250,6 +250,13 @@ QMenu* MainWindow::_getToolsMenu() {
 
     auto toolsMenuItem = new QMenu(I18n::tr()->Menu_Tools().c_str());
 
+    //maintenance tool
+    auto openMaintenanceToolAction = new QAction(I18n::tr()->Menu_OpenMaintenanceTool().c_str(), toolsMenuItem);
+    QObject::connect(
+        openMaintenanceToolAction, &QAction::triggered,
+        this->_updateIntegrator, &UpdaterUIIntegrator::openMaintenanceTool
+    );
+
     //full log
     auto openLogAction = new QAction(I18n::tr()->Menu_OpenLog().c_str(), toolsMenuItem);
     QObject::connect(
@@ -278,6 +285,9 @@ QMenu* MainWindow::_getToolsMenu() {
         }
     );
 
+    //layout
+    toolsMenuItem->addAction(openMaintenanceToolAction);
+    toolsMenuItem->addSeparator();
     toolsMenuItem->addAction(openDataFolderAction);
     toolsMenuItem->addSeparator();
     toolsMenuItem->addAction(openLogAction);

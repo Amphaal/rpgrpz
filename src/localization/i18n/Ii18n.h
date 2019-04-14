@@ -5,6 +5,7 @@
 class ITranslator {
     public:
         virtual std::string Menu_File() const = 0;
+        virtual std::string Menu_OpenMaintenanceTool() const = 0;
         virtual std::string Menu_Tools() const = 0;
         virtual std::string Menu_Patchnotes(const std::string &version) = 0;
         virtual std::string Menu_Help() const = 0;

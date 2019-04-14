@@ -15,7 +15,7 @@ SET(PEM_CERT_NAME "cacert.pem")
 #version
 SET(CMAKE_PROJECT_VERSION_MAJOR 0)
 SET(CMAKE_PROJECT_VERSION_MINOR 8)
-SET(CMAKE_PROJECT_VERSION_PATCH 5)
+SET(CMAKE_PROJECT_VERSION_PATCH 4)
 
 #set default maintenance tool path
 SET(MAINTENANCE_TOOL_LOCATION "")
@@ -124,7 +124,7 @@ list(APPEND SOURCES
 
 #ui components
 list(APPEND SOURCES
-
+    
     src/shared/map/MapHint.cpp
     src/shared/map/MapHintViewBinder.cpp
 
