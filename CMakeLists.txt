@@ -128,28 +128,28 @@ list(APPEND SOURCES
     src/shared/map/MapHint.cpp
     src/shared/map/MapHintViewBinder.cpp
 
-    src/ui/components/map/base/AssetsNavigator.cpp
-    src/ui/components/map/base/AssetsPreviewer.cpp
-    src/ui/components/map/base/AnimationTimeLine.hpp
-    src/ui/components/map/MapTools.cpp
-    src/ui/components/map/MapView.cpp
-    src/ui/components/map/MapLayoutManager.cpp
-    src/ui/components/map/AssetsManager.cpp
+    src/ui/map/base/AssetsNavigator.cpp
+    src/ui/map/base/AssetsPreviewer.cpp
+    src/ui/map/base/AnimationTimeLine.hpp
+    src/ui/map/MapTools.cpp
+    src/ui/map/MapView.cpp
+    src/ui/map/MapLayoutManager.cpp
+    src/ui/map/AssetsManager.cpp
 
-    src/ui/components/others/RPZStatusBar.hpp
-    src/ui/components/others/UpdaterUIIntegrator.hpp
+    src/ui/others/RPZStatusBar.hpp
+    src/ui/others/UpdaterUIIntegrator.hpp
 
-    src/ui/components/communication/ChatEdit.cpp
-    src/ui/components/communication/logs/base/LogContainer.cpp
-    src/ui/components/communication/logs/base/LogScrollView.cpp
-    src/ui/components/communication/logs/UsersLog.hpp
-    src/ui/components/communication/ChatWidget.cpp
-    src/ui/components/communication/ConnectWidget.cpp
+    src/ui/communication/ChatEdit.cpp
+    src/ui/communication/logs/base/LogContainer.cpp
+    src/ui/communication/logs/base/LogScrollView.cpp
+    src/ui/communication/logs/UsersLog.hpp
+    src/ui/communication/ChatWidget.cpp
+    src/ui/communication/ConnectWidget.cpp
 
-    src/ui/components/communication/audio/AudioStreamToolbar.hpp
-    src/ui/components/communication/audio/PlaylistToolbar.hpp
-    src/ui/components/communication/audio/PlaylistController.cpp
-    src/ui/components/communication/audio/AudioStreamController.cpp
+    src/ui/communication/audio/AudioStreamToolbar.hpp
+    src/ui/communication/audio/PlaylistToolbar.hpp
+    src/ui/communication/audio/PlaylistController.cpp
+    src/ui/communication/audio/AudioStreamController.cpp
 )
 
 #main

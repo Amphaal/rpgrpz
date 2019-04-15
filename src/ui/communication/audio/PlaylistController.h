@@ -16,7 +16,7 @@
 
 #include <QUrlQuery>
 
-#include "src/shared/ClientBindable.hpp"
+#include "src/ui/others/ClientBindable.hpp"
 
 #include "PlaylistToolbar.hpp"
 

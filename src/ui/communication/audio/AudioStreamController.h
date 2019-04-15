@@ -8,7 +8,7 @@
 #include <QDragMoveEvent>
 #include <QDragEnterEvent>
 
-#include "src/shared/ClientBindable.hpp"
+#include "src/ui/others/ClientBindable.hpp"
 
 #include "AudioStreamToolbar.hpp"
 

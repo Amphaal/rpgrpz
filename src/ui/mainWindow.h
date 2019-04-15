@@ -17,19 +17,20 @@
 #include "src/network/ConnectivityHelper.h"
 #include "src/network/rpz/server/RPZServer.h"
 
-#include "src/ui/components/communication/ConnectWidget.h"
-#include "src/ui/components/communication/ChatWidget.h"
-#include "src/ui/components/communication/audio/AudioStreamController.h"
-#include "src/ui/components/communication/audio/PlaylistController.h"
+#include "src/ui/communication/ConnectWidget.h"
+#include "src/ui/communication/ChatWidget.h"
+#include "src/ui/communication/audio/AudioStreamController.h"
+#include "src/ui/communication/audio/PlaylistController.h"
 
-#include "src/ui/components/map/AssetsManager.h"
-#include "src/ui/components/map/MapView.h"
-#include "src/ui/components/map/MapTools.h"
-#include "src/ui/components/map/MapLayoutManager.h"
+#include "src/ui/map/AssetsManager.h"
+#include "src/ui/map/MapView.h"
+#include "src/ui/map/MapTools.h"
+#include "src/ui/map/MapLayoutManager.h"
 
-#include "src/ui/components/others/RestoringSplitter.hpp"
-#include "src/ui/components/others/UpdaterUIIntegrator.hpp"
-#include "src/ui/components/others/RPZStatusBar.hpp"
+#include "src/ui/others/RestoringSplitter.hpp"
+#include "src/ui/others/UpdaterUIIntegrator.hpp"
+#include "src/ui/others/RPZStatusBar.hpp"
+#include "src/ui/others/AnimatedPlaceholder.hpp"
 
 
 class MainWindow : public QMainWindow { 

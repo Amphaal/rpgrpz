@@ -147,14 +147,19 @@ void MainWindow::_initUIApp() {
     designer->layout()->addWidget(this->_mapView);
 
     //Chat...
-    auto audio = new QWidget;
-    audio->setLayout(new QVBoxLayout);
-    audio->setContentsMargins(0, 0, 0, 0);
-    audio->layout()->addWidget(this->_streamController);
-    audio->layout()->addWidget(this->_streamNotifier);
+    auto chat = new AnimatedPlaceholder(this->_cw, new QLabel("test"));
+
+    //audio...
+    auto audio_content = new QWidget;
+    audio_content->setLayout(new QVBoxLayout);
+    audio_content->setContentsMargins(0, 0, 0, 0);
+    audio_content->layout()->addWidget(this->_streamController);
+    audio_content->layout()->addWidget(this->_streamNotifier);
+    auto audio = new AnimatedPlaceholder(audio_content, new QLabel("test"));
     
+    //right part tab
     auto eTabs = new QTabWidget(this);
-    eTabs->addTab(this->_cw, QIcon(":/icons/app/tabs/chat.png"), "Chat de la partie");
+    eTabs->addTab(chat, QIcon(":/icons/app/tabs/chat.png"), "Chat de la partie");
     eTabs->addTab(audio, QIcon(":/icons/app/tabs/playlist.png"), "Audio");
 
     auto right = new QWidget;

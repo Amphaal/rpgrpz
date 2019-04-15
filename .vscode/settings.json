@@ -125,6 +125,7 @@
         "qdragenterevent": "cpp",
         "qlistwidget": "cpp",
         "qstringlistmodel": "cpp",
-        "qslider": "cpp"
+        "qslider": "cpp",
+        "qgraphicsopacityeffect": "cpp"
     }
 }

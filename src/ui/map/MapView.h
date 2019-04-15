@@ -26,7 +26,7 @@
 
 #include "src/shared/map/MapHintViewBinder.h"
 #include "src/shared/network/RPZAsset.hpp"
-#include "src/shared/ClientBindable.hpp"
+#include "src/ui/others/ClientBindable.hpp"
 
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/network/rpz/client/RPZClient.h"

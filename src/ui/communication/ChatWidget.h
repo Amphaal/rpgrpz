@@ -5,13 +5,13 @@
 
 #include <QtGui/QWindow>
 #include <QStyle>
-#include "src/ui/components/others/RestoringSplitter.hpp"
+#include "src/ui/others/RestoringSplitter.hpp"
 
 #include "src/network/rpz/client/RPZClient.h"
 
 #include "src/shared/network/RPZMessage.hpp"
 #include "src/shared/network/RPZUser.hpp"
-#include "src/shared/ClientBindable.hpp"
+#include "src/ui/others/ClientBindable.hpp"
 
 #include "ChatEdit.h"
 

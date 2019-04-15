@@ -2,9 +2,9 @@
 
 ChatWidget::ChatWidget(QWidget *parent) : 
             QWidget(parent),
-            _chatLog(new MessagesLog),
-            _usersLog(new UsersLog),
-            _chatEdit(new ChatEdit) {
+            _chatLog(new MessagesLog(this)),
+            _usersLog(new UsersLog(this)),
+            _chatEdit(new ChatEdit(this)) {
 
         //this...
         this->_DisableUI();

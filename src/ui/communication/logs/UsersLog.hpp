@@ -20,7 +20,6 @@ class UsersLog : public LogScrollView {
             return &this->_users;
         };
 
-
     public slots:
         void updateUsers(const QVariantHash &users) {
 

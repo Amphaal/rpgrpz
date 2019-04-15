@@ -7,6 +7,8 @@ class MessagesLog : public LogScrollView {
     public:
         enum MessageType { Default, ServerLog, ClientMessage };
 
+        MessagesLog(QWidget *parent = nullptr) : LogScrollView(parent) {};
+
         void writeAtEnd(const QString &newMessage, const MessageType &logType = MessageType::Default) {
             
             auto line = LogScrollView::writeAtEnd(newMessage);

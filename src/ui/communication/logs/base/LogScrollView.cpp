@@ -31,7 +31,7 @@ QWidget* LogScrollView::writeAtEnd(const QString &newMessage) {
 
 void LogScrollView::newLog() {
     this->clearLog();
-    this->_log = new LogContainer;
+    this->_log = new LogContainer(this);
     this->setWidget(this->_log);
 
 }
