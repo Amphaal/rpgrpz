@@ -30,8 +30,6 @@
 #include "src/ui/others/RestoringSplitter.hpp"
 #include "src/ui/others/UpdaterUIIntegrator.hpp"
 #include "src/ui/others/RPZStatusBar.hpp"
-#include "src/ui/others/AnimatedPlaceholder.hpp"
-
 
 class MainWindow : public QMainWindow { 
     public:

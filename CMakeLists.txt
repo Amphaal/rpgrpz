@@ -85,14 +85,13 @@ SET(SOURCES
 ####################
 
 # Define required linked QT libs
-find_package(Qt5 REQUIRED COMPONENTS Core Widgets Network Svg OpenGL Multimedia)
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets Network Svg OpenGL)
 SET(EXT_LIBS 
     Qt5::Widgets 
     Qt5::Core
     Qt5::Network
     Qt5::Svg
     Qt5::OpenGL
-    Qt5::Multimedia
 )
 
 #private libs
