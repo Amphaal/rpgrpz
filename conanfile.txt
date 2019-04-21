@@ -1,23 +1,6 @@
 [requires]
-qt/5.12.2@bincrafters/stable
+OpenSSL/1.1.1b@conan/stable
 miniupnpc/2.1@rhard/testing
 
 [generators]
 cmake
-cmake_find_package
-cmake_paths
-
-[options]
-qt:qtsvg=True
-
-[imports]
-
-#WINDOWS
-plugins/platforms, qwindows*.dll -> ./bin/platforms
-plugins/bearer, qgenericbearer*.dll -> ./bin/bearer
-bin, Qt5Widgets*.dll -> ./bin 
-bin, Qt5Core*.dll -> ./bin 
-bin, Qt5Gui*.dll -> ./bin
-bin, Qt5Network*.dll -> ./bin 
-bin, Qt5Svg*.dll -> ./bin 
-bin, Qt5OpenGL*.dll -> ./bin 

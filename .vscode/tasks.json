@@ -8,27 +8,27 @@
     "tasks": [
         /*DEBUG*/
         {
-            "label": "Client+Server",
-            "type": "shell",
-            "command": "rpgrpz.exe; rpgrpz.exe -serverOnly;",
-            "options": {
-                "cwd": "${workspaceRoot}/buildDebug/bin"
-            }
-        },
-        {
             "label": "Debug - 0. Create build folder",
             "group": "test",
             "type": "shell",
+            "command": "rm -rf buildDebug; mkdir buildDebug",
             "windows": {
-                "command": "rm buildDebug -r -fo; mkdir buildDebug",
+                "command": "del /S /Q buildDebug & rd /S /Q buildDebug & md buildDebug"
             }
         },
         {
-            "label": "Debug - 1. Download Dependencies",
+            "label": "Debug - 0a. add Conan remote",
             "dependsOn" : "Debug - 0. Create build folder",
             "group": "test",
             "type": "shell",
-            "command": "conan remote add rhard https://api.bintray.com/conan/rhard/conan; conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan; conan install .. -s build_type=Debug --build missing",
+            "command": "conan remote add --force bincrafters https://api.bintray.com/conan/bincrafters/public-conan & conan remote add --force rhard https://api.bintray.com/conan/rhard/conan"
+        },
+        {
+            "label": "Debug - 1. Download Dependencies",
+            "dependsOn" : "Debug - 0a. add Conan remote",
+            "group": "test",
+            "type": "shell",
+            "command": "conan install .. -s build_type=Debug --build missing",
             "options": {
                 "cwd": "${workspaceRoot}/buildDebug"
             }
@@ -41,9 +41,7 @@
                 "kind" : "test"
             },
             "type": "shell",
-            "windows": {
-                "command": "cmake .. -G 'Visual Studio 15 2017 Win64'",
-            },
+            "command": "cmake ..",
             "options": {
                 "cwd": "${workspaceRoot}/buildDebug"
             }
@@ -58,9 +56,7 @@
             "label": "Release - 0. Create build folder",
             "group": "build",
             "type": "shell",
-            "windows": {
-                "command": "rm buildRelease -r -fo; mkdir buildRelease",
-            }
+            "command": "del /S /Q buildRelease & rd /S /Q buildRelease & md buildRelease",
         },
         {
             "label": "Release - 1. Download Dependencies",
@@ -78,7 +74,7 @@
             "group": "build",
             "type": "shell",
             "windows": {
-                "command": "cmake .. -G 'Visual Studio 15 2017 Win64'",
+                "command": "cmake ..",
             },
             "options": {
                 "cwd": "${workspaceRoot}/buildRelease"

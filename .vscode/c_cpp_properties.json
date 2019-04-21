@@ -5,8 +5,8 @@
             "defines": [],
             "browse": {
                 "path": [
-                    "${env:USERPROFILE}/data",
-                    "${env:SYSTEMDRIVE}/.conan"
+                    "${env:HOMEPATH}/.conan/data",
+                    "${env:SYSTEMDRIVE}/Qtd/5.12.2/msvc2017_64/include"
                 ]
             },
             "windowsSdkVersion": "10.0.17134.0",
@@ -18,15 +18,10 @@
                 "${default}",
                 "${workspaceFolder}",
                 "${workspaceRoot}",
-                "C:/.conan/2bfee4/1/include",
-                "C:/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/package/d2eed54dd60974c85a4e38a37976c95179d53fa0/include",
-                "C:/.conan/2bfee4/1/include/QtCore",
-                "C:/.conan/2bfee4/1/include/QtNetwork",
-                "C:/.conan/2bfee4/1/include/QtWidgets",
-                "${workspaceFolder}/libs/upnpc_custom",
-                "C:/.conan/2bfee4/1/include/QtGui",
-                "C:/.conan/2bfee4/1/include/QtOpenGL",
-                "C:/.conan/30aa3c/1/qt5/qtsvg/include"
+                "C:/Qtd/5.12.2/msvc2017_64/include/QtWidgets",
+                "C:/Qtd/5.12.2/msvc2017_64/include/QtCore",
+                "C:/Qtd/5.12.2/msvc2017_64/include",
+                "C:/Qtd/5.12.2/msvc2017_64/include/QtGui"
             ]
         }
     ],
