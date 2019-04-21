@@ -318,6 +318,14 @@ QMenu* MainWindow::_getHelpMenu() {
         }
     );
 
+    //close the app for upload
+    QObject::connect(
+        this->_updateIntegrator, &UpdaterUIIntegrator::MTOpeningRequested,
+        [&]() {
+            this->_updateIntegrator->openMaintenanceTool();
+        }
+    );
+
     //patchnote
     auto patchnoteAction = new QAction(I18n::tr()->Menu_Patchnotes(APP_FULL_DENOM).c_str(), helpMenuItem);
     QObject::connect(

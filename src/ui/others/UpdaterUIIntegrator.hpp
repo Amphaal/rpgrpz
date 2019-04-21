@@ -14,6 +14,7 @@ class UpdaterUIIntegrator : public QObject {
     
     signals:
         void stateChanged(const bool isSearching);
+        void MTOpeningRequested();
 
     public:
         UpdaterUIIntegrator(QMainWindow* wParent) : QObject(wParent), _wParent(wParent) {
@@ -100,7 +101,7 @@ class UpdaterUIIntegrator : public QObject {
             );
             
             if(msgboxRslt == QMessageBox::Yes) {
-                this->openMaintenanceTool();
+                emit MTOpeningRequested();
             } else {
                 emit stateChanged(false);
             }
