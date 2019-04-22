@@ -1,6 +1,16 @@
 project(RPGRPZ)
 cmake_minimum_required(VERSION 3.13.3)
 
+#default configuration
+SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/)
+
+SET(CMAKE_CXX_WARNING_LEVEL 4)
+if (MSVC)
+        add_definitions("/W4")
+else()
+        add_definitions("-Wall -Wextra")
+endif ()
+
 ########################
 ## VERSION.H HANDLING ##
 ########################
@@ -11,7 +21,11 @@ SET(APP_ROOT_URL "https://zonme.to2x.ovh")
 SET(APP_MAIN_URL ${APP_ROOT_URL}/rpgrpz)
 SET(APP_PATCHNOTE_URL "https://github.com/Amphaal/rpgrpz/releases")
 SET(PEM_CERT_NAME "cacert.pem")
+
+#external libs
+SET(PKG_CONFIG_EXECUTABLE "C:/msys64/usr/bin/mingw64/x86_64-w64-mingw32-pkg-config.exe")
 SET(Qt5_DIR "C:/Qtd/5.12.2/msvc2017_64/lib/cmake/Qt5")
+list(APPEND CMAKE_PREFIX_PATH "D:/gstreamer/1.0/x86_64")
 
 #version
 SET(CMAKE_PROJECT_VERSION_MAJOR 0)
@@ -67,7 +81,7 @@ endif(MSVC)
 #########################
 ## Libraries specifics ##
 #########################
-
+ 
 #Qt
 SET(CMAKE_AUTOMOC ON)
 SET(CMAKE_AUTORCC ON)
@@ -77,10 +91,8 @@ SET(CMAKE_INCLUDE_CURRENT_DIR ON) #for moc auto
 ## Bundle configuration ##
 ##########################
 
-
 SET(BUNDLE_TYPE WIN32) #set bundle type
 SET(RPGRPZ_ICO ${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.rc) #add icon
-
 
 #default source contains
 SET(SOURCES
@@ -102,6 +114,18 @@ SET(EXT_LIBS
     Qt5::Svg
     Qt5::OpenGL
 )
+#############
+# Gstreamer #
+#############
+    find_package(GLIB2 REQUIRED)
+    find_package(GStreamer REQUIRED)
+
+    #linkage
+    include_directories(${GSTREAMER_INCLUDE_DIRS} ${GLIB2_INCLUDE_DIR})
+    list(APPEND EXT_LIBS 
+        ${GSTREAMER_LIBRARIES}
+        ${GLIB2_LIBRARIES}
+    )
 
 #private libs
 file(GLOB_RECURSE INT_LIBS
@@ -109,9 +133,9 @@ file(GLOB_RECURSE INT_LIBS
     "libs/*.cpp"
 )
 
-##
-# mandatory explicit generation
-##
+#################################
+# mandatory explicit generation #
+#################################
 
 #QThread derivatives
 list(APPEND SOURCES
@@ -172,44 +196,31 @@ list(APPEND SOURCES
 
 # Create executable
 add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES} ${INT_LIBS}) 
-  
-set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/ignore:4099 /ignore:4267 /ignore:4244 /ignore:4715")
 
 # Bind ext libs
 conan_target_link_libraries(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
 
-###
-### LIBRARIES COPY
-###
-
-#default
-add_custom_command(TARGET ${PROJECT_NAME}
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Core> $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Gui> $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Widgets> $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Network> $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::Svg> $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:Qt5::OpenGL> $<TARGET_FILE_DIR:${PROJECT_NAME}>
-)
+##################
+# LIBRARIES COPY #
+##################
 
 #misc
 add_custom_command(TARGET ${PROJECT_NAME}
     #CA CERT
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CACERT_FP} $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    #UI plugin
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-    $<TARGET_FILE:Qt5::QWindowsIntegrationPlugin> 
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/platforms/$<TARGET_FILE_NAME:Qt5::QWindowsIntegrationPlugin>
-    #bearer plugin
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-    $<TARGET_FILE:Qt5::QGenericEnginePlugin> 
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>/bearer/$<TARGET_FILE_NAME:Qt5::QGenericEnginePlugin>
 )
 
+#using windeployqt to import all the .dll and qt requirements based on used components
+include(Windeployqt)
+windeployqt(${PROJECT_NAME} ${CMAKE_CURRENT_BINARY_DIR}/bin/)
 
 ######################
 # add Publish target #
 ######################
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/CMakePublish.cmake)
+include(CMakePublish)
+
+
+
+

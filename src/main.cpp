@@ -17,6 +17,7 @@
 #include <QDir>
 #include <QLockFile>
 
+#include "tuto.hpp"
 
 int serverConsole(int argc, char** argv) {
     
@@ -62,7 +63,11 @@ int clientApp(int argc, char** argv) {
     return app.exec();
 }
 
+
+
 int main(int argc, char** argv){
+
+    //return tuto(argc, argv);
 
     if(QString(argv[1]) == "serverOnly") {
         

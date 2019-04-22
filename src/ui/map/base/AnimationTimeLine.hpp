@@ -21,7 +21,7 @@ class AnimationTimeLine : public QTimeLine {
             if(!_handlers.contains(controllerType)) {
                 
                 //create
-                handler = new AnimationTimeLine(controllerType, stateModifier, parent, onValueChanged);
+                handler = new AnimationTimeLine(stateModifier, parent, onValueChanged);
 
                 //add
                 _handlers.insert(controllerType, handler);
@@ -48,7 +48,7 @@ class AnimationTimeLine : public QTimeLine {
 
 
         //
-        AnimationTimeLine(const AnimationTimeLine::Type &controllerType, qreal stateModifier, QObject* parent, std::function<void(qreal, qreal)> onValueChanged) : 
+        AnimationTimeLine(qreal stateModifier, QObject* parent, std::function<void(qreal, qreal)> onValueChanged) : 
         QTimeLine(300, parent), 
         _currentModifier(stateModifier) {  
             

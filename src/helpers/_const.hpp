@@ -25,7 +25,7 @@ static const std::string UPNP_REQUEST_DESCRIPTION = "RPGRPZ";
 static std::string getAppDataLocation() {
     auto target = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString();
     auto qt = QString::fromStdString(target);
-    auto created = QDir().mkpath(qt);
+    QDir().mkpath(qt);
     return target;
 }
 

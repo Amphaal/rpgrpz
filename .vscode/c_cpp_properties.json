@@ -6,7 +6,8 @@
             "browse": {
                 "path": [
                     "${env:HOMEPATH}/.conan/data",
-                    "${env:SYSTEMDRIVE}/Qtd/5.12.2/msvc2017_64/include"
+                    "${env:SYSTEMDRIVE}/Qtd/5.12.2/msvc2017_64",
+                    "D:/gstreamer/1.0/x86_64"
                 ]
             },
             "windowsSdkVersion": "10.0.17134.0",
@@ -21,7 +22,13 @@
                 "C:/Qtd/5.12.2/msvc2017_64/include/QtWidgets",
                 "C:/Qtd/5.12.2/msvc2017_64/include/QtCore",
                 "C:/Qtd/5.12.2/msvc2017_64/include",
-                "C:/Qtd/5.12.2/msvc2017_64/include/QtGui"
+                "C:/Qtd/5.12.2/msvc2017_64/include/QtGui",
+                "D:/gstreamer/1.0/x86_64/include/gstreamer-1.0",
+                "D:/gstreamer/1.0/x86_64/include/glib-2.0",
+                "C:/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/source/miniupnp/miniupnpc",
+                "C:/Qtd/5.12.2/msvc2017_64/include/QtNetwork",
+                "C:/Qtd/5.12.2/msvc2017_64/include/QtSvg",
+                "C:/Qtd/5.12.2/msvc2017_64/include/QtOpenGL"
             ]
         }
     ],
