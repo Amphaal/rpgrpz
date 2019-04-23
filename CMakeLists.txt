@@ -113,20 +113,39 @@ list(APPEND EXT_LIBS
     SET(CMAKE_PREFIX_PATH "D:/gstreamer/1.0/x86_64")
     find_package(PkgConfig) 
 
-    #required modules
+    #base required modules
     pkg_check_modules(GST REQUIRED 
+        gobject-2.0    
         gstreamer-1.0
-        gobject-2.0
     )
-    
-    #get the DLL lib location
-    pkg_get_variable(GSTREAMER_DLL_LOCATION 
-        "${CMAKE_PREFIX_PATH}/lib/pkgconfig/gstreamer-1.0.pc" 
-        toolsdir)
+
+    #plugins...
+
+        #plugins to include and dir
+        pkg_get_variable(_GSTREAMER_PLUGINS
+            "${CMAKE_PREFIX_PATH}/lib/pkgconfig/gstreamer-plugins-base-1.0.pc" 
+            libraries)
+        pkg_get_variable(_GSTREAMER_PLUGINS_DIR
+            "${CMAKE_PREFIX_PATH}/lib/pkgconfig/gstreamer-plugins-base-1.0.pc" 
+            pluginsdir)
+
+        #add plugins to check in pkgconfig
+        foreach(_gstPlugin IN ITEMS ${_GSTREAMER_PLUGINS})
+            list(APPEND GST_PLUGINS_pc gstreamer-${_gstPlugin}-1.0)
+        endforeach()
+
+        #check for plugins
+        pkg_check_modules(GST_PLUGINS REQUIRED 
+            ${GST_PLUGINS_pc}
+        )
 
     #linking
-    link_directories(${GST_LIBRARY_DIRS})
-    include_directories(${GST_INCLUDE_DIRS}) 
+    link_directories(${GST_LIBRARY_DIRS} ${GST_PLUGINS_LIBRARY_DIRS})
+    include_directories(${GST_INCLUDE_DIRS} ${GST_PLUGINS_INCLUDE_DIRS}) 
+
+    #fuse and remove duplicate
+    #list(APPEND GST_LIBRARIES ${GST_PLUGINS_LIBRARIES})
+    #list(REMOVE_DUPLICATES GST_LIBRARIES) 
     list(APPEND EXT_LIBS 
         ${GST_LIBRARIES}
     )
@@ -220,20 +239,29 @@ include(Windeployqt)
 windeployqt(${PROJECT_NAME} ${CMAKE_CURRENT_BINARY_DIR}/bin/)
 
 #copy gstreamer .dlls
-foreach(_gstLib IN ITEMS ${GST_LIBRARIES})
-    
-    #searched expression
-    file(GLOB _se LIST_DIRECTORIES OFF
-        "${GSTREAMER_DLL_LOCATION}/${_gstLib}*.dll"
-    )
-    get_filename_component(_se_dll ${_se} NAME)
 
-    #copy lib
-    add_custom_command(TARGET ${PROJECT_NAME} COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-        ${_se} $<TARGET_FILE_DIR:${PROJECT_NAME}>/${_se_dll}
-    )
+    #get the DLL lib location
+    pkg_get_variable(GSTREAMER_DLL_LOCATION 
+        "${CMAKE_PREFIX_PATH}/lib/pkgconfig/gstreamer-1.0.pc" 
+        toolsdir)
 
-endforeach()
+    #fe...
+    foreach(_gstLib IN ITEMS ${GST_LIBRARIES})
+        
+        #searched expression
+        file(GLOB _se LIST_DIRECTORIES OFF
+            "${GSTREAMER_DLL_LOCATION}/${_gstLib}*.dll"
+        )
+        
+        #extract lib name
+        get_filename_component(_se_dll ${_se} NAME)
+
+        #copy lib
+        add_custom_command(TARGET ${PROJECT_NAME} COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+            ${_se} $<TARGET_FILE_DIR:${PROJECT_NAME}>/${_se_dll}
+        )
+
+    endforeach()
 
 ######################
 # add Publish target #
