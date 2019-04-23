@@ -1,15 +1,14 @@
 project(RPGRPZ)
 cmake_minimum_required(VERSION 3.13.3)
 
+#version
+SET(CMAKE_PROJECT_VERSION_MAJOR 0)
+SET(CMAKE_PROJECT_VERSION_MINOR 8)
+SET(CMAKE_PROJECT_VERSION_PATCH 7)
+
+
 #default configuration
 SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/)
-
-SET(CMAKE_CXX_WARNING_LEVEL 4)
-if (MSVC)
-        add_definitions("/W4")
-else()
-        add_definitions("-Wall -Wextra")
-endif ()
 
 ########################
 ## VERSION.H HANDLING ##
@@ -21,16 +20,6 @@ SET(APP_ROOT_URL "https://zonme.to2x.ovh")
 SET(APP_MAIN_URL ${APP_ROOT_URL}/rpgrpz)
 SET(APP_PATCHNOTE_URL "https://github.com/Amphaal/rpgrpz/releases")
 SET(PEM_CERT_NAME "cacert.pem")
-
-#external libs
-SET(PKG_CONFIG_EXECUTABLE "C:/msys64/usr/bin/mingw64/x86_64-w64-mingw32-pkg-config.exe")
-SET(Qt5_DIR "C:/Qtd/5.12.2/msvc2017_64/lib/cmake/Qt5")
-list(APPEND CMAKE_PREFIX_PATH "D:/gstreamer/1.0/x86_64")
-
-#version
-SET(CMAKE_PROJECT_VERSION_MAJOR 0)
-SET(CMAKE_PROJECT_VERSION_MINOR 8)
-SET(CMAKE_PROJECT_VERSION_PATCH 7)
 
 #set default maintenance tool path
 SET(MAINTENANCE_TOOL_LOCATION "")
@@ -73,9 +62,7 @@ conan_basic_setup(KEEP_RPATHS)
 SET(CMAKE_CXX_STANDARD 17)
 
 if(MSVC)
-    add_definitions(-D_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING)
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-    add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS) #upnpc
 endif(MSVC)
 
 #########################
@@ -100,13 +87,16 @@ SET(SOURCES
     resources/resources.qrc
 )
 
-####################
-# Code compilation #
-####################
+###########
+# QT libs #
+###########
 
-# Define required linked QT libs
+#search path
+SET(Qt5_DIR "C:/Qtd/5.12.2/msvc2017_64/lib/cmake/Qt5")
+
+#find package
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL)
-SET(EXT_LIBS 
+list(APPEND EXT_LIBS 
     Qt5::Core
     Qt5::Gui 
     Qt5::Widgets
@@ -117,25 +107,39 @@ SET(EXT_LIBS
 #############
 # Gstreamer #
 #############
-    find_package(GLIB2 REQUIRED)
-    find_package(GStreamer REQUIRED)
 
-    #linkage
-    include_directories(${GSTREAMER_INCLUDE_DIRS} ${GLIB2_INCLUDE_DIR})
-    list(APPEND EXT_LIBS 
-        ${GSTREAMER_LIBRARIES}
-        ${GLIB2_LIBRARIES}
+    #pkgConfig setup
+    SET(PKG_CONFIG_EXECUTABLE "C:\\msys64\\mingw64\\bin\\x86_64-w64-mingw32-pkg-config.exe")
+    SET(CMAKE_PREFIX_PATH "D:/gstreamer/1.0/x86_64")
+    find_package(PkgConfig) 
+
+    #required modules
+    pkg_check_modules(GST REQUIRED 
+        gstreamer-1.0
+        gobject-2.0
     )
+    
+    #get the DLL lib location
+    pkg_get_variable(GSTREAMER_DLL_LOCATION 
+        "${CMAKE_PREFIX_PATH}/lib/pkgconfig/gstreamer-1.0.pc" 
+        toolsdir)
+
+    #linking
+    link_directories(${GST_LIBRARY_DIRS})
+    include_directories(${GST_INCLUDE_DIRS}) 
+    list(APPEND EXT_LIBS 
+        ${GST_LIBRARIES}
+    )
+
+#################################
+# mandatory explicit generation #
+#################################
 
 #private libs
 file(GLOB_RECURSE INT_LIBS
     "libs/*.c"
     "libs/*.cpp"
 )
-
-#################################
-# mandatory explicit generation #
-#################################
 
 #QThread derivatives
 list(APPEND SOURCES
@@ -215,12 +219,26 @@ add_custom_command(TARGET ${PROJECT_NAME}
 include(Windeployqt)
 windeployqt(${PROJECT_NAME} ${CMAKE_CURRENT_BINARY_DIR}/bin/)
 
+#copy gstreamer .dlls
+foreach(_gstLib IN ITEMS ${GST_LIBRARIES})
+    
+    #searched expression
+    file(GLOB _se LIST_DIRECTORIES OFF
+        "${GSTREAMER_DLL_LOCATION}/${_gstLib}*.dll"
+    )
+    get_filename_component(_se_dll ${_se} NAME)
+
+    #copy lib
+    add_custom_command(TARGET ${PROJECT_NAME} COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+        ${_se} $<TARGET_FILE_DIR:${PROJECT_NAME}>/${_se_dll}
+    )
+
+endforeach()
+
 ######################
 # add Publish target #
 ######################
 
 include(CMakePublish)
 
-
-
-
+#include(PrintAllVariables)

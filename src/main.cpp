@@ -67,7 +67,7 @@ int clientApp(int argc, char** argv) {
 
 int main(int argc, char** argv){
 
-    //return tuto(argc, argv);
+    return tuto(argc, argv);
 
     if(QString(argv[1]) == "serverOnly") {
         

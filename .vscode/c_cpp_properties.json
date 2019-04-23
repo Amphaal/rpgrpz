@@ -28,7 +28,8 @@
                 "C:/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/source/miniupnp/miniupnpc",
                 "C:/Qtd/5.12.2/msvc2017_64/include/QtNetwork",
                 "C:/Qtd/5.12.2/msvc2017_64/include/QtSvg",
-                "C:/Qtd/5.12.2/msvc2017_64/include/QtOpenGL"
+                "C:/Qtd/5.12.2/msvc2017_64/include/QtOpenGL",
+                "D:/gstreamer/1.0/x86_64/lib/glib-2.0/include"
             ]
         }
     ],
