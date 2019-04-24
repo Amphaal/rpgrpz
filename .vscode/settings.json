@@ -1,3 +1,7 @@
 {
-    "terminal.integrated.shell.windows": "cmd.exe"
+    "terminal.integrated.shell.windows": "cmd.exe",
+    "files.associations": {
+        "qdir": "cpp",
+        "xstring": "cpp"
+    }
 }

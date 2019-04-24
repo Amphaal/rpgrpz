@@ -36,7 +36,7 @@ endif()
 
 # Add commands that copy the Qt runtime to the target's output directory after
 # build and install the Qt runtime to the specified directory
-function(windeployqt target directory)
+function(windeployqt target)
 
     # Run windeployqt immediately after build
     add_custom_command(TARGET ${target} POST_BUILD
@@ -46,7 +46,7 @@ function(windeployqt target directory)
                 --no-compiler-runtime
                 --no-angle
                 --no-opengl-sw
-                \"$<TARGET_FILE:${target}>\"
+                \"$<TARGET_FILE:${target}>/\"
     )
 
     # install(CODE ...) doesn't support generator expressions, but
@@ -55,35 +55,35 @@ function(windeployqt target directory)
         CONTENT "$<TARGET_FILE:${target}>"
     )
 
-    # Before installation, run a series of commands that copy each of the Qt
-    # runtime files to the appropriate directory for installation
-    install(CODE
-        "
-        file(READ \"${CMAKE_CURRENT_BINARY_DIR}/${target}_path\" _file)
-        execute_process(
-            COMMAND \"${CMAKE_COMMAND}\" -E
-                env PATH=\"${_qt_bin_dir}\" \"${WINDEPLOYQT_EXECUTABLE}\"
-                    --dry-run
-                    --no-compiler-runtime
-                    --no-angle
-                    --no-opengl-sw
-                    --list mapping
-                    \${_file}
-            OUTPUT_VARIABLE _output
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-        )
-        separate_arguments(_files WINDOWS_COMMAND \${_output})
-        while(_files)
-            list(GET _files 0 _src)
-            list(GET _files 1 _dest)
-            execute_process(
-                COMMAND \"${CMAKE_COMMAND}\" -E
-                    copy \${_src} \"\${CMAKE_INSTALL_PREFIX}/${directory}/\${_dest}\"
-            )
-            list(REMOVE_AT _files 0 1)
-        endwhile()
-        "
-    )
+    # # Before installation, run a series of commands that copy each of the Qt
+    # # runtime files to the appropriate directory for installation
+    # install(CODE
+    #     "
+    #     file(READ \"${CMAKE_CURRENT_BINARY_DIR}/${target}_path\" _file)
+    #     execute_process(
+    #         COMMAND \"${CMAKE_COMMAND}\" -E
+    #             env PATH=\"${_qt_bin_dir}\" \"${WINDEPLOYQT_EXECUTABLE}\"
+    #                 --dry-run
+    #                 --no-compiler-runtime
+    #                 --no-angle
+    #                 --no-opengl-sw
+    #                 --list mapping
+    #                 \${_file}
+    #         OUTPUT_VARIABLE _output
+    #         OUTPUT_STRIP_TRAILING_WHITESPACE
+    #     )
+    #     separate_arguments(_files WINDOWS_COMMAND \${_output})
+    #     while(_files)
+    #         list(GET _files 0 _src)
+    #         list(GET _files 1 _dest)
+    #         execute_process(
+    #             COMMAND \"${CMAKE_COMMAND}\" -E
+    #                 copy \${_src} \"\${CMAKE_INSTALL_PREFIX}/${directory}/\${_dest}\"
+    #         )
+    #         list(REMOVE_AT _files 0 1)
+    #     endwhile()
+    #     "
+    # )
 
     # windeployqt doesn't work correctly with the system runtime libraries,
     # so we fall back to one of CMake's own modules for copying them over

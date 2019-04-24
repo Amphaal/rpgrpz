@@ -1,13 +1,23 @@
 #include <gst/gst.h>
 #include <gst/gstmessage.h>
 
+#include <QString>
+#include <QApplication>
+#include <QDir>
+
 int tuto(int argc, char** argv) {
+
+    //
+    QCoreApplication exec(argc, argv);
+    auto td = QDir::toNativeSeparators(QDir::currentPath()).toStdString() + "\\gst-plugins";
+    qputenv("GST_PLUGIN_PATH", td.c_str());
 
     /* Initialize GStreamer */
     gst_init (&argc, &argv);
 
     /* Build the pipeline */
-    auto pipeline = gst_parse_launch ("playbin uri=https://www.freedesktop.org/software/gstreamer-sdk/data/media/sintel_trailer-480p.webm", NULL);
+    GError* err = NULL;
+    auto pipeline = gst_parse_launch("playbin uri=https://www.youtube.com/watch?v=ZbHd-Br5R6Q", &err);
 
     /* Start playing */
     gst_element_set_state (pipeline, GST_STATE_PLAYING);
@@ -18,7 +28,21 @@ int tuto(int argc, char** argv) {
 
     /* Free resources */
     if (msg != NULL) {
-    gst_message_unref (msg);
+        switch (GST_MESSAGE_TYPE(msg)) {
+            case GST_MESSAGE_ERROR: {
+                GError *err = NULL;
+                gchar *dbg_info = NULL;
+
+                gst_message_parse_error (msg, &err, &dbg_info);
+                g_printerr ("ERROR from element %s: %s\n",
+                    GST_OBJECT_NAME (msg->src), err->message);
+                g_printerr ("Debugging info: %s\n", (dbg_info) ? dbg_info : "none");
+                g_error_free (err);
+                g_free (dbg_info);
+                break;
+            }
+        }
+        gst_message_unref(msg);
     }
 
     gst_object_unref (bus);

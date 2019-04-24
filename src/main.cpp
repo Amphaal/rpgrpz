@@ -1,8 +1,8 @@
 #define _HAS_STD_BYTE 0
 
-#include <QtCore/QString>
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QStyleFactory>
+#include <QString>
+#include <QApplication>
+#include <QStyleFactory>
 #include <QSplashScreen>
 #include <QImageReader>
 
@@ -19,6 +19,10 @@
 
 #include "tuto.hpp"
 
+////////////
+// SERVER //
+////////////
+
 int serverConsole(int argc, char** argv) {
     
     QCoreApplication server(argc, argv);
@@ -26,6 +30,14 @@ int serverConsole(int argc, char** argv) {
     rpz->run();
     return server.exec();
 }
+
+////////////////
+// END SERVER //
+////////////////
+
+////////////
+// CLIENT //
+////////////
 
 int clientApp(int argc, char** argv) {
     
@@ -45,15 +57,6 @@ int clientApp(int argc, char** argv) {
     app.setStyle(QStyleFactory::create("Fusion")); 
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
-    //configure QThreads to acknowledge specific types for data exchanges
-    qRegisterMetaType<std::string>("std::string");
-
-    //message handler
-    qInstallMessageHandler(LogWriter::customMO);
-
-    //preload log
-    qDebug() << "handled image formats " << QImageReader::supportedImageFormats();
-
     //fetch main window
     AppLoader loader;
     MainWindow mw;
@@ -63,9 +66,22 @@ int clientApp(int argc, char** argv) {
     return app.exec();
 }
 
+////////////////
+// END CLIENT //
+////////////////
 
 
 int main(int argc, char** argv){
+
+    //configure QThreads to acknowledge specific types for data exchanges
+    qRegisterMetaType<std::string>("std::string");
+
+    //message handler
+    qInstallMessageHandler(LogWriter::customMO);
+
+    ////////////
+    // LAUNCH //
+    ////////////
 
     return tuto(argc, argv);
 
