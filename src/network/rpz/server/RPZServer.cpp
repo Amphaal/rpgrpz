@@ -1,12 +1,8 @@
 #include "RPZServer.h" 
 
 RPZServer::RPZServer(QObject* parent) : QTcpServer(parent), 
-                                        _audioServ(new AudioServer(QString::fromStdString(UPNP_DEFAULT_TARGET_PORT))), 
                                         _hints(new MapHint) { };
 
-AudioServer* RPZServer::audioServer() {
-    return this->_audioServ;
-}
 
 RPZServer::~RPZServer() {
     //ended server

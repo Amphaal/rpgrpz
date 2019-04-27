@@ -21,8 +21,14 @@ class AudioStreamToolbar : public QWidget {
             this->_audio->setOrientation(Qt::Orientation::Horizontal);
             this->_audio->setMinimum(0);
             this->_audio->setMaximum(100);
-            this->_audio->setValue(50);
+            this->_audio->setValue(100);
             this->_audio->setFixedWidth(100);
+            QObject::connect(
+                this->_audio, &QAbstractSlider::valueChanged,
+                [&](int value) {
+                    emit askForVolumeChange(value); 
+                }
+            );
 
             //mute
             this->_mute->setCheckable(true);

@@ -14,10 +14,10 @@
 #include "ui/MainWindow.h"
 #include "ui/AppLoader.hpp"
 
+#include "tests/TestMainWindow.hpp"
+
 #include <QDir>
 #include <QLockFile>
-
-#include "tuto.hpp"
 
 ////////////
 // SERVER //
@@ -70,6 +70,19 @@ int clientApp(int argc, char** argv) {
 // END CLIENT //
 ////////////////
 
+//////////
+// TEST //
+//////////
+
+int test(int argc, char** argv){    
+    QApplication app(argc, argv);
+    TestMainWindow test;
+    return app.exec();
+}
+
+//////////////
+// END TEST //
+//////////////
 
 int main(int argc, char** argv){
 
@@ -83,15 +96,19 @@ int main(int argc, char** argv){
     // LAUNCH //
     ////////////
 
-    return tuto(argc, argv);
+    auto firstArg = QString(argv[1]);
+    if(firstArg == "test") {
+        
+        //test app
+        return test(argc, argv);
 
-    if(QString(argv[1]) == "serverOnly") {
+
+    } else if (firstArg == "serverOnly") {
         
         //as server console
         return serverConsole(argc, argv);
 
     } else {
-
         //as client app
         return clientApp(argc, argv);
 

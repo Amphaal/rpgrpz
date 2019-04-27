@@ -140,11 +140,11 @@ list(APPEND SOURCES
 #functionnal components
 list(APPEND SOURCES
     src/network/rpz/_any/JSONSocket.cpp
-    src/network/audio/_any/AudioBase.hpp
-    src/network/audio/client/AudioClient.cpp
-    src/network/audio/server/AudioServer.cpp
     src/network/rpz/client/RPZClient.cpp
     src/network/rpz/server/RPZServer.cpp
+
+    src/network/stream/GStreamerClient.cpp
+
     src/network/uPnP/uPnPRequester.cpp
     src/network/ConnectivityHelper.cpp
 )
@@ -173,6 +173,7 @@ list(APPEND SOURCES
     src/ui/communication/ChatWidget.cpp
     src/ui/communication/ConnectWidget.cpp
 
+    src/ui/communication/audio/Playlist.cpp
     src/ui/communication/audio/AudioStreamToolbar.hpp
     src/ui/communication/audio/PlaylistToolbar.hpp
     src/ui/communication/audio/PlaylistController.cpp
@@ -182,6 +183,7 @@ list(APPEND SOURCES
 #main
 list(APPEND SOURCES 
     src/ui/MainWindow.cpp
+    tests/TestMainWindow.hpp
     src/main.cpp
 )
 
@@ -211,11 +213,12 @@ include(Windeployqt)
 windeployqt(${PROJECT_NAME} "${CMAKE_CURRENT_BINARY_DIR}/bin")
 
 #copy gstreamer .dlls
-list(APPEND _gstreamer_plugins
-    "gstsoup"
-    "gstplayback" 
-    "gstcoreelements"
-)
+# list(APPEND _gstreamer_plugins
+#     "gstsoup"
+#     "gstplayback" 
+#     "gstcoreelements"
+# )
+set(_gstreamer_plugins "all")
 DeployGStreamer(${PROJECT_NAME} "${_gstreamer_plugins}")
     
 

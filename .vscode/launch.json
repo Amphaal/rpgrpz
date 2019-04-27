@@ -35,6 +35,21 @@
             "preLaunchTask": "Debug - 3. Build"
         },
         {
+            "name": "Test App",
+            "windows": {
+                "type": "cppvsdbg",
+                "program": "rpgrpz.exe",
+            },
+            "type": "cppdbg",
+            "request": "launch",
+            "args": ["test"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/buildDebug/bin/",
+            "environment": [],
+            "externalConsole": false,
+            "preLaunchTask": "Debug - 3. Build"
+        },
+        {
             "name": "Launch Server",
             "windows": {
                 "type": "cppvsdbg",

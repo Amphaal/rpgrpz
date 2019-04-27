@@ -1,11 +1,10 @@
 #include "PlaylistController.h"
 
 PlaylistController::PlaylistController(QWidget * parent) : QGroupBox(parent), 
-    _list(new QListWidget(this)), 
-    _toolbar(new PlaylistToolbar(this)) {
+    playlist(new Playlist(this)), 
+    toolbar(new PlaylistToolbar(this)) {
 
     //self
-    this->setAcceptDrops(true);
     this->setEnabled(false);
     this->setLayout(new QVBoxLayout);
 
@@ -13,9 +12,15 @@ PlaylistController::PlaylistController(QWidget * parent) : QGroupBox(parent),
     this->setTitle("Liste de lecture");
     this->setAlignment(Qt::AlignHCenter);
 
+    //connect
+    QObject::connect(
+        this->toolbar, &PlaylistToolbar::actionRequired,
+        this, &PlaylistController::_onToolbarActionRequested
+    );
+
     //inner list
-    this->layout()->addWidget(this->_toolbar);
-    this->layout()->addWidget(this->_list);
+    this->layout()->addWidget(this->toolbar);
+    this->layout()->addWidget(this->playlist);
 };
 
 
@@ -31,99 +36,17 @@ void PlaylistController::bindToRPZClient(RPZClient * cc) {
     );
 }
 
-void PlaylistController::dropEvent(QDropEvent *event) {
-    
-    QWidget::dropEvent(event);
-
-    //for each link registered
-    for(auto &link : this->_tempDnD) {
-        
-        //defines behavior depending on tag
-        switch(link.first) {
-            case PlaylistController::ServerAudio:
-                break;
-            case PlaylistController::YoutubePlaylist:
-                break;
-            case PlaylistController::YoutubeVideo:
-                break;
-        }
-
-        //add item de list
-        this->_list->addItem(link.second.toString());
+void PlaylistController::_onToolbarActionRequested(const PlaylistToolbar::Action &action) {
+    switch(action) {
+        case PlaylistToolbar::Action::Pause:
+            break;
+        case PlaylistToolbar::Action::Play:
+            break;
+        case PlaylistToolbar::Action::Forward:
+            this->playlist->playNext();
+            break;
+        case PlaylistToolbar::Action::Rewind:
+            this->playlist->playPrevious();
+            break;
     }
-
-    //clear temp content
-    this->_tempDnD.clear();
-
-}
-
-int PlaylistController::tempHashDnDFromUrlList(QList<QUrl> &list) {
-    
-    //clear temp content
-    this->_tempDnD.clear();
-    
-    //iterate through
-    for(auto &url : list) {
-        
-        //if is not local file
-        if(!url.isValid()) continue;
-
-        //for local files...
-        if(url.isLocalFile()) { 
-            
-            //only audio local files
-            auto mimeOfFile = this->_MIMEDb.mimeTypeForUrl(url).name();
-            if(!mimeOfFile.startsWith("audio")) continue;
-
-            //add...
-            this->_tempDnD.append(QPair(PlaylistController::ServerAudio, url));
-        
-        //from youtube
-        } else if (url.host().contains("youtu")) {
-
-            //check if video or playlist link
-            auto query = QUrlQuery(url);
-            
-            //playlist
-            if(query.hasQueryItem("list")) {
-
-                //add...
-                this->_tempDnD.append(QPair(PlaylistController::YoutubePlaylist, url));
-                
-            //video
-            } else if(query.hasQueryItem("v")) {
-                
-                //add...
-                this->_tempDnD.append(QPair(PlaylistController::YoutubeVideo, url));
-
-            //unhandled format
-            } else {
-                continue;
-            }
-        }
-            
-    }
-
-    //return valid urls count
-    return this->_tempDnD.size();
-}
-
-void PlaylistController::dragEnterEvent(QDragEnterEvent *event) {
-
-    QWidget::dragEnterEvent(event);
-
-    //if dragged from OS
-    if (event->mimeData()->hasUrls()) {
-        
-        //create list of handled urls
-        auto handledUrlsCount = this->tempHashDnDFromUrlList(event->mimeData()->urls());
-
-        //if there is a single handledUrls, continue
-        if(handledUrlsCount) {
-            event->setDropAction(Qt::DropAction::MoveAction);
-            event->acceptProposedAction();
-        }
-    
-    }
-
 }

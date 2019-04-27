@@ -16,7 +16,10 @@ macro(LinkGStreamer)
     #base required modules
     pkg_check_modules(GST REQUIRED
         gstreamer-1.0
+        gstreamer-controller-1.0
         libsoup-2.4
+        gnutls
+        libmpg123
     )
 
     #plugins base...
@@ -72,16 +75,21 @@ function(_GstThroughLibs target dllLocation libList dest)
 
         endif()
 
-        #extract lib name
-        get_filename_component(_se_dll ${_se} NAME)
+        #foreach libname found
+        foreach(_libFile IN ITEMS ${_se})
+            
+            #extract lib name
+            get_filename_component(_dllName ${_libFile} NAME)
 
-        #copy lib
-        add_custom_command(TARGET ${target} COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-            ${_se} $<TARGET_FILE_DIR:${target}>/${dest}${_se_dll}
-        )
-        #message(STATUS "\"${_gstLib}\" added")
+            #copy lib
+            add_custom_command(TARGET ${target} COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+                ${_libFile} $<TARGET_FILE_DIR:${target}>${dest}${_dllName}
+            )
+            #message(STATUS "\"${_gstLib}\" added")
 
-    endforeach()
+        endforeach(_libFile)
+        
+    endforeach(_gstLib)
 
 endfunction()
 
@@ -102,6 +110,29 @@ macro(DeployGStreamer target plugins)
     #import
     _GstThroughLibs(${target} ${_GSTREAMER_DLL_LOCATION} "${GST_STATIC_LIBRARIES}" "/") #iterate
     _GstThroughLibs(${target} ${_GSTREAMER_DLL_LOCATION} "${GST_PLUGINS_BASE_STATIC_LIBRARIES}" "/") #iterate
-    _GstThroughLibs(${target} ${_GSTREAMER_DLL_PLUGINS_LOCATION} "${plugins}" "/gst-plugins/") #iterate
+
+    #plugins import
+    SET(_plug_subdir "/gst-plugins/")
+    
+    #if request all plugins
+    if (${plugins} STREQUAL "all")
+
+        #find all files 
+        message("all plugins requested !")
+        file(GLOB _temp_plugins LIST_DIRECTORIES OFF
+        "${_GSTREAMER_DLL_PLUGINS_LOCATION}/*.dll"
+        )
+
+        #get their names
+        foreach(_t IN ITEMS ${_temp_plugins})
+            get_filename_component(_fu ${_t} NAME_WE)
+            list(APPEND _def_plugins "${_fu}")
+        endforeach()
+    else()
+        SET(_def_plugins ${plugins})
+    endif()
+
+    #import...
+    _GstThroughLibs(${target} ${_GSTREAMER_DLL_PLUGINS_LOCATION} "${_def_plugins}" ${_plug_subdir}) #iterate
 
 endmacro()

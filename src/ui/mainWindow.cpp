@@ -82,12 +82,6 @@ void MainWindow::_initConnectivity() {
             }
         );
 
-        //tell the UI when music is streaming
-        QObject::connect(
-            this->_rpzServer->audioServer(), &AudioServer::kbpsSent,
-            this->_sb, &RPZStatusBar::updateSentAudioKbps
-        );
-
         this->_rpzServer->run();
 
     }
