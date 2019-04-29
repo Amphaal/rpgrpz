@@ -15,11 +15,6 @@ ConnectivityHelper::ConnectivityHelper(QObject *parent) :
         this, &ConnectivityHelper::_mustReInit
     );
 
-    QObject::connect(
-        this->_nam, &QNetworkAccessManager::finished, 
-        this, &ConnectivityHelper::_onExternalAddressRequestResponse
-    );
-
 };
 
 void ConnectivityHelper::_mustReInit(const QNetworkConfiguration &config) {
@@ -142,16 +137,6 @@ void ConnectivityHelper::_onUPnPSuccess(const char * protocol, const char * nego
 
 }
 
-void ConnectivityHelper::_askExternalAddress() {
-
-    QUrl targetUrl("http://api.ipify.org?format=json");
-    QNetworkRequest request(targetUrl);
-
-    qDebug() << "Connectivity : asking ipify.org for external IP...";
-
-    this->_nam->get(request);
-};
-
 void ConnectivityHelper::networkChanged(const QNetworkAccessManager::NetworkAccessibility accessible) {
     
     emit localAddressStateChanged(this->_getWaitingText());
@@ -167,7 +152,6 @@ void ConnectivityHelper::networkChanged(const QNetworkAccessManager::NetworkAcce
         qDebug() << "Connectivity : network accessible, trying to get IPs and UPnP...";
 
         this->_getLocalAddress();
-        this->_askExternalAddress();
         this->_tryNegociateUPnPPort();
     }
 };
@@ -191,28 +175,6 @@ void ConnectivityHelper::_getLocalAddress() {
         qDebug() << "Connectivity : local ip" << rtrn;
         emit localAddressStateChanged(rtrn.toStdString());
     }
-};
-
-void ConnectivityHelper::_onExternalAddressRequestResponse(QNetworkReply* networkReply) {   
-    
-    //prepare
-    auto err = networkReply->error();
-    networkReply->deleteLater();
-
-    //if upnp found it already, do nothing
-    if(this->_upnp_extIp.length() > 0) return;
-    
-    //if network error
-    if(err) {
-        qWarning() << "Connectivity : ipify.org cannot be reached !";
-        emit remoteAddressStateChanged(this->_getErrorText());
-        return;
-    }
-
-    //else get the ip from the response
-    const auto ip = QJsonDocument::fromJson(networkReply->readAll()).object().value("ip").toString();
-    qDebug() << "Connectivity : ipify.org responded our external IP is " << ip;
-    emit remoteAddressStateChanged(ip.toStdString().c_str(), true);
 };
 
 ///

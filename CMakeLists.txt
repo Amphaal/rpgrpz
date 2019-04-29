@@ -128,8 +128,7 @@ list(APPEND EXT_LIBS
 
 #private libs
 file(GLOB_RECURSE INT_LIBS
-    "libs/*.c"
-    "libs/*.cpp"
+    "libs/*"
 )
 
 #QThread derivatives
@@ -151,7 +150,7 @@ list(APPEND SOURCES
 
 #ui components
 list(APPEND SOURCES
-    
+
     src/shared/map/MapHint.cpp
     src/shared/map/MapHintViewBinder.cpp
 
@@ -192,7 +191,7 @@ list(APPEND SOURCES
 #########################
 
 # Create executable
-add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES} ${INT_LIBS}) 
+add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${INT_LIBS} ${SOURCES}) 
 
 # Bind ext libs
 conan_target_link_libraries(${PROJECT_NAME})

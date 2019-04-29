@@ -104,30 +104,70 @@ void Playlist::dropEvent(QDropEvent *event) {
     for(auto &link : this->_tempDnD) {
         
         //prepare
-        QString data;
         auto url = link.second;
 
         //defines behavior depending on tag
         switch(link.first) {
-            case LinkType::ServerAudio:
-                data = url.toString(QFlags<QUrl::UrlFormattingOption>(QUrl::RemoveScheme | QUrl::StripTrailingSlash));
-                data = data.mid(3);
+            case LinkType::ServerAudio: {
+                    
+                    //strip file:/// before
+                    auto data = url.toString(QFlags<QUrl::UrlFormattingOption>(QUrl::RemoveScheme | QUrl::StripTrailingSlash));
+                    data = data.mid(3);
+                    this->_buildItemsFromUri(data, link.first);
+
+                }
                 break;
-            case LinkType::YoutubePlaylist:
-                
+            case LinkType::YoutubePlaylist: {
+                    
+                    //handler...
+                    auto _handler = [&, link](QList<QString> list) {
+                        for(auto &id : list) {
+                            auto ytUrl = YoutubeHelper::buildVideoUrlFromVideoId(id);
+                            this->_buildItemsFromUri(ytUrl, link.first);
+                        }
+                    };
+
+                    //fetch videos
+                    YoutubeHelper::getVideoIdsFromPlaylistUrl(url.toString()).then(_handler);
+
+                }
                 break;
             case LinkType::YoutubeVideo:
-                data = url.toString();
+                this->_buildItemsFromUri(url.toString(), link.first);
                 break;
         }
 
-        //add item de list
-        this->addItem(data);
     }
 
     //clear temp content
     this->_tempDnD.clear();
 
+}
+
+void Playlist::_buildItemsFromUri(QString uri, const LinkType &type) {
+        
+        //prepare item
+        auto a = new QListWidgetItem();
+        a->setData(Qt::UserRole, uri);
+        
+        //define default title
+        auto setText = [a](QString title) {
+            a->setText(title);
+        };
+        setText(uri);
+
+        //conditionnal additionnal informations fetchers
+        switch(type) {
+            case LinkType::ServerAudio:
+                //AudioFilesHelper::getTitleOfFile(uri).then(setText);
+                break;
+            case LinkType::YoutubePlaylist:
+            case LinkType::YoutubeVideo:
+                YoutubeHelper::getVideoTitle(uri).then(setText);
+                break;
+        }
+    
+    this->addItem(a);
 }
 
 

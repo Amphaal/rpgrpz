@@ -130,9 +130,9 @@ class PlaylistToolbar : public QWidget {
             this->_setPlayButtonState(btnstate);
             
             if(btnstate) {
-                emit actionRequired(PlaylistToolbar::Action::Pause);
-            } else {
                 emit actionRequired(PlaylistToolbar::Action::Play);
+            } else {
+                emit actionRequired(PlaylistToolbar::Action::Pause);
             }
         }
 };

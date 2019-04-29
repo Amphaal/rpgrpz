@@ -54,7 +54,13 @@
         "xtree": "cpp",
         "xutility": "cpp",
         "qapplication": "cpp",
-        "qlistwidget": "cpp"
+        "qlistwidget": "cpp",
+        "qmimedatabase": "cpp",
+        "qdragmoveevent": "cpp",
+        "qnetworkaccessmanager": "cpp",
+        "qstring": "cpp",
+        "qjsondocument": "cpp",
+        "qurlquery": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

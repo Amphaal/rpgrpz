@@ -11,6 +11,9 @@
 
 #include <QUrlQuery>
 
+#include "src/helpers/network/_YoutubeHelper.hpp"
+// #include "src/helpers/network/_AudioFilesHelper.hpp"
+
 class Playlist : public QListWidget {
 
     Q_OBJECT
@@ -40,6 +43,7 @@ class Playlist : public QListWidget {
             //d&d temp
             QList<QPair<LinkType, QUrl>> _tempDnD;
             int _tempHashDnDFromUrlList(QList<QUrl> &list);
+            void _buildItemsFromUri(QString uri, const LinkType &type);
     
 
         bool _defaultPlay();

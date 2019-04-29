@@ -29,7 +29,6 @@ class ConnectivityHelper : public QObject
         void uPnPStateChanged(const std::string &state);
 
     private:
-        
         QNetworkAccessManager* _nam = nullptr;
         QNetworkConfigurationManager* _ncm = nullptr;
 
@@ -41,12 +40,8 @@ class ConnectivityHelper : public QObject
         std::string _getErrorText();
 
         void _getLocalAddress();
-        void _askExternalAddress();
         void _tryNegociateUPnPPort();
         void _clearUPnPRequester();
-
-        void _onExternalAddressRequestResponse(QNetworkReply* networkReply);
-
         void _pickPreferedConfiguration();
 
         void _onUPnPSuccess(const char * protocol, const char * negociatedPort);
@@ -59,4 +54,5 @@ class ConnectivityHelper : public QObject
 
         QList<QNetworkConfiguration> _getDefinedConfiguration();
         
+
 };

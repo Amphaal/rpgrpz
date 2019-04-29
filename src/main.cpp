@@ -74,6 +74,8 @@ int clientApp(int argc, char** argv) {
 // TEST //
 //////////
 
+#include "src/helpers/network/_YoutubeHelper.hpp"
+
 int test(int argc, char** argv){    
     QApplication app(argc, argv);
     TestMainWindow test;

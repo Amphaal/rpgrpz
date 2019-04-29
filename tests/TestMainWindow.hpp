@@ -13,7 +13,7 @@ class TestMainWindow : public QMainWindow {
         _cli(new GStreamerClient(this)),
         _plCtrl(new PlaylistController),
         _asCtrl(new AudioStreamController) {
-            
+
             //init
             _plCtrl->setEnabled(true);
             this->setCentralWidget(new QWidget);
@@ -56,7 +56,7 @@ class TestMainWindow : public QMainWindow {
 
             //initial show
             this->resize(800, 600);
-            this->showMaximized();
+            this->show();
         }
     
     private:
