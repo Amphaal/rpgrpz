@@ -2,6 +2,9 @@
 
 Playlist::Playlist(QWidget* parent) : QListWidget(parent) {
 
+    auto a = YoutubeVideo::fromUrl("https://www.youtube.com/watch?v=YUDhZJ-BJhc");
+    a->fetchVideoInfos();
+
     //self
     this->setAcceptDrops(true);
     this->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -59,7 +62,7 @@ int Playlist::_tempHashDnDFromUrlList(QList<QUrl> &list) {
             if(!mimeOfFile.startsWith("audio")) continue;
 
             //add...
-            this->_tempDnD.append(QPair(LinkType::ServerAudio, url));
+            this->_tempDnD.append(QPair(PlaylistItem::LinkType::ServerAudio, url));
         
         //from youtube
         } else if (url.host().contains("youtu")) {
@@ -71,13 +74,13 @@ int Playlist::_tempHashDnDFromUrlList(QList<QUrl> &list) {
             if(query.hasQueryItem("list")) {
 
                 //add...
-                this->_tempDnD.append(QPair(LinkType::YoutubePlaylist, url));
+                this->_tempDnD.append(QPair(PlaylistItem::LinkType::YoutubePlaylist, url));
                 
             //video
             } else if(query.hasQueryItem("v")) {
                 
                 //add...
-                this->_tempDnD.append(QPair(LinkType::YoutubeVideo, url));
+                this->_tempDnD.append(QPair(PlaylistItem::LinkType::YoutubeVideo, url));
 
             //unhandled format
             } else {
@@ -108,31 +111,31 @@ void Playlist::dropEvent(QDropEvent *event) {
 
         //defines behavior depending on tag
         switch(link.first) {
-            case LinkType::ServerAudio: {
+            case PlaylistItem::LinkType::ServerAudio: {
                     
                     //strip file:/// before
-                    auto data = url.toString(QFlags<QUrl::UrlFormattingOption>(QUrl::RemoveScheme | QUrl::StripTrailingSlash));
-                    data = data.mid(3);
-                    this->_buildItemsFromUri(data, link.first);
+                    auto cleanUrl = url.toString(QFlags<QUrl::UrlFormattingOption>(QUrl::RemoveScheme | QUrl::StripTrailingSlash));
+                    cleanUrl = cleanUrl.mid(3);
+                    this->_buildItemsFromUri(cleanUrl, link.first);
 
                 }
                 break;
-            case LinkType::YoutubePlaylist: {
+            case PlaylistItem::LinkType::YoutubePlaylist: {
                     
                     //handler...
-                    auto _handler = [&, link](QList<QString> list) {
+                    auto _iterateVideoIds = [&, link](QList<QString> list) {
                         for(auto &id : list) {
-                            auto ytUrl = YoutubeHelper::buildVideoUrlFromVideoId(id);
-                            this->_buildItemsFromUri(ytUrl, link.first);
+                            auto url = YoutubeVideo::urlFromVideoId(id);
+                            this->_buildItemsFromUri(url, link.first);
                         }
                     };
 
                     //fetch videos
-                    YoutubeHelper::getVideoIdsFromPlaylistUrl(url.toString()).then(_handler);
+                    YoutubeVideo::fromPlaylistUrl(url.toString()).then(_iterateVideoIds);
 
                 }
                 break;
-            case LinkType::YoutubeVideo:
+            case PlaylistItem::LinkType::YoutubeVideo:
                 this->_buildItemsFromUri(url.toString(), link.first);
                 break;
         }
@@ -144,26 +147,39 @@ void Playlist::dropEvent(QDropEvent *event) {
 
 }
 
-void Playlist::_buildItemsFromUri(QString uri, const LinkType &type) {
+void Playlist::_buildItemsFromUri(QString uri, const PlaylistItem::LinkType &type) {
         
         //prepare item
         auto a = new QListWidgetItem();
-        a->setData(Qt::UserRole, uri);
+        auto plItem = new PlaylistItem(type, uri);
+        
+        //define inner data
+        a->setData(
+            Qt::UserRole, 
+            QVariant::fromValue(static_cast<void*>(plItem))
+        );
         
         //define default title
-        auto setText = [a](QString title) {
+        auto _defineTitle = [a, plItem](QString title) {
+            plItem->setTitle(title);
+            //auto test = static_cast<PlaylistItem*>(variant.value<void*>());
             a->setText(title);
         };
-        setText(uri);
+        _defineTitle(uri); //temporary title
 
         //conditionnal additionnal informations fetchers
         switch(type) {
-            case LinkType::ServerAudio:
-                //AudioFilesHelper::getTitleOfFile(uri).then(setText);
+            case PlaylistItem::LinkType::ServerAudio:
+                AudioFilesHelper::getTitleOfFile(uri).then(_defineTitle);
                 break;
-            case LinkType::YoutubePlaylist:
-            case LinkType::YoutubeVideo:
-                YoutubeHelper::getVideoTitle(uri).then(setText);
+            case PlaylistItem::LinkType::YoutubePlaylist:
+            case PlaylistItem::LinkType::YoutubeVideo: {
+                    auto ytV = YoutubeVideo::fromUrl(uri);
+                    ytV->fetchVideoInfos().then([&]() {
+                        _defineTitle(ytV->getTitle());
+                    });
+                }
+                
                 break;
         }
     

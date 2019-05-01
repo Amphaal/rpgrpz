@@ -11,8 +11,9 @@
 
 #include <QUrlQuery>
 
+#include "PlaylistItem.hpp"
 #include "src/helpers/network/_YoutubeHelper.hpp"
-// #include "src/helpers/network/_AudioFilesHelper.hpp"
+#include "src/helpers/network/_AudioFilesHelper.hpp"
 
 class Playlist : public QListWidget {
 
@@ -20,8 +21,6 @@ class Playlist : public QListWidget {
 
     public:
         Playlist(QWidget* parent = nullptr);
-
-        enum LinkType { YoutubePlaylist, YoutubeVideo, ServerAudio };
 
         void playNext();
         void playPrevious();
@@ -41,9 +40,9 @@ class Playlist : public QListWidget {
             void dropEvent(QDropEvent *event) override;
 
             //d&d temp
-            QList<QPair<LinkType, QUrl>> _tempDnD;
+            QList<QPair<PlaylistItem::LinkType, QUrl>> _tempDnD;
             int _tempHashDnDFromUrlList(QList<QUrl> &list);
-            void _buildItemsFromUri(QString uri, const LinkType &type);
+            void _buildItemsFromUri(QString uri, const PlaylistItem::LinkType &type);
     
 
         bool _defaultPlay();

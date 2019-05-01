@@ -60,7 +60,8 @@
         "qnetworkaccessmanager": "cpp",
         "qstring": "cpp",
         "qjsondocument": "cpp",
-        "qurlquery": "cpp"
+        "qurlquery": "cpp",
+        "array": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

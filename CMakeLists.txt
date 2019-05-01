@@ -172,6 +172,7 @@ list(APPEND SOURCES
     src/ui/communication/ChatWidget.cpp
     src/ui/communication/ConnectWidget.cpp
 
+    src/ui/communication/audio/PlaylistItem.hpp
     src/ui/communication/audio/Playlist.cpp
     src/ui/communication/audio/AudioStreamToolbar.hpp
     src/ui/communication/audio/PlaylistToolbar.hpp
