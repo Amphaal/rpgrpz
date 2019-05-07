@@ -20,6 +20,13 @@ class YoutubeVideo : public NetworkHelper {
         QHash<int, QHash<QString, QString>>* _sourceUrlsByItag = nullptr;
         QHash<int, QString>* _audioTypeByItag = nullptr;
 
+        void _usePlayerResponse(QUrlQuery &query) {
+            auto strP_R = query.queryItemValue("player_response", QUrl::FullyDecoded);
+            auto P_R = QJsonDocument::fromJson(strP_R.toUtf8());
+            
+            qDebug() << P_R;
+        }
+
         void _setFormatsInfosFromQuery(QUrlQuery &query) {
             
             //delete / recreate
@@ -52,7 +59,7 @@ class YoutubeVideo : public NetworkHelper {
                     //insert
                     t.insert(pair.first, data);
                     
-                    qDebug() << pair.first << " : " << data;
+                    // qDebug() << pair.first << " : " << data;
 
                     //detect audio type
                     if(pair.first == "type" && data.contains("audio")) isAudio = true;
@@ -109,6 +116,13 @@ class YoutubeVideo : public NetworkHelper {
                 if(!title.isNull()) {
                     this->_title = title;
                 }
+
+                // for(auto &s : query.queryItems()) {
+                //     qDebug() << s;
+                // }
+
+                //player response
+                this->_usePlayerResponse(query);
 
                 //set length
                 this->_lengthInSeconds = query.queryItemValue("length_seconds").toInt();
@@ -194,7 +208,7 @@ class YoutubeVideo : public NetworkHelper {
 
         static QString videoInfoRequestUrlFromVideoId(QString videoId) {
             auto encodedApiUrl = QUrl::toPercentEncoding(apiUrlFromVideoId(videoId));
-            return QString("https://www.youtube.com/get_video_info?video_id=") + videoId + "&el=detailpage&eurl=" + encodedApiUrl;
+            return QString("https://www.youtube.com/get_video_info?video_id=") + videoId + "&el=embedded&eurl=" + encodedApiUrl;
         }
 
 };

@@ -21,7 +21,6 @@
 #include <QVector>
 
 #include "MapTools.h"
-#include "base/AssetsNavigator.h"
 #include "base/AnimationTimeLine.hpp"
 
 #include "src/shared/map/MapHintViewBinder.h"

@@ -2,8 +2,8 @@
 
 Playlist::Playlist(QWidget* parent) : QListWidget(parent) {
 
-    auto a = YoutubeVideo::fromUrl("https://www.youtube.com/watch?v=YUDhZJ-BJhc");
-    a->fetchVideoInfos();
+    // auto a = YoutubeVideo::fromUrl("https://www.youtube.com/watch?v=9bZkp7q19f0");
+    // a->fetchVideoInfos();
 
     //self
     this->setAcceptDrops(true);

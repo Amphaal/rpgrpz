@@ -22,10 +22,11 @@
 #include "src/ui/communication/audio/AudioStreamController.h"
 #include "src/ui/communication/audio/PlaylistController.h"
 
-#include "src/ui/map/AssetsManager.h"
 #include "src/ui/map/MapView.h"
 #include "src/ui/map/MapTools.h"
 #include "src/ui/map/MapLayoutManager.h"
+
+#include "src/ui/assets/AssetsManager.h"
 
 #include "src/ui/others/RestoringSplitter.hpp"
 #include "src/ui/others/UpdaterUIIntegrator.hpp"

@@ -9,8 +9,8 @@
 #include <QJsonObject>
 
 #include "src/helpers/_const.hpp"
-#include "base/AssetsNavigator.h"
-#include "base/AssetsPreviewer.h"
+#include "base/AssetsTreeView.hpp"
+#include "AssetsPreviewer.h"
 
 class AssetsManager : public QWidget {
 
@@ -20,10 +20,6 @@ class AssetsManager : public QWidget {
         AssetsManager(QWidget * parent = nullptr);
 
     private:
-        AssetsNavigator* _tree;
+        AssetsTreeView* _tree;
         AssetsPreviewer* _previewer;
-
-        QJsonDocument _getCoordinator();
-        void _addAppObjectsToTree();
-        void _refreshTree();
 };

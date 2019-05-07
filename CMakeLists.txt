@@ -92,7 +92,7 @@ SET(SOURCES
 ###########
 
 #search path
-SET(Qt5_DIR "C:/Qtd/5.12.2/msvc2017_64/lib/cmake/Qt5")
+SET(Qt5_DIR "C:/Qtd/5.12.3/msvc2017_64/lib/cmake/Qt5")
 
 #find package
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL)
@@ -104,6 +104,7 @@ list(APPEND EXT_LIBS
     Qt5::Svg
     Qt5::OpenGL
 )
+
 #############
 # Gstreamer #
 #############
@@ -154,13 +155,16 @@ list(APPEND SOURCES
     src/shared/map/MapHint.cpp
     src/shared/map/MapHintViewBinder.cpp
 
-    src/ui/map/base/AssetsNavigator.cpp
-    src/ui/map/base/AssetsPreviewer.cpp
     src/ui/map/base/AnimationTimeLine.hpp
     src/ui/map/MapTools.cpp
     src/ui/map/MapView.cpp
     src/ui/map/MapLayoutManager.cpp
-    src/ui/map/AssetsManager.cpp
+    
+    src/shared/assets/JSONDatabase.cpp
+    src/shared/assets/AssetsDatabase.cpp
+ 
+    src/ui/assets/AssetsManager.cpp
+    src/ui/assets/AssetsPreviewer.cpp
 
     src/ui/others/RPZStatusBar.hpp
     src/ui/others/UpdaterUIIntegrator.hpp
@@ -213,11 +217,6 @@ include(Windeployqt)
 windeployqt(${PROJECT_NAME} "${CMAKE_CURRENT_BINARY_DIR}/bin")
 
 #copy gstreamer .dlls
-# list(APPEND _gstreamer_plugins
-#     "gstsoup"
-#     "gstplayback" 
-#     "gstcoreelements"
-# )
 set(_gstreamer_plugins "all")
 DeployGStreamer(${PROJECT_NAME} "${_gstreamer_plugins}")
     

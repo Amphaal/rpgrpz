@@ -1,6 +1,5 @@
 #pragma once
 
-#include <QTcpSocket>
 #include <QMessageBox>
 #include <QJsonDocument>
 #include <QJsonObject>

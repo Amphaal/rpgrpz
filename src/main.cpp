@@ -88,6 +88,8 @@ int test(int argc, char** argv){
 
 int main(int argc, char** argv){
 
+    // qputenv("QT_DEBUG_PLUGINS", QByteArray("1"));
+
     //configure QThreads to acknowledge specific types for data exchanges
     qRegisterMetaType<std::string>("std::string");
 

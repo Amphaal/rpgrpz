@@ -10,7 +10,7 @@
 class TestMainWindow : public QMainWindow {
     public:
         TestMainWindow() : 
-        _cli(new GStreamerClient(this)),
+        //_cli(new GStreamerClient(this)),
         _plCtrl(new PlaylistController),
         _asCtrl(new AudioStreamController) {
 
@@ -21,37 +21,37 @@ class TestMainWindow : public QMainWindow {
             this->centralWidget()->layout()->addWidget(_plCtrl);
             this->centralWidget()->layout()->addWidget(_asCtrl);
             
-            //connect
-            QObject::connect(
-                this->_plCtrl->playlist, &Playlist::playRequested,
-                [&](const QString &uri) {
+            // //connect
+            // QObject::connect(
+            //     this->_plCtrl->playlist, &Playlist::playRequested,
+            //     [&](const QString &uri) {
                     
-                    this->_asCtrl->setEnabled(true);
-                    this->_asCtrl->updatePlayedMusic(uri);
+            //         this->_asCtrl->setEnabled(true);
+            //         this->_asCtrl->updatePlayedMusic(uri);
 
-                    this->_plCtrl->toolbar->newTrack(0);
-                    this->_cli->useSource(uri);
-                }
-            );
+            //         this->_plCtrl->toolbar->newTrack(0);
+            //         this->_cli->useSource(uri);
+            //     }
+            // );
 
-            QObject::connect(
-                this->_plCtrl->toolbar, &PlaylistToolbar::actionRequired,
-                [&](const PlaylistToolbar::Action &action) {
-                    switch(action) {
-                        case PlaylistToolbar::Action::Play:
-                            this->_cli->play();
-                        break;
-                        case PlaylistToolbar::Action::Pause:
-                            this->_cli->pause();
-                        break;
-                    }
-                }
-            );
+            // QObject::connect(
+            //     this->_plCtrl->toolbar, &PlaylistToolbar::actionRequired,
+            //     [&](const PlaylistToolbar::Action &action) {
+            //         switch(action) {
+            //             case PlaylistToolbar::Action::Play:
+            //                 this->_cli->play();
+            //             break;
+            //             case PlaylistToolbar::Action::Pause:
+            //                 this->_cli->pause();
+            //             break;
+            //         }
+            //     }
+            // );
 
-            QObject::connect(
-                this->_asCtrl->toolbar, &AudioStreamToolbar::askForVolumeChange,
-                this->_cli, &GStreamerClient::setVolume
-            );
+            // QObject::connect(
+            //     this->_asCtrl->toolbar, &AudioStreamToolbar::askForVolumeChange,
+            //     this->_cli, &GStreamerClient::setVolume
+            // );
 
 
             //initial show

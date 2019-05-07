@@ -61,7 +61,12 @@
         "qstring": "cpp",
         "qjsondocument": "cpp",
         "qurlquery": "cpp",
-        "array": "cpp"
+        "array": "cpp",
+        "qstandarditemmodel": "cpp",
+        "qtreeview": "cpp",
+        "qabstractitemmodel": "cpp",
+        "qheaderview": "cpp",
+        "qdragenterevent": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

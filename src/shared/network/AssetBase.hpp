@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QString>
+
 class AssetBase {
     public:
         enum Type { Undefined, Drawing, Brush, NPC, Event, PC };
