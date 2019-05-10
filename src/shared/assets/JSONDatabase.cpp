@@ -6,40 +6,59 @@ void JSONDatabase::_instanciateDb() {
     
     //read coordinator file as JSON
     auto dbPath = this->dbPath();
-    QFile jsonFile(dbPath);
+    this->_destfile = new QFile(dbPath);
     
     //helper for file creation
-    auto writeNewCoord = [&](QFile &file) {
-        file.open(QFile::WriteOnly);
-        file.write(this->defaultJsonDoc().toStdString().c_str());
-        file.close();
+    auto writeNewCoord = [&](QFile* file) {
+        file->open(QFile::WriteOnly);
+        file->write(this->defaultJsonDoc().toStdString().c_str());
+        file->close();
     };
 
     //helper for reading
-    auto readNewCoord = [](QFile &file) {
-        file.open(QFile::ReadOnly);
-        auto coordinator = QJsonDocument::fromJson(file.readAll());
-        file.close();
+    auto readNewCoord = [](QFile* file) {
+        file->open(QFile::ReadOnly);
+        auto coordinator = QJsonDocument::fromJson(file->readAll());
+        file->close();
         return coordinator;
     };
 
 
     //if file is empty or doesnt exist
-    if(!jsonFile.size() || !jsonFile.exists()) {
-        writeNewCoord(jsonFile);
+    if(!this->_destfile->size() || !this->_destfile->exists()) {
+        writeNewCoord(this->_destfile);
     }
 
     //try to read the file
-    auto coordinator = readNewCoord(jsonFile);
+    auto coordinator = readNewCoord(this->_destfile);
 
     //corrupted file, move it and create a new one
     if(coordinator.isNull()) {
         const auto errorPath = dbPath + "_error";
         QDir().remove(errorPath);
         QDir().rename(dbPath, errorPath);
-        writeNewCoord(jsonFile);
-        readNewCoord(jsonFile);
+        writeNewCoord(this->_destfile);
+        readNewCoord(this->_destfile);
     }
 
-    this->_db = new QJsonDocument(coordinator);
+    this->_db = coordinator;
+}
+
+void JSONDatabase::_checkFileExistance() {
+    if(!this->_destfile->exists()) this->_instanciateDb();
+}
+
+void JSONDatabase::_updateDbFile(QJsonObject &newData) {
+    this->_destfile->open(QFile::WriteOnly);
+    
+        this->_db.setObject(newData);
+        
+        this->_destfile->write(
+            this->_db.toJson(
+                // QJsonDocument::JsonFormat::Compact
+                QJsonDocument::JsonFormat::Indented
+            )
+        );
+
+    this->_destfile->close();
 }

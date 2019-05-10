@@ -22,11 +22,15 @@ static const std::string ASSETS_JSON_COORDINATOR_FILENAME = "/resources.json";
 static const std::string UPNP_DEFAULT_TARGET_PORT = "31137";
 static const std::string UPNP_REQUEST_DESCRIPTION = "RPGRPZ";
 
+static std::string makeSureDirPathExists(std::string &path) {
+    auto qt = QString::fromStdString(path);
+    QDir().mkpath(qt);
+    return path;
+}
+
 static std::string getAppDataLocation() {
     auto target = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).toStdString();
-    auto qt = QString::fromStdString(target);
-    QDir().mkpath(qt);
-    return target;
+    return makeSureDirPathExists(target);
 }
 
 static std::string getAssetsFileCoordinatorLocation() {
@@ -34,7 +38,7 @@ static std::string getAssetsFileCoordinatorLocation() {
 }
 
 static std::string getAssetsFolderLocation() {
-    return getAppDataLocation() + ASSETS_PATH;
+    return makeSureDirPathExists(getAppDataLocation() + ASSETS_PATH);
 }
 
 static std::string getLogFileLocation() {

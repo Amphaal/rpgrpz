@@ -332,7 +332,7 @@ void MapView::changePenSize(const int newSize) {
 
 void MapView::_goToSceneCenter() {
     auto center = this->scene()->sceneRect().center();
-    qDebug() << "centering on " << center;
+    // qDebug() << "centering on " << center;
     this->centerOn(center);
 }
 
@@ -378,7 +378,7 @@ void MapView::wheelEvent(QWheelEvent *event) {
         this->_currentRelScale = factor * this->_currentRelScale;
         this->scale(factor, factor);
 
-        qDebug() << "zooming by " << factor << " (" << qreal(this->_currentRelScale) << " from initial)";
+        // qDebug() << "zooming by " << factor << " (" << qreal(this->_currentRelScale) << " from initial)";
     };
 
     AnimationTimeLine::use(AnimationTimeLine::Type::Zoom, zoomRatioToApply, this, zoom);
@@ -414,7 +414,7 @@ void MapView::_rotate(double deg) {
     this->_degreesFromNorth += deg; 
     this->rotate(deg);
 
-    qDebug() << "rotating " << qreal(deg) << " deg (" << qreal(this->_degreesFromNorth) << " from north)";
+    // qDebug() << "rotating " << qreal(deg) << " deg (" << qreal(this->_degreesFromNorth) << " from north)";
 }
 
 void MapView::_rotateBackToNorth() {
@@ -424,7 +424,7 @@ void MapView::_rotateBackToNorth() {
     auto adjust = fmod(this->_degreesFromNorth, 360);
     this->rotate(-this->_degreesFromNorth);
     
-    qDebug() << "rotating " << qreal(-this->_degreesFromNorth) << "deg back to north)";
+    // qDebug() << "rotating " << qreal(-this->_degreesFromNorth) << "deg back to north)";
     
     this->_degreesFromNorth = 0;
 }

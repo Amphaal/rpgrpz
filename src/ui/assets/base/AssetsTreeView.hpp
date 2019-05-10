@@ -40,7 +40,6 @@ class AssetsTreeView : public QTreeView {
         QMimeDatabase* _MIMEDb = nullptr;
 
         void dragEnterEvent(QDragEnterEvent *event) override {
-            QAbstractItemView::dragEnterEvent(event);
 
             //if dragged from OS
             auto md = event->mimeData();
@@ -57,27 +56,27 @@ class AssetsTreeView : public QTreeView {
                 }
 
                 //if no error, accept
-                event->acceptProposedAction();
+                this->setState(DraggingState); //mandatory for external drop visual features
+                event->accept();
             
             } else if(event->source()) {
 
                 //if has a widget attached, OK
-                event->acceptProposedAction();
+                this->setState(DraggingState); //mandatory for external drop visual features
+                event->accept();
 
             }
-        }
-        
-        void dragMoveEvent(QDragMoveEvent * event) override {
-            QAbstractItemView::dragMoveEvent(event);
 
-            event->acceptProposedAction();
-            event->accept();
         }
 
-        void dropEvent(QDropEvent *event) override {
-            QAbstractItemView::dropEvent(event);
+        void dragMoveEvent(QDragMoveEvent *event) override {
             
-            event->acceptProposedAction();
-            event->accept();
+            QAbstractItemView::dragMoveEvent(event); //mandatory for external drop visual features
+            
+            //if has a widget attached, move type drop
+            if(event->source()) {
+                event->setDropAction(Qt::DropAction::MoveAction);
+            }
         }
+
 };

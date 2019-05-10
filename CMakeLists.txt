@@ -160,9 +160,10 @@ list(APPEND SOURCES
     src/ui/map/MapView.cpp
     src/ui/map/MapLayoutManager.cpp
     
+    src/shared/assets/AssetsDatabaseElement.cpp
     src/shared/assets/JSONDatabase.cpp
     src/shared/assets/AssetsDatabase.cpp
- 
+    
     src/ui/assets/AssetsManager.cpp
     src/ui/assets/AssetsPreviewer.cpp
 
