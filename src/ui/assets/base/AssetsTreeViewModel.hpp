@@ -14,6 +14,39 @@ class AssetsTreeViewModel : public QAbstractItemModel {
     public:
         AssetsTreeViewModel(QObject *parent = nullptr) : QAbstractItemModel(parent), _db(new AssetsDatabase) { };
 
+        ///////////////
+        /// HELPERS ///
+        ///////////////
+
+        bool createFolder(QModelIndex &parentIndex) {
+            this->beginInsertRows(parentIndex, 0, 1);
+            this->_db->createFolder(
+                AssetsDatabaseElement::fromIndex(parentIndex)
+            );
+            this->endInsertRows();
+        }
+
+
+        bool removeItems(const QList<QModelIndex> &itemsIndexesToRemove) {
+            
+            //create list
+            QList<AssetsDatabaseElement*> items;
+            for(auto &item : itemsIndexesToRemove) {
+                items.append(
+                    AssetsDatabaseElement::fromIndex(item)
+                );
+            }
+            
+            //TODO being/end
+            this->_db->removeItems(items);
+            
+        }
+        
+        ///////////////////
+        /// END HELPERS ///
+        ///////////////////
+
+
         ////////////////////////
         /// REIMPLEMENTATION ///
         ////////////////////////
@@ -27,7 +60,7 @@ class AssetsTreeViewModel : public QAbstractItemModel {
             }
             
             //prepare data
-            auto data = static_cast<AssetsDatabaseElement*>(parent.internalPointer());
+            auto data = AssetsDatabaseElement::fromIndex(parent);
             
             return this->createIndex(row, column, data->child(row)); 
             
@@ -37,7 +70,7 @@ class AssetsTreeViewModel : public QAbstractItemModel {
         QModelIndex parent(const QModelIndex &index) const override {
             
             //prepare data
-            auto data = static_cast<AssetsDatabaseElement*>(index.internalPointer());
+            auto data = AssetsDatabaseElement::fromIndex(index);
 
             //if root element requested..
             if(data->isRoot()) {
@@ -55,14 +88,14 @@ class AssetsTreeViewModel : public QAbstractItemModel {
                 return 0;
             }
 
-            return static_cast<AssetsDatabaseElement*>(index.internalPointer())->flags();
+            return AssetsDatabaseElement::fromIndex(index)->flags();
         }
 
         //data
         QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override {
             
             //bound data...
-            auto data = static_cast<AssetsDatabaseElement*>(index.internalPointer());
+            auto data = AssetsDatabaseElement::fromIndex(index);
 
             //for handled roles
             switch (role) {
@@ -81,6 +114,23 @@ class AssetsTreeViewModel : public QAbstractItemModel {
             
         }
 
+        bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override {
+            
+            //bound data...
+            auto data = AssetsDatabaseElement::fromIndex(index);
+
+            //if not main column, default behavior
+            if(index.column()) return QAbstractItemModel::setData(index, value, role);
+
+            switch(role) {
+                case Qt::EditRole:
+                    return this->_db->rename(value.toString(), data);
+                    break;
+                default:
+                    return QAbstractItemModel::setData(index, value, role);
+            }
+        }
+
         int columnCount(const QModelIndex &parent = QModelIndex()) const override {
             return 2;
         }
@@ -93,13 +143,9 @@ class AssetsTreeViewModel : public QAbstractItemModel {
             }
 
             //is inner element
-            auto data = static_cast<AssetsDatabaseElement*>(parent.internalPointer());
+            auto data = AssetsDatabaseElement::fromIndex(parent);
             return data->childCount();
         }
-
-        // bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex()) override {
-
-        // }
 
         ////////////////////////////
         /// END REIMPLEMENTATION ///
@@ -120,11 +166,12 @@ class AssetsTreeViewModel : public QAbstractItemModel {
             if(!data->hasFormat("text/uri-list") && !data->hasFormat(AssetsDatabaseElement::listMimeType)) return false;
 
             auto droppedList = pointerListFromMimeData(data);
-            auto dest = static_cast<AssetsDatabaseElement*>(parent.internalPointer());
+            auto dest = AssetsDatabaseElement::fromIndex(parent);
 
             //inner drop, move
             if(data->hasFormat(AssetsDatabaseElement::listMimeType)) {
-
+                //TODO begin/end
+                this->_db->moveItems(droppedList, dest);
             }
 
             //external drop, insert 
@@ -179,7 +226,7 @@ class AssetsTreeViewModel : public QAbstractItemModel {
             if(staticContainersSources.count() > 1) return false;
 
             //if drop is not in source static container, reject
-            auto destStaticContainerType = static_cast<AssetsDatabaseElement*>(parent.internalPointer())->getBoundStaticContainer();
+            auto destStaticContainerType = AssetsDatabaseElement::fromIndex(parent)->getBoundStaticContainer();
             if(staticContainersSources.contains(destStaticContainerType)) return false;
 
             return true;

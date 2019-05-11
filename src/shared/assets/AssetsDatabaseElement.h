@@ -3,6 +3,7 @@
 #include <QString>
 #include <QList>
 #include <QHash>
+#include <QModelIndex>
 
 class AssetsDatabaseElement {
     public:
@@ -26,25 +27,36 @@ class AssetsDatabaseElement {
 
         AssetsDatabaseElement(
             const QString &name, 
-            const AssetsDatabaseElement::Type &type = AssetsDatabaseElement::Type::Folder
+            const AssetsDatabaseElement::Type &type = AssetsDatabaseElement::Type::Folder,
+            QString id = "" 
         );
         AssetsDatabaseElement();
         ~AssetsDatabaseElement();
 
+        static AssetsDatabaseElement* fromIndex(QModelIndex index);
         static QString getIconPathForType(const AssetsDatabaseElement::Type &type);
         QString displayName();
         AssetsDatabaseElement::Type type();
         QString iconPath();
         QString path();
+        QString id();
+
+        //prefer using rename() with AssetsDatabase
+        void rename(QString &newName);
 
         AssetsDatabaseElement* parent();
         int row() const;
         AssetsDatabaseElement* child(int row);
         int childCount() const;
+
+        QList<AssetsDatabaseElement*> childrenContainers();
+        QList<AssetsDatabaseElement*> childrenItems();
         
         bool isContainer();
         bool isInternal();
         bool isRoot();
+        bool isItem();
+        bool isStaticContainer();
 
         //prefer using insertAsset() for parallel db insertion
         void appendChild(AssetsDatabaseElement* child);;
@@ -60,6 +72,7 @@ class AssetsDatabaseElement {
     private:
         QString _name;
         AssetsDatabaseElement::Type _type = Unknown;
+        QString _id = "";
 
         static const inline QList<AssetsDatabaseElement::Type> _containerTypes = {
             InternalContainer,
@@ -67,6 +80,12 @@ class AssetsDatabaseElement {
             FloorBrushContainer, 
             ObjectContainer,
             Folder
+        };
+
+        static const inline QList<AssetsDatabaseElement::Type> _itemTypes = {
+            NPC, 
+            FloorBrush,
+            Object
         };
 
         static const inline QList<AssetsDatabaseElement::Type> _staticContainerTypes = {

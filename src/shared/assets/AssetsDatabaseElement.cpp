@@ -2,13 +2,23 @@
 
 AssetsDatabaseElement::AssetsDatabaseElement(
     const QString &name, 
-    const AssetsDatabaseElement::Type &type
-) : _name(name), _type(type) { };
+    const AssetsDatabaseElement::Type &type,
+    QString id
+) : _name(name), _type(type) { 
+
+   //prevent id definition if not asset Type
+   if(this->isItem()) this->_id = id;
+   
+};
 
 AssetsDatabaseElement::AssetsDatabaseElement() : AssetsDatabaseElement("", AssetsDatabaseElement::Type::Root) { };
 
 AssetsDatabaseElement::~AssetsDatabaseElement(){
     qDeleteAll(this->_subElements);
+}
+
+AssetsDatabaseElement* AssetsDatabaseElement::fromIndex(QModelIndex index) {
+    return static_cast<AssetsDatabaseElement*>(index.internalPointer());
 }
 
 QString AssetsDatabaseElement::getIconPathForType(const AssetsDatabaseElement::Type &type) {
@@ -17,6 +27,10 @@ QString AssetsDatabaseElement::getIconPathForType(const AssetsDatabaseElement::T
 
 QString AssetsDatabaseElement::displayName() {
     return this->_name;
+}
+
+QString AssetsDatabaseElement::id() {
+    return this->_id;
 }
 
 AssetsDatabaseElement::Type AssetsDatabaseElement::type() {
@@ -37,6 +51,10 @@ int AssetsDatabaseElement::row() const {
     }
 
     return 0;
+}
+
+void AssetsDatabaseElement::rename(QString &newName) {
+    this->_name = newName;
 }
 
 QString AssetsDatabaseElement::path() {
@@ -82,10 +100,39 @@ bool AssetsDatabaseElement::isRoot() {
     return this->_type == AssetsDatabaseElement::Type::Root;
 }
 
+bool AssetsDatabaseElement::isItem() {
+    return this->_itemTypes.contains(this->_type);
+}
+
+bool AssetsDatabaseElement::isStaticContainer() {
+    return this->_staticContainerTypes.contains(this->_type);
+}
+
 void AssetsDatabaseElement::appendChild(AssetsDatabaseElement* child) {
     child->defineParent(this);
     this->_subElements.append(child);
 };
+
+QList<AssetsDatabaseElement*> AssetsDatabaseElement::childrenContainers() {
+    QList<AssetsDatabaseElement*> list;
+    
+    for(auto &elem : this->_subElements) {
+        if(elem->isContainer()) list.append(elem);
+    }
+
+    return list;
+}
+
+QList<AssetsDatabaseElement*> AssetsDatabaseElement::childrenItems() {
+    QList<AssetsDatabaseElement*> list;
+    auto filterType = this->defaultTypeOnContainerForInsert();
+    
+    for(auto &elem : this->_subElements) {
+        if(filterType == elem->type()) list.append(elem);
+    }
+
+    return list;
+}
 
 AssetsDatabaseElement::Type AssetsDatabaseElement::defaultTypeOnContainerForInsert() {
     switch(this->getBoundStaticContainer()) {
@@ -127,10 +174,12 @@ Qt::ItemFlags AssetsDatabaseElement::flags() {
             break;
         case Player:
         case Event:
+            return QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable);
+            break;
         case Object:
         case NPC:
         case FloorBrush:
-            return QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable);
+            return QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
             break;
         case NPC_Container:
         case FloorBrushContainer:
@@ -138,7 +187,7 @@ Qt::ItemFlags AssetsDatabaseElement::flags() {
             return QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemIsDropEnabled);
             break;
         case Folder:
-            return QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsDragEnabled);
+            return QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
         default:
             return 0;
             break;
