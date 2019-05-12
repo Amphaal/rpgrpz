@@ -8,12 +8,17 @@ AssetsDatabaseElement::AssetsDatabaseElement(
 
    //prevent id definition if not asset Type
    if(this->isItem()) this->_id = id;
-   
+
 };
 
-AssetsDatabaseElement::AssetsDatabaseElement() : AssetsDatabaseElement("", AssetsDatabaseElement::Type::Root) { };
+AssetsDatabaseElement::AssetsDatabaseElement() : AssetsDatabaseElement("", Root) { };
 
 AssetsDatabaseElement::~AssetsDatabaseElement(){
+    
+    if(this->_parentElement) {
+        this->_parentElement->unrefChild(this);
+    }
+
     qDeleteAll(this->_subElements);
 }
 
@@ -80,12 +85,20 @@ QString AssetsDatabaseElement::path() {
     return this->_parentElement->path() + path;
 }
 
+QString AssetsDatabaseElement::fullPath() {
+    return this->isItem() ? this->path() : this->path() + "/" + this->_name;
+}
+
 AssetsDatabaseElement* AssetsDatabaseElement::child(int row) {
     return this->_subElements.value(row);
 }
 
 int AssetsDatabaseElement::childCount() const {
     return this->_subElements.count();
+}
+
+int AssetsDatabaseElement::itemChildrenCount() const {
+    return this->_itemChildrenCount;
 }
 
 bool AssetsDatabaseElement::isContainer() {
@@ -104,13 +117,27 @@ bool AssetsDatabaseElement::isItem() {
     return this->_itemTypes.contains(this->_type);
 }
 
+bool AssetsDatabaseElement::isDeletable() {
+    return this->_deletableItemTypes.contains(this->_type);
+}
+
 bool AssetsDatabaseElement::isStaticContainer() {
     return this->_staticContainerTypes.contains(this->_type);
 }
 
 void AssetsDatabaseElement::appendChild(AssetsDatabaseElement* child) {
-    child->defineParent(this);
-    this->_subElements.append(child);
+    
+    child->_defineParent(this);
+
+    //add to list
+    if(child->type() == Folder) {
+         this->_subElements.prepend(child);
+    } else {
+        this->_subElements.append(child);
+    }
+    
+    //increment count
+    if(child->isItem()) this->_itemChildrenCount++;
 };
 
 QList<AssetsDatabaseElement*> AssetsDatabaseElement::childrenContainers() {
@@ -150,8 +177,31 @@ AssetsDatabaseElement::Type AssetsDatabaseElement::defaultTypeOnContainerForInse
     }
 }
 
-void AssetsDatabaseElement::defineParent(AssetsDatabaseElement* parent) {
+void AssetsDatabaseElement::_defineParent(AssetsDatabaseElement* parent) {
+    
+    //if already existing parent, tells him to deref child
+    if(this->_parentElement) {
+        this->_parentElement->unrefChild(this);
+    }
+
+    //set new parent
     this->_parentElement = parent;
+}
+
+void AssetsDatabaseElement::unrefChild(AssetsDatabaseElement* child) {
+
+    //find child in subelements
+    auto foundIndex = this->_subElements.indexOf(child);
+    
+    //if found
+    if (foundIndex > -1) {
+
+        //unref
+        this->_subElements.removeAt(foundIndex);
+
+        //unincrement
+        if(child->isItem()) _itemChildrenCount--;
+    }
 }
 
 AssetsDatabaseElement::Type AssetsDatabaseElement::getBoundStaticContainer() {
@@ -187,7 +237,8 @@ Qt::ItemFlags AssetsDatabaseElement::flags() {
             return QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemIsDropEnabled);
             break;
         case Folder:
-            return QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsEditable);
+            return QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
+            break;
         default:
             return 0;
             break;

@@ -5,7 +5,7 @@ function Component() {
 
 Component.prototype.getPathToApp = function() {
     var appName = installer.value("Title");
-    var exePath = installer.value("TargetDir") + "/" + appName + ".exe";;
+    var exePath = installer.value("TargetDir") + "/" + appName + ".exe";
 
     return exePath;
 }

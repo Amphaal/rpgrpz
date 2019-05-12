@@ -18,16 +18,19 @@ const QString AssetsDatabase::dbPath() {
 ///
 
 void AssetsDatabase::_includeDbComponents() {
-
-    //extracts paths from db
+    
+    //data
     auto db_paths = this->_db["paths"].toObject();
+    auto assets_db = this->_db["assets"].toObject();
 
     //sort the keys
     auto paths = db_paths.keys();
     paths.sort();
 
-    //create container elems
-    QHash<QString, AssetsDatabaseElement*> _containers;
+    //to be created items
+    QHash<QString, AssetsDatabaseElement*> containersToFill;
+
+    //create folders arbo
     for(auto &path : paths) {
         
         //split the path
@@ -59,12 +62,23 @@ void AssetsDatabase::_includeDbComponents() {
 
         //create path
         auto lastContainer = this->_helperPathCreation(staticContainerElem, split);
-        auto lastContainerInsertType = lastContainer->defaultTypeOnContainerForInsert();
+        
+        //append to list
+        containersToFill.insert(path, lastContainer);
+    }
+
+    //create items for each end-containers
+    QHash<QString, AssetsDatabaseElement*>::iterator i;
+    for (i = containersToFill.begin(); i != containersToFill.end(); ++i) {
+        
+        //define
+        auto path = i.key();
+        auto lastContainer =  i.value();
 
         //preapre for search
         auto items_ids = db_paths[path].toArray();
-        auto assets_db = this->_db["assets"].toObject();
-
+        auto lastContainerInsertType = lastContainer->defaultTypeOnContainerForInsert();
+        
         //find items in db and create them
         for(auto &id : items_ids) {
             
@@ -83,6 +97,7 @@ void AssetsDatabase::_includeDbComponents() {
             lastContainer->appendChild(newElem);
         }
     }
+
 }
 
 AssetsDatabaseElement* AssetsDatabase::_helperPathCreation(AssetsDatabaseElement* parent, QList<QString> paths) {
@@ -104,7 +119,7 @@ AssetsDatabaseElement* AssetsDatabase::_helperPathCreation(AssetsDatabaseElement
 
     //if not found, create it
     if(!found) {
-        found = new AssetsDatabaseElement(part, AssetsDatabaseElement::Type::Folder);
+        found = new AssetsDatabaseElement(part);
         parent->appendChild(found);
     }
 
@@ -170,7 +185,7 @@ bool AssetsDatabase::insertAsset(QUrl &url, AssetsDatabaseElement* parent) {
     //read hash..
     sourceFile.open(QFile::ReadOnly);
     auto hash = QString::fromUtf8(
-        QCryptographicHash::hash(sourceFile.readAll(), QCryptographicHash::Keccak_224)
+        QCryptographicHash::hash(sourceFile.readAll(), QCryptographicHash::Keccak_224).toHex()
     );
     sourceFile.close();
 
@@ -241,15 +256,178 @@ bool AssetsDatabase::insertAsset(QUrl &url, AssetsDatabaseElement* parent) {
     return true;
 }
 
+QJsonArray AssetsDatabase::_diff(QJsonArray &target, QSet<QString> &toRemoveFromTarget) {
+    auto output = QJsonArray();
+    for(auto &e : target) {
+        auto str = e.toString();
+        if(!toRemoveFromTarget.contains(str)) {
+            output.append(str);
+        }
+    }
+    return output;
+}
 
-bool AssetsDatabase::removeItems(QList<AssetsDatabaseElement*> itemsToRemove) {
-    //TODO
-    return false;
+void AssetsDatabase::_prepareForAlteration(QList<AssetsDatabaseElement*> elemsToAlter) {
+    
+    //clear previous alteration cache
+    this->_temp_pathsToAlter = QSet<QString>();
+    this->_temp_idsToAlterByPath = QHash<QString, QSet<QString>>();
+    this->_temp_db_paths = QJsonObject();
+
+    //iterate through initial list
+    for(auto &elem : elemsToAlter) {
+        
+        //for containers
+        if(elem->isContainer()) {
+            this->_temp_pathsToAlter.insert(elem->path());
+        } 
+
+        //for items
+        else if(elem->isItem()) {
+            this->_temp_idsToAlterByPath[elem->path()].insert(elem->id());
+        }  
+
+    }
+
+    //augment list of paths to alter with children of paths already planned for alteration
+    this->_temp_db_paths = this->_db["paths"].toObject();
+
+        //remove already planned alterations
+        QSet<QString> inheritedPathAlterations;
+        auto remaining_db_paths = this->_temp_db_paths.keys().toSet().subtract(this->_temp_pathsToAlter);
+
+        //check if a path to be remove is a part of a remaining path 
+        for(auto &remaining_path : remaining_db_paths) {
+            
+            for(auto &pathToCompareTo : this->_temp_pathsToAlter) {
+                
+                //if so, adds it to alteration list
+                if(remaining_path.startsWith(pathToCompareTo)) {
+                    inheritedPathAlterations.insert(remaining_path);
+                }
+
+            }
+        }
+
+        //fusion of sets
+        for(auto &path : inheritedPathAlterations) {
+            this->_temp_pathsToAlter.insert(path);
+        }
+        
+
+    //additional items to alter from paths arrays
+    for(auto &path : this->_temp_pathsToAlter) {
+
+        //if does not contains targeted path, skip
+        if(!this->_temp_db_paths.contains(path)) break;
+
+        //if it does, add it to the list
+        for(auto &id : this->_temp_db_paths[path].toArray()) {
+            this->_temp_idsToAlterByPath[path].insert(id.toString());
+        }
+    }
+
+    //delete for each path
+    QHash<QString, QSet<QString>>::iterator i;
+    for (i = this->_temp_idsToAlterByPath.begin(); i != this->_temp_idsToAlterByPath.end(); ++i) { 
+        
+        //preapre
+        auto path = i.key();
+        auto idsToDelete = i.value();
+
+        //define ids left for the path
+        auto idsLeftInPath = _diff(
+            this->_temp_db_paths[path].toArray(), 
+            idsToDelete
+        );
+
+        //if ids are still left, update the array
+        if(idsLeftInPath.count()) {
+            this->_temp_db_paths[path] = idsLeftInPath;
+        } 
+
+        // if no more ids, just delete the key
+        else {
+            this->_temp_db_paths.remove(path);
+        }
+    }
+
+    //delete remaining paths, e.g. empty folders
+    for(auto &path : this->_temp_pathsToAlter) {
+        if(this->_temp_db_paths.contains(path)) {
+            this->_temp_db_paths.remove(path);
+        }
+    }
+
+
+}
+
+bool AssetsDatabase::removeItems(QList<AssetsDatabaseElement*> elemsToRemove) {
+
+    //prepare temporary data
+    this->_prepareForAlteration(elemsToRemove);
+    
+    //prepare to delete items
+    auto db_assets = this->_db["assets"].toObject();
+    QSet<QString> hashesToRemove;
+
+    //finally delete items
+    for(auto &idsList : this->_temp_idsToAlterByPath) {
+        for(auto &id : idsList) {
+
+            //append hash to remove
+            auto asset = db_assets[id].toObject();
+            auto hash = asset["hash"].toString();
+            hashesToRemove.insert(hash);
+
+            //remove
+            db_assets.remove(id);
+
+            //remove stored file
+            auto fileName = id + "." + asset["ext"].toString();
+            auto fileToRemove = QFile(fileName);
+            if(fileToRemove.exists()) {
+                fileToRemove.remove();
+            }
+        }
+    }
+
+    //update hashes array
+    auto db_hashes = _diff(
+        this->_db["hashes"].toArray(),
+        hashesToRemove
+    );
+
+    //save changes
+    auto obj = this->_db.object();
+    obj["assets"] = db_assets;
+    obj["hashes"] = db_hashes;
+    obj["paths"] = this->_temp_db_paths;
+    this->_updateDbFile(obj);
+
+    //finally delete elems
+    for(auto elem : elemsToRemove) {
+        // qDebug() << elem->fullPath();
+        //TODO prevent deleting already deleted nodes
+        delete elem;
+    }
+
+    return true;
 }
 
 bool AssetsDatabase::moveItems(QList<AssetsDatabaseElement*> targetedItems, AssetsDatabaseElement* target) {
-    //TODO
-    return false;
+
+    //prepare temporary data
+    // this->_prepareForAlteration(targetedItems);
+
+
+
+    //update model
+    for(auto &item : targetedItems) {
+        target->appendChild(item);
+    }
+
+    return true;
 }
 
 bool AssetsDatabase::createFolder(AssetsDatabaseElement* parent) {
@@ -261,7 +439,10 @@ bool AssetsDatabase::createFolder(AssetsDatabaseElement* parent) {
     //prepare path generation
     QString generatedPath = "";
     auto generateNewPath = [parentPath]() {
-        return parentPath + "/Dossier_" + QString::number(QDateTime().toTime_t());
+        auto newPath = parentPath;
+        newPath += "/Dossier_";
+        newPath += QString::number(QDateTime().currentMSecsSinceEpoch());
+        return newPath;
     }; 
 
     //generate non existing path in db
@@ -284,6 +465,8 @@ bool AssetsDatabase::createFolder(AssetsDatabaseElement* parent) {
 }
 
 bool AssetsDatabase::rename(QString name, AssetsDatabaseElement* target) { 
+
+    if(name.isEmpty()) return false;
 
     //data template
     auto obj = this->_db.object();

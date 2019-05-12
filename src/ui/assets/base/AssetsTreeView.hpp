@@ -3,6 +3,7 @@
 #include <QMimeDatabase>
 #include <QTreeView>
 #include <QHeaderView>
+#include <QMessageBox>
 
 #include <QMenu>
 
@@ -21,7 +22,26 @@ class AssetsTreeView : public QTreeView {
         { 
             //model
             this->setModel(this->_model);
-            this->setRootIndex(this->_model->index(0,0));
+
+                //helper for root definition
+                auto defineRoot = [&]() {
+                    this->setRootIndex(this->_model->index(0,0));
+                    this->expandAll();
+                };
+                defineRoot();
+
+                //redefine root on reset
+                QObject::connect(
+                    this->_model, &QAbstractItemModel::modelReset,
+                    defineRoot
+                );
+            
+            //auto expand on insert
+            QObject::connect(
+                this->_model, &QAbstractItemModel::rowsInserted,
+                this, &AssetsTreeView::_onRowInsert
+            );
+
 
             //ui config
             this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
@@ -47,7 +67,11 @@ class AssetsTreeView : public QTreeView {
         }
     
     private:
-        //drag and drop
+
+        ///////////////////
+        // drag and drop //
+        ///////////////////
+
         QMimeDatabase* _MIMEDb = nullptr;
         AssetsTreeViewModel* _model = nullptr;
 
@@ -91,34 +115,31 @@ class AssetsTreeView : public QTreeView {
             }
         }
 
+        ///////////////////////
+        // END drag and drop //
+        ///////////////////////
+
+        /////////////////////
+        // Contextual menu //
+        /////////////////////
+
         void _renderCustomContextMenu(const QPoint &pos) {
             
-            QList<QModelIndex> indexes;
+            auto indexesToProcess = this->_getSelectedIndexes();
 
             //check selected items (autoselected on right click)
-            if(this->selectedIndexes().count()) {
-                
-                //get list of items
-                for(auto &i : this->selectedIndexes()) {
-
-                    //only first column
-                    if(i.column() > 0) continue;
-
-                    //append
-                    indexes.append(i);
-                }
-            } else {
-                
+            if(!indexesToProcess.count()) {
+            
                 //get elem under cursor
                 auto index = this->indexAt(pos);
                 if(index.isValid()) {
-                    indexes.append(index);
+                    indexesToProcess.append(index);
                 }
 
             }
 
             //create menu
-            this->_generateMenu(indexes, this->viewport()->mapToGlobal(pos));
+            this->_generateMenu(indexesToProcess, this->viewport()->mapToGlobal(pos));
         }
 
         void _generateMenu(QList<QModelIndex> &itemsIndexes, const QPoint &whereToDisplay) {
@@ -148,32 +169,25 @@ class AssetsTreeView : public QTreeView {
                         }
                     );
                     actions.append(createFolder);
-
-                    //folder deletion
-                    auto deleteFolder = new QAction("Supprimer le dossier");
-                    actions.append(deleteFolder);
-
-                    //prevent deleting
-                    if(firstItem->isStaticContainer()) {
-                        deleteFolder->setDisabled(true);
-                    }
                 }
             }
 
-            // check if all selected are items...
-            auto areAllItemsType = [itemsIndexes]() {
+            // check if all selected are deletable type...
+            auto areAllDeletable = [itemsIndexes]() {
                 for(auto &elemIndex : itemsIndexes) {
                     auto elem = AssetsDatabaseElement::fromIndex(elemIndex);
-                    if(!elem->isItem()) return false;
+                    if(!elem->isDeletable()) return false;
                 }
                 return true;
-            };
-            if(areAllItemsType()) {
+            }();
+
+            //if so, allow deletion
+            if(areAllDeletable) {
                 auto deleteItem = new QAction("Supprimer");
                 QObject::connect(
                     deleteItem, &QAction::triggered,
                     [&, itemsIndexes]() {
-                        this->_model->removeItems(itemsIndexes);
+                        this->_requestDeletion(itemsIndexes);
                     }
                 );
                 actions.append(deleteItem);
@@ -185,6 +199,61 @@ class AssetsTreeView : public QTreeView {
                 menu.addActions(actions);
                 menu.exec(whereToDisplay);
             }
+        }
+
+        /////////////////////////
+        // END Contextual menu //
+        /////////////////////////
+
+        void _onRowInsert(const QModelIndex &parent, int first, int last) {
+            for (; first <= last; ++first) {
+                auto index = this->_model->index(first, 0, parent);
+                this->expand(index);
+            }
+        }
+
+        void _requestDeletion(const QModelIndexList &itemsIndexesToDelete) {
+
+            QString title = "Suppression des elements de la boîte à jouets";
+            QString content = "Voulez-vous vraiment supprimer les " + QString::number(itemsIndexesToDelete.count()) + " elements selectionnés ?";
+
+            auto userResponse = QMessageBox::warning(this, title, content, QMessageBox::Yes|QMessageBox::No, QMessageBox::No);
+            if(userResponse == QMessageBox::Yes) {
+                this->_model->removeItems(itemsIndexesToDelete);
+            }
+        }
+
+        void keyPressEvent(QKeyEvent * event) override {
+            
+            auto key = (Qt::Key)event->key();
+
+            //switch
+            switch(key) {
+                case Qt::Key::Key_Delete:
+                    auto selectedIndexes = this->_getSelectedIndexes();
+                    if(selectedIndexes.count()) {
+                        this->_requestDeletion(selectedIndexes);
+                    }
+                    break;
+            }
+
+            return QTreeView::keyPressEvent(event);
+        }
+
+        QModelIndexList _getSelectedIndexes() {
+            QList<QModelIndex> indexes;
+
+            //get list of items
+            for(auto &i : this->selectedIndexes()) {
+
+                //only first column
+                if(i.column() > 0) continue;
+
+                //append
+                indexes.append(i);
+            }
+
+            return indexes;
         }
 
 };

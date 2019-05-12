@@ -66,7 +66,9 @@
         "qtreeview": "cpp",
         "qabstractitemmodel": "cpp",
         "qheaderview": "cpp",
-        "qdragenterevent": "cpp"
+        "qdragenterevent": "cpp",
+        "qhash": "cpp",
+        "random": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

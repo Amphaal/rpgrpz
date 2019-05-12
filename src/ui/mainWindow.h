@@ -51,7 +51,7 @@ class MainWindow : public QMainWindow {
         ConnectWidget* _connectWidget;
         AudioStreamController* _streamNotifier;
         PlaylistController* _streamController;
-        ChatWidget* _cw = nullptr;;
+        ChatWidget* _cw = nullptr;
         AssetsManager* _assetsManager;
         MapTools* _mapTools;
         MapLayoutManager* _mlManager;

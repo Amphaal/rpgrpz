@@ -4,6 +4,7 @@
 #include <QList>
 #include <QHash>
 #include <QModelIndex>
+#include <QDebug>
 
 class AssetsDatabaseElement {
     public:
@@ -27,7 +28,7 @@ class AssetsDatabaseElement {
 
         AssetsDatabaseElement(
             const QString &name, 
-            const AssetsDatabaseElement::Type &type = AssetsDatabaseElement::Type::Folder,
+            const AssetsDatabaseElement::Type &type = Folder,
             QString id = "" 
         );
         AssetsDatabaseElement();
@@ -39,6 +40,7 @@ class AssetsDatabaseElement {
         AssetsDatabaseElement::Type type();
         QString iconPath();
         QString path();
+        QString fullPath();
         QString id();
 
         //prefer using rename() with AssetsDatabase
@@ -48,6 +50,7 @@ class AssetsDatabaseElement {
         int row() const;
         AssetsDatabaseElement* child(int row);
         int childCount() const;
+        int itemChildrenCount() const;
 
         QList<AssetsDatabaseElement*> childrenContainers();
         QList<AssetsDatabaseElement*> childrenItems();
@@ -57,11 +60,14 @@ class AssetsDatabaseElement {
         bool isRoot();
         bool isItem();
         bool isStaticContainer();
+        bool isDeletable();
 
         //prefer using insertAsset() for parallel db insertion
-        void appendChild(AssetsDatabaseElement* child);;
+        void appendChild(AssetsDatabaseElement* child);
+        void unrefChild(AssetsDatabaseElement* child);
+        
         AssetsDatabaseElement::Type defaultTypeOnContainerForInsert();
-        void defineParent(AssetsDatabaseElement* parent);
+        
         AssetsDatabaseElement::Type getBoundStaticContainer();
         Qt::ItemFlags flags();
 
@@ -73,6 +79,9 @@ class AssetsDatabaseElement {
         QString _name;
         AssetsDatabaseElement::Type _type = Unknown;
         QString _id = "";
+        int _itemChildrenCount = 0;
+
+        void _defineParent(AssetsDatabaseElement* parent);
 
         static const inline QList<AssetsDatabaseElement::Type> _containerTypes = {
             InternalContainer,
@@ -83,9 +92,18 @@ class AssetsDatabaseElement {
         };
 
         static const inline QList<AssetsDatabaseElement::Type> _itemTypes = {
+            Player, 
+            Event, 
             NPC, 
             FloorBrush,
             Object
+        };
+
+        static const inline QList<AssetsDatabaseElement::Type> _deletableItemTypes = {
+            NPC, 
+            FloorBrush,
+            Object,
+            Folder
         };
 
         static const inline QList<AssetsDatabaseElement::Type> _staticContainerTypes = {
@@ -100,6 +118,7 @@ class AssetsDatabaseElement {
             { Event, ":/icons/app/manager/event.png" },
             { NPC_Container, ":/icons/app/manager/npc.png" },
             { ObjectContainer, ":/icons/app/manager/asset.png" },
-            { FloorBrushContainer, ":/icons/app/manager/brushes.png" }
+            { FloorBrushContainer, ":/icons/app/manager/brushes.png" },
+            { Folder, ":/icons/app/manager/folder.png" }
         };
 };
