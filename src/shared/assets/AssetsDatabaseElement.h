@@ -24,37 +24,23 @@ class AssetsDatabaseElement {
                 Object
         };
         
-        static inline QString listMimeType = "application/x-assets-db-elem-list";
+        static AssetsDatabaseElement* fromIndex(QModelIndex index);
+        static inline QString listMimeType = "application/x-assets-db-elem-list";    
 
-        AssetsDatabaseElement(
-            const QString &name, 
-            const AssetsDatabaseElement::Type &type = Folder,
-            QString id = "" 
-        );
+        AssetsDatabaseElement(const QString &name, AssetsDatabaseElement* parent, const AssetsDatabaseElement::Type &type = Folder, QString id = "");
         AssetsDatabaseElement();
         ~AssetsDatabaseElement();
 
-        static AssetsDatabaseElement* fromIndex(QModelIndex index);
-        static QString getIconPathForType(const AssetsDatabaseElement::Type &type);
-        QString displayName();
         AssetsDatabaseElement::Type type();
+        AssetsDatabaseElement::Type insertType();
+        AssetsDatabaseElement::Type rootStaticContainer();
         QString iconPath();
+        QString displayName();
         QString path();
         QString fullPath();
         QString id();
-
-        //prefer using rename() with AssetsDatabase
-        void rename(QString &newName);
-
-        AssetsDatabaseElement* parent();
-        int row() const;
-        AssetsDatabaseElement* child(int row);
-        int childCount() const;
-        int itemChildrenCount() const;
-
-        QList<AssetsDatabaseElement*> childrenContainers();
-        QList<AssetsDatabaseElement*> childrenItems();
-        
+        Qt::ItemFlags flags();
+                
         bool isContainer();
         bool isInternal();
         bool isRoot();
@@ -62,26 +48,59 @@ class AssetsDatabaseElement {
         bool isStaticContainer();
         bool isDeletable();
 
-        //prefer using insertAsset() for parallel db insertion
-        void appendChild(AssetsDatabaseElement* child);
+        AssetsDatabaseElement* parent();
+        int row() const;
+        AssetsDatabaseElement* child(int row);
+        int childCount() const;
+        int itemChildrenCount() const;
+        QList<AssetsDatabaseElement*> childrenContainers();
+        QList<AssetsDatabaseElement*> childrenItems();
+
+        void rename(const QString &newName); //prefer using rename() with AssetsDatabase for db interaction
+        void appendChild(AssetsDatabaseElement* child); //prefer using insertAsset() for parallel db insertion
         void unrefChild(AssetsDatabaseElement* child);
-        
-        AssetsDatabaseElement::Type defaultTypeOnContainerForInsert();
-        
-        AssetsDatabaseElement::Type getBoundStaticContainer();
-        Qt::ItemFlags flags();
 
     protected:
         QList<AssetsDatabaseElement*> _subElements;
         AssetsDatabaseElement* _parentElement = nullptr;
 
     private:
-        QString _name;
         AssetsDatabaseElement::Type _type = Unknown;
+        AssetsDatabaseElement::Type _insertType = Unknown;
+        AssetsDatabaseElement::Type _rootStaticContainerType = Unknown;
         QString _id = "";
+        QString _name = "";
+        QString _path = "";
+        QString _fullPath = "";
+        QString _iconPath = "";
+        Qt::ItemFlags _flags = 0;
         int _itemChildrenCount = 0;
 
+        bool _isContainer = false;
+        bool _isInternal = false;
+        bool _isRoot = false;
+        bool _isItem = false;
+        bool _isStaticContainer = false;
+        bool _isDeletable = false;
+
         void _defineParent(AssetsDatabaseElement* parent);
+        void _defineFlags();
+        void _definePath();
+        void _defineFullPath();
+        void _defineIconPath();
+        void _defineInsertType();
+        void _defineRootStaticContainer();
+    
+        void _defineIsContainer();
+        void _defineIsInternal();
+        void _defineIsRoot();
+        void _defineIsItem();
+        void _defineIsStaticContainer();
+        void _defineIsDeletable();
+        
+        ///
+        ///
+        ///
 
         static const inline QList<AssetsDatabaseElement::Type> _containerTypes = {
             InternalContainer,

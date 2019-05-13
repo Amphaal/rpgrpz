@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm>
+
 #include <QHash>
 #include <QString>
 #include <QUrl>
@@ -36,6 +38,9 @@ class AssetsDatabase : public JSONDatabase, public AssetsDatabaseElement {
 
         //helper for item substraction
         static QJsonArray _diff(QJsonArray &target, QSet<QString> &toRemoveFromTarget);
+
+        //helper
+        static QSet<AssetsDatabaseElement*> _onlyHighestsElementsByPath(QList<AssetsDatabaseElement*> elems);
 
         ///prepare for alteration (delete, move) operations
         QSet<QString> _temp_pathsToAlter;

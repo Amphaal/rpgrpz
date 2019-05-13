@@ -45,7 +45,8 @@ void AssetsDatabase::_includeDbComponents() {
         }
         
         //type cast and get element type
-        firstSplit = firstSplit.replace("{", "").replace("}", "");
+        firstSplit.replace("{", "");
+        firstSplit.replace("}", "");
         auto castOk = false;
         auto staticCType = (AssetsDatabaseElement::Type)firstSplit.toInt(&castOk);
         if(!castOk) {
@@ -77,7 +78,7 @@ void AssetsDatabase::_includeDbComponents() {
 
         //preapre for search
         auto items_ids = db_paths[path].toArray();
-        auto lastContainerInsertType = lastContainer->defaultTypeOnContainerForInsert();
+        auto lastContainerInsertType = lastContainer->insertType();
         
         //find items in db and create them
         for(auto &id : items_ids) {
@@ -93,8 +94,7 @@ void AssetsDatabase::_includeDbComponents() {
             //create
             auto asset = assets_db[idStr].toObject();
             auto assetName = asset["name"].toString();
-            auto newElem = new AssetsDatabaseElement(assetName, lastContainerInsertType, idStr);
-            lastContainer->appendChild(newElem);
+            auto newElem = new AssetsDatabaseElement(assetName, lastContainer, lastContainerInsertType, idStr);
         }
     }
 
@@ -119,8 +119,7 @@ AssetsDatabaseElement* AssetsDatabase::_helperPathCreation(AssetsDatabaseElement
 
     //if not found, create it
     if(!found) {
-        found = new AssetsDatabaseElement(part);
-        parent->appendChild(found);
+        found = new AssetsDatabaseElement(part, parent);
     }
 
     //iterate through...
@@ -131,7 +130,7 @@ AssetsDatabaseElement* AssetsDatabase::_helperPathCreation(AssetsDatabaseElement
 void AssetsDatabase::_includeStaticComponents() {
 
     auto staticModelInsert = [&](QString name, AssetsDatabaseElement::Type type) {
-        auto i = new AssetsDatabaseElement(name, type);
+        auto i = new AssetsDatabaseElement(name, this, type);
         this->_staticElements.insert(type, i);
         return i;
     };
@@ -140,12 +139,10 @@ void AssetsDatabase::_includeStaticComponents() {
     auto interne = staticModelInsert("Interne", AssetsDatabaseElement::Type::InternalContainer);
             
         /* /Internal/Player... */
-        auto player = new AssetsDatabaseElement("Joueur", AssetsDatabaseElement::Type::Player);
-        interne->appendChild(player);
+        auto player = new AssetsDatabaseElement("Joueur", interne, AssetsDatabaseElement::Type::Player);
 
         /* /Internal/Trigger... */
-        auto trigger = new AssetsDatabaseElement("Evenement", AssetsDatabaseElement::Type::Event);
-        interne->appendChild(trigger);
+        auto trigger = new AssetsDatabaseElement("Evenement", interne, AssetsDatabaseElement::Type::Event);
 
     /* /NPC... */
     auto npc = staticModelInsert("PNJ", AssetsDatabaseElement::Type::NPC_Container);
@@ -156,10 +153,6 @@ void AssetsDatabase::_includeStaticComponents() {
     /* /Brushes... */
     auto brushes = staticModelInsert("Terrains", AssetsDatabaseElement::Type::FloorBrushContainer);
 
-    this->appendChild(interne);
-    this->appendChild(npc);
-    this->appendChild(mapAssets);
-    this->appendChild(brushes);
 }
 
 
@@ -251,8 +244,7 @@ bool AssetsDatabase::insertAsset(QUrl &url, AssetsDatabaseElement* parent) {
     qDebug() << "Assets : " << fInfo.filePath() << " inserted !";
 
     //add element
-    auto element = new AssetsDatabaseElement(fInfo.fileName(), parent->defaultTypeOnContainerForInsert(), quuid);
-    parent->appendChild(element);
+    auto element = new AssetsDatabaseElement(fInfo.fileName(), parent, parent->insertType(), quuid);
     return true;
 }
 
@@ -405,10 +397,16 @@ bool AssetsDatabase::removeItems(QList<AssetsDatabaseElement*> elemsToRemove) {
     obj["paths"] = this->_temp_db_paths;
     this->_updateDbFile(obj);
 
+    //sort items by path length (number of slashes); delete them first
+    struct {
+        bool operator()(AssetsDatabaseElement* a, AssetsDatabaseElement* b) const {   
+            return a->fullPath().count("/") > b->fullPath().count("/");
+        }   
+    } pathLength;
+    std::sort(elemsToRemove.begin(), elemsToRemove.end(), pathLength);
+
     //finally delete elems
     for(auto elem : elemsToRemove) {
-        // qDebug() << elem->fullPath();
-        //TODO prevent deleting already deleted nodes
         delete elem;
     }
 
@@ -420,14 +418,76 @@ bool AssetsDatabase::moveItems(QList<AssetsDatabaseElement*> targetedItems, Asse
     //prepare temporary data
     // this->_prepareForAlteration(targetedItems);
 
+    //update dest path
+    auto targetPath = target->path();
+
+    //
+    // this->_temp_pathsToAlter = QSet<QString>();
+    // this->_temp_idsToAlterByPath = QHash<QString, QSet<QString>>();
+    // this->_temp_db_paths = QJsonObject();
+    
+    
 
 
-    //update model
-    for(auto &item : targetedItems) {
+    //update model, reduce targetedItems list to only the higher in order for each node
+    for(auto &item : _onlyHighestsElementsByPath(targetedItems)) {
         target->appendChild(item);
     }
 
     return true;
+}
+
+QSet<AssetsDatabaseElement*> AssetsDatabase::_onlyHighestsElementsByPath(QList<AssetsDatabaseElement*> elems) {
+
+    QSet<AssetsDatabaseElement*> higher;
+    while(elems.count()) {
+
+        //take first
+        if(!higher.count()) {
+            higher.insert(elems.takeFirst());
+            continue;
+        }
+
+        //compare
+        auto toCompareTo = elems.takeFirst();
+            auto compare_path = toCompareTo->fullPath();
+            auto compare_length = compare_path.length();
+        
+        auto isForeigner = true;
+
+        //iterate
+        QSet<AssetsDatabaseElement*> obsoletePointers;
+        for(auto &st : higher) {
+
+            auto st_path = st->fullPath();
+            auto st_length = st_path.length();
+
+            auto outputArrayContainsBuffered = st_path.startsWith(compare_path);
+
+            //if 
+            if(isForeigner && (outputArrayContainsBuffered || compare_path.startsWith(st_path))) {
+                isForeigner = false;
+            }
+
+            //must be deleted, compared path must be prefered
+            if(outputArrayContainsBuffered && st_length > compare_length) {
+                obsoletePointers.insert(st);
+            }
+        }
+
+        //if no presence or better than a stored one
+        if(isForeigner || obsoletePointers.count()) {
+            higher.insert(toCompareTo);
+        }
+
+        //if obsolete pointers have been marked, remove them from the higherList and add the compared one to it
+        if(obsoletePointers.count()) {
+            higher.subtract(obsoletePointers);
+        }
+
+    }
+
+    return higher;
 }
 
 bool AssetsDatabase::createFolder(AssetsDatabaseElement* parent) {
@@ -458,22 +518,30 @@ bool AssetsDatabase::createFolder(AssetsDatabaseElement* parent) {
 
     //create elem
     auto generatedName = generatedPath.split("/", QString::SplitBehavior::SkipEmptyParts).takeLast();
-    auto folder = new AssetsDatabaseElement(generatedName);
-    parent->appendChild(folder);
+    auto folder = new AssetsDatabaseElement(generatedName, parent);
 
     return true;
 }
 
 bool AssetsDatabase::rename(QString name, AssetsDatabaseElement* target) { 
 
+    //strip name from slashes and double quotes
+    name.replace("\"", "");
+    name.replace("/", "");
+
+    //if empty name
     if(name.isEmpty()) return false;
+
+    //if same name, no changes
+    if(target->displayName() == name) return false;
 
     //data template
     auto obj = this->_db.object();
 
+    //rename for items
     if(target->isItem()) {
         
-        //rename for assets
+        //prepare
         auto db_assets = obj["assets"].toObject();
         auto targetId = target->id();
 
@@ -490,9 +558,12 @@ bool AssetsDatabase::rename(QString name, AssetsDatabaseElement* target) {
         db_assets[targetId] = asset;
         obj["assets"] = db_assets;
 
-    } else if(target->type() == Folder) {
+    } 
+    
+    //rename for folders
+    else if(target->type() == Folder) {
 
-        //rename for folders
+        //prepare
         auto currentPath = target->path();
         auto db_paths = obj["paths"].toObject();
 
@@ -509,10 +580,22 @@ bool AssetsDatabase::rename(QString name, AssetsDatabaseElement* target) {
         pathAsList.append(name);
         auto updatedPath = "/" + pathAsList.join("/");
 
-        //replace old path
-        auto currentPathContent = db_paths[currentPath].toArray();
-        db_paths.remove(currentPath);
-        db_paths[updatedPath] = currentPathContent;
+        //search for paths beeing part of the old path, and replace their value
+        for(auto &path : db_paths.keys()) {
+            
+            //skip if not targeted
+            if(!path.startsWith(currentPath)) continue; 
+
+            //rebuild path
+            auto rebuiltPath = path;
+            rebuiltPath.replace(currentPath, updatedPath);
+
+            //replace old path
+            auto tempPathContent = db_paths[path].toArray();
+            db_paths.remove(path);
+            db_paths[rebuiltPath] = tempPathContent;
+        }
+
         obj["paths"] = db_paths;
 
     } else {

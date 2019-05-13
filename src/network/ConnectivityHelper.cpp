@@ -67,8 +67,12 @@ void ConnectivityHelper::_pickPreferedConfiguration() {
 }
 
 void ConnectivityHelper::init() {
-    auto initAccessibilityCheck = this->_nam->networkAccessible();
-    this->networkChanged(initAccessibilityCheck);
+
+    //BUG with bearer, force
+    this->networkChanged(QNetworkAccessManager::NetworkAccessibility::Accessible);
+
+    // auto initAccessibilityCheck = this->_nam->networkAccessible();
+    // this->networkChanged(initAccessibilityCheck);
 }
 
 ConnectivityHelper::~ConnectivityHelper()  {
@@ -132,7 +136,7 @@ void ConnectivityHelper::_onUPnPSuccess(const char * protocol, const char * nego
     out += negociatedPort;
     out += "] ";
 
-    qDebug() << "Connectivity : uPnP "<< protocol << " " << QString::fromStdString(out);
+    qDebug() << "Connectivity : uPnP " + QString(protocol) << QString::fromStdString(out);
     emit uPnPStateChanged(out.c_str());
 
 }

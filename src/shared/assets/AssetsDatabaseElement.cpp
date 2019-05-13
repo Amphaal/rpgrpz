@@ -1,17 +1,10 @@
 #include "AssetsDatabaseElement.h"
 
-AssetsDatabaseElement::AssetsDatabaseElement(
-    const QString &name, 
-    const AssetsDatabaseElement::Type &type,
-    QString id
-) : _name(name), _type(type) { 
+AssetsDatabaseElement* AssetsDatabaseElement::fromIndex(QModelIndex index) {
+    return static_cast<AssetsDatabaseElement*>(index.internalPointer());
+}
 
-   //prevent id definition if not asset Type
-   if(this->isItem()) this->_id = id;
-
-};
-
-AssetsDatabaseElement::AssetsDatabaseElement() : AssetsDatabaseElement("", Root) { };
+AssetsDatabaseElement::AssetsDatabaseElement() : AssetsDatabaseElement("", nullptr, Root) { };
 
 AssetsDatabaseElement::~AssetsDatabaseElement(){
     
@@ -22,12 +15,42 @@ AssetsDatabaseElement::~AssetsDatabaseElement(){
     qDeleteAll(this->_subElements);
 }
 
-AssetsDatabaseElement* AssetsDatabaseElement::fromIndex(QModelIndex index) {
-    return static_cast<AssetsDatabaseElement*>(index.internalPointer());
-}
+AssetsDatabaseElement::AssetsDatabaseElement(
+    const QString &name, 
+    AssetsDatabaseElement* parent,
+    const AssetsDatabaseElement::Type &type,
+    QString id
+) :  _type(type) { 
 
-QString AssetsDatabaseElement::getIconPathForType(const AssetsDatabaseElement::Type &type) {
-    return _iconPathByElementType[type];
+    //prevent id definition if not asset Type
+    if(this->isItem()) this->_id = id;
+
+    //define name (fullpath redefinition included)
+    this->rename(name);
+
+    // types-related definitions
+    this->_defineIconPath();
+    this->_defineFlags();
+    this->_defineIsContainer();
+    this->_defineIsInternal();
+    this->_defineIsRoot();
+    this->_defineIsItem();
+    this->_defineIsStaticContainer();
+    this->_defineIsDeletable();
+
+    //if a parent is defined, add self to its inner list
+    if(parent) {
+        parent->appendChild(this);
+    }
+
+};
+
+///////////////////
+// RO Properties //
+///////////////////
+
+Qt::ItemFlags AssetsDatabaseElement::flags() {
+    return this->_flags;
 }
 
 QString AssetsDatabaseElement::displayName() {
@@ -42,52 +65,60 @@ AssetsDatabaseElement::Type AssetsDatabaseElement::type() {
     return this->_type;
 }
 
-QString AssetsDatabaseElement::iconPath() {
-    return getIconPathForType(this->type());
-}
-
 AssetsDatabaseElement* AssetsDatabaseElement::parent() {
     return this->_parentElement;
 }
 
-int AssetsDatabaseElement::row() const {
-    if (this->_parentElement) {
-        return this->_parentElement->_subElements.indexOf(const_cast<AssetsDatabaseElement*>(this));
-    }
-
-    return 0;
-}
-
-void AssetsDatabaseElement::rename(QString &newName) {
-    this->_name = newName;
+QString AssetsDatabaseElement::fullPath() {
+    return this->_fullPath;
 }
 
 QString AssetsDatabaseElement::path() {
-
-    //assimilated root...
-    if(!this->_parentElement) return "";
-
-    //generate path
-    auto path = QString();
-    if(this->isContainer()) {
-
-        if(this->_staticContainerTypes.contains(this->type())) {
-            //if is static, dont use name
-            path = "/{" + QString::number(this->type()) + "}";
-        } else {
-            //use name for other container types
-            path = "/" + this->displayName();
-        }
-
-    }
-
-    //return
-    return this->_parentElement->path() + path;
+    return this->_path;
 }
 
-QString AssetsDatabaseElement::fullPath() {
-    return this->isItem() ? this->path() : this->path() + "/" + this->_name;
+QString AssetsDatabaseElement::iconPath() {
+    return this->_iconPath;
 }
+
+
+bool AssetsDatabaseElement::isContainer() {
+    return this->_isContainer;
+}
+
+bool AssetsDatabaseElement::isInternal() {
+    return this->_isInternal;
+}
+
+bool AssetsDatabaseElement::isRoot() {
+    return this->_isRoot;
+}
+
+bool AssetsDatabaseElement::isItem() {
+    return this->_isItem;
+}
+
+bool AssetsDatabaseElement::isStaticContainer() {
+    return this->_isStaticContainer;
+}
+
+bool AssetsDatabaseElement::isDeletable() {
+    return this->_isDeletable;
+}
+
+AssetsDatabaseElement::Type AssetsDatabaseElement::insertType() {
+    return this->_insertType;
+}
+
+AssetsDatabaseElement::Type AssetsDatabaseElement::rootStaticContainer() {
+    return this->_rootStaticContainerType;
+}
+
+
+///////////////////////
+// END RO Properties //
+///////////////////////
+
 
 AssetsDatabaseElement* AssetsDatabaseElement::child(int row) {
     return this->_subElements.value(row);
@@ -101,28 +132,12 @@ int AssetsDatabaseElement::itemChildrenCount() const {
     return this->_itemChildrenCount;
 }
 
-bool AssetsDatabaseElement::isContainer() {
-    return _containerTypes.contains(this->_type);
-}
+int AssetsDatabaseElement::row() const {
+    if (this->_parentElement) {
+        return this->_parentElement->_subElements.indexOf(const_cast<AssetsDatabaseElement*>(this));
+    }
 
-bool AssetsDatabaseElement::isInternal() {
-    return this->getBoundStaticContainer() == InternalContainer;
-}
-
-bool AssetsDatabaseElement::isRoot() {
-    return this->_type == AssetsDatabaseElement::Type::Root;
-}
-
-bool AssetsDatabaseElement::isItem() {
-    return this->_itemTypes.contains(this->_type);
-}
-
-bool AssetsDatabaseElement::isDeletable() {
-    return this->_deletableItemTypes.contains(this->_type);
-}
-
-bool AssetsDatabaseElement::isStaticContainer() {
-    return this->_staticContainerTypes.contains(this->_type);
+    return 0;
 }
 
 void AssetsDatabaseElement::appendChild(AssetsDatabaseElement* child) {
@@ -140,53 +155,6 @@ void AssetsDatabaseElement::appendChild(AssetsDatabaseElement* child) {
     if(child->isItem()) this->_itemChildrenCount++;
 };
 
-QList<AssetsDatabaseElement*> AssetsDatabaseElement::childrenContainers() {
-    QList<AssetsDatabaseElement*> list;
-    
-    for(auto &elem : this->_subElements) {
-        if(elem->isContainer()) list.append(elem);
-    }
-
-    return list;
-}
-
-QList<AssetsDatabaseElement*> AssetsDatabaseElement::childrenItems() {
-    QList<AssetsDatabaseElement*> list;
-    auto filterType = this->defaultTypeOnContainerForInsert();
-    
-    for(auto &elem : this->_subElements) {
-        if(filterType == elem->type()) list.append(elem);
-    }
-
-    return list;
-}
-
-AssetsDatabaseElement::Type AssetsDatabaseElement::defaultTypeOnContainerForInsert() {
-    switch(this->getBoundStaticContainer()) {
-        case NPC_Container:
-            return NPC;
-            break;
-        case FloorBrushContainer:
-            return FloorBrush;
-            break;
-        case ObjectContainer:
-            return Object;
-            break;
-        default:
-            return Unknown;
-    }
-}
-
-void AssetsDatabaseElement::_defineParent(AssetsDatabaseElement* parent) {
-    
-    //if already existing parent, tells him to deref child
-    if(this->_parentElement) {
-        this->_parentElement->unrefChild(this);
-    }
-
-    //set new parent
-    this->_parentElement = parent;
-}
 
 void AssetsDatabaseElement::unrefChild(AssetsDatabaseElement* child) {
 
@@ -204,43 +172,185 @@ void AssetsDatabaseElement::unrefChild(AssetsDatabaseElement* child) {
     }
 }
 
-AssetsDatabaseElement::Type AssetsDatabaseElement::getBoundStaticContainer() {
+QList<AssetsDatabaseElement*> AssetsDatabaseElement::childrenContainers() {
+    QList<AssetsDatabaseElement*> list;
     
-    //if self is bound
-    if(_staticContainerTypes.contains(this->_type)) return this->_type;
-    
-    //if no parent, return unkown
-    if(!this->_parentElement) return Unknown;
-    
-    //fetch the information from parent
-    auto parentType = this->_parentElement->type();
-    return _staticContainerTypes.contains(parentType) ? parentType : this->_parentElement->getBoundStaticContainer();
+    for(auto &elem : this->_subElements) {
+        if(elem->isContainer()) list.append(elem);
+    }
+
+    return list;
 }
 
-Qt::ItemFlags AssetsDatabaseElement::flags() {
+QList<AssetsDatabaseElement*> AssetsDatabaseElement::childrenItems() {
+    QList<AssetsDatabaseElement*> list;
+    auto filterType = this->insertType();
+    
+    for(auto &elem : this->_subElements) {
+        if(filterType == elem->type()) list.append(elem);
+    }
+
+    return list;
+}
+
+void AssetsDatabaseElement::rename(const QString &newName) {
+    this->_name = newName;
+
+    //redefine paths
+    this->_definePath();
+}
+
+
+//////////////
+/// DEFINES //
+//////////////
+
+void AssetsDatabaseElement::_defineFlags() {
+    //flags definition
     switch(this->_type) {
         case InternalContainer:
-            return Qt::ItemIsEnabled;
+            this->_flags = Qt::ItemIsEnabled;
             break;
         case Player:
         case Event:
-            return QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable);
+            this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable);
             break;
         case Object:
         case NPC:
         case FloorBrush:
-            return QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
+            this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
             break;
         case NPC_Container:
         case FloorBrushContainer:
         case ObjectContainer:
-            return QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemIsDropEnabled);
+            this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemIsDropEnabled);
             break;
         case Folder:
-            return QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
+            this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
             break;
         default:
-            return 0;
+            this->_flags = 0;
             break;
     }
 }
+
+void AssetsDatabaseElement::_definePath() {
+
+    //assimilated root, let default...
+    if(!this->_parentElement) {
+        this->_path = "";
+        return;
+    }
+
+    //generate path
+    auto path = QString();
+    if(this->isContainer()) {
+
+        if(this->isStaticContainer()) {
+            //if is static, dont use name
+            path = "/{" + QString::number(this->type()) + "}";
+        } else {
+            //use name for other container types
+            path = "/" + this->displayName();
+        }
+
+    }
+
+    //return
+    this->_path = this->_parentElement->path() + path;
+    this->_defineFullPath();
+
+    //update children paths
+    for(auto &elem : this->_subElements) {
+        elem->_definePath();
+    }
+}
+
+void AssetsDatabaseElement::_defineFullPath() {
+    this->_fullPath = this->isItem() ? 
+                            this->path() + "/" + this->_name : 
+                            this->path();
+}
+
+
+void AssetsDatabaseElement::_defineIconPath() {
+    this->_iconPath = _iconPathByElementType[this->_type];
+}
+
+
+void AssetsDatabaseElement::_defineParent(AssetsDatabaseElement* parent) {
+    
+    //if already existing parent, tells him to deref child
+    if(this->_parentElement) {
+        this->_parentElement->unrefChild(this);
+    }
+
+    //set new parent
+    this->_parentElement = parent;
+
+    //paths-related redefinitions
+    this->_definePath();
+    this->_defineRootStaticContainer();
+    this->_defineInsertType();
+}
+
+void AssetsDatabaseElement::_defineIsContainer() {
+    this->_isContainer = this->_containerTypes.contains(this->_type);
+}
+void AssetsDatabaseElement::_defineIsInternal() {
+    this->_isInternal = this->rootStaticContainer() == InternalContainer;
+}
+void AssetsDatabaseElement::_defineIsRoot() {
+    this->_isRoot = this->_type == AssetsDatabaseElement::Type::Root;
+}
+void AssetsDatabaseElement::_defineIsItem() {
+    this->_isItem = this->_itemTypes.contains(this->_type);
+}
+void AssetsDatabaseElement::_defineIsStaticContainer() {
+    this->_isStaticContainer = this->_staticContainerTypes.contains(this->_type);
+}
+void AssetsDatabaseElement::_defineIsDeletable() {
+    this->_isDeletable = this->_deletableItemTypes.contains(this->_type);
+}
+
+
+void AssetsDatabaseElement::_defineRootStaticContainer() {
+     
+    //if no parent, let default
+    if(!this->_parentElement){
+        this->_rootStaticContainerType = Unknown;
+        return;
+    }
+
+    //if self is bound
+    if(this->isStaticContainer()) {
+        this->_rootStaticContainerType = this->_type;
+        return;
+    }
+
+    //fetch the information from parent
+    this->_rootStaticContainerType = this->_parentElement->isStaticContainer() ? 
+            this->_parentElement->type() : 
+            this->_parentElement->rootStaticContainer();
+}
+
+
+void AssetsDatabaseElement::_defineInsertType() {
+    switch(this->rootStaticContainer()) {
+        case NPC_Container:
+            this->_insertType = NPC;
+            break;
+        case FloorBrushContainer:
+            this->_insertType = FloorBrush;
+            break;
+        case ObjectContainer:
+            this->_insertType = Object;
+            break;
+        default:
+            this->_insertType = Unknown;
+    }
+}
+
+//////////////////
+/// END DEFINES //
+//////////////////

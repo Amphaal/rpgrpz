@@ -110,7 +110,7 @@ class YoutubeVideo : public NetworkHelper {
 
                 //format title
                 auto title = query.queryItemValue("title", QUrl::FullyDecoded);
-                title = title.replace("+", " ");
+                title.replace("+", " ");
                 
                 //define title
                 if(!title.isNull()) {
