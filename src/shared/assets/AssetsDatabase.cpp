@@ -13,6 +13,10 @@ const QString AssetsDatabase::dbPath() {
     return QString::fromStdString(getAssetsFileCoordinatorLocation());
 };
 
+QString AssetsDatabase::assetsStorageFilepath() {
+    return QString::fromStdString(getAssetsFolderLocation());
+}
+
 ///
 ///
 ///
@@ -196,7 +200,7 @@ QString AssetsDatabase::_moveFileToDbFolder(QUrl &url) {
     auto quuid = JSONDatabase::generateId();
 
     //dest file
-    auto destFolder = QString::fromStdString(getAssetsFolderLocation());
+    auto destFolder = this->assetsStorageFilepath();
     auto destFileExt = QFileInfo(url.fileName()).suffix();
     auto dest = destFolder + QDir::separator() + quuid + "." + destFileExt;
 
@@ -420,7 +424,9 @@ void AssetsDatabase::_removeAssetFile(QString &id, QJsonObject &asset) {
     
     //prepare
     auto fileName = id + "." + asset["ext"].toString();
-    auto fileToRemove = QFile(fileName);
+
+    auto expectedLocation = this->assetsStorageFilepath();
+    auto fileToRemove = QFile(expectedLocation + QDir::separator() + fileName);
 
     //remove stored file
     if(fileToRemove.exists()) {

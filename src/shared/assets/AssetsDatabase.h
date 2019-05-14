@@ -34,6 +34,8 @@ class AssetsDatabase : public JSONDatabase, public AssetsDatabaseElement {
         QJsonObject assets();
         QJsonArray hashes(); 
 
+        static QString assetsStorageFilepath();
+
     protected:
         const QString defaultJsonDoc() override;
         const QString dbPath() override;
