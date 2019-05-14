@@ -33,6 +33,7 @@ class AssetsDatabase : public JSONDatabase, public AssetsDatabaseElement {
         QJsonObject paths();
         QJsonObject assets();
         QJsonArray hashes(); 
+        QString getFilePathToAsset(AssetsDatabaseElement* asset);
 
         static QString assetsStorageFilepath();
 

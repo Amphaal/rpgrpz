@@ -18,6 +18,15 @@ class AssetsTreeViewModel : public QAbstractItemModel {
         /// HELPERS ///
         ///////////////
 
+        QString getFilePathToAsset(QModelIndex &targetIndex) {
+            
+            //if selected elem is no item, skip
+            auto target = AssetsDatabaseElement::fromIndex(targetIndex);
+            if(!target->isItem()) return NULL;
+
+            return this->_db->getFilePathToAsset(target);
+        }
+
         bool createFolder(QModelIndex &parentIndex) {
             this->beginInsertRows(parentIndex, 0, 0);
             

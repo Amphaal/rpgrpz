@@ -17,6 +17,19 @@ QString AssetsDatabase::assetsStorageFilepath() {
     return QString::fromStdString(getAssetsFolderLocation());
 }
 
+QString AssetsDatabase::getFilePathToAsset(AssetsDatabaseElement* asset) {
+
+    auto db_assets = this->assets();
+    
+    auto id = asset->id();
+    if(!db_assets.contains(id)) return NULL;
+
+    auto assetJSON = db_assets[id].toObject();
+    auto fileName = id + "." + assetJSON["ext"].toString();
+
+    return this->assetsStorageFilepath() + QDir::separator() + fileName;
+}
+
 ///
 ///
 ///

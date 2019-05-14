@@ -164,6 +164,8 @@ list(APPEND SOURCES
     src/shared/assets/JSONDatabase.cpp
     src/shared/assets/AssetsDatabase.cpp
     
+
+    src/ui/assets/base/AssetsTreeView.hpp
     src/ui/assets/AssetsManager.cpp
     src/ui/assets/AssetsPreviewer.cpp
 

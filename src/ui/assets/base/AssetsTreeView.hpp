@@ -14,6 +14,9 @@
 #include "AssetsTreeViewModel.hpp"
 
 class AssetsTreeView : public QTreeView {
+
+    Q_OBJECT
+
     public:
         AssetsTreeView(QWidget *parent = nullptr) : 
             QTreeView(parent), 
@@ -42,7 +45,6 @@ class AssetsTreeView : public QTreeView {
                 this, &AssetsTreeView::_onRowInsert
             );
 
-
             //ui config
             this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
             this->setHeaderHidden(true);
@@ -66,6 +68,10 @@ class AssetsTreeView : public QTreeView {
             );
         }
     
+    signals:
+        void requestAssetPreview(QString assetLocation);
+        void requestPreviewReset();
+
     private:
 
         ///////////////////
@@ -205,6 +211,7 @@ class AssetsTreeView : public QTreeView {
         // END Contextual menu //
         /////////////////////////
 
+        //auto expand on row insert
         void _onRowInsert(const QModelIndex &parent, int first, int last) {
             for (; first <= last; ++first) {
                 auto index = this->_model->index(first, 0, parent);
@@ -239,6 +246,28 @@ class AssetsTreeView : public QTreeView {
 
             return QTreeView::keyPressEvent(event);
         }
+        
+        void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override {
+            QTreeView::selectionChanged(selected, deselected);
+
+            //if not single selection, skip
+            auto selectedIndexes = this->_getSelectedIndexes();
+            if(selectedIndexes.count() != 1) {
+                emit requestPreviewReset();
+                return;
+            }
+            
+            //if selected elem is no item, skip
+            auto targetFilePath = this->_model->getFilePathToAsset(selectedIndexes.takeFirst());
+            if(targetFilePath.isNull()) {
+                emit requestPreviewReset();
+                return;
+            }
+
+            //request preview
+            emit requestAssetPreview(targetFilePath);
+        }
+
 
         QModelIndexList _getSelectedIndexes() {
             QList<QModelIndex> indexes;

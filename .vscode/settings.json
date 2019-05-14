@@ -70,7 +70,9 @@
         "qhash": "cpp",
         "random": "cpp",
         "future": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "qimage": "cpp",
+        "qsvgrenderer": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }
