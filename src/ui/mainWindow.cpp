@@ -10,6 +10,10 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
     //initial show
     this->resize(800, 600);
     this->showMaximized();
+
+    
+    //start the update check
+    this->_updateIntegrator->checkForAppUpdates();
 }
 
 void MainWindow::_trueShow() {
@@ -309,14 +313,6 @@ QMenu* MainWindow::_getHelpMenu() {
             this->cfugAction->setEnabled(!isSearching);
             const std::string descr = isSearching ? I18n::tr()->SearchingForUpdates() : I18n::tr()->Menu_CheckForUpgrades();
             this->cfugAction->setText(descr.c_str());
-        }
-    );
-
-    //close the app for upload
-    QObject::connect(
-        this->_updateIntegrator, &UpdaterUIIntegrator::MTOpeningRequested,
-        [&]() {
-            this->_updateIntegrator->openMaintenanceTool();
         }
     );
 

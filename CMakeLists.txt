@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.13.3)
 #version
 SET(CMAKE_PROJECT_VERSION_MAJOR 0)
 SET(CMAKE_PROJECT_VERSION_MINOR 9)
-SET(CMAKE_PROJECT_VERSION_PATCH 0)
+SET(CMAKE_PROJECT_VERSION_PATCH 1)
 
 
 #default configuration
@@ -30,7 +30,7 @@ IF(${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR}/buildDebug)
 
     #define debug and tool location
     SET(IS_DEBUG_APP ON)
-    SET(MAINTENANCE_TOOL_LOCATION "C:/Qt/MaintenanceTool")
+    SET(MAINTENANCE_TOOL_LOCATION "C:/Program Files/RPGRPZ/maintenancetool")
 	
 ENDIF()
 
