@@ -4,7 +4,7 @@ AssetsDatabaseElement* AssetsDatabaseElement::fromIndex(QModelIndex index) {
     return static_cast<AssetsDatabaseElement*>(index.internalPointer());
 }
 
-AssetsDatabaseElement::AssetsDatabaseElement() : AssetsDatabaseElement("", nullptr, Root) { };
+AssetsDatabaseElement::AssetsDatabaseElement() : AssetsDatabaseElement(QString(""), nullptr, Root) { };
 
 AssetsDatabaseElement::~AssetsDatabaseElement(){
     
@@ -16,14 +16,11 @@ AssetsDatabaseElement::~AssetsDatabaseElement(){
 }
 
 AssetsDatabaseElement::AssetsDatabaseElement(
-    const QString &name, 
+    QString &name, 
     AssetsDatabaseElement* parent,
     const AssetsDatabaseElement::Type &type,
     QString id
 ) :  _type(type) { 
-
-    //prevent id definition if not asset Type
-    if(this->isItem()) this->_id = id;
 
     //define name (fullpath redefinition included)
     this->rename(name);
@@ -37,6 +34,11 @@ AssetsDatabaseElement::AssetsDatabaseElement(
     this->_defineIsItem();
     this->_defineIsStaticContainer();
     this->_defineIsDeletable();
+
+    //prevent id definition if not asset Type
+    if(this->isItem()) {
+        this->_id = id;
+    }
 
     //if a parent is defined, add self to its inner list
     if(parent) {
@@ -353,4 +355,133 @@ void AssetsDatabaseElement::_defineInsertType() {
 
 //////////////////
 /// END DEFINES //
+//////////////////
+
+//////////////
+/// HELPERS //
+//////////////
+
+
+QList<AssetsDatabaseElement::Type> AssetsDatabaseElement::staticContainerTypes() {
+    return _staticContainerTypes;
+}
+
+QList<AssetsDatabaseElement::Type> AssetsDatabaseElement::internalItemTypes() {
+    return _internalItemsTypes;
+}
+
+QString AssetsDatabaseElement::typeDescription(AssetsDatabaseElement::Type &type) {
+    return _typeDescriptions[type];
+}
+
+bool AssetsDatabaseElement::isAcceptableNameChange(QString &newName) {
+    
+    //strip name from slashes and double quotes
+    newName.replace("\"", "");
+    newName.replace("/", "");
+
+    //if empty name
+    if(newName.isEmpty()) return false;
+
+    //if same name, no changes
+    if(this->displayName() == newName) return false;
+
+    return true;
+    
+}
+
+void AssetsDatabaseElement::sortByPathLengthDesc(QList<AssetsDatabaseElement*> &listToSort) {
+    
+    //sort algorythm
+    struct {
+        bool operator()(AssetsDatabaseElement* a, AssetsDatabaseElement* b) const {   
+            return a->fullPath().count("/") > b->fullPath().count("/");
+        }   
+    } pathLength;
+
+    //sort
+    std::sort(listToSort.begin(), listToSort.end(), pathLength);
+
+}
+
+QList<QString> AssetsDatabaseElement::pathAsList(QString path) {
+    return path.split("/", QString::SplitBehavior::SkipEmptyParts);
+}
+
+AssetsDatabaseElement::Type AssetsDatabaseElement::pathChunktoType(QString &chunk) {
+    
+    auto expected = chunk.startsWith("{") && chunk.endsWith("}");
+    if(!expected) {
+        qDebug() << "Assets : ignoring path, as its structure is not expected.";
+        return Unknown;
+    }
+    
+    //type cast and get element type
+    chunk.replace("{", "");
+    chunk.replace("}", "");
+    auto castOk = false;
+    auto staticCType = (AssetsDatabaseElement::Type)chunk.toInt(&castOk);
+    if(!castOk) {
+        qDebug() << "Assets : ignoring path, as static container type was impossible to deduce";
+        return Unknown;
+    }
+
+    return staticCType;
+}
+
+QSet<AssetsDatabaseElement*> AssetsDatabaseElement::filterTopMostOnly(QList<AssetsDatabaseElement*> elemsToFilter) {
+
+    QSet<AssetsDatabaseElement*> higher;
+    while(elemsToFilter.count()) {
+
+        //take first
+        if(!higher.count()) {
+            higher.insert(elemsToFilter.takeFirst());
+            continue;
+        }
+
+        //compare
+        auto toCompareTo = elemsToFilter.takeFirst();
+            auto compare_path = toCompareTo->fullPath();
+            auto compare_length = compare_path.length();
+        
+        auto isForeigner = true;
+
+        //iterate
+        QSet<AssetsDatabaseElement*> obsoletePointers;
+        for(auto &st : higher) {
+
+            auto st_path = st->fullPath();
+            auto st_length = st_path.length();
+
+            auto outputArrayContainsBuffered = st_path.startsWith(compare_path);
+
+            //if 
+            if(isForeigner && (outputArrayContainsBuffered || compare_path.startsWith(st_path))) {
+                isForeigner = false;
+            }
+
+            //must be deleted, compared path must be prefered
+            if(outputArrayContainsBuffered && st_length > compare_length) {
+                obsoletePointers.insert(st);
+            }
+        }
+
+        //if no presence or better than a stored one
+        if(isForeigner || obsoletePointers.count()) {
+            higher.insert(toCompareTo);
+        }
+
+        //if obsolete pointers have been marked, remove them from the higherList and add the compared one to it
+        if(obsoletePointers.count()) {
+            higher.subtract(obsoletePointers);
+        }
+
+    }
+
+    return higher;
+}
+
+//////////////////
+/// END HELPERS //
 //////////////////

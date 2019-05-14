@@ -68,7 +68,9 @@
         "qheaderview": "cpp",
         "qdragenterevent": "cpp",
         "qhash": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "future": "cpp",
+        "thread": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

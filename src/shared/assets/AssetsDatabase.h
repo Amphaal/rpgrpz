@@ -8,7 +8,6 @@
 #include <QDebug>
 #include <QFileInfo>
 #include <QFile>
-#include <QUuid>
 #include <QCryptographicHash>
 #include <QDir>
 #include <QDateTime>
@@ -24,11 +23,16 @@ class AssetsDatabase : public JSONDatabase, public AssetsDatabaseElement {
         AssetsDatabase();
 
         //CRUD methods
-        bool insertAsset(QUrl &url, AssetsDatabaseElement* parent);
-        bool removeItems(QList<AssetsDatabaseElement*> elemsToRemove);
-        bool moveItems(QList<AssetsDatabaseElement*> targetedItems, AssetsDatabaseElement* target);
         bool createFolder(AssetsDatabaseElement* parent);
+        bool insertAsset(QUrl &url, AssetsDatabaseElement* parent);
         bool rename(QString name, AssetsDatabaseElement* target);
+        bool removeItems(QList<AssetsDatabaseElement*> elemsToRemove);
+        bool moveItems(QList<AssetsDatabaseElement*> selectedItemsToMove, AssetsDatabaseElement* target);
+
+        //read
+        QJsonObject paths();
+        QJsonObject assets();
+        QJsonArray hashes(); 
 
     protected:
         const QString defaultJsonDoc() override;
@@ -36,23 +40,44 @@ class AssetsDatabase : public JSONDatabase, public AssetsDatabaseElement {
     
     private:
 
-        //helper for item substraction
-        static QJsonArray _diff(QJsonArray &target, QSet<QString> &toRemoveFromTarget);
+        //createFolder() helpers
+        QString _generateNonExistingPath(AssetsDatabaseElement* parent, QString prefix);
 
-        //helper
-        static QSet<AssetsDatabaseElement*> _onlyHighestsElementsByPath(QList<AssetsDatabaseElement*> elems);
+        //rename() helpers
+        void _renameItem(QString &name, AssetsDatabaseElement* target);
+        void _renameFolder(QString &name, AssetsDatabaseElement* target);
 
-        ///prepare for alteration (delete, move) operations
-        QSet<QString> _temp_pathsToAlter;
-        QHash<QString, QSet<QString>> _temp_idsToAlterByPath;
-        QJsonObject _temp_db_paths;
-        void _prepareForAlteration(QList<AssetsDatabaseElement*> elemsToAlter);
+        //insertAsset() helpers
+        QString _getHashFromFileUri(QUrl &url); //return the hash
+        QString _moveFileToDbFolder(QUrl &url); //returns an unique id
+        QString _addAssetToDb(QString &id, QUrl &url, QString &fileHash, AssetsDatabaseElement* parent); //returns a default displayname
 
-        //static elements, descendant of root
+        //removeItems() helpers
+        QSet<QString> _getPathsToAlterFromList(QList<AssetsDatabaseElement*> &elemsToAlter);
+        QHash<QString, QSet<QString>> _getAssetsToAlterFromList(QList<AssetsDatabaseElement*> &elemsToAlter);
+        QSet<QString> _augmentPathsSetWithMissingDescendents(QSet<QString> &setToAugment);
+        void _augmentAssetsHashWithMissingDescendents(QHash<QString, QSet<QString>> &hashToAugment, QSet<QString> &morePathsToDelete);
+        QList<QString> _removeIdsFromPaths(QJsonObject &db_paths, QHash<QString, QSet<QString>> &idsToRemoveByPath); //returns removed ids
+        QSet<QString> _removeAssetsFromDb(QJsonObject &db_assets, QList<QString> &assetIdsToRemove); //returns hashes to remove
+        void _removeAssetFile(QString &id, QJsonObject &asset);
+
+        ////////////////////////////////////
+        // INITIAL Tree Injection helpers //
+        ////////////////////////////////////
+
         QHash<AssetsDatabaseElement::Type, AssetsDatabaseElement*> _staticElements;     
-        void _includeStaticComponents();
-        void _includeDbComponents();
-                
-        //helper, returns last container element created/found
-        AssetsDatabaseElement* _helperPathCreation(AssetsDatabaseElement* parent, QList<QString> paths);
+        void _injectStaticStructure();
+        
+        void _injectDbStructure();              
+            
+            //returns last elem by path created
+            QHash<QString, AssetsDatabaseElement*> _generateFolderTreeFromDb();
+
+            //iterate through paths chunks and create missing folders at each pass, returns last folder found/created
+            AssetsDatabaseElement* _recursiveElementCreator(AssetsDatabaseElement* parent, QList<QString> pathChunks); 
+
+            //from definitive paths, fetch items from db and generate elements
+            void _generateItemsFromDb(QHash<QString, AssetsDatabaseElement*> &pathsToFillWithItems);
+
+
 };

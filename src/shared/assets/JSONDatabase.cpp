@@ -62,3 +62,25 @@ void JSONDatabase::_updateDbFile(QJsonObject &newData) {
 
     this->_destfile->close();
 }
+
+QJsonArray JSONDatabase::diff(QJsonArray &target, QSet<QString> &toRemoveFromTarget) {
+    auto output = QJsonArray();
+    for(auto &e : target) {
+        auto str = e.toString();
+        if(!toRemoveFromTarget.contains(str)) {
+            output.append(str);
+        }
+    }
+    return output;
+}
+
+
+QString JSONDatabase::generateId() {
+
+    auto quuid = QUuid::createUuid().toString();
+
+    //strips braces
+    quuid = quuid.mid(1, quuid.length() - 2);
+    
+    return quuid;
+}
