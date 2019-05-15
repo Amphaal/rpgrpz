@@ -72,7 +72,12 @@
         "future": "cpp",
         "thread": "cpp",
         "qimage": "cpp",
-        "qsvgrenderer": "cpp"
+        "qsvgrenderer": "cpp",
+        "qlabel": "cpp",
+        "qwidget": "cpp",
+        "qhboxlayout": "cpp",
+        "condition_variable": "cpp",
+        "mutex": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

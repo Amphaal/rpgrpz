@@ -30,7 +30,9 @@
 
 #include "src/ui/others/RestoringSplitter.hpp"
 #include "src/ui/others/UpdaterUIIntegrator.hpp"
-#include "src/ui/others/RPZStatusBar.hpp"
+#include "src/ui/others/statusbar/RPZStatusBar.h"
+
+#include "src/ui/others/statusbar/RPZStatusLabel.hpp"
 
 class MainWindow : public QMainWindow { 
     public:

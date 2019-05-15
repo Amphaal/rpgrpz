@@ -40,7 +40,7 @@ void MainWindow::_initConnectivity() {
         //do nothing
         this->_mustLaunchServer = false;
         qDebug() << "RPZServer : No server to start because the user said so.";
-        this->_sb->updateServerStateLabel("Non");
+        this->_sb->updateServerStateLabel("Non", RPZStatusLabel::State::Finished);
 
     }
 
@@ -74,7 +74,7 @@ void MainWindow::_initConnectivity() {
         QObject::connect(
             this->_rpzServer, &RPZServer::listening,
             [&]() {
-                this->_sb->updateServerStateLabel("OK");
+                this->_sb->updateServerStateLabel("OK", RPZStatusLabel::State::Finished);
             }
         );
 
@@ -82,7 +82,7 @@ void MainWindow::_initConnectivity() {
         QObject::connect(
             this->_rpzServer, &RPZServer::error,
             [&]() {
-                this->_sb->updateServerStateLabel("Erreur");
+                this->_sb->updateServerStateLabel("Erreur", RPZStatusLabel::State::Error);
             }
         );
 

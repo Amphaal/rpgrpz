@@ -14,6 +14,8 @@
 
 #include "src/helpers/_const.hpp"
 
+#include "src/ui/others/statusbar/RPZStatusLabel.hpp"
+
 class ConnectivityHelper : public QObject
 {
     Q_OBJECT
@@ -24,9 +26,9 @@ class ConnectivityHelper : public QObject
         void init();
 
     signals:
-        void localAddressStateChanged(const std::string &state);
-        void remoteAddressStateChanged(const std::string &state, const bool isOn = false);
-        void uPnPStateChanged(const std::string &state);
+        void localAddressStateChanged(const std::string &stateText, int state = 0);
+        void remoteAddressStateChanged(const std::string &stateText, int state = 0);
+        void uPnPStateChanged(const std::string &stateText, int state = 0);
 
     private:
         QNetworkAccessManager* _nam = nullptr;

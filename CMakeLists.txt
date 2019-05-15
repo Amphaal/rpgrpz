@@ -169,7 +169,8 @@ list(APPEND SOURCES
     src/ui/assets/AssetsManager.cpp
     src/ui/assets/AssetsPreviewer.cpp
 
-    src/ui/others/RPZStatusBar.hpp
+    src/ui/others/statusbar/RPZStatusLabel.hpp
+    src/ui/others/statusbar/RPZStatusBar.cpp
     src/ui/others/UpdaterUIIntegrator.hpp
 
     src/ui/communication/ChatEdit.cpp

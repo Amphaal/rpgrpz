@@ -123,7 +123,7 @@ void ConnectivityHelper::_tryNegociateUPnPPort() {
 
 void ConnectivityHelper::_onUPnPExtIpFound(const std::string &extIp) {
     this->_upnp_extIp = extIp;
-    emit remoteAddressStateChanged(extIp, true);
+    emit remoteAddressStateChanged(extIp);
 };
 
 void ConnectivityHelper::_onUPnPError(int errorCode) {
@@ -143,9 +143,9 @@ void ConnectivityHelper::_onUPnPSuccess(const char * protocol, const char * nego
 
 void ConnectivityHelper::networkChanged(const QNetworkAccessManager::NetworkAccessibility accessible) {
     
-    emit localAddressStateChanged(this->_getWaitingText());
-    emit remoteAddressStateChanged(this->_getWaitingText());
-    emit uPnPStateChanged(this->_getWaitingText());
+    emit localAddressStateChanged(this->_getWaitingText(), RPZStatusLabel::State::Processing);
+    emit remoteAddressStateChanged(this->_getWaitingText(), RPZStatusLabel::State::Processing);
+    emit uPnPStateChanged(this->_getWaitingText(), RPZStatusLabel::State::Processing);
 
     if(!accessible) {
 
@@ -174,7 +174,7 @@ void ConnectivityHelper::_getLocalAddress() {
 
     if(rtrn.isNull()) {
         qWarning() << "Connectivity : local ip not found !";
-        emit localAddressStateChanged(this->_getErrorText());
+        emit localAddressStateChanged(this->_getErrorText(), RPZStatusLabel::State::Error);
     } else {
         qDebug() << "Connectivity : local ip" << rtrn;
         emit localAddressStateChanged(rtrn.toStdString());
