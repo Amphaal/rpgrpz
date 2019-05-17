@@ -1,13 +1,14 @@
 #pragma once
 
+#include <QtMath>
 #include <math.h>
 
-#include <QWidget>
 #include <QGraphicsScene>
 #include <QGraphicsView>
-#include <QtMath>
+
+#include <QWidget>
+
 #include <QWheelEvent>
-#include <QGraphicsSvgItem>
 #include <QTreeWidgetItem>
 #include <QVariant>
 #include <QAction>
@@ -20,6 +21,7 @@
 #include <QVariant>
 #include <QVector>
 
+
 #include "MapTools.h"
 #include "base/AnimationTimeLine.hpp"
 
@@ -29,6 +31,8 @@
 
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/network/rpz/client/RPZClient.h"
+
+#include "src/ui/assets/base/AssetsTreeView.hpp"
 
 
 class MapView : public QGraphicsView, public ClientBindable {
@@ -53,9 +57,13 @@ class MapView : public QGraphicsView, public ClientBindable {
 
     protected:
         void wheelEvent(QWheelEvent *event) override;
+
+
         void dropEvent(QDropEvent *event) override;
         void dragEnterEvent(QDragEnterEvent *event) override;
+        void dragLeaveEvent(QDragLeaveEvent *event) override;
         void dragMoveEvent(QDragMoveEvent * event) override;
+
         void mousePressEvent(QMouseEvent *event) override;
         void mouseReleaseEvent(QMouseEvent *event) override;
         void mouseMoveEvent(QMouseEvent *event) override;
@@ -99,13 +107,15 @@ class MapView : public QGraphicsView, public ClientBindable {
             void _animatedRotation(double deg);
             void _rotateBackToNorth();
 
+        //d&d
+            AssetsDatabase* _droppableSourceDatabase = nullptr;
+            AssetsDatabaseElement* _droppableElement = nullptr;
+            QGraphicsItem* _droppableGraphicsItem = nullptr;
+
         //zooming...
             const double _defaultScale = 5;
             double _currentRelScale = 1;
             void _goToDefaultZoom();
-        
-        //droping..
-            // QPoint* _latestPosDrop;
 
         //drawing...
             int _penWidth = 1;

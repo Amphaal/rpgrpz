@@ -4,7 +4,15 @@
 
 class AssetBase {
     public:
-        enum Type { Undefined, Drawing, Brush, NPC, Event, PC };
+        enum Type { 
+            Undefined, 
+            Drawing,
+            Object = 105, 
+            Brush = 104, 
+            NPC = 103, 
+            Event = 102, 
+            PC = 101 
+        };
 
         AssetBase() {}
         AssetBase(const AssetBase::Type &type) : _selfType(type) {

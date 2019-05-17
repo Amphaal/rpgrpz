@@ -20,15 +20,79 @@ void MapHintViewBinder::_onSceneSelectionChanged() {
 
 }
 
+void MapHintViewBinder::centerGraphicsItemToPoint(QGraphicsItem* item, const QPoint &eventPos) {
+    QPointF point = this->_boundGv->mapToScene(eventPos);
+    point = point - item->boundingRect().center();
+    item->setPos(point);
+}
+
 QGraphicsPathItem* MapHintViewBinder::addDrawing(const QPainterPath &path, const QPen &pen) {
+    
+    //add path
     auto newPath = this->_boundGv->scene()->addPath(path, pen);
     
+    //define flags
     newPath->setFlags(QFlags<QGraphicsItem::GraphicsItemFlag>(
         QGraphicsItem::GraphicsItemFlag::ItemIsSelectable |
         QGraphicsItem::GraphicsItemFlag::ItemIsMovable
     ));
 
+    //define metadata
+    auto metadata = QVariantHash();
+    metadata["w"] = pen.width();
+
+    //inform
+    auto newAsset = RPZAsset(AssetBase::Type::Drawing, newPath, metadata);
+    this->alterSceneFromAsset(RPZAsset::Alteration::Added, newAsset);
+
     return newPath;
+}
+
+QGraphicsItem* MapHintViewBinder::temporaryAssetElement(AssetsDatabaseElement* assetElem, AssetsDatabase *database) {
+        
+        //find filepath to asset
+        auto path = database->getFilePathToAsset(assetElem);
+        QFileInfo pathInfo(path);
+        
+        //define graphicsitem
+        QGraphicsItem* item = nullptr;
+        if(pathInfo.suffix() == "svg") {
+            item = new QGraphicsSvgItem(path);
+        } 
+        else {
+            item = new QGraphicsPixmapItem(QPixmap(path));
+        };
+
+        //define transparency as it is a dummy
+        item->setOpacity(.5);
+
+        //add it to the scene
+        this->_boundGv->scene()->addItem(item);
+
+        return item;
+}
+
+
+
+QGraphicsItem* MapHintViewBinder::addAssetElement(QGraphicsItem* item, AssetsDatabaseElement* assetElem, const QPoint &pos) {
+
+        //define position
+        this->centerGraphicsItemToPoint(item, pos);
+
+        //define flags
+        item->setFlags(QFlags<QGraphicsItem::GraphicsItemFlag>(
+            QGraphicsItem::GraphicsItemFlag::ItemIsSelectable |
+            QGraphicsItem::GraphicsItemFlag::ItemIsMovable
+        ));
+
+        //inform
+        auto newAsset = RPZAsset((AssetBase::Type)assetElem->type(), item);
+        this->alterSceneFromAsset(RPZAsset::Alteration::Added, newAsset);
+    
+        //reset transparency as it is not a dummy anymore
+        item->setOpacity(1);
+
+        return item;
 }
 
 void MapHintViewBinder::unpackFromNetworkReceived(const QVariantHash &package) {

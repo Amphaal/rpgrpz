@@ -77,7 +77,8 @@
         "qwidget": "cpp",
         "qhboxlayout": "cpp",
         "condition_variable": "cpp",
-        "mutex": "cpp"
+        "mutex": "cpp",
+        "qtmath": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

@@ -3,7 +3,14 @@
 #include <QGraphicsView>
 #include <QWidget>
 
+#include <QFileInfo>
+
+#include <QGraphicsPixmapItem>
+#include <QGraphicsSvgItem>
+#include <QPixmap>
+
 #include "src/shared/network/AlterationPayload.hpp"
+#include "src/ui/assets/base/AssetsTreeViewModel.hpp"
 
 #include "MapHint.h"
 
@@ -23,6 +30,10 @@ class MapHintViewBinder : public MapHint {
 
         //actions helpers
         QGraphicsPathItem* addDrawing(const QPainterPath &path, const QPen &pen);
+
+        QGraphicsItem* temporaryAssetElement(AssetsDatabaseElement* assetElem, AssetsDatabase *database);
+        void centerGraphicsItemToPoint(QGraphicsItem* item, const QPoint &eventPos);
+        QGraphicsItem* addAssetElement(QGraphicsItem* item, AssetsDatabaseElement* assetElem, const QPoint &pos);
 
     protected:
         QGraphicsView* _boundGv = nullptr;

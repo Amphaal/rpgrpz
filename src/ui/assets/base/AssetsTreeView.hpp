@@ -67,6 +67,26 @@ class AssetsTreeView : public QTreeView {
                 this, &AssetsTreeView::_renderCustomContextMenu
             );
         }
+
+        AssetsTreeViewModel* assetsModel() {
+            return this->_model;
+        }
+
+        QModelIndexList selectedElementsIndexes() {
+            QList<QModelIndex> indexes;
+
+            //get list of items
+            for(auto &i : this->selectedIndexes()) {
+
+                //only first column
+                if(i.column() > 0) continue;
+
+                //append
+                indexes.append(i);
+            }
+
+            return indexes;
+        }
     
     signals:
         void requestAssetPreview(QString assetLocation);
@@ -131,7 +151,7 @@ class AssetsTreeView : public QTreeView {
 
         void _renderCustomContextMenu(const QPoint &pos) {
             
-            auto indexesToProcess = this->_getSelectedIndexes();
+            auto indexesToProcess = this->selectedElementsIndexes();
 
             //check selected items (autoselected on right click)
             if(!indexesToProcess.count()) {
@@ -237,7 +257,7 @@ class AssetsTreeView : public QTreeView {
             //switch
             switch(key) {
                 case Qt::Key::Key_Delete:
-                    auto selectedIndexes = this->_getSelectedIndexes();
+                    auto selectedIndexes = this->selectedElementsIndexes();
                     if(selectedIndexes.count()) {
                         this->_requestDeletion(selectedIndexes);
                     }
@@ -251,7 +271,7 @@ class AssetsTreeView : public QTreeView {
             QTreeView::selectionChanged(selected, deselected);
 
             //if not single selection, skip
-            auto selectedIndexes = this->_getSelectedIndexes();
+            auto selectedIndexes = this->selectedElementsIndexes();
             if(selectedIndexes.count() != 1) {
                 emit requestPreviewReset();
                 return;
@@ -268,21 +288,5 @@ class AssetsTreeView : public QTreeView {
             emit requestAssetPreview(targetFilePath);
         }
 
-
-        QModelIndexList _getSelectedIndexes() {
-            QList<QModelIndex> indexes;
-
-            //get list of items
-            for(auto &i : this->selectedIndexes()) {
-
-                //only first column
-                if(i.column() > 0) continue;
-
-                //append
-                indexes.append(i);
-            }
-
-            return indexes;
-        }
 
 };

@@ -14,6 +14,10 @@ class AssetsTreeViewModel : public QAbstractItemModel {
     public:
         AssetsTreeViewModel(QObject *parent = nullptr) : QAbstractItemModel(parent), _db(new AssetsDatabase) { };
 
+        AssetsDatabase* database() {
+            return this->_db;
+        }
+
         ///////////////
         /// HELPERS ///
         ///////////////

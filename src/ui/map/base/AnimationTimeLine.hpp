@@ -35,7 +35,7 @@ class AnimationTimeLine : public QTimeLine {
             }
 
             //start or restart handler
-            handler->start();
+            if(handler->state() != QTimeLine::Running) handler->start();
             return handler;
         }
 

@@ -438,33 +438,61 @@ void MapView::_rotateBackToNorth() {
 //////////
 
 void MapView::dropEvent(QDropEvent *event) {
-    
-    // auto source = (AssetsNavigator*)event->source();
-    // auto si = source->selectedItems();
-    // auto toRepresent = si[0]->data(1, Qt::UserRole);
-    
+    if(!this->_droppableGraphicsItem) return;
 
-    // QPointF point = this->mapToScene(event->pos());
-    // item->setPos(point);
-    // auto item = new QGraphicsSvgItem("C:/Users/Amphaal/Desktop/pp.svg");
-    // this->scene()->addItem(item);
+    //definitive appending for temporary graphicsItem
+    this->_hints->addAssetElement(
+        this->_droppableGraphicsItem, 
+        this->_droppableElement, 
+        event->pos()
+    );
 
-    // //update latest for auto inserts
-    // this->_latestPosDrop->setX(this->_latestPosDrop->x() + 10);
-    // this->_latestPosDrop->setY(this->_latestPosDrop->y() + 10);
+    this->_droppableGraphicsItem = nullptr;
 }
 
 void MapView::dragMoveEvent(QDragMoveEvent * event) {
+    if(!this->_droppableGraphicsItem) return;
     event->acceptProposedAction();
+
+    //update dummy graphics item
+    this->_hints->centerGraphicsItemToPoint(this->_droppableGraphicsItem, event->pos());
 }
 
 void MapView::dragEnterEvent(QDragEnterEvent *event) {
-    
+
+    //reset previous temp values
+    if(this->_droppableGraphicsItem) delete this->_droppableGraphicsItem;
+    this->_droppableGraphicsItem = nullptr;
+    this->_droppableElement = nullptr;
+    this->_droppableSourceDatabase = nullptr;
+
     //if has a widget attached, OK
     if(event->source()) {
+        
+        //check selected items in source
+        auto droppableSource = (AssetsTreeView*)event->source();
+        auto selectedIndexes = droppableSource->selectedElementsIndexes();
+        if(selectedIndexes.count() != 1) return;
+        auto selectedElem = AssetsDatabaseElement::fromIndex(selectedIndexes.takeFirst());
+        if(!selectedElem->isItem()) return;
+
+        //update temporary values
+        this->_droppableSourceDatabase = droppableSource->assetsModel()->database();
+        this->_droppableElement = selectedElem;
+        this->_droppableGraphicsItem = this->_hints->temporaryAssetElement(this->_droppableElement, this->_droppableSourceDatabase);
+
+        //accept
         event->acceptProposedAction();
     }
 
+}
+
+void MapView::dragLeaveEvent(QDragLeaveEvent *event) {
+    //reset previous temp values
+    if(this->_droppableGraphicsItem) delete this->_droppableGraphicsItem;
+    this->_droppableGraphicsItem = nullptr;
+    this->_droppableElement = nullptr;
+    this->_droppableSourceDatabase = nullptr;
 }
 
 //////////////
@@ -491,12 +519,7 @@ void MapView::_endDrawing() {
     if(this->_tempLines.size()) {
 
         //add definitive path
-        auto currPen = this->_getPen();
-        auto drawing = this->_hints->addDrawing(*this->_tempDrawing, currPen);
-        auto metadata = QVariantHash();
-        metadata["w"] = currPen.width();
-        auto newAsset = RPZAsset(AssetBase::Type::Drawing, drawing, metadata);
-        this->_hints->alterSceneFromAsset(RPZAsset::Alteration::Added, newAsset);
+        this->_hints->addDrawing(*this->_tempDrawing, this->_getPen());
     }
 
     //destroy temp

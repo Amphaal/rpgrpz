@@ -13,15 +13,15 @@ class AssetsDatabaseElement {
             Root = 1,
             Folder = 2,
             //
-            InternalContainer,
-                Player, 
-                Event, 
-            NPC_Container, 
-                NPC, 
-            FloorBrushContainer, 
-                FloorBrush,
-            ObjectContainer,
-                Object
+            InternalContainer = 201,
+                Player = 101, 
+                Event = 102, 
+            NPC_Container = 202, 
+                NPC = 103, 
+            FloorBrushContainer = 203, 
+                FloorBrush = 104,
+            ObjectContainer = 204,
+                Object = 105
         };
         
         static AssetsDatabaseElement* fromIndex(QModelIndex index);

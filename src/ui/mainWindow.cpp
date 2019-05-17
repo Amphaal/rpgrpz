@@ -182,14 +182,6 @@ void MainWindow::_initUIApp() {
         ClientBindable::bindAll
     );
 
-    //move to map content tab when selection changed inside the map
-    QObject::connect(
-        this->_mapView->scene(), &QGraphicsScene::selectionChanged,
-        [assetTabs]() {
-            assetTabs->setCurrentIndex(1);
-        }
-    );
-
     //on map alteration, update treelist
     QObject::connect(
         this->_mapView->hints(), &MapHintViewBinder::assetsAlteredForLocal,
