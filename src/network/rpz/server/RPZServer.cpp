@@ -93,8 +93,8 @@ void RPZServer::_onDisconnect() {
 void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) {
 
     switch(method) {
-        case JSONMethod::MessageFromPlayer:
-            {
+        case JSONMethod::MessageFromPlayer: 
+        {
                 //get message, add corresponding user to it then store it
                 auto message = RPZMessage::fromVariantHash(data.toHash());
                 message.setOwnership(*this->_getUser(target));
@@ -104,14 +104,23 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
                 this->_broadcastMessage(message);
             }
             break;
-        case JSONMethod::MapChanged:
-        case JSONMethod::HostMapHistory:
-            {
-                this->_broadcastMapChanges(data.toHash(), target);
+        case JSONMethod::AskForAsset: {   
+
+                auto assetId = data.toString();
+                auto package = AssetsDatabase::get()->prepareAssetPackage(assetId);
+                target->sendJSON(JSONMethod::RequestedAsset, package);
+                
             }
             break;
-        case JSONMethod::PlayerHasUsername:
-            {   
+        case JSONMethod::MapChanged:
+        case JSONMethod::HostMapHistory: {
+
+                this->_broadcastMapChanges(data.toHash(), target);
+
+            }
+            break;
+        case JSONMethod::PlayerHasUsername: {   
+
                 //bind username to socket
                 const auto dn = data.toList()[0].toString();
                 this->_getUser(target)->setName(dn);

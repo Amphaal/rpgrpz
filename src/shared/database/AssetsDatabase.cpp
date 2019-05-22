@@ -37,6 +37,67 @@ QString AssetsDatabase::assetsStorageFilepath() {
     return QString::fromStdString(getAssetsFolderLocation());
 }
 
+
+QString AssetsDatabase::importAsset(QVariantHash &package) {
+    
+    if(package.isEmpty()) return NULL;
+
+    //copy into db
+    auto asset_id = package["_id"].toString();
+    auto copy = this->_db.object();
+
+        auto db_assets = this->assets();
+        auto asset = QJsonDocument::fromVariant(package["_meta"]).object();
+        db_assets[asset_id] = asset;
+    
+    copy["assets"] = db_assets;
+    this->_updateDbFile(copy);
+
+
+    //turn encoded file from JSON into file
+    auto destFolder = this->assetsStorageFilepath();
+    auto destFileExt = asset["ext"].toString();
+    auto dest = destFolder + "/" + asset_id + "." + destFileExt;
+
+        //write file
+        QFile assetFile(dest);
+        assetFile.open(QFile::WriteOnly);
+
+            auto decoded = QByteArray::fromBase64(
+                package["_fileContent"].toByteArray()
+            );
+            assetFile.write(decoded);
+
+        assetFile.close();
+    
+    
+    qDebug() << "Assets : asset " << asset_id << "imported";
+    return asset_id;
+}
+
+QVariantHash AssetsDatabase::prepareAssetPackage(QString &assetId) {
+    
+    //determine id existance by fetching the file path
+    auto pathToFile = this->getFilePathToAsset(assetId);
+    if(pathToFile.isNull()) return QVariantHash();
+    
+    //json obj
+    QVariantHash package;
+    package["_id"] = assetId;
+
+    //append file as base64
+    QFile assetFile;
+    assetFile.open(QFile::ReadOnly);
+
+        auto fileContent = assetFile.readAll().toBase64();
+        package["_fileContent"] = QString(fileContent);
+
+    assetFile.close();
+
+    package["_meta"] = this->assets()[assetId].toObject();
+    return package;
+}
+
 QString AssetsDatabase::getFilePathToAsset(QString &assetId) {
     auto db_assets = this->assets();
     if(!db_assets.contains(assetId)) return NULL;
@@ -223,6 +284,7 @@ QString AssetsDatabase::_getFileSignatureFromFileUri(QUrl &url) {
 
     return signature;
 }
+
 
 bool AssetsDatabase::_moveFileToDbFolder(QUrl &url, QString &id) {
 

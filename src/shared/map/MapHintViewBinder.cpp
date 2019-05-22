@@ -51,9 +51,20 @@ bool MapHintViewBinder::isRemote() {
 }
 
 bool MapHintViewBinder::defineAsRemote(QString &remoteMapDescriptor) {
+    
+    //define remote flag
     this->_isRemote = !remoteMapDescriptor.isEmpty();
+    
+    //reset missing assets list
+    if(this->_missingAssetsIdsFromDb) delete this->_missingAssetsIdsFromDb;
+    this->_missingAssetsIdsFromDb = new QMultiHash<QString, QGraphicsItem*>();
+
+    //change map descriptor if is a remote session
     if(this->_isRemote) this->_stateFilePath = remoteMapDescriptor;
+
+    //anyway, unset dirty
     this->_setDirty(false);
+    
     return this->_isRemote;
 }
 
@@ -212,6 +223,35 @@ void MapHintViewBinder::addTemplateAssetElement(QGraphicsItem* temporaryItem, As
     this->alterSceneFromAsset(RPZAsset::Alteration::Added, newAsset);
 }
 
+void MapHintViewBinder::replaceMissingAssetPlaceholders(const QString &assetId) {
+    if(!this->_missingAssetsIdsFromDb) return;
+    if(!this->_missingAssetsIdsFromDb->contains(assetId)) return;
+
+    //find the path file
+    auto pathToFile = AssetsDatabase::get()->getFilePathToAsset(QString(assetId));
+    if(pathToFile.isNull()) return;
+    
+    //iterate through the list of GI to replace
+    auto setOfGraphicsItemsToReplace = this->_missingAssetsIdsFromDb->values(assetId).toSet();
+    for(auto gi : setOfGraphicsItemsToReplace) {
+        
+        //add on top the required graphical item
+        auto newGi = this->_addGenericImageBasedAsset(pathToFile, 1, gi->pos());
+        
+        //replace bound graphic item to the appropriate RPZAssets which are already stored 
+        auto id = this->_idsByGraphicItem[gi];
+        auto asset = this->_assetsById[id];
+        asset.setGraphicsItem(newGi);
+        this->_assetsById[id] = asset;
+
+        //delete placeholder
+        delete gi;
+    }
+
+    //clear the id from the missing list
+    this->_missingAssetsIdsFromDb->remove(assetId);
+}
+
 void MapHintViewBinder::_unpack(const RPZAsset::Alteration &alteration, QVector<RPZAsset> &assets) {
 
     //if reset
@@ -274,7 +314,14 @@ void MapHintViewBinder::_unpack(const RPZAsset::Alteration &alteration, QVector<
                         //add placeholder
                         newItem = this->_addMissingAssetPH(boundingRect);
 
-                        //TODO ask for missing assets
+                        //add graphic item to list of items to replace at times
+                        this->_missingAssetsIdsFromDb->insert(dbAssetId, newItem);
+
+                        //if first time the ID is encountered
+                        if(!this->_missingAssetsIdsFromDb->contains(dbAssetId)) {
+                            emit requestMissingAsset(dbAssetId);
+                        }
+
                     }
                 }
                 break;

@@ -21,6 +21,8 @@
 #include "src/shared/network/RPZMessage.hpp"
 #include "src/shared/network/RPZUser.hpp"
 
+#include "src/shared/database/AssetsDatabase.h"
+
 #include "src/helpers/_const.hpp"
 
 class RPZServer : public QTcpServer, public JSONRouter { 

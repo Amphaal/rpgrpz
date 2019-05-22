@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QMultiHash>
+
 #include <QGraphicsView>
 #include <QWidget>
 
@@ -35,6 +37,9 @@ class MapHintViewBinder : public MapHint {
         bool isRemote();
         bool defineAsRemote(QString &remoteMapDescriptor = QString());
 
+        //replace placeholders
+        void replaceMissingAssetPlaceholders(const QString &assetId);
+
         //on received data, include them into view
         void unpackFromNetworkReceived(const QVariantHash &package);
 
@@ -49,15 +54,14 @@ class MapHintViewBinder : public MapHint {
         QGraphicsItem* generateTemplateAssetElement(AssetsDatabaseElement* assetElem);
         void addTemplateAssetElement(QGraphicsItem* temporaryItem, AssetsDatabaseElement* assetElem, const QPoint &dropPos);
 
-        //
-        QGraphicsItem* addObject();
-
     signals:
         void mapFileStateChanged(const QString &filePath, bool isDirty);
+        void requestMissingAsset(const QString &assetIdToRequest);
 
     protected:
         QString _stateFilePath;
 
+        QMultiHash<QString, QGraphicsItem*> *_missingAssetsIdsFromDb = nullptr;
         bool _isRemote = false;
 
         bool _isDirty = false;

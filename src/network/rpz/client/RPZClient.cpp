@@ -92,6 +92,11 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
                 emit mapChanged(data.toHash());
             }   
             break;
+        case JSONMethod::RequestedAsset: {
+                auto assetId = AssetsDatabase::get()->importAsset(data.toHash()); 
+                emit receivedAsset(assetId);
+            }
+            break;
         default:
             qWarning() << "RPZClient : unknown method from JSON !";
     }
@@ -132,6 +137,12 @@ void RPZClient::sendMessage(const QString &messageToSend) {
     qDebug() << "RPZClient : message sent " << messageToSend; 
 }
 
+void RPZClient::askForAsset(const QString &assetId) {
+
+    this->sendJSON(JSONMethod::AskForAsset, assetId);
+
+    qDebug() << "RPZClient : requesting asset " << assetId << " to server"; 
+}
 
 void RPZClient::sendMapChanges(const QVariantHash &changes, bool isHistory) {
     if(isHistory) {

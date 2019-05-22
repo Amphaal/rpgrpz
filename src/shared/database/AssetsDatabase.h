@@ -32,6 +32,10 @@ class AssetsDatabase : public JSONDatabase, public AssetsDatabaseElement {
         bool removeItems(QList<AssetsDatabaseElement*> elemsToRemove);
         bool moveItems(QList<AssetsDatabaseElement*> selectedItemsToMove, AssetsDatabaseElement* target);
 
+        //network import/export
+        QVariantHash prepareAssetPackage(QString &assetId);
+        QString importAsset(QVariantHash &package);
+
         //read
         QJsonObject paths();
         QJsonObject assets();

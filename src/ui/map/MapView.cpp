@@ -128,6 +128,18 @@ void MapView::onRPZClientConnecting(RPZClient * cc) {
         }
     );
 
+    //when missing assets
+    QObject::connect(
+        this->_hints, &MapHintViewBinder::requestMissingAsset,
+        this->_rpzClient, &RPZClient::askForAsset
+    );
+
+    //when receiving missing asset
+    QObject::connect(
+        this->_rpzClient, &RPZClient::receivedAsset,
+        this->_hints, &MapHintViewBinder::replaceMissingAssetPlaceholders
+    );
+
     //on map change
     QObject::connect(
         this->_rpzClient, &RPZClient::mapChanged,

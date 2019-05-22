@@ -9,6 +9,8 @@
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/network/rpz/_any/JSONRouter.h"
 
+#include "src/shared/database/AssetsDatabase.h"
+
 #include "src/shared/network/RPZMessage.hpp"
 
 #include "src/helpers/_const.hpp"
@@ -24,9 +26,10 @@ class RPZClient : public JSONSocket, public JSONRouter {
         
         void run();
     
-    public slots:
+        //
         void sendMessage(const QString &messageToSend);
         void sendMapChanges(const QVariantHash &changes, bool isHistory);
+        void askForAsset(const QString &assetId);
 
     signals:
         void receivedMessage(const QVariantHash &message);
@@ -36,6 +39,7 @@ class RPZClient : public JSONSocket, public JSONRouter {
         void error(const std::string &errMessage);
         void mapChanged(const QVariantHash &data);
         void beenAskedForMapHistory();
+        void receivedAsset(const QString &assetId);
 
     private:       
         QString _domain;
