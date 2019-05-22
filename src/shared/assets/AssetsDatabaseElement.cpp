@@ -22,14 +22,14 @@ AssetsDatabaseElement::AssetsDatabaseElement(
     QString id
 ) :  _type(type) { 
 
+
     //define name (fullpath redefinition included)
     this->rename(name);
-
+ 
     // types-related definitions
     this->_defineIconPath();
     this->_defineFlags();
     this->_defineIsContainer();
-    this->_defineIsInternal();
     this->_defineIsRoot();
     this->_defineIsItem();
     this->_defineIsStaticContainer();
@@ -40,7 +40,7 @@ AssetsDatabaseElement::AssetsDatabaseElement(
         this->_id = id;
     }
 
-    //if a parent is defined, add self to its inner list
+   //if a parent is defined, add self to its inner list
     if(parent) {
         parent->appendChild(this);
     }
@@ -293,6 +293,7 @@ void AssetsDatabaseElement::_defineParent(AssetsDatabaseElement* parent) {
     //paths-related redefinitions
     this->_definePath();
     this->_defineRootStaticContainer();
+    this->_defineIsInternal();
     this->_defineInsertType();
 }
 

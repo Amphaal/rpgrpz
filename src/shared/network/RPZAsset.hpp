@@ -76,7 +76,8 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
                         
                         //object
                         case AssetBase::Type::Object: {
-                            const auto shape = this->graphicsItem()->shape();
+                            QPainterPath shape;
+                            shape.addRect(this->graphicsItem()->sceneBoundingRect());
                             this->_data = JSONSerializer::toBase64(shape);
                         }
                         break;

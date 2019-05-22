@@ -268,6 +268,7 @@ class AssetsTreeViewModel : public QAbstractItemModel {
             //external drop, allows
             if(!data->hasFormat(AssetsDatabaseElement::listMimeType)) return true;
 
+            //if is root or not corresponding to a tree element
             auto dest = AssetsDatabaseElement::fromIndex(parent);
             if(!dest || dest->isRoot()) return false;
 

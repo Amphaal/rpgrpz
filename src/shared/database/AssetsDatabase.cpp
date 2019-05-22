@@ -44,7 +44,7 @@ QString AssetsDatabase::getFilePathToAsset(QString &assetId) {
     auto assetJSON = db_assets[assetId].toObject();
     auto fileName = assetId + "." + assetJSON["ext"].toString();
 
-    return this->assetsStorageFilepath() + QDir::separator() + fileName;
+    return this->assetsStorageFilepath() + "/" + fileName;
 }
 
 QString AssetsDatabase::getFilePathToAsset(AssetsDatabaseElement* asset) {
@@ -229,7 +229,7 @@ bool AssetsDatabase::_moveFileToDbFolder(QUrl &url, QString &id) {
     //dest file
     auto destFolder = this->assetsStorageFilepath();
     auto destFileExt = QFileInfo(url.fileName()).suffix();
-    auto dest = destFolder + QDir::separator() + id + "." + destFileExt;
+    auto dest = destFolder + "/" + id + "." + destFileExt;
 
     //copy
     auto copyResult = QFile::copy(url.toLocalFile(), dest);
@@ -446,7 +446,7 @@ void AssetsDatabase::_removeAssetFile(QString &id, QJsonObject &asset) {
     auto fileName = id + "." + asset["ext"].toString();
 
     auto expectedLocation = this->assetsStorageFilepath();
-    auto fileToRemove = QFile(expectedLocation + QDir::separator() + fileName);
+    auto fileToRemove = QFile(expectedLocation + "/" + fileName);
 
     //remove stored file
     if(fileToRemove.exists()) {

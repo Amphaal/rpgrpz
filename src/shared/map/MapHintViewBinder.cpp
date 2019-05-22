@@ -131,7 +131,6 @@ QGraphicsPathItem* MapHintViewBinder::_addDrawing(const QPainterPath &path, cons
         QGraphicsItem::GraphicsItemFlag::ItemIsMovable
     ));
 
-
     return newPath;
 }
 
@@ -151,28 +150,40 @@ void MapHintViewBinder::addDrawing(const QPainterPath &path, const QPen &pen) {
 
 
 QGraphicsItem* MapHintViewBinder::generateTemplateAssetElement(AssetsDatabaseElement* assetElem) {
-        
     //find filepath to asset
     auto path = AssetsDatabase::get()->getFilePathToAsset(assetElem);
-    QFileInfo pathInfo(path);
+    return this->_addGenericImageBasedAsset(path, .5);
+}
+
+QGraphicsItem* MapHintViewBinder::_addGenericImageBasedAsset(const QString &pathToImageFile, qreal opacity, const QPointF &initialPos) {
+    
+    //get file infos
+    QFileInfo pathInfo(pathToImageFile);
     
     //define graphicsitem
     QGraphicsItem* item = nullptr;
     if(pathInfo.suffix() == "svg") {
-        item = new QGraphicsSvgItem(path);
+        item = new QGraphicsSvgItem(pathToImageFile);
     } 
     else {
-        auto pixmap = QPixmap(path);
-        auto pix_item = new QGraphicsPixmapItem(pixmap);
-        pix_item->setShapeMode(QGraphicsPixmapItem::BoundingRectShape);
-        item = pix_item;
+        auto pixmap = QPixmap(pathToImageFile);
+        item = new QGraphicsPixmapItem(pixmap);
     };
 
     //define transparency as it is a dummy
-    item->setOpacity(.5);
+    item->setOpacity(opacity);
+
+    //define flags
+    item->setFlags(QFlags<QGraphicsItem::GraphicsItemFlag>(
+        QGraphicsItem::GraphicsItemFlag::ItemIsSelectable |
+        QGraphicsItem::GraphicsItemFlag::ItemIsMovable
+    ));
 
     //add it to the scene
     this->_boundGv->scene()->addItem(item);
+
+    //define position
+    if(!initialPos.isNull()) item->setPos(initialPos);
 
     return item;
 }
@@ -230,7 +241,7 @@ void MapHintViewBinder::_unpack(const RPZAsset::Alteration &alteration, QVector<
                     const QPainterPath path = JSONSerializer::fromBase64(*asset.data());
                     
                     //define a ped
-                    auto pen = QPen();
+                    QPen pen;
                     pen.setColor(asset.owner().color());
                     pen.setWidth(asset.metadata()->value("w").toInt());
 
@@ -240,26 +251,31 @@ void MapHintViewBinder::_unpack(const RPZAsset::Alteration &alteration, QVector<
                 break;
 
                 //objects
-                case AssetBase::Type::Object : {
-
-                    //prepare
-                    auto dbAssetId = asset.metadata()->value("a_id").toString();
-                    auto pathToAssetFile = AssetsDatabase::get()->getFilePathToAsset(dbAssetId);
+                case AssetBase::Type::Object: {
 
                     //depending on presence in asset db...
-                    if(pathToAssetFile.isNull()) {
+                    auto dbAssetId = asset.metadata()->value("a_id").toString();
+                    QString pathToAssetFile = AssetsDatabase::get()->getFilePathToAsset(dbAssetId);
+                                            
+                    //extract the shape as bounding rect
+                    auto boundingRect = JSONSerializer::fromBase64(*asset.data()).boundingRect();
 
-                    } else {
+                    //is in db
+                    if(!pathToAssetFile.isNull()) {
+                        
+                        //add to view
+                        newItem = this->_addGenericImageBasedAsset(pathToAssetFile, 1, boundingRect.topLeft());
 
+                    } 
+                    
+                    //not in db, render the shape
+                    else {
+                        
+                        //add placeholder
+                        newItem = this->_addMissingAssetPH(boundingRect);
+
+                        //TODO ask for missing assets
                     }
-
-                    //extract the shape
-                    auto shape = JSONSerializer::fromBase64(*asset.data());
-                    qDebug() << shape;
-                    auto pen = QPen();
-                    pen.setColor(asset.owner().color());
-                    pen.setWidth(10);
-                    newItem = this->_addDrawing(shape, pen);
                 }
                 break;
 
@@ -277,6 +293,30 @@ void MapHintViewBinder::_unpack(const RPZAsset::Alteration &alteration, QVector<
     //inform !
     this->_preventNetworkAlterationEmission = true;
     this->_alterSceneGlobal(alteration, assets);
+}
+
+QGraphicsRectItem* MapHintViewBinder::_addMissingAssetPH(QRectF &rect) {
+    
+    //pen to draw the rect with
+    QPen pen;
+    pen.setStyle(Qt::DashLine);
+    pen.setJoinStyle(Qt::MiterJoin);
+    pen.setColor(Qt::GlobalColor::red);
+    pen.setWidth(0);
+
+    //background brush
+    QBrush brush(QColor(255, 0, 0, 128));
+
+    //add path
+    auto placeholder = this->_boundGv->scene()->addRect(rect, pen, brush);
+    
+    //define flags
+    placeholder->setFlags(QFlags<QGraphicsItem::GraphicsItemFlag>(
+        QGraphicsItem::GraphicsItemFlag::ItemIsSelectable |
+        QGraphicsItem::GraphicsItemFlag::ItemIsMovable
+    ));
+
+    return placeholder;
 }
 
 void MapHintViewBinder::unpackFromNetworkReceived(const QVariantHash &package) {
@@ -352,11 +392,11 @@ QUuid MapHintViewBinder::_alterSceneInternal(const RPZAsset::Alteration &alterat
             item = this->_assetsById[elemId].graphicsItem();
         
         } else {
-            qDebug() << "No graphicsItem found on cached Asset !";
+            qWarning() << "No graphicsItem found on cached Asset !";
         }
         
     } else {
-        qDebug() << "Cannot find a graphicsItem bound to the asset !";
+        qWarning() << "Cannot find a graphicsItem bound to the asset !";
     }
     
     //default handling last, cuz asset will be deleted first from internal list

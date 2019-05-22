@@ -48,9 +48,7 @@ static std::string getMapsFolderLocation() {
 }
 
 static QString getDefaultMapFile() {
-    return QDir::toNativeSeparators(
-        QString::fromStdString(getMapsFolderLocation()) + "/default" + QString::fromStdString(RPZ_MAP_FILE_EXT)
-    );
+    return QString::fromStdString(getMapsFolderLocation()) + "/default" + QString::fromStdString(RPZ_MAP_FILE_EXT);
 }
 
 static std::string getLogFileLocation() {

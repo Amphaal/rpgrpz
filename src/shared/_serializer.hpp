@@ -12,6 +12,8 @@
 class JSONSerializer {
     
     public:
+
+        //
         static QByteArray toBase64(const QPainterPath &path) {
             QByteArray bArray;
             QDataStream stream(&bArray, QIODevice::WriteOnly);

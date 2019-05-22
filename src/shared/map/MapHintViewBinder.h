@@ -71,6 +71,8 @@ class MapHintViewBinder : public MapHint {
 
         void _unpack(const RPZAsset::Alteration &alteration, QVector<RPZAsset> &assets);
         QGraphicsPathItem* _addDrawing(const QPainterPath &path, const QPen &pen);
+        QGraphicsRectItem* _addMissingAssetPH(QRectF &rect);
+        QGraphicsItem* _addGenericImageBasedAsset(const QString &pathToImageFile, qreal opacity = 1, const QPointF &initialPos = QPointF());
 
         QHash<QGraphicsItem*, QUuid> _idsByGraphicItem;
 
