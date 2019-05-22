@@ -117,7 +117,7 @@ QVector<QUuid> MapLayoutManager::_extractIdsFromSelection() const {
     QVector<QUuid> idList;
     
     for(auto &i : this->selectedItems()) {
-        const auto innerData = i->data(0,Qt::UserRole).toUuid();
+        const auto innerData = i->data(0, Qt::UserRole).toUuid();
         idList.append(innerData);
     }
 

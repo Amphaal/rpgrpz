@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.13.3)
 #version
 SET(CMAKE_PROJECT_VERSION_MAJOR 0)
 SET(CMAKE_PROJECT_VERSION_MINOR 9)
-SET(CMAKE_PROJECT_VERSION_PATCH 2)
+SET(CMAKE_PROJECT_VERSION_PATCH 3)
 
 
 #default configuration
@@ -160,9 +160,10 @@ list(APPEND SOURCES
     src/ui/map/MapView.cpp
     src/ui/map/MapLayoutManager.cpp
     
+    src/shared/database/base/JSONDatabase.cpp
+    src/shared/database/AssetsDatabase.cpp
     src/shared/assets/AssetsDatabaseElement.cpp
-    src/shared/assets/JSONDatabase.cpp
-    src/shared/assets/AssetsDatabase.cpp
+    
     
 
     src/ui/assets/base/AssetsTreeView.hpp

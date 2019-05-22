@@ -4,7 +4,7 @@ RPZStatusBar::RPZStatusBar(QWidget * parent) : QStatusBar(parent) {
     
     qDebug() << "UI : StatusBar instantiation";
 
-    this->setContentsMargins(10, 5, 10, 5);
+    this->setContentsMargins(10, 0, 10, 0);
     this->setAutoFillBackground(true);
 
     //colors
@@ -40,8 +40,13 @@ void RPZStatusBar::_installComponents() {
     this->_serverStateLabel = new RPZStatusLabel("Serveur");
     this->_sentAudioKbpsStateLabel = new RPZStatusLabel("Envoyé");
     this->_receivedAudioKbpsStateLabel = new RPZStatusLabel("Reçu");
+    this->_mapFileLabel = new QLabel();
 
 };
+
+void RPZStatusBar::updateMapFileLabel(const QString &filePath, bool isDirty) {
+    this->_mapFileLabel->setText(filePath + (isDirty ? "*" : ""));
+}
 
 void RPZStatusBar::_installLayout() {
 
@@ -57,12 +62,13 @@ void RPZStatusBar::_installLayout() {
     this->addWidget(this->_upnpStateLabel);
     
     this->addWidget(new QWidget, 1); 
-    
-    this->addWidget(this->_sentAudioKbpsStateLabel);
-    addSeparator();
-    this->addWidget(this->_receivedAudioKbpsStateLabel);
 
+    this->addWidget(this->_mapFileLabel);
+    // this->addWidget(this->_sentAudioKbpsStateLabel);
+    // addSeparator();
+    // this->addWidget(this->_receivedAudioKbpsStateLabel);
 }
+
 
 ///
 ///

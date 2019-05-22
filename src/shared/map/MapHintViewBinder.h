@@ -5,12 +5,16 @@
 
 #include <QFileInfo>
 
+#include <QMessageBox>
+
 #include <QGraphicsPixmapItem>
 #include <QGraphicsSvgItem>
 #include <QPixmap>
 
 #include "src/shared/network/AlterationPayload.hpp"
 #include "src/ui/assets/base/AssetsTreeViewModel.hpp"
+
+#include "src/shared/database/MapDatabase.hpp"
 
 #include "MapHint.h"
 
@@ -21,7 +25,16 @@ class MapHintViewBinder : public MapHint {
     public:
         MapHintViewBinder(QGraphicsView* boundGv);
 
-    public slots:
+        //load/unload
+        bool loadState(QString &filePath);
+        bool loadDefaultState();
+        bool saveState();
+        QString stateFilePath();
+        bool isDirty();
+        void mayWantToSavePendingState();
+        bool isRemote();
+        bool defineAsRemote(QString &remoteMapDescriptor = QString());
+
         //on received data, include them into view
         void unpackFromNetworkReceived(const QVariantHash &package);
 
@@ -29,17 +42,35 @@ class MapHintViewBinder : public MapHint {
         void alterSceneFromItems(const RPZAsset::Alteration &alteration, const QList<QGraphicsItem*> &elements);
 
         //actions helpers
-        QGraphicsPathItem* addDrawing(const QPainterPath &path, const QPen &pen);
+        void addDrawing(const QPainterPath &path, const QPen &pen);
 
-        QGraphicsItem* temporaryAssetElement(AssetsDatabaseElement* assetElem, AssetsDatabase *database);
+        //D&D assets handling
         void centerGraphicsItemToPoint(QGraphicsItem* item, const QPoint &eventPos);
-        QGraphicsItem* addAssetElement(QGraphicsItem* item, AssetsDatabaseElement* assetElem, const QPoint &pos);
+        QGraphicsItem* generateTemplateAssetElement(AssetsDatabaseElement* assetElem);
+        void addTemplateAssetElement(QGraphicsItem* temporaryItem, AssetsDatabaseElement* assetElem, const QPoint &dropPos);
+
+        //
+        QGraphicsItem* addObject();
+
+    signals:
+        void mapFileStateChanged(const QString &filePath, bool isDirty);
 
     protected:
+        QString _stateFilePath;
+
+        bool _isRemote = false;
+
+        bool _isDirty = false;
+        void _setDirty(bool dirty = true);
+        void _shouldMakeDirty(const RPZAsset::Alteration &state, QVector<RPZAsset> &elements);
+
         QGraphicsView* _boundGv = nullptr;
 
         bool _externalInstructionPending = false;
         bool _deletionProcessing = false;
+
+        void _unpack(const RPZAsset::Alteration &alteration, QVector<RPZAsset> &assets);
+        QGraphicsPathItem* _addDrawing(const QPainterPath &path, const QPen &pen);
 
         QHash<QGraphicsItem*, QUuid> _idsByGraphicItem;
 

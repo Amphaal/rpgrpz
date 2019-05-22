@@ -4,9 +4,12 @@
 
 class AssetBase {
     public:
+
+        // defined values shared with AssetsDatabaseElement type for static casts
         enum Type { 
             Undefined, 
             Drawing,
+            Text,
             Object = 105, 
             Brush = 104, 
             NPC = 103, 

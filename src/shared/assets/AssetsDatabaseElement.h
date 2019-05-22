@@ -8,11 +8,12 @@
 
 class AssetsDatabaseElement {
     public:
+
         enum Type { 
             Unknown = 0,
             Root = 1,
             Folder = 2,
-            //
+            //defined values shared with AssetBase type for static casts
             InternalContainer = 201,
                 Player = 101, 
                 Event = 102, 

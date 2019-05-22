@@ -15,8 +15,11 @@
 class RPZUser : public Serializable {
 
     public:
-        enum Role { Host, None };
-        static const inline QStringList IconsByRoles = { ":/icons/app/connectivity/crown.png", ":/icons/app/connectivity/user.png" };
+        enum Role { Unknown, None, Host };
+        static const inline QHash<Role, QString> IconsByRoles = { 
+            {None, ":/icons/app/connectivity/user.png"},
+            {Host, ":/icons/app/connectivity/crown.png"}
+        };
         
         RPZUser() {};
 

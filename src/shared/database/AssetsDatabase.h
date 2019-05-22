@@ -13,14 +13,17 @@
 #include <QDateTime>
 #include <QRandomGenerator>
 
-#include "JSONDatabase.h"
-#include "AssetsDatabaseElement.h"
+#include "base/JSONDatabase.h"
+#include "src/shared/assets/AssetsDatabaseElement.h"
 
 #include "src/helpers/_const.hpp"
 
 class AssetsDatabase : public JSONDatabase, public AssetsDatabaseElement {
+    
     public:
-        AssetsDatabase();
+
+        //singleton
+        static AssetsDatabase* get();
 
         //CRUD methods
         bool createFolder(AssetsDatabaseElement* parent);
@@ -32,16 +35,24 @@ class AssetsDatabase : public JSONDatabase, public AssetsDatabaseElement {
         //read
         QJsonObject paths();
         QJsonObject assets();
-        QJsonArray hashes(); 
+
         QString getFilePathToAsset(AssetsDatabaseElement* asset);
+        QString getFilePathToAsset(QString &assetId);
 
         static QString assetsStorageFilepath();
 
     protected:
         const QString defaultJsonDoc() override;
         const QString dbPath() override;
+        const int apiVersion() override;
+        const int dbVersion() override;
+
+        void _removeDatabase() override;
     
     private:
+        //singleton
+        AssetsDatabase();
+        static inline AssetsDatabase* _singleton = nullptr;
 
         //createFolder() helpers
         QString _generateNonExistingPath(AssetsDatabaseElement* parent, QString prefix);
@@ -51,9 +62,9 @@ class AssetsDatabase : public JSONDatabase, public AssetsDatabaseElement {
         void _renameFolder(QString &name, AssetsDatabaseElement* target);
 
         //insertAsset() helpers
-        QString _getHashFromFileUri(QUrl &url); //return the hash
-        QString _moveFileToDbFolder(QUrl &url); //returns an unique id
-        QString _addAssetToDb(QString &id, QUrl &url, QString &fileHash, AssetsDatabaseElement* parent); //returns a default displayname
+        QString _getFileSignatureFromFileUri(QUrl &url); //return the hash
+        bool _moveFileToDbFolder(QUrl &url, QString &id);
+        QString _addAssetToDb(QString &id, QUrl &url, AssetsDatabaseElement* parent); //returns a default displayname
 
         //removeItems() helpers
         QSet<QString> _getPathsToAlterFromList(QList<AssetsDatabaseElement*> &elemsToAlter);
@@ -61,7 +72,7 @@ class AssetsDatabase : public JSONDatabase, public AssetsDatabaseElement {
         QSet<QString> _augmentPathsSetWithMissingDescendents(QSet<QString> &setToAugment);
         void _augmentAssetsHashWithMissingDescendents(QHash<QString, QSet<QString>> &hashToAugment, QSet<QString> &morePathsToDelete);
         QList<QString> _removeIdsFromPaths(QJsonObject &db_paths, QHash<QString, QSet<QString>> &idsToRemoveByPath); //returns removed ids
-        QSet<QString> _removeAssetsFromDb(QJsonObject &db_assets, QList<QString> &assetIdsToRemove); //returns hashes to remove
+        void _removeAssetsFromDb(QJsonObject &db_assets, QList<QString> &assetIdsToRemove);
         void _removeAssetFile(QString &id, QJsonObject &asset);
 
         ////////////////////////////////////

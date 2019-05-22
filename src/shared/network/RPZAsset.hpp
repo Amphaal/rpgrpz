@@ -18,11 +18,12 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
         RPZAsset() {}
         
         //enums
-        enum Alteration { Changed, Added, Removed, Selected, Focused, Reset };
+        enum Alteration { Changed, Added, Removed, Selected, Focused, Reset }; //TODO turn CHANGED into RESIZED, MOVED....
         static inline const QList<Alteration> networkAlterations = { 
             Alteration::Changed, 
             Alteration::Added,
-            Alteration::Removed 
+            Alteration::Removed,
+            Alteration::Reset 
         };
         static const inline QList<Alteration> mustParseGraphicsItem = {
             Alteration::Added, 
@@ -66,11 +67,19 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
                     switch(this->type()) {
                         
                         //drawing...
-                        case AssetBase::Type::Drawing:
+                        case AssetBase::Type::Drawing: {
                             auto casted = (QGraphicsPathItem*)this->graphicsItem();
                             const auto path = casted->path();
                             this->_data = JSONSerializer::toBase64(path);
-                            break;
+                        }
+                        break;
+                        
+                        //object
+                        case AssetBase::Type::Object: {
+                            const auto shape = this->graphicsItem()->shape();
+                            this->_data = JSONSerializer::toBase64(shape);
+                        }
+                        break;
                     
                     }
 
@@ -102,6 +111,13 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
         QString descriptor() override { 
             auto base = AssetBase::descriptor();
 
+            //displays asset name
+            auto asname = this->_metadata["a_name"].toString();
+            if(!asname.isNull()) {
+                base += " \"" + asname + "\" ";
+            }
+
+            //displays ownership
             if(!this->owner().name().isNull()) {
                 base += " (" + this->owner().name() + ")";
             } else if (!this->owner().id().isNull()) {

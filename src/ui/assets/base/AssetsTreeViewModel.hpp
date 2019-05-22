@@ -8,11 +8,11 @@
 #include <QString>
 
 #include "src/shared/assets/AssetsDatabaseElement.h"
-#include "src/shared/assets/AssetsDatabase.h"
+#include "src/shared/database/AssetsDatabase.h"
 
 class AssetsTreeViewModel : public QAbstractItemModel {
     public:
-        AssetsTreeViewModel(QObject *parent = nullptr) : QAbstractItemModel(parent), _db(new AssetsDatabase) { };
+        AssetsTreeViewModel(QObject *parent = nullptr) : QAbstractItemModel(parent), _db(AssetsDatabase::get()) { };
 
         AssetsDatabase* database() {
             return this->_db;

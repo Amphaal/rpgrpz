@@ -13,7 +13,7 @@ class ClientBindable {
         
         static void bindAll(RPZClient* cc) {
             for(auto widget : _boundWidgets) {
-                widget->bindToRPZClient(cc);
+                widget->onRPZClientConnecting(cc);
             }
         }
 
@@ -23,10 +23,18 @@ class ClientBindable {
             }
         }
 
-        virtual void bindToRPZClient(RPZClient* cc) {
+        virtual void onRPZClientConnecting(RPZClient* cc) {
             
             this->unbindRPZClient();
             this->_rpzClient = cc;
+
+            //on disconnect
+            QObject::connect(
+                this->_rpzClient, &JSONSocket::disconnected,
+                [&]() {
+                    this->onRPZClientDisconnect(this->_rpzClient);
+                }
+            );
 
             //pass to nullptr for comparaisons
             QObject::connect(
@@ -37,6 +45,8 @@ class ClientBindable {
             );
 
         }
+
+        virtual void onRPZClientDisconnect(RPZClient* cc) {}
 
         void unbindRPZClient() {
             if(this->_rpzClient) {

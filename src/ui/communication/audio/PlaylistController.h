@@ -13,7 +13,8 @@ class PlaylistController : public QGroupBox, public ClientBindable {
 
         PlaylistController(QWidget * parent = nullptr);
 
-        void bindToRPZClient(RPZClient * cc) override;
+        void onRPZClientConnecting(RPZClient * cc) override;
+        void onRPZClientDisconnect(RPZClient* cc) override;
 
         PlaylistToolbar* toolbar = nullptr;
         Playlist* playlist = nullptr;    

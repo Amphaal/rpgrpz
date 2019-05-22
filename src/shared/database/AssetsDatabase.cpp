@@ -1,13 +1,33 @@
 #include "AssetsDatabase.h"
 
+AssetsDatabase* AssetsDatabase::get() {
+    if(!_singleton) {
+        _singleton = new AssetsDatabase();
+    }
+    return _singleton;
+}
+
 AssetsDatabase::AssetsDatabase() { 
     this->_instanciateDb();
     this->_injectStaticStructure();
     this->_injectDbStructure();
 };
 
+const int AssetsDatabase::dbVersion() {
+    return this->_db["version"].toInt();
+}
+
+const int AssetsDatabase::apiVersion() {
+    return 2;
+}
+
+void AssetsDatabase::_removeDatabase() {
+    JSONDatabase::_removeDatabase();
+    QDir(this->assetsStorageFilepath()).removeRecursively();
+}
+
 const QString AssetsDatabase::defaultJsonDoc() {
-    return "{\"version\":1,\"paths\":{},\"hashes\":[]}";
+    return "{\"version\":" + QString::number(this->apiVersion()) + ",\"paths\":{},\"assets\":{}}";
 };
 const QString AssetsDatabase::dbPath() {
     return QString::fromStdString(getAssetsFileCoordinatorLocation());
@@ -17,17 +37,18 @@ QString AssetsDatabase::assetsStorageFilepath() {
     return QString::fromStdString(getAssetsFolderLocation());
 }
 
-QString AssetsDatabase::getFilePathToAsset(AssetsDatabaseElement* asset) {
-
+QString AssetsDatabase::getFilePathToAsset(QString &assetId) {
     auto db_assets = this->assets();
-    
-    auto id = asset->id();
-    if(!db_assets.contains(id)) return NULL;
+    if(!db_assets.contains(assetId)) return NULL;
 
-    auto assetJSON = db_assets[id].toObject();
-    auto fileName = id + "." + assetJSON["ext"].toString();
+    auto assetJSON = db_assets[assetId].toObject();
+    auto fileName = assetId + "." + assetJSON["ext"].toString();
 
     return this->assetsStorageFilepath() + QDir::separator() + fileName;
+}
+
+QString AssetsDatabase::getFilePathToAsset(AssetsDatabaseElement* asset) {
+    return this->getFilePathToAsset(asset->id());
 }
 
 ///
@@ -40,10 +61,6 @@ QJsonObject AssetsDatabase::paths() {
 
 QJsonObject AssetsDatabase::assets() {
     return this->_db["assets"].toObject();
-}
-
-QJsonArray AssetsDatabase::hashes() {
-    return this->_db["hashes"].toArray();
 }
 
 ///
@@ -95,7 +112,7 @@ QHash<QString, AssetsDatabaseElement*> AssetsDatabase::_generateFolderTreeFromDb
         //make sure first split is a type
         auto staticCType = AssetsDatabaseElement::pathChunktoType(split.takeFirst());
 
-        //get element from static hash
+        //get element from static source
         if(!this->_staticElements.contains(staticCType)) {
             qDebug() << "Assets : ignoring path, as the static container it points to doesnt exist";
             continue;
@@ -181,7 +198,7 @@ void AssetsDatabase::_generateItemsFromDb(QHash<QString, AssetsDatabaseElement*>
 ///
 ///
 
-QString AssetsDatabase::_getHashFromFileUri(QUrl &url) {
+QString AssetsDatabase::_getFileSignatureFromFileUri(QUrl &url) {
     
     if(!url.isLocalFile()) {
         qDebug() << "Assets : cannot insert, uri is not a file !";
@@ -197,55 +214,46 @@ QString AssetsDatabase::_getHashFromFileUri(QUrl &url) {
 
     sourceFile.open(QFile::ReadOnly);
         
-        //read hash...
-        auto hash = QString::fromUtf8(
+        //read signature...
+        auto signature = QString::fromUtf8(
             QCryptographicHash::hash(sourceFile.readAll(), QCryptographicHash::Keccak_224).toHex()
         );
 
     sourceFile.close();
 
-    return hash;
+    return signature;
 }
 
-QString AssetsDatabase::_moveFileToDbFolder(QUrl &url) {
-    
-    //future asset id
-    auto quuid = JSONDatabase::generateId();
+bool AssetsDatabase::_moveFileToDbFolder(QUrl &url, QString &id) {
 
     //dest file
     auto destFolder = this->assetsStorageFilepath();
     auto destFileExt = QFileInfo(url.fileName()).suffix();
-    auto dest = destFolder + QDir::separator() + quuid + "." + destFileExt;
+    auto dest = destFolder + QDir::separator() + id + "." + destFileExt;
 
     //copy
     auto copyResult = QFile::copy(url.toLocalFile(), dest);
     if(!copyResult) {
         qDebug() << "Assets : cannot insert, issue while copying source file to dest !";
-        return NULL;
+        return false;
     }
 
-    return quuid;
+    return true;
 }
 
-QString AssetsDatabase::_addAssetToDb(QString &id, QUrl &url, QString &fileHash, AssetsDatabaseElement* parent) {
+QString AssetsDatabase::_addAssetToDb(QString &id, QUrl &url, AssetsDatabaseElement* parent) {
 
     //prepare
-    auto db_hashes = this->hashes();
     auto db_paths = this->paths();
     auto obj = this->_db.object();
     auto folderParentPath = parent->path();
     QFileInfo fInfo(url.fileName());
-        
-    //1. update hashes list
-    db_hashes.append(QJsonValue(fileHash));
-    obj["hashes"] = db_hashes;
 
-    //2.save new asset
+    //1.save new asset
     auto assets = this->assets();
 
         //define new asset item
         auto newAsset = QJsonObject();
-        newAsset["hash"] = fileHash;
         newAsset["ext"] = fInfo.suffix();
         newAsset["name"] = fInfo.baseName();
 
@@ -257,7 +265,7 @@ QString AssetsDatabase::_addAssetToDb(QString &id, QUrl &url, QString &fileHash,
     QJsonArray objsInPath = db_paths.contains(folderParentPath) ? db_paths[folderParentPath].toArray() : QJsonArray();
     if(!objsInPath.contains(id)) {
 
-        //3. update path status
+        //2. update path status
         objsInPath.append(id);
         db_paths[folderParentPath] = objsInPath;
         obj["paths"] = db_paths;
@@ -273,26 +281,25 @@ QString AssetsDatabase::_addAssetToDb(QString &id, QUrl &url, QString &fileHash,
 
 bool AssetsDatabase::insertAsset(QUrl &url, AssetsDatabaseElement* parent) {
 
-    //get the corresponding hash
-    auto fileHash = this->_getHashFromFileUri(url);
-    if(fileHash.isNull()) return false;
+    //get the corresponding signature
+    auto fileSignature = this->_getFileSignatureFromFileUri(url);
+    if(fileSignature.isNull()) return false;
 
     // comparaison from db
-    auto db_hashes = this->hashes();
-    if(db_hashes.contains(fileHash)) {
-        qDebug() << "Assets : will not insert, file hash has been found in db !";
+    auto fileSignatures = this->assets().keys();
+    if(fileSignatures.contains(fileSignature)) {
+        qDebug() << "Assets : will not insert, file signature has been found in db !";
         return false;
     }
 
     //copy file
-    auto quuid = this->_moveFileToDbFolder(url);
-    if(quuid.isNull()) return false;
+    if(!this->_moveFileToDbFolder(url, fileSignature)) return false;
 
     //insert into db
-    auto displayName = this->_addAssetToDb(quuid, url, fileHash, parent);
+    auto displayName = this->_addAssetToDb(fileSignature, url, parent);
 
     //add element
-    auto element = new AssetsDatabaseElement(displayName, parent, parent->insertType(), quuid);
+    auto element = new AssetsDatabaseElement(displayName, parent, parent->insertType(), fileSignature);
     return true;
 }
 
@@ -524,17 +531,12 @@ QList<QString> AssetsDatabase::_removeIdsFromPaths(QJsonObject &db_paths, QHash<
     return ids;
 }
 
-QSet<QString> AssetsDatabase::_removeAssetsFromDb(QJsonObject &db_assets, QList<QString> &assetIdsToRemove) {
-    
-    QSet<QString> hashesToRemove;
+void AssetsDatabase::_removeAssetsFromDb(QJsonObject &db_assets, QList<QString> &assetIdsToRemove) {
 
     //finally delete items
     for(auto &id : assetIdsToRemove) {
 
-        //append hash to remove
         auto asset = db_assets[id].toObject();
-        auto hash = asset["hash"].toString();
-        hashesToRemove.insert(hash);
 
         //remove
         db_assets.remove(id);
@@ -542,8 +544,6 @@ QSet<QString> AssetsDatabase::_removeAssetsFromDb(QJsonObject &db_assets, QList<
         //remove stored file
         this->_removeAssetFile(id, asset);
     }
-
-    return hashesToRemove;
 }
 
 bool AssetsDatabase::removeItems(QList<AssetsDatabaseElement*> elemsToRemove) {
@@ -551,7 +551,6 @@ bool AssetsDatabase::removeItems(QList<AssetsDatabaseElement*> elemsToRemove) {
     //prepare
     auto db_paths = this->paths();
     auto db_assets = this->assets();
-    auto db_hashes = this->hashes();
 
     //compartimentation
     auto pathsToDelete = this->_getPathsToAlterFromList(elemsToRemove);
@@ -574,18 +573,11 @@ bool AssetsDatabase::removeItems(QList<AssetsDatabaseElement*> elemsToRemove) {
     }
     
     //delete assets
-    auto hashesToRemove = this->_removeAssetsFromDb(db_assets, removedIdsFromPaths);
-
-    //update hashes array
-    db_hashes = JSONDatabase::diff(
-        db_hashes,
-        hashesToRemove
-    );
+    this->_removeAssetsFromDb(db_assets, removedIdsFromPaths);
 
     //save changes
     auto obj = this->_db.object();
     obj["assets"] = db_assets;
-    obj["hashes"] = db_hashes;
     obj["paths"] = db_paths;
     this->_updateDbFile(obj);
 

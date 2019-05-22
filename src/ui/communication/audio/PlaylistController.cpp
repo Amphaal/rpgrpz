@@ -24,16 +24,14 @@ PlaylistController::PlaylistController(QWidget * parent) : QGroupBox(parent),
 };
 
 
-void PlaylistController::bindToRPZClient(RPZClient * cc) {
-    ClientBindable::bindToRPZClient(cc);
+void PlaylistController::onRPZClientConnecting(RPZClient * cc) {
+    ClientBindable::onRPZClientConnecting(cc);
+    
     this->setEnabled(true);
+}
 
-    QObject::connect(
-       cc, &JSONSocket::disconnected,
-       [&]() {
-           this->setEnabled(false);
-       }
-    );
+void PlaylistController::onRPZClientDisconnect(RPZClient* cc) {
+    this->setEnabled(false);
 }
 
 void PlaylistController::_onToolbarActionRequested(const PlaylistToolbar::Action &action) {

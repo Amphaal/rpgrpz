@@ -23,7 +23,6 @@ RPZClient::RPZClient(QObject* parent, const QString &name, const QString &domain
         this, &RPZClient::_onDisconnect
     );
 
-
     QObject::connect(
         this->socket(), QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error),
         this, &RPZClient::_error

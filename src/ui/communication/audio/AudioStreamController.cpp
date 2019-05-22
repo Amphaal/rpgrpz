@@ -21,15 +21,12 @@ void AudioStreamController::updatePlayedMusic(const QString &musicName) {
     else this->_descr->setText(musicName);
 }
 
-void AudioStreamController::bindToRPZClient(RPZClient * cc) {
-    
-    ClientBindable::bindToRPZClient(cc);
-    this->setEnabled(true);
+void AudioStreamController::onRPZClientConnecting(RPZClient * cc) {
+    ClientBindable::onRPZClientConnecting(cc);
 
-    QObject::connect(
-       cc, &JSONSocket::disconnected,
-       [&]() {
-           this->setEnabled(false);
-       }
-    );
+    this->setEnabled(true);
+}
+
+void AudioStreamController::onRPZClientDisconnect(RPZClient* cc) {
+    this->setEnabled(false);
 }

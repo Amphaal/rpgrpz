@@ -18,9 +18,11 @@ static const std::string DEBUG_APP_FILE_APPENDICE = IS_DEBUG_APP ? ".debug" : ""
 static const std::string LOG_FILE = "/rpgrpz" + DEBUG_APP_FILE_APPENDICE + ".log";
 static const std::string LATEST_LOG_FILE = "/rpgrpz.latest" + DEBUG_APP_FILE_APPENDICE + ".log";
 static const std::string ASSETS_PATH = "/resources";
+static const std::string MAPS_PATH = "/maps";
 static const std::string ASSETS_JSON_COORDINATOR_FILENAME = "/resources.json";
 static const std::string UPNP_DEFAULT_TARGET_PORT = "31137";
 static const std::string UPNP_REQUEST_DESCRIPTION = "RPGRPZ";
+static const std::string RPZ_MAP_FILE_EXT = ".mrpz";
 
 static std::string makeSureDirPathExists(std::string &path) {
     auto qt = QString::fromStdString(path);
@@ -39,6 +41,16 @@ static std::string getAssetsFileCoordinatorLocation() {
 
 static std::string getAssetsFolderLocation() {
     return makeSureDirPathExists(getAppDataLocation() + ASSETS_PATH);
+}
+
+static std::string getMapsFolderLocation() {
+    return makeSureDirPathExists(getAppDataLocation() + MAPS_PATH);
+}
+
+static QString getDefaultMapFile() {
+    return QDir::toNativeSeparators(
+        QString::fromStdString(getMapsFolderLocation()) + "/default" + QString::fromStdString(RPZ_MAP_FILE_EXT)
+    );
 }
 
 static std::string getLogFileLocation() {

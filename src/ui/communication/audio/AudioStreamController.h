@@ -18,7 +18,9 @@ class AudioStreamController : public QGroupBox, public ClientBindable {
         AudioStreamController(QWidget * parent = nullptr);
         void updatePlayedMusic(const QString &musicName);
 
-        void bindToRPZClient(RPZClient * cc) override;
+        void onRPZClientConnecting(RPZClient * cc) override;
+        void onRPZClientDisconnect(RPZClient* cc) override;
+        
         AudioStreamToolbar* toolbar;
         
     private:

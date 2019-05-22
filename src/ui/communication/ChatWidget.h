@@ -27,7 +27,7 @@ class ChatWidget : public QWidget, public ClientBindable {
         ChatWidget(QWidget *parent = nullptr);
 
     public slots: 
-        void bindToRPZClient(RPZClient* cc) override;
+        void onRPZClientConnecting(RPZClient* cc) override;
 
     private:
         MessagesLog *_chatLog;

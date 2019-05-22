@@ -8,7 +8,101 @@ MapHintViewBinder::MapHintViewBinder(QGraphicsView* boundGv) : _boundGv(boundGv)
         this, &MapHintViewBinder::_onSceneSelectionChanged
     );
 
+    //define dirty
+    QObject::connect(
+        this, &MapHint::assetsAlteredForNetwork,
+        this, &MapHintViewBinder::_shouldMakeDirty
+    );
+
 };
+
+void MapHintViewBinder::mayWantToSavePendingState() {
+    if(!this->_isDirty || this->_isRemote) return;
+
+    //popup
+    auto result = QMessageBox::warning(
+        this->_boundGv, 
+        this->_stateFilePath, 
+        "Voulez-vous sauvegarder les modifications effectuées sur la carte ?", 
+        QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes
+    );
+
+    //save state
+    if(result == QMessageBox::Yes) {
+        this->saveState();
+    }
+
+}
+
+void MapHintViewBinder::_shouldMakeDirty(const RPZAsset::Alteration &state, QVector<RPZAsset> &elements) {
+    
+    if(this->_isRemote) return;
+
+    this->_setDirty();
+}
+
+bool MapHintViewBinder::loadDefaultState() {
+    qDebug() << "Map : loading default map...";
+    return this->loadState(getDefaultMapFile());
+}
+
+bool MapHintViewBinder::isRemote() {
+    return this->_isRemote;
+}
+
+bool MapHintViewBinder::defineAsRemote(QString &remoteMapDescriptor) {
+    this->_isRemote = !remoteMapDescriptor.isEmpty();
+    if(this->_isRemote) this->_stateFilePath = remoteMapDescriptor;
+    this->_setDirty(false);
+    return this->_isRemote;
+}
+
+bool MapHintViewBinder::loadState(QString &filePath) {
+    
+    if(this->_isRemote) return false;
+
+    //ask for save if dirty before loading
+    this->mayWantToSavePendingState();
+
+    //load file and parse it
+    MapDatabase mapDb(filePath);
+    this->_unpack(RPZAsset::Alteration::Reset, mapDb.toAssets());
+    
+    //change file path and define as clean
+    this->_stateFilePath = filePath;
+    this->_setDirty(false);
+
+    return true;
+}
+
+
+bool MapHintViewBinder::saveState() {
+
+    if(this->_isRemote) return false;
+
+    //save into file
+    MapDatabase mapDb(this->_stateFilePath);
+    mapDb.saveIntoFile(this->fetchHistory());
+
+    //define as clean
+    this->_setDirty(false);
+
+    return true;
+}
+
+QString MapHintViewBinder::stateFilePath() {
+    return this->_stateFilePath;
+}
+
+bool MapHintViewBinder::isDirty() {
+    return this->_isDirty;
+}
+
+
+void MapHintViewBinder::_setDirty(bool dirty) {
+    this->_isDirty = dirty;
+    emit mapFileStateChanged(this->_stateFilePath, this->_isDirty);
+}
 
 void MapHintViewBinder::_onSceneSelectionChanged() {
 
@@ -26,7 +120,7 @@ void MapHintViewBinder::centerGraphicsItemToPoint(QGraphicsItem* item, const QPo
     item->setPos(point);
 }
 
-QGraphicsPathItem* MapHintViewBinder::addDrawing(const QPainterPath &path, const QPen &pen) {
+QGraphicsPathItem* MapHintViewBinder::_addDrawing(const QPainterPath &path, const QPen &pen) {
     
     //add path
     auto newPath = this->_boundGv->scene()->addPath(path, pen);
@@ -37,70 +131,80 @@ QGraphicsPathItem* MapHintViewBinder::addDrawing(const QPainterPath &path, const
         QGraphicsItem::GraphicsItemFlag::ItemIsMovable
     ));
 
-    //define metadata
-    auto metadata = QVariantHash();
-    metadata["w"] = pen.width();
-
-    //inform
-    auto newAsset = RPZAsset(AssetBase::Type::Drawing, newPath, metadata);
-    this->alterSceneFromAsset(RPZAsset::Alteration::Added, newAsset);
 
     return newPath;
 }
 
-QGraphicsItem* MapHintViewBinder::temporaryAssetElement(AssetsDatabaseElement* assetElem, AssetsDatabase *database) {
-        
-        //find filepath to asset
-        auto path = database->getFilePathToAsset(assetElem);
-        QFileInfo pathInfo(path);
-        
-        //define graphicsitem
-        QGraphicsItem* item = nullptr;
-        if(pathInfo.suffix() == "svg") {
-            item = new QGraphicsSvgItem(path);
-        } 
-        else {
-            item = new QGraphicsPixmapItem(QPixmap(path));
-        };
-
-        //define transparency as it is a dummy
-        item->setOpacity(.5);
-
-        //add it to the scene
-        this->_boundGv->scene()->addItem(item);
-
-        return item;
-}
-
-
-
-QGraphicsItem* MapHintViewBinder::addAssetElement(QGraphicsItem* item, AssetsDatabaseElement* assetElem, const QPoint &pos) {
-
-        //define position
-        this->centerGraphicsItemToPoint(item, pos);
-
-        //define flags
-        item->setFlags(QFlags<QGraphicsItem::GraphicsItemFlag>(
-            QGraphicsItem::GraphicsItemFlag::ItemIsSelectable |
-            QGraphicsItem::GraphicsItemFlag::ItemIsMovable
-        ));
-
-        //inform
-        auto newAsset = RPZAsset((AssetBase::Type)assetElem->type(), item);
-        this->alterSceneFromAsset(RPZAsset::Alteration::Added, newAsset);
+void MapHintViewBinder::addDrawing(const QPainterPath &path, const QPen &pen) {
     
-        //reset transparency as it is not a dummy anymore
-        item->setOpacity(1);
+    auto newPath = this->_addDrawing(path, pen);
 
-        return item;
+    //define metadata
+    auto metadata = QVariantHash();
+    metadata["w"] = pen.width();
+    
+    //inform !
+    auto newAsset = RPZAsset(AssetBase::Type::Drawing, newPath, metadata);
+    this->alterSceneFromAsset(RPZAsset::Alteration::Added, newAsset);
 }
 
-void MapHintViewBinder::unpackFromNetworkReceived(const QVariantHash &package) {
 
-    auto payload = AlterationPayload::fromVariantHash(package);
+
+QGraphicsItem* MapHintViewBinder::generateTemplateAssetElement(AssetsDatabaseElement* assetElem) {
+        
+    //find filepath to asset
+    auto path = AssetsDatabase::get()->getFilePathToAsset(assetElem);
+    QFileInfo pathInfo(path);
+    
+    //define graphicsitem
+    QGraphicsItem* item = nullptr;
+    if(pathInfo.suffix() == "svg") {
+        item = new QGraphicsSvgItem(path);
+    } 
+    else {
+        auto pixmap = QPixmap(path);
+        auto pix_item = new QGraphicsPixmapItem(pixmap);
+        pix_item->setShapeMode(QGraphicsPixmapItem::BoundingRectShape);
+        item = pix_item;
+    };
+
+    //define transparency as it is a dummy
+    item->setOpacity(.5);
+
+    //add it to the scene
+    this->_boundGv->scene()->addItem(item);
+
+    return item;
+}
+
+void MapHintViewBinder::addTemplateAssetElement(QGraphicsItem* temporaryItem, AssetsDatabaseElement* assetElem, const QPoint &dropPos) {
+
+    //define position
+    this->centerGraphicsItemToPoint(temporaryItem, dropPos);
+
+    //define flags
+    temporaryItem->setFlags(QFlags<QGraphicsItem::GraphicsItemFlag>(
+        QGraphicsItem::GraphicsItemFlag::ItemIsSelectable |
+        QGraphicsItem::GraphicsItemFlag::ItemIsMovable
+    ));
+
+    //define metadata
+    auto metadata = QVariantHash();
+    metadata["a_id"] = assetElem->id();
+    metadata["a_name"] = assetElem->displayName();
+
+    //reset transparency as it is not a dummy anymore
+    temporaryItem->setOpacity(1);
+
+    //inform !
+    auto newAsset = RPZAsset((AssetBase::Type)assetElem->type(), temporaryItem, metadata);
+    this->alterSceneFromAsset(RPZAsset::Alteration::Added, newAsset);
+}
+
+void MapHintViewBinder::_unpack(const RPZAsset::Alteration &alteration, QVector<RPZAsset> &assets) {
 
     //if reset
-    if(payload.alteration() == RPZAsset::Alteration::Reset) {
+    if(alteration == RPZAsset::Alteration::Reset) {
         this->_idsByGraphicItem.clear();
         for(auto item : this->_boundGv->items()) {
             delete item;
@@ -108,24 +212,59 @@ void MapHintViewBinder::unpackFromNetworkReceived(const QVariantHash &package) {
     }
 
     //iterate through assets
-    for(auto &asset : *payload.assets()) {
+    for(auto &asset : assets) {
 
         //if new element from network
-        if(RPZAsset::mustParseGraphicsItem.contains(payload.alteration())) {
+        if(RPZAsset::mustParseGraphicsItem.contains(alteration)) {
 
             //newly created map elem
-            QGraphicsItem * newItem;
+            QGraphicsItem* newItem = nullptr;
 
             //depending on assetType...
             switch(asset.type()) {
                 
                 //drawing...
-                case AssetBase::Type::Drawing:
+                case AssetBase::Type::Drawing: {
+
+                    //extract path
                     const QPainterPath path = JSONSerializer::fromBase64(*asset.data());
+                    
+                    //define a ped
                     auto pen = QPen();
                     pen.setColor(asset.owner().color());
                     pen.setWidth(asset.metadata()->value("w").toInt());
-                    newItem = this->addDrawing(path, pen);
+
+                    //draw the form
+                    newItem = this->_addDrawing(path, pen);
+                }
+                break;
+
+                //objects
+                case AssetBase::Type::Object : {
+
+                    //prepare
+                    auto dbAssetId = asset.metadata()->value("a_id").toString();
+                    auto pathToAssetFile = AssetsDatabase::get()->getFilePathToAsset(dbAssetId);
+
+                    //depending on presence in asset db...
+                    if(pathToAssetFile.isNull()) {
+
+                    } else {
+
+                    }
+
+                    //extract the shape
+                    auto shape = JSONSerializer::fromBase64(*asset.data());
+                    qDebug() << shape;
+                    auto pen = QPen();
+                    pen.setColor(asset.owner().color());
+                    pen.setWidth(10);
+                    newItem = this->_addDrawing(shape, pen);
+                }
+                break;
+
+                //
+                default:
                     break;
             
             }
@@ -135,9 +274,14 @@ void MapHintViewBinder::unpackFromNetworkReceived(const QVariantHash &package) {
         }
     }
 
-    //process new state
+    //inform !
     this->_preventNetworkAlterationEmission = true;
-    this->_alterSceneGlobal(payload.alteration(), *payload.assets());
+    this->_alterSceneGlobal(alteration, assets);
+}
+
+void MapHintViewBinder::unpackFromNetworkReceived(const QVariantHash &package) {
+    auto payload = AlterationPayload::fromVariantHash(package);
+    this->_unpack(payload.alteration(), *payload.assets());
 }
 
 //helper
@@ -150,8 +294,22 @@ QVector<RPZAsset> MapHintViewBinder::_fetchAssets(const QList<QGraphicsItem*> &l
     QVector<RPZAsset> list;
 
     for(auto &e : listToFetch) {
+        
+        //failsafe check
+        if(!this->_idsByGraphicItem.contains(e)) {
+            qWarning() << "Assets : cannot fetch asset id by its graphic item !";
+            continue;
+        }
         auto id = this->_idsByGraphicItem[e];
+
+        //failsafe check
+        if(!this->_assetsById.contains(id)) {
+            qWarning() << "Assets : cannot fetch asset by its id !";
+            continue;
+        }
         auto asset = this->_assetsById[id];
+
+        //append
         list.append(asset);
     }
 
@@ -166,7 +324,6 @@ void MapHintViewBinder::_alterSceneGlobal(const RPZAsset::Alteration &alteration
     //make sure to clear selection before selecting new
     if(alteration == RPZAsset::Alteration::Selected) this->_boundGv->scene()->clearSelection();
     if(alteration == RPZAsset::Alteration::Removed) this->_deletionProcessing = true;
-
 
     MapHint::_alterSceneGlobal(alteration, assets);
 
@@ -219,12 +376,12 @@ QUuid MapHintViewBinder::_alterSceneInternal(const RPZAsset::Alteration &alterat
         
         //on focus
         case RPZAsset::Alteration::Focused:
-            this->_boundGv->centerOn(item);
+            if(item) this->_boundGv->centerOn(item);
             break;
 
         //on selection
         case RPZAsset::Alteration::Selected:
-            item->setSelected(true);
+            if(item) item->setSelected(true);
             break;
 
         //on removal

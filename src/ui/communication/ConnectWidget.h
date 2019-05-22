@@ -46,7 +46,7 @@ class ConnectWidget : public QGroupBox {
         void _destroyClient();
 
         void _onRPZClientError(const std::string &errMsg);
-        void _onRPZClientConnected();
+        void _onRPZClientConnecting();
 
         void _saveValuesAsSettings();
 };  

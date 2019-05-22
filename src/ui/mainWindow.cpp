@@ -11,9 +11,11 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
     this->resize(800, 600);
     this->showMaximized();
 
-    
     //start the update check
     this->_updateIntegrator->checkForAppUpdates();
+
+    //load default map
+    this->_mapView->hints()->loadDefaultState();
 }
 
 void MainWindow::_trueShow() {
@@ -25,11 +27,14 @@ void MainWindow::_trueShow() {
 //handle clean close
 void MainWindow::closeEvent(QCloseEvent *event) {
 
-    ClientBindable::unbindAll();
+    //save map changes
+    this->_mapView->hints()->mayWantToSavePendingState();
 
+    //unbind network client from ui
+    ClientBindable::unbindAll();
+    
     event->accept();
 }
-
 
 void MainWindow::_initConnectivity() {
     
@@ -111,9 +116,9 @@ void MainWindow::_initUI() {
     this->setCentralWidget(centralW);
 
     //specific componements
-    this->_initUIMenu();
     this->_initUIStatusBar();
     this->_initUIApp();
+    this->_initUIMenu();
 
     //default focus
     this->_mapView->setFocus();
@@ -212,11 +217,22 @@ void MainWindow::_initUIApp() {
         this->_mapView, &MapView::changePenSize
     );
 
+    //update status bar on map file update
+    QObject::connect(
+        this->_mapView->hints(), &MapHintViewBinder::mapFileStateChanged,
+        this->_sb, &RPZStatusBar::updateMapFileLabel
+    );
+    this->_sb->updateMapFileLabel(
+        this->_mapView->hints()->stateFilePath(),
+        this->_mapView->hints()->isDirty()
+    );
+
 }
 
 void MainWindow::_initUIMenu() {
     auto menuBar = new QMenuBar;
     menuBar->addMenu(this->_getFileMenu());
+    menuBar->addMenu(this->_getMapMenu());
     menuBar->addMenu(this->_getToolsMenu());
     menuBar->addMenu(this->_getHelpMenu());
     this->setMenuWidget(menuBar);
@@ -236,6 +252,48 @@ void MainWindow::_initUIStatusBar() {
 /// Menu components //
 //////////////////////
 
+QMenu* MainWindow::_getMapMenu() {
+
+    auto mapMenuItem = new QMenu("Carte");
+
+    //load map
+    auto loadMap = new QAction("Charger une carte", mapMenuItem);
+    QObject::connect(
+        loadMap, &QAction::triggered,
+        [&]() {
+            auto picked = QFileDialog::getOpenFileName(this, 
+                "Ouvrir une carte", 
+                QStandardPaths::writableLocation(QStandardPaths::DesktopLocation), 
+                "Carte RPGZ (*" +  QString::fromStdString(RPZ_MAP_FILE_EXT) + ")"
+            );
+            if(!picked.isNull()) {
+                this->_mapView->hints()->loadState(picked);
+            }
+        }
+    );
+    
+    //save map
+    auto saveMap = new QAction("Sauvegarder la carte", mapMenuItem);
+    saveMap->setShortcut(QKeySequence::Save);
+    QObject::connect(
+        saveMap, &QAction::triggered,
+        this->_mapView->hints(), &MapHintViewBinder::saveState
+    );
+
+    //on remote change detected...
+    QObject::connect(
+        this->_mapView, &MapView::remoteChanged,
+        [loadMap, saveMap](bool isRemote) {
+            loadMap->setEnabled(!isRemote);
+            saveMap->setEnabled(!isRemote);
+        }
+    );
+
+    mapMenuItem->addAction(loadMap);
+    mapMenuItem->addAction(saveMap);
+
+    return mapMenuItem;
+}
 
 QMenu* MainWindow::_getToolsMenu() {
 

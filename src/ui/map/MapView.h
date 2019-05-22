@@ -48,16 +48,15 @@ class MapView : public QGraphicsView, public ClientBindable {
         void changePenSize(const int newSize);
         
         //network
-        void bindToRPZClient(RPZClient * cc) override;
+        void onRPZClientConnecting(RPZClient * cc) override;
+        void onRPZClientDisconnect(RPZClient* cc) override;
     
     signals:
         void unselectCurrentToolAsked();
-        void assetsAlteredForLocal(const RPZAsset::Alteration &state, QVector<RPZAsset> &elements);
-        void assetsAlteredForNetwork(const RPZAsset::Alteration &state, QVector<RPZAsset> &elements);
+        void remoteChanged(bool isRemote);
 
     protected:
         void wheelEvent(QWheelEvent *event) override;
-
 
         void dropEvent(QDropEvent *event) override;
         void dragEnterEvent(QDragEnterEvent *event) override;

@@ -33,10 +33,6 @@ class UsersLog : public LogScrollView {
                 auto user = RPZUser::fromVariantHash(var_user.toHash());
                 _users.insert(user.id(), user);
 
-                //icon
-                auto pathToIcon = RPZUser::IconsByRoles[(int)user.role()];
-                auto icon = QPixmap(pathToIcon);
-
                 //write line
                 this->writeAtEnd(user);
             }
@@ -51,12 +47,15 @@ class UsersLog : public LogScrollView {
             if(!line) return;
 
             //logo part
-            auto icon = new QLabel; 
-            icon->setMargin(0); 
-            auto pixAsIcon = QPixmap(RPZUser::IconsByRoles[(int)user.role()]);
-            icon->setPixmap(pixAsIcon.scaled(14, 14));
-            icon->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
-            ((QBoxLayout*)line->layout())->insertWidget(0, icon);
+            auto pathToIcon = RPZUser::IconsByRoles[user.role()];
+            if(!pathToIcon.isEmpty()) {
+                auto icon = new QLabel; 
+                icon->setMargin(0); 
+                auto pixAsIcon = QPixmap(pathToIcon);
+                icon->setPixmap(pixAsIcon.scaled(14, 14));
+                icon->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+                ((QBoxLayout*)line->layout())->insertWidget(0, icon);
+            }
 
             //color descriptor
             auto colorwidget = new ColorIndicator(user.color());

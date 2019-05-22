@@ -37,8 +37,7 @@ class RPZClient : public JSONSocket, public JSONRouter {
         void mapChanged(const QVariantHash &data);
         void beenAskedForMapHistory();
 
-    private:
-        
+    private:       
         QString _domain;
         QString _port;
         QString _name;

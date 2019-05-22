@@ -31,21 +31,12 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
 
     //optimisations
     //this->setOptimizationFlags( QFlags<OptimizationFlag>(QGraphicsView::DontSavePainterState | QGraphicsView::DontAdjustForAntialiasing));
-
-    //to route from MapHints
-    QObject::connect(
-        this->_hints, &MapHint::assetsAlteredForLocal,
-        [&](const RPZAsset::Alteration &state, QVector<RPZAsset> &elements) {
-            emit assetsAlteredForLocal(state, elements);
-        }
-    );
     
     //to route from MapHints
     QObject::connect(
         this->_hints, &MapHint::assetsAlteredForNetwork,
         this, &MapView::_sendMapChanges
     );
-
 
     //default state
     this->scale(this->_defaultScale, this->_defaultScale);
@@ -113,22 +104,34 @@ void MapView::keyPressEvent(QKeyEvent * event) {
 /* NETWORK */
 /////////////
 
-void MapView::bindToRPZClient(RPZClient * cc) {
+void MapView::onRPZClientConnecting(RPZClient * cc) {
 
-    ClientBindable::bindToRPZClient(cc);
+    ClientBindable::onRPZClientConnecting(cc);
+
+    //save current map
+    this->_hints->mayWantToSavePendingState();
+
+    //when self user send
+    QObject::connect(
+        this->_rpzClient, &RPZClient::ackIdentity,
+        [&](const QVariantHash &user) {
+            auto rpz_user = RPZUser::fromVariantHash(user);
+
+            //define self pen color
+            this->_penColor = rpz_user.color();
+
+            //if host
+            auto descriptor = rpz_user.role() == RPZUser::Role::Host ? NULL : this->_rpzClient->getConnectedSocketAddress();
+            bool is_remote = this->_hints->defineAsRemote(descriptor);
+
+            emit remoteChanged(is_remote);
+        }
+    );
 
     //on map change
     QObject::connect(
         this->_rpzClient, &RPZClient::mapChanged,
         this->_hints, &MapHintViewBinder::unpackFromNetworkReceived
-    );
-    
-    //when self user send
-    QObject::connect(
-        this->_rpzClient, &RPZClient::ackIdentity,
-        [&](const QVariantHash &user) {
-            this->_penColor = RPZUser::fromVariantHash(user).color();
-        }
     );
 
     //when been asked for map content
@@ -136,6 +139,14 @@ void MapView::bindToRPZClient(RPZClient * cc) {
         this->_rpzClient, &RPZClient::beenAskedForMapHistory,
         this, &MapView::_sendMapHistory
     );
+
+}
+
+void MapView::onRPZClientDisconnect(RPZClient* cc) {
+
+    //back to default state
+    this->_hints->loadDefaultState();
+    this->_hints->defineAsRemote();
 
 }
 
@@ -441,8 +452,8 @@ void MapView::dropEvent(QDropEvent *event) {
     if(!this->_droppableGraphicsItem) return;
 
     //definitive appending for temporary graphicsItem
-    this->_hints->addAssetElement(
-        this->_droppableGraphicsItem, 
+    this->_hints->addTemplateAssetElement(
+        this->_droppableGraphicsItem,
         this->_droppableElement, 
         event->pos()
     );
@@ -473,13 +484,17 @@ void MapView::dragEnterEvent(QDragEnterEvent *event) {
         auto droppableSource = (AssetsTreeView*)event->source();
         auto selectedIndexes = droppableSource->selectedElementsIndexes();
         if(selectedIndexes.count() != 1) return;
+
+        //check if item
         auto selectedElem = AssetsDatabaseElement::fromIndex(selectedIndexes.takeFirst());
         if(!selectedElem->isItem()) return;
 
+        //TODO handle more types
+        if(selectedElem->type() != AssetsDatabaseElement::Type::Object) return; 
+
         //update temporary values
-        this->_droppableSourceDatabase = droppableSource->assetsModel()->database();
         this->_droppableElement = selectedElem;
-        this->_droppableGraphicsItem = this->_hints->temporaryAssetElement(this->_droppableElement, this->_droppableSourceDatabase);
+        this->_droppableGraphicsItem = this->_hints->generateTemplateAssetElement(this->_droppableElement);
 
         //accept
         event->acceptProposedAction();

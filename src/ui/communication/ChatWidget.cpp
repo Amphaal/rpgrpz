@@ -91,9 +91,9 @@ void ChatWidget::_onReceivedLogHistory(const QVariantList &messages) {
     this->_chatLog->writeAtEnd(welcome, MessagesLog::MessageType::ServerLog);
 }
 
-void ChatWidget::bindToRPZClient(RPZClient * cc) {
+void ChatWidget::onRPZClientConnecting(RPZClient * cc) {
 
-    ClientBindable::bindToRPZClient(cc);
+    ClientBindable::onRPZClientConnecting(cc);
     
     this->serverName = cc->getConnectedSocketAddress();
     this->_usersLog->newLog();

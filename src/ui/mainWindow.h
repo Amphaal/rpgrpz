@@ -14,6 +14,8 @@
 #include <QGroupBox>
 #include <QApplication>
 
+#include <QFileDialog>
+
 #include "src/network/ConnectivityHelper.h"
 #include "src/network/rpz/server/RPZServer.h"
 
@@ -69,6 +71,7 @@ class MainWindow : public QMainWindow {
         QMenu* _getToolsMenu();
         QMenu* _getFileMenu();
         QMenu* _getHelpMenu();
+        QMenu* _getMapMenu();
 
         UpdaterUIIntegrator* _updateIntegrator = nullptr;
 };

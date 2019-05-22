@@ -38,14 +38,26 @@ void JSONDatabase::_instanciateDb() {
         QDir().remove(errorPath);
         QDir().rename(dbPath, errorPath);
         writeNewCoord(this->_destfile);
-        readNewCoord(this->_destfile);
+        coordinator = readNewCoord(this->_destfile);
     }
 
     this->_db = coordinator;
+
+    //compare versions, if missmatch, delete db and recreate
+    if(this->apiVersion() != this->dbVersion()) {
+        qDebug() << "Assets : Database removed because of a new API version !";
+        this->_removeDatabase();
+        writeNewCoord(this->_destfile);
+        this->_db = readNewCoord(this->_destfile);
+    }
 }
 
 void JSONDatabase::_checkFileExistance() {
     if(!this->_destfile->exists()) this->_instanciateDb();
+}
+
+void JSONDatabase::_removeDatabase() {
+    QDir().remove(this->dbPath());
 }
 
 void JSONDatabase::_updateDbFile(QJsonObject &newData) {
@@ -72,15 +84,4 @@ QJsonArray JSONDatabase::diff(QJsonArray &target, QSet<QString> &toRemoveFromTar
         }
     }
     return output;
-}
-
-
-QString JSONDatabase::generateId() {
-
-    auto quuid = QUuid::createUuid().toString();
-
-    //strips braces
-    quuid = quuid.mid(1, quuid.length() - 2);
-    
-    return quuid;
 }
