@@ -258,18 +258,10 @@ QMenu* MainWindow::_getMapMenu() {
 
     //load map
     auto loadMap = new QAction("Charger une carte", mapMenuItem);
+    loadMap->setShortcut(QKeySequence::Open);
     QObject::connect(
         loadMap, &QAction::triggered,
-        [&]() {
-            auto picked = QFileDialog::getOpenFileName(this, 
-                "Ouvrir une carte", 
-                QStandardPaths::writableLocation(QStandardPaths::DesktopLocation), 
-                "Carte RPGZ (*" +  QString::fromStdString(RPZ_MAP_FILE_EXT) + ")"
-            );
-            if(!picked.isNull()) {
-                this->_mapView->hints()->loadState(picked);
-            }
-        }
+        this, &MainWindow::_loadMap
     );
     
     //save map
@@ -280,19 +272,54 @@ QMenu* MainWindow::_getMapMenu() {
         this->_mapView->hints(), &MapHintViewBinder::saveState
     );
 
+    //save as map
+    auto saveAsMap = new QAction("Enregistrer la carte sous...", mapMenuItem);
+    saveAsMap->setShortcut(QKeySequence::SaveAs);
+    QObject::connect(
+        saveAsMap, &QAction::triggered,
+        this, &MainWindow::_saveAs
+    );
+
+    QList<QAction*> mapActions = { loadMap, saveMap, saveAsMap };
+
     //on remote change detected...
     QObject::connect(
         this->_mapView, &MapView::remoteChanged,
-        [loadMap, saveMap](bool isRemote) {
-            loadMap->setEnabled(!isRemote);
-            saveMap->setEnabled(!isRemote);
+        [mapActions](bool isRemote) {
+            for(auto action : mapActions) {
+                action->setEnabled(!isRemote);
+            }
         }
     );
 
     mapMenuItem->addAction(loadMap);
+    mapMenuItem->addSeparator();
     mapMenuItem->addAction(saveMap);
+    mapMenuItem->addAction(saveAsMap);
 
     return mapMenuItem;
+}
+
+void MainWindow::_saveAs() {
+    auto picked = QFileDialog::getSaveFileName(this,
+        "Enregistrer sous...",
+        this->_mapView->hints()->stateFilePath(), 
+        "Carte RPGZ (*" +  QString::fromStdString(RPZ_MAP_FILE_EXT) + ")"
+    );
+
+    if(!picked.isNull()) {
+        this->_mapView->hints()->saveStateAs(picked);
+    }
+}
+void MainWindow::_loadMap() {
+    auto picked = QFileDialog::getOpenFileName(this, 
+        "Ouvrir une carte", 
+        QStandardPaths::writableLocation(QStandardPaths::DesktopLocation), 
+        "Carte RPGZ (*" +  QString::fromStdString(RPZ_MAP_FILE_EXT) + ")"
+    );
+    if(!picked.isNull()) {
+        this->_mapView->hints()->loadState(picked);
+    }
 }
 
 QMenu* MainWindow::_getToolsMenu() {

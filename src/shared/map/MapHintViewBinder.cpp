@@ -86,6 +86,13 @@ bool MapHintViewBinder::loadState(QString &filePath) {
     return true;
 }
 
+bool MapHintViewBinder::saveStateAs(QString &newFilePath) {
+    if(this->_isRemote) return false;
+
+    this->_stateFilePath = newFilePath;
+    this->saveState();
+}
+
 
 bool MapHintViewBinder::saveState() {
 

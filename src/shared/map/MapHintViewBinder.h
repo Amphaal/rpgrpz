@@ -31,6 +31,7 @@ class MapHintViewBinder : public MapHint {
         bool loadState(QString &filePath);
         bool loadDefaultState();
         bool saveState();
+        bool saveStateAs(QString &newFilePath);
         QString stateFilePath();
         bool isDirty();
         void mayWantToSavePendingState();

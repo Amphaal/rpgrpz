@@ -72,6 +72,8 @@ class MainWindow : public QMainWindow {
         QMenu* _getFileMenu();
         QMenu* _getHelpMenu();
         QMenu* _getMapMenu();
+            void _saveAs();
+            void _loadMap();
 
         UpdaterUIIntegrator* _updateIntegrator = nullptr;
 };
