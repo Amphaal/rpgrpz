@@ -39,8 +39,8 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 void MainWindow::_initConnectivity() {
     
     //server behavior
-    const auto appArgs = QApplication::instance()->arguments();
-    if(appArgs.size() > 1 && appArgs.at(1) == "noServer") {    
+    auto appArgs = AppContext::getOptionArgs(*QApplication::instance());
+    if(appArgs.count() && appArgs.at(0) == "noServer") {    
 
         //do nothing
         this->_mustLaunchServer = false;
@@ -104,10 +104,7 @@ void MainWindow::_initConnectivity() {
 
 void MainWindow::_initUI() {
     
-    //values specific to this
-    const std::string stdTitle = IS_DEBUG_APP ? (std::string)"DEBUG - " + APP_FULL_DENOM : APP_FULL_DENOM;
-    this->setWindowTitle(QString(stdTitle.c_str()));
-
+    this->setWindowTitle(AppContext::getWindowTitle());
     this->setWindowIcon(QIcon(":/icons/app/rpgrpz_32.png"));
 
     //central widget
@@ -304,7 +301,7 @@ void MainWindow::_saveAs() {
     auto picked = QFileDialog::getSaveFileName(this,
         "Enregistrer sous...",
         this->_mapView->hints()->stateFilePath(), 
-        "Carte RPGZ (*" +  QString::fromStdString(RPZ_MAP_FILE_EXT) + ")"
+        I18n::tr()->Popup_MapDescriptor()
     );
 
     if(!picked.isNull()) {
@@ -314,8 +311,8 @@ void MainWindow::_saveAs() {
 void MainWindow::_loadMap() {
     auto picked = QFileDialog::getOpenFileName(this, 
         "Ouvrir une carte", 
-        QStandardPaths::writableLocation(QStandardPaths::DesktopLocation), 
-        "Carte RPGZ (*" +  QString::fromStdString(RPZ_MAP_FILE_EXT) + ")"
+        AppContext::getAppDataLocation(), 
+        I18n::tr()->Popup_MapDescriptor()
     );
     if(!picked.isNull()) {
         this->_mapView->hints()->loadState(picked);
@@ -324,40 +321,44 @@ void MainWindow::_loadMap() {
 
 QMenu* MainWindow::_getToolsMenu() {
 
-    auto toolsMenuItem = new QMenu(I18n::tr()->Menu_Tools().c_str());
+    auto toolsMenuItem = new QMenu(I18n::tr()->Menu_Tools());
 
     //maintenance tool
-    auto openMaintenanceToolAction = new QAction(I18n::tr()->Menu_OpenMaintenanceTool().c_str(), toolsMenuItem);
+    auto openMaintenanceToolAction = new QAction(I18n::tr()->Menu_OpenMaintenanceTool(), toolsMenuItem);
     QObject::connect(
         openMaintenanceToolAction, &QAction::triggered,
         this->_updateIntegrator, &UpdaterUIIntegrator::openMaintenanceTool
     );
 
     //full log
-    auto openLogAction = new QAction(I18n::tr()->Menu_OpenLog().c_str(), toolsMenuItem);
+    auto openLogAction = new QAction(I18n::tr()->Menu_OpenLog(), toolsMenuItem);
     QObject::connect(
         openLogAction, &QAction::triggered,
         [&]() {
-            openFileInOS(getLogFileLocation());
+            AppContext::openFileInOS(
+                AppContext::getLogFileLocation()
+            );
         }
     );
 
     //latest log
-    auto openLatestLogAction = new QAction(I18n::tr()->Menu_OpenLatestLog().c_str(), toolsMenuItem);
+    auto openLatestLogAction = new QAction(I18n::tr()->Menu_OpenLatestLog(), toolsMenuItem);
     QObject::connect(
         openLatestLogAction, &QAction::triggered,
         [&]() {
-            openFileInOS(getLatestLogFileLocation());
+            AppContext::openFileInOS(
+                AppContext::getLatestLogFileLocation()
+            );
         }
     );
 
     //data folder
-    const auto df = getAppDataLocation();
-    auto openDataFolderAction = new QAction(I18n::tr()->Menu_OpenDataFolder(df).c_str(), toolsMenuItem);
+    const auto df = AppContext::getAppDataLocation();
+    auto openDataFolderAction = new QAction(I18n::tr()->Menu_OpenDataFolder(df), toolsMenuItem);
     QObject::connect(
         openDataFolderAction, &QAction::triggered,
         [&, df]() {
-            openFolderInOS(df);
+            AppContext::openFolderInOS(df);
         }
     );
 
@@ -374,10 +375,10 @@ QMenu* MainWindow::_getToolsMenu() {
 
 QMenu* MainWindow::_getHelpMenu() {
 
-    auto helpMenuItem = new QMenu(I18n::tr()->Menu_Help().c_str());
+    auto helpMenuItem = new QMenu(I18n::tr()->Menu_Help());
 
     //for checking the upgrades available
-    this->cfugAction = new QAction(I18n::tr()->Menu_CheckForUpgrades().c_str(), helpMenuItem);
+    this->cfugAction = new QAction(I18n::tr()->Menu_CheckForUpgrades(), helpMenuItem);
     QObject::connect(
         this->cfugAction, &QAction::triggered,
         this->_updateIntegrator, &UpdaterUIIntegrator ::requireUpdateCheckFromUser
@@ -388,17 +389,18 @@ QMenu* MainWindow::_getHelpMenu() {
         this->_updateIntegrator, &UpdaterUIIntegrator::stateChanged,
         [&](const bool isSearching) {
             this->cfugAction->setEnabled(!isSearching);
-            const std::string descr = isSearching ? I18n::tr()->SearchingForUpdates() : I18n::tr()->Menu_CheckForUpgrades();
-            this->cfugAction->setText(descr.c_str());
+            const QString descr = isSearching ? I18n::tr()->SearchingForUpdates() : I18n::tr()->Menu_CheckForUpgrades();
+            this->cfugAction->setText(descr);
         }
     );
 
     //patchnote
-    auto patchnoteAction = new QAction(I18n::tr()->Menu_Patchnotes(APP_FULL_DENOM).c_str(), helpMenuItem);
+    auto patchnoteAction = new QAction(I18n::tr()->Menu_Patchnotes(APP_FULL_DENOM), helpMenuItem);
     QObject::connect(
         patchnoteAction, &QAction::triggered,
         [&]() {
-            QDesktopServices::openUrl(QUrl(APP_PATCHNOTE_URL));
+            auto destUrl = QUrl(APP_PATCHNOTE_URL);
+            QDesktopServices::openUrl(destUrl);
         }
     );
 
@@ -411,10 +413,11 @@ QMenu* MainWindow::_getHelpMenu() {
 
 QMenu* MainWindow::_getFileMenu() {
 
-    auto fileMenuItem = new QMenu(I18n::tr()->Menu_File().c_str());
+    auto fileMenuItem = new QMenu(I18n::tr()->Menu_File());
 
     //quit
-    auto quitAction = new QAction(I18n::tr()->Menu_Quit().c_str(), fileMenuItem);
+    auto quitAction = new QAction(I18n::tr()->Menu_Quit(), fileMenuItem);
+    quitAction->setShortcut(QKeySequence::Quit);
     QObject::connect(
         quitAction, &QAction::triggered,
         this, &MainWindow::close

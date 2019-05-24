@@ -18,9 +18,9 @@ class RPZStatusBar : public QStatusBar {
 
         void updateSentAudioKbps(double kbps, int clients);
         void updateReceivedAudioKbps(double kbps);
-        void updateServerStateLabel(const std::string &stateText, int state);
-        void updateUPnPLabel(const std::string &stateText, int state);
-        void updateExtIPLabel(const std::string &stateText, int state);
+        void updateServerStateLabel(const QString &stateText, int state);
+        void updateUPnPLabel(const QString &stateText, int state);
+        void updateExtIPLabel(const QString &stateText, int state);
         void updateMapFileLabel(const QString &filePath, bool isDirty);
 
     private:

@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.13.3)
 #version
 SET(CMAKE_PROJECT_VERSION_MAJOR 0)
 SET(CMAKE_PROJECT_VERSION_MINOR 10)
-SET(CMAKE_PROJECT_VERSION_PATCH 0)
+SET(CMAKE_PROJECT_VERSION_PATCH 1)
 
 
 #default configuration
@@ -132,6 +132,10 @@ file(GLOB_RECURSE INT_LIBS
     "libs/*"
 )
 
+list(APPEND SOURCES 
+    src/helpers/_appContext.cpp
+)
+
 #QThread derivatives
 list(APPEND SOURCES
     src/network/uPnP/uPnPThread.h
@@ -163,7 +167,6 @@ list(APPEND SOURCES
     src/shared/database/base/JSONDatabase.cpp
     src/shared/database/AssetsDatabase.cpp
     src/shared/assets/AssetsDatabaseElement.cpp
-    
     
 
     src/ui/assets/base/AssetsTreeView.hpp
@@ -218,8 +221,10 @@ add_custom_command(TARGET ${PROJECT_NAME}
 )
 
 #using windeployqt to import all the .dll and qt requirements based on used components
-include(Windeployqt)
-windeployqt(${PROJECT_NAME} "${CMAKE_CURRENT_BINARY_DIR}/bin")
+IF(NOT EXISTS "${CMAKE_BINARY_DIR}/bin/Qt5Cored.dll")
+    include(Windeployqt)
+    windeployqt(${PROJECT_NAME} "${CMAKE_CURRENT_BINARY_DIR}/bin")
+ENDIF()
 
 #copy gstreamer .dlls
 set(_gstreamer_plugins "all")

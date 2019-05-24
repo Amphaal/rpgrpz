@@ -35,9 +35,9 @@ RPZClient::~RPZClient() {
 }
 
 void RPZClient::_onDisconnect() {
-    const std::string msg = "Déconnecté du serveur";
+    const QString msg = "Déconnecté du serveur";
     emit error(msg);
-    qWarning() << "RPZClient : " << QString::fromStdString(msg);
+    qWarning() << "RPZClient : " << msg;
 }
 
 void RPZClient::_onConnected() {
@@ -104,7 +104,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
 void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
     
-    std::string msg;
+    QString msg;
     
     switch (_socketError) {
         case QAbstractSocket::RemoteHostClosedError:
@@ -117,12 +117,12 @@ void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
             msg = "La connexion a été refusée par l'hôte distant.";
             break;
         default:
-            msg = "L'erreur suivante s'est produite : " + this->socket()->errorString().toStdString();
+            msg = "L'erreur suivante s'est produite : " + this->socket()->errorString();
                                    
     }
 
     emit error(msg);
-    qWarning() << "RPZClient : :" << QString::fromStdString(msg);
+    qWarning() << "RPZClient : :" << msg;
 
     this->socket()->close();
 }

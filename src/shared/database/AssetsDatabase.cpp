@@ -30,11 +30,11 @@ const QString AssetsDatabase::defaultJsonDoc() {
     return "{\"version\":" + QString::number(this->apiVersion()) + ",\"paths\":{},\"assets\":{}}";
 };
 const QString AssetsDatabase::dbPath() {
-    return QString::fromStdString(getAssetsFileCoordinatorLocation());
+    return AppContext::getAssetsFileCoordinatorLocation();
 };
 
 QString AssetsDatabase::assetsStorageFilepath() {
-    return QString::fromStdString(getAssetsFolderLocation());
+    return AppContext::getAssetsFolderLocation();
 }
 
 

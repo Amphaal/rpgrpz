@@ -75,30 +75,30 @@ void RPZStatusBar::_installLayout() {
 ///
 
 void RPZStatusBar::updateSentAudioKbps(double kbps, int clients) {
-    QString lbl(QString::number(kbps) + " kbps / " + QString::number(clients) + " client(s)");
+    auto const lbl = QString::number(kbps) + " kbps / " + QString::number(clients) + " client(s)";
     this->_sentAudioKbpsStateLabel->updateState(lbl);
 }
 
 void RPZStatusBar::updateReceivedAudioKbps(double kbps) {
-    QString lbl(QString::number(kbps) + " kbps");
+    auto const lbl = QString::number(kbps) + " kbps";
     this->_receivedAudioKbpsStateLabel->updateState(lbl);
 }
 
-void RPZStatusBar::updateServerStateLabel(const std::string &stateText, int state) {
+void RPZStatusBar::updateServerStateLabel(const QString &stateText, int state) {
     this->_serverStateLabel->updateState(
         stateText, 
         state
     );
 }
 
-void RPZStatusBar::updateUPnPLabel(const std::string &stateText, int state) {
+void RPZStatusBar::updateUPnPLabel(const QString &stateText, int state) {
     this->_upnpStateLabel->updateState(
         stateText, 
         state
     );
 }
 
-void RPZStatusBar::updateExtIPLabel(const std::string &stateText, int state) {
+void RPZStatusBar::updateExtIPLabel(const QString &stateText, int state) {
     
     auto asHTMLLink = [stateText]() {
         return "<a href='" + stateText + "'>" + stateText + "</a>";

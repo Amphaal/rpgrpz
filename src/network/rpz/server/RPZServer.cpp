@@ -14,7 +14,7 @@ void RPZServer::run() {
 
     qDebug() << "RPZServer : Starting server...";
 
-    auto result = this->listen(QHostAddress::Any, std::stoi(UPNP_DEFAULT_TARGET_PORT));
+    auto result = this->listen(QHostAddress::Any, AppContext::UPNP_DEFAULT_TARGET_PORT.toInt());
 
     if(!result) {
         qWarning() << "RPZServer : Error while starting to listen >> " + this->errorString();

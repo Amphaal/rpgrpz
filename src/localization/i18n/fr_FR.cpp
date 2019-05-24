@@ -3,19 +3,20 @@
 using namespace std;
 
 class Translator_FR : public ITranslator {
-    std::string Menu_File() const { return "Fichier"; }
-    std::string Menu_Tools() const { return "Outils"; }
-    std::string Menu_OpenMaintenanceTool() const { return "Ouvrir l'outil de maintenance"; };
-    std::string Menu_Patchnotes(const std::string &version) { return version + " - Notes de publication"; }
-    std::string Menu_Help() const { return "Aide"; }
-    std::string Menu_Options() const { return "Options"; }
-    std::string Menu_Quit() const { return "Quitter"; };
-    std::string Menu_About() const { return "À Propos"; }
-    std::string Menu_OpenLog() const { return "Ouvrir le fichier de log complet"; };
-    std::string Menu_OpenLatestLog() const { return "Ouvrir le fichier de log de la session"; };
-    std::string Menu_CheckForUpgrades() const { return "Vérifier les mises à jour..."; };
-    std::string Alert_UpdateAvailable_Title() const { return "Mise à jour disponible"; };
-    std::string Alert_UpdateAvailable_Text() const { return "Une mise à jour a été trouvé pour " + (std::string)APP_NAME + ". Voulez-vous l'installer maintenant ?"; };
-    std::string SearchingForUpdates() const { return "Recherche des mises à jour...";};
-    std::string Menu_OpenDataFolder(const std::string &folder) { return "Ouvrir le dossier de données (" + folder + ") "; };
+    QString Menu_File() const { return "Fichier"; }
+    QString Menu_Tools() const { return "Outils"; }
+    QString Menu_OpenMaintenanceTool() const { return "Ouvrir l'outil de maintenance"; };
+    QString Menu_Patchnotes(const QString &version) { return version + " - Notes de publication"; }
+    QString Menu_Help() const { return "Aide"; }
+    QString Menu_Options() const { return "Options"; }
+    QString Menu_Quit() const { return "Quitter"; };
+    QString Menu_About() const { return "À Propos"; }
+    QString Menu_OpenLog() const { return "Ouvrir le fichier de log complet"; };
+    QString Menu_OpenLatestLog() const { return "Ouvrir le fichier de log de la session"; };
+    QString Menu_CheckForUpgrades() const { return "Vérifier les mises à jour..."; };
+    QString Alert_UpdateAvailable_Title() const { return "Mise à jour disponible"; };
+    QString Alert_UpdateAvailable_Text() const { return "Une mise à jour a été trouvé pour " + QString(APP_NAME) + ". Voulez-vous l'installer maintenant ?"; };
+    QString SearchingForUpdates() const { return "Recherche des mises à jour...";};
+    QString Menu_OpenDataFolder(const QString &folder) { return "Ouvrir le dossier de données (" + folder + ") "; };
+    QString Popup_MapDescriptor() { return "Carte RPGZ (*" +  AppContext::RPZ_MAP_FILE_EXT + ")"; };
 };

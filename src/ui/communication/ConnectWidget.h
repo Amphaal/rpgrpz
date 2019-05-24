@@ -10,7 +10,7 @@
 #include <QMessageBox>
 #include <QGroupBox>
 
-#include "src/helpers/_const.hpp"
+#include "src/helpers/_appContext.h"
 #include "src/network/rpz/client/RPZClient.h"
 
 class ConnectWidget : public QGroupBox {
@@ -45,7 +45,7 @@ class ConnectWidget : public QGroupBox {
         void _changeState(ConnectWidget::State newState);
         void _destroyClient();
 
-        void _onRPZClientError(const std::string &errMsg);
+        void _onRPZClientError(const QString &errMsg);
         void _onRPZClientConnecting();
 
         void _saveValuesAsSettings();

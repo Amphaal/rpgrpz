@@ -28,20 +28,13 @@ class RPZStatusLabel : public QWidget {
             this->updateState("<En attente...>", Waiting);
         }
 
-        void updateState(const QString &stateText, const State &state = Finished) {
+        void updateState(const QString &stateText, int state = Finished) {
             
             auto mustWait = (state == Processing);
             this->setWaiting(mustWait);
 
             this->_dataLbl->setText(stateText);
         };
-
-        void updateState(const std::string &stateText, int state = Finished) {
-            updateState(
-                QString::fromStdString(stateText),
-                (RPZStatusLabel::State)state
-            );
-        }
 
         void setWaiting(bool waiting) {
             

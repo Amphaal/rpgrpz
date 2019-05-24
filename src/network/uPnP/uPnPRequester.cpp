@@ -1,5 +1,7 @@
 #include "uPnPThread.h"
 
+#include <QString>
+
 class uPnPRequester : public uPnPThread {
     
     public:
@@ -19,10 +21,9 @@ class uPnPRequester : public uPnPThread {
         const char * description = 0;
         const char * targetPort = 0;
 
-        uPnPRequester(const char * targetPort, const char * description, QObject * parent = nullptr) :
-            targetPort(targetPort), 
-            description(description) { 
-            
+        uPnPRequester(const char * tPort, const char * descr, QObject * parent = nullptr) :
+            targetPort(tPort), 
+            description(descr) {
             this->setParent(parent);
         }
         
@@ -36,13 +37,8 @@ class uPnPRequester : public uPnPThread {
                     return;
                 }
 
-                //register for a TCP redirect...
-                auto requester = [&](const char * protocol) {
-                    return this->SetRedirectAndTest(this->lanaddr, this->targetPort, this->targetPort, protocol, "0", 0);
-                };
-                
-                auto resultTCP = requester("TCP");
-                auto resultUDP = requester("UDP");
+                auto resultTCP = this->SetRedirectAndTest(this->lanaddr, this->targetPort, this->targetPort, "TCP", "0", 0);
+                auto resultUDP = this->SetRedirectAndTest(this->lanaddr, this->targetPort, this->targetPort, "UDP", "0", 0);
 
                 if(resultTCP != 0 || resultUDP != 0) {
                     emit uPnPError(-999);

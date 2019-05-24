@@ -57,11 +57,11 @@ void ChatWidget::_instUI() {
     this->layout()->addWidget(splitter);
 }
 
-void ChatWidget::_onRPZClientError(const std::string &errMsg) {    
+void ChatWidget::_onRPZClientError(const QString &errMsg) {    
     
     //out log
     if(!this->serverName.isEmpty()) {
-        const auto nm = QString::fromStdString(errMsg) + " (" + this->serverName + ")";
+        const auto nm = errMsg + " (" + this->serverName + ")";
         this->_chatLog->writeAtEnd(nm, MessagesLog::MessageType::ServerLog);
     }
 

@@ -13,7 +13,7 @@
 
 #include "src/shared/network/RPZMessage.hpp"
 
-#include "src/helpers/_const.hpp"
+#include "src/helpers/_appContext.h"
 
 class RPZClient : public JSONSocket, public JSONRouter {
     
@@ -36,7 +36,7 @@ class RPZClient : public JSONSocket, public JSONRouter {
         void loggedUsersUpdated(const QVariantHash &users);
         void ackIdentity(const QVariantHash &user);
         void receivedLogHistory(const QVariantList &messages);
-        void error(const std::string &errMessage);
+        void error(const QString &errMessage);
         void mapChanged(const QVariantHash &data);
         void beenAskedForMapHistory();
         void receivedAsset(const QString &assetId);

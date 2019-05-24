@@ -36,7 +36,7 @@ ConnectWidget::ConnectWidget(QWidget * parent) : QGroupBox(parent),
     this->_portTarget->setText(
         this->_settings.value(
             "port", 
-            QString::fromStdString(UPNP_DEFAULT_TARGET_PORT)
+            AppContext::UPNP_DEFAULT_TARGET_PORT
         ).toString()
     );
     this->_portTarget->setMaximumWidth(70);
@@ -108,12 +108,12 @@ void ConnectWidget::_tryConnectToServer() {
     this->_cc->run();
 }
 
-void ConnectWidget::_onRPZClientError(const std::string &errMsg) {
+void ConnectWidget::_onRPZClientError(const QString &errMsg) {
     
     if(this->_state = State::Connecting) {
         QMessageBox::information(this, 
             QString("Erreur lors de la connexion"), 
-            QString::fromStdString(errMsg), 
+            errMsg, 
             QMessageBox::Ok, QMessageBox::Ok);
     }
 

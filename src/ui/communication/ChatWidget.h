@@ -46,7 +46,7 @@ class ChatWidget : public QWidget, public ClientBindable {
         void _EnableUI();
 
     private slots:
-        void _onRPZClientError(const std::string &errMsg);
+        void _onRPZClientError(const QString &errMsg);
         void _onReceivedMessage(const QVariantHash &message);
         void _onReceivedLogHistory(const QVariantList &messages);
 

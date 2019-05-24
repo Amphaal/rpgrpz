@@ -34,6 +34,8 @@ if((MSVC_VERSION VERSION_EQUAL 1900 OR MSVC_VERSION VERSION_GREATER 1900)
     message(WARNING "Deploying with MSVC 2015+ requires CMake 3.6+")
 endif()
 
+message("Including QT shared dependencies...")
+
 # Add commands that copy the Qt runtime to the target's output directory after
 # build and install the Qt runtime to the specified directory
 function(windeployqt target)

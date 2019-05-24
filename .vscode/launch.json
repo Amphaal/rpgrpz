@@ -12,7 +12,7 @@
             },
             "type": "cppdbg",
             "request": "launch",
-            "args": ["noServer"],
+            "args": ["noServer random"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/buildDebug/bin/",
             "environment": [],

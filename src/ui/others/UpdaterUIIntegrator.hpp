@@ -1,7 +1,7 @@
 #pragma once
 
 #include "src/localization/i18n.hpp"
-#include "src/helpers/_const.hpp"
+#include "src/helpers/_appContext.h"
 
 #include <QDebug>
 #include <QMessageBox>
@@ -64,18 +64,18 @@ class UpdaterUIIntegrator : public QObject {
             if(this->_userNotificationOnUpdateCheck) {
                 this->_userNotificationOnUpdateCheck = false;
                 
-                const std::string title = (std::string)APP_NAME + " - " + I18n::tr()->Menu_CheckForUpgrades();
-                const std::string content = this->_updater->errorLog().toStdString();
+                const QString title = QString(APP_NAME) + " - " + I18n::tr()->Menu_CheckForUpgrades();
+                const QString content = this->_updater->errorLog();
 
                 if(!hasUpdate && !hasError) {
                     QMessageBox::information(this->_wParent, 
-                        QString(title.c_str()), 
-                        QString(content.c_str()), 
+                        title, 
+                        content, 
                         QMessageBox::Ok, QMessageBox::Ok);
                 } else if (hasError) {
                     QMessageBox::warning(this->_wParent, 
-                        QString(title.c_str()), 
-                        QString(content.c_str()), 
+                        title, 
+                        content, 
                         QMessageBox::Ok, QMessageBox::Ok);
                 }
             }
@@ -87,12 +87,12 @@ class UpdaterUIIntegrator : public QObject {
             }
 
             //if has update
-            const std::string title = (std::string)APP_NAME + " - " + I18n::tr()->Alert_UpdateAvailable_Title();
-            const std::string content = I18n::tr()->Alert_UpdateAvailable_Text();
+            const QString title = QString(APP_NAME) + " - " + I18n::tr()->Alert_UpdateAvailable_Title();
+            const QString content = I18n::tr()->Alert_UpdateAvailable_Text();
 
             auto msgboxRslt = QMessageBox::information(this->_wParent, 
-                        QString(title.c_str()), 
-                        QString(content.c_str()), 
+                        title, 
+                        content, 
                         QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes
             );
             

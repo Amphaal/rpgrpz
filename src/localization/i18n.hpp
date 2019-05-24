@@ -16,8 +16,8 @@ class I18n {
             return m_pInstance;
         }
 
-        static std::string getLocaleName() {
-            return QLocale::system().name().toStdString();
+        static QString getLocaleName() {
+            return QLocale::system().name();
         }
 
     private:
@@ -31,7 +31,7 @@ class I18n {
         static ITranslator* setTranslator() {
             auto lName = I18n::getLocaleName();
 
-            if (lName.substr(0,2) == "fr") {
+            if (lName.mid(0,2) == "fr") {
                 return new Translator_FR();
             } else {
                 return new Translator_EN();

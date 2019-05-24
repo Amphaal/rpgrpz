@@ -96,12 +96,16 @@ void ConnectivityHelper::_tryNegociateUPnPPort() {
     
     this->_clearUPnPRequester();
 
-    this->_requestedUPnPPort = UPNP_DEFAULT_TARGET_PORT.c_str();
-    const auto descr = UPNP_REQUEST_DESCRIPTION.c_str();
+    qDebug() << "Connectivity : trying to open uPnP port " << AppContext::UPNP_DEFAULT_TARGET_PORT << " as \"" << AppContext::UPNP_REQUEST_DESCRIPTION << "\" ";
 
-    qDebug() << "Connectivity : trying to open uPnP port " << this->_requestedUPnPPort.c_str() << " as \"" << descr << "\" ";
+    this->_requestedUPnPPort = AppContext::UPNP_DEFAULT_TARGET_PORT.toStdString();
+    this->_requestedDescription = AppContext::UPNP_REQUEST_DESCRIPTION.toStdString();
 
-    this->_upnpThread = new uPnPRequester(this->_requestedUPnPPort.c_str(), descr, this);
+    this->_upnpThread = new uPnPRequester(
+        this->_requestedUPnPPort.c_str(), 
+        this->_requestedDescription.c_str(), 
+        this
+    );
 
     QObject::connect(
         this->_upnpThread, &uPnPThread::uPnPSuccess, 
@@ -121,7 +125,7 @@ void ConnectivityHelper::_tryNegociateUPnPPort() {
     this->_upnpThread->start();
 }
 
-void ConnectivityHelper::_onUPnPExtIpFound(const std::string &extIp) {
+void ConnectivityHelper::_onUPnPExtIpFound(const QString &extIp) {
     this->_upnp_extIp = extIp;
     emit remoteAddressStateChanged(extIp);
 };
@@ -132,12 +136,12 @@ void ConnectivityHelper::_onUPnPError(int errorCode) {
 }
 
 void ConnectivityHelper::_onUPnPSuccess(const char * protocol, const char * negociatedPort) {
-    std::string out = "OK [port: ";
+    QString out = "OK [port: ";
     out += negociatedPort;
     out += "] ";
 
-    qDebug() << "Connectivity : uPnP " + QString(protocol) << QString::fromStdString(out);
-    emit uPnPStateChanged(out.c_str());
+    qDebug() << "Connectivity : uPnP " + QString(protocol) << out;
+    emit uPnPStateChanged(out);
 
 }
 
@@ -177,7 +181,7 @@ void ConnectivityHelper::_getLocalAddress() {
         emit localAddressStateChanged(this->_getErrorText(), RPZStatusLabel::State::Error);
     } else {
         qDebug() << "Connectivity : local ip" << rtrn;
-        emit localAddressStateChanged(rtrn.toStdString());
+        emit localAddressStateChanged(rtrn);
     }
 };
 
@@ -185,22 +189,22 @@ void ConnectivityHelper::_getLocalAddress() {
 ///
 ///
 
-std::string ConnectivityHelper::_getWaitingText() {
+QString ConnectivityHelper::_getWaitingText() {
     return "<Recherche...>";
 };
 
-std::string ConnectivityHelper::_getErrorText() {
+QString ConnectivityHelper::_getErrorText() {
     return "<Erreur>";
 };
 
 void ConnectivityHelper::_debugNetworkConfig() {
     
-    auto _debug = [&](const std::string &descr, const QNetworkConfiguration &config) {
-        qDebug() << "Connectivity :" << QString::fromStdString(descr)
-                << ">> name:" << config.name() 
-                << ", state:" << config.state() 
-                << ", type:" << config.type() 
-                << ", bearer:" << config.bearerTypeName();
+    auto _debug = [&](const QString &descr, const QNetworkConfiguration &config) {
+        qDebug() << "Connectivity : " + descr
+                + ">> name:" + config.name() 
+                + ", state:" + config.state() 
+                + ", type:" + config.type() 
+                + ", bearer:" + config.bearerTypeName();
     };
 
     for (auto &config : this->_getDefinedConfiguration()) {

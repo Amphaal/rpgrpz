@@ -43,7 +43,9 @@ void MapHintViewBinder::_shouldMakeDirty(const RPZAsset::Alteration &state, QVec
 
 bool MapHintViewBinder::loadDefaultState() {
     qDebug() << "Map : loading default map...";
-    return this->loadState(getDefaultMapFile());
+    return this->loadState(
+        AppContext::getDefaultMapFile()
+    );
 }
 
 bool MapHintViewBinder::isRemote() {
@@ -90,7 +92,8 @@ bool MapHintViewBinder::saveStateAs(QString &newFilePath) {
     if(this->_isRemote) return false;
 
     this->_stateFilePath = newFilePath;
-    this->saveState();
+    return this->saveState();
+
 }
 
 
