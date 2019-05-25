@@ -59,7 +59,7 @@ bool MapHintViewBinder::defineAsRemote(QString &remoteMapDescriptor) {
     
     //reset missing assets list
     if(this->_missingAssetsIdsFromDb) delete this->_missingAssetsIdsFromDb;
-    this->_missingAssetsIdsFromDb = new QMultiHash<QString, QGraphicsItem*>();
+    this->_missingAssetsIdsFromDb = new QMultiHash<QString, QGraphicsRectItem*>();
 
     //change map descriptor if is a remote session
     if(this->_isRemote) this->_stateFilePath = remoteMapDescriptor;
@@ -211,6 +211,9 @@ QGraphicsItem* MapHintViewBinder::_addGenericImageBasedAsset(const QString &path
 
 void MapHintViewBinder::addTemplateAssetElement(QGraphicsItem* temporaryItem, AssetsDatabaseElement* assetElem, const QPoint &dropPos) {
 
+    //prevent if remote
+    if(this->_isRemote) return;
+
     //define position
     this->centerGraphicsItemToPoint(temporaryItem, dropPos);
 
@@ -246,7 +249,11 @@ void MapHintViewBinder::replaceMissingAssetPlaceholders(const QString &assetId) 
     for(auto gi : setOfGraphicsItemsToReplace) {
         
         //add on top the required graphical item
-        auto newGi = this->_addGenericImageBasedAsset(pathToFile, 1, gi->pos());
+        auto pos = gi->scenePos();
+        if(pos.isNull()) {
+            pos = gi->sceneBoundingRect().topLeft();
+        }
+        auto newGi = this->_addGenericImageBasedAsset(pathToFile, 1, pos);
         
         //replace bound graphic item to the appropriate RPZAssets which are already stored 
         auto id = this->_idsByGraphicItem[gi];
@@ -255,6 +262,8 @@ void MapHintViewBinder::replaceMissingAssetPlaceholders(const QString &assetId) 
         this->_assetsById[id] = asset;
 
         //delete placeholder
+        this->_idsByGraphicItem.remove(gi);
+        this->_idsByGraphicItem.insert(newGi, id);
         delete gi;
     }
 
@@ -322,14 +331,14 @@ void MapHintViewBinder::_unpack(const RPZAsset::Alteration &alteration, QVector<
                     else {
                         
                         //add placeholder
-                        newItem = this->_addMissingAssetPH(boundingRect);
-
+                        auto placeholder = this->_addMissingAssetPH(boundingRect);
+                        newItem = placeholder;
 
                         //if first time the ID is encountered
                         if(!this->_missingAssetsIdsFromDb->contains(dbAssetId)) {
 
                             //add graphic item to list of items to replace at times
-                            this->_missingAssetsIdsFromDb->insert(dbAssetId, newItem);
+                            this->_missingAssetsIdsFromDb->insert(dbAssetId, placeholder);
                             emit requestMissingAsset(dbAssetId);
                         }
 

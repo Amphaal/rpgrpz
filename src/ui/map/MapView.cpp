@@ -136,7 +136,7 @@ void MapView::onRPZClientConnecting(RPZClient * cc) {
 
     //when receiving missing asset
     QObject::connect(
-        this->_rpzClient, &RPZClient::receivedAsset,
+        this->_rpzClient, &RPZClient::assetSucessfullyInserted,
         this->_hints, &MapHintViewBinder::replaceMissingAssetPlaceholders
     );
 
@@ -488,6 +488,9 @@ void MapView::dragEnterEvent(QDragEnterEvent *event) {
     this->_droppableGraphicsItem = nullptr;
     this->_droppableElement = nullptr;
     this->_droppableSourceDatabase = nullptr;
+
+    //prevent if remote
+    if(this->hints()->isRemote()) return;
 
     //if has a widget attached, OK
     if(event->source()) {

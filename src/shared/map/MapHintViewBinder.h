@@ -62,7 +62,7 @@ class MapHintViewBinder : public MapHint {
     protected:
         QString _stateFilePath;
 
-        QMultiHash<QString, QGraphicsItem*> *_missingAssetsIdsFromDb = nullptr;
+        QMultiHash<QString, QGraphicsRectItem*> *_missingAssetsIdsFromDb = nullptr;
         bool _isRemote = false;
 
         bool _isDirty = false;

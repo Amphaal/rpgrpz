@@ -38,40 +38,31 @@ QString AssetsDatabase::assetsStorageFilepath() {
 }
 
 
-QString AssetsDatabase::importAsset(QVariantHash &package) {
+QString AssetsDatabase::importAsset(const QVariantHash &package) {
     
     if(package.isEmpty()) return NULL;
+    
+    //check content
+    auto fileBytes = package["_fileContent"].toByteArray();
+    if(!fileBytes.size()) return NULL;
+
+    //asset
+    auto asset_id = package["_id"].toString();
+    auto asset = QJsonDocument::fromVariant(package["_meta"]).object();
+
+    //save file
+    auto fileAsRawData = QByteArray::fromBase64(fileBytes);
+    auto destFileExt = asset["ext"].toString();
+    auto destFileName = asset["name"].toString();
+    auto destUrl = this->_moveFileToDbFolder(fileAsRawData, destFileExt, destFileName, asset_id);
 
     //copy into db
-    auto asset_id = package["_id"].toString();
-    auto copy = this->_db.object();
+    auto parent = this->_staticElements[DownloadedContainer];
+    this->_addAssetToDb(asset_id, destUrl, parent);
 
-        auto db_assets = this->assets();
-        auto asset = QJsonDocument::fromVariant(package["_meta"]).object();
-        db_assets[asset_id] = asset;
-    
-    copy["assets"] = db_assets;
-    this->_updateDbFile(copy);
-
-
-    //turn encoded file from JSON into file
-    auto destFolder = this->assetsStorageFilepath();
-    auto destFileExt = asset["ext"].toString();
-    auto dest = destFolder + "/" + asset_id + "." + destFileExt;
-
-        //write file
-        QFile assetFile(dest);
-        assetFile.open(QFile::WriteOnly);
-
-            auto decoded = QByteArray::fromBase64(
-                package["_fileContent"].toByteArray()
-            );
-            assetFile.write(decoded);
-
-        assetFile.close();
-    
-    
-    qDebug() << "Assets : asset " << asset_id << "imported";
+    //add to tree
+    auto element = new AssetsDatabaseElement(destFileName, parent, parent->insertType(), asset_id);
+    qDebug() << "Assets :" << asset_id << "imported";
     return asset_id;
 }
 
@@ -86,7 +77,7 @@ QVariantHash AssetsDatabase::prepareAssetPackage(QString &assetId) {
     package["_id"] = assetId;
 
     //append file as base64
-    QFile assetFile;
+    QFile assetFile(pathToFile);
     assetFile.open(QFile::ReadOnly);
 
         auto fileContent = assetFile.readAll().toBase64();
@@ -285,22 +276,39 @@ QString AssetsDatabase::_getFileSignatureFromFileUri(QUrl &url) {
     return signature;
 }
 
+QUrl AssetsDatabase::_moveFileToDbFolder(QByteArray &data, QString &fileExt, QString &name, QString &id) {
+    
+    //turn encoded file from JSON into file
+    auto destFolder = this->assetsStorageFilepath();
+    auto dest = destFolder + "/" + id + "." + fileExt;
+    auto forgedDest = destFolder + "/" + name + "." + fileExt;
+
+    //write file
+    QFile assetFile(dest);
+    assetFile.open(QFile::WriteOnly);
+        auto written = assetFile.write(data);
+    assetFile.close();
+    
+    //dummy
+    return QUrl(forgedDest);
+}
 
 bool AssetsDatabase::_moveFileToDbFolder(QUrl &url, QString &id) {
 
-    //dest file
-    auto destFolder = this->assetsStorageFilepath();
-    auto destFileExt = QFileInfo(url.fileName()).suffix();
-    auto dest = destFolder + "/" + id + "." + destFileExt;
+    //dest file suffix
+    QFileInfo fInfo(url.fileName());
+    auto destFileExt = fInfo.suffix();
+    auto destFileName = fInfo.baseName();
+    
+    //file as raw data
+    QFile assetFile(url.fileName());
+    assetFile.open(QFile::ReadOnly);
+        auto data = assetFile.readAll();
+    assetFile.close();
 
-    //copy
-    auto copyResult = QFile::copy(url.toLocalFile(), dest);
-    if(!copyResult) {
-        qDebug() << "Assets : cannot insert, issue while copying source file to dest !";
-        return false;
-    }
-
-    return true;
+    //
+    auto destUrl = this->_moveFileToDbFolder(data, destFileExt, destFileName, id);
+    return !destUrl.isEmpty();
 }
 
 QString AssetsDatabase::_addAssetToDb(QString &id, QUrl &url, AssetsDatabaseElement* parent) {

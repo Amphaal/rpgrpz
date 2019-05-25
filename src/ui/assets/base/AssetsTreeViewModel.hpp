@@ -10,12 +10,32 @@
 #include "src/shared/assets/AssetsDatabaseElement.h"
 #include "src/shared/database/AssetsDatabase.h"
 
-class AssetsTreeViewModel : public QAbstractItemModel {
+#include "src/ui/others/ClientBindable.hpp"
+
+class AssetsTreeViewModel : public QAbstractItemModel, ClientBindable {
     public:
         AssetsTreeViewModel(QObject *parent = nullptr) : QAbstractItemModel(parent), _db(AssetsDatabase::get()) { };
 
         AssetsDatabase* database() {
             return this->_db;
+        }
+
+        void onRPZClientConnecting(RPZClient * cc) override {
+            ClientBindable::onRPZClientConnecting(cc);
+
+            //import asset
+            QObject::connect(
+                cc, &RPZClient::receivedAsset,
+                [&, cc](const QVariantHash &data) {
+                    
+                    this->beginResetModel();
+                        auto asset_id = this->_db->importAsset(data); 
+                    this->endResetModel();
+
+                    cc->informAssetSucessfulInsertion(asset_id);
+
+                }
+            );
         }
 
         ///////////////

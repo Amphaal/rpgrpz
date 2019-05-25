@@ -34,7 +34,7 @@ class AssetsDatabase : public JSONDatabase, public AssetsDatabaseElement {
 
         //network import/export
         QVariantHash prepareAssetPackage(QString &assetId);
-        QString importAsset(QVariantHash &package);
+        QString importAsset(const QVariantHash &package);
 
         //read
         QJsonObject paths();
@@ -68,6 +68,7 @@ class AssetsDatabase : public JSONDatabase, public AssetsDatabaseElement {
         //insertAsset() helpers
         QString _getFileSignatureFromFileUri(QUrl &url); //return the hash
         bool _moveFileToDbFolder(QUrl &url, QString &id);
+        QUrl _moveFileToDbFolder(QByteArray &data, QString &fileExt, QString &name, QString &id);
         QString _addAssetToDb(QString &id, QUrl &url, AssetsDatabaseElement* parent); //returns a default displayname
 
         //removeItems() helpers

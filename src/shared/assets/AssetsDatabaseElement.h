@@ -22,7 +22,9 @@ class AssetsDatabaseElement {
             FloorBrushContainer = 203, 
                 FloorBrush = 104,
             ObjectContainer = 204,
-                Object = 105
+                Object = 105,
+            DownloadedContainer = 299,
+                Downloaded = 199
         };
         
         static AssetsDatabaseElement* fromIndex(QModelIndex index);
@@ -119,6 +121,9 @@ class AssetsDatabaseElement {
         void _defineIsStaticContainer();
         void _defineIsDeletable();
         
+        void _setType(const AssetsDatabaseElement::Type &type);
+        static void _resetSubjacentItemsType(const AssetsDatabaseElement::Type &replacingType, AssetsDatabaseElement* target); //recursive
+
         ///
         ///
         //
@@ -128,7 +133,8 @@ class AssetsDatabaseElement {
             NPC_Container, 
             FloorBrushContainer, 
             ObjectContainer,
-            Folder
+            Folder,
+            DownloadedContainer
         };
 
         static const inline QList<AssetsDatabaseElement::Type> _itemTypes = {
@@ -136,7 +142,8 @@ class AssetsDatabaseElement {
             Event, 
             NPC, 
             FloorBrush,
-            Object
+            Object,
+            Downloaded
         };
 
         static const inline QList<AssetsDatabaseElement::Type> _deletableItemTypes = {
@@ -150,7 +157,8 @@ class AssetsDatabaseElement {
             InternalContainer,
             NPC_Container, 
             FloorBrushContainer, 
-            ObjectContainer
+            ObjectContainer,
+            DownloadedContainer
         };
 
         static const inline QList<AssetsDatabaseElement::Type> _internalItemsTypes = {
@@ -164,7 +172,9 @@ class AssetsDatabaseElement {
             { NPC_Container, ":/icons/app/manager/npc.png" },
             { ObjectContainer, ":/icons/app/manager/asset.png" },
             { FloorBrushContainer, ":/icons/app/manager/brushes.png" },
-            { Folder, ":/icons/app/manager/folder.png" }
+            { Folder, ":/icons/app/manager/folder.png" }, 
+            { InternalContainer, ":/icons/app/manager/internal.png" },
+            { DownloadedContainer, ":/icons/app/manager/downloaded.png" }
         };
 
         static const inline QHash<AssetsDatabaseElement::Type, QString> _typeDescriptions = {
@@ -173,6 +183,7 @@ class AssetsDatabaseElement {
             { Event, "Evenement" },
             { NPC_Container, "PNJ" },
             { ObjectContainer, "Assets de carte" },
-            { FloorBrushContainer, "Terrains" }
+            { FloorBrushContainer, "Terrains" },
+            { DownloadedContainer, "Téléchargés" }
         };
 };

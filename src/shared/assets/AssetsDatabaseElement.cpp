@@ -20,21 +20,13 @@ AssetsDatabaseElement::AssetsDatabaseElement(
     AssetsDatabaseElement* parent,
     const AssetsDatabaseElement::Type &type,
     QString id
-) :  _type(type) { 
-
+) { 
+    //define type
+    this->_setType(type);
 
     //define name (fullpath redefinition included)
     this->rename(name);
  
-    // types-related definitions
-    this->_defineIconPath();
-    this->_defineFlags();
-    this->_defineIsContainer();
-    this->_defineIsRoot();
-    this->_defineIsItem();
-    this->_defineIsStaticContainer();
-    this->_defineIsDeletable();
-
     //prevent id definition if not asset Type
     if(this->isItem()) {
         this->_id = id;
@@ -46,6 +38,19 @@ AssetsDatabaseElement::AssetsDatabaseElement(
     }
 
 };
+
+void AssetsDatabaseElement::_setType(const AssetsDatabaseElement::Type &type) {
+    this->_type = type; 
+
+      // types-related definitions
+    this->_defineIconPath();
+    this->_defineFlags();
+    this->_defineIsContainer();
+    this->_defineIsRoot();
+    this->_defineIsItem();
+    this->_defineIsStaticContainer();
+    this->_defineIsDeletable();
+}
 
 ///////////////////
 // RO Properties //
@@ -82,7 +87,6 @@ QString AssetsDatabaseElement::path() {
 QString AssetsDatabaseElement::iconPath() {
     return this->_iconPath;
 }
-
 
 bool AssetsDatabaseElement::isContainer() {
     return this->_isContainer;
@@ -211,6 +215,7 @@ void AssetsDatabaseElement::_defineFlags() {
     //flags definition
     switch(this->_type) {
         case InternalContainer:
+        case DownloadedContainer:
             this->_flags = Qt::ItemIsEnabled;
             break;
         case Player:
@@ -220,6 +225,7 @@ void AssetsDatabaseElement::_defineFlags() {
         case Object:
         case NPC:
         case FloorBrush:
+        case Downloaded:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
             break;
         case NPC_Container:
@@ -279,12 +285,35 @@ void AssetsDatabaseElement::_defineIconPath() {
     this->_iconPath = _iconPathByElementType[this->_type];
 }
 
+void AssetsDatabaseElement::_resetSubjacentItemsType(const AssetsDatabaseElement::Type &replacingType, AssetsDatabaseElement* target) {
+    //update children
+    for(auto elem : target->_subElements) {
+        if(elem->isContainer()) {
+            AssetsDatabaseElement::_resetSubjacentItemsType(replacingType, elem);
+        } else if(elem->isItem()) {
+            elem->_setType(replacingType);
+        }
+    }
+}
 
 void AssetsDatabaseElement::_defineParent(AssetsDatabaseElement* parent) {
     
-    //if already existing parent, tells him to deref child
+    //if already existing parent, tell him to deref child
     if(this->_parentElement) {
         this->_parentElement->unrefChild(this);
+
+        //reset type if base insert type is different from parent's
+        auto replacingType = parent->insertType();
+        if(this->insertType() != replacingType) {
+
+            //update self
+            if(this->isItem()) {
+                this->_setType(replacingType);
+            }
+
+            //update children
+            AssetsDatabaseElement::_resetSubjacentItemsType(replacingType, this);
+        }
     }
 
     //set new parent
@@ -349,8 +378,12 @@ void AssetsDatabaseElement::_defineInsertType() {
         case ObjectContainer:
             this->_insertType = Object;
             break;
+        case DownloadedContainer:
+            this->_insertType = Downloaded;
+            break;
         default:
             this->_insertType = Unknown;
+            break;
     }
 }
 

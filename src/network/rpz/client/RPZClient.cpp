@@ -93,13 +93,16 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             }   
             break;
         case JSONMethod::RequestedAsset: {
-                auto assetId = AssetsDatabase::get()->importAsset(data.toHash()); 
-                emit receivedAsset(assetId);
+                emit receivedAsset(data.toHash());
             }
             break;
         default:
             qWarning() << "RPZClient : unknown method from JSON !";
     }
+}
+
+void RPZClient::informAssetSucessfulInsertion(const QString &assetId) {
+    emit assetSucessfullyInserted(assetId);
 }
 
 void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
