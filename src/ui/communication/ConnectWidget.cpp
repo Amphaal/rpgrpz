@@ -6,7 +6,7 @@ ConnectWidget::ConnectWidget(QWidget * parent) : QGroupBox(parent),
                                             _domainTarget(new QLineEdit(this)),
                                             _connectBtn(new QPushButton(this)) {
                                                     
-    this->_settings.beginGroup("ConnectWidget");
+    AppContext::settings()->beginGroup("ConnectWidget");
 
     //this
     this->setLayout(new QHBoxLayout);
@@ -17,13 +17,13 @@ ConnectWidget::ConnectWidget(QWidget * parent) : QGroupBox(parent),
     //name target
     this->_nameTarget->addAction(QIcon(":/icons/app/connectivity/user.png"), QLineEdit::LeadingPosition);
     this->_nameTarget->setPlaceholderText("Nom de joueur");
-    this->_nameTarget->setText(this->_settings.value("name", "").toString());
+    this->_nameTarget->setText(AppContext::settings()->value("name", "").toString());
 
 
     //domain target
     this->_domainTarget->addAction(QIcon(":/icons/app/connectivity/server.png"), QLineEdit::LeadingPosition);
     this->_domainTarget->setPlaceholderText("IP ou domaine du serveur");
-    this->_domainTarget->setText(this->_settings.value("domain", "localhost").toString());
+    this->_domainTarget->setText(AppContext::settings()->value("domain", "localhost").toString());
 
     //sep
     auto sep = new QLabel(this);
@@ -34,7 +34,7 @@ ConnectWidget::ConnectWidget(QWidget * parent) : QGroupBox(parent),
     this->_portTarget->setValidator(new QIntValidator(0, 65535));
     this->_portTarget->setPlaceholderText("Port");
     this->_portTarget->setText(
-        this->_settings.value(
+        AppContext::settings()->value(
             "port", 
             AppContext::UPNP_DEFAULT_TARGET_PORT
         ).toString()
@@ -59,24 +59,24 @@ ConnectWidget::ConnectWidget(QWidget * parent) : QGroupBox(parent),
     this->layout()->addWidget(this->_portTarget);
     this->layout()->addWidget(this->_connectBtn);
 
-    this->_settings.endGroup();
+    AppContext::settings()->endGroup();
 }
 
 void ConnectWidget::_saveValuesAsSettings() {
     
     //register default values
-    this->_settings.beginGroup("ConnectWidget");
+    AppContext::settings()->beginGroup("ConnectWidget");
 
     const auto dt_text = this->_domainTarget->text();
-    if(!dt_text.isEmpty()) this->_settings.setValue("domain", dt_text);
+    if(!dt_text.isEmpty()) AppContext::settings()->setValue("domain", dt_text);
 
     const auto pt_text = this->_portTarget->text();
-    if(!pt_text.isEmpty()) this->_settings.setValue("port", pt_text);
+    if(!pt_text.isEmpty()) AppContext::settings()->setValue("port", pt_text);
 
     const auto nt_text = this->_nameTarget->text();
-    if(!nt_text.isEmpty()) this->_settings.setValue("name", nt_text);
+    if(!nt_text.isEmpty()) AppContext::settings()->setValue("name", nt_text);
 
-    this->_settings.endGroup();
+    AppContext::settings()->endGroup();
 }
 
 void ConnectWidget::_tryConnectToServer() {

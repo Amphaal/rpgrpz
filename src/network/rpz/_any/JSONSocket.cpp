@@ -114,7 +114,7 @@ void JSONSocket::_processIncomingAsJson(const QByteArray &data) {
 
     //signal
     auto method = static_cast<JSONMethod>((int)content["_m"].toDouble());
-    qDebug() << this->_customLog("json received >> " + JSONMethodAsArray[method]);
+    qDebug() << this->_customLog("json received << " + JSONMethodAsArray[method]);
     
     //bind
     emit JSONReceived(this, method, content["_d"].toVariant());

@@ -1,8 +1,9 @@
 #pragma once
 
 #include <QSplitter>
-#include <QSettings>
 #include <QWidget>
+
+#include "src/helpers/_appContext.h"
 
 class RestoringSplitter : public QSplitter {
     
@@ -10,16 +11,15 @@ class RestoringSplitter : public QSplitter {
         RestoringSplitter(const QString &id, QWidget * parent = nullptr) : QSplitter(parent), _id(id) {   
 
             QObject::connect(this, &QSplitter::splitterMoved, [&]() {
-                this->_intSettings.setValue(this->_id, this->saveState());
+                AppContext::settings()->setValue(this->_id, this->saveState());
             });
         }
 
         void loadState(){
-            this->restoreState(this->_intSettings.value(this->_id).toByteArray());
+            this->restoreState(AppContext::settings()->value(this->_id).toByteArray());
             this->setHandleWidth(7);
         }
 
     private:
-        QSettings _intSettings;
         const QString _id;
 };

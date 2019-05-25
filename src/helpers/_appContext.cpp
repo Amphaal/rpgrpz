@@ -1,5 +1,15 @@
 #include "_appContext.h"
 
+QSettings* AppContext::settings() {
+
+    if(!_settings) {
+        auto path = getAppDataLocation() + APP_SETTINGS_FILENAME;
+        _settings = new QSettings(path, QSettings::IniFormat);
+    }
+    
+    return _settings;
+}
+
 QString AppContext::_defaultAppDataLocation() {
     return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 } 

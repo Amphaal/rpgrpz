@@ -4,6 +4,8 @@
 
 #include <QCoreApplication>
 
+#include <QSettings>
+
 #include <QStandardPaths>
 #include <QTemporaryDir>
 #include <QString>
@@ -17,6 +19,8 @@
 class AppContext {
     
     private:
+        static inline QSettings* _settings = nullptr;
+
         static inline QString _appDataLocation;
         static QString _defaultAppDataLocation();
 
@@ -26,8 +30,11 @@ class AppContext {
         static inline const QString ASSETS_PATH = "/resources";
         static inline const QString MAPS_PATH = "/maps";
         static inline const QString ASSETS_JSON_COORDINATOR_FILENAME = "/resources.json";
+        static inline const QString APP_SETTINGS_FILENAME = "/settings.ini";
         
     public:    
+        static QSettings* settings();
+
         static inline const QString UPNP_DEFAULT_TARGET_PORT = "31137";
         static inline const QString UPNP_REQUEST_DESCRIPTION = "RPGRPZ";
         static inline const QString RPZ_MAP_FILE_EXT = ".mrpz";
@@ -38,7 +45,6 @@ class AppContext {
         void static initRandomContext();
         void static initCustomContext(QString &customContextSuffix);
         void static init(QString &customContext = QString());
-
 
         static QString makeSureDirPathExists(QString &path);
         static QString getAppDataLocation();

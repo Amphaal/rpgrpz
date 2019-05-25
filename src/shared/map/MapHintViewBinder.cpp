@@ -276,7 +276,7 @@ void MapHintViewBinder::_unpack(const RPZAsset::Alteration &alteration, QVector<
     for(auto &asset : assets) {
 
         //if new element from network
-        if(RPZAsset::mustParseGraphicsItem.contains(alteration)) {
+        if(RPZAsset::mustCreateGraphicsItem.contains(alteration)) {
 
             //newly created map elem
             QGraphicsItem* newItem = nullptr;
@@ -288,7 +288,7 @@ void MapHintViewBinder::_unpack(const RPZAsset::Alteration &alteration, QVector<
                 case AssetBase::Type::Drawing: {
 
                     //extract path
-                    const QPainterPath path = JSONSerializer::fromBase64(*asset.data());
+                    const QPainterPath path = JSONSerializer::fromBase64(*asset.shape());
                     
                     //define a ped
                     QPen pen;
@@ -308,7 +308,7 @@ void MapHintViewBinder::_unpack(const RPZAsset::Alteration &alteration, QVector<
                     QString pathToAssetFile = AssetsDatabase::get()->getFilePathToAsset(dbAssetId);
                                             
                     //extract the shape as bounding rect
-                    auto boundingRect = JSONSerializer::fromBase64(*asset.data()).boundingRect();
+                    auto boundingRect = JSONSerializer::fromBase64(*asset.shape()).boundingRect();
 
                     //is in db
                     if(!pathToAssetFile.isNull()) {
@@ -324,11 +324,12 @@ void MapHintViewBinder::_unpack(const RPZAsset::Alteration &alteration, QVector<
                         //add placeholder
                         newItem = this->_addMissingAssetPH(boundingRect);
 
-                        //add graphic item to list of items to replace at times
-                        this->_missingAssetsIdsFromDb->insert(dbAssetId, newItem);
 
                         //if first time the ID is encountered
                         if(!this->_missingAssetsIdsFromDb->contains(dbAssetId)) {
+
+                            //add graphic item to list of items to replace at times
+                            this->_missingAssetsIdsFromDb->insert(dbAssetId, newItem);
                             emit requestMissingAsset(dbAssetId);
                         }
 

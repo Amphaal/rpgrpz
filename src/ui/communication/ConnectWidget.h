@@ -1,6 +1,5 @@
 #pragma once
 
-#include <QSettings>
 #include <QHBoxLayout>
 #include <QWidget>
 #include <QLineEdit>
@@ -33,8 +32,6 @@ class ConnectWidget : public QGroupBox {
         
         QPushButton* _connectBtn = nullptr;
         QMetaObject::Connection _connectBtnLink;
-
-        QSettings _settings;
 
         RPZClient* _cc = nullptr;
         ConnectWidget::State _state = ConnectWidget::State::NotConnected;

@@ -18,14 +18,15 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
         RPZAsset() {}
         
         //enums
-        enum Alteration { Changed, Added, Removed, Selected, Focused, Reset }; //TODO turn CHANGED into RESIZED, MOVED....
+        enum Alteration { Resized, Moved, Added, Removed, Selected, Focused, Reset }; //TODO turn CHANGED into RESIZED, MOVED....
         static inline const QList<Alteration> networkAlterations = { 
-            Alteration::Changed, 
+            Alteration::Resized, 
+            Alteration::Moved,
             Alteration::Added,
             Alteration::Removed,
             Alteration::Reset 
         };
-        static const inline QList<Alteration> mustParseGraphicsItem = {
+        static const inline QList<Alteration> mustCreateGraphicsItem = {
             Alteration::Added, 
             Alteration::Reset
         };
@@ -34,7 +35,7 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
             Serializable(id), 
             AssetBase(type), 
             Ownable(owner),
-            _data(data),
+            _shape(data),
             _metadata(metadata) { };
 
         RPZAsset(const AssetBase::Type &type,  QGraphicsItem* assetItemOnMap, const QVariantHash &metadata = QVariantHash()) :
@@ -50,7 +51,7 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
             auto out = this->toVariantHash();
             
             //if no graphics item
-            if(!this->graphicsItem() && this->_data.isNull()) {
+            if(!this->graphicsItem() && this->_shape.isNull()) {
                 
                 //warning
                 qWarning() << "Trying to parse an asset with no GraphicsItem bound !";
@@ -61,7 +62,7 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
             if(this->graphicsItem()) {
 
                 //if alteration that required a parsing
-                if(RPZAsset::mustParseGraphicsItem.contains(alteration)) {
+                if(RPZAsset::mustCreateGraphicsItem.contains(alteration)) {
 
                     //depending on assetType...
                     switch(this->type()) {
@@ -70,7 +71,7 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
                         case AssetBase::Type::Drawing: {
                             auto casted = (QGraphicsPathItem*)this->graphicsItem();
                             const auto path = casted->path();
-                            this->_data = JSONSerializer::toBase64(path);
+                            this->_shape = JSONSerializer::toBase64(path);
                         }
                         break;
                         
@@ -78,7 +79,7 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
                         case AssetBase::Type::Object: {
                             QPainterPath shape;
                             shape.addRect(this->graphicsItem()->sceneBoundingRect());
-                            this->_data = JSONSerializer::toBase64(shape);
+                            this->_shape = JSONSerializer::toBase64(shape);
                         }
                         break;
                     
@@ -88,7 +89,7 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
 
             }
 
-            out.insert("data", this->_data);
+            out.insert("data", this->_shape);
 
             return out;
         }
@@ -105,7 +106,7 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
 
         QGraphicsItem* graphicsItem() { return this->_item; };
         void setGraphicsItem(QGraphicsItem* item) { this->_item = item; };
-        QByteArray* data() { return &this->_data; };
+        QByteArray* shape() { return &this->_shape; };
         QVariantHash* metadata() { return &this->_metadata; };
 
         //overrides descriptor
@@ -131,7 +132,7 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
 
     private:
         QGraphicsItem* _item = nullptr;
-        QByteArray _data;
+        QByteArray _shape;
         QVariantHash _metadata;
 
         QVariantHash toVariantHash() override {

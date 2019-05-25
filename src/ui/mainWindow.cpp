@@ -311,7 +311,7 @@ void MainWindow::_saveAs() {
 void MainWindow::_loadMap() {
     auto picked = QFileDialog::getOpenFileName(this, 
         "Ouvrir une carte", 
-        AppContext::getAppDataLocation(), 
+        AppContext::getMapsFolderLocation(), 
         I18n::tr()->Popup_MapDescriptor()
     );
     if(!picked.isNull()) {

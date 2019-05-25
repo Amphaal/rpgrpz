@@ -18,6 +18,8 @@
 
 #include "tests/TestMainWindow.hpp"
 
+#include "src/shared/RandomColor.hpp"
+
 #include <QDir>
 #include <QLockFile>
 
