@@ -191,10 +191,15 @@ void RPZServer::_broadcastMapChanges(const QVariantHash &payload, JSONSocket * s
 
     auto payloadWithOwners = AlterationPayload::fromVariantHash(payload);
 
-    //put owners on top
-    auto owner = this->_getUser(senderSocket);
+    //determine ownership on absent owner data data
+    auto defaultOwner = this->_getUser(senderSocket); //default is sender
     for(auto &asset : *payloadWithOwners.assets()) {
-        asset.setOwnership(*owner);
+        
+        //if no owner data, assume the sender is the owner
+        if(asset.owner().id().isNull()) {
+            asset.setOwnership(*defaultOwner);
+        }
+
     }
 
     //save for history

@@ -118,7 +118,7 @@ void MapView::onRPZClientConnecting(RPZClient * cc) {
             auto rpz_user = RPZUser::fromVariantHash(user);
 
             //define self pen color
-            this->_penColor = rpz_user.color();
+            this->hints()->setPenColor(rpz_user.color());
 
             //if host
             auto descriptor = rpz_user.role() == RPZUser::Role::Host ? NULL : this->_rpzClient->getConnectedSocketAddress();
@@ -341,10 +341,6 @@ void MapView::changeToolFromAction(const MapTools::Actions &instruction) {
 
 }
 
-void MapView::changePenSize(const int newSize) {
-    this->_penWidth = newSize;
-}
-
 //////////////
 /* END TOOL */
 //////////////
@@ -549,7 +545,7 @@ void MapView::_endDrawing() {
     if(this->_tempLines.size()) {
 
         //add definitive path
-        this->_hints->addDrawing(*this->_tempDrawing, this->_getPen());
+        this->_hints->addDrawing(*this->_tempDrawing, this->hints()->getPen());
     }
 
     //destroy temp
@@ -570,13 +566,9 @@ void MapView::_drawLineTo(const QPoint &evtPoint) {
     this->_tempDrawing->lineTo(to);
 
     //draw temp line
-    auto currentPen = this->_getPen();
+    auto currentPen = this->hints()->getPen();
     auto tempLine = this->scene()->addLine(lineCoord, currentPen);
     this->_tempLines.append(tempLine);
-}
-
-QPen MapView::_getPen() const {
-    return QPen(this->_penColor, this->_penWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 }
 
 /////////////////

@@ -211,7 +211,7 @@ void MainWindow::_initUIApp() {
     //on pen size change
     QObject::connect(
         this->_mapTools, &MapTools::penSizeChanged,
-        this->_mapView, &MapView::changePenSize
+        this->_mapView->hints(), &MapHintViewBinder::setPenSize
     );
 
     //update status bar on map file update

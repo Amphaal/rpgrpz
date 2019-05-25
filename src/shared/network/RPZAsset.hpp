@@ -89,7 +89,7 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
 
             }
 
-            out.insert("data", this->_shape);
+            out.insert("shape", this->_shape);
 
             return out;
         }
@@ -99,7 +99,7 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
                 data["id"].toUuid(),
                 (AssetBase::Type)data["type"].toInt(),
                 RPZUser::fromVariantHash(data["owner"].toHash()),
-                data.contains("data") ? data["data"].toByteArray() : NULL,
+                data.contains("shape") ? data["shape"].toByteArray() : NULL,
                 data.contains("mdata") ? data["mdata"].toHash() : QVariantHash()
             );
         };

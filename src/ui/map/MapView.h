@@ -45,7 +45,6 @@ class MapView : public QGraphicsView, public ClientBindable {
 
     public slots:
         void changeToolFromAction(const MapTools::Actions &instruction);
-        void changePenSize(const int newSize);
         
         //network
         void onRPZClientConnecting(RPZClient * cc) override;
@@ -117,10 +116,6 @@ class MapView : public QGraphicsView, public ClientBindable {
             void _goToDefaultZoom();
 
         //drawing...
-            int _penWidth = 1;
-            QColor _penColor = Qt::blue;
-            QPen _getPen() const;
-
             QVector<QGraphicsItem*> _tempLines;
             QPainterPath* _tempDrawing = nullptr;
             void _beginDrawing();

@@ -7,13 +7,6 @@ MapHintViewBinder::MapHintViewBinder(QGraphicsView* boundGv) : _boundGv(boundGv)
         this->_boundGv->scene(), &QGraphicsScene::selectionChanged,
         this, &MapHintViewBinder::_onSceneSelectionChanged
     );
-
-    //define dirty
-    QObject::connect(
-        this, &MapHint::assetsAlteredForNetwork,
-        this, &MapHintViewBinder::_shouldMakeDirty
-    );
-
 };
 
 void MapHintViewBinder::mayWantToSavePendingState() {
@@ -36,7 +29,11 @@ void MapHintViewBinder::mayWantToSavePendingState() {
 
 void MapHintViewBinder::_shouldMakeDirty(const RPZAsset::Alteration &state, QVector<RPZAsset> &elements) {
     
+    //if remote, never dirty
     if(this->_isRemote) return;
+
+    //if not a network alteration type
+    if(!RPZAsset::networkAlterations.contains(state)) return;
 
     this->_setDirty();
 }
@@ -271,6 +268,33 @@ void MapHintViewBinder::replaceMissingAssetPlaceholders(const QString &assetId) 
     this->_missingAssetsIdsFromDb->remove(assetId);
 }
 
+
+QPen MapHintViewBinder::getPen() const {
+    return QPen(this->_penColor, this->_penWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+}
+
+void MapHintViewBinder::setPenColor(QColor &color) {
+    this->_penColor = color;
+
+    //update self graphic path items with new color
+    for(auto &elemId : this->_selfElements) {
+        auto gi = this->_assetsById[elemId].graphicsItem();
+        
+        //determine if is a path type
+        auto casted = dynamic_cast<QGraphicsPathItem*>(gi);
+        if(!casted) continue;
+
+        //update color
+        auto c_pen = casted->pen();
+        c_pen.setColor(color);
+        casted->setPen(c_pen);
+    }
+}
+
+void MapHintViewBinder::setPenSize(int size) {
+    this->_penWidth = size;
+}
+
 void MapHintViewBinder::_unpack(const RPZAsset::Alteration &alteration, QVector<RPZAsset> &assets) {
 
     //if reset
@@ -301,8 +325,16 @@ void MapHintViewBinder::_unpack(const RPZAsset::Alteration &alteration, QVector<
                     
                     //define a ped
                     QPen pen;
-                    pen.setColor(asset.owner().color());
-                    pen.setWidth(asset.metadata()->value("w").toInt());
+
+                        //if no owner set, assume it is self
+                        if(asset.owner().id().isNull()) {
+                            pen.setColor(this->_penColor);
+                        } else {
+                            pen.setColor(asset.owner().color());
+                        }
+
+                        //set width
+                        pen.setWidth(asset.metadata()->value("w").toInt());
 
                     //draw the form
                     newItem = this->_addDrawing(path, pen);
@@ -437,6 +469,10 @@ void MapHintViewBinder::_alterSceneGlobal(const RPZAsset::Alteration &alteration
     this->_preventNetworkAlterationEmission = false;
     this->_deletionProcessing = false;
     this->_externalInstructionPending = false;
+
+    //define dirty
+    this->_shouldMakeDirty(alteration, assets);
+
 
 }
 

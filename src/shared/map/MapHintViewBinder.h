@@ -54,6 +54,11 @@ class MapHintViewBinder : public MapHint {
         void centerGraphicsItemToPoint(QGraphicsItem* item, const QPoint &eventPos);
         QGraphicsItem* generateTemplateAssetElement(AssetsDatabaseElement* assetElem);
         void addTemplateAssetElement(QGraphicsItem* temporaryItem, AssetsDatabaseElement* assetElem, const QPoint &dropPos);
+        
+        //pen
+        QPen getPen() const;
+        void setPenColor(QColor &color);
+        void setPenSize(int size);
 
     signals:
         void mapFileStateChanged(const QString &filePath, bool isDirty);
@@ -87,4 +92,9 @@ class MapHintViewBinder : public MapHint {
         QUuid _alterSceneInternal(const RPZAsset::Alteration &alteration, RPZAsset &asset) override;
 
         void _onSceneSelectionChanged();
+
+        //drawing
+        int _penWidth = 1;
+        QColor _penColor = Qt::blue;
+
 };
