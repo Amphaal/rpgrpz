@@ -79,7 +79,10 @@
         "condition_variable": "cpp",
         "mutex": "cpp",
         "qtmath": "cpp",
-        "qdebug": "cpp"
+        "qdebug": "cpp",
+        "qgraphicsitem": "cpp",
+        "qgraphicsrectitem": "cpp",
+        "qvariant": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

@@ -155,8 +155,9 @@ list(APPEND SOURCES
 
 #ui components
 list(APPEND SOURCES
-
+    src/ui/map/graphics/MapViewGraphicsScene.hpp
     src/shared/map/MapHint.cpp
+    
     src/shared/map/MapHintViewBinder.cpp
 
     src/ui/map/base/AnimationTimeLine.hpp

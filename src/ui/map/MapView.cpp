@@ -3,15 +3,8 @@
 MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
 
     //default
-    this->setScene(
-        new QGraphicsScene(
-            this->_defaultSceneSize,  
-            this->_defaultSceneSize,  
-            this->_defaultSceneSize, 
-            this->_defaultSceneSize, 
-            this
-        )
-    );
+    this->_scene = new MapViewGraphicsScene(this->_defaultSceneSize);
+    this->setScene(this->_scene);
     this->_hints = new MapHintViewBinder(this); //after first inst of scene
     this->setAcceptDrops(true);
     this->_changeTool(MapView::_defaultTool);
@@ -27,10 +20,6 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
     //background
     auto background = new QBrush("#EEE", Qt::CrossPattern);
     this->setBackgroundBrush(*background);
-    //this->setCacheMode(QGraphicsView::CacheBackground);
-
-    //optimisations
-    //this->setOptimizationFlags( QFlags<OptimizationFlag>(QGraphicsView::DontSavePainterState | QGraphicsView::DontAdjustForAntialiasing));
     
     //to route from MapHints
     QObject::connect(
@@ -64,7 +53,7 @@ void MapView::keyPressEvent(QKeyEvent * event) {
 
         //deletion handling
         case Qt::Key::Key_Delete:
-            this->_hints->alterSceneFromItems(RPZAsset::Alteration::Removed, this->scene()->selectedItems());
+            this->_hints->alterSceneFromItems(RPZAsset::Alteration::Removed, this->_scene->selectedItems());
             break;
         
         //ask unselection of current tool
@@ -261,9 +250,14 @@ void MapView::_toolOnMousePress(const MapTools::Actions &tool) {
 }
 
 void MapView::_toolOnMouseRelease(const MapTools::Actions &tool) {
+    
+    //if was drawing...
     if(this->_tempDrawing)  {
         this->_endDrawing();
     }
+
+    //if was moving ?
+    this->hints()->handleAnyMovedItems();
 }
 
 
@@ -289,7 +283,7 @@ void MapView::_changeTool(MapTools::Actions newTool, const bool quickChange) {
 
         //define new tool
         this->_selectedTool = newTool;
-        this->scene()->clearSelection();
+        this->_scene->clearSelection();
 
     }    
 
@@ -350,7 +344,7 @@ void MapView::changeToolFromAction(const MapTools::Actions &instruction) {
 //////////
 
 void MapView::_goToSceneCenter() {
-    auto center = this->scene()->sceneRect().center();
+    auto center = this->_scene->sceneRect().center();
     // qDebug() << "centering on " << center;
     this->centerOn(center);
 }
@@ -567,7 +561,7 @@ void MapView::_drawLineTo(const QPoint &evtPoint) {
 
     //draw temp line
     auto currentPen = this->hints()->getPen();
-    auto tempLine = this->scene()->addLine(lineCoord, currentPen);
+    auto tempLine = this->_scene->addLine(lineCoord, currentPen);
     this->_tempLines.append(tempLine);
 }
 

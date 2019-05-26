@@ -96,14 +96,12 @@ void MapHint::_alterSceneGlobal(const RPZAsset::Alteration &alteration, QVector<
     this->_emitAlteration(alteration, assets);
 }
 
-
 //helper
 void MapHint::alterSceneFromAsset(const RPZAsset::Alteration &alteration, RPZAsset &asset) {
     QVector<RPZAsset> list;
     list.append(asset);
     return this->_alterSceneGlobal(alteration, list);
 }
-
 
 //helper
 void MapHint::alterSceneFromAssets(const RPZAsset::Alteration &alteration, QVector<RPZAsset> &assets) {
@@ -115,7 +113,6 @@ void MapHint::alterSceneFromIds(const RPZAsset::Alteration &alteration, const QV
     return this->_alterSceneGlobal(alteration, this->_fetchAssets(elementIds));
 }
 
-
 //helper
 QVector<RPZAsset> MapHint::_fetchAssets(const QVector<QUuid> &listToFetch) const {
    QVector<RPZAsset> list;
@@ -126,7 +123,6 @@ QVector<RPZAsset> MapHint::_fetchAssets(const QVector<QUuid> &listToFetch) const
 
    return list; 
 }
-
 
 //////////////////
 /* END ELEMENTS */

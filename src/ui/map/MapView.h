@@ -21,6 +21,7 @@
 #include <QVariant>
 #include <QVector>
 
+#include "graphics/MapViewGraphicsScene.hpp"
 
 #include "MapTools.h"
 #include "base/AnimationTimeLine.hpp"
@@ -69,6 +70,8 @@ class MapView : public QGraphicsView, public ClientBindable {
         void resizeEvent(QResizeEvent * event) override;
 
     private:
+        MapViewGraphicsScene* _scene = nullptr;
+
         MapHintViewBinder* _hints;
         void _onSceneSelectionChanged();
         void _goToDefaultViewState();

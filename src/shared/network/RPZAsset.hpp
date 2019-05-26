@@ -9,8 +9,6 @@
 #include "../_serializer.hpp"
 #include "Ownable.hpp"
 
-#include "src/shared/map/MapHint.h"
-
 #include "AssetBase.hpp"
 
 class RPZAsset : public AssetBase, public Serializable, public Ownable {
@@ -18,24 +16,49 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
         RPZAsset() {}
         
         //enums
-        enum Alteration { Resized, Moved, Added, Removed, Selected, Focused, Reset }; //TODO turn CHANGED into RESIZED, MOVED....
+        enum Alteration { 
+            Resized, 
+            Moved, 
+            Added, 
+            Removed, 
+            Selected, 
+            Focused, 
+            Reset 
+        }; 
+
         static inline const QList<Alteration> networkAlterations = { 
-            Alteration::Resized, 
-            Alteration::Moved,
-            Alteration::Added,
-            Alteration::Removed,
-            Alteration::Reset 
+            Resized, 
+            Moved, 
+            Added, 
+            Removed, 
+            // Selected, 
+            // Focused, 
+            Reset 
         };
-        static const inline QList<Alteration> mustCreateGraphicsItem = {
-            Alteration::Added, 
-            Alteration::Reset
+        static const inline QList<Alteration> buildGraphicsItemAlterations = {
+            // Resized, 
+            // Moved, 
+            Added, 
+            // Removed, 
+            // Selected, 
+            // Focused, 
+            Reset 
+        };
+        static const inline QList<Alteration> updateGraphicsItemAlterations = {
+            Resized, 
+            Moved, 
+            // Added, 
+            // Removed, 
+            // Selected, 
+            // Focused, 
+            // Reset 
         };
 
-        RPZAsset(const QUuid &id, const AssetBase::Type &type, const RPZUser &owner, const QByteArray &data = NULL, const QVariantHash &metadata = QVariantHash()) : 
+        RPZAsset(const QUuid &id, const AssetBase::Type &type, const RPZUser &owner, const QByteArray &shape = NULL, const QVariantHash &metadata = QVariantHash()) : 
             Serializable(id), 
             AssetBase(type), 
             Ownable(owner),
-            _shape(data),
+            _shape(shape),
             _metadata(metadata) { };
 
         RPZAsset(const AssetBase::Type &type,  QGraphicsItem* assetItemOnMap, const QVariantHash &metadata = QVariantHash()) :
@@ -62,29 +85,8 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
             if(this->graphicsItem()) {
 
                 //if alteration that required a parsing
-                if(RPZAsset::mustCreateGraphicsItem.contains(alteration)) {
-
-                    //depending on assetType...
-                    switch(this->type()) {
-                        
-                        //drawing...
-                        case AssetBase::Type::Drawing: {
-                            auto casted = (QGraphicsPathItem*)this->graphicsItem();
-                            const auto path = casted->path();
-                            this->_shape = JSONSerializer::toBase64(path);
-                        }
-                        break;
-                        
-                        //object
-                        case AssetBase::Type::Object: {
-                            QPainterPath shape;
-                            shape.addRect(this->graphicsItem()->sceneBoundingRect());
-                            this->_shape = JSONSerializer::toBase64(shape);
-                        }
-                        break;
-                    
-                    }
-
+                if(RPZAsset::buildGraphicsItemAlterations.contains(alteration)) {
+                    this->updateShapeFromGraphicsItem();
                 }
 
             }
@@ -103,6 +105,32 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
                 data.contains("mdata") ? data["mdata"].toHash() : QVariantHash()
             );
         };
+
+        void updateShapeFromGraphicsItem() {
+            
+            if(!this->graphicsItem()) return;
+
+            //depending on assetType...
+            switch(this->type()) {
+                
+                //drawing...
+                case AssetBase::Type::Drawing: {
+                    auto casted = (QGraphicsPathItem*)this->graphicsItem();
+                    const auto path = casted->path();
+                    this->_shape = JSONSerializer::toBase64(path);
+                }
+                break;
+                
+                //object
+                case AssetBase::Type::Object: {
+                    QPainterPath shape;
+                    shape.addRect(this->graphicsItem()->sceneBoundingRect());
+                    this->_shape = JSONSerializer::toBase64(shape);
+                }
+                break;
+            
+            }
+        }
 
         QGraphicsItem* graphicsItem() { return this->_item; };
         void setGraphicsItem(QGraphicsItem* item) { this->_item = item; };

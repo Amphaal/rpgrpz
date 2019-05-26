@@ -18,6 +18,8 @@
 
 #include "src/shared/database/MapDatabase.hpp"
 
+#include "src/ui/map/graphics/MapViewGraphicsScene.hpp"
+
 #include "MapHint.h"
 
 class MapHintViewBinder : public MapHint {
@@ -26,15 +28,18 @@ class MapHintViewBinder : public MapHint {
 
     public:
         MapHintViewBinder(QGraphicsView* boundGv);
+        MapViewGraphicsScene* scene();
 
         //load/unload
-        bool loadState(QString &filePath);
+        QString stateFilePath();
         bool loadDefaultState();
+        bool loadState(QString &filePath);
         bool saveState();
         bool saveStateAs(QString &newFilePath);
-        QString stateFilePath();
+        
         bool isDirty();
         void mayWantToSavePendingState();
+
         bool isRemote();
         bool defineAsRemote(QString &remoteMapDescriptor = QString());
 
@@ -46,6 +51,7 @@ class MapHintViewBinder : public MapHint {
 
         //add alteration from graphicitem
         void alterSceneFromItems(const RPZAsset::Alteration &alteration, const QList<QGraphicsItem*> &elements);
+        void alterSceneFromItem(const RPZAsset::Alteration &alteration, QGraphicsItem* element);
 
         //actions helpers
         void addDrawing(const QPainterPath &path, const QPen &pen);
@@ -55,6 +61,9 @@ class MapHintViewBinder : public MapHint {
         QGraphicsItem* generateTemplateAssetElement(AssetsDatabaseElement* assetElem);
         void addTemplateAssetElement(QGraphicsItem* temporaryItem, AssetsDatabaseElement* assetElem, const QPoint &dropPos);
         
+        //
+        void handleAnyMovedItems();
+
         //pen
         QPen getPen() const;
         void setPenColor(QColor &color);
@@ -64,7 +73,7 @@ class MapHintViewBinder : public MapHint {
         void mapFileStateChanged(const QString &filePath, bool isDirty);
         void requestMissingAsset(const QString &assetIdToRequest);
 
-    protected:
+    private:
         QString _stateFilePath;
 
         QMultiHash<QString, QGraphicsRectItem*> *_missingAssetsIdsFromDb = nullptr;
@@ -80,21 +89,23 @@ class MapHintViewBinder : public MapHint {
         bool _deletionProcessing = false;
 
         void _unpack(const RPZAsset::Alteration &alteration, QVector<RPZAsset> &assets);
-        QGraphicsPathItem* _addDrawing(const QPainterPath &path, const QPen &pen);
-        QGraphicsRectItem* _addMissingAssetPH(QRectF &rect);
-        QGraphicsItem* _addGenericImageBasedAsset(const QString &pathToImageFile, qreal opacity = 1, const QPointF &initialPos = QPointF());
+            QGraphicsItem* _unpack_build(RPZAsset &assetToBuildFrom);
+            QGraphicsItem* _unpack_update(const RPZAsset::Alteration &alteration, RPZAsset &assetToUpdateFrom);
 
         QHash<QGraphicsItem*, QUuid> _idsByGraphicItem;
 
+        RPZAsset _fetchAsset(QGraphicsItem* graphicElem) const;
         QVector<RPZAsset> _fetchAssets(const QList<QGraphicsItem*> &listToFetch) const;
-        
-        void _alterSceneGlobal(const RPZAsset::Alteration &alteration, QVector<RPZAsset> &assets) override;
-        QUuid _alterSceneInternal(const RPZAsset::Alteration &alteration, RPZAsset &asset) override;
 
         void _onSceneSelectionChanged();
+        void _onSceneItemChanged(QGraphicsItem* item, int alteration);
+            QSet<QGraphicsItem*> _itemsWhoNotifiedMovement;
 
         //drawing
         int _penWidth = 1;
         QColor _penColor = Qt::blue;
 
+        //augmenting MapHint
+        void _alterSceneGlobal(const RPZAsset::Alteration &alteration, QVector<RPZAsset> &assets) override;
+        QUuid _alterSceneInternal(const RPZAsset::Alteration &alteration, RPZAsset &asset) override;
 };
