@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.13.3)
 #version
 SET(CMAKE_PROJECT_VERSION_MAJOR 0)
 SET(CMAKE_PROJECT_VERSION_MINOR 10)
-SET(CMAKE_PROJECT_VERSION_PATCH 1)
+SET(CMAKE_PROJECT_VERSION_PATCH 2)
 
 
 #default configuration
@@ -222,10 +222,10 @@ add_custom_command(TARGET ${PROJECT_NAME}
 )
 
 #using windeployqt to import all the .dll and qt requirements based on used components
-# IF(NOT EXISTS "${CMAKE_BINARY_DIR}/bin/Qt5Cored.dll")
-#     include(Windeployqt)
-#     windeployqt(${PROJECT_NAME} "${CMAKE_CURRENT_BINARY_DIR}/bin")
-# ENDIF()
+IF(NOT EXISTS "${CMAKE_BINARY_DIR}/bin/Qt5Cored.dll")
+    include(Windeployqt)
+    windeployqt(${PROJECT_NAME} "${CMAKE_CURRENT_BINARY_DIR}/bin")
+ENDIF()
 
 #copy gstreamer .dlls
 set(_gstreamer_plugins "all")
