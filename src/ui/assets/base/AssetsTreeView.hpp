@@ -288,5 +288,9 @@ class AssetsTreeView : public QTreeView {
             emit requestAssetPreview(targetFilePath);
         }
 
+        void focusOutEvent(QFocusEvent *event) override {
+            this->clearSelection();
+        }
+
 
 };

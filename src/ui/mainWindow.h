@@ -1,6 +1,7 @@
 #pragma once
 
 #include "src/localization/i18n.hpp"
+#include "src/helpers/_appContext.h"
 
 #include <QMainWindow>
 #include <QMenuBar>
@@ -45,6 +46,9 @@ class MainWindow : public QMainWindow {
         void closeEvent(QCloseEvent *event) override;
         
         void _initUI();
+
+        void _saveWindowState();
+        void _loadWindowState();
 
         ConnectivityHelper* _ipHelper;
         RPZServer* _rpzServer = nullptr;

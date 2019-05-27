@@ -8,14 +8,42 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
     this->_initConnectivity();
     
     //initial show
-    this->resize(800, 600);
-    this->showMaximized();
+    this->_loadWindowState();
 
     //start the update check
     this->_updateIntegrator->checkForAppUpdates();
 
     //load default map
     this->_mapView->hints()->loadDefaultState();
+}
+
+void MainWindow::_saveWindowState() {
+    AppContext::settings()->beginGroup("mainWindow");
+    AppContext::settings()->setValue("windowGeometry", this->saveGeometry());
+    AppContext::settings()->setValue("windowState", this->saveState());
+    AppContext::settings()->endGroup();
+}
+
+void MainWindow::_loadWindowState() {
+
+    //default state to save
+    if(!AppContext::settings()->childGroups().contains("mainWindow")) {
+        this->showMaximized();
+        this->_saveWindowState();
+        return;
+    }
+
+    //load...
+    AppContext::settings()->beginGroup("mainWindow");
+    this->restoreGeometry(
+        AppContext::settings()->value("windowGeometry").toByteArray()
+    );
+    this->restoreState(
+        AppContext::settings()->value("windowState").toByteArray()
+    );
+    AppContext::settings()->endGroup();
+
+    this->show();
 }
 
 void MainWindow::_trueShow() {
@@ -32,8 +60,12 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 
     //unbind network client from ui
     ClientBindable::unbindAll();
+
+    //save window state
+    this->_saveWindowState();
     
-    event->accept();
+    //normal close
+    QMainWindow::closeEvent(event);
 }
 
 void MainWindow::_initConnectivity() {
