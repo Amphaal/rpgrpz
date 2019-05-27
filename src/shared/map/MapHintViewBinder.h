@@ -76,7 +76,7 @@ class MapHintViewBinder : public MapHint {
     private:
         QString _stateFilePath;
 
-        QMultiHash<QString, QGraphicsRectItem*> *_missingAssetsIdsFromDb = nullptr;
+        QMultiHash<QString, QGraphicsRectItem*> _missingAssetsIdsFromDb;
         bool _isRemote = false;
 
         bool _isDirty = false;
@@ -96,6 +96,8 @@ class MapHintViewBinder : public MapHint {
 
         RPZAsset _fetchAsset(QGraphicsItem* graphicElem) const;
         QVector<RPZAsset> _fetchAssets(const QList<QGraphicsItem*> &listToFetch) const;
+
+        QGraphicsItem* _findBoundGraphicsItem(RPZAsset &asset);
 
         void _onSceneSelectionChanged();
         void _onSceneItemChanged(QGraphicsItem* item, int alteration);

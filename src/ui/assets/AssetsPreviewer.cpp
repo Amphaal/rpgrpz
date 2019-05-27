@@ -40,7 +40,7 @@ void AssetsPreviewer::previewFile(QString localFilePath) {
         renderer.render(&painter);
     } else {
        image = QImage(localFilePath);
-       image = image.scaled(250, 250);
+       image = image.scaled(QSize(250, 250), Qt::AspectRatioMode::KeepAspectRatio);
     }
 
     //update preview

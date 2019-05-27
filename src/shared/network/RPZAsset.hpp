@@ -11,6 +11,63 @@
 
 #include "AssetBase.hpp"
 
+
+class RPZAssetMetadata : public QVariantHash {
+    public:
+        RPZAssetMetadata() : QVariantHash() {}
+        RPZAssetMetadata(const QVariantHash &hash) : QVariantHash(hash) {}
+    
+        QString dbAssetId() const {
+            return (*this)["a_id"].toString();
+        }
+
+        QString dbAssetName() const {
+            return (*this)["a_name"].toString();
+        }
+
+        QPainterPath shape() const {
+            return JSONSerializer::toPainterPath(
+                (*this)["shape"].toByteArray()
+            );
+        }
+
+        QPointF pos() const {
+            return JSONSerializer::toPointF(
+                (*this)["pos"].toByteArray()
+            );
+        }
+
+        int penWidth() const {
+            return (*this)["pen_w"].toInt();
+        }
+
+        void setDbAssetId(const QString &id) {
+            (*this)["a_id"] = id;
+        }
+
+        void setDbAssetName(const QString &name) {
+            (*this)["a_name"] = name;
+        }
+
+        void setShape(const QPainterPath &path) {
+            (*this)["shape"] = JSONSerializer::asBase64(path);
+        }
+
+        void setShape(const QRectF &rect) {
+            QPainterPath shape;
+            shape.addRect(rect);
+            this->setShape(shape);
+        }
+
+        void setPos(const QPointF &pos) {
+            (*this)["pos"] = JSONSerializer::asBase64(pos);
+        }
+
+        void setPenWidth(int width) {
+            (*this)["pen_w"] = width;
+        }
+};
+
 class RPZAsset : public AssetBase, public Serializable, public Ownable {
     public:
         RPZAsset() {}
@@ -54,14 +111,13 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
             // Reset 
         };
 
-        RPZAsset(const QUuid &id, const AssetBase::Type &type, const RPZUser &owner, const QByteArray &shape = NULL, const QVariantHash &metadata = QVariantHash()) : 
+        RPZAsset(const QUuid &id, const AssetBase::Type &type, const RPZUser &owner, const RPZAssetMetadata &metadata) : 
             Serializable(id), 
             AssetBase(type), 
             Ownable(owner),
-            _shape(shape),
             _metadata(metadata) { };
 
-        RPZAsset(const AssetBase::Type &type,  QGraphicsItem* assetItemOnMap, const QVariantHash &metadata = QVariantHash()) :
+        RPZAsset(const AssetBase::Type &type,  QGraphicsItem* assetItemOnMap, const RPZAssetMetadata &metadata) :
             Serializable(QUuid::createUuid()),
             AssetBase(type), 
             _item(assetItemOnMap),
@@ -70,17 +126,6 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
 
         QVariantHash toVariantHashWithData(const Alteration &alteration) {
             
-            //initial
-            auto out = this->toVariantHash();
-            
-            //if no graphics item
-            if(!this->graphicsItem() && this->_shape.isNull()) {
-                
-                //warning
-                qWarning() << "Trying to parse an asset with no GraphicsItem bound !";
-
-            }
-
             //if graphicsItem bound, set data
             if(this->graphicsItem()) {
 
@@ -89,11 +134,11 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
                     this->updateShapeFromGraphicsItem();
                 }
 
+            } else {
+                qWarning() << "Trying to parse an asset with no GraphicsItem bound !";
             }
 
-            out.insert("shape", this->_shape);
-
-            return out;
+            return this->toVariantHash();
         }
 
         static RPZAsset fromVariantHash(const QVariantHash &data) {
@@ -101,7 +146,6 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
                 data["id"].toUuid(),
                 (AssetBase::Type)data["type"].toInt(),
                 RPZUser::fromVariantHash(data["owner"].toHash()),
-                data.contains("shape") ? data["shape"].toByteArray() : NULL,
                 data.contains("mdata") ? data["mdata"].toHash() : QVariantHash()
             );
         };
@@ -116,33 +160,38 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
                 //drawing...
                 case AssetBase::Type::Drawing: {
                     auto casted = (QGraphicsPathItem*)this->graphicsItem();
-                    const auto path = casted->path();
-                    this->_shape = JSONSerializer::toBase64(path);
+                    this->metadata()->setShape(
+                        casted->path()
+                    );
                 }
                 break;
                 
                 //object
                 case AssetBase::Type::Object: {
-                    QPainterPath shape;
-                    shape.addRect(this->graphicsItem()->sceneBoundingRect());
-                    this->_shape = JSONSerializer::toBase64(shape);
+                    this->metadata()->setShape(
+                        this->graphicsItem()->sceneBoundingRect()
+                    );
                 }
                 break;
-            
             }
+
+            this->metadata()->setPos(
+                this->graphicsItem()->scenePos()
+            );
+
         }
 
         QGraphicsItem* graphicsItem() { return this->_item; };
         void setGraphicsItem(QGraphicsItem* item) { this->_item = item; };
-        QByteArray* shape() { return &this->_shape; };
-        QVariantHash* metadata() { return &this->_metadata; };
+
+        RPZAssetMetadata* metadata() { return &this->_metadata; };
 
         //overrides descriptor
         QString descriptor() override { 
             auto base = AssetBase::descriptor();
 
             //displays asset name
-            auto asname = this->_metadata["a_name"].toString();
+            auto asname = this->metadata()->dbAssetName();
             if(!asname.isNull()) {
                 base += " \"" + asname + "\" ";
             }
@@ -160,8 +209,7 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
 
     private:
         QGraphicsItem* _item = nullptr;
-        QByteArray _shape;
-        QVariantHash _metadata;
+        RPZAssetMetadata _metadata;
 
         QVariantHash toVariantHash() override {
             QVariantHash out;

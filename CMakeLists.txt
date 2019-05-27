@@ -222,10 +222,10 @@ add_custom_command(TARGET ${PROJECT_NAME}
 )
 
 #using windeployqt to import all the .dll and qt requirements based on used components
-IF(NOT EXISTS "${CMAKE_BINARY_DIR}/bin/Qt5Cored.dll")
-    include(Windeployqt)
-    windeployqt(${PROJECT_NAME} "${CMAKE_CURRENT_BINARY_DIR}/bin")
-ENDIF()
+# IF(NOT EXISTS "${CMAKE_BINARY_DIR}/bin/Qt5Cored.dll")
+#     include(Windeployqt)
+#     windeployqt(${PROJECT_NAME} "${CMAKE_CURRENT_BINARY_DIR}/bin")
+# ENDIF()
 
 #copy gstreamer .dlls
 set(_gstreamer_plugins "all")

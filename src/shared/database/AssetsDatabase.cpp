@@ -301,7 +301,7 @@ bool AssetsDatabase::_moveFileToDbFolder(QUrl &url, QString &id) {
     auto destFileName = fInfo.baseName();
     
     //file as raw data
-    QFile assetFile(url.fileName());
+    QFile assetFile(url.toLocalFile());
     assetFile.open(QFile::ReadOnly);
         auto data = assetFile.readAll();
     assetFile.close();

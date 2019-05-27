@@ -60,6 +60,13 @@ QUuid MapHint::_alterSceneInternal(const RPZAsset::Alteration &alteration, RPZAs
             }
             break;
         
+        //on move / resize, update inner RPZAsset
+        case RPZAsset::Alteration::Moved:
+        case RPZAsset::Alteration::Resized:
+            asset.updateShapeFromGraphicsItem();
+            this->_assetsById[elemId] = asset;
+            break;
+            
         //on removal
         case RPZAsset::Alteration::Removed:
 

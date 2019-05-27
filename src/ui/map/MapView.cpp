@@ -146,8 +146,8 @@ void MapView::onRPZClientConnecting(RPZClient * cc) {
 void MapView::onRPZClientDisconnect(RPZClient* cc) {
 
     //back to default state
-    this->_hints->loadDefaultState();
     this->_hints->defineAsRemote();
+    this->_hints->loadDefaultState();
 
 }
 
@@ -494,7 +494,7 @@ void MapView::dragEnterEvent(QDragEnterEvent *event) {
         auto selectedElem = AssetsDatabaseElement::fromIndex(selectedIndexes.takeFirst());
         if(!selectedElem->isItem()) return;
 
-        //TODO handle more types
+        //type restriction
         if(selectedElem->type() != AssetsDatabaseElement::Type::Object) return; 
 
         //update temporary values

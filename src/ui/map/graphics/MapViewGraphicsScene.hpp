@@ -22,7 +22,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
     public:
         MapViewGraphicsScene(int defaultSize) : QGraphicsScene(defaultSize, defaultSize, defaultSize, defaultSize) {}
 
-        QGraphicsItem* addGenericImageBasedAsset(const QString &pathToImageFile, qreal opacity = 1, const QPointF &initialPos = QPointF()) {
+        QGraphicsItem* addGenericImageBasedAsset(const QString &pathToImageFile, qreal opacity = 1, const QPointF &pos = QPointF()) {
     
             //get file infos
             QFileInfo pathInfo(pathToImageFile);
@@ -39,26 +39,29 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             //define transparency as it is a dummy
             item->setOpacity(opacity);
 
+            //define position
+            if(!pos.isNull()) {
+                item->setPos(pos);
+            }
+
             //add it to the scene
             this->addItem(item);
-
-            //define position
-            if(!initialPos.isNull()) item->setPos(initialPos);
 
             return item;
         }
 
-        QGraphicsPathItem* addDrawing(const QPainterPath &path, const QPen &pen) {
-            
+        QGraphicsPathItem* addDrawing(const QPainterPath &path, const QPen &pen, const QPointF &pos) {
+
             //add path
             auto newPath = new MapViewGraphicsPathItem(this, path, pen);
+            newPath->setPos(pos);
             this->addItem(newPath);
             
             return newPath;
         }
 
 
-        MapViewGraphicsRectItem* addMissingAssetPH(QRectF &rect) {
+        MapViewGraphicsRectItem* addMissingAssetPH(QRectF &rect, QPointF &pos) {
     
             //pen to draw the rect with
             QPen pen;
@@ -72,6 +75,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
 
             //add to scene
             auto placeholder = new MapViewGraphicsRectItem(this, rect, pen, brush);
+            placeholder->setPos(pos);
             this->addItem(placeholder);
 
             return placeholder;

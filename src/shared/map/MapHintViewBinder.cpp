@@ -153,8 +153,7 @@ bool MapHintViewBinder::defineAsRemote(QString &remoteMapDescriptor) {
     this->_isRemote = !remoteMapDescriptor.isEmpty();
     
     //reset missing assets list
-    if(this->_missingAssetsIdsFromDb) delete this->_missingAssetsIdsFromDb;
-    this->_missingAssetsIdsFromDb = new QMultiHash<QString, QGraphicsRectItem*>();
+    this->_missingAssetsIdsFromDb.clear();
 
     //change map descriptor if is a remote session
     if(this->_isRemote) this->_stateFilePath = remoteMapDescriptor;
@@ -227,13 +226,18 @@ void MapHintViewBinder::setPenSize(int size) {
 /////////////////////////////
 
 void MapHintViewBinder::addDrawing(const QPainterPath &path, const QPen &pen) {
-    
-    auto newPath = this->scene()->addDrawing(path, pen);
+            
+    //translate to positionnable item
+    auto initialPos = path.elementAt(0);
+    auto translated = path.translated(-initialPos);
+
+    //generate item
+    auto newPath = this->scene()->addDrawing(translated, pen, initialPos);
 
     //define metadata
-    auto metadata = QVariantHash();
-    metadata["w"] = pen.width();
-    
+    auto metadata = RPZAssetMetadata();
+    metadata.setPenWidth(pen.width());
+
     //inform !
     auto newAsset = RPZAsset(AssetBase::Type::Drawing, newPath, metadata);
     this->alterSceneFromAsset(RPZAsset::Alteration::Added, newAsset);
@@ -261,9 +265,9 @@ void MapHintViewBinder::addTemplateAssetElement(QGraphicsItem* temporaryItem, As
     this->centerGraphicsItemToPoint(temporaryItem, dropPos);
 
     //define metadata
-    auto metadata = QVariantHash();
-    metadata["a_id"] = assetElem->id();
-    metadata["a_name"] = assetElem->displayName();
+    auto metadata = RPZAssetMetadata();
+    metadata.setDbAssetId(assetElem->id());
+    metadata.setDbAssetName(assetElem->displayName());
 
     //reset transparency as it is not a dummy anymore
     temporaryItem->setOpacity(1);
@@ -341,7 +345,8 @@ QGraphicsItem* MapHintViewBinder::_unpack_build(RPZAsset &assetToBuildFrom) {
         case AssetBase::Type::Drawing: {
 
             //extract path
-            const QPainterPath path = JSONSerializer::fromBase64(*assetToBuildFrom.shape());
+            auto path = assetToBuildFrom.metadata()->shape();
+            auto pos = assetToBuildFrom.metadata()->pos();
             
             //define a ped
             QPen pen;
@@ -354,10 +359,10 @@ QGraphicsItem* MapHintViewBinder::_unpack_build(RPZAsset &assetToBuildFrom) {
                 }
 
                 //set width
-                pen.setWidth(assetToBuildFrom.metadata()->value("w").toInt());
+                pen.setWidth(assetToBuildFrom.metadata()->penWidth());
 
             //draw the form
-            newItem = this->scene()->addDrawing(path, pen);
+            newItem = this->scene()->addDrawing(path, pen, pos);
         }
         break;
 
@@ -365,17 +370,17 @@ QGraphicsItem* MapHintViewBinder::_unpack_build(RPZAsset &assetToBuildFrom) {
         case AssetBase::Type::Object: {
 
             //depending on presence in asset db...
-            auto dbAssetId = assetToBuildFrom.metadata()->value("a_id").toString();
+            auto dbAssetId = assetToBuildFrom.metadata()->dbAssetId();
             QString pathToAssetFile = AssetsDatabase::get()->getFilePathToAsset(dbAssetId);
-                                    
-            //extract the shape as bounding rect
-            auto boundingRect = JSONSerializer::fromBase64(*assetToBuildFrom.shape()).boundingRect();
+            
+            //get position
+            auto pos = assetToBuildFrom.metadata()->pos();
 
             //is in db
             if(!pathToAssetFile.isNull()) {
                 
                 //add to view
-                newItem = this->scene()->addGenericImageBasedAsset(pathToAssetFile, 1, boundingRect.topLeft());
+                newItem = this->scene()->addGenericImageBasedAsset(pathToAssetFile, 1, pos);
 
             } 
             
@@ -383,14 +388,15 @@ QGraphicsItem* MapHintViewBinder::_unpack_build(RPZAsset &assetToBuildFrom) {
             else {
                 
                 //add placeholder
-                auto placeholder = this->scene()->addMissingAssetPH(boundingRect);
+                auto boundingRect = assetToBuildFrom.metadata()->shape().boundingRect();
+                auto placeholder = this->scene()->addMissingAssetPH(boundingRect, pos);
                 newItem = placeholder;
 
                 //if first time the ID is encountered
-                if(!this->_missingAssetsIdsFromDb->contains(dbAssetId)) {
+                if(!this->_missingAssetsIdsFromDb.contains(dbAssetId)) {
 
                     //add graphic item to list of items to replace at times
-                    this->_missingAssetsIdsFromDb->insert(dbAssetId, placeholder);
+                    this->_missingAssetsIdsFromDb.insert(dbAssetId, placeholder);
                     emit requestMissingAsset(dbAssetId);
                 }
 
@@ -409,13 +415,9 @@ QGraphicsItem* MapHintViewBinder::_unpack_update(const RPZAsset::Alteration &alt
 
     switch(alteration) { 
         case RPZAsset::Alteration::Moved: {    
-            auto painter = JSONSerializer::fromBase64(*assetToUpdateFrom.shape());
-            
-            auto initPos = itemToUpdate->sceneBoundingRect().topLeft();
-            auto destPos = painter.boundingRect().topLeft();
-
-            //TODO
-            // itemToUpdate->setPos(1,1);
+            auto destPos = assetToUpdateFrom.metadata()->pos();
+            //TODO test
+            itemToUpdate->setPos(destPos);
         }
         break;
     }
@@ -424,15 +426,14 @@ QGraphicsItem* MapHintViewBinder::_unpack_update(const RPZAsset::Alteration &alt
 }
 
 void MapHintViewBinder::replaceMissingAssetPlaceholders(const QString &assetId) {
-    if(!this->_missingAssetsIdsFromDb) return;
-    if(!this->_missingAssetsIdsFromDb->contains(assetId)) return;
+    if(!this->_missingAssetsIdsFromDb.contains(assetId)) return;
 
     //find the path file
     auto pathToFile = AssetsDatabase::get()->getFilePathToAsset(QString(assetId));
     if(pathToFile.isNull()) return;
     
     //iterate through the list of GI to replace
-    auto setOfGraphicsItemsToReplace = this->_missingAssetsIdsFromDb->values(assetId).toSet();
+    auto setOfGraphicsItemsToReplace = this->_missingAssetsIdsFromDb.values(assetId).toSet();
     for(auto gi : setOfGraphicsItemsToReplace) {
         
         //add on top the required graphical item
@@ -455,7 +456,7 @@ void MapHintViewBinder::replaceMissingAssetPlaceholders(const QString &assetId) 
     }
 
     //clear the id from the missing list
-    this->_missingAssetsIdsFromDb->remove(assetId);
+    this->_missingAssetsIdsFromDb.remove(assetId);
 }
 
 /////////////////////////////
@@ -539,12 +540,11 @@ void MapHintViewBinder::_alterSceneGlobal(const RPZAsset::Alteration &alteration
 
 }
 
-//register actions
-QUuid MapHintViewBinder::_alterSceneInternal(const RPZAsset::Alteration &alteration, RPZAsset &asset) {
-
-    //get underlying item. If received from network, search in local cache
+QGraphicsItem* MapHintViewBinder::_findBoundGraphicsItem(RPZAsset &asset) {
+    
     auto elemId = asset.id();
     QGraphicsItem * item = nullptr; 
+
     if(asset.graphicsItem()) {
 
         item = asset.graphicsItem();
@@ -564,6 +564,16 @@ QUuid MapHintViewBinder::_alterSceneInternal(const RPZAsset::Alteration &alterat
     } else {
         qWarning() << "Cannot find a graphicsItem bound to the asset !";
     }
+
+    return item;
+}
+
+//register actions
+QUuid MapHintViewBinder::_alterSceneInternal(const RPZAsset::Alteration &alteration, RPZAsset &asset) {
+
+    //get underlying item. If received from network, search in local cache
+    auto elemId = asset.id();
+    QGraphicsItem * item = this->_findBoundGraphicsItem(asset);
     
     //default handling last, cuz asset will be deleted first from internal list
     MapHint::_alterSceneInternal(alteration, asset); 
@@ -583,16 +593,6 @@ QUuid MapHintViewBinder::_alterSceneInternal(const RPZAsset::Alteration &alterat
         //on focus
         case RPZAsset::Alteration::Focused:
             if(item) this->_boundGv->centerOn(item);
-            break;
-
-        //on move
-        case RPZAsset::Alteration::Moved: {
-                //update internal RPZAsset
-                auto id = this->_idsByGraphicItem[item];
-                auto asset = this->_assetsById[id];
-                asset.updateShapeFromGraphicsItem();
-                this->_assetsById[id] = asset;
-            }
             break;
 
         //on selection
