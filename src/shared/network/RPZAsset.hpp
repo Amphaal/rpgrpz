@@ -169,7 +169,7 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
                 //object
                 case AssetBase::Type::Object: {
                     this->metadata()->setShape(
-                        this->graphicsItem()->sceneBoundingRect()
+                        this->graphicsItem()->boundingRect()
                     );
                 }
                 break;
