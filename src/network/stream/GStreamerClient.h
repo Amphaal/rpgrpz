@@ -4,6 +4,8 @@
 #include <gst/controller/gstinterpolationcontrolsource.h>
 #include <gst/controller/gstdirectcontrolbinding.h>
 
+#include "src/helpers/_appContext.h"
+
 #include <QObject>
 #include <QDir>
 

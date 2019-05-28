@@ -88,6 +88,9 @@ GStreamerClient::GStreamerClient(QObject* parent) : QObject(parent) {
             "volume", this->_volumeControl
         )
     );
+    this->setVolume(
+        AppContext::settings()->audioVolume()
+    );
     
     //define bus and callbacks
     auto bus = gst_element_get_bus(this->_bin);

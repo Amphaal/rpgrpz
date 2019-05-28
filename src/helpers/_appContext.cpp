@@ -1,10 +1,24 @@
 #include "_appContext.h"
 
-QSettings* AppContext::settings() {
+AppSettings::AppSettings(const QString &path) : QSettings(path, QSettings::IniFormat) {}
+
+int AppSettings::audioVolume() {
+    return this->value("volume", 100).toInt();
+}
+
+void AppSettings::setAudioVolume(int volume) {
+    this->setValue("volume", volume);
+}
+
+///
+///
+///
+
+AppSettings* AppContext::settings() {
 
     if(!_settings) {
         auto path = getAppDataLocation() + APP_SETTINGS_FILENAME;
-        _settings = new QSettings(path, QSettings::IniFormat);
+        _settings = new AppSettings(path);
     }
     
     return _settings;

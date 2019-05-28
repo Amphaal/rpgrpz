@@ -4,7 +4,6 @@
 #include <QObject>
 
 #include "src/helpers/network/youtube/YoutubeHelper.hpp"
-#include "src/helpers/_AudioFilesHelper.hpp"
 
 #include "libs/qtPromise/qpromise.h"
 
@@ -45,10 +44,7 @@ class PlaylistItem : public QObject {
         QPromise<QString> streamSourceUri() {
             switch(this->_type) {
                 case PlaylistItem::LinkType::ServerAudio: {
-                        return AudioFilesHelper::getTitleOfFile(this->_uri).then([=](const QString &title) {
-                            this->_setTitle(title);
-                            return this->_uri;
-                        });
+                        return QPromise<QString>::resolve(this->_uri);
                     }
                     break;
                 case PlaylistItem::LinkType::YoutubePlaylist:

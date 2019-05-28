@@ -16,10 +16,18 @@
 #define _WINSOCKAPI_
 #include <windows.h>
 
+class AppSettings : public QSettings {
+    public:
+        AppSettings(const QString &path);
+
+        int audioVolume();
+        void setAudioVolume(int volume = 100);
+};
+
 class AppContext {
     
     private:
-        static inline QSettings* _settings = nullptr;
+        static inline AppSettings* _settings = nullptr;
 
         static inline QString _appDataLocation;
         static QString _defaultAppDataLocation();
@@ -33,7 +41,7 @@ class AppContext {
         static inline const QString APP_SETTINGS_FILENAME = "/settings.ini";
         
     public:    
-        static QSettings* settings();
+        static AppSettings* settings();
 
         static inline const QString UPNP_DEFAULT_TARGET_PORT = "31137";
         static inline const QString UPNP_REQUEST_DESCRIPTION = "RPGRPZ";

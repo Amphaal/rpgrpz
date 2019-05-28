@@ -7,6 +7,8 @@
 
 #include <QHBoxLayout>
 
+#include "src/helpers/_appContext.h"
+
 class AudioStreamToolbar : public QWidget {
     
     Q_OBJECT
@@ -21,7 +23,9 @@ class AudioStreamToolbar : public QWidget {
             this->_audio->setOrientation(Qt::Orientation::Horizontal);
             this->_audio->setMinimum(0);
             this->_audio->setMaximum(100);
-            this->_audio->setValue(100);
+            this->_audio->setValue(
+                AppContext::settings()->audioVolume()
+            );
             this->_audio->setFixedWidth(100);
             QObject::connect(
                 this->_audio, &QAbstractSlider::valueChanged,
@@ -45,6 +49,10 @@ class AudioStreamToolbar : public QWidget {
 
             //self
             this->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+        }
+
+        ~AudioStreamToolbar() {
+            AppContext::settings()->setAudioVolume(this->_audio->value());
         }
     
     private:
