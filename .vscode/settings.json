@@ -82,7 +82,9 @@
         "qdebug": "cpp",
         "qgraphicsitem": "cpp",
         "qgraphicsrectitem": "cpp",
-        "qvariant": "cpp"
+        "qvariant": "cpp",
+        "qregularexpression": "cpp",
+        "qdatetime": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

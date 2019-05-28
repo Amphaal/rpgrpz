@@ -196,7 +196,7 @@ list(APPEND SOURCES
 #main
 list(APPEND SOURCES 
     src/ui/MainWindow.cpp
-    tests/TestMainWindow.hpp
+    tests/TestMainWindow.cpp
     src/main.cpp
 )
 

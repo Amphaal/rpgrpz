@@ -13,8 +13,10 @@ class NetworkHelper {
             return QPromise<QByteArray>([&](
                 const QPromiseResolve<QByteArray>& resolve,
                 const QPromiseReject<QByteArray>& reject) {
+                
+                QNetworkRequest request(url);
+                auto reply = _manager.get(request);
 
-                QNetworkReply* reply = _manager.get(QNetworkRequest(url));
                 QObject::connect(reply, &QNetworkReply::finished, [=]() {
                     if (reply->error() == QNetworkReply::NoError) {
                         resolve(reply->readAll());

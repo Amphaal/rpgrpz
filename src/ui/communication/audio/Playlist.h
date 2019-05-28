@@ -12,8 +12,6 @@
 #include <QUrlQuery>
 
 #include "PlaylistItem.hpp"
-#include "src/helpers/network/_YoutubeHelper.hpp"
-#include "src/helpers/network/_AudioFilesHelper.hpp"
 
 class Playlist : public QListWidget {
 
@@ -26,7 +24,7 @@ class Playlist : public QListWidget {
         void playPrevious();
     
     signals:
-        void playRequested(const QString &uri);
+        void playRequested(void* data);
 
     private:
         void _onItemDoubleClicked(QListWidgetItem * item);

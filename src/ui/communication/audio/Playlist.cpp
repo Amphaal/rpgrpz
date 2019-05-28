@@ -2,9 +2,6 @@
 
 Playlist::Playlist(QWidget* parent) : QListWidget(parent) {
 
-    // auto a = YoutubeVideo::fromUrl("https://www.youtube.com/watch?v=9bZkp7q19f0");
-    // a->fetchVideoInfos();
-
     //self
     this->setAcceptDrops(true);
     this->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -112,26 +109,20 @@ void Playlist::dropEvent(QDropEvent *event) {
         //defines behavior depending on tag
         switch(link.first) {
             case PlaylistItem::LinkType::ServerAudio: {
-                    
-                    //strip file:/// before
-                    auto cleanUrl = url.toString(QFlags<QUrl::UrlFormattingOption>(QUrl::RemoveScheme | QUrl::StripTrailingSlash));
-                    cleanUrl = cleanUrl.mid(3);
-                    this->_buildItemsFromUri(cleanUrl, link.first);
-
+                    this->_buildItemsFromUri(url.toLocalFile(), link.first);
                 }
                 break;
             case PlaylistItem::LinkType::YoutubePlaylist: {
                     
                     //handler...
-                    auto _iterateVideoIds = [&, link](QList<QString> list) {
-                        for(auto &id : list) {
-                            auto url = YoutubeVideo::urlFromVideoId(id);
-                            this->_buildItemsFromUri(url, link.first);
+                    auto _iterateVideoIds = [&, link](const QList<YoutubeVideoMetadata*> &mvideoList) {
+                        for(auto mvideo : mvideoList) {
+                            this->_buildItemsFromUri(mvideo->url(), PlaylistItem::LinkType::YoutubeVideo);
                         }
                     };
 
                     //fetch videos
-                    YoutubeVideo::fromPlaylistUrl(url.toString()).then(_iterateVideoIds);
+                    YoutubeHelper::fromPlaylistUrl(url.toString()).then(_iterateVideoIds);
 
                 }
                 break;
@@ -149,41 +140,24 @@ void Playlist::dropEvent(QDropEvent *event) {
 
 void Playlist::_buildItemsFromUri(QString uri, const PlaylistItem::LinkType &type) {
         
-        //prepare item
-        auto a = new QListWidgetItem();
-        auto plItem = new PlaylistItem(type, uri);
-        
-        //define inner data
-        a->setData(
-            Qt::UserRole, 
-            QVariant::fromValue(static_cast<void*>(plItem))
-        );
-        
-        //define default title
-        auto _defineTitle = [a, plItem](QString title) {
-            plItem->setTitle(title);
-            //auto test = static_cast<PlaylistItem*>(variant.value<void*>());
-            a->setText(title);
-        };
-        _defineTitle(uri); //temporary title
-
-        //conditionnal additionnal informations fetchers
-        switch(type) {
-            case PlaylistItem::LinkType::ServerAudio:
-                AudioFilesHelper::getTitleOfFile(uri).then(_defineTitle);
-                break;
-            case PlaylistItem::LinkType::YoutubePlaylist:
-            case PlaylistItem::LinkType::YoutubeVideo: {
-                    auto ytV = YoutubeVideo::fromUrl(uri);
-                    ytV->fetchVideoInfos().then([&]() {
-                        _defineTitle(ytV->getTitle());
-                    });
-                }
-                
-                break;
-        }
+    //prepare item
+    auto playlistItem = new QListWidgetItem(uri);
+    auto data = new PlaylistItem(type, uri);
     
-    this->addItem(a);
+    //define inner data
+    auto c_data_pointer = (long long)data;
+    auto c_data_pointer_variant = QVariant::fromValue(c_data_pointer);
+    playlistItem->setData(Qt::UserRole, c_data_pointer_variant);
+
+    //update text from playlist update
+    QObject::connect(
+        data, &PlaylistItem::titleChanged,
+        [playlistItem](const QString &title) {
+            playlistItem->setText(title);
+        }
+    );
+
+    this->addItem(playlistItem);
 }
 
 
@@ -233,8 +207,10 @@ bool Playlist::_defaultPlay() {
 }
 
 void Playlist::_playLink() {
-    auto uri = this->_runningLink->text();
-    emit playRequested(uri);
+    auto data_variant = this->_runningLink->data(Qt::UserRole);
+    auto asLong = data_variant.toLongLong();
+    auto p_data = (PlaylistItem*)asLong;
+    emit playRequested((void*)p_data);
 }
 
 void Playlist::_onItemDoubleClicked(QListWidgetItem * item) {
