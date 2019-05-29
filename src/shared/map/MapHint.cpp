@@ -38,6 +38,10 @@ QUuid MapHint::_alterSceneInternal(const RPZAsset::Alteration &alteration, RPZAs
     auto elemId = asset.id();
     auto ownerId = asset.owner().id();
     
+    //update asset
+    asset.mayUpdateDataFromGraphicsItem(alteration);
+
+    //additionnal modifications
     switch(alteration) {
 
         //on addition
@@ -63,7 +67,7 @@ QUuid MapHint::_alterSceneInternal(const RPZAsset::Alteration &alteration, RPZAs
         //on move / resize, update inner RPZAsset
         case RPZAsset::Alteration::Moved:
         case RPZAsset::Alteration::Resized:
-            asset.updateShapeFromGraphicsItem();
+        case RPZAsset::Alteration::LayerChange:
             this->_assetsById[elemId] = asset;
             break;
             
@@ -116,7 +120,18 @@ void MapHint::alterSceneFromAssets(const RPZAsset::Alteration &alteration, QVect
 }
 
 //helper
-void MapHint::alterSceneFromIds(const RPZAsset::Alteration &alteration, const QVector<QUuid> &elementIds) {
+void MapHint::alterSceneFromIds(const RPZAsset::Alteration &alteration, const QVector<QUuid> &elementIds, QVariant &arg) {
+
+    //apply new layer to assets
+    if(alteration == RPZAsset::Alteration::LayerChange) {
+        auto layer = arg.toInt();
+        for(auto &id : elementIds) {
+            auto asset = this->_assetsById[id];
+            asset.metadata()->setLayer(layer);
+            this->_assetsById[id] = asset;
+        }
+    }
+
     return this->_alterSceneGlobal(alteration, this->_fetchAssets(elementIds));
 }
 

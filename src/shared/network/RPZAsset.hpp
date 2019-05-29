@@ -31,6 +31,10 @@ class RPZAssetMetadata : public QVariantHash {
             );
         }
 
+        int layer() const {
+            return (*this)["lyr"].toInt();
+        }
+
         QPointF pos() const {
             return JSONSerializer::toPointF(
                 (*this)["pos"].toByteArray()
@@ -66,6 +70,10 @@ class RPZAssetMetadata : public QVariantHash {
         void setPenWidth(int width) {
             (*this)["pen_w"] = width;
         }
+
+        void setLayer(int pos) {
+            (*this)["lyr"] = pos;
+        }
 };
 
 class RPZAsset : public AssetBase, public Serializable, public Ownable {
@@ -73,14 +81,16 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
         RPZAsset() {}
         
         //enums
-        enum Alteration { 
+        enum Alteration {
+            Unknown, 
             Resized, 
             Moved, 
             Added, 
             Removed, 
             Selected, 
             Focused, 
-            Reset 
+            Reset,
+            LayerChange 
         }; 
 
         static inline const QList<Alteration> networkAlterations = { 
@@ -88,27 +98,17 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
             Moved, 
             Added, 
             Removed, 
-            // Selected, 
-            // Focused, 
-            Reset 
+            Reset,
+            LayerChange 
         };
         static const inline QList<Alteration> buildGraphicsItemAlterations = {
-            // Resized, 
-            // Moved, 
-            Added, 
-            // Removed, 
-            // Selected, 
-            // Focused, 
-            Reset 
+            Added,  
+            Reset
         };
         static const inline QList<Alteration> updateGraphicsItemAlterations = {
             Resized, 
             Moved, 
-            // Added, 
-            // Removed, 
-            // Selected, 
-            // Focused, 
-            // Reset 
+            LayerChange  
         };
 
         RPZAsset(const QUuid &id, const AssetBase::Type &type, const RPZUser &owner, const RPZAssetMetadata &metadata) : 
@@ -123,24 +123,6 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
             _item(assetItemOnMap),
             _metadata(metadata) {  };
 
-
-        QVariantHash toVariantHashWithData(const Alteration &alteration) {
-            
-            //if graphicsItem bound, set data
-            if(this->graphicsItem()) {
-
-                //if alteration that required a parsing
-                if(RPZAsset::buildGraphicsItemAlterations.contains(alteration)) {
-                    this->updateShapeFromGraphicsItem();
-                }
-
-            } else {
-                qWarning() << "Trying to parse an asset with no GraphicsItem bound !";
-            }
-
-            return this->toVariantHash();
-        }
-
         static RPZAsset fromVariantHash(const QVariantHash &data) {
             return RPZAsset(
                 data["id"].toUuid(),
@@ -150,35 +132,13 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
             );
         };
 
-        void updateShapeFromGraphicsItem() {
+        void mayUpdateDataFromGraphicsItem(const Alteration &alteration) {
             
-            if(!this->graphicsItem()) return;
-
-            //depending on assetType...
-            switch(this->type()) {
-                
-                //drawing...
-                case AssetBase::Type::Drawing: {
-                    auto casted = (QGraphicsPathItem*)this->graphicsItem();
-                    this->metadata()->setShape(
-                        casted->path()
-                    );
-                }
-                break;
-                
-                //object
-                case AssetBase::Type::Object: {
-                    this->metadata()->setShape(
-                        this->graphicsItem()->boundingRect()
-                    );
-                }
-                break;
+            if(!this->graphicsItem()) { return; }
+            
+            if(buildGraphicsItemAlterations.contains(alteration) || updateGraphicsItemAlterations.contains(alteration)) {
+                this->_updateShapeFromGraphicsItem();
             }
-
-            this->metadata()->setPos(
-                this->graphicsItem()->scenePos()
-            );
-
         }
 
         QGraphicsItem* graphicsItem() { return this->_item; };
@@ -206,11 +166,6 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
             return base;
         };
 
-
-    private:
-        QGraphicsItem* _item = nullptr;
-        RPZAssetMetadata _metadata;
-
         QVariantHash toVariantHash() override {
             QVariantHash out;
 
@@ -222,5 +177,44 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
 
             return out;
         };
+
+
+    private:
+        QGraphicsItem* _item = nullptr;
+        RPZAssetMetadata _metadata;
+
+        void _updateShapeFromGraphicsItem() {
+            
+            //depending on assetType...
+            switch(this->type()) {
+                
+                //drawing...
+                case AssetBase::Type::Drawing: {
+                    auto casted = (QGraphicsPathItem*)this->graphicsItem();
+                    this->metadata()->setShape(
+                        casted->path()
+                    );
+                }
+                break;
+                
+                //object
+                case AssetBase::Type::Object: {
+                    this->metadata()->setShape(
+                        this->graphicsItem()->boundingRect()
+                    );
+                }
+                break;
+            }
+
+            //and position
+            this->metadata()->setPos(
+                this->graphicsItem()->scenePos()
+            );
+
+            //layer pos
+            this->metadata()->setLayer(
+                this->graphicsItem()->zValue()
+            );
+        }
 
 };

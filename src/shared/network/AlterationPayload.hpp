@@ -19,7 +19,7 @@ class AlterationPayload : public Serializable {
 
             QVariantList assets;
             for(auto &i : this->_assets) {
-               assets.append(i.toVariantHashWithData(this->_alteration));
+               assets.append(i.toVariantHash());
             }
 
             out.insert("assets", assets);

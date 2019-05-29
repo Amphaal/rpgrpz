@@ -416,8 +416,12 @@ QGraphicsItem* MapHintViewBinder::_unpack_update(const RPZAsset::Alteration &alt
     switch(alteration) { 
         case RPZAsset::Alteration::Moved: {    
             auto destPos = assetToUpdateFrom.metadata()->pos();
-            //TODO test
             itemToUpdate->setPos(destPos);
+        }
+        break;
+        case RPZAsset::Alteration::LayerChange: {
+            auto newLayer = assetToUpdateFrom.metadata()->layer();
+            itemToUpdate->setZValue(newLayer);
         }
         break;
     }

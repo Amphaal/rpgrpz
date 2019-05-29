@@ -27,7 +27,7 @@ class MapHint : public QObject {
         //from external App instructions (toolBar, RPZServer...)
         void alterSceneFromAsset(const RPZAsset::Alteration &alteration, RPZAsset &asset);
         void alterSceneFromAssets(const RPZAsset::Alteration &alteration, QVector<RPZAsset> &assets);
-        void alterSceneFromIds(const RPZAsset::Alteration &alteration, const QVector<QUuid> &assetIds); 
+        void alterSceneFromIds(const RPZAsset::Alteration &alteration, const QVector<QUuid> &assetIds, QVariant &arg); 
 
     protected:
         bool _preventNetworkAlterationEmission = false;

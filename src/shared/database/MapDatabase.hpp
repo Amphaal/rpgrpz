@@ -23,7 +23,7 @@ class MapDatabase : public JSONDatabase {
 
                 auto asset_id = elem.id().toString(QUuid::WithoutBraces);
                 auto casted = QJsonObject::fromVariantHash(
-                    elem.toVariantHashWithData(RPZAsset::Alteration::Reset)
+                    elem.toVariantHash()
                 );
 
                 db_elems[asset_id] = casted;
