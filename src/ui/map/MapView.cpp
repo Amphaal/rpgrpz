@@ -132,7 +132,7 @@ void MapView::onRPZClientConnecting(RPZClient * cc) {
     //on map change
     QObject::connect(
         this->_rpzClient, &RPZClient::mapChanged,
-        this->_hints, &MapHintViewBinder::unpackFromNetworkReceived
+        this->_hints, &MapHint::alterScene
     );
 
     //when been asked for map content
@@ -151,20 +151,15 @@ void MapView::onRPZClientDisconnect(RPZClient* cc) {
 
 }
 
-void MapView::_sendMapChanges(const AlterationPayload::Alteration &state, QVector<RPZAtom> &elements) {
+void MapView::_sendMapChanges(AlterationPayload &payload) {
     if(!this->_rpzClient) return;
 
-    auto data = this->_hints->packageForNetworkSend(state, elements);
-
-    this->_rpzClient->sendMapChanges(data, false);
+    this->_rpzClient->sendMapChanges(payload);
 }
 
 void MapView::_sendMapHistory() {
     if(!this->_rpzClient) return;
-
-    auto data = this->_hints->packageForNetworkSend(AlterationPayload::Alteration::Reset, this->_hints->atoms());
-
-    this->_rpzClient->sendMapChanges(data, true);
+    this->_sendMapChanges(ResetPayload(AlterationPayload::Source::Network, this->_hints->atoms()));
 }
 
 /////////////////

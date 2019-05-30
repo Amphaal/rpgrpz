@@ -2,7 +2,7 @@
 
 #include <QVariantHash>
 
-class AlterationPayload : protected QVariantHash {
+class AlterationPayload : public QVariantHash {
     public:
         enum Source {
             Local,
@@ -46,6 +46,10 @@ class AlterationPayload : protected QVariantHash {
         Alteration type() {
             return (Alteration)this->value("t").toInt();
         };
+
+        virtual QVariantHash alterationByAtomId() {
+            return QVariantHash();
+        }
 
     protected:
         void _setSource(const Source &source) {

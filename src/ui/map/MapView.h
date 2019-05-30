@@ -10,7 +10,7 @@
 
 #include <QWheelEvent>
 #include <QTreeWidgetItem>
-#include <QVariant>
+#include <QVariantHash>
 #include <QAction>
 #include <QTimeLine>
 #include <QGLWidget>
@@ -34,6 +34,8 @@
 #include "src/network/rpz/client/RPZClient.h"
 
 #include "src/ui/assets/base/AssetsTreeView.hpp"
+
+#include "src/shared/models/Payloads.h"
 
 
 class MapView : public QGraphicsView, public ClientBindable {
@@ -77,7 +79,7 @@ class MapView : public QGraphicsView, public ClientBindable {
         void _goToDefaultViewState();
         
         //network
-            void _sendMapChanges(const AlterationPayload::Alteration &state, QVector<RPZAtom> &elements);
+            void _sendMapChanges(AlterationPayload &payload);
             void _sendMapHistory();
 
         //registered points

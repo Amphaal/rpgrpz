@@ -144,7 +144,9 @@ bool MapHintViewBinder::loadState(QString &filePath) {
 
     //load file and parse it
     MapDatabase mapDb(filePath);
-    this->_alterSceneGlobal(AlterationPayload::Alteration::Reset, mapDb.toAtoms());
+    this->_alterSceneGlobal(
+        ResetPayload(mapDb.toAtoms()
+    );
     
     //change file path and define as clean
     this->_stateFilePath = filePath;
@@ -172,13 +174,13 @@ bool MapHintViewBinder::defineAsRemote(QString &remoteMapDescriptor) {
 }
 
 
-void MapHintViewBinder::_shouldMakeDirty(const AlterationPayload::Alteration &state, QVector<RPZAtom> &elements) {
+void MapHintViewBinder::_shouldMakeDirty(AlterationPayload &payload) {
     
     //if remote, never dirty
     if(this->_isRemote) return;
 
     //if not a network alteration type
-    if(!AlterationPayload::networkAlterations.contains(state)) return;
+    if(!AlterationPayload::networkAlterations.contains(payload.type())) return;
 
     this->_setDirty();
 }
@@ -297,11 +299,6 @@ void MapHintViewBinder::turnGhostItemIntoDefinitive(QGraphicsItem* temporaryItem
 /////////////////////////
 // Integration handler //
 /////////////////////////
-
-void MapHintViewBinder::unpackFromNetworkReceived(const QVariantHash &package) {
-    auto payload = AlterationPayload::fromVariantHash(package);
-    this->_alterSceneGlobal(payload.alteration(), *payload.atoms());
-}
 
 
 QGraphicsItem* MapHintViewBinder::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom) {
@@ -478,21 +475,22 @@ void MapHintViewBinder::centerGraphicsItemToPoint(QGraphicsItem* item, const QPo
 ////////////////////////
 
 //alter Scene
-void MapHintViewBinder::_alterSceneGlobal(const AlterationPayload::Alteration &alteration, QVector<RPZAtom> &atoms) { 
+void MapHintViewBinder::_alterSceneGlobal(AlterationPayload &payload) { 
     
     this->_externalInstructionPending = true;
 
     //on reset
-    if(alteration == AlterationPayload::Alteration::Reset) {
+    auto type = payload.type();
+    if(type == AlterationPayload::Alteration::Reset) {
         this->_idsByGraphicItem.clear();
         for(auto item : this->_boundGv->items()) {
             delete item;
         }
     }
-    if(alteration == AlterationPayload::Alteration::Selected) this->scene()->clearSelection();
-    if(alteration == AlterationPayload::Alteration::Removed) this->_deletionProcessing = true;
+    if(type == AlterationPayload::Alteration::Selected) this->scene()->clearSelection();
+    if(type == AlterationPayload::Alteration::Removed) this->_deletionProcessing = true;
 
-    MapHint::_alterSceneGlobal(alteration, atoms);
+    MapHint::_alterSceneGlobal(payload);
 
     this->_preventNetworkAlterationEmission = false;
     this->_deletionProcessing = false;
@@ -536,8 +534,9 @@ QGraphicsItem* MapHintViewBinder::_findBoundGraphicsItem(const AlterationPayload
     return item;
 }
 
+
 //register actions
-void MapHintViewBinder::_alterSceneInternal(const AlterationPayload::Alteration &alteration, RPZAtom &atom) {
+void MapHintViewBinder::_alterSceneInternal(const AlterationPayload::Alteration &type, QUuid &targetedAtomId, QVariant &atomAlteration) {
 
     //find or create the graphics item
     auto gItem = this->_findBoundGraphicsItem(alteration, atom);
@@ -571,7 +570,7 @@ void MapHintViewBinder::_alterSceneInternal(const AlterationPayload::Alteration 
         break;
 
         //on layer change
-        case AlterationPayload::Alteration::LayerChange: {
+        case AlterationPayload::Alteration::LayerChanged: {
             auto newLayer = atom.metadata()->layer();
             gItem->setZValue(newLayer);
         }

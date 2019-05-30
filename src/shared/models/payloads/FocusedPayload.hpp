@@ -13,6 +13,14 @@ class FocusedPayload : public AlterationPayload {
         QUuid targetAtomId() {
             return this->value("id").toUuid();
         }
+
+        QVariantHash alterationByAtomId() override {
+            QVariantHash out;
+
+            out.insert(this->targetAtomId().toString(), QVariant());
+            
+            return out;
+        }
     
     private:
         void _setTargetAtomId(const QUuid &targetAtomId) {

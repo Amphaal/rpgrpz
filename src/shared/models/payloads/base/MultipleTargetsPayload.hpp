@@ -15,8 +15,22 @@ class MultipleTargetsPayload : public AlterationPayload {
             this->_setTargetAtomIds(targetedAtomIds);
         }
     
-        QUuid targetAtomIds() {
-            return this->value("ids").toUuid();
+        QList<QUuid> targetAtomIds() {
+            QList<QUuid> out;
+            auto list = this->value("ids").toList();
+            for(auto &e : list) {
+                list.append(e.toUuid());
+            }
+            return out;
+        }
+
+        QVariantHash alterationByAtomId() override {
+            QVariantHash out;
+            auto list = this->targetAtomIds();
+            for(auto &e : list) {
+                out.insert(e.toString(), QVariant());
+            }
+            return out;
         }
     
     private:

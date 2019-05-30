@@ -12,6 +12,15 @@ class AddedPayload : AlterationPayload {
             return this->value("atom").toHash();
         }
 
+        QVariantHash alterationByAtomId() override {
+            QVariantHash out;
+
+            auto atom = this->atom();
+            out.insert(atom.id().toString(), atom);
+            
+            return out;
+        }
+
     private:
         void _setAddedAtom(RPZAtom &atom) {
             (*this)["atom"] = atom;

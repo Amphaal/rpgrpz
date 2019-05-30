@@ -24,15 +24,12 @@ class MapHint : public QObject {
         void atomsAlteredForNetwork(const QVariantHash &payload);
 
     public slots:
-        //network helpers...
-        QVariantHash packageForNetworkSend(const AlterationPayload::Alteration &state, QVector<RPZAtom> &atoms);
-
         //from external App instructions (toolBar, RPZServer...)
         void alterScene(const QVariantHash &payload); 
 
     protected:
         bool _preventNetworkAlterationEmission = false;
-        void _emitAlteration(const AlterationPayload &payload);
+        void _emitAlteration(AlterationPayload &payload);
 
         //atoms list 
         QHash<QUuid, RPZAtom> _atomsById;
@@ -41,12 +38,7 @@ class MapHint : public QObject {
         QSet<QUuid> _selfElements;
         QHash<QUuid, QSet<QUuid>> _foreignElementIdsByOwnerId;
 
-        //get atoms from list of atom Ids
-        QVector<RPZAtom> _fetchAtoms(const QVector<QUuid> &listToFetch);
-
         //alter the inner atoms lists
-        virtual void _alterSceneGlobal(const AlterationPayload::Alteration &alteration, QVector<RPZAtom> &atoms);
-        virtual void _alterSceneInternal(const AlterationPayload::Alteration &alteration, RPZAtom &atom);
-
-
+        virtual void _alterSceneGlobal(AlterationPayload &payload);
+        virtual void _alterSceneInternal(const AlterationPayload::Alteration &type, QUuid &targetedAtomId, QVariant &atomAlteration);
 };

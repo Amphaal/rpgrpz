@@ -87,7 +87,6 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
                 emit receivedMessage(mfp);
             }
             break;
-        case JSONMethod::HostMapHistory:
         case JSONMethod::MapChanged: {
                 emit mapChanged(data.toHash());
             }   
@@ -147,10 +146,6 @@ void RPZClient::askForAsset(const QString &assetId) {
     qDebug() << "RPZClient : requesting asset " << assetId << " to server"; 
 }
 
-void RPZClient::sendMapChanges(const QVariantHash &changes, bool isHistory) {
-    if(isHistory) {
-        this->sendJSON(JSONMethod::HostMapHistory, changes);
-    } else {
-        this->sendJSON(JSONMethod::MapChanged, changes);
-    }
+void RPZClient::sendMapChanges(const QVariantHash &changes) {
+    this->sendJSON(JSONMethod::MapChanged, changes);
 }

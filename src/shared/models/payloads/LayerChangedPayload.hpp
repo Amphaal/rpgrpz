@@ -12,6 +12,16 @@ class LayerChangedPayload : public MultipleTargetsPayload {
         int layer() {
             return this->value("lyr").toInt();
         }
+
+        QVariantHash alterationByAtomId() override {
+            QVariantHash out;
+            auto list = this->targetAtomIds();
+            auto layer = this->layer();
+            for(auto &e : list) {
+                out.insert(e.toString(), layer);
+            }
+            return out;
+        }
     
     private:
         void _setLayer(const int layer) {

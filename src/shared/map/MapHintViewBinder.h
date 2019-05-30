@@ -46,13 +46,6 @@ class MapHintViewBinder : public MapHint {
         //replace placeholders
         void replaceMissingAssetPlaceholders(const QString &assetId);
 
-        //on received data, include them into view
-        void unpackFromNetworkReceived(const QVariantHash &package);
-
-        //add alteration from graphicitem
-        void alterSceneFromItems(const AlterationPayload::Alteration &alteration, const QList<QGraphicsItem*> &elements);
-        void alterSceneFromItem(const AlterationPayload::Alteration &alteration, QGraphicsItem* element);
-
         //actions helpers
         void addDrawing(const QPainterPath &path, const QPen &pen);
 
@@ -84,7 +77,7 @@ class MapHintViewBinder : public MapHint {
 
         bool _isDirty = false;
         void _setDirty(bool dirty = true);
-        void _shouldMakeDirty(const AlterationPayload::Alteration &state, QVector<RPZAtom> &elements);
+        void _shouldMakeDirty(AlterationPayload &payload);
 
         QGraphicsView* _boundGv = nullptr;
 
@@ -113,6 +106,6 @@ class MapHintViewBinder : public MapHint {
         int _defaultLayer = 0;
 
         //augmenting MapHint
-        void _alterSceneGlobal(const AlterationPayload::Alteration &alteration, QVector<RPZAtom> &atoms) override;
-        void _alterSceneInternal(const AlterationPayload::Alteration &alteration, RPZAtom &atom) override;
+        virtual void _alterSceneGlobal(AlterationPayload &payload) override;
+        virtual void _alterSceneInternal(const AlterationPayload::Alteration &type, QUuid &targetedAtomId, QVariant &atomAlteration) override;
 };

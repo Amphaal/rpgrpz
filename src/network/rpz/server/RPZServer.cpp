@@ -112,8 +112,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
                 
             }
             break;
-        case JSONMethod::MapChanged:
-        case JSONMethod::HostMapHistory: {
+        case JSONMethod::MapChanged:{
 
                 this->_broadcastMapChanges(data.toHash(), target);
 
