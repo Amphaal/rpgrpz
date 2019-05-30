@@ -22,6 +22,9 @@ class AppSettings : public QSettings {
 
         int audioVolume();
         void setAudioVolume(int volume = 100);
+
+        int defaultLayer();
+        void setDefaultLayer(int layer = 0);
 };
 
 class AppContext {

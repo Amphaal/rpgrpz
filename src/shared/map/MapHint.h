@@ -9,7 +9,7 @@
 #include <QDebug>
 
 #include "src/shared/_serializer.hpp"
-#include "src/shared/network/RPZAsset.hpp"
+#include "src/shared/network/RPZAtom.hpp"
 #include "src/shared/network/AlterationPayload.hpp"
 
 class MapHint : public QObject {
@@ -18,36 +18,36 @@ class MapHint : public QObject {
 
     public:
         MapHint();
-        QVector<RPZAsset> fetchHistory();
+        QVector<RPZAtom> atoms();
     
     public slots:
         //network helpers...
-        QVariantHash packageForNetworkSend(const RPZAsset::Alteration &state, QVector<RPZAsset> &assets);
+        QVariantHash packageForNetworkSend(const RPZAtom::Alteration &state, QVector<RPZAtom> &atoms);
 
         //from external App instructions (toolBar, RPZServer...)
-        void alterSceneFromAsset(const RPZAsset::Alteration &alteration, RPZAsset &asset);
-        void alterSceneFromAssets(const RPZAsset::Alteration &alteration, QVector<RPZAsset> &assets);
-        void alterSceneFromIds(const RPZAsset::Alteration &alteration, const QVector<QUuid> &assetIds, QVariant &arg); 
+        void alterSceneFromAtom(const RPZAtom::Alteration &alteration, RPZAtom &atom);
+        void alterSceneFromAtoms(const RPZAtom::Alteration &alteration, QVector<RPZAtom> &atoms);
+        void alterSceneFromIds(const RPZAtom::Alteration &alteration, const QVector<QUuid> &atomIds, QVariant &arg); 
 
     protected:
         bool _preventNetworkAlterationEmission = false;
-        void _emitAlteration(const RPZAsset::Alteration &state, QVector<RPZAsset> &elements);
+        void _emitAlteration(const RPZAtom::Alteration &state, QVector<RPZAtom> &elements);
 
-        //assets list 
-        QHash<QUuid, RPZAsset> _assetsById;
+        //atoms list 
+        QHash<QUuid, RPZAtom> _atomsById;
 
         //credentials handling
         QSet<QUuid> _selfElements;
         QHash<QUuid, QSet<QUuid>> _foreignElementIdsByOwnerId;
 
-        //get assets from list of asset Ids
-        QVector<RPZAsset> _fetchAssets(const QVector<QUuid> &listToFetch) const;
+        //get atoms from list of atom Ids
+        QVector<RPZAtom> _fetchAtoms(const QVector<QUuid> &listToFetch) const;
 
-        //alter the inner assets lists
-        virtual void _alterSceneGlobal(const RPZAsset::Alteration &alteration, QVector<RPZAsset> &assets);
-        virtual QUuid _alterSceneInternal(const RPZAsset::Alteration &alteration, RPZAsset &asset);
+        //alter the inner atoms lists
+        virtual void _alterSceneGlobal(const RPZAtom::Alteration &alteration, QVector<RPZAtom> &atoms);
+        virtual void _alterSceneInternal(const RPZAtom::Alteration &alteration, RPZAtom &atom);
 
     signals:
-        void assetsAlteredForLocal(const RPZAsset::Alteration &state, QVector<RPZAsset> &elements);
-        void assetsAlteredForNetwork(const RPZAsset::Alteration &state, QVector<RPZAsset> &elements);
+        void atomsAlteredForLocal(const RPZAtom::Alteration &state, QVector<RPZAtom> &elements);
+        void atomsAlteredForNetwork(const RPZAtom::Alteration &state, QVector<RPZAtom> &elements);
 };

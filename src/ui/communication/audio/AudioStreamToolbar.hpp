@@ -52,7 +52,10 @@ class AudioStreamToolbar : public QWidget {
         }
 
         ~AudioStreamToolbar() {
-            AppContext::settings()->setAudioVolume(this->_audio->value());
+            if(this->_audio) {
+                AppContext::settings()->setAudioVolume(this->_audio->value());
+            }
+            
         }
     
     private:

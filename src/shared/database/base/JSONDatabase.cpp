@@ -45,7 +45,7 @@ void JSONDatabase::_instanciateDb() {
 
     //compare versions, if missmatch, delete db and recreate
     if(this->apiVersion() != this->dbVersion()) {
-        qDebug() << "Assets : Database removed because of a new API version !";
+        qDebug() << "JSON Database : Database removed because of a new API version !";
         this->_removeDatabase();
         writeNewCoord(this->_destfile);
         this->_db = readNewCoord(this->_destfile);

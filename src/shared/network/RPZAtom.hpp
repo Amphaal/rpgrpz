@@ -9,76 +9,12 @@
 #include "../_serializer.hpp"
 #include "Ownable.hpp"
 
-#include "AssetBase.hpp"
+#include "AtomBase.hpp"
+#include "RPZAtomMetadata.hpp"
 
-
-class RPZAssetMetadata : public QVariantHash {
+class RPZAtom : public AtomBase, public Serializable, public Ownable {
     public:
-        RPZAssetMetadata() : QVariantHash() {}
-        RPZAssetMetadata(const QVariantHash &hash) : QVariantHash(hash) {}
-    
-        QString dbAssetId() const {
-            return (*this)["a_id"].toString();
-        }
-
-        QString dbAssetName() const {
-            return (*this)["a_name"].toString();
-        }
-
-        QPainterPath shape() const {
-            return JSONSerializer::toPainterPath(
-                (*this)["shape"].toByteArray()
-            );
-        }
-
-        int layer() const {
-            return (*this)["lyr"].toInt();
-        }
-
-        QPointF pos() const {
-            return JSONSerializer::toPointF(
-                (*this)["pos"].toByteArray()
-            );
-        }
-
-        int penWidth() const {
-            return (*this)["pen_w"].toInt();
-        }
-
-        void setDbAssetId(const QString &id) {
-            (*this)["a_id"] = id;
-        }
-
-        void setDbAssetName(const QString &name) {
-            (*this)["a_name"] = name;
-        }
-
-        void setShape(const QPainterPath &path) {
-            (*this)["shape"] = JSONSerializer::asBase64(path);
-        }
-
-        void setShape(const QRectF &rect) {
-            QPainterPath shape;
-            shape.addRect(rect);
-            this->setShape(shape);
-        }
-
-        void setPos(const QPointF &pos) {
-            (*this)["pos"] = JSONSerializer::asBase64(pos);
-        }
-
-        void setPenWidth(int width) {
-            (*this)["pen_w"] = width;
-        }
-
-        void setLayer(int pos) {
-            (*this)["lyr"] = pos;
-        }
-};
-
-class RPZAsset : public AssetBase, public Serializable, public Ownable {
-    public:
-        RPZAsset() {}
+        RPZAtom() {}
         
         //enums
         enum Alteration {
@@ -101,6 +37,7 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
             Reset,
             LayerChange 
         };
+        
         static const inline QList<Alteration> buildGraphicsItemAlterations = {
             Added,  
             Reset
@@ -111,22 +48,22 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
             LayerChange  
         };
 
-        RPZAsset(const QUuid &id, const AssetBase::Type &type, const RPZUser &owner, const RPZAssetMetadata &metadata) : 
+        RPZAtom(const QUuid &id, const AtomBase::Type &type, const RPZUser &owner, const RPZAtomMetadata &metadata) : 
             Serializable(id), 
-            AssetBase(type), 
+            AtomBase(type), 
             Ownable(owner),
             _metadata(metadata) { };
 
-        RPZAsset(const AssetBase::Type &type,  QGraphicsItem* assetItemOnMap, const RPZAssetMetadata &metadata) :
+        RPZAtom(const AtomBase::Type &type,  QGraphicsItem* item, const RPZAtomMetadata &metadata) :
             Serializable(QUuid::createUuid()),
-            AssetBase(type), 
-            _item(assetItemOnMap),
+            AtomBase(type), 
+            _item(item),
             _metadata(metadata) {  };
 
-        static RPZAsset fromVariantHash(const QVariantHash &data) {
-            return RPZAsset(
+        static RPZAtom fromVariantHash(const QVariantHash &data) {
+            return RPZAtom(
                 data["id"].toUuid(),
-                (AssetBase::Type)data["type"].toInt(),
+                (AtomBase::Type)data["type"].toInt(),
                 RPZUser::fromVariantHash(data["owner"].toHash()),
                 data.contains("mdata") ? data["mdata"].toHash() : QVariantHash()
             );
@@ -134,7 +71,7 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
 
         void mayUpdateDataFromGraphicsItem(const Alteration &alteration) {
             
-            if(!this->graphicsItem()) { return; }
+            if(!this->graphicsItem()) return;
             
             if(buildGraphicsItemAlterations.contains(alteration) || updateGraphicsItemAlterations.contains(alteration)) {
                 this->_updateShapeFromGraphicsItem();
@@ -144,14 +81,14 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
         QGraphicsItem* graphicsItem() { return this->_item; };
         void setGraphicsItem(QGraphicsItem* item) { this->_item = item; };
 
-        RPZAssetMetadata* metadata() { return &this->_metadata; };
+        RPZAtomMetadata* metadata() { return &this->_metadata; };
 
         //overrides descriptor
         QString descriptor() override { 
-            auto base = AssetBase::descriptor();
+            auto base = AtomBase::descriptor();
 
             //displays asset name
-            auto asname = this->metadata()->dbAssetName();
+            auto asname = this->metadata()->assetName();
             if(!asname.isNull()) {
                 base += " \"" + asname + "\" ";
             }
@@ -181,15 +118,15 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
 
     private:
         QGraphicsItem* _item = nullptr;
-        RPZAssetMetadata _metadata;
+        RPZAtomMetadata _metadata;
 
         void _updateShapeFromGraphicsItem() {
             
-            //depending on assetType...
+            //depending on atomType...
             switch(this->type()) {
                 
                 //drawing...
-                case AssetBase::Type::Drawing: {
+                case AtomBase::Type::Drawing: {
                     auto casted = (QGraphicsPathItem*)this->graphicsItem();
                     this->metadata()->setShape(
                         casted->path()
@@ -198,7 +135,7 @@ class RPZAsset : public AssetBase, public Serializable, public Ownable {
                 break;
                 
                 //object
-                case AssetBase::Type::Object: {
+                case AtomBase::Type::Object: {
                     this->metadata()->setShape(
                         this->graphicsItem()->boundingRect()
                     );

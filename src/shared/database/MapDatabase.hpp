@@ -2,7 +2,7 @@
 
 #include <QString>
 #include <QVector>
-#include "src/shared/network/RPZAsset.hpp"
+#include "src/shared/network/RPZAtom.hpp"
 
 #include "base/JSONDatabase.h"
 
@@ -13,48 +13,48 @@ class MapDatabase : public JSONDatabase {
             JSONDatabase::_instanciateDb();
         };
 
-        void saveIntoFile(QVector<RPZAsset> &elements) {
+        void saveIntoFile(QVector<RPZAtom> &atoms) {
             
             auto copy = this->_db.object();
 
-            //reseting "elements" object
-            auto db_elems = QJsonObject();
-            for(auto &elem : elements) {
+            //reseting "atoms" object
+            auto db_atoms = QJsonObject();
+            for(auto &atom : atoms) {
 
-                auto asset_id = elem.id().toString(QUuid::WithoutBraces);
+                auto atom_id = atom.id().toString(QUuid::WithoutBraces);
                 auto casted = QJsonObject::fromVariantHash(
-                    elem.toVariantHash()
+                    atom.toVariantHash()
                 );
 
-                db_elems[asset_id] = casted;
+                db_atoms[atom_id] = casted;
             }
-            copy["elements"] = db_elems;
+            copy["atoms"] = db_atoms;
 
             //saving...
             this->_updateDbFile(copy);
-            qDebug() << "Map database : saving " << elements.count() << " elements";
+            qDebug() << "Map database : saving " << atoms.count() << " atoms";
         };
 
-        QVector<RPZAsset> toAssets() {
-            QVector<RPZAsset> out;
+        QVector<RPZAtom> toAtoms() {
+            QVector<RPZAtom> out;
 
-            auto db_elems = this->_db["elements"].toObject();
+            auto db_atoms = this->_db["atoms"].toObject();
 
-            for(auto &e : db_elems) {
-              auto asset = RPZAsset::fromVariantHash(
+            for(auto &e : db_atoms) {
+              auto atom = RPZAtom::fromVariantHash(
                   e.toObject().toVariantHash()
               );
-              out.append(asset);
+              out.append(atom);
             }
 
-            qDebug() << "Map database : " << out.count() << " elements read";
+            qDebug() << "Map database : " << out.count() << " atoms read";
 
             return out;
         }
 
     protected:
         const QString defaultJsonDoc() override {
-            return "{\"version\":" + QString::number(this->apiVersion()) + ",\"elements\":{}}";
+            return "{\"version\":" + QString::number(this->apiVersion()) + ",\"atoms\":{}}";
         }
 
         const QString dbPath() override {

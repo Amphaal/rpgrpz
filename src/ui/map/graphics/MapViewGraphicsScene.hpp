@@ -12,17 +12,17 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
     Q_OBJECT
 
     signals:
-        void sceneItemChanged(QGraphicsItem* item, int assetAlteration);
+        void sceneItemChanged(QGraphicsItem* item, int atomAlteration);
 
     private:
-        void onItemChange(QGraphicsItem* item, RPZAsset::Alteration alteration) override {
+        void onItemChange(QGraphicsItem* item, RPZAtom::Alteration alteration) override {
             emit sceneItemChanged(item, alteration);
         };
 
     public:
         MapViewGraphicsScene(int defaultSize) : QGraphicsScene(defaultSize, defaultSize, defaultSize, defaultSize) {}
 
-        QGraphicsItem* addGenericImageBasedAsset(const QString &pathToImageFile, qreal opacity = 1, const QPointF &pos = QPointF()) {
+        QGraphicsItem* addGenericImageBasedItem(const QString &pathToImageFile, int layer = 0, qreal opacity = 1, const QPointF &pos = QPointF()) {
     
             //get file infos
             QFileInfo pathInfo(pathToImageFile);
@@ -38,6 +38,9 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
 
             //define transparency as it is a dummy
             item->setOpacity(opacity);
+
+            //define layer
+            item->setZValue(layer);
 
             //define position
             if(!pos.isNull()) {

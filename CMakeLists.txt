@@ -163,8 +163,10 @@ list(APPEND SOURCES
     src/ui/map/base/AnimationTimeLine.hpp
     src/ui/map/MapTools.cpp
     src/ui/map/MapView.cpp
+    src/ui/map/layout/LayerSelector.cpp
+    src/ui/map/layout/MapLayoutTree.cpp
     src/ui/map/MapLayoutManager.cpp
-    
+
     src/shared/database/base/JSONDatabase.cpp
     src/shared/database/AssetsDatabase.cpp
     src/shared/assets/AssetsDatabaseElement.cpp

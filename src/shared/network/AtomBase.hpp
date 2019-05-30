@@ -2,7 +2,7 @@
 
 #include <QString>
 
-class AssetBase {
+class AtomBase {
     public:
 
         // defined values shared with AssetsDatabaseElement type for static casts
@@ -17,8 +17,8 @@ class AssetBase {
             PC = 101 
         };
 
-        AssetBase() {}
-        AssetBase(const AssetBase::Type &type) : _selfType(type) {
+        AtomBase() {}
+        AtomBase(const AtomBase::Type &type) : _selfType(type) {
 
             switch(type) {
                 case Type::Drawing:
@@ -30,10 +30,10 @@ class AssetBase {
 
         } 
         
-        AssetBase::Type type() const { return this->_selfType; }
+        AtomBase::Type type() const { return this->_selfType; }
         virtual QString descriptor() { return this->_description; }
 
     private:
-        AssetBase::Type _selfType;
+        AtomBase::Type _selfType;
         QString _description;
 };

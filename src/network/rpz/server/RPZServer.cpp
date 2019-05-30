@@ -193,17 +193,17 @@ void RPZServer::_broadcastMapChanges(const QVariantHash &payload, JSONSocket * s
 
     //determine ownership on absent owner data data
     auto defaultOwner = this->_getUser(senderSocket); //default is sender
-    for(auto &asset : *payloadWithOwners.assets()) {
+    for(auto &atom : *payloadWithOwners.atoms()) {
         
         //if no owner data, assume the sender is the owner
-        if(asset.owner().id().isNull()) {
-            asset.setOwnership(*defaultOwner);
+        if(atom.owner().id().isNull()) {
+            atom.setOwnership(*defaultOwner);
         }
 
     }
 
     //save for history
-    this->_hints->alterSceneFromAssets(payloadWithOwners.alteration(), *payloadWithOwners.assets());
+    this->_hints->alterSceneFromAtoms(payloadWithOwners.alteration(), *payloadWithOwners.atoms());
 
     //send...
     for(auto &user : this->_usersById) {
@@ -215,7 +215,7 @@ void RPZServer::_broadcastMapChanges(const QVariantHash &payload, JSONSocket * s
 
 void RPZServer::_sendMapHistory(JSONSocket * clientSocket) {
     //send...
-    auto payload = AlterationPayload(RPZAsset::Alteration::Reset, this->_hints->fetchHistory());
+    auto payload = AlterationPayload(RPZAtom::Alteration::Reset, this->_hints->atoms());
     clientSocket->sendJSON(JSONMethod::MapChanged, payload.toVariantHash());
 
 }

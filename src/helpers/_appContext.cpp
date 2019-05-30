@@ -10,6 +10,13 @@ void AppSettings::setAudioVolume(int volume) {
     this->setValue("volume", volume);
 }
 
+int AppSettings::defaultLayer() {
+    return this->value("defaultLayer", 0).toInt();
+}
+void AppSettings::setDefaultLayer(int layer) {
+    this->setValue("defaultLayer", layer);
+}
+
 ///
 ///
 ///

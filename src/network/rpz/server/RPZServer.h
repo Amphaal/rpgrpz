@@ -49,7 +49,7 @@ class RPZServer : public QTcpServer, public JSONRouter {
         void _broadcastUsers();
         void _tellUserHisIdentity(JSONSocket* socket);
 
-        //map assets
+        //map atoms
         MapHint* _hints;
         void _askHostForMapHistory();
         void _broadcastMapChanges(const QVariantHash &payload, JSONSocket * senderSocket);

@@ -1,49 +1,49 @@
 #pragma once
 
 #include "src/shared/map/MapHint.h"
-#include "RPZAsset.hpp"
+#include "RPZAtom.hpp"
 
 #include "../Serializable.hpp"
 
 class AlterationPayload : public Serializable {
     public:
-        AlterationPayload(const RPZAsset::Alteration &alteration, QVector<RPZAsset> &assets) : 
+        AlterationPayload(const RPZAtom::Alteration &alteration, QVector<RPZAtom> &atoms) : 
         Serializable(NULL), 
         _alteration(alteration),
-        _assets(assets) { };
+        _atoms(atoms) { };
 
         QVariantHash toVariantHash() override {
             QVariantHash out;
 
             out.insert("state", (int)this->_alteration);
 
-            QVariantList assets;
-            for(auto &i : this->_assets) {
-               assets.append(i.toVariantHash());
+            QVariantList atoms;
+            for(auto &i : this->_atoms) {
+               atoms.append(i.toVariantHash());
             }
 
-            out.insert("assets", assets);
+            out.insert("atoms", atoms);
 
             return out;
         };
 
-        QVector<RPZAsset>* assets() { return &this->_assets; };
-        RPZAsset::Alteration alteration() { return this->_alteration; };
+        QVector<RPZAtom>* atoms() { return &this->_atoms; };
+        RPZAtom::Alteration alteration() { return this->_alteration; };
 
         static AlterationPayload fromVariantHash(const QVariantHash &data) {
             
-            auto state = (RPZAsset::Alteration)data["state"].toInt();
+            auto state = (RPZAtom::Alteration)data["state"].toInt();
             
-            QVector<RPZAsset> assets;
-            for(auto &i : data["assets"].toList()) {
-                assets.append(RPZAsset::fromVariantHash(i.toHash()));
+            QVector<RPZAtom> atoms;
+            for(auto &i : data["atoms"].toList()) {
+                atoms.append(RPZAtom::fromVariantHash(i.toHash()));
             }
             
-            return AlterationPayload(state, assets);
+            return AlterationPayload(state, atoms);
         };
 
 
     private:
-        RPZAsset::Alteration _alteration;
-        QVector<RPZAsset> _assets;
+        RPZAtom::Alteration _alteration;
+        QVector<RPZAtom> _atoms;
 };

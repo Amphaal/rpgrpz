@@ -5,11 +5,11 @@
 
 #include <QDebug>
 
-#include "src/shared/network/RPZAsset.hpp"
+#include "src/shared/network/RPZAtom.hpp"
 
 class MapViewItemsNotified  {
     public:
-        virtual void onItemChange(QGraphicsItem* item, RPZAsset::Alteration alteration) = 0;
+        virtual void onItemChange(QGraphicsItem* item, RPZAtom::Alteration alteration) = 0;
 };
 
 class MapViewItemsNotifier  {
@@ -50,7 +50,7 @@ class MapViewItemsNotifier  {
             
             switch(change) {
                 case QGraphicsItem::ItemPositionHasChanged:
-                    this->_toNotify->onItemChange(this->_item, RPZAsset::Alteration::Moved);
+                    this->_toNotify->onItemChange(this->_item, RPZAtom::Alteration::Moved);
                     break;
             }
         }

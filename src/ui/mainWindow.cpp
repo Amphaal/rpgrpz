@@ -218,13 +218,19 @@ void MainWindow::_initUIApp() {
 
     //on map alteration, update treelist
     QObject::connect(
-        this->_mapView->hints(), &MapHintViewBinder::assetsAlteredForLocal,
-        this->_mlManager, &MapLayoutManager::alterTreeElements
+        this->_mapView->hints(), &MapHintViewBinder::atomsAlteredForLocal,
+        this->_mlManager->tree(), &MapLayoutTree::alterTreeElements
+    );
+
+    //on default layer changed
+    QObject::connect(
+        this->_mlManager->layerSelector()->spinbox(), qOverload<int>(&QSpinBox::valueChanged),
+        this->_mapView->hints(), &MapHintViewBinder::setDefaultLayer
     );
 
     //intercept alteration from layout manager
     QObject::connect(
-        this->_mlManager, &MapLayoutManager::elementsAlterationAsked,
+        this->_mlManager->tree(), &MapLayoutTree::elementsAlterationAsked,
         this->_mapView->hints(), &MapHintViewBinder::alterSceneFromIds
     );
 

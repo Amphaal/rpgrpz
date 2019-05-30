@@ -27,7 +27,7 @@
 #include "base/AnimationTimeLine.hpp"
 
 #include "src/shared/map/MapHintViewBinder.h"
-#include "src/shared/network/RPZAsset.hpp"
+#include "src/shared/network/RPZAtom.hpp"
 #include "src/ui/others/ClientBindable.hpp"
 
 #include "src/network/rpz/_any/JSONSocket.h"
@@ -77,7 +77,7 @@ class MapView : public QGraphicsView, public ClientBindable {
         void _goToDefaultViewState();
         
         //network
-            void _sendMapChanges(const RPZAsset::Alteration &state, QVector<RPZAsset> &elements);
+            void _sendMapChanges(const RPZAtom::Alteration &state, QVector<RPZAtom> &elements);
             void _sendMapHistory();
 
         //registered points

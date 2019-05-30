@@ -23,7 +23,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
     
     //to route from MapHints
     QObject::connect(
-        this->_hints, &MapHint::assetsAlteredForNetwork,
+        this->_hints, &MapHint::atomsAlteredForNetwork,
         this, &MapView::_sendMapChanges
     );
 
@@ -53,7 +53,7 @@ void MapView::keyPressEvent(QKeyEvent * event) {
 
         //deletion handling
         case Qt::Key::Key_Delete:
-            this->_hints->alterSceneFromItems(RPZAsset::Alteration::Removed, this->_scene->selectedItems());
+            this->_hints->alterSceneFromItems(RPZAtom::Alteration::Removed, this->_scene->selectedItems());
             break;
         
         //ask unselection of current tool
@@ -151,7 +151,7 @@ void MapView::onRPZClientDisconnect(RPZClient* cc) {
 
 }
 
-void MapView::_sendMapChanges(const RPZAsset::Alteration &state, QVector<RPZAsset> &elements) {
+void MapView::_sendMapChanges(const RPZAtom::Alteration &state, QVector<RPZAtom> &elements) {
     if(!this->_rpzClient) return;
 
     auto data = this->_hints->packageForNetworkSend(state, elements);
@@ -162,7 +162,7 @@ void MapView::_sendMapChanges(const RPZAsset::Alteration &state, QVector<RPZAsse
 void MapView::_sendMapHistory() {
     if(!this->_rpzClient) return;
 
-    auto data = this->_hints->packageForNetworkSend(RPZAsset::Alteration::Reset, this->_hints->fetchHistory());
+    auto data = this->_hints->packageForNetworkSend(RPZAtom::Alteration::Reset, this->_hints->atoms());
 
     this->_rpzClient->sendMapChanges(data, true);
 }
@@ -454,7 +454,7 @@ void MapView::dropEvent(QDropEvent *event) {
     if(!this->_droppableGraphicsItem) return;
 
     //definitive appending for temporary graphicsItem
-    this->_hints->addTemplateAssetElement(
+    this->_hints->turnGhostItemIntoDefinitive(
         this->_droppableGraphicsItem,
         this->_droppableElement, 
         event->pos()
@@ -499,7 +499,7 @@ void MapView::dragEnterEvent(QDragEnterEvent *event) {
 
         //update temporary values
         this->_droppableElement = selectedElem;
-        this->_droppableGraphicsItem = this->_hints->generateTemplateAssetElement(this->_droppableElement);
+        this->_droppableGraphicsItem = this->_hints->generateGhostItem(this->_droppableElement);
 
         //accept
         event->acceptProposedAction();

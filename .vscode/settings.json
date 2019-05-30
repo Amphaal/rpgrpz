@@ -84,7 +84,9 @@
         "qgraphicsrectitem": "cpp",
         "qvariant": "cpp",
         "qregularexpression": "cpp",
-        "qdatetime": "cpp"
+        "qdatetime": "cpp",
+        "qtreewidget": "cpp",
+        "qspinbox": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

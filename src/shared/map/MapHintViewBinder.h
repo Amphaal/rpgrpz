@@ -50,16 +50,16 @@ class MapHintViewBinder : public MapHint {
         void unpackFromNetworkReceived(const QVariantHash &package);
 
         //add alteration from graphicitem
-        void alterSceneFromItems(const RPZAsset::Alteration &alteration, const QList<QGraphicsItem*> &elements);
-        void alterSceneFromItem(const RPZAsset::Alteration &alteration, QGraphicsItem* element);
+        void alterSceneFromItems(const RPZAtom::Alteration &alteration, const QList<QGraphicsItem*> &elements);
+        void alterSceneFromItem(const RPZAtom::Alteration &alteration, QGraphicsItem* element);
 
         //actions helpers
         void addDrawing(const QPainterPath &path, const QPen &pen);
 
         //D&D assets handling
         void centerGraphicsItemToPoint(QGraphicsItem* item, const QPoint &eventPos);
-        QGraphicsItem* generateTemplateAssetElement(AssetsDatabaseElement* assetElem);
-        void addTemplateAssetElement(QGraphicsItem* temporaryItem, AssetsDatabaseElement* assetElem, const QPoint &dropPos);
+        QGraphicsItem* generateGhostItem(AssetsDatabaseElement* assetElem);
+        void turnGhostItemIntoDefinitive(QGraphicsItem* temporaryItem, AssetsDatabaseElement* assetElem, const QPoint &dropPos);
         
         //
         void handleAnyMovedItems();
@@ -68,6 +68,9 @@ class MapHintViewBinder : public MapHint {
         QPen getPen() const;
         void setPenColor(QColor &color);
         void setPenSize(int size);
+
+        //layer
+        void setDefaultLayer(int layer);
 
     signals:
         void mapFileStateChanged(const QString &filePath, bool isDirty);
@@ -81,23 +84,22 @@ class MapHintViewBinder : public MapHint {
 
         bool _isDirty = false;
         void _setDirty(bool dirty = true);
-        void _shouldMakeDirty(const RPZAsset::Alteration &state, QVector<RPZAsset> &elements);
+        void _shouldMakeDirty(const RPZAtom::Alteration &state, QVector<RPZAtom> &elements);
 
         QGraphicsView* _boundGv = nullptr;
 
         bool _externalInstructionPending = false;
         bool _deletionProcessing = false;
 
-        void _unpack(const RPZAsset::Alteration &alteration, QVector<RPZAsset> &assets);
-            QGraphicsItem* _unpack_build(RPZAsset &assetToBuildFrom);
-            QGraphicsItem* _unpack_update(const RPZAsset::Alteration &alteration, RPZAsset &assetToUpdateFrom);
+
+        QGraphicsItem* _buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom);
 
         QHash<QGraphicsItem*, QUuid> _idsByGraphicItem;
 
-        RPZAsset _fetchAsset(QGraphicsItem* graphicElem) const;
-        QVector<RPZAsset> _fetchAssets(const QList<QGraphicsItem*> &listToFetch) const;
+        RPZAtom _fetchAtom(QGraphicsItem* graphicElem) const;
+        QVector<RPZAtom> _fetchAtoms(const QList<QGraphicsItem*> &listToFetch) const;
 
-        QGraphicsItem* _findBoundGraphicsItem(RPZAsset &asset);
+        QGraphicsItem* _findBoundGraphicsItem(const RPZAtom::Alteration &alteration, RPZAtom &atom);
 
         void _onSceneSelectionChanged();
         void _onSceneItemChanged(QGraphicsItem* item, int alteration);
@@ -107,7 +109,10 @@ class MapHintViewBinder : public MapHint {
         int _penWidth = 1;
         QColor _penColor = Qt::blue;
 
+        //layer
+        int _defaultLayer = 0;
+
         //augmenting MapHint
-        void _alterSceneGlobal(const RPZAsset::Alteration &alteration, QVector<RPZAsset> &assets) override;
-        QUuid _alterSceneInternal(const RPZAsset::Alteration &alteration, RPZAsset &asset) override;
+        void _alterSceneGlobal(const RPZAtom::Alteration &alteration, QVector<RPZAtom> &atoms) override;
+        void _alterSceneInternal(const RPZAtom::Alteration &alteration, RPZAtom &atom) override;
 };

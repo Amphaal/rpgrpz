@@ -2,23 +2,23 @@
 
 MapHint::MapHint() {};
 
-QVector<RPZAsset> MapHint::fetchHistory() {
-    return this->_assetsById.values().toVector();
+QVector<RPZAtom> MapHint::atoms() {
+    return this->_atomsById.values().toVector();
 }
 
 //handle network and local evts emission
-void MapHint::_emitAlteration(const RPZAsset::Alteration &state, QVector<RPZAsset> &elements) {
+void MapHint::_emitAlteration(const RPZAtom::Alteration &state, QVector<RPZAtom> &elements) {
 
-    emit assetsAlteredForLocal(state, elements);
+    emit atomsAlteredForLocal(state, elements);
 
-    if(RPZAsset::networkAlterations.contains(state) && !this->_preventNetworkAlterationEmission) {
-        emit assetsAlteredForNetwork(state, elements);
+    if(RPZAtom::networkAlterations.contains(state) && !this->_preventNetworkAlterationEmission) {
+        emit atomsAlteredForNetwork(state, elements);
     }
 
 } 
 
-QVariantHash MapHint::packageForNetworkSend(const RPZAsset::RPZAsset::Alteration &state, QVector<RPZAsset> &assets) {
-    AlterationPayload payload(state, assets);
+QVariantHash MapHint::packageForNetworkSend(const RPZAtom::RPZAtom::Alteration &state, QVector<RPZAtom> &atoms) {
+    AlterationPayload payload(state, atoms);
     return payload.toVariantHash();
 }
 
@@ -32,21 +32,18 @@ QVariantHash MapHint::packageForNetworkSend(const RPZAsset::RPZAsset::Alteration
 //////////////
 
 //register actions
-QUuid MapHint::_alterSceneInternal(const RPZAsset::Alteration &alteration, RPZAsset &asset) {
+void MapHint::_alterSceneInternal(const RPZAtom::Alteration &alteration, RPZAtom &atom) {
 
     //get the Uuids
-    auto elemId = asset.id();
-    auto ownerId = asset.owner().id();
-    
-    //update asset
-    asset.mayUpdateDataFromGraphicsItem(alteration);
+    auto elemId = atom.id();
+    auto ownerId = atom.owner().id();
 
     //additionnal modifications
     switch(alteration) {
 
         //on addition
-        case RPZAsset::Alteration::Reset:
-        case RPZAsset::Alteration::Added:
+        case RPZAtom::Alteration::Reset:
+        case RPZAtom::Alteration::Added: {
             
             //bind to owners
             if(!ownerId.isNull()) {
@@ -59,21 +56,24 @@ QUuid MapHint::_alterSceneInternal(const RPZAsset::Alteration &alteration, RPZAs
             }
 
             //bind elem
-            if(!this->_assetsById.contains(elemId)) {
-                this->_assetsById.insert(elemId, asset);
+            if(!this->_atomsById.contains(elemId)) {
+                this->_atomsById.insert(elemId, atom);
             }
-            break;
+            
+        }
+        break;
         
-        //on move / resize, update inner RPZAsset
-        case RPZAsset::Alteration::Moved:
-        case RPZAsset::Alteration::Resized:
-        case RPZAsset::Alteration::LayerChange:
-            this->_assetsById[elemId] = asset;
-            break;
+        //on move / resize, update inner RPZAtom
+        case RPZAtom::Alteration::Moved:
+        case RPZAtom::Alteration::Resized:
+        case RPZAtom::Alteration::LayerChange: {
+            this->_atomsById[elemId] = atom;
+        }
+        break;
             
         //on removal
-        case RPZAsset::Alteration::Removed:
-
+        case RPZAtom::Alteration::Removed: {
+            
             //unbind from owners
             if(!ownerId.isNull()) {
                this->_foreignElementIdsByOwnerId[ownerId].remove(elemId);
@@ -82,65 +82,66 @@ QUuid MapHint::_alterSceneInternal(const RPZAsset::Alteration &alteration, RPZAs
             }
 
             //update 
-            this->_assetsById.remove(elemId);
-            break;
+            this->_atomsById.remove(elemId);
+
+        }
+        break;
 
     }
-
-    return elemId;
 }
 
 //alter Scene
-void MapHint::_alterSceneGlobal(const RPZAsset::Alteration &alteration, QVector<RPZAsset> &assets) { 
+void MapHint::_alterSceneGlobal(const RPZAtom::Alteration &alteration, QVector<RPZAtom> &atoms) { 
 
-    if(alteration == RPZAsset::Alteration::Reset) {
+    //on reset
+    if(alteration == RPZAtom::Alteration::Reset) {
         this->_selfElements.clear();
-        this->_assetsById.clear();
+        this->_atomsById.clear();
         this->_foreignElementIdsByOwnerId.clear();
     }
 
     //handling
-    for(auto &asset : assets) {
-        this->_alterSceneInternal(alteration, asset);
+    for(auto &atom : atoms) {
+        this->_alterSceneInternal(alteration, atom);
     }
     //emit event
-    this->_emitAlteration(alteration, assets);
+    this->_emitAlteration(alteration, atoms);
 }
 
 //helper
-void MapHint::alterSceneFromAsset(const RPZAsset::Alteration &alteration, RPZAsset &asset) {
-    QVector<RPZAsset> list;
-    list.append(asset);
+void MapHint::alterSceneFromAtom(const RPZAtom::Alteration &alteration, RPZAtom &atom) {
+    QVector<RPZAtom> list;
+    list.append(atom);
     return this->_alterSceneGlobal(alteration, list);
 }
 
 //helper
-void MapHint::alterSceneFromAssets(const RPZAsset::Alteration &alteration, QVector<RPZAsset> &assets) {
-    return this->_alterSceneGlobal(alteration, assets);
+void MapHint::alterSceneFromAtoms(const RPZAtom::Alteration &alteration, QVector<RPZAtom> &atoms) {
+    return this->_alterSceneGlobal(alteration, atoms);
 }
 
 //helper
-void MapHint::alterSceneFromIds(const RPZAsset::Alteration &alteration, const QVector<QUuid> &elementIds, QVariant &arg) {
+void MapHint::alterSceneFromIds(const RPZAtom::Alteration &alteration, const QVector<QUuid> &elementIds, QVariant &arg) {
 
-    //apply new layer to assets
-    if(alteration == RPZAsset::Alteration::LayerChange) {
+    //apply new layer to atoms
+    if(alteration == RPZAtom::Alteration::LayerChange) {
         auto layer = arg.toInt();
         for(auto &id : elementIds) {
-            auto asset = this->_assetsById[id];
-            asset.metadata()->setLayer(layer);
-            this->_assetsById[id] = asset;
+            auto atom = this->_atomsById[id];
+            atom.metadata()->setLayer(layer);
+            this->_atomsById[id] = atom;
         }
     }
 
-    return this->_alterSceneGlobal(alteration, this->_fetchAssets(elementIds));
+    return this->_alterSceneGlobal(alteration, this->_fetchAtoms(elementIds));
 }
 
 //helper
-QVector<RPZAsset> MapHint::_fetchAssets(const QVector<QUuid> &listToFetch) const {
-   QVector<RPZAsset> list;
+QVector<RPZAtom> MapHint::_fetchAtoms(const QVector<QUuid> &listToFetch) const {
+   QVector<RPZAtom> list;
 
     for(auto &e : listToFetch) {
-        list.append(this->_assetsById[e]);
+        list.append(this->_atomsById[e]);
     }
 
    return list; 
