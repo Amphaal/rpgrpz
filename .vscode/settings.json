@@ -86,7 +86,9 @@
         "qregularexpression": "cpp",
         "qdatetime": "cpp",
         "qtreewidget": "cpp",
-        "qspinbox": "cpp"
+        "qspinbox": "cpp",
+        "qvarianthash": "cpp",
+        "quuid": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

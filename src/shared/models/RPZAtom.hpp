@@ -5,118 +5,102 @@
 #include <QUuid>
 #include <QVector>
 
-#include "../Serializable.hpp"
-#include "../_serializer.hpp"
 #include "Ownable.hpp"
 
-#include "AtomBase.hpp"
 #include "RPZAtomMetadata.hpp"
 
-class RPZAtom : public AtomBase, public Serializable, public Ownable {
+class RPZAtom : public Ownable {
     public:
+
+        // defined values shared with AssetsDatabaseElement type for static casts
+        enum Type { 
+            Undefined, 
+            Drawing,
+            Text,
+            Object = 105, 
+            Brush = 104, 
+            NPC = 103, 
+            Event = 102, 
+            PC = 101 
+        };
+
         RPZAtom() {}
-        
-        //enums
-        enum Alteration {
-            Unknown, 
-            Resized, 
-            Moved, 
-            Added, 
-            Removed, 
-            Selected, 
-            Focused, 
-            Reset,
-            LayerChange 
-        }; 
+        RPZAtom(const QVariantHash &hash) : Ownable(hash) {}
 
-        static inline const QList<Alteration> networkAlterations = { 
-            Resized, 
-            Moved, 
-            Added, 
-            Removed, 
-            Reset,
-            LayerChange 
-        };
-        
-        static const inline QList<Alteration> buildGraphicsItemAlterations = {
-            Added,  
-            Reset
-        };
-        static const inline QList<Alteration> updateGraphicsItemAlterations = {
-            Resized, 
-            Moved, 
-            LayerChange  
-        };
+        RPZAtom(const QUuid &id, const Type &type, const RPZUser &owner, const RPZAtomMetadata &metadata) : Ownable(id, owner) {
+                this->_setType(type);
+                this->_setMetadata(metadata);
+            };
 
-        RPZAtom(const QUuid &id, const AtomBase::Type &type, const RPZUser &owner, const RPZAtomMetadata &metadata) : 
-            Serializable(id), 
-            AtomBase(type), 
-            Ownable(owner),
-            _metadata(metadata) { };
+        RPZAtom(const Type &type, QGraphicsItem* item, const RPZAtomMetadata &metadata) : Ownable(QUuid::createUuid()), _item(item){
+                this->_setType(type);  
+                this->_setMetadata(metadata);
+            };
 
-        RPZAtom(const AtomBase::Type &type,  QGraphicsItem* item, const RPZAtomMetadata &metadata) :
-            Serializable(QUuid::createUuid()),
-            AtomBase(type), 
-            _item(item),
-            _metadata(metadata) {  };
 
-        static RPZAtom fromVariantHash(const QVariantHash &data) {
-            return RPZAtom(
-                data["id"].toUuid(),
-                (AtomBase::Type)data["type"].toInt(),
-                RPZUser::fromVariantHash(data["owner"].toHash()),
-                data.contains("mdata") ? data["mdata"].toHash() : QVariantHash()
-            );
-        };
-
-        void mayUpdateDataFromGraphicsItem(const Alteration &alteration) {
+        void mayUpdateDataFromGraphicsItem() {
             
             if(!this->graphicsItem()) return;
             
-            if(buildGraphicsItemAlterations.contains(alteration) || updateGraphicsItemAlterations.contains(alteration)) {
-                this->_updateShapeFromGraphicsItem();
-            }
+            this->_updateDataFromGraphicsItem();
         }
 
-        QGraphicsItem* graphicsItem() { return this->_item; };
-        void setGraphicsItem(QGraphicsItem* item) { this->_item = item; };
+        QGraphicsItem* graphicsItem() { 
+            return this->_item; 
+        };
 
-        RPZAtomMetadata* metadata() { return &this->_metadata; };
+        void setGraphicsItem(QGraphicsItem* item) { 
+            this->_item = item; 
+        };
+
+        RPZAtomMetadata* metadata() { 
+            auto metadata = (RPZAtomMetadata)this->value("mdata").toHash(); 
+            return &metadata;
+        };
+
+        Type type() {
+            return (Type)this->value("type").toInt();
+        }
 
         //overrides descriptor
-        QString descriptor() override { 
+        QString descriptor() { 
 
             //displays asset name
             auto asname = this->metadata()->assetName();
             if(!asname.isNull()) return asname;
 
-            return AtomBase::descriptor();
-        };
-
-        QVariantHash toVariantHash() override {
-            QVariantHash out;
-
-            out.insert("id", this->id());
-            out.insert("type", (int)this->type());
-            out.insert("mdata", this->_metadata);
-
-            this->injectOwnerDataToHash(out);
-
-            return out;
+            return this->_defaultDescriptor();
         };
 
 
     private:
         QGraphicsItem* _item = nullptr;
-        RPZAtomMetadata _metadata;
 
-        void _updateShapeFromGraphicsItem() {
+        QString _defaultDescriptor() {
+            switch(this->type()) {
+                case Type::Drawing:
+                    return "Dessin";
+                    break;
+                default:
+                    return "Atome";
+            }
+        }
+
+        void _setMetadata(const RPZAtomMetadata &metadata) {
+            (*this)["mdata"] = metadata;
+        }
+
+        void _setType(const Type &type) {
+            (*this)["type"] = (int)type;
+        }
+
+        void _updateDataFromGraphicsItem() {
             
             //depending on atomType...
             switch(this->type()) {
                 
                 //drawing...
-                case AtomBase::Type::Drawing: {
+                case Type::Drawing: {
                     auto casted = (QGraphicsPathItem*)this->graphicsItem();
                     this->metadata()->setShape(
                         casted->path()
@@ -125,7 +109,7 @@ class RPZAtom : public AtomBase, public Serializable, public Ownable {
                 break;
                 
                 //object
-                case AtomBase::Type::Object: {
+                case Type::Object: {
                     this->metadata()->setShape(
                         this->graphicsItem()->boundingRect()
                     );

@@ -2,13 +2,16 @@
 
 MapLayoutTree::MapLayoutTree(QWidget * parent) : RPZTree(parent) {
     
-    this->setColumnCount(2);
+    this->setColumnCount(3);
 
     this->setHeaderHidden(true);
+
     this->header()->setStretchLastSection(false);
     this->header()->setMinimumSectionSize(15);
+
     this->header()->setSectionResizeMode(0, QHeaderView::Stretch);
     this->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    this->header()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
 
     this->setSelectionMode(QAbstractItemView::ExtendedSelection);
     this->setDragDropMode(QAbstractItemView::DragDropMode::NoDragDrop);
@@ -100,7 +103,7 @@ void MapLayoutTree::_moveSelectionToLayer(int targetLayer) {
     this->_changeLayer(selectedIds, targetLayer);
 
     //unilateral event, expect only outer calls
-    this->_expectedPingback = RPZAtom::Alteration::Unknown;
+    this->_expectedPingback = RPZAtom::Alteration::LayerChange;
     emit elementsAlterationAsked(this->_expectedPingback, selectedIds, QVariant(targetLayer));
 }
 
@@ -284,8 +287,12 @@ QTreeWidgetItem* MapLayoutTree::_getLayerItem(int layer) {
 QTreeWidgetItem* MapLayoutTree::_createTreeItem(RPZAtom &atom) {
     
     auto item = new QTreeWidgetItem();
+    
     item->setText(0, atom.descriptor());
+    item->setText(1, atom.owner().toString());
+
     item->setData(0, Qt::UserRole, atom.id());
+    
     item->setFlags(
         QFlags<Qt::ItemFlag>(
             Qt::ItemIsEnabled | 

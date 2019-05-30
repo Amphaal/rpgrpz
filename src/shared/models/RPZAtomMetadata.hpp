@@ -3,7 +3,26 @@
 #include <QVariantHash>
 #include <QPainterPath>
 
-#include "../_serializer.hpp"
+#include <QByteArray>
+#include <QDataStream>
+
+class JSONSerializer {
+    public:
+        static QByteArray asBase64(const QPainterPath &path) {
+            QByteArray bArray;
+            QDataStream stream(&bArray, QIODevice::WriteOnly);
+            stream << path;
+            return bArray.toBase64();
+        }
+
+        static QPainterPath toPainterPath(const QByteArray &base64) {
+            auto b64 = QByteArray::fromBase64(base64);
+            QDataStream stream(&b64, QIODevice::ReadOnly);
+            auto returned = QPainterPath();
+            stream >> returned;
+            return returned;
+        }
+};
 
 class RPZAtomMetadata : public QVariantHash {
     public:
@@ -29,9 +48,7 @@ class RPZAtomMetadata : public QVariantHash {
         }
 
         QPointF pos() const {
-            return JSONSerializer::toPointF(
-                (*this)["pos"].toByteArray()
-            );
+            return (*this)["pos"].toPointF();
         }
 
         int penWidth() const {
@@ -57,7 +74,7 @@ class RPZAtomMetadata : public QVariantHash {
         }
 
         void setPos(const QPointF &pos) {
-            (*this)["pos"] = JSONSerializer::asBase64(pos);
+            (*this)["pos"] = pos;
         }
 
         void setPenWidth(int width) {

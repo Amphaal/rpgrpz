@@ -8,9 +8,8 @@
 #include <QObject>
 #include <QDebug>
 
-#include "src/shared/_serializer.hpp"
 #include "src/shared/models/RPZAtom.hpp"
-#include "src/shared/models/AlterationPayload.hpp"
+#include "src/shared/models/payloads/base/AlterationPayload.hpp"
 
 class MapHint : public QObject {
 

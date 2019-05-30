@@ -3,27 +3,25 @@
 #include <QUuid>
 #include <QString>
 
+#include "Serializable.hpp"
+
 #include "RPZUser.hpp"
 
-class Ownable {
+class Ownable : public Serializable {
 
     public:
         Ownable() {};
-        Ownable(const RPZUser &user) {
+        Ownable(const QVariantHash &hash) : Serializable(hash) {}
+        Ownable(const QUuid &id) : Serializable(id) {}
+        Ownable(const QUuid &id, const RPZUser &user) : Ownable(id) {
             this->setOwnership(user);
         };
 
-        RPZUser owner() { return this->_owner; };
-
-        void setOwnership(const RPZUser &user) { 
-            this->_owner = user;
+        RPZUser owner() { 
+            return this->value("owner").toHash(); 
         };
 
-    protected: 
-        void injectOwnerDataToHash(QVariantHash &hash) {
-            hash.insert("owner", this->_owner.toVariantHash());
-        }
-
-    private:
-        RPZUser _owner;
+        void setOwnership(const RPZUser &user) { 
+            (*this)["owner"] = user;
+        };
 };

@@ -504,11 +504,10 @@ void MapHintViewBinder::_alterSceneGlobal(const RPZAtom::Alteration &alteration,
 }
 
 QGraphicsItem* MapHintViewBinder::_findBoundGraphicsItem(const RPZAtom::Alteration &alteration, RPZAtom &atom) {
-    
+
     //if already bound (inner source), immerdiate return
     QGraphicsItem * item = atom.graphicsItem(); 
     if(item) {
-        atom.mayUpdateDataFromGraphicsItem(alteration); //update inner state
         return item;
     }
     
@@ -542,7 +541,7 @@ void MapHintViewBinder::_alterSceneInternal(const RPZAtom::Alteration &alteratio
 
     //find or create the graphics item
     auto gItem = this->_findBoundGraphicsItem(alteration, atom);
-
+    
     //default handling
     MapHint::_alterSceneInternal(alteration, atom); 
 

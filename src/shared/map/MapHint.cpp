@@ -65,7 +65,6 @@ void MapHint::_alterSceneInternal(const RPZAtom::Alteration &alteration, RPZAtom
         
         //on move / resize, update inner RPZAtom
         case RPZAtom::Alteration::Moved:
-        case RPZAtom::Alteration::Resized:
         case RPZAtom::Alteration::LayerChange: {
             this->_atomsById[elemId] = atom;
         }
@@ -141,7 +140,8 @@ QVector<RPZAtom> MapHint::_fetchAtoms(const QVector<QUuid> &listToFetch) const {
    QVector<RPZAtom> list;
 
     for(auto &e : listToFetch) {
-        list.append(this->_atomsById[e]);
+        auto atom = this->_atomsById[e];
+        list.append(atom);
     }
 
    return list; 

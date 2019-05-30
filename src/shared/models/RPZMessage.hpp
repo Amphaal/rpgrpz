@@ -5,59 +5,51 @@
 #include <QDateTime>
 
 #include "RPZUser.hpp"
-#include "../Serializable.hpp"
 #include "Ownable.hpp"
 
-class RPZMessage : public Serializable, public Ownable {
+class RPZMessage : public Ownable {
     public:
         RPZMessage() {};
-        RPZMessage(const QUuid &id, const QString &message, const QDateTime &dt, const RPZUser &owner) : 
-            Serializable(id),
-            Ownable(owner),
-            _message(message), 
-            _dt(dt) { };
+        RPZMessage(const QVariantHash &hash) : Ownable(hash) {}
+        RPZMessage(const QUuid &id, const QString &message, const QDateTime &dt, const RPZUser &owner) : Ownable(id, owner) {
+            this->_setTimestamp(dt);
+            this->_setMessage(message);
+        };
 
-        RPZMessage(const QUuid &id, const QString &message, const QDateTime &dt) : 
-            Serializable(id),
-            _message(message), 
-            _dt(dt){ };
+        RPZMessage(const QUuid &id, const QString &message, const QDateTime &dt) : Ownable(id) { 
+            this->_setTimestamp(dt);
+            this->_setMessage(message);
+        };
 
-        RPZMessage(const QString &message) : RPZMessage(
+        RPZMessage(const QString &message) : 
+        RPZMessage(
             QUuid::createUuid(), 
             message, 
             QDateTime::currentDateTime()
         ) { };
 
-        static RPZMessage fromVariantHash(const QVariantHash &hash) {
-            return RPZMessage(
-                hash["id"].toUuid(), 
-                hash["msg"].toString(), 
-                hash["dt"].toDateTime(),
-                RPZUser::fromVariantHash(hash["owner"].toHash())
-            );
-        };
+        QString message() {
+            return this->value("msg").toString();
+        }
+
+        QDateTime timestamp() {
+            return this->value("dt").toDateTime();
+        }
 
         QString toString() {
-            const auto ts = QString("[" + _dt.toString("dd.MM.yyyy-hh:mm:ss") + "] ");
+            const auto ts = QString("[" + this->timestamp().toString("dd.MM.yyyy-hh:mm:ss") + "] ");
             const auto name = this->owner().name() + " a dit : ";
-            const auto fullMsg = ts + name + "“" + this->_message + "”";
+            const auto fullMsg = ts + name + "“" + this->message() + "”";
             return fullMsg;
-        };
-
-        QVariantHash toVariantHash() override {
-            QVariantHash out;
-
-            out.insert("id", this->id());
-            out.insert("msg", this->_message);
-            out.insert("dt", this->_dt);
-            
-            this->injectOwnerDataToHash(out);
-
-            return out;
         };
 
 
     private:
-        QString _message;
-        QDateTime _dt;
+        void _setTimestamp(const QDateTime &dt) {
+            (*this)["dt"] = dt;
+        }
+
+        void _setMessage(const QString &message) {
+            (*this)["msg"] = message;
+        }
 };
