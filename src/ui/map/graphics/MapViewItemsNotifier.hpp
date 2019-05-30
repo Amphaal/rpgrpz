@@ -9,7 +9,7 @@
 
 class MapViewItemsNotified  {
     public:
-        virtual void onItemChange(QGraphicsItem* item, RPZAtom::Alteration alteration) = 0;
+        virtual void onItemChange(QGraphicsItem* item, AlterationPayload::Alteration alteration) = 0;
 };
 
 class MapViewItemsNotifier  {
@@ -50,7 +50,7 @@ class MapViewItemsNotifier  {
             
             switch(change) {
                 case QGraphicsItem::ItemPositionHasChanged:
-                    this->_toNotify->onItemChange(this->_item, RPZAtom::Alteration::Moved);
+                    this->_toNotify->onItemChange(this->_item, AlterationPayload::Alteration::Moved);
                     break;
             }
         }

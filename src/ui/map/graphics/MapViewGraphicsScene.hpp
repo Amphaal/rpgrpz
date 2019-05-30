@@ -15,7 +15,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
         void sceneItemChanged(QGraphicsItem* item, int atomAlteration);
 
     private:
-        void onItemChange(QGraphicsItem* item, RPZAtom::Alteration alteration) override {
+        void onItemChange(QGraphicsItem* item, AlterationPayload::Alteration alteration) override {
             emit sceneItemChanged(item, alteration);
         };
 

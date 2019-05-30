@@ -77,7 +77,7 @@ class MapView : public QGraphicsView, public ClientBindable {
         void _goToDefaultViewState();
         
         //network
-            void _sendMapChanges(const RPZAtom::Alteration &state, QVector<RPZAtom> &elements);
+            void _sendMapChanges(const AlterationPayload::Alteration &state, QVector<RPZAtom> &elements);
             void _sendMapHistory();
 
         //registered points

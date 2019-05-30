@@ -53,7 +53,7 @@ void MapView::keyPressEvent(QKeyEvent * event) {
 
         //deletion handling
         case Qt::Key::Key_Delete:
-            this->_hints->alterSceneFromItems(RPZAtom::Alteration::Removed, this->_scene->selectedItems());
+            this->_hints->alterSceneFromItems(AlterationPayload::Alteration::Removed, this->_scene->selectedItems());
             break;
         
         //ask unselection of current tool
@@ -151,7 +151,7 @@ void MapView::onRPZClientDisconnect(RPZClient* cc) {
 
 }
 
-void MapView::_sendMapChanges(const RPZAtom::Alteration &state, QVector<RPZAtom> &elements) {
+void MapView::_sendMapChanges(const AlterationPayload::Alteration &state, QVector<RPZAtom> &elements) {
     if(!this->_rpzClient) return;
 
     auto data = this->_hints->packageForNetworkSend(state, elements);
@@ -162,7 +162,7 @@ void MapView::_sendMapChanges(const RPZAtom::Alteration &state, QVector<RPZAtom>
 void MapView::_sendMapHistory() {
     if(!this->_rpzClient) return;
 
-    auto data = this->_hints->packageForNetworkSend(RPZAtom::Alteration::Reset, this->_hints->atoms());
+    auto data = this->_hints->packageForNetworkSend(AlterationPayload::Alteration::Reset, this->_hints->atoms());
 
     this->_rpzClient->sendMapChanges(data, true);
 }

@@ -50,8 +50,8 @@ class MapHintViewBinder : public MapHint {
         void unpackFromNetworkReceived(const QVariantHash &package);
 
         //add alteration from graphicitem
-        void alterSceneFromItems(const RPZAtom::Alteration &alteration, const QList<QGraphicsItem*> &elements);
-        void alterSceneFromItem(const RPZAtom::Alteration &alteration, QGraphicsItem* element);
+        void alterSceneFromItems(const AlterationPayload::Alteration &alteration, const QList<QGraphicsItem*> &elements);
+        void alterSceneFromItem(const AlterationPayload::Alteration &alteration, QGraphicsItem* element);
 
         //actions helpers
         void addDrawing(const QPainterPath &path, const QPen &pen);
@@ -84,7 +84,7 @@ class MapHintViewBinder : public MapHint {
 
         bool _isDirty = false;
         void _setDirty(bool dirty = true);
-        void _shouldMakeDirty(const RPZAtom::Alteration &state, QVector<RPZAtom> &elements);
+        void _shouldMakeDirty(const AlterationPayload::Alteration &state, QVector<RPZAtom> &elements);
 
         QGraphicsView* _boundGv = nullptr;
 
@@ -99,7 +99,7 @@ class MapHintViewBinder : public MapHint {
         RPZAtom _fetchAtom(QGraphicsItem* graphicElem) const;
         QVector<RPZAtom> _fetchAtoms(const QList<QGraphicsItem*> &listToFetch) const;
 
-        QGraphicsItem* _findBoundGraphicsItem(const RPZAtom::Alteration &alteration, RPZAtom &atom);
+        QGraphicsItem* _findBoundGraphicsItem(const AlterationPayload::Alteration &alteration, RPZAtom &atom);
 
         void _onSceneSelectionChanged();
         void _onSceneItemChanged(QGraphicsItem* item, int alteration);
@@ -113,6 +113,6 @@ class MapHintViewBinder : public MapHint {
         int _defaultLayer = 0;
 
         //augmenting MapHint
-        void _alterSceneGlobal(const RPZAtom::Alteration &alteration, QVector<RPZAtom> &atoms) override;
-        void _alterSceneInternal(const RPZAtom::Alteration &alteration, RPZAtom &atom) override;
+        void _alterSceneGlobal(const AlterationPayload::Alteration &alteration, QVector<RPZAtom> &atoms) override;
+        void _alterSceneInternal(const AlterationPayload::Alteration &alteration, RPZAtom &atom) override;
 };

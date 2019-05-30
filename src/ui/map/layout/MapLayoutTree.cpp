@@ -103,18 +103,18 @@ void MapLayoutTree::_moveSelectionToLayer(int targetLayer) {
     this->_changeLayer(selectedIds, targetLayer);
 
     //unilateral event, expect only outer calls
-    this->_expectedPingback = RPZAtom::Alteration::LayerChange;
+    this->_expectedPingback = AlterationPayload::Alteration::LayerChange;
     emit elementsAlterationAsked(this->_expectedPingback, selectedIds, QVariant(targetLayer));
 }
 
 
 void MapLayoutTree::_onElementDoubleClicked(QTreeWidgetItem * item, int column) {
-    emit elementsAlterationAsked(RPZAtom::Alteration::Focused, this->_extractIdsFromSelection());
+    emit elementsAlterationAsked(AlterationPayload::Alteration::Focused, this->_extractIdsFromSelection());
 }
 
 void MapLayoutTree::_onElementSelectionChanged() {
     
-    auto associatedAlteration = RPZAtom::Alteration::Selected;
+    auto associatedAlteration = AlterationPayload::Alteration::Selected;
 
     //bilateral event, prevent circular for inner and outer events
     if(this->_expectedPingback == associatedAlteration) return;
@@ -124,22 +124,22 @@ void MapLayoutTree::_onElementSelectionChanged() {
 
 }
 
-void MapLayoutTree::alterTreeElements(const RPZAtom::Alteration &state, QVector<RPZAtom> &elements) {
+void MapLayoutTree::alterTreeElements(const AlterationPayload::Alteration &state, QVector<RPZAtom> &elements) {
     
     //if pingback invocation, skip
     if(this->_expectedPingback == state) {
-        this->_expectedPingback = RPZAtom::Alteration::Unknown;
+        this->_expectedPingback = AlterationPayload::Alteration::Unknown;
         return;
     }
 
     //special handling
-    if(state == RPZAtom::Alteration::Selected) {
+    if(state == AlterationPayload::Alteration::Selected) {
         this->_expectedPingback = state; //prevent inner circular event calls
         this->clearSelection();
     }
 
     //special handling
-    else if(state == RPZAtom::Alteration::Reset) {
+    else if(state == AlterationPayload::Alteration::Reset) {
         
         //empty
         for(auto item : this->_treeItemsByAtomId) {
@@ -156,7 +156,7 @@ void MapLayoutTree::alterTreeElements(const RPZAtom::Alteration &state, QVector<
 
         switch(state) {
 
-            case RPZAtom::Alteration::Removed: {
+            case AlterationPayload::Alteration::Removed: {
                     auto item = this->_treeItemsByAtomId[key];
                     if(item) {
 
@@ -176,19 +176,19 @@ void MapLayoutTree::alterTreeElements(const RPZAtom::Alteration &state, QVector<
                 }
                 break;
 
-            case RPZAtom::Alteration::LayerChange: {
+            case AlterationPayload::Alteration::LayerChange: {
                     this->_changeLayer(e);
                 }
                 break;
 
-            case RPZAtom::Alteration::Selected: {
+            case AlterationPayload::Alteration::Selected: {
                     auto item = this->_treeItemsByAtomId[key];
                     if(item) item->setSelected(true);
                 }
                 break;
 
-            case RPZAtom::Alteration::Reset:
-            case RPZAtom::Alteration::Added: {
+            case AlterationPayload::Alteration::Reset:
+            case AlterationPayload::Alteration::Added: {
                     auto item = this->_createTreeItem(e);
                     this->_treeItemsByAtomId.insert(key, item);
 
@@ -203,8 +203,8 @@ void MapLayoutTree::alterTreeElements(const RPZAtom::Alteration &state, QVector<
     }
 
     //release lock
-    if(state == RPZAtom::Alteration::Selected) {
-        this->_expectedPingback = RPZAtom::Alteration::Unknown;
+    if(state == AlterationPayload::Alteration::Selected) {
+        this->_expectedPingback = AlterationPayload::Alteration::Unknown;
     }
 
 }
@@ -341,7 +341,7 @@ void MapLayoutTree::keyPressEvent(QKeyEvent * event) {
             const auto selectedIds = this->_extractIdsFromSelection();
             if(!selectedIds.length()) return;
 
-            emit elementsAlterationAsked(RPZAtom::Alteration::Removed, selectedIds);
+            emit elementsAlterationAsked(AlterationPayload::Alteration::Removed, selectedIds);
             break;
     }
 

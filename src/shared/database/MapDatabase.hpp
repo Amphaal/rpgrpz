@@ -22,9 +22,7 @@ class MapDatabase : public JSONDatabase {
             for(auto &atom : atoms) {
 
                 auto atom_id = atom.id().toString(QUuid::WithoutBraces);
-                auto casted = QJsonObject::fromVariantHash(
-                    atom.toVariantHash()
-                );
+                auto casted = QJsonObject::fromVariantHash(atom);
 
                 db_atoms[atom_id] = casted;
             }
@@ -41,9 +39,7 @@ class MapDatabase : public JSONDatabase {
             auto db_atoms = this->_db["atoms"].toObject();
 
             for(auto &e : db_atoms) {
-              auto atom = RPZAtom::fromVariantHash(
-                  e.toObject().toVariantHash()
-              );
+              auto atom = RPZAtom(e.toObject().toVariantHash());
               out.append(atom);
             }
 

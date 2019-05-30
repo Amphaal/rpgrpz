@@ -166,7 +166,7 @@ void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
 void RPZServer::_broadcastMessage(RPZMessage &messageToBroadcast) {
 
     for(auto &user : this->_usersById) {
-        user.jsonHelper()->sendJSON(JSONMethod::MessageFromPlayer, messageToBroadcast.toVariantHash());
+        user.jsonHelper()->sendJSON(JSONMethod::MessageFromPlayer, messageToBroadcast);
     }
 
     qDebug() << "RPZServer : Broadcasted message to " << this->_usersById.size() << " clients";
@@ -208,15 +208,15 @@ void RPZServer::_broadcastMapChanges(const QVariantHash &payload, JSONSocket * s
     //send...
     for(auto &user : this->_usersById) {
         if(user.jsonHelper() == senderSocket) continue; //prevent self send
-        user.jsonHelper()->sendJSON(JSONMethod::MapChanged, payloadWithOwners.toVariantHash());
+        user.jsonHelper()->sendJSON(JSONMethod::MapChanged, payloadWithOwners);
     }
 
 }
 
 void RPZServer::_sendMapHistory(JSONSocket * clientSocket) {
     //send...
-    auto payload = AlterationPayload(RPZAtom::Alteration::Reset, this->_hints->atoms());
-    clientSocket->sendJSON(JSONMethod::MapChanged, payload.toVariantHash());
+    auto payload = AlterationPayload(AlterationPayload::Alteration::Reset, this->_hints->atoms());
+    clientSocket->sendJSON(JSONMethod::MapChanged, payload);
 
 }
 
@@ -224,7 +224,7 @@ QVariantHash RPZServer::_serializeUsers() {
     QVariantHash base;
 
     for (auto &user : this->_usersById) {
-        base.insert(user.id().toString(), user.toVariantHash());
+        base.insert(user.id().toString(), user);
     }
 
     return base;
@@ -234,7 +234,7 @@ QVariantList RPZServer::_serializeMessages() {
     QVariantList base;
 
     for (auto &msg : this->_messages) {
-        base.append(msg.toVariantHash());
+        base.append(msg);
     }
 
     return base;

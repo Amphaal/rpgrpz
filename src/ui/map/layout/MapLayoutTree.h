@@ -14,6 +14,8 @@
 #include "src/shared/database/AssetsDatabase.h"
 
 #include "src/shared/models/RPZAtom.hpp"
+#include "src/shared/models/RPZAtom.hpp"
+
 #include "src/ui/map/base/RPZTree.hpp"
 #include "LayerTreeItem.hpp"
 
@@ -23,10 +25,10 @@ class MapLayoutTree : public RPZTree {
 
     public:
         MapLayoutTree(QWidget* parent = nullptr);
-        void alterTreeElements(const RPZAtom::Alteration &state, QVector<RPZAtom> &elements);
+        void alterTreeElements(const AlterationPayload::Alteration &state, QVector<RPZAtom> &elements);
     
     signals:
-        void elementsAlterationAsked(const RPZAtom::Alteration &state, const QVector<QUuid> &elementIds, QVariant &arg = QVariant());
+        void elementsAlterationAsked(const AlterationPayload::Alteration &state, const QVector<QUuid> &elementIds, QVariant &arg = QVariant());
 
     protected:
         void keyPressEvent(QKeyEvent * event) override;
@@ -49,7 +51,7 @@ class MapLayoutTree : public RPZTree {
         QHash<QString, QSet<QTreeWidgetItem*>> _treeItemsByAssetId;
 
         QVector<QUuid> _extractIdsFromSelection() const;
-        RPZAtom::Alteration _expectedPingback = RPZAtom::Alteration::Unknown;
+        AlterationPayload::Alteration _expectedPingback = AlterationPayload::Alteration::Unknown;
 
         QTreeWidgetItem* _createTreeItem(RPZAtom &atom);
 

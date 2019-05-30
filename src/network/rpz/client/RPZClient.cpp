@@ -135,7 +135,7 @@ void RPZClient::sendMessage(const QString &messageToSend) {
 
     auto msg = RPZMessage(messageToSend);
 
-    this->sendJSON(JSONMethod::MessageFromPlayer, msg.toVariantHash());
+    this->sendJSON(JSONMethod::MessageFromPlayer, msg);
 
     qDebug() << "RPZClient : message sent " << messageToSend; 
 }
