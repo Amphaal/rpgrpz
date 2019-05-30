@@ -4,7 +4,6 @@
 
 class AlterationPayload : protected QVariantHash {
     public:
-
         enum Source {
             Local,
             Network
@@ -38,6 +37,7 @@ class AlterationPayload : protected QVariantHash {
             LayerChanged  
         };
 
+        AlterationPayload(const QVariantHash &hash) : QVariantHash(hash) {}
         AlterationPayload(const Alteration &type, const Source &source) : QVariantHash() {
             this->_setType(type);
             this->_setSource(source);

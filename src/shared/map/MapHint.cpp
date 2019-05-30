@@ -7,9 +7,9 @@ QVector<RPZAtom> MapHint::atoms() {
 }
 
 //handle network and local evts emission
-void MapHint::_emitAlteration(const AlterationPayload::Alteration &state, QVector<RPZAtom> &elements) {
+void MapHint::_emitAlteration(const AlterationPayload &payload) {
 
-    emit atomsAlteredForLocal(state, elements);
+    emit atomsAlteredForLocal(payload);
 
     if(AlterationPayload::networkAlterations.contains(state) && !this->_preventNetworkAlterationEmission) {
         emit atomsAlteredForNetwork(state, elements);
@@ -135,7 +135,7 @@ void MapHint::alterSceneFromIds(const AlterationPayload::Alteration &alteration,
 }
 
 //helper
-QVector<RPZAtom> MapHint::_fetchAtoms(const QVector<QUuid> &listToFetch) const {
+QVector<RPZAtom> MapHint::_fetchAtoms(const QVector<QUuid> &listToFetch) {
    QVector<RPZAtom> list;
 
     for(auto &e : listToFetch) {

@@ -9,8 +9,8 @@
 
 #include "src/network/rpz/client/RPZClient.h"
 
-#include "src/shared/models/RPZMessage.hpp"
-#include "src/shared/models/RPZUser.hpp"
+#include "src/shared/models/entities/RPZMessage.hpp"
+#include "src/shared/models/entities/RPZUser.hpp"
 #include "src/ui/others/ClientBindable.hpp"
 
 #include "ChatEdit.h"

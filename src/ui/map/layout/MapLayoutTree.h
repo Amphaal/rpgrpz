@@ -13,8 +13,8 @@
 
 #include "src/shared/database/AssetsDatabase.h"
 
-#include "src/shared/models/RPZAtom.hpp"
-#include "src/shared/models/RPZAtom.hpp"
+#include "src/shared/models/entities/RPZAtom.hpp"
+#include "src/shared/models/Payloads.h"
 
 #include "src/ui/map/base/RPZTree.hpp"
 #include "LayerTreeItem.hpp"
@@ -25,10 +25,12 @@ class MapLayoutTree : public RPZTree {
 
     public:
         MapLayoutTree(QWidget* parent = nullptr);
-        void alterTreeElements(const AlterationPayload::Alteration &state, QVector<RPZAtom> &elements);
+    
+    public slots:
+        void alterTreeElements(const QVariantHash &payload);
     
     signals:
-        void elementsAlterationAsked(const AlterationPayload::Alteration &state, const QVector<QUuid> &elementIds, QVariant &arg = QVariant());
+        void elementsAlterationAsked(const QVariantHash &payload);
 
     protected:
         void keyPressEvent(QKeyEvent * event) override;

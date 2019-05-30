@@ -1,4 +1,4 @@
-#include "src/shared/models/RPZAtom.hpp"
+#include "src/shared/models/entities/RPZAtom.hpp"
 
 #include "base/AlterationPayload.hpp"
 

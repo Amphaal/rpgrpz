@@ -96,7 +96,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         case JSONMethod::MessageFromPlayer: 
         {
                 //get message, add corresponding user to it then store it
-                auto message = RPZMessage::fromVariantHash(data.toHash());
+                RPZMessage message(data.toHash());
                 message.setOwnership(*this->_getUser(target));
                 this->_messages.insert(message.id(), message);
 
@@ -149,8 +149,8 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 }
 
 void RPZServer::_tellUserHisIdentity(JSONSocket* socket) {
-    auto serialized = this->_getUser(socket)->toVariantHash();
-    socket->sendJSON(JSONMethod::AckIdentity, serialized);
+    auto serialized = this->_getUser(socket);
+    socket->sendJSON(JSONMethod::AckIdentity, *serialized);
 }
 
 void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
@@ -189,16 +189,34 @@ void RPZServer::_askHostForMapHistory() {
 
 void RPZServer::_broadcastMapChanges(const QVariantHash &payload, JSONSocket * senderSocket) {
 
-    auto payloadWithOwners = AlterationPayload::fromVariantHash(payload);
+    AlterationPayload aPayload(payload);
 
     //determine ownership on absent owner data data
     auto defaultOwner = this->_getUser(senderSocket); //default is sender
-    for(auto &atom : *payloadWithOwners.atoms()) {
-        
-        //if no owner data, assume the sender is the owner
+    
+    //if no owner data, assume the sender is the owner
+    auto setDefaultOwner = [defaultOwner](RPZAtom &atom) {
         if(atom.owner().id().isNull()) {
             atom.setOwnership(*defaultOwner);
         }
+    };
+
+    switch(aPayload.type()) {
+        case AlterationPayload::Alteration::Added: {
+            auto cPayload = (AddedPayload)aPayload;
+            setDefaultOwner(cPayload.);
+        }
+        break;
+
+        case AlterationPayload::Alteration::Reset: { 
+
+        }
+        break;
+
+    }
+    for(auto &atom : *payloadWithOwners.atoms()) {
+        
+
 
     }
 

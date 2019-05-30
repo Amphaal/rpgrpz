@@ -11,7 +11,7 @@
 
 #include "src/shared/database/AssetsDatabase.h"
 
-#include "src/shared/models/RPZMessage.hpp"
+#include "src/shared/models/entities/RPZMessage.hpp"
 
 #include "src/helpers/_appContext.h"
 

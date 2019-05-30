@@ -5,7 +5,7 @@
 
 #include <QDebug>
 
-#include "src/shared/models/RPZAtom.hpp"
+#include "src/shared/models/entities/RPZAtom.hpp"
 
 class MapViewItemsNotified  {
     public:

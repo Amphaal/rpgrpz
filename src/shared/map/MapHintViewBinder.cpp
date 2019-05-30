@@ -247,7 +247,7 @@ void MapHintViewBinder::addDrawing(const QPainterPath &path, const QPen &pen) {
     metadata.setLayer(this->_defaultLayer);
 
     //inform !
-    auto newAtom = RPZAtom(AtomBase::Type::Drawing, newPath, metadata);
+    auto newAtom = RPZAtom(RPZAtom::Type::Drawing, newPath, metadata);
     this->alterSceneFromAtom(AlterationPayload::Alteration::Added, newAtom);
 }
 
@@ -286,7 +286,7 @@ void MapHintViewBinder::turnGhostItemIntoDefinitive(QGraphicsItem* temporaryItem
     if(notifier) notifier->activateNotifications();
 
     //inform !
-    auto newAtom = RPZAtom((AtomBase::Type)assetElem->type(), temporaryItem, metadata);
+    auto newAtom = RPZAtom((RPZAtom::Type)assetElem->type(), temporaryItem, metadata);
     this->alterSceneFromAtom(AlterationPayload::Alteration::Added, newAtom);
 }
 
@@ -312,7 +312,7 @@ QGraphicsItem* MapHintViewBinder::_buildGraphicsItemFromAtom(RPZAtom &atomToBuil
     switch(atomToBuildFrom.type()) {
         
         //drawing...
-        case AtomBase::Type::Drawing: {
+        case RPZAtom::Type::Drawing: {
 
             //extract path
             auto path = atomToBuildFrom.metadata()->shape();
@@ -337,7 +337,7 @@ QGraphicsItem* MapHintViewBinder::_buildGraphicsItemFromAtom(RPZAtom &atomToBuil
         break;
 
         //objects
-        case AtomBase::Type::Object: {
+        case RPZAtom::Type::Object: {
 
             //depending on presence in asset db...
             auto assetId = atomToBuildFrom.metadata()->assetId();

@@ -103,8 +103,8 @@ void MapView::onRPZClientConnecting(RPZClient * cc) {
     //when self user send
     QObject::connect(
         this->_rpzClient, &RPZClient::ackIdentity,
-        [&](const QVariantHash &user) {
-            auto rpz_user = RPZUser::fromVariantHash(user);
+        [&](const QVariantHash &hash) {
+            RPZUser rpz_user(hash);
 
             //define self pen color
             this->hints()->setPenColor(rpz_user.color());

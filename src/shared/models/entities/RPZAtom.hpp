@@ -5,7 +5,7 @@
 #include <QUuid>
 #include <QVector>
 
-#include "Ownable.hpp"
+#include "base/Ownable.hpp"
 
 #include "RPZAtomMetadata.hpp"
 

@@ -5,7 +5,7 @@
 #include <QDateTime>
 
 #include "RPZUser.hpp"
-#include "Ownable.hpp"
+#include "base/Ownable.hpp"
 
 class RPZMessage : public Ownable {
     public:

@@ -7,7 +7,7 @@
 #include "base/LogScrollView.h"
 #include "base/ColorIndicator.hpp"
 
-#include "src/shared/models/RPZUser.hpp"
+#include "src/shared/models/entities/RPZUser.hpp"
 
 class UsersLog : public LogScrollView {
     
@@ -30,7 +30,7 @@ class UsersLog : public LogScrollView {
             for(auto &var_user : users) {
                 
                 //add user to list
-                auto user = RPZUser::fromVariantHash(var_user.toHash());
+                RPZUser user(var_user.toHash());
                 _users.insert(user.id(), user);
 
                 //write line

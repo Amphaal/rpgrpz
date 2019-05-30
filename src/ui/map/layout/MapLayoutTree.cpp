@@ -303,7 +303,7 @@ QTreeWidgetItem* MapLayoutTree::_createTreeItem(RPZAtom &atom) {
 
     const auto type = atom.type();
     switch(type) {
-        case AtomBase::Type::Drawing:
+        case RPZAtom::Type::Drawing:
             item->setIcon(0, QIcon(":/icons/app/manager/drawing.png"));
             break;
     }
@@ -341,7 +341,7 @@ void MapLayoutTree::keyPressEvent(QKeyEvent * event) {
             const auto selectedIds = this->_extractIdsFromSelection();
             if(!selectedIds.length()) return;
 
-            emit elementsAlterationAsked(AlterationPayload::Alteration::Removed, selectedIds);
+            emit elementsAlterationAsked(RemovedPayload(Local, selectedIds));
             break;
     }
 

@@ -27,7 +27,7 @@
 #include "base/AnimationTimeLine.hpp"
 
 #include "src/shared/map/MapHintViewBinder.h"
-#include "src/shared/models/RPZAtom.hpp"
+#include "src/shared/models/entities/RPZAtom.hpp"
 #include "src/ui/others/ClientBindable.hpp"
 
 #include "src/network/rpz/_any/JSONSocket.h"
