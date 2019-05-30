@@ -57,6 +57,16 @@ class RPZUser : public Serializable {
         Role role() { return this->_role; };
         QColor color() { return this->_color; };
 
+        QString toString() {
+            if(!this->name().isNull()) {
+                return this->name();
+            } else if (!this->id().isNull()) {
+                return this->id().toString(QUuid::StringFormat::WithoutBraces);
+            } else {
+                return "Moi";
+            }
+        }
+
         QVariantHash toVariantHash() override {
             QVariantHash out;
 

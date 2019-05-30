@@ -9,8 +9,8 @@
 #include <QDebug>
 
 #include "src/shared/_serializer.hpp"
-#include "src/shared/network/RPZAtom.hpp"
-#include "src/shared/network/AlterationPayload.hpp"
+#include "src/shared/models/RPZAtom.hpp"
+#include "src/shared/models/AlterationPayload.hpp"
 
 class MapHint : public QObject {
 

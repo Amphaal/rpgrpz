@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QObject>
+
 #include <algorithm>
 
 #include <QHash>
@@ -18,10 +20,11 @@
 
 #include "src/helpers/_appContext.h"
 
-class AssetsDatabase : public JSONDatabase, public AssetsDatabaseElement {
+class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabaseElement {
     
-    public:
+    Q_OBJECT
 
+    public:
         //singleton
         static AssetsDatabase* get();
 
@@ -44,6 +47,9 @@ class AssetsDatabase : public JSONDatabase, public AssetsDatabaseElement {
         QString getFilePathToAsset(QString &assetId);
 
         static QString assetsStorageFilepath();
+
+    signals:
+        void assetRenamed(const QString &assetId, const QString &newName);
 
     protected:
         const QString defaultJsonDoc() override;

@@ -11,7 +11,9 @@
 #include <QMenu>
 #include <QHeaderView>
 
-#include "src/shared/network/RPZAtom.hpp"
+#include "src/shared/database/AssetsDatabase.h"
+
+#include "src/shared/models/RPZAtom.hpp"
 #include "src/ui/map/base/RPZTree.hpp"
 #include "LayerTreeItem.hpp"
 
@@ -41,8 +43,11 @@ class MapLayoutTree : public RPZTree {
 
         void _onElementSelectionChanged();
         void _onElementDoubleClicked(QTreeWidgetItem * item, int column);
+        void _onRenamedAsset(const QString &assetId, const QString &newName);
 
-        QHash<QUuid, QTreeWidgetItem*> _treeItemsById;
+        QHash<QUuid, QTreeWidgetItem*> _treeItemsByAtomId;
+        QHash<QString, QSet<QTreeWidgetItem*>> _treeItemsByAssetId;
+
         QVector<QUuid> _extractIdsFromSelection() const;
         RPZAtom::Alteration _expectedPingback = RPZAtom::Alteration::Unknown;
 

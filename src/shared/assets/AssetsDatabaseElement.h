@@ -182,7 +182,7 @@ class AssetsDatabaseElement {
             { Player, "Joueur" },
             { Event, "Evenement" },
             { NPC_Container, "PNJ" },
-            { ObjectContainer, "Assets de carte" },
+            { ObjectContainer, "Objets" },
             { FloorBrushContainer, "Terrains" },
             { DownloadedContainer, "Téléchargés" }
         };

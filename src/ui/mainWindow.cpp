@@ -168,7 +168,7 @@ void MainWindow::_initUIApp() {
     //assets
     auto assetTabs = new QTabWidget(this);
     assetTabs->addTab(this->_assetsManager, QIcon(":/icons/app/tabs/box.png"), "Boite à jouets");
-    assetTabs->addTab(this->_mlManager, QIcon(":/icons/app/tabs/list.png"), "Elements de la carte");
+    assetTabs->addTab(this->_mlManager, QIcon(":/icons/app/tabs/list.png"), "Atomes de la carte");
 
     //designer
     auto designer = new QWidget;

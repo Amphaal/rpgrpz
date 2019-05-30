@@ -13,11 +13,13 @@ MapLayoutTree::MapLayoutTree(QWidget * parent) : RPZTree(parent) {
     this->setSelectionMode(QAbstractItemView::ExtendedSelection);
     this->setDragDropMode(QAbstractItemView::DragDropMode::NoDragDrop);
 
+    //selection changed
     QObject::connect(
         this, &QTreeWidget::itemSelectionChanged,
         this, &MapLayoutTree::_onElementSelectionChanged
     );
 
+    //focus
     QObject::connect(
         this, &QTreeWidget::itemDoubleClicked,
         this, &MapLayoutTree::_onElementDoubleClicked
@@ -28,6 +30,12 @@ MapLayoutTree::MapLayoutTree(QWidget * parent) : RPZTree(parent) {
     QObject::connect(
         this, &QWidget::customContextMenuRequested,
         this, &MapLayoutTree::_renderCustomContextMenu
+    );
+
+    //on rename
+    QObject::connect(
+        AssetsDatabase::get(), &AssetsDatabase::assetRenamed,
+        this, &MapLayoutTree::_onRenamedAsset
     );
 }
 
@@ -131,11 +139,11 @@ void MapLayoutTree::alterTreeElements(const RPZAtom::Alteration &state, QVector<
     else if(state == RPZAtom::Alteration::Reset) {
         
         //empty
-        for(auto item : this->_treeItemsById) {
+        for(auto item : this->_treeItemsByAtomId) {
             delete item;
         }
 
-        this->_treeItemsById.clear();
+        this->_treeItemsByAtomId.clear();
     }
 
     //iterate through items
@@ -146,14 +154,21 @@ void MapLayoutTree::alterTreeElements(const RPZAtom::Alteration &state, QVector<
         switch(state) {
 
             case RPZAtom::Alteration::Removed: {
-                    auto item = this->_treeItemsById[key];
+                    auto item = this->_treeItemsByAtomId[key];
                     if(item) {
 
                         auto layerItem = item->parent();
-                        delete this->_treeItemsById.take(key);
+                        auto oldItem = this->_treeItemsByAtomId.take(key);
+                        delete oldItem;
 
                         //also remove layer
                         this->_updateLayerState(layerItem);
+
+                        //if has assetId, remove it
+                        auto assetId = e.metadata()->assetId();
+                        if(!assetId.isNull()) {
+                            this->_treeItemsByAssetId[assetId].remove(oldItem);
+                        }
                     }
                 }
                 break;
@@ -164,7 +179,7 @@ void MapLayoutTree::alterTreeElements(const RPZAtom::Alteration &state, QVector<
                 break;
 
             case RPZAtom::Alteration::Selected: {
-                    auto item = this->_treeItemsById[key];
+                    auto item = this->_treeItemsByAtomId[key];
                     if(item) item->setSelected(true);
                 }
                 break;
@@ -172,7 +187,13 @@ void MapLayoutTree::alterTreeElements(const RPZAtom::Alteration &state, QVector<
             case RPZAtom::Alteration::Reset:
             case RPZAtom::Alteration::Added: {
                     auto item = this->_createTreeItem(e);
-                    this->_treeItemsById.insert(key, item);
+                    this->_treeItemsByAtomId.insert(key, item);
+
+                    //if has assetId, add it
+                    auto assetId = e.metadata()->assetId();
+                    if(!assetId.isNull()) {
+                        this->_treeItemsByAssetId[assetId].insert(item);
+                    }
                 }
                 break;
         }
@@ -191,13 +212,21 @@ void MapLayoutTree::_changeLayer(RPZAtom &atom) {
     this->_changeLayer(arg, atom.metadata()->layer());
 }
 
+void MapLayoutTree::_onRenamedAsset(const QString &assetId, const QString &newName) {
+    if(!this->_treeItemsByAssetId.contains(assetId)) return;
+
+    for(auto item : this->_treeItemsByAssetId[assetId]) {
+        item->setText(0, newName);
+    }
+}
+
 void MapLayoutTree::_changeLayer(QVector<QUuid> &elementIds, int newLayer) {
 
     QSet<QTreeWidgetItem*> dirtyLayerItems;
 
     //inner elements to update
     for(auto &key : elementIds) {
-        auto item = this->_treeItemsById[key];
+        auto item = this->_treeItemsByAtomId[key];
         if(item) {
             
             //remove from initial layer, maybe remove it too

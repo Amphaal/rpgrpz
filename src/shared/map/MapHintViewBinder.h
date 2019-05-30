@@ -13,7 +13,7 @@
 #include <QGraphicsSvgItem>
 #include <QPixmap>
 
-#include "src/shared/network/AlterationPayload.hpp"
+#include "src/shared/models/AlterationPayload.hpp"
 #include "src/ui/assets/base/AssetsTreeViewModel.hpp"
 
 #include "src/shared/database/MapDatabase.hpp"

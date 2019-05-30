@@ -7,7 +7,7 @@ AssetsDatabase* AssetsDatabase::get() {
     return _singleton;
 }
 
-AssetsDatabase::AssetsDatabase() { 
+AssetsDatabase::AssetsDatabase() : QObject(nullptr) { 
     this->_instanciateDb();
     this->_injectStaticStructure();
     this->_injectDbStructure();
@@ -440,6 +440,8 @@ void AssetsDatabase::_renameItem(QString &name, AssetsDatabaseElement* target) {
 
     //update db
     this->_updateDbFile(obj);
+
+    emit assetRenamed(target->id(), name);
 }
 
 void AssetsDatabase::_renameFolder(QString &name, AssetsDatabaseElement* target) {

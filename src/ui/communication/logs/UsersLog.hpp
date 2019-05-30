@@ -7,7 +7,7 @@
 #include "base/LogScrollView.h"
 #include "base/ColorIndicator.hpp"
 
-#include "src/shared/network/RPZUser.hpp"
+#include "src/shared/models/RPZUser.hpp"
 
 class UsersLog : public LogScrollView {
     

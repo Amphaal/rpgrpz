@@ -85,22 +85,12 @@ class RPZAtom : public AtomBase, public Serializable, public Ownable {
 
         //overrides descriptor
         QString descriptor() override { 
-            auto base = AtomBase::descriptor();
 
             //displays asset name
             auto asname = this->metadata()->assetName();
-            if(!asname.isNull()) {
-                base += " \"" + asname + "\" ";
-            }
+            if(!asname.isNull()) return asname;
 
-            //displays ownership
-            if(!this->owner().name().isNull()) {
-                base += " (" + this->owner().name() + ")";
-            } else if (!this->owner().id().isNull()) {
-                base += " (" + this->owner().id().toString() + ")";
-            }
-
-            return base;
+            return AtomBase::descriptor();
         };
 
         QVariantHash toVariantHash() override {

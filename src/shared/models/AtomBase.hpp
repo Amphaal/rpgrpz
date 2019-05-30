@@ -25,7 +25,7 @@ class AtomBase {
                     this->_description = "Dessin";
                     break;
                 default:
-                    this->_description = "Element";
+                    this->_description = "Atome";
             }
 
         } 
