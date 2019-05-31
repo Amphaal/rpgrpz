@@ -40,5 +40,5 @@ class MapHint : public QObject {
 
         //alter the inner atoms lists
         virtual void _alterSceneGlobal(AlterationPayload &payload);
-        virtual void _alterSceneInternal(const AlterationPayload::Alteration &type, QUuid &targetedAtomId, QVariant &atomAlteration);
+        virtual RPZAtom* _alterSceneInternal(const AlterationPayload::Alteration &type, QUuid &targetedAtomId, QVariant &atomAlteration);
 };

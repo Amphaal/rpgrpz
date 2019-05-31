@@ -5,5 +5,5 @@
 class SelectedPayload : public MultipleTargetsPayload {
     public:
         SelectedPayload(const QList<QUuid> &selectedAtomIds) : 
-        MultipleTargetsPayload(AlterationPayload::Alteration::Selected, AlterationPayload::Source::Local, selectedAtomIds) {}
+        MultipleTargetsPayload(AlterationPayload::Alteration::Selected, selectedAtomIds) {}
 };

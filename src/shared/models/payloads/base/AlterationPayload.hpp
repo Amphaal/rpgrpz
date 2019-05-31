@@ -5,6 +5,7 @@
 class AlterationPayload : public QVariantHash {
     public:
         enum Source {
+            Unknown,
             Local,
             Network
         };
@@ -38,9 +39,9 @@ class AlterationPayload : public QVariantHash {
         };
 
         AlterationPayload(const QVariantHash &hash) : QVariantHash(hash) {}
-        AlterationPayload(const Alteration &type, const Source &source) : QVariantHash() {
+        AlterationPayload(const Alteration &type) : QVariantHash() {
             this->_setType(type);
-            this->_setSource(source);
+            this->changeSource(Local);
         }
 
         Alteration type() {
@@ -51,9 +52,8 @@ class AlterationPayload : public QVariantHash {
             return QVariantHash();
         }
 
-    protected:
-        void _setSource(const Source &source) {
-            (*this)["s"] = (int)source;
+        void changeSource(const Source &newSource) {
+            (*this)["s"] = (int)newSource;
         }
 
     private:       

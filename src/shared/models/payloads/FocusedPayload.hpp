@@ -6,7 +6,7 @@
 
 class FocusedPayload : public AlterationPayload {
     public:
-        FocusedPayload(QUuid &targetedAtomId) : AlterationPayload(AlterationPayload::Focused, AlterationPayload::Local) {
+        FocusedPayload(QUuid &targetedAtomId) : AlterationPayload(AlterationPayload::Focused) {
             this->_setTargetAtomId(targetedAtomId);
         }
     

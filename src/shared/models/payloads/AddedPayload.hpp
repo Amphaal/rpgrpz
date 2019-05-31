@@ -2,9 +2,9 @@
 
 #include "base/AlterationPayload.hpp"
 
-class AddedPayload : AlterationPayload {
+class AddedPayload : public AlterationPayload {
     public:
-        AddedPayload(const AlterationPayload::Source &source, RPZAtom &atom) : AlterationPayload(AlterationPayload::Alteration::Added, source) {
+        AddedPayload(RPZAtom &atom) : AlterationPayload(AlterationPayload::Alteration::Added) {
             this->_setAddedAtom(atom);
         }
     

@@ -4,7 +4,7 @@
 
 class ResetPayload : public AlterationPayload {
     public:
-        ResetPayload(const AlterationPayload::Source &source, QVector<RPZAtom> &atoms) : AlterationPayload(AlterationPayload::Alteration::Reset, source) {
+        ResetPayload(QVector<RPZAtom> &atoms) : AlterationPayload(AlterationPayload::Alteration::Reset) {
             this->_setAddedAtoms(atoms);
         }
             

@@ -53,7 +53,7 @@ void MapHint::_alterSceneGlobal(AlterationPayload &payload) {
 }
 
 //register actions
-void MapHint::_alterSceneInternal(const AlterationPayload::Alteration &type, QUuid &targetedAtomId, QVariant &atomAlteration) {
+RPZAtom* MapHint::_alterSceneInternal(const AlterationPayload::Alteration &type, QUuid &targetedAtomId, QVariant &atomAlteration) {
 
     //get the stored atom relative to the targeted id
     RPZAtom* storedAtom = nullptr;
@@ -82,9 +82,10 @@ void MapHint::_alterSceneInternal(const AlterationPayload::Alteration &type, QUu
             }
 
             //bind elem
-            if(!this->_atomsById.contains(targetedAtomId)) {
-                this->_atomsById.insert(targetedAtomId, newAtom);
-            }
+            this->_atomsById.insert(targetedAtomId, newAtom);
+            
+            //replace for return
+            storedAtom = &this->_atomsById[targetedAtomId];
             
         }
         break;
@@ -122,6 +123,8 @@ void MapHint::_alterSceneInternal(const AlterationPayload::Alteration &type, QUu
         break;
 
     }
+
+    return storedAtom;
 }
 
 //////////////////

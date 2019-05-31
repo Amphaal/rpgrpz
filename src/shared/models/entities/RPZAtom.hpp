@@ -37,14 +37,6 @@ class RPZAtom : public Ownable {
                 this->_setMetadata(metadata);
             };
 
-
-        void mayUpdateDataFromGraphicsItem() {
-            
-            if(!this->graphicsItem()) return;
-            
-            this->_updateDataFromGraphicsItem();
-        }
-
         QGraphicsItem* graphicsItem() { 
             return this->_item; 
         };
@@ -93,39 +85,4 @@ class RPZAtom : public Ownable {
         void _setType(const Type &type) {
             (*this)["type"] = (int)type;
         }
-
-        void _updateDataFromGraphicsItem() {
-            
-            //depending on atomType...
-            switch(this->type()) {
-                
-                //drawing...
-                case Type::Drawing: {
-                    auto casted = (QGraphicsPathItem*)this->graphicsItem();
-                    this->metadata()->setShape(
-                        casted->path()
-                    );
-                }
-                break;
-                
-                //object
-                case Type::Object: {
-                    this->metadata()->setShape(
-                        this->graphicsItem()->boundingRect()
-                    );
-                }
-                break;
-            }
-
-            //and position
-            this->metadata()->setPos(
-                this->graphicsItem()->scenePos()
-            );
-
-            //layer pos
-            this->metadata()->setLayer(
-                this->graphicsItem()->zValue()
-            );
-        }
-
 };

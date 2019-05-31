@@ -9,9 +9,8 @@ class MultipleTargetsPayload : public AlterationPayload {
     public:
         MultipleTargetsPayload(
             const AlterationPayload::Alteration &alteration, 
-            const AlterationPayload::Source &source,
             const QList<QUuid> &targetedAtomIds
-        ) : AlterationPayload(alteration, source) {
+        ) : AlterationPayload(alteration) {
             this->_setTargetAtomIds(targetedAtomIds);
         }
     

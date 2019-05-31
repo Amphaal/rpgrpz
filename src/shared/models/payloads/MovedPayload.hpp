@@ -7,8 +7,8 @@
 
 class MovedPayload : public AlterationPayload {
     public:
-        MovedPayload(const AlterationPayload::Source &source, const QHash<QUuid, QPointF> &newCoordsByAtomId) 
-        : AlterationPayload(AlterationPayload::Alteration::Moved, source) { }
+        MovedPayload(const QHash<QUuid, QPointF> &newCoordsByAtomId) 
+        : AlterationPayload(AlterationPayload::Alteration::Moved) { }
 
         QHash<QUuid, QPointF> coordHash() {
             

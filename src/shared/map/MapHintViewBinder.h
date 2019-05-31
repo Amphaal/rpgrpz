@@ -84,15 +84,11 @@ class MapHintViewBinder : public MapHint {
         bool _externalInstructionPending = false;
         bool _deletionProcessing = false;
 
-
         QGraphicsItem* _buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom);
 
-        QHash<QGraphicsItem*, QUuid> _idsByGraphicItem;
-
-        RPZAtom _fetchAtom(QGraphicsItem* graphicElem) const;
-        QVector<RPZAtom> _fetchAtoms(const QList<QGraphicsItem*> &listToFetch) const;
-
-        QGraphicsItem* _findBoundGraphicsItem(const AlterationPayload::Alteration &alteration, RPZAtom &atom);
+        void _crossBindingAtomWithGI(RPZAtom* atom, QGraphicsItem* gi);
+        RPZAtom* _fetchAtom(QGraphicsItem* graphicElem) const;
+        QVector<RPZAtom*> _fetchAtoms(const QList<QGraphicsItem*> &listToFetch) const;
 
         void _onSceneSelectionChanged();
         void _onSceneItemChanged(QGraphicsItem* item, int alteration);
@@ -107,5 +103,5 @@ class MapHintViewBinder : public MapHint {
 
         //augmenting MapHint
         virtual void _alterSceneGlobal(AlterationPayload &payload) override;
-        virtual void _alterSceneInternal(const AlterationPayload::Alteration &type, QUuid &targetedAtomId, QVariant &atomAlteration) override;
+        virtual RPZAtom* _alterSceneInternal(const AlterationPayload::Alteration &type, QUuid &targetedAtomId, QVariant &atomAlteration) override;
 };
