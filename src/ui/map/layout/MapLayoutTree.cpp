@@ -2,18 +2,18 @@
 
 MapLayoutTree::MapLayoutTree(QWidget * parent) : RPZTree(parent) {
     
-    this->setColumnCount(3);
+    this->setColumnCount(2);
 
     this->setHeaderHidden(true);
-
     this->header()->setStretchLastSection(false);
     this->header()->setMinimumSectionSize(15);
 
     this->header()->setSectionResizeMode(0, QHeaderView::Stretch);
     this->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-    this->header()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
-
+    
+    this->setSelectionBehavior(QAbstractItemView::SelectRows);
     this->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
     this->setDragDropMode(QAbstractItemView::DragDropMode::NoDragDrop);
 
     //selection changed
@@ -115,18 +115,25 @@ void MapLayoutTree::_onElementDoubleClicked(QTreeWidgetItem * item, int column) 
 }
 
 void MapLayoutTree::_onElementSelectionChanged() {
+    if(this->_preventInnerGIEventsHandling) return;
+
     this->_emitAlteration(
         SelectedPayload(this->_selectedAtomIds())
     );
 }
 
 void MapLayoutTree::alterTreeElements(QVariantHash &payload) {
+    
+    this->_preventInnerGIEventsHandling = true;
 
     //prevent circular payloads
     auto aPayload = Payload::autoCast(payload);
     auto type = aPayload->type();
-    if(aPayload->source() == this->_source) {
+    auto source = aPayload->source();
+
+    if(source == this->_source) {
         delete aPayload;
+        this->_preventInnerGIEventsHandling = false;
         return;
     }
 
@@ -195,8 +202,9 @@ void MapLayoutTree::alterTreeElements(QVariantHash &payload) {
         }
 
     }
+    
     delete aPayload;
-
+    this->_preventInnerGIEventsHandling = false;
 }
 
 void MapLayoutTree::_onRenamedAsset(const QString &assetId, const QString &newName) {
@@ -249,7 +257,11 @@ QTreeWidgetItem* MapLayoutTree::_getLayerItem(int layer) {
         layerElem->setText(0, "Calque " + QString::number(layer));
         layerElem->setData(0, Qt::UserRole, QVariant(layer));
         layerElem->setIcon(0, QIcon(":/icons/app/manager/layer.png"));
-        layerElem->setFlags(Qt::ItemIsEnabled);
+        layerElem->setFlags(
+            QFlags<Qt::ItemFlag>(
+                Qt::ItemIsEnabled 
+            )
+        );
         
         //add to layout
         this->_layersItems[layer] = layerElem;
@@ -311,7 +323,10 @@ void MapLayoutTree::_updateLayerState(QTreeWidgetItem* layerItem) {
 }
 
 void MapLayoutTree::_emitAlteration(AlterationPayload &payload) {
-    payload.changeSource(this->_source);
+    auto source = payload.source();
+    if(source == AlterationPayload::Source::Undefined) {
+        payload.changeSource(this->_source);
+    }
     emit elementsAlterationAsked(payload);
 }
 

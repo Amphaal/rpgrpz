@@ -25,8 +25,7 @@ class MovedPayload : public AlterationPayload {
         QVariantHash alterationByAtomId() override {
             QVariantHash out;
             auto list = this->coordHash();
-            QHash<QUuid, QPointF>::iterator i;
-            for (i = list.begin(); i != list.end(); ++i) {
+            for (QHash<QUuid, QPointF>::iterator i = list.begin(); i != list.end(); ++i) {
                 out.insert(i.key().toString(), i.value());
             }
             return out;
@@ -34,6 +33,10 @@ class MovedPayload : public AlterationPayload {
 
     private:
         void _setCoordHash(const QHash<QUuid, QPointF> &newCoordsByAtomId) {
-            (*this)["coords"] = QVariant::fromValue(newCoordsByAtomId);
+            QVariantHash cast;
+            for (QHash<QUuid, QPointF>::const_iterator i = newCoordsByAtomId.begin(); i != newCoordsByAtomId.end(); ++i) {
+                cast.insert(i.key().toString(), i.value());
+            }
+            (*this)["coords"] = cast;
         }
 };

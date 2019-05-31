@@ -23,22 +23,6 @@ void MapHintViewBinder::setDefaultLayer(int layer) {
     this->_defaultLayer = layer;
 }
 
-void MapHintViewBinder::_onSceneItemChanged(QGraphicsItem* item, int alteration) {
-
-    auto c_alteration = (AlterationPayload::Alteration)alteration;
-    
-    //on moving...
-    if(c_alteration == AlterationPayload::Alteration::Moved) {
-        
-        //add to list for future information
-        this->_itemsWhoNotifiedMovement.insert(item);
-
-        //disable further notifications until information have been handled
-        auto notifier = dynamic_cast<MapViewItemsNotifier*>(item);
-        if(notifier) notifier->disableNotifications();
-    }
-}
-
 void MapHintViewBinder::handleAnyMovedItems() {
     
     //if no item moved since last call, do nothing
@@ -63,7 +47,27 @@ void MapHintViewBinder::handleAnyMovedItems() {
     this->_itemsWhoNotifiedMovement.clear();
 }
 
+void MapHintViewBinder::_onSceneItemChanged(QGraphicsItem* item, int alteration) {
+
+    if(this->_preventInnerGIEventsHandling) return;
+
+    auto c_alteration = (AlterationPayload::Alteration)alteration;
+    
+    //on moving...
+    if(c_alteration == AlterationPayload::Alteration::Moved) {
+        
+        //add to list for future information
+        this->_itemsWhoNotifiedMovement.insert(item);
+
+        //disable further notifications until information have been handled
+        auto notifier = dynamic_cast<MapViewItemsNotifier*>(item);
+        if(notifier) notifier->disableNotifications();
+    }
+}
+
 void MapHintViewBinder::_onSceneSelectionChanged() {
+    
+    if(this->_preventInnerGIEventsHandling) return;
 
     //emit event, no RPZAtom alteration necessary
     auto selectedAtoms = this->_fetchAtoms(this->scene()->selectedItems());
@@ -472,6 +476,8 @@ void MapHintViewBinder::centerGraphicsItemToPoint(QGraphicsItem* item, const QPo
 //alter Scene
 void MapHintViewBinder::_alterSceneGlobal(AlterationPayload &payload) { 
 
+    this->_preventInnerGIEventsHandling = true;
+
     //on reset
     auto type = payload.type();
     if(type == AlterationPayload::Alteration::Selected) this->scene()->clearSelection();
@@ -485,6 +491,8 @@ void MapHintViewBinder::_alterSceneGlobal(AlterationPayload &payload) {
 
     //define dirty
     this->_shouldMakeDirty(payload);
+
+    this->_preventInnerGIEventsHandling = false;
 }
 
 //register actions
@@ -525,6 +533,7 @@ RPZAtom* MapHintViewBinder::_alterSceneInternal(const AlterationPayload::Alterat
 
         //on selection
         case AlterationPayload::Alteration::Selected: {
+            
             updatedAtom->graphicsItem()->setSelected(true);
         }
         break;
@@ -532,8 +541,8 @@ RPZAtom* MapHintViewBinder::_alterSceneInternal(const AlterationPayload::Alterat
         //on removal
         case AlterationPayload::Alteration::Removed: {
             auto toRemove = updatedAtom->graphicsItem();
-            updatedAtom->setGraphicsItem(nullptr);
             delete toRemove;
+            updatedAtom->setGraphicsItem(nullptr);
         }
         break;
 

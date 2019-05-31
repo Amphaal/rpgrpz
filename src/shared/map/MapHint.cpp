@@ -15,7 +15,10 @@ QVector<RPZAtom> MapHint::atoms() {
 void MapHint::_emitAlteration(AlterationPayload &payload) {
 
     //define source of payload
-    payload.changeSource(this->_source);
+    auto source = payload.source();
+    if(source == AlterationPayload::Source::Undefined) {
+        payload.changeSource(this->_source);
+    }
 
     emit atomsAlteredForLocal(payload);
 
@@ -43,7 +46,8 @@ void MapHint::alterScene(QVariantHash &payload) {
 void MapHint::_alterSceneGlobal(AlterationPayload &payload) { 
 
     //prevent circular payloads
-    if(payload.source() == this->_source) return;
+    auto payloadSource = payload.source();
+    if(payloadSource == this->_source) return;
 
     //on reset
     auto pType = payload.type();
@@ -56,6 +60,9 @@ void MapHint::_alterSceneGlobal(AlterationPayload &payload) {
     //handling
     auto aCasted = Payload::autoCast(payload);
     auto alterations = aCasted->alterationByAtomId();
+    if(pType == AlterationPayload::Alteration::Selected) {
+        qDebug() << alterations.keys();
+    }
     for (QVariantHash::iterator i = alterations.begin(); i != alterations.end(); ++i) {
         this->_alterSceneInternal(pType, QUuid(i.key()), i.value());
     }

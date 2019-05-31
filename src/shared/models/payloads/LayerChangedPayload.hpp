@@ -14,12 +14,15 @@ class LayerChangedPayload : public MultipleTargetsPayload {
         }
 
         QVariantHash alterationByAtomId() override {
-            QVariantHash out;
+            
             auto list = this->targetAtomIds();
             auto layer = this->layer();
+
+            QVariantHash out;
             for(auto &e : list) {
                 out.insert(e.toString(), layer);
             }
+
             return out;
         }
     

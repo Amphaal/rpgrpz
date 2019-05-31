@@ -89,6 +89,7 @@ class MapHintViewBinder : public MapHint {
         RPZAtom* _fetchAtom(QGraphicsItem* graphicElem) const;
         QVector<RPZAtom*> _fetchAtoms(const QList<QGraphicsItem*> &listToFetch) const;
 
+        bool _preventInnerGIEventsHandling = false;
         void _onSceneSelectionChanged();
         void _onSceneItemChanged(QGraphicsItem* item, int alteration);
             QSet<QGraphicsItem*> _itemsWhoNotifiedMovement;

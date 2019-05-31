@@ -36,6 +36,7 @@ class MapLayoutTree : public RPZTree {
         void keyPressEvent(QKeyEvent * event) override;
 
     private:
+        bool _preventInnerGIEventsHandling = false;
         AlterationPayload::Source _source = AlterationPayload::Source::Local_MapLayout;
 
         void _emitAlteration(AlterationPayload &payload);
