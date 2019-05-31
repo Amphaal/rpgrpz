@@ -30,29 +30,30 @@ class RPZAtomMetadata : public QVariantHash {
         RPZAtomMetadata(const QVariantHash &hash) : QVariantHash(hash) {}
     
         QString assetId() const {
-            return (*this)["a_id"].toString();
+            return this->value("a_id").toString();
         }
 
         QString assetName() const {
-            return (*this)["a_name"].toString();
+            return this->value("a_name").toString();
         }
 
         QPainterPath shape() const {
             return JSONSerializer::toPainterPath(
-                (*this)["shape"].toByteArray()
+                this->value("shape").toByteArray()
             );
         }
 
         int layer() const {
-            return (*this)["lyr"].toInt();
+            return this->value("lyr").toInt();
         }
 
         QPointF pos() const {
-            return (*this)["pos"].toPointF();
+            auto arr = this->value("pos").toList();
+            return arr.isEmpty() ? QPointF() : QPointF(arr[0].toReal(), arr[1].toReal());
         }
 
         int penWidth() const {
-            return (*this)["pen_w"].toInt();
+            return this->value("pen_w").toInt();
         }
 
         void setAssetId(const QString &id) {
@@ -74,7 +75,8 @@ class RPZAtomMetadata : public QVariantHash {
         }
 
         void setPos(const QPointF &pos) {
-            (*this)["pos"] = pos;
+            QVariantList a { pos.x(), pos.y() };
+            (*this)["pos"] = a;
         }
 
         void setPenWidth(int width) {

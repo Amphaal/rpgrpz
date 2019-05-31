@@ -35,7 +35,7 @@ void MapHint::_emitAlteration(AlterationPayload &payload) {
 
 
 //helper
-void MapHint::alterScene(const QVariantHash &payload) {
+void MapHint::alterScene(QVariantHash &payload) {
     return this->_alterSceneGlobal(AlterationPayload(payload));
 }
 
@@ -54,10 +54,12 @@ void MapHint::_alterSceneGlobal(AlterationPayload &payload) {
     }
 
     //handling
-    auto alterations = payload.alterationByAtomId();
+    auto aCasted = Payload::autoCast(payload);
+    auto alterations = aCasted->alterationByAtomId();
     for (QVariantHash::iterator i = alterations.begin(); i != alterations.end(); ++i) {
         this->_alterSceneInternal(pType, QUuid(i.key()), i.value());
     }
+    delete aCasted;
 
     //emit event
     this->_emitAlteration(payload);
@@ -104,14 +106,18 @@ RPZAtom* MapHint::_alterSceneInternal(const AlterationPayload::Alteration &type,
         //on move
         case AlterationPayload::Alteration::Moved: {
             auto position = atomAlteration.toPointF();
-            storedAtom->metadata()->setPos(position);
+            auto mdata = storedAtom->metadata();
+            mdata.setPos(position);
+            storedAtom->setMetadata(mdata);
         }
         break;
 
         //on resize
         case AlterationPayload::Alteration::LayerChanged: {
             auto layer = atomAlteration.toInt();
-            storedAtom->metadata()->setLayer(layer);
+            auto mdata = storedAtom->metadata();
+            mdata.setLayer(layer);
+            storedAtom->setMetadata(mdata);
         }
         break;
             

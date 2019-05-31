@@ -18,13 +18,12 @@ class MapDatabase : public JSONDatabase {
             auto copy = this->_db.object();
 
             //reseting "atoms" object
-            auto db_atoms = QJsonObject();
+            auto db_atoms = QJsonArray();
             for(auto &atom : atoms) {
 
-                auto atom_id = atom.id().toString(QUuid::WithoutBraces);
                 auto casted = QJsonObject::fromVariantHash(atom);
 
-                db_atoms[atom_id] = casted;
+                db_atoms.append(casted);
             }
             copy["atoms"] = db_atoms;
 
@@ -36,7 +35,7 @@ class MapDatabase : public JSONDatabase {
         QVector<RPZAtom> toAtoms() {
             QVector<RPZAtom> out;
 
-            auto db_atoms = this->_db["atoms"].toObject();
+            auto db_atoms = this->_db["atoms"].toArray();
 
             for(auto &e : db_atoms) {
               auto atom = RPZAtom(e.toObject().toVariantHash());
@@ -58,7 +57,7 @@ class MapDatabase : public JSONDatabase {
         }
 
         const int apiVersion() override {
-            return 2;
+            return 3;
         }
 
         const int dbVersion() override {

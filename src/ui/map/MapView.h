@@ -79,7 +79,7 @@ class MapView : public QGraphicsView, public ClientBindable {
         void _goToDefaultViewState();
         
         //network
-            void _sendMapChanges(AlterationPayload &payload);
+            void _sendMapChanges(QVariantHash &payload);
             void _sendMapHistory();
 
         //registered points

@@ -52,8 +52,10 @@ class MapHintViewBinder : public MapHint {
         //D&D assets handling
         void centerGraphicsItemToPoint(QGraphicsItem* item, const QPoint &eventPos);
         QGraphicsItem* generateGhostItem(AssetsDatabaseElement* assetElem);
-        void turnGhostItemIntoDefinitive(QGraphicsItem* temporaryItem, AssetsDatabaseElement* assetElem, const QPoint &dropPos);
+        void turnGhostItemIntoDefinitive(QGraphicsItem* temporaryItem, AssetsDatabaseElement* assetElem, const QPoint &eventPos);
         
+        void deleteCurrentSelectionItems();
+
         //
         void handleAnyMovedItems();
 

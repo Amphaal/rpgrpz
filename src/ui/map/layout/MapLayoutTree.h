@@ -27,10 +27,10 @@ class MapLayoutTree : public RPZTree {
         MapLayoutTree(QWidget* parent = nullptr);
     
     public slots:
-        void alterTreeElements(const QVariantHash &payload);
+        void alterTreeElements(QVariantHash &payload);
     
     signals:
-        void elementsAlterationAsked(const QVariantHash &payload);
+        void elementsAlterationAsked(QVariantHash &payload);
 
     protected:
         void keyPressEvent(QKeyEvent * event) override;

@@ -26,10 +26,10 @@ class AssetsTreeViewModel : public QAbstractItemModel, ClientBindable {
             //import asset
             QObject::connect(
                 cc, &RPZClient::receivedAsset,
-                [&, cc](const QVariantHash &data) {
+                [&, cc](const QVariantHash &package) {
                     
                     this->beginResetModel();
-                        auto asset_id = this->_db->importAsset(data); 
+                        auto asset_id = this->_db->importAsset(package); 
                     this->endResetModel();
 
                     cc->informAssetSucessfulInsertion(asset_id);

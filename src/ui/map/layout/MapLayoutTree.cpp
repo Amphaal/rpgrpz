@@ -108,9 +108,10 @@ void MapLayoutTree::_moveSelectionToLayer(int targetLayer) {
 
 
 void MapLayoutTree::_onElementDoubleClicked(QTreeWidgetItem * item, int column) {
-    this->_emitAlteration(
-        FocusedPayload(this->_extractAtomIdFromItem(item))
-    );
+    auto focusedAtomId = this->_extractAtomIdFromItem(item);
+    if(focusedAtomId.isNull()) return;
+
+    this->_emitAlteration(FocusedPayload(focusedAtomId));
 }
 
 void MapLayoutTree::_onElementSelectionChanged() {
@@ -119,12 +120,15 @@ void MapLayoutTree::_onElementSelectionChanged() {
     );
 }
 
-void MapLayoutTree::alterTreeElements(const QVariantHash &payload) {
+void MapLayoutTree::alterTreeElements(QVariantHash &payload) {
 
     //prevent circular payloads
-    AlterationPayload aPayload(payload);
-    auto type = aPayload.type();
-    if(aPayload.source() == this->_source) return;
+    auto aPayload = Payload::autoCast(payload);
+    auto type = aPayload->type();
+    if(aPayload->source() == this->_source) {
+        delete aPayload;
+        return;
+    }
 
     //special handling
     if(type == AlterationPayload::Alteration::Selected) this->clearSelection();
@@ -142,7 +146,7 @@ void MapLayoutTree::alterTreeElements(const QVariantHash &payload) {
     }
 
     //conditionnal handling by alteration
-    auto alterations = aPayload.alterationByAtomId();
+    auto alterations = aPayload->alterationByAtomId();
     for (QVariantHash::iterator i = alterations.begin(); i != alterations.end(); ++i) {
         
         auto key = i.key();
@@ -152,16 +156,16 @@ void MapLayoutTree::alterTreeElements(const QVariantHash &payload) {
             case AlterationPayload::Alteration::Removed: {
                 
                 auto layerItem = item->parent();
-                auto old_assetId = item->data(0, 666).toString();
-                auto old_id = item->data(0, Qt::UserRole).toUuid();
+                auto tbrAtom_assetId = item->data(0, 666).toString();
+                auto tbrAtom_id = item->data(0, Qt::UserRole).toUuid();
 
                 //if has assetId, remove it from tracking list
-                if(!old_assetId.isNull()) {
-                     this->_atomIdsBoundByAssetId[old_assetId].remove(oldItem);
+                if(!tbrAtom_assetId.isNull()) {
+                     this->_atomIdsBoundByAssetId[tbrAtom_assetId].remove(tbrAtom_id);
                 }
 
                 this->_treeItemsByAtomId.remove(key);
-                delete oldItem;
+                delete item;
 
                 //also remove layer
                 this->_updateLayerState(layerItem);
@@ -182,7 +186,7 @@ void MapLayoutTree::alterTreeElements(const QVariantHash &payload) {
                 this->_treeItemsByAtomId.insert(key, item);
 
                 //if has assetId, add it
-                auto assetId = atom.metadata()->assetId();
+                auto assetId = atom.metadata().assetId();
                 if(!assetId.isNull()) {
                     this->_atomIdsBoundByAssetId[assetId].insert(key);
                 }
@@ -191,6 +195,7 @@ void MapLayoutTree::alterTreeElements(const QVariantHash &payload) {
         }
 
     }
+    delete aPayload;
 
 }
 
@@ -262,12 +267,13 @@ QTreeWidgetItem* MapLayoutTree::_getLayerItem(int layer) {
 QTreeWidgetItem* MapLayoutTree::_createTreeItem(RPZAtom &atom) {
     
     auto item = new QTreeWidgetItem();
+    auto mdata = atom.metadata();
     
     item->setText(0, atom.descriptor());
     item->setText(1, atom.owner().toString());
 
     item->setData(0, Qt::UserRole, atom.id());
-    item->setData(0, 666, atom.metadata()->assetId());
+    item->setData(0, 666, mdata.assetId());
     
     item->setFlags(
         QFlags<Qt::ItemFlag>(
@@ -285,7 +291,7 @@ QTreeWidgetItem* MapLayoutTree::_createTreeItem(RPZAtom &atom) {
     }
 
     //create or get the layer element
-    auto layerElem = this->_getLayerItem(atom.metadata()->layer());
+    auto layerElem = this->_getLayerItem(mdata.layer());
     layerElem->addChild(item);
     this->_updateLayerState(layerElem);
 
@@ -335,7 +341,8 @@ QUuid MapLayoutTree::_extractAtomIdFromItem(QTreeWidgetItem* item) const {
 QVector<QUuid> MapLayoutTree::_selectedAtomIds() const {
     QVector<QUuid> idList;
     for(auto i : this->selectedItems()) {
-        idList.append(this->_extractAtomIdFromItem(i));
+        auto boundId = this->_extractAtomIdFromItem(i);
+        if(!boundId.isNull()) idList.append(boundId);
     }
     return idList;
 }

@@ -53,7 +53,7 @@ void MapView::keyPressEvent(QKeyEvent * event) {
 
         //deletion handling
         case Qt::Key::Key_Delete:
-            this->_hints->alterSceneFromItems(AlterationPayload::Alteration::Removed, this->_scene->selectedItems());
+            this->_hints->deleteCurrentSelectionItems();
             break;
         
         //ask unselection of current tool
@@ -103,8 +103,8 @@ void MapView::onRPZClientConnecting(RPZClient * cc) {
     //when self user send
     QObject::connect(
         this->_rpzClient, &RPZClient::ackIdentity,
-        [&](const QVariantHash &hash) {
-            RPZUser rpz_user(hash);
+        [&](const QVariantHash &userHash) {
+            RPZUser rpz_user(userHash);
 
             //define self pen color
             this->hints()->setPenColor(rpz_user.color());
@@ -151,7 +151,7 @@ void MapView::onRPZClientDisconnect(RPZClient* cc) {
 
 }
 
-void MapView::_sendMapChanges(AlterationPayload &payload) {
+void MapView::_sendMapChanges(QVariantHash &payload) {
     if(!this->_rpzClient) return;
 
     this->_rpzClient->sendMapChanges(payload);
@@ -159,7 +159,7 @@ void MapView::_sendMapChanges(AlterationPayload &payload) {
 
 void MapView::_sendMapHistory() {
     if(!this->_rpzClient) return;
-    this->_sendMapChanges(ResetPayload(AlterationPayload::Source::Network, this->_hints->atoms()));
+    this->_sendMapChanges(ResetPayload(this->_hints->atoms()));
 }
 
 /////////////////

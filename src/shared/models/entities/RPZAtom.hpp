@@ -29,25 +29,24 @@ class RPZAtom : public Ownable {
 
         RPZAtom(const QUuid &id, const Type &type, const RPZUser &owner, const RPZAtomMetadata &metadata) : Ownable(id, owner) {
                 this->_setType(type);
-                this->_setMetadata(metadata);
+                this->setMetadata(metadata);
             };
 
-        RPZAtom(const Type &type, QGraphicsItem* item, const RPZAtomMetadata &metadata) : Ownable(QUuid::createUuid()), _item(item){
+        RPZAtom(const Type &type, const RPZAtomMetadata &metadata) : Ownable(QUuid::createUuid()) {
                 this->_setType(type);  
-                this->_setMetadata(metadata);
+                this->setMetadata(metadata);
             };
 
         QGraphicsItem* graphicsItem() { 
-            return this->_item; 
+            return this->_graphicsItem; 
         };
 
         void setGraphicsItem(QGraphicsItem* item) { 
-            this->_item = item; 
+            this->_graphicsItem = item; 
         };
 
-        RPZAtomMetadata* metadata() { 
-            auto metadata = (RPZAtomMetadata)this->value("mdata").toHash(); 
-            return &metadata;
+        RPZAtomMetadata metadata() { 
+            return (RPZAtomMetadata)this->value("mdata").toHash();
         };
 
         Type type() {
@@ -58,15 +57,19 @@ class RPZAtom : public Ownable {
         QString descriptor() { 
 
             //displays asset name
-            auto asname = this->metadata()->assetName();
+            auto asname = this->metadata().assetName();
             if(!asname.isNull()) return asname;
 
             return this->_defaultDescriptor();
         };
 
+        void setMetadata(const RPZAtomMetadata &metadata) {
+            (*this)["mdata"] = metadata;
+        }
+
 
     private:
-        QGraphicsItem* _item = nullptr;
+        QGraphicsItem* _graphicsItem = nullptr;
 
         QString _defaultDescriptor() {
             switch(this->type()) {
@@ -78,9 +81,7 @@ class RPZAtom : public Ownable {
             }
         }
 
-        void _setMetadata(const RPZAtomMetadata &metadata) {
-            (*this)["mdata"] = metadata;
-        }
+
 
         void _setType(const Type &type) {
             (*this)["type"] = (int)type;

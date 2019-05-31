@@ -37,7 +37,7 @@ RPZClient::~RPZClient() {
 void RPZClient::_onDisconnect() {
     const QString msg = "Déconnecté du serveur";
     emit error(msg);
-    qWarning() << "RPZClient : " << msg;
+    qDebug() << "RPZClient : " << msg;
 }
 
 void RPZClient::_onConnected() {
@@ -146,6 +146,6 @@ void RPZClient::askForAsset(const QString &assetId) {
     qDebug() << "RPZClient : requesting asset " << assetId << " to server"; 
 }
 
-void RPZClient::sendMapChanges(const QVariantHash &changes) {
-    this->sendJSON(JSONMethod::MapChanged, changes);
+void RPZClient::sendMapChanges(QVariantHash &payload) {
+    this->sendJSON(JSONMethod::MapChanged, payload);
 }

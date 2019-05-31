@@ -186,14 +186,15 @@ void RPZServer::_askHostForMapHistory() {
     this->_hostSocket->sendJSON(JSONMethod::AskForHostMapHistory, QStringList());
 }
 
-AlterationPayload RPZServer::_alterIncomingPayloadWithUpdatedOwners(const QVariantHash &payload, JSONSocket * senderSocket) {
+AlterationPayload RPZServer::_alterIncomingPayloadWithUpdatedOwners(QVariantHash &payload, JSONSocket * senderSocket) {
 
-    AlterationPayload aPayload(payload);
-    auto type = aPayload.type();
+    auto aPayload = Payload::autoCast(payload);
+    auto type = aPayload->type();
 
     //no need to modify anything
     if(!AlterationPayload::buildGraphicsItemAlterations.contains(type)) {
-        return aPayload;
+        delete aPayload;
+        return payload;
     }
 
     //get sender identity
@@ -201,13 +202,14 @@ AlterationPayload RPZServer::_alterIncomingPayloadWithUpdatedOwners(const QVaria
 
     //override ownership on absent owner data
     QVector<RPZAtom> updatedAtoms;
-    for(auto &atomRaw : aPayload.alterationByAtomId()) {
+    for(auto &atomRaw : aPayload->alterationByAtomId()) {
         RPZAtom atom(atomRaw.toHash());
         if(atom.owner().id().isNull()) {
             atom.setOwnership(*defaultOwner);
         }
         updatedAtoms.append(atom);
     }
+    delete aPayload;
 
     //return altered
     switch(type) {
@@ -216,9 +218,12 @@ AlterationPayload RPZServer::_alterIncomingPayloadWithUpdatedOwners(const QVaria
         case AlterationPayload::Alteration::Reset:
             return ResetPayload(updatedAtoms);
     }
+
+    //default return
+    return payload;
 }
 
-void RPZServer::_broadcastMapChanges(const QVariantHash &payload, JSONSocket * senderSocket) {
+void RPZServer::_broadcastMapChanges(QVariantHash &payload, JSONSocket * senderSocket) {
 
     //cast
     auto aPayload = this->_alterIncomingPayloadWithUpdatedOwners(payload, senderSocket);
