@@ -69,7 +69,7 @@ void ChatWidget::_onRPZClientError(const QString &errMsg) {
 
 }
 void ChatWidget::_onReceivedMessage(const QVariantHash &message) {
-    auto msg = RPZMessage::fromVariantHash(message);
+    auto msg = RPZMessage(message);
     auto str_msg = msg.toString();
     
     //write in log

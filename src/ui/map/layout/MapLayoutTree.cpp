@@ -99,127 +99,106 @@ void MapLayoutTree::_generateMenu(QList<QTreeWidgetItem*> &itemsToProcess, const
 
 void MapLayoutTree::_moveSelectionToLayer(int targetLayer) {
 
-    auto selectedIds = this->_extractIdsFromSelection();
+    auto selectedIds = this->_selectedAtomIds();
     this->_changeLayer(selectedIds, targetLayer);
 
     //unilateral event, expect only outer calls
-    this->_expectedPingback = AlterationPayload::Alteration::LayerChange;
-    emit elementsAlterationAsked(this->_expectedPingback, selectedIds, QVariant(targetLayer));
+    this->_emitAlteration(LayerChangedPayload(selectedIds, targetLayer));
 }
 
 
 void MapLayoutTree::_onElementDoubleClicked(QTreeWidgetItem * item, int column) {
-    emit elementsAlterationAsked(AlterationPayload::Alteration::Focused, this->_extractIdsFromSelection());
+    this->_emitAlteration(
+        FocusedPayload(this->_extractAtomIdFromItem(item))
+    );
 }
 
 void MapLayoutTree::_onElementSelectionChanged() {
-    
-    auto associatedAlteration = AlterationPayload::Alteration::Selected;
-
-    //bilateral event, prevent circular for inner and outer events
-    if(this->_expectedPingback == associatedAlteration) return;
-
-    this->_expectedPingback = associatedAlteration;
-    emit elementsAlterationAsked(associatedAlteration, this->_extractIdsFromSelection());
-
+    this->_emitAlteration(
+        SelectedPayload(this->_selectedAtomIds())
+    );
 }
 
-void MapLayoutTree::alterTreeElements(const AlterationPayload::Alteration &state, QVector<RPZAtom> &elements) {
-    
-    //if pingback invocation, skip
-    if(this->_expectedPingback == state) {
-        this->_expectedPingback = AlterationPayload::Alteration::Unknown;
-        return;
-    }
+void MapLayoutTree::alterTreeElements(const QVariantHash &payload) {
+
+    //prevent circular payloads
+    AlterationPayload aPayload(payload);
+    auto type = aPayload.type();
+    if(aPayload.source() == this->_source) return;
 
     //special handling
-    if(state == AlterationPayload::Alteration::Selected) {
-        this->_expectedPingback = state; //prevent inner circular event calls
-        this->clearSelection();
-    }
-
-    //special handling
-    else if(state == AlterationPayload::Alteration::Reset) {
-        
-        //empty
+    if(type == AlterationPayload::Alteration::Selected) this->clearSelection();
+    if(type == AlterationPayload::Alteration::Reset) {
         for(auto item : this->_treeItemsByAtomId) {
             delete item;
         }
-
         this->_treeItemsByAtomId.clear();
     }
 
-    //iterate through items
-    for (auto &e : elements) {
+    //specific bulk handling for UI optimizations
+    if(type == AlterationPayload::Alteration::LayerChanged) {
+        auto temp = LayerChangedPayload(payload);
+        this->_changeLayer(temp.targetAtomIds(), temp.layer());
+    }
 
-        const auto key = e.id();
+    //conditionnal handling by alteration
+    auto alterations = aPayload.alterationByAtomId();
+    for (QVariantHash::iterator i = alterations.begin(); i != alterations.end(); ++i) {
+        
+        auto key = i.key();
+        auto item = this->_treeItemsByAtomId[key];
 
-        switch(state) {
-
+        switch(type) {
             case AlterationPayload::Alteration::Removed: {
-                    auto item = this->_treeItemsByAtomId[key];
-                    if(item) {
+                
+                auto layerItem = item->parent();
+                auto old_assetId = item->data(0, 666).toString();
+                auto old_id = item->data(0, Qt::UserRole).toUuid();
 
-                        auto layerItem = item->parent();
-                        auto oldItem = this->_treeItemsByAtomId.take(key);
-                        delete oldItem;
-
-                        //also remove layer
-                        this->_updateLayerState(layerItem);
-
-                        //if has assetId, remove it
-                        auto assetId = e.metadata()->assetId();
-                        if(!assetId.isNull()) {
-                            this->_treeItemsByAssetId[assetId].remove(oldItem);
-                        }
-                    }
+                //if has assetId, remove it from tracking list
+                if(!old_assetId.isNull()) {
+                     this->_atomIdsBoundByAssetId[old_assetId].remove(oldItem);
                 }
-                break;
 
-            case AlterationPayload::Alteration::LayerChange: {
-                    this->_changeLayer(e);
-                }
-                break;
+                this->_treeItemsByAtomId.remove(key);
+                delete oldItem;
+
+                //also remove layer
+                this->_updateLayerState(layerItem);
+
+
+            }
+            break;
 
             case AlterationPayload::Alteration::Selected: {
-                    auto item = this->_treeItemsByAtomId[key];
-                    if(item) item->setSelected(true);
-                }
-                break;
+                item->setSelected(true);
+            }
+            break;
 
             case AlterationPayload::Alteration::Reset:
             case AlterationPayload::Alteration::Added: {
-                    auto item = this->_createTreeItem(e);
-                    this->_treeItemsByAtomId.insert(key, item);
+                auto atom = RPZAtom(i.value().toHash());
+                auto item = this->_createTreeItem(atom);
+                this->_treeItemsByAtomId.insert(key, item);
 
-                    //if has assetId, add it
-                    auto assetId = e.metadata()->assetId();
-                    if(!assetId.isNull()) {
-                        this->_treeItemsByAssetId[assetId].insert(item);
-                    }
+                //if has assetId, add it
+                auto assetId = atom.metadata()->assetId();
+                if(!assetId.isNull()) {
+                    this->_atomIdsBoundByAssetId[assetId].insert(key);
                 }
-                break;
+            }
+            break;
         }
+
     }
 
-    //release lock
-    if(state == AlterationPayload::Alteration::Selected) {
-        this->_expectedPingback = AlterationPayload::Alteration::Unknown;
-    }
-
-}
-
-void MapLayoutTree::_changeLayer(RPZAtom &atom) {
-    QVector<QUuid> arg;
-    arg.append(atom.id());
-    this->_changeLayer(arg, atom.metadata()->layer());
 }
 
 void MapLayoutTree::_onRenamedAsset(const QString &assetId, const QString &newName) {
-    if(!this->_treeItemsByAssetId.contains(assetId)) return;
+    if(!this->_atomIdsBoundByAssetId.contains(assetId)) return;
 
-    for(auto item : this->_treeItemsByAssetId[assetId]) {
-        item->setText(0, newName);
+    for(auto &atomId : this->_atomIdsBoundByAssetId[assetId]) {
+        this->_treeItemsByAtomId[atomId]->setText(0, newName);
     }
 }
 
@@ -252,10 +231,6 @@ void MapLayoutTree::_changeLayer(QVector<QUuid> &elementIds, int newLayer) {
     }
 
 
-}
-
-QTreeWidgetItem* MapLayoutTree::_getLayerItem(RPZAtom &atom) {
-    return this->_getLayerItem(atom.metadata()->layer());
 }
 
 QTreeWidgetItem* MapLayoutTree::_getLayerItem(int layer) {
@@ -292,6 +267,7 @@ QTreeWidgetItem* MapLayoutTree::_createTreeItem(RPZAtom &atom) {
     item->setText(1, atom.owner().toString());
 
     item->setData(0, Qt::UserRole, atom.id());
+    item->setData(0, 666, atom.metadata()->assetId());
     
     item->setFlags(
         QFlags<Qt::ItemFlag>(
@@ -309,7 +285,7 @@ QTreeWidgetItem* MapLayoutTree::_createTreeItem(RPZAtom &atom) {
     }
 
     //create or get the layer element
-    auto layerElem = this->_getLayerItem(atom);
+    auto layerElem = this->_getLayerItem(atom.metadata()->layer());
     layerElem->addChild(item);
     this->_updateLayerState(layerElem);
 
@@ -328,6 +304,11 @@ void MapLayoutTree::_updateLayerState(QTreeWidgetItem* layerItem) {
     }
 }
 
+void MapLayoutTree::_emitAlteration(AlterationPayload &payload) {
+    payload.changeSource(this->_source);
+    emit elementsAlterationAsked(payload);
+}
+
 void MapLayoutTree::keyPressEvent(QKeyEvent * event) {
     
     RPZTree::keyPressEvent(event);
@@ -338,23 +319,23 @@ void MapLayoutTree::keyPressEvent(QKeyEvent * event) {
         case Qt::Key::Key_Delete:
 
             //make sure there is a selection
-            const auto selectedIds = this->_extractIdsFromSelection();
+            const auto selectedIds = this->_selectedAtomIds();
             if(!selectedIds.length()) return;
 
-            emit elementsAlterationAsked(RemovedPayload(Local, selectedIds));
+            this->_emitAlteration(RemovedPayload(selectedIds));
             break;
     }
 
 }
 
-QVector<QUuid> MapLayoutTree::_extractIdsFromSelection() const {
-    
-    QVector<QUuid> idList;
-    
-    for(auto &i : this->selectedItems()) {
-        const auto innerData = i->data(0, Qt::UserRole).toUuid();
-        idList.append(innerData);
-    }
+QUuid MapLayoutTree::_extractAtomIdFromItem(QTreeWidgetItem* item) const {
+    return item->data(0, Qt::UserRole).toUuid();
+}
 
+QVector<QUuid> MapLayoutTree::_selectedAtomIds() const {
+    QVector<QUuid> idList;
+    for(auto i : this->selectedItems()) {
+        idList.append(this->_extractAtomIdFromItem(i));
+    }
     return idList;
 }

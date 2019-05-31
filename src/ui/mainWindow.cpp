@@ -231,7 +231,7 @@ void MainWindow::_initUIApp() {
     //intercept alteration from layout manager
     QObject::connect(
         this->_mlManager->tree(), &MapLayoutTree::elementsAlterationAsked,
-        this->_mapView->hints(), &MapHintViewBinder::alterSceneFromIds
+        this->_mapView->hints(), &MapHintViewBinder::alterScene
     );
 
     //unselect tools

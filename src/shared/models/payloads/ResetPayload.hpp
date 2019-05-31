@@ -1,9 +1,12 @@
+#pragma once
+
 #include "src/shared/models/entities/RPZAtom.hpp"
 
 #include "base/AlterationPayload.hpp"
 
 class ResetPayload : public AlterationPayload {
     public:
+        ResetPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
         ResetPayload(QVector<RPZAtom> &atoms) : AlterationPayload(AlterationPayload::Alteration::Reset) {
             this->_setAddedAtoms(atoms);
         }

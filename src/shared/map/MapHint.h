@@ -16,7 +16,8 @@ class MapHint : public QObject {
     Q_OBJECT
 
     public:
-        MapHint();
+        MapHint(const AlterationPayload::Source &boundSource);
+        AlterationPayload::Source source(); 
         QVector<RPZAtom> atoms();
 
     signals:
@@ -28,7 +29,7 @@ class MapHint : public QObject {
         void alterScene(const QVariantHash &payload); 
 
     protected:
-        bool _preventNetworkAlterationEmission = false;
+        AlterationPayload::Source _source = AlterationPayload::Source::Undefined;
         void _emitAlteration(AlterationPayload &payload);
 
         //atoms list 

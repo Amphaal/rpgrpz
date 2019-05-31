@@ -4,8 +4,8 @@
 
 class LayerChangedPayload : public MultipleTargetsPayload {
     public:
-        LayerChangedPayload(const QList<QUuid> &changedAtomIds, const int newLayer) : 
-        MultipleTargetsPayload(AlterationPayload::Alteration::LayerChanged, changedAtomIds) {
+        LayerChangedPayload(const QVariantHash &hash) : MultipleTargetsPayload(hash) {}
+        LayerChangedPayload(const QVector<QUuid> &changedAtomIds, const int newLayer) : MultipleTargetsPayload(AlterationPayload::Alteration::LayerChanged, changedAtomIds) {
             this->_setLayer(newLayer);
         }
 

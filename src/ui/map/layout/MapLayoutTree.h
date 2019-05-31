@@ -36,13 +36,16 @@ class MapLayoutTree : public RPZTree {
         void keyPressEvent(QKeyEvent * event) override;
 
     private:
+        AlterationPayload::Source _source = AlterationPayload::Source::Local_MapLayout;
+
+        void _emitAlteration(AlterationPayload &payload);
+
         void _renderCustomContextMenu(const QPoint &pos);
         void _generateMenu(QList<QTreeWidgetItem*> &itemsToProcess, const QPoint &whereToDisplay);
             void _moveSelectionToLayer(int targetLayer);
 
         QHash<int, QTreeWidgetItem*> _layersItems;
         QTreeWidgetItem* _getLayerItem(int layer);
-        QTreeWidgetItem* _getLayerItem(RPZAtom &atom);
         void _updateLayerState(QTreeWidgetItem* layerItem);
 
         void _onElementSelectionChanged();
@@ -50,13 +53,12 @@ class MapLayoutTree : public RPZTree {
         void _onRenamedAsset(const QString &assetId, const QString &newName);
 
         QHash<QUuid, QTreeWidgetItem*> _treeItemsByAtomId;
-        QHash<QString, QSet<QTreeWidgetItem*>> _treeItemsByAssetId;
-
-        QVector<QUuid> _extractIdsFromSelection() const;
-        AlterationPayload::Alteration _expectedPingback = AlterationPayload::Alteration::Unknown;
+        QHash<QString, QSet<QUuid>> _atomIdsBoundByAssetId;
+        
+        QVector<QUuid> _selectedAtomIds() const;
+        QUuid _extractAtomIdFromItem(QTreeWidgetItem* item) const;
 
         QTreeWidgetItem* _createTreeItem(RPZAtom &atom);
 
         void _changeLayer(QVector<QUuid> &elementIds, int newLayer);
-        void _changeLayer(RPZAtom &atom);
 };

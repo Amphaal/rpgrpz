@@ -1,6 +1,11 @@
 #include "MapHint.h"
 
-MapHint::MapHint() {};
+
+MapHint::MapHint(const AlterationPayload::Source &boundSource) : _source(boundSource) {};
+
+AlterationPayload::Source MapHint::source() {
+    return this->_source;
+}
 
 QVector<RPZAtom> MapHint::atoms() {
     return this->_atomsById.values().toVector();
@@ -9,9 +14,12 @@ QVector<RPZAtom> MapHint::atoms() {
 //handle network and local evts emission
 void MapHint::_emitAlteration(AlterationPayload &payload) {
 
+    //define source of payload
+    payload.changeSource(this->_source);
+
     emit atomsAlteredForLocal(payload);
 
-    if(AlterationPayload::networkAlterations.contains(payload.type()) && !this->_preventNetworkAlterationEmission) {
+    if(AlterationPayload::networkAlterations.contains(payload.type())) {
         emit atomsAlteredForNetwork(payload);
     }
 
@@ -33,6 +41,9 @@ void MapHint::alterScene(const QVariantHash &payload) {
 
 //alter Scene
 void MapHint::_alterSceneGlobal(AlterationPayload &payload) { 
+
+    //prevent circular payloads
+    if(payload.source() == this->_source) return;
 
     //on reset
     auto pType = payload.type();

@@ -81,9 +81,6 @@ class MapHintViewBinder : public MapHint {
 
         QGraphicsView* _boundGv = nullptr;
 
-        bool _externalInstructionPending = false;
-        bool _deletionProcessing = false;
-
         QGraphicsItem* _buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom);
 
         void _crossBindingAtomWithGI(RPZAtom* atom, QGraphicsItem* gi);

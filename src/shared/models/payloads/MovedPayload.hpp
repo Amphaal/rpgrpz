@@ -7,16 +7,15 @@
 
 class MovedPayload : public AlterationPayload {
     public:
-        MovedPayload(const QHash<QUuid, QPointF> &newCoordsByAtomId) 
-        : AlterationPayload(AlterationPayload::Alteration::Moved) { }
+        MovedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
+        MovedPayload(const QHash<QUuid, QPointF> &newCoordsByAtomId) : AlterationPayload(AlterationPayload::Alteration::Moved) {}
 
         QHash<QUuid, QPointF> coordHash() {
             
             auto base = this->value("coords").toHash();
             
             QHash<QUuid, QPointF> out;
-            QVariantHash::iterator i;
-            for (i = base.begin(); i != base.end(); ++i) {
+            for (QVariantHash::iterator i = base.begin(); i != base.end(); ++i) {
                 out.insert(QUuid(i.key()), i.value().toPointF());
             }
 

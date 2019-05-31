@@ -1,6 +1,6 @@
 #include "MapHintViewBinder.h"
 
-MapHintViewBinder::MapHintViewBinder(QGraphicsView* boundGv) : _boundGv(boundGv) {
+MapHintViewBinder::MapHintViewBinder(QGraphicsView* boundGv) : MapHint(AlterationPayload::Source::Local_Map), _boundGv(boundGv) {
 
     //default layer from settings
     this->setDefaultLayer(AppContext::settings()->defaultLayer());
@@ -44,10 +44,6 @@ void MapHintViewBinder::handleAnyMovedItems() {
     //if no item moved since last call, do nothing
     if(!this->_itemsWhoNotifiedMovement.count()) return;
 
-    //if instructions pending, abort
-    if(this->_externalInstructionPending || this->_deletionProcessing) return;
-
-
     //generate args for payload
     QHash<QUuid, QPointF> coords;
     for( auto gi : this->_itemsWhoNotifiedMovement) {
@@ -69,13 +65,11 @@ void MapHintViewBinder::handleAnyMovedItems() {
 
 void MapHintViewBinder::_onSceneSelectionChanged() {
 
-    if(this->_externalInstructionPending || this->_deletionProcessing) return;
-
     //emit event, no RPZAtom alteration necessary
     auto selectedAtoms = this->_fetchAtoms(this->scene()->selectedItems());
 
     //extract ids for payload
-    QList<QUuid> selectedAtomIds;
+    QVector<QUuid> selectedAtomIds;
     for(auto atom : selectedAtoms) {
         selectedAtomIds.append(atom->id());
     }
@@ -475,8 +469,6 @@ void MapHintViewBinder::centerGraphicsItemToPoint(QGraphicsItem* item, const QPo
 
 //alter Scene
 void MapHintViewBinder::_alterSceneGlobal(AlterationPayload &payload) { 
-    
-    this->_externalInstructionPending = true;
 
     //on reset
     auto type = payload.type();
@@ -486,13 +478,8 @@ void MapHintViewBinder::_alterSceneGlobal(AlterationPayload &payload) {
         }
     }
     if(type == AlterationPayload::Alteration::Selected) this->scene()->clearSelection();
-    if(type == AlterationPayload::Alteration::Removed) this->_deletionProcessing = true;
 
     MapHint::_alterSceneGlobal(payload);
-
-    this->_preventNetworkAlterationEmission = false;
-    this->_deletionProcessing = false;
-    this->_externalInstructionPending = false;
 
     //define dirty
     this->_shouldMakeDirty(payload);

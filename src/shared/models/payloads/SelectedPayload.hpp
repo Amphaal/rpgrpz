@@ -4,6 +4,6 @@
 
 class SelectedPayload : public MultipleTargetsPayload {
     public:
-        SelectedPayload(const QList<QUuid> &selectedAtomIds) : 
-        MultipleTargetsPayload(AlterationPayload::Alteration::Selected, selectedAtomIds) {}
+        SelectedPayload(const QVariantHash &hash) : MultipleTargetsPayload(hash) {}
+        SelectedPayload(const QVector<QUuid> &selectedAtomIds) : MultipleTargetsPayload(AlterationPayload::Alteration::Selected, selectedAtomIds) {}
 };

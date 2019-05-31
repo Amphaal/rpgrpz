@@ -1,9 +1,13 @@
+#pragma once
+
 #include "src/shared/models/entities/RPZAtom.hpp"
 
 #include "base/AlterationPayload.hpp"
 
 class AddedPayload : public AlterationPayload {
     public:
+
+        AddedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
         AddedPayload(RPZAtom &atom) : AlterationPayload(AlterationPayload::Alteration::Added) {
             this->_setAddedAtom(atom);
         }

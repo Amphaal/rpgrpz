@@ -7,15 +7,14 @@
 
 class MultipleTargetsPayload : public AlterationPayload {
     public:
-        MultipleTargetsPayload(
-            const AlterationPayload::Alteration &alteration, 
-            const QList<QUuid> &targetedAtomIds
-        ) : AlterationPayload(alteration) {
+
+        MultipleTargetsPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
+        MultipleTargetsPayload(const AlterationPayload::Alteration &alteration, const QVector<QUuid> &targetedAtomIds) : AlterationPayload(alteration) {
             this->_setTargetAtomIds(targetedAtomIds);
         }
     
-        QList<QUuid> targetAtomIds() {
-            QList<QUuid> out;
+        QVector<QUuid> targetAtomIds() {
+            QVector<QUuid> out;
             auto list = this->value("ids").toList();
             for(auto &e : list) {
                 list.append(e.toUuid());
@@ -33,7 +32,7 @@ class MultipleTargetsPayload : public AlterationPayload {
         }
     
     private:
-        void _setTargetAtomIds(const QList<QUuid> &targetAtomIds) {
+        void _setTargetAtomIds(const QVector<QUuid> &targetAtomIds) {
             (*this)["ids"] = QVariant::fromValue(targetAtomIds);
         }
 };

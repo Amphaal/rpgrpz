@@ -1,7 +1,7 @@
 #include "RPZServer.h" 
 
 RPZServer::RPZServer(QObject* parent) : QTcpServer(parent), 
-                                        _hints(new MapHint) { };
+                                        _hints(new MapHint(AlterationPayload::Source::Network)) { };
 
 
 RPZServer::~RPZServer() {
@@ -186,53 +186,60 @@ void RPZServer::_askHostForMapHistory() {
     this->_hostSocket->sendJSON(JSONMethod::AskForHostMapHistory, QStringList());
 }
 
-void RPZServer::_broadcastMapChanges(const QVariantHash &payload, JSONSocket * senderSocket) {
+AlterationPayload RPZServer::_alterIncomingPayloadWithUpdatedOwners(const QVariantHash &payload, JSONSocket * senderSocket) {
 
     AlterationPayload aPayload(payload);
+    auto type = aPayload.type();
 
-    //determine ownership on absent owner data data
-    auto defaultOwner = this->_getUser(senderSocket); //default is sender
-    
-    //if no owner data, assume the sender is the owner
-    auto setDefaultOwner = [defaultOwner](RPZAtom &atom) {
+    //no need to modify anything
+    if(!AlterationPayload::buildGraphicsItemAlterations.contains(type)) {
+        return aPayload;
+    }
+
+    //get sender identity
+    auto defaultOwner = this->_getUser(senderSocket); 
+
+    //override ownership on absent owner data
+    QVector<RPZAtom> updatedAtoms;
+    for(auto &atomRaw : aPayload.alterationByAtomId()) {
+        RPZAtom atom(atomRaw.toHash());
         if(atom.owner().id().isNull()) {
             atom.setOwnership(*defaultOwner);
         }
-    };
-
-    switch(aPayload.type()) {
-        case AlterationPayload::Alteration::Added: {
-            auto cPayload = (AddedPayload)aPayload;
-            setDefaultOwner(cPayload.);
-        }
-        break;
-
-        case AlterationPayload::Alteration::Reset: { 
-
-        }
-        break;
-
+        updatedAtoms.append(atom);
     }
-    for(auto &atom : *payloadWithOwners.atoms()) {
-        
 
-
+    //return altered
+    switch(type) {
+        case AlterationPayload::Alteration::Added:
+            return AddedPayload(updatedAtoms.first());
+        case AlterationPayload::Alteration::Reset:
+            return ResetPayload(updatedAtoms);
     }
+}
+
+void RPZServer::_broadcastMapChanges(const QVariantHash &payload, JSONSocket * senderSocket) {
+
+    //cast
+    auto aPayload = this->_alterIncomingPayloadWithUpdatedOwners(payload, senderSocket);
 
     //save for history
-    this->_hints->alterSceneFromAtoms(payloadWithOwners.alteration(), *payloadWithOwners.atoms());
+    this->_hints->alterScene(aPayload);
+
+    //add source for outer calls
+    aPayload.changeSource(this->_hints->source());
 
     //send...
     for(auto &user : this->_usersById) {
         if(user.jsonHelper() == senderSocket) continue; //prevent self send
-        user.jsonHelper()->sendJSON(JSONMethod::MapChanged, payloadWithOwners);
+        user.jsonHelper()->sendJSON(JSONMethod::MapChanged, aPayload);
     }
 
 }
 
 void RPZServer::_sendMapHistory(JSONSocket * clientSocket) {
     //send...
-    auto payload = AlterationPayload(AlterationPayload::Alteration::Reset, this->_hints->atoms());
+    auto payload = ResetPayload(this->_hints->atoms());
     clientSocket->sendJSON(JSONMethod::MapChanged, payload);
 
 }
