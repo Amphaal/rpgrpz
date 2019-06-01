@@ -53,10 +53,10 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             return item;
         }
 
-        QGraphicsPathItem* addDrawing(const QPainterPath &translatedPath, const QPen &pen, const QPointF &pos, int zIndex) {
+        QGraphicsPathItem* addDrawing(const QPainterPath &path, const QPen &pen, const QPointF &pos, int zIndex) {
 
             //create path gi, set to pos
-            auto newPath = new MapViewGraphicsPathItem(this, translatedPath, pen);
+            auto newPath = new MapViewGraphicsPathItem(this, path, pen);
             newPath->setPos(pos);
             newPath->setZValue(zIndex);
             

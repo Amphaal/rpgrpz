@@ -37,7 +37,7 @@ class MapViewGraphicsTextItem : public QGraphicsTextItem, public MapViewItemsNot
             font.setPointSize(textSize);
             this->setFont(font);
             
-            this->setTextInteractionFlags(Qt::TextEditorInteraction);
+            // this->setTextInteractionFlags(Qt::TextEditorInteraction);
         }
 
     QVariant itemChange(GraphicsItemChange change, const QVariant & value) override {
@@ -45,16 +45,16 @@ class MapViewGraphicsTextItem : public QGraphicsTextItem, public MapViewItemsNot
             return QGraphicsTextItem::itemChange(change, value);
         }
     
-    private:
-        void focusInEvent(QFocusEvent  * event) override {
-            QGraphicsTextItem::focusInEvent(event);
-            MapViewItemsNotifier::_notifyItemChange(MapViewCustomItemsEventFlag::TextFocusIn);
-        }
+    // private:
+    //     void focusInEvent(QFocusEvent  * event) override {
+    //         QGraphicsTextItem::focusInEvent(event);
+    //         MapViewItemsNotifier::_notifyItemChange(MapViewCustomItemsEventFlag::TextFocusIn);
+    //     }
 
-        void focusOutEvent(QFocusEvent * event) override {
-            QGraphicsTextItem::focusOutEvent(event);
-            MapViewItemsNotifier::_notifyItemChange(MapViewCustomItemsEventFlag::TextFocusOut);
-        }
+    //     void focusOutEvent(QFocusEvent * event) override {
+    //         QGraphicsTextItem::focusOutEvent(event);
+    //         MapViewItemsNotifier::_notifyItemChange(MapViewCustomItemsEventFlag::TextFocusOut);
+    //     }
 };
 
 class MapViewGraphicsRectItem : public QGraphicsRectItem, public MapViewItemsNotifier {

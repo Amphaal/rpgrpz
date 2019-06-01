@@ -310,6 +310,9 @@ QTreeWidgetItem* MapLayoutTree::_createTreeItem(RPZAtom &atom) {
         case RPZAtom::Type::Drawing:
             item->setIcon(0, QIcon(":/icons/app/manager/drawing.png"));
             break;
+        case RPZAtom::Type::Text:
+            item->setIcon(0, QIcon(":/icons/app/tools/text.png"));
+            break;
     }
 
     //create or get the layer element

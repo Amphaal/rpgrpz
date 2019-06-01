@@ -296,18 +296,14 @@ void MapHintViewBinder::addText(const QPoint &eventPos) {
     this->alterScene(AddedPayload(newAtom));
 }
         
-void MapHintViewBinder::addDrawing(const QPainterPath &rawPath, const QPen &pen) {
-            
-    //translate to positionnable item
-    auto initialPos = rawPath.elementAt(0);
-    auto translated = rawPath.translated(-initialPos);
+void MapHintViewBinder::addDrawing(const QPointF &startPos, const QPainterPath &path, const QPen &pen) {
 
     //define metadata
     auto metadata = RPZAtomMetadata();
     metadata.setPenWidth(pen.width());
     metadata.setLayer(this->_defaultLayer);
-    metadata.setShape(translated);
-    metadata.setPos(initialPos);
+    metadata.setShape(path);
+    metadata.setPos(startPos);
 
     //inform !
     auto newAtom = RPZAtom(RPZAtom::Type::Drawing, metadata);

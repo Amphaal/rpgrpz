@@ -121,8 +121,7 @@ class MapView : public QGraphicsView, public ClientBindable {
             void _goToDefaultZoom();
 
         //drawing...
-            QVector<QGraphicsItem*> _tempLines;
-            QPainterPath* _tempDrawing = nullptr;
+            QGraphicsPathItem* _tempDrawing = nullptr;
             void _beginDrawing();
             void _endDrawing();
             void _drawLineTo(const QPoint &evtPoint);

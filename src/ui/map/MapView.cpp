@@ -206,7 +206,7 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
 
     switch(this->_getCurrentTool()) {
         case MapTools::Actions::Draw:
-            this->_drawLineTo(event->pos());
+            if(this->_isMousePressed) this->_drawLineTo(event->pos());
             break;
         case MapTools::Actions::Rotate:
             this->_rotateFromPoint(event->pos());
@@ -274,6 +274,8 @@ MapTools::Actions MapView::_getCurrentTool() const {
 
 //change tool
 void MapView::_changeTool(MapTools::Actions newTool, const bool quickChange) {
+    
+    this->_endDrawing();
 
     //if quick change asked
     if(quickChange) {
@@ -536,44 +538,43 @@ void MapView::dragLeaveEvent(QDragLeaveEvent *event) {
 
 void MapView::_beginDrawing() {
     
+    //destroy temp
     if(this->_tempDrawing) {
         delete this->_tempDrawing;
         this->_tempDrawing = nullptr;
     }
 
-    this->_tempDrawing = new QPainterPath(this->mapToScene(this->_lastPointMousePressed));
+    auto startPoint = this->mapToScene(this->_lastPointMousePressed);
+    this->_tempDrawing = this->scene()->addPath(QPainterPath(QPointF(0,0)), this->hints()->getPen());
+    this->_tempDrawing->setPos(startPoint);
 }
 
 void MapView::_endDrawing() {
-    
-    //if something has been drawn
-    if(this->_tempLines.size()) {
+    if(!this->_tempDrawing) return;
 
-        //add definitive path
-        this->_hints->addDrawing(*this->_tempDrawing, this->hints()->getPen());
-    }
+    //add definitive path
+    this->_hints->addDrawing(
+        this->_tempDrawing->scenePos(), 
+        this->_tempDrawing->path(), 
+        this->hints()->getPen()
+    );
 
     //destroy temp
-    for(auto &i : this->_tempLines) {
-        delete i;
-    }
-    this->_tempLines.clear();
+    delete this->_tempDrawing;
+    this->_tempDrawing = nullptr;
 }
 
 void MapView::_drawLineTo(const QPoint &evtPoint) {
 
+    auto existingPath = this->_tempDrawing->path();
+
     //define vector
-    auto from = this->mapToScene(this->_lastPointMousePressing);
     auto to = this->mapToScene(evtPoint);
-    auto lineCoord = QLineF(from, to);
+    auto to2 = this->_tempDrawing->mapFromScene(to);
 
-    //save
-    this->_tempDrawing->lineTo(to);
-
-    //draw temp line
-    auto currentPen = this->hints()->getPen();
-    auto tempLine = this->_scene->addLine(lineCoord, currentPen);
-    this->_tempLines.append(tempLine);
+    //save as new path
+    existingPath.lineTo(to2);
+    this->_tempDrawing->setPath(existingPath);
 }
 
 /////////////////
