@@ -29,6 +29,7 @@ class MapHintViewBinder : public MapHint {
     public:
         MapHintViewBinder(QGraphicsView* boundGv);
         MapViewGraphicsScene* scene();
+        bool isInTextInteractiveMode();
 
         //load/unload
         QString stateFilePath();
@@ -48,6 +49,8 @@ class MapHintViewBinder : public MapHint {
 
         //actions helpers
         void addDrawing(const QPainterPath &rawPath, const QPen &pen);
+
+        void addText(const QPoint &eventPos);
 
         //D&D assets handling
         void centerGraphicsItemToPoint(QGraphicsItem* item, const QPoint &eventPos);
@@ -91,7 +94,7 @@ class MapHintViewBinder : public MapHint {
 
         bool _preventInnerGIEventsHandling = false;
         void _onSceneSelectionChanged();
-        void _onSceneItemChanged(QGraphicsItem* item, int alteration);
+        void _onSceneItemChanged(QGraphicsItem* item, int changeFlag);
             QSet<QGraphicsItem*> _itemsWhoNotifiedMovement;
 
         //drawing
@@ -100,6 +103,9 @@ class MapHintViewBinder : public MapHint {
 
         //layer
         int _defaultLayer = 0;
+
+        //text interactive
+        bool _isInTextInteractiveMode = false;
 
         //augmenting MapHint
         virtual void _alterSceneGlobal(AlterationPayload &payload) override;

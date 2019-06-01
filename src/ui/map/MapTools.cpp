@@ -21,24 +21,27 @@ MapTools::MapTools(QWidget* parent) : QToolBar(parent) {
     selection->setIconText("Selection");
     selection->setData(MapTools::Actions::Select);
     this->addAction(selection);
-    QObject::connect(
-        selection, &QAction::toggled,
-        [&, selection](bool checked) {
-            if(!checked && !this->_selectableToolSelected) {
-                selection->setChecked(true);
-            }
-        }
-    );
     this->_defaultTool = selection;
 
-    //draw
     this->addSeparator();
+
+    //text
+    auto text = new QAction(this);
+    text->setIcon(QIcon(":/icons/app/tools/text.png"));
+    text->setData(MapTools::Actions::Text);
+    text->setIconText("Ecrire");
+    text->setCheckable(true);
+    this->addAction(text);
+    this->_selectableTools.append(text);
+
+    //draw
     auto draw = new QAction(this);
     draw->setIcon(QIcon(":/icons/app/tools/pen.png"));
     draw->setData(MapTools::Actions::Draw);
     draw->setIconText("Dessiner");
     draw->setCheckable(true);
     this->addAction(draw);
+    this->_selectableTools.append(draw);
 
     //draw size
     auto sizer = new QSpinBox(this);
@@ -67,23 +70,22 @@ MapTools::MapTools(QWidget* parent) : QToolBar(parent) {
     this->addAction(reset);
     this->addSeparator();
 
-    //selectable tools
-    this->_selectableTools.append(draw);
 }
 
-void MapTools::unselectAllTools() {
+void MapTools::selectDefaultTool() {
+    this->_unselectAllTools();
+    this->_defaultTool->setChecked(true);
+}
+
+void MapTools::_unselectAllTools() {
     for(auto action : this->_selectableTools) {
         action->setChecked(false);
     }
-    this->_defaultTool->setChecked(true);
 }
 
 void MapTools::_onToolSelectionChanged(QAction *action) {
 
-    //if default tool is aimed
-    if(action == this->_defaultTool) {
-        this->unselectAllTools();
-    }
+    auto targetAction = (MapTools::Actions)action->data().toInt();
 
     //define if selectable tool is selected
     this->_selectableToolSelected = false;
@@ -94,14 +96,18 @@ void MapTools::_onToolSelectionChanged(QAction *action) {
         }
     }
 
+    this->_unselectAllTools();
+
     //define default tool state
-    auto defaultToolState = !this->_selectableToolSelected && !this->_defaultTool->isChecked();
-    this->_defaultTool->setChecked(defaultToolState);
+    if(this->_selectableToolSelected && targetAction != MapTools::Actions::Select) {
+        action->setChecked(true);
+        this->_defaultTool->setChecked(false);
+    } else {
+        this->_defaultTool->setChecked(true);
+    }
 
     //emit action
-    auto mt_action = (MapTools::Actions)action->data().toInt();
-    if(!action->isChecked() && _selectableTools.contains(action)) {
-        mt_action = MapTools::Actions::None;
-    }
+    auto mt_action = action->isChecked() ? targetAction :  MapTools::Actions::None;
+
     return emit toolSelectionChanged(mt_action);
 }

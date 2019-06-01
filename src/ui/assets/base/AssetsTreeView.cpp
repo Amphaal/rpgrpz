@@ -1,10 +1,12 @@
 #include "AssetsTreeView.h"
 
-AssetsTreeView::AssetsTreeView(QWidget *parent) : 
-    QTreeView(parent), 
+AssetsTreeView::AssetsTreeView(QWidget *parent) : QTreeView(parent), 
     _MIMEDb(new QMimeDatabase), 
-    _model(new AssetsTreeViewModel) 
-{ 
+    _model(new AssetsTreeViewModel) {     
+
+    this->setSelectionBehavior(QAbstractItemView::SelectRows);
+    this->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
     //model
     this->setModel(this->_model);
 
@@ -40,9 +42,6 @@ AssetsTreeView::AssetsTreeView(QWidget *parent) :
     this->setDragEnabled(true);
     this->setDropIndicatorShown(true);
     this->setDragDropMode(QAbstractItemView::DragDropMode::DragDrop);
-    
-    this->setSelectionBehavior(QAbstractItemView::SelectRows);
-    this->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     //context menu
     this->setContextMenuPolicy(Qt::CustomContextMenu);

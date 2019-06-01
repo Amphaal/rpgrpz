@@ -115,6 +115,15 @@ RPZAtom* MapHint::_alterSceneInternal(const AlterationPayload::Alteration &type,
             storedAtom->setMetadata(mdata);
         }
         break;
+
+        //on text change
+        case AlterationPayload::Alteration::TextChanged: {
+            auto text = atomAlteration.toString();
+            auto mdata = storedAtom->metadata();
+            mdata.setText(text);
+            storedAtom->setMetadata(mdata);
+        }
+        break;
             
         //on removal
         case AlterationPayload::Alteration::Removed: {

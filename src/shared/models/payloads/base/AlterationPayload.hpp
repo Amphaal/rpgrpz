@@ -4,6 +4,7 @@
 
 class AlterationPayload : public QVariantHash {
     public:
+
         enum Source {
             Undefined,
             Local_MapLayout,
@@ -19,7 +20,8 @@ class AlterationPayload : public QVariantHash {
             LayerChanged,
             Moved, 
             Added, 
-            Reset
+            Reset,
+            TextChanged,
         }; 
 
         AlterationPayload(const QVariantHash &hash) : QVariantHash(hash) {
@@ -49,10 +51,6 @@ class AlterationPayload : public QVariantHash {
             return this->_instructGIBuild;
         }
 
-        bool requiresGraphicsItemUpdate() {
-            return this->_instructGIUpdate;
-        }
-
         bool isNetworkRoutable() {
             return this->_isNetworkAlteration;
         }
@@ -60,23 +58,19 @@ class AlterationPayload : public QVariantHash {
     private:      
         bool _isNetworkAlteration = false;
         bool _instructGIBuild = false;
-        bool _instructGIUpdate = false;
 
         static inline const QList<Alteration> _networkAlterations = { 
             Moved, 
             Added, 
             Removed, 
             Reset,
-            LayerChanged 
+            LayerChanged,
+            TextChanged 
         };
 
         static const inline QList<Alteration> _buildGraphicsItemAlterations = {
             Added,  
             Reset
-        };
-        static const inline QList<Alteration> _updateGraphicsItemAlterations = {
-            Moved, 
-            LayerChanged  
         };
 
         void _setType(const Alteration &type) {
@@ -87,6 +81,5 @@ class AlterationPayload : public QVariantHash {
         void _updateTags(const Alteration &type) {
             this->_isNetworkAlteration = _networkAlterations.contains(type);
             this->_instructGIBuild = _buildGraphicsItemAlterations.contains(type);
-            this->_instructGIUpdate = _updateGraphicsItemAlterations.contains(type);
         }
 };

@@ -43,6 +43,10 @@ class RPZAtomMetadata : public QVariantHash {
             );
         }
 
+        QString text() const {
+            return this->value("txt").toString();
+        }
+
         int layer() const {
             return this->value("lyr").toInt();
         }
@@ -85,5 +89,9 @@ class RPZAtomMetadata : public QVariantHash {
 
         void setLayer(int pos) {
             (*this)["lyr"] = pos;
+        }
+
+        void setText(const QString &text) {
+            (*this)["txt"] = text;
         }
 };

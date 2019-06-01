@@ -88,7 +88,8 @@
         "qtreewidget": "cpp",
         "qspinbox": "cpp",
         "qvarianthash": "cpp",
-        "quuid": "cpp"
+        "quuid": "cpp",
+        "qgraphicstextitem": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

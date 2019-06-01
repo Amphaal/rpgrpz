@@ -9,9 +9,15 @@
 
 #include "src/shared/models/entities/RPZAtom.hpp"
 
+enum MapViewCustomItemsEventFlag {
+    Moved = 6224,
+    TextFocusOut = 6225,
+    TextFocusIn = 6226
+};
+
 class MapViewItemsNotified  {
     public:
-        virtual void onItemChange(QGraphicsItem* item, AlterationPayload::Alteration alteration) = 0;
+        virtual void onItemChange(QGraphicsItem* item, MapViewCustomItemsEventFlag flag) = 0;
 };
 
 class MapViewItemsNotifier  {
@@ -46,13 +52,17 @@ class MapViewItemsNotifier  {
         }
     
     protected:
-        void _notifyItemChange(QGraphicsItem::GraphicsItemChange change) {
+        void _notifyItemChange(int change) {
             if(!this->_item->scene()) return;
             if(!this->_mustNotify) return;
             
             switch(change) {
                 case QGraphicsItem::ItemPositionHasChanged:
-                    this->_toNotify->onItemChange(this->_item, AlterationPayload::Alteration::Moved);
+                    this->_toNotify->onItemChange(this->_item, MapViewCustomItemsEventFlag::Moved);
+                    break;
+                case MapViewCustomItemsEventFlag::TextFocusOut:
+                case MapViewCustomItemsEventFlag::TextFocusIn:
+                    this->_toNotify->onItemChange(this->_item, (MapViewCustomItemsEventFlag)change);
                     break;
             }
         }

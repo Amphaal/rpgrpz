@@ -15,8 +15,8 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
         void sceneItemChanged(QGraphicsItem* item, int atomAlteration);
 
     private:
-        void onItemChange(QGraphicsItem* item, AlterationPayload::Alteration alteration) override {
-            emit sceneItemChanged(item, alteration);
+        void onItemChange(QGraphicsItem* item, MapViewCustomItemsEventFlag flag) override {
+            emit sceneItemChanged(item, flag);
         };
 
     public:
@@ -65,8 +65,19 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             return newPath;
         }
 
+        QGraphicsTextItem* addText(const QString &text, int textSize, QPointF &pos, int zIndex) {
 
-        MapViewGraphicsRectItem* addMissingAssetPH(QRectF &rect, QPointF &pos, int zIndex) {
+            auto newText = new MapViewGraphicsTextItem(this, text, textSize);
+            newText->setPos(pos);
+            newText->setZValue(zIndex);
+
+            //add to scene
+            this->addItem(newText);
+            return newText;
+        }
+
+
+        QGraphicsRectItem* addMissingAssetPH(QRectF &rect, QPointF &pos, int zIndex) {
     
             //pen to draw the rect with
             QPen pen;

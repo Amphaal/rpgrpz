@@ -19,6 +19,10 @@ MapHintViewBinder::MapHintViewBinder(QGraphicsView* boundGv) : MapHint(Alteratio
 
 };
 
+bool MapHintViewBinder::isInTextInteractiveMode() {
+    return this->_isInTextInteractiveMode;
+}
+
 void MapHintViewBinder::setDefaultLayer(int layer) {
     this->_defaultLayer = layer;
 }
@@ -49,22 +53,39 @@ void MapHintViewBinder::handleAnyMovedItems() {
     this->_itemsWhoNotifiedMovement.clear();
 }
 
-void MapHintViewBinder::_onSceneItemChanged(QGraphicsItem* item, int alteration) {
+void MapHintViewBinder::_onSceneItemChanged(QGraphicsItem* item, int changeFlag) {
 
     if(this->_preventInnerGIEventsHandling) return;
 
-    auto c_alteration = (AlterationPayload::Alteration)alteration;
-    
-    //on moving...
-    if(c_alteration == AlterationPayload::Alteration::Moved) {
-        
-        //add to list for future information
-        this->_itemsWhoNotifiedMovement.insert(item);
+    switch(changeFlag) {
+        case MapViewCustomItemsEventFlag::Moved: {
 
-        //disable further notifications until information have been handled
-        auto notifier = dynamic_cast<MapViewItemsNotifier*>(item);
-        if(notifier) notifier->disableNotifications();
+            //add to list for future information
+            this->_itemsWhoNotifiedMovement.insert(item);
+
+            //disable further notifications until information have been handled
+            auto notifier = dynamic_cast<MapViewItemsNotifier*>(item);
+            if(notifier) notifier->disableNotifications();
+
+        }
+        break;
+
+        case MapViewCustomItemsEventFlag::TextFocusIn: {
+            this->_isInTextInteractiveMode = true;
+        }
+        break;
+        
+        case MapViewCustomItemsEventFlag::TextFocusOut: {
+
+            this->_isInTextInteractiveMode = false;
+
+            auto atom = this->_fetchAtom(item);
+            auto cItem = (QGraphicsTextItem*)item;
+            this->alterScene(TextChangedPayload(atom->id(), cItem->toPlainText()));
+        }
+        break;
     }
+
 }
 
 void MapHintViewBinder::_onSceneSelectionChanged() {
@@ -226,16 +247,15 @@ void MapHintViewBinder::setPenColor(QColor &color) {
 
     //update self graphic path items with new color
     for(auto &elemId : this->_selfElements) {
+        
         auto gi = this->_atomsById[elemId].graphicsItem();
         
         //determine if is a path type
-        auto casted = dynamic_cast<QGraphicsPathItem*>(gi);
-        if(!casted) continue;
-
-        //update color
-        auto c_pen = casted->pen();
-        c_pen.setColor(color);
-        casted->setPen(c_pen);
+        if(auto pathItem = dynamic_cast<QGraphicsPathItem*>(gi)) {
+            auto c_pen = pathItem->pen();
+            c_pen.setColor(color);
+            pathItem->setPen(c_pen);
+        } 
     }
 }
 
@@ -258,6 +278,22 @@ void MapHintViewBinder::deleteCurrentSelectionItems() {
         atomIdsToRemove.append(atom->id());
     }
     this->alterScene(RemovedPayload(atomIdsToRemove));
+}
+
+void MapHintViewBinder::addText(const QPoint &eventPos) {
+    
+    auto scenePos = this->_boundGv->mapToScene(eventPos);
+
+    //define metadata
+    auto metadata = RPZAtomMetadata();
+    metadata.setPenWidth(this->_penWidth);
+    metadata.setPos(scenePos);
+    metadata.setLayer(this->_defaultLayer);
+    metadata.setText("Saisir du texte");
+
+    //inform !
+    auto newAtom = RPZAtom(RPZAtom::Type::Text, metadata);
+    this->alterScene(AddedPayload(newAtom));
 }
         
 void MapHintViewBinder::addDrawing(const QPainterPath &rawPath, const QPen &pen) {
@@ -328,13 +364,24 @@ QGraphicsItem* MapHintViewBinder::_buildGraphicsItemFromAtom(RPZAtom &atomToBuil
     QGraphicsItem* newItem = nullptr;
 
     //get position
-     auto mdata = atomToBuildFrom.metadata();
+    auto mdata = atomToBuildFrom.metadata();
     auto pos = mdata.pos();
     auto layer = mdata.layer();
 
     //depending on atomType...
     switch(atomToBuildFrom.type()) {
         
+        //text...
+        case RPZAtom::Type::Text: { 
+            newItem = this->scene()->addText(
+                mdata.text(), 
+                mdata.penWidth(), 
+                pos, 
+                layer
+            );
+        }
+        break;
+
         //drawing...
         case RPZAtom::Type::Drawing: {
 
@@ -529,6 +576,14 @@ RPZAtom* MapHintViewBinder::_alterSceneInternal(const AlterationPayload::Alterat
         case AlterationPayload::Alteration::Moved: {
             auto destPos = updatedAtom->metadata().pos();
             updatedAtom->graphicsItem()->setPos(destPos);  
+        }
+        break;
+
+        //on text change
+        case AlterationPayload::Alteration::TextChanged: {
+            auto newText = updatedAtom->metadata().text();
+            auto cItem = (QGraphicsTextItem*)updatedAtom->graphicsItem();
+            cItem->setPlainText(newText);
         }
         break;
 

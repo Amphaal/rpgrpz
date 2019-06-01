@@ -237,7 +237,7 @@ void MainWindow::_initUIApp() {
     //unselect tools
     QObject::connect(
         this->_mapView, &MapView::unselectCurrentToolAsked,
-        this->_mapTools, &MapTools::unselectAllTools
+        this->_mapTools, &MapTools::selectDefaultTool
     );
 
     //bind toolbar to mapview

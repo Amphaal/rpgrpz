@@ -49,6 +49,10 @@ MapHintViewBinder* MapView::hints() {
 
 void MapView::keyPressEvent(QKeyEvent * event) {
     
+    QGraphicsView::keyPressEvent(event);
+    
+    if(this->_hints->isInTextInteractiveMode()) return;
+
     switch(event->key()) {
 
         //deletion handling
@@ -85,6 +89,7 @@ void MapView::keyPressEvent(QKeyEvent * event) {
         case Qt::Key::Key_Right:
             this->_animatedMove(Qt::Orientation::Horizontal, 10);
             break;
+        
     }
 
 }
@@ -243,6 +248,10 @@ void MapView::_toolOnMousePress(const MapTools::Actions &tool) {
             this->_beginDrawing();
         }
         break;
+
+        case MapTools::Actions::Text: {
+            this->_hints->addText(this->_lastPointMousePressed);
+        }
     }
 }
 
@@ -294,6 +303,11 @@ void MapView::_changeTool(MapTools::Actions newTool, const bool quickChange) {
             this->setInteractive(false);
             this->setDragMode(QGraphicsView::DragMode::NoDrag);
             this->setCursor(Qt::CrossCursor);
+            break;
+        case MapTools::Actions::Text:
+            this->setInteractive(false);
+            this->setDragMode(QGraphicsView::DragMode::NoDrag);
+            this->setCursor(Qt::IBeamCursor);
             break;
         case MapTools::Actions::Rotate:
             this->setInteractive(false);

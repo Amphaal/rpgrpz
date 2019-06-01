@@ -5,8 +5,8 @@
 #include <QUuid>
 
 class FocusedPayload : public AlterationPayload {
+    
     public:
-
         FocusedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
         FocusedPayload(QUuid &targetedAtomId) : AlterationPayload(AlterationPayload::Focused) {
             this->_setTargetAtomId(targetedAtomId);
@@ -28,5 +28,4 @@ class FocusedPayload : public AlterationPayload {
         void _setTargetAtomId(const QUuid &targetAtomId) {
             (*this)["id"] = targetAtomId;
         }
-
 };

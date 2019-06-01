@@ -12,9 +12,9 @@ class MapTools : public QToolBar {
     Q_OBJECT
 
     public:
-        enum Actions { None, Select, Scroll, Draw, Rotate, RotateToNorth, ResetView };
+        enum Actions { None, Select, Scroll, Draw, Rotate, RotateToNorth, ResetView, Text };
         MapTools(QWidget * parent = nullptr); 
-        void unselectAllTools();
+        void selectDefaultTool();
     
     signals:
         void penSizeChanged(const int newSize);
@@ -25,4 +25,6 @@ class MapTools : public QToolBar {
         void _onToolSelectionChanged(QAction *action);
         QVector<QAction*> _selectableTools;
         QAction* _defaultTool;
+
+        void _unselectAllTools();
 };

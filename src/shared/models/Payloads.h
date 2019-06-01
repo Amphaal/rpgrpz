@@ -7,6 +7,7 @@
 #include "payloads/RemovedPayload.hpp"
 #include "payloads/ResetPayload.hpp"
 #include "payloads/SelectedPayload.hpp"
+#include "payloads/TextChangedPayload.hpp"
 
 class Payload {
     public:

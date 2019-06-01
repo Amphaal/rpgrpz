@@ -76,12 +76,13 @@ class RPZAtom : public Ownable {
                 case Type::Drawing:
                     return "Dessin";
                     break;
+                case Type::Text:
+                    return "Texte";
+                    break;
                 default:
                     return "Atome";
             }
         }
-
-
 
         void _setType(const Type &type) {
             (*this)["type"] = (int)type;
