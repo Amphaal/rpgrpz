@@ -19,7 +19,9 @@
 #include "src/ui/map/base/RPZTree.hpp"
 #include "LayerTreeItem.hpp"
 
-class MapLayoutTree : public RPZTree {
+#include "src/ui/others/ClientBindable.hpp"
+
+class MapLayoutTree : public RPZTree, ClientBindable {
 
     Q_OBJECT
 
@@ -34,6 +36,7 @@ class MapLayoutTree : public RPZTree {
 
     protected:
         void keyPressEvent(QKeyEvent * event) override;
+        void onRPZClientConnecting(RPZClient * cc) override;
 
     private:
         bool _preventInnerGIEventsHandling = false;

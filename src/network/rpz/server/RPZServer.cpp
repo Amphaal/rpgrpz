@@ -113,9 +113,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             }
             break;
         case JSONMethod::MapChanged:{
-
                 this->_broadcastMapChanges(data.toHash(), target);
-
             }
             break;
         case JSONMethod::PlayerHasUsername: {   
@@ -191,8 +189,8 @@ AlterationPayload RPZServer::_alterIncomingPayloadWithUpdatedOwners(QVariantHash
     auto aPayload = Payload::autoCast(payload);
     auto type = aPayload->type();
 
-    //no need to modify anything
-    if(!AlterationPayload::buildGraphicsItemAlterations.contains(type)) {
+    //no need to modify anything if not a build operation
+    if(!aPayload->requiresGraphicsItemBuild()) {
         delete aPayload;
         return payload;
     }
@@ -203,10 +201,12 @@ AlterationPayload RPZServer::_alterIncomingPayloadWithUpdatedOwners(QVariantHash
     //override ownership on absent owner data
     QVector<RPZAtom> updatedAtoms;
     for(auto &atomRaw : aPayload->alterationByAtomId()) {
+        
         RPZAtom atom(atomRaw.toHash());
-        if(atom.owner().id().isNull()) {
-            atom.setOwnership(*defaultOwner);
-        }
+        auto owner = atom.owner();
+
+        if(owner.isEmpty()) atom.setOwnership(*defaultOwner);
+        
         updatedAtoms.append(atom);
     }
     delete aPayload;
@@ -234,9 +234,15 @@ void RPZServer::_broadcastMapChanges(QVariantHash &payload, JSONSocket * senderS
     //add source for outer calls
     aPayload.changeSource(this->_hints->source());
 
-    //send...
+    //send to registered users...
     for(auto &user : this->_usersById) {
-        if(user.jsonHelper() == senderSocket) continue; //prevent self send
+        
+        //prevent self send
+        if(user.jsonHelper() == senderSocket) {
+            continue;
+        } 
+
+        //send to others
         user.jsonHelper()->sendJSON(JSONMethod::MapChanged, aPayload);
     }
 

@@ -16,16 +16,10 @@ void MapHint::_emitAlteration(AlterationPayload &payload) {
 
     //define source of payload
     auto source = payload.source();
-    if(source == AlterationPayload::Source::Undefined) {
-        payload.changeSource(this->_source);
-    }
+    if(source == AlterationPayload::Source::Network) return; //prevent resending network payloay
+    if(source == AlterationPayload::Source::Undefined) payload.changeSource(this->_source); //inner payload, apply own source
 
-    emit atomsAlteredForLocal(payload);
-
-    if(AlterationPayload::networkAlterations.contains(payload.type())) {
-        emit atomsAlteredForNetwork(payload);
-    }
-
+    emit atomsAltered(payload);
 } 
 
 /////////////////
@@ -44,7 +38,7 @@ void MapHint::alterScene(QVariantHash &payload) {
 
 //alter Scene
 void MapHint::_alterSceneGlobal(AlterationPayload &payload) { 
-
+    
     //prevent circular payloads
     auto payloadSource = payload.source();
     if(payloadSource == this->_source) return;
@@ -60,9 +54,6 @@ void MapHint::_alterSceneGlobal(AlterationPayload &payload) {
     //handling
     auto aCasted = Payload::autoCast(payload);
     auto alterations = aCasted->alterationByAtomId();
-    if(pType == AlterationPayload::Alteration::Selected) {
-        qDebug() << alterations.keys();
-    }
     for (QVariantHash::iterator i = alterations.begin(); i != alterations.end(); ++i) {
         this->_alterSceneInternal(pType, QUuid(i.key()), i.value());
     }
@@ -89,14 +80,11 @@ RPZAtom* MapHint::_alterSceneInternal(const AlterationPayload::Alteration &type,
         case AlterationPayload::Alteration::Added: {
             
             auto newAtom = RPZAtom(atomAlteration.toHash());
-            auto ownerId = newAtom.owner().id();
+            auto owner = newAtom.owner();
 
             //bind to owners
-            if(!ownerId.isNull()) {
-                if(!this->_foreignElementIdsByOwnerId.contains(ownerId)) {
-                    this->_foreignElementIdsByOwnerId.insert(ownerId, QSet<QUuid>());
-                }
-                this->_foreignElementIdsByOwnerId[ownerId].insert(targetedAtomId);
+            if(!owner.isEmpty()) {
+                this->_foreignElementIdsByOwnerId[owner.id()].insert(targetedAtomId);
             } else {
                 this->_selfElements.insert(targetedAtomId);
             }
@@ -131,17 +119,19 @@ RPZAtom* MapHint::_alterSceneInternal(const AlterationPayload::Alteration &type,
         //on removal
         case AlterationPayload::Alteration::Removed: {
             
-            auto storedAtomOwnerId = storedAtom->owner().id();
+            auto storedAtomOwner = storedAtom->owner();
 
             //unbind from owners
-            if(!storedAtomOwnerId.isNull()) {
-               this->_foreignElementIdsByOwnerId[storedAtomOwnerId].remove(targetedAtomId);
+            if(!storedAtomOwner.isEmpty()) {
+               this->_foreignElementIdsByOwnerId[storedAtomOwner.id()].remove(targetedAtomId);
             } else {
                 this->_selfElements.remove(targetedAtomId);
             }
 
             //update 
-            this->_atomsById.remove(targetedAtomId);
+            delete storedAtom->graphicsItem();
+            this->_atomsById.remove(targetedAtomId); 
+            storedAtom = nullptr;
 
         }
         break;

@@ -23,7 +23,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
     
     //to route from MapHints
     QObject::connect(
-        this->_hints, &MapHint::atomsAlteredForNetwork,
+        this->_hints, &MapHint::atomsAltered,
         this, &MapView::_sendMapChanges
     );
 
@@ -152,14 +152,16 @@ void MapView::onRPZClientDisconnect(RPZClient* cc) {
 }
 
 void MapView::_sendMapChanges(QVariantHash &payload) {
-    if(!this->_rpzClient) return;
+    AlterationPayload aPayload(payload);
+    if(!aPayload.isNetworkRoutable()) return;
 
+    if(!this->_rpzClient) return;
     this->_rpzClient->sendMapChanges(payload);
 }
 
 void MapView::_sendMapHistory() {
-    if(!this->_rpzClient) return;
-    this->_sendMapChanges(ResetPayload(this->_hints->atoms()));
+    ResetPayload payload(this->_hints->atoms());
+    this->_sendMapChanges(payload);
 }
 
 /////////////////

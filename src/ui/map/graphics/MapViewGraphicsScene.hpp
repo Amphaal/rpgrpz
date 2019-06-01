@@ -53,14 +53,12 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             return item;
         }
 
-        QGraphicsPathItem* addDrawing(const QPainterPath &path, const QPen &pen, const QPointF &pos) {
-            
-            //translate path from arg pos 
-            auto translated = path.translated(-pos);
+        QGraphicsPathItem* addDrawing(const QPainterPath &translatedPath, const QPen &pen, const QPointF &pos, int zIndex) {
 
             //create path gi, set to pos
-            auto newPath = new MapViewGraphicsPathItem(this, translated, pen);
+            auto newPath = new MapViewGraphicsPathItem(this, translatedPath, pen);
             newPath->setPos(pos);
+            newPath->setZValue(zIndex);
             
             //add to scene
             this->addItem(newPath);
@@ -68,7 +66,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
         }
 
 
-        MapViewGraphicsRectItem* addMissingAssetPH(QRectF &rect, QPointF &pos) {
+        MapViewGraphicsRectItem* addMissingAssetPH(QRectF &rect, QPointF &pos, int zIndex) {
     
             //pen to draw the rect with
             QPen pen;
@@ -83,6 +81,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             //add to scene
             auto placeholder = new MapViewGraphicsRectItem(this, rect, pen, brush);
             placeholder->setPos(pos);
+            placeholder->setZValue(zIndex);
             this->addItem(placeholder);
 
             return placeholder;

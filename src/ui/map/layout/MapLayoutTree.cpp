@@ -42,6 +42,16 @@ MapLayoutTree::MapLayoutTree(QWidget * parent) : RPZTree(parent) {
     );
 }
 
+void MapLayoutTree::onRPZClientConnecting(RPZClient * cc) {
+    ClientBindable::onRPZClientConnecting(cc);
+
+    //on map change
+    QObject::connect(
+        cc, &RPZClient::mapChanged,
+        this, &MapLayoutTree::alterTreeElements
+    );
+}
+
 void MapLayoutTree::_renderCustomContextMenu(const QPoint &pos) {
     
     auto itemsToProcess = this->selectedItems();
@@ -103,7 +113,7 @@ void MapLayoutTree::_moveSelectionToLayer(int targetLayer) {
     this->_changeLayer(selectedIds, targetLayer);
 
     //unilateral event, expect only outer calls
-    this->_emitAlteration(LayerChangedPayload(selectedIds, targetLayer));
+    this->alterTreeElements(LayerChangedPayload(selectedIds, targetLayer));
 }
 
 
@@ -176,8 +186,6 @@ void MapLayoutTree::alterTreeElements(QVariantHash &payload) {
 
                 //also remove layer
                 this->_updateLayerState(layerItem);
-
-
             }
             break;
 
@@ -205,6 +213,8 @@ void MapLayoutTree::alterTreeElements(QVariantHash &payload) {
     
     delete aPayload;
     this->_preventInnerGIEventsHandling = false;
+    
+    this->_emitAlteration(AlterationPayload(payload));
 }
 
 void MapLayoutTree::_onRenamedAsset(const QString &assetId, const QString &newName) {
@@ -324,9 +334,9 @@ void MapLayoutTree::_updateLayerState(QTreeWidgetItem* layerItem) {
 
 void MapLayoutTree::_emitAlteration(AlterationPayload &payload) {
     auto source = payload.source();
-    if(source == AlterationPayload::Source::Undefined) {
-        payload.changeSource(this->_source);
-    }
+    if(source == AlterationPayload::Source::Network) return; //prevent resending network payloay
+    if(source == AlterationPayload::Source::Undefined) payload.changeSource(this->_source); //inner payload, apply own source
+    
     emit elementsAlterationAsked(payload);
 }
 
@@ -343,7 +353,7 @@ void MapLayoutTree::keyPressEvent(QKeyEvent * event) {
             const auto selectedIds = this->_selectedAtomIds();
             if(!selectedIds.length()) return;
 
-            this->_emitAlteration(RemovedPayload(selectedIds));
+            this->alterTreeElements(RemovedPayload(selectedIds));
             break;
     }
 

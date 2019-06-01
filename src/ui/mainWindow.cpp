@@ -218,7 +218,7 @@ void MainWindow::_initUIApp() {
 
     //on map alteration, update treelist
     QObject::connect(
-        this->_mapView->hints(), &MapHintViewBinder::atomsAlteredForLocal,
+        this->_mapView->hints(), &MapHintViewBinder::atomsAltered,
         this->_mlManager->tree(), &MapLayoutTree::alterTreeElements
     );
 

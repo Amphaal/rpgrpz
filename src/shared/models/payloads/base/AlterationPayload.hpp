@@ -22,24 +22,9 @@ class AlterationPayload : public QVariantHash {
             Reset
         }; 
 
-        static inline const QList<Alteration> networkAlterations = { 
-            Moved, 
-            Added, 
-            Removed, 
-            Reset,
-            LayerChanged 
-        };
-        
-        static const inline QList<Alteration> buildGraphicsItemAlterations = {
-            Added,  
-            Reset
-        };
-        static const inline QList<Alteration> updateGraphicsItemAlterations = {
-            Moved, 
-            LayerChanged  
-        };
-
-        AlterationPayload(const QVariantHash &hash) : QVariantHash(hash) {}
+        AlterationPayload(const QVariantHash &hash) : QVariantHash(hash) {
+            this->_updateTags(this->type());
+        }
         AlterationPayload(const Alteration &type) : QVariantHash() {
             this->_setType(type);
         }
@@ -60,8 +45,48 @@ class AlterationPayload : public QVariantHash {
             return (Source)this->value("s").toInt();
         }
 
-    private:       
-       void _setType(const Alteration &type) {
-           (*this)["t"] = (int)type;
-       }
+        bool requiresGraphicsItemBuild() {
+            return this->_instructGIBuild;
+        }
+
+        bool requiresGraphicsItemUpdate() {
+            return this->_instructGIUpdate;
+        }
+
+        bool isNetworkRoutable() {
+            return this->_isNetworkAlteration;
+        }
+
+    private:      
+        bool _isNetworkAlteration = false;
+        bool _instructGIBuild = false;
+        bool _instructGIUpdate = false;
+
+        static inline const QList<Alteration> _networkAlterations = { 
+            Moved, 
+            Added, 
+            Removed, 
+            Reset,
+            LayerChanged 
+        };
+
+        static const inline QList<Alteration> _buildGraphicsItemAlterations = {
+            Added,  
+            Reset
+        };
+        static const inline QList<Alteration> _updateGraphicsItemAlterations = {
+            Moved, 
+            LayerChanged  
+        };
+
+        void _setType(const Alteration &type) {
+            (*this)["t"] = (int)type;
+            this->_updateTags(type);
+        }
+
+        void _updateTags(const Alteration &type) {
+            this->_isNetworkAlteration = _networkAlterations.contains(type);
+            this->_instructGIBuild = _buildGraphicsItemAlterations.contains(type);
+            this->_instructGIUpdate = _updateGraphicsItemAlterations.contains(type);
+        }
 };

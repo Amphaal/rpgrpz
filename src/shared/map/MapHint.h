@@ -21,11 +21,9 @@ class MapHint : public QObject {
         QVector<RPZAtom> atoms();
 
     signals:
-        void atomsAlteredForLocal(QVariantHash &payload);
-        void atomsAlteredForNetwork(QVariantHash &payload);
+        void atomsAltered(QVariantHash &payload);
 
     public slots:
-        //from external App instructions (toolBar, RPZServer...)
         void alterScene(QVariantHash &payload); 
 
     protected:

@@ -47,7 +47,7 @@ class MapHintViewBinder : public MapHint {
         void replaceMissingAssetPlaceholders(const QString &assetId);
 
         //actions helpers
-        void addDrawing(const QPainterPath &path, const QPen &pen);
+        void addDrawing(const QPainterPath &rawPath, const QPen &pen);
 
         //D&D assets handling
         void centerGraphicsItemToPoint(QGraphicsItem* item, const QPoint &eventPos);

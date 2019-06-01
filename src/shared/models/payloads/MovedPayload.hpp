@@ -8,7 +8,9 @@
 class MovedPayload : public AlterationPayload {
     public:
         MovedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        MovedPayload(const QHash<QUuid, QPointF> &newCoordsByAtomId) : AlterationPayload(AlterationPayload::Alteration::Moved) {}
+        MovedPayload(const QHash<QUuid, QPointF> &newCoordsByAtomId) : AlterationPayload(AlterationPayload::Alteration::Moved) {
+            this->_setCoordHash(newCoordsByAtomId);
+        }
 
         QHash<QUuid, QPointF> coordHash() {
             
@@ -16,7 +18,14 @@ class MovedPayload : public AlterationPayload {
             
             QHash<QUuid, QPointF> out;
             for (QVariantHash::iterator i = base.begin(); i != base.end(); ++i) {
-                out.insert(QUuid(i.key()), i.value().toPointF());
+                
+                //from list of numeric values
+                auto arr = i.value().toList();
+                auto coord = arr.isEmpty() ? QPointF() : QPointF(arr[0].toReal(), arr[1].toReal());
+
+                //append
+                out.insert(QUuid(i.key()), coord);
+            
             }
 
             return out;
@@ -33,10 +42,19 @@ class MovedPayload : public AlterationPayload {
 
     private:
         void _setCoordHash(const QHash<QUuid, QPointF> &newCoordsByAtomId) {
+            
             QVariantHash cast;
             for (QHash<QUuid, QPointF>::const_iterator i = newCoordsByAtomId.begin(); i != newCoordsByAtomId.end(); ++i) {
-                cast.insert(i.key().toString(), i.value());
+                
+                //into an array
+                auto coord = i.value();
+                QVariantList coordsList { coord.x(), coord.y() };
+
+                //append
+                cast.insert(i.key().toString(), coordsList);
+
             }
+
             (*this)["coords"] = cast;
         }
 };
