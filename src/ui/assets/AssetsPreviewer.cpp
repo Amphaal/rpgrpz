@@ -1,10 +1,12 @@
 #include "AssetsPreviewer.h"
 
 AssetsPreviewer::AssetsPreviewer(QWidget * parent) : QGroupBox(parent) {
+    
     this->setTitle("Aperçu");
     this->setAlignment(Qt::AlignHCenter);
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
-    this->setMinimumHeight(250);
+    
+    this->setFixedSize(250,250);
 
     this->setLayout(new QVBoxLayout);
 }

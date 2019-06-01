@@ -14,7 +14,7 @@
 #include <QPixmap>
 
 #include "src/shared/models/Payloads.h"
-#include "src/ui/assets/base/AssetsTreeViewModel.hpp"
+#include "src/ui/assets/base/AssetsTreeViewModel.h"
 
 #include "src/shared/database/MapDatabase.hpp"
 

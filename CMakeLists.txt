@@ -171,8 +171,8 @@ list(APPEND SOURCES
     src/shared/database/AssetsDatabase.cpp
     src/shared/assets/AssetsDatabaseElement.cpp
     
-
-    src/ui/assets/base/AssetsTreeView.hpp
+    src/ui/assets/base/AssetsTreeViewModel.cpp
+    src/ui/assets/base/AssetsTreeView.cpp
     src/ui/assets/AssetsManager.cpp
     src/ui/assets/AssetsPreviewer.cpp
 

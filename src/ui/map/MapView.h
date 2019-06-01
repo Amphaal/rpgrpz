@@ -33,7 +33,7 @@
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/network/rpz/client/RPZClient.h"
 
-#include "src/ui/assets/base/AssetsTreeView.hpp"
+#include "src/ui/assets/base/AssetsTreeView.h"
 
 #include "src/shared/models/Payloads.h"
 
