@@ -419,6 +419,10 @@ QGraphicsItem* MapHintViewBinder::_buildGraphicsItemFromAtom(RPZAtom &atomToBuil
                 //set width
                 pen.setWidth(mdata.penWidth());
 
+                //cap
+                pen.setCapStyle(Qt::RoundCap);
+                pen.setJoinStyle(Qt::RoundJoin);
+
             //draw the form
             newItem = this->scene()->addDrawing(path, pen, pos, layer);
             

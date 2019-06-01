@@ -105,7 +105,12 @@ void MapView::_clearTempText() {
 }
 
 void MapView::enterEvent(QEvent *event) {
+    this->_generateTempText();
+}
+
+void MapView::_generateTempText() {
     if(this->_getCurrentTool() == MapTools::Actions::Text) {
+        if(this->_tempText) this->_clearTempText();
         this->_tempText = this->_hints->generateGhostTextItem();
     }
 }
@@ -228,7 +233,7 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
             this->_rotateFromPoint(event->pos());
             break;
         case MapTools::Actions::Text:
-            this->_hints->centerGraphicsItemToPoint(this->_tempText, event->pos());
+            if(this->_tempText) this->_hints->centerGraphicsItemToPoint(this->_tempText, event->pos());
             break;
     }
 
@@ -306,6 +311,7 @@ void MapView::_changeTool(MapTools::Actions newTool, const bool quickChange) {
         //if unselecting quicktool
         if(newTool == MapTools::Actions::None) {
             newTool = this->_selectedTool;
+            this->_generateTempText();
         }   
 
     } else {

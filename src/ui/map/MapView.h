@@ -77,6 +77,7 @@ class MapView : public QGraphicsView, public ClientBindable {
     private:
         QGraphicsTextItem* _tempText = nullptr;
         void _clearTempText();
+        void _generateTempText();
 
         MapViewGraphicsScene* _scene = nullptr;
 
