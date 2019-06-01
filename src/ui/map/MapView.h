@@ -58,6 +58,9 @@ class MapView : public QGraphicsView, public ClientBindable {
         void remoteChanged(bool isRemote);
 
     protected:
+        void leaveEvent(QEvent *event) override;
+        void enterEvent(QEvent *event) override;
+
         void wheelEvent(QWheelEvent *event) override;
 
         void dropEvent(QDropEvent *event) override;
@@ -72,6 +75,9 @@ class MapView : public QGraphicsView, public ClientBindable {
         void resizeEvent(QResizeEvent * event) override;
 
     private:
+        QGraphicsTextItem* _tempText = nullptr;
+        void _clearTempText();
+
         MapViewGraphicsScene* _scene = nullptr;
 
         MapHintViewBinder* _hints;

@@ -94,6 +94,22 @@ void MapView::keyPressEvent(QKeyEvent * event) {
 
 }
 
+void MapView::leaveEvent(QEvent *event) {
+    this->_clearTempText();
+}
+
+void MapView::_clearTempText() {
+    if(!this->_tempText) return;
+    delete this->_tempText;
+    this->_tempText = nullptr;
+}
+
+void MapView::enterEvent(QEvent *event) {
+    if(this->_getCurrentTool() == MapTools::Actions::Text) {
+        this->_tempText = this->_hints->generateGhostTextItem();
+    }
+}
+
 /////////////
 /* NETWORK */
 /////////////
@@ -211,6 +227,9 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
         case MapTools::Actions::Rotate:
             this->_rotateFromPoint(event->pos());
             break;
+        case MapTools::Actions::Text:
+            this->_hints->centerGraphicsItemToPoint(this->_tempText, event->pos());
+            break;
     }
 
     //register last position
@@ -250,8 +269,9 @@ void MapView::_toolOnMousePress(const MapTools::Actions &tool) {
         break;
 
         case MapTools::Actions::Text: {
-            this->_hints->addText(this->_lastPointMousePressed);
+            this->_hints->turnGhostTextIntoDefinitive(this->_tempText, this->_lastPointMousePressed);
         }
+        break;
     }
 }
 
@@ -275,6 +295,7 @@ MapTools::Actions MapView::_getCurrentTool() const {
 //change tool
 void MapView::_changeTool(MapTools::Actions newTool, const bool quickChange) {
     
+    this->_clearTempText();
     this->_endDrawing();
 
     //if quick change asked

@@ -22,7 +22,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
     public:
         MapViewGraphicsScene(int defaultSize) : QGraphicsScene(defaultSize, defaultSize, defaultSize, defaultSize) {}
 
-        QGraphicsItem* addGenericImageBasedItem(const QString &pathToImageFile, int layer = 0, qreal opacity = 1, const QPointF &pos = QPointF()) {
+        QGraphicsItem* addGenericImageBasedItem(const QString &pathToImageFile, int layer = 0, const QPointF &pos = QPointF()) {
     
             //get file infos
             QFileInfo pathInfo(pathToImageFile);
@@ -35,9 +35,6 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             else {
                 item = new MapViewGraphicsPixmapItem(this, pathToImageFile);
             };
-
-            //define transparency as it is a dummy
-            item->setOpacity(opacity);
 
             //define layer
             item->setZValue(layer);
@@ -65,10 +62,12 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             return newPath;
         }
 
-        QGraphicsTextItem* addText(const QString &text, int textSize, QPointF &pos, int zIndex) {
+        QGraphicsTextItem* addText(const QString &text, int textSize, int zIndex, QPointF &pos = QPointF()) {
 
             auto newText = new MapViewGraphicsTextItem(this, text, textSize);
-            newText->setPos(pos);
+            if(!pos.isNull()) {
+                newText->setPos(pos);
+            }
             newText->setZValue(zIndex);
 
             //add to scene

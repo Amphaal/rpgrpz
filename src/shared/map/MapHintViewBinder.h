@@ -50,7 +50,8 @@ class MapHintViewBinder : public MapHint {
         //actions helpers
         void addDrawing(const QPointF &startPos, const QPainterPath &path, const QPen &pen);
 
-        void addText(const QPoint &eventPos);
+        QGraphicsTextItem* generateGhostTextItem();
+        void turnGhostTextIntoDefinitive(QGraphicsTextItem* temporaryText, const QPoint &eventPos);
 
         //D&D assets handling
         void centerGraphicsItemToPoint(QGraphicsItem* item, const QPoint &eventPos);

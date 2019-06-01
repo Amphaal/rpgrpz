@@ -280,22 +280,7 @@ void MapHintViewBinder::deleteCurrentSelectionItems() {
     this->alterScene(RemovedPayload(atomIdsToRemove));
 }
 
-void MapHintViewBinder::addText(const QPoint &eventPos) {
-    
-    auto scenePos = this->_boundGv->mapToScene(eventPos);
 
-    //define metadata
-    auto metadata = RPZAtomMetadata();
-    metadata.setPenWidth(this->_penWidth);
-    metadata.setPos(scenePos);
-    metadata.setLayer(this->_defaultLayer);
-    metadata.setText("Saisir du texte");
-
-    //inform !
-    auto newAtom = RPZAtom(RPZAtom::Type::Text, metadata);
-    this->alterScene(AddedPayload(newAtom));
-}
-        
 void MapHintViewBinder::addDrawing(const QPointF &startPos, const QPainterPath &path, const QPen &pen) {
 
     //define metadata
@@ -308,13 +293,49 @@ void MapHintViewBinder::addDrawing(const QPointF &startPos, const QPainterPath &
     //inform !
     auto newAtom = RPZAtom(RPZAtom::Type::Drawing, metadata);
     this->alterScene(AddedPayload(newAtom));
+
+}
+
+QGraphicsTextItem* MapHintViewBinder::generateGhostTextItem() {
+
+    auto temporaryItem = this->scene()->addText("Saisir du texte", this->_penWidth, this->_defaultLayer);
+
+    //define transparency as it is a dummy
+    temporaryItem->setOpacity(.5);
+
+    //prevent notifications on move to kick in since the graphics item is not really in the scene
+    auto notifier = dynamic_cast<MapViewItemsNotifier*>(temporaryItem);
+    if(notifier) notifier->disableNotifications();
+
+    return temporaryItem;
+}
+
+void MapHintViewBinder::turnGhostTextIntoDefinitive(QGraphicsTextItem* temporaryText, const QPoint &eventPos) {
+    
+    this->centerGraphicsItemToPoint(temporaryText, eventPos);
+
+    //define metadata
+    auto metadata = RPZAtomMetadata();
+    metadata.setPenWidth(temporaryText->font().pointSize());
+    metadata.setPos(temporaryText->scenePos());
+    metadata.setLayer(temporaryText->zValue());
+    metadata.setText(temporaryText->toPlainText());
+
+    //inform !
+    auto newAtom = RPZAtom(RPZAtom::Type::Text, metadata);
+    this->alterScene(AddedPayload(newAtom));
+
+    //DO NOT REMOVE, it will be removed my the map
 }
 
 QGraphicsItem* MapHintViewBinder::generateGhostItem(AssetsDatabaseElement* assetElem) {
     
     //find filepath to asset
     auto path = AssetsDatabase::get()->getFilePathToAsset(assetElem);
-    auto temporaryItem = this->scene()->addGenericImageBasedItem(path, this->_defaultLayer, .5);
+    auto temporaryItem = this->scene()->addGenericImageBasedItem(path, this->_defaultLayer);
+    
+    //define transparency as it is a dummy
+    temporaryItem->setOpacity(.5);
 
     //prevent notifications on move to kick in since the graphics item is not really in the scene
     auto notifier = dynamic_cast<MapViewItemsNotifier*>(temporaryItem);
@@ -334,7 +355,7 @@ void MapHintViewBinder::turnGhostItemIntoDefinitive(QGraphicsItem* temporaryItem
     auto metadata = RPZAtomMetadata();
     metadata.setAssetId(assetElem->id());
     metadata.setAssetName(assetElem->displayName());
-    metadata.setLayer(this->_defaultLayer);
+    metadata.setLayer(temporaryItem->zValue());
     metadata.setPos(temporaryItem->scenePos());
     metadata.setShape(temporaryItem->boundingRect());
 
@@ -372,8 +393,8 @@ QGraphicsItem* MapHintViewBinder::_buildGraphicsItemFromAtom(RPZAtom &atomToBuil
             newItem = this->scene()->addText(
                 mdata.text(), 
                 mdata.penWidth(), 
-                pos, 
-                layer
+                layer,
+                pos
             );
         }
         break;
@@ -414,7 +435,7 @@ QGraphicsItem* MapHintViewBinder::_buildGraphicsItemFromAtom(RPZAtom &atomToBuil
 
             //is in db, add to view
             if(!pathToAssetFile.isNull()) {
-                newItem = this->scene()->addGenericImageBasedItem(pathToAssetFile, layer, 1, pos);
+                newItem = this->scene()->addGenericImageBasedItem(pathToAssetFile, layer, pos);
             } 
             
             //not in db, render the shape
@@ -464,7 +485,7 @@ void MapHintViewBinder::replaceMissingAssetPlaceholders(const QString &assetId) 
         auto atom = this->_fetchAtom(gi);
 
         //create the new graphics item
-        auto newGi = this->scene()->addGenericImageBasedItem(pathToFile, atom->metadata().layer(), 1, pos);
+        auto newGi = this->scene()->addGenericImageBasedItem(pathToFile, atom->metadata().layer(), pos);
         this->_crossBindingAtomWithGI(atom, newGi);
 
         delete gi;
