@@ -83,18 +83,27 @@ void MapTools::_unselectAllTools() {
     }
 }
 
+QAction* MapTools::_getCheckedTool() {
+    for(auto tool : this->_selectableTools) {
+        if(tool->isChecked()) return tool;
+    }
+
+    return this->_defaultTool;
+}
+
 void MapTools::_onToolSelectionChanged(QAction *action) {
 
     auto targetAction = (MapTools::Actions)action->data().toInt();
     auto targetIsSelectable = this->_selectableTools.contains(action);
     auto targetIsChecked = action->isChecked();
+    auto currentlyChecked = this->_getCheckedTool();
 
     this->_unselectAllTools();
 
     if(targetIsSelectable && targetIsChecked) {
         action->setChecked(true);
     } else {
-        this->_defaultTool->setChecked(true);
+        currentlyChecked->setChecked(true);
     }
 
     //if unchecked

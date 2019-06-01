@@ -26,5 +26,7 @@ class MapTools : public QToolBar {
         QVector<QAction*> _selectableTools;
         QAction* _defaultTool;
 
+        QAction* _getCheckedTool();
+
         void _unselectAllTools();
 };
