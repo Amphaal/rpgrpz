@@ -46,6 +46,7 @@ MapTools::MapTools(QWidget* parent) : QToolBar(parent) {
     //draw size
     auto sizer = new QSpinBox(this);
     sizer->setMinimum(1);
+    sizer->setValue(defaultPenSize);
     QObject::connect(
         sizer, qOverload<int>(&QSpinBox::valueChanged),
         [&](const int i) {
@@ -102,7 +103,11 @@ void MapTools::_onToolSelectionChanged(QAction *action) {
 
     if(targetIsSelectable && targetIsChecked) {
         action->setChecked(true);
-    } else {
+    } 
+    else if(action == this->_defaultTool) {
+        this->_defaultTool->setChecked(true);
+    } 
+    else {
         currentlyChecked->setChecked(true);
     }
 

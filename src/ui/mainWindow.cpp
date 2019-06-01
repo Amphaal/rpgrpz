@@ -165,42 +165,48 @@ void MainWindow::_initUIApp() {
     this->_mapTools = new MapTools(this);
     this->_mlManager = new MapLayoutManager(this);
     
-    //assets
-    auto assetTabs = new QTabWidget(this);
-    assetTabs->addTab(this->_assetsManager, QIcon(":/icons/app/tabs/box.png"), "Boite à jouets");
-    assetTabs->addTab(this->_mlManager, QIcon(":/icons/app/tabs/list.png"), "Atomes de la carte");
-
-    //designer
-    auto designer = new QWidget;
-    designer->setLayout(new QVBoxLayout);
-    designer->layout()->setMargin(0);
-    designer->layout()->setSpacing(2);
-    designer->layout()->addWidget(this->_mapTools);
-    designer->layout()->addWidget(this->_mapView);
-
     //audio...
     auto audio_content = new QWidget;
     audio_content->setLayout(new QVBoxLayout);
     audio_content->setContentsMargins(0, 0, 0, 0);
     audio_content->layout()->addWidget(this->_streamController);
     audio_content->layout()->addWidget(this->_streamNotifier);
-    
+
+    //assets
+    auto assetTabs = new QTabWidget(this);
+    assetTabs->addTab(this->_assetsManager, QIcon(":/icons/app/tabs/box.png"), "Boite à jouets");
+    assetTabs->addTab(audio_content, QIcon(":/icons/app/tabs/playlist.png"), "Audio");
+
+    //designer
+    auto designer = new QWidget;
+    designer->setLayout(new QVBoxLayout);
+    designer->layout()->setMargin(0);
+    designer->layout()->setSpacing(2);
+
+        auto toolbar = new QWidget;
+        auto toolbarLayout = new QHBoxLayout;
+        toolbar->setLayout(toolbarLayout);
+        toolbarLayout->setMargin(0);
+        toolbarLayout->setSpacing(0);
+
+        toolbarLayout->addWidget(this->_mapTools);
+        toolbarLayout->addStretch(0);
+        toolbarLayout->addWidget(this->_connectWidget);
+        
+    designer->layout()->addWidget(toolbar);
+    designer->layout()->addWidget(this->_mapView);
+
     //right part tab
     auto eTabs = new QTabWidget(this);
+    eTabs->setLayoutDirection(Qt::LayoutDirection::RightToLeft);
+    eTabs->addTab(this->_mlManager, QIcon(":/icons/app/tabs/list.png"), "Atomes de la carte");
     eTabs->addTab(this->_cw, QIcon(":/icons/app/tabs/chat.png"), "Chat de la partie");
-    eTabs->addTab(audio_content, QIcon(":/icons/app/tabs/playlist.png"), "Audio");
 
-    auto right = new QWidget;
-    right->setLayout(new QVBoxLayout);
-    right->layout()->setMargin(0);
-    right->layout()->addWidget(this->_connectWidget);
-    right->layout()->addWidget(eTabs);
-    
     //final
     auto centralWidget = (RestoringSplitter*)this->centralWidget();
     centralWidget->addWidget(assetTabs);
     centralWidget->addWidget(designer);
-    centralWidget->addWidget(right);
+    centralWidget->addWidget(eTabs);
     centralWidget->setStretchFactor(0, 0);
     centralWidget->setStretchFactor(1, 1);
     centralWidget->setStretchFactor(2, 0);

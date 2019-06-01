@@ -37,8 +37,8 @@ class MapViewGraphicsTextItem : public QGraphicsTextItem, public MapViewItemsNot
             font.setPointSize(textSize);
             this->setFont(font);
             
-            //TODO bug
-            // this->setTextInteractionFlags(Qt::TextEditorInteraction);
+            //TODO bug "Unsupported composition mode"
+            this->setTextInteractionFlags(Qt::TextEditorInteraction);
         }
 
     QVariant itemChange(GraphicsItemChange change, const QVariant & value) override {

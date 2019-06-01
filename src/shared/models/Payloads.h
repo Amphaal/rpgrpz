@@ -29,6 +29,8 @@ class Payload {
                     return new ResetPayload(payload);
                 case AlterationPayload::Alteration::Selected:
                     return new SelectedPayload(payload);
+                case AlterationPayload::Alteration::TextChanged:
+                    return new TextChangedPayload(payload);
             }
 
             return new AlterationPayload(payload);

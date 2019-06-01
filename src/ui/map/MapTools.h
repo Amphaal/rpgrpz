@@ -11,8 +11,19 @@ class MapTools : public QToolBar {
 
     Q_OBJECT
 
-    public:
-        enum Actions { None, Select, Scroll, Draw, Rotate, RotateToNorth, ResetView, Text };
+    public:    
+        enum Actions { 
+            None, 
+            Select, 
+            Scroll, 
+            Draw, 
+            Rotate, 
+            RotateToNorth, 
+            ResetView, 
+            Text 
+        };
+        static inline int defaultPenSize = 4;
+
         MapTools(QWidget * parent = nullptr); 
         void selectDefaultTool();
     

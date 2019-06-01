@@ -1,6 +1,6 @@
 #include "ConnectWidget.h"
 
-ConnectWidget::ConnectWidget(QWidget * parent) : QGroupBox(parent), 
+ConnectWidget::ConnectWidget(QWidget * parent) : QWidget(parent), 
                                             _nameTarget(new QLineEdit(this)),
                                             _portTarget(new QLineEdit(this)), 
                                             _domainTarget(new QLineEdit(this)),
@@ -10,8 +10,7 @@ ConnectWidget::ConnectWidget(QWidget * parent) : QGroupBox(parent),
 
     //this
     this->setLayout(new QHBoxLayout);
-    this->setTitle("Connexion à une session");
-    this->setAlignment(Qt::AlignHCenter);
+    this->layout()->setMargin(0);
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
 
     //name target

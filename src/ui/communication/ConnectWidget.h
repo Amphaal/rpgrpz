@@ -7,12 +7,11 @@
 #include <QIntValidator>
 #include <QPushButton>
 #include <QMessageBox>
-#include <QGroupBox>
 
 #include "src/helpers/_appContext.h"
 #include "src/network/rpz/client/RPZClient.h"
 
-class ConnectWidget : public QGroupBox {
+class ConnectWidget : public QWidget {
 
     Q_OBJECT
 

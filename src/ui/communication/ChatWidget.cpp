@@ -55,6 +55,8 @@ void ChatWidget::_instUI() {
     splitter->setStretchFactor(1, 0);
     splitter->loadState();
     this->layout()->addWidget(splitter);
+
+    this->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
 }
 
 void ChatWidget::_onRPZClientError(const QString &errMsg) {    

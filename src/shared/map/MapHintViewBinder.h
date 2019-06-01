@@ -22,6 +22,8 @@
 
 #include "MapHint.h"
 
+#include "src/ui/map/MapTools.h"
+
 class MapHintViewBinder : public MapHint {
     
     Q_OBJECT
@@ -99,7 +101,7 @@ class MapHintViewBinder : public MapHint {
             QSet<QGraphicsItem*> _itemsWhoNotifiedMovement;
 
         //drawing
-        int _penWidth = 1;
+        int _penWidth = MapTools::defaultPenSize;
         QColor _penColor = Qt::blue;
 
         //layer
