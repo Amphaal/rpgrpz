@@ -98,10 +98,8 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
                 //get message, add corresponding user to it then store it
                 RPZMessage message(data.toHash());
                 message.setOwnership(*this->_getUser(target));
-                this->_messages.insert(message.id(), message);
 
-                //push to all sockets
-                this->_broadcastMessage(message);
+                this->_interpretMessage(target, message);
             }
             break;
         case JSONMethod::AskForAsset: {   
@@ -279,4 +277,38 @@ QVariantList RPZServer::_serializeMessages() {
 RPZUser* RPZServer::_getUser(JSONSocket* socket) {
     const auto id = this->_idsByClientSocket[socket];
     return &this->_usersById[id];
+}
+
+void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
+    
+    //check if is a command
+    auto text = msg.message();
+    auto interpretation = MessageInterpreter::findInterpretation(text);
+
+    switch(interpretation) {
+        
+        //on unknown command
+        case MessageInterpreter::Unknown: {
+            RPZMessage response("Le serveur n'a pas compris.");
+            response.setResponseToMessageId(msg.id());
+            sender->sendJSON(JSONMethod::MessageFromPlayer, response);
+        }
+        break;
+
+        //on whisper
+        case MessageInterpreter::Whisper: {
+
+        }
+
+        //on standard message
+        case MessageInterpreter::Say:
+        default: {
+            //store message
+            this->_messages.insert(msg.id(), msg);
+
+            //push to all sockets
+            this->_broadcastMessage(msg);
+        }
+        break;
+    }
 }

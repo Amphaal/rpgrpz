@@ -25,6 +25,8 @@
 
 #include "src/helpers/_appContext.h"
 
+#include "src/shared/command/MessageInterpreter.hpp"
+
 class RPZServer : public QTcpServer, public JSONRouter { 
     
     Q_OBJECT
@@ -61,6 +63,7 @@ class RPZServer : public QTcpServer, public JSONRouter {
         QVariantList _serializeMessages();
         void _sendStoredMessages(JSONSocket * clientSocket);
         void _broadcastMessage(RPZMessage &messageToBroadcast);
+        void _interpretMessage(JSONSocket* sender, RPZMessage &msg);
         
         //internal
         void _onNewConnection();

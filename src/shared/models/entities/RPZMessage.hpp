@@ -11,22 +11,11 @@ class RPZMessage : public Ownable {
     public:
         RPZMessage() {};
         RPZMessage(const QVariantHash &hash) : Ownable(hash) {}
-        RPZMessage(const QUuid &id, const QString &message, const QDateTime &dt, const RPZUser &owner) : Ownable(id, owner) {
-            this->_setTimestamp(dt);
-            this->_setMessage(message);
-        };
 
-        RPZMessage(const QUuid &id, const QString &message, const QDateTime &dt) : Ownable(id) { 
-            this->_setTimestamp(dt);
+        RPZMessage(const QString &message) : Ownable(QUuid::createUuid()) { 
             this->_setMessage(message);
+            this->_setTimestamp(QDateTime::currentDateTime());
         };
-
-        RPZMessage(const QString &message) : 
-        RPZMessage(
-            QUuid::createUuid(), 
-            message, 
-            QDateTime::currentDateTime()
-        ) { };
 
         QString message() {
             return this->value("msg").toString();
@@ -43,6 +32,13 @@ class RPZMessage : public Ownable {
             return fullMsg;
         };
 
+        QUuid respondTo() {
+            return this->value("r_id").toUuid();
+        }
+
+        void setResponseToMessageId(const QUuid &answerMessageId) {
+            (*this)["r_id"] = answerMessageId;
+        }
 
     private:
         void _setTimestamp(const QDateTime &dt) {

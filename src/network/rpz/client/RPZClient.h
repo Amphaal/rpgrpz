@@ -34,6 +34,9 @@ class RPZClient : public JSONSocket, public JSONRouter {
         //helper
         void informAssetSucessfulInsertion(const QString &assetId);
 
+        RPZUser identity();
+        QVector<RPZUser> sessionUsers();
+
     signals:
         void receivedMessage(const QVariantHash &message);
         void loggedUsersUpdated(const QVariantHash &users);
@@ -49,6 +52,9 @@ class RPZClient : public JSONSocket, public JSONRouter {
         QString _domain;
         QString _port;
         QString _name;
+
+        RPZUser _self;
+        QVector<RPZUser> _sessionUsers;
 
         void _onConnected();
         void _error(QAbstractSocket::SocketError _socketError);

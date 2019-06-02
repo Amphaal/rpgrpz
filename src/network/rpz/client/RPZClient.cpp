@@ -63,6 +63,14 @@ void RPZClient::run() {
     
 }
 
+RPZUser RPZClient::identity() {
+    return this->_self;
+}
+
+QVector<RPZUser> RPZClient::sessionUsers() {
+    return this->_sessionUsers;
+}
+
 void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) {
     
     switch(method) {
@@ -70,12 +78,22 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             emit receivedLogHistory(data.toList());
             break;
         case JSONMethod::LoggedPlayersChanged: {
-                const auto users = data.toHash();
+                auto users = data.toHash();
+
+                //store users
+                this->_sessionUsers.clear();
+                for(auto &rUser : users) this->_sessionUsers.append(RPZUser(rUser.toHash()));
+
                 emit loggedUsersUpdated(users);
             }
             break;
         case JSONMethod::AckIdentity: {
-                emit ackIdentity(data.toHash());
+                auto hash = data.toHash();
+                
+                //store our identity
+                this->_self = RPZUser(hash);
+
+                emit ackIdentity(hash);
             }
             break;
         case JSONMethod::AskForHostMapHistory: {
