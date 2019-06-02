@@ -28,7 +28,9 @@ void ChatWidget::_instUI() {
         left->layout()->setMargin(0);
         
         //chat area...
-        left->layout()->addWidget(this->_chatLog);
+        auto scroller = new LogScrollView(left);
+        scroller->setWidget(this->_chatLog);
+        left->layout()->addWidget(scroller);
 
         //messaging...
         left->layout()->addWidget(this->_chatEdit);
@@ -42,7 +44,10 @@ void ChatWidget::_instUI() {
 
     auto _right = [&]() {
         this->_usersLog->setMinimumWidth(100);
-        return this->_usersLog;
+
+        auto scroller = new LogScrollView(this);
+        scroller->setWidget(this->_usersLog);
+        return scroller;
     };
 
     ////////////
@@ -62,21 +67,15 @@ void ChatWidget::_instUI() {
 void ChatWidget::_onRPZClientError(const QString &errMsg) {    
     
     //out log
-    if(!this->serverName.isEmpty()) {
-        const auto nm = errMsg + " (" + this->serverName + ")";
-        this->_chatLog->writeAtEnd(nm, MessagesLog::MessageType::ServerLog);
-    }
+    RPZMessage msg(errMsg + " (" + this->serverName + ")");
+    this->_chatLog->handleMessage(msg);
 
     this->_DisableUI();
 
 }
 void ChatWidget::_onReceivedMessage(const QVariantHash &message) {
     auto msg = RPZMessage(message);
-    auto str_msg = msg.toString();
-    
-    //write in log
-    this->_chatLog->writeAtEnd(str_msg);
-
+    this->_chatLog->handleMessage(msg);
 }
 
 void ChatWidget::_onReceivedLogHistory(const QVariantList &messages) {
@@ -90,7 +89,7 @@ void ChatWidget::_onReceivedLogHistory(const QVariantList &messages) {
 
     //welcome msg
     const auto welcome = QString("Connecté au serveur (") + this->serverName + ")";
-    this->_chatLog->writeAtEnd(welcome, MessagesLog::MessageType::ServerLog);
+    this->_chatLog->handleMessage(RPZMessage(welcome));
 }
 
 void ChatWidget::onRPZClientConnecting(RPZClient * cc) {
@@ -98,8 +97,9 @@ void ChatWidget::onRPZClientConnecting(RPZClient * cc) {
     ClientBindable::onRPZClientConnecting(cc);
     
     this->serverName = cc->getConnectedSocketAddress();
-    this->_usersLog->newLog();
-    this->_chatLog->newLog();
+    
+    this->_usersLog->clearLines();
+    this->_chatLog->clearLines();
 
     //on error from client
     QObject::connect(
@@ -129,7 +129,15 @@ void ChatWidget::onRPZClientConnecting(RPZClient * cc) {
     this->_chatEdit->disconnect();
     QObject::connect(
         this->_chatEdit, &ChatEdit::askedToSendMessage,
-        this->_rpzClient, &RPZClient::sendMessage
+        [=](const QString &msg) {
+            
+            RPZMessage message(msg);
+            message.setOwnership(cc->identity());
+            
+            this->_chatLog->handleMessage(message);
+            this->_rpzClient->sendMessage(message);
+        }
+        
     );
 
 }

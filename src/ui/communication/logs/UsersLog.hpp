@@ -4,62 +4,74 @@
 #include <QPixMap>
 #include <QLabel>
 
-#include "base/LogScrollView.h"
-#include "base/ColorIndicator.hpp"
+#include "base/LogContainer.h"
 
 #include "src/shared/models/entities/RPZUser.hpp"
 
-class UsersLog : public LogScrollView {
-    
-    Q_OBJECT
+#include <QFrame>
+#include <QColor>
+
+class UserLogColor : public QFrame {
+    public:
+        UserLogColor(RPZUser &user) {
+            this->setFrameShape(QFrame::Shape::Box); 
+            this->setLineWidth(1); 
+            this->setFixedSize(10, 10);
+            this->setAutoFillBackground(true);
+            this->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+
+            auto pal = this->palette();
+            pal.setColor(QPalette::Background, user.color());
+            this->setPalette(pal);
+        };
+};
+
+class UserLogIcon : public QLabel {
+    public:
+        UserLogIcon(RPZUser &user) {
+
+            this->setMargin(0);
+            this->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum); 
+
+            auto pathToIcon = RPZUser::IconsByRoles[user.role()];
+            auto pixAsIcon = QPixmap(pathToIcon);
+            this->setPixmap(pixAsIcon.scaled(14, 14));
+
+        }
+};
+
+class UsersLog : public LogContainer {
 
     public:
-        UsersLog(QWidget *parent = nullptr) : LogScrollView(parent) {};
-        
-        QHash<QUuid, RPZUser>* users() {
-            return &this->_users;
-        };
+        UsersLog(QWidget *parent = nullptr) : LogContainer(parent) {};
 
-    public slots:
         void updateUsers(const QVariantHash &users) {
+   
+            this->clearLines();
 
-            //clear        
-            this->newLog();
-            this->_users.clear();
-
-            for(auto &var_user : users) {
-                
-                //add user to list
-                RPZUser user(var_user.toHash());
-                _users.insert(user.id(), user);
-
-                //write line
-                this->writeAtEnd(user);
+            for(auto &rawUser : users) {
+                RPZUser user(rawUser.toHash());
+                this->_addUserLog(user);
             }
+
         };
 
     private:
-        QHash<QUuid, RPZUser> _users;
-
-        void writeAtEnd(RPZUser &user) {
+        void _addUserLog(RPZUser &user) {
             
-            auto line = LogScrollView::writeAtEnd(user.name());
-            if(!line) return;
+            auto line = LogContainer::_addLine(user);
 
             //logo part
-            auto pathToIcon = RPZUser::IconsByRoles[user.role()];
-            if(!pathToIcon.isEmpty()) {
-                auto icon = new QLabel; 
-                icon->setMargin(0); 
-                auto pixAsIcon = QPixmap(pathToIcon);
-                icon->setPixmap(pixAsIcon.scaled(14, 14));
-                icon->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
-                ((QBoxLayout*)line->layout())->insertWidget(0, icon);
-            }
+            auto userIcon = new UserLogIcon(user);
+            line->layout()->addWidget(userIcon);
 
+            //name
+            auto name = new LogText(user.name());
+            line->layout()->addWidget(name);
+            
             //color descriptor
-            auto colorwidget = new ColorIndicator(user.color());
-            line->layout()->addWidget(colorwidget);
+            auto userColor = new UserLogColor(user);
+            line->layout()->addWidget(userColor);
         };
 
 };

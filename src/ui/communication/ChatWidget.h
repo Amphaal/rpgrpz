@@ -15,6 +15,7 @@
 
 #include "ChatEdit.h"
 
+#include "logs/base/LogScrollView.h"
 #include "logs/UsersLog.hpp"
 #include "logs/MessagesLog.hpp"
 

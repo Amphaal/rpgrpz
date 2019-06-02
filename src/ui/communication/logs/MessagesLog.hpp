@@ -1,24 +1,53 @@
 #pragma once
 
-#include "base/LogScrollView.h"
+#include "base/LogContainer.h"
 
-class MessagesLog : public LogScrollView {
+#include "src/shared/models/entities/RPZMessage.hpp"
+
+class MessagesLog : public LogContainer {
 
     public:
-        enum MessageType { Default, ServerLog, ClientMessage };
+        enum MessageType { Default, ServerLog, ClientMessage, ClientMessageWaiting };
 
-        MessagesLog(QWidget *parent = nullptr) : LogScrollView(parent) {};
+        MessagesLog(QWidget *parent = nullptr) : LogContainer(parent) {};
 
-        void writeAtEnd(const QString &newMessage, const MessageType &logType = MessageType::Default) {
+        void handleMessage(RPZMessage &msg) {
+
+            //get line
+            MessageType msgType;
+            auto respondedToId = msg.respondTo();
+            auto targetLine = LogContainer::_getLine(msg);
+
+            //create if line not found
+            if(!targetLine) {
+                
+                //create line
+                targetLine = LogContainer::_addLine(msg, respondedToId);
+                
+                //add text
+                auto txt = new LogText(msg.toString());
+                targetLine->horizontalLayout()->addWidget(txt, 10);
+
+                //define msg type
+                msgType = msg.owner().isEmpty() ? ServerLog : ClientMessageWaiting;
+            } 
             
-            auto line = LogScrollView::writeAtEnd(newMessage);
-            if(!line) return;
+            //if found, ack message received
+            else {
+                msgType = ClientMessage;
+            }
 
-            line->setPalette(this->getPalette(logType));
+            //update palette 
+            this->_updateLogItemPalette(targetLine, msgType);
+
+            //if respondedToId, update its palette too
+            if(!respondedToId.isNull()) {
+                this->_updateLogItemPalette(LogContainer::_getLine(respondedToId), ClientMessage);
+            }
         }
 
     private:
-        QPalette getPalette(const MessageType &logType) {
+        void _updateLogItemPalette(LogItem * item, const MessageType &logType) {
     
             QPalette colors = QPalette();
 
@@ -27,9 +56,12 @@ class MessagesLog : public LogScrollView {
                     colors.setColor(QPalette::Window, "#71ed55");
                     colors.setColor(QPalette::WindowText, Qt::black);
                     break;
+                case MessageType::ClientMessageWaiting:
+                    colors.setColor(QPalette::WindowText, "#999999");
+                    break;
             }
 
-            return colors;
+            item->setPalette(colors);
         };
 
 };

@@ -151,7 +151,7 @@ void RPZServer::_tellUserHisIdentity(JSONSocket* socket) {
 void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
 
     //message...
-    auto countMsgs = this->_messages.size();
+    auto countMsgs = this->_messages.count();
     auto serialized = this->_serializeMessages();
     clientSocket->sendJSON(JSONMethod::ChatLogHistory, serialized);
     
@@ -283,13 +283,21 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
     
     //check if is a command
     auto text = msg.message();
-    auto interpretation = MessageInterpreter::findInterpretation(text);
+    auto command = MessageInterpreter::interpretText(text);
 
-    switch(interpretation) {
+    switch(command) {
         
         //on unknown command
         case MessageInterpreter::Unknown: {
-            RPZMessage response("Le serveur n'a pas compris.");
+            RPZMessage response("Le serveur n'a pas compris. ""/h"" pour obtenir de l'aide !");
+            response.setResponseToMessageId(msg.id());
+            sender->sendJSON(JSONMethod::MessageFromPlayer, response);
+        }
+        break;
+
+        //on help
+        case MessageInterpreter::Help: {
+            RPZMessage response(MessageInterpreter::help());
             response.setResponseToMessageId(msg.id());
             sender->sendJSON(JSONMethod::MessageFromPlayer, response);
         }
@@ -299,6 +307,7 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
         case MessageInterpreter::Whisper: {
 
         }
+        break;
 
         //on standard message
         case MessageInterpreter::Say:

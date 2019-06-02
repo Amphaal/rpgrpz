@@ -148,13 +148,13 @@ void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
 }
 
 
-void RPZClient::sendMessage(const QString &messageToSend) {
+void RPZClient::sendMessage(QVariantHash &message) {
 
-    auto msg = RPZMessage(messageToSend);
+    auto msg = RPZMessage(message);
 
     this->sendJSON(JSONMethod::MessageFromPlayer, msg);
 
-    qDebug() << "RPZClient : message sent " << messageToSend; 
+    qDebug() << "RPZClient : message sent " << msg.message(); 
 }
 
 void RPZClient::askForAsset(const QString &assetId) {
