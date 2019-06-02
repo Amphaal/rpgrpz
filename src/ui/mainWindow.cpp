@@ -228,6 +228,13 @@ void MainWindow::_initUIApp() {
         this->_mlManager->tree(), &MapLayoutTree::alterTreeElements
     );
 
+    //on map selection change
+    QObject::connect(
+        this->_mapView->hints(), &MapHintViewBinder::selectionChanged,
+        this->_mlManager->editor(), &AtomEditor::buildEditor
+    );
+
+
     //on default layer changed
     QObject::connect(
         this->_mlManager->layerSelector()->spinbox(), qOverload<int>(&QSpinBox::valueChanged),
@@ -237,6 +244,12 @@ void MainWindow::_initUIApp() {
     //intercept alteration from layout manager
     QObject::connect(
         this->_mlManager->tree(), &MapLayoutTree::elementsAlterationAsked,
+        this->_mapView->hints(), &MapHintViewBinder::alterScene
+    );
+
+    //intercept alteration from editor
+    QObject::connect(
+        this->_mlManager->editor(), &AtomEditor::requiresAtomAlteration,
         this->_mapView->hints(), &MapHintViewBinder::alterScene
     );
 

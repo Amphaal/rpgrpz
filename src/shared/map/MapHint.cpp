@@ -107,6 +107,24 @@ RPZAtom* MapHint::_alterSceneInternal(const AlterationPayload::Alteration &type,
         }
         break;
 
+        //on scaling
+        case AlterationPayload::Alteration::Scaled: {
+            auto scale = atomAlteration.toDouble();
+            auto mdata = storedAtom->metadata();
+            mdata.setScale(scale);
+            storedAtom->setMetadata(mdata);
+        }
+        break;
+
+        //on rotation
+        case AlterationPayload::Alteration::Rotated: {
+            auto deg = atomAlteration.toDouble();
+            auto mdata = storedAtom->metadata();
+            mdata.setRotation(deg);
+            storedAtom->setMetadata(mdata);
+        }
+        break;
+
         //on resize
         case AlterationPayload::Alteration::LayerChanged: {
             auto layer = atomAlteration.toInt();

@@ -1,6 +1,6 @@
 #include "PlaylistController.h"
 
-PlaylistController::PlaylistController(QWidget * parent) : QGroupBox(parent), 
+PlaylistController::PlaylistController(QWidget * parent) : QGroupBox("Liste de lecture", parent), 
     playlist(new Playlist(this)), 
     toolbar(new PlaylistToolbar(this)) {
 
@@ -9,7 +9,6 @@ PlaylistController::PlaylistController(QWidget * parent) : QGroupBox(parent),
     this->setLayout(new QVBoxLayout);
 
     //groupbox
-    this->setTitle("Liste de lecture");
     this->setAlignment(Qt::AlignHCenter);
 
     //connect

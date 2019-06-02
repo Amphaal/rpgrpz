@@ -76,6 +76,7 @@ class MapHintViewBinder : public MapHint {
     signals:
         void mapFileStateChanged(const QString &filePath, bool isDirty);
         void requestMissingAsset(const QString &assetIdToRequest);
+        void selectionChanged(QVector<void*> &atoms);
 
     private:
         QString _stateFilePath;
@@ -113,4 +114,6 @@ class MapHintViewBinder : public MapHint {
         //augmenting MapHint
         virtual void _alterSceneGlobal(AlterationPayload &payload) override;
         virtual RPZAtom* _alterSceneInternal(const AlterationPayload::Alteration &type, QUuid &targetedAtomId, QVariant &atomAlteration) override;
+
+        RPZAtomMetadata _contextualizedMetadata();
 };

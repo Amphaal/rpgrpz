@@ -43,12 +43,20 @@ class RPZAtomMetadata : public QVariantHash {
             );
         }
 
+        double scale() const {
+            return this->value("scl", 1.0).toDouble();
+        }
+
+        double rotation() const {
+            return this->value("deg", 0).toDouble();
+        }
+
         QString text() const {
-            return this->value("txt").toString();
+            return this->value("txt", "Saisir du texte").toString();
         }
 
         int layer() const {
-            return this->value("lyr").toInt();
+            return this->value("lyr", 0).toInt();
         }
 
         QPointF pos() const {
@@ -57,7 +65,7 @@ class RPZAtomMetadata : public QVariantHash {
         }
 
         int penWidth() const {
-            return this->value("pen_w").toInt();
+            return this->value("pen_w", 1).toInt();
         }
 
         void setAssetId(const QString &id) {
@@ -93,5 +101,13 @@ class RPZAtomMetadata : public QVariantHash {
 
         void setText(const QString &text) {
             (*this)["txt"] = text;
+        }
+
+        void setScale(const double scale) {
+            (*this)["scl"] = scale;
+        }
+
+        void setRotation(const double rotation) {
+            (*this)["deg"] = rotation;
         }
 };

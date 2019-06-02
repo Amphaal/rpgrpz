@@ -8,6 +8,8 @@
 #include "payloads/ResetPayload.hpp"
 #include "payloads/SelectedPayload.hpp"
 #include "payloads/TextChangedPayload.hpp"
+#include "payloads/RotatedPayload.hpp"
+#include "payloads/ScaledPayload.hpp"
 
 class Payload {
     public:
@@ -31,6 +33,10 @@ class Payload {
                     return new SelectedPayload(payload);
                 case AlterationPayload::Alteration::TextChanged:
                     return new TextChangedPayload(payload);
+                case AlterationPayload::Alteration::Rotated:
+                    return new RotatedPayload(payload);
+                case AlterationPayload::Alteration::Scaled:
+                    return new ScaledPayload(payload);
             }
 
             return new AlterationPayload(payload);

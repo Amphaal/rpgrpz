@@ -1,8 +1,7 @@
 #include "AssetsPreviewer.h"
 
-AssetsPreviewer::AssetsPreviewer(QWidget * parent) : QGroupBox(parent) {
+AssetsPreviewer::AssetsPreviewer(QWidget * parent) : QGroupBox("Aperçu", parent) {
     
-    this->setTitle("Aperçu");
     this->setAlignment(Qt::AlignHCenter);
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
 
@@ -28,6 +27,7 @@ void AssetsPreviewer::previewFile(QString localFilePath) {
     auto ext = fi.suffix();
 
     this->_previewedImage = new QLabel();
+    this->_previewedImage->setMargin(0);
     this->_previewedImage->setAlignment(Qt::AlignCenter);
 
     //switch...

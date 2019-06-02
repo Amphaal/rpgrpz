@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QWidget>
-#include <QGroupBox>
 #include <QVBoxLayout>
 #include <QJsonDocument>
 #include <QDir>

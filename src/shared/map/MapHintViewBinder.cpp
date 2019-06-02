@@ -90,10 +90,17 @@ void MapHintViewBinder::_onSceneItemChanged(QGraphicsItem* item, int changeFlag)
 
 void MapHintViewBinder::_onSceneSelectionChanged() {
     
-    if(this->_preventInnerGIEventsHandling) return;
-
-    //emit event, no RPZAtom alteration necessary
     auto selectedAtoms = this->_fetchAtoms(this->scene()->selectedItems());
+
+    //send selection changed
+    QVector<void*> blandList;
+    for(auto atom : selectedAtoms) {
+        blandList.append(atom);
+    }
+    emit selectionChanged(blandList);
+
+    //prevent
+    if(this->_preventInnerGIEventsHandling) return;
 
     //extract ids for payload
     QVector<QUuid> selectedAtomIds;
@@ -298,7 +305,7 @@ void MapHintViewBinder::addDrawing(const QPointF &startPos, const QPainterPath &
 
 QGraphicsTextItem* MapHintViewBinder::generateGhostTextItem() {
 
-    auto temporaryItem = this->scene()->addText("Saisir du texte", this->_penWidth, this->_defaultLayer);
+    auto temporaryItem = this->scene()->addText(this->_contextualizedMetadata());
 
     //define transparency as it is a dummy
     temporaryItem->setOpacity(.5);
@@ -328,11 +335,22 @@ void MapHintViewBinder::turnGhostTextIntoDefinitive(QGraphicsTextItem* temporary
     //DO NOT REMOVE, it will be removed my the map
 }
 
+RPZAtomMetadata MapHintViewBinder::_contextualizedMetadata() {
+    RPZAtomMetadata out;
+
+    out.setLayer(this->_defaultLayer);
+    out.setPenWidth(this->_penWidth);
+
+    return out;
+}
+
 QGraphicsItem* MapHintViewBinder::generateGhostItem(AssetsDatabaseElement* assetElem) {
     
     //find filepath to asset
     auto path = AssetsDatabase::get()->getFilePathToAsset(assetElem);
-    auto temporaryItem = this->scene()->addGenericImageBasedItem(path, this->_defaultLayer);
+
+
+    auto temporaryItem = this->scene()->addGenericImageBasedItem(path, this->_contextualizedMetadata());
     
     //define transparency as it is a dummy
     temporaryItem->setOpacity(.5);
@@ -380,52 +398,18 @@ QGraphicsItem* MapHintViewBinder::_buildGraphicsItemFromAtom(RPZAtom &atomToBuil
 
     QGraphicsItem* newItem = nullptr;
 
-    //get position
-    auto mdata = atomToBuildFrom.metadata();
-    auto pos = mdata.pos();
-    auto layer = mdata.layer();
-
     //depending on atomType...
     switch(atomToBuildFrom.type()) {
         
         //text...
         case RPZAtom::Type::Text: { 
-            newItem = this->scene()->addText(
-                mdata.text(), 
-                mdata.penWidth(), 
-                layer,
-                pos
-            );
+            newItem = this->scene()->addText(atomToBuildFrom.metadata());
         }
         break;
 
         //drawing...
         case RPZAtom::Type::Drawing: {
-
-            //extract path
-            auto path = mdata.shape();
-
-            //define a ped
-            QPen pen;
-
-                //if no owner set, assume it is self
-                auto owner = atomToBuildFrom.owner();
-                if(owner.isEmpty()) {
-                    pen.setColor(this->_penColor);
-                } else {
-                    pen.setColor(owner.color());
-                }
-
-                //set width
-                pen.setWidth(mdata.penWidth());
-
-                //cap
-                pen.setCapStyle(Qt::RoundCap);
-                pen.setJoinStyle(Qt::RoundJoin);
-
-            //draw the form
-            newItem = this->scene()->addDrawing(path, pen, pos, layer);
-            
+            newItem = this->scene()->addDrawing(atomToBuildFrom, this->_penColor);
         }
         break;
 
@@ -433,21 +417,20 @@ QGraphicsItem* MapHintViewBinder::_buildGraphicsItemFromAtom(RPZAtom &atomToBuil
         case RPZAtom::Type::Object: {
 
             //depending on presence in asset db...
-            auto assetId = mdata.assetId();
+            auto metadata = atomToBuildFrom.metadata();
+            auto assetId = metadata.assetId();
             QString pathToAssetFile = AssetsDatabase::get()->getFilePathToAsset(assetId);
         
-
             //is in db, add to view
             if(!pathToAssetFile.isNull()) {
-                newItem = this->scene()->addGenericImageBasedItem(pathToAssetFile, layer, pos);
+                newItem = this->scene()->addGenericImageBasedItem(pathToAssetFile, metadata);
             } 
             
             //not in db, render the shape
             else {
                 
                 //add placeholder
-                auto boundingRect = mdata.shape().boundingRect();
-                auto placeholder = this->scene()->addMissingAssetPH(boundingRect, pos, layer);
+                auto placeholder = this->scene()->addMissingAssetPH(metadata);
                 newItem = placeholder;
 
                 //if first time the ID is encountered
@@ -489,7 +472,7 @@ void MapHintViewBinder::replaceMissingAssetPlaceholders(const QString &assetId) 
         auto atom = this->_fetchAtom(gi);
 
         //create the new graphics item
-        auto newGi = this->scene()->addGenericImageBasedItem(pathToFile, atom->metadata().layer(), pos);
+        auto newGi = this->scene()->addGenericImageBasedItem(pathToFile, atom->metadata());
         this->_crossBindingAtomWithGI(atom, newGi);
 
         delete gi;
@@ -597,6 +580,20 @@ RPZAtom* MapHintViewBinder::_alterSceneInternal(const AlterationPayload::Alterat
         case AlterationPayload::Alteration::Moved: {
             auto destPos = updatedAtom->metadata().pos();
             updatedAtom->graphicsItem()->setPos(destPos);  
+        }
+        break;
+
+        //on scaling
+        case AlterationPayload::Alteration::Scaled: {
+            auto destScale = updatedAtom->metadata().scale();
+            updatedAtom->graphicsItem()->setScale(destScale);
+        }
+        break;
+
+        //on rotation
+        case AlterationPayload::Alteration::Rotated: {
+            auto destRotation = updatedAtom->metadata().rotation();
+            updatedAtom->graphicsItem()->setRotation(destRotation);
         }
         break;
 

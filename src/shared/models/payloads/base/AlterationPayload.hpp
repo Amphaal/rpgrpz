@@ -22,6 +22,8 @@ class AlterationPayload : public QVariantHash {
             Added, 
             Reset,
             TextChanged,
+            Rotated,
+            Scaled
         }; 
 
         AlterationPayload(const QVariantHash &hash) : QVariantHash(hash) {
@@ -65,7 +67,9 @@ class AlterationPayload : public QVariantHash {
             Removed, 
             Reset,
             LayerChanged,
-            TextChanged 
+            TextChanged,
+            Rotated,
+            Scaled 
         };
 
         static const inline QList<Alteration> _buildGraphicsItemAlterations = {

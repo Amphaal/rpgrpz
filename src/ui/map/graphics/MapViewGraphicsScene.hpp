@@ -7,6 +7,8 @@
 #include "MapViewGraphicsItem.hpp"
 #include "MapViewItemsNotifier.hpp"
 
+#include "src/shared/models/entities/RPZAtomMetadata.hpp"
+
 class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
 
     Q_OBJECT
@@ -19,10 +21,21 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             emit sceneItemChanged(item, flag);
         };
 
-    public:
-        MapViewGraphicsScene(int defaultSize) : QGraphicsScene(defaultSize, defaultSize, defaultSize, defaultSize) {}
+        void _bindDefaultMetadataToGraphicsItem(QGraphicsItem* item, RPZAtomMetadata &metadata) {
+            item->setZValue(metadata.layer());
+            item->setPos(metadata.pos());
+            item->setScale(metadata.scale());
+            item->setRotation(metadata.rotation());
+        }
 
-        QGraphicsItem* addGenericImageBasedItem(const QString &pathToImageFile, int layer = 0, const QPointF &pos = QPointF()) {
+    public:
+        MapViewGraphicsScene(int defaultSize) : QGraphicsScene(defaultSize, defaultSize, defaultSize, defaultSize) { }
+
+        ///
+        ///
+        ///
+
+        QGraphicsItem* addGenericImageBasedItem(const QString &pathToImageFile, RPZAtomMetadata &metadata) {
     
             //get file infos
             QFileInfo pathInfo(pathToImageFile);
@@ -36,47 +49,62 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
                 item = new MapViewGraphicsPixmapItem(this, pathToImageFile);
             };
 
-            //define layer
-            item->setZValue(layer);
-
-            //define position
-            if(!pos.isNull()) {
-                item->setPos(pos);
-            }
-
+            //bind default
+            this->_bindDefaultMetadataToGraphicsItem(item, metadata);
+            
             //add it to the scene
             this->addItem(item);
 
             return item;
         }
 
-        QGraphicsPathItem* addDrawing(const QPainterPath &path, const QPen &pen, const QPointF &pos, int zIndex) {
+        QGraphicsPathItem* addDrawing(RPZAtom &atom, const QColor &fallbackColor = QColor()) {
+            
+            //define a ped
+            QPen pen;
+
+                //if no owner set, assume it is self
+                auto owner = atom.owner();
+                if(owner.isEmpty()) {
+                    pen.setColor(fallbackColor);
+                } else {
+                    pen.setColor(owner.color());
+                }
+
+                //set width
+                auto metadata = atom.metadata();
+
+                pen.setWidth(metadata.penWidth());
+                pen.setCapStyle(Qt::RoundCap);
+                pen.setJoinStyle(Qt::RoundJoin);
 
             //create path gi, set to pos
-            auto newPath = new MapViewGraphicsPathItem(this, path, pen);
-            newPath->setPos(pos);
-            newPath->setZValue(zIndex);
+            auto newPath = new MapViewGraphicsPathItem(this, metadata.shape(), pen);
             
+            //bind default
+            this->_bindDefaultMetadataToGraphicsItem(newPath, metadata);
+
             //add to scene
             this->addItem(newPath);
+
             return newPath;
         }
 
-        QGraphicsTextItem* addText(const QString &text, int textSize, int zIndex, QPointF &pos = QPointF()) {
+        QGraphicsTextItem* addText(RPZAtomMetadata &metadata) {
 
-            auto newText = new MapViewGraphicsTextItem(this, text, textSize);
-            if(!pos.isNull()) {
-                newText->setPos(pos);
-            }
-            newText->setZValue(zIndex);
+            auto newText = new MapViewGraphicsTextItem(this, metadata.text(), metadata.penWidth());
+            
+            //bind default
+            this->_bindDefaultMetadataToGraphicsItem(newText, metadata);
 
             //add to scene
             this->addItem(newText);
+
             return newText;
         }
 
 
-        QGraphicsRectItem* addMissingAssetPH(QRectF &rect, QPointF &pos, int zIndex) {
+        QGraphicsRectItem* addMissingAssetPH(RPZAtomMetadata &metadata) {
     
             //pen to draw the rect with
             QPen pen;
@@ -89,9 +117,11 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             QBrush brush(QColor(255, 0, 0, 128));
 
             //add to scene
-            auto placeholder = new MapViewGraphicsRectItem(this, rect, pen, brush);
-            placeholder->setPos(pos);
-            placeholder->setZValue(zIndex);
+            auto placeholder = new MapViewGraphicsRectItem(this, metadata.shape().boundingRect(), pen, brush);
+            
+            //bind default
+            this->_bindDefaultMetadataToGraphicsItem(placeholder, metadata);
+
             this->addItem(placeholder);
 
             return placeholder;

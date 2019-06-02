@@ -12,7 +12,6 @@
 #include <QTabWidget>
 #include <QLabel>
 #include <QStatusBar>
-#include <QGroupBox>
 #include <QApplication>
 
 #include <QFileDialog>
