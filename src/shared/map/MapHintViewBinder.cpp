@@ -36,8 +36,7 @@ void MapHintViewBinder::handleAnyMovedItems() {
     QHash<QUuid, QPointF> coords;
     for( auto gi : this->_itemsWhoNotifiedMovement) {
         auto atom = this->_fetchAtom(gi);
-        auto itemScenePos = gi->scenePos();
-        coords.insert(atom->id(), itemScenePos);
+        coords.insert(atom->id(), gi->pos());
     }
 
     //inform moving

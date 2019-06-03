@@ -16,42 +16,32 @@ class MessagesLog : public LogContainer {
 
             auto respToId = response.answerer();
             
-            //local message or server message, consider standard insert
-            if(respToId.isNull()) {
-                auto newLine = LogContainer::_addLine(response);
-                
-                //add text
-                auto txt = new LogText(response.toString());
-                newLine->horizontalLayout()->addWidget(txt, 10);
-
-                this->_updateLogItemPalette(newLine, ServerLog);
-                return;
+            //update style of response Item
+            if(!respToId.isNull()) {
+                auto existingLine = LogContainer::_getLine(respToId);
+                this->_updateLogItemPalette(existingLine);
             }
 
-            auto respCode = response.responseCode();
-
             //depending on response code
-            switch(respCode) {
+            switch(response.responseCode()) {
 
                 case RPZResponse::Ack: {
-                    auto existingLine = LogContainer::_getLine(respToId);
-                    
-                    //add text
-                    auto txt = new LogText(response.toString());
-                    existingLine->horizontalLayout()->addWidget(txt, 10);
-
-                    this->_updateLogItemPalette(existingLine);
+                    //nothing to do
                 }
                 break;
                 
                 default: {
+
+                    //get new line
                     auto newLine = LogContainer::_addLine(response, respToId);
                     
                     //add text
                     auto txt = new LogText(response.toString());
                     newLine->horizontalLayout()->addWidget(txt, 10);
 
+                    //define style as server log
                     this->_updateLogItemPalette(newLine, ServerLog);
+
                 }
                 break;
             }

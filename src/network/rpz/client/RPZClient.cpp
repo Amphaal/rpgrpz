@@ -42,7 +42,7 @@ void RPZClient::_onDisconnect() {
 
 void RPZClient::_onConnected() {
     //tell the server your username
-    this->sendJSON(JSONMethod::PlayerHasUsername, QStringList(this->_name));
+    this->sendJSON(JSONMethod::PlayerHasUsername, QVariant(this->_name));
 }
 
 
@@ -95,12 +95,11 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         break;
 
         case JSONMethod::AckIdentity: {
-            auto hash = data.toHash();
             
             //store our identity
-            this->_self = RPZUser(hash);
+            this->_self = RPZUser(data.toHash());
 
-            emit ackIdentity(hash);
+            emit ackIdentity(this->_self);
         }
         break;
 

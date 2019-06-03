@@ -38,7 +38,7 @@ class RPZResponse : public Stampable {
             switch(this->responseCode()) {
 
                 case UnknownCommand: {
-                    return "Le serveur n'a pas compris. ""/h"" pour obtenir de l'aide !";
+                    return "Le serveur n'a pas compris. Faites \"/h\" pour obtenir de l'aide !";
                 }
 
                 case ConnectedToServer: {

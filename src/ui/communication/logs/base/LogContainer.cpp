@@ -5,8 +5,6 @@ LogText::LogText(const QString &text) : QLabel(text) {
     this->setWordWrap(true);
 }
 
-
-
 LogItem::LogItem() : QWidget(), _hLayout(new QHBoxLayout) {
     this->setLayout(this->_hLayout);
     this->layout()->setContentsMargins(10, 3, 10, 3);

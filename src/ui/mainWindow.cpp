@@ -156,14 +156,14 @@ void MainWindow::_initUI() {
 void MainWindow::_initUIApp() {
     
     //init components
-    this->_connectWidget = new ConnectWidget(this);
-    this->_cw = new ChatWidget(this);
+    this->_connectWidget = new ConnectWidget;
+    this->_cw = new ChatWidget;
     this->_mapView = new MapView(this);
-    this->_streamNotifier = new AudioStreamController(this);
-    this->_streamController = new PlaylistController(this);
-    this->_assetsManager = new AssetsManager(this);
-    this->_mapTools = new MapTools(this);
-    this->_mlManager = new MapLayoutManager(this);
+    this->_streamNotifier = new AudioStreamController;
+    this->_streamController = new PlaylistController;
+    this->_assetsManager = new AssetsManager;
+    this->_mapTools = new MapTools;
+    this->_mlManager = new MapLayoutManager;
     
     //audio...
     auto audio_content = new QWidget;
@@ -284,11 +284,16 @@ void MainWindow::_initUIApp() {
 }
 
 void MainWindow::_initUIMenu() {
+    
+    //menu
     auto menuBar = new QMenuBar;
     menuBar->addMenu(this->_getFileMenu());
     menuBar->addMenu(this->_getMapMenu());
     menuBar->addMenu(this->_getToolsMenu());
     menuBar->addMenu(this->_getHelpMenu());
+
+
+    //set container
     this->setMenuWidget(menuBar);
 }
 

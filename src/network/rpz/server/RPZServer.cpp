@@ -1,8 +1,6 @@
 #include "RPZServer.h" 
 
-RPZServer::RPZServer(QObject* parent) : QTcpServer(parent), 
-                                        _hints(new MapHint(AlterationPayload::Source::Network)) { };
-
+RPZServer::RPZServer(QObject* parent) : QTcpServer(parent),  _hints(new MapHint(AlterationPayload::Source::Network)) { };
 
 RPZServer::~RPZServer() {
     //ended server
@@ -92,52 +90,53 @@ void RPZServer::_onDisconnect() {
 void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) {
 
     switch(method) {
+        
         case JSONMethod::MessageFromPlayer: 
         {
-                //get message, add corresponding user to it then store it
-                RPZMessage message(data.toHash());
-                message.setOwnership(*this->_getUser(target));
+            RPZMessage message(data.toHash());
+            message.setOwnership(*this->_getUser(target)); //force corresponding user to it then store it
+            this->_interpretMessage(target, message);
+        }
+        break;
 
-                this->_interpretMessage(target, message);
-            }
-            break;
         case JSONMethod::AskForAsset: {   
+            auto assetId = data.toString();
+            auto package = AssetsDatabase::get()->prepareAssetPackage(assetId);
+            target->sendJSON(JSONMethod::RequestedAsset, package);
+        }
+        break;
 
-                auto assetId = data.toString();
-                auto package = AssetsDatabase::get()->prepareAssetPackage(assetId);
-                target->sendJSON(JSONMethod::RequestedAsset, package);
-                
-            }
-            break;
         case JSONMethod::MapChanged:{
-                this->_broadcastMapChanges(data.toHash(), target);
-            }
-            break;
+            this->_broadcastMapChanges(data.toHash(), target);
+        }
+        break;
+
         case JSONMethod::PlayerHasUsername: {   
+            //prepare
+            auto targetUser = this->_getUser(target);
+            auto chosenName = data.toString();
 
-                //bind username to socket
-                const auto dn = data.toList()[0].toString();
-                this->_getUser(target)->setName(dn);
+            //change the requested username if already exists
+            if(this->_lwrcsUniqueRegisteredUsernames.contains(chosenName)) chosenName = chosenName + targetUser->color().name();
+            targetUser->setName(chosenName);
 
-                //tell other users this one exists
-                this->_broadcastUsers();
+            //tell other users this one exists
+            this->_broadcastUsers();
 
-                //send user object to socket
-                this->_tellUserHisIdentity(target);
+            //send user object to socket
+            this->_tellUserHisIdentity(target);
 
-                //send history to the client
-                this->_sendStoredMessages(target);
+            //send history to the client
+            this->_sendStoredMessages(target);
 
-                //ask for host map history
-                if(target == this->_hostSocket)  {
-                    this->_askHostForMapHistory();
-                } else {
-                    this->_sendMapHistory(target);
-                }
+            //ask for host map history
+            if(target == this->_hostSocket)  {
+                this->_askHostForMapHistory();
+            } else {
+                this->_sendMapHistory(target);
             }
-            break;
-        default:
-            qWarning() << "RPZServer : unknown method from JSON !";
+        }
+        break;
     }
 
 }
@@ -160,6 +159,14 @@ void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
 
 
 void RPZServer::_broadcastUsers() {
+    
+    //reset registered username list
+    this->_lwrcsUniqueRegisteredUsernames.clear();
+    for(auto &user : this->_usersById) {
+        this->_lwrcsUniqueRegisteredUsernames.insert(user.name().toLower());
+    }
+
+    //send data
     this->_sendToAll(JSONMethod::LoggedPlayersChanged, this->_usersById.toVList());
     qDebug() << "RPZServer : Now " << this->_usersById.size() << " clients logged";
 }
