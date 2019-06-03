@@ -5,8 +5,6 @@ ConnectivityHelper::ConnectivityHelper(QObject *parent) :
         QObject(parent), 
         _nam(new QNetworkAccessManager(this)), 
         _ncm(new QNetworkConfigurationManager(this)) { 
-    
-    qDebug() << "Connectivity : helper starting !";
 
     this->_pickPreferedConfiguration();
 

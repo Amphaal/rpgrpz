@@ -1,8 +1,6 @@
 #include "RPZStatusBar.h"
 
 RPZStatusBar::RPZStatusBar(QWidget * parent) : QStatusBar(parent) {
-    
-    qDebug() << "UI : StatusBar instantiation";
 
     this->setContentsMargins(10, 0, 3, 0);
     this->setAutoFillBackground(true);

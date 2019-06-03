@@ -65,8 +65,7 @@ void AppContext::init(QString &customContext) {
     } else {
         _appDataLocation = _defaultAppDataLocation();
     }
-
-    qDebug() << "App context : changed " << _appDataLocation;
+    
 } 
 
 

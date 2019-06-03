@@ -17,8 +17,6 @@ class UpdaterUIIntegrator : public QObject {
 
     public:
         UpdaterUIIntegrator(QMainWindow* wParent) : QObject(wParent), _wParent(wParent) {
-             
-            qDebug() << "UI : AutoUpdate instantiation";
 
             if(MAINTENANCE_TOOL_LOCATION == "") {
                 this->_updater = new QtAutoUpdater::Updater(wParent);

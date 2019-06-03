@@ -172,7 +172,6 @@ bool MapHintViewBinder::saveStateAs(QString &newFilePath) {
 }
 
 bool MapHintViewBinder::loadDefaultState() {
-    qDebug() << "Map : loading default map...";
     return this->loadState(
         AppContext::getDefaultMapFile()
     );

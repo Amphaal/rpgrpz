@@ -25,7 +25,6 @@ class RandomColor {
             for(int i = 0; i < howMany; i++) {
                 auto color = getRandomColor();
                 list.append(color);
-                qDebug() << color.name();
             }   
 
             return list;

@@ -13,11 +13,6 @@ JSONSocket::JSONSocket(QObject* parent, const QString &logId, QTcpSocket* wrappe
         this, &JSONSocket::_processIncomingData
     );
 
-    QObject::connect(
-        this->_innerSocket, &QIODevice::bytesWritten,
-        this, &JSONSocket::_onBytesWritten
-    );
-
     //clear on client disconnect
     QObject::connect(
         this->_innerSocket, &QAbstractSocket::disconnected,
@@ -25,10 +20,6 @@ JSONSocket::JSONSocket(QObject* parent, const QString &logId, QTcpSocket* wrappe
             emit disconnected();
         }
     );
-}
-
-void JSONSocket::_onBytesWritten() {
-    qDebug() << this->_customLog("json sent !");
 }
 
 void JSONSocket::sendJSON(const JSONMethod &method, const QVariant &data) {
@@ -44,8 +35,6 @@ void JSONSocket::sendJSON(const JSONMethod &method, const QVariant &data) {
     json_payload["_m"] = method;
     json_payload["_d"] = data.toJsonValue();
     QJsonDocument payload_doc(json_payload);
-
-    qDebug() << this->_customLog("json to be sent >> " + JSONMethodAsArray[method]);
 
     //send !
     QDataStream out(this->_innerSocket);
@@ -114,7 +103,6 @@ void JSONSocket::_processIncomingAsJson(const QByteArray &data) {
 
     //signal
     auto method = static_cast<JSONMethod>((int)content["_m"].toDouble());
-    qDebug() << this->_customLog("json received << " + JSONMethodAsArray[method]);
     
     //bind
     emit JSONReceived(this, method, content["_d"].toVariant());

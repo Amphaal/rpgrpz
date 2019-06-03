@@ -6,8 +6,6 @@ RPZClient::RPZClient(QObject* parent, const QString &name, const QString &domain
                         _domain(domain), 
                         _port(port) {
 
-    qDebug() << "RPZClient : Instantiation...";
-
     QObject::connect(
         this, &JSONSocket::JSONReceived,
         this, &RPZClient::_routeIncomingJSON
@@ -58,9 +56,7 @@ void RPZClient::run() {
         return;
     }
 
-    qDebug() << "RPZClient : Connecting...";    
     this->socket()->connectToHost(this->_domain, this->_port.toInt());
-    
 }
 
 RPZUser RPZClient::identity() {
@@ -162,19 +158,12 @@ void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
 
 
 void RPZClient::sendMessage(QVariantHash &message) {
-
     auto msg = RPZMessage(message);
-
     this->sendJSON(JSONMethod::MessageFromPlayer, msg);
-
-    qDebug() << "RPZClient : message sent " << msg.text(); 
 }
 
 void RPZClient::askForAsset(const QString &assetId) {
-
     this->sendJSON(JSONMethod::AskForAsset, assetId);
-
-    qDebug() << "RPZClient : requesting asset " << assetId << " to server"; 
 }
 
 void RPZClient::sendMapChanges(QVariantHash &payload) {
