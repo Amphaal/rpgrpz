@@ -36,7 +36,7 @@ RPZClient::~RPZClient() {
 
 void RPZClient::_onDisconnect() {
     const QString msg = "Déconnecté du serveur";
-    emit error(msg);
+    emit connectionStatus(msg);
     qDebug() << "RPZClient : " << msg;
 }
 
@@ -54,7 +54,7 @@ void RPZClient::run() {
 
     //prerequisites
     if(this->_name.isEmpty()) {
-        emit error("Nom de joueur requis !");
+        emit connectionStatus("Nom de joueur requis !", true);
         return;
     }
 
@@ -74,47 +74,61 @@ QVector<RPZUser> RPZClient::sessionUsers() {
 void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) {
     
     switch(method) {
-        case JSONMethod::ChatLogHistory:
+
+        case JSONMethod::ChatLogHistory: {
             emit receivedLogHistory(data.toList());
-            break;
+        }
+        break;
+
         case JSONMethod::LoggedPlayersChanged: {
-                auto users = data.toHash();
+            auto users = data.toList();
 
-                //store users
-                this->_sessionUsers.clear();
-                for(auto &rUser : users) this->_sessionUsers.append(RPZUser(rUser.toHash()));
-
-                emit loggedUsersUpdated(users);
+            //store users
+            this->_sessionUsers.clear();
+            for(auto &rUser : users) {
+                RPZUser user(rUser.toHash());
+                this->_sessionUsers.append(user);
             }
-            break;
+
+            emit loggedUsersUpdated(users);
+        }
+        break;
+
         case JSONMethod::AckIdentity: {
-                auto hash = data.toHash();
-                
-                //store our identity
-                this->_self = RPZUser(hash);
+            auto hash = data.toHash();
+            
+            //store our identity
+            this->_self = RPZUser(hash);
 
-                emit ackIdentity(hash);
-            }
-            break;
+            emit ackIdentity(hash);
+        }
+        break;
+
         case JSONMethod::AskForHostMapHistory: {
-                emit beenAskedForMapHistory();
-            }
-            break;
+            emit beenAskedForMapHistory();
+        }
+        break;
+
         case JSONMethod::MessageFromPlayer: {
-                const auto mfp = data.toHash();
-                emit receivedMessage(mfp);
-            }
-            break;
+            const auto mfp = data.toHash();
+            emit receivedMessage(mfp);
+        }
+        break;
+
         case JSONMethod::MapChanged: {
-                emit mapChanged(data.toHash());
-            }   
-            break;
+            emit mapChanged(data.toHash());
+        }   
+        break;
+
         case JSONMethod::RequestedAsset: {
-                emit receivedAsset(data.toHash());
-            }
-            break;
-        default:
-            qWarning() << "RPZClient : unknown method from JSON !";
+            emit receivedAsset(data.toHash());
+        }
+        break;
+
+        case JSONMethod::ServerResponse: {
+            emit serverResponseReceived(data.toHash());
+        }
+        break;
     }
 }
 
@@ -141,7 +155,7 @@ void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
                                    
     }
 
-    emit error(msg);
+    emit connectionStatus(msg, true);
     qWarning() << "RPZClient : :" << msg;
 
     this->socket()->close();
@@ -154,7 +168,7 @@ void RPZClient::sendMessage(QVariantHash &message) {
 
     this->sendJSON(JSONMethod::MessageFromPlayer, msg);
 
-    qDebug() << "RPZClient : message sent " << msg.message(); 
+    qDebug() << "RPZClient : message sent " << msg.text(); 
 }
 
 void RPZClient::askForAsset(const QString &assetId) {

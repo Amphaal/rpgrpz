@@ -18,3 +18,19 @@ class Serializable : public QVariantHash {
     private:
         QUuid _id;
 };
+
+template<typename T>
+class RPZHash : public QHash<QUuid, T> {
+
+    static_assert(std::is_base_of<Serializable, T>::value, "Must derive from Serializable");
+    T element;
+    
+    public:
+        QVariantList toVList() {
+            QVariantList out;
+            for(T &base : this->values()) {
+                out.append(base);
+            }
+            return out;
+        }
+};

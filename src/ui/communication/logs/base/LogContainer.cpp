@@ -82,8 +82,8 @@ void LogContainer::clearLines() {
     
     //clear UI
     while(auto item = this->layout()->takeAt(0)) {
+        delete item->widget();
         this->layout()->removeItem(item);
-        delete item;
     }
 
     //clear storage

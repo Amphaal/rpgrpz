@@ -10,6 +10,8 @@
 #include "src/network/rpz/client/RPZClient.h"
 
 #include "src/shared/models/entities/RPZMessage.hpp"
+#include "src/shared/models/entities/RPZResponse.hpp"
+
 #include "src/shared/models/entities/RPZUser.hpp"
 #include "src/ui/others/ClientBindable.hpp"
 
@@ -47,8 +49,7 @@ class ChatWidget : public QWidget, public ClientBindable {
         void _EnableUI();
 
     private slots:
-        void _onRPZClientError(const QString &errMsg);
-        void _onReceivedMessage(const QVariantHash &message);
+        void _onRPZClientStatus(const QString &statusMsg, bool isError);
         void _onReceivedLogHistory(const QVariantList &messages);
 
 };

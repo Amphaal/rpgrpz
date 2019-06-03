@@ -45,7 +45,7 @@ class UsersLog : public LogContainer {
     public:
         UsersLog(QWidget *parent = nullptr) : LogContainer(parent) {};
 
-        void updateUsers(const QVariantHash &users) {
+        void updateUsers(const QVariantList &users) {
    
             this->clearLines();
 

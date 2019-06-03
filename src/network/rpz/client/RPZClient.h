@@ -22,8 +22,8 @@ class RPZClient : public JSONSocket, public JSONRouter {
     public:
         RPZClient(QObject* parent, const QString &displayname, const QString &domain, const QString &port);
         ~RPZClient();
+
         QString getConnectedSocketAddress();
-        
         void run();
     
         //
@@ -38,15 +38,20 @@ class RPZClient : public JSONSocket, public JSONRouter {
         QVector<RPZUser> sessionUsers();
 
     signals:
+        void connectionStatus(const QString &statusMessage, bool isError = false);
+
         void receivedMessage(const QVariantHash &message);
-        void loggedUsersUpdated(const QVariantHash &users);
+        void serverResponseReceived(const QVariantHash &reponse);
         void ackIdentity(const QVariantHash &user);
-        void receivedLogHistory(const QVariantList &messages);
-        void error(const QString &errMessage);
+        
         void mapChanged(QVariantHash &payload);
         void beenAskedForMapHistory();
-        void receivedAsset(const QVariantHash &package);
+
         void assetSucessfullyInserted(const QString &assetId);
+        void receivedAsset(const QVariantHash &package);
+
+        void loggedUsersUpdated(const QVariantList &users);
+        void receivedLogHistory(const QVariantList &messages);
 
     private:       
         QString _domain;

@@ -99,20 +99,21 @@ void ConnectWidget::_tryConnectToServer() {
     );
 
     QObject::connect(
-        this->_cc, &RPZClient::error, 
-        this, &ConnectWidget::_onRPZClientError
+        this->_cc, &RPZClient::connectionStatus, 
+        this, &ConnectWidget::_onRPZClientStatus
     );
 
     this->_changeState(State::Connecting);
     this->_cc->run();
 }
 
-void ConnectWidget::_onRPZClientError(const QString &errMsg) {
-    
+void ConnectWidget::_onRPZClientStatus(const QString &statusMsg, bool isError) {
+    if(!isError) return;
+
     if(this->_state = State::Connecting) {
         QMessageBox::information(this, 
             QString("Erreur lors de la connexion"), 
-            errMsg, 
+            statusMsg, 
             QMessageBox::Ok, QMessageBox::Ok);
     }
 

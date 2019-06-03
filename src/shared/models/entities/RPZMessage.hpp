@@ -5,69 +5,53 @@
 #include <QDateTime>
 
 #include "RPZUser.hpp"
-#include "base/Ownable.hpp"
+#include "base/Stampable.hpp"
 
 #include "src/shared/command/MessageInterpreter.hpp"
 
-class RPZMessage : public Ownable {
+class RPZMessage : public Stampable {
     
     public:
         RPZMessage() {};
-        RPZMessage(const QVariantHash &hash) : Ownable(hash) {
-            this->_interpretMessageAsCommand();
+        RPZMessage(const QVariantHash &hash) : Stampable(hash) {
+            this->_interpretTextAsCommand();
         }
 
-        RPZMessage(const QString &message) : Ownable(QUuid::createUuid()) { 
-            this->_setMessage(message);
-            this->_setTimestamp(QDateTime::currentDateTime());
+        RPZMessage(const QString &message) : Stampable() { 
+            this->_setText(message);
         };
 
-        QString message() {
-            return this->value("msg").toString();
+        QString text() {
+            return this->value("txt").toString();
         }
 
-        QDateTime timestamp() {
-            return this->value("dt").toDateTime();
+        MessageInterpreter::Command commandType() {
+            return this->_command;
         }
 
-        QString toString() {
+        QString toString() override {
+
+            auto base = Stampable::toString();
+
             switch(this->_command) {
-                case MessageInterpreter::Command::Say: {
-                    const auto ts = QString("[" + this->timestamp().toString("dd.MM.yyyy-hh:mm:ss") + "] ");
-                    const auto name = this->owner().name() + " a dit : ";
-                    const auto fullMsg = ts + name + "“" + this->message() + "”";
-                    return fullMsg;
-                }
-                break;
+                case MessageInterpreter::Say:
+                    return base + " a dit : " + "“" + this->text() +  "”";
 
-                default: 
-                    return this->message();
-                break;
+                default:
+                    return this->text();
             }
 
         };
 
-        QUuid respondTo() {
-            return this->value("r_id").toUuid();
-        }
-
-        void setResponseToMessageId(const QUuid &answerMessageId) {
-            (*this)["r_id"] = answerMessageId;
-        }
-
     private:
         MessageInterpreter::Command _command = MessageInterpreter::Command::Unknown;
-
-        void _interpretMessageAsCommand() {
-            this->_command = MessageInterpreter::interpretText(this->message());
+        
+        void _setText(const QString &text) {
+            (*this)["txt"] = text;
+            this->_interpretTextAsCommand();
         }
 
-        void _setTimestamp(const QDateTime &dt) {
-            (*this)["dt"] = dt;
-        }
-
-        void _setMessage(const QString &message) {
-            (*this)["msg"] = message;
-            this->_interpretMessageAsCommand();
+        void _interpretTextAsCommand() {
+            this->_command = MessageInterpreter::interpretText(this->text());
         }
 };

@@ -33,7 +33,6 @@ void RPZServer::run() {
 
 };
 
-
 void RPZServer::_onNewConnection() {
         
         //new connection,store it
@@ -143,38 +142,25 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
 }
 
+//
+// HIGH Helpers
+//
+
 void RPZServer::_tellUserHisIdentity(JSONSocket* socket) {
     auto serialized = this->_getUser(socket);
     socket->sendJSON(JSONMethod::AckIdentity, *serialized);
 }
 
 void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
-
     //message...
     auto countMsgs = this->_messages.count();
-    auto serialized = this->_serializeMessages();
-    clientSocket->sendJSON(JSONMethod::ChatLogHistory, serialized);
-    
+    clientSocket->sendJSON(JSONMethod::ChatLogHistory, this->_messages.toVList());
     qDebug() << "RPZServer :" << countMsgs << " stored messages sent to " << clientSocket->socket()->peerAddress().toString();
 }
 
-void RPZServer::_broadcastMessage(RPZMessage &messageToBroadcast) {
-
-    for(auto &user : this->_usersById) {
-        user.jsonHelper()->sendJSON(JSONMethod::MessageFromPlayer, messageToBroadcast);
-    }
-
-    qDebug() << "RPZServer : Broadcasted message to " << this->_usersById.size() << " clients";
-}
 
 void RPZServer::_broadcastUsers() {
-
-    auto serialized = this->_serializeUsers();
-
-    for(auto &user : this->_usersById) {
-        user.jsonHelper()->sendJSON(JSONMethod::LoggedPlayersChanged, serialized);
-    }
-
+    this->_sendToAll(JSONMethod::LoggedPlayersChanged, this->_usersById.toVList());
     qDebug() << "RPZServer : Now " << this->_usersById.size() << " clients logged";
 }
 
@@ -233,6 +219,71 @@ void RPZServer::_broadcastMapChanges(QVariantHash &payload, JSONSocket * senderS
     aPayload.changeSource(this->_hints->source());
 
     //send to registered users...
+    this->_sendToAllButSelf(senderSocket, JSONMethod::MapChanged, aPayload);
+
+}
+
+void RPZServer::_sendMapHistory(JSONSocket * clientSocket) {
+    auto payload = ResetPayload(this->_hints->atoms());
+    clientSocket->sendJSON(JSONMethod::MapChanged, payload);
+
+}
+
+void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
+    
+    auto msgId = msg.id();
+    RPZResponse response;
+
+    switch(msg.commandType()) {
+        
+        //on unknown command
+        case MessageInterpreter::Unknown: {
+            response = RPZResponse(msgId, RPZResponse::UnknownCommand);
+        }
+        break;
+
+        //on help
+        case MessageInterpreter::Help: {
+            response = RPZResponse(msgId, RPZResponse::HelpManifest, MessageInterpreter::help());
+        }
+        break;
+
+        //on whisper
+        case MessageInterpreter::Whisper: {
+            //TODO
+        }
+        break;
+
+        //on standard message
+        case MessageInterpreter::Say:
+        default: {
+            
+            //store message
+            this->_messages.insert(msgId, msg);
+
+            //push to all sockets
+            this->_sendToAllButSelf(sender, JSONMethod::MessageFromPlayer, msg);
+
+        }
+        break;
+    }
+
+    //set ack if no specific reponse set
+    if(response.answerer().isNull()) response = RPZResponse(msgId);
+
+    //send response
+    sender->sendJSON(JSONMethod::ServerResponse, response);
+}
+
+//
+//
+//
+
+//
+// LOW Helpers
+//
+
+void RPZServer::_sendToAllButSelf(JSONSocket * senderSocket, const JSONMethod &method, const QVariant &data) {
     for(auto &user : this->_usersById) {
         
         //prevent self send
@@ -241,83 +292,18 @@ void RPZServer::_broadcastMapChanges(QVariantHash &payload, JSONSocket * senderS
         } 
 
         //send to others
-        user.jsonHelper()->sendJSON(JSONMethod::MapChanged, aPayload);
+        user.jsonHelper()->sendJSON(method, data);
     }
-
 }
 
-void RPZServer::_sendMapHistory(JSONSocket * clientSocket) {
-    //send...
-    auto payload = ResetPayload(this->_hints->atoms());
-    clientSocket->sendJSON(JSONMethod::MapChanged, payload);
-
-}
-
-QVariantHash RPZServer::_serializeUsers() {
-    QVariantHash base;
-
-    for (auto &user : this->_usersById) {
-        base.insert(user.id().toString(), user);
+void RPZServer::_sendToAll(const JSONMethod &method, const QVariant &data) {
+    for(auto &user : this->_usersById) {
+        user.jsonHelper()->sendJSON(method, data);
     }
-
-    return base;
-}
-
-QVariantList RPZServer::_serializeMessages() {
-    QVariantList base;
-
-    for (auto &msg : this->_messages) {
-        base.append(msg);
-    }
-
-    return base;
 }
 
 
 RPZUser* RPZServer::_getUser(JSONSocket* socket) {
     const auto id = this->_idsByClientSocket[socket];
     return &this->_usersById[id];
-}
-
-void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
-    
-    //check if is a command
-    auto text = msg.message();
-    auto command = MessageInterpreter::interpretText(text);
-
-    switch(command) {
-        
-        //on unknown command
-        case MessageInterpreter::Unknown: {
-            RPZMessage response("Le serveur n'a pas compris. ""/h"" pour obtenir de l'aide !");
-            response.setResponseToMessageId(msg.id());
-            sender->sendJSON(JSONMethod::MessageFromPlayer, response);
-        }
-        break;
-
-        //on help
-        case MessageInterpreter::Help: {
-            RPZMessage response(MessageInterpreter::help());
-            response.setResponseToMessageId(msg.id());
-            sender->sendJSON(JSONMethod::MessageFromPlayer, response);
-        }
-        break;
-
-        //on whisper
-        case MessageInterpreter::Whisper: {
-
-        }
-        break;
-
-        //on standard message
-        case MessageInterpreter::Say:
-        default: {
-            //store message
-            this->_messages.insert(msg.id(), msg);
-
-            //push to all sockets
-            this->_broadcastMessage(msg);
-        }
-        break;
-    }
 }

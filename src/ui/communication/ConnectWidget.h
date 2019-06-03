@@ -41,7 +41,7 @@ class ConnectWidget : public QWidget {
         void _changeState(ConnectWidget::State newState);
         void _destroyClient();
 
-        void _onRPZClientError(const QString &errMsg);
+        void _onRPZClientStatus(const QString &statusMsg, bool isError);
         void _onRPZClientConnecting();
 
         void _saveValuesAsSettings();

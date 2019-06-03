@@ -20,6 +20,7 @@
 #include "src/shared/models/Payloads.h"
 #include "src/shared/models/entities/RPZMessage.hpp"
 #include "src/shared/models/entities/RPZUser.hpp"
+#include "src/shared/models/entities/RPZResponse.hpp"
 
 #include "src/shared/database/AssetsDatabase.h"
 
@@ -45,8 +46,7 @@ class RPZServer : public QTcpServer, public JSONRouter {
         JSONSocket* _hostSocket = nullptr;
         
         //users
-        QHash<QUuid, RPZUser> _usersById;
-        QVariantHash _serializeUsers();
+        RPZHash<RPZUser> _usersById;
         RPZUser* _getUser(JSONSocket* socket);
         void _broadcastUsers();
         void _tellUserHisIdentity(JSONSocket* socket);
@@ -59,14 +59,15 @@ class RPZServer : public QTcpServer, public JSONRouter {
         AlterationPayload _alterIncomingPayloadWithUpdatedOwners(QVariantHash &payload, JSONSocket * senderSocket);
         
         //messages
-        QHash<QUuid, RPZMessage> _messages;
-        QVariantList _serializeMessages();
+        RPZHash<RPZMessage> _messages;
         void _sendStoredMessages(JSONSocket * clientSocket);
-        void _broadcastMessage(RPZMessage &messageToBroadcast);
         void _interpretMessage(JSONSocket* sender, RPZMessage &msg);
         
         //internal
         void _onNewConnection();
         void _onDisconnect();
         void _routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) override;
+        
+        void _sendToAll(const JSONMethod &method, const QVariant &data);
+        void _sendToAllButSelf(JSONSocket * senderSocket, const JSONMethod &method, const QVariant &data);
 };

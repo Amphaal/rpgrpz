@@ -31,7 +31,7 @@ class MapHint : public QObject {
         void _emitAlteration(AlterationPayload &payload);
 
         //atoms list 
-        QHash<QUuid, RPZAtom> _atomsById;
+        RPZHash<RPZAtom> _atomsById;
 
         //credentials handling
         QSet<QUuid> _selfElements;

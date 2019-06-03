@@ -3,7 +3,8 @@
 #include <QString>
 
 enum JSONMethod { 
-    MessageFromPlayer, 
+    MessageFromPlayer,
+    ServerResponse, 
     PlayerHasUsername, 
     LoggedPlayersChanged, 
     ChatLogHistory,
@@ -15,7 +16,8 @@ enum JSONMethod {
 };
 
 static const QStringList JSONMethodAsArray = { 
-    "MessageFromPlayer", 
+    "MessageFromPlayer",
+    "ServerResponse", 
     "PlayerHasUsername", 
     "LoggedPlayersChanged", 
     "ChatLogHistory",
