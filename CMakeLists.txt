@@ -155,6 +155,7 @@ list(APPEND SOURCES
 
 #ui components
 list(APPEND SOURCES
+
     src/ui/map/graphics/MapViewGraphicsScene.hpp
     src/shared/map/MapHint.cpp
     
@@ -177,6 +178,7 @@ list(APPEND SOURCES
     src/ui/assets/AssetsManager.cpp
     src/ui/assets/AssetsPreviewer.cpp
 
+    src/ui/others/RestoringSplitter.cpp
     src/ui/others/statusbar/RPZStatusLabel.hpp
     src/ui/others/statusbar/RPZStatusBar.cpp
     src/ui/others/UpdaterUIIntegrator.hpp

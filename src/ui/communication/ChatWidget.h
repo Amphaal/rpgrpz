@@ -5,7 +5,7 @@
 
 #include <QtGui/QWindow>
 #include <QStyle>
-#include "src/ui/others/RestoringSplitter.hpp"
+#include "src/ui/others/RestoringSplitter.h"
 
 #include "src/network/rpz/client/RPZClient.h"
 

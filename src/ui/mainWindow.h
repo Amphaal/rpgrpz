@@ -30,7 +30,7 @@
 
 #include "src/ui/assets/AssetsManager.h"
 
-#include "src/ui/others/RestoringSplitter.hpp"
+#include "src/ui/others/RestoringSplitter.h"
 #include "src/ui/others/UpdaterUIIntegrator.hpp"
 #include "src/ui/others/statusbar/RPZStatusBar.h"
 
