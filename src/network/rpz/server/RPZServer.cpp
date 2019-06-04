@@ -122,7 +122,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             auto clientVersion = handshakePkg.clientVersion();
             if(clientVersion != serverVersion) {
                 target->sendJSON(JSONMethod::ServerStatus, 
-                    QString("Incompatibilité de version entre client et serveur : v%1(client) <> v%2(serveur) !")
+                    QString("Incompatibilité de version entre client et serveur : v%1 (client) / v%2 (serveur) !")
                     .arg(clientVersion)
                     .arg(serverVersion)
                 );

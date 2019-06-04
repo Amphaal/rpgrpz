@@ -73,7 +73,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
         case JSONMethod::ServerStatus: {
             emit connectionStatus(data.toString(), true);
-            this->disconnect();
+            this->socket()->disconnectFromHost();
         }
         break;
         
