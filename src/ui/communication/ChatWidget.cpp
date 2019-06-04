@@ -141,12 +141,9 @@ void ChatWidget::onRPZClientConnecting(RPZClient * cc) {
     this->_chatEdit->disconnect();
     QObject::connect(
         this->_chatEdit, &ChatEdit::askedToSendMessage,
-        [=](const QString &msg) {
-            
+        [=](const QString &msg) {      
             RPZMessage message(msg);
-            message.setOwnership(cc->identity());
-            
-            this->_chatLog->handleMessage(message);
+            this->_chatLog->handleMessage(message, true);
             this->_rpzClient->sendMessage(message);
         }
         

@@ -117,7 +117,10 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             auto chosenName = data.toString();
 
             //change the requested username if already exists
-            if(this->_lwrcsUniqueRegisteredUsernames.contains(chosenName)) chosenName = chosenName + targetUser->color().name();
+            auto adapted = MessageInterpreter::usernameToCommandCompatible(chosenName);
+            if(this->_formatedUsernamesByUser.contains(adapted)) {
+                chosenName = chosenName + targetUser->color().name();
+            }
             targetUser->setName(chosenName);
 
             //tell other users this one exists
@@ -161,9 +164,12 @@ void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
 void RPZServer::_broadcastUsers() {
     
     //reset registered username list
-    this->_lwrcsUniqueRegisteredUsernames.clear();
+    this->_formatedUsernamesByUser.clear();
+
+    //refill
     for(auto &user : this->_usersById) {
-        this->_lwrcsUniqueRegisteredUsernames.insert(user.name().toLower());
+        auto formated = MessageInterpreter::usernameToCommandCompatible(user.name());
+        this->_formatedUsernamesByUser.insert(formated, &user);
     }
 
     //send data
@@ -257,7 +263,42 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
 
         //on whisper
         case MessageInterpreter::Whisper: {
-            //TODO
+            
+            //get recipients usernames
+            auto textCommand = msg.text();
+            auto recipients = MessageInterpreter::findRecipentsFromText(textCommand);
+
+            //iterate
+            QList<QString> notFound;
+            for(auto &recipient : recipients) {
+                
+                //find user from recipident
+                auto user = this->_formatedUsernamesByUser[recipient];
+                if(!user) {
+                    notFound.append(recipient);
+                    continue;
+                }
+
+                //send to recipient user
+                auto textOnly = MessageInterpreter::sanitizeText(textCommand);
+                
+                //create a new message 
+                auto newMessage = RPZMessage(textOnly, MessageInterpreter::Whisper);
+                newMessage.setOwnership(msg.owner());
+
+                //send new message
+                user->jsonHelper()->sendJSON(JSONMethod::MessageFromPlayer, newMessage);
+            }
+
+            //inform whisperer of any unfound users
+            if(notFound.count()) {
+
+                QVariantList usernamesNotFound;
+                for( auto &un : notFound) usernamesNotFound.append(un);
+
+                response = RPZResponse(msgId, RPZResponse::ErrorRecipients, usernamesNotFound);
+            }
+            
         }
         break;
 

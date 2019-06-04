@@ -8,7 +8,8 @@ class RPZResponse : public Stampable {
             UnknownCommand, 
             HelpManifest, 
             Ack, 
-            Error, 
+            Error,
+            ErrorRecipients,
             ConnectedToServer, 
             Status
         };
@@ -41,6 +42,14 @@ class RPZResponse : public Stampable {
                     return "Le serveur n'a pas compris. Faites \"/h\" pour obtenir de l'aide !";
                 }
 
+                case ErrorRecipients: {
+
+                    QList<QString> rcpts;
+                    for(auto &e : this->responseData().toList()) rcpts.append(e.toString());
+
+                    return QString("Les utilisateurs cibles n'ont pas été trouvés : ") + rcpts.join(", ");
+                }
+
                 case ConnectedToServer: {
                     return QString("Connecté au serveur (") + this->responseData().toString() + ")";
                 }
@@ -53,8 +62,33 @@ class RPZResponse : public Stampable {
                     return this->responseData().toString();
                 }
             };
-
+        
         };
+
+        QPalette palette() override {
+            
+            //default palette
+            auto palette = Stampable::palette();
+
+            //switch by resp code...
+            switch(this->responseCode()) {
+                
+                case Error:
+                case ErrorRecipients:
+                    palette.setColor(QPalette::Window, "#f9dad4");
+                    palette.setColor(QPalette::WindowText, "#FF0000");
+                    break;
+
+                case ConnectedToServer:
+                case Status:
+                    palette.setColor(QPalette::Window, "#71ed55");
+                    palette.setColor(QPalette::WindowText, "#0f4706");
+                    break;
+
+            }
+
+            return palette;
+        }
 
     private:
         void _setAnswerer(const QUuid &answererStampableId) {

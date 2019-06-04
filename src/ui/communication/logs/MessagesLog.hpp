@@ -8,47 +8,44 @@
 class MessagesLog : public LogContainer {
 
     public:
-        enum MessageStyle { Default, ServerLog, ClientMessageWaiting };
-
         MessagesLog(QWidget *parent = nullptr) : LogContainer(parent) {};
 
         void handleResponse(RPZResponse &response) {
 
             auto respToId = response.answerer();
-            
-            //update style of response Item
+
+            //if respond to a message, "ungrey" the responded
             if(!respToId.isNull()) {
-                auto existingLine = LogContainer::_getLine(respToId);
-                this->_updateLogItemPalette(existingLine);
-            }
-
-            //depending on response code
-            switch(response.responseCode()) {
-
-                case RPZResponse::Ack: {
-                    //nothing to do
-                }
-                break;
                 
-                default: {
+                auto existingLine = LogContainer::_getLine(respToId);
+                auto existingPalette = existingLine->palette();
+                
+                auto txtColor = existingPalette.color(QPalette::WindowText);
+                txtColor.setAlpha(255);
+                existingPalette.setColor(QPalette::WindowText, txtColor);
 
-                    //get new line
-                    auto newLine = LogContainer::_addLine(response, respToId);
-                    
-                    //add text
-                    auto txt = new LogText(response.toString());
-                    newLine->horizontalLayout()->addWidget(txt, 10);
+                existingLine->setPalette(existingPalette);
 
-                    //define style as server log
-                    this->_updateLogItemPalette(newLine, ServerLog);
-
-                }
-                break;
             }
+
+            //if response code is ask, stop here
+            auto respCode = response.responseCode();
+            if(respCode == RPZResponse::Ack) return;
+
+            //get new line
+            auto newLine = LogContainer::_addLine(response, respToId);
+            
+            //add text
+            auto txt = new LogText(response.toString());
+            newLine->horizontalLayout()->addWidget(txt, 10);
+
+            
+            //set palette
+            newLine->setPalette(response.palette());
 
         }
 
-        void handleMessage(RPZMessage &msg) {
+        void handleMessage(RPZMessage &msg, bool isLocal = false) {
             
             //should not exist
             auto targetLine = LogContainer::_getLine(msg);
@@ -61,27 +58,18 @@ class MessagesLog : public LogContainer {
             auto txt = new LogText(msg.toString());
             targetLine->horizontalLayout()->addWidget(txt, 10);
 
-            //set waiting palette
-            this->_updateLogItemPalette(targetLine, ClientMessageWaiting);
-
-        }
-
-    private:
-        void _updateLogItemPalette(LogItem * item, const MessageStyle &logType = Default) {
-    
-            QPalette colors;
-
-            switch(logType) {
-                case MessageStyle::ServerLog:
-                    colors.setColor(QPalette::Window, "#71ed55");
-                    colors.setColor(QPalette::WindowText, Qt::black);
-                    break;
-                case MessageStyle::ClientMessageWaiting:
-                    colors.setColor(QPalette::WindowText, "#999999");
-                    break;
+            //define palette to apply
+            auto msgPalette = msg.palette();
+            
+            //if is local, expect a server response and add opacity to signal it to the user
+            if(isLocal) {
+                auto txtColor = msgPalette.color(QPalette::WindowText);
+                txtColor.setAlpha(128);
+                msgPalette.setColor(QPalette::WindowText, txtColor);
             }
 
-            item->setPalette(colors);
-        };
+            //apply it
+            targetLine->setPalette(msgPalette);
+        }
 
 };

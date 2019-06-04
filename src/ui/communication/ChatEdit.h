@@ -6,8 +6,12 @@
 #include <QString>
 #include <QHBoxLayout>
 #include <QEvent>
+#include <QCompleter>
+#include <QStringListModel>
 
-class ChatEdit : public QWidget {
+#include "src/ui/others/ClientBindable.hpp"
+
+class ChatEdit : public QWidget, public ClientBindable {
 
     Q_OBJECT
 
@@ -19,10 +23,13 @@ class ChatEdit : public QWidget {
     
     protected:
         void changeEvent(QEvent *event) override;
+        void onRPZClientConnecting(RPZClient* cc) override;
 
     private:
         QLineEdit* _msgEdit = nullptr;
         QPushButton* _sendMsgBtn = nullptr;
 
         void _sendMessage();
+        
+        void _onUsersChanged(const QVariantList &users);
 };
