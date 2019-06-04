@@ -21,6 +21,7 @@
 #include "src/shared/models/entities/RPZMessage.hpp"
 #include "src/shared/models/entities/RPZUser.hpp"
 #include "src/shared/models/entities/RPZResponse.hpp"
+#include "src/shared/models/entities/RPZHandshake.hpp"
 
 #include "src/shared/database/AssetsDatabase.h"
 

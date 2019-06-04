@@ -111,12 +111,26 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         }
         break;
 
-        case JSONMethod::PlayerHasUsername: {   
+        case JSONMethod::Handshake: {   
+            
             //prepare
             auto targetUser = this->_getUser(target);
-            auto chosenName = data.toString();
+            auto handshakePkg = RPZHandshake(data.toHash());
+            
+            //check versions with server, if different, reject
+            auto serverVersion = QString(APP_CURRENT_VERSION);
+            auto clientVersion = handshakePkg.clientVersion();
+            if(clientVersion != serverVersion) {
+                target->sendJSON(JSONMethod::ServerStatus, 
+                    QString("Incompatibilité de version entre client et serveur : v%1(client) <> v%2(serveur) !")
+                    .arg(clientVersion)
+                    .arg(serverVersion)
+                );
+                return;
+            }
 
             //change the requested username if already exists
+            auto chosenName = handshakePkg.requestedUsername();
             auto adapted = MessageInterpreter::usernameToCommandCompatible(chosenName);
             if(this->_formatedUsernamesByUser.contains(adapted)) {
                 chosenName = chosenName + targetUser->color().name();

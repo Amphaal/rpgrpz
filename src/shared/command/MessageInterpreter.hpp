@@ -5,6 +5,8 @@
 
 #include <QRegularExpression>
 
+#include "src/helpers/_appContext.h"
+
 class MessageInterpreter {
     public:
         enum Command { Unknown, Say, Whisper, Help };
@@ -62,7 +64,10 @@ class MessageInterpreter {
         }
 
         static QString help()  {
-            return "Pas d'aide disponible";
+            QString help;
+            help += QString("Serveur ") + QString(APP_FULL_DENOM) + " :\n";
+            help += "- Pour chuchotter : @{nom}. Vous pouvez chuchotter à plusieurs personne pour 1 message.";
+            return help;
         }
 
         static QString usernameToCommandCompatible(QString username) {

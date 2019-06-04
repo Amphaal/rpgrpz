@@ -122,7 +122,6 @@ void ConnectWidget::_onRPZClientStatus(const QString &statusMsg, bool isError) {
 }
 void ConnectWidget::_onRPZClientConnecting() {
     this->_changeState(State::Connected);
-    emit connectionSuccessful(this->_cc);
 }
 
 void ConnectWidget::_destroyClient() {

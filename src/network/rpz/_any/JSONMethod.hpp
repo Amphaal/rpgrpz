@@ -4,8 +4,9 @@
 
 enum JSONMethod { 
     MessageFromPlayer,
+    ServerStatus,
     ServerResponse, 
-    PlayerHasUsername, 
+    Handshake, 
     LoggedPlayersChanged, 
     ChatLogHistory,
     MapChanged,
@@ -17,8 +18,9 @@ enum JSONMethod {
 
 static const QStringList JSONMethodAsArray = { 
     "MessageFromPlayer",
+    "ServerStatus",
     "ServerResponse", 
-    "PlayerHasUsername", 
+    "Handshake", 
     "LoggedPlayersChanged", 
     "ChatLogHistory",
     "MapChanged",

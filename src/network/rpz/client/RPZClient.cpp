@@ -40,7 +40,7 @@ void RPZClient::_onDisconnect() {
 
 void RPZClient::_onConnected() {
     //tell the server your username
-    this->sendJSON(JSONMethod::PlayerHasUsername, QVariant(this->_name));
+    this->sendJSON(JSONMethod::Handshake, RPZHandshake(this->_name));
 }
 
 
@@ -71,6 +71,12 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
     
     switch(method) {
 
+        case JSONMethod::ServerStatus: {
+            emit connectionStatus(data.toString(), true);
+            this->disconnect();
+        }
+        break;
+        
         case JSONMethod::ChatLogHistory: {
             emit receivedLogHistory(data.toList());
         }

@@ -16,7 +16,6 @@ class ConnectWidget : public QWidget {
     Q_OBJECT
 
     signals:
-        void connectionSuccessful(RPZClient* cc);
         void startingConnection(RPZClient* cc);
 
     public:
