@@ -1,6 +1,5 @@
 #pragma once
  
-#include <QUuid>
 #include <QString>
 #include <QColor>
 #include <QVariantHash>
@@ -23,13 +22,13 @@ class RPZUser : public Serializable {
         RPZUser() {};
         RPZUser(const QVariantHash &hash) : Serializable(hash) {}
 
-        RPZUser(JSONSocket* socket) : Serializable(QUuid::createUuid()) {
+        RPZUser(JSONSocket* socket) : Serializable(SnowFlake::get()->nextId()) {
             this->_jsonHelper = socket;
             this->_localAddress = socket->socket()->localAddress().toString();
             this->_setColor();
         };
 
-        RPZUser(const QUuid &id, const QString name, const Role &role, const QColor &color) : Serializable(id) { 
+        RPZUser(const snowflake_uid &id, const QString name, const Role &role, const QColor &color) : Serializable(id) { 
             this->setName(name);
             this->setRole(role);
             this->_setColor(color);
@@ -68,8 +67,8 @@ class RPZUser : public Serializable {
         QString toString() {
             if(!this->name().isNull()) {
                 return this->name();
-            } else if (!this->id().isNull()) {
-                return this->id().toString(QUuid::StringFormat::WithoutBraces);
+            } else if (!this->id()) {
+                return QString::number(this->id());
             } else {
                 return "Moi";
             }

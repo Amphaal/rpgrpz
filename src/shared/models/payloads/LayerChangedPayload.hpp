@@ -5,7 +5,7 @@
 class LayerChangedPayload : public MultipleTargetsPayload {
     public:
         LayerChangedPayload(const QVariantHash &hash) : MultipleTargetsPayload(hash) {}
-        LayerChangedPayload(const QVector<QUuid> &changedAtomIds, const int newLayer) : MultipleTargetsPayload(AlterationPayload::Alteration::LayerChanged, changedAtomIds) {
+        LayerChangedPayload(const QVector<snowflake_uid> &changedAtomIds, const int newLayer) : MultipleTargetsPayload(AlterationPayload::Alteration::LayerChanged, changedAtomIds) {
             this->_setLayer(newLayer);
         }
 
@@ -20,7 +20,7 @@ class LayerChangedPayload : public MultipleTargetsPayload {
 
             QVariantHash out;
             for(auto &e : list) {
-                out.insert(e.toString(), layer);
+                out.insert(QString::number(e), layer);
             }
 
             return out;

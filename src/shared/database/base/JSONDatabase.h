@@ -5,7 +5,6 @@
 #include <QDir>
 #include <QDebug>
 #include <QSet>
-#include <QUuid>
 
 #include <QJsonDocument>
 #include <QJsonObject>

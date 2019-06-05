@@ -3,7 +3,6 @@
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QHash>
-#include <QUuid>
 #include <QString>
 #include <QWidget>
 
@@ -34,10 +33,10 @@ class LogContainer : public QWidget {
     
     protected:
         LogItem* _getLine(Serializable &element);
-        LogItem* _getLine(QUuid &elementId);
-        LogItem* _addLine(Serializable &element, QUuid &putUnder = QUuid());
+        LogItem* _getLine(snowflake_uid &elementId);
+        LogItem* _addLine(Serializable &element, const snowflake_uid &putUnder = 0);
     
     private:
-        QHash<QUuid, LogItem*> _linesBySerializableId;
+        QHash<snowflake_uid, LogItem*> _linesBySerializableId;
         QVBoxLayout* _vLayout = nullptr;
 };

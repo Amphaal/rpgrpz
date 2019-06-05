@@ -20,7 +20,7 @@ class AddedPayload : public AlterationPayload {
             QVariantHash out;
 
             auto atom = this->atom();
-            out.insert(atom.id().toString(), atom);
+            out.insert(QString::number(atom.id()), atom);
             
             return out;
         }

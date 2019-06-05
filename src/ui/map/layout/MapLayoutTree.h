@@ -4,7 +4,6 @@
 #include <QSet>
 #include <QHash>
 #include <QVector>
-#include <QUuid>
 #include <QGraphicsItem>
 #include <QIcon>
 #include <QAction>
@@ -56,13 +55,13 @@ class MapLayoutTree : public RPZTree, ClientBindable {
         void _onElementDoubleClicked(QTreeWidgetItem * item, int column);
         void _onRenamedAsset(const QString &assetId, const QString &newName);
 
-        QHash<QUuid, QTreeWidgetItem*> _treeItemsByAtomId;
-        QHash<QString, QSet<QUuid>> _atomIdsBoundByAssetId;
+        QHash<snowflake_uid, QTreeWidgetItem*> _treeItemsByAtomId;
+        QHash<QString, QSet<snowflake_uid>> _atomIdsBoundByAssetId;
         
-        QVector<QUuid> _selectedAtomIds() const;
-        QUuid _extractAtomIdFromItem(QTreeWidgetItem* item) const;
+        QVector<snowflake_uid> _selectedAtomIds() const;
+        snowflake_uid _extractAtomIdFromItem(QTreeWidgetItem* item) const;
 
         QTreeWidgetItem* _createTreeItem(RPZAtom &atom);
 
-        void _changeLayer(QVector<QUuid> &elementIds, int newLayer);
+        void _changeLayer(QVector<snowflake_uid> &elementIds, int newLayer);
 };

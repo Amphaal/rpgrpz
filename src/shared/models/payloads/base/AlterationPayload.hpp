@@ -2,9 +2,8 @@
 
 #include <QVariantHash>
 
-class AlterationPayload : public QVariantHash {
+class AlterationPayload : public QVariantHash { 
     public:
-
         enum Source {
             Undefined,
             Local_MapLayout,

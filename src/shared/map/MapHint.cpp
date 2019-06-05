@@ -55,7 +55,7 @@ void MapHint::_alterSceneGlobal(AlterationPayload &payload) {
     auto aCasted = Payload::autoCast(payload);
     auto alterations = aCasted->alterationByAtomId();
     for (QVariantHash::iterator i = alterations.begin(); i != alterations.end(); ++i) {
-        this->_alterSceneInternal(pType, QUuid(i.key()), i.value());
+        this->_alterSceneInternal(pType, i.key().toULongLong(), i.value());
     }
     delete aCasted;
 
@@ -64,7 +64,7 @@ void MapHint::_alterSceneGlobal(AlterationPayload &payload) {
 }
 
 //register actions
-RPZAtom* MapHint::_alterSceneInternal(const AlterationPayload::Alteration &type, QUuid &targetedAtomId, QVariant &atomAlteration) {
+RPZAtom* MapHint::_alterSceneInternal(const AlterationPayload::Alteration &type, snowflake_uid &targetedAtomId, QVariant &atomAlteration) {
 
     //get the stored atom relative to the targeted id
     RPZAtom* storedAtom = nullptr;

@@ -2,30 +2,28 @@
 
 #include "base/AlterationPayload.hpp"
 
-#include <QUuid>
-
 class FocusedPayload : public AlterationPayload {
     
     public:
         FocusedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        FocusedPayload(QUuid &targetedAtomId) : AlterationPayload(AlterationPayload::Focused) {
+        FocusedPayload(const snowflake_uid &targetedAtomId) : AlterationPayload(AlterationPayload::Focused) {
             this->_setTargetAtomId(targetedAtomId);
         }
     
-        QUuid targetAtomId() {
-            return this->value("id").toUuid();
+        snowflake_uid targetAtomId() {
+            return this->value("id").toULongLong();
         }
 
         QVariantHash alterationByAtomId() override {
             QVariantHash out;
 
-            out.insert(this->targetAtomId().toString(), QVariant());
+            out.insert(QString::number(this->targetAtomId()), QVariant());
             
             return out;
         }
     
     private:
-        void _setTargetAtomId(const QUuid &targetAtomId) {
-            (*this)["id"] = targetAtomId;
+        void _setTargetAtomId(const snowflake_uid &targetAtomId) {
+            (*this)["id"] = QString::number(targetAtomId);
         }
 };

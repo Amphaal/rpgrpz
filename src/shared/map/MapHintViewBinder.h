@@ -113,7 +113,7 @@ class MapHintViewBinder : public MapHint {
 
         //augmenting MapHint
         virtual void _alterSceneGlobal(AlterationPayload &payload) override;
-        virtual RPZAtom* _alterSceneInternal(const AlterationPayload::Alteration &type, QUuid &targetedAtomId, QVariant &atomAlteration) override;
+        virtual RPZAtom* _alterSceneInternal(const AlterationPayload::Alteration &type, snowflake_uid &targetedAtomId, QVariant &atomAlteration) override;
 
         RPZAtomMetadata _contextualizedMetadata();
 };

@@ -7,7 +7,7 @@
 
 class Stampable : public Ownable {
     public:
-        Stampable() : Ownable(QUuid::createUuid()) {
+        Stampable() : Ownable(SnowFlake::get()->nextId()) {
             this->_setTimestamp(QDateTime::currentDateTime());
         }
         Stampable(const QVariantHash &hash) : Ownable(hash) {}

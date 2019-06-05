@@ -124,8 +124,8 @@ int AtomEditor::_fromScaleValue(double scaled) {
     return roundedResult < 1 ? 1 : roundedResult;
 }
 
-QVector<QUuid> AtomEditor::_atomsToUuidList() {
-    QVector<QUuid> out;
+QVector<snowflake_uid> AtomEditor::_atomsToSnowflakeList() {
+    QVector<snowflake_uid> out;
     for(auto atom : this->_atoms) out.append(atom->id());
     return out;
 }
@@ -142,13 +142,13 @@ void AtomEditor::_destroyEditor() {
 
 void AtomEditor::_onScaleChanged() {
     auto scaleVal = this->_toScaleValue(this->_scaleSlider->value());
-    auto payload = ScaledPayload(this->_atomsToUuidList(), scaleVal);
+    auto payload = ScaledPayload(this->_atomsToSnowflakeList(), scaleVal);
     emit requiresAtomAlteration(payload);
 }
 
 void AtomEditor::_onRotateChanged() {
     auto sliderVal = this->_rotateSlider->value();
-    auto payload = RotatedPayload(this->_atomsToUuidList(), sliderVal);
+    auto payload = RotatedPayload(this->_atomsToSnowflakeList(), sliderVal);
     emit requiresAtomAlteration(payload);
 }
 

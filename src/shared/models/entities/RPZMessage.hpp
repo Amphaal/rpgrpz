@@ -1,7 +1,6 @@
 #pragma once 
 
 #include <QString>
-#include <QUuid>
 #include <QDateTime>
 
 #include "RPZUser.hpp"

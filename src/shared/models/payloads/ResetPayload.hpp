@@ -25,7 +25,7 @@ class ResetPayload : public AlterationPayload {
         QVariantHash out;
 
         for(auto &atom : this->atoms()) {
-            out.insert(atom.id().toString(), atom);
+            out.insert(QString::number(atom.id()), atom);
         }
         
         return out;

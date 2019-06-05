@@ -33,7 +33,7 @@ void MapHintViewBinder::handleAnyMovedItems() {
     if(!this->_itemsWhoNotifiedMovement.count()) return;
 
     //generate args for payload
-    QHash<QUuid, QPointF> coords;
+    QHash<snowflake_uid, QPointF> coords;
     for( auto gi : this->_itemsWhoNotifiedMovement) {
         auto atom = this->_fetchAtom(gi);
         coords.insert(atom->id(), gi->pos());
@@ -102,7 +102,7 @@ void MapHintViewBinder::_onSceneSelectionChanged() {
     if(this->_preventInnerGIEventsHandling) return;
 
     //extract ids for payload
-    QVector<QUuid> selectedAtomIds;
+    QVector<snowflake_uid> selectedAtomIds;
     for(auto atom : selectedAtoms) {
         selectedAtomIds.append(atom->id());
     }
@@ -277,7 +277,7 @@ void MapHintViewBinder::setPenSize(int size) {
 /////////////////////////////
 
 void MapHintViewBinder::deleteCurrentSelectionItems() {
-    QVector<QUuid> atomIdsToRemove;
+    QVector<snowflake_uid> atomIdsToRemove;
     for(auto item : this->scene()->selectedItems()) {
         auto atom = this->_fetchAtom(item);
         atomIdsToRemove.append(atom->id());
@@ -553,7 +553,7 @@ void MapHintViewBinder::_alterSceneGlobal(AlterationPayload &payload) {
 }
 
 //register actions
-RPZAtom* MapHintViewBinder::_alterSceneInternal(const AlterationPayload::Alteration &type, QUuid &targetedAtomId, QVariant &atomAlteration) {
+RPZAtom* MapHintViewBinder::_alterSceneInternal(const AlterationPayload::Alteration &type, snowflake_uid &targetedAtomId, QVariant &atomAlteration) {
    
     //default handling
     auto updatedAtom = MapHint::_alterSceneInternal(type, targetedAtomId, atomAlteration); 

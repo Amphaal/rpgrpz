@@ -5,7 +5,7 @@
 class ScaledPayload : public MultipleTargetsPayload {
     public:
         ScaledPayload(const QVariantHash &hash) : MultipleTargetsPayload(hash) {}
-        ScaledPayload(const QVector<QUuid> &changedAtomIds, const double scale) : MultipleTargetsPayload(AlterationPayload::Alteration::Scaled, changedAtomIds) {
+        ScaledPayload(const QVector<snowflake_uid> &changedAtomIds, const double scale) : MultipleTargetsPayload(AlterationPayload::Alteration::Scaled, changedAtomIds) {
             this->_setScale(scale);
         }
 
@@ -20,7 +20,7 @@ class ScaledPayload : public MultipleTargetsPayload {
 
             QVariantHash out;
             for(auto &e : list) {
-                out.insert(e.toString(), scale);
+                out.insert(QString::number(e), scale);
             }
 
             return out;

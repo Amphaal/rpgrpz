@@ -1,6 +1,5 @@
 #pragma once
 
-#include <QUuid>
 #include <QString>
 
 #include "Serializable.hpp"
@@ -12,8 +11,8 @@ class Ownable : public Serializable {
     public:
         Ownable() {};
         Ownable(const QVariantHash &hash) : Serializable(hash) {}
-        Ownable(const QUuid &id) : Serializable(id) {}
-        Ownable(const QUuid &id, const RPZUser &user) : Ownable(id) {
+        Ownable(const snowflake_uid &id) : Serializable(id) {}
+        Ownable(const snowflake_uid &id, const RPZUser &user) : Ownable(id) {
             this->setOwnership(user);
         };
 

@@ -170,7 +170,7 @@ void MapLayoutTree::alterTreeElements(QVariantHash &payload) {
     auto alterations = aPayload->alterationByAtomId();
     for (QVariantHash::iterator i = alterations.begin(); i != alterations.end(); ++i) {
         
-        auto key = i.key();
+        auto key = (snowflake_uid)i.key().toULongLong();
         auto item = this->_treeItemsByAtomId[key];
 
         switch(type) {
@@ -178,11 +178,10 @@ void MapLayoutTree::alterTreeElements(QVariantHash &payload) {
                 
                 auto layerItem = item->parent();
                 auto tbrAtom_assetId = item->data(0, 666).toString();
-                auto tbrAtom_id = item->data(0, Qt::UserRole).toUuid();
 
                 //if has assetId, remove it from tracking list
                 if(!tbrAtom_assetId.isNull()) {
-                     this->_atomIdsBoundByAssetId[tbrAtom_assetId].remove(tbrAtom_id);
+                     this->_atomIdsBoundByAssetId[tbrAtom_assetId].remove(key);
                 }
 
                 this->_treeItemsByAtomId.remove(key);
@@ -229,7 +228,7 @@ void MapLayoutTree::_onRenamedAsset(const QString &assetId, const QString &newNa
     }
 }
 
-void MapLayoutTree::_changeLayer(QVector<QUuid> &elementIds, int newLayer) {
+void MapLayoutTree::_changeLayer(QVector<snowflake_uid> &elementIds, int newLayer) {
 
     QSet<QTreeWidgetItem*> dirtyLayerItems;
 
@@ -366,15 +365,15 @@ void MapLayoutTree::keyPressEvent(QKeyEvent * event) {
 
 }
 
-QUuid MapLayoutTree::_extractAtomIdFromItem(QTreeWidgetItem* item) const {
-    return item->data(0, Qt::UserRole).toUuid();
+snowflake_uid MapLayoutTree::_extractAtomIdFromItem(QTreeWidgetItem* item) const {
+    return item->data(0, Qt::UserRole).toULongLong();
 }
 
-QVector<QUuid> MapLayoutTree::_selectedAtomIds() const {
-    QVector<QUuid> idList;
+QVector<snowflake_uid> MapLayoutTree::_selectedAtomIds() const {
+    QVector<snowflake_uid> idList;
     for(auto i : this->selectedItems()) {
         auto boundId = this->_extractAtomIdFromItem(i);
-        if(!boundId.isNull()) idList.append(boundId);
+        if(boundId) idList.append(boundId);
     }
     return idList;
 }

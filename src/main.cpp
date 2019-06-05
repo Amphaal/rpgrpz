@@ -21,6 +21,8 @@
 #include <QDir>
 #include <QLockFile>
 
+#include "libs/snowflake.hpp"
+
 void configureApp(QCoreApplication &app) {
     
     //context preparation

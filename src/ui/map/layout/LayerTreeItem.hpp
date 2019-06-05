@@ -9,7 +9,7 @@ class LayerTreeItem : public QTreeWidgetItem {
         bool operator<(const QTreeWidgetItem &other) const override {
 
             auto othersData = other.data(0, Qt::UserRole);
-            if(othersData.isNull() || !othersData.toUuid().isNull()) return false;
+            if(othersData.isNull()) return false;
             
             auto layer = this->data(0, Qt::UserRole).toInt();
             return layer < othersData.toInt();

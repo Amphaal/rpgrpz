@@ -11,7 +11,6 @@
 #include <QStringList>
 #include <QHash>
 #include <QVector>
-#include <QUuid>
 
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/network/rpz/_any/JSONRouter.h"
@@ -43,11 +42,11 @@ class RPZServer : public QTcpServer, public JSONRouter {
         void error();
 
     private:
-        QHash<JSONSocket*, QUuid> _idsByClientSocket;
+        QHash<JSONSocket*, snowflake_uid> _idsByClientSocket;
         JSONSocket* _hostSocket = nullptr;
         
         //users
-        RPZHash<RPZUser> _usersById;
+        RPZMap<RPZUser> _usersById;
         QHash<QString, RPZUser*> _formatedUsernamesByUser;
         RPZUser* _getUser(JSONSocket* socket);
         void _broadcastUsers();
@@ -61,7 +60,7 @@ class RPZServer : public QTcpServer, public JSONRouter {
         AlterationPayload _alterIncomingPayloadWithUpdatedOwners(QVariantHash &payload, JSONSocket * senderSocket);
         
         //messages
-        RPZHash<RPZMessage> _messages;
+        RPZMap<RPZMessage> _messages;
         void _sendStoredMessages(JSONSocket * clientSocket);
         void _interpretMessage(JSONSocket* sender, RPZMessage &msg);
         

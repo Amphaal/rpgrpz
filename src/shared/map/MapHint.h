@@ -1,6 +1,5 @@
 #pragma once
 
-#include <QUuid>
 #include <QHash>
 #include <QSet>
 #include <QVector>
@@ -31,13 +30,13 @@ class MapHint : public QObject {
         void _emitAlteration(AlterationPayload &payload);
 
         //atoms list 
-        RPZHash<RPZAtom> _atomsById;
+        RPZMap<RPZAtom> _atomsById;
 
         //credentials handling
-        QSet<QUuid> _selfElements;
-        QHash<QUuid, QSet<QUuid>> _foreignElementIdsByOwnerId;
+        QSet<snowflake_uid> _selfElements;
+        QHash<snowflake_uid, QSet<snowflake_uid>> _foreignElementIdsByOwnerId;
 
         //alter the inner atoms lists
         virtual void _alterSceneGlobal(AlterationPayload &payload);
-        virtual RPZAtom* _alterSceneInternal(const AlterationPayload::Alteration &type, QUuid &targetedAtomId, QVariant &atomAlteration);
+        virtual RPZAtom* _alterSceneInternal(const AlterationPayload::Alteration &type, snowflake_uid &targetedAtomId, QVariant &atomAlteration);
 };

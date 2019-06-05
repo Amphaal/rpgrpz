@@ -46,7 +46,7 @@ class AtomEditor : public QGroupBox {
         void _onScaleChanging(int sliderVal);
         void _onRotateChanging(int sliderVal);
 
-        QVector<QUuid> _atomsToUuidList();
+        QVector<snowflake_uid> _atomsToSnowflakeList();
 
         double _toScaleValue(int sliderVal);
         int _fromScaleValue(double scaled);

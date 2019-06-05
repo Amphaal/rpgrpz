@@ -17,7 +17,6 @@
 #include <QCursor>
 #include <QTimer>
 #include <QScrollBar>
-#include <QUuid>
 #include <QVariant>
 #include <QVector>
 

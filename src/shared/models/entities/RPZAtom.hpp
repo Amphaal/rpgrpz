@@ -2,7 +2,6 @@
 
 #include <QGraphicsItem>
 #include <QString>
-#include <QUuid>
 #include <QVector>
 
 #include "base/Ownable.hpp"
@@ -27,12 +26,12 @@ class RPZAtom : public Ownable {
         RPZAtom() {}
         RPZAtom(const QVariantHash &hash) : Ownable(hash) {}
 
-        RPZAtom(const QUuid &id, const Type &type, const RPZUser &owner, const RPZAtomMetadata &metadata) : Ownable(id, owner) {
+        RPZAtom(const snowflake_uid &id, const Type &type, const RPZUser &owner, const RPZAtomMetadata &metadata) : Ownable(id, owner) {
                 this->_setType(type);
                 this->setMetadata(metadata);
             };
 
-        RPZAtom(const Type &type, const RPZAtomMetadata &metadata) : Ownable(QUuid::createUuid()) {
+        RPZAtom(const Type &type, const RPZAtomMetadata &metadata) : Ownable(SnowFlake::get()->nextId()) {
                 this->_setType(type);  
                 this->setMetadata(metadata);
             };

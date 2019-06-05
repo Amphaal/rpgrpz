@@ -15,7 +15,7 @@ class RPZResponse : public Stampable {
         };
         
         RPZResponse() : Stampable() {}
-        RPZResponse(const QUuid &answererTo, const ResponseCode &code = Ack, const QVariant &data = QVariant()) : Stampable() {
+        RPZResponse(const snowflake_uid &answererTo, const ResponseCode &code = Ack, const QVariant &data = QVariant()) : Stampable() {
             this->_setResponseCode(code);
             if(!answererTo.isNull()) this->_setAnswerer(answererTo);
             if(!data.isNull()) this->_setResponseData(data);
@@ -30,8 +30,8 @@ class RPZResponse : public Stampable {
             return this->value("rdata");
         }
         
-        QUuid answerer() {
-            return this->value("aswr").toUuid();
+        snowflake_uid answerer() {
+            return this->value("aswr").toULongLong();
         }
 
         QString toString() override {
@@ -91,8 +91,8 @@ class RPZResponse : public Stampable {
         }
 
     private:
-        void _setAnswerer(const QUuid &answererStampableId) {
-            (*this)["aswr"] = answererStampableId;
+        void _setAnswerer(const snowflake_uid &answererStampableId) {
+            (*this)["aswr"] = QString::number(answererStampableId);
         }
 
         void _setResponseCode(const ResponseCode &code) {
