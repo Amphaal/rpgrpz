@@ -36,8 +36,8 @@ class AlterationPayload : public QVariantHash {
             return (Alteration)this->value("t").toInt();
         };
 
-        virtual QVariantHash alterationByAtomId() {
-            return QVariantHash();
+        virtual QVariantMap alterationByAtomId() {
+            return QVariantMap();
         }
 
         void changeSource(const Source &newSource) {

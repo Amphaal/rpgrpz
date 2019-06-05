@@ -15,7 +15,7 @@ class MessagesLog : public LogContainer {
             auto respToId = response.answerer();
 
             //if respond to a message, "ungrey" the responded
-            if(!respToId.isNull()) {
+            if(respToId) {
                 
                 auto existingLine = LogContainer::_getLine(respToId);
                 auto existingPalette = existingLine->palette();

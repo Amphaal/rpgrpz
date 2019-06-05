@@ -17,7 +17,7 @@ class MapHint : public QObject {
     public:
         MapHint(const AlterationPayload::Source &boundSource);
         AlterationPayload::Source source(); 
-        QVector<RPZAtom> atoms();
+        RPZMap<RPZAtom> atoms();
 
     signals:
         void atomsAltered(QVariantHash &payload);
@@ -38,5 +38,5 @@ class MapHint : public QObject {
 
         //alter the inner atoms lists
         virtual void _alterSceneGlobal(AlterationPayload &payload);
-        virtual RPZAtom* _alterSceneInternal(const AlterationPayload::Alteration &type, snowflake_uid &targetedAtomId, QVariant &atomAlteration);
+        virtual RPZAtom* _alterSceneInternal(const AlterationPayload::Alteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration);
 };

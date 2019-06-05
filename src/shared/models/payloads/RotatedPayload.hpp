@@ -13,12 +13,12 @@ class RotatedPayload : public MultipleTargetsPayload {
             return this->value("deg").toDouble();
         }
 
-        QVariantHash alterationByAtomId() override {
+        QVariantMap alterationByAtomId() override {
             
             auto list = this->targetAtomIds();
             auto rotation = this->rotation();
 
-            QVariantHash out;
+            QVariantMap out;
             for(auto &e : list) {
                 out.insert(QString::number(e), rotation);
             }

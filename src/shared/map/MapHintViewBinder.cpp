@@ -154,7 +154,7 @@ bool MapHintViewBinder::saveState() {
 
     //save into file
     MapDatabase mapDb(this->_stateFilePath);
-    mapDb.saveIntoFile(this->atoms());
+    mapDb.saveIntoFile(this->_atomsById);
 
     //define as clean
     this->_setDirty(false);
@@ -553,7 +553,7 @@ void MapHintViewBinder::_alterSceneGlobal(AlterationPayload &payload) {
 }
 
 //register actions
-RPZAtom* MapHintViewBinder::_alterSceneInternal(const AlterationPayload::Alteration &type, snowflake_uid &targetedAtomId, QVariant &atomAlteration) {
+RPZAtom* MapHintViewBinder::_alterSceneInternal(const AlterationPayload::Alteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) {
    
     //default handling
     auto updatedAtom = MapHint::_alterSceneInternal(type, targetedAtomId, atomAlteration); 

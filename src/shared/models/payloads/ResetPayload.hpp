@@ -7,35 +7,38 @@
 class ResetPayload : public AlterationPayload {
     public:
         ResetPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        ResetPayload(QVector<RPZAtom> &atoms) : AlterationPayload(AlterationPayload::Alteration::Reset) {
+        ResetPayload(RPZMap<RPZAtom> &atoms) : AlterationPayload(AlterationPayload::Alteration::Reset) {
             this->_setAddedAtoms(atoms);
         }
             
-    QVector<RPZAtom> atoms() {
-        QVector<RPZAtom> out;
-        auto list = this->value("atoms").toList();
-        for(auto &e : list) {
-            out.append(e.toHash());
-        }
+    RPZMap<RPZAtom> atoms() {
+        RPZMap<RPZAtom> out;
+        
+        auto map = this->value("atoms").toMap();
 
-        return out;
-    }
-
-    QVariantHash alterationByAtomId() override {
-        QVariantHash out;
-
-        for(auto &atom : this->atoms()) {
-            out.insert(QString::number(atom.id()), atom);
+        for(QVariantMap::iterator i = map.begin(); i != map.end(); ++i) { 
+            out.insert(i.key().toULongLong(), i.value().toHash());
         }
         
         return out;
     }
 
+    QVariantMap alterationByAtomId() override {
+        QVariantMap out;
+     
+        auto list = this->atoms();
+        for(auto &atom : list) {
+            out.insert(QString::number(atom.id()), atom);
+        }
+
+        return out;
+    }
+
     private:
-        void _setAddedAtoms(QVector<RPZAtom> &atoms) {
-            QVariantList list;
+        void _setAddedAtoms(RPZMap<RPZAtom> &atoms) {
+            QVariantMap list;
             for(auto &e : atoms) {
-                list.append(e);
+                list.insert(QString::number(e.id()), e);
             }
             (*this)["atoms"] = list;
         }

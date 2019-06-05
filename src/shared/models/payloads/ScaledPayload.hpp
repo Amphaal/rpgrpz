@@ -13,12 +13,12 @@ class ScaledPayload : public MultipleTargetsPayload {
             return this->value("scl").toDouble();
         }
 
-        QVariantHash alterationByAtomId() override {
+        QVariantMap alterationByAtomId() override {
             
             auto list = this->targetAtomIds();
             auto scale = this->scale();
 
-            QVariantHash out;
+            QVariantMap out;
             for(auto &e : list) {
                 out.insert(QString::number(e), scale);
             }

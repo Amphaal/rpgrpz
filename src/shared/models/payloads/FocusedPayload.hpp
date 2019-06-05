@@ -14,8 +14,8 @@ class FocusedPayload : public AlterationPayload {
             return this->value("id").toULongLong();
         }
 
-        QVariantHash alterationByAtomId() override {
-            QVariantHash out;
+        QVariantMap alterationByAtomId() override {
+            QVariantMap out;
 
             out.insert(QString::number(this->targetAtomId()), QVariant());
             

@@ -17,7 +17,7 @@ class RPZResponse : public Stampable {
         RPZResponse() : Stampable() {}
         RPZResponse(const snowflake_uid &answererTo, const ResponseCode &code = Ack, const QVariant &data = QVariant()) : Stampable() {
             this->_setResponseCode(code);
-            if(!answererTo.isNull()) this->_setAnswerer(answererTo);
+            if(answererTo) this->_setAnswerer(answererTo);
             if(!data.isNull()) this->_setResponseData(data);
         }
         RPZResponse(const QVariantHash &hash) : Stampable(hash) {}

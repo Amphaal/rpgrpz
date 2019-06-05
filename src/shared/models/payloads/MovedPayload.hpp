@@ -30,8 +30,8 @@ class MovedPayload : public AlterationPayload {
             return out;
         }
 
-        QVariantHash alterationByAtomId() override {
-            QVariantHash out;
+        QVariantMap alterationByAtomId() override {
+            QVariantMap out;
             auto list = this->coordHash();
             for (QHash<snowflake_uid, QPointF>::iterator i = list.begin(); i != list.end(); ++i) {
                 out.insert(QString::number(i.key()), i.value());

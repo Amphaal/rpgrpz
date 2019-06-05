@@ -24,8 +24,8 @@ class MultipleTargetsPayload : public AlterationPayload {
             return out;
         }
 
-        QVariantHash alterationByAtomId() override {
-            QVariantHash out;
+        QVariantMap alterationByAtomId() override {
+            QVariantMap out;
             auto list = this->targetAtomIds();
             for(auto &e : list) {
                 out.insert(QString::number(e), QVariant());

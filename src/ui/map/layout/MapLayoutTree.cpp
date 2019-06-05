@@ -119,7 +119,7 @@ void MapLayoutTree::_moveSelectionToLayer(int targetLayer) {
 
 void MapLayoutTree::_onElementDoubleClicked(QTreeWidgetItem * item, int column) {
     auto focusedAtomId = this->_extractAtomIdFromItem(item);
-    if(focusedAtomId.isNull()) return;
+    if(!focusedAtomId) return;
 
     this->_emitAlteration(FocusedPayload(focusedAtomId));
 }
@@ -168,7 +168,7 @@ void MapLayoutTree::alterTreeElements(QVariantHash &payload) {
 
     //conditionnal handling by alteration
     auto alterations = aPayload->alterationByAtomId();
-    for (QVariantHash::iterator i = alterations.begin(); i != alterations.end(); ++i) {
+    for (QVariantMap::iterator i = alterations.begin(); i != alterations.end(); ++i) {
         
         auto key = (snowflake_uid)i.key().toULongLong();
         auto item = this->_treeItemsByAtomId[key];

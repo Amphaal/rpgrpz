@@ -20,8 +20,8 @@ class TextChangedPayload : public AlterationPayload {
             return this->value("txt").toString();
         }
 
-        QVariantHash alterationByAtomId() override {
-            QVariantHash out;
+        QVariantMap alterationByAtomId() override {
+            QVariantMap out;
 
             out.insert(QString::number(this->targetAtomId()), this->text());
             

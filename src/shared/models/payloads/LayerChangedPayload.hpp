@@ -13,12 +13,12 @@ class LayerChangedPayload : public MultipleTargetsPayload {
             return this->value("lyr").toInt();
         }
 
-        QVariantHash alterationByAtomId() override {
+        QVariantMap alterationByAtomId() override {
             
             auto list = this->targetAtomIds();
             auto layer = this->layer();
 
-            QVariantHash out;
+            QVariantMap out;
             for(auto &e : list) {
                 out.insert(QString::number(e), layer);
             }

@@ -13,7 +13,7 @@ class MapDatabase : public JSONDatabase {
             JSONDatabase::_instanciateDb();
         };
 
-        void saveIntoFile(QVector<RPZAtom> &atoms) {
+        void saveIntoFile(RPZMap<RPZAtom> &atoms) {
             
             auto copy = this->_db.object();
 
@@ -32,14 +32,14 @@ class MapDatabase : public JSONDatabase {
             qDebug() << "Map database : saving " << atoms.count() << " atoms";
         };
 
-        QVector<RPZAtom> toAtoms() {
-            QVector<RPZAtom> out;
+        RPZMap<RPZAtom> toAtoms() {
+            RPZMap<RPZAtom> out;
 
             auto db_atoms = this->_db["atoms"].toArray();
 
             for(auto &e : db_atoms) {
               auto atom = RPZAtom(e.toObject().toVariantHash());
-              out.append(atom);
+              out.insert(atom.id(), atom);
             }
 
             qDebug() << "Map database : " << out.count() << " atoms read";
@@ -57,7 +57,7 @@ class MapDatabase : public JSONDatabase {
         }
 
         const int apiVersion() override {
-            return 3;
+            return 4;
         }
 
         const int dbVersion() override {

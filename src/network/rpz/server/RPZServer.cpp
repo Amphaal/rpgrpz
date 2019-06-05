@@ -210,7 +210,7 @@ AlterationPayload RPZServer::_alterIncomingPayloadWithUpdatedOwners(QVariantHash
     auto defaultOwner = this->_getUser(senderSocket); 
 
     //override ownership on absent owner data
-    QVector<RPZAtom> updatedAtoms;
+    RPZMap<RPZAtom> updatedAtoms;
     for(auto &atomRaw : aPayload->alterationByAtomId()) {
         
         RPZAtom atom(atomRaw.toHash());
@@ -218,7 +218,7 @@ AlterationPayload RPZServer::_alterIncomingPayloadWithUpdatedOwners(QVariantHash
 
         if(owner.isEmpty()) atom.setOwnership(*defaultOwner);
         
-        updatedAtoms.append(atom);
+        updatedAtoms.insert(atom.id(), atom);
     }
     delete aPayload;
 
@@ -331,7 +331,7 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
     }
 
     //set ack if no specific reponse set
-    if(response.answerer().isNull()) response = RPZResponse(msgId);
+    if(!response.answerer()) response = RPZResponse(msgId);
 
     //send response
     sender->sendJSON(JSONMethod::ServerResponse, response);

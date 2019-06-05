@@ -16,8 +16,8 @@ class AddedPayload : public AlterationPayload {
             return this->value("atom").toHash();
         }
 
-        QVariantHash alterationByAtomId() override {
-            QVariantHash out;
+        QVariantMap alterationByAtomId() override {
+            QVariantMap out;
 
             auto atom = this->atom();
             out.insert(QString::number(atom.id()), atom);

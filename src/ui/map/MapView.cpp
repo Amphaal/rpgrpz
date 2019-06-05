@@ -568,6 +568,7 @@ void MapView::_beginDrawing() {
 
 void MapView::_endDrawing() {
     if(!this->_tempDrawing) return;
+    if(this->_tempDrawing->path().elementCount() < 2) return;
 
     //add definitive path
     this->_hints->addDrawing(
