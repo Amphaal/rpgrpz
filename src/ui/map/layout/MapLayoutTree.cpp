@@ -10,7 +10,7 @@ MapLayoutTree::MapLayoutTree(QWidget * parent) : RPZTree(parent) {
 
     this->header()->setSectionResizeMode(0, QHeaderView::Stretch);
     this->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-    
+
     this->setSelectionBehavior(QAbstractItemView::SelectRows);
     this->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
@@ -125,10 +125,14 @@ void MapLayoutTree::_onElementDoubleClicked(QTreeWidgetItem * item, int column) 
 }
 
 void MapLayoutTree::_onElementSelectionChanged() {
+    
+    auto selected = this->_selectedAtomIds();
+    if(!selected.count()) this->clearFocus();
+
     if(this->_preventInnerGIEventsHandling) return;
 
     this->_emitAlteration(
-        SelectedPayload(this->_selectedAtomIds())
+        SelectedPayload(selected)
     );
 }
 

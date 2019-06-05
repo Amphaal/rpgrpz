@@ -9,7 +9,6 @@
 
 #include "src/helpers/_appContext.h"
 #include "base/AssetsTreeView.h"
-#include "AssetsPreviewer.h"
 
 class AssetsManager : public QWidget {
 
@@ -20,5 +19,4 @@ class AssetsManager : public QWidget {
 
     private:
         AssetsTreeView* _tree;
-        AssetsPreviewer* _previewer;
 };

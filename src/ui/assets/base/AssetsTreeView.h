@@ -28,6 +28,8 @@ class AssetsTreeView : public QTreeView {
 
     private:
 
+        void drawRow(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+
         ///////////////////
         // drag and drop //
         ///////////////////
@@ -59,5 +61,4 @@ class AssetsTreeView : public QTreeView {
 
         void keyPressEvent(QKeyEvent * event) override;
         void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
-        void focusOutEvent(QFocusEvent *event) override;
 };

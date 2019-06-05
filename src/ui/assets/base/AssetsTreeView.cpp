@@ -1,11 +1,32 @@
 #include "AssetsTreeView.h"
 
+void AssetsTreeView::drawRow(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+    
+    return QTreeView::drawRow(painter, option, index);
+
+    // auto data = AssetsDatabaseElement::fromIndex(index);
+
+    // switch(data->type()) {
+    //     case AssetsDatabaseElement::Type::NPC:
+    //     case AssetsDatabaseElement::Type::FloorBrush:
+    //     case AssetsDatabaseElement::Type::Object:
+    //     case AssetsDatabaseElement::Type::Downloaded: { 
+    //         auto display = index.data(Qt::DisplayRole).toString();
+    //         painter->drawText(option.rect.bottomLeft(), display);
+    //     }
+    //     break;
+
+    //     default: {
+    //         return QTreeView::drawRow(painter, option, index);
+    //     }
+    //     break;
+    // }
+
+}
+
 AssetsTreeView::AssetsTreeView(QWidget *parent) : QTreeView(parent), 
     _MIMEDb(new QMimeDatabase), 
     _model(new AssetsTreeViewModel) {     
-
-    this->setSelectionBehavior(QAbstractItemView::SelectRows);
-    this->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     //model
     this->setModel(this->_model);
@@ -40,7 +61,6 @@ AssetsTreeView::AssetsTreeView(QWidget *parent) : QTreeView(parent),
     //drop config
     this->setAcceptDrops(true);
     this->setDragEnabled(true);
-    this->setDropIndicatorShown(true);
     this->setDragDropMode(QAbstractItemView::DragDropMode::DragDrop);
 
     //context menu
@@ -49,6 +69,9 @@ AssetsTreeView::AssetsTreeView(QWidget *parent) : QTreeView(parent),
         this, &QWidget::customContextMenuRequested,
         this, &AssetsTreeView::_renderCustomContextMenu
     );
+
+    this->setSelectionBehavior(QAbstractItemView::SelectRows);
+    this->setSelectionMode(QAbstractItemView::ExtendedSelection);
 }
 
 AssetsTreeViewModel* AssetsTreeView::assetsModel() {
@@ -70,6 +93,7 @@ QModelIndexList AssetsTreeView::selectedElementsIndexes() {
 
     return indexes;
 }
+
 
 ///////////////////
 // drag and drop //
@@ -242,26 +266,9 @@ void AssetsTreeView::keyPressEvent(QKeyEvent * event) {
 }
 
 void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) {
+    
     QTreeView::selectionChanged(selected, deselected);
 
-    //if not single selection, skip
-    auto selectedIndexes = this->selectedElementsIndexes();
-    if(selectedIndexes.count() != 1) {
-        emit requestPreviewReset();
-        return;
-    }
-    
-    //if selected elem is no item, skip
-    auto targetFilePath = this->_model->getFilePathToAsset(selectedIndexes.takeFirst());
-    if(targetFilePath.isNull()) {
-        emit requestPreviewReset();
-        return;
-    }
+    if(!this->selectedElementsIndexes().count()) this->clearFocus();
 
-    //request preview
-    emit requestAssetPreview(targetFilePath);
-}
-
-void AssetsTreeView::focusOutEvent(QFocusEvent *event) {
-    this->clearSelection();
 }

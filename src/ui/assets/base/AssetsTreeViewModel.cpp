@@ -28,13 +28,13 @@ void AssetsTreeViewModel::onRPZClientConnecting(RPZClient * cc) {
 /// HELPERS ///
 ///////////////
 
-QString AssetsTreeViewModel::getFilePathToAsset(QModelIndex &targetIndex) {
+QString AssetsTreeViewModel::getFilePathToAsset(const QModelIndex &targetIndex) const {
     
     //if selected elem is no item, skip
     auto target = AssetsDatabaseElement::fromIndex(targetIndex);
     if(!target->isItem()) return NULL;
 
-    return this->_db->getFilePathToAsset(target);
+    return AssetsDatabase::get()->getFilePathToAsset(target);
 }
 
 bool AssetsTreeViewModel::createFolder(QModelIndex &parentIndex) {
@@ -142,14 +142,10 @@ QModelIndex AssetsTreeViewModel::parent(const QModelIndex &index) const {
 Qt::ItemFlags AssetsTreeViewModel::flags(const QModelIndex &index) const {
     
     //if unvalid
-    if(!index.isValid()) {
-        return 0;
-    }
+    if(!index.isValid()) return 0;
     
-    //if column, only enabled
-    if(index.column()) {
-        return QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled);
-    }
+    //if not first column
+    if(index.column()) return 0;
 
     //if no data pointer, return
     auto data = AssetsDatabaseElement::fromIndex(index);
@@ -170,15 +166,56 @@ QVariant AssetsTreeViewModel::data(const QModelIndex &index, int role) const {
 
     //for handled roles
     switch (role) {
-        case Qt::DisplayRole:
+        case Qt::DisplayRole: {
             switch(index.column()) {
                 case 0:
                     return data->displayName();
                 case 1:
                     return data->isContainer() ? QString::number(data->itemChildrenCount()) : QVariant();
             }
-        case Qt::DecorationRole:
-            return index.column() == 0 ? QIcon(data->iconPath()) : QVariant();
+        }
+        break;
+
+        case Qt::DecorationRole: {
+            
+            //if not first index
+            auto colIndex = index.column();
+            if(colIndex) return QVariant();
+
+            //if has iconPath
+            auto iconPath = data->iconPath();
+            if(!iconPath.isEmpty()) return QIcon(iconPath);
+
+            auto type = data->type();
+            QSize defaultQSize = type == AssetsDatabaseElement::Type::FloorBrush ? QSize(32, 32) : QSize(90, 90);
+
+            switch(type) {
+                case AssetsDatabaseElement::Type::NPC:
+                case AssetsDatabaseElement::Type::FloorBrush:
+                case AssetsDatabaseElement::Type::Object:
+                case AssetsDatabaseElement::Type::Downloaded: {  
+                    auto pathToAsset = this->getFilePathToAsset(index);
+                    QPixmap temp(pathToAsset);
+                    return temp.scaled(defaultQSize);
+                }
+                break;
+                
+                default:
+                    return QVariant();
+            }
+
+        }
+        break;
+
+        case Qt::SizeHintRole: {
+            auto type = data->type();
+            if(type == AssetsDatabaseElement::Type::NPC || type == AssetsDatabaseElement::Type::Object || type == AssetsDatabaseElement::Type::Downloaded)  {
+                return QSize(0, 100);
+            }
+            return QVariant();
+        }
+        break;
+
         default:
             return QVariant();
     }

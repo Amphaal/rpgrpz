@@ -176,7 +176,6 @@ list(APPEND SOURCES
     src/ui/assets/base/AssetsTreeViewModel.cpp
     src/ui/assets/base/AssetsTreeView.cpp
     src/ui/assets/AssetsManager.cpp
-    src/ui/assets/AssetsPreviewer.cpp
 
     src/ui/others/RestoringSplitter.cpp
     src/ui/others/statusbar/RPZStatusLabel.hpp

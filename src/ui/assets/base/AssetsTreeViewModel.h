@@ -22,7 +22,7 @@ class AssetsTreeViewModel : public QAbstractItemModel, ClientBindable {
         /// HELPERS ///
         ///////////////
 
-        QString getFilePathToAsset(QModelIndex &targetIndex);
+        QString getFilePathToAsset(const QModelIndex &targetIndex) const;
         bool createFolder(QModelIndex &parentIndex);
         bool moveItems(const QMimeData *data, const QModelIndex &parentIndex);
         bool insertAssets(QList<QUrl> &urls, const QModelIndex &parentIndex);
