@@ -12,13 +12,11 @@ class MapLayoutItemDelegate  : public QStyledItemDelegate {
 
         void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override {
             
-            auto data = index.data(Qt::UserRole);
+            auto color = index.data(Qt::UserRole).value<QColor>();
 
-            if(!data.isNull()) {
+            if(color.isValid()) {
                 
                 //define colors
-                auto color = data.value<QColor>();
-                if(!color.isValid()) color = QColor("#000000");
                 painter->setBrush(QBrush(color, Qt::SolidPattern));
 
                 //define size

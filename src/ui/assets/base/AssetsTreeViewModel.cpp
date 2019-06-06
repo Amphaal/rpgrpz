@@ -187,7 +187,7 @@ QVariant AssetsTreeViewModel::data(const QModelIndex &index, int role) const {
             if(!iconPath.isEmpty()) return QIcon(iconPath);
 
             auto type = data->type();
-            QSize defaultQSize = type == AssetsDatabaseElement::Type::FloorBrush ? QSize(32, 32) : QSize(90, 90);
+            QSize defaultQSize = type == AssetsDatabaseElement::Type::FloorBrush ? QSize(32, 32) : QSize(55, 55);
 
             switch(type) {
                 case AssetsDatabaseElement::Type::NPC:
@@ -196,7 +196,10 @@ QVariant AssetsTreeViewModel::data(const QModelIndex &index, int role) const {
                 case AssetsDatabaseElement::Type::Downloaded: {  
                     auto pathToAsset = this->getFilePathToAsset(index);
                     QPixmap temp(pathToAsset);
-                    return temp.scaled(defaultQSize);
+                    return temp.scaled(
+                        defaultQSize,
+                        Qt::AspectRatioMode::KeepAspectRatio 
+                    );
                 }
                 break;
                 
@@ -210,7 +213,7 @@ QVariant AssetsTreeViewModel::data(const QModelIndex &index, int role) const {
         case Qt::SizeHintRole: {
             auto type = data->type();
             if(type == AssetsDatabaseElement::Type::NPC || type == AssetsDatabaseElement::Type::Object || type == AssetsDatabaseElement::Type::Downloaded)  {
-                return QSize(0, 100);
+                return QSize(0, 64);
             }
             return QVariant();
         }

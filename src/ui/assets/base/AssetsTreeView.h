@@ -4,6 +4,8 @@
 #include <QTreeView>
 #include <QHeaderView>
 #include <QMessageBox>
+#include <QDrag>
+#include <QPainter>
 
 #include <QMenu>
 
@@ -39,6 +41,7 @@ class AssetsTreeView : public QTreeView {
 
         void dragEnterEvent(QDragEnterEvent *event) override;
         void dragMoveEvent(QDragMoveEvent *event) override;
+        void startDrag(Qt::DropActions supportedActions) override;
 
         ///////////////////////
         // END drag and drop //

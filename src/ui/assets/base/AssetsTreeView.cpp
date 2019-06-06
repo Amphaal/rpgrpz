@@ -62,7 +62,7 @@ AssetsTreeView::AssetsTreeView(QWidget *parent) : QTreeView(parent),
     this->setAcceptDrops(true);
     this->setDragEnabled(true);
     this->setDragDropMode(QAbstractItemView::DragDropMode::DragDrop);
-    this->setDropIndicatorShown(false);
+    this->setDropIndicatorShown(true);
 
     //context menu
     this->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -101,6 +101,29 @@ QModelIndexList AssetsTreeView::selectedElementsIndexes() {
 // drag and drop //
 ///////////////////
 
+void AssetsTreeView::startDrag(Qt::DropActions supportedActions) {
+    
+    auto indexes = this->selectedIndexes();
+    QMimeData *data = model()->mimeData(indexes);
+    if (!data) return;
+
+    QDrag *drag = new QDrag(this);
+
+    QPixmap pixmap(":/icons/app/rpgrpz_32.png");
+    QPainter *paint = new QPainter(&pixmap);
+    paint->setPen(QPen("#000000"));
+    paint->setBrush(QBrush(Qt::white));
+    QRect numberRect(12, 8, 13, 13);
+    paint->drawRect(numberRect);
+    paint->drawText(numberRect, Qt::AlignHCenter | Qt::AlignVCenter, QString("%1").arg(indexes.count()));
+    drag->setPixmap(pixmap);
+            
+    drag->setMimeData(data);
+    Qt::DropAction defaultDropAction = Qt::MoveAction;
+    drag->exec(supportedActions, defaultDropAction);
+
+}
+
 void AssetsTreeView::dragEnterEvent(QDragEnterEvent *event) {
 
     //if dragged from OS
@@ -134,7 +157,7 @@ void AssetsTreeView::dragEnterEvent(QDragEnterEvent *event) {
 void AssetsTreeView::dragMoveEvent(QDragMoveEvent *event) {
     
     QAbstractItemView::dragMoveEvent(event); //mandatory for external drop visual features
-    
+
     //if has a widget attached, move type drop
     if(event->source()) {
         event->setDropAction(Qt::DropAction::MoveAction);
