@@ -26,7 +26,7 @@
 
 #include "src/ui/map/MapView.h"
 #include "src/ui/map/MapTools.h"
-#include "src/ui/map/MapLayoutManager.h"
+#include "src/ui/layout/MapLayoutManager.h"
 
 #include "src/ui/assets/AssetsManager.h"
 

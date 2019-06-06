@@ -62,6 +62,7 @@ AssetsTreeView::AssetsTreeView(QWidget *parent) : QTreeView(parent),
     this->setAcceptDrops(true);
     this->setDragEnabled(true);
     this->setDragDropMode(QAbstractItemView::DragDropMode::DragDrop);
+    this->setDropIndicatorShown(false);
 
     //context menu
     this->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -70,6 +71,7 @@ AssetsTreeView::AssetsTreeView(QWidget *parent) : QTreeView(parent),
         this, &AssetsTreeView::_renderCustomContextMenu
     );
 
+    //selection
     this->setSelectionBehavior(QAbstractItemView::SelectRows);
     this->setSelectionMode(QAbstractItemView::ExtendedSelection);
 }

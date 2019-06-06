@@ -67,7 +67,7 @@ class RPZUser : public Serializable {
         QString toString() {
             if(!this->name().isNull()) {
                 return this->name();
-            } else if (!this->id()) {
+            } else if (this->id()) {
                 return QString::number(this->id());
             } else {
                 return "Moi";

@@ -13,7 +13,7 @@
 
 class UserLogColor : public QFrame {
     public:
-        UserLogColor(RPZUser &user) {
+        UserLogColor(const QColor &color) {
             this->setFrameShape(QFrame::Shape::Box); 
             this->setLineWidth(1); 
             this->setFixedSize(10, 10);
@@ -21,9 +21,11 @@ class UserLogColor : public QFrame {
             this->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 
             auto pal = this->palette();
-            pal.setColor(QPalette::Background, user.color());
+            pal.setColor(QPalette::Background, color);
             this->setPalette(pal);
         };
+        UserLogColor(RPZUser &user) : UserLogColor(user.color()) {};
+
 };
 
 class UserLogIcon : public QLabel {

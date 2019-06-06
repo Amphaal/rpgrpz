@@ -2,6 +2,8 @@
 
 MapLayoutTree::MapLayoutTree(QWidget * parent) : RPZTree(parent) {
     
+    this->setItemDelegateForColumn(1, new MapLayoutItemDelegate);
+
     this->setColumnCount(2);
 
     this->setHeaderHidden(true);
@@ -50,6 +52,7 @@ void MapLayoutTree::onRPZClientConnecting(RPZClient * cc) {
         cc, &RPZClient::mapChanged,
         this, &MapLayoutTree::alterTreeElements
     );
+
 }
 
 void MapLayoutTree::_renderCustomContextMenu(const QPoint &pos) {
@@ -154,10 +157,14 @@ void MapLayoutTree::alterTreeElements(QVariantHash &payload) {
     //special handling
     if(type == AlterationPayload::Alteration::Selected) this->clearSelection();
     if(type == AlterationPayload::Alteration::Reset) {
-        for(auto item : this->_treeItemsByAtomId) {
-            delete item;
-        }
+
+        for(auto item : this->_treeItemsByAtomId) delete item;
         this->_treeItemsByAtomId.clear();
+
+        for(auto layerItem : this->_layersItems) delete layerItem;
+        this->_layersItems.clear();
+        
+        this->_atomIdsBoundByAssetId.clear();
     }
 
     //specific bulk handling for UI optimizations
@@ -199,7 +206,9 @@ void MapLayoutTree::alterTreeElements(QVariantHash &payload) {
 
             case AlterationPayload::Alteration::Reset:
             case AlterationPayload::Alteration::Added: {
+                
                 auto atom = RPZAtom(i.value().toHash());
+                
                 auto item = this->_createTreeItem(atom);
                 this->_treeItemsByAtomId.insert(key, item);
 
@@ -295,11 +304,13 @@ QTreeWidgetItem* MapLayoutTree::_createTreeItem(RPZAtom &atom) {
     auto mdata = atom.metadata();
     
     item->setText(0, atom.descriptor());
-    item->setText(1, atom.owner().toString());
-
     item->setData(0, Qt::UserRole, atom.id());
     item->setData(0, 666, mdata.assetId());
-    
+
+    auto owner = atom.owner();
+    item->setData(1, Qt::UserRole, owner.color());
+    item->setData(1, Qt::ToolTipRole, owner.toString());
+
     item->setFlags(
         QFlags<Qt::ItemFlag>(
             Qt::ItemIsEnabled | 

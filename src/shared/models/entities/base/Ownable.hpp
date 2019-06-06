@@ -17,7 +17,7 @@ class Ownable : public Serializable {
         };
 
         RPZUser owner() { 
-            return this->value("owner").toHash(); 
+            return this->value("owner", RPZUser()).toHash(); 
         };
 
         void setOwnership(const RPZUser &user) { 

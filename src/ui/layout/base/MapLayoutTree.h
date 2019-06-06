@@ -20,6 +20,8 @@
 
 #include "src/ui/others/ClientBindable.hpp"
 
+#include "MapLayoutItemDelegate.hpp"
+
 class MapLayoutTree : public RPZTree, ClientBindable {
 
     Q_OBJECT
@@ -54,7 +56,7 @@ class MapLayoutTree : public RPZTree, ClientBindable {
         void _onElementSelectionChanged();
         void _onElementDoubleClicked(QTreeWidgetItem * item, int column);
         void _onRenamedAsset(const QString &assetId, const QString &newName);
-
+        
         QHash<snowflake_uid, QTreeWidgetItem*> _treeItemsByAtomId;
         QHash<QString, QSet<snowflake_uid>> _atomIdsBoundByAssetId;
         

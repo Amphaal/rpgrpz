@@ -3,9 +3,9 @@
 #include <QWidget>
 #include <QVBoxLayout>
 
-#include "layout/MapLayoutTree.h"
-#include "layout/LayerSelector.h"
-#include "layout/AtomEditor.h"
+#include "base/MapLayoutTree.h"
+#include "base/LayerSelector.h"
+#include "AtomEditor.h"
 
 class MapLayoutManager : public QWidget {
     public:

@@ -46,9 +46,8 @@ void MapHint::_alterSceneGlobal(AlterationPayload &payload) {
     //on reset
     auto pType = payload.type();
     if(pType == AlterationPayload::Alteration::Reset) {
-        this->_selfElements.clear();
         this->_atomsById.clear();
-        this->_foreignElementIdsByOwnerId.clear();
+        this->_atomIdsByOwnerId.clear();
     }
 
     //handling
@@ -83,11 +82,7 @@ RPZAtom* MapHint::_alterSceneInternal(const AlterationPayload::Alteration &type,
             auto owner = newAtom.owner();
 
             //bind to owners
-            if(!owner.isEmpty()) {
-                this->_foreignElementIdsByOwnerId[owner.id()].insert(targetedAtomId);
-            } else {
-                this->_selfElements.insert(targetedAtomId);
-            }
+            this->_atomIdsByOwnerId[owner.id()].insert(targetedAtomId);
 
             //bind elem
             this->_atomsById.insert(targetedAtomId, newAtom);
@@ -149,11 +144,7 @@ RPZAtom* MapHint::_alterSceneInternal(const AlterationPayload::Alteration &type,
             auto storedAtomOwner = storedAtom->owner();
 
             //unbind from owners
-            if(!storedAtomOwner.isEmpty()) {
-               this->_foreignElementIdsByOwnerId[storedAtomOwner.id()].remove(targetedAtomId);
-            } else {
-                this->_selfElements.remove(targetedAtomId);
-            }
+            this->_atomIdsByOwnerId[storedAtomOwner.id()].remove(targetedAtomId);
 
             //update 
             delete storedAtom->graphicsItem();

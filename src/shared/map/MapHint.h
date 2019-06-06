@@ -33,8 +33,7 @@ class MapHint : public QObject {
         RPZMap<RPZAtom> _atomsById;
 
         //credentials handling
-        QSet<snowflake_uid> _selfElements;
-        QHash<snowflake_uid, QSet<snowflake_uid>> _foreignElementIdsByOwnerId;
+        QHash<snowflake_uid, QSet<snowflake_uid>> _atomIdsByOwnerId;
 
         //alter the inner atoms lists
         virtual void _alterSceneGlobal(AlterationPayload &payload);

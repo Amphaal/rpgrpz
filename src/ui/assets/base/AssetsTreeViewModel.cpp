@@ -220,6 +220,7 @@ QVariant AssetsTreeViewModel::data(const QModelIndex &index, int role) const {
             return QVariant();
     }
     
+    return QVariant();
 }
 
 bool AssetsTreeViewModel::setData(const QModelIndex &index, const QVariant &value, int role) {

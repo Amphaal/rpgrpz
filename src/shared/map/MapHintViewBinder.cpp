@@ -251,7 +251,7 @@ void MapHintViewBinder::setPenColor(QColor &color) {
     this->_penColor = color;
 
     //update self graphic path items with new color
-    for(auto &elemId : this->_selfElements) {
+    for(auto &elemId : this->_atomIdsByOwnerId[0]) {
         
         auto gi = this->_atomsById[elemId].graphicsItem();
         
