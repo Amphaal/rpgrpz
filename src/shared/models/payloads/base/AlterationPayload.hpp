@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QVariantHash>
+#include "libs/snowflake.hpp"
 
 class AlterationPayload : public QVariantHash { 
     public:
@@ -22,7 +23,9 @@ class AlterationPayload : public QVariantHash {
             Reset,
             TextChanged,
             Rotated,
-            Scaled
+            Scaled,
+            LockChanged,
+            VisibilityChanged
         }; 
 
         AlterationPayload(const QVariantHash &hash) : QVariantHash(hash) {
@@ -68,7 +71,9 @@ class AlterationPayload : public QVariantHash {
             LayerChanged,
             TextChanged,
             Rotated,
-            Scaled 
+            Scaled,
+            LockChanged,
+            VisibilityChanged 
         };
 
         static const inline QList<Alteration> _buildGraphicsItemAlterations = {

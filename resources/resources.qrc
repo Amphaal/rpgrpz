@@ -12,6 +12,8 @@
         <file>icons/app/tools/reset.png</file>
         <file>icons/app/tools/cursor.png</file>
         <file>icons/app/tools/text.png</file>
+        <file>icons/app/tools/hidden.png</file>
+        <file>icons/app/tools/lock.png</file>
         <file>icons/app/manager/layer.png</file>
         <file>icons/app/manager/npc.png</file>
         <file>icons/app/manager/asset.png</file>

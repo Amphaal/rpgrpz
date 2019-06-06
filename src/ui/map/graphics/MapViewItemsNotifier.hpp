@@ -21,7 +21,15 @@ class MapViewItemsNotified  {
 };
 
 class MapViewItemsNotifier  {
+    
     public:
+        static QFlags<QGraphicsItem::GraphicsItemFlag> defaultFlags() {
+            return QFlags<QGraphicsItem::GraphicsItemFlag>(
+                QGraphicsItem::GraphicsItemFlag::ItemIsSelectable |
+                QGraphicsItem::GraphicsItemFlag::ItemIsMovable
+            );
+        }
+
         MapViewItemsNotifier(MapViewItemsNotified* targetToNotify, QGraphicsItem* item) : _toNotify(targetToNotify), _item(item) { 
             
             this->activateNotifications();
@@ -32,25 +40,14 @@ class MapViewItemsNotifier  {
         }
 
         void disableNotifications() {
-            
-            //default flags
-            auto flags = QFlags<QGraphicsItem::GraphicsItemFlag>(
-                QGraphicsItem::GraphicsItemFlag::ItemIsSelectable |
-                QGraphicsItem::GraphicsItemFlag::ItemIsMovable
-            );
-            this->_item->setFlags(flags);
-
+            this->_item->setFlags(defaultFlags());
             this->_mustNotify = false;
         }
 
         void activateNotifications() {
 
-            //default flags
-            auto flags = QFlags<QGraphicsItem::GraphicsItemFlag>(
-                QGraphicsItem::GraphicsItemFlag::ItemIsSelectable |
-                QGraphicsItem::GraphicsItemFlag::ItemIsMovable |
-                QGraphicsItem::GraphicsItemFlag::ItemSendsGeometryChanges
-            );
+            auto flags = defaultFlags();
+            flags.setFlag(QGraphicsItem::GraphicsItemFlag::ItemSendsGeometryChanges);
             this->_item->setFlags(flags);
 
             this->_mustNotify = true;

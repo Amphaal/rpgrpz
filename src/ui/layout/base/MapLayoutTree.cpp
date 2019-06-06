@@ -2,9 +2,10 @@
 
 MapLayoutTree::MapLayoutTree(QWidget * parent) : RPZTree(parent) {
     
-    this->setItemDelegateForColumn(1, new MapLayoutItemDelegate);
+    this->setItemDelegateForColumn(1, new LockAndVisibilityDelegate);
+    this->setItemDelegateForColumn(2, new OwnerDelegate);
 
-    this->setColumnCount(2);
+    this->setColumnCount(3);
 
     this->setHeaderHidden(true);
     this->header()->setStretchLastSection(false);
@@ -12,6 +13,7 @@ MapLayoutTree::MapLayoutTree(QWidget * parent) : RPZTree(parent) {
 
     this->header()->setSectionResizeMode(0, QHeaderView::Stretch);
     this->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    this->header()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
 
     this->setSelectionBehavior(QAbstractItemView::SelectRows);
     this->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -307,9 +309,12 @@ QTreeWidgetItem* MapLayoutTree::_createTreeItem(RPZAtom &atom) {
     item->setData(0, Qt::UserRole, atom.id());
     item->setData(0, 666, mdata.assetId());
 
+    QVariantList hl { mdata.isHidden(), mdata.isLocked() };
+    item->setData(1, Qt::UserRole, hl);
+
     auto owner = atom.owner();
-    item->setData(1, Qt::UserRole, owner.color());
-    item->setData(1, Qt::ToolTipRole, owner.toString());
+    item->setData(2, Qt::UserRole, owner.color());
+    item->setData(2, Qt::ToolTipRole, owner.toString());
 
     item->setFlags(
         QFlags<Qt::ItemFlag>(

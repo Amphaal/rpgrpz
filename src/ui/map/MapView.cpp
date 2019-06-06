@@ -14,10 +14,9 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
     this->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
     this->update();
 
-    //background
-    auto background = new QBrush("#EEE", Qt::CrossPattern);
-    this->setBackgroundBrush(*background);
-    
+    //background / foreground
+    this->setBackgroundBrush(QBrush("#EEE", Qt::BrushStyle::CrossPattern));
+
     //to route from MapHints
     QObject::connect(
         this->_hints, &MapHint::atomsAltered,

@@ -10,6 +10,8 @@
 #include "payloads/TextChangedPayload.hpp"
 #include "payloads/RotatedPayload.hpp"
 #include "payloads/ScaledPayload.hpp"
+#include "payloads/VisibilityPayload.hpp"
+#include "payloads/LockingPayload.hpp"
 
 class Payload {
     public:
@@ -17,6 +19,10 @@ class Payload {
             auto type = (AlterationPayload::Alteration)payload["t"].toInt();
 
             switch(type) {
+                case AlterationPayload::Alteration::LockChanged:
+                    return new LockingPayload(payload);
+                case AlterationPayload::Alteration::VisibilityChanged:
+                    return new VisibilityPayload(payload);
                 case AlterationPayload::Alteration::Added:                  
                     return new AddedPayload(payload);
                 case AlterationPayload::Alteration::Focused:

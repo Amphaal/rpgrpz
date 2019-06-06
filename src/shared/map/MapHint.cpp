@@ -93,6 +93,24 @@ RPZAtom* MapHint::_alterSceneInternal(const AlterationPayload::Alteration &type,
         }
         break;
         
+        // on locking change
+        case AlterationPayload::Alteration::LockChanged: {
+            auto isLocked = atomAlteration.toBool();
+            auto mdata = storedAtom->metadata();
+            mdata.setLocked(isLocked);
+            storedAtom->setMetadata(mdata);
+        }
+        break;
+        
+        // on changing visibility
+        case AlterationPayload::Alteration::VisibilityChanged: {
+            auto isHidden = atomAlteration.toBool();
+            auto mdata = storedAtom->metadata();
+            mdata.setHidden(isHidden);
+            storedAtom->setMetadata(mdata);
+        }
+        break;
+
         //on move
         case AlterationPayload::Alteration::Moved: {
             auto position = atomAlteration.toPointF();

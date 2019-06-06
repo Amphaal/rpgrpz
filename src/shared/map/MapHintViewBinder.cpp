@@ -588,6 +588,22 @@ RPZAtom* MapHintViewBinder::_alterSceneInternal(const AlterationPayload::Alterat
         }
         break;
 
+        // on locking change
+        case AlterationPayload::Alteration::LockChanged: {
+            auto locked = updatedAtom->metadata().isLocked();
+            auto flags = !locked ? MapViewItemsNotifier::defaultFlags() : 0;
+            updatedAtom->graphicsItem()->setFlags(flags);
+        }
+        break;
+        
+        // on changing visibility
+        case AlterationPayload::Alteration::VisibilityChanged: {
+            auto hidden = updatedAtom->metadata().isHidden();
+            auto opacity = hidden ? .1 : 1;
+            updatedAtom->graphicsItem()->setOpacity(opacity);
+        }
+        break;
+
         //on rotation
         case AlterationPayload::Alteration::Rotated: {
             auto destRotation = updatedAtom->metadata().rotation();

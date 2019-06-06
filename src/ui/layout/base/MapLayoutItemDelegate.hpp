@@ -6,9 +6,9 @@
 
 #include <QStyledItemDelegate>
 
-class MapLayoutItemDelegate  : public QStyledItemDelegate {
+class OwnerDelegate  : public QStyledItemDelegate {
     public:
-        MapLayoutItemDelegate(QWidget *parent = nullptr) : QStyledItemDelegate(parent) {}
+        OwnerDelegate(QWidget *parent = nullptr) : QStyledItemDelegate(parent) {}
 
         void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override {
             
@@ -26,11 +26,33 @@ class MapLayoutItemDelegate  : public QStyledItemDelegate {
                 );
 
                 //draw
-                painter->drawRect(indicator);
-                qDebug() << "drawn";
+                return painter->drawRect(indicator);
             }
 
             QStyledItemDelegate::paint(painter, option, index);
+        }
+
+        QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override {
+            return QStyledItemDelegate::sizeHint(option, index);
+        }
+};
+
+class LockAndVisibilityDelegate  : public QStyledItemDelegate {
+    public:
+        LockAndVisibilityDelegate(QWidget *parent = nullptr) : QStyledItemDelegate(parent) { }
+
+        void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override {
+            
+            //fetch data
+            auto data = index.data(Qt::UserRole).toList();
+            auto isHidden = data[0].toBool();
+            auto isLocked = data[1].toBool();
+
+            if(isHidden) painter->drawPixmap(option.rect.topLeft(), QPixmap(":/icons/app/tools/hidden.png"));
+            if(isLocked) painter->drawPixmap(option.rect.topRight(), QPixmap(":/icons/app/tools/lock.png"));
+
+            //TODO add interactions
+            // return QStyledItemDelegate::paint(painter, option, index);
         }
 
         QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override {
