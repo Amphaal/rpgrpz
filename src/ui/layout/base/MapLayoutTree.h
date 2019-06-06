@@ -47,7 +47,9 @@ class MapLayoutTree : public RPZTree, ClientBindable {
 
         void _renderCustomContextMenu(const QPoint &pos);
         void _generateMenu(QList<QTreeWidgetItem*> &itemsToProcess, const QPoint &whereToDisplay);
-            void _moveSelectionToLayer(int targetLayer);
+            QList<QAction*> _genLayerActions(QList<QTreeWidgetItem*> &selectedItems);
+            QList<QAction*> _genVisibilityActions(QList<QTreeWidgetItem*> &selectedItems);
+            QList<QAction*> _genAvailabilityActions(QList<QTreeWidgetItem*> &selectedItems);
 
         QHash<int, QTreeWidgetItem*> _layersItems;
         QTreeWidgetItem* _getLayerItem(int layer);

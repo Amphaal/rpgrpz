@@ -6,6 +6,12 @@
 
 #include <QStyledItemDelegate>
 
+enum LayoutCustomRoles { 
+    AssetIdRole = 260, 
+    VisibilityRole = 261, 
+    AvailabilityRole = 262 
+};
+
 class OwnerDelegate  : public QStyledItemDelegate {
     public:
         OwnerDelegate(QWidget *parent = nullptr) : QStyledItemDelegate(parent) {}
@@ -44,18 +50,15 @@ class LockAndVisibilityDelegate  : public QStyledItemDelegate {
         void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override {
             
             //fetch data
-            auto data = index.data(Qt::UserRole).toList();
-            auto isHidden = data[0].toBool();
-            auto isLocked = data[1].toBool();
+            auto isHidden = index.data(VisibilityRole).toBool();
+            auto isLocked = index.data(AvailabilityRole).toBool();
 
             if(isHidden) painter->drawPixmap(option.rect.topLeft(), QPixmap(":/icons/app/tools/hidden.png"));
-            if(isLocked) painter->drawPixmap(option.rect.topRight(), QPixmap(":/icons/app/tools/lock.png"));
+            if(isLocked) painter->drawPixmap(QPoint(option.rect.right()-16, option.rect.top()), QPixmap(":/icons/app/tools/lock.png"));
 
-            //TODO add interactions
-            // return QStyledItemDelegate::paint(painter, option, index);
         }
 
         QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override {
-            return QStyledItemDelegate::sizeHint(option, index);
+            return QSize(32, 16);
         }
 };

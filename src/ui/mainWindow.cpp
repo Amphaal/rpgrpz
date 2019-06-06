@@ -479,7 +479,7 @@ QMenu* MainWindow::_getFileMenu() {
 
     //quit
     auto quitAction = new QAction(I18n::tr()->Menu_Quit(), fileMenuItem);
-    quitAction->setShortcut(QKeySequence::Quit);
+    quitAction->setShortcut(QKeySequence::Close);
     QObject::connect(
         quitAction, &QAction::triggered,
         this, &MainWindow::close

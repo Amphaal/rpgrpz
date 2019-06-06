@@ -599,7 +599,7 @@ RPZAtom* MapHintViewBinder::_alterSceneInternal(const AlterationPayload::Alterat
         // on changing visibility
         case AlterationPayload::Alteration::VisibilityChanged: {
             auto hidden = updatedAtom->metadata().isHidden();
-            auto opacity = hidden ? .1 : 1;
+            auto opacity = hidden ? .05 : 1;
             updatedAtom->graphicsItem()->setOpacity(opacity);
         }
         break;

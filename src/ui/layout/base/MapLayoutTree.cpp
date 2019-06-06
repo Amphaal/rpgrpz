@@ -78,47 +78,118 @@ void MapLayoutTree::_renderCustomContextMenu(const QPoint &pos) {
     this->_generateMenu(itemsToProcess, this->viewport()->mapToGlobal(pos));
 }
 
-void MapLayoutTree::_generateMenu(QList<QTreeWidgetItem*> &itemsToProcess, const QPoint &whereToDisplay) {
+QList<QAction*> MapLayoutTree::_genLayerActions(QList<QTreeWidgetItem*> &selectedItems) {
     
-    //if still no item, stop
-    if(!itemsToProcess.count()) return;
-
     //targets
-    auto riseLayoutTarget = itemsToProcess.first()->parent()->data(0, Qt::UserRole).toInt() + 1;
-    auto lowerLayoutTarget = itemsToProcess.last()->parent()->data(0, Qt::UserRole).toInt() - 1;
+    auto riseLayoutTarget = selectedItems.first()->parent()->data(0, Qt::UserRole).toInt() + 1;
+    auto lowerLayoutTarget = selectedItems.last()->parent()->data(0, Qt::UserRole).toInt() - 1;
 
-    //list of actions to bind to menu
-    QList<QAction*> actions;
+    //helper
+    auto _moveSelectionToLayer = [&](int targetLayer) {
+
+        auto selectedIds = this->_selectedAtomIds();
+
+        //unilateral event, expect only outer calls
+        this->alterTreeElements(LayerChangedPayload(selectedIds, targetLayer));
+    };
+
+    //list of layer actions to bind to menu
+    QList<QAction*> layerActions;
     
         //rise...
         auto riseAction = new QAction("Remonter (Calque " + QString::number(riseLayoutTarget) + ")");
         QObject::connect(
             riseAction, &QAction::triggered,
-            [=]() {this->_moveSelectionToLayer(riseLayoutTarget);}
+            [=]() {_moveSelectionToLayer(riseLayoutTarget);}
         );
-        actions.append(riseAction);
+        layerActions.append(riseAction);
 
         //lower...
         auto lowerAction = new QAction("Descendre (Calque " + QString::number(lowerLayoutTarget) + ")");
         QObject::connect(
             lowerAction, &QAction::triggered,
-            [=]() {this->_moveSelectionToLayer(lowerLayoutTarget);}
+            [=]() {_moveSelectionToLayer(lowerLayoutTarget);}
         );
-        actions.append(lowerAction);
+        layerActions.append(lowerAction);
+    
+    return layerActions;
+}
+
+QList<QAction*> MapLayoutTree::_genVisibilityActions(QList<QTreeWidgetItem*> &selectedItems) {
+   
+    QList<QAction*> out;
+
+    //helper
+    auto _visibilityHelper = [&](bool isHidden) {
+
+        auto selectedIds = this->_selectedAtomIds();
+
+        //unilateral event, expect only outer calls
+        this->alterTreeElements(VisibilityPayload(selectedIds, isHidden));
+    };
+
+    auto showAction = new QAction("Montrer");
+    QObject::connect(
+        showAction, &QAction::triggered,
+        [=]() {_visibilityHelper(false);}
+    );
+    out.append(showAction);
+
+    auto hideAction = new QAction("Cacher");
+    QObject::connect(
+        hideAction, &QAction::triggered,
+        [=]() {_visibilityHelper(true);}
+    );
+    out.append(hideAction);
+
+    return out;
+
+}
+QList<QAction*> MapLayoutTree::_genAvailabilityActions(QList<QTreeWidgetItem*> &selectedItems) {
+    
+    QList<QAction*> out;
+
+    //helper
+    auto _availabilityHelper = [&](bool isLocked) {
+
+        auto selectedIds = this->_selectedAtomIds();
+
+        //unilateral event, expect only outer calls
+        this->alterTreeElements(LockingPayload(selectedIds, isLocked));
+    };
+
+    auto lockAction = new QAction("Verouiller");
+    QObject::connect(
+        lockAction, &QAction::triggered,
+        [=]() {_availabilityHelper(true);}
+    );
+    out.append(lockAction);
+
+    auto unlockAction = new QAction("Déverouiller");
+    QObject::connect(
+        unlockAction, &QAction::triggered,
+        [=]() {_availabilityHelper(false);}
+    );
+    out.append(unlockAction);
+
+    return out;
+
+}
+
+void MapLayoutTree::_generateMenu(QList<QTreeWidgetItem*> &itemsToProcess, const QPoint &whereToDisplay) {
+    
+    //if still no item, stop
+    if(!itemsToProcess.count()) return;
 
     //display menu
     QMenu menu;
-    menu.addActions(actions);
+    menu.addActions(this->_genLayerActions(itemsToProcess));
+    menu.addSeparator();
+    menu.addActions(this->_genVisibilityActions(itemsToProcess));
+    menu.addSeparator();
+    menu.addActions(this->_genAvailabilityActions(itemsToProcess));
+
     menu.exec(whereToDisplay);
-}
-
-void MapLayoutTree::_moveSelectionToLayer(int targetLayer) {
-
-    auto selectedIds = this->_selectedAtomIds();
-    this->_changeLayer(selectedIds, targetLayer);
-
-    //unilateral event, expect only outer calls
-    this->alterTreeElements(LayerChangedPayload(selectedIds, targetLayer));
 }
 
 
@@ -183,10 +254,11 @@ void MapLayoutTree::alterTreeElements(QVariantHash &payload) {
         auto item = this->_treeItemsByAtomId[key];
 
         switch(type) {
+
             case AlterationPayload::Alteration::Removed: {
                 
                 auto layerItem = item->parent();
-                auto tbrAtom_assetId = item->data(0, 666).toString();
+                auto tbrAtom_assetId = item->data(0, LayoutCustomRoles::AssetIdRole).toString();
 
                 //if has assetId, remove it from tracking list
                 if(!tbrAtom_assetId.isNull()) {
@@ -200,6 +272,18 @@ void MapLayoutTree::alterTreeElements(QVariantHash &payload) {
                 this->_updateLayerState(layerItem);
             }
             break;
+
+
+            case AlterationPayload::Alteration::LockChanged: {
+                item->setData(1, LayoutCustomRoles::AvailabilityRole, i.value().toBool());
+            }
+            break;
+
+            case AlterationPayload::Alteration::VisibilityChanged: {
+                item->setData(1, LayoutCustomRoles::VisibilityRole, i.value().toBool());
+            }
+            break;
+
 
             case AlterationPayload::Alteration::Selected: {
                 item->setSelected(true);
@@ -307,10 +391,10 @@ QTreeWidgetItem* MapLayoutTree::_createTreeItem(RPZAtom &atom) {
     
     item->setText(0, atom.descriptor());
     item->setData(0, Qt::UserRole, atom.id());
-    item->setData(0, 666, mdata.assetId());
+    item->setData(0, LayoutCustomRoles::AssetIdRole, mdata.assetId());
 
-    QVariantList hl { mdata.isHidden(), mdata.isLocked() };
-    item->setData(1, Qt::UserRole, hl);
+    item->setData(1, LayoutCustomRoles::VisibilityRole, mdata.isHidden());
+    item->setData(1, LayoutCustomRoles::AvailabilityRole, mdata.isLocked());
 
     auto owner = atom.owner();
     item->setData(2, Qt::UserRole, owner.color());
@@ -345,7 +429,7 @@ QTreeWidgetItem* MapLayoutTree::_createTreeItem(RPZAtom &atom) {
 void MapLayoutTree::_updateLayerState(QTreeWidgetItem* layerItem) {
     if(layerItem->childCount()) {
         //has children, update count column
-        layerItem->setText(1, QString::number(layerItem->childCount()));
+        layerItem->setText(2, QString::number(layerItem->childCount()));
         layerItem->setExpanded(true);
     } else {
         //has no more children, remove

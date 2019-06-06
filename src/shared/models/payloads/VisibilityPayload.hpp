@@ -5,7 +5,7 @@
 class VisibilityPayload : public MultipleTargetsPayload {
     public:
         VisibilityPayload(const QVariantHash &hash) : MultipleTargetsPayload(hash) {}
-        VisibilityPayload(const QVector<snowflake_uid> &changedAtomIds, bool isHidden) : MultipleTargetsPayload(AlterationPayload::Alteration::LayerChanged, changedAtomIds) {
+        VisibilityPayload(const QVector<snowflake_uid> &changedAtomIds, bool isHidden) : MultipleTargetsPayload(AlterationPayload::Alteration::VisibilityChanged, changedAtomIds) {
             this->_setHidden(isHidden);
         }
 
