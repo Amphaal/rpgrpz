@@ -9,7 +9,7 @@ class AnimationTimeLine : public QTimeLine {
     Q_OBJECT
 
     public:
-        enum Type { Rotation, Zoom, HorizontalMove, VerticalMove };
+        enum Type { Zoom, HorizontalMove, VerticalMove };
 
         void setStateModifier(const qreal modifier) { this->_currentModifier = modifier; };
 

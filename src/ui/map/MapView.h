@@ -108,14 +108,6 @@ class MapView : public QGraphicsView, public ClientBindable {
             void _goToSceneCenter();
             void _animatedMove(const Qt::Orientation &orientation, int correction);
 
-        //rotating...
-            QCursor * _rotateCursor = nullptr;
-            double _degreesFromNorth = 0;
-            void _rotateFromPoint(const QPoint &evtPoint);
-            void _rotate(double deg);
-            void _animatedRotation(double deg);
-            void _rotateBackToNorth();
-
         //d&d
             AssetsDatabase* _droppableSourceDatabase = nullptr;
             AssetsDatabaseElement* _droppableElement = nullptr;

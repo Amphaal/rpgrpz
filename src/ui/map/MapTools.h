@@ -17,8 +17,6 @@ class MapTools : public QToolBar {
             Select, 
             Scroll, 
             Draw, 
-            Rotate, 
-            RotateToNorth, 
             ResetView, 
             Text 
         };

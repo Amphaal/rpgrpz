@@ -8,9 +8,6 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
     this->_hints = new MapHintViewBinder(this); //after first inst of scene
     this->setAcceptDrops(true);
     this->_changeTool(MapView::_defaultTool);
-
-    //custom cursors
-    this->_rotateCursor = new QCursor(QPixmap(":/icons/app/tools/rotate.png"));
     
     //openGL activation
     this->setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers | QGL::DirectRendering)));
@@ -40,7 +37,6 @@ void MapView::resizeEvent(QResizeEvent * event) {
 void MapView::_goToDefaultViewState() {
     this->_goToSceneCenter();
     this->_goToDefaultZoom();
-    this->_rotateBackToNorth();
 }
 
 MapHintViewBinder* MapView::hints() {
@@ -64,14 +60,6 @@ void MapView::keyPressEvent(QKeyEvent * event) {
         case Qt::Key::Key_Escape:
             this->_changeTool(MapView::_defaultTool);
             emit unselectCurrentToolAsked();
-            break;
-        
-        case Qt::Key::Key_PageUp:
-            this->_animatedRotation(1);
-            break;
-
-        case Qt::Key::Key_PageDown:
-            this->_animatedRotation(-1);
             break;
         
         case Qt::Key::Key_Up:
@@ -212,7 +200,7 @@ void MapView::mousePressEvent(QMouseEvent *event) {
             this->_changeTool(MapTools::Actions::Scroll, true);
             break;
         case Qt::MouseButton::RightButton:
-            this->_changeTool(MapTools::Actions::Rotate, true);
+            //TODO Contextual menu
             break;
         case Qt::MouseButton::LeftButton:
             this->_toolOnMousePress(this->_getCurrentTool());
@@ -228,9 +216,6 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
     switch(this->_getCurrentTool()) {
         case MapTools::Actions::Draw:
             if(this->_isMousePressed) this->_drawLineTo(event->pos());
-            break;
-        case MapTools::Actions::Rotate:
-            this->_rotateFromPoint(event->pos());
             break;
         case MapTools::Actions::Text:
             if(this->_tempText) this->_hints->centerGraphicsItemToPoint(this->_tempText, event->pos());
@@ -338,11 +323,6 @@ void MapView::_changeTool(MapTools::Actions newTool, const bool quickChange) {
             this->setDragMode(QGraphicsView::DragMode::NoDrag);
             this->setCursor(Qt::IBeamCursor);
             break;
-        case MapTools::Actions::Rotate:
-            this->setInteractive(false);
-            this->setDragMode(QGraphicsView::DragMode::NoDrag);
-            this->setCursor(*this->_rotateCursor);
-            break;
         case MapTools::Actions::Scroll:
             this->setInteractive(false);
             this->setDragMode(QGraphicsView::DragMode::ScrollHandDrag);
@@ -362,9 +342,6 @@ void MapView::changeToolFromAction(const MapTools::Actions &instruction) {
 
     //oneshot instructions switch
     switch(instruction) {
-        case MapTools::Actions::RotateToNorth:
-            this->_rotateBackToNorth();
-            return;
         case MapTools::Actions::ResetView:
             this->_goToDefaultViewState();
             return;
@@ -440,44 +417,6 @@ void MapView::wheelEvent(QWheelEvent *event) {
 //////////////
 /* END ZOOM */
 //////////////
-
-////////////
-/* ROTATE */
-////////////
-
-void MapView::_animatedRotation(double deg) {
-    
-    //define animation handler
-    AnimationTimeLine::use(AnimationTimeLine::Type::Rotation, deg, this, [&](qreal base, qreal prc) {
-        this->_rotate(base);
-    });
-
-}
-
-void MapView::_rotateFromPoint(const QPoint &evtPoint) {
-    const auto way = this->_lastPointMousePressing - evtPoint;
-    auto pp = ((double)way.y()) / 5;
-    return this->_rotate(pp);
-}
-
-void MapView::_rotate(double deg) {
-    this->_degreesFromNorth += deg; 
-    this->rotate(deg);
-}
-
-void MapView::_rotateBackToNorth() {
-    
-    if(this->_degreesFromNorth == 0) return;
-
-    auto adjust = fmod(this->_degreesFromNorth, 360);
-    this->rotate(-this->_degreesFromNorth);
-    
-    this->_degreesFromNorth = 0;
-}
-
-////////////////
-/* END ROTATE */
-////////////////
 
 //////////
 /* DROP */

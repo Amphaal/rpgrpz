@@ -14,9 +14,9 @@
 
 class MapViewGraphicsPathItem : public QGraphicsPathItem, public MapViewItemsNotifier {
     public:
-        MapViewGraphicsPathItem(MapViewItemsNotified* toNotify, const QPainterPath & path, const QPen &pen, QGraphicsItem * parent = 0) : 
-        QGraphicsPathItem(path, parent), 
-        MapViewItemsNotifier(toNotify, this) {
+        MapViewGraphicsPathItem(MapViewItemsNotified* toNotify, const QPainterPath & path, const QPen &pen) : 
+        QGraphicsPathItem(path), 
+        MapViewItemsNotifier(toNotify, this)  {
             this->setPen(pen);
         }
             
@@ -60,8 +60,8 @@ class MapViewGraphicsTextItem : public QGraphicsTextItem, public MapViewItemsNot
 
 class MapViewGraphicsRectItem : public QGraphicsRectItem, public MapViewItemsNotifier {
     public:
-        MapViewGraphicsRectItem(MapViewItemsNotified* toNotify, const QRectF & rect, const QPen &pen, const QBrush &brush, QGraphicsItem * parent = 0) :
-        QGraphicsRectItem(rect, parent), 
+        MapViewGraphicsRectItem(MapViewItemsNotified* toNotify, const QRectF & rect, const QPen &pen, const QBrush &brush) :
+        QGraphicsRectItem(rect), 
         MapViewItemsNotifier(toNotify, this) {
             this->setBrush(brush);
             this->setPen(pen);
@@ -76,8 +76,8 @@ class MapViewGraphicsRectItem : public QGraphicsRectItem, public MapViewItemsNot
 
 class MapViewGraphicsSvgItem : public QGraphicsSvgItem, public MapViewItemsNotifier {
     public:
-        MapViewGraphicsSvgItem(MapViewItemsNotified* toNotify, const QString &fileName, QGraphicsItem *parent = nullptr) : 
-        QGraphicsSvgItem(fileName, parent), 
+        MapViewGraphicsSvgItem(MapViewItemsNotified* toNotify, const QString &fileName) : 
+        QGraphicsSvgItem(fileName), 
         MapViewItemsNotifier(toNotify, this) {}
     
     private:
@@ -89,8 +89,8 @@ class MapViewGraphicsSvgItem : public QGraphicsSvgItem, public MapViewItemsNotif
 
 class MapViewGraphicsPixmapItem : public QGraphicsPixmapItem, public MapViewItemsNotifier {
     public:
-        MapViewGraphicsPixmapItem(MapViewItemsNotified* toNotify, const QString &fileName, QGraphicsItem * parent = 0) : 
-        QGraphicsPixmapItem(QPixmap(fileName), parent), 
+        MapViewGraphicsPixmapItem(MapViewItemsNotified* toNotify, const QString &fileName) : 
+        QGraphicsPixmapItem(QPixmap(fileName)), 
         MapViewItemsNotifier(toNotify, this) {}
 
     private:

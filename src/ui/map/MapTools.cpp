@@ -55,13 +55,6 @@ MapTools::MapTools(QWidget* parent) : QToolBar(parent) {
     );
     this->addWidget(sizer);
     this->addSeparator();
-
-    //to north
-    auto tonorth = new QAction(this);
-    tonorth->setIcon(QIcon(":/icons/app/tools/north.png"));
-    tonorth->setData(MapTools::Actions::RotateToNorth);
-    tonorth->setIconText("Repositionner vers le nord");
-    this->addAction(tonorth);
     
     //reset
     auto reset = new QAction(this);

@@ -28,6 +28,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             item->setRotation(metadata.rotation());
         }
 
+
     public:
         MapViewGraphicsScene(int defaultSize) : QGraphicsScene(defaultSize, defaultSize, defaultSize, defaultSize) { }
 
