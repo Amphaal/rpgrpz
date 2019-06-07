@@ -157,9 +157,11 @@ list(APPEND SOURCES
 list(APPEND SOURCES
 
     src/ui/map/graphics/MapViewGraphicsScene.hpp
-    src/shared/map/AtomsStorage.cpp
+    src/shared/atoms/AtomsHandler.cpp
+    src/shared/atoms/AtomsStorage.cpp
     
-    src/shared/map/ViewMapHint.cpp
+    src/shared/atoms/ViewMapHint.cpp
+    src/shared/atoms/TreeMapHint.cpp
 
     src/ui/map/base/AnimationTimeLine.hpp
     src/ui/map/MapTools.cpp

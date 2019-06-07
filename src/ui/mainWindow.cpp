@@ -225,7 +225,13 @@ void MainWindow::_initUIApp() {
     //on map alteration, update treelist
     QObject::connect(
         this->_mapView->hints(), &ViewMapHint::alterationRequested,
-        this->_mlManager->tree(), &MapLayoutTree::alterTreeElements
+        this->_mlManager->tree()->hints(), &TreeMapHint::handleAlterationRequest
+    );
+
+    //intercept alteration from layout manager
+    QObject::connect(
+        this->_mlManager->tree()->hints(), &TreeMapHint::elementsAlterationAsked,
+        this->_mapView->hints(), &ViewMapHint::handleAlterationRequest
     );
 
     //on map selection change
@@ -241,11 +247,7 @@ void MainWindow::_initUIApp() {
         this->_mapView->hints(), &ViewMapHint::setDefaultLayer
     );
 
-    //intercept alteration from layout manager
-    QObject::connect(
-        this->_mlManager->tree(), &MapLayoutTree::elementsAlterationAsked,
-        this->_mapView->hints(), &ViewMapHint::handleAlterationRequest
-    );
+
 
     //intercept alteration from editor
     QObject::connect(

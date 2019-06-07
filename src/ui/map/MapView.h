@@ -24,7 +24,7 @@
 #include "MapTools.h"
 #include "base/AnimationTimeLine.hpp"
 
-#include "src/shared/map/ViewMapHint.h"
+#include "src/shared/atoms/ViewMapHint.h"
 #include "src/shared/models/entities/RPZAtom.hpp"
 #include "src/ui/others/ClientBindable.hpp"
 
