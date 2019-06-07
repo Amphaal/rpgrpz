@@ -1,6 +1,6 @@
 #include "TreeMapHint.h"
 
-TreeMapHint::TreeMapHint(QTreeWidget* boundTree) : AtomsHandler(AlterationPayload::Source::Local_MapLayout), _boundTree(boundTree) { 
+TreeMapHint::TreeMapHint(QTreeWidget* boundTree) : AtomsHandler(AlterationPayload::Source::Local_MapLayout), AtomsContextualMenuHandler(this), _boundTree(boundTree) { 
     
     //selection changed
     QObject::connect(
@@ -146,6 +146,8 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const AlterationPayload::Alteration
         }
         break;
     }
+
+    return nullptr;
 }
 
 void TreeMapHint::_onRenamedAsset(const QString &assetId, const QString &newName) {
@@ -276,7 +278,7 @@ snowflake_uid TreeMapHint::_extractAtomIdFromItem(QTreeWidgetItem* item) const {
     return item->data(0, Qt::UserRole).toULongLong();
 }
 
-QVector<snowflake_uid> TreeMapHint::_selectedAtomIds() const {
+QVector<snowflake_uid> TreeMapHint::_selectedAtomIds() {
     QVector<snowflake_uid> idList;
     for(auto i : this->_boundTree->selectedItems()) {
         auto boundId = this->_extractAtomIdFromItem(i);

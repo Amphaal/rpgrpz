@@ -8,9 +8,11 @@
 
 #include "src/ui/layout/base/MapLayoutItemDelegate.hpp"
 
+#include "AtomsContextualMenuHandler.hpp"
+
 #include <QTreeWidget>
 
-class TreeMapHint : public AtomsHandler {
+class TreeMapHint : public AtomsHandler, public AtomsContextualMenuHandler  {
     public:
         TreeMapHint(QTreeWidget* boundTree);
 
@@ -29,7 +31,7 @@ class TreeMapHint : public AtomsHandler {
         QHash<snowflake_uid, QTreeWidgetItem*> _treeItemsByAtomId;
         QHash<QString, QSet<snowflake_uid>> _atomIdsBoundByAssetId;
         
-        QVector<snowflake_uid> _selectedAtomIds() const;
+        QVector<snowflake_uid> _selectedAtomIds() override;
         snowflake_uid _extractAtomIdFromItem(QTreeWidgetItem* item) const;
 
         QTreeWidgetItem* _createTreeItem(RPZAtom &atom);

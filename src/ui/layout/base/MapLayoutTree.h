@@ -35,13 +35,8 @@ class MapLayoutTree : public RPZTree {
     protected:
         void keyPressEvent(QKeyEvent * event) override;
 
+        void contextMenuEvent(QContextMenuEvent *event) override;
+
     private:
         TreeMapHint* _hints;
-
-        void _renderCustomContextMenu(const QPoint &pos);
-        void _generateMenu(QList<QTreeWidgetItem*> &itemsToProcess, const QPoint &whereToDisplay);
-            QList<QAction*> _genLayerActions(QList<QTreeWidgetItem*> &selectedItems);
-            QList<QAction*> _genVisibilityActions(QList<QTreeWidgetItem*> &selectedItems);
-            QList<QAction*> _genAvailabilityActions(QList<QTreeWidgetItem*> &selectedItems);
-
 };

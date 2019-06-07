@@ -26,13 +26,41 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
     //default state
     this->scale(this->_defaultScale, this->_defaultScale);
     this->_goToDefaultViewState();
-
-    this->setContextMenuPolicy(Qt::CustomContextMenu);
     
 }
 
 void MapView::contextMenuEvent(QContextMenuEvent *event) {
-    //TODO context menu
+
+    auto pos = event->pos();
+    auto selected = this->scene()->selectedItems();
+    if(!selected.count()) return;
+
+    //targets
+    auto firstPass = true;
+    auto riseLayoutTarget = 0;
+    auto lowerLayoutTarget = 0;
+
+    for(auto &item : selected) {
+        
+        auto atom = (RPZAtom*)item->data(0).toLongLong();
+        auto layer = atom->metadata().layer();
+        
+        if(firstPass) {
+            firstPass = false;
+            riseLayoutTarget = layer;
+            lowerLayoutTarget = layer;
+            continue;
+        }
+
+        if(layer > riseLayoutTarget) riseLayoutTarget = layer;
+        if(layer < lowerLayoutTarget) lowerLayoutTarget = layer;
+    }
+
+    riseLayoutTarget++;
+    lowerLayoutTarget--;
+
+    //create menu
+    this->_hints->invokeMenu(riseLayoutTarget, lowerLayoutTarget, this->viewport()->mapToGlobal(pos));
 }
 
 void MapView::resizeEvent(QResizeEvent * event) {

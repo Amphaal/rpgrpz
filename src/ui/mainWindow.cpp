@@ -230,7 +230,7 @@ void MainWindow::_initUIApp() {
 
     //intercept alteration from layout manager
     QObject::connect(
-        this->_mlManager->tree()->hints(), &TreeMapHint::elementsAlterationAsked,
+        this->_mlManager->tree()->hints(), &TreeMapHint::alterationRequested,
         this->_mapView->hints(), &ViewMapHint::handleAlterationRequest
     );
 
@@ -240,14 +240,11 @@ void MainWindow::_initUIApp() {
         this->_mlManager->editor(), &AtomEditor::buildEditor
     );
 
-
     //on default layer changed
     QObject::connect(
         this->_mlManager->layerSelector()->spinbox(), qOverload<int>(&QSpinBox::valueChanged),
         this->_mapView->hints(), &ViewMapHint::setDefaultLayer
     );
-
-
 
     //intercept alteration from editor
     QObject::connect(

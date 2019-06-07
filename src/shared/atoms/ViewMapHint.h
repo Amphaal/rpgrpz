@@ -24,7 +24,9 @@
 
 #include "src/ui/map/MapTools.h"
 
-class ViewMapHint : public AtomsStorage {
+#include "AtomsContextualMenuHandler.hpp"
+
+class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
     
     Q_OBJECT
 
@@ -95,6 +97,7 @@ class ViewMapHint : public AtomsStorage {
         void _crossBindingAtomWithGI(RPZAtom* atom, QGraphicsItem* gi);
         RPZAtom* _fetchAtom(QGraphicsItem* graphicElem) const;
         QVector<RPZAtom*> _fetchAtoms(const QList<QGraphicsItem*> &listToFetch) const;
+        QVector<snowflake_uid> _selectedAtomIds() override;
 
         bool _preventInnerGIEventsHandling = false;
         void _onSceneSelectionChanged();

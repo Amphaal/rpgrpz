@@ -1,6 +1,6 @@
 #include "ViewMapHint.h"
 
-ViewMapHint::ViewMapHint(QGraphicsView* boundGv) : AtomsStorage(AlterationPayload::Source::Local_Map), _boundGv(boundGv) {
+ViewMapHint::ViewMapHint(QGraphicsView* boundGv) : AtomsStorage(AlterationPayload::Source::Local_Map), AtomsContextualMenuHandler(this), _boundGv(boundGv) {
 
     //default layer from settings
     this->setDefaultLayer(AppContext::settings()->defaultLayer());
@@ -84,6 +84,18 @@ void ViewMapHint::_onSceneItemChanged(QGraphicsItem* item, int changeFlag) {
         break;
     }
 
+}
+
+QVector<snowflake_uid> ViewMapHint::_selectedAtomIds() {
+    
+    auto selectedAtoms = this->_fetchAtoms(this->scene()->selectedItems());
+    
+    QVector<snowflake_uid> selectedAtomIds;
+    for(auto atom : selectedAtoms) {
+        selectedAtomIds.append(atom->id());
+    }
+    
+    return selectedAtomIds;
 }
 
 void ViewMapHint::_onSceneSelectionChanged() {
@@ -637,6 +649,6 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const AlterationPayload::Alteration
     return updatedAtom;
 }
 
-////////////////////////////
+/////////////////////////////////
 // END AtomsStorage Overriding //
-////////////////////////////
+/////////////////////////////////
