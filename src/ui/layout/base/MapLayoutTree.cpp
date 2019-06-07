@@ -121,10 +121,7 @@ QList<QAction*> MapLayoutTree::_genVisibilityActions(QList<QTreeWidgetItem*> &se
 
     //helper
     auto _visibilityHelper = [&](bool isHidden) {
-
         auto selectedIds = this->_selectedAtomIds();
-
-        //unilateral event, expect only outer calls
         this->alterTreeElements(VisibilityPayload(selectedIds, isHidden));
     };
 
@@ -151,10 +148,7 @@ QList<QAction*> MapLayoutTree::_genAvailabilityActions(QList<QTreeWidgetItem*> &
 
     //helper
     auto _availabilityHelper = [&](bool isLocked) {
-
         auto selectedIds = this->_selectedAtomIds();
-
-        //unilateral event, expect only outer calls
         this->alterTreeElements(LockingPayload(selectedIds, isLocked));
     };
 
@@ -188,6 +182,17 @@ void MapLayoutTree::_generateMenu(QList<QTreeWidgetItem*> &itemsToProcess, const
     menu.addActions(this->_genVisibilityActions(itemsToProcess));
     menu.addSeparator();
     menu.addActions(this->_genAvailabilityActions(itemsToProcess));
+    menu.addSeparator();
+
+    auto del = RPZActions::remove();
+    QObject::connect(
+        del, &QAction::triggered,
+        [&]() {
+            auto selectedIds = this->_selectedAtomIds();
+            this->alterTreeElements(RemovedPayload(selectedIds));
+        }
+    );
+    menu.addAction(del);
 
     menu.exec(whereToDisplay);
 }
@@ -436,14 +441,6 @@ void MapLayoutTree::_updateLayerState(QTreeWidgetItem* layerItem) {
         auto layer = layerItem->data(0, Qt::UserRole).toInt();
         delete this->_layersItems.take(layer);
     }
-}
-
-void MapLayoutTree::_emitAlteration(AlterationPayload &payload) {
-    auto source = payload.source();
-    if(source == AlterationPayload::Source::Network) return; //prevent resending network payloay
-    if(source == AlterationPayload::Source::Undefined) payload.changeSource(this->_source); //inner payload, apply own source
-    
-    emit elementsAlterationAsked(payload);
 }
 
 void MapLayoutTree::keyPressEvent(QKeyEvent * event) {

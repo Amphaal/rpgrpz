@@ -25,28 +25,23 @@
 
 #include "MapLayoutItemDelegate.hpp"
 
+#include "src/shared/map/TreeMapHint.h"
+
 class MapLayoutTree : public RPZTree, ClientBindable {
 
     Q_OBJECT
 
     public:
         MapLayoutTree(QWidget* parent = nullptr);
-    
-    public slots:
-        void alterTreeElements(QVariantHash &payload);
-    
-    signals:
-        void elementsAlterationAsked(QVariantHash &payload);
+        TreeMapHint* hints();
 
     protected:
         void keyPressEvent(QKeyEvent * event) override;
         void onRPZClientConnecting(RPZClient * cc) override;
 
     private:
+        TreeMapHint* _hints;
         bool _preventInnerGIEventsHandling = false;
-        AlterationPayload::Source _source = AlterationPayload::Source::Local_MapLayout;
-
-        void _emitAlteration(AlterationPayload &payload);
 
         void _renderCustomContextMenu(const QPoint &pos);
         void _generateMenu(QList<QTreeWidgetItem*> &itemsToProcess, const QPoint &whereToDisplay);

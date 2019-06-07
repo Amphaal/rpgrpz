@@ -224,13 +224,13 @@ void MainWindow::_initUIApp() {
 
     //on map alteration, update treelist
     QObject::connect(
-        this->_mapView->hints(), &MapHintViewBinder::atomsAltered,
+        this->_mapView->hints(), &ViewMapHint::alterationRequested,
         this->_mlManager->tree(), &MapLayoutTree::alterTreeElements
     );
 
     //on map selection change
     QObject::connect(
-        this->_mapView->hints(), &MapHintViewBinder::selectionChanged,
+        this->_mapView->hints(), &ViewMapHint::selectionChanged,
         this->_mlManager->editor(), &AtomEditor::buildEditor
     );
 
@@ -238,19 +238,19 @@ void MainWindow::_initUIApp() {
     //on default layer changed
     QObject::connect(
         this->_mlManager->layerSelector()->spinbox(), qOverload<int>(&QSpinBox::valueChanged),
-        this->_mapView->hints(), &MapHintViewBinder::setDefaultLayer
+        this->_mapView->hints(), &ViewMapHint::setDefaultLayer
     );
 
     //intercept alteration from layout manager
     QObject::connect(
         this->_mlManager->tree(), &MapLayoutTree::elementsAlterationAsked,
-        this->_mapView->hints(), &MapHintViewBinder::alterScene
+        this->_mapView->hints(), &ViewMapHint::handleAlterationRequest
     );
 
     //intercept alteration from editor
     QObject::connect(
         this->_mlManager->editor(), &AtomEditor::requiresAtomAlteration,
-        this->_mapView->hints(), &MapHintViewBinder::alterScene
+        this->_mapView->hints(), &ViewMapHint::handleAlterationRequest
     );
 
     //unselect tools
@@ -268,12 +268,12 @@ void MainWindow::_initUIApp() {
     //on pen size change
     QObject::connect(
         this->_mapTools, &MapTools::penSizeChanged,
-        this->_mapView->hints(), &MapHintViewBinder::setPenSize
+        this->_mapView->hints(), &ViewMapHint::setPenSize
     );
 
     //update status bar on map file update
     QObject::connect(
-        this->_mapView->hints(), &MapHintViewBinder::mapFileStateChanged,
+        this->_mapView->hints(), &ViewMapHint::mapFileStateChanged,
         this->_sb, &RPZStatusBar::updateMapFileLabel
     );
     this->_sb->updateMapFileLabel(
@@ -326,7 +326,7 @@ QMenu* MainWindow::_getMapMenu() {
     auto saveMap = RPZActions::saveMap();
     QObject::connect(
         saveMap, &QAction::triggered,
-        this->_mapView->hints(), &MapHintViewBinder::saveState
+        this->_mapView->hints(), &ViewMapHint::saveState
     );
 
     //save as map

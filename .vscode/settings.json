@@ -90,7 +90,9 @@
         "qvarianthash": "cpp",
         "quuid": "cpp",
         "qgraphicstextitem": "cpp",
-        "qpointf": "cpp"
+        "qpointf": "cpp",
+        "qmetaobject": "cpp",
+        "qqueue": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

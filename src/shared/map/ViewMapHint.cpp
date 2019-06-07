@@ -1,6 +1,6 @@
-#include "MapHintViewBinder.h"
+#include "ViewMapHint.h"
 
-MapHintViewBinder::MapHintViewBinder(QGraphicsView* boundGv) : MapHint(AlterationPayload::Source::Local_Map), _boundGv(boundGv) {
+ViewMapHint::ViewMapHint(QGraphicsView* boundGv) : AtomsStorage(AlterationPayload::Source::Local_Map), _boundGv(boundGv) {
 
     //default layer from settings
     this->setDefaultLayer(AppContext::settings()->defaultLayer());
@@ -8,26 +8,25 @@ MapHintViewBinder::MapHintViewBinder(QGraphicsView* boundGv) : MapHint(Alteratio
     //on selection
     QObject::connect(
         this->scene(), &QGraphicsScene::selectionChanged,
-        this, &MapHintViewBinder::_onSceneSelectionChanged
+        this, &ViewMapHint::_onSceneSelectionChanged
     );
 
     //on scene children items changed
     QObject::connect(
         this->scene(), &MapViewGraphicsScene::sceneItemChanged,
-        this, &MapHintViewBinder::_onSceneItemChanged
+        this, &ViewMapHint::_onSceneItemChanged
     ); 
-
 };
 
-bool MapHintViewBinder::isInTextInteractiveMode() {
+bool ViewMapHint::isInTextInteractiveMode() {
     return this->_isInTextInteractiveMode;
 }
 
-void MapHintViewBinder::setDefaultLayer(int layer) {
+void ViewMapHint::setDefaultLayer(int layer) {
     this->_defaultLayer = layer;
 }
 
-void MapHintViewBinder::handleAnyMovedItems() {
+void ViewMapHint::handleAnyMovedItems() {
     
     //if no item moved since last call, do nothing
     if(!this->_itemsWhoNotifiedMovement.count()) return;
@@ -40,7 +39,7 @@ void MapHintViewBinder::handleAnyMovedItems() {
     }
 
     //inform moving
-    this->alterScene(MovedPayload(coords));
+    this->handleAlterationRequest(MovedPayload(coords));
 
     //enable notifications back on those items
     for(auto item : this->_itemsWhoNotifiedMovement) {
@@ -52,7 +51,7 @@ void MapHintViewBinder::handleAnyMovedItems() {
     this->_itemsWhoNotifiedMovement.clear();
 }
 
-void MapHintViewBinder::_onSceneItemChanged(QGraphicsItem* item, int changeFlag) {
+void ViewMapHint::_onSceneItemChanged(QGraphicsItem* item, int changeFlag) {
 
     if(this->_preventInnerGIEventsHandling) return;
 
@@ -80,14 +79,14 @@ void MapHintViewBinder::_onSceneItemChanged(QGraphicsItem* item, int changeFlag)
 
             auto atom = this->_fetchAtom(item);
             auto cItem = (QGraphicsTextItem*)item;
-            this->alterScene(TextChangedPayload(atom->id(), cItem->toPlainText()));
+            this->handleAlterationRequest(TextChangedPayload(atom->id(), cItem->toPlainText()));
         }
         break;
     }
 
 }
 
-void MapHintViewBinder::_onSceneSelectionChanged() {
+void ViewMapHint::_onSceneSelectionChanged() {
     
     auto selectedAtoms = this->_fetchAtoms(this->scene()->selectedItems());
 
@@ -118,19 +117,19 @@ void MapHintViewBinder::_onSceneSelectionChanged() {
 // State handling //
 ////////////////////
 
-QString MapHintViewBinder::stateFilePath() {
+QString ViewMapHint::stateFilePath() {
     return this->_stateFilePath;
 }
 
-bool MapHintViewBinder::isRemote() {
+bool ViewMapHint::isRemote() {
     return this->_isRemote;
 }
 
-bool MapHintViewBinder::isDirty() {
+bool ViewMapHint::isDirty() {
     return this->_isDirty;
 }
 
-void MapHintViewBinder::mayWantToSavePendingState() {
+void ViewMapHint::mayWantToSavePendingState() {
     if(!this->_isDirty || this->_isRemote) return;
 
     //popup
@@ -148,7 +147,7 @@ void MapHintViewBinder::mayWantToSavePendingState() {
 
 }
 
-bool MapHintViewBinder::saveState() {
+bool ViewMapHint::saveState() {
 
     if(this->_isRemote) return false;
 
@@ -163,7 +162,7 @@ bool MapHintViewBinder::saveState() {
 }
 
 
-bool MapHintViewBinder::saveStateAs(QString &newFilePath) {
+bool ViewMapHint::saveStateAs(QString &newFilePath) {
     if(this->_isRemote) return false;
 
     this->_stateFilePath = newFilePath;
@@ -171,14 +170,14 @@ bool MapHintViewBinder::saveStateAs(QString &newFilePath) {
 
 }
 
-bool MapHintViewBinder::loadDefaultState() {
+bool ViewMapHint::loadDefaultState() {
     return this->loadState(
         AppContext::getDefaultMapFile()
     );
 }
 
 
-bool MapHintViewBinder::loadState(QString &filePath) {
+bool ViewMapHint::loadState(QString &filePath) {
     
     if(this->_isRemote) return false;
 
@@ -187,7 +186,7 @@ bool MapHintViewBinder::loadState(QString &filePath) {
 
     //load file and parse it
     MapDatabase mapDb(filePath);
-    this->_alterSceneGlobal(
+    this->_handlePayload(
         ResetPayload(mapDb.toAtoms())
     );
     
@@ -199,7 +198,7 @@ bool MapHintViewBinder::loadState(QString &filePath) {
 }
 
 
-bool MapHintViewBinder::defineAsRemote(QString &remoteMapDescriptor) {
+bool ViewMapHint::defineAsRemote(QString &remoteMapDescriptor) {
     
     //define remote flag
     this->_isRemote = !remoteMapDescriptor.isEmpty();
@@ -217,7 +216,7 @@ bool MapHintViewBinder::defineAsRemote(QString &remoteMapDescriptor) {
 }
 
 
-void MapHintViewBinder::_shouldMakeDirty(AlterationPayload &payload) {
+void ViewMapHint::_shouldMakeDirty(AlterationPayload &payload) {
     
     //if remote, never dirty
     if(this->_isRemote) return;
@@ -229,7 +228,7 @@ void MapHintViewBinder::_shouldMakeDirty(AlterationPayload &payload) {
 }
 
 
-void MapHintViewBinder::_setDirty(bool dirty) {
+void ViewMapHint::_setDirty(bool dirty) {
     this->_isDirty = dirty;
     emit mapFileStateChanged(this->_stateFilePath, this->_isDirty);
 }
@@ -243,11 +242,11 @@ void MapHintViewBinder::_setDirty(bool dirty) {
 // Pen handling //
 //////////////////
 
-QPen MapHintViewBinder::getPen() const {
+QPen ViewMapHint::getPen() const {
     return QPen(this->_penColor, this->_penWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 }
 
-void MapHintViewBinder::setPenColor(QColor &color) {
+void ViewMapHint::setPenColor(QColor &color) {
     this->_penColor = color;
 
     //update self graphic path items with new color
@@ -264,7 +263,7 @@ void MapHintViewBinder::setPenColor(QColor &color) {
     }
 }
 
-void MapHintViewBinder::setPenSize(int size) {
+void ViewMapHint::setPenSize(int size) {
     this->_penWidth = size;
 }
 
@@ -276,17 +275,17 @@ void MapHintViewBinder::setPenSize(int size) {
 // Atom insertion helpers //
 /////////////////////////////
 
-void MapHintViewBinder::deleteCurrentSelectionItems() {
+void ViewMapHint::deleteCurrentSelectionItems() {
     QVector<snowflake_uid> atomIdsToRemove;
     for(auto item : this->scene()->selectedItems()) {
         auto atom = this->_fetchAtom(item);
         atomIdsToRemove.append(atom->id());
     }
-    this->alterScene(RemovedPayload(atomIdsToRemove));
+    this->handleAlterationRequest(RemovedPayload(atomIdsToRemove));
 }
 
 
-void MapHintViewBinder::addDrawing(const QPointF &startPos, const QPainterPath &path, const QPen &pen) {
+void ViewMapHint::addDrawing(const QPointF &startPos, const QPainterPath &path, const QPen &pen) {
 
     //define metadata
     auto metadata = RPZAtomMetadata();
@@ -297,11 +296,11 @@ void MapHintViewBinder::addDrawing(const QPointF &startPos, const QPainterPath &
 
     //inform !
     auto newAtom = RPZAtom(RPZAtom::Type::Drawing, metadata);
-    this->alterScene(AddedPayload(newAtom));
+    this->handleAlterationRequest(AddedPayload(newAtom));
 
 }
 
-QGraphicsTextItem* MapHintViewBinder::generateGhostTextItem() {
+QGraphicsTextItem* ViewMapHint::generateGhostTextItem() {
 
     auto temporaryItem = this->scene()->addText(this->_contextualizedMetadata());
 
@@ -315,7 +314,7 @@ QGraphicsTextItem* MapHintViewBinder::generateGhostTextItem() {
     return temporaryItem;
 }
 
-void MapHintViewBinder::turnGhostTextIntoDefinitive(QGraphicsTextItem* temporaryText, const QPoint &eventPos) {
+void ViewMapHint::turnGhostTextIntoDefinitive(QGraphicsTextItem* temporaryText, const QPoint &eventPos) {
     
     this->centerGraphicsItemToPoint(temporaryText, eventPos);
 
@@ -328,12 +327,12 @@ void MapHintViewBinder::turnGhostTextIntoDefinitive(QGraphicsTextItem* temporary
 
     //inform !
     auto newAtom = RPZAtom(RPZAtom::Type::Text, metadata);
-    this->alterScene(AddedPayload(newAtom));
+    this->handleAlterationRequest(AddedPayload(newAtom));
 
     //DO NOT REMOVE, it will be removed my the map
 }
 
-RPZAtomMetadata MapHintViewBinder::_contextualizedMetadata() {
+RPZAtomMetadata ViewMapHint::_contextualizedMetadata() {
     RPZAtomMetadata out;
 
     out.setLayer(this->_defaultLayer);
@@ -342,7 +341,7 @@ RPZAtomMetadata MapHintViewBinder::_contextualizedMetadata() {
     return out;
 }
 
-QGraphicsItem* MapHintViewBinder::generateGhostItem(AssetsDatabaseElement* assetElem) {
+QGraphicsItem* ViewMapHint::generateGhostItem(AssetsDatabaseElement* assetElem) {
     
     //find filepath to asset
     auto path = AssetsDatabase::get()->getFilePathToAsset(assetElem);
@@ -360,7 +359,7 @@ QGraphicsItem* MapHintViewBinder::generateGhostItem(AssetsDatabaseElement* asset
     return temporaryItem;
 }
 
-void MapHintViewBinder::turnGhostItemIntoDefinitive(QGraphicsItem* temporaryItem, AssetsDatabaseElement* assetElem, const QPoint &eventPos) {
+void ViewMapHint::turnGhostItemIntoDefinitive(QGraphicsItem* temporaryItem, AssetsDatabaseElement* assetElem, const QPoint &eventPos) {
 
     //prevent if remote
     if(this->_isRemote) return;
@@ -377,7 +376,7 @@ void MapHintViewBinder::turnGhostItemIntoDefinitive(QGraphicsItem* temporaryItem
 
     //inform !
     auto newAtom = RPZAtom((RPZAtom::Type)assetElem->type(), metadata);
-    this->alterScene(AddedPayload(newAtom));
+    this->handleAlterationRequest(AddedPayload(newAtom));
 
     //remove ghost
     delete temporaryItem;
@@ -392,7 +391,7 @@ void MapHintViewBinder::turnGhostItemIntoDefinitive(QGraphicsItem* temporaryItem
 /////////////////////////
 
 
-QGraphicsItem* MapHintViewBinder::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom) {
+QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom) {
 
     QGraphicsItem* newItem = nullptr;
 
@@ -449,7 +448,7 @@ QGraphicsItem* MapHintViewBinder::_buildGraphicsItemFromAtom(RPZAtom &atomToBuil
     return newItem;
 }
 
-void MapHintViewBinder::replaceMissingAssetPlaceholders(const QString &assetId) {
+void ViewMapHint::replaceMissingAssetPlaceholders(const QString &assetId) {
     if(!this->_missingAssetsIdsFromDb.contains(assetId)) return;
 
     //find the path file
@@ -488,17 +487,17 @@ void MapHintViewBinder::replaceMissingAssetPlaceholders(const QString &assetId) 
 // Internal Helpers //
 //////////////////////
 
-void MapHintViewBinder::_crossBindingAtomWithGI(RPZAtom* atom, QGraphicsItem* gi) {
+void ViewMapHint::_crossBindingAtomWithGI(RPZAtom* atom, QGraphicsItem* gi) {
     atom->setGraphicsItem(gi);
     auto ptrValToAtom = (long long)atom;
     gi->setData(0, ptrValToAtom);
 }
 
-MapViewGraphicsScene* MapHintViewBinder::scene() {
+MapViewGraphicsScene* ViewMapHint::scene() {
     return (MapViewGraphicsScene*)this->_boundGv->scene();
 }
 
-QVector<RPZAtom*> MapHintViewBinder::_fetchAtoms(const QList<QGraphicsItem*> &listToFetch) const {
+QVector<RPZAtom*> ViewMapHint::_fetchAtoms(const QList<QGraphicsItem*> &listToFetch) const {
     QVector<RPZAtom*> list;
     for(auto e : listToFetch) {
         auto atom = this->_fetchAtom(e);
@@ -507,12 +506,12 @@ QVector<RPZAtom*> MapHintViewBinder::_fetchAtoms(const QList<QGraphicsItem*> &li
     return list;
 }
 
-RPZAtom* MapHintViewBinder::_fetchAtom(QGraphicsItem* graphicElem) const {
+RPZAtom* ViewMapHint::_fetchAtom(QGraphicsItem* graphicElem) const {
     auto ptrValToAtom = graphicElem->data(0).toLongLong();
     return (RPZAtom*)ptrValToAtom;
 }
 
-void MapHintViewBinder::centerGraphicsItemToPoint(QGraphicsItem* item, const QPoint &eventPos) {
+void ViewMapHint::centerGraphicsItemToPoint(QGraphicsItem* item, const QPoint &eventPos) {
     QPointF point = this->_boundGv->mapToScene(eventPos);
     point = point - item->boundingRect().center();
     item->setPos(point);
@@ -523,11 +522,11 @@ void MapHintViewBinder::centerGraphicsItemToPoint(QGraphicsItem* item, const QPo
 //////////////////////////
 
 ////////////////////////
-// MapHint Overriding //
+// AtomsStorage Overriding //
 ////////////////////////
 
 //alter Scene
-void MapHintViewBinder::_alterSceneGlobal(AlterationPayload &payload) { 
+void ViewMapHint::_handlePayload(AlterationPayload &payload) { 
 
     //make sure to not perpetuate circular payloads
     auto payloadSource = payload.source();
@@ -544,7 +543,7 @@ void MapHintViewBinder::_alterSceneGlobal(AlterationPayload &payload) {
         }
     }
     
-    MapHint::_alterSceneGlobal(payload);
+    AtomsStorage::_handlePayload(payload);
 
     //define dirty
     this->_shouldMakeDirty(payload);
@@ -553,10 +552,10 @@ void MapHintViewBinder::_alterSceneGlobal(AlterationPayload &payload) {
 }
 
 //register actions
-RPZAtom* MapHintViewBinder::_alterSceneInternal(const AlterationPayload::Alteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) {
+RPZAtom* ViewMapHint::_handlePayloadInternal(const AlterationPayload::Alteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) {
    
     //default handling
-    auto updatedAtom = MapHint::_alterSceneInternal(type, targetedAtomId, atomAlteration); 
+    auto updatedAtom = AtomsStorage::_handlePayloadInternal(type, targetedAtomId, atomAlteration); 
 
     //by alteration
     switch(type) {
@@ -639,5 +638,5 @@ RPZAtom* MapHintViewBinder::_alterSceneInternal(const AlterationPayload::Alterat
 }
 
 ////////////////////////////
-// END MapHint Overriding //
+// END AtomsStorage Overriding //
 ////////////////////////////

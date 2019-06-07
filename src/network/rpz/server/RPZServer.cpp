@@ -1,6 +1,6 @@
 #include "RPZServer.h" 
 
-RPZServer::RPZServer(QObject* parent) : QTcpServer(parent),  _hints(new MapHint(AlterationPayload::Source::Network)) { };
+RPZServer::RPZServer(QObject* parent) : QTcpServer(parent),  _hints(new AtomsStorage(AlterationPayload::Source::Network)) { };
 
 RPZServer::~RPZServer() {
     //ended server
@@ -240,7 +240,7 @@ void RPZServer::_broadcastMapChanges(QVariantHash &payload, JSONSocket * senderS
     auto aPayload = this->_alterIncomingPayloadWithUpdatedOwners(payload, senderSocket);
 
     //save for history
-    this->_hints->alterScene(aPayload);
+    this->_hints->handleAlterationRequest(aPayload);
 
     //add source for outer calls
     aPayload.changeSource(this->_hints->source());

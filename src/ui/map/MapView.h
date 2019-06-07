@@ -24,7 +24,7 @@
 #include "MapTools.h"
 #include "base/AnimationTimeLine.hpp"
 
-#include "src/shared/map/MapHintViewBinder.h"
+#include "src/shared/map/ViewMapHint.h"
 #include "src/shared/models/entities/RPZAtom.hpp"
 #include "src/ui/others/ClientBindable.hpp"
 
@@ -42,7 +42,7 @@ class MapView : public QGraphicsView, public ClientBindable {
 
     public:
         MapView(QWidget *parent);
-        MapHintViewBinder* hints();
+        ViewMapHint* hints();
 
     public slots:
         void changeToolFromAction(const MapTools::Actions &instruction);
@@ -56,6 +56,8 @@ class MapView : public QGraphicsView, public ClientBindable {
         void remoteChanged(bool isRemote);
 
     protected:
+        void contextMenuEvent(QContextMenuEvent *event) override;
+
         void leaveEvent(QEvent *event) override;
         void enterEvent(QEvent *event) override;
 
@@ -79,7 +81,7 @@ class MapView : public QGraphicsView, public ClientBindable {
 
         MapViewGraphicsScene* _scene = nullptr;
 
-        MapHintViewBinder* _hints;
+        ViewMapHint* _hints;
         void _onSceneSelectionChanged();
         void _goToDefaultViewState();
         

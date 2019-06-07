@@ -5,7 +5,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
     //default
     this->_scene = new MapViewGraphicsScene(this->_defaultSceneSize);
     this->setScene(this->_scene);
-    this->_hints = new MapHintViewBinder(this); //after first inst of scene
+    this->_hints = new ViewMapHint(this); //after first inst of scene
     this->setAcceptDrops(true);
     this->_changeTool(MapView::_defaultTool);
     
@@ -19,14 +19,20 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
 
     //to route from MapHints
     QObject::connect(
-        this->_hints, &MapHint::atomsAltered,
+        this->_hints, &AtomsStorage::alterationRequested,
         this, &MapView::_sendMapChanges
     );
 
     //default state
     this->scale(this->_defaultScale, this->_defaultScale);
     this->_goToDefaultViewState();
+
+    this->setContextMenuPolicy(Qt::CustomContextMenu);
     
+}
+
+void MapView::contextMenuEvent(QContextMenuEvent *event) {
+    //TODO context menu
 }
 
 void MapView::resizeEvent(QResizeEvent * event) {
@@ -38,7 +44,7 @@ void MapView::_goToDefaultViewState() {
     this->_goToDefaultZoom();
 }
 
-MapHintViewBinder* MapView::hints() {
+ViewMapHint* MapView::hints() {
     return this->_hints;
 }
 
@@ -132,20 +138,20 @@ void MapView::onRPZClientConnecting(RPZClient * cc) {
 
     //when missing assets
     QObject::connect(
-        this->_hints, &MapHintViewBinder::requestMissingAsset,
+        this->_hints, &ViewMapHint::requestMissingAsset,
         this->_rpzClient, &RPZClient::askForAsset
     );
 
     //when receiving missing asset
     QObject::connect(
         this->_rpzClient, &RPZClient::assetSucessfullyInserted,
-        this->_hints, &MapHintViewBinder::replaceMissingAssetPlaceholders
+        this->_hints, &ViewMapHint::replaceMissingAssetPlaceholders
     );
 
     //on map change
     QObject::connect(
         this->_rpzClient, &RPZClient::mapChanged,
-        this->_hints, &MapHint::alterScene
+        this->_hints, &AtomsStorage::handleAlterationRequest
     );
 
     //when been asked for map content

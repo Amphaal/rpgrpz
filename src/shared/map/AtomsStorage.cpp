@@ -1,43 +1,20 @@
-#include "MapHint.h"
+#include "AtomsStorage.h"
 
 
-MapHint::MapHint(const AlterationPayload::Source &boundSource) : _source(boundSource) {};
+AtomsStorage::AtomsStorage(const AlterationPayload::Source &boundSource) : AtomsHandler(boundSource) { };
 
-AlterationPayload::Source MapHint::source() {
-    return this->_source;
-}
 
-RPZMap<RPZAtom> MapHint::atoms() {
+RPZMap<RPZAtom> AtomsStorage::atoms() {
     return this->_atomsById;
 }
 
-//handle network and local evts emission
-void MapHint::_emitAlteration(AlterationPayload &payload) {
-
-    //define source of payload
-    auto source = payload.source();
-    if(source == AlterationPayload::Source::Network) return; //prevent resending network payloay
-    if(source == AlterationPayload::Source::Undefined) payload.changeSource(this->_source); //inner payload, apply own source
-
-    emit atomsAltered(payload);
-} 
-
-/////////////////
-/* END NETWORK */
-/////////////////
 
 //////////////
 /* ELEMENTS */
 //////////////
 
-
-//helper
-void MapHint::alterScene(QVariantHash &payload) {
-    return this->_alterSceneGlobal(AlterationPayload(payload));
-}
-
 //alter Scene
-void MapHint::_alterSceneGlobal(AlterationPayload &payload) { 
+void AtomsStorage::_handlePayload(AlterationPayload &payload) { 
     
     //prevent circular payloads
     auto payloadSource = payload.source();
@@ -54,7 +31,7 @@ void MapHint::_alterSceneGlobal(AlterationPayload &payload) {
     auto aCasted = Payload::autoCast(payload);
     auto alterations = aCasted->alterationByAtomId();
     for (QVariantMap::iterator i = alterations.begin(); i != alterations.end(); ++i) {
-        this->_alterSceneInternal(pType, i.key().toULongLong(), i.value());
+        this->_handlePayloadInternal(pType, i.key().toULongLong(), i.value());
     }
     delete aCasted;
 
@@ -63,7 +40,7 @@ void MapHint::_alterSceneGlobal(AlterationPayload &payload) {
 }
 
 //register actions
-RPZAtom* MapHint::_alterSceneInternal(const AlterationPayload::Alteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) {
+RPZAtom* AtomsStorage::_handlePayloadInternal(const AlterationPayload::Alteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) {
 
     //get the stored atom relative to the targeted id
     RPZAtom* storedAtom = nullptr;

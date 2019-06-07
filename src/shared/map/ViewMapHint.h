@@ -20,16 +20,16 @@
 
 #include "src/ui/map/graphics/MapViewGraphicsScene.hpp"
 
-#include "MapHint.h"
+#include "AtomsStorage.h"
 
 #include "src/ui/map/MapTools.h"
 
-class MapHintViewBinder : public MapHint {
+class ViewMapHint : public AtomsStorage {
     
     Q_OBJECT
 
     public:
-        MapHintViewBinder(QGraphicsView* boundGv);
+        ViewMapHint(QGraphicsView* boundGv);
         MapViewGraphicsScene* scene();
         bool isInTextInteractiveMode();
 
@@ -111,9 +111,9 @@ class MapHintViewBinder : public MapHint {
         //text interactive
         bool _isInTextInteractiveMode = false;
 
-        //augmenting MapHint
-        virtual void _alterSceneGlobal(AlterationPayload &payload) override;
-        virtual RPZAtom* _alterSceneInternal(const AlterationPayload::Alteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) override;
+        //augmenting AtomsStorage
+        virtual void _handlePayload(AlterationPayload &payload) override;
+        virtual RPZAtom* _handlePayloadInternal(const AlterationPayload::Alteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) override;
 
         RPZAtomMetadata _contextualizedMetadata();
 };
