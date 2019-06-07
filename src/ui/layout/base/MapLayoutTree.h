@@ -6,9 +6,12 @@
 #include <QVector>
 #include <QGraphicsItem>
 #include <QIcon>
-#include <QAction>
 #include <QMenu>
 #include <QHeaderView>
+
+#include "src/shared/command/RPZActions.hpp"
+
+#include "src/shared/command/RPZActions.hpp"
 
 #include "src/shared/database/AssetsDatabase.h"
 

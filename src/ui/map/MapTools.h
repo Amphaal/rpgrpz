@@ -5,7 +5,9 @@
 #include <QToolBar>
 #include <QToolButton>
 #include <QSpinBox>
-#include <QActionEvent>
+#include <QAction>
+
+#include "src/shared/command/RPZActions.hpp"
 
 class MapTools : public QToolBar {
 

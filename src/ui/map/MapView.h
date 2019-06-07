@@ -11,7 +11,6 @@
 #include <QWheelEvent>
 #include <QTreeWidgetItem>
 #include <QVariantHash>
-#include <QAction>
 #include <QTimeLine>
 #include <QGLWidget>
 #include <QCursor>

@@ -210,7 +210,7 @@ void AssetsTreeView::_generateMenu(QList<QModelIndex> &itemsIndexes, const QPoin
         if(firstItem->isContainer()) {
             
             //folder creation
-            auto createFolder = new QAction("Créer un dossier");
+            auto createFolder = RPZActions::createFolder();
             QObject::connect(
                 createFolder, &QAction::triggered,
                 [&, firstItem]() {
@@ -232,7 +232,7 @@ void AssetsTreeView::_generateMenu(QList<QModelIndex> &itemsIndexes, const QPoin
 
     //if so, allow deletion
     if(areAllDeletable) {
-        auto deleteItem = new QAction("Supprimer");
+        auto deleteItem = RPZActions::remove();
         QObject::connect(
             deleteItem, &QAction::triggered,
             [&, itemsIndexes]() {

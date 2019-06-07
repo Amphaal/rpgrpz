@@ -316,24 +316,21 @@ QMenu* MainWindow::_getMapMenu() {
     auto mapMenuItem = new QMenu("Carte");
 
     //load map
-    auto loadMap = new QAction("Charger une carte", mapMenuItem);
-    loadMap->setShortcut(QKeySequence::Open);
+    auto loadMap = RPZActions::loadMap();
     QObject::connect(
         loadMap, &QAction::triggered,
         this, &MainWindow::_loadMap
     );
     
     //save map
-    auto saveMap = new QAction("Sauvegarder la carte", mapMenuItem);
-    saveMap->setShortcut(QKeySequence::Save);
+    auto saveMap = RPZActions::saveMap();
     QObject::connect(
         saveMap, &QAction::triggered,
         this->_mapView->hints(), &MapHintViewBinder::saveState
     );
 
     //save as map
-    auto saveAsMap = new QAction("Enregistrer la carte sous...", mapMenuItem);
-    saveAsMap->setShortcut(QKeySequence::SaveAs);
+    auto saveAsMap = RPZActions::saveAsMap();
     QObject::connect(
         saveAsMap, &QAction::triggered,
         this, &MainWindow::_saveAs
@@ -386,14 +383,14 @@ QMenu* MainWindow::_getToolsMenu() {
     auto toolsMenuItem = new QMenu(I18n::tr()->Menu_Tools());
 
     //maintenance tool
-    auto openMaintenanceToolAction = new QAction(I18n::tr()->Menu_OpenMaintenanceTool(), toolsMenuItem);
+    auto openMaintenanceToolAction = RPZActions::openMaintenanceTool();
     QObject::connect(
         openMaintenanceToolAction, &QAction::triggered,
         this->_updateIntegrator, &UpdaterUIIntegrator::openMaintenanceTool
     );
 
     //full log
-    auto openLogAction = new QAction(I18n::tr()->Menu_OpenLog(), toolsMenuItem);
+    auto openLogAction = RPZActions::openFullLog();
     QObject::connect(
         openLogAction, &QAction::triggered,
         [&]() {
@@ -404,7 +401,7 @@ QMenu* MainWindow::_getToolsMenu() {
     );
 
     //latest log
-    auto openLatestLogAction = new QAction(I18n::tr()->Menu_OpenLatestLog(), toolsMenuItem);
+    auto openLatestLogAction = RPZActions::openLatestLog();
     QObject::connect(
         openLatestLogAction, &QAction::triggered,
         [&]() {
@@ -415,12 +412,13 @@ QMenu* MainWindow::_getToolsMenu() {
     );
 
     //data folder
-    const auto df = AppContext::getAppDataLocation();
-    auto openDataFolderAction = new QAction(I18n::tr()->Menu_OpenDataFolder(df), toolsMenuItem);
+    auto openDataFolderAction = RPZActions::openInternalDataFolder();
     QObject::connect(
         openDataFolderAction, &QAction::triggered,
-        [&, df]() {
-            AppContext::openFolderInOS(df);
+        [&]() {
+            AppContext::openFolderInOS(
+                AppContext::getAppDataLocation()
+            );
         }
     );
 
@@ -440,7 +438,7 @@ QMenu* MainWindow::_getHelpMenu() {
     auto helpMenuItem = new QMenu(I18n::tr()->Menu_Help());
 
     //for checking the upgrades available
-    this->cfugAction = new QAction(I18n::tr()->Menu_CheckForUpgrades(), helpMenuItem);
+    this->cfugAction = RPZActions::checkUpdates();
     QObject::connect(
         this->cfugAction, &QAction::triggered,
         this->_updateIntegrator, &UpdaterUIIntegrator ::requireUpdateCheckFromUser
@@ -457,7 +455,7 @@ QMenu* MainWindow::_getHelpMenu() {
     );
 
     //patchnote
-    auto patchnoteAction = new QAction(I18n::tr()->Menu_Patchnotes(APP_FULL_DENOM), helpMenuItem);
+    auto patchnoteAction = RPZActions::patchnote();
     QObject::connect(
         patchnoteAction, &QAction::triggered,
         [&]() {
@@ -478,8 +476,7 @@ QMenu* MainWindow::_getFileMenu() {
     auto fileMenuItem = new QMenu(I18n::tr()->Menu_File());
 
     //quit
-    auto quitAction = new QAction(I18n::tr()->Menu_Quit(), fileMenuItem);
-    quitAction->setShortcut(QKeySequence::Close);
+    auto quitAction = RPZActions::quit();
     QObject::connect(
         quitAction, &QAction::triggered,
         this, &MainWindow::close

@@ -4,8 +4,8 @@ MapTools::MapTools(QWidget* parent) : QToolBar(parent) {
     
     //self
     this->layout()->setMargin(0);
+    this->setIconSize(QSize(16, 16));
     this->setMovable(true);
-    this->setIconSize(QSize(16,16));
     this->setFloatable(true);
 
     QObject::connect(
@@ -14,11 +14,8 @@ MapTools::MapTools(QWidget* parent) : QToolBar(parent) {
     );
 
     //selection
-    auto selection = new QAction(this);
-    selection->setCheckable(true);
+    auto selection = RPZActions::selectionTool();
     selection->setChecked(true);
-    selection->setIcon(QIcon(":/icons/app/tools/cursor.png"));
-    selection->setIconText("Selection");
     selection->setData(MapTools::Actions::Select);
     this->addAction(selection);
     this->_defaultTool = selection;
@@ -26,20 +23,14 @@ MapTools::MapTools(QWidget* parent) : QToolBar(parent) {
     this->addSeparator();
 
     //text
-    auto text = new QAction(this);
-    text->setIcon(QIcon(":/icons/app/tools/text.png"));
+    auto text = RPZActions::writeTool();
     text->setData(MapTools::Actions::Text);
-    text->setIconText("Ecrire");
-    text->setCheckable(true);
     this->addAction(text);
     this->_selectableTools.append(text);
 
     //draw
-    auto draw = new QAction(this);
-    draw->setIcon(QIcon(":/icons/app/tools/pen.png"));
+    auto draw = RPZActions::drawTool();
     draw->setData(MapTools::Actions::Draw);
-    draw->setIconText("Dessiner");
-    draw->setCheckable(true);
     this->addAction(draw);
     this->_selectableTools.append(draw);
 
@@ -57,10 +48,8 @@ MapTools::MapTools(QWidget* parent) : QToolBar(parent) {
     this->addSeparator();
     
     //reset
-    auto reset = new QAction(this);
-    reset->setIcon(QIcon(":/icons/app/tools/reset.png"));
+    auto reset = RPZActions::resetView();
     reset->setData(MapTools::Actions::ResetView);
-    reset->setIconText("Réinitialiser la vue");
     this->addAction(reset);
     this->addSeparator();
 

@@ -97,7 +97,7 @@ QList<QAction*> MapLayoutTree::_genLayerActions(QList<QTreeWidgetItem*> &selecte
     QList<QAction*> layerActions;
     
         //rise...
-        auto riseAction = new QAction("Remonter (Calque " + QString::number(riseLayoutTarget) + ")");
+        auto riseAction = RPZActions::raiseAtom(riseLayoutTarget);
         QObject::connect(
             riseAction, &QAction::triggered,
             [=]() {_moveSelectionToLayer(riseLayoutTarget);}
@@ -105,7 +105,7 @@ QList<QAction*> MapLayoutTree::_genLayerActions(QList<QTreeWidgetItem*> &selecte
         layerActions.append(riseAction);
 
         //lower...
-        auto lowerAction = new QAction("Descendre (Calque " + QString::number(lowerLayoutTarget) + ")");
+        auto lowerAction = RPZActions::lowerAtom(lowerLayoutTarget);
         QObject::connect(
             lowerAction, &QAction::triggered,
             [=]() {_moveSelectionToLayer(lowerLayoutTarget);}
@@ -128,14 +128,14 @@ QList<QAction*> MapLayoutTree::_genVisibilityActions(QList<QTreeWidgetItem*> &se
         this->alterTreeElements(VisibilityPayload(selectedIds, isHidden));
     };
 
-    auto showAction = new QAction("Montrer");
+    auto showAction = RPZActions::showAtom();
     QObject::connect(
         showAction, &QAction::triggered,
         [=]() {_visibilityHelper(false);}
     );
     out.append(showAction);
 
-    auto hideAction = new QAction("Cacher");
+    auto hideAction = RPZActions::hideAtom();
     QObject::connect(
         hideAction, &QAction::triggered,
         [=]() {_visibilityHelper(true);}
@@ -158,14 +158,14 @@ QList<QAction*> MapLayoutTree::_genAvailabilityActions(QList<QTreeWidgetItem*> &
         this->alterTreeElements(LockingPayload(selectedIds, isLocked));
     };
 
-    auto lockAction = new QAction("Verouiller");
+    auto lockAction = RPZActions::lockAtom();
     QObject::connect(
         lockAction, &QAction::triggered,
         [=]() {_availabilityHelper(true);}
     );
     out.append(lockAction);
 
-    auto unlockAction = new QAction("Déverouiller");
+    auto unlockAction = RPZActions::unlockAtom();
     QObject::connect(
         unlockAction, &QAction::triggered,
         [=]() {_availabilityHelper(false);}
