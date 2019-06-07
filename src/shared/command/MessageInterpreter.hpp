@@ -35,15 +35,15 @@ class MessageInterpreter {
         static QList<QString> findRecipentsFromText(QString &text) {
             
             auto matches = _hasWhispRegex.globalMatch(text);
-            QList<QString> out;
+            QSet<QString> out;
 
             //iterate
             while (matches.hasNext()) {
                 auto match = matches.next(); //next
-                out.append(match.captured(1));
+                out.insert(match.captured(1));
             }
 
-            return out;
+            return out.toList();
         }
 
         static QString sanitizeText(QString text) {

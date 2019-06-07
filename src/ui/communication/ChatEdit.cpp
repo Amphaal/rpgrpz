@@ -71,6 +71,9 @@ void ChatEdit::_onUsersChanged(const QVariantList &users) {
 
     auto model = new QStringListModel(usernamesList.toList());
     auto completer = new QCompleter(model);
+    completer->setCompletionMode(QCompleter::CompletionMode::PopupCompletion);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
+    completer->setFilterMode(Qt::MatchFlag::MatchContains);
     
     this->_msgEdit->setCompleter(completer);
 }
