@@ -8,12 +8,17 @@
         <file>icons/app/connectivity/crown.png</file>
         <file>icons/app/tools/rotate.png</file>
         <file>icons/app/tools/pen.png</file>
-        <file>icons/app/tools/north.png</file>
         <file>icons/app/tools/reset.png</file>
         <file>icons/app/tools/cursor.png</file>
         <file>icons/app/tools/text.png</file>
         <file>icons/app/tools/hidden.png</file>
+        <file>icons/app/tools/raise.png</file>
+        <file>icons/app/tools/lower.png</file>
+        <file>icons/app/tools/shown.png</file>
         <file>icons/app/tools/lock.png</file>
+        <file>icons/app/tools/unlock.png</file>
+        <file>icons/app/tools/exit.png</file>
+        <file>icons/app/tools/bin.png</file>
         <file>icons/app/manager/layer.png</file>
         <file>icons/app/manager/npc.png</file>
         <file>icons/app/manager/asset.png</file>

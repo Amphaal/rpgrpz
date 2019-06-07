@@ -3,37 +3,58 @@
 #include "src/localization/i18n.hpp"
 
 #include <QAction>
+#include <QIcon>
 
 class RPZActions {
     public:
         static QAction* createFolder() {
-            return new QAction("Créer un dossier");
+            return new QAction(
+                QIcon(":/icons/app/manager/folder.png"), 
+                "Créer un dossier"
+            );
         }
 
         static QAction* remove() {
-            return new QAction("Supprimer");
+            auto remove = new QAction(
+                QIcon(":/icons/app/tools/bin.png"), 
+                "Supprimer"
+            );
+            remove->setShortcut(QKeySequence::Delete);
+            return remove;
         }
 
         static QAction* raiseAtom(int targetLayer) {
+            auto descr = QString("Remonter (Calque %1)")
+                            .arg(QString::number(targetLayer));
+
             return new QAction(
-                QString("Remonter (Calque %1)")
-                    .arg(QString::number(targetLayer))
+                QIcon(":/icons/app/tools/raise.png"),
+                descr
             );
         }
 
         static QAction* lowerAtom(int targetLayer) {
+            auto descr = QString("Descendre (Calque %1)")
+                            .arg(QString::number(targetLayer));
+
             return new QAction(
-                QString("Descendre (Calque %1)")
-                    .arg(QString::number(targetLayer))
+                QIcon(":/icons/app/tools/lower.png"),
+                descr
             );
         }
 
         static QAction* showAtom() {
-            return new QAction("Montrer");
+            return new QAction(
+                QIcon(":/icons/app/tools/shown.png"),
+                "Montrer"
+            );
         }
 
         static QAction* hideAtom() {
-            return new QAction("Cacher");
+            return new QAction(
+                QIcon(":/icons/app/tools/hidden.png"),
+                "Cacher"
+            );
         }
 
         static QAction* selectionTool() {
@@ -68,15 +89,24 @@ class RPZActions {
         }
 
         static QAction* lockAtom() {
-            return new QAction("Verouiller");
+            return new QAction(
+                QIcon(":/icons/app/tools/lock.png"),
+                "Verouiller"
+            );
         }
 
         static QAction* unlockAtom() {
-            return new QAction("Déverouiller");
+            return new QAction(
+                QIcon(":/icons/app/tools/unlock.png"),
+                "Déverouiller"
+            );
         }
 
         static QAction* quit() {
-            auto quitAction = new QAction(I18n::tr()->Menu_Quit());
+            auto quitAction = new QAction(
+                QIcon(":/icons/app/tools/exit.png"),
+                I18n::tr()->Menu_Quit()
+            );
             quitAction->setShortcut(QKeySequence::Close);
             return quitAction;
         }
