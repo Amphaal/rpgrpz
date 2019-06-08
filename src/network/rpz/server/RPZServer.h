@@ -26,7 +26,7 @@
 
 #include "src/helpers/_appContext.h"
 
-#include "src/shared/command/MessageInterpreter.hpp"
+#include "src/shared/commands/MessageInterpreter.h"
 
 class RPZServer : public QTcpServer, public JSONRouter { 
     

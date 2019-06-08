@@ -17,8 +17,12 @@ class AtomsStorage : public AtomsHandler {
     public:
         AtomsStorage(const AlterationPayload::Source &boundSource);
         RPZMap<RPZAtom> atoms();
-
+        
     protected:
+        QVector<snowflake_uid> _latestDuplication;
+        int _duplicationCount = 0;
+        void _duplicateAtoms(QVector<snowflake_uid> &atomIdList);
+
         //atoms list 
         RPZMap<RPZAtom> _atomsById;
 

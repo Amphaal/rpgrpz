@@ -6,7 +6,7 @@
 #include "RPZUser.hpp"
 #include "base/Stampable.hpp"
 
-#include "src/shared/command/MessageInterpreter.hpp"
+#include "src/shared/commands/MessageInterpreter.h"
 
 class RPZMessage : public Stampable {
     

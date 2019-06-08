@@ -3,7 +3,7 @@
 #include "src/localization/i18n.hpp"
 #include "src/helpers/_appContext.h"
 
-#include "src/shared/command/RPZActions.hpp"
+#include "src/shared/commands/RPZActions.h"
 
 #include <QMainWindow>
 #include <QMenuBar>

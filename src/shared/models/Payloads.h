@@ -12,6 +12,7 @@
 #include "payloads/ScaledPayload.hpp"
 #include "payloads/VisibilityPayload.hpp"
 #include "payloads/LockingPayload.hpp"
+#include "payloads/DuplicatedPayload.hpp"
 
 class Payload {
     public:
@@ -43,6 +44,8 @@ class Payload {
                     return new RotatedPayload(payload);
                 case AlterationPayload::Alteration::Scaled:
                     return new ScaledPayload(payload);
+                case AlterationPayload::Alteration::Duplicated:
+                    return new DuplicatedPayload(payload);
             }
 
             return new AlterationPayload(payload);

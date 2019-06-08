@@ -12,12 +12,21 @@ class Serializable : public QVariantHash {
         Serializable(const QVariantHash &hash) : QVariantHash(hash) {}
         
         Serializable(const snowflake_uid &id) {
-            (*this)["id"] = QString::number(id);
+            this->_setId(id);
         };
 
         snowflake_uid id() { 
             return this->value("id").toULongLong(); 
         };
+
+        void shuffleId() {
+            this->_setId(SnowFlake::get()->nextId());
+        }
+    
+    private:
+        void _setId(const snowflake_uid &id) {
+            (*this)["id"] = QString::number(id);
+        }
 };
 
 template<typename T>
@@ -28,7 +37,7 @@ class RPZMap : public QMap<snowflake_uid, T> {
     
     public:
         RPZMap() {}
-        RPZMap(RPZAtom &singleAtom) {
+        RPZMap(T &singleAtom) {
             this->insert(singleAtom.id(), singleAtom);
         }
 

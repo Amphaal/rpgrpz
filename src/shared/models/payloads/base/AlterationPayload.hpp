@@ -25,6 +25,7 @@ class AlterationPayload : public QVariantHash {
             Rotated,
             Scaled,
             LockChanged,
+            Duplicated,
             VisibilityChanged
         }; 
 

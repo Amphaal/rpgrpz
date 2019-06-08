@@ -3,7 +3,6 @@
 
 AtomsStorage::AtomsStorage(const AlterationPayload::Source &boundSource) : AtomsHandler(boundSource) { };
 
-
 RPZMap<RPZAtom> AtomsStorage::atoms() {
     return this->_atomsById;
 }
@@ -22,10 +21,17 @@ void AtomsStorage::_handlePayload(AlterationPayload &payload) {
 
     //on reset
     auto pType = payload.type();
+
+    //on duplication
+    if(pType == AlterationPayload::Alteration::Duplicated) {
+        return this->_duplicateAtoms(((DuplicatedPayload)payload).targetAtomIds());
+    }
+
     if(pType == AlterationPayload::Alteration::Reset) {
         this->_atomsById.clear();
         this->_atomIdsByOwnerId.clear();
     }
+
 
     //handling
     auto aCasted = Payload::autoCast(payload);
@@ -153,6 +159,50 @@ RPZAtom* AtomsStorage::_handlePayloadInternal(const AlterationPayload::Alteratio
 
     return storedAtom;
 }
+
+void AtomsStorage::_duplicateAtoms(QVector<snowflake_uid> &atomIdList) {
+    
+    if(this->_latestDuplication != atomIdList) {
+        this->_latestDuplication = atomIdList;
+        this->_duplicationCount = 1;
+    } else {
+        this->_duplicationCount++;
+    }
+    
+    RPZMap<RPZAtom> newAtoms;
+    for(auto atomId : atomIdList) {
+        
+        if(!this->_atomsById.contains(atomId)) continue;
+
+        RPZAtom newAtom(this->_atomsById[atomId]);
+        newAtom.shuffleId();
+        newAtom.setOwnership(RPZUser());
+
+        auto metadata = newAtom.metadata();
+        auto currPos = metadata.pos();
+        
+        auto br = metadata.shape().boundingRect();
+        auto stepWidth = br.width() / 10;
+        auto stepHeight = br.height() / 10;
+        
+            currPos.setX(
+                currPos.x() + (this->_duplicationCount * stepWidth)
+            );
+
+            currPos.setY(
+                currPos.y() + (this->_duplicationCount * stepHeight)
+            );
+
+        metadata.setPos(currPos);
+        newAtom.setMetadata(metadata);
+
+        newAtoms.insert(newAtom.id(), newAtom);
+    }
+
+    //new payload
+    this->_handlePayload(AddedPayload(newAtoms));
+}
+
 
 //////////////////
 /* END ELEMENTS */

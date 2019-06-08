@@ -157,7 +157,11 @@ list(APPEND SOURCES
 list(APPEND SOURCES
 
     src/ui/map/graphics/MapViewGraphicsScene.hpp
-    src/shared/atoms/AtomsContextualMenuHandler.hpp
+    
+    src/shared/commands/RPZActions.cpp
+    src/shared/commands/AtomsContextualMenuHandler.cpp
+    src/shared/commands/MessageInterpreter.cpp
+    
     src/shared/atoms/AtomsHandler.cpp
     src/shared/atoms/AtomsStorage.cpp
     

@@ -14,7 +14,7 @@
 #include <QDropEvent>
 
 #include "AssetsTreeViewModel.h"
-#include "src/shared/command/RPZActions.hpp"
+#include "src/shared/commands/RPZActions.h"
 
 class AssetsTreeView : public QTreeView {
 

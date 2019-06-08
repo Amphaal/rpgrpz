@@ -24,7 +24,7 @@
 
 #include "src/ui/map/MapTools.h"
 
-#include "AtomsContextualMenuHandler.hpp"
+#include "src/shared/commands/AtomsContextualMenuHandler.h"
 
 class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
     

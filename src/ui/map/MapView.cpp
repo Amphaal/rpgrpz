@@ -5,6 +5,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
     //default
     this->_scene = new MapViewGraphicsScene(this->_defaultSceneSize);
     this->setScene(this->_scene);
+
     this->_hints = new ViewMapHint(this); //after first inst of scene
     this->setAcceptDrops(true);
     this->_changeTool(MapView::_defaultTool);
@@ -26,14 +27,15 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
     //default state
     this->scale(this->_defaultScale, this->_defaultScale);
     this->_goToDefaultViewState();
-    
+
 }
 
 void MapView::contextMenuEvent(QContextMenuEvent *event) {
 
     auto pos = event->pos();
     auto selected = this->scene()->selectedItems();
-    if(!selected.count()) return;
+    
+    auto count = selected.count();
 
     //targets
     auto firstPass = true;
@@ -60,7 +62,7 @@ void MapView::contextMenuEvent(QContextMenuEvent *event) {
     lowerLayoutTarget--;
 
     //create menu
-    this->_hints->invokeMenu(riseLayoutTarget, lowerLayoutTarget, this->viewport()->mapToGlobal(pos));
+    this->_hints->invokeMenu(riseLayoutTarget, lowerLayoutTarget, count, this->viewport()->mapToGlobal(pos));
 }
 
 void MapView::resizeEvent(QResizeEvent * event) {

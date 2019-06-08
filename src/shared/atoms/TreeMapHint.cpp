@@ -1,6 +1,8 @@
 #include "TreeMapHint.h"
 
-TreeMapHint::TreeMapHint(QTreeWidget* boundTree) : AtomsHandler(AlterationPayload::Source::Local_MapLayout), AtomsContextualMenuHandler(this), _boundTree(boundTree) { 
+TreeMapHint::TreeMapHint(QTreeWidget* boundTree) : AtomsHandler(AlterationPayload::Source::Local_MapLayout), 
+    AtomsContextualMenuHandler(this, boundTree), 
+    _boundTree(boundTree) { 
     
     //selection changed
     QObject::connect(

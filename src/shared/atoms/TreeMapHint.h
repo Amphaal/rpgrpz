@@ -8,7 +8,7 @@
 
 #include "src/ui/layout/base/MapLayoutItemDelegate.hpp"
 
-#include "AtomsContextualMenuHandler.hpp"
+#include "src/shared/commands/AtomsContextualMenuHandler.h"
 
 #include <QTreeWidget>
 

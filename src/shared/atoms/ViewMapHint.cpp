@@ -1,6 +1,8 @@
 #include "ViewMapHint.h"
 
-ViewMapHint::ViewMapHint(QGraphicsView* boundGv) : AtomsStorage(AlterationPayload::Source::Local_Map), AtomsContextualMenuHandler(this), _boundGv(boundGv) {
+ViewMapHint::ViewMapHint(QGraphicsView* boundGv) : AtomsStorage(AlterationPayload::Source::Local_Map), 
+    AtomsContextualMenuHandler(this, boundGv), 
+    _boundGv(boundGv) {
 
     //default layer from settings
     this->setDefaultLayer(AppContext::settings()->defaultLayer());
@@ -15,7 +17,7 @@ ViewMapHint::ViewMapHint(QGraphicsView* boundGv) : AtomsStorage(AlterationPayloa
     QObject::connect(
         this->scene(), &MapViewGraphicsScene::sceneItemChanged,
         this, &ViewMapHint::_onSceneItemChanged
-    ); 
+    );
 };
 
 bool ViewMapHint::isInTextInteractiveMode() {

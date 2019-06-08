@@ -31,14 +31,15 @@ void MapLayoutTree::contextMenuEvent(QContextMenuEvent *event) {
     auto pos = event->pos();
     auto itemsToProcess = this->selectedItems();
 
-    if(!itemsToProcess.count()) return;
+    auto count = itemsToProcess.count();
+    if(!count) return;
 
     //targets
     auto riseLayoutTarget = itemsToProcess.first()->parent()->data(0, Qt::UserRole).toInt() + 1;
     auto lowerLayoutTarget = itemsToProcess.last()->parent()->data(0, Qt::UserRole).toInt() - 1;
 
     //create menu
-    this->_hints->invokeMenu(riseLayoutTarget, lowerLayoutTarget, this->viewport()->mapToGlobal(pos));
+    this->_hints->invokeMenu(riseLayoutTarget, lowerLayoutTarget, count, this->viewport()->mapToGlobal(pos));
 }
 
 

@@ -1,33 +1,11 @@
 #include "AssetsTreeView.h"
 
-void AssetsTreeView::drawRow(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    
-    return QTreeView::drawRow(painter, option, index);
 
-    // auto data = AssetsDatabaseElement::fromIndex(index);
-
-    // switch(data->type()) {
-    //     case AssetsDatabaseElement::Type::NPC:
-    //     case AssetsDatabaseElement::Type::FloorBrush:
-    //     case AssetsDatabaseElement::Type::Object:
-    //     case AssetsDatabaseElement::Type::Downloaded: { 
-    //         auto display = index.data(Qt::DisplayRole).toString();
-    //         painter->drawText(option.rect.bottomLeft(), display);
-    //     }
-    //     break;
-
-    //     default: {
-    //         return QTreeView::drawRow(painter, option, index);
-    //     }
-    //     break;
-    // }
-
-}
 
 AssetsTreeView::AssetsTreeView(QWidget *parent) : QTreeView(parent), 
     _MIMEDb(new QMimeDatabase), 
     _model(new AssetsTreeViewModel) {     
-
+        
     //model
     this->setModel(this->_model);
 
@@ -78,6 +56,30 @@ AssetsTreeView::AssetsTreeView(QWidget *parent) : QTreeView(parent),
 
 AssetsTreeViewModel* AssetsTreeView::assetsModel() {
     return this->_model;
+}
+
+void AssetsTreeView::drawRow(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+    
+    return QTreeView::drawRow(painter, option, index);
+
+    // auto data = AssetsDatabaseElement::fromIndex(index);
+
+    // switch(data->type()) {
+    //     case AssetsDatabaseElement::Type::NPC:
+    //     case AssetsDatabaseElement::Type::FloorBrush:
+    //     case AssetsDatabaseElement::Type::Object:
+    //     case AssetsDatabaseElement::Type::Downloaded: { 
+    //         auto display = index.data(Qt::DisplayRole).toString();
+    //         painter->drawText(option.rect.bottomLeft(), display);
+    //     }
+    //     break;
+
+    //     default: {
+    //         return QTreeView::drawRow(painter, option, index);
+    //     }
+    //     break;
+    // }
+
 }
 
 QModelIndexList AssetsTreeView::selectedElementsIndexes() {

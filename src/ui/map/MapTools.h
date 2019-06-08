@@ -7,7 +7,7 @@
 #include <QSpinBox>
 #include <QAction>
 
-#include "src/shared/command/RPZActions.hpp"
+#include "src/shared/commands/RPZActions.h"
 
 class MapTools : public QToolBar {
 
