@@ -27,6 +27,11 @@ class RPZMap : public QMap<snowflake_uid, T> {
     T element;
     
     public:
+        RPZMap() {}
+        RPZMap(RPZAtom &singleAtom) {
+            this->insert(singleAtom.id(), singleAtom);
+        }
+
         QVariantList toVList() {
             QVariantList out;
             for(T &base : this->values()) {
