@@ -58,8 +58,8 @@ void TreeMapHint::_handlePayload(AlterationPayload* payload) {
     }
 
     //special handling
-    if(type == AlterationPayload::Alteration::Selected) this->_boundTree->clearSelection();
-    if(type == AlterationPayload::Alteration::Reset) {
+    if(type == PayloadAlteration::Selected) this->_boundTree->clearSelection();
+    if(type == PayloadAlteration::Reset) {
 
         for(auto item : this->_treeItemsByAtomId) delete item;
         this->_treeItemsByAtomId.clear();
@@ -71,7 +71,7 @@ void TreeMapHint::_handlePayload(AlterationPayload* payload) {
     }
 
     //specific bulk handling for UI optimizations
-    if(type == AlterationPayload::Alteration::LayerChanged) {
+    if(type == PayloadAlteration::LayerChanged) {
         auto temp = LayerChangedPayload(*payload);
         this->_changeLayer(temp.targetAtomIds(), temp.layer());
     }
@@ -88,13 +88,13 @@ void TreeMapHint::_handlePayload(AlterationPayload* payload) {
     this->_emitAlteration(payload);
 }
 
-RPZAtom* TreeMapHint::_handlePayloadInternal(const AlterationPayload::Alteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) {
+RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) {
     
     auto item = this->_treeItemsByAtomId[targetedAtomId];
 
     switch(type) {
 
-        case AlterationPayload::Alteration::Removed: {
+        case PayloadAlteration::Removed: {
             
             auto layerItem = item->parent();
             auto tbrAtom_assetId = item->data(0, LayoutCustomRoles::AssetIdRole).toString();
@@ -113,24 +113,24 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const AlterationPayload::Alteration
         break;
 
 
-        case AlterationPayload::Alteration::LockChanged: {
+        case PayloadAlteration::LockChanged: {
             item->setData(1, LayoutCustomRoles::AvailabilityRole, atomAlteration.toBool());
         }
         break;
 
-        case AlterationPayload::Alteration::VisibilityChanged: {
+        case PayloadAlteration::VisibilityChanged: {
             item->setData(1, LayoutCustomRoles::VisibilityRole, atomAlteration.toBool());
         }
         break;
 
 
-        case AlterationPayload::Alteration::Selected: {
+        case PayloadAlteration::Selected: {
             item->setSelected(true);
         }
         break;
 
-        case AlterationPayload::Alteration::Reset:
-        case AlterationPayload::Alteration::Added: {
+        case PayloadAlteration::Reset:
+        case PayloadAlteration::Added: {
             
             auto atom = RPZAtom(atomAlteration.toHash());
             
@@ -138,7 +138,7 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const AlterationPayload::Alteration
             this->_treeItemsByAtomId.insert(targetedAtomId, item);
 
             //if has assetId, add it
-            auto assetId = atom.metadata().assetId();
+            auto assetId = atom.assetId();
             if(!assetId.isNull()) {
                 this->_atomIdsBoundByAssetId[assetId].insert(targetedAtomId);
             }
@@ -221,14 +221,13 @@ QTreeWidgetItem* TreeMapHint::_getLayerItem(int layer) {
 QTreeWidgetItem* TreeMapHint::_createTreeItem(RPZAtom &atom) {
     
     auto item = new QTreeWidgetItem();
-    auto mdata = atom.metadata();
     
     item->setText(0, atom.descriptor());
     item->setData(0, Qt::UserRole, atom.id());
-    item->setData(0, LayoutCustomRoles::AssetIdRole, mdata.assetId());
+    item->setData(0, LayoutCustomRoles::AssetIdRole, atom.assetId());
 
-    item->setData(1, LayoutCustomRoles::VisibilityRole, mdata.isHidden());
-    item->setData(1, LayoutCustomRoles::AvailabilityRole, mdata.isLocked());
+    item->setData(1, LayoutCustomRoles::VisibilityRole, atom.isHidden());
+    item->setData(1, LayoutCustomRoles::AvailabilityRole, atom.isLocked());
 
     auto owner = atom.owner();
     item->setData(2, Qt::UserRole, owner.color());

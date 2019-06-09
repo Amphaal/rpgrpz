@@ -3,6 +3,25 @@
 #include <QVariantHash>
 #include "libs/snowflake.hpp"
 
+enum PayloadAlteration {
+    Unknown,
+    Focused,
+    Selected,
+    Removed,
+    LayerChanged,
+    Moved, 
+    Added, 
+    Reset,
+    TextChanged,
+    Rotated,
+    Scaled,
+    LockChanged,
+    Duplicated,
+    VisibilityChanged,
+    Redone,
+    Undone
+}; 
+
 class AlterationPayload : public QVariantHash { 
     public:
         enum Source {
@@ -12,32 +31,15 @@ class AlterationPayload : public QVariantHash {
             Network
         };
 
-        enum Alteration {
-            Unknown,
-            Focused,
-            Selected,
-            Removed,
-            LayerChanged,
-            Moved, 
-            Added, 
-            Reset,
-            TextChanged,
-            Rotated,
-            Scaled,
-            LockChanged,
-            Duplicated,
-            VisibilityChanged
-        }; 
-
         AlterationPayload(const QVariantHash &hash) : QVariantHash(hash) {
             this->_updateTags(this->type());
         }
-        AlterationPayload(const Alteration &type) : QVariantHash() {
+        AlterationPayload(const PayloadAlteration &type) : QVariantHash() {
             this->_setType(type);
         }
 
-        Alteration type() {
-            return (Alteration)this->value("t").toInt();
+        PayloadAlteration type() {
+            return (PayloadAlteration)this->value("t").toInt();
         };
 
         virtual QVariantMap alterationByAtomId() {
@@ -64,7 +66,7 @@ class AlterationPayload : public QVariantHash {
         bool _isNetworkAlteration = false;
         bool _instructGIBuild = false;
 
-        static inline const QList<Alteration> _networkAlterations = { 
+        static inline const QList<PayloadAlteration> _networkAlterations = { 
             Moved, 
             Added, 
             Removed, 
@@ -77,17 +79,17 @@ class AlterationPayload : public QVariantHash {
             VisibilityChanged 
         };
 
-        static const inline QList<Alteration> _buildGraphicsItemAlterations = {
+        static const inline QList<PayloadAlteration> _buildGraphicsItemAlterations = {
             Added,  
             Reset
         };
 
-        void _setType(const Alteration &type) {
+        void _setType(const PayloadAlteration &type) {
             (*this)["t"] = (int)type;
             this->_updateTags(type);
         }
 
-        void _updateTags(const Alteration &type) {
+        void _updateTags(const PayloadAlteration &type) {
             this->_isNetworkAlteration = _networkAlterations.contains(type);
             this->_instructGIBuild = _buildGraphicsItemAlterations.contains(type);
         }

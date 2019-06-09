@@ -8,7 +8,7 @@
 
 #include "RPZAtomMetadata.hpp"
 
-class RPZAtom : public Ownable {
+class RPZAtom : public Ownable, public RPZAtomMetadata {
     public:
 
         // defined values shared with AssetsDatabaseElement type for static casts
@@ -23,18 +23,14 @@ class RPZAtom : public Ownable {
             PC = 101 
         };
 
-        RPZAtom() {}
-        RPZAtom(const QVariantHash &hash) : Ownable(hash) {}
-
-        RPZAtom(const snowflake_uid &id, const Type &type, const RPZUser &owner, const RPZAtomMetadata &metadata) : Ownable(id, owner) {
-                this->_setType(type);
-                this->setMetadata(metadata);
-            };
-
-        RPZAtom(const Type &type, const RPZAtomMetadata &metadata) : Ownable(SnowFlake::get()->nextId()) {
-                this->_setType(type);  
-                this->setMetadata(metadata);
-            };
+        RPZAtom() : RPZAtomMetadata(this) {}
+        RPZAtom(const QVariantHash &hash) : Ownable(hash), RPZAtomMetadata(this) {}
+        RPZAtom(const snowflake_uid &id, const Type &type, const RPZUser &owner) : Ownable(id, owner), RPZAtomMetadata(this) {
+            this->_setType(type);
+        };
+        RPZAtom(const Type &type) : Ownable(SnowFlake::get()->nextId()), RPZAtomMetadata(this) {
+            this->_setType(type);  
+        };
 
         QGraphicsItem* graphicsItem() { 
             return this->_graphicsItem; 
@@ -42,10 +38,6 @@ class RPZAtom : public Ownable {
 
         void setGraphicsItem(QGraphicsItem* item) { 
             this->_graphicsItem = item; 
-        };
-
-        RPZAtomMetadata metadata() { 
-            return (RPZAtomMetadata)this->value("mdata").toHash();
         };
 
         Type type() {
@@ -56,15 +48,11 @@ class RPZAtom : public Ownable {
         QString descriptor() { 
 
             //displays asset name
-            auto asname = this->metadata().assetName();
+            auto asname = this->assetName();
             if(!asname.isNull()) return asname;
 
             return this->_defaultDescriptor();
         };
-
-        void setMetadata(const RPZAtomMetadata &metadata) {
-            (*this)["mdata"] = metadata;
-        }
 
 
     private:

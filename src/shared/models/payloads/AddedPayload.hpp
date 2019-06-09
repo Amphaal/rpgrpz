@@ -5,7 +5,7 @@
 class AddedPayload : public AtomsWielderPayload {
     public:
         AddedPayload(const QVariantHash &hash) : AtomsWielderPayload(hash) { }
-        AddedPayload(RPZMap<RPZAtom> &atoms) : AtomsWielderPayload(AlterationPayload::Alteration::Added, atoms) { }
+        AddedPayload(RPZMap<RPZAtom> &atoms) : AtomsWielderPayload(PayloadAlteration::Added, atoms) { }
         AddedPayload(RPZAtom &atom) : AddedPayload(RPZMap<RPZAtom>(atom)) { }
         
 };

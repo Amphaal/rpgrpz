@@ -5,7 +5,7 @@
 class LockingPayload : public MultipleTargetsPayload {
     public:
         LockingPayload(const QVariantHash &hash) : MultipleTargetsPayload(hash) {}
-        LockingPayload(const QVector<snowflake_uid> &changedAtomIds, bool isLocked) : MultipleTargetsPayload(AlterationPayload::Alteration::LockChanged, changedAtomIds) {
+        LockingPayload(const QVector<snowflake_uid> &changedAtomIds, bool isLocked) : MultipleTargetsPayload(PayloadAlteration::LockChanged, changedAtomIds) {
             this->_setLocked(isLocked);
         }
 

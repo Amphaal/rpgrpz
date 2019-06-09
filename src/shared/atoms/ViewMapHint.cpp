@@ -300,22 +300,20 @@ void ViewMapHint::deleteCurrentSelectionItems() {
 
 void ViewMapHint::addDrawing(const QPointF &startPos, const QPainterPath &path, const QPen &pen) {
 
-    //define metadata
-    auto metadata = RPZAtomMetadata();
-    metadata.setPenWidth(pen.width());
-    metadata.setLayer(this->_defaultLayer);
-    metadata.setShape(path);
-    metadata.setPos(startPos);
+    //define new atom
+    auto newAtom = RPZAtom(RPZAtom::Type::Drawing);
+    newAtom.setPenWidth(pen.width());
+    newAtom.setLayer(this->_defaultLayer);
+    newAtom.setShape(path);
+    newAtom.setPos(startPos);
 
     //inform !
-    auto newAtom = RPZAtom(RPZAtom::Type::Drawing, metadata);
     this->handleAlterationRequest(AddedPayload(newAtom));
-
 }
 
 QGraphicsTextItem* ViewMapHint::generateGhostTextItem() {
 
-    auto temporaryItem = this->scene()->addText(this->_contextualizedMetadata());
+    auto temporaryItem = this->scene()->addText(this->_generateContextualizedAtom());
 
     //define transparency as it is a dummy
     temporaryItem->setOpacity(.5);
@@ -331,22 +329,21 @@ void ViewMapHint::turnGhostTextIntoDefinitive(QGraphicsTextItem* temporaryText, 
     
     this->centerGraphicsItemToPoint(temporaryText, eventPos);
 
-    //define metadata
-    auto metadata = RPZAtomMetadata();
-    metadata.setPenWidth(temporaryText->font().pointSize());
-    metadata.setPos(temporaryText->scenePos());
-    metadata.setLayer(temporaryText->zValue());
-    metadata.setText(temporaryText->toPlainText());
+    //define new atom
+    auto newAtom = RPZAtom(RPZAtom::Type::Text);
+    newAtom.setPenWidth(temporaryText->font().pointSize());
+    newAtom.setPos(temporaryText->scenePos());
+    newAtom.setLayer(temporaryText->zValue());
+    newAtom.setText(temporaryText->toPlainText());
 
     //inform !
-    auto newAtom = RPZAtom(RPZAtom::Type::Text, metadata);
     this->handleAlterationRequest(AddedPayload(newAtom));
 
     //DO NOT REMOVE, it will be removed my the map
 }
 
-RPZAtomMetadata ViewMapHint::_contextualizedMetadata() {
-    RPZAtomMetadata out;
+RPZAtom ViewMapHint::_generateContextualizedAtom() {
+    RPZAtom out;
 
     out.setLayer(this->_defaultLayer);
     out.setPenWidth(this->_penWidth);
@@ -360,7 +357,7 @@ QGraphicsItem* ViewMapHint::generateGhostItem(AssetsDatabaseElement* assetElem) 
     auto path = AssetsDatabase::get()->getFilePathToAsset(assetElem);
 
 
-    auto temporaryItem = this->scene()->addGenericImageBasedItem(path, this->_contextualizedMetadata());
+    auto temporaryItem = this->scene()->addGenericImageBasedItem(path, this->_generateContextualizedAtom());
     
     //define transparency as it is a dummy
     temporaryItem->setOpacity(.5);
@@ -379,16 +376,15 @@ void ViewMapHint::turnGhostItemIntoDefinitive(QGraphicsItem* temporaryItem, Asse
 
     this->centerGraphicsItemToPoint(temporaryItem, eventPos);
 
-    //define metadata
-    auto metadata = RPZAtomMetadata();
-    metadata.setAssetId(assetElem->id());
-    metadata.setAssetName(assetElem->displayName());
-    metadata.setLayer(temporaryItem->zValue());
-    metadata.setPos(temporaryItem->scenePos());
-    metadata.setShape(temporaryItem->boundingRect());
+    //define new atom
+    auto newAtom = RPZAtom((RPZAtom::Type)assetElem->type());
+    newAtom.setAssetId(assetElem->id());
+    newAtom.setAssetName(assetElem->displayName());
+    newAtom.setLayer(temporaryItem->zValue());
+    newAtom.setPos(temporaryItem->scenePos());
+    newAtom.setShape(temporaryItem->boundingRect());
 
     //inform !
-    auto newAtom = RPZAtom((RPZAtom::Type)assetElem->type(), metadata);
     auto payload = AddedPayload(newAtom);
     this->handleAlterationRequest(payload);
 
@@ -414,7 +410,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
         
         //text...
         case RPZAtom::Type::Text: { 
-            newItem = this->scene()->addText(atomToBuildFrom.metadata());
+            newItem = this->scene()->addText(atomToBuildFrom);
         }
         break;
 
@@ -428,20 +424,19 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
         case RPZAtom::Type::Object: {
 
             //depending on presence in asset db...
-            auto metadata = atomToBuildFrom.metadata();
-            auto assetId = metadata.assetId();
+            auto assetId = atomToBuildFrom.assetId();
             QString pathToAssetFile = AssetsDatabase::get()->getFilePathToAsset(assetId);
         
             //is in db, add to view
             if(!pathToAssetFile.isNull()) {
-                newItem = this->scene()->addGenericImageBasedItem(pathToAssetFile, metadata);
+                newItem = this->scene()->addGenericImageBasedItem(pathToAssetFile, atomToBuildFrom);
             } 
             
             //not in db, render the shape
             else {
                 
                 //add placeholder
-                auto placeholder = this->scene()->addMissingAssetPH(metadata);
+                auto placeholder = this->scene()->addMissingAssetPH(atomToBuildFrom);
                 newItem = placeholder;
 
                 //if first time the ID is encountered
@@ -483,7 +478,7 @@ void ViewMapHint::replaceMissingAssetPlaceholders(const QString &assetId) {
         auto atom = this->_fetchAtom(gi);
 
         //create the new graphics item
-        auto newGi = this->scene()->addGenericImageBasedItem(pathToFile, atom->metadata());
+        auto newGi = this->scene()->addGenericImageBasedItem(pathToFile, *atom);
         this->_crossBindingAtomWithGI(atom, newGi);
 
         delete gi;
@@ -550,8 +545,8 @@ void ViewMapHint::_handlePayload(AlterationPayload* payload) {
 
     //on reset
     auto type = payload->type();
-    if(type == AlterationPayload::Alteration::Selected) this->scene()->clearSelection();
-    if(type == AlterationPayload::Alteration::Reset) {
+    if(type == PayloadAlteration::Selected) this->scene()->clearSelection();
+    if(type == PayloadAlteration::Reset) {
         for(auto item : this->_boundGv->items()) {
             delete item;
         }
@@ -566,7 +561,7 @@ void ViewMapHint::_handlePayload(AlterationPayload* payload) {
 }
 
 //register actions
-RPZAtom* ViewMapHint::_handlePayloadInternal(const AlterationPayload::Alteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) {
+RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) {
    
     //default handling
     auto updatedAtom = AtomsStorage::_handlePayloadInternal(type, targetedAtomId, atomAlteration); 
@@ -575,72 +570,72 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const AlterationPayload::Alteration
     switch(type) {
         
         //on addition
-        case AlterationPayload::Alteration::Reset:
-        case AlterationPayload::Alteration::Added: {
+        case PayloadAlteration::Reset:
+        case PayloadAlteration::Added: {
             this->_buildGraphicsItemFromAtom(*updatedAtom);
         }
         break;
         
         //on focus
-        case AlterationPayload::Alteration::Focused: {
+        case PayloadAlteration::Focused: {
             this->_boundGv->centerOn(updatedAtom->graphicsItem());
         }
         break;
 
         //on moving
-        case AlterationPayload::Alteration::Moved: {
-            auto destPos = updatedAtom->metadata().pos();
+        case PayloadAlteration::Moved: {
+            auto destPos = updatedAtom->pos();
             updatedAtom->graphicsItem()->setPos(destPos);  
         }
         break;
 
         //on scaling
-        case AlterationPayload::Alteration::Scaled: {
-            auto destScale = updatedAtom->metadata().scale();
+        case PayloadAlteration::Scaled: {
+            auto destScale = updatedAtom->scale();
             updatedAtom->graphicsItem()->setScale(destScale);
         }
         break;
 
         // on locking change
-        case AlterationPayload::Alteration::LockChanged: {
-            auto locked = updatedAtom->metadata().isLocked();
+        case PayloadAlteration::LockChanged: {
+            auto locked = updatedAtom->isLocked();
             auto flags = !locked ? MapViewItemsNotifier::defaultFlags() : 0;
             updatedAtom->graphicsItem()->setFlags(flags);
         }
         break;
         
         // on changing visibility
-        case AlterationPayload::Alteration::VisibilityChanged: {
-            auto hidden = updatedAtom->metadata().isHidden();
+        case PayloadAlteration::VisibilityChanged: {
+            auto hidden = updatedAtom->isHidden();
             auto opacity = hidden ? .05 : 1;
             updatedAtom->graphicsItem()->setOpacity(opacity);
         }
         break;
 
         //on rotation
-        case AlterationPayload::Alteration::Rotated: {
-            auto destRotation = updatedAtom->metadata().rotation();
+        case PayloadAlteration::Rotated: {
+            auto destRotation = updatedAtom->rotation();
             updatedAtom->graphicsItem()->setRotation(destRotation);
         }
         break;
 
         //on text change
-        case AlterationPayload::Alteration::TextChanged: {
-            auto newText = updatedAtom->metadata().text();
+        case PayloadAlteration::TextChanged: {
+            auto newText = updatedAtom->text();
             auto cItem = (QGraphicsTextItem*)updatedAtom->graphicsItem();
             cItem->setPlainText(newText);
         }
         break;
 
         //on layer change
-        case AlterationPayload::Alteration::LayerChanged: {
-            auto newLayer = updatedAtom->metadata().layer();
+        case PayloadAlteration::LayerChanged: {
+            auto newLayer = updatedAtom->layer();
             updatedAtom->graphicsItem()->setZValue(newLayer);
         }
         break;
 
         //on selection
-        case AlterationPayload::Alteration::Selected: {
+        case PayloadAlteration::Selected: {
             
             updatedAtom->graphicsItem()->setSelected(true);
         }

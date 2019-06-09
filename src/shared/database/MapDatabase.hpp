@@ -57,7 +57,7 @@ class MapDatabase : public JSONDatabase {
         }
 
         const int apiVersion() override {
-            return 4;
+            return 5;
         }
 
         const int dbVersion() override {

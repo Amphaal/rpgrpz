@@ -5,7 +5,7 @@
 class RotatedPayload : public MultipleTargetsPayload {
     public:
         RotatedPayload(const QVariantHash &hash) : MultipleTargetsPayload(hash) {}
-        RotatedPayload(const QVector<snowflake_uid> &changedAtomIds, const double degrees) : MultipleTargetsPayload(AlterationPayload::Alteration::Rotated, changedAtomIds) {
+        RotatedPayload(const QVector<snowflake_uid> &changedAtomIds, const double degrees) : MultipleTargetsPayload(PayloadAlteration::Rotated, changedAtomIds) {
             this->_setRotation(degrees);
         }
 

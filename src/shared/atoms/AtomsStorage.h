@@ -25,7 +25,6 @@ class AtomsStorage : public AtomsHandler {
         // redo/undo
         void _registerUndoPayload(AlterationPayload* payload);
 
-
         //duplication
         QVector<snowflake_uid> _latestDuplication;
         int _duplicationCount = 0;
@@ -39,5 +38,5 @@ class AtomsStorage : public AtomsHandler {
 
         //alter the inner atoms lists
         virtual void _handlePayload(AlterationPayload* payload) override;
-        virtual RPZAtom* _handlePayloadInternal(const AlterationPayload::Alteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) override;
+        virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) override;
 };

@@ -13,38 +13,44 @@
 #include "payloads/VisibilityPayload.hpp"
 #include "payloads/LockingPayload.hpp"
 #include "payloads/DuplicatedPayload.hpp"
+#include "payloads/RedonePayload.hpp"
+#include "payloads/UndonePayload.hpp"
 
 class Payload {
     public:
         static AlterationPayload* autoCast(QVariantHash &payload) {
-            auto type = (AlterationPayload::Alteration)payload["t"].toInt();
+            auto type = (PayloadAlteration)payload["t"].toInt();
 
             switch(type) {
-                case AlterationPayload::Alteration::LockChanged:
+                case PayloadAlteration::Redone:
+                    return new RedonePayload(payload);
+                case PayloadAlteration::Undone:
+                    return new UndonePayload(payload);
+                case PayloadAlteration::LockChanged:
                     return new LockingPayload(payload);
-                case AlterationPayload::Alteration::VisibilityChanged:
+                case PayloadAlteration::VisibilityChanged:
                     return new VisibilityPayload(payload);
-                case AlterationPayload::Alteration::Added:                  
+                case PayloadAlteration::Added:                  
                     return new AddedPayload(payload);
-                case AlterationPayload::Alteration::Focused:
+                case PayloadAlteration::Focused:
                     return new FocusedPayload(payload);
-                case AlterationPayload::Alteration::LayerChanged:
+                case PayloadAlteration::LayerChanged:
                     return new LayerChangedPayload(payload);
-                case AlterationPayload::Alteration::Moved:
+                case PayloadAlteration::Moved:
                     return new MovedPayload(payload);
-                case AlterationPayload::Alteration::Removed:
+                case PayloadAlteration::Removed:
                     return new RemovedPayload(payload);
-                case AlterationPayload::Alteration::Reset:
+                case PayloadAlteration::Reset:
                     return new ResetPayload(payload);
-                case AlterationPayload::Alteration::Selected:
+                case PayloadAlteration::Selected:
                     return new SelectedPayload(payload);
-                case AlterationPayload::Alteration::TextChanged:
+                case PayloadAlteration::TextChanged:
                     return new TextChangedPayload(payload);
-                case AlterationPayload::Alteration::Rotated:
+                case PayloadAlteration::Rotated:
                     return new RotatedPayload(payload);
-                case AlterationPayload::Alteration::Scaled:
+                case PayloadAlteration::Scaled:
                     return new ScaledPayload(payload);
-                case AlterationPayload::Alteration::Duplicated:
+                case PayloadAlteration::Duplicated:
                     return new DuplicatedPayload(payload);
             }
 

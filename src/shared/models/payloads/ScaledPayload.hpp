@@ -5,7 +5,7 @@
 class ScaledPayload : public MultipleTargetsPayload {
     public:
         ScaledPayload(const QVariantHash &hash) : MultipleTargetsPayload(hash) {}
-        ScaledPayload(const QVector<snowflake_uid> &changedAtomIds, const double scale) : MultipleTargetsPayload(AlterationPayload::Alteration::Scaled, changedAtomIds) {
+        ScaledPayload(const QVector<snowflake_uid> &changedAtomIds, const double scale) : MultipleTargetsPayload(PayloadAlteration::Scaled, changedAtomIds) {
             this->_setScale(scale);
         }
 

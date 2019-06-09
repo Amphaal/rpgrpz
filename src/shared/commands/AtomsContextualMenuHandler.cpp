@@ -9,10 +9,10 @@ AtomsContextualMenuHandler::AtomsContextualMenuHandler(AtomsHandler* hintsToCont
 }
 
 void AtomsContextualMenuHandler::undoAlteration() {
-    auto i = true;
+    this->_hints->handleAlterationRequest(UndonePayload());
 }
 void AtomsContextualMenuHandler::redoAlteration() {
-    auto i = true;
+    this->_hints->handleAlterationRequest(RedonePayload());
 }
 
 void AtomsContextualMenuHandler::copySelectedAtomsToClipboard() {
@@ -33,17 +33,23 @@ void AtomsContextualMenuHandler::removeSelectedAtoms() {
 
 void AtomsContextualMenuHandler::moveSelectedAtomsToLayer(int targetLayer) {
     auto selectedIds = this->_selectedAtomIds();
-    this->_hints->handleAlterationRequest(LayerChangedPayload(selectedIds, targetLayer));
+    this->_hints->handleAlterationRequest(
+        LayerChangedPayload(selectedIds, targetLayer)
+    );
 }
 
 void AtomsContextualMenuHandler::alterSelectedAtomsVisibility(bool isHidden) {
     auto selectedIds = this->_selectedAtomIds();
-    this->_hints->handleAlterationRequest(VisibilityPayload(selectedIds, isHidden));
+    this->_hints->handleAlterationRequest(
+        VisibilityPayload(selectedIds, isHidden)
+    );
 }
 
 void AtomsContextualMenuHandler::alterSelectedAtomsAvailability(bool isLocked) {
     auto selectedIds = this->_selectedAtomIds();
-    this->_hints->handleAlterationRequest(LockingPayload(selectedIds, isLocked));
+    this->_hints->handleAlterationRequest(
+        LockingPayload(selectedIds, isLocked)
+    );
 }
 
 void AtomsContextualMenuHandler::invokeMenu(int topMostLayer, int bottomMostLayer, int countAtoms, const QPoint &whereToDisplay) {

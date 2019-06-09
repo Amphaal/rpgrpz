@@ -84,9 +84,9 @@ void AtomEditor::buildEditor(QVector<void*> &atoms) {
     }
 
     //define default values
-    RPZAtomMetadata mdata = atoms.count() == 1 ? this->_atoms[0]->metadata() : RPZAtomMetadata();
-    auto defaultRotation = mdata.rotation();
-    auto defaultScale = mdata.scale();
+    RPZAtom atom = atoms.count() == 1 ? *this->_atoms[0] : RPZAtom();
+    auto defaultRotation = atom.rotation();
+    auto defaultScale = atom.scale();
 
     //depending on number of items selected...
     if(atoms.count() > 1) {

@@ -7,7 +7,7 @@
 class MovedPayload : public AlterationPayload {
     public:
         MovedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        MovedPayload(const QHash<snowflake_uid, QPointF> &newCoordsByAtomId) : AlterationPayload(AlterationPayload::Alteration::Moved) {
+        MovedPayload(const QHash<snowflake_uid, QPointF> &newCoordsByAtomId) : AlterationPayload(PayloadAlteration::Moved) {
             this->_setCoordHash(newCoordsByAtomId);
         }
 

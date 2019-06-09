@@ -8,7 +8,7 @@ class MultipleTargetsPayload : public AlterationPayload {
     public:
 
         MultipleTargetsPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        MultipleTargetsPayload(const AlterationPayload::Alteration &alteration, const QVector<snowflake_uid> &targetedAtomIds) : AlterationPayload(alteration) {
+        MultipleTargetsPayload(const PayloadAlteration &alteration, const QVector<snowflake_uid> &targetedAtomIds) : AlterationPayload(alteration) {
             this->_setTargetAtomIds(targetedAtomIds);
         }
     

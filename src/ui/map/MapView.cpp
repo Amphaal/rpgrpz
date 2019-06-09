@@ -45,7 +45,7 @@ void MapView::contextMenuEvent(QContextMenuEvent *event) {
     for(auto &item : selected) {
         
         auto atom = (RPZAtom*)item->data(0).toLongLong();
-        auto layer = atom->metadata().layer();
+        auto layer = atom->layer();
         
         if(firstPass) {
             firstPass = false;
