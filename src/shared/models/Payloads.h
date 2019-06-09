@@ -18,7 +18,7 @@
 
 class Payload {
     public:
-        static AlterationPayload* autoCast(QVariantHash &payload) {
+        static AlterationPayload* autoCast(const QVariantHash &payload) {
             auto type = (PayloadAlteration)payload["t"].toInt();
 
             switch(type) {

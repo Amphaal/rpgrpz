@@ -11,7 +11,7 @@ RPZMap<RPZAtom> AtomsStorage::atoms() {
 void AtomsStorage::undo() {
 
     //if no history, abort
-    auto count = this->_payloadHistory.count();
+    auto count = this->_undoHistory.count();
     if(!count) return;
 
     //check if targeted payload exists
@@ -20,12 +20,11 @@ void AtomsStorage::undo() {
     if(toReachIndex < 0) return;
 
     //get stored payload and handle it
-    auto pl = this->_payloadHistory[toReachIndex];
-    auto undo_pl = this->_generateUndoPayload(&pl);
+    auto pl = Payload::autoCast(this->_undoHistory.at(toReachIndex));
 
-        this->_basic_handlePayload(undo_pl);
+        this->_basic_handlePayload(pl);
     
-    delete undo_pl;
+    delete pl;
 
     //update the index
     this->_payloadHistoryIndex++;
@@ -36,19 +35,27 @@ void AtomsStorage::redo() {
     //if already on the most recent, abort
     if(!this->_payloadHistoryIndex) return;
 
+    //if no history, abort
+    auto count = this->_redoHistory.count();
+    if(!count) return;
+
     //check if targeted payload exists
     auto toReach = this->_payloadHistoryIndex - 1;
-    auto toReachIndex = this->_payloadHistory.count() - toReach;
-    
+    auto toReachIndex = (count - toReach) - 1 ;
+    if(toReachIndex < 0) return;
+
     //get stored payload and handle it
-    auto pl = this->_payloadHistory[toReachIndex];
-    this->_basic_handlePayload(&pl);
+    auto pl = Payload::autoCast(this->_redoHistory.at(toReachIndex));
+        
+        this->_basic_handlePayload(pl);
+
+    delete pl;
 
     //update the index
     this->_payloadHistoryIndex--;
 }
 
-AlterationPayload* AtomsStorage::_generateUndoPayload(AlterationPayload* historyPayload) {
+AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload* historyPayload) {
     
     switch(historyPayload->type()) {
 
@@ -58,13 +65,13 @@ AlterationPayload* AtomsStorage::_generateUndoPayload(AlterationPayload* history
             for(auto atomId : casted->coordHash().keys()) {
                 out.insert(atomId, this->_atomsById[atomId].pos());
             }
-            return new MovedPayload(out);
+            return MovedPayload(out);
         }
         break; 
 
         case PayloadAlteration::Added: {
             auto casted = (AddedPayload*)historyPayload;
-            return new RemovedPayload(casted->atoms().keys().toVector());
+            return RemovedPayload(casted->atoms().keys().toVector());
         }
         break; 
 
@@ -74,13 +81,13 @@ AlterationPayload* AtomsStorage::_generateUndoPayload(AlterationPayload* history
             for(auto atomId : casted->targetAtomIds()) {
                 out.insert(atomId, this->_atomsById[atomId]);
             }
-            return new AddedPayload(out);
+            return AddedPayload(out);
         }
         break; 
 
     }
 
-    return nullptr;
+    return *historyPayload;
 }
 
 void AtomsStorage::_registerPayloadForHistory(AlterationPayload* payload) {
@@ -90,12 +97,14 @@ void AtomsStorage::_registerPayloadForHistory(AlterationPayload* payload) {
 
     //cut branch
     while(this->_payloadHistoryIndex) {
-        this->_payloadHistory.pop();
+        this->_undoHistory.pop();
+        this->_redoHistory.pop();
         this->_payloadHistoryIndex--;
     }
 
     //build a new one
-    this->_payloadHistory.push(*payload);
+    this->_redoHistory.push(*payload);
+    this->_undoHistory.push(this->_generateUndoPayload(payload));
 }
 
 //////////////
@@ -127,7 +136,8 @@ void AtomsStorage::_handlePayload(AlterationPayload* payload) {
     if(pType == PayloadAlteration::Reset) {
         this->_atomsById.clear();
         this->_atomIdsByOwnerId.clear();
-        this->_payloadHistory.clear();
+        this->_undoHistory.clear();
+        this->_redoHistory.clear();
     }
 
     //base handling
