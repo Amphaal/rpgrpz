@@ -13,6 +13,8 @@ class AtomsContextualMenuHandler {
     public:
         AtomsContextualMenuHandler(AtomsHandler* hintsToContextualize, QWidget* menuParent = nullptr);
 
+        void undoAlteration();
+        void redoAlteration();
         void copySelectedAtomsToClipboard();
         void pasteAtomsFromClipboard();
         void removeSelectedAtoms();
@@ -45,8 +47,8 @@ class AtomsContextualMenuHandler {
 
         QAction* _genRemoveAction(int selectedAtoms);
         QList<QAction*> _genLayerActions(int riseLayoutTarget, int lowerLayoutTarget, int selectedAtoms);
-        QList<QAction*> _genUndoRedoActions(int selectedAtoms);
-        QList<QAction*> _genCopyPasteActions(int selectedAtoms);
+        QList<QAction*> _genUndoRedoActions();
+        QList<QAction*> _genCopyPasteActions();
         QList<QAction*> _genVisibilityActions(int selectedAtoms);
         QList<QAction*> _genAvailabilityActions(int selectedAtoms);
 };

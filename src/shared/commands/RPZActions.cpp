@@ -3,6 +3,7 @@
 QAction* RPZActions::redo() {
     auto action = new QAction("Rétablir");
     action->setShortcut(QKeySequence::Redo);
+    action->setShortcutContext(Qt::ShortcutContext::WidgetWithChildrenShortcut);
     action->setShortcutVisibleInContextMenu(true);
     return action;
 }
@@ -10,6 +11,7 @@ QAction* RPZActions::redo() {
 QAction* RPZActions::undo() {
     auto action = new QAction("Annuler");
     action->setShortcut(QKeySequence::Undo);
+    action->setShortcutContext(Qt::ShortcutContext::WidgetWithChildrenShortcut);
     action->setShortcutVisibleInContextMenu(true);
     return action;
 }

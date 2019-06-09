@@ -5,6 +5,14 @@ AtomsContextualMenuHandler::AtomsContextualMenuHandler(AtomsHandler* hintsToCont
     _hints(hintsToContextualize) { 
 
     menuParent->addActions(this->_genCopyPasteActions());
+    menuParent->addActions(this->_genUndoRedoActions());
+}
+
+void AtomsContextualMenuHandler::undoAlteration() {
+    auto i = true;
+}
+void AtomsContextualMenuHandler::redoAlteration() {
+    auto i = true;
 }
 
 void AtomsContextualMenuHandler::copySelectedAtomsToClipboard() {
@@ -43,7 +51,7 @@ void AtomsContextualMenuHandler::invokeMenu(int topMostLayer, int bottomMostLaye
     //display menu
     QMenu menu(this->_menuParent);
 
-    menu.addActions(this->_genCopyPasteActions(countAtoms));
+    menu.addActions(this->_genCopyPasteActions());
     menu.addSeparator();
     menu.addActions(this->_genLayerActions(topMostLayer, bottomMostLayer, countAtoms));
     menu.addSeparator();
@@ -103,29 +111,23 @@ QList<QAction*> AtomsContextualMenuHandler::_genLayerActions(int riseLayoutTarge
 
 }
 
-QList<QAction*> AtomsContextualMenuHandler::_genUndoRedoActions(int selectedAtoms) { 
+QList<QAction*> AtomsContextualMenuHandler::_genUndoRedoActions() { 
 
     if(!this->_undoAction) {
         this->_undoAction = RPZActions::undo();
         QObject::connect(
             this->_undoAction, &QAction::triggered,
-            [=]() {
-                auto i = true;
-            }
+            [=]() {this->undoAlteration();}
         );
     }
-    this->_undoAction->setEnabled(selectedAtoms);
 
     if(!this->_redoAction) {
         this->_redoAction = RPZActions::redo();
         QObject::connect(
-            this->_undoAction, &QAction::triggered,
-            [=]() {
-                auto i = true;
-            }
+            this->_redoAction, &QAction::triggered,
+            [=]() {this->redoAlteration();}
         );
     }
-    this->_redoAction->setEnabled(selectedAtoms);
 
     QList<QAction*> out;
     out.append(this->_undoAction);

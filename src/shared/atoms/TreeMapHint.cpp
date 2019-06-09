@@ -29,7 +29,8 @@ void TreeMapHint::_onElementDoubleClicked(QTreeWidgetItem * item, int column) {
     auto focusedAtomId = this->_extractAtomIdFromItem(item);
     if(!focusedAtomId) return;
 
-    this->_emitAlteration(FocusedPayload(focusedAtomId));
+    auto payload = FocusedPayload(focusedAtomId);
+    this->_emitAlteration(&payload);
 }
 
 void TreeMapHint::_onElementSelectionChanged() {
@@ -39,22 +40,19 @@ void TreeMapHint::_onElementSelectionChanged() {
 
     if(this->_preventInnerGIEventsHandling) return;
 
-    this->_emitAlteration(
-        SelectedPayload(selected)
-    );
+    auto payload = SelectedPayload(selected);
+    this->_emitAlteration(&payload);
 }
 
-void TreeMapHint::_handlePayload(AlterationPayload &payload) {
+void TreeMapHint::_handlePayload(AlterationPayload* payload) {
 
     this->_preventInnerGIEventsHandling = true;
 
     //prevent circular payloads
-    auto aPayload = Payload::autoCast(payload);
-    auto type = aPayload->type();
-    auto source = aPayload->source();
+    auto type = payload->type();
+    auto source = payload->source();
 
     if(source == this->_source) {
-        delete aPayload;
         this->_preventInnerGIEventsHandling = false;
         return;
     }
@@ -74,21 +72,20 @@ void TreeMapHint::_handlePayload(AlterationPayload &payload) {
 
     //specific bulk handling for UI optimizations
     if(type == AlterationPayload::Alteration::LayerChanged) {
-        auto temp = LayerChangedPayload(payload);
+        auto temp = LayerChangedPayload(*payload);
         this->_changeLayer(temp.targetAtomIds(), temp.layer());
     }
 
     //conditionnal handling by alteration
-    auto alterations = aPayload->alterationByAtomId();
+    auto alterations = payload->alterationByAtomId();
     for (QVariantMap::iterator i = alterations.begin(); i != alterations.end(); ++i) {
         auto atomId = (snowflake_uid)i.key().toULongLong();
         this->_handlePayloadInternal(type, atomId, i.value());
     }
     
-    delete aPayload;
     this->_preventInnerGIEventsHandling = false;
     
-    this->_emitAlteration(AlterationPayload(payload));
+    this->_emitAlteration(payload);
 }
 
 RPZAtom* TreeMapHint::_handlePayloadInternal(const AlterationPayload::Alteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) {

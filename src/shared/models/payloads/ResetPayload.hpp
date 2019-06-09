@@ -1,45 +1,9 @@
 #pragma once
 
-#include "src/shared/models/entities/RPZAtom.hpp"
+#include "base/AtomsWielderPayload.hpp"
 
-#include "base/AlterationPayload.hpp"
-
-class ResetPayload : public AlterationPayload {
+class ResetPayload : public AtomsWielderPayload {
     public:
-        ResetPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        ResetPayload(RPZMap<RPZAtom> &atoms) : AlterationPayload(AlterationPayload::Alteration::Reset) {
-            this->_setAddedAtoms(atoms);
-        }
-            
-    RPZMap<RPZAtom> atoms() {
-        RPZMap<RPZAtom> out;
-        
-        auto map = this->value("atoms").toMap();
-
-        for(QVariantMap::iterator i = map.begin(); i != map.end(); ++i) { 
-            out.insert(i.key().toULongLong(), i.value().toHash());
-        }
-        
-        return out;
-    }
-
-    QVariantMap alterationByAtomId() override {
-        QVariantMap out;
-     
-        auto list = this->atoms();
-        for(auto &atom : list) {
-            out.insert(QString::number(atom.id()), atom);
-        }
-
-        return out;
-    }
-
-    private:
-        void _setAddedAtoms(RPZMap<RPZAtom> &atoms) {
-            QVariantMap list;
-            for(auto &e : atoms) {
-                list.insert(QString::number(e.id()), e);
-            }
-            (*this)["atoms"] = list;
-        }
+        ResetPayload(const QVariantHash &hash) : AtomsWielderPayload(hash) {}
+        ResetPayload(RPZMap<RPZAtom> &atoms) : AtomsWielderPayload(AlterationPayload::Alteration::Reset, atoms) { }
 };

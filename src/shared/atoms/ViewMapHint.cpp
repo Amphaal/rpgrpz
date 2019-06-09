@@ -121,9 +121,8 @@ void ViewMapHint::_onSceneSelectionChanged() {
     }
 
     //bypass internal
-    this->_emitAlteration(
-        SelectedPayload(selectedAtomIds)
-    );
+    auto payload = SelectedPayload(selectedAtomIds);
+    this->_emitAlteration(&payload);
 
 }
 
@@ -200,7 +199,7 @@ bool ViewMapHint::loadState(QString &filePath) {
 
     //load file and parse it
     MapDatabase mapDb(filePath);
-    this->_handlePayload(
+    this->handleAlterationRequest(
         ResetPayload(mapDb.toAtoms())
     );
     
@@ -230,13 +229,13 @@ bool ViewMapHint::defineAsRemote(QString &remoteMapDescriptor) {
 }
 
 
-void ViewMapHint::_shouldMakeDirty(AlterationPayload &payload) {
+void ViewMapHint::_shouldMakeDirty(AlterationPayload* payload) {
     
     //if remote, never dirty
     if(this->_isRemote) return;
 
     //if not a network alteration type
-    if(!payload.isNetworkRoutable()) return;
+    if(!payload->isNetworkRoutable()) return;
 
     this->_setDirty();
 }
@@ -390,7 +389,8 @@ void ViewMapHint::turnGhostItemIntoDefinitive(QGraphicsItem* temporaryItem, Asse
 
     //inform !
     auto newAtom = RPZAtom((RPZAtom::Type)assetElem->type(), metadata);
-    this->handleAlterationRequest(AddedPayload(newAtom));
+    auto payload = AddedPayload(newAtom);
+    this->handleAlterationRequest(payload);
 
     //remove ghost
     delete temporaryItem;
@@ -540,16 +540,16 @@ void ViewMapHint::centerGraphicsItemToPoint(QGraphicsItem* item, const QPoint &e
 ////////////////////////
 
 //alter Scene
-void ViewMapHint::_handlePayload(AlterationPayload &payload) { 
+void ViewMapHint::_handlePayload(AlterationPayload* payload) { 
 
     //make sure to not perpetuate circular payloads
-    auto payloadSource = payload.source();
+    auto payloadSource = payload->source();
     if(payloadSource == this->_source) return;
 
     this->_preventInnerGIEventsHandling = true;
 
     //on reset
-    auto type = payload.type();
+    auto type = payload->type();
     if(type == AlterationPayload::Alteration::Selected) this->scene()->clearSelection();
     if(type == AlterationPayload::Alteration::Reset) {
         for(auto item : this->_boundGv->items()) {

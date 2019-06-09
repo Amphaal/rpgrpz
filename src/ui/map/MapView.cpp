@@ -234,9 +234,6 @@ void MapView::mousePressEvent(QMouseEvent *event) {
             this->_isMiddleToolLock = !this->_isMiddleToolLock;
             this->_changeTool(MapTools::Actions::Scroll, true);
             break;
-        case Qt::MouseButton::RightButton:
-            //TODO Contextual menu
-            break;
         case Qt::MouseButton::LeftButton:
             this->_toolOnMousePress(this->_getCurrentTool());
             break;

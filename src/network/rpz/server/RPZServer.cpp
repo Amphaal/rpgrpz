@@ -195,59 +195,36 @@ void RPZServer::_askHostForMapHistory() {
     this->_hostSocket->sendJSON(JSONMethod::AskForHostMapHistory, QStringList());
 }
 
-AlterationPayload RPZServer::_alterIncomingPayloadWithUpdatedOwners(QVariantHash &payload, JSONSocket * senderSocket) {
-
-    auto aPayload = Payload::autoCast(payload);
-    auto type = aPayload->type();
+void RPZServer::_alterIncomingPayloadWithUpdatedOwners(AlterationPayload* payload, JSONSocket * senderSocket) {
 
     //no need to modify anything if not a build operation
-    if(!aPayload->requiresGraphicsItemBuild()) {
-        delete aPayload;
-        return payload;
-    }
+    if(!payload->requiresGraphicsItemBuild()) return;
+    auto cPayload = (AtomsWielderPayload*)payload;
 
     //get sender identity
     auto defaultOwner = this->_getUser(senderSocket); 
+    cPayload->updateEmptyUser(*defaultOwner);
 
-    //override ownership on absent owner data
-    RPZMap<RPZAtom> updatedAtoms;
-    for(auto &atomRaw : aPayload->alterationByAtomId()) {
-        
-        RPZAtom atom(atomRaw.toHash());
-        auto owner = atom.owner();
-
-        if(owner.isEmpty()) atom.setOwnership(*defaultOwner);
-        
-        updatedAtoms.insert(atom.id(), atom);
-    }
-    delete aPayload;
-
-    //return altered
-    switch(type) {
-        case AlterationPayload::Alteration::Added:
-            return AddedPayload(updatedAtoms.first());
-        case AlterationPayload::Alteration::Reset:
-            return ResetPayload(updatedAtoms);
-    }
-
-    //default return
-    return payload;
 }
 
 void RPZServer::_broadcastMapChanges(QVariantHash &payload, JSONSocket * senderSocket) {
 
     //cast
-    auto aPayload = this->_alterIncomingPayloadWithUpdatedOwners(payload, senderSocket);
+    auto aPayload = Payload::autoCast(payload);
+
+    this->_alterIncomingPayloadWithUpdatedOwners(aPayload, senderSocket);
 
     //save for history
-    this->_hints->handleAlterationRequest(aPayload);
+    this->_hints->handleAlterationRequest(*aPayload);
 
     //add source for outer calls
-    aPayload.changeSource(this->_hints->source());
+    aPayload->changeSource(this->_hints->source());
 
     //send to registered users...
-    this->_sendToAllButSelf(senderSocket, JSONMethod::MapChanged, aPayload);
+    this->_sendToAllButSelf(senderSocket, JSONMethod::MapChanged, *aPayload);
 
+    //clear obj
+    delete aPayload;
 }
 
 void RPZServer::_sendMapHistory(JSONSocket * clientSocket) {

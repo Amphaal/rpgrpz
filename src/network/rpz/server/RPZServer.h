@@ -57,7 +57,7 @@ class RPZServer : public QTcpServer, public JSONRouter {
         void _askHostForMapHistory();
         void _broadcastMapChanges(QVariantHash &payload, JSONSocket * senderSocket);
         void _sendMapHistory(JSONSocket * clientSocket);
-        AlterationPayload _alterIncomingPayloadWithUpdatedOwners(QVariantHash &payload, JSONSocket * senderSocket);
+            void _alterIncomingPayloadWithUpdatedOwners(AlterationPayload* payload, JSONSocket * senderSocket);
         
         //messages
         RPZMap<RPZMessage> _messages;

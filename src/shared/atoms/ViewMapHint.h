@@ -88,7 +88,7 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
 
         bool _isDirty = false;
         void _setDirty(bool dirty = true);
-        void _shouldMakeDirty(AlterationPayload &payload);
+        void _shouldMakeDirty(AlterationPayload* payload);
 
         QGraphicsView* _boundGv = nullptr;
 
@@ -115,7 +115,7 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         bool _isInTextInteractiveMode = false;
 
         //augmenting AtomsStorage
-        virtual void _handlePayload(AlterationPayload &payload) override;
+        virtual void _handlePayload(AlterationPayload* payload) override;
         virtual RPZAtom* _handlePayloadInternal(const AlterationPayload::Alteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) override;
 
         RPZAtomMetadata _contextualizedMetadata();

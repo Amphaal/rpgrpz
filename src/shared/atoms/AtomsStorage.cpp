@@ -13,18 +13,18 @@ RPZMap<RPZAtom> AtomsStorage::atoms() {
 //////////////
 
 //alter Scene
-void AtomsStorage::_handlePayload(AlterationPayload &payload) { 
+void AtomsStorage::_handlePayload(AlterationPayload* payload) { 
     
     //prevent circular payloads
-    auto payloadSource = payload.source();
+    auto payloadSource = payload->source();
     if(payloadSource == this->_source) return;
 
     //on reset
-    auto pType = payload.type();
+    auto pType = payload->type();
 
     //on duplication
     if(pType == AlterationPayload::Alteration::Duplicated) {
-        return this->_duplicateAtoms(((DuplicatedPayload)payload).targetAtomIds());
+        return this->_duplicateAtoms(((DuplicatedPayload*)payload)->targetAtomIds());
     }
 
     if(pType == AlterationPayload::Alteration::Reset) {
@@ -34,12 +34,10 @@ void AtomsStorage::_handlePayload(AlterationPayload &payload) {
 
 
     //handling
-    auto aCasted = Payload::autoCast(payload);
-    auto alterations = aCasted->alterationByAtomId();
+    auto alterations = payload->alterationByAtomId();
     for (QVariantMap::iterator i = alterations.begin(); i != alterations.end(); ++i) {
         this->_handlePayloadInternal(pType, i.key().toULongLong(), i.value());
     }
-    delete aCasted;
 
     //emit event
     this->_emitAlteration(payload);
@@ -200,7 +198,7 @@ void AtomsStorage::_duplicateAtoms(QVector<snowflake_uid> &atomIdList) {
     }
 
     //new payload
-    this->_handlePayload(AddedPayload(newAtoms));
+    this->handleAlterationRequest(AddedPayload(newAtoms));
 }
 
 
