@@ -3,6 +3,7 @@
 #include <QHash>
 #include <QSet>
 #include <QVector>
+#include <QStack>
 #include <QVariantList>
 #include <QObject>
 #include <QDebug>
@@ -23,7 +24,9 @@ class AtomsStorage : public AtomsHandler {
 
     protected:
         // redo/undo
-        void _registerUndoPayload(AlterationPayload* payload);
+        QStack<AlterationPayload> _payloadHistory;
+        int _payloadHistoryIndex = 0;
+        void _registerPayloadForHistory(AlterationPayload* payload);
 
         //duplication
         QVector<snowflake_uid> _latestDuplication;
@@ -39,4 +42,5 @@ class AtomsStorage : public AtomsHandler {
         //alter the inner atoms lists
         virtual void _handlePayload(AlterationPayload* payload) override;
         virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) override;
+
 };

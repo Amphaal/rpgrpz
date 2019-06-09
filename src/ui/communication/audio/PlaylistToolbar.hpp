@@ -111,7 +111,7 @@ class PlaylistToolbar : public QWidget {
 
         QSlider* _trackStateSlider;
         QLabel* _trackPlayStateLbl;
-        static inline QString _defaultNoTime = "--"; 
+        static inline const QString _defaultNoTime = "--"; 
         QString _trackPlayStateTemplator = QString(" %1 / %2 ");
         QString _currentTrackEndFormated = PlaylistToolbar::_defaultNoTime; 
 

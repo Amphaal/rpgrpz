@@ -7,72 +7,66 @@ RPZMap<RPZAtom> AtomsStorage::atoms() {
     return this->_atomsById;
 }
 
+void AtomsStorage::redo() {
+    if(!this->_payloadHistoryIndex) return;
+
+
+    
+
+    this->_payloadHistoryIndex--;
+}
+
+void AtomsStorage::_registerPayloadForHistory(AlterationPayload* payload) {
+    while(this->_payloadHistoryIndex) {
+        this->_payloadHistory.pop();
+        this->_payloadHistoryIndex--;
+    }
+    this->_payloadHistory.push(*payload);
+}
+
+void AtomsStorage::undo() {
+    auto count = this->_payloadHistory.count();
+    if(!count) return;
+
+    auto toReach = this->_payloadHistoryIndex + 1;
+
+    this->_payloadHistoryIndex++;
+
+    switch(payload->type()) {
+
+        case PayloadAlteration::Moved: {
+            auto casted = (MovedPayload*)payload;
+            QHash<snowflake_uid, QPointF> out;
+            for(auto atomId : casted->coordHash().keys()) {
+                out.insert(atomId, this->_atomsById[atomId].pos());
+            }
+            return new MovedPayload(out);
+        }
+        break; 
+
+        case PayloadAlteration::Added: {
+            auto casted = (AddedPayload*)payload;
+            return new RemovedPayload(casted->atoms().keys().toVector());
+        }
+        break; 
+
+        case PayloadAlteration::Removed: {
+            auto casted = (RemovedPayload*)payload;
+            RPZMap<RPZAtom> out;
+            for(auto atomId : casted->targetAtomIds()) {
+                out.insert(atomId, this->_atomsById[atomId]);
+            }
+            return new AddedPayload(out);
+        }
+        break; 
+
+    }
+}
+
 
 //////////////
 /* ELEMENTS */
 //////////////
-
-void AtomsStorage::_registerUndoPayload(AlterationPayload* payload) {
-    switch(payload->type()) {
-
-            case PayloadAlteration::Moved: {
-                auto casted = (MovedPayload*)payload;
-            }
-            break; 
-
-            case PayloadAlteration::Added: {
-                auto casted = (AddedPayload*)payload;
-                return RemovedPayload(casted->atoms().keys().toVector());
-            }
-            break; 
-
-            case PayloadAlteration::Removed: {
-                auto casted = (RemovedPayload*)payload;
-                RPZMap<RPZAtom> out;
-                for(auto atomId : casted->targetAtomIds()) {
-                    out.insert(atomId, this->_atomsById[atomId]);
-                }
-                return AddedPayload(out);
-            }
-            break; 
-
-            case PayloadAlteration::Reset: {
-                auto casted = (ResetPayload*)payload;
-                return ResetPayload(this->_atomsById);
-            }
-            break;
-
-            case PayloadAlteration::LayerChanged: {
-                auto casted = (LayerChangedPayload*)payload;
-            }
-            break;
-
-            case PayloadAlteration::TextChanged: {
-                auto casted = (TextChangedPayload*)payload;
-            }
-            break;
-
-            case PayloadAlteration::Rotated: {
-                auto casted = (RotatedPayload*)payload;
-            }
-            break;
-
-            case PayloadAlteration::Scaled: {
-                auto casted = (ScaledPayload*)payload;
-            }
-            break;
-
-            case PayloadAlteration::LockChanged: {
-                auto casted = (LockingPayload*)payload;
-            }
-            break;
-            
-            case PayloadAlteration::VisibilityChanged: {
-                auto casted = (VisibilityPayload*)payload;
-            }
-            break;
-    }
-}
 
 //alter Scene
 void AtomsStorage::_handlePayload(AlterationPayload* payload) { 
@@ -92,13 +86,14 @@ void AtomsStorage::_handlePayload(AlterationPayload* payload) {
     if(pType == PayloadAlteration::Redone) return this->redo(); //on redo
     if(pType == PayloadAlteration::Undone) return this->undo(); //on undo
 
-    //register
-    this->_registerUndoPayload(payload);
+    //register history
+    this->_registerPayloadForHistory(payload);
 
     //on reset
     if(pType == PayloadAlteration::Reset) {
         this->_atomsById.clear();
         this->_atomIdsByOwnerId.clear();
+        this->_payloadHistory.clear();
     }
 
     //handling

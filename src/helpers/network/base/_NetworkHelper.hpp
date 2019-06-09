@@ -30,5 +30,5 @@ class NetworkHelper {
         }
     
     private:
-        static inline QNetworkAccessManager _manager = QNetworkAccessManager();
+        static inline QNetworkAccessManager _manager;
 };

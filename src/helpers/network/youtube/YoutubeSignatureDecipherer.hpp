@@ -161,5 +161,5 @@ class YoutubeSignatureDecipherer {
         
         QQueue<QPair<CipherOperation, QVariant>> _operations;
 
-        static inline QHash<QString, YoutubeSignatureDecipherer*> _cache = QHash<QString, YoutubeSignatureDecipherer*>();
+        static inline QHash<QString, YoutubeSignatureDecipherer*> _cache;
 };

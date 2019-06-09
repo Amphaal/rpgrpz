@@ -28,7 +28,7 @@ class AssetsDatabaseElement {
         };
         
         static AssetsDatabaseElement* fromIndex(QModelIndex index);
-        static inline QString listMimeType = "application/x-assets-db-elem-list";
+        static inline const QString listMimeType = "application/x-assets-db-elem-list";
 
         static QList<AssetsDatabaseElement::Type> staticContainerTypes();
         static QList<AssetsDatabaseElement::Type> internalItemTypes();

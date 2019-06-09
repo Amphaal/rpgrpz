@@ -11,7 +11,7 @@ class MessageInterpreter {
     public:
         enum Command { Unknown, Say, Whisper, Help };
         
-        static inline QHash<QString, Command> _textByCommand = {
+        static inline const QHash<QString, Command> _textByCommand = {
             { "/h", Help }
         };
 
@@ -28,6 +28,6 @@ class MessageInterpreter {
         static QString usernameToCommandCompatible(QString username);
 
     private:
-        static inline QRegularExpression _hasWhispRegex = QRegularExpression("@(\\w+)");
-        static inline QRegularExpression _hasCommandRegex = QRegularExpression("\\/(\\w+)");
+        static inline const QRegularExpression _hasWhispRegex = QRegularExpression("@(\\w+)");
+        static inline const QRegularExpression _hasCommandRegex = QRegularExpression("\\/(\\w+)");
 };

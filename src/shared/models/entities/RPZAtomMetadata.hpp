@@ -43,7 +43,7 @@ class RPZAtomMetadata {
             Locked
         };
 
-        static inline QHash<Parameters, QString> _str = {
+        static inline const QHash<Parameters, QString> _str = {
             { AssetId, "a_id" },
             { AssetName, "a_name" },
             { Scale, "scl" },

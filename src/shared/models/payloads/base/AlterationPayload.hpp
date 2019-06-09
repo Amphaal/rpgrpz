@@ -78,8 +78,21 @@ class AlterationPayload : public QVariantHash {
             LockChanged,
             VisibilityChanged 
         };
+        
+        static inline const QList<PayloadAlteration> _networkAlterations = { 
+            Moved, 
+            Added, 
+            Removed, 
+            Reset,
+            LayerChanged,
+            TextChanged,
+            Rotated,
+            Scaled,
+            LockChanged,
+            VisibilityChanged 
+        };
 
-        static const inline QList<PayloadAlteration> _buildGraphicsItemAlterations = {
+        static const inline const QList<PayloadAlteration> _buildGraphicsItemAlterations = {
             Added,  
             Reset
         };

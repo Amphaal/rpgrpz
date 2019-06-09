@@ -44,7 +44,7 @@ class AnimationTimeLine : public QTimeLine {
 
     private:
         //static
-        static inline QHash<AnimationTimeLine::Type, AnimationTimeLine*> _handlers = QHash<AnimationTimeLine::Type, AnimationTimeLine*>();
+        static inline QHash<AnimationTimeLine::Type, AnimationTimeLine*> _handlers;
 
 
         //

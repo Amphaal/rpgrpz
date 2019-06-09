@@ -32,5 +32,5 @@ class RandomColor {
 
     private:
         static inline double _rand = 0;
-        static inline double _goldenRatio = 0.618033988749895;
+        static inline const double _goldenRatio = 0.618033988749895;
 };
