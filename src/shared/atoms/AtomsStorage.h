@@ -8,7 +8,7 @@
 #include <QObject>
 #include <QDebug>
 
-#include "src/shared/models/entities/RPZAtom.hpp"
+#include "src/shared/models/entities/RPZAtom.h"
 #include "src/shared/models/Payloads.h"
 
 #include "AtomsHandler.h"
@@ -17,6 +17,7 @@ class AtomsStorage : public AtomsHandler {
 
     public:
         AtomsStorage(const AlterationPayload::Source &boundSource);
+        
         RPZMap<RPZAtom> atoms();
         
         void redo();
@@ -27,6 +28,7 @@ class AtomsStorage : public AtomsHandler {
         QStack<AlterationPayload> _payloadHistory;
         int _payloadHistoryIndex = 0;
         void _registerPayloadForHistory(AlterationPayload* payload);
+        AlterationPayload* _generateUndoPayload(AlterationPayload* historyPayload);
 
         //duplication
         QVector<snowflake_uid> _latestDuplication;
@@ -43,4 +45,6 @@ class AtomsStorage : public AtomsHandler {
         virtual void _handlePayload(AlterationPayload* payload) override;
         virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) override;
 
+    private:
+        void _basic_handlePayload(AlterationPayload* payload);
 };

@@ -7,9 +7,9 @@
 
 #include "src/shared/models/Payloads.h"
 
-#include "src/shared/models/entities/RPZAtom.hpp"
+#include "src/shared/models/entities/RPZAtom.h"
 
-enum MapViewCustomItemsEventFlag {
+enum class MapViewCustomItemsEventFlag {
     Moved = 6224,
     TextFocusOut = 6225,
     TextFocusIn = 6226
@@ -62,8 +62,8 @@ class MapViewItemsNotifier  {
                 case QGraphicsItem::ItemPositionHasChanged:
                     this->_toNotify->onItemChange(this->_item, MapViewCustomItemsEventFlag::Moved);
                     break;
-                case MapViewCustomItemsEventFlag::TextFocusOut:
-                case MapViewCustomItemsEventFlag::TextFocusIn:
+                case (int)MapViewCustomItemsEventFlag::TextFocusOut:
+                case (int)MapViewCustomItemsEventFlag::TextFocusIn:
                     this->_toNotify->onItemChange(this->_item, (MapViewCustomItemsEventFlag)change);
                     break;
             }

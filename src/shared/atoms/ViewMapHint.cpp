@@ -301,7 +301,7 @@ void ViewMapHint::deleteCurrentSelectionItems() {
 void ViewMapHint::addDrawing(const QPointF &startPos, const QPainterPath &path, const QPen &pen) {
 
     //define new atom
-    auto newAtom = RPZAtom(RPZAtom::Type::Drawing);
+    auto newAtom = RPZAtom(AtomType::Drawing);
     newAtom.setPenWidth(pen.width());
     newAtom.setLayer(this->_defaultLayer);
     newAtom.setShape(path);
@@ -330,7 +330,7 @@ void ViewMapHint::turnGhostTextIntoDefinitive(QGraphicsTextItem* temporaryText, 
     this->centerGraphicsItemToPoint(temporaryText, eventPos);
 
     //define new atom
-    auto newAtom = RPZAtom(RPZAtom::Type::Text);
+    auto newAtom = RPZAtom(AtomType::Text);
     newAtom.setPenWidth(temporaryText->font().pointSize());
     newAtom.setPos(temporaryText->scenePos());
     newAtom.setLayer(temporaryText->zValue());
@@ -377,7 +377,7 @@ void ViewMapHint::turnGhostItemIntoDefinitive(QGraphicsItem* temporaryItem, Asse
     this->centerGraphicsItemToPoint(temporaryItem, eventPos);
 
     //define new atom
-    auto newAtom = RPZAtom((RPZAtom::Type)assetElem->type());
+    auto newAtom = RPZAtom((AtomType)assetElem->type());
     newAtom.setAssetId(assetElem->id());
     newAtom.setAssetName(assetElem->displayName());
     newAtom.setLayer(temporaryItem->zValue());
@@ -409,19 +409,19 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
     switch(atomToBuildFrom.type()) {
         
         //text...
-        case RPZAtom::Type::Text: { 
+        case AtomType::Text: { 
             newItem = this->scene()->addText(atomToBuildFrom);
         }
         break;
 
         //drawing...
-        case RPZAtom::Type::Drawing: {
+        case AtomType::Drawing: {
             newItem = this->scene()->addDrawing(atomToBuildFrom, this->_penColor);
         }
         break;
 
         //objects
-        case RPZAtom::Type::Object: {
+        case AtomType::Object: {
 
             //depending on presence in asset db...
             auto assetId = atomToBuildFrom.assetId();

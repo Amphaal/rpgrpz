@@ -7,7 +7,7 @@
 #include "MapViewGraphicsItem.hpp"
 #include "MapViewItemsNotifier.hpp"
 
-#include "src/shared/models/entities/RPZAtomMetadata.hpp"
+#include "src/shared/models/entities/RPZAtom.h"
 
 class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
 
@@ -18,7 +18,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
 
     private:
         void onItemChange(QGraphicsItem* item, MapViewCustomItemsEventFlag flag) override {
-            emit sceneItemChanged(item, flag);
+            emit sceneItemChanged(item, (int)flag);
         };
 
         void _bindDefaultMetadataToGraphicsItem(QGraphicsItem* item, RPZAtom &atom) {

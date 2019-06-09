@@ -243,16 +243,16 @@ QTreeWidgetItem* TreeMapHint::_createTreeItem(RPZAtom &atom) {
 
     const auto type = atom.type();
     switch(type) {
-        case RPZAtom::Type::Drawing:
+        case AtomType::Drawing:
             item->setIcon(0, QIcon(":/icons/app/manager/drawing.png"));
             break;
-        case RPZAtom::Type::Text:
+        case AtomType::Text:
             item->setIcon(0, QIcon(":/icons/app/tools/text.png"));
             break;
     }
 
     //create or get the layer element
-    auto layerElem = this->_getLayerItem(mdata.layer());
+    auto layerElem = this->_getLayerItem(atom.layer());
     layerElem->addChild(item);
     this->_updateLayerState(layerElem);
 

@@ -3,7 +3,7 @@
 #include <QVariantHash>
 #include "libs/snowflake.hpp"
 
-enum PayloadAlteration {
+enum class PayloadAlteration {
     Unknown,
     Focused,
     Selected,
@@ -31,6 +31,7 @@ class AlterationPayload : public QVariantHash {
             Network
         };
 
+        AlterationPayload() {}
         AlterationPayload(const QVariantHash &hash) : QVariantHash(hash) {
             this->_updateTags(this->type());
         }
@@ -62,39 +63,37 @@ class AlterationPayload : public QVariantHash {
             return this->_isNetworkAlteration;
         }
 
+        bool isRedoCompatible() {
+            return this->_isRedoCompatible;
+        }
+
     private:      
         bool _isNetworkAlteration = false;
         bool _instructGIBuild = false;
+        bool _isRedoCompatible = false;
 
         static inline const QList<PayloadAlteration> _networkAlterations = { 
-            Moved, 
-            Added, 
-            Removed, 
-            Reset,
-            LayerChanged,
-            TextChanged,
-            Rotated,
-            Scaled,
-            LockChanged,
-            VisibilityChanged 
+            PayloadAlteration::Moved, 
+            PayloadAlteration::Added, 
+            PayloadAlteration::Removed, 
+            PayloadAlteration::Reset,
+            PayloadAlteration::LayerChanged,
+            PayloadAlteration::TextChanged,
+            PayloadAlteration::Rotated,
+            PayloadAlteration::Scaled,
+            PayloadAlteration::LockChanged,
+            PayloadAlteration::VisibilityChanged 
         };
         
-        static inline const QList<PayloadAlteration> _networkAlterations = { 
-            Moved, 
-            Added, 
-            Removed, 
-            Reset,
-            LayerChanged,
-            TextChanged,
-            Rotated,
-            Scaled,
-            LockChanged,
-            VisibilityChanged 
+        static inline const QList<PayloadAlteration> _redoAlterations = { 
+            PayloadAlteration::Moved, 
+            PayloadAlteration::Added, 
+            PayloadAlteration::Removed
         };
 
-        static const inline const QList<PayloadAlteration> _buildGraphicsItemAlterations = {
-            Added,  
-            Reset
+        static inline const QList<PayloadAlteration> _buildGraphicsItemAlterations = {
+            PayloadAlteration::Added,  
+            PayloadAlteration::Reset
         };
 
         void _setType(const PayloadAlteration &type) {
@@ -105,5 +104,6 @@ class AlterationPayload : public QVariantHash {
         void _updateTags(const PayloadAlteration &type) {
             this->_isNetworkAlteration = _networkAlterations.contains(type);
             this->_instructGIBuild = _buildGraphicsItemAlterations.contains(type);
+            this->_isRedoCompatible = _redoAlterations.contains(type);
         }
 };

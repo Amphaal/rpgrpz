@@ -6,7 +6,7 @@ class FocusedPayload : public AlterationPayload {
     
     public:
         FocusedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        FocusedPayload(const snowflake_uid &targetedAtomId) : AlterationPayload(AlterationPayload::Focused) {
+        FocusedPayload(const snowflake_uid &targetedAtomId) : AlterationPayload(PayloadAlteration::Focused) {
             this->_setTargetAtomId(targetedAtomId);
         }
     

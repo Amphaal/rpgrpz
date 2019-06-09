@@ -49,12 +49,12 @@ class MapViewGraphicsTextItem : public QGraphicsTextItem, public MapViewItemsNot
     private:
         void focusInEvent(QFocusEvent  * event) override {
             QGraphicsTextItem::focusInEvent(event);
-            MapViewItemsNotifier::_notifyItemChange(MapViewCustomItemsEventFlag::TextFocusIn);
+            MapViewItemsNotifier::_notifyItemChange((int)MapViewCustomItemsEventFlag::TextFocusIn);
         }
 
         void focusOutEvent(QFocusEvent * event) override {
             QGraphicsTextItem::focusOutEvent(event);
-            MapViewItemsNotifier::_notifyItemChange(MapViewCustomItemsEventFlag::TextFocusOut);
+            MapViewItemsNotifier::_notifyItemChange((int)MapViewCustomItemsEventFlag::TextFocusOut);
         }
 };
 

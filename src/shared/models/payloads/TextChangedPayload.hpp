@@ -7,7 +7,7 @@
 class TextChangedPayload : public AlterationPayload {
     public:
         TextChangedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        TextChangedPayload(const snowflake_uid &targetedAtomId, const QString &text) : AlterationPayload(AlterationPayload::TextChanged) {
+        TextChangedPayload(const snowflake_uid &targetedAtomId, const QString &text) : AlterationPayload(PayloadAlteration::TextChanged) {
             this->_setTargetAtomId(targetedAtomId);
             this->_setText(text);
         }

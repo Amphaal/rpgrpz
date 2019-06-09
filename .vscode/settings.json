@@ -93,7 +93,8 @@
         "qpointf": "cpp",
         "qmetaobject": "cpp",
         "qqueue": "cpp",
-        "qlineedit": "cpp"
+        "qlineedit": "cpp",
+        "qbytearray": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }
