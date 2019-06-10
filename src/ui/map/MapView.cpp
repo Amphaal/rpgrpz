@@ -27,6 +27,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
     this->scale(this->_defaultScale, this->_defaultScale);
     this->_goToDefaultViewState();
 
+    this->setMouseTracking(true);
 }
 
 void MapView::contextMenuEvent(QContextMenuEvent *event) {
@@ -94,6 +95,7 @@ void MapView::keyPressEvent(QKeyEvent * event) {
         case Qt::Key::Key_Escape:
             this->_changeTool(MapView::_defaultTool);
             emit unselectCurrentToolAsked();
+            emit unselectCurrentAssetAsked();
             break;
         
         case Qt::Key::Key_Up:
@@ -116,8 +118,10 @@ void MapView::keyPressEvent(QKeyEvent * event) {
 
 }
 
-void MapView::useAssetTemplate(const AtomType &type, const QString assetLocation) {
-    this->_generateGhostItem(type, assetLocation);
+void MapView::useAssetTemplate(const AtomType &type, const QString assetId, const QString assetName, const QString assetLocation) {
+    this->_changeTool(MapTools::Actions::AssetDraw);
+    emit unselectCurrentToolAsked();
+    this->_generateGhostItem(type, assetId, assetName, assetLocation);
 }
 
 void MapView::_clearGhostItem() {
@@ -126,9 +130,26 @@ void MapView::_clearGhostItem() {
     this->_ghostItem = nullptr;
 }
 
-void MapView::_generateGhostItem(const AtomType &type, const QString assetLocation) {
+void MapView::enterEvent(QEvent *event) {
+    if(!this->_ghostItem) return;
+    if(this->_isGhostFrozen) return;
+
+    this->_ghostItem->setVisible(true);
+}
+
+void MapView::leaveEvent(QEvent *event) {
+    if(!this->_ghostItem) return;
+    if(this->_isGhostFrozen) return;
+
+    auto cursorPosInWidget = this->mapFromGlobal(QCursor::pos());
+    if(this->geometry().contains(cursorPosInWidget)) return;
+
+    this->_ghostItem->setVisible(false);
+}
+
+void MapView::_generateGhostItem(const AtomType &type, const QString assetId, const QString assetName, const QString assetLocation) {
     this->_clearGhostItem();
-    this->_ghostItem = this->_hints->generateGhostItem(type, assetLocation);
+    this->_ghostItem = this->_hints->generateGhostItem(type, assetId, assetName, assetLocation);
 }
 
 void MapView::_generateGhostItem(const MapTools::Actions &action) {
@@ -137,8 +158,21 @@ void MapView::_generateGhostItem(const MapTools::Actions &action) {
             return this->_generateGhostItem(AtomType::Text);
         case MapTools::Actions::Draw:
             return this->_generateGhostItem(AtomType::Drawing);
-        default:
-            this->_clearGhostItem();
+        case MapTools::Actions::AssetDraw: {
+            if(this->_ghostItem) {
+                this->_isGhostFrozen = false;
+                this->_ghostItem->setVisible(true);
+            }
+        }
+        break;
+        default: {
+            if(this->_ghostItem) {
+                this->_isGhostFrozen = true;
+                this->_ghostItem->setVisible(false);
+            }
+        }
+        break;
+            
     }
 }
 
@@ -221,9 +255,9 @@ void MapView::_sendMapHistory() {
 /* END NETWORK */
 /////////////////
 
-//////////
-/* TOOL */
-//////////
+//////////////////
+/* MOUSE EVENTS */
+//////////////////
 
 //mouse click
 void MapView::mousePressEvent(QMouseEvent *event) {
@@ -232,22 +266,29 @@ void MapView::mousePressEvent(QMouseEvent *event) {
     this->_isMousePressed = true;
 
     switch(event->button()) {
-        case Qt::MouseButton::MiddleButton:
+
+        case Qt::MouseButton::MiddleButton: {
             this->_isMiddleToolLock = !this->_isMiddleToolLock;
-            this->_changeTool(MapTools::Actions::Scroll, true);
-            break;
+            this->_changeTool(this->_isMiddleToolLock ? MapTools::Actions::Scroll : MapTools::Actions::None, true);
+        }
+        break;
+
         case Qt::MouseButton::LeftButton: {
             
             auto currentTool = this->_getCurrentTool();
             auto currentPos = event->pos();
 
             switch(currentTool) {
+
                 case MapTools::Actions::Draw:
                     this->_beginDrawing(currentPos);
                 break;
-                default:
-                    this->_hints->integrateGraphicsItemAsPayload(this->_ghostItem);
+
+                case MapTools::Actions::Text:
+                case MapTools::Actions::AssetDraw:
+                    if(!this->_isGhostFrozen) this->_hints->integrateGraphicsItemAsPayload(this->_ghostItem);
                 break;
+
             }
         }
         break;
@@ -260,13 +301,16 @@ void MapView::mousePressEvent(QMouseEvent *event) {
 void MapView::mouseMoveEvent(QMouseEvent *event) {
 
     //follow ghost item
-    if(this->_ghostItem) this->_hints->centerGraphicsItemToPoint(this->_ghostItem, event->pos());
+    if(this->_ghostItem) {
+        this->_hints->centerGraphicsItemToPoint(this->_ghostItem, event->pos());
+    }
 
-    //drawing handling
-    switch(this->_getCurrentTool()) {
-        case MapTools::Actions::Draw:
-            if(this->_isMousePressed) this->_drawLineTo(event->pos());
-            break;
+    if(this->_isMousePressed) {
+        switch(this->_getCurrentTool()) {
+            case MapTools::Actions::Draw:
+                this->_drawLineTo(event->pos());
+                break;
+        }
     }
 
     QGraphicsView::mouseMoveEvent(event);
@@ -277,14 +321,6 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
 void MapView::mouseReleaseEvent(QMouseEvent *event) {
 
     switch(event->button()) {
-        case Qt::MouseButton::RightButton:
-            this->_changeTool(MapTools::Actions::None, true);
-            break;
-        case Qt::MouseButton::MiddleButton:
-            if(!this->_isMiddleToolLock) {
-                this->_changeTool(MapTools::Actions::None, true);
-            }
-            break;
         case Qt::MouseButton::LeftButton: {
             
             //if was drawing...
@@ -301,6 +337,14 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
     QGraphicsView::mouseReleaseEvent(event);
 }
 
+//////////////////////
+/* END MOUSE EVENTS */
+//////////////////////
+
+//////////
+/* TOOL */
+//////////
+
 //returns tool
 MapTools::Actions MapView::_getCurrentTool() const {
     return this->_quickTool == MapTools::Actions::None ? this->_selectedTool : this->_quickTool;
@@ -308,8 +352,7 @@ MapTools::Actions MapView::_getCurrentTool() const {
 
 //change tool
 void MapView::_changeTool(MapTools::Actions newTool, const bool quickChange) {
-    
-    this->_clearGhostItem();
+
     this->_endDrawing();
 
     //if quick change asked
@@ -340,6 +383,11 @@ void MapView::_changeTool(MapTools::Actions newTool, const bool quickChange) {
     
     //depending on tool
     switch(newTool) {
+        case MapTools::Actions::AssetDraw:
+            this->setInteractive(false);
+            this->setDragMode(QGraphicsView::DragMode::NoDrag);
+            this->setCursor(Qt::ClosedHandCursor);
+            break;
         case MapTools::Actions::Draw:
             this->setInteractive(false);
             this->setDragMode(QGraphicsView::DragMode::NoDrag);
@@ -353,19 +401,20 @@ void MapView::_changeTool(MapTools::Actions newTool, const bool quickChange) {
         case MapTools::Actions::Scroll:
             this->setInteractive(false);
             this->setDragMode(QGraphicsView::DragMode::ScrollHandDrag);
-            this->setCursor(Qt::ClosedHandCursor);
             break;
         case MapTools::Actions::Select:
         default:
             this->setInteractive(true);
             this->setDragMode(QGraphicsView::DragMode::RubberBandDrag);
             this->setCursor(Qt::ArrowCursor);
-            this->_isMiddleToolLock = false;
+            break;
     }
 }
 
 //on received event
 void MapView::changeToolFromAction(const MapTools::Actions &instruction) {
+
+    emit unselectCurrentAssetAsked();
 
     //oneshot instructions switch
     switch(instruction) {
@@ -463,6 +512,7 @@ void MapView::_beginDrawing(const QPoint &lastPointMousePressed) {
 }
 
 void MapView::_drawLineTo(const QPoint &evtPoint) {
+    if(!this->_tempDrawing) return;
 
     auto existingPath = this->_tempDrawing->path();
 
@@ -477,10 +527,12 @@ void MapView::_drawLineTo(const QPoint &evtPoint) {
 
 void MapView::_endDrawing() {
     if(!this->_tempDrawing) return;
-    if(this->_tempDrawing->path().elementCount() < 2) return;
+    
+    auto path = this->_tempDrawing->path();
+    if(path.elementCount() < 2) return;
 
     //add definitive path
-    this->_hints->integrateGraphicsItemAsPayload(this->_tempDrawing);
+    this->_hints->integrateDrawingAsPayload(this->_tempDrawing, this->_ghostItem);
 
     //destroy temp
     delete this->_tempDrawing;

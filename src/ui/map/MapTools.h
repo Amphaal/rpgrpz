@@ -18,7 +18,8 @@ class MapTools : public QToolBar {
             None, 
             Select, 
             Scroll, 
-            Draw, 
+            Draw,
+            AssetDraw, 
             ResetView, 
             Text 
         };

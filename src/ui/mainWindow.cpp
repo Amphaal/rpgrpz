@@ -254,6 +254,12 @@ void MainWindow::_initUIApp() {
         this->_mapView->hints(), &ViewMapHint::handleAlterationRequest
     );
 
+    //unselect asset
+    QObject::connect(
+        this->_mapView, &MapView::unselectCurrentAssetAsked,
+        this->_assetsManager->tree(), &QAbstractItemView::clearSelection
+    );
+
     //unselect tools
     QObject::connect(
         this->_mapView, &MapView::unselectCurrentToolAsked,

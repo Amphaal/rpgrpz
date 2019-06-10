@@ -308,5 +308,6 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
 
     if(atomType == AtomType::Undefined) return;
     
-    emit templateAssetChosen(atomType, AssetsDatabase::get()->getFilePathToAsset(elem));
+    auto assetLocation = AssetsDatabase::get()->getFilePathToAsset(elem);
+    emit templateAssetChosen(atomType, elem->id(), elem->displayName(), assetLocation);
 }

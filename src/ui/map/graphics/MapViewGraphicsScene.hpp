@@ -30,6 +30,8 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
         void sceneItemChanged(QGraphicsItem* item, int atomAlteration);
 
     private:
+        enum DataIndex { TemplateAtom = 222 };
+
         void onItemChange(QGraphicsItem* item, MapViewCustomItemsEventFlag flag) override {
             emit sceneItemChanged(item, (int)flag);
         };
@@ -39,9 +41,8 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             target->setPos(blueprint.pos());
             target->setScale(blueprint.scale());
             target->setRotation(blueprint.rotation());
-            target->setData(1, RPZAtom(blueprint));
+            target->setData(TemplateAtom, RPZAtom(blueprint));
         }
-
 
     public:
         MapViewGraphicsScene(int defaultSize) : QGraphicsScene(defaultSize, defaultSize, defaultSize, defaultSize) { }
@@ -49,11 +50,32 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
         static RPZAtom itemToAtom(QGraphicsItem* blueprint) {
             
             //recover template
-            auto atom = RPZAtom(blueprint->data(1).toHash());
+            auto atom = RPZAtom(blueprint->data(TemplateAtom).toHash());
+            atom.shuffleId();
 
             //update template values from current gi properties
             atom.setPos(blueprint->scenePos());
-            atom.setShape(blueprint->boundingRect());
+            
+            switch(atom.type()) {
+                
+                case AtomType::Text: {
+                    auto casted = dynamic_cast<QGraphicsTextItem*>(blueprint);
+                    atom.setShape(blueprint->boundingRect());
+                    atom.setText(casted->toPlainText());
+                }
+                break;
+
+                case AtomType::Drawing: {
+                    auto casted = dynamic_cast<QGraphicsPathItem*>(blueprint);
+                    atom.setShape(casted->path()); 
+                }
+                break;
+
+                default: {
+                    atom.setShape(blueprint->boundingRect());
+                }
+                break;
+            }
 
             return atom;
         }
@@ -146,7 +168,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             //define a default shape for ghost items
             auto shape = atom.shape();
             if(!shape.elementCount()) {
-                shape.lineTo(QPoint(.1,.1));
+                shape.lineTo(.01,.01);
             }
 
             //create path

@@ -298,11 +298,16 @@ void ViewMapHint::deleteCurrentSelectionItems() {
     this->handleAlterationRequest(RemovedPayload(atomIdsToRemove));
 }
 
-QGraphicsItem* ViewMapHint::generateGhostItem(const AtomType &type, const QString assetLocation) {
+QGraphicsItem* ViewMapHint::generateGhostItem(const AtomType &type, const QString assetId, const QString assetName, const QString assetLocation) {
 
     //generate a blueprint
     auto atomBuiltFromTemplate = RPZAtom(*this->_templateAtom);
     atomBuiltFromTemplate.changeType(type);
+    
+    if(!assetId.isNull()) {
+        atomBuiltFromTemplate.setAssetId(assetId);
+        atomBuiltFromTemplate.setAssetName(assetName);
+    }
 
     //add to scene
     auto aditionnalArgs = MVPayload(this->_penColor, assetLocation);
@@ -321,7 +326,22 @@ QGraphicsItem* ViewMapHint::generateGhostItem(const AtomType &type, const QStrin
     return ghostItem;
 }
 
+void ViewMapHint::integrateDrawingAsPayload(QGraphicsPathItem* drawnItem, QGraphicsItem* templateGhostItem) {
+    if(!templateGhostItem) return;
+
+    //from ghost item
+    auto newAtom = MapViewGraphicsScene::itemToAtom(templateGhostItem);
+    
+    //override shape and pos to fit the drawn item
+    newAtom.setShape(drawnItem->path());
+    newAtom.setPos(drawnItem->scenePos());
+
+    auto payload = AddedPayload(newAtom);
+    this->handleAlterationRequest(payload);
+}
+
 void ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem) {
+    if(!ghostItem) return;
     auto newAtom = MapViewGraphicsScene::itemToAtom(ghostItem);
     auto payload = AddedPayload(newAtom);
     this->handleAlterationRequest(payload);

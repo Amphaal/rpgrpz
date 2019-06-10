@@ -20,7 +20,8 @@ void AtomsStorage::undo() {
     if(toReachIndex < 0) return;
 
     //get stored payload and handle it
-    auto pl = Payload::autoCast(this->_undoHistory.at(toReachIndex));
+    auto st_payload = this->_undoHistory.at(toReachIndex);
+    auto pl = Payload::autoCast(st_payload);
 
         this->_basic_handlePayload(pl);
     
@@ -45,7 +46,8 @@ void AtomsStorage::redo() {
     if(toReachIndex < 0) return;
 
     //get stored payload and handle it
-    auto pl = Payload::autoCast(this->_redoHistory.at(toReachIndex));
+    auto st_payload = this->_redoHistory.at(toReachIndex);
+    auto pl = Payload::autoCast(st_payload);
         
         this->_basic_handlePayload(pl);
 

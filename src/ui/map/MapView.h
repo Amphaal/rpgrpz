@@ -46,13 +46,20 @@ class MapView : public QGraphicsView, public ClientBindable {
 
     public slots:
         void changeToolFromAction(const MapTools::Actions &instruction);
-        void useAssetTemplate(const AtomType &type, const QString assetLocation);
+        void useAssetTemplate(const AtomType &type, 
+                const QString assetId = NULL, 
+                const QString assetName = NULL, 
+                const QString assetLocation = NULL);
     
     signals:
         void unselectCurrentToolAsked();
+        void unselectCurrentAssetAsked();
         void remoteChanged(bool isRemote);
 
     protected:
+        void enterEvent(QEvent *event) override;
+        void leaveEvent(QEvent *event) override;
+
         void onRPZClientConnecting(RPZClient * cc) override;
         void onRPZClientDisconnect(RPZClient* cc) override;
 
@@ -73,10 +80,15 @@ class MapView : public QGraphicsView, public ClientBindable {
         void _onSceneSelectionChanged();
         void _goToDefaultViewState();
 
-        //ghost handling
+        //ghost
             QGraphicsItem* _ghostItem = nullptr;
+            bool _isGhostFrozen = false;
             void _clearGhostItem();
-            void _generateGhostItem(const AtomType &type, const QString assetLocation = QString());
+            void _generateGhostItem(const AtomType &type, 
+                const QString assetId = NULL, 
+                const QString assetName = NULL, 
+                const QString assetLocation = NULL
+            );
             void _generateGhostItem(const MapTools::Actions &action);
         
         //network
@@ -98,11 +110,6 @@ class MapView : public QGraphicsView, public ClientBindable {
             const int _defaultSceneSize = 36000;
             void _goToSceneCenter();
             void _animatedMove(const Qt::Orientation &orientation, int correction);
-
-        //d&d
-            AssetsDatabase* _droppableSourceDatabase = nullptr;
-            AssetsDatabaseElement* _droppableElement = nullptr;
-            QGraphicsItem* _droppableGraphicsItem = nullptr;
 
         //zooming...
             const double _defaultScale = 5;

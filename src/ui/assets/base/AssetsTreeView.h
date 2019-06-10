@@ -26,10 +26,9 @@ class AssetsTreeView : public QTreeView {
         QModelIndexList selectedElementsIndexes();
     
     signals:
-        void templateAssetChosen(const AtomType &type, const QString assetLocation);
+        void templateAssetChosen(const AtomType &type, const QString assetId, const QString assetName, const QString assetLocation);
 
     private:
-
         void drawRow(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
         ///////////////////
