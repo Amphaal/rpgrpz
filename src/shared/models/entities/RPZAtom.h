@@ -27,11 +27,11 @@ enum class AtomType {
     Undefined, 
     Drawing,
     Text,
-    Object = 105, 
-    Brush = 104, 
-    NPC = 103, 
-    Event = 102, 
-    PC = 101 
+    Object, 
+    Brush, 
+    NPC, 
+    Event, 
+    PC 
 };
 
 class RPZAtom : public Ownable {
@@ -82,6 +82,7 @@ class RPZAtom : public Ownable {
         void setGraphicsItem(QGraphicsItem* item);
 
         AtomType type();
+        void changeType(const AtomType &type);
         QString descriptor();
 
         //

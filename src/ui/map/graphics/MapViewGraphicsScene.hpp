@@ -9,6 +9,21 @@
 
 #include "src/shared/models/entities/RPZAtom.h"
 
+class MVPayload : public QVariantHash {
+    
+    public:
+        QString pathToImageFile;
+        QColor defaultColor; 
+        
+        MVPayload() {};
+        MVPayload(const QColor &fallbackColor, const QString &pathToAsset = QString()) : 
+            pathToImageFile(pathToAsset), 
+            defaultColor(fallbackColor) { 
+
+        }; 
+
+};
+
 class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
 
     Q_OBJECT
@@ -32,76 +47,23 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
     public:
         MapViewGraphicsScene(int defaultSize) : QGraphicsScene(defaultSize, defaultSize, defaultSize, defaultSize) { }
 
-        ///
-        ///
-        ///
-
-        QGraphicsItem* addGenericImageBasedItem(const QString &pathToImageFile, RPZAtom &atom) {
-    
-            //get file infos
-            QFileInfo pathInfo(pathToImageFile);
+        QGraphicsItem* addToScene(RPZAtom &atom, MVPayload &aditionnalArgs = MVPayload()) {
             
-            //define graphicsitem
-            QGraphicsItem* item = nullptr;
-            if(pathInfo.suffix() == "svg") {
-                item = new MapViewGraphicsSvgItem(this, pathToImageFile);
-            } 
-            else {
-                item = new MapViewGraphicsPixmapItem(this, pathToImageFile);
-            };
+            switch(atom.type()) {
+                case AtomType::Object:
+                    return this->_addGenericImageBasedItem(atom, aditionnalArgs);
+                break;
+                
+                case AtomType::Drawing:
+                    return this->_addDrawing(atom, aditionnalArgs);
+                break;
 
-            //bind default
-            this->_bindDefaultMetadataToGraphicsItem(item, atom);
-            
-            //add it to the scene
-            this->addItem(item);
+                case AtomType::Text:
+                    return this->_addText(atom);
+                break;
+            }
 
-            return item;
         }
-
-        QGraphicsPathItem* addDrawing(RPZAtom &atom, const QColor &fallbackColor = QColor()) {
-            
-            //define a ped
-            QPen pen;
-
-                //if no owner set, assume it is self
-                auto owner = atom.owner();
-                if(owner.isEmpty()) {
-                    pen.setColor(fallbackColor);
-                } else {
-                    pen.setColor(owner.color());
-                }
-
-                //set pen
-                pen.setWidth(atom.penWidth());
-                pen.setCapStyle(Qt::RoundCap);
-                pen.setJoinStyle(Qt::RoundJoin);
-
-            //create path gi, set to pos
-            auto newPath = new MapViewGraphicsPathItem(this, atom.shape(), pen);
-            
-            //bind default
-            this->_bindDefaultMetadataToGraphicsItem(newPath, atom);
-
-            //add to scene
-            this->addItem(newPath);
-
-            return newPath;
-        }
-
-        QGraphicsTextItem* addText(RPZAtom &atom) {
-
-            auto newText = new MapViewGraphicsTextItem(this, atom.text(), atom.penWidth());
-            
-            //bind default
-            this->_bindDefaultMetadataToGraphicsItem(newText, atom);
-
-            //add to scene
-            this->addItem(newText);
-
-            return newText;
-        }
-
 
         QGraphicsRectItem* addMissingAssetPH(RPZAtom &atom) {
     
@@ -125,4 +87,73 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
 
             return placeholder;
         }
+
+    protected:
+        QGraphicsItem* _addGenericImageBasedItem(RPZAtom &atom, MVPayload &aditionnalArgs) {
+    
+            //get file infos
+            auto pathToImageFile = aditionnalArgs.pathToImageFile;
+            QFileInfo pathInfo(pathToImageFile);
+            
+            //define graphicsitem
+            QGraphicsItem* item = nullptr;
+            if(pathInfo.suffix() == "svg") {
+                item = new MapViewGraphicsSvgItem(this, pathToImageFile);
+            } 
+            else {
+                item = new MapViewGraphicsPixmapItem(this, pathToImageFile);
+            };
+
+            //bind default
+            this->_bindDefaultMetadataToGraphicsItem(item, atom);
+            
+            //add it to the scene
+            this->addItem(item);
+
+            return item;
+        }
+
+        QGraphicsPathItem* _addDrawing(RPZAtom &atom, MVPayload &aditionnalArgs)) {
+            
+            //define a ped
+            QPen pen;
+
+                //if no owner set, assume it is self
+                auto owner = atom.owner();
+                if(owner.isEmpty()) {
+                    pen.setColor(aditionnalArgs.defaultColor);
+                } else {
+                    pen.setColor(owner.color());
+                }
+
+                //set pen
+                pen.setWidth(atom.penWidth());
+                pen.setCapStyle(Qt::RoundCap);
+                pen.setJoinStyle(Qt::RoundJoin);
+
+            //create path gi, set to pos
+            auto newPath = new MapViewGraphicsPathItem(this, atom.shape(), pen);
+            
+            //bind default
+            this->_bindDefaultMetadataToGraphicsItem(newPath, atom);
+
+            //add to scene
+            this->addItem(newPath);
+
+            return newPath;
+        }
+
+        QGraphicsTextItem* _addText(RPZAtom &atom) {
+
+            auto newText = new MapViewGraphicsTextItem(this, atom.text(), atom.penWidth());
+            
+            //bind default
+            this->_bindDefaultMetadataToGraphicsItem(newText, atom);
+
+            //add to scene
+            this->addItem(newText);
+
+            return newText;
+        }
+
 };

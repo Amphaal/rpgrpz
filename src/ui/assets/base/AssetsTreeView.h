@@ -26,8 +26,7 @@ class AssetsTreeView : public QTreeView {
         QModelIndexList selectedElementsIndexes();
     
     signals:
-        void requestAssetPreview(QString assetLocation);
-        void requestPreviewReset();
+        void templateAssetChosen(const AtomType &type, const QString assetLocation);
 
     private:
 

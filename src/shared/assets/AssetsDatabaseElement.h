@@ -6,25 +6,26 @@
 #include <QModelIndex>
 #include <QDebug>
 
-class AssetsDatabaseElement {
-    public:
+#include "src/shared/models/entities/RPZAtom.h"
 
+class AssetsDatabaseElement {
+    
+    public:
         enum Type { 
-            Unknown = 0,
-            Root = 1,
-            Folder = 2,
-            //defined values shared with AtomBase type for static casts
-            InternalContainer = 201,
-                Player = 101, 
-                Event = 102, 
-            NPC_Container = 202, 
-                NPC = 103, 
-            FloorBrushContainer = 203, 
-                FloorBrush = 104,
-            ObjectContainer = 204,
-                Object = 105,
-            DownloadedContainer = 299,
-                Downloaded = 199
+            Unknown,
+            Root,
+            Folder,
+            InternalContainer,
+                Player,
+                Event,
+            NPC_Container,
+                NPC,
+            FloorBrushContainer,
+                FloorBrush,
+            ObjectContainer,
+                Object,
+            DownloadedContainer,
+                Downloaded
         };
         
         static AssetsDatabaseElement* fromIndex(QModelIndex index);
@@ -39,6 +40,7 @@ class AssetsDatabaseElement {
         ~AssetsDatabaseElement();
 
         AssetsDatabaseElement::Type type();
+        AtomType atomType();
         AssetsDatabaseElement::Type insertType();
         AssetsDatabaseElement::Type rootStaticContainer();
         QString iconPath();
@@ -91,6 +93,7 @@ class AssetsDatabaseElement {
         AssetsDatabaseElement::Type _type = Unknown;
         AssetsDatabaseElement::Type _insertType = Unknown;
         AssetsDatabaseElement::Type _rootStaticContainerType = Unknown;
+        AtomType _atomType = AtomType::Undefined;
         QString _id = "";
         QString _name = "";
         QString _path = "";
@@ -106,6 +109,7 @@ class AssetsDatabaseElement {
         bool _isStaticContainer = false;
         bool _isDeletable = false;
 
+        void _defineAtomType();
         void _defineParent(AssetsDatabaseElement* parent);
         void _defineFlags();
         void _definePath();

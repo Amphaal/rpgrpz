@@ -2,7 +2,8 @@
 
 ViewMapHint::ViewMapHint(QGraphicsView* boundGv) : AtomsStorage(AlterationPayload::Source::Local_Map), 
     AtomsContextualMenuHandler(this, boundGv), 
-    _boundGv(boundGv) {
+    _boundGv(boundGv),
+    _templateAtom(new RPZAtom) {
 
     //default layer from settings
     this->setDefaultLayer(AppContext::settings()->defaultLayer());
@@ -25,7 +26,7 @@ bool ViewMapHint::isInTextInteractiveMode() {
 }
 
 void ViewMapHint::setDefaultLayer(int layer) {
-    this->_defaultLayer = layer;
+    this->_templateAtom->setLayer(layer);
 }
 
 void ViewMapHint::handleAnyMovedItems() {
@@ -58,7 +59,7 @@ void ViewMapHint::_onSceneItemChanged(QGraphicsItem* item, int changeFlag) {
     if(this->_preventInnerGIEventsHandling) return;
 
     switch(changeFlag) {
-        case MapViewCustomItemsEventFlag::Moved: {
+        case (int)MapViewCustomItemsEventFlag::Moved: {
 
             //add to list for future information
             this->_itemsWhoNotifiedMovement.insert(item);
@@ -70,12 +71,12 @@ void ViewMapHint::_onSceneItemChanged(QGraphicsItem* item, int changeFlag) {
         }
         break;
 
-        case MapViewCustomItemsEventFlag::TextFocusIn: {
+        case (int)MapViewCustomItemsEventFlag::TextFocusIn: {
             this->_isInTextInteractiveMode = true;
         }
         break;
         
-        case MapViewCustomItemsEventFlag::TextFocusOut: {
+        case (int)MapViewCustomItemsEventFlag::TextFocusOut: {
 
             this->_isInTextInteractiveMode = false;
 
@@ -256,7 +257,7 @@ void ViewMapHint::_setDirty(bool dirty) {
 //////////////////
 
 QPen ViewMapHint::getPen() const {
-    return QPen(this->_penColor, this->_penWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    return QPen(this->_penColor, this->_templateAtom->penWidth(), Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 }
 
 void ViewMapHint::setPenColor(QColor &color) {
@@ -277,7 +278,7 @@ void ViewMapHint::setPenColor(QColor &color) {
 }
 
 void ViewMapHint::setPenSize(int size) {
-    this->_penWidth = size;
+    this->_templateAtom->setPenWidth(size);
 }
 
 //////////////////////
@@ -297,37 +298,20 @@ void ViewMapHint::deleteCurrentSelectionItems() {
     this->handleAlterationRequest(RemovedPayload(atomIdsToRemove));
 }
 
-
-void ViewMapHint::addDrawing(const QPointF &startPos, const QPainterPath &path, const QPen &pen) {
+void ViewMapHint::addDrawing(QGraphicsPathItem* drawn) {
 
     //define new atom
     auto newAtom = RPZAtom(AtomType::Drawing);
-    newAtom.setPenWidth(pen.width());
-    newAtom.setLayer(this->_defaultLayer);
-    newAtom.setShape(path);
-    newAtom.setPos(startPos);
+    newAtom.setPenWidth(drawn->pen().width());
+    newAtom.setLayer(this->_templateAtom->layer());
+    newAtom.setShape(drawn->path());
+    newAtom.setPos(drawn->scenePos());
 
     //inform !
     this->handleAlterationRequest(AddedPayload(newAtom));
 }
 
-QGraphicsTextItem* ViewMapHint::generateGhostTextItem() {
-
-    auto temporaryItem = this->scene()->addText(this->_generateContextualizedAtom());
-
-    //define transparency as it is a dummy
-    temporaryItem->setOpacity(.5);
-
-    //prevent notifications on move to kick in since the graphics item is not really in the scene
-    auto notifier = dynamic_cast<MapViewItemsNotifier*>(temporaryItem);
-    if(notifier) notifier->disableNotifications();
-
-    return temporaryItem;
-}
-
-void ViewMapHint::turnGhostTextIntoDefinitive(QGraphicsTextItem* temporaryText, const QPoint &eventPos) {
-    
-    this->centerGraphicsItemToPoint(temporaryText, eventPos);
+void ViewMapHint::turnGhostTextIntoDefinitive(QGraphicsItem* temporaryText, const QPoint &eventPos) {
 
     //define new atom
     auto newAtom = RPZAtom(AtomType::Text);
@@ -342,39 +326,21 @@ void ViewMapHint::turnGhostTextIntoDefinitive(QGraphicsTextItem* temporaryText, 
     //DO NOT REMOVE, it will be removed my the map
 }
 
-RPZAtom ViewMapHint::_generateContextualizedAtom() {
-    RPZAtom out;
-
-    out.setLayer(this->_defaultLayer);
-    out.setPenWidth(this->_penWidth);
-
-    return out;
-}
-
-QGraphicsItem* ViewMapHint::generateGhostItem(AssetsDatabaseElement* assetElem) {
+QGraphicsItem* ViewMapHint::generateGhostItem(const AtomType &type, const QString assetLocation = QString()) {
     
-    //find filepath to asset
-    auto path = AssetsDatabase::get()->getFilePathToAsset(assetElem);
+    QGraphicsItem * ghostItem = this->scene()->addToScene();
 
-
-    auto temporaryItem = this->scene()->addGenericImageBasedItem(path, this->_generateContextualizedAtom());
-    
     //define transparency as it is a dummy
-    temporaryItem->setOpacity(.5);
+    ghostItem->setOpacity(.5);
 
     //prevent notifications on move to kick in since the graphics item is not really in the scene
-    auto notifier = dynamic_cast<MapViewItemsNotifier*>(temporaryItem);
+    auto notifier = dynamic_cast<MapViewItemsNotifier*>(ghostItem);
     if(notifier) notifier->disableNotifications();
 
-    return temporaryItem;
+    return ghostItem;
 }
 
-void ViewMapHint::turnGhostItemIntoDefinitive(QGraphicsItem* temporaryItem, AssetsDatabaseElement* assetElem, const QPoint &eventPos) {
-
-    //prevent if remote
-    if(this->_isRemote) return;
-
-    this->centerGraphicsItemToPoint(temporaryItem, eventPos);
+void ViewMapHint::turnGhostItemIntoDefinitive(QGraphicsItem* ghostItem) {
 
     //define new atom
     auto newAtom = RPZAtom((AtomType)assetElem->type());
@@ -388,8 +354,6 @@ void ViewMapHint::turnGhostItemIntoDefinitive(QGraphicsItem* temporaryItem, Asse
     auto payload = AddedPayload(newAtom);
     this->handleAlterationRequest(payload);
 
-    //remove ghost
-    delete temporaryItem;
 }
 
 /////////////////////////////////

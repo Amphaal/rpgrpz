@@ -46,27 +46,19 @@ class MapView : public QGraphicsView, public ClientBindable {
 
     public slots:
         void changeToolFromAction(const MapTools::Actions &instruction);
-        
-        //network
-        void onRPZClientConnecting(RPZClient * cc) override;
-        void onRPZClientDisconnect(RPZClient* cc) override;
+        void useAssetTemplate(const AtomType &type, const QString assetLocation);
     
     signals:
         void unselectCurrentToolAsked();
         void remoteChanged(bool isRemote);
 
     protected:
+        void onRPZClientConnecting(RPZClient * cc) override;
+        void onRPZClientDisconnect(RPZClient* cc) override;
+
         void contextMenuEvent(QContextMenuEvent *event) override;
 
-        void leaveEvent(QEvent *event) override;
-        void enterEvent(QEvent *event) override;
-
         void wheelEvent(QWheelEvent *event) override;
-
-        void dropEvent(QDropEvent *event) override;
-        void dragEnterEvent(QDragEnterEvent *event) override;
-        void dragLeaveEvent(QDragLeaveEvent *event) override;
-        void dragMoveEvent(QDragMoveEvent * event) override;
 
         void mousePressEvent(QMouseEvent *event) override;
         void mouseReleaseEvent(QMouseEvent *event) override;
@@ -75,35 +67,33 @@ class MapView : public QGraphicsView, public ClientBindable {
         void resizeEvent(QResizeEvent * event) override;
 
     private:
-        QGraphicsTextItem* _tempText = nullptr;
-        void _clearTempText();
-        void _generateTempText();
-
         MapViewGraphicsScene* _scene = nullptr;
 
         ViewMapHint* _hints;
         void _onSceneSelectionChanged();
         void _goToDefaultViewState();
+
+        //ghost handling
+            QGraphicsItem* _ghostItem = nullptr;
+            void _clearGhostItem();
+            void _generateGhostItem(const AtomType &type, const QString assetLocation = QString());
+            void _generateGhostItem(const MapTools::Actions &action);
         
         //network
             void _sendMapChanges(QVariantHash &payload);
             void _sendMapHistory();
 
         //registered points
-            QPoint _lastPointMousePressing;
-            QPoint _lastPointMousePressed;
             bool _isMousePressed = false;
             bool _isMiddleToolLock = false;
 
         //tool
-            MapTools::Actions _selectedTool;
             static const MapTools::Actions _defaultTool = MapTools::Actions::Select;
             MapTools::Actions _quickTool = MapTools::Actions::None;
-            void _changeTool(MapTools::Actions newTool, const bool quickChange = false);
+            MapTools::Actions _selectedTool;
             MapTools::Actions _getCurrentTool() const;
-            void _toolOnMousePress(const MapTools::Actions &tool);
-            void _toolOnMouseRelease(const MapTools::Actions &tool);
-
+            void _changeTool(MapTools::Actions newTool, const bool quickChange = false);
+            
         //moving...
             const int _defaultSceneSize = 36000;
             void _goToSceneCenter();
@@ -121,7 +111,7 @@ class MapView : public QGraphicsView, public ClientBindable {
 
         //drawing...
             QGraphicsPathItem* _tempDrawing = nullptr;
-            void _beginDrawing();
+            void _beginDrawing(const QPoint &lastPointMousePressed);
             void _endDrawing();
             void _drawLineTo(const QPoint &evtPoint);
 

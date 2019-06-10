@@ -13,3 +13,7 @@ AssetsManager::AssetsManager(QWidget * parent) : QWidget(parent),
     this->_tree->show();
     this->_tree->expandAll();
 }
+
+AssetsTreeView* AssetsManager::tree() {
+    return this->_tree;
+}

@@ -58,6 +58,7 @@ QString RPZAtom::_defaultDescriptor() {
 
 AtomType RPZAtom::type() {return (AtomType)this->value(_str[Type]).toInt();}
 void RPZAtom::_setType(const AtomType &type) { this->insert(_str[Type], (int)type); }
+void RPZAtom::changeType(const AtomType &type) { this->_setType(type);}
 
 QString RPZAtom::assetId() { return this->value(_str[AssetId]).toString(); }
 void RPZAtom::setAssetId(const QString &id) { this->insert(_str[AssetId], id); }

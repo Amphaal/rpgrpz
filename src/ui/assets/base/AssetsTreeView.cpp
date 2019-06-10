@@ -296,6 +296,17 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
     
     QTreeView::selectionChanged(selected, deselected);
 
-    if(!this->selectedElementsIndexes().count()) this->clearFocus();
+    auto selectedElems = this->selectedElementsIndexes();
+    auto indexesCount = selectedElems.count();
+    
+    if(!indexesCount) return this->clearFocus();
+    
+    if(indexesCount != 1) return;
 
+    auto elem = AssetsDatabaseElement::fromIndex(selectedElems[0]);
+    auto atomType = elem->atomType();
+
+    if(atomType == AtomType::Undefined) return;
+    
+    emit templateAssetChosen(atomType, AssetsDatabase::get()->getFilePathToAsset(elem));
 }

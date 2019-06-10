@@ -282,6 +282,11 @@ void MainWindow::_initUIApp() {
         this->_mapView->hints()->isDirty()
     );
 
+    //on template selected
+    QObject::connect(
+        this->_assetsManager->tree(), &AssetsTreeView::templateAssetChosen,
+        this->_mapView, &MapView::useAssetTemplate
+    ); 
 }
 
 void MainWindow::_initUIMenu() {

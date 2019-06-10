@@ -42,7 +42,8 @@ AssetsDatabaseElement::AssetsDatabaseElement(
 void AssetsDatabaseElement::_setType(const AssetsDatabaseElement::Type &type) {
     this->_type = type; 
 
-      // types-related definitions
+    // types-related definitions
+    void _defineAtomType();
     this->_defineIconPath();
     this->_defineFlags();
     this->_defineIsContainer();
@@ -70,6 +71,10 @@ QString AssetsDatabaseElement::id() {
 
 AssetsDatabaseElement::Type AssetsDatabaseElement::type() {
     return this->_type;
+}
+
+AtomType AssetsDatabaseElement::atomType() {
+    return this->_atomType;
 }
 
 AssetsDatabaseElement* AssetsDatabaseElement::parent() {
@@ -238,6 +243,26 @@ void AssetsDatabaseElement::_defineFlags() {
             break;
         default:
             this->_flags = 0;
+            break;
+    }
+}
+
+void AssetsDatabaseElement::_defineAtomType() {
+    switch(this->_type) {
+        case Player:
+            this->_atomType = AtomType::PC;
+            break;
+        case Event:
+            this->_atomType = AtomType::Event;
+            break;
+        case NPC:
+            this->_atomType = AtomType::NPC;
+            break;
+        case FloorBrush:
+            this->_atomType = AtomType::Brush;
+            break;
+        case Object:
+            this->_atomType = AtomType::Object;
             break;
     }
 }

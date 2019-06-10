@@ -52,19 +52,15 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         void replaceMissingAssetPlaceholders(const QString &assetId);
 
         //actions helpers
-        void addDrawing(const QPointF &startPos, const QPainterPath &path, const QPen &pen);
-
-        QGraphicsTextItem* generateGhostTextItem();
-        void turnGhostTextIntoDefinitive(QGraphicsTextItem* temporaryText, const QPoint &eventPos);
-
-        //D&D assets handling
-        void centerGraphicsItemToPoint(QGraphicsItem* item, const QPoint &eventPos);
-        QGraphicsItem* generateGhostItem(AssetsDatabaseElement* assetElem);
-        void turnGhostItemIntoDefinitive(QGraphicsItem* temporaryItem, AssetsDatabaseElement* assetElem, const QPoint &eventPos);
-        
         void deleteCurrentSelectionItems();
+        void addDrawing(QGraphicsPathItem* drawn);
 
-        //
+        //ghost handling
+        QGraphicsItem* generateGhostItem(const AtomType &type, const QString assetLocation = QString());
+        void turnGhostItemIntoDefinitive(QGraphicsItem* ghostItem);
+        void centerGraphicsItemToPoint(QGraphicsItem* item, const QPoint &eventPos);
+
+        //on move
         void handleAnyMovedItems();
 
         //pen
@@ -81,35 +77,30 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         void selectionChanged(QVector<void*> &atoms);
 
     private:
+        QGraphicsView* _boundGv = nullptr;
+        
+        //map state handling
         QString _stateFilePath;
-
-        QMultiHash<QString, QGraphicsRectItem*> _missingAssetsIdsFromDb;
         bool _isRemote = false;
-
         bool _isDirty = false;
         void _setDirty(bool dirty = true);
         void _shouldMakeDirty(AlterationPayload* payload);
 
-        QGraphicsView* _boundGv = nullptr;
-
+        //helpers
         QGraphicsItem* _buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom);
-
         void _crossBindingAtomWithGI(RPZAtom* atom, QGraphicsItem* gi);
         RPZAtom* _fetchAtom(QGraphicsItem* graphicElem) const;
         QVector<RPZAtom*> _fetchAtoms(const QList<QGraphicsItem*> &listToFetch) const;
         QVector<snowflake_uid> _selectedAtomIds() override;
 
+        //inner event handling
         bool _preventInnerGIEventsHandling = false;
         void _onSceneSelectionChanged();
         void _onSceneItemChanged(QGraphicsItem* item, int changeFlag);
             QSet<QGraphicsItem*> _itemsWhoNotifiedMovement;
 
-        //drawing
-        int _penWidth = MapTools::defaultPenSize;
-        QColor _penColor = Qt::blue;
-
-        //layer
-        int _defaultLayer = 0;
+        //missing assets tracking
+        QMultiHash<QString, QGraphicsRectItem*> _missingAssetsIdsFromDb;
 
         //text interactive
         bool _isInTextInteractiveMode = false;
@@ -118,5 +109,7 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         virtual void _handlePayload(AlterationPayload* payload) override;
         virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) override;
 
-        RPZAtom _generateContextualizedAtom();
+        //template
+            QColor _penColor = Qt::blue;
+            RPZAtom* _templateAtom = nullptr;
 };
