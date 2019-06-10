@@ -53,11 +53,10 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
 
         //actions helpers
         void deleteCurrentSelectionItems();
-        void addDrawing(QGraphicsPathItem* drawn);
 
         //ghost handling
         QGraphicsItem* generateGhostItem(const AtomType &type, const QString assetLocation = QString());
-        void turnGhostItemIntoDefinitive(QGraphicsItem* ghostItem);
+        void integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem);
         void centerGraphicsItemToPoint(QGraphicsItem* item, const QPoint &eventPos);
 
         //on move

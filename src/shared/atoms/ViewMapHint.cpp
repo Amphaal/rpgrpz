@@ -298,37 +298,18 @@ void ViewMapHint::deleteCurrentSelectionItems() {
     this->handleAlterationRequest(RemovedPayload(atomIdsToRemove));
 }
 
-void ViewMapHint::addDrawing(QGraphicsPathItem* drawn) {
+QGraphicsItem* ViewMapHint::generateGhostItem(const AtomType &type, const QString assetLocation) {
 
-    //define new atom
-    auto newAtom = RPZAtom(AtomType::Drawing);
-    newAtom.setPenWidth(drawn->pen().width());
-    newAtom.setLayer(this->_templateAtom->layer());
-    newAtom.setShape(drawn->path());
-    newAtom.setPos(drawn->scenePos());
+    //generate a blueprint
+    auto atomBuiltFromTemplate = RPZAtom(*this->_templateAtom);
+    atomBuiltFromTemplate.changeType(type);
 
-    //inform !
-    this->handleAlterationRequest(AddedPayload(newAtom));
-}
+    //add to scene
+    auto aditionnalArgs = MVPayload(this->_penColor, assetLocation);
+    QGraphicsItem* ghostItem = this->scene()->addToScene(atomBuiltFromTemplate, aditionnalArgs);
 
-void ViewMapHint::turnGhostTextIntoDefinitive(QGraphicsItem* temporaryText, const QPoint &eventPos) {
-
-    //define new atom
-    auto newAtom = RPZAtom(AtomType::Text);
-    newAtom.setPenWidth(temporaryText->font().pointSize());
-    newAtom.setPos(temporaryText->scenePos());
-    newAtom.setLayer(temporaryText->zValue());
-    newAtom.setText(temporaryText->toPlainText());
-
-    //inform !
-    this->handleAlterationRequest(AddedPayload(newAtom));
-
-    //DO NOT REMOVE, it will be removed my the map
-}
-
-QGraphicsItem* ViewMapHint::generateGhostItem(const AtomType &type, const QString assetLocation = QString()) {
-    
-    QGraphicsItem * ghostItem = this->scene()->addToScene();
+    //if no ghost item, return
+    if(!ghostItem) return ghostItem;
 
     //define transparency as it is a dummy
     ghostItem->setOpacity(.5);
@@ -340,20 +321,10 @@ QGraphicsItem* ViewMapHint::generateGhostItem(const AtomType &type, const QStrin
     return ghostItem;
 }
 
-void ViewMapHint::turnGhostItemIntoDefinitive(QGraphicsItem* ghostItem) {
-
-    //define new atom
-    auto newAtom = RPZAtom((AtomType)assetElem->type());
-    newAtom.setAssetId(assetElem->id());
-    newAtom.setAssetName(assetElem->displayName());
-    newAtom.setLayer(temporaryItem->zValue());
-    newAtom.setPos(temporaryItem->scenePos());
-    newAtom.setShape(temporaryItem->boundingRect());
-
-    //inform !
+void ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem) {
+    auto newAtom = MapViewGraphicsScene::itemToAtom(ghostItem);
     auto payload = AddedPayload(newAtom);
     this->handleAlterationRequest(payload);
-
 }
 
 /////////////////////////////////
@@ -368,52 +339,36 @@ void ViewMapHint::turnGhostItemIntoDefinitive(QGraphicsItem* ghostItem) {
 QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom) {
 
     QGraphicsItem* newItem = nullptr;
+    auto hasMissingAssetFile = false;
+    auto pathToAssetFile = QString();
+    auto assetId = QString();
 
-    //depending on atomType...
-    switch(atomToBuildFrom.type()) {
+    //displayable atoms
+    if(atomToBuildFrom.type() == AtomType::Object || atomToBuildFrom.type() == AtomType::Brush) {
+        assetId = atomToBuildFrom.assetId();
+        pathToAssetFile = AssetsDatabase::get()->getFilePathToAsset(assetId);
+        hasMissingAssetFile = pathToAssetFile.isEmpty();
+    }
+
+    //depending on presence in asset db...
+    if(hasMissingAssetFile) {
         
-        //text...
-        case AtomType::Text: { 
-            newItem = this->scene()->addText(atomToBuildFrom);
+        //add placeholder
+        auto placeholder = this->scene()->addMissingAssetPH(atomToBuildFrom);
+        newItem = placeholder;
+
+        //if first time the ID is encountered
+        if(!this->_missingAssetsIdsFromDb.contains(assetId)) {
+
+            //add graphic item to list of items to replace at times
+            this->_missingAssetsIdsFromDb.insert(assetId, placeholder);
+            emit requestMissingAsset(assetId);
         }
-        break;
-
-        //drawing...
-        case AtomType::Drawing: {
-            newItem = this->scene()->addDrawing(atomToBuildFrom, this->_penColor);
-        }
-        break;
-
-        //objects
-        case AtomType::Object: {
-
-            //depending on presence in asset db...
-            auto assetId = atomToBuildFrom.assetId();
-            QString pathToAssetFile = AssetsDatabase::get()->getFilePathToAsset(assetId);
-        
-            //is in db, add to view
-            if(!pathToAssetFile.isNull()) {
-                newItem = this->scene()->addGenericImageBasedItem(pathToAssetFile, atomToBuildFrom);
-            } 
-            
-            //not in db, render the shape
-            else {
-                
-                //add placeholder
-                auto placeholder = this->scene()->addMissingAssetPH(atomToBuildFrom);
-                newItem = placeholder;
-
-                //if first time the ID is encountered
-                if(!this->_missingAssetsIdsFromDb.contains(assetId)) {
-
-                    //add graphic item to list of items to replace at times
-                    this->_missingAssetsIdsFromDb.insert(assetId, placeholder);
-                    emit requestMissingAsset(assetId);
-                }
-
-            }
-        }
-        break;
+    } 
+    
+    //default
+    else {
+        newItem = this->scene()->addToScene(atomToBuildFrom, MVPayload(this->_penColor, pathToAssetFile));
     }
 
     //save pointer ref
@@ -442,7 +397,7 @@ void ViewMapHint::replaceMissingAssetPlaceholders(const QString &assetId) {
         auto atom = this->_fetchAtom(gi);
 
         //create the new graphics item
-        auto newGi = this->scene()->addGenericImageBasedItem(pathToFile, *atom);
+        auto newGi = this->scene()->addToScene(*atom, MVPayload(this->_penColor, pathToFile));
         this->_crossBindingAtomWithGI(atom, newGi);
 
         delete gi;

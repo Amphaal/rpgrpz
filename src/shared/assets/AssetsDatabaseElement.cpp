@@ -43,7 +43,7 @@ void AssetsDatabaseElement::_setType(const AssetsDatabaseElement::Type &type) {
     this->_type = type; 
 
     // types-related definitions
-    void _defineAtomType();
+    this->_defineAtomType();
     this->_defineIconPath();
     this->_defineFlags();
     this->_defineIsContainer();

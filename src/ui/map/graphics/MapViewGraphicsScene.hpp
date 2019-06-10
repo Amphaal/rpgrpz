@@ -18,9 +18,7 @@ class MVPayload : public QVariantHash {
         MVPayload() {};
         MVPayload(const QColor &fallbackColor, const QString &pathToAsset = QString()) : 
             pathToImageFile(pathToAsset), 
-            defaultColor(fallbackColor) { 
-
-        }; 
+            defaultColor(fallbackColor) { }; 
 
 };
 
@@ -36,33 +34,56 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             emit sceneItemChanged(item, (int)flag);
         };
 
-        void _bindDefaultMetadataToGraphicsItem(QGraphicsItem* item, RPZAtom &atom) {
-            item->setZValue(atom.layer());
-            item->setPos(atom.pos());
-            item->setScale(atom.scale());
-            item->setRotation(atom.rotation());
+        void _updateGraphicsItemFromAtom(QGraphicsItem* target, RPZAtom &blueprint) {
+            target->setZValue(blueprint.layer());
+            target->setPos(blueprint.pos());
+            target->setScale(blueprint.scale());
+            target->setRotation(blueprint.rotation());
+            target->setData(1, RPZAtom(blueprint));
         }
 
 
     public:
         MapViewGraphicsScene(int defaultSize) : QGraphicsScene(defaultSize, defaultSize, defaultSize, defaultSize) { }
 
-        QGraphicsItem* addToScene(RPZAtom &atom, MVPayload &aditionnalArgs = MVPayload()) {
+        static RPZAtom itemToAtom(QGraphicsItem* blueprint) {
             
+            //recover template
+            auto atom = RPZAtom(blueprint->data(1).toHash());
+
+            //update template values from current gi properties
+            atom.setPos(blueprint->scenePos());
+            atom.setShape(blueprint->boundingRect());
+
+            return atom;
+        }
+
+        QGraphicsItem* addToScene(RPZAtom &atom, MVPayload &aditionnalArgs) {
+            
+            QGraphicsItem* out;
+
             switch(atom.type()) {
                 case AtomType::Object:
-                    return this->_addGenericImageBasedItem(atom, aditionnalArgs);
+                    out = this->_addGenericImageBasedItem(atom, aditionnalArgs);
                 break;
                 
                 case AtomType::Drawing:
-                    return this->_addDrawing(atom, aditionnalArgs);
+                    out = this->_addDrawing(atom, aditionnalArgs);
                 break;
 
                 case AtomType::Text:
-                    return this->_addText(atom);
+                    out = this->_addText(atom);
+                break;
+
+                default:
+                    return nullptr;
                 break;
             }
 
+            //add atomType tracker
+            this->_updateGraphicsItemFromAtom(out, atom);
+            this->addItem(out);
+            return out;
         }
 
         QGraphicsRectItem* addMissingAssetPH(RPZAtom &atom) {
@@ -79,10 +100,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
 
             //add to scene
             auto placeholder = new MapViewGraphicsRectItem(this, atom.shape().boundingRect(), pen, brush);
-            
-            //bind default
-            this->_bindDefaultMetadataToGraphicsItem(placeholder, atom);
-
+            this->_updateGraphicsItemFromAtom(placeholder, atom);
             this->addItem(placeholder);
 
             return placeholder;
@@ -104,16 +122,10 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
                 item = new MapViewGraphicsPixmapItem(this, pathToImageFile);
             };
 
-            //bind default
-            this->_bindDefaultMetadataToGraphicsItem(item, atom);
-            
-            //add it to the scene
-            this->addItem(item);
-
             return item;
         }
 
-        QGraphicsPathItem* _addDrawing(RPZAtom &atom, MVPayload &aditionnalArgs)) {
+        QGraphicsPathItem* _addDrawing(RPZAtom &atom, MVPayload &aditionnalArgs) {
             
             //define a ped
             QPen pen;
@@ -131,29 +143,20 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
                 pen.setCapStyle(Qt::RoundCap);
                 pen.setJoinStyle(Qt::RoundJoin);
 
-            //create path gi, set to pos
-            auto newPath = new MapViewGraphicsPathItem(this, atom.shape(), pen);
+            //define a default shape for ghost items
+            auto shape = atom.shape();
+            if(!shape.elementCount()) {
+                shape.lineTo(QPoint(.1,.1));
+            }
+
+            //create path
+            auto newPath = new MapViewGraphicsPathItem(this, shape, pen);
             
-            //bind default
-            this->_bindDefaultMetadataToGraphicsItem(newPath, atom);
-
-            //add to scene
-            this->addItem(newPath);
-
             return newPath;
         }
 
         QGraphicsTextItem* _addText(RPZAtom &atom) {
-
-            auto newText = new MapViewGraphicsTextItem(this, atom.text(), atom.penWidth());
-            
-            //bind default
-            this->_bindDefaultMetadataToGraphicsItem(newText, atom);
-
-            //add to scene
-            this->addItem(newText);
-
-            return newText;
+            return new MapViewGraphicsTextItem(this, atom.text(), atom.penWidth());
         }
 
 };

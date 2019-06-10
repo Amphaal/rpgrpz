@@ -116,6 +116,10 @@ void MapView::keyPressEvent(QKeyEvent * event) {
 
 }
 
+void MapView::useAssetTemplate(const AtomType &type, const QString assetLocation) {
+    this->_generateGhostItem(type, assetLocation);
+}
+
 void MapView::_clearGhostItem() {
     if(!this->_ghostItem) return;
     delete this->_ghostItem;
@@ -242,7 +246,7 @@ void MapView::mousePressEvent(QMouseEvent *event) {
                     this->_beginDrawing(currentPos);
                 break;
                 default:
-                    this->_hints->turnGhostItemIntoDefinitive(this->_ghostItem);
+                    this->_hints->integrateGraphicsItemAsPayload(this->_ghostItem);
                 break;
             }
         }
@@ -476,7 +480,7 @@ void MapView::_endDrawing() {
     if(this->_tempDrawing->path().elementCount() < 2) return;
 
     //add definitive path
-    this->_hints->addDrawing(this->_tempDrawing);
+    this->_hints->integrateGraphicsItemAsPayload(this->_tempDrawing);
 
     //destroy temp
     delete this->_tempDrawing;
