@@ -1,13 +1,14 @@
 #pragma once
 
-#include "src/ui/atoms/base/AtomSliderEditor.hpp"
+#include "src/ui/atoms/base/AtomSliderEditor.h"
 
 class AtomScalingEditor : public AtomSliderEditor {
     
     public:
-        AtomScalingEditor(AtomEditor* parent) : AtomSliderEditor("Taille:", "x", parent) {
-            this->_slider->setMinimum(1);
-            this->_slider->setMaximum(1000);
+        AtomScalingEditor() : AtomSliderEditor("Taille:", "x", 1, 1000) {}
+
+        AlterationPayload createPayload() override {
+            return ScaledPayload(this->_atomsToSnowflakeList(), this->outputValue());
         }
 
     private:
@@ -25,10 +26,6 @@ class AtomScalingEditor : public AtomSliderEditor {
             return this->_fromScaleValue(
                 this->atomValue(atom)
             );
-        }
-
-        AlterationPayload _createPayload(QVector<snowflake_uid> &toAlter, double newValue) override {
-            return ScaledPayload(toAlter, newValue);
         }
 
         void _updateGraphicsItem(QGraphicsItem* giToUpdate, double value) override {

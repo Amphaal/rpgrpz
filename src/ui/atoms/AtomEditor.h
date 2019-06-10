@@ -21,15 +21,15 @@ class AtomEditor : public QWidget {
         AtomEditor(QWidget* parent = nullptr);
 
         void buildEditorFromSelection(QVector<void*> &selectedAtoms);
-        void signalPayload(AlterationPayload &payload);
     
     signals:
         void requiresAtomAlteration(QVariantHash &payload);
     
     private:
         QVector<RPZAtom*> _atoms;
-        void _destroyEditor();
 
         AtomRotationEditor* _rotateEditor = nullptr;
         AtomScalingEditor* _scaleEditor = nullptr;
+
+        void _onSubEditorChanged(AtomSliderEditor* editor);
 };
