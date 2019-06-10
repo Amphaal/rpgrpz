@@ -172,9 +172,10 @@ list(APPEND SOURCES
     src/ui/map/base/AnimationTimeLine.hpp
     src/ui/map/MapTools.cpp
     src/ui/map/MapView.cpp
-    src/ui/layout/AtomEditor.cpp
+    src/ui/atoms/base/AtomEditorLineDescriptor.cpp
+    src/ui/atoms/AtomEditor.cpp
     src/ui/layout/base/LayerSelector.cpp
-    src/ui/layout/base/MapLayoutTree.cpp
+    src/ui/layout/MapLayoutTree.cpp
     src/ui/layout/MapLayoutManager.cpp
 
     src/shared/database/base/JSONDatabase.cpp

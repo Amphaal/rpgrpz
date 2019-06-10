@@ -20,7 +20,7 @@
 
 #include "src/ui/others/ClientBindable.hpp"
 
-#include "MapLayoutItemDelegate.hpp"
+#include "base/MapLayoutItemDelegate.hpp"
 
 #include "src/shared/atoms/TreeMapHint.h"
 

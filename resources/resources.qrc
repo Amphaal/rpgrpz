@@ -33,6 +33,7 @@
         <file>icons/app/tabs/playlist.png</file>
         <file>icons/app/tabs/chat.png</file>
         <file>icons/app/tabs/box.png</file>
+        <file>icons/app/tabs/config.png</file>
         <file>icons/app/audio/play.png</file>
         <file>icons/app/audio/pause.png</file>
         <file>icons/app/audio/rewind.png</file>

@@ -32,6 +32,8 @@
 
 #include "src/ui/assets/AssetsManager.h"
 
+#include "src/ui/atoms/AtomEditor.h"
+
 #include "src/ui/others/RestoringSplitter.h"
 #include "src/ui/others/UpdaterUIIntegrator.hpp"
 #include "src/ui/others/statusbar/RPZStatusBar.h"
@@ -57,13 +59,14 @@ class MainWindow : public QMainWindow {
         void _initConnectivity();
 
         MapView* _mapView = nullptr;
-        ConnectWidget* _connectWidget;
-        AudioStreamController* _streamNotifier;
-        PlaylistController* _streamController;
+        ConnectWidget* _connectWidget = nullptr;
+        AudioStreamController* _streamNotifier = nullptr;
+        PlaylistController* _streamController = nullptr;
         ChatWidget* _cw = nullptr;
-        AssetsManager* _assetsManager;
-        MapTools* _mapTools;
-        MapLayoutManager* _mlManager;
+        AssetsManager* _assetsManager = nullptr;
+        MapTools* _mapTools = nullptr;
+        MapLayoutManager* _mlManager = nullptr;
+        AtomEditor* _atomEditor = nullptr;
         void _initUIApp();
 
         /*statusbar*/
