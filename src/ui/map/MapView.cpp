@@ -27,6 +27,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
     this->scale(this->_defaultScale, this->_defaultScale);
     this->_goToDefaultViewState();
 
+    //activate mouse tracking for ghost 
     this->setMouseTracking(true);
 }
 

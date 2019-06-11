@@ -392,10 +392,10 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
     QGraphicsItem* newItem = nullptr;
     auto hasMissingAssetFile = false;
     auto pathToAssetFile = QString();
-    auto assetId = QString();
+    auto assetId = atomToBuildFrom.assetId();
 
     //displayable atoms
-    if(atomToBuildFrom.type() == AtomType::Object || atomToBuildFrom.type() == AtomType::Brush) {
+    if(!assetId.isEmpty()) {
         assetId = atomToBuildFrom.assetId();
         pathToAssetFile = AssetsDatabase::get()->getFilePathToAsset(assetId);
         hasMissingAssetFile = pathToAssetFile.isEmpty();
@@ -415,6 +415,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
             this->_missingAssetsIdsFromDb.insert(assetId, placeholder);
             emit requestMissingAsset(assetId);
         }
+
     } 
     
     //default
@@ -500,9 +501,9 @@ void ViewMapHint::centerGraphicsItemToPoint(QGraphicsItem* item, const QPoint &e
 // END Internal Helpers //
 //////////////////////////
 
-////////////////////////
+/////////////////////////////
 // AtomsStorage Overriding //
-////////////////////////
+/////////////////////////////
 
 //alter Scene
 void ViewMapHint::_handlePayload(AlterationPayload* payload) { 
@@ -517,8 +518,9 @@ void ViewMapHint::_handlePayload(AlterationPayload* payload) {
     auto type = payload->type();
     if(type == PayloadAlteration::Selected) this->scene()->clearSelection();
     if(type == PayloadAlteration::Reset) {
-        for(auto item : this->_boundGv->items()) {
-            delete item;
+        for(auto &atom : this->_atomsById) {
+            auto gi = atom.graphicsItem();
+            if(gi) delete gi;
         }
     }
     
@@ -606,7 +608,6 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, cons
 
         //on selection
         case PayloadAlteration::Selected: {
-            
             updatedAtom->graphicsItem()->setSelected(true);
         }
         break;
