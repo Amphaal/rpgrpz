@@ -37,7 +37,6 @@ MapTools::MapTools(QWidget* parent) : QToolBar(parent) {
     //draw size
     auto sizer = new QSpinBox(this);
     sizer->setMinimum(1);
-    sizer->setValue(defaultPenSize);
     QObject::connect(
         sizer, qOverload<int>(&QSpinBox::valueChanged),
         [&](const int i) {

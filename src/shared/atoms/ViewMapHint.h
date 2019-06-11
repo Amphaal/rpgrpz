@@ -63,18 +63,18 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         //on move
         void handleAnyMovedItems();
 
-        //pen
         QPen getPen() const;
-        void setPenColor(QColor &color);
-        void setPenSize(int size);
 
-        //layer
+        //alter template Atom
+        void setPenSize(int size);
+        void setDefaultUser(RPZUser user);
         void setDefaultLayer(int layer);
 
     signals:
         void mapFileStateChanged(const QString &filePath, bool isDirty);
         void requestMissingAsset(const QString &assetIdToRequest);
         void selectionChanged(QVector<void*> &atoms);
+        void atomTemplateChanged(void* atomTemplate);
 
     private:
         QGraphicsView* _boundGv = nullptr;
@@ -110,6 +110,5 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) override;
 
         //template
-            QColor _penColor = Qt::blue;
-            RPZAtom* _templateAtom = nullptr;
+        RPZAtom* _templateAtom = nullptr;
 };

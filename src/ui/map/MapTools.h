@@ -23,7 +23,6 @@ class MapTools : public QToolBar {
             ResetView, 
             Text 
         };
-        static inline const int defaultPenSize = 4;
 
         MapTools(QWidget * parent = nullptr); 
         void selectDefaultTool();

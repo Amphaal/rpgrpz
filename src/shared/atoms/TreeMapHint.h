@@ -24,11 +24,13 @@ class TreeMapHint : public AtomsHandler, public AtomsContextualMenuHandler  {
         QTreeWidgetItem* _getLayerItem(int layer);
         void _updateLayerState(QTreeWidgetItem* layerItem);
 
+        void _bindOwnerToItem(QTreeWidgetItem* item, RPZUser &owner);
+
         void _onElementSelectionChanged();
         void _onElementDoubleClicked(QTreeWidgetItem * item, int column);
         void _onRenamedAsset(const QString &assetId, const QString &newName);
         
-        QHash<snowflake_uid, QTreeWidgetItem*> _treeItemsByAtomId;
+        QHash<snowflake_uid, QTreeWidgetItem*> _atomTreeItemsById;
         QHash<QString, QSet<snowflake_uid>> _atomIdsBoundByAssetId;
         
         QVector<snowflake_uid> _selectedAtomIds() override;

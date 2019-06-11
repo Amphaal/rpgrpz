@@ -61,8 +61,8 @@ void TreeMapHint::_handlePayload(AlterationPayload* payload) {
     if(type == PayloadAlteration::Selected) this->_boundTree->clearSelection();
     if(type == PayloadAlteration::Reset) {
 
-        for(auto item : this->_treeItemsByAtomId) delete item;
-        this->_treeItemsByAtomId.clear();
+        for(auto item : this->_atomTreeItemsById) delete item;
+        this->_atomTreeItemsById.clear();
 
         for(auto layerItem : this->_layersItems) delete layerItem;
         this->_layersItems.clear();
@@ -70,19 +70,24 @@ void TreeMapHint::_handlePayload(AlterationPayload* payload) {
         this->_atomIdsBoundByAssetId.clear();
     }
 
-    //specific bulk handling for UI optimizations
+    
     if(type == PayloadAlteration::LayerChanged) {
+
+        //specific bulk handling for UI optimizations
         auto temp = LayerChangedPayload(*payload);
         this->_changeLayer(temp.targetAtomIds(), temp.layer());
+
+    } else {
+
+        //conditionnal handling by alteration
+        auto alterations = payload->alterationByAtomId();
+        for (QVariantMap::iterator i = alterations.begin(); i != alterations.end(); ++i) {
+            auto atomId = (snowflake_uid)i.key().toULongLong();
+            this->_handlePayloadInternal(type, atomId, i.value());
+        }
+    
     }
 
-    //conditionnal handling by alteration
-    auto alterations = payload->alterationByAtomId();
-    for (QVariantMap::iterator i = alterations.begin(); i != alterations.end(); ++i) {
-        auto atomId = (snowflake_uid)i.key().toULongLong();
-        this->_handlePayloadInternal(type, atomId, i.value());
-    }
-    
     this->_preventInnerGIEventsHandling = false;
     
     this->_emitAlteration(payload);
@@ -90,7 +95,7 @@ void TreeMapHint::_handlePayload(AlterationPayload* payload) {
 
 RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) {
     
-    auto item = this->_treeItemsByAtomId[targetedAtomId];
+    auto item = this->_atomTreeItemsById[targetedAtomId];
 
     switch(type) {
 
@@ -104,7 +109,7 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, cons
                     this->_atomIdsBoundByAssetId[tbrAtom_assetId].remove(targetedAtomId);
             }
 
-            this->_treeItemsByAtomId.remove(targetedAtomId);
+            this->_atomTreeItemsById.remove(targetedAtomId);
             delete item;
 
             //also remove layer
@@ -123,6 +128,10 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, cons
         }
         break;
 
+        case PayloadAlteration::OwnerChanged: {
+            this->_bindOwnerToItem(item, RPZUser(atomAlteration.toHash()));
+        }
+        break;
 
         case PayloadAlteration::Selected: {
             item->setSelected(true);
@@ -135,7 +144,7 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, cons
             auto atom = RPZAtom(atomAlteration.toHash());
             
             auto item = this->_createTreeItem(atom);
-            this->_treeItemsByAtomId.insert(targetedAtomId, item);
+            this->_atomTreeItemsById.insert(targetedAtomId, item);
 
             //if has assetId, add it
             auto assetId = atom.assetId();
@@ -153,7 +162,7 @@ void TreeMapHint::_onRenamedAsset(const QString &assetId, const QString &newName
     if(!this->_atomIdsBoundByAssetId.contains(assetId)) return;
 
     for(auto &atomId : this->_atomIdsBoundByAssetId[assetId]) {
-        this->_treeItemsByAtomId[atomId]->setText(0, newName);
+        this->_atomTreeItemsById[atomId]->setText(0, newName);
     }
 }
 
@@ -163,7 +172,7 @@ void TreeMapHint::_changeLayer(QVector<snowflake_uid> &elementIds, int newLayer)
 
     //inner elements to update
     for(auto &key : elementIds) {
-        auto item = this->_treeItemsByAtomId[key];
+        auto item = this->_atomTreeItemsById[key];
         if(item) {
             
             //remove from initial layer, maybe remove it too
@@ -218,6 +227,12 @@ QTreeWidgetItem* TreeMapHint::_getLayerItem(int layer) {
     return layerElem;
 }
 
+void TreeMapHint::_bindOwnerToItem(QTreeWidgetItem* item, RPZUser &owner) {
+    item->setData(2, LayoutCustomRoles::OwnerIdRole, owner.id());
+    item->setData(2, Qt::UserRole, owner.color());
+    item->setData(2, Qt::ToolTipRole, owner.toString());
+}
+
 QTreeWidgetItem* TreeMapHint::_createTreeItem(RPZAtom &atom) {
     
     auto item = new QTreeWidgetItem();
@@ -230,8 +245,7 @@ QTreeWidgetItem* TreeMapHint::_createTreeItem(RPZAtom &atom) {
     item->setData(1, LayoutCustomRoles::AvailabilityRole, atom.isLocked());
 
     auto owner = atom.owner();
-    item->setData(2, Qt::UserRole, owner.color());
-    item->setData(2, Qt::ToolTipRole, owner.toString());
+    this->_bindOwnerToItem(item, owner);
 
     item->setFlags(
         QFlags<Qt::ItemFlag>(

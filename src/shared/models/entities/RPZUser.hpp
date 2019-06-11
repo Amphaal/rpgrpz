@@ -60,7 +60,7 @@ class RPZUser : public Serializable {
 
         QColor color() { 
             return QColor(
-                this->value("color").toString()
+                this->value("color", "#0000FF").toString()
             ); 
         };
 

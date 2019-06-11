@@ -147,6 +147,11 @@ void MapView::leaveEvent(QEvent *event) {
     this->_ghostItem->setVisible(false);
 }
 
+void MapView::updateGhostItemFromAtomTemplate(void* atomTemplate) {
+    if(!this->_ghostItem) return;
+    this->_scene->updateGraphicsItemFromAtom(this->_ghostItem, *(RPZAtom*)atomTemplate);
+}
+
 void MapView::_generateGhostItem(const AtomType &type, const QString assetId, const QString assetName, const QString assetLocation) {
     this->_clearGhostItem();
     this->_ghostItem = this->_hints->generateGhostItem(type, assetId, assetName, assetLocation);
@@ -191,10 +196,9 @@ void MapView::onRPZClientConnecting(RPZClient * cc) {
     QObject::connect(
         this->_rpzClient, &RPZClient::ackIdentity,
         [&](const QVariantHash &userHash) {
+            
             RPZUser rpz_user(userHash);
-
-            //define self pen color
-            this->hints()->setPenColor(rpz_user.color());
+            this->hints()->setDefaultUser(rpz_user);
 
             //if host
             auto descriptor = rpz_user.role() == RPZUser::Role::Host ? NULL : this->_rpzClient->getConnectedSocketAddress();

@@ -19,7 +19,8 @@ enum class PayloadAlteration {
     Duplicated,
     VisibilityChanged,
     Redone,
-    Undone
+    Undone,
+    OwnerChanged
 }; 
 
 class AlterationPayload : public QVariantHash { 

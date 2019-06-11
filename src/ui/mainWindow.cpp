@@ -242,6 +242,18 @@ void MainWindow::_initUIApp() {
         this->_atomEditor, &AtomEditor::buildEditorFromSelection
     );
 
+    //on selection change
+    QObject::connect(
+        this->_mapView->hints(), &ViewMapHint::selectionChanged,
+        this->_atomEditor, &AtomEditor::buildEditorFromSelection
+    );
+
+    //on template changing
+    QObject::connect(
+        this->_mapView->hints(), &ViewMapHint::atomTemplateChanged,
+        this->_mapView, &MapView::updateGhostItemFromAtomTemplate
+    );
+
     //on default layer changed
     QObject::connect(
         this->_mlManager->layerSelector()->spinbox(), qOverload<int>(&QSpinBox::valueChanged),

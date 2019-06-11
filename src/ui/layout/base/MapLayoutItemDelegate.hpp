@@ -6,7 +6,8 @@
 
 #include <QStyledItemDelegate>
 
-enum LayoutCustomRoles { 
+enum LayoutCustomRoles {
+    OwnerIdRole = 267, 
     AssetIdRole = 260, 
     VisibilityRole = 261, 
     AvailabilityRole = 262 
@@ -28,7 +29,7 @@ class OwnerDelegate  : public QStyledItemDelegate {
                 //define size
                 QRect indicator(
                     QPoint(option.rect.left()+4, option.rect.top()+4),
-                    QPoint(option.rect.right()-4, option.rect.bottom()-4)
+                    QSize(6,6)
                 );
 
                 //draw

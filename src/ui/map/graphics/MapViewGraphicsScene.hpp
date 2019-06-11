@@ -16,9 +16,8 @@ class MVPayload : public QVariantHash {
         QColor defaultColor; 
         
         MVPayload() {};
-        MVPayload(const QColor &fallbackColor, const QString &pathToAsset = QString()) : 
-            pathToImageFile(pathToAsset), 
-            defaultColor(fallbackColor) { }; 
+        MVPayload(const QString &pathToAsset = QString()) : 
+            pathToImageFile(pathToAsset) { }; 
 
 };
 
@@ -36,16 +35,32 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             emit sceneItemChanged(item, (int)flag);
         };
 
-        void _updateGraphicsItemFromAtom(QGraphicsItem* target, RPZAtom &blueprint) {
-            target->setZValue(blueprint.layer());
-            target->setPos(blueprint.pos());
-            target->setScale(blueprint.scale());
-            target->setRotation(blueprint.rotation());
-            target->setData(TemplateAtom, RPZAtom(blueprint));
-        }
-
     public:
         MapViewGraphicsScene(int defaultSize) : QGraphicsScene(defaultSize, defaultSize, defaultSize, defaultSize) { }
+
+        static void updateGraphicsItemFromAtom(QGraphicsItem* target, RPZAtom &blueprint) {
+
+            target->setZValue(blueprint.layer());
+            target->setPos(blueprint.pos());
+            target->setRotation(blueprint.rotation());
+            target->setScale(blueprint.scale());
+
+            target->setData(TemplateAtom, RPZAtom(blueprint));
+
+            if(auto casted = dynamic_cast<QGraphicsTextItem*>(target)) {
+                auto font = casted->font();
+                font.setPointSize(blueprint.penWidth());
+                casted->setFont(font);
+            }
+
+            else if(auto casted = dynamic_cast<QGraphicsPathItem*>(target)) {
+                auto pen = casted->pen();
+                pen.setWidth(blueprint.penWidth());
+                pen.setColor(blueprint.owner().color());
+                casted->setPen(pen);
+            }
+                    
+        }
 
         static RPZAtom itemToAtom(QGraphicsItem* blueprint) {
             
@@ -53,6 +68,11 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             auto atom = RPZAtom(blueprint->data(TemplateAtom).toHash());
             atom.shuffleId();
 
+            //remove -1 layer to the actual wanted layer
+            atom.setLayer(
+                atom.layer() - 1
+            );
+            
             //update template values from current gi properties
             atom.setPos(blueprint->scenePos());
             
@@ -61,6 +81,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
                 case AtomType::Text: {
                     auto casted = dynamic_cast<QGraphicsTextItem*>(blueprint);
                     atom.setShape(blueprint->boundingRect());
+                    atom.setPenWidth(casted->font().pointSize());
                     atom.setText(casted->toPlainText());
                 }
                 break;
@@ -90,7 +111,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
                 break;
                 
                 case AtomType::Drawing:
-                    out = this->_addDrawing(atom, aditionnalArgs);
+                    out = this->_addDrawing(atom);
                 break;
 
                 case AtomType::Text:
@@ -103,7 +124,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             }
 
             //add atomType tracker
-            this->_updateGraphicsItemFromAtom(out, atom);
+            this->updateGraphicsItemFromAtom(out, atom);
             this->addItem(out);
             return out;
         }
@@ -122,7 +143,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
 
             //add to scene
             auto placeholder = new MapViewGraphicsRectItem(this, atom.shape().boundingRect(), pen, brush);
-            this->_updateGraphicsItemFromAtom(placeholder, atom);
+            this->updateGraphicsItemFromAtom(placeholder, atom);
             this->addItem(placeholder);
 
             return placeholder;
@@ -147,23 +168,14 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             return item;
         }
 
-        QGraphicsPathItem* _addDrawing(RPZAtom &atom, MVPayload &aditionnalArgs) {
+        QGraphicsPathItem* _addDrawing(RPZAtom &atom) {
             
             //define a ped
             QPen pen;
-
-                //if no owner set, assume it is self
-                auto owner = atom.owner();
-                if(owner.isEmpty()) {
-                    pen.setColor(aditionnalArgs.defaultColor);
-                } else {
-                    pen.setColor(owner.color());
-                }
-
-                //set pen
-                pen.setWidth(atom.penWidth());
-                pen.setCapStyle(Qt::RoundCap);
-                pen.setJoinStyle(Qt::RoundJoin);
+            pen.setColor(atom.owner().color());
+            pen.setWidth(atom.penWidth());
+            pen.setCapStyle(Qt::RoundCap);
+            pen.setJoinStyle(Qt::RoundJoin);
 
             //define a default shape for ghost items
             auto shape = atom.shape();

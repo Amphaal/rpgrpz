@@ -15,6 +15,7 @@
 #include "payloads/DuplicatedPayload.hpp"
 #include "payloads/RedonePayload.hpp"
 #include "payloads/UndonePayload.hpp"
+#include "payloads/OwnerChangedPayload.hpp"
 
 class Payload {
     public:
@@ -22,6 +23,8 @@ class Payload {
             auto type = (PayloadAlteration)payload["t"].toInt();
 
             switch(type) {
+                case PayloadAlteration::OwnerChanged:
+                    return new OwnerChangedPayload(payload);
                 case PayloadAlteration::Redone:
                     return new RedonePayload(payload);
                 case PayloadAlteration::Undone:

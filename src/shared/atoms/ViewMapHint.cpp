@@ -27,6 +27,7 @@ bool ViewMapHint::isInTextInteractiveMode() {
 
 void ViewMapHint::setDefaultLayer(int layer) {
     this->_templateAtom->setLayer(layer);
+    emit atomTemplateChanged(this->_templateAtom);
 }
 
 void ViewMapHint::handleAnyMovedItems() {
@@ -257,16 +258,30 @@ void ViewMapHint::_setDirty(bool dirty) {
 //////////////////
 
 QPen ViewMapHint::getPen() const {
-    return QPen(this->_penColor, this->_templateAtom->penWidth(), Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    return QPen(
+        this->_templateAtom->owner().color(), 
+        this->_templateAtom->penWidth(), 
+        Qt::SolidLine, 
+        Qt::RoundCap, 
+        Qt::RoundJoin
+    );
 }
 
-void ViewMapHint::setPenColor(QColor &color) {
-    this->_penColor = color;
+void ViewMapHint::setDefaultUser(RPZUser user) {
+    
+    //update template
+    auto oldOwnerId = this->_templateAtom->owner().id();
+    this->_templateAtom->setOwnership(user);
+    emit atomTemplateChanged(this->_templateAtom);
 
     //update self graphic path items with new color
-    for(auto &elemId : this->_atomIdsByOwnerId[0]) {
+    auto color = user.color();
+
+    auto atomIds = this->_atomIdsByOwnerId[oldOwnerId];
+    for(auto &elemId : atomIds) {
         
-        auto gi = this->_atomsById[elemId].graphicsItem();
+        auto &atom = this->_atomsById[elemId];
+        auto gi = atom.graphicsItem();
         
         //determine if is a path type
         if(auto pathItem = dynamic_cast<QGraphicsPathItem*>(gi)) {
@@ -274,11 +289,25 @@ void ViewMapHint::setPenColor(QColor &color) {
             c_pen.setColor(color);
             pathItem->setPen(c_pen);
         } 
+        
+        //redefine ownership
+        atom.setOwnership(user);
     }
+
+    //change bound
+    this->_atomIdsByOwnerId.remove(oldOwnerId);
+    this->_atomIdsByOwnerId.insert(user.id(), atomIds);
+
+    //inform atom layout
+    auto payload = OwnerChangedPayload(atomIds.toList().toVector(), user);
+    this->_emitAlteration(&payload);
+
 }
+
 
 void ViewMapHint::setPenSize(int size) {
     this->_templateAtom->setPenWidth(size);
+    emit atomTemplateChanged(this->_templateAtom);
 }
 
 //////////////////////
@@ -300,17 +329,19 @@ void ViewMapHint::deleteCurrentSelectionItems() {
 
 QGraphicsItem* ViewMapHint::generateGhostItem(const AtomType &type, const QString assetId, const QString assetName, const QString assetLocation) {
 
+    //update template
+    this->_templateAtom->changeType(type);
+    this->_templateAtom->setAssetId(assetId);
+    this->_templateAtom->setAssetName(assetName);
+    
     //generate a blueprint
     auto atomBuiltFromTemplate = RPZAtom(*this->_templateAtom);
-    atomBuiltFromTemplate.changeType(type);
-    
-    if(!assetId.isNull()) {
-        atomBuiltFromTemplate.setAssetId(assetId);
-        atomBuiltFromTemplate.setAssetName(assetName);
-    }
+    atomBuiltFromTemplate.setLayer(
+        atomBuiltFromTemplate.layer() + 1
+    ); //add +1 to layer, will be discarded later
 
     //add to scene
-    auto aditionnalArgs = MVPayload(this->_penColor, assetLocation);
+    auto aditionnalArgs = MVPayload(assetLocation);
     QGraphicsItem* ghostItem = this->scene()->addToScene(atomBuiltFromTemplate, aditionnalArgs);
 
     //if no ghost item, return
@@ -388,7 +419,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
     
     //default
     else {
-        newItem = this->scene()->addToScene(atomToBuildFrom, MVPayload(this->_penColor, pathToAssetFile));
+        newItem = this->scene()->addToScene(atomToBuildFrom, MVPayload(pathToAssetFile));
     }
 
     //save pointer ref
@@ -417,7 +448,7 @@ void ViewMapHint::replaceMissingAssetPlaceholders(const QString &assetId) {
         auto atom = this->_fetchAtom(gi);
 
         //create the new graphics item
-        auto newGi = this->scene()->addToScene(*atom, MVPayload(this->_penColor, pathToFile));
+        auto newGi = this->scene()->addToScene(*atom, MVPayload(pathToFile));
         this->_crossBindingAtomWithGI(atom, newGi);
 
         delete gi;
@@ -546,7 +577,7 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, cons
         // on changing visibility
         case PayloadAlteration::VisibilityChanged: {
             auto hidden = updatedAtom->isHidden();
-            auto opacity = hidden ? .05 : 1;
+            auto opacity = hidden ? .01 : 1;
             updatedAtom->graphicsItem()->setOpacity(opacity);
         }
         break;

@@ -61,10 +61,22 @@ void RPZAtom::_setType(const AtomType &type) { this->insert(_str[Type], (int)typ
 void RPZAtom::changeType(const AtomType &type) { this->_setType(type);}
 
 QString RPZAtom::assetId() { return this->value(_str[AssetId]).toString(); }
-void RPZAtom::setAssetId(const QString &id) { this->insert(_str[AssetId], id); }
+void RPZAtom::setAssetId(const QString &id) { 
+    if(id.isEmpty()) {
+        this->remove(_str[AssetId]); 
+        return;
+    }
+    this->insert(_str[AssetId], id); 
+}
 
 QString RPZAtom::assetName() { return this->value(_str[AssetName]).toString();}
-void RPZAtom::setAssetName(const QString &name) { this->insert(_str[AssetName], name); }
+void RPZAtom::setAssetName(const QString &name) {
+    if(name.isEmpty()) {
+        this->remove(_str[AssetName]); 
+        return;
+    }
+    this->insert(_str[AssetName], name); 
+}
 
 double RPZAtom::scale() { return this->value(_str[Scale], 1.0).toDouble();}
 void RPZAtom::setScale(const double scale) { this->insert(_str[Scale], scale); }
@@ -73,7 +85,13 @@ double RPZAtom::rotation() { return this->value(_str[Rotation], 0).toDouble(); }
 void RPZAtom::setRotation(const double rotation) { this->insert(_str[Rotation], rotation); }
 
 QString RPZAtom::text() { return this->value(_str[Text], "Saisir du texte").toString(); }
-void RPZAtom::setText(const QString &text) { this->insert(_str[Text], text); }
+void RPZAtom::setText(const QString &text) {
+    if(text.isEmpty()) {
+        this->remove(_str[Text]); 
+        return;
+    }
+    this->insert(_str[Text], text); 
+}
 
 int RPZAtom::layer() { return this->value(_str[Layer], 0).toInt(); }
 void RPZAtom::setLayer(int pos) { this->insert(_str[Layer], pos); }

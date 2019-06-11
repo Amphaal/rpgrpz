@@ -50,6 +50,7 @@ class MapView : public QGraphicsView, public ClientBindable {
                 const QString assetId = NULL, 
                 const QString assetName = NULL, 
                 const QString assetLocation = NULL);
+        void updateGhostItemFromAtomTemplate(void* atomTemplate);
     
     signals:
         void unselectCurrentToolAsked();
