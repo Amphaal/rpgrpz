@@ -16,12 +16,7 @@ class MapTools : public QToolBar {
     public:    
         enum Actions { 
             None, 
-            Select, 
-            Scroll, 
-            Draw,
-            AssetDraw, 
-            ResetView, 
-            Text 
+            ResetView
         };
 
         MapTools(QWidget * parent = nullptr); 

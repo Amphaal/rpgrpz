@@ -155,6 +155,7 @@ void MapView::updateGhostItemFromAtomTemplate(void* atomTemplate) {
 
 void MapView::_generateGhostItem(const AtomType &type, const QString assetId, const QString assetName, const QString assetLocation) {
     this->_clearGhostItem();
+    this->_bufferedAssetLocation = assetLocation;
     this->_ghostItem = this->_hints->generateGhostItem(type, assetId, assetName, assetLocation);
 }
 
@@ -512,7 +513,7 @@ void MapView::_beginDrawing(const QPoint &lastPointMousePressed) {
     }
 
     auto startPoint = this->mapToScene(lastPointMousePressed);
-    this->_tempDrawing = this->scene()->addPath(QPainterPath(QPointF(0,0)), this->hints()->getPen());
+    this->_tempDrawing = this->_scene->addToScene(this->_hints->templateAtom, );
     this->_tempDrawing->setPos(startPoint);
 }
 

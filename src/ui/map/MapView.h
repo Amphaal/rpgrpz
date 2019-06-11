@@ -25,7 +25,7 @@
 #include "base/AnimationTimeLine.hpp"
 
 #include "src/shared/atoms/ViewMapHint.h"
-#include "src/shared/models/entities/RPZAtom.h"
+#include "src/shared/models/RPZAtom.h"
 #include "src/ui/others/ClientBindable.hpp"
 
 #include "src/network/rpz/_any/JSONSocket.h"
@@ -33,7 +33,7 @@
 
 #include "src/ui/assets/base/AssetsTreeView.h"
 
-#include "src/shared/models/Payloads.h"
+#include "src/shared/payloads/Payloads.h"
 
 
 class MapView : public QGraphicsView, public ClientBindable {
@@ -84,6 +84,7 @@ class MapView : public QGraphicsView, public ClientBindable {
         //ghost
             QGraphicsItem* _ghostItem = nullptr;
             bool _isGhostFrozen = false;
+            QString _bufferedAssetLocation;
             void _clearGhostItem();
             void _generateGhostItem(const AtomType &type, 
                 const QString assetId = NULL, 

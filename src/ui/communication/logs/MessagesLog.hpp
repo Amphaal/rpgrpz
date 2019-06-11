@@ -2,8 +2,8 @@
 
 #include "base/LogContainer.h"
 
-#include "src/shared/models/entities/RPZMessage.hpp"
-#include "src/shared/models/entities/RPZResponse.hpp"
+#include "src/shared/models/RPZMessage.hpp"
+#include "src/shared/models/RPZResponse.hpp"
 
 class MessagesLog : public LogContainer {
 

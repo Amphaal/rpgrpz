@@ -14,10 +14,11 @@
 
 class MapViewGraphicsPathItem : public QGraphicsPathItem, public MapViewItemsNotifier {
     public:
-        MapViewGraphicsPathItem(MapViewItemsNotified* toNotify, const QPainterPath & path, const QPen &pen) : 
+        MapViewGraphicsPathItem(MapViewItemsNotified* toNotify, const QPainterPath & path, const QPen &pen, const QBrush &brush = QBrush()) : 
         QGraphicsPathItem(path), 
         MapViewItemsNotifier(toNotify, this)  {
             this->setPen(pen);
+            if(brush.style() != Qt::BrushStyle::NoBrush) this->setBrush(brush);
         }
             
     private:

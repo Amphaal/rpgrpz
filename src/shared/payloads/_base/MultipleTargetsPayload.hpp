@@ -23,15 +23,6 @@ class MultipleTargetsPayload : public AlterationPayload {
             
             return out;
         }
-
-        QVariantMap alterationByAtomId() override {
-            QVariantMap out;
-            auto list = this->targetAtomIds();
-            for(auto &e : list) {
-                out.insert(QString::number(e), QVariant());
-            }
-            return out;
-        }
     
     private:
         void _setTargetAtomIds(const QVector<snowflake_uid> &targetAtomIds) {

@@ -7,9 +7,8 @@ AlterationPayload::Source AtomsHandler::source() {
 }
 
 void AtomsHandler::handleAlterationRequest(QVariantHash &payload) {
-    auto cPayload = Payload::autoCast(payload);
+    auto cPayload = dynamic_cast<AlterationPayload*>(&payload);
     this->_handlePayload(cPayload);
-    delete cPayload;
 }
 
 void AtomsHandler::_emitAlteration(AlterationPayload* payload) {

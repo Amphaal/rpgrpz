@@ -155,7 +155,7 @@ list(APPEND SOURCES
 
 #ui components
 list(APPEND SOURCES
-    src/shared/models/entities/RPZAtom.cpp
+    src/shared/models/RPZAtom.cpp
 
     src/ui/map/graphics/MapViewGraphicsScene.hpp
     

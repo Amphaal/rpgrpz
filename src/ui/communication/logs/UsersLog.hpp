@@ -6,7 +6,7 @@
 
 #include "base/LogContainer.h"
 
-#include "src/shared/models/entities/RPZUser.hpp"
+#include "src/shared/models/RPZUser.hpp"
 
 #include <QFrame>
 #include <QColor>

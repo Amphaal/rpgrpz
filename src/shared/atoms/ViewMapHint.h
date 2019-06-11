@@ -13,7 +13,7 @@
 #include <QGraphicsSvgItem>
 #include <QPixmap>
 
-#include "src/shared/models/Payloads.h"
+#include "src/shared/payloads/Payloads.h"
 #include "src/ui/assets/base/AssetsTreeViewModel.h"
 
 #include "src/shared/database/MapDatabase.hpp"
@@ -63,9 +63,8 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         //on move
         void handleAnyMovedItems();
 
-        QPen getPen() const;
-
         //alter template Atom
+        RPZAtom* templateAtom = nullptr;
         void setPenSize(int size);
         void setDefaultUser(RPZUser user);
         void setDefaultLayer(int layer);
@@ -108,7 +107,4 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         //augmenting AtomsStorage
         virtual void _handlePayload(AlterationPayload* payload) override;
         virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) override;
-
-        //template
-        RPZAtom* _templateAtom = nullptr;
 };

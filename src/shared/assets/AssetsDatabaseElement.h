@@ -6,7 +6,7 @@
 #include <QModelIndex>
 #include <QDebug>
 
-#include "src/shared/models/entities/RPZAtom.h"
+#include "src/shared/models/RPZAtom.h"
 
 class AssetsDatabaseElement {
     

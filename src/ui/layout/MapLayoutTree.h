@@ -13,8 +13,8 @@
 
 #include "src/shared/commands/RPZActions.h"
 
-#include "src/shared/models/entities/RPZAtom.h"
-#include "src/shared/models/Payloads.h"
+#include "src/shared/models/RPZAtom.h"
+#include "src/shared/payloads/Payloads.h"
 
 #include "src/ui/map/base/RPZTree.hpp"
 

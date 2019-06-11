@@ -21,11 +21,7 @@ void AtomsStorage::undo() {
 
     //get stored payload and handle it
     auto st_payload = this->_undoHistory.at(toReachIndex);
-    auto pl = Payload::autoCast(st_payload);
-
-        this->_basic_handlePayload(pl);
-    
-    delete pl;
+    this->_basic_handlePayload(&st_payload);
 
     //update the index
     this->_payloadHistoryIndex++;
@@ -47,11 +43,7 @@ void AtomsStorage::redo() {
 
     //get stored payload and handle it
     auto st_payload = this->_redoHistory.at(toReachIndex);
-    auto pl = Payload::autoCast(st_payload);
-        
-        this->_basic_handlePayload(pl);
-
-    delete pl;
+    this->_basic_handlePayload(&st_payload);
 
     //update the index
     this->_payloadHistoryIndex--;
@@ -61,13 +53,21 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload* historyP
     
     switch(historyPayload->type()) {
 
-        case PayloadAlteration::Moved: {
-            auto casted = (MovedPayload*)historyPayload;
-            QHash<snowflake_uid, QPointF> out;
-            for(auto atomId : casted->coordHash().keys()) {
-                out.insert(atomId, this->_atomsById[atomId].pos());
+        case PayloadAlteration::MetadataChanged: {
+            auto casted = (MetadataChangedPayload*)historyPayload;
+            auto changesTypes = casted->changes().keys();
+
+            RPZMap<RPZAtom> partialAtoms;
+            for(auto id : casted->targetAtomIds()) {
+                RPZAtom baseAtom;
+                auto refAtom = this->_atomsById[id];
+                for(auto change : changesTypes) {
+                    baseAtom.setMetadata(change, refAtom.metadata(change));
+                }
+                partialAtoms.insert(id, baseAtom);
             }
-            return MovedPayload(out);
+
+            return BulkMetadataChangedPayload(partialAtoms);
         }
         break; 
 
@@ -95,7 +95,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload* historyP
 void AtomsStorage::_registerPayloadForHistory(AlterationPayload* payload) {
     
     //do nothing is payload is not redo compatible
-    if(!payload->isRedoCompatible()) return;
+    if(!payload->isNetworkRoutable()) return;
 
     //cut branch
     while(this->_payloadHistoryIndex) {
@@ -121,15 +121,14 @@ void AtomsStorage::_handlePayload(AlterationPayload* payload) {
     if(payloadSource == this->_source) return;
 
     auto pType = payload->type();
+    if(pType == PayloadAlteration::Redone) return this->redo(); //on redo
+    if(pType == PayloadAlteration::Undone) return this->undo(); //on undo
 
     //on duplication
-    if(pType == PayloadAlteration::Duplicated) {
+    if(auto dCasted = dynamic_cast<DuplicatedPayload*>(payload)) {
         auto cPayload = (DuplicatedPayload*)payload;
         return this->_duplicateAtoms(cPayload->targetAtomIds());
     }
-
-    if(pType == PayloadAlteration::Redone) return this->redo(); //on redo
-    if(pType == PayloadAlteration::Undone) return this->undo(); //on undo
 
     //register history
     this->_registerPayloadForHistory(payload);

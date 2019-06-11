@@ -2,7 +2,7 @@
 
 #include <QObject>
 
-#include "src/shared/models/Payloads.h"
+#include "src/shared/payloads/Payloads.h"
 
 class AtomsHandler : public QObject {
     

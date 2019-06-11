@@ -1,8 +1,8 @@
 #pragma once
 
-#include "base/MultipleTargetsPayload.hpp"
+#include "src/shared/payloads/_base/MultipleTargetsPayload.hpp"
 
-#include "src/shared/models/entities/RPZUser.hpp"
+#include "src/shared/models/RPZUser.hpp"
 
 class OwnerChangedPayload : public MultipleTargetsPayload {
     public:
@@ -13,19 +13,6 @@ class OwnerChangedPayload : public MultipleTargetsPayload {
 
         RPZUser owner() {
             return this->value("owner").toHash();
-        }
-
-        QVariantMap alterationByAtomId() override {
-            
-            auto list = this->targetAtomIds();
-            auto owner = this->owner();
-
-            QVariantMap out;
-            for(auto &e : list) {
-                out.insert(QString::number(e), owner);
-            }
-
-            return out;
         }
     
     private:

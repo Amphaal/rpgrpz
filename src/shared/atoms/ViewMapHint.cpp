@@ -3,7 +3,7 @@
 ViewMapHint::ViewMapHint(QGraphicsView* boundGv) : AtomsStorage(AlterationPayload::Source::Local_Map), 
     AtomsContextualMenuHandler(this, boundGv), 
     _boundGv(boundGv),
-    _templateAtom(new RPZAtom) {
+    templateAtom(new RPZAtom) {
 
     //default layer from settings
     this->setDefaultLayer(AppContext::settings()->defaultLayer());
@@ -26,8 +26,8 @@ bool ViewMapHint::isInTextInteractiveMode() {
 }
 
 void ViewMapHint::setDefaultLayer(int layer) {
-    this->_templateAtom->setLayer(layer);
-    emit atomTemplateChanged(this->_templateAtom);
+    this->templateAtom->setLayer(layer);
+    emit atomTemplateChanged(this->templateAtom);
 }
 
 void ViewMapHint::handleAnyMovedItems() {
@@ -257,22 +257,13 @@ void ViewMapHint::_setDirty(bool dirty) {
 // Pen handling //
 //////////////////
 
-QPen ViewMapHint::getPen() const {
-    return QPen(
-        this->_templateAtom->owner().color(), 
-        this->_templateAtom->penWidth(), 
-        Qt::SolidLine, 
-        Qt::RoundCap, 
-        Qt::RoundJoin
-    );
-}
 
 void ViewMapHint::setDefaultUser(RPZUser user) {
     
     //update template
-    auto oldOwnerId = this->_templateAtom->owner().id();
-    this->_templateAtom->setOwnership(user);
-    emit atomTemplateChanged(this->_templateAtom);
+    auto oldOwnerId = this->templateAtom->owner().id();
+    this->templateAtom->setOwnership(user);
+    emit atomTemplateChanged(this->templateAtom);
 
     //update self graphic path items with new color
     auto color = user.color();
@@ -306,8 +297,8 @@ void ViewMapHint::setDefaultUser(RPZUser user) {
 
 
 void ViewMapHint::setPenSize(int size) {
-    this->_templateAtom->setPenWidth(size);
-    emit atomTemplateChanged(this->_templateAtom);
+    this->templateAtom->setPenWidth(size);
+    emit atomTemplateChanged(this->templateAtom);
 }
 
 //////////////////////
@@ -330,12 +321,12 @@ void ViewMapHint::deleteCurrentSelectionItems() {
 QGraphicsItem* ViewMapHint::generateGhostItem(const AtomType &type, const QString assetId, const QString assetName, const QString assetLocation) {
 
     //update template
-    this->_templateAtom->changeType(type);
-    this->_templateAtom->setAssetId(assetId);
-    this->_templateAtom->setAssetName(assetName);
+    this->templateAtom->changeType(type);
+    this->templateAtom->setAssetId(assetId);
+    this->templateAtom->setAssetName(assetName);
     
     //generate a blueprint
-    auto atomBuiltFromTemplate = RPZAtom(*this->_templateAtom);
+    auto atomBuiltFromTemplate = RPZAtom(*this->templateAtom);
     atomBuiltFromTemplate.setLayer(
         atomBuiltFromTemplate.layer() + 1
     ); //add +1 to layer, will be discarded later

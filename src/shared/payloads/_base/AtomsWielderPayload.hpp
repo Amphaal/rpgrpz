@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/shared/models/entities/RPZAtom.h"
+#include "src/shared/models/RPZAtom.h"
 
 #include "AlterationPayload.hpp"
 
@@ -34,17 +34,6 @@ class AtomsWielderPayload : public AlterationPayload {
         }
 
         this->_setAddedAtoms(atoms);
-    }
-
-    QVariantMap alterationByAtomId() override {
-        QVariantMap out;
-     
-        auto list = this->atoms();
-        for(auto &atom : list) {
-            out.insert(QString::number(atom.id()), atom);
-        }
-
-        return out;
     }
 
     private:

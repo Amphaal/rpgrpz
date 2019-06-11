@@ -8,7 +8,7 @@ class AtomScalingEditor : public AtomSliderEditor {
         AtomScalingEditor() : AtomSliderEditor("Taille:", "x", 1, 1000) {}
 
         AlterationPayload createPayload() override {
-            return ScaledPayload(this->_atomsToSnowflakeList(), this->outputValue());
+            return //MetadataChangedPayload(this->_atomsToSnowflakeList(), this->outputValue());
         }
 
     private:

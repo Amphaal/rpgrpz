@@ -8,8 +8,8 @@
 #include <QObject>
 #include <QDebug>
 
-#include "src/shared/models/entities/RPZAtom.h"
-#include "src/shared/models/Payloads.h"
+#include "src/shared/models/RPZAtom.h"
+#include "src/shared/payloads/Payloads.h"
 
 #include "AtomsHandler.h"
 

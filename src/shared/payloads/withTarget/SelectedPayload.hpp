@@ -1,6 +1,6 @@
 #pragma once
 
-#include "base/MultipleTargetsPayload.hpp"
+#include "src/shared/payloads/_base/MultipleTargetsPayload.hpp"
 
 class SelectedPayload : public MultipleTargetsPayload {
     public:

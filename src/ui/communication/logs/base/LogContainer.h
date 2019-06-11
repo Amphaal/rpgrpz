@@ -6,7 +6,7 @@
 #include <QString>
 #include <QWidget>
 
-#include "src/shared/models/entities/base/Serializable.hpp"
+#include "src/shared/models/base/Serializable.hpp"
 
 class LogItem : public QWidget {
     

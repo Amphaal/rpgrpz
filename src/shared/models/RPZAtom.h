@@ -36,7 +36,7 @@ enum class AtomType {
 
 class RPZAtom : public Ownable {
     
-    private:
+    public:
         enum Parameters {
             Type,
             AssetId,
@@ -52,27 +52,6 @@ class RPZAtom : public Ownable {
             Locked
         };
 
-        static inline const QHash<Parameters, QString> _str = {
-            { Type, "t" },
-            { AssetId, "a_id" },
-            { AssetName, "a_name" },
-            { Scale, "scl" },
-            { Rotation, "deg" },
-            { Text, "txt" },
-            { Layer, "lyr" },
-            { Position, "pos" },
-            { PenWidth, "pen_w" },
-            { Shape, "shape" },
-            { Hidden, "hid" },
-            { Locked, "lck" }
-        };
-
-        QString _defaultDescriptor();
-        void _setType(const AtomType &type);
-
-        QGraphicsItem* _graphicsItem = nullptr;
-
-    public:
         RPZAtom();
         RPZAtom(const QVariantHash &hash);
         RPZAtom(const snowflake_uid &id, const AtomType &type, const RPZUser &owner);
@@ -88,6 +67,9 @@ class RPZAtom : public Ownable {
         //
         //
         //
+
+        void setMetadata(const Parameters &key, const QVariant &value);
+        QVariant metadata(const Parameters &key);
 
         QString assetId();
         void setAssetId(const QString &id);
@@ -122,4 +104,40 @@ class RPZAtom : public Ownable {
 
         bool isLocked();
         void setLocked(bool isLocked);
+
+    private:
+        static inline const QHash<Parameters, QString> _str = {
+            { Type, "t" },
+            { AssetId, "a_id" },
+            { AssetName, "a_name" },
+            { Scale, "scl" },
+            { Rotation, "deg" },
+            { Text, "txt" },
+            { Layer, "lyr" },
+            { Position, "pos" },
+            { PenWidth, "pen_w" },
+            { Shape, "shape" },
+            { Hidden, "hid" },
+            { Locked, "lck" }
+        };
+
+        static inline const QHash<Parameters, QVariant> _defaultVal = {
+            { Type, 0 },
+            { AssetId, "" },
+            { AssetName, "" },
+            { Scale, 1.0 },
+            { Rotation, 0.0 },
+            { Text, "Saisir du texte" },
+            { Layer, 0 },
+            { Position, NULL },
+            { PenWidth, 1 },
+            { Shape, NULL },
+            { Hidden, false },
+            { Locked, false }
+        };
+
+        QString _defaultDescriptor();
+        void _setType(const AtomType &type);
+
+        QGraphicsItem* _graphicsItem = nullptr;
 };

@@ -2,7 +2,7 @@
 
 #include <QString>
 #include <QVector>
-#include "src/shared/models/entities/RPZAtom.h"
+#include "src/shared/models/RPZAtom.h"
 
 #include "base/JSONDatabase.h"
 

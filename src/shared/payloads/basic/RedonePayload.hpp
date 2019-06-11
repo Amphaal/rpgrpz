@@ -1,6 +1,6 @@
 #pragma once
 
-#include "base/AlterationPayload.hpp"
+#include "src/shared/payloads/_base/AlterationPayload.hpp"
 
 class RedonePayload : public AlterationPayload {
     public:

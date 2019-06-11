@@ -1,6 +1,6 @@
 #pragma once
 
-#include "base/AtomsWielderPayload.hpp"
+#include "src/shared/payloads/_base/AtomsWielderPayload.hpp"
 
 class AddedPayload : public AtomsWielderPayload {
     public:

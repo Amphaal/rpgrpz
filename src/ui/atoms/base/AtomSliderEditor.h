@@ -6,8 +6,8 @@
 
 #include "AtomEditorLineDescriptor.h"
 
-#include "src/shared/models/entities/RPZAtom.h"
-#include "src/shared/models/payloads/base/AlterationPayload.hpp"
+#include "src/shared/models/RPZAtom.h"
+#include "src/shared/payloads/Payloads.h"
 
 class AtomSliderEditor : public QWidget {
     public:

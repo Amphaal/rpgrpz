@@ -16,11 +16,11 @@
 #include "src/network/rpz/_any/JSONRouter.h"
 
 #include "src/shared/atoms/AtomsStorage.h"
-#include "src/shared/models/Payloads.h"
-#include "src/shared/models/entities/RPZMessage.hpp"
-#include "src/shared/models/entities/RPZUser.hpp"
-#include "src/shared/models/entities/RPZResponse.hpp"
-#include "src/shared/models/entities/RPZHandshake.hpp"
+#include "src/shared/payloads/Payloads.h"
+#include "src/shared/models/RPZMessage.hpp"
+#include "src/shared/models/RPZUser.hpp"
+#include "src/shared/models/RPZResponse.hpp"
+#include "src/shared/models/RPZHandshake.hpp"
 
 #include "src/shared/database/AssetsDatabase.h"
 
@@ -57,7 +57,7 @@ class RPZServer : public QTcpServer, public JSONRouter {
         void _askHostForMapHistory();
         void _broadcastMapChanges(QVariantHash &payload, JSONSocket * senderSocket);
         void _sendMapHistory(JSONSocket * clientSocket);
-            void _alterIncomingPayloadWithUpdatedOwners(AlterationPayload* payload, JSONSocket * senderSocket);
+            void _alterIncomingPayloadWithUpdatedOwners(AtomsWielderPayload* wPayload, JSONSocket * senderSocket);
         
         //messages
         RPZMap<RPZMessage> _messages;

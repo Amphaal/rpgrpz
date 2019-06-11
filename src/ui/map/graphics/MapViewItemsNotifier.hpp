@@ -5,9 +5,9 @@
 
 #include <QDebug>
 
-#include "src/shared/models/Payloads.h"
+#include "src/shared/payloads/Payloads.h"
 
-#include "src/shared/models/entities/RPZAtom.h"
+#include "src/shared/models/RPZAtom.h"
 
 enum class MapViewCustomItemsEventFlag {
     Moved = 6224,

@@ -7,7 +7,7 @@
 #include "MapViewGraphicsItem.hpp"
 #include "MapViewItemsNotifier.hpp"
 
-#include "src/shared/models/entities/RPZAtom.h"
+#include "src/shared/models/RPZAtom.h"
 
 class MVPayload : public QVariantHash {
     
@@ -106,12 +106,14 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             QGraphicsItem* out;
 
             switch(atom.type()) {
+                
                 case AtomType::Object:
                     out = this->_addGenericImageBasedItem(atom, aditionnalArgs);
                 break;
                 
+                case AtomType::Brush:
                 case AtomType::Drawing:
-                    out = this->_addDrawing(atom);
+                    out = this->_addDrawing(atom, aditionnalArgs);
                 break;
 
                 case AtomType::Text:
@@ -168,11 +170,10 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             return item;
         }
 
-        QGraphicsPathItem* _addDrawing(RPZAtom &atom) {
+        QGraphicsPathItem* _addDrawing(RPZAtom &atom, MVPayload &aditionnalArgs) {
             
             //define a ped
             QPen pen;
-            pen.setColor(atom.owner().color());
             pen.setWidth(atom.penWidth());
             pen.setCapStyle(Qt::RoundCap);
             pen.setJoinStyle(Qt::RoundJoin);
@@ -183,8 +184,16 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
                 shape.lineTo(.01,.01);
             }
 
+            //add brush
+            QBrush brush;
+            if(!aditionnalArgs.pathToImageFile.isEmpty()) {
+                brush.setTexture(QPixmap(aditionnalArgs.pathToImageFile));
+            } else {
+                pen.setColor(atom.owner().color());
+            }
+
             //create path
-            auto newPath = new MapViewGraphicsPathItem(this, shape, pen);
+            auto newPath = new MapViewGraphicsPathItem(this, shape, pen, brush);
             
             return newPath;
         }

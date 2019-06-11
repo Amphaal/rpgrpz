@@ -8,19 +8,14 @@ enum class PayloadAlteration {
     Focused,
     Selected,
     Removed,
-    LayerChanged,
-    Moved, 
     Added, 
     Reset,
-    TextChanged,
-    Rotated,
-    Scaled,
-    LockChanged,
     Duplicated,
-    VisibilityChanged,
     Redone,
     Undone,
-    OwnerChanged
+    OwnerChanged,
+    MetadataChanged,
+    BulkMetadataChanged
 }; 
 
 class AlterationPayload : public QVariantHash { 
@@ -44,10 +39,6 @@ class AlterationPayload : public QVariantHash {
             return (PayloadAlteration)this->value("t").toInt();
         };
 
-        virtual QVariantMap alterationByAtomId() {
-            return QVariantMap();
-        }
-
         void changeSource(const Source &newSource) {
             (*this)["s"] = (int)newSource;
         }
@@ -56,47 +47,26 @@ class AlterationPayload : public QVariantHash {
             return (Source)this->value("s").toInt();
         }
 
-        bool requiresGraphicsItemBuild() {
-            return this->_instructGIBuild;
-        }
-
         bool isNetworkRoutable() {
             return this->_isNetworkAlteration;
         }
 
-        bool isRedoCompatible() {
-            return this->_isRedoCompatible;
+        //necessary for dynamic_cast operations
+        virtual ~AlterationPayload() {
+            QVariantHash::~QVariantHash();
         }
 
     private:      
         bool _isNetworkAlteration = false;
-        bool _instructGIBuild = false;
-        bool _isRedoCompatible = false;
 
         static inline const QList<PayloadAlteration> _networkAlterations = { 
-            PayloadAlteration::Moved, 
             PayloadAlteration::Added, 
             PayloadAlteration::Removed, 
             PayloadAlteration::Reset,
-            PayloadAlteration::LayerChanged,
-            PayloadAlteration::TextChanged,
-            PayloadAlteration::Rotated,
-            PayloadAlteration::Scaled,
-            PayloadAlteration::LockChanged,
-            PayloadAlteration::VisibilityChanged 
+            PayloadAlteration::MetadataChanged,
+            PayloadAlteration::BulkMetadataChanged
         };
         
-        static inline const QList<PayloadAlteration> _redoAlterations = { 
-            PayloadAlteration::Moved, 
-            PayloadAlteration::Added, 
-            PayloadAlteration::Removed
-        };
-
-        static inline const QList<PayloadAlteration> _buildGraphicsItemAlterations = {
-            PayloadAlteration::Added,  
-            PayloadAlteration::Reset
-        };
-
         void _setType(const PayloadAlteration &type) {
             (*this)["t"] = (int)type;
             this->_updateTags(type);
@@ -104,7 +74,5 @@ class AlterationPayload : public QVariantHash {
 
         void _updateTags(const PayloadAlteration &type) {
             this->_isNetworkAlteration = _networkAlterations.contains(type);
-            this->_instructGIBuild = _buildGraphicsItemAlterations.contains(type);
-            this->_isRedoCompatible = _redoAlterations.contains(type);
         }
 };

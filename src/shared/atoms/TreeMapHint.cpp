@@ -46,19 +46,27 @@ void TreeMapHint::_onElementSelectionChanged() {
 
 void TreeMapHint::_handlePayload(AlterationPayload* payload) {
 
-    this->_preventInnerGIEventsHandling = true;
-
     //prevent circular payloads
-    auto type = payload->type();
-    auto source = payload->source();
-
-    if(source == this->_source) {
+    if(source == payload->source()) {
         this->_preventInnerGIEventsHandling = false;
         return;
     }
+    
+    this->_preventInnerGIEventsHandling = true;
+
+    //selected...
+    if(auto mtPayload = dynamic_cast<MultipleTargetsPayload*>(payload)) {
+        
+        for(auto ids = mtPayload->targetAtomIds()) {
+
+        }
+        this->_boundTree->clearSelection();
+        for(cPayload->) {
+            item->setSelected(true);
+        }
+    }
 
     //special handling
-    if(type == PayloadAlteration::Selected) this->_boundTree->clearSelection();
     if(type == PayloadAlteration::Reset) {
 
         for(auto item : this->_atomTreeItemsById) delete item;

@@ -8,7 +8,7 @@
 
 #include <QtMath>
 
-#include "src/shared/models/Payloads.h"
+#include "src/shared/payloads/Payloads.h"
 
 #include "editors/AtomRotationEditor.hpp"
 #include "editors/AtomScalingEditor.hpp"

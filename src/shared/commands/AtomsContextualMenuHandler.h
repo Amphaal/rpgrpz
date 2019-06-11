@@ -2,7 +2,7 @@
 
 #include "src/shared/atoms/AtomsHandler.h"
 #include "src/shared/commands/RPZActions.h"
-#include "src/shared/models/Payloads.h"
+#include "src/shared/payloads/Payloads.h"
 
 #include <QAction>
 #include <QWidget>
