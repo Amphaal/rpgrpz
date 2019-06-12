@@ -38,7 +38,7 @@ void AtomsStorage::redo() {
 
     //check if targeted payload exists
     auto toReach = this->_payloadHistoryIndex - 1;
-    auto toReachIndex = (count - toReach) - 1 ;
+    auto toReachIndex = (count - toReach) - 1;
     if(toReachIndex < 0) return;
 
     //get stored payload and handle it
@@ -50,7 +50,7 @@ void AtomsStorage::redo() {
 }
 
 AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &historyPayload) {
-    qDebug() << historyPayload;
+
     switch(historyPayload.type()) {
 
         case PayloadAlteration::MetadataChanged: {
@@ -107,9 +107,6 @@ void AtomsStorage::_registerPayloadForHistory(AlterationPayload &payload) {
     //build a new one
     this->_redoHistory.push(payload);
     this->_undoHistory.push(this->_generateUndoPayload(payload));
-    
-    qDebug() << payload;
-    qDebug() << payload;
 }
 
 //////////////
