@@ -102,7 +102,7 @@ class MapView : public QGraphicsView, public ClientBindable {
             bool _isMiddleToolLock = false;
 
         //tool
-            static const MapTools::Actions _defaultTool = MapTools::Actions::Select;
+            static const MapTools::Actions _defaultTool = MapTools::Actions::None;
             MapTools::Actions _quickTool = MapTools::Actions::None;
             MapTools::Actions _selectedTool;
             MapTools::Actions _getCurrentTool() const;

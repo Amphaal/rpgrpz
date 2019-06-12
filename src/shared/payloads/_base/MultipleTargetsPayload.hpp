@@ -23,6 +23,10 @@ class MultipleTargetsPayload : public AlterationPayload {
             
             return out;
         }
+
+        virtual QVariant args() {
+            return this->value("args");
+        }
     
     private:
         void _setTargetAtomIds(const QVector<snowflake_uid> &targetAtomIds) {

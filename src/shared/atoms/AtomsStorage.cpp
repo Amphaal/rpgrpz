@@ -55,7 +55,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload* historyP
 
         case PayloadAlteration::MetadataChanged: {
             auto casted = (MetadataChangedPayload*)historyPayload;
-            auto changesTypes = casted->changes().keys();
+            auto changesTypes = MetadataChangedPayload::fromArgs(casted->args()).hasMetadata();
 
             RPZMap<RPZAtom> partialAtoms;
             for(auto id : casted->targetAtomIds()) {
@@ -126,8 +126,7 @@ void AtomsStorage::_handlePayload(AlterationPayload* payload) {
 
     //on duplication
     if(auto dCasted = dynamic_cast<DuplicatedPayload*>(payload)) {
-        auto cPayload = (DuplicatedPayload*)payload;
-        return this->_duplicateAtoms(cPayload->targetAtomIds());
+        return this->_duplicateAtoms(dCasted->targetAtomIds());
     }
 
     //register history
@@ -147,10 +146,29 @@ void AtomsStorage::_handlePayload(AlterationPayload* payload) {
 
 void AtomsStorage::_basic_handlePayload(AlterationPayload* payload) {
     
-    //handling
-    auto alterations = payload->alterationByAtomId();
-    for (QVariantMap::iterator i = alterations.begin(); i != alterations.end(); ++i) {
-        this->_handlePayloadInternal(payload->type(), i.key().toULongLong(), i.value());
+    auto type = payload->type();
+
+    //atom wielders format
+    if(auto bPayload = dynamic_cast<AtomsWielderPayload*>(payload)) {
+        
+        auto atoms  = bPayload->atoms();
+        
+        for (RPZMap<RPZAtom>::iterator i = atoms.begin(); i != atoms.end(); ++i) {
+            this->_handlePayloadInternal(type, i.key(), i.value());
+        }
+
+    }
+
+    //multi target format
+    if(auto mPayload = dynamic_cast<MultipleTargetsPayload*>(payload)) {
+        
+        auto ids = mPayload->targetAtomIds();
+        auto args =  mPayload->args();
+        
+        for (auto id : ids) {
+            this->_handlePayloadInternal(type, id, args);
+        }
+
     }
 
     //emit event
@@ -158,7 +176,7 @@ void AtomsStorage::_basic_handlePayload(AlterationPayload* payload) {
 }
 
 //register actions
-RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) {
+RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, const QVariant &alteration) {
 
     //get the stored atom relative to the targeted id
     RPZAtom* storedAtom = nullptr;
@@ -173,7 +191,7 @@ RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, con
         case PayloadAlteration::Reset:
         case PayloadAlteration::Added: {
             
-            auto newAtom = RPZAtom(atomAlteration.toHash());
+            auto newAtom = RPZAtom(alteration.toHash());
             auto owner = newAtom.owner();
 
             //bind to owners
@@ -187,56 +205,17 @@ RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, con
             
         }
         break;
-        
-        // on locking change
-        case PayloadAlteration::LockChanged: {
-            auto isLocked = atomAlteration.toBool();
-            storedAtom->setLocked(isLocked);
-        }
-        break;
-        
-        // on changing visibility
-        case PayloadAlteration::VisibilityChanged: {
-            auto isHidden = atomAlteration.toBool();
-            storedAtom->setHidden(isHidden);
-        }
-        break;
 
-        //on move
-        case PayloadAlteration::Moved: {
-            auto position = atomAlteration.toPointF();
-            storedAtom->setPos(position);
-        }
-        break;
-
-        //on scaling
-        case PayloadAlteration::Scaled: {
-            auto scale = atomAlteration.toDouble();
-            storedAtom->setScale(scale);
-        }
-        break;
-
-        //on rotation
-        case PayloadAlteration::Rotated: {
-            auto deg = atomAlteration.toDouble();
-            storedAtom->setRotation(deg);
-        }
-        break;
-
-        //on resize
-        case PayloadAlteration::LayerChanged: {
-            auto layer = atomAlteration.toInt();
-            storedAtom->setLayer(layer);
-        }
-        break;
-
-        //on text change
-        case PayloadAlteration::TextChanged: {
-            auto text = atomAlteration.toString();
-            storedAtom->setText(text);
-        }
-        break;
+        case PayloadAlteration::MetadataChanged:
+        case PayloadAlteration::BulkMetadataChanged: {
+            auto partial = type == PayloadAlteration::BulkMetadataChanged ? RPZAtom(alteration.toHash()) : MetadataChangedPayload::fromArgs(alteration);
             
+            for(auto param : partial.hasMetadata()) {
+                storedAtom->setMetadata(param, partial.metadata(param));
+            }
+        }   
+        break;
+
         //on removal
         case PayloadAlteration::Removed: {
             
@@ -274,7 +253,8 @@ void AtomsStorage::_duplicateAtoms(QVector<snowflake_uid> &atomIdList) {
 
         RPZAtom newAtom(this->_atomsById[atomId]);
         newAtom.shuffleId();
-        newAtom.setOwnership(RPZUser());
+        newAtom.setOwnership(RPZUser()); //replace owner by self
+        //TODO ownership when connected to server ?
 
         auto currPos = newAtom.pos();
         
@@ -290,7 +270,7 @@ void AtomsStorage::_duplicateAtoms(QVector<snowflake_uid> &atomIdList) {
                 currPos.y() + (this->_duplicationCount * stepHeight)
             );
 
-        newAtom.setPos(currPos);
+        newAtom.setMetadata(RPZAtom::Parameters::Position, currPos);
 
         newAtoms.insert(newAtom.id(), newAtom);
     }

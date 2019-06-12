@@ -70,44 +70,25 @@ class RPZAtom : public Ownable {
 
         void setMetadata(const Parameters &key, const QVariant &value);
         QVariant metadata(const Parameters &key);
+        QList<RPZAtom::Parameters> hasMetadata();
 
         QString assetId();
-        void setAssetId(const QString &id);
-
         QString assetName();
-        void setAssetName(const QString &name);
-        
         double scale();
-        void setScale(const double scale);
-
         double rotation();
-        void setRotation(const double rotation);
-
         QString text();
-        void setText(const QString &text);
-
         int layer();
-        void setLayer(int pos);
-
         QPointF pos();
-        void setPos(const QPointF &pos);
-
         int penWidth();
-        void setPenWidth(int width); 
+        bool isHidden();
+        bool isLocked();
 
         QPainterPath shape();
         void setShape(const QPainterPath &path);
         void setShape(const QRectF &rect);
 
-        bool isHidden();
-        void setHidden(bool isHidden);
-
-        bool isLocked();
-        void setLocked(bool isLocked);
-
     private:
         static inline const QHash<Parameters, QString> _str = {
-            { Type, "t" },
             { AssetId, "a_id" },
             { AssetName, "a_name" },
             { Scale, "scl" },
@@ -122,7 +103,6 @@ class RPZAtom : public Ownable {
         };
 
         static inline const QHash<Parameters, QVariant> _defaultVal = {
-            { Type, 0 },
             { AssetId, "" },
             { AssetName, "" },
             { Scale, 1.0 },

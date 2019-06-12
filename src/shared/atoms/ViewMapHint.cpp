@@ -26,7 +26,7 @@ bool ViewMapHint::isInTextInteractiveMode() {
 }
 
 void ViewMapHint::setDefaultLayer(int layer) {
-    this->templateAtom->setLayer(layer);
+    this->templateAtom->setMetadata(RPZAtom::Parameters::Layer, layer);
     emit atomTemplateChanged(this->templateAtom);
 }
 
@@ -36,14 +36,16 @@ void ViewMapHint::handleAnyMovedItems() {
     if(!this->_itemsWhoNotifiedMovement.count()) return;
 
     //generate args for payload
-    QHash<snowflake_uid, QPointF> coords;
-    for( auto gi : this->_itemsWhoNotifiedMovement) {
-        auto atom = this->_fetchAtom(gi);
-        coords.insert(atom->id(), gi->pos());
+    RPZMap<RPZAtom> coords;
+    for(auto gi : this->_itemsWhoNotifiedMovement) {
+        auto cAtom = this->_fetchAtom(gi);
+        RPZAtom oAtom;
+        oAtom.setMetadata(RPZAtom::Parameters::Position, gi->pos());
+        coords.insert(cAtom->id(), oAtom);
     }
 
     //inform moving
-    this->handleAlterationRequest(MovedPayload(coords));
+    this->handleAlterationRequest(BulkMetadataChangedPayload(coords));
 
     //enable notifications back on those items
     for(auto item : this->_itemsWhoNotifiedMovement) {
@@ -81,9 +83,10 @@ void ViewMapHint::_onSceneItemChanged(QGraphicsItem* item, int changeFlag) {
 
             this->_isInTextInteractiveMode = false;
 
-            auto atom = this->_fetchAtom(item);
-            auto cItem = (QGraphicsTextItem*)item;
-            this->handleAlterationRequest(TextChangedPayload(atom->id(), cItem->toPlainText()));
+            auto atomId = this->_fetchAtom(item)->id();
+            auto text = ((QGraphicsTextItem*)item)->toPlainText();
+
+            this->handleAlterationRequest(MetadataChangedPayload(atomId, RPZAtom::Parameters::Text, text));
         }
         break;
     }
@@ -297,7 +300,7 @@ void ViewMapHint::setDefaultUser(RPZUser user) {
 
 
 void ViewMapHint::setPenSize(int size) {
-    this->templateAtom->setPenWidth(size);
+    this->templateAtom->setMetadata(RPZAtom::Parameters::PenWidth, size);
     emit atomTemplateChanged(this->templateAtom);
 }
 
@@ -322,14 +325,17 @@ QGraphicsItem* ViewMapHint::generateGhostItem(const AtomType &type, const QStrin
 
     //update template
     this->templateAtom->changeType(type);
-    this->templateAtom->setAssetId(assetId);
-    this->templateAtom->setAssetName(assetName);
+    this->templateAtom->setMetadata(RPZAtom::Parameters::AssetId, assetId);
+    this->templateAtom->setMetadata(RPZAtom::Parameters::AssetName, assetName);
     
     //generate a blueprint
     auto atomBuiltFromTemplate = RPZAtom(*this->templateAtom);
-    atomBuiltFromTemplate.setLayer(
+    
+    //add +1 to layer, will be discarded later
+    atomBuiltFromTemplate.setMetadata(
+        RPZAtom::Parameters::Layer,
         atomBuiltFromTemplate.layer() + 1
-    ); //add +1 to layer, will be discarded later
+    ); 
 
     //add to scene
     auto aditionnalArgs = MVPayload(assetLocation);
@@ -356,7 +362,7 @@ void ViewMapHint::integrateDrawingAsPayload(QGraphicsPathItem* drawnItem, QGraph
     
     //override shape and pos to fit the drawn item
     newAtom.setShape(drawnItem->path());
-    newAtom.setPos(drawnItem->scenePos());
+    newAtom.setMetadata(RPZAtom::Parameters::Position, drawnItem->scenePos());
 
     auto payload = AddedPayload(newAtom);
     this->handleAlterationRequest(payload);
@@ -524,10 +530,10 @@ void ViewMapHint::_handlePayload(AlterationPayload* payload) {
 }
 
 //register actions
-RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, QVariant &atomAlteration) {
+RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, const QVariant &alteration) {
    
     //default handling
-    auto updatedAtom = AtomsStorage::_handlePayloadInternal(type, targetedAtomId, atomAlteration); 
+    auto updatedAtom = AtomsStorage::_handlePayloadInternal(type, targetedAtomId, alteration); 
 
     //by alteration
     switch(type) {
@@ -545,57 +551,71 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, cons
         }
         break;
 
-        //on moving
-        case PayloadAlteration::Moved: {
-            auto destPos = updatedAtom->pos();
-            updatedAtom->graphicsItem()->setPos(destPos);  
-        }
+        case PayloadAlteration::MetadataChanged:
+        case PayloadAlteration::BulkMetadataChanged: {
+
+            auto partial = type == PayloadAlteration::BulkMetadataChanged ? RPZAtom(alteration.toHash()) : MetadataChangedPayload::fromArgs(alteration);
+            
+            for(auto param : partial.hasMetadata()) {
+                
+                switch(param) {
+                    //on moving
+                    case RPZAtom::Parameters::Position: {
+                        auto destPos = updatedAtom->pos();
+                        updatedAtom->graphicsItem()->setPos(destPos);  
+                    }
+                    break;
+
+                    //on scaling
+                    case RPZAtom::Parameters::Scale: {
+                        auto destScale = updatedAtom->scale();
+                        updatedAtom->graphicsItem()->setScale(destScale);
+                    }
+                    break;
+
+                    // on locking change
+                    case RPZAtom::Parameters::Locked: {
+                        auto locked = updatedAtom->isLocked();
+                        auto flags = !locked ? MapViewItemsNotifier::defaultFlags() : 0;
+                        updatedAtom->graphicsItem()->setFlags(flags);
+                    }
+                    break;
+                    
+                    // on changing visibility
+                    case RPZAtom::Parameters::Hidden: {
+                        auto hidden = updatedAtom->isHidden();
+                        auto opacity = hidden ? .01 : 1;
+                        updatedAtom->graphicsItem()->setOpacity(opacity);
+                    }
+                    break;
+
+                    //on rotation
+                    case RPZAtom::Parameters::Rotation: {
+                        auto destRotation = updatedAtom->rotation();
+                        updatedAtom->graphicsItem()->setRotation(destRotation);
+                    }
+                    break;
+
+                    //on text change
+                    case RPZAtom::Parameters::Text: {
+                        auto newText = updatedAtom->text();
+                        auto cItem = (QGraphicsTextItem*)updatedAtom->graphicsItem();
+                        cItem->setPlainText(newText);
+                    }
+                    break;
+
+                    //on layer change
+                    case RPZAtom::Parameters::Layer: {
+                        auto newLayer = updatedAtom->layer();
+                        updatedAtom->graphicsItem()->setZValue(newLayer);
+                    }
+                    break;
+                }
+                
+            }
+        }   
         break;
 
-        //on scaling
-        case PayloadAlteration::Scaled: {
-            auto destScale = updatedAtom->scale();
-            updatedAtom->graphicsItem()->setScale(destScale);
-        }
-        break;
-
-        // on locking change
-        case PayloadAlteration::LockChanged: {
-            auto locked = updatedAtom->isLocked();
-            auto flags = !locked ? MapViewItemsNotifier::defaultFlags() : 0;
-            updatedAtom->graphicsItem()->setFlags(flags);
-        }
-        break;
-        
-        // on changing visibility
-        case PayloadAlteration::VisibilityChanged: {
-            auto hidden = updatedAtom->isHidden();
-            auto opacity = hidden ? .01 : 1;
-            updatedAtom->graphicsItem()->setOpacity(opacity);
-        }
-        break;
-
-        //on rotation
-        case PayloadAlteration::Rotated: {
-            auto destRotation = updatedAtom->rotation();
-            updatedAtom->graphicsItem()->setRotation(destRotation);
-        }
-        break;
-
-        //on text change
-        case PayloadAlteration::TextChanged: {
-            auto newText = updatedAtom->text();
-            auto cItem = (QGraphicsTextItem*)updatedAtom->graphicsItem();
-            cItem->setPlainText(newText);
-        }
-        break;
-
-        //on layer change
-        case PayloadAlteration::LayerChanged: {
-            auto newLayer = updatedAtom->layer();
-            updatedAtom->graphicsItem()->setZValue(newLayer);
-        }
-        break;
 
         //on selection
         case PayloadAlteration::Selected: {

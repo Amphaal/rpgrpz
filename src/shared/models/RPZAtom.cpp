@@ -56,83 +56,74 @@ QString RPZAtom::_defaultDescriptor() {
     }
 }
 
+AtomType RPZAtom::type() {return (AtomType)this->value("t").toInt();}
+void RPZAtom::_setType(const AtomType &type) { this->insert("t", (int)type); }
+void RPZAtom::changeType(const AtomType &type) { this->_setType(type);}
+
+
 void RPZAtom::setMetadata(const Parameters &key, const QVariant &value) {
+    
     if(value.isNull()) {
         this->remove(_str[key]);
+        return;
     }
-    this->insert(_str[key], value);
+
+    switch(key) {
+
+        case Parameters::Position: {
+            auto pos = value.toPointF();
+            QVariantList a { pos.x(), pos.y() };
+            this->insert(_str[Position], a);
+        }
+        break;
+
+        default:
+            this->insert(_str[key], value);
+            
+    }
+    
 }
 
 QVariant RPZAtom::metadata(const Parameters &key) {
-    return this->value(_str[key], _defaultVal[key]);
-}
+    switch(key) {
 
-AtomType RPZAtom::type() {return (AtomType)this->value(_str[Type], _defaultVal[Type]).toInt();}
-void RPZAtom::_setType(const AtomType &type) { this->insert(_str[Type], (int)type); }
-void RPZAtom::changeType(const AtomType &type) { this->_setType(type);}
+        case Parameters::Position: {
+            auto posArr = this->value(_str[Position]).toList();
+            return posArr.isEmpty() ? QPointF() : QPointF(posArr[0].toReal(), posArr[1].toReal());
+        }
+        break;
 
-QString RPZAtom::assetId() { return this->value(_str[AssetId], _defaultVal[AssetId]).toString(); }
-void RPZAtom::setAssetId(const QString &id) { 
-    if(id.isEmpty()) {
-        this->remove(_str[AssetId]); 
-        return;
+        default:
+            return this->value(_str[key], _defaultVal[key]);
+
     }
-    this->insert(_str[AssetId], id); 
 }
 
-QString RPZAtom::assetName() { return this->value(_str[AssetName], _defaultVal[AssetName]).toString();}
-void RPZAtom::setAssetName(const QString &name) {
-    if(name.isEmpty()) {
-        this->remove(_str[AssetName]); 
-        return;
+QList<RPZAtom::Parameters> RPZAtom::hasMetadata() {
+    QList<RPZAtom::Parameters> out;
+
+    for (QHash<Parameters, QString>::const_iterator i = _str.constBegin(); i != _str.constEnd(); ++i) {
+        if(this->contains(i.value())) out.append(i.key());
     }
-    this->insert(_str[AssetName], name); 
+    
+    return out;
 }
 
-double RPZAtom::scale() { return this->value(_str[Scale], _defaultVal[Scale]).toDouble();}
-void RPZAtom::setScale(const double scale) { this->insert(_str[Scale], scale); }
+QString RPZAtom::assetId() { return this->metadata(AssetId).toString(); }
+QString RPZAtom::assetName() { return this->metadata(AssetName).toString();}
+double RPZAtom::scale() { return this->metadata(Scale).toDouble();}
+double RPZAtom::rotation() { return this->metadata(Rotation).toDouble(); }
+QString RPZAtom::text() { return this->metadata(Text).toString(); }
+int RPZAtom::layer() { return this->metadata(Layer).toInt(); }
+QPointF RPZAtom::pos() { return this->metadata(Position).toPointF();}
+int RPZAtom::penWidth() { return this->metadata(PenWidth).toInt(); }
+bool RPZAtom::isHidden() { return this->metadata(Hidden).toBool(); }
+bool RPZAtom::isLocked() { return this->metadata(Locked).toBool(); }
 
-double RPZAtom::rotation() { return this->value(_str[Rotation], _defaultVal[Rotation]).toDouble(); }
-void RPZAtom::setRotation(const double rotation) { this->insert(_str[Rotation], rotation); }
-
-QString RPZAtom::text() { return this->value(_str[Text], _defaultVal[Text]).toString(); }
-void RPZAtom::setText(const QString &text) {
-    if(text.isEmpty()) {
-        this->remove(_str[Text]); 
-        return;
-    }
-    this->insert(_str[Text], text); 
-}
-
-int RPZAtom::layer() { return this->value(_str[Layer], _defaultVal[Layer]).toInt(); }
-void RPZAtom::setLayer(int pos) { this->insert(_str[Layer], pos); }
-
-QPointF RPZAtom::pos() {
-    auto arr = this->value(_str[Position]).toList();
-    return arr.isEmpty() ? QPointF() : QPointF(arr[0].toReal(), arr[1].toReal());
-}
-void RPZAtom::setPos(const QPointF &pos) {
-    QVariantList a { pos.x(), pos.y() };
-    this->insert(_str[Position], a);
-}
-
-int RPZAtom::penWidth() { return this->value(_str[PenWidth],, _defaultVal[PenWidth]).toInt(); }
-void RPZAtom::setPenWidth(int width) { this->insert(_str[PenWidth], width); }  
-
-QPainterPath RPZAtom::shape() {
-    return JSONSerializer::toPainterPath(
-        this->value(_str[Shape], _defaultVal[Shape]).toByteArray()
-    );
-}
-void RPZAtom::setShape(const QPainterPath &path) { this->insert(_str[Shape], JSONSerializer::asBase64(path)); }
+QPainterPath RPZAtom::shape() {return JSONSerializer::toPainterPath(this->metadata(Shape).toByteArray());}
+void RPZAtom::setShape(const QPainterPath &path) { this->setMetadata(Shape, JSONSerializer::asBase64(path)); }
 void RPZAtom::setShape(const QRectF &rect) {
     QPainterPath shape;
     shape.addRect(rect);
     this->setShape(shape);
 }
-
-bool RPZAtom::isHidden() { return this->value(_str[Hidden], _defaultVal[Hidden]).toBool(); }
-void RPZAtom::setHidden(bool isHidden) { this->insert(_str[Hidden], isHidden); }
-
-bool RPZAtom::isLocked() { return this->value(_str[Locked], _defaultVal[Locked]).toBool(); }
-void RPZAtom::setLocked(bool isLocked) { this->insert(_str[Locked], isLocked); }
