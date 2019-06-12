@@ -54,10 +54,10 @@ class AppContext {
         static QStringList getOptionArgs(int argc, char** argv);
 
         void static initRandomContext();
-        void static initCustomContext(QString &customContextSuffix);
-        void static init(QString &customContext = QString());
+        void static initCustomContext(const QString &customContextSuffix);
+        void static init(const QString &customContext = QString());
 
-        static QString makeSureDirPathExists(QString &path);
+        static QString makeSureDirPathExists(const QString &path);
         static QString getAppDataLocation();
         static QString getWindowTitle();
         static QString getAssetsFileCoordinatorLocation();

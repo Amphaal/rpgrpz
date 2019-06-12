@@ -53,12 +53,12 @@ void AppContext::initRandomContext() {
     init(randomDir.path());
 }
 
-void AppContext::initCustomContext(QString &customContextSuffix) {
+void AppContext::initCustomContext(const QString &customContextSuffix) {
     auto fullContextPath = _defaultAppDataLocation() + "/" + customContextSuffix;
     init(fullContextPath);
 }
 
-void AppContext::init(QString &customContext) {
+void AppContext::init(const QString &customContext) {
     
     if(!customContext.isEmpty()) {
         _appDataLocation = customContext;
@@ -69,7 +69,7 @@ void AppContext::init(QString &customContext) {
 } 
 
 
-QString AppContext::makeSureDirPathExists(QString &path) {
+QString AppContext::makeSureDirPathExists(const QString &path) {
     QDir().mkpath(path);
     return path;
 }
