@@ -225,6 +225,8 @@ void AssetsDatabaseElement::_defineFlags() {
             break;
         case Player:
         case Event:
+        case Text:
+        case FreeDraw:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable);
             break;
         case Object:
@@ -263,6 +265,12 @@ void AssetsDatabaseElement::_defineAtomType() {
             break;
         case Object:
             this->_atomType = AtomType::Object;
+            break;
+        case FreeDraw:
+            this->_atomType = AtomType::Drawing;
+            break;
+        case Text:
+            this->_atomType = AtomType::Text;
             break;
     }
 }
