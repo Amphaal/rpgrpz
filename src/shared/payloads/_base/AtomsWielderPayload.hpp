@@ -42,6 +42,6 @@ class AtomsWielderPayload : public AlterationPayload {
             for(auto &e : atoms) {
                 list.insert(QString::number(e.id()), e);
             }
-            (*this)["atoms"] = list;
+            this->insert("atoms", list);
         }
 };

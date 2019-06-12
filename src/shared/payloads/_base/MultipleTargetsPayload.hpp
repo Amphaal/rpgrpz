@@ -36,6 +36,6 @@ class MultipleTargetsPayload : public AlterationPayload {
                     QString::number(id)
                 );
             }
-            (*this)["ids"] = cast;
+            this->insert("ids", cast);
         }
 };

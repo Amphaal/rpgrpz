@@ -35,11 +35,11 @@ class RPZUser : public Serializable {
         };
 
         void setName(const QString &name) {
-            (*this)["name"] = name;
+            this->insert("name", name);
         };
 
         void setRole(const Role &role) {
-            (*this)["role"] = (int)role;
+            this->insert("role", (int)role);
         };
 
         JSONSocket* jsonHelper() { return this->_jsonHelper; };
@@ -76,7 +76,8 @@ class RPZUser : public Serializable {
 
     private:
         void _setColor(const QColor &color = QColor()) {
-            (*this)["color"] = color.isValid() ? color.name() : RandomColor::getRandomColor().name();
+            auto colorToUse = color.isValid() ? color.name() : RandomColor::getRandomColor().name();
+            this->insert("color", colorToUse);
         }
 
         JSONSocket* _jsonHelper;

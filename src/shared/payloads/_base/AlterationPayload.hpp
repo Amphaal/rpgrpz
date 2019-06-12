@@ -40,7 +40,7 @@ class AlterationPayload : public QVariantHash {
         };
 
         void changeSource(const Source &newSource) {
-            (*this)["s"] = (int)newSource;
+            this->insert("s", (int)newSource);
         }
 
         Source source() {
@@ -68,7 +68,7 @@ class AlterationPayload : public QVariantHash {
         };
         
         void _setType(const PayloadAlteration &type) {
-            (*this)["t"] = (int)type;
+            this->insert("t", (int)type);
             this->_updateTags(type);
         }
 

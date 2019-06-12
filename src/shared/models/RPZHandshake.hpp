@@ -21,10 +21,10 @@ class RPZHandshake : public QVariantHash {
 
     private:
         void _setClientVersion() {
-            (*this)["v"] = QString(APP_CURRENT_VERSION);
+            this->insert("v", QString(APP_CURRENT_VERSION));
         }
 
         void _setRequestedUsername(const QString &requestedUsername) {
-            (*this)["un"] = requestedUsername;
+            this->insert("un", requestedUsername);
         }
 };

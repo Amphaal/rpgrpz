@@ -55,6 +55,6 @@ class MetadataChangedPayload : public MultipleTargetsPayload {
             for (QHash<RPZAtom::Parameters, QVariant>::iterator i = changes.begin(); i != changes.end(); ++i) {
                 in.insert(QString::number(i.key()), i.value());
             }
-            (*this)["args"] = in;
+            this->insert("args", in);
         }
 };

@@ -17,7 +17,7 @@ class OwnerChangedPayload : public MultipleTargetsPayload {
     
     private:
         void _setOwner(RPZUser &newOwner) {
-            (*this)["args"] = newOwner;
+            this->insert("args", newOwner);
         }
 
 };

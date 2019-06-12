@@ -86,12 +86,12 @@ class RPZMessage : public Stampable {
         MessageInterpreter::Command _command = MessageInterpreter::Command::Unknown;
         
         void _setText(const QString &text) {
-            (*this)["txt"] = text;
+            this->insert("txt", text);
             this->_interpretTextAsCommand();
         }
 
         void _forceCommand(const MessageInterpreter::Command &forced) {
-            (*this)["cmd"] = (int)forced;
+            this->insert("cmd", (int)forced);
         }
 
         void _interpretTextAsCommand() {

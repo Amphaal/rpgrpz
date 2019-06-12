@@ -21,6 +21,6 @@ class Ownable : public Serializable {
         };
 
         void setOwnership(const RPZUser &user) { 
-            (*this)["owner"] = user;
+            this->insert("owner", user);
         };
 };

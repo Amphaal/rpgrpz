@@ -92,15 +92,15 @@ class RPZResponse : public Stampable {
 
     private:
         void _setAnswerer(const snowflake_uid &answererStampableId) {
-            (*this)["aswr"] = QString::number(answererStampableId);
+            this->insert("aswr", QString::number(answererStampableId));
         }
 
         void _setResponseCode(const ResponseCode &code) {
-            (*this)["r"] = (int)code;
+            this->insert("r", (int)code);
         }
 
         void _setResponseData(const QVariant &data) {
-            (*this)["rdata"] = data;
+            this->insert("rdata", data);
         }
 
 };

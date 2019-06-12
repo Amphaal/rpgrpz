@@ -31,7 +31,7 @@ class Stampable : public Ownable {
 
     private:
         void _setTimestamp(const QDateTime &dt) {
-            (*this)["dt"] = dt;
+            this->insert("dt", dt);
         }
 
 };
