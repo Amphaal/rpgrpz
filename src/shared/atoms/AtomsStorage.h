@@ -29,8 +29,8 @@ class AtomsStorage : public AtomsHandler {
         QStack<AlterationPayload> _undoHistory;
 
         int _payloadHistoryIndex = 0;
-        void _registerPayloadForHistory(AlterationPayload payload);
-        AlterationPayload _generateUndoPayload(AlterationPayload historyPayload);
+        void _registerPayloadForHistory(AlterationPayload &payload);
+        AlterationPayload _generateUndoPayload(AlterationPayload &historyPayload);
 
         //duplication
         QVector<snowflake_uid> _latestDuplication;

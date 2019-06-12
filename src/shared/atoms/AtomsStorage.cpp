@@ -49,7 +49,7 @@ void AtomsStorage::redo() {
     this->_payloadHistoryIndex--;
 }
 
-AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload historyPayload) {
+AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &historyPayload) {
     qDebug() << historyPayload;
     switch(historyPayload.type()) {
 
@@ -92,7 +92,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload historyPa
     return historyPayload;
 }
 
-void AtomsStorage::_registerPayloadForHistory(AlterationPayload payload) {
+void AtomsStorage::_registerPayloadForHistory(AlterationPayload &payload) {
     
     //do nothing is payload is not redo compatible
     if(!payload.isNetworkRoutable()) return;
