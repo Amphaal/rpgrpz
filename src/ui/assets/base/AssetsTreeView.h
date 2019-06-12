@@ -16,6 +16,8 @@
 #include "AssetsTreeViewModel.h"
 #include "src/shared/commands/RPZActions.h"
 
+#include "src/shared/models/AssetMetadata.hpp"
+
 class AssetsTreeView : public QTreeView {
 
     Q_OBJECT
@@ -26,7 +28,7 @@ class AssetsTreeView : public QTreeView {
         QModelIndexList selectedElementsIndexes();
     
     signals:
-        void templateAssetChosen(const AtomType &type, const QString assetId, const QString assetName, const QString assetLocation);
+        void templateAssetChosen(const QVariantHash &assetMetadata);
 
     private:
         void drawRow(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;

@@ -8,7 +8,7 @@ class AtomPenWidthEditor : public AtomSliderEditor {
         AtomPenWidthEditor() : AtomSliderEditor("Taille:", "pt", 1, 5000) { }
 
         AlterationPayload createPayload() override {
-            return RotatedPayload(this->_atomsToSnowflakeList(), this->outputValue());
+            return MetadataChangedPayload(this->_atomsToSnowflakeList(), RPZAtom::Parameters::PenWidth, this->outputValue());
         }
 
     private:

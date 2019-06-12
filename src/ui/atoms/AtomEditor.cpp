@@ -11,9 +11,11 @@ AtomEditor::AtomEditor(QWidget* parent) : QWidget(parent) {
     //editors
     this->_rotateEditor = new AtomRotationEditor;
     this->_scaleEditor = new AtomScalingEditor;
+    this->_penWidthEditor = new AtomPenWidthEditor;
     
     layout->addWidget(this->_rotateEditor);
     layout->addWidget(this->_scaleEditor);
+    layout->addWidget(this->_penWidthEditor);
 
     QObject::connect(
         this->_rotateEditor->slider(), &QAbstractSlider::sliderReleased,
@@ -22,6 +24,10 @@ AtomEditor::AtomEditor(QWidget* parent) : QWidget(parent) {
     QObject::connect(
         this->_scaleEditor->slider(), &QAbstractSlider::sliderReleased,
         [=]() { this->_onSubEditorChanged(this->_scaleEditor); }
+    );
+    QObject::connect(
+        this->_penWidthEditor->slider(), &QAbstractSlider::sliderReleased,
+        [=]() { this->_onSubEditorChanged(this->_penWidthEditor); }
     );
 }
 
@@ -39,4 +45,5 @@ void AtomEditor::buildEditorFromSelection(QVector<void*> &selectedAtoms) {
 
     this->_rotateEditor->loadAtomsAsTemplate(this->_atoms);
     this->_scaleEditor->loadAtomsAsTemplate(this->_atoms);
+    this->_penWidthEditor->loadAtomsAsTemplate(this->_atoms);
 }

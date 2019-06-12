@@ -272,22 +272,10 @@ void MainWindow::_initUIApp() {
         this->_assetsManager->tree(), &QAbstractItemView::clearSelection
     );
 
-    //unselect tools
-    QObject::connect(
-        this->_mapView, &MapView::unselectCurrentToolAsked,
-        this->_mapTools, &MapTools::selectDefaultTool
-    );
-
     //bind toolbar to mapview
     QObject::connect(
-        this->_mapTools, &MapTools::toolSelectionChanged,
-        this->_mapView, &MapView::changeToolFromAction
-    );
-
-    //on pen size change
-    QObject::connect(
-        this->_mapTools, &MapTools::penSizeChanged,
-        this->_mapView->hints(), &ViewMapHint::setPenSize
+        this->_mapTools, &MapTools::actionRequested,
+        this->_mapView, &MapView::actionRequested
     );
 
     //update status bar on map file update

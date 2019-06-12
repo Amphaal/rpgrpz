@@ -163,7 +163,7 @@ void AssetsDatabaseElement::appendChild(AssetsDatabaseElement* child) {
     }
     
     //increment count
-    if(child->isItem()) this->_itemChildrenCount++;
+    if(!child->isContainer()) this->_itemChildrenCount++;
 };
 
 
@@ -179,7 +179,7 @@ void AssetsDatabaseElement::unrefChild(AssetsDatabaseElement* child) {
         this->_subElements.removeAt(foundIndex);
 
         //unincrement
-        if(child->isItem()) _itemChildrenCount--;
+        if(!child->isContainer()) _itemChildrenCount--;
     }
 }
 

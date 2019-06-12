@@ -25,6 +25,7 @@
 #include "src/ui/map/MapTools.h"
 
 #include "src/shared/commands/AtomsContextualMenuHandler.h"
+#include "src/shared/models/AssetMetadata.hpp"
 
 class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
     
@@ -55,7 +56,7 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         void deleteCurrentSelectionItems();
 
         //ghost handling
-        QGraphicsItem* generateGhostItem(const AtomType &type, const QString assetId, const QString assetName, const QString assetLocation);
+        QGraphicsItem* generateGhostItem(AssetMetadata &assetMetadata);
         void integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem);
         void integrateDrawingAsPayload(QGraphicsPathItem* drawnItem, QGraphicsItem* templateGhostItem);
         void centerGraphicsItemToPoint(QGraphicsItem* item, const QPoint &eventPos);
@@ -83,7 +84,7 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         bool _isRemote = false;
         bool _isDirty = false;
         void _setDirty(bool dirty = true);
-        void _shouldMakeDirty(AlterationPayload* payload);
+        void _shouldMakeDirty(AlterationPayload &payload);
 
         //helpers
         QGraphicsItem* _buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom);
@@ -105,6 +106,6 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         bool _isInTextInteractiveMode = false;
 
         //augmenting AtomsStorage
-        virtual void _handlePayload(AlterationPayload* payload) override;
+        virtual void _handlePayload(AlterationPayload &payload) override;
         virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, const QVariant &alteration) override;
 };

@@ -35,25 +35,28 @@
 
 #include "src/shared/payloads/Payloads.h"
 
+#include "src/shared/models/AssetMetadata.hpp"
 
 class MapView : public QGraphicsView, public ClientBindable {
 
     Q_OBJECT
 
     public:
+        enum Tool {
+            Default,
+            Atom,
+            Scroll
+        };
+
         MapView(QWidget *parent);
         ViewMapHint* hints();
 
     public slots:
-        void changeToolFromAction(const MapTools::Actions &instruction);
-        void useAssetTemplate(const AtomType &type, 
-                const QString assetId = NULL, 
-                const QString assetName = NULL, 
-                const QString assetLocation = NULL);
+        void actionRequested(const MapTools::Actions &action);
+        void useAssetTemplate(const QVariantHash &assetMetadata);
         void updateGhostItemFromAtomTemplate(void* atomTemplate);
     
     signals:
-        void unselectCurrentToolAsked();
         void unselectCurrentAssetAsked();
         void remoteChanged(bool isRemote);
 
@@ -83,15 +86,10 @@ class MapView : public QGraphicsView, public ClientBindable {
 
         //ghost
             QGraphicsItem* _ghostItem = nullptr;
-            bool _isGhostFrozen = false;
-            QString _bufferedAssetLocation;
+            AssetMetadata _bufferedAssetMetadata;
             void _clearGhostItem();
-            void _generateGhostItem(const AtomType &type, 
-                const QString assetId = NULL, 
-                const QString assetName = NULL, 
-                const QString assetLocation = NULL
-            );
-            void _generateGhostItem(const MapTools::Actions &action);
+            void _generateGhostItemFromBuffer();
+            void _handleGhostItem(const Tool &tool);
         
         //network
             void _sendMapChanges(QVariantHash &payload);
@@ -99,14 +97,12 @@ class MapView : public QGraphicsView, public ClientBindable {
 
         //registered points
             bool _isMousePressed = false;
-            bool _isMiddleToolLock = false;
 
         //tool
-            static const MapTools::Actions _defaultTool = MapTools::Actions::None;
-            MapTools::Actions _quickTool = MapTools::Actions::None;
-            MapTools::Actions _selectedTool;
-            MapTools::Actions _getCurrentTool() const;
-            void _changeTool(MapTools::Actions newTool, const bool quickChange = false);
+            Tool _tool = Tool::Default;
+            Tool _quickTool = Tool::Default;
+            Tool _getCurrentTool() const;
+            void _changeTool(Tool newTool, const bool quickChange = false);
             
         //moving...
             const int _defaultSceneSize = 36000;

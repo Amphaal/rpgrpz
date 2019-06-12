@@ -83,30 +83,6 @@ QAction* RPZActions::hideAtom() {
     );
 }
 
-QAction* RPZActions::selectionTool() {
-    auto action = new QAction;
-    action->setIcon(QIcon(":/icons/app/tools/cursor.png"));
-    action->setIconText("Outil de sélection");
-    action->setCheckable(true);
-    return action;
-}
-
-QAction* RPZActions::writeTool() {
-    auto action = new QAction;
-    action->setIcon(QIcon(":/icons/app/tools/text.png"));
-    action->setIconText("Ecrire");
-    action->setCheckable(true);
-    return action;
-}
-
-QAction* RPZActions::drawTool() {
-    auto action = new QAction;
-    action->setIcon(QIcon(":/icons/app/tools/pen.png"));
-    action->setIconText("Dessiner");
-    action->setCheckable(true);
-    return action;
-}
-
 QAction* RPZActions::resetView() {
     auto action = new QAction;
     action->setIcon(QIcon(":/icons/app/tools/reset.png"));

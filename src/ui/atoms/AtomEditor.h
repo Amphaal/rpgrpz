@@ -12,6 +12,7 @@
 
 #include "editors/AtomRotationEditor.hpp"
 #include "editors/AtomScalingEditor.hpp"
+#include "editors/AtomPenWidthEditor.hpp"
 
 class AtomEditor : public QWidget {
 
@@ -30,6 +31,7 @@ class AtomEditor : public QWidget {
 
         AtomRotationEditor* _rotateEditor = nullptr;
         AtomScalingEditor* _scaleEditor = nullptr;
+        AtomPenWidthEditor* _penWidthEditor = nullptr;
 
         void _onSubEditorChanged(AtomSliderEditor* editor);
 };

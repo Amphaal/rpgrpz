@@ -127,7 +127,7 @@ void ViewMapHint::_onSceneSelectionChanged() {
 
     //bypass internal
     auto payload = SelectedPayload(selectedAtomIds);
-    this->_emitAlteration(&payload);
+    this->_emitAlteration(payload);
 
 }
 
@@ -234,13 +234,13 @@ bool ViewMapHint::defineAsRemote(QString &remoteMapDescriptor) {
 }
 
 
-void ViewMapHint::_shouldMakeDirty(AlterationPayload* payload) {
+void ViewMapHint::_shouldMakeDirty(AlterationPayload &payload) {
     
     //if remote, never dirty
     if(this->_isRemote) return;
 
     //if not a network alteration type
-    if(!payload->isNetworkRoutable()) return;
+    if(!payload.isNetworkRoutable()) return;
 
     this->_setDirty();
 }
@@ -294,7 +294,7 @@ void ViewMapHint::setDefaultUser(RPZUser user) {
 
     //inform atom layout
     auto payload = OwnerChangedPayload(atomIds.toList().toVector(), user);
-    this->_emitAlteration(&payload);
+    this->_emitAlteration(payload);
 
 }
 
@@ -321,12 +321,12 @@ void ViewMapHint::deleteCurrentSelectionItems() {
     this->handleAlterationRequest(RemovedPayload(atomIdsToRemove));
 }
 
-QGraphicsItem* ViewMapHint::generateGhostItem(const AtomType &type, const QString assetId, const QString assetName, const QString assetLocation) {
+QGraphicsItem* ViewMapHint::generateGhostItem(AssetMetadata &assetMetadata) {
 
     //update template
-    this->templateAtom->changeType(type);
-    this->templateAtom->setMetadata(RPZAtom::Parameters::AssetId, assetId);
-    this->templateAtom->setMetadata(RPZAtom::Parameters::AssetName, assetName);
+    this->templateAtom->changeType(assetMetadata.atomType());
+    this->templateAtom->setMetadata(RPZAtom::Parameters::AssetId, assetMetadata.assetId());
+    this->templateAtom->setMetadata(RPZAtom::Parameters::AssetName, assetMetadata.assetName());
     
     //generate a blueprint
     auto atomBuiltFromTemplate = RPZAtom(*this->templateAtom);
@@ -338,8 +338,7 @@ QGraphicsItem* ViewMapHint::generateGhostItem(const AtomType &type, const QStrin
     ); 
 
     //add to scene
-    auto aditionnalArgs = MVPayload(assetLocation);
-    QGraphicsItem* ghostItem = this->scene()->addToScene(atomBuiltFromTemplate, aditionnalArgs);
+    QGraphicsItem* ghostItem = this->scene()->addToScene(atomBuiltFromTemplate, assetMetadata);
 
     //if no ghost item, return
     if(!ghostItem) return ghostItem;
@@ -417,7 +416,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
     
     //default
     else {
-        newItem = this->scene()->addToScene(atomToBuildFrom, MVPayload(pathToAssetFile));
+        newItem = this->scene()->addToScene(atomToBuildFrom, AssetMetadata(pathToAssetFile));
     }
 
     //save pointer ref
@@ -446,7 +445,7 @@ void ViewMapHint::replaceMissingAssetPlaceholders(const QString &assetId) {
         auto atom = this->_fetchAtom(gi);
 
         //create the new graphics item
-        auto newGi = this->scene()->addToScene(*atom, MVPayload(pathToFile));
+        auto newGi = this->scene()->addToScene(*atom, AssetMetadata(pathToFile));
         this->_crossBindingAtomWithGI(atom, newGi);
 
         delete gi;
@@ -503,16 +502,15 @@ void ViewMapHint::centerGraphicsItemToPoint(QGraphicsItem* item, const QPoint &e
 /////////////////////////////
 
 //alter Scene
-void ViewMapHint::_handlePayload(AlterationPayload* payload) { 
+void ViewMapHint::_handlePayload(AlterationPayload &payload) { 
 
     //make sure to not perpetuate circular payloads
-    auto payloadSource = payload->source();
-    if(payloadSource == this->_source) return;
+    if( payload.source() == this->_source) return;
 
     this->_preventInnerGIEventsHandling = true;
 
     //on reset
-    auto type = payload->type();
+    auto type = payload.type();
     if(type == PayloadAlteration::Selected) this->scene()->clearSelection();
     if(type == PayloadAlteration::Reset) {
         for(auto &atom : this->_atomsById) {

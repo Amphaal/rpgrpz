@@ -2,13 +2,15 @@
 
 #include "src/ui/atoms/base/AtomSliderEditor.h"
 
+#include <QtMath>
+
 class AtomScalingEditor : public AtomSliderEditor {
     
     public:
         AtomScalingEditor() : AtomSliderEditor("Taille:", "x", 1, 1000) {}
 
         AlterationPayload createPayload() override {
-            return //MetadataChangedPayload(this->_atomsToSnowflakeList(), this->outputValue());
+            return MetadataChangedPayload(this->_atomsToSnowflakeList(), RPZAtom::Parameters::Scale, this->outputValue());
         }
 
     private:

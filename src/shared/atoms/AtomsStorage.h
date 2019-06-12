@@ -29,8 +29,8 @@ class AtomsStorage : public AtomsHandler {
         QStack<AlterationPayload> _undoHistory;
 
         int _payloadHistoryIndex = 0;
-        void _registerPayloadForHistory(AlterationPayload* payload);
-        AlterationPayload _generateUndoPayload(AlterationPayload* historyPayload);
+        void _registerPayloadForHistory(AlterationPayload payload);
+        AlterationPayload _generateUndoPayload(AlterationPayload historyPayload);
 
         //duplication
         QVector<snowflake_uid> _latestDuplication;
@@ -44,9 +44,9 @@ class AtomsStorage : public AtomsHandler {
         QHash<snowflake_uid, QSet<snowflake_uid>> _atomIdsByOwnerId;
 
         //alter the inner atoms lists
-        virtual void _handlePayload(AlterationPayload* payload) override;
+        virtual void _handlePayload(AlterationPayload &payload) override;
         virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, const QVariant &alteration) override;
 
     private:
-        void _basic_handlePayload(AlterationPayload* payload);
+        void _basic_handlePayload(AlterationPayload &payload);
 };

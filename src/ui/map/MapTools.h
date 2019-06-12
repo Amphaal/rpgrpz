@@ -15,7 +15,6 @@ class MapTools : public QToolBar {
 
     public:    
         enum Actions { 
-            None, 
             ResetView
         };
 
@@ -23,8 +22,7 @@ class MapTools : public QToolBar {
         void selectDefaultTool();
     
     signals:
-        void penSizeChanged(const int newSize);
-        void toolSelectionChanged(const MapTools::Actions &tool);
+        void actionRequested(const MapTools::Actions &action);
 
     private:
         bool _selectableToolSelected = false;

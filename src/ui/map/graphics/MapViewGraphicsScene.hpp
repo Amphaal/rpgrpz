@@ -8,18 +8,8 @@
 #include "MapViewItemsNotifier.hpp"
 
 #include "src/shared/models/RPZAtom.h"
+#include "src/shared/models/AssetMetadata.hpp"
 
-class MVPayload : public QVariantHash {
-    
-    public:
-        QString pathToImageFile;
-        QColor defaultColor; 
-        
-        MVPayload() {};
-        MVPayload(const QString &pathToAsset = QString()) : 
-            pathToImageFile(pathToAsset) { }; 
-
-};
 
 class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
 
@@ -69,20 +59,24 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             atom.shuffleId();
 
             //remove -1 layer to the actual wanted layer
-            atom.setLayer(
+            atom.setMetadata(
+                RPZAtom::Parameters::Layer,
                 atom.layer() - 1
             );
             
             //update template values from current gi properties
-            atom.setPos(blueprint->scenePos());
+            atom.setMetadata(
+                RPZAtom::Parameters::Position,
+                blueprint->scenePos()
+            );
             
             switch(atom.type()) {
                 
                 case AtomType::Text: {
                     auto casted = dynamic_cast<QGraphicsTextItem*>(blueprint);
                     atom.setShape(blueprint->boundingRect());
-                    atom.setPenWidth(casted->font().pointSize());
-                    atom.setText(casted->toPlainText());
+                    atom.setMetadata(RPZAtom::Parameters::PenWidth, casted->font().pointSize());
+                    atom.setMetadata(RPZAtom::Parameters::Text, casted->toPlainText());
                 }
                 break;
 
@@ -101,19 +95,19 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             return atom;
         }
 
-        QGraphicsItem* addToScene(RPZAtom &atom, MVPayload &aditionnalArgs) {
+        QGraphicsItem* addToScene(RPZAtom &atom, AssetMetadata &assetMetadata) {
             
             QGraphicsItem* out;
 
             switch(atom.type()) {
                 
                 case AtomType::Object:
-                    out = this->_addGenericImageBasedItem(atom, aditionnalArgs);
+                    out = this->_addGenericImageBasedItem(atom, assetMetadata);
                 break;
                 
                 case AtomType::Brush:
                 case AtomType::Drawing:
-                    out = this->_addDrawing(atom, aditionnalArgs);
+                    out = this->_addDrawing(atom, assetMetadata);
                 break;
 
                 case AtomType::Text:
@@ -152,10 +146,10 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
         }
 
     protected:
-        QGraphicsItem* _addGenericImageBasedItem(RPZAtom &atom, MVPayload &aditionnalArgs) {
+        QGraphicsItem* _addGenericImageBasedItem(RPZAtom &atom, AssetMetadata &assetMetadata) {
     
             //get file infos
-            auto pathToImageFile = aditionnalArgs.pathToImageFile;
+            auto pathToImageFile = assetMetadata.pathToAssetFile();
             QFileInfo pathInfo(pathToImageFile);
             
             //define graphicsitem
@@ -170,7 +164,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             return item;
         }
 
-        QGraphicsPathItem* _addDrawing(RPZAtom &atom, MVPayload &aditionnalArgs) {
+        QGraphicsPathItem* _addDrawing(RPZAtom &atom, AssetMetadata &assetMetadata) {
             
             //define a ped
             QPen pen;
@@ -186,8 +180,9 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
 
             //add brush
             QBrush brush;
-            if(!aditionnalArgs.pathToImageFile.isEmpty()) {
-                brush.setTexture(QPixmap(aditionnalArgs.pathToImageFile));
+            auto fpath = assetMetadata.pathToAssetFile();
+            if(!fpath.isEmpty()) {
+                brush.setTexture(QPixmap(fpath));
             } else {
                 pen.setColor(atom.owner().color());
             }

@@ -8,7 +8,7 @@ class AtomRotationEditor : public AtomSliderEditor {
         AtomRotationEditor() : AtomSliderEditor("Rotation:", "°", 0, 359) { }
 
         AlterationPayload createPayload() override {
-            return RotatedPayload(this->_atomsToSnowflakeList(), this->outputValue());
+            return MetadataChangedPayload(this->_atomsToSnowflakeList(), RPZAtom::Parameters::Rotation, this->outputValue());
         }
 
     private:

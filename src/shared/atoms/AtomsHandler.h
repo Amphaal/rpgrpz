@@ -20,8 +20,8 @@ class AtomsHandler : public QObject {
     protected:
         AlterationPayload::Source _source = AlterationPayload::Source::Undefined;
         
-        void _emitAlteration(AlterationPayload* payload);
+        void _emitAlteration(AlterationPayload &payload);
 
-        virtual void _handlePayload(AlterationPayload* payload) = 0;
+        virtual void _handlePayload(AlterationPayload &payload) = 0;
         virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, const QVariant &alteration) = 0; 
 };

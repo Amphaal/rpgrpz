@@ -21,7 +21,7 @@ void AtomsStorage::undo() {
 
     //get stored payload and handle it
     auto st_payload = this->_undoHistory.at(toReachIndex);
-    this->_basic_handlePayload(&st_payload);
+    this->_basic_handlePayload(st_payload);
 
     //update the index
     this->_payloadHistoryIndex++;
@@ -43,18 +43,18 @@ void AtomsStorage::redo() {
 
     //get stored payload and handle it
     auto st_payload = this->_redoHistory.at(toReachIndex);
-    this->_basic_handlePayload(&st_payload);
+    this->_basic_handlePayload(st_payload);
 
     //update the index
     this->_payloadHistoryIndex--;
 }
 
-AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload* historyPayload) {
-    
-    switch(historyPayload->type()) {
+AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload historyPayload) {
+    qDebug() << historyPayload;
+    switch(historyPayload.type()) {
 
         case PayloadAlteration::MetadataChanged: {
-            auto casted = (MetadataChangedPayload*)historyPayload;
+            auto casted = (MetadataChangedPayload*)&historyPayload;
             auto changesTypes = MetadataChangedPayload::fromArgs(casted->args()).hasMetadata();
 
             RPZMap<RPZAtom> partialAtoms;
@@ -72,13 +72,13 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload* historyP
         break; 
 
         case PayloadAlteration::Added: {
-            auto casted = (AddedPayload*)historyPayload;
+            auto casted = (AddedPayload*)&historyPayload;
             return RemovedPayload(casted->atoms().keys().toVector());
         }
         break; 
 
         case PayloadAlteration::Removed: {
-            auto casted = (RemovedPayload*)historyPayload;
+            auto casted = (RemovedPayload*)&historyPayload;
             RPZMap<RPZAtom> out;
             for(auto atomId : casted->targetAtomIds()) {
                 out.insert(atomId, this->_atomsById[atomId]);
@@ -89,13 +89,13 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload* historyP
 
     }
 
-    return *historyPayload;
+    return historyPayload;
 }
 
-void AtomsStorage::_registerPayloadForHistory(AlterationPayload* payload) {
+void AtomsStorage::_registerPayloadForHistory(AlterationPayload payload) {
     
     //do nothing is payload is not redo compatible
-    if(!payload->isNetworkRoutable()) return;
+    if(!payload.isNetworkRoutable()) return;
 
     //cut branch
     while(this->_payloadHistoryIndex) {
@@ -105,8 +105,11 @@ void AtomsStorage::_registerPayloadForHistory(AlterationPayload* payload) {
     }
 
     //build a new one
-    this->_redoHistory.push(*payload);
+    this->_redoHistory.push(payload);
     this->_undoHistory.push(this->_generateUndoPayload(payload));
+    
+    qDebug() << payload;
+    qDebug() << payload;
 }
 
 //////////////
@@ -114,18 +117,17 @@ void AtomsStorage::_registerPayloadForHistory(AlterationPayload* payload) {
 //////////////
 
 //alter Scene
-void AtomsStorage::_handlePayload(AlterationPayload* payload) { 
-    
-    //prevent circular payloads
-    auto payloadSource = payload->source();
-    if(payloadSource == this->_source) return;
+void AtomsStorage::_handlePayload(AlterationPayload &payload) { 
 
-    auto pType = payload->type();
+    //prevent circular payloads
+    if(payload.source() == this->_source) return;
+
+    auto pType = payload.type();
     if(pType == PayloadAlteration::Redone) return this->redo(); //on redo
     if(pType == PayloadAlteration::Undone) return this->undo(); //on undo
 
     //on duplication
-    if(auto dCasted = dynamic_cast<DuplicatedPayload*>(payload)) {
+    if(auto dCasted = dynamic_cast<DuplicatedPayload*>(&payload)) {
         return this->_duplicateAtoms(dCasted->targetAtomIds());
     }
 
@@ -144,12 +146,12 @@ void AtomsStorage::_handlePayload(AlterationPayload* payload) {
     this->_basic_handlePayload(payload);
 }
 
-void AtomsStorage::_basic_handlePayload(AlterationPayload* payload) {
-    
-    auto type = payload->type();
+void AtomsStorage::_basic_handlePayload(AlterationPayload &payload) {
+
+    auto type = payload.type();
 
     //atom wielders format
-    if(auto bPayload = dynamic_cast<AtomsWielderPayload*>(payload)) {
+    if(auto bPayload = dynamic_cast<AtomsWielderPayload*>(&payload)) {
         
         auto atoms  = bPayload->atoms();
         
@@ -160,7 +162,7 @@ void AtomsStorage::_basic_handlePayload(AlterationPayload* payload) {
     }
 
     //multi target format
-    if(auto mPayload = dynamic_cast<MultipleTargetsPayload*>(payload)) {
+    if(auto mPayload = dynamic_cast<MultipleTargetsPayload*>(&payload)) {
         
         auto ids = mPayload->targetAtomIds();
         auto args =  mPayload->args();

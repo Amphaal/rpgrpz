@@ -30,7 +30,7 @@ void TreeMapHint::_onElementDoubleClicked(QTreeWidgetItem * item, int column) {
     if(!focusedAtomId) return;
 
     auto payload = FocusedPayload(focusedAtomId);
-    this->_emitAlteration(&payload);
+    this->_emitAlteration(payload);
 }
 
 void TreeMapHint::_onElementSelectionChanged() {
@@ -41,20 +41,20 @@ void TreeMapHint::_onElementSelectionChanged() {
     if(this->_preventInnerGIEventsHandling) return;
 
     auto payload = SelectedPayload(selected);
-    this->_emitAlteration(&payload);
+    this->_emitAlteration(payload);
 }
 
-void TreeMapHint::_handlePayload(AlterationPayload* payload) {
+void TreeMapHint::_handlePayload(AlterationPayload &payload) {
 
     //prevent circular payloads
-    if(payload->source() == this->_source) {
+    if(payload.source() == this->_source) {
         this->_preventInnerGIEventsHandling = false;
         return;
     }
     
     this->_preventInnerGIEventsHandling = true;
 
-    auto type = payload->type();
+    auto type = payload.type();
 
     //selected...
     if(type == PayloadAlteration::Selected) this->_boundTree->clearSelection();
@@ -71,7 +71,7 @@ void TreeMapHint::_handlePayload(AlterationPayload* payload) {
 
 
     //atom wielders format
-    if(auto bPayload = dynamic_cast<AtomsWielderPayload*>(payload)) {
+    if(auto bPayload = dynamic_cast<AtomsWielderPayload*>(&payload)) {
         
         auto atoms  = bPayload->atoms();
         
@@ -82,7 +82,7 @@ void TreeMapHint::_handlePayload(AlterationPayload* payload) {
     }
 
     //multi target format
-    if(auto mPayload = dynamic_cast<MultipleTargetsPayload*>(payload)) {
+    if(auto mPayload = dynamic_cast<MultipleTargetsPayload*>(&payload)) {
         
         auto ids = mPayload->targetAtomIds();
         auto args =  mPayload->args();

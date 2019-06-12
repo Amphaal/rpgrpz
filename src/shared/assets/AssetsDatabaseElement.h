@@ -18,6 +18,8 @@ class AssetsDatabaseElement {
             InternalContainer,
                 Player,
                 Event,
+                FreeDraw,
+                Text,
             NPC_Container,
                 NPC,
             FloorBrushContainer,
@@ -142,8 +144,6 @@ class AssetsDatabaseElement {
         };
 
         static const inline QList<AssetsDatabaseElement::Type> _itemTypes = {
-            Player, 
-            Event, 
             NPC, 
             FloorBrush,
             Object,
@@ -167,7 +167,9 @@ class AssetsDatabaseElement {
 
         static const inline QList<AssetsDatabaseElement::Type> _internalItemsTypes = {
             Player, 
-            Event
+            Event,
+            FreeDraw,
+            Text
         };
 
         static const inline QHash<AssetsDatabaseElement::Type, QString> _iconPathByElementType = {
@@ -176,6 +178,8 @@ class AssetsDatabaseElement {
             { NPC_Container, ":/icons/app/manager/npc.png" },
             { ObjectContainer, ":/icons/app/manager/asset.png" },
             { FloorBrushContainer, ":/icons/app/manager/brushes.png" },
+            { FreeDraw, ":/icons/app/tools/pen.png" },
+            { Text, ":/icons/app/tools/text.png" },
             { Folder, ":/icons/app/manager/folder.png" }, 
             { InternalContainer, ":/icons/app/manager/internal.png" },
             { DownloadedContainer, ":/icons/app/manager/downloaded.png" }
@@ -185,9 +189,12 @@ class AssetsDatabaseElement {
             { InternalContainer, "Interne" },
             { Player, "Joueur" },
             { Event, "Evenement" },
+            { FreeDraw, "Dessin" },
+            { Text, "Texte" },
             { NPC_Container, "PNJ" },
             { ObjectContainer, "Objets" },
             { FloorBrushContainer, "Terrains" },
             { DownloadedContainer, "Téléchargés" }
         };
+
 };

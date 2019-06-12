@@ -17,9 +17,6 @@ class RPZActions {
         static QAction* lowerAtom(int targetLayer);
         static QAction* showAtom();
         static QAction* hideAtom();
-        static QAction* selectionTool();
-        static QAction* writeTool();
-        static QAction* drawTool();
         static QAction* resetView();
         static QAction* lockAtom();
         static QAction* unlockAtom();
