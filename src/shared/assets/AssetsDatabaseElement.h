@@ -12,22 +12,22 @@ class AssetsDatabaseElement {
     
     public:
         enum Type { 
-            Unknown,
-            Root,
-            Folder,
-            InternalContainer,
-                Player,
-                Event,
-                FreeDraw,
-                Text,
-            NPC_Container,
-                NPC,
-            FloorBrushContainer,
-                FloorBrush,
-            ObjectContainer,
-                Object,
-            DownloadedContainer,
-                Downloaded
+            Unknown = 0,
+            Root = 100,
+            Folder = 101,
+            InternalContainer = 201,
+                Player = 250,
+                Event = 251,
+                FreeDraw = 252,
+                Text = 253,
+            NPC_Container = 301,
+                NPC = 350,
+            FloorBrushContainer = 401,
+                FloorBrush = 450,
+            ObjectContainer = 501,
+                Object = 550,
+            DownloadedContainer = 601,
+                Downloaded = 650 
         };
         
         static AssetsDatabaseElement* fromIndex(QModelIndex index);

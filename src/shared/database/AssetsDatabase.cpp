@@ -18,7 +18,7 @@ const int AssetsDatabase::dbVersion() {
 }
 
 const int AssetsDatabase::apiVersion() {
-    return 3;
+    return 4;
 }
 
 void AssetsDatabase::_removeDatabase() {
