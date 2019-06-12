@@ -204,9 +204,8 @@ bool ViewMapHint::loadState(QString &filePath) {
 
     //load file and parse it
     MapDatabase mapDb(filePath);
-    this->handleAlterationRequest(
-        ResetPayload(mapDb.toAtoms())
-    );
+    auto payload = ResetPayload(mapDb.toAtoms());
+    this->handleAlterationRequest(payload);
     
     //change file path and define as clean
     this->_stateFilePath = filePath;
