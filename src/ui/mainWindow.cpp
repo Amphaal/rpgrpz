@@ -190,9 +190,9 @@ void MainWindow::_initUIApp() {
         toolbarLayout->setMargin(0);
         toolbarLayout->setSpacing(0);
 
-        toolbarLayout->addWidget(this->_mapTools);
-        toolbarLayout->addStretch(0);
         toolbarLayout->addWidget(this->_connectWidget);
+        toolbarLayout->addStretch(0);
+        toolbarLayout->addWidget(this->_mapTools);
         
     designer->layout()->addWidget(toolbar);
     designer->layout()->addWidget(this->_mapView);
