@@ -52,9 +52,7 @@ class AlterationPayload : public QVariantHash {
         }
 
         //necessary for dynamic_cast operations
-        virtual ~AlterationPayload() {
-            QVariantHash::~QVariantHash();
-        }
+        virtual ~AlterationPayload() {}
 
     private:      
         bool _isNetworkAlteration = false;
