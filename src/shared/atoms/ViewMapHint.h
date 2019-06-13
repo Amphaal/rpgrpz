@@ -66,7 +66,6 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
 
         //alter template Atom
         RPZAtom* templateAtom = nullptr;
-        void setPenSize(int size);
         void setDefaultUser(RPZUser user);
         void setDefaultLayer(int layer);
 

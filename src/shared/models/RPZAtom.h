@@ -44,6 +44,7 @@ class RPZAtom : public Ownable {
             Scale,
             Rotation,
             Text,
+            TextSize,
             Layer,
             Position,
             PenWidth,
@@ -77,6 +78,7 @@ class RPZAtom : public Ownable {
         double scale();
         double rotation();
         QString text();
+        int textSize();
         int layer();
         QPointF pos();
         int penWidth();
@@ -94,6 +96,7 @@ class RPZAtom : public Ownable {
             { Scale, "scl" },
             { Rotation, "deg" },
             { Text, "txt" },
+            { TextSize, "txt_s" },
             { Layer, "lyr" },
             { Position, "pos" },
             { PenWidth, "pen_w" },
@@ -108,6 +111,7 @@ class RPZAtom : public Ownable {
             { Scale, 1.0 },
             { Rotation, 0.0 },
             { Text, "Saisir du texte" },
+            { TextSize, 10 },
             { Layer, 0 },
             { Position, NULL },
             { PenWidth, 1 },

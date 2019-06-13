@@ -489,11 +489,16 @@ void MapView::_beginDrawing(const QPoint &lastPointMousePressed) {
         this->_tempDrawing = nullptr;
     }
 
-    auto startPoint = this->mapToScene(lastPointMousePressed);
-    this->_tempDrawing = (QGraphicsPathItem*)this->_scene->addToScene(
+    //create base and store it
+    auto gi = this->_scene->addToScene(
         *this->_hints->templateAtom, 
-        this->_bufferedAssetMetadata
+        this->_bufferedAssetMetadata,
+        true
     );
+    this->_tempDrawing = (QGraphicsPathItem*)gi;
+
+    //update position
+    auto startPoint = this->mapToScene(lastPointMousePressed);
     this->_tempDrawing->setPos(startPoint);
 }
 

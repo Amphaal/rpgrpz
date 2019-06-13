@@ -281,12 +281,20 @@ void AssetsTreeView::keyPressEvent(QKeyEvent * event) {
 
     //switch
     switch(key) {
-        case Qt::Key::Key_Delete:
+        
+        case Qt::Key::Key_Delete: {
             auto selectedIndexes = this->selectedElementsIndexes();
             if(selectedIndexes.count()) {
                 this->_requestDeletion(selectedIndexes);
             }
-            break;
+        }
+        break;
+
+        case Qt::Key::Key_Escape: {
+            this->clearSelection();
+        }
+        break;
+
     }
 
     return QTreeView::keyPressEvent(event);

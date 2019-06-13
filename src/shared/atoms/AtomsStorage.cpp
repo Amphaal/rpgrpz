@@ -7,6 +7,32 @@ RPZMap<RPZAtom> AtomsStorage::atoms() {
     return this->_atomsById;
 }
 
+/////////////
+// HISTORY //
+/////////////
+
+void AtomsStorage::_registerPayloadForHistory(AlterationPayload &payload) {
+    
+    //do nothing is payload is not redo compatible
+    if(!payload.isNetworkRoutable()) return;
+
+    //change source
+    payload.changeSource(AlterationPayload::Source::Undefined);
+
+    //cut branch
+    while(this->_payloadHistoryIndex) {
+        this->_undoHistory.pop();
+        this->_redoHistory.pop();
+        this->_payloadHistoryIndex--;
+    }
+
+    //store redo
+    this->_redoHistory.push(payload);
+
+    //store undo
+    auto correspondingUndo = this->_generateUndoPayload(payload);
+    this->_undoHistory.push(correspondingUndo);
+}
 
 void AtomsStorage::undo() {
 
@@ -21,7 +47,8 @@ void AtomsStorage::undo() {
 
     //get stored payload and handle it
     auto st_payload = this->_undoHistory.at(toReachIndex);
-    this->_basic_handlePayload(st_payload);
+    auto ptr = Payloads::autoCastFromNetwork(st_payload);
+    this->_basic_handlePayload(*ptr);
 
     //update the index
     this->_payloadHistoryIndex++;
@@ -43,7 +70,8 @@ void AtomsStorage::redo() {
 
     //get stored payload and handle it
     auto st_payload = this->_redoHistory.at(toReachIndex);
-    this->_basic_handlePayload(st_payload);
+    auto ptr = Payloads::autoCastFromNetwork(st_payload);
+    this->_basic_handlePayload(*ptr);
 
     //update the index
     this->_payloadHistoryIndex--;
@@ -53,18 +81,48 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &historyP
 
     switch(historyPayload.type()) {
 
+        case PayloadAlteration::BulkMetadataChanged: {
+            
+            auto casted = (BulkMetadataChangedPayload*)&historyPayload;
+            auto intialAtoms = casted->atoms();
+            RPZMap<RPZAtom> outAtoms;
+
+            for (RPZMap<RPZAtom>::iterator i = intialAtoms.begin(); i != intialAtoms.end(); ++i) { 
+                
+                auto snowflakeId = i.key();
+                auto partialAtom = i.value(); 
+
+                RPZAtom outAtom;
+                auto refAtom = this->_atomsById[snowflakeId];
+
+                for(auto change : partialAtom.hasMetadata()) {
+                    outAtom.setMetadata(change, refAtom.metadata(change));
+                }
+
+                outAtoms.insert(snowflakeId, outAtom);
+            }
+            
+            return BulkMetadataChangedPayload(outAtoms);
+        }
+        break; 
+
         case PayloadAlteration::MetadataChanged: {
+            
             auto casted = (MetadataChangedPayload*)&historyPayload;
             auto changesTypes = MetadataChangedPayload::fromArgs(casted->args()).hasMetadata();
-
             RPZMap<RPZAtom> partialAtoms;
+
             for(auto id : casted->targetAtomIds()) {
+
                 RPZAtom baseAtom;
                 auto refAtom = this->_atomsById[id];
+
                 for(auto change : changesTypes) {
                     baseAtom.setMetadata(change, refAtom.metadata(change));
                 }
+
                 partialAtoms.insert(id, baseAtom);
+                
             }
 
             return BulkMetadataChangedPayload(partialAtoms);
@@ -92,22 +150,10 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &historyP
     return historyPayload;
 }
 
-void AtomsStorage::_registerPayloadForHistory(AlterationPayload &payload) {
-    
-    //do nothing is payload is not redo compatible
-    if(!payload.isNetworkRoutable()) return;
 
-    //cut branch
-    while(this->_payloadHistoryIndex) {
-        this->_undoHistory.pop();
-        this->_redoHistory.pop();
-        this->_payloadHistoryIndex--;
-    }
-
-    //build a new one
-    this->_redoHistory.push(payload);
-    this->_undoHistory.push(this->_generateUndoPayload(payload));
-}
+/////////////////
+// END HISTORY //
+/////////////////
 
 //////////////
 /* ELEMENTS */
@@ -148,10 +194,10 @@ void AtomsStorage::_basic_handlePayload(AlterationPayload &payload) {
     auto type = payload.type();
 
     //atom wielders format
-    if(auto bPayload = reinterpret_cast<AtomsWielderPayload*>(&payload)) {
+    if(auto bPayload = dynamic_cast<AtomsWielderPayload*>(&payload)) {
         
         auto atoms  = bPayload->atoms();
-        
+
         for (RPZMap<RPZAtom>::iterator i = atoms.begin(); i != atoms.end(); ++i) {
             this->_handlePayloadInternal(type, i.key(), i.value());
         }
@@ -176,6 +222,10 @@ void AtomsStorage::_basic_handlePayload(AlterationPayload &payload) {
 
 //register actions
 RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, const QVariant &alteration) {
+
+    if(!targetedAtomId) {
+        qWarning() << "Atoms: targeted Atom Id is null !";
+    }
 
     //get the stored atom relative to the targeted id
     RPZAtom* storedAtom = nullptr;
@@ -252,8 +302,7 @@ void AtomsStorage::_duplicateAtoms(QVector<snowflake_uid> &atomIdList) {
 
         RPZAtom newAtom(this->_atomsById[atomId]);
         newAtom.shuffleId();
-        newAtom.setOwnership(RPZUser()); //replace owner by self
-        //TODO ownership when connected to server ?
+        newAtom.setOwnership(this->_defaultOwner);
 
         auto currPos = newAtom.pos();
         

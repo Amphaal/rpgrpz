@@ -34,6 +34,7 @@ class AtomsStorage : public AtomsHandler {
 
         //duplication
         QVector<snowflake_uid> _latestDuplication;
+        RPZUser _defaultOwner;
         int _duplicationCount = 0;
         void _duplicateAtoms(QVector<snowflake_uid> &atomIdList);
 

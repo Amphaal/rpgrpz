@@ -39,7 +39,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
 
             if(auto casted = dynamic_cast<QGraphicsTextItem*>(target)) {
                 auto font = casted->font();
-                font.setPointSize(blueprint.penWidth());
+                font.setPointSize(blueprint.textSize());
                 casted->setFont(font);
             }
 
@@ -75,7 +75,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
                 case AtomType::Text: {
                     auto casted = dynamic_cast<QGraphicsTextItem*>(blueprint);
                     atom.setShape(blueprint->boundingRect());
-                    atom.setMetadata(RPZAtom::Parameters::PenWidth, casted->font().pointSize());
+                    atom.setMetadata(RPZAtom::Parameters::TextSize, casted->font().pointSize());
                     atom.setMetadata(RPZAtom::Parameters::Text, casted->toPlainText());
                 }
                 break;
@@ -95,7 +95,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             return atom;
         }
 
-        QGraphicsItem* addToScene(RPZAtom &atom, AssetMetadata &assetMetadata) {
+        QGraphicsItem* addToScene(RPZAtom &atom, AssetMetadata &assetMetadata, bool isTemporary = false) {
             
             QGraphicsItem* out;
 
@@ -122,6 +122,13 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             //add atomType tracker
             this->updateGraphicsItemFromAtom(out, atom);
             this->addItem(out);
+
+            //prevent notifications on move to kick in since the graphics item is not really in the scene
+            if(isTemporary) {
+                auto notifier = dynamic_cast<MapViewItemsNotifier*>(out);
+                notifier->disableNotifications();
+            }          
+
             return out;
         }
 
@@ -194,7 +201,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
         }
 
         QGraphicsTextItem* _addText(RPZAtom &atom) {
-            return new MapViewGraphicsTextItem(this, atom.text(), atom.penWidth());
+            return new MapViewGraphicsTextItem(this, atom.text(), atom.textSize());
         }
 
 };

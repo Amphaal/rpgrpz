@@ -114,6 +114,7 @@ QString RPZAtom::assetName() { return this->metadata(AssetName).toString();}
 double RPZAtom::scale() { return this->metadata(Scale).toDouble();}
 double RPZAtom::rotation() { return this->metadata(Rotation).toDouble(); }
 QString RPZAtom::text() { return this->metadata(Text).toString(); }
+int RPZAtom::textSize() { return this->metadata(TextSize).toInt(); }
 int RPZAtom::layer() { return this->metadata(Layer).toInt(); }
 QPointF RPZAtom::pos() { return this->metadata(Position).toPointF();}
 int RPZAtom::penWidth() { return this->metadata(PenWidth).toInt(); }

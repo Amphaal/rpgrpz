@@ -65,6 +65,11 @@ class Payloads {
                 case PayloadAlteration::Undone:
                     return QSharedPointer<UndonePayload>(new UndonePayload(hash));
                 break;
+
+                default:
+                    return QSharedPointer<AlterationPayload>(new AlterationPayload(hash));
+                break;
+                
             }
 
         }

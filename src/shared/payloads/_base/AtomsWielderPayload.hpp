@@ -16,8 +16,10 @@ class AtomsWielderPayload : public AlterationPayload {
         
         auto map = this->value("atoms").toMap();
 
-        for(QVariantMap::iterator i = map.begin(); i != map.end(); ++i) { 
-            out.insert(i.key().toULongLong(), i.value().toHash());
+        for(QVariantMap::iterator i = map.begin(); i != map.end(); ++i) {    
+            auto snowflakeId = i.key().toULongLong();
+            RPZAtom atom(i.value().toHash());
+            out.insert(snowflakeId, atom);
         }
         
         return out;
@@ -39,8 +41,10 @@ class AtomsWielderPayload : public AlterationPayload {
     private:
         void _setAddedAtoms(RPZMap<RPZAtom> &atoms) {
             QVariantMap list;
-            for(auto &e : atoms) {
-                list.insert(QString::number(e.id()), e);
+            for (RPZMap<RPZAtom>::iterator i = atoms.begin(); i != atoms.end(); ++i) {
+                auto snowflakeAsStr = QString::number(i.key());
+                auto maybePartialAtom = i.value();
+                list.insert(snowflakeAsStr, maybePartialAtom);
             }
             this->insert("atoms", list);
         }

@@ -69,14 +69,17 @@ void TreeMapHint::_handlePayload(AlterationPayload &payload) {
         this->_atomIdsBoundByAssetId.clear();
     }
 
-
     //atom wielders format
     if(auto bPayload = dynamic_cast<AtomsWielderPayload*>(&payload)) {
         
         auto atoms  = bPayload->atoms();
         
         for (RPZMap<RPZAtom>::iterator i = atoms.begin(); i != atoms.end(); ++i) {
-            this->_handlePayloadInternal(type, i.key(), i.value());
+            
+            auto snowflakeId = i.key();
+            auto atom = i.value();
+
+            this->_handlePayloadInternal(type, snowflakeId, atom);
         }
 
     }
@@ -157,17 +160,20 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, cons
                 switch(param) {
                 
                     case RPZAtom::Parameters::Locked: {
-                        item->setData(1, LayoutCustomRoles::AvailabilityRole, partial.isLocked());
+                        auto isLocked = partial.isLocked();
+                        item->setData(1, LayoutCustomRoles::AvailabilityRole, isLocked);
                     }
                     break;
 
                     case RPZAtom::Parameters::Hidden: {
-                        item->setData(1, LayoutCustomRoles::VisibilityRole, partial.isHidden());
+                        auto isHidden = partial.isHidden();
+                        item->setData(1, LayoutCustomRoles::VisibilityRole, isHidden);
                     }
                     break;
 
                     case RPZAtom::Parameters::Layer: {
-                        this->_changeLayer(QVector<snowflake_uid>(targetedAtomId), partial.layer());
+                        QVector<snowflake_uid> list {targetedAtomId};
+                        this->_changeLayer(list, partial.layer());
                     }
                 }
                 

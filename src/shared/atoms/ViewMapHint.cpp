@@ -45,7 +45,8 @@ void ViewMapHint::handleAnyMovedItems() {
     }
 
     //inform moving
-    this->handleAlterationRequest(BulkMetadataChangedPayload(coords));
+    auto payload = BulkMetadataChangedPayload(coords);
+    this->_handlePayload(payload);
 
     //enable notifications back on those items
     for(auto item : this->_itemsWhoNotifiedMovement) {
@@ -86,7 +87,8 @@ void ViewMapHint::_onSceneItemChanged(QGraphicsItem* item, int changeFlag) {
             auto atomId = this->_fetchAtom(item)->id();
             auto text = ((QGraphicsTextItem*)item)->toPlainText();
 
-            this->handleAlterationRequest(MetadataChangedPayload(atomId, RPZAtom::Parameters::Text, text));
+            auto payload = MetadataChangedPayload(atomId, RPZAtom::Parameters::Text, text);
+            this->_handlePayload(payload);
         }
         break;
     }
@@ -205,7 +207,7 @@ bool ViewMapHint::loadState(QString &filePath) {
     //load file and parse it
     MapDatabase mapDb(filePath);
     auto payload = ResetPayload(mapDb.toAtoms());
-    this->handleAlterationRequest(payload);
+    this->_handlePayload(payload);
     
     //change file path and define as clean
     this->_stateFilePath = filePath;
@@ -263,6 +265,7 @@ void ViewMapHint::_setDirty(bool dirty) {
 void ViewMapHint::setDefaultUser(RPZUser user) {
     
     //update template
+    this->_defaultOwner = user;
     auto oldOwnerId = this->templateAtom->owner().id();
     this->templateAtom->setOwnership(user);
     emit atomTemplateChanged(this->templateAtom);
@@ -297,12 +300,6 @@ void ViewMapHint::setDefaultUser(RPZUser user) {
 
 }
 
-
-void ViewMapHint::setPenSize(int size) {
-    this->templateAtom->setMetadata(RPZAtom::Parameters::PenWidth, size);
-    emit atomTemplateChanged(this->templateAtom);
-}
-
 //////////////////////
 // END Pen handling //
 //////////////////////
@@ -317,7 +314,9 @@ void ViewMapHint::deleteCurrentSelectionItems() {
         auto atom = this->_fetchAtom(item);
         atomIdsToRemove.append(atom->id());
     }
-    this->handleAlterationRequest(RemovedPayload(atomIdsToRemove));
+
+    auto payload = RemovedPayload(atomIdsToRemove);
+    this->_handlePayload(payload);
 }
 
 QGraphicsItem* ViewMapHint::generateGhostItem(AssetMetadata &assetMetadata) {
@@ -337,17 +336,13 @@ QGraphicsItem* ViewMapHint::generateGhostItem(AssetMetadata &assetMetadata) {
     ); 
 
     //add to scene
-    QGraphicsItem* ghostItem = this->scene()->addToScene(atomBuiltFromTemplate, assetMetadata);
+    QGraphicsItem* ghostItem = this->scene()->addToScene(atomBuiltFromTemplate, assetMetadata, true);
 
     //if no ghost item, return
     if(!ghostItem) return ghostItem;
 
     //define transparency as it is a dummy
     ghostItem->setOpacity(.5);
-
-    //prevent notifications on move to kick in since the graphics item is not really in the scene
-    auto notifier = dynamic_cast<MapViewItemsNotifier*>(ghostItem);
-    if(notifier) notifier->disableNotifications();
 
     return ghostItem;
 }
@@ -363,14 +358,14 @@ void ViewMapHint::integrateDrawingAsPayload(QGraphicsPathItem* drawnItem, QGraph
     newAtom.setMetadata(RPZAtom::Parameters::Position, drawnItem->scenePos());
 
     auto payload = AddedPayload(newAtom);
-    this->handleAlterationRequest(payload);
+    this->_handlePayload(payload);
 }
 
 void ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem) {
     if(!ghostItem) return;
     auto newAtom = MapViewGraphicsScene::itemToAtom(ghostItem);
     auto payload = AddedPayload(newAtom);
-    this->handleAlterationRequest(payload);
+    this->_handlePayload(payload);
 }
 
 /////////////////////////////////
@@ -581,7 +576,7 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, cons
                     // on changing visibility
                     case RPZAtom::Parameters::Hidden: {
                         auto hidden = updatedAtom->isHidden();
-                        auto opacity = hidden ? .01 : 1;
+                        auto opacity = hidden ? .05 : 1;
                         updatedAtom->graphicsItem()->setOpacity(opacity);
                     }
                     break;
