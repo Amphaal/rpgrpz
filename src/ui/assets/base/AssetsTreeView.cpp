@@ -299,14 +299,25 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
     auto selectedElems = this->selectedElementsIndexes();
     auto indexesCount = selectedElems.count();
     
-    if(!indexesCount) return this->clearFocus();
+    AssetMetadata out; 
     
-    if(indexesCount != 1) return;
+    if(!indexesCount) {
+        emit assetTemplateChanged(AssetMetadata());
+        return this->clearFocus();
+    }
+    
+    if(indexesCount != 1) {
+        emit assetTemplateChanged(AssetMetadata());
+        return;
+    }
 
     auto elem = AssetsDatabaseElement::fromIndex(selectedElems[0]);
     auto atomType = elem->atomType();
 
-    if(atomType == AtomType::Undefined) return;
+    if(atomType == AtomType::Undefined) {
+        emit assetTemplateChanged(AssetMetadata());
+        return;
+    }
     
-    emit templateAssetChosen(AssetMetadata(elem));
+    emit assetTemplateChanged(AssetMetadata(elem));
 }

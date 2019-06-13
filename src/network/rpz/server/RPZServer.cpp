@@ -195,26 +195,25 @@ void RPZServer::_askHostForMapHistory() {
     this->_hostSocket->sendJSON(JSONMethod::AskForHostMapHistory, QStringList());
 }
 
-void RPZServer::_alterIncomingPayloadWithUpdatedOwners(AtomsWielderPayload* wPayload, JSONSocket * senderSocket) {
+void RPZServer::_alterIncomingPayloadWithUpdatedOwners(AtomsWielderPayload &wPayload, JSONSocket * senderSocket) {
     auto defaultOwner = this->_getUser(senderSocket); 
-    wPayload->updateEmptyUser(*defaultOwner);
+    wPayload.updateEmptyUser(*defaultOwner);
 }
 
 void RPZServer::_broadcastMapChanges(QVariantHash &payload, JSONSocket * senderSocket) {
 
-    auto aPayload = AlterationPayload(payload);
-    auto cPayload = dynamic_cast<AlterationPayload*>(&aPayload);
+    auto aPayload = Payloads::autoCastFromNetwork(payload);
 
     //TODO RE-TESTER
-    if(auto wPayload = dynamic_cast<AtomsWielderPayload*>(cPayload)) {
-        this->_alterIncomingPayloadWithUpdatedOwners(wPayload, senderSocket);
+    if(auto wPayload = aPayload.dynamicCast<AtomsWielderPayload>()) {
+        this->_alterIncomingPayloadWithUpdatedOwners(*wPayload, senderSocket);
     }
 
     //save for history
     this->_hints->handleAlterationRequest(payload);
 
     //add source for outer calls
-    cPayload->changeSource(this->_hints->source());
+    aPayload->changeSource(this->_hints->source());
 
     //send to registered users...
     this->_sendToAllButSelf(senderSocket, JSONMethod::MapChanged, payload);

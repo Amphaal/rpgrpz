@@ -53,7 +53,7 @@ class MapView : public QGraphicsView, public ClientBindable {
 
     public slots:
         void actionRequested(const MapTools::Actions &action);
-        void useAssetTemplate(const QVariantHash &assetMetadata);
+        void assetTemplateChanged(const QVariantHash &assetMetadata);
         void updateGhostItemFromAtomTemplate(void* atomTemplate);
     
     signals:

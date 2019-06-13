@@ -117,9 +117,9 @@ void MapView::keyPressEvent(QKeyEvent * event) {
 
 }
 
-void MapView::useAssetTemplate(const QVariantHash &assetMetadata) {
+void MapView::assetTemplateChanged(const QVariantHash &assetMetadata) {
     this->_bufferedAssetMetadata = AssetMetadata(assetMetadata);
-    this->_changeTool(Tool::Atom);
+    this->_changeTool(assetMetadata.isEmpty() ? Tool::Default : Tool::Atom);
 }
 
 void MapView::_clearGhostItem() {
@@ -380,6 +380,9 @@ void MapView::_changeTool(Tool newTool, const bool quickChange) {
                     break;
                 case AtomType::Text:
                     this->setCursor(Qt::IBeamCursor);
+                    break;
+                default:
+                    this->setCursor(Qt::CrossCursor);
                     break;
             }
 

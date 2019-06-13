@@ -148,7 +148,7 @@ void AtomsStorage::_basic_handlePayload(AlterationPayload &payload) {
     auto type = payload.type();
 
     //atom wielders format
-    if(auto bPayload = dynamic_cast<AtomsWielderPayload*>(&payload)) {
+    if(auto bPayload = reinterpret_cast<AtomsWielderPayload*>(&payload)) {
         
         auto atoms  = bPayload->atoms();
         

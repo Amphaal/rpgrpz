@@ -290,8 +290,8 @@ void MainWindow::_initUIApp() {
 
     //on template selected
     QObject::connect(
-        this->_assetsManager->tree(), &AssetsTreeView::templateAssetChosen,
-        this->_mapView, &MapView::useAssetTemplate
+        this->_assetsManager->tree(), &AssetsTreeView::assetTemplateChanged,
+        this->_mapView, &MapView::assetTemplateChanged
     ); 
 }
 
