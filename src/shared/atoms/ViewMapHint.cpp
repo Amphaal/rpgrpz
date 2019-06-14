@@ -26,7 +26,7 @@ bool ViewMapHint::isInTextInteractiveMode() {
 }
 
 void ViewMapHint::setDefaultLayer(int layer) {
-    this->templateAtom->setMetadata(RPZAtom::Parameters::Layer, layer);
+    this->templateAtom->setMetadata(AtomParameter::Layer, layer);
     emit atomTemplateChanged(this->templateAtom);
 }
 
@@ -40,7 +40,7 @@ void ViewMapHint::handleAnyMovedItems() {
     for(auto gi : this->_itemsWhoNotifiedMovement) {
         auto cAtom = this->_fetchAtom(gi);
         RPZAtom oAtom;
-        oAtom.setMetadata(RPZAtom::Parameters::Position, gi->pos());
+        oAtom.setMetadata(AtomParameter::Position, gi->pos());
         coords.insert(cAtom->id(), oAtom);
     }
 
@@ -87,7 +87,7 @@ void ViewMapHint::_onSceneItemChanged(QGraphicsItem* item, int changeFlag) {
             auto atomId = this->_fetchAtom(item)->id();
             auto text = ((QGraphicsTextItem*)item)->toPlainText();
 
-            auto payload = MetadataChangedPayload(atomId, RPZAtom::Parameters::Text, text);
+            auto payload = MetadataChangedPayload(atomId, AtomParameter::Text, text);
             this->_handlePayload(payload);
         }
         break;
@@ -311,8 +311,8 @@ QGraphicsItem* ViewMapHint::generateGhostItem(AssetMetadata &assetMetadata) {
 
     //update template
     this->templateAtom->changeType(assetMetadata.atomType());
-    this->templateAtom->setMetadata(RPZAtom::Parameters::AssetId, assetMetadata.assetId());
-    this->templateAtom->setMetadata(RPZAtom::Parameters::AssetName, assetMetadata.assetName());
+    this->templateAtom->setMetadata(AtomParameter::AssetId, assetMetadata.assetId());
+    this->templateAtom->setMetadata(AtomParameter::AssetName, assetMetadata.assetName());
     
     //generate a blueprint
     auto atomBuiltFromTemplate = RPZAtom(*this->templateAtom);
@@ -341,7 +341,6 @@ void ViewMapHint::integrateDrawingAsPayload(QGraphicsPathItem* drawnItem, QGraph
     
     //override shape and pos to fit the drawn item
     newAtom.setShape(drawnItem->path());
-    newAtom.setMetadata(RPZAtom::Parameters::Position, drawnItem->scenePos());
 
     auto payload = AddedPayload(newAtom);
     this->_handlePayload(payload);
@@ -415,12 +414,6 @@ void ViewMapHint::replaceMissingAssetPlaceholders(const QString &assetId) {
     auto setOfGraphicsItemsToReplace = this->_missingAssetsIdsFromDb.values(assetId).toSet();
     for(auto gi : setOfGraphicsItemsToReplace) {
         
-        //add on top the required graphical item
-        auto pos = gi->scenePos();
-        if(pos.isNull()) {
-            pos = gi->sceneBoundingRect().topLeft();
-        }
-
         //find corresponding atom
         auto atom = this->_fetchAtom(gi);
 
@@ -445,7 +438,7 @@ void ViewMapHint::handleParametersUpdateAlterationRequest(QVariantHash &payload)
         
         //update template
         auto partial = MetadataChangedPayload::fromArgs(mtPayload->args());
-        for(auto param : partial.hasMetadata()) {
+        for(auto param : partial.orderedEditedMetadata()) {
             this->templateAtom->setMetadata(param, partial.metadata(param));
         }
 
@@ -555,7 +548,7 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, cons
 
             auto partial = type == PayloadAlteration::BulkMetadataChanged ? RPZAtom(alteration.toHash()) : MetadataChangedPayload::fromArgs(alteration);
             
-            for(auto param : partial.hasMetadata()) {
+            for(auto param : partial.orderedEditedMetadata()) {
                 
                 RPZAtom::updateGraphicsItemFromMetadata(
                     updatedAtom->graphicsItem(),

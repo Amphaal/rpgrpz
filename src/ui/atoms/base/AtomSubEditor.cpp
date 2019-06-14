@@ -1,6 +1,6 @@
 #include "AtomSubEditor.h"
 
-AtomSubEditor::AtomSubEditor(const RPZAtom::Parameters &parameter) :
+AtomSubEditor::AtomSubEditor(const AtomParameter &parameter) :
     _param(parameter),
     _descr(new AtomEditorLineDescriptor(_ParamDescr[parameter], _valSuffix[parameter])) { 
 

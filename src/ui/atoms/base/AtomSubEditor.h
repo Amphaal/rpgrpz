@@ -13,16 +13,16 @@ class AtomSubEditor : public QWidget {
     Q_OBJECT
 
     public:
-        AtomSubEditor(const RPZAtom::Parameters &parameter);
+        AtomSubEditor(const AtomParameter &parameter);
         
-        RPZAtom::Parameters param();
+        AtomParameter param();
         void virtual loadTemplate(QVector<RPZAtom*> &atomsToManipulate, QVariant &defaultValue);
 
     signals:
-        void valueConfirmedForPayload(const RPZAtom::Parameters &parameter, QVariant &value);
+        void valueConfirmedForPayload(const AtomParameter &parameter, QVariant &value);
 
     protected:
-        RPZAtom::Parameters _param;
+        AtomParameter _param;
         QWidget* _dataEditor = nullptr;
         void _setAsDataEditor(QWidget *dataEditor);
 
@@ -30,17 +30,17 @@ class AtomSubEditor : public QWidget {
         QVector<RPZAtom*> _atomsToManipulate;
     
     private:
-        static inline QHash<RPZAtom::Parameters, QString> _ParamDescr = {
-            { RPZAtom::Parameters::Rotation, "Rotation" },
-            { RPZAtom::Parameters::Scale, "Taille de l'atome" },
-            { RPZAtom::Parameters::PenWidth, "Taille du pinceau" },
-            { RPZAtom::Parameters::TextSize, "Taille du texte" }
+        static inline QHash<AtomParameter, QString> _ParamDescr = {
+            { AtomParameter::Rotation, "Rotation" },
+            { AtomParameter::Scale, "Taille de l'atome" },
+            { AtomParameter::PenWidth, "Taille du pinceau" },
+            { AtomParameter::TextSize, "Taille du texte" }
         };
 
-        static inline QHash<RPZAtom::Parameters, QString> _valSuffix = {
-            { RPZAtom::Parameters::Rotation, "°" },
-            { RPZAtom::Parameters::Scale, "x" },
-            { RPZAtom::Parameters::PenWidth, "pt" },
-            { RPZAtom::Parameters::TextSize, "pt" }
+        static inline QHash<AtomParameter, QString> _valSuffix = {
+            { AtomParameter::Rotation, "°" },
+            { AtomParameter::Scale, "x" },
+            { AtomParameter::PenWidth, "pt" },
+            { AtomParameter::TextSize, "pt" }
         };
 };

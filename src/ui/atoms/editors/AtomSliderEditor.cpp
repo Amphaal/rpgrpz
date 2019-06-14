@@ -1,6 +1,6 @@
 #include "AtomSliderEditor.h"
 
-AtomSliderEditor::AtomSliderEditor(const RPZAtom::Parameters &parameter, int minimum, int maximum) : AtomSubEditor(parameter) { 
+AtomSliderEditor::AtomSliderEditor(const AtomParameter &parameter, int minimum, int maximum) : AtomSubEditor(parameter) { 
 
     this->_setAsDataEditor(new QSlider(Qt::Orientation::Horizontal, this));
     this->slider()->setMinimum(minimum);

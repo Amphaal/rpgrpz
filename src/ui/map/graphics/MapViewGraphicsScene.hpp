@@ -34,12 +34,12 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             target->setData(TemplateAtom, RPZAtom(blueprint));
 
             //update GI
-            auto paramToUpdate = blueprint.hasMetadata();
-            for(auto param : paramToUpdate) {
+            for(auto param : blueprint.orderedEditedMetadata()) {
 
                 auto val = blueprint.metadata(param);
 
-                if(isTargetTemporary && param == RPZAtom::Parameters::Layer) {
+                //always force temporary item on top of his actual set layer index
+                if(isTargetTemporary && param == AtomParameter::Layer) {
                     val = val.toInt() + 1;
                 }
 
@@ -61,19 +61,18 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             auto atom = RPZAtom(blueprint->data(TemplateAtom).toHash());
             atom.shuffleId();
 
-            //update template values from current gi properties
-            atom.setMetadata(
-                RPZAtom::Parameters::Position,
-                blueprint->scenePos()
-            );
+            //default update
+            auto pos = blueprint->scenePos();
+            atom.setMetadata(AtomParameter::Position, pos);
+            atom.setShape(blueprint->boundingRect());
             
+            //specifics
             switch(atom.type()) {
                 
                 case AtomType::Text: {
                     auto casted = dynamic_cast<QGraphicsTextItem*>(blueprint);
-                    atom.setShape(blueprint->boundingRect());
-                    atom.setMetadata(RPZAtom::Parameters::TextSize, casted->font().pointSize());
-                    atom.setMetadata(RPZAtom::Parameters::Text, casted->toPlainText());
+                    atom.setMetadata(AtomParameter::TextSize, casted->font().pointSize());
+                    atom.setMetadata(AtomParameter::Text, casted->toPlainText());
                 }
                 break;
 
@@ -84,7 +83,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
                 break;
 
                 default: {
-                    atom.setShape(blueprint->boundingRect());
+                    
                 }
                 break;
             }

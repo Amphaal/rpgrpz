@@ -1,20 +1,20 @@
 #include "RPZAtom.h"
 
-void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const Parameters &param, QVariant &val) {
+void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const AtomParameter &param, QVariant &val) {
     
     if(!item) return;
 
     switch(param) {
                     
         //on moving
-        case RPZAtom::Parameters::Position: {
+        case AtomParameter::Position: {
             auto destPos = val.toPointF();
             item->setPos(destPos);  
         }
         break;
 
         //on scaling
-        case RPZAtom::Parameters::Scale: {
+        case AtomParameter::Scale: {
             
             auto destScale = val.toDouble();
             item->setScale(destScale);
@@ -23,7 +23,7 @@ void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const Paramete
         break;
 
         // on locking change
-        case RPZAtom::Parameters::Locked: {
+        case AtomParameter::Locked: {
             auto locked = val.toBool();
             auto flags = !locked ? MapViewItemsNotifier::defaultFlags() : 0;
             item->setFlags(flags);
@@ -31,7 +31,7 @@ void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const Paramete
         break;
         
         // on changing visibility
-        case RPZAtom::Parameters::Hidden: {
+        case AtomParameter::Hidden: {
             auto hidden = val.toBool();
             auto opacity = hidden ? .05 : 1;
             item->setOpacity(opacity);
@@ -39,14 +39,14 @@ void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const Paramete
         break;
 
         //on rotation
-        case RPZAtom::Parameters::Rotation: {
+        case AtomParameter::Rotation: {
             auto destRotation = val.toInt();
             item->setRotation(destRotation);
         }
         break;
 
         //on text size change
-        case RPZAtom::Parameters::TextSize: {
+        case AtomParameter::TextSize: {
             if(auto cItem = dynamic_cast<QGraphicsTextItem*>(item)) {
                 auto newSize = val.toInt();
                 auto font = cItem->font();
@@ -57,7 +57,7 @@ void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const Paramete
         break;
 
         //on pen width change
-        case RPZAtom::Parameters::PenWidth: {
+        case AtomParameter::PenWidth: {
             if(auto cItem = dynamic_cast<QGraphicsPathItem*>(item)) {
                 auto newWidth = val.toInt();
                 auto pen = cItem->pen();
@@ -68,7 +68,7 @@ void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const Paramete
         break;
 
         //on text change
-        case RPZAtom::Parameters::Text: {
+        case AtomParameter::Text: {
             if(auto cItem = dynamic_cast<QGraphicsTextItem*>(item)) {
                 auto newText = val.toString();
                 cItem->setPlainText(newText);
@@ -77,7 +77,7 @@ void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const Paramete
         break;
 
         //on layer change
-        case RPZAtom::Parameters::Layer: {
+        case AtomParameter::Layer: {
             auto newLayer = val.toInt();
             item->setZValue(newLayer);
         }
@@ -114,15 +114,15 @@ QString RPZAtom::descriptor() {
     return this->_defaultDescriptor();
 };
 
-QSet<RPZAtom::Parameters> RPZAtom::customizableParams() {
-    QSet<RPZAtom::Parameters> out { Scale, Rotation };
+QSet<AtomParameter> RPZAtom::customizableParams() {
+    QSet<AtomParameter> out { AtomParameter::Scale, AtomParameter::Rotation };
     
     switch(this->type()) {
         case AtomType::Drawing:
-            out.insert(RPZAtom::Parameters::PenWidth);
+            out.insert(AtomParameter::PenWidth);
             break;
         case AtomType::Text:
-            out.insert(RPZAtom::Parameters::TextSize);
+            out.insert(AtomParameter::TextSize);
             break;
     }
 
@@ -149,7 +149,7 @@ void RPZAtom::_setType(const AtomType &type) { this->insert("t", (int)type); }
 void RPZAtom::changeType(const AtomType &type) { this->_setType(type);}
 
 
-void RPZAtom::setMetadata(const Parameters &key, const QVariant &value) {
+void RPZAtom::setMetadata(const AtomParameter &key, const QVariant &value) {
     
     if(value.isNull()) {
         this->remove(_str[key]);
@@ -158,10 +158,10 @@ void RPZAtom::setMetadata(const Parameters &key, const QVariant &value) {
 
     switch(key) {
 
-        case Parameters::Position: {
+        case AtomParameter::Position: {
             auto pos = value.toPointF();
             QVariantList a { pos.x(), pos.y() };
-            this->insert(_str[Position], a);
+            this->insert(_str[AtomParameter::Position], a);
         }
         break;
 
@@ -172,11 +172,11 @@ void RPZAtom::setMetadata(const Parameters &key, const QVariant &value) {
     
 }
 
-QVariant RPZAtom::metadata(const Parameters &key) {
+QVariant RPZAtom::metadata(const AtomParameter &key) {
     switch(key) {
 
-        case Parameters::Position: {
-            auto posArr = this->value(_str[Position]).toList();
+        case AtomParameter::Position: {
+            auto posArr = this->value(_str[AtomParameter::Position]).toList();
             return posArr.isEmpty() ? QPointF() : QPointF(posArr[0].toReal(), posArr[1].toReal());
         }
         break;
@@ -187,30 +187,33 @@ QVariant RPZAtom::metadata(const Parameters &key) {
     }
 }
 
-QSet<RPZAtom::Parameters> RPZAtom::hasMetadata() {
-    QSet<RPZAtom::Parameters> out;
+QList<AtomParameter> RPZAtom::orderedEditedMetadata() {
+    QList<AtomParameter> out;
 
-    for (QHash<Parameters, QString>::const_iterator i = _str.constBegin(); i != _str.constEnd(); ++i) {
-        if(this->contains(i.value())) out.insert(i.key());
+    for (auto i = _str.constBegin(); i != _str.constEnd(); ++i) {
+        if(this->contains(i.value())) out.append(i.key());
     }
     
+    //order
+    std::sort(out.begin(), out.end());
+
     return out;
 }
 
-QString RPZAtom::assetId() { return this->metadata(AssetId).toString(); }
-QString RPZAtom::assetName() { return this->metadata(AssetName).toString();}
-double RPZAtom::scale() { return this->metadata(Scale).toDouble();}
-double RPZAtom::rotation() { return this->metadata(Rotation).toDouble(); }
-QString RPZAtom::text() { return this->metadata(Text).toString(); }
-int RPZAtom::textSize() { return this->metadata(TextSize).toInt(); }
-int RPZAtom::layer() { return this->metadata(Layer).toInt(); }
-QPointF RPZAtom::pos() { return this->metadata(Position).toPointF();}
-int RPZAtom::penWidth() { return this->metadata(PenWidth).toInt(); }
-bool RPZAtom::isHidden() { return this->metadata(Hidden).toBool(); }
-bool RPZAtom::isLocked() { return this->metadata(Locked).toBool(); }
+QString RPZAtom::assetId() { return this->metadata(AtomParameter::AssetId).toString(); }
+QString RPZAtom::assetName() { return this->metadata(AtomParameter::AssetName).toString();}
+double RPZAtom::scale() { return this->metadata(AtomParameter::Scale).toDouble();}
+double RPZAtom::rotation() { return this->metadata(AtomParameter::Rotation).toDouble(); }
+QString RPZAtom::text() { return this->metadata(AtomParameter::Text).toString(); }
+int RPZAtom::textSize() { return this->metadata(AtomParameter::TextSize).toInt(); }
+int RPZAtom::layer() { return this->metadata(AtomParameter::Layer).toInt(); }
+QPointF RPZAtom::pos() { return this->metadata(AtomParameter::Position).toPointF();}
+int RPZAtom::penWidth() { return this->metadata(AtomParameter::PenWidth).toInt(); }
+bool RPZAtom::isHidden() { return this->metadata(AtomParameter::Hidden).toBool(); }
+bool RPZAtom::isLocked() { return this->metadata(AtomParameter::Locked).toBool(); }
 
-QPainterPath RPZAtom::shape() {return JSONSerializer::toPainterPath(this->metadata(Shape).toByteArray());}
-void RPZAtom::setShape(const QPainterPath &path) { this->setMetadata(Shape, JSONSerializer::asBase64(path)); }
+QPainterPath RPZAtom::shape() {return JSONSerializer::toPainterPath(this->metadata(AtomParameter::Shape).toByteArray());}
+void RPZAtom::setShape(const QPainterPath &path) { this->setMetadata(AtomParameter::Shape, JSONSerializer::asBase64(path)); }
 void RPZAtom::setShape(const QRectF &rect) {
     QPainterPath shape;
     shape.addRect(rect);

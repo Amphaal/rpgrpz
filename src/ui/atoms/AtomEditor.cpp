@@ -10,10 +10,10 @@ AtomEditor::AtomEditor(QWidget* parent) : QWidget(parent) {
 }
 
 void AtomEditor::_createEditors() {
-    this->_editorsByParam[RPZAtom::Rotation] = new AtomSliderEditor(RPZAtom::Rotation, 0, 359);
-    this->_editorsByParam[RPZAtom::Scale] = new NonLinearAtomSliderEditor(RPZAtom::Scale, 1, 1000);
-    this->_editorsByParam[RPZAtom::PenWidth] = new AtomSliderEditor(RPZAtom::PenWidth, 1, 50);
-    this->_editorsByParam[RPZAtom::TextSize] = new AtomSliderEditor(RPZAtom::TextSize, 1, 50);
+    this->_editorsByParam[AtomParameter::Rotation] = new AtomSliderEditor(AtomParameter::Rotation, 0, 359);
+    this->_editorsByParam[AtomParameter::Scale] = new NonLinearAtomSliderEditor(AtomParameter::Scale, 1, 1000);
+    this->_editorsByParam[AtomParameter::PenWidth] = new AtomSliderEditor(AtomParameter::PenWidth, 1, 50);
+    this->_editorsByParam[AtomParameter::TextSize] = new AtomSliderEditor(AtomParameter::TextSize, 1, 50);
 
     for(auto editor : this->_editorsByParam) {
         QObject::connect(
@@ -24,7 +24,7 @@ void AtomEditor::_createEditors() {
     }
 }
 
-void AtomEditor::_onSubEditorChanged(const RPZAtom::Parameters &parameterWhoChanged, QVariant &value) {
+void AtomEditor::_onSubEditorChanged(const AtomParameter &parameterWhoChanged, QVariant &value) {
     
     QVector<snowflake_uid> ids;
     for(auto atom : this->_atoms) ids.append(atom->id());
@@ -35,15 +35,15 @@ void AtomEditor::_onSubEditorChanged(const RPZAtom::Parameters &parameterWhoChan
 
 }
 
-QHash<RPZAtom::Parameters, QVariant> AtomEditor::_findDefaultValuesToBind() {
-    QHash<RPZAtom::Parameters, QVariant> out;
+QHash<AtomParameter, QVariant> AtomEditor::_findDefaultValuesToBind() {
+    QHash<AtomParameter, QVariant> out;
 
     if(this->_atoms.count() > 0) {
 
         auto firstItem = this->_atoms[0];
 
         //intersect all customizables params
-        QSet<RPZAtom::Parameters> paramsToDisplay = firstItem->customizableParams();
+        QSet<AtomParameter> paramsToDisplay = firstItem->customizableParams();
         for(int i = 1; i < this->_atoms.count(); i++) {
             auto currCP = this->_atoms[i]->customizableParams();
             paramsToDisplay = paramsToDisplay.intersect(currCP);

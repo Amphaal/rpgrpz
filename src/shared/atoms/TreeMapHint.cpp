@@ -155,23 +155,23 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, cons
         case PayloadAlteration::BulkMetadataChanged: {
             auto partial = type == PayloadAlteration::BulkMetadataChanged ? RPZAtom(alteration.toHash()) : MetadataChangedPayload::fromArgs(alteration);
             
-            for(auto param : partial.hasMetadata()) {
+            for(auto param : partial.orderedEditedMetadata()) {
                 
                 switch(param) {
                 
-                    case RPZAtom::Parameters::Locked: {
+                    case AtomParameter::Locked: {
                         auto isLocked = partial.isLocked();
                         item->setData(1, LayoutCustomRoles::AvailabilityRole, isLocked);
                     }
                     break;
 
-                    case RPZAtom::Parameters::Hidden: {
+                    case AtomParameter::Hidden: {
                         auto isHidden = partial.isHidden();
                         item->setData(1, LayoutCustomRoles::VisibilityRole, isHidden);
                     }
                     break;
 
-                    case RPZAtom::Parameters::Layer: {
+                    case AtomParameter::Layer: {
                         QVector<snowflake_uid> list {targetedAtomId};
                         this->_changeLayer(list, partial.layer());
                     }

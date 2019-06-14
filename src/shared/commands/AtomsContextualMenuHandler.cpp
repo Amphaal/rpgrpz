@@ -34,21 +34,21 @@ void AtomsContextualMenuHandler::removeSelectedAtoms() {
 void AtomsContextualMenuHandler::moveSelectedAtomsToLayer(int targetLayer) {
     auto selectedIds = this->_selectedAtomIds();
     this->_hints->handleAlterationRequest(
-        MetadataChangedPayload(selectedIds, RPZAtom::Parameters::Layer, targetLayer)
+        MetadataChangedPayload(selectedIds, AtomParameter::Layer, targetLayer)
     );
 }
 
 void AtomsContextualMenuHandler::alterSelectedAtomsVisibility(bool isHidden) {
     auto selectedIds = this->_selectedAtomIds();
     this->_hints->handleAlterationRequest(
-        MetadataChangedPayload(selectedIds, RPZAtom::Parameters::Hidden, isHidden)
+        MetadataChangedPayload(selectedIds, AtomParameter::Hidden, isHidden)
     );
 }
 
 void AtomsContextualMenuHandler::alterSelectedAtomsAvailability(bool isLocked) {
     auto selectedIds = this->_selectedAtomIds();
     this->_hints->handleAlterationRequest(
-        MetadataChangedPayload(selectedIds, RPZAtom::Parameters::Locked, isLocked)
+        MetadataChangedPayload(selectedIds, AtomParameter::Locked, isLocked)
     );
 }
 

@@ -6,7 +6,7 @@
 
 class NonLinearAtomSliderEditor : public AtomSliderEditor {
     public:
-        NonLinearAtomSliderEditor(const RPZAtom::Parameters &parameter, int minimum, int maximum) : AtomSliderEditor(parameter, minimum, maximum) {}
+        NonLinearAtomSliderEditor(const AtomParameter &parameter, int minimum, int maximum) : AtomSliderEditor(parameter, minimum, maximum) {}
 
     private:    
         //https://www.wolframalpha.com/input/?i=fit+exponential++%5B(1,+0.1),+(500,+1),+(1000,+10)%5D

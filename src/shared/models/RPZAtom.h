@@ -34,26 +34,26 @@ enum class AtomType {
     PC 
 };
 
+//order is important for transform handling
+enum AtomParameter {
+    AssetId,
+    AssetName,
+    Scale,
+    Rotation,
+    Text,
+    TextSize,
+    Layer,
+    PenWidth,
+    Hidden,
+    Locked,
+    Shape,
+    Position
+};
+
 class RPZAtom : public Ownable {
     
     public:
-        enum Parameters {
-            Type,
-            AssetId,
-            AssetName,
-            Scale,
-            Rotation,
-            Text,
-            TextSize,
-            Layer,
-            Position,
-            PenWidth,
-            Shape,
-            Hidden,
-            Locked
-        };
-
-        static void updateGraphicsItemFromMetadata(QGraphicsItem* item, const Parameters &param, QVariant &val);
+        static void updateGraphicsItemFromMetadata(QGraphicsItem* item, const AtomParameter &param, QVariant &val);
 
         RPZAtom();
         RPZAtom(const QVariantHash &hash);
@@ -71,10 +71,10 @@ class RPZAtom : public Ownable {
         //
         //
 
-        void setMetadata(const Parameters &key, const QVariant &value);
-        QVariant metadata(const Parameters &key);
-        QSet<RPZAtom::Parameters> hasMetadata();
-        QSet<RPZAtom::Parameters> customizableParams();
+        void setMetadata(const AtomParameter &key, const QVariant &value);
+        QVariant metadata(const AtomParameter &key);
+        QList<AtomParameter> orderedEditedMetadata();
+        QSet<AtomParameter> customizableParams();
 
         QString assetId();
         QString assetName();
@@ -93,34 +93,34 @@ class RPZAtom : public Ownable {
         void setShape(const QRectF &rect);
 
     private:
-        static inline const QHash<Parameters, QString> _str = {
-            { AssetId, "a_id" },
-            { AssetName, "a_name" },
-            { Scale, "scl" },
-            { Rotation, "deg" },
-            { Text, "txt" },
-            { TextSize, "txt_s" },
-            { Layer, "lyr" },
-            { Position, "pos" },
-            { PenWidth, "pen_w" },
-            { Shape, "shape" },
-            { Hidden, "hid" },
-            { Locked, "lck" }
+        static inline const QHash<AtomParameter, QString> _str = {
+            { AtomParameter::AssetId, "a_id" },
+            { AtomParameter::AssetName, "a_name" },
+            { AtomParameter::Scale, "scl" },
+            { AtomParameter::Rotation, "deg" },
+            { AtomParameter::Text, "txt" },
+            { AtomParameter::TextSize, "txt_s" },
+            { AtomParameter::Layer, "lyr" },
+            { AtomParameter::Position, "pos" },
+            { AtomParameter::PenWidth, "pen_w" },
+            { AtomParameter::Shape, "shape" },
+            { AtomParameter::Hidden, "hid" },
+            { AtomParameter::Locked, "lck" }
         };
 
-        static inline const QHash<Parameters, QVariant> _defaultVal = {
-            { AssetId, "" },
-            { AssetName, "" },
-            { Scale, 1.0 },
-            { Rotation, 0.0 },
-            { Text, "Saisir du texte" },
-            { TextSize, 10 },
-            { Layer, 0 },
-            { Position, NULL },
-            { PenWidth, 1 },
-            { Shape, NULL },
-            { Hidden, false },
-            { Locked, false }
+        static inline const QHash<AtomParameter, QVariant> _defaultVal = {
+            { AtomParameter::AssetId, "" },
+            { AtomParameter::AssetName, "" },
+            { AtomParameter::Scale, 1.0 },
+            { AtomParameter::Rotation, 0.0 },
+            { AtomParameter::Text, "Saisir du texte" },
+            { AtomParameter::TextSize, 10 },
+            { AtomParameter::Layer, 0 },
+            { AtomParameter::Position, NULL },
+            { AtomParameter::PenWidth, 1 },
+            { AtomParameter::Shape, NULL },
+            { AtomParameter::Hidden, false },
+            { AtomParameter::Locked, false }
         };
 
         QString _defaultDescriptor();

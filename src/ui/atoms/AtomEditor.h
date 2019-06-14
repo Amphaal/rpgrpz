@@ -27,10 +27,10 @@ class AtomEditor : public QWidget {
     
     private:
         QVector<RPZAtom*> _atoms;
-        QHash<RPZAtom::Parameters, AtomSubEditor*> _editorsByParam;
+        QHash<AtomParameter, AtomSubEditor*> _editorsByParam;
 
-        QHash<RPZAtom::Parameters, QVariant> _findDefaultValuesToBind();
+        QHash<AtomParameter, QVariant> _findDefaultValuesToBind();
         void _createEditors();
 
-        void _onSubEditorChanged(const RPZAtom::Parameters &parameterWhoChanged, QVariant &value);
+        void _onSubEditorChanged(const AtomParameter &parameterWhoChanged, QVariant &value);
 };

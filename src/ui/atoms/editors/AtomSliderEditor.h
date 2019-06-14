@@ -6,7 +6,7 @@
 
 class AtomSliderEditor : public AtomSubEditor {
     public:
-        AtomSliderEditor(const RPZAtom::Parameters &parameter, int minimum, int maximum);
+        AtomSliderEditor(const AtomParameter &parameter, int minimum, int maximum);
 
         QSlider* slider();
 

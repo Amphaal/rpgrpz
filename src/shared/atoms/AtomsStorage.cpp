@@ -95,7 +95,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &historyP
                 RPZAtom outAtom;
                 auto refAtom = this->_atomsById[snowflakeId];
 
-                for(auto change : partialAtom.hasMetadata()) {
+                for(auto change : partialAtom.orderedEditedMetadata()) {
                     outAtom.setMetadata(change, refAtom.metadata(change));
                 }
 
@@ -109,7 +109,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &historyP
         case PayloadAlteration::MetadataChanged: {
             
             auto casted = (MetadataChangedPayload*)&historyPayload;
-            auto changesTypes = MetadataChangedPayload::fromArgs(casted->args()).hasMetadata();
+            auto changesTypes = MetadataChangedPayload::fromArgs(casted->args()).orderedEditedMetadata();
             RPZMap<RPZAtom> partialAtoms;
 
             for(auto id : casted->targetAtomIds()) {
@@ -259,7 +259,7 @@ RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, con
         case PayloadAlteration::BulkMetadataChanged: {
             auto partial = type == PayloadAlteration::BulkMetadataChanged ? RPZAtom(alteration.toHash()) : MetadataChangedPayload::fromArgs(alteration);
             
-            for(auto param : partial.hasMetadata()) {
+            for(auto param : partial.orderedEditedMetadata()) {
                 storedAtom->setMetadata(param, partial.metadata(param));
             }
         }   
@@ -318,7 +318,7 @@ void AtomsStorage::_duplicateAtoms(QVector<snowflake_uid> &atomIdList) {
                 currPos.y() + (this->_duplicationCount * stepHeight)
             );
 
-        newAtom.setMetadata(RPZAtom::Parameters::Position, currPos);
+        newAtom.setMetadata(AtomParameter::Position, currPos);
 
         newAtoms.insert(newAtom.id(), newAtom);
     }
