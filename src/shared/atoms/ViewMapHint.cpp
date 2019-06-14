@@ -38,10 +38,17 @@ void ViewMapHint::handleAnyMovedItems() {
     //generate args for payload
     RPZMap<RPZAtom> coords;
     for(auto gi : this->_itemsWhoNotifiedMovement) {
+        
         auto cAtom = this->_fetchAtom(gi);
+        if(!cAtom) {
+            qWarning() << "BUG";
+            continue;
+        }
+
         RPZAtom oAtom;
         oAtom.setMetadata(AtomParameter::Position, gi->pos());
         coords.insert(cAtom->id(), oAtom);
+
     }
 
     //inform moving
@@ -50,8 +57,9 @@ void ViewMapHint::handleAnyMovedItems() {
 
     //enable notifications back on those items
     for(auto item : this->_itemsWhoNotifiedMovement) {
-        auto notifier = dynamic_cast<MapViewItemsNotifier*>(item);
-        if(notifier) notifier->activateNotifications();
+        if(auto notifier = dynamic_cast<MapViewItemsNotifier*>(item)) {
+            notifier->activateNotifications();
+        }
     }
 
     //reset list 
@@ -340,6 +348,7 @@ void ViewMapHint::integrateDrawingAsPayload(QGraphicsPathItem* drawnItem, QGraph
     auto newAtom = MapViewGraphicsScene::itemToAtom(templateGhostItem);
     
     //override shape and pos to fit the drawn item
+    newAtom.setMetadata(AtomParameter::Position, drawnItem->pos());
     newAtom.setShape(drawnItem->path());
 
     auto payload = AddedPayload(newAtom);
@@ -395,7 +404,10 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
     
     //default
     else {
-        newItem = this->scene()->addToScene(atomToBuildFrom, AssetMetadata(pathToAssetFile));
+        newItem = this->scene()->addToScene(
+            atomToBuildFrom, 
+            AssetMetadata(pathToAssetFile)
+        );
     }
 
     //save pointer ref

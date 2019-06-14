@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QGraphicsItem>
+#include <QGraphicsScene>
 #include <QVariant>
 #include <QDebug>
 
@@ -18,6 +19,10 @@ class MapViewItemsNotified  {
 class MapViewItemsNotifier  {
     
     public:
+        ~MapViewItemsNotifier() {
+            if(this->_debugPoint) delete this->_debugPoint;
+        }
+
         static QFlags<QGraphicsItem::GraphicsItemFlag> defaultFlags() {
             return QFlags<QGraphicsItem::GraphicsItemFlag>(
                 QGraphicsItem::GraphicsItemFlag::ItemIsSelectable |
@@ -56,10 +61,13 @@ class MapViewItemsNotifier  {
             if(!this->_item->scene()) return;
             if(!this->_mustNotify) return;
             
+            // this->_updateDebugPoint();
+
             switch(change) {
-                case QGraphicsItem::ItemPositionHasChanged:
+                case QGraphicsItem::ItemPositionHasChanged: {
                     this->_toNotify->onItemChange(this->_item, MapViewCustomItemsEventFlag::Moved);
-                    break;
+                }
+                break;
                 case (int)MapViewCustomItemsEventFlag::TextFocusOut:
                 case (int)MapViewCustomItemsEventFlag::TextFocusIn:
                     this->_toNotify->onItemChange(this->_item, (MapViewCustomItemsEventFlag)change);
@@ -71,4 +79,24 @@ class MapViewItemsNotifier  {
         MapViewItemsNotified* _toNotify = nullptr;
         QGraphicsItem* _item = nullptr;
         bool _mustNotify = true;
+
+        QGraphicsItem* _debugPoint = nullptr;
+        
+        void _updateDebugPoint() {
+            
+            if(this->_debugPoint) delete this->_debugPoint;
+
+            auto pos = this->_item->pos();
+            auto line = QLineF(
+                pos,
+                pos + QPointF(.01, .01)
+            );
+
+            QPen pen;
+            pen.setWidth(1);
+            pen.setColor("#FF0000");
+
+            this->_debugPoint = this->_item->scene()->addLine(line, pen);
+
+        }
 };

@@ -62,7 +62,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             atom.shuffleId();
 
             //default update
-            auto pos = blueprint->scenePos();
+            auto pos = blueprint->pos();
             atom.setMetadata(AtomParameter::Position, pos);
             atom.setShape(blueprint->boundingRect());
             
