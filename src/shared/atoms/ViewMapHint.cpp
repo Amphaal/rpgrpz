@@ -95,12 +95,15 @@ void ViewMapHint::_onSceneItemChanged(QGraphicsItem* item, int changeFlag) {
 
 }
 
+
+QVector<RPZAtom*> ViewMapHint::selectedAtoms() {
+    return this->_fetchAtoms(this->scene()->selectedItems());
+}
+
 QVector<snowflake_uid> ViewMapHint::_selectedAtomIds() {
-    
-    auto selectedAtoms = this->_fetchAtoms(this->scene()->selectedItems());
-    
     QVector<snowflake_uid> selectedAtomIds;
-    for(auto atom : selectedAtoms) {
+    
+    for(auto atom : this->selectedAtoms()) {
         selectedAtomIds.append(atom->id());
     }
     
@@ -109,26 +112,11 @@ QVector<snowflake_uid> ViewMapHint::_selectedAtomIds() {
 
 void ViewMapHint::_onSceneSelectionChanged() {
     
-    auto selectedAtoms = this->_fetchAtoms(this->scene()->selectedItems());
-
-    //send selection changed
-    QVector<void*> blandList;
-    for(auto atom : selectedAtoms) {
-        blandList.append(atom);
-    }
-    emit selectionChanged(blandList);
-
     //prevent
     if(this->_preventInnerGIEventsHandling) return;
 
-    //extract ids for payload
-    QVector<snowflake_uid> selectedAtomIds;
-    for(auto atom : selectedAtoms) {
-        selectedAtomIds.append(atom->id());
-    }
-
     //bypass internal
-    auto payload = SelectedPayload(selectedAtomIds);
+    auto payload = SelectedPayload(this->_selectedAtomIds());
     this->_emitAlteration(payload);
 
 }

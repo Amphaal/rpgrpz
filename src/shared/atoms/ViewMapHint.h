@@ -69,10 +69,11 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         void setDefaultUser(RPZUser user);
         void setDefaultLayer(int layer);
 
+        QVector<RPZAtom*> selectedAtoms();
+
     signals:
         void mapFileStateChanged(const QString &filePath, bool isDirty);
         void requestMissingAsset(const QString &assetIdToRequest);
-        void selectionChanged(QVector<void*> &atoms);
         void atomTemplateChanged(void* atomTemplate);
 
     private:

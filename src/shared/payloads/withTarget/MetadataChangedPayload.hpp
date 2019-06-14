@@ -32,7 +32,7 @@ class MetadataChangedPayload : public MultipleTargetsPayload {
             const snowflake_uid &targetedId, 
             const RPZAtom::Parameters &param, 
             const QVariant &value
-        ) : MultipleTargetsPayload(PayloadAlteration::MetadataChanged, QVector<snowflake_uid>(targetedId)) {
+        ) : MultipleTargetsPayload(PayloadAlteration::MetadataChanged, QVector<snowflake_uid>({targetedId})) {
             QHash<RPZAtom::Parameters, QVariant> changes {{ param, value }};
             this->_setMetadataChanges(changes);
         }

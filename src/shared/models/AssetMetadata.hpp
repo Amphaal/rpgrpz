@@ -11,9 +11,13 @@ class AssetMetadata : public QVariantHash {
         AssetMetadata(const QVariantHash &hash) :  QVariantHash(hash) {}
         AssetMetadata(AssetsDatabaseElement *elem) {
             this->_setAtomType(elem->atomType());
-            this->insert("aId", elem->id());
-            this->insert("nm", elem->displayName());
-            this->insert("pth", AssetsDatabase::get()->getFilePathToAsset(elem));
+
+            if(elem->isItem()) {
+                this->insert("aId", elem->id());
+                this->insert("nm", elem->displayName());
+                this->insert("pth", AssetsDatabase::get()->getFilePathToAsset(elem));
+            } 
+
         }
 
         AssetMetadata(const QString &pathToAssetFile) {

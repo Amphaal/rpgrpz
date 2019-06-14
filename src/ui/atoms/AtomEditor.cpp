@@ -72,7 +72,8 @@ void AtomEditor::buildEditor(QVector<void*> &atomsToBuildFrom) {
 
     //load those who need to be displayed
     for(auto i = toDisplay.begin(); i != toDisplay.end(); ++i) {
-        this->_editorsByParam[i.key()]->loadTemplate(this->_atoms, i.value());
+        auto editor = this->_editorsByParam[i.key()];
+        editor->loadTemplate(this->_atoms, i.value());
     }
 
     //hide the others
