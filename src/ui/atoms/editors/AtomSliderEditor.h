@@ -11,7 +11,6 @@ class AtomSliderEditor : public AtomSubEditor {
         QSlider* slider();
 
     private:
-        QWidget* _instDataEditor() override;
         void loadTemplate(QVector<RPZAtom*> &atomsToManipulate, QVariant &defaultValue) override;
 
         void _onSliderChanging(int sliderVal);

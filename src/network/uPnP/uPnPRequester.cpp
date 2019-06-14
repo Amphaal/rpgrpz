@@ -1,4 +1,4 @@
-#include "uPnPThread.h"
+#include "uPnPThread.hpp"
 
 #include <QString>
 

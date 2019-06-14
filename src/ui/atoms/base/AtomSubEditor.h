@@ -24,7 +24,7 @@ class AtomSubEditor : public QWidget {
     protected:
         RPZAtom::Parameters _param;
         QWidget* _dataEditor = nullptr;
-        virtual QWidget* _instDataEditor() = 0;
+        void _setAsDataEditor(QWidget *dataEditor);
 
         AtomEditorLineDescriptor* _descr = nullptr;
         QVector<RPZAtom*> _atomsToManipulate;

@@ -18,7 +18,7 @@ void AtomEditor::_createEditors() {
     for(auto editor : this->_editorsByParam) {
         QObject::connect(
             editor, &AtomSubEditor::valueConfirmedForPayload,
-            this, AtomEditor::_onSubEditorChanged
+            this, &AtomEditor::_onSubEditorChanged
         );
         this->layout()->addWidget(editor);
     }

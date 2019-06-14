@@ -127,8 +127,8 @@ list(APPEND EXT_LIBS
 # mandatory explicit generation #
 #################################
 
-file(GLOB_RECURSE HPP_FILES src/*.hpp)
 file(GLOB_RECURSE CPP_FILES src/*.cpp)
+file(GLOB_RECURSE HPP_FILES src/*.hpp)
 
 list(APPEND SOURCES 
     ${CPP_FILES}

@@ -6,6 +6,9 @@
 #include <QString>
 #include <QHash>
 
+#include <QFont>
+#include <QPen>
+
 #include <QDebug>
 
 #include <QByteArray>

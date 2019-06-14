@@ -2,6 +2,7 @@
 
 AtomSliderEditor::AtomSliderEditor(const RPZAtom::Parameters &parameter, int minimum, int maximum) : AtomSubEditor(parameter) { 
 
+    this->_setAsDataEditor(new QSlider(Qt::Orientation::Horizontal, this));
     this->slider()->setMinimum(minimum);
     this->slider()->setMaximum(maximum);
 
@@ -13,10 +14,6 @@ AtomSliderEditor::AtomSliderEditor(const RPZAtom::Parameters &parameter, int min
 
 QSlider* AtomSliderEditor::slider() {
     return (QSlider*)this->_dataEditor;
-}
-
-QWidget* AtomSliderEditor::_instDataEditor() {
-    this->_dataEditor = new QSlider(Qt::Orientation::Horizontal, this);
 }
 
 
