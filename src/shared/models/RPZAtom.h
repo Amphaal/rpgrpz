@@ -16,6 +16,8 @@
 #include "libs/snowflake.hpp"
 #include "base/Ownable.hpp"
 
+#include "src/ui/map/graphics/MapViewItemsNotifier.hpp"
+
 class JSONSerializer {
     public:
         static QByteArray asBase64(const QPainterPath &path);
@@ -53,6 +55,8 @@ class RPZAtom : public Ownable {
             Locked
         };
 
+        static void updateGraphicsItemFromMetadata(QGraphicsItem* item, const Parameters &param, QVariant &val);
+
         RPZAtom();
         RPZAtom(const QVariantHash &hash);
         RPZAtom(const snowflake_uid &id, const AtomType &type, const RPZUser &owner);
@@ -71,7 +75,8 @@ class RPZAtom : public Ownable {
 
         void setMetadata(const Parameters &key, const QVariant &value);
         QVariant metadata(const Parameters &key);
-        QList<RPZAtom::Parameters> hasMetadata();
+        QSet<RPZAtom::Parameters> hasMetadata();
+        QSet<RPZAtom::Parameters> customizableParams();
 
         QString assetId();
         QString assetName();

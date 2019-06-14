@@ -550,60 +550,12 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, cons
             
             for(auto param : partial.hasMetadata()) {
                 
-                switch(param) {
-                    //on moving
-                    case RPZAtom::Parameters::Position: {
-                        auto destPos = updatedAtom->pos();
-                        updatedAtom->graphicsItem()->setPos(destPos);  
-                    }
-                    break;
-
-                    //on scaling
-                    case RPZAtom::Parameters::Scale: {
-                        auto destScale = updatedAtom->scale();
-                        updatedAtom->graphicsItem()->setScale(destScale);
-                    }
-                    break;
-
-                    // on locking change
-                    case RPZAtom::Parameters::Locked: {
-                        auto locked = updatedAtom->isLocked();
-                        auto flags = !locked ? MapViewItemsNotifier::defaultFlags() : 0;
-                        updatedAtom->graphicsItem()->setFlags(flags);
-                    }
-                    break;
-                    
-                    // on changing visibility
-                    case RPZAtom::Parameters::Hidden: {
-                        auto hidden = updatedAtom->isHidden();
-                        auto opacity = hidden ? .05 : 1;
-                        updatedAtom->graphicsItem()->setOpacity(opacity);
-                    }
-                    break;
-
-                    //on rotation
-                    case RPZAtom::Parameters::Rotation: {
-                        auto destRotation = updatedAtom->rotation();
-                        updatedAtom->graphicsItem()->setRotation(destRotation);
-                    }
-                    break;
-
-                    //on text change
-                    case RPZAtom::Parameters::Text: {
-                        auto newText = updatedAtom->text();
-                        auto cItem = (QGraphicsTextItem*)updatedAtom->graphicsItem();
-                        cItem->setPlainText(newText);
-                    }
-                    break;
-
-                    //on layer change
-                    case RPZAtom::Parameters::Layer: {
-                        auto newLayer = updatedAtom->layer();
-                        updatedAtom->graphicsItem()->setZValue(newLayer);
-                    }
-                    break;
-                }
-                
+                RPZAtom::updateGraphicsItemFromMetadata(
+                    updatedAtom->graphicsItem(),
+                    param,
+                    updatedAtom->metadata(param)
+                );
+            
             }
         }   
         break;

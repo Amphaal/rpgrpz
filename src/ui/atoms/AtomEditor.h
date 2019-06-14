@@ -10,9 +10,9 @@
 
 #include "src/shared/payloads/Payloads.h"
 
-#include "editors/AtomRotationEditor.hpp"
-#include "editors/AtomScalingEditor.hpp"
-#include "editors/AtomPenWidthEditor.hpp"
+#include "base/AtomSubEditor.h"
+#include "editors/AtomSliderEditor.h"
+#include "editors/NonLinearAtomSliderEditor.hpp"
 
 class AtomEditor : public QWidget {
 
@@ -20,18 +20,17 @@ class AtomEditor : public QWidget {
 
     public:
         AtomEditor(QWidget* parent = nullptr);
-
-        void buildEditorFromSelection(QVector<void*> &selectedAtoms);
+        void buildEditor(QVector<void*> &atomsToBuildFrom);
     
     signals:
         void requiresAtomAlteration(QVariantHash &payload);
     
     private:
         QVector<RPZAtom*> _atoms;
+        QHash<RPZAtom::Parameters, AtomSubEditor*> _editorsByParam;
 
-        AtomRotationEditor* _rotateEditor = nullptr;
-        AtomScalingEditor* _scaleEditor = nullptr;
-        AtomPenWidthEditor* _penWidthEditor = nullptr;
+        QHash<RPZAtom::Parameters, QVariant> _findDefaultValuesToBind();
+        void _createEditors();
 
-        void _onSubEditorChanged(AtomSliderEditor* editor);
+        void _onSubEditorChanged(const RPZAtom::Parameters &parameterWhoChanged, QVariant &value);
 };

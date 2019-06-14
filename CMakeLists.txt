@@ -173,7 +173,8 @@ list(APPEND SOURCES
     src/ui/map/MapTools.cpp
     src/ui/map/MapView.cpp
     src/ui/atoms/base/AtomEditorLineDescriptor.cpp
-    src/ui/atoms/base/AtomSliderEditor.cpp
+    src/ui/atoms/base/AtomSubEditor.cpp
+    src/ui/atoms/editors/AtomSliderEditor.cpp
     src/ui/atoms/AtomEditor.cpp
     src/ui/layout/base/LayerSelector.cpp
     src/ui/layout/MapLayoutTree.cpp

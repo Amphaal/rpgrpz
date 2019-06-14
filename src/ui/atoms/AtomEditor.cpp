@@ -1,49 +1,83 @@
 #include "AtomEditor.h"
 
 AtomEditor::AtomEditor(QWidget* parent) : QWidget(parent) {
-
-    //prepare
-    this->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
     
+    this->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
     auto layout = new QVBoxLayout;
     this->setLayout(layout);
 
-    //editors
-    this->_rotateEditor = new AtomRotationEditor;
-    this->_scaleEditor = new AtomScalingEditor;
-    this->_penWidthEditor = new AtomPenWidthEditor;
-    
-    layout->addWidget(this->_rotateEditor);
-    layout->addWidget(this->_scaleEditor);
-    layout->addWidget(this->_penWidthEditor);
-
-    QObject::connect(
-        this->_rotateEditor->slider(), &QAbstractSlider::sliderReleased,
-        [=]() { this->_onSubEditorChanged(this->_rotateEditor); }
-    );
-    QObject::connect(
-        this->_scaleEditor->slider(), &QAbstractSlider::sliderReleased,
-        [=]() { this->_onSubEditorChanged(this->_scaleEditor); }
-    );
-    QObject::connect(
-        this->_penWidthEditor->slider(), &QAbstractSlider::sliderReleased,
-        [=]() { this->_onSubEditorChanged(this->_penWidthEditor); }
-    );
+    this->_createEditors();
 }
 
+void AtomEditor::_createEditors() {
+    this->_editorsByParam[RPZAtom::Rotation] = new AtomSliderEditor(RPZAtom::Rotation, 0, 359);
+    this->_editorsByParam[RPZAtom::Scale] = new NonLinearAtomSliderEditor(RPZAtom::Scale, 1, 1000);
+    this->_editorsByParam[RPZAtom::PenWidth] = new AtomSliderEditor(RPZAtom::PenWidth, 1, 50);
+    this->_editorsByParam[RPZAtom::TextSize] = new AtomSliderEditor(RPZAtom::TextSize, 1, 50);
 
-void AtomEditor::_onSubEditorChanged(AtomSliderEditor* editor) {
-    auto payload = editor->createPayload();
-    requiresAtomAlteration(payload);
+    for(auto editor : this->_editorsByParam) {
+        QObject::connect(
+            editor, &AtomSubEditor::valueConfirmedForPayload,
+            this, AtomEditor::_onSubEditorChanged
+        );
+        this->layout()->addWidget(editor);
+    }
 }
 
-void AtomEditor::buildEditorFromSelection(QVector<void*> &selectedAtoms) {
+void AtomEditor::_onSubEditorChanged(const RPZAtom::Parameters &parameterWhoChanged, QVariant &value) {
     
-    //populate
+    QVector<snowflake_uid> ids;
+    for(auto atom : this->_atoms) ids.append(atom->id());
+    
+    auto payload = MetadataChangedPayload(ids, parameterWhoChanged, value);
+    payload.changeSource(AlterationPayload::Source::Local_AtomEditor);
+    emit requiresAtomAlteration(payload);
+
+}
+
+QHash<RPZAtom::Parameters, QVariant> AtomEditor::_findDefaultValuesToBind() {
+    QHash<RPZAtom::Parameters, QVariant> out;
+
+    if(this->_atoms.count() > 0) {
+
+        auto firstItem = this->_atoms[0];
+
+        //intersect all customizables params
+        QSet<RPZAtom::Parameters> paramsToDisplay = firstItem->customizableParams();
+        for(int i = 1; i < this->_atoms.count(); i++) {
+            auto currCP = this->_atoms[i]->customizableParams();
+            paramsToDisplay = paramsToDisplay.intersect(currCP);
+        }
+
+        //find default values to apply
+        auto hasMoreThanOneAtomToBind = this->_atoms.count() > 1;
+        for(auto param : paramsToDisplay) {
+            QVariant val =  hasMoreThanOneAtomToBind ? QVariant() : firstItem->metadata(param);
+            out.insert(param, val);
+        }
+
+    }
+
+    return out;
+}
+
+void AtomEditor::buildEditor(QVector<void*> &atomsToBuildFrom) {
+    
+    //modify atom list
     this->_atoms.clear();
-    for(auto atom : selectedAtoms) this->_atoms.append((RPZAtom*)atom);
+    for(auto atom : atomsToBuildFrom) this->_atoms.append((RPZAtom*)atom);
+    
+    //fetch parameter editors to display
+    auto toDisplay = this->_findDefaultValuesToBind();
 
-    this->_rotateEditor->loadAtomsAsTemplate(this->_atoms);
-    this->_scaleEditor->loadAtomsAsTemplate(this->_atoms);
-    this->_penWidthEditor->loadAtomsAsTemplate(this->_atoms);
+    //load those who need to be displayed
+    for(auto i = toDisplay.begin(); i != toDisplay.end(); ++i) {
+        this->_editorsByParam[i.key()]->loadTemplate(this->_atoms, i.value());
+    }
+
+    //hide the others
+    auto toHide = _editorsByParam.keys().toSet().subtract(
+        toDisplay.keys().toSet()
+    );
+    for(auto i : toHide) this->_editorsByParam[i]->setVisible(false);
 }

@@ -24,6 +24,7 @@ class AlterationPayload : public QVariantHash {
             Undefined,
             Local_MapLayout,
             Local_Map,
+            Local_AtomEditor,
             Network
         };
 

@@ -15,6 +15,86 @@ QPainterPath JSONSerializer::toPainterPath(const QByteArray &base64) {
     return returned;
 }
 
+void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const Parameters &param, QVariant &val) {
+    
+    if(!item) return;
+    
+    switch(param) {
+                    
+        //on moving
+        case RPZAtom::Parameters::Position: {
+            auto destPos = val.toPointF();
+            item->setPos(destPos);  
+        }
+        break;
+
+        //on scaling
+        case RPZAtom::Parameters::Scale: {
+            auto destScale = val.toDouble();
+            item->setScale(destScale);
+        }
+        break;
+
+        // on locking change
+        case RPZAtom::Parameters::Locked: {
+            auto locked = val.toBool();
+            auto flags = !locked ? MapViewItemsNotifier::defaultFlags() : 0;
+            item->setFlags(flags);
+        }
+        break;
+        
+        // on changing visibility
+        case RPZAtom::Parameters::Hidden: {
+            auto hidden = val.toBool();
+            auto opacity = hidden ? .05 : 1;
+            item->setOpacity(opacity);
+        }
+        break;
+
+        //on rotation
+        case RPZAtom::Parameters::Rotation: {
+            auto destRotation = val.toInt();
+            item->setRotation(destRotation);
+        }
+        break;
+
+        //on text size change
+        case RPZAtom::Parameters::TextSize: {
+            auto newSize = val.toInt();
+            auto cItem = (QGraphicsTextItem*)item;
+            auto font = cItem->font();
+            font.setPointSize(newSize);
+            cItem->setFont(font);
+        }
+        break;
+
+        //on pen width change
+        case RPZAtom::Parameters::PenWidth: {
+            auto newWidth = val.toInt();
+            auto cItem = (QGraphicsPathItem*)item;
+            auto pen = cItem->pen();
+            pen.setWidth(newWidth);
+            cItem->setPen(pen);
+        }
+        break;
+
+        //on text change
+        case RPZAtom::Parameters::Text: {
+            auto newText = val.toString();
+            auto cItem = (QGraphicsTextItem*)item;
+            cItem->setPlainText(newText);
+        }
+        break;
+
+        //on layer change
+        case RPZAtom::Parameters::Layer: {
+            auto newLayer = val.toInt();
+            item->setZValue(newLayer);
+        }
+        break;
+    }
+};
+
 RPZAtom::RPZAtom() {}
 RPZAtom::RPZAtom(const QVariantHash &hash) : Ownable(hash) {}
 RPZAtom::RPZAtom(const snowflake_uid &id, const AtomType &type, const RPZUser &owner) : Ownable(id, owner) {
@@ -37,20 +117,38 @@ QString RPZAtom::descriptor() {
 
     //displays asset name
     auto asname = this->assetName();
-    if(!asname.isNull()) return asname;
+    if(!asname.isNull()) {
+        return asname + "(" + this->_defaultDescriptor() +")";
+    }
 
     return this->_defaultDescriptor();
 };
 
+QSet<RPZAtom::Parameters> RPZAtom::customizableParams() {
+    QSet<RPZAtom::Parameters> out { Scale, Rotation };
+    
+    switch(this->type()) {
+        case AtomType::Drawing:
+            out.insert(RPZAtom::Parameters::PenWidth);
+            break;
+        case AtomType::Text:
+            out.insert(RPZAtom::Parameters::TextSize);
+            break;
+    }
+
+    return out;
+}
 
 QString RPZAtom::_defaultDescriptor() {
     switch(this->type()) {
         case AtomType::Drawing:
             return "Dessin";
-            break;
         case AtomType::Text:
             return "Texte";
-            break;
+        case AtomType::Object:
+            return "Objet";
+        case AtomType::Brush:
+            return "Brosse";
         default:
             return "Atome";
     }
@@ -99,11 +197,11 @@ QVariant RPZAtom::metadata(const Parameters &key) {
     }
 }
 
-QList<RPZAtom::Parameters> RPZAtom::hasMetadata() {
-    QList<RPZAtom::Parameters> out;
+QSet<RPZAtom::Parameters> RPZAtom::hasMetadata() {
+    QSet<RPZAtom::Parameters> out;
 
     for (QHash<Parameters, QString>::const_iterator i = _str.constBegin(); i != _str.constEnd(); ++i) {
-        if(this->contains(i.value())) out.append(i.key());
+        if(this->contains(i.value())) out.insert(i.key());
     }
     
     return out;

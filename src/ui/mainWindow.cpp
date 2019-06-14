@@ -239,13 +239,7 @@ void MainWindow::_initUIApp() {
     //on map selection change
     QObject::connect(
         this->_mapView->hints(), &ViewMapHint::selectionChanged,
-        this->_atomEditor, &AtomEditor::buildEditorFromSelection
-    );
-
-    //on selection change
-    QObject::connect(
-        this->_mapView->hints(), &ViewMapHint::selectionChanged,
-        this->_atomEditor, &AtomEditor::buildEditorFromSelection
+        this->_atomEditor, &AtomEditor::buildEditor
     );
 
     //on template changing
