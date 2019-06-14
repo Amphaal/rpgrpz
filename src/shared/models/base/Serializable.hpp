@@ -3,7 +3,7 @@
 #include <QVariantHash>
 #include <QMap>
 
-#include "libs/snowflake.hpp"
+#include "src/_libs/snowflake.hpp"
 
 class Serializable : public QVariantHash {
     
@@ -26,41 +26,5 @@ class Serializable : public QVariantHash {
     private:
         void _setId(const snowflake_uid &id) {
             this->insert("id", QString::number(id));
-        }
-};
-
-template<typename T>
-class RPZMap : public QMap<snowflake_uid, T> {
-
-    static_assert(std::is_base_of<Serializable, T>::value, "Must derive from Serializable");
-    T element;
-    
-    public:
-        RPZMap() {}
-        RPZMap(T &singleAtom) {
-            this->insert(singleAtom.id(), singleAtom);
-        }
-
-        QVariantList toVList() {
-            QVariantList out;
-            for(T &base : this->values()) {
-                out.append(base);
-            }
-            return out;
-        }
-};
-
-template<typename T>
-class RPZList : public QList<T> {
-    
-    static_assert(std::is_base_of<Serializable, T>::value, "Must derive from Serializable");
-    T element;
-    
-    public:
-        RPZList(const QVariantList &list) {
-            for(auto &elem : list) {
-                auto casted = T(elem.toHash());
-                this->append(casted);
-            }
         }
 };

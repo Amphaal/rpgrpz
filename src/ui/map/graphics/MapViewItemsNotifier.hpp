@@ -2,12 +2,7 @@
 
 #include <QGraphicsItem>
 #include <QVariant>
-
 #include <QDebug>
-
-#include "src/shared/payloads/Payloads.h"
-
-#include "src/shared/models/RPZAtom.h"
 
 enum class MapViewCustomItemsEventFlag {
     Moved = 6224,

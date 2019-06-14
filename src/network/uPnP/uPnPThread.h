@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QtCore/QThread>
-#include "libs/upnpc_custom/upnpc.hpp"
+#include "src/_libs/upnpc_custom/upnpc.hpp"
 #include <QDebug>
 
 class uPnPThread : public QThread {

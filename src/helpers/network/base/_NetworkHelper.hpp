@@ -1,6 +1,6 @@
 #pragma once
 
-#include "libs/qtPromise/qpromise.h"
+#include "src/_libs/qtPromise/qpromise.h"
 
 #include <QNetworkAccessManager>
 #include <QNetworkReply>

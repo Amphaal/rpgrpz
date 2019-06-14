@@ -16,12 +16,12 @@
 #include "ui/MainWindow.h"
 #include "ui/AppLoader.hpp"
 
-#include "tests/TestMainWindow.h"
+#include "_tests/TestMainWindow.h"
 
 #include <QDir>
 #include <QLockFile>
 
-#include "libs/snowflake.hpp"
+#include "_libs/snowflake.hpp"
 
 void configureApp(QCoreApplication &app) {
     

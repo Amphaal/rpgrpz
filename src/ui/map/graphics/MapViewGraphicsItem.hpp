@@ -6,11 +6,12 @@
 #include <QGraphicsSvgItem>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsTextItem>
-    #include <QTextDocument>
 
 #include "MapViewItemsNotifier.hpp"
 
 #include <QVariant>
+#include <QBrush>
+#include <QFont>
 
 class MapViewGraphicsPathItem : public QGraphicsPathItem, public MapViewItemsNotifier {
     public:

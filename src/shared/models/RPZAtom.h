@@ -13,16 +13,11 @@
 
 #include <QGraphicsItem>
 
-#include "libs/snowflake.hpp"
+#include "src/_libs/snowflake.hpp"
 #include "base/Ownable.hpp"
+#include "base/JSONSerializer.hpp"
 
 #include "src/ui/map/graphics/MapViewItemsNotifier.hpp"
-
-class JSONSerializer {
-    public:
-        static QByteArray asBase64(const QPainterPath &path);
-        static QPainterPath toPainterPath(const QByteArray &base64);
-};
 
 // defined values shared with AssetsDatabaseElement type for static casts
 enum class AtomType { 

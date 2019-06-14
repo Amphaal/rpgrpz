@@ -6,7 +6,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QMainWindow>
-#include "libs/qtautoupdater/autoupdatercore/updater.h"
+#include "src/_libs/qtautoupdater/autoupdatercore/updater.h"
 
 class UpdaterUIIntegrator : public QObject {
     

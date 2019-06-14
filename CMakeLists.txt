@@ -127,92 +127,12 @@ list(APPEND EXT_LIBS
 # mandatory explicit generation #
 #################################
 
-#private libs
-file(GLOB_RECURSE INT_LIBS
-    "libs/*"
-)
+file(GLOB_RECURSE HPP_FILES src/*.hpp)
+file(GLOB_RECURSE CPP_FILES src/*.cpp)
 
 list(APPEND SOURCES 
-    src/helpers/_appContext.cpp
-)
-
-#QThread derivatives
-list(APPEND SOURCES
-    src/network/uPnP/uPnPThread.h
-)
-
-#functionnal components
-list(APPEND SOURCES
-    src/network/rpz/_any/JSONSocket.cpp
-    src/network/rpz/client/RPZClient.cpp
-    src/network/rpz/server/RPZServer.cpp
-
-    src/network/stream/GStreamerClient.cpp
-
-    src/network/uPnP/uPnPRequester.cpp
-    src/network/ConnectivityHelper.cpp
-)
-
-#ui components
-list(APPEND SOURCES
-    src/shared/models/RPZAtom.cpp
-
-    src/ui/map/graphics/MapViewGraphicsScene.hpp
-    
-    src/shared/commands/RPZActions.cpp
-    src/shared/commands/AtomsContextualMenuHandler.cpp
-    src/shared/commands/MessageInterpreter.cpp
-    
-    src/shared/atoms/AtomsHandler.cpp
-    src/shared/atoms/AtomsStorage.cpp
-    
-    src/shared/atoms/ViewMapHint.cpp
-    src/shared/atoms/TreeMapHint.cpp
-
-    src/ui/map/base/AnimationTimeLine.hpp
-    src/ui/map/MapTools.cpp
-    src/ui/map/MapView.cpp
-    src/ui/atoms/base/AtomEditorLineDescriptor.cpp
-    src/ui/atoms/base/AtomSubEditor.cpp
-    src/ui/atoms/editors/AtomSliderEditor.cpp
-    src/ui/atoms/AtomEditor.cpp
-    src/ui/layout/base/LayerSelector.cpp
-    src/ui/layout/MapLayoutTree.cpp
-    src/ui/layout/MapLayoutManager.cpp
-
-    src/shared/database/base/JSONDatabase.cpp
-    src/shared/database/AssetsDatabase.cpp
-    src/shared/assets/AssetsDatabaseElement.cpp
-    
-    src/ui/assets/base/AssetsTreeViewModel.cpp
-    src/ui/assets/base/AssetsTreeView.cpp
-    src/ui/assets/AssetsManager.cpp
-
-    src/ui/others/RestoringSplitter.cpp
-    src/ui/others/statusbar/RPZStatusLabel.hpp
-    src/ui/others/statusbar/RPZStatusBar.cpp
-    src/ui/others/UpdaterUIIntegrator.hpp
-
-    src/ui/communication/ChatEdit.cpp
-    src/ui/communication/logs/base/LogContainer.cpp
-    src/ui/communication/logs/base/LogScrollView.cpp
-    src/ui/communication/logs/UsersLog.hpp
-    src/ui/communication/ChatWidget.cpp
-    src/ui/communication/ConnectWidget.cpp
-
-    src/ui/communication/audio/PlaylistItem.hpp
-    src/ui/communication/audio/Playlist.cpp
-    src/ui/communication/audio/AudioStreamToolbar.hpp
-    src/ui/communication/audio/PlaylistToolbar.hpp
-    src/ui/communication/audio/PlaylistController.cpp
-    src/ui/communication/audio/AudioStreamController.cpp
-)
-
-#main
-list(APPEND SOURCES 
-    src/ui/MainWindow.cpp
-    tests/TestMainWindow.cpp
-    src/main.cpp
+    ${CPP_FILES}
+    ${HPP_FILES}
 )
 
 #########################
@@ -220,7 +140,7 @@ list(APPEND SOURCES
 #########################
 
 # Create executable
-add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${INT_LIBS} ${SOURCES}) 
+add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES}) 
 
 # Bind ext libs
 conan_target_link_libraries(${PROJECT_NAME})

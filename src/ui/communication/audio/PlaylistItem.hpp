@@ -5,7 +5,7 @@
 
 #include "src/helpers/network/youtube/YoutubeHelper.hpp"
 
-#include "libs/qtPromise/qpromise.h"
+#include "src/_libs/qtPromise/qpromise.h"
 
 class PlaylistItem : public QObject {
     

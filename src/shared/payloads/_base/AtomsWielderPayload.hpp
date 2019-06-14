@@ -1,5 +1,6 @@
 #pragma once
 
+#include "src/shared/models/base/RPZMap.hpp"
 #include "src/shared/models/RPZAtom.h"
 
 #include "AlterationPayload.hpp"

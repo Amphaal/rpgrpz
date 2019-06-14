@@ -11,6 +11,8 @@
 
 #include "src/ui/others/ClientBindable.hpp"
 
+#include "src/shared/models/base/RPZList.hpp"
+
 class ChatEdit : public QWidget, public ClientBindable {
 
     Q_OBJECT
