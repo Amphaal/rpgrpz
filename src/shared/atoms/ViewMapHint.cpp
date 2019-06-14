@@ -316,12 +316,6 @@ QGraphicsItem* ViewMapHint::generateGhostItem(AssetMetadata &assetMetadata) {
     
     //generate a blueprint
     auto atomBuiltFromTemplate = RPZAtom(*this->templateAtom);
-    
-    //add +1 to layer, will be discarded later
-    atomBuiltFromTemplate.setMetadata(
-        RPZAtom::Parameters::Layer,
-        atomBuiltFromTemplate.layer() + 1
-    ); 
 
     //add to scene
     QGraphicsItem* ghostItem = this->scene()->addToScene(atomBuiltFromTemplate, assetMetadata, true);

@@ -28,7 +28,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
     public:
         MapViewGraphicsScene(int defaultSize) : QGraphicsScene(defaultSize, defaultSize, defaultSize, defaultSize) { }
 
-        static void updateGraphicsItemFromAtom(QGraphicsItem* target, RPZAtom &blueprint) {
+        static void updateGraphicsItemFromAtom(QGraphicsItem* target, RPZAtom &blueprint, bool isTargetTemporary = false) {
             
             //bind
             target->setData(TemplateAtom, RPZAtom(blueprint));
@@ -36,7 +36,14 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             //update GI
             auto paramToUpdate = blueprint.hasMetadata();
             for(auto param : paramToUpdate) {
-                RPZAtom::updateGraphicsItemFromMetadata(target, param, blueprint.metadata(param));
+
+                auto val = blueprint.metadata(param);
+
+                if(isTargetTemporary && param == RPZAtom::Parameters::Layer) {
+                    val = val.toInt() + 1;
+                }
+
+                RPZAtom::updateGraphicsItemFromMetadata(target, param, val);
             }
 
             //specific update
@@ -54,12 +61,6 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             auto atom = RPZAtom(blueprint->data(TemplateAtom).toHash());
             atom.shuffleId();
 
-            //remove -1 layer to the actual wanted layer
-            atom.setMetadata(
-                RPZAtom::Parameters::Layer,
-                atom.layer() - 1
-            );
-            
             //update template values from current gi properties
             atom.setMetadata(
                 RPZAtom::Parameters::Position,
@@ -116,7 +117,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             }
 
             //add atomType tracker
-            this->updateGraphicsItemFromAtom(out, atom);
+            this->updateGraphicsItemFromAtom(out, atom, isTemporary);
             this->addItem(out);
 
             //prevent notifications on move to kick in since the graphics item is not really in the scene

@@ -3,12 +3,6 @@
 void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const Parameters &param, QVariant &val) {
     
     if(!item) return;
-    
-    auto _updtTOP = [&]() {
-        item->setTransformOriginPoint(
-            item->boundingRect().center()
-        );
-    };
 
     switch(param) {
                     
@@ -24,8 +18,6 @@ void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const Paramete
             
             auto destScale = val.toDouble();
             item->setScale(destScale);
-
-            // _updtTOP();
 
         }
         break;
@@ -50,8 +42,6 @@ void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const Paramete
         case RPZAtom::Parameters::Rotation: {
             auto destRotation = val.toInt();
             item->setRotation(destRotation);
-
-            // _updtTOP();
         }
         break;
 
@@ -62,8 +52,6 @@ void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const Paramete
                 auto font = cItem->font();
                 font.setPointSize(newSize);
                 cItem->setFont(font);
-
-                // _updtTOP();
             }
         }
         break;
@@ -84,8 +72,6 @@ void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const Paramete
             if(auto cItem = dynamic_cast<QGraphicsTextItem*>(item)) {
                 auto newText = val.toString();
                 cItem->setPlainText(newText);
-
-                // _updtTOP();
             }
         }
         break;

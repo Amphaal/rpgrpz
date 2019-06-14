@@ -27,11 +27,14 @@ class MapViewItemsNotifier  {
 
         MapViewItemsNotifier(MapViewItemsNotified* targetToNotify, QGraphicsItem* item) : _toNotify(targetToNotify), _item(item) { 
             
+            //notifications activated by default
             this->activateNotifications();
             
+            //define transform origin point to center
             item->setTransformOriginPoint(
                 item->boundingRect().center()
             );
+
         }
 
         void disableNotifications() {
