@@ -10,6 +10,14 @@ AtomSliderEditor::AtomSliderEditor(const RPZAtom::Parameters &parameter, int min
         this->slider(), &QAbstractSlider::valueChanged,
         this, &AtomSliderEditor::_onSliderChanging
     );
+
+    QObject::connect(
+        this->slider(), &QAbstractSlider::sliderReleased,
+        [&]() {
+            emit valueConfirmedForPayload(this->_param, QVariant(this->outputValue()));
+        }
+    );
+
 }
 
 QSlider* AtomSliderEditor::slider() {

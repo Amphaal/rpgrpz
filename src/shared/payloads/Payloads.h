@@ -16,7 +16,7 @@
 
 class Payloads {
     public:
-        static QSharedPointer<AlterationPayload> autoCastFromNetwork(QVariantHash &hash) {
+        static QSharedPointer<AlterationPayload> autoCast(QVariantHash &hash) {
             
             auto lowCast = AlterationPayload(hash);
             

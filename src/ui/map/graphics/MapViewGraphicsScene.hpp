@@ -29,23 +29,19 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
         MapViewGraphicsScene(int defaultSize) : QGraphicsScene(defaultSize, defaultSize, defaultSize, defaultSize) { }
 
         static void updateGraphicsItemFromAtom(QGraphicsItem* target, RPZAtom &blueprint) {
-
-            target->setZValue(blueprint.layer());
-            target->setPos(blueprint.pos());
-            target->setRotation(blueprint.rotation());
-            target->setScale(blueprint.scale());
-
+            
+            //bind
             target->setData(TemplateAtom, RPZAtom(blueprint));
 
-            if(auto casted = dynamic_cast<QGraphicsTextItem*>(target)) {
-                auto font = casted->font();
-                font.setPointSize(blueprint.textSize());
-                casted->setFont(font);
+            //update GI
+            auto paramToUpdate = blueprint.hasMetadata();
+            for(auto param : paramToUpdate) {
+                RPZAtom::updateGraphicsItemFromMetadata(target, param, blueprint.metadata(param));
             }
 
-            else if(auto casted = dynamic_cast<QGraphicsPathItem*>(target)) {
+            //specific update
+            if(auto casted = dynamic_cast<QGraphicsPathItem*>(target)) {
                 auto pen = casted->pen();
-                pen.setWidth(blueprint.penWidth());
                 pen.setColor(blueprint.owner().color());
                 casted->setPen(pen);
             }

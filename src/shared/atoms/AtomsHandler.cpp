@@ -7,7 +7,7 @@ AlterationPayload::Source AtomsHandler::source() {
 }
 
 void AtomsHandler::handleAlterationRequest(QVariantHash &payload) {
-    auto ptr = Payloads::autoCastFromNetwork(payload);
+    auto ptr = Payloads::autoCast(payload);
     this->_handlePayload(*ptr);
 }
 

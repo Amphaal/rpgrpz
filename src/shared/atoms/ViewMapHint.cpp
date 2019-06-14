@@ -325,6 +325,10 @@ QGraphicsItem* ViewMapHint::generateGhostItem(AssetMetadata &assetMetadata) {
 
     //add to scene
     QGraphicsItem* ghostItem = this->scene()->addToScene(atomBuiltFromTemplate, assetMetadata, true);
+    this->templateAtom->setGraphicsItem(ghostItem);
+
+    //advert change in template
+    emit atomTemplateChanged(this->templateAtom);
 
     //if no ghost item, return
     if(!ghostItem) return ghostItem;
@@ -435,6 +439,27 @@ void ViewMapHint::replaceMissingAssetPlaceholders(const QString &assetId) {
 
     //clear the id from the missing list
     this->_missingAssetsIdsFromDb.remove(assetId);
+}
+
+void ViewMapHint::handleParametersUpdateAlterationRequest(QVariantHash &payload) {
+    auto cPayload = Payloads::autoCast(payload);
+    auto mtPayload = cPayload.dynamicCast<MetadataChangedPayload>();
+    
+    auto targets = mtPayload->targetAtomIds();
+
+    if(targets.count() == 1 && !targets[0]) {
+        
+        //update template
+        auto partial = MetadataChangedPayload::fromArgs(mtPayload->args());
+        for(auto param : partial.hasMetadata()) {
+            this->templateAtom->setMetadata(param, partial.metadata(param));
+        }
+
+        emit atomTemplateChanged(this->templateAtom);
+
+    } else {
+        this->_handlePayload(*cPayload);
+    }
 }
 
 /////////////////////////////

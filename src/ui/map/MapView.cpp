@@ -23,6 +23,11 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
         this, &MapView::_sendMapChanges
     );
 
+    QObject::connect(
+        this->scene(), &QGraphicsScene::selectionChanged,
+        this, &MapView::_onSceneSelectionChanged
+    );
+
     //default state
     this->scale(this->_defaultScale, this->_defaultScale);
     this->_goToDefaultViewState();
@@ -143,9 +148,14 @@ void MapView::leaveEvent(QEvent *event) {
     this->_ghostItem->setVisible(false);
 }
 
-void MapView::updateGhostItemFromAtomTemplate(void* atomTemplate) {
-    if(!this->_ghostItem) return;
-    this->_scene->updateGraphicsItemFromAtom(this->_ghostItem, *(RPZAtom*)atomTemplate);
+void MapView::onAtomTemplateChange(void* atomTemplate) {
+    
+    emit subjectedAtomsChanged(QVector<void*>({atomTemplate}));
+
+    auto templatePtr = (RPZAtom*)atomTemplate;
+    
+    //update the ghost graphics item to display the updated values
+    this->_scene->updateGraphicsItemFromAtom(this->_ghostItem, *templatePtr);
 }
 
 void MapView::_generateGhostItemFromBuffer() {
@@ -155,7 +165,22 @@ void MapView::_generateGhostItemFromBuffer() {
 
 void MapView::_handleGhostItem(const Tool &tool) {
     if(tool == Atom) this->_generateGhostItemFromBuffer();
-    else this->_clearGhostItem();
+    else {
+        this->_clearGhostItem();
+        emit subjectedAtomsChanged(QVector<void*>());
+    }
+}
+
+
+void MapView::_onSceneSelectionChanged() {
+    
+    auto selectedAtoms = this->_hints->selectedAtoms();
+    
+    QVector<void*> out;
+    for(auto atom : selectedAtoms) out.append(atom);
+
+    emit subjectedAtomsChanged(out);
+    
 }
 
 /////////////

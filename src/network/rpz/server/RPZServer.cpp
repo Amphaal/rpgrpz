@@ -202,7 +202,7 @@ void RPZServer::_alterIncomingPayloadWithUpdatedOwners(AtomsWielderPayload &wPay
 
 void RPZServer::_broadcastMapChanges(QVariantHash &payload, JSONSocket * senderSocket) {
 
-    auto aPayload = Payloads::autoCastFromNetwork(payload);
+    auto aPayload = Payloads::autoCast(payload);
 
     //TODO RE-TESTER
     if(auto wPayload = aPayload.dynamicCast<AtomsWielderPayload>()) {

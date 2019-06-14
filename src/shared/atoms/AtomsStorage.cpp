@@ -47,7 +47,7 @@ void AtomsStorage::undo() {
 
     //get stored payload and handle it
     auto st_payload = this->_undoHistory.at(toReachIndex);
-    auto ptr = Payloads::autoCastFromNetwork(st_payload);
+    auto ptr = Payloads::autoCast(st_payload);
     this->_basic_handlePayload(*ptr);
 
     //update the index
@@ -70,7 +70,7 @@ void AtomsStorage::redo() {
 
     //get stored payload and handle it
     auto st_payload = this->_redoHistory.at(toReachIndex);
-    auto ptr = Payloads::autoCastFromNetwork(st_payload);
+    auto ptr = Payloads::autoCast(st_payload);
     this->_basic_handlePayload(*ptr);
 
     //update the index

@@ -63,6 +63,9 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
 
         //on move
         void handleAnyMovedItems();
+        
+        //special handling
+        void handleParametersUpdateAlterationRequest(QVariantHash &payload);
 
         //alter template Atom
         RPZAtom* templateAtom = nullptr;

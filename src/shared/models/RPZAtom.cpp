@@ -4,6 +4,12 @@ void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const Paramete
     
     if(!item) return;
     
+    auto _updtTOP = [&]() {
+        item->setTransformOriginPoint(
+            item->boundingRect().center()
+        );
+    };
+
     switch(param) {
                     
         //on moving
@@ -15,8 +21,12 @@ void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const Paramete
 
         //on scaling
         case RPZAtom::Parameters::Scale: {
+            
             auto destScale = val.toDouble();
             item->setScale(destScale);
+
+            // _updtTOP();
+
         }
         break;
 
@@ -40,34 +50,43 @@ void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const Paramete
         case RPZAtom::Parameters::Rotation: {
             auto destRotation = val.toInt();
             item->setRotation(destRotation);
+
+            // _updtTOP();
         }
         break;
 
         //on text size change
         case RPZAtom::Parameters::TextSize: {
-            auto newSize = val.toInt();
-            auto cItem = (QGraphicsTextItem*)item;
-            auto font = cItem->font();
-            font.setPointSize(newSize);
-            cItem->setFont(font);
+            if(auto cItem = dynamic_cast<QGraphicsTextItem*>(item)) {
+                auto newSize = val.toInt();
+                auto font = cItem->font();
+                font.setPointSize(newSize);
+                cItem->setFont(font);
+
+                // _updtTOP();
+            }
         }
         break;
 
         //on pen width change
         case RPZAtom::Parameters::PenWidth: {
-            auto newWidth = val.toInt();
-            auto cItem = (QGraphicsPathItem*)item;
-            auto pen = cItem->pen();
-            pen.setWidth(newWidth);
-            cItem->setPen(pen);
+            if(auto cItem = dynamic_cast<QGraphicsPathItem*>(item)) {
+                auto newWidth = val.toInt();
+                auto pen = cItem->pen();
+                pen.setWidth(newWidth);
+                cItem->setPen(pen);
+            }
         }
         break;
 
         //on text change
         case RPZAtom::Parameters::Text: {
-            auto newText = val.toString();
-            auto cItem = (QGraphicsTextItem*)item;
-            cItem->setPlainText(newText);
+            if(auto cItem = dynamic_cast<QGraphicsTextItem*>(item)) {
+                auto newText = val.toString();
+                cItem->setPlainText(newText);
+
+                // _updtTOP();
+            }
         }
         break;
 

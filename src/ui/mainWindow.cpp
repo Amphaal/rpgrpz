@@ -238,14 +238,14 @@ void MainWindow::_initUIApp() {
 
     //on map selection change
     QObject::connect(
-        this->_mapView->hints(), &ViewMapHint::selectionChanged,
+        this->_mapView, &MapView::subjectedAtomsChanged,
         this->_atomEditor, &AtomEditor::buildEditor
     );
 
     //on template changing
     QObject::connect(
         this->_mapView->hints(), &ViewMapHint::atomTemplateChanged,
-        this->_mapView, &MapView::updateGhostItemFromAtomTemplate
+        this->_mapView, &MapView::onAtomTemplateChange
     );
 
     //on default layer changed
@@ -257,7 +257,7 @@ void MainWindow::_initUIApp() {
     //intercept alteration from editor
     QObject::connect(
         this->_atomEditor, &AtomEditor::requiresAtomAlteration,
-        this->_mapView->hints(), &ViewMapHint::handleAlterationRequest
+        this->_mapView->hints(), &ViewMapHint::handleParametersUpdateAlterationRequest
     );
 
     //unselect asset

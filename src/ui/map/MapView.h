@@ -54,11 +54,12 @@ class MapView : public QGraphicsView, public ClientBindable {
     public slots:
         void actionRequested(const MapTools::Actions &action);
         void assetTemplateChanged(const QVariantHash &assetMetadata);
-        void updateGhostItemFromAtomTemplate(void* atomTemplate);
+        void onAtomTemplateChange(void* atomTemplate);
     
     signals:
         void unselectCurrentAssetAsked();
         void remoteChanged(bool isRemote);
+        void subjectedAtomsChanged(QVector<void*> &subjectAtoms);
 
     protected:
         void enterEvent(QEvent *event) override;
