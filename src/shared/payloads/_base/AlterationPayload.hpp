@@ -40,6 +40,13 @@ class AlterationPayload : public QVariantHash {
             return (PayloadAlteration)this->value("t").toInt();
         };
 
+        bool hasControllerAcknowledged() {
+            this->value("ack").toBool();
+        }
+        void setControllerAck() {
+            this->insert("ack", true);
+        }
+
         void changeSource(const Source &newSource) {
             this->insert("s", (int)newSource);
         }

@@ -47,7 +47,8 @@ void TreeMapHint::_onElementSelectionChanged() {
 void TreeMapHint::_handlePayload(AlterationPayload &payload) {
 
     //prevent circular payloads
-    if(payload.source() == this->_source) {
+    auto source = payload.source();
+    if(source == this->_source) {
         this->_preventInnerGIEventsHandling = false;
         return;
     }
@@ -103,7 +104,7 @@ void TreeMapHint::_handlePayload(AlterationPayload &payload) {
 
 RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, const QVariant &alteration) {
     
-    auto item = this->_atomTreeItemsById[targetedAtomId];
+    QTreeWidgetItem* item = item = this->_atomTreeItemsById[targetedAtomId];
 
     switch(type) {
 
@@ -112,7 +113,7 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, cons
             
             auto atom = RPZAtom(alteration.toHash());
             
-            auto item = this->_createTreeItem(atom);
+            item = this->_createTreeItem(atom);
             this->_atomTreeItemsById.insert(targetedAtomId, item);
 
             //if has assetId, add it

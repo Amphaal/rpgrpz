@@ -441,11 +441,13 @@ void ViewMapHint::replaceMissingAssetPlaceholders(const QString &assetId) {
 }
 
 void ViewMapHint::handleParametersUpdateAlterationRequest(QVariantHash &payload) {
-    auto cPayload = Payloads::autoCast(payload);
-    auto mtPayload = cPayload.dynamicCast<MetadataChangedPayload>();
     
+    auto cPayload = Payloads::autoCast(payload);
+    
+    auto mtPayload = cPayload.dynamicCast<MetadataChangedPayload>();
     auto targets = mtPayload->targetAtomIds();
 
+    //if single target and no ID == templateAtom update
     if(targets.count() == 1 && !targets[0]) {
         
         //update template
@@ -453,11 +455,20 @@ void ViewMapHint::handleParametersUpdateAlterationRequest(QVariantHash &payload)
         for(auto param : partial.orderedEditedMetadata()) {
             this->templateAtom->setMetadata(param, partial.metadata(param));
         }
-
+        
+        //says it changed
         emit atomTemplateChanged(this->templateAtom);
 
-    } else {
+    } 
+    
+    else {
+
+        //Change for this source to take ownership at re-emission and prevent circular event
+        cPayload->changeSource(AlterationPayload::Source::Undefined); 
+
+        //handle payload
         this->_handlePayload(*cPayload);
+
     }
 }
 
@@ -511,7 +522,8 @@ void ViewMapHint::centerGraphicsItemToPoint(QGraphicsItem* item, const QPoint &e
 void ViewMapHint::_handlePayload(AlterationPayload &payload) { 
 
     //make sure to not perpetuate circular payloads
-    if( payload.source() == this->_source) return;
+    auto source = payload.source();
+    if(source == this->_source) return;
 
     this->_preventInnerGIEventsHandling = true;
 

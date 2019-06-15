@@ -18,7 +18,8 @@ class MultipleTargetsPayload : public AlterationPayload {
 
             QVector<snowflake_uid> out;
             for(auto &e : list) {
-                out.append(e.toULongLong());
+                auto id = e.toULongLong();
+                out.append(id);
             }
             
             return out;

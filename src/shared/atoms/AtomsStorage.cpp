@@ -16,9 +16,6 @@ void AtomsStorage::_registerPayloadForHistory(AlterationPayload &payload) {
     //do nothing is payload is not redo compatible
     if(!payload.isNetworkRoutable()) return;
 
-    //change source
-    payload.changeSource(AlterationPayload::Source::Undefined);
-
     //cut branch
     while(this->_payloadHistoryIndex) {
         this->_undoHistory.pop();
@@ -48,6 +45,10 @@ void AtomsStorage::undo() {
     //get stored payload and handle it
     auto st_payload = this->_undoHistory.at(toReachIndex);
     auto ptr = Payloads::autoCast(st_payload);
+
+    //change source
+    ptr->changeSource(AlterationPayload::Source::Undefined);
+
     this->_basic_handlePayload(*ptr);
 
     //update the index
@@ -71,6 +72,10 @@ void AtomsStorage::redo() {
     //get stored payload and handle it
     auto st_payload = this->_redoHistory.at(toReachIndex);
     auto ptr = Payloads::autoCast(st_payload);
+
+    //change source
+    ptr->changeSource(AlterationPayload::Source::Undefined);
+
     this->_basic_handlePayload(*ptr);
 
     //update the index
