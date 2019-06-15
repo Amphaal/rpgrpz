@@ -76,6 +76,7 @@ class RPZAtom : public Ownable {
         void setMetadata(const AtomParameter &key, const QVariant &value);
         QVariant metadata(const AtomParameter &key);
         QList<AtomParameter> orderedEditedMetadata();
+        QSet<AtomParameter> legalParameters();
         QSet<AtomParameter> customizableParams();
 
         QString assetId();

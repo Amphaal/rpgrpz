@@ -28,23 +28,4 @@ class AtomSubEditor : public QWidget {
 
         AtomEditorLineDescriptor* _descr = nullptr;
         QVector<RPZAtom*> _atomsToManipulate;
-    
-    private:
-        static inline QHash<AtomParameter, QString> _ParamDescr = {
-            { AtomParameter::Rotation, "Rotation" },
-            { AtomParameter::Scale, "Taille de l'atome" },
-            { AtomParameter::AssetRotation, "Rotation la texture" },
-            { AtomParameter::AssetScale, "Taille de la texture" },
-            { AtomParameter::PenWidth, "Taille du pinceau" },
-            { AtomParameter::TextSize, "Taille du texte" }
-        };
-
-        static inline QHash<AtomParameter, QString> _valSuffix = {
-            { AtomParameter::Rotation, "°" },
-            { AtomParameter::Scale, "x" },
-            { AtomParameter::AssetRotation, "°" },
-            { AtomParameter::AssetScale, "x" },
-            { AtomParameter::PenWidth, "pt" },
-            { AtomParameter::TextSize, "pt" }
-        };
 };

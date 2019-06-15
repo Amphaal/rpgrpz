@@ -32,7 +32,7 @@
 
 #include "src/ui/assets/AssetsManager.h"
 
-#include "src/ui/atoms/AtomEditor.h"
+#include "src/ui/atoms/AtomEditionManager.hpp"
 
 #include "src/ui/others/RestoringSplitter.h"
 #include "src/ui/others/UpdaterUIIntegrator.hpp"
@@ -66,7 +66,7 @@ class MainWindow : public QMainWindow {
         AssetsManager* _assetsManager = nullptr;
         MapTools* _mapTools = nullptr;
         MapLayoutManager* _mlManager = nullptr;
-        AtomEditor* _atomEditor = nullptr;
+        AtomEditionManager* _atomEditManager = nullptr;
         void _initUIApp();
 
         /*statusbar*/

@@ -571,7 +571,6 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, cons
         case PayloadAlteration::BulkMetadataChanged: {
 
             auto partial = type == PayloadAlteration::BulkMetadataChanged ? RPZAtom(alteration.toHash()) : MetadataChangedPayload::fromArgs(alteration);
-            
             for(auto param : partial.orderedEditedMetadata()) {
                 
                 RPZAtom::updateGraphicsItemFromMetadata(

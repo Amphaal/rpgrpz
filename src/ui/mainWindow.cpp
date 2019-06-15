@@ -164,7 +164,7 @@ void MainWindow::_initUIApp() {
     this->_assetsManager = new AssetsManager;
     this->_mapTools = new MapTools;
     this->_mlManager = new MapLayoutManager;
-    this->_atomEditor = new AtomEditor;
+    this->_atomEditManager = new AtomEditionManager;
     
     //audio...
     auto audio_content = new QWidget;
@@ -201,7 +201,7 @@ void MainWindow::_initUIApp() {
     auto eTabs = new QTabWidget(this);
     eTabs->setLayoutDirection(Qt::LayoutDirection::RightToLeft);
     eTabs->addTab(this->_mlManager, QIcon(":/icons/app/tabs/list.png"), "Atomes de la carte");
-    eTabs->addTab(this->_atomEditor, QIcon(":/icons/app/tabs/config.png"), "Editeur d'atome");
+    eTabs->addTab(this->_atomEditManager, QIcon(":/icons/app/tabs/config.png"), "Editeur d'atome");
     eTabs->addTab(this->_cw, QIcon(":/icons/app/tabs/chat.png"), "Chat de la partie");
 
     //final
@@ -239,7 +239,7 @@ void MainWindow::_initUIApp() {
     //on map selection change
     QObject::connect(
         this->_mapView, &MapView::subjectedAtomsChanged,
-        this->_atomEditor, &AtomEditor::buildEditor
+        this->_atomEditManager, &AtomEditionManager::onSubjectedAtomsChange
     );
 
     //on template changing
@@ -256,7 +256,7 @@ void MainWindow::_initUIApp() {
 
     //intercept alteration from editor
     QObject::connect(
-        this->_atomEditor, &AtomEditor::requiresAtomAlteration,
+        this->_atomEditManager->editor(), &AtomEditor::requiresAtomAlteration,
         this->_mapView->hints(), &ViewMapHint::handleParametersUpdateAlterationRequest
     );
 

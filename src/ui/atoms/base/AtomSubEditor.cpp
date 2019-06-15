@@ -1,8 +1,8 @@
 #include "AtomSubEditor.h"
 
 AtomSubEditor::AtomSubEditor(const AtomParameter &parameter) :
-    _param(parameter),
-    _descr(new AtomEditorLineDescriptor(_ParamDescr[parameter], _valSuffix[parameter])) { 
+    _descr(new AtomEditorLineDescriptor(parameter)),
+    _param(parameter) { 
 
     this->setVisible(false);
 

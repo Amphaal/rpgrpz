@@ -1,15 +1,17 @@
 #include "AtomEditor.h"
 
-AtomEditor::AtomEditor(QWidget* parent) : QWidget(parent) {
-    
+AtomEditor::AtomEditor(QWidget* parent) : QGroupBox(_strEM[None], parent) {
+
+    this->setAlignment(Qt::AlignHCenter);
+
     this->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
     auto layout = new QVBoxLayout;
     this->setLayout(layout);
 
-    this->_createEditors();
+    this->_createEditorsFromAtomParameters();
 }
 
-void AtomEditor::_createEditors() {
+void AtomEditor::_createEditorsFromAtomParameters() {
     this->_editorsByParam[AtomParameter::Rotation] = new AtomSliderEditor(AtomParameter::Rotation, 0, 359);
     this->_editorsByParam[AtomParameter::Scale] = new NonLinearAtomSliderEditor(AtomParameter::Scale, 1, 1000);
     
@@ -28,15 +30,31 @@ void AtomEditor::_createEditors() {
     }
 }
 
-void AtomEditor::_onSubEditorChanged(const AtomParameter &parameterWhoChanged, QVariant &value) {
-    
+QVector<snowflake_uid> AtomEditor::_atomIds() {
     QVector<snowflake_uid> ids;
     for(auto atom : this->_atoms) ids.append(atom->id());
-    
-    auto payload = MetadataChangedPayload(ids, parameterWhoChanged, value);
+    return ids;
+}
+
+void AtomEditor::_onSubEditorChanged(const AtomParameter &parameterWhoChanged, QVariant &value) {
+    auto payload = MetadataChangedPayload(this->_atomIds(), parameterWhoChanged, value);
+    this->_emitPayload(payload);
+}
+
+void AtomEditor::_emitPayload(AlterationPayload &payload) {
     payload.changeSource(AlterationPayload::Source::Local_AtomEditor);
     emit requiresAtomAlteration(payload);
+}
 
+void AtomEditor::resetParams() {
+
+    QHash<AtomParameter, QVariant> changes;
+    for(auto param : this->_editorsByParam.keys()) {
+        changes.insert(param, QVariant());
+    }
+
+    auto payload = MetadataChangedPayload(this->_atomIds(), changes);
+    this->_emitPayload(payload);
 }
 
 QHash<AtomParameter, QVariant> AtomEditor::_findDefaultValuesToBind() {
@@ -65,12 +83,13 @@ QHash<AtomParameter, QVariant> AtomEditor::_findDefaultValuesToBind() {
     return out;
 }
 
-void AtomEditor::buildEditor(QVector<void*> &atomsToBuildFrom) {
+void AtomEditor::buildEditor(QVector<RPZAtom*> &atomsToBuildFrom) {
     
     //modify atom list
-    this->_atoms.clear();
-    for(auto atom : atomsToBuildFrom) this->_atoms.append((RPZAtom*)atom);
-    
+    this->_atoms = atomsToBuildFrom;
+
+    this->_changeEditMode();
+
     //fetch parameter editors to display
     auto toDisplay = this->_findDefaultValuesToBind();
 
@@ -85,4 +104,23 @@ void AtomEditor::buildEditor(QVector<void*> &atomsToBuildFrom) {
         toDisplay.keys().toSet()
     );
     for(auto i : toHide) this->_editorsByParam[i]->setVisible(false);
+}
+
+AtomEditor::EditMode AtomEditor::_changeEditMode() {
+    EditMode currentEditMode;;
+    auto countItems = this->_atoms.count();
+    
+    if(countItems == 0) {
+        currentEditMode  = EditMode::None;
+    }
+    else if(countItems == 1 && !this->_atoms.at(0)->id()) {
+        currentEditMode = EditMode::Template;
+    } 
+    else {
+        currentEditMode = EditMode::Selection;
+    }
+
+    this->setTitle(_strEM[currentEditMode]);
+
+    return currentEditMode;
 }

@@ -92,7 +92,7 @@ void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const AtomPara
                 brush.setTransform(transform);
                 cItem->setBrush(brush);
 
-                //handle
+                //TODO no relative updates
             }
         }
         break;
@@ -104,11 +104,26 @@ void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const AtomPara
                 
                 auto brush = cItem->brush();
                 auto transform = brush.transform();
+                
                 transform.scale(destScale, destScale);
+                // transform.setMatrix(
+                //     transform.m11(), 
+                //     transform.m12(), 
+                //     transform.m13(), 
+                //     transform.m21(), 
+                //     transform.m22(), 
+                //     transform.m23(), 
+                //     // destScale,
+                //     // destScale,
+                //     //transform.m31(), 
+                //     //transform.m32(), 
+                //     transform.m33()
+                // );
+                
                 brush.setTransform(transform);
                 cItem->setBrush(brush);
 
-                //handle
+                //TODO no relative updates
             }
             
         }
@@ -146,22 +161,65 @@ QString RPZAtom::descriptor() {
 };
 
 QSet<AtomParameter> RPZAtom::customizableParams() {
-    QSet<AtomParameter> out { AtomParameter::Scale, AtomParameter::Rotation };
+    
+    QSet<AtomParameter> out;
     
     switch(this->type()) {
-        case AtomType::Drawing:
+
+        case AtomType::Drawing: {
             out.insert(AtomParameter::PenWidth);
-            break;
-        case AtomType::Text:
+        }
+        break;
+
+        case AtomType::Object: {
+            out.insert(AtomParameter::Rotation);
+            out.insert(AtomParameter::Scale);
+        }
+        break;
+
+        case AtomType::Text: {
             out.insert(AtomParameter::TextSize);
-            break;
-        case AtomType::Brush:
+            out.insert(AtomParameter::Rotation);
+        }
+        break;
+
+        case AtomType::Brush: {
             out.insert(AtomParameter::AssetRotation);
             out.insert(AtomParameter::AssetScale);
-            break;
+        }
+        break;
+
     }
 
     return out;
+}
+
+QSet<AtomParameter> RPZAtom::legalParameters() {
+    
+    auto base = this->customizableParams();
+    
+    base.insert(AtomParameter::Position);
+    base.insert(AtomParameter::Layer);
+    base.insert(AtomParameter::Hidden);
+    base.insert(AtomParameter::Locked);
+    
+    switch(this->type()) {
+
+        case AtomType::Text: {
+            base.insert(AtomParameter::Text);
+        }
+        break;
+
+        case AtomType::Object:
+        case AtomType::Brush: {
+            base.insert(AtomParameter::AssetId);
+            base.insert(AtomParameter::AssetName);
+        }
+        break;
+
+    }
+    
+    return base;
 }
 
 QString RPZAtom::_defaultDescriptor() {
@@ -223,16 +281,17 @@ QVariant RPZAtom::metadata(const AtomParameter &key) {
 }
 
 QList<AtomParameter> RPZAtom::orderedEditedMetadata() {
-    QList<AtomParameter> out;
-
-    for (auto i = _str.constBegin(); i != _str.constEnd(); ++i) {
-        if(this->contains(i.value())) out.append(i.key());
-    }
     
-    //order
-    std::sort(out.begin(), out.end());
+    //existing metadata
+    QList<AtomParameter> existing;
+    for (auto i = _str.constBegin(); i != _str.constEnd(); ++i) {
+        if(this->contains(i.value())) existing.append(i.key());
+    }
 
-    return out;
+    //order
+    std::sort(existing.begin(), existing.end());
+
+    return existing;
 }
 
 QString RPZAtom::assetId() { return this->metadata(AtomParameter::AssetId).toString(); }
