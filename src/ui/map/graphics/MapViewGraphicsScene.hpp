@@ -48,9 +48,13 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
 
             //specific update
             if(auto casted = dynamic_cast<QGraphicsPathItem*>(target)) {
-                auto pen = casted->pen();
-                pen.setColor(blueprint.owner().color());
-                casted->setPen(pen);
+                
+                if(blueprint.type() == AtomType::Drawing) {
+                    auto pen = casted->pen();
+                    pen.setColor(blueprint.owner().color());
+                    casted->setPen(pen);
+                }
+
             }
                     
         }
@@ -82,10 +86,6 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
                 }
                 break;
 
-                default: {
-                    
-                }
-                break;
             }
 
             return atom;
@@ -102,8 +102,11 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
                 break;
                 
                 case AtomType::Brush:
+                    out = this->_addBrush(atom, assetMetadata);
+                break;
+
                 case AtomType::Drawing:
-                    out = this->_addDrawing(atom, assetMetadata);
+                    out = this->_addDrawing(atom);
                 break;
 
                 case AtomType::Text:
@@ -167,7 +170,34 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             return item;
         }
 
-        QGraphicsPathItem* _addDrawing(RPZAtom &atom, AssetMetadata &assetMetadata) {
+        QGraphicsPathItem* _addBrush(RPZAtom &atom, AssetMetadata &assetMetadata) {
+            
+            //define a ped
+            QPen pen;
+            pen.setWidth(0);
+            pen.setCapStyle(Qt::RoundCap);
+            pen.setJoinStyle(Qt::RoundJoin);
+            pen.setColor(QColor(255, 255, 255, 0));
+
+            //define a default shape for ghost items
+            auto shape = atom.shape();
+            shape.setFillRule(Qt::FillRule::WindingFill);
+            if(!shape.elementCount()) {
+                shape.lineTo(.01,.01);
+            }
+
+            //add brush
+            QBrush brush;
+            auto fpath = assetMetadata.pathToAssetFile();
+            brush.setTexture(QPixmap(fpath));
+            
+            //create path
+            auto newPath = new MapViewGraphicsPathItem(this, shape, pen, brush);
+            
+            return newPath;
+        }
+
+        QGraphicsPathItem* _addDrawing(RPZAtom &atom) {
             
             //define a ped
             QPen pen;
@@ -181,17 +211,8 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
                 shape.lineTo(.01,.01);
             }
 
-            //add brush
-            QBrush brush;
-            auto fpath = assetMetadata.pathToAssetFile();
-            if(!fpath.isEmpty()) {
-                brush.setTexture(QPixmap(fpath));
-            } else {
-                pen.setColor(atom.owner().color());
-            }
-
             //create path
-            auto newPath = new MapViewGraphicsPathItem(this, shape, pen, brush);
+            auto newPath = new MapViewGraphicsPathItem(this, shape, pen);
             
             return newPath;
         }

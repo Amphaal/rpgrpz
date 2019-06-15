@@ -13,15 +13,6 @@ void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const AtomPara
         }
         break;
 
-        //on scaling
-        case AtomParameter::Scale: {
-            
-            auto destScale = val.toDouble();
-            item->setScale(destScale);
-
-        }
-        break;
-
         // on locking change
         case AtomParameter::Locked: {
             auto locked = val.toBool();
@@ -42,6 +33,13 @@ void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const AtomPara
         case AtomParameter::Rotation: {
             auto destRotation = val.toInt();
             item->setRotation(destRotation);
+        }
+        break;
+
+        //on scaling
+        case AtomParameter::Scale: {
+            auto destScale = val.toDouble();
+            item->setScale(destScale);
         }
         break;
 
@@ -80,6 +78,39 @@ void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const AtomPara
         case AtomParameter::Layer: {
             auto newLayer = val.toInt();
             item->setZValue(newLayer);
+        }
+        break;
+
+        //on asset rotation
+        case AtomParameter::AssetRotation: {
+            if(auto cItem = dynamic_cast<QGraphicsPathItem*>(item)) {
+                auto destRotation = val.toInt();
+                
+                auto brush = cItem->brush();
+                auto transform = brush.transform();
+                transform.rotate(destRotation);
+                brush.setTransform(transform);
+                cItem->setBrush(brush);
+
+                //handle
+            }
+        }
+        break;
+
+        //on asset scaling
+        case AtomParameter::AssetScale: {
+            if(auto cItem = dynamic_cast<QGraphicsPathItem*>(item)) {
+                auto destScale = val.toDouble();
+                
+                auto brush = cItem->brush();
+                auto transform = brush.transform();
+                transform.scale(destScale, destScale);
+                brush.setTransform(transform);
+                cItem->setBrush(brush);
+
+                //handle
+            }
+            
         }
         break;
     }
@@ -123,6 +154,10 @@ QSet<AtomParameter> RPZAtom::customizableParams() {
             break;
         case AtomType::Text:
             out.insert(AtomParameter::TextSize);
+            break;
+        case AtomType::Brush:
+            out.insert(AtomParameter::AssetRotation);
+            out.insert(AtomParameter::AssetScale);
             break;
     }
 
@@ -211,6 +246,8 @@ QPointF RPZAtom::pos() { return this->metadata(AtomParameter::Position).toPointF
 int RPZAtom::penWidth() { return this->metadata(AtomParameter::PenWidth).toInt(); }
 bool RPZAtom::isHidden() { return this->metadata(AtomParameter::Hidden).toBool(); }
 bool RPZAtom::isLocked() { return this->metadata(AtomParameter::Locked).toBool(); }
+double RPZAtom::assetScale() { return this->metadata(AtomParameter::AssetScale).toDouble();}
+double RPZAtom::assetRotation() { return this->metadata(AtomParameter::AssetRotation).toDouble();}
 
 QPainterPath RPZAtom::shape() {return JSONSerializer::toPainterPath(this->metadata(AtomParameter::Shape).toByteArray());}
 void RPZAtom::setShape(const QPainterPath &path) { this->setMetadata(AtomParameter::Shape, JSONSerializer::asBase64(path)); }

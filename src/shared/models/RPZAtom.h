@@ -47,7 +47,9 @@ enum AtomParameter {
     Hidden,
     Locked,
     Shape,
-    Position
+    Position,
+    AssetRotation,
+    AssetScale
 };
 
 class RPZAtom : public Ownable {
@@ -80,6 +82,8 @@ class RPZAtom : public Ownable {
         QString assetName();
         double scale();
         double rotation();
+        double assetScale();
+        double assetRotation();
         QString text();
         int textSize();
         int layer();
@@ -105,7 +109,9 @@ class RPZAtom : public Ownable {
             { AtomParameter::PenWidth, "pen_w" },
             { AtomParameter::Shape, "shape" },
             { AtomParameter::Hidden, "hid" },
-            { AtomParameter::Locked, "lck" }
+            { AtomParameter::Locked, "lck" },
+            { AtomParameter::AssetRotation, "a_deg" },
+            { AtomParameter::AssetScale, "a_scl" }
         };
 
         static inline const QHash<AtomParameter, QVariant> _defaultVal = {
@@ -120,7 +126,9 @@ class RPZAtom : public Ownable {
             { AtomParameter::PenWidth, 1 },
             { AtomParameter::Shape, NULL },
             { AtomParameter::Hidden, false },
-            { AtomParameter::Locked, false }
+            { AtomParameter::Locked, false },
+            { AtomParameter::AssetRotation, 0.0 },
+            { AtomParameter::AssetScale, 1.0 }
         };
 
         QString _defaultDescriptor();
