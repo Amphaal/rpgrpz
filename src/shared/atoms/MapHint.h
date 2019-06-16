@@ -3,6 +3,9 @@
 #include "ViewMapHint.h"
 
 class MapHint : public ViewMapHint {
+
+    Q_OBJECT
+
     public:
         MapHint(QGraphicsView* boundGv);
 
