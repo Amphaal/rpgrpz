@@ -15,6 +15,7 @@
 #include "base/AtomSubEditor.h"
 #include "editors/AtomSliderEditor.h"
 #include "editors/NonLinearAtomSliderEditor.hpp"
+#include "editors/BrushToolEditor.hpp"
 
 class AtomEditor : public QGroupBox {
 
@@ -22,7 +23,6 @@ class AtomEditor : public QGroupBox {
 
     public:
         enum EditMode { None, Template, Selection };
-        enum BrushTool { Featheredge, Stamp, Ovale, Rectangle, FreeDraw };
 
         AtomEditor(QWidget* parent = nullptr);
         void buildEditor(QVector<RPZAtom*> &atomsToBuildFrom);
@@ -30,16 +30,9 @@ class AtomEditor : public QGroupBox {
     
     signals:
         void requiresAtomAlteration(QVariantHash &payload);
-        void requestBurshToolChange(const int &toolToUse);
+        void requestBurshToolChange(int toolToUse);
     
     private:
-        static inline QHash<BrushTool, QString> _strBT {
-            { Featheredge, "Biseau" },
-            { Stamp, "Tampon" },
-            { Ovale, "Circulaire" },
-            { Rectangle, "Rectangulaire" },
-            { FreeDraw, "Libre" }
-        };
 
         static inline QHash<EditMode, QString> _strEM {
             { None, "Rien à modifier" },
@@ -51,6 +44,7 @@ class AtomEditor : public QGroupBox {
         QVector<snowflake_uid> _atomIds();
 
         QMap<AtomParameter, AtomSubEditor*> _editorsByParam;
+        BrushToolEditor* _burshToolSelector = nullptr;
         QList<AtomParameter> _visibleEditors;
 
         QHash<AtomParameter, QVariant> _findDefaultValuesToBind();

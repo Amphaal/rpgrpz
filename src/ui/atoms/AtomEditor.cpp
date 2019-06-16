@@ -5,10 +5,76 @@ AtomEditor::AtomEditor(QWidget* parent) : QGroupBox(_strEM[None], parent) {
     this->setAlignment(Qt::AlignHCenter);
 
     this->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
-    auto layout = new QVBoxLayout;
-    this->setLayout(layout);
+    this->setLayout(new QVBoxLayout);
 
+    //custom editors
+    this->_burshToolSelector = new BrushToolEditor();
+    this->layout()->addWidget(this->_burshToolSelector);
+    QObject::connect(
+        this->_burshToolSelector->combo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
+        [&](int selectedTool) {
+            emit requestBurshToolChange(selectedTool);
+        }
+    );
+
+    //create params editors
     this->_createEditorsFromAtomParameters();
+}
+
+
+void AtomEditor::buildEditor(QVector<RPZAtom*> &atomsToBuildFrom) {
+    
+    //modify atom list
+    this->_atoms = atomsToBuildFrom;
+    this->_visibleEditors.clear();
+
+    //update edit mode
+    auto editMode = this->_changeEditMode();
+
+    //fetch parameter editors to display
+    auto toDisplay = this->_findDefaultValuesToBind();
+
+    //load those who need to be displayed
+    for(auto i = toDisplay.begin(); i != toDisplay.end(); ++i) {
+        
+        //prepare
+        auto param = i.key();
+        auto editor = this->_editorsByParam[param];
+
+        //load template, and display them
+        editor->loadTemplate(this->_atoms, i.value());
+
+        //add to the visible editors list
+        this->_visibleEditors.append(param);
+
+    }
+
+    //hide the others
+    auto toHide = _editorsByParam.keys().toSet().subtract(
+        toDisplay.keys().toSet()
+    );
+    for(auto i : toHide) this->_editorsByParam[i]->setVisible(false);
+}
+
+//
+//
+//
+
+void AtomEditor::resetParams() {
+
+    //reset displayed params
+        QHash<AtomParameter, QVariant> changes;
+        for(auto param : this->_visibleEditors) {
+            changes.insert(param, QVariant());
+        }
+
+        auto payload = MetadataChangedPayload(this->_atomIds(), changes);
+        this->_emitPayload(payload);
+
+    //resetBrushTool
+    if(this->_burshToolSelector->isVisible()) {
+        this->_burshToolSelector->combo()->setCurrentIndex(0);
+    }
 }
 
 void AtomEditor::_createEditorsFromAtomParameters() {
@@ -46,17 +112,6 @@ void AtomEditor::_emitPayload(AlterationPayload &payload) {
     emit requiresAtomAlteration(payload);
 }
 
-void AtomEditor::resetParams() {
-
-    QHash<AtomParameter, QVariant> changes;
-    for(auto param : this->_visibleEditors) {
-        changes.insert(param, QVariant());
-    }
-
-    auto payload = MetadataChangedPayload(this->_atomIds(), changes);
-    this->_emitPayload(payload);
-}
-
 QHash<AtomParameter, QVariant> AtomEditor::_findDefaultValuesToBind() {
     QHash<AtomParameter, QVariant> out;
 
@@ -83,38 +138,9 @@ QHash<AtomParameter, QVariant> AtomEditor::_findDefaultValuesToBind() {
     return out;
 }
 
-void AtomEditor::buildEditor(QVector<RPZAtom*> &atomsToBuildFrom) {
-    
-    //modify atom list
-    this->_atoms = atomsToBuildFrom;
-    this->_visibleEditors.clear();
-
-    this->_changeEditMode();
-
-    //fetch parameter editors to display
-    auto toDisplay = this->_findDefaultValuesToBind();
-
-    //load those who need to be displayed
-    for(auto i = toDisplay.begin(); i != toDisplay.end(); ++i) {
-        
-        auto param = i.key();
-        auto editor = this->_editorsByParam[param];
-
-        editor->loadTemplate(this->_atoms, i.value());
-
-        this->_visibleEditors.append(param);
-
-    }
-
-    //hide the others
-    auto toHide = _editorsByParam.keys().toSet().subtract(
-        toDisplay.keys().toSet()
-    );
-    for(auto i : toHide) this->_editorsByParam[i]->setVisible(false);
-}
 
 AtomEditor::EditMode AtomEditor::_changeEditMode() {
-    EditMode currentEditMode;;
+    EditMode currentEditMode;
     auto countItems = this->_atoms.count();
     
     if(countItems == 0) {
@@ -127,7 +153,11 @@ AtomEditor::EditMode AtomEditor::_changeEditMode() {
         currentEditMode = EditMode::Selection;
     }
 
+    //update title
     this->setTitle(_strEM[currentEditMode]);
+
+    //update tool brush selector visibility
+    this->_burshToolSelector->setVisible(currentEditMode == Template);
 
     return currentEditMode;
 }

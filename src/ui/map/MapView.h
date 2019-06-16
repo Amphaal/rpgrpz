@@ -42,11 +42,8 @@ class MapView : public QGraphicsView, public ClientBindable {
     Q_OBJECT
 
     public:
-        enum Tool {
-            Default,
-            Atom,
-            Scroll
-        };
+        enum Tool { Default, Atom, Scroll };
+        enum BrushTool { Stamp, Rectangle, Ovale, Cutter, Scissors };
 
         MapView(QWidget *parent);
         MapHint* hints();
