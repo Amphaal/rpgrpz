@@ -18,6 +18,7 @@ class RPZActions {
         static QAction* showAtom();
         static QAction* hideAtom();
         static QAction* resetView();
+        static QAction* resetTool();
         static QAction* lockAtom();
         static QAction* unlockAtom();
         static QAction* quit();

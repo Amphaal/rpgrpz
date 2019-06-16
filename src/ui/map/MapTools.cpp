@@ -12,12 +12,18 @@ MapTools::MapTools(QWidget* parent) : QToolBar(parent) {
         this, &QToolBar::actionTriggered,
         this, &MapTools::_onToolSelectionChanged
     );
+
+    //reset tool
+    auto resetTool = RPZActions::resetTool();
+    resetTool->setData(MapTools::Actions::ResetTool);
+    this->addAction(resetTool);
     
-    //reset
-    auto reset = RPZActions::resetView();
-    reset->setData(MapTools::Actions::ResetView);
-    this->addAction(reset);
     this->addSeparator();
+
+    //reset view
+    auto resetV = RPZActions::resetView();
+    resetV->setData(MapTools::Actions::ResetView);
+    this->addAction(resetV);
 
 }
 

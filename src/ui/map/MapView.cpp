@@ -7,7 +7,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
     this->setScene(this->_scene);
 
     this->_hints = new MapHint(this); //after first inst of scene
-    this->_changeTool(Tool::Default);
+    this->_resetTool();
     
     //openGL activation
     this->setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers | QGL::DirectRendering)));
@@ -99,7 +99,7 @@ void MapView::keyPressEvent(QKeyEvent * event) {
         
         //ask unselection of current tool
         case Qt::Key::Key_Escape:
-            this->_changeTool(Tool::Default);
+            this->_resetTool();
             break;
         
         case Qt::Key::Key_Up:
@@ -359,6 +359,11 @@ MapView::Tool MapView::_getCurrentTool() const {
     return this->_quickTool == Tool::Default ? this->_tool : this->_quickTool;
 }
 
+void MapView::_resetTool() {
+    this->_quickTool = Tool::Default;
+    this->_changeTool(Tool::Default);
+}
+
 //change tool
 void MapView::_changeTool(Tool newTool, const bool quickChange) {
 
@@ -432,7 +437,10 @@ void MapView::actionRequested(const MapTools::Actions &action) {
     switch(action) {
         case MapTools::Actions::ResetView:
             this->_goToDefaultViewState();
-            return;
+            break;
+        case MapTools::Actions::ResetTool:
+            this->_resetTool();
+            break;
     }
 }
 

@@ -90,6 +90,13 @@ QAction* RPZActions::resetView() {
     return action;
 }
 
+QAction* RPZActions::resetTool() {
+    auto action = new QAction;
+    action->setIcon(QIcon(":/icons/app/tools/cursor.png"));
+    action->setIconText("Retour à l'outil de sélection");
+    return action;
+}
+
 QAction* RPZActions::lockAtom() {
     return new QAction(
         QIcon(":/icons/app/tools/lock.png"),

@@ -104,6 +104,7 @@ class MapView : public QGraphicsView, public ClientBindable {
             Tool _quickTool = Tool::Default;
             Tool _getCurrentTool() const;
             void _changeTool(Tool newTool, const bool quickChange = false);
+            void _resetTool();
             
         //moving...
             const int _defaultSceneSize = 36000;

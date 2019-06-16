@@ -15,22 +15,15 @@ class MapTools : public QToolBar {
 
     public:    
         enum Actions { 
-            ResetView
+            ResetView,
+            ResetTool
         };
 
         MapTools(QWidget * parent = nullptr); 
-        void selectDefaultTool();
     
     signals:
         void actionRequested(const MapTools::Actions &action);
 
     private:
-        bool _selectableToolSelected = false;
         void _onToolSelectionChanged(QAction *action);
-        QVector<QAction*> _selectableTools;
-        QAction* _defaultTool;
-
-        QAction* _getCheckedTool();
-
-        void _unselectAllTools();
 };
