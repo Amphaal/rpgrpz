@@ -18,7 +18,7 @@
 
 #include "src/_libs/snowflake.hpp"
 #include "base/Ownable.hpp"
-#include "base/JSONSerializer.hpp"
+#include "src/helpers/JSONSerializer.hpp"
 
 #include "src/ui/map/graphics/MapViewItemsNotifier.hpp"
 
