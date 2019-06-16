@@ -49,16 +49,17 @@ void RPZAtom::_setType(const AtomType &type) { this->insert("t", (int)type); }
 void RPZAtom::changeType(const AtomType &type) { this->_setType(type);}
 
 
-void RPZAtom::setMetadata(const AtomParameter &key, RPZAtom &base) {
-    this->setMetadata(key, base.metadata(key));
+void RPZAtom::setMetadata(const AtomParameter &key, RPZAtom &base, bool autoRemove) {
+    this->setMetadata(key, base.metadata(key), autoRemove);
 }
 
-void RPZAtom::setMetadata(const AtomParameter &key, const QVariant &value) {
-    
-    if(value.isNull()) {
-        this->remove(_str[key]);
-        return;
-    }
+void RPZAtom::unsetMetadata(const AtomParameter &key) {
+    this->remove(_str[key]);
+}
+
+void RPZAtom::setMetadata(const AtomParameter &key, const QVariant &value, bool autoRemove) {
+
+    if(value.isNull() && autoRemove) return this->unsetMetadata(key);
 
     switch(key) {
 

@@ -262,7 +262,9 @@ RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, con
 
         case PayloadAlteration::MetadataChanged:
         case PayloadAlteration::BulkMetadataChanged: {
-            auto partial = type == PayloadAlteration::BulkMetadataChanged ? RPZAtom(alteration.toHash()) : MetadataChangedPayload::fromArgs(alteration);
+            auto partial = type == PayloadAlteration::BulkMetadataChanged ? 
+                                                    RPZAtom(alteration.toHash()) : 
+                                                    MetadataChangedPayload::fromArgs(alteration);
             
             for(auto param : partial.editedMetadata()) {
                 storedAtom->setMetadata(param, partial);

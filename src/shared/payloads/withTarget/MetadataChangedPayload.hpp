@@ -43,7 +43,7 @@ class MetadataChangedPayload : public MultipleTargetsPayload {
             auto base = args.toHash();           
             for (QVariantHash::iterator i = base.begin(); i != base.end(); ++i) {
                 auto param = (AtomParameter)i.key().toInt();
-                out.setMetadata(param, i.value());
+                out.setMetadata(param, i.value(), false); //prevent autoremove
             }
 
             return out;

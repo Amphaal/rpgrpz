@@ -49,7 +49,7 @@ void AtomEditor::_emitPayload(AlterationPayload &payload) {
 void AtomEditor::resetParams() {
 
     QHash<AtomParameter, QVariant> changes;
-    for(auto param : this->_editorsByParam.keys()) {
+    for(auto param : this->_visibleEditors) {
         changes.insert(param, QVariant());
     }
 
@@ -87,6 +87,7 @@ void AtomEditor::buildEditor(QVector<RPZAtom*> &atomsToBuildFrom) {
     
     //modify atom list
     this->_atoms = atomsToBuildFrom;
+    this->_visibleEditors.clear();
 
     this->_changeEditMode();
 
@@ -95,8 +96,14 @@ void AtomEditor::buildEditor(QVector<RPZAtom*> &atomsToBuildFrom) {
 
     //load those who need to be displayed
     for(auto i = toDisplay.begin(); i != toDisplay.end(); ++i) {
-        auto editor = this->_editorsByParam[i.key()];
+        
+        auto param = i.key();
+        auto editor = this->_editorsByParam[param];
+
         editor->loadTemplate(this->_atoms, i.value());
+
+        this->_visibleEditors.append(param);
+
     }
 
     //hide the others

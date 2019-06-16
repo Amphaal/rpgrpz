@@ -222,7 +222,6 @@ void ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsItem) {
     
     //from ghost item / temporary drawing
     auto newAtom = AtomConverter::graphicsToAtom(graphicsItem);
-
     auto payload = AddedPayload(newAtom);
     this->_handlePayload(payload);
 }
@@ -314,9 +313,10 @@ void ViewMapHint::handleParametersUpdateAlterationRequest(QVariantHash &payload)
 
     //if single target and no ID == templateAtom update
     if(targets.count() == 1 && !targets[0]) {
-        
+
         //update template
         auto partial = MetadataChangedPayload::fromArgs(mtPayload->args());
+        
         for(auto param : partial.editedMetadata()) {
             this->templateAtom->setMetadata(param, partial);
         }

@@ -15,11 +15,12 @@ class AtomConverter {
             target->setData(TemplateAtom, RPZAtom(blueprint));
             target->setData(IsTemporary, isTargetTemporary);
 
+            //refresh all legal if temporary
+            auto paramsToUpdate = isTargetTemporary ? blueprint.legalParameters() : blueprint.legalEditedMetadata();
+            
             //update GI
-            for(auto param : blueprint.legalEditedMetadata()) {
-
+            for(auto param : paramsToUpdate) {
                 auto val = blueprint.metadata(param);
-
                 updateGraphicsItemFromMetadata(target, param, val);
             }
 
@@ -56,7 +57,9 @@ class AtomConverter {
 
             //get legal custom metadata
             auto templateMetadata = atom.legalEditedMetadata();
+            
             templateMetadata.insert(AtomParameter::Position); //force position update
+            templateMetadata.insert(AtomParameter::Shape); //force position update
 
             //for each param to set to atom
             for(auto param : templateMetadata) {

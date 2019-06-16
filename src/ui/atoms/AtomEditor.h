@@ -51,6 +51,7 @@ class AtomEditor : public QGroupBox {
         QVector<snowflake_uid> _atomIds();
 
         QMap<AtomParameter, AtomSubEditor*> _editorsByParam;
+        QList<AtomParameter> _visibleEditors;
 
         QHash<AtomParameter, QVariant> _findDefaultValuesToBind();
         void _createEditorsFromAtomParameters();

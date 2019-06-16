@@ -154,7 +154,9 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, cons
 
         case PayloadAlteration::MetadataChanged:
         case PayloadAlteration::BulkMetadataChanged: {
-            auto partial = type == PayloadAlteration::BulkMetadataChanged ? RPZAtom(alteration.toHash()) : MetadataChangedPayload::fromArgs(alteration);
+            auto partial = type == PayloadAlteration::BulkMetadataChanged ? 
+                                                        RPZAtom(alteration.toHash()) : 
+                                                        MetadataChangedPayload::fromArgs(alteration);
             
             for(auto param : partial.editedMetadata()) {
                 
