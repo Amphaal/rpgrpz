@@ -101,7 +101,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &historyP
                 auto refAtom = this->_atomsById[snowflakeId];
 
                 for(auto change : partialAtom.orderedEditedMetadata()) {
-                    outAtom.setMetadata(change, refAtom.metadata(change));
+                    outAtom.setMetadata(change, refAtom);
                 }
 
                 outAtoms.insert(snowflakeId, outAtom);
@@ -123,7 +123,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &historyP
                 auto refAtom = this->_atomsById[id];
 
                 for(auto change : changesTypes) {
-                    baseAtom.setMetadata(change, refAtom.metadata(change));
+                    baseAtom.setMetadata(change, change);
                 }
 
                 partialAtoms.insert(id, baseAtom);
@@ -265,7 +265,7 @@ RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, con
             auto partial = type == PayloadAlteration::BulkMetadataChanged ? RPZAtom(alteration.toHash()) : MetadataChangedPayload::fromArgs(alteration);
             
             for(auto param : partial.orderedEditedMetadata()) {
-                storedAtom->setMetadata(param, partial.metadata(param));
+                storedAtom->setMetadata(param, partial);
             }
         }   
         break;

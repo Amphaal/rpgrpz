@@ -155,7 +155,7 @@ void MapView::onAtomTemplateChange(void* atomTemplate) {
     auto templatePtr = (RPZAtom*)atomTemplate;
     
     //update the ghost graphics item to display the updated values
-    this->_scene->updateGraphicsItemFromAtom(this->_ghostItem, *templatePtr, true);
+    AtomConverter::updateGraphicsItemFromAtom(this->_ghostItem, *templatePtr, true);
 }
 
 void MapView::_generateGhostItemFromBuffer() {

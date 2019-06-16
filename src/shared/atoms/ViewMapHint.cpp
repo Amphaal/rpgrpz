@@ -345,7 +345,7 @@ void ViewMapHint::integrateDrawingAsPayload(QGraphicsPathItem* drawnItem, QGraph
     if(!templateGhostItem) return;
 
     //from ghost item
-    auto newAtom = MapViewGraphicsScene::itemToAtom(templateGhostItem);
+    auto newAtom = AtomConverter::graphicsToAtom(templateGhostItem);
     
     //override shape and pos to fit the drawn item
     newAtom.setMetadata(AtomParameter::Position, drawnItem->pos());
@@ -357,7 +357,7 @@ void ViewMapHint::integrateDrawingAsPayload(QGraphicsPathItem* drawnItem, QGraph
 
 void ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem) {
     if(!ghostItem) return;
-    auto newAtom = MapViewGraphicsScene::itemToAtom(ghostItem);
+    auto newAtom = AtomConverter::graphicsToAtom(ghostItem);
     auto payload = AddedPayload(newAtom);
     this->_handlePayload(payload);
 }
@@ -453,7 +453,7 @@ void ViewMapHint::handleParametersUpdateAlterationRequest(QVariantHash &payload)
         //update template
         auto partial = MetadataChangedPayload::fromArgs(mtPayload->args());
         for(auto param : partial.orderedEditedMetadata()) {
-            this->templateAtom->setMetadata(param, partial.metadata(param));
+            this->templateAtom->setMetadata(param, partial);
         }
         
         //says it changed
@@ -573,7 +573,7 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, cons
             auto partial = type == PayloadAlteration::BulkMetadataChanged ? RPZAtom(alteration.toHash()) : MetadataChangedPayload::fromArgs(alteration);
             for(auto param : partial.orderedEditedMetadata()) {
                 
-                RPZAtom::updateGraphicsItemFromMetadata(
+                AtomConverter::updateGraphicsItemFromMetadata(
                     updatedAtom->graphicsItem(),
                     param,
                     updatedAtom->metadata(param)

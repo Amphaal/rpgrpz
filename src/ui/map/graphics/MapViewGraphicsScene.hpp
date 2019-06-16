@@ -10,6 +10,7 @@
 #include "src/shared/models/RPZAtom.h"
 #include "src/shared/models/AssetMetadata.hpp"
 
+#include "src/shared/atoms/AtomConverter.hpp"
 
 class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
 
@@ -19,77 +20,12 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
         void sceneItemChanged(QGraphicsItem* item, int atomAlteration);
 
     private:
-        enum DataIndex { TemplateAtom = 222 };
-
         void onItemChange(QGraphicsItem* item, MapViewCustomItemsEventFlag flag) override {
             emit sceneItemChanged(item, (int)flag);
         };
 
     public:
         MapViewGraphicsScene(int defaultSize) : QGraphicsScene(defaultSize, defaultSize, defaultSize, defaultSize) { }
-
-        static void updateGraphicsItemFromAtom(QGraphicsItem* target, RPZAtom &blueprint, bool isTargetTemporary = false) {
-            
-            //bind
-            target->setData(TemplateAtom, RPZAtom(blueprint));
-
-            //update GI
-            for(auto param : blueprint.orderedEditedMetadata()) {
-
-                auto val = blueprint.metadata(param);
-
-                //always force temporary item on top of his actual set layer index
-                if(isTargetTemporary && param == AtomParameter::Layer) {
-                    val = val.toInt() + 1;
-                }
-
-                RPZAtom::updateGraphicsItemFromMetadata(target, param, val);
-            }
-
-            //specific update
-            if(auto casted = dynamic_cast<QGraphicsPathItem*>(target)) {
-                
-                if(blueprint.type() == AtomType::Drawing) {
-                    auto pen = casted->pen();
-                    pen.setColor(blueprint.owner().color());
-                    casted->setPen(pen);
-                }
-
-            }
-                    
-        }
-
-        static RPZAtom itemToAtom(QGraphicsItem* blueprint) {
-            
-            //recover template
-            auto atom = RPZAtom(blueprint->data(TemplateAtom).toHash());
-            atom.shuffleId();
-
-            //default update
-            auto pos = blueprint->pos();
-            atom.setMetadata(AtomParameter::Position, pos);
-            atom.setShape(blueprint->boundingRect());
-            
-            //specifics
-            switch(atom.type()) {
-                
-                case AtomType::Text: {
-                    auto casted = dynamic_cast<QGraphicsTextItem*>(blueprint);
-                    atom.setMetadata(AtomParameter::TextSize, casted->font().pointSize());
-                    atom.setMetadata(AtomParameter::Text, casted->toPlainText());
-                }
-                break;
-
-                case AtomType::Drawing: {
-                    auto casted = dynamic_cast<QGraphicsPathItem*>(blueprint);
-                    atom.setShape(casted->path()); 
-                }
-                break;
-
-            }
-
-            return atom;
-        }
 
         QGraphicsItem* addToScene(RPZAtom &atom, AssetMetadata &assetMetadata, bool isTemporary = false) {
             
@@ -119,7 +55,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             }
 
             //add atomType tracker
-            this->updateGraphicsItemFromAtom(out, atom, isTemporary);
+            AtomConverter::updateGraphicsItemFromAtom(out, atom, isTemporary);
             this->addItem(out);
 
             //prevent notifications on move to kick in since the graphics item is not really in the scene
@@ -145,7 +81,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
 
             //add to scene
             auto placeholder = new MapViewGraphicsRectItem(this, atom.shape().boundingRect(), pen, brush);
-            this->updateGraphicsItemFromAtom(placeholder, atom);
+            AtomConverter::updateGraphicsItemFromAtom(placeholder, atom);
             this->addItem(placeholder);
 
             return placeholder;

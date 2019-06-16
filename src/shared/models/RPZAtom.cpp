@@ -1,136 +1,5 @@
 #include "RPZAtom.h"
 
-void RPZAtom::updateGraphicsItemFromMetadata(QGraphicsItem* item, const AtomParameter &param, QVariant &val) {
-    
-    if(!item) return;
-
-    switch(param) {
-                    
-        //on moving
-        case AtomParameter::Position: {
-            auto destPos = val.toPointF();
-            item->setPos(destPos);  
-        }
-        break;
-
-        // on locking change
-        case AtomParameter::Locked: {
-            auto locked = val.toBool();
-            auto flags = !locked ? MapViewItemsNotifier::defaultFlags() : 0;
-            item->setFlags(flags);
-        }
-        break;
-        
-        // on changing visibility
-        case AtomParameter::Hidden: {
-            auto hidden = val.toBool();
-            auto opacity = hidden ? .05 : 1;
-            item->setOpacity(opacity);
-        }
-        break;
-
-        //on rotation
-        case AtomParameter::Rotation: {
-            auto destRotation = val.toInt();
-            item->setRotation(destRotation);
-        }
-        break;
-
-        //on scaling
-        case AtomParameter::Scale: {
-            auto destScale = val.toDouble();
-            item->setScale(destScale);
-        }
-        break;
-
-        //on text size change
-        case AtomParameter::TextSize: {
-            if(auto cItem = dynamic_cast<QGraphicsTextItem*>(item)) {
-                auto newSize = val.toInt();
-                auto font = cItem->font();
-                font.setPointSize(newSize);
-                cItem->setFont(font);
-            }
-        }
-        break;
-
-        //on pen width change
-        case AtomParameter::PenWidth: {
-            if(auto cItem = dynamic_cast<QGraphicsPathItem*>(item)) {
-                auto newWidth = val.toInt();
-                auto pen = cItem->pen();
-                pen.setWidth(newWidth);
-                cItem->setPen(pen);
-            }
-        }
-        break;
-
-        //on text change
-        case AtomParameter::Text: {
-            if(auto cItem = dynamic_cast<QGraphicsTextItem*>(item)) {
-                auto newText = val.toString();
-                cItem->setPlainText(newText);
-            }
-        }
-        break;
-
-        //on layer change
-        case AtomParameter::Layer: {
-            auto newLayer = val.toInt();
-            item->setZValue(newLayer);
-        }
-        break;
-
-        //on asset rotation
-        case AtomParameter::AssetRotation: {
-            if(auto cItem = dynamic_cast<QGraphicsPathItem*>(item)) {
-                auto destRotation = val.toInt();
-                
-                auto brush = cItem->brush();
-                auto transform = brush.transform();
-                transform.rotate(destRotation);
-                brush.setTransform(transform);
-                cItem->setBrush(brush);
-
-                //TODO no relative updates
-            }
-        }
-        break;
-
-        //on asset scaling
-        case AtomParameter::AssetScale: {
-            if(auto cItem = dynamic_cast<QGraphicsPathItem*>(item)) {
-                auto destScale = val.toDouble();
-                
-                auto brush = cItem->brush();
-                auto transform = brush.transform();
-                
-                transform.scale(destScale, destScale);
-                // transform.setMatrix(
-                //     transform.m11(), 
-                //     transform.m12(), 
-                //     transform.m13(), 
-                //     transform.m21(), 
-                //     transform.m22(), 
-                //     transform.m23(), 
-                //     // destScale,
-                //     // destScale,
-                //     //transform.m31(), 
-                //     //transform.m32(), 
-                //     transform.m33()
-                // );
-                
-                brush.setTransform(transform);
-                cItem->setBrush(brush);
-
-                //TODO no relative updates
-            }
-            
-        }
-        break;
-    }
-};
-
 RPZAtom::RPZAtom() {}
 RPZAtom::RPZAtom(const QVariantHash &hash) : Ownable(hash) {}
 RPZAtom::RPZAtom(const snowflake_uid &id, const AtomType &type, const RPZUser &owner) : Ownable(id, owner) {
@@ -241,6 +110,10 @@ AtomType RPZAtom::type() {return (AtomType)this->value("t").toInt();}
 void RPZAtom::_setType(const AtomType &type) { this->insert("t", (int)type); }
 void RPZAtom::changeType(const AtomType &type) { this->_setType(type);}
 
+
+void RPZAtom::setMetadata(const AtomParameter &key, RPZAtom &base) {
+    this->setMetadata(key, base.metadata(key));
+}
 
 void RPZAtom::setMetadata(const AtomParameter &key, const QVariant &value) {
     

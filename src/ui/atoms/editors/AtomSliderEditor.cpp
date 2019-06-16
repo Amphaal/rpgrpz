@@ -48,7 +48,7 @@ void AtomSliderEditor::_onSliderChanging(int sliderVal) {
     this->_descr->updateValue(output);
     
     for(auto atom : this->_atomsToManipulate) {
-        RPZAtom::updateGraphicsItemFromMetadata(atom->graphicsItem(), this->_param, QVariant(output));
+        AtomConverter::updateGraphicsItemFromMetadata(atom->graphicsItem(), this->_param, QVariant(output));
     }
 };
 

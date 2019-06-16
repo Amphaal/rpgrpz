@@ -55,8 +55,6 @@ enum AtomParameter {
 class RPZAtom : public Ownable {
     
     public:
-        static void updateGraphicsItemFromMetadata(QGraphicsItem* item, const AtomParameter &param, QVariant &val);
-
         RPZAtom();
         RPZAtom(const QVariantHash &hash);
         RPZAtom(const snowflake_uid &id, const AtomType &type, const RPZUser &owner);
@@ -73,8 +71,11 @@ class RPZAtom : public Ownable {
         //
         //
 
-        void setMetadata(const AtomParameter &key, const QVariant &value);
         QVariant metadata(const AtomParameter &key);
+        void setMetadata(const AtomParameter &key, const QVariant &value);
+        void setMetadata(const AtomParameter &key, RPZAtom &base);
+
+        
         QList<AtomParameter> orderedEditedMetadata();
         QSet<AtomParameter> legalParameters();
         QSet<AtomParameter> customizableParams();
