@@ -24,7 +24,7 @@
 #include "MapTools.h"
 #include "base/AnimationTimeLine.hpp"
 
-#include "src/shared/atoms/ViewMapHint.h"
+#include "src/shared/atoms/MapHint.h"
 #include "src/shared/models/RPZAtom.h"
 #include "src/ui/others/ClientBindable.hpp"
 
@@ -49,7 +49,7 @@ class MapView : public QGraphicsView, public ClientBindable {
         };
 
         MapView(QWidget *parent);
-        ViewMapHint* hints();
+        MapHint* hints();
 
     public slots:
         void actionRequested(const MapTools::Actions &action);
@@ -81,7 +81,7 @@ class MapView : public QGraphicsView, public ClientBindable {
     private:
         MapViewGraphicsScene* _scene = nullptr;
 
-        ViewMapHint* _hints;
+        MapHint* _hints;
         void _onSceneSelectionChanged();
         void _goToDefaultViewState();
 

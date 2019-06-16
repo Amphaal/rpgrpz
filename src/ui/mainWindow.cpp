@@ -226,14 +226,14 @@ void MainWindow::_initUIApp() {
 
     //on map alteration, update treelist
     QObject::connect(
-        this->_mapView->hints(), &ViewMapHint::alterationRequested,
+        this->_mapView->hints(), &MapHint::alterationRequested,
         this->_mlManager->tree()->hints(), &TreeMapHint::handleAlterationRequest
     );
 
     //intercept alteration from layout manager
     QObject::connect(
         this->_mlManager->tree()->hints(), &TreeMapHint::alterationRequested,
-        this->_mapView->hints(), &ViewMapHint::handleAlterationRequest
+        this->_mapView->hints(), &MapHint::handleAlterationRequest
     );
 
     //on map selection change
@@ -244,20 +244,20 @@ void MainWindow::_initUIApp() {
 
     //on template changing
     QObject::connect(
-        this->_mapView->hints(), &ViewMapHint::atomTemplateChanged,
+        this->_mapView->hints(), &MapHint::atomTemplateChanged,
         this->_mapView, &MapView::onAtomTemplateChange
     );
 
     //on default layer changed
     QObject::connect(
         this->_mlManager->layerSelector()->spinbox(), qOverload<int>(&QSpinBox::valueChanged),
-        this->_mapView->hints(), &ViewMapHint::setDefaultLayer
+        this->_mapView->hints(), &MapHint::setDefaultLayer
     );
 
     //intercept alteration from editor
     QObject::connect(
         this->_atomEditManager->editor(), &AtomEditor::requiresAtomAlteration,
-        this->_mapView->hints(), &ViewMapHint::handleParametersUpdateAlterationRequest
+        this->_mapView->hints(), &MapHint::handleParametersUpdateAlterationRequest
     );
 
     //unselect asset
@@ -274,7 +274,7 @@ void MainWindow::_initUIApp() {
 
     //update status bar on map file update
     QObject::connect(
-        this->_mapView->hints(), &ViewMapHint::mapFileStateChanged,
+        this->_mapView->hints(), &MapHint::mapFileStateChanged,
         this->_sb, &RPZStatusBar::updateMapFileLabel
     );
     this->_sb->updateMapFileLabel(
@@ -332,7 +332,7 @@ QMenu* MainWindow::_getMapMenu() {
     auto saveMap = RPZActions::saveMap();
     QObject::connect(
         saveMap, &QAction::triggered,
-        this->_mapView->hints(), &ViewMapHint::saveState
+        this->_mapView->hints(), &MapHint::saveState
     );
 
     //save as map

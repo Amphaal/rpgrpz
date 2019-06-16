@@ -6,7 +6,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
     this->_scene = new MapViewGraphicsScene(this->_defaultSceneSize);
     this->setScene(this->_scene);
 
-    this->_hints = new ViewMapHint(this); //after first inst of scene
+    this->_hints = new MapHint(this); //after first inst of scene
     this->_changeTool(Tool::Default);
     
     //openGL activation
@@ -80,7 +80,7 @@ void MapView::_goToDefaultViewState() {
     this->_goToDefaultZoom();
 }
 
-ViewMapHint* MapView::hints() {
+MapHint* MapView::hints() {
     return this->_hints;
 }
 
@@ -212,14 +212,14 @@ void MapView::onRPZClientConnecting(RPZClient * cc) {
 
     //when missing assets
     QObject::connect(
-        this->_hints, &ViewMapHint::requestMissingAsset,
+        this->_hints, &MapHint::requestMissingAsset,
         this->_rpzClient, &RPZClient::askForAsset
     );
 
     //when receiving missing asset
     QObject::connect(
         this->_rpzClient, &RPZClient::assetSucessfullyInserted,
-        this->_hints, &ViewMapHint::replaceMissingAssetPlaceholders
+        this->_hints, &MapHint::replaceMissingAssetPlaceholders
     );
 
     //on map change

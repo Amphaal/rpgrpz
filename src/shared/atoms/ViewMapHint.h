@@ -36,19 +36,6 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         MapViewGraphicsScene* scene();
         bool isInTextInteractiveMode();
 
-        //load/unload
-        QString stateFilePath();
-        bool loadDefaultState();
-        bool loadState(QString &filePath);
-        bool saveState();
-        bool saveStateAs(QString &newFilePath);
-        
-        bool isDirty();
-        void mayWantToSavePendingState();
-
-        bool isRemote();
-        bool defineAsRemote(QString &remoteMapDescriptor = QString());
-
         //replace placeholders
         void replaceMissingAssetPlaceholders(const QString &assetId);
 
@@ -80,15 +67,6 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         void atomTemplateChanged(void* atomTemplate);
 
     private:
-        QGraphicsView* _boundGv = nullptr;
-        
-        //map state handling
-        QString _stateFilePath;
-        bool _isRemote = false;
-        bool _isDirty = false;
-        void _setDirty(bool dirty = true);
-        void _shouldMakeDirty(AlterationPayload &payload);
-
         //helpers
         QGraphicsItem* _buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom);
         void _crossBindingAtomWithGI(RPZAtom* atom, QGraphicsItem* gi);
@@ -102,11 +80,14 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         void _onSceneItemChanged(QGraphicsItem* item, int changeFlag);
             QSet<QGraphicsItem*> _itemsWhoNotifiedMovement;
 
-        //missing assets tracking
-        QMultiHash<QString, QGraphicsRectItem*> _missingAssetsIdsFromDb;
-
         //text interactive
         bool _isInTextInteractiveMode = false;
+
+    protected:
+        QGraphicsView* _boundGv = nullptr;
+
+        //missing assets tracking
+        QMultiHash<QString, QGraphicsRectItem*> _missingAssetsIdsFromDb;
 
         //augmenting AtomsStorage
         virtual void _handlePayload(AlterationPayload &payload) override;
