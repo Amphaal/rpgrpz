@@ -29,68 +29,6 @@ QString RPZAtom::descriptor() {
     return this->_defaultDescriptor();
 };
 
-QSet<AtomParameter> RPZAtom::customizableParams() {
-    
-    QSet<AtomParameter> out;
-    
-    switch(this->type()) {
-
-        case AtomType::Drawing: {
-            out.insert(AtomParameter::PenWidth);
-        }
-        break;
-
-        case AtomType::Object: {
-            out.insert(AtomParameter::Rotation);
-            out.insert(AtomParameter::Scale);
-        }
-        break;
-
-        case AtomType::Text: {
-            out.insert(AtomParameter::TextSize);
-            out.insert(AtomParameter::Rotation);
-        }
-        break;
-
-        case AtomType::Brush: {
-            out.insert(AtomParameter::AssetRotation);
-            out.insert(AtomParameter::AssetScale);
-        }
-        break;
-
-    }
-
-    return out;
-}
-
-QSet<AtomParameter> RPZAtom::legalParameters() {
-    
-    auto base = this->customizableParams();
-    
-    base.insert(AtomParameter::Position);
-    base.insert(AtomParameter::Layer);
-    base.insert(AtomParameter::Hidden);
-    base.insert(AtomParameter::Locked);
-    
-    switch(this->type()) {
-
-        case AtomType::Text: {
-            base.insert(AtomParameter::Text);
-        }
-        break;
-
-        case AtomType::Object:
-        case AtomType::Brush: {
-            base.insert(AtomParameter::AssetId);
-            base.insert(AtomParameter::AssetName);
-        }
-        break;
-
-    }
-    
-    return base;
-}
-
 QString RPZAtom::_defaultDescriptor() {
     switch(this->type()) {
         case AtomType::Drawing:
@@ -153,20 +91,6 @@ QVariant RPZAtom::metadata(const AtomParameter &key) {
     }
 }
 
-QList<AtomParameter> RPZAtom::orderedEditedMetadata() {
-    
-    //existing metadata
-    QList<AtomParameter> existing;
-    for (auto i = _str.constBegin(); i != _str.constEnd(); ++i) {
-        if(this->contains(i.value())) existing.append(i.key());
-    }
-
-    //order
-    std::sort(existing.begin(), existing.end());
-
-    return existing;
-}
-
 QString RPZAtom::assetId() { return this->metadata(AtomParameter::AssetId).toString(); }
 QString RPZAtom::assetName() { return this->metadata(AtomParameter::AssetName).toString();}
 double RPZAtom::scale() { return this->metadata(AtomParameter::Scale).toDouble();}
@@ -187,4 +111,88 @@ void RPZAtom::setShape(const QRectF &rect) {
     QPainterPath shape;
     shape.addRect(rect);
     this->setShape(shape);
+}
+
+//
+//
+//
+
+QSet<AtomParameter> RPZAtom::customizableParams() {
+    
+    QSet<AtomParameter> out;
+    
+    switch(this->type()) {
+
+        case AtomType::Drawing: {
+            out.insert(AtomParameter::PenWidth);
+        }
+        break;
+
+        case AtomType::Object: {
+            out.insert(AtomParameter::Rotation);
+            out.insert(AtomParameter::Scale);
+        }
+        break;
+
+        case AtomType::Text: {
+            out.insert(AtomParameter::TextSize);
+            out.insert(AtomParameter::Rotation);
+        }
+        break;
+
+        case AtomType::Brush: {
+            out.insert(AtomParameter::AssetRotation);
+            out.insert(AtomParameter::AssetScale);
+        }
+        break;
+
+    }
+
+    return out;
+}
+
+QSet<AtomParameter> RPZAtom::legalParameters() {
+    
+    auto base = this->customizableParams();
+    
+    base.insert(AtomParameter::Position);
+    base.insert(AtomParameter::Layer);
+    base.insert(AtomParameter::Hidden);
+    base.insert(AtomParameter::Locked);
+    base.insert(AtomParameter::Shape);
+    
+    switch(this->type()) {
+
+        case AtomType::Text: {
+            base.insert(AtomParameter::Text);
+        }
+        break;
+
+        case AtomType::Object:
+        case AtomType::Brush: {
+            base.insert(AtomParameter::AssetId);
+            base.insert(AtomParameter::AssetName);
+        }
+        break;
+
+    }
+    
+    return base;
+}
+
+QSet<AtomParameter> RPZAtom::editedMetadata() {
+    
+    //existing metadata
+    QSet<AtomParameter> existing;
+    for (auto i = _str.constBegin(); i != _str.constEnd(); ++i) {
+        if(this->contains(i.value())) existing.insert(i.key());
+    }
+
+    return existing;
+}
+
+QSet<AtomParameter> RPZAtom::legalEditedMetadata() {
+    return this->editedMetadata().intersect(
+        this->legalParameters()
+    );
 }

@@ -307,7 +307,7 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
 
     //make ghost item tracking mouse position
     if(this->_ghostItem) {
-        this->_hints->centerGraphicsItemToPoint(this->_ghostItem, event->pos());
+        this->_hints->centerGhostItemToPoint(this->_ghostItem, event->pos());
     }
 
     if(this->_isMousePressed) {
@@ -548,13 +548,12 @@ void MapView::_endDrawing() {
     if(path.elementCount() < 2) return;
 
     //add definitive path
-    this->_hints->integrateDrawingAsPayload(this->_tempDrawing, this->_ghostItem);
+    this->_hints->integrateGraphicsItemAsPayload(this->_tempDrawing);
 
     //destroy temp
     delete this->_tempDrawing;
     this->_tempDrawing = nullptr;
 }
-
 
 /////////////////
 /* END DRAWING */

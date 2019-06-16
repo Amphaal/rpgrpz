@@ -2,8 +2,8 @@
 
 ViewMapHint::ViewMapHint(QGraphicsView* boundGv) : AtomsStorage(AlterationPayload::Source::Local_Map), 
     AtomsContextualMenuHandler(this, boundGv), 
-    _boundGv(boundGv),
-    templateAtom(new RPZAtom) {
+    templateAtom(new RPZAtom),
+    _boundGv(boundGv) {
 
     //default layer from settings
     this->setDefaultLayer(AppContext::settings()->defaultLayer());
@@ -341,23 +341,12 @@ QGraphicsItem* ViewMapHint::generateGhostItem(AssetMetadata &assetMetadata) {
     return ghostItem;
 }
 
-void ViewMapHint::integrateDrawingAsPayload(QGraphicsPathItem* drawnItem, QGraphicsItem* templateGhostItem) {
-    if(!templateGhostItem) return;
-
-    //from ghost item
-    auto newAtom = AtomConverter::graphicsToAtom(templateGhostItem);
+void ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsItem) {
+    if(!graphicsItem) return;
     
-    //override shape and pos to fit the drawn item
-    newAtom.setMetadata(AtomParameter::Position, drawnItem->pos());
-    newAtom.setShape(drawnItem->path());
+    //from ghost item / temporary drawing
+    auto newAtom = AtomConverter::graphicsToAtom(graphicsItem);
 
-    auto payload = AddedPayload(newAtom);
-    this->_handlePayload(payload);
-}
-
-void ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem) {
-    if(!ghostItem) return;
-    auto newAtom = AtomConverter::graphicsToAtom(ghostItem);
     auto payload = AddedPayload(newAtom);
     this->_handlePayload(payload);
 }
@@ -452,7 +441,7 @@ void ViewMapHint::handleParametersUpdateAlterationRequest(QVariantHash &payload)
         
         //update template
         auto partial = MetadataChangedPayload::fromArgs(mtPayload->args());
-        for(auto param : partial.orderedEditedMetadata()) {
+        for(auto param : partial.editedMetadata()) {
             this->templateAtom->setMetadata(param, partial);
         }
         
@@ -504,10 +493,10 @@ RPZAtom* ViewMapHint::_fetchAtom(QGraphicsItem* graphicElem) const {
     return (RPZAtom*)ptrValToAtom;
 }
 
-void ViewMapHint::centerGraphicsItemToPoint(QGraphicsItem* item, const QPoint &eventPos) {
+void ViewMapHint::centerGhostItemToPoint(QGraphicsItem* ghostItem, const QPoint &eventPos) {
     QPointF point = this->_boundGv->mapToScene(eventPos);
-    point = point - item->boundingRect().center();
-    item->setPos(point);
+    point = point - ghostItem->boundingRect().center();
+    ghostItem->setPos(point);
 }
 
 //////////////////////////
@@ -571,7 +560,7 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, cons
         case PayloadAlteration::BulkMetadataChanged: {
 
             auto partial = type == PayloadAlteration::BulkMetadataChanged ? RPZAtom(alteration.toHash()) : MetadataChangedPayload::fromArgs(alteration);
-            for(auto param : partial.orderedEditedMetadata()) {
+            for(auto param : partial.editedMetadata()) {
                 
                 AtomConverter::updateGraphicsItemFromMetadata(
                     updatedAtom->graphicsItem(),

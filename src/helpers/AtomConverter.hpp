@@ -2,25 +2,23 @@
 
 #include "src/shared/models/RPZAtom.h"
 
+#include <QGraphicsPathItem>
+
 class AtomConverter {
     
-    enum DataIndex { TemplateAtom = 222, BrushTransform = 555 };
+    enum DataIndex { TemplateAtom = 222, BrushTransform = 555, IsTemporary = 666 };
 
     public:
         static void updateGraphicsItemFromAtom(QGraphicsItem* target, RPZAtom &blueprint, bool isTargetTemporary = false) {
             
             //bind a copy of the template to the item
             target->setData(TemplateAtom, RPZAtom(blueprint));
+            target->setData(IsTemporary, isTargetTemporary);
 
             //update GI
-            for(auto param : blueprint.orderedEditedMetadata()) {
+            for(auto param : blueprint.legalEditedMetadata()) {
 
                 auto val = blueprint.metadata(param);
-
-                //always force temporary item on top of his actual set layer index
-                if(isTargetTemporary && param == AtomParameter::Layer) {
-                    val = val.toInt() + 1;
-                }
 
                 updateGraphicsItemFromMetadata(target, param, val);
             }
@@ -38,13 +36,14 @@ class AtomConverter {
                     
         }
 
-        static void updateGraphicsItemFromMetadata(QGraphicsItem* item, const AtomParameter &param, QVariant &val) {
+        static void updateGraphicsItemFromMetadata(QGraphicsItem* item, const AtomParameter &param,  QVariant &val) {
+            
             if(!item) return;
             
             auto requiresTransform = _setParamToGraphicsItemFromAtom(param, item, val);
 
             if(requiresTransform) {
-                if(auto cItem = dynamic_cast<QAbstractGraphicsShapeItem*>(item)) {
+                if(auto cItem = dynamic_cast<QGraphicsPathItem*>(item)) {
                     _bulkTransformApply(cItem);
                 }
             }
@@ -55,8 +54,12 @@ class AtomConverter {
             //recover template
             auto atom = RPZAtom(blueprint->data(TemplateAtom).toHash());
 
+            //get legal custom metadata
+            auto templateMetadata = atom.legalEditedMetadata();
+            templateMetadata.insert(AtomParameter::Position); //force position update
+
             //for each param to set to atom
-            for(auto param : atom.orderedEditedMetadata()) {
+            for(auto param : templateMetadata) {
                 _setParamToAtomFromGraphicsItem(param, atom, blueprint);
             }
                         
@@ -68,7 +71,7 @@ class AtomConverter {
 
     private:
 
-        void static _bulkTransformApply(QAbstractGraphicsShapeItem* itemBrushToUpdate) {
+        void static _bulkTransformApply(QGraphicsPathItem* itemBrushToUpdate) {
             
             auto transforms = itemBrushToUpdate->data(BrushTransform).toHash();
             
@@ -101,6 +104,7 @@ class AtomConverter {
         }
 
         bool static _setParamToGraphicsItemFromAtom(const AtomParameter &param, QGraphicsItem* itemToUpdate, QVariant &val) {
+            
             switch(param) {
                                 
                     //on moving
@@ -173,8 +177,15 @@ class AtomConverter {
 
                     //on layer change
                     case AtomParameter::Layer: {
+                        
                         auto newLayer = val.toInt();
+
+                        //always force temporary item on top of his actual set layer index
+                        auto isTemporary = itemToUpdate->data(IsTemporary).toBool();
+                        if(isTemporary) newLayer++;
+ 
                         itemToUpdate->setZValue(newLayer);
+
                     }
                     break;
 
@@ -215,7 +226,15 @@ class AtomConverter {
                 break;
 
                 case Layer: {
-                    atomToUpdate.setMetadata(param, blueprint->zValue());     
+
+                    auto layer = blueprint->zValue();
+
+                    //if is a temporary, reset layer to expected value
+                    auto isTemporary = blueprint->data(IsTemporary).toBool();
+                    if(isTemporary) layer--;
+
+                    atomToUpdate.setMetadata(param, layer);     
+
                 }
                 break;
 
