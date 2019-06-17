@@ -105,6 +105,7 @@ bool RPZAtom::isHidden() { return this->metadata(AtomParameter::Hidden).toBool()
 bool RPZAtom::isLocked() { return this->metadata(AtomParameter::Locked).toBool(); }
 double RPZAtom::assetScale() { return this->metadata(AtomParameter::AssetScale).toDouble();}
 double RPZAtom::assetRotation() { return this->metadata(AtomParameter::AssetRotation).toDouble();}
+BrushType RPZAtom::brushType() { return (BrushType)this->metadata(AtomParameter::BrushStyle).toInt(); }
 
 QPainterPath RPZAtom::shape() {return JSONSerializer::toPainterPath(this->metadata(AtomParameter::Shape).toByteArray());}
 void RPZAtom::setShape(const QPainterPath &path) { this->setMetadata(AtomParameter::Shape, JSONSerializer::asBase64(path)); }

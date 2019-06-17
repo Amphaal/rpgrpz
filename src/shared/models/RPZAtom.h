@@ -34,6 +34,15 @@ enum class AtomType {
     PC 
 };
 
+enum class BrushType { 
+    Stamp, 
+    Rectangle, 
+    Ovale,
+    RoundBrush,
+    Cutter, 
+    Scissors 
+};
+
 //order is important for transform handling
 enum AtomParameter {
     AssetId,
@@ -49,7 +58,8 @@ enum AtomParameter {
     Shape,
     Position,
     AssetRotation,
-    AssetScale
+    AssetScale,
+    BrushStyle
 };
 
 class RPZAtom : public Ownable {
@@ -95,6 +105,7 @@ class RPZAtom : public Ownable {
         int penWidth();
         bool isHidden();
         bool isLocked();
+        BrushType brushType();
 
         QPainterPath shape();
         void setShape(const QPainterPath &path);
@@ -115,7 +126,8 @@ class RPZAtom : public Ownable {
             { AtomParameter::Hidden, "hid" },
             { AtomParameter::Locked, "lck" },
             { AtomParameter::AssetRotation, "a_deg" },
-            { AtomParameter::AssetScale, "a_scl" }
+            { AtomParameter::AssetScale, "a_scl" },
+            { AtomParameter::BrushStyle, "brush_t" }
         };
 
         static inline const QHash<AtomParameter, QVariant> _defaultVal = {
@@ -132,7 +144,8 @@ class RPZAtom : public Ownable {
             { AtomParameter::Hidden, false },
             { AtomParameter::Locked, false },
             { AtomParameter::AssetRotation, 0.0 },
-            { AtomParameter::AssetScale, 1.0 }
+            { AtomParameter::AssetScale, 1.0 },
+            { AtomParameter::BrushStyle, 0 }
         };
 
         QString _defaultDescriptor();

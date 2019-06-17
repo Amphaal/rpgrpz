@@ -43,14 +43,6 @@ class MapView : public QGraphicsView, public ClientBindable {
 
     public:
         enum Tool { Default, Atom, Scroll };
-        enum BrushTool { 
-            Stamp, 
-            Rectangle, 
-            Ovale,
-            RoundBrush,
-            //Cutter, 
-            Scissors 
-        };
 
         MapView(QWidget *parent);
         MapHint* hints();
@@ -105,7 +97,7 @@ class MapView : public QGraphicsView, public ClientBindable {
             bool _isMousePressed = false;
 
         //tool
-            BrushTool _bTool = (BrushTool)0;
+            BrushType _bTool = (BrushType)0;
             int _bToolWidth = 1;
             Tool _tool = (Tool)0;
             Tool _quickTool = (Tool)0;

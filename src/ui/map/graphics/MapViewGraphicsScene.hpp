@@ -123,9 +123,10 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             QBrush brush;
             auto fpath = assetMetadata.pathToAssetFile();
             brush.setTexture(QPixmap(fpath));
+            pen.setBrush(brush);
             
             //create path
-            auto newPath = new MapViewGraphicsPathItem(this, shape, pen, brush);
+            auto newPath = new MapViewGraphicsPathItem(this, shape, pen);
             
             return newPath;
         }

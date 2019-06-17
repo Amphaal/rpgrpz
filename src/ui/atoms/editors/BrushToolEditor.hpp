@@ -6,6 +6,7 @@
 #include <QComboBox>
 
 #include "src/ui/map/MapView.h"
+#include "src/shared/models/RPZAtom.h"
 #include "src/ui/atoms/base/BrushToolWidthEditor.hpp"
 
 class BrushToolEditor : public QWidget {
@@ -16,22 +17,22 @@ class BrushToolEditor : public QWidget {
         void brushToolChanged(int selectedBrushTool, int brushWidth);
 
     private:    
-        static inline QMap<MapView::BrushTool, QString> _strBT {
-            { MapView::Stamp, "Tampon" },
-            { MapView::Rectangle, "Rectangulaire" },
-            { MapView::Ovale, "Circulaire" },
-            { MapView::RoundBrush, "Brosse ronde" },
-            //{ MapView::Cutter, "Biseau" },
-            { MapView::Scissors, "Ciseaux" }
+        static inline QMap<BrushType, QString> _strBT {
+            { BrushType::Stamp, "Tampon" },
+            { BrushType::Rectangle, "Rectangulaire" },
+            { BrushType::Ovale, "Circulaire" },
+            { BrushType::RoundBrush, "Brosse ronde" },
+            { BrushType::Cutter, "Biseau" },
+            { BrushType::Scissors, "Ciseaux" }
         };
 
-        static inline QHash<MapView::BrushTool, QString> _BTicons {
-            { MapView::Stamp, ":/icons/app/tools/stamp.png" },
-            { MapView::Rectangle, ":/icons/app/tools/rectangle.png" },
-            { MapView::Ovale, ":/icons/app/tools/ovale.png" },
-            { MapView::RoundBrush, ":/icons/app/tools/roundBrush.png" },
-            //{ MapView::Cutter, ":/icons/app/tools/cutter.png" },
-            { MapView::Scissors, ":/icons/app/tools/scissors.png" }
+        static inline QHash<BrushType, QString> _BTicons {
+            { BrushType::Stamp, ":/icons/app/tools/stamp.png" },
+            { BrushType::Rectangle, ":/icons/app/tools/rectangle.png" },
+            { BrushType::Ovale, ":/icons/app/tools/ovale.png" },
+            { BrushType::RoundBrush, ":/icons/app/tools/roundBrush.png" },
+            { BrushType::Cutter, ":/icons/app/tools/cutter.png" },
+            { BrushType::Scissors, ":/icons/app/tools/scissors.png" }
         };
 
         QComboBox* _combo = nullptr;
@@ -69,8 +70,8 @@ class BrushToolEditor : public QWidget {
             QObject::connect(
                 this->combo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
                 [&](int currentIndex) {
-                        auto isFreeDraw = (MapView::BrushTool)currentIndex == MapView::FreeDraw;
-                        this->_brushToolWidthEditor->setVisible(isFreeDraw);
+                        auto isRoundBrush = (BrushType)currentIndex == MapView::RoundBrush;
+                        this->_brushToolWidthEditor->setVisible(isRoundBrush);
                         this->_onBrushToolChanged();
                 }
             );

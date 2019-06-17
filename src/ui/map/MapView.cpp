@@ -354,7 +354,7 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
 //////////
 
 void MapView::onBrushToolChange(int brushTool, int brushToolWidth) {
-    this->_bTool = (BrushTool)brushTool;
+    this->_bTool = (BrushType)brushTool;
     this->_bToolWidth = brushToolWidth;
 }
 
@@ -570,32 +570,39 @@ void MapView::_updateDrawingPath(const QPoint &evtPoint) {
 void MapView::_updateDrawingPathForBrush(const QPointF &pathCoord, QPainterPath &pathToAlter) {
     switch(this->_bTool) {
         
-        // case BrushTool::Cutter:
+        case BrushType::Stamp:
+
+        break;
+
+        // case BrushType::Cutter:
 
         // break;
 
-        case BrushTool::Ovale: {
+        case BrushType::Ovale: {
             pathToAlter = QPainterPath();
             QRectF rect(QPointF(0,0), pathCoord);
             pathToAlter.addEllipse(rect);
         }
         break;
 
-        case BrushTool::Rectangle: {
+        case BrushType::Rectangle: {
             pathToAlter = QPainterPath();
             QRectF rect(QPointF(0,0), pathCoord);
             pathToAlter.addRect(rect);
         }
         break;
 
-        case BrushTool::Scissors: {
+        case BrushType::Scissors: {
             pathToAlter.lineTo(pathCoord);
         }
         break;
 
-        case BrushTool::Stamp: {
+        case BrushType::RoundBrush: {
+            auto halved = (double)this->_bToolWidth / 2;
+            auto centeredPathCoord = pathCoord - QPointF(halved, halved);
+
             auto newPath = QPainterPath();
-            auto centeredPathCoord = pathCoord - QPointF(this->_bToolWidth / 2, this->_bToolWidth / 2);
+
             QRectF rect(centeredPathCoord, QSize(this->_bToolWidth, this->_bToolWidth));
             newPath.addEllipse(rect);
             pathToAlter = pathToAlter.united(newPath);

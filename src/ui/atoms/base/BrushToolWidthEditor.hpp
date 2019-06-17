@@ -16,7 +16,7 @@ class BrushToolWidthEditor : public QWidget {
             auto layout = new QHBoxLayout;
             this->setLayout(layout);
             
-            auto descr = new QLabel("Taille du tampon :");
+            auto descr = new QLabel("Taille de la brosse :");
 
             this->_spin->setMinimum(1);
             this->_spin->setMaximum(50);

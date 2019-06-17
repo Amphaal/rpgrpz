@@ -147,13 +147,16 @@ QHash<AtomParameter, QVariant> AtomEditor::_findDefaultValuesToBind() {
 
 
 AtomEditor::EditMode AtomEditor::_changeEditMode() {
+    
     EditMode currentEditMode;
+    
     auto countItems = this->_atoms.count();
+    auto firstItem = countItems > 0 ? this->_atoms.at(0) : nullptr;
     
     if(countItems == 0) {
         currentEditMode  = EditMode::None;
     }
-    else if(countItems == 1 && !this->_atoms.at(0)->id()) {
+    else if(countItems == 1 && !firstItem->id()) {
         currentEditMode = EditMode::Template;
     } 
     else {
@@ -164,7 +167,8 @@ AtomEditor::EditMode AtomEditor::_changeEditMode() {
     this->setTitle(_strEM[currentEditMode]);
 
     //update tool brush selector visibility
-    this->_burshToolSelector->setVisible(currentEditMode == Template);
+    auto mustShowBrushToolEditor = currentEditMode == Template && firstItem->type() == AtomType::Brush;
+    this->_burshToolSelector->setVisible(mustShowBrushToolEditor);
 
     return currentEditMode;
 }
