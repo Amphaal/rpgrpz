@@ -148,19 +148,18 @@ void MapView::leaveEvent(QEvent *event) {
     this->_ghostItem->setVisible(false);
 }
 
-void MapView::onAtomTemplateChange(void* atomTemplate) {
-    
-    emit subjectedAtomsChanged(QVector<void*>({atomTemplate}));
-
-    auto templatePtr = (RPZAtom*)atomTemplate;
+void MapView::onAtomTemplateChange() {
+    emit subjectedAtomsChanged(QVector<void*>({this->_hints->templateAtom}));
     
     //update the ghost graphics item to display the updated values
-    AtomConverter::updateGraphicsItemFromAtom(this->_ghostItem, *templatePtr, true);
+    AtomConverter::updateGraphicsItemFromAtom(this->_ghostItem, *this->_hints->templateAtom, true);
 }
 
 void MapView::_generateGhostItemFromBuffer() {
+    
     this->_clearGhostItem();
     this->_ghostItem = this->_hints->generateGhostItem(this->_bufferedAssetMetadata);
+
 }
 
 void MapView::_handleGhostItem(const Tool &tool) {
@@ -316,7 +315,7 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
                 switch(this->_bufferedAssetMetadata.atomType()) {
                     case AtomType::Drawing:
                     case AtomType::Brush:
-                        this->_drawLineTo(event->pos());
+                        this->_updateDrawingPath(event->pos());
                     break;
                 }
         }
@@ -353,6 +352,11 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
 //////////
 /* TOOL */
 //////////
+
+void MapView::onBrushToolChange(int brushTool, int brushToolWidth) {
+    this->_bTool = (BrushTool)brushTool;
+    this->_bToolWidth = brushToolWidth;
+}
 
 //returns tool
 MapView::Tool MapView::_getCurrentTool() const {
@@ -514,44 +518,98 @@ void MapView::wheelEvent(QWheelEvent *event) {
 /* DRAWING */
 /////////////
 
-void MapView::_beginDrawing(const QPoint &lastPointMousePressed) {
-    
-    //destroy temp
+void MapView::_destroyTempDrawing() {
     if(this->_tempDrawing) {
         delete this->_tempDrawing;
         this->_tempDrawing = nullptr;
     }
+    this->_currentDrawing_AtomType = (AtomType)0;
+}
+
+void MapView::_beginDrawing(const QPoint &lastPointMousePressed) {
+    
+    //destroy temp
+    this->_destroyTempDrawing();
 
     //create base and store it
-    auto gi = this->_scene->addToScene(
-        *this->_hints->templateAtom, 
-        this->_bufferedAssetMetadata,
-        true
-    );
+    auto gi = this->_scene->addToScene(*this->_hints->templateAtom, this->_bufferedAssetMetadata, true);
     this->_tempDrawing = (QGraphicsPathItem*)gi;
+    this->_currentDrawing_AtomType = this->_hints->templateAtom->type();
 
     //update position
     auto startPoint = this->mapToScene(lastPointMousePressed);
     this->_tempDrawing->setPos(startPoint);
 }
 
-void MapView::_drawLineTo(const QPoint &evtPoint) {
+void MapView::_updateDrawingPath(const QPoint &evtPoint) {
+    
+    //if no temp, stop
     if(!this->_tempDrawing) return;
 
+    //get existing path
     auto existingPath = this->_tempDrawing->path();
 
-    //define vector
-    auto to = this->mapToScene(evtPoint);
-    auto to2 = this->_tempDrawing->mapFromScene(to);
+    //define destination coordonate
+    auto sceneCoord = this->mapToScene(evtPoint);
+    auto pathCoord = this->_tempDrawing->mapFromScene(sceneCoord);
+
+    switch(this->_currentDrawing_AtomType) {
+        case AtomType::Drawing:
+            existingPath.lineTo(pathCoord);
+        break;
+
+        case AtomType::Brush:
+            this->_updateDrawingPathForBrush(pathCoord, existingPath);
+        break;
+    }
 
     //save as new path
-    existingPath.lineTo(to2);
     this->_tempDrawing->setPath(existingPath);
 }
 
+void MapView::_updateDrawingPathForBrush(const QPointF &pathCoord, QPainterPath &pathToAlter) {
+    switch(this->_bTool) {
+        
+        // case BrushTool::Cutter:
+
+        // break;
+
+        case BrushTool::Ovale: {
+            pathToAlter = QPainterPath();
+            QRectF rect(QPointF(0,0), pathCoord);
+            pathToAlter.addEllipse(rect);
+        }
+        break;
+
+        case BrushTool::Rectangle: {
+            pathToAlter = QPainterPath();
+            QRectF rect(QPointF(0,0), pathCoord);
+            pathToAlter.addRect(rect);
+        }
+        break;
+
+        case BrushTool::Scissors: {
+            pathToAlter.lineTo(pathCoord);
+        }
+        break;
+
+        case BrushTool::Stamp: {
+            auto newPath = QPainterPath();
+            auto centeredPathCoord = pathCoord - QPointF(this->_bToolWidth / 2, this->_bToolWidth / 2);
+            QRectF rect(centeredPathCoord, QSize(this->_bToolWidth, this->_bToolWidth));
+            newPath.addEllipse(rect);
+            pathToAlter = pathToAlter.united(newPath);
+        }
+        break;
+
+    }
+}
+
 void MapView::_endDrawing() {
+    //if no temporary drawing, stop
     if(!this->_tempDrawing) return;
     
+    //if too small stop
     auto path = this->_tempDrawing->path();
     if(path.elementCount() < 2) return;
 
@@ -559,8 +617,7 @@ void MapView::_endDrawing() {
     this->_hints->integrateGraphicsItemAsPayload(this->_tempDrawing);
 
     //destroy temp
-    delete this->_tempDrawing;
-    this->_tempDrawing = nullptr;
+    this->_destroyTempDrawing();
 }
 
 /////////////////

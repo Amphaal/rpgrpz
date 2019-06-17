@@ -8,14 +8,15 @@ AtomEditor::AtomEditor(QWidget* parent) : QGroupBox(_strEM[None], parent) {
     this->setLayout(new QVBoxLayout);
 
     //custom editors
-    this->_burshToolSelector = new BrushToolEditor();
-    this->layout()->addWidget(this->_burshToolSelector);
-    QObject::connect(
-        this->_burshToolSelector->combo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
-        [&](int selectedTool) {
-            emit requestBurshToolChange(selectedTool);
-        }
-    );
+        
+        //brush tool
+        this->_burshToolSelector = new BrushToolEditor;
+        this->layout()->addWidget(this->_burshToolSelector);
+        QObject::connect(
+            this->_burshToolSelector, &BrushToolEditor::brushToolChanged,
+            this, &AtomEditor::_onBrushToolChange
+        );
+
 
     //create params editors
     this->_createEditorsFromAtomParameters();
@@ -73,8 +74,10 @@ void AtomEditor::resetParams() {
 
     //resetBrushTool
     if(this->_burshToolSelector->isVisible()) {
-        this->_burshToolSelector->combo()->setCurrentIndex(0);
+        this->_burshToolSelector->reset();
     }
+
+
 }
 
 void AtomEditor::_createEditorsFromAtomParameters() {
@@ -106,6 +109,10 @@ void AtomEditor::_onSubEditorChanged(const AtomParameter &parameterWhoChanged, Q
     auto payload = MetadataChangedPayload(this->_atomIds(), parameterWhoChanged, value);
     this->_emitPayload(payload);
 }
+
+ void AtomEditor::_onBrushToolChange(int selectedBrushTool, int brushWidth) {  
+     emit requestBurshToolChange(selectedBrushTool, brushWidth);  
+ }
 
 void AtomEditor::_emitPayload(AlterationPayload &payload) {
     payload.changeSource(AlterationPayload::Source::Local_AtomEditor);

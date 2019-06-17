@@ -43,7 +43,14 @@ class MapView : public QGraphicsView, public ClientBindable {
 
     public:
         enum Tool { Default, Atom, Scroll };
-        enum BrushTool { Stamp, Rectangle, Ovale, Cutter, Scissors };
+        enum BrushTool { 
+            Stamp, 
+            Rectangle, 
+            Ovale,
+            RoundBrush,
+            //Cutter, 
+            Scissors 
+        };
 
         MapView(QWidget *parent);
         MapHint* hints();
@@ -51,7 +58,8 @@ class MapView : public QGraphicsView, public ClientBindable {
     public slots:
         void actionRequested(const MapTools::Actions &action);
         void assetTemplateChanged(const QVariantHash &assetMetadata);
-        void onAtomTemplateChange(void* atomTemplate);
+        void onAtomTemplateChange();
+        void onBrushToolChange(int brushTool, int brushToolWidth);
     
     signals:
         void unselectCurrentAssetAsked();
@@ -97,8 +105,10 @@ class MapView : public QGraphicsView, public ClientBindable {
             bool _isMousePressed = false;
 
         //tool
-            Tool _tool = Tool::Default;
-            Tool _quickTool = Tool::Default;
+            BrushTool _bTool = (BrushTool)0;
+            int _bToolWidth = 1;
+            Tool _tool = (Tool)0;
+            Tool _quickTool = (Tool)0;
             Tool _getCurrentTool() const;
             void _changeTool(Tool newTool, const bool quickChange = false);
             void _resetTool();
@@ -115,8 +125,12 @@ class MapView : public QGraphicsView, public ClientBindable {
 
         //drawing...
             QGraphicsPathItem* _tempDrawing = nullptr;
+            AtomType _currentDrawing_AtomType = (AtomType)0;
+
+            void _destroyTempDrawing();
             void _beginDrawing(const QPoint &lastPointMousePressed);
             void _endDrawing();
-            void _drawLineTo(const QPoint &evtPoint);
+            void _updateDrawingPath(const QPoint &evtPoint);
+            void _updateDrawingPathForBrush(const QPointF &pathCoord, QPainterPath &pathToAlter);
 
 };

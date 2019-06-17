@@ -39,6 +39,14 @@ class AssetMetadata : public QVariantHash {
         AtomType atomType() {
             return (AtomType)this->value("t").toInt();
         }
+
+        int brushWidth() {
+            return this->value("bw").toInt();
+        }
+
+        void setBrushWidth(int width) {
+            this->insert("bw", width);
+        }
     
     private:
         void _setAtomType(const AtomType &type) {

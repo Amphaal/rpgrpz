@@ -118,9 +118,6 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             //define a default shape for ghost items
             auto shape = atom.shape();
             shape.setFillRule(Qt::FillRule::WindingFill);
-            if(!shape.elementCount()) {
-                shape.lineTo(.01,.01);
-            }
 
             //add brush
             QBrush brush;

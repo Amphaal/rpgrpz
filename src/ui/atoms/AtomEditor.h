@@ -30,7 +30,7 @@ class AtomEditor : public QGroupBox {
     
     signals:
         void requiresAtomAlteration(QVariantHash &payload);
-        void requestBurshToolChange(int toolToUse);
+        void requestBurshToolChange(int toolToUse, int brushWidth);
     
     private:
 
@@ -44,13 +44,15 @@ class AtomEditor : public QGroupBox {
         QVector<snowflake_uid> _atomIds();
 
         QMap<AtomParameter, AtomSubEditor*> _editorsByParam;
-        BrushToolEditor* _burshToolSelector = nullptr;
         QList<AtomParameter> _visibleEditors;
+
+        BrushToolEditor* _burshToolSelector = nullptr;
 
         QHash<AtomParameter, QVariant> _findDefaultValuesToBind();
         void _createEditorsFromAtomParameters();
 
         void _onSubEditorChanged(const AtomParameter &parameterWhoChanged, QVariant &value);
+        void _onBrushToolChange(int selectedBrushTool, int brushWidth);
         void _emitPayload(AlterationPayload &payload);
         EditMode _changeEditMode();
 };

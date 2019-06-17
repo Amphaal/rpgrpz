@@ -27,7 +27,7 @@ bool ViewMapHint::isInTextInteractiveMode() {
 
 void ViewMapHint::setDefaultLayer(int layer) {
     this->templateAtom->setMetadata(AtomParameter::Layer, layer);
-    emit atomTemplateChanged(this->templateAtom);
+    emit atomTemplateChanged();
 }
 
 void ViewMapHint::handleAnyMovedItems() {
@@ -140,7 +140,7 @@ void ViewMapHint::setDefaultUser(RPZUser user) {
     this->_defaultOwner = user;
     auto oldOwnerId = this->templateAtom->owner().id();
     this->templateAtom->setOwnership(user);
-    emit atomTemplateChanged(this->templateAtom);
+    emit atomTemplateChanged();
 
     //update self graphic path items with new color
     auto color = user.color();
@@ -206,7 +206,7 @@ QGraphicsItem* ViewMapHint::generateGhostItem(AssetMetadata &assetMetadata) {
     this->templateAtom->setGraphicsItem(ghostItem);
 
     //advert change in template
-    emit atomTemplateChanged(this->templateAtom);
+    emit atomTemplateChanged();
 
     //if no ghost item, return
     if(!ghostItem) return ghostItem;
@@ -322,7 +322,7 @@ void ViewMapHint::handleParametersUpdateAlterationRequest(QVariantHash &payload)
         }
         
         //says it changed
-        emit atomTemplateChanged(this->templateAtom);
+        emit atomTemplateChanged();
 
     } 
     
