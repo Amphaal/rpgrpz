@@ -248,12 +248,6 @@ void MainWindow::_initUIApp() {
         this->_mapView, &MapView::onAtomTemplateChange
     );
 
-    //on brush tool change
-    QObject::connect(
-        this->_atomEditManager->editor(), &AtomEditor::requestBurshToolChange,
-        this->_mapView, &MapView::onBrushToolChange
-    );
-
     //on default layer changed
     QObject::connect(
         this->_mlManager->layerSelector()->spinbox(), qOverload<int>(&QSpinBox::valueChanged),

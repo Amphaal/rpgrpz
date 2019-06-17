@@ -110,7 +110,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             
             //define a ped
             QPen pen;
-            pen.setWidth(0);
+            pen.setWidth(atom.penWidth());
             pen.setCapStyle(Qt::RoundCap);
             pen.setJoinStyle(Qt::RoundJoin);
             pen.setColor(QColor(255, 255, 255, 0));
@@ -119,14 +119,21 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             auto shape = atom.shape();
             shape.setFillRule(Qt::FillRule::WindingFill);
 
-            //add brush
+            //configure brush
             QBrush brush;
             auto fpath = assetMetadata.pathToAssetFile();
             brush.setTexture(QPixmap(fpath));
-            pen.setBrush(brush);
+            
+            //conditionnal binding
+            QBrush giBrush;
+            if(atom.brushType() == BrushType::RoundBrush) {
+                pen.setBrush(brush);
+            } else {
+                giBrush = brush;
+            }
             
             //create path
-            auto newPath = new MapViewGraphicsPathItem(this, shape, pen);
+            auto newPath = new MapViewGraphicsPathItem(this, shape, pen, giBrush);
             
             return newPath;
         }

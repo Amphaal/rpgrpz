@@ -1,52 +1,41 @@
 #pragma once
 
 #include "src/ui/atoms/base/AtomEditorLineDescriptor.h"
-#include <QWidget>
 #include <QVBoxLayout>
 #include <QComboBox>
 
 #include "src/ui/map/MapView.h"
 #include "src/shared/models/RPZAtom.h"
-#include "src/ui/atoms/base/BrushToolWidthEditor.hpp"
+#include "src/ui/atoms/editors/AtomSliderEditor.h"
 
-class BrushToolEditor : public QWidget {
+class BrushToolEditor : public AtomSubEditor {
     
     Q_OBJECT
 
-    signals:
-        void brushToolChanged(int selectedBrushTool, int brushWidth);
-
     private:    
-        static inline QMap<BrushType, QString> _strBT {
-            { BrushType::Stamp, "Tampon" },
-            { BrushType::Rectangle, "Rectangulaire" },
-            { BrushType::Ovale, "Circulaire" },
-            { BrushType::RoundBrush, "Brosse ronde" },
-            { BrushType::Cutter, "Biseau" },
-            { BrushType::Scissors, "Ciseaux" }
+        static inline QMap<int, QString> _strBT {
+            { (int)BrushType::Stamp, "Tampon" },
+            { (int)BrushType::Rectangle, "Rectangulaire" },
+            { (int)BrushType::Ovale, "Circulaire" },
+            { (int)BrushType::RoundBrush, "Brosse ronde" },
+            { (int)BrushType::Cutter, "Biseau" },
+            { (int)BrushType::Scissors, "Ciseaux" }
         };
 
-        static inline QHash<BrushType, QString> _BTicons {
-            { BrushType::Stamp, ":/icons/app/tools/stamp.png" },
-            { BrushType::Rectangle, ":/icons/app/tools/rectangle.png" },
-            { BrushType::Ovale, ":/icons/app/tools/ovale.png" },
-            { BrushType::RoundBrush, ":/icons/app/tools/roundBrush.png" },
-            { BrushType::Cutter, ":/icons/app/tools/cutter.png" },
-            { BrushType::Scissors, ":/icons/app/tools/scissors.png" }
+        static inline QHash<int, QString> _BTicons {
+            { (int)BrushType::Stamp, ":/icons/app/tools/stamp.png" },
+            { (int)BrushType::Rectangle, ":/icons/app/tools/rectangle.png" },
+            { (int)BrushType::Ovale, ":/icons/app/tools/ovale.png" },
+            { (int)BrushType::RoundBrush, ":/icons/app/tools/roundBrush.png" },
+            { (int)BrushType::Cutter, ":/icons/app/tools/cutter.png" },
+            { (int)BrushType::Scissors, ":/icons/app/tools/scissors.png" }
         };
 
         QComboBox* _combo = nullptr;
-        BrushToolWidthEditor* _brushToolWidthEditor = nullptr;
-
-        void _onBrushToolChanged() {
-            emit brushToolChanged(
-                this->_combo->currentIndex(), 
-                this->_brushToolWidthEditor->spin()->value()
-            );
-        }
+        AtomSliderEditor* _brushToolWidthEditor = nullptr;
 
     public:
-        BrushToolEditor() : _brushToolWidthEditor(new BrushToolWidthEditor) { 
+        BrushToolEditor() : AtomSubEditor(AtomParameter::BrushStyle), _brushToolWidthEditor(new AtomSliderEditor(AtomParameter::BrushPenWidth, 1, 500)) { 
             this->setVisible(false);
 
             this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
@@ -68,16 +57,12 @@ class BrushToolEditor : public QWidget {
             }
 
             QObject::connect(
-                this->combo(), QOverload<int>::of(&QComboBox::currentIndexChanged),
+                this->_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
                 [&](int currentIndex) {
-                        auto isRoundBrush = (BrushType)currentIndex == MapView::RoundBrush;
-                        this->_brushToolWidthEditor->setVisible(isRoundBrush);
-                        this->_onBrushToolChanged();
+                    auto isRoundBrush = (BrushType)currentIndex == BrushType::RoundBrush;
+                    this->_brushToolWidthEditor->setVisible(isRoundBrush);
+                    emit valueConfirmedForPayload(this->_param, QVariant(currentIndex));
                 }
-            );
-            QObject::connect(
-                this->_brushToolWidthEditor->spin(), QOverload<int>::of(&QSpinBox::valueChanged),
-                this, &BrushToolEditor::_onBrushToolChanged
             );
 
             this->layout()->addWidget(this->_combo);
@@ -86,23 +71,15 @@ class BrushToolEditor : public QWidget {
 
         void reset() {
 
-            this->_combo->blockSignals(true);
-                this->_combo->setCurrentIndex(0);
-            this->_combo->blockSignals(false);
-
-                
+            this->_combo->setCurrentIndex(0);
+             
             if(this->_brushToolWidthEditor->isVisible()) {
-                this->_brushToolWidthEditor->spin()->blockSignals(true);
-                    this->_brushToolWidthEditor->spin()->setValue(1);
-                this->_brushToolWidthEditor->spin()->blockSignals(false);
+                this->_brushToolWidthEditor->slider()->setValue(1);
             }
-
-            this->_onBrushToolChanged();
-
         }
 
-        QComboBox* combo() {
-            return this->_combo;
+        AtomSliderEditor* widthEditor() {
+            return this->_brushToolWidthEditor;
         }
 
 };

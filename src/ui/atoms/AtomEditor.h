@@ -30,7 +30,6 @@ class AtomEditor : public QGroupBox {
     
     signals:
         void requiresAtomAlteration(QVariantHash &payload);
-        void requestBurshToolChange(int toolToUse, int brushWidth);
     
     private:
 
@@ -52,7 +51,6 @@ class AtomEditor : public QGroupBox {
         void _createEditorsFromAtomParameters();
 
         void _onSubEditorChanged(const AtomParameter &parameterWhoChanged, QVariant &value);
-        void _onBrushToolChange(int selectedBrushTool, int brushWidth);
         void _emitPayload(AlterationPayload &payload);
         EditMode _changeEditMode();
 };

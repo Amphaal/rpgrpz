@@ -106,6 +106,7 @@ bool RPZAtom::isLocked() { return this->metadata(AtomParameter::Locked).toBool()
 double RPZAtom::assetScale() { return this->metadata(AtomParameter::AssetScale).toDouble();}
 double RPZAtom::assetRotation() { return this->metadata(AtomParameter::AssetRotation).toDouble();}
 BrushType RPZAtom::brushType() { return (BrushType)this->metadata(AtomParameter::BrushStyle).toInt(); }
+int RPZAtom::brushPenWidth() { return this->metadata(AtomParameter::BrushPenWidth).toInt(); }
 
 QPainterPath RPZAtom::shape() {return JSONSerializer::toPainterPath(this->metadata(AtomParameter::Shape).toByteArray());}
 void RPZAtom::setShape(const QPainterPath &path) { this->setMetadata(AtomParameter::Shape, JSONSerializer::asBase64(path)); }
@@ -145,6 +146,8 @@ QSet<AtomParameter> RPZAtom::customizableParams() {
         case AtomType::Brush: {
             out.insert(AtomParameter::AssetRotation);
             out.insert(AtomParameter::AssetScale);
+            out.insert(AtomParameter::BrushStyle);
+            out.insert(AtomParameter::BrushPenWidth);
         }
         break;
 
@@ -170,10 +173,17 @@ QSet<AtomParameter> RPZAtom::legalParameters() {
         }
         break;
 
-        case AtomType::Object:
+        case AtomType::Object: {
+            base.insert(AtomParameter::AssetId);
+            base.insert(AtomParameter::AssetName);
+        }
+        break;
+
         case AtomType::Brush: {
             base.insert(AtomParameter::AssetId);
             base.insert(AtomParameter::AssetName);
+            base.insert(AtomParameter::BrushStyle);
+            base.insert(AtomParameter::BrushPenWidth);
         }
         break;
 

@@ -571,12 +571,12 @@ void MapView::_updateDrawingPathForBrush(const QPointF &pathCoord, QPainterPath 
     switch(this->_bTool) {
         
         case BrushType::Stamp:
-
+            //TODO
         break;
 
-        // case BrushType::Cutter:
-
-        // break;
+        case BrushType::Cutter:
+            //TODO
+        break;
 
         case BrushType::Ovale: {
             pathToAlter = QPainterPath();
@@ -598,14 +598,7 @@ void MapView::_updateDrawingPathForBrush(const QPointF &pathCoord, QPainterPath 
         break;
 
         case BrushType::RoundBrush: {
-            auto halved = (double)this->_bToolWidth / 2;
-            auto centeredPathCoord = pathCoord - QPointF(halved, halved);
-
-            auto newPath = QPainterPath();
-
-            QRectF rect(centeredPathCoord, QSize(this->_bToolWidth, this->_bToolWidth));
-            newPath.addEllipse(rect);
-            pathToAlter = pathToAlter.united(newPath);
+            pathToAlter.lineTo(pathCoord);
         }
         break;
 

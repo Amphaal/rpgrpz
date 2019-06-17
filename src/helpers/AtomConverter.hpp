@@ -159,6 +159,7 @@ class AtomConverter {
                     break;
 
                     //on pen width change
+                    case AtomParameter::BrushPenWidth:
                     case AtomParameter::PenWidth: {
                         if(auto cItem = dynamic_cast<QGraphicsPathItem*>(itemToUpdate)) {
                             auto newWidth = val.toInt();
@@ -191,7 +192,7 @@ class AtomConverter {
 
                     }
                     break;
-
+                    
                     //on asset rotation / scale, store metadata for all-in transform update in main method
                     case AtomParameter::AssetRotation: {
                     case AtomParameter::AssetScale: {
@@ -241,6 +242,7 @@ class AtomConverter {
                 }
                 break;
 
+                case BrushPenWidth:
                 case PenWidth: {
                     if(auto pathItem = dynamic_cast<QGraphicsPathItem*>(blueprint)) {
                         atomToUpdate.setMetadata(param, pathItem->pen().width()); 

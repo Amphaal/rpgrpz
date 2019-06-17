@@ -13,10 +13,13 @@ AtomEditor::AtomEditor(QWidget* parent) : QGroupBox(_strEM[None], parent) {
         this->_burshToolSelector = new BrushToolEditor;
         this->layout()->addWidget(this->_burshToolSelector);
         QObject::connect(
-            this->_burshToolSelector, &BrushToolEditor::brushToolChanged,
-            this, &AtomEditor::_onBrushToolChange
+            this->_burshToolSelector, &AtomSubEditor::valueConfirmedForPayload,
+            this, &AtomEditor::_onSubEditorChanged
         );
-
+        QObject::connect(
+            this->_burshToolSelector->widthEditor(), &AtomSubEditor::valueConfirmedForPayload,
+            this, &AtomEditor::_onSubEditorChanged
+        );
 
     //create params editors
     this->_createEditorsFromAtomParameters();
@@ -41,6 +44,7 @@ void AtomEditor::buildEditor(QVector<RPZAtom*> &atomsToBuildFrom) {
         //prepare
         auto param = i.key();
         auto editor = this->_editorsByParam[param];
+        if(!editor) continue;
 
         //load template, and display them
         editor->loadTemplate(this->_atoms, i.value());
@@ -109,10 +113,6 @@ void AtomEditor::_onSubEditorChanged(const AtomParameter &parameterWhoChanged, Q
     auto payload = MetadataChangedPayload(this->_atomIds(), parameterWhoChanged, value);
     this->_emitPayload(payload);
 }
-
- void AtomEditor::_onBrushToolChange(int selectedBrushTool, int brushWidth) {  
-     emit requestBurshToolChange(selectedBrushTool, brushWidth);  
- }
 
 void AtomEditor::_emitPayload(AlterationPayload &payload) {
     payload.changeSource(AlterationPayload::Source::Local_AtomEditor);
