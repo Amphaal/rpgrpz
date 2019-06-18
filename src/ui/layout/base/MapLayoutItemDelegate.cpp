@@ -1,6 +1,6 @@
 #include "MapLayoutItemDelegate.h"
 
-OwnerDelegate::OwnerDelegate(QWidget *parent = nullptr) : QStyledItemDelegate(parent) {}
+OwnerDelegate::OwnerDelegate(QWidget *parent) : QStyledItemDelegate(parent) {}
 
 void OwnerDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
     
@@ -28,7 +28,7 @@ QSize OwnerDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIn
     return QStyledItemDelegate::sizeHint(option, index);
 }
 
-LockAndVisibilityDelegate::LockAndVisibilityDelegate(QWidget *parent = nullptr) : QStyledItemDelegate(parent) { }
+LockAndVisibilityDelegate::LockAndVisibilityDelegate(QWidget *parent) : QStyledItemDelegate(parent) { }
 
 void LockAndVisibilityDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
     

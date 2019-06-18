@@ -11,7 +11,7 @@ QColor RandomColor::getRandomColor() {
     return QColor::fromHsvF(_rand, .5, .95);
 }
 
-QList<QColor> RandomColor::generateColors(int howMany = 10) {
+QList<QColor> RandomColor::generateColors(int howMany) {
     QList<QColor> list;
 
     for(int i = 0; i < howMany; i++) {
