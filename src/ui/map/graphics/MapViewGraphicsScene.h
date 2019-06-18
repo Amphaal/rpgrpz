@@ -8,7 +8,7 @@
 #include "MapViewItemsNotifier.h"
 
 #include "src/shared/models/RPZAtom.h"
-#include "src/shared/models/AssetMetadata.hpp"
+#include "src/shared/models/AssetMetadata.h"
 
 #include "src/helpers/AtomConverter.h"
 

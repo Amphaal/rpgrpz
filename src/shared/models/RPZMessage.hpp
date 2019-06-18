@@ -3,7 +3,7 @@
 #include <QString>
 #include <QDateTime>
 
-#include "RPZUser.hpp"
+#include "RPZUser.h"
 #include "base/Stampable.hpp"
 
 #include "src/shared/commands/MessageInterpreter.h"

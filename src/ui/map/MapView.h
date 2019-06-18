@@ -35,7 +35,7 @@
 
 #include "src/shared/payloads/Payloads.h"
 
-#include "src/shared/models/AssetMetadata.hpp"
+#include "src/shared/models/AssetMetadata.h"
 
 class MapView : public QGraphicsView, public ClientBindable {
 

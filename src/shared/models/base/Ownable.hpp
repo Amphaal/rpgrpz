@@ -4,7 +4,7 @@
 
 #include "Serializable.hpp"
 
-#include "src/shared/models/RPZUser.hpp"
+#include "src/shared/models/RPZUser.h"
 
 class Ownable : public Serializable {
 

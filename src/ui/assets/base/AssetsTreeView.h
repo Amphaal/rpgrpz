@@ -16,7 +16,7 @@
 #include "AssetsTreeViewModel.h"
 #include "src/shared/commands/RPZActions.h"
 
-#include "src/shared/models/AssetMetadata.hpp"
+#include "src/shared/models/AssetMetadata.h"
 
 class AssetsTreeView : public QTreeView {
 

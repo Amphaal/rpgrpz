@@ -18,7 +18,7 @@
 #include "src/shared/atoms/AtomsStorage.h"
 #include "src/shared/payloads/Payloads.h"
 #include "src/shared/models/RPZMessage.hpp"
-#include "src/shared/models/RPZUser.hpp"
+#include "src/shared/models/RPZUser.h"
 #include "src/shared/models/RPZResponse.hpp"
 #include "src/shared/models/RPZHandshake.hpp"
 

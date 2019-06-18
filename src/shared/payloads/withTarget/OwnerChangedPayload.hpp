@@ -2,7 +2,7 @@
 
 #include "src/shared/payloads/_base/MultipleTargetsPayload.hpp"
 
-#include "src/shared/models/RPZUser.hpp"
+#include "src/shared/models/RPZUser.h"
 
 class OwnerChangedPayload : public MultipleTargetsPayload {
     public:

@@ -12,14 +12,14 @@
 #include "src/shared/models/RPZMessage.hpp"
 #include "src/shared/models/RPZResponse.hpp"
 
-#include "src/shared/models/RPZUser.hpp"
+#include "src/shared/models/RPZUser.h"
 #include "src/ui/others/ClientBindable.h"
 
 #include "ChatEdit.h"
 
 #include "logs/base/LogScrollView.h"
-#include "logs/UsersLog.hpp"
-#include "logs/MessagesLog.hpp"
+#include "logs/UsersLog.h"
+#include "logs/MessagesLog.h"
 
 
 class ChatWidget : public QWidget, public ClientBindable {

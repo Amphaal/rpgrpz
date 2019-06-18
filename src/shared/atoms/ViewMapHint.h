@@ -16,7 +16,7 @@
 #include "src/shared/payloads/Payloads.h"
 #include "src/ui/assets/base/AssetsTreeViewModel.h"
 
-#include "src/shared/database/MapDatabase.hpp"
+#include "src/shared/database/MapDatabase.h"
 
 #include "src/ui/map/graphics/MapViewGraphicsScene.h"
 
@@ -25,7 +25,7 @@
 #include "src/ui/map/MapTools.h"
 
 #include "src/shared/commands/AtomsContextualMenuHandler.h"
-#include "src/shared/models/AssetMetadata.hpp"
+#include "src/shared/models/AssetMetadata.h"
 
 class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
     
