@@ -5,7 +5,7 @@
 #include <QFileInfo>
 
 #include "MapViewGraphicsItem.hpp"
-#include "MapViewItemsNotifier.hpp"
+#include "MapViewItemsNotifier.h"
 
 #include "src/shared/models/RPZAtom.h"
 #include "src/shared/models/AssetMetadata.hpp"
@@ -20,7 +20,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
         void sceneItemChanged(QGraphicsItem* item, int atomAlteration);
 
     private:
-        void onItemChange(QGraphicsItem* item, MapViewCustomItemsEventFlag flag) override {
+        void onGraphicsItemCustomChange(QGraphicsItem* item, MapViewCustomItemsEventFlag flag) override {
             emit sceneItemChanged(item, (int)flag);
         };
 
@@ -54,15 +54,21 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
                 break;
             }
 
+            //update
+            AtomConverter::updateGraphicsItemFromAtom(out, atom, isTemporary);        
+
             //add atomType tracker
-            AtomConverter::updateGraphicsItemFromAtom(out, atom, isTemporary);
             this->addItem(out);
 
-            //prevent notifications on move to kick in since the graphics item is not really in the scene
-            if(isTemporary) {
-                auto notifier = dynamic_cast<MapViewItemsNotifier*>(out);
-                notifier->disableNotifications();
-            }          
+            //prevent notifications on move to kick in for temporary items
+            if(auto notifier = dynamic_cast<MapViewItemsNotifier*>(out)) {
+                if(isTemporary) {
+                    notifier->disableNotifications();
+                }
+                else {
+                    notifier->activateNotifications();
+                }
+            }
 
             return out;
         }
@@ -79,10 +85,22 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
             //background brush
             QBrush brush(QColor(255, 0, 0, 128));
 
-            //add to scene
-            auto placeholder = new MapViewGraphicsRectItem(this, atom.shape().boundingRect(), pen, brush);
+            //shape
+            auto shape = atom.shape().boundingRect();
+
+            //create graphics item
+            auto placeholder = new MapViewGraphicsRectItem(this, shape, pen, brush);
+            
+            //Update values from atom blueprint
             AtomConverter::updateGraphicsItemFromAtom(placeholder, atom);
+            
+            //add to scene
             this->addItem(placeholder);
+
+            //activate notifications
+            if(auto notifier = dynamic_cast<MapViewItemsNotifier*>(placeholder)) {
+                notifier->activateNotifications();
+            }
 
             return placeholder;
         }
@@ -116,7 +134,6 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
 
             //define a default shape for ghost items
             auto shape = atom.shape();
-            if(!shape.elementCount()) shape.lineTo(.01,.01);
             shape.setFillRule(Qt::FillRule::WindingFill);
 
             //configure brush

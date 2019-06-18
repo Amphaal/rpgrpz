@@ -40,10 +40,7 @@ void ViewMapHint::handleAnyMovedItems() {
     for(auto gi : this->_itemsWhoNotifiedMovement) {
         
         auto cAtom = this->_fetchAtom(gi);
-        if(!cAtom) {
-            qWarning() << "BUG";
-            continue;
-        }
+        if(!cAtom) continue;
 
         RPZAtom oAtom;
         oAtom.setMetadata(AtomParameter::Position, gi->pos());
@@ -77,8 +74,9 @@ void ViewMapHint::_onSceneItemChanged(QGraphicsItem* item, int changeFlag) {
             this->_itemsWhoNotifiedMovement.insert(item);
 
             //disable further notifications until information have been handled
-            auto notifier = dynamic_cast<MapViewItemsNotifier*>(item);
-            if(notifier) notifier->disableNotifications();
+            if(auto notifier = dynamic_cast<MapViewItemsNotifier*>(item)) {
+                notifier->disableNotifications();
+            }
 
         }
         break;
@@ -276,6 +274,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
 
     //save pointer ref
     this->_crossBindingAtomWithGI(&atomToBuildFrom, newItem);
+    
     return newItem;
 }
 
@@ -367,12 +366,6 @@ QVector<RPZAtom*> ViewMapHint::_fetchAtoms(const QList<QGraphicsItem*> &listToFe
 RPZAtom* ViewMapHint::_fetchAtom(QGraphicsItem* graphicElem) const {
     auto ptrValToAtom = graphicElem->data(0).toLongLong();
     return (RPZAtom*)ptrValToAtom;
-}
-
-void ViewMapHint::centerGhostItemToPoint(QGraphicsItem* ghostItem, const QPoint &eventPos) {
-    QPointF point = this->_boundGv->mapToScene(eventPos);
-    point = point - ghostItem->boundingRect().center();
-    ghostItem->setPos(point);
 }
 
 //////////////////////////

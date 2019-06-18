@@ -7,7 +7,7 @@
 
 #include "src/network/rpz/_any/JSONSocket.h"
 
-#include "src/helpers/RandomColor.hpp"
+#include "src/helpers/RandomColor.h"
 #include "base/Serializable.hpp"
 
 class RPZUser : public Serializable {

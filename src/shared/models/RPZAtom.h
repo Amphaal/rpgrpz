@@ -18,9 +18,9 @@
 
 #include "src/_libs/snowflake.hpp"
 #include "base/Ownable.hpp"
-#include "src/helpers/JSONSerializer.hpp"
+#include "src/helpers/JSONSerializer.h"
 
-#include "src/ui/map/graphics/MapViewItemsNotifier.hpp"
+#include "src/ui/map/graphics/MapViewItemsNotifier.h"
 
 // defined values shared with AssetsDatabaseElement type for static casts
 enum class AtomType { 

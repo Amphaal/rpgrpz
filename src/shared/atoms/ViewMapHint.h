@@ -45,8 +45,6 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         //ghost handling
         QGraphicsItem* generateGhostItem(AssetMetadata &assetMetadata);
         void integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem);
-        void integrateShapeAsPayload(QGraphicsPathItem* drawnItem, QGraphicsItem* templateGhostItem);
-        void centerGhostItemToPoint(QGraphicsItem* item, const QPoint &eventPos);
 
         //on move
         void handleAnyMovedItems();

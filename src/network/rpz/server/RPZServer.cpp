@@ -204,7 +204,6 @@ void RPZServer::_broadcastMapChanges(QVariantHash &payload, JSONSocket * senderS
 
     auto aPayload = Payloads::autoCast(payload);
 
-    //TODO RE-TESTER
     if(auto wPayload = aPayload.dynamicCast<AtomsWielderPayload>()) {
         this->_alterIncomingPayloadWithUpdatedOwners(*wPayload, senderSocket);
     }

@@ -9,7 +9,7 @@
 #include <QImageReader>
 
 #include "src/helpers/_appContext.h"
-#include "src/helpers/_logWriter.hpp"
+#include "src/helpers/_logWriter.h"
 
 #include "src/network/rpz/server/RPZServer.h"
 

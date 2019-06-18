@@ -306,7 +306,7 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
 
     //make ghost item tracking mouse position
     if(this->_ghostItem) {
-        this->_hints->centerGhostItemToPoint(this->_ghostItem, event->pos());
+        this->_centerItemToPoint(this->_ghostItem, event->pos());
     }
 
     if(this->_isMousePressed) {
@@ -528,12 +528,11 @@ void MapView::_beginDrawing(const QPoint &lastPointMousePressed) {
 
     //create base and store it
     auto gi = this->_scene->addToScene(*this->_hints->templateAtom, this->_bufferedAssetMetadata, true);
-    this->_tempDrawing = (QGraphicsPathItem*)gi;
+    this->_tempDrawing = (MapViewGraphicsPathItem*)gi;
     this->_currentDrawing_AtomType = this->_hints->templateAtom->type();
 
     //update position
-    auto startPoint = this->mapToScene(lastPointMousePressed);
-    this->_tempDrawing->setPos(startPoint);
+    this->_centerItemToPoint(this->_tempDrawing, lastPointMousePressed);
 }
 
 void MapView::_updateDrawingPath(const QPoint &evtPoint) {
@@ -554,7 +553,7 @@ void MapView::_updateDrawingPath(const QPoint &evtPoint) {
         break;
 
         case AtomType::Brush:
-            this->_updateDrawingPathForBrush(pathCoord, existingPath);
+            this->_updateDrawingPathForBrush(pathCoord, existingPath, this->_tempDrawing);
         break;
     }
 
@@ -562,7 +561,7 @@ void MapView::_updateDrawingPath(const QPoint &evtPoint) {
     this->_tempDrawing->setPath(existingPath);
 }
 
-void MapView::_updateDrawingPathForBrush(const QPointF &pathCoord, QPainterPath &pathToAlter) {
+void MapView::_updateDrawingPathForBrush(const QPointF &pathCoord, QPainterPath &pathToAlter, MapViewGraphicsPathItem* sourceTemplate) {
     
     auto brushType = this->_hints->templateAtom->brushType();
     switch(brushType) {
@@ -620,3 +619,9 @@ void MapView::_endDrawing() {
 /////////////////
 /* END DRAWING */
 /////////////////
+
+void MapView::_centerItemToPoint(QGraphicsItem* item, const QPoint &eventPos) {
+    QPointF point = this->mapToScene(eventPos);
+    point = point - item->boundingRect().center();
+    item->setPos(point);
+}

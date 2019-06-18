@@ -7,7 +7,7 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsTextItem>
 
-#include "MapViewItemsNotifier.hpp"
+#include "MapViewItemsNotifier.h"
 
 #include <QVariant>
 #include <QBrush>
@@ -19,6 +19,7 @@ class MapViewGraphicsPathItem : public QGraphicsPathItem, public MapViewItemsNot
         QGraphicsPathItem(path), 
         MapViewItemsNotifier(toNotify, this),
         _sourceBrush(brush) {
+            this->_sourceBrushSize = QSizeF(this->_sourceBrush.texture().size());
             this->setPen(pen);
         }
 
@@ -26,8 +27,13 @@ class MapViewGraphicsPathItem : public QGraphicsPathItem, public MapViewItemsNot
             return this->_sourceBrush;
         }
 
+        QSizeF sourceBrushSize() {
+            return this->_sourceBrushSize;
+        }
+
     private:
         QBrush _sourceBrush;
+        QSizeF _sourceBrushSize;
 
         QVariant itemChange(GraphicsItemChange change, const QVariant & value) override {
             MapViewItemsNotifier::_notifyItemChange(change);
@@ -49,13 +55,13 @@ class MapViewGraphicsTextItem : public QGraphicsTextItem, public MapViewItemsNot
             this->setTextInteractionFlags(Qt::TextEditorInteraction);
         }
 
-    QVariant itemChange(GraphicsItemChange change, const QVariant & value) override {
+    private:
+        QVariant itemChange(GraphicsItemChange change, const QVariant & value) override {
             MapViewItemsNotifier::_notifyItemChange(change);
             return QGraphicsTextItem::itemChange(change, value);
         }
-    
-    private:
-        void focusInEvent(QFocusEvent  * event) override {
+
+        void focusInEvent(QFocusEvent * event) override {
             QGraphicsTextItem::focusInEvent(event);
             MapViewItemsNotifier::_notifyItemChange((int)MapViewCustomItemsEventFlag::TextFocusIn);
         }
