@@ -215,22 +215,23 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
                         cItem->setBrush(cItem->sourceBrush());
                     }
 
-                    //define default shape for stamps
-                    if(_isTemporary(itemToUpdate) && type == BrushType::Stamp) {
+                    //define default shape for temporary
+                    if(_isTemporary(itemToUpdate)) {
                         
                         QPainterPath path;
-                        QRectF rect(QPointF(0,0), cItem->sourceBrushSize());
-                        path.addRect(rect);
+
+                        if(type == BrushType::Stamp) {
+                            QRectF rect(QPointF(0,0), cItem->sourceBrushSize());
+                            path.addRect(rect);
+                        } 
+                        
+                        else {
+                            path.lineTo(.01,.01);
+                        }
 
                         cItem->setPath(path);
-
                     } 
                     
-                    else {
-                        QPainterPath path;
-                        path.lineTo(.01,.01);
-                        cItem->setPath(path);
-                    }
                 }
             }
             break;

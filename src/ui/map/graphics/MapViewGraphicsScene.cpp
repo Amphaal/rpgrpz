@@ -49,6 +49,8 @@ QGraphicsItem* MapViewGraphicsScene::addToScene(RPZAtom &atom, AssetMetadata &as
         }
     }
 
+    qDebug() << out->boundingRect();
+
     return out;
 }
 

@@ -39,7 +39,6 @@ void MapViewItemsNotifier::activateNotifications() {
 
 
 void MapViewItemsNotifier::_notifyItemChange(int change) {
-    qDebug() << this->_item->flags();
     if(!this->_item->scene()) return;
     if(!this->_mustNotify) return;
     

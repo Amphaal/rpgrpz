@@ -200,6 +200,7 @@ void ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsItem) {
     //from ghost item / temporary drawing
     auto newAtom = AtomConverter::graphicsToAtom(graphicsItem);
     auto payload = AddedPayload(newAtom);
+
     this->_handlePayload(payload);
 }
 
@@ -253,7 +254,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
 
     //save pointer ref
     this->_crossBindingAtomWithGI(&atomToBuildFrom, newItem);
-    
+
     return newItem;
 }
 
@@ -288,9 +289,10 @@ void ViewMapHint::handleParametersUpdateAlterationRequest(QVariantHash &payload)
     
     auto mtPayload = cPayload.dynamicCast<MetadataChangedPayload>();
     auto targets = mtPayload->targetAtomIds();
+    auto firstTargetId = targets.count() > 0 ? targets[0] : 0;
 
     //if single target and no ID == templateAtom update
-    if(targets.count() == 1 && !targets[0]) {
+    if(!firstTargetId) {
 
         //update template
         auto partial = MetadataChangedPayload::fromArgs(mtPayload->args());
