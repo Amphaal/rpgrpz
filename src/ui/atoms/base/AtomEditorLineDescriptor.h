@@ -25,7 +25,8 @@ class AtomEditorLineDescriptor : public QWidget {
             { AtomParameter::AssetScale, "Taille de la texture" },
             { AtomParameter::PenWidth, "Taille du pinceau" },
             { AtomParameter::TextSize, "Taille du texte" },
-            { AtomParameter::BrushPenWidth, "Taille de la brosse" }
+            { AtomParameter::BrushPenWidth, "Taille de la brosse" },
+            { AtomParameter::BrushStyle, "Outil de terrain" }
         };
 
         static inline QHash<AtomParameter, QString> _valSuffix = {
@@ -35,7 +36,8 @@ class AtomEditorLineDescriptor : public QWidget {
             { AtomParameter::AssetScale, "x" },
             { AtomParameter::PenWidth, "pt" },
             { AtomParameter::TextSize, "pt" },
-            { AtomParameter::BrushPenWidth, "pt" }
+            { AtomParameter::BrushPenWidth, "pt" },
+            { AtomParameter::BrushStyle, "" }
         };
 
         static inline QHash<AtomParameter, QString> _icons = {
@@ -45,6 +47,7 @@ class AtomEditorLineDescriptor : public QWidget {
             { AtomParameter::AssetScale, ":/icons/app/tools/scale.png" },
             { AtomParameter::PenWidth, ":/icons/app/tools/pen.png" },
             { AtomParameter::TextSize, ":/icons/app/tools/text.png" },
-            { AtomParameter::BrushPenWidth, ":/icons/app/tools/roundBrush.png" }
+            { AtomParameter::BrushPenWidth, ":/icons/app/tools/roundBrush.png" },
+            { AtomParameter::BrushStyle, ":/icons/app/tabs/config.png" }
         };
 };

@@ -107,7 +107,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
         }
 
         QGraphicsPathItem* _addBrush(RPZAtom &atom, AssetMetadata &assetMetadata) {
-            
+
             //define a ped
             QPen pen;
             pen.setCapStyle(Qt::RoundCap);
@@ -116,6 +116,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
 
             //define a default shape for ghost items
             auto shape = atom.shape();
+            if(!shape.elementCount()) shape.lineTo(.01,.01);
             shape.setFillRule(Qt::FillRule::WindingFill);
 
             //configure brush
@@ -138,9 +139,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
 
             //define a default shape for ghost items
             auto shape = atom.shape();
-            if(!shape.elementCount()) {
-                shape.lineTo(.01,.01);
-            }
+            if(!shape.elementCount()) shape.lineTo(.01,.01);
 
             //create path
             auto newPath = new MapViewGraphicsPathItem(this, shape, pen);

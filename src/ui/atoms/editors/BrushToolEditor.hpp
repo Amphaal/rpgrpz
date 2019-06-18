@@ -40,9 +40,6 @@ class BrushToolEditor : public AtomSubEditor {
 
             this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
             this->setLayout(new QVBoxLayout);
-
-            auto descr = new AtomEditorLineDescriptor(QString("Outil de terrain"), QString(""), QString(":/icons/app/tabs/config.png"));
-            this->layout()->addWidget(descr);
             
             this->_combo = new QComboBox;
             for(auto i = _strBT.constBegin(); i != _strBT.constEnd(); i++) {

@@ -78,6 +78,7 @@ void RPZAtom::setMetadata(const AtomParameter &key, const QVariant &value, bool 
 }
 
 QVariant RPZAtom::metadata(const AtomParameter &key) {
+    
     switch(key) {
 
         case AtomParameter::Position: {
