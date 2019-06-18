@@ -11,8 +11,8 @@
 
 #include "src/shared/database/AssetsDatabase.h"
 
-#include "src/shared/models/RPZMessage.hpp"
-#include "src/shared/models/RPZHandshake.hpp"
+#include "src/shared/models/RPZMessage.h"
+#include "src/shared/models/RPZHandshake.h"
 
 #include "src/helpers/_appContext.h"
 

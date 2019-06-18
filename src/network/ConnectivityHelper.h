@@ -2,7 +2,7 @@
 
 #include <QString>
 #include <QLabel>
-#include "uPnP/uPnPRequester.cpp"
+#include "uPnP/uPnPRequester.hpp"
 
 #include <QJsonDocument>
 #include <QJsonObject>

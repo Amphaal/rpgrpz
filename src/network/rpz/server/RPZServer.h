@@ -17,10 +17,10 @@
 
 #include "src/shared/atoms/AtomsStorage.h"
 #include "src/shared/payloads/Payloads.h"
-#include "src/shared/models/RPZMessage.hpp"
+#include "src/shared/models/RPZMessage.h"
 #include "src/shared/models/RPZUser.h"
-#include "src/shared/models/RPZResponse.hpp"
-#include "src/shared/models/RPZHandshake.hpp"
+#include "src/shared/models/RPZResponse.h"
+#include "src/shared/models/RPZHandshake.h"
 
 #include "src/shared/database/AssetsDatabase.h"
 
