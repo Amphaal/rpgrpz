@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/localization/i18n.hpp"
+#include "src/localization/i18n.h"
 #include "src/helpers/_appContext.h"
 
 #include "src/shared/commands/RPZActions.h"
@@ -38,7 +38,7 @@
 #include "src/ui/others/UpdaterUIIntegrator.h"
 #include "src/ui/others/statusbar/RPZStatusBar.h"
 
-#include "src/ui/others/statusbar/RPZStatusLabel.hpp"
+#include "src/ui/others/statusbar/RPZStatusLabel.h"
 
 class MainWindow : public QMainWindow { 
     public:

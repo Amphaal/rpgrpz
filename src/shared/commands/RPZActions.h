@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/localization/i18n.hpp"
+#include "src/localization/i18n.h"
 
 #include <QAction>
 #include <QIcon>

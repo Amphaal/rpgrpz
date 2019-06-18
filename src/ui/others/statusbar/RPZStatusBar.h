@@ -7,7 +7,7 @@
 #include <QApplication>
 #include <QToolTip>
 
-#include "RPZStatusLabel.hpp"
+#include "RPZStatusLabel.h"
 
 class RPZStatusBar : public QStatusBar {
 

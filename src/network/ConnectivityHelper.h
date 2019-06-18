@@ -14,7 +14,7 @@
 
 #include "src/helpers/_appContext.h"
 
-#include "src/ui/others/statusbar/RPZStatusLabel.hpp"
+#include "src/ui/others/statusbar/RPZStatusLabel.h"
 
 class ConnectivityHelper : public QObject
 {
