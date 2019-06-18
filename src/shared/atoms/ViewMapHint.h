@@ -34,7 +34,6 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
     public:
         ViewMapHint(QGraphicsView* boundGv);
         MapViewGraphicsScene* scene();
-        bool isInTextInteractiveMode();
 
         //replace placeholders
         void replaceMissingAssetPlaceholders(const QString &assetId);
@@ -77,9 +76,6 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         void _onSceneSelectionChanged();
         void _onSceneItemChanged(QGraphicsItem* item, int changeFlag);
             QSet<QGraphicsItem*> _itemsWhoNotifiedMovement;
-
-        //text interactive
-        bool _isInTextInteractiveMode = false;
 
     protected:
         QGraphicsView* _boundGv = nullptr;

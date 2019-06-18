@@ -81,6 +81,7 @@ void AtomEditor::_createEditorsFromAtomParameters() {
 
     this->_editorsByParam[AtomParameter::PenWidth] = new AtomSliderEditor(AtomParameter::PenWidth, 1, 50);
     this->_editorsByParam[AtomParameter::TextSize] = new AtomSliderEditor(AtomParameter::TextSize, 1, 50);
+    this->_editorsByParam[AtomParameter::Text] = new AtomTextEditor(AtomParameter::Text);
 
     for(auto editor : this->_editorsByParam) {
         QObject::connect(

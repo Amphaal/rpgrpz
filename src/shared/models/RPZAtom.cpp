@@ -140,6 +140,7 @@ QSet<AtomParameter> RPZAtom::customizableParams() {
 
         case AtomType::Text: {
             out.insert(AtomParameter::TextSize);
+            out.insert(AtomParameter::Text);
             out.insert(AtomParameter::Rotation);
         }
         break;

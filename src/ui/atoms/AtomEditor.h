@@ -16,6 +16,7 @@
 #include "editors/AtomSliderEditor.h"
 #include "editors/NonLinearAtomSliderEditor.hpp"
 #include "editors/BrushToolEditor.hpp"
+#include "editors/AtomTextEditor.hpp"
 
 class AtomEditor : public QGroupBox {
 

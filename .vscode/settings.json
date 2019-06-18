@@ -95,7 +95,9 @@
         "qqueue": "cpp",
         "qlineedit": "cpp",
         "qbytearray": "cpp",
-        "qvboxlayout": "cpp"
+        "qvboxlayout": "cpp",
+        "qtextedit": "cpp",
+        "qpushbutton": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

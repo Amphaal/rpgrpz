@@ -23,8 +23,6 @@ class MapViewGraphicsTextItem : public QGraphicsTextItem, public MapViewItemsNot
             font.setPointSize(textSize);
             this->setFont(font);
             
-            //TODO bug "Unsupported composition mode"
-            this->setTextInteractionFlags(Qt::TextEditorInteraction);
         }
 
     private:
@@ -33,13 +31,4 @@ class MapViewGraphicsTextItem : public QGraphicsTextItem, public MapViewItemsNot
             return QGraphicsTextItem::itemChange(change, value);
         }
 
-        void focusInEvent(QFocusEvent * event) override {
-            QGraphicsTextItem::focusInEvent(event);
-            MapViewItemsNotifier::_notifyItemChange((int)MapViewCustomItemsEventFlag::TextFocusIn);
-        }
-
-        void focusOutEvent(QFocusEvent * event) override {
-            QGraphicsTextItem::focusOutEvent(event);
-            MapViewItemsNotifier::_notifyItemChange((int)MapViewCustomItemsEventFlag::TextFocusOut);
-        }
 };

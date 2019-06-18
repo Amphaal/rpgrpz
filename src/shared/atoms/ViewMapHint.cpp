@@ -21,10 +21,6 @@ ViewMapHint::ViewMapHint(QGraphicsView* boundGv) : AtomsStorage(AlterationPayloa
     );
 };
 
-bool ViewMapHint::isInTextInteractiveMode() {
-    return this->_isInTextInteractiveMode;
-}
-
 void ViewMapHint::setDefaultLayer(int layer) {
     this->templateAtom->setMetadata(AtomParameter::Layer, layer);
     emit atomTemplateChanged();
@@ -78,23 +74,6 @@ void ViewMapHint::_onSceneItemChanged(QGraphicsItem* item, int changeFlag) {
                 notifier->disableNotifications();
             }
 
-        }
-        break;
-
-        case (int)MapViewCustomItemsEventFlag::TextFocusIn: {
-            this->_isInTextInteractiveMode = true;
-        }
-        break;
-        
-        case (int)MapViewCustomItemsEventFlag::TextFocusOut: {
-
-            this->_isInTextInteractiveMode = false;
-
-            auto atomId = this->_fetchAtom(item)->id();
-            auto text = ((QGraphicsTextItem*)item)->toPlainText();
-
-            auto payload = MetadataChangedPayload(atomId, AtomParameter::Text, text);
-            this->_handlePayload(payload);
         }
         break;
     }

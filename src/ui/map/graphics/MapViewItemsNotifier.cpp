@@ -50,10 +50,6 @@ void MapViewItemsNotifier::_notifyItemChange(int change) {
             this->_toNotify->onGraphicsItemCustomChange(this->_item, MapViewCustomItemsEventFlag::Moved);
         }
         break;
-        case (int)MapViewCustomItemsEventFlag::TextFocusOut:
-        case (int)MapViewCustomItemsEventFlag::TextFocusIn:
-            this->_toNotify->onGraphicsItemCustomChange(this->_item, (MapViewCustomItemsEventFlag)change);
-            break;
     }
 }
 

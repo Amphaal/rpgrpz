@@ -87,8 +87,6 @@ MapHint* MapView::hints() {
 void MapView::keyPressEvent(QKeyEvent * event) {
     
     QGraphicsView::keyPressEvent(event);
-    
-    if(this->_hints->isInTextInteractiveMode()) return;
 
     switch(event->key()) {
 

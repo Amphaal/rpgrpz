@@ -6,9 +6,7 @@
 #include <QDebug>
 
 enum class MapViewCustomItemsEventFlag {
-    Moved = 6224,
-    TextFocusOut = 6225,
-    TextFocusIn = 6226
+    Moved = 6224
 };
 
 class MapViewItemsNotified  {
