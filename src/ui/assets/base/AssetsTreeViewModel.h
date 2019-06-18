@@ -10,7 +10,7 @@
 #include "src/shared/assets/AssetsDatabaseElement.h"
 #include "src/shared/database/AssetsDatabase.h"
 
-#include "src/ui/others/ClientBindable.hpp"
+#include "src/ui/others/ClientBindable.h"
 
 class AssetsTreeViewModel : public QAbstractItemModel, ClientBindable {
     public:

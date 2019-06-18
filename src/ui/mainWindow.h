@@ -35,7 +35,7 @@
 #include "src/ui/atoms/AtomEditionManager.hpp"
 
 #include "src/ui/others/RestoringSplitter.h"
-#include "src/ui/others/UpdaterUIIntegrator.hpp"
+#include "src/ui/others/UpdaterUIIntegrator.h"
 #include "src/ui/others/statusbar/RPZStatusBar.h"
 
 #include "src/ui/others/statusbar/RPZStatusLabel.hpp"

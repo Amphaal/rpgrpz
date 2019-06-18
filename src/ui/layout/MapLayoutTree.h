@@ -18,7 +18,7 @@
 
 #include "src/ui/map/base/RPZTree.hpp"
 
-#include "src/ui/others/ClientBindable.hpp"
+#include "src/ui/others/ClientBindable.h"
 
 #include "base/MapLayoutItemDelegate.hpp"
 

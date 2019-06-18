@@ -2,7 +2,7 @@
 
 #include <QSlider>
 
-#include "src/helpers/AtomConverter.hpp"
+#include "src/helpers/AtomConverter.h"
 #include "src/ui/atoms/base/AtomSubEditor.h"
 
 class AtomSliderEditor : public AtomSubEditor {

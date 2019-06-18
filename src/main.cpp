@@ -14,7 +14,7 @@
 #include "src/network/rpz/server/RPZServer.h"
 
 #include "ui/MainWindow.h"
-#include "ui/AppLoader.hpp"
+#include "ui/AppLoader.h"
 
 #include "_tests/TestMainWindow.h"
 

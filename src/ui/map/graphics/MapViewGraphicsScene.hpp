@@ -10,7 +10,7 @@
 #include "src/shared/models/RPZAtom.h"
 #include "src/shared/models/AssetMetadata.hpp"
 
-#include "src/helpers/AtomConverter.hpp"
+#include "src/helpers/AtomConverter.h"
 
 class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
 

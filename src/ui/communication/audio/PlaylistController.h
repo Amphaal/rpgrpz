@@ -3,7 +3,7 @@
 #include <QGroupBox>
 #include <QVBoxLayout>
 
-#include "src/ui/others/ClientBindable.hpp"
+#include "src/ui/others/ClientBindable.h"
 
 #include "PlaylistToolbar.hpp"
 #include "Playlist.h"

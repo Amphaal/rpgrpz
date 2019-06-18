@@ -9,7 +9,7 @@
 #include <QCompleter>
 #include <QStringListModel>
 
-#include "src/ui/others/ClientBindable.hpp"
+#include "src/ui/others/ClientBindable.h"
 
 #include "src/shared/models/base/RPZList.hpp"
 

@@ -13,7 +13,7 @@
 #include "src/shared/models/RPZResponse.hpp"
 
 #include "src/shared/models/RPZUser.hpp"
-#include "src/ui/others/ClientBindable.hpp"
+#include "src/ui/others/ClientBindable.h"
 
 #include "ChatEdit.h"
 

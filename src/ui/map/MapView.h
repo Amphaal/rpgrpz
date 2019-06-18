@@ -26,7 +26,7 @@
 
 #include "src/shared/atoms/MapHint.h"
 #include "src/shared/models/RPZAtom.h"
-#include "src/ui/others/ClientBindable.hpp"
+#include "src/ui/others/ClientBindable.h"
 
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/network/rpz/client/RPZClient.h"
