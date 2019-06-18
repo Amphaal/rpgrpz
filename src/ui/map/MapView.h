@@ -19,7 +19,7 @@
 #include <QVariant>
 #include <QVector>
 
-#include "graphics/MapViewGraphicsScene.hpp"
+#include "graphics/MapViewGraphicsScene.h"
 
 #include "MapTools.h"
 #include "base/AnimationTimeLine.hpp"

@@ -11,7 +11,7 @@
 
 #include <QUrlQuery>
 
-#include "PlaylistItem.hpp"
+#include "PlaylistItem.h"
 
 class Playlist : public QListWidget {
 

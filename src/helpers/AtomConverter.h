@@ -3,7 +3,7 @@
 #include "src/shared/models/RPZAtom.h"
 
 #include <QPainterPath>
-#include "src/ui/map/graphics/MapViewGraphicsItem.hpp"
+#include "src/ui/map/graphics/items/MapViewGraphicsItems.h"
 
 enum class AtomConverterDataIndex { TemplateAtom = 222, BrushTransform = 555, IsTemporary = 666, BrushDrawStyle = 767 };
 

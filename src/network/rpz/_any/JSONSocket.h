@@ -6,7 +6,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-#include "JSONMethod.hpp"
+#include "JSONMethod.h"
 
 class JSONSocket : public QObject {
 

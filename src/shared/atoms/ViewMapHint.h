@@ -18,7 +18,7 @@
 
 #include "src/shared/database/MapDatabase.hpp"
 
-#include "src/ui/map/graphics/MapViewGraphicsScene.hpp"
+#include "src/ui/map/graphics/MapViewGraphicsScene.h"
 
 #include "AtomsStorage.h"
 

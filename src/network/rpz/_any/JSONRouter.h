@@ -4,7 +4,7 @@
 #include <QString>
 #include <QVariant>
 
-#include "JSONMethod.hpp"
+#include "JSONMethod.h"
 
 class JSONRouter {
     protected:
