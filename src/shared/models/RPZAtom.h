@@ -47,6 +47,8 @@ enum class BrushType {
 enum AtomParameter {
     AssetId,
     AssetName,
+    BrushStyle,
+    BrushPenWidth,
     Scale,
     Rotation,
     Text,
@@ -58,9 +60,7 @@ enum AtomParameter {
     Shape,
     Position,
     AssetRotation,
-    AssetScale,
-    BrushStyle,
-    BrushPenWidth
+    AssetScale
 };
 
 class RPZAtom : public Ownable {

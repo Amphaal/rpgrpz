@@ -3,6 +3,7 @@
 #include "src/shared/models/RPZAtom.h"
 
 #include <QGraphicsPathItem>
+#include "src/ui/map/graphics/MapViewGraphicsItem.hpp"
 
 class AtomConverter {
     
@@ -170,6 +171,37 @@ class AtomConverter {
                     }
                     break;
 
+                    case AtomParameter::BrushStyle: {
+                        if(auto cItem = dynamic_cast<MapViewGraphicsPathItem*>(itemToUpdate)) {
+                            auto type = (BrushType)val.toInt();
+                            
+                            //use pen as brush
+                            if(type == BrushType::RoundBrush) {
+                                
+                                //reset brush
+                                cItem->setBrush(QBrush());
+                                
+                                //set pen
+                                auto pen = cItem->pen();
+                                pen.setBrush(cItem->sourceBrush());
+                                cItem->setPen(pen);
+                            } 
+                            
+                            //use item brush
+                            else {
+
+                                //reset pen
+                                auto pen = cItem->pen();
+                                pen.setBrush(QBrush());
+                                cItem->setPen(pen);
+
+                                //set brush
+                                cItem->setBrush(cItem->sourceBrush());
+                            }
+                        }
+                    }
+                    break;
+
                     //on text change
                     case AtomParameter::Text: {
                         if(auto cItem = dynamic_cast<QGraphicsTextItem*>(itemToUpdate)) {
@@ -249,7 +281,7 @@ class AtomConverter {
                     }
                 }
                 break;
-                
+
                 case Shape: {
                     if(auto pathItem = dynamic_cast<QGraphicsPathItem*>(blueprint)) {
                         atomToUpdate.setShape(pathItem->path()); 

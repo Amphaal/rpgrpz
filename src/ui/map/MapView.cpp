@@ -353,11 +353,6 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
 /* TOOL */
 //////////
 
-void MapView::onBrushToolChange(int brushTool, int brushToolWidth) {
-    this->_bTool = (BrushType)brushTool;
-    this->_bToolWidth = brushToolWidth;
-}
-
 //returns tool
 MapView::Tool MapView::_getCurrentTool() const {
     return this->_quickTool == Tool::Default ? this->_tool : this->_quickTool;
@@ -568,7 +563,9 @@ void MapView::_updateDrawingPath(const QPoint &evtPoint) {
 }
 
 void MapView::_updateDrawingPathForBrush(const QPointF &pathCoord, QPainterPath &pathToAlter) {
-    switch(this->_bTool) {
+    
+    auto brushType = this->_hints->templateAtom->brushType();
+    switch(brushType) {
         
         case BrushType::Stamp:
             //TODO

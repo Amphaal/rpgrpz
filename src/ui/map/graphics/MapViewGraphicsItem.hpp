@@ -17,12 +17,18 @@ class MapViewGraphicsPathItem : public QGraphicsPathItem, public MapViewItemsNot
     public:
         MapViewGraphicsPathItem(MapViewItemsNotified* toNotify, const QPainterPath & path, const QPen &pen, const QBrush &brush = QBrush()) : 
         QGraphicsPathItem(path), 
-        MapViewItemsNotifier(toNotify, this)  {
+        MapViewItemsNotifier(toNotify, this),
+        _sourceBrush(brush) {
             this->setPen(pen);
-            if(brush.style() != Qt::BrushStyle::NoBrush) this->setBrush(brush);
         }
-            
+
+        QBrush sourceBrush() {
+            return this->_sourceBrush;
+        }
+
     private:
+        QBrush _sourceBrush;
+
         QVariant itemChange(GraphicsItemChange change, const QVariant & value) override {
             MapViewItemsNotifier::_notifyItemChange(change);
             return QGraphicsPathItem::itemChange(change, value);

@@ -7,20 +7,6 @@ AtomEditor::AtomEditor(QWidget* parent) : QGroupBox(_strEM[None], parent) {
     this->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
     this->setLayout(new QVBoxLayout);
 
-    //custom editors
-        
-        //brush tool
-        this->_burshToolSelector = new BrushToolEditor;
-        this->layout()->addWidget(this->_burshToolSelector);
-        QObject::connect(
-            this->_burshToolSelector, &AtomSubEditor::valueConfirmedForPayload,
-            this, &AtomEditor::_onSubEditorChanged
-        );
-        QObject::connect(
-            this->_burshToolSelector->widthEditor(), &AtomSubEditor::valueConfirmedForPayload,
-            this, &AtomEditor::_onSubEditorChanged
-        );
-
     //create params editors
     this->_createEditorsFromAtomParameters();
 }
@@ -58,7 +44,11 @@ void AtomEditor::buildEditor(QVector<RPZAtom*> &atomsToBuildFrom) {
     auto toHide = _editorsByParam.keys().toSet().subtract(
         toDisplay.keys().toSet()
     );
-    for(auto i : toHide) this->_editorsByParam[i]->setVisible(false);
+    for(auto i : toHide) {
+        auto editor = this->_editorsByParam[i];
+        if(!editor) continue;
+        editor->setVisible(false);
+    }
 }
 
 //
@@ -76,15 +66,13 @@ void AtomEditor::resetParams() {
         auto payload = MetadataChangedPayload(this->_atomIds(), changes);
         this->_emitPayload(payload);
 
-    //resetBrushTool
-    if(this->_burshToolSelector->isVisible()) {
-        this->_burshToolSelector->reset();
-    }
-
-
 }
 
 void AtomEditor::_createEditorsFromAtomParameters() {
+
+    this->_editorsByParam[AtomParameter::BrushStyle] = new BrushToolEditor;
+    this->_editorsByParam[AtomParameter::BrushPenWidth] = new AtomSliderEditor(AtomParameter::BrushPenWidth, 1, 500);
+
     this->_editorsByParam[AtomParameter::Rotation] = new AtomSliderEditor(AtomParameter::Rotation, 0, 359);
     this->_editorsByParam[AtomParameter::Scale] = new NonLinearAtomSliderEditor(AtomParameter::Scale, 1, 1000);
     
@@ -165,10 +153,6 @@ AtomEditor::EditMode AtomEditor::_changeEditMode() {
 
     //update title
     this->setTitle(_strEM[currentEditMode]);
-
-    //update tool brush selector visibility
-    auto mustShowBrushToolEditor = currentEditMode == Template && firstItem->type() == AtomType::Brush;
-    this->_burshToolSelector->setVisible(mustShowBrushToolEditor);
 
     return currentEditMode;
 }

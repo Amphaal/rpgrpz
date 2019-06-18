@@ -13,6 +13,10 @@ AtomSubEditor::AtomSubEditor(const AtomParameter &parameter) :
 
 }
 
+AtomParameter AtomSubEditor::param() {
+    return this->_param;
+}
+
 void AtomSubEditor::_setAsDataEditor(QWidget *dataEditor) {
     this->_dataEditor = dataEditor;
     this->layout()->addWidget(dataEditor);

@@ -8,12 +8,10 @@
 class AtomSliderEditor : public AtomSubEditor {
     public:
         AtomSliderEditor(const AtomParameter &parameter, int minimum, int maximum);
-
+        void loadTemplate(QVector<RPZAtom*> &atomsToManipulate, QVariant &defaultValue) override;
         QSlider* slider();
 
     private:
-        void loadTemplate(QVector<RPZAtom*> &atomsToManipulate, QVariant &defaultValue) override;
-
         void _onSliderChanging(int sliderVal);
 
         double outputValue();

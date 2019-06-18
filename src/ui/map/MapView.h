@@ -51,7 +51,6 @@ class MapView : public QGraphicsView, public ClientBindable {
         void actionRequested(const MapTools::Actions &action);
         void assetTemplateChanged(const QVariantHash &assetMetadata);
         void onAtomTemplateChange();
-        void onBrushToolChange(int brushTool, int brushToolWidth);
     
     signals:
         void unselectCurrentAssetAsked();
@@ -97,8 +96,6 @@ class MapView : public QGraphicsView, public ClientBindable {
             bool _isMousePressed = false;
 
         //tool
-            BrushType _bTool = (BrushType)0;
-            int _bToolWidth = 1;
             Tool _tool = (Tool)0;
             Tool _quickTool = (Tool)0;
             Tool _getCurrentTool() const;

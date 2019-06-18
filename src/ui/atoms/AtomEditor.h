@@ -45,8 +45,6 @@ class AtomEditor : public QGroupBox {
         QMap<AtomParameter, AtomSubEditor*> _editorsByParam;
         QList<AtomParameter> _visibleEditors;
 
-        BrushToolEditor* _burshToolSelector = nullptr;
-
         QHash<AtomParameter, QVariant> _findDefaultValuesToBind();
         void _createEditorsFromAtomParameters();
 

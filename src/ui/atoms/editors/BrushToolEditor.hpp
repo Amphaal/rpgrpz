@@ -32,10 +32,10 @@ class BrushToolEditor : public AtomSubEditor {
         };
 
         QComboBox* _combo = nullptr;
-        AtomSliderEditor* _brushToolWidthEditor = nullptr;
 
     public:
-        BrushToolEditor() : AtomSubEditor(AtomParameter::BrushStyle), _brushToolWidthEditor(new AtomSliderEditor(AtomParameter::BrushPenWidth, 1, 500)) { 
+        BrushToolEditor() : AtomSubEditor(AtomParameter::BrushStyle) { 
+
             this->setVisible(false);
 
             this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
@@ -59,27 +59,11 @@ class BrushToolEditor : public AtomSubEditor {
             QObject::connect(
                 this->_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
                 [&](int currentIndex) {
-                    auto isRoundBrush = (BrushType)currentIndex == BrushType::RoundBrush;
-                    this->_brushToolWidthEditor->setVisible(isRoundBrush);
                     emit valueConfirmedForPayload(this->_param, QVariant(currentIndex));
                 }
             );
 
             this->layout()->addWidget(this->_combo);
-            this->layout()->addWidget(this->_brushToolWidthEditor);
         };
-
-        void reset() {
-
-            this->_combo->setCurrentIndex(0);
-             
-            if(this->_brushToolWidthEditor->isVisible()) {
-                this->_brushToolWidthEditor->slider()->setValue(1);
-            }
-        }
-
-        AtomSliderEditor* widthEditor() {
-            return this->_brushToolWidthEditor;
-        }
 
 };
