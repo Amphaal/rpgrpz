@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QVariantHash>
-#include "src/_libs/snowflake.hpp"
+#include "src/_libs/snowflake.h"
 
 enum class PayloadAlteration {
     Unknown,

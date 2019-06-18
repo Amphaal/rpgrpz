@@ -8,7 +8,7 @@
 #include "src/ui/communication/audio/PlaylistController.h"
 
 #include "src/network/stream/GStreamerClient.h"
-#include "src/helpers/network/youtube/YoutubeHelper.hpp"
+#include "src/helpers/network/youtube/YoutubeHelper.h"
 
 class TestMainWindow : public QMainWindow {
     public:
