@@ -588,7 +588,24 @@ void MapView::_updateDrawingPathForBrush(const QPointF &pathCoord, QPainterPath 
     switch(this->_hints->templateAtom->brushType()) {
         
         case BrushType::Stamp: {
-            //TODO
+            
+            //if contained in path, nothing to do
+            if(pathToAlter.contains(pathCoord)) return;
+
+            auto xRatio = qCeil(pathCoord.x() / sourceTemplate->sourceBrushSize().width()) - 1;
+            auto yRatio = qCeil(pathCoord.y() / sourceTemplate->sourceBrushSize().height()) - 1;
+            auto expectedStampPos = QPointF(
+                xRatio * sourceTemplate->sourceBrushSize().width(),
+                yRatio * sourceTemplate->sourceBrushSize().height()
+            );
+
+            //if something at expected, nothing to do
+            if(pathToAlter.contains(expectedStampPos)) return;
+            
+            //add rect
+            QRectF rect(expectedStampPos, sourceTemplate->sourceBrushSize());
+            pathToAlter.addRect(rect);
+
         }
         break;
 

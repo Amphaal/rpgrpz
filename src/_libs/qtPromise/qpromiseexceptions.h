@@ -52,7 +52,6 @@ public:
 // QPromiseError is provided for backward compatibility and will be
 // removed in the next major version: it wasn't intended to be used
 // directly and thus should not be part of the public API.
-// TODO Remove QPromiseError at version 1.0
 using QPromiseError = QtPromisePrivate::PromiseError;
 
 } // namespace QtPromise

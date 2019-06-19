@@ -137,7 +137,6 @@ inline QPromise<T> QPromiseBase<T>::delay(int msec) const
 template <typename T>
 inline QPromise<T> QPromiseBase<T>::wait() const
 {
-    // @TODO wait timeout + global timeout
     while (m_d->isPending()) {
         QCoreApplication::processEvents(QEventLoop::AllEvents);
         QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
@@ -168,7 +167,6 @@ inline QPromise<T> QPromise<T>::each(Functor fn)
                 QtPromise::attempt(fn, v, i)
                     .then([]() {
                         // Cast to void in case fn returns a non promise value.
-                        // TODO remove when implicit cast is implemented.
                     }));
 
             i++;

@@ -116,7 +116,6 @@ attempt(Functor&& fn, Args&&... args)
     // NOTE: std::forward<T<U>>: MSVC 2013 fails when forwarding
     // template type (error: "expects 4 arguments - 0 provided").
     // However it succeeds with type alias.
-    // TODO: should we expose QPromise::ResolveType & RejectType?
     using ResolveType = QPromiseResolve<ValueType>;
     using RejectType = QPromiseReject<ValueType>;
 

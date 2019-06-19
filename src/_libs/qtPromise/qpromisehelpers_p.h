@@ -6,9 +6,6 @@
 
 namespace QtPromisePrivate {
 
-// TODO: Suppress QPrivateSignal trailing private signal args
-// TODO: Support deducing tuple from args (might require MSVC2017)
-
 template <typename Signal>
 using PromiseFromSignal = typename QtPromise::QPromise<Unqualified<typename ArgsOf<Signal>::first>>;
 
