@@ -9,7 +9,7 @@ LogScrollView::LogScrollView(QWidget *parent) : QScrollArea(parent) {
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
 
     auto pal = this->palette();
-    pal.setColor(QPalette::Background, Qt::white);
+    pal.setColor(QPalette::Window, Qt::white);
     this->setPalette(pal);
 
     //bindings...

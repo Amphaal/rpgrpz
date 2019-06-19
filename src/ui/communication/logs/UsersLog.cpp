@@ -8,7 +8,7 @@ UserLogColor::UserLogColor(const QColor &color) {
     this->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 
     auto pal = this->palette();
-    pal.setColor(QPalette::Background, color);
+    pal.setColor(QPalette::Window, color);
     this->setPalette(pal);
 };
 UserLogColor::UserLogColor(RPZUser &user) : UserLogColor(user.color()) {};

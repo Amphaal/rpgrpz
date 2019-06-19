@@ -7,7 +7,7 @@ RPZStatusBar::RPZStatusBar(QWidget * parent) : QStatusBar(parent) {
 
     //colors
     auto colors = this->palette();
-    colors.setColor(QPalette::Background, "#DDD");
+    colors.setColor(QPalette::Window, "#DDD");
     this->setPalette(colors);
 
     //install...

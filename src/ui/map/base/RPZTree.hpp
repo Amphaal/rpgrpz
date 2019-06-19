@@ -70,6 +70,6 @@ class RPZTree : public QTreeWidget {
                 //select next
                 auto next_item = this->itemFromIndex(next_index);
                 this->clearSelection();
-                this->setItemSelected(next_item, true); 
+                next_item->setSelected(true);
         };
 };
