@@ -49,10 +49,30 @@ QGraphicsItem* MapViewGraphicsScene::addToScene(RPZAtom &atom, AssetMetadata &as
         }
     }
 
-    qDebug() << out->boundingRect();
-
     return out;
 }
+
+QGraphicsItem* MapViewGraphicsScene::addOutlineRect(QPointF &scenePos) {
+    
+    //rect...
+    QRectF rect(scenePos - QPointF(1,1), scenePos + QPointF(1,1));
+    
+    //pen...
+    QPen pen;
+    pen.setWidth(0);
+    pen.setJoinStyle(Qt::MiterJoin);
+    pen.setCapStyle(Qt::SquareCap);
+    pen.setJoinStyle(Qt::MiterJoin);
+
+    //add item
+    auto item = this->addRect(rect, pen);
+
+    //hover on top
+    item->setZValue(9999999);
+    
+    return item;
+}
+
 
 QGraphicsRectItem* MapViewGraphicsScene::addMissingAssetPH(RPZAtom &atom) {
 
@@ -85,6 +105,7 @@ QGraphicsRectItem* MapViewGraphicsScene::addMissingAssetPH(RPZAtom &atom) {
 
     return placeholder;
 }
+
 
 QGraphicsItem* MapViewGraphicsScene::_addGenericImageBasedItem(RPZAtom &atom, AssetMetadata &assetMetadata) {
 

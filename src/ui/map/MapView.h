@@ -117,6 +117,7 @@ class MapView : public QGraphicsView, public ClientBindable {
 
         //drawing...
             MapViewGraphicsPathItem* _tempDrawing = nullptr;
+            QList<QGraphicsItem*> _tempDrawingHelpers;
             bool _stickyBrushIsDrawing = false;
             int _stickyBrushValidNodeCount = 0;
 

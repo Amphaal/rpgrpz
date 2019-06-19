@@ -311,16 +311,14 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
         this->_centerItemToPoint(this->_ghostItem, event->pos());
     }
 
-    if(this->_isMousePressed) {
-        switch(this->_getCurrentTool()) {
-            case Tool::Atom:
-                switch(this->_bufferedAssetMetadata.atomType()) {
-                    case AtomType::Drawing:
-                    case AtomType::Brush:
-                        this->_updateDrawingPath(event->pos());
-                    break;
-                }
-        }
+    switch(this->_getCurrentTool()) {
+        case Tool::Atom:
+            switch(this->_bufferedAssetMetadata.atomType()) {
+                case AtomType::Drawing:
+                case AtomType::Brush:
+                    this->_updateDrawingPath(event->pos());
+                break;
+            }
     }
 
     QGraphicsView::mouseMoveEvent(event);
@@ -516,10 +514,24 @@ void MapView::wheelEvent(QWheelEvent *event) {
 /////////////
 
 void MapView::_destroyTempDrawing() {
-    if(this->_tempDrawing) {
-        delete this->_tempDrawing;
-        this->_tempDrawing = nullptr;
+    if(!this->_tempDrawing) return;
+    
+    //remove helpers
+    for(auto helper : this->_tempDrawingHelpers) {
+        delete helper;
     }
+    this->_tempDrawingHelpers.clear();
+        
+    //remove drawing
+    delete this->_tempDrawing;
+    this->_tempDrawing = nullptr;
+
+    //reset sticky
+    if(this->_stickyBrushIsDrawing) {   
+        this->_stickyBrushIsDrawing = false;
+        this->_stickyBrushValidNodeCount = 0;
+    }
+    
 }
 
 void MapView::_beginDrawing(const QPoint &lastPointMousePressed) {
@@ -532,11 +544,17 @@ void MapView::_beginDrawing(const QPoint &lastPointMousePressed) {
     this->_tempDrawing = (MapViewGraphicsPathItem*)gi;
 
     //determine if it must be sticky
-    this->_stickyBrushIsDrawing = this->_hints->templateAtom->brushType() != BrushType::Cutter;
+    this->_stickyBrushIsDrawing = this->_hints->templateAtom->brushType() == BrushType::Cutter;
     this->_stickyBrushValidNodeCount = this->_stickyBrushIsDrawing ? this->_tempDrawing->path().elementCount() : 0;
 
     //update position
     this->_centerItemToPoint(this->_tempDrawing, lastPointMousePressed);
+
+    //add outline
+    if(this->_stickyBrushIsDrawing) {
+        auto outline = this->_scene->addOutlineRect(this->_tempDrawing->pos());
+        this->_tempDrawingHelpers.append(outline);
+    }
 }
 
 void MapView::_updateDrawingPath(const QPoint &evtPoint) {
@@ -624,12 +642,6 @@ void MapView::_endDrawing() {
     //if too small stop
     auto path = this->_tempDrawing->path();
     if(path.elementCount() < 2) return;
-    
-    //reset sticky
-    if(this->_stickyBrushIsDrawing) {   
-        this->_stickyBrushIsDrawing = false;
-        this->_stickyBrushValidNodeCount = 0;
-    }
 
     //add definitive path
     this->_hints->integrateGraphicsItemAsPayload(this->_tempDrawing);
@@ -649,6 +661,11 @@ void MapView::_savePosAsStickyNode(const QPoint &evtPoint) {
     auto path = this->_tempDrawing->path();
     auto count = path.elementCount();
     path.setElementPositionAt(count-1, destCoord.x(), destCoord.y());
+    this->_tempDrawing->setPath(path);
+    
+    //add visual helper
+    auto outline = this->_scene->addOutlineRect(sceneCoord);
+    this->_tempDrawingHelpers.append(outline);
 
     //update
     this->_stickyBrushValidNodeCount = count;
@@ -656,9 +673,12 @@ void MapView::_savePosAsStickyNode(const QPoint &evtPoint) {
     //check vicinity between last node and first node
     auto firstNode = this->_tempDrawing->mapToScene(path.elementAt(0));
     auto firstNodeGlobalPos = this->mapFromScene(firstNode);
+    auto gap = evtPoint - firstNodeGlobalPos;
 
-    qDebug() << evtPoint;
-    qDebug() << firstNodeGlobalPos;
+    //if gap is minimal, understand that the users wants to end the drawing
+    if(gap.manhattanLength() < 20) {
+        this->_endDrawing();
+    }
 }
 
 /////////////////

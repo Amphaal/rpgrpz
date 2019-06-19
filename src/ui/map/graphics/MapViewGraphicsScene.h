@@ -12,7 +12,7 @@
 
 #include "src/helpers/AtomConverter.h"
 
-class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
+class  MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
 
     Q_OBJECT
 
@@ -27,6 +27,7 @@ class MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
 
         QGraphicsItem* addToScene(RPZAtom &atom, AssetMetadata &assetMetadata, bool isTemporary = false);
         QGraphicsRectItem* addMissingAssetPH(RPZAtom &atom);
+        QGraphicsItem* addOutlineRect(QPointF &scenePos);
 
     protected:
         QGraphicsItem* _addGenericImageBasedItem(RPZAtom &atom, AssetMetadata &assetMetadata);
