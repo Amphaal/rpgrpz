@@ -117,12 +117,13 @@ class MapView : public QGraphicsView, public ClientBindable {
 
         //drawing...
             MapViewGraphicsPathItem* _tempDrawing = nullptr;
-            AtomType _currentDrawing_AtomType = (AtomType)0;
+            bool _stickyBrushIsDrawing = false;
+            int _stickyBrushValidNodeCount = 0;
 
             void _destroyTempDrawing();
             void _beginDrawing(const QPoint &lastPointMousePressed);
             void _endDrawing();
             void _updateDrawingPath(const QPoint &evtPoint);
             void _updateDrawingPathForBrush(const QPointF &pathCoord, QPainterPath &pathToAlter, MapViewGraphicsPathItem* sourceTemplate);
-
+            void _savePosAsStickyNode(const QPoint &evtPoint);
 };

@@ -6,7 +6,7 @@
             "browse": {
                 "path": [
                     "${env:HOMEPATH}/.conan/data",
-                    "${env:SYSTEMDRIVE}/Qtd/5.12.3/msvc2017_64",
+                    "${env:SYSTEMDRIVE}/Qtd/5.13.0/msvc2017_64",
                     "D:/gstreamer/1.0/x86_64"
                 ]
             },
@@ -23,13 +23,13 @@
                 "D:/gstreamer/1.0/x86_64/include/glib-2.0",
                 "C:/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/source/miniupnp/miniupnpc",
                 "D:/gstreamer/1.0/x86_64/lib/glib-2.0/include",
-                "C:/Qtd/5.12.3/msvc2017_64/include/QtWidgets",
-                "C:/Qtd/5.12.3/msvc2017_64/include",
-                "C:/Qtd/5.12.3/msvc2017_64/include/QtCore",
-                "C:/Qtd/5.12.3/msvc2017_64/include/QtGui",
-                "C:/Qtd/5.12.3/msvc2017_64/include/QtNetwork",
-                "C:/Qtd/5.12.3/msvc2017_64/include/QtSvg",
-                "C:/Qtd/5.12.3/msvc2017_64/include/QtOpenGL"
+                "C:/Qtd/5.13.0/msvc2017_64/include/QtWidgets",
+                "C:/Qtd/5.13.0/msvc2017_64/include",
+                "C:/Qtd/5.13.0/msvc2017_64/include/QtCore",
+                "C:/Qtd/5.13.0/msvc2017_64/include/QtGui",
+                "C:/Qtd/5.13.0/msvc2017_64/include/QtNetwork",
+                "C:/Qtd/5.13.0/msvc2017_64/include/QtSvg",
+                "C:/Qtd/5.13.0/msvc2017_64/include/QtOpenGL"
             ]
         }
     ],

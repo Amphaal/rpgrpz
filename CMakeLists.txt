@@ -92,7 +92,7 @@ SET(SOURCES
 ###########
 
 #search path
-SET(Qt5_DIR "C:/Qtd/5.12.3/msvc2017_64/lib/cmake/Qt5")
+SET(Qt5_DIR "C:/Qtd/5.13.0/msvc2017_64/lib/cmake/Qt5")
 
 #find package
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL)
