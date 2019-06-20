@@ -22,10 +22,8 @@
 #include "src/network/rpz/server/RPZServer.h"
 
 #include "src/ui/communication/ConnectWidget.h"
-#include "src/ui/communication/ChatWidget.h"
-#include "src/ui/communication/audio/AudioStreamController.h"
-#include "src/ui/communication/audio/PlaylistController.h"
-
+#include "src/ui/communication/chat/ChatWidget.h"
+#include "src/ui/communication/audio/AudioManager.h"
 #include "src/ui/map/MapView.h"
 #include "src/ui/map/MapTools.h"
 #include "src/ui/layout/MapLayoutManager.h"
@@ -60,8 +58,7 @@ class MainWindow : public QMainWindow {
 
         MapView* _mapView = nullptr;
         ConnectWidget* _connectWidget = nullptr;
-        AudioStreamController* _streamNotifier = nullptr;
-        PlaylistController* _streamController = nullptr;
+        AudioManager* _audioManager = nullptr;
         ChatWidget* _cw = nullptr;
         AssetsManager* _assetsManager = nullptr;
         MapTools* _mapTools = nullptr;

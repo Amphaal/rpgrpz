@@ -60,6 +60,7 @@ QPromise<void> PlaylistItem::_mayRefreshYTMetadata() {
 
 QString PlaylistItem::_getPreferedStreamSourceFromYTMetadata() {
     auto available = this->_mData->audioStreams()->availableAudioMimes();
-    auto selectedMime = available.takeFirst();
+    auto mp4Audio = available.filter(QRegularExpression("mp4"));
+    auto selectedMime = mp4Audio.count() ? mp4Audio.at(0) : available.at(0);
     return this->_mData->audioStreams()->streamUrl(selectedMime);
 }

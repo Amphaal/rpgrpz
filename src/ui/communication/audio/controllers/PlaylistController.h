@@ -5,8 +5,8 @@
 
 #include "src/ui/others/ClientBindable.h"
 
-#include "PlaylistToolbar.h"
-#include "Playlist.h"
+#include "base/PlaylistToolbar.h"
+#include "base/Playlist.h"
 
 class PlaylistController : public QGroupBox, public ClientBindable {
     public:

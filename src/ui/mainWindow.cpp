@@ -159,24 +159,16 @@ void MainWindow::_initUIApp() {
     this->_connectWidget = new ConnectWidget;
     this->_cw = new ChatWidget;
     this->_mapView = new MapView(this);
-    this->_streamNotifier = new AudioStreamController;
-    this->_streamController = new PlaylistController;
+    this->_audioManager = new AudioManager;
     this->_assetsManager = new AssetsManager;
     this->_mapTools = new MapTools;
     this->_mlManager = new MapLayoutManager;
     this->_atomEditManager = new AtomEditionManager;
     
-    //audio...
-    auto audio_content = new QWidget;
-    audio_content->setLayout(new QVBoxLayout);
-    audio_content->setContentsMargins(0, 0, 0, 0);
-    audio_content->layout()->addWidget(this->_streamController);
-    audio_content->layout()->addWidget(this->_streamNotifier);
-
     //assets
     auto assetTabs = new QTabWidget(this);
     assetTabs->addTab(this->_assetsManager, QIcon(":/icons/app/tabs/box.png"), "Boite à jouets");
-    assetTabs->addTab(audio_content, QIcon(":/icons/app/tabs/playlist.png"), "Audio");
+    assetTabs->addTab(this->_audioManager, QIcon(":/icons/app/tabs/playlist.png"), "Audio");
 
     //designer
     auto designer = new QWidget;

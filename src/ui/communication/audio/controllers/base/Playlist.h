@@ -24,7 +24,7 @@ class Playlist : public QListWidget {
         void playPrevious();
     
     signals:
-        void playRequested(void* data);
+        void playRequested(void* playlistItemPtr);
 
     private:
         void _onItemDoubleClicked(QListWidgetItem * item);

@@ -29,7 +29,8 @@
                 "C:/Qtd/5.13.0/msvc2017_64/include/QtGui",
                 "C:/Qtd/5.13.0/msvc2017_64/include/QtNetwork",
                 "C:/Qtd/5.13.0/msvc2017_64/include/QtSvg",
-                "C:/Qtd/5.13.0/msvc2017_64/include/QtOpenGL"
+                "C:/Qtd/5.13.0/msvc2017_64/include/QtOpenGL",
+                "C:/Qtd/5.13.0/msvc2017_64/include/QtMultimedia"
             ]
         }
     ],

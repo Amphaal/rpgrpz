@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/ui/communication/logs/UsersLog.h"
+#include "src/ui/communication/chat/logs/UsersLog.h"
 
 #include <QPainter>
 

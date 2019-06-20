@@ -10,7 +10,7 @@
 
 #include "src/ui/others/ClientBindable.h"
 
-#include "AudioStreamToolbar.h"
+#include "base/AudioStreamToolbar.h"
 
 class AudioStreamController : public QGroupBox, public ClientBindable {
 
