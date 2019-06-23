@@ -16,36 +16,13 @@
 #include "ui/MainWindow.h"
 #include "ui/AppLoader.h"
 
-#include "_tests/TestMainWindow.h"
+#include "_tests/tests.hpp"
 
 #include <QDir>
 #include <QLockFile>
 
 #include "_libs/snowflake.h"
 
-void configureApp(QCoreApplication &app) {
-    
-    //context preparation
-    app.setApplicationName(QString(APP_NAME));
-    app.setOrganizationName(QString(APP_PUBLISHER));
-    
-    //define context
-    auto args = AppContext::getOptionArgs(app);
-    QString customContext = NULL;
-    
-    //if custom context is set
-    if(args.count() > 1) {
-
-        customContext = args[1];
-        if(customContext == "random") {
-            return AppContext::initRandomContext();
-        } else {
-            return AppContext::initCustomContext(customContext);
-        }
-    }
-
-    AppContext::init();
-}
 
 ////////////
 // SERVER //
@@ -54,7 +31,7 @@ void configureApp(QCoreApplication &app) {
 int serverConsole(int argc, char** argv) {
     
     QCoreApplication server(argc, argv);
-    configureApp(server);
+    AppContext::configureApp(server);
 
     auto rpz = new RPZServer;
     rpz->run();
@@ -83,7 +60,7 @@ int clientApp(int argc, char** argv) {
 
     //setup app
     QApplication app(argc, argv);
-    configureApp(app);
+    AppContext::configureApp(app);
 
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
     app.setStyle(QStyleFactory::create("Fusion")); 
@@ -100,21 +77,6 @@ int clientApp(int argc, char** argv) {
 ////////////////
 // END CLIENT //
 ////////////////
-
-//////////
-// TEST //
-//////////
-
-int test(int argc, char** argv){    
-    QApplication app(argc, argv);
-    configureApp(app);
-    TestMainWindow test;
-    return app.exec();
-}
-
-//////////////
-// END TEST //
-//////////////
 
 int main(int argc, char** argv){
 
@@ -134,7 +96,7 @@ int main(int argc, char** argv){
         if(typeLaunch == "test") {
             
             //test app
-            return test(argc, argv);
+            return testApp(argc, argv);
 
 
         } else if (typeLaunch == "serverOnly") {

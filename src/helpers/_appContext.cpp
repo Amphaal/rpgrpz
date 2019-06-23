@@ -21,6 +21,31 @@ void AppSettings::setDefaultLayer(int layer) {
 ///
 ///
 
+void AppContext::configureApp(QCoreApplication &app) {
+    
+    //context preparation
+    app.setApplicationName(QString(APP_NAME));
+    app.setOrganizationName(QString(APP_PUBLISHER));
+    
+    //define context
+    auto args = AppContext::getOptionArgs(app);
+    QString customContext = NULL;
+    
+    //if custom context is set
+    if(args.count() > 1) {
+
+        customContext = args[1];
+        if(customContext == "random") {
+            return AppContext::initRandomContext();
+        } else {
+            return AppContext::initCustomContext(customContext);
+        }
+    }
+
+    AppContext::init();
+}
+
+
 AppSettings* AppContext::settings() {
 
     if(!_settings) {

@@ -52,6 +52,7 @@ class AppContext {
 
         static QStringList getOptionArgs(QCoreApplication &source);
         static QStringList getOptionArgs(int argc, char** argv);
+        static void configureApp(QCoreApplication &app);
 
         void static initRandomContext();
         void static initCustomContext(const QString &customContextSuffix);

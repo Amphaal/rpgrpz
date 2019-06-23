@@ -35,6 +35,4 @@ class PlaylistItem : public QObject {
         void _setTitle(const QString &title);
 
         QPromise<void> _mayRefreshYTMetadata();
-        
-        QString _getPreferedStreamSourceFromYTMetadata();
 };

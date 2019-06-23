@@ -17,8 +17,8 @@ class YoutubeAudioStreamInfos {
         YoutubeAudioStreamInfos(const QString &adaptativeStreamInfosAsStr, YoutubeSignatureDecipherer* decipherer);
 
         QString streamUrl(const QString &mime);
-
         QList<QString> availableAudioMimes();
+        QPair<QString, QString> getPreferedMineSourcePair();
     
     private:
         QHash<QString, QHash<QString, QString>> _InfosByAudioMime;

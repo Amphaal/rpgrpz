@@ -42,6 +42,15 @@ YoutubeAudioStreamInfos::YoutubeAudioStreamInfos(const QString &adaptativeStream
 
 }
 
+QPair<QString, QString> YoutubeAudioStreamInfos::getPreferedMineSourcePair() {
+    auto available = this->availableAudioMimes();
+    auto mp4Audio = available.filter(QRegularExpression("opus"));
+    auto selectedMime = mp4Audio.count() ? mp4Audio.at(0) : 
+    available.at(0);
+    auto selectedUrl = this->streamUrl(selectedMime);
+    return QPair<QString, QString>(selectedMime, selectedUrl);
+}
+
 QString YoutubeAudioStreamInfos::streamUrl(const QString &mime) {
     return this->_InfosByAudioMime[mime]["url"];
 }

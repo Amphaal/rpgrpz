@@ -33,7 +33,8 @@ QPromise<QString> PlaylistItem::streamSourceUri() {
         case PlaylistItem::LinkType::YoutubePlaylist:
         case PlaylistItem::LinkType::YoutubeVideo: {
                 return this->_mayRefreshYTMetadata().then([=]() {
-                    return this->_getPreferedStreamSourceFromYTMetadata();
+                    auto pair = this->_mData->audioStreams()->getPreferedMineSourcePair();
+                    return pair.second;
                 });
             }
             break;
@@ -56,11 +57,4 @@ QPromise<void> PlaylistItem::_mayRefreshYTMetadata() {
     return YoutubeHelper::refreshMetadata(this->_mData).then([=]() {
         this->_setTitle(this->_mData->title());
     });
-}
-
-QString PlaylistItem::_getPreferedStreamSourceFromYTMetadata() {
-    auto available = this->_mData->audioStreams()->availableAudioMimes();
-    auto mp4Audio = available.filter(QRegularExpression("mp4"));
-    auto selectedMime = mp4Audio.count() ? mp4Audio.at(0) : available.at(0);
-    return this->_mData->audioStreams()->streamUrl(selectedMime);
 }

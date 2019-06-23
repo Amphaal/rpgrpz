@@ -97,7 +97,10 @@
         "qbytearray": "cpp",
         "qvboxlayout": "cpp",
         "qtextedit": "cpp",
-        "qpushbutton": "cpp"
+        "qpushbutton": "cpp",
+        "qmediaplaylist": "cpp",
+        "qmediaplayer": "cpp",
+        "qmediacontent": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

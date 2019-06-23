@@ -1,71 +1,80 @@
 #include "AudioManager.h"
 
 AudioManager::AudioManager() : 
-    _cli(new QMediaPlayer(this)), 
+    _cli(new QMediaPlayer),   
     _plCtrl(new PlaylistController), 
     _asCtrl(new AudioStreamController) {
-    
-    //init
+
+    //UI init
     this->_plCtrl->setEnabled(true);
     this->setLayout(new QVBoxLayout);
     this->setContentsMargins(0, 0, 0, 0);
     this->layout()->addWidget(_plCtrl);
     this->layout()->addWidget(_asCtrl);
+
+    //link between inner elements
+    this->_link();
+}
+
+void AudioManager::_link() {
     
-    //connect
+    //on play requested from playlist
     QObject::connect(
         this->_plCtrl->playlist, &Playlist::playRequested,
-        [&](void* playlistItemPtr) {
-            auto playlistItem = (PlaylistItem*)playlistItemPtr;
-
-            this->_asCtrl->setEnabled(true);
-            this->_asCtrl->updatePlayedMusic(playlistItem->title());
-
-            this->_plCtrl->toolbar->newTrack(0);
-            playlistItem->streamSourceUri().then([=](const QString &sourceUrlStr) {
-                QUrl url(sourceUrlStr);
-                QMediaContent content(url);
-                this->_cli->setMedia(content);
-                this->_cli->setVolume(50);
-                this->_cli->play();
-            });
-        }
+        this, &AudioManager::_onToolbarPlayRequested
     );
 
-    //on reading error
+    //player position changed
     QObject::connect(
-        this->_cli, QOverload<QMediaPlayer::Error>::of(&QMediaPlayer::error),
-        [&](QMediaPlayer::Error error) {
-            qDebug() << error;
-        }
+        this->_cli, &QMediaPlayer::positionChanged,
+        this, &AudioManager::_onPlayerPositionChanged
     );
 
-    //on status change
-    QObject::connect(
-        this->_cli, &QMediaPlayer::mediaStatusChanged,
-        [&](QMediaPlayer::MediaStatus status) {
-            qDebug() << status;
-        }
-    );
-
+    //on action required from toolbar
     QObject::connect(
         this->_plCtrl->toolbar, &PlaylistToolbar::actionRequired,
-        [&](const PlaylistToolbar::Action &action) {
-            switch(action) {
-                case PlaylistToolbar::Action::Play:
-                    this->_cli->play();
-                break;
-                case PlaylistToolbar::Action::Pause:
-                    this->_cli->pause();
-                break;
-            }
-        }
+        this, &AudioManager::_onToolbarActionRequested
     );
 
-    //volume change
+    //volume change from toolbar
     QObject::connect(
         this->_asCtrl->toolbar, &AudioStreamToolbar::askForVolumeChange,
         this->_cli, &QMediaPlayer::setVolume
     );
 
+}
+
+//
+// events helpers
+//
+
+void AudioManager::_onToolbarActionRequested(const PlaylistToolbar::Action &action) {
+    switch(action) {
+        case PlaylistToolbar::Action::Play:
+            this->_cli->play();
+        break;
+        case PlaylistToolbar::Action::Pause:
+            this->_cli->pause();
+        break;
+    }
+}
+
+void AudioManager::_onToolbarPlayRequested(void* playlistItemPtr) {
+
+    auto playlistItem = (PlaylistItem*)playlistItemPtr;
+
+    playlistItem->streamSourceUri().then([=](const QString &sourceUrlStr) {
+        
+        this->_asCtrl->setEnabled(true);
+        this->_asCtrl->updatePlayedMusic(playlistItem->title());
+
+        this->_plCtrl->toolbar->newTrack(0);
+        this->_cli->setMedia(QUrl(sourceUrlStr));
+        this->_cli->play();
+    });
+
+}
+
+void AudioManager::_onPlayerPositionChanged(int position) {
+    this->_plCtrl->toolbar->updateTrackState(position);
 }
