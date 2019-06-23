@@ -1,5 +1,13 @@
 {
-    "terminal.integrated.shell.windows": "cmd.exe",
+    "terminal.integrated.shell.windows": "C:\\msys64\\usr\\bin\\bash.exe",
+    "terminal.integrated.env.windows":
+    {
+        "MSYSTEM": "MINGW64",
+        //"MSYS2_PATH_TYPE": "inherit",
+        "MSVSCODE": "1",
+        "CC": "C:\\msys64\\mingw64\\bin\\gcc.exe",
+        "CXX": "C:\\msys64\\mingw64\\bin\\g++.exe"
+    },
     "files.associations": {
         "qdir": "cpp",
         "xstring": "cpp",

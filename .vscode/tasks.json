@@ -11,17 +11,14 @@
             "label": "Debug - 0. Create build folder",
             "group": "test",
             "type": "shell",
-            "command": "rm -rf buildDebug; mkdir buildDebug",
-            "windows": {
-                "command": "del /S /Q buildDebug & rd /S /Q buildDebug & md buildDebug"
-            }
+            "command": "rm -rf buildDebug; mkdir buildDebug"
         },
         {
             "label": "Debug - 0a. add Conan remote",
             "dependsOn" : "Debug - 0. Create build folder",
             "group": "test",
             "type": "shell",
-            "command": "conan remote add --force bincrafters https://api.bintray.com/conan/bincrafters/public-conan & conan remote add --force rhard https://api.bintray.com/conan/rhard/conan"
+            "command": "conan remote add --force bincrafters https://api.bintray.com/conan/bincrafters/public-conan; conan remote add --force rhard https://api.bintray.com/conan/rhard/conan"
         },
         {
             "label": "Debug - 1. Download Dependencies",
@@ -56,7 +53,7 @@
             "label": "Release - 0. Create build folder",
             "group": "build",
             "type": "shell",
-            "command": "del /S /Q buildRelease & rd /S /Q buildRelease & md buildRelease",
+            "command": "rm -rf buildRelease; mkdir buildRelease"
         },
         {
             "label": "Release - 1. Download Dependencies",
@@ -73,9 +70,7 @@
             "dependsOn" : "Release - 1. Download Dependencies",
             "group": "build",
             "type": "shell",
-            "windows": {
-                "command": "cmake ..",
-            },
+            "command": "cmake ..",
             "options": {
                 "cwd": "${workspaceRoot}/buildRelease"
             }
