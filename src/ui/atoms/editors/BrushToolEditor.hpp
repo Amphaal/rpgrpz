@@ -56,7 +56,8 @@ class BrushToolEditor : public AtomSubEditor {
             QObject::connect(
                 this->_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
                 [&](int currentIndex) {
-                    emit valueConfirmedForPayload(this->_param, QVariant(currentIndex));
+                    auto out = QVariant(currentIndex);
+                    emit valueConfirmedForPayload(this->_param, out);
                 }
             );
 

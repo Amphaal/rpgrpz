@@ -14,7 +14,8 @@ AtomSliderEditor::AtomSliderEditor(const AtomParameter &parameter, int minimum, 
     QObject::connect(
         this->slider(), &QAbstractSlider::sliderReleased,
         [&]() {
-            emit valueConfirmedForPayload(this->_param, QVariant(this->outputValue()));
+            auto out = QVariant(this->outputValue());
+            emit valueConfirmedForPayload(this->_param, out);
         }
     );
 

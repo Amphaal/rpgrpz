@@ -44,7 +44,7 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
         QJsonObject assets();
 
         QString getFilePathToAsset(AssetsDatabaseElement* asset);
-        QString getFilePathToAsset(QString &assetId);
+        QString getFilePathToAsset(const QString &assetId);
 
         static QString assetsStorageFilepath();
 

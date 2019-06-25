@@ -471,11 +471,11 @@ void AssetsDatabaseElement::sortByPathLengthDesc(QList<AssetsDatabaseElement*> &
 
 }
 
-QList<QString> AssetsDatabaseElement::pathAsList(QString path) {
+QList<QString> AssetsDatabaseElement::pathAsList(const QString &path) {
     return path.split("/", QString::SplitBehavior::SkipEmptyParts);
 }
 
-AssetsDatabaseElement::Type AssetsDatabaseElement::pathChunktoType(QString &chunk) {
+AssetsDatabaseElement::Type AssetsDatabaseElement::pathChunktoType(const QString &chunk) {
     
     auto expected = chunk.startsWith("{") && chunk.endsWith("}");
     if(!expected) {
@@ -484,10 +484,11 @@ AssetsDatabaseElement::Type AssetsDatabaseElement::pathChunktoType(QString &chun
     }
     
     //type cast and get element type
-    chunk.replace("{", "");
-    chunk.replace("}", "");
+    auto cp_chunk = chunk;
+    cp_chunk.replace("{", "");
+    cp_chunk.replace("}", "");
     auto castOk = false;
-    auto staticCType = (AssetsDatabaseElement::Type)chunk.toInt(&castOk);
+    auto staticCType = (AssetsDatabaseElement::Type)cp_chunk.toInt(&castOk);
     if(!castOk) {
         qDebug() << "Assets : ignoring path, as static container type was impossible to deduce";
         return Unknown;

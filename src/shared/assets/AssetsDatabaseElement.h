@@ -79,10 +79,10 @@ class AssetsDatabaseElement {
         static QSet<AssetsDatabaseElement*> filterTopMostOnly(QList<AssetsDatabaseElement*> elemsToFilter);
 
         //returns elements of a path
-        static QList<QString> pathAsList(QString path);
+        static QList<QString> pathAsList(const QString &path);
 
         //interpret path element as corresponding type
-        static AssetsDatabaseElement::Type pathChunktoType(QString &chunk);
+        static AssetsDatabaseElement::Type pathChunktoType(const QString &chunk);
 
         //sort items by path length (number of slashes)
         static void sortByPathLengthDesc(QList<AssetsDatabaseElement*> &listToSort);

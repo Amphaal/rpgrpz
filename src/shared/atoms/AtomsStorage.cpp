@@ -176,7 +176,8 @@ void AtomsStorage::_handlePayload(AlterationPayload &payload) {
 
     //on duplication
     if(auto dCasted = dynamic_cast<DuplicatedPayload*>(&payload)) {
-        return this->_duplicateAtoms(dCasted->targetAtomIds());
+        auto targetAtomsIds = dCasted->targetAtomIds();
+        return this->_duplicateAtoms(targetAtomsIds);
     }
 
     //register history
@@ -331,10 +332,12 @@ void AtomsStorage::_duplicateAtoms(QVector<snowflake_uid> &atomIdList) {
     }
 
     //add them
-    this->handleAlterationRequest(AddedPayload(newAtoms));
+    AddedPayload added(newAtoms);
+    this->handleAlterationRequest(added);
 
     //select them 
-    this->handleAlterationRequest(SelectedPayload(newAtoms.keys().toVector()));
+    SelectedPayload selected(newAtoms.keys().toVector());
+    this->handleAlterationRequest(selected);
 }
 
 

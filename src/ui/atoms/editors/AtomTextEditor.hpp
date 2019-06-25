@@ -21,7 +21,8 @@ class AtomTextEditor : public AtomSubEditor  {
             QObject::connect(
                 this->_validateButton, &QPushButton::pressed,
                 [&]() {
-                    emit valueConfirmedForPayload(this->_param, QVariant(this->textEdit()->toPlainText()));
+                    auto out = QVariant(this->textEdit()->toPlainText());
+                    emit valueConfirmedForPayload(this->_param, out);
                 }
             );
 

@@ -89,7 +89,7 @@ QVariantHash AssetsDatabase::prepareAssetPackage(QString &assetId) {
     return package;
 }
 
-QString AssetsDatabase::getFilePathToAsset(QString &assetId) {
+QString AssetsDatabase::getFilePathToAsset(const QString &assetId) {
     auto db_assets = this->assets();
     if(!db_assets.contains(assetId)) return NULL;
 
@@ -226,7 +226,7 @@ void AssetsDatabase::_generateItemsFromDb(QHash<QString, AssetsDatabaseElement*>
         auto items_ids = db_paths[path].toArray();
         
         //find items in db and create them
-        for(auto &id : items_ids) {
+        for(auto id : items_ids) {
             
             auto idStr = id.toString();
 
@@ -562,7 +562,8 @@ void AssetsDatabase::_augmentAssetsHashWithMissingDescendents(QHash<QString, QSe
         if(!db_paths.contains(path)) break;
 
         //if it does, add it to the list
-        for(auto &id : db_paths[path].toArray()) {
+        auto idsInPath = db_paths[path].toArray();
+        for(auto id : idsInPath) {
             hashToAugment[path].insert(id.toString());
         }
     }
@@ -584,8 +585,9 @@ QList<QString> AssetsDatabase::_removeIdsFromPaths(QJsonObject &db_paths, QHash<
         ids.append(idsToDelete.toList());
 
         //define ids left for the path
+        auto IdsInPath = db_paths[path].toArray();
         auto idsLeftInPath = JSONDatabase::diff(
-            db_paths[path].toArray(), 
+            IdsInPath, 
             idsToDelete
         );
 
@@ -712,11 +714,10 @@ bool AssetsDatabase::moveItems(QList<AssetsDatabaseElement*> selectedItemsToMove
             //if there are ids to transfert
             auto content = db_paths[path].toArray();
             if(content.count()) {
-                for(auto &id : content) {
+                for(auto id : content) {
                     dest.append(id);
                 }
             }
-
 
             //erase new path array by new one
             db_paths[newFullPath] = dest;

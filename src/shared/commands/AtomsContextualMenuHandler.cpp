@@ -9,10 +9,12 @@ AtomsContextualMenuHandler::AtomsContextualMenuHandler(AtomsHandler* hintsToCont
 }
 
 void AtomsContextualMenuHandler::undoAlteration() {
-    this->_hints->handleAlterationRequest(UndonePayload());
+    auto payload = UndonePayload();
+    this->_hints->handleAlterationRequest(payload);
 }
 void AtomsContextualMenuHandler::redoAlteration() {
-    this->_hints->handleAlterationRequest(RedonePayload());
+    auto payload = RedonePayload();
+    this->_hints->handleAlterationRequest(payload);
 }
 
 void AtomsContextualMenuHandler::copySelectedAtomsToClipboard() {
@@ -21,35 +23,32 @@ void AtomsContextualMenuHandler::copySelectedAtomsToClipboard() {
 
 void AtomsContextualMenuHandler::pasteAtomsFromClipboard() {
     if(!_copyClipboard.count()) return;
-    this->_hints->handleAlterationRequest(
-        DuplicatedPayload(_copyClipboard)
-    );
+    auto payload = DuplicatedPayload(_copyClipboard);
+    this->_hints->handleAlterationRequest(payload);
 }
 
 void AtomsContextualMenuHandler::removeSelectedAtoms() {
     auto selectedIds = this->_selectedAtomIds();
-    this->_hints->handleAlterationRequest(RemovedPayload(selectedIds));
+    auto payload = RemovedPayload(selectedIds);
+    this->_hints->handleAlterationRequest(payload);
 }
 
 void AtomsContextualMenuHandler::moveSelectedAtomsToLayer(int targetLayer) {
     auto selectedIds = this->_selectedAtomIds();
-    this->_hints->handleAlterationRequest(
-        MetadataChangedPayload(selectedIds, AtomParameter::Layer, targetLayer)
-    );
+    auto payload = MetadataChangedPayload(selectedIds, AtomParameter::Layer, targetLayer);
+    this->_hints->handleAlterationRequest(payload);
 }
 
 void AtomsContextualMenuHandler::alterSelectedAtomsVisibility(bool isHidden) {
     auto selectedIds = this->_selectedAtomIds();
-    this->_hints->handleAlterationRequest(
-        MetadataChangedPayload(selectedIds, AtomParameter::Hidden, isHidden)
-    );
+    auto payload = MetadataChangedPayload(selectedIds, AtomParameter::Hidden, isHidden);
+    this->_hints->handleAlterationRequest(payload);
 }
 
 void AtomsContextualMenuHandler::alterSelectedAtomsAvailability(bool isLocked) {
     auto selectedIds = this->_selectedAtomIds();
-    this->_hints->handleAlterationRequest(
-        MetadataChangedPayload(selectedIds, AtomParameter::Locked, isLocked)
-    );
+    auto payload = MetadataChangedPayload(selectedIds, AtomParameter::Locked, isLocked);
+    this->_hints->handleAlterationRequest(payload);
 }
 
 void AtomsContextualMenuHandler::invokeMenu(int topMostLayer, int bottomMostLayer, int countAtoms, const QPoint &whereToDisplay) {
