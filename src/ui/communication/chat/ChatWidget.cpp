@@ -87,7 +87,7 @@ void ChatWidget::_onReceivedLogHistory(const QVariantList &messages) {
     }
 
     //welcome msg
-    auto response = RPZResponse(NULL, RPZResponse::ResponseCode::ConnectedToServer, this->serverName);
+    auto response = RPZResponse(0, RPZResponse::ResponseCode::ConnectedToServer, this->serverName);
     this->_chatLog->handleResponse(response);
 }
 

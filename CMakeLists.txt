@@ -60,6 +60,7 @@ conan_basic_setup(KEEP_RPATHS)
 ################################
 
 SET(CMAKE_CXX_STANDARD 17)
+add_definitions(-D_WINSOCKAPI_ -DWIN32_LEAN_AND_MEAN)
 
 #########################
 ## Libraries specifics ##
@@ -128,7 +129,6 @@ file(GLOB_RECURSE CPP_FILES src/*.cpp)
 file(GLOB_RECURSE HPP_FILES src/*.hpp)
 
 list(APPEND SOURCES
-    src/basedef.h
     ${CPP_FILES}
     ${HPP_FILES}
 )

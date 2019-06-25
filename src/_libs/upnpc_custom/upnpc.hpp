@@ -11,8 +11,6 @@
 #include <time.h>
 #ifdef _WIN32
 #include <winsock2.h>
-#include <windows.h>
-#define snprintf _snprintf
 #else
 /* for IPPROTO_TCP / IPPROTO_UDP */
 #include <netinet/in.h>
@@ -23,7 +21,7 @@
 #include "upnpcommands.h"
 #include "portlistingparse.h"
 #include "upnperrors.h"
-#include "miniupnpcstrings.h"
+#include "miniupnpcstrings.hpp"
 
 /* protofix() checks if protocol is "UDP" or "TCP"
  * returns NULL if not */
