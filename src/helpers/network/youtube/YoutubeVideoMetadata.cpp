@@ -8,7 +8,7 @@ YoutubeVideoMetadata* YoutubeVideoMetadata::fromUrl(const QString &url) {
 
     //returns
     if(!match.hasMatch()) {
-        throw new std::exception("Cannot create YT video obj from url");
+        throw new std::invalid_argument("Cannot create YT video obj from url");
     }
 
     return new YoutubeVideoMetadata(match.captured("videoId"));

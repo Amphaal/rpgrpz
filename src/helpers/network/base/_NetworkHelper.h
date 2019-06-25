@@ -12,5 +12,5 @@ class NetworkHelper {
         static QPromise<QByteArray> download(const QUrl& url);
     
     private:
-        static inline QNetworkAccessManager _manager;
+        static inline QNetworkAccessManager _manager = QNetworkAccessManager();
 };

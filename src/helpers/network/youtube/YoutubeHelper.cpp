@@ -48,7 +48,7 @@ YoutubeVideoMetadata* YoutubeHelper::_augmentMetadataWithPlayerConfiguration(You
 
     //check values exist
     if(!sts || playerSourceUrl.isEmpty() || title.isEmpty() || !length) {
-        throw new std::exception("error while getting player client configuration !");
+        throw new std::logic_error("error while getting player client configuration !");
     }
 
     //augment...
@@ -72,7 +72,7 @@ YoutubeVideoMetadata* YoutubeHelper::_augmentMetadataWithVideoInfos(
     auto error = videoInfos.queryItemValue("errorcode");
     auto video_id = videoInfos.queryItemValue("video_id");
     if(!error.isNull() || video_id.isNull()) {
-        throw new std::exception("An error occured while fetching video infos");
+        throw new std::logic_error("An error occured while fetching video infos");
     }
 
     //define stream infos
@@ -85,7 +85,7 @@ YoutubeVideoMetadata* YoutubeHelper::_augmentMetadataWithVideoInfos(
     auto playerResponse = QJsonDocument::fromJson(playerResponseAsStr.toUtf8());
     auto pStatus = playerResponse["playabilityStatus"].toObject()["reason"].toString();
     if(!pStatus.isNull()) {
-        throw new std::exception("An error occured while fetching video infos");
+        throw new std::logic_error("An error occured while fetching video infos");
     }
 
     //set expiration flag
@@ -167,7 +167,7 @@ QList<QString> YoutubeHelper::_extractVideoIdsFromHTTPRequest(const QByteArray &
         }
 
         //if no ids
-        if(!idsList.count()) throw new std::exception("no playlist metadata container found !");
+        if(!idsList.count()) throw new std::logic_error("no playlist metadata container found !");
 
         //return
         return idsList;

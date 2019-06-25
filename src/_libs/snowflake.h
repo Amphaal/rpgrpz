@@ -8,7 +8,8 @@
 #include <QDebug>
 
 #define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
+#include <winsock2.h>
+#include <windows.h>
 #include <stdint.h> // portable: uint64_t   MSVC: __int64 
 
 typedef uint64_t snowflake_uid;
@@ -41,12 +42,6 @@ class SnowFlake {
         std::mutex mutex_;
 
         uint64_t getNextMill();
-
-        // MSVC defines this in winsock2.h!?
-        typedef struct timeval {
-            long tv_sec;
-            long tv_usec;
-        } timeval;
 
         int gettimeofday(struct timeval * tp, struct timezone * tzp);
         uint64_t getNewstmp();

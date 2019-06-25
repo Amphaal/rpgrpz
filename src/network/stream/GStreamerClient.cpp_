@@ -45,7 +45,7 @@ GStreamerClient::GStreamerClient(QObject* parent) : QObject(parent) {
     parser && decoder 
     && converter && resampler;
     if(!allSet) {
-         throw new std::exception("gst plugins missing !");
+         throw new std::runtime_error("gst plugins missing !");
          return;
     }
 
