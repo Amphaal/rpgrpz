@@ -100,7 +100,8 @@
         "qpushbutton": "cpp",
         "qmediaplaylist": "cpp",
         "qmediaplayer": "cpp",
-        "qmediacontent": "cpp"
+        "qmediacontent": "cpp",
+        "*.tcc": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

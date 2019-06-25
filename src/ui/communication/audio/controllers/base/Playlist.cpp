@@ -28,7 +28,8 @@ void Playlist::dragEnterEvent(QDragEnterEvent *event) {
     if (event->mimeData()->hasUrls()) {
         
         //create list of handled urls
-        auto handledUrlsCount = this->_tempHashDnDFromUrlList(event->mimeData()->urls());
+        auto urls = event->mimeData()->urls();
+        auto handledUrlsCount = this->_tempHashDnDFromUrlList(urls);
 
         //if there is a single handledUrls, continue
         if(handledUrlsCount) {

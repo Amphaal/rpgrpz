@@ -227,7 +227,7 @@ void AtomsStorage::_basic_handlePayload(AlterationPayload &payload) {
 }
 
 //register actions
-RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, const QVariant &alteration) {
+RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) {
 
     if(!targetedAtomId) {
         qWarning() << "Atoms: targeted Atom Id is null !";

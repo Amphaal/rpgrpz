@@ -30,7 +30,7 @@ LogContainer::LogContainer(QWidget *parent) : QWidget(parent), _vLayout(new QVBo
     this->layout()->setMargin(0);
 }
 
-LogItem* LogContainer::_addLine(Serializable &element, const snowflake_uid &putUnder) {
+LogItem* LogContainer::_addLine(Serializable &element, snowflake_uid putUnder) {
     
     auto eId = element.id();
     auto found = this->_linesBySerializableId[eId];
@@ -72,7 +72,7 @@ LogItem* LogContainer::_getLine(Serializable &element) {
     return this->_getLine(element.id());
 }
 
-LogItem* LogContainer::_getLine(const snowflake_uid &elementId) {
+LogItem* LogContainer::_getLine(snowflake_uid elementId) {
     return this->_linesBySerializableId[elementId];
 }
 

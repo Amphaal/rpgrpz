@@ -11,7 +11,7 @@ class Serializable : public QVariantHash {
         Serializable() {};
         Serializable(const QVariantHash &hash) : QVariantHash(hash) {}
         
-        Serializable(const snowflake_uid &id) {
+        Serializable(snowflake_uid id) {
             this->_setId(id);
         };
 
@@ -24,7 +24,7 @@ class Serializable : public QVariantHash {
         }
     
     private:
-        void _setId(const snowflake_uid &id) {
+        void _setId(snowflake_uid id) {
             this->insert("id", QString::number(id));
         }
 };

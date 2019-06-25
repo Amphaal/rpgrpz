@@ -1,23 +1,24 @@
 #include "MessageInterpreter.h"
 
-MessageInterpreter::Command MessageInterpreter::interpretText(QString &text) {
+MessageInterpreter::Command MessageInterpreter::interpretText(const QString &text) {
     //initial trim
-    text = text.trimmed();
+    auto cp_text = text;
+    cp_text = cp_text.trimmed();
     
     //if has whisper command
-    if(_hasWhispRegex.match(text).hasMatch()) return Whisper;
+    if(_hasWhispRegex.match(cp_text).hasMatch()) return Whisper;
 
     //if not a command
-    if(!text.startsWith("/")) return Say;
+    if(!cp_text.startsWith("/")) return Say;
 
     //extract command
-    auto command = text.split(" ", QString::SplitBehavior::SkipEmptyParts)[0];
+    auto command = cp_text.split(" ", QString::SplitBehavior::SkipEmptyParts)[0];
 
     //returns command   
     return _textByCommand[command];
 }
 
-QList<QString> MessageInterpreter::findRecipentsFromText(QString &text) {
+QList<QString> MessageInterpreter::findRecipentsFromText(const QString &text) {
     
     auto matches = _hasWhispRegex.globalMatch(text);
     QSet<QString> out;
@@ -31,13 +32,14 @@ QList<QString> MessageInterpreter::findRecipentsFromText(QString &text) {
     return out.toList();
 }
 
-QString MessageInterpreter::sanitizeText(QString text) {
-    text.remove(_hasWhispRegex);
-    text.remove(_hasCommandRegex);
-    return text.trimmed();
+QString MessageInterpreter::sanitizeText(const QString &text) {
+    auto cp_text = text;
+    cp_text.remove(_hasWhispRegex);
+    cp_text.remove(_hasCommandRegex);
+    return cp_text.trimmed();
 }
 
-bool MessageInterpreter::isSendable(QString &textToSend) {
+bool MessageInterpreter::isSendable(const QString &textToSend) {
     
     //if has whisper
     if(_hasWhispRegex.match(textToSend).hasMatch()) {
@@ -55,6 +57,9 @@ QString MessageInterpreter::help()  {
     return help;
 }
 
-QString MessageInterpreter::usernameToCommandCompatible(QString username) {
-    return username.toLower().replace(" ", "_");
+QString MessageInterpreter::usernameToCommandCompatible(const QString &username) {
+    auto cp_username = username;
+    cp_username = cp_username.toLower();
+    cp_username = cp_username.replace(" ", "_");
+    return cp_username;
 }

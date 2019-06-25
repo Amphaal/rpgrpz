@@ -246,9 +246,10 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
     
     //default
     else {
+        auto metadata = AssetMetadata(pathToAssetFile);
         newItem = this->scene()->addToScene(
             atomToBuildFrom, 
-            AssetMetadata(pathToAssetFile)
+            metadata
         );
     }
 
@@ -273,7 +274,8 @@ void ViewMapHint::replaceMissingAssetPlaceholders(const QString &assetId) {
         auto atom = this->_fetchAtom(gi);
 
         //create the new graphics item
-        auto newGi = this->scene()->addToScene(*atom, AssetMetadata(pathToFile));
+        auto metadata = AssetMetadata(pathToFile);
+        auto newGi = this->scene()->addToScene(*atom, metadata);
         this->_crossBindingAtomWithGI(atom, newGi);
 
         delete gi;
@@ -382,7 +384,7 @@ void ViewMapHint::_handlePayload(AlterationPayload &payload) {
 }
 
 //register actions
-RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, const QVariant &alteration) {
+RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) {
    
     //default handling
     auto updatedAtom = AtomsStorage::_handlePayloadInternal(type, targetedAtomId, alteration); 
@@ -409,10 +411,11 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, cons
             auto partial = type == PayloadAlteration::BulkMetadataChanged ? RPZAtom(alteration.toHash()) : MetadataChangedPayload::fromArgs(alteration);
             for(auto param : partial.editedMetadata()) {
                 
+                auto paramVal = updatedAtom->metadata(param);
                 AtomConverter::updateGraphicsItemFromMetadata(
                     updatedAtom->graphicsItem(),
                     param,
-                    updatedAtom->metadata(param)
+                    paramVal
                 );
             
             }

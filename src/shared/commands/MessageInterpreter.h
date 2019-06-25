@@ -15,17 +15,17 @@ class MessageInterpreter {
             { "/h", Help }
         };
 
-        static Command interpretText(QString &text);
+        static Command interpretText(const QString &text);
 
-        static QList<QString> findRecipentsFromText(QString &text);
+        static QList<QString> findRecipentsFromText(const QString &text);
 
-        static QString sanitizeText(QString text);
+        static QString sanitizeText(const QString &text);
 
-        static bool isSendable(QString &textToSend);
+        static bool isSendable(const QString &textToSend);
 
         static QString help();
 
-        static QString usernameToCommandCompatible(QString username);
+        static QString usernameToCommandCompatible(const QString &username);
 
     private:
         static inline const QRegularExpression _hasWhispRegex = QRegularExpression("@(\\w+)");

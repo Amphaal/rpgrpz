@@ -85,5 +85,5 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
 
         //augmenting AtomsStorage
         virtual void _handlePayload(AlterationPayload &payload) override;
-        virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, const QVariant &alteration) override;
+        virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) override;
 };

@@ -1,16 +1,11 @@
 #pragma once
 
-#include <stdint.h>
-#include <time.h>
-#include <stdexcept>
-#include <mutex>
-
 #include <QDebug>
 
-#define WIN32_LEAN_AND_MEAN
-#include <winsock2.h>
-#include <windows.h>
-#include <stdint.h> // portable: uint64_t   MSVC: __int64 
+#include <stdint.h>
+#include <sys/time.h>
+#include <stdexcept>
+#include <mutex>
 
 typedef uint64_t snowflake_uid;
 
@@ -42,8 +37,6 @@ class SnowFlake {
         std::mutex mutex_;
 
         uint64_t getNextMill();
-
-        int gettimeofday(struct timeval * tp, struct timezone * tzp);
         uint64_t getNewstmp();
 
         static inline SnowFlake* _self = nullptr;

@@ -15,7 +15,7 @@ class RPZResponse : public Stampable {
         };
         
         RPZResponse();
-        RPZResponse(const snowflake_uid &answererTo, const ResponseCode &code = Ack, const QVariant &data = QVariant());
+        RPZResponse(snowflake_uid answererTo, const ResponseCode &code = Ack, const QVariant &data = QVariant());
         RPZResponse(const QVariantHash &hash);
 
         ResponseCode responseCode();
@@ -25,7 +25,7 @@ class RPZResponse : public Stampable {
         QPalette palette() override;
 
     private:
-        void _setAnswerer(const snowflake_uid &answererStampableId);
+        void _setAnswerer(snowflake_uid answererStampableId);
         void _setResponseCode(const ResponseCode &code);
         void _setResponseData(const QVariant &data);
 };

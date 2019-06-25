@@ -11,8 +11,8 @@ class Ownable : public Serializable {
     public:
         Ownable() {};
         Ownable(const QVariantHash &hash) : Serializable(hash) {}
-        Ownable(const snowflake_uid &id) : Serializable(id) {}
-        Ownable(const snowflake_uid &id, const RPZUser &user) : Ownable(id) {
+        Ownable(snowflake_uid id) : Serializable(id) {}
+        Ownable(snowflake_uid id, const RPZUser &user) : Ownable(id) {
             this->setOwnership(user);
         };
 

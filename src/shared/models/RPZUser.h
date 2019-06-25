@@ -22,7 +22,7 @@ class RPZUser : public Serializable {
         RPZUser();
         RPZUser(const QVariantHash &hash);
         RPZUser(JSONSocket* socket);
-        RPZUser(const snowflake_uid &id, const QString name, const Role &role, const QColor &color);
+        RPZUser(snowflake_uid id, const QString name, const Role &role, const QColor &color);
 
         void setName(const QString &name);
         void setRole(const Role &role);

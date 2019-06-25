@@ -136,10 +136,11 @@ QString AppContext::getLatestLogFileLocation() {
 }
 
 void AppContext::openFileInOS(const QString &cpURL) {
-    ShellExecute(NULL, "open", cpURL.toStdString().c_str(), NULL,  NULL, SW_SHOWNORMAL);
+    QUrl url("file:///" + cpURL, QUrl::TolerantMode);
+    QDesktopServices::openUrl(url);
 };
 
 void AppContext::openFolderInOS(const QString &cpURL) {
-    ShellExecute(NULL, "open",  cpURL.toStdString().c_str(), NULL, NULL, SW_SHOWNORMAL);
+     QProcess::startDetached("explorer.exe", {"/select,", QDir::toNativeSeparators(cpURL)});
 };
 

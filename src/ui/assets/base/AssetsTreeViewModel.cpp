@@ -277,7 +277,8 @@ bool AssetsTreeViewModel::dropMimeData(const QMimeData *data, Qt::DropAction act
     } else if(data->hasFormat("text/uri-list")){
     
         //external drop, insert 
-        return this->insertAssets(data->urls(), parent);
+        auto includedUrls = data->urls();
+        return this->insertAssets(includedUrls, parent);
     }
 
     //should not happen

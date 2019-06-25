@@ -46,7 +46,7 @@ class AtomsStorage : public AtomsHandler {
 
         //alter the inner atoms lists
         virtual void _handlePayload(AlterationPayload &payload) override;
-        virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, const QVariant &alteration) override;
+        virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) override;
 
     private:
         void _basic_handlePayload(AlterationPayload &payload);

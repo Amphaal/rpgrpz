@@ -13,8 +13,9 @@
 #include <QDir>
 #include <QDateTime>
 
-#define _WINSOCKAPI_
-#include <windows.h>
+#include <QDesktopServices>
+#include <QProcess>
+#include <QUrl>
 
 class AppSettings : public QSettings {
     public:

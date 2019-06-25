@@ -68,7 +68,7 @@ class RPZAtom : public Ownable {
     public:
         RPZAtom();
         RPZAtom(const QVariantHash &hash);
-        RPZAtom(const snowflake_uid &id, const AtomType &type, const RPZUser &owner);
+        RPZAtom(snowflake_uid id, const AtomType &type, const RPZUser &owner);
         RPZAtom(const AtomType &type);
 
         QGraphicsItem* graphicsItem();

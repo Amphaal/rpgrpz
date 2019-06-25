@@ -29,7 +29,7 @@ class MetadataChangedPayload : public MultipleTargetsPayload {
 
         //single target / single param
         MetadataChangedPayload(
-            const snowflake_uid &targetedId, 
+            snowflake_uid targetedId, 
             const AtomParameter &param, 
             const QVariant &value
         ) : MultipleTargetsPayload(PayloadAlteration::MetadataChanged, QVector<snowflake_uid>({targetedId})) {

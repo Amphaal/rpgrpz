@@ -102,7 +102,7 @@ void TreeMapHint::_handlePayload(AlterationPayload &payload) {
     this->_emitAlteration(payload);
 }
 
-RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, const snowflake_uid &targetedAtomId, const QVariant &alteration) {
+RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) {
     
     QTreeWidgetItem* item = item = this->_atomTreeItemsById[targetedAtomId];
 
@@ -125,7 +125,8 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, cons
         break;
 
         case PayloadAlteration::OwnerChanged: {
-            this->_bindOwnerToItem(item, RPZUser(alteration.toHash()));
+            auto user = RPZUser(alteration.toHash());
+            this->_bindOwnerToItem(item, user);
         }
         break;
 

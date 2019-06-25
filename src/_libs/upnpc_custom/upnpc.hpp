@@ -11,6 +11,7 @@
 #include <time.h>
 #ifdef _WIN32
 #include <winsock2.h>
+#include <windows.h>
 #else
 /* for IPPROTO_TCP / IPPROTO_UDP */
 #include <netinet/in.h>

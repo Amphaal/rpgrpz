@@ -9,7 +9,7 @@ RPZUser::RPZUser(JSONSocket* socket) : Serializable(SnowFlake::get()->nextId()) 
     this->_setColor();
 };
 
-RPZUser::RPZUser(const snowflake_uid &id, const QString name, const Role &role, const QColor &color) : Serializable(id) { 
+RPZUser::RPZUser(snowflake_uid id, const QString name, const Role &role, const QColor &color) : Serializable(id) { 
     this->setName(name);
     this->setRole(role);
     this->_setColor(color);

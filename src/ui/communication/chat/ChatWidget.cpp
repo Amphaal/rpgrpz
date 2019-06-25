@@ -69,7 +69,7 @@ void ChatWidget::_onRPZClientStatus(const QString &statusMsg, bool isError) {
     auto respCode = isError ? RPZResponse::ResponseCode::Error : RPZResponse::ResponseCode::Status;
 
     //out log
-    RPZResponse response(NULL, respCode, statusMsg);
+    RPZResponse response(0, respCode, statusMsg);
     this->_chatLog->handleResponse(response);
 
     this->_DisableUI();

@@ -76,8 +76,8 @@ void JSONDatabase::_updateDbFile(QJsonObject &newData) {
 }
 
 QJsonArray JSONDatabase::diff(QJsonArray &target, QSet<QString> &toRemoveFromTarget) {
-    auto output = QJsonArray();
-    for(auto &e : target) {
+    QJsonArray output;
+    for(auto e : target) {
         auto str = e.toString();
         if(!toRemoveFromTarget.contains(str)) {
             output.append(str);
