@@ -41,7 +41,7 @@ class AlterationPayload : public QVariantHash {
         };
 
         bool hasControllerAcknowledged() {
-            this->value("ack").toBool();
+            return this->value("ack").toBool();
         }
         void setControllerAck() {
             this->insert("ack", true);

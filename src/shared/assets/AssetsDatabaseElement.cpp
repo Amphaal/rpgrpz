@@ -16,7 +16,7 @@ AssetsDatabaseElement::~AssetsDatabaseElement(){
 }
 
 AssetsDatabaseElement::AssetsDatabaseElement(
-    QString &name, 
+    const QString &name, 
     AssetsDatabaseElement* parent,
     const AssetsDatabaseElement::Type &type,
     QString id

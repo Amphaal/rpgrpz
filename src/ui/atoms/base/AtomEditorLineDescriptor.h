@@ -9,7 +9,7 @@
 
 class AtomEditorLineDescriptor : public QWidget {
     public:
-        AtomEditorLineDescriptor(const QString &description, const QString &suffix, QString &iconPath = QString());
+        AtomEditorLineDescriptor(const QString &description, const QString &suffix, const QString &iconPath = QString());
         AtomEditorLineDescriptor(const AtomParameter &paramType);
         void updateValue(double value);
         void cannotDisplayValue();

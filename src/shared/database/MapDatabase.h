@@ -11,7 +11,7 @@
 class MapDatabase : public JSONDatabase {
     
     public:
-        MapDatabase(QString &filePath);
+        MapDatabase(const QString &filePath);
 
         void saveIntoFile(RPZMap<RPZAtom> &atoms);
 

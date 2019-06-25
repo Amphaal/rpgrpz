@@ -147,7 +147,8 @@ void MapView::leaveEvent(QEvent *event) {
 }
 
 void MapView::onAtomTemplateChange() {
-    emit subjectedAtomsChanged(QVector<void*>({this->_hints->templateAtom}));
+    auto subjects = QVector<void*>({this->_hints->templateAtom});
+    emit subjectedAtomsChanged(subjects);
     
     //update the ghost graphics item to display the updated values
     AtomConverter::updateGraphicsItemFromAtom(this->_ghostItem, *this->_hints->templateAtom, true);
@@ -164,7 +165,8 @@ void MapView::_handleGhostItem(const Tool &tool) {
     if(tool == Atom) this->_generateGhostItemFromBuffer();
     else {
         this->_clearGhostItem();
-        emit subjectedAtomsChanged(QVector<void*>());
+        auto subjects = QVector<void*>(); //no more subjects
+        emit subjectedAtomsChanged(subjects);
     }
 }
 
@@ -250,7 +252,8 @@ void MapView::_sendMapChanges(QVariantHash &payload) {
 }
 
 void MapView::_sendMapHistory() {
-    ResetPayload payload(this->_hints->atoms());
+    auto allAtoms = this->_hints->atoms();
+    ResetPayload payload(allAtoms);
     this->_sendMapChanges(payload);
 }
 
@@ -552,7 +555,8 @@ void MapView::_beginDrawing(const QPoint &lastPointMousePressed) {
 
     //add outline
     if(this->_stickyBrushIsDrawing) {
-        auto outline = this->_scene->addOutlineRect(this->_tempDrawing->pos());
+        auto pos = this->_tempDrawing->pos();
+        auto outline = this->_scene->addOutlineRect(pos);
         this->_tempDrawingHelpers.append(outline);
     }
 }

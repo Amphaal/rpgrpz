@@ -6,7 +6,7 @@ AtomEditorLineDescriptor::AtomEditorLineDescriptor(const AtomParameter &paramTyp
     _icons[paramType]
 ) { }
 
-AtomEditorLineDescriptor::AtomEditorLineDescriptor(const QString &description, const QString &suffix, QString &iconPath) : 
+AtomEditorLineDescriptor::AtomEditorLineDescriptor(const QString &description, const QString &suffix, const QString &iconPath) : 
     _suffix(suffix),
     _valLbl(new QLabel) {
     

@@ -12,15 +12,15 @@ class MapHint : public ViewMapHint {
         //load/unload
         QString stateFilePath();
         bool loadDefaultState();
-        bool loadState(QString &filePath);
+        bool loadState(const QString &filePath);
         bool saveState();
-        bool saveStateAs(QString &newFilePath);
+        bool saveStateAs(const QString &newFilePath);
         
         bool isDirty();
         void mayWantToSavePendingState();
 
         bool isRemote();
-        bool defineAsRemote(QString &remoteMapDescriptor = QString());
+        bool defineAsRemote(const QString &remoteMapDescriptor = QString());
 
     signals:
         void mapFileStateChanged(const QString &filePath, bool isDirty);

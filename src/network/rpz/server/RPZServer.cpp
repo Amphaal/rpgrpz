@@ -107,7 +107,8 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         break;
 
         case JSONMethod::MapChanged:{
-            this->_broadcastMapChanges(data.toHash(), target);
+            auto hash = data.toHash();
+            this->_broadcastMapChanges(hash, target);
         }
         break;
 
@@ -219,7 +220,8 @@ void RPZServer::_broadcastMapChanges(QVariantHash &payload, JSONSocket * senderS
 }
 
 void RPZServer::_sendMapHistory(JSONSocket * clientSocket) {
-    auto payload = ResetPayload(this->_hints->atoms());
+    auto allAtoms = this->_hints->atoms();
+    auto payload = ResetPayload(allAtoms);
     clientSocket->sendJSON(JSONMethod::MapChanged, payload);
 
 }

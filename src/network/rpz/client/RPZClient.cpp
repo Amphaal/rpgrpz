@@ -111,8 +111,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         break;
 
         case JSONMethod::MessageFromPlayer: {
-            const auto mfp = data.toHash();
-            emit receivedMessage(mfp);
+            emit receivedMessage(data.toHash());
         }
         break;
 

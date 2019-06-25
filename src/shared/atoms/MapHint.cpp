@@ -59,7 +59,7 @@ bool MapHint::saveState() {
 }
 
 
-bool MapHint::saveStateAs(QString &newFilePath) {
+bool MapHint::saveStateAs(const QString &newFilePath) {
     if(this->_isRemote) return false;
 
     this->_stateFilePath = newFilePath;
@@ -74,7 +74,7 @@ bool MapHint::loadDefaultState() {
 }
 
 
-bool MapHint::loadState(QString &filePath) {
+bool MapHint::loadState(const QString &filePath) {
     
     if(this->_isRemote) return false;
 
@@ -83,7 +83,8 @@ bool MapHint::loadState(QString &filePath) {
 
     //load file and parse it
     MapDatabase mapDb(filePath);
-    auto payload = ResetPayload(mapDb.toAtoms());
+    auto allAtoms = mapDb.toAtoms();
+    auto payload = ResetPayload(allAtoms);
     this->_handlePayload(payload);
     
     //change file path and define as clean
@@ -94,7 +95,7 @@ bool MapHint::loadState(QString &filePath) {
 }
 
 
-bool MapHint::defineAsRemote(QString &remoteMapDescriptor) {
+bool MapHint::defineAsRemote(const QString &remoteMapDescriptor) {
     
     //define remote flag
     this->_isRemote = !remoteMapDescriptor.isEmpty();

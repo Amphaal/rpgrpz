@@ -45,7 +45,7 @@ class RPZClient : public JSONSocket, public JSONRouter {
         void serverResponseReceived(const QVariantHash &reponse);
         void ackIdentity(const QVariantHash &user);
         
-        void mapChanged(QVariantHash &payload);
+        void mapChanged(const QVariantHash &payload);
         void beenAskedForMapHistory();
 
         void assetSucessfullyInserted(const QString &assetId);

@@ -37,7 +37,7 @@ class AssetsDatabaseElement {
         static QList<AssetsDatabaseElement::Type> internalItemTypes();
         static QString typeDescription(AssetsDatabaseElement::Type &type);
 
-        AssetsDatabaseElement(QString &name, AssetsDatabaseElement* parent, const AssetsDatabaseElement::Type &type = Folder, QString id = "");
+        AssetsDatabaseElement(const QString &name, AssetsDatabaseElement* parent, const AssetsDatabaseElement::Type &type = Folder, QString id = "");
         AssetsDatabaseElement();
         ~AssetsDatabaseElement();
 

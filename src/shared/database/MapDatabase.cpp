@@ -1,6 +1,6 @@
 #include "MapDatabase.h"
 
-MapDatabase::MapDatabase(QString &filePath) : _filePath(filePath) {
+MapDatabase::MapDatabase(const QString &filePath) : _filePath(filePath) {
     JSONDatabase::_instanciateDb();
 };
 
@@ -28,7 +28,7 @@ RPZMap<RPZAtom> MapDatabase::toAtoms() {
 
     auto db_atoms = this->_db["atoms"].toArray();
 
-    for(auto &e : db_atoms) {
+    for(auto e : db_atoms) {
         auto atom = RPZAtom(e.toObject().toVariantHash());
         out.insert(atom.id(), atom);
     }
