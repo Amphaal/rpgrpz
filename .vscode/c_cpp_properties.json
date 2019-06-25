@@ -6,7 +6,7 @@
             "browse": {
                 "path": [
                     "${env:HOMEPATH}/.conan/data",
-                    "${env:SYSTEMDRIVE}/Qtd/5.13.0/msvc2017_64",
+                    "${env:SYSTEMDRIVE}/Qtd/5.13.0/mingw73_64",
                     "D:/gstreamer/1.0/x86_64"
                 ]
             },
@@ -30,7 +30,8 @@
                 "C:/Qtd/5.13.0/mingw73_64/include/QtSvg",
                 "C:/Qtd/5.13.0/mingw73_64/include/QtOpenGL",
                 "C:/Qtd/5.13.0/mingw73_64/include/QtMultimedia",
-                "C:/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/source/miniupnp/miniupnpc"
+                "C:/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/source/miniupnp/miniupnpc",
+                "C:/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/build/072fb91f5e7753f7249447fa3c5037394f9d1120"
             ]
         }
     ],

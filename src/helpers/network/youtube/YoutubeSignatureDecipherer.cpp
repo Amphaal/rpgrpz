@@ -121,7 +121,7 @@ YoutubeSignatureDecipherer::YoutubeSignatureDecipherer(const QString &rawPlayerS
                 operations.enqueue(
                     QPair<CipherOperation, QVariant>(
                         operationType, 
-                        QVariant(NULL)
+                        QVariant()
                     )
                 );
                 break;

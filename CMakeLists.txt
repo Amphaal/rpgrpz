@@ -61,10 +61,6 @@ conan_basic_setup(KEEP_RPATHS)
 
 SET(CMAKE_CXX_STANDARD 17)
 
-if(MSVC)
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS) #upnpc
-endif(MSVC)
-
 #########################
 ## Libraries specifics ##
 #########################
@@ -131,7 +127,8 @@ list(APPEND EXT_LIBS
 file(GLOB_RECURSE CPP_FILES src/*.cpp)
 file(GLOB_RECURSE HPP_FILES src/*.hpp)
 
-list(APPEND SOURCES 
+list(APPEND SOURCES
+    src/basedef.h
     ${CPP_FILES}
     ${HPP_FILES}
 )
