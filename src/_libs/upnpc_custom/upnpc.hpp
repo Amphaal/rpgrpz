@@ -18,11 +18,11 @@
 #include <netinet/in.h>
 #endif
 #include <ctype.h>
-#include <miniupnpc/miniwget.h>
-#include <miniupnpc/miniupnpc.h>
-#include <miniupnpc/upnpcommands.h>
-#include <miniupnpc/portlistingparse.h>
-#include <miniupnpc/upnperrors.h>
+#include "miniwget.h"
+#include "miniupnpc.h"
+#include "upnpcommands.h"
+#include "portlistingparse.h"
+#include "upnperrors.h"
 #include "miniupnpcstrings.hpp"
 
 /* protofix() checks if protocol is "UDP" or "TCP"

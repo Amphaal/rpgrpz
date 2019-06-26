@@ -60,8 +60,7 @@ conan_basic_setup(KEEP_RPATHS)
 ################################
 
 SET(CMAKE_CXX_STANDARD 17)
-message(STATUS "${CMAKE_EXE_LINKER_FLAGS}")
-add_definitions(-D_WINSOCKAPI_ -DWIN32_LEAN_AND_MEAN)
+add_definitions(-DWIN32_LEAN_AND_MEAN) #std::btye c++17 ambiguity
 
 #########################
 ## Libraries specifics ##
@@ -143,6 +142,10 @@ add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES})
 
 # Bind ext libs
 conan_target_link_libraries(${PROJECT_NAME})
+
+#force target link for upnp lib for mingw conan builds (check liblibminiupnpc.a, rename into libminiupnpc.a!)
+target_link_libraries(${PROJECT_NAME} wsock32 ws2_32 iphlpapi) 
+
 target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
 
 ##################

@@ -30,7 +30,9 @@
                 "C:/Qtd/5.13.0/mingw73_64/include/QtSvg",
                 "C:/Qtd/5.13.0/mingw73_64/include/QtOpenGL",
                 "C:/Qtd/5.13.0/mingw73_64/include/QtMultimedia",
-                "C:/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/source/miniupnp"
+                "C:/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/source/miniupnp",
+                "C:/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/source",
+                "C:/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/source/miniupnp/miniupnpc"
             ]
         }
     ],
