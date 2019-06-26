@@ -1,6 +1,5 @@
 #include "MainWindow.h"
 
-
 MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 
     //init...
@@ -218,14 +217,14 @@ void MainWindow::_initUIApp() {
 
     //on map alteration, update treelist
     QObject::connect(
-        this->_mapView->hints(), &MapHint::alterationRequested,
-        this->_mlManager->tree()->hints(), &TreeMapHint::handleAlterationRequest
+        this->_mapView->hints(), &AtomsHandler::alterationRequested,
+        this->_mlManager->tree()->hints(), &AtomsHandler::handleAlterationRequest
     );
 
     //intercept alteration from layout manager
     QObject::connect(
-        this->_mlManager->tree()->hints(), &TreeMapHint::alterationRequested,
-        this->_mapView->hints(), &MapHint::handleAlterationRequest
+        this->_mlManager->tree()->hints(), &AtomsHandler::alterationRequested,
+        this->_mapView->hints(), &AtomsHandler::handleAlterationRequest
     );
 
     //on map selection change
@@ -236,20 +235,20 @@ void MainWindow::_initUIApp() {
 
     //on template changing
     QObject::connect(
-        this->_mapView->hints(), &MapHint::atomTemplateChanged,
+        this->_mapView->hints(), &ViewMapHint::atomTemplateChanged,
         this->_mapView, &MapView::onAtomTemplateChange
     );
 
     //on default layer changed
     QObject::connect(
         this->_mlManager->layerSelector()->spinbox(), qOverload<int>(&QSpinBox::valueChanged),
-        this->_mapView->hints(), &MapHint::setDefaultLayer
+        this->_mapView->hints(), &ViewMapHint::setDefaultLayer
     );
 
     //intercept alteration from editor
     QObject::connect(
         this->_atomEditManager->editor(), &AtomEditor::requiresAtomAlteration,
-        this->_mapView->hints(), &MapHint::handleParametersUpdateAlterationRequest
+        this->_mapView->hints(), &ViewMapHint::handleParametersUpdateAlterationRequest
     );
 
 

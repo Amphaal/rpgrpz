@@ -60,6 +60,7 @@ conan_basic_setup(KEEP_RPATHS)
 ################################
 
 SET(CMAKE_CXX_STANDARD 17)
+message(STATUS "${CMAKE_EXE_LINKER_FLAGS}")
 add_definitions(-D_WINSOCKAPI_ -DWIN32_LEAN_AND_MEAN)
 
 #########################

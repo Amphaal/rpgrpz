@@ -101,7 +101,8 @@
         "qmediaplaylist": "cpp",
         "qmediaplayer": "cpp",
         "qmediacontent": "cpp",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "qsplashscreen": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef MINIUPNPCSTRINGS_H_INCLUDED
 #define MINIUPNPCSTRINGS_H_INCLUDED
 

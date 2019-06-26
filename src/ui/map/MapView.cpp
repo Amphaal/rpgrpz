@@ -19,7 +19,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
 
     //to route from MapHints
     QObject::connect(
-        this->_hints, &AtomsStorage::alterationRequested,
+        this->_hints, &AtomsHandler::alterationRequested,
         this, &MapView::_sendMapChanges
     );
 
@@ -224,7 +224,10 @@ void MapView::onRPZClientConnecting(RPZClient * cc) {
     //on map change
     QObject::connect(
         this->_rpzClient, &RPZClient::mapChanged,
-        this->_hints, &AtomsStorage::handleAlterationRequest
+        [&](const QVariantHash &payload) {
+            auto cp_payload = payload;
+            this->_hints->handleAlterationRequest(cp_payload);
+        }
     );
 
     //when been asked for map content

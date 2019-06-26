@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QtMath>
-#include <math.h>
 
 #include <QGraphicsScene>
 #include <QGraphicsView>
