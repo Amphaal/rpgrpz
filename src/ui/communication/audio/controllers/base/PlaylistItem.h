@@ -3,7 +3,7 @@
 #include <QString>
 #include <QObject>
 
-#include "src/helpers/network/youtube/YoutubeHelper.h"
+#include "src/network/youtube/YoutubeHelper.h"
 
 #include "src/_libs/qtPromise/qpromise.h"
 

@@ -6,30 +6,25 @@
             "browse": {
                 "path": [
                     "${env:HOMEPATH}/.conan/data",
-                    "${env:SYSTEMDRIVE}/Qtd/5.13.0/mingw73_64",
-                    "D:/gstreamer/1.0/x86_64"
+                    "${env:SYSTEMDRIVE}/msys64/mingw64/qt5-static",
+                    "${env:SYSTEMDRIVE}/msys64/mingw64/include"
                 ]
             },
             "windowsSdkVersion": "10.0.17134.0",
-            "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/cl.exe",
             "cStandard": "c11",
             "cppStandard": "c++17",
-            "intelliSenseMode": "msvc-x64",
             "includePath": [
                 "${default}",
                 "${workspaceFolder}",
                 "${workspaceRoot}",
-                "D:/gstreamer/1.0/x86_64/include/gstreamer-1.0",
-                "D:/gstreamer/1.0/x86_64/include/glib-2.0",
-                "D:/gstreamer/1.0/x86_64/lib/glib-2.0/include",
-                "C:/Qtd/5.13.0/mingw73_64/include/QtWidgets",
-                "C:/Qtd/5.13.0/mingw73_64/include",
-                "C:/Qtd/5.13.0/mingw73_64/include/QtCore",
-                "C:/Qtd/5.13.0/mingw73_64/include/QtGui",
-                "C:/Qtd/5.13.0/mingw73_64/include/QtNetwork",
-                "C:/Qtd/5.13.0/mingw73_64/include/QtSvg",
-                "C:/Qtd/5.13.0/mingw73_64/include/QtOpenGL",
-                "C:/Qtd/5.13.0/mingw73_64/include/QtMultimedia",
+                "C:/msys64/mingw64/qt5-static/include/QtWidgets",
+                "C:/msys64/mingw64/qt5-static/include",
+                "C:/msys64/mingw64/qt5-static/include/QtCore",
+                "C:/msys64/mingw64/qt5-static/include/QtGui",
+                "C:/msys64/mingw64/qt5-static/include/QtNetwork",
+                "C:/msys64/mingw64/qt5-static/include/QtSvg",
+                "C:/msys64/mingw64/qt5-static/include/QtOpenGL",
+                "C:/msys64/mingw64/qt5-static/include/QtMultimedia",
                 "C:/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/source/miniupnp",
                 "C:/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/source",
                 "C:/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/source/miniupnp/miniupnpc"

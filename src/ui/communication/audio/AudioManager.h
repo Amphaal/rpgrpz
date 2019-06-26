@@ -7,9 +7,9 @@
 #include "src/ui/communication/audio/controllers/AudioStreamController.h"
 #include "src/ui/communication/audio/controllers/PlaylistController.h"
 
-#include <QMediaPlayer>
+#include "src/shared/audio/GStreamerClient.h"
 
-#include "src/helpers/network/youtube/YoutubeHelper.h"
+#include "src/network/youtube/YoutubeHelper.h"
 
 class AudioManager : public QWidget {
     public:
@@ -18,7 +18,7 @@ class AudioManager : public QWidget {
     private:
         PlaylistController* _plCtrl = nullptr;
         AudioStreamController* _asCtrl = nullptr;
-        QMediaPlayer* _cli = nullptr;
+        GStreamerClient* _cli = nullptr;
 
         void _link();
         void _onToolbarActionRequested(const PlaylistToolbar::Action &action);

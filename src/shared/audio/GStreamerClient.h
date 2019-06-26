@@ -25,7 +25,7 @@ class GStreamerClient : public QObject {
         void stop();
 
     signals:
-        void playingState(int pos);
+        void positionChanged(int pos);
         void endOfStream();
         void downloadedKbps(double kbps);
 

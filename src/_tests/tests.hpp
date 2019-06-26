@@ -3,8 +3,8 @@
 #include <QDebug>
 
 #include "src/helpers/_appContext.h"
-#include "src/helpers/network/youtube/YoutubeHelper.h"
-#include "src/helpers/network/youtube/YoutubeVideoMetadata.h"
+#include "src/network/youtube/YoutubeHelper.h"
+#include "src/network/youtube/YoutubeVideoMetadata.h"
 #include "TestMainWindow.h"
 #include <QApplication>
 

@@ -89,10 +89,10 @@ SET(SOURCES
 ###########
 
 #search path
-SET(Qt5_DIR "C:/Qtd/5.13.0/mingw73_64/lib/cmake/Qt5")
+SET(Qt5_DIR "C:/msys64/mingw64/qt5-static/lib/cmake/Qt5")
 
 #find package
-find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL Multimedia)
+find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL)
 list(APPEND EXT_LIBS 
     Qt5::Core
     Qt5::Gui 
@@ -100,26 +100,25 @@ list(APPEND EXT_LIBS
     Qt5::Network
     Qt5::Svg
     Qt5::OpenGL
-    Qt5::Multimedia
 )
 
 #############
 # Gstreamer #
 #############
 
-# #pkgConfig setup
-# SET(PKG_CONFIG_EXECUTABLE "C:\\msys64\\mingw64\\bin\\x86_64-w64-mingw32-pkg-config.exe")
+#pkgConfig setup
+SET(PKG_CONFIG_EXECUTABLE "pkg-config.exe")
 
-# #weak linking
-# SET(GSTREAMER_LOCATION "D:/gstreamer/1.0/x86_64")
-# include(GStreamerHelper)
-# LinkGStreamer()
+#weak linking
+SET(GSTREAMER_LOCATION "C:/msys64/mingw64")
+include(GStreamerHelper)
+LinkGStreamer()
 
-# #append librairies for later
-# list(APPEND EXT_LIBS 
-#     ${GST_STATIC_LIBRARIES}
-#     ${GST_PLUGINS_BASE_STATIC_LIBRARIES}
-# )
+#append librairies for later
+list(APPEND EXT_LIBS 
+    ${GST_STATIC_LIBRARIES}
+    ${GST_PLUGINS_BASE_STATIC_LIBRARIES}
+)
     
 #################################
 # mandatory explicit generation #
@@ -144,7 +143,7 @@ add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES})
 conan_target_link_libraries(${PROJECT_NAME})
 
 #force target link for upnp lib for mingw conan builds (check liblibminiupnpc.a, rename into libminiupnpc.a!)
-target_link_libraries(${PROJECT_NAME} wsock32 ws2_32 iphlpapi) 
+target_link_libraries(${PROJECT_NAME} ws2_32 iphlpapi) 
 
 target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
 
@@ -164,9 +163,9 @@ IF(NOT EXISTS "${CMAKE_BINARY_DIR}/bin/Qt5Cored.dll")
     windeployqt(${PROJECT_NAME} "${CMAKE_CURRENT_BINARY_DIR}/bin")
 ENDIF()
 
-# #copy gstreamer .dlls
-# set(_gstreamer_plugins "all")
-# DeployGStreamer(${PROJECT_NAME} "${_gstreamer_plugins}")
+#copy gstreamer .dlls
+set(_gstreamer_plugins "all")
+DeployGStreamer(${PROJECT_NAME} "${_gstreamer_plugins}")
     
 
 ######################

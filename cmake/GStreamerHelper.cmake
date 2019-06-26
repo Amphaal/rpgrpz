@@ -17,9 +17,7 @@ macro(LinkGStreamer)
     pkg_check_modules(GST REQUIRED
         gstreamer-1.0
         gstreamer-controller-1.0
-        libsoup-2.4
-        gnutls
-        libmpg123
+        gstreamer-net-1.0
     )
 
     #plugins base...

@@ -1,7 +1,7 @@
 #include "AudioManager.h"
 
 AudioManager::AudioManager() : 
-    _cli(new QMediaPlayer),   
+    _cli(new GStreamerClient),   
     _plCtrl(new PlaylistController), 
     _asCtrl(new AudioStreamController) {
 
@@ -26,7 +26,7 @@ void AudioManager::_link() {
 
     //player position changed
     QObject::connect(
-        this->_cli, &QMediaPlayer::positionChanged,
+        this->_cli, &GStreamerClient::positionChanged,
         this, &AudioManager::_onPlayerPositionChanged
     );
 
@@ -39,7 +39,7 @@ void AudioManager::_link() {
     //volume change from toolbar
     QObject::connect(
         this->_asCtrl->toolbar, &AudioStreamToolbar::askForVolumeChange,
-        this->_cli, &QMediaPlayer::setVolume
+        this->_cli, &GStreamerClient::setVolume
     );
 
 }
@@ -69,7 +69,7 @@ void AudioManager::_onToolbarPlayRequested(void* playlistItemPtr) {
         this->_asCtrl->updatePlayedMusic(playlistItem->title());
 
         this->_plCtrl->toolbar->newTrack(0);
-        this->_cli->setMedia(QUrl(sourceUrlStr));
+        this->_cli->useSource(sourceUrlStr);
         this->_cli->play();
     });
 

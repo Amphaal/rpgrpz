@@ -10,7 +10,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-#include "src/helpers/network/base/_NetworkHelper.h"
+#include "base/_NetworkHelper.h"
 
 #include "YoutubeVideoMetadata.h"
 

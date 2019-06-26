@@ -165,7 +165,7 @@ void GStreamerClient::_initGst() {
     GError* err = NULL;
     gst_init_check(NULL, NULL, &err);
     if(err) {
-        throw std::exception("Could not instanciate GStreamer !");
+        throw std::runtime_error("Could not instanciate GStreamer !");
         return;
     }
 }
