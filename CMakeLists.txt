@@ -48,13 +48,6 @@ file(DOWNLOAD
 SET(CACERT src/${PEM_CERT_NAME})
 get_filename_component(CACERT_FP ${CACERT} ABSOLUTE)
 
-##################
-## Enable Conan ##
-##################
-
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup(KEEP_RPATHS)
-
 ################################
 ## CPP Compiler Configuration ##
 ################################
@@ -84,16 +77,25 @@ SET(SOURCES
     resources/resources.qrc
 )
 
-###########
-# QT libs #
-###########
+#############
+# miniupnpc #
+#############
 
-#search path
-SET(Qt5_DIR "C:/msys64/mingw64/qt5-static/lib/cmake/Qt5")
+find_package(MiniUPnPc REQUIRED)
 
-#find package
+include_directories("${MINIUPNP_INCLUDE_DIR}")
+
+list(APPEND EXT_LIBS
+    ${MINIUPNP_LIBRARY}
+)
+
+
+########
+# QT 5 #
+########
+
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL)
-list(APPEND EXT_LIBS 
+list(APPEND EXT_LIBS
     Qt5::Core
     Qt5::Gui 
     Qt5::Widgets
@@ -139,13 +141,7 @@ list(APPEND SOURCES
 # Create executable
 add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES}) 
 
-# Bind ext libs
-conan_target_link_libraries(${PROJECT_NAME})
-
-#force target link for upnp lib for mingw conan builds (check liblibminiupnpc.a, rename into libminiupnpc.a!)
-target_link_libraries(${PROJECT_NAME} ws2_32 iphlpapi) 
-
-target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
+target_link_libraries(${PROJECT_NAME} ${EXT_LIBS} -static mingw32)
 
 ##################
 # LIBRARIES COPY #

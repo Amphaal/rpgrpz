@@ -42,8 +42,8 @@ macro(LinkGStreamer)
     #linking
     link_directories(${GST_STATIC_LIBRARY_DIRS} ${GST_PLUGINS_BASE_STATIC_LIBRARY_DIRS})
     include_directories(${GST_STATIC_INCLUDE_DIRS} ${GST_PLUGINS_BASE_STATIC_INCLUDE_DIRS})
-    #add_compile_options(${GST_STATIC_CFLAGS} ${GST_PLUGINS_BASE_STATIC_CFLAGS})
-
+    add_compile_options(${GST_STATIC_CFLAGS} ${GST_PLUGINS_BASE_STATIC_CFLAGS})
+    
 endmacro()
 
 

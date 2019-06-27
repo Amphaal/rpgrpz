@@ -5,8 +5,6 @@
             "defines": [],
             "browse": {
                 "path": [
-                    "${env:HOMEPATH}/.conan/data",
-                    "${env:SYSTEMDRIVE}/msys64/mingw64/qt5-static",
                     "${env:SYSTEMDRIVE}/msys64/mingw64/include"
                 ]
             },
@@ -17,17 +15,7 @@
                 "${default}",
                 "${workspaceFolder}",
                 "${workspaceRoot}",
-                "C:/msys64/mingw64/qt5-static/include/QtWidgets",
-                "C:/msys64/mingw64/qt5-static/include",
-                "C:/msys64/mingw64/qt5-static/include/QtCore",
-                "C:/msys64/mingw64/qt5-static/include/QtGui",
-                "C:/msys64/mingw64/qt5-static/include/QtNetwork",
-                "C:/msys64/mingw64/qt5-static/include/QtSvg",
-                "C:/msys64/mingw64/qt5-static/include/QtOpenGL",
-                "C:/msys64/mingw64/qt5-static/include/QtMultimedia",
-                "C:/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/source/miniupnp",
-                "C:/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/source",
-                "C:/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/source/miniupnp/miniupnpc"
+                "C:/msys64/mingw64/include/miniupnpc"
             ]
         }
     ],
