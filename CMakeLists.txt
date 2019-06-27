@@ -9,6 +9,7 @@ SET(CMAKE_PROJECT_VERSION_PATCH 0)
 
 #default configuration
 SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 ########################
 ## VERSION.H HANDLING ##
@@ -86,7 +87,8 @@ find_package(MiniUPnPc REQUIRED)
 include_directories("${MINIUPNP_INCLUDE_DIR}")
 
 list(APPEND EXT_LIBS
-    ${MINIUPNP_STATIC_LIBRARY}
+    ${MINIUPNP_LIBRARY}
+    ws2_32
 )
 
 
@@ -102,6 +104,7 @@ list(APPEND EXT_LIBS
     Qt5::Network
     Qt5::Svg
     Qt5::OpenGL
+    -shared
 )
 
 #############
@@ -140,7 +143,7 @@ list(APPEND SOURCES
 # Create executable
 add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES}) 
 
-target_link_libraries(${PROJECT_NAME} ${EXT_LIBS} -static)
+target_link_libraries(${PROJECT_NAME} ${EXT_LIBS} -lmingw32)
 
 ##################
 # LIBRARIES COPY #

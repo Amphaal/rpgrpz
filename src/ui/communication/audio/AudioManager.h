@@ -7,7 +7,7 @@
 #include "src/ui/communication/audio/controllers/AudioStreamController.h"
 #include "src/ui/communication/audio/controllers/PlaylistController.h"
 
-#include "src/shared/audio/GStreamerClient.h"
+// #include "src/shared/audio/GStreamerClient.h"
 
 #include "src/network/youtube/YoutubeHelper.h"
 
