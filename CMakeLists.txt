@@ -86,7 +86,7 @@ find_package(MiniUPnPc REQUIRED)
 include_directories("${MINIUPNP_INCLUDE_DIR}")
 
 list(APPEND EXT_LIBS
-    ${MINIUPNP_LIBRARY}
+    ${MINIUPNP_STATIC_LIBRARY}
 )
 
 
@@ -108,19 +108,18 @@ list(APPEND EXT_LIBS
 # Gstreamer #
 #############
 
-#pkgConfig setup
-SET(PKG_CONFIG_EXECUTABLE "pkg-config.exe")
+# #pkgConfig setup
+# SET(PKG_CONFIG_EXECUTABLE "pkg-config.exe")
+# SET(GSTREAMER_LOCATION "C:/msys64/mingw64")
 
-#weak linking
-SET(GSTREAMER_LOCATION "C:/msys64/mingw64")
-include(GStreamerHelper)
-LinkGStreamer()
+# include(GStreamerHelper)
+# LinkGStreamer()
 
-#append librairies for later
-list(APPEND EXT_LIBS 
-    ${GST_STATIC_LIBRARIES}
-    ${GST_PLUGINS_BASE_STATIC_LIBRARIES}
-)
+# #append librairies for later
+# list(APPEND EXT_LIBS 
+#     ${GST_STATIC_LIBRARIES}
+#     ${GST_PLUGINS_BASE_STATIC_LIBRARIES}
+# )
     
 #################################
 # mandatory explicit generation #
@@ -141,7 +140,7 @@ list(APPEND SOURCES
 # Create executable
 add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES}) 
 
-target_link_libraries(${PROJECT_NAME} ${EXT_LIBS} -static mingw32)
+target_link_libraries(${PROJECT_NAME} ${EXT_LIBS} -static)
 
 ##################
 # LIBRARIES COPY #
@@ -159,9 +158,9 @@ IF(NOT EXISTS "${CMAKE_BINARY_DIR}/bin/Qt5Cored.dll")
     windeployqt(${PROJECT_NAME} "${CMAKE_CURRENT_BINARY_DIR}/bin")
 ENDIF()
 
-#copy gstreamer .dlls
-set(_gstreamer_plugins "all")
-DeployGStreamer(${PROJECT_NAME} "${_gstreamer_plugins}")
+# #copy gstreamer .dlls
+# set(_gstreamer_plugins "all")
+# DeployGStreamer(${PROJECT_NAME} "${_gstreamer_plugins}")
     
 
 ######################

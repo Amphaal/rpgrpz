@@ -5,7 +5,8 @@
             "defines": [],
             "browse": {
                 "path": [
-                    "${env:SYSTEMDRIVE}/msys64/mingw64/include"
+                    "${env:SYSTEMDRIVE}/msys64/mingw64/include",
+                    "${env:SYSTEMDRIVE}/msys64/mingw64/lib"
                 ]
             },
             "windowsSdkVersion": "10.0.17134.0",
@@ -15,7 +16,14 @@
                 "${default}",
                 "${workspaceFolder}",
                 "${workspaceRoot}",
-                "C:/msys64/mingw64/include/miniupnpc"
+                "C:/msys64/mingw64/include/miniupnpc",
+                "C:/msys64/mingw64/include/gstreamer-1.0",
+                "C:/msys64/mingw64/include/glib-2.0",
+                "C:/msys64/mingw64/include/QtCore",
+                "C:/msys64/mingw64/lib/glib-2.0/include",
+                "C:/msys64/mingw64/include/QtGui",
+                "C:/msys64/mingw64/include/QtWidgets",
+                "C:/msys64/mingw64/include/QtNetwork"
             ]
         }
     ],

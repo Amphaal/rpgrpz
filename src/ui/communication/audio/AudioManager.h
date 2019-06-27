@@ -18,7 +18,7 @@ class AudioManager : public QWidget {
     private:
         PlaylistController* _plCtrl = nullptr;
         AudioStreamController* _asCtrl = nullptr;
-        GStreamerClient* _cli = nullptr;
+        // GStreamerClient* _cli = nullptr;
 
         void _link();
         void _onToolbarActionRequested(const PlaylistToolbar::Action &action);
