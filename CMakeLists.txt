@@ -168,6 +168,6 @@ ENDIF()
 # add Publish target #
 ######################
 
-#include(CMakePublish)
+include(CMakePublish)
 
 #include(PrintAllVariables)
