@@ -49,6 +49,7 @@ function(windeployqt target)
                 --verbose 0
                 --no-compiler-runtime
                 --no-angle
+                --no-translations
                 --${WINDEPLOYQT_TARGET}
                 --no-opengl-sw
                 \"$<TARGET_FILE:${target}>/\"

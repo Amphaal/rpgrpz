@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.13.3)
 #version
 SET(CMAKE_PROJECT_VERSION_MAJOR 0)
 SET(CMAKE_PROJECT_VERSION_MINOR 15)
-SET(CMAKE_PROJECT_VERSION_PATCH 1)
+SET(CMAKE_PROJECT_VERSION_PATCH 2)
 
 
 #default configuration
@@ -90,6 +90,7 @@ include_directories("${MINIUPNP_INCLUDE_DIR}")
 
 list(APPEND EXT_LIBS
     ${MINIUPNP_LIBRARY}
+    ${MINIUPNP_STATIC_LIBRARY}
     ws2_32
 )
 
@@ -111,7 +112,7 @@ list(APPEND EXT_LIBS
 # Gstreamer #
 #############
 
-# #pkgConfig setup
+# # #pkgConfig setup
 # SET(PKG_CONFIG_EXECUTABLE "pkg-config.exe")
 # SET(GSTREAMER_LOCATION "C:/msys64/mingw64")
 
@@ -144,6 +145,7 @@ list(APPEND SOURCES
 add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES}) 
 
 target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
+target_link_libraries(${PROJECT_NAME} -static)
 
 ##################
 # LIBRARIES COPY #
@@ -155,14 +157,18 @@ add_custom_command(TARGET ${PROJECT_NAME}
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CACERT_FP} $<TARGET_FILE_DIR:${PROJECT_NAME}>
 )
 
-#using windeployqt to import all the .dll and qt requirements based on used components
+#only copy for release
 IF(NOT ${IS_DEBUG_APP})
+
+    #using windeployqt to import all the .dll and qt requirements based on used components
     include(Windeployqt)
     windeployqt(${PROJECT_NAME} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
+    # #copy gstreamer .dlls
+    # set(_gstreamer_plugins "all")
+    # DeployGStreamer(${PROJECT_NAME} "${_gstreamer_plugins}")
+
 ENDIF()
-# #copy gstreamer .dlls
-# set(_gstreamer_plugins "all")
-# DeployGStreamer(${PROJECT_NAME} "${_gstreamer_plugins}")
     
 
 ######################
