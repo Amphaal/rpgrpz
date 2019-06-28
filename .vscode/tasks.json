@@ -56,7 +56,7 @@
                 "kind" : "build"
             },
             "type": "shell",
-            "command" : "cmake --build ./buildRelease"
+            "command" : "cmake --build ./buildRelease --target publishPackage"
         }
     ]
 }
