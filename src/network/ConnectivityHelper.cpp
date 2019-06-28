@@ -1,10 +1,9 @@
 #include "ConnectivityHelper.h"
 
-
 ConnectivityHelper::ConnectivityHelper(QObject *parent) : 
         QObject(parent), 
-        _nam(new QNetworkAccessManager(this)), 
-        _ncm(new QNetworkConfigurationManager(this)) { 
+        _nam(new QNetworkAccessManager), 
+        _ncm(new QNetworkConfigurationManager) { 
 
     this->_pickPreferedConfiguration();
 

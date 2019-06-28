@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QDebug>
+
 #include <QString>
 #include <QLabel>
 #include "uPnP/uPnPRequester.hpp"

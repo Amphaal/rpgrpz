@@ -103,7 +103,6 @@ list(APPEND EXT_LIBS
     Qt5::Network
     Qt5::Svg
     Qt5::OpenGL
-    Qt5::QGenericEnginePlugin
 )
 
 #############
@@ -169,6 +168,6 @@ ENDIF()
 # add Publish target #
 ######################
 
-include(CMakePublish)
+#include(CMakePublish)
 
 #include(PrintAllVariables)

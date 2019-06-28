@@ -1,5 +1,7 @@
 #include "AppLoader.h"
 
-AppLoader::AppLoader() : QSplashScreen(QPixmap(":/icons/app/rpgrpz.png")) {
+AppLoader::AppLoader() {
+    QPixmap loaderIcon(":/icons/app/rpgrpz.png");
+    this->setPixmap(loaderIcon);
     this->show();
 }

@@ -14,6 +14,7 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 
     //load default map
     this->_mapView->hints()->loadDefaultState();
+
 }
 
 void MainWindow::_saveWindowState() {
