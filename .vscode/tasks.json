@@ -21,7 +21,7 @@
                 "kind" : "test"
             },
             "type": "shell",
-            "command": "cmake -GNinja ..",
+            "command": "cmake -GNinja -DCMAKE_BUILD_TYPE=Debug ..",
             "options": {
                 "cwd": "${workspaceRoot}/buildDebug"
             }
@@ -29,7 +29,7 @@
         {
             "label": "Debug - 3. Build",
             "type": "shell",
-            "command": "cmake --build ./buildDebug --config Debug"
+            "command": "cmake --build ./buildDebug"
         },
         /*RELEASE*/
         {
@@ -43,7 +43,7 @@
             "dependsOn" : "Release - 0. Create build folder",
             "group": "build",
             "type": "shell",
-            "command": "cmake -GNinja ..",
+            "command": "cmake -GNinja -DCMAKE_BUILD_TYPE=Release ..",
             "options": {
                 "cwd": "${workspaceRoot}/buildRelease"
             }
@@ -56,7 +56,7 @@
                 "kind" : "build"
             },
             "type": "shell",
-            "command" : "cmake --build ./buildRelease --target publishPackage"
+            "command" : "cmake --build ./buildRelease"
         }
     ]
 }

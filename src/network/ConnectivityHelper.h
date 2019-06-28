@@ -10,6 +10,7 @@
 #include <QNetworkReply>
 #include <QNetworkInterface>
 #include <QNetworkSession>
+#include <QNetworkAccessManager>
 #include <QNetworkConfigurationManager>
 
 #include "src/helpers/_appContext.h"

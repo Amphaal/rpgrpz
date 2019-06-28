@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.13.3)
 #version
 SET(CMAKE_PROJECT_VERSION_MAJOR 0)
 SET(CMAKE_PROJECT_VERSION_MINOR 15)
-SET(CMAKE_PROJECT_VERSION_PATCH 0)
+SET(CMAKE_PROJECT_VERSION_PATCH 1)
 
 
 #default configuration
@@ -91,7 +91,6 @@ list(APPEND EXT_LIBS
     ws2_32
 )
 
-
 ########
 # QT 5 #
 ########
@@ -104,7 +103,7 @@ list(APPEND EXT_LIBS
     Qt5::Network
     Qt5::Svg
     Qt5::OpenGL
-    -shared
+    Qt5::QGenericEnginePlugin
 )
 
 #############
@@ -143,7 +142,7 @@ list(APPEND SOURCES
 # Create executable
 add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES}) 
 
-target_link_libraries(${PROJECT_NAME} ${EXT_LIBS} -lmingw32)
+target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
 
 ##################
 # LIBRARIES COPY #

@@ -34,7 +34,7 @@
         },
         {
             "name": "Launch App",
-            "program": "RPGRPZ.exe",
+            "program": "${workspaceFolder}/buildDebug/bin/RPGRPZ.exe",
             "type": "cppdbg",
             "request": "launch",
             "args": [],

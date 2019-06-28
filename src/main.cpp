@@ -1,4 +1,3 @@
-#pragma once
 #include <QDebug>
 
 #include <QString>
@@ -77,7 +76,7 @@ int clientApp(int argc, char** argv) {
 // END CLIENT //
 ////////////////
 
-int main(int argc, char** argv){
+int main(int argc, char** argv) {
 
     //message handler
     qInstallMessageHandler(LogWriter::customMO);
