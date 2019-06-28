@@ -34,11 +34,13 @@ if((MSVC_VERSION VERSION_EQUAL 1900 OR MSVC_VERSION VERSION_GREATER 1900)
     message(WARNING "Deploying with MSVC 2015+ requires CMake 3.6+")
 endif()
 
-message("Including QT shared dependencies...")
-
 # Add commands that copy the Qt runtime to the target's output directory after
 # build and install the Qt runtime to the specified directory
 function(windeployqt target)
+
+    # force target for mingw/ninja builds
+    string(TOLOWER ${CMAKE_BUILD_TYPE} WINDEPLOYQT_TARGET)
+    message("Including QT shared \"${CMAKE_BUILD_TYPE}\" dependencies...")
 
     # Run windeployqt immediately after build
     add_custom_command(TARGET ${target} POST_BUILD
@@ -47,6 +49,7 @@ function(windeployqt target)
                 --verbose 0
                 --no-compiler-runtime
                 --no-angle
+                --${WINDEPLOYQT_TARGET}
                 --no-opengl-sw
                 \"$<TARGET_FILE:${target}>/\"
     )

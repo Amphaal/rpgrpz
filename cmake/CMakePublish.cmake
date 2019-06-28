@@ -81,7 +81,7 @@ SET(APP_PACKAGED_REPOSITORY_PATH "${APP_PACKAGED_PATH}/repository")
 #install CoreUtils for Win32 if mv missing
 add_custom_target(publishPackage 
     #build
-    COMMAND ${CMAKE_COMMAND} --build . --config Release --target package
+    COMMAND ${CMAKE_COMMAND} --build . --target package
 
     #copy to dest
     COMMAND ${CMAKE_COMMAND} -E copy ${APP_PACKAGED_INSTALLER_PATH} ${APP_REMOTE_SERVER_DOWNLOAD_PATH}

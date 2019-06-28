@@ -25,6 +25,7 @@ SET(PEM_CERT_NAME "cacert.pem")
 #set default maintenance tool path
 SET(MAINTENANCE_TOOL_LOCATION "")
 SET(IS_DEBUG_APP OFF)
+SET(CMAKE_BUILD_TYPE "Release")
 
 #if debug build
 IF(${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR}/buildDebug)
@@ -32,6 +33,7 @@ IF(${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR}/buildDebug)
     #define debug and tool location
     SET(IS_DEBUG_APP ON)
     SET(MAINTENANCE_TOOL_LOCATION "C:/Program Files/RPGRPZ/maintenancetool")
+    SET(CMAKE_BUILD_TYPE "Debug")
 	
 ENDIF()
 
@@ -154,11 +156,10 @@ add_custom_command(TARGET ${PROJECT_NAME}
 )
 
 #using windeployqt to import all the .dll and qt requirements based on used components
-IF(NOT EXISTS "${CMAKE_BINARY_DIR}/bin/Qt5Cored.dll")
+IF(NOT ${IS_DEBUG_APP})
     include(Windeployqt)
-    windeployqt(${PROJECT_NAME} "${CMAKE_CURRENT_BINARY_DIR}/bin")
+    windeployqt(${PROJECT_NAME} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 ENDIF()
-
 # #copy gstreamer .dlls
 # set(_gstreamer_plugins "all")
 # DeployGStreamer(${PROJECT_NAME} "${_gstreamer_plugins}")
