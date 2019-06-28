@@ -10,7 +10,5 @@ using namespace QtPromise;
 class NetworkHelper {
     protected:
         static QPromise<QByteArray> download(const QUrl& url);
-    
-    private:
-        static inline QNetworkAccessManager _manager = QNetworkAccessManager();
+
 };

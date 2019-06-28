@@ -64,12 +64,8 @@ void ConnectivityHelper::_pickPreferedConfiguration() {
 }
 
 void ConnectivityHelper::init() {
-
-    //BUG with bearer, force
-    this->networkChanged(QNetworkAccessManager::NetworkAccessibility::Accessible);
-
-    // auto initAccessibilityCheck = this->_nam->networkAccessible();
-    // this->networkChanged(initAccessibilityCheck);
+    auto initAccessibilityCheck = this->_nam->networkAccessible();
+    this->networkChanged(initAccessibilityCheck);
 }
 
 ConnectivityHelper::~ConnectivityHelper()  {
