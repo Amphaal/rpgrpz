@@ -104,7 +104,10 @@
         "*.tcc": "cpp",
         "qsplashscreen": "cpp",
         "qnetworkconfigurationmanager": "cpp",
-        "qtimer": "cpp"
+        "qtimer": "cpp",
+        "qnetworkreply": "cpp",
+        "qnetworkrequest": "cpp",
+        "qiodevice": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

@@ -117,17 +117,17 @@ list(APPEND EXT_LIBS
 # Gstreamer #
 #############
 
-# #pkgConfig setup
-# SET(PKG_CONFIG_EXECUTABLE "pkg-config.exe")
-# SET(GSTREAMER_LOCATION "C:/msys64/mingw64")
+#pkgConfig setup
+SET(PKG_CONFIG_EXECUTABLE "pkg-config.exe")
+SET(GSTREAMER_LOCATION "C:/msys64/mingw64")
 
-# include(GStreamerHelper)
-# FindGStreamer()
+include(GStreamerHelper)
+FindGStreamer()
 
-# list(APPEND EXT_LIBS
-#     PkgConfig::Gst
-#     PkgConfig::GstPluginsBase
-# )
+list(APPEND EXT_LIBS
+    PkgConfig::Gst
+    PkgConfig::GstPluginsBase
+)
     
 #################################
 # mandatory explicit generation #
@@ -171,7 +171,6 @@ windeployqt(${PROJECT_NAME})
 # #copy gstreamer .dlls
 # set(_gstreamer_plugins "all")
 # DeployGStreamer(${PROJECT_NAME} "${_gstreamer_plugins}")
-
 
 ######################
 # add Publish target #
