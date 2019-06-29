@@ -9,7 +9,9 @@
             "browse": {
                 "path": [
                     "${env:SYSTEMDRIVE}/msys64/mingw64/include",
-                    "${env:SYSTEMDRIVE}/msys64/mingw64/lib"
+                    "${env:SYSTEMDRIVE}/msys64/mingw64/lib",
+                    "${env:SYSTEMDRIVE}/msys64/mingw64/qt5-static/include",
+                    "${env:SYSTEMDRIVE}/msys64/mingw64/qt5-static/lib"
                 ]
             },
             "compilerPath": "${env:SYSTEMDRIVE}/msys64/mingw64/bin/g++.exe",
@@ -24,13 +26,21 @@
                 "C:/msys64/mingw64/include/miniupnpc",
                 "C:/msys64/mingw64/include/gstreamer-1.0",
                 "C:/msys64/mingw64/include/glib-2.0",
-                "C:/msys64/mingw64/include/QtCore",
                 "C:/msys64/mingw64/lib/glib-2.0/include",
+                "C:/msys64/mingw64/include/QtCore",
                 "C:/msys64/mingw64/include/QtGui",
                 "C:/msys64/mingw64/include/QtWidgets",
                 "C:/msys64/mingw64/include/QtNetwork",
                 "C:/msys64/mingw64/include/QtOpenGL",
-                "C:/msys64/mingw64/include/QtSvg"
+                "C:/msys64/mingw64/include/QtSvg",
+                "C:/msys64/mingw64/include",
+                "C:/msys64/mingw64/qt5-static/include/QtCore",
+                "C:/msys64/mingw64/qt5-static/include/QtGui",
+                "C:/msys64/mingw64/qt5-static/include/QtWidgets",
+                "C:/msys64/mingw64/qt5-static/include/QtNetwork",
+                "C:/msys64/mingw64/qt5-static/include/QtOpenGL",
+                "C:/msys64/mingw64/qt5-static/include/QtSvg",
+                "C:/msys64/mingw64/qt5-static/include"
             ]
         }
     ],

@@ -6,7 +6,8 @@ QPromise<QByteArray> NetworkHelper::download(const QUrl& url) {
         const QPromiseReject<QByteArray>& reject) {
         
         QNetworkRequest request(url);
-        auto reply = QNetworkAccessManager().get(request);
+        QNetworkAccessManager manager;
+        auto reply = manager.get(request);
 
         QObject::connect(reply, &QNetworkReply::finished, [=]() {
             if (reply->error() == QNetworkReply::NoError) {

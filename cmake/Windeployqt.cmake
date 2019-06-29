@@ -47,11 +47,11 @@ function(windeployqt target)
         COMMAND "${CMAKE_COMMAND}" -E
             env PATH="${_qt_bin_dir}" "${WINDEPLOYQT_EXECUTABLE}"
                 --verbose 0
-                --no-compiler-runtime
+                --compiler-runtime
                 --no-angle
                 --no-translations
-                --${WINDEPLOYQT_TARGET}
                 --no-opengl-sw
+                --${WINDEPLOYQT_TARGET}
                 \"$<TARGET_FILE:${target}>/\"
     )
 
