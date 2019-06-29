@@ -1,3 +1,5 @@
+#pragma once
+
 #include <QApplication>
 #include <stdio.h>
 #include <stdlib.h>

@@ -147,7 +147,7 @@ list(APPEND SOURCES
 
 # Create executable
 add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES}) 
-target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
+target_link_libraries(${PROJECT_NAME} ${EXT_LIBS} -static -dynamic)
 
 ##################
 # LIBRARIES COPY #
@@ -169,8 +169,8 @@ include(Windeployqt)
 windeployqt(${PROJECT_NAME})
 
 # #copy gstreamer .dlls
-# set(_gstreamer_plugins "all")
-# DeployGStreamer(${PROJECT_NAME} "${_gstreamer_plugins}")
+set(_gstreamer_plugins "all")
+DeployGStreamer(${PROJECT_NAME} "${_gstreamer_plugins}")
 
 ######################
 # add Publish target #

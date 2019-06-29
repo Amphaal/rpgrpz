@@ -1,7 +1,7 @@
 #include "AudioManager.h"
 
 AudioManager::AudioManager() : 
-    // _cli(new GStreamerClient),   
+    _cli(new GStreamerClient),   
     _plCtrl(new PlaylistController), 
     _asCtrl(new AudioStreamController) {
 
@@ -24,11 +24,11 @@ void AudioManager::_link() {
         this, &AudioManager::_onToolbarPlayRequested
     );
 
-    // //player position changed
-    // QObject::connect(
-    //     this->_cli, &GStreamerClient::positionChanged,
-    //     this, &AudioManager::_onPlayerPositionChanged
-    // );
+    //player position changed
+    QObject::connect(
+        this->_cli, &GStreamerClient::positionChanged,
+        this, &AudioManager::_onPlayerPositionChanged
+    );
 
     //on action required from toolbar
     QObject::connect(
@@ -36,11 +36,11 @@ void AudioManager::_link() {
         this, &AudioManager::_onToolbarActionRequested
     );
 
-    // //volume change from toolbar
-    // QObject::connect(
-    //     this->_asCtrl->toolbar, &AudioStreamToolbar::askForVolumeChange,
-    //     this->_cli, &GStreamerClient::setVolume
-    // );
+    //volume change from toolbar
+    QObject::connect(
+        this->_asCtrl->toolbar, &AudioStreamToolbar::askForVolumeChange,
+        this->_cli, &GStreamerClient::setVolume
+    );
 
 }
 
@@ -69,8 +69,8 @@ void AudioManager::_onToolbarPlayRequested(void* playlistItemPtr) {
         this->_asCtrl->updatePlayedMusic(playlistItem->title());
 
         this->_plCtrl->toolbar->newTrack(0);
-        // this->_cli->useSource(sourceUrlStr);
-        // this->_cli->play();
+        this->_cli->useSource(sourceUrlStr);
+        this->_cli->play();
     });
 
 }

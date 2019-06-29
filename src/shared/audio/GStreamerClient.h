@@ -30,12 +30,8 @@ class GStreamerClient : public QObject {
         void downloadedKbps(double kbps);
 
     private:
-        GstElement* _bin = NULL;
-        GstElement* _sourceFile = NULL;
-        GstElement* _output = NULL;
-
-        GstControlSource* _volumeControl = NULL;
-        GstControlSource* _faderControl = NULL;
+        GstElement* _bin = nullptr;
+        GstBus* _bus = nullptr;
 
         void _unrefPipeline();
         void _changeBinState(const GstState &state);

@@ -29,7 +29,11 @@
                 "C:/msys64/mingw64/lib/glib-2.0/include",
                 "C:/msys64/mingw64/include",
                 "C:/Qt/5.13.0/mingw73_64/include/QtCore",
-                "C:/Qt/5.13.0/mingw73_64/include/QtNetwork"
+                "C:/Qt/5.13.0/mingw73_64/include/QtNetwork",
+                "C:/Qt/5.13.0/mingw73_64/include/QtGui",
+                "C:/Qt/5.13.0/mingw73_64/include/QtWidgets",
+                "C:/Qt/5.13.0/mingw73_64/include/QtOpenGL",
+                "C:/Qt/5.13.0/mingw73_64/include/QtSvg"
             ]
         }
     ],

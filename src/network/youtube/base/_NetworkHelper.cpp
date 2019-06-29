@@ -1,28 +1,19 @@
 #include "_NetworkHelper.h"
 
+QNetworkAccessManager* NetworkHelper::getNAM() {
+    if(!_nam) _nam = new QNetworkAccessManager;
+    return _nam;
+}
+
 QPromise<QByteArray> NetworkHelper::download(const QUrl& url) {
-    return QPromise<QByteArray>([&](
+
+    return QPromise<QByteArray>([=](
         const QPromiseResolve<QByteArray>& resolve,
         const QPromiseReject<QByteArray>& reject) {
-        
+
         QNetworkRequest request(url);
         QNetworkAccessManager manager;
-        auto reply = manager.get(request);  
-
-        //on standard error
-        QObject::connect(
-            reply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error), [=](QNetworkReply::NetworkError code) {
-                reject(code);
-                reply->deleteLater();
-            }
-        );
-
-        //on ssl error 
-        QObject::connect(reply, &QNetworkReply::sslErrors, [=](const QList<QSslError> &errors) {
-            qDebug() << errors;
-            reject("SSL Error");
-            reply->deleteLater();
-        });
+        auto reply = getNAM()->get(request);  
 
         //on finished
         QObject::connect(reply, &QNetworkReply::finished, [=]() {
