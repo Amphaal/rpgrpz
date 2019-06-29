@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.13.3)
 #version
 SET(CMAKE_PROJECT_VERSION_MAJOR 0)
 SET(CMAKE_PROJECT_VERSION_MINOR 15)
-SET(CMAKE_PROJECT_VERSION_PATCH 4)
+SET(CMAKE_PROJECT_VERSION_PATCH 11)
 
 
 #default configuration
@@ -98,7 +98,10 @@ list(APPEND EXT_LIBS
 # QT 5 #
 ########
 
-# SET(Qt5_DIR "C:/msys64/mingw64/qt5-static/lib/cmake/Qt5")
+# IF(IS_DEBUG_APP) 
+#     SET(Qt5_DIR "C:/msys64/mingw64/qt5-static/lib/cmake/Qt5")
+# endif()
+SET(Qt5_DIR "C:/Qt/5.13.0/mingw73_64/lib/cmake/Qt5")
 
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL)
 list(APPEND EXT_LIBS
@@ -114,17 +117,16 @@ list(APPEND EXT_LIBS
 # Gstreamer #
 #############
 
-# # #pkgConfig setup
+# #pkgConfig setup
 # SET(PKG_CONFIG_EXECUTABLE "pkg-config.exe")
 # SET(GSTREAMER_LOCATION "C:/msys64/mingw64")
 
 # include(GStreamerHelper)
-# LinkGStreamer()
+# FindGStreamer()
 
-# #append librairies for later
-# list(APPEND EXT_LIBS 
-#     ${GST_STATIC_LIBRARIES}
-#     ${GST_PLUGINS_BASE_STATIC_LIBRARIES}
+# list(APPEND EXT_LIBS
+#     PkgConfig::Gst
+#     PkgConfig::GstPluginsBase
 # )
     
 #################################
@@ -145,7 +147,6 @@ list(APPEND SOURCES
 
 # Create executable
 add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES}) 
-
 target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
 
 ##################
@@ -156,11 +157,16 @@ target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
 add_custom_command(TARGET ${PROJECT_NAME}
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CACERT_FP} $<TARGET_FILE_DIR:${PROJECT_NAME}> #CA CERT
     COMMAND ${CMAKE_COMMAND} -E copy_if_different "C:/msys64/mingw64/bin/libminiupnpc.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}> #miniupnpc
+
+    #runtime
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "C:/Qt/5.13.0/mingw73_64/bin/libgcc_s_seh-1.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}> 
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "C:/Qt/5.13.0/mingw73_64/bin/libstdc++-6.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}> 
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "C:/Qt/5.13.0/mingw73_64/bin/libwinpthread-1.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}> 
 )
 
 #using windeployqt to import all the QT .dll requirements based on used components
 include(Windeployqt)
-windeployqt(${PROJECT_NAME} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+windeployqt(${PROJECT_NAME})
 
 # #copy gstreamer .dlls
 # set(_gstreamer_plugins "all")
@@ -173,4 +179,10 @@ windeployqt(${PROJECT_NAME} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
 include(CMakePublish)
 
+#################
+# Debug helpers #
+#################
+
 #include(PrintAllVariables)
+#include(PrintTargetProperties)
+#print_target_properties(PkgConfig::GstPluginsBase)

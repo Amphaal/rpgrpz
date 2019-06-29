@@ -8,13 +8,13 @@ if(NOT DEFINED GSTREAMER_LOCATION)
 endif()
 
 #linking...
-macro(LinkGStreamer)
+macro(FindGStreamer)
 
     #add search path to pkgConfig searchpath
     list(APPEND CMAKE_PREFIX_PATH ${GSTREAMER_LOCATION})
 
     #base required modules
-    pkg_check_modules(GST REQUIRED
+    pkg_check_modules(Gst REQUIRED IMPORTED_TARGET
         gstreamer-1.0
         gstreamer-controller-1.0
         gstreamer-net-1.0
@@ -25,9 +25,6 @@ macro(LinkGStreamer)
         pkg_get_variable(_GSTREAMER_PLUGINS
             "${GSTREAMER_LOCATION}/lib/pkgconfig/gstreamer-plugins-base-1.0.pc" 
         libraries)
-        pkg_get_variable(_GSTREAMER_PLUGINS_DIR
-            "${GSTREAMER_LOCATION}/lib/pkgconfig/gstreamer-plugins-base-1.0.pc" 
-        pluginsdir)
 
         #add plugins to check in pkgconfig
         foreach(_gstPlugin IN ITEMS ${_GSTREAMER_PLUGINS})
@@ -35,10 +32,10 @@ macro(LinkGStreamer)
         endforeach()
 
         #check for plugins
-        pkg_check_modules(GST_PLUGINS_BASE REQUIRED 
+        pkg_check_modules(GstPluginsBase REQUIRED IMPORTED_TARGET 
             ${GST_PLUGINS_BASE_pc}
         )
-    
+
 endmacro()
 
 
@@ -101,8 +98,8 @@ macro(DeployGStreamer target plugins)
     pluginsdir)
 
     #import
-    _GstThroughLibs(${target} ${_GSTREAMER_DLL_LOCATION} "${GST_STATIC_LIBRARIES}" "/") #iterate
-    _GstThroughLibs(${target} ${_GSTREAMER_DLL_LOCATION} "${GST_PLUGINS_BASE_STATIC_LIBRARIES}" "/") #iterate
+    _GstThroughLibs(${target} ${_GSTREAMER_DLL_LOCATION} "${Gst_STATIC_LIBRARIES}" "/") #iterate
+    _GstThroughLibs(${target} ${_GSTREAMER_DLL_LOCATION} "${GstPluginsBase_STATIC_LIBRARIES}" "/") #iterate
 
     #plugins import
     SET(_plug_subdir "/gst-plugins/")

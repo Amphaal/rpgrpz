@@ -103,7 +103,8 @@
         "qmediacontent": "cpp",
         "*.tcc": "cpp",
         "qsplashscreen": "cpp",
-        "qnetworkconfigurationmanager": "cpp"
+        "qnetworkconfigurationmanager": "cpp",
+        "qtimer": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }
