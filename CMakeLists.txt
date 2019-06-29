@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.13.3)
 #version
 SET(CMAKE_PROJECT_VERSION_MAJOR 0)
 SET(CMAKE_PROJECT_VERSION_MINOR 15)
-SET(CMAKE_PROJECT_VERSION_PATCH 3)
+SET(CMAKE_PROJECT_VERSION_PATCH 4)
 
 
 #default configuration
@@ -91,6 +91,7 @@ include_directories("${MINIUPNP_INCLUDE_DIR}")
 list(APPEND EXT_LIBS
     ${MINIUPNP_LIBRARY}
     ws2_32
+    iphlpapi
 )
 
 ########
@@ -153,11 +154,11 @@ target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
 
 #misc
 add_custom_command(TARGET ${PROJECT_NAME}
-    #CA CERT
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CACERT_FP} $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CACERT_FP} $<TARGET_FILE_DIR:${PROJECT_NAME}> #CA CERT
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "C:/msys64/mingw64/bin/libminiupnpc.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}> #miniupnpc
 )
 
-#using windeployqt to import all the .dll and qt requirements based on used components
+#using windeployqt to import all the QT .dll requirements based on used components
 include(Windeployqt)
 windeployqt(${PROJECT_NAME} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
