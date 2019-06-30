@@ -3,3 +3,5 @@ buildDebug
 src/version.h
 src/cacert.pem
 .vscode/ipch
+nbproject
+/build/

@@ -35,7 +35,7 @@ GStreamerClient::GStreamerClient(QObject* parent) : QObject(parent) {
     //define bus and callbacks
     this->_bus = gst_element_get_bus(this->_bin);
     gst_bus_add_signal_watch(this->_bus);
-    g_signal_connect(G_OBJECT(this->_bus), "message::eos", (GCallback)eos_cb, this);
+    g_signal_connect(G_OBJECT(this->_bus), "message", (GCallback)eos_cb, this);
 
 }
 

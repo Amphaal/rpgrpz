@@ -2,20 +2,20 @@
 
 #include "src/version.h"
 
-#include <QCoreApplication>
+#include <QtCore/QCoreApplication>
 
-#include <QSettings>
+#include <QtCore/QSettings>
 
-#include <QStandardPaths>
-#include <QTemporaryDir>
-#include <QString>
-#include <QDebug>
-#include <QDir>
-#include <QDateTime>
+#include <QtCore/QStandardPaths>
+#include <QtCore/QTemporaryDir>
+#include <QtCore/QString>
+#include <QtCore/QDebug>
+#include <QtCore/QDir>
+#include <QtCore/QDateTime>
 
-#include <QDesktopServices>
-#include <QProcess>
-#include <QUrl>
+#include <QtGui/QDesktopServices>
+#include <QtCore/QProcess>
+#include <QtCore/QUrl>
 
 class AppSettings : public QSettings {
     public:

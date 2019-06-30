@@ -5,6 +5,7 @@
 #include <QStyleFactory>
 #include <QSplashScreen>
 #include <QImageReader>
+#include <QLockFile>
 
 #include "src/helpers/_appContext.h"
 #include "src/helpers/_logWriter.h"
@@ -17,7 +18,7 @@
 #include "_tests/tests.hpp"
 
 #include <QDir>
-#include <QLockFile>
+#include <QtCore/QLockFile>
 
 #include "_libs/snowflake.h"
 

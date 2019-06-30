@@ -51,10 +51,10 @@ void AudioManager::_link() {
 void AudioManager::_onToolbarActionRequested(const PlaylistToolbar::Action &action) {
     switch(action) {
         case PlaylistToolbar::Action::Play:
-            // this->_cli->play();
+            this->_cli->play();
         break;
         case PlaylistToolbar::Action::Pause:
-            // this->_cli->pause();
+            this->_cli->pause();
         break;
     }
 }

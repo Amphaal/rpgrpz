@@ -25,15 +25,13 @@ SET(PEM_CERT_NAME "cacert.pem")
 #set default maintenance tool path
 SET(MAINTENANCE_TOOL_LOCATION "")
 SET(IS_DEBUG_APP OFF)
-SET(CMAKE_BUILD_TYPE "Release")
 
 #if debug build
-IF(${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR}/buildDebug)
+IF(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 
     #define debug and tool location
     SET(IS_DEBUG_APP ON)
     SET(MAINTENANCE_TOOL_LOCATION "C:/Program Files/RPGRPZ/maintenancetool")
-    SET(CMAKE_BUILD_TYPE "Debug")
 	
 ENDIF()
 
