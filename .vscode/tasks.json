@@ -11,7 +11,7 @@
             "label": "Debug - 0. Create build folder",
             "group": "test",
             "type": "shell",
-            "command": "rm buildDebug -r -fo; mkdir buildDebug"
+            "command": "rm buildDebug -rf; mkdir buildDebug"
         },
         {
             "label": "Debug - 2a. Generate Project files",
@@ -21,7 +21,7 @@
                 "kind" : "test"
             },
             "type": "shell",
-            "command": "cmake -GNinja ..",
+            "command": "cmake -GNinja -DCMAKE_BUILD_TYPE=Debug ..",
             "options": {
                 "cwd": "${workspaceRoot}/buildDebug"
             }
@@ -36,14 +36,14 @@
             "label": "Release - 0. Create build folder",
             "group": "build",
             "type": "shell",
-            "command": "rm buildRelease -r -fo; mkdir buildRelease"
+            "command": "rm buildRelease -rf; mkdir buildRelease"
         },
         {
             "label": "Release - 2. Generate Project files",
             "dependsOn" : "Release - 0. Create build folder",
             "group": "build",
             "type": "shell",
-            "command": "cmake -GNinja ..",
+            "command": "cmake -GNinja -DCMAKE_BUILD_TYPE=Release ..",
             "options": {
                 "cwd": "${workspaceRoot}/buildRelease"
             }

@@ -1,13 +1,13 @@
-#include <gst/gst.h>
-#include <gst/gstmessage.h>
+#include <gstreamer-1.0/gst/gst.h>
+#include <gstreamer-1.0/gst/gstmessage.h>
 
-#include <gst/controller/gstinterpolationcontrolsource.h>
-#include <gst/controller/gstdirectcontrolbinding.h>
+#include <gstreamer-1.0/gst/controller/gstinterpolationcontrolsource.h>
+#include <gstreamer-1.0/gst/controller/gstdirectcontrolbinding.h>
 
 #include "src/helpers/_appContext.h"
 
-#include <QObject>
-#include <QDir>
+#include <QtCore/QObject>
+#include <QtCore/QDir>
 
 class GStreamerClient : public QObject {
 

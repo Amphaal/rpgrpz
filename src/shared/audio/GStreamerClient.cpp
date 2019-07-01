@@ -26,7 +26,11 @@ GStreamerClient::GStreamerClient(QObject* parent) : QObject(parent) {
     this->_initGst();
 
     //inst elements
-    this->_bin = gst_element_factory_make ("playbin", "playbin");
+    this->_bin = gst_element_factory_make ("playbin", "bin");
+    if(!this->_bin) {
+    	this->_unrefPipeline();
+        throw std::runtime_error("Unable to init playbin");
+    }
     
     this->setVolume(
         AppContext::settings()->audioVolume()
@@ -34,8 +38,16 @@ GStreamerClient::GStreamerClient(QObject* parent) : QObject(parent) {
     
     //define bus and callbacks
     this->_bus = gst_element_get_bus(this->_bin);
+    if(!this->_bus) {
+    	this->_unrefPipeline();
+    	throw std::runtime_error("Unable to init bus for playbin");
+    }
+
     gst_bus_add_signal_watch(this->_bus);
-    g_signal_connect(G_OBJECT(this->_bus), "message", (GCallback)eos_cb, this);
+    g_signal_connect(
+		G_OBJECT(this->_bus), "message",
+		(GCallback)eos_cb, this
+	);
 
 }
 
@@ -49,7 +61,7 @@ void GStreamerClient::useSource(QString uri) {
     this->stop();
 
     //set new source
-    g_object_set(this->_bin, "uri", uri.toStdString().c_str(), NULL);
+    g_object_set(G_OBJECT(this->_bin), "uri", uri.toStdString().c_str(), NULL);
 
     //play
     this->play();
@@ -62,7 +74,7 @@ void GStreamerClient::setVolume(double volume) {
     if (volume > 1) volume = 1;
 
     //set new volume
-    g_object_set(this->_bin, "volume", volume, NULL);
+    g_object_set(G_OBJECT(this->_bin), "volume", volume, NULL);
 
 }
 
@@ -82,24 +94,24 @@ void GStreamerClient::stop() {
 }
 
 void GStreamerClient::_unrefPipeline() {
-    if(!this->_bin) return;
-    gst_object_unref(this->_bus);
-    gst_element_set_state (this->_bin, GST_STATE_NULL);
-    gst_object_unref(this->_bin);
+    if(this->_bus) gst_object_unref(GST_OBJECT(this->_bus));
+    if(this->_bin) {
+        gst_element_set_state(this->_bin, GST_STATE_NULL);
+        gst_object_unref(GST_OBJECT(this->_bin));
+    }
 }
 
 void GStreamerClient::_changeBinState(const GstState &state) {
     auto ret = gst_element_set_state(this->_bin, state);
     if (ret == GST_STATE_CHANGE_FAILURE) {
-        g_printerr ("Unable to set the pipeline to the playing state.\n");
         this->_unrefPipeline();
-        return;
+        throw std::runtime_error("Unable to set the pipeline to the playing state.\n");
     }
 }
 
 void GStreamerClient::_initGst() {
     //plugin dir
-    auto td = QDir::toNativeSeparators(QDir::currentPath()).toStdString() + "\\gst-plugins";
+    auto td = QCoreApplication::applicationDirPath().toStdString() + "/gst-plugins";
     qputenv("GST_PLUGIN_PATH", td.c_str());
     
     //setup
@@ -107,6 +119,5 @@ void GStreamerClient::_initGst() {
     gst_init_check(NULL, NULL, &err);
     if(err) {
         throw std::runtime_error("Could not instanciate GStreamer !");
-        return;
     }
 }

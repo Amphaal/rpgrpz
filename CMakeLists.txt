@@ -11,6 +11,12 @@ SET(CMAKE_PROJECT_VERSION_PATCH 11)
 SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+#check for build type value
+IF(NOT CMAKE_BUILD_TYPE)
+    message(WARNING "Missing CMAKE_BUILD_TYPE for Ninja / MinGW build ! Defaulting to \"Release\"")
+    SET(CMAKE_BUILD_TYPE "Release")
+endif()
+
 ########################
 ## VERSION.H HANDLING ##
 ########################
@@ -27,7 +33,7 @@ SET(MAINTENANCE_TOOL_LOCATION "")
 SET(IS_DEBUG_APP OFF)
 
 #if debug build
-IF(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+IF(CMAKE_BUILD_TYPE EQUAL "Debug")
 
     #define debug and tool location
     SET(IS_DEBUG_APP ON)
@@ -117,7 +123,9 @@ list(APPEND EXT_LIBS
 
 #pkgConfig setup
 SET(PKG_CONFIG_EXECUTABLE "pkg-config.exe")
-SET(GSTREAMER_LOCATION "C:/msys64/mingw64")
+
+#SET(GSTREAMER_LOCATION "C:/msys64/mingw64")
+SET(GSTREAMER_LOCATION "D:/gstreamer/1.0/x86_64")
 
 include(GStreamerHelper)
 FindGStreamer()

@@ -52,10 +52,11 @@
             "type": "cppdbg",
             "request": "launch",
             "args": ["test"],
+            "targetArchitecture": "x64",
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "externalConsole": false,
+            "externalConsole": true,
             "preLaunchTask": "Debug - 3. Build",
             "MIMode": "gdb",
             "miDebuggerPath": "${env:SYSTEMDRIVE}/msys64/mingw64/bin/gdb.exe"
