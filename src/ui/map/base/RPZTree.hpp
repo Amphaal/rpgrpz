@@ -30,6 +30,9 @@ class RPZTree : public QTreeWidget {
                         this->selectAll();
                     }
                     break;
+
+                default:
+                    break;
             }
         }
     
@@ -59,7 +62,9 @@ class RPZTree : public QTreeWidget {
                         selected = this->selectedItems().last();
                          n_selector = 1;
                         break;
-    
+                        
+                    default:
+                        break;
                 }
 
                 //find next elem

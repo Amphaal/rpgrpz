@@ -5,28 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "gdb",
+            "type": "lldb",
             "request": "launch",
-            "name": "Full-features debug",
-            "target": "./bin/RPGRPZ.exe",
-            "cwd": "${workspaceFolder}/build/Debug",
-            "valuesFormatting": "parseText",
-            "arguments": "",
-            "env": {
-                "_NO_DEBUG_HEAP" : "1"
-            }
-        },
-        {
-            "type": "gdb",
-            "request": "launch",
-            "name": "test debug",
-            "target": "./bin/RPGRPZ.exe",
-            "cwd": "${workspaceFolder}/build/Debug",
-            "valuesFormatting": "parseText",
-            "arguments": "test",
-            "env": {
-                "_NO_DEBUG_HEAP" : "1"
-            }
-        },
+            "name": "Test",
+            "program": "${workspaceFolder}/build/Debug/bin/RPGRPZ.exe",
+            "args": ["test"],
+            "preLaunchTask": "Debug - 3. Build"
+        }
     ]
 }

@@ -296,7 +296,9 @@ class uPnPRequester : public uPnPThread {
             if(uptime > 0) {
                 timenow = time(NULL);
                 timestarted = timenow - uptime;
-                qDebug() << "UPNP Info :  Time started : " << ctime(&timestarted);
+                char tt[26];
+                ctime_s(tt, sizeof(tt), &timestarted);
+                qDebug() << "UPNP Info :  Time started : " << tt;
             }
             if(UPNP_GetLinkLayerMaxBitRates(urls.controlURL_CIF, data.CIF.servicetype,
                                             &brDown, &brUp) != UPNPCOMMAND_SUCCESS) {

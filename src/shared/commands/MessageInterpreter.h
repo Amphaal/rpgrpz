@@ -9,7 +9,7 @@
 
 class MessageInterpreter {
     public:
-        enum Command { Unknown, Say, Whisper, Help };
+        enum Command { C_Unknown, Say, Whisper, Help };
         
         static inline const QHash<QString, Command> _textByCommand = {
             { "/h", Help }

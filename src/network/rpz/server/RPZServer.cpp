@@ -155,6 +155,10 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             }
         }
         break;
+
+        default:
+            break;
+        
     }
 
 }
@@ -234,7 +238,7 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
     switch(msg.commandType()) {
         
         //on unknown command
-        case MessageInterpreter::Unknown: {
+        case MessageInterpreter::C_Unknown: {
             response = RPZResponse(msgId, RPZResponse::UnknownCommand);
         }
         break;

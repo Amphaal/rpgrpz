@@ -12,7 +12,7 @@
 
 #include "src/network/rpz/server/RPZServer.h"
 
-#include "ui/MainWindow.h"
+#include "ui/mainWindow.h"
 #include "ui/AppLoader.h"
 
 #include "_tests/tests.hpp"

@@ -129,6 +129,9 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             emit serverResponseReceived(data.toHash());
         }
         break;
+
+        default:
+            break;
     }
 }
 

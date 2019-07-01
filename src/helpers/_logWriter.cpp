@@ -3,18 +3,20 @@
 void LogWriter::customMO(QtMsgType type, const QMessageLogContext &context, const QString &msg) {   
     
     //default log
-    const auto logFLoc = AppContext::getLogFileLocation();
-    const auto _fs = fopen(logFLoc.toStdString().c_str(), "a+");
-    if(!_fs) return; //error
+    const auto logFLoc = AppContext::getLogFileLocation().toStdString().c_str();
+    FILE* _fs;
+    const auto _fsErr = fopen_s(&_fs, logFLoc, "a+");
+    if(!_fsErr) return; //error
 
     //latest log
     auto mod_latest = "a+";
     if(!_latest_been_inst) {
         mod_latest = "w";
     }
-    const auto logLatestFLoc = AppContext::getLatestLogFileLocation();
-    const auto _fsLatest = fopen(logLatestFLoc.toStdString().c_str(), mod_latest);
-    if(!_fsLatest) {
+    const auto logLatestFLoc = AppContext::getLatestLogFileLocation().toStdString().c_str();
+    FILE* _fsLatest;
+    const auto _fsLatestErr = fopen_s(&_fsLatest, logLatestFLoc, mod_latest);
+    if(!_fsLatestErr) {
         return; //error
     } else {
         _latest_been_inst = true;

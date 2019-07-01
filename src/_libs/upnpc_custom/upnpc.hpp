@@ -85,7 +85,9 @@ static void DisplayInfos(struct UPNPUrls * urls,
 	if(uptime > 0) {
 		timenow = time(NULL);
 		timestarted = timenow - uptime;
-		printf("  Time started : %s", ctime(&timestarted));
+		char tt[26];
+		ctime_s(tt, sizeof(tt), &timestarted);
+		printf("  Time started : %s", tt);
 	}
 	if(UPNP_GetLinkLayerMaxBitRates(urls->controlURL_CIF, data->CIF.servicetype,
 	                                &brDown, &brUp) != UPNPCOMMAND_SUCCESS) {

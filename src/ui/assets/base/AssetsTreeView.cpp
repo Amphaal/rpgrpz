@@ -295,6 +295,8 @@ void AssetsTreeView::keyPressEvent(QKeyEvent * event) {
         }
         break;
 
+        default:
+            break;
     }
 
     return QTreeView::keyPressEvent(event);

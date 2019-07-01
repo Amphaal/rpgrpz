@@ -179,6 +179,10 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
                         QVector<snowflake_uid> list {targetedAtomId};
                         this->_changeLayer(list, partial.layer());
                     }
+                    break;
+
+                    default:
+                        break;
                 }
                 
             }

@@ -38,6 +38,9 @@ QPromise<QString> PlaylistItem::streamSourceUri() {
                 });
             }
             break;
+        
+        default:
+            break;
     }
 
     return QPromise<QString>::resolve("");

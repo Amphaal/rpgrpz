@@ -9,25 +9,33 @@ QString YoutubeSignatureDecipherer::decipher(const QString &signature) {
 
         auto operation = copyOfOperations.dequeue();
         switch(operation.first) {
-            case Reverse:
+            
+            case Reverse: {
                 std::reverse(modifiedSignature.begin(), modifiedSignature.end());
-                break;
-            case Slice: {
-                    auto targetIndex = operation.second.toInt();
-                    modifiedSignature = modifiedSignature.mid(targetIndex);
-                }
-                break;
-            case Swap: {
-                    auto firstIndex = 0;
-                    auto secondIndex = operation.second.toInt();
+            }
+            break;
 
-                    auto first = QString(modifiedSignature[firstIndex]);
-                    auto second = QString(modifiedSignature[secondIndex]);
-                    
-                    modifiedSignature.replace(firstIndex, 1, second);
-                    modifiedSignature.replace(secondIndex, 1, first);
-                }
+            case Slice: {
+                auto targetIndex = operation.second.toInt();
+                modifiedSignature = modifiedSignature.mid(targetIndex);
+            }
+            break;
+
+            case Swap: {
+                auto firstIndex = 0;
+                auto secondIndex = operation.second.toInt();
+
+                auto first = QString(modifiedSignature[firstIndex]);
+                auto second = QString(modifiedSignature[secondIndex]);
+                
+                modifiedSignature.replace(firstIndex, 1, second);
+                modifiedSignature.replace(secondIndex, 1, first);
+            }
+            break;
+
+            default:
                 break;
+
         }
 
     }
@@ -117,26 +125,33 @@ YoutubeSignatureDecipherer::YoutubeSignatureDecipherer(const QString &rawPlayerS
         //by operation type
         auto operationType = functionNamesByOperation.key(calledFunctionName);
         switch(operationType) {
-            case Reverse:
+            
+            case Reverse: {
                 operations.enqueue(
                     QPair<CipherOperation, QVariant>(
                         operationType, 
                         QVariant()
                     )
                 );
-                break;
+            }
+            break;
+
             case Slice:
             case Swap: {
-                    auto matchingArg = findArgument.match(call);
-                    auto arg = matchingArg.captured(1).toInt();
-                    operations.enqueue(
-                        QPair<CipherOperation, QVariant>(
-                            operationType, 
-                            QVariant(arg)
-                        )
-                    );
-                }
+                auto matchingArg = findArgument.match(call);
+                auto arg = matchingArg.captured(1).toInt();
+                operations.enqueue(
+                    QPair<CipherOperation, QVariant>(
+                        operationType, 
+                        QVariant(arg)
+                    )
+                );
+            }
+            break;
+
+            default:
                 break;
+
         }
     }
 

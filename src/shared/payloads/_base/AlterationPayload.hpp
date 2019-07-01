@@ -4,7 +4,7 @@
 #include "src/_libs/snowflake.h"
 
 enum class PayloadAlteration {
-    Unknown,
+    PA_Unknown,
     Focused,
     Selected,
     Removed,

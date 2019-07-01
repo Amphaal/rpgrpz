@@ -272,6 +272,8 @@ void AssetsDatabaseElement::_defineAtomType() {
         case Text:
             this->_atomType = AtomType::Text;
             break;
+        default:
+            break;
     }
 }
 
@@ -383,7 +385,7 @@ void AssetsDatabaseElement::_defineRootStaticContainer() {
      
     //if no parent, let default
     if(!this->_parentElement){
-        this->_rootStaticContainerType = Unknown;
+        this->_rootStaticContainerType = T_Unknown;
         return;
     }
 
@@ -415,7 +417,7 @@ void AssetsDatabaseElement::_defineInsertType() {
             this->_insertType = Downloaded;
             break;
         default:
-            this->_insertType = Unknown;
+            this->_insertType = T_Unknown;
             break;
     }
 }
@@ -480,7 +482,7 @@ AssetsDatabaseElement::Type AssetsDatabaseElement::pathChunktoType(const QString
     auto expected = chunk.startsWith("{") && chunk.endsWith("}");
     if(!expected) {
         qDebug() << "Assets : ignoring path, as its structure is not expected.";
-        return Unknown;
+        return T_Unknown;
     }
     
     //type cast and get element type
@@ -491,7 +493,7 @@ AssetsDatabaseElement::Type AssetsDatabaseElement::pathChunktoType(const QString
     auto staticCType = (AssetsDatabaseElement::Type)cp_chunk.toInt(&castOk);
     if(!castOk) {
         qDebug() << "Assets : ignoring path, as static container type was impossible to deduce";
-        return Unknown;
+        return T_Unknown;
     }
 
     return staticCType;

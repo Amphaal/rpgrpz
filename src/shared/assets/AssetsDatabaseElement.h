@@ -12,7 +12,7 @@ class AssetsDatabaseElement {
     
     public:
         enum Type { 
-            Unknown = 0,
+            T_Unknown = 0,
             Root = 100,
             Folder = 101,
             InternalContainer = 201,
@@ -92,9 +92,9 @@ class AssetsDatabaseElement {
         AssetsDatabaseElement* _parentElement = nullptr;
 
     private:
-        AssetsDatabaseElement::Type _type = Unknown;
-        AssetsDatabaseElement::Type _insertType = Unknown;
-        AssetsDatabaseElement::Type _rootStaticContainerType = Unknown;
+        AssetsDatabaseElement::Type _type = T_Unknown;
+        AssetsDatabaseElement::Type _insertType = T_Unknown;
+        AssetsDatabaseElement::Type _rootStaticContainerType = T_Unknown;
         AtomType _atomType = AtomType::Undefined;
         QString _id = "";
         QString _name = "";

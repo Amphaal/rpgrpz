@@ -32,6 +32,9 @@ void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, RPZAtom &b
         }
         break;
 
+        default:
+            break;
+
     }
             
 }
@@ -94,6 +97,9 @@ void AtomConverter::_bulkTransformApply(QGraphicsItem* itemBrushToUpdate) {
                 toApply.rotate(degrees);
             }
             break;
+
+            default:
+                break;
         }
 
     }
@@ -267,6 +273,9 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
                 return true;
             }
             break;
+
+            default:
+                break;
         }
     }
 
@@ -345,5 +354,8 @@ void AtomConverter::_setParamToAtomFromGraphicsItem(const AtomParameter &param, 
             atomToUpdate.setMetadata(param, transform); 
         }
         break;
+
+        default:
+            break;
     }
 }   

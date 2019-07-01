@@ -44,7 +44,8 @@ void ConnectivityHelper::_pickPreferedConfiguration() {
         const auto type = conf.type();
         const auto name = conf.name();
 
-        if(!type == QNetworkConfiguration::InternetAccessPoint) continue;
+        auto isIAP = type == QNetworkConfiguration::InternetAccessPoint;
+        if(!isIAP) continue;
 
         auto unauthorizedInterface = name.contains("npcap", Qt::CaseInsensitive) ||
                              name.contains("virtualbox", Qt::CaseInsensitive) ||

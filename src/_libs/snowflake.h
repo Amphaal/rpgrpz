@@ -3,7 +3,7 @@
 #include <QDebug>
 
 #include <stdint.h>
-#include <sys/time.h>
+#include <time.h>
 #include <stdexcept>
 #include <mutex>
 

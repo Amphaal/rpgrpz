@@ -102,9 +102,7 @@ list(APPEND EXT_LIBS
 # QT 5 #
 ########
 
-# IF(IS_DEBUG_APP) 
-#     SET(Qt5_DIR "C:/msys64/mingw64/qt5-static/lib/cmake/Qt5")
-# endif()
+#SET(Qt5_DIR "C:/msys64/mingw64/qt5-static/lib/cmake/Qt5")
 SET(Qt5_DIR "C:/Qt/5.13.0/mingw73_64/lib/cmake/Qt5")
 
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL)
@@ -154,6 +152,7 @@ list(APPEND SOURCES
 # Create executable
 add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES}) 
 target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
+link_directories("C:/msys64/mingw64/x86_64-w64-mingw32/include")
 
 ##################
 # LIBRARIES COPY #

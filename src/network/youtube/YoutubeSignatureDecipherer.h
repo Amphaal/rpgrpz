@@ -5,13 +5,14 @@
 #include <QRegularExpression>
 #include <QPair>
 #include <QQueue>
+#include <QVariant>
 
 #include <QDebug>
 
 class YoutubeSignatureDecipherer {
     
     public:
-        enum CipherOperation {Unknown, Reverse, Slice, Swap };
+        enum CipherOperation { CO_Unknown, Reverse, Slice, Swap };
 
         QString decipher(const QString &signature);
         static YoutubeSignatureDecipherer* create(const QString &clientPlayerUrl, const QString &rawPlayerSourceData);

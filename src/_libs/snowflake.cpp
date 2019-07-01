@@ -9,10 +9,10 @@ uint64_t SnowFlake::getNextMill() {
 }
 
 uint64_t SnowFlake::getNewstmp() {
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
+    struct timespec tv;
+    clock_gettime(0, &tv);
 
-    uint64_t time = tv.tv_usec;
+    uint64_t time = tv.tv_sec;
     time /= 1000;
     time += (tv.tv_sec * 1000);
     return time;
