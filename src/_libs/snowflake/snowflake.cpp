@@ -8,11 +8,32 @@ uint64_t SnowFlake::getNextMill() {
     return mill;
 }
 
-uint64_t SnowFlake::getNewstmp() {
-    struct timespec tv;
-    clock_gettime(0, &tv);
+int SnowFlake::gettimeofday(struct timeval * tp, struct timezone * tzp)
+{
+    // Note: some broken versions only have 8 trailing zero's, the correct epoch has 9 trailing zero's
+    // This magic number is the number of 100 nanosecond intervals since January 1, 1601 (UTC)
+    // until 00:00:00 January 1, 1970 
+    static const uint64_t EPOCH = ((uint64_t) 116444736000000000ULL);
 
-    uint64_t time = tv.tv_sec;
+    SYSTEMTIME  system_time;
+    FILETIME    file_time;
+    uint64_t    time;
+
+    GetSystemTime( &system_time );
+    SystemTimeToFileTime( &system_time, &file_time );
+    time =  ((uint64_t)file_time.dwLowDateTime )      ;
+    time += ((uint64_t)file_time.dwHighDateTime) << 32;
+
+    tp->tv_sec  = (long) ((time - EPOCH) / 10000000L);
+    tp->tv_usec = (long) (system_time.wMilliseconds * 1000);
+    return 0;
+}
+
+uint64_t SnowFlake::getNewstmp() {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+
+    uint64_t time = tv.tv_usec;
     time /= 1000;
     time += (tv.tv_sec * 1000);
     return time;
@@ -59,4 +80,4 @@ snowflake_uid SnowFlake::nextId() {
             | datacenterId << datacenter_left
             | machineId << machine_left
             | sequence;
-}
+} 

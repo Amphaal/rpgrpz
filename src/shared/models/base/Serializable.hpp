@@ -3,7 +3,7 @@
 #include <QVariantHash>
 #include <QMap>
 
-#include "src/_libs/snowflake.h"
+#include "src/_libs/snowflake/snowflake.h"
 
 class Serializable : public QVariantHash {
     

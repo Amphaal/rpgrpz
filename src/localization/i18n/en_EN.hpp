@@ -1,7 +1,5 @@
 #include "Ii18n.h"
 
-using namespace std;
-
 class Translator_EN : public ITranslator {
     QString Menu_File() const { return "File"; }
     QString Menu_Tools() const { return "Tools"; }

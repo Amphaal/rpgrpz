@@ -10,6 +10,8 @@ PlaylistItem::PlaylistItem(LinkType type, const QString &uri) : _type(type), _ur
                 this->_mData = YoutubeVideoMetadata::fromUrl(uri);
             }
             break;
+        default:
+            break;
     }
 };
 PlaylistItem::LinkType PlaylistItem::type() {
@@ -24,10 +26,10 @@ QString PlaylistItem::title() {
     return this->_title;
 }
 
-QPromise<QString> PlaylistItem::streamSourceUri() {
+_CLASS_DEFINE_CV_REF_NOEXCEPT PlaylistItem::streamSourceUri() {
     switch(this->_type) {
         case PlaylistItem::LinkType::ServerAudio: {
-                return QPromise<QString>::resolve(this->_uri);
+                return resolve(this->_uri);
             }
             break;
         case PlaylistItem::LinkType::YoutubePlaylist:
@@ -43,7 +45,7 @@ QPromise<QString> PlaylistItem::streamSourceUri() {
             break;
     }
 
-    return QPromise<QString>::resolve("");
+    return resolve::resolve("");
 }
 
 
@@ -52,10 +54,10 @@ void PlaylistItem::_setTitle(const QString &title) {
     emit titleChanged(title);
 }
 
-QPromise<void> PlaylistItem::_mayRefreshYTMetadata() {
-    if(this->_type == PlaylistItem::LinkType::ServerAudio) return QPromise<void>::resolve();
-    if(!this->_mData) return QPromise<void>::resolve();
-    if(this->_mData->isValid()) return QPromise<void>::resolve();
+Defer PlaylistItem::_mayRefreshYTMetadata() {
+    if(this->_type == PlaylistItem::LinkType::ServerAudio) return promise::resolve();
+    if(!this->_mData) return promise::resolve();
+    if(this->_mData->isValid()) return promise::resolve();
 
     return YoutubeHelper::refreshMetadata(this->_mData).then([=]() {
         this->_setTitle(this->_mData->title());

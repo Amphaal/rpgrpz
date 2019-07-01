@@ -429,6 +429,9 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
         }
         break;
 
+        default:
+            break;
+
     }
 
     return updatedAtom;

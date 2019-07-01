@@ -13,9 +13,7 @@
                     "D:/gstreamer/1.0/x86_64/include",
                     "D:/gstreamer/1.0/x86_64/lib",
                     "C:/Program Files/LLVM/include",
-                    "C:/Program Files/LLVM/lib",
-                    "${env:SYSTEMDRIVE}/msys64/mingw64/include",
-                    "${env:SYSTEMDRIVE}/msys64/mingw64/lib"
+                    "C:/Program Files/LLVM/lib"
                 ],
                 "limitSymbolsToIncludedHeaders": true
             },
@@ -37,7 +35,8 @@
                 "D:/gstreamer/1.0/x86_64/include/gstreamer-1.0",
                 "C:/Qt/5.13.0/mingw73_64/include",
                 "C:/Program Files/LLVM/include",
-                "D:/gstreamer/1.0/x86_64/include/glib-2.0"
+                "D:/gstreamer/1.0/x86_64/include/glib-2.0",
+                "${workspaceFolder}/src/_libs"
             ]
         }
     ],

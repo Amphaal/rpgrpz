@@ -5,7 +5,7 @@
 
 #include "src/network/youtube/YoutubeHelper.h"
 
-#include "src/_libs/qtPromise/qpromise.h"
+#include "src/_libs/promise.hpp"
 
 class PlaylistItem : public QObject {
     
@@ -23,7 +23,7 @@ class PlaylistItem : public QObject {
         LinkType type();
         QString uri();
         QString title();
-        QPromise<QString> streamSourceUri();
+        Defer streamSourceUri();
     
     private:
         YoutubeVideoMetadata* _mData = nullptr;
@@ -34,5 +34,5 @@ class PlaylistItem : public QObject {
 
         void _setTitle(const QString &title);
 
-        QPromise<void> _mayRefreshYTMetadata();
+        Defer _mayRefreshYTMetadata();
 };

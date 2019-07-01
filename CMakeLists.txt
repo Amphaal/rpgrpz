@@ -152,7 +152,7 @@ list(APPEND SOURCES
 # Create executable
 add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES}) 
 target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
-link_directories("C:/msys64/mingw64/x86_64-w64-mingw32/include")
+link_directories("C:\\msys64\\mingw64\\x86_64-w64-mingw32\\include")
 
 ##################
 # LIBRARIES COPY #

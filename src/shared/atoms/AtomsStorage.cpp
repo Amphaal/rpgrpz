@@ -150,6 +150,9 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &historyP
         }
         break; 
 
+        default:
+            break;
+
     }
 
     return historyPayload;
@@ -288,6 +291,9 @@ RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, sno
 
         }
         break;
+
+        default:
+            break;
 
     }
 

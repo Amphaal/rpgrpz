@@ -5,11 +5,9 @@ QNetworkAccessManager* NetworkHelper::getNAM() {
     return _nam;
 }
 
-QPromise<QByteArray> NetworkHelper::download(const QUrl& url) {
+Defer NetworkHelper::download(const QUrl& url) {
 
-    return QPromise<QByteArray>([=](
-        const QPromiseResolve<QByteArray>& resolve,
-        const QPromiseReject<QByteArray>& reject) {
+    return newPromise([=](Defer d) {
 
         QNetworkRequest request(url);
         QNetworkAccessManager manager;
@@ -18,9 +16,9 @@ QPromise<QByteArray> NetworkHelper::download(const QUrl& url) {
         //on finished
         QObject::connect(reply, &QNetworkReply::finished, [=]() {
             if (reply->error() == QNetworkReply::NoError) {
-                resolve(reply->readAll());
+                d.resolve(reply->readAll());
             } else {
-                reject(reply->error());
+                d.reject(reply->error());
             }
 
             reply->deleteLater();

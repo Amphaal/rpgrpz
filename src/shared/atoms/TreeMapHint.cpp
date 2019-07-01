@@ -188,6 +188,9 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
             }
         }   
         break;
+
+        default:
+            break;
     }
 
     return nullptr;
@@ -297,6 +300,8 @@ QTreeWidgetItem* TreeMapHint::_createTreeItem(RPZAtom &atom) {
             break;
         case AtomType::Text:
             item->setIcon(0, QIcon(":/icons/app/tools/text.png"));
+            break;
+        default:
             break;
     }
 

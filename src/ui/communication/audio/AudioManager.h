@@ -2,7 +2,7 @@
 
 #include <QMainWindow>
 
-#include "src/_libs/qtPromise/qpromise.h"
+#include "src/_libs/promise.hpp"
 
 #include "src/ui/communication/audio/controllers/AudioStreamController.h"
 #include "src/ui/communication/audio/controllers/PlaylistController.h"

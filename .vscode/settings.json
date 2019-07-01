@@ -118,7 +118,16 @@
         "qiodevice": "cpp",
         "qgraphicsscene": "cpp",
         "qbrush": "cpp",
-        "qfont": "cpp"
+        "qfont": "cpp",
+        "ctime": "cpp",
+        "typeindex": "cpp",
+        "bit": "cpp",
+        "clocale": "cpp",
+        "cwctype": "cpp",
+        "fstream": "cpp",
+        "optional": "cpp",
+        "sstream": "cpp",
+        "string_view": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }
