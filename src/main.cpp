@@ -20,7 +20,7 @@
 #include <QDir>
 #include <QtCore/QLockFile>
 
-#include "_libs/snowflake.h"
+#include "_libs/snowflake/snowflake.h"
 
 
 ////////////

@@ -1,13 +1,13 @@
 #include "YoutubeHelper.h"
 
-Defer YoutubeHelper::fromPlaylistUrl(const QString &url) {
+promise::Defer YoutubeHelper::fromPlaylistUrl(const QString &url) {
     return download(url)
             .then(&_extractVideoIdsFromHTTPRequest)
             .then(&_videoIdsToMetadataList);         
 };
 
-Defer YoutubeHelper::refreshMetadata(YoutubeVideoMetadata* toRefresh) {
-    return newPromise([=](Defer d){
+promise::Defer YoutubeHelper::refreshMetadata(YoutubeVideoMetadata* toRefresh) {
+    return promise::newPromise([=](promise::Defer d){
         
         _getVideoEmbedPageRawData(toRefresh)
         .then([toRefresh](const QByteArray &htmlResponse) {
@@ -22,7 +22,7 @@ Defer YoutubeHelper::refreshMetadata(YoutubeVideoMetadata* toRefresh) {
 };
 
 
-Defer YoutubeHelper::_getVideoEmbedPageRawData(YoutubeVideoMetadata* metadata) {
+promise::Defer YoutubeHelper::_getVideoEmbedPageRawData(YoutubeVideoMetadata* metadata) {
     auto videoEmbedPageHtmlUrl = QString("https://www.youtube.com/embed/" + metadata->id() + "?disable_polymer=true&hl=en");
     return download(videoEmbedPageHtmlUrl);
 }
@@ -95,18 +95,18 @@ YoutubeVideoMetadata* YoutubeHelper::_augmentMetadataWithVideoInfos(
 }
 
 
-Defer YoutubeHelper::_downloadVideoInfosAndAugmentMetadata(YoutubeVideoMetadata* metadata) {
+promise::Defer YoutubeHelper::_downloadVideoInfosAndAugmentMetadata(YoutubeVideoMetadata* metadata) {
     
     //define timestamp for request
     auto requestedAt = QDateTime::currentDateTime();
     auto cachedDecipherer = YoutubeSignatureDecipherer::fromCache(metadata->playerSourceUrl());
 
     //helper for raw data download
-    QVector<Defer> dlPromises{
+    QVector<promise::Defer> dlPromises{
         _getVideoInfosRawData(metadata),
         !cachedDecipherer ? download(metadata->playerSourceUrl()) : promise::resolve(QByteArray())
     };
-    auto downloadAll = Defer::all(dlPromises);
+    auto downloadAll = promise::all(dlPromises);
 
     //handle augment
     return downloadAll.then([&, metadata, requestedAt, cachedDecipherer](const QVector<QByteArray>& res) {
@@ -128,7 +128,7 @@ QString YoutubeHelper::_getApiUrl(const QString &videoId) {
     return QString("https://youtube.googleapis.com/v/") +videoId;
 }
 
-Defer YoutubeHelper::_getVideoInfosRawData(YoutubeVideoMetadata* metadata) {
+promise::Defer YoutubeHelper::_getVideoInfosRawData(YoutubeVideoMetadata* metadata) {
     auto encodedApiUrl = QUrl::toPercentEncoding(_getApiUrl(metadata->id()));
     auto requestUrl = QString("https://www.youtube.com/get_video_info?video_id=" + metadata->id() + "&el=embedded&sts=" + metadata->sts() + "&eurl=" + encodedApiUrl + "&hl=en");
     return download(requestUrl);

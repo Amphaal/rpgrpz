@@ -110,7 +110,7 @@ void ConnectWidget::_tryConnectToServer() {
 void ConnectWidget::_onRPZClientStatus(const QString &statusMsg, bool isError) {
     if(!isError) return;
 
-    if(this->_state = State::Connecting) {
+    if(this->_state == State::Connecting) {
         QMessageBox::information(this, 
             QString("Erreur lors de la connexion"), 
             statusMsg, 

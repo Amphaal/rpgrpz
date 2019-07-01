@@ -1,4 +1,4 @@
-#include "MainWindow.h"
+#include "mainWindow.h"
 
 MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 

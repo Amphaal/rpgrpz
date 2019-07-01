@@ -23,7 +23,7 @@ class PlaylistItem : public QObject {
         LinkType type();
         QString uri();
         QString title();
-        Defer streamSourceUri();
+        promise::Defer streamSourceUri();
     
     private:
         YoutubeVideoMetadata* _mData = nullptr;
@@ -34,5 +34,5 @@ class PlaylistItem : public QObject {
 
         void _setTitle(const QString &title);
 
-        Defer _mayRefreshYTMetadata();
+        promise::Defer _mayRefreshYTMetadata();
 };

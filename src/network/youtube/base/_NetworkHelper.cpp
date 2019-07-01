@@ -5,9 +5,9 @@ QNetworkAccessManager* NetworkHelper::getNAM() {
     return _nam;
 }
 
-Defer NetworkHelper::download(const QUrl& url) {
+promise::Defer NetworkHelper::download(const QUrl& url) {
 
-    return newPromise([=](Defer d) {
+    return promise::newPromise([=](promise::Defer d) {
 
         QNetworkRequest request(url);
         QNetworkAccessManager manager;

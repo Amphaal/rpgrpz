@@ -153,6 +153,9 @@ QSet<AtomParameter> RPZAtom::customizableParams() {
         }
         break;
 
+        default:
+            break;
+
     }
 
     return out;
@@ -188,6 +191,9 @@ QSet<AtomParameter> RPZAtom::legalParameters() {
             base.insert(AtomParameter::BrushPenWidth);
         }
         break;
+
+        default:
+            break;
 
     }
     

@@ -36,7 +36,8 @@
                 "C:/Qt/5.13.0/mingw73_64/include",
                 "C:/Program Files/LLVM/include",
                 "D:/gstreamer/1.0/x86_64/include/glib-2.0",
-                "${workspaceFolder}/src/_libs"
+                "${workspaceFolder}/src/_libs",
+                "D:/gstreamer/1.0/x86_64/lib/glib-2.0/include"
             ]
         }
     ],

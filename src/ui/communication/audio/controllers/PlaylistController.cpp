@@ -45,5 +45,7 @@ void PlaylistController::_onToolbarActionRequested(const PlaylistToolbar::Action
         case PlaylistToolbar::Action::Rewind:
             this->playlist->playPrevious();
             break;
+        default:
+            break;
     }
 }

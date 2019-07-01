@@ -296,14 +296,18 @@ void MapView::mousePressEvent(QMouseEvent *event) {
                         }
                     break;
 
-                    default:
+                    default:{
                         this->_hints->integrateGraphicsItemAsPayload(this->_ghostItem);
+                    }
                     break;
 
                 }
             }
         }
         break;
+
+        default:
+            break;
     }
 
     QGraphicsView::mousePressEvent(event);
@@ -324,7 +328,13 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
                 case AtomType::Brush:
                     this->_updateDrawingPath(event->pos());
                 break;
+
+                default:
+                    break;
             }
+        
+        default:
+            break;
     }
 
     QGraphicsView::mouseMoveEvent(event);
@@ -344,6 +354,9 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
             this->hints()->handleAnyMovedItems();
         }
         break;
+
+        default:
+            break;
     }
 
     this->_isMousePressed = false;
@@ -445,6 +458,8 @@ void MapView::actionRequested(const MapTools::Actions &action) {
             break;
         case MapTools::Actions::ResetTool:
             this->_resetTool();
+            break;
+        default:
             break;
     }
 }
@@ -584,6 +599,9 @@ void MapView::_updateDrawingPath(const QPoint &evtPoint) {
         case AtomType::Brush:
             this->_updateDrawingPathForBrush(pathCoord, existingPath, this->_tempDrawing);
         break;
+
+        default:
+            break;
     }
 
     //save as new path
@@ -654,6 +672,9 @@ void MapView::_updateDrawingPathForBrush(const QPointF &pathCoord, QPainterPath 
             pathToAlter.lineTo(pathCoord);
         }
         break;
+
+        default:
+            break;
 
     }
 }

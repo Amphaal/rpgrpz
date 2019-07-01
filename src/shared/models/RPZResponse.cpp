@@ -71,6 +71,8 @@ QPalette RPZResponse::palette() {
             palette.setColor(QPalette::WindowText, "#0f4706");
             break;
 
+        default:
+            break;
     }
 
     return palette;

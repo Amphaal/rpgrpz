@@ -26,10 +26,10 @@ QString PlaylistItem::title() {
     return this->_title;
 }
 
-_CLASS_DEFINE_CV_REF_NOEXCEPT PlaylistItem::streamSourceUri() {
+promise::Defer PlaylistItem::streamSourceUri() {
     switch(this->_type) {
         case PlaylistItem::LinkType::ServerAudio: {
-                return resolve(this->_uri);
+                return promise::resolve(this->_uri);
             }
             break;
         case PlaylistItem::LinkType::YoutubePlaylist:
@@ -45,7 +45,7 @@ _CLASS_DEFINE_CV_REF_NOEXCEPT PlaylistItem::streamSourceUri() {
             break;
     }
 
-    return resolve::resolve("");
+    return promise::resolve("");
 }
 
 
@@ -54,7 +54,7 @@ void PlaylistItem::_setTitle(const QString &title) {
     emit titleChanged(title);
 }
 
-Defer PlaylistItem::_mayRefreshYTMetadata() {
+promise::Defer PlaylistItem::_mayRefreshYTMetadata() {
     if(this->_type == PlaylistItem::LinkType::ServerAudio) return promise::resolve();
     if(!this->_mData) return promise::resolve();
     if(this->_mData->isValid()) return promise::resolve();

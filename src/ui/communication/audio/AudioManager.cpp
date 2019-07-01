@@ -56,6 +56,8 @@ void AudioManager::_onToolbarActionRequested(const PlaylistToolbar::Action &acti
         case PlaylistToolbar::Action::Pause:
             this->_cli->pause();
         break;
+        default:
+            break;
     }
 }
 

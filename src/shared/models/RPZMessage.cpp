@@ -65,6 +65,9 @@ QPalette RPZMessage::palette() {
             palette.setColor(QPalette::Window, "#FFFFFF");
             palette.setColor(QPalette::WindowText, "#000000");
             break;
+        
+        default:
+            break;
     }
 
     return palette;
