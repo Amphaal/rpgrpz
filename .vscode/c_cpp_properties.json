@@ -12,8 +12,10 @@
                     "C:/Qt/5.13.0/mingw73_64/lib",
                     "D:/gstreamer/1.0/x86_64/include",
                     "D:/gstreamer/1.0/x86_64/lib",
-                    "C:/Program Files/LLVM/include",
-                    "C:/Program Files/LLVM/lib"
+                    "C:/msys64/mingw64/include",
+                    "C:/msys64/mingw64/lib",
+                    "C:/msys64/mingw64/x86_64-w64-mingw32/include",
+                    "C:/msys64/mingw64/x86_64-w64-mingw32/lib"
                 ],
                 "limitSymbolsToIncludedHeaders": true
             },
@@ -23,8 +25,10 @@
             "cppStandard": "c++17",
             "includePath": [
                 "${workspaceFolder}",
+                "${workspaceFolder}/src/_libs",
                 "${workspaceRoot}",
                 "C:/msys64/mingw64/include/miniupnpc",
+                "C:/Qt/5.13.0/mingw73_64/include",
                 "C:/Qt/5.13.0/mingw73_64/include/QtCore",
                 "C:/Qt/5.13.0/mingw73_64/include/QtNetwork",
                 "C:/Qt/5.13.0/mingw73_64/include/QtGui",
@@ -33,11 +37,9 @@
                 "C:/Qt/5.13.0/mingw73_64/include/QtSvg",
                 "D:/gstreamer/1.0/x86_64/include",
                 "D:/gstreamer/1.0/x86_64/include/gstreamer-1.0",
-                "C:/Qt/5.13.0/mingw73_64/include",
-                "C:/Program Files/LLVM/include",
                 "D:/gstreamer/1.0/x86_64/include/glib-2.0",
-                "${workspaceFolder}/src/_libs",
-                "D:/gstreamer/1.0/x86_64/lib/glib-2.0/include"
+                "D:/gstreamer/1.0/x86_64/lib/glib-2.0/include",
+                "C:/msys64/mingw64/x86_64-w64-mingw32/include"
             ]
         }
     ],
