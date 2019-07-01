@@ -5,75 +5,28 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Client (no server, random context)",
-            "program": "${workspaceFolder}/buildDebug/bin/RPGRPZ.exe",
-            "type": "cppdbg",
+            "type": "gdb",
             "request": "launch",
-            "args": ["noServer random"],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "preLaunchTask": "Debug - 3. Build",
-            "MIMode": "gdb",
-            "miDebuggerPath": "${env:SYSTEMDRIVE}/msys64/mingw64/bin/gdb.exe"
+            "name": "Full-features debug",
+            "target": "./bin/RPGRPZ.exe",
+            "cwd": "${workspaceFolder}/build/Debug",
+            "valuesFormatting": "parseText",
+            "arguments": "",
+            "env": {
+                "_NO_DEBUG_HEAP" : "1"
+            }
         },
         {
-            "name": "Launch Client (no server, test context)",
-            "program": "${workspaceFolder}/buildDebug/bin/RPGRPZ.exe",
-            "type": "cppdbg",
+            "type": "gdb",
             "request": "launch",
-            "args": ["noServer testContext"],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "preLaunchTask": "Debug - 3. Build",
-            "MIMode": "gdb",
-            "miDebuggerPath": "${env:SYSTEMDRIVE}/msys64/mingw64/bin/gdb.exe"
+            "name": "test debug",
+            "target": "./bin/RPGRPZ.exe",
+            "cwd": "${workspaceFolder}/build/Debug",
+            "valuesFormatting": "parseText",
+            "arguments": "test",
+            "env": {
+                "_NO_DEBUG_HEAP" : "1"
+            }
         },
-        {
-            "name": "Launch App",
-            "program": "${workspaceFolder}/buildDebug/bin/RPGRPZ.exe",
-            "type": "cppdbg",
-            "request": "launch",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "preLaunchTask": "Debug - 3. Build",
-            "MIMode": "gdb",
-            "miDebuggerPath": "${env:SYSTEMDRIVE}/msys64/mingw64/bin/gdb.exe"
-        },
-        {
-            "name": "Test App",
-            "program": "${workspaceFolder}/buildDebug/bin/RPGRPZ.exe",
-            "type": "cppdbg",
-            "request": "launch",
-            "args": ["test"],
-            "targetArchitecture": "x64",
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": true,
-            "preLaunchTask": "Debug - 3. Build",
-            "MIMode": "gdb",
-            "miDebuggerPath": "${env:SYSTEMDRIVE}/msys64/mingw64/bin/gdb.exe"
-        },
-        {
-            "name": "Launch Server",
-            "program": "${workspaceFolder}/buildDebug/bin/RPGRPZ.exe",
-            "type": "cppdbg",
-            "request": "launch",
-            "args": ["serverOnly"],
-            "stopAtEntry": true,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "preLaunchTask": "Debug - 3. Build",
-            "MIMode": "gdb",
-            "miDebuggerPath": "${env:SYSTEMDRIVE}/msys64/mingw64/bin/gdb.exe"
-        }
     ]
 }

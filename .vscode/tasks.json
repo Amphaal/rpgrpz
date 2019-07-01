@@ -11,7 +11,7 @@
             "label": "Debug - 0. Create build folder",
             "group": "test",
             "type": "shell",
-            "command": "rm buildDebug -rf; mkdir buildDebug"
+            "command": "rm build/Debug -rf; mkdir build/Debug"
         },
         {
             "label": "Debug - 2a. Generate Project files",
@@ -21,31 +21,31 @@
                 "kind" : "test"
             },
             "type": "shell",
-            "command": "cmake -GNinja -DCMAKE_BUILD_TYPE=Debug ..",
+            "command": "cmake -GNinja -DCMAKE_BUILD_TYPE=Debug ../..",
             "options": {
-                "cwd": "${workspaceRoot}/buildDebug"
+                "cwd": "${workspaceRoot}/build/Debug"
             }
         },
         {
             "label": "Debug - 3. Build",
             "type": "shell",
-            "command": "cmake --build ./buildDebug"
+            "command": "cmake --build ./build/Debug"
         },
         /*RELEASE*/
         {
             "label": "Release - 0. Create build folder",
             "group": "build",
             "type": "shell",
-            "command": "rm buildRelease -rf; mkdir buildRelease"
+            "command": "rm build/Release -rf; mkdir build/Release"
         },
         {
             "label": "Release - 2. Generate Project files",
             "dependsOn" : "Release - 0. Create build folder",
             "group": "build",
             "type": "shell",
-            "command": "cmake -GNinja -DCMAKE_BUILD_TYPE=Release ..",
+            "command": "cmake -GNinja -DCMAKE_BUILD_TYPE=Release ../..",
             "options": {
-                "cwd": "${workspaceRoot}/buildRelease"
+                "cwd": "${workspaceRoot}/build/Release"
             }
         },
         {
@@ -56,7 +56,7 @@
                 "kind" : "build"
             },
             "type": "shell",
-            "command" : "cmake --build ./buildRelease --target publishPackage"
+            "command" : "cmake --build ./build/Release --target publishPackage"
         }
     ]
 }

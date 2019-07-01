@@ -43,7 +43,7 @@ ENDIF()
 
 #config file to source code
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/build_templates/version.h.in 
+    ${CMAKE_CURRENT_SOURCE_DIR}/templates/version.h.in 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/version.h
 )
 
@@ -153,7 +153,7 @@ list(APPEND SOURCES
 
 # Create executable
 add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES}) 
-target_link_libraries(${PROJECT_NAME} ${EXT_LIBS} -static -dynamic)
+target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
 
 ##################
 # LIBRARIES COPY #
