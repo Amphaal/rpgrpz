@@ -1,13 +1,13 @@
 {
-    "terminal.integrated.shell.windows": "C:\\Program Files\\Git\\bin\\bash.exe",
+    //"terminal.integrated.shell.windows": "C:\\Program Files\\Git\\bin\\bash.exe",
+    "terminal.integrated.shell.windows": "C:/Program Files/PowerShell/6/pwsh.exe",
     "terminal.integrated.env.windows": {
         // "CC" : "C:\\Program Files\\LLVM\\bin\\clang.exe",
-        "CC" : "C:\\msys64\\mingw64\\bin\\gcc.exe",
+        //"CC" : "C:\\msys64\\mingw64\\bin\\gcc.exe",
         // "CXX" : "C:\\Program Files\\LLVM\\bin\\clang++.exe",
-        "CXX" : "C:\\msys64\\mingw64\\bin\\g++.exe",
+        //"CXX" : "C:\\msys64\\mingw64\\bin\\g++.exe",
         // "RC" : "C:\\Program Files\\LLVM\\bin\\llvm-rc.exe",
     },
-    "lldb.adapterType": "bundled",
     "files.associations": {
         "qdir": "cpp",
         "xstring": "cpp",

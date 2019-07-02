@@ -5,11 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "lldb",
+            "name": "(Windows) Launch",
+            "type": "cppvsdbg",
             "request": "launch",
-            "name": "Test",
-            "program": "${workspaceFolder}/build/Debug/bin/RPGRPZ.exe",
+            "program": "./bin/RPGRPZ.exe",
             "args": ["test"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build/Debug",
+            "environment": [],
+            "externalConsole": true,
             "preLaunchTask": "Debug - 3. Build"
         }
     ]

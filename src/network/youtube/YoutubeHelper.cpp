@@ -109,7 +109,7 @@ promise::Defer YoutubeHelper::_downloadVideoInfosAndAugmentMetadata(YoutubeVideo
     auto downloadAll = promise::all(dlPromises);
 
     //handle augment
-    return downloadAll.then([&, metadata, requestedAt, cachedDecipherer](const QVector<QByteArray>& res) {
+    return downloadAll.then([=](const QVector<QByteArray>& res) {
         
         //prepare args
         auto videoInfosRawData = res[0];

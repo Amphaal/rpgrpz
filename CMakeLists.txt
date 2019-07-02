@@ -11,11 +11,6 @@ SET(CMAKE_PROJECT_VERSION_PATCH 0)
 SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-#check for build type value
-IF(NOT CMAKE_BUILD_TYPE)
-    message(WARNING "Missing CMAKE_BUILD_TYPE for Ninja / MinGW build ! Defaulting to \"Release\"")
-    SET(CMAKE_BUILD_TYPE "Release")
-endif()
 
 ########################
 ## VERSION.H HANDLING ##
@@ -33,7 +28,7 @@ SET(MAINTENANCE_TOOL_LOCATION "")
 SET(IS_DEBUG_APP OFF)
 
 #if debug build
-IF(CMAKE_BUILD_TYPE EQUAL "Debug")
+IF(${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR}/build/Debug)
 
     #define debug and tool location
     SET(IS_DEBUG_APP ON)
@@ -61,8 +56,6 @@ get_filename_component(CACERT_FP ${CACERT} ABSOLUTE)
 
 SET(CMAKE_CXX_STANDARD 17)
 add_definitions(-DWIN32_LEAN_AND_MEAN) #std::btye c++17 ambiguity
-# SET(CMAKE_CXX_COMPILER_LAUNCHER "ccache")
-# SET(CMAKE_CC_COMPILER_LAUNCHER "ccache")
 
 #########################
 ## Libraries specifics ##
@@ -90,12 +83,10 @@ SET(SOURCES
 # miniupnpc #
 #############
 
-find_package(MiniUPnPc REQUIRED)
-
-include_directories("${MINIUPNP_INCLUDE_DIR}")
+include_directories("C:/msys64/mingw64/include/miniupnpc")
 
 list(APPEND EXT_LIBS
-    ${MINIUPNP_LIBRARY}
+    "C:/msys64/mingw64/bin/libminiupnpc.dll"
     ws2_32
     iphlpapi
 )
@@ -104,8 +95,7 @@ list(APPEND EXT_LIBS
 # QT 5 #
 ########
 
-#SET(Qt5_DIR "C:/msys64/mingw64/qt5-static/lib/cmake/Qt5")
-SET(Qt5_DIR "C:/Qt/5.13.0/mingw73_64/lib/cmake/Qt5")
+SET(Qt5_DIR "C:/Qt/5.13.0/msvc2017_64/lib/cmake/Qt5")
 
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL)
 list(APPEND EXT_LIBS
@@ -122,9 +112,7 @@ list(APPEND EXT_LIBS
 #############
 
 #pkgConfig setup
-SET(PKG_CONFIG_EXECUTABLE "pkg-config.exe")
-
-#SET(GSTREAMER_LOCATION "C:/msys64/mingw64")
+SET(PKG_CONFIG_EXECUTABLE "C:\\msys64\\mingw64\\bin\\x86_64-w64-mingw32-pkg-config.exe")
 SET(GSTREAMER_LOCATION "D:/gstreamer/1.0/x86_64")
 
 include(GStreamerHelper)
@@ -147,6 +135,13 @@ list(APPEND SOURCES
     ${HPP_FILES}
 )
 
+# #Debug files
+# list(APPEND SOURCES
+#     "src/helpers/_appContext.cpp"
+#     "src/_tests/main.cpp"
+# )
+
+
 #########################
 # Executable Generation #
 #########################
@@ -155,6 +150,7 @@ list(APPEND SOURCES
 add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES}) 
 target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
 
+#accelerate builds times
 include(cotire)
 cotire(${PROJECT_NAME})
 
@@ -174,12 +170,16 @@ add_custom_command(TARGET ${PROJECT_NAME}
 )
 
 #using windeployqt to import all the QT .dll requirements based on used components
-include(Windeployqt)
-windeployqt(${PROJECT_NAME})
+IF(${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR}/build/Debug)
+    include(Windeployqt)
+    windeployqt(${PROJECT_NAME})
+endif()
 
-# #copy gstreamer .dlls
-set(_gstreamer_plugins "all")
-DeployGStreamer(${PROJECT_NAME} "${_gstreamer_plugins}")
+#copy gstreamer .dlls
+IF(NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bin/gst-plugins/)
+    set(_gstreamer_plugins "all")
+    DeployGStreamer(${PROJECT_NAME} "${_gstreamer_plugins}")
+endif()
 
 ######################
 # add Publish target #

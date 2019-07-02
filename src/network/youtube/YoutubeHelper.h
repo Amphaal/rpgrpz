@@ -6,6 +6,7 @@
 
 #include <QRegularExpression>
 #include <QUrlQuery>
+#include <QString>
 
 #include <QJsonDocument>
 #include <QJsonObject>

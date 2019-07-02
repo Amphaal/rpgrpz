@@ -8,19 +8,16 @@
             ],
             "browse": {
                 "path": [
-                    "C:/Qt/5.13.0/mingw73_64/include",
-                    "C:/Qt/5.13.0/mingw73_64/lib",
+                    "C:/Qt/5.13.0/msvc2017_64/include",
+                    "C:/Qt/5.13.0/msvc2017_64/lib",
                     "D:/gstreamer/1.0/x86_64/include",
-                    "D:/gstreamer/1.0/x86_64/lib",
-                    "C:/msys64/mingw64/include",
-                    "C:/msys64/mingw64/lib",
-                    "C:/msys64/mingw64/x86_64-w64-mingw32/include",
-                    "C:/msys64/mingw64/x86_64-w64-mingw32/lib"
+                    "D:/gstreamer/1.0/x86_64/lib"
                 ],
                 "limitSymbolsToIncludedHeaders": true
             },
-            "compilerPath": "C:/Program Files/LLVM/bin/clang++.exe",
-            "intelliSenseMode": "clang-x64",
+            "windowsSdkVersion": "10.0.18362.0",
+            "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.21.27702/bin/Hostx64/x64/cl.exe",
+            "intelliSenseMode": "msvc-x64",
             "cStandard": "c11",
             "cppStandard": "c++17",
             "includePath": [
@@ -28,20 +25,17 @@
                 "${workspaceFolder}/src/_libs",
                 "${workspaceRoot}",
                 "C:/msys64/mingw64/include/miniupnpc",
-                "C:/Qt/5.13.0/mingw73_64/include",
-                "C:/Qt/5.13.0/mingw73_64/include/QtCore",
-                "C:/Qt/5.13.0/mingw73_64/include/QtNetwork",
-                "C:/Qt/5.13.0/mingw73_64/include/QtGui",
-                "C:/Qt/5.13.0/mingw73_64/include/QtWidgets",
-                "C:/Qt/5.13.0/mingw73_64/include/QtOpenGL",
-                "C:/Qt/5.13.0/mingw73_64/include/QtSvg",
+                "C:/Qt/5.13.0/msvc2017_64/include",
+                "C:/Qt/5.13.0/msvc2017_64/include/QtCore",
+                "C:/Qt/5.13.0/msvc2017_64/include/QtNetwork",
+                "C:/Qt/5.13.0/msvc2017_64/include/QtGui",
+                "C:/Qt/5.13.0/msvc2017_64/include/QtWidgets",
+                "C:/Qt/5.13.0/msvc2017_64/include/QtOpenGL",
+                "C:/Qt/5.13.0/msvc2017_64/include/QtSvg",
                 "D:/gstreamer/1.0/x86_64/include",
                 "D:/gstreamer/1.0/x86_64/include/gstreamer-1.0",
                 "D:/gstreamer/1.0/x86_64/include/glib-2.0",
-                "D:/gstreamer/1.0/x86_64/lib/glib-2.0/include",
-                "C:/msys64/mingw64/x86_64-w64-mingw32/include",
-                "C:/msys64/mingw64/include/c++/9.1.0",
-                "C:/msys64/mingw64/include/c++/9.1.0/x86_64-w64-mingw32"
+                "D:/gstreamer/1.0/x86_64/lib/glib-2.0/include"
             ]
         }
     ],

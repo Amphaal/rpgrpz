@@ -38,10 +38,6 @@ endif()
 # build and install the Qt runtime to the specified directory
 function(windeployqt target)
 
-    # force target for mingw/ninja builds
-    string(TOLOWER ${CMAKE_BUILD_TYPE} WINDEPLOYQT_TARGET)
-    message("Including QT shared \"${CMAKE_BUILD_TYPE}\" dependencies...")
-
     # Run windeployqt immediately after build
     add_custom_command(TARGET ${target} POST_BUILD
         COMMAND "${CMAKE_COMMAND}" -E
@@ -50,7 +46,6 @@ function(windeployqt target)
                 --no-angle
                 --no-translations
                 --no-opengl-sw
-                --${WINDEPLOYQT_TARGET}
                 \"$<TARGET_FILE:${target}>/\"
     )
 

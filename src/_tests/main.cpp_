@@ -1,0 +1,19 @@
+#include <QDebug>
+#include <QApplication>
+#include <QMainWindow>
+
+#include <iostream>
+
+#include "src/helpers/_appContext.h"
+
+int main(int argc, char** argv) {  
+    
+    auto app = QApplication(argc, argv);
+    AppContext::configureApp(app);
+    QMainWindow q;
+    q.resize(800, 600);
+    q.show();
+    std::cout << "test";
+    return app.exec();
+}
+
