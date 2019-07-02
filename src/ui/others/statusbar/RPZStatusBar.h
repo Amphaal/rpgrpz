@@ -11,8 +11,6 @@
 
 class RPZStatusBar : public QStatusBar {
 
-    Q_OBJECT
-
     public:
         RPZStatusBar(QWidget * parent = nullptr);
 

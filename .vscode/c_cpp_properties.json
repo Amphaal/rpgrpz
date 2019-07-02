@@ -39,7 +39,9 @@
                 "D:/gstreamer/1.0/x86_64/include/gstreamer-1.0",
                 "D:/gstreamer/1.0/x86_64/include/glib-2.0",
                 "D:/gstreamer/1.0/x86_64/lib/glib-2.0/include",
-                "C:/msys64/mingw64/x86_64-w64-mingw32/include"
+                "C:/msys64/mingw64/x86_64-w64-mingw32/include",
+                "C:/msys64/mingw64/include/c++/9.1.0",
+                "C:/msys64/mingw64/include/c++/9.1.0/x86_64-w64-mingw32"
             ]
         }
     ],

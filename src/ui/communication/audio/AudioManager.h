@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QObject>
+#include <QString>
 #include <QMainWindow>
 
 #include "src/_libs/promise.hpp"

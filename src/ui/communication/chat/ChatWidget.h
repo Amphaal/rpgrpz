@@ -24,12 +24,9 @@
 
 class ChatWidget : public QWidget, public ClientBindable {
 
-    Q_OBJECT
-
     public:
         ChatWidget(QWidget *parent = nullptr);
 
-    public slots: 
         void onRPZClientConnecting(RPZClient* cc) override;
 
     private:
@@ -48,7 +45,6 @@ class ChatWidget : public QWidget, public ClientBindable {
         void _DisableUI();
         void _EnableUI();
 
-    private slots:
         void _onRPZClientStatus(const QString &statusMsg, bool isError);
         void _onReceivedLogHistory(const QVariantList &messages);
 

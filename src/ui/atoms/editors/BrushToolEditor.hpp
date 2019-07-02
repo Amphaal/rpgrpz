@@ -9,9 +9,6 @@
 #include "src/ui/atoms/editors/AtomSliderEditor.h"
 
 class BrushToolEditor : public AtomSubEditor {
-    
-    Q_OBJECT
-
     private:    
         static inline QMap<int, QString> _strBT {
             { (int)BrushType::Stamp, "Tampon" },

@@ -12,8 +12,6 @@
 
 class AssetsManager : public QWidget {
 
-    Q_OBJECT
-    
     public:
         AssetsManager(QWidget * parent = nullptr);
         AssetsTreeView* tree();

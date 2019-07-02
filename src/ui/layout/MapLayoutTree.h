@@ -26,8 +26,6 @@
 
 class MapLayoutTree : public RPZTree {
 
-    Q_OBJECT
-
     public:
         MapLayoutTree(QWidget* parent = nullptr);
         TreeMapHint* hints();

@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.13.3)
 
 #version
 SET(CMAKE_PROJECT_VERSION_MAJOR 0)
-SET(CMAKE_PROJECT_VERSION_MINOR 15)
-SET(CMAKE_PROJECT_VERSION_PATCH 11)
+SET(CMAKE_PROJECT_VERSION_MINOR 16)
+SET(CMAKE_PROJECT_VERSION_PATCH 0)
 
 
 #default configuration
@@ -61,6 +61,8 @@ get_filename_component(CACERT_FP ${CACERT} ABSOLUTE)
 
 SET(CMAKE_CXX_STANDARD 17)
 add_definitions(-DWIN32_LEAN_AND_MEAN) #std::btye c++17 ambiguity
+# SET(CMAKE_CXX_COMPILER_LAUNCHER "ccache")
+# SET(CMAKE_CC_COMPILER_LAUNCHER "ccache")
 
 #########################
 ## Libraries specifics ##
@@ -152,7 +154,9 @@ list(APPEND SOURCES
 # Create executable
 add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES}) 
 target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
-link_directories("C:\\msys64\\mingw64\\x86_64-w64-mingw32\\include")
+
+include(cotire)
+cotire(${PROJECT_NAME})
 
 ##################
 # LIBRARIES COPY #

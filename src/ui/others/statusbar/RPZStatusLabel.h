@@ -9,8 +9,6 @@
 
 class RPZStatusLabel : public QWidget {
 
-    Q_OBJECT
-
     public:
         enum State {Finished = 0, Waiting, Processing, Error };
 

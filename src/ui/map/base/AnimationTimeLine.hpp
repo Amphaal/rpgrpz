@@ -6,7 +6,6 @@
 
 class AnimationTimeLine : public QTimeLine {
 
-    Q_OBJECT
 
     public:
         enum Type { Zoom, HorizontalMove, VerticalMove };
