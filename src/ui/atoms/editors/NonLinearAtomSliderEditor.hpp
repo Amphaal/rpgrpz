@@ -19,6 +19,6 @@ class NonLinearAtomSliderEditor : public AtomSliderEditor {
         int _toSliderValue(double atomValue) override {
             auto eqResult = (double)216.93 * qLn((double)10.0385 * atomValue);
             auto roundedResult = round(eqResult * 100) / 100;
-            return roundedResult < 1 ? 1 : roundedResult;
+            return roundedResult < 1 ? 1 : (int)roundedResult;
         }
 };

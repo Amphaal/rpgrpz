@@ -1,0 +1,5 @@
+[requires]
+miniupnpc/2.1@rhard/testing
+
+[generators]
+cmake

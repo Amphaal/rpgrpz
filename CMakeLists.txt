@@ -28,7 +28,7 @@ SET(MAINTENANCE_TOOL_LOCATION "")
 SET(IS_DEBUG_APP OFF)
 
 #if debug build
-IF(${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR}/build/Debug)
+IF(CMAKE_INSTALL_CONFIG_NAME STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "Debug")
 
     #define debug and tool location
     SET(IS_DEBUG_APP ON)
@@ -49,6 +49,13 @@ file(DOWNLOAD
 )
 SET(CACERT src/${PEM_CERT_NAME})
 get_filename_component(CACERT_FP ${CACERT} ABSOLUTE)
+
+##################
+## Enable Conan ##
+##################
+
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup(KEEP_RPATHS)
 
 ################################
 ## CPP Compiler Configuration ##
@@ -79,17 +86,6 @@ SET(SOURCES
     resources/resources.qrc
 )
 
-#############
-# miniupnpc #
-#############
-
-include_directories("C:/msys64/mingw64/include/miniupnpc")
-
-list(APPEND EXT_LIBS
-    "C:/msys64/mingw64/bin/libminiupnpc.dll"
-    ws2_32
-    iphlpapi
-)
 
 ########
 # QT 5 #
@@ -135,7 +131,7 @@ list(APPEND SOURCES
     ${HPP_FILES}
 )
 
-# #Debug files
+#Debug files
 # list(APPEND SOURCES
 #     "src/helpers/_appContext.cpp"
 #     "src/_tests/main.cpp"
@@ -148,6 +144,8 @@ list(APPEND SOURCES
 
 # Create executable
 add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES}) 
+
+conan_target_link_libraries(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
 
 #accelerate builds times
@@ -161,22 +159,14 @@ cotire(${PROJECT_NAME})
 #misc
 add_custom_command(TARGET ${PROJECT_NAME}
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CACERT_FP} $<TARGET_FILE_DIR:${PROJECT_NAME}> #CA CERT
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "C:/msys64/mingw64/bin/libminiupnpc.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}> #miniupnpc
-
-    #runtime
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "C:/Qt/5.13.0/mingw73_64/bin/libgcc_s_seh-1.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}> 
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "C:/Qt/5.13.0/mingw73_64/bin/libstdc++-6.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}> 
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "C:/Qt/5.13.0/mingw73_64/bin/libwinpthread-1.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}> 
 )
 
 #using windeployqt to import all the QT .dll requirements based on used components
-IF(${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR}/build/Debug)
-    include(Windeployqt)
-    windeployqt(${PROJECT_NAME})
-endif()
+include(Windeployqt)
+windeployqt(${PROJECT_NAME})
 
 #copy gstreamer .dlls
-IF(NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bin/gst-plugins/)
+IF(NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins/)
     set(_gstreamer_plugins "all")
     DeployGStreamer(${PROJECT_NAME} "${_gstreamer_plugins}")
 endif()

@@ -63,5 +63,5 @@ double AtomSliderEditor::_toAtomValue(int sliderVal) {
 }
 
 int AtomSliderEditor::_toSliderValue(double atomValue) {
-    return atomValue;
+    return (int)atomValue;
 }

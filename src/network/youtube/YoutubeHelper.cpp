@@ -88,7 +88,7 @@ YoutubeVideoMetadata* YoutubeHelper::_augmentMetadataWithVideoInfos(
     //set expiration flag
     auto expiresIn = playerResponse["streamingData"].toObject()["expiresInSeconds"].toString().toDouble();
     metadata->setExpirationDate(
-        tsRequest.addSecs(expiresIn)
+        tsRequest.addSecs((qint64)expiresIn)
     );
 
     return metadata;

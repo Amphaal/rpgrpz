@@ -485,7 +485,7 @@ void MapView::_animatedMove(const Qt::Orientation &orientation, int correction) 
 
     //define animation handler
     AnimationTimeLine::use(controller, correction, this, [bar](qreal base, qreal prc) {
-        bar->setValue(bar->value() + base);
+        bar->setValue(bar->value() + (int)base);
     });
 
 }

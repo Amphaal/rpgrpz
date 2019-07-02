@@ -14,14 +14,31 @@
             "command": "rm build/Debug -r -fo; mkdir build/Debug"
         },
         {
-            "label": "Debug - 2a. Generate Project files",
+            "label": "Debug - 0a. add Conan remote",
             "dependsOn" : "Debug - 0. Create build folder",
+            "group": "test",
+            "type": "shell",
+            "command": "conan remote add --force bincrafters https://api.bintray.com/conan/bincrafters/public-conan; conan remote add --force rhard https://api.bintray.com/conan/rhard/conan"
+        },
+        {
+            "label": "Debug - 1. Download Dependencies",
+            "dependsOn" : "Debug - 0a. add Conan remote",
+            "group": "test",
+            "type": "shell",
+            "command": "conan install ../.. -s build_type=Debug --build missing",
+            "options": {
+                "cwd": "${workspaceRoot}/build/Debug"
+            }
+        },
+        {
+            "label": "Debug - 2a. Generate Project files",
+            "dependsOn" : "Debug - 1. Download Dependencies",
             "group": {
                 "isDefault": true,
                 "kind" : "test"
             },
             "type": "shell",
-            "command": "cmake ../..",
+            "command": "cmake -DCMAKE_BUILD_TYPE=Debug ../..",
             "options": {
                 "cwd": "${workspaceRoot}/build/Debug"
             }
@@ -29,7 +46,7 @@
         {
             "label": "Debug - 3. Build",
             "type": "shell",
-            "command": "cmake --build --config Debug ./build/Debug"
+            "command": "cmake --build ./build/Debug --config Debug"
         },
         /*RELEASE*/
         {
@@ -39,11 +56,23 @@
             "command": "rm build/Release -r -fo; mkdir build/Release"
         },
         {
-            "label": "Release - 2. Generate Project files",
+            "label": "Release - 1. Download Dependencies",
             "dependsOn" : "Release - 0. Create build folder",
             "group": "build",
             "type": "shell",
-            "command": "cmake ../..",
+            "command": "conan install ../.. -s build_type=Release --build missing",
+            "options": {
+                "cwd": "${workspaceRoot}/build/Release"
+            }
+        },
+        {
+            "label": "Release - 2. Generate Project files",
+            "dependsOn" : "Release - 1. Download Dependencies",
+            "group": "build",
+            "type": "shell",
+            "windows": {
+                "command": "-DCMAKE_BUILD_TYPE=Release ../..",
+            },
             "options": {
                 "cwd": "${workspaceRoot}/build/Release"
             }
