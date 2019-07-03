@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.13.3)
 #version
 SET(CMAKE_PROJECT_VERSION_MAJOR 0)
 SET(CMAKE_PROJECT_VERSION_MINOR 16)
-SET(CMAKE_PROJECT_VERSION_PATCH 0)
+SET(CMAKE_PROJECT_VERSION_PATCH 1)
 
 
 #default configuration
@@ -164,19 +164,45 @@ add_custom_command(TARGET ${PROJECT_NAME}
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CACERT_FP} $<TARGET_FILE_DIR:${PROJECT_NAME}> 
 
     #missing deps for gstreamer
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/liba52-0.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/libcairo-2.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/libcairo-gobject-2.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/libcairo-script-interpreter-2.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/avcodec-58.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/avfilter-7.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/avformat-58.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/avutil-56.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/bz2.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/libgmp-10.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/libgnutls-30.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/libhogweed-4.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/libnettle-6.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/libsoup-2.4-1.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/libtasn1-6.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/libwinpthread-1.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/libxml2-2.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/swresample-3.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/lib/gio/modules/giognutls.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>/gio/giognutls.dll
 )
 
 #using windeployqt to import all the QT .dll requirements based on used components
-include(Windeployqt)
-windeployqt(${PROJECT_NAME})
+IF(NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bearer/)
+    include(Windeployqt)
+    windeployqt(${PROJECT_NAME})
+endif()
 
 #copy gstreamer .dlls
 IF(NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins/)
-    set(_gstreamer_plugins "all")
+    #LIST(APPEND _gstreamer_plugins all)
+    LIST(APPEND _gstreamer_plugins 
+        gstaudioconvert
+        gstaudioparsers
+        gstaudioresample
+        gstcoreelements
+        gstisomp4
+        gstlibav
+        gstplayback
+        gstsoup
+        gsttypefindfunctions
+        gstvolume
+        gstwasapi
+    )
     DeployGStreamer(${PROJECT_NAME} "${_gstreamer_plugins}")
 endif()
 

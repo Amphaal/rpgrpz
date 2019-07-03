@@ -105,7 +105,7 @@ macro(DeployGStreamer target plugins)
     SET(_plug_subdir "/gst-plugins/")
     
     #if request all plugins
-    if (${plugins} STREQUAL "all")
+    if ("all" IN_LIST plugins)
 
         #find all files 
         message("all plugins requested !")

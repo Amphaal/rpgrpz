@@ -3,7 +3,7 @@
 AppSettings::AppSettings(const QString &path) : QSettings(path, QSettings::IniFormat) {}
 
 int AppSettings::audioVolume() {
-    return this->value("volume", 100).toInt();
+    return this->value("volume", 50).toInt();
 }
 
 void AppSettings::setAudioVolume(int volume) {

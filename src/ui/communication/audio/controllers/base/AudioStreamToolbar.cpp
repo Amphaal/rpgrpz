@@ -4,17 +4,16 @@ AudioStreamToolbar::AudioStreamToolbar(QWidget* parent) : QWidget(parent), _audi
     
     //audio
     this->_audio->setOrientation(Qt::Orientation::Horizontal);
+    this->_audio->setFixedWidth(100);
     this->_audio->setMinimum(0);
     this->_audio->setMaximum(100);
-    this->_audio->setValue(
-        AppContext::settings()->audioVolume()
-    );
-    this->_audio->setFixedWidth(100);
+    auto savedAV = AppContext::settings()->audioVolume();
+    this->_audio->setValue(savedAV);
+
+
     QObject::connect(
         this->_audio, &QAbstractSlider::valueChanged,
-        [&](int value) {
-            emit askForVolumeChange(value); 
-        }
+        this, &AudioStreamToolbar::_onAudioChange
     );
 
     //mute
@@ -34,11 +33,11 @@ AudioStreamToolbar::AudioStreamToolbar(QWidget* parent) : QWidget(parent), _audi
     this->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 }
 
-AudioStreamToolbar::~AudioStreamToolbar() {
-    if(this->_audio) {
-        AppContext::settings()->setAudioVolume(this->_audio->value());
-    }
-    
+AudioStreamToolbar::~AudioStreamToolbar() {}
+
+void AudioStreamToolbar::_onAudioChange(int newSliderVal) {
+    AppContext::settings()->setAudioVolume(newSliderVal);
+    emit askForVolumeChange(newSliderVal); 
 }
 
 void AudioStreamToolbar::_onMuteButtonClick() {

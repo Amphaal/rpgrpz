@@ -3,18 +3,15 @@
 /////////////
 /////////////
 
-struct GStreamerClient::CB {
-
-  static void _onEndOfStream(GstBus *bus, GstMessage *msg, void* data) {
+void GStreamerClient::CB::_handleMessages(GstBus *bus, GstMessage *msg, void* data) {
     GStreamerClient* cli = static_cast<GStreamerClient*>(data);
-    emit cli->endOfStream();
-  }
+    auto i = true;
+}
 
-};
 
 extern "C" {
-  static void eos_cb(GstBus *bus, GstMessage *msg, void* data) {
-    GStreamerClient::CB::_onEndOfStream(bus, msg, data);
+  static void gst_cb(GstBus *bus, GstMessage *msg, void* data) {
+    GStreamerClient::CB::_handleMessages(bus, msg, data);
   }
 }
 
@@ -43,11 +40,7 @@ GStreamerClient::GStreamerClient(QObject* parent) : QObject(parent) {
     	throw std::runtime_error("Unable to init bus for playbin");
     }
 
-    gst_bus_add_signal_watch(this->_bus);
-    g_signal_connect(
-		G_OBJECT(this->_bus), "message",
-		(GCallback)eos_cb, this
-	);
+    gst_bus_add_watch(this->_bus, (GstBusFunc)gst_cb, this->_bus);
 
 }
 
@@ -114,6 +107,10 @@ void GStreamerClient::_initGst() {
     //add plugin dir detection
     auto td = QCoreApplication::applicationDirPath().toStdString() + "/gst-plugins";
     qputenv("GST_PLUGIN_PATH", td.c_str());
+
+    //gio module dir
+    auto gio_ = QCoreApplication::applicationDirPath().toStdString() + "/gio";
+    qputenv("GIO_MODULE_DIR", gio_.c_str());
 
     //setup
     GError* err = NULL;

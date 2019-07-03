@@ -28,5 +28,7 @@ class AudioStreamToolbar : public QWidget {
         QIcon _volumeIcon = QIcon(":/icons/app/audio/volume.png");
         QIcon _mutedIcon = QIcon(":/icons/app/audio/mute.png");
 
+        void _onAudioChange(int newSliderVal);
+
         void _onMuteButtonClick();
 };
