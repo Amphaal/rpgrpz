@@ -16,9 +16,10 @@
 class AudioManager : public QWidget {
     public:
         AudioManager();
-    
-    private:
+
         PlaylistController* _plCtrl = nullptr;
+
+    private:
         AudioStreamController* _asCtrl = nullptr;
         GStreamerClient* _cli = nullptr;
 

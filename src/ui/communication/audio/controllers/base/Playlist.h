@@ -22,6 +22,8 @@ class Playlist : public QListWidget {
 
         void playNext();
         void playPrevious();
+
+        void addYoutubeVideo(QString url);
     
     signals:
         void playRequested(void* playlistItemPtr);

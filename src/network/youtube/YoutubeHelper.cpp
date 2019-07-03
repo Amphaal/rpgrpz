@@ -109,17 +109,19 @@ promise::Defer YoutubeHelper::_downloadVideoInfosAndAugmentMetadata(YoutubeVideo
     auto downloadAll = promise::all(dlPromises);
 
     //handle augment
-    return downloadAll.then([=](const QVector<QByteArray>& res) {
-        
+    return downloadAll.then([=](const std::vector<promise::pm_any> &results) {
+
         //prepare args
-        auto videoInfosRawData = res[0];
+        auto videoInfosRawData = static_cast<QByteArray*>(results[0].tuple_element(0));
+        auto rawPlayerSourceData = static_cast<QByteArray*>(results[1].tuple_element(0));
+
         auto c_decipherer = cachedDecipherer ? cachedDecipherer : YoutubeSignatureDecipherer::create(
                                                                     metadata->playerSourceUrl(),
-                                                                    QString::fromUtf8(res[1])
-                                                                    );
+                                                                    QString::fromUtf8(*rawPlayerSourceData)
+                                                                  );
 
         //augment
-        return _augmentMetadataWithVideoInfos(metadata, c_decipherer, videoInfosRawData, requestedAt);
+        return _augmentMetadataWithVideoInfos(metadata, c_decipherer, *videoInfosRawData, requestedAt);
 
     });
 }

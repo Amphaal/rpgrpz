@@ -18,7 +18,6 @@ macro(FindGStreamer)
         gstreamer-1.0
         gstreamer-controller-1.0
         gstreamer-net-1.0
-        cairo-gobject
     )
 
     #plugins base...

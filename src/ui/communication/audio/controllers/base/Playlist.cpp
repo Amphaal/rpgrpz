@@ -139,6 +139,10 @@ void Playlist::dropEvent(QDropEvent *event) {
 
 }
 
+void Playlist::addYoutubeVideo(QString url) {
+    this->_buildItemsFromUri(url, PlaylistItem::LinkType::YoutubeVideo);
+}
+
 void Playlist::_buildItemsFromUri(QString uri, const PlaylistItem::LinkType &type) {
         
     //prepare item

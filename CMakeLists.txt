@@ -86,20 +86,6 @@ SET(SOURCES
     resources/resources.qrc
 )
 
-########
-# QT 5 #
-########
-
-find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL)
-list(APPEND EXT_LIBS
-    Qt5::Core
-    Qt5::Gui 
-    Qt5::Widgets
-    Qt5::Network
-    Qt5::Svg
-    Qt5::OpenGL
-)
-
 #############
 # Gstreamer #
 #############
@@ -115,6 +101,20 @@ FindGStreamer()
 list(APPEND EXT_LIBS
     PkgConfig::Gst
     PkgConfig::GstPluginsBase
+)
+
+########
+# QT 5 #
+########
+
+find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL)
+list(APPEND EXT_LIBS
+    Qt5::Core
+    Qt5::Gui 
+    Qt5::Widgets
+    Qt5::Network
+    Qt5::Svg
+    Qt5::OpenGL
 )
 
 #################################
@@ -165,6 +165,9 @@ add_custom_command(TARGET ${PROJECT_NAME}
 
     #missing deps for gstreamer
     COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/liba52-0.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/libcairo-2.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/libcairo-gobject-2.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/libcairo-script-interpreter-2.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
 )
 
 #using windeployqt to import all the QT .dll requirements based on used components
