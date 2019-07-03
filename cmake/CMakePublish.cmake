@@ -7,7 +7,7 @@ SET(CPACK_GENERATOR IFW)
 
 #install bin + libs
 install(
-    DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/"
     DESTINATION .
     COMPONENT app
 )
@@ -43,20 +43,20 @@ set(CPACK_COMPONENTS_ALL app)
 INCLUDE(CPackIFW)
 
 cpack_add_component(app
-                    DISPLAY_NAME ${PROJECT_NAME}
-                    DESCRIPTION ${APP_DESCRIPTION}
+    DISPLAY_NAME ${PROJECT_NAME}
+    DESCRIPTION ${APP_DESCRIPTION}
 )
 
 #additionnal configuration
 cpack_ifw_configure_component(app
-                    ESSENTIAL
-                    FORCED_INSTALLATION
-                    NAME "com.lvwl.rpgrpz"
-                    DESCRIPTION ${APP_DESCRIPTION}
-                    VERSION ${CPACK_PACKAGE_VERSION} 
-                    SCRIPT "src/ifw/install.js"
-                    USER_INTERFACES "src/ifw/install.ui"
-                    DEFAULT TRUE
+    ESSENTIAL
+    FORCED_INSTALLATION
+    NAME "com.lvwl.rpgrpz"
+    DESCRIPTION ${APP_DESCRIPTION}
+    VERSION ${CPACK_PACKAGE_VERSION} 
+    SCRIPT "src/ifw/install.js"
+    USER_INTERFACES "src/ifw/install.ui"
+    DEFAULT TRUE
 )
 
 #remote repo

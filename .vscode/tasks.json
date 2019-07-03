@@ -71,7 +71,7 @@
             "group": "build",
             "type": "shell",
             "windows": {
-                "command": "-DCMAKE_BUILD_TYPE=Release ../..",
+                "command": "cmake -DCMAKE_BUILD_TYPE=Release ../..",
             },
             "options": {
                 "cwd": "${workspaceRoot}/build/Release"
@@ -85,7 +85,7 @@
                 "kind" : "build"
             },
             "type": "shell",
-            "command" : "cmake --build ./build/Release --target publishPackage"
+            "command" : "cmake --build ./build/Release --config Release --target publishPackage"
         }
     ]
 }

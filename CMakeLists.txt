@@ -182,13 +182,13 @@ add_custom_command(TARGET ${PROJECT_NAME}
 )
 
 #using windeployqt to import all the QT .dll requirements based on used components
-IF(NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bearer/)
+IF(NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bearer)
     include(Windeployqt)
     windeployqt(${PROJECT_NAME})
 endif()
 
 #copy gstreamer .dlls
-IF(NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins/)
+IF(NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins)
     #LIST(APPEND _gstreamer_plugins all)
     LIST(APPEND _gstreamer_plugins 
         gstaudioconvert
