@@ -6,14 +6,22 @@
 
 #include "src/helpers/_appContext.h"
 
+#include <QNetworkAccessManager>
+#include <QUrl>
+#include <QSslSocket>
+
 int main(int argc, char** argv) {  
     
     auto app = QApplication(argc, argv);
     AppContext::configureApp(app);
-    QMainWindow q;
-    q.resize(800, 600);
-    q.show();
-    std::cout << "test";
+
+    auto t = new QNetworkAccessManager;
+    QNetworkRequest request(QUrl("https://zonme.to2x.ovh/wtnz/amphaal"));
+    t->get(request);
+
+    qDebug() << QSslSocket::sslLibraryBuildVersionString();
+    qDebug() << QSslSocket::sslLibraryVersionString();
+
     return app.exec();
 }
 

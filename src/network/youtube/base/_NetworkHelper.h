@@ -11,5 +11,5 @@ class NetworkHelper {
 
     private:
         static inline QNetworkAccessManager* _nam = nullptr;
-        static QNetworkAccessManager* getNAM();
+        static QNetworkAccessManager* _getNAM();
 };

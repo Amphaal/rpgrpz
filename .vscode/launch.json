@@ -12,8 +12,14 @@
             "args": ["test"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build/Debug",
-            "environment": [],
-            "externalConsole": true,
+            "environment": [
+                {
+                    "name": "GST_DEBUG",
+                    "value": "3"
+                }
+            ],
+            
+            "externalConsole": false,
             "preLaunchTask": "Debug - 3. Build"
         }
     ]

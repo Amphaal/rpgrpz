@@ -9,7 +9,7 @@ SET(CMAKE_PROJECT_VERSION_PATCH 0)
 
 #default configuration
 SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 
 ########################
@@ -86,12 +86,9 @@ SET(SOURCES
     resources/resources.qrc
 )
 
-
 ########
 # QT 5 #
 ########
-
-SET(Qt5_DIR "C:/Qt/5.13.0/msvc2017_64/lib/cmake/Qt5")
 
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL)
 list(APPEND EXT_LIBS
@@ -108,8 +105,9 @@ list(APPEND EXT_LIBS
 #############
 
 #pkgConfig setup
-SET(PKG_CONFIG_EXECUTABLE "C:\\msys64\\mingw64\\bin\\x86_64-w64-mingw32-pkg-config.exe")
-SET(GSTREAMER_LOCATION "D:/gstreamer/1.0/x86_64")
+SET(PKG_CONFIG_EXECUTABLE "C:/msys64/mingw64/bin/x86_64-w64-mingw32-pkg-config.exe")
+SET(W32_GSTREAMER_LOCATION $ENV{GSTREAMER_1_0_ROOT_X86_64})
+string(REPLACE "\\" "/" GSTREAMER_LOCATION ${W32_GSTREAMER_LOCATION})
 
 include(GStreamerHelper)
 FindGStreamer()
@@ -118,7 +116,7 @@ list(APPEND EXT_LIBS
     PkgConfig::Gst
     PkgConfig::GstPluginsBase
 )
-    
+
 #################################
 # mandatory explicit generation #
 #################################
@@ -131,7 +129,7 @@ list(APPEND SOURCES
     ${HPP_FILES}
 )
 
-#Debug files
+# #Debug files
 # list(APPEND SOURCES
 #     "src/helpers/_appContext.cpp"
 #     "src/_tests/main.cpp"
@@ -148,7 +146,7 @@ add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES})
 conan_target_link_libraries(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
 
-#accelerate builds times
+# #accelerate builds times
 include(cotire)
 cotire(${PROJECT_NAME})
 
@@ -158,7 +156,15 @@ cotire(${PROJECT_NAME})
 
 #misc
 add_custom_command(TARGET ${PROJECT_NAME}
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CACERT_FP} $<TARGET_FILE_DIR:${PROJECT_NAME}> #CA CERT
+
+    # get windeployqt tool from official snapshot
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "C:/Qt/5.13.0/msvc2017_64/bin/windeployqt.exe" $<TARGET_FILE_DIR:Qt5::Core>/../bin/windeployqt.exe
+    
+    #CA CERT
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CACERT_FP} $<TARGET_FILE_DIR:${PROJECT_NAME}> 
+
+    #missing deps for gstreamer
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/liba52-0.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
 )
 
 #using windeployqt to import all the QT .dll requirements based on used components

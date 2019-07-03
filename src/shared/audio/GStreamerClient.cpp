@@ -109,11 +109,12 @@ void GStreamerClient::_changeBinState(const GstState &state) {
     }
 }
 
-void GStreamerClient::_initGst() {
-    //plugin dir
+void GStreamerClient::_initGst() {   
+
+    //add plugin dir detection
     auto td = QCoreApplication::applicationDirPath().toStdString() + "/gst-plugins";
     qputenv("GST_PLUGIN_PATH", td.c_str());
-    
+
     //setup
     GError* err = NULL;
     gst_init_check(NULL, NULL, &err);

@@ -23,7 +23,7 @@ int testApp(int argc, char** argv){
     //     auto qq = true;
     // });
 
-    TestMainWindow test;
+    // TestMainWindow test;
     return app.exec();
 }
 
