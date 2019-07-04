@@ -14,9 +14,6 @@ class GStreamerClient : public QObject {
     Q_OBJECT
     
     public:
-        struct CB {
-            static void _handleMessages(GstBus *bus, GstMessage *msg, void* data);
-        };
         GStreamerClient(QObject* parent = nullptr);
         ~GStreamerClient();
 
@@ -26,16 +23,17 @@ class GStreamerClient : public QObject {
         void pause();
         void stop();
 
-    signals:
-        void positionChanged(int pos);
-        void downloadedKbps(double kbps);
-
-    private:
+    //pseudo private
         GstElement* _bin = nullptr;
         GstBus* _bus = nullptr;
 
         void _unrefPipeline();
         void _changeBinState(const GstState &state);
+        GstTagList* _currentPlayTags = nullptr;
+
+    signals:
+        void positionChanged(int pos);
+        void bufferingPercentChanged(int bufferPrc);
 
     protected:
         void _initGst();

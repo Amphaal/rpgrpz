@@ -11,11 +11,11 @@
             "program": "./bin/RPGRPZ.exe",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build/Release",
+            "cwd": "${workspaceFolder}/build/Debug",
             "environment": [],
             
             "externalConsole": false,
-            // "preLaunchTask": "Debug - 3. Build"
+            "preLaunchTask": "Debug - 3. Build"
         },
         {
             "name": "Test",
