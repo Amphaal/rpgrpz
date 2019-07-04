@@ -1,16 +1,15 @@
 project(RPGRPZ)
-cmake_minimum_required(VERSION 3.13.3)
+cmake_minimum_required(VERSION 3.15)
 
 #version
 SET(CMAKE_PROJECT_VERSION_MAJOR 0)
 SET(CMAKE_PROJECT_VERSION_MINOR 16)
-SET(CMAKE_PROJECT_VERSION_PATCH 1)
+SET(CMAKE_PROJECT_VERSION_PATCH 2)
 
 
 #default configuration
 SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/)
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
 
 ########################
 ## VERSION.H HANDLING ##
@@ -29,12 +28,24 @@ SET(IS_DEBUG_APP OFF)
 
 #if debug build
 IF(CMAKE_INSTALL_CONFIG_NAME STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "Debug")
-
     #define debug and tool location
     SET(IS_DEBUG_APP ON)
     SET(MAINTENANCE_TOOL_LOCATION "C:/Program Files/RPGRPZ/maintenancetool")
-	
 ENDIF()
+
+#force build type for Md / Mt flags attribution
+IF(NOT DEFINED CMAKE_BUILD_TYPE)
+    IF(CMAKE_INSTALL_CONFIG_NAME STREQUAL "Debug")
+        SET(CMAKE_BUILD_TYPE "Debug")
+    else()
+        SET(CMAKE_BUILD_TYPE "Release")
+    endif()
+endif()
+
+message("####################################################")
+message("### BUILD_TYPE : Building RPG-RPZ for ${CMAKE_BUILD_TYPE}... ###")
+message("####################################################")
+
 
 #config file to source code
 configure_file(

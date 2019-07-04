@@ -5,7 +5,20 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(Windows) Launch",
+            "name": "Launch",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "./bin/RPGRPZ.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build/Release",
+            "environment": [],
+            
+            "externalConsole": false,
+            // "preLaunchTask": "Debug - 3. Build"
+        },
+        {
+            "name": "Test",
             "type": "cppvsdbg",
             "request": "launch",
             "program": "./bin/RPGRPZ.exe",
