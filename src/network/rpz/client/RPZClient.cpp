@@ -76,6 +76,12 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             this->socket()->disconnectFromHost();
         }
         break;
+
+        case JSONMethod::AudioStreamChanged: {
+            auto payload = data.toHash();
+            emit audioSourceChanged(payload["url"].toString(), payload["title"].toString());
+        }
+        break;
         
         case JSONMethod::ChatLogHistory: {
             emit receivedLogHistory(data.toList());
@@ -176,4 +182,11 @@ void RPZClient::askForAsset(const QString &assetId) {
 
 void RPZClient::sendMapChanges(QVariantHash &payload) {
     this->sendJSON(JSONMethod::MapChanged, payload);
+}
+
+void RPZClient::defineAudioStreamSource(const QString &audioStreamUrl, const QString &sourceTitle) {
+    QVariantHash hash;
+    hash["url"] = audioStreamUrl;
+    hash["title"] = sourceTitle;
+    this->sendJSON(JSONMethod::AudioStreamChanged, hash);
 }

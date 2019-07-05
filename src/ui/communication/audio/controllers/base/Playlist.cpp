@@ -162,7 +162,7 @@ void Playlist::_buildItemsFromUri(QString uri, const PlaylistItem::LinkType &typ
     //update text from playlist update
     QObject::connect(
         data, &PlaylistItem::metadataChanged,
-        [playlistItem](void * metadata) {
+        [=](void * metadata) {
             auto casted = reinterpret_cast<YoutubeVideoMetadata*>(metadata);
 
             auto durationStr = DurationHelper::secondsToTrackDuration(casted->duration());
@@ -177,6 +177,11 @@ void Playlist::_buildItemsFromUri(QString uri, const PlaylistItem::LinkType &typ
             playlistItem->setIcon(QIcon(":/icons/app/audio/youtube.png"));
 
         }
+    );
+
+    QObject::connect(
+        data, &PlaylistItem::metadataLoading,
+        [=]() {  playlistItem->setText(data->title() + " (Chargement des métadonnées...)"); }
     );
 
     this->addItem(playlistItem);

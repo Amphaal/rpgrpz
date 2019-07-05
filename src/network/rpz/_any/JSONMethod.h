@@ -13,7 +13,8 @@ enum JSONMethod {
     AskForHostMapHistory,
     AckIdentity,
     AskForAsset,
-    RequestedAsset 
+    RequestedAsset,
+    AudioStreamChanged 
 };
 
 static const QStringList JSONMethodAsArray = { 
@@ -27,5 +28,6 @@ static const QStringList JSONMethodAsArray = {
     "AskForHostMapHistory",
     "AckIdentity",
     "AskForAsset",
-    "RequestedAsset"
+    "RequestedAsset",
+    "AudioStreamChanged"
 };

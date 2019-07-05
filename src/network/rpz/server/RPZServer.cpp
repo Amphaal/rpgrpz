@@ -99,6 +99,11 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         }
         break;
 
+        case JSONMethod::AudioStreamChanged: {
+            this->_sendToAllButSelf(target, JSONMethod::AudioStreamChanged, data);
+        }
+        break;
+
         case JSONMethod::AskForAsset: {   
             auto assetId = data.toString();
             auto package = AssetsDatabase::get()->prepareAssetPackage(assetId);

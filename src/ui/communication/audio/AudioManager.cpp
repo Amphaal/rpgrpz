@@ -16,6 +16,32 @@ AudioManager::AudioManager() :
     this->_link();
 }
 
+void AudioManager::onRPZClientConnecting(RPZClient * cc) {
+    ClientBindable::onRPZClientConnecting(cc);
+    
+    this->_isLocalOnly = false;
+
+    QObject::connect(
+        cc, &RPZClient::ackIdentity,
+        [&]() {
+            this->_isNetworkMaster = this->_rpzClient->identity().role() == RPZUser::Role::Host;
+        }
+    );
+
+    //on master requesting audio change
+    QObject::connect(
+        cc, &RPZClient::audioSourceChanged,
+        this, &AudioManager::_playAudio
+    );
+
+}
+
+void AudioManager::onRPZClientDisconnect(RPZClient* cc) {
+    this->_isNetworkMaster = false;
+    this->_isLocalOnly = true;
+}
+
+
 void AudioManager::_link() {
     
     //on play requested from playlist
@@ -49,6 +75,13 @@ void AudioManager::_link() {
 
 }
 
+void AudioManager::_playAudio(const QString &audioSourceUrl, const QString &sourceTitle) {
+    this->_asCtrl->setEnabled(true);
+    this->_asCtrl->updatePlayedMusic(sourceTitle);
+    this->_cli->useSource(audioSourceUrl);
+    this->_cli->play();
+}
+
 //
 // events helpers
 //
@@ -72,18 +105,25 @@ void AudioManager::_onToolbarPlayRequested(void* playlistItemPtr) {
 
     playlistItem->streamSourceUri().then([=](const QString &sourceUrlStr) {
         
-        this->_asCtrl->setEnabled(true);
-        this->_asCtrl->updatePlayedMusic(playlistItem->title());
+        auto title = playlistItem->title();
+        this->_playAudio(sourceUrlStr, title);
 
+        //play new track
         this->_plCtrl->toolbar->newTrack(playlistItem->durationSecs());
-        this->_cli->useSource(sourceUrlStr);
-        this->_cli->play();
+
+
+        //tells others users what to listen to
+        if(this->_isNetworkMaster) {
+            this->_rpzClient->defineAudioStreamSource(sourceUrlStr, title);
+        }
     });
 
 }
 
 void AudioManager::_onPlayerPositionChanged(int position) {
-    this->_plCtrl->toolbar->updateTrackState(position);
+    if(this->_isNetworkMaster || this->_isLocalOnly) {
+        this->_plCtrl->toolbar->updateTrackState(position);
+    }
 }
 
 void AudioManager::_onSeekingRequested(int seekPos) {

@@ -1,7 +1,7 @@
 #include "PlaylistItem.h"
         
 PlaylistItem::PlaylistItem() {};
-PlaylistItem::PlaylistItem(LinkType type, const QString &uri) : _type(type), _uri(uri) {
+PlaylistItem::PlaylistItem(LinkType type, const QString &uri) : _type(type), _uri(uri), _title(uri) {
     
     //conditionnal additionnal informations fetchers
     switch(type) {
@@ -56,6 +56,8 @@ promise::Defer PlaylistItem::_mayRefreshYTMetadata() {
     if(this->_type == PlaylistItem::LinkType::ServerAudio) return promise::resolve();
     if(!this->_mData) return promise::resolve();
     if(this->_mData->isValid()) return promise::resolve();
+
+    emit metadataLoading();
 
     return YoutubeHelper::refreshMetadata(this->_mData).then([=]() {
         

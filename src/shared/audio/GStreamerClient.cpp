@@ -73,9 +73,8 @@ GStreamerClient::GStreamerClient(QObject* parent) : QObject(parent), _elapsedTim
         throw std::runtime_error("Unable to init playbin");
     }
     
-    this->setVolume(
-        AppContext::settings()->audioVolume()
-    );
+    //init bin
+    this->setVolume(AppContext::settings()->audioVolume());
     
     //define bus and callbacks
     this->_bus = gst_pipeline_get_bus(GST_PIPELINE(this->_bin));
@@ -108,13 +107,16 @@ void GStreamerClient::useSource(QString uri) {
 }
 
 void GStreamerClient::seek(int seekPos) {
-    auto nano_seekPos = GST_SECOND * seekPos;
-    auto worked = gst_element_seek_simple(
-        this->_bin, 
-        GST_FORMAT_TIME, 
-        (GstSeekFlags)(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT), 
-        nano_seekPos
-    );
+    
+    // gint64 nano_seekPos = GST_SECOND * seekPos;
+    
+    // auto result = gst_element_seek_simple(
+    //     this->_bin, 
+    //     GST_FORMAT_TIME,
+    //     GstSeekFlags(GST_SEEK_FLAG_KEY_UNIT),
+    //     nano_seekPos
+    // );
+
 }
 
 void GStreamerClient::setVolume(double volume) {

@@ -46,7 +46,7 @@ int YoutubeVideoMetadata::duration() {
 
 bool YoutubeVideoMetadata::isValid() {
     if(this->_validUntil.isNull()) return false;
-    return this->_validUntil < QDateTime::currentDateTime();
+    return QDateTime::currentDateTime() < this->_validUntil;
 }
 
 void YoutubeVideoMetadata::setSts(const QString &sts) {

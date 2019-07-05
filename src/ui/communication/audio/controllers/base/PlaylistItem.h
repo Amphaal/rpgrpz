@@ -13,6 +13,7 @@ class PlaylistItem : public QObject {
     
     signals:
         void metadataChanged(void * metadata);
+        void metadataLoading();
 
     public:
         enum LinkType { YoutubePlaylist, YoutubeVideo, ServerAudio };
