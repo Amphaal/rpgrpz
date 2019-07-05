@@ -36,6 +36,11 @@ void AudioManager::_link() {
         this, &AudioManager::_onToolbarActionRequested
     );
 
+    QObject::connect(
+        this->_plCtrl->toolbar, &PlaylistToolbar::seeking,
+        this, &AudioManager::_onSeekingRequested
+    );
+
     //volume change from toolbar
     QObject::connect(
         this->_asCtrl->toolbar, &AudioStreamToolbar::askForVolumeChange,
@@ -79,4 +84,8 @@ void AudioManager::_onToolbarPlayRequested(void* playlistItemPtr) {
 
 void AudioManager::_onPlayerPositionChanged(int position) {
     this->_plCtrl->toolbar->updateTrackState(position);
+}
+
+void AudioManager::_onSeekingRequested(int seekPos) {
+    this->_cli->seek(seekPos);
 }

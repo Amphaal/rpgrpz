@@ -154,9 +154,9 @@ void Playlist::_buildItemsFromUri(QString uri, const PlaylistItem::LinkType &typ
     auto c_data_pointer_variant = QVariant::fromValue(c_data_pointer);
     playlistItem->setData(Qt::UserRole, c_data_pointer_variant);
 
-    //define icon
+    //define default icon
     if(type == PlaylistItem::LinkType::YoutubePlaylist || type == PlaylistItem::LinkType::YoutubeVideo) {
-        playlistItem->setIcon(QIcon(":/icons/app/audio/youtube.png"));
+        playlistItem->setIcon(QIcon(":/icons/app/audio/youtubeGrey.png"));
     }
 
     //update text from playlist update
@@ -165,12 +165,16 @@ void Playlist::_buildItemsFromUri(QString uri, const PlaylistItem::LinkType &typ
         [playlistItem](void * metadata) {
             auto casted = reinterpret_cast<YoutubeVideoMetadata*>(metadata);
 
-            std::chrono::seconds trackDuration(casted->duration());
+            auto durationStr = DurationHelper::secondsToTrackDuration(casted->duration());
 
             auto title = QString("%1 [%2]")
                             .arg(casted->title())
-                            .arg(tDuration.toString());
+                            .arg(durationStr);
+
             playlistItem->setText(title);
+            
+            //define active YT icon
+            playlistItem->setIcon(QIcon(":/icons/app/audio/youtube.png"));
 
         }
     );

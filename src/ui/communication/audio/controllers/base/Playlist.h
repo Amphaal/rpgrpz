@@ -8,7 +8,7 @@
 #include <QMimeDatabase>
 #include <QMimeData>
 
-#include <chrono>
+#include "src/helpers/DurationHelper.hpp"
 
 #include <QHash>
 #include <QPair>

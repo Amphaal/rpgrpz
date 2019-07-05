@@ -43,4 +43,6 @@ class PlaylistToolbar : public QWidget {
         QString _fromSecondsToTime(int lengthInSeconds);
         void _setPlayButtonState(bool isPlaying);
         void _tooglePlayButtonState();
+
+        bool _sliderDown = false;
 };

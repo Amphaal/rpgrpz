@@ -9,6 +9,8 @@
 #include <QtCore/QObject>
 #include <QtCore/QDir>
 
+#include <QTimer>
+
 class GStreamerClient : public QObject {
 
     Q_OBJECT
@@ -22,6 +24,7 @@ class GStreamerClient : public QObject {
         void play();
         void pause();
         void stop();
+        void seek(int seekPos);
 
     //pseudo private
         GstElement* _bin = nullptr;
@@ -29,7 +32,10 @@ class GStreamerClient : public QObject {
 
         void _unrefPipeline();
         void _changeBinState(const GstState &state);
-        GstTagList* _currentPlayTags = nullptr;
+        void _requestPosition();
+
+        QTimer* _elapsedTimer = nullptr;
+        bool _downloadBufferOK = false;
 
     signals:
         void positionChanged(int pos);

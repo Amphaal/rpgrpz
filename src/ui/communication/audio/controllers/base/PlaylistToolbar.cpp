@@ -36,10 +36,28 @@ PlaylistToolbar::PlaylistToolbar(QWidget* parent) : QWidget(parent),
     //track state
     this->_trackStateSlider->setOrientation(Qt::Orientation::Horizontal);
     this->updateTrackState(-1);
+    
+    //on slider release
+    QObject::connect(
+        this->_trackStateSlider, &QSlider::sliderReleased,
+        [&]() {
+            this->_sliderDown = false;
+            auto pos = this->_trackStateSlider->value();
+            emit seeking(pos);
+        }
+    );
+    QObject::connect(
+        this->_trackStateSlider, &QSlider::sliderPressed,
+        [&]() {this->_sliderDown = true;}
+    );
+
     QObject::connect(
         this->_trackStateSlider, &QSlider::valueChanged,
-        [&](int newVal) {
-            emit seeking(newVal);
+        [&](int pos) {
+            this->updateTrackState(pos);
+            if(!this->_sliderDown) {
+                emit seeking(pos);
+            }
         }
     );
 
@@ -57,6 +75,14 @@ void PlaylistToolbar::updateTrackState(int stateInSeconds) {
     //conditionnal state widgets
     QString current = stateInSeconds < 0 ? PlaylistToolbar::_defaultNoTime : this->_fromSecondsToTime(stateInSeconds);
     this->_trackStateSlider->setEnabled(stateInSeconds > -1);
+    
+    //update slider value
+    if(this->_trackStateSlider->isEnabled() && !this->_sliderDown) {
+        this->_trackStateSlider->blockSignals(true); 
+        this->_trackStateSlider->setValue(stateInSeconds);
+        this->_trackStateSlider->blockSignals(false); 
+    }
+
     this->_playBtn->setEnabled(stateInSeconds > -1);
     this->_rewindBtn->setEnabled(stateInSeconds > -1);
     this->_forwardBtn->setEnabled(stateInSeconds > -1);

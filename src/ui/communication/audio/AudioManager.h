@@ -27,4 +27,5 @@ class AudioManager : public QWidget {
         void _onToolbarActionRequested(const PlaylistToolbar::Action &action);
         void _onToolbarPlayRequested(void* playlistItemPtr);
         void _onPlayerPositionChanged(int position);
+        void _onSeekingRequested(int seekPos);
 };
