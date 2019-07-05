@@ -23,19 +23,19 @@ class YoutubeVideoMetadata {
         QString url() const;
         QString sts() const;
         QString playerSourceUrl() const;
-        int length();
+        int duration();
         bool isValid();
         void setSts(const QString &sts);
         void setPlayerSourceUrl(const QString &pSourceUrl);
         void setTitle(const QString &title);
-        void setLength(int lengthInSeconds);
+        void setDuration(int durationInSeconds);
         void setExpirationDate(const QDateTime &expiration);
         void setAudioStreamInfos(const YoutubeAudioStreamInfos &adaptativeStreamInfos);
 
         YoutubeAudioStreamInfos* audioStreams();
 
     private:
-        int _lengthInSeconds = -1;
+        int _durationInSeconds = -1;
         QString _videoId;
         QString _url;
         QString _title;

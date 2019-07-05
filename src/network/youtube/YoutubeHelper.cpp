@@ -52,7 +52,7 @@ YoutubeVideoMetadata* YoutubeHelper::_augmentMetadataWithPlayerConfiguration(You
     metadata->setSts(QString::number(sts));
     metadata->setPlayerSourceUrl("https://www.youtube.com" + playerSourceUrl);
     metadata->setTitle(title);
-    metadata->setLength(length);
+    metadata->setDuration(length);
 
     return metadata;
 }

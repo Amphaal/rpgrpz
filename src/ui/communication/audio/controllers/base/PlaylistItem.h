@@ -12,7 +12,7 @@ class PlaylistItem : public QObject {
     Q_OBJECT
     
     signals:
-        void titleChanged(const QString &title);
+        void metadataChanged(void * metadata);
 
     public:
         enum LinkType { YoutubePlaylist, YoutubeVideo, ServerAudio };
@@ -24,6 +24,7 @@ class PlaylistItem : public QObject {
         QString uri();
         QString title();
         promise::Defer streamSourceUri();
+        int durationSecs();
     
     private:
         YoutubeVideoMetadata* _mData = nullptr;
@@ -31,8 +32,7 @@ class PlaylistItem : public QObject {
         LinkType _type;
         QString _title;
         QString _uri;
-
-        void _setTitle(const QString &title);
+        int _duration;
 
         promise::Defer _mayRefreshYTMetadata();
 };

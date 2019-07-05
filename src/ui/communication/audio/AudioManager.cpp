@@ -70,7 +70,7 @@ void AudioManager::_onToolbarPlayRequested(void* playlistItemPtr) {
         this->_asCtrl->setEnabled(true);
         this->_asCtrl->updatePlayedMusic(playlistItem->title());
 
-        this->_plCtrl->toolbar->newTrack(0);
+        this->_plCtrl->toolbar->newTrack(playlistItem->durationSecs());
         this->_cli->useSource(sourceUrlStr);
         this->_cli->play();
     });

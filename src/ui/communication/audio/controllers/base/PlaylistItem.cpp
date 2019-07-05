@@ -26,6 +26,10 @@ QString PlaylistItem::title() {
     return this->_title;
 }
 
+int PlaylistItem::durationSecs() {
+    return this->_duration;
+}
+
 promise::Defer PlaylistItem::streamSourceUri() {
     switch(this->_type) {
         case PlaylistItem::LinkType::ServerAudio: {
@@ -48,18 +52,17 @@ promise::Defer PlaylistItem::streamSourceUri() {
     return promise::resolve("");
 }
 
-
-void PlaylistItem::_setTitle(const QString &title) {
-    this->_title = title;
-    emit titleChanged(title);
-}
-
 promise::Defer PlaylistItem::_mayRefreshYTMetadata() {
     if(this->_type == PlaylistItem::LinkType::ServerAudio) return promise::resolve();
     if(!this->_mData) return promise::resolve();
     if(this->_mData->isValid()) return promise::resolve();
 
     return YoutubeHelper::refreshMetadata(this->_mData).then([=]() {
-        this->_setTitle(this->_mData->title());
+        
+        this->_title = this->_mData->title();
+        this->_duration = this->_mData->duration();
+        
+        emit metadataChanged(this->_mData);
+
     });
 }

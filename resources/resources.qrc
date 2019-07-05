@@ -47,6 +47,8 @@
         <file>icons/app/audio/forward.png</file>
         <file>icons/app/audio/volume.png</file>
         <file>icons/app/audio/mute.png</file>
+        <file>icons/app/audio/musicPlaying.gif</file>
+        <file>icons/app/audio/youtube.png</file>
         <file>icons/app/loader.gif</file>
     </qresource>
 </RCC>

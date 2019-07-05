@@ -1,3 +1,5 @@
+#pragma once
+
 #include <QListWidget>
 
 #include <QDropEvent>
@@ -5,6 +7,8 @@
 #include <QDragEnterEvent>
 #include <QMimeDatabase>
 #include <QMimeData>
+
+#include <chrono>
 
 #include <QHash>
 #include <QPair>

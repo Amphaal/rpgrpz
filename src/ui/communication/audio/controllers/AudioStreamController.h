@@ -3,6 +3,7 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QMovie>
 
 #include <QDropEvent>
 #include <QDragMoveEvent>
@@ -24,5 +25,7 @@ class AudioStreamController : public QGroupBox, public ClientBindable {
         AudioStreamToolbar* toolbar;
         
     private:
-        QLabel* _descr;
+        QLabel* _descr = nullptr;
+        QLabel* _playIconLbl = nullptr;
+        QMovie* _playIcon = nullptr;
 };

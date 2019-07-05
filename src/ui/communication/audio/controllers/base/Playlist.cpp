@@ -154,11 +154,24 @@ void Playlist::_buildItemsFromUri(QString uri, const PlaylistItem::LinkType &typ
     auto c_data_pointer_variant = QVariant::fromValue(c_data_pointer);
     playlistItem->setData(Qt::UserRole, c_data_pointer_variant);
 
+    //define icon
+    if(type == PlaylistItem::LinkType::YoutubePlaylist || type == PlaylistItem::LinkType::YoutubeVideo) {
+        playlistItem->setIcon(QIcon(":/icons/app/audio/youtube.png"));
+    }
+
     //update text from playlist update
     QObject::connect(
-        data, &PlaylistItem::titleChanged,
-        [playlistItem](const QString &title) {
+        data, &PlaylistItem::metadataChanged,
+        [playlistItem](void * metadata) {
+            auto casted = reinterpret_cast<YoutubeVideoMetadata*>(metadata);
+
+            std::chrono::seconds trackDuration(casted->duration());
+
+            auto title = QString("%1 [%2]")
+                            .arg(casted->title())
+                            .arg(tDuration.toString());
             playlistItem->setText(title);
+
         }
     );
 

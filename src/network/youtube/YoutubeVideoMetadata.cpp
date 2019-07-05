@@ -40,8 +40,8 @@ QString YoutubeVideoMetadata::playerSourceUrl() const {
     return this->_playerSourceUrl;
 }
 
-int YoutubeVideoMetadata::length() {
-    return this->_lengthInSeconds;
+int YoutubeVideoMetadata::duration() {
+    return this->_durationInSeconds;
 }
 
 bool YoutubeVideoMetadata::isValid() {
@@ -61,8 +61,8 @@ void YoutubeVideoMetadata::setTitle(const QString &title) {
     this->_title = title;
 }
 
-void YoutubeVideoMetadata::setLength(int lengthInSeconds) {
-    this->_lengthInSeconds = lengthInSeconds;
+void YoutubeVideoMetadata::setDuration(int durationInSeconds) {
+    this->_durationInSeconds = durationInSeconds;
 }
 
 void YoutubeVideoMetadata::setExpirationDate(const QDateTime &expiration) {
