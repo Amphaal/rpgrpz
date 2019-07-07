@@ -27,20 +27,12 @@ void AudioStreamController::updatePlayedMusic(const QString &musicName) {
         this->_descr->setText("Pas de musique jouée");
         this->_playIcon->stop();
         this->_playIconLbl->setVisible(false);
+        this->setEnabled(false);
     }
     else {
         this->_descr->setText(musicName);
         this->_playIcon->start();
         this->_playIconLbl->setVisible(true);
+        this->setEnabled(true);
     }
-}
-
-void AudioStreamController::onRPZClientConnecting(RPZClient * cc) {
-    ClientBindable::onRPZClientConnecting(cc);
-
-    this->setEnabled(true);
-}
-
-void AudioStreamController::onRPZClientDisconnect(RPZClient* cc) {
-    this->setEnabled(false);
 }

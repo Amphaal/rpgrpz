@@ -77,7 +77,19 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         }
         break;
 
-        case JSONMethod::AudioStreamChanged: {
+        case JSONMethod::AudioStreamPositionChanged: {
+            auto newPos = data.toInt();
+            emit audioPositionChanged(newPos);
+        }
+        break;
+
+        case JSONMethod::AudioStreamPlayingStateChanged: {
+            auto isPlaying = data.toBool();
+            emit audioPlayStateChanged(isPlaying);
+        }
+        break;
+
+        case JSONMethod::AudioStreamUrlChanged: {
             auto payload = data.toHash();
             emit audioSourceChanged(payload["url"].toString(), payload["title"].toString());
         }
@@ -188,5 +200,5 @@ void RPZClient::defineAudioStreamSource(const QString &audioStreamUrl, const QSt
     QVariantHash hash;
     hash["url"] = audioStreamUrl;
     hash["title"] = sourceTitle;
-    this->sendJSON(JSONMethod::AudioStreamChanged, hash);
+    this->sendJSON(JSONMethod::AudioStreamUrlChanged, hash);
 }

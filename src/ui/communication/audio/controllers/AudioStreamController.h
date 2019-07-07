@@ -13,14 +13,11 @@
 
 #include "base/AudioStreamToolbar.h"
 
-class AudioStreamController : public QGroupBox, public ClientBindable {
+class AudioStreamController : public QGroupBox {
 
     public:
         AudioStreamController(QWidget * parent = nullptr);
         void updatePlayedMusic(const QString &musicName);
-
-        void onRPZClientConnecting(RPZClient * cc) override;
-        void onRPZClientDisconnect(RPZClient* cc) override;
         
         AudioStreamToolbar* toolbar;
         

@@ -19,12 +19,18 @@ AudioManager::AudioManager() :
 void AudioManager::onRPZClientConnecting(RPZClient * cc) {
     ClientBindable::onRPZClientConnecting(cc);
     
+    //reset state
     this->_isLocalOnly = false;
+    this->_isNetworkMaster = false;
+    this->_plCtrl->setEnabled(false);
+    this->_onStreamPlayEnded();
 
+    //on receiving identity
     QObject::connect(
         cc, &RPZClient::ackIdentity,
         [&]() {
             this->_isNetworkMaster = this->_rpzClient->identity().role() == RPZUser::Role::Host;
+            this->_plCtrl->setEnabled(this->_isNetworkMaster);
         }
     );
 
@@ -34,11 +40,28 @@ void AudioManager::onRPZClientConnecting(RPZClient * cc) {
         this, &AudioManager::_playAudio
     );
 
+    //on master seeking
+    QObject::connect(
+        cc, &RPZClient::audioPositionChanged,
+        this, &AudioManager::_onSeekingRequested
+    );
+
+    //on master pausing / playing
+    QObject::connect(
+        cc, &RPZClient::audioPlayStateChanged,
+        [&](bool isPlaying) {
+            if(isPlaying) this->_cli->play();
+            else this->_cli->pause();
+        }
+    );
+
 }
 
 void AudioManager::onRPZClientDisconnect(RPZClient* cc) {
     this->_isNetworkMaster = false;
     this->_isLocalOnly = true;
+    this->_plCtrl->setEnabled(true);
+    this->_onStreamPlayEnded();
 }
 
 
@@ -54,6 +77,12 @@ void AudioManager::_link() {
     QObject::connect(
         this->_cli, &GStreamerClient::positionChanged,
         this, &AudioManager::_onPlayerPositionChanged
+    );
+
+    //on stream play ended
+    QObject::connect(
+        this->_cli, &GStreamerClient::streamEnded,
+        this, &AudioManager::_onStreamPlayEnded
     );
 
     //on action required from toolbar
@@ -76,7 +105,6 @@ void AudioManager::_link() {
 }
 
 void AudioManager::_playAudio(const QString &audioSourceUrl, const QString &sourceTitle) {
-    this->_asCtrl->setEnabled(true);
     this->_asCtrl->updatePlayedMusic(sourceTitle);
     this->_cli->useSource(audioSourceUrl);
     this->_cli->play();
@@ -120,6 +148,15 @@ void AudioManager::_onToolbarPlayRequested(void* playlistItemPtr) {
 
 }
 
+void AudioManager::_onStreamPlayEnded() {
+    this->_plCtrl->toolbar->endTrack();
+    this->_asCtrl->updatePlayedMusic(NULL);
+
+    if(this->_isNetworkMaster || this->_isLocalOnly) {
+        this->_plCtrl->playlist->playNext();
+    }
+}
+
 void AudioManager::_onPlayerPositionChanged(int position) {
     if(this->_isNetworkMaster || this->_isLocalOnly) {
         this->_plCtrl->toolbar->updateTrackState(position);
@@ -127,5 +164,7 @@ void AudioManager::_onPlayerPositionChanged(int position) {
 }
 
 void AudioManager::_onSeekingRequested(int seekPos) {
-    this->_cli->seek(seekPos);
+    if(this->_isNetworkMaster || this->_isLocalOnly) {
+        this->_cli->seek(seekPos);
+    }
 }

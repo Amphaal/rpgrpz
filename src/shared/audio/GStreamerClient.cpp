@@ -25,11 +25,13 @@ extern "C" {
                 g_printerr ("Debugging information: %s\n", debug_info ? debug_info : "none");
                 g_clear_error (&err);
                 g_free (debug_info);
+                emit cli->streamEnded();
             }
             break;
 
             case GST_MESSAGE_EOS: {
-                g_print ("End-Of-Stream reached.\n");
+                cli->_elapsedTimer->stop();
+                emit cli->streamEnded();
             }
             break;
 
@@ -72,7 +74,11 @@ GStreamerClient::GStreamerClient(QObject* parent) : QObject(parent), _elapsedTim
     	this->_unrefPipeline();
         throw std::runtime_error("Unable to init playbin");
     }
-    
+
+    //force sink to prevent usage of wasapi Sink (which is a bad-plugin)
+    auto sink = gst_element_factory_make("autoaudiosink", "sink");
+    g_object_set(this->_bin, "audio-sink", sink, NULL);
+
     //init bin
     this->setVolume(AppContext::settings()->audioVolume());
     
@@ -103,19 +109,21 @@ void GStreamerClient::useSource(QString uri) {
 
     //play
     this->play();
-    
+
+    //debug graph (use https://dreampuf.github.io/GraphvizOnline to read it)
+    //GST_DEBUG_BIN_TO_DOT_FILE(GST_BIN(this->_bin), GST_DEBUG_GRAPH_SHOW_ALL, "gst-pipeline");
 }
 
 void GStreamerClient::seek(int seekPos) {
     
-    // gint64 nano_seekPos = GST_SECOND * seekPos;
+    gint64 nano_seekPos = GST_SECOND * seekPos;
     
-    // auto result = gst_element_seek_simple(
-    //     this->_bin, 
-    //     GST_FORMAT_TIME,
-    //     GstSeekFlags(GST_SEEK_FLAG_KEY_UNIT),
-    //     nano_seekPos
-    // );
+    auto result = gst_element_seek_simple(
+        this->_bin, 
+        GST_FORMAT_TIME,
+        GstSeekFlags(GST_SEEK_FLAG_FLUSH),
+        nano_seekPos
+    );
 
 }
 
@@ -171,7 +179,7 @@ void GStreamerClient::_requestPosition() {
     gst_element_query_position (this->_bin, GST_FORMAT_TIME, &pos);
     if(pos == -1) return;
 
-    int posSec = (int)(pos / GST_SECOND);
+    auto posSec = qCeil((double)pos / GST_SECOND);
 
     emit positionChanged(posSec);
 }

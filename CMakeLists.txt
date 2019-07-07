@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.15)
 #version
 SET(CMAKE_PROJECT_VERSION_MAJOR 0)
 SET(CMAKE_PROJECT_VERSION_MINOR 16)
-SET(CMAKE_PROJECT_VERSION_PATCH 3)
+SET(CMAKE_PROJECT_VERSION_PATCH 4)
 
 
 #default configuration
@@ -203,11 +203,11 @@ IF(NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins)
     #LIST(APPEND _gstreamer_plugins all)
     LIST(APPEND _gstreamer_plugins 
         gstaudioconvert
-        gstaudioparsers
+        gstautodetect
         gstaudioresample
         gstcoreelements
-        gstisomp4
         gstlibav
+        gstmatroska
         gstplayback
         gstsoup
         gsttypefindfunctions

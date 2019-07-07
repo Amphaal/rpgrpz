@@ -1,3 +1,5 @@
+#pragma once
+
 #include <gstreamer-1.0/gst/gst.h>
 #include <gstreamer-1.0/gst/gstmessage.h>
 
@@ -10,6 +12,7 @@
 #include <QtCore/QDir>
 
 #include <QTimer>
+#include <QtMath>
 
 class GStreamerClient : public QObject {
 
@@ -18,6 +21,7 @@ class GStreamerClient : public QObject {
     public:
         GStreamerClient(QObject* parent = nullptr);
         ~GStreamerClient();
+        
 
         void useSource(QString uri);
         void setVolume(double volume);
@@ -39,6 +43,7 @@ class GStreamerClient : public QObject {
 
     signals:
         void positionChanged(int pos);
+        void streamEnded();
         void bufferingPercentChanged(int bufferPrc);
 
     protected:

@@ -99,8 +99,18 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         }
         break;
 
-        case JSONMethod::AudioStreamChanged: {
-            this->_sendToAllButSelf(target, JSONMethod::AudioStreamChanged, data);
+        case JSONMethod::AudioStreamUrlChanged: {
+            this->_sendToAllButSelf(target, JSONMethod::AudioStreamUrlChanged, data);
+        }
+        break;
+
+        case JSONMethod::AudioStreamPlayingStateChanged: {
+            this->_sendToAllButSelf(target, JSONMethod::AudioStreamPlayingStateChanged, data);
+        }
+        break;
+
+        case JSONMethod::AudioStreamPositionChanged: {
+            this->_sendToAllButSelf(target, JSONMethod::AudioStreamPositionChanged, data);
         }
         break;
 

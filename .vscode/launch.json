@@ -29,6 +29,10 @@
                 {
                     "name": "GST_DEBUG",
                     "value": "3"
+                },
+                {
+                    "name" : "GST_DEBUG_DUMP_DOT_DIR",
+                    "value": "C:\\Users\\Amphaal\\Desktop"
                 }
             ],
             

@@ -22,17 +22,6 @@ PlaylistController::PlaylistController(QWidget * parent) : QGroupBox("Liste de l
     this->layout()->addWidget(this->playlist);
 };
 
-
-void PlaylistController::onRPZClientConnecting(RPZClient * cc) {
-    ClientBindable::onRPZClientConnecting(cc);
-    
-    this->setEnabled(true);
-}
-
-void PlaylistController::onRPZClientDisconnect(RPZClient* cc) {
-    this->setEnabled(false);
-}
-
 void PlaylistController::_onToolbarActionRequested(const PlaylistToolbar::Action &action) {
     switch(action) {
         case PlaylistToolbar::Action::Pause:

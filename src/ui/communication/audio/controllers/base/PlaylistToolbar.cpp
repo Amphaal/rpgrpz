@@ -95,6 +95,11 @@ void PlaylistToolbar::updateTrackState(int stateInSeconds) {
     );
 }
 
+void PlaylistToolbar::endTrack() {
+    this->_currentTrackEndFormated = PlaylistToolbar::_defaultNoTime;
+    this->updateTrackState(-1);
+}
+
 
 void PlaylistToolbar::newTrack(int lengthInSeconds) {
     this->_trackStateSlider->setValue(0);

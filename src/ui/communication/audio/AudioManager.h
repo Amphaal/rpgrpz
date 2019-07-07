@@ -35,6 +35,7 @@ class AudioManager : public QWidget, public ClientBindable {
         void _onToolbarPlayRequested(void* playlistItemPtr);
         void _onPlayerPositionChanged(int position);
         void _onSeekingRequested(int seekPos);
+        void _onStreamPlayEnded();
 
         void _playAudio(const QString &audioSourceUrl, const QString &sourceTitle);
 };

@@ -68,20 +68,16 @@ QHash<QString, QString> AppContext::_getOptionArgs(const QString &argsAsStr) {
     QHash<QString, QString> out;
 
     QRegularExpression split("--\\w+?($|\\s)");
-    QRegularExpression args("--(\\w+)(.*?)(\\w+)");
 
     auto splitMatches = split.globalMatch(argsAsStr);
     while (splitMatches.hasNext()) {
         QRegularExpressionMatch splitMatch = splitMatches.next(); //next
 
         auto arg = splitMatch.captured();
-        auto argMatches = args.match(arg);
 
-        auto key = argMatches.captured(0);
-        auto separator = argMatches.captured(1);
-        auto value = argMatches.captured(2);
-
-        if(separator.isEmpty()) value = "";
+        auto key = arg.mid(2);
+        auto kvpSplit = arg.split("=", QString::SkipEmptyParts);
+        QString value = kvpSplit.count() > 1 ? kvpSplit[1] : "";
 
         out.insert(key, value);
     }
@@ -117,7 +113,6 @@ void AppContext::init(const QString &customContext) {
 
 
 QString AppContext::makeSureDirPathExists(const QString &path) {
-    qDebug() << path;
     QDir().mkpath(path);
     return path;
 }

@@ -8,13 +8,10 @@
 #include "base/PlaylistToolbar.h"
 #include "base/Playlist.h"
 
-class PlaylistController : public QGroupBox, public ClientBindable {
+class PlaylistController : public QGroupBox {
     public:
 
         PlaylistController(QWidget * parent = nullptr);
-
-        void onRPZClientConnecting(RPZClient * cc) override;
-        void onRPZClientDisconnect(RPZClient* cc) override;
 
         PlaylistToolbar* toolbar = nullptr;
         Playlist* playlist = nullptr;    

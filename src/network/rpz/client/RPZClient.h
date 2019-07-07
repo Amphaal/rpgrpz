@@ -32,6 +32,8 @@ class RPZClient : public JSONSocket, public JSONRouter {
         void sendMapChanges(QVariantHash &payload);
         void askForAsset(const QString &assetId);
         void defineAudioStreamSource(const QString &audioStreamUrl, const QString &sourceTitle);
+        void changeAudioPosition(int newPosition);
+        void setAudioStreamPlayState(bool isPlaying);
         
         //helper
         void informAssetSucessfulInsertion(const QString &assetId);
@@ -56,6 +58,8 @@ class RPZClient : public JSONSocket, public JSONRouter {
         void receivedLogHistory(const QVariantList &messages);
 
         void audioSourceChanged(const QString &audioSourceUrl, const QString &sourceTitle);
+        void audioPositionChanged(int newPos);
+        void audioPlayStateChanged(bool isPlaying);
 
     private:       
         QString _domain;

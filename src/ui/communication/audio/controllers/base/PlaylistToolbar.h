@@ -21,6 +21,7 @@ class PlaylistToolbar : public QWidget {
     
         void updateTrackState(int stateInSeconds);
         void newTrack(int lengthInSeconds);
+        void endTrack();
 
     signals:
         void actionRequired(const PlaylistToolbar::Action &action);

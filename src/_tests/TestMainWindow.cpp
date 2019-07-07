@@ -11,5 +11,6 @@ TestMainWindow::TestMainWindow() {
 
     //test url
     manager->_plCtrl->playlist->addYoutubeVideo("https://www.youtube.com/watch?time_continue=211&v=6p03KD5IBrI");
+    manager->_plCtrl->playlist->addYoutubeVideo("https://www.youtube.com/watch?v=ovQj6jcxpEU");
 
 }
