@@ -2,6 +2,8 @@
 
 #include "src/version.h"
 
+#include <iostream>
+
 #include <QtCore/QCoreApplication>
 
 #include <QtCore/QSettings>
@@ -16,6 +18,10 @@
 #include <QtGui/QDesktopServices>
 #include <QtCore/QProcess>
 #include <QtCore/QUrl>
+
+#include <QHash>
+
+#include <QRegularExpression>
 
 class AppSettings : public QSettings {
     public:
@@ -35,6 +41,8 @@ class AppContext {
 
         static inline QString _appDataLocation;
         static QString _defaultAppDataLocation();
+        
+        static QHash<QString, QString> _getOptionArgs(const QString &argsAsStr);
 
         static inline const QString DEBUG_APP_FILE_APPENDICE = IS_DEBUG_APP ? ".debug" : "";
         static inline const QString LOG_FILE = "/rpgrpz" + DEBUG_APP_FILE_APPENDICE + ".log";
@@ -51,8 +59,8 @@ class AppContext {
         static inline const QString UPNP_REQUEST_DESCRIPTION = "RPGRPZ";
         static inline const QString RPZ_MAP_FILE_EXT = ".mrpz";
 
-        static QStringList getOptionArgs(QCoreApplication &source);
-        static QStringList getOptionArgs(int argc, char** argv);
+        static QHash<QString, QString> getOptionArgs(QCoreApplication &source);
+        static QHash<QString, QString> getOptionArgs(int argc, char** argv);
         static void configureApp(QCoreApplication &app);
 
         void static initRandomContext();

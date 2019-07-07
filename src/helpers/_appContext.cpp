@@ -29,17 +29,15 @@ void AppContext::configureApp(QCoreApplication &app) {
     
     //define context
     auto args = AppContext::getOptionArgs(app);
-    QString customContext = NULL;
     
     //if custom context is set
-    if(args.count() > 1) {
-
-        customContext = args[1];
-        if(customContext == "random") {
-            return AppContext::initRandomContext();
-        } else {
-            return AppContext::initCustomContext(customContext);
-        }
+    if(args.contains("randomContext")) {
+        return AppContext::initRandomContext();
+    } 
+    
+    else if(args.contains("customContext")) {
+        auto customContext = args["customContext"];
+        return AppContext::initCustomContext(customContext);
     }
 
     AppContext::init();
@@ -60,17 +58,41 @@ QString AppContext::_defaultAppDataLocation() {
     return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 } 
 
-QStringList AppContext::getOptionArgs(QCoreApplication &source) {
+QHash<QString, QString> AppContext::getOptionArgs(QCoreApplication &source) {
     auto args = source.arguments();
-    if(args.count() < 2) return QStringList();
-
-    return args[1].split(" ", QString::SplitBehavior::SkipEmptyParts);
+    if(args.count() < 2) return QHash<QString, QString>();
+    return _getOptionArgs(args[1]);
 }
 
-QStringList AppContext::getOptionArgs(int argc, char** argv) {
-    if(argc < 2) return QStringList();
+QHash<QString, QString> AppContext::_getOptionArgs(const QString &argsAsStr) {
+    QHash<QString, QString> out;
 
-    return QString(argv[1]).split(" ", QString::SplitBehavior::SkipEmptyParts);
+    QRegularExpression split("--\\w+?($|\\s)");
+    QRegularExpression args("--(\\w+)(.*?)(\\w+)");
+
+    auto splitMatches = split.globalMatch(argsAsStr);
+    while (splitMatches.hasNext()) {
+        QRegularExpressionMatch splitMatch = splitMatches.next(); //next
+
+        auto arg = splitMatch.captured();
+        auto argMatches = args.match(arg);
+
+        auto key = argMatches.captured(0);
+        auto separator = argMatches.captured(1);
+        auto value = argMatches.captured(2);
+
+        if(separator.isEmpty()) value = "";
+
+        out.insert(key, value);
+    }
+    
+    return out;
+}
+
+QHash<QString, QString> AppContext::getOptionArgs(int argc, char** argv) {
+    if(argc < 2) return QHash<QString, QString>();
+
+    return _getOptionArgs(QString(argv[1]));
 }
 
 void AppContext::initRandomContext() {
@@ -95,6 +117,7 @@ void AppContext::init(const QString &customContext) {
 
 
 QString AppContext::makeSureDirPathExists(const QString &path) {
+    qDebug() << path;
     QDir().mkpath(path);
     return path;
 }

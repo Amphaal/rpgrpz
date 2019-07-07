@@ -22,7 +22,7 @@
             "type": "cppvsdbg",
             "request": "launch",
             "program": "./bin/RPGRPZ.exe",
-            "args": ["test"],
+            "args": ["--test"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build/Debug",
             "environment": [

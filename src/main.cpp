@@ -88,24 +88,21 @@ int main(int argc, char** argv) {
 
     //default
     auto args = AppContext::getOptionArgs(argc, argv);
-    if(args.count()) {
 
-        //conditionnal
-        auto typeLaunch = args[0];
-        if(typeLaunch == "test") {
-            
-            //test app
-            return testApp(argc, argv);
-
-
-        } else if (typeLaunch == "serverOnly") {
-            
-            //as server console
-            return serverConsole(argc, argv);
-
-        }
+    //conditionnal
+    if(args.contains("test")) {
+        
+        //test app
+        return testApp(argc, argv);
 
     } 
+    
+    else if (args.contains("serverOnly")) {
+        
+        //as server console
+        return serverConsole(argc, argv);
+
+    }
 
     //as client app
     return clientApp(argc, argv);
