@@ -33,7 +33,7 @@ RPZMap<RPZAtom> MapDatabase::toAtoms() {
         out.insert(atom.id(), atom);
     }
 
-    qDebug() << "Map database : " << out.count() << " atoms read";
+    qDebug() << "Map database :" << out.count() << "atoms read";
 
     return out;
 }

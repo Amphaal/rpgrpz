@@ -63,7 +63,7 @@ void RPZServer::_onNewConnection() {
 
         //signals new connection
         auto newIp = clientSocket->socket()->peerAddress().toString();
-        qDebug() << "RPZServer : New connection from " << newIp;
+        qDebug() << "RPZServer : New connection from" << newIp;
 
 }
 
@@ -79,6 +79,8 @@ void RPZServer::_onDisconnect() {
     if(this->_hostSocket == clientSocket) {
         this->_hostSocket = nullptr;
     }
+
+    qDebug() << "RPZServer : " << clientSocket->socket()->peerAddress().toString() << " disconnected !";
 
     clientSocket->deleteLater();
 
@@ -191,7 +193,7 @@ void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
     //message...
     auto countMsgs = this->_messages.count();
     clientSocket->sendJSON(JSONMethod::ChatLogHistory, this->_messages.toVList());
-    qDebug() << "RPZServer :" << countMsgs << " stored messages sent to " << clientSocket->socket()->peerAddress().toString();
+    qDebug() << "RPZServer :" << countMsgs << "stored messages sent to" << clientSocket->socket()->peerAddress().toString();
 }
 
 
@@ -208,7 +210,7 @@ void RPZServer::_broadcastUsers() {
 
     //send data
     this->_sendToAll(JSONMethod::LoggedPlayersChanged, this->_usersById.toVList());
-    qDebug() << "RPZServer : Now " << this->_usersById.size() << " clients logged";
+    qDebug() << "RPZServer : Now" << this->_usersById.size() << "clients logged";
 }
 
 void RPZServer::_askHostForMapHistory() {

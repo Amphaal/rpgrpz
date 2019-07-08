@@ -134,7 +134,7 @@ void ConnectivityHelper::_onUPnPSuccess(const char * protocol, const char * nego
     out += negociatedPort;
     out += "] ";
 
-    qDebug() << "Connectivity : uPnP " + QString(protocol) << out;
+    qDebug() << "Connectivity : uPnP" << protocol << out.toStdString().c_str();
     emit uPnPStateChanged(out);
 
 }

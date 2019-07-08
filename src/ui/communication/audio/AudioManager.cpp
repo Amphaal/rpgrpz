@@ -167,6 +167,7 @@ void AudioManager::_onToolbarPlayRequested(void* playlistItemPtr) {
 }
 
 void AudioManager::_onStreamPlayEnded() {
+    this->_cli->stop();
     this->_plCtrl->toolbar->endTrack();
     this->_asCtrl->updatePlayedMusic(NULL);
 
