@@ -196,6 +196,14 @@ void RPZClient::sendMapChanges(QVariantHash &payload) {
     this->sendJSON(JSONMethod::MapChanged, payload);
 }
 
+void RPZClient::changeAudioPosition(int newPosition) {
+    this->sendJSON(JSONMethod::AudioStreamPositionChanged, newPosition);
+}
+
+void RPZClient::setAudioStreamPlayState(bool isPlaying) {
+    this->sendJSON(JSONMethod::AudioStreamPlayingStateChanged, isPlaying);
+}
+
 void RPZClient::defineAudioStreamSource(const QString &audioStreamUrl, const QString &sourceTitle) {
     QVariantHash hash;
     hash["url"] = audioStreamUrl;

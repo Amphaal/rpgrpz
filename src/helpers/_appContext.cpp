@@ -29,7 +29,7 @@ void AppContext::configureApp(QCoreApplication &app) {
     
     //define context
     auto args = AppContext::getOptionArgs(app);
-    
+
     //if custom context is set
     if(args.contains("randomContext")) {
         return AppContext::initRandomContext();
@@ -67,16 +67,16 @@ QHash<QString, QString> AppContext::getOptionArgs(QCoreApplication &source) {
 QHash<QString, QString> AppContext::_getOptionArgs(const QString &argsAsStr) {
     QHash<QString, QString> out;
 
-    QRegularExpression split("--\\w+?($|\\s)");
+    QRegularExpression split("--.+?($|\\s)");
 
     auto splitMatches = split.globalMatch(argsAsStr);
     while (splitMatches.hasNext()) {
         QRegularExpressionMatch splitMatch = splitMatches.next(); //next
 
         auto arg = splitMatch.captured();
-
-        auto key = arg.mid(2).trimmed();
         auto kvpSplit = arg.split("=", QString::SkipEmptyParts);
+
+        auto key = kvpSplit[0].mid(2).trimmed();
         QString value = kvpSplit.count() > 1 ? kvpSplit[1].trimmed() : "";
 
         out.insert(key, value);

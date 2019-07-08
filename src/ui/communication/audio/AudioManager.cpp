@@ -91,6 +91,7 @@ void AudioManager::_link() {
         this, &AudioManager::_onToolbarActionRequested
     );
 
+    //on seeking from toolbar
     QObject::connect(
         this->_plCtrl->toolbar, &TrackToolbar::seeking,
         this, &AudioManager::_onSeekingRequested
@@ -100,6 +101,14 @@ void AudioManager::_link() {
     QObject::connect(
         this->_asCtrl->toolbar, &VolumeToolbar::askForVolumeChange,
         this->_cli, &GStreamerClient::setVolume
+    );
+
+    //on cli play state changed
+    QObject::connect(
+        this->_cli, &GStreamerClient::playStateChanged,
+        [&](bool isPlaying) {
+            this->_asCtrl->changeTrackState(isPlaying);
+        }
     );
 
 }
@@ -115,16 +124,25 @@ void AudioManager::_playAudio(const QString &audioSourceUrl, const QString &sour
 //
 
 void AudioManager::_onToolbarActionRequested(const TrackToolbar::Action &action) {
+    
     switch(action) {
+        
         case TrackToolbar::Action::Play:
             this->_cli->play();
+            if(this->_isNetworkMaster) this->_rpzClient->setAudioStreamPlayState(true);
         break;
+
         case TrackToolbar::Action::Pause:
             this->_cli->pause();
+            if(this->_isNetworkMaster) this->_rpzClient->setAudioStreamPlayState(false);
         break;
+
         default:
             break;
+
     }
+
+
 }
 
 void AudioManager::_onToolbarPlayRequested(void* playlistItemPtr) {
@@ -164,7 +182,8 @@ void AudioManager::_onPlayerPositionChanged(int position) {
 }
 
 void AudioManager::_onSeekingRequested(int seekPos) {
-    if(this->_isNetworkMaster || this->_isLocalOnly) {
-        this->_cli->seek(seekPos);
+    this->_cli->seek(seekPos);
+    if(this->_isNetworkMaster) {
+        this->_rpzClient->changeAudioPosition(seekPos);
     }
 }

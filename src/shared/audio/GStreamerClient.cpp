@@ -141,18 +141,21 @@ void GStreamerClient::play() {
     this->_changeBinState(GST_STATE_PLAYING);
     this->_elapsedTimer->start(1000);
     this->_requestPosition();
+    emit playStateChanged(true);
 }
 
 void GStreamerClient::pause() {
     this->_changeBinState(GST_STATE_PAUSED);
     this->_elapsedTimer->stop();
     this->_requestPosition();
+    emit playStateChanged(false);
 }
 
 void GStreamerClient::stop() {
     this->_changeBinState(GST_STATE_READY);
     this->_elapsedTimer->stop();
     emit positionChanged(0);
+    emit playStateChanged(false);
 }
 
 void GStreamerClient::_unrefPipeline() {
