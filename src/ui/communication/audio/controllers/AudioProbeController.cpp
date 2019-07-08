@@ -1,12 +1,12 @@
-#include "AudioStreamController.h"
+#include "AudioProbeController.h"
 
-AudioStreamController::AudioStreamController(QWidget * parent) : QGroupBox("Musique actuellement jouée", parent), 
+AudioProbeController::AudioProbeController(QWidget * parent) : QGroupBox("Musique actuellement jouée", parent), 
     _descr(new QLabel(this)),
     _playIconLbl(new QLabel(this)),
     _playIcon(new QMovie(":/icons/app/audio/musicPlaying.gif")),
-    toolbar(new AudioStreamToolbar(this)) {
+    toolbar(new VolumeToolbar(this)) {
 
-    this->setEnabled(false);
+    this->setEnabled(true);
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     this->setAlignment(Qt::AlignHCenter);
 
@@ -22,17 +22,22 @@ AudioStreamController::AudioStreamController(QWidget * parent) : QGroupBox("Musi
     this->layout()->addWidget(this->toolbar);
 }
 
-void AudioStreamController::updatePlayedMusic(const QString &musicName) {
+void AudioProbeController::updatePlayedMusic(const QString &musicName) {
     if(musicName.isNull()) {
         this->_descr->setText("Pas de musique jouée");
         this->_playIcon->stop();
         this->_playIconLbl->setVisible(false);
-        this->setEnabled(false);
+        this->_descr->setEnabled(false);
     }
     else {
         this->_descr->setText(musicName);
         this->_playIcon->start();
         this->_playIconLbl->setVisible(true);
-        this->setEnabled(true);
+        this->_descr->setEnabled(true);
     }
+}
+
+void AudioProbeController::changeTrackState(bool isPlaying) {
+    if(isPlaying) this->_playIcon->start();
+    else this->_playIcon->stop();
 }

@@ -1,6 +1,6 @@
-#include "AudioStreamToolbar.h"
+#include "VolumeToolbar.h"
 
-AudioStreamToolbar::AudioStreamToolbar(QWidget* parent) : QWidget(parent), 
+VolumeToolbar::VolumeToolbar(QWidget* parent) : QWidget(parent), 
     _audio(new QSlider), 
     _volumeStr(new QLabel),
     _mute(new QToolButton) {
@@ -18,7 +18,7 @@ AudioStreamToolbar::AudioStreamToolbar(QWidget* parent) : QWidget(parent),
 
     QObject::connect(
         this->_audio, &QAbstractSlider::valueChanged,
-        this, &AudioStreamToolbar::_onAudioChange
+        this, &VolumeToolbar::_onAudioChange
     );
 
     //mute
@@ -26,7 +26,7 @@ AudioStreamToolbar::AudioStreamToolbar(QWidget* parent) : QWidget(parent),
     this->_onMuteButtonClick();
     QObject::connect(
         this->_mute, &QAbstractButton::clicked,
-        this, &AudioStreamToolbar::_onMuteButtonClick
+        this, &VolumeToolbar::_onMuteButtonClick
     );
 
     //layout
@@ -39,15 +39,13 @@ AudioStreamToolbar::AudioStreamToolbar(QWidget* parent) : QWidget(parent),
     this->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 }
 
-AudioStreamToolbar::~AudioStreamToolbar() {}
-
-void AudioStreamToolbar::_onAudioChange(int newSliderVal) {
+void VolumeToolbar::_onAudioChange(int newSliderVal) {
     this->_setAudioValLbl(newSliderVal);
     AppContext::settings()->setAudioVolume(newSliderVal);
     emit askForVolumeChange(newSliderVal); 
 }
 
-void AudioStreamToolbar::_onMuteButtonClick() {
+void VolumeToolbar::_onMuteButtonClick() {
 
     if(this->_mute->isChecked()) {
         this->_mute->setIcon(this->_mutedIcon);
@@ -59,6 +57,6 @@ void AudioStreamToolbar::_onMuteButtonClick() {
 
 }
 
-void AudioStreamToolbar::_setAudioValLbl(int sliderVal) {
+void VolumeToolbar::_setAudioValLbl(int sliderVal) {
     this->_volumeStr->setText(QString::number(sliderVal) + QString("%"));
 }

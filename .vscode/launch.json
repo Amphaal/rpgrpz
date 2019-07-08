@@ -5,6 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "No Server",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "./bin/RPGRPZ.exe",
+            "args": ["--noServer --customContext=NoServer"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build/Debug",
+            "environment": [],
+            
+            "externalConsole": false,
+            "preLaunchTask": "Debug - 3. Build"
+        },
+        {
             "name": "Launch",
             "type": "cppvsdbg",
             "request": "launch",

@@ -62,7 +62,7 @@ YoutubeSignatureDecipherer* YoutubeSignatureDecipherer::fromCache(const QString 
 YoutubeSignatureDecipherer::YoutubeSignatureDecipherer(const QString &rawPlayerSourceData) {
     
     //find decipher function name
-    QRegularExpression findFunctionName("\\bc\\s*&&\\s*d\\.set\\([^,]+,\\s*(?:encodeURIComponent\\s*\\()?\\s*([\\w$]+)\\(");
+    QRegularExpression findFunctionName(R"("(\w+)=function\(\w+\){(\w+)=\2\.split\(\x22{2}\);.*?return\s+\2\.join\(\x22{2}\)}")");
     auto functionName = findFunctionName.match(rawPlayerSourceData).captured(1);
     
     //get the body of the function
@@ -74,8 +74,7 @@ YoutubeSignatureDecipherer::YoutubeSignatureDecipherer(const QString &rawPlayerS
 
     //prepare
     QHash<CipherOperation, QString> functionNamesByOperation;
-    // QRegularExpression findCalledFunction("\\w+(?:.|\\[)(\\\"\"?\\w+(?:\\\"\")?)\\]?\\(");
-    QRegularExpression findCalledFunction("\\.(.*?)\\(");
+    QRegularExpression findCalledFunction(R"("\w+(?:.|\[)(\""?\w+(?:\"")?)\]?\(")");
     QRegularExpression findArgument("\\(\\w+,(\\d+)\\)");
 
     //find subjacent functions used by decipherer

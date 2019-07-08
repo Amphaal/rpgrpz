@@ -75,9 +75,9 @@ QHash<QString, QString> AppContext::_getOptionArgs(const QString &argsAsStr) {
 
         auto arg = splitMatch.captured();
 
-        auto key = arg.mid(2);
+        auto key = arg.mid(2).trimmed();
         auto kvpSplit = arg.split("=", QString::SkipEmptyParts);
-        QString value = kvpSplit.count() > 1 ? kvpSplit[1] : "";
+        QString value = kvpSplit.count() > 1 ? kvpSplit[1].trimmed() : "";
 
         out.insert(key, value);
     }

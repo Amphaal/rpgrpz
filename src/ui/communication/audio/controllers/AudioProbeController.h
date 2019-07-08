@@ -11,15 +11,17 @@
 
 #include "src/ui/others/ClientBindable.h"
 
-#include "base/AudioStreamToolbar.h"
+#include "base/VolumeToolbar.h"
 
-class AudioStreamController : public QGroupBox {
+class AudioProbeController : public QGroupBox {
 
     public:
-        AudioStreamController(QWidget * parent = nullptr);
-        void updatePlayedMusic(const QString &musicName);
+        AudioProbeController(QWidget * parent = nullptr);
         
-        AudioStreamToolbar* toolbar;
+        void updatePlayedMusic(const QString &musicName);
+        void changeTrackState(bool isPlaying);
+        
+        VolumeToolbar* toolbar = nullptr;
         
     private:
         QLabel* _descr = nullptr;

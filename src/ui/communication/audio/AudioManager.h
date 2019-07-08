@@ -6,7 +6,7 @@
 
 #include "src/_libs/promise.hpp"
 
-#include "src/ui/communication/audio/controllers/AudioStreamController.h"
+#include "src/ui/communication/audio/controllers/AudioProbeController.h"
 #include "src/ui/communication/audio/controllers/PlaylistController.h"
 
 #include "src/shared/audio/GStreamerClient.h"
@@ -22,7 +22,7 @@ class AudioManager : public QWidget, public ClientBindable {
         PlaylistController* _plCtrl = nullptr;
 
     private:
-        AudioStreamController* _asCtrl = nullptr;
+        AudioProbeController* _asCtrl = nullptr;
         GStreamerClient* _cli = nullptr;
 
         bool _isLocalOnly = true;
@@ -31,7 +31,7 @@ class AudioManager : public QWidget, public ClientBindable {
         void onRPZClientDisconnect(RPZClient* cc) override;
 
         void _link();
-        void _onToolbarActionRequested(const PlaylistToolbar::Action &action);
+        void _onToolbarActionRequested(const TrackToolbar::Action &action);
         void _onToolbarPlayRequested(void* playlistItemPtr);
         void _onPlayerPositionChanged(int position);
         void _onSeekingRequested(int seekPos);

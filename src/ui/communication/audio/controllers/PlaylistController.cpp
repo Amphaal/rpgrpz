@@ -2,7 +2,7 @@
 
 PlaylistController::PlaylistController(QWidget * parent) : QGroupBox("Liste de lecture", parent), 
     playlist(new Playlist(this)), 
-    toolbar(new PlaylistToolbar(this)) {
+    toolbar(new TrackToolbar(this)) {
 
     //self
     this->setEnabled(false);
@@ -13,7 +13,7 @@ PlaylistController::PlaylistController(QWidget * parent) : QGroupBox("Liste de l
 
     //connect
     QObject::connect(
-        this->toolbar, &PlaylistToolbar::actionRequired,
+        this->toolbar, &TrackToolbar::actionRequired,
         this, &PlaylistController::_onToolbarActionRequested
     );
 
@@ -22,16 +22,16 @@ PlaylistController::PlaylistController(QWidget * parent) : QGroupBox("Liste de l
     this->layout()->addWidget(this->playlist);
 };
 
-void PlaylistController::_onToolbarActionRequested(const PlaylistToolbar::Action &action) {
+void PlaylistController::_onToolbarActionRequested(const TrackToolbar::Action &action) {
     switch(action) {
-        case PlaylistToolbar::Action::Pause:
+        case TrackToolbar::Action::Pause:
             break;
-        case PlaylistToolbar::Action::Play:
+        case TrackToolbar::Action::Play:
             break;
-        case PlaylistToolbar::Action::Forward:
+        case TrackToolbar::Action::Forward:
             this->playlist->playNext();
             break;
-        case PlaylistToolbar::Action::Rewind:
+        case TrackToolbar::Action::Rewind:
             this->playlist->playPrevious();
             break;
         default:

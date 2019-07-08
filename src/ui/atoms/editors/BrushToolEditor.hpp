@@ -36,7 +36,6 @@ class BrushToolEditor : public AtomSubEditor {
             this->setVisible(false);
 
             this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
-            this->setLayout(new QVBoxLayout);
             
             this->_combo = new QComboBox;
             for(auto i = _strBT.constBegin(); i != _strBT.constEnd(); i++) {

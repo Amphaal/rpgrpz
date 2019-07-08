@@ -10,21 +10,21 @@
 #include <QSlider>
 #include <QToolButton>
 
-class PlaylistToolbar : public QWidget {
+class TrackToolbar : public QWidget {
     
     Q_OBJECT
 
     public:
         enum Action { Rewind, Forward, Play, Pause };
 
-        PlaylistToolbar(QWidget* parent = nullptr);
+        TrackToolbar(QWidget* parent = nullptr);
     
         void updateTrackState(int stateInSeconds);
         void newTrack(int lengthInSeconds);
         void endTrack();
 
     signals:
-        void actionRequired(const PlaylistToolbar::Action &action);
+        void actionRequired(const TrackToolbar::Action &action);
         void seeking(int pos);
 
     private:
@@ -39,7 +39,7 @@ class PlaylistToolbar : public QWidget {
         QLabel* _trackPlayStateLbl;
         static inline const QString _defaultNoTime = "--"; 
         QString _trackPlayStateTemplator = QString(" %1 / %2 ");
-        QString _currentTrackEndFormated = PlaylistToolbar::_defaultNoTime; 
+        QString _currentTrackEndFormated = TrackToolbar::_defaultNoTime; 
 
         QString _fromSecondsToTime(int lengthInSeconds);
         void _setPlayButtonState(bool isPlaying);

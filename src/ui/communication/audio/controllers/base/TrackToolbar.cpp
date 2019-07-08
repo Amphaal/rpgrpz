@@ -1,6 +1,6 @@
-#include "PlaylistToolbar.h"
+#include "TrackToolbar.h"
 
-PlaylistToolbar::PlaylistToolbar(QWidget* parent) : QWidget(parent), 
+TrackToolbar::TrackToolbar(QWidget* parent) : QWidget(parent), 
     _playBtn(new QToolButton), 
     _rewindBtn(new QToolButton),
     _forwardBtn(new QToolButton), 
@@ -12,7 +12,7 @@ PlaylistToolbar::PlaylistToolbar(QWidget* parent) : QWidget(parent),
     this->_setPlayButtonState(false);
     QObject::connect(
         this->_playBtn, &QAbstractButton::clicked,
-        this, &PlaylistToolbar::_tooglePlayButtonState
+        this, &TrackToolbar::_tooglePlayButtonState
     );
     
     //rewind
@@ -20,7 +20,7 @@ PlaylistToolbar::PlaylistToolbar(QWidget* parent) : QWidget(parent),
     QObject::connect(
         this->_rewindBtn, &QAbstractButton::clicked,
         [&]() {
-            emit actionRequired(PlaylistToolbar::Action::Rewind); 
+            emit actionRequired(TrackToolbar::Action::Rewind); 
         }
     );
 
@@ -29,7 +29,7 @@ PlaylistToolbar::PlaylistToolbar(QWidget* parent) : QWidget(parent),
     QObject::connect(
         this->_forwardBtn, &QAbstractButton::clicked,
         [&]() {
-            emit actionRequired(PlaylistToolbar::Action::Forward);
+            emit actionRequired(TrackToolbar::Action::Forward);
         }
     );
 
@@ -70,10 +70,12 @@ PlaylistToolbar::PlaylistToolbar(QWidget* parent) : QWidget(parent),
     this->layout()->addWidget(this->_trackPlayStateLbl);
 }
 
-void PlaylistToolbar::updateTrackState(int stateInSeconds) {
+void TrackToolbar::updateTrackState(int stateInSeconds) {
+    //prevent updating while slider is manipulated
+    if(this->_sliderDown) return;
 
     //conditionnal state widgets
-    QString current = stateInSeconds < 0 ? PlaylistToolbar::_defaultNoTime : this->_fromSecondsToTime(stateInSeconds);
+    QString current = stateInSeconds < 0 ? TrackToolbar::_defaultNoTime : this->_fromSecondsToTime(stateInSeconds);
     this->_trackStateSlider->setEnabled(stateInSeconds > -1);
     
     //update slider value
@@ -95,13 +97,13 @@ void PlaylistToolbar::updateTrackState(int stateInSeconds) {
     );
 }
 
-void PlaylistToolbar::endTrack() {
-    this->_currentTrackEndFormated = PlaylistToolbar::_defaultNoTime;
+void TrackToolbar::endTrack() {
+    this->_currentTrackEndFormated = TrackToolbar::_defaultNoTime;
     this->updateTrackState(-1);
 }
 
 
-void PlaylistToolbar::newTrack(int lengthInSeconds) {
+void TrackToolbar::newTrack(int lengthInSeconds) {
     this->_trackStateSlider->setValue(0);
     this->_trackStateSlider->setMaximum(lengthInSeconds);
 
@@ -111,23 +113,23 @@ void PlaylistToolbar::newTrack(int lengthInSeconds) {
     this->_setPlayButtonState(true);
 }
 
-QString PlaylistToolbar::_fromSecondsToTime(int lengthInSeconds) {
+QString TrackToolbar::_fromSecondsToTime(int lengthInSeconds) {
     return QTime::fromMSecsSinceStartOfDay(lengthInSeconds * 1000).toString("hh:mm:ss");
 }
 
-void PlaylistToolbar::_setPlayButtonState(bool isPlaying) {
+void TrackToolbar::_setPlayButtonState(bool isPlaying) {
     this->_playBtn->setChecked(isPlaying);
     this->_playBtn->setIcon(isPlaying ? this->_pauseIcon : this->_playIcon);
 }
 
-void PlaylistToolbar::_tooglePlayButtonState() {
+void TrackToolbar::_tooglePlayButtonState() {
     
     auto btnstate = this->_playBtn->isChecked();
     this->_setPlayButtonState(btnstate);
     
     if(btnstate) {
-        emit actionRequired(PlaylistToolbar::Action::Play);
+        emit actionRequired(TrackToolbar::Action::Play);
     } else {
-        emit actionRequired(PlaylistToolbar::Action::Pause);
+        emit actionRequired(TrackToolbar::Action::Pause);
     }
 }

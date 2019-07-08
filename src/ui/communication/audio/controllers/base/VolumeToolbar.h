@@ -10,7 +10,7 @@
 
 #include "src/helpers/_appContext.h"
 
-class AudioStreamToolbar : public QWidget {
+class VolumeToolbar : public QWidget {
     
     Q_OBJECT
 
@@ -18,9 +18,7 @@ class AudioStreamToolbar : public QWidget {
         void askForVolumeChange(int newVolume);
 
     public:
-        AudioStreamToolbar(QWidget* parent = nullptr);
-
-        ~AudioStreamToolbar();
+        VolumeToolbar(QWidget* parent = nullptr);
     
     private:
         QSlider* _audio = nullptr;

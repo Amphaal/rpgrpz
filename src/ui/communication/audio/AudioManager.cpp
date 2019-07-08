@@ -3,7 +3,7 @@
 AudioManager::AudioManager() : 
     _cli(new GStreamerClient),   
     _plCtrl(new PlaylistController), 
-    _asCtrl(new AudioStreamController) {
+    _asCtrl(new AudioProbeController) {
 
     //UI init
     this->_plCtrl->setEnabled(true);
@@ -87,18 +87,18 @@ void AudioManager::_link() {
 
     //on action required from toolbar
     QObject::connect(
-        this->_plCtrl->toolbar, &PlaylistToolbar::actionRequired,
+        this->_plCtrl->toolbar, &TrackToolbar::actionRequired,
         this, &AudioManager::_onToolbarActionRequested
     );
 
     QObject::connect(
-        this->_plCtrl->toolbar, &PlaylistToolbar::seeking,
+        this->_plCtrl->toolbar, &TrackToolbar::seeking,
         this, &AudioManager::_onSeekingRequested
     );
 
     //volume change from toolbar
     QObject::connect(
-        this->_asCtrl->toolbar, &AudioStreamToolbar::askForVolumeChange,
+        this->_asCtrl->toolbar, &VolumeToolbar::askForVolumeChange,
         this->_cli, &GStreamerClient::setVolume
     );
 
@@ -114,12 +114,12 @@ void AudioManager::_playAudio(const QString &audioSourceUrl, const QString &sour
 // events helpers
 //
 
-void AudioManager::_onToolbarActionRequested(const PlaylistToolbar::Action &action) {
+void AudioManager::_onToolbarActionRequested(const TrackToolbar::Action &action) {
     switch(action) {
-        case PlaylistToolbar::Action::Play:
+        case TrackToolbar::Action::Play:
             this->_cli->play();
         break;
-        case PlaylistToolbar::Action::Pause:
+        case TrackToolbar::Action::Pause:
             this->_cli->pause();
         break;
         default:

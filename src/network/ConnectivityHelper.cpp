@@ -90,7 +90,7 @@ void ConnectivityHelper::_tryNegociateUPnPPort() {
     
     this->_clearUPnPRequester();
 
-    qDebug() << "Connectivity : trying to open uPnP port " << AppContext::UPNP_DEFAULT_TARGET_PORT << " as \"" << AppContext::UPNP_REQUEST_DESCRIPTION << "\" ";
+    qDebug() << "Connectivity : trying to open uPnP port " + AppContext::UPNP_DEFAULT_TARGET_PORT + " as " + AppContext::UPNP_REQUEST_DESCRIPTION ;
 
     this->_requestedUPnPPort = AppContext::UPNP_DEFAULT_TARGET_PORT.toStdString();
     this->_requestedDescription = AppContext::UPNP_REQUEST_DESCRIPTION.toStdString();
@@ -195,10 +195,10 @@ void ConnectivityHelper::_debugNetworkConfig() {
     
     auto _debug = [&](const QString &descr, const QNetworkConfiguration &config) {
         qDebug() << "Connectivity : " + descr
-                + ">> name:" + config.name() 
+                + " >> name:" + config.name() 
                 + ", state:" + config.state() 
-                + ", type:" + config.type() 
-                + ", bearer:" + config.bearerTypeName();
+                << ", type:" + config.type() 
+                << ", bearer:" + config.bearerTypeName();
     };
 
     for (auto &config : this->_getDefinedConfiguration()) {
