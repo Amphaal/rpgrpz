@@ -195,10 +195,10 @@ void ConnectivityHelper::_debugNetworkConfig() {
     
     auto _debug = [&](const QString &descr, const QNetworkConfiguration &config) {
         qDebug() << "Connectivity : " + descr
-                + " >> name:" + config.name() 
-                + ", state:" + config.state() 
-                << ", type:" + config.type() 
-                << ", bearer:" + config.bearerTypeName();
+                 + " >> name:" << config.name() 
+                 << ", state:" << config.state() 
+                 << ", type:" << config.type() 
+                 << ", bearer:" << config.bearerTypeName();
     };
 
     for (auto &config : this->_getDefinedConfiguration()) {

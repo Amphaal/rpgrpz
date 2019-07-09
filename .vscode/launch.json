@@ -18,6 +18,19 @@
             "preLaunchTask": "Debug - 3. Build"
         },
         {
+            "name": "Random No Server",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "./bin/RPGRPZ.exe",
+            "args": ["--noServer --randomContext"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build/Debug",
+            "environment": [],
+            
+            "externalConsole": false,
+            "preLaunchTask": "Debug - 3. Build"
+        },
+        {
             "name": "Launch",
             "type": "cppvsdbg",
             "request": "launch",

@@ -7,6 +7,7 @@
 
 #include "base/TrackToolbar.h"
 #include "playlist/Playlist.h"
+#include "playlist/YoutubePlaylistItemInsertor.hpp"
 
 class PlaylistController : public QGroupBox {
     public:
@@ -15,6 +16,7 @@ class PlaylistController : public QGroupBox {
 
         TrackToolbar* toolbar = nullptr;
         Playlist* playlist = nullptr;    
+        YoutubePlaylistItemInsertor* linkInserter = nullptr;
 
     private:
         void _onToolbarActionRequested(const TrackToolbar::Action &action);

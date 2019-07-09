@@ -51,6 +51,7 @@
         <file>icons/app/audio/youtube.png</file>
         <file>icons/app/audio/youtubeGrey.png</file>
         <file>icons/app/audio/youtubeError.png</file>
+        <file>icons/app/audio/add.png</file>
         <file>icons/app/loader.gif</file>
     </qresource>
 </RCC>
