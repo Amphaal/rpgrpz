@@ -32,10 +32,11 @@ class AudioManager : public QWidget, public ClientBindable {
 
         void _link();
         void _onToolbarActionRequested(const TrackToolbar::Action &action);
-        void _onToolbarPlayRequested(void* playlistItemPtr);
+        void _onToolbarPlayRequested(YoutubeVideoMetadata* playlistItemPtr);
         void _onPlayerPositionChanged(int position);
         void _onSeekingRequested(int seekPos);
         void _onStreamPlayEnded();
+        void _onStreamError();
 
         void _playAudio(const QString &audioSourceUrl, const QString &sourceTitle);
 };

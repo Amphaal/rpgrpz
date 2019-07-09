@@ -12,29 +12,36 @@
 
 #include <QHash>
 #include <QPair>
+#include <QToolTip>
 
 #include <QUrlQuery>
 
-#include "PlaylistItem.h"
+#include "src/network/youtube/YoutubeHelper.h"
 
 class Playlist : public QListWidget {
 
     Q_OBJECT
 
     public:
+        enum YoutubeUrlType { YoutubePlaylist, YoutubeVideo };
         Playlist(QWidget* parent = nullptr);
 
         void playNext();
         void playPrevious();
 
-        void addYoutubeVideo(QString url);
+        void addYoutubeVideo(const QString &url);
+
+        YoutubeVideoMetadata* currentPlay();
     
     signals:
-        void playRequested(void* playlistItemPtr);
+        void playRequested(YoutubeVideoMetadata* metadata);
 
     private:
+
+        QSet<QString> _playlistVideoIds;
+
         void _onItemDoubleClicked(QListWidgetItem * item);
-        QListWidgetItem* _runningLink = nullptr;
+        QListWidgetItem* _playlistItemToUse = nullptr;
 
         //drag and drop
             QMimeDatabase _MIMEDb;
@@ -44,11 +51,9 @@ class Playlist : public QListWidget {
             void dropEvent(QDropEvent *event) override;
 
             //d&d temp
-            QList<QPair<PlaylistItem::LinkType, QUrl>> _tempDnD;
-            int _tempHashDnDFromUrlList(QList<QUrl> &list);
-            void _buildItemsFromUri(QString uri, const PlaylistItem::LinkType &type);
-    
+            QList<QPair<YoutubeUrlType, QUrl>> _tempDnD;
+            int _tempHashDnDFromUrlList(QList<QUrl> &list);  
 
         bool _defaultPlay();
-        void _playLink();
+        void _requestPlay();
 };

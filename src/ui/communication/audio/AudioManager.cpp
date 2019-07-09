@@ -85,6 +85,12 @@ void AudioManager::_link() {
         this, &AudioManager::_onStreamPlayEnded
     );
 
+    //on stream error while trying to play it
+    QObject::connect(
+        this->_cli, &GStreamerClient::streamError,
+        this, &AudioManager::_onStreamError
+    );
+
     //on action required from toolbar
     QObject::connect(
         this->_plCtrl->toolbar, &TrackToolbar::actionRequired,
@@ -145,25 +151,32 @@ void AudioManager::_onToolbarActionRequested(const TrackToolbar::Action &action)
 
 }
 
-void AudioManager::_onToolbarPlayRequested(void* playlistItemPtr) {
+void AudioManager::_onToolbarPlayRequested(YoutubeVideoMetadata* metadata) {
 
-    auto playlistItem = (PlaylistItem*)playlistItemPtr;
-
-    playlistItem->streamSourceUri().then([=](const QString &sourceUrlStr) {
+    YoutubeHelper::refreshMetadata(metadata).then([=]() {
         
-        auto title = playlistItem->title();
-        this->_playAudio(sourceUrlStr, title);
+        auto title = metadata->title();
+        auto streamUrl = metadata->audioStreams()->getPreferedMineSourcePair().second;
+        
+        this->_playAudio(streamUrl, title);
 
         //play new track
-        this->_plCtrl->toolbar->newTrack(playlistItem->durationSecs());
-
+        this->_plCtrl->toolbar->newTrack(metadata->duration());
 
         //tells others users what to listen to
         if(this->_isNetworkMaster) {
-            this->_rpzClient->defineAudioStreamSource(sourceUrlStr, title);
+            this->_rpzClient->defineAudioStreamSource(streamUrl, title);
         }
     });
 
+}
+
+void AudioManager::_onStreamError() {
+    this->_plCtrl->toolbar->endTrack();
+    this->_asCtrl->updatePlayedMusic(NULL);
+
+    auto currentPlay = this->_plCtrl->playlist->currentPlay();
+    currentPlay->setFailure(true);
 }
 
 void AudioManager::_onStreamPlayEnded() {

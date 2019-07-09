@@ -156,4 +156,6 @@ YoutubeSignatureDecipherer::YoutubeSignatureDecipherer(const QString &rawPlayerS
 
     //copy operation to object
     this->_operations = operations;
+
+    qDebug() << this->_operations;
 };

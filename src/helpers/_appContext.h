@@ -59,7 +59,7 @@ class AppContext {
         static inline const QString UPNP_REQUEST_DESCRIPTION = "RPGRPZ";
         static inline const QString RPZ_MAP_FILE_EXT = ".mrpz";
 
-        static inline const QString REGEX_YOUTUBE_URL = "^((?:https?:)?\\/\\/)?((?:www|m)\\.)?((?:youtube\\.com|youtu.be))(\\/(?:[\\w\\-]+\?v=|embed\\/|v\\/)?)([\\w\\-]+)(\\S+)?$";
+        static inline const QString REGEX_YOUTUBE_URL = "(?:youtube\\.com|youtu.be).*?(?:v=|embed\\/)(?<videoId>[\\w\\-]+)";
 
         static QHash<QString, QString> getOptionArgs(QCoreApplication &source);
         static QHash<QString, QString> getOptionArgs(int argc, char** argv);

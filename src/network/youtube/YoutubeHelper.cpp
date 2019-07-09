@@ -6,7 +6,11 @@ promise::Defer YoutubeHelper::fromPlaylistUrl(const QString &url) {
             .then(&_videoIdsToMetadataList);         
 };
 
-promise::Defer YoutubeHelper::refreshMetadata(YoutubeVideoMetadata* toRefresh) {
+promise::Defer YoutubeHelper::refreshMetadata(YoutubeVideoMetadata* toRefresh, bool force) {
+    if(!force && toRefresh->isMetadataValid()) return promise::resolve(toRefresh);
+    
+    emit toRefresh->metadataFetching();
+
     return promise::newPromise([=](promise::Defer d){
         
         _getVideoEmbedPageRawData(toRefresh)
@@ -15,7 +19,10 @@ promise::Defer YoutubeHelper::refreshMetadata(YoutubeVideoMetadata* toRefresh) {
         })
         .then(&_downloadVideoInfosAndAugmentMetadata)
         .then([=]() {
+            emit toRefresh->metadataRefreshed();
             d.resolve(toRefresh);
+        }).fail([= ]() {
+           toRefresh->setFailure(true); 
         });
 
     });
@@ -38,18 +45,18 @@ YoutubeVideoMetadata* YoutubeHelper::_augmentMetadataWithPlayerConfiguration(You
     auto args = playerConfig["args"].toObject();
 
     //get valuable data from it
-    auto sts = playerConfig["sts"].toInt();
+    auto sts = args["cver"].toString();
     auto playerSourceUrl = playerConfig["assets"].toObject()["js"].toString();
     auto title = args["title"].toString();
     auto length = args["length_seconds"].toInt();
 
     //check values exist
-    if(!sts || playerSourceUrl.isEmpty() || title.isEmpty() || !length) {
+    if(sts.isEmpty() || playerSourceUrl.isEmpty() || title.isEmpty() || !length) {
         throw new std::logic_error("error while getting player client configuration !");
     }
 
     //augment...
-    metadata->setSts(QString::number(sts));
+    metadata->setSts(sts);
     metadata->setPlayerSourceUrl("https://www.youtube.com" + playerSourceUrl);
     metadata->setTitle(title);
     metadata->setDuration(length);

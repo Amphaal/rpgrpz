@@ -25,7 +25,9 @@ extern "C" {
                 g_printerr ("Debugging information: %s\n", debug_info ? debug_info : "none");
                 g_clear_error (&err);
                 g_free (debug_info);
-                emit cli->streamEnded();
+                
+                cli->_elapsedTimer->stop();
+                emit cli->streamError();
             }
             break;
 
@@ -170,8 +172,7 @@ void GStreamerClient::_changeBinState(const GstState &state) {
     auto ret = gst_element_set_state(this->_bin, state);
     
     if (ret == GST_STATE_CHANGE_FAILURE) {
-        this->_unrefPipeline();
-        throw std::runtime_error("Unable to set the pipeline to the playing state.\n");
+        qWarning() << "Gstreamer : cannot change bin state !";
     }
 
 }

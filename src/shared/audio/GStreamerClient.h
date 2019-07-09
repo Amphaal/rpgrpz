@@ -44,6 +44,7 @@ class GStreamerClient : public QObject {
     signals:
         void positionChanged(int pos);
         void streamEnded();
+        void streamError();
         void playStateChanged(bool isPlaying);
         void bufferingPercentChanged(int bufferPrc);
 

@@ -23,7 +23,7 @@ class YoutubeHelper : public NetworkHelper {
     
     public:
         static promise::Defer fromPlaylistUrl(const QString &url);
-        static promise::Defer refreshMetadata(YoutubeVideoMetadata* toRefresh);
+        static promise::Defer refreshMetadata(YoutubeVideoMetadata* toRefresh, bool force = false);
 
     private:
         static promise::Defer _getVideoEmbedPageRawData(YoutubeVideoMetadata* metadata);

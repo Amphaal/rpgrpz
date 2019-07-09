@@ -1,17 +1,18 @@
 #include "YoutubeVideoMetadata.h"
 
-YoutubeVideoMetadata* YoutubeVideoMetadata::fromUrl(const QString &url) {
+YoutubeVideoMetadata* YoutubeVideoMetadata::fromVideoUrl(const QString &url) {
     
     //find id
-    QRegularExpression re("v=(?<videoId>.*?)($|&)");
+    QRegularExpression re(AppContext::REGEX_YOUTUBE_URL);
     auto match = re.match(url);
 
     //returns
     if(!match.hasMatch()) {
-        throw new std::invalid_argument("Cannot create YT video obj from url");
+        throw new std::invalid_argument("URL is not a valid Youtube URL !");
     }
 
-    return new YoutubeVideoMetadata(match.captured("videoId"));
+    auto videoId = match.captured("videoId");
+    return new YoutubeVideoMetadata(videoId);
 }
 
 QString YoutubeVideoMetadata::urlFromVideoId(const QString &videoId) {
@@ -44,9 +45,18 @@ int YoutubeVideoMetadata::duration() {
     return this->_durationInSeconds;
 }
 
-bool YoutubeVideoMetadata::isValid() {
+bool YoutubeVideoMetadata::isMetadataValid() {
     if(this->_validUntil.isNull()) return false;
     return QDateTime::currentDateTime() < this->_validUntil;
+}
+
+bool YoutubeVideoMetadata::hasFailed() {
+    return this->_failed;
+}
+
+void YoutubeVideoMetadata::setFailure(bool failed) {
+    if(failed == true && this->_failed != failed) emit streamFailed();
+    this->_failed = failed;
 }
 
 void YoutubeVideoMetadata::setSts(const QString &sts) {
@@ -77,4 +87,4 @@ YoutubeAudioStreamInfos* YoutubeVideoMetadata::audioStreams() {
     return &this->_audioStreamInfos;
 }
 
-
+Q_DECLARE_METATYPE(YoutubeVideoMetadata*)

@@ -6,6 +6,7 @@
 
 #include <QDateTime>
 
+#include <QObject>
 #include <QHash>
 #include <QString>
 #include <QRegularExpression>
@@ -14,10 +15,14 @@
 
 #include "YoutubeAudioStreamInfos.h"
 
-class YoutubeVideoMetadata {
+#include "src/helpers/_appContext.h"
+
+class YoutubeVideoMetadata : public QObject {
     
+    Q_OBJECT
+
     public:
-        static YoutubeVideoMetadata* fromUrl(const QString &url);
+        static YoutubeVideoMetadata* fromVideoUrl(const QString &url);
         static QString urlFromVideoId(const QString &videoId);
         
         YoutubeVideoMetadata(const QString &videoId);
@@ -28,21 +33,30 @@ class YoutubeVideoMetadata {
         QString sts() const;
         QString playerSourceUrl() const;
         int duration();
-        bool isValid();
+        bool isMetadataValid();
+        bool hasFailed();
+
         void setSts(const QString &sts);
         void setPlayerSourceUrl(const QString &pSourceUrl);
         void setTitle(const QString &title);
         void setDuration(int durationInSeconds);
         void setExpirationDate(const QDateTime &expiration);
         void setAudioStreamInfos(const YoutubeAudioStreamInfos &adaptativeStreamInfos);
+        void setFailure(bool failed);
 
         YoutubeAudioStreamInfos* audioStreams();
+
+    signals:
+        void metadataFetching();
+        void metadataRefreshed();
+        void streamFailed();
 
     private:
         int _durationInSeconds = -1;
         QString _videoId;
         QString _url;
         QString _title;
+        bool _failed = false;
 
         QString _sts;
         QString _playerSourceUrl;
@@ -54,3 +68,4 @@ class YoutubeVideoMetadata {
         QHash<int, QHash<QString, QString>> _sourceUrlsByItag;
         QHash<int, QString> _audioTypeByItag;
 };
+
