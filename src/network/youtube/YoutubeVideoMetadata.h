@@ -17,6 +17,8 @@
 
 #include "src/helpers/_appContext.h"
 
+typedef QString YoutubeVideoID;
+
 class YoutubeVideoMetadata : public QObject {
     
     Q_OBJECT
@@ -25,9 +27,9 @@ class YoutubeVideoMetadata : public QObject {
         static YoutubeVideoMetadata* fromVideoUrl(const QString &url);
         static QString urlFromVideoId(const QString &videoId);
         
-        YoutubeVideoMetadata(const QString &videoId);
+        YoutubeVideoMetadata(const YoutubeVideoID &videoId);
 
-        QString id() const;
+        YoutubeVideoID id() const;
         QString title() const;
         QString url() const;
         QString sts() const;
@@ -53,7 +55,7 @@ class YoutubeVideoMetadata : public QObject {
 
     private:
         int _durationInSeconds = -1;
-        QString _videoId;
+        YoutubeVideoID _videoId;
         QString _url;
         QString _title;
         bool _failed = false;

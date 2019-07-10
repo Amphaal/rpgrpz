@@ -126,18 +126,22 @@ void Playlist::dropEvent(QDropEvent *event) {
 
 
 void Playlist::addYoutubeVideo(const QString &url) {
-        
-    //prepare item
-    auto playlistItem = new QListWidgetItem(url);
+    
+    //metadata definition
     auto data = YoutubeVideoMetadata::fromVideoUrl(url);
     auto videoId = data->id();
 
     //handle duplicates
     if(this->_playlistVideoIds.contains(videoId)) {
         QToolTip::showText(this->mapToGlobal(QPoint()), "Ce lien Youtube a déjà été inclu !");
+        delete data;
         return;
     }
     this->_playlistVideoIds.insert(videoId);
+    auto pos = QString::number(this->_playlistVideoIds.count()) + ". ";
+
+    //prepare item
+    auto playlistItem = new QListWidgetItem(pos + url);   
 
     //define inner data
     auto c_data_pointer = (long long)data;
@@ -158,7 +162,7 @@ void Playlist::addYoutubeVideo(const QString &url) {
                             .arg(data->title())
                             .arg(durationStr);
 
-            playlistItem->setText(title);
+            playlistItem->setText(pos + title);
             
             //define active YT icon
             playlistItem->setIcon(QIcon(":/icons/app/audio/youtube.png"));
@@ -170,7 +174,7 @@ void Playlist::addYoutubeVideo(const QString &url) {
         data, &YoutubeVideoMetadata::metadataFetching,
         [=]() {  
             playlistItem->setIcon(QIcon(":/icons/app/audio/youtubeGrey.png"));
-            playlistItem->setText("(Chargement des métadonnées...) " + data->url()); 
+            playlistItem->setText(pos + "(Chargement des métadonnées...) " + data->url()); 
         }
     );
 
@@ -178,7 +182,7 @@ void Playlist::addYoutubeVideo(const QString &url) {
         data, &YoutubeVideoMetadata::streamFailed,
         [=]() {  
             playlistItem->setIcon(QIcon(":/icons/app/audio/youtubeError.png"));
-            playlistItem->setText("(Erreur) " + data->url()); 
+            playlistItem->setText(pos + "(Erreur) " + data->url()); 
         }
     );
 

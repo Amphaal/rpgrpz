@@ -38,7 +38,7 @@ class Playlist : public QListWidget {
 
     private:
 
-        QSet<QString> _playlistVideoIds;
+        QSet<YoutubeVideoID> _playlistVideoIds;
 
         void _onItemDoubleClicked(QListWidgetItem * item);
         QListWidgetItem* _playlistItemToUse = nullptr;
