@@ -21,7 +21,10 @@ promise::Defer YoutubeHelper::refreshMetadata(YoutubeVideoMetadata* toRefresh, b
         .then([=]() {
             emit toRefresh->metadataRefreshed();
             d.resolve(toRefresh);
-        }).fail([= ]() {
+        }).fail([=](const std::runtime_error &err) {
+            qWarning() << "Youtube : error while fecthing audio stream >> " << err.what();
+            toRefresh->setFailure(true); 
+        }).fail([=]() {
            toRefresh->setFailure(true); 
         });
 
@@ -106,12 +109,15 @@ promise::Defer YoutubeHelper::_downloadVideoInfosAndAugmentMetadata(YoutubeVideo
     
     //define timestamp for request
     auto requestedAt = QDateTime::currentDateTime();
-    auto cachedDecipherer = YoutubeSignatureDecipherer::fromCache(metadata->playerSourceUrl());
+    auto ytPlayerSourceUrl = metadata->playerSourceUrl();
+    auto cachedDecipherer = YoutubeSignatureDecipherer::fromCache(ytPlayerSourceUrl);
+
+    qDebug() << "Youtube: YT player source URL : " + ytPlayerSourceUrl;
 
     //helper for raw data download
     QVector<promise::Defer> dlPromises{
         _getVideoInfosRawData(metadata),
-        !cachedDecipherer ? download(metadata->playerSourceUrl()) : promise::resolve(QByteArray())
+        !cachedDecipherer ? download(ytPlayerSourceUrl) : promise::resolve(QByteArray())
     };
     auto downloadAll = promise::all(dlPromises);
 
@@ -123,7 +129,7 @@ promise::Defer YoutubeHelper::_downloadVideoInfosAndAugmentMetadata(YoutubeVideo
         auto rawPlayerSourceData = static_cast<QByteArray*>(results[1].tuple_element(0));
 
         auto c_decipherer = cachedDecipherer ? cachedDecipherer : YoutubeSignatureDecipherer::create(
-                                                                    metadata->playerSourceUrl(),
+                                                                    ytPlayerSourceUrl,
                                                                     QString::fromUtf8(*rawPlayerSourceData)
                                                                   );
 
