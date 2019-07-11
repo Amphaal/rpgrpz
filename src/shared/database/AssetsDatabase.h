@@ -20,7 +20,7 @@
 
 #include "src/helpers/_appContext.h"
 
-typedef QString RPZAssetPath;
+typedef QString RPZAssetPath; //internal DB arborescence path (only containers)
 
 class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabaseElement {
     

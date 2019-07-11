@@ -23,13 +23,11 @@ class AtomEditionManager : public QWidget {
             return this->_editor;
         }
 
-        void onSubjectedAtomsChange(QVector<void*> &subjectsChanged) {
-            QVector<RPZAtom*> list;
-            for(auto atom : subjectsChanged) list.append((RPZAtom*)atom);
+        void onSubjectedAtomsChange(QVector<RPZAtom*> &subjectsChanged) {
 
-            this->_resetButton->setEnabled(list.count());
+            this->_resetButton->setEnabled(subjectsChanged.count());
 
-            this->_editor->buildEditor(list);
+            this->_editor->buildEditor(subjectsChanged);
         }
     
     private:

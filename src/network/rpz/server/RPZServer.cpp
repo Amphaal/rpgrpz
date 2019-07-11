@@ -116,10 +116,16 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         }
         break;
 
-        case JSONMethod::AskForAsset: {   
-            RPZAssetId id = data.toString();
-            auto package = AssetsDatabase::get()->prepareAssetPackage(id);
-            target->sendJSON(JSONMethod::RequestedAsset, package);
+        case JSONMethod::AskForAssets: {   
+            auto list = data.toList();
+            QList<RPZAssetId> requestedIds;
+            for(auto &var : list) requestedIds.append(var.toString());
+
+            for(auto &id : requestedIds) {
+                auto package = AssetsDatabase::get()->prepareAssetPackage(id);
+                target->sendJSON(JSONMethod::RequestedAsset, package);
+            }
+
         }
         break;
 

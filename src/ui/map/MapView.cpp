@@ -147,7 +147,7 @@ void MapView::leaveEvent(QEvent *event) {
 }
 
 void MapView::onAtomTemplateChange() {
-    auto subjects = QVector<void*>({this->_hints->templateAtom});
+    auto subjects = QVector<RPZAtom*>({this->_hints->templateAtom});
     emit subjectedAtomsChanged(subjects);
     
     //update the ghost graphics item to display the updated values
@@ -165,7 +165,7 @@ void MapView::_handleGhostItem(const Tool &tool) {
     if(tool == Atom) this->_generateGhostItemFromBuffer();
     else {
         this->_clearGhostItem();
-        auto subjects = QVector<void*>(); //no more subjects
+        auto subjects = QVector<RPZAtom*>(); //no more subjects
         emit subjectedAtomsChanged(subjects);
     }
 }
@@ -175,7 +175,7 @@ void MapView::_onSceneSelectionChanged() {
     
     auto selectedAtoms = this->_hints->selectedAtoms();
     
-    QVector<void*> out;
+    QVector<RPZAtom*> out;
     for(auto atom : selectedAtoms) out.append(atom);
 
     emit subjectedAtomsChanged(out);
@@ -211,7 +211,7 @@ void MapView::onRPZClientConnecting(RPZClient * cc) {
 
     //when missing assets
     QObject::connect(
-        this->_hints, &MapHint::requestMissingAsset,
+        this->_hints, &MapHint::requestMissingAssets,
         this->_rpzClient, &RPZClient::askForAsset
     );
 

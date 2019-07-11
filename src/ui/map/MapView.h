@@ -54,7 +54,7 @@ class MapView : public QGraphicsView, public ClientBindable {
     signals:
         void unselectCurrentAssetAsked();
         void remoteChanged(bool isRemote);
-        void subjectedAtomsChanged(QVector<void*> &subjectAtoms);
+        void subjectedAtomsChanged(QVector<RPZAtom*> &subjectAtoms);
 
     protected:
         void enterEvent(QEvent *event) override;

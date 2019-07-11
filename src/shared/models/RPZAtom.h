@@ -63,7 +63,7 @@ enum AtomParameter {
     AssetScale
 };
 
-typedef QString RPZAssetId;
+typedef QString RPZAssetId; //file hash of the asset
 
 class RPZAtom : public Ownable {
     

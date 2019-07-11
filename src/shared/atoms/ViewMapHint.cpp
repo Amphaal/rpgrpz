@@ -382,8 +382,11 @@ void ViewMapHint::_handlePayload(AlterationPayload &payload) {
 
     this->_preventInnerGIEventsHandling = false;
 
-    if()
-    emit requestMissingAssets(assetId);
+    //request assets if there are missing
+    if(this->_missingAssetsIdsFromDb.count()) {
+        emit requestMissingAssets(this->_missingAssetsIdsFromDb.keys());
+    }
+    
 }
 
 //register actions

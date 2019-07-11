@@ -188,8 +188,10 @@ void RPZClient::sendMessage(QVariantHash &message) {
     this->sendJSON(JSONMethod::MessageFromPlayer, msg);
 }
 
-void RPZClient::askForAsset(const RPZAssetId &id) {
-    this->sendJSON(JSONMethod::AskForAsset, id);
+void RPZClient::askForAssets(QList<RPZAssetId> ids) {
+    QVariantList list;
+    for(auto &id : ids) list.append(id);
+    this->sendJSON(JSONMethod::AskForAssets, list);
 }
 
 void RPZClient::sendMapChanges(QVariantHash &payload) {

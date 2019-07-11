@@ -60,7 +60,7 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
 
     signals:
         void mapFileStateChanged(const QString &filePath, bool isDirty);
-        void requestMissingAssets(QList<RPZAssetId> &assetIdsToRequest);
+        void requestMissingAssets(QList<RPZAssetId> assetIdsToRequest);
         void atomTemplateChanged();
 
     private:
