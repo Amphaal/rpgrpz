@@ -19,7 +19,7 @@ AssetsDatabaseElement::AssetsDatabaseElement(
     const QString &name, 
     AssetsDatabaseElement* parent,
     const AssetsDatabaseElement::Type &type,
-    QString id
+    RPZAssetId id
 ) { 
     //define type
     this->_setType(type);
@@ -65,7 +65,7 @@ QString AssetsDatabaseElement::displayName() {
     return this->_name;
 }
 
-QString AssetsDatabaseElement::id() {
+RPZAssetId AssetsDatabaseElement::id() {
     return this->_id;
 }
 

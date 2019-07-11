@@ -63,6 +63,8 @@ enum AtomParameter {
     AssetScale
 };
 
+typedef QString RPZAssetId;
+
 class RPZAtom : public Ownable {
     
     public:
@@ -93,7 +95,7 @@ class RPZAtom : public Ownable {
         QSet<AtomParameter> legalParameters();
         QSet<AtomParameter> customizableParams();
 
-        QString assetId();
+        RPZAssetId assetId();
         QString assetName();
         double scale();
         double rotation();

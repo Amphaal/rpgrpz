@@ -8,7 +8,7 @@
 
 enum LayoutCustomRoles {
     OwnerIdRole = 267, 
-    AssetIdRole = 260, 
+    RPZAssetIdRole = 260, 
     VisibilityRole = 261, 
     AvailabilityRole = 262 
 };

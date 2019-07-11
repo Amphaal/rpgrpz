@@ -93,7 +93,7 @@ QVariant RPZAtom::metadata(const AtomParameter &key) {
     }
 }
 
-QString RPZAtom::assetId() { return this->metadata(AtomParameter::AssetId).toString(); }
+RPZAssetId RPZAtom::assetId() { return this->metadata(AtomParameter::AssetId).toString(); }
 QString RPZAtom::assetName() { return this->metadata(AtomParameter::AssetName).toString();}
 double RPZAtom::scale() { return this->metadata(AtomParameter::Scale).toDouble();}
 double RPZAtom::rotation() { return this->metadata(AtomParameter::Rotation).toDouble(); }

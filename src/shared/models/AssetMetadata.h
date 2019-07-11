@@ -14,7 +14,7 @@ class AssetMetadata : public QVariantHash {
 
         QString pathToAssetFile();
         QString assetName();
-        QString assetId();
+        RPZAssetId assetId();
         AtomType atomType();
         int brushWidth();
 

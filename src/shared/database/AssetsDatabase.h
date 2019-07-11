@@ -20,6 +20,8 @@
 
 #include "src/helpers/_appContext.h"
 
+typedef QString RPZAssetPath;
+
 class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabaseElement {
     
     Q_OBJECT
@@ -36,20 +38,20 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
         bool moveItems(QList<AssetsDatabaseElement*> selectedItemsToMove, AssetsDatabaseElement* target);
 
         //network import/export
-        QVariantHash prepareAssetPackage(QString &assetId);
-        QString importAsset(const QVariantHash &package);
+        QVariantHash prepareAssetPackage(RPZAssetId &id);
+        RPZAssetId importAsset(const QVariantHash &package);
 
         //read
         QJsonObject paths();
         QJsonObject assets();
 
         QString getFilePathToAsset(AssetsDatabaseElement* asset);
-        QString getFilePathToAsset(const QString &assetId);
+        QString getFilePathToAsset(const RPZAssetId &id);
 
         static QString assetsStorageFilepath();
 
     signals:
-        void assetRenamed(const QString &assetId, const QString &newName);
+        void assetRenamed(const RPZAssetId &id, const QString &newName);
 
     protected:
         const QString defaultJsonDoc() override;
@@ -72,19 +74,19 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
         void _renameFolder(QString &name, AssetsDatabaseElement* target);
 
         //insertAsset() helpers
-        QString _getFileSignatureFromFileUri(QUrl &url); //return the hash
-        bool _moveFileToDbFolder(QUrl &url, QString &id);
-        QUrl _moveFileToDbFolder(QByteArray &data, QString &fileExt, QString &name, QString &id);
-        QString _addAssetToDb(QString &id, QUrl &url, AssetsDatabaseElement* parent); //returns a default displayname
+        RPZAssetId _getFileSignatureFromFileUri(QUrl &url); //return the hash
+        bool _moveFileToDbFolder(QUrl &url, RPZAssetId &id);
+        QUrl _moveFileToDbFolder(QByteArray &data, QString &fileExt, QString &name, RPZAssetId &id);
+        QString _addAssetToDb(RPZAssetId &id, QUrl &url, AssetsDatabaseElement* parent); //returns a default displayname
 
         //removeItems() helpers
-        QSet<QString> _getPathsToAlterFromList(QList<AssetsDatabaseElement*> &elemsToAlter);
-        QHash<QString, QSet<QString>> _getAssetsToAlterFromList(QList<AssetsDatabaseElement*> &elemsToAlter);
-        QSet<QString> _augmentPathsSetWithMissingDescendents(QSet<QString> &setToAugment);
-        void _augmentAssetsHashWithMissingDescendents(QHash<QString, QSet<QString>> &hashToAugment, QSet<QString> &morePathsToDelete);
-        QList<QString> _removeIdsFromPaths(QJsonObject &db_paths, QHash<QString, QSet<QString>> &idsToRemoveByPath); //returns removed ids
-        void _removeAssetsFromDb(QJsonObject &db_assets, QList<QString> &assetIdsToRemove);
-        void _removeAssetFile(QString &id, QJsonObject &asset);
+        QSet<RPZAssetPath> _getPathsToAlterFromList(QList<AssetsDatabaseElement*> &elemsToAlter);
+        QHash<RPZAssetPath, QSet<RPZAssetId>> _getAssetsToAlterFromList(QList<AssetsDatabaseElement*> &elemsToAlter);
+        QSet<RPZAssetPath> _augmentPathsSetWithMissingDescendents(QSet<RPZAssetPath> &setToAugment);
+        void _augmentAssetsHashWithMissingDescendents(QHash<RPZAssetPath, QSet<RPZAssetId>> &hashToAugment, QSet<RPZAssetPath> &morePathsToDelete);
+        QList<RPZAssetId> _removeIdsFromPaths(QJsonObject &db_paths, QHash<RPZAssetPath, QSet<RPZAssetId>> &idsToRemoveByPath); //returns removed ids
+        void _removeAssetsFromDb(QJsonObject &db_assets, QList<RPZAssetId> &assetIdsToRemove);
+        void _removeAssetFile(RPZAssetId &id, QJsonObject &asset);
 
         ////////////////////////////////////
         // INITIAL Tree Injection helpers //
@@ -96,13 +98,13 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
         void _injectDbStructure();              
             
             //returns last elem by path created
-            QHash<QString, AssetsDatabaseElement*> _generateFolderTreeFromDb();
+            QHash<RPZAssetPath, AssetsDatabaseElement*> _generateFolderTreeFromDb();
 
             //iterate through paths chunks and create missing folders at each pass, returns last folder found/created
             AssetsDatabaseElement* _recursiveElementCreator(AssetsDatabaseElement* parent, QList<QString> pathChunks); 
 
             //from definitive paths, fetch items from db and generate elements
-            void _generateItemsFromDb(QHash<QString, AssetsDatabaseElement*> &pathsToFillWithItems);
+            void _generateItemsFromDb(QHash<RPZAssetPath, AssetsDatabaseElement*> &pathsToFillWithItems);
 
 
 };

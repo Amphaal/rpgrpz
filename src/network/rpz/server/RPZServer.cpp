@@ -117,8 +117,8 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         break;
 
         case JSONMethod::AskForAsset: {   
-            auto assetId = data.toString();
-            auto package = AssetsDatabase::get()->prepareAssetPackage(assetId);
+            RPZAssetId id = data.toString();
+            auto package = AssetsDatabase::get()->prepareAssetPackage(id);
             target->sendJSON(JSONMethod::RequestedAsset, package);
         }
         break;

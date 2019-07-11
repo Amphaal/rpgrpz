@@ -67,7 +67,7 @@ void TreeMapHint::_handlePayload(AlterationPayload &payload) {
         for(auto layerItem : this->_layersItems) delete layerItem;
         this->_layersItems.clear();
         
-        this->_atomIdsBoundByAssetId.clear();
+        this->_atomIdsBoundByRPZAssetId.clear();
     }
 
     //atom wielders format
@@ -119,7 +119,7 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
             //if has assetId, add it
             auto assetId = atom.assetId();
             if(!assetId.isNull()) {
-                this->_atomIdsBoundByAssetId[assetId].insert(targetedAtomId);
+                this->_atomIdsBoundByRPZAssetId[assetId].insert(targetedAtomId);
             }
         }
         break;
@@ -133,11 +133,11 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
         case PayloadAlteration::Removed: {
             
             auto layerItem = item->parent();
-            auto tbrAtom_assetId = item->data(0, LayoutCustomRoles::AssetIdRole).toString();
+            RPZAssetId tbrAtom_assetId = item->data(0, LayoutCustomRoles::RPZAssetIdRole).toString();
 
             //if has assetId, remove it from tracking list
             if(!tbrAtom_assetId.isNull()) {
-                    this->_atomIdsBoundByAssetId[tbrAtom_assetId].remove(targetedAtomId);
+                    this->_atomIdsBoundByRPZAssetId[tbrAtom_assetId].remove(targetedAtomId);
             }
 
             this->_atomTreeItemsById.remove(targetedAtomId);
@@ -197,9 +197,9 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
 }
 
 void TreeMapHint::_onRenamedAsset(const QString &assetId, const QString &newName) {
-    if(!this->_atomIdsBoundByAssetId.contains(assetId)) return;
+    if(!this->_atomIdsBoundByRPZAssetId.contains(assetId)) return;
 
-    for(auto &atomId : this->_atomIdsBoundByAssetId[assetId]) {
+    for(auto &atomId : this->_atomIdsBoundByRPZAssetId[assetId]) {
         this->_atomTreeItemsById[atomId]->setText(0, newName);
     }
 }
@@ -277,7 +277,7 @@ QTreeWidgetItem* TreeMapHint::_createTreeItem(RPZAtom &atom) {
     
     item->setText(0, atom.descriptor());
     item->setData(0, Qt::UserRole, atom.id());
-    item->setData(0, LayoutCustomRoles::AssetIdRole, atom.assetId());
+    item->setData(0, LayoutCustomRoles::RPZAssetIdRole, atom.assetId());
 
     item->setData(1, LayoutCustomRoles::VisibilityRole, atom.isHidden());
     item->setData(1, LayoutCustomRoles::AvailabilityRole, atom.isLocked());
