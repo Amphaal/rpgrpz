@@ -39,8 +39,8 @@ void RPZServer::_onNewConnection() {
         //create new user
         auto user = RPZUser(clientSocket);
 
-        //check if host
-        if(clientSocket->socket()->localAddress().isLoopback()) {
+        //check if connecting from localhost and no host has already been elected
+        if(clientSocket->socket()->localAddress().isLoopback() && !this->_hostSocket) {
             this->_hostSocket = clientSocket;
             user.setRole(RPZUser::Role::Host);
         }
@@ -240,10 +240,11 @@ void RPZServer::_broadcastMapChanges(QVariantHash &payload, JSONSocket * senderS
     this->_hints->handleAlterationRequest(payload);
 
     //add source for outer calls
-    aPayload->changeSource(this->_hints->source());
+    auto source = this->_hints->source();
+    aPayload->changeSource(source);
 
     //send to registered users...
-    this->_sendToAllButSelf(senderSocket, JSONMethod::MapChanged, payload);
+    this->_sendToAllButSelf(senderSocket, JSONMethod::MapChanged, *aPayload);
 }
 
 void RPZServer::_sendMapHistory(JSONSocket * clientSocket) {

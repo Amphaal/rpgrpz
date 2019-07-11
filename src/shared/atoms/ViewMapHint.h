@@ -82,6 +82,7 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
 
         //missing assets tracking
         QMultiHash<RPZAssetId, QGraphicsRectItem*> _missingAssetsIdsFromDb;
+        QSet<RPZAssetId> _assetsIdsToRequest;
 
         //augmenting AtomsStorage
         virtual void _handlePayload(AlterationPayload &payload) override;

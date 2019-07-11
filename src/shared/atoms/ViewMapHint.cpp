@@ -239,7 +239,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
 
             //add graphic item to list of items to replace at times
             this->_missingAssetsIdsFromDb.insert(assetId, placeholder);
-
+            this->_assetsIdsToRequest.insert(assetId);
         }
 
     } 
@@ -383,8 +383,10 @@ void ViewMapHint::_handlePayload(AlterationPayload &payload) {
     this->_preventInnerGIEventsHandling = false;
 
     //request assets if there are missing
-    if(this->_missingAssetsIdsFromDb.count()) {
-        emit requestMissingAssets(this->_missingAssetsIdsFromDb.keys());
+    if(this->_assetsIdsToRequest.count()) {
+        auto toRequest = this->_assetsIdsToRequest.toList();
+        this->_assetsIdsToRequest.clear();
+        emit requestMissingAssets(toRequest);
     }
     
 }

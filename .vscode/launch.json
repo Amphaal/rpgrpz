@@ -14,8 +14,7 @@
             "cwd": "${workspaceFolder}/build/Debug",
             "environment": [],
             
-            "externalConsole": false,
-            "preLaunchTask": "Debug - 3. Build"
+            "externalConsole": false
         },
         {
             "name": "Random No Server",
@@ -27,8 +26,7 @@
             "cwd": "${workspaceFolder}/build/Debug",
             "environment": [],
             
-            "externalConsole": false,
-            "preLaunchTask": "Debug - 3. Build"
+            "externalConsole": false
         },
         {
             "name": "Launch",
@@ -62,8 +60,7 @@
                 }
             ],
             
-            "externalConsole": false,
-            "preLaunchTask": "Debug - 3. Build"
+            "externalConsole": false
         }
     ]
 }

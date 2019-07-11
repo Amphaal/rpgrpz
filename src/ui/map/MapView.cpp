@@ -212,7 +212,7 @@ void MapView::onRPZClientConnecting(RPZClient * cc) {
     //when missing assets
     QObject::connect(
         this->_hints, &MapHint::requestMissingAssets,
-        this->_rpzClient, &RPZClient::askForAsset
+        this->_rpzClient, &RPZClient::askForAssets
     );
 
     //when receiving missing asset
