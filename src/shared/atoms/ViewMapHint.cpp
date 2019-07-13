@@ -3,8 +3,12 @@
 ViewMapHint::ViewMapHint(QGraphicsView* boundGv) : AtomsStorage(AlterationPayload::Source::Local_Map), 
     AtomsContextualMenuHandler(this, boundGv), 
     templateAtom(new RPZAtom),
-    _boundGv(boundGv) {
-
+    _boundGv(boundGv),
+    _hiddingBrush(new QBrush("#EEE", Qt::BrushStyle::SolidPattern)) {
+    
+    //auto hidding
+    this->_boundGv->setForegroundBrush(*this->_hiddingBrush);
+    
     //default layer from settings
     this->setDefaultLayer(AppContext::settings()->defaultLayer());
 

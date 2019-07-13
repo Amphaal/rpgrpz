@@ -28,10 +28,10 @@ class TreeMapHint : public AtomsHandler, public AtomsContextualMenuHandler  {
 
         void _onElementSelectionChanged();
         void _onElementDoubleClicked(QTreeWidgetItem * item, int column);
-        void _onRenamedAsset(const RPZAssetId &id, const QString &newName);
+        void _onRenamedAsset(const RPZAssetHash &id, const QString &newName);
         
         QHash<snowflake_uid, QTreeWidgetItem*> _atomTreeItemsById;
-        QHash<RPZAssetId, QSet<snowflake_uid>> _atomIdsBoundByRPZAssetId;
+        QHash<RPZAssetHash, QSet<snowflake_uid>> _atomIdsBoundByRPZAssetHash;
         
         QVector<snowflake_uid> _selectedAtomIds() override;
         snowflake_uid _extractAtomIdFromItem(QTreeWidgetItem* item) const;

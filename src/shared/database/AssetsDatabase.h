@@ -38,20 +38,20 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
         bool moveItems(QList<AssetsDatabaseElement*> selectedItemsToMove, AssetsDatabaseElement* target);
 
         //network import/export
-        QVariantHash prepareAssetPackage(RPZAssetId &id);
-        RPZAssetId importAsset(const QVariantHash &package);
+        QVariantHash prepareAssetPackage(RPZAssetHash &id);
+        RPZAssetHash importAsset(const QVariantHash &package);
 
         //read
         QJsonObject paths();
         QJsonObject assets();
 
         QString getFilePathToAsset(AssetsDatabaseElement* asset);
-        QString getFilePathToAsset(const RPZAssetId &id);
+        QString getFilePathToAsset(const RPZAssetHash &id);
 
         static QString assetsStorageFilepath();
 
     signals:
-        void assetRenamed(const RPZAssetId &id, const QString &newName);
+        void assetRenamed(const RPZAssetHash &id, const QString &newName);
 
     protected:
         const QString defaultJsonDoc() override;
@@ -74,19 +74,19 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
         void _renameFolder(QString &name, AssetsDatabaseElement* target);
 
         //insertAsset() helpers
-        RPZAssetId _getFileSignatureFromFileUri(QUrl &url); //return the hash
-        bool _moveFileToDbFolder(QUrl &url, RPZAssetId &id);
-        QUrl _moveFileToDbFolder(QByteArray &data, QString &fileExt, QString &name, RPZAssetId &id);
-        QString _addAssetToDb(RPZAssetId &id, QUrl &url, AssetsDatabaseElement* parent); //returns a default displayname
+        RPZAssetHash _getFileSignatureFromFileUri(QUrl &url); //return the hash
+        bool _moveFileToDbFolder(QUrl &url, RPZAssetHash &id);
+        QUrl _moveFileToDbFolder(QByteArray &data, QString &fileExt, QString &name, RPZAssetHash &id);
+        QString _addAssetToDb(RPZAssetHash &id, QUrl &url, AssetsDatabaseElement* parent); //returns a default displayname
 
         //removeItems() helpers
         QSet<RPZAssetPath> _getPathsToAlterFromList(QList<AssetsDatabaseElement*> &elemsToAlter);
-        QHash<RPZAssetPath, QSet<RPZAssetId>> _getAssetsToAlterFromList(QList<AssetsDatabaseElement*> &elemsToAlter);
+        QHash<RPZAssetPath, QSet<RPZAssetHash>> _getAssetsToAlterFromList(QList<AssetsDatabaseElement*> &elemsToAlter);
         QSet<RPZAssetPath> _augmentPathsSetWithMissingDescendents(QSet<RPZAssetPath> &setToAugment);
-        void _augmentAssetsHashWithMissingDescendents(QHash<RPZAssetPath, QSet<RPZAssetId>> &hashToAugment, QSet<RPZAssetPath> &morePathsToDelete);
-        QList<RPZAssetId> _removeIdsFromPaths(QJsonObject &db_paths, QHash<RPZAssetPath, QSet<RPZAssetId>> &idsToRemoveByPath); //returns removed ids
-        void _removeAssetsFromDb(QJsonObject &db_assets, QList<RPZAssetId> &assetIdsToRemove);
-        void _removeAssetFile(RPZAssetId &id, QJsonObject &asset);
+        void _augmentAssetsHashWithMissingDescendents(QHash<RPZAssetPath, QSet<RPZAssetHash>> &hashToAugment, QSet<RPZAssetPath> &morePathsToDelete);
+        QList<RPZAssetHash> _removeIdsFromPaths(QJsonObject &db_paths, QHash<RPZAssetPath, QSet<RPZAssetHash>> &idsToRemoveByPath); //returns removed ids
+        void _removeAssetsFromDb(QJsonObject &db_assets, QList<RPZAssetHash> &assetIdsToRemove);
+        void _removeAssetFile(RPZAssetHash &id, QJsonObject &asset);
 
         ////////////////////////////////////
         // INITIAL Tree Injection helpers //

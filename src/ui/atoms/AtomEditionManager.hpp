@@ -25,7 +25,8 @@ class AtomEditionManager : public QWidget {
 
         void onSubjectedAtomsChange(QVector<RPZAtom*> &subjectsChanged) {
 
-            this->_resetButton->setEnabled(subjectsChanged.count());
+            bool hasSubjects = subjectsChanged.count();
+            this->_resetButton->setEnabled(hasSubjects);
 
             this->_editor->buildEditor(subjectsChanged);
         }

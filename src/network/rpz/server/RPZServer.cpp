@@ -118,7 +118,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
         case JSONMethod::AskForAssets: {   
             auto list = data.toList();
-            QList<RPZAssetId> requestedIds;
+            QList<RPZAssetHash> requestedIds;
             for(auto &var : list) requestedIds.append(var.toString());
 
             for(auto &id : requestedIds) {

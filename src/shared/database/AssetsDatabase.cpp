@@ -38,7 +38,7 @@ QString AssetsDatabase::assetsStorageFilepath() {
 }
 
 
-RPZAssetId AssetsDatabase::importAsset(const QVariantHash &package) {
+RPZAssetHash AssetsDatabase::importAsset(const QVariantHash &package) {
     
     if(package.isEmpty()) return NULL;
     
@@ -47,7 +47,7 @@ RPZAssetId AssetsDatabase::importAsset(const QVariantHash &package) {
     if(!fileBytes.size()) return NULL;
 
     //asset
-    RPZAssetId asset_id = package["_id"].toString();
+    RPZAssetHash asset_id = package["_id"].toString();
     auto asset = QJsonDocument::fromVariant(package["_meta"]).object();
 
     //save file
@@ -66,7 +66,7 @@ RPZAssetId AssetsDatabase::importAsset(const QVariantHash &package) {
     return asset_id;
 }
 
-QVariantHash AssetsDatabase::prepareAssetPackage(RPZAssetId &id) {
+QVariantHash AssetsDatabase::prepareAssetPackage(RPZAssetHash &id) {
     
     //determine id existance by fetching the file path
     auto pathToFile = this->getFilePathToAsset(id);
@@ -89,7 +89,7 @@ QVariantHash AssetsDatabase::prepareAssetPackage(RPZAssetId &id) {
     return package;
 }
 
-QString AssetsDatabase::getFilePathToAsset(const RPZAssetId &id) {
+QString AssetsDatabase::getFilePathToAsset(const RPZAssetHash &id) {
     auto db_assets = this->assets();
     if(!db_assets.contains(id)) return NULL;
 
@@ -250,7 +250,7 @@ void AssetsDatabase::_generateItemsFromDb(QHash<RPZAssetPath, AssetsDatabaseElem
 ///
 ///
 
-RPZAssetId AssetsDatabase::_getFileSignatureFromFileUri(QUrl &url) {
+RPZAssetHash AssetsDatabase::_getFileSignatureFromFileUri(QUrl &url) {
     
     if(!url.isLocalFile()) {
         qDebug() << "Assets : cannot insert, uri is not a file !";
@@ -267,7 +267,7 @@ RPZAssetId AssetsDatabase::_getFileSignatureFromFileUri(QUrl &url) {
     sourceFile.open(QFile::ReadOnly);
         
         //read signature...
-        RPZAssetId signature = QString::fromUtf8(
+        RPZAssetHash signature = QString::fromUtf8(
             QCryptographicHash::hash(
                 sourceFile.readAll(), 
                 QCryptographicHash::Keccak_224
@@ -279,7 +279,7 @@ RPZAssetId AssetsDatabase::_getFileSignatureFromFileUri(QUrl &url) {
     return signature;
 }
 
-QUrl AssetsDatabase::_moveFileToDbFolder(QByteArray &data, QString &fileExt, QString &name, RPZAssetId &id) {
+QUrl AssetsDatabase::_moveFileToDbFolder(QByteArray &data, QString &fileExt, QString &name, RPZAssetHash &id) {
     
     //turn encoded file from JSON into file
     auto destFolder = this->assetsStorageFilepath();
@@ -296,7 +296,7 @@ QUrl AssetsDatabase::_moveFileToDbFolder(QByteArray &data, QString &fileExt, QSt
     return QUrl(forgedDest);
 }
 
-bool AssetsDatabase::_moveFileToDbFolder(QUrl &url, RPZAssetId &id) {
+bool AssetsDatabase::_moveFileToDbFolder(QUrl &url, RPZAssetHash &id) {
 
     //dest file suffix
     QFileInfo fInfo(url.fileName());
@@ -314,7 +314,7 @@ bool AssetsDatabase::_moveFileToDbFolder(QUrl &url, RPZAssetId &id) {
     return !destUrl.isEmpty();
 }
 
-QString AssetsDatabase::_addAssetToDb(RPZAssetId &id, QUrl &url, AssetsDatabaseElement* parent) {
+QString AssetsDatabase::_addAssetToDb(RPZAssetHash &id, QUrl &url, AssetsDatabaseElement* parent) {
 
     //prepare
     auto db_paths = this->paths();
@@ -515,7 +515,7 @@ bool AssetsDatabase::rename(QString name, AssetsDatabaseElement* target) {
 ///
 ////
 
-void AssetsDatabase::_removeAssetFile(RPZAssetId &id, QJsonObject &asset) {
+void AssetsDatabase::_removeAssetFile(RPZAssetHash &id, QJsonObject &asset) {
     
     //prepare
     auto fileName = id + "." + asset["ext"].toString();
@@ -542,8 +542,8 @@ QSet<RPZAssetPath> AssetsDatabase::_getPathsToAlterFromList(QList<AssetsDatabase
     return out;
 }
 
-QHash<RPZAssetPath, QSet<RPZAssetId>> AssetsDatabase::_getAssetsToAlterFromList(QList<AssetsDatabaseElement*> &elemsToAlter) {
-    auto out = QHash<RPZAssetPath, QSet<RPZAssetId>>();
+QHash<RPZAssetPath, QSet<RPZAssetHash>> AssetsDatabase::_getAssetsToAlterFromList(QList<AssetsDatabaseElement*> &elemsToAlter) {
+    auto out = QHash<RPZAssetPath, QSet<RPZAssetHash>>();
     
     for(auto &elem : elemsToAlter) {
         if(elem->isItem()) {
@@ -554,7 +554,7 @@ QHash<RPZAssetPath, QSet<RPZAssetId>> AssetsDatabase::_getAssetsToAlterFromList(
     return out;
 }
 
-void AssetsDatabase::_augmentAssetsHashWithMissingDescendents(QHash<RPZAssetPath, QSet<RPZAssetId>> &hashToAugment, QSet<RPZAssetPath> &morePathsToDelete) {
+void AssetsDatabase::_augmentAssetsHashWithMissingDescendents(QHash<RPZAssetPath, QSet<RPZAssetHash>> &hashToAugment, QSet<RPZAssetPath> &morePathsToDelete) {
     
     auto db_paths = this->paths();
 
@@ -573,12 +573,12 @@ void AssetsDatabase::_augmentAssetsHashWithMissingDescendents(QHash<RPZAssetPath
 
 }
 
-QList<RPZAssetId> AssetsDatabase::_removeIdsFromPaths(QJsonObject &db_paths, QHash<RPZAssetPath, QSet<RPZAssetId>> &idsToRemoveByPath) {
+QList<RPZAssetHash> AssetsDatabase::_removeIdsFromPaths(QJsonObject &db_paths, QHash<RPZAssetPath, QSet<RPZAssetHash>> &idsToRemoveByPath) {
     
-    QList<RPZAssetId> ids;
+    QList<RPZAssetHash> ids;
 
     //delete for each path
-    QHash<RPZAssetPath, QSet<RPZAssetId>>::iterator i;
+    QHash<RPZAssetPath, QSet<RPZAssetHash>>::iterator i;
     for (i = idsToRemoveByPath.begin(); i != idsToRemoveByPath.end(); ++i) { 
         
         //preapre
@@ -608,7 +608,7 @@ QList<RPZAssetId> AssetsDatabase::_removeIdsFromPaths(QJsonObject &db_paths, QHa
     return ids;
 }
 
-void AssetsDatabase::_removeAssetsFromDb(QJsonObject &db_assets, QList<RPZAssetId> &assetIdsToRemove) {
+void AssetsDatabase::_removeAssetsFromDb(QJsonObject &db_assets, QList<RPZAssetHash> &assetIdsToRemove) {
 
     //finally delete items
     for(auto &id : assetIdsToRemove) {

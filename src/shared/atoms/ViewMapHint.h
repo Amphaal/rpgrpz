@@ -36,7 +36,7 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         MapViewGraphicsScene* scene();
 
         //replace placeholders
-        void replaceMissingAssetPlaceholders(const RPZAssetId &id);
+        void replaceMissingAssetPlaceholders(const RPZAssetHash &id);
 
         //actions helpers
         void deleteCurrentSelectionItems();
@@ -60,7 +60,7 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
 
     signals:
         void mapFileStateChanged(const QString &filePath, bool isDirty);
-        void requestMissingAssets(QList<RPZAssetId> assetIdsToRequest);
+        void requestMissingAssets(QList<RPZAssetHash> assetIdsToRequest);
         void atomTemplateChanged();
 
     private:
@@ -78,11 +78,12 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
             QSet<QGraphicsItem*> _itemsWhoNotifiedMovement;
 
     protected:
+        QBrush* _hiddingBrush = nullptr;
         QGraphicsView* _boundGv = nullptr;
 
         //missing assets tracking
-        QMultiHash<RPZAssetId, QGraphicsRectItem*> _missingAssetsIdsFromDb;
-        QSet<RPZAssetId> _assetsIdsToRequest;
+        QMultiHash<RPZAssetHash, QGraphicsRectItem*> _missingAssetsIdsFromDb;
+        QSet<RPZAssetHash> _assetsIdsToRequest;
 
         //augmenting AtomsStorage
         virtual void _handlePayload(AlterationPayload &payload) override;

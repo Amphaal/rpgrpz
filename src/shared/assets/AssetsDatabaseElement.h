@@ -37,7 +37,7 @@ class AssetsDatabaseElement {
         static QList<AssetsDatabaseElement::Type> internalItemTypes();
         static QString typeDescription(AssetsDatabaseElement::Type &type);
 
-        AssetsDatabaseElement(const QString &name, AssetsDatabaseElement* parent, const AssetsDatabaseElement::Type &type = Folder, RPZAssetId id = "");
+        AssetsDatabaseElement(const QString &name, AssetsDatabaseElement* parent, const AssetsDatabaseElement::Type &type = Folder, RPZAssetHash id = "");
         AssetsDatabaseElement();
         ~AssetsDatabaseElement();
 
@@ -49,7 +49,7 @@ class AssetsDatabaseElement {
         QString displayName();
         QString path();
         QString fullPath();
-        RPZAssetId id();
+        RPZAssetHash id();
         Qt::ItemFlags flags();
 
         //sanitize and check if the name change is OK
@@ -96,7 +96,7 @@ class AssetsDatabaseElement {
         AssetsDatabaseElement::Type _insertType = T_Unknown;
         AssetsDatabaseElement::Type _rootStaticContainerType = T_Unknown;
         AtomType _atomType = AtomType::Undefined;
-        RPZAssetId _id = "";
+        RPZAssetHash _id = "";
         QString _name = "";
         QString _path = "";
         QString _fullPath = "";

@@ -24,7 +24,7 @@ QString AssetMetadata::assetName() {
     return this->value("nm").toString();
 }
 
-RPZAssetId AssetMetadata::assetId() {
+RPZAssetHash AssetMetadata::assetId() {
     return this->value("aId").toString();
 }
 

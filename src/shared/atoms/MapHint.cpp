@@ -81,15 +81,21 @@ bool MapHint::loadState(const QString &filePath) {
     //ask for save if dirty before loading
     this->mayWantToSavePendingState();
 
-    //load file and parse it
-    MapDatabase mapDb(filePath);
-    auto allAtoms = mapDb.toAtoms();
-    auto payload = ResetPayload(allAtoms);
-    this->_handlePayload(payload);
-    
-    //change file path and define as clean
-    this->_stateFilePath = filePath;
-    this->_setDirty(false);
+    //loader....
+    this->_boundGv->setForegroundBrush(*this->_hiddingBrush);
+
+        //load file and parse it
+        MapDatabase mapDb(filePath);
+        auto allAtoms = mapDb.toAtoms();
+        auto payload = ResetPayload(allAtoms);
+        this->_handlePayload(payload);
+        
+        //change file path and define as clean
+        this->_stateFilePath = filePath;
+        this->_setDirty(false);
+
+    //loader...
+    this->_boundGv->setForegroundBrush(QBrush());
 
     return true;
 }

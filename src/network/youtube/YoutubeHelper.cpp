@@ -112,7 +112,7 @@ promise::Defer YoutubeHelper::_downloadVideoInfosAndAugmentMetadata(YoutubeVideo
     auto ytPlayerSourceUrl = metadata->playerSourceUrl();
     auto cachedDecipherer = YoutubeSignatureDecipherer::fromCache(ytPlayerSourceUrl);
 
-    qDebug() << "Youtube: YT player source URL : " + ytPlayerSourceUrl;
+    // qDebug() << "Youtube: YT player source URL : " + ytPlayerSourceUrl;
 
     //helper for raw data download
     QVector<promise::Defer> dlPromises{

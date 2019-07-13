@@ -153,7 +153,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
     }
 }
 
-void RPZClient::informAssetSucessfulInsertion(const RPZAssetId &id) {
+void RPZClient::informAssetSucessfulInsertion(const RPZAssetHash &id) {
     emit assetSucessfullyInserted(id);
 }
 
@@ -188,7 +188,7 @@ void RPZClient::sendMessage(QVariantHash &message) {
     this->sendJSON(JSONMethod::MessageFromPlayer, msg);
 }
 
-void RPZClient::askForAssets(QList<RPZAssetId> ids) {
+void RPZClient::askForAssets(QList<RPZAssetHash> ids) {
     QVariantList list;
     for(auto &id : ids) list.append(id);
     this->sendJSON(JSONMethod::AskForAssets, list);

@@ -9,15 +9,26 @@ void MapDatabase::saveIntoFile(RPZMap<RPZAtom> &atoms) {
     auto copy = this->_db.object();
 
     //reseting "atoms" object
-    auto db_atoms = QJsonArray();
+    QJsonArray db_atoms;
+    QSet<RPZAssetHash> unique_assetIds;
     for(auto &atom : atoms) {
+        
+        //list asset id
+        auto assetId = atom.assetId();
+        if(!assetId.isEmpty()) unique_assetIds.insert(assetId);
 
+        //fill db
         auto casted = QJsonObject::fromVariantHash(atom);
-
         db_atoms.append(casted);
-    }
-    copy["atoms"] = db_atoms;
 
+    }
+
+    //fill copy
+    copy["assets_c"] = unique_assetIds.count();
+    copy["atoms_c"] = db_atoms.count();
+    copy["assets"] = QJsonArray::fromStringList(unique_assetIds.toList());
+    copy["atoms"] = db_atoms;
+    
     //saving...
     this->_updateDbFile(copy);
     qDebug() << "Map database : saving " << atoms.count() << " atoms";
@@ -33,7 +44,7 @@ RPZMap<RPZAtom> MapDatabase::toAtoms() {
         out.insert(atom.id(), atom);
     }
 
-    qDebug() << "Map database :" << out.count() << "atoms read";
+    qDebug() << "MapDB : read" << out.count() << "atoms";
 
     return out;
 }
