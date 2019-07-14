@@ -76,6 +76,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 IF(WIN32)
     add_definitions(-DWIN32_LEAN_AND_MEAN) #std::btye c++17 ambiguity
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS) #ctime_s...
 endif()
 
 if (APPLE)

@@ -5,7 +5,19 @@
 
 #include <QDebug>
 
-#include "snowflake.time.hpp"
+#ifdef __APPLE__
+
+#include <sys/time.h>
+
+#endif
+
+#ifdef _WIN32
+
+#include <stdint.h>
+#include <time.h>
+#include <Windows.h>
+
+#endif
 
 typedef uint64_t snowflake_uid;
 
@@ -38,6 +50,7 @@ class SnowFlake {
 
         uint64_t getNextMill();
         uint64_t getNewstmp();
+        static int gettimeofday(struct timeval * tp, struct timezone * tzp);
 
         static inline SnowFlake* _self = nullptr;
         SnowFlake(int datacenter_Id, int machine_Id);
