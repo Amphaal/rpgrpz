@@ -304,7 +304,7 @@ QList<AssetsDatabaseElement*> AssetsTreeViewModel::pointerListFromMimeData(const
 }
 
 bool AssetsTreeViewModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const {
-    
+
     //prevent dropping anywhere else than in the main column
     if(column > 0) return false;
 

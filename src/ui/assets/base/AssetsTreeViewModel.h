@@ -65,8 +65,9 @@ class AssetsTreeViewModel : public QAbstractItemModel, ClientBindable {
         /// DROP HANDLING ///
         /////////////////////
 
-        bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
         static QList<AssetsDatabaseElement*> pointerListFromMimeData(const QMimeData *data);
+
+        bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
         bool canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const override;
         QMimeData* mimeData(const QModelIndexList &indexes) const override;
         Qt::DropActions supportedDropActions() const override;

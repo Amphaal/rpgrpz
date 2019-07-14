@@ -217,6 +217,7 @@ void AssetsDatabaseElement::rename(const QString &newName) {
 //////////////
 
 void AssetsDatabaseElement::_defineFlags() {
+
     //flags definition
     switch(this->_type) {
         case InternalContainer:
