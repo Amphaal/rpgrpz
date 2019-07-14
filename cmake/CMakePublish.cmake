@@ -29,11 +29,20 @@ set(CPACK_COMPONENTS_ALL app)
     SET(CPACK_IFW_PRODUCT_URL ${APP_MAIN_URL})
     SET(CPACK_IFW_TARGET_DIRECTORY "@ApplicationsDirX64@/${PROJECT_NAME}")
 
-    SET(CPACK_IFW_ROOT "C:/Qt/Tools/QtInstallerFramework/3.1")
     SET(APP_REMOTE_SERVER_PATH "//192.168.0.12/www/RPGRPZ")
-    SET(APP_REMOTE_SERVER_PLATFORM_FOLDER "win")
-    SET(APP_INSTALLER_EXTENSION ".exe")
     SET(APP_ICON_EXT ".ico")
+
+    IF(WIN32)
+        SET(CPACK_IFW_ROOT "C:/Qt/Tools/QtInstallerFramework/3.1")
+        SET(APP_REMOTE_SERVER_PLATFORM_FOLDER "win")
+        SET(APP_INSTALLER_EXTENSION ".exe")
+    endif()
+
+    IF(APPLE)
+        SET(CPACK_IFW_ROOT "/Qt/Tools/QtInstallerFramework/3.1")
+        SET(APP_REMOTE_SERVER_PLATFORM_FOLDER "osx")
+        SET(APP_INSTALLER_EXTENSION ".dmg")
+    endif()
 
     #icons
     SET(CPACK_IFW_PACKAGE_LOGO "${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/app_64.png")

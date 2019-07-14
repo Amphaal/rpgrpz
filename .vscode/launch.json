@@ -6,36 +6,56 @@
     "configurations": [
         {
             "name": "No Server",
-            "type": "cppvsdbg",
+            "type": "cppdbg",
+            "program": "RPGRPZ.exe",
             "request": "launch",
-            "program": "./bin/RPGRPZ.exe",
             "args": ["--noServer --customContext=NoServer"],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build/Debug",
+            "cwd": "${workspaceFolder}/build/Debug/bin",
             "environment": [],
-            
+            "osx": {
+                "program": "${workspaceFolder}/build/Debug/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ",
+                "MIMode": "lldb"
+            },
+            "windows": {
+                "type": "cppvsdbg"
+            },
             "externalConsole": false
         },
         {
             "name": "Random No Server",
-            "type": "cppvsdbg",
+            "type": "cppdbg",
+            "program": "RPGRPZ.exe",
             "request": "launch",
-            "program": "./bin/RPGRPZ.exe",
+            "osx": {
+                "program": "${workspaceFolder}/build/Debug/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ",
+                "MIMode": "lldb"
+            },
+            "windows": {
+                "type": "cppvsdbg"
+            },
             "args": ["--noServer --randomContext"],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build/Debug",
+            "cwd": "${workspaceFolder}/build/Debug/bin",
             "environment": [],
             
             "externalConsole": false
         },
         {
             "name": "Launch",
-            "type": "cppvsdbg",
+            "type": "cppdbg",
+            "program": "RPGRPZ.exe",
             "request": "launch",
-            "program": "./bin/RPGRPZ.exe",
+            "osx": {
+                "program": "${workspaceFolder}/build/Debug/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ",
+                "MIMode": "lldb"
+            },
+            "windows": {
+                "type": "cppvsdbg"
+            },
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build/Debug",
+            "cwd": "${workspaceFolder}/build/Debug/bin",
             "environment": [],
             
             "externalConsole": false,
@@ -43,20 +63,23 @@
         },
         {
             "name": "Test",
-            "type": "cppvsdbg",
+            "type": "cppdbg",
+            "program": "RPGRPZ.exe",
             "request": "launch",
-            "program": "./bin/RPGRPZ.exe",
+            "osx": {
+                "program": "${workspaceFolder}/build/Debug/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ",
+                "MIMode": "lldb"
+            },
+            "windows": {
+                "type": "cppvsdbg"
+            },
             "args": ["--test"],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build/Debug",
+            "cwd": "${workspaceFolder}/build/Debug/bin",
             "environment": [
                 {
                     "name": "GST_DEBUG",
                     "value": "3"
-                },
-                {
-                    "name" : "GST_DEBUG_DUMP_DOT_DIR",
-                    "value": "C:\\Users\\Amphaal\\Desktop"
                 }
             ],
             

@@ -1,14 +1,11 @@
 #pragma once
 
-#include <stdint.h>
-#include <time.h>
 #include <stdexcept>
 #include <mutex>
 
 #include <QDebug>
 
-#include <Windows.h>
-#include <stdint.h> // portable: uint64_t   MSVC: __int64 
+#include "snowflake.time.hpp"
 
 typedef uint64_t snowflake_uid;
 
@@ -40,14 +37,6 @@ class SnowFlake {
         std::mutex mutex_;
 
         uint64_t getNextMill();
-
-        // MSVC defines this in winsock2.h!?
-        typedef struct timeval {
-            long tv_sec;
-            long tv_usec;
-        } timeval;
-
-        int gettimeofday(struct timeval * tp, struct timezone * tzp);
         uint64_t getNewstmp();
 
         static inline SnowFlake* _self = nullptr;

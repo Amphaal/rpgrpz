@@ -67,7 +67,9 @@ class uPnPRequester : public uPnPThread {
                 }
                 
                 /*End websock*/
-                WSACleanup();        
+                #ifdef _WIN32
+                    WSACleanup();
+                #endif        
         }
 
 
@@ -75,12 +77,14 @@ class uPnPRequester : public uPnPThread {
 
         void _initUPnP() {
 
-            /*start websock*/
-            WSADATA wsaData;
-            int nResult = WSAStartup(MAKEWORD(2,2), &wsaData);
-            if(nResult != NO_ERROR) {
-                 qWarning() << "UPNP Inst : Cannot init socket with WSAStartup !";
-            };
+            #ifdef _WIN32
+                /*start websock*/
+                WSADATA wsaData;
+                int nResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+                if(nResult != NO_ERROR) {
+                    qWarning() << "UPNP Inst : Cannot init socket with WSAStartup !";
+                };
+            #endif
             
             /*discover*/
             if( rootdescurl || (devlist = upnpDiscover(2000, multicastif, minissdpdpath, localport, ipv6, ttl, &error))) {
@@ -290,8 +294,9 @@ class uPnPRequester : public uPnPThread {
             if(uptime > 0) {
                 timenow = time(NULL);
                 timestarted = timenow - uptime;
-                char tt[26];
-                ctime_s(tt, sizeof(tt), &timestarted);
+                //char tt[26];
+                //ctime_s(tt, sizeof(tt), &timestarted);
+                auto tt = ctime(&timestarted);
                 qDebug() << "UPNP Info :  Time started :" << tt;
             }
             if(UPNP_GetLinkLayerMaxBitRates(urls.controlURL_CIF, data.CIF.servicetype,

@@ -10,12 +10,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+
 #ifdef _WIN32
-#include <winsock2.h>
+	#include <time.h>
+	#include <winsock2.h>
 #else
 /* for IPPROTO_TCP / IPPROTO_UDP */
-#include <netinet/in.h>
+	#include <sys/time.h>
+	#include <netinet/in.h>
 #endif
 #include <ctype.h>
 #include "miniupnpc.h"
@@ -85,8 +87,9 @@ static void DisplayInfos(struct UPNPUrls * urls,
 	if(uptime > 0) {
 		timenow = time(NULL);
 		timestarted = timenow - uptime;
-		char tt[26];
-		ctime_s(tt, sizeof(tt), &timestarted);
+		auto tt = ctime(&timestarted);
+		//char tt[26];
+		//ctime_s(tt, sizeof(tt), &timestarted);
 		printf("  Time started : %s", tt);
 	}
 	if(UPNP_GetLinkLayerMaxBitRates(urls->controlURL_CIF, data->CIF.servicetype,

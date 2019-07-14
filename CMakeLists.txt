@@ -1,5 +1,5 @@
 project(RPGRPZ)
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.14.3)
 
 #version
 SET(CMAKE_PROJECT_VERSION_MAJOR 0)
@@ -30,7 +30,6 @@ SET(IS_DEBUG_APP OFF)
 IF(CMAKE_INSTALL_CONFIG_NAME STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "Debug")
     #define debug and tool location
     SET(IS_DEBUG_APP ON)
-    SET(MAINTENANCE_TOOL_LOCATION "C:/Program Files/RPGRPZ/maintenancetool")
 ENDIF()
 
 #force build type for Md / Mt flags attribution
@@ -73,7 +72,17 @@ conan_basic_setup(KEEP_RPATHS)
 ################################
 
 SET(CMAKE_CXX_STANDARD 17)
-add_definitions(-DWIN32_LEAN_AND_MEAN) #std::btye c++17 ambiguity
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+IF(WIN32)
+    add_definitions(-DWIN32_LEAN_AND_MEAN) #std::btye c++17 ambiguity
+endif()
+
+if (APPLE)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET 10.14)
+    SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE) #prevent linking errors once app shared
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-no_compact_unwind") #prevent warning
+endif (APPLE)
 
 #########################
 ## Libraries specifics ##
@@ -88,8 +97,18 @@ SET(CMAKE_INCLUDE_CURRENT_DIR ON) #for moc auto
 ## Bundle configuration ##
 ##########################
 
-SET(BUNDLE_TYPE WIN32) #set bundle type
-SET(RPGRPZ_ICO ${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.rc) #add icon
+IF(WIN32)
+    SET(BUNDLE_TYPE WIN32) #set bundle type
+    SET(RPGRPZ_ICO ${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.rc) #add icon
+endif()
+
+IF(APPLE)
+    SET(BUNDLE_TYPE MACOSX_BUNDLE) #set bundle type
+    SET(MACOSX_BUNDLE_ICON_FILE "app.icns") #define icon
+    SET(APP_ICO ${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/app.icns) #add icon
+    set_source_files_properties(${APP_ICO} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources") #locate icon in package
+    set_source_files_properties(${CACERT} PROPERTIES MACOSX_PACKAGE_LOCATION "MacOS") #locate cert in package
+endif()
 
 #default source contains
 SET(SOURCES
@@ -102,9 +121,18 @@ SET(SOURCES
 #############
 
 #pkgConfig setup
-SET(PKG_CONFIG_EXECUTABLE "C:/msys64/mingw64/bin/x86_64-w64-mingw32-pkg-config.exe")
-SET(W32_GSTREAMER_LOCATION $ENV{GSTREAMER_1_0_ROOT_X86_64})
-string(REPLACE "\\" "/" GSTREAMER_LOCATION ${W32_GSTREAMER_LOCATION})
+IF(WIN32)
+    SET(PKG_CONFIG_EXECUTABLE "C:/msys64/mingw64/bin/x86_64-w64-mingw32-pkg-config.exe")
+    SET(W32_GSTREAMER_LOCATION $ENV{GSTREAMER_1_0_ROOT_X86_64})
+    string(REPLACE "\\" "/" GSTREAMER_LOCATION ${W32_GSTREAMER_LOCATION})
+    SET(GSTREAMER_SLIB_LOCATION "${GSTREAMER_LOCATION}/bin")
+endif()
+
+if(APPLE)
+    SET(PKG_CONFIG_EXECUTABLE "/usr/local/Cellar/pkg-config/0.29.2/bin/pkg-config")
+    SET(GSTREAMER_LOCATION "/Library/Frameworks/GStreamer.framework/Libraries/pkgconfig")
+    SET(GSTREAMER_SLIB_LOCATION "/Library/Frameworks/GStreamer.framework/Libraries")
+endif(APPLE)
 
 include(GStreamerHelper)
 FindGStreamer()
@@ -157,48 +185,87 @@ add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES})
 conan_target_link_libraries(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
 
+if(APPLE)
+    #add highdpi support / menu behavior via plist template (MACOS)
+    set_target_properties(${PROJECT_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/templates/Info.plist.in) 
+endif()
+
 # #accelerate builds times
 include(cotire)
 cotire(${PROJECT_NAME})
 
-##################
-# LIBRARIES COPY #
-##################
+################
+# INSTALL COPY #
+################
 
-#misc
-add_custom_command(TARGET ${PROJECT_NAME}
-
-    # get windeployqt tool from official snapshot
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "C:/Qt/5.13.0/msvc2017_64/bin/windeployqt.exe" $<TARGET_FILE_DIR:Qt5::Core>/../bin/windeployqt.exe
-    
-    #CA CERT
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CACERT_FP} $<TARGET_FILE_DIR:${PROJECT_NAME}> 
-
-    #missing deps for gstreamer
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/avcodec-58.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/avfilter-7.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/avformat-58.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/avutil-56.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/bz2.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/libgmp-10.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/libgnutls-30.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/libhogweed-4.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/libnettle-6.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/libsoup-2.4-1.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/libtasn1-6.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/libwinpthread-1.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/libxml2-2.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/bin/swresample-3.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${GSTREAMER_LOCATION}/lib/gio/modules/giognutls.dll" $<TARGET_FILE_DIR:${PROJECT_NAME}>/gio/giognutls.dll
+#CA CERT
+add_custom_command(TARGET ${PROJECT_NAME}       
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CACERT_FP} $<TARGET_FILE_DIR:${PROJECT_NAME}>
 )
 
-#using windeployqt to import all the QT .dll requirements based on used components
-IF(NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bearer)
-    include(Windeployqt)
-    windeployqt(${PROJECT_NAME})
+######################
+# GST LIBRARIES COPY #
+######################
+
+if(WIN32)
+    #missing deps for gstreamer
+    list(APPEND GST_SLIBS
+        avcodec-58
+        avfilter-7
+        avformat-58
+        avutil-56
+        bz2
+        libgmp-10
+        libgnutls-30
+        libhogweed-4
+        libnettle-6
+        libsoup-2.4-1
+        libtasn1-6
+        libwinpthread-1
+        libxml2-2
+        swresample-3
+    )
 endif()
 
-#copy gstreamer .dlls
+if(APPLE)
+    #missing deps for gstreamer
+    list(APPEND GST_SLIBS
+        avcodec
+        avfilter
+        avformat
+        avutil
+        bz2
+        gmp
+        gnutls
+        hogweed
+        intl
+        nettle
+        soup-2.4
+        swresample
+        tasn1
+        xml2
+    )
+endif()
+
+#import all missing GSTREAMER libs
+foreach(_gstSLib IN ITEMS ${GST_SLIBS})
+    add_custom_command(TARGET ${PROJECT_NAME}
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+            "${GSTREAMER_SLIB_LOCATION}/${CMAKE_SHARED_LIBRARY_PREFIX}${_gstSLib}${CMAKE_SHARED_LIBRARY_SUFFIX}"
+            "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+    )
+endforeach()
+
+#missing specifics
+IF(WIN32)
+    add_custom_command(TARGET ${PROJECT_NAME}       
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+        "${GSTREAMER_LOCATION}/lib/gio/modules/giognutls${CMAKE_SHARED_LIBRARY_SUFFIX}" 
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>/gio/giognutls${CMAKE_SHARED_LIBRARY_SUFFIX}
+    )
+endif()
+
+#copy gstreamer ${CMAKE_SHARED_LIBRARY_SUFFIX}s
 IF(NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins)
     #LIST(APPEND _gstreamer_plugins all)
     LIST(APPEND _gstreamer_plugins 
@@ -216,6 +283,22 @@ IF(NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins)
     )
     DeployGStreamer(${PROJECT_NAME} "${_gstreamer_plugins}")
 endif()
+
+#####################
+# QT LIBRARIES COPY #
+#####################
+
+IF(WIN32)
+    SET(QT_DEPLOY_BIN_PATH "C:/Qt/5.13.0/msvc2017_64/bin")
+endif()
+
+IF(APPLE)
+    SET(QT_DEPLOY_BIN_PATH "/Qt/5.13.0/clang_64/bin")
+endif()
+
+#using deployqt to import all the QT ${CMAKE_SHARED_LIBRARY_SUFFIX} requirements based on used components
+include(deployqt)
+deployqt(${PROJECT_NAME})
 
 ######################
 # add Publish target #

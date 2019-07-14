@@ -11,7 +11,10 @@
             "label": "Debug - 0. Create build folder",
             "group": "test",
             "type": "shell",
-            "command": "rm build/Debug -r -fo; mkdir build/Debug"
+            "command": "rm build/Debug -r -fo; mkdir build/Debug",
+            "osx": {
+                "command": "rm -rf build/Debug; mkdir build; mkdir build/Debug"
+            }
         },
         {
             "label": "Debug - 0a. add Conan remote",
@@ -53,7 +56,10 @@
             "label": "Release - 0. Create build folder",
             "group": "build",
             "type": "shell",
-            "command": "rm build/Release -r -fo; mkdir build/Release"
+            "command": "rm build/Release -r -fo; mkdir build/Release",
+            "osx": {
+                "command": "rm -rf build/Release; mkdir build; mkdir build/Release"
+            }
         },
         {
             "label": "Release - 1. Download Dependencies",

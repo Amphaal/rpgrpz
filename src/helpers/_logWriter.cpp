@@ -77,9 +77,11 @@ void LogWriter::_openFileAndLog(QString* logFilePath, const QString &channel, co
     FILE* _fs;
     auto fdp = logFilePath->toStdString();
     auto q_lfp = fdp.c_str();
-    const auto _fsErr = fopen_s(&_fs, q_lfp, mod_latest);
+
+    //const auto _fsErr = fopen_s(&_fs, q_lfp, mod_latest);
+    _fs = fopen(q_lfp, mod_latest);
     
-    if(_fsErr) return; //error
+    if(!_fs) return; //error
     else {
         if(sessionlogToken) *sessionlogToken = true;
     }

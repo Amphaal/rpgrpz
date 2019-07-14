@@ -3,3 +3,4 @@ src/cacert.pem
 .vscode/ipch
 nbproject
 /build/
+.DS_Store

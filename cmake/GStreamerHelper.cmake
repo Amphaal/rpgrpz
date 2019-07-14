@@ -1,17 +1,17 @@
-
-#using pkgConfig, makes sure PKG_CONFIG_EXECUTABLE is set
-find_package(PkgConfig REQUIRED)
-
 #check requirements
 if(NOT DEFINED GSTREAMER_LOCATION)
     message(FATAL_ERROR "GSTREAMER_LOCATION have not been set!")
 endif()
 
+#add search path to pkgConfig searchpath
+list(APPEND CMAKE_PREFIX_PATH ${GSTREAMER_LOCATION})
+set(ENV{PKG_CONFIG_PATH} ${GSTREAMER_LOCATION})
+
+#using pkgConfig, makes sure PKG_CONFIG_EXECUTABLE is set
+find_package(PkgConfig REQUIRED)
+
 #linking...
 macro(FindGStreamer)
-
-    #add search path to pkgConfig searchpath
-    list(APPEND CMAKE_PREFIX_PATH ${GSTREAMER_LOCATION})
 
     #base required modules
     pkg_check_modules(Gst REQUIRED IMPORTED_TARGET
@@ -23,7 +23,7 @@ macro(FindGStreamer)
     #plugins base...
         #plugins to include and dir
         pkg_get_variable(_GSTREAMER_PLUGINS
-            "${GSTREAMER_LOCATION}/lib/pkgconfig/gstreamer-plugins-base-1.0.pc" 
+            gstreamer-plugins-base-1.0
         libraries)
 
         #add plugins to check in pkgconfig
@@ -46,15 +46,15 @@ function(_GstThroughLibs target dllLocation libList dest)
 
         #searched expression
         file(GLOB _se LIST_DIRECTORIES OFF
-            "${dllLocation}/${_gstLib}*.dll"
+            "${dllLocation}/${_gstLib}*${CMAKE_SHARED_LIBRARY_SUFFIX}"
         )
         
-        #if .dll is not found, search with prefix
+        #if shared lib is not found, search with prefix
         if (_se STREQUAL "")
             
             #prefix search
             file(GLOB _se LIST_DIRECTORIES OFF
-                "${dllLocation}/lib${_gstLib}*.dll"
+                "${dllLocation}/lib${_gstLib}*${CMAKE_SHARED_LIBRARY_SUFFIX}"
             )
 
             #if still not found...
@@ -88,14 +88,10 @@ endfunction()
 macro(DeployGStreamer target plugins)
 
     #get the DLL lib location for base
-    pkg_get_variable(_GSTREAMER_DLL_LOCATION 
-        "${GSTREAMER_LOCATION}/lib/pkgconfig/gstreamer-1.0.pc" 
-    toolsdir)
+    pkg_get_variable(_GSTREAMER_DLL_LOCATION gstreamer-1.0 toolsdir)
 
     #get the DLL lib location for plugins
-    pkg_get_variable(_GSTREAMER_DLL_PLUGINS_LOCATION 
-        "${GSTREAMER_LOCATION}/lib/pkgconfig/gstreamer-1.0.pc" 
-    pluginsdir)
+    pkg_get_variable(_GSTREAMER_DLL_PLUGINS_LOCATION gstreamer-1.0 pluginsdir)
 
     #import
     _GstThroughLibs(${target} ${_GSTREAMER_DLL_LOCATION} "${Gst_STATIC_LIBRARIES}" "/") #iterate
@@ -110,7 +106,7 @@ macro(DeployGStreamer target plugins)
         #find all files 
         message("all plugins requested !")
         file(GLOB _temp_plugins LIST_DIRECTORIES OFF
-        "${_GSTREAMER_DLL_PLUGINS_LOCATION}/*.dll"
+        "${_GSTREAMER_DLL_PLUGINS_LOCATION}/*${CMAKE_SHARED_LIBRARY_SUFFIX}"
         )
 
         #get their names
