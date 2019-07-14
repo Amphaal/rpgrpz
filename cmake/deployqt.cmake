@@ -46,7 +46,7 @@ function(deployqt target)
             COMMAND "${CMAKE_COMMAND}" -E
                  env "${DEPLOYQT_EXECUTABLE}"
                     \"$<TARGET_FILE:${target}>/../../../\"
-                    -verbose 0
+                    -verbose=1
                     ${QT_DEPLOY_MUST_BE_DEBUG}
         )
 

@@ -50,7 +50,7 @@ class SnowFlake {
 
         uint64_t getNextMill();
         uint64_t getNewstmp();
-        static int gettimeofday(struct timeval * tp, struct timezone * tzp);
+        static int gtod(struct timeval * tp, struct timezone * tzp);
 
         static inline SnowFlake* _self = nullptr;
         SnowFlake(int datacenter_Id, int machine_Id);

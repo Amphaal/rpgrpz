@@ -2,7 +2,7 @@
 
 #ifdef __APPLE__
 
-int Snowflake::gettimeofday(struct timeval * tp, struct timezone * tzp) {
+int SnowFlake::gtod(struct timeval * tp, struct timezone * tzp) {
     return gettimeofday(tp, tzp);
 }
 
@@ -10,7 +10,7 @@ int Snowflake::gettimeofday(struct timeval * tp, struct timezone * tzp) {
 
 #ifdef _WIN32
 
-int SnowFlake::gettimeofday(struct timeval * tp, struct timezone * tzp) {
+int SnowFlake::gtod(struct timeval * tp, struct timezone * tzp) {
     // Note: some broken versions only have 8 trailing zero's, the correct epoch has 9 trailing zero's
     // This magic number is the number of 100 nanosecond intervals since January 1, 1601 (UTC)
     // until 00:00:00 January 1, 1970 
@@ -42,7 +42,7 @@ uint64_t SnowFlake::getNextMill() {
 
 uint64_t SnowFlake::getNewstmp() {
     struct timeval tv;
-    SnowFlake::gettimeofday(&tv, NULL);
+    SnowFlake::gtod(&tv, NULL);
 
     uint64_t time = tv.tv_usec;
     time /= 1000;

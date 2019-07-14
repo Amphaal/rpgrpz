@@ -204,6 +204,23 @@ add_custom_command(TARGET ${PROJECT_NAME}
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CACERT_FP} $<TARGET_FILE_DIR:${PROJECT_NAME}>
 )
 
+#####################
+# QT LIBRARIES COPY #
+#####################
+
+IF(WIN32)
+    SET(QT_DEPLOY_BIN_PATH "C:/Qt/5.13.0/msvc2017_64/bin")
+endif()
+
+IF(APPLE)
+    SET(QT_DEPLOY_BIN_PATH "/Qt/5.13.0/clang_64/bin")
+endif()
+
+#using deployqt to import all the QT ${CMAKE_SHARED_LIBRARY_SUFFIX} requirements based on used components
+include(deployqt)
+deployqt(${PROJECT_NAME})
+
+
 ######################
 # GST LIBRARIES COPY #
 ######################
@@ -285,22 +302,6 @@ IF(NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins)
     DeployGStreamer(${PROJECT_NAME} "${_gstreamer_plugins}")
 endif()
 
-#####################
-# QT LIBRARIES COPY #
-#####################
-
-IF(WIN32)
-    SET(QT_DEPLOY_BIN_PATH "C:/Qt/5.13.0/msvc2017_64/bin")
-endif()
-
-IF(APPLE)
-    SET(QT_DEPLOY_BIN_PATH "/Qt/5.13.0/clang_64/bin")
-endif()
-
-#using deployqt to import all the QT ${CMAKE_SHARED_LIBRARY_SUFFIX} requirements based on used components
-include(deployqt)
-deployqt(${PROJECT_NAME})
-
 ######################
 # add Publish target #
 ######################
@@ -313,4 +314,4 @@ include(CMakePublish)
 
 #include(PrintAllVariables)
 #include(PrintTargetProperties)
-#print_target_properties(PkgConfig::GstPluginsBase)
+#print_target_properties(PkgConfig::Gst)
