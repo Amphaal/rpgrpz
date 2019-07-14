@@ -5,16 +5,15 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
     //init...
     this->_initUI();
     this->_initConnectivity();
-    
+
+    //load default map
+    this->_mapView->hints()->loadDefaultState();
+
     //initial show
     this->_loadWindowState();
 
     //start the update check
     this->_updateIntegrator->checkForAppUpdates();
-
-    //load default map
-    this->_mapView->hints()->loadDefaultState();
-
 }
 
 void MainWindow::_saveWindowState() {

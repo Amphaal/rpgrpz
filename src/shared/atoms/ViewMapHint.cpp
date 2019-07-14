@@ -132,12 +132,14 @@ void ViewMapHint::setDefaultUser(RPZUser user) {
         auto &atom = this->_atomsById[elemId];
         auto gi = atom.graphicsItem();
         
-        //determine if is a path type
-        if(auto pathItem = dynamic_cast<QGraphicsPathItem*>(gi)) {
-            auto c_pen = pathItem->pen();
-            c_pen.setColor(color);
-            pathItem->setPen(c_pen);
-        } 
+        //determine if is a drawing type
+        if(atom.type() == AtomType::Drawing) {
+            if(auto pathItem = dynamic_cast<QGraphicsPathItem*>(gi)) {
+                auto c_pen = pathItem->pen();
+                c_pen.setColor(color);
+                pathItem->setPen(c_pen);
+            } 
+        }
         
         //redefine ownership
         atom.setOwnership(user);
