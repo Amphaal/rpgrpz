@@ -242,7 +242,7 @@ void MapView::onRPZClientDisconnect(RPZClient* cc) {
 
     //back to default state
     this->_hints->defineAsRemote();
-    this->_hints->loadDefaultState();
+    this->_hints->loadDefaultMap();
 
 }
 

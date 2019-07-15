@@ -7,7 +7,7 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
     this->_initConnectivity();
 
     //load default map
-    this->_mapView->hints()->loadDefaultState();
+    this->_mapView->hints()->loadDefaultMap();
 
     //initial show
     this->_loadWindowState();
@@ -200,7 +200,7 @@ void MainWindow::_initUIApp() {
     centralWidget->setStretchFactor(0, 0);
     centralWidget->setStretchFactor(1, 1);
     centralWidget->setStretchFactor(2, 0);
-    centralWidget->loadState();
+    centralWidget->loadMap();
 
     //
     // EVENTS
@@ -267,8 +267,8 @@ void MainWindow::_initUIApp() {
         this->_sb, &RPZStatusBar::updateMapFileLabel
     );
     this->_sb->updateMapFileLabel(
-        this->_mapView->hints()->stateFilePath(),
-        this->_mapView->hints()->isDirty()
+        this->_mapView->hints()->mapFilePath(),
+        this->_mapView->hints()->isMapDirty()
     );
 
     //on template selected
@@ -321,7 +321,7 @@ QMenu* MainWindow::_getMapMenu() {
     auto saveMap = RPZActions::saveMap();
     QObject::connect(
         saveMap, &QAction::triggered,
-        this->_mapView->hints(), &MapHint::saveState
+        this->_mapView->hints(), &MapHint::saveMap
     );
 
     //save as map
@@ -354,12 +354,12 @@ QMenu* MainWindow::_getMapMenu() {
 void MainWindow::_saveAs() {
     auto picked = QFileDialog::getSaveFileName(this,
         "Enregistrer sous...",
-        this->_mapView->hints()->stateFilePath(), 
+        this->_mapView->hints()->mapFilePath(), 
         I18n::tr()->Popup_MapDescriptor()
     );
 
     if(!picked.isNull()) {
-        this->_mapView->hints()->saveStateAs(picked);
+        this->_mapView->hints()->saveMapAs(picked);
     }
 }
 void MainWindow::_loadMap() {
@@ -369,7 +369,7 @@ void MainWindow::_loadMap() {
         I18n::tr()->Popup_MapDescriptor()
     );
     if(!picked.isNull()) {
-        this->_mapView->hints()->loadState(picked);
+        this->_mapView->hints()->loadMap(picked);
     }
 }
 

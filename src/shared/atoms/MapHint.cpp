@@ -7,74 +7,74 @@ void MapHint::_handlePayload(AlterationPayload &payload) {
     ViewMapHint::_handlePayload(payload);
 
     //define dirty
-    this->_shouldMakeDirty(payload);
+    this->_shouldMakeMapDirty(payload);
 }
 
 ////////////////////
 // State handling //
 ////////////////////
 
-QString MapHint::stateFilePath() {
-    return this->_stateFilePath;
+QString MapHint::mapFilePath() {
+    return this->_mapFilePath;
 }
 
 bool MapHint::isRemote() {
     return this->_isRemote;
 }
 
-bool MapHint::isDirty() {
-    return this->_isDirty;
+bool MapHint::isMapDirty() {
+    return this->_isMapDirty;
 }
 
 void MapHint::mayWantToSavePendingState() {
-    if(!this->_isDirty || this->_isRemote) return;
+    if(!this->_isMapDirty || this->_isRemote) return;
 
     //popup
     auto result = QMessageBox::warning(
         this->_boundGv, 
-        this->_stateFilePath, 
+        this->_mapFilePath, 
         "Voulez-vous sauvegarder les modifications effectuées sur la carte ?", 
         QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes
     );
 
     //save state
     if(result == QMessageBox::Yes) {
-        this->saveState();
+        this->saveMap();
     }
 
 }
 
-bool MapHint::saveState() {
+bool MapHint::saveMap() {
 
     if(this->_isRemote) return false;
 
     //save into file
-    MapDatabase mapDb(this->_stateFilePath);
+    MapDatabase mapDb(this->_mapFilePath);
     mapDb.saveIntoFile(this->_atomsById);
 
     //define as clean
-    this->_setDirty(false);
+    this->_setMapDirtiness(false);
 
     return true;
 }
 
 
-bool MapHint::saveStateAs(const QString &newFilePath) {
+bool MapHint::saveMapAs(const QString &newFilePath) {
     if(this->_isRemote) return false;
 
-    this->_stateFilePath = newFilePath;
-    return this->saveState();
+    this->_mapFilePath = newFilePath;
+    return this->saveMap();
 
 }
 
-bool MapHint::loadDefaultState() {
-    return this->loadState(
+bool MapHint::loadDefaultMap() {
+    return this->loadMap(
         AppContext::getDefaultMapFile()
     );
 }
 
 
-bool MapHint::loadState(const QString &filePath) {
+bool MapHint::loadMap(const QString &filePath) {
     
     if(this->_isRemote) return false;
 
@@ -91,8 +91,8 @@ bool MapHint::loadState(const QString &filePath) {
         this->_handlePayload(payload);
         
         //change file path and define as clean
-        this->_stateFilePath = filePath;
-        this->_setDirty(false);
+        this->_mapFilePath = filePath;
+        this->_setMapDirtiness(false);
 
     //loader...
     this->_boundGv->setForegroundBrush(QBrush());
@@ -110,16 +110,16 @@ bool MapHint::defineAsRemote(const QString &remoteMapDescriptor) {
     this->_missingAssetsIdsFromDb.clear();
 
     //change map descriptor if is a remote session
-    if(this->_isRemote) this->_stateFilePath = remoteMapDescriptor;
+    if(this->_isRemote) this->_mapFilePath = remoteMapDescriptor;
 
     //anyway, unset dirty
-    this->_setDirty(false);
+    this->_setMapDirtiness(false);
     
     return this->_isRemote;
 }
 
 
-void MapHint::_shouldMakeDirty(AlterationPayload &payload) {
+void MapHint::_shouldMakeMapDirty(AlterationPayload &payload) {
     
     //if remote, never dirty
     if(this->_isRemote) return;
@@ -127,13 +127,13 @@ void MapHint::_shouldMakeDirty(AlterationPayload &payload) {
     //if not a network alteration type
     if(!payload.isNetworkRoutable()) return;
 
-    this->_setDirty();
+    this->_setMapDirtiness();
 }
 
 
-void MapHint::_setDirty(bool dirty) {
-    this->_isDirty = dirty;
-    emit mapFileStateChanged(this->_stateFilePath, this->_isDirty);
+void MapHint::_setMapDirtiness(bool dirty) {
+    this->_isMapDirty = dirty;
+    emit mapFileStateChanged(this->_mapFilePath, this->_isMapDirty);
 }
 
 

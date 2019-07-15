@@ -10,28 +10,28 @@ class MapHint : public ViewMapHint {
         MapHint(QGraphicsView* boundGv);
 
         //load/unload
-        QString stateFilePath();
-        bool loadDefaultState();
-        bool loadState(const QString &filePath);
-        bool saveState();
-        bool saveStateAs(const QString &newFilePath);
+        QString mapFilePath();
+        bool loadDefaultMap();
+        bool loadMap(const QString &filePath);
+        bool saveMap();
+        bool saveMapAs(const QString &newFilePath);
         
-        bool isDirty();
+        bool isMapDirty();
         void mayWantToSavePendingState();
 
         bool isRemote();
         bool defineAsRemote(const QString &remoteMapDescriptor = QString());
 
     signals:
-        void mapFileStateChanged(const QString &filePath, bool isDirty);
+        void mapFileStateChanged(const QString &filePath, bool isMapDirty);
     
     private: 
-        QString _stateFilePath;
+        QString _mapFilePath;
         bool _isRemote = false;
-        bool _isDirty = false;
+        bool _isMapDirty = false;
 
-        void _setDirty(bool dirty = true);
-        void _shouldMakeDirty(AlterationPayload &payload);
+        void _setMapDirtiness(bool dirty = true);
+        void _shouldMakeMapDirty(AlterationPayload &payload);
     
     protected:
         virtual void _handlePayload(AlterationPayload &payload) override;

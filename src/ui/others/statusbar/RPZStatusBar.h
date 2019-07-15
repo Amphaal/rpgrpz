@@ -19,7 +19,7 @@ class RPZStatusBar : public QStatusBar {
         void updateServerStateLabel(const QString &stateText, int state);
         void updateUPnPLabel(const QString &stateText, int state);
         void updateExtIPLabel(const QString &stateText, int state);
-        void updateMapFileLabel(const QString &filePath, bool isDirty);
+        void updateMapFileLabel(const QString &filePath, bool isMapDirty);
 
     private:
         RPZStatusLabel* _extIpLabel;

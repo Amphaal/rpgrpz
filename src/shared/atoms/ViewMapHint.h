@@ -59,7 +59,7 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         QVector<RPZAtom*> selectedAtoms();
 
     signals:
-        void mapFileStateChanged(const QString &filePath, bool isDirty);
+        void mapFileStateChanged(const QString &filePath, bool isMapDirty);
         void requestMissingAssets(QList<RPZAssetHash> assetIdsToRequest);
         void atomTemplateChanged();
 

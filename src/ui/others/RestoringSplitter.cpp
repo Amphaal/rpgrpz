@@ -6,7 +6,7 @@ RestoringSplitter::RestoringSplitter(const QString &id, QWidget * parent) : QSpl
     });
 }
 
-void RestoringSplitter::loadState(){
+void RestoringSplitter::loadMap(){
     this->restoreState(AppContext::settings()->value(this->_id).toByteArray());
     
     this->setOpaqueResize(false);

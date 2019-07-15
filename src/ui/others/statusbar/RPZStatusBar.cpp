@@ -42,8 +42,8 @@ void RPZStatusBar::_installComponents() {
 
 };
 
-void RPZStatusBar::updateMapFileLabel(const QString &filePath, bool isDirty) {
-    this->_mapFileLabel->setText(filePath + (isDirty ? "*" : ""));
+void RPZStatusBar::updateMapFileLabel(const QString &filePath, bool isMapDirty) {
+    this->_mapFileLabel->setText(filePath + (isMapDirty ? "*" : ""));
 }
 
 void RPZStatusBar::_installLayout() {
