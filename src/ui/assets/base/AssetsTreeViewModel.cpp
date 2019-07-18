@@ -79,13 +79,13 @@ bool AssetsTreeViewModel::insertAssets(QList<QUrl> &urls, const QModelIndex &par
 }
 
 bool AssetsTreeViewModel::removeItems(const QList<QModelIndex> &itemsIndexesToRemove) {
-    
-    this->beginResetModel();
 
         //create list
         QList<AssetsDatabaseElement*> items;
         for(auto &index : itemsIndexesToRemove) {
             
+            this->beginRemoveRows(index.parent(), index.row(), index.row());
+
             items.append(
                 AssetsDatabaseElement::fromIndex(index)
             );
@@ -93,7 +93,7 @@ bool AssetsTreeViewModel::removeItems(const QList<QModelIndex> &itemsIndexesToRe
         
         auto result = this->_db->removeItems(items);
     
-    this->endResetModel();
+    this->endRemoveRows();
 
     return result;
 }

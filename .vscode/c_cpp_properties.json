@@ -53,6 +53,7 @@
                 "${workspaceFolder}",
                 "${workspaceFolder}/src/_libs",
                 "${workspaceRoot}",
+                "C:/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/source/miniupnp/miniupnpc",
                 "C:/Qt/5.13.0/msvc2017_64/include",
                 "C:/Qt/5.13.0/msvc2017_64/include/QtCore",
                 "C:/Qt/5.13.0/msvc2017_64/include/QtNetwork",

@@ -519,6 +519,12 @@ void MapView::wheelEvent(QWheelEvent *event) {
         this->_currentRelScale = factor * this->_currentRelScale;
         this->scale(factor, factor);
 
+        //update ghost item position relative to cursor
+        if(this->_ghostItem) {
+            this->_centerItemToPoint(this->_ghostItem, this->mapFromGlobal(QCursor::pos()));
+        }
+        
+
     };
 
     AnimationTimeLine::use(AnimationTimeLine::Type::Zoom, zoomRatioToApply, this, zoom);

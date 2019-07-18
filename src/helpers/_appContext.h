@@ -1,7 +1,6 @@
 #pragma once
 
 #include "src/version.h"
-
 #include <iostream>
 
 #include <QtCore/QCoreApplication>

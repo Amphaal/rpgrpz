@@ -1,5 +1,4 @@
 #include <QDebug>
-
 #include <QString>
 #include <QApplication>
 #include <QStyleFactory>
@@ -21,7 +20,6 @@
 #include <QtCore/QLockFile>
 
 #include "_libs/snowflake/snowflake.h"
-
 
 ////////////
 // SERVER //
