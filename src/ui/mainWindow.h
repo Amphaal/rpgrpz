@@ -19,7 +19,7 @@
 #include <QFileDialog>
 
 #include "src/network/ConnectivityHelper.h"
-#include "src/network/rpz/server/RPZServer.h"
+#include "src/network/rpz/server/RPZServerThread.h"
 
 #include "src/ui/communication/ConnectWidget.h"
 #include "src/ui/communication/chat/ChatWidget.h"
@@ -41,6 +41,7 @@
 class MainWindow : public QMainWindow { 
     public:
         MainWindow();
+        ~MainWindow();
 
     private:
         void _trueShow();
@@ -52,7 +53,7 @@ class MainWindow : public QMainWindow {
         void _loadWindowState();
 
         ConnectivityHelper* _ipHelper = nullptr;
-        RPZServer* _rpzServer = nullptr;
+        RPZServerThread _rpzServer;
         bool _mustLaunchServer = true;
         void _initConnectivity();
 

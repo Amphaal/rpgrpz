@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QThread>
+
 #include <QDebug>
 #include <QTcpServer>
 #include <QHostAddress>
@@ -28,14 +30,13 @@
 
 #include "src/shared/commands/MessageInterpreter.h"
 
-class RPZServer : public QTcpServer, public JSONRouter { 
+class RPZServerThread : public QThread, public JSONRouter { 
     
     Q_OBJECT
 
     public:
-        RPZServer(QObject* parent = nullptr);
-        ~RPZServer();
-        void run();
+        RPZServerThread(QObject* parent = nullptr);
+        void run() override;
 
     signals:
         void listening();
@@ -53,7 +54,7 @@ class RPZServer : public QTcpServer, public JSONRouter {
         void _tellUserHisIdentity(JSONSocket* socket);
 
         //map atoms
-        AtomsStorage* _hints;
+        AtomsStorage* _hints = nullptr;
         void _askHostForMapHistory();
         void _broadcastMapChanges(QVariantHash &payload, JSONSocket * senderSocket);
         void _sendMapHistory(JSONSocket * clientSocket);
@@ -65,7 +66,7 @@ class RPZServer : public QTcpServer, public JSONRouter {
         void _interpretMessage(JSONSocket* sender, RPZMessage &msg);
         
         //internal
-        void _onNewConnection();
+        void _onNewConnection(QTcpServer * server);
         void _onDisconnect();
         void _routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) override;
         

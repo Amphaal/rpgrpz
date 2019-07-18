@@ -28,6 +28,11 @@ class SnowFlake {
         snowflake_uid nextId();
 
     private:
+        typedef struct timeval {
+            long tv_sec;
+            long tv_usec;
+        } timeval;
+
         static const uint64_t start_stmp_ = 1480166465631;
         static const uint64_t sequence_bit_ = 12;
         static const uint64_t machine_bit_ = 5;

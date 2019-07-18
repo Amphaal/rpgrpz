@@ -16,6 +16,13 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
     this->_updateIntegrator->checkForAppUpdates();
 }
 
+MainWindow::~MainWindow() {
+    if(this->_rpzServer.isRunning()) {
+        this->_rpzServer.quit();
+        this->_rpzServer.wait();
+    }
+}
+
 void MainWindow::_saveWindowState() {
     AppContext::settings()->beginGroup("mainWindow");
     AppContext::settings()->setValue("windowGeometry", this->saveGeometry());
@@ -73,7 +80,7 @@ void MainWindow::_initConnectivity() {
     auto appArgs = AppContext::getOptionArgs(*QApplication::instance());
     if(appArgs.contains("noServer")) {    
         this->_mustLaunchServer = false;
-        qDebug() << "RPZServer : No server to start because the user said so.";
+        qDebug() << "RPZServerThread : No server to start because the user said so.";
         this->_sb->updateServerStateLabel("Non", RPZStatusLabel::State::Finished);
     }
 
@@ -95,17 +102,15 @@ void MainWindow::_initConnectivity() {
     this->_ipHelper->init();
 
     ////////////////////
-    /// RPZServer ! //
+    /// RPZServerThread ! //
     ////////////////////
 
     //si serveur est local et lié à l'app
     if(this->_mustLaunchServer) {    
 
-        this->_rpzServer = new RPZServer(this);
-
         //tell the UI when the server is up
         QObject::connect(
-            this->_rpzServer, &RPZServer::listening,
+            &this->_rpzServer, &RPZServerThread::listening,
             [&]() {
                 this->_sb->updateServerStateLabel("OK", RPZStatusLabel::State::Finished);
             }
@@ -113,13 +118,14 @@ void MainWindow::_initConnectivity() {
 
         //tell the UI when the server is down
         QObject::connect(
-            this->_rpzServer, &RPZServer::error,
+            &this->_rpzServer, &RPZServerThread::error,
             [&]() {
                 this->_sb->updateServerStateLabel("Erreur", RPZStatusLabel::State::Error);
             }
         );
 
-        this->_rpzServer->run();
+        //start
+        this->_rpzServer.start();
 
     }
 

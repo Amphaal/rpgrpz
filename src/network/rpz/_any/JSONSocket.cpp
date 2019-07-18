@@ -1,11 +1,11 @@
 #include "JSONSocket.h"
 
-JSONSocket::JSONSocket(QObject* parent, const QString &logId, QTcpSocket* wrapped) : QObject(parent), _logId(logId) {
+JSONSocket::JSONSocket(const QString &logId, QTcpSocket* wrapped) : _logId(logId) {
 
     if (wrapped) {
         this->_innerSocket = wrapped;
     } else {
-        this->_innerSocket = new QTcpSocket(this);
+        this->_innerSocket = new QTcpSocket;
     }
 
     QObject::connect(
@@ -38,10 +38,10 @@ void JSONSocket::sendJSON(const JSONMethod &method, const QVariant &data) {
 
     //send !
     QDataStream out(this->_innerSocket);
-    out.setVersion(QDataStream::Qt_5_12);
+    out.setVersion(QDataStream::Qt_5_13);
     out << payload_doc.toJson(QJsonDocument::Compact);
     
-    qDebug() << "Network :" << JSONMethodAsArray[method] << "sent";
+    qDebug() << this->_logId << ":" << JSONMethodAsArray[method] << "sent";
 }
 
 void JSONSocket::_processIncomingData() {
@@ -49,7 +49,7 @@ void JSONSocket::_processIncomingData() {
     //process incoming data
     QByteArray block;
     QDataStream in(this->_innerSocket);
-    in.setVersion(QDataStream::Qt_5_12);
+    in.setVersion(QDataStream::Qt_5_13);
     
     for (;;) {
 
@@ -104,7 +104,7 @@ void JSONSocket::_processIncomingAsJson(const QByteArray &data) {
 
     //signal
     auto method = static_cast<JSONMethod>((int)content["_m"].toDouble());
-    qDebug() << "Network :" << JSONMethodAsArray[method] << "received";
+    qDebug() << this->_logId << ":" << JSONMethodAsArray[method] << "received";
 
     //bind
     emit JSONReceived(this, method, content["_d"].toVariant());
