@@ -161,6 +161,6 @@ void AppContext::openFileInOS(const QString &cpURL) {
 };
 
 void AppContext::openFolderInOS(const QString &cpURL) {
-     QProcess::startDetached("explorer.exe", {"/select,", QDir::toNativeSeparators(cpURL)});
+    auto toOpen = QDir::toNativeSeparators(cpURL);
+    QProcess::startDetached("explorer.exe", {toOpen});
 };
-
