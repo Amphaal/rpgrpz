@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QPixmapCache>
+
 #include <QWidget>
 #include <QPixMap>
 #include <QLabel>

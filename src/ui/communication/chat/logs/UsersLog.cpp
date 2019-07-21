@@ -18,9 +18,15 @@ UserLogIcon::UserLogIcon(RPZUser &user) {
     this->setMargin(0);
     this->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum); 
 
+    //get cached pixmap
+    QPixmap pixAsIcon;
     auto pathToIcon = RPZUser::IconsByRoles[user.role()];
-    auto pixAsIcon = QPixmap(pathToIcon);
-    this->setPixmap(pixAsIcon.scaled(14, 14));
+    auto foundCached = QPixmapCache::find(pathToIcon, &pixAsIcon);
+    if(!foundCached) {
+        pixAsIcon = QPixmap(pathToIcon);
+        pixAsIcon = pixAsIcon.scaled(14, 14);
+    }
+    this->setPixmap(pixAsIcon);
 
 }
 
