@@ -21,8 +21,7 @@ const int AssetsDatabase::apiVersion() {
     return 4;
 }
 
-void AssetsDatabase::_removeDatabase() {
-    JSONDatabase::_removeDatabase();
+void AssetsDatabase::_removeDatabaseLinkedFiles() {
     QDir(this->assetsStorageFilepath()).removeRecursively();
 }
 

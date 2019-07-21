@@ -59,7 +59,7 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
         const int apiVersion() override;
         const int dbVersion() override;
 
-        void _removeDatabase() override;
+        void _removeDatabaseLinkedFiles() override;
     
     private:
         //singleton

@@ -109,7 +109,10 @@ double RPZAtom::assetRotation() { return this->metadata(AtomParameter::AssetRota
 BrushType RPZAtom::brushType() { return (BrushType)this->metadata(AtomParameter::BrushStyle).toInt(); }
 int RPZAtom::brushPenWidth() { return this->metadata(AtomParameter::BrushPenWidth).toInt(); }
 
-QPainterPath RPZAtom::shape() {return JSONSerializer::toPainterPath(this->metadata(AtomParameter::Shape).toByteArray());}
+QPainterPath RPZAtom::shape() {
+    auto rawShape = this->metadata(AtomParameter::Shape).toByteArray();
+    return JSONSerializer::toPainterPath(rawShape);
+}
 void RPZAtom::setShape(const QPainterPath &path) { this->setMetadata(AtomParameter::Shape, JSONSerializer::asBase64(path)); }
 void RPZAtom::setShape(const QRectF &rect) {
     QPainterPath shape;

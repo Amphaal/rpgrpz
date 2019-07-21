@@ -14,9 +14,8 @@ QFlags<QGraphicsItem::GraphicsItemFlag> MapViewItemsNotifier::defaultFlags() {
 MapViewItemsNotifier::MapViewItemsNotifier(MapViewItemsNotified* targetToNotify, QGraphicsItem* item) : _toNotify(targetToNotify), _item(item) { 
     
     //define transform origin point to center
-    item->setTransformOriginPoint(
-        item->boundingRect().center()
-    );
+    auto center = item->boundingRect().center();
+    item->setTransformOriginPoint(center);
 
 }
 

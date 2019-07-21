@@ -77,7 +77,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 IF(WIN32)
     add_definitions(-DWIN32_LEAN_AND_MEAN) #std::btye c++17 ambiguity
     add_definitions(-D_CRT_SECURE_NO_WARNINGS) #ctime_s...
-    SET(CMAKE_PDB_OUTPUT_DIRECTORY_DEBUG ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/../lib) #bug from VS2017, not coping .pdb files at the right place
 endif()
 
 if (APPLE)

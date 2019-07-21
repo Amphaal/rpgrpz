@@ -1,5 +1,8 @@
 #pragma once
 
+#include <algorithm>
+#include <vector>
+
 #include <QString>
 #include <QFile>
 #include <QDir>
@@ -11,7 +14,11 @@
 #include <QJsonValue>
 #include <QJsonArray>
 
+typedef int JSONDatabaseVersion;
+typedef std::function<void(QJsonDocument&)> JSONDatabaseUpdateHandler;
+
 class JSONDatabase {
+
     public:
         JSONDatabase();
 
@@ -31,12 +38,20 @@ class JSONDatabase {
         //recreate file if doesnt exist
         void _checkFileExistance();
 
-        virtual void _removeDatabase();
+        virtual void _removeDatabaseLinkedFiles();
+
+        //create new file formated for new API expected version if possible
+        virtual QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> _getUpdateHandlers();
+        void _handleVersionMissmatch(QJsonDocument &databaseToUpdate, int databaseToUpdateVersion);
 
         //pure, replace
         virtual const QString defaultJsonDoc() = 0;
         virtual const QString dbPath() = 0;
         virtual const int apiVersion() = 0;
         virtual const int dbVersion() = 0;
-        
+
+    private:
+        void _createEmptyDbFile();
+        QJsonDocument _readDbFile();
+        void _duplicateDbFile(QString destSuffix);
 };

@@ -125,7 +125,15 @@
         "optional": "cpp",
         "sstream": "cpp",
         "string_view": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "filesystem": "cpp",
+        "iomanip": "cpp",
+        "locale": "cpp",
+        "xlocbuf": "cpp",
+        "xlocmes": "cpp",
+        "xlocmon": "cpp",
+        "xloctime": "cpp",
+        "set": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }
