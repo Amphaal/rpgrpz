@@ -21,6 +21,8 @@
 
 #include "_libs/snowflake/snowflake.h"
 
+#include "version.h"
+
 ////////////
 // SERVER //
 ////////////
@@ -45,9 +47,9 @@ int serverConsole(int argc, char** argv) {
 ////////////
 
 int clientApp(int argc, char** argv) {
-    
+
     if(!IS_DEBUG_APP) {
-        //prevent multiples instances
+        // prevent multiples instances
         QString tmpDir = QDir::tempPath();
         QLockFile lockFile(tmpDir + "/rpgrpz.lock");
         if(!lockFile.tryLock(100)){

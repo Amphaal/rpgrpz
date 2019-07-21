@@ -113,7 +113,9 @@ void AppContext::init(const QString &customContext) {
 
 
 QString AppContext::makeSureDirPathExists(const QString &path) {
-    QDir().mkpath(path);
+    if(!std::filesystem::exists(path.toStdString())) {
+        QDir().mkpath(path);
+    }
     return path;
 }
 
