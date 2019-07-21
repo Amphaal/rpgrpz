@@ -1,6 +1,9 @@
 #include "Playlist.h"
 
-Playlist::Playlist(QWidget* parent) : QListWidget(parent) {
+Playlist::Playlist(QWidget* parent) : QListWidget(parent),
+    _ytIconGrey(new QIcon(":/icons/app/audio/youtubeGrey.png")),
+    _ytIcon(new QIcon(":/icons/app/audio/youtube.png")),
+    _ytIconErr(new QIcon(":/icons/app/audio/youtubeError.png")) {
 
     //self
     this->setAcceptDrops(true);
@@ -149,7 +152,7 @@ void Playlist::addYoutubeVideo(const QString &url) {
     playlistItem->setData(Qt::UserRole, c_data_pointer_variant);
 
     //define default icon
-    playlistItem->setIcon(QIcon(":/icons/app/audio/youtubeGrey.png"));
+    playlistItem->setIcon(*this->_ytIconGrey);
 
     //update text from playlist update
     QObject::connect(
@@ -165,7 +168,7 @@ void Playlist::addYoutubeVideo(const QString &url) {
             playlistItem->setText(pos + title);
             
             //define active YT icon
-            playlistItem->setIcon(QIcon(":/icons/app/audio/youtube.png"));
+            playlistItem->setIcon(*this->_ytIcon);
 
         }
     );
@@ -173,7 +176,7 @@ void Playlist::addYoutubeVideo(const QString &url) {
     QObject::connect(
         data, &YoutubeVideoMetadata::metadataFetching,
         [=]() {  
-            playlistItem->setIcon(QIcon(":/icons/app/audio/youtubeGrey.png"));
+            playlistItem->setIcon(*this->_ytIconGrey);
             playlistItem->setText(pos + "(Chargement des métadonnées...) " + data->url()); 
         }
     );
@@ -181,7 +184,7 @@ void Playlist::addYoutubeVideo(const QString &url) {
     QObject::connect(
         data, &YoutubeVideoMetadata::streamFailed,
         [=]() {  
-            playlistItem->setIcon(QIcon(":/icons/app/audio/youtubeError.png"));
+            playlistItem->setIcon(*this->_ytIconErr);
             playlistItem->setText(pos + "(Erreur) " + data->url()); 
         }
     );

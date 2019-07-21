@@ -36,8 +36,6 @@ void RPZStatusBar::_installComponents() {
 
     this->_upnpStateLabel = new RPZStatusLabel("uPnP");
     this->_serverStateLabel = new RPZStatusLabel("Serveur");
-    this->_sentAudioKbpsStateLabel = new RPZStatusLabel("Envoyé");
-    this->_receivedAudioKbpsStateLabel = new RPZStatusLabel("Reçu");
     this->_mapFileLabel = new QLabel();
 
 };
@@ -62,25 +60,12 @@ void RPZStatusBar::_installLayout() {
     this->addWidget(new QWidget, 1); 
 
     this->addWidget(this->_mapFileLabel);
-    // this->addWidget(this->_sentAudioKbpsStateLabel);
-    // addSeparator();
-    // this->addWidget(this->_receivedAudioKbpsStateLabel);
 }
 
 
 ///
 ///
 ///
-
-void RPZStatusBar::updateSentAudioKbps(double kbps, int clients) {
-    auto const lbl = QString::number(kbps) + " kbps / " + QString::number(clients) + " client(s)";
-    this->_sentAudioKbpsStateLabel->updateState(lbl);
-}
-
-void RPZStatusBar::updateReceivedAudioKbps(double kbps) {
-    auto const lbl = QString::number(kbps) + " kbps";
-    this->_receivedAudioKbpsStateLabel->updateState(lbl);
-}
 
 void RPZStatusBar::updateServerStateLabel(const QString &stateText, int state) {
     this->_serverStateLabel->updateState(

@@ -10,7 +10,7 @@ QByteArray JSONSerializer::asBase64(const QPainterPath &path) {
 QPainterPath JSONSerializer::toPainterPath(const QByteArray &base64) {
     auto b64 = QByteArray::fromBase64(base64);
     QDataStream stream(&b64, QIODevice::ReadOnly);
-    auto returned = QPainterPath();
+    QPainterPath returned;
     stream >> returned;
     return returned;
 }

@@ -3,6 +3,8 @@
 #include <QAbstractItemModel>
 #include <QMimeData>
 
+#include <QPixmapCache>
+
 #include <QIcon>
 #include <QLabel>
 #include <QString>
@@ -22,7 +24,7 @@ class AssetsTreeViewModel : public QAbstractItemModel, ClientBindable {
         /// HELPERS ///
         ///////////////
 
-        QString getFilePathToAsset(const QModelIndex &targetIndex) const;
+        QPixmap getAssetIcon(AssetsDatabaseElement* target, QSize &sizeToApply) const;
         bool createFolder(QModelIndex &parentIndex);
         bool moveItems(const QMimeData *data, const QModelIndex &parentIndex);
         bool insertAssets(QList<QUrl> &urls, const QModelIndex &parentIndex);

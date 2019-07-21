@@ -43,4 +43,9 @@ class TreeMapHint : public AtomsHandler, public AtomsContextualMenuHandler  {
         //augmenting AtomsStorage
         virtual void _handlePayload(AlterationPayload &payload) override;
         virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) override;
+
+        //icons
+        QIcon* _layerIcon = nullptr;
+        QIcon* _textIcon = nullptr;
+        QIcon* _drawingIcon = nullptr;
 };

@@ -28,7 +28,12 @@ QSize OwnerDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIn
     return QStyledItemDelegate::sizeHint(option, index);
 }
 
-LockAndVisibilityDelegate::LockAndVisibilityDelegate(QWidget *parent) : QStyledItemDelegate(parent) { }
+LockAndVisibilityDelegate::LockAndVisibilityDelegate(QWidget *parent) : QStyledItemDelegate(parent) {
+    if(!_hiddenPix && !_lockPix) {
+        _hiddenPix = new QPixmap(":/icons/app/tools/hidden.png");
+        _lockPix = new QPixmap(":/icons/app/tools/lock.png");
+    }
+ }
 
 void LockAndVisibilityDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
     
@@ -36,8 +41,17 @@ void LockAndVisibilityDelegate::paint(QPainter *painter, const QStyleOptionViewI
     auto isHidden = index.data(VisibilityRole).toBool();
     auto isLocked = index.data(AvailabilityRole).toBool();
 
-    if(isHidden) painter->drawPixmap(option.rect.topLeft(), QPixmap(":/icons/app/tools/hidden.png"));
-    if(isLocked) painter->drawPixmap(QPoint(option.rect.right()-16, option.rect.top()), QPixmap(":/icons/app/tools/lock.png"));
+    //may draw "hide" icon
+    if(isHidden) painter->drawPixmap(option.rect.topLeft(), *_hiddenPix);
+    
+    //may draw "lock" icon
+    if(isLocked) {
+        auto startPoint = QPoint(
+            option.rect.right() - 16, 
+            option.rect.top()
+        );
+        painter->drawPixmap(startPoint, *_lockPix);
+    }
 
 }
 

@@ -56,4 +56,9 @@ class Playlist : public QListWidget {
 
         bool _defaultPlay();
         void _requestPlay();
+
+        //icons
+        QIcon* _ytIconGrey = nullptr;
+        QIcon* _ytIcon = nullptr;
+        QIcon* _ytIconErr = nullptr;
 };

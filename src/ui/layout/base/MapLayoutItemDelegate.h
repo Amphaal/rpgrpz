@@ -29,4 +29,8 @@ class LockAndVisibilityDelegate  : public QStyledItemDelegate {
 
         void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
         QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    
+    private:
+        static inline QPixmap* _hiddenPix = nullptr;
+        static inline QPixmap* _lockPix = nullptr;
 };

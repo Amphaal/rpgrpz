@@ -5,7 +5,6 @@
 #include <QHash>
 #include <QVector>
 #include <QGraphicsItem>
-#include <QIcon>
 #include <QMenu>
 #include <QHeaderView>
 

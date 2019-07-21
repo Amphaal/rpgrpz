@@ -2,7 +2,10 @@
 
 TreeMapHint::TreeMapHint(QTreeWidget* boundTree) : AtomsHandler(AlterationPayload::Source::Local_MapLayout), 
     AtomsContextualMenuHandler(this, boundTree), 
-    _boundTree(boundTree) { 
+    _boundTree(boundTree),
+    _layerIcon(new QIcon(":/icons/app/manager/layer.png")),
+    _textIcon(new QIcon(":/icons/app/tools/text.png")),
+    _drawingIcon(new QIcon(":/icons/app/manager/drawing.png")) { 
     
     //selection changed
     QObject::connect(
@@ -245,7 +248,7 @@ QTreeWidgetItem* TreeMapHint::_getLayerItem(int layer) {
         layerElem = new LayerTreeItem();
         layerElem->setText(0, "Calque " + QString::number(layer));
         layerElem->setData(0, Qt::UserRole, QVariant(layer));
-        layerElem->setIcon(0, QIcon(":/icons/app/manager/layer.png"));
+        layerElem->setIcon(0, *this->_layerIcon);
         layerElem->setFlags(
             QFlags<Qt::ItemFlag>(
                 Qt::ItemIsEnabled 
@@ -296,10 +299,10 @@ QTreeWidgetItem* TreeMapHint::_createTreeItem(RPZAtom &atom) {
     const auto type = atom.type();
     switch(type) {
         case AtomType::Drawing:
-            item->setIcon(0, QIcon(":/icons/app/manager/drawing.png"));
+            item->setIcon(0, *this->_drawingIcon);
             break;
         case AtomType::Text:
-            item->setIcon(0, QIcon(":/icons/app/tools/text.png"));
+            item->setIcon(0, *this->_textIcon);
             break;
         default:
             break;

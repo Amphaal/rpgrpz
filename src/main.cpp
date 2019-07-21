@@ -5,6 +5,7 @@
 #include <QSplashScreen>
 #include <QImageReader>
 #include <QLockFile>
+#include <QPixmapCache>
 
 #include "src/helpers/_appContext.h"
 #include "src/helpers/_logWriter.h"
@@ -63,6 +64,9 @@ int clientApp(int argc, char** argv) {
 
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
     app.setStyle(QStyleFactory::create("Fusion")); 
+
+    //set cache limit to max
+    QPixmapCache::setCacheLimit(INT_MAX);
 
     //fetch main window
     AppLoader loader;

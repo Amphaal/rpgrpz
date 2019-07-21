@@ -68,9 +68,8 @@ bool MapHint::saveMapAs(const QString &newFilePath) {
 }
 
 bool MapHint::loadDefaultMap() {
-    return this->loadMap(
-        AppContext::getDefaultMapFile()
-    );
+	auto map = AppContext::getDefaultMapFile();
+	return this->loadMap(map);
 }
 
 

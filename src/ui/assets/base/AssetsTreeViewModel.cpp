@@ -28,13 +28,31 @@ void AssetsTreeViewModel::onRPZClientConnecting(RPZClient * cc) {
 /// HELPERS ///
 ///////////////
 
-QString AssetsTreeViewModel::getFilePathToAsset(const QModelIndex &targetIndex) const {
+QPixmap AssetsTreeViewModel::getAssetIcon(AssetsDatabaseElement* target, QSize &sizeToApply) const {
     
-    //if selected elem is no item, skip
-    auto target = AssetsDatabaseElement::fromIndex(targetIndex);
-    if(!target->isItem()) return NULL;
+    QPixmap toFind;
 
-    return AssetsDatabase::get()->getFilePathToAsset(target);
+    //if selected elem is no item, skip
+    if(!target->isItem()) return toFind;
+
+    //search in cache
+    auto idToSearch = target->id() + "_ico";
+    auto isFound = QPixmapCache::find(idToSearch, &toFind);
+    if(isFound) return toFind;
+
+    //get asset from filepath
+    auto fpToAssetFile = AssetsDatabase::get()->getFilePathToAsset(target);
+    QPixmap pixmap(fpToAssetFile);
+
+    //resize it to hint
+    pixmap = pixmap.scaled(
+        sizeToApply,
+        Qt::AspectRatioMode::KeepAspectRatio 
+    );
+
+    //cache pixmap and return it
+    QPixmapCache::insert(idToSearch, pixmap);
+    return pixmap;
 }
 
 bool AssetsTreeViewModel::createFolder(QModelIndex &parentIndex) {
@@ -194,12 +212,12 @@ QVariant AssetsTreeViewModel::data(const QModelIndex &index, int role) const {
                 case AssetsDatabaseElement::Type::FloorBrush:
                 case AssetsDatabaseElement::Type::Object:
                 case AssetsDatabaseElement::Type::Downloaded: {  
-                    auto pathToAsset = this->getFilePathToAsset(index);
-                    QPixmap temp(pathToAsset);
-                    return temp.scaled(
-                        defaultQSize,
-                        Qt::AspectRatioMode::KeepAspectRatio 
-                    );
+                    
+                    auto cachedPixmap = getAssetIcon(data, defaultQSize);
+                    if(!cachedPixmap.isNull()) return cachedPixmap;
+
+                    return QVariant();
+
                 }
                 break;
                 
