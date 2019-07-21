@@ -13,10 +13,6 @@ AssetsDatabase::AssetsDatabase() : QObject(nullptr) {
     this->_injectDbStructure();
 };
 
-const int AssetsDatabase::dbVersion() {
-    return this->_db["version"].toInt();
-}
-
 const int AssetsDatabase::apiVersion() {
     return 4;
 }

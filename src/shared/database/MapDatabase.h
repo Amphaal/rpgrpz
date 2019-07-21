@@ -19,13 +19,9 @@ class MapDatabase : public JSONDatabase {
 
     protected:
         const QString defaultJsonDoc() override;
-
         const QString dbPath() override;
-
         const int apiVersion() override;
 
-        const int dbVersion() override;
-    
     private:
         QString _filePath;
 };

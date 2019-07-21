@@ -61,7 +61,3 @@ const QString MapDatabase::dbPath() {
 const int MapDatabase::apiVersion() {
     return 6;
 }
-
-const int MapDatabase::dbVersion() {
-    return this->_db["version"].toInt();
-}

@@ -90,7 +90,7 @@ void ConnectivityHelper::_tryNegociateUPnPPort() {
     
     this->_clearUPnPRequester();
 
-    qDebug() << "Connectivity : trying to open uPnP port " + AppContext::UPNP_DEFAULT_TARGET_PORT + " as " + AppContext::UPNP_REQUEST_DESCRIPTION ;
+    qDebug() << "Connectivity : Trying to open uPnP port" << AppContext::UPNP_DEFAULT_TARGET_PORT << "as" << AppContext::UPNP_REQUEST_DESCRIPTION;
 
     this->_requestedUPnPPort = AppContext::UPNP_DEFAULT_TARGET_PORT.toStdString();
     this->_requestedDescription = AppContext::UPNP_REQUEST_DESCRIPTION.toStdString();
@@ -147,11 +147,11 @@ void ConnectivityHelper::networkChanged(const QNetworkAccessManager::NetworkAcce
 
     if(!accessible) {
 
-        qDebug() << "Connectivity : network not accessible, letting default label";
+        qDebug() << "Connectivity : Network not accessible, letting default label";
 
     } else {
 
-        qDebug() << "Connectivity : network accessible, trying to get IPs and UPnP...";
+        qDebug() << "Connectivity : Network accessible, trying to get IPs and UPnP...";
 
         this->_getLocalAddress();
         this->_tryNegociateUPnPPort();
@@ -171,10 +171,10 @@ void ConnectivityHelper::_getLocalAddress() {
     }
 
     if(rtrn.isNull()) {
-        qWarning() << "Connectivity : local ip not found !";
+        qWarning() << "Connectivity : Local IP not found !";
         emit localAddressStateChanged(this->_getErrorText(), RPZStatusLabel::State::Error);
     } else {
-        qDebug() << "Connectivity : local ip" << rtrn;
+        qDebug() << "Connectivity : Local IP" << rtrn;
         emit localAddressStateChanged(rtrn);
     }
 };
@@ -194,18 +194,20 @@ QString ConnectivityHelper::_getErrorText() {
 void ConnectivityHelper::_debugNetworkConfig() {
     
     auto _debug = [&](const QString &descr, const QNetworkConfiguration &config) {
-        qDebug() << "Connectivity : " + descr
-                 + " >> name:" << config.name() 
-                 << ", state:" << config.state() 
-                 << ", type:" << config.type() 
-                 << ", bearer:" << config.bearerTypeName();
+        QString model = R"(Connectivity : %1 >> %2 [state:%3, type:%4, bearer:%5])";
+        model = model.arg(descr)
+                     .arg(config.name())
+                     .arg(config.state())
+                     .arg(config.type())
+                     .arg(config.bearerTypeName());
+        qDebug() << model.toStdString().c_str();
     };
 
     for (auto &config : this->_getDefinedConfiguration()) {
-        _debug("defined configuration", config);
+        _debug("EXISTING", config);
     }
 
     //active...
     auto activeConf = this->_nam->configuration();
-    _debug("active configuration", activeConf);
+    _debug("ACTIVE", activeConf);
 }

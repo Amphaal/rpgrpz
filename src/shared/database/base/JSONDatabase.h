@@ -25,6 +25,8 @@ class JSONDatabase {
         //remove from the array the elements in the set
         static QJsonArray diff(QJsonArray &target, QSet<QString> &toRemoveFromTarget);
 
+        static JSONDatabaseVersion getDbVersion(QJsonDocument &db); 
+
     protected:
         QJsonDocument _db;
         QFile* _destfile = nullptr;
@@ -42,13 +44,13 @@ class JSONDatabase {
 
         //create new file formated for new API expected version if possible
         virtual QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> _getUpdateHandlers();
-        void _handleVersionMissmatch(QJsonDocument &databaseToUpdate, int databaseToUpdateVersion);
+        bool _handleVersionMissmatch(QJsonDocument &databaseToUpdate, int databaseToUpdateVersion);
 
         //pure, replace
         virtual const QString defaultJsonDoc() = 0;
         virtual const QString dbPath() = 0;
         virtual const int apiVersion() = 0;
-        virtual const int dbVersion() = 0;
+        const int dbVersion();
 
     private:
         void _createEmptyDbFile();

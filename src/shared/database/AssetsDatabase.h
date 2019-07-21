@@ -57,7 +57,6 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
         const QString defaultJsonDoc() override;
         const QString dbPath() override;
         const int apiVersion() override;
-        const int dbVersion() override;
 
         void _removeDatabaseLinkedFiles() override;
     

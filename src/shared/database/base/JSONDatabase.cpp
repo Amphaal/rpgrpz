@@ -2,6 +2,15 @@
 
 JSONDatabase::JSONDatabase() {}
 
+const int JSONDatabase::dbVersion() {
+    return getDbVersion(this->_db);
+}
+
+JSONDatabaseVersion JSONDatabase::getDbVersion(QJsonDocument &db) {
+    auto version = db["version"].toInt();
+    return version;
+}
+
 void JSONDatabase::_instanciateDb() {
     
     //read database file as JSON
@@ -21,21 +30,26 @@ void JSONDatabase::_instanciateDb() {
         qDebug() << "JSON Database : Cannot read database, creating a new one...";
         this->_duplicateDbFile("error");
         this->_createEmptyDbFile();
-        database = this->_readDbFile();
+        this->_db = this->_readDbFile();
+        return;
     }
 
     //compare versions
-    auto dbVersion = this->dbVersion();
-    if(this->apiVersion() != dbVersion) {
+    auto currentVersion = getDbVersion(database);
+    auto expectedVersion = this->apiVersion();
+    if(expectedVersion != currentVersion) {
         
         //duplicate file to migrate
         qDebug() << "JSON Database : Database does not match API version !";
         this->_duplicateDbFile("oldVersion");
 
         //handle missmatch and update temporary database accordingly
-        this->_handleVersionMissmatch(database, dbVersion);
+        auto error = this->_handleVersionMissmatch(database, currentVersion);
+        if(error) this->_db = this->_readDbFile();
+        return;
     }
 
+    //bind
     this->_db = database;
 }
 
@@ -43,18 +57,20 @@ QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> JSONDatabase::_getUpdateHa
     return QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler>();
 }
 
-void JSONDatabase::_handleVersionMissmatch(QJsonDocument &databaseToUpdate, int databaseToUpdateVersion) {
+bool JSONDatabase::_handleVersionMissmatch(QJsonDocument &databaseToUpdate, int databaseToUpdateVersion) {
     
     auto defaultBehavior = [&](QString reason){
-        qDebug() << "JSON Database : Database have not been updated >> " << reason << " Replaced by empty database.";
+        qDebug() << "JSON Database : Database have not been updated :" << reason;
         this->_createEmptyDbFile();
+        qDebug() << "JSON Database : Empty database created !";
+        return true;
     };
 
     //get handlers
     auto handlers = this->_getUpdateHandlers();
 
     //if no handlers
-    if(!handlers.count()) return defaultBehavior("no handlers");
+    if(!handlers.count()) return defaultBehavior("No handlers found");
 
     //remove obsolete handlers
     auto aimedAPIVersion = this->apiVersion();
@@ -74,11 +90,12 @@ void JSONDatabase::_handleVersionMissmatch(QJsonDocument &databaseToUpdate, int 
     }
 
     //if no update have been applied
-    if(!updateApplied) return defaultBehavior("no later handlers");
+    if(!updateApplied) return defaultBehavior("No later handlers found");
 
     //save into file
     this->_updateDbFile(databaseToUpdate.object());
     qDebug() << "JSON Database : Update complete !";
+    return false;
 
 }
 
