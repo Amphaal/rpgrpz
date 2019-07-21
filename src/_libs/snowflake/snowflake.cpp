@@ -46,7 +46,7 @@ uint64_t SnowFlake::getNewstmp() {
 
     uint64_t time = tv.tv_usec;
     time /= 1000;
-    time += (tv.tv_sec * 1000);
+    time += (((long long)tv.tv_sec) * 1000);
     return time;
 }
 

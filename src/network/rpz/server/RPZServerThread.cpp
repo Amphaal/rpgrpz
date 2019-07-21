@@ -308,7 +308,7 @@ void RPZServerThread::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
                 newMessage.setOwnership(msg.owner());
 
                 //send new message
-                user->jsonHelper()->sendJSON(JSONMethod::MessageFromPlayer, newMessage);
+                user->networkSocket()->sendJSON(JSONMethod::MessageFromPlayer, newMessage);
             }
 
             //inform whisperer of any unfound users
@@ -356,18 +356,18 @@ void RPZServerThread::_sendToAllButSelf(JSONSocket * senderSocket, const JSONMet
     for(auto &user : this->_usersById) {
         
         //prevent self send
-        if(user.jsonHelper() == senderSocket) {
+        if(user.networkSocket() == senderSocket) {
             continue;
         } 
 
         //send to others
-        user.jsonHelper()->sendJSON(method, data);
+        user.networkSocket()->sendJSON(method, data);
     }
 }
 
 void RPZServerThread::_sendToAll(const JSONMethod &method, const QVariant &data) {
     for(auto &user : this->_usersById) {
-        user.jsonHelper()->sendJSON(method, data);
+        user.networkSocket()->sendJSON(method, data);
     }
 }
 

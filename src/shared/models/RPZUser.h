@@ -27,7 +27,7 @@ class RPZUser : public Serializable {
         void setName(const QString &name);
         void setRole(const Role &role);
 
-        JSONSocket* jsonHelper();
+        JSONSocket* networkSocket();
         QString name();
         Role role();
         QColor color();
@@ -36,7 +36,7 @@ class RPZUser : public Serializable {
     private:
         void _setColor(const QColor &color = QColor());
 
-        JSONSocket* _jsonHelper;
+        JSONSocket* _associatedSocket = nullptr;
         QString _localAddress;
 
 };

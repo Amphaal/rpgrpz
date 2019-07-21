@@ -4,7 +4,7 @@ RPZUser::RPZUser() {};
 RPZUser::RPZUser(const QVariantHash &hash) : Serializable(hash) {}
 
 RPZUser::RPZUser(JSONSocket* socket) : Serializable(SnowFlake::get()->nextId()) {
-    this->_jsonHelper = socket;
+    this->_associatedSocket = socket;
     this->_localAddress = socket->socket()->localAddress().toString();
     this->_setColor();
 };
@@ -23,7 +23,7 @@ void RPZUser::setRole(const Role &role) {
     this->insert("role", (int)role);
 };
 
-JSONSocket* RPZUser::jsonHelper() { return this->_jsonHelper; };
+JSONSocket* RPZUser::networkSocket() { return this->_associatedSocket; };
 
 QString RPZUser::name() { 
 
