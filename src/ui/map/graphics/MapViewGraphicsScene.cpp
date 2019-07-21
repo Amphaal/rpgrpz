@@ -119,7 +119,7 @@ QGraphicsItem* MapViewGraphicsScene::_addGenericImageBasedItem(RPZAtom &atom, As
         item = new MapViewGraphicsSvgItem(this, pathToImageFile);
     } 
     else {
-        item = new MapViewGraphicsPixmapItem(this, pathToImageFile);
+        item = new MapViewGraphicsPixmapItem(this, assetMetadata);
     };
 
     return item;
@@ -139,8 +139,16 @@ QGraphicsPathItem* MapViewGraphicsScene::_addBrush(RPZAtom &atom, AssetMetadata 
 
     //configure brush
     QBrush brush;
-    auto fpath = assetMetadata.pathToAssetFile();
-    brush.setTexture(QPixmap(fpath));
+    
+        //get texture from cache
+        QPixmap cached;
+        auto assetId = assetMetadata.assetId();
+        auto found = QPixmapCache::find(assetId, &cached);
+        if(!found) {
+            cached = QPixmap(assetMetadata.pathToAssetFile());
+            QPixmapCache::insert(assetId, cached);
+        }
+        brush.setTexture(cached);
     
     //create path
     auto newPath = new MapViewGraphicsPathItem(this, shape, pen, brush);

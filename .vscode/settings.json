@@ -133,7 +133,8 @@
         "xlocmes": "cpp",
         "xlocmon": "cpp",
         "xloctime": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "qpixmapcache": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

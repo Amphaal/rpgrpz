@@ -3,6 +3,7 @@
 #include <QGraphicsScene>
 
 #include <QFileInfo>
+#include <QPixmapCache>
 
 #include "items/MapViewGraphicsItems.h"
 #include "MapViewItemsNotifier.h"

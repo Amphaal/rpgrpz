@@ -25,6 +25,7 @@ UserLogIcon::UserLogIcon(RPZUser &user) {
     if(!foundCached) {
         pixAsIcon = QPixmap(pathToIcon);
         pixAsIcon = pixAsIcon.scaled(14, 14);
+        QPixmapCache::insert(pathToIcon, pixAsIcon);
     }
     this->setPixmap(pixAsIcon);
 

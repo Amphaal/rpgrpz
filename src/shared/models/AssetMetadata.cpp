@@ -12,7 +12,8 @@ AssetMetadata::AssetMetadata(AssetsDatabaseElement *elem) {
     } 
 
 }
-AssetMetadata::AssetMetadata(const QString &pathToAssetFile) {
+AssetMetadata::AssetMetadata(const RPZAssetHash &assetId, const QString &pathToAssetFile) {
+    this->insert("aId", assetId);
     this->_setFilePath(pathToAssetFile);
 }
 

@@ -252,7 +252,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
     
     //default
     else {
-        auto metadata = AssetMetadata(pathToAssetFile);
+        auto metadata = AssetMetadata(assetId, pathToAssetFile);
         newItem = this->scene()->addToScene(
             atomToBuildFrom, 
             metadata
@@ -280,7 +280,7 @@ void ViewMapHint::replaceMissingAssetPlaceholders(const QString &assetId) {
         auto atom = this->_fetchAtom(gi);
 
         //create the new graphics item
-        auto metadata = AssetMetadata(pathToFile);
+        auto metadata = AssetMetadata(assetId, pathToFile);
         auto newGi = this->scene()->addToScene(*atom, metadata);
         this->_crossBindingAtomWithGI(atom, newGi);
 

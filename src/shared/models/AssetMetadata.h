@@ -10,7 +10,7 @@ class AssetMetadata : public QVariantHash {
         AssetMetadata();
         AssetMetadata(const QVariantHash &hash);
         AssetMetadata(AssetsDatabaseElement *elem);
-        AssetMetadata(const QString &pathToAssetFile);
+        AssetMetadata(const RPZAssetHash &assetId, const QString &pathToAssetFile);
 
         QString pathToAssetFile();
         QString assetName();
