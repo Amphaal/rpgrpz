@@ -14,16 +14,16 @@ class RPZStatusBar : public QStatusBar {
     public:
         RPZStatusBar(QWidget * parent = nullptr);
 
-        void updateServerStateLabel(const QString &stateText, int state);
-        void updateUPnPLabel(const QString &stateText, int state);
-        void updateExtIPLabel(const QString &stateText, int state);
+        void updateServerStateLabel(const QString &stateText, SLState state);
+        void updateUPnPLabel(const QString &stateText, SLState state);
+        void updateExtIPLabel(const QString &stateText, SLState state);
         void updateMapFileLabel(const QString &filePath, bool isMapDirty);
 
     private:
-        RPZStatusLabel* _extIpLabel;
-        RPZStatusLabel* _upnpStateLabel;
-        RPZStatusLabel* _serverStateLabel;
-        QLabel* _mapFileLabel;
+        RPZStatusLabel* _extIpLabel = nullptr;
+        RPZStatusLabel* _upnpStateLabel = nullptr;
+        RPZStatusLabel* _serverStateLabel = nullptr;
+        RPZStatusLabel* _mapFileLabel = nullptr;
 
         void _installComponents();
         void _installLayout();

@@ -1,22 +1,26 @@
 #include "RPZStatusLabel.h"
 
 RPZStatusLabel::RPZStatusLabel(QString descriptor, QWidget* parent) : QWidget(parent), 
-_descriptorLbl(new QLabel(descriptor + ":")), 
-_dataLbl(new QLabel),
-_loaderLbl(new QLabel) {
+    _descriptorLbl(new QLabel(descriptor + ":")), 
+    _dataLbl(new QLabel),
+    _loaderLbl(new QLabel) {
     
+    if(!_loader) {
+
+    }
+
     this->setLayout(new QHBoxLayout);
     this->layout()->setContentsMargins(0, 0, 0, 0);
     this->layout()->addWidget(this->_descriptorLbl);
     this->layout()->addWidget(this->_dataLbl);
     
     //default state
-    this->updateState("<En attente...>", Waiting);
+    this->updateState("<En attente...>", SL_Waiting);
 }
 
-void RPZStatusLabel::updateState(const QString &stateText, int state) {
+void RPZStatusLabel::updateState(const QString &stateText, SLState state) {
     
-    auto mustWait = (state == Processing);
+    auto mustWait = (state == SL_Processing);
     this->setWaiting(mustWait);
 
     this->_dataLbl->setText(stateText);

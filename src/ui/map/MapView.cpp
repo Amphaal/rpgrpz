@@ -10,7 +10,11 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
     this->_resetTool();
     
     //openGL activation
-    this->setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers | QGL::DirectRendering)));
+    QGLFormat format;
+    format.setSampleBuffers(true);
+    format.setDirectRendering(true);
+    format.setAlpha(true);
+    this->setViewport(new QGLWidget(format));
     this->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
     this->update();
 

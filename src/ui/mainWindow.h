@@ -68,7 +68,7 @@ class MainWindow : public QMainWindow {
         void _initUIApp();
 
         /*statusbar*/
-        RPZStatusBar* _sb;
+        RPZStatusBar* _sb = nullptr;
         void _initUIStatusBar();
 
         /*menu*/

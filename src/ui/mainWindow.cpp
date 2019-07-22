@@ -81,7 +81,7 @@ void MainWindow::_initConnectivity() {
     if(appArgs.contains("noServer")) {    
         this->_mustLaunchServer = false;
         qDebug() << "RPZServerThread : No server to start because the user said so.";
-        this->_sb->updateServerStateLabel("Non", RPZStatusLabel::State::Finished);
+        this->_sb->updateServerStateLabel("Non", SLState::SL_Finished);
     }
 
     ////////////////////////////
@@ -112,7 +112,7 @@ void MainWindow::_initConnectivity() {
         QObject::connect(
             &this->_rpzServer, &RPZServerThread::listening,
             [&]() {
-                this->_sb->updateServerStateLabel("OK", RPZStatusLabel::State::Finished);
+                this->_sb->updateServerStateLabel("OK", SLState::SL_Finished);
             }
         );
 
@@ -120,7 +120,7 @@ void MainWindow::_initConnectivity() {
         QObject::connect(
             &this->_rpzServer, &RPZServerThread::error,
             [&]() {
-                this->_sb->updateServerStateLabel("Erreur", RPZStatusLabel::State::Error);
+                this->_sb->updateServerStateLabel("Erreur", SLState::SL_Error);
             }
         );
 
@@ -300,7 +300,7 @@ void MainWindow::_initUIMenu() {
 
 void MainWindow::_initUIStatusBar() {
 
-    this->_sb = new RPZStatusBar(this);
+    this->_sb = new RPZStatusBar;
     this->setStatusBar(this->_sb);
 }
 

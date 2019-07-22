@@ -36,30 +36,34 @@ void RPZStatusBar::_installComponents() {
 
     this->_upnpStateLabel = new RPZStatusLabel("uPnP");
     this->_serverStateLabel = new RPZStatusLabel("Serveur");
-    this->_mapFileLabel = new QLabel();
+    this->_mapFileLabel = new RPZStatusLabel("Carte");
 
 };
 
 void RPZStatusBar::updateMapFileLabel(const QString &filePath, bool isMapDirty) {
-    this->_mapFileLabel->setText(filePath + (isMapDirty ? "*" : ""));
+    auto reflectDirtiness = filePath + (isMapDirty ? "*" : "");
+    this->_mapFileLabel->updateState(reflectDirtiness, SL_Finished);
 }
 
 void RPZStatusBar::_installLayout() {
+    
+    setUpdatesEnabled(false);
 
-    auto addSeparator = [&]() {
-        this->addWidget(new QLabel(" | "));
-    };
+    auto leftPart = new QWidget;
+    leftPart->setLayout(new QHBoxLayout);
+    leftPart->layout()->setMargin(0);
+    leftPart->layout()->addWidget(this->_serverStateLabel);
+    leftPart->layout()->addWidget(new QLabel(" | "));
+    leftPart->layout()->addWidget(this->_extIpLabel);
+    leftPart->layout()->addWidget(new QLabel(" | "));
+    leftPart->layout()->addWidget(this->_upnpStateLabel);
 
     //append components
-    this->addWidget(this->_serverStateLabel);
-    addSeparator();
-    this->addWidget(this->_extIpLabel);
-    addSeparator();
-    this->addWidget(this->_upnpStateLabel);
-    
-    this->addWidget(new QWidget, 1); 
+    this->addPermanentWidget(leftPart);
+    this->addPermanentWidget(new QWidget, 1); 
+    this->addPermanentWidget(this->_mapFileLabel);
 
-    this->addWidget(this->_mapFileLabel);
+    setUpdatesEnabled(true);
 }
 
 
@@ -67,28 +71,28 @@ void RPZStatusBar::_installLayout() {
 ///
 ///
 
-void RPZStatusBar::updateServerStateLabel(const QString &stateText, int state) {
+void RPZStatusBar::updateServerStateLabel(const QString &stateText, SLState state) {
     this->_serverStateLabel->updateState(
         stateText, 
         state
     );
 }
 
-void RPZStatusBar::updateUPnPLabel(const QString &stateText, int state) {
+void RPZStatusBar::updateUPnPLabel(const QString &stateText, SLState state) {
     this->_upnpStateLabel->updateState(
         stateText, 
         state
     );
 }
 
-void RPZStatusBar::updateExtIPLabel(const QString &stateText, int state) {
+void RPZStatusBar::updateExtIPLabel(const QString &stateText, SLState state) {
     
     auto asHTMLLink = [stateText]() {
         return "<a href='" + stateText + "'>" + stateText + "</a>";
     };
 
     this->_extIpLabel->updateState( 
-        (RPZStatusLabel::State)state == RPZStatusLabel::State::Finished ? asHTMLLink() : stateText,
+        state == SLState::SL_Finished ? asHTMLLink() : stateText,
         state
     );
 }
