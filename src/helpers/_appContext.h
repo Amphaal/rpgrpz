@@ -53,6 +53,8 @@ class AppContext {
         static inline const QString ASSETS_JSON_COORDINATOR_FILENAME = "/resources.json";
         static inline const QString APP_SETTINGS_FILENAME = "/settings.ini";
         
+        static void _makeSureDirPathExists(const QString &path);
+
     public:    
         static AppSettings* settings();
 
@@ -70,7 +72,6 @@ class AppContext {
         void static initCustomContext(const QString &customContextSuffix);
         void static init(const QString &customContext = QString());
 
-        static QString makeSureDirPathExists(const QString &path);
         static QString getAppDataLocation();
         static QString getWindowTitle();
         static QString getAssetsFileCoordinatorLocation();

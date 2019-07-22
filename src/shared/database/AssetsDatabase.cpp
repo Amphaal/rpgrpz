@@ -89,7 +89,8 @@ QString AssetsDatabase::getFilePathToAsset(const RPZAssetHash &id) {
     if(!db_assets.contains(id)) return NULL;
 
     auto assetJSON = db_assets[id].toObject();
-    auto fileName = id + "." + assetJSON["ext"].toString();
+    auto fileExtension =  assetJSON["ext"].toString();
+    auto fileName = id + "." + fileExtension;
 
     return this->assetsStorageFilepath() + "/" + fileName;
 }

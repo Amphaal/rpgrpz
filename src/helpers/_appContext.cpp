@@ -109,18 +109,22 @@ void AppContext::init(const QString &customContext) {
         _appDataLocation = _defaultAppDataLocation();
     }
     
+    //create default paths
+    _makeSureDirPathExists(getAppDataLocation());
+    _makeSureDirPathExists(getAssetsFolderLocation());
+    _makeSureDirPathExists(getMapsFolderLocation());
+
 } 
 
 
-QString AppContext::makeSureDirPathExists(const QString &path) {
+void AppContext::_makeSureDirPathExists(const QString &path) {
     if(!std::filesystem::exists(path.toStdString())) {
         QDir().mkpath(path);
     }
-    return path;
 }
 
 QString AppContext::getAppDataLocation() {
-    return makeSureDirPathExists(_appDataLocation);
+    return _appDataLocation;
 }
 
 QString AppContext::getWindowTitle() {
@@ -135,12 +139,12 @@ QString AppContext::getAssetsFileCoordinatorLocation() {
 
 QString AppContext::getAssetsFolderLocation() {
     auto dest = getAppDataLocation() + ASSETS_PATH;
-    return makeSureDirPathExists(dest);
+    return dest;
 }
 
 QString AppContext::getMapsFolderLocation() {
     auto dest = getAppDataLocation() + MAPS_PATH;
-    return makeSureDirPathExists(dest);
+    return dest;
 }
 
 QString AppContext::getDefaultMapFile() {
