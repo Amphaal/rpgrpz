@@ -307,26 +307,27 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
 
     auto selectedElems = this->selectedElementsIndexes();
     auto indexesCount = selectedElems.count();
-    
-    AssetMetadata out; 
-    
+    auto defSelect = AssetMetadata();
+
     if(!indexesCount) {
-        emit assetTemplateChanged(AssetMetadata());
-        return this->clearFocus();
-    }
+        this->clearFocus();
+    } 
     
-    if(indexesCount != 1) {
-        emit assetTemplateChanged(AssetMetadata());
-        return;
+    else if(indexesCount == 1) {
+
+        auto elem = AssetsDatabaseElement::fromIndex(selectedElems[0]);
+        auto atomType = elem->atomType();
+
+        if(atomType != AtomType::Undefined) {
+            defSelect = AssetMetadata(elem);
+        }
+
     }
 
-    auto elem = AssetsDatabaseElement::fromIndex(selectedElems[0]);
-    auto atomType = elem->atomType();
-
-    if(atomType == AtomType::Undefined) {
-        emit assetTemplateChanged(AssetMetadata());
-        return;
+    //if different, send
+    if(this->_selectedAsset != defSelect) {
+        this->_selectedAsset = defSelect;
+        emit assetTemplateChanged(this->_selectedAsset);
     }
-    
-    emit assetTemplateChanged(AssetMetadata(elem));
+   
 }

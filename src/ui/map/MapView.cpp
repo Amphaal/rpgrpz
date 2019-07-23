@@ -126,7 +126,7 @@ void MapView::keyPressEvent(QKeyEvent * event) {
 
 void MapView::assetTemplateChanged(const QVariantHash &assetMetadata) {
     this->_bufferedAssetMetadata = AssetMetadata(assetMetadata);
-    this->_changeTool(assetMetadata.isEmpty() ? Tool::Default : Tool::Atom);
+    this->_changeTool(assetMetadata.isEmpty() ? Tool::Default : Tool::Atom, false, true);
 }
 
 void MapView::_clearGhostItem() {
@@ -300,7 +300,7 @@ void MapView::mousePressEvent(QMouseEvent *event) {
                         }
                     break;
 
-                    default:{
+                    default: {
                         this->_hints->integrateGraphicsItemAsPayload(this->_ghostItem);
                     }
                     break;
@@ -387,7 +387,7 @@ void MapView::_resetTool() {
 }
 
 //change tool
-void MapView::_changeTool(Tool newTool, const bool quickChange) {
+void MapView::_changeTool(Tool newTool, const bool quickChange, bool isFromExternal) {
 
     this->_endDrawing();
 
@@ -449,7 +449,7 @@ void MapView::_changeTool(Tool newTool, const bool quickChange) {
             this->setInteractive(true);
             this->setDragMode(QGraphicsView::DragMode::RubberBandDrag);
             this->setCursor(Qt::ArrowCursor);
-            emit unselectCurrentAssetAsked();
+            if(!isFromExternal) emit unselectCurrentAssetAsked();
             break;
     }
 }
@@ -527,11 +527,15 @@ void MapView::wheelEvent(QWheelEvent *event) {
         if(this->_ghostItem) {
             this->_centerItemToPoint(this->_ghostItem, this->mapFromGlobal(QCursor::pos()));
         }
-        
 
     };
 
-    AnimationTimeLine::use(AnimationTimeLine::Type::Zoom, zoomRatioToApply, this, zoom);
+    AnimationTimeLine::use(
+        AnimationTimeLine::Type::Zoom, 
+        zoomRatioToApply, 
+        this, 
+        zoom
+    );
 
 };
 

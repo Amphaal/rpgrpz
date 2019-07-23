@@ -101,7 +101,7 @@ class MapView : public QGraphicsView, public ClientBindable {
             Tool _tool = (Tool)0;
             Tool _quickTool = (Tool)0;
             Tool _getCurrentTool() const;
-            void _changeTool(Tool newTool, const bool quickChange = false);
+            void _changeTool(Tool newTool, bool quickChange = false, bool isFromExternal = false);
             void _resetTool();
             
         //moving...

@@ -64,5 +64,7 @@ class AssetsTreeView : public QTreeView {
         void _requestDeletion(const QModelIndexList &itemsIndexesToDelete);
 
         void keyPressEvent(QKeyEvent * event) override;
+
+        AssetMetadata _selectedAsset;
         void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
 };
