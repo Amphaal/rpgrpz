@@ -109,20 +109,19 @@ void AssetsTreeView::startDrag(Qt::DropActions supportedActions) {
     QMimeData *data = model()->mimeData(indexes);
     if (!data) return;
 
-    QDrag *drag = new QDrag(this);
+    QDrag drag(this);
 
     QPixmap pixmap(":/icons/app/rpgrpz_32.png");
-    QPainter *paint = new QPainter(&pixmap);
-    paint->setPen(QPen("#000000"));
-    paint->setBrush(QBrush(Qt::white));
+    QPainter paint(&pixmap);
+    paint.setPen(QPen("#000000"));
+    paint.setBrush(QBrush(Qt::white));
     QRect numberRect(12, 8, 13, 13);
-    paint->drawRect(numberRect);
-    paint->drawText(numberRect, Qt::AlignHCenter | Qt::AlignVCenter, QString("%1").arg(indexes.count()));
-    drag->setPixmap(pixmap);
+    paint.drawRect(numberRect);
+    paint.drawText(numberRect, Qt::AlignHCenter | Qt::AlignVCenter, QString::number(indexes.count()));
+    drag.setPixmap(pixmap);
             
-    drag->setMimeData(data);
-    Qt::DropAction defaultDropAction = Qt::MoveAction;
-    drag->exec(supportedActions, defaultDropAction);
+    drag.setMimeData(data);
+    drag.exec(supportedActions, Qt::MoveAction);
 
 }
 

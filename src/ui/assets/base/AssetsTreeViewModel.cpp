@@ -324,20 +324,30 @@ QList<AssetsDatabaseElement*> AssetsTreeViewModel::pointerListFromMimeData(const
 bool AssetsTreeViewModel::canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const {
 
     //prevent dropping anywhere else than in the main column
-    if(column > 0) return false;
+    if(column > 0) {
+        return false;
+    }
 
     //external drop, allows
-    if(!data->hasFormat(AssetsDatabaseElement::listMimeType)) return true;
+    if(!data->hasFormat(AssetsDatabaseElement::listMimeType)) {
+        return true;
+    }
 
     //if is root or not corresponding to a tree element
     auto dest = AssetsDatabaseElement::fromIndex(parent);
-    if(!dest || dest->isRoot()) return false;
+    if(!dest || dest->isRoot()) {
+        return false;
+    }
 
     //iterate through list
     auto dataList = pointerListFromMimeData(data);
     for(auto &ptr : dataList) {
+
         //internal drop/move, reject internal objects drop
-        if(ptr->isInternal()) return false;
+        if(ptr->isInternal()) {
+            return false;
+        }
+
     }
 
     //prevent dropping into a selected index
@@ -346,8 +356,12 @@ bool AssetsTreeViewModel::canDropMimeData(const QMimeData *data, Qt::DropAction 
         selectedPaths.append(ptr->path());
     }
     auto destPath = dest->path();
-    if(selectedPaths.contains(destPath)) return false;
+    if(selectedPaths.contains(destPath)) {
+        return false;
+    }
 
+
+    //else, allow
     return true;
 }
 
