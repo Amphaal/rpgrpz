@@ -154,7 +154,8 @@ class AssetsDatabaseElement {
             NPC, 
             FloorBrush,
             Object,
-            Folder
+            Folder,
+            Downloaded
         };
 
         static const inline QList<AssetsDatabaseElement::Type> _staticContainerTypes = {

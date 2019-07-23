@@ -208,7 +208,7 @@ void AssetsTreeView::_generateMenu(QList<QModelIndex> &itemsIndexes, const QPoin
         auto firstItem = AssetsDatabaseElement::fromIndex(firstItemIndex);
 
         //container actions...
-        if(firstItem->isContainer()) {
+        if(firstItem->isContainer() && firstItem->type() != AssetsDatabaseElement::Type::DownloadedContainer) {
             
             //folder creation
             auto createFolder = RPZActions::createFolder();
