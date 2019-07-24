@@ -47,7 +47,7 @@ LogItem* LogContainer::_addLine(Serializable &element, snowflake_uid putUnder) {
         }
         else {
             //add carriage return symbol
-            auto cr = new QLabel("☇");
+            auto cr = new QLabel(QChar(0x2607));
             found->layout()->setAlignment(Qt::AlignLeft);
             found->layout()->addWidget(cr);
 

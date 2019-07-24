@@ -27,7 +27,7 @@ QString RPZMessage::toString() {
     switch(this->_command) {
         case MessageInterpreter::Say: {
             QString textPrefix = ownerExist ? " a dit : " : "vous dites : ";
-            return base + textPrefix + "“" + text +  "”";
+            return base + textPrefix + QChar(0x201C) + text + QChar(0x201D);
         }
 
         case MessageInterpreter::Whisper: {
@@ -39,7 +39,7 @@ QString RPZMessage::toString() {
                 text = MessageInterpreter::sanitizeText(text);
             }
 
-            return base + textPrefix + "“" + text +  "”";
+            return base + textPrefix + QChar(0x201C) + text + QChar(0x201D);
         }
 
         default:
