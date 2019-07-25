@@ -6,11 +6,11 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
     this->_initUI();
     this->_initConnectivity();
 
-    //initial show
-    this->_loadWindowState();
-
     //load default map
     this->_mapView->hints()->loadDefaultMap();
+
+    //initial show
+    this->_loadWindowState();
 
     //start the update check
     this->_updateIntegrator->checkForAppUpdates();

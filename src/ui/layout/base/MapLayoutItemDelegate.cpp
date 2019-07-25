@@ -25,7 +25,7 @@ void OwnerDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 }
 
 QSize OwnerDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    return QSize(6, 6);
+    return QSize(24, 12);
 }
 
 LockAndVisibilityDelegate::LockAndVisibilityDelegate(QWidget *parent) : QStyledItemDelegate(parent) {
