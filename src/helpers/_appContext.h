@@ -24,6 +24,8 @@
 
 #include <QRegularExpression>
 
+#include "RPZUserRoles.h"
+
 class AppSettings : public QSettings {
     public:
         AppSettings(const QString &path);

@@ -5,7 +5,6 @@
 #include "src/shared/database/AssetsDatabase.h"
 
 #include "src/ui/layout/base/LayerTreeItem.h"
-
 #include "src/ui/layout/base/MapLayoutItemDelegate.h"
 
 #include "src/shared/commands/AtomsContextualMenuHandler.h"

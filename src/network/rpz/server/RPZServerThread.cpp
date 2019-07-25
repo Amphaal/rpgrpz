@@ -59,7 +59,9 @@ void RPZServerThread::_onNewConnection(QTcpServer * server) {
         //clear on client disconnect
         QObject::connect(
             clientSocket, &JSONSocket::disconnected,
-            [&]() {this->_onDisconnect();}
+            [&, clientSocket]() {
+				this->_onDisconnect(clientSocket);
+			}
         );
 
         //on data reception
@@ -76,22 +78,21 @@ void RPZServerThread::_onNewConnection(QTcpServer * server) {
 
 }
 
-void RPZServerThread::_onDisconnect() {
-
-    auto clientSocket = (JSONSocket*)this->sender();
+void RPZServerThread::_onDisconnect(JSONSocket* disconnecting) {
 
     //remove socket
-    const auto idToRemove = this->_idsByClientSocket.take(clientSocket);
+    const auto idToRemove = this->_idsByClientSocket.take(disconnecting);
     this->_usersById.remove(idToRemove);
 
     //desalocate host
-    if(this->_hostSocket == clientSocket) {
+    if(this->_hostSocket == disconnecting) {
         this->_hostSocket = nullptr;
     }
 
-    qDebug() << "RPZServerThread : " << clientSocket->socket()->peerAddress().toString() << " disconnected !";
+    auto disconnectingAddress = disconnecting->socket()->peerAddress().toString();
+    qDebug() << "RPZServerThread : " << disconnectingAddress << " disconnected !";
 
-    clientSocket->deleteLater();
+    disconnecting->deleteLater();
 
     //tell other clients that the user is gone
     this->_broadcastUsers();

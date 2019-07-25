@@ -336,7 +336,7 @@ void ViewMapHint::handleParametersUpdateAlterationRequest(QVariantHash &payload)
 void ViewMapHint::_crossBindingAtomWithGI(RPZAtom* atom, QGraphicsItem* gi) {
     atom->setGraphicsItem(gi);
     auto ptrValToAtom = (long long)atom;
-    gi->setData(0, ptrValToAtom);
+    gi->setData(RPZUserRoles::AtomPtr, ptrValToAtom);
 }
 
 MapViewGraphicsScene* ViewMapHint::scene() {
@@ -353,7 +353,7 @@ QVector<RPZAtom*> ViewMapHint::_fetchAtoms(const QList<QGraphicsItem*> &listToFe
 }
 
 RPZAtom* ViewMapHint::_fetchAtom(QGraphicsItem* graphicElem) const {
-    auto ptrValToAtom = graphicElem->data(0).toLongLong();
+    auto ptrValToAtom = graphicElem->data(RPZUserRoles::AtomPtr).toLongLong();
     return (RPZAtom*)ptrValToAtom;
 }
 

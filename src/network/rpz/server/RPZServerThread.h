@@ -67,7 +67,7 @@ class RPZServerThread : public QThread, public JSONRouter {
         
         //internal
         void _onNewConnection(QTcpServer * server);
-        void _onDisconnect();
+        void _onDisconnect(JSONSocket* disconnecting);
         void _routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) override;
         
         void _sendToAll(const JSONMethod &method, const QVariant &data);

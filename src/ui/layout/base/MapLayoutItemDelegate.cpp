@@ -4,7 +4,7 @@ OwnerDelegate::OwnerDelegate(QWidget *parent) : QStyledItemDelegate(parent) {}
 
 void OwnerDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
     
-    auto color = index.data(Qt::UserRole).value<QColor>();
+    auto color = index.data(RPZUserRoles::UserColor).value<QColor>();
 
     if(color.isValid()) {
         
@@ -25,7 +25,7 @@ void OwnerDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 }
 
 QSize OwnerDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    return QStyledItemDelegate::sizeHint(option, index);
+    return QSize(6, 6);
 }
 
 LockAndVisibilityDelegate::LockAndVisibilityDelegate(QWidget *parent) : QStyledItemDelegate(parent) {
@@ -38,8 +38,8 @@ LockAndVisibilityDelegate::LockAndVisibilityDelegate(QWidget *parent) : QStyledI
 void LockAndVisibilityDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
     
     //fetch data
-    auto isHidden = index.data(VisibilityRole).toBool();
-    auto isLocked = index.data(AvailabilityRole).toBool();
+    auto isHidden = index.data(RPZUserRoles::AtomVisibility).toBool();
+    auto isLocked = index.data(RPZUserRoles::AtomAvailability).toBool();
 
     //may draw "hide" icon
     if(isHidden) painter->drawPixmap(option.rect.topLeft(), *_hiddenPix);

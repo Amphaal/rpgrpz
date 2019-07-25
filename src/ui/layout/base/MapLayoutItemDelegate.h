@@ -6,12 +6,7 @@
 
 #include <QStyledItemDelegate>
 
-enum LayoutCustomRoles {
-    OwnerIdRole = 267, 
-    RPZAssetHashRole = 260, 
-    VisibilityRole = 261, 
-    AvailabilityRole = 262 
-};
+#include "src/helpers/RPZUserRoles.h"
 
 class OwnerDelegate  : public QStyledItemDelegate {
     

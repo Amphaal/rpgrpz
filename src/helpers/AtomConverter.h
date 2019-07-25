@@ -5,10 +5,9 @@
 #include <QPainterPath>
 #include "src/ui/map/graphics/items/MapViewGraphicsItems.h"
 
-enum class AtomConverterDataIndex { TemplateAtom = 222, BrushTransform = 555, IsTemporary = 666, BrushDrawStyle = 767 };
+enum class AtomConverterDataIndex { TemplateAtom = 2220, BrushTransform = 2555, IsTemporary = 2666, BrushDrawStyle = 2767 };
 
 class AtomConverter {
-    
     public:
         static void updateGraphicsItemFromAtom(QGraphicsItem* target, RPZAtom &blueprint, bool isTargetTemporary = false);
         static void updateGraphicsItemFromMetadata(QGraphicsItem* item, const AtomParameter &param, QVariant &val);

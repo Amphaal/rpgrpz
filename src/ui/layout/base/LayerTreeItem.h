@@ -2,6 +2,8 @@
 
 #include <QTreeWidgetItem>
 
+#include "src/shared/atoms/TreeMapHint.h"
+
 class LayerTreeItem : public QTreeWidgetItem {
     public:
         LayerTreeItem();

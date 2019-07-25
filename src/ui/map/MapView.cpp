@@ -54,7 +54,7 @@ void MapView::contextMenuEvent(QContextMenuEvent *event) {
 
     for(auto &item : selected) {
         
-        auto atom = (RPZAtom*)item->data(0).toLongLong();
+        auto atom = (RPZAtom*)item->data(RPZUserRoles::AtomPtr).toLongLong();
         auto layer = atom->layer();
         
         if(firstPass) {

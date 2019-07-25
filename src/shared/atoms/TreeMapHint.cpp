@@ -136,7 +136,7 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
         case PayloadAlteration::Removed: {
             
             auto layerItem = item->parent();
-            RPZAssetHash tbrAtom_assetId = item->data(0, LayoutCustomRoles::RPZAssetHashRole).toString();
+            RPZAssetHash tbrAtom_assetId = item->data(0, RPZUserRoles::AssetHash).toString();
 
             //if has assetId, remove it from tracking list
             if(!tbrAtom_assetId.isNull()) {
@@ -168,13 +168,13 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
                 
                     case AtomParameter::Locked: {
                         auto isLocked = partial.isLocked();
-                        item->setData(1, LayoutCustomRoles::AvailabilityRole, isLocked);
+                        item->setData(1, RPZUserRoles::AtomAvailability, isLocked);
                     }
                     break;
 
                     case AtomParameter::Hidden: {
                         auto isHidden = partial.isHidden();
-                        item->setData(1, LayoutCustomRoles::VisibilityRole, isHidden);
+                        item->setData(1, RPZUserRoles::AtomVisibility, isHidden);
                     }
                     break;
 
@@ -247,7 +247,7 @@ QTreeWidgetItem* TreeMapHint::_getLayerItem(int layer) {
         //define new
         layerElem = new LayerTreeItem();
         layerElem->setText(0, "Calque " + QString::number(layer));
-        layerElem->setData(0, Qt::UserRole, QVariant(layer));
+        layerElem->setData(0, RPZUserRoles::AtomLayer, QVariant(layer));
         layerElem->setIcon(0, *this->_layerIcon);
         layerElem->setFlags(
             QFlags<Qt::ItemFlag>(
@@ -269,8 +269,8 @@ QTreeWidgetItem* TreeMapHint::_getLayerItem(int layer) {
 }
 
 void TreeMapHint::_bindOwnerToItem(QTreeWidgetItem* item, RPZUser &owner) {
-    item->setData(2, LayoutCustomRoles::OwnerIdRole, owner.id());
-    item->setData(2, Qt::UserRole, owner.color());
+    item->setData(2, RPZUserRoles::OwnerId, owner.id());
+    item->setData(2, RPZUserRoles::UserColor, owner.color());
     item->setData(2, Qt::ToolTipRole, owner.toString());
 }
 
@@ -279,11 +279,11 @@ QTreeWidgetItem* TreeMapHint::_createTreeItem(RPZAtom &atom) {
     auto item = new QTreeWidgetItem();
     
     item->setText(0, atom.descriptor());
-    item->setData(0, Qt::UserRole, atom.id());
-    item->setData(0, LayoutCustomRoles::RPZAssetHashRole, atom.assetId());
+    item->setData(0, RPZUserRoles::AtomId, atom.id());
+    item->setData(0, RPZUserRoles::AssetHash, atom.assetId());
 
-    item->setData(1, LayoutCustomRoles::VisibilityRole, atom.isHidden());
-    item->setData(1, LayoutCustomRoles::AvailabilityRole, atom.isLocked());
+    item->setData(1, RPZUserRoles::AtomVisibility, atom.isHidden());
+    item->setData(1, RPZUserRoles::AtomAvailability, atom.isLocked());
 
     auto owner = atom.owner();
     this->_bindOwnerToItem(item, owner);
@@ -323,14 +323,14 @@ void TreeMapHint::_updateLayerState(QTreeWidgetItem* layerItem) {
         layerItem->setExpanded(true);
     } else {
         //has no more children, remove
-        auto layer = layerItem->data(0, Qt::UserRole).toInt();
+        auto layer = layerItem->data(0, RPZUserRoles::AtomLayer).toInt();
         delete this->_layersItems.take(layer);
     }
 }
 
 
 snowflake_uid TreeMapHint::_extractAtomIdFromItem(QTreeWidgetItem* item) const {
-    return item->data(0, Qt::UserRole).toULongLong();
+    return item->data(0, RPZUserRoles::AtomId).toULongLong();
 }
 
 QVector<snowflake_uid> TreeMapHint::_selectedAtomIds() {
