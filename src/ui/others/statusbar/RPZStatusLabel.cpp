@@ -4,10 +4,6 @@ RPZStatusLabel::RPZStatusLabel(QString descriptor, QWidget* parent) : QWidget(pa
     _descriptorLbl(new QLabel(descriptor + ":")), 
     _dataLbl(new QLabel),
     _loaderLbl(new QLabel) {
-    
-    if(!_loader) {
-
-    }
 
     this->setLayout(new QHBoxLayout);
     this->layout()->setContentsMargins(0, 0, 0, 0);

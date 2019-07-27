@@ -90,9 +90,12 @@ QString AssetsDatabase::getFilePathToAsset(const RPZAssetHash &id) {
 
     auto assetJSON = db_assets[id].toObject();
     auto fileExtension =  assetJSON["ext"].toString();
-    auto fileName = id + "." + fileExtension;
+	auto asFP = this->assetsStorageFilepath();
 
-    return this->assetsStorageFilepath() + "/" + fileName;
+	return QString("%1/%2.%3")
+					.arg(asFP)
+					.arg(id)
+					.arg(fileExtension);
 }
 
 QString AssetsDatabase::getFilePathToAsset(AssetsDatabaseElement* asset) {

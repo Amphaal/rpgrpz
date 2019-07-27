@@ -23,7 +23,10 @@ QString RPZAtom::descriptor() {
     //displays asset name
     auto asname = this->assetName();
     if(!asname.isEmpty()) {
-        return asname + " (" + this->_defaultDescriptor() +")";
+		auto descriptor = this->_defaultDescriptor();
+		return QString("%1 (%2)")
+					.arg(asname)
+					.arg(descriptor);
     }
 
     return this->_defaultDescriptor();

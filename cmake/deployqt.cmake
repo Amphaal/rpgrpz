@@ -16,11 +16,20 @@ SET(DEPLOYQT_EXECUTABLE ${QT_DEPLOY_BIN_PATH}/${QT_DEPLOY_BIN})
 # build and install the Qt runtime to the specified directory
 function(deployqt target)
 
+    #define default debug symbols import
+    SET(QT_DEPLOY_MUST_BE_DEBUG "")
+
     # force target
     string(TOLOWER ${CMAKE_BUILD_TYPE} DEPLOYQT_TARGET)
     message("Including QT shared \"${CMAKE_BUILD_TYPE}\" dependencies...")
 
     if(WIN32)
+
+        #import .pdb
+        if(DEPLOYQT_TARGET STREQUAL "debug")
+            SET(QT_DEPLOY_MUST_BE_DEBUG "--pdb")
+        endif()
+
         add_custom_command(TARGET ${target} POST_BUILD
             COMMAND "${CMAKE_COMMAND}" -E
                 env "${DEPLOYQT_EXECUTABLE}"
@@ -29,6 +38,7 @@ function(deployqt target)
                     --no-angle
                     --no-translations
                     --no-opengl-sw
+                    ${QT_DEPLOY_MUST_BE_DEBUG}
                     --${DEPLOYQT_TARGET}
                     \"$<TARGET_FILE:${target}>/\"
         )
@@ -36,8 +46,7 @@ function(deployqt target)
 
     if(APPLE)
 
-        #define debug symbols import
-        SET(QT_DEPLOY_MUST_BE_DEBUG "")
+        #use debug libs
         if(DEPLOYQT_TARGET STREQUAL "debug")
             SET(QT_DEPLOY_MUST_BE_DEBUG "-use-debug-libs")
         endif()

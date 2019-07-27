@@ -149,6 +149,9 @@ list(APPEND EXT_LIBS
 # QT 5 #
 ########
 
+#force official binaires from Qt
+#SET(Qt5_DIR "C:/Qt/5.13.0/msvc2017_64/lib/cmake/Qt5")
+
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL)
 list(APPEND EXT_LIBS
     Qt5::Core

@@ -7,6 +7,8 @@ TreeMapHint::TreeMapHint(QTreeWidget* boundTree) : AtomsHandler(AlterationPayloa
     _textIcon(new QIcon(":/icons/app/tools/text.png")),
     _drawingIcon(new QIcon(":/icons/app/manager/drawing.png")) { 
     
+	this->_boundTree->setSortingEnabled(true);
+
     //selection changed
     QObject::connect(
         this->_boundTree, &QTreeWidget::itemSelectionChanged,
@@ -241,30 +243,26 @@ void TreeMapHint::_changeLayer(QVector<snowflake_uid> &elementIds, int newLayer)
 QTreeWidgetItem* TreeMapHint::_getLayerItem(int layer) {
     
     auto layerElem = this->_layersItems[layer];
-    
-    if(!layerElem) {
+	if (layerElem) return layerElem;
 
-        //define new
-        layerElem = new LayerTreeItem();
-        layerElem->setText(0, "Calque " + QString::number(layer));
-        layerElem->setData(0, RPZUserRoles::AtomLayer, QVariant(layer));
-        layerElem->setIcon(0, *this->_layerIcon);
-        layerElem->setFlags(
-            QFlags<Qt::ItemFlag>(
-                Qt::ItemIsEnabled 
-            )
-        );
+    //if undef, create new
+    layerElem = new LayerTreeItem();
+    layerElem->setText(0, "Calque " + QString::number(layer));
+    layerElem->setData(0, RPZUserRoles::AtomLayer, QVariant(layer));
+    layerElem->setIcon(0, *this->_layerIcon);
+    layerElem->setFlags(
+        QFlags<Qt::ItemFlag>(
+            Qt::ItemIsEnabled 
+        )
+    );
         
-        //add to layout
-        this->_layersItems[layer] = layerElem;
-        this->_boundTree->addTopLevelItem(layerElem);
+    //add to layout
+    this->_layersItems[layer] = layerElem;
+    this->_boundTree->addTopLevelItem(layerElem);
 
-        //initial sort
-        this->_boundTree->setSortingEnabled(true);
-        this->_boundTree->sortByColumn(0, Qt::SortOrder::DescendingOrder);
-        this->_boundTree->setSortingEnabled(false);
-    }
-
+    //initial sort
+    this->_boundTree->sortByColumn(0, Qt::SortOrder::DescendingOrder);
+    
     return layerElem;
 }
 
