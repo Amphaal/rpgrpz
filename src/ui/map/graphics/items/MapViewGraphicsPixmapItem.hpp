@@ -9,7 +9,7 @@
 
 #include "src/ui/map/graphics/MapViewItemsNotifier.h"
 
-#include "src/shared/models/AssetMetadata.h"
+#include "src/shared/models/RPZAssetMetadata.h"
 
 #include <QVariant>
 #include <QBrush>
@@ -19,7 +19,7 @@
 class MapViewGraphicsPixmapItem : public QGraphicsPixmapItem, public MapViewItemsNotifier {
     
     public:
-        MapViewGraphicsPixmapItem(MapViewItemsNotified* toNotify, AssetMetadata &assetMetadata) : 
+        MapViewGraphicsPixmapItem(MapViewItemsNotified* toNotify, const RPZAssetMetadata &assetMetadata) : 
             QGraphicsPixmapItem(fetchCachedPixmap(assetMetadata)), 
             MapViewItemsNotifier(toNotify, this) {
 
@@ -31,7 +31,7 @@ class MapViewGraphicsPixmapItem : public QGraphicsPixmapItem, public MapViewItem
             return QGraphicsPixmapItem::itemChange(change, value);
         }
 
-        static QPixmap fetchCachedPixmap(AssetMetadata &assetMetadata) {
+        static QPixmap fetchCachedPixmap(const RPZAssetMetadata &assetMetadata) {
             QPixmap cached;
 
             auto assetId = assetMetadata.assetId();

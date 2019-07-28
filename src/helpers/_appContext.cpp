@@ -39,7 +39,8 @@ void AppContext::configureApp(QCoreApplication &app) {
         auto customContext = args["customContext"];
         return AppContext::initCustomContext(customContext);
     }
-
+    
+    //else default init
     AppContext::init();
 }
 
@@ -92,8 +93,17 @@ QHash<QString, QString> AppContext::getOptionArgs(int argc, char** argv) {
 }
 
 void AppContext::initRandomContext() {
-    QTemporaryDir randomDir(_defaultAppDataLocation() + "/r");
-    init(randomDir.path());
+    
+    QString templateStr("%1/r_%2");
+    auto randomSF = QString::number(
+        SnowFlake::get()->nextId()
+    );
+
+    auto randomPath = templateStr
+                        .arg(_defaultAppDataLocation())
+                        .arg(randomSF);
+                        
+    init(randomPath);
 }
 
 void AppContext::initCustomContext(const QString &customContextSuffix) {
@@ -109,6 +119,8 @@ void AppContext::init(const QString &customContext) {
         _appDataLocation = _defaultAppDataLocation();
     }
     
+    qDebug() << "Context : using" << _appDataLocation;
+
     //create default paths
     _makeSureDirPathExists(getAppDataLocation());
     _makeSureDirPathExists(getAssetsFolderLocation());

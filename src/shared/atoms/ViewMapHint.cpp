@@ -39,7 +39,7 @@ void ViewMapHint::handleAnyMovedItems() {
     RPZMap<RPZAtom> coords;
     for(auto gi : this->_itemsWhoNotifiedMovement) {
         
-        auto cAtom = this->_fetchAtom(gi);
+        auto cAtom = this->_getAtomFromGraphicsItem(gi);
         if(!cAtom) continue;
 
         RPZAtom oAtom;
@@ -86,7 +86,7 @@ void ViewMapHint::_onSceneItemChanged(QGraphicsItem* item, int changeFlag) {
 
 
 QVector<RPZAtom*> ViewMapHint::selectedAtoms() {
-    return this->_fetchAtoms(this->scene()->selectedItems());
+    return this->_getAtomFromGraphicsItems(this->scene()->selectedItems());
 }
 
 QVector<snowflake_uid> ViewMapHint::_selectedAtomIds() {
@@ -106,7 +106,7 @@ void ViewMapHint::_onSceneSelectionChanged() {
 
     //bypass internal
     auto payload = SelectedPayload(this->_selectedAtomIds());
-    this->_emitAlteration(payload);
+    this->propagateAlteration(payload);
 
 }
 
@@ -151,7 +151,7 @@ void ViewMapHint::setDefaultUser(RPZUser user) {
 
     //inform atom layout
     auto payload = OwnerChangedPayload(atomIds.toList().toVector(), user);
-    this->_emitAlteration(payload);
+    this->propagateAlteration(payload);
 
 }
 
@@ -166,7 +166,7 @@ void ViewMapHint::setDefaultUser(RPZUser user) {
 void ViewMapHint::deleteCurrentSelectionItems() {
     QVector<snowflake_uid> atomIdsToRemove;
     for(auto item : this->scene()->selectedItems()) {
-        auto atom = this->_fetchAtom(item);
+        auto atom = this->_getAtomFromGraphicsItem(item);
         atomIdsToRemove.append(atom->id());
     }
 
@@ -174,7 +174,7 @@ void ViewMapHint::deleteCurrentSelectionItems() {
     this->_handlePayload(payload);
 }
 
-QGraphicsItem* ViewMapHint::generateGhostItem(AssetMetadata &assetMetadata) {
+QGraphicsItem* ViewMapHint::generateGhostItem(RPZAssetMetadata &assetMetadata) {
 
     //update template
     this->templateAtom->changeType(assetMetadata.atomType());
@@ -240,11 +240,11 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
         auto placeholder = this->scene()->addMissingAssetPH(atomToBuildFrom);
         newItem = placeholder;
 
-        //if first time the ID is encountered
-        if(!this->_missingAssetsIdsFromDb.contains(assetId)) {
+        //add graphic item to list of items to replace at times
+        this->_missingAssetsIdsFromDb.insert(assetId, placeholder);
 
-            //add graphic item to list of items to replace at times
-            this->_missingAssetsIdsFromDb.insert(assetId, placeholder);
+        //if first time the ID is encountered
+        if(!this->_assetsIdsToRequest.contains(assetId)) {
             this->_assetsIdsToRequest.insert(assetId);
         }
 
@@ -252,7 +252,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
     
     //default
     else {
-        auto metadata = AssetMetadata(assetId, pathToAssetFile);
+        auto metadata = RPZAssetMetadata(assetId, pathToAssetFile);
         newItem = this->scene()->addToScene(
             atomToBuildFrom, 
             metadata
@@ -265,22 +265,22 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
     return newItem;
 }
 
-void ViewMapHint::replaceMissingAssetPlaceholders(const QString &assetId) {
-    if(!this->_missingAssetsIdsFromDb.contains(assetId)) return;
+void ViewMapHint::replaceMissingAssetPlaceholders(const RPZAssetMetadata &metadata) {
+    
+    auto assetId = metadata.assetId();
+    auto pathToFile = metadata.pathToAssetFile();
 
-    //find the path file
-    auto pathToFile = AssetsDatabase::get()->getFilePathToAsset(QString(assetId));
-    if(pathToFile.isNull()) return;
+    if(!this->_missingAssetsIdsFromDb.contains(assetId)) return; //no assetId, skip
+    if(pathToFile.isNull()) return; //path to file empty, skip
     
     //iterate through the list of GI to replace
     auto setOfGraphicsItemsToReplace = this->_missingAssetsIdsFromDb.values(assetId).toSet();
     for(auto gi : setOfGraphicsItemsToReplace) {
         
         //find corresponding atom
-        auto atom = this->_fetchAtom(gi);
+        auto atom = this->_getAtomFromGraphicsItem(gi);
 
         //create the new graphics item
-        auto metadata = AssetMetadata(assetId, pathToFile);
         auto newGi = this->scene()->addToScene(*atom, metadata);
         this->_crossBindingAtomWithGI(atom, newGi);
 
@@ -343,16 +343,16 @@ MapViewGraphicsScene* ViewMapHint::scene() {
     return (MapViewGraphicsScene*)this->_boundGv->scene();
 }
 
-QVector<RPZAtom*> ViewMapHint::_fetchAtoms(const QList<QGraphicsItem*> &listToFetch) const {
+QVector<RPZAtom*> ViewMapHint::_getAtomFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const {
     QVector<RPZAtom*> list;
     for(auto e : listToFetch) {
-        auto atom = this->_fetchAtom(e);
+        auto atom = this->_getAtomFromGraphicsItem(e);
         list.append(atom);
     }
     return list;
 }
 
-RPZAtom* ViewMapHint::_fetchAtom(QGraphicsItem* graphicElem) const {
+RPZAtom* ViewMapHint::_getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const {
     auto ptrValToAtom = graphicElem->data(RPZUserRoles::AtomPtr).toLongLong();
     return (RPZAtom*)ptrValToAtom;
 }

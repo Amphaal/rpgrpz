@@ -35,7 +35,7 @@ void TreeMapHint::_onElementDoubleClicked(QTreeWidgetItem * item, int column) {
     if(!focusedAtomId) return;
 
     auto payload = FocusedPayload(focusedAtomId);
-    this->_emitAlteration(payload);
+    this->propagateAlteration(payload);
 }
 
 void TreeMapHint::_onElementSelectionChanged() {
@@ -46,7 +46,7 @@ void TreeMapHint::_onElementSelectionChanged() {
     if(this->_preventInnerGIEventsHandling) return;
 
     auto payload = SelectedPayload(selected);
-    this->_emitAlteration(payload);
+    this->propagateAlteration(payload);
 }
 
 void TreeMapHint::_handlePayload(AlterationPayload &payload) {
@@ -103,8 +103,7 @@ void TreeMapHint::_handlePayload(AlterationPayload &payload) {
     }
 
     this->_preventInnerGIEventsHandling = false;
-    
-    this->_emitAlteration(payload);
+
 }
 
 RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) {

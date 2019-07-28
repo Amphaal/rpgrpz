@@ -43,6 +43,10 @@ void RPZClient::_onConnected() {
     this->sendJSON(JSONMethod::Handshake, RPZHandshake(this->_name));
 }
 
+void RPZClient::handleAlterationRequest(AlterationPayload &payload) {
+    if(!payload.isNetworkRoutable()) return;
+    this->sendJSON(JSONMethod::MapChanged, payload);
+}
 
 QString RPZClient::getConnectedSocketAddress() {
     return this->_domain + ":" + this->_port;
@@ -153,10 +157,6 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
     }
 }
 
-void RPZClient::informAssetSucessfulInsertion(const RPZAssetHash &id) {
-    emit assetSucessfullyInserted(id);
-}
-
 void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
     
     QString msg;
@@ -188,14 +188,10 @@ void RPZClient::sendMessage(QVariantHash &message) {
     this->sendJSON(JSONMethod::MessageFromPlayer, msg);
 }
 
-void RPZClient::askForAssets(QList<RPZAssetHash> ids) {
+void RPZClient::askForAssets(const QList<RPZAssetHash> ids) {
     QVariantList list;
     for(auto &id : ids) list.append(id);
     this->sendJSON(JSONMethod::AskForAssets, list);
-}
-
-void RPZClient::sendMapChanges(QVariantHash &payload) {
-    this->sendJSON(JSONMethod::MapChanged, payload);
 }
 
 void RPZClient::changeAudioPosition(int newPosition) {

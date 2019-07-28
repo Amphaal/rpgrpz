@@ -6,17 +6,17 @@ AlterationPayload::Source AtomsHandler::source() {
     return this->_source;
 }
 
-void AtomsHandler::handleAlterationRequest(QVariantHash &payload) {
-    auto ptr = Payloads::autoCast(payload);
-    this->_handlePayload(*ptr);
+void AtomsHandler::handleAlterationRequest(AlterationPayload &payload) {
+    this->_handlePayload(payload);
 }
 
-void AtomsHandler::_emitAlteration(AlterationPayload &payload) {
+void AtomsHandler::propagateAlteration(AlterationPayload &payload) {
 
-    //define source of payload
+    //if inner payload, apply own source for send
     auto source = payload.source();
-    if(source == AlterationPayload::Source::Network) return; //prevent resending network payload
-    if(source == AlterationPayload::Source::Undefined) payload.changeSource(this->_source); //inner payload, apply own source for send
+    if(source == AlterationPayload::Source::Undefined) payload.changeSource(this->_source); 
 
-    emit alterationRequested(payload);
+    //propagate
+    AtomAlterationAcknoledger::propagateAlteration(payload);
+    
 }

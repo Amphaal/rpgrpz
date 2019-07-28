@@ -15,11 +15,13 @@ void AssetsTreeViewModel::onRPZClientConnecting(RPZClient * cc) {
         [&, cc](const QVariantHash &package) {
             
             this->beginResetModel();
-                auto asset_id = this->_db->importAsset(package); 
+                auto metadata = this->_db->importAsset(package); 
             this->endResetModel();
 
-            cc->informAssetSucessfulInsertion(asset_id);
-
+            if(!metadata.isEmpty()) {
+                RPZAssetMetadata castedMd(metadata);
+                emit cc->assetSucessfullyInserted(castedMd);
+            }
         }
     );
 }

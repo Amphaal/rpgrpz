@@ -85,13 +85,11 @@ bool MapHint::loadMap(const QString &filePath) {
 
         //load file and parse it
         MapDatabase mapDb(filePath);
-        auto allAtoms = mapDb.toAtoms();
-        auto payload = ResetPayload(allAtoms);
-        this->_handlePayload(payload);
-        
-        //change file path and define as clean
         this->_mapFilePath = filePath;
-        this->_setMapDirtiness(false);
+
+        auto allAtoms = mapDb.toAtoms();
+        ResetPayload payload(allAtoms);
+        this->_handlePayload(payload);
 
     //loader...
     this->_boundGv->setForegroundBrush(QBrush());
@@ -119,12 +117,15 @@ bool MapHint::defineAsRemote(const QString &remoteMapDescriptor) {
 
 
 void MapHint::_shouldMakeMapDirty(AlterationPayload &payload) {
-    
+
     //if remote, never dirty
     if(this->_isRemote) return;
 
     //if not a network alteration type
     if(!payload.isNetworkRoutable()) return;
+
+    //always not dirty if reset
+    if(payload.type() == PayloadAlteration::Reset) return;
 
     this->_setMapDirtiness();
 }

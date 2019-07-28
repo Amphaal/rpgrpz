@@ -25,6 +25,7 @@
 #include <QRegularExpression>
 
 #include "RPZUserRoles.h"
+#include "src/_libs/snowflake/snowflake.h"
 
 class AppSettings : public QSettings {
     public:

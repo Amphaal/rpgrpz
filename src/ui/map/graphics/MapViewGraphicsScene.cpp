@@ -6,7 +6,7 @@ void MapViewGraphicsScene::onGraphicsItemCustomChange(QGraphicsItem* item, MapVi
     emit sceneItemChanged(item, (int)flag);
 };
 
-QGraphicsItem* MapViewGraphicsScene::addToScene(RPZAtom &atom, AssetMetadata &assetMetadata, bool isTemporary) {
+QGraphicsItem* MapViewGraphicsScene::addToScene(RPZAtom &atom, const RPZAssetMetadata &assetMetadata, bool isTemporary) {
     
     QGraphicsItem* out;
 
@@ -107,7 +107,7 @@ QGraphicsRectItem* MapViewGraphicsScene::addMissingAssetPH(RPZAtom &atom) {
 }
 
 
-QGraphicsItem* MapViewGraphicsScene::_addGenericImageBasedItem(RPZAtom &atom, AssetMetadata &assetMetadata) {
+QGraphicsItem* MapViewGraphicsScene::_addGenericImageBasedItem(RPZAtom &atom, const RPZAssetMetadata &assetMetadata) {
 
     //get file infos
     auto pathToImageFile = assetMetadata.pathToAssetFile();
@@ -125,7 +125,7 @@ QGraphicsItem* MapViewGraphicsScene::_addGenericImageBasedItem(RPZAtom &atom, As
     return item;
 }
 
-QGraphicsPathItem* MapViewGraphicsScene::_addBrush(RPZAtom &atom, AssetMetadata &assetMetadata) {
+QGraphicsPathItem* MapViewGraphicsScene::_addBrush(RPZAtom &atom, const RPZAssetMetadata &assetMetadata) {
 
     //define a ped
     QPen pen;

@@ -9,7 +9,7 @@
 #include "MapViewItemsNotifier.h"
 
 #include "src/shared/models/RPZAtom.h"
-#include "src/shared/models/AssetMetadata.h"
+#include "src/shared/models/RPZAssetMetadata.h"
 
 #include "src/helpers/AtomConverter.h"
 
@@ -26,13 +26,13 @@ class  MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
     public:
         MapViewGraphicsScene(int defaultSize);
 
-        QGraphicsItem* addToScene(RPZAtom &atom, AssetMetadata &assetMetadata, bool isTemporary = false);
+        QGraphicsItem* addToScene(RPZAtom &atom, const RPZAssetMetadata &assetMetadata, bool isTemporary = false);
         QGraphicsRectItem* addMissingAssetPH(RPZAtom &atom);
         QGraphicsItem* addOutlineRect(QPointF &scenePos);
 
     protected:
-        QGraphicsItem* _addGenericImageBasedItem(RPZAtom &atom, AssetMetadata &assetMetadata);
-        QGraphicsPathItem* _addBrush(RPZAtom &atom, AssetMetadata &assetMetadata);
+        QGraphicsItem* _addGenericImageBasedItem(RPZAtom &atom, const RPZAssetMetadata &assetMetadata);
+        QGraphicsPathItem* _addBrush(RPZAtom &atom, const RPZAssetMetadata &assetMetadata);
         QGraphicsPathItem* _addDrawing(RPZAtom &atom);
         QGraphicsTextItem* _addText(RPZAtom &atom);
 };

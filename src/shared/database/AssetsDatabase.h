@@ -19,6 +19,7 @@
 #include "src/shared/assets/AssetsDatabaseElement.h"
 
 #include "src/helpers/_appContext.h"
+#include "src/shared/models/RPZAssetMetadata.h"
 
 typedef QString RPZAssetPath; //internal DB arborescence path (only containers)
 
@@ -38,9 +39,9 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
         bool moveItems(QList<AssetsDatabaseElement*> selectedItemsToMove, AssetsDatabaseElement* target);
 
         //network import/export
-        QVariantHash prepareAssetPackage(RPZAssetHash &id);
-        RPZAssetHash importAsset(const QVariantHash &package);
-
+        QVariantHash importAsset(const QVariantHash &package);
+        QVariantHash prepareAssetPackage(const RPZAssetHash &id);
+        
         //read
         QJsonObject paths();
         QJsonObject assets();

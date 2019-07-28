@@ -224,9 +224,6 @@ void AtomsStorage::_basic_handlePayload(AlterationPayload &payload) {
         }
 
     }
-
-    //emit event
-    this->_emitAlteration(payload);
 }
 
 //register actions

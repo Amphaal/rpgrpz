@@ -34,7 +34,7 @@
 
 #include "src/shared/payloads/Payloads.h"
 
-#include "src/shared/models/AssetMetadata.h"
+#include "src/shared/models/RPZAssetMetadata.h"
 
 class MapView : public QGraphicsView, public ClientBindable {
 
@@ -85,13 +85,12 @@ class MapView : public QGraphicsView, public ClientBindable {
 
         //ghost
             QGraphicsItem* _ghostItem = nullptr;
-            AssetMetadata _bufferedAssetMetadata;
+            RPZAssetMetadata _bufferedAssetMetadata;
             void _clearGhostItem();
             void _generateGhostItemFromBuffer();
             void _handleGhostItem(const Tool &tool);
         
         //network
-            void _sendMapChanges(QVariantHash &payload);
             void _sendMapHistory();
 
         //registered points

@@ -307,7 +307,7 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
 
     auto selectedElems = this->selectedElementsIndexes();
     auto indexesCount = selectedElems.count();
-    auto defSelect = AssetMetadata();
+    auto defSelect = RPZAssetMetadata();
 
     if(!indexesCount) {
         this->clearFocus();
@@ -319,7 +319,7 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
         auto atomType = elem->atomType();
 
         if(atomType != AtomType::Undefined) {
-            defSelect = AssetMetadata(elem);
+            defSelect = RPZAssetMetadata(elem);
         }
 
     }

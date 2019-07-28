@@ -1,7 +1,8 @@
 #include "AssetsDatabaseElement.h"
 
 AssetsDatabaseElement* AssetsDatabaseElement::fromIndex(QModelIndex index) {
-    return static_cast<AssetsDatabaseElement*>(index.internalPointer());
+    auto ip = index.internalPointer();
+    return static_cast<AssetsDatabaseElement*>(ip);
 }
 
 AssetsDatabaseElement::AssetsDatabaseElement() : AssetsDatabaseElement(QString(""), nullptr, Root) { };

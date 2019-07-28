@@ -21,12 +21,6 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
     //background / foreground
     this->setBackgroundBrush(QBrush("#EEE", Qt::BrushStyle::CrossPattern));
 
-    //to route from MapHints
-    QObject::connect(
-        this->_hints, &AtomsHandler::alterationRequested,
-        this, &MapView::_sendMapChanges
-    );
-
     QObject::connect(
         this->scene(), &QGraphicsScene::selectionChanged,
         this, &MapView::_onSceneSelectionChanged
@@ -125,7 +119,7 @@ void MapView::keyPressEvent(QKeyEvent * event) {
 }
 
 void MapView::assetTemplateChanged(const QVariantHash &assetMetadata) {
-    this->_bufferedAssetMetadata = AssetMetadata(assetMetadata);
+    this->_bufferedAssetMetadata = RPZAssetMetadata(assetMetadata);
     this->_changeTool(assetMetadata.isEmpty() ? Tool::Default : Tool::Atom, false, true);
 }
 
@@ -229,8 +223,8 @@ void MapView::onRPZClientConnecting(RPZClient * cc) {
     QObject::connect(
         this->_rpzClient, &RPZClient::mapChanged,
         [&](const QVariantHash &payload) {
-            auto cp_payload = payload;
-            this->_hints->handleAlterationRequest(cp_payload);
+            auto cp_payload = Payloads::autoCast(payload);
+            this->_hints->handleAlterationRequest(*cp_payload);
         }
     );
 
@@ -250,18 +244,10 @@ void MapView::onRPZClientDisconnect(RPZClient* cc) {
 
 }
 
-void MapView::_sendMapChanges(QVariantHash &payload) {
-    AlterationPayload aPayload(payload);
-    if(!aPayload.isNetworkRoutable()) return;
-
-    if(!this->_rpzClient) return;
-    this->_rpzClient->sendMapChanges(payload);
-}
-
 void MapView::_sendMapHistory() {
     auto allAtoms = this->_hints->atoms();
     ResetPayload payload(allAtoms);
-    this->_sendMapChanges(payload);
+    this->_hints->handleAlterationRequest(payload);
 }
 
 /////////////////

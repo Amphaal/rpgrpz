@@ -218,18 +218,6 @@ void MainWindow::_initUIApp() {
         ClientBindable::bindAll
     );
 
-    //on map alteration, update treelist
-    QObject::connect(
-        this->_mapView->hints(), &AtomsHandler::alterationRequested,
-        this->_mlManager->tree()->hints(), &AtomsHandler::handleAlterationRequest
-    );
-
-    //intercept alteration from layout manager
-    QObject::connect(
-        this->_mlManager->tree()->hints(), &AtomsHandler::alterationRequested,
-        this->_mapView->hints(), &AtomsHandler::handleAlterationRequest
-    );
-
     //on map selection change
     QObject::connect(
         this->_mapView, &MapView::subjectedAtomsChanged,

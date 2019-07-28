@@ -3,8 +3,9 @@
 #include <QObject>
 
 #include "src/shared/payloads/Payloads.h"
+#include "AtomAlterationAcknoledger.hpp"
 
-class AtomsHandler : public QObject {
+class AtomsHandler : public QObject, public AtomAlterationAcknoledger {
     
     Q_OBJECT
 
@@ -12,15 +13,11 @@ class AtomsHandler : public QObject {
         AtomsHandler(const AlterationPayload::Source &boundSource);
         AlterationPayload::Source source();
 
-        void handleAlterationRequest(QVariantHash &payload);
-
-    signals:
-        void alterationRequested(QVariantHash &payload);
+        void propagateAlteration(AlterationPayload &payload) override;
+        void handleAlterationRequest(AlterationPayload &payload) override;
 
     protected:
         AlterationPayload::Source _source = AlterationPayload::Source::Undefined;
-
-        void _emitAlteration(AlterationPayload &payload);
 
         virtual void _handlePayload(AlterationPayload &payload) = 0;
         virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) = 0; 

@@ -33,13 +33,19 @@ QString AssetsDatabase::assetsStorageFilepath() {
 }
 
 
-RPZAssetHash AssetsDatabase::importAsset(const QVariantHash &package) {
+QVariantHash AssetsDatabase::importAsset(const QVariantHash &package) {
     
-    if(package.isEmpty()) return NULL;
+    if(package.isEmpty()) {
+        qDebug() << "Asset : received empty import package !";
+        return QVariantHash();
+    }
     
     //check content
     auto fileBytes = package["_fileContent"].toByteArray();
-    if(!fileBytes.size()) return NULL;
+    if(!fileBytes.size()) {
+        qDebug() << "Asset : received empty file in import package !";
+        return QVariantHash();
+    }
 
     //asset
     RPZAssetHash asset_id = package["_id"].toString();
@@ -53,15 +59,17 @@ RPZAssetHash AssetsDatabase::importAsset(const QVariantHash &package) {
 
     //copy into db
     auto parent = this->_staticElements[DownloadedContainer];
-    this->_addAssetToDb(asset_id, destUrl, parent);
+    auto displayName = this->_addAssetToDb(asset_id, destUrl, parent);
 
     //add to tree
     auto element = new AssetsDatabaseElement(destFileName, parent, parent->insertType(), asset_id);
-    qDebug() << "Assets :" << asset_id << "imported";
-    return asset_id;
+
+    auto destUrlPath = destUrl.toString();
+    qDebug() << "Assets :" << destFileName << "imported";
+    return RPZAssetMetadata(asset_id, destUrlPath);
 }
 
-QVariantHash AssetsDatabase::prepareAssetPackage(RPZAssetHash &id) {
+QVariantHash AssetsDatabase::prepareAssetPackage(const RPZAssetHash &id) {
     
     //determine id existance by fetching the file path
     auto pathToFile = this->getFilePathToAsset(id);
@@ -282,17 +290,16 @@ QUrl AssetsDatabase::_moveFileToDbFolder(QByteArray &data, QString &fileExt, QSt
     
     //turn encoded file from JSON into file
     auto destFolder = this->assetsStorageFilepath();
-    auto dest = destFolder + "/" + id + "." + fileExt;
-    auto forgedDest = destFolder + "/" + name + "." + fileExt;
+    auto dest = QString("%1/%2.%3").arg(destFolder).arg(id).arg(fileExt);
 
     //write file
     QFile assetFile(dest);
-    assetFile.open(QFile::WriteOnly);
+    auto isOpen = assetFile.open(QIODevice::WriteOnly);
         auto written = assetFile.write(data);
     assetFile.close();
     
     //dummy
-    return QUrl(forgedDest);
+    return QUrl(dest);
 }
 
 bool AssetsDatabase::_moveFileToDbFolder(QUrl &url, RPZAssetHash &id) {
@@ -346,7 +353,7 @@ QString AssetsDatabase::_addAssetToDb(RPZAssetHash &id, QUrl &url, AssetsDatabas
 
     //update db file
     this->_updateDbFile(obj);
-    qDebug() << "Assets : " << fInfo.filePath() << " inserted !";
+    qDebug() << "Assets :" << fInfo.filePath() << "inserted !";
     
     return fInfo.baseName();
 }

@@ -25,7 +25,7 @@
 #include "src/ui/map/MapTools.h"
 
 #include "src/shared/commands/AtomsContextualMenuHandler.h"
-#include "src/shared/models/AssetMetadata.h"
+#include "src/shared/models/RPZAssetMetadata.h"
 
 class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
     
@@ -36,13 +36,13 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         MapViewGraphicsScene* scene();
 
         //replace placeholders
-        void replaceMissingAssetPlaceholders(const RPZAssetHash &id);
+        void replaceMissingAssetPlaceholders(const RPZAssetMetadata &metadata);
 
         //actions helpers
         void deleteCurrentSelectionItems();
 
         //ghost handling
-        QGraphicsItem* generateGhostItem(AssetMetadata &assetMetadata);
+        QGraphicsItem* generateGhostItem(RPZAssetMetadata &assetMetadata);
         void integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem);
 
         //on move
@@ -60,15 +60,15 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
 
     signals:
         void mapFileStateChanged(const QString &filePath, bool isMapDirty);
-        void requestMissingAssets(QList<RPZAssetHash> assetIdsToRequest);
+        void requestMissingAssets(const QList<RPZAssetHash> assetIdsToRequest);
         void atomTemplateChanged();
 
     private:
         //helpers
         QGraphicsItem* _buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom);
         void _crossBindingAtomWithGI(RPZAtom* atom, QGraphicsItem* gi);
-        RPZAtom* _fetchAtom(QGraphicsItem* graphicElem) const;
-        QVector<RPZAtom*> _fetchAtoms(const QList<QGraphicsItem*> &listToFetch) const;
+        RPZAtom* _getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const;
+        QVector<RPZAtom*> _getAtomFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const;
         QVector<snowflake_uid> _selectedAtomIds() override;
 
         //inner event handling

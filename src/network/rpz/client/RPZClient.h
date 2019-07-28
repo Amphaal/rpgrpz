@@ -15,8 +15,9 @@
 #include "src/shared/models/RPZHandshake.h"
 
 #include "src/helpers/_appContext.h"
+#include "src/shared/atoms/AtomAlterationAcknoledger.hpp"
 
-class RPZClient : public JSONSocket, public JSONRouter {
+class RPZClient : public JSONSocket, public JSONRouter, public AtomAlterationAcknoledger {
     
     Q_OBJECT
 
@@ -29,17 +30,15 @@ class RPZClient : public JSONSocket, public JSONRouter {
     
         //slots
         void sendMessage(QVariantHash &message);
-        void sendMapChanges(QVariantHash &payload);
-        void askForAssets(QList<RPZAssetHash> ids);
+        void askForAssets(const QList<RPZAssetHash> ids);
         void defineAudioStreamSource(const QString &audioStreamUrl, const QString &sourceTitle);
         void changeAudioPosition(int newPosition);
         void setAudioStreamPlayState(bool isPlaying);
-        
-        //helper
-        void informAssetSucessfulInsertion(const RPZAssetHash &id);
 
         RPZUser identity();
         QVector<RPZUser> sessionUsers();
+
+        void handleAlterationRequest(AlterationPayload &payload) override;
 
     signals:
         void connectionStatus(const QString &statusMessage, bool isError = false);
@@ -51,7 +50,7 @@ class RPZClient : public JSONSocket, public JSONRouter {
         void mapChanged(const QVariantHash &payload);
         void beenAskedForMapHistory();
 
-        void assetSucessfullyInserted(const RPZAssetHash &id);
+        void assetSucessfullyInserted(const RPZAssetMetadata &metadata);
         void receivedAsset(const QVariantHash &package);
 
         void loggedUsersUpdated(const QVariantList &users);
