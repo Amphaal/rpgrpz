@@ -40,7 +40,7 @@ class TreeMapHint : public AtomsHandler, public AtomsContextualMenuHandler  {
         void _changeLayer(QVector<snowflake_uid> &elementIds, int newLayer);
 
         //augmenting AtomsStorage
-        virtual void _handlePayload(AlterationPayload &payload) override;
+        virtual bool _handlePayload(AlterationPayload &payload) override;
         virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) override;
 
         //icons

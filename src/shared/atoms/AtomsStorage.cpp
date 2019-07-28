@@ -53,6 +53,9 @@ void AtomsStorage::undo() {
 
     //update the index
     this->_payloadHistoryIndex++;
+
+    //propagate
+    this->propagateAlterationPayload(*ptr);
 }
 
 void AtomsStorage::redo() {
@@ -80,6 +83,9 @@ void AtomsStorage::redo() {
 
     //update the index
     this->_payloadHistoryIndex--;
+
+    //propagate
+    this->propagateAlterationPayload(*ptr);
 }
 
 AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &historyPayload) {
@@ -168,19 +174,27 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &historyP
 //////////////
 
 //alter Scene
-void AtomsStorage::_handlePayload(AlterationPayload &payload) { 
-
-    //prevent circular payloads
-    if(payload.source() == this->_source) return;
+bool AtomsStorage::_handlePayload(AlterationPayload &payload) { 
 
     auto pType = payload.type();
-    if(pType == PayloadAlteration::Redone) return this->redo(); //on redo
-    if(pType == PayloadAlteration::Undone) return this->undo(); //on undo
+    
+    //on redo 
+    if(pType == PayloadAlteration::Redone) { 
+        this->redo(); 
+        return false; 
+    }
+
+    //on undo
+    if(pType == PayloadAlteration::Undone) {
+        this->undo(); 
+        return false;
+    }
 
     //on duplication
     if(auto dCasted = dynamic_cast<DuplicatedPayload*>(&payload)) {
         auto targetAtomsIds = dCasted->targetAtomIds();
-        return this->_duplicateAtoms(targetAtomsIds);
+        this->_duplicateAtoms(targetAtomsIds);
+        return false;
     }
 
     //register history
@@ -196,6 +210,8 @@ void AtomsStorage::_handlePayload(AlterationPayload &payload) {
 
     //base handling
     this->_basic_handlePayload(payload);
+
+    return true;
 }
 
 void AtomsStorage::_basic_handlePayload(AlterationPayload &payload) {

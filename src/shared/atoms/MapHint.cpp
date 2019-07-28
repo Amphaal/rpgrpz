@@ -2,12 +2,14 @@
 
 MapHint::MapHint(QGraphicsView* boundGv) : ViewMapHint(boundGv) { }
 
-void MapHint::_handlePayload(AlterationPayload &payload) { 
+bool MapHint::_handlePayload(AlterationPayload &payload) { 
 
-    ViewMapHint::_handlePayload(payload);
+    auto allowPropagation = ViewMapHint::_handlePayload(payload);
 
     //define dirty
     this->_shouldMakeMapDirty(payload);
+
+    return allowPropagation;
 }
 
 ////////////////////
@@ -89,7 +91,7 @@ bool MapHint::loadMap(const QString &filePath) {
 
         auto allAtoms = mapDb.toAtoms();
         ResetPayload payload(allAtoms);
-        this->_handlePayload(payload);
+        this->handleAlterationRequest(payload);
 
     //loader...
     this->_boundGv->setForegroundBrush(QBrush());

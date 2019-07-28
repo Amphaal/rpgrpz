@@ -50,7 +50,7 @@ void ViewMapHint::handleAnyMovedItems() {
 
     //inform moving
     BulkMetadataChangedPayload payload(coords);
-    this->_handlePayload(payload);
+    this->handleAlterationRequest(payload);
 
     //enable notifications back on those items
     for(auto item : this->_itemsWhoNotifiedMovement) {
@@ -171,7 +171,7 @@ void ViewMapHint::deleteCurrentSelectionItems() {
     }
 
     RemovedPayload payload(atomIdsToRemove);
-    this->_handlePayload(payload);
+    this->handleAlterationRequest(payload);
 }
 
 QGraphicsItem* ViewMapHint::generateGhostItem(RPZAssetMetadata &assetMetadata) {
@@ -207,7 +207,7 @@ void ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsItem) {
     auto newAtom = AtomConverter::graphicsToAtom(graphicsItem);
     AddedPayload payload(newAtom);
 
-    this->_handlePayload(payload);
+    this->handleAlterationRequest(payload);
 }
 
 /////////////////////////////////
@@ -320,7 +320,7 @@ void ViewMapHint::handleParametersUpdateAlterationRequest(QVariantHash &payload)
         cPayload->changeSource(AlterationPayload::Source::Undefined); 
 
         //handle payload
-        this->_handlePayload(*cPayload);
+        this->handleAlterationRequest(*cPayload);
 
     }
 }
@@ -366,11 +366,7 @@ RPZAtom* ViewMapHint::_getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const
 /////////////////////////////
 
 //alter Scene
-void ViewMapHint::_handlePayload(AlterationPayload &payload) { 
-
-    //make sure to not perpetuate circular payloads
-    auto source = payload.source();
-    if(source == this->_source) return;
+bool ViewMapHint::_handlePayload(AlterationPayload &payload) { 
 
     this->_preventInnerGIEventsHandling = true;
 
@@ -384,7 +380,7 @@ void ViewMapHint::_handlePayload(AlterationPayload &payload) {
         }
     }
     
-    AtomsStorage::_handlePayload(payload);
+    auto allowPropagation = AtomsStorage::_handlePayload(payload);
 
     this->_preventInnerGIEventsHandling = false;
 
@@ -395,6 +391,7 @@ void ViewMapHint::_handlePayload(AlterationPayload &payload) {
         emit requestMissingAssets(toRequest);
     }
     
+    return allowPropagation;
 }
 
 //register actions

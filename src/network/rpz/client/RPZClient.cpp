@@ -43,7 +43,7 @@ void RPZClient::_onConnected() {
     this->sendJSON(JSONMethod::Handshake, RPZHandshake(this->_name));
 }
 
-void RPZClient::handleAlterationRequest(AlterationPayload &payload) {
+void RPZClient::handleAlterationRequest(AlterationPayload &payload, bool autoPropagate) {
     if(!payload.isNetworkRoutable()) return;
     this->sendJSON(JSONMethod::MapChanged, payload);
 }

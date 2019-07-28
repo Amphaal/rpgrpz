@@ -14,11 +14,11 @@ class AtomsHandler : public QObject, public AtomAlterationAcknoledger {
         AlterationPayload::Source source();
 
         void propagateAlterationPayload(AlterationPayload &payload) override;
-        void handleAlterationRequest(AlterationPayload &payload) override;
+        void handleAlterationRequest(AlterationPayload &payload, bool autoPropagate = true) override;
 
     protected:
         AlterationPayload::Source _source = AlterationPayload::Source::Undefined;
 
-        virtual void _handlePayload(AlterationPayload &payload) = 0;
+        virtual bool _handlePayload(AlterationPayload &payload) = 0;
         virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) = 0; 
 };

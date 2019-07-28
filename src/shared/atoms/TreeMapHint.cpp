@@ -49,14 +49,7 @@ void TreeMapHint::_onElementSelectionChanged() {
     this->propagateAlterationPayload(payload);
 }
 
-void TreeMapHint::_handlePayload(AlterationPayload &payload) {
-
-    //prevent circular payloads
-    auto source = payload.source();
-    if(source == this->_source) {
-        this->_preventInnerGIEventsHandling = false;
-        return;
-    }
+bool TreeMapHint::_handlePayload(AlterationPayload &payload) {
     
     this->_preventInnerGIEventsHandling = true;
 
@@ -104,6 +97,7 @@ void TreeMapHint::_handlePayload(AlterationPayload &payload) {
 
     this->_preventInnerGIEventsHandling = false;
 
+    return true;
 }
 
 RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) {

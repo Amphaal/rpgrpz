@@ -45,7 +45,7 @@ class AtomsStorage : public AtomsHandler {
         QHash<snowflake_uid, QSet<snowflake_uid>> _atomIdsByOwnerId;
 
         //alter the inner atoms lists
-        virtual void _handlePayload(AlterationPayload &payload) override;
+        virtual bool _handlePayload(AlterationPayload &payload) override;
         virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) override;
 
     private:

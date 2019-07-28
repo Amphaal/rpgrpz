@@ -6,9 +6,9 @@ AlterationPayload::Source AtomsHandler::source() {
     return this->_source;
 }
 
-void AtomsHandler::handleAlterationRequest(AlterationPayload &payload) {
-    this->_handlePayload(payload);
-    this->propagateAlterationPayload(payload);
+void AtomsHandler::handleAlterationRequest(AlterationPayload &payload, bool autoPropagate) {
+    auto allowPropagation = this->_handlePayload(payload);
+    if(autoPropagate && allowPropagation) this->propagateAlterationPayload(payload);
 }
 
 void AtomsHandler::propagateAlterationPayload(AlterationPayload &payload) {
