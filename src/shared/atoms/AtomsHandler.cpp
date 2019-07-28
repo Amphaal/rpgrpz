@@ -8,15 +8,16 @@ AlterationPayload::Source AtomsHandler::source() {
 
 void AtomsHandler::handleAlterationRequest(AlterationPayload &payload) {
     this->_handlePayload(payload);
+    this->propagateAlterationPayload(payload);
 }
 
-void AtomsHandler::propagateAlteration(AlterationPayload &payload) {
+void AtomsHandler::propagateAlterationPayload(AlterationPayload &payload) {
 
     //if inner payload, apply own source for send
     auto source = payload.source();
     if(source == AlterationPayload::Source::Undefined) payload.changeSource(this->_source); 
 
     //propagate
-    AtomAlterationAcknoledger::propagateAlteration(payload);
+    AtomAlterationAcknoledger::propagateAlterationPayload(payload);
     
 }

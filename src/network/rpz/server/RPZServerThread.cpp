@@ -259,7 +259,7 @@ void RPZServerThread::_broadcastMapChanges(QVariantHash &payload, JSONSocket * s
 
 void RPZServerThread::_sendMapHistory(JSONSocket * clientSocket) {
     auto allAtoms = this->_hints->atoms();
-    auto payload = ResetPayload(allAtoms);
+    ResetPayload payload(allAtoms);
     clientSocket->sendJSON(JSONMethod::MapChanged, payload);
 
 }

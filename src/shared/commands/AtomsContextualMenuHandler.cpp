@@ -9,11 +9,11 @@ AtomsContextualMenuHandler::AtomsContextualMenuHandler(AtomsHandler* hintsToCont
 }
 
 void AtomsContextualMenuHandler::undoAlteration() {
-    auto payload = UndonePayload();
+    UndonePayload payload;
     this->_hints->handleAlterationRequest(payload);
 }
 void AtomsContextualMenuHandler::redoAlteration() {
-    auto payload = RedonePayload();
+    RedonePayload payload;
     this->_hints->handleAlterationRequest(payload);
 }
 
@@ -23,31 +23,31 @@ void AtomsContextualMenuHandler::copySelectedAtomsToClipboard() {
 
 void AtomsContextualMenuHandler::pasteAtomsFromClipboard() {
     if(!_copyClipboard.count()) return;
-    auto payload = DuplicatedPayload(_copyClipboard);
+    DuplicatedPayload payload(_copyClipboard);
     this->_hints->handleAlterationRequest(payload);
 }
 
 void AtomsContextualMenuHandler::removeSelectedAtoms() {
     auto selectedIds = this->_selectedAtomIds();
-    auto payload = RemovedPayload(selectedIds);
+    RemovedPayload payload(selectedIds);
     this->_hints->handleAlterationRequest(payload);
 }
 
 void AtomsContextualMenuHandler::moveSelectedAtomsToLayer(int targetLayer) {
     auto selectedIds = this->_selectedAtomIds();
-    auto payload = MetadataChangedPayload(selectedIds, AtomParameter::Layer, targetLayer);
+    MetadataChangedPayload payload(selectedIds, AtomParameter::Layer, targetLayer);
     this->_hints->handleAlterationRequest(payload);
 }
 
 void AtomsContextualMenuHandler::alterSelectedAtomsVisibility(bool isHidden) {
     auto selectedIds = this->_selectedAtomIds();
-    auto payload = MetadataChangedPayload(selectedIds, AtomParameter::Hidden, isHidden);
+    MetadataChangedPayload payload(selectedIds, AtomParameter::Hidden, isHidden);
     this->_hints->handleAlterationRequest(payload);
 }
 
 void AtomsContextualMenuHandler::alterSelectedAtomsAvailability(bool isLocked) {
     auto selectedIds = this->_selectedAtomIds();
-    auto payload = MetadataChangedPayload(selectedIds, AtomParameter::Locked, isLocked);
+    MetadataChangedPayload payload(selectedIds, AtomParameter::Locked, isLocked);
     this->_hints->handleAlterationRequest(payload);
 }
 

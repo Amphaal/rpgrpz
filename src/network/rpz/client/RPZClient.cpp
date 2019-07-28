@@ -138,7 +138,8 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         break;
 
         case JSONMethod::MapChanged: {
-            emit mapChanged(data.toHash());
+            auto payload = Payloads::autoCast(data.toHash());
+            this->propagateAlterationPayload(*payload);
         }   
         break;
 

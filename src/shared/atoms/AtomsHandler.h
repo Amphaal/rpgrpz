@@ -13,7 +13,7 @@ class AtomsHandler : public QObject, public AtomAlterationAcknoledger {
         AtomsHandler(const AlterationPayload::Source &boundSource);
         AlterationPayload::Source source();
 
-        void propagateAlteration(AlterationPayload &payload) override;
+        void propagateAlterationPayload(AlterationPayload &payload) override;
         void handleAlterationRequest(AlterationPayload &payload) override;
 
     protected:

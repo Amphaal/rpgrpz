@@ -63,7 +63,7 @@ void AtomEditor::resetParams() {
             changes.insert(param, QVariant());
         }
 
-        auto payload = MetadataChangedPayload(this->_atomIds(), changes);
+        MetadataChangedPayload payload(this->_atomIds(), changes);
         this->_emitPayload(payload);
 
 }
@@ -99,7 +99,7 @@ QVector<snowflake_uid> AtomEditor::_atomIds() {
 }
 
 void AtomEditor::_onSubEditorChanged(const AtomParameter &parameterWhoChanged, QVariant &value) {
-    auto payload = MetadataChangedPayload(this->_atomIds(), parameterWhoChanged, value);
+    MetadataChangedPayload payload(this->_atomIds(), parameterWhoChanged, value);
     this->_emitPayload(payload);
 }
 

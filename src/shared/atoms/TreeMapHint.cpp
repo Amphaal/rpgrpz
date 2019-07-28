@@ -34,8 +34,8 @@ void TreeMapHint::_onElementDoubleClicked(QTreeWidgetItem * item, int column) {
     auto focusedAtomId = this->_extractAtomIdFromItem(item);
     if(!focusedAtomId) return;
 
-    auto payload = FocusedPayload(focusedAtomId);
-    this->propagateAlteration(payload);
+    FocusedPayload payload(focusedAtomId);
+    this->propagateAlterationPayload(payload);
 }
 
 void TreeMapHint::_onElementSelectionChanged() {
@@ -45,8 +45,8 @@ void TreeMapHint::_onElementSelectionChanged() {
 
     if(this->_preventInnerGIEventsHandling) return;
 
-    auto payload = SelectedPayload(selected);
-    this->propagateAlteration(payload);
+    SelectedPayload payload(selected);
+    this->propagateAlterationPayload(payload);
 }
 
 void TreeMapHint::_handlePayload(AlterationPayload &payload) {

@@ -49,7 +49,7 @@ void ViewMapHint::handleAnyMovedItems() {
     }
 
     //inform moving
-    auto payload = BulkMetadataChangedPayload(coords);
+    BulkMetadataChangedPayload payload(coords);
     this->_handlePayload(payload);
 
     //enable notifications back on those items
@@ -105,8 +105,8 @@ void ViewMapHint::_onSceneSelectionChanged() {
     if(this->_preventInnerGIEventsHandling) return;
 
     //bypass internal
-    auto payload = SelectedPayload(this->_selectedAtomIds());
-    this->propagateAlteration(payload);
+    SelectedPayload payload(this->_selectedAtomIds());
+    this->propagateAlterationPayload(payload);
 
 }
 
@@ -150,8 +150,8 @@ void ViewMapHint::setDefaultUser(RPZUser user) {
     this->_atomIdsByOwnerId.insert(user.id(), atomIds);
 
     //inform atom layout
-    auto payload = OwnerChangedPayload(atomIds.toList().toVector(), user);
-    this->propagateAlteration(payload);
+    OwnerChangedPayload payload(atomIds.toList().toVector(), user);
+    this->propagateAlterationPayload(payload);
 
 }
 
@@ -170,7 +170,7 @@ void ViewMapHint::deleteCurrentSelectionItems() {
         atomIdsToRemove.append(atom->id());
     }
 
-    auto payload = RemovedPayload(atomIdsToRemove);
+    RemovedPayload payload(atomIdsToRemove);
     this->_handlePayload(payload);
 }
 
@@ -205,7 +205,7 @@ void ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsItem) {
     
     //from ghost item / temporary drawing
     auto newAtom = AtomConverter::graphicsToAtom(graphicsItem);
-    auto payload = AddedPayload(newAtom);
+    AddedPayload payload(newAtom);
 
     this->_handlePayload(payload);
 }
