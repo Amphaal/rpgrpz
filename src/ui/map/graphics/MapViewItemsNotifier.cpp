@@ -15,7 +15,8 @@ MapViewItemsNotifier::MapViewItemsNotifier(MapViewItemsNotified* targetToNotify,
     
     //define transform origin point to center
 	auto rect = item->boundingRect();
-    item->setTransformOriginPoint(rect.center());
+    auto center = rect.center();
+    item->setTransformOriginPoint(center);
 
 }
 

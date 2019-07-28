@@ -55,7 +55,10 @@ QGraphicsItem* MapViewGraphicsScene::addToScene(RPZAtom &atom, const RPZAssetMet
 QGraphicsItem* MapViewGraphicsScene::addOutlineRect(QPointF &scenePos) {
     
     //rect...
-    QRectF rect(scenePos - QPointF(1,1), scenePos + QPointF(1,1));
+    QRectF rect(
+        scenePos - QPointF(1,1), 
+        scenePos + QPointF(1,1)
+    );
     
     //pen...
     QPen pen;

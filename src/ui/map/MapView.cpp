@@ -149,7 +149,11 @@ void MapView::onAtomTemplateChange() {
     emit subjectedAtomsChanged(subjects);
     
     //update the ghost graphics item to display the updated values
-    AtomConverter::updateGraphicsItemFromAtom(this->_ghostItem, *this->_hints->templateAtom, true);
+    AtomConverter::updateGraphicsItemFromAtom(
+        this->_ghostItem, 
+        *this->_hints->templateAtom, 
+        true
+    );
 }
 
 void MapView::_generateGhostItemFromBuffer() {

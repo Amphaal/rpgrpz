@@ -329,12 +329,31 @@ void AtomConverter::_setParamToAtomFromGraphicsItem(const AtomParameter &param, 
         }
         break;
 
+        //add shapeCenter too
         case AtomParameter::Shape: {
+
+            auto center = QPointF();
+
             if(auto pathItem = dynamic_cast<MapViewGraphicsPathItem*>(blueprint)) {
-                atomToUpdate.setShape(pathItem->path()); 
-            } else {
-                atomToUpdate.setShape(blueprint->boundingRect());
+
+                auto path = pathItem->path();
+                center = path.boundingRect().center();
+                
+                atomToUpdate.setShape(path); 
+            
+            } 
+            
+            else {
+                
+                auto rect = blueprint->boundingRect();
+                center = rect.center();
+                
+                atomToUpdate.setShape(rect);
+                
             }
+
+            atomToUpdate.setMetadata(AtomParameter::ShapeCenter, center);
+
         }
         break;
 

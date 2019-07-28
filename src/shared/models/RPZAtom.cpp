@@ -66,10 +66,11 @@ void RPZAtom::setMetadata(const AtomParameter &key, const QVariant &value, bool 
 
     switch(key) {
 
+        case AtomParameter::ShapeCenter:
         case AtomParameter::Position: {
             auto pos = value.toPointF();
             QVariantList a { pos.x(), pos.y() };
-            this->insert(_str[AtomParameter::Position], a);
+            this->insert(_str[key], a);
         }
         break;
 
@@ -84,8 +85,9 @@ QVariant RPZAtom::metadata(const AtomParameter &key) {
     
     switch(key) {
 
+        case AtomParameter::ShapeCenter:
         case AtomParameter::Position: {
-            auto posArr = this->value(_str[AtomParameter::Position]).toList();
+            auto posArr = this->value(_str[key]).toList();
             return posArr.isEmpty() ? QPointF() : QPointF(posArr[0].toReal(), posArr[1].toReal());
         }
         break;
@@ -111,6 +113,7 @@ double RPZAtom::assetScale() { return this->metadata(AtomParameter::AssetScale).
 double RPZAtom::assetRotation() { return this->metadata(AtomParameter::AssetRotation).toDouble();}
 BrushType RPZAtom::brushType() { return (BrushType)this->metadata(AtomParameter::BrushStyle).toInt(); }
 int RPZAtom::brushPenWidth() { return this->metadata(AtomParameter::BrushPenWidth).toInt(); }
+QPointF RPZAtom::shapeCenter() { return this->metadata(AtomParameter::ShapeCenter).toPointF(); }
 
 QPainterPath RPZAtom::shape() {
     auto rawShape = this->metadata(AtomParameter::Shape).toByteArray();
@@ -176,6 +179,7 @@ QSet<AtomParameter> RPZAtom::legalParameters() {
     base.insert(AtomParameter::Hidden);
     base.insert(AtomParameter::Locked);
     base.insert(AtomParameter::Shape);
+    base.insert(AtomParameter::ShapeCenter);
     
     switch(this->type()) {
 

@@ -60,7 +60,8 @@ enum AtomParameter {
     Shape,
     Position,
     AssetRotation,
-    AssetScale
+    AssetScale,
+    ShapeCenter
 };
 
 typedef QString RPZAssetHash; //file hash of the asset
@@ -89,7 +90,6 @@ class RPZAtom : public Ownable {
         void setMetadata(const AtomParameter &key, const QVariant &value, bool autoRemove = true);
         void setMetadata(const AtomParameter &key, RPZAtom &base, bool autoRemove = true);
 
-        
         QSet<AtomParameter> editedMetadata();
         QSet<AtomParameter> legalEditedMetadata();
         QSet<AtomParameter> legalParameters();
@@ -110,6 +110,7 @@ class RPZAtom : public Ownable {
         bool isLocked();
         BrushType brushType();
         int brushPenWidth();
+        QPointF shapeCenter();
 
         QPainterPath shape();
         void setShape(const QPainterPath &path);
@@ -132,7 +133,8 @@ class RPZAtom : public Ownable {
             { AtomParameter::AssetRotation, "a_deg" },
             { AtomParameter::AssetScale, "a_scl" },
             { AtomParameter::BrushStyle, "brush_t" },
-            { AtomParameter::BrushPenWidth, "brush_w" }
+            { AtomParameter::BrushPenWidth, "brush_w" },
+            { AtomParameter::ShapeCenter, "shape_c" }
         };
 
         static inline const QHash<AtomParameter, QVariant> _defaultVal = {
@@ -151,7 +153,8 @@ class RPZAtom : public Ownable {
             { AtomParameter::AssetRotation, 0.0 },
             { AtomParameter::AssetScale, 1.0 },
             { AtomParameter::BrushStyle, 0 },
-            { AtomParameter::BrushPenWidth, 1 }
+            { AtomParameter::BrushPenWidth, 1 },
+            { AtomParameter::ShapeCenter, QVariant() }
         };
 
         QString _defaultDescriptor();

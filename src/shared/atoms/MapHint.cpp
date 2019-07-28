@@ -88,6 +88,7 @@ bool MapHint::loadMap(const QString &filePath) {
         //load file and parse it
         MapDatabase mapDb(filePath);
         this->_mapFilePath = filePath;
+        this->_setMapDirtiness(false);
 
         auto allAtoms = mapDb.toAtoms();
         ResetPayload payload(allAtoms);
