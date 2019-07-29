@@ -130,9 +130,9 @@ void AppContext::init(const QString &customContext) {
 
 
 void AppContext::_makeSureDirPathExists(const QString &path) {
-    if(!std::filesystem::exists(path.toStdString())) {
-        QDir().mkpath(path);
-    }
+    struct stat buffer;
+    auto pathExists = (stat(path.toStdString().c_str(), &buffer) == 0);
+    if(!pathExists) QDir().mkpath(path);
 }
 
 QString AppContext::getAppDataLocation() {

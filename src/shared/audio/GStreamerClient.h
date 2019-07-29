@@ -1,10 +1,10 @@
 #pragma once
 
-#include <gstreamer-1.0/gst/gst.h>
-#include <gstreamer-1.0/gst/gstmessage.h>
+#include <gst/gst.h>
+#include <gst/gstmessage.h>
 
-#include <gstreamer-1.0/gst/controller/gstinterpolationcontrolsource.h>
-#include <gstreamer-1.0/gst/controller/gstdirectcontrolbinding.h>
+#include <gst/controller/gstinterpolationcontrolsource.h>
+#include <gst/controller/gstdirectcontrolbinding.h>
 
 #include "src/helpers/_appContext.h"
 

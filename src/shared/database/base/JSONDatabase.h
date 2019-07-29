@@ -35,7 +35,7 @@ class JSONDatabase {
         void _instanciateDb();
 
         //update the physical file
-        void _updateDbFile(QJsonObject &newData);
+        void _updateDbFile(const QJsonObject &newData);
 
         //recreate file if doesnt exist
         void _checkFileExistance();
