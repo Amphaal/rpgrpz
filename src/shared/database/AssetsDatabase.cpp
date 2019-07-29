@@ -40,15 +40,16 @@ QVariantHash AssetsDatabase::importAsset(const QVariantHash &package) {
         return QVariantHash();
     }
     
+    RPZAssetHash asset_id = package["_id"].toString();
+
     //check content
     auto fileBytes = package["_fileContent"].toByteArray();
     if(!fileBytes.size()) {
-        qDebug() << "Asset : received empty file in import package !";
+        qDebug() << "Asset : requested" << asset_id << "cannot be found by server";
         return QVariantHash();
     }
 
     //asset
-    RPZAssetHash asset_id = package["_id"].toString();
     auto asset = QJsonDocument::fromVariant(package["_meta"]).object();
 
     //save file
@@ -71,13 +72,16 @@ QVariantHash AssetsDatabase::importAsset(const QVariantHash &package) {
 
 QVariantHash AssetsDatabase::prepareAssetPackage(const RPZAssetHash &id) {
     
-    //determine id existance by fetching the file path
-    auto pathToFile = this->getFilePathToAsset(id);
-    if(pathToFile.isNull()) return QVariantHash();
-    
     //json obj
     QVariantHash package;
     package["_id"] = id;
+
+    //determine id existance by fetching the file path
+    auto pathToFile = this->getFilePathToAsset(id);
+    if(pathToFile.isNull()) {
+        qDebug() << "Asset : requested" << id << "not found";
+        return package;
+    }
 
     //append file as base64
     QFile assetFile(pathToFile);

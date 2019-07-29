@@ -17,11 +17,6 @@
 #include <time.h>
 #include <Windows.h>
 
-typedef struct timeval {
-    long tv_sec;
-    long tv_usec;
-} timeval;
-
 #endif
 
 typedef uint64_t snowflake_uid;

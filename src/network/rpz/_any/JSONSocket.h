@@ -27,6 +27,4 @@ class JSONSocket : public QObject {
 
         void _processIncomingData();
         void _processIncomingAsJson(const QByteArray &data);
-
-        QString _customLog(const QString &text);
 };

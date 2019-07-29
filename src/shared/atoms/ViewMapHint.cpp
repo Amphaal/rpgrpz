@@ -380,7 +380,9 @@ bool ViewMapHint::_handlePayload(AlterationPayload &payload) {
     this->_preventInnerGIEventsHandling = false;
 
     //request assets if there are missing
-    if(this->_assetsIdsToRequest.count()) {
+    auto c_MissingAssets = this->_assetsIdsToRequest.count();
+    if(c_MissingAssets) {
+        qDebug() << "Assets : missings " << QString::number(c_MissingAssets) << "asset(s)" << this->_assetsIdsToRequest.toList();
         auto toRequest = this->_assetsIdsToRequest.toList();
         this->_assetsIdsToRequest.clear();
         emit requestMissingAssets(toRequest);

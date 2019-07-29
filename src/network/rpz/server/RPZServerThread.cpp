@@ -247,7 +247,7 @@ void RPZServerThread::_broadcastMapChanges(QVariantHash &payload, JSONSocket * s
     }
 
     //save for history
-    this->_hints->handleAlterationRequest(*aPayload);
+    this->_hints->handleAlterationRequest(*aPayload, false); //prevent sending alterations to UI (different threads !)
 
     //add source for outer calls
     auto source = this->_hints->source();
