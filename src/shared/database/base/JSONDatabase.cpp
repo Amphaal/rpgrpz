@@ -136,7 +136,7 @@ void JSONDatabase::_removeDatabaseLinkedFiles() {
     //to implement from inheritors
 }
 
-void JSONDatabase::_updateDbFile(QJsonObject &newData) {
+void JSONDatabase::_updateDbFile(const QJsonObject &newData) {
     this->_destfile->open(QFile::WriteOnly);
     
         this->_db.setObject(newData);

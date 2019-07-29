@@ -55,7 +55,7 @@ RPZMap<RPZAtom> MapDatabase::toAtoms(QJsonDocument &doc) {
 
     auto db_atoms = doc["atoms"].toArray();
 
-    for(auto &e : db_atoms) {
+    for(const auto &e : db_atoms) {
         auto atom = RPZAtom(e.toObject().toVariantHash());
         out.insert(atom.id(), atom);
     }
