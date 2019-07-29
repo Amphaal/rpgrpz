@@ -3,20 +3,35 @@
 #include <QVariantHash>
 #include "src/_libs/snowflake/snowflake.h"
 
-enum class PayloadAlteration {
+enum PayloadAlteration {
     PA_Unknown,
-    Focused,
-    Selected,
-    Removed,
-    Added, 
-    Reset,
-    Duplicated,
-    Redone,
-    Undone,
-    OwnerChanged,
-    MetadataChanged,
-    BulkMetadataChanged
+    PA_Focused,
+    PA_Selected,
+    PA_Removed,
+    PA_Added, 
+    PA_Reset,
+    PA_Duplicated,
+    PA_Redone,
+    PA_Undone,
+    PA_OwnerChanged,
+    PA_MetadataChanged,
+    PA_BulkMetadataChanged
 }; 
+
+static const QStringList PayloadAlterationAsString {
+    "Unknown",
+    "Focused",
+    "Selected",
+    "Removed",
+    "Added", 
+    "Reset",
+    "Duplicated",
+    "Redone",
+    "Undone",
+    "OwnerChanged",
+    "MetadataChanged",
+    "BulkMetadataChanged"
+};
 
 class AlterationPayload : public QVariantHash { 
     public:
@@ -25,7 +40,15 @@ class AlterationPayload : public QVariantHash {
             Local_MapLayout,
             Local_Map,
             Local_AtomEditor,
-            Network
+            RPZServer
+        };
+
+        static inline QStringList SourceAsStr {
+            "Undefined",
+            "Local_MapLayout",
+            "Local_Map",
+            "Local_AtomEditor",
+            "RPZServer"
         };
 
         AlterationPayload() {}
@@ -66,11 +89,11 @@ class AlterationPayload : public QVariantHash {
         bool _isNetworkAlteration = false;
 
         static inline const QList<PayloadAlteration> _networkAlterations = { 
-            PayloadAlteration::Added, 
-            PayloadAlteration::Removed, 
-            PayloadAlteration::Reset,
-            PayloadAlteration::MetadataChanged,
-            PayloadAlteration::BulkMetadataChanged
+            PayloadAlteration::PA_Added, 
+            PayloadAlteration::PA_Removed, 
+            PayloadAlteration::PA_Reset,
+            PayloadAlteration::PA_MetadataChanged,
+            PayloadAlteration::PA_BulkMetadataChanged
         };
         
         void _setType(const PayloadAlteration &type) {

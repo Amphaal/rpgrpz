@@ -7,6 +7,7 @@
 #include "src/shared/models/base/RPZMap.hpp"
 
 #include "base/JSONDatabase.h"
+#include "src/helpers/JSONSerializer.h"
 
 class MapDatabase : public JSONDatabase {
     
@@ -14,8 +15,10 @@ class MapDatabase : public JSONDatabase {
         MapDatabase(const QString &filePath);
 
         void saveIntoFile(RPZMap<RPZAtom> &atoms);
+        static QJsonObject toObject(RPZMap<RPZAtom> &atoms, QJsonDocument &doc);
 
         RPZMap<RPZAtom> toAtoms();
+        static RPZMap<RPZAtom> toAtoms(QJsonDocument &doc);
 
     protected:
         const QString defaultJsonDoc() override;
@@ -24,4 +27,6 @@ class MapDatabase : public JSONDatabase {
 
     private:
         QString _filePath;
+
+        QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> _getUpdateHandlers() override;
 };

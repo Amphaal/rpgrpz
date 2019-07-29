@@ -5,5 +5,5 @@
 class UndonePayload : public AlterationPayload {
     public:
         UndonePayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        UndonePayload() : AlterationPayload(PayloadAlteration::Undone) {}
+        UndonePayload() : AlterationPayload(PayloadAlteration::PA_Undone) {}
 };

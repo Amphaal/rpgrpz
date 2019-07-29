@@ -13,7 +13,7 @@ class MetadataChangedPayload : public MultipleTargetsPayload {
         MetadataChangedPayload(
             const QVector<snowflake_uid> &targetedAtomIds,
             QHash<AtomParameter, QVariant> &changes
-        ) : MultipleTargetsPayload(PayloadAlteration::MetadataChanged, targetedAtomIds) {
+        ) : MultipleTargetsPayload(PayloadAlteration::PA_MetadataChanged, targetedAtomIds) {
             this->_setMetadataChanges(changes);
         }
 
@@ -22,7 +22,7 @@ class MetadataChangedPayload : public MultipleTargetsPayload {
             const QVector<snowflake_uid> &targetedAtomIds,
             const AtomParameter &param, 
             const QVariant &value
-        ) : MultipleTargetsPayload(PayloadAlteration::MetadataChanged, targetedAtomIds) {
+        ) : MultipleTargetsPayload(PayloadAlteration::PA_MetadataChanged, targetedAtomIds) {
             QHash<AtomParameter, QVariant> changes {{ param, value }};
             this->_setMetadataChanges(changes);
         }
@@ -32,7 +32,7 @@ class MetadataChangedPayload : public MultipleTargetsPayload {
             snowflake_uid targetedId, 
             const AtomParameter &param, 
             const QVariant &value
-        ) : MultipleTargetsPayload(PayloadAlteration::MetadataChanged, QVector<snowflake_uid>({targetedId})) {
+        ) : MultipleTargetsPayload(PayloadAlteration::PA_MetadataChanged, QVector<snowflake_uid>({targetedId})) {
             QHash<AtomParameter, QVariant> changes {{ param, value }};
             this->_setMetadataChanges(changes);
         }

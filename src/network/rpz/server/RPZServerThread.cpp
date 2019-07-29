@@ -8,7 +8,7 @@ void RPZServerThread::run() {
 
     //init
     auto server = new QTcpServer;  
-    this->_hints = new AtomsStorage(AlterationPayload::Source::Network);
+    this->_hints = new AtomsStorage(AlterationPayload::Source::RPZServer);
 
     qDebug() << "RPZServerThread : Starting server...";
 

@@ -117,7 +117,7 @@ QPointF RPZAtom::shapeCenter() { return this->metadata(AtomParameter::ShapeCente
 
 QPainterPath RPZAtom::shape() {
     auto rawShape = this->metadata(AtomParameter::Shape).toByteArray();
-    return JSONSerializer::toPainterPath(rawShape);
+    return JSONSerializer::fromByteArray(rawShape);
 }
 void RPZAtom::setShape(const QPainterPath &path) { this->setMetadata(AtomParameter::Shape, JSONSerializer::asBase64(path)); }
 void RPZAtom::setShape(const QRectF &rect) {

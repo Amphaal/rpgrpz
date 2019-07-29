@@ -80,11 +80,18 @@ bool JSONDatabase::_handleVersionMissmatch(QJsonDocument &databaseToUpdate, int 
     bool updateApplied = false;
     for(auto targetUpdateVersion : handledAPIVersions) {
         
-        //if target version is older than actual version, skip
-        if(targetUpdateVersion <= aimedAPIVersion) continue;
+        //if patch is for later versions, skip
+        if(aimedAPIVersion < targetUpdateVersion) continue;
+
+        //if target version is not newer than actual DB version, skip
+        if(targetUpdateVersion <= databaseToUpdateVersion) continue;
 
         //update...
-        qDebug() << "JSON Database : updating from" << QString::number(databaseToUpdateVersion) << "to" << QString::number(targetUpdateVersion) << "...";
+        qDebug() << "JSON Database : updating from" 
+                 << QString::number(databaseToUpdateVersion) 
+                 << "to" << QString::number(targetUpdateVersion) 
+                 << "...";
+                 
         handlers[targetUpdateVersion](databaseToUpdate);
         updateApplied = true;
     }
@@ -136,8 +143,8 @@ void JSONDatabase::_updateDbFile(QJsonObject &newData) {
         
         this->_destfile->write(
             this->_db.toJson(
-                // QJsonDocument::JsonFormat::Compact
-                QJsonDocument::JsonFormat::Indented
+                QJsonDocument::JsonFormat::Compact
+                //QJsonDocument::JsonFormat::Indented
             )
         );
 

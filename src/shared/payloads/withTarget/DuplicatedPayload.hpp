@@ -5,5 +5,5 @@
 class DuplicatedPayload : public MultipleTargetsPayload {
     public:
         DuplicatedPayload(const QVariantHash &hash) : MultipleTargetsPayload(hash) {}
-        DuplicatedPayload(const QVector<snowflake_uid> &atomIdsToDuplicate) : MultipleTargetsPayload(PayloadAlteration::Duplicated, atomIdsToDuplicate) {}
+        DuplicatedPayload(const QVector<snowflake_uid> &atomIdsToDuplicate) : MultipleTargetsPayload(PayloadAlteration::PA_Duplicated, atomIdsToDuplicate) {}
 };

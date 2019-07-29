@@ -13,7 +13,6 @@
 #include <QTimeLine>
 #include <QGLWidget>
 #include <QCursor>
-#include <QTimer>
 #include <QScrollBar>
 #include <QVariant>
 #include <QVector>

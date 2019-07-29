@@ -56,16 +56,12 @@ bool TreeMapHint::_handlePayload(AlterationPayload &payload) {
     auto type = payload.type();
 
     //selected...
-    if(type == PayloadAlteration::Selected) this->_boundTree->clearSelection();
-    if(type == PayloadAlteration::Reset) {
-
-        for(auto item : this->_atomTreeItemsById) delete item;
+    if(type == PayloadAlteration::PA_Selected) this->_boundTree->clearSelection();
+    if(type == PayloadAlteration::PA_Reset) {
         this->_atomTreeItemsById.clear();
-
-        for(auto layerItem : this->_layersItems) delete layerItem;
         this->_layersItems.clear();
-        
         this->_atomIdsBoundByRPZAssetHash.clear();
+        this->_boundTree->clear();
     }
 
     //atom wielders format
@@ -106,8 +102,8 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
 
     switch(type) {
 
-        case PayloadAlteration::Reset:
-        case PayloadAlteration::Added: {
+        case PayloadAlteration::PA_Reset:
+        case PayloadAlteration::PA_Added: {
             
             auto atom = RPZAtom(alteration.toHash());
             
@@ -122,13 +118,13 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
         }
         break;
 
-        case PayloadAlteration::OwnerChanged: {
+        case PayloadAlteration::PA_OwnerChanged: {
             auto user = RPZUser(alteration.toHash());
             this->_bindOwnerToItem(item, user);
         }
         break;
 
-        case PayloadAlteration::Removed: {
+        case PayloadAlteration::PA_Removed: {
             
             auto layerItem = item->parent();
             RPZAssetHash tbrAtom_assetId = item->data(0, RPZUserRoles::AssetHash).toString();
@@ -146,14 +142,14 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
         }
         break;
 
-        case PayloadAlteration::Selected: {
+        case PayloadAlteration::PA_Selected: {
             item->setSelected(true);
         }
         break;
 
-        case PayloadAlteration::MetadataChanged:
-        case PayloadAlteration::BulkMetadataChanged: {
-            auto partial = type == PayloadAlteration::BulkMetadataChanged ? 
+        case PayloadAlteration::PA_MetadataChanged:
+        case PayloadAlteration::PA_BulkMetadataChanged: {
+            auto partial = type == PayloadAlteration::PA_BulkMetadataChanged ? 
                                                         RPZAtom(alteration.toHash()) : 
                                                         MetadataChangedPayload::fromArgs(alteration);
             

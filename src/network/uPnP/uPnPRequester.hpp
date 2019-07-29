@@ -239,7 +239,7 @@ class uPnPRequester : public uPnPThread {
 
         void ListRedirections() {
             int r;
-            int i = 0;
+            i = 0;
             char index[6];
             char intClient[40];
             char intPort[6];

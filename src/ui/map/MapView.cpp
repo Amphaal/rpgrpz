@@ -148,12 +148,15 @@ void MapView::onAtomTemplateChange() {
     auto subjects = QVector<RPZAtom*>({this->_hints->templateAtom});
     emit subjectedAtomsChanged(subjects);
     
-    //update the ghost graphics item to display the updated values
-    AtomConverter::updateGraphicsItemFromAtom(
-        this->_ghostItem, 
-        *this->_hints->templateAtom, 
-        true
-    );
+    if(this->_ghostItem) {
+        //update the ghost graphics item to display the updated values
+        AtomConverter::updateGraphicsItemFromAtom(
+            this->_ghostItem, 
+            *this->_hints->templateAtom, 
+            true
+        );
+    }
+
 }
 
 void MapView::_generateGhostItemFromBuffer() {

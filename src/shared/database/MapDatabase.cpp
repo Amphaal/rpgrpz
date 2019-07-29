@@ -4,9 +4,7 @@ MapDatabase::MapDatabase(const QString &filePath) : _filePath(filePath) {
     JSONDatabase::_instanciateDb();
 };
 
-void MapDatabase::saveIntoFile(RPZMap<RPZAtom> &atoms) {
-    
-    auto copy = this->_db.object();
+QJsonObject MapDatabase::toObject(RPZMap<RPZAtom> &atoms, QJsonDocument &doc) {
 
     //reseting "atoms" object
     QJsonArray db_atoms;
@@ -24,31 +22,46 @@ void MapDatabase::saveIntoFile(RPZMap<RPZAtom> &atoms) {
     }
 
     //fill copy
+    QJsonObject copy;
     copy["assets_c"] = unique_assetIds.count();
     copy["atoms_c"] = db_atoms.count();
     copy["assets"] = QJsonArray::fromStringList(unique_assetIds.toList());
     copy["atoms"] = db_atoms;
+    copy["version"] = doc["version"];
     
+    return copy;
+
+}
+
+void MapDatabase::saveIntoFile(RPZMap<RPZAtom> &atoms) {
+    
+    auto copy = MapDatabase::toObject(atoms, this->_db);
+
     //saving...
     this->_updateDbFile(copy);
+
     qDebug() << "Map database : saving " << atoms.count() << " atoms";
+
 };
 
 RPZMap<RPZAtom> MapDatabase::toAtoms() {
+    RPZMap<RPZAtom> out = MapDatabase::toAtoms(this->_db);
+    qDebug() << "MapDB : read" << out.count() << "atoms";
+    return out;
+}
+
+RPZMap<RPZAtom> MapDatabase::toAtoms(QJsonDocument &doc) {
     RPZMap<RPZAtom> out;
 
-    auto db_atoms = this->_db["atoms"].toArray();
+    auto db_atoms = doc["atoms"].toArray();
 
     for(auto &e : db_atoms) {
         auto atom = RPZAtom(e.toObject().toVariantHash());
         out.insert(atom.id(), atom);
     }
 
-    qDebug() << "MapDB : read" << out.count() << "atoms";
-
     return out;
 }
-
 
 const QString MapDatabase::defaultJsonDoc() {
     return "{\"version\":" + QString::number(this->apiVersion()) + ",\"atoms\":{}}";
@@ -59,5 +72,40 @@ const QString MapDatabase::dbPath() {
 }
 
 const int MapDatabase::apiVersion() {
-    return 6;
+    return 7;
+}
+
+QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> MapDatabase::_getUpdateHandlers() {
+    
+    auto out = QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler>();
+
+    //to v7
+    out.insert(
+        7,
+        [&](QJsonDocument &doc) {
+            
+            //iterate atoms
+            auto atoms = MapDatabase::toAtoms(doc);
+            for(auto &atom : atoms) {
+                
+                auto shape = atom.shape();
+
+                //add center
+                atom.setMetadata(
+                    AtomParameter::ShapeCenter, 
+                    shape.boundingRect().center()
+                );
+
+            }
+
+            //update doc
+            auto duplicated = MapDatabase::toObject(atoms, doc);
+            duplicated["version"] = 7;
+            doc.setObject(duplicated);
+
+        }
+    );
+
+    return out;
+
 }

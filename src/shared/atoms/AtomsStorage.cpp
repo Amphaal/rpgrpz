@@ -92,7 +92,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &historyP
 
     switch(historyPayload.type()) {
 
-        case PayloadAlteration::BulkMetadataChanged: {
+        case PayloadAlteration::PA_BulkMetadataChanged: {
             
             auto casted = (BulkMetadataChangedPayload*)&historyPayload;
             auto intialAtoms = casted->atoms();
@@ -117,7 +117,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &historyP
         }
         break; 
 
-        case PayloadAlteration::MetadataChanged: {
+        case PayloadAlteration::PA_MetadataChanged: {
             
             auto casted = (MetadataChangedPayload*)&historyPayload;
             auto changesTypes = MetadataChangedPayload::fromArgs(casted->args()).editedMetadata();
@@ -140,13 +140,13 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &historyP
         }
         break; 
 
-        case PayloadAlteration::Added: {
+        case PayloadAlteration::PA_Added: {
             auto casted = (AddedPayload*)&historyPayload;
             return RemovedPayload(casted->atoms().keys().toVector());
         }
         break; 
 
-        case PayloadAlteration::Removed: {
+        case PayloadAlteration::PA_Removed: {
             auto casted = (RemovedPayload*)&historyPayload;
             RPZMap<RPZAtom> out;
             for(auto atomId : casted->targetAtomIds()) {
@@ -179,13 +179,13 @@ bool AtomsStorage::_handlePayload(AlterationPayload &payload) {
     auto pType = payload.type();
     
     //on redo 
-    if(pType == PayloadAlteration::Redone) { 
+    if(pType == PayloadAlteration::PA_Redone) { 
         this->redo(); 
         return false; 
     }
 
     //on undo
-    if(pType == PayloadAlteration::Undone) {
+    if(pType == PayloadAlteration::PA_Undone) {
         this->undo(); 
         return false;
     }
@@ -201,7 +201,7 @@ bool AtomsStorage::_handlePayload(AlterationPayload &payload) {
     this->_registerPayloadForHistory(payload);
 
     //on reset
-    if(pType == PayloadAlteration::Reset) {
+    if(pType == PayloadAlteration::PA_Reset) {
         this->_atomsById.clear();
         this->_atomIdsByOwnerId.clear();
         this->_undoHistory.clear();
@@ -259,8 +259,8 @@ RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, sno
     switch(type) {
 
         //on addition
-        case PayloadAlteration::Reset:
-        case PayloadAlteration::Added: {
+        case PayloadAlteration::PA_Reset:
+        case PayloadAlteration::PA_Added: {
             
             auto newAtom = RPZAtom(alteration.toHash());
             auto owner = newAtom.owner();
@@ -277,9 +277,9 @@ RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, sno
         }
         break;
 
-        case PayloadAlteration::MetadataChanged:
-        case PayloadAlteration::BulkMetadataChanged: {
-            auto partial = type == PayloadAlteration::BulkMetadataChanged ? 
+        case PayloadAlteration::PA_MetadataChanged:
+        case PayloadAlteration::PA_BulkMetadataChanged: {
+            auto partial = type == PayloadAlteration::PA_BulkMetadataChanged ? 
                                                     RPZAtom(alteration.toHash()) : 
                                                     MetadataChangedPayload::fromArgs(alteration);
             
@@ -290,7 +290,7 @@ RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, sno
         break;
 
         //on removal
-        case PayloadAlteration::Removed: {
+        case PayloadAlteration::PA_Removed: {
             
             auto storedAtomOwner = storedAtom->owner();
 

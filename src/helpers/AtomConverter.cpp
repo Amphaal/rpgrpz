@@ -36,6 +36,10 @@ void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, RPZAtom &b
             break;
 
     }
+
+    //update transform origin
+    auto center = blueprint.shapeCenter();
+    target->setTransformOriginPoint(center);
             
 }
 

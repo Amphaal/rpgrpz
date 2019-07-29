@@ -372,13 +372,8 @@ bool ViewMapHint::_handlePayload(AlterationPayload &payload) {
 
     //on reset
     auto type = payload.type();
-    if(type == PayloadAlteration::Selected) this->scene()->clearSelection();
-    if(type == PayloadAlteration::Reset) {
-        for(auto &atom : this->_atomsById) {
-            auto gi = atom.graphicsItem();
-            if(gi) delete gi;
-        }
-    }
+    if(type == PayloadAlteration::PA_Selected) this->scene()->clearSelection();
+    if(type == PayloadAlteration::PA_Reset) this->scene()->clear();
     
     auto allowPropagation = AtomsStorage::_handlePayload(payload);
 
@@ -404,22 +399,22 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
     switch(type) {
         
         //on addition
-        case PayloadAlteration::Reset:
-        case PayloadAlteration::Added: {
+        case PayloadAlteration::PA_Reset:
+        case PayloadAlteration::PA_Added: {
             this->_buildGraphicsItemFromAtom(*updatedAtom);
         }
         break;
         
         //on focus
-        case PayloadAlteration::Focused: {
+        case PayloadAlteration::PA_Focused: {
             this->_boundGv->centerOn(updatedAtom->graphicsItem());
         }
         break;
 
-        case PayloadAlteration::MetadataChanged:
-        case PayloadAlteration::BulkMetadataChanged: {
+        case PayloadAlteration::PA_MetadataChanged:
+        case PayloadAlteration::PA_BulkMetadataChanged: {
 
-            auto partial = type == PayloadAlteration::BulkMetadataChanged ? RPZAtom(alteration.toHash()) : MetadataChangedPayload::fromArgs(alteration);
+            auto partial = type == PayloadAlteration::PA_BulkMetadataChanged ? RPZAtom(alteration.toHash()) : MetadataChangedPayload::fromArgs(alteration);
             for(auto param : partial.editedMetadata()) {
                 
                 auto paramVal = updatedAtom->metadata(param);
@@ -435,7 +430,7 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
 
 
         //on selection
-        case PayloadAlteration::Selected: {
+        case PayloadAlteration::PA_Selected: {
             updatedAtom->graphicsItem()->setSelected(true);
         }
         break;

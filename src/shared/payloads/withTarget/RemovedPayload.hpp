@@ -5,5 +5,5 @@
 class RemovedPayload : public MultipleTargetsPayload {
     public:
         RemovedPayload(const QVariantHash &hash) : MultipleTargetsPayload(hash) {}
-        RemovedPayload(const QVector<snowflake_uid> &atomIdsToRemove) : MultipleTargetsPayload(PayloadAlteration::Removed, atomIdsToRemove) {}
+        RemovedPayload(const QVector<snowflake_uid> &atomIdsToRemove) : MultipleTargetsPayload(PayloadAlteration::PA_Removed, atomIdsToRemove) {}
 };

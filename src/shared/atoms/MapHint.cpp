@@ -128,7 +128,7 @@ void MapHint::_shouldMakeMapDirty(AlterationPayload &payload) {
     if(!payload.isNetworkRoutable()) return;
 
     //always not dirty if reset
-    if(payload.type() == PayloadAlteration::Reset) return;
+    if(payload.type() == PayloadAlteration::PA_Reset) return;
 
     this->_setMapDirtiness();
 }

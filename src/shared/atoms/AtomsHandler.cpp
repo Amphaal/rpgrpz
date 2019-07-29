@@ -7,6 +7,13 @@ AlterationPayload::Source AtomsHandler::source() {
 }
 
 void AtomsHandler::handleAlterationRequest(AlterationPayload &payload, bool autoPropagate) {
+    
+    //trace
+    auto self = AlterationPayload::SourceAsStr[this->source()];
+    auto source = AlterationPayload::SourceAsStr[payload.source()];
+    auto alterationType = PayloadAlterationAsString[payload.type()];
+    qDebug() << "Alteration :" << self << "received" << alterationType << "from" << source;
+
     auto allowPropagation = this->_handlePayload(payload);
     if(autoPropagate && allowPropagation) this->propagateAlterationPayload(payload);
 }

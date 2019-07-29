@@ -5,5 +5,5 @@
 class BulkMetadataChangedPayload : public AtomsWielderPayload {
     public:
         BulkMetadataChangedPayload(const QVariantHash &hash) : AtomsWielderPayload(hash) { }
-        BulkMetadataChangedPayload(RPZMap<RPZAtom> &partialAtoms) : AtomsWielderPayload(PayloadAlteration::BulkMetadataChanged, partialAtoms) { }
+        BulkMetadataChangedPayload(RPZMap<RPZAtom> &partialAtoms) : AtomsWielderPayload(PayloadAlteration::PA_BulkMetadataChanged, partialAtoms) { }
 };

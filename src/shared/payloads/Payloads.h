@@ -22,47 +22,47 @@ class Payloads {
             
             switch(lowCast.type()) {
                 
-                case PayloadAlteration::BulkMetadataChanged:
+                case PayloadAlteration::PA_BulkMetadataChanged:
                     return QSharedPointer<BulkMetadataChangedPayload>(new BulkMetadataChangedPayload(hash));
                 break;
 
-                case PayloadAlteration::Added:
+                case PayloadAlteration::PA_Added:
                     return QSharedPointer<AddedPayload>(new AddedPayload(hash));
                 break;
 
-                case PayloadAlteration::Reset:
+                case PayloadAlteration::PA_Reset:
                     return QSharedPointer<ResetPayload>(new ResetPayload(hash));
                 break;
 
-                case PayloadAlteration::Focused:
+                case PayloadAlteration::PA_Focused:
                     return QSharedPointer<FocusedPayload>(new FocusedPayload(hash));
                 break;
 
-                case PayloadAlteration::Removed:
+                case PayloadAlteration::PA_Removed:
                     return QSharedPointer<RemovedPayload>(new RemovedPayload(hash));
                 break;
 
-                case PayloadAlteration::Selected:
+                case PayloadAlteration::PA_Selected:
                     return QSharedPointer<SelectedPayload>(new SelectedPayload(hash));
                 break;
 
-                case PayloadAlteration::Duplicated:
+                case PayloadAlteration::PA_Duplicated:
                     return QSharedPointer<DuplicatedPayload>(new DuplicatedPayload(hash));
                 break;
 
-                case PayloadAlteration::OwnerChanged:
+                case PayloadAlteration::PA_OwnerChanged:
                     return QSharedPointer<OwnerChangedPayload>(new OwnerChangedPayload(hash));
                 break;
 
-                case PayloadAlteration::MetadataChanged:
+                case PayloadAlteration::PA_MetadataChanged:
                     return QSharedPointer<MetadataChangedPayload>(new MetadataChangedPayload(hash));
                 break;
 
-                case PayloadAlteration::Redone:
+                case PayloadAlteration::PA_Redone:
                     return QSharedPointer<RedonePayload>(new RedonePayload(hash));
                 break;
 
-                case PayloadAlteration::Undone:
+                case PayloadAlteration::PA_Undone:
                     return QSharedPointer<UndonePayload>(new UndonePayload(hash));
                 break;
 
