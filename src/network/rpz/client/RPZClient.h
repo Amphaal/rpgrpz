@@ -34,6 +34,7 @@ class RPZClient : public JSONSocket, public JSONRouter, public AtomAlterationAck
         void defineAudioStreamSource(const QString &audioStreamUrl, const QString &sourceTitle);
         void changeAudioPosition(int newPosition);
         void setAudioStreamPlayState(bool isPlaying);
+        void sendMapHistory(const QVariantHash &history);
 
         RPZUser identity();
         QVector<RPZUser> sessionUsers();

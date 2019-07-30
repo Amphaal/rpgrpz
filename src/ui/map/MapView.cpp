@@ -201,17 +201,7 @@ void MapView::onRPZClientConnecting(RPZClient * cc) {
     //when self user send
     QObject::connect(
         this->_rpzClient, &RPZClient::ackIdentity,
-        [&](const QVariantHash &userHash) {
-            
-            RPZUser rpz_user(userHash);
-            this->hints()->setDefaultUser(rpz_user);
-
-            //if host
-            auto descriptor = rpz_user.role() == RPZUser::Role::Host ? NULL : this->_rpzClient->getConnectedSocketAddress();
-            bool is_remote = this->_hints->defineAsRemote(descriptor);
-
-            emit remoteChanged(is_remote);
-        }
+        this, &MapView::_onIdentityReceived
     );
 
     //when missing assets
@@ -242,6 +232,16 @@ void MapView::onRPZClientConnecting(RPZClient * cc) {
     );
 
 }
+void MapView::_onIdentityReceived(const QVariantHash &userHash) {
+    RPZUser rpz_user(userHash);
+    this->hints()->setDefaultUser(rpz_user);
+
+    //if host
+    auto descriptor = rpz_user.role() == RPZUser::Role::Host ? NULL : this->_rpzClient->getConnectedSocketAddress();
+    bool is_remote = this->_hints->defineAsRemote(descriptor);
+
+    emit remoteChanged(is_remote);
+}
 
 void MapView::onRPZClientDisconnect(RPZClient* cc) {
 
@@ -254,7 +254,7 @@ void MapView::onRPZClientDisconnect(RPZClient* cc) {
 void MapView::_sendMapHistory() {
     auto allAtoms = this->_hints->atoms();
     ResetPayload payload(allAtoms);
-    this->_hints->handleAlterationRequest(payload);
+    this->_rpzClient->sendMapHistory(payload);
 }
 
 /////////////////

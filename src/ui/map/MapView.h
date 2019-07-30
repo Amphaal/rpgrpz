@@ -91,6 +91,7 @@ class MapView : public QGraphicsView, public ClientBindable {
         
         //network
             void _sendMapHistory();
+            void _onIdentityReceived(const QVariantHash &userHash);
 
         //registered points
             bool _isMousePressed = false;
