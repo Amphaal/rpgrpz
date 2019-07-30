@@ -56,7 +56,6 @@ function(deployqt target)
                  env "${DEPLOYQT_EXECUTABLE}"
                     \"$<TARGET_FILE:${target}>/../../../\"
                     -verbose=1
-                    ${QT_DEPLOY_MUST_BE_DEBUG}
         )
 
     endif()

@@ -107,6 +107,7 @@ IF(WIN32)
 endif()
 
 IF(APPLE)
+    #SET(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
     SET(BUNDLE_TYPE MACOSX_BUNDLE) #set bundle type
     SET(MACOSX_BUNDLE_ICON_FILE "app.icns") #define icon
     SET(APP_ICO ${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/app.icns) #add icon
@@ -151,7 +152,13 @@ list(APPEND EXT_LIBS
 ########
 
 #force official binaires from Qt
-#SET(Qt5_DIR "C:/Qt/5.13.0/msvc2017_64/lib/cmake/Qt5")
+IF(WIN32)
+    SET(Qt5_DIR "C:/Qt/5.13.0/msvc2017_64/lib/cmake/Qt5")
+endif()
+IF(APPLE)
+    SET(Qt5_DIR "/Qt/5.13.0/clang_64/lib/cmake/Qt5")
+endif()
+
 
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL)
 list(APPEND EXT_LIBS
@@ -319,5 +326,6 @@ include(CMakePublish)
 #################
 
 #include(PrintAllVariables)
+
 #include(PrintTargetProperties)
-#print_target_properties(PkgConfig::Gst)
+#print_target_properties(PkgConfig::GstPluginsBase)

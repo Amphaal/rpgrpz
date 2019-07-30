@@ -1,6 +1,6 @@
 [requires]
 miniupnpc/2.1@rhard/testing
-qt/5.13.0@bincrafters/stable
+#qt/5.13.0@bincrafters/stable
 
 [options]
 qt:qtsvg=True
