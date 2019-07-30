@@ -41,7 +41,18 @@ void JSONSocket::sendJSON(const JSONMethod &method, const QVariant &data) {
     out.setVersion(QDataStream::Qt_5_13);
     out << payload_doc.toJson(QJsonDocument::Compact);
     
-    qDebug() << this->_logId.toStdString().c_str() << ":" << JSONMethodAsArray[method] << "sent";
+    //log
+    this->_debugLog(method, "sent");
+}
+
+void JSONSocket::_debugLog(const QString &logId, const JSONMethod &method, const QString &msg) {
+    qDebug() << logId.toStdString().c_str() 
+             << QString("[" + JSONMethodAsArray[method] + "]").toStdString().c_str() 
+             << ":" << msg.toStdString().c_str();
+}
+
+void JSONSocket::_debugLog(const JSONMethod &method, const QString &msg) {
+    JSONSocket::_debugLog(this->_logId, method, msg);
 }
 
 void JSONSocket::_processIncomingData() {
@@ -102,9 +113,9 @@ void JSONSocket::_processIncomingAsJson(const QByteArray &data) {
         return;
     }
 
-    //signal
+    //log
     auto method = static_cast<JSONMethod>((int)content["_m"].toDouble());
-    qDebug() << this->_logId.toStdString().c_str() << ":" << JSONMethodAsArray[method] << "received";
+    this->_debugLog(method, "received");
 
     //bind
     emit JSONReceived(this, method, content["_d"].toVariant());

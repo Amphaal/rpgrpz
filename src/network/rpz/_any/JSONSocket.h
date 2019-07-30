@@ -17,9 +17,14 @@ class JSONSocket : public QObject {
         void sendJSON(const JSONMethod &method, const QVariant &data);
         QTcpSocket* socket();
 
+        static void _debugLog(const QString &logId, const JSONMethod &method, const QString &msg);
+
     signals:
         void JSONReceived(JSONSocket* target, const JSONMethod &method, const QVariant &data);
         void disconnected();
+
+    protected:
+        void _debugLog(const JSONMethod &method, const QString &msg);
 
     private:
         QString _logId;

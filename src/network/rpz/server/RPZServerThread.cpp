@@ -206,10 +206,18 @@ void RPZServerThread::_tellUserHisIdentity(JSONSocket* socket) {
 }
 
 void RPZServerThread::_sendStoredMessages(JSONSocket * clientSocket) {
-    //message...
+    
+    //send messages...
+    auto messagesToSend = this->_messages.toVList();
+    auto method = JSONMethod::ChatLogHistory;
+    clientSocket->sendJSON(method, messagesToSend);
+
+    //log
     auto countMsgs = this->_messages.count();
-    clientSocket->sendJSON(JSONMethod::ChatLogHistory, this->_messages.toVList());
-    qDebug() << "RPZServerThread :" << countMsgs << "stored messages sent to" << clientSocket->socket()->peerAddress().toString();
+    auto logMsg = QString("%1 stored messages sent to \"%2\"")
+                        .arg(countMsgs)
+                        .arg(clientSocket->socket()->peerAddress().toString());
+    JSONSocket::_debugLog("RPZServerThread", method, logMsg);
 }
 
 
@@ -225,8 +233,14 @@ void RPZServerThread::_broadcastUsers() {
     }
 
     //send data
-    this->_sendToAll(JSONMethod::LoggedPlayersChanged, this->_usersById.toVList());
-    qDebug() << "RPZServerThread : Now" << this->_usersById.size() << "clients logged";
+    auto method = JSONMethod::LoggedPlayersChanged;
+    auto toSend =  this->_usersById.toVList();
+    this->_sendToAll(method, toSend);
+
+    //log
+    auto userCount = this->_usersById.size();
+    auto msgLog = QString("Now %1 clients logged").arg(userCount);
+    JSONSocket::_debugLog("RPZServerThread", method, msgLog);
 }
 
 void RPZServerThread::_askHostForMapHistory() {
