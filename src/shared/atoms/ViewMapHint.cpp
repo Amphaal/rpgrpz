@@ -262,6 +262,9 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
     //save pointer ref
     this->_crossBindingAtomWithGI(&atomToBuildFrom, newItem);
 
+    //request insert
+    emit requestingItemInsertion(newItem);
+
     return newItem;
 }
 
@@ -366,16 +369,16 @@ RPZAtom* ViewMapHint::_getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const
 /////////////////////////////
 
 //alter Scene
-bool ViewMapHint::_handlePayload(AlterationPayload &payload) { 
+void ViewMapHint::_handlePayload(AlterationPayload &payload) { 
 
     this->_preventInnerGIEventsHandling = true;
 
     //on reset
     auto type = payload.type();
     if(type == PayloadAlteration::PA_Selected) this->scene()->clearSelection();
-    if(type == PayloadAlteration::PA_Reset) this->scene()->clear();
+    if(type == PayloadAlteration::PA_Reset) emit requestingAllItemsRemoval(); //this->scene()->clear();
     
-    auto allowPropagation = AtomsStorage::_handlePayload(payload);
+    AtomsStorage::_handlePayload(payload);
 
     this->_preventInnerGIEventsHandling = false;
 
@@ -387,8 +390,7 @@ bool ViewMapHint::_handlePayload(AlterationPayload &payload) {
         this->_assetsIdsToRequest.clear();
         emit requestMissingAssets(toRequest);
     }
-    
-    return allowPropagation;
+
 }
 
 //register actions

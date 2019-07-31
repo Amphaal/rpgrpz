@@ -136,7 +136,8 @@
         "set": "cpp",
         "qpixmapcache": "cpp",
         "qrandomgenerator": "cpp",
-        "qlist": "cpp"
+        "qlist": "cpp",
+        "qtconcurrent": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

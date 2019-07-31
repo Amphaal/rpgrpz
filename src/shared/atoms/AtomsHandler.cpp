@@ -14,8 +14,16 @@ void AtomsHandler::handleAlterationRequest(AlterationPayload &payload, bool auto
     auto alterationType = PayloadAlterationAsString[payload.type()];
     qDebug() << "Alteration :" << self << "received" << alterationType << "from" << source;
 
-    auto allowPropagation = this->_handlePayload(payload);
-    if(autoPropagate && allowPropagation) this->propagateAlterationPayload(payload);
+    // auto allowPropagation = ;
+    auto allowPropagation = QtConcurrent::run([=]() {
+        auto cPayload = Payloads::autoCast(payload);
+        return this->_handlePayload(*cPayload);
+    });
+    // allowPropagation.waitForFinished();
+    if(
+        autoPropagate 
+        // && allowPropagation.result()
+    ) this->propagateAlterationPayload(payload);
 }
 
 void AtomsHandler::propagateAlterationPayload(AlterationPayload &payload) {

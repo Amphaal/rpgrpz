@@ -160,7 +160,7 @@ IF(APPLE)
 endif()
 
 
-find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL)
+find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL Concurrent)
 list(APPEND EXT_LIBS
     Qt5::Core
     Qt5::Gui 
@@ -168,6 +168,7 @@ list(APPEND EXT_LIBS
     Qt5::Network
     Qt5::Svg
     Qt5::OpenGL
+    Qt5::Concurrent
 )
 
 #################################

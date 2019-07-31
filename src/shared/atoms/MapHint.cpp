@@ -2,14 +2,13 @@
 
 MapHint::MapHint(QGraphicsView* boundGv) : ViewMapHint(boundGv) { }
 
-bool MapHint::_handlePayload(AlterationPayload &payload) { 
+void MapHint::_handlePayload(AlterationPayload &payload) { 
 
-    auto allowPropagation = ViewMapHint::_handlePayload(payload);
+    ViewMapHint::_handlePayload(payload);
 
     //define dirty
     this->_shouldMakeMapDirty(payload);
 
-    return allowPropagation;
 }
 
 ////////////////////
