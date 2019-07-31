@@ -25,9 +25,6 @@ static const QStringList PayloadAlterationAsString {
     "Removed",
     "Added", 
     "Reset",
-    "Duplicated",
-    "Redone",
-    "Undone",
     "OwnerChanged",
     "MetadataChanged",
     "BulkMetadataChanged"

@@ -26,6 +26,26 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
         this, &MapView::_onSceneSelectionChanged
     );
 
+    auto caca = [=](QGraphicsItem* item){
+        this->scene()->addItem(item);
+    };
+
+    auto pipi = [=]() {
+        if(this->scene()->children().count() > 1) this->scene()->clear();
+    };
+
+    QObject::connect(
+        this->_hints, &MapHint::requestingAllItemsRemoval,
+        this, pipi,
+        Qt::ConnectionType::QueuedConnection
+    );
+    
+    QObject::connect(
+        this->_hints, &MapHint::requestingItemInsertion,
+        this, caca,
+        Qt::ConnectionType::QueuedConnection
+    );
+
     //default state
     this->scale(this->_defaultScale, this->_defaultScale);
     this->_goToDefaultViewState();

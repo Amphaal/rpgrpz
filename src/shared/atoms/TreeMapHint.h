@@ -11,9 +11,17 @@
 
 #include <QTreeWidget>
 
-class TreeMapHint : public AtomsHandler, public AtomsContextualMenuHandler  {
+class TreeMapHint : public AtomsHandler, public AtomsContextualMenuHandler {
+    
+    Q_OBJECT
+    
     public:
         TreeMapHint(QTreeWidget* boundTree);
+
+        void _updateLayerState(QTreeWidgetItem* layerItem);
+
+    signals:
+        void requestingTreeItemInsertion(QTreeWidgetItem *item, QTreeWidgetItem* parent);
 
     private:
         QTreeWidget* _boundTree = nullptr;
@@ -21,7 +29,6 @@ class TreeMapHint : public AtomsHandler, public AtomsContextualMenuHandler  {
         bool _preventInnerGIEventsHandling = false;
         QHash<int, QTreeWidgetItem*> _layersItems;
         QTreeWidgetItem* _getLayerItem(int layer);
-        void _updateLayerState(QTreeWidgetItem* layerItem);
 
         void _bindOwnerToItem(QTreeWidgetItem* item, RPZUser &owner);
 
@@ -40,7 +47,7 @@ class TreeMapHint : public AtomsHandler, public AtomsContextualMenuHandler  {
         void _changeLayer(QVector<snowflake_uid> &elementIds, int newLayer);
 
         //augmenting AtomsStorage
-        virtual bool _handlePayload(AlterationPayload &payload) override;
+        virtual void _handlePayload(AlterationPayload &payload) override;
         virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) override;
 
         //icons

@@ -36,9 +36,6 @@ QGraphicsItem* MapViewGraphicsScene::addToScene(RPZAtom &atom, const RPZAssetMet
     //update
     AtomConverter::updateGraphicsItemFromAtom(out, atom, isTemporary);        
 
-    //add atomType tracker
-    this->addItem(out);
-
     //prevent notifications on move to kick in for temporary items
     if(auto notifier = dynamic_cast<MapViewItemsNotifier*>(out)) {
         if(isTemporary) {
@@ -48,6 +45,9 @@ QGraphicsItem* MapViewGraphicsScene::addToScene(RPZAtom &atom, const RPZAssetMet
             notifier->activateNotifications();
         }
     }
+    
+    //add atomType tracker
+    // this->addItem(out);
 
     return out;
 }

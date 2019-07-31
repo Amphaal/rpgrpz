@@ -5,6 +5,8 @@
 #include "src/shared/payloads/Payloads.h"
 #include "AtomAlterationAcknoledger.hpp"
 
+#include <QtConcurrent>
+
 class AtomsHandler : public QObject, public AtomAlterationAcknoledger {
     
     Q_OBJECT
@@ -19,6 +21,6 @@ class AtomsHandler : public QObject, public AtomAlterationAcknoledger {
     protected:
         AlterationPayload::Source _source = AlterationPayload::Source::Undefined;
 
-        virtual bool _handlePayload(AlterationPayload &payload) = 0;
+        virtual void _handlePayload(AlterationPayload &payload) = 0;
         virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) = 0; 
 };

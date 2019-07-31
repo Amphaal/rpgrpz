@@ -49,7 +49,7 @@ void TreeMapHint::_onElementSelectionChanged() {
     this->propagateAlterationPayload(payload);
 }
 
-bool TreeMapHint::_handlePayload(AlterationPayload &payload) {
+void TreeMapHint::_handlePayload(AlterationPayload &payload) {
     
     this->_preventInnerGIEventsHandling = true;
 
@@ -93,7 +93,6 @@ bool TreeMapHint::_handlePayload(AlterationPayload &payload) {
 
     this->_preventInnerGIEventsHandling = false;
 
-    return true;
 }
 
 RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) {
@@ -247,10 +246,11 @@ QTreeWidgetItem* TreeMapHint::_getLayerItem(int layer) {
         
     //add to layout
     this->_layersItems[layer] = layerElem;
-    this->_boundTree->addTopLevelItem(layerElem);
+    // this->_boundTree->addTopLevelItem(layerElem);
+    emit requestingTreeItemInsertion(layerElem, nullptr);
 
     //initial sort
-    this->_boundTree->sortByColumn(0, Qt::SortOrder::DescendingOrder);
+    // this->_boundTree->sortByColumn(0, Qt::SortOrder::DescendingOrder);
     
     return layerElem;
 }
@@ -297,8 +297,9 @@ QTreeWidgetItem* TreeMapHint::_createTreeItem(RPZAtom &atom) {
 
     //create or get the layer element
     auto layerElem = this->_getLayerItem(atom.layer());
-    layerElem->addChild(item);
-    this->_updateLayerState(layerElem);
+    // layerElem->addChild(item);
+    emit requestingTreeItemInsertion(item, layerElem);
+    // this->_updateLayerState(layerElem);
 
     return item;
 }

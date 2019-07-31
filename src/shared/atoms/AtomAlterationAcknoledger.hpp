@@ -1,6 +1,10 @@
 #pragma once
 
 #include <QSet>
+#include <QQueue>
+
+#include <QtConcurrent>
+
 #include "src/shared/payloads/Payloads.h"
 
 class AtomAlterationAcknoledger {
@@ -13,7 +17,7 @@ class AtomAlterationAcknoledger {
             _registeredAcknoledgers.remove(this);
         }
 
-        virtual void propagateAlterationPayload(AlterationPayload &payload) {
+        virtual QFuture<void> propagateAlterationPayload(AlterationPayload &payload) {
             
             for(auto ack : _registeredAcknoledgers) {
                 if(ack == this) continue; //do not self propagate
@@ -22,8 +26,9 @@ class AtomAlterationAcknoledger {
             
         }
 
-        virtual void handleAlterationRequest(AlterationPayload &payload, bool autoPropagate = true) = 0;
+        virtual QFuture<void> handleAlterationRequest(AlterationPayload &payload, bool autoPropagate = true) = 0;
     
     private:
         static inline QSet<AtomAlterationAcknoledger*> _registeredAcknoledgers;
+        static QQueue<QFuture<void>> _queuedAlterations;
 };

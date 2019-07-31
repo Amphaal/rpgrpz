@@ -8,11 +8,8 @@
 #include "withTarget/FocusedPayload.hpp"
 #include "withTarget/RemovedPayload.hpp"
 #include "withTarget/SelectedPayload.hpp"
-#include "withTarget/DuplicatedPayload.hpp"
 #include "withTarget/OwnerChangedPayload.hpp"
 #include "withTarget/MetadataChangedPayload.hpp"
-#include "basic/RedonePayload.hpp"
-#include "basic/UndonePayload.hpp"
 
 class Payloads {
     public:
@@ -46,24 +43,12 @@ class Payloads {
                     return QSharedPointer<SelectedPayload>(new SelectedPayload(hash));
                 break;
 
-                case PayloadAlteration::PA_Duplicated:
-                    return QSharedPointer<DuplicatedPayload>(new DuplicatedPayload(hash));
-                break;
-
                 case PayloadAlteration::PA_OwnerChanged:
                     return QSharedPointer<OwnerChangedPayload>(new OwnerChangedPayload(hash));
                 break;
 
                 case PayloadAlteration::PA_MetadataChanged:
                     return QSharedPointer<MetadataChangedPayload>(new MetadataChangedPayload(hash));
-                break;
-
-                case PayloadAlteration::PA_Redone:
-                    return QSharedPointer<RedonePayload>(new RedonePayload(hash));
-                break;
-
-                case PayloadAlteration::PA_Undone:
-                    return QSharedPointer<UndonePayload>(new UndonePayload(hash));
                 break;
 
                 default:

@@ -63,6 +63,9 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         void requestMissingAssets(const QList<RPZAssetHash> assetIdsToRequest);
         void atomTemplateChanged();
 
+        void requestingItemInsertion(QGraphicsItem* graphicElem);
+        void requestingAllItemsRemoval();
+
     private:
         //helpers
         QGraphicsItem* _buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom);
@@ -86,6 +89,6 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         QSet<RPZAssetHash> _assetsIdsToRequest;
 
         //augmenting AtomsStorage
-        virtual bool _handlePayload(AlterationPayload &payload) override;
+        virtual void _handlePayload(AlterationPayload &payload) override;
         virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) override;
 };

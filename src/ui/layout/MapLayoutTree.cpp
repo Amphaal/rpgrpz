@@ -20,6 +20,22 @@ MapLayoutTree::MapLayoutTree(QWidget * parent) : RPZTree(parent), _hints(new Tre
 
     this->setDragDropMode(QAbstractItemView::DragDropMode::NoDragDrop);
 
+    auto caca = [&](QTreeWidgetItem *item, QTreeWidgetItem* parent) {
+        if(!parent) {
+            this->addTopLevelItem(item);
+            this->sortByColumn(0, Qt::SortOrder::DescendingOrder);
+        } else {
+            parent->addChild(item);
+            this->_hints->_updateLayerState(parent);
+        }
+    };
+
+    QObject::connect(
+        this->_hints, &TreeMapHint::requestingTreeItemInsertion,
+        this, caca,
+        Qt::QueuedConnection
+    );
+
 }
 
 TreeMapHint* MapLayoutTree::hints() {

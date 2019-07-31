@@ -174,7 +174,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &historyP
 //////////////
 
 //alter Scene
-bool AtomsStorage::_handlePayload(AlterationPayload &payload) { 
+void AtomsStorage::_handlePayload(AlterationPayload &payload) { 
 
     auto pType = payload.type();
     
