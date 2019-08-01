@@ -1,18 +1,14 @@
 #include "AtomsHandler.h"
 
-AtomsHandler::AtomsHandler(const AlterationPayload::Source &boundSource, bool autoRegisterAck) : AtomAlterationAcknoledger(autoRegisterAck), _source(boundSource) { }
-
-AlterationPayload::Source AtomsHandler::source() {
-    return this->_source;
-}
+AtomsHandler::AtomsHandler(
+        const AlterationPayload::Source &boundSource, 
+        bool autoRegisterAck
+    ) : AtomAlterationAcknoledger(boundSource, autoRegisterAck) { }
 
 QFuture<void> AtomsHandler::_handleAlterationRequest(AlterationPayload &payload, bool autoPropagate) {
     
     //trace
-    auto self = AlterationPayload::SourceAsStr[this->source()];
-    auto source = AlterationPayload::SourceAsStr[payload.source()];
-    auto alterationType = PayloadAlterationAsString[payload.type()];
-    qDebug() << "Alteration :" << self << "received" << alterationType << "from" << source;
+    this->_payloadTrace(payload);
 
     // handling promise
     auto alterationHandled = QtConcurrent::run([=]() {
@@ -36,7 +32,7 @@ QFuture<void> AtomsHandler::propagateAlterationPayload(AlterationPayload &payloa
 
     //if inner payload, apply own source for send
     auto source = payload.source();
-    if(source == AlterationPayload::Source::Undefined) payload.changeSource(this->_source); 
+    if(source == AlterationPayload::Source::Undefined) payload.changeSource(this->source()); 
 
     //propagate
     return AtomAlterationAcknoledger::propagateAlterationPayload(payload);

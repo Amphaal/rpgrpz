@@ -15,7 +15,7 @@
 #include "src/shared/models/RPZHandshake.h"
 
 #include "src/helpers/_appContext.h"
-#include "src/shared/atoms/AtomAlterationAcknoledger.hpp"
+#include "src/shared/atoms/AtomAlterationAcknoledger.h"
 
 class RPZClient : public JSONSocket, public JSONRouter, public AtomAlterationAcknoledger {
     

@@ -98,13 +98,14 @@ QGraphicsRectItem* MapViewGraphicsScene::addMissingAssetPH(RPZAtom &atom) {
     //Update values from atom blueprint
     AtomConverter::updateGraphicsItemFromAtom(placeholder, atom);
     
-    //add to scene
-    this->addItem(placeholder);
-
     //activate notifications
     if(auto notifier = dynamic_cast<MapViewItemsNotifier*>(placeholder)) {
         notifier->activateNotifications();
     }
+
+    //add to scene
+    //this->addItem(placeholder);
+
 
     return placeholder;
 }
