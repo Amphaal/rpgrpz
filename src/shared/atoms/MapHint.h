@@ -10,11 +10,11 @@ class MapHint : public ViewMapHint {
         MapHint(QGraphicsView* boundGv);
 
         //load/unload
-        QString mapFilePath();
-        bool loadDefaultMap();
-        bool loadMap(const QString &filePath);
-        bool saveMap();
-        bool saveMapAs(const QString &newFilePath);
+        QString RPZMapFilePath();
+        bool loadDefaultRPZMap();
+        bool loadRPZMap(const QString &filePath);
+        bool saveRPZMap();
+        bool saveRPZMapAs(const QString &newFilePath);
         
         bool isMapDirty();
         void mayWantToSavePendingState();

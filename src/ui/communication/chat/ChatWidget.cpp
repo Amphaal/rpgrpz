@@ -58,7 +58,7 @@ void ChatWidget::_instUI() {
     splitter->addWidget(_right());
     splitter->setStretchFactor(0, 1);
     splitter->setStretchFactor(1, 0);
-    splitter->loadMap();
+    splitter->restore();
     this->layout()->addWidget(splitter);
 
     this->setLayoutDirection(Qt::LayoutDirection::LeftToRight);

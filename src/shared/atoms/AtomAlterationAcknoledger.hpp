@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include <QSet>
 #include <QQueue>
 
@@ -16,27 +18,16 @@ class AtomAlterationAcknoledger {
         ~AtomAlterationAcknoledger() {
             _registeredAcknoledgers.remove(this);
         }
-    
-    protected:
-        virtual QFuture<void> handleAlterationRequest(AlterationPayload &payload, bool autoPropagate = true) = 0;
-        virtual QFuture<void> propagateAlterationPayload(AlterationPayload &payload) {
-            
-            //wait for all propagations to be done
-            auto all = AsyncFuture::combine();
-
-            for(auto ack : _registeredAcknoledgers) {
-                if(ack == this) continue; //do not self propagate
-                all << ack->handleAlterationRequest(payload, false); //prevent another propagation
-            }
-            
-            return all.future();
-        }
-
+        
         void queueAlteration(AlterationPayload &payload, bool autoPropagate = true) {
             
+            if(auto bPayload = dynamic_cast<ResetPayload*>(&payload)) {
+                auto i = true;
+            }
+
             //add to queue
             auto instruction = [=]() mutable {
-                return this->handleAlterationRequest(payload, autoPropagate);
+                return this->_handleAlterationRequest(payload, autoPropagate);
             };
             _queuedAlterations.enqueue(instruction);
             
@@ -44,9 +35,25 @@ class AtomAlterationAcknoledger {
             if(_queuedAlterations.count() > 0 && !_dequeuing) _emptyQueue();
         }
     
+    
+    protected:
+        virtual QFuture<void> _handleAlterationRequest(AlterationPayload &payload, bool autoPropagate = true) = 0;
+        virtual QFuture<void> propagateAlterationPayload(AlterationPayload &payload) {
+            
+            //wait for all propagations to be done
+            auto all = AsyncFuture::combine();
+
+            for(auto ack : _registeredAcknoledgers) {
+                if(ack == this) continue; //do not self propagate
+                all << ack->_handleAlterationRequest(payload, false); //prevent another propagation
+            }
+            
+            return all.future();
+        }
+
     private:
         static inline QSet<AtomAlterationAcknoledger*> _registeredAcknoledgers;
-        static QQueue<std::function<QFuture<void>()>> _queuedAlterations;
+        static inline QQueue<std::function<QFuture<void>()>> _queuedAlterations;
         
         static inline bool _dequeuing = false;
         static void _emptyQueue() {

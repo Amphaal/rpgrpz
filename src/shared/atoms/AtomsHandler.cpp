@@ -6,7 +6,7 @@ AlterationPayload::Source AtomsHandler::source() {
     return this->_source;
 }
 
-QFuture<void> AtomsHandler::handleAlterationRequest(AlterationPayload &payload, bool autoPropagate) {
+QFuture<void> AtomsHandler::_handleAlterationRequest(AlterationPayload &payload, bool autoPropagate) {
     
     //trace
     auto self = AlterationPayload::SourceAsStr[this->source()];

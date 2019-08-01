@@ -10,7 +10,7 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
     this->_loadWindowState();
 
     //load default map
-    this->_mapView->hints()->loadDefaultMap();
+    this->_mapView->hints()->loadDefaultRPZMap();
 
     //start the update check
     this->_updateIntegrator->checkForAppUpdates();
@@ -206,7 +206,7 @@ void MainWindow::_initUIApp() {
     centralWidget->setStretchFactor(0, 0);
     centralWidget->setStretchFactor(1, 1);
     centralWidget->setStretchFactor(2, 0);
-    centralWidget->loadMap();
+    centralWidget->restore();
 
     //
     // EVENTS
@@ -261,7 +261,7 @@ void MainWindow::_initUIApp() {
         this->_sb, &RPZStatusBar::updateMapFileLabel
     );
     this->_sb->updateMapFileLabel(
-        this->_mapView->hints()->mapFilePath(),
+        this->_mapView->hints()->RPZMapFilePath(),
         this->_mapView->hints()->isMapDirty()
     );
 
@@ -305,24 +305,24 @@ QMenu* MainWindow::_getMapMenu() {
     auto mapMenuItem = new QMenu("Carte");
 
     //load map
-    auto loadMap = RPZActions::loadMap();
+    auto loadMap = RPZActions::loadRPZMap();
     QObject::connect(
         loadMap, &QAction::triggered,
-        this, &MainWindow::_loadMap
+        this, &MainWindow::_loadRPZMap
     );
     
     //save map
-    auto saveMap = RPZActions::saveMap();
+    auto saveMap = RPZActions::saveRPZMap();
     QObject::connect(
         saveMap, &QAction::triggered,
-        this->_mapView->hints(), &MapHint::saveMap
+        this->_mapView->hints(), &MapHint::saveRPZMap
     );
 
     //save as map
-    auto saveAsMap = RPZActions::saveAsMap();
+    auto saveAsMap = RPZActions::saveAsRPZMap();
     QObject::connect(
         saveAsMap, &QAction::triggered,
-        this, &MainWindow::_saveAs
+        this, &MainWindow::_saveRPZMapAs
     );
 
     QList<QAction*> mapActions = { loadMap, saveMap, saveAsMap };
@@ -345,25 +345,25 @@ QMenu* MainWindow::_getMapMenu() {
     return mapMenuItem;
 }
 
-void MainWindow::_saveAs() {
+void MainWindow::_saveRPZMapAs() {
     auto picked = QFileDialog::getSaveFileName(this,
         "Enregistrer sous...",
-        this->_mapView->hints()->mapFilePath(), 
+        this->_mapView->hints()->RPZMapFilePath(), 
         I18n::tr()->Popup_MapDescriptor()
     );
 
     if(!picked.isNull()) {
-        this->_mapView->hints()->saveMapAs(picked);
+        this->_mapView->hints()->saveRPZMapAs(picked);
     }
 }
-void MainWindow::_loadMap() {
+void MainWindow::_loadRPZMap() {
     auto picked = QFileDialog::getOpenFileName(this, 
         "Ouvrir une carte", 
         AppContext::getMapsFolderLocation(), 
         I18n::tr()->Popup_MapDescriptor()
     );
     if(!picked.isNull()) {
-        this->_mapView->hints()->loadMap(picked);
+        this->_mapView->hints()->loadRPZMap(picked);
     }
 }
 

@@ -60,7 +60,7 @@ void ViewMapHint::handleAnyMovedItems() {
 
     //inform moving
     BulkMetadataChangedPayload payload(coords);
-    this->handleAlterationRequest(payload);
+    this->queueAlteration(payload);
     
 }
 
@@ -172,7 +172,7 @@ void ViewMapHint::deleteCurrentSelectionItems() {
     }
 
     RemovedPayload payload(atomIdsToRemove);
-    this->handleAlterationRequest(payload);
+    this->queueAlteration(payload);
 }
 
 QGraphicsItem* ViewMapHint::generateGhostItem(RPZAssetMetadata &assetMetadata) {
@@ -208,7 +208,7 @@ void ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsItem) {
     auto newAtom = AtomConverter::graphicsToAtom(graphicsItem);
     AddedPayload payload(newAtom);
 
-    this->handleAlterationRequest(payload);
+    this->queueAlteration(payload);
 }
 
 /////////////////////////////////
@@ -324,7 +324,7 @@ void ViewMapHint::handleParametersUpdateAlterationRequest(QVariantHash &payload)
         cPayload->changeSource(AlterationPayload::Source::Undefined); 
 
         //handle payload
-        this->handleAlterationRequest(*cPayload);
+        this->queueAlteration(*cPayload);
 
     }
 }
