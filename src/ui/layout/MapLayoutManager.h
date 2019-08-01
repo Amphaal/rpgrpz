@@ -8,7 +8,7 @@
 
 class MapLayoutManager : public QWidget {
     public:
-        MapLayoutManager(QWidget *parent = nullptr);
+        MapLayoutManager(AtomsStorage* mapMaster, QWidget *parent = nullptr);
 
         MapLayoutTree* tree();
         LayerSelector* layerSelector();

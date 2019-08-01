@@ -177,25 +177,6 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &historyP
 void AtomsStorage::_handlePayload(AlterationPayload &payload) { 
 
     auto pType = payload.type();
-    
-    //on redo 
-    if(pType == PayloadAlteration::PA_Redone) { 
-        this->redo(); 
-        return false; 
-    }
-
-    //on undo
-    if(pType == PayloadAlteration::PA_Undone) {
-        this->undo(); 
-        return false;
-    }
-
-    //on duplication
-    if(auto dCasted = dynamic_cast<DuplicatedPayload*>(&payload)) {
-        auto targetAtomsIds = dCasted->targetAtomIds();
-        this->_duplicateAtoms(targetAtomsIds);
-        return false;
-    }
 
     //register history
     this->_registerPayloadForHistory(payload);
@@ -211,7 +192,6 @@ void AtomsStorage::_handlePayload(AlterationPayload &payload) {
     //base handling
     this->_basic_handlePayload(payload);
 
-    return true;
 }
 
 void AtomsStorage::_basic_handlePayload(AlterationPayload &payload) {
@@ -313,7 +293,7 @@ RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, sno
     return storedAtom;
 }
 
-void AtomsStorage::_duplicateAtoms(QVector<snowflake_uid> &atomIdList) {
+void AtomsStorage::duplicateAtoms(QVector<snowflake_uid> &atomIdList) {
     
     if(this->_latestDuplication != atomIdList) {
         this->_latestDuplication = atomIdList;

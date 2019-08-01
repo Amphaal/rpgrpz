@@ -6,7 +6,7 @@ AlterationPayload::Source AtomsHandler::source() {
     return this->_source;
 }
 
-void AtomsHandler::handleAlterationRequest(AlterationPayload &payload, bool autoPropagate) {
+QFuture<void> AtomsHandler::handleAlterationRequest(AlterationPayload &payload, bool autoPropagate) {
     
     //trace
     auto self = AlterationPayload::SourceAsStr[this->source()];
@@ -14,25 +14,29 @@ void AtomsHandler::handleAlterationRequest(AlterationPayload &payload, bool auto
     auto alterationType = PayloadAlterationAsString[payload.type()];
     qDebug() << "Alteration :" << self << "received" << alterationType << "from" << source;
 
-    // auto allowPropagation = ;
-    auto allowPropagation = QtConcurrent::run([=]() {
-        auto cPayload = Payloads::autoCast(payload);
-        return this->_handlePayload(*cPayload);
+    // handling promise
+    auto alterationHandled = QtConcurrent::run([=]() mutable {
+        return this->_handlePayload(payload);
     });
-    // allowPropagation.waitForFinished();
-    if(
-        autoPropagate 
-        // && allowPropagation.result()
-    ) this->propagateAlterationPayload(payload);
+    
+    //if propagation required, wait for alteration to finish, then wait for propagation to finish before completing
+    if(autoPropagate) {
+        return AsyncFuture::observe(alterationHandled).subscribe([=]() mutable {
+           return this->propagateAlterationPayload(payload);
+        }).future();
+    }
+
+    //else, just wait for alteration to finish
+    return alterationHandled;
 }
 
-void AtomsHandler::propagateAlterationPayload(AlterationPayload &payload) {
+QFuture<void> AtomsHandler::propagateAlterationPayload(AlterationPayload &payload) {
 
     //if inner payload, apply own source for send
     auto source = payload.source();
     if(source == AlterationPayload::Source::Undefined) payload.changeSource(this->_source); 
 
     //propagate
-    AtomAlterationAcknoledger::propagateAlterationPayload(payload);
+    return AtomAlterationAcknoledger::propagateAlterationPayload(payload);
     
 }

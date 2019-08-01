@@ -48,10 +48,6 @@ void ViewMapHint::handleAnyMovedItems() {
 
     }
 
-    //inform moving
-    BulkMetadataChangedPayload payload(coords);
-    this->handleAlterationRequest(payload);
-
     //enable notifications back on those items
     for(auto item : this->_itemsWhoNotifiedMovement) {
         if(auto notifier = dynamic_cast<MapViewItemsNotifier*>(item)) {
@@ -61,6 +57,11 @@ void ViewMapHint::handleAnyMovedItems() {
 
     //reset list 
     this->_itemsWhoNotifiedMovement.clear();
+
+    //inform moving
+    BulkMetadataChangedPayload payload(coords);
+    this->handleAlterationRequest(payload);
+    
 }
 
 void ViewMapHint::_onSceneItemChanged(QGraphicsItem* item, int changeFlag) {

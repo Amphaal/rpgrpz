@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/shared/atoms/AtomsHandler.h"
+#include "src/shared/atoms/AtomsStorage.h"
 #include "src/shared/commands/RPZActions.h"
 #include "src/shared/payloads/Payloads.h"
 
@@ -11,7 +11,7 @@
 class AtomsContextualMenuHandler {
 
     public:
-        AtomsContextualMenuHandler(AtomsHandler* hintsToContextualize, QWidget* menuParent = nullptr);
+        AtomsContextualMenuHandler(AtomsStorage* mapMaster, QWidget* menuParent = nullptr);
 
         void undoAlteration();
         void redoAlteration();
@@ -29,7 +29,7 @@ class AtomsContextualMenuHandler {
 
     private:
         QWidget* _menuParent = nullptr;
-        AtomsHandler* _hints = nullptr;  
+        AtomsStorage* _mapMaster = nullptr;  
 
         static inline QVector<snowflake_uid> _copyClipboard;
 

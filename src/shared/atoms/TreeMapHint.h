@@ -16,7 +16,7 @@ class TreeMapHint : public AtomsHandler, public AtomsContextualMenuHandler {
     Q_OBJECT
     
     public:
-        TreeMapHint(QTreeWidget* boundTree);
+        TreeMapHint(QTreeWidget* boundTree, AtomsStorage* mapMaster);
 
         void _updateLayerState(QTreeWidgetItem* layerItem);
 
