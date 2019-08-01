@@ -44,10 +44,13 @@ void RPZClient::_onConnected() {
 }
 
 QFuture<void> RPZClient::_handleAlterationRequest(AlterationPayload &payload, bool autoPropagate) {
-    auto f = AsyncFuture::deferred<void>().future();
-    if(!payload.isNetworkRoutable()) return f;
+    
+    auto d = AsyncFuture::deferred<void>();
+    d.complete();
+
+    if(!payload.isNetworkRoutable()) return d.future();
     this->sendJSON(JSONMethod::MapChanged, payload);
-    return f;
+    return d.future();
 }
 
 QString RPZClient::getConnectedSocketAddress() {

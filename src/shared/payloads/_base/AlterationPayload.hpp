@@ -10,9 +10,6 @@ enum PayloadAlteration {
     PA_Removed,
     PA_Added, 
     PA_Reset,
-    PA_Duplicated,
-    PA_Redone,
-    PA_Undone,
     PA_OwnerChanged,
     PA_MetadataChanged,
     PA_BulkMetadataChanged

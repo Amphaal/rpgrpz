@@ -94,17 +94,16 @@ bool MapHint::loadRPZMap(const QString &filePath) {
         ResetPayload payload(allAtoms);
 
         //execute
-        // AsyncFuture::Deferred<void> d;
-        // d.complete(
-        //     this->queueAlteration(payload)
-        // );
-        // d.subscribe([=]() {
-        //     //on success, remove placeholder
-        //     this->_boundGv->setForegroundBrush(QBrush());
-        // });
+        AsyncFuture::Deferred<void> d;
+        d.complete(
+            this->queueAlteration(payload)
+        );
+        d.subscribe([=]() {
+            //on success, remove placeholder
+            this->_boundGv->setForegroundBrush(QBrush());
+        });
 
-        this->queueAlteration(payload);
-
+        
     return true;
 }
 
