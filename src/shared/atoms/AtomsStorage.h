@@ -16,7 +16,7 @@
 class AtomsStorage : public AtomsHandler {
 
     public:
-        AtomsStorage(const AlterationPayload::Source &boundSource);
+        AtomsStorage(const AlterationPayload::Source &boundSource, bool autoRegisterAck = true);
         
         RPZMap<RPZAtom> atoms();
         

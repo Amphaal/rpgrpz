@@ -1,7 +1,7 @@
 #include "AtomsStorage.h"
 
 
-AtomsStorage::AtomsStorage(const AlterationPayload::Source &boundSource) : AtomsHandler(boundSource) { };
+AtomsStorage::AtomsStorage(const AlterationPayload::Source &boundSource, bool autoRegisterAck) : AtomsHandler(boundSource, autoRegisterAck) { };
 
 RPZMap<RPZAtom> AtomsStorage::atoms() {
     return this->_atomsById;

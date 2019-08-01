@@ -1,6 +1,6 @@
 #include "AtomsHandler.h"
 
-AtomsHandler::AtomsHandler(const AlterationPayload::Source &boundSource) : _source(boundSource) { }
+AtomsHandler::AtomsHandler(const AlterationPayload::Source &boundSource, bool autoRegisterAck) : AtomAlterationAcknoledger(autoRegisterAck), _source(boundSource) { }
 
 AlterationPayload::Source AtomsHandler::source() {
     return this->_source;
@@ -15,15 +15,17 @@ QFuture<void> AtomsHandler::_handleAlterationRequest(AlterationPayload &payload,
     qDebug() << "Alteration :" << self << "received" << alterationType << "from" << source;
 
     // handling promise
-    auto alterationHandled = QtConcurrent::run([=]() mutable {
-        return this->_handlePayload(payload);
+    auto alterationHandled = QtConcurrent::run([=]() {
+        auto cPayload = Payloads::autoCast(payload);
+        return this->_handlePayload(*cPayload);
     });
     
-    //if propagation required, wait for alteration to finish, then wait for propagation to finish before completing
+    //if propagation required, wait for alteration and propagation to finish before completing
     if(autoPropagate) {
-        return AsyncFuture::observe(alterationHandled).subscribe([=]() mutable {
-           return this->propagateAlterationPayload(payload);
-        }).future();
+        auto all = AsyncFuture::combine();
+        all << alterationHandled;
+        all << this->propagateAlterationPayload(payload);
+        return all.future();
     }
 
     //else, just wait for alteration to finish
