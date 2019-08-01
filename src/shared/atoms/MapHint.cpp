@@ -74,6 +74,19 @@ bool MapHint::loadDefaultRPZMap() {
 }
 
 
+
+void MapHint::resetAlterationRequested(QFuture<void> &alterationRequest) {
+    
+    //placeholder...
+    this->_boundGv->setForegroundBrush(*this->_hiddingBrush);
+
+    //on success, remove placeholder
+    AsyncFuture::observe(alterationRequest).subscribe([=]() {
+        this->_boundGv->setForegroundBrush(QBrush());
+    });
+}
+
+
 bool MapHint::loadRPZMap(const QString &filePath) {
     
     if(this->_isRemote) return false;
@@ -81,29 +94,19 @@ bool MapHint::loadRPZMap(const QString &filePath) {
     //ask for save if dirty before loading
     this->mayWantToSavePendingState();
 
-    //placeholder...
-    this->_boundGv->setForegroundBrush(*this->_hiddingBrush);
+        //placeholder...
+        this->_boundGv->setForegroundBrush(*this->_hiddingBrush);
 
         //load file and parse it
         MapDatabase mapDb(filePath);
         this->_mapFilePath = filePath;
         this->_setMapDirtiness(false);
 
-        //create payload to fill UI elements
+        //create payload and queue it
         auto allAtoms = mapDb.toAtoms();
         ResetPayload payload(allAtoms);
+        this->queueAlteration(payload);
 
-        //execute
-        AsyncFuture::Deferred<void> d;
-        d.complete(
-            this->queueAlteration(payload)
-        );
-        d.subscribe([=]() {
-            //on success, remove placeholder
-            this->_boundGv->setForegroundBrush(QBrush());
-        });
-
-        
     return true;
 }
 

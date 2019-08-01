@@ -305,27 +305,27 @@ QMenu* MainWindow::_getMapMenu() {
     auto mapMenuItem = new QMenu("Carte");
 
     //load map
-    auto loadMap = RPZActions::loadRPZMap();
+    auto loadRPZMap = RPZActions::loadRPZMap();
     QObject::connect(
-        loadMap, &QAction::triggered,
+        loadRPZMap, &QAction::triggered,
         this, &MainWindow::_loadRPZMap
     );
     
     //save map
-    auto saveMap = RPZActions::saveRPZMap();
+    auto saveRPZMap = RPZActions::saveRPZMap();
     QObject::connect(
-        saveMap, &QAction::triggered,
+        saveRPZMap, &QAction::triggered,
         this->_mapView->hints(), &MapHint::saveRPZMap
     );
 
     //save as map
-    auto saveAsMap = RPZActions::saveAsRPZMap();
+    auto saveAsRPZMap = RPZActions::saveAsRPZMap();
     QObject::connect(
-        saveAsMap, &QAction::triggered,
+        saveAsRPZMap, &QAction::triggered,
         this, &MainWindow::_saveRPZMapAs
     );
 
-    QList<QAction*> mapActions = { loadMap, saveMap, saveAsMap };
+    QList<QAction*> mapActions = { loadRPZMap, saveRPZMap, saveAsRPZMap };
 
     //on remote change detected...
     QObject::connect(
@@ -337,10 +337,10 @@ QMenu* MainWindow::_getMapMenu() {
         }
     );
 
-    mapMenuItem->addAction(loadMap);
+    mapMenuItem->addAction(loadRPZMap);
     mapMenuItem->addSeparator();
-    mapMenuItem->addAction(saveMap);
-    mapMenuItem->addAction(saveAsMap);
+    mapMenuItem->addAction(saveRPZMap);
+    mapMenuItem->addAction(saveAsRPZMap);
 
     return mapMenuItem;
 }

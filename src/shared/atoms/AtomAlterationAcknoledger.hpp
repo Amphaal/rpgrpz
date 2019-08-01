@@ -4,13 +4,14 @@
 
 #include <QSet>
 #include <QQueue>
+#include <QObject>
 
 #include "src/_libs/asyncfuture.h"
 
 #include "src/shared/payloads/Payloads.h"
 
 class AtomAlterationAcknoledger {
-    
+
     public:
         AtomAlterationAcknoledger(bool autoRegisterAck = true) {
             if(autoRegisterAck) _registeredAcknoledgers.insert(this);
@@ -20,25 +21,28 @@ class AtomAlterationAcknoledger {
             _registeredAcknoledgers.remove(this);
         }
         
-        QFuture<void> queueAlteration(AlterationPayload &payload, bool autoPropagate = true) {
+        void queueAlteration(AlterationPayload &payload, bool autoPropagate = true) {
             
             //add to queue
             auto instruction = [=]() {
+                
                 auto cPayload = Payloads::autoCast(payload);
-                return this->_handleAlterationRequest(*cPayload, autoPropagate);
+                
+                auto exec = this->_handleAlterationRequest(*cPayload, autoPropagate);
+
+                if(cPayload->type() == PA_Reset) _resetAck(exec);
+
+                return exec;
+
             };
+
             _queuedAlterations.enqueue(instruction);
             
             //if no dequeuing running, start dequeuing
-            if(_queuedAlterations.count() > 0 && !_dequeuing) return _emptyQueue();
+            if(_queuedAlterations.count() > 0 && !_dequeuing) _emptyQueue();
 
-            //else return immediately
-            auto d = AsyncFuture::deferred<void>();
-            d.complete();
-            return d.future();
         }
-    
-    
+
     protected:
         virtual QFuture<void> _handleAlterationRequest(AlterationPayload &payload, bool autoPropagate = true) = 0;
         virtual QFuture<void> propagateAlterationPayload(AlterationPayload &payload) {
@@ -54,6 +58,9 @@ class AtomAlterationAcknoledger {
             return all.future();
         }
 
+        //on reset starting
+        virtual void resetAlterationRequested(QFuture<void> &alterationRequest) {};
+
     private:
         static inline QSet<AtomAlterationAcknoledger*> _registeredAcknoledgers;
         static inline QQueue<std::function<QFuture<void>()>> _queuedAlterations;
@@ -66,7 +73,7 @@ class AtomAlterationAcknoledger {
             auto instr = _queuedAlterations.dequeue();
 
             return AsyncFuture::observe(instr()).subscribe([=]()->QFuture<void>{
-                
+
                 //if queue is empty, stop
                 if(!_queuedAlterations.count()) {
                     _dequeuing = false;
@@ -80,4 +87,10 @@ class AtomAlterationAcknoledger {
 
             }).future();
         };
+
+        static void _resetAck(QFuture<void> &resetPromise) {
+            for(auto ack : _registeredAcknoledgers) {
+                ack->resetAlterationRequested(resetPromise);
+            }
+        }
 };
