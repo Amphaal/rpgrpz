@@ -43,9 +43,11 @@ void RPZClient::_onConnected() {
     this->sendJSON(JSONMethod::Handshake, RPZHandshake(this->_name));
 }
 
-void RPZClient::handleAlterationRequest(AlterationPayload &payload, bool autoPropagate) {
-    if(!payload.isNetworkRoutable()) return;
+QFuture<void> RPZClient::_handleAlterationRequest(AlterationPayload &payload, bool autoPropagate) {
+    auto f = AsyncFuture::deferred<void>().future();
+    if(!payload.isNetworkRoutable()) return f;
     this->sendJSON(JSONMethod::MapChanged, payload);
+    return f;
 }
 
 QString RPZClient::getConnectedSocketAddress() {

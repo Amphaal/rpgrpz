@@ -15,7 +15,7 @@ void MapHint::_handlePayload(AlterationPayload &payload) {
 // State handling //
 ////////////////////
 
-QString MapHint::mapFilePath() {
+QString MapHint::RPZMapFilePath() {
     return this->_mapFilePath;
 }
 
@@ -40,12 +40,12 @@ void MapHint::mayWantToSavePendingState() {
 
     //save state
     if(result == QMessageBox::Yes) {
-        this->saveMap();
+        this->saveRPZMap();
     }
 
 }
 
-bool MapHint::saveMap() {
+bool MapHint::saveRPZMap() {
 
     if(this->_isRemote) return false;
 
@@ -60,21 +60,21 @@ bool MapHint::saveMap() {
 }
 
 
-bool MapHint::saveMapAs(const QString &newFilePath) {
+bool MapHint::saveRPZMapAs(const QString &newFilePath) {
     if(this->_isRemote) return false;
 
     this->_mapFilePath = newFilePath;
-    return this->saveMap();
+    return this->saveRPZMap();
 
 }
 
-bool MapHint::loadDefaultMap() {
+bool MapHint::loadDefaultRPZMap() {
 	auto map = AppContext::getDefaultMapFile();
-	return this->loadMap(map);
+	return this->loadRPZMap(map);
 }
 
 
-bool MapHint::loadMap(const QString &filePath) {
+bool MapHint::loadRPZMap(const QString &filePath) {
     
     if(this->_isRemote) return false;
 
@@ -94,14 +94,16 @@ bool MapHint::loadMap(const QString &filePath) {
         ResetPayload payload(allAtoms);
 
         //execute
-        AsyncFuture::Deferred<void> d;
-        d.complete(
-            this->handleAlterationRequest(payload)
-        );
-        d.subscribe([=]() {
-            //on success, remove placeholder
-            this->_boundGv->setForegroundBrush(QBrush());
-        });
+        // AsyncFuture::Deferred<void> d;
+        // d.complete(
+        //     this->queueAlteration(payload)
+        // );
+        // d.subscribe([=]() {
+        //     //on success, remove placeholder
+        //     this->_boundGv->setForegroundBrush(QBrush());
+        // });
+
+        this->queueAlteration(payload);
 
     return true;
 }

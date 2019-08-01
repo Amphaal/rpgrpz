@@ -241,7 +241,7 @@ void MapView::onRPZClientConnecting(RPZClient * cc) {
         this->_rpzClient, &RPZClient::mapChanged,
         [&](const QVariantHash &payload) {
             auto cp_payload = Payloads::autoCast(payload);
-            this->_hints->handleAlterationRequest(*cp_payload);
+            this->_hints->queueAlteration(*cp_payload);
         }
     );
 
@@ -267,7 +267,7 @@ void MapView::onRPZClientDisconnect(RPZClient* cc) {
 
     //back to default state
     this->_hints->defineAsRemote();
-    this->_hints->loadDefaultMap();
+    this->_hints->loadDefaultRPZMap();
 
 }
 

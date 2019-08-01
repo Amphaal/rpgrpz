@@ -39,8 +39,6 @@ class RPZClient : public JSONSocket, public JSONRouter, public AtomAlterationAck
         RPZUser identity();
         QVector<RPZUser> sessionUsers();
 
-        void handleAlterationRequest(AlterationPayload &payload, bool autoPropagate = true) override;
-
     signals:
         void connectionStatus(const QString &statusMessage, bool isError = false);
 
@@ -74,5 +72,7 @@ class RPZClient : public JSONSocket, public JSONRouter, public AtomAlterationAck
         void _onDisconnect();
         
         void _routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) override;
+ 
+        QFuture<void> _handleAlterationRequest(AlterationPayload &payload, bool autoPropagate = true) override;
 
 };

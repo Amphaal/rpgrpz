@@ -332,11 +332,11 @@ void AtomsStorage::duplicateAtoms(QVector<snowflake_uid> &atomIdList) {
 
     //add them
     AddedPayload added(newAtoms);
-    this->handleAlterationRequest(added);
+    this->queueAlteration(added);
 
     //select them 
     SelectedPayload selected(newAtoms.keys().toVector());
-    this->handleAlterationRequest(selected);
+    this->queueAlteration(selected);
 }
 
 

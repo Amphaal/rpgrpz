@@ -10,7 +10,7 @@ class RestoringSplitter : public QSplitter {
     public:
         RestoringSplitter(const QString &id, QWidget * parent = nullptr);
 
-        void loadMap();
+        void restore();
 
     private:
         const QString _id;
