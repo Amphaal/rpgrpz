@@ -35,4 +35,6 @@ class MapHint : public ViewMapHint {
     
     protected:
         virtual void _handlePayload(AlterationPayload &payload) override;
+
+        void resetAlterationRequested(QFuture<void> &alterationRequest) override;
 };
