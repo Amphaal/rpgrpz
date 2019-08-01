@@ -22,6 +22,7 @@ class AtomsStorage : public AtomsHandler {
         
         void redo();
         void undo();
+        void duplicateAtoms(QVector<snowflake_uid> &atomIdList);
 
     protected:
         // redo/undo
@@ -36,7 +37,6 @@ class AtomsStorage : public AtomsHandler {
         QVector<snowflake_uid> _latestDuplication;
         RPZUser _defaultOwner;
         int _duplicationCount = 0;
-        void _duplicateAtoms(QVector<snowflake_uid> &atomIdList);
 
         //atoms list 
         RPZMap<RPZAtom> _atomsById;

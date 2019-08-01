@@ -5,6 +5,7 @@
 #include "src/shared/payloads/Payloads.h"
 #include "AtomAlterationAcknoledger.hpp"
 
+#include "src/_libs/asyncfuture.h"
 #include <QtConcurrent>
 
 class AtomsHandler : public QObject, public AtomAlterationAcknoledger {
@@ -15,12 +16,13 @@ class AtomsHandler : public QObject, public AtomAlterationAcknoledger {
         AtomsHandler(const AlterationPayload::Source &boundSource);
         AlterationPayload::Source source();
 
-        void propagateAlterationPayload(AlterationPayload &payload) override;
-        void handleAlterationRequest(AlterationPayload &payload, bool autoPropagate = true) override;
+        QFuture<void> propagateAlterationPayload(AlterationPayload &payload) override;
+        QFuture<void> handleAlterationRequest(AlterationPayload &payload, bool autoPropagate = true) override;
 
     protected:
-        AlterationPayload::Source _source = AlterationPayload::Source::Undefined;
-
         virtual void _handlePayload(AlterationPayload &payload) = 0;
         virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) = 0; 
+
+    private:
+        AlterationPayload::Source _source = AlterationPayload::Source::Undefined;
 };

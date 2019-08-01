@@ -164,7 +164,7 @@ void MainWindow::_initUIApp() {
     this->_audioManager = new AudioManager;
     this->_assetsManager = new AssetsManager;
     this->_mapTools = new MapTools;
-    this->_mlManager = new MapLayoutManager;
+    this->_mlManager = new MapLayoutManager(this->_mapView->hints());
     this->_atomEditManager = new AtomEditionManager;
     
     //assets

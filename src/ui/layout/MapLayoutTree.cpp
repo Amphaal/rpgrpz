@@ -1,6 +1,6 @@
 #include "MapLayoutTree.h"
 
-MapLayoutTree::MapLayoutTree(QWidget * parent) : RPZTree(parent), _hints(new TreeMapHint(this)) {
+MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) : RPZTree(parent), _hints(new TreeMapHint(this, mapMaster)) {
     
     this->setItemDelegateForColumn(1, new LockAndVisibilityDelegate);
     this->setItemDelegateForColumn(2, new OwnerDelegate);

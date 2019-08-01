@@ -26,7 +26,7 @@
 class MapLayoutTree : public RPZTree {
 
     public:
-        MapLayoutTree(QWidget* parent = nullptr);
+        MapLayoutTree(AtomsStorage* mapMaster, QWidget* parent = nullptr);
         TreeMapHint* hints();
 
     protected:

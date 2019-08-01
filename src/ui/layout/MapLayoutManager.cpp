@@ -1,7 +1,7 @@
 #include "MapLayoutManager.h"
 
-MapLayoutManager::MapLayoutManager(QWidget *parent) : QWidget(parent), 
-                                                        _tree(new MapLayoutTree(this)), 
+MapLayoutManager::MapLayoutManager(AtomsStorage* mapMaster, QWidget *parent) : QWidget(parent), 
+                                                        _tree(new MapLayoutTree(mapMaster, this)), 
                                                         _layerSelector(new LayerSelector(this)) {
         
     this->setLayout(new QVBoxLayout);

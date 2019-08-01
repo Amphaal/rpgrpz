@@ -56,11 +56,11 @@ class AlterationPayload : public QVariantHash {
             this->_setType(type);
         }
 
-        PayloadAlteration type() {
+        PayloadAlteration type() const {
             return (PayloadAlteration)this->value("t").toInt();
         };
 
-        bool hasControllerAcknowledged() {
+        bool hasControllerAcknowledged() const {
             return this->value("ack").toBool();
         }
         void setControllerAck() {
@@ -71,11 +71,11 @@ class AlterationPayload : public QVariantHash {
             this->insert("s", (int)newSource);
         }
 
-        Source source() {
+        Source source() const {
             return (Source)this->value("s").toInt();
         }
 
-        bool isNetworkRoutable() {
+        bool isNetworkRoutable() const {
             return this->_isNetworkAlteration;
         }
 

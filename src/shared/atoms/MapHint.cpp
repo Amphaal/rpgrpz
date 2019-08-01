@@ -81,7 +81,7 @@ bool MapHint::loadMap(const QString &filePath) {
     //ask for save if dirty before loading
     this->mayWantToSavePendingState();
 
-    //loader....
+    //placeholder...
     this->_boundGv->setForegroundBrush(*this->_hiddingBrush);
 
         //load file and parse it
@@ -89,12 +89,19 @@ bool MapHint::loadMap(const QString &filePath) {
         this->_mapFilePath = filePath;
         this->_setMapDirtiness(false);
 
+        //create payload to fill UI elements
         auto allAtoms = mapDb.toAtoms();
         ResetPayload payload(allAtoms);
-        this->handleAlterationRequest(payload);
 
-    //loader...
-    this->_boundGv->setForegroundBrush(QBrush());
+        //execute
+        AsyncFuture::Deferred<void> d;
+        d.complete(
+            this->handleAlterationRequest(payload)
+        );
+        d.subscribe([=]() {
+            //on success, remove placeholder
+            this->_boundGv->setForegroundBrush(QBrush());
+        });
 
     return true;
 }
