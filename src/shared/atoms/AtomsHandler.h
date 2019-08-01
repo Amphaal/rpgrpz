@@ -3,7 +3,7 @@
 #include <QObject>
 
 #include "src/shared/payloads/Payloads.h"
-#include "AtomAlterationAcknoledger.hpp"
+#include "AtomAlterationAcknoledger.h"
 
 #include "src/_libs/asyncfuture.h"
 #include <QtConcurrent>
@@ -14,7 +14,6 @@ class AtomsHandler : public QObject, public AtomAlterationAcknoledger {
 
     public:
         AtomsHandler(const AlterationPayload::Source &boundSource, bool autoRegisterAck = true);
-        AlterationPayload::Source source();
 
     protected:
         virtual void _handlePayload(AlterationPayload &payload) = 0;
@@ -23,7 +22,5 @@ class AtomsHandler : public QObject, public AtomAlterationAcknoledger {
         QFuture<void> propagateAlterationPayload(AlterationPayload &payload) override;
 
     private:
-        AlterationPayload::Source _source = AlterationPayload::Source::Undefined;
-
         QFuture<void> _handleAlterationRequest(AlterationPayload &payload, bool autoPropagate = true) override;
 };

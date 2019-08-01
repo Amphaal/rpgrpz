@@ -127,7 +127,7 @@ void ConnectWidget::_onRPZClientConnecting() {
 void ConnectWidget::_destroyClient() {
     if(this->_cc) {
         delete this->_cc;
-        this->_cc = 0;
+        this->_cc = nullptr;
     }
 
     this->_changeState(State::NotConnected);

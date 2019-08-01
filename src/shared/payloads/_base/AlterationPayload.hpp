@@ -34,7 +34,8 @@ class AlterationPayload : public QVariantHash {
             Local_MapLayout,
             Local_Map,
             Local_AtomEditor,
-            RPZServer
+            RPZServer,
+            RPZClient
         };
 
         static inline QStringList SourceAsStr {
@@ -42,7 +43,8 @@ class AlterationPayload : public QVariantHash {
             "Local_MapLayout",
             "Local_Map",
             "Local_AtomEditor",
-            "RPZServer"
+            "RPZServer",
+            "RPZClient"
         };
 
         AlterationPayload() {}

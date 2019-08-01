@@ -1,6 +1,7 @@
 #include "RPZClient.h"
 
 RPZClient::RPZClient(QObject* parent, const QString &name, const QString &domain, const QString &port) : 
+                        AtomAlterationAcknoledger(AlterationPayload::Source::RPZClient),
                         JSONSocket("RPZClient"),
                         _name(name), 
                         _domain(domain), 
@@ -45,6 +46,9 @@ void RPZClient::_onConnected() {
 
 QFuture<void> RPZClient::_handleAlterationRequest(AlterationPayload &payload, bool autoPropagate) {
     
+    //trace
+    this->_payloadTrace(payload);
+
     auto d = AsyncFuture::deferred<void>();
     d.complete();
 
