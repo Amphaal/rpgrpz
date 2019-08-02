@@ -18,6 +18,9 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
     this->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
     this->update();
 
+    //rubberband UC optimization
+    this->setRubberBandSelectionMode(Qt::ItemSelectionMode::ContainsItemBoundingRect);
+
     //background / foreground
     this->setBackgroundBrush(QBrush("#EEE", Qt::BrushStyle::CrossPattern));
 
