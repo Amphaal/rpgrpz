@@ -10,7 +10,9 @@
 
 #include "src/shared/payloads/Payloads.h"
 
-class AtomAlterationAcknoledger {
+class AtomAlterationAcknoledger : public QObject {
+
+    Q_OBJECT
 
     public:
         AtomAlterationAcknoledger(const AlterationPayload::Source &source, bool autoRegisterAck = true);
@@ -20,12 +22,12 @@ class AtomAlterationAcknoledger {
 
         void queueAlteration(AlterationPayload &payload, bool autoPropagate = true);
 
+    signals:
+        void resetAlterationRequested(QFuture<void> &alterationRequest);
+
     protected:
         virtual QFuture<void> _handleAlterationRequest(AlterationPayload &payload, bool autoPropagate = true) = 0;
         virtual QFuture<void> propagateAlterationPayload(AlterationPayload &payload);
-
-        //on reset starting
-        virtual void resetAlterationRequested(QFuture<void> &alterationRequest);
 
         void _payloadTrace(AlterationPayload &payload);
 

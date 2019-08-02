@@ -27,8 +27,8 @@ class AudioManager : public QWidget, public ClientBindable {
 
         bool _isLocalOnly = true;
         bool _isNetworkMaster = false;
-        void onRPZClientConnecting(RPZClient * cc) override;
-        void onRPZClientDisconnect(RPZClient* cc) override;
+        void onRPZClientThreadConnecting(RPZClientThread * cc) override;
+        void onRPZClientThreadDisconnect(RPZClientThread* cc) override;
 
         void _link();
         void _onToolbarActionRequested(const TrackToolbar::Action &action);

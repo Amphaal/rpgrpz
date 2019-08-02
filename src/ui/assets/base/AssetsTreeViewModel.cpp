@@ -6,12 +6,12 @@ AssetsDatabase* AssetsTreeViewModel::database() {
     return this->_db;
 }
 
-void AssetsTreeViewModel::onRPZClientConnecting(RPZClient * cc) {
-    ClientBindable::onRPZClientConnecting(cc);
+void AssetsTreeViewModel::onRPZClientThreadConnecting(RPZClientThread * cc) {
+    ClientBindable::onRPZClientThreadConnecting(cc);
 
     //import asset
     QObject::connect(
-        cc, &RPZClient::receivedAsset,
+        cc, &RPZClientThread::receivedAsset,
         [&, cc](const QVariantHash &package) {
             
             this->beginResetModel();

@@ -84,7 +84,7 @@ void ConnectWidget::_tryConnectToServer() {
 
     //new connection..
     this->_destroyClient();
-    this->_cc = new RPZClient(
+    this->_cc = new RPZClientThread(
         this, 
         this->_nameTarget->text(), 
         this->_domainTarget->text(), 
@@ -94,20 +94,20 @@ void ConnectWidget::_tryConnectToServer() {
     emit startingConnection(this->_cc);
     
     QObject::connect(
-        this->_cc, &RPZClient::receivedLogHistory, 
-        this, &ConnectWidget::_onRPZClientConnecting
+        this->_cc, &RPZClientThread::receivedLogHistory, 
+        this, &ConnectWidget::_onRPZClientThreadConnecting
     );
 
     QObject::connect(
-        this->_cc, &RPZClient::connectionStatus, 
-        this, &ConnectWidget::_onRPZClientStatus
+        this->_cc, &RPZClientThread::connectionStatus, 
+        this, &ConnectWidget::_onRPZClientThreadStatus
     );
 
     this->_changeState(State::Connecting);
     this->_cc->run();
 }
 
-void ConnectWidget::_onRPZClientStatus(const QString &statusMsg, bool isError) {
+void ConnectWidget::_onRPZClientThreadStatus(const QString &statusMsg, bool isError) {
     if(!isError) return;
 
     if(this->_state == State::Connecting) {
@@ -120,7 +120,7 @@ void ConnectWidget::_onRPZClientStatus(const QString &statusMsg, bool isError) {
     this->_changeState(State::NotConnected);
 
 }
-void ConnectWidget::_onRPZClientConnecting() {
+void ConnectWidget::_onRPZClientThreadConnecting() {
     this->_changeState(State::Connected);
 }
 

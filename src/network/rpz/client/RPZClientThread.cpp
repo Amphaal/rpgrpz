@@ -1,50 +1,50 @@
-#include "RPZClient.h"
+#include "RPZClientThread.h"
 
-RPZClient::RPZClient(QObject* parent, const QString &name, const QString &domain, const QString &port) : 
+RPZClientThread::RPZClientThread(QObject* parent, const QString &name, const QString &domain, const QString &port) : 
                         AtomAlterationAcknoledger(AlterationPayload::Source::RPZClient),
-                        JSONSocket("RPZClient"),
+                        JSONSocket("RPZClientThread"),
                         _name(name), 
                         _domain(domain), 
                         _port(port) {
 
     QObject::connect(
         this, &JSONSocket::JSONReceived,
-        this, &RPZClient::_routeIncomingJSON
+        this, &RPZClientThread::_routeIncomingJSON
     );
 
     QObject::connect(
         this->socket(), &QAbstractSocket::connected,
-        this, &RPZClient::_onConnected
+        this, &RPZClientThread::_onConnected
     );
 
     QObject::connect(
         this->socket(), &QAbstractSocket::disconnected,
-        this, &RPZClient::_onDisconnect
+        this, &RPZClientThread::_onDisconnect
     );
 
     QObject::connect(
         this->socket(), QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error),
-        this, &RPZClient::_error
+        this, &RPZClientThread::_error
     );
 
 }
 
-RPZClient::~RPZClient() {
+RPZClientThread::~RPZClientThread() {
     this->socket()->close();
 }
 
-void RPZClient::_onDisconnect() {
+void RPZClientThread::_onDisconnect() {
     const QString msg = "Déconnecté du serveur";
     emit connectionStatus(msg);
-    qDebug() << "RPZClient : disconnected from server";
+    qDebug() << "RPZClientThread : disconnected from server";
 }
 
-void RPZClient::_onConnected() {
+void RPZClientThread::_onConnected() {
     //tell the server your username
     this->sendJSON(JSONMethod::Handshake, RPZHandshake(this->_name));
 }
 
-QFuture<void> RPZClient::_handleAlterationRequest(AlterationPayload &payload, bool autoPropagate) {
+QFuture<void> RPZClientThread::_handleAlterationRequest(AlterationPayload &payload, bool autoPropagate) {
     
     //completed deferred
     auto d = AsyncFuture::deferred<void>();
@@ -64,11 +64,11 @@ QFuture<void> RPZClient::_handleAlterationRequest(AlterationPayload &payload, bo
     return d.future();
 }
 
-QString RPZClient::getConnectedSocketAddress() {
+QString RPZClientThread::getConnectedSocketAddress() {
     return this->_domain + ":" + this->_port;
 }
 
-void RPZClient::run() {
+void RPZClientThread::run() {
 
     //prerequisites
     if(this->_name.isEmpty()) {
@@ -79,15 +79,15 @@ void RPZClient::run() {
     this->socket()->connectToHost(this->_domain, this->_port.toInt());
 }
 
-RPZUser RPZClient::identity() {
+RPZUser RPZClientThread::identity() {
     return this->_self;
 }
 
-QVector<RPZUser> RPZClient::sessionUsers() {
+QVector<RPZUser> RPZClientThread::sessionUsers() {
     return this->_sessionUsers;
 }
 
-void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) {
+void RPZClientThread::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) {
     
     switch(method) {
 
@@ -174,7 +174,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
     }
 }
 
-void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
+void RPZClientThread::_error(QAbstractSocket::SocketError _socketError) {
     
     QString msg;
     
@@ -194,36 +194,36 @@ void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
     }
 
     emit connectionStatus(msg, true);
-    qWarning() << "RPZClient : :" << msg;
+    qWarning() << "RPZClientThread : :" << msg;
 
     this->socket()->close();
 }
 
 
-void RPZClient::sendMessage(QVariantHash &message) {
+void RPZClientThread::sendMessage(QVariantHash &message) {
     auto msg = RPZMessage(message);
     this->sendJSON(JSONMethod::MessageFromPlayer, msg);
 }
 
-void RPZClient::sendMapHistory(const QVariantHash &history) {
+void RPZClientThread::sendMapHistory(const QVariantHash &history) {
     this->sendJSON(JSONMethod::MapChanged, history);
 }
 
-void RPZClient::askForAssets(const QList<RPZAssetHash> ids) {
+void RPZClientThread::askForAssets(const QList<RPZAssetHash> ids) {
     QVariantList list;
     for(auto &id : ids) list.append(id);
     this->sendJSON(JSONMethod::AskForAssets, list);
 }
 
-void RPZClient::changeAudioPosition(int newPosition) {
+void RPZClientThread::changeAudioPosition(int newPosition) {
     this->sendJSON(JSONMethod::AudioStreamPositionChanged, newPosition);
 }
 
-void RPZClient::setAudioStreamPlayState(bool isPlaying) {
+void RPZClientThread::setAudioStreamPlayState(bool isPlaying) {
     this->sendJSON(JSONMethod::AudioStreamPlayingStateChanged, isPlaying);
 }
 
-void RPZClient::defineAudioStreamSource(const QString &audioStreamUrl, const QString &sourceTitle) {
+void RPZClientThread::defineAudioStreamSource(const QString &audioStreamUrl, const QString &sourceTitle) {
     QVariantHash hash;
     hash["url"] = audioStreamUrl;
     hash["title"] = sourceTitle;

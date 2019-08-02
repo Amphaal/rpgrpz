@@ -212,7 +212,7 @@ void MainWindow::_initUIApp() {
     // EVENTS
     //
 
-    //bind RPZClient to widget once a connection starts
+    //bind RPZClientThread to widget once a connection starts
     QObject::connect(
         this->_connectWidget, &ConnectWidget::startingConnection, 
         ClientBindable::bindAll

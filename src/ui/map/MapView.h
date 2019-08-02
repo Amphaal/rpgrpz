@@ -27,7 +27,7 @@
 #include "src/ui/others/ClientBindable.h"
 
 #include "src/network/rpz/_any/JSONSocket.h"
-#include "src/network/rpz/client/RPZClient.h"
+#include "src/network/rpz/client/RPZClientThread.h"
 
 #include "src/ui/assets/base/AssetsTreeView.h"
 
@@ -59,8 +59,8 @@ class MapView : public QGraphicsView, public ClientBindable {
         void enterEvent(QEvent *event) override;
         void leaveEvent(QEvent *event) override;
 
-        void onRPZClientConnecting(RPZClient * cc) override;
-        void onRPZClientDisconnect(RPZClient* cc) override;
+        void onRPZClientThreadConnecting(RPZClientThread * cc) override;
+        void onRPZClientThreadDisconnect(RPZClientThread* cc) override;
 
         void contextMenuEvent(QContextMenuEvent *event) override;
 
@@ -73,7 +73,9 @@ class MapView : public QGraphicsView, public ClientBindable {
         void resizeEvent(QResizeEvent * event) override;
 
     private:
-        MapViewGraphicsScene* _scene = nullptr;
+        //scene
+            MapViewGraphicsScene* _scene = nullptr;
+            QBrush* _hiddingBrush = nullptr;
 
         MapHint* _hints;
         void _onSceneSelectionChanged();

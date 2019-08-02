@@ -1,6 +1,6 @@
 #include "MapHint.h"
 
-MapHint::MapHint(QGraphicsView* boundGv) : ViewMapHint(boundGv) { }
+MapHint::MapHint() { }
 
 void MapHint::_handlePayload(AlterationPayload &payload) { 
 
@@ -32,7 +32,7 @@ void MapHint::mayWantToSavePendingState() {
 
     //popup
     auto result = QMessageBox::warning(
-        this->_boundGv, 
+        nullptr, 
         this->_mapFilePath, 
         "Voulez-vous sauvegarder les modifications effectuées sur la carte ?", 
         QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes
@@ -73,20 +73,6 @@ bool MapHint::loadDefaultRPZMap() {
 	return this->loadRPZMap(map);
 }
 
-
-
-void MapHint::resetAlterationRequested(QFuture<void> &alterationRequest) {
-    
-    //placeholder...
-    this->_boundGv->setForegroundBrush(*this->_hiddingBrush);
-
-    //on success, remove placeholder
-    AsyncFuture::observe(alterationRequest).subscribe([=]() {
-        this->_boundGv->setForegroundBrush(QBrush());
-    });
-}
-
-
 bool MapHint::loadRPZMap(const QString &filePath) {
     
     if(this->_isRemote) return false;
@@ -94,8 +80,8 @@ bool MapHint::loadRPZMap(const QString &filePath) {
     //ask for save if dirty before loading
     this->mayWantToSavePendingState();
 
-        //placeholder...
-        this->_boundGv->setForegroundBrush(*this->_hiddingBrush);
+        //tells UI that map is loading
+        emit mapLoading();
 
         //load file and parse it
         MapDatabase mapDb(filePath);

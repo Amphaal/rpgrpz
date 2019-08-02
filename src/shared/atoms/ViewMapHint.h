@@ -32,8 +32,7 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
     Q_OBJECT
 
     public:
-        ViewMapHint(QGraphicsView* boundGv);
-        MapViewGraphicsScene* scene();
+        ViewMapHint();
 
         //replace placeholders
         void replaceMissingAssetPlaceholders(const RPZAssetMetadata &metadata);
@@ -81,9 +80,6 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
             QSet<QGraphicsItem*> _itemsWhoNotifiedMovement;
 
     protected:
-        QBrush* _hiddingBrush = nullptr;
-        QGraphicsView* _boundGv = nullptr;
-
         //missing assets tracking
         QMultiHash<RPZAssetHash, QGraphicsRectItem*> _missingAssetsIdsFromDb;
         QSet<RPZAssetHash> _assetsIdsToRequest;

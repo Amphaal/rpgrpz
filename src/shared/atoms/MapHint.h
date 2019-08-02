@@ -7,7 +7,7 @@ class MapHint : public ViewMapHint {
     Q_OBJECT
 
     public:
-        MapHint(QGraphicsView* boundGv);
+        MapHint();
 
         //load/unload
         QString RPZMapFilePath();
@@ -24,7 +24,8 @@ class MapHint : public ViewMapHint {
 
     signals:
         void mapFileStateChanged(const QString &filePath, bool isMapDirty);
-    
+        void mapLoading();
+
     private: 
         QString _mapFilePath;
         bool _isRemote = false;
@@ -35,6 +36,4 @@ class MapHint : public ViewMapHint {
     
     protected:
         virtual void _handlePayload(AlterationPayload &payload) override;
-
-        void resetAlterationRequested(QFuture<void> &alterationRequest) override;
 };
