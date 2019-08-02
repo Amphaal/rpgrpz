@@ -50,8 +50,6 @@ QFuture<void> AtomAlterationAcknoledger::propagateAlterationPayload(AlterationPa
     return all.future();
 }
 
-void AtomAlterationAcknoledger::resetAlterationRequested(QFuture<void> &alterationRequest) {};
-
 void AtomAlterationAcknoledger::_payloadTrace(AlterationPayload &payload) {
     auto self = AlterationPayload::SourceAsStr[this->source()];
     auto source = AlterationPayload::SourceAsStr[payload.source()];
@@ -83,6 +81,6 @@ QFuture<void> AtomAlterationAcknoledger::_emptyQueue() {
 
 void AtomAlterationAcknoledger::_resetAck(QFuture<void> &resetPromise) {
     for(auto ack : _registeredAcknoledgers) {
-        ack->resetAlterationRequested(resetPromise);
+        emit ack->resetAlterationRequested(resetPromise);
     }
 }

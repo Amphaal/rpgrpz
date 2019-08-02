@@ -64,7 +64,7 @@ void ChatWidget::_instUI() {
     this->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
 }
 
-void ChatWidget::_onRPZClientStatus(const QString &statusMsg, bool isError) {    
+void ChatWidget::_onRPZClientThreadStatus(const QString &statusMsg, bool isError) {    
     
     auto respCode = isError ? RPZResponse::ResponseCode::Error : RPZResponse::ResponseCode::Status;
 
@@ -91,9 +91,9 @@ void ChatWidget::_onReceivedLogHistory(const QVariantList &messages) {
     this->_chatLog->handleResponse(response);
 }
 
-void ChatWidget::onRPZClientConnecting(RPZClient * cc) {
+void ChatWidget::onRPZClientThreadConnecting(RPZClientThread * cc) {
 
-    ClientBindable::onRPZClientConnecting(cc);
+    ClientBindable::onRPZClientThreadConnecting(cc);
     
     this->serverName = cc->getConnectedSocketAddress();
     
@@ -102,13 +102,13 @@ void ChatWidget::onRPZClientConnecting(RPZClient * cc) {
 
     //on error from client
     QObject::connect(
-        this->_rpzClient, &RPZClient::connectionStatus, 
-        this, &ChatWidget::_onRPZClientStatus
+        this->_rpzClient, &RPZClientThread::connectionStatus, 
+        this, &ChatWidget::_onRPZClientThreadStatus
     );
     
     //on message received
     QObject::connect(
-        this->_rpzClient, &RPZClient::receivedMessage, 
+        this->_rpzClient, &RPZClientThread::receivedMessage, 
         [&](const QVariantHash &message) {
             auto msg = RPZMessage(message);
             this->_chatLog->handleMessage(msg);
@@ -117,13 +117,13 @@ void ChatWidget::onRPZClientConnecting(RPZClient * cc) {
 
     //welcome once all history have been received
     QObject::connect(
-        this->_rpzClient, &RPZClient::receivedLogHistory, 
+        this->_rpzClient, &RPZClientThread::receivedLogHistory, 
         this, &ChatWidget::_onReceivedLogHistory
     );
 
     //on server response
     QObject::connect(
-        this->_rpzClient, &RPZClient::serverResponseReceived, 
+        this->_rpzClient, &RPZClientThread::serverResponseReceived, 
         [&](const QVariantHash &reponse) {
             auto resp = RPZResponse(reponse);
             this->_chatLog->handleResponse(resp);
@@ -133,7 +133,7 @@ void ChatWidget::onRPZClientConnecting(RPZClient * cc) {
     
     //update users list
     QObject::connect(
-        this->_rpzClient, &RPZClient::loggedUsersUpdated,
+        this->_rpzClient, &RPZClientThread::loggedUsersUpdated,
         this->_usersLog, &UsersLog::updateUsers
     );
 

@@ -1,13 +1,8 @@
 #include "ViewMapHint.h"
 
-ViewMapHint::ViewMapHint(QGraphicsView* boundGv) : AtomsStorage(AlterationPayload::Source::Local_Map), 
-    AtomsContextualMenuHandler(this, boundGv), 
-    templateAtom(new RPZAtom),
-    _boundGv(boundGv),
-    _hiddingBrush(new QBrush("#EEE", Qt::BrushStyle::SolidPattern)) {
-    
-    //auto hidding
-    this->_boundGv->setForegroundBrush(*this->_hiddingBrush);
+ViewMapHint::ViewMapHint() : AtomsStorage(AlterationPayload::Source::Local_Map), 
+    AtomsContextualMenuHandler(this), 
+    templateAtom(new RPZAtom) {
     
     //default layer from settings
     this->setDefaultLayer(AppContext::settings()->defaultLayer());
@@ -341,10 +336,6 @@ void ViewMapHint::_crossBindingAtomWithGI(RPZAtom* atom, QGraphicsItem* gi) {
     atom->setGraphicsItem(gi);
     auto ptrValToAtom = (long long)atom;
     gi->setData(RPZUserRoles::AtomPtr, ptrValToAtom);
-}
-
-MapViewGraphicsScene* ViewMapHint::scene() {
-    return (MapViewGraphicsScene*)this->_boundGv->scene();
 }
 
 QVector<RPZAtom*> ViewMapHint::_getAtomFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const {

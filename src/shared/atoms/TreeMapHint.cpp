@@ -1,13 +1,10 @@
 #include "TreeMapHint.h"
 
-TreeMapHint::TreeMapHint(QTreeWidget* boundTree, AtomsStorage* mapMaster) : AtomsHandler(AlterationPayload::Source::Local_MapLayout), 
-    AtomsContextualMenuHandler(mapMaster, boundTree), 
-    _boundTree(boundTree),
+TreeMapHint::TreeMapHint(AtomsStorage* mapMaster) : AtomsHandler(AlterationPayload::Source::Local_MapLayout), 
+    AtomsContextualMenuHandler(mapMaster), 
     _layerIcon(new QIcon(":/icons/app/manager/layer.png")),
     _textIcon(new QIcon(":/icons/app/tools/text.png")),
     _drawingIcon(new QIcon(":/icons/app/manager/drawing.png")) { 
-    
-	this->_boundTree->setSortingEnabled(true);
 
     //selection changed
     QObject::connect(

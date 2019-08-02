@@ -17,16 +17,16 @@
 #include "src/helpers/_appContext.h"
 #include "src/shared/atoms/AtomAlterationAcknoledger.h"
 
-class RPZClient : public JSONSocket, public JSONRouter, public AtomAlterationAcknoledger {
+class RPZClientThread : public QThread, public JSONSocket, public JSONRouter, public AtomAlterationAcknoledger {
     
     Q_OBJECT
 
     public:
-        RPZClient(QObject* parent, const QString &displayname, const QString &domain, const QString &port);
-        ~RPZClient();
+        RPZClientThread(QObject* parent, const QString &displayname, const QString &domain, const QString &port);
+        ~RPZClientThread();
 
         QString getConnectedSocketAddress();
-        void run();
+        void run() override;
     
         //slots
         void sendMessage(QVariantHash &message);

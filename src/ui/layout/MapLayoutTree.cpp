@@ -2,6 +2,8 @@
 
 MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) : RPZTree(parent), _hints(new TreeMapHint(this, mapMaster)) {
     
+	this->setSortingEnabled(true);
+
     this->setItemDelegateForColumn(1, new LockAndVisibilityDelegate);
     this->setItemDelegateForColumn(2, new OwnerDelegate);
 

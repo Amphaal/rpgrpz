@@ -7,7 +7,7 @@
 #include <QStyle>
 #include "src/ui/others/RestoringSplitter.h"
 
-#include "src/network/rpz/client/RPZClient.h"
+#include "src/network/rpz/client/RPZClientThread.h"
 
 #include "src/shared/models/RPZMessage.h"
 #include "src/shared/models/RPZResponse.h"
@@ -27,7 +27,7 @@ class ChatWidget : public QWidget, public ClientBindable {
     public:
         ChatWidget(QWidget *parent = nullptr);
 
-        void onRPZClientConnecting(RPZClient* cc) override;
+        void onRPZClientThreadConnecting(RPZClientThread* cc) override;
 
     private:
         MessagesLog *_chatLog;
@@ -45,7 +45,7 @@ class ChatWidget : public QWidget, public ClientBindable {
         void _DisableUI();
         void _EnableUI();
 
-        void _onRPZClientStatus(const QString &statusMsg, bool isError);
+        void _onRPZClientThreadStatus(const QString &statusMsg, bool isError);
         void _onReceivedLogHistory(const QVariantList &messages);
 
 };

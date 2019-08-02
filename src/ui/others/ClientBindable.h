@@ -1,6 +1,6 @@
 #pragma once 
 
-#include "src/network/rpz/client/RPZClient.h"
+#include "src/network/rpz/client/RPZClientThread.h"
 #include <QObject>
 
 class ClientBindable {
@@ -9,16 +9,16 @@ class ClientBindable {
 
         ClientBindable();
         
-        static void bindAll(RPZClient* cc);
+        static void bindAll(RPZClientThread* cc);
         static void unbindAll();
 
-        virtual void onRPZClientConnecting(RPZClient* cc);
-        virtual void onRPZClientDisconnect(RPZClient* cc);
+        virtual void onRPZClientThreadConnecting(RPZClientThread* cc);
+        virtual void onRPZClientThreadDisconnect(RPZClientThread* cc);
 
-        void unbindRPZClient();
+        void unbindRPZClientThread();
 
     protected:
-        RPZClient* _rpzClient = nullptr;
+        RPZClientThread* _rpzClient = nullptr;
     
     private:
         static inline QVector<ClientBindable*> _boundWidgets = QVector<ClientBindable*>();

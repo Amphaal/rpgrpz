@@ -24,13 +24,13 @@ ChatEdit::ChatEdit(QWidget * parent) : QWidget(parent),
 
 }
 
-void ChatEdit::onRPZClientConnecting(RPZClient* cc) {
+void ChatEdit::onRPZClientThreadConnecting(RPZClientThread* cc) {
     
-    ClientBindable::onRPZClientConnecting(cc);
+    ClientBindable::onRPZClientThreadConnecting(cc);
 
     //on user connected
     QObject::connect(
-        cc, &RPZClient::loggedUsersUpdated,
+        cc, &RPZClientThread::loggedUsersUpdated,
         this, &ChatEdit::_onUsersChanged
     );
 

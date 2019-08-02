@@ -1,6 +1,6 @@
 #include "MapView.h"
 
-MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
+MapView::MapView(QWidget *parent) : QGraphicsView(parent), _hiddingBrush(new QBrush("#EEE", Qt::BrushStyle::SolidPattern)) {
 
     //default
     this->_scene = new MapViewGraphicsScene(this->_defaultSceneSize);
@@ -24,31 +24,52 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent) {
     //background / foreground
     this->setBackgroundBrush(QBrush("#EEE", Qt::BrushStyle::CrossPattern));
 
+    //on selection
     QObject::connect(
         this->scene(), &QGraphicsScene::selectionChanged,
         this, &MapView::_onSceneSelectionChanged
     );
 
-    auto caca = [=](QGraphicsItem* item){
-        this->scene()->addItem(item);
-    };
+        auto caca = [=](QGraphicsItem* item){
+            this->scene()->addItem(item);
+        };
 
-    auto pipi = [=]() {
-        if(this->scene()->children().count() > 1) this->scene()->clear();
-    };
+        auto pipi = [=]() {
+            if(this->scene()->children().count() > 1) this->scene()->clear();
+        };
 
+        QObject::connect(
+            this->_hints, &MapHint::requestingAllItemsRemoval,
+            this, pipi,
+            Qt::ConnectionType::QueuedConnection
+        );
+        
+        QObject::connect(
+            this->_hints, &MapHint::requestingItemInsertion,
+            this, caca,
+            Qt::ConnectionType::QueuedConnection
+        );
+
+    //on map loading, set placeholder...
     QObject::connect(
-        this->_hints, &MapHint::requestingAllItemsRemoval,
-        this, pipi,
-        Qt::ConnectionType::QueuedConnection
+        this->_hints, &MapHint::mapLoading,
+        [=]() {
+            this->setForegroundBrush(*this->_hiddingBrush);
+        }
+    );
+
+    //on reset requested : set placeholder. When over, remove placeholder
+    QObject::connect(
+        this->_hints, &AtomAlterationAcknoledger::resetAlterationRequested,
+        [=](QFuture<void> &alterationRequest) {
+            this->setForegroundBrush(*this->_hiddingBrush);
+            AsyncFuture::observe(alterationRequest).subscribe([=]() {
+                this->setForegroundBrush(QBrush());
+            });
+
+        }
     );
     
-    QObject::connect(
-        this->_hints, &MapHint::requestingItemInsertion,
-        this, caca,
-        Qt::ConnectionType::QueuedConnection
-    );
-
     //default state
     this->scale(this->_defaultScale, this->_defaultScale);
     this->_goToDefaultViewState();
@@ -214,34 +235,34 @@ void MapView::_onSceneSelectionChanged() {
 /* NETWORK */
 /////////////
 
-void MapView::onRPZClientConnecting(RPZClient * cc) {
+void MapView::onRPZClientThreadConnecting(RPZClientThread * cc) {
 
-    ClientBindable::onRPZClientConnecting(cc);
+    ClientBindable::onRPZClientThreadConnecting(cc);
 
     //save current map
     this->_hints->mayWantToSavePendingState();
 
     //when self user send
     QObject::connect(
-        this->_rpzClient, &RPZClient::ackIdentity,
+        this->_rpzClient, &RPZClientThread::ackIdentity,
         this, &MapView::_onIdentityReceived
     );
 
     //when missing assets
     QObject::connect(
         this->_hints, &MapHint::requestMissingAssets,
-        this->_rpzClient, &RPZClient::askForAssets
+        this->_rpzClient, &RPZClientThread::askForAssets
     );
 
     //when receiving missing asset
     QObject::connect(
-        this->_rpzClient, &RPZClient::assetSucessfullyInserted,
+        this->_rpzClient, &RPZClientThread::assetSucessfullyInserted,
         this->_hints, &MapHint::replaceMissingAssetPlaceholders
     );
 
     //on map change
     QObject::connect(
-        this->_rpzClient, &RPZClient::mapChanged,
+        this->_rpzClient, &RPZClientThread::mapChanged,
         [&](const QVariantHash &payload) {
             auto cp_payload = Payloads::autoCast(payload);
             this->_hints->queueAlteration(*cp_payload);
@@ -250,7 +271,7 @@ void MapView::onRPZClientConnecting(RPZClient * cc) {
 
     //when been asked for map content
     QObject::connect(
-        this->_rpzClient, &RPZClient::beenAskedForMapHistory,
+        this->_rpzClient, &RPZClientThread::beenAskedForMapHistory,
         this, &MapView::_sendMapHistory
     );
 
@@ -266,7 +287,7 @@ void MapView::_onIdentityReceived(const QVariantHash &userHash) {
     emit remoteChanged(is_remote);
 }
 
-void MapView::onRPZClientDisconnect(RPZClient* cc) {
+void MapView::onRPZClientThreadDisconnect(RPZClientThread* cc) {
 
     //back to default state
     this->_hints->defineAsRemote();

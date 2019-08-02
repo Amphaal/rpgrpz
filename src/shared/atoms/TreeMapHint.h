@@ -16,7 +16,7 @@ class TreeMapHint : public AtomsHandler, public AtomsContextualMenuHandler {
     Q_OBJECT
     
     public:
-        TreeMapHint(QTreeWidget* boundTree, AtomsStorage* mapMaster);
+        TreeMapHint(AtomsStorage* mapMaster);
 
         void _updateLayerState(QTreeWidgetItem* layerItem);
 
@@ -24,8 +24,6 @@ class TreeMapHint : public AtomsHandler, public AtomsContextualMenuHandler {
         void requestingTreeItemInsertion(QTreeWidgetItem *item, QTreeWidgetItem* parent);
 
     private:
-        QTreeWidget* _boundTree = nullptr;
-
         bool _preventInnerGIEventsHandling = false;
         QHash<int, QTreeWidgetItem*> _layersItems;
         QTreeWidgetItem* _getLayerItem(int layer);
