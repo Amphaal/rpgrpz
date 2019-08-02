@@ -36,7 +36,7 @@ RPZClient::~RPZClient() {
 void RPZClient::_onDisconnect() {
     const QString msg = "Déconnecté du serveur";
     emit connectionStatus(msg);
-    qDebug() << "RPZClient : " << msg;
+    qDebug() << "RPZClient : disconnected from server";
 }
 
 void RPZClient::_onConnected() {
@@ -46,13 +46,20 @@ void RPZClient::_onConnected() {
 
 QFuture<void> RPZClient::_handleAlterationRequest(AlterationPayload &payload, bool autoPropagate) {
     
-    //trace
-    this->_payloadTrace(payload);
-
+    //completed deferred
     auto d = AsyncFuture::deferred<void>();
     d.complete();
 
+    //ignore alteration requests when socket is not connected
+    if(this->socket()->state() != QAbstractSocket::ConnectedState) return d.future();
+
+    //trace
+    this->_payloadTrace(payload);
+
+    //if not routable, instant return 
     if(!payload.isNetworkRoutable()) return d.future();
+
+    //send json
     this->sendJSON(JSONMethod::MapChanged, payload);
     return d.future();
 }

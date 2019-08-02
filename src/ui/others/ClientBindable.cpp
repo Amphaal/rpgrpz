@@ -23,7 +23,7 @@ void ClientBindable::onRPZClientConnecting(RPZClient* cc) {
 
     //on disconnect
     QObject::connect(
-        this->_rpzClient, &JSONSocket::disconnected,
+        this->_rpzClient->socket(), &QAbstractSocket::disconnected,
         [&]() {
             this->onRPZClientDisconnect(this->_rpzClient);
         }

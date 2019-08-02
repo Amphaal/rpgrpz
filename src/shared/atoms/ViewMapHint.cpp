@@ -386,7 +386,7 @@ void ViewMapHint::_handlePayload(AlterationPayload &payload) {
     //request assets if there are missing
     auto c_MissingAssets = this->_assetsIdsToRequest.count();
     if(c_MissingAssets) {
-        qDebug() << "Assets : missings " << QString::number(c_MissingAssets) << "asset(s)" << this->_assetsIdsToRequest.toList();
+        qDebug() << "Assets : missing" << QString::number(c_MissingAssets).toStdString().c_str() << "asset(s)" << this->_assetsIdsToRequest.toList();
         auto toRequest = this->_assetsIdsToRequest.toList();
         this->_assetsIdsToRequest.clear();
         emit requestMissingAssets(toRequest);

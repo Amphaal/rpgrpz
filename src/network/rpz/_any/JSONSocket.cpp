@@ -13,17 +13,16 @@ JSONSocket::JSONSocket(const QString &logId, QTcpSocket* wrapped) : _logId(logId
         this, &JSONSocket::_processIncomingData
     );
 
-    //clear on client disconnect
-    QObject::connect(
-        this->_innerSocket, &QAbstractSocket::disconnected,
-        [&]() {
-            emit disconnected();
-        }
-    );
 }
 
 void JSONSocket::sendJSON(const JSONMethod &method, const QVariant &data) {
     
+    //ignore emission when socket is not connected
+    if(this->socket()->state() != QAbstractSocket::ConnectedState) {
+        qWarning() << this->_logId.toStdString().c_str() << ": cannot send JSON as the socket is not connected !";  
+        return;
+    }
+
     //checks
     if(data.isNull()) {
         qWarning() << this->_logId.toStdString().c_str() << ": cannot send JSON as input values are unexpected";  
