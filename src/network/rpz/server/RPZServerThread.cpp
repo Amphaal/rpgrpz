@@ -58,7 +58,7 @@ void RPZServerThread::_onNewConnection(QTcpServer * server) {
         
         //clear on client disconnect
         QObject::connect(
-            clientSocket, &JSONSocket::disconnected,
+            clientSocket->socket(), &QAbstractSocket::disconnected,
             [&, clientSocket]() {
 				this->_onDisconnect(clientSocket);
 			}

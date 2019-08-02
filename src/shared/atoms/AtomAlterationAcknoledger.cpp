@@ -2,7 +2,9 @@
 
 
 AtomAlterationAcknoledger::AtomAlterationAcknoledger(const AlterationPayload::Source &source, bool autoRegisterAck) : _source(source) {
-    if(autoRegisterAck) _registeredAcknoledgers.insert(this);
+    if(autoRegisterAck) {
+        _registeredAcknoledgers.insert(this);
+    }
 }
 
 AtomAlterationAcknoledger::~AtomAlterationAcknoledger() {
