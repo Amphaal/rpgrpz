@@ -9,8 +9,6 @@
 #include <QtConcurrent>
 
 class AtomsHandler : public QObject, public AtomAlterationAcknoledger {
-    
-    Q_OBJECT
 
     public:
         AtomsHandler(const AlterationPayload::Source &boundSource, bool autoRegisterAck = true);

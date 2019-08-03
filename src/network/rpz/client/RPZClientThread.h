@@ -18,8 +18,6 @@
 #include "src/shared/atoms/AtomAlterationAcknoledger.h"
 
 class RPZClientThread : public QThread, public JSONSocket, public JSONRouter, public AtomAlterationAcknoledger {
-    
-    Q_OBJECT
 
     public:
         RPZClientThread(QObject* parent, const QString &displayname, const QString &domain, const QString &port);
