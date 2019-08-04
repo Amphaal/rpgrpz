@@ -6,19 +6,7 @@ TreeMapHint::TreeMapHint(AtomsStorage* mapMaster) : AtomsHandler(AlterationPaylo
     _textIcon(new QIcon(":/icons/app/tools/text.png")),
     _drawingIcon(new QIcon(":/icons/app/manager/drawing.png")) { 
 
-    //selection changed
-    QObject::connect(
-        this->_boundTree, &QTreeWidget::itemSelectionChanged,
-        this, &TreeMapHint::_onElementSelectionChanged
-    );
-
-    //focus
-    QObject::connect(
-        this->_boundTree, &QTreeWidget::itemDoubleClicked,
-        this, &TreeMapHint::_onElementDoubleClicked
-    );
-
-       //on rename
+    //on rename
     QObject::connect(
         AssetsDatabase::get(), &AssetsDatabase::assetRenamed,
         this, &TreeMapHint::_onRenamedAsset
@@ -26,29 +14,17 @@ TreeMapHint::TreeMapHint(AtomsStorage* mapMaster) : AtomsHandler(AlterationPaylo
 
 }
 
-
-void TreeMapHint::_onElementDoubleClicked(QTreeWidgetItem * item, int column) {
-    auto focusedAtomId = this->_extractAtomIdFromItem(item);
-    if(!focusedAtomId) return;
-
+void TreeMapHint::propagateFocus(snowflake_uid focusedAtomId) {
     FocusedPayload payload(focusedAtomId);
     this->propagateAlterationPayload(payload);
 }
 
-void TreeMapHint::_onElementSelectionChanged() {
-    
-    auto selected = this->_selectedAtomIds();
-    if(!selected.count()) this->_boundTree->clearFocus();
-
-    if(this->_preventInnerGIEventsHandling) return;
-
-    SelectedPayload payload(selected);
+void TreeMapHint::propagateSelection(QVector<snowflake_uid> &selectedIds) {
+    SelectedPayload payload(selectedIds);
     this->propagateAlterationPayload(payload);
 }
 
 void TreeMapHint::_handlePayload(AlterationPayload &payload) {
-    
-    this->_preventInnerGIEventsHandling = true;
 
     auto type = payload.type();
 
@@ -87,8 +63,6 @@ void TreeMapHint::_handlePayload(AlterationPayload &payload) {
         }
 
     }
-
-    this->_preventInnerGIEventsHandling = false;
 
 }
 
@@ -203,7 +177,7 @@ void TreeMapHint::_changeLayer(QVector<snowflake_uid> &elementIds, int newLayer)
         auto item = this->_atomTreeItemsById[key];
         if(item) {
             
-            //remove from initial layer, maybe remove it too
+            //remove from initial layer, maybe remove the layer item too
             auto oldLayerItem = item->parent();
             oldLayerItem->removeChild(item);
 
@@ -302,27 +276,14 @@ QTreeWidgetItem* TreeMapHint::_createTreeItem(RPZAtom &atom) {
 }
 
 void TreeMapHint::_updateLayerState(QTreeWidgetItem* layerItem) {
-    if(layerItem->childCount()) {
+    if(auto childCount = layerItem->childCount()) {
         //has children, update count column
-        layerItem->setText(2, QString::number(layerItem->childCount()));
+        auto childCountStr = QString::number(childCount);
+        layerItem->setText(2, childCountStr);
         layerItem->setExpanded(true);
     } else {
         //has no more children, remove
         auto layer = layerItem->data(0, RPZUserRoles::AtomLayer).toInt();
         delete this->_layersItems.take(layer);
     }
-}
-
-
-snowflake_uid TreeMapHint::_extractAtomIdFromItem(QTreeWidgetItem* item) const {
-    return item->data(0, RPZUserRoles::AtomId).toULongLong();
-}
-
-QVector<snowflake_uid> TreeMapHint::_selectedAtomIds() {
-    QVector<snowflake_uid> idList;
-    for(auto i : this->_boundTree->selectedItems()) {
-        auto boundId = this->_extractAtomIdFromItem(i);
-        if(boundId) idList.append(boundId);
-    }
-    return idList;
 }

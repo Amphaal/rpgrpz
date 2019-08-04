@@ -22,15 +22,43 @@ MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) : RPZTre
 
     this->setDragDropMode(QAbstractItemView::DragDropMode::NoDragDrop);
 
-    this->_handleHintsSignals();
+    this->_handleHintsSignalsAndSlots();
 
 }
 
-void MapLayoutTree::_handleHintsSignals() {
+void MapLayoutTree::_handleHintsSignalsAndSlots() {
+    
+    //on insertion required
     QObject::connect(
         this->_hints, &TreeMapHint::requestingTreeItemInsertion,
         this, &MapLayoutTree::_insertTreeWidgetItem
     );
+
+    //focus
+    QObject::connect(
+        this, &QTreeWidget::itemDoubleClicked,
+        [=](QTreeWidgetItem *item, int column) {
+            auto focusedAtomId = this->_extractAtomIdFromItem(item);
+            if(!focusedAtomId) return;
+            this->_hints->propagateFocus(focusedAtomId);
+        }
+    );
+
+    //selection
+    QObject::connect(
+        this, &QTreeWidget::itemSelectionChanged,
+        [=](QTreeWidgetItem *item, int column) {
+            
+            if(isHandling) return;
+
+            auto selected = this->selectedItems();
+            if(!selected.count()) this->clearFocus();
+            
+            auto selectedIds = _extractAtomIdFromItems(selected);
+            this->_hints->propagateSelection(selectedIds);
+        }
+    );
+
 }
 
 void MapLayoutTree::_insertTreeWidgetItem(QTreeWidgetItem *item, QTreeWidgetItem* parent) {
@@ -76,4 +104,18 @@ void MapLayoutTree::keyPressEvent(QKeyEvent * event) {
             break;
     }
 
+}
+
+
+snowflake_uid MapLayoutTree::_extractAtomIdFromItem(QTreeWidgetItem* item) const {
+    return item->data(0, RPZUserRoles::AtomId).toULongLong();
+}
+
+QVector<snowflake_uid> MapLayoutTree::_extractAtomIdFromItems(const QList<QTreeWidgetItem*> &items) const {
+    QVector<snowflake_uid> idList;
+    for(auto i : this->selectedItems()) {
+        auto boundId = this->_extractAtomIdFromItem(i);
+        if(boundId) idList.append(boundId);
+    }
+    return idList;
 }

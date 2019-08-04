@@ -74,45 +74,45 @@ class RPZAtom : public Ownable {
         RPZAtom(snowflake_uid id, const AtomType &type, const RPZUser &owner);
         RPZAtom(const AtomType &type);
 
-        QGraphicsItem* graphicsItem();
+        QGraphicsItem* graphicsItem() const;
         void setGraphicsItem(QGraphicsItem* item);
 
-        AtomType type();
+        AtomType type() const;
         void changeType(const AtomType &type);
-        QString descriptor();
+        QString descriptor() const;
 
         //
         //
         //
 
-        QVariant metadata(const AtomParameter &key);
+        QVariant metadata(const AtomParameter &key) const;
         void unsetMetadata(const AtomParameter &key);
         void setMetadata(const AtomParameter &key, const QVariant &value, bool autoRemove = true);
         void setMetadata(const AtomParameter &key, RPZAtom &base, bool autoRemove = true);
 
-        QSet<AtomParameter> editedMetadata();
-        QSet<AtomParameter> legalEditedMetadata();
-        QSet<AtomParameter> legalParameters();
-        QSet<AtomParameter> customizableParams();
+        QSet<AtomParameter> editedMetadata() const;
+        QSet<AtomParameter> legalEditedMetadata() const;
+        QSet<AtomParameter> legalParameters() const;
+        QSet<AtomParameter> customizableParams() const;
 
-        RPZAssetHash assetId();
-        QString assetName();
-        double scale();
-        double rotation();
-        double assetScale();
-        double assetRotation();
-        QString text();
-        int textSize();
-        int layer();
-        QPointF pos();
-        int penWidth();
-        bool isHidden();
-        bool isLocked();
-        BrushType brushType();
-        int brushPenWidth();
-        QPointF shapeCenter();
+        RPZAssetHash assetId() const;
+        QString assetName() const;
+        double scale() const;
+        double rotation() const;
+        double assetScale() const;
+        double assetRotation() const;
+        QString text() const;
+        int textSize() const;
+        int layer() const;
+        QPointF pos() const;
+        int penWidth() const;
+        bool isHidden() const;
+        bool isLocked() const;
+        BrushType brushType() const;
+        int brushPenWidth() const;
+        QPointF shapeCenter() const;
 
-        QPainterPath shape();
+        QPainterPath shape() const;
         void setShape(const QPainterPath &path);
         void setShape(const QRectF &rect);
 
@@ -157,7 +157,7 @@ class RPZAtom : public Ownable {
             { AtomParameter::ShapeCenter, QVariant() }
         };
 
-        QString _defaultDescriptor();
+        QString _defaultDescriptor() const;
         void _setType(const AtomType &type);
 
         QGraphicsItem* _graphicsItem = nullptr;

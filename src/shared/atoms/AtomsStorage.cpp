@@ -304,52 +304,76 @@ RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, sno
     return storedAtom;
 }
 
-void AtomsStorage::duplicateAtoms(QVector<snowflake_uid> &atomIdList) {
+void AtomsStorage::duplicateAtoms(const QVector<snowflake_uid> &atomIdList) {
     
-    if(this->_latestDuplication != atomIdList) {
+    //check if a recent duplication have been made, and if it was about the same atoms
+    if(this->_latestDuplication != atomIdList) { //if not
+        //reset duplication cache
         this->_latestDuplication = atomIdList;
         this->_duplicationCount = 1;
     } else {
+        //else, increment subsequent duplication count
         this->_duplicationCount++;
     }
     
-    RPZMap<RPZAtom> newAtoms;
-    for(auto atomId : atomIdList) {
-        
-        if(!this->_atomsById.contains(atomId)) continue;
+    //generate duplicated atoms
+    auto newAtoms = this->_generateDuplicate(atomIdList);
 
-        RPZAtom newAtom(this->_atomsById[atomId]);
-        newAtom.shuffleId();
-        newAtom.setOwnership(this->_defaultOwner);
-
-        auto currPos = newAtom.pos();
-        
-        auto br = newAtom.shape().boundingRect();
-        auto stepWidth = br.width() / 10;
-        auto stepHeight = br.height() / 10;
-        
-            currPos.setX(
-                currPos.x() + (this->_duplicationCount * stepWidth)
-            );
-
-            currPos.setY(
-                currPos.y() + (this->_duplicationCount * stepHeight)
-            );
-
-        newAtom.setMetadata(AtomParameter::Position, currPos);
-
-        newAtoms.insert(newAtom.id(), newAtom);
-    }
-
-    //add them
+    //request insertion
     AddedPayload added(newAtoms);
     this->queueAlteration(added);
 
-    //select them 
+    //request selection
     SelectedPayload selected(newAtoms.keys().toVector());
     this->queueAlteration(selected);
 }
 
+
+RPZMap<RPZAtom> AtomsStorage::_generateDuplicate(const QVector<snowflake_uid> &atomIdsToDuplicate) const {
+    
+    RPZMap<RPZAtom> newAtoms;
+
+    //create the new atoms from the selection
+    for(auto atomId : atomIdsToDuplicate) {
+        
+        //skip if atomId does not exist
+        if(!this->_atomsById.contains(atomId)) continue;
+        
+        //create copy atom, change ownership to self and update its id
+        RPZAtom newAtom(this->_atomsById[atomId]);
+        newAtom.shuffleId();
+        newAtom.setOwnership(this->_defaultOwner);
+
+        //find new position for the duplicated atom
+        auto newPos = _getPositionFromAtomDuplication(newAtom, this->_duplicationCount);
+        newAtom.setMetadata(AtomParameter::Position, newPos);
+
+        //adds it to the final list
+        newAtoms.insert(newAtom.id(), newAtom);
+    }
+
+    return newAtoms;
+}
+
+QPointF AtomsStorage::_getPositionFromAtomDuplication(const RPZAtom &atomToDuplicate, int duplicateCount) {
+    
+    auto currPos = atomToDuplicate.pos();
+    auto br = atomToDuplicate.shape().boundingRect();
+
+    auto stepWidth = br.width() / _pixelStepPosDuplication;
+    auto stepHeight = br.height() / _pixelStepPosDuplication;
+    
+    currPos.setX(
+        currPos.x() + (duplicateCount * stepWidth)
+    );
+
+    currPos.setY(
+        currPos.y() + (duplicateCount * stepHeight)
+    );
+
+    return currPos;
+
+}
 
 //////////////////
 /* END ELEMENTS */

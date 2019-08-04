@@ -22,7 +22,8 @@ class AtomsStorage : public AtomsHandler {
         
         void redo();
         void undo();
-        void duplicateAtoms(QVector<snowflake_uid> &atomIdList);
+
+        void duplicateAtoms(const QVector<snowflake_uid> &atomIdList);
         QVector<snowflake_uid> selectedAtomIds();
 
     protected:
@@ -51,6 +52,10 @@ class AtomsStorage : public AtomsHandler {
 
     private:
         void _basic_handlePayload(AlterationPayload &payload);
-        
         QVector<snowflake_uid> _selectedAtomIds;
+
+        //duplication
+        RPZMap<RPZAtom> _generateDuplicate(const QVector<snowflake_uid> &atomIdsToDuplicate) const;
+        static constexpr int _pixelStepPosDuplication = 10;
+        static QPointF _getPositionFromAtomDuplication(const RPZAtom &atomToDuplicate, int duplicateCount);
 };

@@ -20,11 +20,14 @@ class TreeMapHint : public AtomsHandler, public AtomsContextualMenuHandler {
 
         void _updateLayerState(QTreeWidgetItem* layerItem);
 
+    public slots:
+        void propagateFocus(snowflake_uid focusedAtomId);
+        void propagateSelection(QVector<snowflake_uid> &selectedIds);
+
     signals:
         void requestingTreeItemInsertion(QTreeWidgetItem *item, QTreeWidgetItem* parent);
 
     private:
-        bool _preventInnerGIEventsHandling = false;
         QHash<int, QTreeWidgetItem*> _layersItems;
         QTreeWidgetItem* _getLayerItem(int layer);
 
@@ -36,8 +39,6 @@ class TreeMapHint : public AtomsHandler, public AtomsContextualMenuHandler {
         
         QHash<snowflake_uid, QTreeWidgetItem*> _atomTreeItemsById;
         QHash<RPZAssetHash, QSet<snowflake_uid>> _atomIdsBoundByRPZAssetHash;
-        
-        snowflake_uid _extractAtomIdFromItem(QTreeWidgetItem* item) const;
 
         QTreeWidgetItem* _createTreeItem(RPZAtom &atom);
 

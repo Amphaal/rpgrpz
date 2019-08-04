@@ -16,7 +16,7 @@ QFuture<void> AtomsHandler::_handleAlterationRequest(AlterationPayload &payload,
         return this->_handlePayload(*cPayload);
     });
     
-    //if propagation required, wait for alteration and propagation to finish before completing
+    //if propagation required, waitAll (alteration and propagation) to finish before completing
     if(autoPropagate) {
         auto all = AsyncFuture::combine();
         all << alterationHandled;
