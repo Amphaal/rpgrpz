@@ -38,5 +38,9 @@ class MapLayoutTree : public RPZTree {
 
     private:
         TreeMapHint* _hints = nullptr;
-        void _handleHintsSignals();
+        void _handleHintsSignalsAndSlots();
+
+        //id fetching
+        snowflake_uid _extractAtomIdFromItem(QTreeWidgetItem* item) const;
+        QVector<snowflake_uid> _extractAtomIdFromItems(const QList<QTreeWidgetItem*> &items) const;
 };

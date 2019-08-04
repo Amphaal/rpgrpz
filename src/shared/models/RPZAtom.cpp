@@ -9,7 +9,7 @@ RPZAtom::RPZAtom(const AtomType &type) : Ownable(SnowFlake::get()->nextId()) {
     this->_setType(type);  
 };
 
-QGraphicsItem* RPZAtom::graphicsItem() { 
+QGraphicsItem* RPZAtom::graphicsItem() const { 
     return this->_graphicsItem; 
 };
 
@@ -18,7 +18,7 @@ void RPZAtom::setGraphicsItem(QGraphicsItem* item) {
 };
 
 //overrides descriptor
-QString RPZAtom::descriptor() { 
+QString RPZAtom::descriptor() const { 
 
     //displays asset name
     auto asname = this->assetName();
@@ -32,7 +32,7 @@ QString RPZAtom::descriptor() {
     return this->_defaultDescriptor();
 };
 
-QString RPZAtom::_defaultDescriptor() {
+QString RPZAtom::_defaultDescriptor() const {
     switch(this->type()) {
         case AtomType::Drawing:
             return "Dessin";
@@ -47,7 +47,7 @@ QString RPZAtom::_defaultDescriptor() {
     }
 }
 
-AtomType RPZAtom::type() {return (AtomType)this->value("t").toInt();}
+AtomType RPZAtom::type() const {return (AtomType)this->value("t").toInt();}
 void RPZAtom::_setType(const AtomType &type) { this->insert("t", (int)type); }
 void RPZAtom::changeType(const AtomType &type) { this->_setType(type);}
 
@@ -81,7 +81,7 @@ void RPZAtom::setMetadata(const AtomParameter &key, const QVariant &value, bool 
     
 }
 
-QVariant RPZAtom::metadata(const AtomParameter &key) {
+QVariant RPZAtom::metadata(const AtomParameter &key) const {
     
     switch(key) {
 
@@ -98,24 +98,24 @@ QVariant RPZAtom::metadata(const AtomParameter &key) {
     }
 }
 
-RPZAssetHash RPZAtom::assetId() { return this->metadata(AtomParameter::AssetId).toString(); }
-QString RPZAtom::assetName() { return this->metadata(AtomParameter::AssetName).toString();}
-double RPZAtom::scale() { return this->metadata(AtomParameter::Scale).toDouble();}
-double RPZAtom::rotation() { return this->metadata(AtomParameter::Rotation).toDouble(); }
-QString RPZAtom::text() { return this->metadata(AtomParameter::Text).toString(); }
-int RPZAtom::textSize() { return this->metadata(AtomParameter::TextSize).toInt(); }
-int RPZAtom::layer() { return this->metadata(AtomParameter::Layer).toInt(); }
-QPointF RPZAtom::pos() { return this->metadata(AtomParameter::Position).toPointF();}
-int RPZAtom::penWidth() { return this->metadata(AtomParameter::PenWidth).toInt(); }
-bool RPZAtom::isHidden() { return this->metadata(AtomParameter::Hidden).toBool(); }
-bool RPZAtom::isLocked() { return this->metadata(AtomParameter::Locked).toBool(); }
-double RPZAtom::assetScale() { return this->metadata(AtomParameter::AssetScale).toDouble();}
-double RPZAtom::assetRotation() { return this->metadata(AtomParameter::AssetRotation).toDouble();}
-BrushType RPZAtom::brushType() { return (BrushType)this->metadata(AtomParameter::BrushStyle).toInt(); }
-int RPZAtom::brushPenWidth() { return this->metadata(AtomParameter::BrushPenWidth).toInt(); }
-QPointF RPZAtom::shapeCenter() { return this->metadata(AtomParameter::ShapeCenter).toPointF(); }
+RPZAssetHash RPZAtom::assetId() const { return this->metadata(AtomParameter::AssetId).toString(); }
+QString RPZAtom::assetName() const { return this->metadata(AtomParameter::AssetName).toString();}
+double RPZAtom::scale() const { return this->metadata(AtomParameter::Scale).toDouble();}
+double RPZAtom::rotation() const { return this->metadata(AtomParameter::Rotation).toDouble(); }
+QString RPZAtom::text() const { return this->metadata(AtomParameter::Text).toString(); }
+int RPZAtom::textSize() const { return this->metadata(AtomParameter::TextSize).toInt(); }
+int RPZAtom::layer() const { return this->metadata(AtomParameter::Layer).toInt(); }
+QPointF RPZAtom::pos() const { return this->metadata(AtomParameter::Position).toPointF();}
+int RPZAtom::penWidth() const { return this->metadata(AtomParameter::PenWidth).toInt(); }
+bool RPZAtom::isHidden() const { return this->metadata(AtomParameter::Hidden).toBool(); }
+bool RPZAtom::isLocked() const { return this->metadata(AtomParameter::Locked).toBool(); }
+double RPZAtom::assetScale() const { return this->metadata(AtomParameter::AssetScale).toDouble();}
+double RPZAtom::assetRotation() const { return this->metadata(AtomParameter::AssetRotation).toDouble();}
+BrushType RPZAtom::brushType() const { return (BrushType)this->metadata(AtomParameter::BrushStyle).toInt(); }
+int RPZAtom::brushPenWidth() const { return this->metadata(AtomParameter::BrushPenWidth).toInt(); }
+QPointF RPZAtom::shapeCenter() const { return this->metadata(AtomParameter::ShapeCenter).toPointF(); }
 
-QPainterPath RPZAtom::shape() {
+QPainterPath RPZAtom::shape() const {
     auto rawShape = this->metadata(AtomParameter::Shape).toByteArray();
     return JSONSerializer::fromByteArray(rawShape);
 }
@@ -130,7 +130,7 @@ void RPZAtom::setShape(const QRectF &rect) {
 //
 //
 
-QSet<AtomParameter> RPZAtom::customizableParams() {
+QSet<AtomParameter> RPZAtom::customizableParams() const {
     
     QSet<AtomParameter> out;
     
@@ -170,7 +170,7 @@ QSet<AtomParameter> RPZAtom::customizableParams() {
     return out;
 }
 
-QSet<AtomParameter> RPZAtom::legalParameters() {
+QSet<AtomParameter> RPZAtom::legalParameters() const {
     
     auto base = this->customizableParams();
     
@@ -210,7 +210,7 @@ QSet<AtomParameter> RPZAtom::legalParameters() {
     return base;
 }
 
-QSet<AtomParameter> RPZAtom::editedMetadata() {
+QSet<AtomParameter> RPZAtom::editedMetadata() const {
     
     //existing metadata
     QSet<AtomParameter> existing;
@@ -221,7 +221,7 @@ QSet<AtomParameter> RPZAtom::editedMetadata() {
     return existing;
 }
 
-QSet<AtomParameter> RPZAtom::legalEditedMetadata() {
+QSet<AtomParameter> RPZAtom::legalEditedMetadata() const {
     return this->editedMetadata().intersect(
         this->legalParameters()
     );
