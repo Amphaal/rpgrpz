@@ -1,9 +1,10 @@
 #include "JSONSocket.h"
 
-JSONSocket::JSONSocket(const QString &logId, QTcpSocket* wrapped) : _logId(logId) {
+JSONSocket::JSONSocket(const QString &logId, QTcpSocket* socketToHandle) : _logId(logId) {
 
-    if (wrapped) {
-        this->_innerSocket = wrapped;
+    if (socketToHandle) {
+        this->_isWrapper = true;
+        this->_innerSocket = socketToHandle;
     } else {
         this->_innerSocket = new QTcpSocket;
     }
@@ -13,6 +14,13 @@ JSONSocket::JSONSocket(const QString &logId, QTcpSocket* wrapped) : _logId(logId
         this, &JSONSocket::_processIncomingData
     );
 
+}
+
+JSONSocket::~JSONSocket() {
+    if(!this->_isWrapper) {
+        this->_innerSocket->close();
+        delete this->_innerSocket;
+    }
 }
 
 void JSONSocket::sendJSON(const JSONMethod &method, const QVariant &data) {

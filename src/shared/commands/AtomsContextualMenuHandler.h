@@ -24,9 +24,6 @@ class AtomsContextualMenuHandler {
 
         void invokeMenu(int topMostLayer, int bottomMostLayer, int countAtoms, const QPoint &whereToDisplay);
 
-    protected:
-        virtual QVector<snowflake_uid> _selectedAtomIds() = 0;
-
     private:
         QWidget* _menuParent = nullptr;
         AtomsStorage* _mapMaster = nullptr;  

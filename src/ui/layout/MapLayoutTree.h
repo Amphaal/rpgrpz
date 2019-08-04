@@ -31,9 +31,12 @@ class MapLayoutTree : public RPZTree {
 
     protected:
         void keyPressEvent(QKeyEvent * event) override;
-
         void contextMenuEvent(QContextMenuEvent *event) override;
 
+    private slots:
+        void _insertTreeWidgetItem(QTreeWidgetItem *item, QTreeWidgetItem* parent);
+
     private:
-        TreeMapHint* _hints;
+        TreeMapHint* _hints = nullptr;
+        void _handleHintsSignals();
 };

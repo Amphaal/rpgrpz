@@ -189,6 +189,11 @@ void AtomsStorage::_handlePayload(AlterationPayload &payload) {
         this->_redoHistory.clear();
     }
 
+    //on selection changed
+    if(pType == PayloadAlteration::PA_Selected) {
+        this->_selectedAtomIds.clear();
+    }
+
     //base handling
     this->_basic_handlePayload(payload);
 
@@ -254,6 +259,12 @@ RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, sno
             //replace for return
             storedAtom = &this->_atomsById[targetedAtomId];
             
+        }
+        break;
+
+        //on selection change
+        case PayloadAlteration::PA_Selected: {
+            this->_selectedAtomIds.append(targetedAtomId);
         }
         break;
 

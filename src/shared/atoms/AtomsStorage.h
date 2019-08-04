@@ -23,6 +23,7 @@ class AtomsStorage : public AtomsHandler {
         void redo();
         void undo();
         void duplicateAtoms(QVector<snowflake_uid> &atomIdList);
+        QVector<snowflake_uid> selectedAtomIds();
 
     protected:
         // redo/undo
@@ -50,4 +51,6 @@ class AtomsStorage : public AtomsHandler {
 
     private:
         void _basic_handlePayload(AlterationPayload &payload);
+        
+        QVector<snowflake_uid> _selectedAtomIds;
 };
