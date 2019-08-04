@@ -2,35 +2,53 @@
 
 RPZClientThread::RPZClientThread(QObject* parent, const QString &name, const QString &domain, const QString &port) : 
                         AtomAlterationAcknoledger(AlterationPayload::Source::RPZClient),
-                        JSONSocket("RPZClientThread"),
                         _name(name), 
                         _domain(domain), 
-                        _port(port) {
+                        _port(port) { }
+
+void RPZClientThread::run() {
+
+    //prerequisites
+    if(this->_name.isEmpty()) {
+        emit connectionStatus("Nom de joueur requis !", true);
+        return;
+    }
+
+    this->_cli = new JSONSocket("RPZClient");
 
     QObject::connect(
-        this, &JSONSocket::JSONReceived,
-        this, &RPZClientThread::_routeIncomingJSON
+        this->_cli, &JSONSocket::JSONReceived,
+        [=](JSONSocket *target, const JSONMethod &method, const QVariant &data) {
+            this->_routeIncomingJSON(target, method, data);
+        }
     );
 
     QObject::connect(
-        this->socket(), &QAbstractSocket::connected,
-        this, &RPZClientThread::_onConnected
+        this->_cli->socket(), &QAbstractSocket::connected,
+        [=]() {
+            this->_onConnected();
+        }
     );
 
     QObject::connect(
-        this->socket(), &QAbstractSocket::disconnected,
-        this, &RPZClientThread::_onDisconnect
+        this->_cli->socket(), &QAbstractSocket::disconnected,
+        [=]() {
+            this->_onDisconnect();
+        }
     );
 
     QObject::connect(
-        this->socket(), QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error),
-        this, &RPZClientThread::_error
+        this->_cli->socket(), QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error),
+        [=](QAbstractSocket::SocketError err) {
+            this->_error(err);
+        }
     );
 
-}
+    this->_cli->socket()->connectToHost(this->_domain, this->_port.toInt());
+    
+    this->exec();
 
-RPZClientThread::~RPZClientThread() {
-    this->socket()->close();
+    this->_cli->socket()->close();
 }
 
 void RPZClientThread::_onDisconnect() {
@@ -41,7 +59,7 @@ void RPZClientThread::_onDisconnect() {
 
 void RPZClientThread::_onConnected() {
     //tell the server your username
-    this->sendJSON(JSONMethod::Handshake, RPZHandshake(this->_name));
+    this->_cli->sendJSON(JSONMethod::Handshake, RPZHandshake(this->_name));
 }
 
 QFuture<void> RPZClientThread::_handleAlterationRequest(AlterationPayload &payload, bool autoPropagate) {
@@ -51,7 +69,7 @@ QFuture<void> RPZClientThread::_handleAlterationRequest(AlterationPayload &paylo
     d.complete();
 
     //ignore alteration requests when socket is not connected
-    if(this->socket()->state() != QAbstractSocket::ConnectedState) return d.future();
+    if(this->_cli->socket()->state() != QAbstractSocket::ConnectedState) return d.future();
 
     //trace
     this->_payloadTrace(payload);
@@ -60,7 +78,7 @@ QFuture<void> RPZClientThread::_handleAlterationRequest(AlterationPayload &paylo
     if(!payload.isNetworkRoutable()) return d.future();
 
     //send json
-    this->sendJSON(JSONMethod::MapChanged, payload);
+    this->_cli->sendJSON(JSONMethod::MapChanged, payload);
     return d.future();
 }
 
@@ -68,16 +86,7 @@ QString RPZClientThread::getConnectedSocketAddress() {
     return this->_domain + ":" + this->_port;
 }
 
-void RPZClientThread::run() {
 
-    //prerequisites
-    if(this->_name.isEmpty()) {
-        emit connectionStatus("Nom de joueur requis !", true);
-        return;
-    }
-
-    this->socket()->connectToHost(this->_domain, this->_port.toInt());
-}
 
 RPZUser RPZClientThread::identity() {
     return this->_self;
@@ -93,7 +102,7 @@ void RPZClientThread::_routeIncomingJSON(JSONSocket* target, const JSONMethod &m
 
         case JSONMethod::ServerStatus: {
             emit connectionStatus(data.toString(), true);
-            this->socket()->disconnectFromHost();
+            this->_cli->socket()->disconnectFromHost();
         }
         break;
 
@@ -189,43 +198,43 @@ void RPZClientThread::_error(QAbstractSocket::SocketError _socketError) {
             msg = "La connexion a été refusée par l'hôte distant.";
             break;
         default:
-            msg = "L'erreur suivante s'est produite : " + this->socket()->errorString();
+            msg = "L'erreur suivante s'est produite : " + this->_cli->socket()->errorString();
                                    
     }
 
     emit connectionStatus(msg, true);
     qWarning() << "RPZClientThread : :" << msg;
 
-    this->socket()->close();
+    this->_cli->socket()->close();
 }
 
 
 void RPZClientThread::sendMessage(QVariantHash &message) {
     auto msg = RPZMessage(message);
-    this->sendJSON(JSONMethod::MessageFromPlayer, msg);
+    this->_cli->sendJSON(JSONMethod::MessageFromPlayer, msg);
 }
 
 void RPZClientThread::sendMapHistory(const QVariantHash &history) {
-    this->sendJSON(JSONMethod::MapChanged, history);
+    this->_cli->sendJSON(JSONMethod::MapChanged, history);
 }
 
 void RPZClientThread::askForAssets(const QList<RPZAssetHash> ids) {
     QVariantList list;
     for(auto &id : ids) list.append(id);
-    this->sendJSON(JSONMethod::AskForAssets, list);
+    this->_cli->sendJSON(JSONMethod::AskForAssets, list);
 }
 
 void RPZClientThread::changeAudioPosition(int newPosition) {
-    this->sendJSON(JSONMethod::AudioStreamPositionChanged, newPosition);
+    this->_cli->sendJSON(JSONMethod::AudioStreamPositionChanged, newPosition);
 }
 
 void RPZClientThread::setAudioStreamPlayState(bool isPlaying) {
-    this->sendJSON(JSONMethod::AudioStreamPlayingStateChanged, isPlaying);
+    this->_cli->sendJSON(JSONMethod::AudioStreamPlayingStateChanged, isPlaying);
 }
 
 void RPZClientThread::defineAudioStreamSource(const QString &audioStreamUrl, const QString &sourceTitle) {
     QVariantHash hash;
     hash["url"] = audioStreamUrl;
     hash["title"] = sourceTitle;
-    this->sendJSON(JSONMethod::AudioStreamUrlChanged, hash);
+    this->_cli->sendJSON(JSONMethod::AudioStreamUrlChanged, hash);
 }

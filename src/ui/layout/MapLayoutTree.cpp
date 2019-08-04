@@ -1,6 +1,6 @@
 #include "MapLayoutTree.h"
 
-MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) : RPZTree(parent), _hints(new TreeMapHint(this, mapMaster)) {
+MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) : RPZTree(parent), _hints(new TreeMapHint(mapMaster)) {
     
 	this->setSortingEnabled(true);
 
@@ -22,22 +22,25 @@ MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) : RPZTre
 
     this->setDragDropMode(QAbstractItemView::DragDropMode::NoDragDrop);
 
-    auto caca = [&](QTreeWidgetItem *item, QTreeWidgetItem* parent) {
-        if(!parent) {
-            this->addTopLevelItem(item);
-            this->sortByColumn(0, Qt::SortOrder::DescendingOrder);
-        } else {
-            parent->addChild(item);
-            this->_hints->_updateLayerState(parent);
-        }
-    };
+    this->_handleHintsSignals();
 
+}
+
+void MapLayoutTree::_handleHintsSignals() {
     QObject::connect(
         this->_hints, &TreeMapHint::requestingTreeItemInsertion,
-        this, caca,
-        Qt::QueuedConnection
+        this, &MapLayoutTree::_insertTreeWidgetItem
     );
+}
 
+void MapLayoutTree::_insertTreeWidgetItem(QTreeWidgetItem *item, QTreeWidgetItem* parent) {
+    if(!parent) {
+        this->addTopLevelItem(item);
+        this->sortByColumn(0, Qt::SortOrder::DescendingOrder);
+    } else {
+        parent->addChild(item);
+        this->_hints->_updateLayerState(parent);
+    }
 }
 
 TreeMapHint* MapLayoutTree::hints() {

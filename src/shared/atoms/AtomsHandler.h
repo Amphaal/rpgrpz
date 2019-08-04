@@ -8,7 +8,7 @@
 #include "src/_libs/asyncfuture.h"
 #include <QtConcurrent>
 
-class AtomsHandler : public QObject, public AtomAlterationAcknoledger {
+class AtomsHandler : public AtomAlterationAcknoledger {
 
     public:
         AtomsHandler(const AlterationPayload::Source &boundSource, bool autoRegisterAck = true);

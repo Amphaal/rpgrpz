@@ -37,7 +37,6 @@ class TreeMapHint : public AtomsHandler, public AtomsContextualMenuHandler {
         QHash<snowflake_uid, QTreeWidgetItem*> _atomTreeItemsById;
         QHash<RPZAssetHash, QSet<snowflake_uid>> _atomIdsBoundByRPZAssetHash;
         
-        QVector<snowflake_uid> _selectedAtomIds() override;
         snowflake_uid _extractAtomIdFromItem(QTreeWidgetItem* item) const;
 
         QTreeWidgetItem* _createTreeItem(RPZAtom &atom);
