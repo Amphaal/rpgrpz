@@ -30,25 +30,35 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), _hiddingBrush(new QBr
         this, &MapView::_onSceneSelectionChanged
     );
 
-        auto caca = [=](QGraphicsItem* item){
-            this->scene()->addItem(item);
-        };
+    this->_handleHintsSignalsAndSlots();
 
-        auto pipi = [=]() {
-            if(this->scene()->children().count() > 1) this->scene()->clear();
-        };
+    //default state
+    this->scale(this->_defaultScale, this->_defaultScale);
+    this->_goToDefaultViewState();
 
-        QObject::connect(
-            this->_hints, &MapHint::requestingAllItemsRemoval,
-            this, pipi,
-            Qt::ConnectionType::QueuedConnection
-        );
-        
-        QObject::connect(
-            this->_hints, &MapHint::requestingItemInsertion,
-            this, caca,
-            Qt::ConnectionType::QueuedConnection
-        );
+    //activate mouse tracking for ghost 
+    this->setMouseTracking(true);
+}
+
+void MapView::_handleHintsSignalsAndSlots() {
+ 
+    //on reset
+    QObject::connect(
+        this->_hints, &MapHint::requestingItemClearing,
+        this->scene(), &QGraphicsScene::clear
+    );
+    
+    //on item insert
+    QObject::connect(
+        this->_hints, &MapHint::requestingItemInsertion,
+        this->scene(), &QGraphicsScene::addItem
+    );
+
+    //on selection clear
+    QObject::connect(
+        this->_hints, &MapHint::requestingItemSelectionClearing,
+        this->scene(), &QGraphicsScene::clearSelection
+    );
 
     //on map loading, set placeholder...
     QObject::connect(
@@ -69,13 +79,6 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), _hiddingBrush(new QBr
 
         }
     );
-    
-    //default state
-    this->scale(this->_defaultScale, this->_defaultScale);
-    this->_goToDefaultViewState();
-
-    //activate mouse tracking for ghost 
-    this->setMouseTracking(true);
 }
 
 void MapView::contextMenuEvent(QContextMenuEvent *event) {
@@ -122,7 +125,7 @@ void MapView::_goToDefaultViewState() {
     this->_goToDefaultZoom();
 }
 
-MapHint* MapView::hints() {
+MapHint* MapView::hints() const {
     return this->_hints;
 }
 
@@ -157,7 +160,7 @@ void MapView::keyPressEvent(QKeyEvent * event) {
         case Qt::Key::Key_Right:
             this->_animatedMove(Qt::Orientation::Horizontal, 10);
             break;
-        
+
     }
 
 }
@@ -221,14 +224,8 @@ void MapView::_handleGhostItem(const Tool &tool) {
 
 
 void MapView::_onSceneSelectionChanged() {
-    
     auto selectedAtoms = this->_hints->selectedAtoms();
-    
-    QVector<RPZAtom*> out;
-    for(auto atom : selectedAtoms) out.append(atom);
-
-    emit subjectedAtomsChanged(out);
-    
+    emit subjectedAtomsChanged(selectedAtoms);
 }
 
 /////////////

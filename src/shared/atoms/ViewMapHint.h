@@ -64,8 +64,13 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         void requestMissingAssets(const QList<RPZAssetHash> assetIdsToRequest);
         void atomTemplateChanged();
 
-        void requestingItemInsertion(QGraphicsItem* graphicElem);
-        void requestingAllItemsRemoval();
+        void requestingItemInsertion(QGraphicsItem* toInsert);
+        void requestingItemFocus(QGraphicsItem* toFocus);
+        void requestingItemClearing();
+        void requestingItemDeletion(QGraphicsItem* toRemove);
+        void requestingItemSelectionClearing();
+        void requestingItemSelection(QGraphicsItem* toSelect);
+        void requestingItemUpdate(QGraphicsItem* toUpdate, const QHash<AtomParameter, QVariant> &newData);
 
     private:
         //helpers

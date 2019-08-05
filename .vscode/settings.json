@@ -138,7 +138,8 @@
         "qrandomgenerator": "cpp",
         "qlist": "cpp",
         "qtconcurrent": "cpp",
-        "qcoreapplication": "cpp"
+        "qcoreapplication": "cpp",
+        "compare": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

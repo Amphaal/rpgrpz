@@ -43,7 +43,7 @@ class MapView : public QGraphicsView, public ClientBindable {
         enum Tool { Default, Atom, Scroll };
 
         MapView(QWidget *parent);
-        MapHint* hints();
+        MapHint* hints() const;
 
     public slots:
         void actionRequested(const MapTools::Actions &action);
@@ -72,12 +72,17 @@ class MapView : public QGraphicsView, public ClientBindable {
         void keyPressEvent(QKeyEvent * event) override;
         void resizeEvent(QResizeEvent * event) override;
 
+    private slots:
+
+    
     private:
+        void _handleHintsSignalsAndSlots();
+
         //scene
             MapViewGraphicsScene* _scene = nullptr;
             QBrush* _hiddingBrush = nullptr;
 
-        MapHint* _hints;
+        MapHint* _hints = nullptr;
         void _onSceneSelectionChanged();
         void _goToDefaultViewState();
 
