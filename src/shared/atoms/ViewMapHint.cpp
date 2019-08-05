@@ -280,6 +280,12 @@ void ViewMapHint::replaceMissingAssetPlaceholders(const RPZAssetMetadata &metada
     this->_missingAssetsIdsFromDb.remove(assetId);
 }
 
+void ViewMapHint::handlePreviewRequest(const QVector<snowflake_uid> &atomIdsToPreview, const AtomParameter &parameter, QVariant &value) {
+    for(const auto &id : atomIdsToPreview) {
+        AtomConverter::updateGraphicsItemFromMetadata(this->_GItemsByAtomId[id], parameter, value);
+    }
+}
+
 void ViewMapHint::handleParametersUpdateAlterationRequest(QVariantHash &payload) {
     
     auto cPayload = Payloads::autoCast(payload);

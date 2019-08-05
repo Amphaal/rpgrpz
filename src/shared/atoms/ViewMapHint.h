@@ -49,6 +49,7 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         
         //special handling
         void handleParametersUpdateAlterationRequest(QVariantHash &payload);
+        void handlePreviewRequest(const QVector<snowflake_uid> &atomIdsToPreview, const AtomParameter &parameter, QVariant &value);
 
         //alter template Atom
         RPZAtom* templateAtom = nullptr;
