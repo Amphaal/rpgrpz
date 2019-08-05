@@ -235,34 +235,32 @@ void MapView::_onSceneSelectionChanged() {
 /* NETWORK */
 /////////////
 
-void MapView::onRPZClientThreadConnecting(RPZClientThread * cc) {
-
-    ClientBindable::onRPZClientThreadConnecting(cc);
+void MapView::onRPZClientThreadConnecting() {
 
     //save current map
     this->_hints->mayWantToSavePendingState();
 
     //when self user send
     QObject::connect(
-        this->_rpzClient, &RPZClientThread::ackIdentity,
+        _rpzClient, &RPZClientThread::ackIdentity,
         this, &MapView::_onIdentityReceived
     );
 
     //when missing assets
     QObject::connect(
         this->_hints, &MapHint::requestMissingAssets,
-        this->_rpzClient, &RPZClientThread::askForAssets
+        _rpzClient, &RPZClientThread::askForAssets
     );
 
     //when receiving missing asset
     QObject::connect(
-        this->_rpzClient, &RPZClientThread::assetSucessfullyInserted,
+        _rpzClient, &RPZClientThread::assetSucessfullyInserted,
         this->_hints, &MapHint::replaceMissingAssetPlaceholders
     );
 
     //on map change
     QObject::connect(
-        this->_rpzClient, &RPZClientThread::mapChanged,
+        _rpzClient, &RPZClientThread::mapChanged,
         [&](const QVariantHash &payload) {
             auto cp_payload = Payloads::autoCast(payload);
             this->_hints->queueAlteration(*cp_payload);
@@ -271,7 +269,7 @@ void MapView::onRPZClientThreadConnecting(RPZClientThread * cc) {
 
     //when been asked for map content
     QObject::connect(
-        this->_rpzClient, &RPZClientThread::beenAskedForMapHistory,
+        _rpzClient, &RPZClientThread::beenAskedForMapHistory,
         this, &MapView::_sendMapHistory
     );
 
@@ -287,7 +285,7 @@ void MapView::_onIdentityReceived(const QVariantHash &userHash) {
     emit remoteChanged(is_remote);
 }
 
-void MapView::onRPZClientThreadDisconnect(RPZClientThread* cc) {
+void MapView::onRPZClientThreadDisconnect() {
 
     //back to default state
     this->_hints->defineAsRemote();

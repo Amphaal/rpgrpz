@@ -16,8 +16,7 @@ AudioManager::AudioManager() :
     this->_link();
 }
 
-void AudioManager::onRPZClientThreadConnecting(RPZClientThread * cc) {
-    ClientBindable::onRPZClientThreadConnecting(cc);
+void AudioManager::onRPZClientThreadConnecting() {
     
     //reset state
     this->_isLocalOnly = false;
@@ -27,7 +26,7 @@ void AudioManager::onRPZClientThreadConnecting(RPZClientThread * cc) {
 
     //on receiving identity
     QObject::connect(
-        cc, &RPZClientThread::ackIdentity,
+        _rpzClient, &RPZClientThread::ackIdentity,
         [&]() {
             this->_isNetworkMaster = this->_rpzClient->identity().role() == RPZUser::Role::Host;
             this->_plCtrl->setEnabled(this->_isNetworkMaster);
@@ -36,19 +35,19 @@ void AudioManager::onRPZClientThreadConnecting(RPZClientThread * cc) {
 
     //on master requesting audio change
     QObject::connect(
-        cc, &RPZClientThread::audioSourceChanged,
+        _rpzClient, &RPZClientThread::audioSourceChanged,
         this, &AudioManager::_playAudio
     );
 
     //on master seeking
     QObject::connect(
-        cc, &RPZClientThread::audioPositionChanged,
+        _rpzClient, &RPZClientThread::audioPositionChanged,
         this, &AudioManager::_onSeekingRequested
     );
 
     //on master pausing / playing
     QObject::connect(
-        cc, &RPZClientThread::audioPlayStateChanged,
+        _rpzClient, &RPZClientThread::audioPlayStateChanged,
         [&](bool isPlaying) {
             if(isPlaying) this->_cli->play();
             else this->_cli->pause();
@@ -57,7 +56,7 @@ void AudioManager::onRPZClientThreadConnecting(RPZClientThread * cc) {
 
 }
 
-void AudioManager::onRPZClientThreadDisconnect(RPZClientThread* cc) {
+void AudioManager::onRPZClientThreadDisconnect() {
     this->_isNetworkMaster = false;
     this->_isLocalOnly = true;
     this->_plCtrl->setEnabled(true);

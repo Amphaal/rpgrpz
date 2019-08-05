@@ -172,7 +172,6 @@ QGraphicsItem* ViewMapHint::generateGhostItem(RPZAssetMetadata &assetMetadata) {
 
     //add to scene
     QGraphicsItem* ghostItem = this->scene()->addToScene(atomBuiltFromTemplate, assetMetadata, true);
-    this->templateGItem = ghostItem;
 
     //advert change in template
     emit atomTemplateChanged();
@@ -343,7 +342,7 @@ QVector<RPZAtom*> ViewMapHint::_getAtomFromGraphicsItems(const QList<QGraphicsIt
     return list;
 }
 
-RPZAtom* ViewMapHint::_getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const {
+&RPZAtom ViewMapHint::_getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const {
     auto ptrValToAtom = graphicElem->data(RPZUserRoles::AtomPtr).toLongLong();
     return (RPZAtom*)ptrValToAtom;
 }
@@ -425,7 +424,6 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
             }
         }   
         break;
-
 
         //on selection
         case PayloadAlteration::PA_Selected: {

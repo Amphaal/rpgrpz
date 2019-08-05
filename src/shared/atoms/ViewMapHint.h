@@ -53,7 +53,6 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
 
         //alter template Atom
         RPZAtom* templateAtom = nullptr;
-        QGraphicsItem* templateGItem = nullptr;
 
         void setDefaultUser(RPZUser user);
         void setDefaultLayer(int layer);
@@ -75,7 +74,7 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         RPZAtom* _getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const;
         QVector<RPZAtom*> _getAtomFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const;
 
-        RPZMap<QGraphicsItem*> _GItemsByAtomId;
+        QMap<snowflake_uid, QGraphicsItem*> _GItemsByAtomId;
 
         //inner event handling
         bool _preventInnerGIEventsHandling = false;
