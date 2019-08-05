@@ -205,7 +205,7 @@ void RPZClientThread::_error(QAbstractSocket::SocketError _socketError) {
     emit connectionStatus(msg, true);
     qWarning() << "RPZClientThread : :" << msg;
 
-    this->_cli->socket()->close();
+    this->exit();
 }
 
 

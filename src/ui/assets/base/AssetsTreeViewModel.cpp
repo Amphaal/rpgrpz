@@ -6,13 +6,12 @@ AssetsDatabase* AssetsTreeViewModel::database() {
     return this->_db;
 }
 
-void AssetsTreeViewModel::onRPZClientThreadConnecting(RPZClientThread * cc) {
-    ClientBindable::onRPZClientThreadConnecting(cc);
+void AssetsTreeViewModel::onRPZClientThreadConnecting() {
 
     //import asset
     QObject::connect(
-        cc, &RPZClientThread::receivedAsset,
-        [&, cc](const QVariantHash &package) {
+        _rpzClient, &RPZClientThread::receivedAsset,
+        [&](const QVariantHash &package) {
             
             this->beginResetModel();
                 auto metadata = this->_db->importAsset(package); 
@@ -20,7 +19,7 @@ void AssetsTreeViewModel::onRPZClientThreadConnecting(RPZClientThread * cc) {
 
             if(!metadata.isEmpty()) {
                 RPZAssetMetadata castedMd(metadata);
-                emit cc->assetSucessfullyInserted(castedMd);
+                emit _rpzClient->assetSucessfullyInserted(castedMd);
             }
         }
     );

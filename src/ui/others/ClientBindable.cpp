@@ -5,44 +5,37 @@ ClientBindable::ClientBindable() {
 }
 
 void ClientBindable::bindAll(RPZClientThread* cc) {
-    for(auto widget : _boundWidgets) {
-        widget->onRPZClientThreadConnecting(cc);
+    
+    _rpzClient = cc;
+
+    //on disconnect
+    QObject::connect(
+        _rpzClient, &QThread::finished,
+		ClientBindable::_onClientThreadFinished
+    );
+    
+    //trigger connection
+    for(auto ref : _boundWidgets) {
+        ref->onRPZClientThreadConnecting();
+    }
+
+}
+
+void ClientBindable::_onClientThreadFinished() {
+    delete _rpzClient;
+    _rpzClient = nullptr;
+
+    for(auto ref : _boundWidgets) {
+        ref->onRPZClientThreadDisconnect();
     }
 }
 
 void ClientBindable::unbindAll() {
-    for(auto widget : _boundWidgets) {
-        widget->unbindRPZClientThread();
+    if(_rpzClient && _rpzClient->isRunning()) {
+        _rpzClient->exit();
+		_rpzClient->wait();
     }
 }
 
-void ClientBindable::onRPZClientThreadConnecting(RPZClientThread* cc) {
-    
-    this->unbindRPZClientThread();
-    this->_rpzClient = cc;
-
-    //on disconnect
-    QObject::connect(
-        this->_rpzClient->socket(), &QAbstractSocket::disconnected,
-        [&]() {
-            this->onRPZClientThreadDisconnect(this->_rpzClient);
-        }
-    );
-
-    //pass to nullptr for comparaisons
-    QObject::connect(
-        this->_rpzClient, &QObject::destroyed,
-        [&]() {
-            this->_rpzClient = nullptr;
-        }
-    );
-
-}
-
-void ClientBindable::onRPZClientThreadDisconnect(RPZClientThread* cc) {}
-
-void ClientBindable::unbindRPZClientThread() {
-    if(this->_rpzClient) {
-        this->_rpzClient->disconnect();
-    }
-}
+void ClientBindable::onRPZClientThreadConnecting() {}
+void ClientBindable::onRPZClientThreadDisconnect() {}

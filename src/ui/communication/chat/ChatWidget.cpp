@@ -91,24 +91,22 @@ void ChatWidget::_onReceivedLogHistory(const QVariantList &messages) {
     this->_chatLog->handleResponse(response);
 }
 
-void ChatWidget::onRPZClientThreadConnecting(RPZClientThread * cc) {
-
-    ClientBindable::onRPZClientThreadConnecting(cc);
+void ChatWidget::onRPZClientThreadConnecting() {
     
-    this->serverName = cc->getConnectedSocketAddress();
+    this->serverName = _rpzClient->getConnectedSocketAddress();
     
     this->_usersLog->clearLines();
     this->_chatLog->clearLines();
 
     //on error from client
     QObject::connect(
-        this->_rpzClient, &RPZClientThread::connectionStatus, 
+        _rpzClient, &RPZClientThread::connectionStatus, 
         this, &ChatWidget::_onRPZClientThreadStatus
     );
     
     //on message received
     QObject::connect(
-        this->_rpzClient, &RPZClientThread::receivedMessage, 
+        _rpzClient, &RPZClientThread::receivedMessage, 
         [&](const QVariantHash &message) {
             auto msg = RPZMessage(message);
             this->_chatLog->handleMessage(msg);
@@ -117,13 +115,13 @@ void ChatWidget::onRPZClientThreadConnecting(RPZClientThread * cc) {
 
     //welcome once all history have been received
     QObject::connect(
-        this->_rpzClient, &RPZClientThread::receivedLogHistory, 
+        _rpzClient, &RPZClientThread::receivedLogHistory, 
         this, &ChatWidget::_onReceivedLogHistory
     );
 
     //on server response
     QObject::connect(
-        this->_rpzClient, &RPZClientThread::serverResponseReceived, 
+        _rpzClient, &RPZClientThread::serverResponseReceived, 
         [&](const QVariantHash &reponse) {
             auto resp = RPZResponse(reponse);
             this->_chatLog->handleResponse(resp);
@@ -133,7 +131,7 @@ void ChatWidget::onRPZClientThreadConnecting(RPZClientThread * cc) {
     
     //update users list
     QObject::connect(
-        this->_rpzClient, &RPZClientThread::loggedUsersUpdated,
+        _rpzClient, &RPZClientThread::loggedUsersUpdated,
         this->_usersLog, &UsersLog::updateUsers
     );
 

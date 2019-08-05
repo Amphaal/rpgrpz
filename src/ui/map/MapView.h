@@ -59,8 +59,8 @@ class MapView : public QGraphicsView, public ClientBindable {
         void enterEvent(QEvent *event) override;
         void leaveEvent(QEvent *event) override;
 
-        void onRPZClientThreadConnecting(RPZClientThread * cc) override;
-        void onRPZClientThreadDisconnect(RPZClientThread* cc) override;
+        void onRPZClientThreadConnecting() override;
+        void onRPZClientThreadDisconnect() override;
 
         void contextMenuEvent(QContextMenuEvent *event) override;
 

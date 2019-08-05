@@ -6,20 +6,17 @@
 class ClientBindable {
     
     public:
-
         ClientBindable();
         
         static void bindAll(RPZClientThread* cc);
         static void unbindAll();
 
-        virtual void onRPZClientThreadConnecting(RPZClientThread* cc);
-        virtual void onRPZClientThreadDisconnect(RPZClientThread* cc);
-
-        void unbindRPZClientThread();
-
     protected:
-        RPZClientThread* _rpzClient = nullptr;
-    
+        static inline RPZClientThread* _rpzClient = nullptr;
+        virtual void onRPZClientThreadConnecting();
+        virtual void onRPZClientThreadDisconnect();
+
     private:
-        static inline QVector<ClientBindable*> _boundWidgets = QVector<ClientBindable*>();
+        static inline QVector<ClientBindable*> _boundWidgets;
+        static void _onClientThreadFinished();
 };
