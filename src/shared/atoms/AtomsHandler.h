@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+#include <QPair>
 
 #include "src/shared/payloads/Payloads.h"
 #include "AtomAlterationAcknoledger.h"

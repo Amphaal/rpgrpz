@@ -74,9 +74,6 @@ class RPZAtom : public Ownable {
         RPZAtom(snowflake_uid id, const AtomType &type, const RPZUser &owner);
         RPZAtom(const AtomType &type);
 
-        QGraphicsItem* graphicsItem() const;
-        void setGraphicsItem(QGraphicsItem* item);
-
         AtomType type() const;
         void changeType(const AtomType &type);
         QString descriptor() const;
