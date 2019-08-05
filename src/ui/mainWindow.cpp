@@ -242,6 +242,11 @@ void MainWindow::_initUIApp() {
         this->_mapView->hints(), &ViewMapHint::handleParametersUpdateAlterationRequest
     );
 
+    //intercept preview request from editor
+    QObject::connect(
+        this->_atomEditManager->editor(), &AtomEditor::requiresPreview,
+        this->_mapView->hints(), &ViewMapHint::handlePreviewRequest
+    );
 
     //unselect asset
     QObject::connect(

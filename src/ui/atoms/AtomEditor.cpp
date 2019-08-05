@@ -12,10 +12,14 @@ AtomEditor::AtomEditor(QWidget* parent) : QGroupBox(_strEM[None], parent) {
 }
 
 
-void AtomEditor::buildEditor(QVector<RPZAtom*> &atomsToBuildFrom) {
+void AtomEditor::buildEditor(const QVector<RPZAtom*> &atomsToBuildFrom) {
     
     //modify atom list
     this->_atoms = atomsToBuildFrom;
+    this->_atomIds.clear();
+    for(auto atom : this->_atoms) this->_atomIds.append(atom->id());
+    
+    //clear editors
     this->_visibleEditors.clear();
 
     //update edit mode
@@ -63,7 +67,7 @@ void AtomEditor::resetParams() {
             changes.insert(param, QVariant());
         }
 
-        MetadataChangedPayload payload(this->_atomIds(), changes);
+        MetadataChangedPayload payload(this->_atomIds, changes);
         this->_emitPayload(payload);
 
 }
@@ -84,23 +88,29 @@ void AtomEditor::_createEditorsFromAtomParameters() {
     this->_editorsByParam[AtomParameter::Text] = new AtomTextEditor(AtomParameter::Text);
 
     for(auto editor : this->_editorsByParam) {
+
         QObject::connect(
             editor, &AtomSubEditor::valueConfirmedForPayload,
             this, &AtomEditor::_onSubEditorChanged
         );
+
+        QObject::connect(
+            editor, &AtomSubEditor::valueConfirmedForPreview,
+            this, &AtomEditor::_onPreviewRequested
+        );
+
         this->layout()->addWidget(editor);
+
     }
 }
 
-QVector<snowflake_uid> AtomEditor::_atomIds() {
-    QVector<snowflake_uid> ids;
-    for(auto atom : this->_atoms) ids.append(atom->id());
-    return ids;
+void AtomEditor::_onSubEditorChanged(const AtomParameter &parameterWhoChanged, QVariant &value) {
+    MetadataChangedPayload payload(this->_atomIds, parameterWhoChanged, value);
+    this->_emitPayload(payload);
 }
 
-void AtomEditor::_onSubEditorChanged(const AtomParameter &parameterWhoChanged, QVariant &value) {
-    MetadataChangedPayload payload(this->_atomIds(), parameterWhoChanged, value);
-    this->_emitPayload(payload);
+void AtomEditor::_onPreviewRequested(const AtomParameter &parameter, QVariant &value) {
+    emit requiresPreview(this->_atoms, parameter, value);
 }
 
 void AtomEditor::_emitPayload(AlterationPayload &payload) {

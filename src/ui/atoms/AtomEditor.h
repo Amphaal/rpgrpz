@@ -26,11 +26,12 @@ class AtomEditor : public QGroupBox {
         enum EditMode { None, Template, Selection };
 
         AtomEditor(QWidget* parent = nullptr);
-        void buildEditor(QVector<RPZAtom*> &atomsToBuildFrom);
+        void buildEditor(const QVector<RPZAtom*> &atomsToBuildFrom);
         void resetParams();
     
     signals:
         void requiresAtomAlteration(QVariantHash &payload);
+        void requiresPreview(const QVector<snowflake_uid> &atomIdsToPreview, const AtomParameter &parameter, QVariant &value);
     
     private:
 
@@ -41,7 +42,7 @@ class AtomEditor : public QGroupBox {
         };
 
         QVector<RPZAtom*> _atoms;
-        QVector<snowflake_uid> _atomIds();
+        QVector<snowflake_uid> _atomIds;
 
         QMap<AtomParameter, AtomSubEditor*> _editorsByParam;
         QList<AtomParameter> _visibleEditors;
@@ -50,6 +51,8 @@ class AtomEditor : public QGroupBox {
         void _createEditorsFromAtomParameters();
 
         void _onSubEditorChanged(const AtomParameter &parameterWhoChanged, QVariant &value);
+        void _onPreviewRequested(const AtomParameter &parameter, QVariant &value);
+
         void _emitPayload(AlterationPayload &payload);
         EditMode _changeEditMode();
 };

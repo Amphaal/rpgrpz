@@ -49,9 +49,7 @@ void AtomSliderEditor::_onSliderChanging(int sliderVal) {
     auto outputAsVariant = QVariant(output);
     this->_descr->updateValue(output);
     
-    for(auto atom : this->_atomsToManipulate) {
-        AtomConverter::updateGraphicsItemFromMetadata(atom->graphicsItem(), this->_param, outputAsVariant);
-    }
+    emit valueConfirmedForPreview(this->_param, outputAsVariant);
 };
 
 double AtomSliderEditor::outputValue() {

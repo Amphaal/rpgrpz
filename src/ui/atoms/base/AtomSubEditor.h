@@ -20,6 +20,7 @@ class AtomSubEditor : public QWidget {
 
     signals:
         void valueConfirmedForPayload(const AtomParameter &parameter, QVariant &value);
+        void valueConfirmedForPreview(const AtomParameter &parameter, QVariant &value);
 
     protected:
         AtomParameter _param;
