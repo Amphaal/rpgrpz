@@ -9,14 +9,6 @@ RPZAtom::RPZAtom(const AtomType &type) : Ownable(SnowFlake::get()->nextId()) {
     this->_setType(type);  
 };
 
-QGraphicsItem* RPZAtom::graphicsItem() const { 
-    return this->_graphicsItem; 
-};
-
-void RPZAtom::setGraphicsItem(QGraphicsItem* item) { 
-    this->_graphicsItem = item; 
-};
-
 //overrides descriptor
 QString RPZAtom::descriptor() const { 
 

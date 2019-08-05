@@ -55,7 +55,7 @@ class AtomsStorage : public AtomsHandler {
         QVector<snowflake_uid> _selectedAtomIds;
 
         //duplication
-        RPZMap<RPZAtom> _generateDuplicate(const QVector<snowflake_uid> &atomIdsToDuplicate) const;
+        RPZMap<RPZAtom> _generateAtomDuplicates(const QVector<snowflake_uid> &atomIdsToDuplicate) const;
         static constexpr int _pixelStepPosDuplication = 10;
         static QPointF _getPositionFromAtomDuplication(const RPZAtom &atomToDuplicate, int duplicateCount);
 };

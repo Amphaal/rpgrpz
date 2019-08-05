@@ -46,11 +46,11 @@ void AtomSliderEditor::loadTemplate(QVector<RPZAtom*> &atomsToManipulate, QVaria
 void AtomSliderEditor::_onSliderChanging(int sliderVal) {
     
     auto output = this->outputValue();
+    auto outputAsVariant = QVariant(output);
     this->_descr->updateValue(output);
     
     for(auto atom : this->_atomsToManipulate) {
-        auto outputVal = QVariant(output);
-        AtomConverter::updateGraphicsItemFromMetadata(atom->graphicsItem(), this->_param, outputVal);
+        AtomConverter::updateGraphicsItemFromMetadata(atom->graphicsItem(), this->_param, outputAsVariant);
     }
 };
 

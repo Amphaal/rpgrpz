@@ -13,7 +13,7 @@ RPZMap<RPZAtom> AtomsStorage::atoms() {
 
 void AtomsStorage::_registerPayloadForHistory(AlterationPayload &payload) {
     
-    //do nothing is payload is not redo compatible
+    //do nothing if payload is not redo compatible
     if(!payload.isNetworkRoutable()) return;
 
     //cut branch
@@ -289,7 +289,6 @@ RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, sno
             this->_atomIdsByOwnerId[storedAtomOwner.id()].remove(targetedAtomId);
 
             //update 
-            delete storedAtom->graphicsItem();
             this->_atomsById.remove(targetedAtomId); 
             storedAtom = nullptr;
 
@@ -317,7 +316,7 @@ void AtomsStorage::duplicateAtoms(const QVector<snowflake_uid> &atomIdList) {
     }
     
     //generate duplicated atoms
-    auto newAtoms = this->_generateDuplicate(atomIdList);
+    auto newAtoms = this->_generateAtomDuplicates(atomIdList);
 
     //request insertion
     AddedPayload added(newAtoms);
@@ -329,7 +328,7 @@ void AtomsStorage::duplicateAtoms(const QVector<snowflake_uid> &atomIdList) {
 }
 
 
-RPZMap<RPZAtom> AtomsStorage::_generateDuplicate(const QVector<snowflake_uid> &atomIdsToDuplicate) const {
+RPZMap<RPZAtom> AtomsStorage::_generateAtomDuplicates(const QVector<snowflake_uid> &atomIdsToDuplicate) const {
     
     RPZMap<RPZAtom> newAtoms;
 
