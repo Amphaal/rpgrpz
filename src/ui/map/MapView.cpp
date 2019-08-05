@@ -6,7 +6,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), _hiddingBrush(new QBr
     this->_scene = new MapViewGraphicsScene(this->_defaultSceneSize);
     this->setScene(this->_scene);
 
-    this->_hints = new MapHint(this); //after first inst of scene
+    this->_hints = new MapHint; //after first inst of scene
     this->_resetTool();
     
     //openGL activation

@@ -18,31 +18,33 @@ class TreeMapHint : public AtomsHandler, public AtomsContextualMenuHandler {
     public:
         TreeMapHint(AtomsStorage* mapMaster);
 
-        void _updateLayerState(QTreeWidgetItem* layerItem);
-
     public slots:
         void propagateFocus(snowflake_uid focusedAtomId);
         void propagateSelection(QVector<snowflake_uid> &selectedIds);
+        void removeLayerItem(int layer);
 
     signals:
-        void requestingTreeItemInsertion(QTreeWidgetItem *item, QTreeWidgetItem* parent);
+        void requestingTreeItemInsertion(QTreeWidgetItem* item, QTreeWidgetItem* parent);
+        void requestingClearingTree();
+        void requestingItemDeletion(QTreeWidgetItem* toRemove);
+        void requestingItemMove(QTreeWidgetItem* oldLayerItem, QTreeWidgetItem* newLayerItem, QTreeWidgetItem *item);
+        void requestingItemTextChange(QTreeWidgetItem* toChange, const QString &newName);
+        void requestingClearingSelection();
+        void requestingSelection(QTreeWidgetItem* toSelect);
+        void requestingItemDataUpdate(QTreeWidgetItem* target, int column, const QHash<int, QVariant> &newData);
+
+    private slots:
+        void _onRenamedAsset(const RPZAssetHash &id, const QString &newName);
 
     private:
         QHash<int, QTreeWidgetItem*> _layersItems;
         QTreeWidgetItem* _getLayerItem(int layer);
 
+        QTreeWidgetItem* _createTreeItem(RPZAtom &atom);
         void _bindOwnerToItem(QTreeWidgetItem* item, RPZUser &owner);
 
-        void _onElementSelectionChanged();
-        void _onElementDoubleClicked(QTreeWidgetItem * item, int column);
-        void _onRenamedAsset(const RPZAssetHash &id, const QString &newName);
-        
         QHash<snowflake_uid, QTreeWidgetItem*> _atomTreeItemsById;
         QHash<RPZAssetHash, QSet<snowflake_uid>> _atomIdsBoundByRPZAssetHash;
-
-        QTreeWidgetItem* _createTreeItem(RPZAtom &atom);
-
-        void _changeLayer(QVector<snowflake_uid> &elementIds, int newLayer);
 
         //augmenting AtomsStorage
         virtual void _handlePayload(AlterationPayload &payload) override;

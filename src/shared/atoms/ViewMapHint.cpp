@@ -61,7 +61,7 @@ void ViewMapHint::handleAnyMovedItems() {
 
 void ViewMapHint::_onSceneItemChanged(QGraphicsItem* item, int changeFlag) {
 
-    if(this->_preventInnerGIEventsHandling) return;
+    if(isDequeuing()) return;
 
     switch(changeFlag) {
         case (int)MapViewCustomItemsEventFlag::Moved: {
@@ -88,7 +88,7 @@ QVector<RPZAtom*> ViewMapHint::selectedAtoms() {
 void ViewMapHint::_onSceneSelectionChanged() {
     
     //prevent
-    if(this->_preventInnerGIEventsHandling) return;
+    if(isDequeuing()) return;
 
     //bypass internal
     SelectedPayload payload(this->selectedAtomIds());
@@ -342,7 +342,7 @@ QVector<RPZAtom*> ViewMapHint::_getAtomFromGraphicsItems(const QList<QGraphicsIt
     return list;
 }
 
-&RPZAtom ViewMapHint::_getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const {
+RPZAtom* ViewMapHint::_getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const {
     auto ptrValToAtom = graphicElem->data(RPZUserRoles::AtomPtr).toLongLong();
     return (RPZAtom*)ptrValToAtom;
 }
@@ -358,16 +358,12 @@ QVector<RPZAtom*> ViewMapHint::_getAtomFromGraphicsItems(const QList<QGraphicsIt
 //alter Scene
 void ViewMapHint::_handlePayload(AlterationPayload &payload) { 
 
-    this->_preventInnerGIEventsHandling = true;
-
     //on reset
     auto type = payload.type();
     if(type == PayloadAlteration::PA_Selected) this->scene()->clearSelection();
     if(type == PayloadAlteration::PA_Reset) emit requestingAllItemsRemoval(); //this->scene()->clear();
     
     AtomsStorage::_handlePayload(payload);
-
-    this->_preventInnerGIEventsHandling = false;
 
     //request assets if there are missing
     auto c_MissingAssets = this->_assetsIdsToRequest.count();

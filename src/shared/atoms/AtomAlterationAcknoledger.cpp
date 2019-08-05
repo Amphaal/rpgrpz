@@ -50,6 +50,10 @@ QFuture<void> AtomAlterationAcknoledger::propagateAlterationPayload(AlterationPa
     return all.future();
 }
 
+bool AtomAlterationAcknoledger::isDequeuing() {
+    return _dequeuing;
+}
+
 void AtomAlterationAcknoledger::_payloadTrace(AlterationPayload &payload) {
     auto self = AlterationPayload::SourceAsStr[this->source()];
     auto source = AlterationPayload::SourceAsStr[payload.source()];
