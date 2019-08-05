@@ -110,7 +110,7 @@ void AtomEditor::_onSubEditorChanged(const AtomParameter &parameterWhoChanged, Q
 }
 
 void AtomEditor::_onPreviewRequested(const AtomParameter &parameter, QVariant &value) {
-    emit requiresPreview(this->_atoms, parameter, value);
+    emit requiresPreview(this->_atomIds, parameter, value);
 }
 
 void AtomEditor::_emitPayload(AlterationPayload &payload) {

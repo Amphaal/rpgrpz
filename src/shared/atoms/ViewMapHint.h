@@ -77,7 +77,6 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         QMap<snowflake_uid, QGraphicsItem*> _GItemsByAtomId;
 
         //inner event handling
-        bool _preventInnerGIEventsHandling = false;
         void _onSceneSelectionChanged();
         void _onSceneItemChanged(QGraphicsItem* item, int changeFlag);
             QSet<QGraphicsItem*> _itemsWhoNotifiedMovement;

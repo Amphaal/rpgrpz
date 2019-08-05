@@ -35,6 +35,12 @@ class MapLayoutTree : public RPZTree {
 
     private slots:
         void _insertTreeWidgetItem(QTreeWidgetItem *item, QTreeWidgetItem* parent);
+        void _moveFromLayer(QTreeWidgetItem* oldLayerItem, QTreeWidgetItem* newLayerItem, QTreeWidgetItem *item);
+        void _renameItem(QTreeWidgetItem* toRename, const QString &newName);
+        void _removeItem(QTreeWidgetItem* toRemove);
+        void _selectItem(QTreeWidgetItem* toSelect);
+        void _clearSelectedItems();
+        void _changeItemData(QTreeWidgetItem* target, int column, const QHash<int, QVariant> &newData);
 
     private:
         TreeMapHint* _hints = nullptr;
@@ -43,4 +49,6 @@ class MapLayoutTree : public RPZTree {
         //id fetching
         snowflake_uid _extractAtomIdFromItem(QTreeWidgetItem* item) const;
         QVector<snowflake_uid> _extractAtomIdFromItems(const QList<QTreeWidgetItem*> &items) const;
+
+        void _updateLayerState(QTreeWidgetItem* layerItem);
 };

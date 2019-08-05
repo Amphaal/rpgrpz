@@ -21,6 +21,7 @@ class AtomAlterationAcknoledger : public QObject {
         AlterationPayload::Source source();
 
         void queueAlteration(AlterationPayload &payload, bool autoPropagate = true);
+        static bool isDequeuing();
 
     signals:
         void resetAlterationRequested(QFuture<void> &alterationRequest);
@@ -30,7 +31,6 @@ class AtomAlterationAcknoledger : public QObject {
         virtual QFuture<void> propagateAlterationPayload(AlterationPayload &payload);
 
         void _payloadTrace(AlterationPayload &payload);
-
 
     private:
         AlterationPayload::Source _source = AlterationPayload::Source::Undefined;

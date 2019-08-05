@@ -29,12 +29,12 @@ void TreeMapHint::_handlePayload(AlterationPayload &payload) {
     auto type = payload.type();
 
     //selected...
-    if(type == PayloadAlteration::PA_Selected) this->_boundTree->clearSelection();
+    if(type == PayloadAlteration::PA_Selected) emit requestingClearingSelection();
     if(type == PayloadAlteration::PA_Reset) {
         this->_atomTreeItemsById.clear();
         this->_layersItems.clear();
         this->_atomIdsBoundByRPZAssetHash.clear();
-        this->_boundTree->clear();
+        emit requestingClearingTree();
     }
 
     //atom wielders format
@@ -96,7 +96,6 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
 
         case PayloadAlteration::PA_Removed: {
             
-            auto layerItem = item->parent();
             RPZAssetHash tbrAtom_assetId = item->data(0, RPZUserRoles::AssetHash).toString();
 
             //if has assetId, remove it from tracking list
@@ -105,15 +104,12 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
             }
 
             this->_atomTreeItemsById.remove(targetedAtomId);
-            delete item;
-
-            //also remove layer
-            this->_updateLayerState(layerItem);
+            emit requestingItemDeletion(item);
         }
         break;
 
         case PayloadAlteration::PA_Selected: {
-            item->setSelected(true);
+            emit requestingSelection(item);
         }
         break;
 
@@ -128,20 +124,29 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
                 switch(param) {
                 
                     case AtomParameter::Locked: {
-                        auto isLocked = partial.isLocked();
-                        item->setData(1, RPZUserRoles::AtomAvailability, isLocked);
+                        emit requestingItemDataUpdate(
+                            item, 1, 
+                            {{RPZUserRoles::AtomAvailability, partial.isLocked()}} 
+                        );
                     }
                     break;
 
                     case AtomParameter::Hidden: {
-                        auto isHidden = partial.isHidden();
-                        item->setData(1, RPZUserRoles::AtomVisibility, isHidden);
+                        emit requestingItemDataUpdate(
+                            item, 1, 
+                            {{RPZUserRoles::AtomVisibility, partial.isHidden()}} 
+                        );
                     }
                     break;
 
                     case AtomParameter::Layer: {
-                        QVector<snowflake_uid> list {targetedAtomId};
-                        this->_changeLayer(list, partial.layer());
+                        auto item = this->_atomTreeItemsById[targetedAtomId];
+                        if(item) {
+                            auto oldLayerItem = item->parent();
+                            auto newLayerItem = this->_getLayerItem(partial.layer());
+                            emit requestingItemMove(oldLayerItem, newLayerItem, item);
+                        }
+
                     }
                     break;
 
@@ -164,39 +169,9 @@ void TreeMapHint::_onRenamedAsset(const QString &assetId, const QString &newName
     if(!this->_atomIdsBoundByRPZAssetHash.contains(assetId)) return;
 
     for(auto &atomId : this->_atomIdsBoundByRPZAssetHash[assetId]) {
-        this->_atomTreeItemsById[atomId]->setText(0, newName);
+        auto itemToChange = this->_atomTreeItemsById[atomId];
+        emit requestingItemTextChange(itemToChange, newName);
     }
-}
-
-void TreeMapHint::_changeLayer(QVector<snowflake_uid> &elementIds, int newLayer) {
-
-    QSet<QTreeWidgetItem*> dirtyLayerItems;
-
-    //inner elements to update
-    for(auto &key : elementIds) {
-        auto item = this->_atomTreeItemsById[key];
-        if(item) {
-            
-            //remove from initial layer, maybe remove the layer item too
-            auto oldLayerItem = item->parent();
-            oldLayerItem->removeChild(item);
-
-            //go to the other layer
-            auto newLayerItem = this->_getLayerItem(newLayer);
-            newLayerItem->addChild(item);
-
-            //add dirty
-            dirtyLayerItems.insert(oldLayerItem);
-            dirtyLayerItems.insert(newLayerItem);
-        }
-    }
-
-    //update layer items
-    for(auto item : dirtyLayerItems) {
-        this->_updateLayerState(item);
-    }
-
-
 }
 
 QTreeWidgetItem* TreeMapHint::_getLayerItem(int layer) {
@@ -217,19 +192,18 @@ QTreeWidgetItem* TreeMapHint::_getLayerItem(int layer) {
         
     //add to layout
     this->_layersItems[layer] = layerElem;
-    // this->_boundTree->addTopLevelItem(layerElem);
     emit requestingTreeItemInsertion(layerElem, nullptr);
-
-    //initial sort
-    // this->_boundTree->sortByColumn(0, Qt::SortOrder::DescendingOrder);
     
     return layerElem;
 }
 
 void TreeMapHint::_bindOwnerToItem(QTreeWidgetItem* item, RPZUser &owner) {
-    item->setData(2, RPZUserRoles::OwnerId, owner.id());
-    item->setData(2, RPZUserRoles::UserColor, owner.color());
-    item->setData(2, Qt::ToolTipRole, owner.toString());
+    QHash<int, QVariant> newData {
+        { RPZUserRoles::OwnerId, owner.id() },
+        { RPZUserRoles::UserColor, owner.color()},
+        { Qt::ToolTipRole, owner.toString() }
+    };
+    emit requestingItemDataUpdate(item, 2, newData);
 }
 
 QTreeWidgetItem* TreeMapHint::_createTreeItem(RPZAtom &atom) {
@@ -268,22 +242,11 @@ QTreeWidgetItem* TreeMapHint::_createTreeItem(RPZAtom &atom) {
 
     //create or get the layer element
     auto layerElem = this->_getLayerItem(atom.layer());
-    // layerElem->addChild(item);
     emit requestingTreeItemInsertion(item, layerElem);
-    // this->_updateLayerState(layerElem);
 
     return item;
 }
 
-void TreeMapHint::_updateLayerState(QTreeWidgetItem* layerItem) {
-    if(auto childCount = layerItem->childCount()) {
-        //has children, update count column
-        auto childCountStr = QString::number(childCount);
-        layerItem->setText(2, childCountStr);
-        layerItem->setExpanded(true);
-    } else {
-        //has no more children, remove
-        auto layer = layerItem->data(0, RPZUserRoles::AtomLayer).toInt();
-        delete this->_layersItems.take(layer);
-    }
+void TreeMapHint::removeLayerItem(int layer) {
+    this->_layersItems.remove(layer);
 }
