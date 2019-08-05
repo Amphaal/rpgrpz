@@ -82,7 +82,12 @@ void ViewMapHint::_onSceneItemChanged(QGraphicsItem* item, int changeFlag) {
 
 
 QVector<RPZAtom*> ViewMapHint::selectedAtoms() {
-    return this->_getAtomFromGraphicsItems(this->scene()->selectedItems());
+    QVector<RPZAtom*> out;
+    for(const auto &selectedId : this->selectedAtomIds()) {
+        auto &atom = this->_atomsById[selectedId];
+        out.append(&atom);
+    }
+    return out;
 }
 
 void ViewMapHint::_onSceneSelectionChanged() {
@@ -150,13 +155,7 @@ void ViewMapHint::setDefaultUser(RPZUser user) {
 /////////////////////////////
 
 void ViewMapHint::deleteCurrentSelectionItems() {
-    QVector<snowflake_uid> atomIdsToRemove;
-    for(auto item : this->scene()->selectedItems()) {
-        auto atom = this->_getAtomFromGraphicsItem(item);
-        atomIdsToRemove.append(atom->id());
-    }
-
-    RemovedPayload payload(atomIdsToRemove);
+    RemovedPayload payload(this->selectedAtomIds());
     this->queueAlteration(payload);
 }
 
@@ -360,8 +359,8 @@ void ViewMapHint::_handlePayload(AlterationPayload &payload) {
 
     //on reset
     auto type = payload.type();
-    if(type == PayloadAlteration::PA_Selected) this->scene()->clearSelection();
-    if(type == PayloadAlteration::PA_Reset) emit requestingAllItemsRemoval(); //this->scene()->clear();
+    if(type == PayloadAlteration::PA_Selected) emit requestingItemSelectionClearing();
+    if(type == PayloadAlteration::PA_Reset) emit requestingItemClearing();
     
     AtomsStorage::_handlePayload(payload);
 
@@ -381,6 +380,7 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
    
     //default handling
     auto updatedAtom = AtomsStorage::_handlePayloadInternal(type, targetedAtomId, alteration); 
+    auto graphicsItem = this->_GItemsByAtomId[targetedAtomId];
 
     //by alteration
     switch(type) {
@@ -394,13 +394,14 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
         
         //on deletion
         case PayloadAlteration::PA_Removed: {
-            delete this->_GItemsByAtomId[targetedAtomId];
+            auto toDelete = this->_GItemsByAtomId.take(targetedAtomId);
+            emit requestingItemDeletion(toDelete);
         }
         break;
 
         //on focus
         case PayloadAlteration::PA_Focused: {
-            this->_boundGv->centerOn(this->_GItemsByAtomId[targetedAtomId]);
+            this->_boundGv->centerOn(graphicsItem);
         }
         break;
 
@@ -412,7 +413,7 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
                 
                 auto paramVal = updatedAtom->metadata(param);
                 AtomConverter::updateGraphicsItemFromMetadata(
-                    this->_GItemsByAtomId[targetedAtomId],
+                    graphicsItem,
                     param,
                     paramVal
                 );
@@ -423,7 +424,7 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
 
         //on selection
         case PayloadAlteration::PA_Selected: {
-            this->_GItemsByAtomId[targetedAtomId]->setSelected(true);
+            graphicsItem->setSelected(true);
         }
         break;
 

@@ -29,12 +29,12 @@ void TreeMapHint::_handlePayload(AlterationPayload &payload) {
     auto type = payload.type();
 
     //selected...
-    if(type == PayloadAlteration::PA_Selected) emit requestingClearingSelection();
+    if(type == PayloadAlteration::PA_Selected) emit requestingItemSelectionClearing();
     if(type == PayloadAlteration::PA_Reset) {
         this->_atomTreeItemsById.clear();
         this->_layersItems.clear();
         this->_atomIdsBoundByRPZAssetHash.clear();
-        emit requestingClearingTree();
+        emit requestingItemClearing();
     }
 
     //atom wielders format
@@ -109,7 +109,7 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
         break;
 
         case PayloadAlteration::PA_Selected: {
-            emit requestingSelection(item);
+            emit requestingItemSelection(item);
         }
         break;
 
@@ -192,7 +192,7 @@ QTreeWidgetItem* TreeMapHint::_getLayerItem(int layer) {
         
     //add to layout
     this->_layersItems[layer] = layerElem;
-    emit requestingTreeItemInsertion(layerElem, nullptr);
+    emit requestingItemInsertion(layerElem, nullptr);
     
     return layerElem;
 }
@@ -242,7 +242,7 @@ QTreeWidgetItem* TreeMapHint::_createTreeItem(RPZAtom &atom) {
 
     //create or get the layer element
     auto layerElem = this->_getLayerItem(atom.layer());
-    emit requestingTreeItemInsertion(item, layerElem);
+    emit requestingItemInsertion(item, layerElem);
 
     return item;
 }

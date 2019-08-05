@@ -24,13 +24,13 @@ class TreeMapHint : public AtomsHandler, public AtomsContextualMenuHandler {
         void removeLayerItem(int layer);
 
     signals:
-        void requestingTreeItemInsertion(QTreeWidgetItem* item, QTreeWidgetItem* parent);
-        void requestingClearingTree();
+        void requestingItemInsertion(QTreeWidgetItem* item, QTreeWidgetItem* parent);
+        void requestingItemClearing();
         void requestingItemDeletion(QTreeWidgetItem* toRemove);
         void requestingItemMove(QTreeWidgetItem* oldLayerItem, QTreeWidgetItem* newLayerItem, QTreeWidgetItem *item);
         void requestingItemTextChange(QTreeWidgetItem* toChange, const QString &newName);
-        void requestingClearingSelection();
-        void requestingSelection(QTreeWidgetItem* toSelect);
+        void requestingItemSelectionClearing();
+        void requestingItemSelection(QTreeWidgetItem* toSelect);
         void requestingItemDataUpdate(QTreeWidgetItem* target, int column, const QHash<int, QVariant> &newData);
 
     private slots:
