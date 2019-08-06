@@ -10,12 +10,12 @@ enum class AtomConverterDataIndex { TemplateAtom = 2220, BrushTransform = 2555, 
 class AtomConverter {
     public:
         static void updateGraphicsItemFromAtom(QGraphicsItem* target, RPZAtom &blueprint, bool isTargetTemporary = false);
-        static void updateGraphicsItemFromMetadata(QGraphicsItem* item, const AtomParameter &param, QVariant &val);
+        static void updateGraphicsItemFromMetadata(QGraphicsItem* item, const AtomParameter &param, const QVariant &val);
         static RPZAtom graphicsToAtom(QGraphicsItem* blueprint);
 
     private:
         bool static _isTemporary(QGraphicsItem* item);
         void static _bulkTransformApply(QGraphicsItem* itemBrushToUpdate);
-        bool static _setParamToGraphicsItemFromAtom(const AtomParameter &param, QGraphicsItem* itemToUpdate, QVariant &val);
+        bool static _setParamToGraphicsItemFromAtom(const AtomParameter &param, QGraphicsItem* itemToUpdate, const QVariant &val);
         void static _setParamToAtomFromGraphicsItem(const AtomParameter &param, RPZAtom &atomToUpdate, QGraphicsItem* blueprint);
 };

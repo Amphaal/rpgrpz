@@ -43,7 +43,7 @@ void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, RPZAtom &b
             
 }
 
-void AtomConverter::updateGraphicsItemFromMetadata(QGraphicsItem* item, const AtomParameter &param, QVariant &val) {
+void AtomConverter::updateGraphicsItemFromMetadata(QGraphicsItem* item, const AtomParameter &param, const QVariant &val) {
     
     if(!item) return;
     
@@ -129,7 +129,7 @@ void AtomConverter::_bulkTransformApply(QGraphicsItem* itemBrushToUpdate) {
 
 }
 
-bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, QGraphicsItem* itemToUpdate, QVariant &val) {
+bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, QGraphicsItem* itemToUpdate, const QVariant &val) {
     
     switch(param) {
                         
