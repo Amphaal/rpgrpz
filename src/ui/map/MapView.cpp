@@ -60,6 +60,45 @@ void MapView::_handleHintsSignalsAndSlots() {
         this->scene(), &QGraphicsScene::clearSelection
     );
 
+    //on focus 
+    QObject::connect(
+        this->_hints, &MapHint::requestingItemFocus,
+        [=](QGraphicsItem* toFocus) {
+            this->centerOn(toFocus);
+        }
+    );
+
+    //on selection
+    QObject::connect(
+        this->_hints, &MapHint::requestingItemSelection,
+        [=](QGraphicsItem* toSelect) {
+            toSelect->setSelected(true);
+        }
+    );
+
+    //on deletion
+    QObject::connect(
+        this->_hints, &MapHint::requestingItemDeletion,
+        [=](QGraphicsItem *toDelete) {
+            this->scene()->removeItem(toDelete);
+            delete toDelete;
+        }
+    );
+
+    //on item update
+    QObject::connect(
+        this->_hints, &MapHint::requestingItemUpdate,
+        [=](QGraphicsItem* toUpdate, const QHash<AtomParameter, QVariant> &newData) {
+            for(QHash<AtomParameter, QVariant>::const_iterator i = newData.begin(); i != newData.end(); ++i) {
+                AtomConverter::updateGraphicsItemFromMetadata(
+                    toUpdate,
+                    i.key(),
+                    i.value()
+                );
+            }
+        }
+    );
+
     //on map loading, set placeholder...
     QObject::connect(
         this->_hints, &MapHint::mapLoading,
@@ -172,6 +211,7 @@ void MapView::assetTemplateChanged(const QVariantHash &assetMetadata) {
 
 void MapView::_clearGhostItem() {
     if(!this->_ghostItem) return;
+    this->scene()->removeItem(this->_ghostItem);
     delete this->_ghostItem;
     this->_ghostItem = nullptr;
 }
@@ -210,6 +250,7 @@ void MapView::_generateGhostItemFromBuffer() {
     
     this->_clearGhostItem();
     this->_ghostItem = this->_hints->generateGhostItem(this->_bufferedAssetMetadata);
+    this->scene()->addItem(this->_ghostItem);
 
 }
 
@@ -585,11 +626,13 @@ void MapView::_destroyTempDrawing() {
     
     //remove helpers
     for(auto helper : this->_tempDrawingHelpers) {
+        this->scene()->removeItem(helper);
         delete helper;
     }
     this->_tempDrawingHelpers.clear();
         
     //remove drawing
+    this->scene()->removeItem(this->_tempDrawing);
     delete this->_tempDrawing;
     this->_tempDrawing = nullptr;
 
@@ -607,7 +650,8 @@ void MapView::_beginDrawing(const QPoint &lastPointMousePressed) {
     this->_destroyTempDrawing();
 
     //create base and store it
-    auto gi = this->_scene->addToScene(*this->_hints->templateAtom, this->_bufferedAssetMetadata, true);
+    auto gi = CustomGraphicsItemHelper::createGraphicsItem(*this->_hints->templateAtom, this->_bufferedAssetMetadata, true);
+    this->scene()->addItem(gi);
     this->_tempDrawing = (MapViewGraphicsPathItem*)gi;
 
     //determine if it must be sticky
@@ -620,7 +664,8 @@ void MapView::_beginDrawing(const QPoint &lastPointMousePressed) {
     //add outline
     if(this->_stickyBrushIsDrawing) {
         auto pos = this->_tempDrawing->pos();
-        auto outline = this->_scene->addOutlineRect(pos);
+        auto outline = CustomGraphicsItemHelper::createOutlineRectItem(pos);
+        this->scene()->addItem(outline);
         this->_tempDrawingHelpers.append(outline);
     }
 }
@@ -755,7 +800,8 @@ void MapView::_savePosAsStickyNode(const QPoint &evtPoint) {
     this->_tempDrawing->setPath(path);
     
     //add visual helper
-    auto outline = this->_scene->addOutlineRect(sceneCoord);
+    auto outline = CustomGraphicsItemHelper::createOutlineRectItem(sceneCoord);
+    this->scene()->addItem(outline);
     this->_tempDrawingHelpers.append(outline);
 
     //update

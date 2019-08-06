@@ -170,7 +170,7 @@ QGraphicsItem* ViewMapHint::generateGhostItem(RPZAssetMetadata &assetMetadata) {
     auto atomBuiltFromTemplate = RPZAtom(*this->templateAtom);
 
     //add to scene
-    QGraphicsItem* ghostItem = this->scene()->addToScene(atomBuiltFromTemplate, assetMetadata, true);
+    QGraphicsItem* ghostItem = this->scene()->createGraphicsItem(atomBuiltFromTemplate, assetMetadata, true);
 
     //advert change in template
     emit atomTemplateChanged();
@@ -221,7 +221,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
     if(hasMissingAssetFile) {
         
         //add placeholder
-        auto placeholder = this->scene()->addMissingAssetPH(atomToBuildFrom);
+        auto placeholder = this->scene()->createMissingAssetPlaceholderItem(atomToBuildFrom);
         newItem = placeholder;
 
         //add graphic item to list of items to replace at times
@@ -237,7 +237,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
     //default
     else {
         auto metadata = RPZAssetMetadata(assetId, pathToAssetFile);
-        newItem = this->scene()->addToScene(
+        newItem = this->scene()->createGraphicsItem(
             atomToBuildFrom, 
             metadata
         );
@@ -268,7 +268,7 @@ void ViewMapHint::replaceMissingAssetPlaceholders(const RPZAssetMetadata &metada
         auto atom = this->_getAtomFromGraphicsItem(gi);
 
         //create the new graphics item
-        auto newGi = this->scene()->addToScene(*atom, metadata);
+        auto newGi = this->scene()->createGraphicsItem(*atom, metadata);
         this->_crossBindingAtomWithGI(atom, newGi);
 
         delete gi;
@@ -401,30 +401,30 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
 
         //on focus
         case PayloadAlteration::PA_Focused: {
-            this->_boundGv->centerOn(graphicsItem);
+            emit requestingItemFocus(graphicsItem);
         }
         break;
 
         case PayloadAlteration::PA_MetadataChanged:
         case PayloadAlteration::PA_BulkMetadataChanged: {
 
-            auto partial = type == PayloadAlteration::PA_BulkMetadataChanged ? RPZAtom(alteration.toHash()) : MetadataChangedPayload::fromArgs(alteration);
-            for(auto param : partial.editedMetadata()) {
-                
-                auto paramVal = updatedAtom->metadata(param);
-                AtomConverter::updateGraphicsItemFromMetadata(
-                    graphicsItem,
-                    param,
-                    paramVal
-                );
+            auto partial = type == PayloadAlteration::PA_BulkMetadataChanged ? 
+                                    RPZAtom(alteration.toHash()) : 
+                                    MetadataChangedPayload::fromArgs(alteration);
             
+            QHash<AtomParameter, QVariant> newData;
+            for(auto param : partial.editedMetadata()) {
+                auto paramVal = updatedAtom->metadata(param);
+                newData.insert(param, paramVal);
             }
+
+            emit requestingItemUpdate(graphicsItem, newData);
         }   
         break;
 
         //on selection
         case PayloadAlteration::PA_Selected: {
-            graphicsItem->setSelected(true);
+            emit requestingItemSelection(graphicsItem);
         }
         break;
 

@@ -18,6 +18,7 @@
 #include <QVector>
 
 #include "graphics/MapViewGraphicsScene.h"
+#include "graphics/CustomGraphicsItemHelper.h"
 
 #include "MapTools.h"
 #include "base/AnimationTimeLine.hpp"
@@ -34,6 +35,8 @@
 #include "src/shared/payloads/Payloads.h"
 
 #include "src/shared/models/RPZAssetMetadata.h"
+#include "src/helpers/AtomConverter.h"
+
 
 class MapView : public QGraphicsView, public ClientBindable {
 
