@@ -12,7 +12,7 @@ class  MapViewGraphicsScene : public QGraphicsScene, MapViewItemsNotified {
         void sceneItemChanged(QGraphicsItem* item, int atomAlteration);
 
     private:
-        void onGraphicsItemCustomChange(QGraphicsItem* item, MapViewCustomItemsEventFlag flag) override;
+        void _onGraphicsItemCustomChange(QGraphicsItem* item, MapViewCustomItemsEventFlag flag) override;
 
     public:
         MapViewGraphicsScene(int defaultSize);

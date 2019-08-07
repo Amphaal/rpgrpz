@@ -11,7 +11,7 @@ enum class MapViewCustomItemsEventFlag {
 
 class MapViewItemsNotified  {
     public:
-        virtual void onGraphicsItemCustomChange(QGraphicsItem* item, MapViewCustomItemsEventFlag flag) = 0;
+        virtual void _onGraphicsItemCustomChange(QGraphicsItem* item, MapViewCustomItemsEventFlag flag) = 0;
 };
 
 class MapViewItemsNotifier  {
