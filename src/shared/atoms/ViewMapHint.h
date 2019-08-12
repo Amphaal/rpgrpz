@@ -13,6 +13,8 @@
 #include <QGraphicsSvgItem>
 #include <QPixmap>
 
+#include "src/ui/map/graphics/CustomGraphicsItemHelper.h"
+
 #include "src/shared/payloads/Payloads.h"
 #include "src/ui/assets/base/AssetsTreeViewModel.h"
 
@@ -56,6 +58,7 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
 
     public slots:
         void notifyMovementOnItems(QList<QGraphicsItem*> itemList);
+        void notifySelectedItems();
 
     signals:
         void mapFileStateChanged(const QString &filePath, bool isMapDirty);

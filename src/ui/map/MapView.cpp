@@ -134,9 +134,6 @@ void MapView::_handleHintsSignalsAndSlots() {
 
             }
 
-
-
-
         }
     );
 
@@ -150,13 +147,22 @@ void MapView::_handleHintsSignalsAndSlots() {
 
     //on reset requested : set placeholder. When over, remove placeholder
     QObject::connect(
-        this->_hints, &AtomAlterationAcknoledger::resetAlterationRequested,
+        this->_hints, &AlterationAcknoledger::resetAlterationRequested,
         [=](QFuture<void> &alterationRequest) {
             this->setForegroundBrush(*this->_hiddingBrush);
             AsyncFuture::observe(alterationRequest).subscribe([=]() {
                 this->setForegroundBrush(QBrush());
             });
 
+        }
+    );
+
+    //on selection from user
+    QObject::connect(
+        this->scene(), &QGraphicsScene::selectionChanged,
+        [=]() {
+            if(AlterationAcknoledger::isDequeuing()) return;
+            this->_hints->notifySelectedItems();
         }
     );
 }
@@ -367,7 +373,7 @@ void MapView::onRPZClientThreadConnecting() {
 }
 void MapView::_onIdentityReceived(const QVariantHash &userHash) {
     RPZUser rpz_user(userHash);
-    this->hints()->setDefaultUser(rpz_user);
+    this->_hints->setDefaultUser(rpz_user);
 
     //if host
     auto descriptor = rpz_user.role() == RPZUser::Role::Host ? NULL : this->_rpzClient->getConnectedSocketAddress();

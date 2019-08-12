@@ -7,12 +7,6 @@ ViewMapHint::ViewMapHint() : AtomsStorage(AlterationPayload::Source::Local_Map),
     //default layer from settings
     this->setDefaultLayer(AppContext::settings()->defaultLayer());
 
-    //on selection
-    QObject::connect(
-        this->scene(), &QGraphicsScene::selectionChanged,
-        this, &ViewMapHint::_onSceneSelectionChanged
-    );
-
 };
 
 void ViewMapHint::setDefaultLayer(int layer) {
@@ -50,15 +44,9 @@ QVector<RPZAtom*> ViewMapHint::selectedAtoms() {
     return out;
 }
 
-void ViewMapHint::_onSceneSelectionChanged() {
-    
-    //prevent
-    if(isDequeuing()) return;
-
-    //bypass internal
+void ViewMapHint::notifySelectedItems() {
     SelectedPayload payload(this->selectedAtomIds());
     this->propagateAlterationPayload(payload);
-
 }
 
 //////////////////
@@ -130,13 +118,10 @@ QGraphicsItem* ViewMapHint::generateGhostItem(RPZAssetMetadata &assetMetadata) {
     auto atomBuiltFromTemplate = RPZAtom(*this->templateAtom);
 
     //add to scene
-    QGraphicsItem* ghostItem = this->scene()->createGraphicsItem(atomBuiltFromTemplate, assetMetadata, true);
+    QGraphicsItem* ghostItem = CustomGraphicsItemHelper::createGraphicsItem(atomBuiltFromTemplate, assetMetadata, true);
 
     //advert change in template
     emit atomTemplateChanged();
-
-    //if no ghost item, return
-    if(!ghostItem) return ghostItem;
 
     //define transparency as it is a dummy
     ghostItem->setOpacity(.5);
@@ -181,7 +166,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
     if(hasMissingAssetFile) {
         
         //add placeholder
-        auto placeholder = this->scene()->createMissingAssetPlaceholderItem(atomToBuildFrom);
+        auto placeholder = CustomGraphicsItemHelper::createMissingAssetPlaceholderItem(atomToBuildFrom);
         newItem = placeholder;
 
         //add graphic item to list of items to replace at times
@@ -197,7 +182,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
     //default
     else {
         auto metadata = RPZAssetMetadata(assetId, pathToAssetFile);
-        newItem = this->scene()->createGraphicsItem(
+        newItem = CustomGraphicsItemHelper::createGraphicsItem(
             atomToBuildFrom, 
             metadata
         );
@@ -228,10 +213,11 @@ void ViewMapHint::replaceMissingAssetPlaceholders(const RPZAssetMetadata &metada
         auto atom = this->_getAtomFromGraphicsItem(gi);
 
         //create the new graphics item
-        auto newGi = this->scene()->createGraphicsItem(*atom, metadata);
+        auto newGi = CustomGraphicsItemHelper::createGraphicsItem(*atom, metadata);
         this->_crossBindingAtomWithGI(atom, newGi);
 
-        delete gi;
+        //remove old
+        emit requestingItemDeletion(gi);
     }
 
     //clear the id from the missing list

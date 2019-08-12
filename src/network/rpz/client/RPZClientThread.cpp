@@ -1,7 +1,7 @@
 #include "RPZClientThread.h"
 
 RPZClientThread::RPZClientThread(QObject* parent, const QString &name, const QString &domain, const QString &port) : 
-                        AtomAlterationAcknoledger(AlterationPayload::Source::RPZClient),
+                        AlterationAcknoledger(AlterationPayload::Source::RPZClient),
                         _name(name), 
                         _domain(domain), 
                         _port(port) { }
