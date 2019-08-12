@@ -7,21 +7,21 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsTextItem>
 
-#include "src/ui/map/graphics/MapViewItemsNotifier.h"
+#include "src/ui/map/graphics/GraphicsItemsChangeNotifier.h"
 
 #include <QVariant>
 #include <QBrush>
 #include <QFont>
 
-class MapViewGraphicsSvgItem : public QGraphicsSvgItem, public MapViewItemsNotifier {
+class MapViewGraphicsSvgItem : public QGraphicsSvgItem, public GraphicsItemsChangeNotifier {
     public:
-        MapViewGraphicsSvgItem(MapViewItemsNotified* toNotify, const QString &fileName) : 
+        MapViewGraphicsSvgItem(const QString &fileName) : 
         QGraphicsSvgItem(fileName), 
-        MapViewItemsNotifier(toNotify, this) {}
+        GraphicsItemsChangeNotifier(this) {}
     
     private:
         QVariant itemChange(GraphicsItemChange change, const QVariant & value) override {
-            MapViewItemsNotifier::_notifyItemChange(change);
+            GraphicsItemsChangeNotifier::_notifyItemChange(change);
             return QGraphicsSvgItem::itemChange(change, value);
         }
 };

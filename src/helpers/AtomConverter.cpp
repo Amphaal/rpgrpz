@@ -143,7 +143,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
             // on locking change
             case AtomParameter::Locked: {
                 auto locked = val.toBool();
-                auto flags = !locked ? MapViewItemsNotifier::defaultFlags() : QFlags<QGraphicsItem::GraphicsItemFlag>();
+                auto flags = !locked ? GraphicsItemsChangeNotifier::defaultFlags() : QFlags<QGraphicsItem::GraphicsItemFlag>();
                 itemToUpdate->setFlags(flags);
             }
             break;

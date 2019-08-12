@@ -7,17 +7,17 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsTextItem>
 
-#include "src/ui/map/graphics/MapViewItemsNotifier.h"
+#include "src/ui/map/graphics/GraphicsItemsChangeNotifier.h"
 
 #include <QVariant>
 #include <QBrush>
 #include <QFont>
 
-class MapViewGraphicsTextItem : public QGraphicsTextItem, public MapViewItemsNotifier {
+class MapViewGraphicsTextItem : public QGraphicsTextItem, public GraphicsItemsChangeNotifier {
     public:
-        MapViewGraphicsTextItem(MapViewItemsNotified* toNotify, const QString &text, int textSize) : 
+        MapViewGraphicsTextItem(const QString &text, int textSize) : 
         QGraphicsTextItem(text), 
-        MapViewItemsNotifier(toNotify, this) {
+        GraphicsItemsChangeNotifier(this) {
             
             auto font = QFont();
             font.setPointSize(textSize);
@@ -27,7 +27,7 @@ class MapViewGraphicsTextItem : public QGraphicsTextItem, public MapViewItemsNot
 
     private:
         QVariant itemChange(GraphicsItemChange change, const QVariant & value) override {
-            MapViewItemsNotifier::_notifyItemChange(change);
+            GraphicsItemsChangeNotifier::_notifyItemChange(change);
             return QGraphicsTextItem::itemChange(change, value);
         }
 
