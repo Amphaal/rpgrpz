@@ -20,7 +20,7 @@ void GraphicsItemsChangeNotifier::disableNotifications() {
     this->_mustNotify = false;
 }
 
-void GraphicsItemsChangeNotifier::addNotified(ItemChangedNotifier* notified) {
+void GraphicsItemsChangeNotifier::addNotified(ItemChangedNotified* notified) {
     this->_toNotify = notified;
 }
 

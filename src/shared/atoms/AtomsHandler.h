@@ -4,12 +4,12 @@
 #include <QPair>
 
 #include "src/shared/payloads/Payloads.h"
-#include "AtomAlterationAcknoledger.h"
+#include "src/shared/async-ui/AlterationAcknoledger.h"
 
 #include "src/_libs/asyncfuture.h"
 #include <QtConcurrent>
 
-class AtomsHandler : public AtomAlterationAcknoledger {
+class AtomsHandler : public AlterationAcknoledger {
 
     public:
         AtomsHandler(const AlterationPayload::Source &boundSource, bool autoRegisterAck = true);

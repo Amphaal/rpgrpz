@@ -15,9 +15,11 @@
 #include "src/shared/models/RPZHandshake.h"
 
 #include "src/helpers/_appContext.h"
-#include "src/shared/atoms/AtomAlterationAcknoledger.h"
+#include "src/shared/async-ui/AlterationAcknoledger.h"
 
-class RPZClientThread : public QThread, public JSONRouter, public AtomAlterationAcknoledger {
+class RPZClientThread : public QThread, public JSONRouter, public AlterationAcknoledger {
+
+    Q_OBJECT
 
     public:
         RPZClientThread(QObject* parent, const QString &displayname, const QString &domain, const QString &port);

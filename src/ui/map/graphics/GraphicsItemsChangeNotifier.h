@@ -9,10 +9,7 @@ enum class MapViewCustomItemsEventFlag {
     Moved = 6224
 };
 
-class ItemChangedNotifier  {
-    public:
-        virtual void onItemChanged(GraphicsItemsChangeNotifier* item, MapViewCustomItemsEventFlag flag) = 0;
-};
+class ItemChangedNotified;
 
 class GraphicsItemsChangeNotifier  {
     
@@ -25,7 +22,7 @@ class GraphicsItemsChangeNotifier  {
         void disableNotifications();
         void activateNotifications();
 
-        void addNotified(ItemChangedNotifier* notified);
+        void addNotified(ItemChangedNotified* notified);
 
         QGraphicsItem* graphicsItem();
     
@@ -33,7 +30,12 @@ class GraphicsItemsChangeNotifier  {
         void _notifyItemChange(int change);
 
     private:    
-        ItemChangedNotifier* _toNotify = nullptr;
+        ItemChangedNotified* _toNotify = nullptr;
         QGraphicsItem* _item = nullptr;
         bool _mustNotify = true;
+};
+
+class ItemChangedNotified {
+    public:
+        virtual void onItemChanged(GraphicsItemsChangeNotifier* item, MapViewCustomItemsEventFlag flag) = 0;
 };

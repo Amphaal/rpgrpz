@@ -37,7 +37,7 @@
 #include "src/helpers/AtomConverter.h"
 
 
-class MapView : public QGraphicsView, public ClientBindable, public ItemChangedNotifier {
+class MapView : public QGraphicsView, public ClientBindable, public ItemChangedNotified {
 
     Q_OBJECT
 

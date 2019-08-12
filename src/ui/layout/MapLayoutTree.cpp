@@ -92,7 +92,7 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
         [=]() {
             
             //handling ongoing, prevent propagation
-            if(AtomAlterationAcknoledger::isDequeuing()) return;
+            if(AlterationAcknoledger::isDequeuing()) return;
 
             auto selected = this->selectedItems();
             if(!selected.count()) this->clearFocus();

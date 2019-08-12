@@ -3,7 +3,7 @@
 AtomsHandler::AtomsHandler(
         const AlterationPayload::Source &boundSource, 
         bool autoRegisterAck
-    ) : AtomAlterationAcknoledger(boundSource, autoRegisterAck) { }
+    ) : AlterationAcknoledger(boundSource, autoRegisterAck) { }
 
 QFuture<void> AtomsHandler::_handleAlterationRequest(AlterationPayload &payload, bool autoPropagate) {
     
@@ -35,6 +35,6 @@ QFuture<void> AtomsHandler::propagateAlterationPayload(AlterationPayload &payloa
     if(source == AlterationPayload::Source::Undefined) payload.changeSource(this->source()); 
 
     //propagate
-    return AtomAlterationAcknoledger::propagateAlterationPayload(payload);
+    return AlterationAcknoledger::propagateAlterationPayload(payload);
     
 }
