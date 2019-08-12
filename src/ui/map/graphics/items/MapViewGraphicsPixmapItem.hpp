@@ -7,7 +7,7 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsTextItem>
 
-#include "src/ui/map/graphics/MapViewItemsNotifier.h"
+#include "src/ui/map/graphics/GraphicsItemsChangeNotifier.h"
 
 #include "src/shared/models/RPZAssetMetadata.h"
 
@@ -16,18 +16,16 @@
 #include <QFont>
 #include <QPixmapCache>
 
-class MapViewGraphicsPixmapItem : public QGraphicsPixmapItem, public MapViewItemsNotifier {
+class MapViewGraphicsPixmapItem : public QGraphicsPixmapItem, public GraphicsItemsChangeNotifier {
     
     public:
-        MapViewGraphicsPixmapItem(MapViewItemsNotified* toNotify, const RPZAssetMetadata &assetMetadata) : 
+        MapViewGraphicsPixmapItem(const RPZAssetMetadata &assetMetadata) : 
             QGraphicsPixmapItem(fetchCachedPixmap(assetMetadata)), 
-            MapViewItemsNotifier(toNotify, this) {
-
-        }
+            GraphicsItemsChangeNotifier(this) { }
 
     private:
         QVariant itemChange(GraphicsItemChange change, const QVariant & value) override {
-            MapViewItemsNotifier::_notifyItemChange(change);
+            GraphicsItemsChangeNotifier::_notifyItemChange(change);
             return QGraphicsPixmapItem::itemChange(change, value);
         }
 

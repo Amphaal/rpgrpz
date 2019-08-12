@@ -9,31 +9,31 @@ enum class MapViewCustomItemsEventFlag {
     Moved = 6224
 };
 
-class MapViewItemsNotified  {
+class ItemChangedNotifier  {
     public:
-        virtual void _onGraphicsItemCustomChange(QGraphicsItem* item, MapViewCustomItemsEventFlag flag) = 0;
+        virtual void onItemChanged(GraphicsItemsChangeNotifier* item, MapViewCustomItemsEventFlag flag) = 0;
 };
 
-class MapViewItemsNotifier  {
+class GraphicsItemsChangeNotifier  {
     
     public:
-        ~MapViewItemsNotifier();
+        ~GraphicsItemsChangeNotifier();
         static QFlags<QGraphicsItem::GraphicsItemFlag> defaultFlags();
 
-        MapViewItemsNotifier(MapViewItemsNotified* targetToNotify, QGraphicsItem* item);
+        GraphicsItemsChangeNotifier(QGraphicsItem* item);
 
         void disableNotifications();
         void activateNotifications();
+
+        void addNotified(ItemChangedNotifier* notified);
+
+        QGraphicsItem* graphicsItem();
     
     protected:
         void _notifyItemChange(int change);
 
     private:    
-        MapViewItemsNotified* _toNotify = nullptr;
+        ItemChangedNotifier* _toNotify = nullptr;
         QGraphicsItem* _item = nullptr;
         bool _mustNotify = true;
-
-        QGraphicsItem* _debugPoint = nullptr;
-        
-        void _updateDebugPoint();
 };

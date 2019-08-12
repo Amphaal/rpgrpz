@@ -18,8 +18,6 @@
 
 #include "src/shared/database/MapDatabase.h"
 
-#include "src/ui/map/graphics/MapViewGraphicsScene.h"
-
 #include "AtomsStorage.h"
 
 #include "src/ui/map/MapTools.h"
@@ -43,9 +41,6 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         //ghost handling
         QGraphicsItem* generateGhostItem(RPZAssetMetadata &assetMetadata);
         void integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem);
-
-        //on move
-        void handleAnyMovedItems();
         
         //special handling
         void handleParametersUpdateAlterationRequest(QVariantHash &payload);
@@ -58,6 +53,9 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         void setDefaultLayer(int layer);
 
         QVector<RPZAtom*> selectedAtoms();
+
+    public slots:
+        void notifyMovementOnItems(QList<QGraphicsItem*> itemList);
 
     signals:
         void mapFileStateChanged(const QString &filePath, bool isMapDirty);
@@ -83,8 +81,6 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
 
         //inner event handling
         void _onSceneSelectionChanged();
-        void _onSceneItemChanged(QGraphicsItem* item, int changeFlag);
-            QSet<QGraphicsItem*> _itemsWhoNotifiedMovement;
 
     protected:
         //missing assets tracking

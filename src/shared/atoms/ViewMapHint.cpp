@@ -13,11 +13,6 @@ ViewMapHint::ViewMapHint() : AtomsStorage(AlterationPayload::Source::Local_Map),
         this, &ViewMapHint::_onSceneSelectionChanged
     );
 
-    //on scene children items changed
-    QObject::connect(
-        this->scene(), &MapViewGraphicsScene::sceneItemChanged,
-        this, &ViewMapHint::_onSceneItemChanged
-    );
 };
 
 void ViewMapHint::setDefaultLayer(int layer) {
@@ -25,14 +20,11 @@ void ViewMapHint::setDefaultLayer(int layer) {
     emit atomTemplateChanged();
 }
 
-void ViewMapHint::handleAnyMovedItems() {
-    
-    //if no item moved since last call, do nothing
-    if(!this->_itemsWhoNotifiedMovement.count()) return;
+void ViewMapHint::notifyMovementOnItems(QList<QGraphicsItem*> itemList) {
 
     //generate args for payload
     RPZMap<RPZAtom> coords;
-    for(auto gi : this->_itemsWhoNotifiedMovement) {
+    for(auto gi : itemList) {
         
         auto cAtom = this->_getAtomFromGraphicsItem(gi);
         if(!cAtom) continue;
@@ -43,43 +35,11 @@ void ViewMapHint::handleAnyMovedItems() {
 
     }
 
-    //enable notifications back on those items
-    for(auto item : this->_itemsWhoNotifiedMovement) {
-        if(auto notifier = dynamic_cast<MapViewItemsNotifier*>(item)) {
-            notifier->activateNotifications();
-        }
-    }
-
-    //reset list 
-    this->_itemsWhoNotifiedMovement.clear();
-
     //inform moving
     BulkMetadataChangedPayload payload(coords);
-    this->queueAlteration(payload);
+    this->propagateAlterationPayload(payload);
     
 }
-
-void ViewMapHint::_onSceneItemChanged(QGraphicsItem* item, int changeFlag) {
-
-    if(isDequeuing()) return;
-
-    switch(changeFlag) {
-        case (int)MapViewCustomItemsEventFlag::Moved: {
-
-            //add to list for future information
-            this->_itemsWhoNotifiedMovement.insert(item);
-
-            //disable further notifications until information have been handled
-            if(auto notifier = dynamic_cast<MapViewItemsNotifier*>(item)) {
-                notifier->disableNotifications();
-            }
-
-        }
-        break;
-    }
-
-}
-
 
 QVector<RPZAtom*> ViewMapHint::selectedAtoms() {
     QVector<RPZAtom*> out;

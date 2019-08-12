@@ -17,7 +17,6 @@
 #include <QVariant>
 #include <QVector>
 
-#include "graphics/MapViewGraphicsScene.h"
 #include "graphics/CustomGraphicsItemHelper.h"
 
 #include "MapTools.h"
@@ -38,7 +37,7 @@
 #include "src/helpers/AtomConverter.h"
 
 
-class MapView : public QGraphicsView, public ClientBindable {
+class MapView : public QGraphicsView, public ClientBindable, public ItemChangedNotifier {
 
     Q_OBJECT
 
@@ -75,22 +74,20 @@ class MapView : public QGraphicsView, public ClientBindable {
         void keyPressEvent(QKeyEvent * event) override;
         void resizeEvent(QResizeEvent * event) override;
 
-    private slots:
-
+        void onItemChanged(GraphicsItemsChangeNotifier* item, MapViewCustomItemsEventFlag flag) override;
     
     private:
+        QBrush* _hiddingBrush = nullptr;
+        MapHint* _hints = nullptr;
+        static inline constexpr int _defaultSceneSize = 36000;
+        
         void _handleHintsSignalsAndSlots();
 
-        //scene
-            MapViewGraphicsScene* _scene = nullptr;
-            QBrush* _hiddingBrush = nullptr;
-
-        MapHint* _hints = nullptr;
+        //helper
+        void _addItem(QGraphicsItem* toAdd, bool mustNotifyMovement = false);
+        void _centerItemToPoint(QGraphicsItem* item, const QPoint &eventPos);
         void _onSceneSelectionChanged();
         void _goToDefaultViewState();
-
-        //helper
-        void _centerItemToPoint(QGraphicsItem* item, const QPoint &eventPos);
 
         //ghost
             QGraphicsItem* _ghostItem = nullptr;
@@ -114,9 +111,9 @@ class MapView : public QGraphicsView, public ClientBindable {
             void _resetTool();
             
         //moving...
-            const int _defaultSceneSize = 36000;
             void _goToSceneCenter();
             void _animatedMove(const Qt::Orientation &orientation, int correction);
+            QSet<QGraphicsItem*> _itemsWhoNotifiedMovement;
 
         //zooming...
             const double _defaultScale = 5;

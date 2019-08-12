@@ -3,8 +3,8 @@
 MapView::MapView(QWidget *parent) : QGraphicsView(parent), _hiddingBrush(new QBrush("#EEE", Qt::BrushStyle::SolidPattern)) {
 
     //default
-    this->_scene = new MapViewGraphicsScene(this->_defaultSceneSize);
-    this->setScene(this->_scene);
+    auto scene = new QGraphicsScene(this->_defaultSceneSize, this->_defaultSceneSize, this->_defaultSceneSize, this->_defaultSceneSize);
+    this->setScene(scene);
 
     this->_hints = new MapHint; //after first inst of scene
     this->_resetTool();
@@ -40,6 +40,24 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), _hiddingBrush(new QBr
     this->setMouseTracking(true);
 }
 
+
+void MapView::onItemChanged(GraphicsItemsChangeNotifier* item, MapViewCustomItemsEventFlag flag) {
+
+    switch(flag) {
+        case MapViewCustomItemsEventFlag::Moved: {
+
+            //add to list for future information
+            this->_itemsWhoNotifiedMovement.insert(item->graphicsItem());
+
+            //disable further notifications until information have been handled
+            item->disableNotifications();
+
+        }
+        break;
+    }
+
+}
+
 void MapView::_handleHintsSignalsAndSlots() {
  
     //on reset
@@ -51,7 +69,9 @@ void MapView::_handleHintsSignalsAndSlots() {
     //on item insert
     QObject::connect(
         this->_hints, &MapHint::requestingItemInsertion,
-        this->scene(), &QGraphicsScene::addItem
+        [=](QGraphicsItem *toInsert) {
+            this->_addItem(toInsert, true);
+        }
     );
 
     //on selection clear
@@ -90,12 +110,33 @@ void MapView::_handleHintsSignalsAndSlots() {
         this->_hints, &MapHint::requestingItemUpdate,
         [=](QGraphicsItem* toUpdate, const QHash<AtomParameter, QVariant> &newData) {
             for(QHash<AtomParameter, QVariant>::const_iterator i = newData.begin(); i != newData.end(); ++i) {
+                
+                auto param = i.key();
+
+                //update GI
                 AtomConverter::updateGraphicsItemFromMetadata(
                     toUpdate,
-                    i.key(),
+                    param,
                     i.value()
                 );
+
+                //if movement
+                if(param == Position) {
+
+                    //enable notifications back on those items
+                    if(auto notifier = dynamic_cast<GraphicsItemsChangeNotifier*>(toUpdate)) {
+                        notifier->activateNotifications();
+                    }
+
+                    //remove from inner list
+                    this->_itemsWhoNotifiedMovement.remove(toUpdate);
+                }
+
             }
+
+
+
+
         }
     );
 
@@ -118,6 +159,18 @@ void MapView::_handleHintsSignalsAndSlots() {
 
         }
     );
+}
+
+void MapView::_addItem(QGraphicsItem* toAdd, bool mustNotifyMovement) {
+    
+    if(mustNotifyMovement) {
+        if(auto notifier = dynamic_cast<GraphicsItemsChangeNotifier*>(toAdd)) {
+            notifier->activateNotifications();
+        }
+    }
+
+    this->scene()->addItem(toAdd);
+
 }
 
 void MapView::contextMenuEvent(QContextMenuEvent *event) {
@@ -250,7 +303,7 @@ void MapView::_generateGhostItemFromBuffer() {
     
     this->_clearGhostItem();
     this->_ghostItem = this->_hints->generateGhostItem(this->_bufferedAssetMetadata);
-    this->scene()->addItem(this->_ghostItem);
+    this->_addItem(this->_ghostItem);
 
 }
 
@@ -427,8 +480,12 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
             //if was drawing...
             if(!this->_stickyBrushIsDrawing) this->_endDrawing();
 
-            //if was moving ?
-            this->hints()->handleAnyMovedItems();
+            //if something moved ?
+            if(this->_itemsWhoNotifiedMovement.count()) {
+                this->_hints->notifyMovementOnItems(this->_itemsWhoNotifiedMovement.toList());
+                this->_itemsWhoNotifiedMovement.clear();
+            }
+            
         }
         break;
 
@@ -477,7 +534,7 @@ void MapView::_changeTool(Tool newTool, const bool quickChange, bool isFromExter
     //if standard tool change
     else {
         this->_tool = newTool;
-        this->_scene->clearSelection();
+        this->scene()->clearSelection();
     }    
 
     //if a quicktool is selected
@@ -550,7 +607,7 @@ void MapView::actionRequested(const MapTools::Actions &action) {
 //////////
 
 void MapView::_goToSceneCenter() {
-    auto center = this->_scene->sceneRect().center();
+    auto center = this->scene()->sceneRect().center();
     this->centerOn(center);
 }
 
@@ -651,7 +708,7 @@ void MapView::_beginDrawing(const QPoint &lastPointMousePressed) {
 
     //create base and store it
     auto gi = CustomGraphicsItemHelper::createGraphicsItem(*this->_hints->templateAtom, this->_bufferedAssetMetadata, true);
-    this->scene()->addItem(gi);
+    this->_addItem(gi);
     this->_tempDrawing = (MapViewGraphicsPathItem*)gi;
 
     //determine if it must be sticky
@@ -665,7 +722,7 @@ void MapView::_beginDrawing(const QPoint &lastPointMousePressed) {
     if(this->_stickyBrushIsDrawing) {
         auto pos = this->_tempDrawing->pos();
         auto outline = CustomGraphicsItemHelper::createOutlineRectItem(pos);
-        this->scene()->addItem(outline);
+        this->_addItem(outline);
         this->_tempDrawingHelpers.append(outline);
     }
 }
@@ -801,7 +858,7 @@ void MapView::_savePosAsStickyNode(const QPoint &evtPoint) {
     
     //add visual helper
     auto outline = CustomGraphicsItemHelper::createOutlineRectItem(sceneCoord);
-    this->scene()->addItem(outline);
+    this->_addItem(outline);
     this->_tempDrawingHelpers.append(outline);
 
     //update

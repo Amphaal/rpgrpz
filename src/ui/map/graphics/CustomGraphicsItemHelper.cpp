@@ -1,6 +1,5 @@
 #include "CustomGraphicsItemHelper.h"
 
-
 QGraphicsItem* CustomGraphicsItemHelper::createGraphicsItem(RPZAtom &atom, const RPZAssetMetadata &assetMetadata, bool isTemporary) {
     
     QGraphicsItem* out;
@@ -30,16 +29,6 @@ QGraphicsItem* CustomGraphicsItemHelper::createGraphicsItem(RPZAtom &atom, const
 
     //update
     AtomConverter::updateGraphicsItemFromAtom(out, atom, isTemporary);        
-
-    //prevent notifications on move to kick in for temporary items
-    if(auto notifier = dynamic_cast<MapViewItemsNotifier*>(out)) {
-        if(isTemporary) {
-            notifier->disableNotifications();
-        }
-        else {
-            notifier->activateNotifications();
-        }
-    }
 
     return out;
 }
@@ -84,16 +73,11 @@ QGraphicsRectItem* CustomGraphicsItemHelper::createMissingAssetPlaceholderItem(R
     auto shape = atom.shape().boundingRect();
 
     //create graphics item
-    auto placeholder = new MapViewGraphicsRectItem(this, shape, pen, brush);
+    auto placeholder = new MapViewGraphicsRectItem(shape, pen, brush);
     
     //Update values from atom blueprint
     AtomConverter::updateGraphicsItemFromAtom(placeholder, atom);
     
-    //activate notifications
-    if(auto notifier = dynamic_cast<MapViewItemsNotifier*>(placeholder)) {
-        notifier->activateNotifications();
-    }
-
     return placeholder;
 }
 
@@ -107,10 +91,10 @@ QGraphicsItem* CustomGraphicsItemHelper::_createGenericImageBasedItem(RPZAtom &a
     //define graphicsitem
     QGraphicsItem* item = nullptr;
     if(pathInfo.suffix() == "svg") {
-        item = new MapViewGraphicsSvgItem(this, pathToImageFile);
+        item = new MapViewGraphicsSvgItem(pathToImageFile);
     } 
     else {
-        item = new MapViewGraphicsPixmapItem(this, assetMetadata);
+        item = new MapViewGraphicsPixmapItem(assetMetadata);
     };
 
     return item;
@@ -142,7 +126,7 @@ QGraphicsPathItem* CustomGraphicsItemHelper::_createBrushItem(RPZAtom &atom, con
         brush.setTexture(cached);
     
     //create path
-    auto newPath = new MapViewGraphicsPathItem(this, shape, pen, brush);
+    auto newPath = new MapViewGraphicsPathItem(shape, pen, brush);
     
     return newPath;
 }
@@ -159,11 +143,11 @@ QGraphicsPathItem* CustomGraphicsItemHelper::_createDrawingItem(RPZAtom &atom) {
     if(!shape.elementCount()) shape.lineTo(.01,.01);
 
     //create path
-    auto newPath = new MapViewGraphicsPathItem(this, shape, pen);
+    auto newPath = new MapViewGraphicsPathItem(shape, pen);
     
     return newPath;
 }
 
 QGraphicsTextItem* CustomGraphicsItemHelper::_createTextItem(RPZAtom &atom) {
-    return new MapViewGraphicsTextItem(this, atom.text(), atom.textSize());
+    return new MapViewGraphicsTextItem(atom.text(), atom.textSize());
 }
