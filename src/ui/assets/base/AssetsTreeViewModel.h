@@ -18,7 +18,7 @@ class AssetsTreeViewModel : public QAbstractItemModel, ClientBindable {
     public:
         AssetsTreeViewModel(QObject *parent = nullptr);
         AssetsDatabase* database();
-        void onRPZClientThreadConnecting() override;
+        void onRPZClientConnecting() override;
 
         ///////////////
         /// HELPERS ///

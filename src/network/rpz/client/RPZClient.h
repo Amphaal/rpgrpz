@@ -19,15 +19,15 @@
 #include "src/helpers/_appContext.h"
 #include "src/shared/async-ui/AlterationAcknoledger.h"
 
-class RPZClientThread : public QThread, public JSONRouter, public AlterationAcknoledger {
+class RPZClient : public JSONRouter {
 
     Q_OBJECT
 
     public:
-        RPZClientThread(QObject* parent, const QString &displayname, const QString &domain, const QString &port);
+        RPZClient(const QString &displayname, const QString &domain, const QString &port);
+        ~RPZClient();
         
         QString getConnectedSocketAddress();
-        void run() override;
     
         //slots
         void sendMessage(QVariantHash &message);
@@ -40,8 +40,12 @@ class RPZClientThread : public QThread, public JSONRouter, public AlterationAckn
         RPZUser identity();
         QVector<RPZUser> sessionUsers();
 
+    public slots:
+        void run();
+
     signals:
         void connectionStatus(const QString &statusMessage, bool isError = false);
+        void closed();
 
         void receivedMessage(const QVariantHash &message);
         void serverResponseReceived(const QVariantHash &reponse);
@@ -68,6 +72,7 @@ class RPZClientThread : public QThread, public JSONRouter, public AlterationAckn
         RPZUser _self;
         QVector<RPZUser> _sessionUsers;
         JSONSocket* _cli = nullptr;
+        AlterationAcknoledger* _ack = nullptr;
 
         void _onConnected();
         void _error(QAbstractSocket::SocketError _socketError);

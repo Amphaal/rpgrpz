@@ -10,7 +10,7 @@
 #include "src/helpers/_appContext.h"
 #include "src/helpers/_logWriter.h"
 
-#include "src/network/rpz/server/RPZServerThread.h"
+#include "src/network/rpz/server/RPZServer.h"
 
 #include "ui/mainWindow.h"
 #include "ui/AppLoader.h"
@@ -33,7 +33,7 @@ int serverConsole(int argc, char** argv) {
     QCoreApplication server(argc, argv);
     AppContext::configureApp(server);
 
-    RPZServerThread thread;
+    RPZServer thread;
     thread.start();
 
     return server.exec();
