@@ -9,14 +9,14 @@
 #include <QMessageBox>
 
 #include "src/helpers/_appContext.h"
-#include "src/network/rpz/client/RPZClientThread.h"
+#include "src/network/rpz/client/RPZClient.h"
 
 class ConnectWidget : public QWidget {
 
     Q_OBJECT
 
     signals:
-        void startingConnection(RPZClientThread* cc);
+        void startingConnection(RPZClient* cc);
 
     public:
         enum State { NotConnected, Connecting, Connected };
@@ -31,7 +31,7 @@ class ConnectWidget : public QWidget {
         QPushButton* _connectBtn = nullptr;
         QMetaObject::Connection _connectBtnLink;
 
-        RPZClientThread* _cc = nullptr;
+        RPZClient* _cc = nullptr;
         ConnectWidget::State _state = ConnectWidget::State::NotConnected;
         
         void _tryConnectToServer();
@@ -40,8 +40,8 @@ class ConnectWidget : public QWidget {
         void _changeState(ConnectWidget::State newState);
         void _destroyClient();
 
-        void _onRPZClientThreadStatus(const QString &statusMsg, bool isError);
-        void _onRPZClientThreadConnecting();
+        void _onRPZClientStatus(const QString &statusMsg, bool isError);
+        void _onRPZClientConnecting();
 
         void _saveValuesAsSettings();
 };  

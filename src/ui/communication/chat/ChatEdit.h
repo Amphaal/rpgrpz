@@ -25,7 +25,7 @@ class ChatEdit : public QWidget, public ClientBindable {
     
     protected:
         void changeEvent(QEvent *event) override;
-        void onRPZClientThreadConnecting() override;
+        void onRPZClientConnecting() override;
 
     private:
         QLineEdit* _msgEdit = nullptr;

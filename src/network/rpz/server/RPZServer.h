@@ -1,7 +1,5 @@
 #pragma once
 
-#include <QThread>
-
 #include <QDebug>
 #include <QTcpServer>
 #include <QHostAddress>
@@ -30,21 +28,25 @@
 
 #include "src/shared/commands/MessageInterpreter.h"
 
-class RPZServerThread : public QThread, public JSONRouter { 
+class RPZServer : public JSONRouter { 
     
     Q_OBJECT
 
     public:
-        RPZServerThread(QObject* parent = nullptr);
-        void run() override;
+        RPZServer();
+    
+    public slots:
+        void run();
 
     signals:
         void listening();
         void error();
+        void closed();
 
     private:
         QHash<JSONSocket*, snowflake_uid> _idsByClientSocket;
         JSONSocket* _hostSocket = nullptr;
+        QTcpServer* _server = nullptr;
         
         //users
         RPZMap<RPZUser> _usersById;
@@ -66,7 +68,7 @@ class RPZServerThread : public QThread, public JSONRouter {
         void _interpretMessage(JSONSocket* sender, RPZMessage &msg);
         
         //internal
-        void _onNewConnection(QTcpServer * server);
+        void _onNewConnection();
         void _onDisconnect(JSONSocket* disconnecting);
         void _routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) override;
         

@@ -64,7 +64,7 @@ void ChatWidget::_instUI() {
     this->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
 }
 
-void ChatWidget::_onRPZClientThreadStatus(const QString &statusMsg, bool isError) {    
+void ChatWidget::_onRPZClientStatus(const QString &statusMsg, bool isError) {    
     
     auto respCode = isError ? RPZResponse::ResponseCode::Error : RPZResponse::ResponseCode::Status;
 
@@ -91,7 +91,7 @@ void ChatWidget::_onReceivedLogHistory(const QVariantList &messages) {
     this->_chatLog->handleResponse(response);
 }
 
-void ChatWidget::onRPZClientThreadConnecting() {
+void ChatWidget::onRPZClientConnecting() {
     
     this->serverName = _rpzClient->getConnectedSocketAddress();
     
@@ -100,13 +100,13 @@ void ChatWidget::onRPZClientThreadConnecting() {
 
     //on error from client
     QObject::connect(
-        _rpzClient, &RPZClientThread::connectionStatus, 
-        this, &ChatWidget::_onRPZClientThreadStatus
+        _rpzClient, &RPZClient::connectionStatus, 
+        this, &ChatWidget::_onRPZClientStatus
     );
     
     //on message received
     QObject::connect(
-        _rpzClient, &RPZClientThread::receivedMessage, 
+        _rpzClient, &RPZClient::receivedMessage, 
         [&](const QVariantHash &message) {
             auto msg = RPZMessage(message);
             this->_chatLog->handleMessage(msg);
@@ -115,13 +115,13 @@ void ChatWidget::onRPZClientThreadConnecting() {
 
     //welcome once all history have been received
     QObject::connect(
-        _rpzClient, &RPZClientThread::receivedLogHistory, 
+        _rpzClient, &RPZClient::receivedLogHistory, 
         this, &ChatWidget::_onReceivedLogHistory
     );
 
     //on server response
     QObject::connect(
-        _rpzClient, &RPZClientThread::serverResponseReceived, 
+        _rpzClient, &RPZClient::serverResponseReceived, 
         [&](const QVariantHash &reponse) {
             auto resp = RPZResponse(reponse);
             this->_chatLog->handleResponse(resp);
@@ -131,7 +131,7 @@ void ChatWidget::onRPZClientThreadConnecting() {
     
     //update users list
     QObject::connect(
-        _rpzClient, &RPZClientThread::loggedUsersUpdated,
+        _rpzClient, &RPZClient::loggedUsersUpdated,
         this->_usersLog, &UsersLog::updateUsers
     );
 

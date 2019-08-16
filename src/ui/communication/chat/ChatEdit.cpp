@@ -24,11 +24,11 @@ ChatEdit::ChatEdit(QWidget * parent) : QWidget(parent),
 
 }
 
-void ChatEdit::onRPZClientThreadConnecting() {
+void ChatEdit::onRPZClientConnecting() {
 
     //on user connected
     QObject::connect(
-        _rpzClient, &RPZClientThread::loggedUsersUpdated,
+        _rpzClient, &RPZClient::loggedUsersUpdated,
         this, &ChatEdit::_onUsersChanged
     );
 

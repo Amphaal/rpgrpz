@@ -80,7 +80,7 @@ void MainWindow::_initConnectivity() {
     auto appArgs = AppContext::getOptionArgs(*QApplication::instance());
     if(appArgs.contains("noServer")) {    
         this->_mustLaunchServer = false;
-        qDebug() << "RPZServerThread : No server to start because the user said so.";
+        qDebug() << "RPZServer : No server to start because the user said so.";
         this->_sb->updateServerStateLabel("Non", SLState::SL_Finished);
     }
 
@@ -102,7 +102,7 @@ void MainWindow::_initConnectivity() {
     this->_ipHelper->init();
 
     ////////////////////
-    /// RPZServerThread ! //
+    /// RPZServer ! //
     ////////////////////
 
     //si serveur est local et lié à l'app
@@ -110,7 +110,7 @@ void MainWindow::_initConnectivity() {
 
         //tell the UI when the server is up
         QObject::connect(
-            &this->_rpzServer, &RPZServerThread::listening,
+            &this->_rpzServer, &RPZServer::listening,
             [&]() {
                 this->_sb->updateServerStateLabel("OK", SLState::SL_Finished);
             }
@@ -118,7 +118,7 @@ void MainWindow::_initConnectivity() {
 
         //tell the UI when the server is down
         QObject::connect(
-            &this->_rpzServer, &RPZServerThread::error,
+            &this->_rpzServer, &RPZServer::error,
             [&]() {
                 this->_sb->updateServerStateLabel("Erreur", SLState::SL_Error);
             }
@@ -212,7 +212,7 @@ void MainWindow::_initUIApp() {
     // EVENTS
     //
 
-    //bind RPZClientThread to widget once a connection starts
+    //bind RPZClient to widget once a connection starts
     QObject::connect(
         this->_connectWidget, &ConnectWidget::startingConnection, 
         ClientBindable::bindAll

@@ -4,7 +4,7 @@ ClientBindable::ClientBindable() {
     _boundWidgets.append(this);
 }
 
-void ClientBindable::bindAll(RPZClientThread* cc) {
+void ClientBindable::bindAll(RPZClient* cc) {
     
     _rpzClient = cc;
 
@@ -16,7 +16,7 @@ void ClientBindable::bindAll(RPZClientThread* cc) {
     
     //trigger connection
     for(auto ref : _boundWidgets) {
-        ref->onRPZClientThreadConnecting();
+        ref->onRPZClientConnecting();
     }
 
 }
@@ -26,7 +26,7 @@ void ClientBindable::_onClientThreadFinished() {
     _rpzClient = nullptr;
 
     for(auto ref : _boundWidgets) {
-        ref->onRPZClientThreadDisconnect();
+        ref->onRPZClientDisconnect();
     }
 }
 
@@ -37,5 +37,5 @@ void ClientBindable::unbindAll() {
     }
 }
 
-void ClientBindable::onRPZClientThreadConnecting() {}
-void ClientBindable::onRPZClientThreadDisconnect() {}
+void ClientBindable::onRPZClientConnecting() {}
+void ClientBindable::onRPZClientDisconnect() {}

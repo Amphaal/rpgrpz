@@ -1,47 +1,40 @@
-#include "RPZServerThread.h" 
+#include "RPZServer.h" 
 
-RPZServerThread::RPZServerThread(QObject* parent) : QThread(parent) {
+RPZServer::RPZServer() {
     qRegisterMetaType<JSONMethod>("JSONMethod");
 };
 
-void RPZServerThread::run() { 
+void RPZServer::run() { 
 
     //init
-    auto server = new QTcpServer;  
     this->_hints = new AtomsStorage(AlterationPayload::Source::RPZServer, false);
+    this->_server = new QTcpServer;
 
-    qDebug() << "RPZServerThread : Starting server...";
+    qDebug() << "RPZServer : Starting server...";
 
-    auto result = server->listen(QHostAddress::Any, AppContext::UPNP_DEFAULT_TARGET_PORT.toInt());
+    auto result = this->_server->listen(QHostAddress::Any, AppContext::UPNP_DEFAULT_TARGET_PORT.toInt());
 
     if(!result) {
-        qWarning() << "RPZServerThread : Error while starting to listen >> " + server->errorString();
+        qWarning() << "RPZServer : Error while starting to listen >>" << this->_server->errorString();
         emit error();
-        return;
+        emit closed();
     } else {
-        qDebug() << "RPZServerThread : Succesfully listening !";
+        qDebug() << "RPZServer : Succesfully listening !";
         emit listening();
     }
 
     //connect to new connections (proxy through windowed function to ensure event is handled into the server thread)
     QObject::connect(
-        server, &QTcpServer::newConnection, 
-        [=]() { this->_onNewConnection(server); }
+        this->_server, &QTcpServer::newConnection, 
+        this, &RPZServer::_onNewConnection
     );
-
-    //running event loop
-    this->exec();
-
-    //ending server
-    server->close();
-    qDebug() << "RPZServerThread : Server ended !";
 
 };
 
-void RPZServerThread::_onNewConnection(QTcpServer * server) {
+void RPZServer::_onNewConnection() {
         
         //new connection,store it
-        auto clientSocket = new JSONSocket("RPZServerThread", server->nextPendingConnection());
+        auto clientSocket = new JSONSocket("RPZServer", this->_server->nextPendingConnection());
         
         //create new user
         RPZUser user(clientSocket);
@@ -74,11 +67,11 @@ void RPZServerThread::_onNewConnection(QTcpServer * server) {
 
         //signals new connection
         auto newIp = clientSocket->socket()->peerAddress().toString();
-        qDebug() << "RPZServerThread : New connection from" << newIp;
+        qDebug() << "RPZServer : New connection from" << newIp;
 
 }
 
-void RPZServerThread::_onDisconnect(JSONSocket* disconnecting) {
+void RPZServer::_onDisconnect(JSONSocket* disconnecting) {
 
     //remove socket
     const auto idToRemove = this->_idsByClientSocket.take(disconnecting);
@@ -90,7 +83,7 @@ void RPZServerThread::_onDisconnect(JSONSocket* disconnecting) {
     }
 
     auto disconnectingAddress = disconnecting->socket()->peerAddress().toString();
-    qDebug() << "RPZServerThread : " << disconnectingAddress << " disconnected !";
+    qDebug() << "RPZServer : " << disconnectingAddress << " disconnected !";
 
     disconnecting->deleteLater();
 
@@ -99,7 +92,7 @@ void RPZServerThread::_onDisconnect(JSONSocket* disconnecting) {
 
 }
 
-void RPZServerThread::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) {
+void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) {
 
     switch(method) {
         
@@ -200,12 +193,12 @@ void RPZServerThread::_routeIncomingJSON(JSONSocket* target, const JSONMethod &m
 // HIGH Helpers
 //
 
-void RPZServerThread::_tellUserHisIdentity(JSONSocket* socket) {
+void RPZServer::_tellUserHisIdentity(JSONSocket* socket) {
     auto serialized = this->_getUser(socket);
     socket->sendJSON(JSONMethod::AckIdentity, *serialized);
 }
 
-void RPZServerThread::_sendStoredMessages(JSONSocket * clientSocket) {
+void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
     
     //send messages...
     auto messagesToSend = this->_messages.toVList();
@@ -217,11 +210,11 @@ void RPZServerThread::_sendStoredMessages(JSONSocket * clientSocket) {
     auto logMsg = QString("%1 stored messages sent to \"%2\"")
                         .arg(countMsgs)
                         .arg(clientSocket->socket()->peerAddress().toString());
-    JSONSocket::_debugLog("RPZServerThread", method, logMsg);
+    JSONSocket::_debugLog("RPZServer", method, logMsg);
 }
 
 
-void RPZServerThread::_broadcastUsers() {
+void RPZServer::_broadcastUsers() {
     
     //reset registered username list
     this->_formatedUsernamesByUser.clear();
@@ -240,19 +233,19 @@ void RPZServerThread::_broadcastUsers() {
     //log
     auto userCount = this->_usersById.size();
     auto msgLog = QString("Now %1 clients logged").arg(userCount);
-    JSONSocket::_debugLog("RPZServerThread", method, msgLog);
+    JSONSocket::_debugLog("RPZServer", method, msgLog);
 }
 
-void RPZServerThread::_askHostForMapHistory() {
+void RPZServer::_askHostForMapHistory() {
     this->_hostSocket->sendJSON(JSONMethod::AskForHostMapHistory, QStringList());
 }
 
-void RPZServerThread::_alterIncomingPayloadWithUpdatedOwners(AtomsWielderPayload &wPayload, JSONSocket * senderSocket) {
+void RPZServer::_alterIncomingPayloadWithUpdatedOwners(AtomsWielderPayload &wPayload, JSONSocket * senderSocket) {
     auto defaultOwner = this->_getUser(senderSocket); 
     wPayload.updateEmptyUser(*defaultOwner);
 }
 
-void RPZServerThread::_broadcastMapChanges(QVariantHash &payload, JSONSocket * senderSocket) {
+void RPZServer::_broadcastMapChanges(QVariantHash &payload, JSONSocket * senderSocket) {
 
     auto aPayload = Payloads::autoCast(payload);
 
@@ -271,14 +264,14 @@ void RPZServerThread::_broadcastMapChanges(QVariantHash &payload, JSONSocket * s
     this->_sendToAllButSelf(senderSocket, JSONMethod::MapChanged, *aPayload);
 }
 
-void RPZServerThread::_sendMapHistory(JSONSocket * clientSocket) {
+void RPZServer::_sendMapHistory(JSONSocket * clientSocket) {
     auto allAtoms = this->_hints->atoms();
     ResetPayload payload(allAtoms);
     clientSocket->sendJSON(JSONMethod::MapChanged, payload);
 
 }
 
-void RPZServerThread::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
+void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
     
     auto msgId = msg.id();
     RPZResponse response;
@@ -367,7 +360,7 @@ void RPZServerThread::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
 // LOW Helpers
 //
 
-void RPZServerThread::_sendToAllButSelf(JSONSocket * senderSocket, const JSONMethod &method, const QVariant &data) {
+void RPZServer::_sendToAllButSelf(JSONSocket * senderSocket, const JSONMethod &method, const QVariant &data) {
     for(auto &user : this->_usersById) {
         
         //prevent self send
@@ -380,14 +373,14 @@ void RPZServerThread::_sendToAllButSelf(JSONSocket * senderSocket, const JSONMet
     }
 }
 
-void RPZServerThread::_sendToAll(const JSONMethod &method, const QVariant &data) {
+void RPZServer::_sendToAll(const JSONMethod &method, const QVariant &data) {
     for(auto &user : this->_usersById) {
         user.networkSocket()->sendJSON(method, data);
     }
 }
 
 
-RPZUser* RPZServerThread::_getUser(JSONSocket* socket) {
+RPZUser* RPZServer::_getUser(JSONSocket* socket) {
     const auto id = this->_idsByClientSocket[socket];
     return &this->_usersById[id];
 }
