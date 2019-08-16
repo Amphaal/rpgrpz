@@ -14,11 +14,11 @@ void ViewMapHint::setDefaultLayer(int layer) {
     emit atomTemplateChanged();
 }
 
-void ViewMapHint::notifyMovementOnItems(QList<QGraphicsItem*> itemList) {
+void ViewMapHint::notifyMovementOnItems(QList<QGraphicsItem*> &itemsWhoMoved) {
 
     //generate args for payload
     RPZMap<RPZAtom> coords;
-    for(auto gi : itemList) {
+    for(auto &gi : itemsWhoMoved) {
         
         auto cAtom = this->_getAtomFromGraphicsItem(gi);
         if(!cAtom) continue;
@@ -44,8 +44,20 @@ QVector<RPZAtom*> ViewMapHint::selectedAtoms() {
     return out;
 }
 
-void ViewMapHint::notifySelectedItems() {
-    SelectedPayload payload(this->selectedAtomIds());
+void ViewMapHint::notifySelectedItems(QList<QGraphicsItem*> &selectedItems) {
+
+    QVector<snowflake_uid> ids;
+
+    for(auto &gi : selectedItems) {
+        
+        auto cAtom = this->_getAtomFromGraphicsItem(gi);
+        if(!cAtom) continue;
+
+        ids.append(cAtom->id());
+
+    }
+
+    SelectedPayload payload(ids);
     AlterationHandler::get()->queueAlteration(this, payload);
 }
 
@@ -302,9 +314,11 @@ RPZAtom* ViewMapHint::_getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const
 
 //alter Scene
 void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) { 
-
+    
     //on reset
     auto type = payload.type();
+
+    if(type == PayloadAlteration::PA_Reset) emit heavyAlterationProcessing();
     if(type == PayloadAlteration::PA_Selected) emit requestingItemSelectionClearing();
     if(type == PayloadAlteration::PA_Reset) emit requestingItemClearing();
     
@@ -319,6 +333,7 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
         emit requestMissingAssets(toRequest);
     }
 
+    if(type == PayloadAlteration::PA_Reset) emit heavyAlterationProcessed();
 }
 
 //register actions
@@ -335,13 +350,6 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
         case PayloadAlteration::PA_Reset:
         case PayloadAlteration::PA_Added: {
             this->_buildGraphicsItemFromAtom(*updatedAtom);
-        }
-        break;
-
-        //on owner changed
-        case PayloadAlteration::PA_OwnerChanged:
-        {
-
         }
         break;
         

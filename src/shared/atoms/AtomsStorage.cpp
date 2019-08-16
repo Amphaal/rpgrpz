@@ -365,6 +365,10 @@ QPointF AtomsStorage::_getPositionFromAtomDuplication(const RPZAtom &atomToDupli
 
 }
 
+QVector<snowflake_uid> AtomsStorage::selectedAtomIds() {
+    return this->_selectedAtomIds;
+}
+
 //////////////////
 /* END ELEMENTS */
 //////////////////

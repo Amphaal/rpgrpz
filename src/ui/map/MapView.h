@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QtMath>
+#include <QMetaObject>
 
 #include <QGraphicsScene>
 #include <QGraphicsView>
@@ -88,6 +89,9 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
         void _centerItemToPoint(QGraphicsItem* item, const QPoint &eventPos);
         void _onSceneSelectionChanged();
         void _goToDefaultViewState();
+        
+        void _displayLoader();
+        void _hideLoader();
 
         //ghost
             QGraphicsItem* _ghostItem = nullptr;

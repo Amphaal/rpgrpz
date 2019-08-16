@@ -81,7 +81,7 @@ bool MapHint::loadRPZMap(const QString &filePath) {
     this->mayWantToSavePendingState();
 
         //tells UI that map is loading
-        emit mapLoading();
+        emit heavyAlterationProcessing();
 
         //load file and parse it
         MapDatabase mapDb(filePath);

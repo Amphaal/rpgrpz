@@ -139,32 +139,30 @@ void MapView::_handleHintsSignalsAndSlots() {
 
     //on map loading, set placeholder...
     QObject::connect(
-        this->_hints, &MapHint::mapLoading,
-        [=]() {
-            this->setForegroundBrush(*this->_hiddingBrush);
-        }
+        this->_hints, &ViewMapHint::heavyAlterationProcessing,
+        this, &MapView::_displayLoader
     );
-
-    //on reset requested : set placeholder. When over, remove placeholder
+    
     QObject::connect(
-        this->_hints, &AlterationAcknoledger::resetAlterationRequested,
-        [=](QFuture<void> &alterationRequest) {
-            this->setForegroundBrush(*this->_hiddingBrush);
-            AsyncFuture::observe(alterationRequest).subscribe([=]() {
-                this->setForegroundBrush(QBrush());
-            });
-
-        }
+        this->_hints, &ViewMapHint::heavyAlterationProcessed,
+        this, &MapView::_hideLoader
     );
 
     //on selection from user
     QObject::connect(
         this->scene(), &QGraphicsScene::selectionChanged,
         [=]() {
-            if(AlterationAcknoledger::isDequeuing()) return;
-            this->_hints->notifySelectedItems();
+            this->_hints->notifySelectedItems(this->scene()->selectedItems());
         }
     );
+}
+
+void MapView::_hideLoader() {
+    this->setForegroundBrush(QBrush());
+}
+
+void MapView::_displayLoader() {
+    this->setForegroundBrush(*this->_hiddingBrush);
 }
 
 void MapView::_addItem(QGraphicsItem* toAdd, bool mustNotifyMovement) {
@@ -355,15 +353,6 @@ void MapView::onRPZClientConnecting() {
         this->_hints, &MapHint::replaceMissingAssetPlaceholders
     );
 
-    //on map change
-    QObject::connect(
-        _rpzClient, &RPZClient::mapChanged,
-        [&](const QVariantHash &payload) {
-            auto cp_payload = Payloads::autoCast(payload);
-            this->_hints->queueAlteration(*cp_payload);
-        }
-    );
-
     //when been asked for map content
     QObject::connect(
         _rpzClient, &RPZClient::beenAskedForMapHistory,
@@ -488,8 +477,13 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
 
             //if something moved ?
             if(this->_itemsWhoNotifiedMovement.count()) {
+
+                //run notify
                 this->_hints->notifyMovementOnItems(this->_itemsWhoNotifiedMovement.toList());
+
+                //clear set
                 this->_itemsWhoNotifiedMovement.clear();
+
             }
             
         }

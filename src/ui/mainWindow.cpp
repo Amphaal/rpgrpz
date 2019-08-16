@@ -2,6 +2,9 @@
 
 MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 
+    //bind AlterationHandler to UI Thread
+    AlterationHandler::get();
+
     //init...
     this->_initUI();
     this->_initConnectivity();
@@ -16,12 +19,7 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
     this->_updateIntegrator->checkForAppUpdates();
 }
 
-MainWindow::~MainWindow() {
-    if(this->_rpzServer.isRunning()) {
-        this->_rpzServer.quit();
-        this->_rpzServer.wait();
-    }
-}
+MainWindow::~MainWindow() { }
 
 void MainWindow::_saveWindowState() {
     AppContext::settings()->beginGroup("mainWindow");
@@ -108,9 +106,11 @@ void MainWindow::_initConnectivity() {
     //si serveur est local et lié à l'app
     if(this->_mustLaunchServer) {    
 
+        this->_rpzServer = new RPZServer;
+
         //tell the UI when the server is up
         QObject::connect(
-            &this->_rpzServer, &RPZServer::listening,
+            this->_rpzServer, &RPZServer::listening,
             [&]() {
                 this->_sb->updateServerStateLabel("OK", SLState::SL_Finished);
             }
@@ -118,14 +118,39 @@ void MainWindow::_initConnectivity() {
 
         //tell the UI when the server is down
         QObject::connect(
-            &this->_rpzServer, &RPZServer::error,
+            this->_rpzServer, &RPZServer::error,
             [&]() {
                 this->_sb->updateServerStateLabel("Erreur", SLState::SL_Error);
             }
         );
 
+        //create a separate thread to run the server into
+        QThread serverThread(this);
+        this->_rpzServer->moveToThread(&serverThread);
+        
+        //events...
+        QObject::connect(
+            &serverThread, &QThread::started, 
+            this->_rpzServer, &RPZServer::run
+        );
+
+        QObject::connect(
+            this->_rpzServer, &RPZServer::stopped, 
+            &serverThread, &QThread::quit
+        );
+
+        QObject::connect(
+            this->_rpzServer, &RPZServer::stopped,  
+            this->_rpzServer, &QObject::deleteLater
+        );
+
+        QObject::connect(
+            &serverThread, &QThread::finished, 
+            &serverThread, &QObject::deleteLater
+        );
+
         //start
-        this->_rpzServer.start();
+        serverThread.start();
 
     }
 

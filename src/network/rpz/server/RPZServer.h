@@ -28,12 +28,13 @@
 
 #include "src/shared/commands/MessageInterpreter.h"
 
-class RPZServer : public JSONRouter { 
+class RPZServer : public QTcpServer, public JSONRouter { 
     
     Q_OBJECT
 
     public:
         RPZServer();
+        ~RPZServer();
     
     public slots:
         void run();
@@ -41,12 +42,11 @@ class RPZServer : public JSONRouter {
     signals:
         void listening();
         void error();
-        void closed();
+        void stopped();
 
     private:
         QHash<JSONSocket*, snowflake_uid> _idsByClientSocket;
         JSONSocket* _hostSocket = nullptr;
-        QTcpServer* _server = nullptr;
         
         //users
         RPZMap<RPZUser> _usersById;
@@ -69,7 +69,7 @@ class RPZServer : public JSONRouter {
         
         //internal
         void _onNewConnection();
-        void _onDisconnect(JSONSocket* disconnecting);
+        void _onClientSocketDisconnected(JSONSocket* disconnectedSocket);
         void _routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) override;
         
         void _sendToAll(const JSONMethod &method, const QVariant &data);
