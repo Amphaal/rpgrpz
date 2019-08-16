@@ -2,9 +2,9 @@
 
 MapHint::MapHint() { }
 
-void MapHint::_handlePayload(AlterationPayload &payload) { 
+void MapHint::_handleAlterationRequest(AlterationPayload &payload) { 
 
-    ViewMapHint::_handlePayload(payload);
+    ViewMapHint::_handleAlterationRequest(payload);
 
     //define dirty
     this->_shouldMakeMapDirty(payload);
@@ -91,7 +91,7 @@ bool MapHint::loadRPZMap(const QString &filePath) {
         //create payload and queue it
         auto allAtoms = mapDb.toAtoms();
         ResetPayload payload(allAtoms);
-        this->queueAlteration(payload);
+        AlterationHandler::get()->queueAlteration(this, payload);
 
     return true;
 }

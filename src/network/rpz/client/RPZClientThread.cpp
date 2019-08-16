@@ -25,16 +25,12 @@ void RPZClientThread::run() {
 
     QObject::connect(
         this->_cli->socket(), &QAbstractSocket::connected,
-        [=]() {
-            this->_onConnected();
-        }
+        this, &RPZClientThread::_onConnected
     );
 
     QObject::connect(
         this->_cli->socket(), &QAbstractSocket::disconnected,
-        [=]() {
-            this->_onDisconnect();
-        }
+        this, &RPZClientThread::_onDisconnect
     );
 
     QObject::connect(
@@ -62,24 +58,16 @@ void RPZClientThread::_onConnected() {
     this->_cli->sendJSON(JSONMethod::Handshake, RPZHandshake(this->_name));
 }
 
-QFuture<void> RPZClientThread::_handleAlterationRequest(AlterationPayload &payload, bool autoPropagate) {
-    
-    //completed deferred
-    auto d = AsyncFuture::deferred<void>();
-    d.complete();
+void RPZClientThread::_handleAlterationRequest(AlterationPayload &payload) {
 
     //ignore alteration requests when socket is not connected
-    if(this->_cli->socket()->state() != QAbstractSocket::ConnectedState) return d.future();
+    if(this->_cli->socket()->state() != QAbstractSocket::ConnectedState) return;
 
-    //trace
-    this->_payloadTrace(payload);
-
-    //if not routable, instant return 
-    if(!payload.isNetworkRoutable()) return d.future();
+    //if not routable, ignore
+    if(!payload.isNetworkRoutable()) return;
 
     //send json
-    this->_cli->sendJSON(JSONMethod::MapChanged, payload);
-    return d.future();
+    return this->_cli->sendJSON(JSONMethod::MapChanged, payload);
 }
 
 QString RPZClientThread::getConnectedSocketAddress() {
@@ -163,8 +151,8 @@ void RPZClientThread::_routeIncomingJSON(JSONSocket* target, const JSONMethod &m
         break;
 
         case JSONMethod::MapChanged: {
-            auto payload = Payloads::autoCast(data.toHash());
-            this->propagateAlterationPayload(*payload);
+            auto payload = AlterationPayload(data.toHash());
+            AlterationHandler::get()->queueAlteration(this, payload);
         }   
         break;
 

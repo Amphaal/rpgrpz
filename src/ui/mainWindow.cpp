@@ -265,10 +265,6 @@ void MainWindow::_initUIApp() {
         this->_mapView->hints(), &MapHint::mapFileStateChanged,
         this->_sb, &RPZStatusBar::updateMapFileLabel
     );
-    this->_sb->updateMapFileLabel(
-        this->_mapView->hints()->RPZMapFilePath(),
-        this->_mapView->hints()->isMapDirty()
-    );
 
     //on template selected
     QObject::connect(

@@ -91,6 +91,6 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         QSet<RPZAssetHash> _assetsIdsToRequest;
 
         //augmenting AtomsStorage
-        virtual void _handlePayload(AlterationPayload &payload) override;
+        virtual void _handleAlterationRequest(AlterationPayload &payload) override;
         virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) override;
 };

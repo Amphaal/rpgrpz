@@ -31,7 +31,7 @@ void ViewMapHint::notifyMovementOnItems(QList<QGraphicsItem*> itemList) {
 
     //inform moving
     BulkMetadataChangedPayload payload(coords);
-    this->propagateAlterationPayload(payload);
+    AlterationHandler::get()->queueAlteration(this, payload);
     
 }
 
@@ -46,7 +46,7 @@ QVector<RPZAtom*> ViewMapHint::selectedAtoms() {
 
 void ViewMapHint::notifySelectedItems() {
     SelectedPayload payload(this->selectedAtomIds());
-    this->propagateAlterationPayload(payload);
+    AlterationHandler::get()->queueAlteration(this, payload);
 }
 
 //////////////////
@@ -90,7 +90,7 @@ void ViewMapHint::setDefaultUser(RPZUser user) {
 
     //inform atom layout
     OwnerChangedPayload payload(atomIds.toList().toVector(), user);
-    this->propagateAlterationPayload(payload);
+    AlterationHandler::get()->queueAlteration(this, payload);
 
 }
 
@@ -104,7 +104,7 @@ void ViewMapHint::setDefaultUser(RPZUser user) {
 
 void ViewMapHint::deleteCurrentSelectionItems() {
     RemovedPayload payload(this->selectedAtomIds());
-    this->queueAlteration(payload);
+    AlterationHandler::get()->queueAlteration(this, payload);
 }
 
 QGraphicsItem* ViewMapHint::generateGhostItem(RPZAssetMetadata &assetMetadata) {
@@ -136,7 +136,7 @@ void ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsItem) {
     auto newAtom = AtomConverter::graphicsToAtom(graphicsItem);
     AddedPayload payload(newAtom);
 
-    this->queueAlteration(payload);
+    AlterationHandler::get()->queueAlteration(this, payload);
 }
 
 /////////////////////////////////
@@ -259,7 +259,7 @@ void ViewMapHint::handleParametersUpdateAlterationRequest(QVariantHash &payload)
         cPayload->changeSource(AlterationPayload::Source::Undefined); 
 
         //handle payload
-        this->queueAlteration(*cPayload);
+        AlterationHandler::get()->queueAlteration(this, *cPayload);
 
     }
 }
@@ -301,14 +301,14 @@ RPZAtom* ViewMapHint::_getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const
 /////////////////////////////
 
 //alter Scene
-void ViewMapHint::_handlePayload(AlterationPayload &payload) { 
+void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) { 
 
     //on reset
     auto type = payload.type();
     if(type == PayloadAlteration::PA_Selected) emit requestingItemSelectionClearing();
     if(type == PayloadAlteration::PA_Reset) emit requestingItemClearing();
     
-    AtomsStorage::_handlePayload(payload);
+    AtomsStorage::_handleAlterationRequest(payload);
 
     //request assets if there are missing
     auto c_MissingAssets = this->_assetsIdsToRequest.count();
@@ -335,6 +335,13 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
         case PayloadAlteration::PA_Reset:
         case PayloadAlteration::PA_Added: {
             this->_buildGraphicsItemFromAtom(*updatedAtom);
+        }
+        break;
+
+        //on owner changed
+        case PayloadAlteration::PA_OwnerChanged:
+        {
+
         }
         break;
         

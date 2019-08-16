@@ -1,27 +1,16 @@
 #include "AlterationHandler.h"
 
-bool AlterationHandler::isDequeuing() {
-    return _dequeuing;
+AlterationHandler* AlterationHandler::get() {
+    if(!_inst) _inst = new AlterationHandler;
+    return _inst; 
 }
 
-QFuture<void> AlterationHandler::_emptyQueue() {
+void AlterationHandler::queueAlteration(AlterationAcknoledger* sender, AlterationPayload &payload) {
 
-    _dequeuing = true;
+    //if initial payload emission, apply sender source for send
+    auto source = payload.source();
+    if(source == AlterationPayload::Source::Undefined && sender) payload.changeSource(sender->source()); 
 
-    auto instr = _queuedAlterations.dequeue();
+    emit requiresPayloadHandling(payload);
 
-    return AsyncFuture::observe(instr()).subscribe([=]()->QFuture<void>{
-
-        //if queue is empty, stop
-        if(!_queuedAlterations.count()) {
-            _dequeuing = false;
-            auto d = AsyncFuture::deferred<void>();
-            d.complete();
-            return d.future();
-        }
-        
-        //keep dequeuing
-        return _emptyQueue();
-
-    }).future();
-};
+}

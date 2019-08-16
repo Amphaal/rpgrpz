@@ -1,35 +1,26 @@
 #pragma once
 
-#include <functional>
-
-#include <QSet>
-#include <QQueue>
 #include <QObject>
 
-#include "src/_libs/asyncfuture.h"
-
 #include "src/shared/payloads/Payloads.h"
+
+#include "AlterationHandler.h"
 
 class AlterationHandler;
 
 class AlterationAcknoledger {
 
     public:
-        AlterationAcknoledger(const AlterationPayload::Source &source, bool senderOnly = false);
-        
+        AlterationAcknoledger(const AlterationPayload::Source &source, bool autoLinkage = true);
         AlterationPayload::Source source();
+        void linkToAlterationHandler();
 
-        void queueAlteration(AlterationPayload &payload);
-    
     protected:
-        virtual QFuture<void> _handleAlterationRequest(AlterationPayload &payload, bool autoPropagate = true) = 0;
-        virtual QFuture<void> propagateAlterationPayload(AlterationPayload &payload);
-
-        void _payloadTrace(AlterationPayload &payload);
+        virtual void _handleAlterationRequest(AlterationPayload &payload);
 
     private:
+        void _ackAlteration(const AlterationPayload &payload);
+        void _payloadTrace(const AlterationPayload &payload);
         AlterationPayload::Source _source = AlterationPayload::Source::Undefined;
-
-        void _queueAlteration(AlterationPayload &payload, bool autoPropagate = true);
 
 };

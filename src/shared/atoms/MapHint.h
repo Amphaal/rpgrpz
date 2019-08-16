@@ -36,5 +36,5 @@ class MapHint : public ViewMapHint {
         void _shouldMakeMapDirty(AlterationPayload &payload);
     
     protected:
-        virtual void _handlePayload(AlterationPayload &payload) override;
+        virtual void _handleAlterationRequest(AlterationPayload &payload) override;
 };

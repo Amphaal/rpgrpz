@@ -28,6 +28,7 @@ static const QStringList PayloadAlterationAsString {
 };
 
 class AlterationPayload : public QVariantHash { 
+    
     public:
         enum Source {
             Undefined,
@@ -48,9 +49,7 @@ class AlterationPayload : public QVariantHash {
         };
 
         AlterationPayload() {}
-        AlterationPayload(const QVariantHash &hash) : QVariantHash(hash) {
-            this->_updateTags(this->type());
-        }
+        AlterationPayload(const QVariantHash &hash) : QVariantHash(hash) {}
         AlterationPayload(const PayloadAlteration &type) : QVariantHash() {
             this->_setType(type);
         }
@@ -58,13 +57,6 @@ class AlterationPayload : public QVariantHash {
         PayloadAlteration type() const {
             return (PayloadAlteration)this->value("t").toInt();
         };
-
-        bool hasControllerAcknowledged() const {
-            return this->value("ack").toBool();
-        }
-        void setControllerAck() {
-            this->insert("ack", true);
-        }
 
         void changeSource(const Source &newSource) {
             this->insert("s", (int)newSource);
@@ -75,14 +67,22 @@ class AlterationPayload : public QVariantHash {
         }
 
         bool isNetworkRoutable() const {
-            return this->_isNetworkAlteration;
+            return _networkAlterations.contains(this->type());
+        }
+
+        void tagAsFromTimeline() {
+            this->insert("h", true);
+        }
+
+        bool isFromTimeline() const {
+            return this->value("h").toBool();
         }
 
         //necessary for dynamic_cast operations
         virtual ~AlterationPayload() {}
 
     private:      
-        bool _isNetworkAlteration = false;
+        bool _isFromTimeline = false; //client only
 
         static inline const QList<PayloadAlteration> _networkAlterations = { 
             PayloadAlteration::PA_Added, 
@@ -94,10 +94,7 @@ class AlterationPayload : public QVariantHash {
         
         void _setType(const PayloadAlteration &type) {
             this->insert("t", (int)type);
-            this->_updateTags(type);
-        }
-
-        void _updateTags(const PayloadAlteration &type) {
-            this->_isNetworkAlteration = _networkAlterations.contains(type);
         }
 };
+
+Q_DECLARE_METATYPE(AlterationPayload)

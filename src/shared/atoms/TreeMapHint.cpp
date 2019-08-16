@@ -1,6 +1,6 @@
 #include "TreeMapHint.h"
 
-TreeMapHint::TreeMapHint(AtomsStorage* mapMaster) : AtomsHandler(AlterationPayload::Source::Local_MapLayout), 
+TreeMapHint::TreeMapHint(AtomsStorage* mapMaster) : AlterationAcknoledger(AlterationPayload::Source::Local_MapLayout), 
     AtomsContextualMenuHandler(mapMaster), 
     _layerIcon(new QIcon(":/icons/app/manager/layer.png")),
     _textIcon(new QIcon(":/icons/app/tools/text.png")),
@@ -16,15 +16,15 @@ TreeMapHint::TreeMapHint(AtomsStorage* mapMaster) : AtomsHandler(AlterationPaylo
 
 void TreeMapHint::propagateFocus(snowflake_uid focusedAtomId) {
     FocusedPayload payload(focusedAtomId);
-    this->propagateAlterationPayload(payload);
+    AlterationHandler::get()->queueAlteration(this, payload);
 }
 
 void TreeMapHint::propagateSelection(QVector<snowflake_uid> &selectedIds) {
     SelectedPayload payload(selectedIds);
-    this->propagateAlterationPayload(payload);
+    AlterationHandler::get()->queueAlteration(this, payload);
 }
 
-void TreeMapHint::_handlePayload(AlterationPayload &payload) {
+void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
 
     auto type = payload.type();
 
