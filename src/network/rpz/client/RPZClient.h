@@ -8,6 +8,9 @@
 #include <QJsonArray>
 #include <QVariantList>
 
+#include <QMutex>
+
+
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/network/rpz/_any/JSONRouter.h"
 
@@ -19,7 +22,7 @@
 #include "src/helpers/_appContext.h"
 #include "src/shared/async-ui/AlterationAcknoledger.h"
 
-class RPZClient : public JSONRouter {
+class RPZClient : public JSONSocket, public AlterationAcknoledger, public JSONRouter {
 
     Q_OBJECT
 
@@ -28,20 +31,19 @@ class RPZClient : public JSONRouter {
         ~RPZClient();
         
         QString getConnectedSocketAddress();
-    
-        //slots
-        void sendMessage(QVariantHash &message);
-        void askForAssets(const QList<RPZAssetHash> ids);
-        void defineAudioStreamSource(const QString &audioStreamUrl, const QString &sourceTitle);
-        void changeAudioPosition(int newPosition);
-        void setAudioStreamPlayState(bool isPlaying);
-        void sendMapHistory(const QVariantHash &history);
 
         RPZUser identity();
         QVector<RPZUser> sessionUsers();
 
     public slots:
         void run();
+
+        void sendMessage(QVariantHash &message);
+        void askForAssets(const QList<RPZAssetHash> ids);
+        void defineAudioStreamSource(const QString &audioStreamUrl, const QString &sourceTitle);
+        void changeAudioPosition(int newPosition);
+        void setAudioStreamPlayState(bool isPlaying);
+        void sendMapHistory(const QVariantHash &history);
 
     signals:
         void connectionStatus(const QString &statusMessage, bool isError = false);
@@ -71,8 +73,6 @@ class RPZClient : public JSONRouter {
 
         RPZUser _self;
         QVector<RPZUser> _sessionUsers;
-        JSONSocket* _cli = nullptr;
-        AlterationAcknoledger* _ack = nullptr;
 
         void _onConnected();
         void _error(QAbstractSocket::SocketError _socketError);
@@ -80,6 +80,6 @@ class RPZClient : public JSONRouter {
         
         void _routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) override;
  
-        void _handleAlterationRequest(AlterationPayload &payload);
+        void _handleAlterationRequest(AlterationPayload &payload) override;
 
 };

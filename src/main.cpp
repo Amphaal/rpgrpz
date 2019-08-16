@@ -33,8 +33,8 @@ int serverConsole(int argc, char** argv) {
     QCoreApplication server(argc, argv);
     AppContext::configureApp(server);
 
-    RPZServer thread;
-    thread.start();
+    RPZServer app;
+    app.run();
 
     return server.exec();
 }

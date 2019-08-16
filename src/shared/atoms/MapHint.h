@@ -24,8 +24,6 @@ class MapHint : public ViewMapHint {
 
     signals:
         void mapFileStateChanged(const QString &filePath, bool isMapDirty);
-        void mapLoading();
-        void resetRequested();
 
     private: 
         QString _mapFilePath;

@@ -1,40 +1,46 @@
 #include "RPZServer.h" 
 
 RPZServer::RPZServer() {
+
     qRegisterMetaType<JSONMethod>("JSONMethod");
+
+    //connect to new connections (proxy through windowed function to ensure event is handled into the server thread)
+    QObject::connect(
+        this, &QTcpServer::newConnection, 
+        this, &RPZServer::_onNewConnection
+    );
+
 };
+
+RPZServer::~RPZServer() {
+    if(this->_hostSocket) delete this->_hostSocket;
+    if(this->_hints) delete this->_hints;
+}
 
 void RPZServer::run() { 
 
     //init
     this->_hints = new AtomsStorage(AlterationPayload::Source::RPZServer, false);
-    this->_server = new QTcpServer;
 
     qDebug() << "RPZServer : Starting server...";
 
-    auto result = this->_server->listen(QHostAddress::Any, AppContext::UPNP_DEFAULT_TARGET_PORT.toInt());
+    auto result = this->listen(QHostAddress::Any, AppContext::UPNP_DEFAULT_TARGET_PORT.toInt());
 
     if(!result) {
-        qWarning() << "RPZServer : Error while starting to listen >>" << this->_server->errorString();
+        qWarning() << "RPZServer : Error while starting to listen >>" << this->errorString();
         emit error();
-        emit closed();
+        emit stopped();
     } else {
         qDebug() << "RPZServer : Succesfully listening !";
         emit listening();
     }
-
-    //connect to new connections (proxy through windowed function to ensure event is handled into the server thread)
-    QObject::connect(
-        this->_server, &QTcpServer::newConnection, 
-        this, &RPZServer::_onNewConnection
-    );
 
 };
 
 void RPZServer::_onNewConnection() {
         
         //new connection,store it
-        auto clientSocket = new JSONSocket("RPZServer", this->_server->nextPendingConnection());
+        auto clientSocket = new JSONSocket("RPZServer", this->nextPendingConnection());
         
         //create new user
         RPZUser user(clientSocket);
@@ -53,16 +59,14 @@ void RPZServer::_onNewConnection() {
         QObject::connect(
             clientSocket->socket(), &QAbstractSocket::disconnected,
             [&, clientSocket]() {
-				this->_onDisconnect(clientSocket);
+				this->_onClientSocketDisconnected(clientSocket);
 			}
         );
 
         //on data reception
         QObject::connect(
             clientSocket, &JSONSocket::JSONReceived,
-            [&](JSONSocket *target, const JSONMethod &method, const QVariant &data) {
-                this->_routeIncomingJSON(target, method, data);
-            }
+            this, &RPZServer::_routeIncomingJSON
         );
 
         //signals new connection
@@ -71,21 +75,21 @@ void RPZServer::_onNewConnection() {
 
 }
 
-void RPZServer::_onDisconnect(JSONSocket* disconnecting) {
+void RPZServer::_onClientSocketDisconnected(JSONSocket* disconnectedSocket) {
 
     //remove socket
-    const auto idToRemove = this->_idsByClientSocket.take(disconnecting);
+    const auto idToRemove = this->_idsByClientSocket.take(disconnectedSocket);
     this->_usersById.remove(idToRemove);
 
     //desalocate host
-    if(this->_hostSocket == disconnecting) {
+    if(this->_hostSocket == disconnectedSocket) {
         this->_hostSocket = nullptr;
     }
 
-    auto disconnectingAddress = disconnecting->socket()->peerAddress().toString();
+    auto disconnectingAddress = disconnectedSocket->socket()->peerAddress().toString();
     qDebug() << "RPZServer : " << disconnectingAddress << " disconnected !";
 
-    disconnecting->deleteLater();
+    delete disconnectedSocket;
 
     //tell other clients that the user is gone
     this->_broadcastUsers();

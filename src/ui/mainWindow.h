@@ -53,7 +53,7 @@ class MainWindow : public QMainWindow {
         void _loadWindowState();
 
         ConnectivityHelper* _ipHelper = nullptr;
-        RPZServer _rpzServer;
+        RPZServer* _rpzServer = nullptr;
         bool _mustLaunchServer = true;
         void _initConnectivity();
 

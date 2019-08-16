@@ -10,7 +10,7 @@ void AssetsTreeViewModel::onRPZClientConnecting() {
 
     //import asset
     QObject::connect(
-        _rpzClient, &RPZClient::receivedAsset,
+        this->_rpzClient, &RPZClient::receivedAsset,
         [&](const QVariantHash &package) {
             
             this->beginResetModel();

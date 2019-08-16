@@ -34,9 +34,6 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
     public:
         ViewMapHint();
 
-        //replace placeholders
-        void replaceMissingAssetPlaceholders(const RPZAssetMetadata &metadata);
-
         //actions helpers
         void deleteCurrentSelectionItems();
 
@@ -57,13 +54,15 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         QVector<RPZAtom*> selectedAtoms();
 
     public slots:
-        void notifyMovementOnItems(QList<QGraphicsItem*> itemList);
-        void notifySelectedItems();
+        void notifyMovementOnItems(QList<QGraphicsItem*> &itemsWhoMoved);
+        void notifySelectedItems(QList<QGraphicsItem*> &selectedItems);
+        void replaceMissingAssetPlaceholders(const RPZAssetMetadata &metadata);
 
     signals:
-        void mapFileStateChanged(const QString &filePath, bool isMapDirty);
-        void requestMissingAssets(const QList<RPZAssetHash> assetIdsToRequest);
+        void requestMissingAssets(const QList<RPZAssetHash> &assetIdsToRequest);
         void atomTemplateChanged();
+        void heavyAlterationProcessing();
+        void heavyAlterationProcessed();
 
         void requestingItemInsertion(QGraphicsItem* toInsert);
         void requestingItemFocus(QGraphicsItem* toFocus);
@@ -74,16 +73,13 @@ class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
         void requestingItemUpdate(QGraphicsItem* toUpdate, const QHash<AtomParameter, QVariant> &newData);
 
     private:
+        QMap<snowflake_uid, QGraphicsItem*> _GItemsByAtomId;
+        
         //helpers
         QGraphicsItem* _buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom);
         void _crossBindingAtomWithGI(RPZAtom* atom, QGraphicsItem* gi);
         RPZAtom* _getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const;
         QVector<RPZAtom*> _getAtomFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const;
-
-        QMap<snowflake_uid, QGraphicsItem*> _GItemsByAtomId;
-
-        //inner event handling
-        void _onSceneSelectionChanged();
 
     protected:
         //missing assets tracking
