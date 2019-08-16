@@ -1,7 +1,7 @@
 #include "AtomsStorage.h"
 
 
-AtomsStorage::AtomsStorage(const AlterationPayload::Source &boundSource, bool autoRegisterAck) : AtomsHandler(boundSource, autoRegisterAck) { };
+AtomsStorage::AtomsStorage(const AlterationPayload::Source &boundSource, bool autoLinkage) : AlterationAcknoledger(boundSource, autoLinkage) { };
 
 RPZMap<RPZAtom> AtomsStorage::atoms() {
     return this->_atomsById;
@@ -13,6 +13,9 @@ RPZMap<RPZAtom> AtomsStorage::atoms() {
 
 void AtomsStorage::_registerPayloadForHistory(AlterationPayload &payload) {
     
+    //do nothing if payload is from timeline
+    if(!payload.isFromTimeline()) return;
+
     //do nothing if payload is not redo compatible
     if(!payload.isNetworkRoutable()) return;
 
@@ -44,18 +47,13 @@ void AtomsStorage::undo() {
 
     //get stored payload and handle it
     auto st_payload = this->_undoHistory.at(toReachIndex);
-    auto ptr = Payloads::autoCast(st_payload);
-
-    //change source
-    ptr->changeSource(AlterationPayload::Source::Undefined);
-
-    this->_basic_handlePayload(*ptr);
+    st_payload.tagAsFromTimeline();
 
     //update the index
     this->_payloadHistoryIndex++;
 
     //propagate
-    this->propagateAlterationPayload(*ptr);
+    AlterationHandler::get()->queueAlteration(this, st_payload);
 }
 
 void AtomsStorage::redo() {
@@ -74,27 +72,22 @@ void AtomsStorage::redo() {
 
     //get stored payload and handle it
     auto st_payload = this->_redoHistory.at(toReachIndex);
-    auto ptr = Payloads::autoCast(st_payload);
-
-    //change source
-    ptr->changeSource(AlterationPayload::Source::Undefined);
-
-    this->_basic_handlePayload(*ptr);
+    st_payload.tagAsFromTimeline();
 
     //update the index
     this->_payloadHistoryIndex--;
 
-    //propagate
-    this->propagateAlterationPayload(*ptr);
+    //process
+    AlterationHandler::get()->queueAlteration(this, st_payload);
 }
 
-AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &historyPayload) {
+AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &fromHistoryPayload) {
 
-    switch(historyPayload.type()) {
+    switch(fromHistoryPayload.type()) {
 
         case PayloadAlteration::PA_BulkMetadataChanged: {
             
-            auto casted = (BulkMetadataChangedPayload*)&historyPayload;
+            auto casted = (BulkMetadataChangedPayload*)&fromHistoryPayload;
             auto intialAtoms = casted->atoms();
             RPZMap<RPZAtom> outAtoms;
 
@@ -119,7 +112,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &historyP
 
         case PayloadAlteration::PA_MetadataChanged: {
             
-            auto casted = (MetadataChangedPayload*)&historyPayload;
+            auto casted = (MetadataChangedPayload*)&fromHistoryPayload;
             auto changesTypes = MetadataChangedPayload::fromArgs(casted->args()).editedMetadata();
             RPZMap<RPZAtom> partialAtoms;
 
@@ -141,13 +134,13 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &historyP
         break; 
 
         case PayloadAlteration::PA_Added: {
-            auto casted = (AddedPayload*)&historyPayload;
+            auto casted = (AddedPayload*)&fromHistoryPayload;
             return RemovedPayload(casted->atoms().keys().toVector());
         }
         break; 
 
         case PayloadAlteration::PA_Removed: {
-            auto casted = (RemovedPayload*)&historyPayload;
+            auto casted = (RemovedPayload*)&fromHistoryPayload;
             RPZMap<RPZAtom> out;
             for(auto atomId : casted->targetAtomIds()) {
                 out.insert(atomId, this->_atomsById[atomId]);
@@ -161,7 +154,8 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &historyP
 
     }
 
-    return historyPayload;
+    return fromHistoryPayload;
+
 }
 
 
@@ -173,13 +167,17 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &historyP
 /* ELEMENTS */
 //////////////
 
+void AtomsStorage::handleAlterationRequest(AlterationPayload &payload) { 
+    return this->_handleAlterationRequest(payload);
+}
+
 //alter Scene
-void AtomsStorage::_handlePayload(AlterationPayload &payload) { 
+void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) { 
+
+    //may register for history
+    this->_registerPayloadForHistory(payload);
 
     auto pType = payload.type();
-
-    //register history
-    this->_registerPayloadForHistory(payload);
 
     //on reset
     if(pType == PayloadAlteration::PA_Reset) {
@@ -195,21 +193,12 @@ void AtomsStorage::_handlePayload(AlterationPayload &payload) {
     }
 
     //base handling
-    this->_basic_handlePayload(payload);
-
-}
-
-void AtomsStorage::_basic_handlePayload(AlterationPayload &payload) {
-
-    auto type = payload.type();
-
-    //atom wielders format
     if(auto bPayload = dynamic_cast<AtomsWielderPayload*>(&payload)) {
         
         auto atoms  = bPayload->atoms();
 
         for (RPZMap<RPZAtom>::iterator i = atoms.begin(); i != atoms.end(); ++i) {
-            this->_handlePayloadInternal(type, i.key(), i.value());
+            this->_handlePayloadInternal(pType, i.key(), i.value());
         }
 
     }
@@ -221,11 +210,13 @@ void AtomsStorage::_basic_handlePayload(AlterationPayload &payload) {
         auto args =  mPayload->args();
         
         for (auto id : ids) {
-            this->_handlePayloadInternal(type, id, args);
+            this->_handlePayloadInternal(pType, id, args);
         }
 
     }
+
 }
+
 
 //register actions
 RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) {
@@ -320,11 +311,11 @@ void AtomsStorage::duplicateAtoms(const QVector<snowflake_uid> &atomIdList) {
 
     //request insertion
     AddedPayload added(newAtoms);
-    this->queueAlteration(added);
+    AlterationHandler::get()->queueAlteration(this, added);
 
     //request selection
     SelectedPayload selected(newAtoms.keys().toVector());
-    this->queueAlteration(selected);
+    AlterationHandler::get()->queueAlteration(this, selected);
 }
 
 

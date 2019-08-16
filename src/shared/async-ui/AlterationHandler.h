@@ -1,28 +1,25 @@
 #pragma once
 
-#include <functional>
-
-#include <QSet>
-#include <QQueue>
 #include <QObject>
-
-#include "src/_libs/asyncfuture.h"
 
 #include "src/shared/payloads/Payloads.h"
 
+#include "AlterationAcknoledger.h"
+
 class AlterationAcknoledger;
 
-class AlterationHandler {
+class AlterationHandler : public QObject {
     
+    Q_OBJECT
+
     public:
-        static void registerAck(AlterationAcknoledger* toRegister);
-        static bool isDequeuing();
+        static AlterationHandler* get();
+        void queueAlteration(AlterationAcknoledger* sender, AlterationPayload &payload);
+
+    signals:
+        void requiresPayloadHandling(const AlterationPayload &payload);
 
     private:
-        static inline QSet<AlterationAcknoledger*> _registeredAcknoledgers;
-        static inline QQueue<std::function<QFuture<void>()>> _queuedAlterations;
-        
-        static inline bool _dequeuing = false;
-        static QFuture<void> _emptyQueue();
+        static inline AlterationHandler* _inst = nullptr;
 
 };

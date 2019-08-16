@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QThread>
+
 #include <QMessageBox>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -73,6 +75,6 @@ class RPZClientThread : public QThread, public JSONRouter, public AlterationAckn
         
         void _routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) override;
  
-        QFuture<void> _handleAlterationRequest(AlterationPayload &payload, bool autoPropagate = true) override;
+        void _handleAlterationRequest(AlterationPayload &payload);
 
 };

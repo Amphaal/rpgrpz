@@ -1,6 +1,6 @@
 #pragma once
 
-#include "AtomsHandler.h"
+#include "src\shared\async-ui\AlterationAcknoledger.h"
 
 #include "src/shared/database/AssetsDatabase.h"
 
@@ -11,7 +11,7 @@
 
 #include <QTreeWidget>
 
-class TreeMapHint : public AtomsHandler, public AtomsContextualMenuHandler {
+class TreeMapHint : public AlterationAcknoledger, public AtomsContextualMenuHandler {
     
     Q_OBJECT
     
@@ -47,8 +47,8 @@ class TreeMapHint : public AtomsHandler, public AtomsContextualMenuHandler {
         QHash<RPZAssetHash, QSet<snowflake_uid>> _atomIdsBoundByRPZAssetHash;
 
         //augmenting AtomsStorage
-        virtual void _handlePayload(AlterationPayload &payload) override;
-        virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) override;
+        virtual void _handleAlterationRequest(AlterationPayload &payload) override;
+        RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration);
 
         //icons
         QIcon* _layerIcon = nullptr;

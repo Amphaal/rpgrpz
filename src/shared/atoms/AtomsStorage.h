@@ -11,12 +11,12 @@
 #include "src/shared/models/RPZAtom.h"
 #include "src/shared/payloads/Payloads.h"
 
-#include "AtomsHandler.h"
+#include "src\shared\async-ui\AlterationAcknoledger.h"
 
-class AtomsStorage : public AtomsHandler {
+class AtomsStorage : public AlterationAcknoledger {
 
     public:
-        AtomsStorage(const AlterationPayload::Source &boundSource, bool autoRegisterAck = true);
+        AtomsStorage(const AlterationPayload::Source &boundSource, bool autoLinkage = true);
         
         RPZMap<RPZAtom> atoms();
         
@@ -25,6 +25,7 @@ class AtomsStorage : public AtomsHandler {
 
         void duplicateAtoms(const QVector<snowflake_uid> &atomIdList);
         QVector<snowflake_uid> selectedAtomIds();
+        void handleAlterationRequest(AlterationPayload &payload);
 
     protected:
         // redo/undo
@@ -47,11 +48,10 @@ class AtomsStorage : public AtomsHandler {
         QHash<snowflake_uid, QSet<snowflake_uid>> _atomIdsByOwnerId;
 
         //alter the inner atoms lists
-        virtual void _handlePayload(AlterationPayload &payload) override;
-        virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) override;
+        void _handleAlterationRequest(AlterationPayload &payload) override;
+        virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration);
 
     private:
-        void _basic_handlePayload(AlterationPayload &payload);
         QVector<snowflake_uid> _selectedAtomIds;
 
         //duplication
