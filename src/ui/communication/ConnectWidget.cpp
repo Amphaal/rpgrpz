@@ -85,7 +85,7 @@ void ConnectWidget::_tryConnectToServer() {
     //new connection..
     this->_destroyClient();
     this->_cc = new RPZClient(
-        this, 
+        this,
         this->_nameTarget->text(), 
         this->_domainTarget->text(), 
         this->_portTarget->text()

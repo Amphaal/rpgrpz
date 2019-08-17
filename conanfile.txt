@@ -1,16 +1,5 @@
 [requires]
 miniupnpc/2.1@rhard/testing
-#qt/5.13.0@bincrafters/stable
-
-[options]
-qt:qtsvg=True
-qt:with_sqlite3=False
-qt:with_mysql=False
-qt:with_odbc=False
-qt:with_openal=False
-qt:with_libalsa=False
-qt:with_sdl2=False
-qt:with_pq=False
 
 [generators]
 cmake

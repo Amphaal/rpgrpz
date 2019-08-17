@@ -27,7 +27,7 @@
 #include "src/shared/commands/AtomsContextualMenuHandler.h"
 #include "src/shared/models/RPZAssetMetadata.h"
 
-class ViewMapHint : public AtomsStorage, public AtomsContextualMenuHandler {
+class ViewMapHint : public QObject, public AtomsStorage, public AtomsContextualMenuHandler {
     
     Q_OBJECT
 
