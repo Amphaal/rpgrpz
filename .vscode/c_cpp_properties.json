@@ -5,7 +5,8 @@
             "browse": {
                 "path": [
                     "/Library/Frameworks/GStreamer.framework/Headers",
-                    "${env:HOME}/.conan/data/qt/5.13.0/bincrafters/stable/package/f675fc177b395e6cda1100b85779c05e1ec4fd4b/include"
+                    "/Qt/5.13.0/clang_64/include",
+                    "/Qt/5.13.0/clang_64/lib"
                 ],
                 "limitSymbolsToIncludedHeaders": true
             },
@@ -19,18 +20,7 @@
             "compilerPath": "/usr/bin/clang",
             "includePath": [
                 "${workspaceFolder}",
-                "${workspaceFolder}/src/_libs",
-                "${workspaceRoot}",
-                "/Users/Amphaal/.conan/data/qt/5.13.0/bincrafters/stable/package/f675fc177b395e6cda1100b85779c05e1ec4fd4b/include/QtCore",
-                "/Users/Amphaal/.conan/data/qt/5.13.0/bincrafters/stable/package/f675fc177b395e6cda1100b85779c05e1ec4fd4b/include",
-                "/Users/Amphaal/.conan/data/qt/5.13.0/bincrafters/stable/package/f675fc177b395e6cda1100b85779c05e1ec4fd4b/include/QtWidgets",
-                "/Users/Amphaal/.conan/data/qt/5.13.0/bincrafters/stable/package/f675fc177b395e6cda1100b85779c05e1ec4fd4b/include/QtSvg",
-                "/Users/Amphaal/.conan/data/qt/5.13.0/bincrafters/stable/package/f675fc177b395e6cda1100b85779c05e1ec4fd4b/include/QtGui",
-                "/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/build/1513b3452ef7e2a2dd5f931247c5e02edeb98cc9/miniupnp/miniupnpc",
-                "/Users/Amphaal/.conan/data/qt/5.13.0/bincrafters/stable/package/f675fc177b395e6cda1100b85779c05e1ec4fd4b/include/QtNetwork",
-                "/Users/Amphaal/.conan/data/qt/5.13.0/bincrafters/stable/package/f675fc177b395e6cda1100b85779c05e1ec4fd4b/include/QtOpenGL",
-                "/Library/Frameworks/GStreamer.framework/Versions/1.0/Headers",
-                "/Users/Amphaal/.conan/data/qt/5.13.0/bincrafters/stable/package/f675fc177b395e6cda1100b85779c05e1ec4fd4b/include/QtConcurrent"
+                "${workspaceRoot}"
             ]
         },
         {

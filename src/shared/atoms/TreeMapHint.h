@@ -11,7 +11,7 @@
 
 #include <QTreeWidget>
 
-class TreeMapHint : public AlterationAcknoledger, public AtomsContextualMenuHandler {
+class TreeMapHint : public QObject, public AlterationAcknoledger, public AtomsContextualMenuHandler {
     
     Q_OBJECT
     
