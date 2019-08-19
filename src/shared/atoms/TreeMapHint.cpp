@@ -175,7 +175,7 @@ void TreeMapHint::_onRenamedAsset(const QString &assetId, const QString &newName
 
 QTreeWidgetItem* TreeMapHint::_getLayerItem(int layer) {
     
-    auto layerElem = this->_layersItems[layer];
+    auto layerElem = this->_layersItems.value(layer);
 	if (layerElem) return layerElem;
 
     //if undef, create new
@@ -190,7 +190,7 @@ QTreeWidgetItem* TreeMapHint::_getLayerItem(int layer) {
     );
         
     //add to layout
-    this->_layersItems[layer] = layerElem;
+    this->_layersItems.insert(layer, layerElem);
     emit requestingItemInsertion(layerElem, nullptr);
     
     return layerElem;
@@ -228,6 +228,8 @@ QTreeWidgetItem* TreeMapHint::_createTreeItem(RPZAtom &atom) {
     );
 
     const auto type = atom.type();
+    const auto layer = atom.layer();
+
     switch(type) {
         case AtomType::Drawing:
             item->setIcon(0, *this->_drawingIcon);
@@ -240,7 +242,7 @@ QTreeWidgetItem* TreeMapHint::_createTreeItem(RPZAtom &atom) {
     }
 
     //create or get the layer element
-    auto layerElem = this->_getLayerItem(atom.layer());
+    auto layerElem = this->_getLayerItem(layer);
     emit requestingItemInsertion(item, layerElem);
 
     return item;

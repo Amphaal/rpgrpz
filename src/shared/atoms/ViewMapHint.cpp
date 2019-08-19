@@ -202,9 +202,6 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
     //save pointer ref
     this->_crossBindingAtomWithGI(&atomToBuildFrom, newItem);
 
-    //request insert
-    emit requestingItemInsertion(newItem);
-
     return newItem;
 }
 
@@ -226,13 +223,13 @@ void ViewMapHint::replaceMissingAssetPlaceholders(const RPZAssetMetadata &metada
         //create the new graphics item
         auto newGi = CustomGraphicsItemHelper::createGraphicsItem(*atom, metadata);
         this->_crossBindingAtomWithGI(atom, newGi);
-
-        //remove old
-        emit requestingItemDeletion(gi);
     }
 
     //clear the id from the missing list
     this->_missingAssetsIdsFromDb.remove(assetId);
+
+    //remove old
+    emit requestingUIAlteration(PA_Removed, setOfGraphicsItemsToReplace.toList());
 }
 
 void ViewMapHint::handlePreviewRequest(const QVector<snowflake_uid> &atomIdsToPreview, const AtomParameter &parameter, QVariant &value) {
@@ -318,9 +315,9 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
     auto type = payload.type();
 
     if(type == PayloadAlteration::PA_Reset) emit heavyAlterationProcessing();
-    if(type == PayloadAlteration::PA_Selected) emit requestingItemSelectionClearing();
-    if(type == PayloadAlteration::PA_Reset) emit requestingItemClearing();
     
+    this->_UIUpdatesBuffer.clear();
+
     AtomsStorage::_handleAlterationRequest(payload);
 
     //request assets if there are missing
@@ -332,7 +329,13 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
         emit requestMissingAssets(toRequest);
     }
 
-    if(type == PayloadAlteration::PA_Reset) emit heavyAlterationProcessed();
+    //send UI events
+    if(type ==PA_MetadataChanged || type == PA_BulkMetadataChanged) {
+        emit requestingUIUpdate(type, this->_UIUpdatesBuffer);
+    } else {
+        emit requestingUIAlteration(type, this->_UIUpdatesBuffer.keys());
+    }
+
 }
 
 //register actions
@@ -340,7 +343,9 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
    
     //default handling
     auto updatedAtom = AtomsStorage::_handlePayloadInternal(type, targetedAtomId, alteration); 
-    auto graphicsItem = this->_GItemsByAtomId[targetedAtomId];
+    
+    QGraphicsItem* graphicsItem = nullptr;
+    QHash<AtomParameter, QVariant> maybeNewData;
 
     //by alteration
     switch(type) {
@@ -348,20 +353,13 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
         //on addition
         case PayloadAlteration::PA_Reset:
         case PayloadAlteration::PA_Added: {
-            this->_buildGraphicsItemFromAtom(*updatedAtom);
+            graphicsItem = this->_buildGraphicsItemFromAtom(*updatedAtom);
         }
         break;
         
         //on deletion
         case PayloadAlteration::PA_Removed: {
-            auto toDelete = this->_GItemsByAtomId.take(targetedAtomId);
-            emit requestingItemDeletion(toDelete);
-        }
-        break;
-
-        //on focus
-        case PayloadAlteration::PA_Focused: {
-            emit requestingItemFocus(graphicsItem);
+            graphicsItem = this->_GItemsByAtomId.take(targetedAtomId);
         }
         break;
 
@@ -372,26 +370,24 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
                                     RPZAtom(alteration.toHash()) : 
                                     MetadataChangedPayload::fromArgs(alteration);
             
-            QHash<AtomParameter, QVariant> newData;
             for(auto param : partial.editedMetadata()) {
                 auto paramVal = updatedAtom->metadata(param);
-                newData.insert(param, paramVal);
+                maybeNewData.insert(param, paramVal);
             }
 
-            emit requestingItemUpdate(graphicsItem, newData);
         }   
-        break;
-
-        //on selection
-        case PayloadAlteration::PA_Selected: {
-            emit requestingItemSelection(graphicsItem);
-        }
         break;
 
         default:
             break;
 
     }
+
+    //get graphics item as default
+    if(!graphicsItem) graphicsItem = this->_GItemsByAtomId[targetedAtomId];
+
+    //update buffers for UI event emission
+    this->_UIUpdatesBuffer.insert(graphicsItem, maybeNewData);
 
     return updatedAtom;
 }

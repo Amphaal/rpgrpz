@@ -60,94 +60,98 @@ void MapView::onItemChanged(GraphicsItemsChangeNotifier* item, MapViewCustomItem
 
 }
 
-void MapView::_handleHintsSignalsAndSlots() {
- 
-    //on reset
-    QObject::connect(
-        this->_hints, &MapHint::requestingItemClearing,
-        this->scene(), &QGraphicsScene::clear
-    );
+void MapView::_onUIAlterationRequest(PayloadAlteration alteration, QList<QGraphicsItem*> &toAlter) {
     
-    //on item insert
-    QObject::connect(
-        this->_hints, &MapHint::requestingItemInsertion,
-        [=](QGraphicsItem *toInsert) {
-            this->_addItem(toInsert, true);
+    if(alteration == PA_Selected) this->scene()->clearSelection();
+    if(alteration == PA_Reset) this->scene()->clear();
+
+    for(auto item : toAlter) {
+        switch(alteration) {
+           
+            case PA_Reset:
+            case PA_Added: {
+                this->_addItem(item, true);
+            }
+            break;
+
+            case PA_Focused: {
+                this->centerOn(item);
+            }
+            break;
+
+            case PA_Selected: {
+                item->setSelected(true);
+            }
+            break;
+
+            case PA_Removed: {
+                this->scene()->removeItem(item);
+                delete item;
+            }
+            break;
+
         }
-    );
+    }
 
-    //on selection clear
-    QObject::connect(
-        this->_hints, &MapHint::requestingItemSelectionClearing,
-        this->scene(), &QGraphicsScene::clearSelection
-    );
+    if(this->_isLoading) this->_hideLoader();
 
-    //on focus 
-    QObject::connect(
-        this->_hints, &MapHint::requestingItemFocus,
-        [=](QGraphicsItem* toFocus) {
-            this->centerOn(toFocus);
-        }
-    );
+}
 
-    //on selection
-    QObject::connect(
-        this->_hints, &MapHint::requestingItemSelection,
-        [=](QGraphicsItem* toSelect) {
-            toSelect->setSelected(true);
-        }
-    );
+void MapView::_onUIUpdateRequest(PayloadAlteration alteration, QHash<QGraphicsItem*, QHash<AtomParameter, QVariant>> &toUpdate) {
 
-    //on deletion
-    QObject::connect(
-        this->_hints, &MapHint::requestingItemDeletion,
-        [=](QGraphicsItem *toDelete) {
-            this->scene()->removeItem(toDelete);
-            delete toDelete;
-        }
-    );
+    for(auto y = toUpdate.begin(); y != toUpdate.end(); ++y) {
+        
+        auto item = y.key();
 
-    //on item update
-    QObject::connect(
-        this->_hints, &MapHint::requestingItemUpdate,
-        [=](QGraphicsItem* toUpdate, const QHash<AtomParameter, QVariant> &newData) {
-            for(QHash<AtomParameter, QVariant>::const_iterator i = newData.begin(); i != newData.end(); ++i) {
-                
-                auto param = i.key();
+        for(auto i = y.value().begin(); i != y.value().end(); ++i) {
+        
+            auto param = i.key();
 
-                //update GI
-                AtomConverter::updateGraphicsItemFromMetadata(
-                    toUpdate,
-                    param,
-                    i.value()
-                );
+            //update GI
+            AtomConverter::updateGraphicsItemFromMetadata(
+                item,
+                param,
+                i.value()
+            );
 
-                //if movement
-                if(param == Position) {
+            //if movement
+            if(param == Position) {
 
-                    //enable notifications back on those items
-                    if(auto notifier = dynamic_cast<GraphicsItemsChangeNotifier*>(toUpdate)) {
-                        notifier->activateNotifications();
-                    }
-
-                    //remove from inner list
-                    this->_itemsWhoNotifiedMovement.remove(toUpdate);
+                //enable notifications back on those items
+                if(auto notifier = dynamic_cast<GraphicsItemsChangeNotifier*>(item)) {
+                    notifier->activateNotifications();
                 }
 
+                //remove from inner list
+                this->_itemsWhoNotifiedMovement.remove(y.key());
             }
 
         }
-    );
+
+    }
+
+}
+
+void MapView::_handleHintsSignalsAndSlots() {
 
     //on map loading, set placeholder...
     QObject::connect(
         this->_hints, &ViewMapHint::heavyAlterationProcessing,
         this, &MapView::_displayLoader
     );
-    
+
     QObject::connect(
-        this->_hints, &ViewMapHint::heavyAlterationProcessed,
-        this, &MapView::_hideLoader
+        this->_hints, &ViewMapHint::requestingUIAlteration,
+        [=](PayloadAlteration alteration, QList<QGraphicsItem*> &toAlter) {
+            this->_onUIAlterationRequest(alteration, toAlter);
+        }
+    );
+
+    QObject::connect(
+        this->_hints, &ViewMapHint::requestingUIUpdate,
+        [=](PayloadAlteration alteration, QHash<QGraphicsItem*, QHash<AtomParameter, QVariant>> &toUpdate) {
+            this->_onUIUpdateRequest(alteration, toUpdate);
+        }
     );
 
     //on selection from user
@@ -161,9 +165,11 @@ void MapView::_handleHintsSignalsAndSlots() {
 
 void MapView::_hideLoader() {
     this->setForegroundBrush(QBrush());
+    this->_isLoading = false;
 }
 
 void MapView::_displayLoader() {
+    this->_isLoading = true;
     this->setForegroundBrush(*this->_hiddingBrush);
 }
 
