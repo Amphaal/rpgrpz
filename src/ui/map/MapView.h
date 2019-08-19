@@ -39,7 +39,6 @@
 
 #include "src\shared\commands\AtomsContextualMenuHandler.h"
 
-
 class MapView : public QGraphicsView, public ClientBindable, public ItemChangedNotified {
 
     Q_OBJECT
@@ -78,6 +77,9 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
         void resizeEvent(QResizeEvent * event) override;
 
         void onItemChanged(GraphicsItemsChangeNotifier* item, MapViewCustomItemsEventFlag flag) override;
+
+        void _onUIAlterationRequest(PayloadAlteration alteration, QList<QGraphicsItem*> &toAlter);
+        void _onUIUpdateRequest(PayloadAlteration alteration, QHash<QGraphicsItem*, QHash<AtomParameter, QVariant>> &toUpdate);
     
     private:
         QBrush* _hiddingBrush = nullptr;
@@ -93,6 +95,7 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
         void _onSceneSelectionChanged();
         void _goToDefaultViewState();
         
+        bool _isLoading = false;
         void _displayLoader();
         void _hideLoader();
 
