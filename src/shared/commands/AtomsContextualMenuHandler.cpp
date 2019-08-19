@@ -28,25 +28,25 @@ void AtomsContextualMenuHandler::pasteAtomsFromClipboard() {
 void AtomsContextualMenuHandler::removeSelectedAtoms() {
     auto selectedIds = this->_mapMaster->selectedAtomIds();
     RemovedPayload payload(selectedIds);
-    this->_mapMaster->queueAlteration(payload);
+    AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 }
 
 void AtomsContextualMenuHandler::moveSelectedAtomsToLayer(int targetLayer) {
     auto selectedIds = this->_mapMaster->selectedAtomIds();
     MetadataChangedPayload payload(selectedIds, AtomParameter::Layer, targetLayer);
-    this->_mapMaster->queueAlteration(payload);
+    AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 }
 
 void AtomsContextualMenuHandler::alterSelectedAtomsVisibility(bool isHidden) {
     auto selectedIds = this->_mapMaster->selectedAtomIds();
     MetadataChangedPayload payload(selectedIds, AtomParameter::Hidden, isHidden);
-    this->_mapMaster->queueAlteration(payload);
+    AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 }
 
 void AtomsContextualMenuHandler::alterSelectedAtomsAvailability(bool isLocked) {
     auto selectedIds = this->_mapMaster->selectedAtomIds();
     MetadataChangedPayload payload(selectedIds, AtomParameter::Locked, isLocked);
-    this->_mapMaster->queueAlteration(payload);
+    AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 }
 
 void AtomsContextualMenuHandler::invokeMenu(int topMostLayer, int bottomMostLayer, int countAtoms, const QPoint &whereToDisplay) {

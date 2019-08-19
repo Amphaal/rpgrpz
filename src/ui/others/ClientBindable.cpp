@@ -10,8 +10,8 @@ void ClientBindable::bindAll(RPZClient* cc) {
 
     //on disconnect
     QObject::connect(
-        _rpzClient, &QThread::finished,
-		ClientBindable::_onClientThreadFinished
+        _rpzClient->thread(), &QThread::finished,
+		&ClientBindable::_onClientThreadFinished
     );
     
     //trigger connection
@@ -31,9 +31,9 @@ void ClientBindable::_onClientThreadFinished() {
 }
 
 void ClientBindable::unbindAll() {
-    if(_rpzClient && _rpzClient->isRunning()) {
-        _rpzClient->exit();
-		_rpzClient->wait();
+    if(_rpzClient && _rpzClient->thread()->isRunning()) {
+        _rpzClient->thread()->quit();
+		_rpzClient->thread()->wait();
     }
 }
 

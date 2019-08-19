@@ -11,12 +11,12 @@
 
 #include <QTreeWidget>
 
-class TreeMapHint : public QObject, public AlterationAcknoledger, public AtomsContextualMenuHandler {
+class TreeMapHint : public QObject, public AlterationAcknoledger {
     
     Q_OBJECT
     
     public:
-        TreeMapHint(AtomsStorage* mapMaster);
+        TreeMapHint();
 
     public slots:
         void propagateFocus(snowflake_uid focusedAtomId);

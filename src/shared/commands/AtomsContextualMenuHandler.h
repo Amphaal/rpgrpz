@@ -8,10 +8,12 @@
 #include <QWidget>
 #include <QMenu>
 
+#include <QMetaObject>
+
 class AtomsContextualMenuHandler {
 
     public:
-        AtomsContextualMenuHandler(AtomsStorage* mapMaster, QWidget* menuParent = nullptr);
+        AtomsContextualMenuHandler(AtomsStorage* mapMaster, QWidget* menuParent);
 
         void undoAlteration();
         void redoAlteration();

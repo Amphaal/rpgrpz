@@ -1,12 +1,14 @@
 #include "MapView.h"
 
-MapView::MapView(QWidget *parent) : QGraphicsView(parent), _hiddingBrush(new QBrush("#EEE", Qt::BrushStyle::SolidPattern)) {
+MapView::MapView(QWidget *parent) : 
+    QGraphicsView(parent),
+    _hiddingBrush(new QBrush("#EEE", Qt::BrushStyle::SolidPattern)),
+    _hints(new MapHint),
+    _menuHandler(new AtomsContextualMenuHandler(_hints, this)) {
 
     //default
     auto scene = new QGraphicsScene(this->_defaultSceneSize, this->_defaultSceneSize, this->_defaultSceneSize, this->_defaultSceneSize);
     this->setScene(scene);
-
-    this->_hints = new MapHint; //after first inst of scene
     this->_resetTool();
     
     //openGL activation
@@ -209,7 +211,7 @@ void MapView::contextMenuEvent(QContextMenuEvent *event) {
     lowerLayoutTarget--;
 
     //create menu
-    this->_hints->invokeMenu(riseLayoutTarget, lowerLayoutTarget, count, this->viewport()->mapToGlobal(pos));
+    this->_menuHandler->invokeMenu(riseLayoutTarget, lowerLayoutTarget, count, this->viewport()->mapToGlobal(pos));
 }
 
 void MapView::resizeEvent(QResizeEvent * event) {
