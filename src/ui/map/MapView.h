@@ -37,6 +37,8 @@
 #include "src/shared/models/RPZAssetMetadata.h"
 #include "src/helpers/AtomConverter.h"
 
+#include "src\shared\commands\AtomsContextualMenuHandler.h"
+
 
 class MapView : public QGraphicsView, public ClientBindable, public ItemChangedNotified {
 
@@ -80,6 +82,7 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
     private:
         QBrush* _hiddingBrush = nullptr;
         MapHint* _hints = nullptr;
+        AtomsContextualMenuHandler* _menuHandler = nullptr;
         static inline constexpr int _defaultSceneSize = 36000;
         
         void _handleHintsSignalsAndSlots();

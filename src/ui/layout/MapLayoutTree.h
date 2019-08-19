@@ -23,7 +23,10 @@
 
 #include "src/shared/atoms/TreeMapHint.h"
 
-class MapLayoutTree : public RPZTree {
+#include "src\shared\commands\AtomsContextualMenuHandler.h"
+
+
+class MapLayoutTree : public RPZTree, public AtomsContextualMenuHandler {
 
     public:
         MapLayoutTree(AtomsStorage* mapMaster, QWidget* parent = nullptr);

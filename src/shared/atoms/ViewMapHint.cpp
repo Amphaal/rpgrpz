@@ -1,7 +1,6 @@
 #include "ViewMapHint.h"
 
-ViewMapHint::ViewMapHint() : AtomsStorage(AlterationPayload::Source::Local_Map), 
-    AtomsContextualMenuHandler(this), 
+ViewMapHint::ViewMapHint() : AtomsStorage(AlterationPayload::Source::Local_Map),
     templateAtom(new RPZAtom) {
     
     //default layer from settings

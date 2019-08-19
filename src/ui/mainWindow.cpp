@@ -125,18 +125,18 @@ void MainWindow::_initConnectivity() {
         );
 
         //create a separate thread to run the server into
-        QThread serverThread(this);
-        this->_rpzServer->moveToThread(&serverThread);
+        auto serverThread = new QThread(this);
+        this->_rpzServer->moveToThread(serverThread);
         
         //events...
         QObject::connect(
-            &serverThread, &QThread::started, 
+            serverThread, &QThread::started, 
             this->_rpzServer, &RPZServer::run
         );
 
         QObject::connect(
             this->_rpzServer, &RPZServer::stopped, 
-            &serverThread, &QThread::quit
+            serverThread, &QThread::quit
         );
 
         QObject::connect(
@@ -145,12 +145,12 @@ void MainWindow::_initConnectivity() {
         );
 
         QObject::connect(
-            &serverThread, &QThread::finished, 
-            &serverThread, &QObject::deleteLater
+            serverThread, &QThread::finished, 
+            serverThread, &QObject::deleteLater
         );
 
         //start
-        serverThread.start();
+        serverThread->start();
 
     }
 

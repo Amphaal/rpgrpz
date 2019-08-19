@@ -84,11 +84,36 @@ void ConnectWidget::_tryConnectToServer() {
 
     //new connection..
     this->_destroyClient();
+    
     this->_cc = new RPZClient(
-        this,
         this->_nameTarget->text(), 
         this->_domainTarget->text(), 
         this->_portTarget->text()
+    );
+
+    //create a separate thread to run the client into
+    auto clientThread = new QThread(this);
+    this->_cc->moveToThread(clientThread);
+    
+    //events...
+    QObject::connect(
+        clientThread, &QThread::started, 
+        this->_cc, &RPZClient::run
+    );
+
+    QObject::connect(
+        this->_cc, &RPZClient::closed, 
+        clientThread, &QThread::quit
+    );
+
+    QObject::connect(
+        this->_cc, &RPZClient::closed,  
+        this->_cc, &QObject::deleteLater
+    );
+
+    QObject::connect(
+        clientThread, &QThread::finished, 
+        clientThread, &QObject::deleteLater
     );
 
     emit startingConnection(this->_cc);
@@ -104,7 +129,11 @@ void ConnectWidget::_tryConnectToServer() {
     );
 
     this->_changeState(State::Connecting);
-    this->_cc->run();
+
+    //start
+    clientThread->start();
+
+
 }
 
 void ConnectWidget::_onRPZClientStatus(const QString &statusMsg, bool isError) {
@@ -126,6 +155,8 @@ void ConnectWidget::_onRPZClientConnecting() {
 
 void ConnectWidget::_destroyClient() {
     if(this->_cc) {
+        this->_cc->thread()->quit();
+        this->_cc->thread()->wait();
         delete this->_cc;
         this->_cc = nullptr;
     }

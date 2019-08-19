@@ -1,7 +1,10 @@
 #include "MapLayoutTree.h"
 
-MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) : RPZTree(parent), _hints(new TreeMapHint(mapMaster)) {
-    
+MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) : 
+    RPZTree(parent), 
+    AtomsContextualMenuHandler(mapMaster, this),
+    _hints(new TreeMapHint) {
+        
 	this->setSortingEnabled(true);
 
     this->setItemDelegateForColumn(1, new LockAndVisibilityDelegate);
@@ -30,13 +33,13 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
     
     //on insertion required
     QObject::connect(
-        this->_hints, &TreeMapHint::requestingTreeItemInsertion,
+        this->_hints, &TreeMapHint::requestingItemInsertion,
         this, &MapLayoutTree::_insertTreeWidgetItem
     );
 
     //clear wanted
     QObject::connect(
-        this->_hints, &TreeMapHint::requestingClearingTree,
+        this->_hints, &TreeMapHint::requestingItemClearing,
         this, &QTreeWidget::clear
     );
 
@@ -60,13 +63,13 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
 
     //on selection
     QObject::connect(
-        this->_hints, &TreeMapHint::requestingSelection,
+        this->_hints, &TreeMapHint::requestingItemSelection,
         this, &MapLayoutTree::_selectItem
     );
 
     //on clear selection
     QObject::connect(
-        this->_hints, &TreeMapHint::requestingClearingSelection,
+        this->_hints, &TreeMapHint::requestingItemSelectionClearing,
         this, &MapLayoutTree::_clearSelectedItems
     );
 
@@ -90,9 +93,6 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
     QObject::connect(
         this, &QTreeWidget::itemSelectionChanged,
         [=]() {
-            
-            //handling ongoing, prevent propagation
-            if(AlterationAcknoledger::isDequeuing()) return;
 
             auto selected = this->selectedItems();
             if(!selected.count()) this->clearFocus();
@@ -182,7 +182,7 @@ void MapLayoutTree::contextMenuEvent(QContextMenuEvent *event) {
     auto lowerLayoutTarget = itemsToProcess.last()->parent()->data(0, RPZUserRoles::AtomLayer).toInt() - 1;
 
     //create menu
-    this->_hints->invokeMenu(riseLayoutTarget, lowerLayoutTarget, count, this->viewport()->mapToGlobal(pos));
+    this->invokeMenu(riseLayoutTarget, lowerLayoutTarget, count, this->viewport()->mapToGlobal(pos));
 }
 
 
@@ -194,7 +194,7 @@ void MapLayoutTree::keyPressEvent(QKeyEvent * event) {
 
         //deletion handling
         case Qt::Key::Key_Delete:
-            this->_hints->removeSelectedAtoms();
+            this->removeSelectedAtoms();
             break;
     }
 

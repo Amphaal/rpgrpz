@@ -24,10 +24,9 @@
 
 #include "src/ui/map/MapTools.h"
 
-#include "src/shared/commands/AtomsContextualMenuHandler.h"
 #include "src/shared/models/RPZAssetMetadata.h"
 
-class ViewMapHint : public QObject, public AtomsStorage, public AtomsContextualMenuHandler {
+class ViewMapHint : public QObject, public AtomsStorage {
     
     Q_OBJECT
 
