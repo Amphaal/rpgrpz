@@ -18,13 +18,13 @@ class AtomsStorage : public AlterationAcknoledger {
     public:
         AtomsStorage(const AlterationPayload::Source &boundSource, bool autoLinkage = true);
         
-        RPZMap<RPZAtom> atoms();
+        RPZMap<RPZAtom> atoms() const;
         
         void redo();
         void undo();
 
         void duplicateAtoms(const QVector<snowflake_uid> &atomIdList);
-        QVector<snowflake_uid> selectedAtomIds();
+        QVector<snowflake_uid> selectedAtomIds() const;
         void handleAlterationRequest(AlterationPayload &payload);
 
     protected:

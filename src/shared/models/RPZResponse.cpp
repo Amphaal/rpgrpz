@@ -8,19 +8,19 @@ RPZResponse::RPZResponse(snowflake_uid answererTo, const ResponseCode &code, con
 }
 RPZResponse::RPZResponse(const QVariantHash &hash) : Stampable(hash) {}
 
-RPZResponse::ResponseCode RPZResponse::responseCode() {
+RPZResponse::ResponseCode RPZResponse::responseCode() const {
     return (ResponseCode)this->value("r").toInt();
 }
 
-QVariant RPZResponse::responseData() {
+QVariant RPZResponse::responseData() const {
     return this->value("rdata");
 }
 
-snowflake_uid RPZResponse::answerer() {
+snowflake_uid RPZResponse::answerer() const {
     return this->value("aswr").toULongLong();
 }
 
-QString RPZResponse::toString() {
+QString RPZResponse::toString() const{
     
     switch(this->responseCode()) {
 
@@ -51,7 +51,7 @@ QString RPZResponse::toString() {
 
 };
 
-QPalette RPZResponse::palette() {
+QPalette RPZResponse::palette() const {
     
     //default palette
     auto palette = Stampable::palette();

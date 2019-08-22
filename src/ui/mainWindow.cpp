@@ -19,8 +19,6 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
     this->_updateIntegrator->checkForAppUpdates();
 }
 
-MainWindow::~MainWindow() { }
-
 void MainWindow::_saveWindowState() {
     AppContext::settings()->beginGroup("mainWindow");
     AppContext::settings()->setValue("windowGeometry", this->saveGeometry());
@@ -125,7 +123,7 @@ void MainWindow::_initConnectivity() {
         );
 
         //create a separate thread to run the server into
-        auto serverThread = new QThread(this);
+        auto serverThread = new QThread;
         this->_rpzServer->moveToThread(serverThread);
         
         //events...

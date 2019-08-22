@@ -65,7 +65,7 @@ void ViewMapHint::notifySelectedItems(QList<QGraphicsItem*> &selectedItems) {
 //////////////////
 
 
-void ViewMapHint::setDefaultUser(RPZUser user) {
+void ViewMapHint::setDefaultUser(const RPZUser &user) {
     
     //update template
     this->_defaultOwner = user;

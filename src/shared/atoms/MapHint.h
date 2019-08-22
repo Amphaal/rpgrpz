@@ -10,7 +10,7 @@ class MapHint : public ViewMapHint {
         MapHint();
 
         //load/unload
-        QString RPZMapFilePath();
+        QString RPZMapFilePath() const;
         bool loadDefaultRPZMap();
         bool loadRPZMap(const QString &filePath);
         bool saveRPZMap();

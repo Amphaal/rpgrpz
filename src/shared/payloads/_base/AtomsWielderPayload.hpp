@@ -26,7 +26,7 @@ class AtomsWielderPayload : public AlterationPayload {
         return out;
     }
 
-    void updateEmptyUser(RPZUser &user) {
+    void updateEmptyUser(const RPZUser &user) {
         
         auto atoms = this->atoms();
         for(auto &atom : atoms) {

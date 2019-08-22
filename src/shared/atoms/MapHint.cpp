@@ -15,7 +15,7 @@ void MapHint::_handleAlterationRequest(AlterationPayload &payload) {
 // State handling //
 ////////////////////
 
-QString MapHint::RPZMapFilePath() {
+QString MapHint::RPZMapFilePath() const {
     return this->_mapFilePath;
 }
 

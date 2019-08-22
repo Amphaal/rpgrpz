@@ -25,7 +25,7 @@ void RPZUser::setRole(const Role &role) {
 
 JSONSocket* RPZUser::networkSocket() { return this->_associatedSocket; };
 
-QString RPZUser::name() { 
+QString RPZUser::name() const { 
 
     auto name = this->value("name").toString();
     if(!name.isEmpty()) return name;
@@ -35,17 +35,17 @@ QString RPZUser::name() {
     return NULL;
 };
 
-RPZUser::Role RPZUser::role() {
+RPZUser::Role RPZUser::role() const {
     return (Role)this->value("role").toInt(); 
 };
 
-QColor RPZUser::color() { 
+QColor RPZUser::color() const { 
     return QColor(
         this->value("color", "#0000FF").toString()
     ); 
 };
 
-QString RPZUser::toString() {
+QString RPZUser::toString() const {
     if(!this->name().isNull()) {
         return this->name();
     } else if (this->id()) {

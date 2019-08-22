@@ -10,6 +10,7 @@
 #include "src/shared/commands/AtomsContextualMenuHandler.h"
 
 #include <QTreeWidget>
+#include <QHash>
 
 class TreeMapHint : public QObject, public AlterationAcknoledger {
     
@@ -22,26 +23,22 @@ class TreeMapHint : public QObject, public AlterationAcknoledger {
         void propagateFocus(snowflake_uid focusedAtomId);
         void propagateSelection(QVector<snowflake_uid> &selectedIds);
         void removeLayerItem(int layer);
+        void updateOwnerFromItem(QTreeWidgetItem* item, const RPZUser &owner);
 
     signals:
-        void requestingItemInsertion(QTreeWidgetItem* item, QTreeWidgetItem* parent);
-        void requestingItemClearing();
-        void requestingItemDeletion(QTreeWidgetItem* toRemove);
-        void requestingItemMove(QTreeWidgetItem* oldLayerItem, QTreeWidgetItem* newLayerItem, QTreeWidgetItem *item);
-        void requestingItemTextChange(QTreeWidgetItem* toChange, const QString &newName);
-        void requestingItemSelectionClearing();
-        void requestingItemSelection(QTreeWidgetItem* toSelect);
-        void requestingItemDataUpdate(QTreeWidgetItem* target, int column, const QHash<int, QVariant> &newData);
+        void requestingUIAlteration(PayloadAlteration alteration, QList<QTreeWidgetItem*> &toAlter);
+        void requestingUIUpdate(PayloadAlteration alteration, QHash<QTreeWidgetItem*, QHash<AtomParameter, QVariant>> &toUpdate);
 
     private slots:
         void _onRenamedAsset(const RPZAssetHash &id, const QString &newName);
 
     private:
+        QHash<QTreeWidgetItem*, QHash<AtomParameter, QVariant>> _UIUpdatesBuffer;
+
         QHash<int, QTreeWidgetItem*> _layersItems;
         QTreeWidgetItem* _getLayerItem(int layer);
 
         QTreeWidgetItem* _createTreeItem(RPZAtom &atom);
-        void _bindOwnerToItem(QTreeWidgetItem* item, RPZUser &owner);
 
         QHash<snowflake_uid, QTreeWidgetItem*> _atomTreeItemsById;
         QHash<RPZAssetHash, QSet<snowflake_uid>> _atomIdsBoundByRPZAssetHash;

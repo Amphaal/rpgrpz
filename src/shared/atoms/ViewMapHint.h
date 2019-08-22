@@ -47,15 +47,14 @@ class ViewMapHint : public QObject, public AtomsStorage {
         //alter template Atom
         RPZAtom* templateAtom = nullptr;
 
-        void setDefaultUser(RPZUser user);
-        void setDefaultLayer(int layer);
-
         QVector<RPZAtom*> selectedAtoms();
 
     public slots:
         void notifyMovementOnItems(QList<QGraphicsItem*> &itemsWhoMoved);
         void notifySelectedItems(QList<QGraphicsItem*> &selectedItems);
         void replaceMissingAssetPlaceholders(const RPZAssetMetadata &metadata);
+        void setDefaultUser(const RPZUser &user);
+        void setDefaultLayer(int layer);
 
     signals:
         void requestMissingAssets(const QList<RPZAssetHash> &assetIdsToRequest);

@@ -28,10 +28,10 @@ class RPZUser : public Serializable {
         void setRole(const Role &role);
 
         JSONSocket* networkSocket();
-        QString name();
-        Role role();
-        QColor color();
-        QString toString();
+        QString name() const;
+        Role role() const;
+        QColor color() const;
+        QString toString() const;
 
     private:
         void _setColor(const QColor &color = QColor());

@@ -18,11 +18,11 @@ class RPZResponse : public Stampable {
         RPZResponse(snowflake_uid answererTo, const ResponseCode &code = Ack, const QVariant &data = QVariant());
         RPZResponse(const QVariantHash &hash);
 
-        ResponseCode responseCode();
-        QVariant responseData();
-        snowflake_uid answerer();
-        QString toString() override;
-        QPalette palette() override;
+        ResponseCode responseCode() const;
+        QVariant responseData() const;
+        snowflake_uid answerer() const;
+        QString toString() const override;
+        QPalette palette() const override;
 
     private:
         void _setAnswerer(snowflake_uid answererStampableId);
