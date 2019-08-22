@@ -41,7 +41,6 @@
 class MainWindow : public QMainWindow { 
     public:
         MainWindow();
-        ~MainWindow();
 
     private:
         void _trueShow();
@@ -73,7 +72,7 @@ class MainWindow : public QMainWindow {
 
         /*menu*/
         void _initUIMenu();
-        QAction *cfugAction;
+        QAction *cfugAction = nullptr;
         QMenu* _getToolsMenu();
         QMenu* _getFileMenu();
         QMenu* _getHelpMenu();

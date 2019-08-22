@@ -15,7 +15,7 @@ class Serializable : public QVariantHash {
             this->_setId(id);
         };
 
-        snowflake_uid id() { 
+        snowflake_uid id() const { 
             return this->value("id").toULongLong(); 
         };
 

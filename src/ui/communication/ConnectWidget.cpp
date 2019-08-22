@@ -1,10 +1,10 @@
 #include "ConnectWidget.h"
 
 ConnectWidget::ConnectWidget(QWidget * parent) : QWidget(parent), 
-                                            _nameTarget(new QLineEdit(this)),
-                                            _portTarget(new QLineEdit(this)), 
-                                            _domainTarget(new QLineEdit(this)),
-                                            _connectBtn(new QPushButton(this)) {
+    _nameTarget(new QLineEdit(this)),
+    _portTarget(new QLineEdit(this)), 
+    _domainTarget(new QLineEdit(this)),
+    _connectBtn(new QPushButton(this)) {
                                                     
     AppContext::settings()->beginGroup("ConnectWidget");
 
@@ -92,7 +92,7 @@ void ConnectWidget::_tryConnectToServer() {
     );
 
     //create a separate thread to run the client into
-    auto clientThread = new QThread(this);
+    auto clientThread = new QThread;
     this->_cc->moveToThread(clientThread);
     
     //events...
@@ -132,7 +132,6 @@ void ConnectWidget::_tryConnectToServer() {
 
     //start
     clientThread->start();
-
 
 }
 

@@ -3,7 +3,7 @@
 
 AtomsStorage::AtomsStorage(const AlterationPayload::Source &boundSource, bool autoLinkage) : AlterationAcknoledger(boundSource, autoLinkage) { };
 
-RPZMap<RPZAtom> AtomsStorage::atoms() {
+RPZMap<RPZAtom> AtomsStorage::atoms() const {
     return this->_atomsById;
 }
 
@@ -253,6 +253,19 @@ RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, sno
         }
         break;
 
+        //on owner change
+        case PayloadAlteration::PA_OwnerChanged: {
+
+            auto currentOwnerId = storedAtom->owner().id();
+
+            RPZUser newOwner(alteration.toHash());
+            storedAtom->setOwnership(newOwner);
+
+            this->_atomIdsByOwnerId[currentOwnerId].remove(targetedAtomId);
+            this->_atomIdsByOwnerId[newOwner.id()].insert(targetedAtomId);
+        }
+        break;
+
         //on selection change
         case PayloadAlteration::PA_Selected: {
             this->_selectedAtomIds.append(targetedAtomId);
@@ -365,7 +378,7 @@ QPointF AtomsStorage::_getPositionFromAtomDuplication(const RPZAtom &atomToDupli
 
 }
 
-QVector<snowflake_uid> AtomsStorage::selectedAtomIds() {
+QVector<snowflake_uid> AtomsStorage::selectedAtomIds() const {
     return this->_selectedAtomIds;
 }
 

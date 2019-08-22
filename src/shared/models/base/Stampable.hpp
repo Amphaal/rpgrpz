@@ -12,17 +12,17 @@ class Stampable : public Ownable {
         }
         Stampable(const QVariantHash &hash) : Ownable(hash) {}
 
-        QDateTime timestamp() {
+        QDateTime timestamp() const {
             return this->value("dt").toDateTime();
         }
 
-        virtual QString toString() {
+        virtual QString toString() const {
             const auto ts = QString("[" + this->timestamp().toString("dd.MM.yyyy-hh:mm:ss") + "] ");
             const auto name = this->owner().name();
             return ts + name;
         }
 
-        virtual QPalette palette() {
+        virtual QPalette palette() const {
             QPalette palette;
             palette.setColor(QPalette::Window, "#fcfcfc");
             palette.setColor(QPalette::WindowText, "#999999");

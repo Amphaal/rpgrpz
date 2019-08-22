@@ -10,15 +10,15 @@ RPZMessage::RPZMessage(const QString &message, const MessageInterpreter::Command
     this->_setText(message);
 };
 
-QString RPZMessage::text() {
+QString RPZMessage::text() const {
     return this->value("txt").toString();
 }
 
-MessageInterpreter::Command RPZMessage::commandType() {
+MessageInterpreter::Command RPZMessage::commandType() const {
     return this->_command;
 }
 
-QString RPZMessage::toString() {
+QString RPZMessage::toString() const {
 
     auto base = Stampable::toString();
     auto ownerExist = !this->owner().isEmpty();
@@ -48,7 +48,7 @@ QString RPZMessage::toString() {
 
 };
 
-QPalette RPZMessage::palette() {
+QPalette RPZMessage::palette() const {
     
     //default palette
     auto palette = Stampable::palette();
