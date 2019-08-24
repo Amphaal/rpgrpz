@@ -51,7 +51,7 @@ bool MapHint::saveRPZMap() {
 
     //save into file
     MapDatabase mapDb(this->_mapFilePath);
-    mapDb.saveIntoFile(this->_atomsById);
+    mapDb.saveIntoFile(this->atoms());
 
     //define as clean
     this->_setMapDirtiness(false);

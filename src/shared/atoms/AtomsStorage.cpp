@@ -4,7 +4,18 @@
 AtomsStorage::AtomsStorage(const AlterationPayload::Source &boundSource, bool autoLinkage) : AlterationAcknoledger(boundSource, autoLinkage) { };
 
 RPZMap<RPZAtom> AtomsStorage::atoms() const {
+    QMutexLocker m(&this->_m_handlingLock);
     return this->_atomsById;
+}
+
+QVector<RPZAtom*> AtomsStorage::selectedAtoms() const {
+    QMutexLocker m(&this->_m_handlingLock);
+    return this->_selectedAtoms;
+}
+
+QVector<snowflake_uid> AtomsStorage::selectedAtomIds() const {
+    QMutexLocker l(&this->_m_handlingLock);
+    return this->_selectedAtomIds;
 }
 
 /////////////
@@ -32,6 +43,7 @@ void AtomsStorage::_registerPayloadForHistory(AlterationPayload &payload) {
     //store undo
     auto correspondingUndo = this->_generateUndoPayload(payload);
     this->_undoHistory.push(correspondingUndo);
+    
 }
 
 void AtomsStorage::undo() {
@@ -54,6 +66,7 @@ void AtomsStorage::undo() {
 
     //propagate
     AlterationHandler::get()->queueAlteration(this, st_payload);
+
 }
 
 void AtomsStorage::redo() {
@@ -174,6 +187,8 @@ void AtomsStorage::handleAlterationRequest(AlterationPayload &payload) {
 //alter Scene
 void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) { 
 
+    QMutexLocker lock(&this->_m_handlingLock);
+
     //may register for history
     this->_registerPayloadForHistory(payload);
 
@@ -189,8 +204,8 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
 
     //on selection changed
     if(pType == PayloadAlteration::PA_Selected) {
-        this->_m_selectedAtomIds.lock();
         this->_selectedAtomIds.clear();
+        this->_selectedAtoms.clear();
     }
 
     //base handling
@@ -215,14 +230,17 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
         }
 
     }
-
-    //unlock 
-    if(pType == PayloadAlteration::PA_Selected) {
-        this->_m_selectedAtomIds.unlock();
-    }
-
+    
 }
 
+RPZAtom* AtomsStorage::_getAtomFromId(const snowflake_uid &id) {
+    if(!this->_atomsById.contains(id)) return nullptr;
+    return &this->_atomsById[id];
+}
+
+void AtomsStorage::_bindDefaultOwner(const RPZUser &newOwner) {
+    this->_defaultOwner = newOwner;
+}
 
 //register actions
 RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) {
@@ -232,10 +250,7 @@ RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, sno
     }
 
     //get the stored atom relative to the targeted id
-    RPZAtom* storedAtom = nullptr;
-    if(this->_atomsById.contains(targetedAtomId)) {
-        storedAtom = &this->_atomsById[targetedAtomId];
-    }
+    RPZAtom* storedAtom = this->_getAtomFromId(targetedAtomId);
 
     //modifications
     switch(type) {
@@ -275,6 +290,7 @@ RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, sno
         //on selection change
         case PayloadAlteration::PA_Selected: {
             this->_selectedAtomIds.append(targetedAtomId);
+            if(storedAtom) this->_selectedAtoms.append(storedAtom);
         }
         break;
 
@@ -386,10 +402,6 @@ QPointF AtomsStorage::_getPositionFromAtomDuplication(const RPZAtom &atomToDupli
 
 }
 
-QVector<snowflake_uid> AtomsStorage::selectedAtomIds() const {
-    QMutexLocker l(&this->_m_selectedAtomIds);
-    return this->_selectedAtomIds;
-}
 
 //////////////////
 /* END ELEMENTS */

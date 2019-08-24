@@ -10,10 +10,10 @@ AtomsContextualMenuHandler::AtomsContextualMenuHandler(AtomsStorage* mapMaster, 
 }
 
 void AtomsContextualMenuHandler::undoAlteration() {
-    this->_mapMaster->undo();
+    QMetaObject::invokeMethod(this->_mapMaster, "undo");
 }
 void AtomsContextualMenuHandler::redoAlteration() {
-    this->_mapMaster->redo();
+    QMetaObject::invokeMethod(this->_mapMaster, "redo");
 }
 
 void AtomsContextualMenuHandler::copySelectedAtomsToClipboard() {
@@ -22,7 +22,7 @@ void AtomsContextualMenuHandler::copySelectedAtomsToClipboard() {
 
 void AtomsContextualMenuHandler::pasteAtomsFromClipboard() {
     if(!_copyClipboard.count()) return;
-    this->_mapMaster->duplicateAtoms(_copyClipboard);
+    QMetaObject::invokeMethod(this->_mapMaster, "duplicateAtoms", Q_ARG(QVector<snowflake_uid>, _copyClipboard));
 }
 
 void AtomsContextualMenuHandler::removeSelectedAtoms() {
