@@ -11,8 +11,8 @@ class OwnerChangedPayload : public MultipleTargetsPayload {
             this->_setOwner(newOwner);
         }
 
-        static RPZUser fromArgs(const QVariant &args) {
-            return RPZUser(args.toHash());
+        RPZUser newOwner() const {
+            return RPZUser(this->args().toHash());
         }
     
     private:

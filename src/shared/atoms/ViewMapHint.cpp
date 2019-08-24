@@ -72,37 +72,6 @@ void ViewMapHint::setDefaultUser(const RPZUser &user) {
     auto oldOwnerId = this->templateAtom->owner().id();
     this->templateAtom->setOwnership(user);
     emit atomTemplateChanged();
-
-    //update self graphic path items with new color
-    auto color = user.color();
-
-    auto atomIds = this->_atomIdsByOwnerId[oldOwnerId];
-    for(auto &elemId : atomIds) {
-        
-        auto &atom = this->_atomsById[elemId];
-        auto gi = this->_GItemsByAtomId[elemId];
-        
-        //determine if is a drawing type
-        if(atom.type() == AtomType::Drawing) {
-            if(auto pathItem = dynamic_cast<QGraphicsPathItem*>(gi)) {
-                auto c_pen = pathItem->pen();
-                c_pen.setColor(color);
-                pathItem->setPen(c_pen);
-            } 
-        }
-        
-        //redefine ownership
-        atom.setOwnership(user);
-    }
-
-    //change bound
-    this->_atomIdsByOwnerId.remove(oldOwnerId);
-    this->_atomIdsByOwnerId.insert(user.id(), atomIds);
-
-    //inform atom layout
-    OwnerChangedPayload payload(atomIds.toList().toVector(), user);
-    AlterationHandler::get()->queueAlteration(this, payload);
-
 }
 
 //////////////////////
@@ -215,21 +184,35 @@ void ViewMapHint::replaceMissingAssetPlaceholders(const RPZAssetMetadata &metada
     
     //iterate through the list of GI to replace
     auto setOfGraphicsItemsToReplace = this->_missingAssetsIdsFromDb.values(assetId).toSet();
-    for(auto gi : setOfGraphicsItemsToReplace) {
+    QHash<snowflake_uid, QGraphicsItem*> oldB;
+    QHash<snowflake_uid, QGraphicsItem*> newB;
+    QList<RPZAtom> toRebuild;
+
+    for(auto oldGi : setOfGraphicsItemsToReplace) {
         
         //find corresponding atom
-        auto atom = this->_getAtomFromGraphicsItem(gi);
+        auto atom = this->_getAtomFromGraphicsItem(oldGi);
+        toRebuild.append(*atom);
 
         //create the new graphics item
         auto newGi = CustomGraphicsItemHelper::createGraphicsItem(*atom, metadata);
         this->_crossBindingAtomWithGI(atom, newGi);
+
+        oldB.insert(atom->id(), oldGi);
+        newB.insert(atom->id(), newGi);
+
     }
 
     //clear the id from the missing list
     this->_missingAssetsIdsFromDb.remove(assetId);
 
     //remove old
-    emit requestingUIAlteration(PA_Removed, setOfGraphicsItemsToReplace.toList());
+    RemovedPayload rPayload(oldB.keys().toVector());
+    emit requestingUIAlteration(rPayload, oldB);
+
+    //replace by new
+    AddedPayload aPayload(toRebuild);
+    emit requestingUIAlteration(aPayload, newB);
 }
 
 void ViewMapHint::handlePreviewRequest(const QVector<snowflake_uid> &atomIdsToPreview, const AtomParameter &parameter, QVariant &value) {
@@ -250,10 +233,10 @@ void ViewMapHint::handleParametersUpdateAlterationRequest(QVariantHash &payload)
     if(!firstTargetId) {
 
         //update template
-        auto partial = MetadataChangedPayload::fromArgs(mtPayload->args());
+        auto updates = mtPayload->updates();
         
-        for(auto param : partial.editedMetadata()) {
-            this->templateAtom->setMetadata(param, partial);
+        for(auto i = updates.begin(); i != updates.end(); i++) {
+            this->templateAtom->setMetadata(i.key(), i.value());
         }
         
         //says it changed
@@ -315,7 +298,7 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
     auto type = payload.type();
 
     if(type == PayloadAlteration::PA_Reset) emit heavyAlterationProcessing();
-    
+
     this->_UIUpdatesBuffer.clear();
 
     AtomsStorage::_handleAlterationRequest(payload);
@@ -330,11 +313,7 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
     }
 
     //send UI events
-    if(type ==PA_MetadataChanged || type == PA_BulkMetadataChanged) {
-        emit requestingUIUpdate(type, this->_UIUpdatesBuffer);
-    } else {
-        emit requestingUIAlteration(type, this->_UIUpdatesBuffer.keys());
-    }
+    emit requestingUIAlteration(payload, this->_UIUpdatesBuffer);
 
 }
 
@@ -345,49 +324,42 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
     auto updatedAtom = AtomsStorage::_handlePayloadInternal(type, targetedAtomId, alteration); 
     
     QGraphicsItem* graphicsItem = nullptr;
-    QHash<AtomParameter, QVariant> maybeNewData;
 
     //by alteration
     switch(type) {
         
         //on addition
-        case PayloadAlteration::PA_Reset:
-        case PayloadAlteration::PA_Added: {
+        case PA_Reset:
+        case PA_Added: {
             graphicsItem = this->_buildGraphicsItemFromAtom(*updatedAtom);
         }
         break;
         
         //on deletion
-        case PayloadAlteration::PA_Removed: {
+        case PA_Removed: {
             graphicsItem = this->_GItemsByAtomId.take(targetedAtomId);
         }
         break;
 
-        case PayloadAlteration::PA_MetadataChanged:
-        case PayloadAlteration::PA_BulkMetadataChanged: {
-
-            auto partial = type == PayloadAlteration::PA_BulkMetadataChanged ? 
-                                    RPZAtom(alteration.toHash()) : 
-                                    MetadataChangedPayload::fromArgs(alteration);
+        //on owner change
+        case PA_OwnerChanged: {
             
-            for(auto param : partial.editedMetadata()) {
-                auto paramVal = updatedAtom->metadata(param);
-                maybeNewData.insert(param, paramVal);
+            //filter by determining if is a drawing type
+            if(updatedAtom->type() == AtomType::Drawing) {
+                graphicsItem = this->_GItemsByAtomId[targetedAtomId];
             }
 
-        }   
-        break;
+        };
 
-        default:
-            break;
+        default: {
+            graphicsItem = this->_GItemsByAtomId[targetedAtomId];
+        }
+        break;
 
     }
 
-    //get graphics item as default
-    if(!graphicsItem) graphicsItem = this->_GItemsByAtomId[targetedAtomId];
-
     //update buffers for UI event emission
-    this->_UIUpdatesBuffer.insert(graphicsItem, maybeNewData);
+    if(!graphicsItem) this->_UIUpdatesBuffer.insert(targetedAtomId, graphicsItem);
 
     return updatedAtom;
 }

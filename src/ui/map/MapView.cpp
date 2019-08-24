@@ -60,12 +60,21 @@ void MapView::onItemChanged(GraphicsItemsChangeNotifier* item, MapViewCustomItem
 
 }
 
-void MapView::_onUIAlterationRequest(PayloadAlteration alteration, QList<QGraphicsItem*> &toAlter) {
+void MapView::_onUIAlterationRequest(AlterationPayload &payload, QHash<snowflake_uid, QGraphicsItem*> &toUpdate) {
     
+    auto alteration = payload.type();
+
     if(alteration == PA_Selected) this->scene()->clearSelection();
     if(alteration == PA_Reset) this->scene()->clear();
 
-    for(auto item : toAlter) {
+    QColor newUserColor;
+    if(auto c = dynamic_cast<OwnerChangedPayload*>(&payload)) newUserColor = c->newOwner().color();
+
+    for(auto i = toUpdate.begin(); i != toUpdate.end(); i++) {
+
+        auto item = i.value(); 
+        auto atomId = i.key();
+
         switch(alteration) {
            
             case PA_Reset:
@@ -90,47 +99,53 @@ void MapView::_onUIAlterationRequest(PayloadAlteration alteration, QList<QGraphi
             }
             break;
 
-        }
+            case PA_OwnerChanged: {
+
+                if(auto pathItem = dynamic_cast<QGraphicsPathItem*>(item)) {
+                    auto c_pen = pathItem->pen();
+                    c_pen.setColor(newUserColor);
+                    pathItem->setPen(c_pen);
+                } 
+
+            }
+            break;
+            
+            case PA_MetadataChanged:
+            case PA_BulkMetadataChanged: {
+
+                for(auto i = y.value().begin(); i != y.value().end(); ++i) {
+                
+                    auto param = i.key();
+
+                    //update GI
+                    AtomConverter::updateGraphicsItemFromMetadata(
+                        item,
+                        param,
+                        i.value()
+                    );
+
+                    //if movement
+                    if(param == Position) {
+
+                        //enable notifications back on those items
+                        if(auto notifier = dynamic_cast<GraphicsItemsChangeNotifier*>(item)) {
+                            notifier->activateNotifications();
+                        }
+
+                        //remove from inner list
+                        this->_itemsWhoNotifiedMovement.remove(y.key());
+                    }
+
+                }
+                
+            }
     }
 
+    //hide loader if visible
     if(this->_isLoading) this->_hideLoader();
 
 }
 
-void MapView::_onUIUpdateRequest(PayloadAlteration alteration, QHash<QGraphicsItem*, QHash<AtomParameter, QVariant>> &toUpdate) {
-
-    for(auto y = toUpdate.begin(); y != toUpdate.end(); ++y) {
-        
-        auto item = y.key();
-
-        for(auto i = y.value().begin(); i != y.value().end(); ++i) {
-        
-            auto param = i.key();
-
-            //update GI
-            AtomConverter::updateGraphicsItemFromMetadata(
-                item,
-                param,
-                i.value()
-            );
-
-            //if movement
-            if(param == Position) {
-
-                //enable notifications back on those items
-                if(auto notifier = dynamic_cast<GraphicsItemsChangeNotifier*>(item)) {
-                    notifier->activateNotifications();
-                }
-
-                //remove from inner list
-                this->_itemsWhoNotifiedMovement.remove(y.key());
-            }
-
-        }
-
-    }
-
-}
 
 void MapView::_handleHintsSignalsAndSlots() {
 
@@ -142,16 +157,7 @@ void MapView::_handleHintsSignalsAndSlots() {
 
     QObject::connect(
         this->_hints, &ViewMapHint::requestingUIAlteration,
-        [=](PayloadAlteration alteration, QList<QGraphicsItem*> &toAlter) {
-            this->_onUIAlterationRequest(alteration, toAlter);
-        }
-    );
-
-    QObject::connect(
-        this->_hints, &ViewMapHint::requestingUIUpdate,
-        [=](PayloadAlteration alteration, QHash<QGraphicsItem*, QHash<AtomParameter, QVariant>> &toUpdate) {
-            this->_onUIUpdateRequest(alteration, toUpdate);
-        }
+        this, &MapView::_onUIAlterationRequest
     );
 
     //on selection from user

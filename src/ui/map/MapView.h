@@ -78,9 +78,8 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
 
         void onItemChanged(GraphicsItemsChangeNotifier* item, MapViewCustomItemsEventFlag flag) override;
 
-        void _onUIAlterationRequest(PayloadAlteration alteration, QList<QGraphicsItem*> &toAlter);
-        void _onUIUpdateRequest(PayloadAlteration alteration, QHash<QGraphicsItem*, QHash<AtomParameter, QVariant>> &toUpdate);
-    
+        void _onUIAlterationRequest(AlterationPayload &payload, QHash<snowflake_uid, QGraphicsItem*> &toUpdate);
+
     private:
         QBrush* _hiddingBrush = nullptr;
         MapHint* _hints = nullptr;

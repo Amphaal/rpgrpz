@@ -60,8 +60,7 @@ class ViewMapHint : public QObject, public AtomsStorage {
         void requestMissingAssets(const QList<RPZAssetHash> &assetIdsToRequest);
         void atomTemplateChanged();
 
-        void requestingUIAlteration(PayloadAlteration alteration, QList<QGraphicsItem*> &toAlter);
-        void requestingUIUpdate(PayloadAlteration alteration, QHash<QGraphicsItem*, QHash<AtomParameter, QVariant>> &toUpdate);
+        void requestingUIAlteration(AlterationPayload &payload, QHash<snowflake_uid, QGraphicsItem*> &toUpdate);
 
         void heavyAlterationProcessing();
 
@@ -75,7 +74,7 @@ class ViewMapHint : public QObject, public AtomsStorage {
         QVector<RPZAtom*> _getAtomFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const;
 
     protected:
-        QHash<QGraphicsItem*, QHash<AtomParameter, QVariant>> _UIUpdatesBuffer;
+        QHash<snowflake_uid, QGraphicsItem*> _UIUpdatesBuffer;
 
         //missing assets tracking
         QMultiHash<RPZAssetHash, QGraphicsItem*> _missingAssetsIdsFromDb;

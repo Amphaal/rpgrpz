@@ -12,7 +12,7 @@ class MultipleTargetsPayload : public AlterationPayload {
             this->_setTargetAtomIds(targetedAtomIds);
         }
     
-        QVector<snowflake_uid> targetAtomIds() {
+        QVector<snowflake_uid> targetAtomIds() const {
             
             auto list = this->value("ids").toList();
 
@@ -25,7 +25,7 @@ class MultipleTargetsPayload : public AlterationPayload {
             return out;
         }
 
-        virtual QVariant args() {
+        virtual QVariant args() const {
             return this->value("args");
         }
     

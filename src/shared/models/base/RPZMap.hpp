@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Serializable.hpp"
+#include <QList>
 
 template<typename T>
 class RPZMap : public QMap<snowflake_uid, T> {
@@ -10,11 +11,17 @@ class RPZMap : public QMap<snowflake_uid, T> {
     
     public:
         RPZMap() {}
-        RPZMap(T &singleAtom) {
-            this->insert(singleAtom.id(), singleAtom);
+        RPZMap(const QList<T> &serializables) {
+            for(auto &s : serializables) {
+                this->insert(s.id(), s);
+            }
         }
 
-        QVariantList toVList() {
+        RPZMap(const T &serializable) {
+            this->insert(serializable.id(), s);
+        }
+
+        QVariantList toVList() const {
             QVariantList out;
             for(T &base : this->values()) {
                 out.append(base);
