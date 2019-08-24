@@ -34,15 +34,6 @@ void ViewMapHint::notifyMovementOnItems(QList<QGraphicsItem*> &itemsWhoMoved) {
     
 }
 
-QVector<RPZAtom*> ViewMapHint::selectedAtoms() {
-    QVector<RPZAtom*> out;
-    for(const auto &selectedId : this->selectedAtomIds()) {
-        auto &atom = this->_atomsById[selectedId];
-        out.append(&atom);
-    }
-    return out;
-}
-
 void ViewMapHint::notifySelectedItems(QList<QGraphicsItem*> &selectedItems) {
 
     QVector<snowflake_uid> ids;
@@ -66,11 +57,8 @@ void ViewMapHint::notifySelectedItems(QList<QGraphicsItem*> &selectedItems) {
 
 
 void ViewMapHint::setDefaultUser(const RPZUser &user) {
-    
-    //update template
-    this->_defaultOwner = user;
-    auto oldOwnerId = this->templateAtom->owner().id();
-    this->templateAtom->setOwnership(user);
+    this->_bindDefaultOwner(user);
+    this->templateAtom->setOwnership(user); //update template
     emit atomTemplateChanged();
 }
 

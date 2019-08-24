@@ -26,9 +26,7 @@
 
 #include "src/shared/models/RPZAssetMetadata.h"
 
-class ViewMapHint : public QObject, public AtomsStorage {
-    
-    Q_OBJECT
+class ViewMapHint : public AtomsStorage {
 
     public:
         ViewMapHint();
@@ -46,8 +44,6 @@ class ViewMapHint : public QObject, public AtomsStorage {
 
         //alter template Atom
         RPZAtom* templateAtom = nullptr;
-
-        QVector<RPZAtom*> selectedAtoms();
 
     public slots:
         void notifyMovementOnItems(QList<QGraphicsItem*> &itemsWhoMoved);

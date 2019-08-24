@@ -9,41 +9,47 @@
 #include <QDebug>
 #include <QMutex>
 #include <QMutexLocker>
+#include <QtConcurrent>
 
 #include "src/shared/models/RPZAtom.h"
 #include "src/shared/payloads/Payloads.h"
 
 #include "src\shared\async-ui\AlterationAcknoledger.h"
 
-class AtomsStorage : public AlterationAcknoledger {
+class AtomsStorage : public QObject, public AlterationAcknoledger {
+
+    Q_OBJECT
 
     public:
         AtomsStorage(const AlterationPayload::Source &boundSource, bool autoLinkage = true);
         
-        RPZMap<RPZAtom> atoms() const;
-        
+        QVector<snowflake_uid> selectedAtomIds() const; //safe
+        QVector<RPZAtom*> selectedAtoms() const; //safe
+        RPZMap<RPZAtom> atoms() const; //safe
+
+    public slots:    
         void redo();
         void undo();
-
         void duplicateAtoms(const QVector<snowflake_uid> &atomIdList);
-        QVector<snowflake_uid> selectedAtomIds() const;
         void handleAlterationRequest(AlterationPayload &payload);
 
     protected:
-        //duplication
-        RPZUser _defaultOwner;
-        
-        //atoms list 
-        RPZMap<RPZAtom> _atomsById;
-
-        //credentials handling
-        QHash<snowflake_uid, QSet<snowflake_uid>> _atomIdsByOwnerId;
-
-        //alter the inner atoms lists
         void _handleAlterationRequest(AlterationPayload &payload) override;
         virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration);
 
+        void _bindDefaultOwner(const RPZUser &newOwner);
+
     private:
+        mutable QMutex _m_handlingLock;
+
+        //atoms list 
+        RPZMap<RPZAtom> _atomsById;
+        RPZAtom* _getAtomFromId(const snowflake_uid &id);
+
+        //credentials handling
+        QHash<snowflake_uid, QSet<snowflake_uid>> _atomIdsByOwnerId;
+        RPZUser _defaultOwner;
+
         // redo/undo
         QStack<AlterationPayload> _redoHistory;
         QStack<AlterationPayload> _undoHistory;
@@ -53,7 +59,7 @@ class AtomsStorage : public AlterationAcknoledger {
 
         //selected
         QVector<snowflake_uid> _selectedAtomIds;
-        mutable QMutex _m_selectedAtomIds;
+        QVector<RPZAtom*> _selectedAtoms;
 
         //duplication
         int _duplicationCount = 0;
