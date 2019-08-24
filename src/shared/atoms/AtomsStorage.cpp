@@ -113,7 +113,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &fromHist
         case PayloadAlteration::PA_MetadataChanged: {
             
             auto casted = (MetadataChangedPayload*)&fromHistoryPayload;
-            auto changesTypes = MetadataChangedPayload::fromArgs(casted->args()).editedMetadata();
+            auto changes = casted->updates();
             RPZMap<RPZAtom> partialAtoms;
 
             for(auto id : casted->targetAtomIds()) {
@@ -121,8 +121,8 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &fromHist
                 RPZAtom baseAtom;
                 auto refAtom = this->_atomsById[id];
 
-                for(auto change : changesTypes) {
-                    baseAtom.setMetadata(change, change);
+                for(auto i = changes.begin(); i != changes.end(); i++) {
+                    baseAtom.setMetadata(i.key(), i.value());
                 }
 
                 partialAtoms.insert(id, baseAtom);
@@ -189,6 +189,7 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
 
     //on selection changed
     if(pType == PayloadAlteration::PA_Selected) {
+        this->_m_selectedAtomIds.lock();
         this->_selectedAtomIds.clear();
     }
 
@@ -197,7 +198,7 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
         
         auto atoms  = bPayload->atoms();
 
-        for (RPZMap<RPZAtom>::iterator i = atoms.begin(); i != atoms.end(); ++i) {
+        for (auto i = atoms.begin(); i != atoms.end(); ++i) {
             this->_handlePayloadInternal(pType, i.key(), i.value());
         }
 
@@ -207,12 +208,17 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
     if(auto mPayload = dynamic_cast<MultipleTargetsPayload*>(&payload)) {
         
         auto ids = mPayload->targetAtomIds();
-        auto args =  mPayload->args();
+        auto args = mPayload->args();
         
         for (auto id : ids) {
             this->_handlePayloadInternal(pType, id, args);
         }
 
+    }
+
+    //unlock 
+    if(pType == PayloadAlteration::PA_Selected) {
+        this->_m_selectedAtomIds.unlock();
     }
 
 }
@@ -274,13 +280,15 @@ RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, sno
 
         case PayloadAlteration::PA_MetadataChanged:
         case PayloadAlteration::PA_BulkMetadataChanged: {
-            auto partial = type == PayloadAlteration::PA_BulkMetadataChanged ? 
-                                                    RPZAtom(alteration.toHash()) : 
-                                                    MetadataChangedPayload::fromArgs(alteration);
             
-            for(auto param : partial.editedMetadata()) {
-                storedAtom->setMetadata(param, partial);
+            auto changes = type == PayloadAlteration::PA_BulkMetadataChanged ? 
+                                    RPZAtom(alteration.toHash()).editedMetadataWithValues() : 
+                                    MetadataChangedPayload::fromArgs(alteration);
+            
+            for(auto i = changes.begin(); i != changes.end(); i++) {
+                storedAtom->setMetadata(i.key(), i.value());
             }
+
         }   
         break;
 
@@ -379,6 +387,7 @@ QPointF AtomsStorage::_getPositionFromAtomDuplication(const RPZAtom &atomToDupli
 }
 
 QVector<snowflake_uid> AtomsStorage::selectedAtomIds() const {
+    QMutexLocker l(&this->_m_selectedAtomIds);
     return this->_selectedAtomIds;
 }
 

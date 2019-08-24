@@ -88,6 +88,7 @@ class RPZAtom : public Ownable {
         void setMetadata(const AtomParameter &key, RPZAtom &base, bool autoRemove = true);
 
         QSet<AtomParameter> editedMetadata() const;
+        QHash<AtomParameter, QVariant> editedMetadataWithValues() const;
         QSet<AtomParameter> legalEditedMetadata() const;
         QSet<AtomParameter> legalParameters() const;
         QSet<AtomParameter> customizableParams() const;

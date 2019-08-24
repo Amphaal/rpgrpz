@@ -103,7 +103,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         case JSONMethod::MessageFromPlayer: 
         {
             RPZMessage message(data.toHash());
-            message.setOwnership(*this->_getUser(target)); //force corresponding user to it then store it
+            message.setOwnership(this->_getUser(target)); //force corresponding user to it then store it
             this->_interpretMessage(target, message);
         }
         break;
@@ -164,9 +164,9 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             auto chosenName = handshakePkg.requestedUsername();
             auto adapted = MessageInterpreter::usernameToCommandCompatible(chosenName);
             if(this->_formatedUsernamesByUser.contains(adapted)) {
-                chosenName = chosenName + targetUser->color().name();
+                chosenName = chosenName + targetUser.color().name();
             }
-            targetUser->setName(chosenName);
+            targetUser.setName(chosenName);
 
             //tell other users this one exists
             this->_broadcastUsers();
@@ -199,7 +199,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
 void RPZServer::_tellUserHisIdentity(JSONSocket* socket) {
     auto serialized = this->_getUser(socket);
-    socket->sendJSON(JSONMethod::AckIdentity, *serialized);
+    socket->sendJSON(JSONMethod::AckIdentity, serialized);
 }
 
 void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
@@ -245,8 +245,22 @@ void RPZServer::_askHostForMapHistory() {
 }
 
 void RPZServer::_alterIncomingPayloadWithUpdatedOwners(AtomsWielderPayload &wPayload, JSONSocket * senderSocket) {
+    
     auto defaultOwner = this->_getUser(senderSocket); 
-    wPayload.updateEmptyUser(*defaultOwner);
+    auto updated = wPayload.updateEmptyUser(defaultOwner);
+    
+    //if sender sent no user atoms
+    if(updated.count()) {
+
+        //tell him that he owns them now
+        OwnerChangedPayload changedOwner(updated, defaultOwner);
+        auto source = this->_hints->source();
+        changedOwner.changeSource(source);
+
+        //send...
+        this->_sendToAllButSelf(senderSocket, JSONMethod::MapChanged, changedOwner);
+
+    }
 }
 
 void RPZServer::_broadcastMapChanges(QVariantHash &payload, JSONSocket * senderSocket) {
@@ -264,7 +278,7 @@ void RPZServer::_broadcastMapChanges(QVariantHash &payload, JSONSocket * senderS
     auto source = this->_hints->source();
     aPayload->changeSource(source);
 
-    //send to registered users...
+    //send to registered users but sender...
     this->_sendToAllButSelf(senderSocket, JSONMethod::MapChanged, *aPayload);
 }
 
@@ -384,7 +398,7 @@ void RPZServer::_sendToAll(const JSONMethod &method, const QVariant &data) {
 }
 
 
-RPZUser* RPZServer::_getUser(JSONSocket* socket) {
+RPZUser& RPZServer::_getUser(JSONSocket* socket) {
     const auto id = this->_idsByClientSocket[socket];
-    return &this->_usersById[id];
+    return this->_usersById[id];
 }

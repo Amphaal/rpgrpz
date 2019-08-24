@@ -51,7 +51,7 @@ class RPZServer : public QTcpServer, public JSONRouter {
         //users
         RPZMap<RPZUser> _usersById;
         QHash<QString, RPZUser*> _formatedUsernamesByUser;
-        RPZUser* _getUser(JSONSocket* socket);
+        RPZUser& _getUser(JSONSocket* socket);
         void _broadcastUsers();
         void _tellUserHisIdentity(JSONSocket* socket);
 

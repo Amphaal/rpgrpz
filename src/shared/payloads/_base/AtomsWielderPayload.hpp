@@ -8,16 +8,16 @@
 class AtomsWielderPayload : public AlterationPayload {
     public:
         AtomsWielderPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        AtomsWielderPayload(const PayloadAlteration &alteration, RPZMap<RPZAtom> &atoms) : AlterationPayload(alteration) {
+        AtomsWielderPayload(const PayloadAlteration &alteration, const RPZMap<RPZAtom> &atoms) : AlterationPayload(alteration) {
             this->_setAddedAtoms(atoms);
         }
             
-    RPZMap<RPZAtom> atoms() {
+    RPZMap<RPZAtom> atoms() const {
         RPZMap<RPZAtom> out;
         
         auto map = this->value("atoms").toMap();
 
-        for(QVariantMap::iterator i = map.begin(); i != map.end(); ++i) {    
+        for(auto i = map.begin(); i != map.end(); ++i) {    
             auto snowflakeId = i.key().toULongLong();
             RPZAtom atom(i.value().toHash());
             out.insert(snowflakeId, atom);
@@ -26,23 +26,35 @@ class AtomsWielderPayload : public AlterationPayload {
         return out;
     }
 
-    void updateEmptyUser(const RPZUser &user) {
+    QVector<snowflake_uid> updateEmptyUser(const RPZUser &user) {
         
         auto atoms = this->atoms();
+
+        QVector<snowflake_uid> updatedAtomIds;
+
         for(auto &atom : atoms) {
+
+            auto currentOwner = atom.owner();
+
             //override ownership on absent owner data
-            if(atom.owner().isEmpty()) {
+            if(currentOwner.isEmpty()) {
+
                 atom.setOwnership(user);
+                updatedAtomIds.append(atom.id());
+
             }
+
         }
 
         this->_setAddedAtoms(atoms);
+
+        return updatedAtomIds;
     }
 
     private:
-        void _setAddedAtoms(RPZMap<RPZAtom> &atoms) {
+        void _setAddedAtoms(const RPZMap<RPZAtom> &atoms) {
             QVariantMap list;
-            for (RPZMap<RPZAtom>::iterator i = atoms.begin(); i != atoms.end(); ++i) {
+            for (RPZMap<RPZAtom>::const_iterator i = atoms.constBegin(); i != atoms.constEnd(); ++i) {
                 auto snowflakeAsStr = QString::number(i.key());
                 auto maybePartialAtom = i.value();
                 list.insert(snowflakeAsStr, maybePartialAtom);

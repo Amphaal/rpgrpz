@@ -37,13 +37,17 @@ class MetadataChangedPayload : public MultipleTargetsPayload {
             this->_setMetadataChanges(changes);
         }
 
-        static RPZAtom fromArgs(const QVariant &args) {
-            RPZAtom out;
+        QHash<AtomParameter, QVariant> updates() const {
+            return fromArgs(this->args());
+        }
 
-            auto base = args.toHash();           
-            for (QVariantHash::iterator i = base.begin(); i != base.end(); ++i) {
+        static QHash<AtomParameter, QVariant> fromArgs(const QVariant &args) {
+            QHash<AtomParameter, QVariant> out;
+            auto base = args.toHash();   
+
+            for (auto i = base.begin(); i != base.end(); ++i) {
                 auto param = (AtomParameter)i.key().toInt();
-                out.setMetadata(param, i.value(), false); //prevent autoremove
+                out.insert(param, i.value());
             }
 
             return out;

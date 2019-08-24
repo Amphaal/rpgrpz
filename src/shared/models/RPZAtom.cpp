@@ -211,6 +211,17 @@ QSet<AtomParameter> RPZAtom::editedMetadata() const {
     }
 
     return existing;
+
+}
+
+QHash<AtomParameter, QVariant> RPZAtom::editedMetadataWithValues() const {
+    QHash<AtomParameter, QVariant> out;
+
+    for (auto m : this->editedMetadata()) {
+        out.insert(m, this->metadata(m));
+    }
+
+    return out;
 }
 
 QSet<AtomParameter> RPZAtom::legalEditedMetadata() const {

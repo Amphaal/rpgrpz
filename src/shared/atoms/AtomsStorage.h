@@ -7,6 +7,8 @@
 #include <QVariantList>
 #include <QObject>
 #include <QDebug>
+#include <QMutex>
+#include <QMutexLocker>
 
 #include "src/shared/models/RPZAtom.h"
 #include "src/shared/payloads/Payloads.h"
@@ -28,19 +30,9 @@ class AtomsStorage : public AlterationAcknoledger {
         void handleAlterationRequest(AlterationPayload &payload);
 
     protected:
-        // redo/undo
-        QStack<AlterationPayload> _redoHistory;
-        QStack<AlterationPayload> _undoHistory;
-
-        int _payloadHistoryIndex = 0;
-        void _registerPayloadForHistory(AlterationPayload &payload);
-        AlterationPayload _generateUndoPayload(AlterationPayload &historyPayload);
-
         //duplication
-        QVector<snowflake_uid> _latestDuplication;
         RPZUser _defaultOwner;
-        int _duplicationCount = 0;
-
+        
         //atoms list 
         RPZMap<RPZAtom> _atomsById;
 
@@ -52,9 +44,20 @@ class AtomsStorage : public AlterationAcknoledger {
         virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration);
 
     private:
+        // redo/undo
+        QStack<AlterationPayload> _redoHistory;
+        QStack<AlterationPayload> _undoHistory;
+        int _payloadHistoryIndex = 0;
+        void _registerPayloadForHistory(AlterationPayload &payload);
+        AlterationPayload _generateUndoPayload(AlterationPayload &historyPayload);
+
+        //selected
         QVector<snowflake_uid> _selectedAtomIds;
+        mutable QMutex _m_selectedAtomIds;
 
         //duplication
+        int _duplicationCount = 0;
+        QVector<snowflake_uid> _latestDuplication;
         RPZMap<RPZAtom> _generateAtomDuplicates(const QVector<snowflake_uid> &atomIdsToDuplicate) const;
         static constexpr int _pixelStepPosDuplication = 10;
         static QPointF _getPositionFromAtomDuplication(const RPZAtom &atomToDuplicate, int duplicateCount);
