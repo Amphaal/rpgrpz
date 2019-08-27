@@ -1,6 +1,6 @@
 #include "AtomConverter.h"
 
-void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, RPZAtom &blueprint, bool isTargetTemporary) {
+void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZAtom &blueprint, bool isTargetTemporary) {
     
     //bind a copy of the template to the item
     target->setData((int)AtomConverterDataIndex::TemplateAtom, RPZAtom(blueprint));
@@ -41,6 +41,13 @@ void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, RPZAtom &b
     auto center = blueprint.shapeCenter();
     target->setTransformOriginPoint(center);
             
+}
+
+void AtomConverter::updateGraphicsItemFromMetadata(QGraphicsItem* item, const AtomUpdates &updates) {
+    //update GI
+    for(auto i = updates.begin(); i != updates.end(); i++) {
+        updateGraphicsItemFromMetadata(item, i.key(), i.value());
+    }
 }
 
 void AtomConverter::updateGraphicsItemFromMetadata(QGraphicsItem* item, const AtomParameter &param, const QVariant &val) {

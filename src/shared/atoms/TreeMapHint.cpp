@@ -75,7 +75,7 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
 RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) {
 
     QTreeWidgetItem* item = nullptr;
-    QHash<AtomParameter, QVariant> maybeNewData;
+    AtomUpdates maybeNewData;
 
     switch(type) {
 
@@ -142,8 +142,8 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
 void TreeMapHint::_onRenamedAsset(const QString &assetId, const QString &newName) {
     if(!this->_atomIdsBoundByRPZAssetHash.contains(assetId)) return;
 
-    QHash<QTreeWidgetItem*, QHash<AtomParameter, QVariant>> toUpdate;
-    QHash<AtomParameter, QVariant> out {{ AssetName, newName }};
+    QHash<QTreeWidgetItem*, AtomUpdates> toUpdate;
+    AtomUpdates out {{ AssetName, newName }};
 
     for(auto &atomId : this->_atomIdsBoundByRPZAssetHash[assetId]) {
         auto itemToChange = this->_atomTreeItemsById[atomId];

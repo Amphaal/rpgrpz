@@ -12,7 +12,7 @@ class AlterationAcknoledger {
 
     public:
         AlterationAcknoledger(const AlterationPayload::Source &source, bool autoLinkage = true);
-        AlterationPayload::Source source();
+        AlterationPayload::Source source() const;
         void linkToAlterationHandler();
 
     protected:

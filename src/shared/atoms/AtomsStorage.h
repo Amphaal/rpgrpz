@@ -27,6 +27,9 @@ class AtomsStorage : public QObject, public AlterationAcknoledger {
         QVector<RPZAtom*> selectedAtoms() const; //safe
         RPZMap<RPZAtom> atoms() const; //safe
 
+    signals: 
+        void heavyAlterationProcessing();
+
     public slots:    
         void redo();
         void undo();
@@ -34,10 +37,21 @@ class AtomsStorage : public QObject, public AlterationAcknoledger {
         void handleAlterationRequest(AlterationPayload &payload);
 
     protected:
-        void _handleAlterationRequest(AlterationPayload &payload) override;
-        virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration);
-
         void _bindDefaultOwner(const RPZUser &newOwner);
+
+        virtual void _handleAlterationRequest(AlterationPayload &payload) override;
+        virtual void _atomsCreated();
+
+        virtual RPZAtom* _insertAtom(const RPZAtom &newAtom);
+        snowflake_uid _ackSelection(RPZAtom* selectedAtom);
+        virtual RPZAtom* _changeOwner(RPZAtom* atomWithNewOwner, const RPZUser &newOwner);
+        snowflake_uid _removeAtom(RPZAtom* toRemove);
+        snowflake_uid _updateAtom(RPZAtom* toUpdate, const AtomUpdates &updates);
+        
+        virtual void basicAlterationDone(const QHash<snowflake_uid, RPZAtom*> &updatedAtoms, const PayloadAlteration &type);
+        virtual void updatesDone(const QList<snowflake_uid> &updatedIds, const AtomUpdates &updates);
+        virtual void updatesDone(const AtomsUpdates &updates);
+        virtual void ownerChangeDone(const QList<RPZAtom*> &updatedAtoms, const RPZUser &newUser);
 
     private:
         mutable QMutex _m_handlingLock;

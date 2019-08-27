@@ -27,13 +27,13 @@ class TreeMapHint : public QObject, public AlterationAcknoledger {
 
     signals:
         void requestingUIAlteration(PayloadAlteration alteration, QList<QTreeWidgetItem*> &toAlter);
-        void requestingUIUpdate(PayloadAlteration alteration, QHash<QTreeWidgetItem*, QHash<AtomParameter, QVariant>> &toUpdate);
+        void requestingUIUpdate(PayloadAlteration alteration, QHash<QTreeWidgetItem*, AtomUpdates> &toUpdate);
 
     private slots:
         void _onRenamedAsset(const RPZAssetHash &id, const QString &newName);
 
     private:
-        QHash<QTreeWidgetItem*, QHash<AtomParameter, QVariant>> _UIUpdatesBuffer;
+        QHash<QTreeWidgetItem*, AtomUpdates> _UIUpdatesBuffer;
 
         QHash<int, QTreeWidgetItem*> _layersItems;
         QTreeWidgetItem* _getLayerItem(int layer);

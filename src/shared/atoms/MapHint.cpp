@@ -103,6 +103,7 @@ bool MapHint::defineAsRemote(const QString &remoteMapDescriptor) {
     this->_isRemote = !remoteMapDescriptor.isEmpty();
     
     //reset missing assets list
+    QMutexLocker l(&this->_m_missingAssetsIdsFromDb);
     this->_missingAssetsIdsFromDb.clear();
 
     //change map descriptor if is a remote session

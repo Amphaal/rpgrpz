@@ -4,7 +4,7 @@ AlterationAcknoledger::AlterationAcknoledger(const AlterationPayload::Source &so
     if(autoLinkage) linkToAlterationHandler();
 }
 
-AlterationPayload::Source AlterationAcknoledger::source() {
+AlterationPayload::Source AlterationAcknoledger::source() const {
     return this->_source;
 }
 

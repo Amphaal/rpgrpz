@@ -22,6 +22,8 @@
 
 #include "src/ui/map/graphics/GraphicsItemsChangeNotifier.h"
 
+
+
 // defined values shared with AssetsDatabaseElement type for static casts
 enum class AtomType { 
     Undefined, 
@@ -64,6 +66,7 @@ enum AtomParameter {
     ShapeCenter
 };
 
+typedef QHash<AtomParameter, QVariant> AtomUpdates;
 typedef QString RPZAssetHash; //file hash of the asset
 
 class RPZAtom : public Ownable {
@@ -86,9 +89,10 @@ class RPZAtom : public Ownable {
         void unsetMetadata(const AtomParameter &key);
         void setMetadata(const AtomParameter &key, const QVariant &value, bool autoRemove = true);
         void setMetadata(const AtomParameter &key, RPZAtom &base, bool autoRemove = true);
+        void setMetadata(const AtomUpdates &metadata, bool autoRemove = true);
 
         QSet<AtomParameter> editedMetadata() const;
-        QHash<AtomParameter, QVariant> editedMetadataWithValues() const;
+        AtomUpdates editedMetadataWithValues() const;
         QSet<AtomParameter> legalEditedMetadata() const;
         QSet<AtomParameter> legalParameters() const;
         QSet<AtomParameter> customizableParams() const;
@@ -135,7 +139,7 @@ class RPZAtom : public Ownable {
             { AtomParameter::ShapeCenter, "shape_c" }
         };
 
-        static inline const QHash<AtomParameter, QVariant> _defaultVal = {
+        static inline const AtomUpdates _defaultVal = {
             { AtomParameter::AssetId, "" },
             { AtomParameter::AssetName, "" },
             { AtomParameter::Scale, 1.0 },

@@ -62,6 +62,7 @@ int clientApp(int argc, char** argv) {
     QApplication app(argc, argv);
     AppContext::configureApp(app);
 
+    app.setApplicationDisplayName(APP_NAME);
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
     app.setStyle(QStyleFactory::create("Fusion")); 
 

@@ -2,7 +2,7 @@
 
 #include <QSharedPointer>
 
-#include "wielder/BulkMetadataChangedPayload.hpp"
+#include "bulk/BulkMetadataChangedPayload.hpp"
 #include "wielder/AddedPayload.hpp"
 #include "wielder/ResetPayload.hpp"
 #include "withTarget/FocusedPayload.hpp"

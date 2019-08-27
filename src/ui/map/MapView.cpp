@@ -303,14 +303,14 @@ void MapView::leaveEvent(QEvent *event) {
 }
 
 void MapView::onAtomTemplateChange() {
-    auto subjects = QVector<RPZAtom*>({this->_hints->templateAtom});
+    QVector<RPZAtom*> subjects {this->_hints->templateAtom()};
     emit subjectedAtomsChanged(subjects);
     
     if(this->_ghostItem) {
         //update the ghost graphics item to display the updated values
         AtomConverter::updateGraphicsItemFromAtom(
             this->_ghostItem, 
-            *this->_hints->templateAtom, 
+            *this->_hints->templateAtom(), 
             true
         );
     }
@@ -363,7 +363,7 @@ void MapView::onRPZClientConnecting() {
 
     //when receiving missing asset
     QObject::connect(
-        _rpzClient, &RPZClient::assetSucessfullyInserted,
+        _rpzClient, &RPZClient::donwloadedAssetSucessfullyInserted,
         this->_hints, &MapHint::replaceMissingAssetPlaceholders
     );
 
@@ -726,7 +726,7 @@ void MapView::_beginDrawing(const QPoint &lastPointMousePressed) {
     this->_tempDrawing = (MapViewGraphicsPathItem*)gi;
 
     //determine if it must be sticky
-    this->_stickyBrushIsDrawing = this->_hints->templateAtom->brushType() == BrushType::Cutter;
+    this->_stickyBrushIsDrawing = this->_hints->templateAtom()->brushType() == BrushType::Cutter;
     this->_stickyBrushValidNodeCount = this->_stickyBrushIsDrawing ? this->_tempDrawing->path().elementCount() : 0;
 
     //update position
@@ -753,7 +753,8 @@ void MapView::_updateDrawingPath(const QPoint &evtPoint) {
     auto sceneCoord = this->mapToScene(evtPoint);
     auto pathCoord = this->_tempDrawing->mapFromScene(sceneCoord);
 
-    switch(this->_hints->templateAtom->type()) {
+    switch(this->_hints->templateAtom()->type()) {
+        
         case AtomType::Drawing:
             existingPath.lineTo(pathCoord);
         break;
@@ -764,6 +765,7 @@ void MapView::_updateDrawingPath(const QPoint &evtPoint) {
 
         default:
             break;
+
     }
 
     //save as new path
@@ -772,7 +774,7 @@ void MapView::_updateDrawingPath(const QPoint &evtPoint) {
 
 void MapView::_updateDrawingPathForBrush(const QPointF &pathCoord, QPainterPath &pathToAlter, MapViewGraphicsPathItem* sourceTemplate) {
     
-    switch(this->_hints->templateAtom->brushType()) {
+    switch(this->_hints->templateAtom()->brushType()) {
         
         case BrushType::Stamp: {
             

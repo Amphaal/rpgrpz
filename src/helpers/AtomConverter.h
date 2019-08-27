@@ -9,8 +9,9 @@ enum class AtomConverterDataIndex { TemplateAtom = 2220, BrushTransform = 2555, 
 
 class AtomConverter {
     public:
-        static void updateGraphicsItemFromAtom(QGraphicsItem* target, RPZAtom &blueprint, bool isTargetTemporary = false);
+        static void updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZAtom &blueprint, bool isTargetTemporary = false);
         static void updateGraphicsItemFromMetadata(QGraphicsItem* item, const AtomParameter &param, const QVariant &val);
+        static void updateGraphicsItemFromMetadata(QGraphicsItem* item, const AtomUpdates &updates);
         static RPZAtom graphicsToAtom(QGraphicsItem* blueprint);
 
     private:
