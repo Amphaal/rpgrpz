@@ -30,10 +30,10 @@ class RPZClient : public JSONSocket, public AlterationAcknoledger, public JSONRo
         RPZClient(const QString &displayname, const QString &domain, const QString &port);
         ~RPZClient();
         
-        QString getConnectedSocketAddress();
+        QString getConnectedSocketAddress() const;
 
-        RPZUser identity();
-        QVector<RPZUser> sessionUsers();
+        RPZUser identity() const;
+        QVector<RPZUser> sessionUsers() const;
 
     public slots:
         void run();
@@ -56,7 +56,7 @@ class RPZClient : public JSONSocket, public AlterationAcknoledger, public JSONRo
         void mapChanged(const QVariantHash &payload);
         void beenAskedForMapHistory();
 
-        void assetSucessfullyInserted(const RPZAssetMetadata &metadata);
+        void donwloadedAssetSucessfullyInserted(const RPZAssetMetadata &metadata);
         void receivedAsset(const QVariantHash &package);
 
         void loggedUsersUpdated(const QVariantList &users);

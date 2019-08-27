@@ -101,25 +101,26 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &fromHist
         case PayloadAlteration::PA_BulkMetadataChanged: {
             
             auto casted = (BulkMetadataChangedPayload*)&fromHistoryPayload;
-            auto intialAtoms = casted->atoms();
-            RPZMap<RPZAtom> outAtoms;
+            auto intialAtoms = casted->atomsUpdates();
+            AtomsUpdates out;
 
-            for (RPZMap<RPZAtom>::iterator i = intialAtoms.begin(); i != intialAtoms.end(); ++i) { 
+            for (auto i = intialAtoms.constBegin(); i != intialAtoms.constEnd(); i++) { 
                 
                 auto snowflakeId = i.key();
-                auto partialAtom = i.value(); 
+                auto updates = i.value(); 
 
-                RPZAtom outAtom;
                 auto refAtom = this->_atomsById[snowflakeId];
 
-                for(auto change : partialAtom.editedMetadata()) {
-                    outAtom.setMetadata(change, refAtom);
+                AtomUpdates updates;
+
+                for(auto y = updates.begin(); y != updates.end(); y++) {
+                    updates.insert(y.key(), refAtom.metadata(y.key()));
                 }
 
-                outAtoms.insert(snowflakeId, outAtom);
+                out.insert(snowflakeId, updates);
             }
             
-            return BulkMetadataChangedPayload(outAtoms);
+            return BulkMetadataChangedPayload(out);
         }
         break; 
 
@@ -127,22 +128,22 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &fromHist
             
             auto casted = (MetadataChangedPayload*)&fromHistoryPayload;
             auto changes = casted->updates();
-            RPZMap<RPZAtom> partialAtoms;
+            AtomsUpdates out;
 
             for(auto id : casted->targetAtomIds()) {
 
-                RPZAtom baseAtom;
+                AtomUpdates updates;
                 auto refAtom = this->_atomsById[id];
 
                 for(auto i = changes.begin(); i != changes.end(); i++) {
-                    baseAtom.setMetadata(i.key(), i.value());
+                    updates.insert(i.key(), refAtom.metadata(i.key()));
                 }
 
-                partialAtoms.insert(id, baseAtom);
+                out.insert(id, updates);
                 
             }
 
-            return BulkMetadataChangedPayload(partialAtoms);
+            return BulkMetadataChangedPayload(out);
         }
         break; 
 
@@ -180,19 +181,40 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &fromHist
 /* ELEMENTS */
 //////////////
 
+
+RPZAtom* AtomsStorage::_getAtomFromId(const snowflake_uid &id) {
+    
+    if(!id) {
+        qWarning() << "Atoms: targeted Atom Id is null !";
+        return nullptr;
+    }
+
+    if(!this->_atomsById.contains(id)) return nullptr;
+    return &this->_atomsById[id];
+}
+
+void AtomsStorage::_bindDefaultOwner(const RPZUser &newOwner) {
+    this->_defaultOwner = newOwner;
+}
+
 void AtomsStorage::handleAlterationRequest(AlterationPayload &payload) { 
     return this->_handleAlterationRequest(payload);
 }
 
 //alter Scene
 void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) { 
+    this->_handleAlterationRequest(payload);
+}
+
+void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
 
     QMutexLocker lock(&this->_m_handlingLock);
+    
+    auto pType = payload.type();
+    if(pType == PayloadAlteration::PA_Reset) emit heavyAlterationProcessing();
 
     //may register for history
     this->_registerPayloadForHistory(payload);
-
-    auto pType = payload.type();
 
     //on reset
     if(pType == PayloadAlteration::PA_Reset) {
@@ -208,128 +230,124 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
         this->_selectedAtoms.clear();
     }
 
-    //base handling
-    if(auto bPayload = dynamic_cast<AtomsWielderPayload*>(&payload)) {
-        
-        auto atoms  = bPayload->atoms();
+    QHash<snowflake_uid, RPZAtom*> alterations;
 
-        for (auto i = atoms.begin(); i != atoms.end(); ++i) {
-            this->_handlePayloadInternal(pType, i.key(), i.value());
+    //reset/insert types
+    if(auto bPayload = dynamic_cast<AtomsWielderPayload*>(&payload)) {
+        for (const auto &atom : bPayload->atoms()) {
+
+            auto storedAtom = this->_insertAtom(atom);
+            auto id = atom.id();
+            
+            alterations.insert(id, storedAtom);
         }
 
+        this->basicAlterationDone(alterations, pType);
+    }
+
+    //bulk
+    else if(auto bPayload = dynamic_cast<BulkMetadataChangedPayload*>(&payload)) {
+        auto updatesById = bPayload->atomsUpdates();
+        for (auto i = updatesById.begin(); i != updatesById.end(); i++) {
+            
+            auto id = i.key();
+            auto atom = this->_getAtomFromId(id);
+
+            this->_updateAtom(atom, i.value());
+        }
+
+        this->updatesDone(updatesById);
     }
 
     //multi target format
-    if(auto mPayload = dynamic_cast<MultipleTargetsPayload*>(&payload)) {
+    else if(auto mPayload = dynamic_cast<MultipleTargetsPayload*>(&payload)) {
+        auto ids = mPayload->targetAtomIds();      
+
+        AtomUpdates maybeUpdates;
+        RPZUser maybeNewUser;
         
-        auto ids = mPayload->targetAtomIds();
-        auto args = mPayload->args();
-        
-        for (auto id : ids) {
-            this->_handlePayloadInternal(pType, id, args);
+        if(auto nPayload = dynamic_cast<MetadataChangedPayload*>(&payload)) {
+            maybeUpdates = nPayload->updates();
+        } else if (auto nPayload = dynamic_cast<OwnerChangedPayload*>(&payload)) {
+            maybeNewUser = nPayload->newOwner();
         }
 
+        for (const auto &id : ids) {
+            auto atom = this->_getAtomFromId(id);
+            
+            if(pType == PayloadAlteration::PA_Selected) this->_ackSelection(atom);
+            if(pType == PayloadAlteration::PA_Removed) this->_removeAtom(atom);
+            if(pType == PayloadAlteration::PA_MetadataChanged) this->_updateAtom(atom, maybeUpdates);
+            if(pType == PayloadAlteration::PA_OwnerChanged) atom = this->_changeOwner(atom, maybeNewUser);
+
+            if(atom) alterations.insert(id, atom);
+        }
+
+        if(!maybeUpdates.isEmpty()) this->updatesDone(alterations.keys(), maybeUpdates);
+        else if(!maybeNewUser.isEmpty()) this->ownerChangeDone(alterations.values(), maybeNewUser);
+        else this->basicAlterationDone(alterations, pType);
+
     }
+}
+
+
+//
+//
+//
+
+RPZAtom* AtomsStorage::_insertAtom(const RPZAtom &newAtom) {
+    auto owner = newAtom.owner();
+    auto atomId = newAtom.id();
+
+    //bind to owners
+    this->_atomIdsByOwnerId[owner.id()].insert(atomId);
+
+    //bind elem
+    this->_atomsById.insert(atomId, newAtom);
     
+    return &this->_atomsById[atomId];
 }
 
-RPZAtom* AtomsStorage::_getAtomFromId(const snowflake_uid &id) {
-    if(!this->_atomsById.contains(id)) return nullptr;
-    return &this->_atomsById[id];
+snowflake_uid AtomsStorage::_ackSelection(RPZAtom* selectedAtom) {
+    auto id = selectedAtom->id();
+    this->_selectedAtomIds.append(id);
+    this->_selectedAtoms.append(selectedAtom);
+    return selectedAtom->id();
 }
 
-void AtomsStorage::_bindDefaultOwner(const RPZUser &newOwner) {
-    this->_defaultOwner = newOwner;
+RPZAtom* AtomsStorage::_changeOwner(RPZAtom* atomWithNewOwner, const RPZUser &newOwner) {
+    auto currentOwnerId = atomWithNewOwner->owner().id();
+    auto atomId = atomWithNewOwner->id();
+
+    atomWithNewOwner->setOwnership(newOwner);
+
+    this->_atomIdsByOwnerId[currentOwnerId].remove(atomId);
+    this->_atomIdsByOwnerId[newOwner.id()].insert(atomId);
+
+    return atomWithNewOwner;
 }
 
-//register actions
-RPZAtom* AtomsStorage::_handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) {
+snowflake_uid AtomsStorage::_removeAtom(RPZAtom* toRemove) {
+    auto storedAtomOwner = toRemove->owner();
+    auto id = toRemove->id();
 
-    if(!targetedAtomId) {
-        qWarning() << "Atoms: targeted Atom Id is null !";
-    }
+    //unbind from owners
+    this->_atomIdsByOwnerId[storedAtomOwner.id()].remove(id);
 
-    //get the stored atom relative to the targeted id
-    RPZAtom* storedAtom = this->_getAtomFromId(targetedAtomId);
+    //update 
+    this->_atomsById.remove(id); 
 
-    //modifications
-    switch(type) {
-
-        //on addition
-        case PayloadAlteration::PA_Reset:
-        case PayloadAlteration::PA_Added: {
-            
-            auto newAtom = RPZAtom(alteration.toHash());
-            auto owner = newAtom.owner();
-
-            //bind to owners
-            this->_atomIdsByOwnerId[owner.id()].insert(targetedAtomId);
-
-            //bind elem
-            this->_atomsById.insert(targetedAtomId, newAtom);
-            
-            //replace for return
-            storedAtom = &this->_atomsById[targetedAtomId];
-            
-        }
-        break;
-
-        //on owner change
-        case PayloadAlteration::PA_OwnerChanged: {
-
-            auto currentOwnerId = storedAtom->owner().id();
-
-            RPZUser newOwner(alteration.toHash());
-            storedAtom->setOwnership(newOwner);
-
-            this->_atomIdsByOwnerId[currentOwnerId].remove(targetedAtomId);
-            this->_atomIdsByOwnerId[newOwner.id()].insert(targetedAtomId);
-        }
-        break;
-
-        //on selection change
-        case PayloadAlteration::PA_Selected: {
-            this->_selectedAtomIds.append(targetedAtomId);
-            if(storedAtom) this->_selectedAtoms.append(storedAtom);
-        }
-        break;
-
-        case PayloadAlteration::PA_MetadataChanged:
-        case PayloadAlteration::PA_BulkMetadataChanged: {
-            
-            auto changes = type == PayloadAlteration::PA_BulkMetadataChanged ? 
-                                    RPZAtom(alteration.toHash()).editedMetadataWithValues() : 
-                                    MetadataChangedPayload::fromArgs(alteration);
-            
-            for(auto i = changes.begin(); i != changes.end(); i++) {
-                storedAtom->setMetadata(i.key(), i.value());
-            }
-
-        }   
-        break;
-
-        //on removal
-        case PayloadAlteration::PA_Removed: {
-            
-            auto storedAtomOwner = storedAtom->owner();
-
-            //unbind from owners
-            this->_atomIdsByOwnerId[storedAtomOwner.id()].remove(targetedAtomId);
-
-            //update 
-            this->_atomsById.remove(targetedAtomId); 
-            storedAtom = nullptr;
-
-        }
-        break;
-
-        default:
-            break;
-
-    }
-
-    return storedAtom;
+    return id;
 }
+
+snowflake_uid AtomsStorage::_updateAtom(RPZAtom* toUpdate, const AtomUpdates &updates) {
+    toUpdate->setMetadata(updates);
+    return toUpdate->id();
+}
+
+//
+//
+//
 
 void AtomsStorage::duplicateAtoms(const QVector<snowflake_uid> &atomIdList) {
     

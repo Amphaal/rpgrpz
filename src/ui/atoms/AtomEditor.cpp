@@ -62,7 +62,7 @@ void AtomEditor::buildEditor(const QVector<RPZAtom*> &atomsToBuildFrom) {
 void AtomEditor::resetParams() {
 
     //reset displayed params
-        QHash<AtomParameter, QVariant> changes;
+        AtomUpdates changes;
         for(auto param : this->_visibleEditors) {
             changes.insert(param, QVariant());
         }
@@ -118,8 +118,8 @@ void AtomEditor::_emitPayload(AlterationPayload &payload) {
     emit requiresAtomAlteration(payload);
 }
 
-QHash<AtomParameter, QVariant> AtomEditor::_findDefaultValuesToBind() {
-    QHash<AtomParameter, QVariant> out;
+AtomUpdates AtomEditor::_findDefaultValuesToBind() {
+    AtomUpdates out;
 
     if(this->_atoms.count() > 0) {
 

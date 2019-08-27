@@ -1,6 +1,6 @@
 #include "CustomGraphicsItemHelper.h"
 
-QGraphicsItem* CustomGraphicsItemHelper::createGraphicsItem(RPZAtom &atom, const RPZAssetMetadata &assetMetadata, bool isTemporary) {
+QGraphicsItem* CustomGraphicsItemHelper::createGraphicsItem(const RPZAtom &atom, const RPZAssetMetadata &assetMetadata, bool isTemporary) {
     
     QGraphicsItem* out;
 
@@ -33,7 +33,7 @@ QGraphicsItem* CustomGraphicsItemHelper::createGraphicsItem(RPZAtom &atom, const
     return out;
 }
 
-QGraphicsItem* CustomGraphicsItemHelper::createOutlineRectItem(QPointF &scenePos) {
+QGraphicsItem* CustomGraphicsItemHelper::createOutlineRectItem(const QPointF &scenePos) {
     
     //rect...
     QRectF rect(
@@ -57,7 +57,7 @@ QGraphicsItem* CustomGraphicsItemHelper::createOutlineRectItem(QPointF &scenePos
 }
 
 
-QGraphicsRectItem* CustomGraphicsItemHelper::createMissingAssetPlaceholderItem(RPZAtom &atom) {
+QGraphicsRectItem* CustomGraphicsItemHelper::createMissingAssetPlaceholderItem(const RPZAtom &atom) {
 
     //pen to draw the rect with
     QPen pen;
@@ -82,7 +82,7 @@ QGraphicsRectItem* CustomGraphicsItemHelper::createMissingAssetPlaceholderItem(R
 }
 
 
-QGraphicsItem* CustomGraphicsItemHelper::_createGenericImageBasedItem(RPZAtom &atom, const RPZAssetMetadata &assetMetadata) {
+QGraphicsItem* CustomGraphicsItemHelper::_createGenericImageBasedItem(const RPZAtom &atom, const RPZAssetMetadata &assetMetadata) {
 
     //get file infos
     auto pathToImageFile = assetMetadata.pathToAssetFile();
@@ -100,7 +100,7 @@ QGraphicsItem* CustomGraphicsItemHelper::_createGenericImageBasedItem(RPZAtom &a
     return item;
 }
 
-QGraphicsPathItem* CustomGraphicsItemHelper::_createBrushItem(RPZAtom &atom, const RPZAssetMetadata &assetMetadata) {
+QGraphicsPathItem* CustomGraphicsItemHelper::_createBrushItem(const RPZAtom &atom, const RPZAssetMetadata &assetMetadata) {
 
     //define a ped
     QPen pen;
@@ -131,7 +131,7 @@ QGraphicsPathItem* CustomGraphicsItemHelper::_createBrushItem(RPZAtom &atom, con
     return newPath;
 }
 
-QGraphicsPathItem* CustomGraphicsItemHelper::_createDrawingItem(RPZAtom &atom) {
+QGraphicsPathItem* CustomGraphicsItemHelper::_createDrawingItem(const RPZAtom &atom) {
     
     //define a ped
     QPen pen;

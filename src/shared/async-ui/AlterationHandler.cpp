@@ -5,7 +5,7 @@ AlterationHandler* AlterationHandler::get() {
     return _inst; 
 }
 
-void AlterationHandler::queueAlteration(AlterationAcknoledger* sender, AlterationPayload &payload) {
+void AlterationHandler::queueAlteration(const AlterationAcknoledger* sender, AlterationPayload &payload) {
 
     //if initial payload emission, apply sender source for send
     auto source = payload.source();

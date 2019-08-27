@@ -12,7 +12,7 @@ class MetadataChangedPayload : public MultipleTargetsPayload {
         //multiple targets / multiple params
         MetadataChangedPayload(
             const QVector<snowflake_uid> &targetedAtomIds,
-            QHash<AtomParameter, QVariant> &changes
+            AtomUpdates &changes
         ) : MultipleTargetsPayload(PayloadAlteration::PA_MetadataChanged, targetedAtomIds) {
             this->_setMetadataChanges(changes);
         }
@@ -23,7 +23,7 @@ class MetadataChangedPayload : public MultipleTargetsPayload {
             const AtomParameter &param, 
             const QVariant &value
         ) : MultipleTargetsPayload(PayloadAlteration::PA_MetadataChanged, targetedAtomIds) {
-            QHash<AtomParameter, QVariant> changes {{ param, value }};
+            AtomUpdates changes {{ param, value }};
             this->_setMetadataChanges(changes);
         }
 
@@ -33,16 +33,16 @@ class MetadataChangedPayload : public MultipleTargetsPayload {
             const AtomParameter &param, 
             const QVariant &value
         ) : MultipleTargetsPayload(PayloadAlteration::PA_MetadataChanged, QVector<snowflake_uid>({targetedId})) {
-            QHash<AtomParameter, QVariant> changes {{ param, value }};
+            AtomUpdates changes {{ param, value }};
             this->_setMetadataChanges(changes);
         }
 
-        QHash<AtomParameter, QVariant> updates() const {
+        AtomUpdates updates() const {
             return fromArgs(this->args());
         }
 
-        static QHash<AtomParameter, QVariant> fromArgs(const QVariant &args) {
-            QHash<AtomParameter, QVariant> out;
+        static AtomUpdates fromArgs(const QVariant &args) {
+            AtomUpdates out;
             auto base = args.toHash();   
 
             for (auto i = base.begin(); i != base.end(); ++i) {
@@ -54,9 +54,9 @@ class MetadataChangedPayload : public MultipleTargetsPayload {
         }
 
     private:
-        void _setMetadataChanges(QHash<AtomParameter, QVariant> &changes) {
+        void _setMetadataChanges(const AtomUpdates &changes) {
             QVariantHash in;
-            for (QHash<AtomParameter, QVariant>::iterator i = changes.begin(); i != changes.end(); ++i) {
+            for (auto i = changes.constBegin(); i != changes.constEnd(); ++i) {
                 in.insert(QString::number((int)i.key()), i.value());
             }
             this->insert("args", in);

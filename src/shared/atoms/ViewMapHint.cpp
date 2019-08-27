@@ -1,30 +1,35 @@
 #include "ViewMapHint.h"
 
 ViewMapHint::ViewMapHint() : AtomsStorage(AlterationPayload::Source::Local_Map),
-    templateAtom(new RPZAtom) {
+    _templateAtom(new RPZAtom) {
     
     //default layer from settings
     this->setDefaultLayer(AppContext::settings()->defaultLayer());
 
 };
 
+RPZAtom* ViewMapHint::templateAtom() const {
+    QMutexLocker m(&this->_m_templateAtom);
+    return this->_templateAtom;
+}
+
 void ViewMapHint::setDefaultLayer(int layer) {
-    this->templateAtom->setMetadata(AtomParameter::Layer, layer);
+    QMutexLocker m(&this->_m_templateAtom);
+    this->_templateAtom->setMetadata(AtomParameter::Layer, layer);
     emit atomTemplateChanged();
 }
 
-void ViewMapHint::notifyMovementOnItems(QList<QGraphicsItem*> &itemsWhoMoved) {
+void ViewMapHint::notifyMovementOnItems(const QList<QGraphicsItem*> &itemsWhoMoved) {
 
     //generate args for payload
-    RPZMap<RPZAtom> coords;
+    AtomsUpdates coords;
     for(auto &gi : itemsWhoMoved) {
         
         auto cAtom = this->_getAtomFromGraphicsItem(gi);
         if(!cAtom) continue;
 
-        RPZAtom oAtom;
-        oAtom.setMetadata(AtomParameter::Position, gi->pos());
-        coords.insert(cAtom->id(), oAtom);
+        AtomUpdates updates {{ AtomParameter::Position, gi->pos() }};
+        coords.insert(cAtom->id(), updates);
 
     }
 
@@ -34,7 +39,7 @@ void ViewMapHint::notifyMovementOnItems(QList<QGraphicsItem*> &itemsWhoMoved) {
     
 }
 
-void ViewMapHint::notifySelectedItems(QList<QGraphicsItem*> &selectedItems) {
+void ViewMapHint::notifySelectedItems(const QList<QGraphicsItem*> &selectedItems) {
 
     QVector<snowflake_uid> ids;
 
@@ -58,7 +63,8 @@ void ViewMapHint::notifySelectedItems(QList<QGraphicsItem*> &selectedItems) {
 
 void ViewMapHint::setDefaultUser(const RPZUser &user) {
     this->_bindDefaultOwner(user);
-    this->templateAtom->setOwnership(user); //update template
+    QMutexLocker m(&this->_m_templateAtom);
+    this->_templateAtom->setOwnership(user); //update template
     emit atomTemplateChanged();
 }
 
@@ -70,23 +76,22 @@ void ViewMapHint::setDefaultUser(const RPZUser &user) {
 // Atom insertion helpers //
 /////////////////////////////
 
-void ViewMapHint::deleteCurrentSelectionItems() {
+void ViewMapHint::deleteCurrentSelectionItems() const {
     RemovedPayload payload(this->selectedAtomIds());
     AlterationHandler::get()->queueAlteration(this, payload);
 }
 
-QGraphicsItem* ViewMapHint::generateGhostItem(RPZAssetMetadata &assetMetadata) {
+QGraphicsItem* ViewMapHint::generateGhostItem(const RPZAssetMetadata &assetMetadata) {
+    
+    QMutexLocker m(&this->_m_templateAtom);
 
     //update template
-    this->templateAtom->changeType(assetMetadata.atomType());
-    this->templateAtom->setMetadata(AtomParameter::AssetId, assetMetadata.assetId());
-    this->templateAtom->setMetadata(AtomParameter::AssetName, assetMetadata.assetName());
+    this->_templateAtom->changeType(assetMetadata.atomType());
+    this->_templateAtom->setMetadata(AtomParameter::AssetId, assetMetadata.assetId());
+    this->_templateAtom->setMetadata(AtomParameter::AssetName, assetMetadata.assetName());
     
-    //generate a blueprint
-    auto atomBuiltFromTemplate = RPZAtom(*this->templateAtom);
-
     //add to scene
-    QGraphicsItem* ghostItem = CustomGraphicsItemHelper::createGraphicsItem(atomBuiltFromTemplate, assetMetadata, true);
+    QGraphicsItem* ghostItem = CustomGraphicsItemHelper::createGraphicsItem(*this->_templateAtom, assetMetadata, true);
 
     //advert change in template
     emit atomTemplateChanged();
@@ -97,7 +102,7 @@ QGraphicsItem* ViewMapHint::generateGhostItem(RPZAssetMetadata &assetMetadata) {
     return ghostItem;
 }
 
-void ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsItem) {
+void ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsItem) const {
     if(!graphicsItem) return;
     
     //from ghost item / temporary drawing
@@ -137,6 +142,8 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
         auto placeholder = CustomGraphicsItemHelper::createMissingAssetPlaceholderItem(atomToBuildFrom);
         newItem = placeholder;
 
+        QMutexLocker l(&this->_m_missingAssetsIdsFromDb);
+
         //add graphic item to list of items to replace at times
         this->_missingAssetsIdsFromDb.insert(assetId, placeholder);
 
@@ -164,6 +171,8 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
 
 void ViewMapHint::replaceMissingAssetPlaceholders(const RPZAssetMetadata &metadata) {
     
+    QMutexLocker l(&this->_m_missingAssetsIdsFromDb);
+
     auto assetId = metadata.assetId();
     auto pathToFile = metadata.pathToAssetFile();
 
@@ -172,35 +181,28 @@ void ViewMapHint::replaceMissingAssetPlaceholders(const RPZAssetMetadata &metada
     
     //iterate through the list of GI to replace
     auto setOfGraphicsItemsToReplace = this->_missingAssetsIdsFromDb.values(assetId).toSet();
-    QHash<snowflake_uid, QGraphicsItem*> oldB;
-    QHash<snowflake_uid, QGraphicsItem*> newB;
-    QList<RPZAtom> toRebuild;
+    QList<QGraphicsItem*> newGis;
+
 
     for(auto oldGi : setOfGraphicsItemsToReplace) {
         
         //find corresponding atom
         auto atom = this->_getAtomFromGraphicsItem(oldGi);
-        toRebuild.append(*atom);
 
         //create the new graphics item
         auto newGi = CustomGraphicsItemHelper::createGraphicsItem(*atom, metadata);
         this->_crossBindingAtomWithGI(atom, newGi);
-
-        oldB.insert(atom->id(), oldGi);
-        newB.insert(atom->id(), newGi);
-
+        newGis.append(newGi);
     }
 
     //clear the id from the missing list
     this->_missingAssetsIdsFromDb.remove(assetId);
 
     //remove old
-    RemovedPayload rPayload(oldB.keys().toVector());
-    emit requestingUIAlteration(rPayload, oldB);
+    emit requestingUIAlteration(PA_Removed, setOfGraphicsItemsToReplace.toList());
 
     //replace by new
-    AddedPayload aPayload(toRebuild);
-    emit requestingUIAlteration(aPayload, newB);
+    emit requestingUIAlteration(PA_Added, newGis);
 }
 
 void ViewMapHint::handlePreviewRequest(const QVector<snowflake_uid> &atomIdsToPreview, const AtomParameter &parameter, QVariant &value) {
@@ -209,7 +211,7 @@ void ViewMapHint::handlePreviewRequest(const QVector<snowflake_uid> &atomIdsToPr
     }
 }
 
-void ViewMapHint::handleParametersUpdateAlterationRequest(QVariantHash &payload) {
+void ViewMapHint::handleParametersUpdateAlterationRequest(AlterationPayload &payload) {
     
     auto cPayload = Payloads::autoCast(payload);
     
@@ -223,8 +225,10 @@ void ViewMapHint::handleParametersUpdateAlterationRequest(QVariantHash &payload)
         //update template
         auto updates = mtPayload->updates();
         
+        QMutexLocker m(&this->_m_templateAtom);
+
         for(auto i = updates.begin(); i != updates.end(); i++) {
-            this->templateAtom->setMetadata(i.key(), i.value());
+            this->_templateAtom->setMetadata(i.key(), i.value());
         }
         
         //says it changed
@@ -280,14 +284,7 @@ RPZAtom* ViewMapHint::_getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const
 /////////////////////////////
 
 //alter Scene
-void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) { 
-    
-    //on reset
-    auto type = payload.type();
-
-    if(type == PayloadAlteration::PA_Reset) emit heavyAlterationProcessing();
-
-    this->_UIUpdatesBuffer.clear();
+void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
 
     AtomsStorage::_handleAlterationRequest(payload);
 
@@ -305,23 +302,30 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
 
 }
 
+RPZAtom* ViewMapHint::_insertAtom(const RPZAtom &newAtom) {
+    auto updatedAtom = AtomsStorage::_insertAtom(newAtom);
+    this->_buildGraphicsItemFromAtom(*updatedAtom);
+    return updatedAtom;
+}
+
+RPZAtom* ViewMapHint::_changeOwner(RPZAtom* atomWithNewOwner, const RPZUser &newOwner) {
+    auto updatedAtom = AtomsStorage::_changeOwner(atomWithNewOwner, newOwner);
+    
+    //filter by determining if is a drawing type
+    if(updatedAtom->type() != AtomType::Drawing) {
+        return nullptr;
+    }
+}
+
 //register actions
 RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) {
    
-    //default handling
-    auto updatedAtom = AtomsStorage::_handlePayloadInternal(type, targetedAtomId, alteration); 
     
     QGraphicsItem* graphicsItem = nullptr;
 
     //by alteration
     switch(type) {
         
-        //on addition
-        case PA_Reset:
-        case PA_Added: {
-            graphicsItem = this->_buildGraphicsItemFromAtom(*updatedAtom);
-        }
-        break;
         
         //on deletion
         case PA_Removed: {
@@ -329,15 +333,6 @@ RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
         }
         break;
 
-        //on owner change
-        case PA_OwnerChanged: {
-            
-            //filter by determining if is a drawing type
-            if(updatedAtom->type() == AtomType::Drawing) {
-                graphicsItem = this->_GItemsByAtomId[targetedAtomId];
-            }
-
-        };
 
         default: {
             graphicsItem = this->_GItemsByAtomId[targetedAtomId];

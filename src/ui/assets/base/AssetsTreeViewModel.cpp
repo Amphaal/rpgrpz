@@ -19,7 +19,7 @@ void AssetsTreeViewModel::onRPZClientConnecting() {
 
             if(!metadata.isEmpty()) {
                 RPZAssetMetadata castedMd(metadata);
-                emit _rpzClient->assetSucessfullyInserted(castedMd);
+                emit _rpzClient->donwloadedAssetSucessfullyInserted(castedMd);
             }
         }
     );

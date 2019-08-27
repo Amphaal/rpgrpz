@@ -28,39 +28,48 @@
 
 class ViewMapHint : public AtomsStorage {
 
+    Q_OBJECT
+
     public:
         ViewMapHint();
 
-        //actions helpers
-        void deleteCurrentSelectionItems();
-
-        //ghost handling
-        QGraphicsItem* generateGhostItem(RPZAssetMetadata &assetMetadata);
-        void integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem);
-        
-        //special handling
-        void handleParametersUpdateAlterationRequest(QVariantHash &payload);
-        void handlePreviewRequest(const QVector<snowflake_uid> &atomIdsToPreview, const AtomParameter &parameter, QVariant &value);
-
-        //alter template Atom
-        RPZAtom* templateAtom = nullptr;
+        //might be called by another thread, safe
+        void deleteCurrentSelectionItems() const;
+        QGraphicsItem* generateGhostItem(const RPZAssetMetadata &assetMetadata);
+        void integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem) const;
+        RPZAtom* templateAtom() const;
 
     public slots:
-        void notifyMovementOnItems(QList<QGraphicsItem*> &itemsWhoMoved);
-        void notifySelectedItems(QList<QGraphicsItem*> &selectedItems);
-        void replaceMissingAssetPlaceholders(const RPZAssetMetadata &metadata);
-        void setDefaultUser(const RPZUser &user);
-        void setDefaultLayer(int layer);
+        void notifyMovementOnItems(const QList<QGraphicsItem*> &itemsWhoMoved); //safe
+        void notifySelectedItems(const QList<QGraphicsItem*> &selectedItems); //safe
+        void replaceMissingAssetPlaceholders(const RPZAssetMetadata &metadata); //safe
+        void setDefaultUser(const RPZUser &user); //safe
+        void setDefaultLayer(int layer); //safe
+
+        //handle Template update or standard piped alteration request
+        void handleParametersUpdateAlterationRequest(AlterationPayload &payload);
+        void handlePreviewRequest(const QVector<snowflake_uid> &atomIdsToPreview, const AtomParameter &parameter, QVariant &value);
 
     signals:
         void requestMissingAssets(const QList<RPZAssetHash> &assetIdsToRequest);
         void atomTemplateChanged();
 
-        void requestingUIAlteration(AlterationPayload &payload, QHash<snowflake_uid, QGraphicsItem*> &toUpdate);
+        void requestingUIAlteration(const PayloadAlteration &type, const QList<QGraphicsItem*> &toAlter);
+        void requestingUIUpdate(const PayloadAlteration &type, const QHash<QGraphicsItem*, AtomUpdates> &toUpdate);
+        void requestingUIUpdate(const PayloadAlteration &type, const QList<QGraphicsItem*> &toUpdate, AtomUpdates &updates);
+        void requestingUIUserChange(const PayloadAlteration &type, const QList<QGraphicsItem*> &toUpdate, const RPZUser &newUser);
 
-        void heavyAlterationProcessing();
+    protected:
+        virtual void _handleAlterationRequest(AlterationPayload &payload) override;
+
+        QMultiHash<RPZAssetHash, QGraphicsItem*> _missingAssetsIdsFromDb;
+        mutable QMutex _m_missingAssetsIdsFromDb;
 
     private:
+        //alter template Atom
+        RPZAtom* _templateAtom = nullptr;
+        mutable QMutex _m_templateAtom;
+
         QMap<snowflake_uid, QGraphicsItem*> _GItemsByAtomId;
         
         //helpers
@@ -69,14 +78,10 @@ class ViewMapHint : public AtomsStorage {
         RPZAtom* _getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const;
         QVector<RPZAtom*> _getAtomFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const;
 
-    protected:
-        QHash<snowflake_uid, QGraphicsItem*> _UIUpdatesBuffer;
-
         //missing assets tracking
-        QMultiHash<RPZAssetHash, QGraphicsItem*> _missingAssetsIdsFromDb;
         QSet<RPZAssetHash> _assetsIdsToRequest;
 
         //augmenting AtomsStorage
-        virtual void _handleAlterationRequest(AlterationPayload &payload) override;
-        virtual RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) override;
+        virtual RPZAtom* _insertAtom(const RPZAtom &newAtom) override;
+        virtual RPZAtom* _changeOwner(RPZAtom* atomWithNewOwner, const RPZUser &newOwner) override;
 };

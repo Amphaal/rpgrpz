@@ -67,15 +67,15 @@ void RPZClient::_handleAlterationRequest(AlterationPayload &payload) {
     return this->sendJSON(JSONMethod::MapChanged, payload);
 }
 
-QString RPZClient::getConnectedSocketAddress() {
+QString RPZClient::getConnectedSocketAddress() const {
     return this->_domain + ":" + this->_port;
 }
 
-RPZUser RPZClient::identity() {
+RPZUser RPZClient::identity() const {
     return this->_self;
 }
 
-QVector<RPZUser> RPZClient::sessionUsers() {
+QVector<RPZUser> RPZClient::sessionUsers() const {
     return this->_sessionUsers;
 }
 

@@ -30,11 +30,10 @@ class AtomEditor : public QGroupBox {
         void resetParams();
     
     signals:
-        void requiresAtomAlteration(QVariantHash &payload);
+        void requiresAtomAlteration(AlterationPayload &payload);
         void requiresPreview(const QVector<snowflake_uid> &atomIdsToPreview, const AtomParameter &parameter, QVariant &value);
     
     private:
-
         static inline QHash<EditMode, QString> _strEM {
             { None, "Rien à modifier" },
             { Template, "Modification de modèle" },
@@ -47,7 +46,7 @@ class AtomEditor : public QGroupBox {
         QMap<AtomParameter, AtomSubEditor*> _editorsByParam;
         QList<AtomParameter> _visibleEditors;
 
-        QHash<AtomParameter, QVariant> _findDefaultValuesToBind();
+        AtomUpdates _findDefaultValuesToBind();
         void _createEditorsFromAtomParameters();
 
         void _onSubEditorChanged(const AtomParameter &parameterWhoChanged, QVariant &value);

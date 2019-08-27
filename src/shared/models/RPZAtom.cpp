@@ -43,13 +43,19 @@ AtomType RPZAtom::type() const {return (AtomType)this->value("t").toInt();}
 void RPZAtom::_setType(const AtomType &type) { this->insert("t", (int)type); }
 void RPZAtom::changeType(const AtomType &type) { this->_setType(type);}
 
+void RPZAtom::unsetMetadata(const AtomParameter &key) {
+    this->remove(_str[key]);
+}
 
 void RPZAtom::setMetadata(const AtomParameter &key, RPZAtom &base, bool autoRemove) {
     this->setMetadata(key, base.metadata(key), autoRemove);
 }
 
-void RPZAtom::unsetMetadata(const AtomParameter &key) {
-    this->remove(_str[key]);
+
+void RPZAtom::setMetadata(const AtomUpdates &metadata, bool autoRemove) {
+    for(auto i = metadata.constBegin(); i != metadata.constEnd(); i++) {
+        this->setMetadata(i.key(), i.value(), autoRemove);
+    }
 }
 
 void RPZAtom::setMetadata(const AtomParameter &key, const QVariant &value, bool autoRemove) {
@@ -214,8 +220,8 @@ QSet<AtomParameter> RPZAtom::editedMetadata() const {
 
 }
 
-QHash<AtomParameter, QVariant> RPZAtom::editedMetadataWithValues() const {
-    QHash<AtomParameter, QVariant> out;
+AtomUpdates RPZAtom::editedMetadataWithValues() const {
+    AtomUpdates out;
 
     for (auto m : this->editedMetadata()) {
         out.insert(m, this->metadata(m));
