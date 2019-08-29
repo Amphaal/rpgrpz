@@ -11,16 +11,17 @@ class MapHint : public ViewMapHint {
 
         //load/unload
         QString RPZMapFilePath() const;
+        bool isRemote() const;
+        bool isMapDirty() const;
+
+        void mayWantToSavePendingState();
+        bool defineAsRemote(const QString &remoteMapDescriptor = QString());
+
+    public slots:
         bool loadDefaultRPZMap();
         bool loadRPZMap(const QString &filePath);
         bool saveRPZMap();
         bool saveRPZMapAs(const QString &newFilePath);
-        
-        bool isMapDirty();
-        void mayWantToSavePendingState();
-
-        bool isRemote();
-        bool defineAsRemote(const QString &remoteMapDescriptor = QString());
 
     signals:
         void mapFileStateChanged(const QString &filePath, bool isMapDirty);

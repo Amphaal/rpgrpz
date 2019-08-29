@@ -30,7 +30,7 @@ class AtomsContextualMenuHandler {
         QWidget* _menuParent = nullptr;
         AtomsStorage* _mapMaster = nullptr;  
 
-        static inline QVector<snowflake_uid> _copyClipboard;
+        static inline QVector<RPZAtomId> _copyClipboard;
 
         QAction* _removeAction = nullptr;
         QAction* _copyAction = nullptr;

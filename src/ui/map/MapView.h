@@ -78,8 +78,6 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
 
         void onItemChanged(GraphicsItemsChangeNotifier* item, MapViewCustomItemsEventFlag flag) override;
 
-        void _onUIAlterationRequest(AlterationPayload &payload, QHash<snowflake_uid, QGraphicsItem*> &toUpdate);
-
     private:
         QBrush* _hiddingBrush = nullptr;
         MapHint* _hints = nullptr;
@@ -87,6 +85,7 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
         static inline constexpr int _defaultSceneSize = 36000;
         
         void _handleHintsSignalsAndSlots();
+        void _updateItemValue(QGraphicsItem* item, const AtomUpdates &updates);
 
         //helper
         void _addItem(QGraphicsItem* toAdd, bool mustNotifyMovement = false);

@@ -6,5 +6,5 @@ class FocusedPayload : public MultipleTargetsPayload {
     
     public:
         FocusedPayload(const QVariantHash &hash) : MultipleTargetsPayload(hash) {}
-        FocusedPayload(snowflake_uid targetedAtomId) : MultipleTargetsPayload(PayloadAlteration::PA_Focused, QVector<snowflake_uid>({targetedAtomId})) {}
+        FocusedPayload(RPZAtomId targetedRPZAtomId) : MultipleTargetsPayload(PayloadAlteration::PA_Focused, QVector<RPZAtomId>({targetedRPZAtomId})) {}
 };

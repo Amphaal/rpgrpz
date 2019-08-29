@@ -11,28 +11,28 @@ class MetadataChangedPayload : public MultipleTargetsPayload {
         
         //multiple targets / multiple params
         MetadataChangedPayload(
-            const QVector<snowflake_uid> &targetedAtomIds,
+            const QVector<RPZAtomId> &targetedRPZAtomIds,
             AtomUpdates &changes
-        ) : MultipleTargetsPayload(PayloadAlteration::PA_MetadataChanged, targetedAtomIds) {
+        ) : MultipleTargetsPayload(PayloadAlteration::PA_MetadataChanged, targetedRPZAtomIds) {
             this->_setMetadataChanges(changes);
         }
 
         //multiple targets / single param
         MetadataChangedPayload(
-            const QVector<snowflake_uid> &targetedAtomIds,
+            const QVector<RPZAtomId> &targetedRPZAtomIds,
             const AtomParameter &param, 
             const QVariant &value
-        ) : MultipleTargetsPayload(PayloadAlteration::PA_MetadataChanged, targetedAtomIds) {
+        ) : MultipleTargetsPayload(PayloadAlteration::PA_MetadataChanged, targetedRPZAtomIds) {
             AtomUpdates changes {{ param, value }};
             this->_setMetadataChanges(changes);
         }
 
         //single target / single param
         MetadataChangedPayload(
-            snowflake_uid targetedId, 
+            RPZAtomId targetedId, 
             const AtomParameter &param, 
             const QVariant &value
-        ) : MultipleTargetsPayload(PayloadAlteration::PA_MetadataChanged, QVector<snowflake_uid>({targetedId})) {
+        ) : MultipleTargetsPayload(PayloadAlteration::PA_MetadataChanged, QVector<RPZAtomId>({targetedId})) {
             AtomUpdates changes {{ param, value }};
             this->_setMetadataChanges(changes);
         }

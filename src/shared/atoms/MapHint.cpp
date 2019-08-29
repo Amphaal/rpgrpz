@@ -19,11 +19,11 @@ QString MapHint::RPZMapFilePath() const {
     return this->_mapFilePath;
 }
 
-bool MapHint::isRemote() {
+bool MapHint::isRemote() const {
     return this->_isRemote;
 }
 
-bool MapHint::isMapDirty() {
+bool MapHint::isMapDirty() const {
     return this->_isMapDirty;
 }
 

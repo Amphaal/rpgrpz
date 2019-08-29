@@ -7,7 +7,7 @@
 class OwnerChangedPayload : public MultipleTargetsPayload {
     public:
         OwnerChangedPayload(const QVariantHash &hash) : MultipleTargetsPayload(hash) {}
-        OwnerChangedPayload(const QVector<snowflake_uid> &changedAtomIds, const RPZUser &newOwner) : MultipleTargetsPayload(PayloadAlteration::PA_OwnerChanged, changedAtomIds) {
+        OwnerChangedPayload(const QVector<RPZAtomId> &changedRPZAtomIds, const RPZUser &newOwner) : MultipleTargetsPayload(PayloadAlteration::PA_OwnerChanged, changedRPZAtomIds) {
             this->_setOwner(newOwner);
         }
 

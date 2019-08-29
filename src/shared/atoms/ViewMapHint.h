@@ -48,16 +48,16 @@ class ViewMapHint : public AtomsStorage {
 
         //handle Template update or standard piped alteration request
         void handleParametersUpdateAlterationRequest(AlterationPayload &payload);
-        void handlePreviewRequest(const QVector<snowflake_uid> &atomIdsToPreview, const AtomParameter &parameter, QVariant &value);
+        void handlePreviewRequest(const QVector<RPZAtomId> &RPZAtomIdsToPreview, const AtomParameter &parameter, QVariant &value);
 
     signals:
         void requestMissingAssets(const QList<RPZAssetHash> &assetIdsToRequest);
         void atomTemplateChanged();
 
         void requestingUIAlteration(const PayloadAlteration &type, const QList<QGraphicsItem*> &toAlter);
-        void requestingUIUpdate(const PayloadAlteration &type, const QHash<QGraphicsItem*, AtomUpdates> &toUpdate);
-        void requestingUIUpdate(const PayloadAlteration &type, const QList<QGraphicsItem*> &toUpdate, AtomUpdates &updates);
-        void requestingUIUserChange(const PayloadAlteration &type, const QList<QGraphicsItem*> &toUpdate, const RPZUser &newUser);
+        void requestingUIUpdate(const QHash<QGraphicsItem*, AtomUpdates> &toUpdate);
+        void requestingUIUpdate(const QList<QGraphicsItem*> &toUpdate, const AtomUpdates &updates);
+        void requestingUIUserChange(const QList<QGraphicsItem*> &toUpdate, const RPZUser &newUser);
 
     protected:
         virtual void _handleAlterationRequest(AlterationPayload &payload) override;
@@ -70,7 +70,7 @@ class ViewMapHint : public AtomsStorage {
         RPZAtom* _templateAtom = nullptr;
         mutable QMutex _m_templateAtom;
 
-        QMap<snowflake_uid, QGraphicsItem*> _GItemsByAtomId;
+        QMap<RPZAtomId, QGraphicsItem*> _GItemsByRPZAtomId;
         
         //helpers
         QGraphicsItem* _buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom);
@@ -84,4 +84,9 @@ class ViewMapHint : public AtomsStorage {
         //augmenting AtomsStorage
         virtual RPZAtom* _insertAtom(const RPZAtom &newAtom) override;
         virtual RPZAtom* _changeOwner(RPZAtom* atomWithNewOwner, const RPZUser &newOwner) override;
+
+        virtual void _basicAlterationDone(const QList<RPZAtomId> &updatedIds, const PayloadAlteration &type) override;
+        virtual void _updatesDone(const QList<RPZAtomId> &updatedIds, const AtomUpdates &updates) override;
+        virtual void _updatesDone(const AtomsUpdates &updates) override;
+        virtual void _ownerChangeDone(const QList<RPZAtomId> &updatedIds, const RPZUser &newUser) override;
 };

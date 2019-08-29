@@ -1,7 +1,9 @@
 #pragma once
 
 #include <QVariantHash>
+
 #include "src/_libs/snowflake/snowflake.h"
+#include "src/shared/models/RPZAtom.h"
 
 enum PayloadAlteration {
     PA_Unknown,

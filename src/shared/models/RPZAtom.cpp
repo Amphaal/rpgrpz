@@ -2,7 +2,7 @@
 
 RPZAtom::RPZAtom() {}
 RPZAtom::RPZAtom(const QVariantHash &hash) : Ownable(hash) {}
-RPZAtom::RPZAtom(snowflake_uid id, const AtomType &type, const RPZUser &owner) : Ownable(id, owner) {
+RPZAtom::RPZAtom(RPZAtomId id, const AtomType &type, const RPZUser &owner) : Ownable(id, owner) {
     this->_setType(type);
 };
 RPZAtom::RPZAtom(const AtomType &type) : Ownable(SnowFlake::get()->nextId()) {

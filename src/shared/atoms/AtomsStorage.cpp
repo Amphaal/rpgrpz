@@ -13,9 +13,9 @@ QVector<RPZAtom*> AtomsStorage::selectedAtoms() const {
     return this->_selectedAtoms;
 }
 
-QVector<snowflake_uid> AtomsStorage::selectedAtomIds() const {
+QVector<RPZAtomId> AtomsStorage::selectedRPZAtomIds() const {
     QMutexLocker l(&this->_m_handlingLock);
-    return this->_selectedAtomIds;
+    return this->_selectedRPZAtomIds;
 }
 
 /////////////
@@ -130,7 +130,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &fromHist
             auto changes = casted->updates();
             AtomsUpdates out;
 
-            for(auto id : casted->targetAtomIds()) {
+            for(auto id : casted->targetRPZAtomIds()) {
 
                 AtomUpdates updates;
                 auto refAtom = this->_atomsById[id];
@@ -156,8 +156,8 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &fromHist
         case PayloadAlteration::PA_Removed: {
             auto casted = (RemovedPayload*)&fromHistoryPayload;
             RPZMap<RPZAtom> out;
-            for(auto atomId : casted->targetAtomIds()) {
-                out.insert(atomId, this->_atomsById[atomId]);
+            for(auto RPZAtomId : casted->targetRPZAtomIds()) {
+                out.insert(RPZAtomId, this->_atomsById[RPZAtomId]);
             }
             return AddedPayload(out);
         }
@@ -182,7 +182,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &fromHist
 //////////////
 
 
-RPZAtom* AtomsStorage::_getAtomFromId(const snowflake_uid &id) {
+RPZAtom* AtomsStorage::_getAtomFromId(const RPZAtomId &id) {
     
     if(!id) {
         qWarning() << "Atoms: targeted Atom Id is null !";
@@ -219,18 +219,18 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
     //on reset
     if(pType == PayloadAlteration::PA_Reset) {
         this->_atomsById.clear();
-        this->_atomIdsByOwnerId.clear();
+        this->_RPZAtomIdsByOwnerId.clear();
         this->_undoHistory.clear();
         this->_redoHistory.clear();
     }
 
     //on selection changed
     if(pType == PayloadAlteration::PA_Selected) {
-        this->_selectedAtomIds.clear();
+        this->_selectedRPZAtomIds.clear();
         this->_selectedAtoms.clear();
     }
 
-    QHash<snowflake_uid, RPZAtom*> alterations;
+    QList<RPZAtomId> alterationsIds;
 
     //reset/insert types
     if(auto bPayload = dynamic_cast<AtomsWielderPayload*>(&payload)) {
@@ -239,10 +239,10 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
             auto storedAtom = this->_insertAtom(atom);
             auto id = atom.id();
             
-            alterations.insert(id, storedAtom);
+            alterationsIds += id;
         }
 
-        this->basicAlterationDone(alterations, pType);
+        this->_basicAlterationDone(alterationsIds, pType);
     }
 
     //bulk
@@ -256,12 +256,12 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
             this->_updateAtom(atom, i.value());
         }
 
-        this->updatesDone(updatesById);
+        this->_updatesDone(updatesById);
     }
 
     //multi target format
     else if(auto mPayload = dynamic_cast<MultipleTargetsPayload*>(&payload)) {
-        auto ids = mPayload->targetAtomIds();      
+        auto ids = mPayload->targetRPZAtomIds();      
 
         AtomUpdates maybeUpdates;
         RPZUser maybeNewUser;
@@ -280,12 +280,12 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
             if(pType == PayloadAlteration::PA_MetadataChanged) this->_updateAtom(atom, maybeUpdates);
             if(pType == PayloadAlteration::PA_OwnerChanged) atom = this->_changeOwner(atom, maybeNewUser);
 
-            if(atom) alterations.insert(id, atom);
+            if(atom) alterationsIds += id;
         }
 
-        if(!maybeUpdates.isEmpty()) this->updatesDone(alterations.keys(), maybeUpdates);
-        else if(!maybeNewUser.isEmpty()) this->ownerChangeDone(alterations.values(), maybeNewUser);
-        else this->basicAlterationDone(alterations, pType);
+        if(!maybeUpdates.isEmpty()) this->_updatesDone(alterationsIds, maybeUpdates);
+        else if(!maybeNewUser.isEmpty()) this->_ownerChangeDone(alterationsIds, maybeNewUser);
+        else this->_basicAlterationDone(alterationsIds, pType);
 
     }
 }
@@ -297,42 +297,42 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
 
 RPZAtom* AtomsStorage::_insertAtom(const RPZAtom &newAtom) {
     auto owner = newAtom.owner();
-    auto atomId = newAtom.id();
+    auto RPZAtomId = newAtom.id();
 
     //bind to owners
-    this->_atomIdsByOwnerId[owner.id()].insert(atomId);
+    this->_RPZAtomIdsByOwnerId[owner.id()].insert(RPZAtomId);
 
     //bind elem
-    this->_atomsById.insert(atomId, newAtom);
+    this->_atomsById.insert(RPZAtomId, newAtom);
     
-    return &this->_atomsById[atomId];
+    return &this->_atomsById[RPZAtomId];
 }
 
-snowflake_uid AtomsStorage::_ackSelection(RPZAtom* selectedAtom) {
+RPZAtomId AtomsStorage::_ackSelection(RPZAtom* selectedAtom) {
     auto id = selectedAtom->id();
-    this->_selectedAtomIds.append(id);
+    this->_selectedRPZAtomIds.append(id);
     this->_selectedAtoms.append(selectedAtom);
     return selectedAtom->id();
 }
 
 RPZAtom* AtomsStorage::_changeOwner(RPZAtom* atomWithNewOwner, const RPZUser &newOwner) {
     auto currentOwnerId = atomWithNewOwner->owner().id();
-    auto atomId = atomWithNewOwner->id();
+    auto RPZAtomId = atomWithNewOwner->id();
 
     atomWithNewOwner->setOwnership(newOwner);
 
-    this->_atomIdsByOwnerId[currentOwnerId].remove(atomId);
-    this->_atomIdsByOwnerId[newOwner.id()].insert(atomId);
+    this->_RPZAtomIdsByOwnerId[currentOwnerId].remove(RPZAtomId);
+    this->_RPZAtomIdsByOwnerId[newOwner.id()].insert(RPZAtomId);
 
     return atomWithNewOwner;
 }
 
-snowflake_uid AtomsStorage::_removeAtom(RPZAtom* toRemove) {
+RPZAtomId AtomsStorage::_removeAtom(RPZAtom* toRemove) {
     auto storedAtomOwner = toRemove->owner();
     auto id = toRemove->id();
 
     //unbind from owners
-    this->_atomIdsByOwnerId[storedAtomOwner.id()].remove(id);
+    this->_RPZAtomIdsByOwnerId[storedAtomOwner.id()].remove(id);
 
     //update 
     this->_atomsById.remove(id); 
@@ -340,7 +340,7 @@ snowflake_uid AtomsStorage::_removeAtom(RPZAtom* toRemove) {
     return id;
 }
 
-snowflake_uid AtomsStorage::_updateAtom(RPZAtom* toUpdate, const AtomUpdates &updates) {
+RPZAtomId AtomsStorage::_updateAtom(RPZAtom* toUpdate, const AtomUpdates &updates) {
     toUpdate->setMetadata(updates);
     return toUpdate->id();
 }
@@ -349,12 +349,12 @@ snowflake_uid AtomsStorage::_updateAtom(RPZAtom* toUpdate, const AtomUpdates &up
 //
 //
 
-void AtomsStorage::duplicateAtoms(const QVector<snowflake_uid> &atomIdList) {
+void AtomsStorage::duplicateAtoms(const QVector<RPZAtomId> &RPZAtomIdList) {
     
     //check if a recent duplication have been made, and if it was about the same atoms
-    if(this->_latestDuplication != atomIdList) { //if not
+    if(this->_latestDuplication != RPZAtomIdList) { //if not
         //reset duplication cache
-        this->_latestDuplication = atomIdList;
+        this->_latestDuplication = RPZAtomIdList;
         this->_duplicationCount = 1;
     } else {
         //else, increment subsequent duplication count
@@ -362,7 +362,7 @@ void AtomsStorage::duplicateAtoms(const QVector<snowflake_uid> &atomIdList) {
     }
     
     //generate duplicated atoms
-    auto newAtoms = this->_generateAtomDuplicates(atomIdList);
+    auto newAtoms = this->_generateAtomDuplicates(RPZAtomIdList);
 
     //request insertion
     AddedPayload added(newAtoms);
@@ -374,18 +374,18 @@ void AtomsStorage::duplicateAtoms(const QVector<snowflake_uid> &atomIdList) {
 }
 
 
-RPZMap<RPZAtom> AtomsStorage::_generateAtomDuplicates(const QVector<snowflake_uid> &atomIdsToDuplicate) const {
+RPZMap<RPZAtom> AtomsStorage::_generateAtomDuplicates(const QVector<RPZAtomId> &RPZAtomIdsToDuplicate) const {
     
     RPZMap<RPZAtom> newAtoms;
 
     //create the new atoms from the selection
-    for(auto atomId : atomIdsToDuplicate) {
+    for(auto RPZAtomId : RPZAtomIdsToDuplicate) {
         
-        //skip if atomId does not exist
-        if(!this->_atomsById.contains(atomId)) continue;
+        //skip if RPZAtomId does not exist
+        if(!this->_atomsById.contains(RPZAtomId)) continue;
         
         //create copy atom, change ownership to self and update its id
-        RPZAtom newAtom(this->_atomsById[atomId]);
+        RPZAtom newAtom(this->_atomsById[RPZAtomId]);
         newAtom.shuffleId();
         newAtom.setOwnership(this->_defaultOwner);
 

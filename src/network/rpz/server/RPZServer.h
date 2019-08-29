@@ -45,7 +45,7 @@ class RPZServer : public QTcpServer, public JSONRouter {
         void stopped();
 
     private:
-        QHash<JSONSocket*, snowflake_uid> _idsByClientSocket;
+        QHash<JSONSocket*, RPZUserId> _idsByClientSocket;
         JSONSocket* _hostSocket = nullptr;
         
         //users

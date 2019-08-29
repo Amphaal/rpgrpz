@@ -1,7 +1,7 @@
 #include "RPZResponse.h"
 
 RPZResponse::RPZResponse() : Stampable() {}
-RPZResponse::RPZResponse(snowflake_uid answererTo, const ResponseCode &code, const QVariant &data) : Stampable() {
+RPZResponse::RPZResponse(RPZStampableId answererTo, const ResponseCode &code, const QVariant &data) : Stampable() {
     this->_setResponseCode(code);
     if(answererTo) this->_setAnswerer(answererTo);
     if(!data.isNull()) this->_setResponseData(data);
@@ -16,7 +16,7 @@ QVariant RPZResponse::responseData() const {
     return this->value("rdata");
 }
 
-snowflake_uid RPZResponse::answerer() const {
+RPZStampableId RPZResponse::answerer() const {
     return this->value("aswr").toULongLong();
 }
 
@@ -78,7 +78,7 @@ QPalette RPZResponse::palette() const {
     return palette;
 }
 
-void RPZResponse::_setAnswerer(snowflake_uid answererStampableId) {
+void RPZResponse::_setAnswerer(RPZStampableId answererStampableId) {
     this->insert("aswr", QString::number(answererStampableId));
 }
 

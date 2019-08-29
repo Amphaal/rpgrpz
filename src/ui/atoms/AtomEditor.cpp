@@ -16,8 +16,8 @@ void AtomEditor::buildEditor(const QVector<RPZAtom*> &atomsToBuildFrom) {
     
     //modify atom list
     this->_atoms = atomsToBuildFrom;
-    this->_atomIds.clear();
-    for(auto atom : this->_atoms) this->_atomIds.append(atom->id());
+    this->_RPZAtomIds.clear();
+    for(auto atom : this->_atoms) this->_RPZAtomIds.append(atom->id());
     
     //clear editors
     this->_visibleEditors.clear();
@@ -67,7 +67,7 @@ void AtomEditor::resetParams() {
             changes.insert(param, QVariant());
         }
 
-        MetadataChangedPayload payload(this->_atomIds, changes);
+        MetadataChangedPayload payload(this->_RPZAtomIds, changes);
         this->_emitPayload(payload);
 
 }
@@ -105,12 +105,12 @@ void AtomEditor::_createEditorsFromAtomParameters() {
 }
 
 void AtomEditor::_onSubEditorChanged(const AtomParameter &parameterWhoChanged, QVariant &value) {
-    MetadataChangedPayload payload(this->_atomIds, parameterWhoChanged, value);
+    MetadataChangedPayload payload(this->_RPZAtomIds, parameterWhoChanged, value);
     this->_emitPayload(payload);
 }
 
 void AtomEditor::_onPreviewRequested(const AtomParameter &parameter, QVariant &value) {
-    emit requiresPreview(this->_atomIds, parameter, value);
+    emit requiresPreview(this->_RPZAtomIds, parameter, value);
 }
 
 void AtomEditor::_emitPayload(AlterationPayload &payload) {

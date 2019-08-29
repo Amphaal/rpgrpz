@@ -2,7 +2,7 @@
 
 #include "src/shared/payloads/_base/AlterationPayload.hpp"
 
-typedef QHash<snowflake_uid, AtomUpdates> AtomsUpdates;
+typedef QHash<RPZAtomId, AtomUpdates> AtomsUpdates;
 
 class BulkMetadataChangedPayload : public AlterationPayload {
     public:
@@ -17,7 +17,7 @@ class BulkMetadataChangedPayload : public AlterationPayload {
 
             for(auto i = rawData.constBegin(); i != rawData.constEnd(); i++) {
                 
-                snowflake_uid atomId = i.key().toULongLong();
+                RPZAtomId RPZAtomId = i.key().toULongLong();
                 auto changes = i.value().toHash();
                 AtomUpdates formatedAtoms;
 
@@ -28,7 +28,7 @@ class BulkMetadataChangedPayload : public AlterationPayload {
                     formatedAtoms.insert(param, y.value());
                 }
 
-                out.insert(atomId, formatedAtoms);
+                out.insert(RPZAtomId, formatedAtoms);
 
             }
 

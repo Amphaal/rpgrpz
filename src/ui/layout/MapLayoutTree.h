@@ -50,8 +50,8 @@ class MapLayoutTree : public RPZTree, public AtomsContextualMenuHandler {
         void _handleHintsSignalsAndSlots();
 
         //id fetching
-        snowflake_uid _extractAtomIdFromItem(QTreeWidgetItem* item) const;
-        QVector<snowflake_uid> _extractAtomIdFromItems(const QList<QTreeWidgetItem*> &items) const;
+        RPZAtomId _extractRPZAtomIdFromItem(QTreeWidgetItem* item) const;
+        QVector<RPZAtomId> _extractRPZAtomIdFromItems(const QList<QTreeWidgetItem*> &items) const;
 
         void _updateLayerState(QTreeWidgetItem* layerItem);
 };

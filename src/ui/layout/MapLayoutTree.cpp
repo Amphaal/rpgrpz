@@ -83,9 +83,9 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
     QObject::connect(
         this, &QTreeWidget::itemDoubleClicked,
         [=](QTreeWidgetItem *item, int column) {
-            auto focusedAtomId = this->_extractAtomIdFromItem(item);
-            if(!focusedAtomId) return;
-            this->_hints->propagateFocus(focusedAtomId);
+            auto focusedRPZAtomId = this->_extractRPZAtomIdFromItem(item);
+            if(!focusedRPZAtomId) return;
+            this->_hints->propagateFocus(focusedRPZAtomId);
         }
     );
 
@@ -97,7 +97,7 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
             auto selected = this->selectedItems();
             if(!selected.count()) this->clearFocus();
             
-            auto selectedIds = _extractAtomIdFromItems(selected);
+            auto selectedIds = _extractRPZAtomIdFromItems(selected);
             this->_hints->propagateSelection(selectedIds);
         }
     );
@@ -201,14 +201,14 @@ void MapLayoutTree::keyPressEvent(QKeyEvent * event) {
 }
 
 
-snowflake_uid MapLayoutTree::_extractAtomIdFromItem(QTreeWidgetItem* item) const {
+RPZAtomId MapLayoutTree::_extractRPZAtomIdFromItem(QTreeWidgetItem* item) const {
     return item->data(0, RPZUserRoles::AtomId).toULongLong();
 }
 
-QVector<snowflake_uid> MapLayoutTree::_extractAtomIdFromItems(const QList<QTreeWidgetItem*> &items) const {
-    QVector<snowflake_uid> idList;
+QVector<RPZAtomId> MapLayoutTree::_extractRPZAtomIdFromItems(const QList<QTreeWidgetItem*> &items) const {
+    QVector<RPZAtomId> idList;
     for(auto i : this->selectedItems()) {
-        auto boundId = this->_extractAtomIdFromItem(i);
+        auto boundId = this->_extractRPZAtomIdFromItem(i);
         if(boundId) idList.append(boundId);
     }
     return idList;
