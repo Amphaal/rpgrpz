@@ -13,12 +13,12 @@ TreeMapHint::TreeMapHint() : AlterationAcknoledger(AlterationPayload::Source::Lo
 
 }
 
-void TreeMapHint::propagateFocus(snowflake_uid focusedAtomId) {
-    FocusedPayload payload(focusedAtomId);
+void TreeMapHint::propagateFocus(RPZAtomId focusedRPZAtomId) {
+    FocusedPayload payload(focusedRPZAtomId);
     AlterationHandler::get()->queueAlteration(this, payload);
 }
 
-void TreeMapHint::propagateSelection(QVector<snowflake_uid> &selectedIds) {
+void TreeMapHint::propagateSelection(QVector<RPZAtomId> &selectedIds) {
     SelectedPayload payload(selectedIds);
     AlterationHandler::get()->queueAlteration(this, payload);
 }
@@ -31,7 +31,7 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
     if(type == PayloadAlteration::PA_Reset) {
         this->_atomTreeItemsById.clear();
         this->_layersItems.clear();
-        this->_atomIdsBoundByRPZAssetHash.clear();
+        this->_RPZAtomIdsBoundByRPZAssetHash.clear();
     }
 
     this->_UIUpdatesBuffer.clear();
@@ -54,7 +54,7 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
     //multi target format
     if(auto mPayload = dynamic_cast<MultipleTargetsPayload*>(&payload)) {
         
-        auto ids = mPayload->targetAtomIds();
+        auto ids = mPayload->targetRPZAtomIds();
         auto args =  mPayload->args();
         
         for (auto id : ids) {
@@ -72,7 +72,7 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
 
 }
 
-RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) {
+RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, RPZAtomId targetedRPZAtomId, const QVariant &alteration) {
 
     QTreeWidgetItem* item = nullptr;
     AtomUpdates maybeNewData;
@@ -85,12 +85,12 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
             auto atom = RPZAtom(alteration.toHash());
             
             item = this->_createTreeItem(atom);
-            this->_atomTreeItemsById.insert(targetedAtomId, item);
+            this->_atomTreeItemsById.insert(targetedRPZAtomId, item);
 
             //if has assetId, add it
             auto assetId = atom.assetId();
             if(!assetId.isNull()) {
-                this->_atomIdsBoundByRPZAssetHash[assetId].insert(targetedAtomId);
+                this->_RPZAtomIdsBoundByRPZAssetHash[assetId].insert(targetedRPZAtomId);
             }
         }
         break;
@@ -107,10 +107,10 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
 
             //if has assetId, remove it from tracking list
             if(!tbrAtom_assetId.isNull()) {
-                    this->_atomIdsBoundByRPZAssetHash[tbrAtom_assetId].remove(targetedAtomId);
+                    this->_RPZAtomIdsBoundByRPZAssetHash[tbrAtom_assetId].remove(targetedRPZAtomId);
             }
 
-            item = this->_atomTreeItemsById.take(targetedAtomId);
+            item = this->_atomTreeItemsById.take(targetedRPZAtomId);
         }
         break;
 
@@ -131,7 +131,7 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
     }
 
     //get graphics item as default
-    if(!item) item = this->_atomTreeItemsById[targetedAtomId];
+    if(!item) item = this->_atomTreeItemsById[targetedRPZAtomId];
 
     //update buffers for UI event emission
     this->_UIUpdatesBuffer.insert(item, maybeNewData);
@@ -140,13 +140,13 @@ RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, snow
 }
 
 void TreeMapHint::_onRenamedAsset(const QString &assetId, const QString &newName) {
-    if(!this->_atomIdsBoundByRPZAssetHash.contains(assetId)) return;
+    if(!this->_RPZAtomIdsBoundByRPZAssetHash.contains(assetId)) return;
 
     QHash<QTreeWidgetItem*, AtomUpdates> toUpdate;
     AtomUpdates out {{ AssetName, newName }};
 
-    for(auto &atomId : this->_atomIdsBoundByRPZAssetHash[assetId]) {
-        auto itemToChange = this->_atomTreeItemsById[atomId];
+    for(auto &RPZAtomId : this->_RPZAtomIdsBoundByRPZAssetHash[assetId]) {
+        auto itemToChange = this->_atomTreeItemsById[RPZAtomId];
         toUpdate.insert(itemToChange, out);
     }
 

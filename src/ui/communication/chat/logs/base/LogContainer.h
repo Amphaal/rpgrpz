@@ -6,7 +6,7 @@
 #include <QString>
 #include <QWidget>
 
-#include "src/shared/models/base/Serializable.hpp"
+#include "src/shared/models/base/Stampable.hpp"
 
 class LogItem : public QWidget {
     
@@ -32,11 +32,11 @@ class LogContainer : public QWidget {
         void clearLines();
     
     protected:
-        LogItem* _getLine(Serializable &element);
-        LogItem* _getLine(snowflake_uid elementId);
-        LogItem* _addLine(Serializable &element, snowflake_uid putUnder = 0);
+        LogItem* _getLine(Stampable &element);
+        LogItem* _getLine(RPZStampableId elementId);
+        LogItem* _addLine(Stampable &element, RPZStampableId putUnder = 0);
     
     private:
-        QHash<snowflake_uid, LogItem*> _linesBySerializableId;
+        QHash<RPZStampableId, LogItem*> _linesBySerializableId;
         QVBoxLayout* _vLayout = nullptr;
 };

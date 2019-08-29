@@ -8,15 +8,15 @@ class MultipleTargetsPayload : public AlterationPayload {
     public:
 
         MultipleTargetsPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        MultipleTargetsPayload(const PayloadAlteration &alteration, const QVector<snowflake_uid> &targetedAtomIds) : AlterationPayload(alteration) {
-            this->_setTargetAtomIds(targetedAtomIds);
+        MultipleTargetsPayload(const PayloadAlteration &alteration, const QVector<RPZAtomId> &targetedRPZAtomIds) : AlterationPayload(alteration) {
+            this->_setTargetRPZAtomIds(targetedRPZAtomIds);
         }
     
-        QVector<snowflake_uid> targetAtomIds() const {
+        QVector<RPZAtomId> targetRPZAtomIds() const {
             
             auto list = this->value("ids").toList();
 
-            QVector<snowflake_uid> out;
+            QVector<RPZAtomId> out;
             for(auto &e : list) {
                 auto id = e.toULongLong();
                 out.append(id);
@@ -30,9 +30,9 @@ class MultipleTargetsPayload : public AlterationPayload {
         }
     
     private:
-        void _setTargetAtomIds(const QVector<snowflake_uid> &targetAtomIds) {
+        void _setTargetRPZAtomIds(const QVector<RPZAtomId> &targetRPZAtomIds) {
             QVariantList cast;
-            for(auto &id : targetAtomIds) {
+            for(auto &id : targetRPZAtomIds) {
                 cast.append(
                     QString::number(id)
                 );

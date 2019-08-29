@@ -23,7 +23,7 @@ class AtomsStorage : public QObject, public AlterationAcknoledger {
     public:
         AtomsStorage(const AlterationPayload::Source &boundSource, bool autoLinkage = true);
         
-        QVector<snowflake_uid> selectedAtomIds() const; //safe
+        QVector<RPZAtomId> selectedRPZAtomIds() const; //safe
         QVector<RPZAtom*> selectedAtoms() const; //safe
         RPZMap<RPZAtom> atoms() const; //safe
 
@@ -33,7 +33,7 @@ class AtomsStorage : public QObject, public AlterationAcknoledger {
     public slots:    
         void redo();
         void undo();
-        void duplicateAtoms(const QVector<snowflake_uid> &atomIdList);
+        void duplicateAtoms(const QVector<RPZAtomId> &RPZAtomIdList);
         void handleAlterationRequest(AlterationPayload &payload);
 
     protected:
@@ -43,25 +43,25 @@ class AtomsStorage : public QObject, public AlterationAcknoledger {
         virtual void _atomsCreated();
 
         virtual RPZAtom* _insertAtom(const RPZAtom &newAtom);
-        snowflake_uid _ackSelection(RPZAtom* selectedAtom);
+        RPZAtomId _ackSelection(RPZAtom* selectedAtom);
         virtual RPZAtom* _changeOwner(RPZAtom* atomWithNewOwner, const RPZUser &newOwner);
-        snowflake_uid _removeAtom(RPZAtom* toRemove);
-        snowflake_uid _updateAtom(RPZAtom* toUpdate, const AtomUpdates &updates);
+        RPZAtomId _removeAtom(RPZAtom* toRemove);
+        RPZAtomId _updateAtom(RPZAtom* toUpdate, const AtomUpdates &updates);
         
-        virtual void basicAlterationDone(const QHash<snowflake_uid, RPZAtom*> &updatedAtoms, const PayloadAlteration &type);
-        virtual void updatesDone(const QList<snowflake_uid> &updatedIds, const AtomUpdates &updates);
-        virtual void updatesDone(const AtomsUpdates &updates);
-        virtual void ownerChangeDone(const QList<RPZAtom*> &updatedAtoms, const RPZUser &newUser);
+        virtual void _basicAlterationDone(const QList<RPZAtomId> &updatedIds, const PayloadAlteration &type);
+        virtual void _updatesDone(const QList<RPZAtomId> &updatedIds, const AtomUpdates &updates);
+        virtual void _updatesDone(const AtomsUpdates &updates);
+        virtual void _ownerChangeDone(const QList<RPZAtomId> &updatedIds, const RPZUser &newUser);
 
     private:
         mutable QMutex _m_handlingLock;
 
         //atoms list 
         RPZMap<RPZAtom> _atomsById;
-        RPZAtom* _getAtomFromId(const snowflake_uid &id);
+        RPZAtom* _getAtomFromId(const RPZAtomId &id);
 
         //credentials handling
-        QHash<snowflake_uid, QSet<snowflake_uid>> _atomIdsByOwnerId;
+        QHash<RPZUserId, QSet<RPZAtomId>> _RPZAtomIdsByOwnerId;
         RPZUser _defaultOwner;
 
         // redo/undo
@@ -72,13 +72,13 @@ class AtomsStorage : public QObject, public AlterationAcknoledger {
         AlterationPayload _generateUndoPayload(AlterationPayload &historyPayload);
 
         //selected
-        QVector<snowflake_uid> _selectedAtomIds;
+        QVector<RPZAtomId> _selectedRPZAtomIds;
         QVector<RPZAtom*> _selectedAtoms;
 
         //duplication
         int _duplicationCount = 0;
-        QVector<snowflake_uid> _latestDuplication;
-        RPZMap<RPZAtom> _generateAtomDuplicates(const QVector<snowflake_uid> &atomIdsToDuplicate) const;
+        QVector<RPZAtomId> _latestDuplication;
+        RPZMap<RPZAtom> _generateAtomDuplicates(const QVector<RPZAtomId> &RPZAtomIdsToDuplicate) const;
         static constexpr int _pixelStepPosDuplication = 10;
         static QPointF _getPositionFromAtomDuplication(const RPZAtom &atomToDuplicate, int duplicateCount);
 };

@@ -5,6 +5,8 @@
 
 #include <QPalette>
 
+typedef snowflake_uid RPZStampableId;
+
 class Stampable : public Ownable {
     public:
         Stampable() : Ownable(SnowFlake::get()->nextId()) {

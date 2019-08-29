@@ -9,6 +9,8 @@
 
 #include "src/shared/commands/AtomsContextualMenuHandler.h"
 
+#include "src/shared/models/RPZAtom.h"
+
 #include <QTreeWidget>
 #include <QHash>
 
@@ -20,32 +22,32 @@ class TreeMapHint : public QObject, public AlterationAcknoledger {
         TreeMapHint();
 
     public slots:
-        void propagateFocus(snowflake_uid focusedAtomId);
-        void propagateSelection(QVector<snowflake_uid> &selectedIds);
+        void propagateFocus(RPZAtomId focusedRPZAtomId);
+        void propagateSelection(QVector<RPZAtomId> &selectedIds);
         void removeLayerItem(int layer);
         void updateOwnerFromItem(QTreeWidgetItem* item, const RPZUser &owner);
 
     signals:
-        void requestingUIAlteration(PayloadAlteration alteration, QList<QTreeWidgetItem*> &toAlter);
-        void requestingUIUpdate(PayloadAlteration alteration, QHash<QTreeWidgetItem*, AtomUpdates> &toUpdate);
+        void requestingUIAlteration(const PayloadAlteration &type, const QList<QGraphicsItem*> &toAlter);
+        void requestingUIUpdate(const QHash<QGraphicsItem*, AtomUpdates> &toUpdate);
+        void requestingUIUpdate(const QList<QGraphicsItem*> &toUpdate, const AtomUpdates &updates);
+        void requestingUIUserChange(const QList<QGraphicsItem*> &toUpdate, const RPZUser &newUser);
 
     private slots:
         void _onRenamedAsset(const RPZAssetHash &id, const QString &newName);
 
     private:
-        QHash<QTreeWidgetItem*, AtomUpdates> _UIUpdatesBuffer;
-
         QHash<int, QTreeWidgetItem*> _layersItems;
         QTreeWidgetItem* _getLayerItem(int layer);
 
         QTreeWidgetItem* _createTreeItem(RPZAtom &atom);
 
-        QHash<snowflake_uid, QTreeWidgetItem*> _atomTreeItemsById;
-        QHash<RPZAssetHash, QSet<snowflake_uid>> _atomIdsBoundByRPZAssetHash;
+        QHash<RPZAtomId, QTreeWidgetItem*> _atomTreeItemsById;
+        QHash<RPZAssetHash, QSet<RPZAtomId>> _RPZAtomIdsBoundByRPZAssetHash;
 
         //augmenting AtomsStorage
         virtual void _handleAlterationRequest(AlterationPayload &payload) override;
-        RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration);
+        RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, RPZAtomId targetedRPZAtomId, const QVariant &alteration);
 
         //icons
         QIcon* _layerIcon = nullptr;

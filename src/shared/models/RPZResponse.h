@@ -15,17 +15,17 @@ class RPZResponse : public Stampable {
         };
         
         RPZResponse();
-        RPZResponse(snowflake_uid answererTo, const ResponseCode &code = Ack, const QVariant &data = QVariant());
+        RPZResponse(RPZStampableId answererTo, const ResponseCode &code = Ack, const QVariant &data = QVariant());
         RPZResponse(const QVariantHash &hash);
 
         ResponseCode responseCode() const;
         QVariant responseData() const;
-        snowflake_uid answerer() const;
+        RPZStampableId answerer() const;
         QString toString() const override;
         QPalette palette() const override;
 
     private:
-        void _setAnswerer(snowflake_uid answererStampableId);
+        void _setAnswerer(RPZStampableId answererStampableId);
         void _setResponseCode(const ResponseCode &code);
         void _setResponseData(const QVariant &data);
 };

@@ -26,11 +26,11 @@ class AtomsWielderPayload : public AlterationPayload {
         return out;
     }
 
-    QVector<snowflake_uid> updateEmptyUser(const RPZUser &user) {
+    QVector<RPZAtomId> updateEmptyUser(const RPZUser &user) {
         
         auto atoms = this->atoms();
 
-        QVector<snowflake_uid> updatedAtomIds;
+        QVector<RPZAtomId> updatedRPZAtomIds;
 
         for(auto &atom : atoms) {
 
@@ -40,7 +40,7 @@ class AtomsWielderPayload : public AlterationPayload {
             if(currentOwner.isEmpty()) {
 
                 atom.setOwnership(user);
-                updatedAtomIds.append(atom.id());
+                updatedRPZAtomIds.append(atom.id());
 
             }
 
@@ -48,7 +48,7 @@ class AtomsWielderPayload : public AlterationPayload {
 
         this->_setAddedAtoms(atoms);
 
-        return updatedAtomIds;
+        return updatedRPZAtomIds;
     }
 
     private:

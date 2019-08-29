@@ -10,6 +10,8 @@
 #include "src/helpers/RandomColor.h"
 #include "base/Serializable.hpp"
 
+typedef snowflake_uid RPZUserId;
+
 class RPZUser : public Serializable {
 
     public:
@@ -22,7 +24,7 @@ class RPZUser : public Serializable {
         RPZUser();
         RPZUser(const QVariantHash &hash);
         RPZUser(JSONSocket* socket);
-        RPZUser(snowflake_uid id, const QString name, const Role &role, const QColor &color);
+        RPZUser(RPZUserId id, const QString name, const Role &role, const QColor &color);
 
         void setName(const QString &name);
         void setRole(const Role &role);

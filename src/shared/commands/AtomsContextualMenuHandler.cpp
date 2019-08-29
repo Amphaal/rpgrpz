@@ -17,34 +17,34 @@ void AtomsContextualMenuHandler::redoAlteration() {
 }
 
 void AtomsContextualMenuHandler::copySelectedAtomsToClipboard() {
-    _copyClipboard = this->_mapMaster->selectedAtomIds();
+    _copyClipboard = this->_mapMaster->selectedRPZAtomIds();
 }
 
 void AtomsContextualMenuHandler::pasteAtomsFromClipboard() {
     if(!_copyClipboard.count()) return;
-    QMetaObject::invokeMethod(this->_mapMaster, "duplicateAtoms", Q_ARG(QVector<snowflake_uid>, _copyClipboard));
+    QMetaObject::invokeMethod(this->_mapMaster, "duplicateAtoms", Q_ARG(QVector<RPZAtomId>, _copyClipboard));
 }
 
 void AtomsContextualMenuHandler::removeSelectedAtoms() {
-    auto selectedIds = this->_mapMaster->selectedAtomIds();
+    auto selectedIds = this->_mapMaster->selectedRPZAtomIds();
     RemovedPayload payload(selectedIds);
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 }
 
 void AtomsContextualMenuHandler::moveSelectedAtomsToLayer(int targetLayer) {
-    auto selectedIds = this->_mapMaster->selectedAtomIds();
+    auto selectedIds = this->_mapMaster->selectedRPZAtomIds();
     MetadataChangedPayload payload(selectedIds, AtomParameter::Layer, targetLayer);
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 }
 
 void AtomsContextualMenuHandler::alterSelectedAtomsVisibility(bool isHidden) {
-    auto selectedIds = this->_mapMaster->selectedAtomIds();
+    auto selectedIds = this->_mapMaster->selectedRPZAtomIds();
     MetadataChangedPayload payload(selectedIds, AtomParameter::Hidden, isHidden);
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 }
 
 void AtomsContextualMenuHandler::alterSelectedAtomsAvailability(bool isLocked) {
-    auto selectedIds = this->_mapMaster->selectedAtomIds();
+    auto selectedIds = this->_mapMaster->selectedRPZAtomIds();
     MetadataChangedPayload payload(selectedIds, AtomParameter::Locked, isLocked);
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 }

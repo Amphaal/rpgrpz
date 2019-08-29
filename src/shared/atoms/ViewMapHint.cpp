@@ -41,7 +41,7 @@ void ViewMapHint::notifyMovementOnItems(const QList<QGraphicsItem*> &itemsWhoMov
 
 void ViewMapHint::notifySelectedItems(const QList<QGraphicsItem*> &selectedItems) {
 
-    QVector<snowflake_uid> ids;
+    QVector<RPZAtomId> ids;
 
     for(auto &gi : selectedItems) {
         
@@ -77,7 +77,7 @@ void ViewMapHint::setDefaultUser(const RPZUser &user) {
 /////////////////////////////
 
 void ViewMapHint::deleteCurrentSelectionItems() const {
-    RemovedPayload payload(this->selectedAtomIds());
+    RemovedPayload payload(this->selectedRPZAtomIds());
     AlterationHandler::get()->queueAlteration(this, payload);
 }
 
@@ -205,9 +205,9 @@ void ViewMapHint::replaceMissingAssetPlaceholders(const RPZAssetMetadata &metada
     emit requestingUIAlteration(PA_Added, newGis);
 }
 
-void ViewMapHint::handlePreviewRequest(const QVector<snowflake_uid> &atomIdsToPreview, const AtomParameter &parameter, QVariant &value) {
-    for(const auto &id : atomIdsToPreview) {
-        AtomConverter::updateGraphicsItemFromMetadata(this->_GItemsByAtomId[id], parameter, value);
+void ViewMapHint::handlePreviewRequest(const QVector<RPZAtomId> &RPZAtomIdsToPreview, const AtomParameter &parameter, QVariant &value) {
+    for(const auto &id : RPZAtomIdsToPreview) {
+        AtomConverter::updateGraphicsItemFromMetadata(this->_GItemsByRPZAtomId[id], parameter, value);
     }
 }
 
@@ -216,7 +216,7 @@ void ViewMapHint::handleParametersUpdateAlterationRequest(AlterationPayload &pay
     auto cPayload = Payloads::autoCast(payload);
     
     auto mtPayload = cPayload.dynamicCast<MetadataChangedPayload>();
-    auto targets = mtPayload->targetAtomIds();
+    auto targets = mtPayload->targetRPZAtomIds();
     auto firstTargetId = targets.count() > 0 ? targets[0] : 0;
 
     //if single target and no ID == templateAtom update
@@ -256,7 +256,7 @@ void ViewMapHint::handleParametersUpdateAlterationRequest(AlterationPayload &pay
 //////////////////////
 
 void ViewMapHint::_crossBindingAtomWithGI(RPZAtom* atom, QGraphicsItem* gi) {
-    this->_GItemsByAtomId[atom->id()] = gi;
+    this->_GItemsByRPZAtomId[atom->id()] = gi;
     auto ptrValToAtom = (long long)atom;
     gi->setData(RPZUserRoles::AtomPtr, ptrValToAtom);
 }
@@ -297,9 +297,6 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
         emit requestMissingAssets(toRequest);
     }
 
-    //send UI events
-    emit requestingUIAlteration(payload, this->_UIUpdatesBuffer);
-
 }
 
 RPZAtom* ViewMapHint::_insertAtom(const RPZAtom &newAtom) {
@@ -317,34 +314,38 @@ RPZAtom* ViewMapHint::_changeOwner(RPZAtom* atomWithNewOwner, const RPZUser &new
     }
 }
 
-//register actions
-RPZAtom* ViewMapHint::_handlePayloadInternal(const PayloadAlteration &type, snowflake_uid targetedAtomId, const QVariant &alteration) {
-   
-    
-    QGraphicsItem* graphicsItem = nullptr;
-
-    //by alteration
-    switch(type) {
-        
-        
-        //on deletion
-        case PA_Removed: {
-            graphicsItem = this->_GItemsByAtomId.take(targetedAtomId);
-        }
-        break;
-
-
-        default: {
-            graphicsItem = this->_GItemsByAtomId[targetedAtomId];
-        }
-        break;
-
+void ViewMapHint::_basicAlterationDone(const QList<RPZAtomId> &updatedIds, const PayloadAlteration &type) {
+    QList<QGraphicsItem*> toUpdate;
+    for(auto id : updatedIds) {
+        if(type == PA_Removed) toUpdate += this->_GItemsByRPZAtomId.take(id);
+        else toUpdate += this->_GItemsByRPZAtomId[id];
     }
+    emit requestingUIAlteration(type, toUpdate);
+}
 
-    //update buffers for UI event emission
-    if(!graphicsItem) this->_UIUpdatesBuffer.insert(targetedAtomId, graphicsItem);
+void ViewMapHint::_updatesDone(const QList<RPZAtomId> &updatedIds, const AtomUpdates &updates) {
+    QList<QGraphicsItem*> toUpdate;
+    for(auto id : updatedIds) {
+        toUpdate += this->_GItemsByRPZAtomId[id];
+    }
+    emit requestingUIUpdate(toUpdate, updates);
+}
 
-    return updatedAtom;
+void ViewMapHint::_updatesDone(const AtomsUpdates &updates) {
+    QHash<QGraphicsItem*, AtomUpdates> toUpdate;
+    for(auto i = updates.constBegin(); i != updates.constEnd(); i++) {
+        auto gi = this->_GItemsByRPZAtomId[i.key()];
+        toUpdate.insert(gi, i.value());
+    }
+    emit requestingUIUpdate(toUpdate);
+}
+
+void ViewMapHint::_ownerChangeDone(const QList<RPZAtomId> &updatedIds, const RPZUser &newUser) {
+    QList<QGraphicsItem*> toUpdate;
+    for(auto id : updatedIds) {
+        toUpdate += this->_GItemsByRPZAtomId[id];
+    }
+    emit requestingUIUserChange(toUpdate, newUser);
 }
 
 /////////////////////////////////

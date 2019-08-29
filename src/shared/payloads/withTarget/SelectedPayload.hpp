@@ -5,5 +5,5 @@
 class SelectedPayload : public MultipleTargetsPayload {
     public:
         SelectedPayload(const QVariantHash &hash) : MultipleTargetsPayload(hash) {}
-        SelectedPayload(const QVector<snowflake_uid> &selectedAtomIds) : MultipleTargetsPayload(PayloadAlteration::PA_Selected, selectedAtomIds) {}
+        SelectedPayload(const QVector<RPZAtomId> &selectedRPZAtomIds) : MultipleTargetsPayload(PayloadAlteration::PA_Selected, selectedRPZAtomIds) {}
 };

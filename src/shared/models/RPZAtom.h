@@ -68,13 +68,14 @@ enum AtomParameter {
 
 typedef QHash<AtomParameter, QVariant> AtomUpdates;
 typedef QString RPZAssetHash; //file hash of the asset
+typedef snowflake_uid RPZAtomId;
 
 class RPZAtom : public Ownable {
     
     public:
         RPZAtom();
         RPZAtom(const QVariantHash &hash);
-        RPZAtom(snowflake_uid id, const AtomType &type, const RPZUser &owner);
+        RPZAtom(RPZAtomId id, const AtomType &type, const RPZUser &owner);
         RPZAtom(const AtomType &type);
 
         AtomType type() const;
