@@ -33,11 +33,11 @@ QString AssetsDatabase::assetsStorageFilepath() {
 }
 
 
-QVariantHash AssetsDatabase::importAsset(const QVariantHash &package) {
+RPZAssetMetadata AssetsDatabase::importAsset(const RPZAssetImportPackage &package) {
     
     if(package.isEmpty()) {
         qDebug() << "Asset : received empty import package !";
-        return QVariantHash();
+        return RPZAssetImportPackage();
     }
     
     RPZAssetHash asset_id = package["_id"].toString();
@@ -46,7 +46,7 @@ QVariantHash AssetsDatabase::importAsset(const QVariantHash &package) {
     auto fileBytes = package["_fileContent"].toByteArray();
     if(!fileBytes.size()) {
         qDebug() << "Asset : requested" << asset_id << "cannot be found by server";
-        return QVariantHash();
+        return RPZAssetImportPackage();
     }
 
     //asset
@@ -70,10 +70,10 @@ QVariantHash AssetsDatabase::importAsset(const QVariantHash &package) {
     return RPZAssetMetadata(asset_id, destUrlPath);
 }
 
-QVariantHash AssetsDatabase::prepareAssetPackage(const RPZAssetHash &id) {
+RPZAssetImportPackage AssetsDatabase::prepareAssetPackage(const RPZAssetHash &id) {
     
     //json obj
-    QVariantHash package;
+    RPZAssetImportPackage package;
     package["_id"] = id;
 
     //determine id existance by fetching the file path

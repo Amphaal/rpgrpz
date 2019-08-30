@@ -11,7 +11,7 @@ void AssetsTreeViewModel::onRPZClientConnecting() {
     //import asset
     QObject::connect(
         this->_rpzClient, &RPZClient::receivedAsset,
-        [&](const QVariantHash &package) {
+        [&](const RPZAssetImportPackage &package) {
             
             this->beginResetModel();
                 auto metadata = this->_db->importAsset(package); 

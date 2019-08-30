@@ -137,8 +137,8 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         break;
 
         case JSONMethod::MapChanged:{
-            auto hash = data.toHash();
-            this->_broadcastMapChanges(hash, target);
+            auto aPayload = Payloads::autoCast(data.toHash());
+            this->_broadcastMapChanges(*aPayload, target);
         }
         break;
 
@@ -263,23 +263,21 @@ void RPZServer::_alterIncomingPayloadWithUpdatedOwners(AtomsWielderPayload &wPay
     }
 }
 
-void RPZServer::_broadcastMapChanges(QVariantHash &payload, JSONSocket * senderSocket) {
+void RPZServer::_broadcastMapChanges(AlterationPayload &payload, JSONSocket * senderSocket) {
 
-    auto aPayload = Payloads::autoCast(payload);
-
-    if(auto wPayload = aPayload.dynamicCast<AtomsWielderPayload>()) {
+    if(auto wPayload = dynamic_cast<AtomsWielderPayload*>(&payload)) {
         this->_alterIncomingPayloadWithUpdatedOwners(*wPayload, senderSocket);
     }
 
     //save for history
-    this->_hints->handleAlterationRequest(*aPayload);
+    this->_hints->handleAlterationRequest(payload);
 
     //add source for outer calls
     auto source = this->_hints->source();
-    aPayload->changeSource(source);
+    payload.changeSource(source);
 
     //send to registered users but sender...
-    this->_sendToAllButSelf(senderSocket, JSONMethod::MapChanged, *aPayload);
+    this->_sendToAllButSelf(senderSocket, JSONMethod::MapChanged, payload);
 }
 
 void RPZServer::_sendMapHistory(JSONSocket * clientSocket) {

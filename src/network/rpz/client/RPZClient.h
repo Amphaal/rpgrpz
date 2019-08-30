@@ -17,6 +17,7 @@
 #include "src/shared/database/AssetsDatabase.h"
 
 #include "src/shared/models/RPZMessage.h"
+#include "src/shared/models/RPZResponse.h"
 #include "src/shared/models/RPZHandshake.h"
 
 #include "src/helpers/_appContext.h"
@@ -30,36 +31,36 @@ class RPZClient : public JSONSocket, public AlterationAcknoledger, public JSONRo
         RPZClient(const QString &displayname, const QString &domain, const QString &port);
         ~RPZClient();
         
-        QString getConnectedSocketAddress() const;
+        QString getConnectedSocketAddress() const; //safe
 
-        RPZUser identity() const;
-        QVector<RPZUser> sessionUsers() const;
+        RPZUser identity() const; //safe
+        QVector<RPZUser> sessionUsers() const; //safe
 
     public slots:
         void run();
 
-        void sendMessage(QVariantHash &message);
+        void sendMessage(const RPZMessage &message);
         void askForAssets(const QList<RPZAssetHash> ids);
         void defineAudioStreamSource(const QString &audioStreamUrl, const QString &sourceTitle);
         void changeAudioPosition(int newPosition);
         void setAudioStreamPlayState(bool isPlaying);
-        void sendMapHistory(const QVariantHash &history);
+        void sendMapHistory(const ResetPayload &historyPayload);
 
     signals:
         void connectionStatus(const QString &statusMessage, bool isError = false);
         void closed();
 
-        void receivedMessage(const QVariantHash &message);
-        void serverResponseReceived(const QVariantHash &reponse);
-        void ackIdentity(const QVariantHash &user);
+        void receivedMessage(const RPZMessage &message);
+        void serverResponseReceived(const RPZResponse &reponse);
+        void ackIdentity(const RPZUser &user);
         
-        void mapChanged(const QVariantHash &payload);
+        void mapChanged(const AlterationPayload &payload);
         void beenAskedForMapHistory();
 
         void donwloadedAssetSucessfullyInserted(const RPZAssetMetadata &metadata);
-        void receivedAsset(const QVariantHash &package);
+        void receivedAsset(const RPZAssetImportPackage &package);
 
-        void loggedUsersUpdated(const QVariantList &users);
+        void loggedUsersUpdated(const QVector<RPZUser> &users);
         void receivedLogHistory(const QVariantList &messages);
 
         void audioSourceChanged(const QString &audioSourceUrl, const QString &sourceTitle);
@@ -72,7 +73,10 @@ class RPZClient : public JSONSocket, public AlterationAcknoledger, public JSONRo
         QString _name;
 
         RPZUser _self;
+        mutable QMutex _m_self;
+
         QVector<RPZUser> _sessionUsers;
+        mutable QMutex _m_sessionUsers;
 
         void _onConnected();
         void _error(QAbstractSocket::SocketError _socketError);

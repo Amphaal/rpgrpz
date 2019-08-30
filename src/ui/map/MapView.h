@@ -10,7 +10,6 @@
 
 #include <QWheelEvent>
 #include <QTreeWidgetItem>
-#include <QVariantHash>
 #include <QTimeLine>
 #include <QGLWidget>
 #include <QCursor>
@@ -51,7 +50,7 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
 
     public slots:
         void actionRequested(const MapTools::Actions &action);
-        void assetTemplateChanged(const QVariantHash &assetMetadata);
+        void assetTemplateChanged(const RPZAssetMetadata &assetMetadata);
         void onAtomTemplateChange();
     
     signals:
@@ -106,7 +105,7 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
         
         //network
             void _sendMapHistory();
-            void _onIdentityReceived(const QVariantHash &userHash);
+            void _onIdentityReceived(const RPZUser &self);
 
         //registered points
             bool _isMousePressed = false;

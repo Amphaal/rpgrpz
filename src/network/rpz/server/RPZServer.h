@@ -58,7 +58,7 @@ class RPZServer : public QTcpServer, public JSONRouter {
         //map atoms
         AtomsStorage* _hints = nullptr;
         void _askHostForMapHistory();
-        void _broadcastMapChanges(QVariantHash &payload, JSONSocket * senderSocket);
+        void _broadcastMapChanges(AlterationPayload &payload, JSONSocket * senderSocket);
         void _sendMapHistory(JSONSocket * clientSocket);
             void _alterIncomingPayloadWithUpdatedOwners(AtomsWielderPayload &wPayload, JSONSocket * senderSocket);
         
