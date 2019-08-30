@@ -2,7 +2,7 @@
 
 MessagesLog::MessagesLog(QWidget *parent) : LogContainer(parent) {};
 
-void MessagesLog::handleResponse(RPZResponse &response) {
+void MessagesLog::handleResponse(const RPZResponse &response) {
 
     auto respToId = response.answerer();
 
@@ -37,7 +37,7 @@ void MessagesLog::handleResponse(RPZResponse &response) {
 
 }
 
-void MessagesLog::handleMessage(RPZMessage &msg, bool isLocal) {
+void MessagesLog::handleMessage(const RPZMessage &msg, bool isLocal) {
     
     //should not exist
     auto targetLine = LogContainer::_getLine(msg);

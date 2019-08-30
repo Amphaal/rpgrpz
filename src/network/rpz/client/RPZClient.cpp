@@ -72,10 +72,12 @@ QString RPZClient::getConnectedSocketAddress() const {
 }
 
 RPZUser RPZClient::identity() const {
+    QMutexLocker l(&this->_m_self);
     return this->_self;
 }
 
 QVector<RPZUser> RPZClient::sessionUsers() const {
+    QMutexLocker l(&this->_m_sessionUsers);
     return this->_sessionUsers;
 }
 
@@ -113,22 +115,24 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         break;
 
         case JSONMethod::LoggedPlayersChanged: {
-            auto users = data.toList();
 
             //store users
+            QMutexLocker l(&this->_m_sessionUsers);
             this->_sessionUsers.clear();
-            for(auto &rUser : users) {
+            
+            for(auto &rUser : data.toList()) {
                 RPZUser user(rUser.toHash());
                 this->_sessionUsers.append(user);
             }
 
-            emit loggedUsersUpdated(users);
+            emit loggedUsersUpdated(this->_sessionUsers);
         }
         break;
 
         case JSONMethod::AckIdentity: {
 
             //store our identity
+            QMutexLocker l(&this->_m_self);
             this->_self = RPZUser(data.toHash());
             emit ackIdentity(this->_self);
 
@@ -141,7 +145,8 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         break;
 
         case JSONMethod::MessageFromPlayer: {
-            emit receivedMessage(data.toHash());
+            RPZMessage msg(data.toHash());
+            emit receivedMessage(msg);
         }
         break;
 
@@ -192,13 +197,13 @@ void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
 }
 
 
-void RPZClient::sendMessage(QVariantHash &message) {
+void RPZClient::sendMessage(const RPZMessage &message) {
     auto msg = RPZMessage(message);
     this->sendJSON(JSONMethod::MessageFromPlayer, msg);
 }
 
-void RPZClient::sendMapHistory(const QVariantHash &history) {
-    this->sendJSON(JSONMethod::MapChanged, history);
+void RPZClient::sendMapHistory(const ResetPayload &historyPayload) {
+    this->sendJSON(JSONMethod::MapChanged, historyPayload);
 }
 
 void RPZClient::askForAssets(const QList<RPZAssetHash> ids) {

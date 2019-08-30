@@ -30,7 +30,7 @@ LogContainer::LogContainer(QWidget *parent) : QWidget(parent), _vLayout(new QVBo
     this->layout()->setMargin(0);
 }
 
-LogItem* LogContainer::_addLine(Stampable &element, RPZStampableId putUnder) {
+LogItem* LogContainer::_addLine(const Stampable &element, RPZStampableId putUnder) {
     
     auto eId = element.id();
     auto found = this->_linesBySerializableId[eId];
@@ -68,7 +68,7 @@ LogItem* LogContainer::_addLine(Stampable &element, RPZStampableId putUnder) {
     return found;
 }
 
-LogItem* LogContainer::_getLine(Stampable &element) {
+LogItem* LogContainer::_getLine(const Stampable &element) {
     return this->_getLine(element.id());
 }
 

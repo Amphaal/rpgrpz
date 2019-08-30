@@ -134,12 +134,12 @@ void AudioManager::_onToolbarActionRequested(const TrackToolbar::Action &action)
         
         case TrackToolbar::Action::Play:
             this->_cli->play();
-            if(this->_isNetworkMaster) this->_rpzClient->setAudioStreamPlayState(true);
+            if(this->_isNetworkMaster) QMetaObject::invokeMethod(this->_rpzClient, "setAudioStreamPlayState", Q_ARG(bool, true));
         break;
 
         case TrackToolbar::Action::Pause:
             this->_cli->pause();
-            if(this->_isNetworkMaster) this->_rpzClient->setAudioStreamPlayState(false);
+            if(this->_isNetworkMaster) QMetaObject::invokeMethod(this->_rpzClient, "setAudioStreamPlayState", Q_ARG(bool, false));
         break;
 
         default:
@@ -164,7 +164,7 @@ void AudioManager::_onToolbarPlayRequested(YoutubeVideoMetadata* metadata) {
 
         //tells others users what to listen to
         if(this->_isNetworkMaster) {
-            this->_rpzClient->defineAudioStreamSource(streamUrl, title);
+            QMetaObject::invokeMethod(this->_rpzClient, "defineAudioStreamSource", Q_ARG(QString, streamUrl), Q_ARG(QString, title));
         }
     });
 
@@ -197,6 +197,6 @@ void AudioManager::_onPlayerPositionChanged(int position) {
 void AudioManager::_onSeekingRequested(int seekPos) {
     this->_cli->seek(seekPos);
     if(this->_isNetworkMaster) {
-        this->_rpzClient->changeAudioPosition(seekPos);
+        QMetaObject::invokeMethod(this->_rpzClient, "changeAudioPosition", Q_ARG(int, seekPos));
     }
 }
