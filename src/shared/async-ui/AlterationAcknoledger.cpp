@@ -17,6 +17,8 @@ void AlterationAcknoledger::linkToAlterationHandler() {
     );
 }
 
+void AlterationAcknoledger::_handleAlterationRequest(AlterationPayload &payload) {}
+
 void AlterationAcknoledger::_ackAlteration(const AlterationPayload &payload) {
 
     //trace

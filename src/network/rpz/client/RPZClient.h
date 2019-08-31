@@ -57,7 +57,6 @@ class RPZClient : public JSONSocket, public AlterationAcknoledger, public JSONRo
         void mapChanged(const AlterationPayload &payload);
         void beenAskedForMapHistory();
 
-        void donwloadedAssetSucessfullyInserted(const RPZAssetMetadata &metadata);
         void receivedAsset(const RPZAssetImportPackage &package);
 
         void loggedUsersUpdated(const QVector<RPZUser> &users);

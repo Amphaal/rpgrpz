@@ -1,6 +1,6 @@
 #include "AtomEditor.h"
 
-AtomEditor::AtomEditor(QWidget* parent) : QGroupBox(_strEM[None], parent) {
+AtomEditor::AtomEditor(QWidget* parent) : QGroupBox(_strEM[None], parent), AlterationAcknoledger(AlterationPayload::Source::Local_AtomEditor, false) {
 
     this->setAlignment(Qt::AlignHCenter);
 
@@ -23,7 +23,7 @@ void AtomEditor::buildEditor(const QVector<RPZAtom*> &atomsToBuildFrom) {
     this->_visibleEditors.clear();
 
     //update edit mode
-    auto editMode = this->_changeEditMode();
+    this->_updateEditMode();
 
     //fetch parameter editors to display
     auto toDisplay = this->_findDefaultValuesToBind();
@@ -105,8 +105,17 @@ void AtomEditor::_createEditorsFromAtomParameters() {
 }
 
 void AtomEditor::_onSubEditorChanged(const AtomParameter &parameterWhoChanged, QVariant &value) {
-    MetadataChangedPayload payload(this->_RPZAtomIds, parameterWhoChanged, value);
-    this->_emitPayload(payload);
+    
+    if(this->_currentEditMode == Template) {
+        AtomTemplateChangedPayload payload(parameterWhoChanged, value);
+        this->_emitPayload(payload);
+    } 
+    
+    else {
+        MetadataChangedPayload payload(this->_RPZAtomIds, parameterWhoChanged, value);
+        this->_emitPayload(payload);
+    }
+
 }
 
 void AtomEditor::_onPreviewRequested(const AtomParameter &parameter, QVariant &value) {
@@ -114,8 +123,7 @@ void AtomEditor::_onPreviewRequested(const AtomParameter &parameter, QVariant &v
 }
 
 void AtomEditor::_emitPayload(AlterationPayload &payload) {
-    payload.changeSource(AlterationPayload::Source::Local_AtomEditor);
-    emit requiresAtomAlteration(payload);
+    AlterationHandler::get()->queueAlteration(this, payload);
 }
 
 AtomUpdates AtomEditor::_findDefaultValuesToBind() {
@@ -145,25 +153,20 @@ AtomUpdates AtomEditor::_findDefaultValuesToBind() {
 }
 
 
-AtomEditor::EditMode AtomEditor::_changeEditMode() {
-    
-    EditMode currentEditMode;
-    
+void AtomEditor::_updateEditMode() {
     auto countItems = this->_atoms.count();
     auto firstItem = countItems > 0 ? this->_atoms.at(0) : nullptr;
     
     if(countItems == 0) {
-        currentEditMode  = EditMode::None;
+        this->_currentEditMode  = EditMode::None;
     }
     else if(countItems == 1 && !firstItem->id()) {
-        currentEditMode = EditMode::Template;
+        this->_currentEditMode = EditMode::Template;
     } 
     else {
-        currentEditMode = EditMode::Selection;
+        this->_currentEditMode = EditMode::Selection;
     }
 
     //update title
-    this->setTitle(_strEM[currentEditMode]);
-
-    return currentEditMode;
+    this->setTitle(_strEM[this->_currentEditMode]);
 }

@@ -169,7 +169,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
     return newItem;
 }
 
-void ViewMapHint::replaceMissingAssetPlaceholders(const RPZAssetMetadata &metadata) {
+void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAssetMetadata &metadata) {
     
     QMutexLocker l(&this->_m_missingAssetsIdsFromDb);
 
@@ -182,7 +182,6 @@ void ViewMapHint::replaceMissingAssetPlaceholders(const RPZAssetMetadata &metada
     //iterate through the list of GI to replace
     auto setOfGraphicsItemsToReplace = this->_missingAssetsIdsFromDb.values(assetId).toSet();
     QList<QGraphicsItem*> newGis;
-
 
     for(auto oldGi : setOfGraphicsItemsToReplace) {
         
@@ -206,46 +205,17 @@ void ViewMapHint::replaceMissingAssetPlaceholders(const RPZAssetMetadata &metada
 }
 
 void ViewMapHint::handlePreviewRequest(const QVector<RPZAtomId> &RPZAtomIdsToPreview, const AtomParameter &parameter, QVariant &value) {
+    
+    QList<QGraphicsItem*> toUpdate;
+    AtomUpdates updates; updates.insert(parameter, value);
+    
     for(const auto &id : RPZAtomIdsToPreview) {
-        AtomConverter::updateGraphicsItemFromMetadata(this->_GItemsByRPZAtomId[id], parameter, value);
+        toUpdate += this->_GItemsByRPZAtomId[id];
     }
+
+    emit requestingUIUpdate(toUpdate, updates);
 }
 
-void ViewMapHint::handleParametersUpdateAlterationRequest(AlterationPayload &payload) {
-    
-    auto cPayload = Payloads::autoCast(payload);
-    
-    auto mtPayload = cPayload.dynamicCast<MetadataChangedPayload>();
-    auto targets = mtPayload->targetRPZAtomIds();
-    auto firstTargetId = targets.count() > 0 ? targets[0] : 0;
-
-    //if single target and no ID == templateAtom update
-    if(!firstTargetId) {
-
-        //update template
-        auto updates = mtPayload->updates();
-        
-        QMutexLocker m(&this->_m_templateAtom);
-
-        for(auto i = updates.begin(); i != updates.end(); i++) {
-            this->_templateAtom->setMetadata(i.key(), i.value());
-        }
-        
-        //says it changed
-        emit atomTemplateChanged();
-
-    } 
-    
-    else {
-
-        //Change for this source to take ownership at re-emission and prevent circular event
-        cPayload->changeSource(AlterationPayload::Source::Undefined); 
-
-        //handle payload
-        AlterationHandler::get()->queueAlteration(this, *cPayload);
-
-    }
-}
 
 /////////////////////////////
 // END Integration handler //
@@ -287,6 +257,22 @@ RPZAtom* ViewMapHint::_getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const
 void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
 
     AtomsStorage::_handleAlterationRequest(payload);
+
+    //if asset changed
+    if(auto bPayload = dynamic_cast<AssetChangedPayload*>(&payload)) _replaceMissingAssetPlaceholders(bPayload->assetMetadata());
+    
+    //if template chaged
+    else if(auto bPayload = dynamic_cast<AtomTemplateChangedPayload*>(&payload)) {
+
+        QMutexLocker m(&this->_m_templateAtom);
+
+        this->_templateAtom->setMetadata(
+            bPayload->updates()
+        );
+        
+        //says it changed
+        emit atomTemplateChanged();
+    }
 
     //request assets if there are missing
     auto c_MissingAssets = this->_assetsIdsToRequest.count();

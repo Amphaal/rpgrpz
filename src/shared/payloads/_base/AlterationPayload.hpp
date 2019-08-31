@@ -14,7 +14,9 @@ enum PayloadAlteration {
     PA_Reset,
     PA_OwnerChanged,
     PA_MetadataChanged,
-    PA_BulkMetadataChanged
+    PA_BulkMetadataChanged,
+    PA_AssetChanged,
+    PA_AtomTemplateChanged
 }; 
 
 static const QStringList PayloadAlterationAsString {
@@ -26,7 +28,9 @@ static const QStringList PayloadAlterationAsString {
     "Reset",
     "OwnerChanged",
     "MetadataChanged",
-    "BulkMetadataChanged"
+    "BulkMetadataChanged",
+    "AssetChanged",
+    "AtomTemplateChanged"
 };
 
 class AlterationPayload : public QVariantHash { 
@@ -37,6 +41,7 @@ class AlterationPayload : public QVariantHash {
             Local_MapLayout,
             Local_Map,
             Local_AtomEditor,
+            Local_AtomDB,
             RPZServer,
             RPZClient
         };

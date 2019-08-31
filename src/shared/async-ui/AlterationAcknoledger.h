@@ -16,7 +16,7 @@ class AlterationAcknoledger {
         void linkToAlterationHandler();
 
     protected:
-        virtual void _handleAlterationRequest(AlterationPayload &payload) = 0;
+        virtual void _handleAlterationRequest(AlterationPayload &payload);
 
     private:
         void _ackAlteration(const AlterationPayload &payload);

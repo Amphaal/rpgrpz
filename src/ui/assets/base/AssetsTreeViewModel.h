@@ -12,9 +12,10 @@
 #include "src/shared/assets/AssetsDatabaseElement.h"
 #include "src/shared/database/AssetsDatabase.h"
 
+#include "src\shared\async-ui\AlterationHandler.h"
 #include "src/ui/others/ClientBindable.h"
 
-class AssetsTreeViewModel : public QAbstractItemModel, ClientBindable {
+class AssetsTreeViewModel : public QAbstractItemModel, public ClientBindable, public AlterationAcknoledger {
     public:
         AssetsTreeViewModel(QObject *parent = nullptr);
         AssetsDatabase* database();

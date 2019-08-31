@@ -1,6 +1,5 @@
 #include "AtomsStorage.h"
 
-
 AtomsStorage::AtomsStorage(const AlterationPayload::Source &boundSource, bool autoLinkage) : AlterationAcknoledger(boundSource, autoLinkage) { };
 
 RPZMap<RPZAtom> AtomsStorage::atoms() const {

@@ -42,12 +42,10 @@ class ViewMapHint : public AtomsStorage {
     public slots:
         void notifyMovementOnItems(const QList<QGraphicsItem*> &itemsWhoMoved); //safe
         void notifySelectedItems(const QList<QGraphicsItem*> &selectedItems); //safe
-        void replaceMissingAssetPlaceholders(const RPZAssetMetadata &metadata); //safe
         void setDefaultUser(const RPZUser &user); //safe
         void setDefaultLayer(int layer); //safe
 
-        //handle Template update or standard piped alteration request
-        void handleParametersUpdateAlterationRequest(AlterationPayload &payload);
+        //handle preview alteration before real payload
         void handlePreviewRequest(const QVector<RPZAtomId> &RPZAtomIdsToPreview, const AtomParameter &parameter, QVariant &value);
 
     signals:
@@ -80,6 +78,7 @@ class ViewMapHint : public AtomsStorage {
 
         //missing assets tracking
         QSet<RPZAssetHash> _assetsIdsToRequest;
+        void _replaceMissingAssetPlaceholders(const RPZAssetMetadata &metadata); //safe
 
         //augmenting AtomsStorage
         virtual RPZAtom* _insertAtom(const RPZAtom &newAtom) override;
