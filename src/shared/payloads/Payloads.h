@@ -10,6 +10,8 @@
 #include "withTarget/SelectedPayload.hpp"
 #include "withTarget/OwnerChangedPayload.hpp"
 #include "withTarget/MetadataChangedPayload.hpp"
+#include "local/AssetChangedPayload.hpp"
+#include "local/AtomTemplateChangedPayload.hpp"
 
 class Payloads {
     public:
@@ -21,6 +23,13 @@ class Payloads {
                 
                 case PayloadAlteration::PA_BulkMetadataChanged:
                     return QSharedPointer<BulkMetadataChangedPayload>(new BulkMetadataChangedPayload(hash));
+                break;
+
+                case PayloadAlteration::PA_AtomTemplateChanged:
+                    return QSharedPointer<AtomTemplateChangedPayload>(new AtomTemplateChangedPayload(hash));
+
+                case PayloadAlteration::PA_AssetChanged:
+                    return QSharedPointer<AssetChangedPayload>(new AssetChangedPayload(hash));
                 break;
 
                 case PayloadAlteration::PA_Added:

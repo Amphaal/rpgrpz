@@ -259,12 +259,6 @@ void MainWindow::_initUIApp() {
         this->_mapView->hints(), &ViewMapHint::setDefaultLayer
     );
 
-    //intercept alteration from editor
-    QObject::connect(
-        this->_atomEditManager->editor(), &AtomEditor::requiresAtomAlteration,
-        this->_mapView->hints(), &ViewMapHint::handleParametersUpdateAlterationRequest
-    );
-
     //intercept preview request from editor
     QObject::connect(
         this->_atomEditManager->editor(), &AtomEditor::requiresPreview,

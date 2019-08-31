@@ -378,12 +378,6 @@ void MapView::onRPZClientConnecting() {
         _rpzClient, &RPZClient::askForAssets
     );
 
-    //when receiving missing asset
-    QObject::connect(
-        _rpzClient, &RPZClient::donwloadedAssetSucessfullyInserted,
-        this->_hints, &MapHint::replaceMissingAssetPlaceholders
-    );
-
     //when been asked for map content
     QObject::connect(
         _rpzClient, &RPZClient::beenAskedForMapHistory,

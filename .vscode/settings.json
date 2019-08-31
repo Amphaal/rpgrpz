@@ -135,7 +135,8 @@
         "qtconcurrent": "cpp",
         "qcoreapplication": "cpp",
         "compare": "cpp",
-        "qmutexlocker": "cpp"
+        "qmutexlocker": "cpp",
+        "qpair": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

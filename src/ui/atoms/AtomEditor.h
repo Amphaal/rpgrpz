@@ -19,7 +19,9 @@
 #include "editors/BrushToolEditor.hpp"
 #include "editors/AtomTextEditor.hpp"
 
-class AtomEditor : public QGroupBox {
+#include "src\shared\async-ui\AlterationHandler.h"
+
+class AtomEditor : public QGroupBox, public AlterationAcknoledger {
 
     Q_OBJECT
 
@@ -31,7 +33,6 @@ class AtomEditor : public QGroupBox {
         void resetParams();
     
     signals:
-        void requiresAtomAlteration(AlterationPayload &payload);
         void requiresPreview(const QVector<RPZAtomId> &RPZAtomIdsToPreview, const AtomParameter &parameter, QVariant &value);
     
     private:
@@ -54,5 +55,7 @@ class AtomEditor : public QGroupBox {
         void _onPreviewRequested(const AtomParameter &parameter, QVariant &value);
 
         void _emitPayload(AlterationPayload &payload);
-        EditMode _changeEditMode();
+
+        EditMode _currentEditMode = None;
+        void _updateEditMode();
 };

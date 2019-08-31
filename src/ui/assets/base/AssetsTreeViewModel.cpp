@@ -1,6 +1,6 @@
 #include "AssetsTreeViewModel.h"
 
-AssetsTreeViewModel::AssetsTreeViewModel(QObject *parent) : QAbstractItemModel(parent), _db(AssetsDatabase::get()) { };
+AssetsTreeViewModel::AssetsTreeViewModel(QObject *parent) : QAbstractItemModel(parent), AlterationAcknoledger(AlterationPayload::Source::Local_AtomDB, false), _db(AssetsDatabase::get()) { };
 
 AssetsDatabase* AssetsTreeViewModel::database() {
     return this->_db;
@@ -16,11 +16,9 @@ void AssetsTreeViewModel::onRPZClientConnecting() {
             this->beginResetModel();
                 auto metadata = this->_db->importAsset(package); 
             this->endResetModel();
-
-            if(!metadata.isEmpty()) {
-                RPZAssetMetadata castedMd(metadata);
-                emit _rpzClient->donwloadedAssetSucessfullyInserted(castedMd);
-            }
+            
+            auto payload = AssetChangedPayload(metadata);
+            AlterationHandler::get()->queueAlteration(this, payload);
         }
     );
 }
