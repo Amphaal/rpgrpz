@@ -148,6 +148,6 @@ QGraphicsPathItem* CustomGraphicsItemHelper::_createDrawingItem(const RPZAtom &a
     return newPath;
 }
 
-QGraphicsTextItem* CustomGraphicsItemHelper::_createTextItem(RPZAtom &atom) {
+QGraphicsTextItem* CustomGraphicsItemHelper::_createTextItem(const RPZAtom &atom) {
     return new MapViewGraphicsTextItem(atom.text(), atom.textSize());
 }

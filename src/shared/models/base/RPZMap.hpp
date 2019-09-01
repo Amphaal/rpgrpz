@@ -18,7 +18,7 @@ class RPZMap : public QMap<snowflake_uid, T> {
         }
 
         RPZMap(const T &serializable) {
-            this->insert(serializable.id(), s);
+            this->insert(serializable.id(), serializable);
         }
 
         QVariantList toVList() const {

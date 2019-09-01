@@ -83,7 +83,7 @@ void ChatWidget::_onReceivedLogHistory(const QVariantList &messages) {
     //add list of messages
     for(auto &msg : messages) {
         RPZMessage message(msg.toHash());
-        this->_chatLog->handleMessage(message);
+        this->_chatLog->handleNonLocalMessage(message);
     }
 
     //welcome msg
@@ -107,7 +107,7 @@ void ChatWidget::onRPZClientConnecting() {
     //on message received
     QObject::connect(
         _rpzClient, &RPZClient::receivedMessage, 
-        this->_chatLog, &MessagesLog::handleMessage
+        this->_chatLog, &MessagesLog::handleNonLocalMessage
     );
 
     //welcome once all history have been received
@@ -119,7 +119,7 @@ void ChatWidget::onRPZClientConnecting() {
     //on server response
     QObject::connect(
         _rpzClient, &RPZClient::serverResponseReceived, 
-        this->_chatLog, MessagesLog::handleResponse
+        this->_chatLog, &MessagesLog::handleResponse
     );
 
     
@@ -135,7 +135,7 @@ void ChatWidget::onRPZClientConnecting() {
         this->_chatEdit, &ChatEdit::askedToSendMessage,
         [=](const QString &msg) {      
             RPZMessage message(msg);
-            this->_chatLog->handleMessage(message, true);
+            this->_chatLog->handleLocalMessage(message);
             QMetaObject::invokeMethod(this->_rpzClient, "sendMessage", Q_ARG(RPZMessage, message));
         }
         

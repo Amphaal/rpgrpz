@@ -32,7 +32,6 @@ QString AssetsDatabase::assetsStorageFilepath() {
     return AppContext::getAssetsFolderLocation();
 }
 
-
 RPZAssetMetadata AssetsDatabase::importAsset(const RPZAssetImportPackage &package) {
     
     if(package.isEmpty()) {

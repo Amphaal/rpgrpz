@@ -294,10 +294,12 @@ RPZAtom* ViewMapHint::_insertAtom(const RPZAtom &newAtom) {
 RPZAtom* ViewMapHint::_changeOwner(RPZAtom* atomWithNewOwner, const RPZUser &newOwner) {
     auto updatedAtom = AtomsStorage::_changeOwner(atomWithNewOwner, newOwner);
     
-    //filter by determining if is a drawing type
+    //filter by determining if is a drawing type if it must be altered
     if(updatedAtom->type() != AtomType::Drawing) {
         return nullptr;
     }
+
+    return updatedAtom;
 }
 
 void ViewMapHint::_basicAlterationDone(const QList<RPZAtomId> &updatedIds, const PayloadAlteration &type) {
