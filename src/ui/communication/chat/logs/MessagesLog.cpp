@@ -37,7 +37,15 @@ void MessagesLog::handleResponse(const RPZResponse &response) {
 
 }
 
-void MessagesLog::handleMessage(const RPZMessage &msg, bool isLocal) {
+void MessagesLog::handleNonLocalMessage(const RPZMessage &msg) {
+    return this->_handleMessage(msg, false);
+}
+
+void MessagesLog::handleLocalMessage(const RPZMessage &msg) {
+    return this->_handleMessage(msg, true);
+}
+
+void MessagesLog::_handleMessage(const RPZMessage &msg, bool isLocal) {
     
     //should not exist
     auto targetLine = LogContainer::_getLine(msg);

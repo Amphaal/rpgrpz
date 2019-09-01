@@ -89,11 +89,6 @@ void MapView::_updateItemValue(QGraphicsItem* item, const AtomUpdates &updates) 
 
 void MapView::_handleHintsSignalsAndSlots() {
 
-    void requestingUIAlteration(const PayloadAlteration &type, const QList<QGraphicsItem*> &toAlter);
-    void requestingUIUpdate(const QHash<QGraphicsItem*, AtomUpdates> &toUpdate);
-    void requestingUIUpdate(const QList<QGraphicsItem*> &toUpdate, const AtomUpdates &updates);
-    void requestingUIUserChange(const QList<QGraphicsItem*> &toUpdate, const RPZUser &newUser);
-
     //on map loading, set placeholder...
     QObject::connect(
         this->_hints, &ViewMapHint::heavyAlterationProcessing,
@@ -731,9 +726,13 @@ void MapView::_beginDrawing(const QPoint &lastPointMousePressed) {
     this->_destroyTempDrawing();
 
     //create base and store it
-    auto gi = CustomGraphicsItemHelper::createGraphicsItem(*this->_hints->templateAtom, this->_bufferedAssetMetadata, true);
-    this->_addItem(gi);
-    this->_tempDrawing = (MapViewGraphicsPathItem*)gi;
+    auto item = CustomGraphicsItemHelper::createGraphicsItem(
+        *this->_hints->templateAtom(), 
+        this->_bufferedAssetMetadata, 
+        true
+    );
+    this->_addItem(item);
+    this->_tempDrawing = static_cast<MapViewGraphicsPathItem*>(item);
 
     //determine if it must be sticky
     this->_stickyBrushIsDrawing = this->_hints->templateAtom()->brushType() == BrushType::Cutter;

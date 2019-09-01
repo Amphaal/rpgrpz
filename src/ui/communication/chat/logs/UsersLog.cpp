@@ -11,9 +11,9 @@ UserLogColor::UserLogColor(const QColor &color) {
     pal.setColor(QPalette::Window, color);
     this->setPalette(pal);
 };
-UserLogColor::UserLogColor(RPZUser &user) : UserLogColor(user.color()) {};
+UserLogColor::UserLogColor(const RPZUser &user) : UserLogColor(user.color()) {};
 
-UserLogIcon::UserLogIcon(RPZUser &user) {
+UserLogIcon::UserLogIcon(const RPZUser &user) {
 
     this->setMargin(0);
     this->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum); 
@@ -33,18 +33,17 @@ UserLogIcon::UserLogIcon(RPZUser &user) {
 
 UsersLog::UsersLog(QWidget *parent) : LogContainer(parent) {};
 
-void UsersLog::updateUsers(const QVariantList &users) {
+void UsersLog::updateUsers(const QVector<RPZUser> &users) {
 
     this->clearLines();
 
-    for(auto &rawUser : users) {
-        RPZUser user(rawUser.toHash());
+    for(auto &user : users) {
         this->_addUserLog(user);
     }
 
 };
 
-void UsersLog::_addUserLog(RPZUser &user) {
+void UsersLog::_addUserLog(const RPZUser &user) {
     
     auto line = LogContainer::_addLine(user);
 
@@ -59,4 +58,5 @@ void UsersLog::_addUserLog(RPZUser &user) {
     //color descriptor
     auto userColor = new UserLogColor(user);
     line->layout()->addWidget(userColor);
+    
 };

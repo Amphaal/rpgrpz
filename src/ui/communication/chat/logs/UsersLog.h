@@ -16,19 +16,19 @@
 class UserLogColor : public QFrame {
     public:
         UserLogColor(const QColor &color);
-        UserLogColor(RPZUser &user);
+        UserLogColor(const RPZUser &user);
 };
 
 class UserLogIcon : public QLabel {
     public:
-        UserLogIcon(RPZUser &user);
+        UserLogIcon(const RPZUser &user);
 };
 
 class UsersLog : public LogContainer {
     public:
         UsersLog(QWidget *parent = nullptr);
-        void updateUsers(const QVariantList &users);
+        void updateUsers(const QVector<RPZUser> &users);
 
     private:
-        void _addUserLog(RPZUser &user);
+        void _addUserLog(const RPZUser &user);
 };

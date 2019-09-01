@@ -10,5 +10,10 @@ class MessagesLog : public LogContainer {
         MessagesLog(QWidget *parent = nullptr);
 
         void handleResponse(const RPZResponse &response);
-        void handleMessage(const RPZMessage &msg, bool isLocal = false);
+        
+        void handleLocalMessage(const RPZMessage &msg);
+        void handleNonLocalMessage(const RPZMessage &msg);
+    
+    private:
+        void _handleMessage(const RPZMessage &msg, bool isLocal = false);
 };

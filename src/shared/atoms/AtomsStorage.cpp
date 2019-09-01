@@ -110,10 +110,10 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &fromHist
 
                 auto refAtom = this->_atomsById[snowflakeId];
 
-                AtomUpdates updates;
+                AtomUpdates newUpdates;
 
                 for(auto y = updates.begin(); y != updates.end(); y++) {
-                    updates.insert(y.key(), refAtom.metadata(y.key()));
+                    newUpdates.insert(y.key(), refAtom.metadata(y.key()));
                 }
 
                 out.insert(snowflakeId, updates);
@@ -198,11 +198,6 @@ void AtomsStorage::_bindDefaultOwner(const RPZUser &newOwner) {
 
 void AtomsStorage::handleAlterationRequest(AlterationPayload &payload) { 
     return this->_handleAlterationRequest(payload);
-}
-
-//alter Scene
-void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) { 
-    this->_handleAlterationRequest(payload);
 }
 
 void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {

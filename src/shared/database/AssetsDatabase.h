@@ -1,28 +1,21 @@
 #pragma once
 
-#include <QObject>
-
 #include <algorithm>
 
-#include <QHash>
 #include <QString>
-#include <QUrl>
-#include <QDebug>
-#include <QFileInfo>
-#include <QFile>
+#include <QVariantHash>
 #include <QCryptographicHash>
-#include <QDir>
-#include <QDateTime>
-#include <QRandomGenerator>
 
+#include "src/shared/models/RPZAssetMetadata.h"
 #include "base/JSONDatabase.h"
 #include "src/shared/assets/AssetsDatabaseElement.h"
-
 #include "src/helpers/_appContext.h"
-#include "src/shared/models/RPZAssetMetadata.h"
+
 
 typedef QString RPZAssetPath; //internal DB arborescence path (only containers)
 typedef QVariantHash RPZAssetImportPackage;
+
+class RPZAssetMetadata;
 
 class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabaseElement {
     
@@ -106,6 +99,4 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
 
             //from definitive paths, fetch items from db and generate elements
             void _generateItemsFromDb(QHash<RPZAssetPath, AssetsDatabaseElement*> &pathsToFillWithItems);
-
-
 };

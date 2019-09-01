@@ -57,12 +57,10 @@ void ChatEdit::_sendMessage() {
     emit askedToSendMessage(textCommand);
 }
 
-void ChatEdit::_onUsersChanged(const QVariantList &users) {
-           
-    RPZList<RPZUser> list(users);
+void ChatEdit::_onUsersChanged(const QVector<RPZUser> &users) {
 
     QSet<QString> usernamesList;
-    for(auto &user : list) {
+    for(auto &user : users) {
         auto adapted = MessageInterpreter::usernameToCommandCompatible(user.name());
         usernamesList.insert("@" + adapted);
     }
