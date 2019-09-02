@@ -30,53 +30,86 @@ MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) :
 }
 
 void MapLayoutTree::_handleHintsSignalsAndSlots() {
-    
-    //on insertion required
-    QObject::connect(
-        this->_hints, &TreeMapHint::requestingItemInsertion,
-        this, &MapLayoutTree::_insertTreeWidgetItem
-    );
 
-    //clear wanted
+    //on std alteration requested
     QObject::connect(
-        this->_hints, &TreeMapHint::requestingItemClearing,
-        this, &QTreeWidget::clear
+        this->_hints, &TreeMapHint::requestingUIAlteration,
+        [=](const PayloadAlteration &type, const QList<QTreeWidgetItem*> &toAlter) {
+            
+            if(type == PA_Selected) this->_clearSelectedItems();
+            if(type == PA_Reset) this->clear();
+
+            for(auto item : toAlter) {
+                switch(type) {
+                    
+                    case PA_Selected:
+                        this->_selectAtomItem(item);
+                    break;
+
+                    case PA_Added:
+                    case PA_Reset:
+                        this->_insertAtomItem(item);
+                    break;
+
+                    case PA_Removed:
+                        this->_removeItem(item);
+                    break;
+
+
+                }
+            }
+
+            if(type == PA_Reset || type == PA_Added) this->sortByColumn(0, Qt::SortOrder::DescendingOrder);
+            if(type == PA_Reset || type == PA_Added || type == PA_Removed) this->_updateLayersDisplayedCount();
+
+        }
     );
 
     //move requested
     QObject::connect(
-        this->_hints, &TreeMapHint::requestingItemMove,
-        this, &MapLayoutTree::_moveFromLayer
+        this->_hints, &TreeMapHint::requestingUIMove,
+        [=](const QHash<int, QList<QTreeWidgetItem*>> &childrenMovedToLayer, const QList<QTreeWidgetItem*> &toRemove) {
+
+            for(auto i = childrenMovedToLayer.constBegin(); i != childrenMovedToLayer.constEnd(); i++) {
+                for(auto child : i.value()) {
+                    child->parent()->removeChild(child);
+                    auto layerItem = this->_hints->getLayerItem(i.key());
+                    layerItem->addChild(child);
+                }
+            }
+
+            this->_updateLayersDisplayedCount();
+        }
     );
 
-    //on rename
+    //owner change
     QObject::connect(
-        this->_hints, &TreeMapHint::requestingItemTextChange,
-        this, &MapLayoutTree::_renameItem
+        this->_hints, &TreeMapHint::requestingUIUserChange,
+        [=](const QList<QTreeWidgetItem*> &toUpdate, const RPZUser &newUser) {
+            for(auto item : toUpdate) {
+                this->_hints->updateOwnerFromItem(item, newUser);
+            }
+        }
     );
 
-    //on specific remove
+    //on updates
     QObject::connect(
-        this->_hints, &TreeMapHint::requestingItemDeletion,
-        this, &MapLayoutTree::_removeItem
+        this->_hints, QOverload<const QList<QTreeWidgetItem*>&, const AtomUpdates&>::of(&TreeMapHint::requestingUIUpdate),
+        [=](const QList<QTreeWidgetItem*> &toUpdate, const AtomUpdates &updates) {
+            for(auto item : toUpdate) {
+                this->_updateAtomItemValues(item, updates);
+            }
+        }
     );
 
-    //on selection
+    //on updates (bulk)
     QObject::connect(
-        this->_hints, &TreeMapHint::requestingItemSelection,
-        this, &MapLayoutTree::_selectItem
-    );
-
-    //on clear selection
-    QObject::connect(
-        this->_hints, &TreeMapHint::requestingItemSelectionClearing,
-        this, &MapLayoutTree::_clearSelectedItems
-    );
-
-    //on data change request
-    QObject::connect(
-        this->_hints, &TreeMapHint::requestingItemDataUpdate,
-        this, &MapLayoutTree::_changeItemData
+        this->_hints, QOverload<const QHash<QTreeWidgetItem*, AtomUpdates>&>::of(&TreeMapHint::requestingUIUpdate),
+        [=](const QHash<QTreeWidgetItem*, AtomUpdates> &toUpdate) { 
+            for(auto i = toUpdate.constBegin(); i != toUpdate.constEnd(); i++) {
+                this->_updateAtomItemValues(i.key(), i.value());
+            }
+        }
     );
     
     //focus
@@ -104,66 +137,60 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
 
 }
 
-void MapLayoutTree::_changeItemData(QTreeWidgetItem* target, int column, const QHash<int, QVariant> &newData) {
-    for(QHash<int, QVariant>::const_iterator i = newData.begin(); i != newData.end(); ++i) {
-        target->setData(column, i.key(), i.value());
+void MapLayoutTree::_updateAtomItemValues(QTreeWidgetItem* toUpdate, const AtomUpdates &updates) {
+    for(auto i = updates.constBegin(); i != updates.constEnd(); i++) {
+        switch(i.key()) {
+            
+            case AtomParameter::AssetName:
+                this->_renameAtomItem(toUpdate, i.value().toString()); //TODO get atom.descriptor() ?
+            break;
+            
+            case AtomParameter::Hidden:
+                toUpdate->setData(1, RPZUserRoles::AtomVisibility, i.value().toBool());
+            break;
+
+            case AtomParameter::Locked:
+                toUpdate->setData(1, RPZUserRoles::AtomAvailability, i.value().toBool());
+            break;
+
+        }
     }
+
 }
 
-
-void MapLayoutTree::_insertTreeWidgetItem(QTreeWidgetItem *item, QTreeWidgetItem* parent) {
-    if(!parent) {
-        this->addTopLevelItem(item);
-        this->sortByColumn(0, Qt::SortOrder::DescendingOrder);
-        this->_updateLayerState(item);
-    } else {
-        parent->addChild(item);
-        this->_updateLayerState(parent);
-    }
+void MapLayoutTree::_insertAtomItem(QTreeWidgetItem *item) {
+    auto layer = item->data(0, RPZUserRoles::AtomLayer).toInt();
+    auto layerItem = this->_hints->getLayerItem(layer);
+    this->addTopLevelItem(layerItem);
+    layerItem->addChild(item);
 }
 
 void MapLayoutTree::_clearSelectedItems() {
     this->clearSelection();
 }
 
-void MapLayoutTree::_selectItem(QTreeWidgetItem* toSelect) {
+void MapLayoutTree::_selectAtomItem(QTreeWidgetItem* toSelect) {
     toSelect->setSelected(true);
 }
 
 void MapLayoutTree::_removeItem(QTreeWidgetItem* toRemove) {
-    auto layerItem = toRemove->parent();
-    layerItem->removeChild(toRemove);
-    this->_updateLayerState(layerItem);
+    auto maybeLayerItem = toRemove->parent();
+    if(maybeLayerItem) maybeLayerItem->removeChild(toRemove);
+    else this->removeItemWidget(toRemove, 0);
 }
 
-void MapLayoutTree::_updateLayerState(QTreeWidgetItem* layerItem) {
-    
-    //has children, update count column
-    if(auto childCount = layerItem->childCount()) {
-        auto childCountStr = QString::number(childCount);
-        layerItem->setText(2, childCountStr);
+void MapLayoutTree::_updateLayersDisplayedCount() {
+    for(auto i = 0; i <= this->topLevelItemCount(); i++) {
+        auto layerItem = this->topLevelItem(i);
+        auto count = layerItem->childCount();
+        layerItem->setText(2, QString::number(count));
         layerItem->setExpanded(true);
-    } 
-    
-    //has no more children, remove
-    else {
-        auto layer = layerItem->data(0, RPZUserRoles::AtomLayer).toInt();
-        this->_hints->removeLayerItem(layer); 
     }
-
 }
 
-void MapLayoutTree::_renameItem(QTreeWidgetItem* toRename, const QString &newName) {
+void MapLayoutTree::_renameAtomItem(QTreeWidgetItem* toRename, const QString &newName) {
     toRename->setText(0, newName);
 }
-
-void MapLayoutTree::_moveFromLayer(QTreeWidgetItem* oldLayerItem, QTreeWidgetItem* newLayerItem, QTreeWidgetItem *item) {
-    oldLayerItem->removeChild(item);
-    newLayerItem->addChild(item);
-    this->_updateLayerState(oldLayerItem);
-    this->_updateLayerState(newLayerItem);
-}
-
 
 TreeMapHint* MapLayoutTree::hints() {
     return this->_hints;
@@ -199,7 +226,6 @@ void MapLayoutTree::keyPressEvent(QKeyEvent * event) {
     }
 
 }
-
 
 RPZAtomId MapLayoutTree::_extractRPZAtomIdFromItem(QTreeWidgetItem* item) const {
     return item->data(0, RPZUserRoles::AtomId).toULongLong();

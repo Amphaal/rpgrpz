@@ -31,137 +31,202 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
     if(type == PayloadAlteration::PA_Reset) {
         this->_atomTreeItemsById.clear();
         this->_layersItems.clear();
+        this->_m_layersItems.lock();
         this->_RPZAtomIdsBoundByRPZAssetHash.clear();
     }
 
-    this->_UIUpdatesBuffer.clear();
+    QList<QTreeWidgetItem*> out;
+    this->_mvHelper = LayerManipulationHelper();
 
-    //atom wielders format
+    //atom wielders format (eg INSERT / RESET)
     if(auto bPayload = dynamic_cast<AtomsWielderPayload*>(&payload)) {
         
         auto atoms  = bPayload->atoms();
-        
-        for (RPZMap<RPZAtom>::iterator i = atoms.begin(); i != atoms.end(); ++i) {
+        for (auto i = atoms.begin(); i != atoms.end(); ++i) {
             
-            auto snowflakeId = i.key();
+            auto atomId = i.key();
             auto atom = i.value();
 
-            this->_handlePayloadInternal(type, snowflakeId, atom);
-        }
-
-    }
-
-    //multi target format
-    if(auto mPayload = dynamic_cast<MultipleTargetsPayload*>(&payload)) {
-        
-        auto ids = mPayload->targetRPZAtomIds();
-        auto args =  mPayload->args();
-        
-        for (auto id : ids) {
-            this->_handlePayloadInternal(type, id, args);
-        }
-
-    }
-
-    //send UI events
-    if(type == PA_MetadataChanged || type == PA_BulkMetadataChanged) {
-        emit requestingUIUpdate(type, this->_UIUpdatesBuffer);
-    } else {
-        emit requestingUIAlteration(type, this->_UIUpdatesBuffer.keys());
-    }
-
-}
-
-RPZAtom* TreeMapHint::_handlePayloadInternal(const PayloadAlteration &type, RPZAtomId targetedRPZAtomId, const QVariant &alteration) {
-
-    QTreeWidgetItem* item = nullptr;
-    AtomUpdates maybeNewData;
-
-    switch(type) {
-
-        case PayloadAlteration::PA_Reset:
-        case PayloadAlteration::PA_Added: {
-            
-            auto atom = RPZAtom(alteration.toHash());
-            
-            item = this->_createTreeItem(atom);
-            this->_atomTreeItemsById.insert(targetedRPZAtomId, item);
+            auto newItem = this->_createTreeItem(atom);
+            out += newItem;
+            this->_atomTreeItemsById.insert(atomId, newItem);
 
             //if has assetId, add it
             auto assetId = atom.assetId();
             if(!assetId.isNull()) {
-                this->_RPZAtomIdsBoundByRPZAssetHash[assetId].insert(targetedRPZAtomId);
+                this->_RPZAtomIdsBoundByRPZAssetHash[assetId].insert(atomId);
             }
         }
-        break;
 
-        case PayloadAlteration::PA_OwnerChanged: {
-            auto user = RPZUser(alteration.toHash());
-            this->updateOwnerFromItem(item, user);
+        this->_m_layersItems.unlock();
+        emit requestingUIAlteration(type, out);
+
+    }
+
+    //on owner changing
+    else if(auto mPayload = dynamic_cast<OwnerChangedPayload*>(&payload)) {
+
+        for (auto &id : mPayload->targetRPZAtomIds()) {
+            out += this->_atomTreeItemsById[id];
         }
-        break;
 
-        case PayloadAlteration::PA_Removed: {
+        emit requestingUIUserChange(out, mPayload->newOwner());
+    
+    }
+
+    //on remove
+    else if(auto mPayload = dynamic_cast<RemovedPayload*>(&payload)) {
+
+        for (auto &id : mPayload->targetRPZAtomIds()) {
             
+            auto item = this->_atomTreeItemsById.take(id);;
+            out += item;
+
             RPZAssetHash tbrAtom_assetId = item->data(0, RPZUserRoles::AssetHash).toString();
 
             //if has assetId, remove it from tracking list
             if(!tbrAtom_assetId.isNull()) {
-                    this->_RPZAtomIdsBoundByRPZAssetHash[tbrAtom_assetId].remove(targetedRPZAtomId);
+                this->_RPZAtomIdsBoundByRPZAssetHash[tbrAtom_assetId].remove(id);
             }
 
-            item = this->_atomTreeItemsById.take(targetedRPZAtomId);
         }
-        break;
 
-        case PayloadAlteration::PA_MetadataChanged:
-        case PayloadAlteration::PA_BulkMetadataChanged: {
-            auto partial = type == PayloadAlteration::PA_BulkMetadataChanged ? 
-                                                        RPZAtom(alteration.toHash()) : 
-                                                        MetadataChangedPayload::fromArgs(alteration);
-            
-            for(auto param : partial.editedMetadata()) {
-                maybeNewData.insert(param, partial.metadata(param));
-            }
-        }   
-        break;
+        emit requestingUIAlteration(type, out);
 
-        default:
-            break;
     }
 
-    //get graphics item as default
-    if(!item) item = this->_atomTreeItemsById[targetedRPZAtomId];
+    //on metadata change
+    else if(auto mPayload = dynamic_cast<MetadataChangedPayload*>(&payload)) {
+        
+        auto updates = mPayload->updates();
+        
+        for (auto &id : mPayload->targetRPZAtomIds()) {
+            auto item = this->_atomTreeItemsById[id];
+            out += item;
+            this->_handleItemMove(item, updates);
+        }
 
-    //update buffers for UI event emission
-    this->_UIUpdatesBuffer.insert(item, maybeNewData);
+        emit requestingUIUpdate(out, updates);
+    }
 
-    return nullptr;
+
+    //on metadata change (bulk)
+    else if(auto bPayload = dynamic_cast<BulkMetadataChangedPayload*>(&payload)) {
+        
+        QHash<QTreeWidgetItem*, AtomUpdates> toUpdate;
+        auto updatesById = bPayload->atomsUpdates();
+        
+        for (auto i = updatesById.begin(); i != updatesById.end(); i++) {
+            
+            auto item = this->_atomTreeItemsById[i.key()];
+            auto updates = i.value();
+
+            toUpdate.insert(item, updates);
+            this->_handleItemMove(item, updates);
+        }
+
+        emit requestingUIUpdate(toUpdate);
+    }
+
+    //on remove
+    else if(auto bPayload = dynamic_cast<RemovedPayload*>(&payload)) {
+        
+        for (auto &id : mPayload->targetRPZAtomIds()) {
+            auto item = this->_atomTreeItemsById[id];
+            out += item;
+            this->_mvHelper.toRemoveChildrenCountByLayerItem[item->parent()]++;
+        }
+
+        emit requestingUIAlteration(type, out);
+    }
+
+    //anything else
+    else if(auto bPayload = dynamic_cast<MultipleTargetsPayload*>(&payload)) {
+        
+        for (auto &id : mPayload->targetRPZAtomIds()) {
+            auto item = this->_atomTreeItemsById[id];
+            out += item;
+        }
+
+        emit requestingUIAlteration(type, out);
+    }
+
+    //request a move if needed
+    if(this->_mvHelper.childrenMovedToLayer.count()) emit requestingUIMove(this->_mvHelper.childrenMovedToLayer);
+
+    //check to-delete layer items
+    if(this->_mvHelper.toRemoveChildrenCountByLayerItem.count()) {
+        
+        QList<QTreeWidgetItem*> mightDelete;
+
+        for(auto i = this->_mvHelper.toRemoveChildrenCountByLayerItem.begin(); i != this->_mvHelper.toRemoveChildrenCountByLayerItem.end(); i++) {
+            auto layerItemMaybeToRemove = i.key();
+            if(layerItemMaybeToRemove->childCount() <= i.value()) {
+                mightDelete += layerItemMaybeToRemove;
+            }
+        }
+
+        //update layers items
+        if(mightDelete.count()) {
+
+            QMutexLocker l(&this->_m_layersItems);
+            for(auto toDelete : mightDelete) {
+                auto layer = toDelete->data(0, RPZUserRoles::AtomLayer).toInt();
+                this->_layersItems.remove(layer);
+            }
+
+            emit requestingUIAlteration(PA_Removed, mightDelete);
+        }
+
+    }
+    
 }
+
+void TreeMapHint::_handleItemMove(QTreeWidgetItem* toUpdate, const AtomUpdates &updatesMightContainMove) {
+    
+    if(!updatesMightContainMove.contains(Layer)) return;
+    
+    auto layerItem = toUpdate->parent();
+    auto currentLayer = layerItem->data(0, RPZUserRoles::AtomLayer).toInt();
+    auto requestedLayer = updatesMightContainMove[Layer].toInt();
+    
+    if(currentLayer == requestedLayer) return;
+
+    this->_mvHelper.childrenMovedToLayer[requestedLayer].append(toUpdate);
+    this->_mvHelper.toRemoveChildrenCountByLayerItem[layerItem]++;
+
+}
+
 
 void TreeMapHint::_onRenamedAsset(const QString &assetId, const QString &newName) {
     if(!this->_RPZAtomIdsBoundByRPZAssetHash.contains(assetId)) return;
 
-    QHash<QTreeWidgetItem*, AtomUpdates> toUpdate;
-    AtomUpdates out {{ AssetName, newName }};
+    QList<QTreeWidgetItem*> toUpdate;
+    AtomUpdates updates {{ AssetName, newName }};
 
     for(auto &RPZAtomId : this->_RPZAtomIdsBoundByRPZAssetHash[assetId]) {
-        auto itemToChange = this->_atomTreeItemsById[RPZAtomId];
-        toUpdate.insert(itemToChange, out);
+        toUpdate += this->_atomTreeItemsById[RPZAtomId];
     }
 
-    emit requestingUIUpdate(PA_MetadataChanged, toUpdate);
+    emit requestingUIUpdate(toUpdate, updates);
 }
 
-QTreeWidgetItem* TreeMapHint::_getLayerItem(int layer) {
+QTreeWidgetItem* TreeMapHint::getLayerItem(int layer) const {
+    QMutexLocker l(&this->_m_layersItems);
+    return this->_layersItems.value(layer);
+}
+
+void TreeMapHint::_mayCreateLayerItem(int layer) {
     
+    QMutexLocker l(&this->_m_layersItems);
+
     auto layerElem = this->_layersItems.value(layer);
-	if (layerElem) return layerElem;
+	if (layerElem) return;
 
     //if undef, create new
     layerElem = new LayerTreeItem();
     layerElem->setText(0, "Calque " + QString::number(layer));
-    layerElem->setData(0, RPZUserRoles::AtomLayer, QVariant(layer));
+    layerElem->setData(0, RPZUserRoles::AtomLayer, layer);
     layerElem->setIcon(0, *this->_layerIcon);
     layerElem->setFlags(
         QFlags<Qt::ItemFlag>(
@@ -171,8 +236,6 @@ QTreeWidgetItem* TreeMapHint::_getLayerItem(int layer) {
         
     //add to layout
     this->_layersItems.insert(layer, layerElem);
-    
-    return layerElem;
 }
 
 void TreeMapHint::updateOwnerFromItem(QTreeWidgetItem* item, const RPZUser &owner) {
@@ -188,13 +251,17 @@ void TreeMapHint::updateOwnerFromItem(QTreeWidgetItem* item, const RPZUser &owne
     item->setData(2, Qt::ToolTipRole, owner.toString());
 }
 
-QTreeWidgetItem* TreeMapHint::_createTreeItem(RPZAtom &atom) {
+QTreeWidgetItem* TreeMapHint::_createTreeItem(const RPZAtom &atom) {
     
     auto item = new QTreeWidgetItem();
     
+    const auto layer = atom.layer();
+    const auto type = atom.type();
+
     item->setText(0, atom.descriptor());
     item->setData(0, RPZUserRoles::AtomId, atom.id());
     item->setData(0, RPZUserRoles::AssetHash, atom.assetId());
+    item->setData(0, RPZUserRoles::AtomLayer, layer);
 
     item->setData(1, RPZUserRoles::AtomVisibility, atom.isHidden());
     item->setData(1, RPZUserRoles::AtomAvailability, atom.isLocked());
@@ -210,9 +277,6 @@ QTreeWidgetItem* TreeMapHint::_createTreeItem(RPZAtom &atom) {
         )
     );
 
-    const auto type = atom.type();
-    const auto layer = atom.layer();
-
     switch(type) {
         case AtomType::Drawing:
             item->setIcon(0, *this->_drawingIcon);
@@ -224,13 +288,7 @@ QTreeWidgetItem* TreeMapHint::_createTreeItem(RPZAtom &atom) {
             break;
     }
 
-    //create or get the layer element
-    auto layerElem = this->_getLayerItem(layer);
-    layerElem->addChild(layerElem);
+    this->_mayCreateLayerItem(layer);
 
     return item;
-}
-
-void TreeMapHint::removeLayerItem(int layer) {
-    this->_layersItems.remove(layer);
 }
