@@ -110,7 +110,12 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         break;
         
         case JSONMethod::ChatLogHistory: {
-            emit receivedLogHistory(data.toList());
+            QVector<RPZMessage> msgs;
+            for(auto &rawMsg : data.toList()) {
+                RPZMessage msg(rawMsg.toHash());
+                msgs.append(msg);
+            }
+            emit receivedLogHistory(msgs);
         }
         break;
 

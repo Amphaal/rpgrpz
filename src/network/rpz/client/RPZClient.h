@@ -60,7 +60,7 @@ class RPZClient : public JSONSocket, public AlterationAcknoledger, public JSONRo
         void receivedAsset(const RPZAssetImportPackage &package);
 
         void loggedUsersUpdated(const QVector<RPZUser> &users);
-        void receivedLogHistory(const QVariantList &messages);
+        void receivedLogHistory(const QVector<RPZMessage> &messages);
 
         void audioSourceChanged(const QString &audioSourceUrl, const QString &sourceTitle);
         void audioPositionChanged(int newPos);
