@@ -14,6 +14,11 @@
 #include <QTreeWidget>
 #include <QHash>
 
+struct LayerManipulationHelper {
+    QHash<QTreeWidgetItem*, int> toRemoveChildrenCountByLayerItem;
+    QHash<int, QList<QTreeWidgetItem*>> childrenMovedToLayer;
+};
+
 class TreeMapHint : public QObject, public AlterationAcknoledger {
     
     Q_OBJECT
@@ -21,36 +26,41 @@ class TreeMapHint : public QObject, public AlterationAcknoledger {
     public:
         TreeMapHint();
 
-    public slots:
-        void propagateFocus(RPZAtomId focusedRPZAtomId);
-        void propagateSelection(QVector<RPZAtomId> &selectedIds);
-        void removeLayerItem(int layer);
-        void updateOwnerFromItem(QTreeWidgetItem* item, const RPZUser &owner);
+        QTreeWidgetItem* getLayerItem(int layer) const; //safe
+        void updateOwnerFromItem(QTreeWidgetItem* item, const RPZUser &owner); //safe
+        void propagateFocus(RPZAtomId focusedRPZAtomId); //safe
+        void propagateSelection(QVector<RPZAtomId> &selectedIds); //safe
 
     signals:
-        void requestingUIAlteration(const PayloadAlteration &type, const QList<QGraphicsItem*> &toAlter);
-        void requestingUIUpdate(const QHash<QGraphicsItem*, AtomUpdates> &toUpdate);
-        void requestingUIUpdate(const QList<QGraphicsItem*> &toUpdate, const AtomUpdates &updates);
-        void requestingUIUserChange(const QList<QGraphicsItem*> &toUpdate, const RPZUser &newUser);
+        void requestingUIAlteration(const PayloadAlteration &type, const QList<QTreeWidgetItem*> &toAlter);
+        void requestingUIUpdate(const QHash<QTreeWidgetItem*, AtomUpdates> &toUpdate);
+        void requestingUIUpdate(const QList<QTreeWidgetItem*> &toUpdate, const AtomUpdates &updates);
+        void requestingUIUserChange(const QList<QTreeWidgetItem*> &toUpdate, const RPZUser &newUser);
+        void requestingUIMove(const QHash<int, QList<QTreeWidgetItem*>> &childrenMovedToLayerMaster);
 
     private slots:
         void _onRenamedAsset(const RPZAssetHash &id, const QString &newName);
 
     private:
+        mutable QMutex _m_layersItems;
         QHash<int, QTreeWidgetItem*> _layersItems;
-        QTreeWidgetItem* _getLayerItem(int layer);
+        void _mayCreateLayerItem(int layer);
 
-        QTreeWidgetItem* _createTreeItem(RPZAtom &atom);
+        QTreeWidgetItem* _createTreeItem(const RPZAtom &atom);
 
         QHash<RPZAtomId, QTreeWidgetItem*> _atomTreeItemsById;
         QHash<RPZAssetHash, QSet<RPZAtomId>> _RPZAtomIdsBoundByRPZAssetHash;
 
-        //augmenting AtomsStorage
+        //handling
         virtual void _handleAlterationRequest(AlterationPayload &payload) override;
-        RPZAtom* _handlePayloadInternal(const PayloadAlteration &type, RPZAtomId targetedRPZAtomId, const QVariant &alteration);
+            LayerManipulationHelper _mvHelper;
+            void _handleItemMove(QTreeWidgetItem* toUpdate, const AtomUpdates &updatesMightContainMove);
+        
 
         //icons
         QIcon* _layerIcon = nullptr;
         QIcon* _textIcon = nullptr;
         QIcon* _drawingIcon = nullptr;
+
+        
 };

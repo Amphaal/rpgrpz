@@ -22,8 +22,6 @@
 
 #include "src/ui/map/graphics/GraphicsItemsChangeNotifier.h"
 
-
-
 // defined values shared with AssetsDatabaseElement type for static casts
 enum class AtomType { 
     Undefined, 
