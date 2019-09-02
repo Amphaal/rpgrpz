@@ -46,6 +46,6 @@ class ChatWidget : public QWidget, public ClientBindable {
         void _EnableUI();
 
         void _onRPZClientStatus(const QString &statusMsg, bool isError);
-        void _onReceivedLogHistory(const QVariantList &messages);
+        void _onReceivedLogHistory(const QVector<RPZMessage> &messages);
 
 };

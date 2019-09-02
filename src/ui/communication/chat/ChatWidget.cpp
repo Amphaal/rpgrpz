@@ -76,14 +76,13 @@ void ChatWidget::_onRPZClientStatus(const QString &statusMsg, bool isError) {
 
 }
 
-void ChatWidget::_onReceivedLogHistory(const QVariantList &messages) {
+void ChatWidget::_onReceivedLogHistory(const QVector<RPZMessage> &messages) {
 
     this->_EnableUI();
 
     //add list of messages
     for(auto &msg : messages) {
-        RPZMessage message(msg.toHash());
-        this->_chatLog->handleNonLocalMessage(message);
+        this->_chatLog->handleNonLocalMessage(msg);
     }
 
     //welcome msg
