@@ -120,6 +120,16 @@ SET(SOURCES
     resources/resources.qrc
 )
 
+###########
+# OpenSSL #
+###########
+
+find_package(OpenSSL REQUIRED COMPONENTS SSL Crypto)
+list(APPEND EXT_LIBS
+    OpenSSL::SSL
+    OpenSSL::Crypto
+)
+
 #############
 # Gstreamer #
 #############
@@ -157,7 +167,6 @@ endif()
 IF(APPLE)
     SET(Qt5_DIR "/Qt/5.13.0/clang_64/lib/cmake/Qt5")
 endif()
-
 
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL Concurrent)
 list(APPEND EXT_LIBS
@@ -313,6 +322,23 @@ IF(NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins)
         gstwasapi
     )
     DeployGStreamer(${PROJECT_NAME} "${_gstreamer_plugins}")
+endif()
+
+
+##
+##
+##
+if(WIN32)
+    add_custom_command(TARGET ${PROJECT_NAME}       
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+        "C:/Qt/Tools/OpenSSL/Win_x64/bin/libcrypto-1_1-x64.dll"
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    )
+    add_custom_command(TARGET ${PROJECT_NAME}       
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+        "C:/Qt/Tools/OpenSSL/Win_x64/bin/libssl-1_1-x64.dll"
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    )
 endif()
 
 ######################

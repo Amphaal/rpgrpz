@@ -1,5 +1,6 @@
 [requires]
 miniupnpc/2.1@rhard/testing
+OpenSSL/1.1.1b@conan/stable
 
 [generators]
 cmake

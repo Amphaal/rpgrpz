@@ -40,7 +40,7 @@ class AtomsStorage : public QObject, public AlterationAcknoledger {
         void _bindDefaultOwner(const RPZUser &newOwner);
 
         virtual void _handleAlterationRequest(AlterationPayload &payload) override;
-        virtual void _atomsCreated();
+        virtual void _atomsCreated() {};
 
         virtual RPZAtom* _insertAtom(const RPZAtom &newAtom);
         RPZAtomId _ackSelection(RPZAtom* selectedAtom);
@@ -48,10 +48,10 @@ class AtomsStorage : public QObject, public AlterationAcknoledger {
         RPZAtomId _removeAtom(RPZAtom* toRemove);
         RPZAtomId _updateAtom(RPZAtom* toUpdate, const AtomUpdates &updates);
         
-        virtual void _basicAlterationDone(const QList<RPZAtomId> &updatedIds, const PayloadAlteration &type);
-        virtual void _updatesDone(const QList<RPZAtomId> &updatedIds, const AtomUpdates &updates);
-        virtual void _updatesDone(const AtomsUpdates &updates);
-        virtual void _ownerChangeDone(const QList<RPZAtomId> &updatedIds, const RPZUser &newUser);
+        virtual void _basicAlterationDone(const QList<RPZAtomId> &updatedIds, const PayloadAlteration &type) {};
+        virtual void _updatesDone(const QList<RPZAtomId> &updatedIds, const AtomUpdates &updates) {};
+        virtual void _updatesDone(const AtomsUpdates &updates) {};
+        virtual void _ownerChangeDone(const QList<RPZAtomId> &updatedIds, const RPZUser &newUser) {};
 
     private:
         mutable QMutex _m_handlingLock;

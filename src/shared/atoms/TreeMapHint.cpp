@@ -217,8 +217,6 @@ QTreeWidgetItem* TreeMapHint::getLayerItem(int layer) const {
 }
 
 void TreeMapHint::_mayCreateLayerItem(int layer) {
-    
-    QMutexLocker l(&this->_m_layersItems);
 
     auto layerElem = this->_layersItems.value(layer);
 	if (layerElem) return;
