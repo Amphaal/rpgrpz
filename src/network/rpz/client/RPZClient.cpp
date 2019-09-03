@@ -120,14 +120,16 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         break;
 
         case JSONMethod::LoggedPlayersChanged: {
-
-            //store users
-            QMutexLocker l(&this->_m_sessionUsers);
-            this->_sessionUsers.clear();
             
-            for(auto &rUser : data.toList()) {
-                RPZUser user(rUser.toHash());
-                this->_sessionUsers.append(user);
+            {
+                //store users
+                QMutexLocker l(&this->_m_sessionUsers);
+                this->_sessionUsers.clear();
+                
+                for(auto &rUser : data.toList()) {
+                    RPZUser user(rUser.toHash());
+                    this->_sessionUsers.append(user);
+                }
             }
 
             emit loggedUsersUpdated(this->_sessionUsers);
@@ -135,10 +137,13 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         break;
 
         case JSONMethod::AckIdentity: {
+            
+            {
+                //store our identity
+                QMutexLocker l(&this->_m_self);
+                this->_self = RPZUser(data.toHash());
+            }
 
-            //store our identity
-            QMutexLocker l(&this->_m_self);
-            this->_self = RPZUser(data.toHash());
             emit ackIdentity(this->_self);
 
         }

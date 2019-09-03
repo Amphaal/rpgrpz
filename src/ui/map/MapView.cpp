@@ -6,6 +6,8 @@ MapView::MapView(QWidget *parent) :
     _hints(new MapHint),
     _menuHandler(new AtomsContextualMenuHandler(_hints, this)) {
 
+    this->_hints->moveToThread(new QThread);
+
     //default
     auto scene = new QGraphicsScene(this->_defaultSceneSize, this->_defaultSceneSize, this->_defaultSceneSize, this->_defaultSceneSize);
     this->setScene(scene);
