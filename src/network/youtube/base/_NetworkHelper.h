@@ -10,6 +10,5 @@ class NetworkHelper {
         static promise::Defer download(const QUrl& url);
 
     private:
-        static inline QNetworkAccessManager* _nam = nullptr;
-        static QNetworkAccessManager* _getNAM();
+        static inline int _pending = 0;
 };

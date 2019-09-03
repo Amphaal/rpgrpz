@@ -7,6 +7,7 @@
 #include <QDragEnterEvent>
 #include <QMimeDatabase>
 #include <QMimeData>
+#include <QTimer>
 
 #include "src/helpers/DurationHelper.hpp"
 

@@ -9,6 +9,7 @@ promise::Defer YoutubeHelper::fromPlaylistUrl(const QString &url) {
 promise::Defer YoutubeHelper::refreshMetadata(YoutubeVideoMetadata* toRefresh, bool force) {
     if(!force && toRefresh->isMetadataValid()) return promise::resolve(toRefresh);
     
+    toRefresh->setFailure(false);
     emit toRefresh->metadataFetching();
 
     return promise::newPromise([=](promise::Defer d){
