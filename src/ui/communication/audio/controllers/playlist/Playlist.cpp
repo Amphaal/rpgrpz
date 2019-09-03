@@ -183,9 +183,12 @@ void Playlist::addYoutubeVideo(const QString &url) {
 
     QObject::connect(
         data, &YoutubeVideoMetadata::streamFailed,
-        [=]() {  
-            playlistItem->setIcon(*this->_ytIconErr);
-            playlistItem->setText(pos + "(Erreur) " + data->url()); 
+        [=]() {
+            //add delay for user ack
+            QTimer::singleShot(100, [=]() {
+                playlistItem->setIcon(*this->_ytIconErr);
+                playlistItem->setText(pos + "(Erreur) " + data->url()); 
+            });  
         }
     );
 
