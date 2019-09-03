@@ -27,38 +27,39 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
 
     auto type = payload.type();
 
-    //selected...
-    if(type == PayloadAlteration::PA_Reset) {
-        this->_atomTreeItemsById.clear();
-        this->_layersItems.clear();
-        this->_m_layersItems.lock();
-        this->_RPZAtomIdsBoundByRPZAssetHash.clear();
-    }
-
     QList<QTreeWidgetItem*> out;
     this->_mvHelper = LayerManipulationHelper();
 
     //atom wielders format (eg INSERT / RESET)
     if(auto bPayload = dynamic_cast<AtomsWielderPayload*>(&payload)) {
         
-        auto atoms  = bPayload->atoms();
-        for (auto i = atoms.begin(); i != atoms.end(); ++i) {
-            
-            auto atomId = i.key();
-            auto atom = i.value();
+        {
+            QMutexLocker l(&this->_m_layersItems);
 
-            auto newItem = this->_createTreeItem(atom);
-            out += newItem;
-            this->_atomTreeItemsById.insert(atomId, newItem);
+            if(type == PayloadAlteration::PA_Reset) {
+                this->_layersItems.clear();
+                this->_atomTreeItemsById.clear();
+                this->_RPZAtomIdsBoundByRPZAssetHash.clear();
+            }
 
-            //if has assetId, add it
-            auto assetId = atom.assetId();
-            if(!assetId.isNull()) {
-                this->_RPZAtomIdsBoundByRPZAssetHash[assetId].insert(atomId);
+            auto atoms  = bPayload->atoms();
+            for (auto i = atoms.begin(); i != atoms.end(); ++i) {
+                
+                auto atomId = i.key();
+                auto atom = i.value();
+
+                auto newItem = this->_createTreeItem(atom);
+                out += newItem;
+                this->_atomTreeItemsById.insert(atomId, newItem);
+
+                //if has assetId, add it
+                auto assetId = atom.assetId();
+                if(!assetId.isNull()) {
+                    this->_RPZAtomIdsBoundByRPZAssetHash[assetId].insert(atomId);
+                }
             }
         }
 
-        this->_m_layersItems.unlock();
         emit requestingUIAlteration(type, out);
 
     }
@@ -169,10 +170,12 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
         //update layers items
         if(mightDelete.count()) {
 
-            QMutexLocker l(&this->_m_layersItems);
-            for(auto toDelete : mightDelete) {
-                auto layer = toDelete->data(0, RPZUserRoles::AtomLayer).toInt();
-                this->_layersItems.remove(layer);
+            {
+                QMutexLocker l(&this->_m_layersItems);
+                for(auto toDelete : mightDelete) {
+                    auto layer = toDelete->data(0, RPZUserRoles::AtomLayer).toInt();
+                    this->_layersItems.remove(layer);
+                }
             }
 
             emit requestingUIAlteration(PA_Removed, mightDelete);

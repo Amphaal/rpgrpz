@@ -102,9 +102,11 @@ bool MapHint::defineAsRemote(const QString &remoteMapDescriptor) {
     //define remote flag
     this->_isRemote = !remoteMapDescriptor.isEmpty();
     
-    //reset missing assets list
-    QMutexLocker l(&this->_m_missingAssetsIdsFromDb);
-    this->_missingAssetsIdsFromDb.clear();
+    {
+        //reset missing assets list
+        QMutexLocker l(&this->_m_missingAssetsIdsFromDb);
+        this->_missingAssetsIdsFromDb.clear();
+    }
 
     //change map descriptor if is a remote session
     if(this->_isRemote) this->_mapFilePath = remoteMapDescriptor;

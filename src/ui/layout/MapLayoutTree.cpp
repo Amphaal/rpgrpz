@@ -5,6 +5,8 @@ MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) :
     AtomsContextualMenuHandler(mapMaster, this),
     _hints(new TreeMapHint) {
         
+    this->_hints->moveToThread(new QThread);
+
 	this->setSortingEnabled(true);
 
     this->setItemDelegateForColumn(1, new LockAndVisibilityDelegate);

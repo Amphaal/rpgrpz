@@ -11,9 +11,7 @@ AlterationPayload::Source AlterationAcknoledger::source() const {
 void AlterationAcknoledger::linkToAlterationHandler() {
     QObject::connect(
         AlterationHandler::get(), &AlterationHandler::requiresPayloadHandling,
-        [=](const AlterationPayload &payload) {
-            this->_ackAlteration(payload);
-        }
+        this, &AlterationAcknoledger::_ackAlteration
     );
 }
 
