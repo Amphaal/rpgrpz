@@ -68,7 +68,7 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
     //move requested
     QObject::connect(
         this->_hints, &TreeMapHint::requestingUIMove,
-        [=](const QHash<int, QList<QTreeWidgetItem*>> &childrenMovedToLayer, const QList<QTreeWidgetItem*> &toRemove) {
+        [=](const QHash<int, QList<QTreeWidgetItem*>> &childrenMovedToLayer) {
 
             for(auto i = childrenMovedToLayer.constBegin(); i != childrenMovedToLayer.constEnd(); i++) {
                 for(auto child : i.value()) {
@@ -180,7 +180,7 @@ void MapLayoutTree::_removeItem(QTreeWidgetItem* toRemove) {
 }
 
 void MapLayoutTree::_updateLayersDisplayedCount() {
-    for(auto i = 0; i <= this->topLevelItemCount(); i++) {
+    for(auto i = 0; i < this->topLevelItemCount(); i++) {
         auto layerItem = this->topLevelItem(i);
         auto count = layerItem->childCount();
         layerItem->setText(2, QString::number(count));

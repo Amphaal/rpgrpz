@@ -77,8 +77,8 @@ YoutubeVideoMetadata* YoutubeHelper::_augmentMetadataWithVideoInfos(
     //as string then to query, check for errors
     QUrlQuery videoInfos(QString::fromUtf8(videoInfoRawResponse));
     auto error = videoInfos.queryItemValue("errorcode");
-    auto video_id = videoInfos.queryItemValue("video_id");
-    if(!error.isNull() || video_id.isNull()) {
+    auto status = videoInfos.queryItemValue("status");
+    if(!error.isNull() || status != "ok") {
         throw new std::logic_error("An error occured while fetching video infos");
     }
 

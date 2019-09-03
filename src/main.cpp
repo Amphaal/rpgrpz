@@ -6,6 +6,7 @@
 #include <QImageReader>
 #include <QLockFile>
 #include <QPixmapCache>
+#include <QSslSocket>
 
 #include "src/helpers/_appContext.h"
 #include "src/helpers/_logWriter.h"
@@ -57,7 +58,7 @@ int clientApp(int argc, char** argv) {
             return 1;
         }
     }
-
+    
     //setup app
     QApplication app(argc, argv);
     AppContext::configureApp(app);
@@ -83,6 +84,9 @@ int clientApp(int argc, char** argv) {
 ////////////////
 
 int main(int argc, char** argv) {
+
+    qDebug() << QSslSocket::sslLibraryBuildVersionString();
+    qDebug() << QSslSocket::sslLibraryVersionString();
 
     //message handler
     qInstallMessageHandler(LogWriter::customMO);
