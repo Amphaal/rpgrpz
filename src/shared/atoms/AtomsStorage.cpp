@@ -1,6 +1,6 @@
 #include "AtomsStorage.h"
 
-AtomsStorage::AtomsStorage(const AlterationPayload::Source &boundSource, bool autoLinkage) : AlterationAcknoledger(boundSource, autoLinkage) { };
+AtomsStorage::AtomsStorage(const AlterationPayload::Source &boundSource) : AlterationAcknoledger(boundSource) { };
 
 RPZMap<RPZAtom> AtomsStorage::atoms() const {
     QMutexLocker m(&this->_m_handlingLock);

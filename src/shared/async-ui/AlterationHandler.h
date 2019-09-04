@@ -15,6 +15,7 @@ class AlterationHandler : public QObject {
     public:
         static AlterationHandler* get();
         void queueAlteration(const AlterationAcknoledger* sender, AlterationPayload &payload);
+        void queueAlteration(const AlterationPayload::Source &senderSource, AlterationPayload &payload);
 
     signals:
         void requiresPayloadHandling(const AlterationPayload &payload);

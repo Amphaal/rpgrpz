@@ -8,19 +8,23 @@
 
 class AlterationHandler;
 
-class AlterationAcknoledger {
+class AlterationAcknoledger : public QObject {
+
+    Q_OBJECT
 
     public:
-        AlterationAcknoledger(const AlterationPayload::Source &source, bool autoLinkage = true);
+        AlterationAcknoledger(const AlterationPayload::Source &source);
         AlterationPayload::Source source() const;
-        void linkToAlterationHandler();
+        void connectToAlterationEmissions();
 
     protected:
         virtual void _handleAlterationRequest(AlterationPayload &payload);
 
-    private:
+    private slots:
         void _ackAlteration(const AlterationPayload &payload);
-        void _payloadTrace(const AlterationPayload &payload);
+        
+    private:
+        static void _payloadTrace(const AlterationPayload &payload);
         AlterationPayload::Source _source = AlterationPayload::Source::Undefined;
 
 };

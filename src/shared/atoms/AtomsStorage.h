@@ -21,7 +21,7 @@ class AtomsStorage : public QObject, public AlterationAcknoledger {
     Q_OBJECT
 
     public:
-        AtomsStorage(const AlterationPayload::Source &boundSource, bool autoLinkage = true);
+        AtomsStorage(const AlterationPayload::Source &boundSource);
         
         QVector<RPZAtomId> selectedRPZAtomIds() const; //safe
         QVector<RPZAtom*> selectedAtoms() const; //safe
