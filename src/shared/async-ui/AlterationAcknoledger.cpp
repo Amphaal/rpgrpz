@@ -1,14 +1,12 @@
 #include "AlterationAcknoledger.h"
 
-AlterationAcknoledger::AlterationAcknoledger(const AlterationPayload::Source &source, bool autoLinkage) : _source(source) { 
-    if(autoLinkage) linkToAlterationHandler();
-}
+AlterationAcknoledger::AlterationAcknoledger(const AlterationPayload::Source &source) : _source(source) {}
 
 AlterationPayload::Source AlterationAcknoledger::source() const {
     return this->_source;
 }
 
-void AlterationAcknoledger::linkToAlterationHandler() {
+void AlterationAcknoledger::connectToAlterationEmissions() {
     QObject::connect(
         AlterationHandler::get(), &AlterationHandler::requiresPayloadHandling,
         this, &AlterationAcknoledger::_ackAlteration
@@ -20,7 +18,7 @@ void AlterationAcknoledger::_handleAlterationRequest(AlterationPayload &payload)
 void AlterationAcknoledger::_ackAlteration(const AlterationPayload &payload) {
 
     //trace
-    this->_payloadTrace(payload);
+    _payloadTrace(payload);
 
     //handle
     auto casted = Payloads::autoCast(payload);
