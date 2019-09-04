@@ -15,6 +15,10 @@ class AlterationAcknoledger : public QObject {
     public:
         AlterationAcknoledger(const AlterationPayload::Source &source);
         AlterationPayload::Source source() const;
+
+        static void payloadTrace(const AlterationPayload::Source &source, const AlterationPayload &payload);
+
+    public slots:
         void connectToAlterationEmissions();
 
     protected:
@@ -24,7 +28,7 @@ class AlterationAcknoledger : public QObject {
         void _ackAlteration(const AlterationPayload &payload);
         
     private:
-        static void _payloadTrace(const AlterationPayload &payload);
+        void _payloadTrace(const AlterationPayload &payload);
         AlterationPayload::Source _source = AlterationPayload::Source::Undefined;
 
 };

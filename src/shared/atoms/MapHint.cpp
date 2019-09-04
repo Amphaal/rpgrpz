@@ -1,6 +1,8 @@
 #include "MapHint.h"
 
-MapHint::MapHint() { }
+MapHint::MapHint() { 
+    this->connectToAlterationEmissions();
+}
 
 void MapHint::_handleAlterationRequest(AlterationPayload &payload) { 
 
@@ -9,6 +11,7 @@ void MapHint::_handleAlterationRequest(AlterationPayload &payload) {
     //define dirty
     this->_shouldMakeMapDirty(payload);
 
+    
 }
 
 ////////////////////

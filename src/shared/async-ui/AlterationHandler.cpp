@@ -10,8 +10,12 @@ void AlterationHandler::queueAlteration(const AlterationAcknoledger* sender, Alt
 }
 
 void AlterationHandler::queueAlteration(const AlterationPayload::Source &senderSource, AlterationPayload &payload) {
+    
     //if initial payload emission, apply sender source for send
-    if(payload.source() == AlterationPayload::Source::Undefined && senderSource) payload.changeSource(sender->source()); 
+    if(payload.source() == AlterationPayload::Source::Undefined && senderSource) {
+        payload.changeSource(senderSource); 
+    }
 
     emit requiresPayloadHandling(payload);
+    
 }

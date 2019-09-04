@@ -2,7 +2,6 @@
 
 RPZClient::RPZClient(const QString &name, const QString &domain, const QString &port) : 
                         JSONSocket("RPZClient"),
-                        AlterationAcknoledger(AlterationPayload::Source::RPZClient, false),
                         _name(name), 
                         _domain(domain), 
                         _port(port) { 
@@ -25,6 +24,11 @@ RPZClient::RPZClient(const QString &name, const QString &domain, const QString &
     QObject::connect(
         this->socket(), QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error),
         this, &RPZClient::_error
+    );
+
+    QObject::connect(
+        AlterationHandler::get(), &AlterationHandler::requiresPayloadHandling,
+        this, &RPZClient::_handleAlterationRequest
     );
                
 }
@@ -55,13 +59,15 @@ void RPZClient::_onConnected() {
     this->sendJSON(JSONMethod::Handshake, RPZHandshake(this->_name));
 }
 
-void RPZClient::_handleAlterationRequest(AlterationPayload &payload) {
+void RPZClient::_handleAlterationRequest(const AlterationPayload &payload) {
 
     //ignore alteration requests when socket is not connected
     if(this->socket()->state() != QAbstractSocket::ConnectedState) return;
 
     //if not routable, instant return 
     if(!payload.isNetworkRoutable()) return;
+
+    AlterationAcknoledger::payloadTrace(AlterationPayload::Source::RPZClient, payload);
 
     //send json
     return this->sendJSON(JSONMethod::MapChanged, payload);
@@ -162,7 +168,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
         case JSONMethod::MapChanged: {
             auto payload = AlterationPayload(data.toHash());
-            AlterationHandler::get()->queueAlteration(this, payload);
+            AlterationHandler::get()->queueAlteration(AlterationPayload::Source::RPZClient, payload);
         }   
         break;
 

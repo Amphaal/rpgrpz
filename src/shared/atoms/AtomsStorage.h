@@ -16,7 +16,7 @@
 
 #include "src\shared\async-ui\AlterationAcknoledger.h"
 
-class AtomsStorage : public QObject, public AlterationAcknoledger {
+class AtomsStorage : public AlterationAcknoledger {
 
     Q_OBJECT
 

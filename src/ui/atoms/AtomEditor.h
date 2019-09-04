@@ -21,7 +21,7 @@
 
 #include "src\shared\async-ui\AlterationHandler.h"
 
-class AtomEditor : public QGroupBox, public AlterationAcknoledger {
+class AtomEditor : public QGroupBox {
 
     Q_OBJECT
 

@@ -15,7 +15,7 @@
 #include "src\shared\async-ui\AlterationHandler.h"
 #include "src/ui/others/ClientBindable.h"
 
-class AssetsTreeViewModel : public QAbstractItemModel, public ClientBindable, public AlterationAcknoledger {
+class AssetsTreeViewModel : public QAbstractItemModel, public ClientBindable {
     public:
         AssetsTreeViewModel(QObject *parent = nullptr);
         AssetsDatabase* database();
