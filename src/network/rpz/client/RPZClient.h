@@ -23,7 +23,7 @@
 #include "src/helpers/_appContext.h"
 #include "src/shared/async-ui/AlterationAcknoledger.h"
 
-class RPZClient : public JSONSocket, public AlterationAcknoledger, public JSONRouter {
+class RPZClient : public JSONSocket, public JSONRouter {
 
     Q_OBJECT
 
@@ -83,6 +83,7 @@ class RPZClient : public JSONSocket, public AlterationAcknoledger, public JSONRo
         
         void _routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) override;
  
-        void _handleAlterationRequest(AlterationPayload &payload) override;
+    private slots:
+        void _handleAlterationRequest(const AlterationPayload &payload);
 
 };

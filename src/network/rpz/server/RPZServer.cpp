@@ -20,7 +20,7 @@ RPZServer::~RPZServer() {
 void RPZServer::run() { 
 
     //init
-    this->_hints = new AtomsStorage(AlterationPayload::Source::RPZServer, false);
+    this->_hints = new AtomsStorage(AlterationPayload::Source::RPZServer);
 
     qDebug() << "RPZServer : Starting server...";
 

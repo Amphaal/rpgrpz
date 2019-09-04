@@ -4,8 +4,10 @@ MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) :
     RPZTree(parent), 
     AtomsContextualMenuHandler(mapMaster, this),
     _hints(new TreeMapHint) {
-        
-    this->_hints->moveToThread(new QThread);
+    
+    // auto nn = new QThread;
+    // this->_hints->moveToThread(nn);
+    // nn->start();
 
 	this->setSortingEnabled(true);
 
@@ -36,82 +38,31 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
     //on std alteration requested
     QObject::connect(
         this->_hints, &TreeMapHint::requestingUIAlteration,
-        [=](const PayloadAlteration &type, const QList<QTreeWidgetItem*> &toAlter) {
-            
-            if(type == PA_Selected) this->_clearSelectedItems();
-            if(type == PA_Reset) this->clear();
-
-            for(auto item : toAlter) {
-                switch(type) {
-                    
-                    case PA_Selected:
-                        this->_selectAtomItem(item);
-                    break;
-
-                    case PA_Added:
-                    case PA_Reset:
-                        this->_insertAtomItem(item);
-                    break;
-
-                    case PA_Removed:
-                        this->_removeItem(item);
-                    break;
-
-
-                }
-            }
-
-            if(type == PA_Reset || type == PA_Added) this->sortByColumn(0, Qt::SortOrder::DescendingOrder);
-            if(type == PA_Reset || type == PA_Added || type == PA_Removed) this->_updateLayersDisplayedCount();
-
-        }
+        this, &MapLayoutTree::_onUIAlterationRequest
     );
 
     //move requested
     QObject::connect(
         this->_hints, &TreeMapHint::requestingUIMove,
-        [=](const QHash<int, QList<QTreeWidgetItem*>> &childrenMovedToLayer) {
-
-            for(auto i = childrenMovedToLayer.constBegin(); i != childrenMovedToLayer.constEnd(); i++) {
-                for(auto child : i.value()) {
-                    child->parent()->removeChild(child);
-                    auto layerItem = this->_hints->getLayerItem(i.key());
-                    layerItem->addChild(child);
-                }
-            }
-
-            this->_updateLayersDisplayedCount();
-        }
+        this, &MapLayoutTree::_onUIMoveRequest
     );
 
     //owner change
     QObject::connect(
         this->_hints, &TreeMapHint::requestingUIUserChange,
-        [=](const QList<QTreeWidgetItem*> &toUpdate, const RPZUser &newUser) {
-            for(auto item : toUpdate) {
-                this->_hints->updateOwnerFromItem(item, newUser);
-            }
-        }
+        this, &MapLayoutTree::_onUIUserChangeRequest
     );
 
     //on updates
     QObject::connect(
         this->_hints, QOverload<const QList<QTreeWidgetItem*>&, const AtomUpdates&>::of(&TreeMapHint::requestingUIUpdate),
-        [=](const QList<QTreeWidgetItem*> &toUpdate, const AtomUpdates &updates) {
-            for(auto item : toUpdate) {
-                this->_updateAtomItemValues(item, updates);
-            }
-        }
+        this, QOverload<const QList<QTreeWidgetItem*>&, const AtomUpdates&>::of(&MapLayoutTree::_onUIUpdateRequest)
     );
 
     //on updates (bulk)
     QObject::connect(
         this->_hints, QOverload<const QHash<QTreeWidgetItem*, AtomUpdates>&>::of(&TreeMapHint::requestingUIUpdate),
-        [=](const QHash<QTreeWidgetItem*, AtomUpdates> &toUpdate) { 
-            for(auto i = toUpdate.constBegin(); i != toUpdate.constEnd(); i++) {
-                this->_updateAtomItemValues(i.key(), i.value());
-            }
-        }
+        this, QOverload<const QHash<QTreeWidgetItem*, AtomUpdates>&>::of(&MapLayoutTree::_onUIUpdateRequest)
     );
     
     //focus
@@ -137,6 +88,66 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
         }
     );
 
+}
+
+void MapLayoutTree::_onUIAlterationRequest(const PayloadAlteration &type, const QList<QTreeWidgetItem*> &toAlter) {
+            
+    if(type == PA_Selected) this->_clearSelectedItems();
+    if(type == PA_Reset) this->clear();
+
+    for(auto item : toAlter) {
+        switch(type) {
+            
+            case PA_Selected:
+                this->_selectAtomItem(item);
+            break;
+
+            case PA_Added:
+            case PA_Reset:
+                this->_insertAtomItem(item);
+            break;
+
+            case PA_Removed:
+                this->_removeItem(item);
+            break;
+
+
+        }
+    }
+
+    if(type == PA_Reset || type == PA_Added) this->sortByColumn(0, Qt::SortOrder::DescendingOrder);
+    if(type == PA_Reset || type == PA_Added || type == PA_Removed) this->_updateLayersDisplayedCount();
+
+}
+
+void MapLayoutTree::_onUIUpdateRequest(const QHash<QTreeWidgetItem*, AtomUpdates> &toUpdate) {
+    for(auto i = toUpdate.constBegin(); i != toUpdate.constEnd(); i++) {
+        this->_updateAtomItemValues(i.key(), i.value());
+    }
+}
+
+void MapLayoutTree::_onUIUpdateRequest(const QList<QTreeWidgetItem*> &toUpdate, const AtomUpdates &updates) {
+    for(auto item : toUpdate) {
+        this->_updateAtomItemValues(item, updates);
+    }
+}
+
+void MapLayoutTree::_onUIUserChangeRequest(const QList<QTreeWidgetItem*> &toUpdate, const RPZUser &newUser) {
+    for(auto item : toUpdate) {
+        this->_hints->updateOwnerFromItem(item, newUser);
+    }
+}
+
+void MapLayoutTree::_onUIMoveRequest(const QHash<int, QList<QTreeWidgetItem*>> &childrenMovedToLayer) {
+    for(auto i = childrenMovedToLayer.constBegin(); i != childrenMovedToLayer.constEnd(); i++) {
+        for(auto child : i.value()) {
+            child->parent()->removeChild(child);
+            auto layerItem = this->_hints->getLayerItem(i.key());
+            layerItem->addChild(child);
+        }
+    }
+
+    this->_updateLayersDisplayedCount();
 }
 
 void MapLayoutTree::_updateAtomItemValues(QTreeWidgetItem* toUpdate, const AtomUpdates &updates) {

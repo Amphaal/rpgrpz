@@ -37,12 +37,11 @@ class MapLayoutTree : public RPZTree, public AtomsContextualMenuHandler {
         void contextMenuEvent(QContextMenuEvent *event) override;
 
     private slots:
-        void _insertAtomItem(QTreeWidgetItem *item);
-        void _renameAtomItem(QTreeWidgetItem* toRename, const QString &newName);
-        void _removeItem(QTreeWidgetItem* toRemove);
-        void _selectAtomItem(QTreeWidgetItem* toSelect);
-        void _updateAtomItemValues(QTreeWidgetItem* toUpdate, const AtomUpdates &updates);
-        void _clearSelectedItems();
+        void _onUIAlterationRequest(const PayloadAlteration &type, const QList<QTreeWidgetItem*> &toAlter);
+        void _onUIUpdateRequest(const QHash<QTreeWidgetItem*, AtomUpdates> &toUpdate);
+        void _onUIUpdateRequest(const QList<QTreeWidgetItem*> &toUpdate, const AtomUpdates &updates);
+        void _onUIUserChangeRequest(const QList<QTreeWidgetItem*> &toUpdate, const RPZUser &newUser);
+        void _onUIMoveRequest(const QHash<int, QList<QTreeWidgetItem*>> &childrenMovedToLayer);
 
     private:
         TreeMapHint* _hints = nullptr;
@@ -53,4 +52,12 @@ class MapLayoutTree : public RPZTree, public AtomsContextualMenuHandler {
         QVector<RPZAtomId> _extractRPZAtomIdFromItems(const QList<QTreeWidgetItem*> &items) const;
 
         void _updateLayersDisplayedCount();
+
+        //helpers
+        void _insertAtomItem(QTreeWidgetItem *item);
+        void _renameAtomItem(QTreeWidgetItem* toRename, const QString &newName);
+        void _removeItem(QTreeWidgetItem* toRemove);
+        void _selectAtomItem(QTreeWidgetItem* toSelect);
+        void _updateAtomItemValues(QTreeWidgetItem* toUpdate, const AtomUpdates &updates);
+        void _clearSelectedItems();
 };

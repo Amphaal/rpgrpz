@@ -77,6 +77,13 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
 
         void onItemChanged(GraphicsItemsChangeNotifier* item, MapViewCustomItemsEventFlag flag) override;
 
+    private slots:
+        void _displayLoader();
+        void _onUIAlterationRequest(const PayloadAlteration &type, const QList<QGraphicsItem*> &toAlter);
+        void _onUIUpdateRequest(const QHash<QGraphicsItem*, AtomUpdates> &toUpdate);
+        void _onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const AtomUpdates &updates);
+        void _onUIUserChangeRequest(const QList<QGraphicsItem*> &toUpdate, const RPZUser &newUser);
+
     private:
         QBrush* _hiddingBrush = nullptr;
         MapHint* _hints = nullptr;
@@ -93,7 +100,6 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
         void _goToDefaultViewState();
         
         bool _isLoading = false;
-        void _displayLoader();
         void _hideLoader();
 
         //ghost

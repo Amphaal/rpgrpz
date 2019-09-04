@@ -1,6 +1,6 @@
 #include "AtomEditor.h"
 
-AtomEditor::AtomEditor(QWidget* parent) : QGroupBox(_strEM[None], parent), AlterationAcknoledger(AlterationPayload::Source::Local_AtomEditor, false) {
+AtomEditor::AtomEditor(QWidget* parent) : QGroupBox(_strEM[None], parent) {
 
     this->setAlignment(Qt::AlignHCenter);
 
@@ -123,7 +123,7 @@ void AtomEditor::_onPreviewRequested(const AtomParameter &parameter, QVariant &v
 }
 
 void AtomEditor::_emitPayload(AlterationPayload &payload) {
-    AlterationHandler::get()->queueAlteration(this, payload);
+    AlterationHandler::get()->queueAlteration(AlterationPayload::Source::Local_AtomEditor, payload);
 }
 
 AtomUpdates AtomEditor::_findDefaultValuesToBind() {

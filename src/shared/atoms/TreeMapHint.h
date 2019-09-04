@@ -19,7 +19,7 @@ struct LayerManipulationHelper {
     QHash<int, QList<QTreeWidgetItem*>> childrenMovedToLayer;
 };
 
-class TreeMapHint : public QObject, public AlterationAcknoledger {
+class TreeMapHint : public AlterationAcknoledger {
     
     Q_OBJECT
     
@@ -36,7 +36,7 @@ class TreeMapHint : public QObject, public AlterationAcknoledger {
         void requestingUIUpdate(const QHash<QTreeWidgetItem*, AtomUpdates> &toUpdate);
         void requestingUIUpdate(const QList<QTreeWidgetItem*> &toUpdate, const AtomUpdates &updates);
         void requestingUIUserChange(const QList<QTreeWidgetItem*> &toUpdate, const RPZUser &newUser);
-        void requestingUIMove(const QHash<int, QList<QTreeWidgetItem*>> &childrenMovedToLayerMaster);
+        void requestingUIMove(const QHash<int, QList<QTreeWidgetItem*>> &childrenMovedToLayer);
 
     private slots:
         void _onRenamedAsset(const RPZAssetHash &id, const QString &newName);

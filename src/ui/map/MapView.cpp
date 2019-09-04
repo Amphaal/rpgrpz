@@ -5,9 +5,11 @@ MapView::MapView(QWidget *parent) :
     _hiddingBrush(new QBrush("#EEE", Qt::BrushStyle::SolidPattern)),
     _hints(new MapHint),
     _menuHandler(new AtomsContextualMenuHandler(_hints, this)) {
-
-    this->_hints->moveToThread(new QThread);
-
+    
+    auto n = new QThread;
+    this->_hints->moveToThread(n);
+    n->start();
+    
     //default
     auto scene = new QGraphicsScene(this->_defaultSceneSize, this->_defaultSceneSize, this->_defaultSceneSize, this->_defaultSceneSize);
     this->setScene(scene);
@@ -105,79 +107,24 @@ void MapView::_handleHintsSignalsAndSlots() {
         }
     );
 
-    //on standard ui alteration
     QObject::connect(
         this->_hints, &ViewMapHint::requestingUIAlteration,
-        [=](const PayloadAlteration &type, const QList<QGraphicsItem*> &toAlter) {
-            if(type == PA_Selected) this->scene()->clearSelection();
-            if(type == PA_Reset) this->scene()->clear();
-
-            for(auto item : toAlter) {
-                switch(type) {
-        
-                    case PA_Reset:
-                    case PA_Added: {
-                        this->_addItem(item, true);
-                    }
-                    break;
-
-                    case PA_Focused: {
-                        this->centerOn(item);
-                    }
-                    break;
-
-                    case PA_Selected: {
-                        item->setSelected(true);
-                    }
-                    break;
-
-                    case PA_Removed: {
-                        this->scene()->removeItem(item);
-                        delete item;
-                    }
-                    break;
-                }
-            }
-
-            this->_hideLoader();
-        }
+        this, &MapView::_onUIAlterationRequest
     );
     
     QObject::connect(
         this->_hints, QOverload<const QHash<QGraphicsItem*, AtomUpdates>&>::of(&ViewMapHint::requestingUIUpdate),
-        [=](const QHash<QGraphicsItem*, AtomUpdates> &toUpdate) {
-            
-            for(auto i = toUpdate.constBegin(); i != toUpdate.constEnd(); i++) {
-                this->_updateItemValue(i.key(), i.value());
-            }
-            
-            this->_hideLoader();
-        }
+        this, QOverload<const QHash<QGraphicsItem*, AtomUpdates>&>::of(&MapView::_onUIUpdateRequest)
     );
-
-
+    
     QObject::connect(
         this->_hints, QOverload<const QList<QGraphicsItem*>&, const AtomUpdates&>::of(&ViewMapHint::requestingUIUpdate),
-        [=](const QList<QGraphicsItem*> &toUpdate, const AtomUpdates &updates) {
-            for(auto item : toUpdate) {
-                this->_updateItemValue(item, updates);
-            }
-            this->_hideLoader();
-        }
+        this, QOverload<const QList<QGraphicsItem*>&, const AtomUpdates&>::of(&MapView::_onUIUpdateRequest)
     );
 
     QObject::connect(
         this->_hints, &ViewMapHint::requestingUIUserChange,
-        [=](const QList<QGraphicsItem*> &toUpdate, const RPZUser &newUser) {
-            for(auto item : toUpdate) {
-                if(auto pathItem = dynamic_cast<QGraphicsPathItem*>(item)) {
-                    auto c_pen = pathItem->pen();
-                    c_pen.setColor(newUser.color());
-                    pathItem->setPen(c_pen);
-                } 
-            }
-            this->_hideLoader();
-        }
+        this, &MapView::_onUIUserChangeRequest
     );
 
 }
@@ -191,6 +138,67 @@ void MapView::_hideLoader() {
 void MapView::_displayLoader() {
     this->_isLoading = true;
     this->setForegroundBrush(*this->_hiddingBrush);
+}
+
+void MapView::_onUIUpdateRequest(const QHash<QGraphicsItem*, AtomUpdates> &toUpdate) {
+    
+    for(auto i = toUpdate.constBegin(); i != toUpdate.constEnd(); i++) {
+        this->_updateItemValue(i.key(), i.value());
+    }
+    
+    this->_hideLoader();
+}
+
+void MapView::_onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const AtomUpdates &updates) {
+    for(auto item : toUpdate) {
+        this->_updateItemValue(item, updates);
+    }
+    this->_hideLoader();
+}
+
+void MapView::_onUIUserChangeRequest(const QList<QGraphicsItem*> &toUpdate, const RPZUser &newUser) {
+    for(auto item : toUpdate) {
+        if(auto pathItem = dynamic_cast<QGraphicsPathItem*>(item)) {
+            auto c_pen = pathItem->pen();
+            c_pen.setColor(newUser.color());
+            pathItem->setPen(c_pen);
+        } 
+    }
+    this->_hideLoader();
+}
+
+void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<QGraphicsItem*> &toAlter) {
+    if(type == PA_Selected) this->scene()->clearSelection();
+    if(type == PA_Reset) this->scene()->clear();
+
+    for(auto item : toAlter) {
+        switch(type) {
+
+            case PA_Reset:
+            case PA_Added: {
+                this->_addItem(item, true);
+            }
+            break;
+
+            case PA_Focused: {
+                this->centerOn(item);
+            }
+            break;
+
+            case PA_Selected: {
+                item->setSelected(true);
+            }
+            break;
+
+            case PA_Removed: {
+                this->scene()->removeItem(item);
+                delete item;
+            }
+            break;
+        }
+    }
+
+    this->_hideLoader();
 }
 
 void MapView::_addItem(QGraphicsItem* toAdd, bool mustNotifyMovement) {

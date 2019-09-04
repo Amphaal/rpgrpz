@@ -19,7 +19,7 @@ enum PayloadAlteration {
     PA_AtomTemplateChanged
 }; 
 
-static const QStringList PayloadAlterationAsString {
+static const QStringList PayloadAlterationAsStr {
     "Unknown",
     "Focused",
     "Selected",

@@ -10,6 +10,8 @@ TreeMapHint::TreeMapHint() : AlterationAcknoledger(AlterationPayload::Source::Lo
         AssetsDatabase::get(), &AssetsDatabase::assetRenamed,
         this, &TreeMapHint::_onRenamedAsset
     );
+    
+    // this->connectToAlterationEmissions();
 
 }
 
