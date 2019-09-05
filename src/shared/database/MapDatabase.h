@@ -14,11 +14,11 @@ class MapDatabase : public JSONDatabase {
     public:
         MapDatabase(const QString &filePath);
 
-        void saveIntoFile(RPZMap<RPZAtom> &atoms);
-        static QJsonObject toObject(RPZMap<RPZAtom> &atoms, QJsonDocument &doc);
+        void saveIntoFile(const RPZMap<RPZAtom> &atoms);
+        static QJsonObject toObject(const RPZMap<RPZAtom> &atoms, const QJsonDocument &doc);
 
         RPZMap<RPZAtom> toAtoms();
-        static RPZMap<RPZAtom> toAtoms(QJsonDocument &doc);
+        static RPZMap<RPZAtom> toAtoms(const QJsonDocument &doc);
 
     protected:
         const QString defaultJsonDoc() override;

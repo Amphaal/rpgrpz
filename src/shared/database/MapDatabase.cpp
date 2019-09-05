@@ -4,7 +4,7 @@ MapDatabase::MapDatabase(const QString &filePath) : _filePath(filePath) {
     JSONDatabase::_instanciateDb();
 };
 
-QJsonObject MapDatabase::toObject(RPZMap<RPZAtom> &atoms, QJsonDocument &doc) {
+QJsonObject MapDatabase::toObject(const RPZMap<RPZAtom> &atoms, const QJsonDocument &doc) {
 
     //reseting "atoms" object
     QJsonArray db_atoms;
@@ -33,7 +33,7 @@ QJsonObject MapDatabase::toObject(RPZMap<RPZAtom> &atoms, QJsonDocument &doc) {
 
 }
 
-void MapDatabase::saveIntoFile(RPZMap<RPZAtom> &atoms) {
+void MapDatabase::saveIntoFile(const RPZMap<RPZAtom> &atoms) {
     
     auto copy = MapDatabase::toObject(atoms, this->_db);
 
@@ -50,7 +50,7 @@ RPZMap<RPZAtom> MapDatabase::toAtoms() {
     return out;
 }
 
-RPZMap<RPZAtom> MapDatabase::toAtoms(QJsonDocument &doc) {
+RPZMap<RPZAtom> MapDatabase::toAtoms(const QJsonDocument &doc) {
     RPZMap<RPZAtom> out;
 
     auto db_atoms = doc["atoms"].toArray();
