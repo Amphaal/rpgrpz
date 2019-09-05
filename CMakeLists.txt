@@ -168,7 +168,7 @@ IF(APPLE)
     SET(Qt5_DIR "/Qt/5.13.0/clang_64/lib/cmake/Qt5")
 endif()
 
-find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL Concurrent)
+find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL)
 list(APPEND EXT_LIBS
     Qt5::Core
     Qt5::Gui 
@@ -176,7 +176,6 @@ list(APPEND EXT_LIBS
     Qt5::Network
     Qt5::Svg
     Qt5::OpenGL
-    Qt5::Concurrent
 )
 
 #################################

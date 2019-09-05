@@ -9,7 +9,6 @@
 #include <QDebug>
 #include <QMutex>
 #include <QMutexLocker>
-#include <QtConcurrent>
 
 #include "src/shared/models/RPZAtom.h"
 #include "src/shared/payloads/Payloads.h"

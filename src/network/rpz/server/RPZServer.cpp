@@ -2,8 +2,6 @@
 
 RPZServer::RPZServer() {
 
-    qRegisterMetaType<JSONMethod>("JSONMethod");
-
     //connect to new connections (proxy through windowed function to ensure event is handled into the server thread)
     QObject::connect(
         this, &QTcpServer::newConnection, 

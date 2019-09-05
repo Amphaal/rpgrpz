@@ -277,16 +277,18 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
     AtomsStorage::_handleAlterationRequest(payload);
 
     //if asset changed
-    if(auto bPayload = dynamic_cast<AssetChangedPayload*>(&payload)) _replaceMissingAssetPlaceholders(bPayload->assetMetadata());
+    if(auto mPayload = dynamic_cast<AssetChangedPayload*>(&payload)) {
+        this->_replaceMissingAssetPlaceholders(mPayload->assetMetadata());
+    }
     
     //if template chaged
-    else if(auto bPayload = dynamic_cast<AtomTemplateChangedPayload*>(&payload)) {
+    else if(auto mPayload = dynamic_cast<AtomTemplateChangedPayload*>(&payload)) {
 
         {
             QMutexLocker m(&this->_m_templateAtom);
 
             this->_templateAtom->setMetadata(
-                bPayload->updates()
+                mPayload->updates()
             );
         }
 

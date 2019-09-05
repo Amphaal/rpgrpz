@@ -5,9 +5,8 @@ MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) :
     AtomsContextualMenuHandler(mapMaster, this),
     _hints(new TreeMapHint) {
     
-    // auto nn = new QThread;
-    // this->_hints->moveToThread(nn);
-    // nn->start();
+    this->_hints->moveToThread(new QThread);
+    this->_hints->thread()->start();
 
 	this->setSortingEnabled(true);
 
@@ -91,7 +90,10 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
 }
 
 void MapLayoutTree::_onUIAlterationRequest(const PayloadAlteration &type, const QList<QTreeWidgetItem*> &toAlter) {
-            
+    
+    //prevent circual selection/focus
+    QSignalBlocker b(this);
+
     if(type == PA_Selected) this->_clearSelectedItems();
     if(type == PA_Reset) this->clear();
 

@@ -104,4 +104,5 @@ class AlterationPayload : public QVariantHash {
         }
 };
 
+Q_DECLARE_METATYPE(PayloadAlteration)
 Q_DECLARE_METATYPE(AlterationPayload)
