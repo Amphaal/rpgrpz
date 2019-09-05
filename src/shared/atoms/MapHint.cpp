@@ -10,7 +10,6 @@ void MapHint::_handleAlterationRequest(AlterationPayload &payload) {
 
     //define dirty
     this->_shouldMakeMapDirty(payload);
-
     
 }
 

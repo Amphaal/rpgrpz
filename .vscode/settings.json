@@ -132,7 +132,6 @@
         "qpixmapcache": "cpp",
         "qrandomgenerator": "cpp",
         "qlist": "cpp",
-        "qtconcurrent": "cpp",
         "qcoreapplication": "cpp",
         "compare": "cpp",
         "qmutexlocker": "cpp",

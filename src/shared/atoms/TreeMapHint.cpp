@@ -11,7 +11,7 @@ TreeMapHint::TreeMapHint() : AlterationAcknoledger(AlterationPayload::Source::Lo
         this, &TreeMapHint::_onRenamedAsset
     );
     
-    // this->connectToAlterationEmissions();
+    this->connectToAlterationEmissions();
 
 }
 
@@ -33,7 +33,7 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
     this->_mvHelper = LayerManipulationHelper();
 
     //atom wielders format (eg INSERT / RESET)
-    if(auto bPayload = dynamic_cast<AtomsWielderPayload*>(&payload)) {
+    if(auto mPayload = dynamic_cast<AtomsWielderPayload*>(&payload)) {
         
         {
             QMutexLocker l(&this->_m_layersItems);
@@ -44,7 +44,7 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
                 this->_RPZAtomIdsBoundByRPZAssetHash.clear();
             }
 
-            auto atoms  = bPayload->atoms();
+            auto atoms  = mPayload->atoms();
             for (auto i = atoms.begin(); i != atoms.end(); ++i) {
                 
                 auto atomId = i.key();
@@ -114,10 +114,10 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
 
 
     //on metadata change (bulk)
-    else if(auto bPayload = dynamic_cast<BulkMetadataChangedPayload*>(&payload)) {
+    else if(auto mPayload = dynamic_cast<BulkMetadataChangedPayload*>(&payload)) {
         
         QHash<QTreeWidgetItem*, AtomUpdates> toUpdate;
-        auto updatesById = bPayload->atomsUpdates();
+        auto updatesById = mPayload->atomsUpdates();
         
         for (auto i = updatesById.begin(); i != updatesById.end(); i++) {
             
@@ -132,7 +132,7 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
     }
 
     //on remove
-    else if(auto bPayload = dynamic_cast<RemovedPayload*>(&payload)) {
+    else if(auto mPayload = dynamic_cast<RemovedPayload*>(&payload)) {
         
         for (auto &id : mPayload->targetRPZAtomIds()) {
             auto item = this->_atomTreeItemsById[id];
@@ -144,7 +144,7 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
     }
 
     //anything else
-    else if(auto bPayload = dynamic_cast<MultipleTargetsPayload*>(&payload)) {
+    else if(auto mPayload = dynamic_cast<MultipleTargetsPayload*>(&payload)) {
         
         for (auto &id : mPayload->targetRPZAtomIds()) {
             auto item = this->_atomTreeItemsById[id];

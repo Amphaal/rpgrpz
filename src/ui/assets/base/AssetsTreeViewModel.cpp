@@ -11,16 +11,19 @@ void AssetsTreeViewModel::onRPZClientConnecting() {
     //import asset
     QObject::connect(
         this->_rpzClient, &RPZClient::receivedAsset,
-        [&](const RPZAssetImportPackage &package) {
-            
-            this->beginResetModel();
-                auto metadata = this->_db->importAsset(package); 
-            this->endResetModel();
-            
-            auto payload = AssetChangedPayload(metadata);
-            AlterationHandler::get()->queueAlteration(AlterationPayload::Source::Local_AtomDB, payload);
-        }
+        this, &AssetsTreeViewModel::_onReceivedAsset
     );
+}
+
+void AssetsTreeViewModel::_onReceivedAsset(const RPZAssetImportPackage &package) {
+    
+    this->beginResetModel();
+        auto metadata = this->_db->importAsset(package); 
+    this->endResetModel();
+    
+    auto payload = AssetChangedPayload(metadata);
+    AlterationHandler::get()->queueAlteration(AlterationPayload::Source::Local_AtomDB, payload);
+
 }
 
 ///////////////

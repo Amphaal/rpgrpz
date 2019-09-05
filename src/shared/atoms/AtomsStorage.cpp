@@ -206,7 +206,7 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
     
     auto pType = payload.type();
     if(pType == PayloadAlteration::PA_Reset) emit heavyAlterationProcessing();
-
+    
     //may register for history
     this->_registerPayloadForHistory(payload);
 
@@ -227,8 +227,8 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
     QList<RPZAtomId> alterationsIds;
 
     //reset/insert types
-    if(auto bPayload = dynamic_cast<AtomsWielderPayload*>(&payload)) {
-        for (const auto &atom : bPayload->atoms()) {
+    if(auto mPayload = dynamic_cast<AtomsWielderPayload*>(&payload)) {
+        for (const auto &atom : mPayload->atoms()) {
 
             auto storedAtom = this->_insertAtom(atom);
             auto id = atom.id();
@@ -240,8 +240,8 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
     }
 
     //bulk
-    else if(auto bPayload = dynamic_cast<BulkMetadataChangedPayload*>(&payload)) {
-        auto updatesById = bPayload->atomsUpdates();
+    else if(auto mPayload = dynamic_cast<BulkMetadataChangedPayload*>(&payload)) {
+        auto updatesById = mPayload->atomsUpdates();
         for (auto i = updatesById.begin(); i != updatesById.end(); i++) {
             
             auto id = i.key();

@@ -5,10 +5,9 @@ MapView::MapView(QWidget *parent) :
     _hiddingBrush(new QBrush("#EEE", Qt::BrushStyle::SolidPattern)),
     _hints(new MapHint),
     _menuHandler(new AtomsContextualMenuHandler(_hints, this)) {
-    
-    auto n = new QThread;
-    this->_hints->moveToThread(n);
-    n->start();
+
+    this->_hints->moveToThread(new QThread);
+    this->_hints->thread()->start();
     
     //default
     auto scene = new QGraphicsScene(this->_defaultSceneSize, this->_defaultSceneSize, this->_defaultSceneSize, this->_defaultSceneSize);
@@ -95,7 +94,7 @@ void MapView::_handleHintsSignalsAndSlots() {
 
     //on map loading, set placeholder...
     QObject::connect(
-        this->_hints, &ViewMapHint::heavyAlterationProcessing,
+        this->_hints, &AtomsStorage::heavyAlterationProcessing,
         this, &MapView::_displayLoader
     );
 
@@ -168,6 +167,10 @@ void MapView::_onUIUserChangeRequest(const QList<QGraphicsItem*> &toUpdate, cons
 }
 
 void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<QGraphicsItem*> &toAlter) {
+    
+    //prevent circual selection
+    QSignalBlocker b(this->scene());
+
     if(type == PA_Selected) this->scene()->clearSelection();
     if(type == PA_Reset) this->scene()->clear();
 

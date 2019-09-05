@@ -85,8 +85,24 @@ int clientApp(int argc, char** argv) {
 
 int main(int argc, char** argv) {
 
+    //log SLL lib loading
     qDebug() << QSslSocket::sslLibraryBuildVersionString();
     qDebug() << QSslSocket::sslLibraryVersionString();
+
+    //registering metatypes
+    qRegisterMetaType<JSONMethod>("JSONMethod");
+    qRegisterMetaType<AlterationPayload>("AlterationPayload");
+    qRegisterMetaType<PayloadAlteration>("PayloadAlteration");
+    qRegisterMetaType<AtomUpdates>("AtomUpdates");
+    qRegisterMetaType<AtomsUpdates>("AtomsUpdates");
+    qRegisterMetaType<RPZUser>("RPZUser");
+    qRegisterMetaType<AtomParameter>("AtomParameter");
+    qRegisterMetaType<RPZMessage>("RPZMessage");
+    qRegisterMetaType<RPZResponse>("RPZResponse");
+    qRegisterMetaType<RPZAssetImportPackage>("RPZAssetImportPackage");
+
+    qRegisterMetaType<QList<QTreeWidgetItem*>>("QList<QTreeWidgetItem*>");
+    qRegisterMetaType<QList<QGraphicsItem*>>("QList<QGraphicsItem*>");
 
     //message handler
     qInstallMessageHandler(LogWriter::customMO);

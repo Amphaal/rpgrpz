@@ -16,6 +16,9 @@
 #include "src/ui/others/ClientBindable.h"
 
 class AssetsTreeViewModel : public QAbstractItemModel, public ClientBindable {
+    
+    Q_OBJECT
+    
     public:
         AssetsTreeViewModel(QObject *parent = nullptr);
         AssetsDatabase* database();
@@ -61,6 +64,9 @@ class AssetsTreeViewModel : public QAbstractItemModel, public ClientBindable {
 
     protected:
         AssetsDatabase* _db = nullptr;
+
+    private slots:
+        void _onReceivedAsset(const RPZAssetImportPackage &package);
 
     private:
         
