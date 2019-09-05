@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src\shared\async-ui\AlterationAcknoledger.h"
+#include "src/shared/async-ui/AlterationAcknoledger.h"
 
 #include "src/shared/database/AssetsDatabase.h"
 

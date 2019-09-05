@@ -19,7 +19,7 @@
 #include "editors/BrushToolEditor.hpp"
 #include "editors/AtomTextEditor.hpp"
 
-#include "src\shared\async-ui\AlterationHandler.h"
+#include "src/shared/async-ui/AlterationHandler.h"
 
 class AtomEditor : public QGroupBox {
 

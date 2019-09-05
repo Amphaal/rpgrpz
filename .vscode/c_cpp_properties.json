@@ -22,7 +22,8 @@
                 "${workspaceFolder}",
                 "${workspaceRoot}",
                 "/Qt/5.13.0/clang_64/lib/QtCore.framework/Versions/5/Headers",
-                "/Qt/5.13.0/clang_64/lib/QtGui.framework/Versions/5/Headers"
+                "/Qt/5.13.0/clang_64/lib/QtGui.framework/Versions/5/Headers",
+                "/Qt/5.13.0/clang_64/lib/QtWidgets.framework/Versions/5/Headers"
             ]
         },
         {

@@ -23,7 +23,7 @@
 
 #include "src/shared/atoms/TreeMapHint.h"
 
-#include "src\shared\commands\AtomsContextualMenuHandler.h"
+#include "src/shared/commands/AtomsContextualMenuHandler.h"
 
 
 class MapLayoutTree : public RPZTree, public AtomsContextualMenuHandler {

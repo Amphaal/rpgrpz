@@ -13,7 +13,7 @@
 #include "src/shared/models/RPZAtom.h"
 #include "src/shared/payloads/Payloads.h"
 
-#include "src\shared\async-ui\AlterationAcknoledger.h"
+#include "src/shared/async-ui/AlterationAcknoledger.h"
 
 class AtomsStorage : public AlterationAcknoledger {
 
