@@ -30,7 +30,7 @@ class AssetsDatabaseElement {
                 Downloaded = 650 
         };
         
-        static AssetsDatabaseElement* fromIndex(QModelIndex index);
+        static AssetsDatabaseElement* fromIndex(const QModelIndex &index);
         static inline const QString listMimeType = "application/x-assets-db-elem-list";
 
         static QList<AssetsDatabaseElement::Type> staticContainerTypes();

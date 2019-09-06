@@ -15,11 +15,21 @@ void AssetsTreeViewModel::onRPZClientConnecting() {
     );
 }
 
+QModelIndex AssetsTreeViewModel::_getDownloadableFolderIndex() {
+    auto root = this->index(0,0);
+    return this->index(4, 0, root);
+}
+
 void AssetsTreeViewModel::_onReceivedAsset(const RPZAssetImportPackage &package) {
     
-    this->beginResetModel();
+    //get where exactly the new asset is supposed to be
+    auto dlFolderIndex = this->_getDownloadableFolderIndex();
+    auto dlFolder = AssetsDatabaseElement::fromIndex(dlFolderIndex);
+    auto posToInsert = dlFolder->childCount();
+    
+    this->beginInsertRows(this->_getDownloadableFolderIndex(), posToInsert, posToInsert);
         auto metadata = this->_db->importAsset(package); 
-    this->endResetModel();
+    this->endInsertRows();
     
     auto payload = AssetChangedPayload(metadata);
     AlterationHandler::get()->queueAlteration(AlterationPayload::Source::Local_AtomDB, payload);
