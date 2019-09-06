@@ -11,7 +11,8 @@ AssetsTreeView::AssetsTreeView(QWidget *parent) : QTreeView(parent),
 
         //helper for root definition
         auto defineRoot = [&]() {
-            this->setRootIndex(this->_model->index(0,0));
+            auto root = this->_model->index(0,0);
+            this->setRootIndex(root);
         };
         
         this->expandAll();
@@ -20,7 +21,10 @@ AssetsTreeView::AssetsTreeView(QWidget *parent) : QTreeView(parent),
         //redefine root on reset
         QObject::connect(
             this->_model, &QAbstractItemModel::modelReset,
-            defineRoot
+            [=]() {
+                defineRoot();
+                this->expandAll();
+            }
         );
     
     //auto expand on insert

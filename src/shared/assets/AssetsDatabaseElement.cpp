@@ -1,6 +1,6 @@
 #include "AssetsDatabaseElement.h"
 
-AssetsDatabaseElement* AssetsDatabaseElement::fromIndex(QModelIndex index) {
+AssetsDatabaseElement* AssetsDatabaseElement::fromIndex(const QModelIndex &index) {
     auto ip = index.internalPointer();
     return static_cast<AssetsDatabaseElement*>(ip);
 }

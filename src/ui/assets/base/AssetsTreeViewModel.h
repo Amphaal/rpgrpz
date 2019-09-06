@@ -69,7 +69,6 @@ class AssetsTreeViewModel : public QAbstractItemModel, public ClientBindable {
         void _onReceivedAsset(const RPZAssetImportPackage &package);
 
     private:
-        
         /////////////////////
         /// DROP HANDLING ///
         /////////////////////
@@ -84,4 +83,6 @@ class AssetsTreeViewModel : public QAbstractItemModel, public ClientBindable {
         /////////////////////////
         /// END DROP HANDLING ///
         /////////////////////////
+
+        QModelIndex _getDownloadableFolderIndex(); 
 };
