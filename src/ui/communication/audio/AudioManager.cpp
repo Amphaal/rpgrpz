@@ -16,6 +16,11 @@ AudioManager::AudioManager() :
     this->_link();
 }
 
+void AudioManager::_onIdentityAck(const RPZUser &user) {
+    this->_isNetworkMaster = user.role() == RPZUser::Role::Host;
+    this->_plCtrl->setEnabled(this->_isNetworkMaster);
+}
+
 void AudioManager::onRPZClientConnecting() {
     
     //reset state
@@ -27,10 +32,7 @@ void AudioManager::onRPZClientConnecting() {
     //on receiving identity
     QObject::connect(
         _rpzClient, &RPZClient::ackIdentity,
-        [&]() {
-            this->_isNetworkMaster = this->_rpzClient->identity().role() == RPZUser::Role::Host;
-            this->_plCtrl->setEnabled(this->_isNetworkMaster);
-        }
+        this, &AudioManager::_onIdentityAck
     );
 
     //on master requesting audio change
@@ -48,12 +50,14 @@ void AudioManager::onRPZClientConnecting() {
     //on master pausing / playing
     QObject::connect(
         _rpzClient, &RPZClient::audioPlayStateChanged,
-        [&](bool isPlaying) {
-            if(isPlaying) this->_cli->play();
-            else this->_cli->pause();
-        }
+        this, &AudioManager::_onAudioPlayStateChanged
     );
 
+}
+
+void AudioManager::_onAudioPlayStateChanged(bool isPlaying) {
+    if(isPlaying) this->_cli->play();
+    else this->_cli->pause();
 }
 
 void AudioManager::onRPZClientDisconnect() {
@@ -111,9 +115,7 @@ void AudioManager::_link() {
     //on cli play state changed
     QObject::connect(
         this->_cli, &GStreamerClient::playStateChanged,
-        [&](bool isPlaying) {
-            this->_asCtrl->changeTrackState(isPlaying);
-        }
+        this->_asCtrl, &AudioProbeController::changeTrackState
     );
 
 }

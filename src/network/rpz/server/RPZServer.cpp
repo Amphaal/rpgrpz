@@ -101,7 +101,8 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         case JSONMethod::MessageFromPlayer: 
         {
             RPZMessage message(data.toHash());
-            message.setOwnership(this->_getUser(target)); //force corresponding user to it then store it
+            auto &user = this->_getUser(target);
+            message.setOwnership(user); //force corresponding user to it then store it
             this->_interpretMessage(target, message);
         }
         break;
@@ -143,7 +144,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         case JSONMethod::Handshake: {   
             
             //prepare
-            auto targetUser = this->_getUser(target);
+            auto &targetUser = this->_getUser(target);
             auto handshakePkg = RPZHandshake(data.toHash());
             
             //check versions with server, if different, reject
@@ -196,7 +197,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 //
 
 void RPZServer::_tellUserHisIdentity(JSONSocket* socket) {
-    auto serialized = this->_getUser(socket);
+    auto &serialized = this->_getUser(socket);
     socket->sendJSON(JSONMethod::AckIdentity, serialized);
 }
 
@@ -244,7 +245,7 @@ void RPZServer::_askHostForMapHistory() {
 
 void RPZServer::_alterIncomingPayloadWithUpdatedOwners(AtomsWielderPayload &wPayload, JSONSocket * senderSocket) {
     
-    auto defaultOwner = this->_getUser(senderSocket); 
+    auto &defaultOwner = this->_getUser(senderSocket); 
     auto updated = wPayload.updateEmptyUser(defaultOwner);
     
     //if sender sent no user atoms
@@ -395,6 +396,6 @@ void RPZServer::_sendToAll(const JSONMethod &method, const QVariant &data) {
 
 
 RPZUser& RPZServer::_getUser(JSONSocket* socket) {
-    const auto id = this->_idsByClientSocket[socket];
+    auto id = this->_idsByClientSocket[socket];
     return this->_usersById[id];
 }

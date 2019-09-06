@@ -24,7 +24,7 @@ class MapViewGraphicsPixmapItem : public QGraphicsPixmapItem, public GraphicsIte
             GraphicsItemsChangeNotifier(this) { }
 
     private:
-        QVariant itemChange(GraphicsItemChange change, const QVariant & value) override {
+        QVariant itemChange(GraphicsItemChange change, const QVariant &value) override {
             GraphicsItemsChangeNotifier::_notifyItemChange(change);
             return QGraphicsPixmapItem::itemChange(change, value);
         }

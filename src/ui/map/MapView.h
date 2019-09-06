@@ -46,6 +46,8 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
         enum Tool { Default, Atom, Scroll };
 
         MapView(QWidget *parent);
+        ~MapView();
+
         MapHint* hints() const;
 
     public slots:

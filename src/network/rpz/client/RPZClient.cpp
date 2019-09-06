@@ -3,7 +3,10 @@
 RPZClient::RPZClient(const QString &name, const QString &domain, const QString &port) : 
                         _name(name), 
                         _domain(domain), 
-                        _port(port) { 
+                        _port(port) { }
+
+void RPZClient::_initSock() {
+    this->_sock = new JSONSocket(this, "RPZClient");
 
     QObject::connect(
         this->_sock, &JSONSocket::JSONReceived,
@@ -29,10 +32,11 @@ RPZClient::RPZClient(const QString &name, const QString &domain, const QString &
         AlterationHandler::get(), &AlterationHandler::requiresPayloadHandling,
         this, &RPZClient::_handleAlterationRequest
     );
-               
 }
 
-RPZClient::~RPZClient() { }
+RPZClient::~RPZClient() { 
+    if(this->_sock) delete this->_sock;
+}
 
 void RPZClient::run() {
 
@@ -41,8 +45,8 @@ void RPZClient::run() {
         emit connectionStatus("Nom de joueur requis !", true);
         emit closed();
     }
-    
-    this->_sock = new JSONSocket(this, "RPZClient");
+
+    this->_initSock();
 
     //connect...
     this->_sock->socket()->connectToHost(this->_domain, this->_port.toInt());

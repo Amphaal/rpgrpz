@@ -15,7 +15,7 @@
 
 class MapViewGraphicsRectItem : public QGraphicsRectItem, public GraphicsItemsChangeNotifier {
     public:
-        MapViewGraphicsRectItem(const QRectF & rect, const QPen &pen, const QBrush &brush) :
+        MapViewGraphicsRectItem(const QRectF &rect, const QPen &pen, const QBrush &brush) :
         QGraphicsRectItem(rect), 
         GraphicsItemsChangeNotifier(this) {
             this->setBrush(brush);
@@ -23,7 +23,7 @@ class MapViewGraphicsRectItem : public QGraphicsRectItem, public GraphicsItemsCh
         }
             
     private:
-        QVariant itemChange(GraphicsItemChange change, const QVariant & value) override {
+        QVariant itemChange(GraphicsItemChange change, const QVariant &value) override {
             GraphicsItemsChangeNotifier::_notifyItemChange(change);
             return QGraphicsRectItem::itemChange(change, value);
         }

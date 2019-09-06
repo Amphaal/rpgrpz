@@ -157,7 +157,6 @@ void ConnectWidget::_destroyClient() {
     if(this->_cc) {
         this->_cc->thread()->quit();
         this->_cc->thread()->wait();
-        delete this->_cc;
         this->_cc = nullptr;
     }
 

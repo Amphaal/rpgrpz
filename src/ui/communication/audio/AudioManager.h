@@ -16,10 +16,19 @@
 #include "src/ui/others/ClientBindable.h"
 
 class AudioManager : public QWidget, public ClientBindable {
+    
+    Q_OBJECT
+    
     public:
         AudioManager();
 
         PlaylistController* _plCtrl = nullptr;
+
+    private slots:
+        void _onIdentityAck(const RPZUser &user);
+        void _onAudioPlayStateChanged(bool isPlaying);
+        void _onSeekingRequested(int seekPos);
+        void _playAudio(const QString &audioSourceUrl, const QString &sourceTitle);
 
     private:
         AudioProbeController* _asCtrl = nullptr;
@@ -34,9 +43,8 @@ class AudioManager : public QWidget, public ClientBindable {
         void _onToolbarActionRequested(const TrackToolbar::Action &action);
         void _onToolbarPlayRequested(YoutubeVideoMetadata* playlistItemPtr);
         void _onPlayerPositionChanged(int position);
-        void _onSeekingRequested(int seekPos);
+        
         void _onStreamPlayEnded();
         void _onStreamError();
-
-        void _playAudio(const QString &audioSourceUrl, const QString &sourceTitle);
+        
 };

@@ -30,7 +30,9 @@ class MapLayoutTree : public RPZTree, public AtomsContextualMenuHandler {
 
     public:
         MapLayoutTree(AtomsStorage* mapMaster, QWidget* parent = nullptr);
-        TreeMapHint* hints();
+        ~MapLayoutTree();
+
+        TreeMapHint* hints() const;
 
     protected:
         void keyPressEvent(QKeyEvent * event) override;

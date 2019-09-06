@@ -15,7 +15,7 @@
 
 class MapViewGraphicsPathItem : public QGraphicsPathItem, public GraphicsItemsChangeNotifier {
     public:
-        MapViewGraphicsPathItem(const QPainterPath & path, const QPen &pen, const QBrush &brush = QBrush()) : 
+        MapViewGraphicsPathItem(const QPainterPath &path, const QPen &pen, const QBrush &brush = QBrush()) : 
         QGraphicsPathItem(path), 
         GraphicsItemsChangeNotifier(this),
         _sourceBrush(brush) {
@@ -35,7 +35,7 @@ class MapViewGraphicsPathItem : public QGraphicsPathItem, public GraphicsItemsCh
         QBrush _sourceBrush;
         QSizeF _sourceBrushSize;
 
-        QVariant itemChange(GraphicsItemChange change, const QVariant & value) override {
+        QVariant itemChange(GraphicsItemChange change, const QVariant &value) override {
             GraphicsItemsChangeNotifier::_notifyItemChange(change);
             return QGraphicsPathItem::itemChange(change, value);
         }

@@ -15,13 +15,13 @@ class ConnectWidget : public QWidget {
 
     Q_OBJECT
 
-    signals:
-        void startingConnection(RPZClient* cc);
-
     public:
         enum State { NotConnected, Connecting, Connected };
 
         ConnectWidget(QWidget * parent = nullptr);
+
+    signals:
+        void startingConnection(RPZClient* cc);
 
     private:
         QLineEdit* _portTarget = nullptr;
