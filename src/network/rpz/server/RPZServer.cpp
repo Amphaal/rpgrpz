@@ -38,7 +38,7 @@ void RPZServer::run() {
 void RPZServer::_onNewConnection() {
         
         //new connection,store it
-        auto clientSocket = new JSONSocket("RPZServer", this->nextPendingConnection());
+        auto clientSocket = new JSONSocket(this, "RPZServer", this->nextPendingConnection());
         
         //create new user
         RPZUser user(clientSocket);

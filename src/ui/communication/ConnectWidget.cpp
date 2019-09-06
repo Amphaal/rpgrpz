@@ -93,6 +93,7 @@ void ConnectWidget::_tryConnectToServer() {
 
     //create a separate thread to run the client into
     auto clientThread = new QThread;
+    clientThread->setObjectName("RPZClient Thread");
     this->_cc->moveToThread(clientThread);
     
     //events...

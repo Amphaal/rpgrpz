@@ -13,7 +13,7 @@ class JSONSocket : public QObject {
     Q_OBJECT
 
     public:
-        JSONSocket(const QString &logId, QTcpSocket * socketToHandle = nullptr);
+        JSONSocket(QObject* parent, const QString &logId, QTcpSocket * socketToHandle = nullptr);
         ~JSONSocket();
         void sendJSON(const JSONMethod &method, const QVariant &data);
         QTcpSocket* socket();
