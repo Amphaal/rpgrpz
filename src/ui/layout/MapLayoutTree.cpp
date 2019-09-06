@@ -32,6 +32,13 @@ MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) :
 
 }
 
+MapLayoutTree::~MapLayoutTree() {
+    if(this->_hints) {
+        this->_hints->thread()->quit();
+        this->_hints->thread()->wait();
+    }
+}
+
 void MapLayoutTree::_handleHintsSignalsAndSlots() {
 
     //on std alteration requested
@@ -211,7 +218,7 @@ void MapLayoutTree::_renameAtomItem(QTreeWidgetItem* toRename, const QString &ne
     toRename->setText(0, newName);
 }
 
-TreeMapHint* MapLayoutTree::hints() {
+TreeMapHint* MapLayoutTree::hints() const {
     return this->_hints;
 }
 

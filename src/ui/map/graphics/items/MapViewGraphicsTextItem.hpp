@@ -26,7 +26,7 @@ class MapViewGraphicsTextItem : public QGraphicsTextItem, public GraphicsItemsCh
         }
 
     private:
-        QVariant itemChange(GraphicsItemChange change, const QVariant & value) override {
+        QVariant itemChange(GraphicsItemChange change, const QVariant &value) override {
             GraphicsItemsChangeNotifier::_notifyItemChange(change);
             return QGraphicsTextItem::itemChange(change, value);
         }

@@ -45,6 +45,13 @@ MapView::MapView(QWidget *parent) :
     this->setMouseTracking(true);
 }
 
+MapView::~MapView() {
+    if(this->_hints) {
+        this->_hints->thread()->quit();
+        this->_hints->thread()->wait();
+    }
+}
+
 
 void MapView::onItemChanged(GraphicsItemsChangeNotifier* item, MapViewCustomItemsEventFlag flag) {
 

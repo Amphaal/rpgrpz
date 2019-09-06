@@ -79,12 +79,14 @@ class RPZClient : public QObject, public JSONRouter {
         QVector<RPZUser> _sessionUsers;
         mutable QMutex _m_sessionUsers;
 
+        void _initSock();
+
         void _onConnected();
         void _error(QAbstractSocket::SocketError _socketError);
         void _onDisconnect();
         
         void _routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) override;
- 
+
     private slots:
         void _handleAlterationRequest(const AlterationPayload &payload);
 

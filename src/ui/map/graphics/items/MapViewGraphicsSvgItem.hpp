@@ -20,7 +20,7 @@ class MapViewGraphicsSvgItem : public QGraphicsSvgItem, public GraphicsItemsChan
         GraphicsItemsChangeNotifier(this) {}
     
     private:
-        QVariant itemChange(GraphicsItemChange change, const QVariant & value) override {
+        QVariant itemChange(GraphicsItemChange change, const QVariant &value) override {
             GraphicsItemsChangeNotifier::_notifyItemChange(change);
             return QGraphicsSvgItem::itemChange(change, value);
         }

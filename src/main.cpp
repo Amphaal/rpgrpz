@@ -106,7 +106,7 @@ int main(int argc, char** argv) {
     qRegisterMetaType<ResetPayload>("ResetPayload");
     qRegisterMetaType<QVector<RPZAtomId>>("QVector<RPZAtomId>");
     qRegisterMetaType<QVector<RPZUser>>("QVector<RPZUser>");
-    
+    qRegisterMetaType<QVector<RPZMessage>>("QVector<RPZMessage>");
     
     //message handler
     qInstallMessageHandler(LogWriter::customMO);

@@ -1,5 +1,15 @@
 #include "mainWindow.h"
 
+MainWindow::~MainWindow() {
+    if(this->_rpzServer) {
+        this->_rpzServer->thread()->quit();
+        this->_rpzServer->thread()->wait();
+    }
+
+    //unbind network client from ui
+    ClientBindable::unbindAll();
+}
+
 MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 
     //bind AlterationHandler to UI Thread
@@ -59,9 +69,6 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 
     //save map changes
     this->_mapView->hints()->mayWantToSavePendingState();
-
-    //unbind network client from ui
-    ClientBindable::unbindAll();
 
     //save window state
     this->_saveWindowState();
