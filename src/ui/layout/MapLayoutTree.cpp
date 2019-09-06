@@ -113,6 +113,8 @@ void MapLayoutTree::_onUIAlterationRequest(const PayloadAlteration &type, const 
                 this->_removeItem(item);
             break;
 
+            default:
+            break;
 
         }
     }
@@ -168,6 +170,8 @@ void MapLayoutTree::_updateAtomItemValues(QTreeWidgetItem* toUpdate, const AtomU
                 toUpdate->setData(1, RPZUserRoles::AtomAvailability, i.value().toBool());
             break;
 
+            default:
+            break;
         }
     }
 

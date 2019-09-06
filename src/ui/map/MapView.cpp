@@ -198,6 +198,9 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
                 delete item;
             }
             break;
+
+            default:
+            break;
         }
     }
 

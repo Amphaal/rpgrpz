@@ -12,7 +12,8 @@
             },
             "macFrameworkPath": [
                 "/System/Library/Frameworks",
-                "/Library/Frameworks"
+                "/Library/Frameworks",
+                "/Qt/5.13.0/clang_64/lib"
             ],
             "cStandard": "c11",
             "cppStandard": "c++17",
@@ -21,9 +22,11 @@
             "includePath": [
                 "${workspaceFolder}",
                 "${workspaceRoot}",
+                "/Qt/5.13.0/clang_64/lib/QtNetwork.framework/Versions/5/Headers",
                 "/Qt/5.13.0/clang_64/lib/QtCore.framework/Versions/5/Headers",
+                "/Qt/5.13.0/clang_64/lib/QtWidgets.framework/Versions/5/Headers",
                 "/Qt/5.13.0/clang_64/lib/QtGui.framework/Versions/5/Headers",
-                "/Qt/5.13.0/clang_64/lib/QtWidgets.framework/Versions/5/Headers"
+                "/Qt/5.13.0/clang_64/lib/QtOpenGL.framework/Versions/5/Headers"
             ]
         },
         {

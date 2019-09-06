@@ -23,7 +23,7 @@
 #include "src/helpers/_appContext.h"
 #include "src/shared/async-ui/AlterationAcknoledger.h"
 
-class RPZClient : public JSONSocket, public JSONRouter {
+class RPZClient : public QObject, public JSONRouter {
 
     Q_OBJECT
 
@@ -66,7 +66,9 @@ class RPZClient : public JSONSocket, public JSONRouter {
         void audioPositionChanged(int newPos);
         void audioPlayStateChanged(bool isPlaying);
 
-    private:       
+    private:   
+        JSONSocket* _sock = nullptr;   
+        
         QString _domain;
         QString _port;
         QString _name;
