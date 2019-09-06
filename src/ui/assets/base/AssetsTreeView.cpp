@@ -17,15 +17,6 @@ AssetsTreeView::AssetsTreeView(QWidget *parent) : QTreeView(parent),
         
         this->expandAll();
         defineRoot();
-
-        //redefine root on reset
-        QObject::connect(
-            this->_model, &QAbstractItemModel::modelReset,
-            [=]() {
-                defineRoot();
-                this->expandAll();
-            }
-        );
     
     //auto expand on insert
     QObject::connect(

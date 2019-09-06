@@ -2,7 +2,7 @@
 
 AssetsTreeViewModel::AssetsTreeViewModel(QObject *parent) : QAbstractItemModel(parent), _db(AssetsDatabase::get()) { };
 
-AssetsDatabase* AssetsTreeViewModel::database() {
+AssetsDatabase* AssetsTreeViewModel::database() const {
     return this->_db;
 }
 
@@ -13,10 +13,11 @@ void AssetsTreeViewModel::onRPZClientConnecting() {
         this->_rpzClient, &RPZClient::receivedAsset,
         this, &AssetsTreeViewModel::_onReceivedAsset
     );
+
 }
 
 QModelIndex AssetsTreeViewModel::_getDownloadableFolderIndex() {
-    auto root = this->index(0,0);
+    auto root = this->index(0, 0);
     return this->index(4, 0, root);
 }
 
@@ -392,9 +393,13 @@ QMimeData* AssetsTreeViewModel::mimeData(const QModelIndexList &indexes) const {
     //remove last separator
     pointerList = pointerList.left(pointerList.length() - 1); 
 
-    //mime
+    //update mime
     auto mimeData = QAbstractItemModel::mimeData(indexes);
     mimeData->setData(AssetsDatabaseElement::listMimeType, pointerList.toUtf8());
+
+    //store as dragged indexes
+    this->_bufferedDraggedIndexes = indexes;
+
     return mimeData;
 }
 

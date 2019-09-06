@@ -21,8 +21,9 @@ class AssetsTreeViewModel : public QAbstractItemModel, public ClientBindable {
     
     public:
         AssetsTreeViewModel(QObject *parent = nullptr);
-        AssetsDatabase* database();
-        void onRPZClientConnecting() override;
+        
+        QModelIndexList getPersistentIndexList() const;
+        AssetsDatabase* database() const;
 
         ///////////////
         /// HELPERS ///
@@ -69,6 +70,8 @@ class AssetsTreeViewModel : public QAbstractItemModel, public ClientBindable {
         void _onReceivedAsset(const RPZAssetImportPackage &package);
 
     private:
+        void onRPZClientConnecting() override;
+
         /////////////////////
         /// DROP HANDLING ///
         /////////////////////
@@ -85,4 +88,6 @@ class AssetsTreeViewModel : public QAbstractItemModel, public ClientBindable {
         /////////////////////////
 
         QModelIndex _getDownloadableFolderIndex(); 
+        mutable QModelIndexList _bufferedDraggedIndexes;
+
 };
