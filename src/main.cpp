@@ -103,7 +103,11 @@ int main(int argc, char** argv) {
 
     qRegisterMetaType<QList<QTreeWidgetItem*>>("QList<QTreeWidgetItem*>");
     qRegisterMetaType<QList<QGraphicsItem*>>("QList<QGraphicsItem*>");
-
+    qRegisterMetaType<ResetPayload>("ResetPayload");
+    qRegisterMetaType<QVector<RPZAtomId>>("QVector<RPZAtomId>");
+    qRegisterMetaType<QVector<RPZUser>>("QVector<RPZUser>");
+    
+    
     //message handler
     qInstallMessageHandler(LogWriter::customMO);
 

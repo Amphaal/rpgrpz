@@ -7,6 +7,7 @@
 
 class AtomsWielderPayload : public AlterationPayload {
     public:
+        AtomsWielderPayload() {}
         AtomsWielderPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
         AtomsWielderPayload(const PayloadAlteration &alteration, const RPZMap<RPZAtom> &atoms) : AlterationPayload(alteration) {
             this->_setAddedAtoms(atoms);

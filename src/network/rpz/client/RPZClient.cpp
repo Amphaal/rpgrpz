@@ -1,7 +1,7 @@
 #include "RPZClient.h"
 
 RPZClient::RPZClient(const QString &name, const QString &domain, const QString &port) : 
-                        JSONSocket("RPZClient"),
+                        JSONSocket(this, "RPZClient"),
                         _name(name), 
                         _domain(domain), 
                         _port(port) { 

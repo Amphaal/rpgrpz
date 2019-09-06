@@ -23,8 +23,8 @@ QVector<RPZAtomId> AtomsStorage::selectedRPZAtomIds() const {
 
 void AtomsStorage::_registerPayloadForHistory(AlterationPayload &payload) {
     
-    //do nothing if payload is from timeline
-    if(!payload.isFromTimeline()) return;
+    //do not register again if payload is already from timeline
+    if(payload.isFromTimeline()) return;
 
     //do nothing if payload is not redo compatible
     if(!payload.isNetworkRoutable()) return;

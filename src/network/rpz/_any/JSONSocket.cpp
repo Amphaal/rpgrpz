@@ -1,6 +1,6 @@
 #include "JSONSocket.h"
 
-JSONSocket::JSONSocket(const QString &logId, QTcpSocket* socketToHandle) : _logId(logId) {
+JSONSocket::JSONSocket(QObject* parent, const QString &logId, QTcpSocket* socketToHandle) : QObject(parent), _logId(logId) {
 
     if (socketToHandle) {
         this->_isWrapper = true;
