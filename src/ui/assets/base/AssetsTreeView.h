@@ -31,7 +31,6 @@ class AssetsTreeView : public QTreeView {
         void assetTemplateChanged(const RPZAssetMetadata &assetMetadata);
 
     private:
-        // void drawRow(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
         ///////////////////
         // drag and drop //
