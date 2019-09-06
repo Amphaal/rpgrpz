@@ -135,7 +135,10 @@
         "qcoreapplication": "cpp",
         "compare": "cpp",
         "qmutexlocker": "cpp",
-        "qpair": "cpp"
+        "qpair": "cpp",
+        "qthread": "cpp",
+        "qmessagebox": "cpp",
+        "qjsonobject": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }
