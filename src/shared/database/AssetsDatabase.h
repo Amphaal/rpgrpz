@@ -22,15 +22,16 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
     Q_OBJECT
 
     public:
+
         //singleton
         static AssetsDatabase* get();
 
         //CRUD methods
         bool createFolder(AssetsDatabaseElement* parent);
-        bool insertAsset(QUrl &url, AssetsDatabaseElement* parent);
-        bool rename(QString name, AssetsDatabaseElement* target);
-        bool removeItems(QList<AssetsDatabaseElement*> elemsToRemove);
-        bool moveItems(QList<AssetsDatabaseElement*> selectedItemsToMove, AssetsDatabaseElement* target);
+        bool insertAsset(const QUrl &url, AssetsDatabaseElement* parent);
+        bool rename(QString &name, AssetsDatabaseElement* target);
+        bool removeItems(const QList<AssetsDatabaseElement*> elemsToRemove);
+        bool moveItems(const QList<AssetsDatabaseElement*> selectedItemsToMove, AssetsDatabaseElement* target);
 
         //network import/export
         RPZAssetMetadata importAsset(const RPZAssetImportPackage &package);
@@ -61,26 +62,26 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
         static inline AssetsDatabase* _singleton = nullptr;
 
         //createFolder() helpers
-        QString _generateNonExistingPath(AssetsDatabaseElement* parent, QString prefix);
+        QString _generateNonExistingPath(AssetsDatabaseElement* parent, const QString &prefix);
 
         //rename() helpers
-        void _renameItem(QString &name, AssetsDatabaseElement* target);
-        void _renameFolder(QString &name, AssetsDatabaseElement* target);
+        void _renameItem(const QString &name, AssetsDatabaseElement* target);
+        void _renameFolder(const QString &name, AssetsDatabaseElement* target);
 
         //insertAsset() helpers
-        RPZAssetHash _getFileSignatureFromFileUri(QUrl &url); //return the hash
-        bool _moveFileToDbFolder(QUrl &url, RPZAssetHash &id);
-        QUrl _moveFileToDbFolder(QByteArray &data, QString &fileExt, QString &name, RPZAssetHash &id);
-        QString _addAssetToDb(RPZAssetHash &id, QUrl &url, AssetsDatabaseElement* parent); //returns a default displayname
+        RPZAssetHash _getFileSignatureFromFileUri(const QUrl &url); //return the hash
+        bool _moveFileToDbFolder(const QUrl &url, const RPZAssetHash &id);
+        QUrl _moveFileToDbFolder(const QByteArray &data, const QString &fileExt, const QString &name, const RPZAssetHash &id);
+        QString _addAssetToDb(const RPZAssetHash &id, const QUrl &url, AssetsDatabaseElement* parent); //returns a default displayname
 
         //removeItems() helpers
-        QSet<RPZAssetPath> _getPathsToAlterFromList(QList<AssetsDatabaseElement*> &elemsToAlter);
-        QHash<RPZAssetPath, QSet<RPZAssetHash>> _getAssetsToAlterFromList(QList<AssetsDatabaseElement*> &elemsToAlter);
+        QSet<RPZAssetPath> _getPathsToAlterFromList(const QList<AssetsDatabaseElement*> &elemsToAlter);
+        QHash<RPZAssetPath, QSet<RPZAssetHash>> _getAssetsToAlterFromList(const QList<AssetsDatabaseElement*> &elemsToAlter);
         QSet<RPZAssetPath> _augmentPathsSetWithMissingDescendents(QSet<RPZAssetPath> &setToAugment);
-        void _augmentAssetsHashWithMissingDescendents(QHash<RPZAssetPath, QSet<RPZAssetHash>> &hashToAugment, QSet<RPZAssetPath> &morePathsToDelete);
-        QList<RPZAssetHash> _removeIdsFromPaths(QJsonObject &db_paths, QHash<RPZAssetPath, QSet<RPZAssetHash>> &idsToRemoveByPath); //returns removed ids
-        void _removeAssetsFromDb(QJsonObject &db_assets, QList<RPZAssetHash> &assetIdsToRemove);
-        void _removeAssetFile(RPZAssetHash &id, QJsonObject &asset);
+        void _augmentAssetsHashWithMissingDescendents(QHash<RPZAssetPath, QSet<RPZAssetHash>> &hashToAugment, const QSet<RPZAssetPath> &morePathsToDelete);
+        QList<RPZAssetHash> _removeIdsFromPaths(QJsonObject &db_paths, const QHash<RPZAssetPath, QSet<RPZAssetHash>> &idsToRemoveByPath); //returns removed ids
+        void _removeAssetsFromDb(QJsonObject &db_assets, const QList<RPZAssetHash> &assetIdsToRemove);
+        void _removeAssetFile(const RPZAssetHash &id, const QJsonObject &asset);
 
         ////////////////////////////////////
         // INITIAL Tree Injection helpers //
@@ -95,8 +96,8 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
             QHash<RPZAssetPath, AssetsDatabaseElement*> _generateFolderTreeFromDb();
 
             //iterate through paths chunks and create missing folders at each pass, returns last folder found/created
-            AssetsDatabaseElement* _recursiveElementCreator(AssetsDatabaseElement* parent, QList<QString> pathChunks); 
+            AssetsDatabaseElement* _recursiveElementCreator(AssetsDatabaseElement* parent, QList<QString> &pathChunks); 
 
             //from definitive paths, fetch items from db and generate elements
-            void _generateItemsFromDb(QHash<RPZAssetPath, AssetsDatabaseElement*> &pathsToFillWithItems);
+            void _generateItemsFromDb(const QHash<RPZAssetPath, AssetsDatabaseElement*> &pathsToFillWithItems);
 };

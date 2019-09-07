@@ -88,6 +88,8 @@ class AssetsTreeViewModel : public QAbstractItemModel, public ClientBindable {
         /////////////////////////
 
         QModelIndex _getDownloadableFolderIndex(); 
+
         mutable QModelIndexList _bufferedDraggedIndexes;
+        QModelIndexList _getTopMostIndexesFromDraggedIndexesBuffer();
 
 };
