@@ -78,72 +78,70 @@ bool AssetsTreeViewModel::createFolder(QModelIndex &parentIndex) {
     return result;
 }
 
+bool AssetsTreeViewModel::_bufferContainsIndexOrParent(const QModelIndex &index) {
+    if(!index.isValid()) return false;
+    if(this->_bufferedDraggedIndexes.contains(index)) return true;
+    return this->_bufferContainsIndexOrParent(index.parent());
+}
+
 QModelIndexList AssetsTreeViewModel::_getTopMostIndexesFromDraggedIndexesBuffer() {
     
-    QSet<QModelIndex> higher;
+    QModelIndexList higher;
     auto elemsToFilter = this->_bufferedDraggedIndexes;
 
     while(elemsToFilter.count()) {
 
+        auto c = elemsToFilter.takeFirst();
+
         //take first
         if(!higher.count()) {
-            higher.insert(elemsToFilter.takeFirst());
+            higher.append(c);
             continue;
         }
 
-        //compare
-        auto toCompareTo = elemsToFilter.takeFirst();
-            auto compare_path = toCompareTo->fullPath();
-            auto compare_length = compare_path.length();
+        if(!this->_bufferContainsIndexOrParent(c.parent())) {
+            higher.append(c);
+        }
         
-        auto isForeigner = true;
-
-        //iterate
-        QSet<QModelIndex> obsoletePointers;
-        for(auto &st : higher) {
-
-            auto st_path = st->fullPath();
-            auto st_length = st_path.length();
-
-            auto outputArrayContainsBuffered = st_path.startsWith(compare_path);
-
-            //if 
-            if(isForeigner && (outputArrayContainsBuffered || compare_path.startsWith(st_path))) {
-                isForeigner = false;
-            }
-
-            //must be deleted, compared path must be prefered
-            if(outputArrayContainsBuffered && st_length > compare_length) {
-                obsoletePointers.insert(st);
-            }
-        }
-
-        //if no presence or better than a stored one
-        if(isForeigner || obsoletePointers.count()) {
-            higher.insert(toCompareTo);
-        }
-
-        //if obsolete pointers have been marked, remove them from the higherList and add the compared one to it
-        if(obsoletePointers.count()) {
-            higher.subtract(obsoletePointers);
-        }
-
     }
 
     return higher;
+}
+
+QPair<int, int> AssetsTreeViewModel::_anticipateInserts(const QModelIndexList &tbi) {
+    
+    int insertAtBegin = 0;
+    int insertAtEnd = 0;
+    
+    for(auto &index : tbi) {
+        auto elem = AssetsDatabaseElement::fromIndex(index);
+        if(elem->type() == AssetsDatabaseElement::Type::Folder) insertAtBegin++;
+        else insertAtEnd++;
+    }
+
+    return QPair<int, int>(insertAtBegin, insertAtEnd);
 }
 
 bool AssetsTreeViewModel::moveItems(const QMimeData *data, const QModelIndex &parentIndex) {
     
     //todo get topmost
     auto topMostIndexes = this->_getTopMostIndexesFromDraggedIndexesBuffer();
+    auto insertInstr = this->_anticipateInserts(topMostIndexes);
 
+    //begin removes...
     for(auto &i : topMostIndexes) {
         this->beginRemoveRows(i.parent(), i.row(), i.row());
     }
 
+    //begin inserts...
     auto parentElem = AssetsDatabaseElement::fromIndex(parentIndex);
-    this->beginInsertRows(parentIndex, 0, parentElem->childCount());
+    if(insertInstr.first) {
+        this->beginInsertRows(parentIndex, 0, insertInstr.first - 1);
+    }
+    if(insertInstr.second) {
+        auto startIndex = parentElem->childCount();
+        this->beginInsertRows(parentIndex, startIndex, startIndex + insertInstr.second - 1);
+    }
     
         auto droppedList = pointerListFromMimeData(data);
         auto dest = AssetsDatabaseElement::fromIndex(parentIndex);

@@ -91,5 +91,7 @@ class AssetsTreeViewModel : public QAbstractItemModel, public ClientBindable {
 
         mutable QModelIndexList _bufferedDraggedIndexes;
         QModelIndexList _getTopMostIndexesFromDraggedIndexesBuffer();
+        bool _bufferContainsIndexOrParent(const QModelIndex &index);
+        QPair<int, int> _anticipateInserts(const QModelIndexList &tbi);
 
 };
