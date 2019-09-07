@@ -158,7 +158,7 @@ void AssetsDatabaseElement::appendChild(AssetsDatabaseElement* child) {
 
     //add to list
     if(child->type() == Folder) {
-         this->_subElements.prepend(child);
+        this->_subElements.prepend(child);
     } else {
         this->_subElements.append(child);
     }

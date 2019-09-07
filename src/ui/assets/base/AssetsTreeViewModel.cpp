@@ -78,15 +78,80 @@ bool AssetsTreeViewModel::createFolder(QModelIndex &parentIndex) {
     return result;
 }
 
+QModelIndexList AssetsTreeViewModel::_getTopMostIndexesFromDraggedIndexesBuffer() {
+    
+    QSet<QModelIndex> higher;
+    auto elemsToFilter = this->_bufferedDraggedIndexes;
+
+    while(elemsToFilter.count()) {
+
+        //take first
+        if(!higher.count()) {
+            higher.insert(elemsToFilter.takeFirst());
+            continue;
+        }
+
+        //compare
+        auto toCompareTo = elemsToFilter.takeFirst();
+            auto compare_path = toCompareTo->fullPath();
+            auto compare_length = compare_path.length();
+        
+        auto isForeigner = true;
+
+        //iterate
+        QSet<QModelIndex> obsoletePointers;
+        for(auto &st : higher) {
+
+            auto st_path = st->fullPath();
+            auto st_length = st_path.length();
+
+            auto outputArrayContainsBuffered = st_path.startsWith(compare_path);
+
+            //if 
+            if(isForeigner && (outputArrayContainsBuffered || compare_path.startsWith(st_path))) {
+                isForeigner = false;
+            }
+
+            //must be deleted, compared path must be prefered
+            if(outputArrayContainsBuffered && st_length > compare_length) {
+                obsoletePointers.insert(st);
+            }
+        }
+
+        //if no presence or better than a stored one
+        if(isForeigner || obsoletePointers.count()) {
+            higher.insert(toCompareTo);
+        }
+
+        //if obsolete pointers have been marked, remove them from the higherList and add the compared one to it
+        if(obsoletePointers.count()) {
+            higher.subtract(obsoletePointers);
+        }
+
+    }
+
+    return higher;
+}
+
 bool AssetsTreeViewModel::moveItems(const QMimeData *data, const QModelIndex &parentIndex) {
-    this->beginResetModel();
+    
+    //todo get topmost
+    auto topMostIndexes = this->_getTopMostIndexesFromDraggedIndexesBuffer();
+
+    for(auto &i : topMostIndexes) {
+        this->beginRemoveRows(i.parent(), i.row(), i.row());
+    }
+
+    auto parentElem = AssetsDatabaseElement::fromIndex(parentIndex);
+    this->beginInsertRows(parentIndex, 0, parentElem->childCount());
     
         auto droppedList = pointerListFromMimeData(data);
         auto dest = AssetsDatabaseElement::fromIndex(parentIndex);
 
         auto result = this->_db->moveItems(droppedList, dest);
 
-    this->endResetModel();
+    this->endRemoveRows();
+    this->endInsertRows();
 
     return result;
 }
