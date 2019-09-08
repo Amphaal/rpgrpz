@@ -27,10 +27,10 @@ void AlterationAcknoledger::_ackAlteration(const AlterationPayload &payload) {
 }
 
 void AlterationAcknoledger::payloadTrace(const AlterationPayload::Source &source, const AlterationPayload &payload) {
-    auto selfStr = AlterationPayload::SourceAsStr[source];
-    auto sourceStr = AlterationPayload::SourceAsStr[payload.source()];
-    auto alterationTypeStr = PayloadAlterationAsStr[payload.type()];
-    qDebug() << "Alteration :" << selfStr << "received" << alterationTypeStr << "from" << sourceStr;
+    // auto selfStr = AlterationPayload::SourceAsStr[source];
+    // auto sourceStr = AlterationPayload::SourceAsStr[payload.source()];
+    // auto alterationTypeStr = PayloadAlterationAsStr[payload.type()];
+    // qDebug() << "Alteration :" << selfStr << "received" << alterationTypeStr << "from" << sourceStr;
 }
 
 void AlterationAcknoledger::_payloadTrace(const AlterationPayload &payload) {

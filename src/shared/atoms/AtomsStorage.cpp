@@ -110,13 +110,15 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &fromHist
 
                 auto refAtom = this->_atomsById[snowflakeId];
 
-                AtomUpdates newUpdates;
+                AtomUpdates oldValues;
 
                 for(auto y = updates.begin(); y != updates.end(); y++) {
-                    newUpdates.insert(y.key(), refAtom.metadata(y.key()));
+                    auto param = y.key();
+                    auto oldValue = refAtom.metadata(param);
+                    oldValues.insert(param, oldValue);
                 }
 
-                out.insert(snowflakeId, updates);
+                out.insert(snowflakeId, oldValues);
             }
             
             return BulkMetadataChangedPayload(out);
@@ -131,14 +133,16 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &fromHist
 
             for(auto id : casted->targetRPZAtomIds()) {
 
-                AtomUpdates updates;
+                AtomUpdates oldValues;
                 auto refAtom = this->_atomsById[id];
 
                 for(auto i = changes.begin(); i != changes.end(); i++) {
-                    updates.insert(i.key(), refAtom.metadata(i.key()));
+                    auto param = i.key();
+                    auto oldValue = refAtom.metadata(param);
+                    oldValues.insert(param, oldValue);
                 }
 
-                out.insert(id, updates);
+                out.insert(id, oldValues);
                 
             }
 

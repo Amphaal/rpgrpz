@@ -29,7 +29,7 @@ class AtomEditor : public QGroupBox {
         enum EditMode { None, Template, Selection };
 
         AtomEditor(QWidget* parent = nullptr);
-        void buildEditor(const QVector<RPZAtom*> &atomsToBuildFrom);
+        void buildEditor(const QVector<const RPZAtom*> &atomsToBuildFrom);
         void resetParams();
     
     signals:
@@ -42,7 +42,7 @@ class AtomEditor : public QGroupBox {
             { Selection, "Modification de selection" }
         };
 
-        QVector<RPZAtom*> _atoms;
+        QVector<const RPZAtom*> _atoms;
         QVector<RPZAtomId> _RPZAtomIds;
 
         QMap<AtomParameter, AtomSubEditor*> _editorsByParam;

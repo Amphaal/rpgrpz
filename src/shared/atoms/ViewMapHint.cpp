@@ -8,7 +8,7 @@ ViewMapHint::ViewMapHint() : AtomsStorage(AlterationPayload::Source::Local_Map),
 
 };
 
-RPZAtom* ViewMapHint::templateAtom() const {
+const RPZAtom* ViewMapHint::templateAtom() const {
     QMutexLocker m(&this->_m_templateAtom);
     return this->_templateAtom;
 }
@@ -47,13 +47,8 @@ void ViewMapHint::notifySelectedItems(const QList<QGraphicsItem*> &selectedItems
 
     QVector<RPZAtomId> ids;
 
-    for(auto &gi : selectedItems) {
-        
-        auto cAtom = this->_getAtomFromGraphicsItem(gi);
-        if(!cAtom) continue;
-
-        ids.append(cAtom->id());
-
+    for(auto atom : this->_getAtomsFromGraphicsItems(selectedItems)) {
+        ids.append(atom->id());
     }
 
     SelectedPayload payload(ids);
@@ -249,7 +244,7 @@ void ViewMapHint::_crossBindingAtomWithGI(RPZAtom* atom, QGraphicsItem* gi) {
     gi->setData(RPZUserRoles::AtomPtr, ptrValToAtom);
 }
 
-QVector<RPZAtom*> ViewMapHint::_getAtomFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const {
+QVector<RPZAtom*> ViewMapHint::_getAtomsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const {
     QVector<RPZAtom*> list;
     for(auto e : listToFetch) {
         auto atom = this->_getAtomFromGraphicsItem(e);
@@ -281,7 +276,7 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
         this->_replaceMissingAssetPlaceholders(mPayload->assetMetadata());
     }
     
-    //if template chaged
+    //if template changed
     else if(auto mPayload = dynamic_cast<AtomTemplateChangedPayload*>(&payload)) {
 
         {

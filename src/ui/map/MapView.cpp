@@ -10,7 +10,12 @@ MapView::MapView(QWidget *parent) :
     this->_hints->thread()->start();
     
     //default
-    auto scene = new QGraphicsScene(this->_defaultSceneSize, this->_defaultSceneSize, this->_defaultSceneSize, this->_defaultSceneSize);
+    auto scene = new QGraphicsScene(
+        this->_defaultSceneSize, 
+        this->_defaultSceneSize, 
+        this->_defaultSceneSize, 
+        this->_defaultSceneSize
+    );
     this->setScene(scene);
     this->_resetTool();
     
@@ -28,12 +33,6 @@ MapView::MapView(QWidget *parent) :
 
     //background / foreground
     this->setBackgroundBrush(QBrush("#EEE", Qt::BrushStyle::CrossPattern));
-
-    //on selection
-    QObject::connect(
-        this->scene(), &QGraphicsScene::selectionChanged,
-        this, &MapView::_onSceneSelectionChanged
-    );
 
     this->_handleHintsSignalsAndSlots();
 
@@ -105,12 +104,9 @@ void MapView::_handleHintsSignalsAndSlots() {
         this, &MapView::_displayLoader
     );
 
-    //on selection from user
     QObject::connect(
         this->scene(), &QGraphicsScene::selectionChanged,
-        [=]() {
-            this->_hints->notifySelectedItems(this->scene()->selectedItems());
-        }
+        this, &MapView::_onSceneSelectionChanged
     );
 
     QObject::connect(
@@ -218,6 +214,7 @@ void MapView::_addItem(QGraphicsItem* toAdd, bool mustNotifyMovement) {
     
     if(mustNotifyMovement) {
         if(auto notifier = dynamic_cast<GraphicsItemsChangeNotifier*>(toAdd)) {
+            notifier->addNotified(this);
             notifier->activateNotifications();
         }
     }
@@ -338,7 +335,7 @@ void MapView::leaveEvent(QEvent *event) {
 }
 
 void MapView::onAtomTemplateChange() {
-    QVector<RPZAtom*> subjects {this->_hints->templateAtom()};
+    QVector<const RPZAtom*> subjects {this->_hints->templateAtom()};
     emit subjectedAtomsChanged(subjects);
     
     if(this->_ghostItem) {
@@ -353,26 +350,30 @@ void MapView::onAtomTemplateChange() {
 }
 
 void MapView::_generateGhostItemFromBuffer() {
-    
     this->_clearGhostItem();
     this->_ghostItem = this->_hints->generateGhostItem(this->_bufferedAssetMetadata);
     this->_addItem(this->_ghostItem);
-
 }
 
 void MapView::_handleGhostItem(const Tool &tool) {
     if(tool == Atom) this->_generateGhostItemFromBuffer();
     else {
         this->_clearGhostItem();
-        auto subjects = QVector<RPZAtom*>(); //no more subjects
+        auto subjects = QVector<const RPZAtom*>(); //no more subjects
         emit subjectedAtomsChanged(subjects);
     }
 }
 
 
 void MapView::_onSceneSelectionChanged() {
-    auto selectedAtoms = this->_hints->selectedAtoms();
-    emit subjectedAtomsChanged(selectedAtoms);
+    this->_hints->notifySelectedItems(this->scene()->selectedItems());
+
+        
+    // if(type == PA_Selected) {
+    //     auto selectedAtoms = this->_hints->selectedAtoms();
+    //     emit subjectedAtomsChanged(selectedAtoms);
+    // }
+
 }
 
 /////////////
@@ -506,7 +507,6 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
 
     QGraphicsView::mouseMoveEvent(event);
 }
-
 
 //mouse drop
 void MapView::mouseReleaseEvent(QMouseEvent *event) {

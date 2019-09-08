@@ -100,13 +100,14 @@ int main(int argc, char** argv) {
     qRegisterMetaType<RPZMessage>("RPZMessage");
     qRegisterMetaType<RPZResponse>("RPZResponse");
     qRegisterMetaType<RPZAssetImportPackage>("RPZAssetImportPackage");
-
     qRegisterMetaType<QList<QTreeWidgetItem*>>("QList<QTreeWidgetItem*>");
     qRegisterMetaType<QList<QGraphicsItem*>>("QList<QGraphicsItem*>");
     qRegisterMetaType<ResetPayload>("ResetPayload");
     qRegisterMetaType<QVector<RPZAtomId>>("QVector<RPZAtomId>");
     qRegisterMetaType<QVector<RPZUser>>("QVector<RPZUser>");
     qRegisterMetaType<QVector<RPZMessage>>("QVector<RPZMessage>");
+    qRegisterMetaType<QHash<QTreeWidgetItem*,AtomUpdates>>("QHash<QTreeWidgetItem*,AtomUpdates>");
+    qRegisterMetaType<QHash<QGraphicsItem*,AtomUpdates>>("QHash<QGraphicsItem*,AtomUpdates>");
     
     //message handler
     qInstallMessageHandler(LogWriter::customMO);

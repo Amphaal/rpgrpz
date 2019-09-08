@@ -16,7 +16,7 @@ class AtomSubEditor : public QWidget {
         AtomSubEditor(const AtomParameter &parameter);
         
         AtomParameter param();
-        void virtual loadTemplate(QVector<RPZAtom*> &atomsToManipulate, QVariant &defaultValue);
+        virtual void loadTemplate(QVector<const RPZAtom*> &atomsToManipulate, QVariant &defaultValue);
 
     signals:
         void valueConfirmedForPayload(const AtomParameter &parameter, QVariant &value);
@@ -28,5 +28,5 @@ class AtomSubEditor : public QWidget {
         void _setAsDataEditor(QWidget *dataEditor);
 
         AtomEditorLineDescriptor* _descr = nullptr;
-        QVector<RPZAtom*> _atomsToManipulate;
+        QVector<const RPZAtom*> _atomsToManipulate;
 };

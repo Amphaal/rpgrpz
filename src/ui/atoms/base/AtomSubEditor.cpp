@@ -22,7 +22,7 @@ void AtomSubEditor::_setAsDataEditor(QWidget *dataEditor) {
     this->layout()->addWidget(dataEditor);
 }
 
-void AtomSubEditor::loadTemplate(QVector<RPZAtom*> &atomsToManipulate, QVariant &defaultValue) {
+void AtomSubEditor::loadTemplate(QVector<const RPZAtom*> &atomsToManipulate, QVariant &defaultValue) {
     
     this->_atomsToManipulate = atomsToManipulate;
     if(!this->_atomsToManipulate.count()) return this->setVisible(false);

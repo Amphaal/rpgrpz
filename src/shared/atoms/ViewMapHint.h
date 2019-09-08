@@ -37,7 +37,7 @@ class ViewMapHint : public AtomsStorage {
         void deleteCurrentSelectionItems() const;
         QGraphicsItem* generateGhostItem(const RPZAssetMetadata &assetMetadata);
         void integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem) const;
-        RPZAtom* templateAtom() const;
+        const RPZAtom* templateAtom() const;
 
     public slots:
         void notifyMovementOnItems(const QList<QGraphicsItem*> &itemsWhoMoved); //safe
@@ -74,7 +74,7 @@ class ViewMapHint : public AtomsStorage {
         QGraphicsItem* _buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom);
         void _crossBindingAtomWithGI(RPZAtom* atom, QGraphicsItem* gi);
         RPZAtom* _getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const;
-        QVector<RPZAtom*> _getAtomFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const;
+        QVector<RPZAtom*> _getAtomsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const;
 
         //missing assets tracking
         QSet<RPZAssetHash> _assetsIdsToRequest;

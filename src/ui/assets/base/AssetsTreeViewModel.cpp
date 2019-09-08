@@ -329,9 +329,12 @@ bool AssetsTreeViewModel::setData(const QModelIndex &index, const QVariant &valu
     if(index.column()) return QAbstractItemModel::setData(index, value, role);
 
     switch(role) {
-        case Qt::EditRole:
-            return this->_db->rename(value.toString(), data);
-            break;
+        case Qt::EditRole: {
+            auto name = value.toString();
+            return this->_db->rename(name, data);
+        }
+        break;
+
         default:
             return QAbstractItemModel::setData(index, value, role);
     }

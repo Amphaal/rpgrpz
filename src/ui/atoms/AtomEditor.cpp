@@ -12,12 +12,17 @@ AtomEditor::AtomEditor(QWidget* parent) : QGroupBox(_strEM[None], parent) {
 }
 
 
-void AtomEditor::buildEditor(const QVector<RPZAtom*> &atomsToBuildFrom) {
+void AtomEditor::buildEditor(const QVector<const RPZAtom*> &atomsToBuildFrom) {
     
     //modify atom list
     this->_atoms = atomsToBuildFrom;
+    
+    //fill
     this->_RPZAtomIds.clear();
-    for(auto atom : this->_atoms) this->_RPZAtomIds.append(atom->id());
+    for(auto atom : this->_atoms) {
+        auto id = atom->id();
+        this->_RPZAtomIds.append(id);
+    }
     
     //clear editors
     this->_visibleEditors.clear();
