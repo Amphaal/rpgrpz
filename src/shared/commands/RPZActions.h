@@ -28,7 +28,7 @@ class RPZActions {
         static QAction* openLatestLog();
         static QAction* openFullLog();
         static QAction* openMaintenanceTool();
-        static QAction* loadRPZMap();
-        static QAction* saveRPZMap();
-        static QAction* saveAsRPZMap();
+        static QAction* loadAMap();
+        static QAction* saveTheMap();
+        static QAction* saveTheMapAs();
 };

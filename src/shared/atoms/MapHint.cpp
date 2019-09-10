@@ -1,6 +1,6 @@
 #include "MapHint.h"
 
-MapHint::MapHint() { 
+MapHint::MapHint() : _sysActor(new AlterationActor(AlterationPayload::Source::Local_System)) { 
     this->connectToAlterationEmissions();
 }
 
@@ -29,20 +29,21 @@ bool MapHint::isMapDirty() const {
     return this->_isMapDirty;
 }
 
-void MapHint::mayWantToSavePendingState() {
-    if(!this->_isMapDirty || this->_isRemote) return;
+void MapHint::mayWantToSavePendingState(QWidget* parent, MapHint* hint) {
+    
+    if(!hint->isMapDirty() || hint->isRemote()) return;
 
     //popup
     auto result = QMessageBox::warning(
-        nullptr, 
-        this->_mapFilePath, 
+        parent, 
+        hint->RPZMapFilePath(), 
         "Voulez-vous sauvegarder les modifications effectuées sur la carte ?", 
         QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes
     );
 
     //save state
     if(result == QMessageBox::Yes) {
-        this->saveRPZMap();
+        hint->saveRPZMap();
     }
 
 }
@@ -72,6 +73,7 @@ bool MapHint::saveRPZMapAs(const QString &newFilePath) {
 }
 
 bool MapHint::loadDefaultRPZMap() {
+    this->defineAsRemote();
 	auto map = AppContext::getDefaultMapFile();
 	return this->loadRPZMap(map);
 }
@@ -79,9 +81,6 @@ bool MapHint::loadDefaultRPZMap() {
 bool MapHint::loadRPZMap(const QString &filePath) {
     
     if(this->_isRemote) return false;
-
-    //ask for save if dirty before loading
-    this->mayWantToSavePendingState();
 
         //tells UI that map is loading
         emit heavyAlterationProcessing();
@@ -94,7 +93,7 @@ bool MapHint::loadRPZMap(const QString &filePath) {
         //create payload and queue it
         auto allAtoms = mapDb.toAtoms();
         ResetPayload payload(allAtoms);
-        AlterationHandler::get()->queueAlteration(this, payload);
+        AlterationHandler::get()->queueAlteration(this->_sysActor, payload);
 
     return true;
 }

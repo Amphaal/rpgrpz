@@ -19,9 +19,9 @@
 #include "editors/BrushToolEditor.hpp"
 #include "editors/AtomTextEditor.hpp"
 
-#include "src/shared/async-ui/AlterationHandler.h"
+#include "src/shared/async-ui/AlterationActor.hpp"
 
-class AtomEditor : public QGroupBox {
+class AtomEditor : public QGroupBox, public AlterationActor {
 
     Q_OBJECT
 

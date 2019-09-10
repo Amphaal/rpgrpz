@@ -1,6 +1,7 @@
 #include "RPZClient.h"
 
 RPZClient::RPZClient(const QString &name, const QString &domain, const QString &port) : 
+                        AlterationActor(AlterationPayload::Source::RPZClient),
                         _name(name), 
                         _domain(domain), 
                         _port(port) { }
@@ -66,13 +67,16 @@ void RPZClient::_onConnected() {
 
 void RPZClient::_handleAlterationRequest(const AlterationPayload &payload) {
 
+    //ignore self send
+    if(payload.source() == this->source()) return;
+
     //ignore alteration requests when socket is not connected
     if(this->_sock->socket()->state() != QAbstractSocket::ConnectedState) return;
 
     //if not routable, instant return 
     if(!payload.isNetworkRoutable()) return;
 
-    AlterationAcknoledger::payloadTrace(AlterationPayload::Source::RPZClient, payload);
+    this->payloadTrace(payload);
 
     //send json
     return this->_sock->sendJSON(JSONMethod::MapChanged, payload);
@@ -173,7 +177,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
         case JSONMethod::MapChanged: {
             auto payload = AlterationPayload(data.toHash());
-            AlterationHandler::get()->queueAlteration(AlterationPayload::Source::RPZClient, payload);
+            AlterationHandler::get()->queueAlteration(this, payload);
         }   
         break;
 

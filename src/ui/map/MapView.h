@@ -51,8 +51,8 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
         MapHint* hints() const;
 
     public slots:
-        void actionRequested(const MapTools::Actions &action);
-        void assetTemplateChanged(const RPZAssetMetadata &assetMetadata);
+        void onActionRequested(const MapTools::Actions &action);
+        void onAssetTemplateChange(const RPZAssetMetadata &assetMetadata);
         void onAtomTemplateChange();
     
     signals:

@@ -145,21 +145,21 @@ QAction* RPZActions::openMaintenanceTool() {
     return new QAction(I18n::tr()->Menu_OpenMaintenanceTool());
 }
 
-QAction* RPZActions::loadRPZMap() {
+QAction* RPZActions::loadAMap() {
     auto action = new QAction("Charger une carte");
     action->setShortcut(QKeySequence::Open);
     action->setShortcutVisibleInContextMenu(true);
     return action;
 }
 
-QAction* RPZActions::saveRPZMap() {
+QAction* RPZActions::saveTheMap() {
     auto action = new QAction("Sauvegarder la carte");
     action->setShortcut(QKeySequence::Save);
     action->setShortcutVisibleInContextMenu(true);
     return action;
 }
 
-QAction* RPZActions::saveAsRPZMap() {
+QAction* RPZActions::saveTheMapAs() {
     auto action = new QAction("Enregistrer la carte sous...");
     action->setShortcut(QKeySequence::SaveAs);
     action->setShortcutVisibleInContextMenu(true);

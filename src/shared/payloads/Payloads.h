@@ -12,6 +12,8 @@
 #include "withTarget/MetadataChangedPayload.hpp"
 #include "local/AssetChangedPayload.hpp"
 #include "local/AtomTemplateChangedPayload.hpp"
+#include "local/AtomTemplateSelectedPayload.hpp"
+
 
 class Payloads {
     public:
@@ -27,6 +29,11 @@ class Payloads {
 
                 case PayloadAlteration::PA_AtomTemplateChanged:
                     return QSharedPointer<AtomTemplateChangedPayload>(new AtomTemplateChangedPayload(hash));
+                break;
+
+                case PayloadAlteration::PA_AtomTemplateSelected:
+                    return QSharedPointer<AtomTemplateSelectedPayload>(new AtomTemplateSelectedPayload(hash));
+                break;
 
                 case PayloadAlteration::PA_AssetChanged:
                     return QSharedPointer<AssetChangedPayload>(new AssetChangedPayload(hash));

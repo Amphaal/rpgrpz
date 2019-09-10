@@ -11,6 +11,8 @@
 #include "src/helpers/_appContext.h"
 #include "src/network/rpz/client/RPZClient.h"
 
+#include "src/shared/atoms/MapHint.h"
+
 class ConnectWidget : public QWidget {
 
     Q_OBJECT
@@ -18,7 +20,7 @@ class ConnectWidget : public QWidget {
     public:
         enum State { NotConnected, Connecting, Connected };
 
-        ConnectWidget(QWidget * parent = nullptr);
+        ConnectWidget(MapHint* hintToControlStateOf);
 
     signals:
         void startingConnection(RPZClient* cc);
@@ -44,4 +46,6 @@ class ConnectWidget : public QWidget {
         void _onRPZClientConnecting();
 
         void _saveValuesAsSettings();
+
+        MapHint* _toControlStateOf = nullptr; 
 };  

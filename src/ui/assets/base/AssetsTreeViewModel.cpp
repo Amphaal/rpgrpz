@@ -1,19 +1,11 @@
 #include "AssetsTreeViewModel.h"
 
-AssetsTreeViewModel::AssetsTreeViewModel(QObject *parent) : QAbstractItemModel(parent), _db(AssetsDatabase::get()) { };
+AssetsTreeViewModel::AssetsTreeViewModel(QObject *parent) : 
+    QAbstractItemModel(parent), 
+    _db(AssetsDatabase::get()) { };
 
 AssetsDatabase* AssetsTreeViewModel::database() const {
     return this->_db;
-}
-
-void AssetsTreeViewModel::onRPZClientConnecting() {
-
-    //import asset
-    QObject::connect(
-        this->_rpzClient, &RPZClient::receivedAsset,
-        this, &AssetsTreeViewModel::_onReceivedAsset
-    );
-
 }
 
 QModelIndex AssetsTreeViewModel::_getDownloadableFolderIndex() {
@@ -21,7 +13,7 @@ QModelIndex AssetsTreeViewModel::_getDownloadableFolderIndex() {
     return this->index(4, 0, root);
 }
 
-void AssetsTreeViewModel::_onReceivedAsset(const RPZAssetImportPackage &package) {
+void AssetsTreeViewModel::integrateAsset(const RPZAssetImportPackage &package) {
     
     //get where exactly the new asset is supposed to be
     auto dlFolderIndex = this->_getDownloadableFolderIndex();
@@ -31,9 +23,6 @@ void AssetsTreeViewModel::_onReceivedAsset(const RPZAssetImportPackage &package)
     this->beginInsertRows(this->_getDownloadableFolderIndex(), posToInsert, posToInsert);
         auto metadata = this->_db->importAsset(package); 
     this->endInsertRows();
-    
-    auto payload = AssetChangedPayload(metadata);
-    AlterationHandler::get()->queueAlteration(AlterationPayload::Source::Local_AtomDB, payload);
 
 }
 

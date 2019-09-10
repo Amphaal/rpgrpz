@@ -1,6 +1,7 @@
 #include "ConnectWidget.h"
 
-ConnectWidget::ConnectWidget(QWidget * parent) : QWidget(parent), 
+ConnectWidget::ConnectWidget(MapHint* hintToControlStateOf) : QWidget(nullptr), 
+    _toControlStateOf(hintToControlStateOf),
     _nameTarget(new QLineEdit(this)),
     _portTarget(new QLineEdit(this)), 
     _domainTarget(new QLineEdit(this)),
@@ -80,11 +81,15 @@ void ConnectWidget::_saveValuesAsSettings() {
 
 void ConnectWidget::_tryConnectToServer() {
 
+    //ask for save the map as it may be erased
+    MapHint::mayWantToSavePendingState(this, _toControlStateOf);
+
     this->_saveValuesAsSettings();
 
     //new connection..
     this->_destroyClient();
     
+
     this->_cc = new RPZClient(
         this->_nameTarget->text(), 
         this->_domainTarget->text(), 
@@ -117,8 +122,6 @@ void ConnectWidget::_tryConnectToServer() {
         clientThread, &QObject::deleteLater
     );
 
-    emit startingConnection(this->_cc);
-    
     QObject::connect(
         this->_cc, &RPZClient::receivedLogHistory, 
         this, &ConnectWidget::_onRPZClientConnecting
@@ -132,6 +135,7 @@ void ConnectWidget::_tryConnectToServer() {
     this->_changeState(State::Connecting);
 
     //start
+    emit startingConnection(this->_cc);
     clientThread->start();
 
 }

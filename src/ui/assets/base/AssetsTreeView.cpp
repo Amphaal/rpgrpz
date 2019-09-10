@@ -1,8 +1,7 @@
 #include "AssetsTreeView.h"
 
-
-
 AssetsTreeView::AssetsTreeView(QWidget *parent) : QTreeView(parent), 
+    AlterationActor(AlterationPayload::Source::Local_AtomDB),
     _MIMEDb(new QMimeDatabase), 
     _model(new AssetsTreeViewModel) {     
         
@@ -48,6 +47,27 @@ AssetsTreeView::AssetsTreeView(QWidget *parent) : QTreeView(parent),
     //selection
     this->setSelectionBehavior(QAbstractItemView::SelectRows);
     this->setSelectionMode(QAbstractItemView::ExtendedSelection);
+}
+
+
+void AssetsTreeView::onRPZClientConnecting() {
+
+    //import asset
+    QObject::connect(
+        this->_rpzClient, &RPZClient::receivedAsset,
+        this, &AssetsTreeView::_onReceivedAsset
+    );
+
+}
+
+void AssetsTreeView::_onReceivedAsset(const RPZAssetImportPackage &package) {
+    
+    //integrate
+    this->assetsModel()->integrateAsset(package);
+    
+    //indicate change
+    auto payload = AssetChangedPayload(package);
+    AlterationHandler::get()->queueAlteration(this, payload);
 }
 
 AssetsTreeViewModel* AssetsTreeView::assetsModel() {

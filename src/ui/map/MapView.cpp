@@ -307,9 +307,13 @@ void MapView::keyPressEvent(QKeyEvent * event) {
 
 }
 
-void MapView::assetTemplateChanged(const RPZAssetMetadata &assetMetadata) {
+void MapView::onAssetTemplateChange(const RPZAssetMetadata &assetMetadata) {
     this->_bufferedAssetMetadata = assetMetadata;
-    this->_changeTool(assetMetadata.isEmpty() ? Tool::Default : Tool::Atom, false, true);
+    this->_changeTool(
+        assetMetadata.isEmpty() ? Tool::Default : Tool::Atom, 
+        false, 
+        true
+    );
 }
 
 void MapView::_clearGhostItem() {
@@ -382,9 +386,6 @@ void MapView::_onSceneSelectionChanged() {
 
 void MapView::onRPZClientConnecting() {
 
-    //save current map
-    this->_hints->mayWantToSavePendingState();
-
     //when self user send
     QObject::connect(
         _rpzClient, &RPZClient::ackIdentity,
@@ -417,8 +418,7 @@ void MapView::_onIdentityReceived(const RPZUser &self) {
 void MapView::onRPZClientDisconnect() {
 
     //back to default state
-    this->_hints->defineAsRemote();
-    this->_hints->loadDefaultRPZMap();
+    QMetaObject::invokeMethod(this->_hints, "loadDefaultRPZMap");
 
 }
 
@@ -627,7 +627,7 @@ void MapView::_changeTool(Tool newTool, const bool quickChange, bool isFromExter
 }
 
 //on received action
-void MapView::actionRequested(const MapTools::Actions &action) {
+void MapView::onActionRequested(const MapTools::Actions &action) {
     switch(action) {
         case MapTools::Actions::ResetView:
             this->_goToDefaultViewState();

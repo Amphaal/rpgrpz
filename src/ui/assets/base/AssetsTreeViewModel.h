@@ -12,10 +12,10 @@
 #include "src/shared/assets/AssetsDatabaseElement.h"
 #include "src/shared/database/AssetsDatabase.h"
 
-#include "src/shared/async-ui/AlterationHandler.h"
+#include "src/shared/async-ui/AlterationActor.hpp"
 #include "src/ui/others/ClientBindable.h"
 
-class AssetsTreeViewModel : public QAbstractItemModel, public ClientBindable {
+class AssetsTreeViewModel : public QAbstractItemModel {
     
     Q_OBJECT
     
@@ -34,6 +34,7 @@ class AssetsTreeViewModel : public QAbstractItemModel, public ClientBindable {
         bool moveItems(const QMimeData *data, const QModelIndex &parentIndex);
         bool insertAssets(QList<QUrl> &urls, const QModelIndex &parentIndex);
         bool removeItems(const QList<QModelIndex> &itemsIndexesToRemove);
+        void integrateAsset(const RPZAssetImportPackage &package);
         
         ///////////////////
         /// END HELPERS ///
@@ -65,12 +66,6 @@ class AssetsTreeViewModel : public QAbstractItemModel, public ClientBindable {
 
     protected:
         AssetsDatabase* _db = nullptr;
-
-    private slots:
-        void _onReceivedAsset(const RPZAssetImportPackage &package);
-
-    private:
-        void onRPZClientConnecting() override;
 
         /////////////////////
         /// DROP HANDLING ///

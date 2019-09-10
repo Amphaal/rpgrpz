@@ -78,8 +78,6 @@ class MainWindow : public QMainWindow {
         QMenu* _getFileMenu();
         QMenu* _getHelpMenu();
         QMenu* _getMapMenu();
-            void _saveRPZMapAs();
-            void _loadRPZMap();
 
         UpdaterUIIntegrator* _updateIntegrator = nullptr;
 };

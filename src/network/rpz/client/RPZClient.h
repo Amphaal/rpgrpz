@@ -21,9 +21,9 @@
 #include "src/shared/models/RPZHandshake.h"
 
 #include "src/helpers/_appContext.h"
-#include "src/shared/async-ui/AlterationAcknoledger.h"
+#include "src/shared/async-ui/AlterationActor.hpp"
 
-class RPZClient : public QObject, public JSONRouter {
+class RPZClient : public QObject, public AlterationActor, public JSONRouter {
 
     Q_OBJECT
 

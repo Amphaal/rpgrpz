@@ -14,14 +14,15 @@ class MapHint : public ViewMapHint {
         bool isRemote() const;
         bool isMapDirty() const;
 
-        void mayWantToSavePendingState();
+        static void mayWantToSavePendingState(QWidget* parent, MapHint* hint); //must block UI
+        
         bool defineAsRemote(const QString &remoteMapDescriptor = QString());
 
     public slots:
-        bool loadDefaultRPZMap();
-        bool loadRPZMap(const QString &filePath);
-        bool saveRPZMap();
-        bool saveRPZMapAs(const QString &newFilePath);
+        bool loadDefaultRPZMap(); //to invoke
+        bool loadRPZMap(const QString &filePath); //to invoke
+        bool saveRPZMap(); //to invoke, unless from mayWantToSavePendingState()
+        bool saveRPZMapAs(const QString &newFilePath); //to invoke
 
     signals:
         void mapFileStateChanged(const QString &filePath, bool isMapDirty);
@@ -35,4 +36,6 @@ class MapHint : public ViewMapHint {
         void _shouldMakeMapDirty(AlterationPayload &payload);
     
         void _handleAlterationRequest(AlterationPayload &payload) final;
+
+        AlterationActor* _sysActor = nullptr;
 };

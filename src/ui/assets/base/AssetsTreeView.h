@@ -18,7 +18,7 @@
 
 #include "src/shared/models/RPZAssetMetadata.h"
 
-class AssetsTreeView : public QTreeView {
+class AssetsTreeView : public QTreeView, public ClientBindable, public AlterationActor {
 
     Q_OBJECT
 
@@ -30,7 +30,11 @@ class AssetsTreeView : public QTreeView {
     signals:
         void assetTemplateChanged(const RPZAssetMetadata &assetMetadata);
 
+    private slots:
+        void _onReceivedAsset(const RPZAssetImportPackage &package);
+
     private:
+        void onRPZClientConnecting() override;
 
         ///////////////////
         // drag and drop //

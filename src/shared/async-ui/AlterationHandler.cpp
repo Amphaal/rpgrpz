@@ -5,11 +5,11 @@ AlterationHandler* AlterationHandler::get() {
     return _inst; 
 }
 
-void AlterationHandler::queueAlteration(const AlterationAcknoledger* sender, AlterationPayload &payload) {
-    return this->queueAlteration(sender->source(), payload);
+void AlterationHandler::queueAlteration(const AlterationActor* sender, AlterationPayload &payload) {
+    return this->_queueAlteration(sender->source(), payload);
 }
 
-void AlterationHandler::queueAlteration(const AlterationPayload::Source &senderSource, AlterationPayload &payload) {
+void AlterationHandler::_queueAlteration(const AlterationPayload::Source &senderSource, AlterationPayload &payload) {
     
     //if initial payload emission, apply sender source for send
     if(payload.source() == AlterationPayload::Source::Undefined && senderSource) {
