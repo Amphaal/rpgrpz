@@ -147,9 +147,10 @@ void Playlist::addYoutubeVideo(const QString &url) {
     auto playlistItem = new QListWidgetItem(pos + url);   
 
     //define inner data
-    auto c_data_pointer = (long long)data;
-    auto c_data_pointer_variant = QVariant::fromValue(c_data_pointer);
-    playlistItem->setData(RPZUserRoles::YTVideoMetadataPtr, c_data_pointer_variant);
+    playlistItem->setData(
+        RPZUserRoles::YTVideoMetadataPtr, 
+        QVariant::fromValue<YoutubeVideoMetadata*>(data)
+    );
 
     //define default icon
     playlistItem->setIcon(*this->_ytIconGrey);
@@ -253,10 +254,5 @@ void Playlist::_onItemDoubleClicked(QListWidgetItem * item) {
 
 YoutubeVideoMetadata* Playlist::currentPlay() {
     if(!this->_playlistItemToUse) return nullptr;
-
-    auto data_variant = this->_playlistItemToUse->data(RPZUserRoles::YTVideoMetadataPtr);
-    auto asLong = data_variant.toLongLong();
-    auto p_data = (YoutubeVideoMetadata*)asLong;
-
-    return p_data;
+    return this->_playlistItemToUse->data(RPZUserRoles::YTVideoMetadataPtr).value<YoutubeVideoMetadata*>();
 }

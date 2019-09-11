@@ -23,7 +23,7 @@ class AtomsStorage : public AlterationAcknoledger {
         AtomsStorage(const AlterationPayload::Source &boundSource);
         
         QVector<RPZAtomId> selectedRPZAtomIds() const; //safe
-        QVector<RPZAtom*> selectedAtoms() const; //safe
+        const QVector<const RPZAtom*> selectedAtoms() const; //safe
         RPZMap<RPZAtom> atoms() const; //safe
 
     signals: 
@@ -72,7 +72,7 @@ class AtomsStorage : public AlterationAcknoledger {
 
         //selected
         QVector<RPZAtomId> _selectedRPZAtomIds;
-        QVector<RPZAtom*> _selectedAtoms;
+        QVector<const RPZAtom*> _selectedAtoms;
 
         //duplication
         int _duplicationCount = 0;

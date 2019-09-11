@@ -196,7 +196,7 @@ void MainWindow::_initUIApp() {
     this->_mapTools = new MapTools;
     this->_mlManager = new MapLayoutManager(this->_mapView->hints());
     this->_connectWidget = new ConnectWidget(this->_mapView->hints());
-    this->_atomEditManager = new AtomEditionManager;
+    this->_atomEditManager = new AtomEditionManager(this->_mapView->hints());
     
     //assets
     auto assetTabs = new QTabWidget(this);
@@ -249,18 +249,6 @@ void MainWindow::_initUIApp() {
         ClientBindable::bindAll
     );
 
-    //on map selection change
-    QObject::connect(
-        this->_mapView, &MapView::subjectedAtomsChanged,
-        this->_atomEditManager, &AtomEditionManager::onSubjectedAtomsChange
-    );
-
-    //on template changing
-    QObject::connect(
-        this->_mapView->hints(), &ViewMapHint::atomTemplateChanged,
-        this->_mapView, &MapView::onAtomTemplateChange
-    );
-
     //on default layer changed
     QObject::connect(
         this->_mlManager->layerSelector()->spinbox(), qOverload<int>(&QSpinBox::valueChanged),
@@ -273,16 +261,10 @@ void MainWindow::_initUIApp() {
         this->_mapView->hints(), &ViewMapHint::handlePreviewRequest
     );
 
-    //unselect asset
-    QObject::connect(
-        this->_mapView, &MapView::unselectCurrentAssetAsked,
-        this->_assetsManager->tree(), &QAbstractItemView::clearSelection
-    );
-
     //bind toolbar to mapview
     QObject::connect(
         this->_mapTools, &MapTools::actionRequested,
-        this->_mapView, &MapView::actionRequested
+        this->_mapView, &MapView::onActionRequested
     );
 
     //update status bar on map file update
@@ -290,12 +272,6 @@ void MainWindow::_initUIApp() {
         this->_mapView->hints(), &MapHint::mapFileStateChanged,
         this->_sb, &RPZStatusBar::updateMapFileLabel
     );
-
-    //on template selected
-    QObject::connect(
-        this->_assetsManager->tree(), &AssetsTreeView::assetTemplateChanged,
-        this->_mapView, &MapView::assetTemplateChanged
-    ); 
 }
 
 void MainWindow::_initUIMenu() {

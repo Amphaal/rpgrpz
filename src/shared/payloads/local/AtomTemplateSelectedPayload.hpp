@@ -4,15 +4,16 @@
 #include <QPair>
 #include "src/shared/models/RPZAtom.h"
 
+
 class AtomTemplateSelectedPayload : public AlterationPayload {
     
     public:
         AtomTemplateSelectedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        AtomTemplateSelectedPayload(const RPZAtom &templated) : AlterationPayload(PayloadAlteration::PA_AtomTemplateSelected) {
-            this->insert("t", templated);
+        AtomTemplateSelectedPayload(const RPZAtom* ref) : AlterationPayload(PayloadAlteration::PA_AtomTemplateSelected) {
+            this->insert("ref", QVariant::fromValue<RPZAtom*>((RPZAtom*)ref));
         }
     
-        RPZAtom selectedTemplate() const {
-            return RPZAtom(this->value("t").toHash());
+        const RPZAtom* selectedTemplate() const {
+            return this->value("t").value<RPZAtom*>();
         }
 };

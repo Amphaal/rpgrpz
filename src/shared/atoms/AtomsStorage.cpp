@@ -7,7 +7,7 @@ RPZMap<RPZAtom> AtomsStorage::atoms() const {
     return this->_atomsById;
 }
 
-QVector<RPZAtom*> AtomsStorage::selectedAtoms() const {
+const QVector<const RPZAtom*> AtomsStorage::selectedAtoms() const {
     QMutexLocker m(&this->_m_handlingLock);
     return this->_selectedAtoms;
 }

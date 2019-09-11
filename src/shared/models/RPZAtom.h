@@ -163,3 +163,5 @@ class RPZAtom : public Ownable {
 
         QGraphicsItem* _graphicsItem = nullptr;
 };
+
+Q_DECLARE_METATYPE(RPZAtom *)

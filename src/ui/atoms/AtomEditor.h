@@ -34,7 +34,7 @@ class AtomEditor : public QGroupBox, public AlterationActor {
     
     signals:
         void requiresPreview(const QVector<RPZAtomId> &RPZAtomIdsToPreview, const AtomParameter &parameter, QVariant &value);
-    
+
     private:
         static inline QHash<EditMode, QString> _strEM {
             { None, "Rien à modifier" },

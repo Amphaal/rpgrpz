@@ -6,11 +6,9 @@ AtomEditor::AtomEditor(QWidget* parent) : QGroupBox(_strEM[None], parent), Alter
 
     this->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
     this->setLayout(new QVBoxLayout);
-
     //create params editors
     this->_createEditorsFromAtomParameters();
 }
-
 
 void AtomEditor::buildEditor(const QVector<const RPZAtom*> &atomsToBuildFrom) {
     

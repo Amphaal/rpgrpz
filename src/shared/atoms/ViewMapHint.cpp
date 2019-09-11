@@ -13,14 +13,29 @@ const RPZAtom* ViewMapHint::templateAtom() const {
     return this->_templateAtom;
 }
 
+QGraphicsItem* ViewMapHint::ghostItem() const {
+    QMutexLocker m(&this->_m_ghostItem);
+    return this->_ghostItem;
+}
+
 void ViewMapHint::setDefaultLayer(int layer) {
     
+    AtomUpdates updates;
+    updates.insert(AtomParameter::Layer, layer);
+
     {
         QMutexLocker m(&this->_m_templateAtom);
-        this->_templateAtom->setMetadata(AtomParameter::Layer, layer);
+        this->_templateAtom->setMetadata(updates);
     }
 
-    emit atomTemplateChanged();
+    this->_m_ghostItem.lock();
+    auto ghostItem = this->_ghostItem;
+    this->_m_ghostItem.unlock();
+
+    if(ghostItem) {
+        emit requestingUIUpdate({ghostItem}, updates);
+    }
+   
 }
 
 void ViewMapHint::notifyMovementOnItems(const QList<QGraphicsItem*> &itemsWhoMoved) {
@@ -29,7 +44,7 @@ void ViewMapHint::notifyMovementOnItems(const QList<QGraphicsItem*> &itemsWhoMov
     AtomsUpdates coords;
     for(auto &gi : itemsWhoMoved) {
         
-        auto cAtom = this->_getAtomFromGraphicsItem(gi);
+        auto cAtom = this->getAtomFromGraphicsItem(gi);
         if(!cAtom) continue;
 
         AtomUpdates updates {{ AtomParameter::Position, gi->pos() }};
@@ -47,7 +62,7 @@ void ViewMapHint::notifySelectedItems(const QList<QGraphicsItem*> &selectedItems
 
     QVector<RPZAtomId> ids;
 
-    for(auto atom : this->_getAtomsFromGraphicsItems(selectedItems)) {
+    for(auto atom : this->getAtomsFromGraphicsItems(selectedItems)) {
         ids.append(atom->id());
     }
 
@@ -69,7 +84,14 @@ void ViewMapHint::setDefaultUser(const RPZUser &user) {
         this->_templateAtom->setOwnership(user); //update template
     }
 
-    emit atomTemplateChanged();
+    
+    this->_m_ghostItem.lock();
+    auto ghostItem = this->_ghostItem;
+    this->_m_ghostItem.unlock();
+
+    if(ghostItem) {
+        emit requestingUIUserChange({ghostItem}, user);
+    }
 
 }
 
@@ -86,9 +108,9 @@ void ViewMapHint::deleteCurrentSelectionItems() const {
     AlterationHandler::get()->queueAlteration(this, payload);
 }
 
-QGraphicsItem* ViewMapHint::generateGhostItem(const RPZAssetMetadata &assetMetadata) {
+QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZAssetMetadata &assetMetadata) {
     
-    {
+    if(!assetMetadata.isEmpty()){
         QMutexLocker m(&this->_m_templateAtom);
 
         //update template
@@ -96,17 +118,41 @@ QGraphicsItem* ViewMapHint::generateGhostItem(const RPZAssetMetadata &assetMetad
         this->_templateAtom->setMetadata(AtomParameter::AssetId, assetMetadata.assetId());
         this->_templateAtom->setMetadata(AtomParameter::AssetName, assetMetadata.assetName());
     }
+    
+    QGraphicsItem* toDelete = nullptr;
 
-    //add to scene
-    QGraphicsItem* ghostItem = CustomGraphicsItemHelper::createGraphicsItem(*this->_templateAtom, assetMetadata, true);
+    {
+        QMutexLocker m(&this->_m_ghostItem);
 
-    //advert change in template
-    emit atomTemplateChanged();
+        //delete if ghost item exist
+        if(this->_ghostItem) toDelete = this->_ghostItem;
 
-    //define transparency as it is a dummy
-    ghostItem->setOpacity(.5);
+        if(!assetMetadata.isEmpty()) {
+            
+            {
+                QMutexLocker l2(&this->_m_templateAsset);
+                this->_templateAsset = assetMetadata;
+            }
+         
+            //add to scene
+            this->_ghostItem = generateTemporaryItemFromTemplateBuffer();
+            
+        }
+        
+    }
 
-    return ghostItem;
+    return toDelete;
+}
+
+QGraphicsItem* ViewMapHint::generateTemporaryItemFromTemplateBuffer() {
+    QMutexLocker l1(&this->_m_templateAtom);
+    QMutexLocker l2(&this->_m_templateAsset);
+
+    return CustomGraphicsItemHelper::createGraphicsItem(
+                *this->_templateAtom, 
+                this->_templateAsset, 
+                true
+            );
 }
 
 void ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsItem) const {
@@ -198,7 +244,7 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAssetMetadata &metad
         for(auto oldGi : setOfGraphicsItemsToReplace) {
             
             //find corresponding atom
-            auto atom = this->_getAtomFromGraphicsItem(oldGi);
+            auto atom = this->getAtomFromGraphicsItem(oldGi);
 
             //create the new graphics item
             auto newGi = CustomGraphicsItemHelper::createGraphicsItem(*atom, metadata);
@@ -240,22 +286,20 @@ void ViewMapHint::handlePreviewRequest(const QVector<RPZAtomId> &RPZAtomIdsToPre
 
 void ViewMapHint::_crossBindingAtomWithGI(RPZAtom* atom, QGraphicsItem* gi) {
     this->_GItemsByRPZAtomId[atom->id()] = gi;
-    auto ptrValToAtom = (long long)atom;
-    gi->setData(RPZUserRoles::AtomPtr, ptrValToAtom);
+    gi->setData(RPZUserRoles::AtomPtr, QVariant::fromValue<RPZAtom*>(atom));
 }
 
-QVector<RPZAtom*> ViewMapHint::_getAtomsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const {
+QVector<RPZAtom*> ViewMapHint::getAtomsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const {
     QVector<RPZAtom*> list;
     for(auto e : listToFetch) {
-        auto atom = this->_getAtomFromGraphicsItem(e);
+        auto atom = this->getAtomFromGraphicsItem(e);
         list.append(atom);
     }
     return list;
 }
 
-RPZAtom* ViewMapHint::_getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const {
-    auto ptrValToAtom = graphicElem->data(RPZUserRoles::AtomPtr).toLongLong();
-    return (RPZAtom*)ptrValToAtom;
+RPZAtom* ViewMapHint::getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const {
+    return graphicElem->data(RPZUserRoles::AtomPtr).value<RPZAtom*>();
 }
 
 //////////////////////////
@@ -275,20 +319,41 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
     if(auto mPayload = dynamic_cast<AssetChangedPayload*>(&payload)) {
         this->_replaceMissingAssetPlaceholders(mPayload->assetMetadata());
     }
+
+    //if asset selected
+    else if(auto mPayload = dynamic_cast<AssetSelectedPayload*>(&payload)) {
+        auto mightDelete = this->_generateGhostItem(mPayload->selectedAsset());
+        
+        if(mightDelete) {
+            emit requestingUIAlteration(PayloadAlteration::PA_Removed, {mightDelete});
+        }
+
+        this->_m_ghostItem.lock();
+        auto ghostItem = this->_ghostItem;
+        this->_m_ghostItem.unlock();
+
+        emit requestingUIAlteration(PayloadAlteration::PA_AssetSelected, {ghostItem});
+    }
     
     //if template changed
     else if(auto mPayload = dynamic_cast<AtomTemplateChangedPayload*>(&payload)) {
 
+        auto updates = mPayload->updates();
+
         {
             QMutexLocker m(&this->_m_templateAtom);
-
-            this->_templateAtom->setMetadata(
-                mPayload->updates()
-            );
+            this->_templateAtom->setMetadata(updates);
         }
 
-        //says it changed
-        emit atomTemplateChanged();
+        this->_m_ghostItem.lock();
+        auto ghostItem = this->_ghostItem;
+        this->_m_ghostItem.unlock();
+
+        if(ghostItem) {
+            //says it changed
+            emit requestingUIUpdate({ghostItem}, updates);
+        }
+        
     }
 
     //request assets if there are missing

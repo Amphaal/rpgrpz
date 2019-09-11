@@ -52,13 +52,9 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
 
     public slots:
         void onActionRequested(const MapTools::Actions &action);
-        void onAssetTemplateChange(const RPZAssetMetadata &assetMetadata);
-        void onAtomTemplateChange();
     
     signals:
-        void unselectCurrentAssetAsked();
         void remoteChanged(bool isRemote);
-        void subjectedAtomsChanged(const QVector<const RPZAtom*> &subjectAtoms);
 
     protected:
         void enterEvent(QEvent *event) override;
@@ -105,11 +101,7 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
         void _hideLoader();
 
         //ghost
-            QGraphicsItem* _ghostItem = nullptr;
-            RPZAssetMetadata _bufferedAssetMetadata;
-            void _clearGhostItem();
-            void _generateGhostItemFromBuffer();
-            void _handleGhostItem(const Tool &tool);
+            void _mightCenterGhostWithCursor();
         
         //network
             void _sendMapHistory();
@@ -122,7 +114,7 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
             Tool _tool = (Tool)0;
             Tool _quickTool = (Tool)0;
             Tool _getCurrentTool() const;
-            void _changeTool(Tool newTool, bool quickChange = false, bool isFromExternal = false);
+            void _changeTool(Tool newTool, bool quickChange = false);
             void _resetTool();
             
         //moving...

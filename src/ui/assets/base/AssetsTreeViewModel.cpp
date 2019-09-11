@@ -443,7 +443,7 @@ QMimeData* AssetsTreeViewModel::mimeData(const QModelIndexList &indexes) const {
         if(i.column() > 0) continue;
 
         //add to list
-        pointerList += QString::number((long long)i.internalPointer()) + ";";
+        pointerList += QString::number((unsigned long long)i.internalPointer()) + ";";
     }
     //remove last separator
     pointerList = pointerList.left(pointerList.length() - 1); 

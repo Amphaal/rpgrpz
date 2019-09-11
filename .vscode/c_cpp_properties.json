@@ -6,7 +6,8 @@
                 "path": [
                     "/Library/Frameworks/GStreamer.framework/Headers",
                     "/Qt/5.13.0/clang_64/include",
-                    "/Qt/5.13.0/clang_64/lib"
+                    "/Qt/5.13.0/clang_64/lib",
+                    "/Users/Amphaal/.conan/data"
                 ],
                 "limitSymbolsToIncludedHeaders": true
             },
@@ -26,7 +27,10 @@
                 "/Qt/5.13.0/clang_64/lib/QtCore.framework/Versions/5/Headers",
                 "/Qt/5.13.0/clang_64/lib/QtWidgets.framework/Versions/5/Headers",
                 "/Qt/5.13.0/clang_64/lib/QtGui.framework/Versions/5/Headers",
-                "/Qt/5.13.0/clang_64/lib/QtOpenGL.framework/Versions/5/Headers"
+                "/Qt/5.13.0/clang_64/lib/QtOpenGL.framework/Versions/5/Headers",
+                "/Qt/5.13.0/clang_64/lib/QtSvg.framework/Versions/5/Headers",
+                "/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/build/1513b3452ef7e2a2dd5f931247c5e02edeb98cc9/miniupnp/miniupnpc",
+                "/Library/Frameworks/GStreamer.framework/Versions/1.0/Headers"
             ]
         },
         {

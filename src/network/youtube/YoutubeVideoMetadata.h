@@ -71,3 +71,4 @@ class YoutubeVideoMetadata : public QObject {
         QHash<int, QString> _audioTypeByItag;
 };
 
+Q_DECLARE_METATYPE(YoutubeVideoMetadata*)

@@ -13,6 +13,7 @@
 #include "local/AssetChangedPayload.hpp"
 #include "local/AtomTemplateChangedPayload.hpp"
 #include "local/AtomTemplateSelectedPayload.hpp"
+#include "local/AssetSelectedPayload.hpp"
 
 
 class Payloads {
@@ -37,6 +38,10 @@ class Payloads {
 
                 case PayloadAlteration::PA_AssetChanged:
                     return QSharedPointer<AssetChangedPayload>(new AssetChangedPayload(hash));
+                break;
+
+                case PayloadAlteration::PA_AssetSelected:
+                    return QSharedPointer<AssetSelectedPayload>(new AssetSelectedPayload(hash));
                 break;
 
                 case PayloadAlteration::PA_Added:

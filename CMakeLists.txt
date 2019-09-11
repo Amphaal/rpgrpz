@@ -212,9 +212,11 @@ if(APPLE)
     set_target_properties(${PROJECT_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/templates/Info.plist.in) 
 endif()
 
-# #accelerate builds times
-include(cotire)
-cotire(${PROJECT_NAME})
+if(WIN32)
+    #accelerate builds times
+    include(cotire)
+    cotire(${PROJECT_NAME})
+endif()
 
 ################
 # INSTALL COPY #

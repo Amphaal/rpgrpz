@@ -235,5 +235,3 @@ QSet<AtomParameter> RPZAtom::legalEditedMetadata() const {
         this->legalParameters()
     );
 }
-
-Q_DECLARE_METATYPE(RPZAtom*)

@@ -86,5 +86,3 @@ void YoutubeVideoMetadata::setAudioStreamInfos(const YoutubeAudioStreamInfos &ad
 YoutubeAudioStreamInfos* YoutubeVideoMetadata::audioStreams() {
     return &this->_audioStreamInfos;
 }
-
-Q_DECLARE_METATYPE(YoutubeVideoMetadata*)

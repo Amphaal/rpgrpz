@@ -26,12 +26,10 @@ class AssetsTreeView : public QTreeView, public ClientBindable, public Alteratio
         AssetsTreeView(QWidget *parent = nullptr);
         AssetsTreeViewModel* assetsModel();
         QModelIndexList selectedElementsIndexes();
-    
-    signals:
-        void assetTemplateChanged(const RPZAssetMetadata &assetMetadata);
 
     private slots:
         void _onReceivedAsset(const RPZAssetImportPackage &package);
+        void _handleAlterationRequest(const AlterationPayload &payload);
 
     private:
         void onRPZClientConnecting() override;

@@ -8,7 +8,7 @@ class AtomTemplateChangedPayload : public AlterationPayload {
     
     public:
         AtomTemplateChangedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        AtomTemplateChangedPayload(const AtomParameter &param, const QVariant &value) : AlterationPayload(PayloadAlteration::PA_AssetChanged) {
+        AtomTemplateChangedPayload(const AtomParameter &param, const QVariant &value) : AlterationPayload(PayloadAlteration::PA_AtomTemplateChanged) {
             this->insert("p", param);
             this->insert("v", value);
         }

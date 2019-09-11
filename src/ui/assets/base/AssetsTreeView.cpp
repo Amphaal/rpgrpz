@@ -44,6 +44,12 @@ AssetsTreeView::AssetsTreeView(QWidget *parent) : QTreeView(parent),
         this, &AssetsTreeView::_renderCustomContextMenu
     );
 
+    //handle alteration
+    QObject::connect(
+        AlterationHandler::get(), &AlterationHandler::requiresPayloadHandling,
+        this, &AssetsTreeView::_handleAlterationRequest
+    );
+
     //selection
     this->setSelectionBehavior(QAbstractItemView::SelectRows);
     this->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -301,10 +307,12 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
     auto indexesCount = selectedElems.count();
     auto defSelect = RPZAssetMetadata();
 
+    //if no selection
     if(!indexesCount) {
         this->clearFocus();
     } 
     
+    //if only a single selection
     else if(indexesCount == 1) {
 
         auto elem = AssetsDatabaseElement::fromIndex(selectedElems[0]);
@@ -319,7 +327,13 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
     //if different, send
     if(this->_selectedAsset != defSelect) {
         this->_selectedAsset = defSelect;
-        emit assetTemplateChanged(this->_selectedAsset);
+
+        AssetSelectedPayload payload(this->_selectedAsset);
+        AlterationHandler::get()->queueAlteration(this, payload);
     }
    
+}
+
+void AssetsTreeView::_handleAlterationRequest(const AlterationPayload &payload) {
+    if(payload.type() == PA_Selected) this->clearSelection();
 }

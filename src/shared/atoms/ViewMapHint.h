@@ -35,9 +35,14 @@ class ViewMapHint : public AtomsStorage {
 
         //might be called by another thread, safe
         void deleteCurrentSelectionItems() const;
-        QGraphicsItem* generateGhostItem(const RPZAssetMetadata &assetMetadata);
         void integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem) const;
         const RPZAtom* templateAtom() const;
+        QGraphicsItem* ghostItem() const;
+
+        RPZAtom* getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const;
+        QVector<RPZAtom*> getAtomsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const;
+
+        QGraphicsItem* generateTemporaryItemFromTemplateBuffer(); //safe
 
     public slots:
         void notifyMovementOnItems(const QList<QGraphicsItem*> &itemsWhoMoved); //safe
@@ -50,7 +55,6 @@ class ViewMapHint : public AtomsStorage {
 
     signals:
         void requestMissingAssets(const QList<RPZAssetHash> &assetIdsToRequest);
-        void atomTemplateChanged();
 
         void requestingUIAlteration(const PayloadAlteration &type, const QList<QGraphicsItem*> &toAlter);
         void requestingUIUpdate(const QHash<QGraphicsItem*, AtomUpdates> &toUpdate);
@@ -65,16 +69,22 @@ class ViewMapHint : public AtomsStorage {
 
     private:
         //alter template Atom
-        RPZAtom* _templateAtom = nullptr;
+        mutable QMutex _m_ghostItem;
+        QGraphicsItem* _ghostItem = nullptr;
+        
+        mutable QMutex _m_templateAsset;
+        RPZAssetMetadata _templateAsset;
+
         mutable QMutex _m_templateAtom;
+        RPZAtom* _templateAtom = nullptr;
+        
 
         QMap<RPZAtomId, QGraphicsItem*> _GItemsByRPZAtomId;
         
         //helpers
+        QGraphicsItem* _generateGhostItem(const RPZAssetMetadata &assetMetadata);
         QGraphicsItem* _buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom);
         void _crossBindingAtomWithGI(RPZAtom* atom, QGraphicsItem* gi);
-        RPZAtom* _getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const;
-        QVector<RPZAtom*> _getAtomsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const;
 
         //missing assets tracking
         QSet<RPZAssetHash> _assetsIdsToRequest;

@@ -40,6 +40,9 @@ void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZA
     //update transform origin
     auto center = blueprint.shapeCenter();
     target->setTransformOriginPoint(center);
+
+    //define transparency as it is a dummy
+    if(isTargetTemporary) target->setOpacity(.5);
             
 }
 

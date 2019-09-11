@@ -17,7 +17,8 @@ enum PayloadAlteration {
     PA_BulkMetadataChanged,
     PA_AssetChanged,
     PA_AtomTemplateChanged,
-    PA_AtomTemplateSelected
+    PA_AtomTemplateSelected,
+    PA_AssetSelected
 }; 
 
 static const QStringList PayloadAlterationAsStr {
@@ -32,7 +33,8 @@ static const QStringList PayloadAlterationAsStr {
     "BulkMetadataChanged",
     "AssetChanged",
     "AtomTemplateChanged",
-    "AtomTemplateSelected"
+    "AtomTemplateSelected",
+    "AssetSelected"
 };
 
 class AlterationPayload : public QVariantHash { 
