@@ -33,7 +33,7 @@ class AtomEditor : public QGroupBox, public AlterationActor {
         void resetParams();
     
     signals:
-        void requiresPreview(const QVector<RPZAtomId> &RPZAtomIdsToPreview, const AtomParameter &parameter, QVariant &value);
+        void requiresPreview(const QVector<RPZAtomId> &RPZAtomIdsToPreview, const AtomParameter &parameter, const QVariant &value);
 
     private:
         static inline QHash<EditMode, QString> _strEM {
@@ -51,8 +51,8 @@ class AtomEditor : public QGroupBox, public AlterationActor {
         AtomUpdates _findDefaultValuesToBind();
         void _createEditorsFromAtomParameters();
 
-        void _onSubEditorChanged(const AtomParameter &parameterWhoChanged, QVariant &value);
-        void _onPreviewRequested(const AtomParameter &parameter, QVariant &value);
+        void _onSubEditorChanged(const AtomParameter &parameterWhoChanged, const QVariant &value);
+        void _onPreviewRequested(const AtomParameter &parameter, const QVariant &value);
 
         void _emitPayload(AlterationPayload &payload);
 

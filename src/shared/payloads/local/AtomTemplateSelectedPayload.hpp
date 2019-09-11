@@ -14,6 +14,6 @@ class AtomTemplateSelectedPayload : public AlterationPayload {
         }
     
         const RPZAtom* selectedTemplate() const {
-            return this->value("t").value<RPZAtom*>();
+            return this->value("ref").value<RPZAtom*>();
         }
 };

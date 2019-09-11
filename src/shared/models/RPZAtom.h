@@ -160,8 +160,6 @@ class RPZAtom : public Ownable {
 
         QString _defaultDescriptor() const;
         void _setType(const AtomType &type);
-
-        QGraphicsItem* _graphicsItem = nullptr;
 };
 
 Q_DECLARE_METATYPE(RPZAtom *)

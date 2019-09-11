@@ -3,13 +3,13 @@
 void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZAtom &blueprint, bool isTargetTemporary) {
     
     //bind a copy of the template to the item
-    target->setData((int)AtomConverterDataIndex::TemplateAtom, RPZAtom(blueprint));
+    target->setData((int)AtomConverterDataIndex::TemplateAtom, blueprint);
     target->setData((int)AtomConverterDataIndex::IsTemporary, isTargetTemporary);
 
     //refresh all legal if temporary
     auto paramsToUpdate = blueprint.legalParameters().toList();
     std::sort(paramsToUpdate.begin(), paramsToUpdate.end()); 
-
+    
     //update GI
     for(auto param : paramsToUpdate) {
         auto val = blueprint.metadata(param);
@@ -59,6 +59,8 @@ void AtomConverter::updateGraphicsItemFromMetadata(QGraphicsItem* item, const At
     
     auto requiresTransform = _setParamToGraphicsItemFromAtom(param, item, val);
     if(requiresTransform) _bulkTransformApply(item);
+
+
 
 };
 

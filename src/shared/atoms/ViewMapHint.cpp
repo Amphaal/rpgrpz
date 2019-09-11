@@ -137,7 +137,7 @@ QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZAssetMetadata &assetMeta
             //add to scene
             this->_ghostItem = generateTemporaryItemFromTemplateBuffer();
             
-        }
+        } else this->_ghostItem = nullptr;
         
     }
 
@@ -174,7 +174,7 @@ void ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsItem) co
 /////////////////////////
 
 
-QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom) {
+QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuildFrom) {
 
     QGraphicsItem* newItem = nullptr;
     auto hasMissingAssetFile = false;
@@ -219,7 +219,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom)
     }
 
     //save pointer ref
-    this->_crossBindingAtomWithGI(&atomToBuildFrom, newItem);
+    this->_crossBindingAtomWithGI((RPZAtom*)&atomToBuildFrom, newItem);
 
     return newItem;
 }
@@ -263,7 +263,7 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAssetMetadata &metad
     emit requestingUIAlteration(PA_Added, newGis);
 }
 
-void ViewMapHint::handlePreviewRequest(const QVector<RPZAtomId> &RPZAtomIdsToPreview, const AtomParameter &parameter, QVariant &value) {
+void ViewMapHint::handlePreviewRequest(const QVector<RPZAtomId> &RPZAtomIdsToPreview, const AtomParameter &parameter, const QVariant &value) {
     
     QList<QGraphicsItem*> toUpdate;
     AtomUpdates updates; updates.insert(parameter, value);
@@ -322,8 +322,11 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
 
     //if asset selected
     else if(auto mPayload = dynamic_cast<AssetSelectedPayload*>(&payload)) {
+        
+        //generate ghost
         auto mightDelete = this->_generateGhostItem(mPayload->selectedAsset());
         
+        //request deletion previous ghost
         if(mightDelete) {
             emit requestingUIAlteration(PayloadAlteration::PA_Removed, {mightDelete});
         }
@@ -332,6 +335,7 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
         auto ghostItem = this->_ghostItem;
         this->_m_ghostItem.unlock();
 
+        //request addition of new ghost
         emit requestingUIAlteration(PayloadAlteration::PA_AssetSelected, {ghostItem});
     }
     

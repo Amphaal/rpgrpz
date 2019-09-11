@@ -16,9 +16,6 @@ class RPZAssetMetadata : public QVariantHash {
         QString assetName() const;
         RPZAssetHash assetId() const;
         AtomType atomType() const;
-        int brushWidth() const;
-
-        void setBrushWidth(int width);
     
     private:
         void _setAtomType(const AtomType &type);

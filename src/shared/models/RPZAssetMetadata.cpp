@@ -33,14 +33,6 @@ AtomType RPZAssetMetadata::atomType() const {
     return (AtomType)this->value("t").toInt();
 }
 
-int RPZAssetMetadata::brushWidth() const {
-    return this->value("bw").toInt();
-}
-
-void RPZAssetMetadata::setBrushWidth(int width) {
-    this->insert("bw", width);
-}
-
 void RPZAssetMetadata::_setAtomType(const AtomType &type) {
     this->insert("t", (int)type);
 }

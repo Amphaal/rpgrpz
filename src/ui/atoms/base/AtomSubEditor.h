@@ -16,11 +16,11 @@ class AtomSubEditor : public QWidget {
         AtomSubEditor(const AtomParameter &parameter);
         
         AtomParameter param();
-        virtual void loadTemplate(QVector<const RPZAtom*> &atomsToManipulate, QVariant &defaultValue);
+        virtual void loadTemplate(QVector<const RPZAtom*> &atomsToManipulate, const QVariant &defaultValue);
 
     signals:
-        void valueConfirmedForPayload(const AtomParameter &parameter, QVariant &value);
-        void valueConfirmedForPreview(const AtomParameter &parameter, QVariant &value);
+        void valueConfirmedForPayload(const AtomParameter &parameter, const QVariant &value);
+        void valueConfirmedForPreview(const AtomParameter &parameter, const QVariant &value);
 
     protected:
         AtomParameter _param;

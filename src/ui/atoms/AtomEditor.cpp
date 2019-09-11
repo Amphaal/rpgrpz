@@ -107,7 +107,7 @@ void AtomEditor::_createEditorsFromAtomParameters() {
     }
 }
 
-void AtomEditor::_onSubEditorChanged(const AtomParameter &parameterWhoChanged, QVariant &value) {
+void AtomEditor::_onSubEditorChanged(const AtomParameter &parameterWhoChanged, const QVariant &value) {
     
     if(this->_currentEditMode == Template) {
         AtomTemplateChangedPayload payload(parameterWhoChanged, value);
@@ -121,7 +121,7 @@ void AtomEditor::_onSubEditorChanged(const AtomParameter &parameterWhoChanged, Q
 
 }
 
-void AtomEditor::_onPreviewRequested(const AtomParameter &parameter, QVariant &value) {
+void AtomEditor::_onPreviewRequested(const AtomParameter &parameter, const QVariant &value) {
     emit requiresPreview(this->_RPZAtomIds, parameter, value);
 }
 

@@ -205,7 +205,8 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
             case PA_AssetSelected: {
                 Tool newTool = item ? Tool::Atom : Tool::Default;
                 const RPZAtom* selectedAtom = item ? this->_hints->templateAtom() : nullptr;
-                
+                if(item) this->_addItem(item);
+
                 //change tool, proceed to unselect items
                 this->_changeTool(newTool);
 

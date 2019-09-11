@@ -26,7 +26,7 @@ QSlider* AtomSliderEditor::slider() {
 }
 
 
-void AtomSliderEditor::loadTemplate(QVector<const RPZAtom*> &atomsToManipulate, QVariant &defaultValue) {
+void AtomSliderEditor::loadTemplate(QVector<const RPZAtom*> &atomsToManipulate, const QVariant &defaultValue) {
     
     AtomSubEditor::loadTemplate(atomsToManipulate, defaultValue);
 

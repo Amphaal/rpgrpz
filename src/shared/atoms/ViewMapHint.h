@@ -51,7 +51,7 @@ class ViewMapHint : public AtomsStorage {
         void setDefaultLayer(int layer); //safe
 
         //handle preview alteration before real payload
-        void handlePreviewRequest(const QVector<RPZAtomId> &RPZAtomIdsToPreview, const AtomParameter &parameter, QVariant &value);
+        void handlePreviewRequest(const QVector<RPZAtomId> &RPZAtomIdsToPreview, const AtomParameter &parameter, const QVariant &value);
 
     signals:
         void requestMissingAssets(const QList<RPZAssetHash> &assetIdsToRequest);
@@ -83,7 +83,7 @@ class ViewMapHint : public AtomsStorage {
         
         //helpers
         QGraphicsItem* _generateGhostItem(const RPZAssetMetadata &assetMetadata);
-        QGraphicsItem* _buildGraphicsItemFromAtom(RPZAtom &atomToBuildFrom);
+        QGraphicsItem* _buildGraphicsItemFromAtom(const RPZAtom &atomToBuildFrom);
         void _crossBindingAtomWithGI(RPZAtom* atom, QGraphicsItem* gi);
 
         //missing assets tracking
