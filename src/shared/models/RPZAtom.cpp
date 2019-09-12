@@ -66,9 +66,10 @@ void RPZAtom::setMetadata(const AtomParameter &key, const QVariant &value, bool 
 
         case AtomParameter::ShapeCenter:
         case AtomParameter::Position: {
-            auto pos = value.toPointF();
-            QVariantList a { pos.x(), pos.y() };
-            this->insert(_str[key], a);
+            this->insert(
+                _str[key], 
+                JSONSerializer::pointToDoublePair(value.toPointF())
+            );
         }
         break;
 
@@ -85,8 +86,9 @@ QVariant RPZAtom::metadata(const AtomParameter &key) const {
 
         case AtomParameter::ShapeCenter:
         case AtomParameter::Position: {
-            auto posArr = this->value(_str[key]).toList();
-            return posArr.isEmpty() ? QPointF() : QPointF(posArr[0].toReal(), posArr[1].toReal());
+            return JSONSerializer::pointFromDoublePair(
+                this->value(_str[key])
+            ); 
         }
         break;
 

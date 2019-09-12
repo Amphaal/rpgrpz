@@ -100,7 +100,6 @@ QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> MapDatabase::_getUpdateHan
 
             //update doc
             auto duplicated = MapDatabase::toObject(atoms, doc);
-            duplicated["version"] = 7;
             doc.setObject(duplicated);
 
         }

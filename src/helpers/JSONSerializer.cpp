@@ -14,3 +14,32 @@ QPainterPath JSONSerializer::fromByteArray(const QByteArray &base64) {
     stream >> returned;
     return returned;
 }
+
+QJsonArray JSONSerializer::fromQSize(const QSize &size) {
+    return QJsonArray { size.width(), size.height() };
+}
+
+QSize JSONSerializer::toQSize(const QJsonArray &JSONArray) {
+    if(JSONArray.count() != 2) return QSize();
+    return QSize(
+        JSONArray[0].toInt(), 
+        JSONArray[0].toInt()
+    );
+}
+
+QPointF JSONSerializer::pointFromDoublePair(const QVariant &doubleList) {
+    auto casted = doubleList.toList();
+    if(casted.count() != 2) return QPointF();
+    return QPointF(
+        casted[0].toReal(), 
+        casted[1].toReal()
+    );
+}
+
+QVariant JSONSerializer::pointToDoublePair(const QPointF &point) {
+    return QVariantList { point.x(), point.y() };
+}
+
+QJsonArray JSONSerializer::sizeCenterToDoublePair(const QSize &size) {
+    return QJsonArray { (qreal)size.width() / 2, (qreal)size.height() / 2 };
+}

@@ -99,8 +99,12 @@ bool JSONDatabase::_handleVersionMissmatch(QJsonDocument &databaseToUpdate, int 
     //if no update have been applied
     if(!updateApplied) return defaultBehavior("No later handlers found");
 
+    //force version update
+    auto out = databaseToUpdate.object();
+    out["version"] = aimedAPIVersion;
+    
     //save into file
-    this->_updateDbFile(databaseToUpdate.object());
+    this->_updateDbFile(out);
     qDebug() << "JSON Database : Update complete !";
     return false;
 

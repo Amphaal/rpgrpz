@@ -14,7 +14,7 @@ AssetsDatabase::AssetsDatabase() : QObject(nullptr) {
 };
 
 const int AssetsDatabase::apiVersion() {
-    return 4;
+    return 5;
 }
 
 void AssetsDatabase::_removeDatabaseLinkedFiles() {
@@ -101,16 +101,19 @@ QString AssetsDatabase::getFilePathToAsset(const RPZAssetHash &id) {
 
     auto assetJSON = db_assets[id].toObject();
     auto fileExtension =  assetJSON["ext"].toString();
-	auto asFP = this->assetsStorageFilepath();
 
-	return QString("%1/%2.%3")
-					.arg(asFP)
-					.arg(id)
-					.arg(fileExtension);
+    return getFilePathToAsset(id, fileExtension);
 }
 
 QString AssetsDatabase::getFilePathToAsset(AssetsDatabaseElement* asset) {
     return this->getFilePathToAsset(asset->id());
+}
+
+QString AssetsDatabase::getFilePathToAsset(const RPZAssetHash &id, const QString &ext) {
+	return QString("%1/%2.%3")
+					.arg(assetsStorageFilepath())
+					.arg(id)
+					.arg(ext);
 }
 
 ///
@@ -122,7 +125,11 @@ QJsonObject AssetsDatabase::paths() {
 }
 
 QJsonObject AssetsDatabase::assets() {
-    return this->_db["assets"].toObject();
+    return assets(this->_db);
+}
+
+QJsonObject AssetsDatabase::assets(QJsonDocument &doc) {
+    return doc["assets"].toObject();
 }
 
 ///
@@ -291,8 +298,7 @@ RPZAssetHash AssetsDatabase::_getFileSignatureFromFileUri(const QUrl &url) {
 QUrl AssetsDatabase::_moveFileToDbFolder(const QByteArray &data, const QString &fileExt, const QString &name, const RPZAssetHash &id) {
     
     //turn encoded file from JSON into file
-    auto destFolder = this->assetsStorageFilepath();
-    auto dest = QString("%1/%2.%3").arg(destFolder).arg(id).arg(fileExt);
+    auto dest = getFilePathToAsset(id, fileExt);
 
     //write file
     QFile assetFile(dest);
@@ -329,6 +335,7 @@ QString AssetsDatabase::_addAssetToDb(const RPZAssetHash &id, const QUrl &url, A
     auto obj = this->_db.object();
     auto folderParentPath = parent->path();
     QFileInfo fInfo(url.fileName());
+    QImage image(url.toLocalFile());
 
     //1.save new asset
     auto assets = this->assets();
@@ -337,6 +344,8 @@ QString AssetsDatabase::_addAssetToDb(const RPZAssetHash &id, const QUrl &url, A
         auto newAsset = QJsonObject();
         newAsset["ext"] = fInfo.suffix();
         newAsset["name"] = fInfo.baseName();
+        newAsset["shape"] = JSONSerializer::fromQSize(image.size());
+        newAsset["center"] = JSONSerializer::sizeCenterToDoublePair(image.size());
 
     assets.insert(id, newAsset);
     obj["assets"] = assets;
@@ -776,4 +785,49 @@ QSet<RPZAssetPath> AssetsDatabase::_augmentPathsSetWithMissingDescendents(QSet<R
     }
 
     return inheritedPathAlterations;
+}
+
+QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> AssetsDatabase::_getUpdateHandlers() {
+    
+    auto out = QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler>();
+
+    //to v5
+    out.insert(
+        5,
+        [&](QJsonDocument &doc) {
+            
+            auto assets = AssetsDatabase::assets(doc);
+
+            //iterate assets
+            for(auto i = assets.begin(); i != assets.end(); i++) {
+                
+                auto assetId = i.key();
+                auto assetDataRef = i.value();
+
+                //get the filepath to the asset
+                auto fpAsset = getFilePathToAsset(
+                    i.key(),
+                    assetDataRef.toObject()["ext"].toString()
+                );
+
+                //add shape + center data
+                QImage image(fpAsset);
+                auto copy = assetDataRef.toObject();
+                copy["shape"] = JSONSerializer::fromQSize(image.size());
+                copy["center"] = JSONSerializer::sizeCenterToDoublePair(image.size());
+
+                assetDataRef = copy;
+
+            }
+
+            //update doc
+            auto copy = doc.object();
+            copy["assets"] = assets;
+            doc.setObject(copy);
+
+        }
+    );
+
+    return out;
+
 }

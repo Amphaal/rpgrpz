@@ -40,9 +40,11 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
         //read
         QJsonObject paths();
         QJsonObject assets();
+        static QJsonObject assets(QJsonDocument &doc);
 
         QString getFilePathToAsset(AssetsDatabaseElement* asset);
         QString getFilePathToAsset(const RPZAssetHash &id);
+        static QString getFilePathToAsset(const RPZAssetHash &id, const QString &ext);
 
         static QString assetsStorageFilepath();
 
@@ -57,6 +59,8 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
         void _removeDatabaseLinkedFiles() override;
     
     private:
+        QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> _getUpdateHandlers() override;
+
         //singleton
         AssetsDatabase();
         static inline AssetsDatabase* _singleton = nullptr;
