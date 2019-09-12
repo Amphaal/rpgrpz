@@ -40,10 +40,6 @@ QVariant JSONSerializer::pointToDoublePair(const QPointF &point) {
     return QVariantList { point.x(), point.y() };
 }
 
-QJsonArray JSONSerializer::pointToDoublePairJSON(const QPointF &point);
-    return QJsonArray { point.x(), point.y() };
-}
-
 QPointF JSONSerializer::pointFromDoublePair(const QJsonArray &doubleList) {
     if(doubleList.count() != 2) return QPointF();
     return QPointF(

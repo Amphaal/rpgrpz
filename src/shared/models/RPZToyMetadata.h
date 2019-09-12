@@ -9,6 +9,7 @@ class AssetsDatabaseElement;
 class RPZToyMetadata : public QVariantHash {
     public:
         RPZToyMetadata();
+        RPZToyMetadata(const QVariantHash &hash);
         RPZToyMetadata(
             AssetsDatabaseElement* parentContainer,
             const AtomType &type, 

@@ -60,7 +60,7 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
         void _removeDatabaseLinkedFiles() override;
     
     private:
-        //
+        //updates handlers
         QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> _getUpdateHandlers() override;
         
         //helpers

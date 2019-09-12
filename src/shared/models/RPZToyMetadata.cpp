@@ -1,6 +1,7 @@
 #include "RPZToyMetadata.h"
 
 RPZToyMetadata::RPZToyMetadata() {}
+RPZToyMetadata::RPZToyMetadata(const QVariantHash &hash) : QVariantHash(hash) {}
 
 RPZToyMetadata::RPZToyMetadata(const AtomType &type) {
     this->_setAtomType(type);

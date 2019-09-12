@@ -5,6 +5,7 @@
 #include <QVariant>
 #include <QJsonArray>
 #include <QSize>
+#include <QPointF>
 
 class JSONSerializer {
     public:
@@ -18,5 +19,7 @@ class JSONSerializer {
         static QPointF pointFromDoublePair(const QVariant &doubleList);
         
         static QVariant pointToDoublePair(const QPointF &point);
-        static QJsonArray pointToDoublePairJSON(const QPointF &point);
+        static QJsonArray pointToDoublePairJSON(const QPointF &point) {
+            return QJsonArray { point.x(), point.y() };
+        };
 };
