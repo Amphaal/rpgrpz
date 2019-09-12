@@ -35,7 +35,7 @@ QPixmap AssetsTreeViewModel::getAssetIcon(AssetsDatabaseElement* target, QSize &
     QPixmap toFind;
 
     //if selected elem is no item, skip
-    if(!target->isItem()) return toFind;
+    if(!target->isIdentifiable()) return toFind;
 
     //search in cache
     auto idToSearch = target->id() + "_ico";

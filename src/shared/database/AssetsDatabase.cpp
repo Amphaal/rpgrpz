@@ -32,11 +32,11 @@ QString AssetsDatabase::assetsStorageFilepath() {
     return AppContext::getAssetsFolderLocation();
 }
 
-RPZAssetMetadata AssetsDatabase::importAsset(const RPZAssetImportPackage &package) {
+RPZToyMetadata AssetsDatabase::importAsset(const RPZAssetImportPackage &package) {
     
     if(package.isEmpty()) {
         qDebug() << "Asset : received empty import package !";
-        return RPZAssetImportPackage();
+        return RPZToyMetadata();
     }
     
     RPZAssetHash asset_id = package["_id"].toString();
@@ -45,7 +45,7 @@ RPZAssetMetadata AssetsDatabase::importAsset(const RPZAssetImportPackage &packag
     auto fileBytes = package["_fileContent"].toByteArray();
     if(!fileBytes.size()) {
         qDebug() << "Asset : requested" << asset_id << "cannot be found by server";
-        return RPZAssetImportPackage();
+        return RPZToyMetadata();
     }
 
     //asset
@@ -59,14 +59,14 @@ RPZAssetMetadata AssetsDatabase::importAsset(const RPZAssetImportPackage &packag
 
     //copy into db
     auto parent = this->_staticElements[DownloadedContainer];
-    auto displayName = this->_addAssetToDb(asset_id, destUrl, parent);
+    auto metadata = this->_addAssetToDb(asset_id, destUrl, parent);
 
     //add to tree
-    auto element = new AssetsDatabaseElement(destFileName, parent, parent->insertType(), asset_id);
+    auto element = new AssetsDatabaseElement(metadata);
 
     auto destUrlPath = destUrl.toString();
     qDebug() << "Assets :" << destFileName << "imported";
-    return RPZAssetMetadata(asset_id, destUrlPath);
+    return metadata;
 }
 
 RPZAssetImportPackage AssetsDatabase::prepareAssetPackage(const RPZAssetHash &id) {
@@ -254,8 +254,19 @@ void AssetsDatabase::_generateItemsFromDb(const QHash<RPZAssetPath, AssetsDataba
 
             //create
             auto asset = assets_db[idStr].toObject();
-            auto assetName = asset["name"].toString();
-            auto newElem = new AssetsDatabaseElement(assetName, lastContainer, lastContainer->insertType(), idStr);
+
+            auto metadata = RPZToyMetadata(
+                lastContainer,
+                (AtomType)lastContainer->insertType(),
+                idStr,
+                asset["name"].toString(),
+                getFilePathToAsset(idStr, asset["ext"].toString()),
+                JSONSerializer::toQSize(asset["shape"].toArray()),
+                JSONSerializer::pointFromDoublePair(asset["center"].toArray())
+            );
+
+            auto elem = new AssetsDatabaseElement(metadata);
+
         }
     }
 
@@ -328,29 +339,32 @@ bool AssetsDatabase::_moveFileToDbFolder(const QUrl &url, const RPZAssetHash &id
     return !destUrl.isEmpty();
 }
 
-QString AssetsDatabase::_addAssetToDb(const RPZAssetHash &id, const QUrl &url, AssetsDatabaseElement* parent) {
+RPZToyMetadata AssetsDatabase::_addAssetToDb(const RPZAssetHash &id, const QUrl &url, AssetsDatabaseElement* parent) {
 
     //prepare
     auto db_paths = this->paths();
     auto obj = this->_db.object();
+
     auto folderParentPath = parent->path();
+    auto pathToAsset = url.toLocalFile();
+
     QFileInfo fInfo(url.fileName());
-    QImage image(url.toLocalFile());
 
     //1.save new asset
     auto assets = this->assets();
 
         //define new asset item
-        auto newAsset = QJsonObject();
+        QJsonObject newAsset;
         newAsset["ext"] = fInfo.suffix();
-        newAsset["name"] = fInfo.baseName();
-        newAsset["shape"] = JSONSerializer::fromQSize(image.size());
-        newAsset["center"] = JSONSerializer::sizeCenterToDoublePair(image.size());
+
+        auto assetName = fInfo.baseName();
+        newAsset["name"] = assetName;
+
+        auto assetSizeAndCenter = _defineSizeAndCenterToDbAsset(pathToAsset, newAsset);
 
     assets.insert(id, newAsset);
     obj["assets"] = assets;
         
-
     //check path existance, create it if non existant
     QJsonArray objsInPath = db_paths.contains(folderParentPath) ? db_paths[folderParentPath].toArray() : QJsonArray();
     if(!objsInPath.contains(id)) {
@@ -366,7 +380,15 @@ QString AssetsDatabase::_addAssetToDb(const RPZAssetHash &id, const QUrl &url, A
     this->_updateDbFile(obj);
     qDebug() << "Assets :" << fInfo.filePath() << "inserted !";
     
-    return fInfo.baseName();
+    return RPZToyMetadata(
+        parent,
+        (AtomType)parent->insertType(),
+        id,
+        assetName,
+        pathToAsset,
+        assetSizeAndCenter.size,
+        assetSizeAndCenter.center
+    );
 }
 
 bool AssetsDatabase::insertAsset(const QUrl &url, AssetsDatabaseElement* parent) {
@@ -386,10 +408,10 @@ bool AssetsDatabase::insertAsset(const QUrl &url, AssetsDatabaseElement* parent)
     if(!this->_moveFileToDbFolder(url, fileSignature)) return false;
 
     //insert into db
-    auto displayName = this->_addAssetToDb(fileSignature, url, parent);
+    auto metadata = this->_addAssetToDb(fileSignature, url, parent);
 
     //add element
-    auto element = new AssetsDatabaseElement(displayName, parent, parent->insertType(), fileSignature);
+    auto element = new AssetsDatabaseElement(metadata);
     return true;
 }
 
@@ -514,7 +536,7 @@ bool AssetsDatabase::rename(QString &name, AssetsDatabaseElement* target) {
     if(!target->isAcceptableNameChange(name)) return false;
 
     //rename for items
-    if(target->isItem()) this->_renameItem(name, target);
+    if(target->isIdentifiable()) this->_renameItem(name, target);
 
     //rename for folders
     else if(target->type() == Folder) this->_renameFolder(name, target);
@@ -563,7 +585,7 @@ QHash<RPZAssetPath, QSet<RPZAssetHash>> AssetsDatabase::_getAssetsToAlterFromLis
     auto out = QHash<RPZAssetPath, QSet<RPZAssetHash>>();
     
     for(auto &elem : elemsToAlter) {
-        if(elem->isItem()) {
+        if(elem->isIdentifiable()) {
             out[elem->path()].insert(elem->id());
         }
     }
@@ -811,11 +833,8 @@ QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> AssetsDatabase::_getUpdate
                 );
 
                 //add shape + center data
-                QImage image(fpAsset);
                 auto copy = assetDataRef.toObject();
-                copy["shape"] = JSONSerializer::fromQSize(image.size());
-                copy["center"] = JSONSerializer::sizeCenterToDoublePair(image.size());
-
+                _defineSizeAndCenterToDbAsset(fpAsset, copy);
                 assetDataRef = copy;
 
             }
@@ -830,4 +849,21 @@ QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> AssetsDatabase::_getUpdate
 
     return out;
 
+}
+
+SizeAndCenter AssetsDatabase::_defineSizeAndCenterToDbAsset(const QString &assetFilePath, QJsonObject &toUpdate) {
+    
+    SizeAndCenter out;
+    QImage image(assetFilePath);
+    
+    out.size = image.size();
+    out.center = QPointF (
+        (qreal)out.size.width() / 2,
+        (qreal)out.size.height() / 2
+    );
+
+    toUpdate["shape"] = JSONSerializer::fromQSize(out.size);
+    toUpdate["center"] = JSONSerializer::pointToDoublePairJSON(out.center);
+
+    return out;
 }

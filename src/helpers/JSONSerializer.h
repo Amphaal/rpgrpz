@@ -14,8 +14,9 @@ class JSONSerializer {
         static QJsonArray fromQSize(const QSize &size);
         static QSize toQSize(const QJsonArray &JSONArray); 
 
+        static QPointF pointFromDoublePair(const QJsonArray &doubleList);
         static QPointF pointFromDoublePair(const QVariant &doubleList);
+        
         static QVariant pointToDoublePair(const QPointF &point);
-
-        static QJsonArray sizeCenterToDoublePair(const QSize &size);
+        static QJsonArray pointToDoublePairJSON(const QPointF &point);
 };

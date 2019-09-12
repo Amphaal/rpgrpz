@@ -24,7 +24,7 @@
 
 #include "src/ui/map/MapTools.h"
 
-#include "src/shared/models/RPZAssetMetadata.h"
+#include "src/shared/models/RPZToyMetadata.h"
 
 class ViewMapHint : public AtomsStorage {
 
@@ -73,7 +73,7 @@ class ViewMapHint : public AtomsStorage {
         QGraphicsItem* _ghostItem = nullptr;
         
         mutable QMutex _m_templateAsset;
-        RPZAssetMetadata _templateAsset;
+        RPZToyMetadata _templateAsset;
 
         mutable QMutex _m_templateAtom;
         RPZAtom* _templateAtom = nullptr;
@@ -82,13 +82,13 @@ class ViewMapHint : public AtomsStorage {
         QMap<RPZAtomId, QGraphicsItem*> _GItemsByRPZAtomId;
         
         //helpers
-        QGraphicsItem* _generateGhostItem(const RPZAssetMetadata &assetMetadata);
+        QGraphicsItem* _generateGhostItem(const RPZToyMetadata &assetMetadata);
         QGraphicsItem* _buildGraphicsItemFromAtom(const RPZAtom &atomToBuildFrom);
         void _crossBindingAtomWithGI(RPZAtom* atom, QGraphicsItem* gi);
 
         //missing assets tracking
         QSet<RPZAssetHash> _assetsIdsToRequest;
-        void _replaceMissingAssetPlaceholders(const RPZAssetMetadata &metadata); //safe
+        void _replaceMissingAssetPlaceholders(const RPZToyMetadata &metadata); //safe
 
         //augmenting AtomsStorage
         virtual RPZAtom* _insertAtom(const RPZAtom &newAtom) override;

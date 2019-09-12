@@ -108,7 +108,7 @@ void ViewMapHint::deleteCurrentSelectionItems() const {
     AlterationHandler::get()->queueAlteration(this, payload);
 }
 
-QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZAssetMetadata &assetMetadata) {
+QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZToyMetadata &assetMetadata) {
     
     if(!assetMetadata.isEmpty()){
         QMutexLocker m(&this->_m_templateAtom);
@@ -183,7 +183,6 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuil
 
     //displayable atoms
     if(!assetId.isEmpty()) {
-        assetId = atomToBuildFrom.assetId();
         pathToAssetFile = AssetsDatabase::get()->getFilePathToAsset(assetId);
         hasMissingAssetFile = pathToAssetFile.isEmpty();
     }
@@ -211,7 +210,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuil
     
     //default
     else {
-        auto metadata = RPZAssetMetadata(assetId, pathToAssetFile);
+        auto metadata = RPZToyMetadata(assetId, pathToAssetFile);
         newItem = CustomGraphicsItemHelper::createGraphicsItem(
             atomToBuildFrom, 
             metadata
@@ -224,7 +223,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuil
     return newItem;
 }
 
-void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAssetMetadata &metadata) {
+void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZToyMetadata &metadata) {
     
     QList<QGraphicsItem*> newGis;
     QSet<QGraphicsItem *> setOfGraphicsItemsToReplace;

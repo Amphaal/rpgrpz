@@ -1,17 +1,17 @@
 #pragma once
 
 #include "src/shared/payloads/_base/AlterationPayload.hpp"
-#include "src/shared/models/RPZAssetMetadata.h"
+#include "src/shared/models/RPZToyMetadata.h"
 
 class AssetChangedPayload : public AlterationPayload {
     
     public:
         AssetChangedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        AssetChangedPayload(const RPZAssetMetadata &metadata) : AlterationPayload(PayloadAlteration::PA_AssetChanged) {
+        AssetChangedPayload(const RPZToyMetadata &metadata) : AlterationPayload(PayloadAlteration::PA_AssetChanged) {
             this->insert("m", metadata);
         }
     
-        RPZAssetMetadata assetMetadata() const {
+        RPZToyMetadata assetMetadata() const {
             return this->value("m").toHash();
         }
 };

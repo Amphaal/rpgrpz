@@ -40,6 +40,14 @@ QVariant JSONSerializer::pointToDoublePair(const QPointF &point) {
     return QVariantList { point.x(), point.y() };
 }
 
-QJsonArray JSONSerializer::sizeCenterToDoublePair(const QSize &size) {
-    return QJsonArray { (qreal)size.width() / 2, (qreal)size.height() / 2 };
+QJsonArray JSONSerializer::pointToDoublePairJSON(const QPointF &point);
+    return QJsonArray { point.x(), point.y() };
+}
+
+QPointF JSONSerializer::pointFromDoublePair(const QJsonArray &doubleList) {
+    if(doubleList.count() != 2) return QPointF();
+    return QPointF(
+        doubleList[0].toDouble(), 
+        doubleList[1].toDouble()
+    );
 }

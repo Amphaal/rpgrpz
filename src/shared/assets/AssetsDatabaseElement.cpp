@@ -16,22 +16,28 @@ AssetsDatabaseElement::~AssetsDatabaseElement(){
     qDeleteAll(this->_subElements);
 }
 
+AssetsDatabaseElement::AssetsDatabaseElement(const RPZToyMetadata &assetMetadata) : 
+    AssetsDatabaseElement(
+        assetMetadata.assetName(), 
+        assetMetadata.associatedParent(), 
+        (AssetsDatabaseElement::Type)assetMetadata.atomType()
+    ) {
+ 
+    this->_id = assetMetadata.assetId();
+    this->_toyMetadata = assetMetadata;
+
+}
+
 AssetsDatabaseElement::AssetsDatabaseElement(
     const QString &name, 
     AssetsDatabaseElement* parent,
-    const AssetsDatabaseElement::Type &type,
-    RPZAssetHash id
+    const AssetsDatabaseElement::Type &type
 ) { 
     //define type
     this->_setType(type);
 
     //define name (fullpath redefinition included)
     this->rename(name);
- 
-    //prevent id definition if not asset Type
-    if(this->isItem()) {
-        this->_id = id;
-    }
 
    //if a parent is defined, add self to its inner list
     if(parent) {
@@ -49,7 +55,7 @@ void AssetsDatabaseElement::_setType(const AssetsDatabaseElement::Type &type) {
     this->_defineFlags();
     this->_defineIsContainer();
     this->_defineIsRoot();
-    this->_defineIsItem();
+    this->_defineIsIdentifiable();
     this->_defineIsStaticContainer();
     this->_defineIsDeletable();
 }
@@ -58,23 +64,28 @@ void AssetsDatabaseElement::_setType(const AssetsDatabaseElement::Type &type) {
 // RO Properties //
 ///////////////////
 
-Qt::ItemFlags AssetsDatabaseElement::flags() {
+RPZToyMetadata AssetsDatabaseElement::toyMetadata() const {
+    if(this->_toyMetadata.isEmpty() && !this->isContainer()) return RPZToyMetadata((AtomType)this->type());
+    return this->_toyMetadata;
+}
+
+Qt::ItemFlags AssetsDatabaseElement::flags() const {
     return this->_flags;
 }
 
-QString AssetsDatabaseElement::displayName() {
+QString AssetsDatabaseElement::displayName() const {
     return this->_name;
 }
 
-RPZAssetHash AssetsDatabaseElement::id() {
+RPZAssetHash AssetsDatabaseElement::id() const {
     return this->_id;
 }
 
-AssetsDatabaseElement::Type AssetsDatabaseElement::type() {
+AssetsDatabaseElement::Type AssetsDatabaseElement::type() const {
     return this->_type;
 }
 
-AtomType AssetsDatabaseElement::atomType() {
+AtomType AssetsDatabaseElement::atomType() const {
     return this->_atomType;
 }
 
@@ -82,47 +93,47 @@ AssetsDatabaseElement* AssetsDatabaseElement::parent() {
     return this->_parentElement;
 }
 
-QString AssetsDatabaseElement::fullPath() {
+QString AssetsDatabaseElement::fullPath() const {
     return this->_fullPath;
 }
 
-QString AssetsDatabaseElement::path() {
+QString AssetsDatabaseElement::path() const {
     return this->_path;
 }
 
-QString AssetsDatabaseElement::iconPath() {
+QString AssetsDatabaseElement::iconPath() const {
     return this->_iconPath;
 }
 
-bool AssetsDatabaseElement::isContainer() {
+bool AssetsDatabaseElement::isContainer() const {
     return this->_isContainer;
 }
 
-bool AssetsDatabaseElement::isInternal() {
+bool AssetsDatabaseElement::isInternal() const {
     return this->_isInternal;
 }
 
-bool AssetsDatabaseElement::isRoot() {
+bool AssetsDatabaseElement::isRoot() const {
     return this->_isRoot;
 }
 
-bool AssetsDatabaseElement::isItem() {
-    return this->_isItem;
+bool AssetsDatabaseElement::isIdentifiable() const {
+    return this->_isIdentifiable;
 }
 
-bool AssetsDatabaseElement::isStaticContainer() {
+bool AssetsDatabaseElement::isStaticContainer() const {
     return this->_isStaticContainer;
 }
 
-bool AssetsDatabaseElement::isDeletable() {
+bool AssetsDatabaseElement::isDeletable() const {
     return this->_isDeletable;
 }
 
-AssetsDatabaseElement::Type AssetsDatabaseElement::insertType() {
+AssetsDatabaseElement::Type AssetsDatabaseElement::insertType() const {
     return this->_insertType;
 }
 
-AssetsDatabaseElement::Type AssetsDatabaseElement::rootStaticContainer() {
+AssetsDatabaseElement::Type AssetsDatabaseElement::rootStaticContainer() const {
     return this->_rootStaticContainerType;
 }
 
@@ -312,7 +323,7 @@ void AssetsDatabaseElement::_definePath() {
 }
 
 void AssetsDatabaseElement::_defineFullPath() {
-    this->_fullPath = this->isItem() ? 
+    this->_fullPath = this->isIdentifiable() ? 
                             this->path() + "/" + this->_name : 
                             this->path();
 }
@@ -327,7 +338,7 @@ void AssetsDatabaseElement::_resetSubjacentItemsType(const AssetsDatabaseElement
     for(auto elem : target->_subElements) {
         if(elem->isContainer()) {
             AssetsDatabaseElement::_resetSubjacentItemsType(replacingType, elem);
-        } else if(elem->isItem()) {
+        } else if(elem->isIdentifiable()) {
             elem->_setType(replacingType);
         }
     }
@@ -344,7 +355,7 @@ void AssetsDatabaseElement::_defineParent(AssetsDatabaseElement* parent) {
         if(this->insertType() != replacingType) {
 
             //update self
-            if(this->isItem()) {
+            if(this->isIdentifiable()) {
                 this->_setType(replacingType);
             }
 
@@ -372,8 +383,8 @@ void AssetsDatabaseElement::_defineIsInternal() {
 void AssetsDatabaseElement::_defineIsRoot() {
     this->_isRoot = this->_type == AssetsDatabaseElement::Type::Root;
 }
-void AssetsDatabaseElement::_defineIsItem() {
-    this->_isItem = this->_itemTypes.contains(this->_type);
+void AssetsDatabaseElement::_defineIsIdentifiable() {
+    this->_isIdentifiable = this->_itemTypes.contains(this->_type);
 }
 void AssetsDatabaseElement::_defineIsStaticContainer() {
     this->_isStaticContainer = this->_staticContainerTypes.contains(this->_type);

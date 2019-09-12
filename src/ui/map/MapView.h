@@ -33,7 +33,7 @@
 
 #include "src/shared/payloads/Payloads.h"
 
-#include "src/shared/models/RPZAssetMetadata.h"
+#include "src/shared/models/RPZToyMetadata.h"
 #include "src/helpers/AtomConverter.h"
 
 #include "src/shared/commands/AtomsContextualMenuHandler.h"

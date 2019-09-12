@@ -7,6 +7,7 @@
 #include <QDebug>
 
 #include "src/shared/models/RPZAtom.h"
+#include "src/shared/models/RPZToyMetadata.h"
 
 class AssetsDatabaseElement {
     
@@ -37,30 +38,32 @@ class AssetsDatabaseElement {
         static QList<AssetsDatabaseElement::Type> internalItemTypes();
         static QString typeDescription(AssetsDatabaseElement::Type &type);
 
-        AssetsDatabaseElement(const QString &name, AssetsDatabaseElement* parent, const AssetsDatabaseElement::Type &type = Folder, RPZAssetHash id = "");
+        AssetsDatabaseElement(const QString &name, AssetsDatabaseElement* parent, const AssetsDatabaseElement::Type &type = Folder);
+        AssetsDatabaseElement(const RPZToyMetadata &assetMetadata);
         AssetsDatabaseElement();
         ~AssetsDatabaseElement();
 
-        AssetsDatabaseElement::Type type();
-        AtomType atomType();
-        AssetsDatabaseElement::Type insertType();
-        AssetsDatabaseElement::Type rootStaticContainer();
-        QString iconPath();
-        QString displayName();
-        QString path();
-        QString fullPath();
-        RPZAssetHash id();
-        Qt::ItemFlags flags();
+        AssetsDatabaseElement::Type type() const;
+        AtomType atomType() const;
+        AssetsDatabaseElement::Type insertType() const;
+        AssetsDatabaseElement::Type rootStaticContainer() const;
+        QString iconPath() const;
+        QString displayName() const;
+        QString path() const;
+        QString fullPath() const;
+        RPZAssetHash id() const;
+        Qt::ItemFlags flags() const;
+        RPZToyMetadata toyMetadata() const;
 
         //sanitize and check if the name change is OK
         bool isAcceptableNameChange(QString &newName);
                 
-        bool isContainer();
-        bool isInternal();
-        bool isRoot();
-        bool isItem();
-        bool isStaticContainer();
-        bool isDeletable();
+        bool isContainer() const;
+        bool isInternal() const;
+        bool isRoot() const;
+        bool isIdentifiable() const;
+        bool isStaticContainer() const;
+        bool isDeletable() const;
 
         AssetsDatabaseElement* parent();
         int row() const;
@@ -103,11 +106,12 @@ class AssetsDatabaseElement {
         QString _iconPath = "";
         Qt::ItemFlags _flags = 0;
         int _itemChildrenCount = 0;
+        RPZToyMetadata _toyMetadata;
 
         bool _isContainer = false;
         bool _isInternal = false;
         bool _isRoot = false;
-        bool _isItem = false;
+        bool _isIdentifiable = false;
         bool _isStaticContainer = false;
         bool _isDeletable = false;
 
@@ -123,7 +127,7 @@ class AssetsDatabaseElement {
         void _defineIsContainer();
         void _defineIsInternal();
         void _defineIsRoot();
-        void _defineIsItem();
+        void _defineIsIdentifiable();
         void _defineIsStaticContainer();
         void _defineIsDeletable();
         

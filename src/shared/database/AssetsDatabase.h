@@ -6,7 +6,7 @@
 #include <QVariantHash>
 #include <QCryptographicHash>
 
-#include "src/shared/models/RPZAssetMetadata.h"
+#include "src/shared/models/RPZToyMetadata.h"
 #include "base/JSONDatabase.h"
 #include "src/shared/assets/AssetsDatabaseElement.h"
 #include "src/helpers/_appContext.h"
@@ -15,14 +15,15 @@
 typedef QString RPZAssetPath; //internal DB arborescence path (only containers)
 typedef QVariantHash RPZAssetImportPackage;
 
-class RPZAssetMetadata;
+struct SizeAndCenter { QPointF center; QSize size; };
+
+class RPZToyMetadata;
 
 class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabaseElement {
     
     Q_OBJECT
 
     public:
-
         //singleton
         static AssetsDatabase* get();
 
@@ -34,7 +35,7 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
         bool moveItems(const QList<AssetsDatabaseElement*> selectedItemsToMove, AssetsDatabaseElement* target);
 
         //network import/export
-        RPZAssetMetadata importAsset(const RPZAssetImportPackage &package);
+        RPZToyMetadata importAsset(const RPZAssetImportPackage &package);
         RPZAssetImportPackage prepareAssetPackage(const RPZAssetHash &id);
         
         //read
@@ -59,7 +60,11 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
         void _removeDatabaseLinkedFiles() override;
     
     private:
+        //
         QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> _getUpdateHandlers() override;
+        
+        //helpers
+        static SizeAndCenter _defineSizeAndCenterToDbAsset(const QString &assetFilePath, QJsonObject &toUpdate);
 
         //singleton
         AssetsDatabase();
@@ -76,7 +81,7 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
         RPZAssetHash _getFileSignatureFromFileUri(const QUrl &url); //return the hash
         bool _moveFileToDbFolder(const QUrl &url, const RPZAssetHash &id);
         QUrl _moveFileToDbFolder(const QByteArray &data, const QString &fileExt, const QString &name, const RPZAssetHash &id);
-        QString _addAssetToDb(const RPZAssetHash &id, const QUrl &url, AssetsDatabaseElement* parent); //returns a default displayname
+        RPZToyMetadata _addAssetToDb(const RPZAssetHash &id, const QUrl &url, AssetsDatabaseElement* parent); //returns asset metadata
 
         //removeItems() helpers
         QSet<RPZAssetPath> _getPathsToAlterFromList(const QList<AssetsDatabaseElement*> &elemsToAlter);

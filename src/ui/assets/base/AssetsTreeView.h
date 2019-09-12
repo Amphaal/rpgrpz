@@ -16,7 +16,7 @@
 #include "AssetsTreeViewModel.h"
 #include "src/shared/commands/RPZActions.h"
 
-#include "src/shared/models/RPZAssetMetadata.h"
+#include "src/shared/models/RPZToyMetadata.h"
 
 class AssetsTreeView : public QTreeView, public ClientBindable, public AlterationActor {
 
@@ -66,6 +66,6 @@ class AssetsTreeView : public QTreeView, public ClientBindable, public Alteratio
 
         void keyPressEvent(QKeyEvent * event) override;
 
-        RPZAssetMetadata _selectedAsset;
+        RPZToyMetadata _selectedAsset;
         void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
 };

@@ -305,7 +305,7 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
 
     auto selectedElems = this->selectedElementsIndexes();
     auto indexesCount = selectedElems.count();
-    auto defSelect = RPZAssetMetadata();
+    RPZToyMetadata defSelect;
 
     //if no selection
     if(!indexesCount) {
@@ -319,7 +319,7 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
         auto atomType = elem->atomType();
 
         if(atomType != AtomType::Undefined) {
-            defSelect = RPZAssetMetadata(elem);
+            defSelect = RPZToyMetadata(elem);
         }
 
     }

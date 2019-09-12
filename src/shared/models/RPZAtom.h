@@ -25,13 +25,13 @@
 // defined values shared with AssetsDatabaseElement type for static casts
 enum class AtomType { 
     Undefined, 
-    Drawing,
-    Text,
-    Object, 
-    Brush, 
-    NPC, 
-    Event, 
-    PC 
+    Drawing = 252,
+    Text = 253,
+    Object = 550, 
+    Brush = 450, 
+    NPC = 350, 
+    Event = 251, 
+    PC = 250
 };
 
 enum class BrushType { 
