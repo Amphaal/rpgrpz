@@ -32,7 +32,6 @@ class RPZToyMetadata : public QVariantHash {
     
     private:
         void _setAtomType(const AtomType &type);
-        void _setFilePath(const QString &pathToAssetFile);
 
         AssetsDatabaseElement* _parentContainer = nullptr;
 };

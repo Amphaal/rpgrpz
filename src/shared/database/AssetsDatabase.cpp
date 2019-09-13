@@ -18,7 +18,7 @@ const int AssetsDatabase::apiVersion() {
 }
 
 void AssetsDatabase::_removeDatabaseLinkedFiles() {
-    QDir(this->assetsStorageFilepath()).removeRecursively();
+    QDir(AppContext::getAssetsFolderLocation()).removeRecursively();
 }
 
 const QString AssetsDatabase::defaultJsonDoc() {
@@ -27,10 +27,6 @@ const QString AssetsDatabase::defaultJsonDoc() {
 const QString AssetsDatabase::dbPath() {
     return AppContext::getAssetsFileCoordinatorLocation();
 };
-
-QString AssetsDatabase::assetsStorageFilepath() {
-    return AppContext::getAssetsFolderLocation();
-}
 
 RPZToyMetadata AssetsDatabase::importAsset(const RPZAssetImportPackage &package) {
     
@@ -111,7 +107,7 @@ QString AssetsDatabase::getFilePathToAsset(AssetsDatabaseElement* asset) {
 
 QString AssetsDatabase::getFilePathToAsset(const RPZAssetHash &id, const QString &ext) {
 	return QString("%1/%2.%3")
-					.arg(assetsStorageFilepath())
+					.arg(AppContext::getAssetsFolderLocation())
 					.arg(id)
 					.arg(ext);
 }
@@ -226,6 +222,10 @@ AssetsDatabaseElement* AssetsDatabase::_recursiveElementCreator(AssetsDatabaseEl
 
 }
 
+RPZToyMetadata AssetsDatabase::getAssetMetadata(const RPZAssetHash &id) {
+    return this->_assetsMetadata[id];
+}
+
 void AssetsDatabase::_generateItemsFromDb(const QHash<RPZAssetPath, AssetsDatabaseElement*> &pathsToFillWithItems) {
     
     auto db_paths = this->paths();
@@ -264,6 +264,8 @@ void AssetsDatabase::_generateItemsFromDb(const QHash<RPZAssetPath, AssetsDataba
                 JSONSerializer::toQSize(asset["shape"].toArray()),
                 JSONSerializer::pointFromDoublePair(asset["center"].toArray())
             );
+
+            this->_assetsMetadata.insert(idStr, metadata);
 
             auto elem = new AssetsDatabaseElement(metadata);
 
@@ -380,7 +382,7 @@ RPZToyMetadata AssetsDatabase::_addAssetToDb(const RPZAssetHash &id, const QUrl 
     this->_updateDbFile(obj);
     qDebug() << "Assets :" << fInfo.filePath() << "inserted !";
     
-    return RPZToyMetadata(
+    auto metadata =  RPZToyMetadata(
         parent,
         (AtomType)parent->insertType(),
         id,
@@ -389,6 +391,10 @@ RPZToyMetadata AssetsDatabase::_addAssetToDb(const RPZAssetHash &id, const QUrl 
         assetSizeAndCenter.size,
         assetSizeAndCenter.center
     );
+
+    this->_assetsMetadata.insert(id, metadata);
+
+    return metadata;
 }
 
 bool AssetsDatabase::insertAsset(const QUrl &url, AssetsDatabaseElement* parent) {
@@ -557,15 +563,16 @@ bool AssetsDatabase::rename(QString &name, AssetsDatabaseElement* target) {
 void AssetsDatabase::_removeAssetFile(const RPZAssetHash &id, const QJsonObject &asset) {
     
     //prepare
-    auto fileName = id + "." + asset["ext"].toString();
+    auto ext = asset["ext"].toString();
+    auto fp = AssetsDatabase::getFilePathToAsset(id, ext);
 
-    auto expectedLocation = this->assetsStorageFilepath();
-    auto fileToRemove = QFile(expectedLocation + "/" + fileName);
+    QFile fileToRemove(fp);
 
     //remove stored file
     if(fileToRemove.exists()) {
         fileToRemove.remove();
     }
+    
 }
 
 QSet<RPZAssetPath> AssetsDatabase::_getPathsToAlterFromList(const QList<AssetsDatabaseElement*> &elemsToAlter) {
@@ -655,6 +662,9 @@ void AssetsDatabase::_removeAssetsFromDb(QJsonObject &db_assets, const QList<RPZ
 
         //remove
         db_assets.remove(id);
+        
+        //
+        this->_assetsMetadata.remove(id);
 
         //remove stored file
         this->_removeAssetFile(id, asset);

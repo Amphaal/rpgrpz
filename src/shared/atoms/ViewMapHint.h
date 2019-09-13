@@ -13,6 +13,8 @@
 #include <QGraphicsSvgItem>
 #include <QPixmap>
 
+#include "src/shared/models/RPZToyMetadata.h"
+
 #include "src/ui/map/graphics/CustomGraphicsItemHelper.h"
 
 #include "src/shared/payloads/Payloads.h"
@@ -23,8 +25,6 @@
 #include "AtomsStorage.h"
 
 #include "src/ui/map/MapTools.h"
-
-#include "src/shared/models/RPZToyMetadata.h"
 
 class ViewMapHint : public AtomsStorage {
 

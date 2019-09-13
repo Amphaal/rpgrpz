@@ -115,6 +115,12 @@ QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZToyMetadata &assetMetada
 
         //update template
         this->_templateAtom->changeType(assetMetadata.atomType());
+
+        this->_templateAtom->setMetadata(AtomParameter::ShapeCenter, assetMetadata.center());
+        this->_templateAtom->setShape(
+            QRectF(QPointF(), assetMetadata.shapeSize())
+        );
+
         this->_templateAtom->setMetadata(AtomParameter::AssetId, assetMetadata.assetId());
         this->_templateAtom->setMetadata(AtomParameter::AssetName, assetMetadata.assetName());
     }
@@ -177,18 +183,12 @@ void ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsItem) co
 QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuildFrom) {
 
     QGraphicsItem* newItem = nullptr;
-    auto hasMissingAssetFile = false;
-    auto pathToAssetFile = QString();
     auto assetId = atomToBuildFrom.assetId();
+    auto assetMetadata = AssetsDatabase::get()->getAssetMetadata(assetId);
+    auto hasMissingAsset = !assetId.isEmpty() && assetMetadata.pathToAssetFile().isEmpty();
 
-    //displayable atoms
-    if(!assetId.isEmpty()) {
-        pathToAssetFile = AssetsDatabase::get()->getFilePathToAsset(assetId);
-        hasMissingAssetFile = pathToAssetFile.isEmpty();
-    }
-
-    //depending on presence in asset db...
-    if(hasMissingAssetFile) {
+    //atom links to missing asset from DB
+    if(hasMissingAsset) {
         
         //add placeholder
         auto placeholder = CustomGraphicsItemHelper::createMissingAssetPlaceholderItem(atomToBuildFrom);
@@ -210,10 +210,9 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuil
     
     //default
     else {
-        auto metadata = RPZToyMetadata(assetId, pathToAssetFile);
         newItem = CustomGraphicsItemHelper::createGraphicsItem(
             atomToBuildFrom, 
-            metadata
+            assetMetadata
         );
     }
 
@@ -249,6 +248,7 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZToyMetadata &metadat
             auto newGi = CustomGraphicsItemHelper::createGraphicsItem(*atom, metadata);
             this->_crossBindingAtomWithGI(atom, newGi);
             newGis.append(newGi);
+
         }
 
         //clear the id from the missing list

@@ -319,7 +319,7 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
         auto atomType = elem->atomType();
 
         if(atomType != AtomType::Undefined) {
-            defSelect = RPZToyMetadata(elem);
+            defSelect = elem->toyMetadata();
         }
 
     }

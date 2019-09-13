@@ -21,8 +21,8 @@ RPZToyMetadata::RPZToyMetadata(
     this->insert("nm", assetName);
     this->insert("shp", dimensions);
     this->insert("ctr", center);
+    this->insert("pth", pathToAsset);
 
-    this->_setFilePath(pathToAsset);
     this->_setAtomType(type);
 
 }
@@ -57,8 +57,4 @@ AtomType RPZToyMetadata::atomType() const {
 
 void RPZToyMetadata::_setAtomType(const AtomType &type) {
     this->insert("t", (int)type);
-}
-
-void RPZToyMetadata::_setFilePath(const QString &pathToAssetFile) {
-    this->insert("pth", pathToAssetFile);
 }

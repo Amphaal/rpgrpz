@@ -69,7 +69,7 @@ RPZAtom AtomConverter::graphicsToAtom(QGraphicsItem* blueprint) {
     //recover template
     auto templateAtom = RPZAtom(blueprint->data((int)AtomConverterDataIndex::TemplateAtom).toHash());
     
-    //update the 2 only parameters who might have changed from the template
+    //update the 3 only parameters who might have changed from the template
     _setParamToAtomFromGraphicsItem(AtomParameter::Position, templateAtom, blueprint);
     _setParamToAtomFromGraphicsItem(AtomParameter::Shape, templateAtom, blueprint);
                 

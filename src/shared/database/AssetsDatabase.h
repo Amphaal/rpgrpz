@@ -34,6 +34,9 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
         bool removeItems(const QList<AssetsDatabaseElement*> elemsToRemove);
         bool moveItems(const QList<AssetsDatabaseElement*> selectedItemsToMove, AssetsDatabaseElement* target);
 
+        //
+        RPZToyMetadata getAssetMetadata(const RPZAssetHash &id);
+
         //network import/export
         RPZToyMetadata importAsset(const RPZAssetImportPackage &package);
         RPZAssetImportPackage prepareAssetPackage(const RPZAssetHash &id);
@@ -43,11 +46,10 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
         QJsonObject assets();
         static QJsonObject assets(QJsonDocument &doc);
 
+        //fpa
         QString getFilePathToAsset(AssetsDatabaseElement* asset);
         QString getFilePathToAsset(const RPZAssetHash &id);
         static QString getFilePathToAsset(const RPZAssetHash &id, const QString &ext);
-
-        static QString assetsStorageFilepath();
 
     signals:
         void assetRenamed(const RPZAssetHash &id, const QString &newName);
@@ -60,6 +62,9 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
         void _removeDatabaseLinkedFiles() override;
     
     private:
+        //
+        QHash<RPZAssetHash, RPZToyMetadata> _assetsMetadata;
+
         //updates handlers
         QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> _getUpdateHandlers() override;
         

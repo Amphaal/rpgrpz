@@ -7,6 +7,8 @@
 
 #include "src/helpers/AtomConverter.h"
 
+#include <QFileInfo>
+
 class CustomGraphicsItemHelper {
     public:
         static QGraphicsItem* createGraphicsItem(const RPZAtom &atom, const RPZToyMetadata &assetMetadata, bool isTemporary = false);
