@@ -5,11 +5,7 @@ AtomSliderEditor::AtomSliderEditor(const AtomParameter &parameter, int minimum, 
     this->_setAsDataEditor(new QSlider(Qt::Orientation::Horizontal, this));
     this->slider()->setMinimum(minimum);
     this->slider()->setMaximum(maximum);
-
-    QObject::connect(
-        this->slider(), &QAbstractSlider::valueChanged,
-        this, &AtomSliderEditor::_onSliderChanging
-    );
+    // this->slider()->setTracking(false);
 
     QObject::connect(
         this->slider(), &QAbstractSlider::sliderReleased,
@@ -19,7 +15,23 @@ AtomSliderEditor::AtomSliderEditor(const AtomParameter &parameter, int minimum, 
         }
     );
 
+    QObject::connect(
+        this->slider(), &QAbstractSlider::valueChanged,
+        this, &AtomSliderEditor::_onSliderChanging
+    );
+
 }
+
+void AtomSliderEditor::_onSliderChanging(int sliderVal) {
+    
+    auto output = this->outputValue();
+    auto outputAsVariant = QVariant(output);
+    this->_descr->updateValue(output);
+    
+    emit valueConfirmedForPreview(this->_param, outputAsVariant);
+    
+};
+
 
 QSlider* AtomSliderEditor::slider() {
     return (QSlider*)this->_dataEditor;
@@ -43,14 +55,6 @@ void AtomSliderEditor::loadTemplate(const QVariant &defaultValue) {
 
 }
 
-void AtomSliderEditor::_onSliderChanging(int sliderVal) {
-    
-    auto output = this->outputValue();
-    auto outputAsVariant = QVariant(output);
-    this->_descr->updateValue(output);
-    
-    emit valueConfirmedForPreview(this->_param, outputAsVariant);
-};
 
 double AtomSliderEditor::outputValue() {
     return this->_toAtomValue(this->slider()->value());

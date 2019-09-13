@@ -29,9 +29,9 @@ class RPZToyMetadata : public QVariantHash {
         QSize shapeSize() const;
 
         AssetsDatabaseElement* associatedParent() const;
-    
-    private:
-        void _setAtomType(const AtomType &type);
 
+        void setAtomType(const AtomType &type);
+
+    private:
         AssetsDatabaseElement* _parentContainer = nullptr;
 };

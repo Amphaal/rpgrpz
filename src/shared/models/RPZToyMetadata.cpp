@@ -4,7 +4,7 @@ RPZToyMetadata::RPZToyMetadata() {}
 RPZToyMetadata::RPZToyMetadata(const QVariantHash &hash) : QVariantHash(hash) {}
 
 RPZToyMetadata::RPZToyMetadata(const AtomType &type) {
-    this->_setAtomType(type);
+    this->setAtomType(type);
 }
 
 RPZToyMetadata::RPZToyMetadata(
@@ -23,7 +23,7 @@ RPZToyMetadata::RPZToyMetadata(
     this->insert("ctr", center);
     this->insert("pth", pathToAsset);
 
-    this->_setAtomType(type);
+    this->setAtomType(type);
 
 }
 
@@ -55,6 +55,6 @@ AtomType RPZToyMetadata::atomType() const {
     return (AtomType)this->value("t").toInt();
 }
 
-void RPZToyMetadata::_setAtomType(const AtomType &type) {
+void RPZToyMetadata::setAtomType(const AtomType &type) {
     this->insert("t", (int)type);
 }

@@ -59,6 +59,7 @@ RPZToyMetadata AssetsDatabase::importAsset(const RPZAssetImportPackage &package)
 
     //add to tree
     auto element = new AssetsDatabaseElement(metadata);
+    this->_withAssetsElems.insert(asset_id, element);
 
     auto destUrlPath = destUrl.toString();
     qDebug() << "Assets :" << destFileName << "imported";
@@ -223,8 +224,10 @@ AssetsDatabaseElement* AssetsDatabase::_recursiveElementCreator(AssetsDatabaseEl
 }
 
 RPZToyMetadata AssetsDatabase::getAssetMetadata(const RPZAssetHash &id) {
-    return this->_assetsMetadata[id];
+    auto ptr = this->_withAssetsElems[id];
+    return ptr ? ptr->toyMetadata() : RPZToyMetadata();
 }
+
 
 void AssetsDatabase::_generateItemsFromDb(const QHash<RPZAssetPath, AssetsDatabaseElement*> &pathsToFillWithItems) {
     
@@ -265,9 +268,9 @@ void AssetsDatabase::_generateItemsFromDb(const QHash<RPZAssetPath, AssetsDataba
                 JSONSerializer::pointFromDoublePair(asset["center"].toArray())
             );
 
-            this->_assetsMetadata.insert(idStr, metadata);
-
             auto elem = new AssetsDatabaseElement(metadata);
+
+            this->_withAssetsElems.insert(idStr, elem);
 
         }
     }
@@ -382,7 +385,7 @@ RPZToyMetadata AssetsDatabase::_addAssetToDb(const RPZAssetHash &id, const QUrl 
     this->_updateDbFile(obj);
     qDebug() << "Assets :" << fInfo.filePath() << "inserted !";
     
-    auto metadata =  RPZToyMetadata(
+    auto metadata = RPZToyMetadata(
         parent,
         AssetsDatabaseElement::toAtomType(parent->insertType()),
         id,
@@ -391,8 +394,6 @@ RPZToyMetadata AssetsDatabase::_addAssetToDb(const RPZAssetHash &id, const QUrl 
         assetSizeAndCenter.size,
         assetSizeAndCenter.center
     );
-
-    this->_assetsMetadata.insert(id, metadata);
 
     return metadata;
 }
@@ -418,6 +419,8 @@ bool AssetsDatabase::insertAsset(const QUrl &url, AssetsDatabaseElement* parent)
 
     //add element
     auto element = new AssetsDatabaseElement(metadata);
+    this->_withAssetsElems.insert(fileSignature, element);
+
     return true;
 }
 
@@ -664,7 +667,7 @@ void AssetsDatabase::_removeAssetsFromDb(QJsonObject &db_assets, const QList<RPZ
         db_assets.remove(id);
         
         //
-        this->_assetsMetadata.remove(id);
+        this->_withAssetsElems.remove(id);
 
         //remove stored file
         this->_removeAssetFile(id, asset);

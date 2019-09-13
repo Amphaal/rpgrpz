@@ -58,6 +58,12 @@ void AssetsDatabaseElement::_setType(const AssetsDatabaseElement::Type &type) {
     this->_defineIsIdentifiable();
     this->_defineIsStaticContainer();
     this->_defineIsDeletable();
+
+    //redefine RPZToyMetadata
+    if(!this->_toyMetadata.isEmpty()) {
+        this->_toyMetadata.setAtomType(this->atomType());
+    }
+    
 }
 
 ///////////////////

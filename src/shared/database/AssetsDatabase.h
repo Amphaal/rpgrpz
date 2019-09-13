@@ -63,7 +63,7 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
     
     private:
         //
-        QHash<RPZAssetHash, RPZToyMetadata> _assetsMetadata;
+        QHash<RPZAssetHash, AssetsDatabaseElement*> _withAssetsElems;
 
         //updates handlers
         QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> _getUpdateHandlers() override;
