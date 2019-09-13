@@ -35,7 +35,7 @@ void AtomEditor::buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr
         if(!editor) continue;
 
         //load template, and display them
-        editor->loadTemplate(this->_atoms, i.value());
+        editor->loadTemplate(i.value());
 
         //add to the visible editors list
         this->_visibleEditors.append(param);
@@ -60,12 +60,22 @@ void AtomEditor::buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr
 void AtomEditor::resetParams() {
 
     //reset displayed params
-        AtomUpdates changes;
-        for(auto param : this->_visibleEditors) {
-            changes.insert(param, QVariant());
-        }
+    AtomUpdates changes;
+    for(auto param : this->_visibleEditors) {
+        changes.insert(
+            param, 
+            RPZAtom::getDefaultValueForParam(param)
+        );
+    }
 
-        this->_emitPayload(changes);
+    //update inner selection accordingly
+    this->_currentSelectionDescr.templateAtom.setMetadata(changes);
+
+    //rebuild
+    this->buildEditor(this->_currentSelectionDescr);
+
+    //emit modifications
+    this->_emitPayload(changes);
 
 }
 
@@ -88,7 +98,7 @@ void AtomEditor::_createEditorsFromAtomParameters() {
 
         QObject::connect(
             editor, &AtomSubEditor::valueConfirmedForPayload,
-            this, &AtomEditor::_emitPayload
+            this, &AtomEditor::_emitPayloadCB
         );
 
         QObject::connect(
@@ -104,6 +114,10 @@ void AtomEditor::_createEditorsFromAtomParameters() {
 void AtomEditor::_onPreviewRequested(const AtomParameter &parameter, const QVariant &value) {
     emit requiresPreview(this->_currentSelectionDescr, parameter, value);
 }
+
+ void AtomEditor::_emitPayloadCB(const AtomParameter &parameter, const QVariant &value) {
+    return _emitPayload({{parameter, value}});
+ }
 
 void AtomEditor::_emitPayload(const AtomUpdates &changesToEmit) {
 
@@ -144,7 +158,10 @@ AtomUpdates AtomEditor::_findDefaultValuesToBind() {
     }
 
     for(auto param : paramsToDisplay) {
-        out.insert(param, this->_currentSelectionDescr.templateAtom.metadata(param));
+        out.insert(
+            param, 
+            this->_currentSelectionDescr.templateAtom.metadata(param)
+        );
     }
 
     return out;

@@ -17,12 +17,16 @@ const AtomsSelectionDescriptor AtomsStorage::getAtomSelectionDescriptor(const QV
         
         if(selectedIds.count() == 1) {
             out.templateAtom = this->_atomsById[selectedIds[0]];
-            out.representedTypes += out.templateAtom.type();
+            out.representedTypes.insert(
+                out.templateAtom.type()
+            );
         }
 
         else {
             for(auto id : selectedIds) {
-                out.representedTypes += this->_atomsById[id].type();
+                out.representedTypes.insert(
+                    this->_atomsById[id].type()
+                );
             }
         }
 
@@ -244,7 +248,6 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
     //on selection changed
     if(pType == PayloadAlteration::PA_Selected) {
         this->_selectedRPZAtomIds.clear();
-        this->_selectedAtoms.clear();
     }
 
     QList<RPZAtomId> alterationsIds;
@@ -328,7 +331,6 @@ RPZAtom* AtomsStorage::_insertAtom(const RPZAtom &newAtom) {
 RPZAtomId AtomsStorage::_ackSelection(RPZAtom* selectedAtom) {
     auto id = selectedAtom->id();
     this->_selectedRPZAtomIds.append(id);
-    this->_selectedAtoms.append(selectedAtom);
     return selectedAtom->id();
 }
 

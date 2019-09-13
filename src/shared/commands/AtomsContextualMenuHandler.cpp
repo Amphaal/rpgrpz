@@ -33,19 +33,19 @@ void AtomsContextualMenuHandler::removeSelectedAtoms() {
 
 void AtomsContextualMenuHandler::moveSelectedAtomsToLayer(int targetLayer) {
     auto selectedIds = this->_mapMaster->bufferedSelectedAtomIds();
-    MetadataChangedPayload payload(selectedIds, AtomParameter::Layer, targetLayer);
+    MetadataChangedPayload payload(selectedIds, {{AtomParameter::Layer, targetLayer}});
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 }
 
 void AtomsContextualMenuHandler::alterSelectedAtomsVisibility(bool isHidden) {
     auto selectedIds = this->_mapMaster->bufferedSelectedAtomIds();
-    MetadataChangedPayload payload(selectedIds, AtomParameter::Hidden, isHidden);
+    MetadataChangedPayload payload(selectedIds, {{AtomParameter::Hidden, isHidden}});
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 }
 
 void AtomsContextualMenuHandler::alterSelectedAtomsAvailability(bool isLocked) {
     auto selectedIds = this->_mapMaster->bufferedSelectedAtomIds();
-    MetadataChangedPayload payload(selectedIds, AtomParameter::Locked, isLocked);
+    MetadataChangedPayload payload(selectedIds, {{AtomParameter::Locked, isLocked}});
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 }
 

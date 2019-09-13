@@ -26,9 +26,9 @@ QSlider* AtomSliderEditor::slider() {
 }
 
 
-void AtomSliderEditor::loadTemplate(QVector<const RPZAtom*> &atomsToManipulate, const QVariant &defaultValue) {
+void AtomSliderEditor::loadTemplate(const QVariant &defaultValue) {
     
-    AtomSubEditor::loadTemplate(atomsToManipulate, defaultValue);
+    AtomSubEditor::loadTemplate(defaultValue);
 
     auto castedVal = defaultValue.toDouble();
 

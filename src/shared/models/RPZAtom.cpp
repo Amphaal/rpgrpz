@@ -39,6 +39,10 @@ QString RPZAtom::_defaultDescriptor() const {
     }
 }
 
+QVariant RPZAtom::getDefaultValueForParam(const AtomParameter &param) {
+    return _defaultVal[param];
+}
+
 AtomType RPZAtom::type() const {return (AtomType)this->value("t").toInt();}
 void RPZAtom::_setType(const AtomType &type) { this->insert("t", (int)type); }
 void RPZAtom::changeType(const AtomType &type) { this->_setType(type);}
@@ -47,21 +51,21 @@ void RPZAtom::unsetMetadata(const AtomParameter &key) {
     this->remove(_str[key]);
 }
 
-void RPZAtom::setMetadata(const AtomParameter &key, RPZAtom &base, bool autoRemove) {
-    this->setMetadata(key, base.metadata(key), autoRemove);
+void RPZAtom::setMetadata(const AtomParameter &key, RPZAtom &base) {
+    this->setMetadata(key, base.metadata(key));
 }
 
 
-void RPZAtom::setMetadata(const AtomUpdates &metadata, bool autoRemove) {
+void RPZAtom::setMetadata(const AtomUpdates &metadata) {
     for(auto i = metadata.constBegin(); i != metadata.constEnd(); i++) {
-        this->setMetadata(i.key(), i.value(), autoRemove);
+        this->setMetadata(i.key(), i.value());
     }
 }
 
-void RPZAtom::setMetadata(const AtomParameter &key, const QVariant &value, bool autoRemove) {
+void RPZAtom::setMetadata(const AtomParameter &key, const QVariant &value) {
 
-    if(value.isNull() && autoRemove) return this->unsetMetadata(key);
-
+    if(value.isNull()) return this->unsetMetadata(key);
+    
     switch(key) {
 
         case AtomParameter::ShapeCenter:

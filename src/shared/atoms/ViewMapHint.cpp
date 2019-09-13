@@ -1,14 +1,13 @@
 #include "ViewMapHint.h"
 
-ViewMapHint::ViewMapHint() : AtomsStorage(AlterationPayload::Source::Local_Map),
-    _templateAtom(new RPZAtom) {
+ViewMapHint::ViewMapHint() : AtomsStorage(AlterationPayload::Source::Local_Map) {
     
     //default layer from settings
     this->setDefaultLayer(AppContext::settings()->defaultLayer());
 
 };
 
-const RPZAtom* ViewMapHint::templateAtom() const {
+const RPZAtom ViewMapHint::templateAtom() const {
     QMutexLocker m(&this->_m_templateAtom);
     return this->_templateAtom;
 }
@@ -25,7 +24,7 @@ void ViewMapHint::setDefaultLayer(int layer) {
 
     {
         QMutexLocker m(&this->_m_templateAtom);
-        this->_templateAtom->setMetadata(updates);
+        this->_templateAtom.setMetadata(updates);
     }
 
     this->_m_ghostItem.lock();
@@ -81,7 +80,7 @@ void ViewMapHint::setDefaultUser(const RPZUser &user) {
     
     {
         QMutexLocker m(&this->_m_templateAtom);
-        this->_templateAtom->setOwnership(user); //update template
+        this->_templateAtom.setOwnership(user); //update template
     }
 
     this->_m_ghostItem.lock();
@@ -113,15 +112,15 @@ QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZToyMetadata &assetMetada
         QMutexLocker m(&this->_m_templateAtom);
 
         //update template
-        this->_templateAtom->changeType(assetMetadata.atomType());
+        this->_templateAtom.changeType(assetMetadata.atomType());
 
-        this->_templateAtom->setMetadata(AtomParameter::ShapeCenter, assetMetadata.center());
-        this->_templateAtom->setShape(
+        this->_templateAtom.setMetadata(AtomParameter::ShapeCenter, assetMetadata.center());
+        this->_templateAtom.setShape(
             QRectF(QPointF(), assetMetadata.shapeSize())
         );
 
-        this->_templateAtom->setMetadata(AtomParameter::AssetId, assetMetadata.assetId());
-        this->_templateAtom->setMetadata(AtomParameter::AssetName, assetMetadata.assetName());
+        this->_templateAtom.setMetadata(AtomParameter::AssetId, assetMetadata.assetId());
+        this->_templateAtom.setMetadata(AtomParameter::AssetName, assetMetadata.assetName());
     }
     
     QGraphicsItem* toDelete = nullptr;
@@ -154,7 +153,7 @@ QGraphicsItem* ViewMapHint::generateTemporaryItemFromTemplateBuffer() {
     QMutexLocker l2(&this->_m_templateAsset);
 
     return CustomGraphicsItemHelper::createGraphicsItem(
-                *this->_templateAtom, 
+                this->_templateAtom, 
                 this->_templateAsset, 
                 true
             );
@@ -163,8 +162,10 @@ QGraphicsItem* ViewMapHint::generateTemporaryItemFromTemplateBuffer() {
 void ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsItem) const {
     if(!graphicsItem) return;
     
+    QMutexLocker l1(&this->_m_templateAtom);
+
     //from ghost item / temporary drawing
-    auto newAtom = AtomConverter::graphicsToAtom(graphicsItem);
+    auto newAtom = AtomConverter::graphicsToAtom(graphicsItem, this->_templateAtom);
     AddedPayload payload(newAtom);
 
     AlterationHandler::get()->queueAlteration(this, payload);
@@ -261,7 +262,7 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZToyMetadata &metadat
     emit requestingUIAlteration(PA_Added, newGis);
 }
 
-void ViewMapHint::handlePreviewRequest(const QVector<RPZAtomId> &RPZAtomIdsToPreview, const AtomParameter &parameter, const QVariant &value) {
+void ViewMapHint::handlePreviewRequest(const AtomsSelectionDescriptor &selectionDescriptor, const AtomParameter &parameter, const QVariant &value) {
     
     //create updates container
     AtomUpdates updates; updates.insert(parameter, value);
@@ -269,7 +270,7 @@ void ViewMapHint::handlePreviewRequest(const QVector<RPZAtomId> &RPZAtomIdsToPre
     QList<QGraphicsItem*> toUpdate;
 
     //is ghost that must be targeted
-    if(RPZAtomIdsToPreview.count() == 1 && RPZAtomIdsToPreview.at(0) == 0) {
+    if(!selectionDescriptor.selectedAtomIds.count() && !selectionDescriptor.templateAtom.isEmpty()) {
         
         QMutexLocker l(&this->_m_ghostItem);
 
@@ -281,7 +282,7 @@ void ViewMapHint::handlePreviewRequest(const QVector<RPZAtomId> &RPZAtomIdsToPre
     else {
         QMutexLocker l(&this->_m_GItemsByRPZAtomId);
 
-        for(const auto &id : RPZAtomIdsToPreview) {
+        for(auto &id : selectionDescriptor.selectedAtomIds) {
             toUpdate += this->_GItemsByRPZAtomId[id];
         }
     }
@@ -313,7 +314,10 @@ QVector<RPZAtom*> ViewMapHint::getAtomsFromGraphicsItems(const QList<QGraphicsIt
 }
 
 RPZAtom* ViewMapHint::getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const {
-    return graphicElem->data(RPZUserRoles::AtomPtr).value<RPZAtom*>();
+    auto ptr = graphicElem->data(RPZUserRoles::AtomPtr).value<RPZAtom*>();
+    if(!ptr) qWarning() << "No atom assigned to this graphics item...";
+    auto q = ptr;
+    return ptr;
 }
 
 //////////////////////////
@@ -363,7 +367,7 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
 
         {
             QMutexLocker m(&this->_m_templateAtom);
-            this->_templateAtom->setMetadata(updates);
+            this->_templateAtom.setMetadata(updates);
         }
 
         this->_m_ghostItem.lock();

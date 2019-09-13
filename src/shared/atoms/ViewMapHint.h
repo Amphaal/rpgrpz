@@ -36,7 +36,7 @@ class ViewMapHint : public AtomsStorage {
         //might be called by another thread, safe
         void deleteCurrentSelectionItems() const;
         void integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem) const;
-        const RPZAtom* templateAtom() const;
+        const RPZAtom templateAtom() const;
         QGraphicsItem* ghostItem() const;
 
         RPZAtom* getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const;
@@ -51,7 +51,7 @@ class ViewMapHint : public AtomsStorage {
         void setDefaultLayer(int layer); //safe
 
         //handle preview alteration before real payload
-        void handlePreviewRequest(const QVector<RPZAtomId> &RPZAtomIdsToPreview, const AtomParameter &parameter, const QVariant &value);
+        void handlePreviewRequest(const AtomsSelectionDescriptor &selectionDescriptor, const AtomParameter &parameter, const QVariant &value);
 
     signals:
         void requestMissingAssets(const QList<RPZAssetHash> &assetIdsToRequest);
@@ -76,7 +76,7 @@ class ViewMapHint : public AtomsStorage {
         RPZToyMetadata _templateAsset;
 
         mutable QMutex _m_templateAtom;
-        RPZAtom* _templateAtom = nullptr;
+        RPZAtom _templateAtom;
         
         mutable QMutex _m_GItemsByRPZAtomId;
         QMap<RPZAtomId, QGraphicsItem*> _GItemsByRPZAtomId;

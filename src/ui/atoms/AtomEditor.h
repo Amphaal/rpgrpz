@@ -52,6 +52,7 @@ class AtomEditor : public QGroupBox, public AlterationActor {
 
         void _onPreviewRequested(const AtomParameter &parameter, const QVariant &value);
         void _emitPayload(const AtomUpdates &changesToEmit);
+        void _emitPayloadCB(const AtomParameter &parameter, const QVariant &value);
 
         EditMode _currentEditMode = None;
         void _updateEditMode();

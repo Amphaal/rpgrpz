@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QHash>
-#include <QSet>
+#include <set>
 #include <QVector>
 #include <QStack>
 #include <QVariantList>
@@ -16,7 +16,7 @@
 #include "src/shared/async-ui/AlterationAcknoledger.h"
 
 struct AtomsSelectionDescriptor {
-    QSet<AtomType> representedTypes;
+    std::set<AtomType> representedTypes; //prefer set to QSet since it handles enum class
     RPZAtom templateAtom;
     QVector<RPZAtomId> selectedAtomIds;
 };
@@ -78,7 +78,6 @@ class AtomsStorage : public AlterationAcknoledger {
 
         //selected
         QVector<RPZAtomId> _selectedRPZAtomIds;
-        QVector<const RPZAtom*> _selectedAtoms;
 
         //duplication
         int _duplicationCount = 0;

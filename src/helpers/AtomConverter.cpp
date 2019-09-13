@@ -3,7 +3,6 @@
 void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZAtom &blueprint, bool isTargetTemporary) {
     
     //bind a copy of the template to the item
-    target->setData((int)AtomConverterDataIndex::TemplateAtom, blueprint);
     target->setData((int)AtomConverterDataIndex::IsTemporary, isTargetTemporary);
 
     //refresh all legal if temporary
@@ -42,7 +41,10 @@ void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZA
     target->setTransformOriginPoint(center);
 
     //define transparency as it is a dummy
-    if(isTargetTemporary) target->setOpacity(.5);
+    if(isTargetTemporary) {
+        target->setOpacity(.5);
+        target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
+    }
             
 }
 
@@ -64,19 +66,16 @@ void AtomConverter::updateGraphicsItemFromMetadata(QGraphicsItem* item, const At
 
 };
 
-RPZAtom AtomConverter::graphicsToAtom(QGraphicsItem* blueprint) {
-    
-    //recover template
-    auto templateAtom = RPZAtom(blueprint->data((int)AtomConverterDataIndex::TemplateAtom).toHash());
+RPZAtom AtomConverter::graphicsToAtom(QGraphicsItem* blueprint, RPZAtom templateCopy) {
     
     //update the 3 only parameters who might have changed from the template
-    _setParamToAtomFromGraphicsItem(AtomParameter::Position, templateAtom, blueprint);
-    _setParamToAtomFromGraphicsItem(AtomParameter::Shape, templateAtom, blueprint);
+    _setParamToAtomFromGraphicsItem(AtomParameter::Position, templateCopy, blueprint);
+    _setParamToAtomFromGraphicsItem(AtomParameter::Shape, templateCopy, blueprint);
                 
     //finally, give it ID for storage
-    templateAtom.shuffleId();
+    templateCopy.shuffleId();
 
-    return templateAtom;
+    return templateCopy;
 }
 
 

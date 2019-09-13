@@ -12,7 +12,7 @@ class AtomEditionManager : public QWidget {
         AtomsStorage* _storage = nullptr;
 
         void _handleSubjectChange(const AtomsSelectionDescriptor &atomsSelectDescriptor) {
-            bool hasSubjects = atomsSelectDescriptor.selectedAtoms.count();
+            bool hasSubjects = atomsSelectDescriptor.representedTypes.size();
             this->_resetButton->setEnabled(hasSubjects);
             this->_editor->buildEditor(atomsSelectDescriptor);
         }
@@ -57,7 +57,9 @@ class AtomEditionManager : public QWidget {
                 AtomsSelectionDescriptor descr;
                 
                 if(!atom_template.isEmpty()) {
-                    descr.representedTypes += atom_template.type();
+                    descr.representedTypes.insert(
+                        atom_template.type()
+                    );
                     descr.templateAtom = atom_template;
                 }
 

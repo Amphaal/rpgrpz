@@ -204,7 +204,7 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
 
             case PA_AssetSelected: {
                 Tool newTool = item ? Tool::Atom : Tool::Default;
-                auto selectedAtom = item ? *this->_hints->templateAtom() : RPZAtom();
+                auto selectedAtom = item ? this->_hints->templateAtom() : RPZAtom();
                 if(item) this->_addItem(item);
 
                 //change tool, proceed to unselect items
@@ -426,7 +426,7 @@ void MapView::mousePressEvent(QMouseEvent *event) {
         case Qt::MouseButton::LeftButton: {
 
             if(this->_getCurrentTool() == Atom) {
-                switch(this->_hints->templateAtom()->type()) {
+                switch(this->_hints->templateAtom().type()) {
 
                     case AtomType::Drawing:
                     case AtomType::Brush:
@@ -461,7 +461,7 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
 
     switch(this->_getCurrentTool()) {
         case Tool::Atom:
-            switch(this->_hints->templateAtom()->type()) {
+            switch(this->_hints->templateAtom().type()) {
                 case AtomType::Drawing:
                 case AtomType::Brush:
                     this->_updateDrawingPath(event->pos());
@@ -561,7 +561,7 @@ void MapView::_changeTool(Tool newTool, const bool quickChange) {
             this->setInteractive(false);
             this->setDragMode(QGraphicsView::DragMode::NoDrag);
             
-            switch(this->_hints->templateAtom()->type()) {
+            switch(this->_hints->templateAtom().type()) {
                 case AtomType::Drawing:
                     this->setCursor(Qt::CrossCursor);
                     break;
@@ -716,7 +716,7 @@ void MapView::_beginDrawing(const QPoint &lastPointMousePressed) {
     this->_tempDrawing = static_cast<MapViewGraphicsPathItem*>(item);
 
     //determine if it must be sticky
-    this->_stickyBrushIsDrawing = this->_hints->templateAtom()->brushType() == BrushType::Cutter;
+    this->_stickyBrushIsDrawing = this->_hints->templateAtom().brushType() == BrushType::Cutter;
     this->_stickyBrushValidNodeCount = this->_stickyBrushIsDrawing ? this->_tempDrawing->path().elementCount() : 0;
 
     //update position
@@ -743,7 +743,7 @@ void MapView::_updateDrawingPath(const QPoint &evtPoint) {
     auto sceneCoord = this->mapToScene(evtPoint);
     auto pathCoord = this->_tempDrawing->mapFromScene(sceneCoord);
 
-    switch(this->_hints->templateAtom()->type()) {
+    switch(this->_hints->templateAtom().type()) {
         
         case AtomType::Drawing:
             existingPath.lineTo(pathCoord);
@@ -764,7 +764,7 @@ void MapView::_updateDrawingPath(const QPoint &evtPoint) {
 
 void MapView::_updateDrawingPathForBrush(const QPointF &pathCoord, QPainterPath &pathToAlter, MapViewGraphicsPathItem* sourceTemplate) {
     
-    switch(this->_hints->templateAtom()->brushType()) {
+    switch(this->_hints->templateAtom().brushType()) {
         
         case BrushType::Stamp: {
             

@@ -108,6 +108,7 @@ int main(int argc, char** argv) {
     qRegisterMetaType<QVector<RPZMessage>>("QVector<RPZMessage>");
     qRegisterMetaType<QHash<QTreeWidgetItem*,AtomUpdates>>("QHash<QTreeWidgetItem*,AtomUpdates>");
     qRegisterMetaType<QHash<QGraphicsItem*,AtomUpdates>>("QHash<QGraphicsItem*,AtomUpdates>");
+    qRegisterMetaType<AtomsSelectionDescriptor>("AtomsSelectionDescriptor");
     
     //message handler
     qInstallMessageHandler(LogWriter::customMO);

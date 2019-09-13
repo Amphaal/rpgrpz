@@ -32,9 +32,9 @@ class AtomTextEditor : public AtomSubEditor  {
 
         QPushButton* _validateButton = nullptr;
 
-        void loadTemplate(QVector<const RPZAtom*> &atomsToManipulate, const QVariant &defaultValue) override {
+        void loadTemplate(const QVariant &defaultValue) override {
             
-            AtomSubEditor::loadTemplate(atomsToManipulate, defaultValue);
+            AtomSubEditor::loadTemplate(defaultValue);
 
             auto castedVal = defaultValue.toString();
             
