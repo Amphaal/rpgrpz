@@ -33,10 +33,7 @@ class AssetsDatabaseElement {
         
         static AssetsDatabaseElement* fromIndex(const QModelIndex &index);
         static inline const QString listMimeType = "application/x-assets-db-elem-list";
-
-        static QList<AssetsDatabaseElement::Type> staticContainerTypes();
-        static QList<AssetsDatabaseElement::Type> internalItemTypes();
-        static QString typeDescription(AssetsDatabaseElement::Type &type);
+        static AtomType toAtomType(const AssetsDatabaseElement::Type &type);
 
         AssetsDatabaseElement(const QString &name, AssetsDatabaseElement* parent, const AssetsDatabaseElement::Type &type = Folder);
         AssetsDatabaseElement(const RPZToyMetadata &assetMetadata);
@@ -54,9 +51,6 @@ class AssetsDatabaseElement {
         RPZAssetHash id() const;
         Qt::ItemFlags flags() const;
         RPZToyMetadata toyMetadata() const;
-
-        //sanitize and check if the name change is OK
-        bool isAcceptableNameChange(QString &newName);
                 
         bool isContainer() const;
         bool isInternal() const;
@@ -72,27 +66,32 @@ class AssetsDatabaseElement {
         int itemChildrenCount() const;
         QList<AssetsDatabaseElement*> childrenContainers();
         QList<AssetsDatabaseElement*> childrenItems();
-
-        void rename(const QString &newName); //prefer using rename() with AssetsDatabase for db interaction
-        void appendChild(AssetsDatabaseElement* child); //prefer using insertAsset() for parallel db insertion
-        void unrefChild(AssetsDatabaseElement* child);
-
         
-        //returns a list of single elements by node path
-        static QSet<AssetsDatabaseElement*> filterTopMostOnly(QList<AssetsDatabaseElement*> elemsToFilter);
-
-        //returns elements of a path
-        static QList<QString> pathAsList(const QString &path);
-
-        //interpret path element as corresponding type
-        static AssetsDatabaseElement::Type pathChunktoType(const QString &chunk);
-
-        //sort items by path length (number of slashes)
-        static void sortByPathLengthDesc(QList<AssetsDatabaseElement*> &listToSort);
+        bool isAcceptableNameChange(QString &newName); //sanitize and check if the name change is OK
+        void rename(const QString &newName); //prefer using rename() with AssetsDatabase for db interaction
+        void appendChild(AssetsDatabaseElement* child); //prefer using insertAsset() with AssetsDatabase for parallel db insertion
 
     protected:
         QList<AssetsDatabaseElement*> _subElements;
         AssetsDatabaseElement* _parentElement = nullptr;
+
+       //sort items by path length (number of slashes)
+        static void sortByPathLengthDesc(QList<AssetsDatabaseElement*> &listToSort);
+
+        //interpret path element as corresponding type
+        static AssetsDatabaseElement::Type pathChunktoType(const QString &chunk);
+
+        //returns elements of a path
+        static QList<QString> pathAsList(const QString &path);
+
+        //returns a list of single elements by node path
+        static QSet<AssetsDatabaseElement*> filterTopMostOnly(QList<AssetsDatabaseElement*> elemsToFilter);
+
+        static QList<AssetsDatabaseElement::Type> staticContainerTypes();
+        static QList<AssetsDatabaseElement::Type> internalItemTypes();
+        static QString typeDescription(AssetsDatabaseElement::Type &type);
+
+        void unrefChild(AssetsDatabaseElement* child);
 
     private:
         AssetsDatabaseElement::Type _type = T_Unknown;

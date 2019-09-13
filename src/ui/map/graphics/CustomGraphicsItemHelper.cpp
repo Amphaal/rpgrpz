@@ -23,6 +23,7 @@ QGraphicsItem* CustomGraphicsItemHelper::createGraphicsItem(const RPZAtom &atom,
         break;
 
         default:
+            qWarning() << "Map : cannot determine atom type for creation !";
             return nullptr;
         break;
     }

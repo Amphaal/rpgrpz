@@ -9,11 +9,11 @@ class AtomTemplateSelectedPayload : public AlterationPayload {
     
     public:
         AtomTemplateSelectedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        AtomTemplateSelectedPayload(const RPZAtom* ref) : AlterationPayload(PayloadAlteration::PA_AtomTemplateSelected) {
-            this->insert("ref", QVariant::fromValue<RPZAtom*>((RPZAtom*)ref));
+        AtomTemplateSelectedPayload(const RPZAtom &templateAtom) : AlterationPayload(PayloadAlteration::PA_AtomTemplateSelected) {
+            this->insert("templ", QVariant::fromValue<RPZAtom>(templateAtom));
         }
     
-        const RPZAtom* selectedTemplate() const {
-            return this->value("ref").value<RPZAtom*>();
+        const RPZAtom selectedTemplate() const {
+            return this->value("templ").value<RPZAtom>();
         }
 };

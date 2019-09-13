@@ -7,43 +7,19 @@
 
 class MetadataChangedPayload : public MultipleTargetsPayload {
     public:
+    
         MetadataChangedPayload(const QVariantHash &hash) : MultipleTargetsPayload(hash) {}
-        
-        //multiple targets / multiple params
-        MetadataChangedPayload(
-            const QVector<RPZAtomId> &targetedRPZAtomIds,
-            AtomUpdates &changes
-        ) : MultipleTargetsPayload(PayloadAlteration::PA_MetadataChanged, targetedRPZAtomIds) {
+        MetadataChangedPayload(const QVector<RPZAtomId> &targetedRPZAtomIds, const AtomUpdates &changes) : 
+            MultipleTargetsPayload(PayloadAlteration::PA_MetadataChanged, targetedRPZAtomIds) {
+            
             this->_setMetadataChanges(changes);
-        }
-
-        //multiple targets / single param
-        MetadataChangedPayload(
-            const QVector<RPZAtomId> &targetedRPZAtomIds,
-            const AtomParameter &param, 
-            const QVariant &value
-        ) : MultipleTargetsPayload(PayloadAlteration::PA_MetadataChanged, targetedRPZAtomIds) {
-            AtomUpdates changes {{ param, value }};
-            this->_setMetadataChanges(changes);
-        }
-
-        //single target / single param
-        MetadataChangedPayload(
-            RPZAtomId targetedId, 
-            const AtomParameter &param, 
-            const QVariant &value
-        ) : MultipleTargetsPayload(PayloadAlteration::PA_MetadataChanged, QVector<RPZAtomId>({targetedId})) {
-            AtomUpdates changes {{ param, value }};
-            this->_setMetadataChanges(changes);
+            
         }
 
         AtomUpdates updates() const {
-            return fromArgs(this->args());
-        }
-
-        static AtomUpdates fromArgs(const QVariant &args) {
+            
             AtomUpdates out;
-            auto base = args.toHash();   
+            auto base = this->args().toHash();   
 
             for (auto i = base.begin(); i != base.end(); ++i) {
                 auto param = (AtomParameter)i.key().toInt();
@@ -51,6 +27,7 @@ class MetadataChangedPayload : public MultipleTargetsPayload {
             }
 
             return out;
+            
         }
 
     private:

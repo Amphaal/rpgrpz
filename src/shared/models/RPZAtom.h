@@ -25,13 +25,13 @@
 // defined values shared with AssetsDatabaseElement type for static casts
 enum class AtomType { 
     Undefined, 
-    Drawing = 252,
-    Text = 253,
-    Object = 550, 
-    Brush = 450, 
-    NPC = 350, 
-    Event = 251, 
-    PC = 250
+    Drawing,
+    Text,
+    Object, 
+    Brush, 
+    NPC, 
+    Event, 
+    PC
 };
 
 enum class BrushType { 
@@ -94,7 +94,9 @@ class RPZAtom : public Ownable {
         AtomUpdates editedMetadataWithValues() const;
         QSet<AtomParameter> legalEditedMetadata() const;
         QSet<AtomParameter> legalParameters() const;
+        
         QSet<AtomParameter> customizableParams() const;
+        static QSet<AtomParameter> customizableParams(const AtomType &type);
 
         RPZAssetHash assetId() const;
         QString assetName() const;
@@ -162,4 +164,4 @@ class RPZAtom : public Ownable {
         void _setType(const AtomType &type);
 };
 
-Q_DECLARE_METATYPE(RPZAtom *)
+Q_DECLARE_METATYPE(RPZAtom*)

@@ -7,12 +7,31 @@ RPZMap<RPZAtom> AtomsStorage::atoms() const {
     return this->_atomsById;
 }
 
-const QVector<const RPZAtom*> AtomsStorage::selectedAtoms() const {
-    QMutexLocker m(&this->_m_handlingLock);
-    return this->_selectedAtoms;
+const AtomsSelectionDescriptor AtomsStorage::getAtomSelectionDescriptor(const QVector<RPZAtomId> &selectedIds) const {
+    
+    AtomsSelectionDescriptor out;
+    out.selectedAtomIds = selectedIds;
+
+    {
+        QMutexLocker m(&this->_m_handlingLock);
+        
+        if(selectedIds.count() == 1) {
+            out.templateAtom = this->_atomsById[selectedIds[0]];
+            out.representedTypes += out.templateAtom.type();
+        }
+
+        else {
+            for(auto id : selectedIds) {
+                out.representedTypes += this->_atomsById[id].type();
+            }
+        }
+
+    }
+
+    return out;
 }
 
-QVector<RPZAtomId> AtomsStorage::selectedRPZAtomIds() const {
+QVector<RPZAtomId> AtomsStorage::bufferedSelectedAtomIds() const {
     QMutexLocker l(&this->_m_handlingLock);
     return this->_selectedRPZAtomIds;
 }

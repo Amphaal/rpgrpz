@@ -20,7 +20,7 @@ AssetsDatabaseElement::AssetsDatabaseElement(const RPZToyMetadata &assetMetadata
     AssetsDatabaseElement(
         assetMetadata.assetName(), 
         assetMetadata.associatedParent(), 
-        (AssetsDatabaseElement::Type)assetMetadata.atomType()
+        assetMetadata.associatedParent()->insertType()
     ) {
  
     this->_id = assetMetadata.assetId();
@@ -65,7 +65,7 @@ void AssetsDatabaseElement::_setType(const AssetsDatabaseElement::Type &type) {
 ///////////////////
 
 RPZToyMetadata AssetsDatabaseElement::toyMetadata() const {
-    if(this->_toyMetadata.isEmpty() && !this->isContainer()) return RPZToyMetadata((AtomType)this->type());
+    if(this->_toyMetadata.isEmpty() && !this->isContainer()) return RPZToyMetadata(this->atomType());
     return this->_toyMetadata;
 }
 
@@ -137,6 +137,33 @@ AssetsDatabaseElement::Type AssetsDatabaseElement::rootStaticContainer() const {
     return this->_rootStaticContainerType;
 }
 
+AtomType AssetsDatabaseElement::toAtomType(const AssetsDatabaseElement::Type &type) {
+    switch(type) {
+        case Player:
+            return AtomType::PC;
+            break;
+        case Event:
+            return AtomType::Event;
+            break;
+        case NPC:
+            return AtomType::NPC;
+            break;
+        case FloorBrush:
+            return AtomType::Brush;
+            break;
+        case Object:
+            return AtomType::Object;
+            break;
+        case FreeDraw:
+            return AtomType::Drawing;
+            break;
+        case Text:
+            return AtomType::Text;
+            break;
+        default:
+            return AtomType::Undefined;
+    }
+}
 
 ///////////////////////
 // END RO Properties //
@@ -263,31 +290,7 @@ void AssetsDatabaseElement::_defineFlags() {
 }
 
 void AssetsDatabaseElement::_defineAtomType() {
-    switch(this->_type) {
-        case Player:
-            this->_atomType = AtomType::PC;
-            break;
-        case Event:
-            this->_atomType = AtomType::Event;
-            break;
-        case NPC:
-            this->_atomType = AtomType::NPC;
-            break;
-        case FloorBrush:
-            this->_atomType = AtomType::Brush;
-            break;
-        case Object:
-            this->_atomType = AtomType::Object;
-            break;
-        case FreeDraw:
-            this->_atomType = AtomType::Drawing;
-            break;
-        case Text:
-            this->_atomType = AtomType::Text;
-            break;
-        default:
-            break;
-    }
+    this->_atomType = toAtomType(this->_type);
 }
 
 void AssetsDatabaseElement::_definePath() {

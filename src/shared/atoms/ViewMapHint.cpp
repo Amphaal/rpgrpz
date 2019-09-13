@@ -84,7 +84,6 @@ void ViewMapHint::setDefaultUser(const RPZUser &user) {
         this->_templateAtom->setOwnership(user); //update template
     }
 
-    
     this->_m_ghostItem.lock();
     auto ghostItem = this->_ghostItem;
     this->_m_ghostItem.unlock();
@@ -104,7 +103,7 @@ void ViewMapHint::setDefaultUser(const RPZUser &user) {
 /////////////////////////////
 
 void ViewMapHint::deleteCurrentSelectionItems() const {
-    RemovedPayload payload(this->selectedRPZAtomIds());
+    RemovedPayload payload(this->bufferedSelectedAtomIds());
     AlterationHandler::get()->queueAlteration(this, payload);
 }
 
@@ -264,11 +263,27 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZToyMetadata &metadat
 
 void ViewMapHint::handlePreviewRequest(const QVector<RPZAtomId> &RPZAtomIdsToPreview, const AtomParameter &parameter, const QVariant &value) {
     
-    QList<QGraphicsItem*> toUpdate;
+    //create updates container
     AtomUpdates updates; updates.insert(parameter, value);
     
-    for(const auto &id : RPZAtomIdsToPreview) {
-        toUpdate += this->_GItemsByRPZAtomId[id];
+    QList<QGraphicsItem*> toUpdate;
+
+    //is ghost that must be targeted
+    if(RPZAtomIdsToPreview.count() == 1 && RPZAtomIdsToPreview.at(0) == 0) {
+        
+        QMutexLocker l(&this->_m_ghostItem);
+
+        if(this->_ghostItem) toUpdate += this->_ghostItem;
+
+    }
+
+    //selected atoms to change
+    else {
+        QMutexLocker l(&this->_m_GItemsByRPZAtomId);
+
+        for(const auto &id : RPZAtomIdsToPreview) {
+            toUpdate += this->_GItemsByRPZAtomId[id];
+        }
     }
 
     emit requestingUIUpdate(toUpdate, updates);
@@ -311,8 +326,11 @@ RPZAtom* ViewMapHint::getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const 
 
 //alter Scene
 void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
-
-    AtomsStorage::_handleAlterationRequest(payload);
+    
+    {
+        QMutexLocker l(&this->_m_GItemsByRPZAtomId);
+        AtomsStorage::_handleAlterationRequest(payload);
+    }
 
     //if asset changed
     if(auto mPayload = dynamic_cast<AssetChangedPayload*>(&payload)) {

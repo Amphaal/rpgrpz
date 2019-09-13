@@ -78,7 +78,7 @@ class ViewMapHint : public AtomsStorage {
         mutable QMutex _m_templateAtom;
         RPZAtom* _templateAtom = nullptr;
         
-
+        mutable QMutex _m_GItemsByRPZAtomId;
         QMap<RPZAtomId, QGraphicsItem*> _GItemsByRPZAtomId;
         
         //helpers

@@ -1,21 +1,41 @@
 #pragma once
 
-#include "src/shared/payloads/_base/AlterationPayload.hpp"
-#include <QPair>
+#include "src/shared/payloads/_base/MultipleTargetsPayload.hpp"
 #include "src/shared/models/RPZAtom.h"
 
+#include <QString>
+
 class AtomTemplateChangedPayload : public AlterationPayload {
-    
     public:
         AtomTemplateChangedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        AtomTemplateChangedPayload(const AtomParameter &param, const QVariant &value) : AlterationPayload(PayloadAlteration::PA_AtomTemplateChanged) {
-            this->insert("p", param);
-            this->insert("v", value);
+        AtomTemplateChangedPayload(const AtomUpdates &changes) : AlterationPayload(PayloadAlteration::PA_AtomTemplateChanged) {
+            this->_setMetadataChanges(changes);
         }
-    
+
         AtomUpdates updates() const {
-            return AtomUpdates {
-                { (AtomParameter)this->value("p").toInt(), this->value("v") }
-            };
+            
+            AtomUpdates out;
+            auto base = this->value("changes").toHash();  
+
+            for (auto i = base.begin(); i != base.end(); ++i) {
+                auto param = (AtomParameter)i.key().toInt();
+                out.insert(param, i.value());
+            }
+
+            return out;
+
+        }
+
+    private:
+        void _setMetadataChanges(const AtomUpdates &changes) {
+            
+            QVariantHash in;
+            
+            for (auto i = changes.constBegin(); i != changes.constEnd(); ++i) {
+                in.insert(QString::number((int)i.key()), i.value());
+            }
+
+            this->insert("changes", in);
+
         }
 };

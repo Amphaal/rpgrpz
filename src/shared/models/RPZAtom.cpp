@@ -130,11 +130,10 @@ void RPZAtom::setShape(const QRectF &rect) {
 //
 //
 
-QSet<AtomParameter> RPZAtom::customizableParams() const {
-    
+QSet<AtomParameter> RPZAtom::customizableParams(const AtomType &type) {
     QSet<AtomParameter> out;
     
-    switch(this->type()) {
+    switch(type) {
 
         case AtomType::Drawing: {
             out.insert(AtomParameter::PenWidth);
@@ -168,6 +167,10 @@ QSet<AtomParameter> RPZAtom::customizableParams() const {
     }
 
     return out;
+}
+
+QSet<AtomParameter> RPZAtom::customizableParams() const {
+    return customizableParams(this->type());
 }
 
 QSet<AtomParameter> RPZAtom::legalParameters() const {

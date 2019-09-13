@@ -56,6 +56,7 @@ class AlterationPayload : public QVariantHash {
             "Local_MapLayout",
             "Local_Map",
             "Local_AtomEditor",
+            "Local_AtomDB",
             "RPZServer",
             "RPZClient",
             "Local_System"

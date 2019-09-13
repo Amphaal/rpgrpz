@@ -257,7 +257,7 @@ void AssetsDatabase::_generateItemsFromDb(const QHash<RPZAssetPath, AssetsDataba
 
             auto metadata = RPZToyMetadata(
                 lastContainer,
-                (AtomType)lastContainer->insertType(),
+                AssetsDatabaseElement::toAtomType(lastContainer->insertType()),
                 idStr,
                 asset["name"].toString(),
                 getFilePathToAsset(idStr, asset["ext"].toString()),
@@ -384,7 +384,7 @@ RPZToyMetadata AssetsDatabase::_addAssetToDb(const RPZAssetHash &id, const QUrl 
     
     auto metadata =  RPZToyMetadata(
         parent,
-        (AtomType)parent->insertType(),
+        AssetsDatabaseElement::toAtomType(parent->insertType()),
         id,
         assetName,
         pathToAsset,

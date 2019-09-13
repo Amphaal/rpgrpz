@@ -29,11 +29,11 @@ class AtomEditor : public QGroupBox, public AlterationActor {
         enum EditMode { None, Template, Selection };
 
         AtomEditor(QWidget* parent = nullptr);
-        void buildEditor(const QVector<const RPZAtom*> &atomsToBuildFrom);
+        void buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr);
         void resetParams();
     
     signals:
-        void requiresPreview(const QVector<RPZAtomId> &RPZAtomIdsToPreview, const AtomParameter &parameter, const QVariant &value);
+        void requiresPreview(const AtomsSelectionDescriptor &selectionDescriptor, const AtomParameter &parameter, const QVariant &value);
 
     private:
         static inline QHash<EditMode, QString> _strEM {
@@ -42,8 +42,7 @@ class AtomEditor : public QGroupBox, public AlterationActor {
             { Selection, "Modification de selection" }
         };
 
-        QVector<const RPZAtom*> _atoms;
-        QVector<RPZAtomId> _RPZAtomIds;
+        AtomsSelectionDescriptor _currentSelectionDescr;
 
         QMap<AtomParameter, AtomSubEditor*> _editorsByParam;
         QList<AtomParameter> _visibleEditors;
@@ -51,10 +50,8 @@ class AtomEditor : public QGroupBox, public AlterationActor {
         AtomUpdates _findDefaultValuesToBind();
         void _createEditorsFromAtomParameters();
 
-        void _onSubEditorChanged(const AtomParameter &parameterWhoChanged, const QVariant &value);
         void _onPreviewRequested(const AtomParameter &parameter, const QVariant &value);
-
-        void _emitPayload(AlterationPayload &payload);
+        void _emitPayload(const AtomUpdates &changesToEmit);
 
         EditMode _currentEditMode = None;
         void _updateEditMode();

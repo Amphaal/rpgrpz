@@ -11,10 +11,10 @@ class AtomEditionManager : public QWidget {
         QPushButton* _resetButton = nullptr;
         AtomsStorage* _storage = nullptr;
 
-        void _handleSubjectChange(const QVector<const RPZAtom*> &newSubjects) {
-            bool hasSubjects = newSubjects.count();
+        void _handleSubjectChange(const AtomsSelectionDescriptor &atomsSelectDescriptor) {
+            bool hasSubjects = atomsSelectDescriptor.selectedAtoms.count();
             this->_resetButton->setEnabled(hasSubjects);
-            this->_editor->buildEditor(newSubjects);
+            this->_editor->buildEditor(atomsSelectDescriptor);
         }
 
     public:
@@ -50,17 +50,25 @@ class AtomEditionManager : public QWidget {
             
             auto casted = Payloads::autoCast(payload);
 
+            //if ghost item selection occured
             if(auto mPayload = dynamic_cast<AtomTemplateSelectedPayload*>(casted.data())) {
-                auto ptr = mPayload->selectedTemplate();
-                if(ptr) this->_handleSubjectChange({ptr});
-                else this->_handleSubjectChange({});
+                
+                auto atom_template = mPayload->selectedTemplate();
+                AtomsSelectionDescriptor descr;
+                
+                if(!atom_template.isEmpty()) {
+                    descr.representedTypes += atom_template.type();
+                    descr.templateAtom = atom_template;
+                }
+
+                this->_handleSubjectChange(descr);
                 
             }
 
+            //if selection occured
             else if(auto mPayload = dynamic_cast<SelectedPayload*>(casted.data())) {
-                this->_handleSubjectChange(
-                    this->_storage->selectedAtoms()
-                );
+                auto descr = this->_storage->getAtomSelectionDescriptor(mPayload->targetRPZAtomIds());
+                this->_handleSubjectChange(descr);
             }
 
         }

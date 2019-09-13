@@ -15,6 +15,12 @@
 
 #include "src/shared/async-ui/AlterationAcknoledger.h"
 
+struct AtomsSelectionDescriptor {
+    QSet<AtomType> representedTypes;
+    RPZAtom templateAtom;
+    QVector<RPZAtomId> selectedAtomIds;
+};
+
 class AtomsStorage : public AlterationAcknoledger {
 
     Q_OBJECT
@@ -22,8 +28,8 @@ class AtomsStorage : public AlterationAcknoledger {
     public:
         AtomsStorage(const AlterationPayload::Source &boundSource);
         
-        QVector<RPZAtomId> selectedRPZAtomIds() const; //safe
-        const QVector<const RPZAtom*> selectedAtoms() const; //safe
+        QVector<RPZAtomId> bufferedSelectedAtomIds() const; //safe
+        const AtomsSelectionDescriptor AtomsStorage::getAtomSelectionDescriptor(const QVector<RPZAtomId> &selectedIds) const; //safe
         RPZMap<RPZAtom> atoms() const; //safe
 
     signals: 

@@ -17,7 +17,7 @@ void AtomsContextualMenuHandler::redoAlteration() {
 }
 
 void AtomsContextualMenuHandler::copySelectedAtomsToClipboard() {
-    _copyClipboard = this->_mapMaster->selectedRPZAtomIds();
+    _copyClipboard = this->_mapMaster->bufferedSelectedAtomIds();
 }
 
 void AtomsContextualMenuHandler::pasteAtomsFromClipboard() {
@@ -26,25 +26,25 @@ void AtomsContextualMenuHandler::pasteAtomsFromClipboard() {
 }
 
 void AtomsContextualMenuHandler::removeSelectedAtoms() {
-    auto selectedIds = this->_mapMaster->selectedRPZAtomIds();
+    auto selectedIds = this->_mapMaster->bufferedSelectedAtomIds();
     RemovedPayload payload(selectedIds);
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 }
 
 void AtomsContextualMenuHandler::moveSelectedAtomsToLayer(int targetLayer) {
-    auto selectedIds = this->_mapMaster->selectedRPZAtomIds();
+    auto selectedIds = this->_mapMaster->bufferedSelectedAtomIds();
     MetadataChangedPayload payload(selectedIds, AtomParameter::Layer, targetLayer);
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 }
 
 void AtomsContextualMenuHandler::alterSelectedAtomsVisibility(bool isHidden) {
-    auto selectedIds = this->_mapMaster->selectedRPZAtomIds();
+    auto selectedIds = this->_mapMaster->bufferedSelectedAtomIds();
     MetadataChangedPayload payload(selectedIds, AtomParameter::Hidden, isHidden);
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 }
 
 void AtomsContextualMenuHandler::alterSelectedAtomsAvailability(bool isLocked) {
-    auto selectedIds = this->_mapMaster->selectedRPZAtomIds();
+    auto selectedIds = this->_mapMaster->bufferedSelectedAtomIds();
     MetadataChangedPayload payload(selectedIds, AtomParameter::Locked, isLocked);
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 }

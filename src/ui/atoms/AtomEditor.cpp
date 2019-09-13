@@ -6,21 +6,16 @@ AtomEditor::AtomEditor(QWidget* parent) : QGroupBox(_strEM[None], parent), Alter
 
     this->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
     this->setLayout(new QVBoxLayout);
+    
     //create params editors
     this->_createEditorsFromAtomParameters();
+
 }
 
-void AtomEditor::buildEditor(const QVector<const RPZAtom*> &atomsToBuildFrom) {
+void AtomEditor::buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr) {
     
     //modify atom list
-    this->_atoms = atomsToBuildFrom;
-    
-    //fill
-    this->_RPZAtomIds.clear();
-    for(auto atom : this->_atoms) {
-        auto id = atom->id();
-        this->_RPZAtomIds.append(id);
-    }
+    this->_currentSelectionDescr = atomsSelectionDescr;
     
     //clear editors
     this->_visibleEditors.clear();
@@ -70,8 +65,7 @@ void AtomEditor::resetParams() {
             changes.insert(param, QVariant());
         }
 
-        MetadataChangedPayload payload(this->_RPZAtomIds, changes);
-        this->_emitPayload(payload);
+        this->_emitPayload(changes);
 
 }
 
@@ -94,7 +88,7 @@ void AtomEditor::_createEditorsFromAtomParameters() {
 
         QObject::connect(
             editor, &AtomSubEditor::valueConfirmedForPayload,
-            this, &AtomEditor::_onSubEditorChanged
+            this, &AtomEditor::_emitPayload
         );
 
         QObject::connect(
@@ -107,49 +101,50 @@ void AtomEditor::_createEditorsFromAtomParameters() {
     }
 }
 
-void AtomEditor::_onSubEditorChanged(const AtomParameter &parameterWhoChanged, const QVariant &value) {
-    
+void AtomEditor::_onPreviewRequested(const AtomParameter &parameter, const QVariant &value) {
+    emit requiresPreview(this->_currentSelectionDescr, parameter, value);
+}
+
+void AtomEditor::_emitPayload(const AtomUpdates &changesToEmit) {
+
     if(this->_currentEditMode == Template) {
-        AtomTemplateChangedPayload payload(parameterWhoChanged, value);
-        this->_emitPayload(payload);
+        AtomTemplateChangedPayload payload(changesToEmit);
+        AlterationHandler::get()->queueAlteration(this, payload);
     } 
     
     else {
-        MetadataChangedPayload payload(this->_RPZAtomIds, parameterWhoChanged, value);
-        this->_emitPayload(payload);
+
+        MetadataChangedPayload payload(
+            this->_currentSelectionDescr.selectedAtomIds, 
+            changesToEmit
+        );
+
+        AlterationHandler::get()->queueAlteration(this, payload);
     }
 
 }
 
-void AtomEditor::_onPreviewRequested(const AtomParameter &parameter, const QVariant &value) {
-    emit requiresPreview(this->_RPZAtomIds, parameter, value);
-}
-
-void AtomEditor::_emitPayload(AlterationPayload &payload) {
-    AlterationHandler::get()->queueAlteration(this, payload);
-}
-
 AtomUpdates AtomEditor::_findDefaultValuesToBind() {
+    
     AtomUpdates out;
 
-    if(this->_atoms.count() > 0) {
-
-        auto firstItem = this->_atoms[0];
-
-        //intersect all customizables params
-        QSet<AtomParameter> paramsToDisplay = firstItem->customizableParams();
-        for(int i = 1; i < this->_atoms.count(); i++) {
-            auto currCP = this->_atoms[i]->customizableParams();
-            paramsToDisplay = paramsToDisplay.intersect(currCP);
+    //intersect represented atom types in selection to determine which editors to display
+    QSet<AtomParameter> paramsToDisplay;
+    for(auto &type : this->_currentSelectionDescr.representedTypes) {
+        
+        auto associatedCustomParams = RPZAtom::customizableParams(type);
+        
+        if(paramsToDisplay.empty()) {
+            paramsToDisplay = associatedCustomParams;
+            continue;
         }
 
-        //find default values to apply
-        auto hasMoreThanOneAtomToBind = this->_atoms.count() > 1;
-        for(auto param : paramsToDisplay) {
-            QVariant val =  hasMoreThanOneAtomToBind ? QVariant() : firstItem->metadata(param);
-            out.insert(param, val);
-        }
+        paramsToDisplay = paramsToDisplay.intersect(associatedCustomParams);
 
+    }
+
+    for(auto param : paramsToDisplay) {
+        out.insert(param, this->_currentSelectionDescr.templateAtom.metadata(param));
     }
 
     return out;
@@ -157,17 +152,16 @@ AtomUpdates AtomEditor::_findDefaultValuesToBind() {
 
 
 void AtomEditor::_updateEditMode() {
-    auto countItems = this->_atoms.count();
-    auto firstItem = countItems > 0 ? this->_atoms.at(0) : nullptr;
+    auto selectedIdsCount = this->_currentSelectionDescr.selectedAtomIds.count();
     
-    if(countItems == 0) {
-        this->_currentEditMode  = EditMode::None;
+    if(selectedIdsCount) {
+        this->_currentEditMode = EditMode::Selection;
     }
-    else if(countItems == 1 && !firstItem->id()) {
+    else if(!selectedIdsCount && !this->_currentSelectionDescr.templateAtom.isEmpty()) {
         this->_currentEditMode = EditMode::Template;
     } 
     else {
-        this->_currentEditMode = EditMode::Selection;
+        this->_currentEditMode  = EditMode::None;
     }
 
     //update title
