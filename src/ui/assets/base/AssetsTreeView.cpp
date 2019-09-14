@@ -335,5 +335,6 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
 }
 
 void AssetsTreeView::_handleAlterationRequest(const AlterationPayload &payload) {
-    if(payload.type() == PA_Selected) this->clearSelection();
+    auto type = payload.type();
+    if(type == PA_Selected || type == PA_Reset) this->clearSelection();
 }

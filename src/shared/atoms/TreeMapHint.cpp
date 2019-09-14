@@ -82,7 +82,8 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
 
         for (auto &id : mPayload->targetRPZAtomIds()) {
             
-            auto item = this->_atomTreeItemsById.take(id);;
+            //remove from internal list
+            auto item = this->_atomTreeItemsById.take(id);
             out += item;
 
             RPZAssetHash tbrAtom_assetId = item->data(0, RPZUserRoles::AssetHash).toString();
@@ -91,6 +92,9 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
             if(!tbrAtom_assetId.isNull()) {
                 this->_RPZAtomIdsBoundByRPZAssetHash[tbrAtom_assetId].remove(id);
             }
+
+            //
+            this->_mvHelper.toRemoveChildrenCountByLayerItem[item->parent()]++;
 
         }
 
@@ -131,18 +135,6 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
         emit requestingUIUpdate(toUpdate);
     }
 
-    //on remove
-    else if(auto mPayload = dynamic_cast<RemovedPayload*>(&payload)) {
-        
-        for (auto &id : mPayload->targetRPZAtomIds()) {
-            auto item = this->_atomTreeItemsById[id];
-            out += item;
-            this->_mvHelper.toRemoveChildrenCountByLayerItem[item->parent()]++;
-        }
-
-        emit requestingUIAlteration(type, out);
-    }
-
     //anything else
     else if(auto mPayload = dynamic_cast<MultipleTargetsPayload*>(&payload)) {
         
@@ -155,7 +147,9 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
     }
 
     //request a move if needed
-    if(this->_mvHelper.childrenMovedToLayer.count()) emit requestingUIMove(this->_mvHelper.childrenMovedToLayer);
+    if(this->_mvHelper.childrenMovedToLayer.count()) {
+        emit requestingUIMove(this->_mvHelper.childrenMovedToLayer);
+    }
 
     //check to-delete layer items
     if(this->_mvHelper.toRemoveChildrenCountByLayerItem.count()) {

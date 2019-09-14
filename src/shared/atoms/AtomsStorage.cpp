@@ -37,7 +37,7 @@ const AtomsSelectionDescriptor AtomsStorage::getAtomSelectionDescriptor(const QV
 
 QVector<RPZAtomId> AtomsStorage::bufferedSelectedAtomIds() const {
     QMutexLocker l(&this->_m_handlingLock);
-    return this->_selectedRPZAtomIds;
+    return this->_selectedRPZAtomIds.toList().toVector();
 }
 
 /////////////
@@ -330,7 +330,7 @@ RPZAtom* AtomsStorage::_insertAtom(const RPZAtom &newAtom) {
 
 RPZAtomId AtomsStorage::_ackSelection(RPZAtom* selectedAtom) {
     auto id = selectedAtom->id();
-    this->_selectedRPZAtomIds.append(id);
+    this->_selectedRPZAtomIds.insert(id);
     return selectedAtom->id();
 }
 
@@ -352,6 +352,9 @@ RPZAtomId AtomsStorage::_removeAtom(RPZAtom* toRemove) {
 
     //unbind from owners
     this->_RPZAtomIdsByOwnerId[storedAtomOwner.id()].remove(id);
+
+    //remove from selection
+    this->_selectedRPZAtomIds.remove(id);
 
     //update 
     this->_atomsById.remove(id); 

@@ -18,6 +18,7 @@
 #include "editors/NonLinearAtomSliderEditor.hpp"
 #include "editors/BrushToolEditor.hpp"
 #include "editors/AtomTextEditor.hpp"
+#include "base/NoEditorMessageWidget.hpp"
 
 #include "src/shared/async-ui/AlterationActor.hpp"
 
@@ -32,6 +33,7 @@ class AtomEditor : public QGroupBox, public AlterationActor {
         void buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr);
         void resetParams();
         bool hasVisibleEditors();
+        AtomsSelectionDescriptor currentSelectionDescriptor();
     
     signals:
         void requiresPreview(const AtomsSelectionDescriptor &selectionDescriptor, const AtomParameter &parameter, const QVariant &value);
@@ -46,6 +48,8 @@ class AtomEditor : public QGroupBox, public AlterationActor {
         AtomsSelectionDescriptor _currentSelectionDescr;
 
         QMap<AtomParameter, AtomSubEditor*> _editorsByParam;
+        NoEditorMessageWidget* _noEditorMsgWidget = nullptr;
+
         QList<AtomParameter> _visibleEditors;
 
         AtomUpdates _findDefaultValuesToBind();

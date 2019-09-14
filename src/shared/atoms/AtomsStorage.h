@@ -77,7 +77,7 @@ class AtomsStorage : public AlterationAcknoledger {
         AlterationPayload _generateUndoPayload(AlterationPayload &historyPayload);
 
         //selected
-        QVector<RPZAtomId> _selectedRPZAtomIds;
+        QSet<RPZAtomId> _selectedRPZAtomIds;
 
         //duplication
         int _duplicationCount = 0;

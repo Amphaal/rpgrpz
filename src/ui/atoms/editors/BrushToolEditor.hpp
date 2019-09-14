@@ -44,7 +44,8 @@ class BrushToolEditor : public AtomSubEditor {
 
                 this->_combo->addItem(
                     QIcon(_BTicons[tool]),
-                    i.value()
+                    i.value(),
+                    tool
                 );
 
             }
@@ -59,5 +60,17 @@ class BrushToolEditor : public AtomSubEditor {
 
             this->layout()->addWidget(this->_combo);
         };
+
+
+        void loadTemplate(const QVariant &defaultValue) override {
+            
+            AtomSubEditor::loadTemplate(defaultValue);
+
+            this->_combo->blockSignals(true); 
+                auto indexToSelect = this->_combo->findData(defaultValue);
+                this->_combo->setCurrentIndex(indexToSelect);
+            this->_combo->blockSignals(false);
+
+        }
 
 };

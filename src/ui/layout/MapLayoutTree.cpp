@@ -113,7 +113,6 @@ void MapLayoutTree::_onUIAlterationRequest(const PayloadAlteration &type, const 
             break;
 
             case PA_Focused: {
-                this->_clearSelectedItems();
                 auto itemIndex = this->indexFromItem(item);
                 this->scrollTo(itemIndex, QAbstractItemView::ScrollHint::EnsureVisible);
             }
@@ -208,9 +207,13 @@ void MapLayoutTree::_selectAtomItem(QTreeWidgetItem* toSelect) {
 }
 
 void MapLayoutTree::_removeItem(QTreeWidgetItem* toRemove) {
-    auto maybeLayerItem = toRemove->parent();
-    if(maybeLayerItem) maybeLayerItem->removeChild(toRemove);
-    else this->removeItemWidget(toRemove, 0);
+    if(auto maybeLayerItem = toRemove->parent()) {
+        maybeLayerItem->removeChild(toRemove);
+    }
+    else {
+        auto topLevelIndex = this->indexOfTopLevelItem(toRemove);
+        this->takeTopLevelItem(topLevelIndex);
+    }
 }
 
 void MapLayoutTree::_updateLayersDisplayedCount() {

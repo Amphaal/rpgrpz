@@ -109,6 +109,7 @@ int main(int argc, char** argv) {
     qRegisterMetaType<QHash<QTreeWidgetItem*,AtomUpdates>>("QHash<QTreeWidgetItem*,AtomUpdates>");
     qRegisterMetaType<QHash<QGraphicsItem*,AtomUpdates>>("QHash<QGraphicsItem*,AtomUpdates>");
     qRegisterMetaType<AtomsSelectionDescriptor>("AtomsSelectionDescriptor");
+    qRegisterMetaType<QHash<int,QList<QTreeWidgetItem*>>>("QHash<int,QList<QTreeWidgetItem*>>");
     
     //message handler
     qInstallMessageHandler(LogWriter::customMO);

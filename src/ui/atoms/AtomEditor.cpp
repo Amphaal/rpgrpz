@@ -10,6 +10,10 @@ AtomEditor::AtomEditor(QWidget* parent) : QGroupBox(_strEM[None], parent), Alter
     //create params editors
     this->_createEditorsFromAtomParameters();
 
+    //message indicating no editors available
+    this->_noEditorMsgWidget = new NoEditorMessageWidget;
+    this->layout()->addWidget(this->_noEditorMsgWidget);
+
 }
 
 void AtomEditor::buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr) {
@@ -51,6 +55,10 @@ void AtomEditor::buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr
         if(!editor) continue;
         editor->setVisible(false);
     }
+
+    //if no editor is displayed, show a little message
+    this->_noEditorMsgWidget->setVisible(!this->hasVisibleEditors());
+
 }
 
 //
@@ -203,4 +211,8 @@ void AtomEditor::_updateEditMode() {
 
 bool AtomEditor::hasVisibleEditors() {
     return this->_visibleEditors.count();
+}
+
+AtomsSelectionDescriptor AtomEditor::currentSelectionDescriptor() {
+    return this->_currentSelectionDescr;
 }

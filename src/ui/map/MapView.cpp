@@ -107,7 +107,7 @@ void MapView::_handleHintsSignalsAndSlots() {
     );
 
     //define selection debouncer
-    this->_debounceSelection.setInterval(500);
+    this->_debounceSelection.setInterval(100);
     this->_debounceSelection.setSingleShot(true);
     this->_debounceSelection.callOnTimeout([=]() {
         this->_hints->notifySelectedItems(
@@ -200,16 +200,16 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
 
             case PA_Focused: {
                 this->centerOn(item);
-                // auto bound = item->sceneBoundingRect();
-                // bound.marginsAdded(
-                //     QMarginsF(
-                //         bound.width(),
-                //         bound.height(),
-                //         bound.width(),
-                //         bound.height()
-                //     )
-                // );
-                this->fitInView(item, Qt::AspectRatioMode::KeepAspectRatio);
+                auto bound = item->sceneBoundingRect();
+                bound = bound.marginsAdded(
+                    QMarginsF(
+                        bound.width() / 2,
+                        bound.height() / 2,
+                        bound.width() / 2,
+                        bound.height() / 2
+                    )
+                );
+                this->fitInView(bound, Qt::AspectRatioMode::KeepAspectRatio);
             }
             break;
 
@@ -566,6 +566,14 @@ void MapView::_changeTool(Tool newTool, const bool quickChange) {
     
     //if standard tool change
     else {
+
+        //since clearSelection wont trigger notification, hard call notification on reset
+        if(this->_tool == Atom && newTool == Default) {
+            this->_hints->notifySelectedItems(
+                this->scene()->selectedItems()
+            );
+        }
+
         this->_tool = newTool;
         this->scene()->clearSelection();
     }    

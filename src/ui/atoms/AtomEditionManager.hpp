@@ -14,7 +14,9 @@ class AtomEditionManager : public QWidget {
         void _handleSubjectChange(const AtomsSelectionDescriptor &atomsSelectDescriptor) {
             this->_resetButton->setEnabled(false);
             this->_editor->buildEditor(atomsSelectDescriptor);
-            this->_resetButton->setEnabled(this->_editor->hasVisibleEditors());
+            this->_resetButton->setEnabled(
+                this->_editor->hasVisibleEditors()
+            );
         }
 
     public:
@@ -69,7 +71,25 @@ class AtomEditionManager : public QWidget {
 
             //if selection occured
             else if(auto mPayload = dynamic_cast<SelectedPayload*>(casted.data())) {
-                auto descr = this->_storage->getAtomSelectionDescriptor(mPayload->targetRPZAtomIds());
+                auto selected = mPayload->targetRPZAtomIds();
+                auto descr = this->_storage->getAtomSelectionDescriptor(selected);
+                this->_handleSubjectChange(descr);
+            }
+
+            //if deletion happened
+            else if(auto mPayload = dynamic_cast<RemovedPayload*>(casted.data())) {
+                
+                auto removed = mPayload->targetRPZAtomIds().toList().toSet();
+                auto current = this->_editor->currentSelectionDescriptor().selectedAtomIds.toList().toSet();
+                auto truncated = current.subtract(removed).toList().toVector();
+
+                auto descr = this->_storage->getAtomSelectionDescriptor(truncated);
+                this->_handleSubjectChange(descr);
+            }
+            
+            //on reset
+            else if(auto mPayload = dynamic_cast<RemovedPayload*>(casted.data())) {
+                AtomsSelectionDescriptor descr;
                 this->_handleSubjectChange(descr);
             }
 
