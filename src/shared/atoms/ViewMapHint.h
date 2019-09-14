@@ -47,6 +47,7 @@ class ViewMapHint : public AtomsStorage {
     public slots:
         void notifyMovementOnItems(const QList<QGraphicsItem*> &itemsWhoMoved); //safe
         void notifySelectedItems(const QList<QGraphicsItem*> &selectedItems); //safe
+        void notifyFocusedItem(QGraphicsItem* focusedItem); //safe
         void setDefaultUser(const RPZUser &user); //safe
         void setDefaultLayer(int layer); //safe
 

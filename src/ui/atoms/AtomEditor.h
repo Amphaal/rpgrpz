@@ -31,6 +31,7 @@ class AtomEditor : public QGroupBox, public AlterationActor {
         AtomEditor(QWidget* parent = nullptr);
         void buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr);
         void resetParams();
+        bool hasVisibleEditors();
     
     signals:
         void requiresPreview(const AtomsSelectionDescriptor &selectionDescriptor, const AtomParameter &parameter, const QVariant &value);

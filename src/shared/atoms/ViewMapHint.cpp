@@ -37,6 +37,12 @@ void ViewMapHint::setDefaultLayer(int layer) {
    
 }
 
+void ViewMapHint::notifyFocusedItem(QGraphicsItem* focusedItem) {
+    auto cAtom = this->getAtomFromGraphicsItem(focusedItem);
+    FocusedPayload payload(cAtom->id());
+    AlterationHandler::get()->queueAlteration(this, payload);
+}
+
 void ViewMapHint::notifyMovementOnItems(const QList<QGraphicsItem*> &itemsWhoMoved) {
 
     //generate args for payload

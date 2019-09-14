@@ -42,6 +42,7 @@ MapView::MapView(QWidget *parent) :
 
     //activate mouse tracking for ghost 
     this->setMouseTracking(true);
+
 }
 
 MapView::~MapView() {
@@ -68,6 +69,7 @@ void MapView::onItemChanged(GraphicsItemsChangeNotifier* item, MapViewCustomItem
     }
 
 }
+
 
 void MapView::_updateItemValue(QGraphicsItem* item, const AtomUpdates &updates) {
     for(auto i = updates.constBegin(); i != updates.constEnd(); ++i) {
@@ -104,9 +106,19 @@ void MapView::_handleHintsSignalsAndSlots() {
         this, &MapView::_displayLoader
     );
 
+    //define selection debouncer
+    this->_debounceSelection.setInterval(500);
+    this->_debounceSelection.setSingleShot(true);
+    this->_debounceSelection.callOnTimeout([=]() {
+        this->_hints->notifySelectedItems(
+            this->scene()->selectedItems()
+        );
+    });
+
+    //call debouncer on selection
     QObject::connect(
         this->scene(), &QGraphicsScene::selectionChanged,
-        this, &MapView::_onSceneSelectionChanged
+        [=]() {this->_debounceSelection.start();}
     );
 
     QObject::connect(
@@ -188,6 +200,16 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
 
             case PA_Focused: {
                 this->centerOn(item);
+                // auto bound = item->sceneBoundingRect();
+                // bound.marginsAdded(
+                //     QMarginsF(
+                //         bound.width(),
+                //         bound.height(),
+                //         bound.width(),
+                //         bound.height()
+                //     )
+                // );
+                this->fitInView(item, Qt::AspectRatioMode::KeepAspectRatio);
             }
             break;
 
@@ -272,6 +294,11 @@ void MapView::contextMenuEvent(QContextMenuEvent *event) {
     this->_menuHandler->invokeMenu(riseLayoutTarget, lowerLayoutTarget, count, this->viewport()->mapToGlobal(pos));
 }
 
+void MapView::mouseDoubleClickEvent(QMouseEvent *event) {
+    auto item = this->itemAt(event->pos());
+    if(item) this->_hints->notifyFocusedItem(item);
+}
+
 void MapView::resizeEvent(QResizeEvent * event) {
     this->_goToSceneCenter();
 }
@@ -345,12 +372,6 @@ void MapView::leaveEvent(QEvent *event) {
         ghost->setVisible(false);
 
     }
-}
-
-void MapView::_onSceneSelectionChanged() {
-    this->_hints->notifySelectedItems(
-        this->scene()->selectedItems()
-    );
 }
 
 /////////////

@@ -12,14 +12,14 @@ class AtomEditionManager : public QWidget {
         AtomsStorage* _storage = nullptr;
 
         void _handleSubjectChange(const AtomsSelectionDescriptor &atomsSelectDescriptor) {
-            bool hasSubjects = atomsSelectDescriptor.representedTypes.size();
-            this->_resetButton->setEnabled(hasSubjects);
+            this->_resetButton->setEnabled(false);
             this->_editor->buildEditor(atomsSelectDescriptor);
+            this->_resetButton->setEnabled(this->_editor->hasVisibleEditors());
         }
 
     public:
         AtomEditionManager(AtomsStorage* storage) : _storage(storage), _editor(new AtomEditor), 
-            _resetButton(new QPushButton("Valeurs par défaut")) {
+            _resetButton(new QPushButton("Réinitialiser les paramètres affichés")) {
             
             auto layout = new QVBoxLayout;
             this->setLayout(layout);

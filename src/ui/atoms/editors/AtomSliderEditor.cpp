@@ -2,10 +2,9 @@
 
 AtomSliderEditor::AtomSliderEditor(const AtomParameter &parameter, int minimum, int maximum) : AtomSubEditor(parameter) { 
 
-    this->_setAsDataEditor(new QSlider(Qt::Orientation::Horizontal, this));
+    this->_setAsDataEditor(new RPZCustomSlider(Qt::Orientation::Horizontal, this));
     this->slider()->setMinimum(minimum);
     this->slider()->setMaximum(maximum);
-    // this->slider()->setTracking(false);
 
     QObject::connect(
         this->slider(), &QAbstractSlider::sliderReleased,

@@ -16,6 +16,7 @@ MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) :
     this->setColumnCount(3);
 
     this->setHeaderHidden(true);
+    this->setUniformRowHeights(true);
     this->header()->setStretchLastSection(false);
     this->header()->setMinimumSectionSize(15);
 
@@ -109,6 +110,13 @@ void MapLayoutTree::_onUIAlterationRequest(const PayloadAlteration &type, const 
             
             case PA_Selected:
                 this->_selectAtomItem(item);
+            break;
+
+            case PA_Focused: {
+                this->_clearSelectedItems();
+                auto itemIndex = this->indexFromItem(item);
+                this->scrollTo(itemIndex, QAbstractItemView::ScrollHint::EnsureVisible);
+            }
             break;
 
             case PA_Added:

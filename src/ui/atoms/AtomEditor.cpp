@@ -169,6 +169,8 @@ AtomUpdates AtomEditor::_findDefaultValuesToBind() {
 
 
 void AtomEditor::_updateEditMode() {
+    
+    //determine edit mode
     auto selectedIdsCount = this->_currentSelectionDescr.selectedAtomIds.count();
     
     if(selectedIdsCount) {
@@ -182,5 +184,23 @@ void AtomEditor::_updateEditMode() {
     }
 
     //update title
-    this->setTitle(_strEM[this->_currentEditMode]);
+    auto title = _strEM[this->_currentEditMode];
+    
+    switch(this->_currentEditMode) {
+        
+        case EditMode::Selection:
+            title += QString(" (%1 élement%2)").arg(selectedIdsCount).arg(selectedIdsCount > 1 ? "s" : "");
+        break;
+
+        case EditMode::Template:
+            title += QString(" (%1)").arg(this->_currentSelectionDescr.templateAtom.assetName());
+        break;
+
+    }
+
+    this->setTitle(title);
+}
+
+bool AtomEditor::hasVisibleEditors() {
+    return this->_visibleEditors.count();
 }

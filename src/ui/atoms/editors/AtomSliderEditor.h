@@ -1,9 +1,8 @@
 #pragma once
 
-#include <QSlider>
-
 #include "src/helpers/AtomConverter.h"
 #include "src/ui/atoms/base/AtomSubEditor.h"
+#include "src/ui/atoms/editors/custom/RPZCustomSlider.hpp"
 
 class AtomSliderEditor : public AtomSubEditor {
     public:
@@ -16,7 +15,7 @@ class AtomSliderEditor : public AtomSubEditor {
 
         double outputValue();
         int atomValueToSliderValue(double atomValue);
-    
+
     protected: 
         virtual double _toAtomValue(int sliderVal);
         virtual int _toSliderValue(double atomValue);

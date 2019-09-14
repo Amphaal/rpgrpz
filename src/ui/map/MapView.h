@@ -7,6 +7,7 @@
 #include <QGraphicsView>
 
 #include <QWidget>
+#include <QTimer>
 
 #include <QWheelEvent>
 #include <QTreeWidgetItem>
@@ -72,6 +73,7 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
         void mouseMoveEvent(QMouseEvent *event) override;
         void keyPressEvent(QKeyEvent * event) override;
         void resizeEvent(QResizeEvent * event) override;
+        void mouseDoubleClickEvent(QMouseEvent *event) override;
 
         void onItemChanged(GraphicsItemsChangeNotifier* item, MapViewCustomItemsEventFlag flag) override;
 
@@ -94,7 +96,7 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
         //helper
         void _addItem(QGraphicsItem* toAdd, bool mustNotifyMovement = false);
         void _centerItemToPoint(QGraphicsItem* item, const QPoint &eventPos);
-        void _onSceneSelectionChanged();
+        QTimer _debounceSelection;
         void _goToDefaultViewState();
         
         bool _isLoading = false;
