@@ -27,6 +27,7 @@
 #include "src/helpers/_appContext.h"
 
 #include "src/shared/commands/MessageInterpreter.h"
+#include "src/shared/audio/StreamPlayStateTracker.hpp"
 
 class RPZServer : public QTcpServer, public JSONRouter { 
     
@@ -48,6 +49,10 @@ class RPZServer : public QTcpServer, public JSONRouter {
         QHash<JSONSocket*, RPZUserId> _idsByClientSocket;
         JSONSocket* _hostSocket = nullptr;
         
+        //music
+        StreamPlayStateTracker _tracker;
+        void _sendPlayedStream(JSONSocket* socket);
+
         //users
         RPZMap<RPZUser> _usersById;
         QHash<QString, RPZUser*> _formatedUsernamesByUser;

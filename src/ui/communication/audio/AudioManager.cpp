@@ -120,10 +120,16 @@ void AudioManager::_link() {
 
 }
 
-void AudioManager::_playAudio(const QString &audioSourceUrl, const QString &sourceTitle) {
+void AudioManager::_playAudio(const QString &audioSourceUrl, const QString &sourceTitle, int startAt) {
+    
+    //if start is not > 1, should not play because stream ended!
+    if(startAt == -1) return;
+    
     this->_asCtrl->updatePlayedMusic(sourceTitle);
     this->_cli->useSource(audioSourceUrl);
+    if(startAt > 0) this->_cli->seek(startAt);
     this->_cli->play();
+
 }
 
 //
@@ -159,14 +165,19 @@ void AudioManager::_onToolbarPlayRequested(YoutubeVideoMetadata* metadata) {
         auto title = metadata->title();
         auto streamUrl = metadata->audioStreams()->getPreferedMineSourcePair().second;
         
-        this->_playAudio(streamUrl, title);
+        this->_playAudio(streamUrl, title, 0);
 
         //play new track
-        this->_plCtrl->toolbar->newTrack(metadata->duration());
+        auto duration = metadata->duration();
+        this->_plCtrl->toolbar->newTrack(duration);
 
         //tells others users what to listen to
         if(this->_isNetworkMaster) {
-            QMetaObject::invokeMethod(this->_rpzClient, "defineAudioStreamSource", Q_ARG(QString, streamUrl), Q_ARG(QString, title));
+            QMetaObject::invokeMethod(this->_rpzClient, "defineAudioStreamSource", 
+                Q_ARG(QString, streamUrl), 
+                Q_ARG(QString, title),
+                Q_ARG(int, duration)
+            );
         }
     });
 

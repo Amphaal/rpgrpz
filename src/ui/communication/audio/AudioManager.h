@@ -28,7 +28,7 @@ class AudioManager : public QWidget, public ClientBindable {
         void _onIdentityAck(const RPZUser &user);
         void _onAudioPlayStateChanged(bool isPlaying);
         void _onSeekingRequested(int seekPos);
-        void _playAudio(const QString &audioSourceUrl, const QString &sourceTitle);
+        void _playAudio(const QString &audioSourceUrl, const QString &sourceTitle, int startAt);
 
     private:
         AudioProbeController* _asCtrl = nullptr;

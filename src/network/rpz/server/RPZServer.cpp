@@ -108,17 +108,34 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         break;
 
         case JSONMethod::AudioStreamUrlChanged: {
+            
+            auto hash = data.toHash();
+            this->_tracker.registerNewPlay(
+                hash["url"].toString(),
+                hash["title"].toString(),
+                hash["dur"].toInt()
+            );
+
             this->_sendToAllButSelf(target, JSONMethod::AudioStreamUrlChanged, data);
+
         }
         break;
 
         case JSONMethod::AudioStreamPlayingStateChanged: {
+            
+            this->_tracker.updateState(data.toBool());
+            
             this->_sendToAllButSelf(target, JSONMethod::AudioStreamPlayingStateChanged, data);
+
         }
         break;
 
         case JSONMethod::AudioStreamPositionChanged: {
+
+            this->_tracker.updateState(data.toInt());
+
             this->_sendToAllButSelf(target, JSONMethod::AudioStreamPositionChanged, data);
+
         }
         break;
 
@@ -175,6 +192,9 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
             //send history to the client
             this->_sendStoredMessages(target);
+
+            //send data about played stream
+            this->_sendPlayedStream(target); 
 
             //ask for host map history
             if(target == this->_hostSocket)  {
@@ -398,4 +418,15 @@ void RPZServer::_sendToAll(const JSONMethod &method, const QVariant &data) {
 RPZUser& RPZServer::_getUser(JSONSocket* socket) {
     auto id = this->_idsByClientSocket[socket];
     return this->_usersById[id];
+}
+
+void RPZServer::_sendPlayedStream(JSONSocket* socket) {
+    if(!this->_tracker.isSomethingPlaying()) return;
+    
+    QVariantHash hash;
+    hash["url"] = this->_tracker.url();
+    hash["title"] = this->_tracker.title();
+    hash["start_at"] = this->_tracker.position();
+    
+    socket->sendJSON(JSONMethod::AudioStreamUrlChanged, hash);
 }
