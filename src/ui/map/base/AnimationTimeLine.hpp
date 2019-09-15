@@ -5,14 +5,16 @@
 #include <QHash>
 
 class AnimationTimeLine : public QTimeLine {
-
-
     public:
         enum Type { Zoom, HorizontalMove, VerticalMove };
 
         void setStateModifier(const qreal modifier) { this->_currentModifier = modifier; };
 
-        static AnimationTimeLine* use(const AnimationTimeLine::Type &controllerType,  qreal stateModifier,  QObject* parent, std::function<void(qreal, qreal)> onValueChanged) {
+        static AnimationTimeLine* use(
+            const AnimationTimeLine::Type &controllerType, 
+            qreal stateModifier, 
+            std::function<void(qreal, qreal)> onValueChanged
+        ) {
             
             AnimationTimeLine* handler = nullptr;
 
@@ -20,7 +22,7 @@ class AnimationTimeLine : public QTimeLine {
             if(!_handlers.contains(controllerType)) {
                 
                 //create
-                handler = new AnimationTimeLine(stateModifier, parent, onValueChanged);
+                handler = new AnimationTimeLine(stateModifier, onValueChanged);
 
                 //add
                 _handlers.insert(controllerType, handler);
@@ -34,25 +36,31 @@ class AnimationTimeLine : public QTimeLine {
             }
 
             //start or restart handler
-            if(handler->state() != QTimeLine::Running) handler->start();
+            if(handler->state() != QTimeLine::State::Running) {
+                handler->start();
+            } else {
+                handler->stop();
+                handler->setCurrentTime(
+                    handler->duration()
+                );
+                handler->start();
+            }
+
             return handler;
         }
-
-
-
 
     private:
         //static
         static inline QHash<AnimationTimeLine::Type, AnimationTimeLine*> _handlers;
 
-
-        //
-        AnimationTimeLine(qreal stateModifier, QObject* parent, std::function<void(qreal, qreal)> onValueChanged) : 
-        QTimeLine(300, parent), 
+        AnimationTimeLine(qreal stateModifier, std::function<void(qreal, qreal)> onValueChanged) : 
+        QTimeLine(300), 
         _currentModifier(stateModifier) {  
             
-            //self state, x15 animations
-            this->setUpdateInterval(20);
+            //set to 30fps
+            this->setUpdateInterval(10);
+            this->setDirection(QTimeLine::Direction::Backward);
+            this->setCurveShape(QTimeLine::CurveShape::EaseOutCurve);
 
             //bind
             QObject::connect(

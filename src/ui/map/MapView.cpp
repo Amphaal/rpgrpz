@@ -123,19 +123,6 @@ void MapView::_handleHintsSignalsAndSlots() {
         [=]() {this->_debounceSelection.start();}
     );
 
-    //
-    this->_zoomTL.setDirection(QTimeLine::Direction::Backward);
-    this->_zoomTL.setUpdateInterval(10);
-    QObject::connect(
-        &this->_zoomTL, &QTimeLine::valueChanged,
-        [=](qreal x) {
-            auto factor = 1 - (x / 10);
-            this->_currentRelScale = factor * this->_currentRelScale;
-            this->scale(factor, factor);
-            this->_mightCenterGhostWithCursor();
-        }
-    );
-
     QObject::connect(
         this->_hints, &ViewMapHint::requestingUIAlteration,
         this, &MapView::_onUIAlterationRequest
@@ -214,17 +201,7 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
             break;
 
             case PA_Focused: {
-                this->centerOn(item);
-                auto bound = item->sceneBoundingRect();
-                bound = bound.marginsAdded(
-                    QMarginsF(
-                        bound.width() / 2,
-                        bound.height() / 2,
-                        bound.width() / 2,
-                        bound.height() / 2
-                    )
-                );
-                this->fitInView(bound, Qt::AspectRatioMode::KeepAspectRatio);
+                this->_focusItem(item);
             }
             break;
 
@@ -259,6 +236,24 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
     }
 
     this->_hideLoader();
+}
+
+void MapView::_focusItem(QGraphicsItem* toFocus) {
+    
+    this->centerOn(toFocus);
+    
+    auto bound = toFocus->sceneBoundingRect();
+    bound = bound.marginsAdded(
+        QMarginsF(
+            bound.width() / 2,
+            bound.height() / 2,
+            bound.width() / 2,
+            bound.height() / 2
+        )
+    );
+    
+    this->fitInView(bound, Qt::AspectRatioMode::KeepAspectRatio);
+
 }
 
 void MapView::_addItem(QGraphicsItem* toAdd, bool mustNotifyMovement) {
@@ -669,7 +664,7 @@ void MapView::_animatedMove(const Qt::Orientation &orientation, int correction) 
     auto controller = orientation == Qt::Orientation::Vertical ? AnimationTimeLine::Type::VerticalMove : AnimationTimeLine::Type::HorizontalMove;
 
     //define animation handler
-    AnimationTimeLine::use(controller, correction, this, [bar](qreal base, qreal prc) {
+    AnimationTimeLine::use(controller, correction, [bar](qreal base, qreal prc) {
         bar->setValue(bar->value() + (int)base);
     });
 
@@ -696,35 +691,18 @@ void MapView::wheelEvent(QWheelEvent *event) {
 
     double zoomRatioToApply = event->delta() / 8;
     zoomRatioToApply = zoomRatioToApply / 15 / 20;
-    
-    if(this->_zoomTL.state() != QTimeLine::State::Running) {
-        this->_zoomTL.start();
-    } else {
-        this->_zoomTL.stop();
-        this->_zoomTL.setCurrentTime(
-            this->_zoomTL.duration()
-        );
-        this->_zoomTL.start();
-    }
-    
 
-    // //define animation handler
-    // auto zoom = [&](qreal base, qreal prc) {
-
-    //     qreal factor = 1.0 + base;
-    //     this->_currentRelScale = factor * this->_currentRelScale;
-    //     this->scale(factor, factor);
-
-    //     this->_mightCenterGhostWithCursor();
-
-    // };
-
-    // AnimationTimeLine::use(
-    //     AnimationTimeLine::Type::Zoom, 
-    //     zoomRatioToApply, 
-    //     this, 
-    //     zoom
-    // );
+    //define animation handler
+    AnimationTimeLine::use(
+        AnimationTimeLine::Type::Zoom, 
+        zoomRatioToApply, 
+        [&](qreal base, qreal prc) {
+            auto factor = 1.0 + (base / 10);
+            this->_currentRelScale = factor * this->_currentRelScale;
+            this->scale(factor, factor);
+            this->_mightCenterGhostWithCursor();
+        }
+    );
 
 };
 

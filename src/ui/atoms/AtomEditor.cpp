@@ -204,6 +204,9 @@ void AtomEditor::_updateEditMode() {
             title += QString(" (%1)").arg(this->_currentSelectionDescr.templateAtom.assetName());
         break;
 
+        default:
+        break;
+
     }
 
     this->setTitle(title);

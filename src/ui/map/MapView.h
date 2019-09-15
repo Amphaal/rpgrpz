@@ -125,8 +125,10 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
             void _animatedMove(const Qt::Orientation &orientation, int correction);
             QSet<QGraphicsItem*> _itemsWhoNotifiedMovement;
 
+        //focusing...
+            void _focusItem(QGraphicsItem* toFocus);
+
         //zooming...
-            QTimeLine _zoomTL = QTimeLine(300);
             const double _defaultScale = 5;
             double _currentRelScale = 1;
             void _goToDefaultZoom();

@@ -29,7 +29,7 @@ class AtomsStorage : public AlterationAcknoledger {
         AtomsStorage(const AlterationPayload::Source &boundSource);
         
         QVector<RPZAtomId> bufferedSelectedAtomIds() const; //safe
-        const AtomsSelectionDescriptor AtomsStorage::getAtomSelectionDescriptor(const QVector<RPZAtomId> &selectedIds) const; //safe
+        const AtomsSelectionDescriptor getAtomSelectionDescriptor(const QVector<RPZAtomId> &selectedIds) const; //safe
         RPZMap<RPZAtom> atoms() const; //safe
 
     public slots:    
