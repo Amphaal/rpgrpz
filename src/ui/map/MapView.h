@@ -122,7 +122,7 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
             
         //moving...
             void _goToSceneCenter();
-            void _animatedMove(const Qt::Orientation &orientation, int correction);
+            void _animatedMove(const AnimationTimeLine::Type &orientation, int correction);
             QSet<QGraphicsItem*> _itemsWhoNotifiedMovement;
 
         //focusing...
