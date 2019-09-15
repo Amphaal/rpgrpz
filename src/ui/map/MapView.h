@@ -127,6 +127,7 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
 
         //focusing...
             void _focusItem(QGraphicsItem* toFocus);
+            QRectF _getVisibleRect();
 
         //zooming...
             const double _defaultScale = 5;

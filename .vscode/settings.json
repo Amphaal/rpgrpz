@@ -139,7 +139,8 @@
         "qthread": "cpp",
         "qmessagebox": "cpp",
         "qjsonobject": "cpp",
-        "qwheelevent": "cpp"
+        "qwheelevent": "cpp",
+        "__functional_03": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

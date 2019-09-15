@@ -238,6 +238,13 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
     this->_hideLoader();
 }
 
+QRectF MapView::_getVisibleRect() {
+    QPointF tl(horizontalScrollBar()->value(), verticalScrollBar()->value());
+    QPointF br = tl + viewport()->rect().bottomRight();
+    QMatrix mat = matrix().inverted();
+    return mat.mapRect(QRectF(tl,br));
+}
+
 void MapView::_focusItem(QGraphicsItem* toFocus) {
     
     this->centerOn(toFocus);
@@ -339,19 +346,19 @@ void MapView::keyPressEvent(QKeyEvent * event) {
             break;
         
         case Qt::Key::Key_Up:
-            this->_animatedMove(Qt::Orientation::Vertical, -10);
+            this->_animatedMove(Qt::Orientation::Vertical, -1);
             break;
         
         case Qt::Key::Key_Down:
-            this->_animatedMove(Qt::Orientation::Vertical, 10);
+            this->_animatedMove(Qt::Orientation::Vertical, 1);
             break;
 
         case Qt::Key::Key_Left:
-            this->_animatedMove(Qt::Orientation::Horizontal, -10);
+            this->_animatedMove(Qt::Orientation::Horizontal, -1);
             break;
 
         case Qt::Key::Key_Right:
-            this->_animatedMove(Qt::Orientation::Horizontal, 10);
+            this->_animatedMove(Qt::Orientation::Horizontal, 1);
             break;
 
     }
@@ -660,13 +667,41 @@ void MapView::_goToSceneCenter() {
 void MapView::_animatedMove(const Qt::Orientation &orientation, int correction) {
     
     //prepare
-    auto bar = orientation == Qt::Orientation::Vertical ? this->verticalScrollBar() : this->horizontalScrollBar();
-    auto controller = orientation == Qt::Orientation::Vertical ? AnimationTimeLine::Type::VerticalMove : AnimationTimeLine::Type::HorizontalMove;
+    auto controller = orientation == Qt::Orientation::Vertical ? 
+                        AnimationTimeLine::Type::VerticalMove : 
+                        AnimationTimeLine::Type::HorizontalMove;
+
+    auto tickEvol = (qreal)correction / 100;
+    auto initialPoint = mapToScene(viewport()->rect().center());
+    
+    auto viewRect = this->_getVisibleRect();
+    if(controller == AnimationTimeLine::Type::VerticalMove) {
+        tickEvol = viewRect.height() * tickEvol;
+    }
+    else {
+        tickEvol = viewRect.width() * tickEvol;
+    }
 
     //define animation handler
-    AnimationTimeLine::use(controller, correction, [bar](qreal base, qreal prc) {
-        bar->setValue(bar->value() + (int)base);
-    });
+    AnimationTimeLine::use(
+        controller, 
+        tickEvol, 
+        [&, initialPoint](qreal base, qreal prc) mutable {
+
+            // if(controller == AnimationTimeLine::Type::VerticalMove) {
+            //     auto addY = initialPoint.y() + base * prc;
+            //     initialPoint.setY(addY);
+            // }
+
+            // else {
+            //     auto addX = initialPoint.x() + base * prc;
+            //     initialPoint.setX(addX);
+            // }
+
+            // this->centerOn(initialPoint);
+            this->translate(0, 2);
+        }
+    );
 
 }
 
@@ -689,15 +724,18 @@ void MapView::wheelEvent(QWheelEvent *event) {
     //make sure no button is pressed
     if(this->_isMousePressed) return;
 
-    double zoomRatioToApply = event->delta() / 8;
-    zoomRatioToApply = zoomRatioToApply / 15 / 20;
+    //cap acceleration to 5% per tick
+    auto delta = event->delta();
+    qDebug() << delta;
+    auto modifier = ((double)delta / 5000);
+    modifier = std::clamp(modifier, -.05, .05);
 
     //define animation handler
     AnimationTimeLine::use(
         AnimationTimeLine::Type::Zoom, 
-        zoomRatioToApply, 
+        modifier, 
         [&](qreal base, qreal prc) {
-            auto factor = 1.0 + (base / 10);
+            auto factor = 1.0 + (prc * base);
             this->_currentRelScale = factor * this->_currentRelScale;
             this->scale(factor, factor);
             this->_mightCenterGhostWithCursor();
