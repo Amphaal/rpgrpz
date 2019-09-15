@@ -6,6 +6,7 @@ MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) :
     _hints(new TreeMapHint) {
     
     this->_hints->moveToThread(new QThread);
+    this->_hints->thread()->setObjectName("TreeLayoutThread");
     this->_hints->thread()->start();
 
 	this->setSortingEnabled(true);

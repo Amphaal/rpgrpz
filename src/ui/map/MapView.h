@@ -126,6 +126,7 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
             QSet<QGraphicsItem*> _itemsWhoNotifiedMovement;
 
         //zooming...
+            QTimeLine _zoomTL = QTimeLine(300);
             const double _defaultScale = 5;
             double _currentRelScale = 1;
             void _goToDefaultZoom();

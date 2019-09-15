@@ -6,9 +6,11 @@ MapView::MapView(QWidget *parent) :
     _hints(new MapHint),
     _menuHandler(new AtomsContextualMenuHandler(_hints, this)) {
 
+    //thread
     this->_hints->moveToThread(new QThread);
+    this->_hints->thread()->setObjectName("MapThread");
     this->_hints->thread()->start();
-    
+
     //default
     auto scene = new QGraphicsScene(
         this->_defaultSceneSize, 
@@ -119,6 +121,19 @@ void MapView::_handleHintsSignalsAndSlots() {
     QObject::connect(
         this->scene(), &QGraphicsScene::selectionChanged,
         [=]() {this->_debounceSelection.start();}
+    );
+
+    //
+    this->_zoomTL.setDirection(QTimeLine::Direction::Backward);
+    this->_zoomTL.setUpdateInterval(10);
+    QObject::connect(
+        &this->_zoomTL, &QTimeLine::valueChanged,
+        [=](qreal x) {
+            auto factor = 1 - (x / 10);
+            this->_currentRelScale = factor * this->_currentRelScale;
+            this->scale(factor, factor);
+            this->_mightCenterGhostWithCursor();
+        }
     );
 
     QObject::connect(
@@ -681,24 +696,35 @@ void MapView::wheelEvent(QWheelEvent *event) {
 
     double zoomRatioToApply = event->delta() / 8;
     zoomRatioToApply = zoomRatioToApply / 15 / 20;
+    
+    if(this->_zoomTL.state() != QTimeLine::State::Running) {
+        this->_zoomTL.start();
+    } else {
+        this->_zoomTL.stop();
+        this->_zoomTL.setCurrentTime(
+            this->_zoomTL.duration()
+        );
+        this->_zoomTL.start();
+    }
+    
 
-    //define animation handler
-    auto zoom = [&](qreal base, qreal prc) {
+    // //define animation handler
+    // auto zoom = [&](qreal base, qreal prc) {
 
-        qreal factor = 1.0 + base;
-        this->_currentRelScale = factor * this->_currentRelScale;
-        this->scale(factor, factor);
+    //     qreal factor = 1.0 + base;
+    //     this->_currentRelScale = factor * this->_currentRelScale;
+    //     this->scale(factor, factor);
 
-        this->_mightCenterGhostWithCursor();
+    //     this->_mightCenterGhostWithCursor();
 
-    };
+    // };
 
-    AnimationTimeLine::use(
-        AnimationTimeLine::Type::Zoom, 
-        zoomRatioToApply, 
-        this, 
-        zoom
-    );
+    // AnimationTimeLine::use(
+    //     AnimationTimeLine::Type::Zoom, 
+    //     zoomRatioToApply, 
+    //     this, 
+    //     zoom
+    // );
 
 };
 
