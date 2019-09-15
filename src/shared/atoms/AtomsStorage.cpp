@@ -232,7 +232,6 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
     QMutexLocker lock(&this->_m_handlingLock);
     
     auto pType = payload.type();
-    if(pType == PayloadAlteration::PA_Reset) emit heavyAlterationProcessing();
     
     //may register for history
     this->_registerPayloadForHistory(payload);

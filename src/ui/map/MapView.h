@@ -38,6 +38,7 @@
 #include "src/helpers/AtomConverter.h"
 
 #include "src/shared/commands/AtomsContextualMenuHandler.h"
+#include "src/shared/async-ui/progress/ProgressTracker.hpp"
 
 class MapView : public QGraphicsView, public ClientBindable, public ItemChangedNotified {
 

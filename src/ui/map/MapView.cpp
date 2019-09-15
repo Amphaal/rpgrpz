@@ -102,7 +102,7 @@ void MapView::_handleHintsSignalsAndSlots() {
 
     //on map loading, set placeholder...
     QObject::connect(
-        this->_hints, &AtomsStorage::heavyAlterationProcessing,
+        ProgressTracker::get(), &ProgressTracker::heavyAlterationProcessing,
         this, &MapView::_displayLoader
     );
 

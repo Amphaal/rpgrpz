@@ -32,9 +32,6 @@ class AtomsStorage : public AlterationAcknoledger {
         const AtomsSelectionDescriptor AtomsStorage::getAtomSelectionDescriptor(const QVector<RPZAtomId> &selectedIds) const; //safe
         RPZMap<RPZAtom> atoms() const; //safe
 
-    signals: 
-        void heavyAlterationProcessing();
-
     public slots:    
         void redo();
         void undo();

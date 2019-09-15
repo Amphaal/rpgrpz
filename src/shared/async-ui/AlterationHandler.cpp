@@ -16,6 +16,8 @@ void AlterationHandler::_queueAlteration(const AlterationPayload::Source &sender
         payload.changeSource(senderSource); 
     }
 
+    if(payload.type() == PayloadAlteration::PA_Reset) QMetaObject::invokeMethod(ProgressTracker::get(), "heavyAlterationStarted");
+
     emit requiresPayloadHandling(payload);
     
 }

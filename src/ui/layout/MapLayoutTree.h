@@ -24,7 +24,7 @@
 #include "src/shared/atoms/TreeMapHint.h"
 
 #include "src/shared/commands/AtomsContextualMenuHandler.h"
-
+#include "src/shared/async-ui/progress/ProgressTracker.hpp"
 
 class MapLayoutTree : public RPZTree, public AtomsContextualMenuHandler {
 

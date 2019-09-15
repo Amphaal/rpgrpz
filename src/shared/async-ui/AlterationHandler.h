@@ -6,6 +6,8 @@
 
 #include "AlterationActor.hpp"
 
+#include "src/shared/async-ui/progress/ProgressTracker.hpp"
+
 class AlterationActor;
 
 class AlterationHandler : public QObject {

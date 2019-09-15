@@ -12,8 +12,9 @@ MainWindow::~MainWindow() {
 
 MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 
-    //bind AlterationHandler to UI Thread
+    //bind AlterationHandler / ProgressTracker to UI Thread
     AlterationHandler::get();
+    ProgressTracker::get();
 
     //init...
     this->_initUI();

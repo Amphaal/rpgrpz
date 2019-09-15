@@ -42,6 +42,14 @@ MapLayoutTree::~MapLayoutTree() {
 
 void MapLayoutTree::_handleHintsSignalsAndSlots() {
 
+    //on map loading, disable
+    QObject::connect(
+        ProgressTracker::get(), &ProgressTracker::heavyAlterationProcessing,
+        [=]() {
+            this->setEnabled(false);
+        }
+    );
+
     //on std alteration requested
     QObject::connect(
         this->_hints, &TreeMapHint::requestingUIAlteration,
@@ -133,6 +141,9 @@ void MapLayoutTree::_onUIAlterationRequest(const PayloadAlteration &type, const 
         }
     }
 
+    //in case of disabling from heavy alteration
+    this->setEnabled(true); 
+    
     if(type == PA_Reset || type == PA_Added) this->sortByColumn(0, Qt::SortOrder::DescendingOrder);
     if(type == PA_Reset || type == PA_Added || type == PA_Removed) this->_updateLayersDisplayedCount();
 

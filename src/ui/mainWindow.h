@@ -38,6 +38,8 @@
 
 #include "src/ui/others/statusbar/RPZStatusLabel.h"
 
+#include "src/shared/async-ui/progress/ProgressTracker.hpp"
+
 class MainWindow : public QMainWindow { 
     public:
         MainWindow();

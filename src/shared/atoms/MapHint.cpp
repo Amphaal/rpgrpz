@@ -83,7 +83,7 @@ bool MapHint::loadRPZMap(const QString &filePath) {
     if(this->_isRemote) return false;
 
         //tells UI that map is loading
-        emit heavyAlterationProcessing();
+        QMetaObject::invokeMethod(ProgressTracker::get(), "heavyAlterationStarted");
 
         //load file and parse it
         MapDatabase mapDb(filePath);
