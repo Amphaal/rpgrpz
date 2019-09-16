@@ -68,6 +68,7 @@ bool MapHint::saveRPZMapAs(const QString &newFilePath) {
     if(this->_isRemote) return false;
 
     this->_mapFilePath = newFilePath;
+    this->_mapDescriptor = QFileInfo(newFilePath).fileName();
     return this->saveRPZMap();
 
 }
@@ -88,6 +89,7 @@ bool MapHint::loadRPZMap(const QString &filePath) {
         //load file and parse it
         MapDatabase mapDb(filePath);
         this->_mapFilePath = filePath;
+        this->_mapDescriptor = QFileInfo(filePath).fileName();
         this->_setMapDirtiness(false);
 
         //create payload and queue it
@@ -111,7 +113,10 @@ bool MapHint::defineAsRemote(const QString &remoteMapDescriptor) {
     }
 
     //change map descriptor if is a remote session
-    if(this->_isRemote) this->_mapFilePath = remoteMapDescriptor;
+    if(this->_isRemote) {
+        this->_mapFilePath.clear();
+        this->_mapDescriptor = remoteMapDescriptor;
+    }
 
     //anyway, unset dirty
     this->_setMapDirtiness(false);
@@ -136,8 +141,14 @@ void MapHint::_shouldMakeMapDirty(AlterationPayload &payload) {
 
 
 void MapHint::_setMapDirtiness(bool dirty) {
+    
     this->_isMapDirty = dirty;
-    emit mapFileStateChanged(this->_mapFilePath, this->_isMapDirty);
+    
+    emit mapStateChanged(
+        this->_mapDescriptor, 
+        this->_isMapDirty
+    );
+
 }
 
 

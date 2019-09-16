@@ -4,6 +4,10 @@ ClientBindable::ClientBindable() {
     _boundWidgets.append(this);
 }
 
+QVector<ClientBindable*> ClientBindable::boundWidgets() {
+    return _boundWidgets;
+}
+
 void ClientBindable::bindAll(RPZClient* cc) {
     
     _rpzClient = cc;
@@ -11,7 +15,7 @@ void ClientBindable::bindAll(RPZClient* cc) {
     //on disconnect
     QObject::connect(
         _rpzClient->thread(), &QThread::finished,
-		&ClientBindable::_onClientThreadFinished
+        &ClientBindable::_onClientThreadFinished
     );
     
     //trigger connection
@@ -25,9 +29,7 @@ void ClientBindable::_onClientThreadFinished() {
     delete _rpzClient;
     _rpzClient = nullptr;
 
-    for(auto ref : _boundWidgets) {
-        ref->onRPZClientDisconnect();
-    }
+    QMetaObject::invokeMethod(ClientBindableMain::get(), "trigger");
 }
 
 void ClientBindable::unbindAll() {

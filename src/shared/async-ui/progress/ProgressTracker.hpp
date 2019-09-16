@@ -17,8 +17,41 @@ class ProgressTracker : public QObject {
             emit heavyAlterationProcessing();
         }
 
+        void serverIsActive() {
+            emit serverActive();
+        }
+
+        void serverIsInactive() {
+            emit serverInactive();
+        }
+
+        void clientIsSending() {
+            emit clientSending();
+        }
+
+        void clientStoppedSending() {
+            emit clientSent();
+        }
+
+        void clientIsReceiving() {
+            emit clientReceiving();
+        }
+
+        void clientStoppedReceiving() {
+            emit clientReceived();
+        }
+
     signals:
         void heavyAlterationProcessing();
+        
+        void serverActive();
+        void serverInactive();
+        
+        void clientSending();
+        void clientSent();
+
+        void clientReceiving();
+        void clientReceived();
     
     private:
         static inline ProgressTracker* _inst = nullptr;

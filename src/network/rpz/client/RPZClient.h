@@ -22,6 +22,7 @@
 
 #include "src/helpers/_appContext.h"
 #include "src/shared/async-ui/AlterationActor.hpp"
+#include "src/shared/async-ui/progress/ProgressTracker.hpp"
 
 class RPZClient : public QObject, public AlterationActor, public JSONRouter {
 
@@ -84,6 +85,8 @@ class RPZClient : public QObject, public AlterationActor, public JSONRouter {
         void _onConnected();
         void _error(QAbstractSocket::SocketError _socketError);
         void _onDisconnect();
+        void _onSending();
+        void _onSent();
         
         void _routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) override;
 

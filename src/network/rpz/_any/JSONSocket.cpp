@@ -25,15 +25,19 @@ JSONSocket::~JSONSocket() {
 
 void JSONSocket::sendJSON(const JSONMethod &method, const QVariant &data) {
     
+    emit sending();
+
     //ignore emission when socket is not connected
     if(this->socket()->state() != QAbstractSocket::ConnectedState) {
         qWarning() << this->_logId.toStdString().c_str() << ": cannot send JSON as the socket is not connected !";  
+        emit sent();
         return;
     }
 
     //checks
     if(data.isNull()) {
         qWarning() << this->_logId.toStdString().c_str() << ": cannot send JSON as input values are unexpected";  
+        emit sent();
         return;
     }
 
@@ -50,6 +54,7 @@ void JSONSocket::sendJSON(const JSONMethod &method, const QVariant &data) {
     
     //log
     this->_debugLog(method, "sent");
+    emit sent();
 }
 
 void JSONSocket::_debugLog(const QString &logId, const JSONMethod &method, const QString &msg) {

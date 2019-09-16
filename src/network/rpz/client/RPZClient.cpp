@@ -20,6 +20,16 @@ void RPZClient::_initSock() {
     );
 
     QObject::connect(
+        this->_sock, &JSONSocket::sending,
+        this, &RPZClient::_onSending
+    );
+
+    QObject::connect(
+        this->_sock, &JSONSocket::sent,
+        this, &RPZClient::_onSent
+    );
+
+    QObject::connect(
         this->_sock->socket(), &QAbstractSocket::disconnected,
         this, &RPZClient::_onDisconnect
     );
@@ -98,6 +108,8 @@ QVector<RPZUser> RPZClient::sessionUsers() const {
 
 void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) {
     
+    QMetaObject::invokeMethod(ProgressTracker::get(), "clientIsReceiving");
+
     switch(method) {
 
         case JSONMethod::ServerStatus: {
@@ -198,6 +210,8 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         default:
             break;
     }
+
+    QMetaObject::invokeMethod(ProgressTracker::get(), "clientStoppedReceiving");
 }
 
 void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
@@ -255,4 +269,12 @@ void RPZClient::defineAudioStreamSource(const QString &audioStreamUrl, const QSt
     hash["title"] = sourceTitle;
     hash["dur"] = durationInSecs;
     this->_sock->sendJSON(JSONMethod::AudioStreamUrlChanged, hash);
+}
+
+void RPZClient::_onSending() {
+    QMetaObject::invokeMethod(ProgressTracker::get(), "clientIsSending");
+}
+
+void RPZClient::_onSent() {
+    QMetaObject::invokeMethod(ProgressTracker::get(), "clientStoppedSending");
 }

@@ -25,10 +25,11 @@ class MapHint : public ViewMapHint {
         bool saveRPZMapAs(const QString &newFilePath); //to invoke
 
     signals:
-        void mapFileStateChanged(const QString &filePath, bool isMapDirty);
+        void mapStateChanged(const QString &mapDescriptor, bool isMapDirty);
 
     private: 
         QString _mapFilePath;
+        QString _mapDescriptor;
         bool _isRemote = false;
         bool _isMapDirty = false;
 

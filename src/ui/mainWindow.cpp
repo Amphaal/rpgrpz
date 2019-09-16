@@ -12,9 +12,10 @@ MainWindow::~MainWindow() {
 
 MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 
-    //bind AlterationHandler / ProgressTracker to UI Thread
+    //bind AlterationHandler / ProgressTracker / ClientBindableMain to UI Thread
     AlterationHandler::get();
     ProgressTracker::get();
+    ClientBindableMain::get();
 
     //init...
     this->_initUI();
@@ -114,11 +115,16 @@ void MainWindow::_initConnectivity() {
 
         this->_rpzServer = new RPZServer;
 
+        this->_sb->bindServerIndicators();
+
         //tell the UI when the server is up
         QObject::connect(
             this->_rpzServer, &RPZServer::listening,
             [&]() {
-                this->_sb->updateServerStateLabel("OK", SLState::SL_Finished);
+                QMetaObject::invokeMethod(this->_sb, "updateServerStateLabel",
+                    Q_ARG(QString, "OK"), 
+                    Q_ARG(SLState, SLState::SL_Finished)
+                );
             }
         );
 
@@ -126,7 +132,10 @@ void MainWindow::_initConnectivity() {
         QObject::connect(
             this->_rpzServer, &RPZServer::error,
             [&]() {
-                this->_sb->updateServerStateLabel("Erreur", SLState::SL_Error);
+                QMetaObject::invokeMethod(this->_sb, "updateServerStateLabel",
+                    Q_ARG(QString, "Erreur"), 
+                    Q_ARG(SLState, SLState::SL_Error)
+                );
             }
         );
 
@@ -270,7 +279,7 @@ void MainWindow::_initUIApp() {
 
     //update status bar on map file update
     QObject::connect(
-        this->_mapView->hints(), &MapHint::mapFileStateChanged,
+        this->_mapView->hints(), &MapHint::mapStateChanged,
         this->_sb, &RPZStatusBar::updateMapFileLabel
     );
 }

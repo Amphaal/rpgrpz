@@ -22,6 +22,8 @@ class JSONSocket : public QObject {
 
     signals:
         void JSONReceived(JSONSocket* target, const JSONMethod &method, const QVariant &data);
+        void sending();
+        void sent();
 
     protected:
         void _debugLog(const JSONMethod &method, const QString &msg);

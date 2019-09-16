@@ -96,6 +96,8 @@ void RPZServer::_onClientSocketDisconnected(JSONSocket* disconnectedSocket) {
 
 void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) {
 
+    QMetaObject::invokeMethod(ProgressTracker::get(), "serverIsActive");
+
     switch(method) {
         
         case JSONMethod::MessageFromPlayer: 
@@ -173,7 +175,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
                     .arg(clientVersion)
                     .arg(serverVersion)
                 );
-                return;
+                break;
             }
 
             //change the requested username if already exists
@@ -209,6 +211,8 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             break;
         
     }
+
+    QMetaObject::invokeMethod(ProgressTracker::get(), "serverIsInactive");
 
 }
 

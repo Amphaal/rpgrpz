@@ -34,15 +34,43 @@ void RPZStatusBar::_installComponents() {
         }
     );
 
-    this->_upnpStateLabel = new RPZStatusLabel("uPnP");
-    this->_serverStateLabel = new RPZStatusLabel("Serveur");
     this->_mapFileLabel = new RPZStatusLabel("Carte");
-
+    this->_upnpStateLabel = new RPZStatusLabel("uPnP");
+    
+    this->_serverStateLabel = new RPZStatusLabel("Serveur");
+    
+    this->_activityIndicators = new ClientActivityIndicator;
 };
 
-void RPZStatusBar::updateMapFileLabel(const QString &filePath, bool isMapDirty) {
-    auto reflectDirtiness = filePath + (isMapDirty ? "*" : "");
-    this->_mapFileLabel->updateState(reflectDirtiness, SL_Finished);
+void RPZStatusBar::updateMapFileLabel(const QString &mapDescriptor, bool isMapDirty) {
+    auto reflectDirtiness = mapDescriptor + (isMapDirty ? "*" : "");
+    this->_mapFileLabel->updateState(reflectDirtiness);
+}
+
+void RPZStatusBar::onRPZClientConnecting() {
+    this->_activityIndicators->setVisible(true);
+}
+
+void RPZStatusBar::onRPZClientDisconnect() {
+    this->_activityIndicators->setVisible(false);
+}
+
+void RPZStatusBar::bindServerIndicators() {
+
+    QObject::connect(
+        ProgressTracker::get(), &ProgressTracker::serverActive,
+        [=]() {
+            this->_serverStateLabel->dataLabel()->setStyleSheet("color:green");
+        }
+    );
+
+    QObject::connect(
+        ProgressTracker::get(), &ProgressTracker::serverInactive,
+        [=]() {
+            this->_serverStateLabel->dataLabel()->setStyleSheet("color:black");
+        }
+    );
+
 }
 
 void RPZStatusBar::_installLayout() {
@@ -62,6 +90,7 @@ void RPZStatusBar::_installLayout() {
     this->addPermanentWidget(leftPart);
     this->addPermanentWidget(new QWidget, 1); 
     this->addPermanentWidget(this->_mapFileLabel);
+    this->addPermanentWidget(this->_activityIndicators);
 
     setUpdatesEnabled(true);
 }
