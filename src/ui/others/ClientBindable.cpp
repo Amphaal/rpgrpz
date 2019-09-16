@@ -26,9 +26,7 @@ void ClientBindable::bindAll(RPZClient* cc) {
 }
 
 void ClientBindable::_onClientThreadFinished() {
-    delete _rpzClient;
     _rpzClient = nullptr;
-
     QMetaObject::invokeMethod(ClientBindableMain::get(), "trigger");
 }
 
