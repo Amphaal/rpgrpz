@@ -249,6 +249,12 @@ QVariant AssetsTreeViewModel::data(const QModelIndex &index, int role) const {
 
     //for handled roles
     switch (role) {
+        
+        case Qt::TextAlignmentRole: {
+            return index.column() == 1 ? Qt::AlignRight : QVariant();
+        }
+        break;
+        
         case Qt::DisplayRole: {
             switch(index.column()) {
                 case 0:
