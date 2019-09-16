@@ -9,25 +9,23 @@ MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) :
     this->_hints->thread()->setObjectName("TreeLayoutThread");
     this->_hints->thread()->start();
 
-	this->setSortingEnabled(true);
-
-    this->setItemDelegateForColumn(1, new LockAndVisibilityDelegate);
-    this->setItemDelegateForColumn(2, new OwnerDelegate);
-
-    this->setColumnCount(3);
-
     this->setHeaderHidden(true);
     this->setUniformRowHeights(true);
+	this->setSortingEnabled(true);
+
+    this->header()->setSortIndicatorShown(false);
     this->header()->setStretchLastSection(false);
     this->header()->setMinimumSectionSize(15);
-
     this->header()->setSectionResizeMode(0, QHeaderView::Stretch);
-    this->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-    this->header()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
 
+    this->setColumnCount(3);
+    this->setItemDelegateForColumn(1, new LockAndVisibilityDelegate);
+    this->setItemDelegateForColumn(2, new OwnerDelegate);
+    this->header()->setSectionResizeMode(1, QHeaderView::ResizeMode::ResizeToContents);
+    this->header()->setSectionResizeMode(2, QHeaderView::ResizeMode::ResizeToContents);
+    
     this->setSelectionBehavior(QAbstractItemView::SelectRows);
     this->setSelectionMode(QAbstractItemView::ExtendedSelection);
-
     this->setDragDropMode(QAbstractItemView::DragDropMode::NoDragDrop);
 
     this->_handleHintsSignalsAndSlots();

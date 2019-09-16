@@ -222,6 +222,8 @@ void TreeMapHint::_mayCreateLayerItem(int layer) {
 
     //if undef, create new
     layerElem = new LayerTreeItem();
+    layerElem->setTextAlignment(1, Qt::AlignRight);
+    layerElem->setTextAlignment(2, Qt::AlignRight);
     layerElem->setText(0, "Calque " + QString::number(layer));
     layerElem->setData(0, RPZUserRoles::AtomLayer, layer);
     layerElem->setIcon(0, *this->_layerIcon);
@@ -251,6 +253,8 @@ void TreeMapHint::updateOwnerFromItem(QTreeWidgetItem* item, const RPZUser &owne
 QTreeWidgetItem* TreeMapHint::_createTreeItem(const RPZAtom &atom) {
     
     auto item = new QTreeWidgetItem();
+    item->setTextAlignment(1, Qt::AlignRight);
+    item->setTextAlignment(2, Qt::AlignRight);
     
     const auto layer = atom.layer();
     const auto type = atom.type();

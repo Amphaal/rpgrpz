@@ -309,8 +309,17 @@ void MapView::contextMenuEvent(QContextMenuEvent *event) {
 }
 
 void MapView::mouseDoubleClickEvent(QMouseEvent *event) {
+    
+    //check item
     auto item = this->itemAt(event->pos());
-    if(item) this->_hints->notifyFocusedItem(item);
+    if(!item) return;
+
+    //check item is not temporary !
+    auto isTemporary = item->data((int)AtomConverterDataIndex::IsTemporary).toBool();
+    if(isTemporary) return;
+
+    //notify focus
+    this->_hints->notifyFocusedItem(item);
 }
 
 void MapView::resizeEvent(QResizeEvent * event) {

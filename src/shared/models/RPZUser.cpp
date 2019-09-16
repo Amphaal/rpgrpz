@@ -40,9 +40,8 @@ RPZUser::Role RPZUser::role() const {
 };
 
 QColor RPZUser::color() const { 
-    return QColor(
-        this->value("color", "#0000FF").toString()
-    ); 
+    auto colorAsStr = this->value("color").toString();
+    return colorAsStr.isEmpty() ? QColor() : QColor(colorAsStr); 
 };
 
 QString RPZUser::toString() const {

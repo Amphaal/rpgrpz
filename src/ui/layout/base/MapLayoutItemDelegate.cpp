@@ -3,7 +3,9 @@
 OwnerDelegate::OwnerDelegate(QWidget *parent) : QStyledItemDelegate(parent) {}
 
 void OwnerDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    
+
+    QStyledItemDelegate::paint(painter, option, index);
+
     auto color = index.data(RPZUserRoles::UserColor).value<QColor>();
 
     if(color.isValid()) {
@@ -11,21 +13,25 @@ void OwnerDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
         //define colors
         painter->setBrush(QBrush(color, Qt::SolidPattern));
 
+        auto center = option.rect.center();
+        center.setX(option.rect.right() - 8);
+
         //define size
         QRect indicator(
-            QPoint(option.rect.left()+4, option.rect.top()+4),
+            QPoint(0,0),
             QSize(6,6)
         );
+        indicator.moveCenter(center);
 
         //draw
-        return painter->drawRect(indicator);
+        painter->drawRect(indicator);
     }
 
-    QStyledItemDelegate::paint(painter, option, index);
 }
 
 QSize OwnerDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    return QSize(24, 12);
+    return QStyledItemDelegate::sizeHint(option, index);
+    // return QSize(24, 12);
 }
 
 LockAndVisibilityDelegate::LockAndVisibilityDelegate(QWidget *parent) : QStyledItemDelegate(parent) {
@@ -36,7 +42,9 @@ LockAndVisibilityDelegate::LockAndVisibilityDelegate(QWidget *parent) : QStyledI
  }
 
 void LockAndVisibilityDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    
+
+    QStyledItemDelegate::paint(painter, option, index);
+
     //fetch data
     auto isHidden = index.data(RPZUserRoles::AtomVisibility).toBool();
     auto isLocked = index.data(RPZUserRoles::AtomAvailability).toBool();
@@ -56,5 +64,6 @@ void LockAndVisibilityDelegate::paint(QPainter *painter, const QStyleOptionViewI
 }
 
 QSize LockAndVisibilityDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
+    //return QStyledItemDelegate::sizeHint(option, index);
     return QSize(32, 16);
 }
