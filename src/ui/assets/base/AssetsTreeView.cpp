@@ -69,10 +69,10 @@ void AssetsTreeView::onRPZClientConnecting() {
 void AssetsTreeView::_onReceivedAsset(const RPZAssetImportPackage &package) {
     
     //integrate
-    this->assetsModel()->integrateAsset(package);
+    auto toyModel = this->assetsModel()->integrateAsset(package);
     
     //indicate change
-    auto payload = AssetChangedPayload(package);
+    auto payload = AssetChangedPayload(toyModel);
     AlterationHandler::get()->queueAlteration(this, payload);
 }
 

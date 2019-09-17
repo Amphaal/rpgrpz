@@ -13,7 +13,7 @@ QModelIndex AssetsTreeViewModel::_getDownloadableFolderIndex() {
     return this->index(4, 0, root);
 }
 
-void AssetsTreeViewModel::integrateAsset(const RPZAssetImportPackage &package) {
+RPZToyMetadata AssetsTreeViewModel::integrateAsset(const RPZAssetImportPackage &package) {
     
     //get where exactly the new asset is supposed to be
     auto dlFolderIndex = this->_getDownloadableFolderIndex();
@@ -24,6 +24,7 @@ void AssetsTreeViewModel::integrateAsset(const RPZAssetImportPackage &package) {
         auto metadata = this->_db->importAsset(package); 
     this->endInsertRows();
 
+    return metadata;
 }
 
 ///////////////

@@ -112,14 +112,14 @@ void ConnectWidget::_tryConnectToServer() {
     );
 
     QObject::connect(
-        this->_cc, &RPZClient::closed, 
+        clientThread, &QThread::finished,
         [=]() {
             this->_cc = nullptr;
         }
     );
 
     QObject::connect(
-        this->_cc, &RPZClient::closed,  
+        clientThread, &QThread::finished,  
         this->_cc, &QObject::deleteLater
     );
 
@@ -164,6 +164,10 @@ void ConnectWidget::_onRPZClientConnecting() {
 }
 
 void ConnectWidget::_destroyClient() {
+    if(this->_cc) {
+        this->_cc->thread()->quit();
+        this->_cc->thread()->wait();
+    }
     this->_changeState(State::NotConnected);
 }
 

@@ -51,11 +51,11 @@ RPZToyMetadata AssetsDatabase::importAsset(const RPZAssetImportPackage &package)
     auto fileAsRawData = QByteArray::fromBase64(fileBytes);
     auto destFileExt = asset["ext"].toString();
     auto destFileName = asset["name"].toString();
-    auto destUrl = this->_moveFileToDbFolder(fileAsRawData, destFileExt, destFileName, asset_id);
+    auto destUrl = this->_moveFileToDbFolder(fileAsRawData, destFileExt, asset_id);
 
     //copy into db
     auto parent = this->_staticElements[DownloadedContainer];
-    auto metadata = this->_addAssetToDb(asset_id, destUrl, parent);
+    auto metadata = this->_addAssetToDb(asset_id, destUrl, parent, destFileName);
 
     //add to tree
     auto element = new AssetsDatabaseElement(metadata);
@@ -311,7 +311,7 @@ RPZAssetHash AssetsDatabase::_getFileSignatureFromFileUri(const QUrl &url) {
     return signature;
 }
 
-QUrl AssetsDatabase::_moveFileToDbFolder(const QByteArray &data, const QString &fileExt, const QString &name, const RPZAssetHash &id) {
+QUrl AssetsDatabase::_moveFileToDbFolder(const QByteArray &data, const QString &fileExt, const RPZAssetHash &id) {
     
     //turn encoded file from JSON into file
     auto dest = getFilePathToAsset(id, fileExt);
@@ -340,19 +340,24 @@ bool AssetsDatabase::_moveFileToDbFolder(const QUrl &url, const RPZAssetHash &id
     assetFile.close();
 
     //
-    auto destUrl = this->_moveFileToDbFolder(data, destFileExt, destFileName, id);
+    auto destUrl = this->_moveFileToDbFolder(data, destFileExt, id);
     return !destUrl.isEmpty();
 }
 
-RPZToyMetadata AssetsDatabase::_addAssetToDb(const RPZAssetHash &id, const QUrl &url, AssetsDatabaseElement* parent) {
+RPZToyMetadata AssetsDatabase::_addAssetToDb(
+        const RPZAssetHash &id, 
+        const QUrl &url, 
+        AssetsDatabaseElement* parent, 
+        const QString &forcedName
+    ) {
 
     //prepare
     auto db_paths = this->paths();
     auto obj = this->_db.object();
-
     auto folderParentPath = parent->path();
-    auto pathToAsset = url.toLocalFile();
 
+    //extract path from URL
+    QString pathToAsset = url.isLocalFile() ? url.toLocalFile() : url.toString();
     QFileInfo fInfo(url.fileName());
 
     //1.save new asset
@@ -362,7 +367,7 @@ RPZToyMetadata AssetsDatabase::_addAssetToDb(const RPZAssetHash &id, const QUrl 
         QJsonObject newAsset;
         newAsset["ext"] = fInfo.suffix();
 
-        auto assetName = fInfo.baseName();
+        auto assetName = forcedName.isEmpty() ? fInfo.baseName() : forcedName;
         newAsset["name"] = assetName;
 
         auto assetSizeAndCenter = _defineSizeAndCenterToDbAsset(pathToAsset, newAsset);

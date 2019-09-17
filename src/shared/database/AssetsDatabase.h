@@ -85,8 +85,8 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
         //insertAsset() helpers
         RPZAssetHash _getFileSignatureFromFileUri(const QUrl &url); //return the hash
         bool _moveFileToDbFolder(const QUrl &url, const RPZAssetHash &id);
-        QUrl _moveFileToDbFolder(const QByteArray &data, const QString &fileExt, const QString &name, const RPZAssetHash &id);
-        RPZToyMetadata _addAssetToDb(const RPZAssetHash &id, const QUrl &url, AssetsDatabaseElement* parent); //returns asset metadata
+        QUrl _moveFileToDbFolder(const QByteArray &data, const QString &fileExt, const RPZAssetHash &id);
+        RPZToyMetadata _addAssetToDb(const RPZAssetHash &id, const QUrl &url, AssetsDatabaseElement* parent, const QString &forcedName = QString()); //returns asset metadata
 
         //removeItems() helpers
         QSet<RPZAssetPath> _getPathsToAlterFromList(const QList<AssetsDatabaseElement*> &elemsToAlter);

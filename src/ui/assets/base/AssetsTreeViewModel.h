@@ -34,7 +34,7 @@ class AssetsTreeViewModel : public QAbstractItemModel {
         bool moveItems(const QMimeData *data, const QModelIndex &parentIndex);
         bool insertAssets(QList<QUrl> &urls, const QModelIndex &parentIndex);
         bool removeItems(const QList<QModelIndex> &itemsIndexesToRemove);
-        void integrateAsset(const RPZAssetImportPackage &package);
+        RPZToyMetadata integrateAsset(const RPZAssetImportPackage &package);
         
         ///////////////////
         /// END HELPERS ///
