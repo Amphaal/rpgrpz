@@ -271,12 +271,13 @@ void AssetsDatabaseElement::_defineFlags() {
             this->_flags = Qt::ItemIsEnabled;
             break;
         
+        //disabled for now
+        case Text:
         case Player:
         case Event:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemNeverHasChildren);
             break;
         
-        case Text:
         case FreeDraw:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable);
             break;
