@@ -41,28 +41,6 @@ enum class BrushType {
     Scissors 
 };
 
-//order is important for transform handling
-enum AtomParameter {
-    AssetId,
-    AssetName,
-    BrushStyle,
-    BrushPenWidth,
-    Scale,
-    Rotation,
-    Text,
-    TextSize,
-    Layer,
-    PenWidth,
-    Hidden,
-    Locked,
-    Shape,
-    Position,
-    AssetRotation,
-    AssetScale,
-    ShapeCenter
-};
-
-typedef QHash<AtomParameter, QVariant> AtomUpdates;
 typedef QString RPZAssetHash; //file hash of the asset
 typedef snowflake_uid RPZAtomId;
 

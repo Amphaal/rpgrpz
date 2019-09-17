@@ -47,3 +47,63 @@ QPointF JSONSerializer::pointFromDoublePair(const QJsonArray &doubleList) {
         doubleList[1].toDouble()
     );
 }
+
+QVariantHash JSONSerializer::serializeUpdates(const AtomUpdates &updates) {
+    QVariantHash in;
+    for (auto i = updates.constBegin(); i != updates.constEnd(); ++i) {
+        
+        auto param = i.key();
+        auto unserializedVal = i.value();
+        
+        in.insert(
+            QString::number((int)param), 
+            JSONSerializer::toSerialized(param, unserializedVal)
+        );
+    }
+    return in;
+}
+
+AtomUpdates JSONSerializer::unserializeUpdates(const QVariantHash &serializedUpdates) {
+    AtomUpdates out;
+
+    for (auto i = serializedUpdates.begin(); i != serializedUpdates.end(); ++i) {
+        auto param = (AtomParameter)i.key().toInt();
+        auto serializedVal = i.value();
+
+        out.insert(param, 
+            JSONSerializer::fromSerialized(param, serializedVal)
+        );
+    }
+
+    return out;
+}
+
+QVariant JSONSerializer::toSerialized(const AtomParameter &param, const QVariant &unserialized) {
+    switch(param) {
+        case AtomParameter::ShapeCenter:
+        case AtomParameter::Position: {
+            return JSONSerializer::pointToDoublePair(unserialized.toPointF());
+        }
+        break;
+
+        default:
+            return unserialized;
+    }
+}
+
+QVariant JSONSerializer::fromSerialized(const AtomParameter &param, const QVariant &serialized) {
+    switch(param) {
+        case AtomParameter::ShapeCenter:
+        case AtomParameter::Position: {
+            return JSONSerializer::pointFromDoublePair(serialized);
+        }
+        break;
+
+        default:
+            return serialized;
+    }
+}
+
+QJsonArray JSONSerializer::pointToDoublePairJSON(const QPointF &point) {
+    return QJsonArray { point.x(), point.y() };
+};

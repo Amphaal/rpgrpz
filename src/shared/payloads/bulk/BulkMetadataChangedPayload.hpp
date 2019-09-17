@@ -18,17 +18,10 @@ class BulkMetadataChangedPayload : public AlterationPayload {
             for(auto i = rawData.constBegin(); i != rawData.constEnd(); i++) {
                 
                 RPZAtomId RPZAtomId = i.key().toULongLong();
-                auto changes = i.value().toHash();
-                AtomUpdates formatedAtoms;
-
-                for(auto y = changes.begin(); y != changes.end(); y++) {
-                    
-                    AtomParameter param = (AtomParameter)y.key().toInt();
-
-                    formatedAtoms.insert(param, y.value());
-                }
-
-                out.insert(RPZAtomId, formatedAtoms);
+                
+                out.insert(RPZAtomId, 
+                    JSONSerializer::unserializeUpdates(i.value().toHash())
+                );
 
             }
 
@@ -45,13 +38,9 @@ class BulkMetadataChangedPayload : public AlterationPayload {
                 auto idStr = QString::number(i.key());
                 QVariantHash changesById;
 
-                for(auto y = i.value().constBegin(); y != i.value().constEnd(); y++) {
-                    auto paramStr = QString::number(y.key());
-
-                    changesById.insert(paramStr, y.value());
-                }
-
-                hash.insert(idStr, changesById);
+                hash.insert(idStr, 
+                    JSONSerializer::serializeUpdates(i.value())
+                );
 
             }
 

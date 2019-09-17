@@ -56,7 +56,8 @@ void ViewMapHint::mightNotifyMovement(const QList<QGraphicsItem*> &itemsWhoMight
         
         //pos have not changed
         auto newPos = gi->pos();
-        if(cAtom->pos() == newPos) continue;
+        auto oldPos = cAtom->pos();
+        if(oldPos == newPos) continue;
 
         //add update into alteration
         AtomUpdates updates {{ AtomParameter::Position, newPos }};
@@ -352,7 +353,7 @@ RPZAtom* ViewMapHint::getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const 
 
 //alter Scene
 void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
-    
+
     {
         QMutexLocker l(&this->_m_GItemsByRPZAtomId);
         AtomsStorage::_handleAlterationRequest(payload);

@@ -77,8 +77,9 @@ void RPZClient::_onConnected() {
 
 void RPZClient::_handleAlterationRequest(const AlterationPayload &payload) {
 
-    //ignore self send
+    //ignore packages from server
     if(payload.source() == this->source()) return;
+    if(payload.source() == AlterationPayload::Source::RPZServer) return;
 
     //ignore alteration requests when socket is not connected
     if(this->_sock->socket()->state() != QAbstractSocket::ConnectedState) return;

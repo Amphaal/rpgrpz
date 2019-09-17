@@ -17,25 +17,13 @@ class MetadataChangedPayload : public MultipleTargetsPayload {
         }
 
         AtomUpdates updates() const {
-            
-            AtomUpdates out;
-            auto base = this->args().toHash();   
-
-            for (auto i = base.begin(); i != base.end(); ++i) {
-                auto param = (AtomParameter)i.key().toInt();
-                out.insert(param, i.value());
-            }
-
-            return out;
-            
+            return JSONSerializer::unserializeUpdates(this->args().toHash());
         }
 
     private:
         void _setMetadataChanges(const AtomUpdates &changes) {
-            QVariantHash in;
-            for (auto i = changes.constBegin(); i != changes.constEnd(); ++i) {
-                in.insert(QString::number((int)i.key()), i.value());
-            }
-            this->insert("args", in);
+            this->insert("args", 
+                JSONSerializer::serializeUpdates(changes)
+            );
         }
 };

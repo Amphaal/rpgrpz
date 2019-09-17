@@ -63,43 +63,16 @@ void RPZAtom::setMetadata(const AtomUpdates &metadata) {
 }
 
 void RPZAtom::setMetadata(const AtomParameter &key, const QVariant &value) {
-
     if(value.isNull()) return this->unsetMetadata(key);
-    
-    switch(key) {
-
-        case AtomParameter::ShapeCenter:
-        case AtomParameter::Position: {
-            this->insert(
-                _str[key], 
-                JSONSerializer::pointToDoublePair(value.toPointF())
-            );
-        }
-        break;
-
-        default:
-            this->insert(_str[key], value);
-            
-    }
-    
+    this->insert(
+        _str[key],
+        JSONSerializer::toSerialized(key, value)
+    );
 }
 
 QVariant RPZAtom::metadata(const AtomParameter &key) const {
-    
-    switch(key) {
-
-        case AtomParameter::ShapeCenter:
-        case AtomParameter::Position: {
-            return JSONSerializer::pointFromDoublePair(
-                this->value(_str[key])
-            ); 
-        }
-        break;
-
-        default:
-            return this->value(_str[key], _defaultVal[key]);
-
-    }
+    auto serialiedVal = this->value(_str[key], _defaultVal[key]);
+    return JSONSerializer::fromSerialized(key, serialiedVal);
 }
 
 RPZAssetHash RPZAtom::assetId() const { return this->metadata(AtomParameter::AssetId).toString(); }
