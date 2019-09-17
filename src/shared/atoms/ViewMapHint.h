@@ -45,7 +45,7 @@ class ViewMapHint : public AtomsStorage {
         QGraphicsItem* generateTemporaryItemFromTemplateBuffer(); //safe
 
     public slots:
-        void notifyMovementOnItems(const QList<QGraphicsItem*> &itemsWhoMoved); //safe
+        void mightNotifyMovement(const QList<QGraphicsItem*> &itemsWhoMightHaveMoved); //safe
         void notifySelectedItems(const QList<QGraphicsItem*> &selectedItems); //safe
         void notifyFocusedItem(QGraphicsItem* focusedItem); //safe
         void setDefaultUser(const RPZUser &user); //safe

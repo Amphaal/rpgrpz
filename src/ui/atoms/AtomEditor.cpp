@@ -201,7 +201,7 @@ void AtomEditor::_updateEditMode() {
         break;
 
         case EditMode::Template:
-            title += QString(" (%1)").arg(this->_currentSelectionDescr.templateAtom.assetName());
+            title += QString(" [%1]").arg(this->_currentSelectionDescr.templateAtom.descriptor());
         break;
 
         default:

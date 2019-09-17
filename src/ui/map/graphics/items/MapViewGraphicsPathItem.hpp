@@ -7,17 +7,14 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsTextItem>
 
-#include "src/ui/map/graphics/GraphicsItemsChangeNotifier.h"
-
 #include <QVariant>
 #include <QBrush>
 #include <QFont>
 
-class MapViewGraphicsPathItem : public QGraphicsPathItem, public GraphicsItemsChangeNotifier {
+class MapViewGraphicsPathItem : public QGraphicsPathItem {
     public:
         MapViewGraphicsPathItem(const QPainterPath &path, const QPen &pen, const QBrush &brush = QBrush()) : 
-        QGraphicsPathItem(path), 
-        GraphicsItemsChangeNotifier(this),
+        QGraphicsPathItem(path),
         _sourceBrush(brush) {
             this->_sourceBrushSize = QSizeF(this->_sourceBrush.texture().size());
             this->setPen(pen);
@@ -35,8 +32,4 @@ class MapViewGraphicsPathItem : public QGraphicsPathItem, public GraphicsItemsCh
         QBrush _sourceBrush;
         QSizeF _sourceBrushSize;
 
-        QVariant itemChange(GraphicsItemChange change, const QVariant &value) override {
-            GraphicsItemsChangeNotifier::_notifyItemChange(change);
-            return QGraphicsPathItem::itemChange(change, value);
-        }
 };

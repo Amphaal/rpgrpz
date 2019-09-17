@@ -44,7 +44,12 @@ void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZA
     if(isTargetTemporary) {
         target->setOpacity(.5);
         target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
+    } else {
+        target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, true);
     }
+
+    //set movable
+    target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, true);
             
 }
 
@@ -61,8 +66,6 @@ void AtomConverter::updateGraphicsItemFromMetadata(QGraphicsItem* item, const At
     
     auto requiresTransform = _setParamToGraphicsItemFromAtom(param, item, val);
     if(requiresTransform) _bulkTransformApply(item);
-
-
 
 };
 
@@ -154,8 +157,8 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
             // on locking change
             case AtomParameter::Locked: {
                 auto locked = val.toBool();
-                auto flags = !locked ? GraphicsItemsChangeNotifier::defaultFlags() : QFlags<QGraphicsItem::GraphicsItemFlag>();
-                itemToUpdate->setFlags(flags);
+                itemToUpdate->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, !locked);
+                itemToUpdate->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, !locked);
             }
             break;
             
@@ -190,7 +193,10 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
                     auto font = cItem->font();
                     font.setPointSize(newSize);
                     cItem->setFont(font);
+                    // auto center = cItem->boundingRect().center();
+                    // cItem->setTransformOriginPoint(center);
                 }
+
             }
             break;
 
@@ -347,27 +353,15 @@ void AtomConverter::_setParamToAtomFromGraphicsItem(const AtomParameter &param, 
         //add shapeCenter too
         case AtomParameter::Shape: {
 
-            auto center = QPointF();
-
             if(auto pathItem = dynamic_cast<MapViewGraphicsPathItem*>(blueprint)) {
-
                 auto path = pathItem->path();
-                center = path.boundingRect().center();
-                
                 atomToUpdate.setShape(path); 
-            
             } 
             
             else {
-                
                 auto rect = blueprint->boundingRect();
-                center = rect.center();
-                
                 atomToUpdate.setShape(rect);
-                
             }
-
-            atomToUpdate.setMetadata(AtomParameter::ShapeCenter, center);
 
         }
         break;

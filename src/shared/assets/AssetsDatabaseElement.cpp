@@ -265,30 +265,39 @@ void AssetsDatabaseElement::_defineFlags() {
 
     //flags definition
     switch(this->_type) {
+        
         case InternalContainer:
         case DownloadedContainer:
             this->_flags = Qt::ItemIsEnabled;
             break;
+        
         case Player:
         case Event:
+            this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemNeverHasChildren);
+            break;
+        
         case Text:
         case FreeDraw:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable);
             break;
+        
         case Object:
         case NPC:
         case FloorBrush:
         case Downloaded:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
             break;
+        
         case NPC_Container:
         case FloorBrushContainer:
         case ObjectContainer:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDropEnabled);
             break;
+        
         case Folder:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
             break;
+        
         default:
             this->_flags = 0;
             break;

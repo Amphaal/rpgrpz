@@ -55,25 +55,8 @@ MapView::~MapView() {
 }
 
 
-void MapView::onItemChanged(GraphicsItemsChangeNotifier* item, MapViewCustomItemsEventFlag flag) {
-
-    switch(flag) {
-        case MapViewCustomItemsEventFlag::Moved: {
-
-            //add to list for future information
-            this->_itemsWhoNotifiedMovement.insert(item->graphicsItem());
-
-            //disable further notifications until information have been handled
-            item->disableNotifications();
-
-        }
-        break;
-    }
-
-}
-
-
 void MapView::_updateItemValue(QGraphicsItem* item, const AtomUpdates &updates) {
+    
     for(auto i = updates.constBegin(); i != updates.constEnd(); ++i) {
     
         auto param = i.key();
@@ -84,18 +67,6 @@ void MapView::_updateItemValue(QGraphicsItem* item, const AtomUpdates &updates) 
             param,
             i.value()
         );
-
-        //if movement
-        if(param == Position) {
-
-            //enable notifications back on those items
-            if(auto notifier = dynamic_cast<GraphicsItemsChangeNotifier*>(item)) {
-                notifier->activateNotifications();
-            }
-
-            //remove from inner list
-            this->_itemsWhoNotifiedMovement.remove(item);
-        }
 
     }
 }
@@ -196,7 +167,7 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
 
             case PA_Reset:
             case PA_Added: {
-                this->_addItem(item, true);
+                this->_addItem(item);
             }
             break;
 
@@ -260,17 +231,8 @@ void MapView::_focusItem(QGraphicsItem* toFocus) {
 
 }
 
-void MapView::_addItem(QGraphicsItem* toAdd, bool mustNotifyMovement) {
-    
-    if(mustNotifyMovement) {
-        if(auto notifier = dynamic_cast<GraphicsItemsChangeNotifier*>(toAdd)) {
-            notifier->addNotified(this);
-            notifier->activateNotifications();
-        }
-    }
-
+void MapView::_addItem(QGraphicsItem* toAdd) {
     this->scene()->addItem(toAdd);
-
 }
 
 void MapView::contextMenuEvent(QContextMenuEvent *event) {
@@ -536,15 +498,7 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
             if(!this->_stickyBrushIsDrawing) this->_endDrawing();
 
             //if something moved ?
-            if(this->_itemsWhoNotifiedMovement.count()) {
-
-                //run notify
-                this->_hints->notifyMovementOnItems(this->_itemsWhoNotifiedMovement.toList());
-
-                //clear set
-                this->_itemsWhoNotifiedMovement.clear();
-
-            }
+            this->_hints->mightNotifyMovement(this->scene()->selectedItems());
             
         }
         break;
@@ -694,6 +648,8 @@ void MapView::_animatedMove(const AnimationTimeLine::Type &orientation, int corr
                 );
             }
             
+            this->_mightCenterGhostWithCursor();
+
         }
     );
 

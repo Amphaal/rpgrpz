@@ -40,7 +40,7 @@
 #include "src/shared/commands/AtomsContextualMenuHandler.h"
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 
-class MapView : public QGraphicsView, public ClientBindable, public ItemChangedNotified {
+class MapView : public QGraphicsView, public ClientBindable {
 
     Q_OBJECT
 
@@ -76,8 +76,6 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
         void resizeEvent(QResizeEvent * event) override;
         void mouseDoubleClickEvent(QMouseEvent *event) override;
 
-        void onItemChanged(GraphicsItemsChangeNotifier* item, MapViewCustomItemsEventFlag flag) override;
-
     private slots:
         void _displayLoader();
         void _onUIAlterationRequest(const PayloadAlteration &type, const QList<QGraphicsItem*> &toAlter);
@@ -95,7 +93,7 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
         void _updateItemValue(QGraphicsItem* item, const AtomUpdates &updates);
 
         //helper
-        void _addItem(QGraphicsItem* toAdd, bool mustNotifyMovement = false);
+        void _addItem(QGraphicsItem* toAdd);
         void _centerItemToPoint(QGraphicsItem* item, const QPoint &eventPos);
         QTimer _debounceSelection;
         void _goToDefaultViewState();
@@ -123,7 +121,6 @@ class MapView : public QGraphicsView, public ClientBindable, public ItemChangedN
         //moving...
             void _goToSceneCenter();
             void _animatedMove(const AnimationTimeLine::Type &orientation, int correction);
-            QSet<QGraphicsItem*> _itemsWhoNotifiedMovement;
 
         //focusing...
             void _focusItem(QGraphicsItem* toFocus);

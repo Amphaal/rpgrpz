@@ -43,19 +43,29 @@ void ViewMapHint::notifyFocusedItem(QGraphicsItem* focusedItem) {
     AlterationHandler::get()->queueAlteration(this, payload);
 }
 
-void ViewMapHint::notifyMovementOnItems(const QList<QGraphicsItem*> &itemsWhoMoved) {
+               
+void ViewMapHint::mightNotifyMovement(const QList<QGraphicsItem*> &itemsWhoMightHaveMoved) {
 
     //generate args for payload
     AtomsUpdates coords;
-    for(auto &gi : itemsWhoMoved) {
+    for(auto &gi : itemsWhoMightHaveMoved) {
         
+        //cannot fetch atom
         auto cAtom = this->getAtomFromGraphicsItem(gi);
         if(!cAtom) continue;
+        
+        //pos have not changed
+        auto newPos = gi->pos();
+        if(cAtom->pos() == newPos) continue;
 
-        AtomUpdates updates {{ AtomParameter::Position, gi->pos() }};
+        //add update into alteration
+        AtomUpdates updates {{ AtomParameter::Position, newPos }};
         coords.insert(cAtom->id(), updates);
 
     }
+
+    //if nothing happened
+    if(!coords.count()) return;
 
     //inform moving
     BulkMetadataChangedPayload payload(coords);
@@ -121,9 +131,15 @@ QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZToyMetadata &assetMetada
         this->_templateAtom.changeType(assetMetadata.atomType());
 
         this->_templateAtom.setMetadata(AtomParameter::ShapeCenter, assetMetadata.center());
-        this->_templateAtom.setShape(
-            QRectF(QPointF(), assetMetadata.shapeSize())
-        );
+        
+        auto sSize = assetMetadata.shapeSize();
+        if(!sSize.isEmpty()) {
+            this->_templateAtom.setShape(
+                QRectF(QPointF(), sSize)
+            );
+        } else {
+            this->_templateAtom.setShape(QRectF()); 
+        }
 
         this->_templateAtom.setMetadata(AtomParameter::AssetId, assetMetadata.assetId());
         this->_templateAtom.setMetadata(AtomParameter::AssetName, assetMetadata.assetName());
@@ -340,6 +356,12 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
     {
         QMutexLocker l(&this->_m_GItemsByRPZAtomId);
         AtomsStorage::_handleAlterationRequest(payload);
+    }
+
+    //if reset, delete ghost
+    if(auto mPayload = dynamic_cast<ResetPayload*>(&payload)) {
+        QMutexLocker l(&this->_m_ghostItem);
+        this->_ghostItem = nullptr;
     }
 
     //if asset changed

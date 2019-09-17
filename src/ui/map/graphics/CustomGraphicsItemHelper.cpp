@@ -31,6 +31,11 @@ QGraphicsItem* CustomGraphicsItemHelper::createGraphicsItem(const RPZAtom &atom,
     //update
     AtomConverter::updateGraphicsItemFromAtom(out, atom, isTemporary);        
 
+    //if base is QGraphicsSvgItem, QGraphicsTextItem, and QGraphicsWidget, move handler to main GUI thread
+    if(auto signalHandler = out->toGraphicsObject()) {
+        signalHandler->moveToThread(QApplication::instance()->thread());
+    }
+
     return out;
 }
 

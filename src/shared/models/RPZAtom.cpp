@@ -123,7 +123,10 @@ QPainterPath RPZAtom::shape() const {
     auto rawShape = this->metadata(AtomParameter::Shape).toByteArray();
     return JSONSerializer::fromByteArray(rawShape);
 }
-void RPZAtom::setShape(const QPainterPath &path) { this->setMetadata(AtomParameter::Shape, JSONSerializer::asBase64(path)); }
+void RPZAtom::setShape(const QPainterPath &path) { 
+    this->setMetadata(AtomParameter::Shape, JSONSerializer::asBase64(path));
+    //this->setMetadata(AtomParameter::ShapeCenter, path.boundingRect().center());
+}
 void RPZAtom::setShape(const QRectF &rect) {
     QPainterPath shape;
     shape.addRect(rect);

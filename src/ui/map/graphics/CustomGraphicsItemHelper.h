@@ -7,6 +7,7 @@
 
 #include "src/helpers/AtomConverter.h"
 
+#include <QApplication>
 #include <QFileInfo>
 
 class CustomGraphicsItemHelper {
