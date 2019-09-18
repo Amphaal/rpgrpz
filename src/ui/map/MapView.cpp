@@ -375,12 +375,6 @@ void MapView::onRPZClientConnecting() {
         this, &MapView::_onIdentityReceived
     );
 
-    //when missing assets
-    QObject::connect(
-        this->_hints, &MapHint::requestMissingAssets,
-        _rpzClient, &RPZClient::askForAssets
-    );
-
     //when been asked for map content
     QObject::connect(
         _rpzClient, &RPZClient::beenAskedForMapHistory,
@@ -406,9 +400,10 @@ void MapView::onRPZClientDisconnect() {
 }
 
 void MapView::_sendMapHistory() {
-    auto allAtoms = this->_hints->atoms();
-    ResetPayload payload(allAtoms);
-    QMetaObject::invokeMethod(this->_rpzClient, "sendMapHistory", Q_ARG(ResetPayload, payload));
+    auto payload = this->_hints->createStatePayload();
+    QMetaObject::invokeMethod(this->_rpzClient, "sendMapHistory", 
+        Q_ARG(ResetPayload, payload)
+    );
 }
 
 /////////////////

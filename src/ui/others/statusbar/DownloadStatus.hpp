@@ -14,7 +14,7 @@ class DownloadStatus : public QProgressBar {
             this->setVisible(false);
             this->setContentsMargins(0, 0, 0, 0);
             this->setMinimum(0);
-            this->setMaximumHeight(10);
+            this->setMaximumHeight(8);
 
             QObject::connect(
                 ProgressTracker::get(), &ProgressTracker::downloadStarted,
@@ -70,20 +70,19 @@ class DownloadStatus : public QProgressBar {
 
         void _setStyleForKind(const ProgressTracker::Kind &kind) {
             
-            auto style = new QStyleOptionProgressBar;
-            style->initFrom(this);
-            
-            QColor c;
+            QString style;
+
             switch (kind) {
                 case ProgressTracker::Kind::Asset:
-                    c = Qt::green;
+                    // style += "QProgressBar { border: 2px solid grey; border-radius: 5px;}";
+                    // style += "QProgressBar::chunk {background-color: #05B8CC; width: 20px;}";
                     break;
                 case ProgressTracker::Kind::Map:
-                    c = Qt::red;
+                    //default style
+                    break;
             }
-            style->palette.setColor(QPalette::Highlight, c);
-            
-            this->initStyleOption(style);
+
+            this->setStyleSheet(style);
 
         }
 

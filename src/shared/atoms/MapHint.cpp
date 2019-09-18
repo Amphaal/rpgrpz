@@ -92,20 +92,12 @@ bool MapHint::loadRPZMap(const QString &filePath) {
         this->_mapDescriptor = QFileInfo(filePath).fileName();
         this->_setMapDirtiness(false);
 
-        //compare assets in map with assets in db 
-        auto missingAssetIds = mapDb.getUsedAssetsIds();
-        auto handledMissingAssetIds = AssetsDatabase::get()->getStoredAssetsIds();
-        missingAssetIds.subtract(handledMissingAssetIds);
-        
-        //if missing assets, request them
-        if(auto count = missingAssetIds.count()) {
-            qDebug() << "Assets : missing" << QString::number(count).toStdString().c_str() << "asset(s)";
-            emit requestMissingAssets(missingAssetIds);
-        }
+        //extract information
+        auto allAtoms = mapDb.toAtoms();
+        auto participatingAssetIds = mapDb.getUsedAssetsIds();
 
         //create payload and queue it
-        auto allAtoms = mapDb.toAtoms();
-        ResetPayload payload(allAtoms);
+        ResetPayload payload(allAtoms, participatingAssetIds);
         AlterationHandler::get()->queueAlteration(this->_sysActor, payload);
 
     return true;
@@ -116,12 +108,6 @@ bool MapHint::defineAsRemote(const QString &remoteMapDescriptor) {
     
     //define remote flag
     this->_isRemote = !remoteMapDescriptor.isEmpty();
-    
-    {
-        //reset missing assets list
-        QMutexLocker l(&this->_m_missingAssetsIdsFromDb);
-        this->_missingAssetsIdsFromDb.clear();
-    }
 
     //change map descriptor if is a remote session
     if(this->_isRemote) {

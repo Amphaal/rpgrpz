@@ -67,6 +67,7 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
         //
         mutable QMutex _m_withAssetsElems;
         QHash<RPZAssetHash, AssetsDatabaseElement*> _withAssetsElems;
+        void _trackAssetByElem(const RPZAssetHash &assetId, AssetsDatabaseElement* elem);
 
         //updates handlers
         QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> _getUpdateHandlers() override;

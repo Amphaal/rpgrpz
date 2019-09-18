@@ -30,7 +30,11 @@ class AtomsStorage : public AlterationAcknoledger {
         
         QVector<RPZAtomId> bufferedSelectedAtomIds() const; //safe
         const AtomsSelectionDescriptor getAtomSelectionDescriptor(const QVector<RPZAtomId> &selectedIds) const; //safe
+        
         RPZMap<RPZAtom> atoms() const; //safe
+        const QSet<RPZAssetHash> usedAssetIds() const;
+        
+        ResetPayload createStatePayload() const;
 
     public slots:    
         void redo();
@@ -59,6 +63,7 @@ class AtomsStorage : public AlterationAcknoledger {
         mutable QMutex _m_handlingLock;
 
         //atoms list 
+        QHash<RPZAssetHash, int> _assetIdsUsed;
         RPZMap<RPZAtom> _atomsById;
         RPZAtom* _getAtomFromId(const RPZAtomId &id);
 

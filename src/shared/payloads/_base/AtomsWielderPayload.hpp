@@ -9,48 +9,62 @@ class AtomsWielderPayload : public AlterationPayload {
     public:
         AtomsWielderPayload() {}
         AtomsWielderPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        AtomsWielderPayload(const PayloadAlteration &alteration, const RPZMap<RPZAtom> &atoms) : AlterationPayload(alteration) {
+        AtomsWielderPayload(const PayloadAlteration &alteration, const RPZMap<RPZAtom> &atoms, const QSet<RPZAssetHash> &includedAssetIds) : AlterationPayload(alteration) {
+            
             this->_setAddedAtoms(atoms);
+
+            QVariantList assetIds;
+            for(auto &i : includedAssetIds) assetIds += i;
+            this->insert("assets", assetIds);
+
+        }
+
+        const QSet<RPZAssetHash> assetIds() const {
+            QSet<RPZAssetHash> out;
+
+            for(auto &i : this->value("assets").toList()) out += i.toString();
+            
+            return out;
         }
             
-    RPZMap<RPZAtom> atoms() const {
-        RPZMap<RPZAtom> out;
-        
-        auto map = this->value("atoms").toMap();
+        RPZMap<RPZAtom> atoms() const {
+            RPZMap<RPZAtom> out;
+            
+            auto map = this->value("atoms").toMap();
 
-        for(auto i = map.begin(); i != map.end(); ++i) {    
-            auto snowflakeId = i.key().toULongLong();
-            RPZAtom atom(i.value().toHash());
-            out.insert(snowflakeId, atom);
+            for(auto i = map.begin(); i != map.end(); ++i) {    
+                auto snowflakeId = i.key().toULongLong();
+                RPZAtom atom(i.value().toHash());
+                out.insert(snowflakeId, atom);
+            }
+            
+            return out;
         }
-        
-        return out;
-    }
 
-    QVector<RPZAtomId> updateEmptyUser(const RPZUser &user) {
-        
-        auto atoms = this->atoms();
+        QVector<RPZAtomId> updateEmptyUser(const RPZUser &user) {
+            
+            auto atoms = this->atoms();
 
-        QVector<RPZAtomId> updatedRPZAtomIds;
+            QVector<RPZAtomId> updatedRPZAtomIds;
 
-        for(auto &atom : atoms) {
+            for(auto &atom : atoms) {
 
-            auto currentOwner = atom.owner();
+                auto currentOwner = atom.owner();
 
-            //override ownership on absent owner data
-            if(currentOwner.isEmpty()) {
+                //override ownership on absent owner data
+                if(currentOwner.isEmpty()) {
 
-                atom.setOwnership(user);
-                updatedRPZAtomIds.append(atom.id());
+                    atom.setOwnership(user);
+                    updatedRPZAtomIds.append(atom.id());
+
+                }
 
             }
 
+            this->_setAddedAtoms(atoms);
+
+            return updatedRPZAtomIds;
         }
-
-        this->_setAddedAtoms(atoms);
-
-        return updatedRPZAtomIds;
-    }
 
     private:
         void _setAddedAtoms(const RPZMap<RPZAtom> &atoms) {

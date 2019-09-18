@@ -6,5 +6,5 @@ class ResetPayload : public AtomsWielderPayload {
     public:
         ResetPayload() {}
         ResetPayload(const QVariantHash &hash) : AtomsWielderPayload(hash) {}
-        ResetPayload(RPZMap<RPZAtom> &atoms) : AtomsWielderPayload(PayloadAlteration::PA_Reset, atoms) { }
+        ResetPayload(RPZMap<RPZAtom> &atoms, const QSet<RPZAssetHash> &includedAssetIds) : AtomsWielderPayload(PayloadAlteration::PA_Reset, atoms, includedAssetIds) { }
 };

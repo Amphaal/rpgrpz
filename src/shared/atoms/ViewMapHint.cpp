@@ -217,12 +217,8 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuil
         auto placeholder = CustomGraphicsItemHelper::createMissingAssetPlaceholderItem(atomToBuildFrom);
         newItem = placeholder;
 
-        {
-            QMutexLocker l(&this->_m_missingAssetsIdsFromDb);
-
-            //add graphic item to list of items to replace at times
-            this->_missingAssetsIdsFromDb.insert(assetId, placeholder);
-        }
+        //add graphic item to list of items to replace at times
+        this->_missingAssetsIdsFromDb.insert(assetId, placeholder);
 
     } 
     
@@ -245,33 +241,29 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZToyMetadata &metadat
     QList<QGraphicsItem*> newGis;
     QSet<QGraphicsItem *> setOfGraphicsItemsToReplace;
 
-    {
-        QMutexLocker l(&this->_m_missingAssetsIdsFromDb);
+    auto assetId = metadata.assetId();
+    auto pathToFile = metadata.pathToAssetFile();
 
-        auto assetId = metadata.assetId();
-        auto pathToFile = metadata.pathToAssetFile();
+    if(!this->_missingAssetsIdsFromDb.contains(assetId)) return; //no assetId, skip
+    if(pathToFile.isNull()) return; //path to file empty, skip
+    
+    //iterate through the list of GI to replace
+    setOfGraphicsItemsToReplace = this->_missingAssetsIdsFromDb.values(assetId).toSet();
 
-        if(!this->_missingAssetsIdsFromDb.contains(assetId)) return; //no assetId, skip
-        if(pathToFile.isNull()) return; //path to file empty, skip
+    for(auto oldGi : setOfGraphicsItemsToReplace) {
         
-        //iterate through the list of GI to replace
-        setOfGraphicsItemsToReplace = this->_missingAssetsIdsFromDb.values(assetId).toSet();
+        //find corresponding atom
+        auto atom = this->getAtomFromGraphicsItem(oldGi);
 
-        for(auto oldGi : setOfGraphicsItemsToReplace) {
-            
-            //find corresponding atom
-            auto atom = this->getAtomFromGraphicsItem(oldGi);
+        //create the new graphics item
+        auto newGi = CustomGraphicsItemHelper::createGraphicsItem(*atom, metadata);
+        this->_crossBindingAtomWithGI(atom, newGi);
+        newGis.append(newGi);
 
-            //create the new graphics item
-            auto newGi = CustomGraphicsItemHelper::createGraphicsItem(*atom, metadata);
-            this->_crossBindingAtomWithGI(atom, newGi);
-            newGis.append(newGi);
-
-        }
-
-        //clear the id from the missing list
-        this->_missingAssetsIdsFromDb.remove(assetId);
     }
+
+    //clear the id from the missing list
+    this->_missingAssetsIdsFromDb.remove(assetId);
 
     //remove old
     emit requestingUIAlteration(PA_Removed, setOfGraphicsItemsToReplace.toList());
@@ -349,18 +341,27 @@ RPZAtom* ViewMapHint::getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const 
 //alter Scene
 void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
 
+    //if reset (before)
+    if(auto mPayload = dynamic_cast<ResetPayload*>(&payload)) {
+        
+        //clear cache of missing qGraphicsItem
+        this->_missingAssetsIdsFromDb.clear();
+
+        //delete ghost
+        QMutexLocker l(&this->_m_ghostItem);
+        this->_ghostItem = nullptr;
+
+    }
+
+    //standard handling
     {
         QMutexLocker l(&this->_m_GItemsByRPZAtomId);
         AtomsStorage::_handleAlterationRequest(payload);
     }
 
-    //if reset
+    //if reset (afterward)
     if(auto mPayload = dynamic_cast<ResetPayload*>(&payload)) {
         
-        //delete ghost
-        QMutexLocker l(&this->_m_ghostItem);
-        this->_ghostItem = nullptr;
-
         //tell UI that download ended
         QMetaObject::invokeMethod(ProgressTracker::get(), "downloadHasEnded", 
             Q_ARG(ProgressTracker::Kind, ProgressTracker::Kind::Map)

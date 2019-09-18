@@ -7,7 +7,7 @@ AssetsDatabase* AssetsDatabase::get() {
     return _singleton;
 }
 
-AssetsDatabase::AssetsDatabase() : QObject(nullptr) { 
+AssetsDatabase::AssetsDatabase() { 
     this->_instanciateDb();
     this->_injectStaticStructure();
     this->_injectDbStructure();
@@ -61,11 +61,15 @@ RPZToyMetadata AssetsDatabase::importAsset(const RPZAssetImportPackage &package)
 
     //add to tree
     auto element = new AssetsDatabaseElement(metadata);
-    this->_withAssetsElems.insert(asset_id, element);
+    this->_trackAssetByElem(asset_id, element);
 
     auto destUrlPath = destUrl.toString();
     qDebug() << "Assets :" << destFileName << "imported";
     return metadata;
+}
+
+void AssetsDatabase::_trackAssetByElem(const RPZAssetHash &assetId, AssetsDatabaseElement* elem) {
+    this->_withAssetsElems.insert(assetId, elem);
 }
 
 RPZAssetImportPackage AssetsDatabase::prepareAssetPackage(const RPZAssetHash &id) {
@@ -147,6 +151,7 @@ void AssetsDatabase::_injectStaticStructure() {
                 auto internalItem = new AssetsDatabaseElement(AssetsDatabaseElement::typeDescription(type), staticFolder, type);
             }
         }
+
     }
 
 }
@@ -227,13 +232,14 @@ AssetsDatabaseElement* AssetsDatabase::_recursiveElementCreator(AssetsDatabaseEl
 
 RPZToyMetadata AssetsDatabase::getAssetMetadata(const RPZAssetHash &id) {
     QMutexLocker l(&this->_m_withAssetsElems);
-    auto ptr = this->_withAssetsElems[id];
+    auto ptr = this->_withAssetsElems.value(id);
     return ptr ? ptr->toyMetadata() : RPZToyMetadata();
 }
 
 const QSet<RPZAssetHash> AssetsDatabase::getStoredAssetsIds() const {
     QMutexLocker l(&this->_m_withAssetsElems);
-    return this->_withAssetsElems.keys().toSet();
+    auto out = this->_withAssetsElems.keys().toSet();
+    return out;
 }
 
 void AssetsDatabase::_generateItemsFromDb(const QHash<RPZAssetPath, AssetsDatabaseElement*> &pathsToFillWithItems) {
@@ -279,7 +285,7 @@ void AssetsDatabase::_generateItemsFromDb(const QHash<RPZAssetPath, AssetsDataba
 
             auto elem = new AssetsDatabaseElement(metadata);
 
-            this->_withAssetsElems.insert(idStr, elem);
+            this->_trackAssetByElem(idStr, elem);
 
         }
     }
@@ -435,7 +441,7 @@ bool AssetsDatabase::insertAsset(const QUrl &url, AssetsDatabaseElement* parent)
 
     //add element
     auto element = new AssetsDatabaseElement(metadata);
-    this->_withAssetsElems.insert(fileSignature, element);
+    this->_trackAssetByElem(fileSignature, element);
 
     return true;
 }

@@ -7,6 +7,18 @@ RPZMap<RPZAtom> AtomsStorage::atoms() const {
     return this->_atomsById;
 }
 
+const QSet<RPZAssetHash> AtomsStorage::usedAssetIds() const {
+    QMutexLocker m(&this->_m_handlingLock);
+    return this->_assetIdsUsed.keys().toSet();
+}
+
+ResetPayload AtomsStorage::createStatePayload() const {
+    return ResetPayload(
+        this->atoms(),
+        this->usedAssetIds()
+    );
+}
+
 const AtomsSelectionDescriptor AtomsStorage::getAtomSelectionDescriptor(const QVector<RPZAtomId> &selectedIds) const {
     
     AtomsSelectionDescriptor out;
@@ -181,9 +193,9 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &fromHist
 
         case PayloadAlteration::PA_Removed: {
             auto casted = (RemovedPayload*)&fromHistoryPayload;
-            RPZMap<RPZAtom> out;
-            for(auto RPZAtomId : casted->targetRPZAtomIds()) {
-                out.insert(RPZAtomId, this->_atomsById[RPZAtomId]);
+            QList<RPZAtom> out;
+            for(auto &id : casted->targetRPZAtomIds()) {
+                out += this->_atomsById[id];
             }
             return AddedPayload(out);
         }
@@ -239,6 +251,7 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
     //on reset
     if(pType == PayloadAlteration::PA_Reset) {
         this->_atomsById.clear();
+        this->_assetIdsUsed.clear();
         this->_RPZAtomIdsByOwnerId.clear();
         this->_undoHistory.clear();
         this->_redoHistory.clear();
@@ -323,6 +336,12 @@ RPZAtom* AtomsStorage::_insertAtom(const RPZAtom &newAtom) {
 
     //bind elem
     this->_atomsById.insert(RPZAtomId, newAtom);
+
+    //track used asset
+    auto assetId = newAtom.assetId();
+    if(!assetId.isEmpty()) {
+        this->_assetIdsUsed[assetId]++;
+    }
     
     return &this->_atomsById[RPZAtomId];
 }
@@ -355,8 +374,16 @@ RPZAtomId AtomsStorage::_removeAtom(RPZAtom* toRemove) {
     //remove from selection
     this->_selectedRPZAtomIds.remove(id);
 
-    //update 
+    //update atom inner hash
     this->_atomsById.remove(id); 
+
+    //track used asset
+    auto assetId = toRemove->assetId();
+    if(!assetId.isEmpty()) {
+        auto &currentCount = this->_assetIdsUsed[assetId];
+        if(currentCount <= 1) this->_assetIdsUsed.remove(assetId);
+        else currentCount--;
+    }
 
     return id;
 }
@@ -386,7 +413,7 @@ void AtomsStorage::duplicateAtoms(const QVector<RPZAtomId> &RPZAtomIdList) {
     auto newAtoms = this->_generateAtomDuplicates(RPZAtomIdList);
 
     //request insertion
-    AddedPayload added(newAtoms);
+    AddedPayload added(newAtoms.values());
     AlterationHandler::get()->queueAlteration(this, added);
 
     //request selection

@@ -244,8 +244,27 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
         case JSONMethod::MapChangedHeavily:
         case JSONMethod::MapChanged: {
-            auto payload = AlterationPayload(data.toHash());
-            AlterationHandler::get()->queueAlteration(this, payload);
+            
+            //to sharedPointer for type casts
+            auto payload = Payloads::autoCast(data.toHash());
+
+            //if atom weilder, check if assets are missing
+            if(auto mPayload = dynamic_cast<AtomsWielderPayload*>(payload.data())) { 
+                
+                //compare assets in map with assets in db 
+                auto missingAssetIds = mPayload->assetIds();
+                auto handledMissingAssetIds = AssetsDatabase::get()->getStoredAssetsIds();
+                missingAssetIds.subtract(handledMissingAssetIds);
+                
+                //if missing assets, request them
+                if(auto count = missingAssetIds.count()) {
+                    qDebug() << "Assets : missing" << QString::number(count).toStdString().c_str() << "asset(s)";
+                    this->_askForAssets(missingAssetIds);
+                }
+
+            }
+
+            AlterationHandler::get()->queueAlteration(this, *payload);
         }   
         break;
 
@@ -301,7 +320,7 @@ void RPZClient::sendMapHistory(const ResetPayload &historyPayload) {
     this->_sock->sendJSON(JSONMethod::MapChangedHeavily, historyPayload);
 }
 
-void RPZClient::askForAssets(const QSet<RPZAssetHash> &ids) {
+void RPZClient::_askForAssets(const QSet<RPZAssetHash> &ids) {
     QVariantList list;
     for(auto &id : ids) list.append(id);
     this->_sock->sendJSON(JSONMethod::AskForAssets, list);

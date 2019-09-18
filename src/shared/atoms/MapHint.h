@@ -25,7 +25,6 @@ class MapHint : public ViewMapHint {
         bool saveRPZMapAs(const QString &newFilePath); //to invoke
 
     signals:
-        void requestMissingAssets(const QSet<RPZAssetHash> &assetIdsToRequest);
         void mapStateChanged(const QString &mapDescriptor, bool isMapDirty);
 
     private: 

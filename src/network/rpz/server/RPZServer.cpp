@@ -158,7 +158,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             if(auto toUploadCount = requested.count()) {
 
                 //log
-                qDebug() << QString("%1 / %2 requested asset(s) ready to upload").arg(toUploadCount).arg(requestedCount);
+                qDebug() << QString("Assets : %1 / %2 requested asset(s) ready to upload").arg(toUploadCount).arg(requestedCount).toStdString().c_str();
                 
                 //rebundle
                 QVariantList remaining;
@@ -329,8 +329,11 @@ void RPZServer::_broadcastMapChanges(JSONMethod method, AlterationPayload &paylo
 }
 
 void RPZServer::_sendMapHistory(JSONSocket * clientSocket) {
-    auto allAtoms = this->_hints->atoms();
-    ResetPayload payload(allAtoms);
+
+    //fetch payload
+    auto payload = this->_hints->createStatePayload();
+
+    //send it
     clientSocket->sendJSON(JSONMethod::MapChangedHeavily, payload);
 
 }

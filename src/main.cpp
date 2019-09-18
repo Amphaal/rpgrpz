@@ -113,6 +113,7 @@ int main(int argc, char** argv) {
     qRegisterMetaType<SLState>("SLState");
     qRegisterMetaType<QList<RPZAssetHash>>("QList<RPZAssetHash>");
     qRegisterMetaType<ProgressTracker::Kind>("ProgressTracker::Kind");
+    qRegisterMetaType<QVector<RPZAssetHash>>("QVector<RPZAssetHash>");
     
     //message handler
     qInstallMessageHandler(LogWriter::customMO);
