@@ -146,6 +146,23 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
     switch(method) {
 
+        case JSONMethod::AvailableAssetsToUpload: {
+            
+            //cast
+            QVector<RPZAssetHash> out;
+            for(auto &e : data.toList()) out += e.toString();
+
+            //update ui
+            QMetaObject::invokeMethod(ProgressTracker::get(), "downloadIsStarting", 
+                Q_ARG(ProgressTracker::Kind, ProgressTracker::Kind::Asset), 
+                Q_ARG(qint64, out.count())
+            );
+
+            //emit
+            emit availableAssetsFromServer(out);
+        }
+        break;
+
         case JSONMethod::ServerStatus: {
             emit connectionStatus(data.toString(), true);
             this->_sock->socket()->disconnectFromHost();
@@ -284,7 +301,7 @@ void RPZClient::sendMapHistory(const ResetPayload &historyPayload) {
     this->_sock->sendJSON(JSONMethod::MapChangedHeavily, historyPayload);
 }
 
-void RPZClient::askForAssets(const QList<RPZAssetHash> ids) {
+void RPZClient::askForAssets(const QSet<RPZAssetHash> &ids) {
     QVariantList list;
     for(auto &id : ids) list.append(id);
     this->_sock->sendJSON(JSONMethod::AskForAssets, list);

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "src/shared/payloads/_base/MultipleTargetsPayload.hpp"
+#include "src/shared/payloads/_base/MultipleAtomTargetsPayload.hpp"
 
-class SelectedPayload : public MultipleTargetsPayload {
+class SelectedPayload : public MultipleAtomTargetsPayload {
     public:
-        SelectedPayload(const QVariantHash &hash) : MultipleTargetsPayload(hash) {}
-        SelectedPayload(const QVector<RPZAtomId> &selectedRPZAtomIds) : MultipleTargetsPayload(PayloadAlteration::PA_Selected, selectedRPZAtomIds) {}
+        SelectedPayload(const QVariantHash &hash) : MultipleAtomTargetsPayload(hash) {}
+        SelectedPayload(const QVector<RPZAtomId> &selectedRPZAtomIds) : MultipleAtomTargetsPayload(PayloadAlteration::PA_Selected, selectedRPZAtomIds) {}
 };

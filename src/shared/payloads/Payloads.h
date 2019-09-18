@@ -20,10 +20,10 @@ class Payloads {
     public:
         static QSharedPointer<AlterationPayload> autoCast(const QVariantHash &hash) {
             
-            auto lowCast = AlterationPayload(hash);
+            AlterationPayload lowCast(hash);
             
             switch(lowCast.type()) {
-                
+
                 case PayloadAlteration::PA_BulkMetadataChanged:
                     return QSharedPointer<BulkMetadataChangedPayload>(new BulkMetadataChangedPayload(hash));
                 break;

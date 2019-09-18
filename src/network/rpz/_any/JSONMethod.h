@@ -17,7 +17,8 @@ enum JSONMethod {
     AudioStreamUrlChanged,
     AudioStreamPlayingStateChanged,
     AudioStreamPositionChanged,
-    MapChangedHeavily
+    MapChangedHeavily,
+    AvailableAssetsToUpload
 };
 
 static const QStringList JSONMethodAsArray = { 
@@ -35,5 +36,6 @@ static const QStringList JSONMethodAsArray = {
     "AudioStreamUrlChanged",
     "AudioStreamPlayingStateChanged",
     "AudioStreamPositionChanged",
-    "MapChangedHeavily"
+    "MapChangedHeavily",
+    "AvailableAssetsToUpload"
 };

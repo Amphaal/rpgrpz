@@ -224,11 +224,6 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuil
             this->_missingAssetsIdsFromDb.insert(assetId, placeholder);
         }
 
-        //if first time the ID is encountered
-        if(!this->_assetsIdsToRequest.contains(assetId)) {
-            this->_assetsIdsToRequest.insert(assetId);
-        }
-
     } 
     
     //default
@@ -416,15 +411,6 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
             emit requestingUIUpdate({ghostItem}, updates);
         }
         
-    }
-
-    //request assets if there are missing
-    auto c_MissingAssets = this->_assetsIdsToRequest.count();
-    if(c_MissingAssets) {
-        qDebug() << "Assets : missing" << QString::number(c_MissingAssets).toStdString().c_str() << "asset(s)" << this->_assetsIdsToRequest.toList();
-        auto toRequest = this->_assetsIdsToRequest.toList();
-        this->_assetsIdsToRequest.clear();
-        emit requestMissingAssets(toRequest);
     }
 
 }

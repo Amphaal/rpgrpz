@@ -231,9 +231,9 @@ RPZToyMetadata AssetsDatabase::getAssetMetadata(const RPZAssetHash &id) {
     return ptr ? ptr->toyMetadata() : RPZToyMetadata();
 }
 
-const QList<RPZAssetHash> AssetsDatabase::getStoredAssetsIds() const {
+const QSet<RPZAssetHash> AssetsDatabase::getStoredAssetsIds() const {
     QMutexLocker l(&this->_m_withAssetsElems);
-    return this->_withAssetsElems.keys();
+    return this->_withAssetsElems.keys().toSet();
 }
 
 void AssetsDatabase::_generateItemsFromDb(const QHash<RPZAssetPath, AssetsDatabaseElement*> &pathsToFillWithItems) {

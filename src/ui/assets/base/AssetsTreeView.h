@@ -28,10 +28,14 @@ class AssetsTreeView : public QTreeView, public ClientBindable, public Alteratio
         QModelIndexList selectedElementsIndexes();
 
     private slots:
+        void _onAssetsAboutToBeDownloaded(const QVector<QString> &availableIds);
         void _onReceivedAsset(const RPZAssetImportPackage &package);
         void _handleAlterationRequest(const AlterationPayload &payload);
 
     private:
+        int _expectedAssetsTBDownloaded = 0;
+        int _expectedAssetsDownloaded = 0;
+
         void onRPZClientConnecting() override;
 
         ///////////////////

@@ -41,7 +41,7 @@ class RPZClient : public QObject, public AlterationActor, public JSONRouter {
         void run();
 
         void sendMessage(const RPZMessage &message);
-        void askForAssets(const QList<RPZAssetHash> ids);
+        void askForAssets(const QSet<RPZAssetHash> &ids);
         void defineAudioStreamSource(const QString &audioStreamUrl, const QString &sourceTitle, int durationInSecs);
         void changeAudioPosition(int newPosition);
         void setAudioStreamPlayState(bool isPlaying);
@@ -58,6 +58,7 @@ class RPZClient : public QObject, public AlterationActor, public JSONRouter {
         void mapChanged(const AlterationPayload &payload);
         void beenAskedForMapHistory();
 
+        void availableAssetsFromServer(const QVector<RPZAssetHash> &availableIds);
         void receivedAsset(const RPZAssetImportPackage &package);
 
         void loggedUsersUpdated(const QVector<RPZUser> &users);

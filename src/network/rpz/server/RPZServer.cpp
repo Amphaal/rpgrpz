@@ -142,12 +142,36 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         break;
 
         case JSONMethod::AskForAssets: {   
-            auto list = data.toList();
-            QList<RPZAssetHash> requestedIds;
-            for(auto &var : list) requestedIds.append(var.toString());
 
-            for(auto &id : requestedIds) {
-                auto package = AssetsDatabase::get()->prepareAssetPackage(id);
+            //cast
+            QSet<RPZAssetHash> requested;
+            for(auto &var : data.toList()) {
+                requested += var.toString();
+            }
+            auto requestedCount = requested.count();
+
+            //determine available assets to upload
+            auto available = AssetsDatabase::get()->getStoredAssetsIds();
+            requested.intersect(available);
+
+            //if there are any, tell the client
+            if(auto toUploadCount = requested.count()) {
+
+                //log
+                qDebug() << QString("%1 / %2 requested asset(s) ready to upload").arg(toUploadCount).arg(requestedCount);
+                
+                //rebundle
+                QVariantList remaining;
+                for(auto &i : requested) remaining += i;
+
+                //send
+                target->sendJSON(JSONMethod::AvailableAssetsToUpload, remaining);
+
+            }
+
+            //package each asset and send it to user
+            for(auto &assetId : requested) {
+                auto package = AssetsDatabase::get()->prepareAssetPackage(assetId);
                 target->sendJSON(JSONMethod::RequestedAsset, package);
             }
 

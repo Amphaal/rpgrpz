@@ -93,7 +93,15 @@ bool MapHint::loadRPZMap(const QString &filePath) {
         this->_setMapDirtiness(false);
 
         //compare assets in map with assets in db 
-        &&&&&&mapDb.getUsedAssetsIds() == AssetsDatabase::get()->getStoredAssetsIds();
+        auto missingAssetIds = mapDb.getUsedAssetsIds();
+        auto handledMissingAssetIds = AssetsDatabase::get()->getStoredAssetsIds();
+        missingAssetIds.subtract(handledMissingAssetIds);
+        
+        //if missing assets, request them
+        if(auto count = missingAssetIds.count()) {
+            qDebug() << "Assets : missing" << QString::number(count).toStdString().c_str() << "asset(s)";
+            emit requestMissingAssets(missingAssetIds);
+        }
 
         //create payload and queue it
         auto allAtoms = mapDb.toAtoms();

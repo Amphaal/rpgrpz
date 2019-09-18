@@ -83,6 +83,10 @@ class MapView : public QGraphicsView, public ClientBindable {
         void _onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const AtomUpdates &updates);
         void _onUIUserChangeRequest(const QList<QGraphicsItem*> &toUpdate, const RPZUser &newUser);
 
+        //network
+        void _sendMapHistory();
+        void _onIdentityReceived(const RPZUser &self);
+
     private:
         QBrush* _hiddingBrush = nullptr;
         MapHint* _hints = nullptr;
@@ -103,10 +107,6 @@ class MapView : public QGraphicsView, public ClientBindable {
 
         //ghost
             void _mightCenterGhostWithCursor();
-        
-        //network
-            void _sendMapHistory();
-            void _onIdentityReceived(const RPZUser &self);
 
         //registered points
             bool _isMousePressed = false;

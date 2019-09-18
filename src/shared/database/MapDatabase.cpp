@@ -4,11 +4,11 @@ MapDatabase::MapDatabase(const QString &filePath) : _filePath(filePath) {
     JSONDatabase::_instanciateDb();
 };
 
-const QList<RPZAssetHash> MapDatabase::getUsedAssetsIds() const {
+const QSet<RPZAssetHash> MapDatabase::getUsedAssetsIds() const {
     auto arr = this->_db["assets"].toArray();
-    QList<RPZAssetHash> out;
+    QSet<RPZAssetHash> out;
 
-    for(auto &id : arr) {
+    for(auto id : arr) {
         out += id.toString();
     }
 

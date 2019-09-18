@@ -1,16 +1,15 @@
 #pragma once
 
-#include "src/shared/payloads/_base/MultipleTargetsPayload.hpp"
+#include "src/shared/payloads/_base/MultipleAtomTargetsPayload.hpp"
 #include "src/shared/models/RPZAtom.h"
 
 #include <QString>
 
-class MetadataChangedPayload : public MultipleTargetsPayload {
+class MetadataChangedPayload : public MultipleAtomTargetsPayload {
     public:
-    
-        MetadataChangedPayload(const QVariantHash &hash) : MultipleTargetsPayload(hash) {}
+        MetadataChangedPayload(const QVariantHash &hash) : MultipleAtomTargetsPayload(hash) {}
         MetadataChangedPayload(const QVector<RPZAtomId> &targetedRPZAtomIds, const AtomUpdates &changes) : 
-            MultipleTargetsPayload(PayloadAlteration::PA_MetadataChanged, targetedRPZAtomIds) {
+            MultipleAtomTargetsPayload(PayloadAlteration::PA_MetadataChanged, targetedRPZAtomIds) {
             
             this->_setMetadataChanges(changes);
             

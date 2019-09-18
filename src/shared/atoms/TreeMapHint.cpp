@@ -136,7 +136,7 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
     }
 
     //anything else
-    else if(auto mPayload = dynamic_cast<MultipleTargetsPayload*>(&payload)) {
+    else if(auto mPayload = dynamic_cast<MultipleAtomTargetsPayload*>(&payload)) {
         
         for (auto &id : mPayload->targetRPZAtomIds()) {
             auto item = this->_atomTreeItemsById[id];

@@ -4,11 +4,11 @@
 
 #include <QList>
 
-class MultipleTargetsPayload : public AlterationPayload {
+class MultipleAtomTargetsPayload : public AlterationPayload {
     public:
 
-        MultipleTargetsPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        MultipleTargetsPayload(const PayloadAlteration &alteration, const QVector<RPZAtomId> &targetedRPZAtomIds) : AlterationPayload(alteration) {
+        MultipleAtomTargetsPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
+        MultipleAtomTargetsPayload(const PayloadAlteration &alteration, const QVector<RPZAtomId> &targetedRPZAtomIds) : AlterationPayload(alteration) {
             this->_setTargetRPZAtomIds(targetedRPZAtomIds);
         }
     

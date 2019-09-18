@@ -37,7 +37,7 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
 
         //
         RPZToyMetadata getAssetMetadata(const RPZAssetHash &id);
-        const QList<RPZAssetHash> getStoredAssetsIds() const;
+        const QSet<RPZAssetHash> getStoredAssetsIds() const;
 
         //network import/export
         RPZToyMetadata importAsset(const RPZAssetImportPackage &package);

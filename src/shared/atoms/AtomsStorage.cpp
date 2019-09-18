@@ -279,7 +279,7 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
     }
 
     //multi target format
-    else if(auto mPayload = dynamic_cast<MultipleTargetsPayload*>(&payload)) {
+    else if(auto mPayload = dynamic_cast<MultipleAtomTargetsPayload*>(&payload)) {
         auto ids = mPayload->targetRPZAtomIds();      
 
         AtomUpdates maybeUpdates;

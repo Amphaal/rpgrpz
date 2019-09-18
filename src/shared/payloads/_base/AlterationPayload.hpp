@@ -18,7 +18,8 @@ enum PayloadAlteration {
     PA_AssetChanged,
     PA_AtomTemplateChanged,
     PA_AtomTemplateSelected,
-    PA_AssetSelected
+    PA_AssetSelected,
+    PA_MissingAssetsRequired
 }; 
 
 static const QStringList PayloadAlterationAsStr {
@@ -34,7 +35,8 @@ static const QStringList PayloadAlterationAsStr {
     "AssetChanged",
     "AtomTemplateChanged",
     "AtomTemplateSelected",
-    "AssetSelected"
+    "AssetSelected",
+    "MissingAssetsRequired"
 };
 
 class AlterationPayload : public QVariantHash { 
@@ -103,7 +105,8 @@ class AlterationPayload : public QVariantHash {
             PayloadAlteration::PA_Removed, 
             PayloadAlteration::PA_Reset,
             PayloadAlteration::PA_MetadataChanged,
-            PayloadAlteration::PA_BulkMetadataChanged
+            PayloadAlteration::PA_BulkMetadataChanged,
+            PayloadAlteration::PA_MissingAssetsRequired
         };
         
         void _setType(const PayloadAlteration &type) {

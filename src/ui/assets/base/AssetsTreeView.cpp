@@ -58,6 +58,12 @@ AssetsTreeView::AssetsTreeView(QWidget *parent) : QTreeView(parent),
 
 void AssetsTreeView::onRPZClientConnecting() {
 
+    //when server responded on available
+    QObject::connect(
+        _rpzClient, &RPZClient::availableAssetsFromServer,
+        this, &AssetsTreeView::_onAssetsAboutToBeDownloaded
+    );
+
     //import asset
     QObject::connect(
         this->_rpzClient, &RPZClient::receivedAsset,
@@ -66,10 +72,29 @@ void AssetsTreeView::onRPZClientConnecting() {
 
 }
 
+void AssetsTreeView::_onAssetsAboutToBeDownloaded(const QVector<QString> &availableIds) {
+    this->_expectedAssetsTBDownloaded = availableIds.count();
+    this->_expectedAssetsDownloaded = 0;
+}
+
 void AssetsTreeView::_onReceivedAsset(const RPZAssetImportPackage &package) {
     
     //integrate
     auto toyModel = this->assetsModel()->integrateAsset(package);
+    this->_expectedAssetsDownloaded++;
+
+    //update UI for progress
+    QMetaObject::invokeMethod(ProgressTracker::get(), "downloadIsProgressing", 
+        Q_ARG(ProgressTracker::Kind, ProgressTracker::Kind::Asset), 
+        Q_ARG(qint64, this->_expectedAssetsDownloaded)
+    );
+
+    //if upload is finished, update UI
+    if(this->_expectedAssetsTBDownloaded == this->_expectedAssetsDownloaded) {
+        QMetaObject::invokeMethod(ProgressTracker::get(), "downloadHasEnded", 
+            Q_ARG(ProgressTracker::Kind, ProgressTracker::Kind::Asset)
+        );
+    }
     
     //indicate change
     auto payload = AssetChangedPayload(toyModel);
