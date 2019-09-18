@@ -154,9 +154,10 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         }
         break;
 
-        case JSONMethod::MapChanged:{
+        case JSONMethod::MapChangedHeavily:
+        case JSONMethod::MapChanged: {
             auto aPayload = Payloads::autoCast(data.toHash());
-            this->_broadcastMapChanges(*aPayload, target);
+            this->_broadcastMapChanges(method, *aPayload, target);
         }
         break;
 
@@ -276,17 +277,17 @@ void RPZServer::_alterIncomingPayloadWithUpdatedOwners(AtomsWielderPayload &wPay
     if(updated.count()) {
 
         //tell him that he owns them now
-        OwnerChangedPayload changedOwner(updated, defaultOwner);
+        OwnerChangedPayload OCPayload(updated, defaultOwner);
         auto source = this->_hints->source();
-        changedOwner.changeSource(source);
+        OCPayload.changeSource(source);
 
         //send...
-        this->_sendToAllButSelf(senderSocket, JSONMethod::MapChanged, changedOwner);
+        this->_sendToAllButSelf(senderSocket, JSONMethod::MapChanged, OCPayload);
 
     }
 }
 
-void RPZServer::_broadcastMapChanges(AlterationPayload &payload, JSONSocket * senderSocket) {
+void RPZServer::_broadcastMapChanges(JSONMethod method, AlterationPayload &payload, JSONSocket * senderSocket) {
 
     if(auto wPayload = dynamic_cast<AtomsWielderPayload*>(&payload)) {
         this->_alterIncomingPayloadWithUpdatedOwners(*wPayload, senderSocket);
@@ -300,13 +301,13 @@ void RPZServer::_broadcastMapChanges(AlterationPayload &payload, JSONSocket * se
     payload.changeSource(source);
 
     //send to registered users but sender...
-    this->_sendToAllButSelf(senderSocket, JSONMethod::MapChanged, payload);
+    this->_sendToAllButSelf(senderSocket, method, payload);
 }
 
 void RPZServer::_sendMapHistory(JSONSocket * clientSocket) {
     auto allAtoms = this->_hints->atoms();
     ResetPayload payload(allAtoms);
-    clientSocket->sendJSON(JSONMethod::MapChanged, payload);
+    clientSocket->sendJSON(JSONMethod::MapChangedHeavily, payload);
 
 }
 

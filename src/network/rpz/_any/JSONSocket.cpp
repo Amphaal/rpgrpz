@@ -24,7 +24,7 @@ JSONSocket::~JSONSocket() {
 }
 
 void JSONSocket::sendJSON(const JSONMethod &method, const QVariant &data) {
-    
+
     emit sending();
 
     //ignore emission when socket is not connected
@@ -50,7 +50,17 @@ void JSONSocket::sendJSON(const JSONMethod &method, const QVariant &data) {
     //send !
     QDataStream out(this->_innerSocket);
     out.setVersion(QDataStream::Qt_5_13);
-    out << payload_doc.toJson(QJsonDocument::Compact);
+
+        //json to bytes
+        auto bytes = payload_doc.toJson(QJsonDocument::Compact);
+        auto size = bytes.size();
+
+        //write header
+        out << (quint32)method;
+        out << (quint32)size;
+
+        //write data
+        out << bytes;
     
     //log
     this->_debugLog(method, "sent");
@@ -70,25 +80,55 @@ void JSONSocket::_debugLog(const JSONMethod &method, const QString &msg) {
 void JSONSocket::_processIncomingData() {
     
     //process incoming data
-    QByteArray block;
     QDataStream in(this->_innerSocket);
     in.setVersion(QDataStream::Qt_5_13);
     
-    for (;;) {
+    while(!in.atEnd()) {
+        
+        if(this->_batchComplete) {
+            this->_batchComplete = false;
+            this->_ackHeader = false;
+        }
 
+        //start transaction
         in.startTransaction();
 
+        //determine method from first byte
+        quint32 methodAsInt, jsonSize;
+        in >> methodAsInt >> jsonSize;
+
+        auto method = (JSONMethod)methodAsInt;
+        auto fullSize = jsonSize + 8;
+
+        //tell that download started, prevent resend on same batch
+        if(!this->_ackHeader) {
+            this->_ackHeader = true;
+            emit ackedBatch(method, fullSize);
+        }
+
+        //handle as transaction
+        QByteArray block;
         in >> block;
 
-        if (in.commitTransaction()) {
+        //break loop if batch is not complete
+        this->_batchComplete = in.commitTransaction();
+        if(!this->_batchComplete) {
             
-            this->_processIncomingAsJson(block);
+            //update progress
+            if(this->_ackHeader) {
+                auto waitingBytes = this->_innerSocket->bytesAvailable();
+                emit batchDownloading(method, waitingBytes);
+            }
 
-        } else {
-            // the read failed, the socket goes automatically back to the state it was in before the transaction started
-            // we just exit the loop and wait for more data to become available
-            break;
+            //break the loop, effectively waiting for more bytes
+            return;
+
         }
+        
+        //process batch
+        emit batchDownloading(method, fullSize);
+        this->_processIncomingAsJson(block);
+
     }
 
 }

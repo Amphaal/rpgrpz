@@ -359,10 +359,18 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
         AtomsStorage::_handleAlterationRequest(payload);
     }
 
-    //if reset, delete ghost
+    //if reset
     if(auto mPayload = dynamic_cast<ResetPayload*>(&payload)) {
+        
+        //delete ghost
         QMutexLocker l(&this->_m_ghostItem);
         this->_ghostItem = nullptr;
+
+        //tell UI that download ended
+        QMetaObject::invokeMethod(ProgressTracker::get(), "downloadHasEnded", 
+            Q_ARG(ProgressTracker::Kind, ProgressTracker::Kind::Map)
+        );
+
     }
 
     //if asset changed

@@ -38,7 +38,7 @@ void RPZStatusBar::_installComponents() {
     this->_upnpStateLabel = new RPZStatusLabel("uPnP");
     
     this->_serverStateLabel = new RPZStatusLabel("Serveur");
-    
+    this->_dlStatus = new DownloadStatus;
     this->_activityIndicators = new ClientActivityIndicator;
 };
 
@@ -53,6 +53,7 @@ void RPZStatusBar::onRPZClientConnecting() {
 
 void RPZStatusBar::onRPZClientDisconnect() {
     this->_activityIndicators->setVisible(false);
+    this->_dlStatus->setVisible(false);
 }
 
 void RPZStatusBar::bindServerIndicators() {
@@ -90,9 +91,11 @@ void RPZStatusBar::_installLayout() {
     this->addPermanentWidget(leftPart);
     this->addPermanentWidget(new QWidget, 1); 
     this->addPermanentWidget(this->_mapFileLabel);
+    this->addPermanentWidget(this->_dlStatus);
     this->addPermanentWidget(this->_activityIndicators);
 
     setUpdatesEnabled(true);
+    
 }
 
 

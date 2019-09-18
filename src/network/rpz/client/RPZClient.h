@@ -87,7 +87,9 @@ class RPZClient : public QObject, public AlterationActor, public JSONRouter {
         void _onDisconnect();
         void _onSending();
         void _onSent();
-        
+        void _onBatchAcked(JSONMethod method, qint64 batchSize);
+        void _onBatchDownloading(JSONMethod method, qint64 downloaded);
+
         void _routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) override;
 
     private slots:

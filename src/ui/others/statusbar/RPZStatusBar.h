@@ -12,6 +12,7 @@
 #include "ClientActivityIndicator.hpp"
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 #include "src/ui/others/ClientBindable.h"
+#include "DownloadStatus.hpp"
 
 class RPZStatusBar : public QStatusBar, public ClientBindable {
 
@@ -34,6 +35,7 @@ class RPZStatusBar : public QStatusBar, public ClientBindable {
         RPZStatusLabel* _serverStateLabel = nullptr;
         RPZStatusLabel* _mapFileLabel = nullptr;
         ClientActivityIndicator* _activityIndicators = nullptr;
+        DownloadStatus* _dlStatus = nullptr;
 
         void _installComponents();
         void _installLayout();

@@ -30,6 +30,16 @@ void RPZClient::_initSock() {
     );
 
     QObject::connect(
+        this->_sock, &JSONSocket::ackedBatch,
+        this, &RPZClient::_onBatchAcked
+    );
+
+    QObject::connect(
+        this->_sock, &JSONSocket::batchDownloading,
+        this, &RPZClient::_onBatchDownloading
+    );
+
+    QObject::connect(
         this->_sock->socket(), &QAbstractSocket::disconnected,
         this, &RPZClient::_onDisconnect
     );
@@ -43,6 +53,28 @@ void RPZClient::_initSock() {
         AlterationHandler::get(), &AlterationHandler::requiresPayloadHandling,
         this, &RPZClient::_handleAlterationRequest
     );
+}
+
+void RPZClient::_onBatchAcked(JSONMethod method, qint64 batchSize) {
+    
+    if(method != JSONMethod::MapChangedHeavily) return;
+
+    QMetaObject::invokeMethod(ProgressTracker::get(), "downloadIsStarting", 
+        Q_ARG(ProgressTracker::Kind, ProgressTracker::Kind::Map), 
+        Q_ARG(qint64, batchSize)
+    );
+
+}
+
+void RPZClient::_onBatchDownloading(JSONMethod method, qint64 downloaded) {
+    
+    if(method != JSONMethod::MapChangedHeavily) return;
+
+    QMetaObject::invokeMethod(ProgressTracker::get(), "downloadIsProgressing", 
+        Q_ARG(ProgressTracker::Kind, ProgressTracker::Kind::Map), 
+        Q_ARG(qint64, downloaded)
+    );
+
 }
 
 RPZClient::~RPZClient() { 
@@ -90,7 +122,8 @@ void RPZClient::_handleAlterationRequest(const AlterationPayload &payload) {
     this->payloadTrace(payload);
 
     //send json
-    return this->_sock->sendJSON(JSONMethod::MapChanged, payload);
+    auto method = payload.type() == PA_Reset ? JSONMethod::MapChangedHeavily : JSONMethod::MapChanged;
+    return this->_sock->sendJSON(method, payload);
 }
 
 QString RPZClient::getConnectedSocketAddress() const {
@@ -192,6 +225,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         }
         break;
 
+        case JSONMethod::MapChangedHeavily:
         case JSONMethod::MapChanged: {
             auto payload = AlterationPayload(data.toHash());
             AlterationHandler::get()->queueAlteration(this, payload);
@@ -247,7 +281,7 @@ void RPZClient::sendMessage(const RPZMessage &message) {
 }
 
 void RPZClient::sendMapHistory(const ResetPayload &historyPayload) {
-    this->_sock->sendJSON(JSONMethod::MapChanged, historyPayload);
+    this->_sock->sendJSON(JSONMethod::MapChangedHeavily, historyPayload);
 }
 
 void RPZClient::askForAssets(const QList<RPZAssetHash> ids) {

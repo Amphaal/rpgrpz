@@ -7,6 +7,8 @@ class ProgressTracker : public QObject {
     Q_OBJECT
     
     public:
+        enum Kind { Map, Asset };
+
         static ProgressTracker* get() {
             if(!_inst) _inst = new ProgressTracker;
             return _inst; 
@@ -41,6 +43,18 @@ class ProgressTracker : public QObject {
             emit clientReceived();
         }
 
+        void downloadIsStarting(const ProgressTracker::Kind &kind, qint64 size) {
+            emit downloadStarted(kind, size);
+        }
+
+        void downloadIsProgressing(const ProgressTracker::Kind &kind, qint64 progress) {
+            emit downloadProgress(kind, progress);
+        }
+
+        void downloadHasEnded(const ProgressTracker::Kind &kind) {
+            emit downloadEnded(kind);
+        }
+
     signals:
         void heavyAlterationProcessing();
         
@@ -52,6 +66,10 @@ class ProgressTracker : public QObject {
 
         void clientReceiving();
         void clientReceived();
+
+        void downloadStarted(const ProgressTracker::Kind &kind, qint64 size);
+        void downloadProgress(const ProgressTracker::Kind &kind, qint64 progress);
+        void downloadEnded(const ProgressTracker::Kind &kind);
     
     private:
         static inline ProgressTracker* _inst = nullptr;
