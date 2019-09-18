@@ -52,7 +52,7 @@ void JSONSocket::sendJSON(const JSONMethod &method, const QVariant &data) {
     out.setVersion(QDataStream::Qt_5_13);
 
         //json to bytes
-        auto bytes = payload_doc.toJson(QJsonDocument::Compact);
+        auto bytes = qCompress(payload_doc.toJson(QJsonDocument::Compact));
         auto size = bytes.size();
 
         //write header
@@ -127,7 +127,7 @@ void JSONSocket::_processIncomingData() {
         
         //process batch
         emit batchDownloading(method, fullSize);
-        this->_processIncomingAsJson(block);
+        this->_processIncomingAsJson(qUncompress(block));
 
     }
 
