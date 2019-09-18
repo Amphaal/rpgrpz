@@ -92,6 +92,9 @@ bool MapHint::loadRPZMap(const QString &filePath) {
         this->_mapDescriptor = QFileInfo(filePath).fileName();
         this->_setMapDirtiness(false);
 
+        //compare assets in map with assets in db 
+        &&&&&&mapDb.getUsedAssetsIds() == AssetsDatabase::get()->getStoredAssetsIds();
+
         //create payload and queue it
         auto allAtoms = mapDb.toAtoms();
         ResetPayload payload(allAtoms);
