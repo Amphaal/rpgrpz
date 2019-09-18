@@ -30,6 +30,8 @@ const QString AssetsDatabase::dbPath() {
 
 RPZToyMetadata AssetsDatabase::importAsset(const RPZAssetImportPackage &package) {
     
+    QMutexLocker l(&this->_m_withAssetsElems);
+
     if(package.isEmpty()) {
         qDebug() << "Asset : received empty import package !";
         return RPZToyMetadata();
@@ -224,15 +226,22 @@ AssetsDatabaseElement* AssetsDatabase::_recursiveElementCreator(AssetsDatabaseEl
 }
 
 RPZToyMetadata AssetsDatabase::getAssetMetadata(const RPZAssetHash &id) {
+    QMutexLocker l(&this->_m_withAssetsElems);
     auto ptr = this->_withAssetsElems[id];
     return ptr ? ptr->toyMetadata() : RPZToyMetadata();
 }
 
+const QList<RPZAssetHash> AssetsDatabase::getStoredAssetsIds() const {
+    QMutexLocker l(&this->_m_withAssetsElems);
+    return this->_withAssetsElems.keys();
+}
 
 void AssetsDatabase::_generateItemsFromDb(const QHash<RPZAssetPath, AssetsDatabaseElement*> &pathsToFillWithItems) {
     
     auto db_paths = this->paths();
     auto assets_db = this->assets();
+
+    QMutexLocker l(&this->_m_withAssetsElems);
 
     //create items for each end-containers
     for (auto i = pathsToFillWithItems.constBegin(); i != pathsToFillWithItems.constEnd(); ++i) {
@@ -404,6 +413,8 @@ RPZToyMetadata AssetsDatabase::_addAssetToDb(
 }
 
 bool AssetsDatabase::insertAsset(const QUrl &url, AssetsDatabaseElement* parent) {
+
+    QMutexLocker l(&this->_m_withAssetsElems);
 
     //get the corresponding signature
     auto fileSignature = this->_getFileSignatureFromFileUri(url);
@@ -662,6 +673,8 @@ QList<RPZAssetHash> AssetsDatabase::_removeIdsFromPaths(QJsonObject &db_paths, c
 }
 
 void AssetsDatabase::_removeAssetsFromDb(QJsonObject &db_assets, const QList<RPZAssetHash> &assetIdsToRemove) {
+
+    QMutexLocker l(&this->_m_withAssetsElems);
 
     //finally delete items
     for(auto &id : assetIdsToRemove) {

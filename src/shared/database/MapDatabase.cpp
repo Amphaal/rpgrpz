@@ -4,6 +4,17 @@ MapDatabase::MapDatabase(const QString &filePath) : _filePath(filePath) {
     JSONDatabase::_instanciateDb();
 };
 
+const QList<RPZAssetHash> MapDatabase::getUsedAssetsIds() const {
+    auto arr = this->_db["assets"].toArray();
+    QList<RPZAssetHash> out;
+
+    for(auto &id : arr) {
+        out += id.toString();
+    }
+
+    return out;
+}
+
 QJsonObject MapDatabase::toObject(const RPZMap<RPZAtom> &atoms, const QJsonDocument &doc) {
 
     //reseting "atoms" object

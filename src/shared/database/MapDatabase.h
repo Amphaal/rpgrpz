@@ -20,6 +20,8 @@ class MapDatabase : public JSONDatabase {
         RPZMap<RPZAtom> toAtoms();
         static RPZMap<RPZAtom> toAtoms(const QJsonDocument &doc);
 
+        const QList<RPZAssetHash> getUsedAssetsIds() const;
+
     protected:
         const QString defaultJsonDoc() override;
         const QString dbPath() override;

@@ -5,6 +5,7 @@
 #include <QString>
 #include <QVariantHash>
 #include <QCryptographicHash>
+#include <QMutexLocker>
 
 #include "src/shared/models/RPZToyMetadata.h"
 #include "base/JSONDatabase.h"
@@ -36,6 +37,7 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
 
         //
         RPZToyMetadata getAssetMetadata(const RPZAssetHash &id);
+        const QList<RPZAssetHash> getStoredAssetsIds() const;
 
         //network import/export
         RPZToyMetadata importAsset(const RPZAssetImportPackage &package);
@@ -63,6 +65,7 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
     
     private:
         //
+        mutable QMutex _m_withAssetsElems;
         QHash<RPZAssetHash, AssetsDatabaseElement*> _withAssetsElems;
 
         //updates handlers
