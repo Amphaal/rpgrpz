@@ -45,6 +45,9 @@ MapView::MapView(QWidget *parent) :
     //activate mouse tracking for ghost 
     this->setMouseTracking(true);
 
+    //animator configuration 
+    this->_configureMoveAnimator();
+
 }
 
 MapView::~MapView() {
@@ -297,6 +300,34 @@ MapHint* MapView::hints() const {
     return this->_hints;
 }
 
+void MapView::keyReleaseEvent(QKeyEvent *event) {
+
+    switch(event->key()) {
+        case Qt::Key::Key_Up:
+            event->ignore();
+            return this->_removeAnimatedMove(GoUp);
+            break;
+        
+        case Qt::Key::Key_Down:
+            event->ignore();
+            return this->_removeAnimatedMove(GoDown);
+            break;
+
+        case Qt::Key::Key_Left:
+            event->ignore();
+            return this->_removeAnimatedMove(GoLeft);
+            break;
+
+        case Qt::Key::Key_Right:
+            event->ignore();
+            return this->_removeAnimatedMove(GoRight);
+            break;
+    }
+
+    QGraphicsView::keyReleaseEvent(event);
+
+}
+
 void MapView::keyPressEvent(QKeyEvent * event) {
 
     switch(event->key()) {
@@ -313,22 +344,22 @@ void MapView::keyPressEvent(QKeyEvent * event) {
         
         case Qt::Key::Key_Up:
             event->ignore();
-            return this->_animatedMove(AnimationTimeLine::Type::VerticalMove, -1);
+            return this->_addAnimatedMove(GoUp);
             break;
         
         case Qt::Key::Key_Down:
             event->ignore();
-            return this->_animatedMove(AnimationTimeLine::Type::VerticalMove, 1);
+            return this->_addAnimatedMove(GoDown);
             break;
 
         case Qt::Key::Key_Left:
             event->ignore();
-            return this->_animatedMove(AnimationTimeLine::Type::HorizontalMove, -1);
+            return this->_addAnimatedMove(GoLeft);
             break;
 
         case Qt::Key::Key_Right:
             event->ignore();
-            return this->_animatedMove(AnimationTimeLine::Type::HorizontalMove, 1);
+            return this->_addAnimatedMove(GoRight);
             break;
 
     }
@@ -336,7 +367,6 @@ void MapView::keyPressEvent(QKeyEvent * event) {
     QGraphicsView::keyPressEvent(event);
 
 }
-
 
 void MapView::_mightCenterGhostWithCursor() {
     //update ghost item position relative to cursor
@@ -623,32 +653,150 @@ void MapView::_goToSceneCenter() {
     this->centerOn(center);
 }
 
-void MapView::_animatedMove(const AnimationTimeLine::Type &orientation, int correction) {
+void MapView::_addAnimatedMove(const MapView::MoveDirection &direction) {
 
-    //define animation handler
-    AnimationTimeLine::use(
-        orientation, 
-        correction, 
-        [=](qreal base, qreal prc) {
+    //set direction, remove opposite
+    this->_currentMoveDirections.insert(direction);
+    auto opposite = this->_getOppositeDirection(direction);
+    this->_currentMoveDirections.remove(opposite);
 
-            if(orientation == AnimationTimeLine::Type::VerticalMove) {
-                verticalScrollBar()->setValue(
-                    verticalScrollBar()->value() + (int)(base * 5 * prc)
-                );
-            }
+    //update instructions
+    this->_currentMoveInstructions = this->_getMoveInstructions(this->_currentMoveDirections);
 
-            else {
-                horizontalScrollBar()->setValue(
-                    horizontalScrollBar()->value() + (int)(base * 5 * prc)
-                );
-            }
+    //start if necessary
+    this->_moveAnimator.stop();
+    this->_stiffMove.start();
+
+}
+
+void MapView::_removeAnimatedMove(const MapView::MoveDirection &direction) {
+    
+    //remove direction
+    this->_currentMoveDirections.remove(direction);
+
+    //update instructions
+    if(this->_currentMoveDirections.isEmpty()) {
+        this->_moveAnimator.start();
+        this->_stiffMove.stop();
+    } else {
+        this->_currentMoveInstructions = this->_getMoveInstructions(this->_currentMoveDirections);
+    }
+    
+}
+
+void MapView::_configureMoveAnimator() {
+    
+    //define animation
+    auto animation = [=](qreal x = 1) {
             
-            this->_mightCenterGhostWithCursor();
+        for(auto &inst : this->_currentMoveInstructions) {
+            
+            //loss acceptable
+            auto castedDelta = (int)(inst.correction * 5 * x);
 
+            //update scrollbar
+            inst.affectedScroll->setValue(
+                inst.affectedScroll->value() + castedDelta
+            );
+
+        }
+        
+        this->_mightCenterGhostWithCursor();
+
+    };
+
+    //define stiff animation
+    this->_stiffMove.setInterval(10);
+    QObject::connect(
+        &this->_stiffMove, &QTimer::timeout,
+        animation
+    );
+    
+    //define
+    this->_moveAnimator.setDuration(300);
+    this->_moveAnimator.setUpdateInterval(10);
+    this->_moveAnimator.setDirection(QTimeLine::Direction::Backward);
+    this->_moveAnimator.setCurveShape(QTimeLine::CurveShape::EaseOutCurve);
+
+    //on finished, reset any move
+    QObject::connect(
+        &this->_moveAnimator, &QTimeLine::finished,
+        [=](){
+            this->_currentMoveDirections.clear();
+            this->_currentMoveInstructions.clear();
         }
     );
 
+    //on animation going
+    QObject::connect(
+        &this->_moveAnimator, &QTimeLine::valueChanged,
+        animation
+    );
 }
+
+
+QList<MapView::MoveInstruction> MapView::_getMoveInstructions(const QSet<MapView::MoveDirection> &directions) {
+    QList<MapView::MoveInstruction> out;
+
+    for(auto &direction : directions) {
+        
+        MapView::MoveInstruction temp;
+
+        switch(direction) {
+            
+            case GoLeft:
+                temp.affectedScroll = this->horizontalScrollBar();
+                temp.correction = -1;
+            break;
+
+            case GoUp:
+                temp.affectedScroll = this->verticalScrollBar();
+                temp.correction = -1;
+            break;
+
+            case GoRight:
+                temp.affectedScroll = this->horizontalScrollBar();
+                temp.correction = 1;
+            break;
+
+            case GoDown:
+                temp.affectedScroll = this->verticalScrollBar();
+                temp.correction = 1;
+            break;
+
+        }
+
+        out += temp;
+
+    }
+
+    return out;
+}
+
+MapView::MoveDirection MapView::_getOppositeDirection(const MapView::MoveDirection &direction) {
+    switch(direction) {
+        case MapView::MoveDirection::GoLeft:
+            return MapView::MoveDirection::GoRight;
+        break;
+
+        case MapView::MoveDirection::GoUp:
+            return MapView::MoveDirection::GoDown;
+        break;
+
+        case MapView::MoveDirection::GoRight:
+            return MapView::MoveDirection::GoLeft;
+        break;
+
+        case MapView::MoveDirection::GoDown:
+            return MapView::MoveDirection::GoUp;
+        break;
+
+        default:
+            return MapView::MoveDirection::GoUndefined;
+        break;
+    }
+}
+
 
 //////////////
 /* END MOVE */

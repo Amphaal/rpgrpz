@@ -6,7 +6,7 @@
 
 class AnimationTimeLine : public QTimeLine {
     public:
-        enum Type { Zoom, HorizontalMove, VerticalMove };
+        enum Type { Zoom };
 
         void setStateModifier(const qreal modifier) { this->_currentModifier = modifier; };
 
@@ -48,6 +48,8 @@ class AnimationTimeLine : public QTimeLine {
 
             return handler;
         }
+
+
 
     private:
         //static

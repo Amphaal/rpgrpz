@@ -46,6 +46,11 @@ class MapView : public QGraphicsView, public ClientBindable {
 
     public:
         enum Tool { Default, Atom, Scroll };
+        enum MoveDirection { GoUndefined, GoLeft, GoUp, GoRight, GoDown };
+        struct MoveInstruction {
+            QScrollBar* affectedScroll;
+            int correction;
+        };
 
         MapView(QWidget *parent);
         ~MapView();
@@ -73,6 +78,7 @@ class MapView : public QGraphicsView, public ClientBindable {
         void mouseReleaseEvent(QMouseEvent *event) override;
         void mouseMoveEvent(QMouseEvent *event) override;
         void keyPressEvent(QKeyEvent * event) override;
+        void keyReleaseEvent(QKeyEvent *event) override;
         void resizeEvent(QResizeEvent * event) override;
         void mouseDoubleClickEvent(QMouseEvent *event) override;
 
@@ -120,7 +126,15 @@ class MapView : public QGraphicsView, public ClientBindable {
             
         //moving...
             void _goToSceneCenter();
-            void _animatedMove(const AnimationTimeLine::Type &orientation, int correction);
+            void _addAnimatedMove(const MapView::MoveDirection &direction);
+            void _removeAnimatedMove(const MapView::MoveDirection &direction);
+            QList<MapView::MoveInstruction> _getMoveInstructions(const QSet<MapView::MoveDirection> &directions);
+            QSet<MapView::MoveDirection> _currentMoveDirections;
+            QList<MapView::MoveInstruction> _currentMoveInstructions;
+            MapView::MoveDirection _getOppositeDirection(const MapView::MoveDirection &direction);
+            QTimeLine _moveAnimator;
+            QTimer _stiffMove;
+            void _configureMoveAnimator();
 
         //focusing...
             void _focusItem(QGraphicsItem* toFocus);
