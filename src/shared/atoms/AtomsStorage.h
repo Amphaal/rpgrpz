@@ -21,6 +21,18 @@ struct AtomsSelectionDescriptor {
     QVector<RPZAtomId> selectedAtomIds;
 };
 
+struct PossibleActionsOnAtomList {
+    bool somethingRedoable = false;
+    bool somethingUndoable = false;
+    bool canCopy = false;
+    bool canRemove = false;
+    bool canChangeLayer = false;
+    bool canChangeVisibility = false;
+    bool canChangeAvailability = false;
+    int targetUpLayer = 0;
+    int targetDownLayer = 0;
+};
+
 class AtomsStorage : public AlterationAcknoledger {
 
     Q_OBJECT
@@ -32,9 +44,10 @@ class AtomsStorage : public AlterationAcknoledger {
         const AtomsSelectionDescriptor getAtomSelectionDescriptor(const QVector<RPZAtomId> &selectedIds) const; //safe
         
         RPZMap<RPZAtom> atoms() const; //safe
-        const QSet<RPZAssetHash> usedAssetIds() const;
+        const QSet<RPZAssetHash> usedAssetIds() const; //safe
         
-        ResetPayload createStatePayload() const;
+        ResetPayload createStatePayload() const; //safe
+        PossibleActionsOnAtomList getPossibleActions(const QVector<RPZAtomId> &ids);
 
     public slots:    
         void redo();
@@ -43,6 +56,8 @@ class AtomsStorage : public AlterationAcknoledger {
         void handleAlterationRequest(AlterationPayload &payload);
 
     protected:
+        RPZAtom* _getAtomFromId(const RPZAtomId &id);
+
         void _bindDefaultOwner(const RPZUser &newOwner);
 
         virtual void _handleAlterationRequest(AlterationPayload &payload) override;
@@ -65,7 +80,6 @@ class AtomsStorage : public AlterationAcknoledger {
         //atoms list 
         QHash<RPZAssetHash, int> _assetIdsUsed;
         RPZMap<RPZAtom> _atomsById;
-        RPZAtom* _getAtomFromId(const RPZAtomId &id);
 
         //credentials handling
         QHash<RPZUserId, QSet<RPZAtomId>> _RPZAtomIdsByOwnerId;
@@ -77,6 +91,8 @@ class AtomsStorage : public AlterationAcknoledger {
         int _payloadHistoryIndex = 0;
         void _registerPayloadForHistory(AlterationPayload &payload);
         AlterationPayload _generateUndoPayload(AlterationPayload &historyPayload);
+        int _canRedo();
+        int _canUndo();
 
         //selected
         QSet<RPZAtomId> _selectedRPZAtomIds;
@@ -87,4 +103,7 @@ class AtomsStorage : public AlterationAcknoledger {
         RPZMap<RPZAtom> _generateAtomDuplicates(const QVector<RPZAtomId> &RPZAtomIdsToDuplicate) const;
         static constexpr int _pixelStepPosDuplication = 10;
         static QPointF _getPositionFromAtomDuplication(const RPZAtom &atomToDuplicate, int duplicateCount);
+
+        //
+        QPair<int, int> _determineMinMaxLayer(const QList<RPZAtom*> &atoms);
 };

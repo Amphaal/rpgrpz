@@ -38,20 +38,30 @@ void ViewMapHint::setDefaultLayer(int layer) {
 }
 
 void ViewMapHint::notifyFocusedItem(QGraphicsItem* focusedItem) {
-    auto cAtom = this->getAtomFromGraphicsItem(focusedItem);
-    FocusedPayload payload(cAtom->id());
+    
+    //extract id
+    auto id = this->_getAtomIdFromGraphicsItem(focusedItem);
+    if(!id) return;
+
+    //send payload
+    FocusedPayload payload(id);
     AlterationHandler::get()->queueAlteration(this, payload);
+
 }
 
                
 void ViewMapHint::mightNotifyMovement(const QList<QGraphicsItem*> &itemsWhoMightHaveMoved) {
-
+    
     //generate args for payload
     AtomsUpdates coords;
-    for(auto &gi : itemsWhoMightHaveMoved) {
+    for(auto gi : itemsWhoMightHaveMoved) {
         
-        //cannot fetch atom
-        auto cAtom = this->getAtomFromGraphicsItem(gi);
+        //find id
+        auto id = this->_getAtomIdFromGraphicsItem(gi);
+        if(!id) continue;
+
+        //find corresponding atom
+        auto cAtom = this->_getAtomFromId(id);
         if(!cAtom) continue;
         
         //pos have not changed
@@ -75,13 +85,7 @@ void ViewMapHint::mightNotifyMovement(const QList<QGraphicsItem*> &itemsWhoMight
 }
 
 void ViewMapHint::notifySelectedItems(const QList<QGraphicsItem*> &selectedItems) {
-
-    QVector<RPZAtomId> ids;
-
-    for(auto atom : this->getAtomsFromGraphicsItems(selectedItems)) {
-        ids.append(atom->id());
-    }
-
+    auto ids = this->getAtomIdsFromGraphicsItems(selectedItems); //allow selecting nothing
     SelectedPayload payload(ids);
     AlterationHandler::get()->queueAlteration(this, payload);
 }
@@ -247,13 +251,19 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZToyMetadata &metadat
     if(!this->_missingAssetsIdsFromDb.contains(assetId)) return; //no assetId, skip
     if(pathToFile.isNull()) return; //path to file empty, skip
     
-    //iterate through the list of GI to replace
+    //get uniques ids
     setOfGraphicsItemsToReplace = this->_missingAssetsIdsFromDb.values(assetId).toSet();
-
-    for(auto oldGi : setOfGraphicsItemsToReplace) {
+    
+    //iterate through the list of GI to replace
+    for(auto item : setOfGraphicsItemsToReplace) {
         
+        //find id
+        auto id = this->_getAtomIdFromGraphicsItem(item);
+        if(!id) continue;
+
         //find corresponding atom
-        auto atom = this->getAtomFromGraphicsItem(oldGi);
+        auto atom = this->_getAtomFromId(id);
+        if(!atom) continue;
 
         //create the new graphics item
         auto newGi = CustomGraphicsItemHelper::createGraphicsItem(*atom, metadata);
@@ -310,24 +320,37 @@ void ViewMapHint::handlePreviewRequest(const AtomsSelectionDescriptor &selection
 //////////////////////
 
 void ViewMapHint::_crossBindingAtomWithGI(RPZAtom* atom, QGraphicsItem* gi) {
-    this->_GItemsByRPZAtomId[atom->id()] = gi;
-    gi->setData(RPZUserRoles::AtomPtr, QVariant::fromValue<RPZAtom*>(atom));
+    auto id = atom->id();
+    this->_GItemsByRPZAtomId[id] = gi;
+    gi->setData(RPZUserRoles::AtomId, id);
 }
 
-QVector<RPZAtom*> ViewMapHint::getAtomsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const {
-    QVector<RPZAtom*> list;
+const QVector<RPZAtomId> ViewMapHint::getAtomIdsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const {
+    
+    QVector<RPZAtomId> list;
+
     for(auto e : listToFetch) {
-        auto atom = this->getAtomFromGraphicsItem(e);
-        list.append(atom);
+        auto id = _getAtomIdFromGraphicsItem(e);
+        if(id) list += id;
     }
+
     return list;
+
 }
 
-RPZAtom* ViewMapHint::getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const {
-    auto ptr = graphicElem->data(RPZUserRoles::AtomPtr).value<RPZAtom*>();
-    if(!ptr) qWarning() << "No atom assigned to this graphics item...";
-    auto q = ptr;
-    return ptr;
+const RPZAtomId ViewMapHint::_getAtomIdFromGraphicsItem(const QGraphicsItem* toFetch) const {
+    
+    if(!toFetch) {
+        qWarning() << "Cannot fetch Atom Id from this non-existant GraphicsItem...";
+        return 0;
+    }
+
+    auto id = toFetch->data(RPZUserRoles::AtomId).toULongLong();
+
+    if(!id) qWarning() << "No atom assigned to this graphics item...";
+
+    return id;
+
 }
 
 //////////////////////////

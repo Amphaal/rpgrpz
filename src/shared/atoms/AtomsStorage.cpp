@@ -19,6 +19,77 @@ ResetPayload AtomsStorage::createStatePayload() const {
     );
 }
 
+PossibleActionsOnAtomList AtomsStorage::getPossibleActions(const QVector<RPZAtomId> &ids) {
+    
+    QMutexLocker l(&_m_handlingLock);
+    PossibleActionsOnAtomList out;
+
+    //availability
+    auto areIdsSelected = !ids.isEmpty();
+    out.canChangeAvailability = areIdsSelected;
+
+    // redo/undo
+    out.somethingRedoable = this->_canRedo() > -1;
+    out.somethingUndoable = this->_canUndo() > -1;
+
+    //iterate
+    QList<RPZAtom*> atomList;
+    for(auto &id : ids) {
+
+        //get atom
+        auto atom = this->_getAtomFromId(id);
+        if(!atom) continue;
+        atomList += atom;
+
+        //if is locked, break
+        if(atom->isLocked()) {
+            return out;
+        }
+
+    }
+
+    //else, activate most
+    out.canChangeLayer = areIdsSelected;
+    out.canCopy = areIdsSelected;
+    out.canChangeVisibility = areIdsSelected;
+    out.canRemove = areIdsSelected;
+
+    //determine min/max
+    auto minMaxLayer = this->_determineMinMaxLayer(atomList);
+    out.targetDownLayer = minMaxLayer.first;
+    out.targetUpLayer = minMaxLayer.second;
+
+    return out;
+}
+
+QPair<int, int> AtomsStorage::_determineMinMaxLayer(const QList<RPZAtom*> &atoms) {
+    
+    //targets
+    auto firstPass = true;
+    auto riseLayoutTarget = 0;
+    auto lowerLayoutTarget = 0;
+
+    for(auto atom : atoms) {
+        
+        auto layer = atom->layer();
+        
+        if(firstPass) {
+            firstPass = false;
+            riseLayoutTarget = layer;
+            lowerLayoutTarget = layer;
+            continue;
+        }
+
+        if(layer > riseLayoutTarget) riseLayoutTarget = layer;
+        if(layer < lowerLayoutTarget) lowerLayoutTarget = layer;
+    }
+
+    riseLayoutTarget++;
+    lowerLayoutTarget--;
+
+    return QPair<int, int>(lowerLayoutTarget, riseLayoutTarget);
+}
+
 const AtomsSelectionDescriptor AtomsStorage::getAtomSelectionDescriptor(const QVector<RPZAtomId> &selectedIds) const {
     
     AtomsSelectionDescriptor out;
@@ -80,15 +151,40 @@ void AtomsStorage::_registerPayloadForHistory(AlterationPayload &payload) {
     
 }
 
-void AtomsStorage::undo() {
+int AtomsStorage::_canRedo() {
+
+    //if already on the most recent, abort
+    if(!this->_payloadHistoryIndex) return -1;
 
     //if no history, abort
+    auto count = this->_redoHistory.count();
+    if(!count) return -1;
+
+    //check if targeted payload exists
+    auto toReach = this->_payloadHistoryIndex - 1;
+    auto toReachIndex = (count - toReach) - 1;
+
+    return toReachIndex;
+
+}
+
+int AtomsStorage::_canUndo() {
+    
+    //if no history, abort
     auto count = this->_undoHistory.count();
-    if(!count) return;
+    if(!count) return -1;
 
     //check if targeted payload exists
     auto toReach = this->_payloadHistoryIndex + 1;
     auto toReachIndex = count - toReach;
+
+    return toReachIndex;
+
+}
+
+void AtomsStorage::undo() {
+
+    auto toReachIndex = this->_canUndo();
     if(toReachIndex < 0) return;
 
     //get stored payload and handle it
@@ -105,16 +201,7 @@ void AtomsStorage::undo() {
 
 void AtomsStorage::redo() {
 
-    //if already on the most recent, abort
-    if(!this->_payloadHistoryIndex) return;
-
-    //if no history, abort
-    auto count = this->_redoHistory.count();
-    if(!count) return;
-
-    //check if targeted payload exists
-    auto toReach = this->_payloadHistoryIndex - 1;
-    auto toReachIndex = (count - toReach) - 1;
+     auto toReachIndex = this->_canRedo();
     if(toReachIndex < 0) return;
 
     //get stored payload and handle it
@@ -218,7 +305,6 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &fromHist
 //////////////
 /* ELEMENTS */
 //////////////
-
 
 RPZAtom* AtomsStorage::_getAtomFromId(const RPZAtomId &id) {
     

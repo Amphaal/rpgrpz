@@ -8,6 +8,5 @@ enum RPZUserRoles {
     AtomVisibility = 1004,
     AtomAvailability = 1005,
     AtomId = 1006,
-    YTVideoMetadataPtr = 1007,
-    AtomPtr = 1008
+    YTVideoMetadataPtr = 1007
 };

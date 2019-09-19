@@ -55,6 +55,8 @@ class MapLayoutTree : public RPZTree, public AtomsContextualMenuHandler {
 
         void _updateLayersDisplayedCount();
 
+        bool _isAssociatedAtomSelectable(QTreeWidgetItem* item);
+
         //helpers
         void _insertAtomItem(QTreeWidgetItem *item);
         void _renameAtomItem(QTreeWidgetItem* toRename, const QString &newName);

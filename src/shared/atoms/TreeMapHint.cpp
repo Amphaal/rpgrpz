@@ -252,12 +252,21 @@ void TreeMapHint::updateOwnerFromItem(QTreeWidgetItem* item, const RPZUser &owne
 
 QTreeWidgetItem* TreeMapHint::_createTreeItem(const RPZAtom &atom) {
     
-    auto item = new QTreeWidgetItem();
+    auto item = new QTreeWidgetItem;
     item->setTextAlignment(1, Qt::AlignRight);
     item->setTextAlignment(2, Qt::AlignRight);
     
     const auto layer = atom.layer();
     const auto type = atom.type();
+
+    //default flags
+    item->setFlags(
+        QFlags<Qt::ItemFlag>(
+            Qt::ItemIsEnabled | 
+            Qt::ItemNeverHasChildren |
+            Qt::ItemIsSelectable
+        )
+    );
 
     item->setText(0, atom.descriptor());
     item->setData(0, RPZUserRoles::AtomId, atom.id());
@@ -265,18 +274,8 @@ QTreeWidgetItem* TreeMapHint::_createTreeItem(const RPZAtom &atom) {
     item->setData(0, RPZUserRoles::AtomLayer, layer);
 
     item->setData(1, RPZUserRoles::AtomVisibility, atom.isHidden());
-    item->setData(1, RPZUserRoles::AtomAvailability, atom.isLocked());
-
-    auto owner = atom.owner();
-    this->updateOwnerFromItem(item, owner);
-
-    item->setFlags(
-        QFlags<Qt::ItemFlag>(
-            Qt::ItemIsEnabled | 
-            Qt::ItemNeverHasChildren | 
-            Qt::ItemIsSelectable
-        )
-    );
+    this->updateLockedState(item, atom.isLocked());
+    this->updateOwnerFromItem(item, atom.owner());
 
     switch(type) {
         case AtomType::Drawing:
@@ -292,4 +291,16 @@ QTreeWidgetItem* TreeMapHint::_createTreeItem(const RPZAtom &atom) {
     this->_mayCreateLayerItem(layer);
 
     return item;
+}
+
+void TreeMapHint::updateLockedState(QTreeWidgetItem* item, bool isLocked) {
+    
+    //set data
+    item->setData(1, RPZUserRoles::AtomAvailability, isLocked);
+    
+    //update flags
+    // auto flags = item->flags();
+    // flags.setFlag(Qt::ItemIsSelectable, !isLocked);
+    // item->setFlags(flags);
+
 }

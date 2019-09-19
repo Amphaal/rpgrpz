@@ -240,37 +240,16 @@ void MapView::_addItem(QGraphicsItem* toAdd) {
 
 void MapView::contextMenuEvent(QContextMenuEvent *event) {
 
-    auto pos = event->pos();
-    auto selected = this->scene()->selectedItems();
-    
-    auto count = selected.count();
-
-    //targets
-    auto firstPass = true;
-    auto riseLayoutTarget = 0;
-    auto lowerLayoutTarget = 0;
-
-    for(auto item : selected) {
-        
-        auto atom = this->_hints->getAtomFromGraphicsItem(item);
-        auto layer = atom->layer();
-        
-        if(firstPass) {
-            firstPass = false;
-            riseLayoutTarget = layer;
-            lowerLayoutTarget = layer;
-            continue;
-        }
-
-        if(layer > riseLayoutTarget) riseLayoutTarget = layer;
-        if(layer < lowerLayoutTarget) lowerLayoutTarget = layer;
-    }
-
-    riseLayoutTarget++;
-    lowerLayoutTarget--;
+    auto pos = this->viewport()->mapToGlobal(
+        event->pos()
+    );
+    auto ids = this->_hints->getAtomIdsFromGraphicsItems(
+        this->scene()->selectedItems()
+    );
 
     //create menu
-    this->_menuHandler->invokeMenu(riseLayoutTarget, lowerLayoutTarget, count, this->viewport()->mapToGlobal(pos));
+    this->_menuHandler->invokeMenu(ids, pos);
+
 }
 
 void MapView::mouseDoubleClickEvent(QMouseEvent *event) {

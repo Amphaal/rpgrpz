@@ -94,14 +94,29 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
         this, &QTreeWidget::itemSelectionChanged,
         [=]() {
 
+            //clear focus if empty
             auto selected = this->selectedItems();
             if(!selected.count()) this->clearFocus();
-            
-            auto selectedIds = _extractRPZAtomIdFromItems(selected);
-            this->_hints->propagateSelection(selectedIds);
+
+            //restrict list of selected item to unlocked ones
+            QList<QTreeWidgetItem *> filtered;
+            for(auto i : selected) {
+                if(this->_isAssociatedAtomSelectable(i)) filtered += i;
+            }
+
+            //propagate with filtered list
+            if(!filtered.isEmpty()) {
+                auto filteredIds = _extractRPZAtomIdFromItems(filtered);
+                this->_hints->propagateSelection(filteredIds);
+            }
+
         }
     );
 
+}
+
+bool MapLayoutTree::_isAssociatedAtomSelectable(QTreeWidgetItem* item) {
+    return !item->data(1, RPZUserRoles::AtomAvailability).toBool();
 }
 
 void MapLayoutTree::_onUIAlterationRequest(const PayloadAlteration &type, const QList<QTreeWidgetItem*> &toAlter) {
@@ -109,7 +124,7 @@ void MapLayoutTree::_onUIAlterationRequest(const PayloadAlteration &type, const 
     //prevent circual selection/focus
     QSignalBlocker b(this);
 
-    if(type == PA_Selected) this->_clearSelectedItems();
+    if(type == PA_Selected || type == PA_Focused) this->_clearSelectedItems();
     if(type == PA_Reset) this->clear();
 
     for(auto item : toAlter) {
@@ -121,7 +136,8 @@ void MapLayoutTree::_onUIAlterationRequest(const PayloadAlteration &type, const 
 
             case PA_Focused: {
                 auto itemIndex = this->indexFromItem(item);
-                this->scrollTo(itemIndex, QAbstractItemView::ScrollHint::EnsureVisible);
+                this->scrollTo(itemIndex, QAbstractItemView::ScrollHint::PositionAtCenter);
+                this->_selectAtomItem(item);
             }
             break;
 
@@ -183,15 +199,19 @@ void MapLayoutTree::_updateAtomItemValues(QTreeWidgetItem* toUpdate, const AtomU
         switch(i.key()) {
             
             case AtomParameter::AssetName:
-                this->_renameAtomItem(toUpdate, i.value().toString()); //TODO get atom.descriptor() ?
+                this->_renameAtomItem(toUpdate, i.value().toString());
             break;
             
-            case AtomParameter::Hidden:
-                toUpdate->setData(1, RPZUserRoles::AtomVisibility, i.value().toBool());
+            case AtomParameter::Hidden: {
+                auto isHidden = i.value().toBool();
+                toUpdate->setData(1, RPZUserRoles::AtomVisibility, isHidden);
+            }
             break;
 
-            case AtomParameter::Locked:
-                toUpdate->setData(1, RPZUserRoles::AtomAvailability, i.value().toBool());
+            case AtomParameter::Locked: {
+                auto isLocked = i.value().toBool();
+                this->_hints->updateLockedState(toUpdate, isLocked);
+            }
             break;
 
             default:
@@ -245,18 +265,16 @@ TreeMapHint* MapLayoutTree::hints() const {
 
 void MapLayoutTree::contextMenuEvent(QContextMenuEvent *event) {
     
-    auto pos = event->pos();
-    auto itemsToProcess = this->selectedItems();
-
-    auto count = itemsToProcess.count();
-    if(!count) return;
-
-    //targets
-    auto riseLayoutTarget = itemsToProcess.first()->parent()->data(0, RPZUserRoles::AtomLayer).toInt() + 1;
-    auto lowerLayoutTarget = itemsToProcess.last()->parent()->data(0, RPZUserRoles::AtomLayer).toInt() - 1;
+    auto pos = this->viewport()->mapToGlobal(
+        event->pos()
+    );
+    auto ids = this->_extractRPZAtomIdFromItems(
+        this->selectedItems()
+    );
 
     //create menu
-    this->invokeMenu(riseLayoutTarget, lowerLayoutTarget, count, this->viewport()->mapToGlobal(pos));
+    this->invokeMenu(ids, pos);
+
 }
 
 

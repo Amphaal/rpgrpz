@@ -11,7 +11,6 @@
 #include <QMetaObject>
 
 class AtomsContextualMenuHandler {
-
     public:
         AtomsContextualMenuHandler(AtomsStorage* mapMaster, QWidget* menuParent);
 
@@ -24,13 +23,15 @@ class AtomsContextualMenuHandler {
         void alterSelectedAtomsVisibility(bool isHidden);
         void alterSelectedAtomsAvailability(bool isLocked);
 
-        void invokeMenu(int topMostLayer, int bottomMostLayer, int countAtoms, const QPoint &whereToDisplay);
+        void invokeMenu(const QVector<RPZAtomId> &toManipulate, const QPoint &whereToDisplay);
 
     private:
         QWidget* _menuParent = nullptr;
         AtomsStorage* _mapMaster = nullptr;  
 
         static inline QVector<RPZAtomId> _copyClipboard;
+        static inline QVector<RPZAtomId> _latestInvokedAtomIds;
+        static inline PossibleActionsOnAtomList _latestPossibleActions;
 
         QAction* _removeAction = nullptr;
         QAction* _copyAction = nullptr;
@@ -44,10 +45,13 @@ class AtomsContextualMenuHandler {
         QAction* _lockAction = nullptr;
         QAction* _unlockAction = nullptr;
 
-        QAction* _genRemoveAction(int selectedAtoms);
-        QList<QAction*> _genLayerActions(int riseLayoutTarget, int lowerLayoutTarget, int selectedAtoms);
-        QList<QAction*> _genUndoRedoActions();
-        QList<QAction*> _genCopyPasteActions();
-        QList<QAction*> _genVisibilityActions(int selectedAtoms);
-        QList<QAction*> _genAvailabilityActions(int selectedAtoms);
+        QAction* _genRemoveAction(bool isEnabled);
+        QList<QAction*> _genLayerActions(int riseLayoutTarget, int lowerLayoutTarget);
+        QList<QAction*> _genUndoRedoActions(bool canUndo, bool canRedo);
+        QList<QAction*> _genCopyPasteActions(bool canCopy, bool canPaste);
+        QList<QAction*> _genVisibilityActions(bool areEnabled);
+        QList<QAction*> _genAvailabilityActions(bool areEnabled);
+
+        void _addCopyPasteActionsToShortcuts();
+        void _addUndoRedoActionsToShortcuts();
 };

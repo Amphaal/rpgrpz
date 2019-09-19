@@ -39,8 +39,7 @@ class ViewMapHint : public AtomsStorage {
         const RPZAtom templateAtom() const;
         QGraphicsItem* ghostItem() const;
 
-        RPZAtom* getAtomFromGraphicsItem(QGraphicsItem* graphicElem) const;
-        QVector<RPZAtom*> getAtomsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const;
+        const QVector<RPZAtomId> getAtomIdsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const; //safe
 
         QGraphicsItem* generateTemporaryItemFromTemplateBuffer(); //safe
 
@@ -95,4 +94,6 @@ class ViewMapHint : public AtomsStorage {
         virtual void _updatesDone(const QList<RPZAtomId> &updatedIds, const AtomUpdates &updates) override;
         virtual void _updatesDone(const AtomsUpdates &updates) override;
         virtual void _ownerChangeDone(const QList<RPZAtomId> &updatedIds, const RPZUser &newUser) override;
+
+        const RPZAtomId _getAtomIdFromGraphicsItem(const QGraphicsItem* toFetch) const;
 };

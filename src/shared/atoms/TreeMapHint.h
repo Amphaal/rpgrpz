@@ -28,6 +28,7 @@ class TreeMapHint : public AlterationAcknoledger {
 
         QTreeWidgetItem* getLayerItem(int layer) const; //safe
         void updateOwnerFromItem(QTreeWidgetItem* item, const RPZUser &owner); //safe
+        void updateLockedState(QTreeWidgetItem* item, bool isLocked); //safe
         void propagateFocus(RPZAtomId focusedRPZAtomId); //safe
         void propagateSelection(QVector<RPZAtomId> &selectedIds); //safe
 
