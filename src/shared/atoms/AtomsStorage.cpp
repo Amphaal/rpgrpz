@@ -453,6 +453,7 @@ RPZAtom* AtomsStorage::_changeOwner(RPZAtom* atomWithNewOwner, const RPZUser &ne
 RPZAtomId AtomsStorage::_removeAtom(RPZAtom* toRemove) {
     auto storedAtomOwner = toRemove->owner();
     auto id = toRemove->id();
+    auto assetId = toRemove->assetId();
 
     //unbind from owners
     this->_RPZAtomIdsByOwnerId[storedAtomOwner.id()].remove(id);
@@ -464,7 +465,6 @@ RPZAtomId AtomsStorage::_removeAtom(RPZAtom* toRemove) {
     this->_atomsById.remove(id); 
 
     //track used asset
-    auto assetId = toRemove->assetId();
     if(!assetId.isEmpty()) {
         auto &currentCount = this->_assetIdsUsed[assetId];
         if(currentCount <= 1) this->_assetIdsUsed.remove(assetId);
