@@ -13,6 +13,10 @@ Playlist::Playlist(QWidget* parent) : QListWidget(parent),
         this, &QListWidget::itemDoubleClicked,
         this, &Playlist::_onItemDoubleClicked
     );
+    
+    //default insert
+    this->addYoutubeVideo("https://www.youtube.com/watch?v=KV5ffXxFI38");
+
 }
 
 Qt::DropActions Playlist::supportedDropActions() const
