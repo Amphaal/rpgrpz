@@ -62,6 +62,12 @@ extern "C" {
 
 GStreamerClient::GStreamerClient(QObject* parent) : QObject(parent), _elapsedTimer(new QTimer) {
     
+    //define volume helper
+    this->_volumeTLHelper.setDuration(100);
+    this->_volumeTLHelper.setDirection(QTimeLine::Direction::Backward);
+    this->_volumeTLHelper.setEasingCurve(QEasingCurve(QEasingCurve::InCubic));
+
+    //inst
     this->_initGst();
     
     //timer
@@ -130,9 +136,14 @@ void GStreamerClient::seek(int seekPos) {
 }
 
 void GStreamerClient::setVolume(double volume) {
-    //convert and limit
-    volume = volume / 100;
-    if (volume > 1) volume = 1;
+    
+    //cap
+    if (volume > 100) volume = 100;
+
+    //apply curve
+    volume = this->_volumeTLHelper.valueForTime((int)volume);
+
+    qDebug() << volume;
 
     //set new volume
     g_object_set(G_OBJECT(this->_bin), "volume", volume, NULL);

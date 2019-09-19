@@ -12,6 +12,7 @@
 #include <QtCore/QDir>
 
 #include <QTimer>
+#include <QTimeLine>
 #include <QtMath>
 
 class GStreamerClient : public QObject {
@@ -29,7 +30,7 @@ class GStreamerClient : public QObject {
         void pause();
         void stop();
         void seek(int seekPos);
-
+    
     //pseudo private
         GstElement* _bin = nullptr;
         GstBus* _bus = nullptr;
@@ -50,4 +51,7 @@ class GStreamerClient : public QObject {
 
     protected:
         void _initGst();
+    
+    private:
+        QTimeLine _volumeTLHelper;
 };

@@ -141,7 +141,8 @@
         "qjsonobject": "cpp",
         "qwheelevent": "cpp",
         "__functional_03": "cpp",
-        "qstyleoptionprogressbar": "cpp"
+        "qstyleoptionprogressbar": "cpp",
+        "qtimeline": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }
