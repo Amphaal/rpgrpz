@@ -2,6 +2,9 @@
 
 void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZAtom &blueprint, bool isTargetTemporary) {
     
+    //set movable
+    target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, true);
+
     //bind a copy of the template to the item
     target->setData((int)AtomConverterDataIndex::IsTemporary, isTargetTemporary);
 
@@ -44,12 +47,7 @@ void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZA
     if(isTargetTemporary) {
         target->setOpacity(.5);
         target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
-    } else {
-        target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, true);
     }
-
-    //set movable
-    target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, true);
             
 }
 
