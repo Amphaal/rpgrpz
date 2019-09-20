@@ -18,6 +18,7 @@ extern "C" {
         //switch
         switch (type) {
             case GST_MESSAGE_ERROR: {
+                
                 GError *err;
                 gchar *debug_info;
                 gst_message_parse_error (msg, &err, &debug_info);
@@ -26,24 +27,20 @@ extern "C" {
                 g_clear_error (&err);
                 g_free (debug_info);
                 
-                cli->_elapsedTimer->stop();
-                emit cli->streamError();
+                QMetaObject::invokeMethod(cli, "stopTimer", Q_ARG(GstMessageType, type));
+
             }
             break;
 
             case GST_MESSAGE_EOS: {
-                cli->_elapsedTimer->stop();
-                emit cli->streamEnded();
+                QMetaObject::invokeMethod(cli, "stopTimer", Q_ARG(GstMessageType, type));
             }
             break;
 
             case GST_MESSAGE_BUFFERING: {
-                
                 gint percent;
                 gst_message_parse_buffering(msg, &percent);
-                cli->_downloadBufferOK = percent == 100;
-                emit cli->bufferingPercentChanged(percent);
-
+                QMetaObject::invokeMethod(cli, "downloadBufferChanging", Q_ARG(int, percent));
             }
             break;
             
@@ -107,6 +104,27 @@ GStreamerClient::~GStreamerClient() {
     this->_unrefPipeline();
 }
 
+void GStreamerClient::downloadBufferChanging(int prcProgress) {
+    this->_downloadBufferOK = prcProgress == 100;
+    emit bufferingPercentChanged(prcProgress);
+}
+
+void GStreamerClient::stopTimer(const GstMessageType &reason) {
+    
+    this->_elapsedTimer->stop();
+
+    switch(reason) {
+        case GST_MESSAGE_ERROR:
+            emit streamError();
+        break;
+
+        case GST_MESSAGE_EOS:
+            emit streamEnded();
+        break;
+    }
+
+}
+
 void GStreamerClient::useSource(QString uri) {
     
     //stop
@@ -142,8 +160,6 @@ void GStreamerClient::setVolume(double volume) {
 
     //apply curve
     volume = this->_volumeTLHelper.valueForTime((int)volume);
-
-    qDebug() << volume;
 
     //set new volume
     g_object_set(G_OBJECT(this->_bin), "volume", volume, NULL);

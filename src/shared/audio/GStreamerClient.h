@@ -42,6 +42,10 @@ class GStreamerClient : public QObject {
         QTimer* _elapsedTimer = nullptr;
         bool _downloadBufferOK = false;
 
+    public slots:
+        void stopTimer(const GstMessageType &reason);
+        void downloadBufferChanging(int prcProgress);
+
     signals:
         void positionChanged(int pos);
         void streamEnded();

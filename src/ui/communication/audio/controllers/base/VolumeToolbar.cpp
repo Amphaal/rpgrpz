@@ -42,7 +42,9 @@ VolumeToolbar::VolumeToolbar(QWidget* parent) : QWidget(parent),
 void VolumeToolbar::_onAudioChange(int newSliderVal) {
     this->_setAudioValLbl(newSliderVal);
     AppContext::settings()->setAudioVolume(newSliderVal);
-    emit askForVolumeChange(newSliderVal); 
+    if(!this->_mute->isChecked()) {
+        emit askForVolumeChange(newSliderVal); 
+    }
 }
 
 void VolumeToolbar::_onMuteButtonClick() {
