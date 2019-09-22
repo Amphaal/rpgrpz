@@ -100,7 +100,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
     switch(method) {
         
-        case JSONMethod::MessageFromPlayer: 
+        case JSONMethod::Message: 
         {
             RPZMessage message(data.toHash());
             auto &user = this->_getUser(target);
@@ -383,7 +383,7 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
                 newMessage.setOwnership(msg.owner());
 
                 //send new message
-                user->networkSocket()->sendJSON(JSONMethod::MessageFromPlayer, newMessage);
+                user->networkSocket()->sendJSON(JSONMethod::Message, newMessage);
             }
 
             //inform whisperer of any unfound users
@@ -406,7 +406,10 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
             this->_messages.insert(msgId, msg);
 
             //push to all sockets
-            this->_sendToAllButSelf(sender, JSONMethod::MessageFromPlayer, msg);
+            this->_sendToAllButSelf(sender, JSONMethod::Message, msg);
+
+            //send dices throws if requested
+            this->_maySendAndStoreDiceThrows(msg.text());
 
         }
         break;
@@ -417,6 +420,47 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
 
     //send response
     sender->sendJSON(JSONMethod::ServerResponse, response);
+}
+
+void RPZServer::_maySendAndStoreDiceThrows(const QString &text) {
+    
+    //check if throws are requested
+    auto throws = MessageInterpreter::findDiceThrowsFromText(text);
+    if(throws.isEmpty()) return;
+
+    //generate values
+    MessageInterpreter::generateValuesOnDiceThrows(throws);
+
+    //create message parts
+    QList<QString> throwsMsgList;
+    for(auto &dThrow : throws) {
+        
+        //sub list of values
+        QList<QString> sub;
+        for(auto &val : dThrow.values) sub += QString::number(val);
+        QString subJoin = sub.join(", ");
+
+        //join values
+        auto joined = QString("%1 : {%2}").arg(dThrow.name).arg(subJoin);
+
+        //display avg if multiple values
+        if(sub.count() > 1) joined += QString(" μ ") + QString::number(dThrow.avg, 'f', 2);
+
+        //add to topmost list
+        throwsMsgList += joined;
+
+    }
+
+    //append it
+    auto msg = throwsMsgList.join(", ");
+    RPZMessage dThrowMsg(msg, MessageInterpreter::Command::C_DiceThrow);
+
+    //store message
+    this->_messages.insert(dThrowMsg.id(), dThrowMsg);
+
+    //send to all
+    this->_sendToAll(JSONMethod::Message, dThrowMsg);
+
 }
 
 //

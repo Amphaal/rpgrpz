@@ -236,7 +236,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         }
         break;
 
-        case JSONMethod::MessageFromPlayer: {
+        case JSONMethod::Message: {
             RPZMessage msg(data.toHash());
             emit receivedMessage(msg);
         }
@@ -313,7 +313,7 @@ void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
 
 void RPZClient::sendMessage(const RPZMessage &message) {
     auto msg = RPZMessage(message);
-    this->_sock->sendJSON(JSONMethod::MessageFromPlayer, msg);
+    this->_sock->sendJSON(JSONMethod::Message, msg);
 }
 
 void RPZClient::sendMapHistory(const ResetPayload &historyPayload) {

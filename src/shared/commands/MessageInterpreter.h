@@ -4,12 +4,21 @@
 #include <QString>
 
 #include <QRegularExpression>
+#include <QRandomGenerator>
 
 #include "src/helpers/_appContext.h"
 
+struct DiceThrow {
+    uint face = 0;
+    uint howMany = 0;
+    QVector<uint> values;
+    QString name;
+    double avg = 0;
+};
+
 class MessageInterpreter {
     public:
-        enum Command { C_Unknown, Say, Whisper, Help };
+        enum Command { C_Unknown, Say, Whisper, Help, C_DiceThrow };
         
         static inline const QHash<QString, Command> _textByCommand = {
             { "/h", Help }
@@ -27,7 +36,11 @@ class MessageInterpreter {
 
         static QString usernameToCommandCompatible(const QString &username);
 
+        static QVector<DiceThrow> findDiceThrowsFromText(const QString &text);
+        static void generateValuesOnDiceThrows(QVector<DiceThrow> &throws);
+
     private:
         static inline const QRegularExpression _hasWhispRegex = QRegularExpression("@(\\w+)");
         static inline const QRegularExpression _hasCommandRegex = QRegularExpression("\\/(\\w+)");
+        static inline const QRegularExpression _mustLaunchDice = QRegularExpression("([1-9]|1[0-6])[dD](\\d+)");
 };

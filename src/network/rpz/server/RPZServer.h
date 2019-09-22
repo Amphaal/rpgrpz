@@ -72,6 +72,7 @@ class RPZServer : public QTcpServer, public JSONRouter {
         RPZMap<RPZMessage> _messages;
         void _sendStoredMessages(JSONSocket * clientSocket);
         void _interpretMessage(JSONSocket* sender, RPZMessage &msg);
+        void _maySendAndStoreDiceThrows(const QString &text);
         
         //internal
         void _onNewConnection();

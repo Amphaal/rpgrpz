@@ -25,6 +25,7 @@ QString RPZMessage::toString() const {
     auto text = this->text();
 
     switch(this->_command) {
+        
         case MessageInterpreter::Say: {
             QString textPrefix = ownerExist ? " a dit : " : "vous dites : ";
             return base + textPrefix + QChar(0x201C) + text + QChar(0x201D);
@@ -44,6 +45,7 @@ QString RPZMessage::toString() const {
 
         default:
             return text;
+            
     }
 
 };
@@ -66,6 +68,11 @@ QPalette RPZMessage::palette() const {
             palette.setColor(QPalette::WindowText, "#000000");
             break;
         
+        case MessageInterpreter::C_DiceThrow:
+            palette.setColor(QPalette::Window, "#87CEEB");
+            palette.setColor(QPalette::WindowText, "#000080");
+            break;
+
         default:
             break;
     }

@@ -18,6 +18,51 @@ MessageInterpreter::Command MessageInterpreter::interpretText(const QString &tex
     return _textByCommand[command];
 }
 
+void MessageInterpreter::generateValuesOnDiceThrows(QVector<DiceThrow> &throws) {
+    
+    double sum = 0;
+
+    for(auto &dThrow : throws) {
+        
+        QVector<uint> sout;
+        
+        for(uint i = 1; i <= dThrow.howMany; i++) {
+            auto rand = QRandomGenerator::global()->bounded((uint)1, dThrow.face + 1);
+            sout += rand;
+            sum += rand;
+        }
+
+        dThrow.values = sout;
+        if(dThrow.howMany > 0) dThrow.avg = sum / dThrow.howMany;
+        
+    }
+
+}
+
+QVector<DiceThrow> MessageInterpreter::findDiceThrowsFromText(const QString &text) {
+    QVector<DiceThrow> out;
+
+    auto matches = _mustLaunchDice.globalMatch(text);
+    while (matches.hasNext()) {
+        auto match = matches.next(); //next
+        
+        auto face = match.captured(2).toUInt();
+        if(face < 2) continue;
+
+        auto howMany = match.captured(1).toUInt();
+        auto name = match.captured(0);
+
+        DiceThrow diceThrow;
+        diceThrow.howMany = howMany;
+        diceThrow.face = face;
+        diceThrow.name = name;
+
+        out += diceThrow;
+    }
+
+    return out;
+}
+
 QList<QString> MessageInterpreter::findRecipentsFromText(const QString &text) {
     
     auto matches = _hasWhispRegex.globalMatch(text);
@@ -53,7 +98,8 @@ bool MessageInterpreter::isSendable(const QString &textToSend) {
 QString MessageInterpreter::help()  {
     QString help;
     help += QString("Serveur ") + QString(APP_FULL_DENOM) + " :\n";
-    help += "- Pour chuchotter : @{nom}. Vous pouvez chuchotter à plusieurs personne pour 1 message.";
+    help += "- Pour chuchotter : @{nom}. Vous pouvez chuchotter à plusieurs personne pour 1 message.\n";
+    help += "- Pour lancer des dés : {nombreDeLancers}D{faceDuDé}. Exemple : 1d5, 2D20, 3D16. Plusieurs lancers en une seule fois est possible !";
     return help;
 }
 
