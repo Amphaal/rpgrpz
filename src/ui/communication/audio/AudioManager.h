@@ -15,6 +15,8 @@
 
 #include "src/ui/others/ClientBindable.h"
 
+#include "src/shared/audio/StreamPlayStateTracker.hpp"
+
 class AudioManager : public QWidget, public ClientBindable {
     
     Q_OBJECT
@@ -26,13 +28,15 @@ class AudioManager : public QWidget, public ClientBindable {
 
     private slots:
         void _onIdentityAck(const RPZUser &user);
-        void _onAudioPlayStateChanged(bool isPlaying);
         void _onSeekingRequested(int seekPos);
-        void _playAudio(const QString &audioSourceUrl, const QString &sourceTitle, int startAt);
+        void _onAudioPlayStateChanged(bool isPlaying);
+        void _onAudioSourceStateChanged(const StreamPlayStateTracker &state);
 
     private:
+        StreamPlayStateTracker _state;
         AudioProbeController* _asCtrl = nullptr;
         GStreamerClient* _cli = nullptr;
+
 
         bool _isLocalOnly = true;
         bool _isNetworkMaster = false;
@@ -40,11 +44,14 @@ class AudioManager : public QWidget, public ClientBindable {
         void onRPZClientDisconnect() override;
 
         void _link();
+
+        void _stopPlayingMusic();
+        void _playAudio(const QString &audioSourceUrl, const QString &sourceTitle, int startAt);
+        
         void _onToolbarActionRequested(const TrackToolbar::Action &action);
         void _onToolbarPlayRequested(YoutubeVideoMetadata* playlistItemPtr);
         void _onPlayerPositionChanged(int position);
-        
         void _onStreamPlayEnded();
         void _onStreamError();
-        
+    
 };

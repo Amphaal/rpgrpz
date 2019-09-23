@@ -23,6 +23,7 @@
 #include "src/helpers/_appContext.h"
 #include "src/shared/async-ui/AlterationActor.hpp"
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
+#include "src/shared/audio/StreamPlayStateTracker.hpp"
 
 class RPZClient : public QObject, public AlterationActor, public JSONRouter {
 
@@ -41,7 +42,7 @@ class RPZClient : public QObject, public AlterationActor, public JSONRouter {
         void run();
 
         void sendMessage(const RPZMessage &message);
-        void defineAudioStreamSource(const QString &audioStreamUrl, const QString &sourceTitle, int durationInSecs);
+        void defineAudioSourceState(const StreamPlayStateTracker &state);
         void changeAudioPosition(int newPosition);
         void setAudioStreamPlayState(bool isPlaying);
         void sendMapHistory(const ResetPayload &historyPayload);
@@ -63,7 +64,7 @@ class RPZClient : public QObject, public AlterationActor, public JSONRouter {
         void loggedUsersUpdated(const QVector<RPZUser> &users);
         void receivedLogHistory(const QVector<RPZMessage> &messages);
 
-        void audioSourceChanged(const QString &audioSourceUrl, const QString &sourceTitle, int startAt);
+        void audioSourceStateChanged(const StreamPlayStateTracker &state);
         void audioPositionChanged(int newPos);
         void audioPlayStateChanged(bool isPlaying);
 

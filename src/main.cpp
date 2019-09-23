@@ -115,7 +115,8 @@ int main(int argc, char** argv) {
     qRegisterMetaType<ProgressTracker::Kind>("ProgressTracker::Kind");
     qRegisterMetaType<QVector<RPZAssetHash>>("QVector<RPZAssetHash>");
     qRegisterMetaType<GstMessageType>("GstMessageType");
-    
+    qRegisterMetaType<StreamPlayStateTracker>("StreamPlayStateTracker");
+
     //message handler
     qInstallMessageHandler(LogWriter::customMO);
 

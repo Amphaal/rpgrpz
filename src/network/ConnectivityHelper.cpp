@@ -125,7 +125,7 @@ void ConnectivityHelper::_onUPnPExtIpFound(const QString &extIp) {
 };
 
 void ConnectivityHelper::_onUPnPError(int errorCode) {
-    qWarning() << "Connectivity : uPnP failed !";
+    qDebug() << "Connectivity : uPnP failed !";
     emit uPnPStateChanged("Non");
 }
 
@@ -171,7 +171,7 @@ void ConnectivityHelper::_getLocalAddress() {
     }
 
     if(rtrn.isNull()) {
-        qWarning() << "Connectivity : Local IP not found !";
+        qDebug() << "Connectivity : Local IP not found !";
         emit localAddressStateChanged(this->_getErrorText(), SLState::SL_Error);
     } else {
         qDebug() << "Connectivity : Local IP" << rtrn;

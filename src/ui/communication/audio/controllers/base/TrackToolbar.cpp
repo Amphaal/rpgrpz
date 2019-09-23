@@ -100,6 +100,7 @@ void TrackToolbar::updateTrackState(int stateInSeconds) {
 void TrackToolbar::endTrack() {
     this->_currentTrackEndFormated = TrackToolbar::_defaultNoTime;
     this->updateTrackState(-1);
+    this->_setPlayButtonState(false);
 }
 
 

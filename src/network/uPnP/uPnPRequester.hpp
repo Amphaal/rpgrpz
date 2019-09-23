@@ -50,7 +50,7 @@ class uPnPRequester : public uPnPThread {
                 }
             
             } catch(...) { 
-                qWarning() << "UPNP run : exception caught while processing";
+                qDebug() << "UPNP run : exception caught while processing";
             }
 
         }
@@ -82,7 +82,7 @@ class uPnPRequester : public uPnPThread {
                 WSADATA wsaData;
                 int nResult = WSAStartup(MAKEWORD(2,2), &wsaData);
                 if(nResult != NO_ERROR) {
-                    qWarning() << "UPNP Inst : Cannot init socket with WSAStartup !";
+                    qDebug() << "UPNP Inst : Cannot init socket with WSAStartup !";
                 };
             #endif
             
@@ -100,7 +100,7 @@ class uPnPRequester : public uPnPThread {
                     }
 
                 } else if(!rootdescurl) {
-                    qWarning() << "UPNP Inst : upnpDiscover() error code=" << error;
+                    qDebug() << "UPNP Inst : upnpDiscover() error code=" << error;
                 }
 
                 i = 1;
@@ -132,7 +132,7 @@ class uPnPRequester : public uPnPThread {
                         data.first.servicetype,
                         externalIPAddress);
                     if(r != UPNPCOMMAND_SUCCESS)
-                        qWarning() << "UPNP AskRedirect : GetExternalIPAddress No IGD UPnP Device. ";
+                        qDebug() << "UPNP AskRedirect : GetExternalIPAddress No IGD UPnP Device. ";
                     else {
                         qDebug() << "UPNP AskRedirect : ExternalIPAddress =" << externalIPAddress;
                         emit uPnPExtIpFound(externalIPAddress);
@@ -140,12 +140,12 @@ class uPnPRequester : public uPnPThread {
 
                 }
                 else {
-                    qWarning() << "UPNP Inst : No valid UPNP Internet Gateway Device found.";
+                    qDebug() << "UPNP Inst : No valid UPNP Internet Gateway Device found.";
                     retcode = 1;
                 }
             }
             else {
-                qWarning() << "UPNP Inst : No IGD UPnP Device found on the network !";
+                qDebug() << "UPNP Inst : No IGD UPnP Device found on the network !";
                 retcode = 1;
             }
         }
@@ -165,12 +165,12 @@ class uPnPRequester : public uPnPThread {
             int r;
 
             if(!iaddr || !iport || !eport || !proto) {
-                qWarning() << "UPNP AskRedirect : Wrong arguments";
+                qDebug() << "UPNP AskRedirect : Wrong arguments";
                 return -1;
             }
             proto = protofix(proto);
             if(!proto) {
-                qWarning() << "UPNP AskRedirect : invalid protocol";
+                qDebug() << "UPNP AskRedirect : invalid protocol";
                 return -1;
             }
 
@@ -178,7 +178,7 @@ class uPnPRequester : public uPnPThread {
                             data.first.servicetype,
                             externalIPAddress);
             if(r!=UPNPCOMMAND_SUCCESS)
-                qWarning() << "UPNP AskRedirect : GetExternalIPAddress No IGD UPnP Device.";
+                qDebug() << "UPNP AskRedirect : GetExternalIPAddress No IGD UPnP Device.";
 
             if (addAny) {
                 r = UPNP_AddAnyPortMapping(urls.controlURL, data.first.servicetype,
@@ -187,13 +187,13 @@ class uPnPRequester : public uPnPThread {
                 if(r==UPNPCOMMAND_SUCCESS)
                     eport = reservedPort;
                 else
-                    qWarning() << "UPNP AskRedirect : AddAnyPortMapping(" << eport << "," << iport << "," << iaddr << ") failed with code" << r << "(" << strupnperror(r) << ")";
+                    qDebug() << "UPNP AskRedirect : AddAnyPortMapping(" << eport << "," << iport << "," << iaddr << ") failed with code" << r << "(" << strupnperror(r) << ")";
             } else {
                 r = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype,
                             eport, iport, iaddr, description,
                             proto, NULL/*remoteHost*/, leaseDuration);
                 if(r!=UPNPCOMMAND_SUCCESS) {
-                    qWarning() << "UPNP AskRedirect : AddPortMapping(" << eport << "," << iport << "," << iaddr << ") failed with code" << r << "(" << strupnperror(r) << ")";
+                    qDebug() << "UPNP AskRedirect : AddPortMapping(" << eport << "," << iport << "," << iaddr << ") failed with code" << r << "(" << strupnperror(r) << ")";
                     return -2;
                 }
             }
@@ -204,7 +204,7 @@ class uPnPRequester : public uPnPThread {
                                 intClient, intPort, NULL/*desc*/,
                                 NULL/*enabled*/, duration);
             if(r!=UPNPCOMMAND_SUCCESS) {
-                qWarning() << "UPNP AskRedirect : GetSpecificPortMappingEntry() failed with code" << r <<"(" << strupnperror(r) << ")";
+                qDebug() << "UPNP AskRedirect : GetSpecificPortMappingEntry() failed with code" << r <<"(" << strupnperror(r) << ")";
                 return -2;
             } else {
                 qDebug() << "UPNP AskRedirect : external" << externalIPAddress << ":" << eport << proto << "is redirected to internal" << intClient << ":" << intPort << "(duration=" << duration << ")";
@@ -218,18 +218,18 @@ class uPnPRequester : public uPnPThread {
             int r;
             if(!proto || !eport)
             {
-                qWarning() << "UPNP RemoveRedirect : invalid arguments";
+                qDebug() << "UPNP RemoveRedirect : invalid arguments";
                 return -1;
             }
             proto = protofix(proto);
             if(!proto)
             {
-                qWarning() << "UPNP RemoveRedirect : protocol invalid";
+                qDebug() << "UPNP RemoveRedirect : protocol invalid";
                 return -1;
             }
             r = UPNP_DeletePortMapping(urls.controlURL, data.first.servicetype, eport, proto, remoteHost);
             if(r!=UPNPCOMMAND_SUCCESS) {
-                qWarning() << "UPNP RemoveRedirect : UPNP_DeletePortMapping() failed with code :" << r << "";
+                qDebug() << "UPNP RemoveRedirect : UPNP_DeletePortMapping() failed with code :" << r << "";
                 return -2;
             }else {
                 qDebug() << "UPNP RemoveRedirect : UPNP_DeletePortMapping() returned :" << r << "";
@@ -283,12 +283,12 @@ class uPnPRequester : public uPnPThread {
             if(UPNP_GetConnectionTypeInfo(urls.controlURL,
                                         data.first.servicetype,
                                         connectionType) != UPNPCOMMAND_SUCCESS)
-                qWarning() << "UPNP Info : GetConnectionTypeInfo failed.";
+                qDebug() << "UPNP Info : GetConnectionTypeInfo failed.";
             else
                 qDebug() << "UPNP Info : Connection Type :" << connectionType << "";
             if(UPNP_GetStatusInfo(urls.controlURL, data.first.servicetype,
                                 status, &uptime, lastconnerr) != UPNPCOMMAND_SUCCESS)
-                qWarning() << "UPNP Info : GetStatusInfo failed.";
+                qDebug() << "UPNP Info : GetStatusInfo failed.";
             else
                 qDebug() << "UPNP Info : Status :" << status << ", uptime=" << uptime << ", LastConnectionError :" << lastconnerr << "";
             if(uptime > 0) {
@@ -301,7 +301,7 @@ class uPnPRequester : public uPnPThread {
             }
             if(UPNP_GetLinkLayerMaxBitRates(urls.controlURL_CIF, data.CIF.servicetype,
                                             &brDown, &brUp) != UPNPCOMMAND_SUCCESS) {
-                qWarning() << "UPNP Info : GetLinkLayerMaxBitRates failed.";
+                qDebug() << "UPNP Info : GetLinkLayerMaxBitRates failed.";
             } else {
                 qDebug() << "UPNP Info : MaxBitRateDown :" << brDown << " bps";
                 if(brDown >= 1000000) {
@@ -321,7 +321,7 @@ class uPnPRequester : public uPnPThread {
                                     data.first.servicetype,
                                     externalIPAddress);
             if(r != UPNPCOMMAND_SUCCESS) {
-                qWarning() << "UPNP Info : GetExternalIPAddress failed. (errorcode=" << r << ")";
+                qDebug() << "UPNP Info : GetExternalIPAddress failed. (errorcode=" << r << ")";
             } else {
                 qDebug() << "UPNP Info : ExternalIPAddress=" << externalIPAddress << "";
             }

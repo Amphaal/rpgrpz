@@ -3,31 +3,37 @@
 #include <QString>
 #include <QDateTime>
 
-class StreamPlayStateTracker {
-    public:
-        void registerNewPlay(const QString &audioSourceUrl, const QString &sourceTitle, int durationInSecs) {
-            _pos = 0;
-            _duration = durationInSecs;
-            _url = audioSourceUrl;
-            _title = sourceTitle;
-            _isPlaying = true;
+#include <QVariantHash>
 
+class StreamPlayStateTracker : public QVariantHash {
+    
+    public: 
+        StreamPlayStateTracker() {};
+        StreamPlayStateTracker(const QVariantHash &hash) : QVariantHash(hash) {};
+
+        void registerNewPlay(const QString &audioSourceUrl, const QString &sourceTitle, int durationInSecs) {
+            this->_setPos(0);
+            this->_setDuration(durationInSecs);
+            this->_setUrl(audioSourceUrl);
+            this->_setTitle(sourceTitle);
+            this->_setIsPlaying(true);
             this->_refreshUpdateTS();
         }
-        void updateState(bool isPlaying) {
+
+        void updatePlayingState(bool isPlaying) {
             
             //if going to pause, update position before updating TS
-            if(!isPlaying && _isPlaying) {
-                _pos = this->position(); 
+            if(!isPlaying && this->isPlaying()) {
+                this->_setPos(this->position()); 
             } 
 
-            _isPlaying = isPlaying;
+            this->_setIsPlaying(isPlaying);
             this->_refreshUpdateTS();
 
         }
         
         void positionChanged(int pos) {
-            this->_pos = pos;
+            this->_setPos(pos);
             this->_refreshUpdateTS();
         }
 
@@ -41,45 +47,73 @@ class StreamPlayStateTracker {
 
         const int position() const {
             
-            if(_isPlaying && !_lastUpdate.isNull() && _pos) {
+            auto lu = this->lastUpdate();
+            auto pos = this->_pos();
+
+            if(this->isPlaying() && !lu.isNull() && pos > -1) {
 
                 auto now = QDateTime::currentDateTime();
-                auto elapsed = _lastUpdate.secsTo(now);
-                auto estimatedPos = _pos + elapsed;
+                auto elapsed = lu.secsTo(now);
+                auto estimatedPos = pos + elapsed;
 
-                if(estimatedPos >= _duration) return -1;
+                if(estimatedPos >= this->duration()) return -1;
                 else return (int)estimatedPos;
 
             }
                 
-            return _pos;
+            return pos;
         }
 
         const int duration() const {
-            return _duration;
+            return this->value("dur", -1).toInt();
         }
 
         const bool isPlaying() const {
-            return _isPlaying;
+            return this->value("plyn", false).toBool();
         }
 
         const QString title() const {
-            return _title;
+            return this->value("titl").toString();
         }
 
         const QString url() const {
-            return _url;
+            return this->value("url").toString();
         }
+
+        const QDateTime lastUpdate() const {
+            return this->value("lu").toDateTime();
+        };
 
     private:
-        void _refreshUpdateTS() {
-            this->_lastUpdate = QDateTime::currentDateTime();
+
+        const int _pos() const {
+            return this->value("pos", -1).toInt();
+        };
+
+        void _setDuration(int newDuration) {
+            this->insert("dur", newDuration);
+        };
+
+        void _setIsPlaying(bool newIsPlaying) {
+            this->insert("plyn", newIsPlaying);
+        };
+        
+        void _setTitle(const QString &newTitle) {
+            this->insert("titl", newTitle);
         }
 
-        int _pos = -1;
-        int _duration = -1;
-        bool _isPlaying = false;
-        QString _url;
-        QString _title;
-        QDateTime _lastUpdate;
+        void _setUrl(const QString &newUrl) {
+            this->insert("url", newUrl);
+        }
+
+        void _refreshUpdateTS() {
+            this->insert("lu", QDateTime::currentDateTime());
+        }
+        
+        void _setPos(int newPos) {
+            this->insert("pos", newPos);
+        }
+
 };
+
+Q_DECLARE_METATYPE(StreamPlayStateTracker)

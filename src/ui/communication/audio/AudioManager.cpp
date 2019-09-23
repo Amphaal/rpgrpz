@@ -17,8 +17,23 @@ AudioManager::AudioManager() :
 }
 
 void AudioManager::_onIdentityAck(const RPZUser &user) {
+    
     this->_isNetworkMaster = user.role() == RPZUser::Role::Host;
     this->_plCtrl->setEnabled(this->_isNetworkMaster);
+    
+    if(!this->_isNetworkMaster) {
+
+        this->_stopPlayingMusic();
+
+    } else {
+
+        //send state to client
+        QMetaObject::invokeMethod(this->_rpzClient, "defineAudioSourceState", 
+            Q_ARG(StreamPlayStateTracker, this->_state)
+        );
+
+    }
+    
 }
 
 void AudioManager::onRPZClientConnecting() {
@@ -27,7 +42,6 @@ void AudioManager::onRPZClientConnecting() {
     this->_isLocalOnly = false;
     this->_isNetworkMaster = false;
     this->_plCtrl->setEnabled(false);
-    this->_onStreamPlayEnded();
 
     //on receiving identity
     QObject::connect(
@@ -37,8 +51,8 @@ void AudioManager::onRPZClientConnecting() {
 
     //on master requesting audio change
     QObject::connect(
-        _rpzClient, &RPZClient::audioSourceChanged,
-        this, &AudioManager::_playAudio
+        _rpzClient, &RPZClient::audioSourceStateChanged,
+        this, &AudioManager::_onAudioSourceStateChanged
     );
 
     //on master seeking
@@ -55,16 +69,39 @@ void AudioManager::onRPZClientConnecting() {
 
 }
 
+void AudioManager::_onAudioSourceStateChanged(const StreamPlayStateTracker &state) {
+
+    //update state
+    this->_state = state;
+
+    //play audio
+    this->_playAudio(
+        this->_state.url(), 
+        this->_state.title(), 
+        this->_state.position()
+    );
+
+}
+
 void AudioManager::_onAudioPlayStateChanged(bool isPlaying) {
+    
+    //update state
+    this->_state.updatePlayingState(isPlaying);
+    
+    //use audio cli
     if(isPlaying) this->_cli->play();
     else this->_cli->pause();
 }
 
 void AudioManager::onRPZClientDisconnect() {
+    if(!this->_isNetworkMaster) {
+        this->_stopPlayingMusic();
+    }
+    
     this->_isNetworkMaster = false;
     this->_isLocalOnly = true;
     this->_plCtrl->setEnabled(true);
-    this->_onStreamPlayEnded();
+
 }
 
 
@@ -74,6 +111,24 @@ void AudioManager::_link() {
     QObject::connect(
         this->_plCtrl->playlist, &Playlist::playRequested,
         this, &AudioManager::_onToolbarPlayRequested
+    );
+
+        //on action required from toolbar
+    QObject::connect(
+        this->_plCtrl->toolbar, &TrackToolbar::actionRequired,
+        this, &AudioManager::_onToolbarActionRequested
+    );
+
+    //on seeking from toolbar
+    QObject::connect(
+        this->_plCtrl->toolbar, &TrackToolbar::seeking,
+        this, &AudioManager::_onSeekingRequested
+    );
+
+    //volume change from toolbar
+    QObject::connect(
+        this->_asCtrl->toolbar, &VolumeToolbar::askForVolumeChange,
+        this->_cli, &GStreamerClient::setVolume
     );
 
     //player position changed
@@ -94,24 +149,6 @@ void AudioManager::_link() {
         this, &AudioManager::_onStreamError
     );
 
-    //on action required from toolbar
-    QObject::connect(
-        this->_plCtrl->toolbar, &TrackToolbar::actionRequired,
-        this, &AudioManager::_onToolbarActionRequested
-    );
-
-    //on seeking from toolbar
-    QObject::connect(
-        this->_plCtrl->toolbar, &TrackToolbar::seeking,
-        this, &AudioManager::_onSeekingRequested
-    );
-
-    //volume change from toolbar
-    QObject::connect(
-        this->_asCtrl->toolbar, &VolumeToolbar::askForVolumeChange,
-        this->_cli, &GStreamerClient::setVolume
-    );
-
     //on cli play state changed
     QObject::connect(
         this->_cli, &GStreamerClient::playStateChanged,
@@ -124,10 +161,18 @@ void AudioManager::_playAudio(const QString &audioSourceUrl, const QString &sour
     
     //if start is not > 1, should not play because stream ended!
     if(startAt == -1) return;
+
+    //update state
+    this->_state.positionChanged(startAt);
     
+    //update ui
     this->_asCtrl->updatePlayedMusic(sourceTitle);
     this->_cli->useSource(audioSourceUrl);
+    
+    //seek
     if(startAt > 0) this->_cli->seek(startAt);
+
+    //advent audio cli
     this->_cli->play();
 
 }
@@ -140,14 +185,40 @@ void AudioManager::_onToolbarActionRequested(const TrackToolbar::Action &action)
     
     switch(action) {
         
-        case TrackToolbar::Action::Play:
+        case TrackToolbar::Action::Play: {
+            
+            //play audio cli
             this->_cli->play();
-            if(this->_isNetworkMaster) QMetaObject::invokeMethod(this->_rpzClient, "setAudioStreamPlayState", Q_ARG(bool, true));
+            
+            //update state
+            this->_state.updatePlayingState(true);
+
+            //send to network
+            if(this->_isNetworkMaster) {
+                QMetaObject::invokeMethod(this->_rpzClient, "setAudioStreamPlayState", 
+                    Q_ARG(bool, true)
+                );
+            }
+
+        }
         break;
 
-        case TrackToolbar::Action::Pause:
+        case TrackToolbar::Action::Pause: {
+            
+            //pause audio cli
             this->_cli->pause();
-            if(this->_isNetworkMaster) QMetaObject::invokeMethod(this->_rpzClient, "setAudioStreamPlayState", Q_ARG(bool, false));
+
+            //update state
+            this->_state.updatePlayingState(false);
+
+            //send to network
+            if(this->_isNetworkMaster) {
+                QMetaObject::invokeMethod(this->_rpzClient, "setAudioStreamPlayState", 
+                    Q_ARG(bool, false)
+                );
+            }
+
+        }
         break;
 
         default:
@@ -164,52 +235,90 @@ void AudioManager::_onToolbarPlayRequested(YoutubeVideoMetadata* metadata) {
         
         auto title = metadata->title();
         auto streamUrl = metadata->audioStreams()->getPreferedMineSourcePair().second;
-        
-        this->_playAudio(streamUrl, title, 0);
-
-        //play new track
         auto duration = metadata->duration();
+
+        //update state
+        this->_state.registerNewPlay(streamUrl, title, duration);
+
+        //update UI
         this->_plCtrl->toolbar->newTrack(duration);
+
+        //play audio cli
+        this->_playAudio(streamUrl, title, 0);
 
         //tells others users what to listen to
         if(this->_isNetworkMaster) {
-            QMetaObject::invokeMethod(this->_rpzClient, "defineAudioStreamSource", 
-                Q_ARG(QString, streamUrl), 
-                Q_ARG(QString, title),
-                Q_ARG(int, duration)
+
+            //send to client
+            QMetaObject::invokeMethod(this->_rpzClient, "defineAudioSourceState", 
+                Q_ARG(StreamPlayStateTracker, this->_state)
             );
+
         }
+
     });
 
 }
 
 void AudioManager::_onStreamError() {
+   
+    //reset state
+    this->_state.clear();
+
+    //update UI
     this->_plCtrl->toolbar->endTrack();
     this->_asCtrl->updatePlayedMusic(NULL);
 
+    //tells that current play failed
     auto currentPlay = this->_plCtrl->playlist->currentPlay();
     currentPlay->setFailure(true);
 }
 
-void AudioManager::_onStreamPlayEnded() {
+void AudioManager::_stopPlayingMusic() {
+    
+    //reset state
+    this->_state.clear();
+    
+    //stop audio
     this->_cli->stop();
+
+    //update UI
     this->_plCtrl->toolbar->endTrack();
     this->_asCtrl->updatePlayedMusic(NULL);
 
+}
+
+void AudioManager::_onStreamPlayEnded() {
+    
+    this->_stopPlayingMusic();
+    
+    //auto play
     if(this->_isNetworkMaster || this->_isLocalOnly) {
         this->_plCtrl->playlist->playNext();
     }
+
 }
 
 void AudioManager::_onPlayerPositionChanged(int position) {
+    
+    //update UI
     if(this->_isNetworkMaster || this->_isLocalOnly) {
         this->_plCtrl->toolbar->updateTrackState(position);
     }
+
 }
 
 void AudioManager::_onSeekingRequested(int seekPos) {
+    
+    //seek audio client
     this->_cli->seek(seekPos);
+    
+    //update state
+    this->_state.positionChanged(seekPos);
+
+    //may advertise client
     if(this->_isNetworkMaster) {
         QMetaObject::invokeMethod(this->_rpzClient, "changeAudioPosition", Q_ARG(int, seekPos));
     }
+
 }

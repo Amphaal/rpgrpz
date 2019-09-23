@@ -183,11 +183,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
         case JSONMethod::AudioStreamUrlChanged: {
             auto payload = data.toHash();
-            emit audioSourceChanged(
-                payload["url"].toString(), 
-                payload["title"].toString(),
-                payload["start_at"].toInt()
-            );
+            emit audioSourceStateChanged(payload);
         }
         break;
         
@@ -305,7 +301,7 @@ void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
     }
 
     emit connectionStatus(msg, true);
-    qWarning() << "RPZClient : :" << msg;
+    qDebug() << "RPZClient : :" << msg.toStdString().c_str();
 
     emit closed();
 }
@@ -334,12 +330,8 @@ void RPZClient::setAudioStreamPlayState(bool isPlaying) {
     this->_sock->sendJSON(JSONMethod::AudioStreamPlayingStateChanged, isPlaying);
 }
 
-void RPZClient::defineAudioStreamSource(const QString &audioStreamUrl, const QString &sourceTitle, int durationInSecs) {
-    QVariantHash hash;
-    hash["url"] = audioStreamUrl;
-    hash["title"] = sourceTitle;
-    hash["dur"] = durationInSecs;
-    this->_sock->sendJSON(JSONMethod::AudioStreamUrlChanged, hash);
+void RPZClient::defineAudioSourceState(const StreamPlayStateTracker &state) {
+    this->_sock->sendJSON(JSONMethod::AudioStreamUrlChanged, state);
 }
 
 void RPZClient::_onSending() {

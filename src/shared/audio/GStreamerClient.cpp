@@ -106,6 +106,7 @@ GStreamerClient::~GStreamerClient() {
 
 void GStreamerClient::downloadBufferChanging(int prcProgress) {
     this->_downloadBufferOK = prcProgress == 100;
+    // qDebug() << "Download buffer..." << prcProgress;
     emit bufferingPercentChanged(prcProgress);
 }
 
@@ -147,9 +148,11 @@ void GStreamerClient::seek(int seekPos) {
     auto result = gst_element_seek_simple(
         this->_bin, 
         GST_FORMAT_TIME,
-        GstSeekFlags(GST_SEEK_FLAG_FLUSH),
+        GstSeekFlags(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT),
         nano_seekPos
     );
+
+    qDebug() << "Seeking : " << (result ? "OK" : "Error");
 
 }
 
