@@ -1,40 +1,63 @@
 #include "AudioProbeController.h"
 
 AudioProbeController::AudioProbeController(QWidget * parent) : QGroupBox("Musique actuellement jouée", parent), 
-    _descr(new QLabel(this)),
-    _playIconLbl(new QLabel(this)),
+    _descr(new QLabel),
+    _playIconLbl(new QLabel),
     _playIcon(new QMovie(":/icons/app/audio/musicPlaying.gif")),
-    toolbar(new VolumeToolbar(this)) {
+    _posInTrackLbl(new QLabel),
+    toolbar(new VolumeToolbar) {
 
-    this->setEnabled(true);
-    this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
-    this->setAlignment(Qt::AlignHCenter);
+    //bind animation to label
+    this->_playIconLbl->setMovie(this->_playIcon);
+    
+    //layout
+        auto h = new QHBoxLayout;
+        h->setMargin(0);
+        h->addWidget(this->_posInTrackLbl);
+        h->addStretch(1);
+        h->addWidget(this->toolbar);
+
+        auto v = new QVBoxLayout;
+        v->setMargin(0);
+        v->addWidget(this->_descr);
+        v->addLayout(h);
+
+        auto topMostLayout = new QHBoxLayout;
+        this->setLayout(topMostLayout);
+        topMostLayout->addWidget(this->_playIconLbl);
+        topMostLayout->addLayout(v, 1);
+    //END layout
 
     this->updatePlayedMusic(NULL);
-    this->_playIcon->stop();
-    this->_playIconLbl->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
-    this->_playIconLbl->setMovie(this->_playIcon);
-    this->_playIconLbl->setVisible(false);
+    this->changeTrackPosition(-1);
 
-    this->setLayout(new QHBoxLayout);
-    this->layout()->addWidget(this->_playIconLbl);
-    this->layout()->addWidget(this->_descr);
-    this->layout()->addWidget(this->toolbar);
+}
+
+void AudioProbeController::changeTrackPosition(int posInSecs) {
+    auto text = posInSecs < 0 ? _defaultNoTime : DurationHelper::secondsToTrackDuration(posInSecs);
+    this->_posInTrackLbl->setText(text);
 }
 
 void AudioProbeController::updatePlayedMusic(const QString &musicName) {
-    if(musicName.isNull()) {
+    
+    auto musicIsPlaying = !musicName.isNull();
+    
+    if(!musicIsPlaying) {
         this->_descr->setText("Pas de musique jouée");
         this->_playIcon->stop();
-        this->_playIconLbl->setVisible(false);
-        this->_descr->setEnabled(false);
     }
     else {
         this->_descr->setText(musicName);
         this->_playIcon->start();
-        this->_playIconLbl->setVisible(true);
-        this->_descr->setEnabled(true);
     }
+
+    this->changeTrackPosition(-1);
+    this->_posInTrackLbl->setVisible(musicIsPlaying);
+    this->_playIconLbl->setVisible(musicIsPlaying);
+    this->toolbar->setVisible(musicIsPlaying);
+    
+    this->_descr->setEnabled(musicIsPlaying);
+    
 }
 
 void AudioProbeController::changeTrackState(bool isPlaying) {

@@ -4,12 +4,12 @@ TrackToolbar::TrackToolbar(QWidget* parent) : QWidget(parent),
     _playBtn(new QToolButton), 
     _rewindBtn(new QToolButton),
     _forwardBtn(new QToolButton), 
-    _trackStateSlider(new QSlider), 
+    _trackStateSlider(new QSlider(Qt::Orientation::Horizontal)), 
     _trackPlayStateLbl(new QLabel) {
     
+    this->endTrack();
+
     //play / pause
-    this->_playBtn->setCheckable(true);
-    this->_setPlayButtonState(false);
     QObject::connect(
         this->_playBtn, &QAbstractButton::clicked,
         this, &TrackToolbar::_tooglePlayButtonState
@@ -33,10 +33,6 @@ TrackToolbar::TrackToolbar(QWidget* parent) : QWidget(parent),
         }
     );
 
-    //track state
-    this->_trackStateSlider->setOrientation(Qt::Orientation::Horizontal);
-    this->updateTrackState(-1);
-    
     //on slider release
     QObject::connect(
         this->_trackStateSlider, &QSlider::sliderReleased,
@@ -48,16 +44,21 @@ TrackToolbar::TrackToolbar(QWidget* parent) : QWidget(parent),
     );
     QObject::connect(
         this->_trackStateSlider, &QSlider::sliderPressed,
-        [&]() {this->_sliderDown = true;}
+        [&]() {
+            this->_sliderDown = true;
+        }
     );
 
     QObject::connect(
         this->_trackStateSlider, &QSlider::valueChanged,
         [&](int pos) {
-            this->updateTrackState(pos);
+           
+            this->_updateTrackTimeStateDescriptor(pos);
+            
             if(!this->_sliderDown) {
                 emit seeking(pos);
             }
+
         }
     );
 
@@ -68,54 +69,69 @@ TrackToolbar::TrackToolbar(QWidget* parent) : QWidget(parent),
     this->layout()->addWidget(this->_forwardBtn);
     this->layout()->addWidget(this->_trackStateSlider);
     this->layout()->addWidget(this->_trackPlayStateLbl);
+
 }
 
-void TrackToolbar::updateTrackState(int stateInSeconds) {
+void TrackToolbar::_updateTrackTimeStateDescriptor(int stateInSeconds) {
+    
+    //formated
+    auto current = stateInSeconds < 0 ? TrackToolbar::_defaultNoTime : DurationHelper::fromSecondsToTime(stateInSeconds);
+    
+    //update lbl
+    this->_trackPlayStateLbl->setText(
+        this->_playStateDescriptor.arg(current)
+    );
+
+}
+
+void TrackToolbar::updatePlayerPosition(int posInSeconds) {
+    
     //prevent updating while slider is manipulated
     if(this->_sliderDown) return;
 
     //conditionnal state widgets
-    QString current = stateInSeconds < 0 ? TrackToolbar::_defaultNoTime : this->_fromSecondsToTime(stateInSeconds);
-    this->_trackStateSlider->setEnabled(stateInSeconds > -1);
+    auto enabledWidgets = posInSeconds > -1;
+    this->_trackStateSlider->setEnabled(enabledWidgets);
     
     //update slider value
-    if(this->_trackStateSlider->isEnabled() && !this->_sliderDown) {
-        this->_trackStateSlider->blockSignals(true); 
-        this->_trackStateSlider->setValue(stateInSeconds);
-        this->_trackStateSlider->blockSignals(false); 
+    if(this->_trackStateSlider->isEnabled()) {
+        QSignalBlocker b(this->_trackStateSlider);
+        this->_trackStateSlider->setValue(posInSeconds);
     }
 
-    this->_playBtn->setEnabled(stateInSeconds > -1);
-    this->_rewindBtn->setEnabled(stateInSeconds > -1);
-    this->_forwardBtn->setEnabled(stateInSeconds > -1);
+    this->_playBtn->setEnabled(enabledWidgets);
+    this->_playBtn->setCheckable(enabledWidgets);
+
+    this->_rewindBtn->setEnabled(enabledWidgets);
+    this->_forwardBtn->setEnabled(enabledWidgets);
 
     //update txt val
-    this->_trackPlayStateLbl->setText(
-        this->_trackPlayStateTemplator
-            .arg(current)
-            .arg(this->_currentTrackEndFormated)
-    );
+    this->_updateTrackTimeStateDescriptor(posInSeconds);
+
 }
 
 void TrackToolbar::endTrack() {
-    this->_currentTrackEndFormated = TrackToolbar::_defaultNoTime;
-    this->updateTrackState(-1);
+    //update descriptor and UI state
+    this->_playStateDescriptor = _trackPlayStateTemplator.arg("%1", _defaultNoTime);
+    this->updatePlayerPosition(-1);
     this->_setPlayButtonState(false);
 }
 
 
 void TrackToolbar::newTrack(int lengthInSeconds) {
-    this->_trackStateSlider->setValue(0);
-    this->_trackStateSlider->setMaximum(lengthInSeconds);
+    
+    //update without triggering events
+    {
+        QSignalBlocker b(this->_trackStateSlider);
+        this->_trackStateSlider->setValue(0);
+        this->_trackStateSlider->setMaximum(lengthInSeconds);
+    }
 
-    this->_currentTrackEndFormated = this->_fromSecondsToTime(lengthInSeconds);
-
-    this->updateTrackState(0);
+    //update descriptor and UI state
+    this->_playStateDescriptor = _trackPlayStateTemplator.arg("%1", DurationHelper::fromSecondsToTime(lengthInSeconds));
+    this->updatePlayerPosition(0);
     this->_setPlayButtonState(true);
-}
 
-QString TrackToolbar::_fromSecondsToTime(int lengthInSeconds) {
-    return QTime::fromMSecsSinceStartOfDay(lengthInSeconds * 1000).toString("hh:mm:ss");
 }
 
 void TrackToolbar::_setPlayButtonState(bool isPlaying) {
@@ -133,4 +149,5 @@ void TrackToolbar::_tooglePlayButtonState() {
     } else {
         emit actionRequired(TrackToolbar::Action::Pause);
     }
+
 }

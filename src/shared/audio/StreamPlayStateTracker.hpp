@@ -12,8 +12,8 @@ class StreamPlayStateTracker : public QVariantHash {
         StreamPlayStateTracker(const QVariantHash &hash) : QVariantHash(hash) {};
 
         void registerNewPlay(const QString &audioSourceUrl, const QString &sourceTitle, int durationInSecs) {
-            this->_setPos(0);
-            this->_setDuration(durationInSecs);
+            this->_setPosInMsecs(0);
+            this->_setDurationInSecs(durationInSecs);
             this->_setUrl(audioSourceUrl);
             this->_setTitle(sourceTitle);
             this->_setIsPlaying(true);
@@ -24,7 +24,7 @@ class StreamPlayStateTracker : public QVariantHash {
             
             //if going to pause, update position before updating TS
             if(!isPlaying && this->isPlaying()) {
-                this->_setPos(this->position()); 
+                this->_setPosInMsecs(this->positionInMsecs()); 
             } 
 
             this->_setIsPlaying(isPlaying);
@@ -32,39 +32,39 @@ class StreamPlayStateTracker : public QVariantHash {
 
         }
         
-        void positionChanged(int pos) {
-            this->_setPos(pos);
+        void updatePositionInMSecs(qint64 posInMSecs) {
+            this->_setPosInMsecs(posInMSecs);
             this->_refreshUpdateTS();
         }
 
         bool isSomethingPlaying() {
-            return this->position() > -1;
+            return this->positionInMsecs() > -1;
         }
 
     ///
     ///
     ///
 
-        const int position() const {
+        const qint64 positionInMsecs() const {
             
             auto lu = this->lastUpdate();
-            auto pos = this->_pos();
+            auto pos = this->_posInMsecs();
 
             if(this->isPlaying() && !lu.isNull() && pos > -1) {
 
                 auto now = QDateTime::currentDateTime();
-                auto elapsed = lu.secsTo(now);
+                auto elapsed = lu.msecsTo(now);
                 auto estimatedPos = pos + elapsed;
 
-                if(estimatedPos >= this->duration()) return -1;
-                else return (int)estimatedPos;
+                if(estimatedPos >= this->durationInSecs() * 1000) return -1;
+                else return (qint64)estimatedPos;
 
             }
                 
             return pos;
         }
 
-        const int duration() const {
+        const int durationInSecs() const {
             return this->value("dur", -1).toInt();
         }
 
@@ -86,12 +86,12 @@ class StreamPlayStateTracker : public QVariantHash {
 
     private:
 
-        const int _pos() const {
-            return this->value("pos", -1).toInt();
+        const qint64 _posInMsecs() const {
+            return this->value("pos", -1).value<qint64>();
         };
 
-        void _setDuration(int newDuration) {
-            this->insert("dur", newDuration);
+        void _setDurationInSecs(int newDurationInSecs) {
+            this->insert("dur", newDurationInSecs);
         };
 
         void _setIsPlaying(bool newIsPlaying) {
@@ -110,8 +110,8 @@ class StreamPlayStateTracker : public QVariantHash {
             this->insert("lu", QDateTime::currentDateTime());
         }
         
-        void _setPos(int newPos) {
-            this->insert("pos", newPos);
+        void _setPosInMsecs(qint64 newPosInMsecs) {
+            this->insert("pos", newPosInMsecs);
         }
 
 };

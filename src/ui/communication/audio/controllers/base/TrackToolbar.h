@@ -10,6 +10,8 @@
 #include <QSlider>
 #include <QToolButton>
 
+#include "src/helpers/DurationHelper.hpp"
+
 class TrackToolbar : public QWidget {
     
     Q_OBJECT
@@ -19,15 +21,18 @@ class TrackToolbar : public QWidget {
 
         TrackToolbar(QWidget* parent = nullptr);
     
-        void updateTrackState(int stateInSeconds);
+        void updatePlayerPosition(int posInSeconds);
         void newTrack(int lengthInSeconds);
         void endTrack();
 
     signals:
         void actionRequired(const TrackToolbar::Action &action);
-        void seeking(int pos);
+        void seeking(int posInSecs);
 
     private:
+        static inline const QString _defaultNoTime = "--"; 
+        static inline const QString _trackPlayStateTemplator = " %1 / %2 ";
+
         QToolButton* _playBtn;
         QIcon _playIcon = QIcon(":/icons/app/audio/play.png");
         QIcon _pauseIcon = QIcon(":/icons/app/audio/pause.png");
@@ -37,13 +42,12 @@ class TrackToolbar : public QWidget {
 
         QSlider* _trackStateSlider;
         QLabel* _trackPlayStateLbl;
-        static inline const QString _defaultNoTime = "--"; 
-        QString _trackPlayStateTemplator = QString(" %1 / %2 ");
-        QString _currentTrackEndFormated = TrackToolbar::_defaultNoTime; 
+        QString _playStateDescriptor; 
 
-        QString _fromSecondsToTime(int lengthInSeconds);
         void _setPlayButtonState(bool isPlaying);
         void _tooglePlayButtonState();
+        void _updateTrackTimeStateDescriptor(int stateInSeconds);
 
         bool _sliderDown = false;
+
 };

@@ -15,6 +15,11 @@
 #include <QTimeLine>
 #include <QtMath>
 
+struct BufferedSeek {
+    QDateTime ts;
+    gint64 posInNano = 0;
+};
+
 class GStreamerClient : public QObject {
 
     Q_OBJECT
@@ -23,13 +28,12 @@ class GStreamerClient : public QObject {
         GStreamerClient(QObject* parent = nullptr);
         ~GStreamerClient();
         
-
         void useSource(QString uri);
         void setVolume(double volume);
         void play();
         void pause();
         void stop();
-        void seek(int seekPos);
+        void seek(qint64 seekPosInMsecs);
     
     //pseudo private
         GstElement* _bin = nullptr;
@@ -42,12 +46,21 @@ class GStreamerClient : public QObject {
         QTimer* _elapsedTimer = nullptr;
         bool _downloadBufferOK = false;
 
+        //seek
+        bool _mayQuerySeekRange = true;
+        bool _seekRangeUpToDate = false;
+        QPair<gint64, gint64> _seekableRange;
+        BufferedSeek _seekBuffer;
+
+        bool _seek(gint64 seekInNanoSecs);
+        void _freeSeekBuffer();
+
     public slots:
         void stopTimer(const GstMessageType &reason);
         void downloadBufferChanging(int prcProgress);
 
     signals:
-        void positionChanged(int pos);
+        void positionChanged(int positionInSecs);
         void streamEnded();
         void streamError();
         void playStateChanged(bool isPlaying);
@@ -57,5 +70,6 @@ class GStreamerClient : public QObject {
         void _initGst();
     
     private:
+        //volume
         QTimeLine _volumeTLHelper;
 };

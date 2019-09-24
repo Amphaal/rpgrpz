@@ -30,13 +30,13 @@ VolumeToolbar::VolumeToolbar(QWidget* parent) : QWidget(parent),
     );
 
     //layout
-    this->setLayout(new QHBoxLayout);
-    this->layout()->addWidget(this->_mute);
-    this->layout()->addWidget(this->_audio);
-    this->layout()->addWidget(this->_volumeStr);
+    auto layout = new QHBoxLayout;
+    this->setLayout(layout);
+    layout->setMargin(0);
+    layout->addWidget(this->_mute);
+    layout->addWidget(this->_audio, 1);
+    layout->addWidget(this->_volumeStr);
 
-    //self
-    this->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 }
 
 void VolumeToolbar::_onAudioChange(int newSliderVal) {

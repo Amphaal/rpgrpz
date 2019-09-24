@@ -11,7 +11,7 @@ class DurationHelper {
 
             int secondsPart = durationInSeconds % 60;
             int minutesPart = (durationInSeconds / 60) % 60;
-            int hoursPart = (durationInSeconds / (60*60));
+            int hoursPart = (durationInSeconds / (60 * 60));
 
             //seconds
             durationStr = ":" + QString::number(secondsPart).rightJustified(2, '0');
@@ -25,6 +25,10 @@ class DurationHelper {
             durationStr = QString::number(hoursPart) + ":" + durationStr;
 
             return durationStr;
+        }
+
+        static QString fromSecondsToTime(int lengthInSeconds) {
+            return QTime::fromMSecsSinceStartOfDay(lengthInSeconds * 1000).toString("hh:mm:ss");
         }
 
 };

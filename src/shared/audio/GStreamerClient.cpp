@@ -11,7 +11,7 @@ extern "C" {
         GStreamerClient* cli = static_cast<GStreamerClient*>(data);
 
         //on message type
-        auto type = GST_MESSAGE_TYPE (msg);
+        auto type = GST_MESSAGE_TYPE(msg);
         // auto test = gst_message_type_get_name (type);
         // g_print ("%s\n", test);
 
@@ -32,15 +32,81 @@ extern "C" {
             }
             break;
 
+            case GST_MESSAGE_STATE_CHANGED: {
+                
+                //get update inner state
+                GstState old_state, new_state, pending_state;
+                gst_message_parse_state_changed (msg, &old_state, &new_state, &pending_state);
+                
+                //if playbin is not the target, skip
+                if(GST_MESSAGE_SRC(msg) != GST_OBJECT(cli->_bin)) break;
+
+                //check if in play state and refresh of seekable must be done
+                auto isPlaying = (new_state == GST_STATE_PLAYING);
+                auto shouldQuery = (cli->_mayQuerySeekRange && !cli->_seekRangeUpToDate && isPlaying);
+                if(!isPlaying) cli->_seekRangeUpToDate = false;
+                if(!shouldQuery) break;
+
+                //create a new query to request seek ranges
+                auto query = gst_query_new_seeking(GST_FORMAT_TIME);
+                
+                //request values from query
+                if (gst_element_query (cli->_bin, query)) {
+                    
+                    //parse values
+                    gint64 start, end;
+                    gboolean seek_enabled;
+                    gst_query_parse_seeking (query, NULL, &seek_enabled, &start, &end);
+
+                    //if can seek
+                    if (seek_enabled) {
+                        
+                        //update seek range
+                        cli->_seekableRange = QPair<gint64, gint64>(start, end);
+                        cli->_seekRangeUpToDate = true;
+                        
+                        //free seek buffer if any
+                        cli->_freeSeekBuffer();
+
+                    } 
+                    
+                    //if cant, prevent further querying until source changed
+                    else {
+                        cli->_mayQuerySeekRange = false;
+                        cli->_seekableRange = QPair<gint64, gint64>();
+                        g_print ("Seeking is DISABLED for this stream.\n");
+                    }
+
+                } 
+                
+                //on error while querying
+                else {
+                    cli->_seekableRange = QPair<gint64, gint64>();
+                    g_printerr ("Seeking query failed.");
+                }
+
+                //unref query
+                gst_query_unref (query);
+                
+            }
+            break;
+
             case GST_MESSAGE_EOS: {
-                QMetaObject::invokeMethod(cli, "stopTimer", Q_ARG(GstMessageType, type));
+                QMetaObject::invokeMethod(cli, "stopTimer", 
+                    Q_ARG(GstMessageType, type)
+                );
             }
             break;
 
             case GST_MESSAGE_BUFFERING: {
+                
                 gint percent;
                 gst_message_parse_buffering(msg, &percent);
-                QMetaObject::invokeMethod(cli, "downloadBufferChanging", Q_ARG(int, percent));
+                
+                QMetaObject::invokeMethod(cli, "downloadBufferChanging", 
+                    Q_ARG(int, percent)
+                );
+
             }
             break;
             
@@ -116,6 +182,7 @@ void GStreamerClient::stopTimer(const GstMessageType &reason) {
 
     switch(reason) {
         case GST_MESSAGE_ERROR:
+            qWarning() << "Error from Stream";
             emit streamError();
         break;
 
@@ -134,25 +201,85 @@ void GStreamerClient::useSource(QString uri) {
     //set new source
     g_object_set(G_OBJECT(this->_bin), "uri", uri.toStdString().c_str(), NULL);
 
-    //play
-    this->play();
+    //allow requesting seek range
+    this->_mayQuerySeekRange = true;
+    this->_seekRangeUpToDate = false;
 
     //debug graph (use https://dreampuf.github.io/GraphvizOnline to read it)
     //GST_DEBUG_BIN_TO_DOT_FILE(GST_BIN(this->_bin), GST_DEBUG_GRAPH_SHOW_ALL, "gst-pipeline");
+
 }
 
-void GStreamerClient::seek(int seekPos) {
+void GStreamerClient::seek(qint64 seekPosInMsecs) {
     
-    gint64 nano_seekPos = GST_SECOND * seekPos;
+    gint64 nano_seekPos = GST_MSECOND * (gint64)seekPosInMsecs;
     
+    //buffer
+    if(!this->_seekRangeUpToDate) {
+        
+        BufferedSeek buf;
+        buf.posInNano = nano_seekPos;
+        buf.ts = QDateTime::currentDateTime();
+
+        this->_seekBuffer = buf;
+
+    } 
+    
+    //seek
+    else {
+        this->_seek(nano_seekPos);
+    }
+    
+}
+
+
+void GStreamerClient::_freeSeekBuffer() {
+    
+    //extract buffer values
+    auto bufpos = this->_seekBuffer.posInNano;
+    auto bufTs = this->_seekBuffer.ts;
+
+    //check if a seek buffer is waiting
+    if(bufpos != 0) {
+
+        //reset buffer
+        BufferedSeek buf;
+        this->_seekBuffer = buf;
+        
+        //update bufpos
+        auto diffMsec = bufTs.msecsTo(QDateTime::currentDateTime());
+        auto diffNsec = GST_MSECOND * diffMsec;
+        bufpos = bufpos + diffNsec;
+
+        //check if Out of Bound 
+        auto oobSeekOperation = 
+            this->_seekableRange.first > bufpos ||
+            this->_seekableRange.second < bufpos;
+
+        if(oobSeekOperation) return;
+
+        //seek
+        this->_seek(bufpos);
+
+    }
+}
+ 
+bool GStreamerClient::_seek(gint64 seekInNanoSecs) {
+
+    //check if can seek
+    auto currentState = this->_bin->current_state;
+    auto canSeek = currentState == GST_STATE_PLAYING || currentState == GST_STATE_PAUSED;
+    if(!canSeek) return false;
+
+    //seek
     auto result = gst_element_seek_simple(
         this->_bin, 
         GST_FORMAT_TIME,
-        GstSeekFlags(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT),
-        nano_seekPos
+        GstSeekFlags(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE),
+        seekInNanoSecs
     );
 
-    qDebug() << "Seeking : " << (result ? "OK" : "Error");
+    return result;
 
 }
 
@@ -171,7 +298,7 @@ void GStreamerClient::setVolume(double volume) {
 
 void GStreamerClient::play() {
     this->_changeBinState(GST_STATE_PLAYING);
-    this->_elapsedTimer->start(1000);
+    this->_elapsedTimer->start(500);
     this->_requestPosition();
     emit playStateChanged(true);
 }
@@ -227,6 +354,9 @@ void GStreamerClient::_initGst() {
     //gio module dir
     auto gio_ = QCoreApplication::applicationDirPath().toStdString() + "/gio";
     qputenv("GIO_MODULE_DIR", gio_.c_str());
+
+    //debug log
+    // qputenv("GST_DEBUG", "4");
 
     //setup
     GError* err = NULL;

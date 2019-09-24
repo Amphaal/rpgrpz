@@ -66,10 +66,9 @@ class BrushToolEditor : public AtomSubEditor {
             
             AtomSubEditor::loadTemplate(defaultValue);
 
-            this->_combo->blockSignals(true); 
-                auto indexToSelect = this->_combo->findData(defaultValue);
-                this->_combo->setCurrentIndex(indexToSelect);
-            this->_combo->blockSignals(false);
+            QSignalBlocker b(this->_combo);
+            auto indexToSelect = this->_combo->findData(defaultValue);
+            this->_combo->setCurrentIndex(indexToSelect);
 
         }
 

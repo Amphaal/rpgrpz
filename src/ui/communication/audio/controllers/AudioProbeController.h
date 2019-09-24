@@ -12,6 +12,7 @@
 #include "src/ui/others/ClientBindable.h"
 
 #include "base/VolumeToolbar.h"
+#include "src/helpers/DurationHelper.hpp"
 
 class AudioProbeController : public QGroupBox {
 
@@ -20,11 +21,15 @@ class AudioProbeController : public QGroupBox {
         
         void updatePlayedMusic(const QString &musicName);
         void changeTrackState(bool isPlaying);
+        void changeTrackPosition(int posInSecs);
         
         VolumeToolbar* toolbar = nullptr;
         
     private:
+        static inline const QString _defaultNoTime = "--"; 
+
         QLabel* _descr = nullptr;
         QLabel* _playIconLbl = nullptr;
+        QLabel* _posInTrackLbl = nullptr;
         QMovie* _playIcon = nullptr;
 };

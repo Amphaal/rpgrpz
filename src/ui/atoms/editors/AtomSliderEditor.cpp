@@ -47,10 +47,11 @@ void AtomSliderEditor::loadTemplate(const QVariant &defaultValue) {
         this->_descr->updateValue(castedVal);
     }
     
-    this->slider()->blockSignals(true); 
+    {
+        QSignalBlocker b(this->slider());
         auto sval = this->_toSliderValue(castedVal);
         this->slider()->setValue(sval);
-    this->slider()->blockSignals(false);
+    }
 
 }
 

@@ -130,7 +130,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
         case JSONMethod::AudioStreamPositionChanged: {
 
-            this->_tracker.updatePlayingState(data.toInt());
+            this->_tracker.updatePlayingState(data.value<qint64>());
 
             this->_sendToAllButSelf(target, JSONMethod::AudioStreamPositionChanged, data);
 

@@ -170,7 +170,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         break;
 
         case JSONMethod::AudioStreamPositionChanged: {
-            auto newPos = data.toInt();
+            auto newPos = data.value<qint64>();
             emit audioPositionChanged(newPos);
         }
         break;
@@ -322,8 +322,8 @@ void RPZClient::_askForAssets(const QSet<RPZAssetHash> &ids) {
     this->_sock->sendJSON(JSONMethod::AskForAssets, list);
 }
 
-void RPZClient::changeAudioPosition(int newPosition) {
-    this->_sock->sendJSON(JSONMethod::AudioStreamPositionChanged, newPosition);
+void RPZClient::changeAudioPosition(qint64 newPositionInMsecs) {
+    this->_sock->sendJSON(JSONMethod::AudioStreamPositionChanged, newPositionInMsecs);
 }
 
 void RPZClient::setAudioStreamPlayState(bool isPlaying) {

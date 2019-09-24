@@ -58,7 +58,7 @@ void AudioManager::onRPZClientConnecting() {
     //on master seeking
     QObject::connect(
         _rpzClient, &RPZClient::audioPositionChanged,
-        this, &AudioManager::_onSeekingRequested
+        this, qOverload<qint64>(&AudioManager::_onSeekingRequested)
     );
 
     //on master pausing / playing
@@ -78,7 +78,7 @@ void AudioManager::_onAudioSourceStateChanged(const StreamPlayStateTracker &stat
     this->_playAudio(
         this->_state.url(), 
         this->_state.title(), 
-        this->_state.position()
+        this->_state.positionInMsecs()
     );
 
 }
@@ -122,7 +122,7 @@ void AudioManager::_link() {
     //on seeking from toolbar
     QObject::connect(
         this->_plCtrl->toolbar, &TrackToolbar::seeking,
-        this, &AudioManager::_onSeekingRequested
+        this, qOverload<int>(&AudioManager::_onSeekingRequested)
     );
 
     //volume change from toolbar
@@ -157,23 +157,23 @@ void AudioManager::_link() {
 
 }
 
-void AudioManager::_playAudio(const QString &audioSourceUrl, const QString &sourceTitle, int startAt) {
+void AudioManager::_playAudio(const QString &audioSourceUrl, const QString &sourceTitle, qint64 startAtMsecsPos) {
     
     //if start is not > 1, should not play because stream ended!
-    if(startAt == -1) return;
+    if(startAtMsecsPos == -1) return;
 
     //update state
-    this->_state.positionChanged(startAt);
+    this->_state.updatePositionInMSecs(startAtMsecsPos);
     
     //update ui
     this->_asCtrl->updatePlayedMusic(sourceTitle);
     this->_cli->useSource(audioSourceUrl);
-    
-    //seek
-    if(startAt > 0) this->_cli->seek(startAt);
 
     //advent audio cli
     this->_cli->play();
+
+    //seek to pos if requested
+    if(startAtMsecsPos > 0) this->_cli->seek(startAtMsecsPos);
 
 }
 
@@ -299,26 +299,34 @@ void AudioManager::_onStreamPlayEnded() {
 
 }
 
-void AudioManager::_onPlayerPositionChanged(int position) {
+void AudioManager::_onPlayerPositionChanged(int positionInSecs) {
     
     //update UI
     if(this->_isNetworkMaster || this->_isLocalOnly) {
-        this->_plCtrl->toolbar->updateTrackState(position);
+        this->_plCtrl->toolbar->updatePlayerPosition(positionInSecs);
+    }
+
+    this->_asCtrl->changeTrackPosition(positionInSecs);
+
+}
+
+void AudioManager::_onSeekingRequested(qint64 seekPosInMsecs) {
+    
+    //seek audio client
+    this->_cli->seek(seekPosInMsecs);
+    
+    //update state
+    this->_state.updatePositionInMSecs(seekPosInMsecs);
+
+    //may advertise client
+    if(this->_isNetworkMaster) {
+        QMetaObject::invokeMethod(this->_rpzClient, "changeAudioPosition", 
+            Q_ARG(qint64, seekPosInMsecs)
+        );
     }
 
 }
 
-void AudioManager::_onSeekingRequested(int seekPos) {
-    
-    //seek audio client
-    this->_cli->seek(seekPos);
-    
-    //update state
-    this->_state.positionChanged(seekPos);
-
-    //may advertise client
-    if(this->_isNetworkMaster) {
-        QMetaObject::invokeMethod(this->_rpzClient, "changeAudioPosition", Q_ARG(int, seekPos));
-    }
-
+void AudioManager::_onSeekingRequested(int seekPosInSecs) {
+    this->_onSeekingRequested((qint64)seekPosInSecs * 1000);
 }

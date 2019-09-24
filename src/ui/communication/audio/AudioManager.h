@@ -28,7 +28,8 @@ class AudioManager : public QWidget, public ClientBindable {
 
     private slots:
         void _onIdentityAck(const RPZUser &user);
-        void _onSeekingRequested(int seekPos);
+        void _onSeekingRequested(int seekPosInSecs);
+        void _onSeekingRequested(qint64 seekPosInMsecs);
         void _onAudioPlayStateChanged(bool isPlaying);
         void _onAudioSourceStateChanged(const StreamPlayStateTracker &state);
 
@@ -46,11 +47,11 @@ class AudioManager : public QWidget, public ClientBindable {
         void _link();
 
         void _stopPlayingMusic();
-        void _playAudio(const QString &audioSourceUrl, const QString &sourceTitle, int startAt);
+        void _playAudio(const QString &audioSourceUrl, const QString &sourceTitle, qint64 startAtMsecsPos);
         
         void _onToolbarActionRequested(const TrackToolbar::Action &action);
         void _onToolbarPlayRequested(YoutubeVideoMetadata* playlistItemPtr);
-        void _onPlayerPositionChanged(int position);
+        void _onPlayerPositionChanged(int positionInSecs);
         void _onStreamPlayEnded();
         void _onStreamError();
     

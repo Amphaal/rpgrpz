@@ -38,9 +38,8 @@ class AtomTextEditor : public AtomSubEditor  {
 
             auto castedVal = defaultValue.toString();
             
-            this->textEdit()->blockSignals(true); 
-                this->textEdit()->setText(castedVal);
-            this->textEdit()->blockSignals(false);
+            QSignalBlocker b(this->textEdit());
+            this->textEdit()->setText(castedVal);
 
         }
 };
