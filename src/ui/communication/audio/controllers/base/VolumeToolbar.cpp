@@ -1,13 +1,11 @@
 #include "VolumeToolbar.h"
 
 VolumeToolbar::VolumeToolbar(QWidget* parent) : QWidget(parent), 
-    _audio(new QSlider), 
+    _audio(new QSlider(Qt::Orientation::Horizontal)), 
     _volumeStr(new QLabel),
     _mute(new QToolButton) {
     
     //audio
-    this->_audio->setOrientation(Qt::Orientation::Horizontal);
-    this->_audio->setFixedWidth(100);
     this->_audio->setMinimum(0);
     this->_audio->setMaximum(100);
 

@@ -116,6 +116,7 @@ int main(int argc, char** argv) {
     qRegisterMetaType<QVector<RPZAssetHash>>("QVector<RPZAssetHash>");
     qRegisterMetaType<GstMessageType>("GstMessageType");
     qRegisterMetaType<StreamPlayStateTracker>("StreamPlayStateTracker");
+    qRegisterMetaType<gint64>("gint64");
 
     //message handler
     qInstallMessageHandler(LogWriter::customMO);

@@ -121,7 +121,8 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
         case JSONMethod::AudioStreamPlayingStateChanged: {
             
-            this->_tracker.updatePlayingState(data.toBool());
+            auto isPlaying = data.toBool();
+            this->_tracker.updatePlayingState(isPlaying);
             
             this->_sendToAllButSelf(target, JSONMethod::AudioStreamPlayingStateChanged, data);
 
@@ -129,8 +130,9 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         break;
 
         case JSONMethod::AudioStreamPositionChanged: {
-
-            this->_tracker.updatePlayingState(data.value<qint64>());
+            
+            auto newPosInMs = data.value<qint64>();
+            this->_tracker.updatePositionInMSecs(newPosInMs);
 
             this->_sendToAllButSelf(target, JSONMethod::AudioStreamPositionChanged, data);
 
@@ -215,16 +217,25 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
             //send history to the client
             this->_sendStoredMessages(target);
-
-            //send data about played stream
-            this->_sendPlayedStream(target); 
-
-            //ask for host map history
+            
+            //if is host
             if(target == this->_hostSocket)  {
+                
+                //ask for host map history
                 this->_askHostForMapHistory();
-            } else {
+
+            } 
+            
+            else {
+                                
+                //send data about played stream
+                this->_sendPlayedStream(target); 
+
+                //send stored history
                 this->_sendMapHistory(target);
+
             }
+
         }
         break;
 

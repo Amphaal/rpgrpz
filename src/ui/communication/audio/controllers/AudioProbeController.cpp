@@ -15,7 +15,7 @@ AudioProbeController::AudioProbeController(QWidget * parent) : QGroupBox("Musiqu
         h->setMargin(0);
         h->addWidget(this->_posInTrackLbl);
         h->addStretch(1);
-        h->addWidget(this->toolbar);
+        h->addWidget(this->toolbar, 3);
 
         auto v = new QVBoxLayout;
         v->setMargin(0);

@@ -23,6 +23,7 @@ void AudioManager::_onIdentityAck(const RPZUser &user) {
     
     if(!this->_isNetworkMaster) {
 
+        //stop playing music and wait for online instructions
         this->_stopPlayingMusic();
 
     } else {
@@ -94,6 +95,7 @@ void AudioManager::_onAudioPlayStateChanged(bool isPlaying) {
 }
 
 void AudioManager::onRPZClientDisconnect() {
+    
     if(!this->_isNetworkMaster) {
         this->_stopPlayingMusic();
     }
@@ -173,7 +175,10 @@ void AudioManager::_playAudio(const QString &audioSourceUrl, const QString &sour
     this->_cli->play();
 
     //seek to pos if requested
-    if(startAtMsecsPos > 0) this->_cli->seek(startAtMsecsPos);
+    if(startAtMsecsPos > 0) {
+        this->_cli->seek(startAtMsecsPos);
+    }
+
 
 }
 

@@ -29,6 +29,7 @@
 #include "src/shared/commands/MessageInterpreter.h"
 #include "src/shared/audio/StreamPlayStateTracker.hpp"
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
+#include "src/helpers/DurationHelper.hpp"
 
 class RPZServer : public QTcpServer, public JSONRouter { 
     

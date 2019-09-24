@@ -7,6 +7,8 @@ TrackToolbar::TrackToolbar(QWidget* parent) : QWidget(parent),
     _trackStateSlider(new QSlider(Qt::Orientation::Horizontal)), 
     _trackPlayStateLbl(new QLabel) {
     
+    this->_playBtn->setCheckable(true);
+
     this->endTrack();
 
     //play / pause
@@ -94,13 +96,12 @@ void TrackToolbar::updatePlayerPosition(int posInSeconds) {
     this->_trackStateSlider->setEnabled(enabledWidgets);
     
     //update slider value
-    if(this->_trackStateSlider->isEnabled()) {
+    {
         QSignalBlocker b(this->_trackStateSlider);
         this->_trackStateSlider->setValue(posInSeconds);
     }
 
     this->_playBtn->setEnabled(enabledWidgets);
-    this->_playBtn->setCheckable(enabledWidgets);
 
     this->_rewindBtn->setEnabled(enabledWidgets);
     this->_forwardBtn->setEnabled(enabledWidgets);

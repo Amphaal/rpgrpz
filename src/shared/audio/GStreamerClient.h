@@ -15,6 +15,8 @@
 #include <QTimeLine>
 #include <QtMath>
 
+#include <QMutexLocker>
+
 struct BufferedSeek {
     QDateTime ts;
     gint64 posInNano = 0;
@@ -47,17 +49,18 @@ class GStreamerClient : public QObject {
         bool _downloadBufferOK = false;
 
         //seek
+        mutable QMutex _m_seek;
         bool _mayQuerySeekRange = true;
         bool _seekRangeUpToDate = false;
         QPair<gint64, gint64> _seekableRange;
         BufferedSeek _seekBuffer;
 
-        bool _seek(gint64 seekInNanoSecs);
         void _freeSeekBuffer();
 
     public slots:
         void stopTimer(const GstMessageType &reason);
         void downloadBufferChanging(int prcProgress);
+        bool _seek(gint64 seekInNanoSecs);
 
     signals:
         void positionChanged(int positionInSecs);

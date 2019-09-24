@@ -160,6 +160,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
             //emit
             emit availableAssetsFromServer(out);
+            
         }
         break;
 

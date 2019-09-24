@@ -27,7 +27,9 @@ extern "C" {
                 g_clear_error (&err);
                 g_free (debug_info);
                 
-                QMetaObject::invokeMethod(cli, "stopTimer", Q_ARG(GstMessageType, type));
+                QMetaObject::invokeMethod(cli, "stopTimer", 
+                    Q_ARG(GstMessageType, type)
+                );
 
             }
             break;
@@ -40,6 +42,8 @@ extern "C" {
                 
                 //if playbin is not the target, skip
                 if(GST_MESSAGE_SRC(msg) != GST_OBJECT(cli->_bin)) break;
+
+                QMutexLocker l(&cli->_m_seek);
 
                 //check if in play state and refresh of seekable must be done
                 auto isPlaying = (new_state == GST_STATE_PLAYING);
@@ -66,6 +70,7 @@ extern "C" {
                         cli->_seekRangeUpToDate = true;
                         
                         //free seek buffer if any
+                        l.unlock();
                         cli->_freeSeekBuffer();
 
                     } 
@@ -162,7 +167,7 @@ GStreamerClient::GStreamerClient(QObject* parent) : QObject(parent), _elapsedTim
 
     //event handler
     gst_bus_set_sync_handler(this->_bus, gst_bus_sync_signal_handler, this, NULL);
-    g_object_connect (this->_bus, "signal::sync-message", G_CALLBACK(gst_rpgrpz_bus_cb), this, NULL);
+    g_object_connect(this->_bus, "signal::sync-message", G_CALLBACK(gst_rpgrpz_bus_cb), this, NULL);
 
 }
 
@@ -201,9 +206,14 @@ void GStreamerClient::useSource(QString uri) {
     //set new source
     g_object_set(G_OBJECT(this->_bin), "uri", uri.toStdString().c_str(), NULL);
 
-    //allow requesting seek range
-    this->_mayQuerySeekRange = true;
-    this->_seekRangeUpToDate = false;
+    {
+        QMutexLocker l(&this->_m_seek);
+
+        //allow requesting seek range
+        this->_mayQuerySeekRange = true;
+        this->_seekRangeUpToDate = false;
+    }
+
 
     //debug graph (use https://dreampuf.github.io/GraphvizOnline to read it)
     //GST_DEBUG_BIN_TO_DOT_FILE(GST_BIN(this->_bin), GST_DEBUG_GRAPH_SHOW_ALL, "gst-pipeline");
@@ -215,18 +225,23 @@ void GStreamerClient::seek(qint64 seekPosInMsecs) {
     gint64 nano_seekPos = GST_MSECOND * (gint64)seekPosInMsecs;
     
     //buffer
+    this->_m_seek.lock();
     if(!this->_seekRangeUpToDate) {
         
         BufferedSeek buf;
         buf.posInNano = nano_seekPos;
-        buf.ts = QDateTime::currentDateTime();
+
+        if(this->_bin->current_state == GST_STATE_PLAYING || this->_bin->target_state == GST_STATE_PLAYING) {
+            buf.ts = QDateTime::currentDateTime();
+        }
 
         this->_seekBuffer = buf;
-
+        this->_m_seek.unlock();
     } 
     
     //seek
     else {
+        this->_m_seek.unlock();
         this->_seek(nano_seekPos);
     }
     
@@ -235,6 +250,8 @@ void GStreamerClient::seek(qint64 seekPosInMsecs) {
 
 void GStreamerClient::_freeSeekBuffer() {
     
+    QMutexLocker l(&this->_m_seek);
+
     //extract buffer values
     auto bufpos = this->_seekBuffer.posInNano;
     auto bufTs = this->_seekBuffer.ts;
@@ -246,10 +263,12 @@ void GStreamerClient::_freeSeekBuffer() {
         BufferedSeek buf;
         this->_seekBuffer = buf;
         
-        //update bufpos
-        auto diffMsec = bufTs.msecsTo(QDateTime::currentDateTime());
-        auto diffNsec = GST_MSECOND * diffMsec;
-        bufpos = bufpos + diffNsec;
+        //update bufpos is buffer was registered while playing was requested
+        if(!bufTs.isNull()) {
+            auto diffMsec = bufTs.msecsTo(QDateTime::currentDateTime());
+            auto diffNsec = GST_MSECOND * diffMsec;
+            bufpos = bufpos + diffNsec;
+        }
 
         //check if Out of Bound 
         auto oobSeekOperation = 
@@ -258,8 +277,12 @@ void GStreamerClient::_freeSeekBuffer() {
 
         if(oobSeekOperation) return;
 
-        //seek
-        this->_seek(bufpos);
+        l.unlock();
+
+        //async seek, as this function could have been called from and inner GST thread
+        QMetaObject::invokeMethod(this, "_seek", 
+            Q_ARG(gint64, bufpos)
+        );
 
     }
 }
@@ -271,11 +294,18 @@ bool GStreamerClient::_seek(gint64 seekInNanoSecs) {
     auto canSeek = currentState == GST_STATE_PLAYING || currentState == GST_STATE_PAUSED;
     if(!canSeek) return false;
 
+    // g_print ("Seeking to... %" GST_TIME_FORMAT "\n", GST_TIME_ARGS (seekInNanoSecs));
+
     //seek
     auto result = gst_element_seek_simple(
         this->_bin, 
         GST_FORMAT_TIME,
-        GstSeekFlags(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE),
+        GstSeekFlags(
+            GST_SEEK_FLAG_FLUSH
+            // | GST_SEEK_FLAG_KEY_UNIT
+            // | GST_SEEK_FLAG_SNAP_NEAREST
+            | GST_SEEK_FLAG_ACCURATE
+        ),
         seekInNanoSecs
     );
 
@@ -301,6 +331,7 @@ void GStreamerClient::play() {
     this->_elapsedTimer->start(500);
     this->_requestPosition();
     emit playStateChanged(true);
+
 }
 
 void GStreamerClient::pause() {
@@ -308,13 +339,15 @@ void GStreamerClient::pause() {
     this->_elapsedTimer->stop();
     this->_requestPosition();
     emit playStateChanged(false);
+
 }
 
 void GStreamerClient::stop() {
-    this->_changeBinState(GST_STATE_READY);
+    this->_changeBinState(GST_STATE_NULL);
     this->_elapsedTimer->stop();
-    emit positionChanged(0);
+    emit positionChanged(-1);
     emit playStateChanged(false);
+
 }
 
 void GStreamerClient::_unrefPipeline() {
@@ -356,7 +389,7 @@ void GStreamerClient::_initGst() {
     qputenv("GIO_MODULE_DIR", gio_.c_str());
 
     //debug log
-    // qputenv("GST_DEBUG", "4");
+    qputenv("GST_DEBUG", "3");
 
     //setup
     GError* err = NULL;
