@@ -161,7 +161,7 @@ void AudioManager::_link() {
 
 void AudioManager::_playAudio(const QString &audioSourceUrl, const QString &sourceTitle, qint64 startAtMsecsPos) {
     
-    //if start is not > 1, should not play because stream ended!
+    //if start is not > -1, should not play because stream ended!
     if(startAtMsecsPos == -1) return;
 
     //update state
@@ -169,16 +169,13 @@ void AudioManager::_playAudio(const QString &audioSourceUrl, const QString &sour
     
     //update ui
     this->_asCtrl->updatePlayedMusic(sourceTitle);
-    this->_cli->useSource(audioSourceUrl);
-
-    //advent audio cli
-    this->_cli->play();
-
-    //seek to pos if requested
+    
+    this->_cli->stop(); //stop
+    this->_cli->useSource(audioSourceUrl); //use source
+    this->_cli->play(); //play
     if(startAtMsecsPos > 0) {
-        this->_cli->seek(startAtMsecsPos);
+        this->_cli->seek(startAtMsecsPos); //seek to pos if requested
     }
-
 
 }
 

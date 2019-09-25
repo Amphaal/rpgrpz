@@ -132,10 +132,14 @@ void MainWindow::_initConnectivity() {
         QObject::connect(
             this->_rpzServer, &RPZServer::error,
             [&]() {
+
                 QMetaObject::invokeMethod(this->_sb, "updateServerStateLabel",
                     Q_ARG(QString, "Erreur"), 
                     Q_ARG(SLState, SLState::SL_Error)
                 );
+
+                this->_rpzServer = nullptr;
+
             }
         );
 

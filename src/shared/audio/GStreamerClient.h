@@ -22,6 +22,8 @@ struct BufferedSeek {
     gint64 posInNano = 0;
 };
 
+extern bool gst_rpgrpz_bus_cb(GstBus *bus, GstMessage *msg, void* data);
+
 class GStreamerClient : public QObject {
 
     Q_OBJECT
@@ -40,8 +42,10 @@ class GStreamerClient : public QObject {
     //pseudo private
         GstElement* _bin = nullptr;
         GstBus* _bus = nullptr;
-
+        
+        void _initPipeline();
         void _unrefPipeline();
+
         void _changeBinState(const GstState &state);
         void _requestPosition();
 
