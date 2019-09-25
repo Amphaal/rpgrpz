@@ -147,14 +147,19 @@ void MapView::_onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const At
 }
 
 void MapView::_onUIUserChangeRequest(const QList<QGraphicsItem*> &toUpdate, const RPZUser &newUser) {
+    
+    auto newColor = newUser.color();
+    
     for(auto item : toUpdate) {
         if(auto pathItem = dynamic_cast<QGraphicsPathItem*>(item)) {
             auto c_pen = pathItem->pen();
-            c_pen.setColor(newUser.color());
+            c_pen.setColor(newColor);
             pathItem->setPen(c_pen);
         } 
     }
+
     this->_hideLoader();
+    
 }
 
 void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<QGraphicsItem*> &toAlter) {

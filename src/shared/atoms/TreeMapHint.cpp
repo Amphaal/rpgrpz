@@ -237,17 +237,18 @@ void TreeMapHint::_mayCreateLayerItem(int layer) {
     this->_layersItems.insert(layer, layerElem);
 }
 
-void TreeMapHint::updateOwnerFromItem(QTreeWidgetItem* item, const RPZUser &owner) {
+void TreeMapHint::updateOwnerFromItems(QVector<QTreeWidgetItem*> items, const RPZUser &owner) {
     
-    QHash<int, QVariant> newData {
-        { RPZUserRoles::OwnerId, owner.id() },
-        { RPZUserRoles::UserColor, owner.color()},
-        { Qt::ToolTipRole, owner.toString() }
-    };
+    auto ownerId = owner.id();
+    auto ownerColor = owner.color();
+    auto ownerAsStr = owner.toString();
 
-    item->setData(2, RPZUserRoles::OwnerId, owner.id());
-    item->setData(2, RPZUserRoles::UserColor, owner.color());
-    item->setData(2, Qt::ToolTipRole, owner.toString());
+    for(auto item : items) {
+        item->setData(2, RPZUserRoles::OwnerId, ownerId);
+        item->setData(2, RPZUserRoles::UserColor, ownerColor);
+        item->setData(2, Qt::ToolTipRole, ownerAsStr);
+    }
+
 }
 
 QTreeWidgetItem* TreeMapHint::_createTreeItem(const RPZAtom &atom) {
@@ -275,7 +276,7 @@ QTreeWidgetItem* TreeMapHint::_createTreeItem(const RPZAtom &atom) {
 
     item->setData(1, RPZUserRoles::AtomVisibility, atom.isHidden());
     this->updateLockedState(item, atom.isLocked());
-    this->updateOwnerFromItem(item, atom.owner());
+    this->updateOwnerFromItems({item}, atom.owner());
 
     switch(type) {
         case AtomType::Drawing:

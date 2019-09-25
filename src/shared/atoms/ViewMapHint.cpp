@@ -303,7 +303,7 @@ void ViewMapHint::handlePreviewRequest(const AtomsSelectionDescriptor &selection
         QMutexLocker l(&this->_m_GItemsByRPZAtomId);
 
         for(auto &id : selectionDescriptor.selectedAtomIds) {
-            toUpdate += this->_GItemsByRPZAtomId[id];
+            toUpdate += this->_GItemsByRPZAtomId.value(id);
         }
     }
 
@@ -460,7 +460,7 @@ void ViewMapHint::_basicAlterationDone(const QList<RPZAtomId> &updatedIds, const
     QList<QGraphicsItem*> toUpdate;
     for(auto id : updatedIds) {
         if(type == PA_Removed) toUpdate += this->_GItemsByRPZAtomId.take(id);
-        else toUpdate += this->_GItemsByRPZAtomId[id];
+        else toUpdate += this->_GItemsByRPZAtomId.value(id);
     }
     emit requestingUIAlteration(type, toUpdate);
 }
@@ -468,7 +468,7 @@ void ViewMapHint::_basicAlterationDone(const QList<RPZAtomId> &updatedIds, const
 void ViewMapHint::_updatesDone(const QList<RPZAtomId> &updatedIds, const AtomUpdates &updates) {
     QList<QGraphicsItem*> toUpdate;
     for(auto id : updatedIds) {
-        toUpdate += this->_GItemsByRPZAtomId[id];
+        toUpdate += this->_GItemsByRPZAtomId.value(id);
     }
     emit requestingUIUpdate(toUpdate, updates);
 }
@@ -476,7 +476,7 @@ void ViewMapHint::_updatesDone(const QList<RPZAtomId> &updatedIds, const AtomUpd
 void ViewMapHint::_updatesDone(const AtomsUpdates &updates) {
     QHash<QGraphicsItem*, AtomUpdates> toUpdate;
     for(auto i = updates.constBegin(); i != updates.constEnd(); i++) {
-        auto gi = this->_GItemsByRPZAtomId[i.key()];
+        auto gi = this->_GItemsByRPZAtomId.value(i.key());
         toUpdate.insert(gi, i.value());
     }
     emit requestingUIUpdate(toUpdate);
@@ -485,7 +485,7 @@ void ViewMapHint::_updatesDone(const AtomsUpdates &updates) {
 void ViewMapHint::_ownerChangeDone(const QList<RPZAtomId> &updatedIds, const RPZUser &newUser) {
     QList<QGraphicsItem*> toUpdate;
     for(auto id : updatedIds) {
-        toUpdate += this->_GItemsByRPZAtomId[id];
+        toUpdate += this->_GItemsByRPZAtomId.value(id);
     }
     emit requestingUIUserChange(toUpdate, newUser);
 }

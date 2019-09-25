@@ -21,8 +21,6 @@ MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) :
     this->setColumnCount(3);
     this->setItemDelegateForColumn(1, new LockAndVisibilityDelegate);
     this->setItemDelegateForColumn(2, new OwnerDelegate);
-    this->header()->setSectionResizeMode(1, QHeaderView::ResizeMode::ResizeToContents);
-    this->header()->setSectionResizeMode(2, QHeaderView::ResizeMode::ResizeToContents);
     
     this->setSelectionBehavior(QAbstractItemView::SelectRows);
     this->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -162,24 +160,37 @@ void MapLayoutTree::_onUIAlterationRequest(const PayloadAlteration &type, const 
     if(type == PA_Reset || type == PA_Added) this->sortByColumn(0, Qt::SortOrder::DescendingOrder);
     if(type == PA_Reset || type == PA_Added || type == PA_Removed) this->_updateLayersDisplayedCount();
 
+    this->_resizeSections();
+
+}
+
+void MapLayoutTree::_resizeSections() {
+    this->header()->resizeSections(QHeaderView::ResizeMode::ResizeToContents);
 }
 
 void MapLayoutTree::_onUIUpdateRequest(const QHash<QTreeWidgetItem*, AtomUpdates> &toUpdate) {
+    
     for(auto i = toUpdate.constBegin(); i != toUpdate.constEnd(); i++) {
         this->_updateAtomItemValues(i.key(), i.value());
     }
+
+    this->_resizeSections();
+
 }
 
 void MapLayoutTree::_onUIUpdateRequest(const QList<QTreeWidgetItem*> &toUpdate, const AtomUpdates &updates) {
+    
     for(auto item : toUpdate) {
         this->_updateAtomItemValues(item, updates);
     }
+
+    this->_resizeSections();
+
 }
 
 void MapLayoutTree::_onUIUserChangeRequest(const QList<QTreeWidgetItem*> &toUpdate, const RPZUser &newUser) {
-    for(auto item : toUpdate) {
-        this->_hints->updateOwnerFromItem(item, newUser);
-    }
+    this->_hints->updateOwnerFromItems(toUpdate.toVector(), newUser);
+    this->_resizeSections();
 }
 
 void MapLayoutTree::_onUIMoveRequest(const QHash<int, QList<QTreeWidgetItem*>> &childrenMovedToLayer) {
@@ -192,9 +203,12 @@ void MapLayoutTree::_onUIMoveRequest(const QHash<int, QList<QTreeWidgetItem*>> &
     }
 
     this->_updateLayersDisplayedCount();
+    this->_resizeSections();
+
 }
 
 void MapLayoutTree::_updateAtomItemValues(QTreeWidgetItem* toUpdate, const AtomUpdates &updates) {
+    
     for(auto i = updates.constBegin(); i != updates.constEnd(); i++) {
         switch(i.key()) {
             
@@ -218,6 +232,8 @@ void MapLayoutTree::_updateAtomItemValues(QTreeWidgetItem* toUpdate, const AtomU
             break;
         }
     }
+
+    this->_resizeSections();
 
 }
 

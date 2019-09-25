@@ -46,6 +46,8 @@ class MapLayoutTree : public RPZTree, public AtomsContextualMenuHandler {
         void _onUIMoveRequest(const QHash<int, QList<QTreeWidgetItem*>> &childrenMovedToLayer);
 
     private:
+        void _resizeSections();
+
         TreeMapHint* _hints = nullptr;
         void _handleHintsSignalsAndSlots();
 

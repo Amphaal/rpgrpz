@@ -310,7 +310,7 @@ void RPZServer::_alterIncomingPayloadWithUpdatedOwners(AtomsWielderPayload &wPay
         OCPayload.changeSource(source);
 
         //send...
-        this->_sendToAllButSelf(senderSocket, JSONMethod::MapChanged, OCPayload);
+        this->_sendToAll(JSONMethod::MapChanged, OCPayload);
 
     }
 }
