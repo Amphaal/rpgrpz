@@ -46,6 +46,7 @@ void UsersLog::updateUsers(const QVector<RPZUser> &users) {
 void UsersLog::_addUserLog(const RPZUser &user) {
     
     auto line = LogContainer::_addLine(user);
+    line->setToolTip(user.whisperTargetName());
 
     //logo part
     auto userIcon = new UserLogIcon(user);

@@ -61,8 +61,7 @@ void ChatEdit::_onUsersChanged(const QVector<RPZUser> &users) {
 
     QSet<QString> usernamesList;
     for(auto &user : users) {
-        auto adapted = MessageInterpreter::usernameToCommandCompatible(user.name());
-        usernamesList.insert("@" + adapted);
+        usernamesList.insert("@" + user.whisperTargetName());
     }
 
     auto model = new QStringListModel(usernamesList.toList());

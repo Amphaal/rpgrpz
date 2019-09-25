@@ -3,36 +3,36 @@
 RPZUser::RPZUser() {};
 RPZUser::RPZUser(const QVariantHash &hash) : Serializable(hash) {}
 
-RPZUser::RPZUser(JSONSocket* socket) : Serializable(SnowFlake::get()->nextId()) {
-    this->_associatedSocket = socket;
-    this->_localAddress = socket->socket()->localAddress().toString();
-    this->_setColor();
-};
-
-RPZUser::RPZUser(RPZUserId id, const QString name, const Role &role, const QColor &color) : Serializable(id) { 
+RPZUser::RPZUser(RPZUserId id, const QString &name, const Role &role, const QColor &color) : Serializable(id) { 
     this->setName(name);
     this->setRole(role);
     this->_setColor(color);
 };
 
 void RPZUser::setName(const QString &name) {
+    
+    //default name
     this->insert("name", name);
+    
+    //whisp name
+    auto adapted = MessageInterpreter::usernameToCommandCompatible(name);
+    adapted = adapted + this->color().name();
+    this->insert("wname", adapted);
+        
 };
 
 void RPZUser::setRole(const Role &role) {
     this->insert("role", (int)role);
 };
 
-JSONSocket* RPZUser::networkSocket() { return this->_associatedSocket; };
 
 QString RPZUser::name() const { 
 
     auto name = this->value("name").toString();
     if(!name.isEmpty()) return name;
 
-    if(!this->_localAddress.isEmpty()) return this->_localAddress;
-
     return NULL;
+    
 };
 
 RPZUser::Role RPZUser::role() const {
@@ -45,13 +45,26 @@ QColor RPZUser::color() const {
 };
 
 QString RPZUser::toString() const {
-    if(!this->name().isNull()) {
+    
+    auto name = this->name();
+    if(!name.isNull()) {
         return this->name();
-    } else if (this->id()) {
-        return QString::number(this->id());
-    } else {
-        return "Moi";
-    }
+    } 
+    
+    if (auto id = this->id()) {
+        return QString::number(id);
+    } 
+    
+    return "Moi";
+
+}
+
+QString RPZUser::whisperTargetName() const {
+    return this->value("wname").toString();
+}
+
+void RPZUser::randomiseColor() {
+    this->_setColor();
 }
 
 void RPZUser::_setColor(const QColor &color) {

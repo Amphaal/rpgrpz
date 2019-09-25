@@ -5,10 +5,9 @@
 #include <QVariantHash>
 #include <QHostAddress>
 
-#include "src/network/rpz/_any/JSONSocket.h"
-
 #include "src/helpers/RandomColor.h"
 #include "base/Serializable.hpp"
+#include "src/shared/commands/MessageInterpreter.h"
 
 typedef snowflake_uid RPZUserId;
 
@@ -23,22 +22,19 @@ class RPZUser : public Serializable {
         
         RPZUser();
         RPZUser(const QVariantHash &hash);
-        RPZUser(JSONSocket* socket);
-        RPZUser(RPZUserId id, const QString name, const Role &role, const QColor &color);
+        RPZUser(RPZUserId id, const QString &name, const Role &role, const QColor &color);
 
         void setName(const QString &name);
         void setRole(const Role &role);
+        void randomiseColor();
 
-        JSONSocket* networkSocket();
         QString name() const;
+        QString whisperTargetName() const;
         Role role() const;
         QColor color() const;
         QString toString() const;
 
     private:
         void _setColor(const QColor &color = QColor());
-
-        JSONSocket* _associatedSocket = nullptr;
-        QString _localAddress;
 
 };

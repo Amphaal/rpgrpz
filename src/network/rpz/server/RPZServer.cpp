@@ -40,8 +40,10 @@ void RPZServer::_onNewConnection() {
         //new connection,store it
         auto clientSocket = new JSONSocket(this, "RPZServer", this->nextPendingConnection());
         
-        //create new user
-        RPZUser user(clientSocket);
+        //create new user with id
+        RPZUser user;
+        user.shuffleId();
+        user.randomiseColor();
 
         //check if connecting from localhost and no host has already been elected
         if(clientSocket->socket()->localAddress().isLoopback() && !this->_hostSocket) {
@@ -50,8 +52,10 @@ void RPZServer::_onNewConnection() {
         }
 
         //add to internal lists
-        this->_usersById.insert(user.id(), user);
-        this->_idsByClientSocket.insert(clientSocket, user.id());
+        auto userId = user.id();
+        this->_usersById.insert(userId, user);
+        this->_idsByClientSocket.insert(clientSocket, userId);
+        this->_clientSocketById.insert(userId, clientSocket);
         
         //clear on client disconnect
         QObject::connect(
@@ -75,9 +79,11 @@ void RPZServer::_onNewConnection() {
 
 void RPZServer::_onClientSocketDisconnected(JSONSocket* disconnectedSocket) {
 
-    //remove socket
-    const auto idToRemove = this->_idsByClientSocket.take(disconnectedSocket);
-    this->_usersById.remove(idToRemove);
+    //remove socket / user from inner db
+    auto idToRemove = this->_idsByClientSocket.take(disconnectedSocket);
+    this->_clientSocketById.remove(idToRemove);
+    auto removedUser = this->_usersById.take(idToRemove);
+    this->_formatedUsernamesByUserId.remove(removedUser.whisperTargetName());
 
     //desalocate host
     if(this->_hostSocket == disconnectedSocket) {
@@ -187,7 +193,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             
             //prepare
             auto &targetUser = this->_getUser(target);
-            auto handshakePkg = RPZHandshake(data.toHash());
+            RPZHandshake handshakePkg(data.toHash());
             
             //check versions with server, if different, reject
             auto serverVersion = QString(APP_CURRENT_VERSION);
@@ -201,13 +207,13 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
                 break;
             }
 
-            //change the requested username if already exists
+            //store username
             auto chosenName = handshakePkg.requestedUsername();
-            auto adapted = MessageInterpreter::usernameToCommandCompatible(chosenName);
-            if(this->_formatedUsernamesByUser.contains(adapted)) {
-                chosenName = chosenName + targetUser.color().name();
-            }
             targetUser.setName(chosenName);
+            this->_formatedUsernamesByUserId.insert(
+                targetUser.whisperTargetName(), 
+                targetUser.id()
+            );
 
             //tell other users this one exists
             this->_broadcastUsers();
@@ -274,15 +280,6 @@ void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
 
 
 void RPZServer::_broadcastUsers() {
-    
-    //reset registered username list
-    this->_formatedUsernamesByUser.clear();
-
-    //refill
-    for(auto &user : this->_usersById) {
-        auto formated = MessageInterpreter::usernameToCommandCompatible(user.name());
-        this->_formatedUsernamesByUser.insert(formated, &user);
-    }
 
     //send data
     auto method = JSONMethod::LoggedPlayersChanged;
@@ -369,6 +366,7 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
             
             //get recipients usernames
             auto textCommand = msg.text();
+            auto initialOwner = msg.owner();
             auto recipients = MessageInterpreter::findRecipentsFromText(textCommand);
 
             //iterate
@@ -376,8 +374,8 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
             for(auto &recipient : recipients) {
                 
                 //find user from recipident
-                auto user = this->_formatedUsernamesByUser[recipient];
-                if(!user) {
+                auto userSocket = this->_getUserSocket(recipient);
+                if(!userSocket) {
                     notFound.append(recipient);
                     continue;
                 }
@@ -387,10 +385,10 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
                 
                 //create a new message 
                 auto newMessage = RPZMessage(textOnly, MessageInterpreter::Whisper);
-                newMessage.setOwnership(msg.owner());
+                newMessage.setOwnership(initialOwner);
 
                 //send new message
-                user->networkSocket()->sendJSON(JSONMethod::Message, newMessage);
+                userSocket->sendJSON(JSONMethod::Message, newMessage);
             }
 
             //inform whisperer of any unfound users
@@ -478,28 +476,32 @@ void RPZServer::_maySendAndStoreDiceThrows(const QString &text) {
 // LOW Helpers
 //
 
-void RPZServer::_sendToAllButSelf(JSONSocket * senderSocket, const JSONMethod &method, const QVariant &data) {
-    for(auto &user : this->_usersById) {
+void RPZServer::_sendToAllButSelf(JSONSocket* senderSocket, const JSONMethod &method, const QVariant &data) {
+    for(auto socket : this->_clientSocketById) {
         
         //prevent self send
-        if(user.networkSocket() == senderSocket) {
+        if(socket == senderSocket) {
             continue;
         } 
 
         //send to others
-        user.networkSocket()->sendJSON(method, data);
+        socket->sendJSON(method, data);
     }
 }
 
 void RPZServer::_sendToAll(const JSONMethod &method, const QVariant &data) {
-    for(auto &user : this->_usersById) {
-        user.networkSocket()->sendJSON(method, data);
+    for(auto socket : this->_clientSocketById) {
+        socket->sendJSON(method, data);
     }
 }
 
+JSONSocket* RPZServer::_getUserSocket(const QString &formatedUsername) {
+    auto id = this->_formatedUsernamesByUserId.value(formatedUsername);
+    return this->_clientSocketById[id];
+}
 
 RPZUser& RPZServer::_getUser(JSONSocket* socket) {
-    auto id = this->_idsByClientSocket[socket];
+    auto id = this->_idsByClientSocket.value(socket);
     return this->_usersById[id];
 }
 

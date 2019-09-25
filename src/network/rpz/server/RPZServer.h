@@ -48,7 +48,10 @@ class RPZServer : public QTcpServer, public JSONRouter {
         void stopped();
 
     private:
+        RPZMap<RPZUser> _usersById;
         QHash<JSONSocket*, RPZUserId> _idsByClientSocket;
+        QHash<RPZUserId, JSONSocket*> _clientSocketById;
+        QHash<QString, RPZUserId> _formatedUsernamesByUserId;
         JSONSocket* _hostSocket = nullptr;
         
         //music
@@ -56,9 +59,8 @@ class RPZServer : public QTcpServer, public JSONRouter {
         void _sendPlayedStream(JSONSocket* socket);
 
         //users
-        RPZMap<RPZUser> _usersById;
-        QHash<QString, RPZUser*> _formatedUsernamesByUser;
         RPZUser& _getUser(JSONSocket* socket);
+        JSONSocket* _getUserSocket(const QString &formatedUsername);
         void _broadcastUsers();
         void _tellUserHisIdentity(JSONSocket* socket);
 
