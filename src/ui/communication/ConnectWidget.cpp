@@ -19,15 +19,10 @@ ConnectWidget::ConnectWidget(MapHint* hintToControlStateOf) : QWidget(nullptr),
     this->_nameTarget->setPlaceholderText("Nom de joueur");
     this->_nameTarget->setText(AppContext::settings()->value("name", "").toString());
 
-
     //domain target
     this->_domainTarget->addAction(QIcon(":/icons/app/connectivity/server.png"), QLineEdit::LeadingPosition);
     this->_domainTarget->setPlaceholderText("IP ou domaine du serveur");
     this->_domainTarget->setText(AppContext::settings()->value("domain", "localhost").toString());
-
-    //sep
-    auto sep = new QLabel(this);
-    sep->setText(":");
 
     //port target
     this->_portTarget->addAction(QIcon(":/icons/app/connectivity/port.png"), QLineEdit::LeadingPosition);
@@ -55,7 +50,7 @@ ConnectWidget::ConnectWidget(MapHint* hintToControlStateOf) : QWidget(nullptr),
     //adding widgets
     this->layout()->addWidget(this->_nameTarget);
     this->layout()->addWidget(this->_domainTarget);
-    this->layout()->addWidget(sep);
+    this->layout()->addWidget(new QLabel(":")); //separator
     this->layout()->addWidget(this->_portTarget);
     this->layout()->addWidget(this->_connectBtn);
 

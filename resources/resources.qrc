@@ -57,5 +57,6 @@
         <file>icons/app/audio/youtubeError.png</file>
         <file>icons/app/audio/add.png</file>
         <file>icons/app/loader.gif</file>
+        <file>asset/default.jpg</file>
     </qresource>
 </RCC>
