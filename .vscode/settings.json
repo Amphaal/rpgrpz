@@ -149,7 +149,8 @@
         "qgroupbox": "cpp",
         "qtabwidget": "cpp",
         "qtableview": "cpp",
-        "qtablewidget": "cpp"
+        "qtablewidget": "cpp",
+        "qprogressbar": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

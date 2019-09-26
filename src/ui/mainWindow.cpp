@@ -224,7 +224,12 @@ void MainWindow::_initUIApp() {
     rTab->setLayoutDirection(Qt::LayoutDirection::RightToLeft);
     rTab->addTab(this->_mlManager, QIcon(":/icons/app/tabs/list.png"), "Atomes de la carte");
     rTab->addTab(this->_atomEditManager, QIcon(":/icons/app/tabs/config.png"), "Editeur d'atome");
-    rTab->addTab(this->_cw, QIcon(":/icons/app/tabs/chat.png"), "Chat de la partie");
+    
+    auto CCw = new QWidget;
+    CCw->setLayout(new QVBoxLayout);
+    CCw->layout()->addWidget(this->_connectWidget); 
+    CCw->layout()->addWidget(this->_cw);
+    rTab->addTab(CCw, QIcon(":/icons/app/tabs/chat.png"), "Connexion / Chat");
 
     //designer
     auto designer = new QWidget;
@@ -238,7 +243,6 @@ void MainWindow::_initUIApp() {
         toolbarLayout->setMargin(0);
         toolbarLayout->setSpacing(0);
 
-        toolbarLayout->addWidget(this->_connectWidget);
         toolbarLayout->addStretch(0);
         toolbarLayout->addWidget(this->_mapTools);
         

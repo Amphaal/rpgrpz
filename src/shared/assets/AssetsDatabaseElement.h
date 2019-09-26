@@ -195,7 +195,7 @@ class AssetsDatabaseElement {
             { Event, "Evenement" },
             { FreeDraw, "Dessin" },
             { Text, "Texte" },
-            { NPC_Container, "PNJ" },
+            { NPC_Container, "PNJ / Portraits" },
             { ObjectContainer, "Objets" },
             { FloorBrushContainer, "Terrains" },
             { DownloadedContainer, "Téléchargés" }

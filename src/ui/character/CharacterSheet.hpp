@@ -12,8 +12,10 @@
 #include <QRegularExpressionValidator>
 #include <QRegularExpression>
 #include <QTabWidget>
+#include <QProgressBar>
 
 #include "components/InventorySheet.hpp"
+#include "components/CustomBarGenerator.hpp"
 
 class CharacterSheet : public QWidget {
     public:
@@ -49,9 +51,9 @@ class CharacterSheet : public QWidget {
 
                     //portrait placeholder
                     this->_imgLbl = new QLabel;
-                    this->_imgLbl->setAlignment(Qt::AlignCenter);
                     this->_imgLbl->setPixmap(*_defaultPortrait);
-                    pLayout->addWidget(this->_imgLbl);
+                    this->_imgLbl->setMaximumSize(QSize(240, 320));
+                    pLayout->addWidget(this->_imgLbl, 0, Qt::AlignCenter);
 
                     //portrait change button
                     auto changePortraitBtn = new QPushButton("Changer le portrait");
@@ -60,8 +62,13 @@ class CharacterSheet : public QWidget {
                 //character name
                 this->_sheetNameEdit = new QLineEdit;
                 characterTabLayout->addRow("Nom de la fiche :", this->_sheetNameEdit);
-                this->_sheetNameEdit->setPlaceholderText("Nom usuel du personnage (Requis)");
+                this->_sheetNameEdit->setPlaceholderText(" Nom usuel du personnage [Requis!]");
                 this->_sheetNameEdit->setValidator(new QRegularExpressionValidator(QRegularExpression("\\w")));
+
+                //archtype
+                this->_archtypeEdit = new QLineEdit;
+                this->_archtypeEdit->setPlaceholderText(" Courte et grossière caractérisation du personnage (Paladin Loyal Bon, Chasseur de Prime...)");
+                characterTabLayout->addRow("Archétype :", this->_archtypeEdit);
 
                 //character description
                 this->_descriptionEdit = new QTextEdit;
@@ -80,8 +87,26 @@ class CharacterSheet : public QWidget {
                 
                 //character status
                 this->_statusEdit = new QLineEdit;
-                this->_statusEdit->setPlaceholderText("Jambe cassée, empoisonné...");
-                stateTabLayout->addRow("Etat :", this->_statusEdit);
+                this->_statusEdit->setPlaceholderText(" Jambe cassée, empoisonné, sous l'effet d'une potion...");
+                stateTabLayout->addRow("Description des altérations :", this->_statusEdit);
+
+                //bars
+                auto bars = new QGroupBox("Jauges");
+                bars->setAlignment(Qt::AlignCenter);
+                stateTabLayout->addRow(bars);
+                auto barsLayout = new QVBoxLayout;
+                barsLayout->setSpacing(10);
+                bars->setLayout(barsLayout);
+                    
+                    //default bar
+                    barsLayout->addWidget(new CustomBarGenerator);
+
+                    //add bar button
+                    auto addBarBtn = new QPushButton;
+                    addBarBtn->setIcon(QIcon(":/icons/app/other/add.png"));
+                    addBarBtn->setToolTip("Ajouter une nouvelle jauge");
+                    barsLayout->addSpacing(10);
+                    barsLayout->addWidget(addBarBtn, 0, Qt::AlignRight);
 
             //inventory tab
             auto inventoryTab = new QWidget;
@@ -120,4 +145,5 @@ class CharacterSheet : public QWidget {
         QLineEdit* _statusEdit = nullptr;
         QComboBox* _characterListCombo = nullptr;
         QComboBox* _inventoryListCombo = nullptr;
+        QLineEdit* _archtypeEdit = nullptr;
 };

@@ -10,6 +10,7 @@ ConnectWidget::ConnectWidget(MapHint* hintToControlStateOf) : QWidget(nullptr),
     AppContext::settings()->beginGroup("ConnectWidget");
 
     //this
+    this->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
     this->setLayout(new QHBoxLayout);
     this->layout()->setMargin(0);
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
