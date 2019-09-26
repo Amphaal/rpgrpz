@@ -40,7 +40,7 @@ class MessageInterpreter {
         static void generateValuesOnDiceThrows(QVector<DiceThrow> &throws);
 
     private:
-        static inline const QRegularExpression _hasWhispRegex = QRegularExpression("@(\\w+)");
+        static inline const QRegularExpression _hasWhispRegex = QRegularExpression("@(.+?)(?:$|\\s)");
         static inline const QRegularExpression _hasCommandRegex = QRegularExpression("\\/(\\w+)");
         static inline const QRegularExpression _mustLaunchDice = QRegularExpression("([1-9]|1[0-6])[dD](\\d+)");
 };
