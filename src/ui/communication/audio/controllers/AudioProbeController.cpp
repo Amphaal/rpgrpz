@@ -8,6 +8,7 @@ AudioProbeController::AudioProbeController(QWidget * parent) : QGroupBox("Musiqu
     toolbar(new VolumeToolbar) {
 
     //bind animation to label
+    this->setAlignment(Qt::AlignHCenter);
     this->_playIconLbl->setMovie(this->_playIcon);
     
     //layout

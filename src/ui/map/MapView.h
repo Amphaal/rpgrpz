@@ -52,7 +52,7 @@ class MapView : public QGraphicsView, public ClientBindable {
             int correction;
         };
 
-        MapView(QWidget *parent);
+        MapView();
         ~MapView();
 
         MapHint* hints() const;

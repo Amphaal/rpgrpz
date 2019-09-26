@@ -398,6 +398,7 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
                 for( auto &un : notFound) usernamesNotFound.append(un);
 
                 response = RPZResponse(msgId, RPZResponse::ErrorRecipients, usernamesNotFound);
+                
             }
             
         }

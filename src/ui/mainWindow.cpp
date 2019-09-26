@@ -204,18 +204,27 @@ void MainWindow::_initUIApp() {
     
     //init components
     this->_cw = new ChatWidget;
-    this->_mapView = new MapView(this);
+    this->_mapView = new MapView;
     this->_audioManager = new AudioManager;
     this->_assetsManager = new AssetsManager;
     this->_mapTools = new MapTools;
     this->_mlManager = new MapLayoutManager(this->_mapView->hints());
     this->_connectWidget = new ConnectWidget(this->_mapView->hints());
     this->_atomEditManager = new AtomEditionManager(this->_mapView->hints());
+    this->_characterSheet = new CharacterSheet;
     
-    //assets
-    auto assetTabs = new QTabWidget(this);
-    assetTabs->addTab(this->_assetsManager, QIcon(":/icons/app/tabs/box.png"), "Boite à jouets");
-    assetTabs->addTab(this->_audioManager, QIcon(":/icons/app/tabs/playlist.png"), "Audio");
+    //left tabs
+    auto lTab = new QTabWidget;
+    lTab->addTab(this->_assetsManager, QIcon(":/icons/app/tabs/box.png"), "Boite à jouets");
+    lTab->addTab(this->_audioManager, QIcon(":/icons/app/tabs/playlist.png"), "Audio");
+    lTab->addTab(this->_characterSheet, QIcon(":/icons/app/tabs/scroll.png"), "Fiches");
+
+    //right tabs
+    auto rTab = new QTabWidget;
+    rTab->setLayoutDirection(Qt::LayoutDirection::RightToLeft);
+    rTab->addTab(this->_mlManager, QIcon(":/icons/app/tabs/list.png"), "Atomes de la carte");
+    rTab->addTab(this->_atomEditManager, QIcon(":/icons/app/tabs/config.png"), "Editeur d'atome");
+    rTab->addTab(this->_cw, QIcon(":/icons/app/tabs/chat.png"), "Chat de la partie");
 
     //designer
     auto designer = new QWidget;
@@ -236,18 +245,11 @@ void MainWindow::_initUIApp() {
     designer->layout()->addWidget(toolbar);
     designer->layout()->addWidget(this->_mapView);
 
-    //right part tab
-    auto eTabs = new QTabWidget(this);
-    eTabs->setLayoutDirection(Qt::LayoutDirection::RightToLeft);
-    eTabs->addTab(this->_mlManager, QIcon(":/icons/app/tabs/list.png"), "Atomes de la carte");
-    eTabs->addTab(this->_atomEditManager, QIcon(":/icons/app/tabs/config.png"), "Editeur d'atome");
-    eTabs->addTab(this->_cw, QIcon(":/icons/app/tabs/chat.png"), "Chat de la partie");
-
     //final
     auto centralWidget = (RestoringSplitter*)this->centralWidget();
-    centralWidget->addWidget(assetTabs);
+    centralWidget->addWidget(lTab);
     centralWidget->addWidget(designer);
-    centralWidget->addWidget(eTabs);
+    centralWidget->addWidget(rTab);
     centralWidget->setStretchFactor(0, 0);
     centralWidget->setStretchFactor(1, 1);
     centralWidget->setStretchFactor(2, 0);

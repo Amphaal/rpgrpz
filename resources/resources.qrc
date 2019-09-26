@@ -45,6 +45,10 @@
         <file>icons/app/tabs/chat.png</file>
         <file>icons/app/tabs/box.png</file>
         <file>icons/app/tabs/config.png</file>
+        <file>icons/app/tabs/scroll.png</file>
+        <file>icons/app/tabs/chest.png</file>
+        <file>icons/app/tabs/feather.png</file>
+        <file>icons/app/tabs/status.png</file>
         <file>icons/app/audio/play.png</file>
         <file>icons/app/audio/pause.png</file>
         <file>icons/app/audio/rewind.png</file>
@@ -55,7 +59,8 @@
         <file>icons/app/audio/youtube.png</file>
         <file>icons/app/audio/youtubeGrey.png</file>
         <file>icons/app/audio/youtubeError.png</file>
-        <file>icons/app/audio/add.png</file>
+        <file>icons/app/other/add.png</file>
+        <file>icons/app/other/bag.png</file>
         <file>icons/app/loader.gif</file>
         <file>asset/default.jpg</file>
     </qresource>

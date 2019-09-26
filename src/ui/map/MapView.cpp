@@ -1,7 +1,6 @@
 #include "MapView.h"
 
-MapView::MapView(QWidget *parent) : 
-    QGraphicsView(parent),
+MapView::MapView() :
     _hiddingBrush(new QBrush("#EEE", Qt::BrushStyle::SolidPattern)),
     _hints(new MapHint),
     _menuHandler(new AtomsContextualMenuHandler(_hints, this)) {

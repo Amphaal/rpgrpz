@@ -52,7 +52,7 @@ class YoutubePlaylistItemInsertor : public QWidget {
                 this, &YoutubePlaylistItemInsertor::_handleLinkInsertionAttempt
             );
 
-            this->_insertLinkBtn->setIcon(QIcon(":/icons/app/audio/add.png"));
+            this->_insertLinkBtn->setIcon(QIcon(":/icons/app/other/add.png"));
             this->_insertLinkBtn->setToolTip("Cliquer pour ajouter un lien à la liste de lecture");
 
             QObject::connect(

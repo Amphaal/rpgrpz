@@ -142,7 +142,14 @@
         "qwheelevent": "cpp",
         "__functional_03": "cpp",
         "qstyleoptionprogressbar": "cpp",
-        "qtimeline": "cpp"
+        "qtimeline": "cpp",
+        "qgridlayout": "cpp",
+        "qformlayout": "cpp",
+        "qcombobox": "cpp",
+        "qgroupbox": "cpp",
+        "qtabwidget": "cpp",
+        "qtableview": "cpp",
+        "qtablewidget": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }
