@@ -166,6 +166,9 @@ AtomType AssetsDatabaseElement::toAtomType(const AssetsDatabaseElement::Type &ty
         case Text:
             return AtomType::Text;
             break;
+        case Background:
+            return AtomType::Background;
+            break;
         default:
             return AtomType::Undefined;
     }
@@ -286,12 +289,14 @@ void AssetsDatabaseElement::_defineFlags() {
         case NPC:
         case FloorBrush:
         case Downloaded:
+        case Background:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
             break;
         
         case NPC_Container:
         case FloorBrushContainer:
         case ObjectContainer:
+        case BackgroundContainer:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDropEnabled);
             break;
         
@@ -448,6 +453,8 @@ void AssetsDatabaseElement::_defineInsertType() {
         case DownloadedContainer:
             this->_insertType = Downloaded;
             break;
+        case BackgroundContainer:
+            this->_insertType = BackgroundContainer;
         default:
             this->_insertType = T_Unknown;
             break;

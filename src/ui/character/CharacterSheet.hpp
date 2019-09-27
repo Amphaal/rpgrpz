@@ -61,7 +61,7 @@ class CharacterSheet : public QWidget {
 
                 //character name
                 this->_sheetNameEdit = new QLineEdit;
-                characterTabLayout->addRow("Nom de la fiche :", this->_sheetNameEdit);
+                characterTabLayout->addRow("Nom de :", this->_sheetNameEdit);
                 this->_sheetNameEdit->setPlaceholderText(" Nom usuel du personnage [Requis!]");
                 this->_sheetNameEdit->setValidator(new QRegularExpressionValidator(QRegularExpression("\\w")));
 
@@ -129,7 +129,7 @@ class CharacterSheet : public QWidget {
             //tabs
             auto tabs = new QTabWidget;
             tabs->addTab(characterTab, QIcon(":/icons/app/tabs/feather.png"), "Lore");
-            tabs->addTab(stateTab, QIcon(":/icons/app/tabs/status.png"), "Statut");
+            tabs->addTab(stateTab, QIcon(":/icons/app/tabs/status.png"), "Statut / Compétences");
             tabs->addTab(invScrollArea, QIcon(":/icons/app/tabs/chest.png"), "Inventaires");
             l->addWidget(tabs);
 

@@ -29,7 +29,8 @@ enum class AtomType {
     Brush, 
     NPC, 
     Event, 
-    PC
+    PC,
+    Background
 };
 
 enum class BrushType { 

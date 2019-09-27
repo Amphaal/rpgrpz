@@ -28,7 +28,9 @@ class AssetsDatabaseElement {
             ObjectContainer = 501,
                 Object = 550,
             DownloadedContainer = 601,
-                Downloaded = 650 
+                Downloaded = 650,
+            BackgroundContainer = 701,
+                Background = 750 
         };
         
         static AssetsDatabaseElement* fromIndex(const QModelIndex &index);
@@ -143,14 +145,16 @@ class AssetsDatabaseElement {
             FloorBrushContainer, 
             ObjectContainer,
             Folder,
-            DownloadedContainer
+            DownloadedContainer,
+            BackgroundContainer
         };
 
         static const inline QList<AssetsDatabaseElement::Type> _itemTypes = {
             NPC, 
             FloorBrush,
             Object,
-            Downloaded
+            Downloaded,
+            Background
         };
 
         static const inline QList<AssetsDatabaseElement::Type> _deletableItemTypes = {
@@ -158,13 +162,15 @@ class AssetsDatabaseElement {
             FloorBrush,
             Object,
             Folder,
-            Downloaded
+            Downloaded,
+            Background
         };
 
         static const inline QList<AssetsDatabaseElement::Type> _staticContainerTypes = {
             InternalContainer,
             NPC_Container, 
             FloorBrushContainer, 
+            BackgroundContainer,
             ObjectContainer,
             DownloadedContainer
         };
@@ -186,7 +192,8 @@ class AssetsDatabaseElement {
             { Text, ":/icons/app/tools/text.png" },
             { Folder, ":/icons/app/manager/folder.png" }, 
             { InternalContainer, ":/icons/app/manager/internal.png" },
-            { DownloadedContainer, ":/icons/app/manager/downloaded.png" }
+            { DownloadedContainer, ":/icons/app/manager/downloaded.png" },
+            { BackgroundContainer, ":/icons/app/manager/background.png" }
         };
 
         static const inline QHash<AssetsDatabaseElement::Type, QString> _typeDescriptions = {
@@ -198,7 +205,8 @@ class AssetsDatabaseElement {
             { NPC_Container, "PNJ / Portraits" },
             { ObjectContainer, "Objets" },
             { FloorBrushContainer, "Terrains" },
-            { DownloadedContainer, "Téléchargés" }
+            { DownloadedContainer, "Téléchargés" },
+            { BackgroundContainer, "Paysages" }
         };
 
 };

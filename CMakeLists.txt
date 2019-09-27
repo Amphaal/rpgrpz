@@ -130,13 +130,13 @@ list(APPEND EXT_LIBS
     OpenSSL::Crypto
 )
 
-#############
+############# 
 # Gstreamer #
 #############
 
 #pkgConfig setup
 IF(WIN32)
-    SET(PKG_CONFIG_EXECUTABLE "C:/msys64/mingw64/bin/x86_64-w64-mingw32-pkg-config.exe")
+    #SET(PKG_CONFIG_EXECUTABLE "C:/msys64/mingw64/bin/x86_64-w64-mingw32-pkg-config.exe") #install pkgconfiglite from Choco
     SET(W32_GSTREAMER_LOCATION $ENV{GSTREAMER_1_0_ROOT_X86_64})
     string(REPLACE "\\" "/" GSTREAMER_LOCATION ${W32_GSTREAMER_LOCATION})
     SET(GSTREAMER_SLIB_LOCATION "${GSTREAMER_LOCATION}/bin")
@@ -162,10 +162,10 @@ list(APPEND EXT_LIBS
 
 #force official binaires from Qt
 IF(WIN32)
-    SET(Qt5_DIR "C:/Qt/5.13.0/msvc2017_64/lib/cmake/Qt5")
+    SET(Qt5_DIR "C:/Qt/5.13.1/msvc2017_64/lib/cmake/Qt5")
 endif()
 IF(APPLE)
-    SET(Qt5_DIR "/Qt/5.13.0/clang_64/lib/cmake/Qt5")
+    SET(Qt5_DIR "/Qt/5.13.1/clang_64/lib/cmake/Qt5")
 endif()
 
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL)
@@ -232,11 +232,11 @@ add_custom_command(TARGET ${PROJECT_NAME}
 #####################
 
 IF(WIN32)
-    SET(QT_DEPLOY_BIN_PATH "C:/Qt/5.13.0/msvc2017_64/bin")
+    SET(QT_DEPLOY_BIN_PATH "C:/Qt/5.13.1/msvc2017_64/bin")
 endif()
 
 IF(APPLE)
-    SET(QT_DEPLOY_BIN_PATH "/Qt/5.13.0/clang_64/bin")
+    SET(QT_DEPLOY_BIN_PATH "/Qt/5.13.1/clang_64/bin")
 endif()
 
 #using deployqt to import all the QT ${CMAKE_SHARED_LIBRARY_SUFFIX} requirements based on used components
