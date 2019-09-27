@@ -30,6 +30,10 @@ LogContainer::LogContainer(QWidget *parent) : QWidget(parent), _vLayout(new QVBo
     this->layout()->setMargin(0);
 }
 
+QVBoxLayout* LogContainer::_getLayout() {
+    return this->_vLayout;
+}
+
 LogItem* LogContainer::_addLine(const Stampable &element, RPZStampableId putUnder) {
     
     auto eId = element.id();

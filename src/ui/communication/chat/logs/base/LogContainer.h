@@ -35,6 +35,7 @@ class LogContainer : public QWidget {
         LogItem* _getLine(const Stampable &element);
         LogItem* _getLine(RPZStampableId elementId);
         LogItem* _addLine(const Stampable &element, RPZStampableId putUnder = 0);
+        QVBoxLayout* _getLayout();
     
     private:
         QHash<RPZStampableId, LogItem*> _linesBySerializableId;

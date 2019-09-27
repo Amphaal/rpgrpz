@@ -3,7 +3,6 @@
 ConnectWidget::ConnectWidget(MapHint* hintToControlStateOf) : QWidget(nullptr), 
     _toControlStateOf(hintToControlStateOf),
     _nameTarget(new QLineEdit(this)),
-    _portTarget(new QLineEdit(this)), 
     _domainTarget(new QLineEdit(this)),
     _connectBtn(new QPushButton(this)) {
                                                     
@@ -25,25 +24,12 @@ ConnectWidget::ConnectWidget(MapHint* hintToControlStateOf) : QWidget(nullptr),
     this->_domainTarget->setPlaceholderText("IP ou domaine du serveur");
     this->_domainTarget->setText(AppContext::settings()->value("domain", "localhost").toString());
 
-    //port target
-    this->_portTarget->addAction(QIcon(":/icons/app/connectivity/port.png"), QLineEdit::LeadingPosition);
-    this->_portTarget->setValidator(new QIntValidator(0, 65535));
-    this->_portTarget->setPlaceholderText("Port");
-    this->_portTarget->setText(
-        AppContext::settings()->value(
-            "port", 
-            AppContext::UPNP_DEFAULT_TARGET_PORT
-        ).toString()
-    );
-    this->_portTarget->setMaximumWidth(70);
-
     //bind to Return Key press...
     auto bb = [&]() {
         this->_connectBtn->click();
     };
     QObject::connect(this->_nameTarget, &QLineEdit::returnPressed, bb);
     QObject::connect(this->_domainTarget, &QLineEdit::returnPressed, bb);
-    QObject::connect(this->_portTarget, &QLineEdit::returnPressed, bb);
 
     //default ui state
     this->_changeState(this->_state);
@@ -51,8 +37,6 @@ ConnectWidget::ConnectWidget(MapHint* hintToControlStateOf) : QWidget(nullptr),
     //adding widgets
     this->layout()->addWidget(this->_nameTarget);
     this->layout()->addWidget(this->_domainTarget);
-    this->layout()->addWidget(new QLabel(":")); //separator
-    this->layout()->addWidget(this->_portTarget);
     this->layout()->addWidget(this->_connectBtn);
 
     AppContext::settings()->endGroup();
@@ -65,9 +49,6 @@ void ConnectWidget::_saveValuesAsSettings() {
 
     const auto dt_text = this->_domainTarget->text();
     if(!dt_text.isEmpty()) AppContext::settings()->setValue("domain", dt_text);
-
-    const auto pt_text = this->_portTarget->text();
-    if(!pt_text.isEmpty()) AppContext::settings()->setValue("port", pt_text);
 
     const auto nt_text = this->_nameTarget->text();
     if(!nt_text.isEmpty()) AppContext::settings()->setValue("name", nt_text);
@@ -87,8 +68,7 @@ void ConnectWidget::_tryConnectToServer() {
     
     this->_cc = new RPZClient(
         this->_nameTarget->text(), 
-        this->_domainTarget->text(), 
-        this->_portTarget->text()
+        this->_domainTarget->text()
     );
 
     //create a separate thread to run the client into
@@ -206,13 +186,11 @@ void ConnectWidget::_changeState(ConnectWidget::State newState) {
     switch(newState) {
         case ConnectWidget::State::NotConnected:
             this->_domainTarget->setEnabled(true);
-            this->_portTarget->setEnabled(true);
             this->_nameTarget->setEnabled(true);
             break;
         case ConnectWidget::State::Connecting:
         case ConnectWidget::State::Connected:
             this->_domainTarget->setEnabled(false);
-            this->_portTarget->setEnabled(false);
             this->_nameTarget->setEnabled(false);
             break;
     }

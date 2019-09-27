@@ -5,6 +5,8 @@
 #include "src/shared/models/RPZMessage.h"
 #include "src/shared/models/RPZResponse.h"
 
+#include <QBoxLayout>
+
 class MessagesLog : public LogContainer {
     public:
         MessagesLog(QWidget *parent = nullptr);

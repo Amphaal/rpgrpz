@@ -1,10 +1,10 @@
 #include "RPZClient.h"
 
-RPZClient::RPZClient(const QString &name, const QString &domain, const QString &port) : 
-                        AlterationActor(AlterationPayload::Source::RPZClient),
-                        _name(name), 
-                        _domain(domain), 
-                        _port(port) { }
+RPZClient::RPZClient(const QString &name, const QString &socketStr) : AlterationActor(AlterationPayload::Source::RPZClient), _name(name) { 
+    auto parts = socketStr.split(":", QString::SplitBehavior::SkipEmptyParts);
+    this->_domain = parts.value(0, "localhost");
+    this->_port = parts.value(1, AppContext::UPNP_DEFAULT_TARGET_PORT);
+}
 
 void RPZClient::_initSock() {
     this->_sock = new JSONSocket(this, "RPZClient");

@@ -1,6 +1,9 @@
 #include "MessagesLog.h"
 
-MessagesLog::MessagesLog(QWidget *parent) : LogContainer(parent) {};
+MessagesLog::MessagesLog(QWidget *parent) : LogContainer(parent) {
+    // this->_getLayout()->setDirection(QBoxLayout::Direction::BottomToTop);
+    this->layout()->setAlignment(Qt::AlignBottom);
+};
 
 void MessagesLog::handleResponse(const RPZResponse &response) {
 

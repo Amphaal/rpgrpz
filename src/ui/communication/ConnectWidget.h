@@ -26,7 +26,6 @@ class ConnectWidget : public QWidget {
         void startingConnection(RPZClient* cc);
 
     private:
-        QLineEdit* _portTarget = nullptr;
         QLineEdit* _domainTarget = nullptr;
         QLineEdit* _nameTarget = nullptr;
         

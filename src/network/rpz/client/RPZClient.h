@@ -30,7 +30,7 @@ class RPZClient : public QObject, public AlterationActor, public JSONRouter {
     Q_OBJECT
 
     public:
-        RPZClient(const QString &displayname, const QString &domain, const QString &port);
+        RPZClient(const QString &displayname, const QString &socketStr);
         ~RPZClient();
         
         QString getConnectedSocketAddress() const; //safe

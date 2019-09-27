@@ -29,6 +29,26 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 
     //start the update check
     this->_updateIntegrator->checkForAppUpdates();
+
+}
+
+void MainWindow::keyPressEvent(QKeyEvent * event) {
+    switch(event->key()) {
+        
+        case Qt::Key_Alt: {
+            this->_showBars = !this->_showBars;
+            this->_triggerBarsVisibility();
+        }
+        break;
+
+        default:
+        break;
+    }
+}
+
+void MainWindow::_triggerBarsVisibility() {
+    this->menuBar()->setVisible(this->_showBars);
+    this->statusBar()->setVisible(this->_showBars);
 }
 
 void MainWindow::_saveWindowState() {
@@ -188,13 +208,15 @@ void MainWindow::_initUI() {
 
     //central widget
     auto centralW = new RestoringSplitter("MainWindowSplitter");
-    centralW->setContentsMargins(10, 5, 10, 10);
+    centralW->setContentsMargins(5, 5, 5, 5);
     this->setCentralWidget(centralW);
 
     //specific componements
     this->_initUIStatusBar();
     this->_initUIApp();
     this->_initUIMenu();
+
+    this->_triggerBarsVisibility();
 
     //default focus
     this->_mapView->setFocus();
@@ -306,12 +328,14 @@ void MainWindow::_initUIMenu() {
 
     //set container
     this->setMenuWidget(menuBar);
+
 }
 
 void MainWindow::_initUIStatusBar() {
 
     this->_sb = new RPZStatusBar;
     this->setStatusBar(this->_sb);
+
 }
 
 //////////////////

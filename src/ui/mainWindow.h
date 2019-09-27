@@ -15,6 +15,7 @@
 #include <QLabel>
 #include <QStatusBar>
 #include <QApplication>
+#include <QShortcut>
 
 #include <QFileDialog>
 
@@ -84,4 +85,8 @@ class MainWindow : public QMainWindow {
         QMenu* _getMapMenu();
 
         UpdaterUIIntegrator* _updateIntegrator = nullptr;
+
+        void keyPressEvent(QKeyEvent * event) override;
+        bool _showBars = false;
+        void _triggerBarsVisibility();
 };
