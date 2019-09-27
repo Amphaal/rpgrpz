@@ -283,6 +283,7 @@ QVariant AssetsTreeViewModel::data(const QModelIndex &index, int role) const {
                 case AssetsDatabaseElement::Type::NPC:
                 case AssetsDatabaseElement::Type::FloorBrush:
                 case AssetsDatabaseElement::Type::Object:
+                case AssetsDatabaseElement::Type::Background:
                 case AssetsDatabaseElement::Type::Downloaded: {  
                     
                     auto cachedPixmap = getAssetIcon(data, defaultQSize);

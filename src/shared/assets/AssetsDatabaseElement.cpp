@@ -399,7 +399,7 @@ void AssetsDatabaseElement::_defineParent(AssetsDatabaseElement* parent) {
 }
 
 void AssetsDatabaseElement::_defineIsContainer() {
-    this->_isContainer = this->_containerTypes.contains(this->_type);
+    this->_isContainer = this->_staticContainerTypes.contains(this->_type) || this->_type == Folder;
 }
 void AssetsDatabaseElement::_defineIsInternal() {
     this->_isInternal = this->rootStaticContainer() == InternalContainer;
@@ -414,7 +414,7 @@ void AssetsDatabaseElement::_defineIsStaticContainer() {
     this->_isStaticContainer = this->_staticContainerTypes.contains(this->_type);
 }
 void AssetsDatabaseElement::_defineIsDeletable() {
-    this->_isDeletable = this->_deletableItemTypes.contains(this->_type);
+    this->_isDeletable = this->_itemTypes.contains(this->_type) ||  this->_type == Folder;
 }
 
 
@@ -454,7 +454,8 @@ void AssetsDatabaseElement::_defineInsertType() {
             this->_insertType = Downloaded;
             break;
         case BackgroundContainer:
-            this->_insertType = BackgroundContainer;
+            this->_insertType = Background;
+            break;
         default:
             this->_insertType = T_Unknown;
             break;

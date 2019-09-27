@@ -139,14 +139,13 @@ class AssetsDatabaseElement {
         ///
         //
 
-        static const inline QList<AssetsDatabaseElement::Type> _containerTypes = {
+        static const inline QList<AssetsDatabaseElement::Type> _staticContainerTypes = {
             InternalContainer,
             NPC_Container, 
             FloorBrushContainer, 
+            BackgroundContainer,
             ObjectContainer,
-            Folder,
-            DownloadedContainer,
-            BackgroundContainer
+            DownloadedContainer
         };
 
         static const inline QList<AssetsDatabaseElement::Type> _itemTypes = {
@@ -155,24 +154,6 @@ class AssetsDatabaseElement {
             Object,
             Downloaded,
             Background
-        };
-
-        static const inline QList<AssetsDatabaseElement::Type> _deletableItemTypes = {
-            NPC, 
-            FloorBrush,
-            Object,
-            Folder,
-            Downloaded,
-            Background
-        };
-
-        static const inline QList<AssetsDatabaseElement::Type> _staticContainerTypes = {
-            InternalContainer,
-            NPC_Container, 
-            FloorBrushContainer, 
-            BackgroundContainer,
-            ObjectContainer,
-            DownloadedContainer
         };
 
         static const inline QList<AssetsDatabaseElement::Type> _internalItemsTypes = {
