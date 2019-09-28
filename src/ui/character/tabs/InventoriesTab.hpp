@@ -4,6 +4,7 @@
 #include <QVBoxLayout>
 #include <QComboBox>
 
+#include "src/shared/models/RPZCharacter.hpp"
 #include "../components/InventorySheet.hpp"
 
 class InventoriesTab : public QWidget {
@@ -23,6 +24,14 @@ class InventoriesTab : public QWidget {
                 
         }
     
+        void updateCharacter(RPZCharacter &toUpdate) {
+            //TODO
+        }   
+
+        void loadCharacter(const RPZCharacter &toLoad) {
+            //TODO
+        }
+
     private:
         QComboBox* _inventoryListCombo = nullptr;
 };

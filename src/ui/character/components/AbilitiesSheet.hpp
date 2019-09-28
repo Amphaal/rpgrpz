@@ -13,6 +13,6 @@ class AbilitiesSheet : public QTableWidget {
             this->setHorizontalHeaderLabels({ "Nom", "Catégorie", "Description" });
             this->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeMode::Interactive);
             this->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeMode::ResizeToContents);
-            this->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeMode::Stretch);
+            this->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeMode::Interactive);
         }
 };

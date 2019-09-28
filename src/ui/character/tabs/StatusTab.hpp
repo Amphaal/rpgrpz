@@ -7,6 +7,8 @@
 #include <QLineEdit>
 #include <QPushButton>
 
+#include "src/shared/models/RPZCharacter.hpp"
+
 #include "../components/CustomBarGenerator.hpp"
 #include "../components/AbilitiesSheet.hpp"
 
@@ -68,7 +70,25 @@ class StatusTab : public QWidget {
                 abilitiesGrp->layout()->addWidget(this->_abilitiesSheet);
                 stateTabLayout->addRow(abilitiesGrp);
         }
-    
+
+        
+        void updateCharacter(RPZCharacter &toUpdate) {
+            toUpdate.setLevel(this->_levelSpin->value());
+            toUpdate.setBonus(this->_statusBonusEdit->text());
+            toUpdate.setMalus(this->_statusMalusEdit->text());
+            //TODO gauges
+            //TODO abilities
+        }   
+
+        void loadCharacter(const RPZCharacter &toLoad) {
+            this->_levelSpin->setValue(toLoad.level());
+            this->_statusBonusEdit->setText(toLoad.bonus());
+            this->_statusMalusEdit->setText(toLoad.malus());
+            //TODO gauges
+            //TODO abilities
+        }
+
+
     private:
         QLineEdit* _statusBonusEdit = nullptr;
         QLineEdit* _statusMalusEdit = nullptr;

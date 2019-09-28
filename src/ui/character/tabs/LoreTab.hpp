@@ -7,6 +7,9 @@
 #include <QTextEdit>
 #include <QPushButton>
 #include <QValidator>
+#include <QBuffer>
+
+#include "src/shared/models/RPZCharacter.hpp"
 
 class LoreTab : public QWidget {
     public:
@@ -38,7 +41,6 @@ class LoreTab : public QWidget {
                 this->_sheetNameEdit = new QLineEdit;
                 characterTabLayout->addRow("Nom du personnage :", this->_sheetNameEdit);
                 this->_sheetNameEdit->setPlaceholderText(" Nom usuel du personnage [Requis!]");
-                this->_sheetNameEdit->setValidator(new QRegularExpressionValidator(QRegularExpression("\\w")));
 
                 //archtype
                 this->_archtypeEdit = new QLineEdit;
@@ -54,10 +56,46 @@ class LoreTab : public QWidget {
                 this->_storyEdit = new QTextEdit;
                 this->_storyEdit->setPlaceholderText("Evolution du personnage au cours de ses aventures...");
                 characterTabLayout->addRow("Histoire :", this->_storyEdit);
-                
+
         }
     
+        void updateCharacter(RPZCharacter &toUpdate) {
+
+            if(!this->_usingDefaultPortrait) {
+                QByteArray bArray;
+                QBuffer buffer(&bArray);
+                buffer.open(QIODevice::WriteOnly);
+                this->_imgLbl->pixmap()->save(&buffer);
+                toUpdate.setPortrait(bArray);
+            }
+
+            toUpdate.setName(this->_sheetNameEdit->text());
+            toUpdate.setArchtype(this->_archtypeEdit->text());
+            toUpdate.setDescription(this->_descriptionEdit->toPlainText());
+            toUpdate.setStory(this->_storyEdit->toPlainText());
+        }   
+
+        void loadCharacter(const RPZCharacter &toLoad) {
+            
+            auto portraitAsBytes = toLoad.portrait();
+            if(!portraitAsBytes.isEmpty()) {
+                QPixmap p;
+                p.loadFromData(portraitAsBytes);
+                this->_imgLbl->setPixmap(p);
+                this->_usingDefaultPortrait = false;
+            } else {
+                this->_imgLbl->setPixmap(*_defaultPortrait);
+                this->_usingDefaultPortrait = true;
+            }
+
+            this->_sheetNameEdit->setText(toLoad.name());
+            this->_archtypeEdit->setText(toLoad.archtype());
+            this->_descriptionEdit->setPlainText(toLoad.description());
+            this->_storyEdit->setPlainText(toLoad.story());
+        }
+
     private:
+        bool _usingDefaultPortrait = true;
         static inline QPixmap* _defaultPortrait = nullptr;
 
         QLabel* _imgLbl = nullptr;

@@ -4,17 +4,18 @@
 #include "base/JSONDatabase.h"
 
 #include "src/shared/models/RPZCharacter.hpp"
+#include "src/shared/models/base/RPZMap.hpp"
 
 class CharactersDatabase : public JSONDatabase {
     
     public:
         static CharactersDatabase* get() {
-            if(!_singleton) _singleton = new CharactersDatabase;
+            if(!_singleton) {_singleton = new CharactersDatabase;}
             return _singleton;
         };
 
-        QMap<snowflake_uid, RPZCharacter> characters() {
-            QMap<snowflake_uid, RPZCharacter> out;
+        RPZMap<RPZCharacter> characters() {
+            RPZMap<RPZCharacter> out;
             for(auto &i : this->_characters().toVariantHash()) {
                 auto character = RPZCharacter(i.toHash());
                 out.insert(character.id(), character);
@@ -38,7 +39,8 @@ class CharactersDatabase : public JSONDatabase {
 
                 //insert in db
                 auto chars = this->_characters();
-                chars.remove(toRemove.idAsStr());
+                auto idToRemove = toRemove.idAsStr();
+                chars.remove(idToRemove);
                 obj["characters"] = chars;
             
             //save

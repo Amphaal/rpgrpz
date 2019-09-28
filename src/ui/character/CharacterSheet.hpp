@@ -26,14 +26,44 @@ class CharacterSheet : public QTabWidget {
             this->addTab(this->_characterTab, QIcon(":/icons/app/tabs/feather.png"), "Lore");
             this->addTab(this->_statusTab, QIcon(":/icons/app/tabs/status.png"), "Statut / Compétences");
             this->addTab(this->_inventoriesTab, QIcon(":/icons/app/tabs/chest.png"), "Inventaires");
-            this->addTab(this->_noteTab, QIcon(":/icons/app/tabs/noting.png"), "Notes");
+            this->addTab(this->_noteTab, QIcon(":/icons/app/tabs/noting.png"), "Notes / Autres");
 
         };
 
+        void updateCharacter(RPZCharacter &toUpdate) {
+            
+            //lore
+            this->_characterTab->updateCharacter(toUpdate);
+
+            //status
+            this->_statusTab->updateCharacter(toUpdate);
+
+            //inventory
+            this->_inventoriesTab->updateCharacter(toUpdate);
+
+            //note 
+            toUpdate.setNotes(this->_noteTab->toPlainText());
+        }
+
     public slots:
-        void loadCharacter(const RPZCharacter &toLoad) {
+        void loadCharacter(const RPZCharacter& toLoad) {
+            
+            //self
             auto characterExists = !toLoad.isEmpty();
             this->setVisible(characterExists);
+
+            //lore
+            this->_characterTab->loadCharacter(toLoad);
+
+            //status
+            this->_statusTab->loadCharacter(toLoad);
+
+            //inventory
+            this->_inventoriesTab->loadCharacter(toLoad);
+
+            //note 
+            this->_noteTab->setPlainText(toLoad.notes());
+
         }
 
     private:

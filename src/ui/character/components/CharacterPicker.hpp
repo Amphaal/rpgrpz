@@ -4,6 +4,7 @@
 #include <QComboBox>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QMessageBox>
 
 #include "src/shared/database/CharactersDatabase.hpp"
 
@@ -12,7 +13,8 @@ class CharacterPicker : public QWidget {
     Q_OBJECT
 
     signals:
-        void selectionChanged(const RPZCharacter &selected);
+        void selectionChanged(const RPZCharacter* selected);
+        void requestSave(RPZCharacter* toSave);
 
     public:
         CharacterPicker() : _characterListCombo(new QComboBox), _deleteCharacterBtn(new QPushButton) {
@@ -53,13 +55,23 @@ class CharacterPicker : public QWidget {
 
         }
 
+        RPZCharacter* currentCharacter() {
+            auto id = this->_characterListCombo->currentData().toULongLong();
+            if(!this->_characters.contains(id)) return nullptr;
+            return &this->_characters[id];
+        }
+
         void loadCharacters() {
             
+            //clear
             this->_characterListCombo->clear();
-            auto characters = CharactersDatabase::get()->characters();
+            this->_bufferedSelectedCharacter = nullptr;
+            this->_bufferedSelectedIndex = -1;
+
+            this->_characters = CharactersDatabase::get()->characters();
             
             //if no character in DB
-            if(characters.isEmpty()) {
+            if(this->_characters.isEmpty()) {
                 this->_characterListCombo->addItem("Aucun personnage existant, créez en un !");
                 this->_characterListCombo->setEnabled(false);
                 return;
@@ -69,13 +81,13 @@ class CharacterPicker : public QWidget {
             this->_characterListCombo->setEnabled(true);
             {
                 QSignalBlocker b(this->_characterListCombo);
-                for(auto &character : characters) {
-                    this->_characterListCombo->addItem(character.toString(), character);
+                for(auto &character : this->_characters) {
+                    this->_characterListCombo->addItem(character.toString(), character.id());
                 }
             }
 
             //make sure to trigger event after refresh
-            auto last = characters.count() - 1;
+            auto last = this->_characters.count() - 1;
             auto ci = this->_characterListCombo->currentIndex();
             if(last != ci) {
                 this->_characterListCombo->setCurrentIndex(last);
@@ -83,21 +95,36 @@ class CharacterPicker : public QWidget {
                 this->_onSelectedIndexChanged(ci);
             }
             
-            
+        }
+
+        void updateBufferedItemString() {
+            if(!this->_bufferedSelectedCharacter) return;
+
+            this->_characterListCombo->setItemText(
+                this->_bufferedSelectedIndex,
+                this->_bufferedSelectedCharacter->toString()
+            );
         }
     
     private:
         QComboBox* _characterListCombo = nullptr;
         QPushButton* _deleteCharacterBtn = nullptr;
-        RPZCharacter _selectedCharacter;
+        RPZCharacter* _bufferedSelectedCharacter = nullptr;
+        int _bufferedSelectedIndex = -1;
+
+        RPZMap<RPZCharacter> _characters;
 
         void _addButtonPressed() {
+            this->_autoSave();
             CharactersDatabase::get()->addNewCharacter();
             this->loadCharacters();
         }
 
         void _deleteButtonPressed() {
             
+            auto currentChar = this->currentCharacter();
+            if(!currentChar) return;
+
             auto result = QMessageBox::warning(
                 this, 
                 "Suppression de fiche", 
@@ -107,19 +134,34 @@ class CharacterPicker : public QWidget {
             );
             
             if(result == QMessageBox::Yes) {
-                CharactersDatabase::get()->removeCharacter(this->_selectedCharacter);
+                CharactersDatabase::get()->removeCharacter(*currentChar);
+                this->_bufferedSelectedCharacter = nullptr;
+                this->_bufferedSelectedIndex = -1;
                 this->loadCharacters();
             }
 
         }
 
+        bool _autoSave() {
+            if(!this->_bufferedSelectedCharacter) return false;
+
+            emit requestSave(this->_bufferedSelectedCharacter);
+            
+            this->updateBufferedItemString();
+
+            return true;
+        }
+
         void _onSelectedIndexChanged(int index) {
-            this->_selectedCharacter = RPZCharacter(this->_characterListCombo->itemData(index).toHash());
-            auto characterSelected = !this->_selectedCharacter.isEmpty();
+            this->_autoSave();
 
-            this->_deleteCharacterBtn->setEnabled(characterSelected);
+            auto newCharacter = this->currentCharacter();
+            this->_deleteCharacterBtn->setEnabled(newCharacter);
+            
+            this->_bufferedSelectedCharacter = newCharacter;
+            this->_bufferedSelectedIndex = index;
 
-            emit selectionChanged(this->_selectedCharacter);
+            emit selectionChanged(newCharacter);
         }
         
 };
