@@ -40,7 +40,7 @@
 #include "src/ui/others/statusbar/RPZStatusLabel.h"
 
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
-#include "src/ui/character/CharacterSheet.hpp"
+#include "src/ui/character/CharacterEditor.hpp"
 
 class MainWindow : public QMainWindow { 
     public:
@@ -69,7 +69,7 @@ class MainWindow : public QMainWindow {
         MapTools* _mapTools = nullptr;
         MapLayoutManager* _mlManager = nullptr;
         AtomEditionManager* _atomEditManager = nullptr;
-        CharacterSheet* _characterSheet = nullptr;
+        CharacterEditor* _characterEditor = nullptr;
         void _initUIApp();
 
         /*statusbar*/

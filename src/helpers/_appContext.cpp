@@ -149,6 +149,10 @@ QString AppContext::getAssetsFileCoordinatorLocation() {
     return getAppDataLocation() + ASSETS_JSON_COORDINATOR_FILENAME;
 }
 
+QString AppContext::getCharacterDatabaseLocation() {
+    return getAppDataLocation() + CHARACTER_JSON_DATABASE_FILENAME;
+}
+
 QString AppContext::getAssetsFolderLocation() {
     auto dest = getAppDataLocation() + ASSETS_PATH;
     return dest;

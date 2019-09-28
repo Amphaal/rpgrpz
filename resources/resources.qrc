@@ -41,6 +41,7 @@
         <file>icons/app/manager/internal.png</file>
         <file>icons/app/manager/background.png</file>
         <file>icons/app/manager/downloaded.png</file>
+        <file>icons/app/tabs/noting.png</file>
         <file>icons/app/tabs/list.png</file>
         <file>icons/app/tabs/playlist.png</file>
         <file>icons/app/tabs/chat.png</file>
@@ -61,6 +62,7 @@
         <file>icons/app/audio/youtubeGrey.png</file>
         <file>icons/app/audio/youtubeError.png</file>
         <file>icons/app/other/add.png</file>
+        <file>icons/app/other/remove.png</file>
         <file>icons/app/other/bag.png</file>
         <file>icons/app/loader.gif</file>
         <file>asset/default.jpg</file>

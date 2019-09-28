@@ -8,6 +8,7 @@
 #include <QSpinBox>
 #include <QPushButton>
 #include <QColorDialog>
+#include <QCheckBox>
 
 class CustomBarGenerator : public QWidget {
     public:
@@ -17,7 +18,8 @@ class CustomBarGenerator : public QWidget {
             _currentValSpin(new QSpinBox),
             _minBarValSpin(new QSpinBox),
             _maxBarValSpin(new QSpinBox),
-            _colorPicker(new QPushButton) {
+            _colorPicker(new QPushButton),
+            _visibleOnPortraitChk(new QCheckBox) {
 
                 //bar
                 this->_bar->setMinimum(_defaultMin);
@@ -28,6 +30,9 @@ class CustomBarGenerator : public QWidget {
                 //bar name 
                 this->_barNameEdit->setPlaceholderText(" Nom de la jauge");
                 this->_barNameEdit->setMinimumWidth(80);
+
+                //visible on portrait
+                this->_visibleOnPortraitChk->setText("Visible sous le portrait");
 
                 //current
                 this->_currentValSpin->setToolTip("Valeur de la jauge");
@@ -51,6 +56,7 @@ class CustomBarGenerator : public QWidget {
                 auto topL = new QHBoxLayout;
                 topL->addWidget(this->_colorPicker);
                 topL->addWidget(this->_barNameEdit);
+                topL->addWidget(this->_visibleOnPortraitChk);
                 topL->addStretch(1);
                 topL->addWidget(this->_currentValSpin);
                 topL->addSpacing(10);
@@ -75,6 +81,7 @@ class CustomBarGenerator : public QWidget {
         QSpinBox* _minBarValSpin = nullptr;
         QSpinBox* _maxBarValSpin = nullptr;
         QPushButton* _colorPicker = nullptr;
+        QCheckBox* _visibleOnPortraitChk = nullptr;
 
         static inline int _defaultValue = 15;
         static inline int _defaultMin = 0;

@@ -19,6 +19,10 @@ class Serializable : public QVariantHash {
             return this->value("id").toULongLong(); 
         };
 
+        QString idAsStr() const { 
+            return QString::number(this->id()); 
+        };
+
         void shuffleId() {
             this->_setId(SnowFlake::get()->nextId());
         }

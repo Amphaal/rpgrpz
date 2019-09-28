@@ -13,17 +13,16 @@ class InventorySheet : public QWidget {
             this->_inventoryNameEdit->setContentsMargins(10, 10, 10, 10);
 
             this->_inventory->setSortingEnabled(true);
-            this->_inventory->setSelectionMode(QAbstractItemView::SelectionMode::NoSelection);
+            this->_inventory->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
+            this->_inventory->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
             this->_inventory->horizontalHeader()->setStretchLastSection(false);
             this->_inventory->verticalHeader()->hide();
-            this->_inventory->setHorizontalHeaderLabels({ "Nom", "Catégorie", "Description",  "Pds", "Nbr" });
-            this->_inventory->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-            this->_inventory->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-            this->_inventory->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
-            this->_inventory->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
-            this->_inventory->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeToContents);
-
-            // this->_inventory->setItem()
+            this->_inventory->setHorizontalHeaderLabels({ "Nom", "Catégorie", "Nbr", "Pds", "Description",});
+            this->_inventory->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeMode::Interactive);
+            this->_inventory->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeMode::ResizeToContents);
+            this->_inventory->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeMode::ResizeToContents);
+            this->_inventory->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeMode::ResizeToContents);
+            this->_inventory->horizontalHeader()->setSectionResizeMode(4, QHeaderView::ResizeMode::Interactive);
 
             auto l = new QVBoxLayout;
             l->setMargin(0);
@@ -36,5 +35,5 @@ class InventorySheet : public QWidget {
     
     private:
         QLineEdit* _inventoryNameEdit = nullptr;
-        QTableWidget * _inventory = nullptr;
+        QTableWidget* _inventory = nullptr;
 };

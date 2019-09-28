@@ -233,13 +233,13 @@ void MainWindow::_initUIApp() {
     this->_mlManager = new MapLayoutManager(this->_mapView->hints());
     this->_connectWidget = new ConnectWidget(this->_mapView->hints());
     this->_atomEditManager = new AtomEditionManager(this->_mapView->hints());
-    this->_characterSheet = new CharacterSheet;
+    this->_characterEditor = new CharacterEditor;
     
     //left tabs
     auto lTab = new QTabWidget;
     lTab->addTab(this->_assetsManager, QIcon(":/icons/app/tabs/box.png"), "Boite à jouets");
     lTab->addTab(this->_audioManager, QIcon(":/icons/app/tabs/playlist.png"), "Audio");
-    lTab->addTab(this->_characterSheet, QIcon(":/icons/app/tabs/scroll.png"), "Fiches");
+    lTab->addTab(this->_characterEditor, QIcon(":/icons/app/tabs/scroll.png"), "Fiches");
 
     //right tabs
     auto rTab = new QTabWidget;
