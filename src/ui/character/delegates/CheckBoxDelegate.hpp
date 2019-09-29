@@ -25,7 +25,16 @@ class CheckBoxDelegate : public QStyledItemDelegate {
             model->setData(index, value, Qt::EditRole);
         }
 
-        void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override {
-            editor->setGeometry(option.rect);
+        void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override {           
+            //center editor
+            auto c = option.rect;
+            c.moveLeft(c.center().x() - editor->sizeHint().width() / 2);           
+            editor->setGeometry(c);
         }
+
+        QString displayText(const QVariant &value, const QLocale &locale) const override {
+            auto val = value.toBool();
+            return val ? QString::fromUtf8("☑") : QString::fromUtf8("☐");
+        }
+
 };

@@ -19,13 +19,13 @@ class LoreTab : public QWidget {
             if(!_defaultPortrait) _defaultPortrait = new QPixmap(":/asset/default.jpg");
 
             //character tab
-            auto characterTabLayout = new QFormLayout;
+            auto characterTabLayout = new QVBoxLayout;
             this->setLayout(characterTabLayout);
             
                 //portrait
                 auto pLayout = new QVBoxLayout;
                 pLayout->setContentsMargins(0, 0, 0, 5);
-                characterTabLayout->addRow(pLayout); 
+                characterTabLayout->addLayout(pLayout); 
 
                     //portrait placeholder
                     this->_imgLbl = new QLabel;
@@ -39,23 +39,23 @@ class LoreTab : public QWidget {
 
                 //character name
                 this->_sheetNameEdit = new QLineEdit;
-                characterTabLayout->addRow("Nom du personnage :", this->_sheetNameEdit);
                 this->_sheetNameEdit->setPlaceholderText(" Nom usuel du personnage [Requis!]");
+                characterTabLayout->addLayout(_addRow("Nom du personnage :", this->_sheetNameEdit));
 
                 //archtype
                 this->_archtypeEdit = new QLineEdit;
                 this->_archtypeEdit->setPlaceholderText(" Courte et grossière caractérisation du personnage (Paladin Loyal Bon, Chasseur de Prime...)");
-                characterTabLayout->addRow("Archétype :", this->_archtypeEdit);
+                characterTabLayout->addLayout(_addRow("Archétype :", this->_archtypeEdit));
 
                 //character description
                 this->_descriptionEdit = new QTextEdit;
                 this->_descriptionEdit->setPlaceholderText("Description physique, psychologique, contextuelle...");
-                characterTabLayout->addRow("Description :", this->_descriptionEdit);
+                characterTabLayout->addLayout(_addRow("Description :", this->_descriptionEdit));
 
                 //character story
                 this->_storyEdit = new QTextEdit;
                 this->_storyEdit->setPlaceholderText("Evolution du personnage au cours de ses aventures...");
-                characterTabLayout->addRow("Histoire :", this->_storyEdit);
+                characterTabLayout->addLayout(_addRow("Histoire :", this->_storyEdit), 1);
 
         }
     
@@ -103,4 +103,17 @@ class LoreTab : public QWidget {
         QLineEdit* _archtypeEdit = nullptr;
         QTextEdit* _descriptionEdit = nullptr;
         QTextEdit* _storyEdit = nullptr;
+
+        static QHBoxLayout* _addRow(const QString &descr, QWidget *widget) {
+            
+            auto l = new QHBoxLayout;
+            auto lbl = new QLabel(descr);
+            
+            lbl->setMinimumWidth(105);
+
+            l->addWidget(lbl);
+            l->addWidget(widget, 1);
+
+            return l;
+        }
 };

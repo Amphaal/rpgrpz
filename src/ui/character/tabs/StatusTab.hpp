@@ -17,22 +17,21 @@ class StatusTab : public QWidget {
         StatusTab() {
             
             //state tab
-            auto stateTabLayout = new QFormLayout;
-            stateTabLayout->setSpacing(30);
+            auto stateTabLayout = new QVBoxLayout;      
             this->setLayout(stateTabLayout);
                 
                 //level
                 this->_levelSpin = new QSpinBox;
                 this->_levelSpin->setMinimum(-1);
                 this->_levelSpin->setValue(-1);
-                stateTabLayout->addRow("Niveau", this->_levelSpin);
+                stateTabLayout->addLayout(_addRow("Niveau", this->_levelSpin));
 
                 //alterations
                 auto alterations = new QGroupBox("Altérations");
                 auto alterationsLayout = new QFormLayout;
                 alterations->setLayout(alterationsLayout);
                 alterations->setAlignment(Qt::AlignCenter);
-                stateTabLayout->addRow(alterations);
+                stateTabLayout->addWidget(alterations);
 
                     //character bonus status
                     this->_statusBonusEdit = new QLineEdit;
@@ -47,7 +46,7 @@ class StatusTab : public QWidget {
                 //bars
                 auto bars = new QGroupBox("Jauges");
                 bars->setAlignment(Qt::AlignCenter);
-                stateTabLayout->addRow(bars);
+                stateTabLayout->addWidget(bars);
                 auto barsLayout = new QVBoxLayout;
                 barsLayout->setSpacing(20);
                 bars->setLayout(barsLayout);
@@ -82,7 +81,8 @@ class StatusTab : public QWidget {
                 this->_abilitiesSheet = new AbilitiesSheet;
                 abilitiesGrp->setLayout(new QVBoxLayout);
                 abilitiesGrp->layout()->addWidget(this->_abilitiesSheet);
-                stateTabLayout->addRow(abilitiesGrp);
+                abilitiesGrp->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+                stateTabLayout->addWidget(abilitiesGrp, 1);
         }
         ~StatusTab() {
             this->_insertGaugeInv = nullptr;
@@ -165,5 +165,12 @@ class StatusTab : public QWidget {
             auto mustShowIndicator = !layoutItemsCount;
             this->_insertGaugeInv->setVisible(mustShowIndicator);
             
+        }
+
+        static QHBoxLayout* _addRow(const QString &descr, QWidget *widget) {
+            auto l = new QHBoxLayout;
+            l->addWidget(new QLabel(descr));
+            l->addWidget(widget, 1);
+            return l;
         }
 };

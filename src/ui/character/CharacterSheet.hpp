@@ -78,7 +78,6 @@ class CharacterSheet : public QTabWidget {
             scroller->setFrameShape(QFrame::NoFrame);
             scroller->setWidget(toMakeScrollable);
             scroller->setWidgetResizable(true);
-            scroller->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
             auto pal = scroller->palette();
             pal.setColor(QPalette::Window, "#FCFCFC");
             scroller->setPalette(pal);

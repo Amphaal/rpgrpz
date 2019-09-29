@@ -4,20 +4,27 @@
 #include <QHeaderView>
 
 #include "../delegates/CheckBoxDelegate.hpp"
+#include "src/shared/models/character/RPZCharacter.hpp"
+#include "src/shared/models/character/RPZAbility.hpp"
 
 class AbilitiesSheet : public QTableWidget {
     public:
         AbilitiesSheet() : QTableWidget(0, 4) {
             this->setSortingEnabled(true);
-            this->setSelectionMode(QAbstractItemView::SelectionMode::NoSelection);
-            this->horizontalHeader()->setStretchLastSection(false);
+
+            this->setSelectionMode(QAbstractItemView::SelectionMode::ExtendedSelection);
+            this->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
+            
             this->verticalHeader()->hide();
+            
             this->setHorizontalHeaderLabels({ "Nom", "Catégorie", "Favoris", "Description" });
+
+            this->horizontalHeader()->setStretchLastSection(false);
             this->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeMode::Interactive);
             this->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeMode::ResizeToContents);
             this->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeMode::ResizeToContents);
             this->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeMode::Interactive);
-            this->setItemDelegateForRow(2, new CheckBoxDelegate);
+            this->setItemDelegateForColumn(2, new CheckBoxDelegate);
         }
 
         void updateCharacter(RPZCharacter &toUpdate) {
@@ -26,13 +33,12 @@ class AbilitiesSheet : public QTableWidget {
             for(auto row = 0; row < this->rowCount(); row++) {
                 RPZAbility ab;
 
-                //name
+                //name, skip if name is empty
                 auto nameItem = this->item(row, 0);
-                
-                if(nameItem) {
-                    auto name = nameItem->text();
-                    ab.setName(name);
-                }
+                if(!nameItem) continue;
+                auto name = nameItem->text();
+                if(name.isEmpty()) continue;
+                ab.setName(name);
 
                 //category
                 auto categoryItem = this->item(row, 1);
@@ -62,6 +68,8 @@ class AbilitiesSheet : public QTableWidget {
                 this->_addRow(ability);
             }
 
+            this->_addRow();
+
         }
 
         void _addRow(const RPZAbility &ability = RPZAbility()) {
@@ -79,7 +87,8 @@ class AbilitiesSheet : public QTableWidget {
 
             //is fav
             auto fWidget = new QTableWidgetItem;
-            fWidget->setData(Qt::EditRole, ability.isFavorite());
+            fWidget->setTextAlignment(Qt::AlignCenter);
+            fWidget->setData(Qt::DisplayRole, ability.isFavorite());
             this->setItem(row, 2, fWidget);
 
             //descr

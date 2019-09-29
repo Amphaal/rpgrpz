@@ -13,11 +13,15 @@ class InventorySheet : public QWidget {
             this->_inventoryNameEdit->setContentsMargins(10, 10, 10, 10);
 
             this->_inventory->setSortingEnabled(true);
-            this->_inventory->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
+
+            this->_inventory->setSelectionMode(QAbstractItemView::SelectionMode::ExtendedSelection);
             this->_inventory->setSelectionBehavior(QAbstractItemView::SelectionBehavior::SelectRows);
-            this->_inventory->horizontalHeader()->setStretchLastSection(false);
+
             this->_inventory->verticalHeader()->hide();
+
             this->_inventory->setHorizontalHeaderLabels({ "Nom", "Catégorie", "Nbr", "Pds", "Description",});
+
+            this->_inventory->horizontalHeader()->setStretchLastSection(false);
             this->_inventory->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeMode::Interactive);
             this->_inventory->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeMode::ResizeToContents);
             this->_inventory->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeMode::ResizeToContents);
