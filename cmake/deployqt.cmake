@@ -36,7 +36,6 @@ function(deployqt target)
                     --verbose 0
                     --no-compiler-runtime
                     --no-angle
-                    --no-translations
                     --no-opengl-sw
                     ${QT_DEPLOY_MUST_BE_DEBUG}
                     --${DEPLOYQT_TARGET}

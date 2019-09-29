@@ -19,6 +19,10 @@
 #include <QtGui/QDesktopServices>
 #include <QtCore/QProcess>
 #include <QtCore/QUrl>
+#include <QTranslator>
+#include <QMessageBox>
+#include <QApplication>
+#include <QLibraryInfo>
 
 #include <QHash>
 
@@ -88,4 +92,6 @@ class AppContext {
 
         static void openFileInOS(const QString &cpURL);
         static void openFolderInOS(const QString &cpURL);
+
+        static QTranslator* installTranslations(QApplication &app);
 };

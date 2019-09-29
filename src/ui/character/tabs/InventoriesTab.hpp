@@ -4,7 +4,7 @@
 #include <QVBoxLayout>
 #include <QComboBox>
 
-#include "src/shared/models/RPZCharacter.hpp"
+#include "src/shared/models/character/RPZCharacter.hpp"
 #include "../components/InventorySheet.hpp"
 
 class InventoriesTab : public QWidget {

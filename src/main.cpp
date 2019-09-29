@@ -61,6 +61,7 @@ int clientApp(int argc, char** argv) {
     
     //setup app
     QApplication app(argc, argv);
+    AppContext::installTranslations(app);
     AppContext::configureApp(app);
 
     app.setApplicationDisplayName(APP_NAME);
@@ -87,7 +88,7 @@ int main(int argc, char** argv) {
 
     //log SLL lib loading
     qDebug() << QSslSocket::sslLibraryBuildVersionString();
-    qDebug() << QSslSocket::sslLibraryVersionString();
+    qDebug() << QSslSocket::sslLibraryVersionString();   
 
     //registering metatypes
     qRegisterMetaType<JSONMethod>("JSONMethod");

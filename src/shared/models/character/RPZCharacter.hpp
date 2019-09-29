@@ -1,7 +1,11 @@
 #pragma once
 
 #include <QVariantHash>
-#include "base/Serializable.hpp"
+#include "../base/Serializable.hpp"
+
+#include "RPZAbility.hpp"
+#include "RPZGauge.hpp"
+#include "RPZInventory.hpp"
 
 class RPZCharacter : public Serializable {
     public:
@@ -49,8 +53,40 @@ class RPZCharacter : public Serializable {
         void setMalus(const QString &malus) {this->insert("malus", malus);}
         const QString malus() const {return this->value("malus").toString();}
 
+        void setGauges(const QVector<RPZGauge> &gauges) {
+            QVariantList in;
+            for(auto &gauge : gauges) in += gauge;
+            this->insert("g", in);
+        }
+        const QVector<RPZGauge> gauges() const {
+            QVector<RPZGauge> out;
+            for(auto &gauge : this->value("g").toList()) out += RPZInventory(gauge.toHash());
+            return out;
+        }
+
+        void setAbilities(const QVector<RPZAbility> &abilities) {
+            QVariantList in;
+            for(auto &ability : abilities) in += ability;
+            this->insert("ab", in);
+        }
+        const QVector<RPZAbility> abilities() const {
+            QVector<RPZAbility> out;
+            for(auto &ability : this->value("ab").toList()) out += RPZAbility(ability.toHash());
+            return out;
+        }
+
         //
 
+        void setInventories(const QVector<RPZInventory> &inventories) {
+            QVariantList in;
+            for(auto &inventory : inventories) in += inventory;
+            this->insert("inv", in);
+        }
+        const QVector<RPZInventory> inventories() const {
+            QVector<RPZInventory> out;
+            for(auto &inv : this->value("inv").toList()) out += RPZInventory(inv.toHash());
+            return out;
+        }
 
         //
         void setNotes(const QString &notes) {this->insert("notes", notes);}

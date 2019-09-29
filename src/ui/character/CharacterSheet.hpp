@@ -2,12 +2,13 @@
 
 #include <QWidget>
 #include <QTabWidget>
+#include <QScrollArea>
 
 #include "tabs/LoreTab.hpp"
 #include "tabs/StatusTab.hpp"
 #include "tabs/InventoriesTab.hpp"
 
-#include "src/shared/models/RPZCharacter.hpp"
+#include "src/shared/models/character/RPZCharacter.hpp"
 
 class CharacterSheet : public QTabWidget {
     
@@ -24,7 +25,7 @@ class CharacterSheet : public QTabWidget {
 
             //tabs
             this->addTab(this->_characterTab, QIcon(":/icons/app/tabs/feather.png"), "Lore");
-            this->addTab(this->_statusTab, QIcon(":/icons/app/tabs/status.png"), "Statut / Compétences");
+            this->addTab(_defineScroller(this->_statusTab), QIcon(":/icons/app/tabs/status.png"), "Statut / Compétences");
             this->addTab(this->_inventoriesTab, QIcon(":/icons/app/tabs/chest.png"), "Inventaires");
             this->addTab(this->_noteTab, QIcon(":/icons/app/tabs/noting.png"), "Notes / Autres");
 
@@ -71,5 +72,17 @@ class CharacterSheet : public QTabWidget {
         StatusTab* _statusTab = nullptr;
         InventoriesTab* _inventoriesTab = nullptr;
         QTextEdit* _noteTab = nullptr;
+
+        static QScrollArea* _defineScroller(QWidget* toMakeScrollable) {
+            auto scroller = new QScrollArea;
+            scroller->setFrameShape(QFrame::NoFrame);
+            scroller->setWidget(toMakeScrollable);
+            scroller->setWidgetResizable(true);
+            scroller->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
+            auto pal = scroller->palette();
+            pal.setColor(QPalette::Window, "#FCFCFC");
+            scroller->setPalette(pal);
+            return scroller;
+        }
 
 };

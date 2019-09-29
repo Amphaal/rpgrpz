@@ -150,7 +150,10 @@
         "qtabwidget": "cpp",
         "qtableview": "cpp",
         "qtablewidget": "cpp",
-        "qprogressbar": "cpp"
+        "qprogressbar": "cpp",
+        "qscrollarea": "cpp",
+        "qstyleditemdelegate": "cpp",
+        "qcheckbox": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

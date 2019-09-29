@@ -39,11 +39,26 @@ void AppContext::configureApp(QCoreApplication &app) {
         auto customContext = args["customContext"];
         return AppContext::initCustomContext(customContext);
     }
-    
+
     //else default init
     AppContext::init();
 }
 
+ QTranslator* AppContext::installTranslations(QApplication &app) {
+    
+    QString translationsPath(QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    QLocale locale = QLocale::system();
+    
+    auto qtTranslator = new QTranslator;
+    if (qtTranslator->load(locale, "qt", "_", translationsPath)) {
+        auto installed = app.installTranslator(qtTranslator);
+        if(installed) {
+            qDebug() << "System locale installed !";
+        }
+    }
+    
+    return qtTranslator;
+ }
 
 AppSettings* AppContext::settings() {
 

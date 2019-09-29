@@ -7,7 +7,7 @@
 
 class InventorySheet : public QWidget {
     public:
-        InventorySheet() : _inventoryNameEdit(new QLineEdit), _inventory(new QTableWidget(1, 5)) {
+        InventorySheet() : _inventoryNameEdit(new QLineEdit), _inventory(new QTableWidget(0, 5)) {
 
             this->_inventoryNameEdit->setPlaceholderText(" Description / emplacement de l'inventaire (Equipé, Mon sac, Coffre...) ");
             this->_inventoryNameEdit->setContentsMargins(10, 10, 10, 10);
@@ -32,6 +32,18 @@ class InventorySheet : public QWidget {
             l->addWidget(this->_inventory, 1);
 
         }   
+
+        void updateCharacter(RPZCharacter &toUpdate) {
+            //TODO
+        }   
+
+        void loadCharacter(const RPZCharacter &toLoad) {
+            //TODO           
+            while(this->_inventory->rowCount() != 0) {
+                this->_inventory->removeRow(0);
+            }
+
+        }
     
     private:
         QLineEdit* _inventoryNameEdit = nullptr;

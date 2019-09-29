@@ -3,7 +3,7 @@
 #include "src/helpers/_appContext.h"
 #include "base/JSONDatabase.h"
 
-#include "src/shared/models/RPZCharacter.hpp"
+#include "src/shared/models/character/RPZCharacter.hpp"
 #include "src/shared/models/base/RPZMap.hpp"
 
 class CharactersDatabase : public JSONDatabase {

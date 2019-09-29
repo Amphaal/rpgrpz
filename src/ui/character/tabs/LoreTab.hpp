@@ -9,7 +9,7 @@
 #include <QValidator>
 #include <QBuffer>
 
-#include "src/shared/models/RPZCharacter.hpp"
+#include "src/shared/models/character/RPZCharacter.hpp"
 
 class LoreTab : public QWidget {
     public:
