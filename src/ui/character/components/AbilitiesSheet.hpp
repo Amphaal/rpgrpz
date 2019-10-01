@@ -2,6 +2,11 @@
 
 #include <QTableWidget>
 #include <QHeaderView>
+#include <QKeyEvent>
+#include <QMessageBox>
+#include <QMenu>
+
+#include <algorithm>
 
 #include "../delegates/CheckBoxDelegate.hpp"
 #include "src/shared/models/character/RPZCharacter.hpp"
@@ -10,6 +15,18 @@
 class AbilitiesSheet : public QTableWidget {
     public:
         AbilitiesSheet() : QTableWidget(0, 4) {
+            
+            this->_addRowAction = new QAction(QIcon(":/icons/app/other/add.png"), "Ajouter une nouvelle compétence"); 
+            this->_removeRowAction = new QAction(QIcon(":/icons/app/tools/bin.png"), "Supprimer les compétences selectionnées");
+            QObject::connect(
+                this->_addRowAction, &QAction::triggered,
+                [=]() {this->_addRow();}
+            );
+            QObject::connect(
+                this->_removeRowAction, &QAction::triggered,
+                [=]() {this->_removeSelection();}
+            );
+
             this->setSortingEnabled(true);
 
             this->setSelectionMode(QAbstractItemView::SelectionMode::ExtendedSelection);
@@ -24,7 +41,9 @@ class AbilitiesSheet : public QTableWidget {
             this->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeMode::ResizeToContents);
             this->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeMode::ResizeToContents);
             this->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeMode::Interactive);
+            
             this->setItemDelegateForColumn(2, new CheckBoxDelegate);
+
         }
 
         void updateCharacter(RPZCharacter &toUpdate) {
@@ -33,12 +52,9 @@ class AbilitiesSheet : public QTableWidget {
             for(auto row = 0; row < this->rowCount(); row++) {
                 RPZAbility ab;
 
-                //name, skip if name is empty
+                //name
                 auto nameItem = this->item(row, 0);
-                if(!nameItem) continue;
-                auto name = nameItem->text();
-                if(name.isEmpty()) continue;
-                ab.setName(name);
+                if(nameItem) ab.setName(nameItem->text());
 
                 //category
                 auto categoryItem = this->item(row, 1);
@@ -68,8 +84,67 @@ class AbilitiesSheet : public QTableWidget {
                 this->_addRow(ability);
             }
 
-            this->_addRow();
+        }
 
+    protected:
+        void keyPressEvent(QKeyEvent *event) override {
+            switch(event->key()) {
+                case Qt::Key_Delete:
+                    this->_removeSelection();
+                break;
+
+                default:
+                break;
+            }
+        }
+
+        void contextMenuEvent(QContextMenuEvent *event) override {
+            
+            this->_removeRowAction->setEnabled(this->selectedIndexes().count());
+            
+            QMenu menu(this);
+            auto pos = this->viewport()->mapToGlobal(
+                event->pos()
+            );
+
+            menu.addAction(this->_removeRowAction);
+            menu.addSeparator();
+            menu.addAction(this->_addRowAction);
+            
+            menu.exec(pos);
+
+        }
+    
+    private:
+        QAction* _addRowAction = nullptr;
+        QAction* _removeRowAction = nullptr;
+
+        void _removeSelection() {
+           
+            //check if selection is done
+            auto selected = this->selectedIndexes();
+            if(!selected.count()) return;
+
+            //ask for validation
+            auto result = QMessageBox::warning(
+                this, 
+                "Suppression de(s) compétence(s)", 
+                "Voulez-vous vraiment supprimer ce(s) compétence(s) ?", 
+                QMessageBox::Yes|QMessageBox::No, 
+                QMessageBox::No
+            );
+            if(result != QMessageBox::Yes) return;
+            
+            //get rows to delete and desc order them
+            QVector<int> rowsToDelete;
+            for(auto &index : selected) {rowsToDelete += index.row();}
+            std::sort(rowsToDelete.begin(), rowsToDelete.end(), std::greater<int>());
+            
+            //remove rows
+            for(auto &row : rowsToDelete) {
+                this->removeRow(row);
+            }
+            
         }
 
         void _addRow(const RPZAbility &ability = RPZAbility()) {
@@ -88,7 +163,7 @@ class AbilitiesSheet : public QTableWidget {
             //is fav
             auto fWidget = new QTableWidgetItem;
             fWidget->setTextAlignment(Qt::AlignCenter);
-            fWidget->setData(Qt::DisplayRole, ability.isFavorite());
+            fWidget->setData(Qt::EditRole, ability.isFavorite());
             this->setItem(row, 2, fWidget);
 
             //descr

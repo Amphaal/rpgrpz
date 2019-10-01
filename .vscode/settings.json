@@ -155,7 +155,8 @@
         "qstyleditemdelegate": "cpp",
         "qcheckbox": "cpp",
         "qabstractitemdelegate": "cpp",
-        "qitemdelegate": "cpp"
+        "qitemdelegate": "cpp",
+        "concepts": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

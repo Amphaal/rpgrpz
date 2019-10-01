@@ -64,7 +64,10 @@ class CharacterPicker : public QWidget {
         void loadCharacters() {
             
             //clear
-            this->_characterListCombo->clear();
+            {
+                QSignalBlocker b(this->_characterListCombo);
+                this->_characterListCombo->clear();
+            }
             this->_bufferedSelectedCharacter = nullptr;
             this->_bufferedSelectedIndex = -1;
 
@@ -82,7 +85,7 @@ class CharacterPicker : public QWidget {
             {
                 QSignalBlocker b(this->_characterListCombo);
                 for(auto &character : this->_characters) {
-                    this->_characterListCombo->addItem(character.toString(), character.id());
+                    this->_characterListCombo->addItem(this->_icon, character.toString(), character.id());
                 }
             }
 
@@ -111,6 +114,7 @@ class CharacterPicker : public QWidget {
         QPushButton* _deleteCharacterBtn = nullptr;
         RPZCharacter* _bufferedSelectedCharacter = nullptr;
         int _bufferedSelectedIndex = -1;
+        QIcon _icon = QIcon(":/icons/app/connectivity/user.png");
 
         RPZMap<RPZCharacter> _characters;
 

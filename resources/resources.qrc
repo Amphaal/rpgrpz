@@ -61,6 +61,8 @@
         <file>icons/app/audio/youtube.png</file>
         <file>icons/app/audio/youtubeGrey.png</file>
         <file>icons/app/audio/youtubeError.png</file>
+        <file>icons/app/other/move.png</file>
+        <file>icons/app/other/split.png</file>
         <file>icons/app/other/add.png</file>
         <file>icons/app/other/save.png</file>
         <file>icons/app/other/remove.png</file>

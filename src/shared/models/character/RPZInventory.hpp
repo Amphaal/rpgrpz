@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QVariantHash>
-
+#include <QMap>
 
 class RPZInventorySlot : public QVariantHash {
     public:
@@ -17,8 +17,8 @@ class RPZInventorySlot : public QVariantHash {
         void setDescription(const QString &descr) { this->insert("d", descr); }
         const QString description() const {return this->value("d").toString();}
 
-        void setNumber(const int &number) {this->insert("nb", number);}
-        const int number() const {return this->value("nb").toInt();}
+        void setHowMany(const int &number) {this->insert("nb", number);}
+        const int howMany() const {return this->value("nb").toInt();}
 
         void setWeight(const double &weight) {this->insert("w", weight);}
         const double weight() const {return this->value("w").toDouble();}
@@ -29,17 +29,31 @@ class RPZInventory : public QVariantHash {
         RPZInventory() {}
         RPZInventory(const QVariantHash &hash) : QVariantHash(hash) {}
 
+        const QString toString(int numberInList) const {
+             auto nameStr = this->name();
+             return nameStr.isEmpty() ? QString("Nouvel Inventaire #%1").arg(numberInList) : nameStr;
+        }
+
         void setName(const QString &name) {this->insert("n", name);}
         const QString name() const {return this->value("n").toString();} 
 
-        void setInventorySlots(const QVector<RPZInventorySlot> &iSlots) {
-            QVariantList in;
-            for(auto &slot : iSlots) in += slot;
+        void setInventorySlots(const QMap<QString, RPZInventorySlot> &iSlots) {
+            QVariantMap in;
+            for(auto i = iSlots.begin(); i != iSlots.end(); i++) {
+                in.insert(i.key(), i.value());
+            }
             this->insert("s", in);
         };
-        const QVector<RPZInventorySlot> inventorySlots() const {
-            QVector<RPZInventorySlot> out;
-            for(auto &slot : this->value("s").toList()) out += RPZInventorySlot(slot.toHash());
+        
+        const QMap<QString, RPZInventorySlot> inventorySlots() const {
+            QMap<QString, RPZInventorySlot> out;
+
+            auto mapped = this->value("s").toMap();
+            for(auto i = mapped.begin(); i != mapped.end(); i++) {
+                auto slot = RPZInventorySlot(i.value().toHash());
+                out.insert(i.key(), slot);
+            }
+
             return out;
         };
 };

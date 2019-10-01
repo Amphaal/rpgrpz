@@ -5,33 +5,52 @@
 #include <QComboBox>
 
 #include "src/shared/models/character/RPZCharacter.hpp"
+
 #include "../components/InventorySheet.hpp"
+#include "../components/InventoryPicker.hpp"
 
 class InventoriesTab : public QWidget {
     public:
-        InventoriesTab() : _inventoryListCombo(new QComboBox) {
+        InventoriesTab() : _inventoryPicker(new InventoryPicker), _inventoryEditor(new InventoryEditor) {
            
             auto inventoryTabLayout = new QVBoxLayout;
             this->setLayout(inventoryTabLayout);
 
-                //combo inventories
-                this->_inventoryListCombo->addItem(QIcon(":/icons/app/other/bag.png"), "Défaut");
-                this->_inventoryListCombo->addItem(QIcon(":/icons/app/other/add.png"), "Créer un nouvel inventaire...");
-                inventoryTabLayout->addWidget(this->_inventoryListCombo);
+            //inventory
+            inventoryTabLayout->addWidget(this->_inventoryPicker, 0, Qt::AlignTop);
+            inventoryTabLayout->addWidget(this->_inventoryEditor, 1);
 
-                //inventory
-                inventoryTabLayout->addWidget(new InventorySheet, 1);
-                
+             //picker        
+            QObject::connect(
+                this->_inventoryPicker, &InventoryPicker::selectionChanged,
+                [=](const RPZInventory *selected) {
+                    this->_inventoryEditor->setVisible(selected);
+                    if(selected) this->_inventoryEditor->loadInventory(*selected);
+                }
+            );
+            QObject::connect(
+                this->_inventoryPicker, &InventoryPicker::requestSave,
+                this, &InventoriesTab::_applyInventoryChanges
+            );
+
         }
     
         void updateCharacter(RPZCharacter &toUpdate) {
-            //TODO
+            this->_applyInventoryChanges(this->_inventoryPicker->currentInventory());
+            this->_inventoryPicker->updateCharacter(toUpdate);
         }   
 
         void loadCharacter(const RPZCharacter &toLoad) {
-            //TODO
+            this->_inventoryPicker->loadCharacter(toLoad);
         }
 
     private:
-        QComboBox* _inventoryListCombo = nullptr;
+        InventoryPicker* _inventoryPicker = nullptr;
+        InventoryEditor* _inventoryEditor = nullptr;
+
+        void _applyInventoryChanges(RPZInventory* toSave) {
+            if(!toSave) return;
+            this->_inventoryEditor->updateInventory(*toSave);
+        }
+        
 };

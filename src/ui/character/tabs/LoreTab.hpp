@@ -36,6 +36,10 @@ class LoreTab : public QWidget {
                     //portrait change button
                     auto changePortraitBtn = new QPushButton("Changer le portrait");
                     pLayout->addWidget(changePortraitBtn, 0, Qt::AlignCenter);
+                    QObject::connect(
+                        changePortraitBtn, &QPushButton::pressed,
+                        this, &LoreTab::_changePortrait
+                    );
 
                 //character name
                 this->_sheetNameEdit = new QLineEdit;
@@ -115,5 +119,9 @@ class LoreTab : public QWidget {
             l->addWidget(widget, 1);
 
             return l;
+        }
+
+        void _changePortrait() {
+            //TODO
         }
 };
