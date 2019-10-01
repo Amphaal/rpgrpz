@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QVariantHash>
+#include <QPixmap>
 #include "../base/Serializable.hpp"
 
 #include "RPZAbility.hpp"
@@ -23,9 +24,32 @@ class RPZCharacter : public Serializable {
 
         //
 
-        void setPortrait(const QByteArray &image) {this->insert("prtrt", image);}
-        const QByteArray portrait() const { return this->value("prtrt").toByteArray(); }
+        void setPortrait(const QPixmap &portrait, const QString &ext) {
+            
+            //prepare to write
+            QByteArray bArray;
+            QBuffer buffer(&bArray);
 
+            //write into buffer
+            buffer.open(QIODevice::WriteOnly);
+                portrait.save(&buffer, ext.toStdString().c_str());
+            buffer.close();
+            
+            this->insert("img", bArray);
+            this->insert("img_ext", ext);
+
+        }
+        const QPixmap portrait() const { 
+            
+            auto bitmap = this->value("img").toByteArray(); 
+            auto ext = this->value("img_ext").toString();
+            
+            QPixmap out;
+            out.loadFromData(bitmap, ext.toStdString().c_str());
+            return out;
+
+        }
+        
         void setName(const QString &name) {this->insert("nm", name);}
         const QString name() const {
             return this->value("nm").toString();

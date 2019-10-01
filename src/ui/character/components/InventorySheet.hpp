@@ -2,14 +2,66 @@
 
 #include <QTableWidget>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QLineEdit>
 #include <QHeaderView>
 #include <QMessageBox>
 #include <QAction>
 #include <QKeyEvent>
 #include <QMenu>
+#include <QDialog>
+#include <QComboBox>
+#include <QLabel>
 
 #include "src/shared/models/character/RPZCharacter.hpp"
+
+class InventorySlotModal : public QDialog {
+    public:
+
+        InventorySlotModal(const RPZInventory* from, const QVector<RPZInventory*> &targets) : 
+            _targets(targets), 
+            _targetsCombo(new QComboBox), 
+            _recipientCombo(new QComboBox) {
+            
+            for(auto target : targets) {
+                this->_addInventoryToCombo(this->_targetsCombo, target);
+            }
+            
+            this->_recipientCombo->setEnabled(false);
+            this->_addInventoryToCombo(this->_recipientCombo, from);
+
+            auto lTransfert = new QHBoxLayout;
+            lTransfert->addWidget(this->_recipientCombo);
+            lTransfert->addWidget(new QLabel(">>>"));
+            lTransfert->addWidget(this->_targetsCombo);
+
+            auto layout = new QVBoxLayout;
+            this->setLayout(layout);
+            layout->addLayout(lTransfert);
+
+        }
+
+        QVector<RPZInventorySlot> execForMove() {
+
+        }
+
+        QVector<RPZInventorySlot> execForSplit() {
+
+        }
+
+        int targetsCount() {
+            return this->_targets.count();
+        };
+
+    private:
+        QVector<RPZInventory*> _targets;
+        QComboBox* _recipientCombo = nullptr;
+        QComboBox* _targetsCombo = nullptr;
+
+        void _addInventoryToCombo(QComboBox* target, const RPZInventory* toAdd) {
+            target->addItem(QIcon(":/icons/app/other/bag.png"), toAdd->toString());
+        }
+};
 
 class InventorySheet : public QTableWidget {
     public:
@@ -17,8 +69,8 @@ class InventorySheet : public QTableWidget {
 
             this->_addRowAction = new QAction(QIcon(":/icons/app/other/add.png"), "Ajouter un objet"); 
             this->_removeRowAction = new QAction(QIcon(":/icons/app/tools/bin.png"), "Supprimer les objets selectionnées");
-            this->_moveItemsAction = new QAction(QIcon(":/icons/app/other/move.png"), "Déplacer les objects selectionnés");
-            this->_splitItemAction = new QAction(QIcon(":/icons/app/other/split.png"), "Diviser l'objet selectionné");
+            this->_moveItemsAction = new QAction(QIcon(":/icons/app/other/move.png"), "Déplacer vers...");
+            this->_splitItemAction = new QAction(QIcon(":/icons/app/other/split.png"), "Diviser vers...");
             QObject::connect(
                 this->_addRowAction, &QAction::triggered,
                 [=]() {this->_addRow();}
@@ -60,37 +112,19 @@ class InventorySheet : public QTableWidget {
             QMap<QString, RPZInventorySlot> out;
             
             for(auto row = 0; row < this->rowCount(); row++) {
-                RPZInventorySlot ab;
-
-                //name
-                auto nameItem = this->item(row, 0);
-                if(nameItem) ab.setName(nameItem->text());
-
-                //category
-                auto categoryItem = this->item(row, 1);
-                if(categoryItem) ab.setCategory(categoryItem->text());
-                
-                //how many
-                auto hmItem = this->item(row, 2);
-                if(hmItem) ab.setHowMany(hmItem->data(Qt::EditRole).toInt());
-                
-                //weight
-                auto weightItem = this->item(row, 3); 
-                if(weightItem) ab.setWeight(weightItem->data(Qt::EditRole).toDouble());
-
-                //descr
-                auto descrItem = this->item(row, 4);
-                if(descrItem) ab.setDescription(descrItem->text());
-
-                out.insert(ab.name(), ab);
+                auto slot = _fromRow(row);
+                out.insert(slot.name(), slot);
             }
 
             toUpdate.setInventorySlots(out);
 
         }   
 
-        void loadInventory(const RPZInventory &toLoad) {
-                     
+        void loadInventory(const RPZInventory &toLoad, const QVector<RPZInventory*> &others) {
+            
+            if(this->_modal) this->_modal->deleteLater();
+            this->_modal = new InventorySlotModal(&toLoad, others);
+
             //clear lines
             while(this->rowCount() != 0) {
                 this->removeRow(0);
@@ -116,13 +150,14 @@ class InventorySheet : public QTableWidget {
         }
 
         void contextMenuEvent(QContextMenuEvent *event) override {
-            
-            auto selectedItemCount = this->selectedIndexes().count();
+
+            auto selectedItemCount = this->_countSelectedRows();
             bool singleSelection = selectedItemCount == 1;
+            bool targetsAvailable = this->_modal->targetsCount();
             
             this->_removeRowAction->setEnabled(selectedItemCount);
-            this->_moveItemsAction->setEnabled(selectedItemCount);
-            this->_splitItemAction->setEnabled(singleSelection);
+            this->_moveItemsAction->setEnabled(selectedItemCount && targetsAvailable);
+            this->_splitItemAction->setEnabled(singleSelection && targetsAvailable);
             
             QMenu menu(this);
             auto pos = this->viewport()->mapToGlobal(
@@ -141,6 +176,8 @@ class InventorySheet : public QTableWidget {
         }
 
     private:
+        InventorySlotModal* _modal = nullptr;
+
         QAction* _addRowAction = nullptr;
         QAction* _removeRowAction = nullptr;
         QAction* _moveItemsAction = nullptr;
@@ -148,12 +185,24 @@ class InventorySheet : public QTableWidget {
 
         void _moveInventoryItem() {
             //TODO
+            this->_modal->exec();
         }
         
         void _splitInventoryItem() {
             //TODO
         }
 
+        int _countSelectedRows() {
+            auto selectedRows = 0;
+            for(auto &range : this->selectedRanges()) selectedRows += range.rowCount();
+            return selectedRows;
+        }
+
+        QSet<int> _selectedRows() {
+            QSet<int> out;
+            for(auto &index : this->selectedIndexes()) out += index.row();
+            return out;
+        }
         
         void _removeSelection() {
            
@@ -172,18 +221,49 @@ class InventorySheet : public QTableWidget {
             if(result != QMessageBox::Yes) return;
             
             //get rows to delete and desc order them
-            QVector<int> rowsToDelete;
+            QSet<int> rowsToDelete;
             for(auto &index : selected) {rowsToDelete += index.row();}
-            std::sort(rowsToDelete.begin(), rowsToDelete.end(), std::greater<int>());
+            auto rowsToDeleteL = rowsToDelete.toList();
+            std::sort(rowsToDeleteL.begin(), rowsToDeleteL.end(), std::greater<int>());
             
             //remove rows
-            for(auto &row : rowsToDelete) {
+            for(auto &row : rowsToDeleteL) {
                 this->removeRow(row);
             }
             
         }
 
+        RPZInventorySlot _fromRow(int row) {
+            
+            RPZInventorySlot out;    
+                
+                //name
+                auto nameItem = this->item(row, 0);
+                if(nameItem) out.setName(nameItem->text());
+
+                //category
+                auto categoryItem = this->item(row, 1);
+                if(categoryItem) out.setCategory(categoryItem->text());
+                
+                //how many
+                auto hmItem = this->item(row, 2);
+                if(hmItem) out.setHowMany(hmItem->data(Qt::EditRole).toInt());
+                
+                //weight
+                auto weightItem = this->item(row, 3); 
+                if(weightItem) out.setWeight(weightItem->data(Qt::EditRole).toDouble());
+
+                //descr
+                auto descrItem = this->item(row, 4);
+                if(descrItem) out.setDescription(descrItem->text());
+            
+            return out;
+
+        }
+
         void _addRow(const RPZInventorySlot &iventoryItem = RPZInventorySlot()) {
+            
+            this->setSortingEnabled(false);
 
             auto row = this->rowCount();
             this->insertRow(row);
@@ -210,41 +290,8 @@ class InventorySheet : public QTableWidget {
             auto dWidget = new QTableWidgetItem(iventoryItem.description());
             this->setItem(row, 4, dWidget);
 
-        }
-
-};
-
-class InventoryEditor : public QWidget {
-    public:
-        InventoryEditor() : _inventoryNameEdit(new QLineEdit), _inventory(new InventorySheet) {
-            
-            this->_inventoryNameEdit->setPlaceholderText(" Description / emplacement de l'inventaire (Equipé, Mon sac, Coffre...) ");
-            this->_inventoryNameEdit->setContentsMargins(10, 10, 10, 10);
-            
-            auto l = new QVBoxLayout;
-            l->setMargin(0);
-            this->setLayout(l);
-
-            l->addWidget(this->_inventoryNameEdit);
-            l->addWidget(this->_inventory, 1);
+            this->setSortingEnabled(true);
 
         }
 
-        void updateInventory(RPZInventory &toUpdate) {
-            
-            toUpdate.setName(this->_inventoryNameEdit->text());
-            this->_inventory->updateInventory(toUpdate);
-
-        }   
-
-        void loadInventory(const RPZInventory &toLoad) {
-                     
-            this->_inventoryNameEdit->setText(toLoad.name());
-            this->_inventory->loadInventory(toLoad);
-
-        }
-    
-    private:
-        QLineEdit* _inventoryNameEdit = nullptr;
-        InventorySheet* _inventory = nullptr;
 };

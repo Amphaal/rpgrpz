@@ -114,7 +114,7 @@ QPair<int, int> AssetsTreeViewModel::_anticipateInserts(const QModelIndexList &t
 
 bool AssetsTreeViewModel::moveItems(const QMimeData *data, const QModelIndex &parentIndex) {
     
-    //todo get topmost
+    //get topmost
     auto topMostIndexes = this->_getTopMostIndexesFromDraggedIndexesBuffer();
     auto insertInstr = this->_anticipateInserts(topMostIndexes);
 

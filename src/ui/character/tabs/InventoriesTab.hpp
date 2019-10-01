@@ -6,7 +6,7 @@
 
 #include "src/shared/models/character/RPZCharacter.hpp"
 
-#include "../components/InventorySheet.hpp"
+#include "../components/InventoryEditor.hpp"
 #include "../components/InventoryPicker.hpp"
 
 class InventoriesTab : public QWidget {
@@ -23,10 +23,7 @@ class InventoriesTab : public QWidget {
              //picker        
             QObject::connect(
                 this->_inventoryPicker, &InventoryPicker::selectionChanged,
-                [=](const RPZInventory *selected) {
-                    this->_inventoryEditor->setVisible(selected);
-                    if(selected) this->_inventoryEditor->loadInventory(*selected);
-                }
+                this, &InventoriesTab::_onPickerSelectionChanged
             );
             QObject::connect(
                 this->_inventoryPicker, &InventoryPicker::requestSave,
@@ -51,6 +48,14 @@ class InventoriesTab : public QWidget {
         void _applyInventoryChanges(RPZInventory* toSave) {
             if(!toSave) return;
             this->_inventoryEditor->updateInventory(*toSave);
+        }
+
+        void _onPickerSelectionChanged(const RPZInventory *selected) {
+                this->_inventoryEditor->setVisible(selected);
+                if(selected) this->_inventoryEditor->loadInventory(
+                    *selected,
+                    this->_inventoryPicker->everyInventoriesExceptArg(selected)
+                );
         }
         
 };

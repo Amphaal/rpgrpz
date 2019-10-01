@@ -136,18 +136,21 @@ class AbilitiesSheet : public QTableWidget {
             if(result != QMessageBox::Yes) return;
             
             //get rows to delete and desc order them
-            QVector<int> rowsToDelete;
+            QSet<int> rowsToDelete;
             for(auto &index : selected) {rowsToDelete += index.row();}
-            std::sort(rowsToDelete.begin(), rowsToDelete.end(), std::greater<int>());
+            auto rowsToDeleteL = rowsToDelete.toList();
+            std::sort(rowsToDeleteL.begin(), rowsToDeleteL.end(), std::greater<int>());
             
             //remove rows
-            for(auto &row : rowsToDelete) {
+            for(auto &row : rowsToDeleteL) {
                 this->removeRow(row);
             }
             
         }
 
         void _addRow(const RPZAbility &ability = RPZAbility()) {
+            
+            this->setSortingEnabled(false);
 
             auto row = this->rowCount();
             this->insertRow(row);
@@ -169,6 +172,8 @@ class AbilitiesSheet : public QTableWidget {
             //descr
             auto dWidget = new QTableWidgetItem(ability.description());
             this->setItem(row, 3, dWidget);
+
+            this->setSortingEnabled(true);
 
         }
 };

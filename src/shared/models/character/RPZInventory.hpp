@@ -29,9 +29,9 @@ class RPZInventory : public QVariantHash {
         RPZInventory() {}
         RPZInventory(const QVariantHash &hash) : QVariantHash(hash) {}
 
-        const QString toString(int numberInList) const {
+        const QString toString() const {
              auto nameStr = this->name();
-             return nameStr.isEmpty() ? QString("Nouvel Inventaire #%1").arg(numberInList) : nameStr;
+             return nameStr.isEmpty() ? "Nouvel Inventaire" : nameStr;
         }
 
         void setName(const QString &name) {this->insert("n", name);}

@@ -8,6 +8,8 @@
 #include <QPushButton>
 #include <QValidator>
 #include <QBuffer>
+#include <QFileDialog>
+#include <QFileInfo>
 
 #include "src/shared/models/character/RPZCharacter.hpp"
 
@@ -30,7 +32,7 @@ class LoreTab : public QWidget {
                     //portrait placeholder
                     this->_imgLbl = new QLabel;
                     this->_imgLbl->setPixmap(*_defaultPortrait);
-                    this->_imgLbl->setMaximumSize(QSize(240, 320));
+                    this->_imgLbl->setMaximumSize(_defaultSize);
                     pLayout->addWidget(this->_imgLbl, 0, Qt::AlignCenter);
 
                     //portrait change button
@@ -65,12 +67,11 @@ class LoreTab : public QWidget {
     
         void updateCharacter(RPZCharacter &toUpdate) {
 
-            if(!this->_usingDefaultPortrait) {
-                QByteArray bArray;
-                QBuffer buffer(&bArray);
-                buffer.open(QIODevice::WriteOnly);
-                this->_imgLbl->pixmap()->save(&buffer);
-                toUpdate.setPortrait(bArray);
+            if(!this->_customPortrait.isNull()) {
+                toUpdate.setPortrait(
+                    this->_customPortrait, 
+                    this->_customPortraitExt
+                );
             }
 
             toUpdate.setName(this->_sheetNameEdit->text());
@@ -81,15 +82,14 @@ class LoreTab : public QWidget {
 
         void loadCharacter(const RPZCharacter &toLoad) {
             
-            auto portraitAsBytes = toLoad.portrait();
-            if(!portraitAsBytes.isEmpty()) {
-                QPixmap p;
-                p.loadFromData(portraitAsBytes);
-                this->_imgLbl->setPixmap(p);
-                this->_usingDefaultPortrait = false;
+            this->_customPortrait = QPixmap();
+            this->_customPortraitExt.clear();
+
+            auto portrait = toLoad.portrait();
+            if(!portrait.isNull()) {
+                this->_imgLbl->setPixmap(portrait);
             } else {
                 this->_imgLbl->setPixmap(*_defaultPortrait);
-                this->_usingDefaultPortrait = true;
             }
 
             this->_sheetNameEdit->setText(toLoad.name());
@@ -99,8 +99,11 @@ class LoreTab : public QWidget {
         }
 
     private:
-        bool _usingDefaultPortrait = true;
+        QPixmap _customPortrait;
+        QString _customPortraitExt;
+        
         static inline QPixmap* _defaultPortrait = nullptr;
+        static inline QSize _defaultSize = QSize(240, 320);
 
         QLabel* _imgLbl = nullptr;
         QLineEdit* _sheetNameEdit = nullptr;
@@ -122,6 +125,21 @@ class LoreTab : public QWidget {
         }
 
         void _changePortrait() {
-            //TODO
+            
+            //get new portrait filepath
+            QFileDialog portraitPicker(this, "Changer de portrait", AppContext::getAssetsFolderLocation(), "Images (*.png *.jpg *.jpeg)");
+            portraitPicker.setFileMode(QFileDialog::FileMode::ExistingFile);
+            portraitPicker.setAcceptMode(QFileDialog::AcceptOpen);
+            if(!portraitPicker.exec()) return;
+            auto portraitFP = portraitPicker.selectedFiles()[0];
+            
+            //resize Pixmap and apply
+            QPixmap newPortrait(portraitFP);
+            this->_customPortrait = newPortrait.scaled(_defaultSize);
+            this->_imgLbl->setPixmap(this->_customPortrait);
+
+            QFileInfo fi(portraitFP);
+            this->_customPortraitExt = fi.suffix();
+            
         }
 };

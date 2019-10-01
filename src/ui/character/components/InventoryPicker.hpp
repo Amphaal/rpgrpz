@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include <QMessageBox>
 
+#include "src/shared/models/character/RPZCharacter.hpp"
 #include "src/shared/models/character/RPZInventory.hpp"
 
 class InventoryPicker : public QWidget {
@@ -62,6 +63,18 @@ class InventoryPicker : public QWidget {
             return &this->_inventories[id];
         }
 
+        QVector<RPZInventory*> everyInventoriesExceptArg(const RPZInventory* toExclude) {
+            QVector<RPZInventory*> out;
+
+            for(auto &inventory : this->_inventories) {
+                auto ptr = &inventory;
+                if(toExclude == ptr) continue;
+                out += ptr;
+            }
+
+            return out;
+        }
+
         void updateCharacter(RPZCharacter &character) {
             character.setInventories(this->_inventories);
             this->updateBufferedItemString();
@@ -76,17 +89,17 @@ class InventoryPicker : public QWidget {
 
             this->_inventoryListCombo->setItemText(
                 this->_bufferedSelectedIndex,
-                this->_bufferedSelectedInventory->toString(this->_bufferedSelectedIndex + 1)
+                this->_bufferedSelectedInventory->toString()
             );
         }
     
     private:
+        QIcon _icon = QIcon(":/icons/app/other/bag.png");
+
         QComboBox* _inventoryListCombo = nullptr;
         QPushButton* _deleteInventoryBtn = nullptr;
         RPZInventory* _bufferedSelectedInventory = nullptr;
         int _bufferedSelectedIndex = -1;
-        QIcon _icon = QIcon(":/icons/app/other/bag.png");
-
         QVector<RPZInventory> _inventories;
 
         void _addButtonPressed() {
@@ -166,10 +179,8 @@ class InventoryPicker : public QWidget {
             this->_inventoryListCombo->setEnabled(true);
             {
                 QSignalBlocker b(this->_inventoryListCombo);
-                auto i = 1;
                 for(auto &inventory : this->_inventories) {
-                    this->_inventoryListCombo->addItem(this->_icon, inventory.toString(i));
-                    i++;
+                    this->_inventoryListCombo->addItem(this->_icon, inventory.toString());
                 }
             }
 

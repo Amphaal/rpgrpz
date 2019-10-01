@@ -156,7 +156,10 @@
         "qcheckbox": "cpp",
         "qabstractitemdelegate": "cpp",
         "qitemdelegate": "cpp",
-        "concepts": "cpp"
+        "concepts": "cpp",
+        "qbuffer": "cpp",
+        "qfileselector": "cpp",
+        "qfiledialog": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }
