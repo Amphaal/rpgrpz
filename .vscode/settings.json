@@ -159,7 +159,8 @@
         "concepts": "cpp",
         "qbuffer": "cpp",
         "qfileselector": "cpp",
-        "qfiledialog": "cpp"
+        "qfiledialog": "cpp",
+        "qdialogbuttonbox": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

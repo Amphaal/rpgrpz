@@ -142,9 +142,11 @@ class AbilitiesSheet : public QTableWidget {
             std::sort(rowsToDeleteL.begin(), rowsToDeleteL.end(), std::greater<int>());
             
             //remove rows
+            this->setSortingEnabled(false);
             for(auto &row : rowsToDeleteL) {
                 this->removeRow(row);
             }
+            this->setSortingEnabled(true);
             
         }
 
