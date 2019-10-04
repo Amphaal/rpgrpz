@@ -30,7 +30,7 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
     auto type = payload.type();
 
     QList<QTreeWidgetItem*> out;
-    this->_mvHelper = LayerManipulationHelper();
+    LayerManipulationHelper mvHelper;
 
     //atom wielders format (eg INSERT / RESET)
     if(auto mPayload = dynamic_cast<AtomsWielderPayload*>(&payload)) {
@@ -94,7 +94,7 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
             }
 
             //
-            this->_mvHelper.toRemoveChildrenCountByLayerItem[item->parent()]++;
+            mvHelper.toRemoveChildrenCountByLayerItem[item->parent()]++;
 
         }
 
@@ -110,7 +110,7 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
         for (auto &id : mPayload->targetRPZAtomIds()) {
             auto item = this->_atomTreeItemsById[id];
             out += item;
-            this->_handleItemMove(item, updates);
+            this->_handleItemMove(item, updates, mvHelper);
         }
 
         emit requestingUIUpdate(out, updates);
@@ -129,7 +129,7 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
             auto updates = i.value();
 
             toUpdate.insert(item, updates);
-            this->_handleItemMove(item, updates);
+            this->_handleItemMove(item, updates, mvHelper);
         }
 
         emit requestingUIUpdate(toUpdate);
@@ -146,17 +146,48 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
         emit requestingUIAlteration(type, out);
     }
 
-    //request a move if needed
-    if(this->_mvHelper.childrenMovedToLayer.count()) {
-        emit requestingUIMove(this->_mvHelper.childrenMovedToLayer);
+    //apply move if needed
+    this->_applyMove(mvHelper);
+    
+}
+
+void TreeMapHint::_handleItemMove(QTreeWidgetItem* toUpdate, const AtomUpdates &updatesMightContainMove, LayerManipulationHelper &mvHelper) {
+    
+    if(!updatesMightContainMove.contains(Layer)) return;
+    
+    auto layerItem = toUpdate->parent();
+    auto currentLayer = layerItem->data(0, RPZUserRoles::AtomLayer).toInt();
+    auto requestedLayer = updatesMightContainMove[Layer].toInt();
+    
+    if(currentLayer == requestedLayer) return;
+
+    //update move helper
+    mvHelper.childrenMovedToLayer[requestedLayer].append(toUpdate);
+    mvHelper.toRemoveChildrenCountByLayerItem[layerItem]++;
+
+}
+
+void TreeMapHint::_applyMove(LayerManipulationHelper &mvHelper) {
+
+    //if move requested...
+    if(mvHelper.childrenMovedToLayer.count()) {
+        
+        //may create new layer item
+        for(auto layer : mvHelper.childrenMovedToLayer.keys()) {
+            this->_mayCreateLayerItem(layer);
+        }
+
+        //ask for move
+        emit requestingUIMove(mvHelper.childrenMovedToLayer);
+
     }
 
     //check to-delete layer items
-    if(this->_mvHelper.toRemoveChildrenCountByLayerItem.count()) {
+    if(mvHelper.toRemoveChildrenCountByLayerItem.count()) {
         
         QList<QTreeWidgetItem*> mightDelete;
 
-        for(auto i = this->_mvHelper.toRemoveChildrenCountByLayerItem.begin(); i != this->_mvHelper.toRemoveChildrenCountByLayerItem.end(); i++) {
+        for(auto i = mvHelper.toRemoveChildrenCountByLayerItem.begin(); i != mvHelper.toRemoveChildrenCountByLayerItem.end(); i++) {
             auto layerItemMaybeToRemove = i.key();
             if(layerItemMaybeToRemove->childCount() <= i.value()) {
                 mightDelete += layerItemMaybeToRemove;
@@ -178,22 +209,6 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
         }
 
     }
-    
-}
-
-void TreeMapHint::_handleItemMove(QTreeWidgetItem* toUpdate, const AtomUpdates &updatesMightContainMove) {
-    
-    if(!updatesMightContainMove.contains(Layer)) return;
-    
-    auto layerItem = toUpdate->parent();
-    auto currentLayer = layerItem->data(0, RPZUserRoles::AtomLayer).toInt();
-    auto requestedLayer = updatesMightContainMove[Layer].toInt();
-    
-    if(currentLayer == requestedLayer) return;
-
-    this->_mvHelper.childrenMovedToLayer[requestedLayer].append(toUpdate);
-    this->_mvHelper.toRemoveChildrenCountByLayerItem[layerItem]++;
-
 }
 
 
@@ -298,10 +313,5 @@ void TreeMapHint::updateLockedState(QTreeWidgetItem* item, bool isLocked) {
     
     //set data
     item->setData(1, RPZUserRoles::AtomAvailability, isLocked);
-    
-    //update flags
-    // auto flags = item->flags();
-    // flags.setFlag(Qt::ItemIsSelectable, !isLocked);
-    // item->setFlags(flags);
 
 }

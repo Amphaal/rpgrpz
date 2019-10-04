@@ -51,6 +51,20 @@ void MainWindow::_triggerBarsVisibility() {
     this->statusBar()->setVisible(this->_showBars);
 }
 
+void MainWindow::_barVisibilityToolTip() {
+    
+    //fix tooltip pos
+    auto pos = this->geometry().bottomRight();
+    pos.setY(pos.y() - 37);
+
+    //display it
+    QToolTip::showText(
+        pos, 
+        "Appuyez sur la touche ALT pour afficher le menu !"
+    );
+
+}
+
 void MainWindow::_saveWindowState() {
     AppContext::settings()->beginGroup("mainWindow");
     AppContext::settings()->setValue("windowGeometry", this->saveGeometry());
@@ -78,6 +92,9 @@ void MainWindow::_loadWindowState() {
     AppContext::settings()->endGroup();
 
     this->show();
+    QTimer::singleShot(1000, [=]() {
+        this->_barVisibilityToolTip();
+    });
 }
 
 void MainWindow::_trueShow() {
@@ -216,6 +233,7 @@ void MainWindow::_initUI() {
     this->_initUIApp();
     this->_initUIMenu();
 
+    //visibility
     this->_triggerBarsVisibility();
 
     //default focus

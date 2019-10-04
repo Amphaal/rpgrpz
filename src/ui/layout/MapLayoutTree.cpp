@@ -194,12 +194,22 @@ void MapLayoutTree::_onUIUserChangeRequest(const QList<QTreeWidgetItem*> &toUpda
 }
 
 void MapLayoutTree::_onUIMoveRequest(const QHash<int, QList<QTreeWidgetItem*>> &childrenMovedToLayer) {
+    
+    //iterate moves by layer
     for(auto i = childrenMovedToLayer.constBegin(); i != childrenMovedToLayer.constEnd(); i++) {
-        for(auto child : i.value()) {
-            child->parent()->removeChild(child);
-            auto layerItem = this->_hints->getLayerItem(i.key());
+        
+        auto layerToMoveTo = i.key();
+        auto widgetsToMove = i.value();
+        auto layerItem = this->_hints->getLayerItem(layerToMoveTo);
+        this->addTopLevelItem(layerItem); //try to add target layer, does nothing if already exists
+
+        //for each widget to move in the targeted layer
+        for(auto child : widgetsToMove) {
+            auto sourceLayerItem = child->parent();
+            sourceLayerItem->removeChild(child);
             layerItem->addChild(child);
         }
+
     }
 
     this->_updateLayersDisplayedCount();
@@ -240,7 +250,7 @@ void MapLayoutTree::_updateAtomItemValues(QTreeWidgetItem* toUpdate, const AtomU
 void MapLayoutTree::_insertAtomItem(QTreeWidgetItem *item) {
     auto layer = item->data(0, RPZUserRoles::AtomLayer).toInt();
     auto layerItem = this->_hints->getLayerItem(layer);
-    this->addTopLevelItem(layerItem);
+    this->addTopLevelItem(layerItem); //try to add target layer, does nothing if already exists
     layerItem->addChild(item);
 }
 

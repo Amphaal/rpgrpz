@@ -54,9 +54,10 @@ class TreeMapHint : public AlterationAcknoledger {
 
         //handling
         virtual void _handleAlterationRequest(AlterationPayload &payload) override;
-            LayerManipulationHelper _mvHelper;
-            void _handleItemMove(QTreeWidgetItem* toUpdate, const AtomUpdates &updatesMightContainMove);
-        
+
+        //move helpers
+        void _handleItemMove(QTreeWidgetItem* toUpdate, const AtomUpdates &updatesMightContainMove, LayerManipulationHelper &mvHelper);
+        void _applyMove(LayerManipulationHelper &mvHelper);
 
         //icons
         QIcon* _layerIcon = nullptr;
