@@ -23,6 +23,7 @@ class MapHint : public ViewMapHint {
         bool loadRPZMap(const QString &filePath); //to invoke
         bool saveRPZMap(); //to invoke, unless from mayWantToSavePendingState()
         bool saveRPZMapAs(const QString &newFilePath); //to invoke
+        bool createNewRPZMapAs(const QString &newFilePath); //to invoke
 
     signals:
         void mapStateChanged(const QString &mapDescriptor, bool isMapDirty);

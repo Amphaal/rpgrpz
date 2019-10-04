@@ -60,7 +60,10 @@ void MainWindow::_barVisibilityToolTip() {
     //display it
     QToolTip::showText(
         pos, 
-        "Appuyez sur la touche ALT pour afficher le menu !"
+        "Appuyez sur la touche ALT pour afficher le menu !",
+        this,
+        this->geometry(),
+        3000
     );
 
 }
@@ -368,22 +371,55 @@ QMenu* MainWindow::_getMapMenu() {
 
     auto mapMenuItem = new QMenu("Carte");
 
+    //create map
+    auto cmRPZmAction = RPZActions::createANewMap();
+    QObject::connect(
+        cmRPZmAction, &QAction::triggered,
+        [=]() {
+            
+            //save beforehand if it have to
+            MapHint::mayWantToSavePendingState(this, this->_mapView->hints());
+
+            //dialog
+            auto picked = QFileDialog::getSaveFileName(
+                this, 
+                "Créer une nouvelle carte", 
+                AppContext::getMapsFolderLocation(), 
+                I18n::tr()->Popup_MapDescriptor()
+            );
+            if(picked.isNull()) return;
+
+            //create !
+            QMetaObject::invokeMethod(this->_mapView->hints(), "createNewRPZMapAs", 
+                Q_ARG(QString, picked)
+            );
+            
+        }
+    );
+
     //load map
     auto lRPZmAction = RPZActions::loadAMap();
     QObject::connect(
         lRPZmAction, &QAction::triggered,
         [=]() {
+            
+            //save beforehand if it have to
+            MapHint::mayWantToSavePendingState(this, this->_mapView->hints());
+            
+            //dialog
             auto picked = QFileDialog::getOpenFileName(
                 this, 
                 "Ouvrir une carte", 
                 AppContext::getMapsFolderLocation(), 
                 I18n::tr()->Popup_MapDescriptor()
             );
+            if(picked.isNull()) return;
 
-            if(!picked.isNull()) {
-                MapHint::mayWantToSavePendingState(this, this->_mapView->hints());
-                QMetaObject::invokeMethod(this->_mapView->hints(), "loadRPZMap", Q_ARG(QString, picked));
-            }
+            //load map
+            QMetaObject::invokeMethod(this->_mapView->hints(), "loadRPZMap", 
+                Q_ARG(QString, picked)
+            );
+            
         }
     );
     
@@ -424,6 +460,7 @@ QMenu* MainWindow::_getMapMenu() {
         }
     );
 
+    mapMenuItem->addAction(cmRPZmAction);
     mapMenuItem->addAction(lRPZmAction);
     mapMenuItem->addSeparator();
     mapMenuItem->addAction(sRPZmAction);

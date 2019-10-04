@@ -63,12 +63,30 @@ bool MapHint::saveRPZMap() {
     return true;
 }
 
-
-bool MapHint::saveRPZMapAs(const QString &newFilePath) {
+bool MapHint::createNewRPZMapAs(const QString &newFilePath) {
+    
+    //reject request if remoted
     if(this->_isRemote) return false;
 
+    //define descr
     this->_mapFilePath = newFilePath;
     this->_mapDescriptor = QFileInfo(newFilePath).fileName();
+
+    //load
+    return this->loadRPZMap(newFilePath);
+
+}
+
+bool MapHint::saveRPZMapAs(const QString &newFilePath) {
+    
+    //reject request if remoted
+    if(this->_isRemote) return false;
+
+    //define descr
+    this->_mapFilePath = newFilePath;
+    this->_mapDescriptor = QFileInfo(newFilePath).fileName();
+    
+    //save
     return this->saveRPZMap();
 
 }

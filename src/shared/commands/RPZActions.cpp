@@ -152,6 +152,13 @@ QAction* RPZActions::loadAMap() {
     return action;
 }
 
+QAction* RPZActions::createANewMap() {
+    auto action = new QAction("Créer une nouvelle carte");
+    action->setShortcut(QKeySequence::New);
+    action->setShortcutVisibleInContextMenu(true);
+    return action;
+}
+
 QAction* RPZActions::saveTheMap() {
     auto action = new QAction("Sauvegarder la carte");
     action->setShortcut(QKeySequence::Save);
