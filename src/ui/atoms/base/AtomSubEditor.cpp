@@ -22,7 +22,7 @@ void AtomSubEditor::_setAsDataEditor(QWidget *dataEditor) {
     this->layout()->addWidget(dataEditor);
 }
 
-void AtomSubEditor::loadTemplate(const QVariant &defaultValue) {
+void AtomSubEditor::loadTemplate(const QVariant &defaultValue, bool updateMode) {
     
     this->setVisible(true);
     

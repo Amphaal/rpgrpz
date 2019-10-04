@@ -32,7 +32,7 @@ class AtomTextEditor : public AtomSubEditor  {
 
         QPushButton* _validateButton = nullptr;
 
-        void loadTemplate(const QVariant &defaultValue) override {
+        void loadTemplate(const QVariant &defaultValue, bool updateMode) override {
             
             AtomSubEditor::loadTemplate(defaultValue);
 

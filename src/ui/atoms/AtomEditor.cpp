@@ -29,17 +29,21 @@ void AtomEditor::buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr
 
     //fetch parameter editors to display
     auto toDisplay = this->_findDefaultValuesToBind();
+    auto isUpdateMode = this->_currentEditMode == EditMode::Selection;
 
     //load those who need to be displayed
     for(auto i = toDisplay.begin(); i != toDisplay.end(); ++i) {
         
         //prepare
         auto param = i.key();
-        auto editor = this->_editorsByParam[param];
+        auto defaultValue = i.value();
+
+        //get editor
+        auto editor = this->_editorsByParam.value(param);
         if(!editor) continue;
 
         //load template, and display them
-        editor->loadTemplate(i.value());
+        editor->loadTemplate(defaultValue, isUpdateMode);
 
         //add to the visible editors list
         this->_visibleEditors.append(param);
@@ -51,7 +55,7 @@ void AtomEditor::buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr
         toDisplay.keys().toSet()
     );
     for(auto i : toHide) {
-        auto editor = this->_editorsByParam[i];
+        auto editor = this->_editorsByParam.value(i);
         if(!editor) continue;
         editor->setVisible(false);
     }
@@ -188,7 +192,7 @@ void AtomEditor::_updateEditMode() {
         this->_currentEditMode = EditMode::Template;
     } 
     else {
-        this->_currentEditMode  = EditMode::None;
+        this->_currentEditMode = EditMode::None;
     }
 
     //update title

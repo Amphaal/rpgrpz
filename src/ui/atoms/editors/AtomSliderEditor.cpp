@@ -37,9 +37,9 @@ QSlider* AtomSliderEditor::slider() {
 }
 
 
-void AtomSliderEditor::loadTemplate(const QVariant &defaultValue) {
+void AtomSliderEditor::loadTemplate(const QVariant &defaultValue, bool updateMode) {
     
-    AtomSubEditor::loadTemplate(defaultValue);
+    AtomSubEditor::loadTemplate(defaultValue, updateMode);
 
     auto castedVal = defaultValue.toDouble();
 

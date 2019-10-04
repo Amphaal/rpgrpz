@@ -16,7 +16,7 @@ class AtomSubEditor : public QWidget {
         AtomSubEditor(const AtomParameter &parameter);
         
         AtomParameter param();
-        virtual void loadTemplate(const QVariant &defaultValue);
+        virtual void loadTemplate(const QVariant &defaultValue, bool updateMode = false);
 
     signals:
         void valueConfirmedForPayload(const AtomParameter &parameter, const QVariant &value);

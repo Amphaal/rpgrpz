@@ -62,13 +62,15 @@ class BrushToolEditor : public AtomSubEditor {
         };
 
 
-        void loadTemplate(const QVariant &defaultValue) override {
+        void loadTemplate(const QVariant &defaultValue, bool updateMode) override {
             
             AtomSubEditor::loadTemplate(defaultValue);
 
             QSignalBlocker b(this->_combo);
             auto indexToSelect = this->_combo->findData(defaultValue);
             this->_combo->setCurrentIndex(indexToSelect);
+
+            this->_combo->setEnabled(!updateMode);
 
         }
 
