@@ -16,7 +16,7 @@
 #include "src/shared/async-ui/AlterationAcknoledger.h"
 
 struct AtomsSelectionDescriptor {
-    std::set<AtomType> representedTypes; //prefer set to QSet since it handles enum class
+    std::set<AtomType> representedTypes; //prefer std::set to QSet since it handles enum class
     RPZAtom templateAtom;
     QVector<RPZAtomId> selectedAtomIds;
 };

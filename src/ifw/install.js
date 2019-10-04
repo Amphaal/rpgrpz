@@ -1,6 +1,6 @@
 function Component() {
-  installer.installationFinished.connect(this, Component.prototype.installationFinishedPageIsShown);
-  installer.finishButtonClicked.connect(this, Component.prototype.installationFinished);
+    installer.installationFinished.connect(this, Component.prototype.installationFinishedPageIsShown);
+    installer.finishButtonClicked.connect(this, Component.prototype.installationFinished);
 }
 
 Component.prototype.getPathToApp = function() {
@@ -15,14 +15,16 @@ Component.prototype.createOperations = function() {
 
     //create a shortcut on windows
     if (systemInfo.productType === "windows") {
-      component.addOperation("CreateShortcut", Component.prototype.getPathToApp(), "@DesktopDir@/@Title@.lnk");
+        component.addOperation("CreateShortcut", Component.prototype.getPathToApp(), "@DesktopDir@/@Title@.lnk");
     }
 }
 
 Component.prototype.installationFinishedPageIsShown = function() {
     try {
         if (installer.isInstaller() && installer.status == QInstaller.Success) {
+
             installer.addWizardPageItem( component, "EndInstallerForm", QInstaller.InstallationFinished );
+            
         }
     } catch(e) {
         console.log(e);
@@ -33,11 +35,11 @@ Component.prototype.installationFinished = function() {
     try {
         if (installer.isInstaller() && installer.status == QInstaller.Success) {
 
-          //LaunchBox
-          var isLaunchBoxChecked = component.userInterface( "EndInstallerForm" ).LaunchBox.checked;
-          if (isLaunchBoxChecked) {
+            //LaunchBox
+            var isLaunchBoxChecked = component.userInterface("EndInstallerForm").LaunchBox.checked;
+            if (isLaunchBoxChecked) {
             QDesktopServices.openUrl("file:///" + Component.prototype.getPathToApp());
-          }
+            }
 
         }
     } catch(e) {

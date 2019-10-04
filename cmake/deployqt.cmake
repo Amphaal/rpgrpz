@@ -34,7 +34,7 @@ function(deployqt target)
             COMMAND "${CMAKE_COMMAND}" -E
                 env "${DEPLOYQT_EXECUTABLE}"
                     --verbose 0
-                    --compiler-runtime
+                    --no-compiler-runtime
                     --no-angle
                     --no-opengl-sw
                     ${QT_DEPLOY_MUST_BE_DEBUG}

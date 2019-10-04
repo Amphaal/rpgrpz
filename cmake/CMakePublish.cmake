@@ -1,22 +1,15 @@
-############################
-### CPACK CONFIG + Qt ITW ##
-############################
+SET(CPACK_IFW_VERBOSE ON)
 
-#configure IFW
-SET(CPACK_GENERATOR IFW)
+####################
+### CONFIGURATION ##
+####################
 
-#install bin + libs
-install(
-    DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/"
-    DESTINATION .
-    COMPONENT app
-)
+    #generate translations
+    file(GLOB_RECURSE IFW_TRANSLATION_FILES "src/ifw/i18n/*.ts")
+    qt5_add_translation(IFW_QM_FILES ${IFW_TRANSLATION_FILES})
+    add_custom_target(ifw_translations DEPENDS ${IFW_QM_FILES})
 
-set(CPACK_COMPONENTS_ALL app)
-
-###################
-# MAIN DEFINITION #
-###################
+    SET(CPACK_GENERATOR IFW)
 
     SET(APP_DESCRIPTION ${PROJECT_NAME}
         fr "L'experience JdR simplifiée."
@@ -48,34 +41,62 @@ set(CPACK_COMPONENTS_ALL app)
     SET(CPACK_IFW_PACKAGE_LOGO "${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/app_64.png")
     SET(CPACK_IFW_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/package${APP_ICON_EXT}")
 
-#componenent
-INCLUDE(CPackIFW)
+##############
+### INSTALL ##
+##############
 
-cpack_add_component(app
-    DISPLAY_NAME ${PROJECT_NAME}
-    DESCRIPTION ${APP_DESCRIPTION}
-)
+    INCLUDE(CPack)
+    INCLUDE(CPackIFW)
 
-#additionnal configuration
-cpack_ifw_configure_component(app
-    ESSENTIAL
-    FORCED_INSTALLATION
-    NAME "com.lvwl.rpgrpz"
-    DESCRIPTION ${APP_DESCRIPTION}
-    VERSION ${CPACK_PACKAGE_VERSION} 
-    SCRIPT "src/ifw/install.js"
-    USER_INTERFACES "src/ifw/install.ui"
-    DEFAULT TRUE
-)
+    #find and install redist deps
+    IF(WIN32)
+        SET(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT "vc_runtime")
+        SET(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ".")
+        include(InstallRequiredSystemLibraries) #find MSVC_CRT_DIR
+        SET(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS "${MSVC_CRT_DIR}/vcruntime140_1.dll") #replace CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS content with dep
+        include(InstallRequiredSystemLibraries)
+    endif()
 
-#remote repo
-cpack_ifw_add_repository(coreRepo URL "${APP_ROOT_URL}/RPGRPZ/packages/${APP_REMOTE_SERVER_PLATFORM_FOLDER}")
+    #install bin + libs
+    install(
+        DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/"
+        DESTINATION .
+        COMPONENT ${PROJECT_NAME}
+    )
 
-INCLUDE(CPack)
+##############
+# COMPONENTS #
+##############
 
-#############
-## Publish ## 
-#############
+# vc_runtime #
+    IF(WIN32)
+        SET(REDIST_COMPONENT_NAME "Visual C++ Redist"
+            fr "Redistribuables Visual C++"
+        )
+        cpack_add_component(vc_runtime)
+        cpack_ifw_configure_component(vc_runtime 
+            FORCED_INSTALLATION
+            VIRTUAL
+            DISPLAY_NAME ${REDIST_COMPONENT_NAME}
+        )
+    endif()
+
+# app #
+    cpack_add_component(${PROJECT_NAME}
+        DOWNLOADED
+    )
+    cpack_ifw_configure_component(${PROJECT_NAME}
+        FORCED_INSTALLATION
+        SCRIPT "src/ifw/install.js"
+        USER_INTERFACES "src/ifw/install.ui"
+        TRANSLATIONS "${CMAKE_BINARY_DIR}/install_fr.qm"
+        DESCRIPTION ${APP_DESCRIPTION}
+    )
+    cpack_ifw_add_repository(coreRepo URL "${APP_ROOT_URL}/RPGRPZ/packages/${APP_REMOTE_SERVER_PLATFORM_FOLDER}")
+
+###################
+## CUSTOM TARGET ## 
+###################
 
 #target
 SET(APP_REMOTE_SERVER_DOWNLOAD_PATH "${APP_REMOTE_SERVER_PATH}/downloads/${APP_REMOTE_SERVER_PLATFORM_FOLDER}")
@@ -87,7 +108,7 @@ SET(APP_PACKAGED_PATH "${CMAKE_BINARY_DIR}/_CPack_Packages/${CPACK_SYSTEM_NAME}/
 SET(APP_PACKAGED_INSTALLER_PATH "${APP_PACKAGED_PATH}${APP_INSTALLER_EXTENSION}")
 SET(APP_PACKAGED_REPOSITORY_PATH "${APP_PACKAGED_PATH}/repository")
 
-#install CoreUtils for Win32 if mv missing
+#define custom target
 add_custom_target(publishPackage 
     #build
     COMMAND ${CMAKE_COMMAND} --build . --config Release --target package
@@ -96,3 +117,4 @@ add_custom_target(publishPackage
     COMMAND ${CMAKE_COMMAND} -E copy ${APP_PACKAGED_INSTALLER_PATH} ${APP_REMOTE_SERVER_DOWNLOAD_PATH}
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${APP_PACKAGED_REPOSITORY_PATH} ${APP_REMOTE_SERVER_PACKAGES_PATH}
 )
+add_dependencies(publishPackage ifw_translations)

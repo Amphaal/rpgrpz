@@ -40,11 +40,6 @@ IF(NOT DEFINED CMAKE_BUILD_TYPE)
     endif()
 endif()
 
-message("####################################################")
-message("### BUILD_TYPE : Building RPG-RPZ for ${CMAKE_BUILD_TYPE}... ###")
-message("####################################################")
-
-
 #config file to source code
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/templates/version.h.in 
@@ -94,6 +89,7 @@ endif (APPLE)
 #Qt
 SET(CMAKE_AUTOMOC ON)
 SET(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
 SET(CMAKE_INCLUDE_CURRENT_DIR ON) #for moc auto 
 
 ##########################
@@ -168,7 +164,7 @@ IF(APPLE)
     SET(Qt5_DIR "/Qt/5.13.1/clang_64/lib/cmake/Qt5")
 endif()
 
-find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL)
+find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL LinguistTools)
 list(APPEND EXT_LIBS
     Qt5::Core
     Qt5::Gui 
@@ -202,8 +198,9 @@ list(APPEND SOURCES
 #########################
 
 # Create executable
-add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES}) 
+add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES})
 
+#link !
 conan_target_link_libraries(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
 
