@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/shared/atoms/AtomsStorage.h"
+#include "src/shared/hints/AtomsStorage.h"
 #include "src/shared/commands/RPZActions.h"
 #include "src/shared/payloads/Payloads.h"
 

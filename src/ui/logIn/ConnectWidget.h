@@ -11,7 +11,7 @@
 #include "src/helpers/_appContext.h"
 #include "src/network/rpz/client/RPZClient.h"
 
-#include "src/shared/atoms/MapHint.h"
+#include "src/shared/hints/MapHint.h"
 
 class ConnectWidget : public QWidget {
 

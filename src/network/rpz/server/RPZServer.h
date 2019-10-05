@@ -15,7 +15,7 @@
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/network/rpz/_any/JSONRouter.h"
 
-#include "src/shared/atoms/AtomsStorage.h"
+#include "src/shared/hints/AtomsStorage.h"
 #include "src/shared/payloads/Payloads.h"
 #include "src/shared/models/RPZMessage.h"
 #include "src/shared/models/RPZUser.h"

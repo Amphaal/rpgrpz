@@ -3,8 +3,9 @@
 QGraphicsItem* CustomGraphicsItemHelper::createGraphicsItem(const RPZAtom &atom, const RPZToyMetadata &assetMetadata, bool isTemporary) {
     
     QGraphicsItem* out;
+    auto type = atom.type();
 
-    switch(atom.type()) {
+    switch(type) {
         
         case AtomType::Object:
             out = _createGenericImageBasedItem(atom, assetMetadata);
@@ -22,10 +23,12 @@ QGraphicsItem* CustomGraphicsItemHelper::createGraphicsItem(const RPZAtom &atom,
             out = _createTextItem(atom);
         break;
 
-        default:
-            qWarning() << "Map : cannot determine atom type for creation !";
+        default: {
+            qWarning() << "Map : Cannot create QGraphicsItem associated with atom, because atomType have no handler associated !";
             return nullptr;
+        }
         break;
+        
     }
 
     //update

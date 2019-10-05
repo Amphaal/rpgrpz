@@ -278,6 +278,10 @@ void AssetsDatabaseElement::_defineFlags() {
         case Text:
         case Player:
         case Event:
+        case NPC_Container:
+        case BackgroundContainer:
+        case Background:
+        case NPC:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemNeverHasChildren);
             break;
         
@@ -286,17 +290,17 @@ void AssetsDatabaseElement::_defineFlags() {
             break;
         
         case Object:
-        case NPC:
         case FloorBrush:
         case Downloaded:
-        case Background:
+        // case Background:
+        // case NPC:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
             break;
         
-        case NPC_Container:
         case FloorBrushContainer:
         case ObjectContainer:
-        case BackgroundContainer:
+        // case NPC_Container:
+        // case BackgroundContainer:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDropEnabled);
             break;
         

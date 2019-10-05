@@ -161,7 +161,9 @@
         "qfileselector": "cpp",
         "qfiledialog": "cpp",
         "qdialogbuttonbox": "cpp",
-        "qtooltip": "cpp"
+        "qtooltip": "cpp",
+        "qabstractlistmodel": "cpp",
+        "qvector": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

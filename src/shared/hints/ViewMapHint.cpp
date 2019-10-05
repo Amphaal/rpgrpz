@@ -128,7 +128,7 @@ void ViewMapHint::deleteCurrentSelectionItems() const {
 }
 
 QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZToyMetadata &assetMetadata) {
-    
+
     if(!assetMetadata.isEmpty()){
         QMutexLocker m(&this->_m_templateAtom);
 

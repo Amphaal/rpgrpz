@@ -326,10 +326,14 @@ void AssetsTreeView::keyPressEvent(QKeyEvent * event) {
 
 void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) {
     
+    auto i = selected.count();
+    auto y = deselected.count();
+
     QTreeView::selectionChanged(selected, deselected);
 
     auto selectedElems = this->selectedElementsIndexes();
     auto indexesCount = selectedElems.count();
+    
     RPZToyMetadata defSelect;
 
     //if no selection
@@ -360,6 +364,13 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
 }
 
 void AssetsTreeView::_handleAlterationRequest(const AlterationPayload &payload) {
+    
     auto type = payload.type();
-    if(type == PA_Selected || type == PA_Reset) this->clearSelection();
+    auto listenedForTypes = (type == PA_Selected || type == PA_Reset);
+    if(!listenedForTypes) return;
+
+    auto isAssetSelected = !this->_selectedAsset.isEmpty();
+    if(!isAssetSelected) return;
+    
+    this->clearSelection();
 }
