@@ -32,14 +32,15 @@ class AtomTextEditor : public AtomSubEditor  {
 
         QPushButton* _validateButton = nullptr;
 
-        void loadTemplate(const QVariant &defaultValue, bool updateMode) override {
+        QVariant loadTemplate(const AtomUpdates &defaultValues, bool updateMode) override {
             
-            AtomSubEditor::loadTemplate(defaultValue);
-
+            auto defaultValue = AtomSubEditor::loadTemplate(defaultValues, updateMode);
             auto castedVal = defaultValue.toString();
             
             QSignalBlocker b(this->textEdit());
             this->textEdit()->setText(castedVal);
 
+            return defaultValue;
+            
         }
 };

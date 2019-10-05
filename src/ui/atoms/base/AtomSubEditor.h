@@ -16,7 +16,9 @@ class AtomSubEditor : public QWidget {
         AtomSubEditor(const AtomParameter &parameter);
         
         AtomParameter param();
-        virtual void loadTemplate(const QVariant &defaultValue, bool updateMode = false);
+        virtual QVariant loadTemplate(const AtomUpdates &defaultValues, bool updateMode = false);
+
+        static bool mustShowBrushPenWidth(const QVariant &brushTypeDefaultValue);
 
     signals:
         void valueConfirmedForPayload(const AtomParameter &parameter, const QVariant &value);
@@ -28,4 +30,5 @@ class AtomSubEditor : public QWidget {
         void _setAsDataEditor(QWidget *dataEditor);
 
         AtomEditorLineDescriptor* _descr = nullptr;
+        virtual void _handleVisibilityOnLoad(const AtomUpdates &defaultValues);
 };

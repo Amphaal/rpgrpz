@@ -7,7 +7,7 @@
 class AtomSliderEditor : public AtomSubEditor {
     public:
         AtomSliderEditor(const AtomParameter &parameter, int minimum, int maximum);
-        void loadTemplate(const QVariant &defaultValue, bool updateMode) override;
+        QVariant loadTemplate(const AtomUpdates &defaultValues, bool updateMode) override;
         QSlider* slider();
 
     private:

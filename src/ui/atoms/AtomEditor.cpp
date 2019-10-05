@@ -36,14 +36,13 @@ void AtomEditor::buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr
         
         //prepare
         auto param = i.key();
-        auto defaultValue = i.value();
 
         //get editor
         auto editor = this->_editorsByParam.value(param);
         if(!editor) continue;
 
         //load template, and display them
-        editor->loadTemplate(defaultValue, isUpdateMode);
+        editor->loadTemplate(toDisplay, isUpdateMode);
 
         //add to the visible editors list
         this->_visibleEditors.append(param);
@@ -121,6 +120,7 @@ void AtomEditor::_createEditorsFromAtomParameters() {
         this->layout()->addWidget(editor);
 
     }
+
 }
 
 void AtomEditor::_onPreviewRequested(const AtomParameter &parameter, const QVariant &value) {
@@ -128,6 +128,10 @@ void AtomEditor::_onPreviewRequested(const AtomParameter &parameter, const QVari
 }
 
  void AtomEditor::_emitPayloadCB(const AtomParameter &parameter, const QVariant &value) {
+    
+    //intercept combo change for visibility
+    this->_mustShowBrushPenWidthEditor(parameter, value);
+    
     return _emitPayload({{parameter, value}});
  }
 
@@ -222,4 +226,19 @@ bool AtomEditor::hasVisibleEditors() {
 
 AtomsSelectionDescriptor AtomEditor::currentSelectionDescriptor() {
     return this->_currentSelectionDescr;
+}
+
+void AtomEditor::_mustShowBrushPenWidthEditor(const AtomParameter &paramToCheck, const QVariant &defaultValue) {
+
+    //check if param is tool combo
+    if(paramToCheck != AtomParameter::BrushStyle) return;
+
+    //check if pen size editor exists
+    auto brushPenWidthEditor = this->_editorsByParam.value(AtomParameter::BrushPenWidth);
+    if(!brushPenWidthEditor) return;
+
+    //set visibility
+    auto mustShow = AtomSubEditor::mustShowBrushPenWidth(defaultValue);
+    brushPenWidthEditor->setVisible(mustShow);
+
 }

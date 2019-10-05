@@ -36,11 +36,9 @@ QSlider* AtomSliderEditor::slider() {
     return (QSlider*)this->_dataEditor;
 }
 
-
-void AtomSliderEditor::loadTemplate(const QVariant &defaultValue, bool updateMode) {
+QVariant AtomSliderEditor::loadTemplate(const AtomUpdates &defaultValues, bool updateMode) {
     
-    AtomSubEditor::loadTemplate(defaultValue, updateMode);
-
+    auto defaultValue = AtomSubEditor::loadTemplate(defaultValues, updateMode);
     auto castedVal = defaultValue.toDouble();
 
     if(!defaultValue.isNull()) {
@@ -53,6 +51,7 @@ void AtomSliderEditor::loadTemplate(const QVariant &defaultValue, bool updateMod
         this->slider()->setValue(sval);
     }
 
+    return defaultValue;
 }
 
 

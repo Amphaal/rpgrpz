@@ -61,4 +61,6 @@ class AtomEditor : public QGroupBox, public AlterationActor {
 
         EditMode _currentEditMode = None;
         void _updateEditMode();
+
+        void _mustShowBrushPenWidthEditor(const AtomParameter &paramToCheck, const QVariant &defaultValue);
 };
