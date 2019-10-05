@@ -5,6 +5,7 @@
 
 #include <QRegularExpression>
 #include <QRandomGenerator>
+#include <QPair>
 
 #include "src/helpers/_appContext.h"
 
@@ -12,6 +13,7 @@ struct DiceThrow {
     uint face = 0;
     uint howMany = 0;
     QVector<uint> values;
+    QVector<QPair<uint, int>> pairedValues;
     QString name;
     double avg = 0;
 };

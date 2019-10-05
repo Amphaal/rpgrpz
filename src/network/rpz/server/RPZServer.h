@@ -25,6 +25,7 @@
 #include "src/shared/database/AssetsDatabase.h"
 
 #include "src/helpers/_appContext.h"
+#include "src/helpers/StringHelper.hpp"
 
 #include "src/shared/commands/MessageInterpreter.h"
 #include "src/shared/audio/StreamPlayStateTracker.hpp"

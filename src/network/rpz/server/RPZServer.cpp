@@ -443,7 +443,11 @@ void RPZServer::_maySendAndStoreDiceThrows(const QString &text) {
         
         //sub list of values
         QList<QString> sub;
-        for(auto &val : dThrow.values) sub += QString::number(val);
+        for(auto &pair : dThrow.pairedValues) {
+            sub += QString("%1%2")
+                        .arg(pair.first)
+                        .arg(StringHelper::toSuperScript(pair.second));
+        }
         QString subJoin = sub.join(", ");
 
         //join values

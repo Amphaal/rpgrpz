@@ -20,21 +20,37 @@ MessageInterpreter::Command MessageInterpreter::interpretText(const QString &tex
 
 void MessageInterpreter::generateValuesOnDiceThrows(QVector<DiceThrow> &throws) {
     
-    double sum = 0;
-
     for(auto &dThrow : throws) {
         
+        double sum = 0;
         QVector<uint> sout;
         
         for(uint i = 1; i <= dThrow.howMany; i++) {
-            auto rand = QRandomGenerator::global()->bounded((uint)1, dThrow.face + 1);
-            sout += rand;
-            sum += rand;
+            auto rand = QRandomGenerator::global()->bounded((uint)1, dThrow.face + 1); //generate throw
+            sout += rand; //add value
+            sum += rand; //sum
         }
 
-        dThrow.values = sout;
-        if(dThrow.howMany > 0) dThrow.avg = sum / dThrow.howMany;
+        dThrow.values = sout; //stores all values
+        if(dThrow.howMany > 0) dThrow.avg = sum / dThrow.howMany; //calculate avg
         
+        //regroup throws
+        QMultiHash<uint, bool> buf;
+        for(auto i : sout) {
+            buf.insertMulti(i, false);
+        }
+
+        //order keys desc
+        auto keys = buf.uniqueKeys();
+        std::sort(keys.begin(), keys.end(), std::greater<int>());
+
+        QVector<QPair<uint, int>> out;
+        for(auto face : keys) {
+            auto count = buf.values(face).count();
+            out += { face, count };
+        }
+        dThrow.pairedValues = out;
+
     }
 
 }
