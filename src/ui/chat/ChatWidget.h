@@ -5,7 +5,7 @@
 
 #include <QtGui/QWindow>
 #include <QStyle>
-#include "src/ui/others/RestoringSplitter.h"
+#include "src/ui/_others/RestoringSplitter.h"
 
 #include "src/network/rpz/client/RPZClient.h"
 
@@ -13,7 +13,7 @@
 #include "src/shared/models/RPZResponse.h"
 
 #include "src/shared/models/RPZUser.h"
-#include "src/ui/others/ClientBindable.h"
+#include "src/ui/_others/ClientBindable.h"
 
 #include "ChatEdit.h"
 

@@ -11,7 +11,7 @@
 #include "RPZStatusLabel.h"
 #include "ClientActivityIndicator.hpp"
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
-#include "src/ui/others/ClientBindable.h"
+#include "src/ui/_others/ClientBindable.h"
 #include "DownloadStatus.hpp"
 
 class RPZStatusBar : public QStatusBar, public ClientBindable {

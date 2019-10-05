@@ -1,12 +1,12 @@
 #pragma once
 
-#include "src/ui/atoms/base/AtomEditorLineDescriptor.h"
+#include "src/ui/atomEditor/base/AtomEditorLineDescriptor.h"
 #include <QVBoxLayout>
 #include <QComboBox>
 
 #include "src/ui/map/MapView.h"
 #include "src/shared/models/RPZAtom.h"
-#include "src/ui/atoms/editors/AtomSliderEditor.h"
+#include "src/ui/atomEditor/editors/AtomSliderEditor.h"
 
 class BrushToolEditor : public AtomSubEditor {
     private:    

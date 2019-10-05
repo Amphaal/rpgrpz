@@ -6,14 +6,14 @@
 
 #include "src/_libs/promise.hpp"
 
-#include "src/ui/communication/audio/controllers/AudioProbeController.h"
-#include "src/ui/communication/audio/controllers/PlaylistController.h"
+#include "src/ui/audio/controllers/AudioProbeController.h"
+#include "src/ui/audio/controllers/PlaylistController.h"
 
 #include "src/shared/audio/GStreamerClient.h"
 
 #include "src/network/youtube/YoutubeHelper.h"
 
-#include "src/ui/others/ClientBindable.h"
+#include "src/ui/_others/ClientBindable.h"
 
 #include "src/shared/audio/StreamPlayStateTracker.hpp"
 

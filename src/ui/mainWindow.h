@@ -23,25 +23,25 @@
 #include "src/network/ConnectivityHelper.h"
 #include "src/network/rpz/server/RPZServer.h"
 
-#include "src/ui/communication/ConnectWidget.h"
-#include "src/ui/communication/chat/ChatWidget.h"
-#include "src/ui/communication/audio/AudioManager.h"
+#include "src/ui/logIn/ConnectWidget.h"
+#include "src/ui/chat/ChatWidget.h"
+#include "src/ui/audio/AudioManager.h"
 #include "src/ui/map/MapView.h"
 #include "src/ui/map/MapTools.h"
-#include "src/ui/layout/MapLayoutManager.h"
+#include "src/ui/mapLayout/MapLayoutManager.h"
 
 #include "src/ui/assets/AssetsManager.h"
 
-#include "src/ui/atoms/AtomEditionManager.hpp"
+#include "src/ui/atomEditor/AtomEditionManager.hpp"
 
-#include "src/ui/others/RestoringSplitter.h"
-#include "src/ui/others/UpdaterUIIntegrator.h"
-#include "src/ui/others/statusbar/RPZStatusBar.h"
+#include "src/ui/_others/RestoringSplitter.h"
+#include "src/ui/_others/UpdaterUIIntegrator.h"
+#include "src/ui/statusBar/RPZStatusBar.h"
 
-#include "src/ui/others/statusbar/RPZStatusLabel.h"
+#include "src/ui/statusBar/RPZStatusLabel.h"
 
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
-#include "src/ui/character/CharacterEditor.hpp"
+#include "src/ui/sheets/CharacterEditor.hpp"
 
 class MainWindow : public QMainWindow { 
     public:

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "src/helpers/AtomConverter.h"
-#include "src/ui/atoms/base/AtomSubEditor.h"
-#include "src/ui/atoms/editors/custom/RPZCustomSlider.hpp"
+#include "src/ui/atomEditor/base/AtomSubEditor.h"
+#include "src/ui/atomEditor/editors/custom/RPZCustomSlider.hpp"
 
 class AtomSliderEditor : public AtomSubEditor {
     public:

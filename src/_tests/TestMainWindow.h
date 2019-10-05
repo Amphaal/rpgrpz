@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/ui/communication/audio/AudioManager.h"
+#include "src/ui/audio/AudioManager.h"
 
 class TestMainWindow : public QMainWindow {
     public:
