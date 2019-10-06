@@ -445,8 +445,8 @@ void RPZServer::_maySendAndStoreDiceThrows(const QString &text) {
         QList<QString> sub;
         for(auto &pair : dThrow.pairedValues) {
             sub += QString("%1%2")
-                        .arg(pair.first)
-                        .arg(StringHelper::toSuperScript(pair.second));
+                        .arg(StringHelper::toSuperScript(pair.second))
+                        .arg(pair.first);
         }
         QString subJoin = sub.join(", ");
 
@@ -454,7 +454,7 @@ void RPZServer::_maySendAndStoreDiceThrows(const QString &text) {
         auto joined = QString("%1 : {%2}").arg(dThrow.name).arg(subJoin);
 
         //display avg if multiple values
-        if(sub.count() > 1) joined += QString(" μ ") + QString::number(dThrow.avg, 'f', 2);
+        if(sub.count() > 1) joined += QString(" x̄ ") + QString::number(dThrow.avg, 'f', 2);
 
         //add to topmost list
         throwsMsgList += joined;
