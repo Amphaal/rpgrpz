@@ -10,7 +10,6 @@
 #include "src/shared/models/RPZToyMetadata.h"
 
 class AssetsDatabaseElement {
-    
     public:
         enum Type { 
             T_Unknown = 0,
@@ -33,6 +32,9 @@ class AssetsDatabaseElement {
                 Background = 750 
         };
         
+        static QList<AssetsDatabaseElement::Type> staticContainerTypes();
+        static QList<AssetsDatabaseElement::Type> movableStaticContainerTypes();
+
         static AssetsDatabaseElement* fromIndex(const QModelIndex &index);
         static inline const QString listMimeType = "application/x-assets-db-elem-list";
         static AtomType toAtomType(const AssetsDatabaseElement::Type &type);
@@ -73,6 +75,9 @@ class AssetsDatabaseElement {
         void rename(const QString &newName); //prefer using rename() with AssetsDatabase for db interaction
         void appendChild(AssetsDatabaseElement* child); //prefer using insertAsset() with AssetsDatabase for parallel db insertion
 
+        bool contains(AssetsDatabaseElement* toCheck, AssetsDatabaseElement* toBeChecked = nullptr);
+        bool containsAny(const QList<AssetsDatabaseElement*> toCheck);
+
     protected:
         QList<AssetsDatabaseElement*> _subElements;
         AssetsDatabaseElement* _parentElement = nullptr;
@@ -89,7 +94,6 @@ class AssetsDatabaseElement {
         //returns a list of single elements by node path
         static QSet<AssetsDatabaseElement*> filterTopMostOnly(QList<AssetsDatabaseElement*> elemsToFilter);
 
-        static QList<AssetsDatabaseElement::Type> staticContainerTypes();
         static QList<AssetsDatabaseElement::Type> internalItemTypes();
         static QString typeDescription(AssetsDatabaseElement::Type &type);
 
@@ -146,6 +150,11 @@ class AssetsDatabaseElement {
             BackgroundContainer,
             ObjectContainer,
             DownloadedContainer
+        };
+
+        static const inline QList<AssetsDatabaseElement::Type> _movableStaticContainerTypes = {
+            FloorBrushContainer, 
+            ObjectContainer
         };
 
         static const inline QList<AssetsDatabaseElement::Type> _itemTypes = {

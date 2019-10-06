@@ -745,7 +745,7 @@ bool AssetsDatabase::removeItems(QList<AssetsDatabaseElement*> elemsToRemove) {
 
 
 
-bool AssetsDatabase::moveItems(QList<AssetsDatabaseElement*> selectedItemsToMove, AssetsDatabaseElement* target) {
+bool AssetsDatabase::moveItemsToContainer(QList<AssetsDatabaseElement*> selectedItemsToMove, AssetsDatabaseElement* target) {
     
     auto db_paths = this->paths();
 

@@ -178,6 +178,29 @@ AtomType AssetsDatabaseElement::toAtomType(const AssetsDatabaseElement::Type &ty
 // END RO Properties //
 ///////////////////////
 
+bool AssetsDatabaseElement::contains(AssetsDatabaseElement* toCheck, AssetsDatabaseElement* toBeChecked) {
+    if(!toBeChecked) toBeChecked = this;
+    
+    //check if self
+    if(toBeChecked == toCheck) return true;
+
+    //check children
+    auto currentDoesContainInChildren = toBeChecked->_subElements.contains(toCheck);
+    if(currentDoesContainInChildren) return true;
+
+    return false;
+}
+
+bool AssetsDatabaseElement::containsAny(const QList<AssetsDatabaseElement*> toCheck) {
+    
+    for(auto i : toCheck) {
+        auto doesContain = this->contains(i);
+        if(doesContain) return true;
+    }
+
+    return false;
+
+}
 
 AssetsDatabaseElement* AssetsDatabaseElement::child(int row) {
     return this->_subElements.value(row);
@@ -418,7 +441,7 @@ void AssetsDatabaseElement::_defineIsStaticContainer() {
     this->_isStaticContainer = this->_staticContainerTypes.contains(this->_type);
 }
 void AssetsDatabaseElement::_defineIsDeletable() {
-    this->_isDeletable = this->_itemTypes.contains(this->_type) ||  this->_type == Folder;
+    this->_isDeletable = this->_itemTypes.contains(this->_type) || this->_type == Folder;
 }
 
 
@@ -477,6 +500,10 @@ void AssetsDatabaseElement::_defineInsertType() {
 
 QList<AssetsDatabaseElement::Type> AssetsDatabaseElement::staticContainerTypes() {
     return _staticContainerTypes;
+}
+
+QList<AssetsDatabaseElement::Type> AssetsDatabaseElement::movableStaticContainerTypes() {
+    return _movableStaticContainerTypes;
 }
 
 QList<AssetsDatabaseElement::Type> AssetsDatabaseElement::internalItemTypes() {

@@ -58,7 +58,10 @@ class AssetsTreeView : public QTreeView, public ClientBindable, public Alteratio
         /////////////////////
 
         void _renderCustomContextMenu(const QPoint &pos);
-        void _generateMenu(QList<QModelIndex> &itemsIndexes, const QPoint &whereToDisplay);
+        void _generateMenu(const QList<QModelIndex> &targetIndexes, const QPoint &whereToDisplay);
+
+        QList<QAction*> _staticContainerMoveActions;
+        void _generateStaticContainerMoveActions();
 
         /////////////////////////
         // END Contextual menu //

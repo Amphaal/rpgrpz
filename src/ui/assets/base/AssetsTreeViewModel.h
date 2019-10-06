@@ -23,6 +23,7 @@ class AssetsTreeViewModel : public QAbstractItemModel {
         AssetsTreeViewModel(QObject *parent = nullptr);
         
         QModelIndexList getPersistentIndexList() const;
+        QModelIndex getStaticContainerTypesIndex(const AssetsDatabaseElement::Type &staticContainerType); 
         AssetsDatabase* database() const;
 
         ///////////////
@@ -31,7 +32,7 @@ class AssetsTreeViewModel : public QAbstractItemModel {
 
         QPixmap getAssetIcon(AssetsDatabaseElement* target, QSize &sizeToApply) const;
         bool createFolder(QModelIndex &parentIndex);
-        bool moveItems(const QMimeData *data, const QModelIndex &parentIndex);
+        bool moveItemsToContainer(const QModelIndex &parentIndex, const QList<QModelIndex> &indexesToMove);
         bool insertAssets(QList<QUrl> &urls, const QModelIndex &parentIndex);
         bool removeItems(const QList<QModelIndex> &itemsIndexesToRemove);
         RPZToyMetadata integrateAsset(const RPZAssetImportPackage &package);
@@ -71,7 +72,7 @@ class AssetsTreeViewModel : public QAbstractItemModel {
         /// DROP HANDLING ///
         /////////////////////
 
-        static QList<AssetsDatabaseElement*> pointerListFromMimeData(const QMimeData *data);
+        static QList<AssetsDatabaseElement*> fromMimeData(const QMimeData *data);
 
         bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
         bool canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const override;
@@ -82,11 +83,9 @@ class AssetsTreeViewModel : public QAbstractItemModel {
         /// END DROP HANDLING ///
         /////////////////////////
 
-        QModelIndex _getDownloadableFolderIndex(); 
-
         mutable QModelIndexList _bufferedDraggedIndexes;
-        QModelIndexList _getTopMostIndexesFromDraggedIndexesBuffer();
-        bool _bufferContainsIndexOrParent(const QModelIndex &index);
+        QModelIndexList _getTopMostIndexes(const QModelIndexList &indexesList);
+        bool _indexListContainsIndexOrParent(const QModelIndexList &base, const QModelIndex &index);
         QPair<int, int> _anticipateInserts(const QModelIndexList &tbi);
 
 };

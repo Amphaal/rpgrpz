@@ -8,19 +8,24 @@ AssetsDatabase* AssetsTreeViewModel::database() const {
     return this->_db;
 }
 
-QModelIndex AssetsTreeViewModel::_getDownloadableFolderIndex() {
+QModelIndex AssetsTreeViewModel::getStaticContainerTypesIndex(const AssetsDatabaseElement::Type &staticContainerType) {
+    
+    auto indexOf = AssetsDatabaseElement::staticContainerTypes().indexOf(staticContainerType);
+    
     auto root = this->index(0, 0);
-    return this->index(4, 0, root);
+    auto out = this->index(indexOf, 0, root);
+
+    return out;
 }
 
 RPZToyMetadata AssetsTreeViewModel::integrateAsset(const RPZAssetImportPackage &package) {
     
     //get where exactly the new asset is supposed to be
-    auto dlFolderIndex = this->_getDownloadableFolderIndex();
+    auto dlFolderIndex = this->getStaticContainerTypesIndex(AssetsDatabaseElement::Type::DownloadedContainer);
     auto dlFolder = AssetsDatabaseElement::fromIndex(dlFolderIndex);
     auto posToInsert = dlFolder->childCount();
     
-    this->beginInsertRows(this->_getDownloadableFolderIndex(), posToInsert, posToInsert);
+    this->beginInsertRows(dlFolderIndex, posToInsert, posToInsert);
         auto metadata = this->_db->importAsset(package); 
     this->endInsertRows();
 
@@ -68,29 +73,27 @@ bool AssetsTreeViewModel::createFolder(QModelIndex &parentIndex) {
     return result;
 }
 
-bool AssetsTreeViewModel::_bufferContainsIndexOrParent(const QModelIndex &index) {
+bool AssetsTreeViewModel::_indexListContainsIndexOrParent(const QModelIndexList &base, const QModelIndex &index) {
     if(!index.isValid()) return false;
-    if(this->_bufferedDraggedIndexes.contains(index)) return true;
-    return this->_bufferContainsIndexOrParent(index.parent());
+    if(base.contains(index)) return true;
+    return this->_indexListContainsIndexOrParent(base, index.parent());
 }
 
-QModelIndexList AssetsTreeViewModel::_getTopMostIndexesFromDraggedIndexesBuffer() {
+QModelIndexList AssetsTreeViewModel::_getTopMostIndexes(const QModelIndexList &indexesList) {
     
     QModelIndexList higher;
-    auto elemsToFilter = this->_bufferedDraggedIndexes;
 
-    while(elemsToFilter.count()) {
+    for(auto &index : indexesList) {
 
-        auto c = elemsToFilter.takeFirst();
-
-        //take first
+        //add to higher if empty
         if(!higher.count()) {
-            higher.append(c);
+            higher.append(index);
             continue;
         }
 
-        if(!this->_bufferContainsIndexOrParent(c.parent())) {
-            higher.append(c);
+        //check if contains 
+        if(!this->_indexListContainsIndexOrParent(indexesList, index.parent())) {
+            higher.append(index);
         }
         
     }
@@ -112,19 +115,29 @@ QPair<int, int> AssetsTreeViewModel::_anticipateInserts(const QModelIndexList &t
     return QPair<int, int>(insertAtBegin, insertAtEnd);
 }
 
-bool AssetsTreeViewModel::moveItems(const QMimeData *data, const QModelIndex &parentIndex) {
+bool AssetsTreeViewModel::moveItemsToContainer(const QModelIndex &parentIndex, const QList<QModelIndex> &indexesToMove) {
     
-    //get topmost
-    auto topMostIndexes = this->_getTopMostIndexesFromDraggedIndexesBuffer();
-    auto insertInstr = this->_anticipateInserts(topMostIndexes);
+    //get topmost only
+    auto topMostIndexes = this->_getTopMostIndexes(indexesToMove);
+
+    //to move indexes to elem list
+    QList<AssetsDatabaseElement*> elementsToMove;
+    for(auto &index : topMostIndexes) elementsToMove += AssetsDatabaseElement::fromIndex(index);
+
+    //parent index to elem
+    auto parentElem = AssetsDatabaseElement::fromIndex(parentIndex);
 
     //begin removes...
     for(auto &i : topMostIndexes) {
-        this->beginRemoveRows(i.parent(), i.row(), i.row());
+        this->beginRemoveRows(
+            i.parent(), 
+            i.row(), 
+            i.row()
+        );
     }
-
-    //begin inserts...
-    auto parentElem = AssetsDatabaseElement::fromIndex(parentIndex);
+    
+    //insert row instructions
+    auto insertInstr = this->_anticipateInserts(topMostIndexes);
     if(insertInstr.first) {
         this->beginInsertRows(parentIndex, 0, insertInstr.first - 1);
     }
@@ -132,17 +145,17 @@ bool AssetsTreeViewModel::moveItems(const QMimeData *data, const QModelIndex &pa
         auto startIndex = parentElem->childCount();
         this->beginInsertRows(parentIndex, startIndex, startIndex + insertInstr.second - 1);
     }
-    
-        auto droppedList = pointerListFromMimeData(data);
-        auto dest = AssetsDatabaseElement::fromIndex(parentIndex);
 
-        auto result = this->_db->moveItems(droppedList, dest);
+    //move
+    auto result = this->_db->moveItemsToContainer(elementsToMove, parentElem);
 
     this->endRemoveRows();
     this->endInsertRows();
 
     return result;
+
 }
+
 
 bool AssetsTreeViewModel::insertAssets(QList<QUrl> &urls, const QModelIndex &parentIndex) {
     
@@ -363,23 +376,29 @@ int AssetsTreeViewModel::rowCount(const QModelIndex &parent) const {
 
 bool AssetsTreeViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) {
     
+    //internal drop
     if(data->hasFormat(AssetsDatabaseElement::listMimeType)) {
 
-        //inner drop, move
-        return this->moveItems(data, parent);
+        //move
+        return this->moveItemsToContainer(parent, this->_bufferedDraggedIndexes);
     
-    } else if(data->hasFormat("text/uri-list")){
+    } 
     
-        //external drop, insert 
+    //external drop
+    else if(data->hasFormat("text/uri-list")){
+    
+        //insert 
         auto includedUrls = data->urls();
         return this->insertAssets(includedUrls, parent);
+
     }
 
     //should not happen
     return false;
+
 }
 
-QList<AssetsDatabaseElement*> AssetsTreeViewModel::pointerListFromMimeData(const QMimeData *data) {
+QList<AssetsDatabaseElement*> AssetsTreeViewModel::fromMimeData(const QMimeData *data) {
 
     //get bound data
     auto asString = QString::fromUtf8(
@@ -390,7 +409,7 @@ QList<AssetsDatabaseElement*> AssetsTreeViewModel::pointerListFromMimeData(const
     //iterate through list
     QList<AssetsDatabaseElement*> list;
     for(auto &pointerAsString : pointerList) {
-        auto ptr = (AssetsDatabaseElement*)pointerAsString.toLongLong();
+        auto ptr = (AssetsDatabaseElement*)pointerAsString.toULongLong();
         list << ptr;
     }
 
@@ -405,37 +424,26 @@ bool AssetsTreeViewModel::canDropMimeData(const QMimeData *data, Qt::DropAction 
     }
 
     //external drop, allows
-    if(!data->hasFormat(AssetsDatabaseElement::listMimeType)) {
+    if(data->hasFormat("text/uri-list")) {
         return true;
     }
 
-    //if is root or not corresponding to a tree element
+    //if inner drop is not expected
+    if(!data->hasFormat(AssetsDatabaseElement::listMimeType)) {
+        return false;
+    }
+
+    
     auto dest = AssetsDatabaseElement::fromIndex(parent);
+
+    //if is root or not corresponding to a tree element
     if(!dest || dest->isRoot()) {
         return false;
     }
 
-    //iterate through list
-    auto dataList = pointerListFromMimeData(data);
-    for(auto &ptr : dataList) {
-
-        //internal drop/move, reject internal objects drop
-        if(ptr->isInternal()) {
-            return false;
-        }
-
-    }
-
     //prevent dropping into a selected index
-    QList<QString> selectedPaths;
-    for(auto &ptr : dataList) {
-        selectedPaths.append(ptr->path());
-    }
-    auto destPath = dest->path();
-    if(selectedPaths.contains(destPath)) {
-        return false;
-    }
-
+    auto elems = fromMimeData(data);
+    if(dest->containsAny(elems)) return false;
 
     //else, allow
     return true;
@@ -443,25 +451,40 @@ bool AssetsTreeViewModel::canDropMimeData(const QMimeData *data, Qt::DropAction 
 
 QMimeData* AssetsTreeViewModel::mimeData(const QModelIndexList &indexes) const {
     
+    //base mime
+    auto mimeData = QAbstractItemModel::mimeData(indexes);
+
     //create pointer list
-    QString pointerList;
+    QList<QString> pointersList;
+    QModelIndexList filteredIndexList;
+
+    //iterate
     for(auto &i : indexes) {
 
         //only first column
         if(i.column() > 0) continue;
+        
+        auto elem = AssetsDatabaseElement::fromIndex(i);
+        
+        //reject undeletable elements from drop
+        if(!elem->isDeletable()) continue;
 
         //add to list
-        pointerList += QString::number((unsigned long long)i.internalPointer()) + ";";
+        pointersList += QString::number((unsigned long long)i.internalPointer());
+        filteredIndexList += i;
+
     }
-    //remove last separator
-    pointerList = pointerList.left(pointerList.length() - 1); 
 
     //update mime
-    auto mimeData = QAbstractItemModel::mimeData(indexes);
-    mimeData->setData(AssetsDatabaseElement::listMimeType, pointerList.toUtf8());
+    if(pointersList.count()) {
+
+        //apply data
+        mimeData->setData(AssetsDatabaseElement::listMimeType, pointersList.join(";").toUtf8());
+
+    }
 
     //store as dragged indexes
-    this->_bufferedDraggedIndexes = indexes;
+    this->_bufferedDraggedIndexes = filteredIndexList;
 
     return mimeData;
 }

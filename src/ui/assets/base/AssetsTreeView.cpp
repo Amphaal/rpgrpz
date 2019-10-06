@@ -4,7 +4,10 @@ AssetsTreeView::AssetsTreeView(QWidget *parent) : QTreeView(parent),
     AlterationActor(AlterationPayload::Source::Local_AtomDB),
     _MIMEDb(new QMimeDatabase), 
     _model(new AssetsTreeViewModel) {     
-        
+    
+    //generate raw actions
+    this->_generateStaticContainerMoveActions();
+
     //model
     this->setModel(this->_model);
 
@@ -196,6 +199,36 @@ void AssetsTreeView::dragMoveEvent(QDragMoveEvent *event) {
 // Contextual menu //
 /////////////////////
 
+
+void AssetsTreeView::_generateStaticContainerMoveActions() {
+
+    QList<QAction*> out;
+
+    for(auto &toCreate : AssetsDatabaseElement::movableStaticContainerTypes()) {
+        
+        auto targetIndex = this->_model->getStaticContainerTypesIndex(toCreate);
+        auto icon = this->_model->data(targetIndex, Qt::DecorationRole).value<QIcon>();
+        auto name = this->_model->data(targetIndex, Qt::DisplayRole).toString();
+        auto action = new QAction(icon, QString("<< Déplacer vers \"%1\"").arg(name));
+        
+        QObject::connect(
+            action, &QAction::triggered,
+            [=]() {
+                this->assetsModel()->moveItemsToContainer(
+                    targetIndex,
+                    this->selectedElementsIndexes() 
+                );
+            }
+        );
+
+        out += action;
+
+    }
+
+    this->_staticContainerMoveActions = out;
+
+}
+
 void AssetsTreeView::_renderCustomContextMenu(const QPoint &pos) {
     
     auto indexesToProcess = this->selectedElementsIndexes();
@@ -215,19 +248,18 @@ void AssetsTreeView::_renderCustomContextMenu(const QPoint &pos) {
     this->_generateMenu(indexesToProcess, this->viewport()->mapToGlobal(pos));
 }
 
-void AssetsTreeView::_generateMenu(QList<QModelIndex> &itemsIndexes, const QPoint &whereToDisplay) {
+void AssetsTreeView::_generateMenu(const QList<QModelIndex> &targetIndexes, const QPoint &whereToDisplay) {
     
     //if no items selected, cancel menu creation
-    if(!itemsIndexes.count()) return;
-
-    //list of actions to bind to menu
-    QList<QAction*> actions;
+    if(!targetIndexes.count()) return;
     
+    QMenu menu;
+
     //if single selection
-    if(itemsIndexes.count() == 1) {
+    if(targetIndexes.count() == 1) {
         
         //sigle selected item
-        auto firstItemIndex = itemsIndexes.first();
+        auto firstItemIndex = targetIndexes.first();
         auto firstItem = AssetsDatabaseElement::fromIndex(firstItemIndex);
 
         //container actions...
@@ -241,35 +273,40 @@ void AssetsTreeView::_generateMenu(QList<QModelIndex> &itemsIndexes, const QPoin
                     this->_model->createFolder(firstItemIndex);
                 }
             );
-            actions.append(createFolder);
+            menu.addAction(createFolder);
         }
     }
 
     // check if all selected are deletable type...
-    auto areAllDeletable = [itemsIndexes]() {
-        for(auto &elemIndex : itemsIndexes) {
+    auto areAllDeletable = [targetIndexes]() {
+        for(auto &elemIndex : targetIndexes) {
             auto elem = AssetsDatabaseElement::fromIndex(elemIndex);
             if(!elem->isDeletable()) return false;
         }
         return true;
     }();
 
-    //if so, allow deletion
+    //if so...
     if(areAllDeletable) {
+
+        //allow deletion
         auto deleteItem = RPZActions::remove();
         QObject::connect(
             deleteItem, &QAction::triggered,
-            [&, itemsIndexes]() {
-                this->_requestDeletion(itemsIndexes);
+            [&, targetIndexes]() {
+                this->_requestDeletion(targetIndexes);
             }
         );
-        actions.append(deleteItem);
+        menu.addAction(deleteItem);
+
+        //allow move to static folders
+        menu.addSeparator();
+        menu.addActions(this->_staticContainerMoveActions);
+
     }
 
     //display menu
-    if(actions.count()) {
-        QMenu menu;
-        menu.addActions(actions);
+    if(menu.actions().count()) {
         menu.exec(whereToDisplay);
     }
 }

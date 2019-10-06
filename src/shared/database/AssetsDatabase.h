@@ -33,7 +33,7 @@ class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabas
         bool insertAsset(const QUrl &url, AssetsDatabaseElement* parent);
         bool rename(QString &name, AssetsDatabaseElement* target);
         bool removeItems(const QList<AssetsDatabaseElement*> elemsToRemove);
-        bool moveItems(const QList<AssetsDatabaseElement*> selectedItemsToMove, AssetsDatabaseElement* target);
+        bool moveItemsToContainer(const QList<AssetsDatabaseElement*> selectedItemsToMove, AssetsDatabaseElement* target);
 
         //
         RPZToyMetadata getAssetMetadata(const RPZAssetHash &id);
