@@ -6,8 +6,13 @@
 #include "src/shared/models/character/RPZCharacter.hpp"
 #include "src/shared/models/base/RPZMap.hpp"
 
-class CharactersDatabase : public JSONDatabase {
+class CharactersDatabase : public QObject, public JSONDatabase {
     
+    Q_OBJECT
+
+    signals:
+        void databaseChanged();
+
     public:
         static CharactersDatabase* get() {
             if(!_singleton) {_singleton = new CharactersDatabase;}
@@ -21,6 +26,10 @@ class CharactersDatabase : public JSONDatabase {
                 out.insert(character.id(), character);
             }
             return out;
+        }
+
+        RPZCharacter character(snowflake_uid characterId) {
+            return this->characters().value(characterId);
         }
 
         RPZCharacter addNewCharacter() {
@@ -45,6 +54,7 @@ class CharactersDatabase : public JSONDatabase {
             
             //save
             this->_updateDbFile(obj);
+            emit databaseChanged();
         }
 
         RPZCharacter updateCharacter(const RPZCharacter &updated) {
@@ -62,6 +72,7 @@ class CharactersDatabase : public JSONDatabase {
             
             //save
             this->_updateDbFile(obj);
+            emit databaseChanged();
 
             return updated;
 

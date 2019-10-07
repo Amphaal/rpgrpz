@@ -71,3 +71,11 @@ void RPZUser::_setColor(const QColor &color) {
     auto colorToUse = color.isValid() ? color.name() : RandomColor::getRandomColor().name();
     this->insert("color", colorToUse);
 }
+
+void RPZUser::setCharacter(const RPZCharacter &character) {
+    this->insert("char", character);
+}
+
+const RPZCharacter RPZUser::character() const {
+    return RPZCharacter(this->value("char").toHash());
+}

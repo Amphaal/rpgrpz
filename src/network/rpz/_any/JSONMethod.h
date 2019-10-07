@@ -7,10 +7,9 @@ enum JSONMethod {
     ServerStatus,
     ServerResponse, 
     Handshake, 
-    LoggedPlayersChanged, 
+    AllConnectedUsers, 
     ChatLogHistory,
     MapChanged,
-    AskForHostMapHistory,
     AckIdentity,
     AskForAssets,
     RequestedAsset,
@@ -18,7 +17,9 @@ enum JSONMethod {
     AudioStreamPlayingStateChanged,
     AudioStreamPositionChanged,
     MapChangedHeavily,
-    AvailableAssetsToUpload
+    AvailableAssetsToUpload,
+    UserIn,
+    UserOut
 };
 
 static const QStringList JSONMethodAsArray = { 
@@ -26,10 +27,9 @@ static const QStringList JSONMethodAsArray = {
     "ServerStatus",
     "ServerResponse", 
     "Handshake", 
-    "LoggedPlayersChanged", 
+    "AllConnectedUsers", 
     "ChatLogHistory",
     "MapChanged",
-    "AskForHostMapHistory",
     "AckIdentity",
     "AskForAssets",
     "RequestedAsset",
@@ -37,5 +37,7 @@ static const QStringList JSONMethodAsArray = {
     "AudioStreamPlayingStateChanged",
     "AudioStreamPositionChanged",
     "MapChangedHeavily",
-    "AvailableAssetsToUpload"
+    "AvailableAssetsToUpload",
+    "UserIn",
+    "UserOut"
 };

@@ -3,15 +3,15 @@
 #include "src/helpers/_appContext.h"
 #include <QVariantHash>
 
+#include "src/shared/models/character/RPZCharacter.hpp"
+
 class RPZHandshake : public QVariantHash {
     public:
         RPZHandshake(const QVariantHash &hash);
-        RPZHandshake(const QString &requestedUsername);
+        RPZHandshake(const QString &requestedUsername, const RPZCharacter &toIncarnate);
 
-        QString clientVersion();
-        QString requestedUsername();
+        const QString clientVersion() const;
+        const QString requestedUsername() const;
+        const RPZCharacter incarnatingAs() const;
 
-    private:
-        void _setClientVersion();
-        void _setRequestedUsername(const QString &requestedUsername);
 };

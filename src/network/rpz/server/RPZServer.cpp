@@ -35,6 +35,28 @@ void RPZServer::run() {
 
 };
 
+void RPZServer::_attributeRoleToUser(JSONSocket* socket, RPZUser &associatedUser, const RPZHandshake &handshake) {
+    
+    auto isLocalConnection = socket->socket()->localAddress().isLoopback();
+    auto noHost = !this->_hostSocket;
+
+    auto incarnation = handshake.incarnatingAs();
+    auto wantsToIncarnate = !incarnation.isEmpty();
+    
+    //may elevate as Host
+    if(isLocalConnection && noHost && !wantsToIncarnate) {
+        this->_hostSocket = socket;
+        associatedUser.setRole(RPZUser::Role::Host);
+    } 
+    
+    //may elevate as Player
+    else if (wantsToIncarnate) {
+        associatedUser.setCharacter(incarnation);
+        associatedUser.setRole(RPZUser::Role::Player);
+    }
+
+}
+
 void RPZServer::_onNewConnection() {
         
         //new connection,store it
@@ -44,12 +66,6 @@ void RPZServer::_onNewConnection() {
         RPZUser user;
         user.shuffleId();
         user.randomiseColor();
-
-        //check if connecting from localhost and no host has already been elected
-        if(clientSocket->socket()->localAddress().isLoopback() && !this->_hostSocket) {
-            this->_hostSocket = clientSocket;
-            user.setRole(RPZUser::Role::Host);
-        }
 
         //add to internal lists
         auto userId = user.id();
@@ -96,7 +112,7 @@ void RPZServer::_onClientSocketDisconnected(JSONSocket* disconnectedSocket) {
     delete disconnectedSocket;
 
     //tell other clients that the user is gone
-    this->_broadcastUsers();
+    this->_sendToAll(JSONMethod::UserOut, idToRemove);
 
 }
 
@@ -214,27 +230,20 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
                 targetUser.whisperTargetName(), 
                 targetUser.id()
             );
+            
+            //determine which role to give to the socket/user
+            this->_attributeRoleToUser(target, targetUser, handshakePkg);
 
-            //tell other users this one exists
-            this->_broadcastUsers();
-
-            //send user object to socket
-            this->_tellUserHisIdentity(target);
+            //distribute user ack events to clients
+            this->_newUserAcknoledged(target, targetUser);
 
             //send history to the client
             this->_sendStoredMessages(target);
             
-            //if is host
-            if(target == this->_hostSocket)  {
-                
-                //ask for host map history
-                this->_askHostForMapHistory();
-
-            } 
-            
-            else {
+            //if is not host
+            if(target != this->_hostSocket)  {
                                 
-                //send data about played stream
+                //send data played stream informations
                 this->_sendPlayedStream(target); 
 
                 //send stored history
@@ -258,9 +267,21 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 // HIGH Helpers
 //
 
-void RPZServer::_tellUserHisIdentity(JSONSocket* socket) {
-    auto &serialized = this->_getUser(socket);
-    socket->sendJSON(JSONMethod::AckIdentity, serialized);
+void RPZServer::_newUserAcknoledged(JSONSocket* socket, const RPZUser &userToAck) {
+    
+    //tell associated user's socket his identity
+    socket->sendJSON(JSONMethod::AckIdentity, userToAck);
+
+    //send whole users database to socket
+    auto method = JSONMethod::AllConnectedUsers;
+    auto toSend = this->_usersById.toVList();
+    this->_sendToAll(method, toSend);
+    auto msgLog = QString("Now %1 clients logged").arg(toSend.count());
+    JSONSocket::_debugLog("RPZServer", method, msgLog);
+
+    //tell the others that this user exists
+    this->_sendToAllButSelf(socket, JSONMethod::UserIn, userToAck);
+
 }
 
 void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
@@ -278,23 +299,6 @@ void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
     JSONSocket::_debugLog("RPZServer", method, logMsg);
 }
 
-
-void RPZServer::_broadcastUsers() {
-
-    //send data
-    auto method = JSONMethod::LoggedPlayersChanged;
-    auto toSend =  this->_usersById.toVList();
-    this->_sendToAll(method, toSend);
-
-    //log
-    auto userCount = this->_usersById.size();
-    auto msgLog = QString("Now %1 clients logged").arg(userCount);
-    JSONSocket::_debugLog("RPZServer", method, msgLog);
-}
-
-void RPZServer::_askHostForMapHistory() {
-    this->_hostSocket->sendJSON(JSONMethod::AskForHostMapHistory, QStringList());
-}
 
 void RPZServer::_alterIncomingPayloadWithUpdatedOwners(AtomsWielderPayload &wPayload, JSONSocket * senderSocket) {
     
@@ -481,11 +485,11 @@ void RPZServer::_maySendAndStoreDiceThrows(const QString &text) {
 // LOW Helpers
 //
 
-void RPZServer::_sendToAllButSelf(JSONSocket* senderSocket, const JSONMethod &method, const QVariant &data) {
+void RPZServer::_sendToAllButSelf(JSONSocket* toExclude, const JSONMethod &method, const QVariant &data) {
     for(auto socket : this->_clientSocketById) {
         
         //prevent self send
-        if(socket == senderSocket) {
+        if(socket == toExclude) {
             continue;
         } 
 

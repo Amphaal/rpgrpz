@@ -1,9 +1,14 @@
 #include "RPZClient.h"
 
-RPZClient::RPZClient(const QString &name, const QString &socketStr) : AlterationActor(AlterationPayload::Source::RPZClient), _name(name) { 
+RPZClient::RPZClient(const QString &socketStr, const QString &displayName, const RPZCharacter &toIncarnate) : AlterationActor(AlterationPayload::Source::RPZClient), 
+    _userDisplayName(displayName),
+    _characterToIncarnate(toIncarnate) { 
+    
+    //split socket str
     auto parts = socketStr.split(":", QString::SplitBehavior::SkipEmptyParts);
     this->_domain = parts.value(0, "localhost");
     this->_port = parts.value(1, AppContext::UPNP_DEFAULT_TARGET_PORT);
+
 }
 
 void RPZClient::_initSock() {
@@ -84,7 +89,7 @@ RPZClient::~RPZClient() {
 void RPZClient::run() {
 
     //prerequisites
-    if(this->_name.isEmpty()) {
+    if(this->_userDisplayName.isEmpty()) {
         emit connectionStatus("Nom de joueur requis !", true);
         emit closed();
     }
@@ -103,8 +108,15 @@ void RPZClient::_onDisconnect() {
 }
 
 void RPZClient::_onConnected() {
+    
     //tell the server your username
-    this->_sock->sendJSON(JSONMethod::Handshake, RPZHandshake(this->_name));
+    this->_sock->sendJSON(JSONMethod::Handshake, 
+        RPZHandshake(
+            this->_userDisplayName,
+            this->_characterToIncarnate
+        )
+    );
+
 }
 
 void RPZClient::_handleAlterationRequest(const AlterationPayload &payload) {
@@ -198,7 +210,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         }
         break;
 
-        case JSONMethod::LoggedPlayersChanged: {
+        case JSONMethod::AllConnectedUsers: {
             
             {
                 //store users
@@ -211,7 +223,17 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
                 }
             }
 
-            emit loggedUsersUpdated(this->_sessionUsers);
+            emit allUsersReceived(this->_sessionUsers);
+        }
+        break;
+
+        case JSONMethod::UserIn: {
+            emit userJoinedServer(RPZUser(data.toHash()));
+        }
+        break;
+
+        case JSONMethod::UserOut: {
+            emit userLeftServer(data.toULongLong());
         }
         break;
 
@@ -225,11 +247,6 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
             emit ackIdentity(this->_self);
 
-        }
-        break;
-
-        case JSONMethod::AskForHostMapHistory: {
-            emit beenAskedForMapHistory();
         }
         break;
 

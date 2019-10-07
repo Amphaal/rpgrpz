@@ -30,7 +30,7 @@ class RPZClient : public QObject, public AlterationActor, public JSONRouter {
     Q_OBJECT
 
     public:
-        RPZClient(const QString &displayname, const QString &socketStr);
+        RPZClient(const QString &socketStr, const QString &displayName, const RPZCharacter &toIncarnate);
         ~RPZClient();
         
         QString getConnectedSocketAddress() const; //safe
@@ -56,12 +56,14 @@ class RPZClient : public QObject, public AlterationActor, public JSONRouter {
         void ackIdentity(const RPZUser &user);
         
         void mapChanged(const AlterationPayload &payload);
-        void beenAskedForMapHistory();
 
         void availableAssetsFromServer(const QVector<RPZAssetHash> &availableIds);
         void receivedAsset(const RPZAssetImportPackage &package);
 
-        void loggedUsersUpdated(const QVector<RPZUser> &users);
+        void allUsersReceived(const QVector<RPZUser> &users);
+        void userLeftServer(snowflake_uid userId);
+        void userJoinedServer(RPZUser &newUser);
+
         void receivedLogHistory(const QVector<RPZMessage> &messages);
 
         void audioSourceStateChanged(const StreamPlayStateTracker &state);
@@ -73,7 +75,8 @@ class RPZClient : public QObject, public AlterationActor, public JSONRouter {
         
         QString _domain;
         QString _port;
-        QString _name;
+        QString _userDisplayName;
+        RPZCharacter _characterToIncarnate;
 
         RPZUser _self;
         mutable QMutex _m_self;

@@ -2,27 +2,39 @@
 
 ConnectWidget::ConnectWidget(MapHint* hintToControlStateOf) : QWidget(nullptr), 
     _toControlStateOf(hintToControlStateOf),
-    _nameTarget(new QLineEdit(this)),
-    _domainTarget(new QLineEdit(this)),
-    _connectBtn(new QPushButton(this)) {
+    _nameTarget(new QLineEdit),
+    _domainTarget(new QLineEdit),
+    _connectBtn(new QPushButton),
+    _characterSheetTarget(new QComboBox) {
                                                     
     AppContext::settings()->beginGroup("ConnectWidget");
 
     //this
     this->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
-    this->setLayout(new QHBoxLayout);
+    auto mainLayout = new QVBoxLayout;
+    this->setLayout(mainLayout);
     this->layout()->setMargin(0);
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
 
     //name target
     this->_nameTarget->addAction(QIcon(":/icons/app/connectivity/user.png"), QLineEdit::LeadingPosition);
     this->_nameTarget->setPlaceholderText("Nom de joueur");
+    this->_nameTarget->setToolTip("Nom de joueur");
     this->_nameTarget->setText(AppContext::settings()->value("name", "").toString());
 
     //domain target
     this->_domainTarget->addAction(QIcon(":/icons/app/connectivity/server.png"), QLineEdit::LeadingPosition);
     this->_domainTarget->setPlaceholderText("IP ou domaine du serveur");
+    this->_domainTarget->setPlaceholderText("IP ou domaine du serveur");
     this->_domainTarget->setText(AppContext::settings()->value("domain", "localhost").toString());
+
+    //character sheet target
+    this->_characterSheetTarget->setToolTip("Personnage à incarner");
+    this->_fillCharacterSheetCombo();
+    QObject::connect(
+        CharactersDatabase::get(), &CharactersDatabase::databaseChanged,
+        this, &ConnectWidget::_fillCharacterSheetCombo
+    );
 
     //bind to Return Key press...
     auto bb = [&]() {
@@ -33,13 +45,33 @@ ConnectWidget::ConnectWidget(MapHint* hintToControlStateOf) : QWidget(nullptr),
 
     //default ui state
     this->_changeState(this->_state);
+    QObject::connect(
+        this->_connectBtn, &QPushButton::clicked,
+        this, &ConnectWidget::_onConnectButtonPressed
+    );
 
     //adding widgets
-    this->layout()->addWidget(this->_nameTarget);
-    this->layout()->addWidget(this->_domainTarget);
-    this->layout()->addWidget(this->_connectBtn);
+    auto layoutSub = new QHBoxLayout;
+    layoutSub->addWidget(this->_nameTarget);
+    layoutSub->addWidget(this->_domainTarget);
+    layoutSub->addWidget(this->_connectBtn);
+
+    mainLayout->addWidget(this->_characterSheetTarget);
+    mainLayout->addLayout(layoutSub);
 
     AppContext::settings()->endGroup();
+}
+
+void ConnectWidget::_onConnectButtonPressed() {
+    switch(this->_state) {
+        case ConnectWidget::State::NotConnected:
+            this->_tryConnectToServer();
+            break;
+        case ConnectWidget::State::Connecting:
+        case ConnectWidget::State::Connected:
+            this->_destroyClient();
+            break;
+    }
 }
 
 void ConnectWidget::_saveValuesAsSettings() {
@@ -66,9 +98,14 @@ void ConnectWidget::_tryConnectToServer() {
     //new connection..
     this->_destroyClient();
     
+    auto selectedCharacter = CharactersDatabase::get()->character(
+        this->_getSelectedCharacterId()
+    );
+    
     this->_cc = new RPZClient(
+        this->_domainTarget->text(),
         this->_nameTarget->text(), 
-        this->_domainTarget->text()
+        selectedCharacter
     );
 
     //create a separate thread to run the client into
@@ -164,38 +201,45 @@ void ConnectWidget::_changeState(ConnectWidget::State newState) {
     }
     this->_connectBtn->setText(btnText);
 
-    //btn event
-    QObject::disconnect(this->_connectBtnLink);
-    switch(newState) {
-        case ConnectWidget::State::NotConnected:
-            this->_connectBtnLink = QObject::connect(
-                this->_connectBtn, &QPushButton::clicked,
-                this, &ConnectWidget::_tryConnectToServer
-            );
-            break;
-        case ConnectWidget::State::Connecting:
-        case ConnectWidget::State::Connected:
-            this->_connectBtnLink = QObject::connect(
-                this->_connectBtn, &QPushButton::clicked,
-                this, &ConnectWidget::_destroyClient
-            );
-            break;
-    }
-
     //inputs state
-    switch(newState) {
-        case ConnectWidget::State::NotConnected:
-            this->_domainTarget->setEnabled(true);
-            this->_nameTarget->setEnabled(true);
-            break;
-        case ConnectWidget::State::Connecting:
-        case ConnectWidget::State::Connected:
-            this->_domainTarget->setEnabled(false);
-            this->_nameTarget->setEnabled(false);
-            break;
-    }
+    auto mustEnableWidgets = newState == ConnectWidget::State::NotConnected;
+    this->_domainTarget->setEnabled(mustEnableWidgets);
+    this->_nameTarget->setEnabled(mustEnableWidgets);
+    this->_characterSheetTarget->setEnabled(mustEnableWidgets);
 
     //define state
     this->_state = newState;
+
+}
+
+
+snowflake_uid ConnectWidget::_getSelectedCharacterId() {
+    return (snowflake_uid)this->_characterSheetTarget->currentData().toULongLong();
+}
+
+void ConnectWidget::_fillCharacterSheetCombo() {
+    
+    auto previouslySelectedCharacterId = this->_getSelectedCharacterId(); //get previous selection
+    this->_characterSheetTarget->clear(); //clear content
+
+    //for each character in db
+    for(auto &character : CharactersDatabase::get()->characters()) {
+        
+        auto id = character.id();
+        auto toBeInsertedIndex = this->_characterSheetTarget->count();
+
+        this->_characterSheetTarget->addItem(QIcon(":/icons/app/connectivity/cloak.png"), character.toString(), id);
+
+        if(previouslySelectedCharacterId == id) {
+            this->_characterSheetTarget->setCurrentIndex(toBeInsertedIndex);
+        }
+
+    }
+
+    //default selection
+    this->_characterSheetTarget->insertItem(0, " Se connecter sans personnage", 0);
+    if(previouslySelectedCharacterId == 0) {
+        this->_characterSheetTarget->setCurrentIndex(0);
+    }
 
 }

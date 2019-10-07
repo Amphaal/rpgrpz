@@ -118,6 +118,7 @@ int main(int argc, char** argv) {
     qRegisterMetaType<GstMessageType>("GstMessageType");
     qRegisterMetaType<StreamPlayStateTracker>("StreamPlayStateTracker");
     qRegisterMetaType<gint64>("gint64");
+    qRegisterMetaType<snowflake_uid>("snowflake_uid");
 
     //message handler
     qInstallMessageHandler(LogWriter::customMO);

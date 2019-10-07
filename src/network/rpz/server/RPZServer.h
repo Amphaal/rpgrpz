@@ -62,12 +62,11 @@ class RPZServer : public QTcpServer, public JSONRouter {
         //users
         RPZUser& _getUser(JSONSocket* socket);
         JSONSocket* _getUserSocket(const QString &formatedUsername);
-        void _broadcastUsers();
-        void _tellUserHisIdentity(JSONSocket* socket);
+        void _newUserAcknoledged(JSONSocket* socket, const RPZUser &userToAck);
+        void _attributeRoleToUser(JSONSocket* socket, RPZUser &associatedUser, const RPZHandshake &handshake);
 
         //map atoms
         AtomsStorage* _hints = nullptr;
-        void _askHostForMapHistory();
         void _broadcastMapChanges(JSONMethod method, AlterationPayload &payload, JSONSocket * senderSocket);
         void _sendMapHistory(JSONSocket * clientSocket);
             void _alterIncomingPayloadWithUpdatedOwners(AtomsWielderPayload &wPayload, JSONSocket * senderSocket);
@@ -84,5 +83,5 @@ class RPZServer : public QTcpServer, public JSONRouter {
         void _routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) override;
         
         void _sendToAll(const JSONMethod &method, const QVariant &data);
-        void _sendToAllButSelf(JSONSocket * senderSocket, const JSONMethod &method, const QVariant &data);
+        void _sendToAllButSelf(JSONSocket* toExclude, const JSONMethod &method, const QVariant &data);
 };

@@ -388,14 +388,15 @@ void MapView::onRPZClientConnecting() {
         this, &MapView::_onIdentityReceived
     );
 
-    //when been asked for map content
-    QObject::connect(
-        _rpzClient, &RPZClient::beenAskedForMapHistory,
-        this, &MapView::_sendMapHistory
-    );
-
 }
 void MapView::_onIdentityReceived(const RPZUser &self) {
+    
+    //send map history if host
+    if(self.role() == RPZUser::Role::Host) {
+        this->_sendMapHistory();
+    }
+
+    //define default creation user
     this->_hints->setDefaultUser(self);
 
     //if host

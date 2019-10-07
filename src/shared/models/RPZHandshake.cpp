@@ -1,23 +1,20 @@
 #include "RPZHandshake.h"
 
 RPZHandshake::RPZHandshake(const QVariantHash &hash) : QVariantHash(hash) {}
-RPZHandshake::RPZHandshake(const QString &requestedUsername) {
-    this->_setClientVersion();
-    this->_setRequestedUsername(requestedUsername);
+RPZHandshake::RPZHandshake(const QString &requestedUsername, const RPZCharacter &toIncarnate) {
+    this->insert("v", QString(APP_CURRENT_VERSION));
+    this->insert("un", requestedUsername);
+    this->insert("char", toIncarnate);
 }
 
-QString RPZHandshake::clientVersion() {
+const QString RPZHandshake::clientVersion() const {
     return this->value("v").toString();
 }
 
-QString RPZHandshake::requestedUsername() {
+const QString RPZHandshake::requestedUsername() const {
     return this->value("un").toString();
 }
 
-void RPZHandshake::_setClientVersion() {
-    this->insert("v", QString(APP_CURRENT_VERSION));
-}
-
-void RPZHandshake::_setRequestedUsername(const QString &requestedUsername) {
-    this->insert("un", requestedUsername);
+const RPZCharacter RPZHandshake::incarnatingAs() const {
+    return RPZCharacter(this->value("char").toHash());
 }

@@ -114,7 +114,7 @@ class CharacterPicker : public QWidget {
         QPushButton* _deleteCharacterBtn = nullptr;
         RPZCharacter* _bufferedSelectedCharacter = nullptr;
         int _bufferedSelectedIndex = -1;
-        QIcon _icon = QIcon(":/icons/app/connectivity/user.png");
+        QIcon _icon = QIcon(":/icons/app/connectivity/cloak.png");
 
         RPZMap<RPZCharacter> _characters;
 

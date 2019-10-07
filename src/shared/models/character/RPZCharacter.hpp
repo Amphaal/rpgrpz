@@ -2,6 +2,8 @@
 
 #include <QVariantHash>
 #include <QPixmap>
+#include <QBuffer>
+
 #include "../base/Serializable.hpp"
 
 #include "RPZAbility.hpp"
