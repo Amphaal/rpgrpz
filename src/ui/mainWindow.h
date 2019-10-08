@@ -29,7 +29,7 @@
 #include "src/ui/map/MapView.h"
 #include "src/ui/map/MapTools.h"
 #include "src/ui/mapLayout/MapLayoutManager.h"
-#include "src/ui/users/UsersListView.hpp"
+#include "src/ui/users/players/PlayersListView.hpp"
 
 #include "src/ui/assets/AssetsManager.h"
 
@@ -63,7 +63,7 @@ class MainWindow : public QMainWindow {
         bool _mustLaunchServer = true;
         void _initConnectivity();
 
-        UsersListView* _usersView = nullptr;
+        PlayersListView* _usersView = nullptr;
         MapView* _mapView = nullptr;
         ConnectWidget* _connectWidget = nullptr;
         AudioManager* _audioManager = nullptr;

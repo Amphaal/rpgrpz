@@ -246,35 +246,35 @@ void MainWindow::_initUI() {
 void MainWindow::_initUIApp() {
     
     //init components
-    this->_cw = new ChatWidget;
-    this->_mapView = new MapView;
-    this->_audioManager = new AudioManager;
-    this->_assetsManager = new AssetsManager;
-    this->_mapTools = new MapTools;
-    this->_mlManager = new MapLayoutManager(this->_mapView->hints());
-    this->_connectWidget = new ConnectWidget(this->_mapView->hints());
-    this->_atomEditManager = new AtomEditionManager(this->_mapView->hints());
-    this->_characterEditor = new CharacterEditor;
-    this->_usersView = new UsersListView;
+    this->_cw = new ChatWidget(this);
+    this->_mapView = new MapView(this);
+    this->_audioManager = new AudioManager(this);
+    this->_assetsManager = new AssetsManager(this);
+    this->_mapTools = new MapTools(this);
+    this->_mlManager = new MapLayoutManager(this->_mapView->hints(), this);
+    this->_connectWidget = new ConnectWidget(this->_mapView->hints(), this);
+    this->_atomEditManager = new AtomEditionManager(this->_mapView->hints(), this);
+    this->_characterEditor = new CharacterEditor(this);
+    this->_usersView = new PlayersListView(this);
     
     //left tabs
-    auto lTab = new QTabWidget;
+    auto lTab = new QTabWidget(this);
     lTab->addTab(this->_assetsManager, QIcon(":/icons/app/tabs/box.png"), "Boite à jouets");
     lTab->addTab(this->_audioManager, QIcon(":/icons/app/tabs/playlist.png"), "Audio");
     lTab->addTab(this->_characterEditor, QIcon(":/icons/app/tabs/scroll.png"), "Fiches");
 
     //right tabs
-    auto rTab = new QTabWidget;
+    auto rTab = new QTabWidget(this);
     rTab->setLayoutDirection(Qt::LayoutDirection::RightToLeft);
     rTab->addTab(this->_mlManager, QIcon(":/icons/app/tabs/list.png"), "Atomes de la carte");
     rTab->addTab(this->_atomEditManager, QIcon(":/icons/app/tabs/config.png"), "Editeur d'atome");
     
-    auto CCw = new QWidget;
-    auto CCwLayout = new QHBoxLayout;
+    auto CCw = new QWidget(this);
+    auto CCwLayout = new QHBoxLayout(this);
     CCwLayout->setDirection(QBoxLayout::RightToLeft);
     CCw->setLayout(CCwLayout);
     
-    auto logLayout = new QVBoxLayout;
+    auto logLayout = new QVBoxLayout(this);
     logLayout->addWidget(this->_connectWidget); 
     logLayout->addWidget(this->_cw);
 
@@ -284,13 +284,13 @@ void MainWindow::_initUIApp() {
     rTab->addTab(CCw, QIcon(":/icons/app/tabs/chat.png"), "Connexion / Chat");
 
     //designer
-    auto designer = new QWidget;
-    designer->setLayout(new QVBoxLayout);
+    auto designer = new QWidget(this);
+    designer->setLayout(new QVBoxLayout(this));
     designer->layout()->setMargin(0);
     designer->layout()->setSpacing(2);
 
-        auto toolbar = new QWidget;
-        auto toolbarLayout = new QHBoxLayout;
+        auto toolbar = new QWidget(this);
+        auto toolbarLayout = new QHBoxLayout(this);
         toolbar->setLayout(toolbarLayout);
         toolbarLayout->setMargin(0);
         toolbarLayout->setSpacing(0);
@@ -349,7 +349,7 @@ void MainWindow::_initUIApp() {
 void MainWindow::_initUIMenu() {
     
     //menu
-    auto menuBar = new QMenuBar;
+    auto menuBar = new QMenuBar(this);
     menuBar->addMenu(this->_getFileMenu());
     menuBar->addMenu(this->_getMapMenu());
     menuBar->addMenu(this->_getToolsMenu());
@@ -363,7 +363,7 @@ void MainWindow::_initUIMenu() {
 
 void MainWindow::_initUIStatusBar() {
 
-    this->_sb = new RPZStatusBar;
+    this->_sb = new RPZStatusBar(this);
     this->setStatusBar(this->_sb);
 
 }
@@ -378,7 +378,7 @@ void MainWindow::_initUIStatusBar() {
 
 QMenu* MainWindow::_getMapMenu() {
 
-    auto mapMenuItem = new QMenu("Carte");
+    auto mapMenuItem = new QMenu("Carte", this);
 
     //create map
     auto cmRPZmAction = RPZActions::createANewMap();
@@ -480,7 +480,7 @@ QMenu* MainWindow::_getMapMenu() {
 
 QMenu* MainWindow::_getToolsMenu() {
 
-    auto toolsMenuItem = new QMenu(I18n::tr()->Menu_Tools());
+    auto toolsMenuItem = new QMenu(I18n::tr()->Menu_Tools(), this);
 
     //maintenance tool
     auto openMaintenanceToolAction = RPZActions::openMaintenanceTool();
@@ -535,7 +535,7 @@ QMenu* MainWindow::_getToolsMenu() {
 
 QMenu* MainWindow::_getHelpMenu() {
 
-    auto helpMenuItem = new QMenu(I18n::tr()->Menu_Help());
+    auto helpMenuItem = new QMenu(I18n::tr()->Menu_Help(), this);
 
     //for checking the upgrades available
     this->cfugAction = RPZActions::checkUpdates();
@@ -573,7 +573,7 @@ QMenu* MainWindow::_getHelpMenu() {
 
 QMenu* MainWindow::_getFileMenu() {
 
-    auto fileMenuItem = new QMenu(I18n::tr()->Menu_File());
+    auto fileMenuItem = new QMenu(I18n::tr()->Menu_File(), this);
 
     //quit
     auto quitAction = RPZActions::quit();

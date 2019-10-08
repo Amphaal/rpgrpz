@@ -22,7 +22,7 @@ class AudioManager : public QWidget, public ClientBindable {
     Q_OBJECT
     
     public:
-        AudioManager();
+        AudioManager(QWidget *parent = nullptr);
 
         PlaylistController* _plCtrl = nullptr;
 

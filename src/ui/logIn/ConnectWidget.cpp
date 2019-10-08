@@ -1,6 +1,6 @@
 #include "ConnectWidget.h"
 
-ConnectWidget::ConnectWidget(MapHint* hintToControlStateOf) : QWidget(nullptr), 
+ConnectWidget::ConnectWidget(MapHint* hintToControlStateOf, QWidget *parent) : QWidget(parent), 
     _toControlStateOf(hintToControlStateOf),
     _nameTarget(new QLineEdit),
     _domainTarget(new QLineEdit),
@@ -31,17 +31,27 @@ ConnectWidget::ConnectWidget(MapHint* hintToControlStateOf) : QWidget(nullptr),
     //character sheet target
     this->_characterSheetTarget->setToolTip("Personnage à incarner");
     this->_fillCharacterSheetCombo();
+       
+        //define preferences
+        auto favChar = AppContext::settings()->value("favChar").toULongLong();
+        for(auto i = 0; i < this->_characterSheetTarget->count(); i++) {
+            
+            auto charId = this->_characterSheetTarget->itemData(i).toULongLong();
+            if(charId != favChar) continue;
+
+            this->_characterSheetTarget->setCurrentIndex(i);
+            break;
+
+        }
+
     QObject::connect(
         CharactersDatabase::get(), &CharactersDatabase::databaseChanged,
         this, &ConnectWidget::_fillCharacterSheetCombo
     );
 
     //bind to Return Key press...
-    auto bb = [&]() {
-        this->_connectBtn->click();
-    };
-    QObject::connect(this->_nameTarget, &QLineEdit::returnPressed, bb);
-    QObject::connect(this->_domainTarget, &QLineEdit::returnPressed, bb);
+    QObject::connect(this->_nameTarget, &QLineEdit::returnPressed, this->_connectBtn, &QPushButton::click);
+    QObject::connect(this->_domainTarget, &QLineEdit::returnPressed, this->_connectBtn, &QPushButton::click);
 
     //default ui state
     this->_changeState(this->_state);
@@ -79,11 +89,14 @@ void ConnectWidget::_saveValuesAsSettings() {
     //register default values
     AppContext::settings()->beginGroup("ConnectWidget");
 
-    const auto dt_text = this->_domainTarget->text();
+    auto dt_text = this->_domainTarget->text();
     if(!dt_text.isEmpty()) AppContext::settings()->setValue("domain", dt_text);
 
-    const auto nt_text = this->_nameTarget->text();
+    auto nt_text = this->_nameTarget->text();
     if(!nt_text.isEmpty()) AppContext::settings()->setValue("name", nt_text);
+
+    auto favoriteCharacterId = this->_characterSheetTarget->currentData().toULongLong();
+    AppContext::settings()->setValue("favChar", favoriteCharacterId);
 
     AppContext::settings()->endGroup();
 }

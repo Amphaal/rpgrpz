@@ -7,30 +7,10 @@
 #include "src/shared/models/character/RPZCharacter.hpp"
 #include "src/ui/_others/ClientBindable.h"
 
-class UsersModel : public QAbstractListModel, public ClientBindable {
+class BaseUsersModel : public QAbstractListModel, public ClientBindable {
     
     public:
-        UsersModel() { };
-
-        QVariant data(const QModelIndex &index, int role) const override {
-            
-            if (!index.isValid() || !this->_users.count()) return QVariant();
-            
-            auto expectedId = this->_users.keys().at(index.row());
-            auto user = this->_users.value(expectedId);
-            if(user.isEmpty()) return QVariant();
-
-            switch(role) {
-
-                case Qt::UserRole: {
-                    return user;
-                }
-
-            }
-
-            return QVariant();
-
-        }
+        BaseUsersModel() { };
 
         int rowCount(const QModelIndex &parent) const override {
             if(parent.isValid()) return 0;
@@ -38,6 +18,10 @@ class UsersModel : public QAbstractListModel, public ClientBindable {
         }
 
     protected:
+        RPZMap<RPZUser> _users;
+
+        virtual bool _isUserInvalidForInsert(const RPZUser &user) = 0;
+
         void onRPZClientDisconnect() override {
             this->beginResetModel();
                 this->_users.clear();
@@ -49,39 +33,49 @@ class UsersModel : public QAbstractListModel, public ClientBindable {
             //update all users
             QObject::connect(
                 this->_rpzClient, &RPZClient::allUsersReceived,
-                this, &UsersModel::_onAllUsersReceived
+                this, &BaseUsersModel::_onAllUsersReceived
             );
 
             //on new user
             QObject::connect(
                 this->_rpzClient, &RPZClient::userJoinedServer,
-                this, &UsersModel::_onUserJoinedServer
+                this, &BaseUsersModel::_onUserJoinedServer
             );
 
             //on user leaving
             QObject::connect(
                 this->_rpzClient, &RPZClient::userLeftServer,
-                this, &UsersModel::_onUserLeftServer
+                this, &BaseUsersModel::_onUserLeftServer
             );
 
         }
 
     private:
-        RPZMap<RPZUser> _users;
-
-        void _onAllUsersReceived() {
+        void _onAllUsersReceived() {          
             this->beginResetModel();
-                this->_users = this->_rpzClient->sessionUsers();
+
+                this->_users.clear();
+                for(auto &user : this->_rpzClient->sessionUsers()) {
+                    if(this->_isUserInvalidForInsert(user)) continue;
+                    this->_users.insert(user.id(), user);
+                }
+
             this->endResetModel();
         }
 
         void _onUserJoinedServer(const RPZUser &newUser) {
+            if(this->_isUserInvalidForInsert(newUser)) return;
+            
             this->beginResetModel();
+
                 this->_users.insert(newUser.id(), newUser);
+
             this->endResetModel();
         }
 
         void _onUserLeftServer(snowflake_uid userId) {
+            if(!this->_users.contains(userId)) return;
+            
             this->beginResetModel();
                 this->_users.remove(userId);
             this->endResetModel();

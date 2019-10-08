@@ -12,7 +12,10 @@ class CharacterEditor : public QWidget {
             this->_saveCurrentCharacter();
         }
 
-        CharacterEditor() : _characterPicker(new CharacterPicker), _sheet(new CharacterSheet), _saveCharacterBtn(new QPushButton) {
+        CharacterEditor(QWidget *parent = nullptr) : QWidget(parent),
+            _characterPicker(new CharacterPicker), 
+            _sheet(new CharacterSheet), 
+            _saveCharacterBtn(new QPushButton) {
 
             //picker        
             QObject::connect(

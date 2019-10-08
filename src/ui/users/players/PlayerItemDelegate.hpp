@@ -7,11 +7,9 @@
 #include "src/shared/models/RPZUser.h"
 #include "src/ui/sheets/components/Gauge.hpp"
 
-
-
-class UserItemDelegate : public QStyledItemDelegate {
+class PlayerItemDelegate : public QStyledItemDelegate {
     public:
-        UserItemDelegate() { }
+        PlayerItemDelegate() { }
 
         void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override {
             
@@ -21,18 +19,34 @@ class UserItemDelegate : public QStyledItemDelegate {
                 
                 case RPZUser::Role::Observer:
                 case RPZUser::Role::Host: {
-
+                    QStyledItemDelegate::paint(painter, option, index);
                 }
                 break;
 
                 
                 case RPZUser::Role::Player: {
+                    
                     auto character = user.character();
+                    
+                    //draw portrait
                     auto portrait = RPZCharacter::getPortrait(character);
                     painter->drawPixmap(option.rect, portrait);
-                    
-                    // qDebug() << option;
-                    // QStyledItemDelegate::paint(painter, option, index);
+
+                    //draw gauges
+                    //TODO
+
+                    //draw bonus / malus
+                    //TODO
+
+                    //draw color indicator
+                    painter->save();
+                        QPen pen;
+                        pen.setColor(user.color());
+                        pen.setWidth(5);
+                        painter->setPen(pen);
+                        painter->drawRect(option.rect);
+                    painter->restore();
+
                 }
                 break;
 
@@ -42,21 +56,19 @@ class UserItemDelegate : public QStyledItemDelegate {
         
         QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override {
 
-            auto user = this->_getUser(index);
             auto out = QStyledItemDelegate::sizeHint(option, index);
 
+            auto user = this->_getUser(index);
             switch(user.role()) {
                 
                 case RPZUser::Role::Observer:
                 case RPZUser::Role::Host: {
-
+                    return out;
                 }
                 break;
                 
                 case RPZUser::Role::Player: {
-                    out.setHeight(
-                        defaultPortraitSize.height()
-                    );
+                    return defaultPortraitSize;
                 }
                 break;
 

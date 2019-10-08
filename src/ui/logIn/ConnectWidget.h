@@ -23,7 +23,7 @@ class ConnectWidget : public QWidget {
     public:
         enum State { NotConnected, Connecting, Connected };
 
-        ConnectWidget(MapHint* hintToControlStateOf);
+        ConnectWidget(MapHint* hintToControlStateOf, QWidget *parent = nullptr);
 
     signals:
         void startingConnection(RPZClient* cc);

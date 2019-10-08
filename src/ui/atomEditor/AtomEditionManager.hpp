@@ -20,7 +20,9 @@ class AtomEditionManager : public QWidget {
         }
 
     public:
-        AtomEditionManager(AtomsStorage* storage) : _storage(storage), _editor(new AtomEditor), 
+        AtomEditionManager(AtomsStorage* storage, QWidget *parent = nullptr) : QWidget(parent), 
+            _storage(storage), 
+            _editor(new AtomEditor), 
             _resetButton(new QPushButton("Réinitialiser les paramètres affichés")) {
             
             auto layout = new QVBoxLayout;

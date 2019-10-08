@@ -1,6 +1,6 @@
 #include "AudioManager.h"
 
-AudioManager::AudioManager() : 
+AudioManager::AudioManager(QWidget *parent) : QWidget(parent), 
     _cli(new GStreamerClient),   
     _plCtrl(new PlaylistController), 
     _asCtrl(new AudioProbeController) {
