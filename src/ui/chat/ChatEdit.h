@@ -33,5 +33,5 @@ class ChatEdit : public QWidget, public ClientBindable {
 
         void _sendMessage();
         
-        void _onUsersChanged(const QVector<RPZUser> &users);
+        void _onSessionUsersChanged();
 };

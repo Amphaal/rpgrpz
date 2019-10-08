@@ -2,12 +2,10 @@
 
 ChatWidget::ChatWidget(QWidget *parent) : 
             QWidget(parent),
-            _chatLog(new MessagesLog(this)),
-            _usersLog(new UsersLog(this)),
-            _chatEdit(new ChatEdit(this)) {
+            _chatLog(new MessagesLog),
+            _chatEdit(new ChatEdit) {
 
-        //this...
-        this->_DisableUI();
+        this->setEnabled(false);
 
         //UI...
         this->_instUI();
@@ -16,53 +14,18 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 void ChatWidget::_instUI() {
 
-    this->setLayout(new QVBoxLayout);
+    auto layout = new QVBoxLayout;
+    layout->setMargin(0);
     
-    ///////////////
-    // left part //
-    ///////////////
-
-    auto _left = [&]() {
-        auto left = new QWidget;
-        left->setLayout(new QVBoxLayout);
-        left->layout()->setMargin(0);
-        
-        //chat area...
-        auto scroller = new LogScrollView(left);
-        scroller->setWidget(this->_chatLog);
-        left->layout()->addWidget(scroller);
-
-        //messaging...
-        left->layout()->addWidget(this->_chatEdit);
-        
-        return left;
-    };
+    auto scroller = new LogScrollView;
+    scroller->setWidget(this->_chatLog);
     
-    ////////////////
-    // right part //
-    ////////////////
+    layout->addWidget(scroller);
+    layout->addWidget(this->_chatEdit);
 
-    auto _right = [&]() {
-        this->_usersLog->setMinimumWidth(100);
-
-        auto scroller = new LogScrollView(this);
-        scroller->setWidget(this->_usersLog);
-        return scroller;
-    };
-
-    ////////////
-    // Fusion //
-    ////////////
-    auto splitter = new RestoringSplitter("ChatWidgetSplitter");
-    splitter->addWidget(_left());
-    splitter->addWidget(_right());
-    splitter->setStretchFactor(0, 1);
-    splitter->setStretchFactor(1, 0);
-    splitter->restore();
-    this->layout()->addWidget(splitter);
-    this->layout()->setMargin(0);
-
+    this->setLayout(layout);
     this->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
+
 }
 
 void ChatWidget::_onRPZClientStatus(const QString &statusMsg, bool isError) {    
@@ -73,13 +36,13 @@ void ChatWidget::_onRPZClientStatus(const QString &statusMsg, bool isError) {
     RPZResponse response(0, respCode, statusMsg);
     this->_chatLog->handleResponse(response);
 
-    this->_DisableUI();
+    this->setEnabled(false);
 
 }
 
 void ChatWidget::_onReceivedLogHistory(const QVector<RPZMessage> &messages) {
 
-    this->_EnableUI();
+    this->setEnabled(true);
 
     //add list of messages
     for(auto &msg : messages) {
@@ -95,7 +58,6 @@ void ChatWidget::onRPZClientConnecting() {
     
     this->serverName = _rpzClient->getConnectedSocketAddress();
     
-    this->_usersLog->clearLines();
     this->_chatLog->clearLines();
 
     //on error from client
@@ -122,13 +84,6 @@ void ChatWidget::onRPZClientConnecting() {
         this->_chatLog, &MessagesLog::handleResponse
     );
 
-    
-    //update users list
-    QObject::connect(
-        _rpzClient, &RPZClient::loggedUsersUpdated,
-        this->_usersLog, &UsersLog::updateUsers
-    );
-
     //on message send request 
     this->_chatEdit->disconnect();
     QObject::connect(
@@ -141,16 +96,4 @@ void ChatWidget::onRPZClientConnecting() {
         
     );
 
-}
-
-void ChatWidget::_DisableUI() {
-    this->_chatEdit->setEnabled(false);
-    this->_usersLog->setEnabled(false);
-    this->_chatLog->setEnabled(false);
-}
-
-void ChatWidget::_EnableUI() {
-    this->_chatEdit->setEnabled(true);
-    this->_usersLog->setEnabled(true);
-    this->_chatLog->setEnabled(true);
 }

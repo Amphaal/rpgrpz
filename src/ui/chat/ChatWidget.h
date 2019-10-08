@@ -18,7 +18,6 @@
 #include "ChatEdit.h"
 
 #include "logs/base/LogScrollView.h"
-#include "logs/UsersLog.h"
 #include "logs/MessagesLog.h"
 
 
@@ -31,7 +30,6 @@ class ChatWidget : public QWidget, public ClientBindable {
 
     private:
         MessagesLog *_chatLog;
-        UsersLog *_usersLog;
         ChatEdit *_chatEdit;
 
         QString serverName;
@@ -40,10 +38,6 @@ class ChatWidget : public QWidget, public ClientBindable {
 
         //ui helpers
         void _instUI();
-
-        //switches
-        void _DisableUI();
-        void _EnableUI();
 
         void _onRPZClientStatus(const QString &statusMsg, bool isError);
         void _onReceivedLogHistory(const QVector<RPZMessage> &messages);

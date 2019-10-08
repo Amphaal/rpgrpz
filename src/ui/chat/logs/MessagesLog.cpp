@@ -40,6 +40,14 @@ void MessagesLog::handleResponse(const RPZResponse &response) {
 
 }
 
+void MessagesLog::changeEvent(QEvent *event) {
+    if(event->type() != QEvent::EnabledChange) return;
+
+    if(!this->isEnabled()) {
+        this->clearLines();
+    }
+}
+
 void MessagesLog::handleNonLocalMessage(const RPZMessage &msg) {
     return this->_handleMessage(msg, false);
 }

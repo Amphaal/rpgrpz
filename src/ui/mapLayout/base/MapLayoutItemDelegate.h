@@ -1,14 +1,12 @@
 #pragma once
 
-#include "src/ui/chat/logs/UsersLog.h"
-
 #include <QPainter>
 
 #include <QStyledItemDelegate>
 
 #include "src/helpers/RPZUserRoles.h"
 
-class OwnerDelegate  : public QStyledItemDelegate {
+class OwnerDelegate : public QStyledItemDelegate {
     
     public:
         OwnerDelegate(QWidget *parent = nullptr);

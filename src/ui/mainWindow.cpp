@@ -255,6 +255,7 @@ void MainWindow::_initUIApp() {
     this->_connectWidget = new ConnectWidget(this->_mapView->hints());
     this->_atomEditManager = new AtomEditionManager(this->_mapView->hints());
     this->_characterEditor = new CharacterEditor;
+    this->_usersView = new UsersListView;
     
     //left tabs
     auto lTab = new QTabWidget;
@@ -269,9 +270,17 @@ void MainWindow::_initUIApp() {
     rTab->addTab(this->_atomEditManager, QIcon(":/icons/app/tabs/config.png"), "Editeur d'atome");
     
     auto CCw = new QWidget;
-    CCw->setLayout(new QVBoxLayout);
-    CCw->layout()->addWidget(this->_connectWidget); 
-    CCw->layout()->addWidget(this->_cw);
+    auto CCwLayout = new QHBoxLayout;
+    CCwLayout->setDirection(QBoxLayout::RightToLeft);
+    CCw->setLayout(CCwLayout);
+    
+    auto logLayout = new QVBoxLayout;
+    logLayout->addWidget(this->_connectWidget); 
+    logLayout->addWidget(this->_cw);
+
+    CCwLayout->addLayout(logLayout, 1);
+    CCwLayout->addWidget(this->_usersView);
+
     rTab->addTab(CCw, QIcon(":/icons/app/tabs/chat.png"), "Connexion / Chat");
 
     //designer

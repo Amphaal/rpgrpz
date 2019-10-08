@@ -25,6 +25,15 @@ class RPZCharacter : public Serializable {
         }
 
         //
+        
+        static inline const QSize defaultPortraitSize = QSize(240, 320);
+
+        static const QPixmap getPortrait(const RPZCharacter &character) {
+            auto portrait = character.portrait();
+            return portrait.isNull() ? getDefaultPortrait() : portrait;
+        }
+
+        //
 
         void setPortrait(const QPixmap &portrait, const QString &ext) {
             
@@ -117,5 +126,13 @@ class RPZCharacter : public Serializable {
         //
         void setNotes(const QString &notes) {this->insert("notes", notes);}
         const QString notes() const {return this->value("notes").toString();}
+
+        static const QPixmap getDefaultPortrait() {
+            if(!_defaultPortrait) _defaultPortrait = new QPixmap(":/asset/default.jpg");
+            return *_defaultPortrait;
+        }
+
+    private:
+        static inline QPixmap* _defaultPortrait = nullptr;
 
 };

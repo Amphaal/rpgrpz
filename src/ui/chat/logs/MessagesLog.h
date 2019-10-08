@@ -18,4 +18,6 @@ class MessagesLog : public LogContainer {
     
     private:
         void _handleMessage(const RPZMessage &msg, bool isLocal = false);
+
+        void changeEvent(QEvent *event) override;
 };

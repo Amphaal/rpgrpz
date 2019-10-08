@@ -5,6 +5,10 @@ MapView::MapView() :
     _hints(new MapHint),
     _menuHandler(new AtomsContextualMenuHandler(_hints, this)) {
 
+    //hide scrollbars
+    this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
     //thread
     this->_hints->moveToThread(new QThread);
     this->_hints->thread()->setObjectName("MapThread");
@@ -404,6 +408,7 @@ void MapView::_onIdentityReceived(const RPZUser &self) {
     bool is_remote = this->_hints->defineAsRemote(descriptor);
 
     emit remoteChanged(is_remote);
+    
 }
 
 void MapView::onRPZClientDisconnect() {

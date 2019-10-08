@@ -7,7 +7,7 @@ LogText::LogText(const QString &text) : QLabel(text) {
 
 LogItem::LogItem() : QWidget(), _hLayout(new QHBoxLayout) {
     this->setLayout(this->_hLayout);
-    this->layout()->setContentsMargins(10, 3, 10, 3);
+    this->_hLayout->setContentsMargins(10, 3, 10, 3);
     this->setAutoFillBackground(true);
 }
 
@@ -25,9 +25,9 @@ QHBoxLayout* LogItem::horizontalLayout() {
 
 LogContainer::LogContainer(QWidget *parent) : QWidget(parent), _vLayout(new QVBoxLayout) {
     this->setLayout(this->_vLayout);
-    this->layout()->setAlignment(Qt::AlignTop);
-    this->layout()->setSpacing(0);
-    this->layout()->setMargin(0);
+    this->_vLayout->setAlignment(Qt::AlignTop);
+    this->_vLayout->setSpacing(0);
+    this->_vLayout->setMargin(0);
 }
 
 QVBoxLayout* LogContainer::_getLayout() {

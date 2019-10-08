@@ -138,16 +138,16 @@ void RPZClient::_handleAlterationRequest(const AlterationPayload &payload) {
     return this->_sock->sendJSON(method, payload);
 }
 
-QString RPZClient::getConnectedSocketAddress() const {
+const QString RPZClient::getConnectedSocketAddress() const {
     return this->_domain + ":" + this->_port;
 }
 
-RPZUser RPZClient::identity() const {
+const RPZUser RPZClient::identity() const {
     QMutexLocker l(&this->_m_self);
     return this->_self;
 }
 
-QVector<RPZUser> RPZClient::sessionUsers() const {
+const RPZMap<RPZUser> RPZClient::sessionUsers() const {
     QMutexLocker l(&this->_m_sessionUsers);
     return this->_sessionUsers;
 }
@@ -213,27 +213,53 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         case JSONMethod::AllConnectedUsers: {
             
             {
-                //store users
                 QMutexLocker l(&this->_m_sessionUsers);
-                this->_sessionUsers.clear();
                 
+                //replace all stored users
+                this->_sessionUsers.clear();
                 for(auto &rUser : data.toList()) {
                     RPZUser user(rUser.toHash());
-                    this->_sessionUsers.append(user);
+                    this->_sessionUsers.insert(user.id(), user);
                 }
+
             }
 
-            emit allUsersReceived(this->_sessionUsers);
+            emit allUsersReceived();
+            emit sessionUsersChanged();
         }
         break;
 
         case JSONMethod::UserIn: {
-            emit userJoinedServer(RPZUser(data.toHash()));
+            
+            RPZUser user(data.toHash());
+            
+            {
+                QMutexLocker l(&this->_m_sessionUsers);
+                
+                //add user to session users
+                this->_sessionUsers.insert(user.id(), user);
+
+            }
+
+            emit userJoinedServer(user);
+            emit sessionUsersChanged();
         }
         break;
 
         case JSONMethod::UserOut: {
-            emit userLeftServer(data.toULongLong());
+            auto idToRemove = data.toULongLong();
+
+            {
+                QMutexLocker l(&this->_m_sessionUsers);
+
+                //remove from session users
+                this->_sessionUsers.remove(idToRemove);
+
+            }
+
+            emit userLeftServer(idToRemove);
+            emit sessionUsersChanged();
+
         }
         break;
 

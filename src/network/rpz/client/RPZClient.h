@@ -33,10 +33,10 @@ class RPZClient : public QObject, public AlterationActor, public JSONRouter {
         RPZClient(const QString &socketStr, const QString &displayName, const RPZCharacter &toIncarnate);
         ~RPZClient();
         
-        QString getConnectedSocketAddress() const; //safe
+        const QString getConnectedSocketAddress() const; //safe
 
-        RPZUser identity() const; //safe
-        QVector<RPZUser> sessionUsers() const; //safe
+        const RPZUser identity() const; //safe
+        const RPZMap<RPZUser> sessionUsers() const; //safe
 
     public slots:
         void run();
@@ -60,9 +60,10 @@ class RPZClient : public QObject, public AlterationActor, public JSONRouter {
         void availableAssetsFromServer(const QVector<RPZAssetHash> &availableIds);
         void receivedAsset(const RPZAssetImportPackage &package);
 
-        void allUsersReceived(const QVector<RPZUser> &users);
+        void allUsersReceived();
         void userLeftServer(snowflake_uid userId);
-        void userJoinedServer(RPZUser &newUser);
+        void userJoinedServer(const RPZUser &newUser);
+        void sessionUsersChanged();
 
         void receivedLogHistory(const QVector<RPZMessage> &messages);
 
@@ -81,7 +82,7 @@ class RPZClient : public QObject, public AlterationActor, public JSONRouter {
         RPZUser _self;
         mutable QMutex _m_self;
 
-        QVector<RPZUser> _sessionUsers;
+        RPZMap<RPZUser> _sessionUsers;
         mutable QMutex _m_sessionUsers;
 
         void _initSock();

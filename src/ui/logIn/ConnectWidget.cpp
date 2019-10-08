@@ -193,19 +193,25 @@ void ConnectWidget::_changeState(ConnectWidget::State newState) {
             btnText = "Se connecter";
             break;
         case ConnectWidget::State::Connecting:
-            btnText = "Annuler";
+            btnText = QString("Annuler (Connexion à %1...)").arg(this->_domainTarget->text());
             break;
         case ConnectWidget::State::Connected:
-            btnText = "Se déconnecter";
+            btnText = QString("Se déconnecter de [%1]").arg(this->_domainTarget->text());
             break;
     }
     this->_connectBtn->setText(btnText);
 
     //inputs state
     auto mustEnableWidgets = newState == ConnectWidget::State::NotConnected;
+    
     this->_domainTarget->setEnabled(mustEnableWidgets);
+    this->_domainTarget->setVisible(mustEnableWidgets);
+
     this->_nameTarget->setEnabled(mustEnableWidgets);
+    this->_nameTarget->setVisible(mustEnableWidgets);
+
     this->_characterSheetTarget->setEnabled(mustEnableWidgets);
+    this->_characterSheetTarget->setVisible(mustEnableWidgets);
 
     //define state
     this->_state = newState;

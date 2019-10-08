@@ -106,6 +106,7 @@ int main(int argc, char** argv) {
     qRegisterMetaType<ResetPayload>("ResetPayload");
     qRegisterMetaType<QVector<RPZAtomId>>("QVector<RPZAtomId>");
     qRegisterMetaType<QVector<RPZUser>>("QVector<RPZUser>");
+    qRegisterMetaType<RPZMap<RPZUser>>("RPZMap<RPZUser>");
     qRegisterMetaType<QVector<RPZMessage>>("QVector<RPZMessage>");
     qRegisterMetaType<QHash<QTreeWidgetItem*,AtomUpdates>>("QHash<QTreeWidgetItem*,AtomUpdates>");
     qRegisterMetaType<QHash<QGraphicsItem*,AtomUpdates>>("QHash<QGraphicsItem*,AtomUpdates>");

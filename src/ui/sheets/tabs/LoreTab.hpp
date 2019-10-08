@@ -17,9 +17,6 @@ class LoreTab : public QWidget {
     public:
         LoreTab() {
 
-            //define default portrait
-            if(!_defaultPortrait) _defaultPortrait = new QPixmap(":/asset/default.jpg");
-
             //character tab
             auto characterTabLayout = new QVBoxLayout;
             this->setLayout(characterTabLayout);
@@ -31,8 +28,8 @@ class LoreTab : public QWidget {
 
                     //portrait placeholder
                     this->_imgLbl = new QLabel;
-                    this->_imgLbl->setPixmap(*_defaultPortrait);
-                    this->_imgLbl->setMaximumSize(_defaultSize);
+                    this->_imgLbl->setPixmap(RPZCharacter::getDefaultPortrait());
+                    this->_imgLbl->setMaximumSize(RPZCharacter::defaultPortraitSize);
                     pLayout->addWidget(this->_imgLbl, 0, Qt::AlignCenter);
 
                     //portrait change button
@@ -85,12 +82,8 @@ class LoreTab : public QWidget {
             this->_customPortrait = QPixmap();
             this->_customPortraitExt.clear();
 
-            auto portrait = toLoad.portrait();
-            if(!portrait.isNull()) {
-                this->_imgLbl->setPixmap(portrait);
-            } else {
-                this->_imgLbl->setPixmap(*_defaultPortrait);
-            }
+            auto portrait = RPZCharacter::getPortrait(toLoad);
+            this->_imgLbl->setPixmap(portrait);
 
             this->_sheetNameEdit->setText(toLoad.name());
             this->_archtypeEdit->setText(toLoad.archtype());
@@ -101,9 +94,6 @@ class LoreTab : public QWidget {
     private:
         QPixmap _customPortrait;
         QString _customPortraitExt;
-        
-        static inline QPixmap* _defaultPortrait = nullptr;
-        static inline QSize _defaultSize = QSize(240, 320);
 
         QLabel* _imgLbl = nullptr;
         QLineEdit* _sheetNameEdit = nullptr;
@@ -135,7 +125,7 @@ class LoreTab : public QWidget {
             
             //resize Pixmap and apply
             QPixmap newPortrait(portraitFP);
-            this->_customPortrait = newPortrait.scaled(_defaultSize);
+            this->_customPortrait = newPortrait.scaled(RPZCharacter::defaultPortraitSize);
             this->_imgLbl->setPixmap(this->_customPortrait);
 
             QFileInfo fi(portraitFP);

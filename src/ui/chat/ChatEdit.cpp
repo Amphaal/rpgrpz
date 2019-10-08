@@ -28,8 +28,8 @@ void ChatEdit::onRPZClientConnecting() {
 
     //on user connected
     QObject::connect(
-        _rpzClient, &RPZClient::loggedUsersUpdated,
-        this, &ChatEdit::_onUsersChanged
+        _rpzClient, &RPZClient::sessionUsersChanged,
+        this, &ChatEdit::_onSessionUsersChanged
     );
 
 }
@@ -38,7 +38,7 @@ void ChatEdit::changeEvent(QEvent *event) {
     if(event->type() != QEvent::EnabledChange) return;
 
     if(this->isEnabled()) {
-        this->_msgEdit->setPlaceholderText("Message à envoyer");
+        this->_msgEdit->setPlaceholderText(" Message à envoyer");
         this->_msgEdit->setText("");
     } else {
         this->_msgEdit->setPlaceholderText("");
@@ -57,10 +57,10 @@ void ChatEdit::_sendMessage() {
     emit askedToSendMessage(textCommand);
 }
 
-void ChatEdit::_onUsersChanged(const QVector<RPZUser> &users) {
-
+void ChatEdit::_onSessionUsersChanged() {
+    
     QSet<QString> usernamesList;
-    for(auto &user : users) {
+    for(auto &user : this->_rpzClient->sessionUsers()) {
         usernamesList.insert("@" + user.whisperTargetName());
     }
 
