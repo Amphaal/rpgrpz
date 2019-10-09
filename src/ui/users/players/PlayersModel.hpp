@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../_base/BaseUsersModel.hpp"
+#include "PlayerItemDelegate.hpp"
 
 class PlayersModel : public BaseUsersModel {
     
@@ -19,9 +20,13 @@ class PlayersModel : public BaseUsersModel {
             auto character = user.character();
             
             switch(role) {
+                
+                case Qt::SizeHintRole: {
+                    return PlayerItemDelegate::defaultPortraitSize;
+                }
 
                 case Qt::ToolTipRole: {
-                    return QString("%1 en tant que \"%2\"").arg(user.name()).arg(character.name());
+                    return QString("[%1] en tant que \"%2\"").arg(user.name()).arg(character.name());
                 }
 
                 case Qt::UserRole: {

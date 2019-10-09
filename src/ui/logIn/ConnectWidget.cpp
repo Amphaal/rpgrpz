@@ -2,10 +2,10 @@
 
 ConnectWidget::ConnectWidget(MapHint* hintToControlStateOf, QWidget *parent) : QWidget(parent), 
     _toControlStateOf(hintToControlStateOf),
-    _nameTarget(new QLineEdit),
-    _domainTarget(new QLineEdit),
-    _connectBtn(new QPushButton),
-    _characterSheetTarget(new QComboBox) {
+    _nameTarget(new QLineEdit(this)),
+    _domainTarget(new QLineEdit(this)),
+    _connectBtn(new QPushButton(this)),
+    _characterSheetTarget(new QComboBox(this)) {
                                                     
     AppContext::settings()->beginGroup("ConnectWidget");
 
@@ -62,7 +62,7 @@ ConnectWidget::ConnectWidget(MapHint* hintToControlStateOf, QWidget *parent) : Q
 
     //adding widgets
     auto layoutSub = new QHBoxLayout;
-    layoutSub->addWidget(this->_nameTarget);
+    layoutSub->addWidget(this->_nameTarget, 1);
     layoutSub->addWidget(this->_domainTarget);
     layoutSub->addWidget(this->_connectBtn);
 

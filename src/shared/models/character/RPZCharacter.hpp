@@ -46,17 +46,23 @@ class RPZCharacter : public Serializable {
                 portrait.save(&buffer, ext.toStdString().c_str());
             buffer.close();
             
-            this->insert("img", bArray);
+            auto base64Img = bArray.toBase64();
+            auto utf8Img = QString::fromUtf8(base64Img);
+
+            this->insert("img", utf8Img);
             this->insert("img_ext", ext);
 
         }
         const QPixmap portrait() const { 
             
-            auto bitmap = this->value("img").toByteArray(); 
+            auto imgDataStr = this->value("img").toString();
+            auto imgDataBase64 = imgDataStr.toUtf8();
+            auto imgData = QByteArray::fromBase64(imgDataBase64); 
+
             auto ext = this->value("img_ext").toString();
             
             QPixmap out;
-            out.loadFromData(bitmap, ext.toStdString().c_str());
+            out.loadFromData(imgData, ext.toStdString().c_str());
             return out;
 
         }

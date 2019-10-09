@@ -69,6 +69,8 @@
         <file>icons/app/other/save.png</file>
         <file>icons/app/other/remove.png</file>
         <file>icons/app/other/bag.png</file>
+        <file>icons/app/other/malus.png</file>
+        <file>icons/app/other/bonus.png</file>
         <file>icons/app/loader.gif</file>
         <file>asset/default.jpg</file>
     </qresource>

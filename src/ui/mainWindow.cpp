@@ -255,7 +255,8 @@ void MainWindow::_initUIApp() {
     this->_connectWidget = new ConnectWidget(this->_mapView->hints(), this);
     this->_atomEditManager = new AtomEditionManager(this->_mapView->hints(), this);
     this->_characterEditor = new CharacterEditor(this);
-    this->_usersView = new PlayersListView(this);
+    this->_usersView = new StandardUsersListView(this);
+    this->_playersView = new PlayersListView(this);
     
     //left tabs
     auto lTab = new QTabWidget(this);
@@ -269,18 +270,18 @@ void MainWindow::_initUIApp() {
     rTab->addTab(this->_mlManager, QIcon(":/icons/app/tabs/list.png"), "Atomes de la carte");
     rTab->addTab(this->_atomEditManager, QIcon(":/icons/app/tabs/config.png"), "Editeur d'atome");
     
-    auto CCw = new QWidget(this);
-    auto CCwLayout = new QHBoxLayout(this);
-    CCwLayout->setDirection(QBoxLayout::RightToLeft);
-    CCw->setLayout(CCwLayout);
-    
     auto logLayout = new QVBoxLayout(this);
     logLayout->addWidget(this->_connectWidget); 
-    logLayout->addWidget(this->_cw);
+    logLayout->addWidget(this->_usersView);
+    logLayout->addWidget(this->_cw, 1);
 
+    auto CCwLayout = new QHBoxLayout(this);
+    CCwLayout->setDirection(QBoxLayout::RightToLeft);
     CCwLayout->addLayout(logLayout, 1);
-    CCwLayout->addWidget(this->_usersView);
+    CCwLayout->addWidget(this->_playersView);
 
+    auto CCw = new QWidget(this);
+    CCw->setLayout(CCwLayout);
     rTab->addTab(CCw, QIcon(":/icons/app/tabs/chat.png"), "Connexion / Chat");
 
     //designer
@@ -354,7 +355,6 @@ void MainWindow::_initUIMenu() {
     menuBar->addMenu(this->_getMapMenu());
     menuBar->addMenu(this->_getToolsMenu());
     menuBar->addMenu(this->_getHelpMenu());
-
 
     //set container
     this->setMenuWidget(menuBar);
