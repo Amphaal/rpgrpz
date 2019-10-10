@@ -46,6 +46,7 @@ class RPZClient : public QObject, public AlterationActor, public JSONRouter {
         void changeAudioPosition(qint64 newPositionInMsecs);
         void setAudioStreamPlayState(bool isPlaying);
         void sendMapHistory(const ResetPayload &historyPayload);
+        void notifyCharacterChange(const RPZCharacter &changed);
 
     signals:
         void connectionStatus(const QString &statusMessage, bool isError = false);
@@ -63,7 +64,8 @@ class RPZClient : public QObject, public AlterationActor, public JSONRouter {
         void allUsersReceived();
         void userLeftServer(snowflake_uid userId);
         void userJoinedServer(const RPZUser &newUser);
-        void sessionUsersChanged();
+        void userDataChanged(const RPZUser &updatedUser);
+        void whisperTargetsChanged();
 
         void receivedLogHistory(const QVector<RPZMessage> &messages);
 

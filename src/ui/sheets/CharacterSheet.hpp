@@ -31,25 +31,31 @@ class CharacterSheet : public QTabWidget {
 
         };
 
-        void updateCharacter(RPZCharacter &toUpdate) {
+        RPZCharacter generateCharacter() {
             
+            auto out = this->_loadedCharacter;
+            if(!out.id()) return out;
+
             //lore
-            this->_characterTab->updateCharacter(toUpdate);
+            this->_characterTab->updateCharacter(out);
 
             //status
-            this->_statusTab->updateCharacter(toUpdate);
+            this->_statusTab->updateCharacter(out);
 
             //inventory
-            this->_inventoriesTab->updateCharacter(toUpdate);
+            this->_inventoriesTab->updateCharacter(out);
 
             //note 
-            toUpdate.setNotes(this->_noteTab->toPlainText());
+            out.setNotes(this->_noteTab->toPlainText());
+            
+            return out;
         }
 
     public slots:
-        void loadCharacter(const RPZCharacter& toLoad) {
-            
+        void loadCharacter(const RPZCharacter& toLoad, bool isReadOnly) {
+
             //self
+            this->_loadedCharacter = toLoad;
             auto characterExists = !toLoad.isEmpty();
             this->setVisible(characterExists);
 
@@ -68,6 +74,8 @@ class CharacterSheet : public QTabWidget {
         }
 
     private:
+        RPZCharacter _loadedCharacter;
+
         LoreTab* _characterTab = nullptr;
         StatusTab* _statusTab = nullptr;
         InventoriesTab* _inventoriesTab = nullptr;

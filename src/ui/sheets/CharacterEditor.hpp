@@ -1,31 +1,43 @@
 #pragma once
 
 #include <QWidget>
+#include <QGroupBox>
+
 #include "CharacterSheet.hpp"
 #include "src/shared/database/CharactersDatabase.hpp"
 
+#include "src/ui/_others/ClientBindable.h"
+
 #include "components/CharacterPicker.hpp"
 
-class CharacterEditor : public QWidget {
-    public:
-        ~CharacterEditor() {
-            this->_saveCurrentCharacter();
-        }
+class CharacterEditor : public QWidget, public ClientBindable {
+    
+    Q_OBJECT
 
+    public:
         CharacterEditor(QWidget *parent = nullptr) : QWidget(parent),
             _characterPicker(new CharacterPicker), 
             _sheet(new CharacterSheet), 
-            _saveCharacterBtn(new QPushButton) {
+            _saveCharacterBtn(new QPushButton),
+            _characterPickerGrpBox(new QGroupBox) {
 
             //picker        
-            QObject::connect(
-                this->_characterPicker, &CharacterPicker::selectionChanged,
-                this, &CharacterEditor::_onPickerSelectionChanged
-            );
-            QObject::connect(
-                this->_characterPicker, &CharacterPicker::requestSave,
-                this, &CharacterEditor::_onSaveRequest
-            );
+                QObject::connect(
+                    this->_characterPicker, &CharacterPicker::selectionChanged,
+                    this, &CharacterEditor::_onSelectedCharacterChanged
+                );
+                QObject::connect(
+                    this->_characterPicker, &CharacterPicker::requestSave,
+                    this, &CharacterEditor::_saveCurrentCharacter
+                );
+                QObject::connect(
+                    this->_characterPicker, &CharacterPicker::requestInsert,
+                    this, &CharacterEditor::_insertRequestFromPicker
+                );
+                QObject::connect(
+                    this->_characterPicker, &CharacterPicker::requestDelete,
+                    this, &CharacterEditor::_deleteRequestFromPicker
+                );
 
             //save character
             this->_saveCharacterBtn->setToolTip("Sauvegarder la fiche");
@@ -34,56 +46,273 @@ class CharacterEditor : public QWidget {
             
             QObject::connect(
                 this->_saveCharacterBtn, &QPushButton::pressed,
-                this, &CharacterEditor::_onSaveButtonPressed
+                this, &CharacterEditor::_saveCurrentCharacter
             );
 
             //layout
             auto l = new QVBoxLayout;
             this->setLayout(l);
             l->setAlignment(Qt::AlignTop);
-            l->addWidget(this->_characterPicker);
+            
+            this->_characterPickerGrpBox->setLayout(new QVBoxLayout);
+            this->_characterPickerGrpBox->layout()->setMargin(0);
+            this->_characterPickerGrpBox->setAlignment(Qt::AlignCenter);
+            this->_characterPickerGrpBox->layout()->addWidget(this->_characterPicker);
+
+            l->addWidget(this->_characterPickerGrpBox);
             l->addWidget(this->_sheet);
             l->addWidget(this->_saveCharacterBtn, 0, Qt::AlignRight);
 
-            //load
-            this->_characterPicker->loadCharacters();
+            //init
+            this->_setMode(CharacterPicker::Mode::Local);
 
         }
+
+        ~CharacterEditor() {
+            this->_saveCurrentCharacter();
+        }
     
+    protected:
+        
+        void onRPZClientConnecting() override {
+            
+            QObject::connect(
+                this->_rpzClient, &RPZClient::allUsersReceived,
+                this, &CharacterEditor::_onAllUsersReceived
+            );
+
+            QObject::connect(
+                this->_rpzClient, &RPZClient::userJoinedServer,
+                this, &CharacterEditor::_onUserJoinedServer
+            );
+
+            QObject::connect(
+                this->_rpzClient, &RPZClient::userLeftServer,
+                this, &CharacterEditor::_onUserLeftServer
+            );
+
+            QObject::connect(
+                this->_rpzClient, &RPZClient::userDataChanged,
+                this, &CharacterEditor::_onUserDataChanged
+            );
+
+            this->_setMode(CharacterPicker::Mode::Remote);
+
+        }
+
+        void onRPZClientDisconnect() override {
+            this->_setMode(CharacterPicker::Mode::Local);
+        }
+
+    private slots:
+        void _onAllUsersReceived() {
+            
+            auto dbCharacterIds = CharactersDatabase::get()->characterIds();
+            
+            RPZMap<RPZCharacter> out;
+            for(auto &remoteUser : this->_rpzClient->sessionUsers()) {
+                
+                auto character = remoteUser.character();
+                auto id = character.id();
+                auto remoteCharacterIsInLocalDB = dbCharacterIds.contains(id);
+
+                if(remoteCharacterIsInLocalDB) {
+                    this->_characterPicker->setLocalCharacterIdFromRemote(id);
+                }
+
+                else {
+                    out.insert(id, character);
+                }
+
+            }
+
+            this->_loadPickerCharactersFromRemote();
+
+        }
+
+        void _onUserJoinedServer(const RPZUser &newUser) {
+            
+            auto character = newUser.character();
+            this->_remoteDb.insert(character.id(), character);
+
+            this->_loadPickerCharactersFromRemote();
+
+        }
+
+        void _onUserLeftServer(snowflake_uid userId) {
+            
+            this->_remoteDb.remove(userId);
+
+            this->_loadPickerCharactersFromRemote();
+
+        }
+
+        void _onUserDataChanged(const RPZUser &updatedUser) {
+            
+            auto character = updatedUser.character();
+            this->_remoteDb.insert(character.id(), character);
+
+            this->_loadPickerCharactersFromRemote();
+
+        }
+
     private:
+        RPZMap<RPZCharacter> _remoteDb;
+
+        CharacterPicker::Mode _mode = CharacterPicker::Mode::Unknown;
+
         QPushButton* _saveCharacterBtn = nullptr;
         CharacterPicker* _characterPicker = nullptr;
         CharacterSheet* _sheet = nullptr;
-
-        void _onSaveRequest(RPZCharacter* toSave) {
-            this->_saveCharacter(toSave);
-        }
-
-        void _onSaveButtonPressed() {
-            this->_saveCurrentCharacter();
-            this->_characterPicker->updateBufferedItemString();       
-        }
+        QGroupBox* _characterPickerGrpBox = nullptr;
 
         void _saveCurrentCharacter() {
-            auto charRef = this->_characterPicker->currentCharacter();
-            this->_saveCharacter(charRef);
+
+            //make sure character have id
+            auto characterFromSheet = this->_sheet->generateCharacter();
+            if(!characterFromSheet.id()) return;
+
+            //update DB
+            CharactersDatabase::get()->updateCharacter(characterFromSheet);
+            
+            //update label
+            this->_characterPicker->updateItemText(
+                characterFromSheet
+            );
+
+            //if remote, tell server that character changed
+            if(this->_mode == CharacterPicker::Mode::Remote) {
+                QMetaObject::invokeMethod(this->_rpzClient, "notifyCharacterChange", 
+                    Q_ARG(RPZCharacter, characterFromSheet)
+                );
+            }
         }
 
-        void _saveCharacter(RPZCharacter* toSave) {
+        void _deleteRequestFromPicker(const snowflake_uid toDelete) {
             
-            if(!toSave) return;
+            if(this->_mode != CharacterPicker::Mode::Local) return;
 
-            this->_sheet->updateCharacter(*toSave);
-            CharactersDatabase::get()->updateCharacter(*toSave);
+            CharactersDatabase::get()->removeCharacter(toDelete); 
+            this->_loadPickerCharactersFromDatabase();
 
         }
 
-        void _onPickerSelectionChanged(const RPZCharacter* selected) {
+        void _insertRequestFromPicker() {
             
-            this->_saveCharacterBtn->setVisible(selected);
-            auto characterTemplate = selected ? *selected : RPZCharacter();
-            
-            this->_sheet->loadCharacter(characterTemplate);
+            if(this->_mode != CharacterPicker::Mode::Local) return;
 
+            CharactersDatabase::get()->addNewCharacter(); 
+            this->_loadPickerCharactersFromDatabase();
+
+        }
+
+        void _onSelectedCharacterChanged(const snowflake_uid selectedId) {
+            
+            bool enableSave = selectedId;
+
+            auto loadCharacterFromDB = [=]() {
+                this->_sheet->loadCharacter(
+                    CharactersDatabase::get()->character(selectedId),
+                    false
+                );
+            };
+
+            auto loadCharacterFromRemote = [=]() {
+                this->_sheet->loadCharacter(
+                    this->_remoteDb.value(selectedId),
+                    true
+                );
+            };
+
+            switch(this->_mode) {
+                
+                case CharacterPicker::Mode::Local: {
+                    loadCharacterFromDB();
+                }
+                break;
+
+                case CharacterPicker::Mode::Remote: {
+                    
+                    enableSave = enableSave && this->_characterPicker->localCharacterIdFromRemote() == selectedId;
+                    
+                    if(enableSave) {
+                        loadCharacterFromDB();
+                    }
+
+                    else {
+                        loadCharacterFromRemote();
+                    }
+
+                }
+                break;
+
+            }         
+
+            this->_saveCharacterBtn->setVisible(selectedId);
+
+        }
+
+        void _setMode(CharacterPicker::Mode mode) {
+
+            //auto save
+            this->_saveCurrentCharacter();
+
+            //change current mode
+            this->_mode = mode;
+
+            //update grpBox label
+            auto title = mode == CharacterPicker::Mode::Local ? "Mes personnages " : "Personnages du serveur";
+            this->_characterPickerGrpBox->setTitle(title);
+
+            switch(mode) {
+
+                case CharacterPicker::Mode::Local: {
+                    
+                    //sync load
+                    this->_loadPickerCharactersFromDatabase();
+
+                }
+                break;
+
+                case CharacterPicker::Mode::Remote: {
+                   
+                    //async load, empty in the inbetween
+                    this->_characterPicker->unloadCharacters();
+                    this->setEnabled(false); 
+
+                }
+                break;
+
+            }
+
+        }
+
+        void _loadPickerCharactersFromDatabase() {
+            
+            this->_characterPicker->loadCharacters(
+                CharactersDatabase::get()->characters(),
+                CharacterPicker::Mode::Local
+            );
+
+            this->setEnabled(true);
+
+        }
+
+        void _loadPickerCharactersFromRemote() {
+            
+            auto local = CharactersDatabase::get()->character(
+                this->_characterPicker->localCharacterIdFromRemote()
+            );
+            
+            auto remoteCopy = this->_remoteDb;
+            if(!local.isEmpty()) remoteCopy.insert(local.id(), local);
+
+            this->_characterPicker->loadCharacters(
+                remoteCopy,
+                CharacterPicker::Mode::Remote,
+                true
+            );
+
+            this->setEnabled(true);
         }
 };

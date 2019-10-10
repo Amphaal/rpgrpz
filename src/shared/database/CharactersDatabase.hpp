@@ -28,6 +28,12 @@ class CharactersDatabase : public QObject, public JSONDatabase {
             return out;
         }
 
+        const QVector<snowflake_uid> characterIds() const {
+            QVector<snowflake_uid> out;
+            for(auto &key : this->_characters().keys()) out += key.toULongLong();
+            return out;
+        }
+
         RPZCharacter character(snowflake_uid characterId) {
             return this->characters().value(characterId);
         }
@@ -42,19 +48,21 @@ class CharactersDatabase : public QObject, public JSONDatabase {
 
         }
 
-        void removeCharacter(const RPZCharacter &toRemove) {
+        void removeCharacter(const snowflake_uid &toRemove) {
+            
             //copy
             auto obj = this->_db.object();
 
                 //insert in db
                 auto chars = this->_characters();
-                auto idToRemove = toRemove.idAsStr();
+                auto idToRemove = QString::number(toRemove);
                 chars.remove(idToRemove);
                 obj["characters"] = chars;
             
             //save
             this->_updateDbFile(obj);
             emit databaseChanged();
+            
         }
 
         RPZCharacter updateCharacter(const RPZCharacter &updated) {
@@ -98,7 +106,7 @@ class CharactersDatabase : public QObject, public JSONDatabase {
             this->_instanciateDb();
         }
         
-        QJsonObject _characters() {
+        QJsonObject _characters() const {
             return this->_db["characters"].toObject();
         }
 

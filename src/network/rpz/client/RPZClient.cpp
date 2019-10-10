@@ -225,7 +225,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             }
 
             emit allUsersReceived();
-            emit sessionUsersChanged();
+            emit whisperTargetsChanged();
         }
         break;
 
@@ -242,7 +242,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             }
 
             emit userJoinedServer(user);
-            emit sessionUsersChanged();
+            emit whisperTargetsChanged();
         }
         break;
 
@@ -258,7 +258,32 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             }
 
             emit userLeftServer(idToRemove);
-            emit sessionUsersChanged();
+            emit whisperTargetsChanged();
+
+        }
+        break;
+
+        case JSONMethod::UserDataChanged: {
+           
+            RPZUser updated(data.toHash());
+            auto updatedId = updated.id();
+            auto existing = this->_sessionUsers.value(updatedId);
+
+            {
+                QMutexLocker l(&this->_m_sessionUsers);
+
+                //remove from session users
+                this->_sessionUsers.insert(updatedId, updated);
+
+            }
+
+            emit userDataChanged(updated);
+
+            if(!existing.isEmpty()) {
+                if(existing.whisperTargetName() != updated.whisperTargetName()) {
+                    emit whisperTargetsChanged();
+                }
+            }
 
         }
         break;
@@ -358,6 +383,10 @@ void RPZClient::sendMessage(const RPZMessage &message) {
 
 void RPZClient::sendMapHistory(const ResetPayload &historyPayload) {
     this->_sock->sendJSON(JSONMethod::MapChangedHeavily, historyPayload);
+}
+
+void RPZClient::notifyCharacterChange(const RPZCharacter &changed) {
+    this->_sock->sendJSON(JSONMethod::CharacterChanged, changed);
 }
 
 void RPZClient::_askForAssets(const QSet<RPZAssetHash> &ids) {

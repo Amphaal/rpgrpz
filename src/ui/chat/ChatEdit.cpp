@@ -28,8 +28,8 @@ void ChatEdit::onRPZClientConnecting() {
 
     //on user connected
     QObject::connect(
-        _rpzClient, &RPZClient::sessionUsersChanged,
-        this, &ChatEdit::_onSessionUsersChanged
+        _rpzClient, &RPZClient::whisperTargetsChanged,
+        this, &ChatEdit::_onWhisperTargetsChanged
     );
 
 }
@@ -57,7 +57,7 @@ void ChatEdit::_sendMessage() {
     emit askedToSendMessage(textCommand);
 }
 
-void ChatEdit::_onSessionUsersChanged() {
+void ChatEdit::_onWhisperTargetsChanged() {
     
     QSet<QString> usernamesList;
     for(auto &user : this->_rpzClient->sessionUsers()) {

@@ -19,7 +19,9 @@ enum JSONMethod {
     MapChangedHeavily,
     AvailableAssetsToUpload,
     UserIn,
-    UserOut
+    UserOut,
+    CharacterChanged,
+    UserDataChanged
 };
 
 static const QStringList JSONMethodAsArray = { 
@@ -39,5 +41,7 @@ static const QStringList JSONMethodAsArray = {
     "MapChangedHeavily",
     "AvailableAssetsToUpload",
     "UserIn",
-    "UserOut"
+    "UserOut",
+    "CharacterChanged",
+    "UserDataChanged"
 };

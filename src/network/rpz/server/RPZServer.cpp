@@ -122,8 +122,20 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
     switch(method) {
         
-        case JSONMethod::Message: 
-        {
+        case JSONMethod::CharacterChanged: {
+            
+            //update character of the user
+            RPZCharacter character(data.toHash());
+            auto &user = this->_getUser(target);
+            user.setCharacter(character);
+
+            //notify everyone else
+            this->_sendToAllButSelf(target, JSONMethod::UserDataChanged, user);
+
+        }
+        break;
+
+        case JSONMethod::Message: {
             RPZMessage message(data.toHash());
             auto &user = this->_getUser(target);
             message.setOwnership(user); //force corresponding user to it then store it
