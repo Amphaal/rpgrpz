@@ -54,7 +54,8 @@ class RPZClient : public QObject, public AlterationActor, public JSONRouter {
 
         void receivedMessage(const RPZMessage &message);
         void serverResponseReceived(const RPZResponse &reponse);
-        void ackIdentity(const RPZUser &user);
+        void selfIdentityAcked(const RPZUser &selfUser);
+        void selfIdentityChanged(const RPZUser &updatedSelfUser);
         
         void mapChanged(const AlterationPayload &payload);
 
@@ -62,7 +63,7 @@ class RPZClient : public QObject, public AlterationActor, public JSONRouter {
         void receivedAsset(const RPZAssetImportPackage &package);
 
         void allUsersReceived();
-        void userLeftServer(snowflake_uid userId);
+        void userLeftServer(const RPZUser &userOut);
         void userJoinedServer(const RPZUser &newUser);
         void userDataChanged(const RPZUser &updatedUser);
         void whisperTargetsChanged();

@@ -112,6 +112,9 @@ class CharacterEditor : public QWidget, public ClientBindable {
             RPZMap<RPZCharacter> out;
             for(auto &remoteUser : this->_rpzClient->sessionUsers()) {
                 
+                //reject if not player
+                if(remoteUser.role() != RPZUser::Role::Player) continue;
+
                 auto character = remoteUser.character();
                 auto id = character.id();
                 auto remoteCharacterIsInLocalDB = dbCharacterIds.contains(id);
@@ -125,6 +128,7 @@ class CharacterEditor : public QWidget, public ClientBindable {
                 }
 
             }
+            this->_remoteDb = out;
 
             this->_loadPickerCharactersFromRemote();
 
@@ -132,6 +136,8 @@ class CharacterEditor : public QWidget, public ClientBindable {
 
         void _onUserJoinedServer(const RPZUser &newUser) {
             
+            if(newUser.role() != RPZUser::Role::Player) return;
+
             auto character = newUser.character();
             this->_remoteDb.insert(character.id(), character);
 
@@ -139,9 +145,11 @@ class CharacterEditor : public QWidget, public ClientBindable {
 
         }
 
-        void _onUserLeftServer(snowflake_uid userId) {
+        void _onUserLeftServer(const RPZUser &userOut) {
             
-            this->_remoteDb.remove(userId);
+            if(userOut.role() != RPZUser::Role::Player) return;
+
+            this->_remoteDb.remove(userOut.character().id());
 
             this->_loadPickerCharactersFromRemote();
 
@@ -149,6 +157,8 @@ class CharacterEditor : public QWidget, public ClientBindable {
 
         void _onUserDataChanged(const RPZUser &updatedUser) {
             
+            if(updatedUser.role() != RPZUser::Role::Player) return;
+
             auto character = updatedUser.character();
             this->_remoteDb.insert(character.id(), character);
 
@@ -167,6 +177,9 @@ class CharacterEditor : public QWidget, public ClientBindable {
         QGroupBox* _characterPickerGrpBox = nullptr;
 
         void _saveCurrentCharacter() {
+            
+            //prevent save if is read only
+            if(this->_sheet->isReadOnlyMode()) return;
 
             //make sure character have id
             auto characterFromSheet = this->_sheet->generateCharacter();
@@ -248,7 +261,7 @@ class CharacterEditor : public QWidget, public ClientBindable {
 
             }         
 
-            this->_saveCharacterBtn->setVisible(selectedId);
+            this->_saveCharacterBtn->setVisible(enableSave);
 
         }
 
@@ -314,5 +327,6 @@ class CharacterEditor : public QWidget, public ClientBindable {
             );
 
             this->setEnabled(true);
+
         }
 };

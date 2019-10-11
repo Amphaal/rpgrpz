@@ -51,8 +51,14 @@ class CharacterSheet : public QTabWidget {
             return out;
         }
 
+        bool isReadOnlyMode() const {
+            return this->_readOnly;
+        }
+
     public slots:
         void loadCharacter(const RPZCharacter& toLoad, bool isReadOnly) {
+            
+            this->_readOnly = isReadOnly;
 
             //self
             this->_loadedCharacter = toLoad;
@@ -60,20 +66,24 @@ class CharacterSheet : public QTabWidget {
             this->setVisible(characterExists);
 
             //lore
-            this->_characterTab->loadCharacter(toLoad);
+            this->_characterTab->loadCharacter(toLoad, isReadOnly);
 
             //status
-            this->_statusTab->loadCharacter(toLoad);
+            this->_statusTab->loadCharacter(toLoad, isReadOnly);
 
             //inventory
-            this->_inventoriesTab->loadCharacter(toLoad);
+            this->_inventoriesTab->loadCharacter(toLoad, isReadOnly);
 
             //note 
-            this->_noteTab->setPlainText(toLoad.notes());
+            this->setTabEnabled(3, !isReadOnly);
+            if(!isReadOnly) {
+                this->_noteTab->setPlainText(toLoad.notes());
+            } 
 
         }
 
     private:
+        bool _readOnly = false;
         RPZCharacter _loadedCharacter;
 
         LoreTab* _characterTab = nullptr;

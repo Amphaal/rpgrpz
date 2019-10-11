@@ -6,10 +6,12 @@
 #include <QGroupBox>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QLabel>
 
 #include "src/shared/models/character/RPZCharacter.hpp"
 
 #include "../components/GaugeEditor.hpp"
+#include "../components/GaugeWidget.hpp"
 #include "../components/AbilitiesSheet.hpp"
 
 class StatusTab : public QWidget {
@@ -57,12 +59,12 @@ class StatusTab : public QWidget {
                     barsLayout->addLayout(this->_gaugesLayout);
 
                     //add bar button
-                    auto addBarBtn = new QPushButton;
-                    addBarBtn->setIcon(QIcon(":/icons/app/other/add.png"));
-                    addBarBtn->setToolTip("Ajouter une nouvelle jauge");
+                    this->_addBarBtn = new QPushButton;
+                    this->_addBarBtn->setIcon(QIcon(":/icons/app/other/add.png"));
+                    this->_addBarBtn->setToolTip("Ajouter une nouvelle jauge");
                     QObject::connect(
-                        addBarBtn, &QPushButton::pressed,
-                        this, &StatusTab::_createGaugeBtnPressed
+                        this->_addBarBtn, &QPushButton::pressed,
+                        this, &StatusTab::_createGaugeEditorBtnPressed
                     );
 
                     //descr
@@ -72,7 +74,7 @@ class StatusTab : public QWidget {
                     //helper
                     auto helperBarLayout = new QHBoxLayout;
                     helperBarLayout->addWidget(this->_insertGaugeInv, 1);
-                    helperBarLayout->addWidget(addBarBtn, 0, Qt::AlignRight);
+                    helperBarLayout->addWidget(this->_addBarBtn, 0, Qt::AlignRight);
                     barsLayout->addLayout(helperBarLayout);
                 
                 //abilities
@@ -97,12 +99,41 @@ class StatusTab : public QWidget {
             this->_abilitiesSheet->updateCharacter(toUpdate);
         }   
 
-        void loadCharacter(const RPZCharacter &toLoad) {
-            this->_levelSpin->setValue(toLoad.level());
+        void loadCharacter(const RPZCharacter &toLoad, bool isReadOnly) {
+            
+            //level
+            auto level = toLoad.level();
+            if(!isReadOnly) {
+                this->_levelSpin->setVisible(true);
+            } 
+            else {
+                this->_levelSpin->setVisible(level > -1);
+            }
+            this->_levelSpin->setValue(level);
+            this->_levelSpin->setReadOnly(isReadOnly);
+            
+            //bonus
             this->_statusBonusEdit->setText(toLoad.bonus());
+            this->_statusBonusEdit->setReadOnly(isReadOnly);
+
+            //malus
             this->_statusMalusEdit->setText(toLoad.malus());
-            this->_createGauges(toLoad.gauges());
-            this->_abilitiesSheet->loadCharacter(toLoad);
+            this->_statusMalusEdit->setReadOnly(isReadOnly);
+
+            //gauges
+            this->_createGauges(
+                toLoad.gauges(), 
+                isReadOnly
+            );
+
+            //abilities
+            this->_abilitiesSheet->loadCharacter(
+                toLoad, 
+                isReadOnly
+            );
+            
+            //insert gauge
+            this->_addBarBtn->setVisible(!isReadOnly);
         }
 
 
@@ -113,26 +144,35 @@ class StatusTab : public QWidget {
         AbilitiesSheet* _abilitiesSheet = nullptr;
         QVBoxLayout* _gaugesLayout = nullptr;
         QLabel* _insertGaugeInv = nullptr;
+        QPushButton* _addBarBtn = nullptr;
 
         QVector<RPZGauge> _getGaugeValues() {
+            
             QVector<RPZGauge> out;
             for(auto i = 0; i < this->_gaugesLayout->count(); i++) {
-                auto gaugeEditor = (GaugeEditor*)this->_gaugesLayout->itemAt(i)->widget();
+                
+                auto widgetPtr = this->_gaugesLayout->itemAt(i)->widget();
+                auto gaugeEditor = dynamic_cast<GaugeEditor*>(widgetPtr);
+                if(!gaugeEditor) continue;
+                
                 out += gaugeEditor->toGauge();
+            
             }
             return out;
+
         }
 
-        void _createGauges(const QVector<RPZGauge> &gauges) {
+        void _createGauges(const QVector<RPZGauge> &gauges, bool readyOnly) {
             
             //clear previous
-            for(auto i = 0; i < this->_gaugesLayout->count(); i++) {
-                this->_gaugesLayout->itemAt(i)->widget()->deleteLater();
+            while(this->_gaugesLayout->count()) {
+                delete this->_gaugesLayout->itemAt(0)->widget();
             }
 
             //add new
             for(auto &gauge : gauges) {
-                this->_createGauge(gauge);
+                if(readyOnly) this->_gaugesLayout->addWidget(new GaugeWidget(gauge));
+                else this->_createGaugeEditor(gauge);
             }
 
             //may update indicator
@@ -140,7 +180,7 @@ class StatusTab : public QWidget {
 
         }
 
-        void _createGauge(const RPZGauge &gauge = RPZGauge()) {
+        void _createGaugeEditor(const RPZGauge &gauge = RPZGauge()) {
            
            auto newBar = new GaugeEditor(gauge);
             QObject::connect(
@@ -152,8 +192,8 @@ class StatusTab : public QWidget {
 
         }
 
-        void _createGaugeBtnPressed() {
-            this->_createGauge();
+        void _createGaugeEditorBtnPressed() {
+            this->_createGaugeEditor();
             this->_mayDisplayGaugeCreationIndicator(false);
         }
 

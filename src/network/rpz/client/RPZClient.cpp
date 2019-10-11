@@ -249,15 +249,17 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         case JSONMethod::UserOut: {
             auto idToRemove = data.toULongLong();
 
+            RPZUser out;
+
             {
                 QMutexLocker l(&this->_m_sessionUsers);
 
                 //remove from session users
-                this->_sessionUsers.remove(idToRemove);
+                out = this->_sessionUsers.take(idToRemove);
 
             }
 
-            emit userLeftServer(idToRemove);
+            emit userLeftServer(out);
             emit whisperTargetsChanged();
 
         }
@@ -296,7 +298,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
                 this->_self = RPZUser(data.toHash());
             }
 
-            emit ackIdentity(this->_self);
+            emit selfIdentityAcked(this->_self);
 
         }
         break;
@@ -386,6 +388,14 @@ void RPZClient::sendMapHistory(const ResetPayload &historyPayload) {
 }
 
 void RPZClient::notifyCharacterChange(const RPZCharacter &changed) {
+    
+    {
+        QMutexLocker l(&this->_m_self);
+        this->_self.setCharacter(changed);
+    }
+
+    emit selfIdentityChanged(this->_self);
+
     this->_sock->sendJSON(JSONMethod::CharacterChanged, changed);
 }
 

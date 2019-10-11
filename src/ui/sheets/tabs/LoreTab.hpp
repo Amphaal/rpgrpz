@@ -12,6 +12,7 @@
 #include <QFileInfo>
 
 #include "src/shared/models/character/RPZCharacter.hpp"
+#include "src/helpers/_appContext.h"
 
 class LoreTab : public QWidget {
     public:
@@ -33,10 +34,10 @@ class LoreTab : public QWidget {
                     pLayout->addWidget(this->_imgLbl, 0, Qt::AlignCenter);
 
                     //portrait change button
-                    auto changePortraitBtn = new QPushButton("Changer le portrait");
-                    pLayout->addWidget(changePortraitBtn, 0, Qt::AlignCenter);
+                    this->_changePortraitBtn = new QPushButton("Changer le portrait");
+                    pLayout->addWidget(this->_changePortraitBtn, 0, Qt::AlignCenter);
                     QObject::connect(
-                        changePortraitBtn, &QPushButton::pressed,
+                        this->_changePortraitBtn, &QPushButton::pressed,
                         this, &LoreTab::_changePortrait
                     );
 
@@ -77,7 +78,7 @@ class LoreTab : public QWidget {
             toUpdate.setStory(this->_storyEdit->toPlainText());
         }   
 
-        void loadCharacter(const RPZCharacter &toLoad) {
+        void loadCharacter(const RPZCharacter &toLoad, bool isReadOnly) {
             
             this->_customPortrait = QPixmap();
             this->_customPortraitExt.clear();
@@ -85,16 +86,28 @@ class LoreTab : public QWidget {
             auto portrait = RPZCharacter::getPortrait(toLoad);
             this->_imgLbl->setPixmap(portrait);
 
+            this->_changePortraitBtn->setVisible(!isReadOnly);
+
             this->_sheetNameEdit->setText(toLoad.name());
+            this->_sheetNameEdit->setReadOnly(isReadOnly);
+
             this->_archtypeEdit->setText(toLoad.archtype());
+            this->_archtypeEdit->setReadOnly(isReadOnly);
+
             this->_descriptionEdit->setPlainText(toLoad.description());
+            this->_descriptionEdit->setReadOnly(isReadOnly);
+
             this->_storyEdit->setPlainText(toLoad.story());
+            this->_storyEdit->setReadOnly(isReadOnly);
+
         }
 
     private:
         QPixmap _customPortrait;
         QString _customPortraitExt;
 
+
+        QPushButton* _changePortraitBtn = nullptr;
         QLabel* _imgLbl = nullptr;
         QLineEdit* _sheetNameEdit = nullptr;
         QLineEdit* _archtypeEdit = nullptr;

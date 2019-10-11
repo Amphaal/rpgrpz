@@ -25,10 +25,12 @@ class InventoryEditor : public QWidget {
 
         }   
 
-        void loadInventory(const RPZInventory &toLoad, const QVector<RPZInventory*> &others) {
+        void loadInventory(const RPZInventory &toLoad, const QVector<RPZInventory*> &others, bool isReadOnly) {
                      
             this->_inventoryNameEdit->setText(toLoad.name());
-            this->_inventory->loadInventory(toLoad, others);
+            this->_inventoryNameEdit->setReadOnly(isReadOnly);
+
+            this->_inventory->loadInventory(toLoad, others, isReadOnly);
 
         }
     

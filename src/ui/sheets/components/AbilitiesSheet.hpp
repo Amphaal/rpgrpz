@@ -74,8 +74,10 @@ class AbilitiesSheet : public QTableWidget {
             toUpdate.setAbilities(out);
         }   
 
-        void loadCharacter(const RPZCharacter &toLoad) {
+        void loadCharacter(const RPZCharacter &toLoad, bool isReadOnly) {
             
+            this->_readOnly = isReadOnly;
+
             while(this->rowCount() != 0) {
                 this->removeRow(0);
             }
@@ -116,6 +118,8 @@ class AbilitiesSheet : public QTableWidget {
         }
     
     private:
+        bool _readOnly = false;
+
         QAction* _addRowAction = nullptr;
         QAction* _removeRowAction = nullptr;
 
@@ -172,7 +176,9 @@ class AbilitiesSheet : public QTableWidget {
             this->setItem(row, 2, fWidget);
 
             //descr
-            auto dWidget = new QTableWidgetItem(ability.description());
+            auto descr = ability.description();
+            auto dWidget = new QTableWidgetItem(descr);
+            dWidget->setToolTip(descr);
             this->setItem(row, 3, dWidget);
 
             this->setSortingEnabled(true);

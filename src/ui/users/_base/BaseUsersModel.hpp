@@ -48,6 +48,18 @@ class BaseUsersModel : public QAbstractListModel, public ClientBindable {
                 this, &BaseUsersModel::_onUserLeftServer
             );
 
+            //on remote user data changed
+            QObject::connect(
+                this->_rpzClient, &RPZClient::userDataChanged,
+                this, &BaseUsersModel::_onUserDataChanged
+            );
+
+            //on self user data changed
+            QObject::connect(
+                this->_rpzClient, &RPZClient::selfIdentityChanged,
+                this, &BaseUsersModel::_onUserDataChanged
+            );
+
         }
 
     private:
@@ -67,18 +79,25 @@ class BaseUsersModel : public QAbstractListModel, public ClientBindable {
             if(this->_isUserInvalidForInsert(newUser)) return;
             
             this->beginResetModel();
-
                 this->_users.insert(newUser.id(), newUser);
-
             this->endResetModel();
+
         }
 
-        void _onUserLeftServer(snowflake_uid userId) {
-            if(!this->_users.contains(userId)) return;
+        void _onUserLeftServer(const RPZUser &userOut) {
+            auto idOut = userOut.id();
+            if(!this->_users.contains(idOut)) return;
             
             this->beginResetModel();
-                this->_users.remove(userId);
+                this->_users.remove(idOut);
             this->endResetModel();
         }
 
+        void _onUserDataChanged(const RPZUser &updated) {
+            if(this->_isUserInvalidForInsert(updated)) return;
+
+            this->beginResetModel();
+                this->_users.insert(updated.id(), updated);
+            this->endResetModel();
+        }
 };

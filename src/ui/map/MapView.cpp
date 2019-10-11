@@ -388,7 +388,7 @@ void MapView::onRPZClientConnecting() {
 
     //when self user send
     QObject::connect(
-        _rpzClient, &RPZClient::ackIdentity,
+        _rpzClient, &RPZClient::selfIdentityAcked,
         this, &MapView::_onIdentityReceived
     );
 

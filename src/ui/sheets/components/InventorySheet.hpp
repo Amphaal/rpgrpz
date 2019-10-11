@@ -73,8 +73,9 @@ class InventorySheet : public QTableWidget {
 
         }   
 
-        void loadInventory(const RPZInventory &toLoad, const QVector<RPZInventory*> &others) {
+        void loadInventory(const RPZInventory &toLoad, const QVector<RPZInventory*> &others, bool isReadOnly) {
             
+            this->_readOnly = isReadOnly;
             this->_inventoryTargets = others;
             this->_self = &toLoad;
 
@@ -130,6 +131,7 @@ class InventorySheet : public QTableWidget {
         }
 
     private:
+        bool _readOnly = false;
         QVector<RPZInventory*> _inventoryTargets;
         const RPZInventory* _self = nullptr;
 
@@ -323,7 +325,9 @@ class InventorySheet : public QTableWidget {
             this->setItem(row, 3, wWidget);
 
             //descr
-            auto dWidget = new QTableWidgetItem(inventoryItem.description());
+            auto descr = inventoryItem.description();
+            auto dWidget = new QTableWidgetItem(descr);
+            dWidget->setToolTip(descr);
             this->setItem(row, 4, dWidget);
 
             this->setSortingEnabled(true);

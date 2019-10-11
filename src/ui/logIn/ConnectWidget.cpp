@@ -247,7 +247,11 @@ void ConnectWidget::_fillCharacterSheetCombo() {
         auto id = character.id();
         auto toBeInsertedIndex = this->_characterSheetTarget->count();
 
-        this->_characterSheetTarget->addItem(QIcon(":/icons/app/connectivity/cloak.png"), character.toString(), id);
+        this->_characterSheetTarget->addItem(
+            QIcon(":/icons/app/connectivity/self_cloak.png"), 
+            character.toString(), 
+            id
+        );
 
         if(previouslySelectedCharacterId == id) {
             this->_characterSheetTarget->setCurrentIndex(toBeInsertedIndex);

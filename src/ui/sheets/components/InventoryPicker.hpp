@@ -18,15 +18,17 @@ class InventoryPicker : public QWidget {
         void requestSave(RPZInventory* toSave);
 
     public:
-        InventoryPicker() : _inventoryListCombo(new QComboBox), _deleteInventoryBtn(new QPushButton) {
+        InventoryPicker() : 
+            _inventoryListCombo(new QComboBox), 
+            _deleteInventoryBtn(new QPushButton),
+            _newInventoryBtn(new QPushButton) {
             
             //add new inventory
-            auto newInventoryBtn = new QPushButton;
-            newInventoryBtn->setIcon(QIcon(":/icons/app/other/add.png"));
-            newInventoryBtn->setToolTip("Créer un nouvel inventaire");
-            newInventoryBtn->setMaximumWidth(25);
+            this->_newInventoryBtn->setIcon(QIcon(":/icons/app/other/add.png"));
+            this->_newInventoryBtn->setToolTip("Créer un nouvel inventaire");
+            this->_newInventoryBtn->setMaximumWidth(25);
             QObject::connect(
-                newInventoryBtn, &QPushButton::pressed,
+                this->_newInventoryBtn, &QPushButton::pressed,
                 this, &InventoryPicker::_addButtonPressed
             );
 
@@ -52,7 +54,7 @@ class InventoryPicker : public QWidget {
             this->setContentsMargins(0,0,0,0);
             clLayout->addWidget(this->_inventoryListCombo, 1);
             clLayout->addWidget(this->_deleteInventoryBtn);
-            clLayout->addWidget(newInventoryBtn);
+            clLayout->addWidget(this->_newInventoryBtn);
 
         }
 
@@ -80,8 +82,13 @@ class InventoryPicker : public QWidget {
             this->updateBufferedItemString();
         }
 
-        void loadCharacter(const RPZCharacter &character) {
+        void loadCharacter(const RPZCharacter &character, bool isReadOnly) {
+            
             this->_loadInventories(character.inventories());
+
+            this->_newInventoryBtn->setVisible(!isReadOnly);
+            this->_deleteInventoryBtn->setVisible(!isReadOnly);
+
         }
 
         void updateBufferedItemString() {
@@ -98,6 +105,7 @@ class InventoryPicker : public QWidget {
 
         QComboBox* _inventoryListCombo = nullptr;
         QPushButton* _deleteInventoryBtn = nullptr;
+        QPushButton* _newInventoryBtn = nullptr;
         RPZInventory* _bufferedSelectedInventory = nullptr;
         int _bufferedSelectedIndex = -1;
         QVector<RPZInventory> _inventories;

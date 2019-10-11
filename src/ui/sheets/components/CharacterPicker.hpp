@@ -79,7 +79,7 @@ class CharacterPicker : public QWidget {
 
         void unloadCharacters() {
             this->setLocalCharacterIdFromRemote(0);
-            this->loadCharacters(RPZMap<RPZCharacter>(), CharacterPicker::Mode::Remote);
+            this->loadCharacters({}, CharacterPicker::Mode::Remote);
         }
 
         void loadCharacters(const RPZMap<RPZCharacter> &toLoad, CharacterPicker::Mode mode, bool maintainSelection = false) {
@@ -119,12 +119,19 @@ class CharacterPicker : public QWidget {
 
                 this->_ids += id;
 
+                //pick icon
+                QIcon* iconToUse;
+                if(isLocal) iconToUse = &this->_selfCloakIcon;
+                else iconToUse = this->_localCharacterIdFromRemote == id ? &this->_selfCloakIcon : &this->_standardClockIcon;
+                
+                //add item
                 this->_characterListCombo->addItem(
-                    this->_icon, 
+                    *iconToUse, 
                     character.toString(), 
                     character.id()
                 );
 
+                //default selection
                 if(maintainSelection && id == previousSelectedId) {
                     this->_characterListCombo->setCurrentIndex(futureInsertIndex);
                 }
@@ -153,7 +160,8 @@ class CharacterPicker : public QWidget {
         QPushButton* _deleteCharacterBtn = nullptr;
         QPushButton* _newCharacterBtn = nullptr;
 
-        QIcon _icon = QIcon(":/icons/app/connectivity/cloak.png");
+        QIcon _standardClockIcon = QIcon(":/icons/app/connectivity/cloak.png");
+        QIcon _selfCloakIcon = QIcon(":/icons/app/connectivity/self_cloak.png");
 
         void _addButtonPressed() {
             this->_autoSave();

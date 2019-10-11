@@ -111,8 +111,8 @@ class InventorySlotMoveModal : public InventorySlotModal {
         void _loadHelpersFromTargetInventorySelection() override {
             
             //clear previous
-            for(auto i = 0; i < this->_subLayout->count(); i++) {
-                this->_subLayout->itemAt(i)->widget()->deleteLater();
+            while(this->_subLayout->count()) {
+                delete this->_subLayout->itemAt(0)->widget();
             }
 
             auto targetSlots = this->getSelectedTargetInventory()->inventorySlots();

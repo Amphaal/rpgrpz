@@ -33,15 +33,23 @@ class InventoriesTab : public QWidget {
         }
     
         void updateCharacter(RPZCharacter &toUpdate) {
-            this->_applyInventoryChanges(this->_inventoryPicker->currentInventory());
+            
+            this->_applyInventoryChanges(
+                this->_inventoryPicker->currentInventory()
+            );
+
             this->_inventoryPicker->updateCharacter(toUpdate);
+
         }   
 
-        void loadCharacter(const RPZCharacter &toLoad) {
-            this->_inventoryPicker->loadCharacter(toLoad);
+        void loadCharacter(const RPZCharacter &toLoad, bool isReadOnly) {
+            this->_readOnly = isReadOnly;
+            this->_inventoryPicker->loadCharacter(toLoad, isReadOnly);
         }
 
     private:
+        bool _readOnly = false;
+
         InventoryPicker* _inventoryPicker = nullptr;
         InventoryEditor* _inventoryEditor = nullptr;
 
@@ -51,11 +59,17 @@ class InventoriesTab : public QWidget {
         }
 
         void _onPickerSelectionChanged(const RPZInventory *selected) {
-                this->_inventoryEditor->setVisible(selected);
-                if(selected) this->_inventoryEditor->loadInventory(
+            
+            this->_inventoryEditor->setVisible(selected);
+            
+            if(selected) {
+                this->_inventoryEditor->loadInventory(
                     *selected,
-                    this->_inventoryPicker->everyInventoriesExceptArg(selected)
+                    this->_inventoryPicker->everyInventoriesExceptArg(selected),
+                    this->_readOnly
                 );
+            }
+
         }
         
 };

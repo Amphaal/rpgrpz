@@ -46,7 +46,7 @@ void AudioManager::onRPZClientConnecting() {
 
     //on receiving identity
     QObject::connect(
-        _rpzClient, &RPZClient::ackIdentity,
+        _rpzClient, &RPZClient::selfIdentityAcked,
         this, &AudioManager::_onIdentityAck
     );
 

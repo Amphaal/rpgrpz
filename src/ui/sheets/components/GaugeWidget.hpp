@@ -4,9 +4,9 @@
 
 #include "src/shared/models/character/RPZGauge.hpp"
 
-class Gauge : public QProgressBar {
+class GaugeWidget : public QProgressBar {
     public:
-        Gauge(const RPZGauge &gauge = RPZGauge()) {
+        GaugeWidget(const RPZGauge &gauge = RPZGauge()) {
 
             //bar
             this->setMinimum(gauge.minGaugeValue());
