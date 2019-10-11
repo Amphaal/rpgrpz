@@ -95,14 +95,26 @@ class RPZCharacter : public Serializable {
         const QString malus() const {return this->value("malus").toString();}
 
         void setGauges(const QVector<RPZGauge> &gauges) {
+            
             QVariantList in;
-            for(auto &gauge : gauges) in += gauge;
+            int favGaugesCount = 0;
+            
+            for(auto &gauge : gauges) {
+                if(gauge.isVisibleUnderPortrait()) favGaugesCount++;
+                in += gauge;
+            }
+
             this->insert("g", in);
+            this->insert("gfavc", favGaugesCount);
+
         }
         const QVector<RPZGauge> gauges() const {
             QVector<RPZGauge> out;
-            for(auto &gauge : this->value("g").toList()) out += RPZInventory(gauge.toHash());
+            for(auto &gauge : this->value("g").toList()) out += RPZGauge(gauge.toHash());
             return out;
+        }
+        const int favGaugesCount() const {
+            return this->value("gfavc", 0).toInt();
         }
 
         void setAbilities(const QVector<RPZAbility> &abilities) {

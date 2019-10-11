@@ -262,7 +262,8 @@ void MainWindow::_initUIApp() {
     auto lTab = new QTabWidget(this);
     lTab->addTab(this->_assetsManager, QIcon(":/icons/app/tabs/box.png"), "Boite à jouets");
     lTab->addTab(this->_audioManager, QIcon(":/icons/app/tabs/playlist.png"), "Audio");
-    lTab->addTab(this->_characterEditor, QIcon(":/icons/app/tabs/scroll.png"), "Fiches");
+    auto charactersSheetTabIndex = 2;
+    lTab->insertTab(charactersSheetTabIndex, this->_characterEditor, QIcon(":/icons/app/tabs/scroll.png"), "Fiches");
 
     //right tabs
     auto rTab = new QTabWidget(this);
@@ -344,6 +345,15 @@ void MainWindow::_initUIApp() {
     QObject::connect(
         this->_mapView->hints(), &MapHint::mapStateChanged,
         this->_sb, &RPZStatusBar::updateMapFileLabel
+    );
+
+    //focus on character
+    QObject::connect(
+        this->_playersView, &PlayersListView::requestingFocusOnCharacter,
+        [=](const snowflake_uid &characterIdToFocus) {
+            this->_characterEditor->tryToSelectCharacter(characterIdToFocus);
+            lTab->setCurrentIndex(charactersSheetTabIndex);
+        }    
     );
 }
 

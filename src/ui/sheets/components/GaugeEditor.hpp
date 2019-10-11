@@ -9,6 +9,8 @@
 #include <QPushButton>
 #include <QColorDialog>
 #include <QCheckBox>
+#include <QLabel>
+#include <QMessageBox>
 
 #include "src/shared/models/character/RPZGauge.hpp"
 

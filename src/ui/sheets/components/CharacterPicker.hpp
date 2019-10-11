@@ -67,7 +67,7 @@ class CharacterPicker : public QWidget {
 
         void updateItemText(const RPZCharacter &updatedCharacter) {
             
-            auto indexItemToUpdate = this->_ids.indexOf(updatedCharacter.id());
+            auto indexItemToUpdate = this->_getIndexOfCharacterId(updatedCharacter.id());
             if(indexItemToUpdate < 0) return;
 
             this->_characterListCombo->setItemText(
@@ -80,6 +80,17 @@ class CharacterPicker : public QWidget {
         void unloadCharacters() {
             this->setLocalCharacterIdFromRemote(0);
             this->loadCharacters({}, CharacterPicker::Mode::Remote);
+        }
+
+        void pickCharacter(const snowflake_uid &characterIdToFocus) {
+
+            auto indexItemToFocus = this->_getIndexOfCharacterId(characterIdToFocus);
+            
+            if(indexItemToFocus < 0) return;
+            if(indexItemToFocus == this->_characterListCombo->currentIndex()) return;
+
+            this->_characterListCombo->setCurrentIndex(indexItemToFocus);
+
         }
 
         void loadCharacters(const RPZMap<RPZCharacter> &toLoad, CharacterPicker::Mode mode, bool maintainSelection = false) {
@@ -213,6 +224,10 @@ class CharacterPicker : public QWidget {
             auto id = this->currentCharacterId();
             this->_deleteCharacterBtn->setEnabled(id);
             emit selectionChanged(id);
+        }
+
+        int _getIndexOfCharacterId(const snowflake_uid &characterIdToFind) {
+            return this->_ids.indexOf(characterIdToFind);
         }
         
 };

@@ -72,8 +72,13 @@ class CharacterEditor : public QWidget, public ClientBindable {
             this->_saveCurrentCharacter();
         }
     
+    public slots:
+        void tryToSelectCharacter(const snowflake_uid &characterIdToFocus) {
+            this->_characterPicker->pickCharacter(characterIdToFocus);
+            this->setFocus(Qt::OtherFocusReason);
+        }
+
     protected:
-        
         void onRPZClientConnecting() override {
             
             QObject::connect(

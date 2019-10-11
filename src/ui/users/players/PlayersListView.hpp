@@ -8,6 +8,12 @@
 #include <QAbstractItemModel>
 
 class PlayersListView : public QListView {
+
+    Q_OBJECT
+
+    signals:
+        void requestingFocusOnCharacter(const snowflake_uid &characterIdToFocus);
+
     public:
         PlayersListView(QWidget *parent = nullptr) : QListView(parent) {
             
@@ -18,6 +24,7 @@ class PlayersListView : public QListView {
             this->setMovement(Movement::Static);
             this->setResizeMode(ResizeMode::Fixed);
             this->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
+            this->setSelectionMode(QAbstractItemView::SelectionMode::NoSelection);
             
             this->setFixedWidth(PlayerItemDelegate::defaultPortraitSize.width() + 2);
             this->setContentsMargins(0, 0, 0, 0);
@@ -36,7 +43,17 @@ class PlayersListView : public QListView {
                 }
             );
 
+            QObject::connect(
+                this, &QAbstractItemView::doubleClicked,
+                [=](const QModelIndex &index) {
+                    RPZUser user(index.data(Qt::UserRole).toHash());
+                    emit requestingFocusOnCharacter(user.id());
+                }
+            );
+
         }
     
+    private:
+
 
 };

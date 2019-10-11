@@ -22,7 +22,22 @@ class PlayersModel : public BaseUsersModel {
             switch(role) {
                 
                 case Qt::SizeHintRole: {
-                    return PlayerItemDelegate::defaultPortraitSize;
+                    
+                    auto size = PlayerItemDelegate::defaultPortraitSize;
+
+                    if(auto favGaugesCount = character.favGaugesCount()) {
+
+                        size.setHeight(
+                            size.height() 
+                            + (PlayerItemDelegate::gaugeHeight * favGaugesCount) 
+                            + PlayerItemDelegate::portraitFrameMargin 
+                            + PlayerItemDelegate::portraitFramePenSize
+                            + (favGaugesCount - 1) * PlayerItemDelegate::spaceBetweenGauges
+                            + 2
+                        );
+
+                    }
+                    return size;
                 }
 
                 case Qt::ToolTipRole: {
