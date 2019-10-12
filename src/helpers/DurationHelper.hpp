@@ -2,6 +2,7 @@
 
 #include <QString>
 #include <QtMath>
+#include <QTime>
 
 class DurationHelper {
 

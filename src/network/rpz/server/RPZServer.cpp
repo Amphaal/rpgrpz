@@ -190,7 +190,10 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             if(auto toUploadCount = requested.count()) {
 
                 //log
-                qDebug() << QString("Assets : %1 / %2 requested asset(s) ready to upload").arg(toUploadCount).arg(requestedCount).toStdString().c_str();
+                qDebug() << QString("Assets : %1 / %2 requested asset(s) ready to upload")
+                                            .arg(toUploadCount)
+                                            .arg(requestedCount)
+                                            .toStdString().c_str();
                 
                 //rebundle
                 QVariantList remaining;
@@ -228,7 +231,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             auto clientVersion = handshakePkg.clientVersion();
             if(clientVersion != serverVersion) {
                 target->sendJSON(JSONMethod::ServerStatus, 
-                    QString("Incompatibilité de version entre client et serveur : v%1 (client) / v%2 (serveur) !")
+                    tr("Versions between host and client are different : v%1 (client) / v%2 (host) !")
                     .arg(clientVersion)
                     .arg(serverVersion)
                 );

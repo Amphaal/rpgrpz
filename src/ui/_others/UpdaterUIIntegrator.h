@@ -1,6 +1,5 @@
 #pragma once
 
-#include "src/localization/i18n.h"
 #include "src/helpers/_appContext.h"
 
 #include <QDebug>

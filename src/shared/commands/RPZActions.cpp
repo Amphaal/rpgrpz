@@ -1,7 +1,7 @@
 #include "RPZActions.h"
 
 QAction* RPZActions::redo() {
-    auto action = new QAction("Rétablir");
+    auto action = new QAction(QObject::tr("Redo"));
     action->setShortcut(QKeySequence::Redo);
     action->setShortcutContext(Qt::ShortcutContext::WidgetWithChildrenShortcut);
     action->setShortcutVisibleInContextMenu(true);
@@ -9,7 +9,7 @@ QAction* RPZActions::redo() {
 }
 
 QAction* RPZActions::undo() {
-    auto action = new QAction("Annuler");
+    auto action = new QAction(QObject::tr("Undo"));
     action->setShortcut(QKeySequence::Undo);
     action->setShortcutContext(Qt::ShortcutContext::WidgetWithChildrenShortcut);
     action->setShortcutVisibleInContextMenu(true);
@@ -17,7 +17,7 @@ QAction* RPZActions::undo() {
 }
 
 QAction* RPZActions::copy() {
-    auto action = new QAction("Copier");
+    auto action = new QAction(QObject::tr("Copy"));
     action->setShortcut(QKeySequence::Copy);
     action->setShortcutContext(Qt::ShortcutContext::WidgetWithChildrenShortcut);
     action->setShortcutVisibleInContextMenu(true);
@@ -25,7 +25,7 @@ QAction* RPZActions::copy() {
 }
 
 QAction* RPZActions::paste() {
-    auto action = new QAction("Coller");
+    auto action = new QAction(QObject::tr("Paste"));
     action->setShortcut(QKeySequence::Paste);
     action->setShortcutContext(Qt::ShortcutContext::WidgetWithChildrenShortcut);
     action->setShortcutVisibleInContextMenu(true);
@@ -35,14 +35,14 @@ QAction* RPZActions::paste() {
 QAction* RPZActions::createFolder() {
     return new QAction(
         QIcon(":/icons/app/manager/folder.png"), 
-        "Créer un dossier"
+        QObject::tr("Create a folder")
     );
 }
 
 QAction* RPZActions::remove() {
     auto action = new QAction(
         QIcon(":/icons/app/tools/bin.png"), 
-        "Supprimer"
+        QObject::tr("Remove")
     );
     action->setShortcut(QKeySequence::Delete);
     action->setShortcutVisibleInContextMenu(true);
@@ -50,8 +50,8 @@ QAction* RPZActions::remove() {
 }
 
 QAction* RPZActions::raiseAtom(int targetLayer) {
-    auto descr = QString("Remonter (Calque %1)")
-                    .arg(QString::number(targetLayer));
+    auto descr = QObject::tr("Raise (Layer %1)");
+    descr = descr.arg(QString::number(targetLayer));
 
     return new QAction(
         QIcon(":/icons/app/tools/raise.png"),
@@ -60,8 +60,8 @@ QAction* RPZActions::raiseAtom(int targetLayer) {
 }
 
 QAction* RPZActions::lowerAtom(int targetLayer) {
-    auto descr = QString("Descendre (Calque %1)")
-                    .arg(QString::number(targetLayer));
+    auto descr = QObject::tr("Lower (Layer %1)");
+    descr = descr.arg(QString::number(targetLayer));
 
     return new QAction(
         QIcon(":/icons/app/tools/lower.png"),
@@ -72,49 +72,49 @@ QAction* RPZActions::lowerAtom(int targetLayer) {
 QAction* RPZActions::showAtom() {
     return new QAction(
         QIcon(":/icons/app/tools/shown.png"),
-        "Montrer"
+        QObject::tr("Show")
     );
 }
 
 QAction* RPZActions::hideAtom() {
     return new QAction(
         QIcon(":/icons/app/tools/hidden.png"),
-        "Cacher"
+        QObject::tr("Hide")
     );
 }
 
 QAction* RPZActions::resetView() {
     auto action = new QAction;
     action->setIcon(QIcon(":/icons/app/tools/reset.png"));
-    action->setIconText("Réinitialiser la vue");
+    action->setIconText(QObject::tr("Reset the view"));
     return action;
 }
 
 QAction* RPZActions::resetTool() {
     auto action = new QAction;
     action->setIcon(QIcon(":/icons/app/tools/cursor.png"));
-    action->setIconText("Retour à l'outil de sélection");
+    action->setIconText(QObject::tr("Back to Select tool"));
     return action;
 }
 
 QAction* RPZActions::lockAtom() {
     return new QAction(
         QIcon(":/icons/app/tools/lock.png"),
-        "Verouiller"
+        QObject::tr("Lock")
     );
 }
 
 QAction* RPZActions::unlockAtom() {
     return new QAction(
         QIcon(":/icons/app/tools/unlock.png"),
-        "Déverouiller"
+        QObject::tr("Unlock")
     );
 }
 
 QAction* RPZActions::quit() {
     auto action = new QAction(
         QIcon(":/icons/app/tools/exit.png"),
-        I18n::tr()->Menu_Quit()
+        QObject::tr("Quit")
     );
     action->setShortcut(QKeySequence::Close);
     action->setShortcutVisibleInContextMenu(true);
@@ -122,52 +122,58 @@ QAction* RPZActions::quit() {
 }
 
 QAction* RPZActions::patchnote() {
-    return new QAction(I18n::tr()->Menu_Patchnotes(APP_FULL_DENOM));
+    return new QAction(
+        QObject::tr("%1 - Patch Notes")
+            .arg(APP_FULL_DENOM)
+    );
 }
 
 QAction* RPZActions::checkUpdates() {
-    return new QAction(I18n::tr()->Menu_CheckForUpgrades());
+    return new QAction(QObject::tr("Check for updates..."));
 }
 
 QAction* RPZActions::openInternalDataFolder() {
-    return new QAction(I18n::tr()->Menu_OpenDataFolder(AppContext::getAppDataLocation()));
+    return new QAction(
+        QObject::tr("Open Data Folder (%1)")
+            .arg(AppContext::getAppDataLocation())
+    );
 }
 
 QAction* RPZActions::openLatestLog() {
-    return new QAction(I18n::tr()->Menu_OpenLatestLog());
+    return new QAction(QObject::tr("Show session log"));
 }
 
 QAction* RPZActions::openFullLog() {
-    return new QAction(I18n::tr()->Menu_OpenLog());
+    return new QAction(QObject::tr("Show full log"));
 }
 
 QAction* RPZActions::openMaintenanceTool() {
-    return new QAction(I18n::tr()->Menu_OpenMaintenanceTool());
+    return new QAction(QObject::tr("Launch maintenance tool"));
 }
 
 QAction* RPZActions::loadAMap() {
-    auto action = new QAction("Charger une carte");
+    auto action = new QAction(QObject::tr("Load a map"));
     action->setShortcut(QKeySequence::Open);
     action->setShortcutVisibleInContextMenu(true);
     return action;
 }
 
 QAction* RPZActions::createANewMap() {
-    auto action = new QAction("Créer une nouvelle carte");
+    auto action = new QAction(QObject::tr("Create a new map"));
     action->setShortcut(QKeySequence::New);
     action->setShortcutVisibleInContextMenu(true);
     return action;
 }
 
 QAction* RPZActions::saveTheMap() {
-    auto action = new QAction("Sauvegarder la carte");
+    auto action = new QAction(QObject::tr("Save map"));
     action->setShortcut(QKeySequence::Save);
     action->setShortcutVisibleInContextMenu(true);
     return action;
 }
 
 QAction* RPZActions::saveTheMapAs() {
-    auto action = new QAction("Enregistrer la carte sous...");
+    auto action = new QAction(QObject::tr("Save as map..."));
     action->setShortcut(QKeySequence::SaveAs);
     action->setShortcutVisibleInContextMenu(true);
     return action;

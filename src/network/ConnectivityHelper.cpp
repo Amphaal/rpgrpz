@@ -23,7 +23,10 @@ void ConnectivityHelper::_mustReInit(const QNetworkConfiguration &config) {
     const auto newPrefConfig = this->_nam->configuration();
     auto mustReInit_2 = oldPrefConfig != newPrefConfig;
 
-    qDebug() << "Connectivity : Detected an alteration in network" << config.name() << ", repicking interface " << this->_nam->configuration().name();
+    qDebug() << "Connectivity : Detected an alteration in network" 
+             << config.name() 
+             << ", repicking interface " 
+             << this->_nam->configuration().name();
     
     if(mustReInit || mustReInit_2) {
         this->init();
@@ -48,10 +51,10 @@ void ConnectivityHelper::_pickPreferedConfiguration() {
         if(!isIAP) continue;
 
         auto unauthorizedInterface = name.contains("npcap", Qt::CaseInsensitive) ||
-                             name.contains("virtualbox", Qt::CaseInsensitive) ||
-                             name.contains("bluetooth", Qt::CaseInsensitive) ||
-                             name.contains("pseudo", Qt::CaseInsensitive) ||
-                             name.contains("WAN", Qt::CaseSensitive);
+                                     name.contains("virtualbox", Qt::CaseInsensitive) ||
+                                     name.contains("bluetooth", Qt::CaseInsensitive) ||
+                                     name.contains("pseudo", Qt::CaseInsensitive) ||
+                                     name.contains("WAN", Qt::CaseSensitive);
         if(unauthorizedInterface) continue;
         
         //define new config
@@ -90,7 +93,10 @@ void ConnectivityHelper::_tryNegociateUPnPPort() {
     
     this->_clearUPnPRequester();
 
-    qDebug() << "Connectivity : Trying to open uPnP port" << AppContext::UPNP_DEFAULT_TARGET_PORT << "as" << AppContext::UPNP_REQUEST_DESCRIPTION;
+    qDebug() << "Connectivity : Trying to open uPnP port" 
+             << AppContext::UPNP_DEFAULT_TARGET_PORT 
+             << "as" 
+             << AppContext::UPNP_REQUEST_DESCRIPTION;
 
     this->_requestedUPnPPort = AppContext::UPNP_DEFAULT_TARGET_PORT.toStdString();
     this->_requestedDescription = AppContext::UPNP_REQUEST_DESCRIPTION.toStdString();
@@ -126,15 +132,18 @@ void ConnectivityHelper::_onUPnPExtIpFound(const QString &extIp) {
 
 void ConnectivityHelper::_onUPnPError(int errorCode) {
     qDebug() << "Connectivity : uPnP failed !";
-    emit uPnPStateChanged("Non");
+    emit uPnPStateChanged(tr("No"));
 }
 
 void ConnectivityHelper::_onUPnPSuccess(const char * protocol, const char * negociatedPort) {
-    QString out = "OK [port: ";
-    out += negociatedPort;
-    out += "] ";
+    
+    QString out("OK [port: %1]");
+    out = out.arg(negociatedPort);
 
-    qDebug() << "Connectivity : uPnP" << protocol << out.toStdString().c_str();
+    qDebug() << "Connectivity : uPnP" 
+             << protocol 
+             << out.toStdString().c_str();
+
     emit uPnPStateChanged(out);
 
 }
@@ -184,11 +193,11 @@ void ConnectivityHelper::_getLocalAddress() {
 ///
 
 QString ConnectivityHelper::_getWaitingText() {
-    return "<Recherche...>";
+    return tr("<Searching...>");
 };
 
 QString ConnectivityHelper::_getErrorText() {
-    return "<Erreur>";
+    return tr("<Error>");
 };
 
 void ConnectivityHelper::_debugNetworkConfig() {

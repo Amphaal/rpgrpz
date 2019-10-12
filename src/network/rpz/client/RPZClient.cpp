@@ -358,16 +358,16 @@ void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
     
     switch (_socketError) {
         case QAbstractSocket::RemoteHostClosedError:
-            msg = "L'hôte a fermé la connexion.";
+            msg = tr("Host closed the connection.");
             break;
         case QAbstractSocket::HostNotFoundError:
-            msg = "L'hôte n'a pa pu être trouvé. Merci de vérifier le nom / l'IP de l'hôte et le numéro de port.";
+            msg = tr("Host could not be found. Please check the hostname and port number.");
             break;
         case QAbstractSocket::ConnectionRefusedError:
-            msg = "La connexion a été refusée par l'hôte distant.";
+            msg = tr("Connection has been refused by remote host.");
             break;
         default:
-            msg = "L'erreur suivante s'est produite : " + this->_sock->socket()->errorString();
+            msg = tr("An error has occured : %1").arg(this->_sock->socket()->errorString());
                                    
     }
 

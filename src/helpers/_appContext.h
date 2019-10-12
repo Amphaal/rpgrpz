@@ -67,7 +67,7 @@ class AppContext {
         static AppSettings* settings();
 
         static inline const QString UPNP_DEFAULT_TARGET_PORT = "31137";
-        static inline const QString UPNP_REQUEST_DESCRIPTION = "RPGRPZ";
+        static inline const QString UPNP_REQUEST_DESCRIPTION = APP_NAME;
         static inline const QString RPZ_MAP_FILE_EXT = ".mrpz";
 
         static inline const QString REGEX_YOUTUBE_URL = "(?:youtube\\.com|youtu.be).*?(?:v=|embed\\/)(?<videoId>[\\w\\-]+)";

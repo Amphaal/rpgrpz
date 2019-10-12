@@ -82,6 +82,7 @@ if (APPLE)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-no_compact_unwind") #prevent warning
 endif (APPLE)
 
+
 #########################
 ## Libraries specifics ##
 #########################
@@ -174,9 +175,13 @@ list(APPEND EXT_LIBS
     Qt5::OpenGL
 )
 
-#################################
-# mandatory explicit generation #
-#################################
+#generate translation
+qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR}/src src/_i18n/fr.ts)
+
+
+#####################
+# list source files #
+#####################
 
 file(GLOB_RECURSE CPP_FILES src/*.cpp)
 file(GLOB_RECURSE HPP_FILES src/*.hpp)
@@ -191,7 +196,6 @@ list(APPEND SOURCES
 #     "src/helpers/_appContext.cpp"
 #     "src/_tests/main.cpp"
 # )
-
 
 #########################
 # Executable Generation #
@@ -347,7 +351,9 @@ endif()
 # add Publish target #
 ######################
 
-include(CMakePublish)
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    include(CMakePublish)
+endif()
 
 #################
 # Debug helpers #

@@ -41,7 +41,7 @@ void UpdaterUIIntegrator::_onUpdateChecked(const bool hasUpdate, const bool hasE
     if(this->_userNotificationOnUpdateCheck) {
         this->_userNotificationOnUpdateCheck = false;
         
-        const QString title = QString(APP_NAME) + " - " + I18n::tr()->Menu_CheckForUpgrades();
+        const QString title = QString(APP_NAME) + " - " + tr("Check for updates...");
         const QString content = this->_updater->errorLog();
 
         if(!hasUpdate && !hasError) {
@@ -64,8 +64,8 @@ void UpdaterUIIntegrator::_onUpdateChecked(const bool hasUpdate, const bool hasE
     }
 
     //if has update
-    const QString title = QString(APP_NAME) + " - " + I18n::tr()->Alert_UpdateAvailable_Title();
-    const QString content = I18n::tr()->Alert_UpdateAvailable_Text();
+    const QString title = QString(APP_NAME) + " - " + tr("Update Available");
+    const QString content = tr("An update is available for %1. Would you like to install it now ?").arg(APP_NAME);
 
     auto msgboxRslt = QMessageBox::information(this->_wParent, 
                 title, 

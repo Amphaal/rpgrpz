@@ -5,7 +5,7 @@ SET(CPACK_IFW_VERBOSE ON)
 ####################
 
     #generate translations
-    file(GLOB_RECURSE IFW_TRANSLATION_FILES "src/ifw/i18n/*.ts")
+    file(GLOB_RECURSE IFW_TRANSLATION_FILES "src/_ifw/i18n/*.ts")
     qt5_add_translation(IFW_QM_FILES ${IFW_TRANSLATION_FILES})
     add_custom_target(ifw_translations DEPENDS ${IFW_QM_FILES})
 
@@ -87,8 +87,8 @@ SET(CPACK_IFW_VERBOSE ON)
     )
     cpack_ifw_configure_component(${PROJECT_NAME}
         FORCED_INSTALLATION
-        SCRIPT "src/ifw/install.js"
-        USER_INTERFACES "src/ifw/install.ui"
+        SCRIPT "src/_ifw/install.js"
+        USER_INTERFACES "src/_ifw/install.ui"
         TRANSLATIONS "${CMAKE_BINARY_DIR}/install_fr.qm"
         DESCRIPTION ${APP_DESCRIPTION}
     )

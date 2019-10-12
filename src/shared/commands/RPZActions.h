@@ -1,9 +1,9 @@
 #pragma once
 
-#include "src/localization/i18n.h"
-
+#include <QString>
 #include <QAction>
 #include <QIcon>
+#include "src/helpers/_appContext.h"
 
 class RPZActions {
     public:

@@ -404,7 +404,7 @@ QMenu* MainWindow::_getMapMenu() {
                 this, 
                 "Créer une nouvelle carte", 
                 AppContext::getMapsFolderLocation(), 
-                I18n::tr()->Popup_MapDescriptor()
+                tr("Game map (*%1)").arg(AppContext::RPZ_MAP_FILE_EXT)
             );
             if(picked.isNull()) return;
 
@@ -430,7 +430,7 @@ QMenu* MainWindow::_getMapMenu() {
                 this, 
                 "Ouvrir une carte", 
                 AppContext::getMapsFolderLocation(), 
-                I18n::tr()->Popup_MapDescriptor()
+                tr("Game map (*%1)").arg(AppContext::RPZ_MAP_FILE_EXT)
             );
             if(picked.isNull()) return;
 
@@ -458,7 +458,7 @@ QMenu* MainWindow::_getMapMenu() {
                 this,
                 "Enregistrer sous...",
                 this->_mapView->hints()->RPZMapFilePath(), 
-                I18n::tr()->Popup_MapDescriptor()
+                tr("Game map (*%1)").arg(AppContext::RPZ_MAP_FILE_EXT)
             );
 
             if(!picked.isNull()) {
@@ -490,7 +490,7 @@ QMenu* MainWindow::_getMapMenu() {
 
 QMenu* MainWindow::_getToolsMenu() {
 
-    auto toolsMenuItem = new QMenu(I18n::tr()->Menu_Tools(), this);
+    auto toolsMenuItem = new QMenu("Tools", this);
 
     //maintenance tool
     auto openMaintenanceToolAction = RPZActions::openMaintenanceTool();
@@ -545,7 +545,7 @@ QMenu* MainWindow::_getToolsMenu() {
 
 QMenu* MainWindow::_getHelpMenu() {
 
-    auto helpMenuItem = new QMenu(I18n::tr()->Menu_Help(), this);
+    auto helpMenuItem = new QMenu("Help", this);
 
     //for checking the upgrades available
     this->cfugAction = RPZActions::checkUpdates();
@@ -559,7 +559,7 @@ QMenu* MainWindow::_getHelpMenu() {
         this->_updateIntegrator, &UpdaterUIIntegrator::stateChanged,
         [&](const bool isSearching) {
             this->cfugAction->setEnabled(!isSearching);
-            const QString descr = isSearching ? I18n::tr()->SearchingForUpdates() : I18n::tr()->Menu_CheckForUpgrades();
+            const QString descr = isSearching ? tr("Searching for updates...") : tr("Check for updates...");
             this->cfugAction->setText(descr);
         }
     );
@@ -583,7 +583,7 @@ QMenu* MainWindow::_getHelpMenu() {
 
 QMenu* MainWindow::_getFileMenu() {
 
-    auto fileMenuItem = new QMenu(I18n::tr()->Menu_File(), this);
+    auto fileMenuItem = new QMenu(tr("File"), this);
 
     //quit
     auto quitAction = RPZActions::quit();

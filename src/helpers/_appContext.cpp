@@ -52,9 +52,6 @@ void AppContext::configureApp(QCoreApplication &app) {
     auto qtTranslator = new QTranslator;
     if (qtTranslator->load(locale, "qt", "_", translationsPath)) {
         auto installed = app.installTranslator(qtTranslator);
-        if(installed) {
-            qDebug() << "System locale installed !";
-        }
     }
     
     return qtTranslator;
