@@ -132,7 +132,7 @@ class PlayerItemDelegate : public QStyledItemDelegate {
                         
                         //reduce innerGaugeRect
                         innerGaugeRect.setWidth(
-                            gaugeRatio * innerGaugeRect.width()
+                            (int)(gaugeRatio * innerGaugeRect.width())
                         );
 
                         //print gauge indicator
