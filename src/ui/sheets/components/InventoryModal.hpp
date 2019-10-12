@@ -15,6 +15,8 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QDialogButtonBox>
+#include <QFormLayout>
+#include <QSpinBox>
 
 #include "src/shared/models/character/RPZCharacter.hpp"
 
@@ -99,7 +101,7 @@ class InventorySlotMoveModal : public InventorySlotModal {
             this->_subLayout = new QFormLayout;
             this->_helperLayout->addLayout(this->_subLayout, 0);
 
-            this->setWindowTitle("Déplacer les objets vers l'inventaire");
+            this->setWindowTitle(tr("Move items to inventory"));
             this->_loadHelpersFromTargetInventorySelection();
 
         }
@@ -125,8 +127,8 @@ class InventorySlotMoveModal : public InventorySlotModal {
                 auto NbrInEq = eqInTarget.howMany();
                 auto NbrInSource = i.value().second.howMany();
 
-                auto left = QString("• \"%1\" (%2 à déplacer) :").arg(nameAsId).arg(NbrInSource);
-                auto right = QString("%1 (Nombre actuel) => %2 (Nouveau Total)").arg(NbrInEq).arg(NbrInEq + NbrInSource);
+                auto left = tr("• \"%1\" (%2 to move) :").arg(nameAsId).arg(NbrInSource);
+                auto right = tr("%1 (Current number) => %2 (New Total)").arg(NbrInEq).arg(NbrInEq + NbrInSource);
 
                 this->_subLayout->addRow(left, new QLabel(right));
 
@@ -144,9 +146,12 @@ class InventorySlotSplitModal : public InventorySlotModal {
             const RPZInventory* from, 
             const QVector<RPZInventory*> &targets, 
             const QPair<int, RPZInventorySlot> &toAlter
-        ) : InventorySlotModal(from, targets, {toAlter}),_splitterTo(new QSpinBox), _splitterFrom(new QSpinBox), _movingLbl(new QLabel) {
+        ) : InventorySlotModal(from, targets, {toAlter}), 
+                _splitterTo(new QSpinBox), 
+                _splitterFrom(new QSpinBox),
+                _movingLbl(new QLabel) {
 
-            this->setWindowTitle("Diviser l'objet vers l'inventaire");
+            this->setWindowTitle(tr("Split item to inventory"));
             this->_maxFrom = this->toBeAltered().second.howMany();
 
             this->_updateMovingLabel();
@@ -154,10 +159,10 @@ class InventorySlotSplitModal : public InventorySlotModal {
             this->_splitterFrom->setMinimum(1);
             this->_splitterFrom->setMaximum(this->_maxFrom);
             this->_splitterFrom->setValue(this->_maxFrom);
-            this->_splitterFrom->setToolTip("Nombre actuel d'objets");
+            this->_splitterFrom->setToolTip(tr("Current number of items"));
 
             this->_splitterTo->setEnabled(false);
-            this->_splitterTo->setToolTip("Nombre d'objets total dans l'inventaire destinataire");
+            this->_splitterTo->setToolTip(tr("Total number of items in dest. inventory"));
 
             QObject::connect(
                 this->_splitterFrom, qOverload<int>(&QSpinBox::valueChanged), 

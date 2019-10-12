@@ -28,7 +28,7 @@ class CharacterPicker : public QWidget {
 
             //add new character
             this->_newCharacterBtn->setIcon(QIcon(":/icons/app/other/add.png"));
-            this->_newCharacterBtn->setToolTip("Créer une nouvelle fiche");
+            this->_newCharacterBtn->setToolTip(tr("Create a new sheet"));
             this->_newCharacterBtn->setMaximumWidth(25);
             QObject::connect(
                 this->_newCharacterBtn, &QPushButton::pressed,
@@ -36,7 +36,7 @@ class CharacterPicker : public QWidget {
             );
 
             //delete character
-            this->_deleteCharacterBtn->setToolTip("Supprimer la fiche");
+            this->_deleteCharacterBtn->setToolTip(tr("Delete sheet"));
             this->_deleteCharacterBtn->setMaximumWidth(25);
             this->_deleteCharacterBtn->setIcon(QIcon(":/icons/app/other/remove.png"));
             this->_deleteCharacterBtn->setEnabled(false);
@@ -112,7 +112,9 @@ class CharacterPicker : public QWidget {
             //if nothing to load
             if(toLoad.isEmpty()) {
 
-                auto emptyItemText = isLocal ? "Aucun personnage existant, créez en un !" : "En Attente de fiches depuis le serveur...";
+                auto emptyItemText = isLocal ? 
+                    tr("No existing character, create some !") : 
+                    tr("Waiting for sheet from host...");
                 this->_characterListCombo->addItem(emptyItemText);
                 this->_characterListCombo->setEnabled(false);
                 
@@ -186,8 +188,8 @@ class CharacterPicker : public QWidget {
 
             auto result = QMessageBox::warning(
                 this, 
-                "Suppression de fiche", 
-                "Voulez-vous vraiment supprimer ce personnage ?",
+                tr("Character sheet deletion"), 
+                tr("Do you really want to delete this character ?"),
                 QMessageBox::Yes|QMessageBox::No, 
                 QMessageBox::No
             );

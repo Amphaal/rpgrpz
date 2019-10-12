@@ -5,7 +5,7 @@ LayerSelector::LayerSelector(QWidget *parent) : QWidget(parent), _spinbox(new QS
     this->setLayout(layout);
     layout->setContentsMargins(2,0,0,0);
 
-    auto lbl = new QLabel("Calque par défaut:", this);
+    auto lbl = new QLabel(tr("Default Layer:"), this);
     layout->addWidget(lbl, 1);
 
     this->_spinbox->setValue(AppContext::settings()->defaultLayer());

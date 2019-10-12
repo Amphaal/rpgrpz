@@ -2,7 +2,7 @@
 
 ChatEdit::ChatEdit(QWidget * parent) : QWidget(parent), 
     _msgEdit(new QLineEdit), 
-    _sendMsgBtn(new QPushButton("Envoyer Message")) {
+    _sendMsgBtn(new QPushButton(tr("Send Message"))) {
     
     //layout
     this->setLayout(new QHBoxLayout);
@@ -38,7 +38,7 @@ void ChatEdit::changeEvent(QEvent *event) {
     if(event->type() != QEvent::EnabledChange) return;
 
     if(this->isEnabled()) {
-        this->_msgEdit->setPlaceholderText(" Message à envoyer");
+        this->_msgEdit->setPlaceholderText(tr(" Message to send"));
         this->_msgEdit->setText("");
     } else {
         this->_msgEdit->setPlaceholderText("");

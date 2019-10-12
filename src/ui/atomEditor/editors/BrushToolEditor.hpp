@@ -11,12 +11,12 @@
 class BrushToolEditor : public AtomSubEditor {
     private:    
         static inline QMap<int, QString> _strBT {
-            { (int)BrushType::Stamp, "Tampon" },
-            { (int)BrushType::Rectangle, "Rectangulaire" },
-            { (int)BrushType::Ovale, "Circulaire" },
-            { (int)BrushType::RoundBrush, "Brosse ronde" },
-            { (int)BrushType::Cutter, "Biseau" },
-            { (int)BrushType::Scissors, "Ciseaux" }
+            { (int)BrushType::Stamp, QT_TR_NOOP("Stamp") },
+            { (int)BrushType::Rectangle, QT_TR_NOOP("Rectangle") },
+            { (int)BrushType::Ovale, QT_TR_NOOP("Ovale") },
+            { (int)BrushType::RoundBrush, QT_TR_NOOP("Round brush") },
+            { (int)BrushType::Cutter, QT_TR_NOOP("Cutter") },
+            { (int)BrushType::Scissors, QT_TR_NOOP("Scissors") }
         };
 
         static inline QHash<int, QString> _BTicons {
@@ -41,12 +41,10 @@ class BrushToolEditor : public AtomSubEditor {
             for(auto i = _strBT.constBegin(); i != _strBT.constEnd(); i++) {
 
                 auto tool = i.key();
+                auto translatedName = tr(i.value().toStdString().c_str());
+                auto associatedIcon = QIcon(_BTicons[tool]);
 
-                this->_combo->addItem(
-                    QIcon(_BTicons[tool]),
-                    i.value(),
-                    tool
-                );
+                this->_combo->addItem(associatedIcon, translatedName, tool);
 
             }
 

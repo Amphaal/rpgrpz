@@ -124,7 +124,7 @@ class RPZAtom : public Ownable {
             { AtomParameter::AssetName, "" },
             { AtomParameter::Scale, 1.0 },
             { AtomParameter::Rotation, 0.0 },
-            { AtomParameter::Text, "Saisir du texte" },
+            { AtomParameter::Text, QObject::tr("Type some text") },
             { AtomParameter::TextSize, 10 },
             { AtomParameter::Layer, 0 },
             { AtomParameter::Position, QVariant() },

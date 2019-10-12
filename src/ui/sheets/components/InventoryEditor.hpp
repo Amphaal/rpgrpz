@@ -6,7 +6,9 @@ class InventoryEditor : public QWidget {
     public:
         InventoryEditor() : _inventoryNameEdit(new QLineEdit), _inventory(new InventorySheet) {
             
-            this->_inventoryNameEdit->setPlaceholderText(" Description / emplacement de l'inventaire (Equipé, Mon sac, Coffre...) ");
+            this->_inventoryNameEdit->setPlaceholderText(
+                tr(" Description / location of the inventory (Equiped, My bag, Chest...) ")
+            );
             this->_inventoryNameEdit->setContentsMargins(10, 10, 10, 10);
             
             auto l = new QVBoxLayout;

@@ -113,9 +113,9 @@ bool MessageInterpreter::isSendable(const QString &textToSend) {
 
 QString MessageInterpreter::help()  {
     QString help;
-    help += QString("Serveur ") + QString(APP_FULL_DENOM) + " :\n";
-    help += "- Pour chuchotter : @{nom}. Vous pouvez chuchotter à plusieurs personne pour 1 message.\n";
-    help += "- Pour lancer des dés : {nombreDeLancers}D{faceDuDé}. Exemple : 1d5, 2D20, 3D16. Plusieurs lancers en une seule fois est possible !";
+    help += QObject::tr("Server %1 :\n").arg(APP_FULL_DENOM);
+    help += QObject::tr("- To whisper : @{toWhisperTo}.\n");
+    help += QObject::tr("- To throw dices : {numberOfThrows}D{diceFace}. Exemple : 1d5, 2D20, 3D16.");
     return help;
 }
 

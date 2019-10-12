@@ -18,8 +18,8 @@ RPZStatusBar::RPZStatusBar(QWidget * parent) : QStatusBar(parent) {
 void RPZStatusBar::_installComponents() {
 
     //ext ip
-    this->_extIpLabel = new RPZStatusLabel("IP externe");
-    this->_extIpLabel->setToolTip("Copier l'IP");
+    this->_extIpLabel = new RPZStatusLabel(tr("External IP"));
+    this->_extIpLabel->setToolTip(tr("Copy IP"));
     QObject::connect(
         this->_extIpLabel->dataLabel(), &QLabel::linkActivated, 
         [](const QString &link) {
@@ -30,14 +30,14 @@ void RPZStatusBar::_installComponents() {
             QApplication::clipboard()->setText(s);
 
             //show tooltip
-            QToolTip::showText(QCursor::pos(), "IP copiée !");
+            QToolTip::showText(QCursor::pos(), tr("IP copied !"));
         }
     );
 
-    this->_mapFileLabel = new RPZStatusLabel("Carte");
+    this->_mapFileLabel = new RPZStatusLabel(tr("Map"));
     this->_upnpStateLabel = new RPZStatusLabel("uPnP");
     
-    this->_serverStateLabel = new RPZStatusLabel("Serveur");
+    this->_serverStateLabel = new RPZStatusLabel(tr("Server"));
     this->_dlStatus = new DownloadStatus;
     this->_activityIndicators = new ClientActivityIndicator;
 };

@@ -187,16 +187,16 @@ class AssetsDatabaseElement {
         };
 
         static const inline QHash<AssetsDatabaseElement::Type, QString> _typeDescriptions = {
-            { InternalContainer, "Interne" },
-            { Player, "Joueur" },
-            { Event, "Evenement" },
-            { FreeDraw, "Dessin" },
-            { Text, "Texte" },
-            { NPC_Container, "PNJ / Portraits" },
-            { ObjectContainer, "Objets" },
-            { FloorBrushContainer, "Terrains" },
-            { DownloadedContainer, "Téléchargés" },
-            { BackgroundContainer, "Paysages" }
+            { InternalContainer, QObject::tr("Internal") },
+            { Player, QObject::tr("Player") },
+            { Event, QObject::tr("Event") },
+            { FreeDraw, QObject::tr("Drawing") },
+            { Text, QObject::tr("Text") },
+            { NPC_Container, QObject::tr("NPC / Portraits") },
+            { ObjectContainer, QObject::tr("Objects") },
+            { FloorBrushContainer, QObject::tr("Brush") },
+            { DownloadedContainer, QObject::tr("Downloaded") },
+            { BackgroundContainer, QObject::tr("Landscapes") }
         };
 
 };

@@ -27,15 +27,15 @@ QString RPZAtom::descriptor() const {
 QString RPZAtom::_defaultDescriptor() const {
     switch(this->type()) {
         case AtomType::Drawing:
-            return "Dessin";
+            return QObject::tr("Drawing");
         case AtomType::Text:
-            return "Texte";
+            return QObject::tr("Text");
         case AtomType::Object:
-            return "Objet";
+            return QObject::tr("Object");
         case AtomType::Brush:
-            return "Brosse";
+            return QObject::tr("Brush");
         default:
-            return "Atome";
+            return QObject::tr("Atom");
     }
 }
 

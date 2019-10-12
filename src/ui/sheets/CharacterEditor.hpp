@@ -40,7 +40,7 @@ class CharacterEditor : public QWidget, public ClientBindable {
                 );
 
             //save character
-            this->_saveCharacterBtn->setToolTip("Sauvegarder la fiche");
+            this->_saveCharacterBtn->setToolTip(tr("Save character sheet"));
             this->_saveCharacterBtn->setIcon(QIcon(":/icons/app/other/save.png"));
             this->_saveCharacterBtn->setVisible(false);
             
@@ -279,7 +279,7 @@ class CharacterEditor : public QWidget, public ClientBindable {
             this->_mode = mode;
 
             //update grpBox label
-            auto title = mode == CharacterPicker::Mode::Local ? "Mes personnages " : "Personnages du serveur";
+            auto title = mode == CharacterPicker::Mode::Local ? tr("My characters") : tr("Hosted characters");
             this->_characterPickerGrpBox->setTitle(title);
 
             switch(mode) {

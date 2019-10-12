@@ -26,10 +26,10 @@ class StatusTab : public QWidget {
                 this->_levelSpin = new QSpinBox;
                 this->_levelSpin->setMinimum(-1);
                 this->_levelSpin->setValue(-1);
-                stateTabLayout->addLayout(_addRow("Niveau", this->_levelSpin));
+                stateTabLayout->addLayout(_addRow(tr("Level"), this->_levelSpin));
 
                 //alterations
-                auto alterations = new QGroupBox("Altérations");
+                auto alterations = new QGroupBox(tr("Alterations"));
                 auto alterationsLayout = new QFormLayout;
                 alterations->setLayout(alterationsLayout);
                 alterations->setAlignment(Qt::AlignCenter);
@@ -37,16 +37,16 @@ class StatusTab : public QWidget {
 
                     //character bonus status
                     this->_statusBonusEdit = new QLineEdit;
-                    this->_statusBonusEdit->setPlaceholderText(" Sous l'effet d'une potion, Rempli de détermination ...");
-                    alterationsLayout->addRow("Bonus d'état :", this->_statusBonusEdit);
+                    this->_statusBonusEdit->setPlaceholderText(tr(" Under the influence of a potion, filled with determination ..."));
+                    alterationsLayout->addRow(tr("State bonus :"), this->_statusBonusEdit);
 
                     //character malus status
                     this->_statusMalusEdit = new QLineEdit;
-                    this->_statusMalusEdit->setPlaceholderText(" Jambe cassée, empoisonné...");
-                    alterationsLayout->addRow("Malus d'état :", this->_statusMalusEdit);
+                    this->_statusMalusEdit->setPlaceholderText(tr(" Broken leg, poisoned ..."));
+                    alterationsLayout->addRow(tr("State malus :"), this->_statusMalusEdit);
 
                 //bars
-                auto bars = new QGroupBox("Jauges");
+                auto bars = new QGroupBox(tr("Gauges"));
                 bars->setAlignment(Qt::AlignCenter);
                 stateTabLayout->addWidget(bars);
                 auto barsLayout = new QVBoxLayout;
@@ -61,14 +61,14 @@ class StatusTab : public QWidget {
                     //add bar button
                     this->_addBarBtn = new QPushButton;
                     this->_addBarBtn->setIcon(QIcon(":/icons/app/other/add.png"));
-                    this->_addBarBtn->setToolTip("Ajouter une nouvelle jauge");
+                    this->_addBarBtn->setToolTip(tr("Add a new gauge"));
                     QObject::connect(
                         this->_addBarBtn, &QPushButton::pressed,
                         this, &StatusTab::_createGaugeEditorBtnPressed
                     );
 
                     //descr
-                    this->_insertGaugeInv = new QLabel("Aucune jauge liée au personnage");
+                    this->_insertGaugeInv = new QLabel(tr("No gauge bound to the character"));
                     this->_insertGaugeInv->setEnabled(false);
 
                     //helper
@@ -78,7 +78,7 @@ class StatusTab : public QWidget {
                     barsLayout->addLayout(helperBarLayout);
                 
                 //abilities
-                auto abilitiesGrp = new QGroupBox("Compétences");
+                auto abilitiesGrp = new QGroupBox(tr("Abilities"));
                 abilitiesGrp->setAlignment(Qt::AlignCenter);
                 this->_abilitiesSheet = new AbilitiesSheet;
                 abilitiesGrp->setLayout(new QVBoxLayout);

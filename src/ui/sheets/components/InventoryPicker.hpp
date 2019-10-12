@@ -25,7 +25,7 @@ class InventoryPicker : public QWidget {
             
             //add new inventory
             this->_newInventoryBtn->setIcon(QIcon(":/icons/app/other/add.png"));
-            this->_newInventoryBtn->setToolTip("Créer un nouvel inventaire");
+            this->_newInventoryBtn->setToolTip(tr("Create new inventory"));
             this->_newInventoryBtn->setMaximumWidth(25);
             QObject::connect(
                 this->_newInventoryBtn, &QPushButton::pressed,
@@ -33,7 +33,7 @@ class InventoryPicker : public QWidget {
             );
 
             //delete inventory
-            this->_deleteInventoryBtn->setToolTip("Supprimer l'inventaire");
+            this->_deleteInventoryBtn->setToolTip(tr("Delete inventory"));
             this->_deleteInventoryBtn->setMaximumWidth(25);
             this->_deleteInventoryBtn->setIcon(QIcon(":/icons/app/other/remove.png"));
             this->_deleteInventoryBtn->setEnabled(false);
@@ -126,8 +126,8 @@ class InventoryPicker : public QWidget {
 
             auto result = QMessageBox::warning(
                 this, 
-                "Suppression d'inventaire", 
-                "Voulez-vous vraiment supprimer cet inventaire ?",
+                tr("Inventory deletion"), 
+                tr("Do you really want to delete this inventory ?"),
                 QMessageBox::Yes|QMessageBox::No, 
                 QMessageBox::No
             );
@@ -186,7 +186,10 @@ class InventoryPicker : public QWidget {
             
             //if no inventory in DB
             if(this->_inventories.isEmpty()) {
-                this->_inventoryListCombo->addItem(this->_readOnly ? "Aucun inventaire existant" : "Aucun inventaire existant, créez en un !");
+                this->_inventoryListCombo->addItem(this->_readOnly ? 
+                    tr("No existing inventory") : 
+                    tr("No existing inventory, create some !")
+                );
                 this->_inventoryListCombo->setEnabled(false);
                 return;
             }

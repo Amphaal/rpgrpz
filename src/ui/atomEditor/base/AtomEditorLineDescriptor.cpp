@@ -1,12 +1,12 @@
 #include "AtomEditorLineDescriptor.h"
 
 AtomEditorLineDescriptor::AtomEditorLineDescriptor(const AtomParameter &paramType) : AtomEditorLineDescriptor(
-    _ParamDescr[paramType], 
+    _paramDescr[paramType], 
     _valSuffix[paramType], 
     _icons[paramType]
 ) { }
 
-AtomEditorLineDescriptor::AtomEditorLineDescriptor(const QString &description, const QString &suffix, const QString &iconPath) : 
+AtomEditorLineDescriptor::AtomEditorLineDescriptor(const QString &untranslatedDescription, const QString &suffix, const QString &iconPath) : 
     _suffix(suffix),
     _valLbl(new QLabel) {
     
@@ -24,7 +24,7 @@ AtomEditorLineDescriptor::AtomEditorLineDescriptor(const QString &description, c
     }
 
     //description
-    auto descrLbl = new QLabel(description);
+    auto descrLbl = new QLabel(tr(untranslatedDescription.toStdString().c_str()));
     hLayout->addWidget(descrLbl);
    
     hLayout->addStretch(0);
@@ -37,5 +37,7 @@ void AtomEditorLineDescriptor::updateValue(double value) {
 }
 
 void AtomEditorLineDescriptor::cannotDisplayValue() {
-    this->_valLbl->setText("val. mult.");
+    this->_valLbl->setText(
+        tr("mult. val.")
+    );
 }

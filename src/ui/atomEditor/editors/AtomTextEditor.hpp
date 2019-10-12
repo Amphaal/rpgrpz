@@ -12,7 +12,8 @@ class AtomTextEditor : public AtomSubEditor  {
             return (QTextEdit*)this->_dataEditor;
         }
 
-        AtomTextEditor(const AtomParameter &parameter) : AtomSubEditor(parameter), _validateButton(new QPushButton("Valider la modification")) {
+        AtomTextEditor(const AtomParameter &parameter) : AtomSubEditor(parameter), 
+            _validateButton(new QPushButton(tr("Confirm modification"))) {
             
             this->_setAsDataEditor(new QTextEdit(this));
 

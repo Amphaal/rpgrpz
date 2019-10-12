@@ -34,7 +34,7 @@ class LoreTab : public QWidget {
                     pLayout->addWidget(this->_imgLbl, 0, Qt::AlignCenter);
 
                     //portrait change button
-                    this->_changePortraitBtn = new QPushButton("Changer le portrait");
+                    this->_changePortraitBtn = new QPushButton(tr("Change portrait"));
                     pLayout->addWidget(this->_changePortraitBtn, 0, Qt::AlignCenter);
                     QObject::connect(
                         this->_changePortraitBtn, &QPushButton::pressed,
@@ -43,23 +43,23 @@ class LoreTab : public QWidget {
 
                 //character name
                 this->_sheetNameEdit = new QLineEdit;
-                this->_sheetNameEdit->setPlaceholderText(" Nom usuel du personnage [Requis!]");
-                characterTabLayout->addLayout(_addRow("Nom du personnage :", this->_sheetNameEdit));
+                this->_sheetNameEdit->setPlaceholderText(tr(" Usual character name [Required!]"));
+                characterTabLayout->addLayout(_addRow(tr("Character name :"), this->_sheetNameEdit));
 
                 //archtype
                 this->_archtypeEdit = new QLineEdit;
-                this->_archtypeEdit->setPlaceholderText(" Courte et grossière caractérisation du personnage (Paladin Loyal Bon, Chasseur de Prime...)");
-                characterTabLayout->addLayout(_addRow("Archétype :", this->_archtypeEdit));
+                this->_archtypeEdit->setPlaceholderText(tr(" Short and gross characterization (Paladin Loyal Good, Bounty hunter...)"));
+                characterTabLayout->addLayout(_addRow(tr("Archtype :"), this->_archtypeEdit));
 
                 //character description
                 this->_descriptionEdit = new QTextEdit;
-                this->_descriptionEdit->setPlaceholderText("Description physique, psychologique, contextuelle...");
-                characterTabLayout->addLayout(_addRow("Description :", this->_descriptionEdit));
+                this->_descriptionEdit->setPlaceholderText(tr("Physical, psycological, environnemental description..."));
+                characterTabLayout->addLayout(_addRow(tr("Description :"), this->_descriptionEdit));
 
                 //character story
                 this->_storyEdit = new QTextEdit;
-                this->_storyEdit->setPlaceholderText("Evolution du personnage au cours de ses aventures...");
-                characterTabLayout->addLayout(_addRow("Histoire :", this->_storyEdit), 1);
+                this->_storyEdit->setPlaceholderText(tr("Evolution of the character during his adventures..."));
+                characterTabLayout->addLayout(_addRow(tr("Chronicles :"), this->_storyEdit), 1);
 
         }
     
@@ -133,7 +133,12 @@ class LoreTab : public QWidget {
         void _changePortrait() {
             
             //get new portrait filepath
-            QFileDialog portraitPicker(this, "Changer de portrait", AppContext::getAssetsFolderLocation(), "Images (*.png *.jpg *.jpeg)");
+            QFileDialog portraitPicker(
+                this, 
+                tr("Change portrait"), 
+                AppContext::getAssetsFolderLocation(), 
+                tr("Images (*.png *.jpg *.jpeg)")
+            );
             portraitPicker.setFileMode(QFileDialog::FileMode::ExistingFile);
             portraitPicker.setAcceptMode(QFileDialog::AcceptOpen);
             if(!portraitPicker.exec()) return;

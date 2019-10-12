@@ -40,9 +40,9 @@ class AtomEditor : public QGroupBox, public AlterationActor {
 
     private:
         static inline QHash<EditMode, QString> _strEM {
-            { None, "Rien à modifier" },
-            { Template, "Modification de modèle" },
-            { Selection, "Modification de selection" }
+            { None, QObject::tr("Nothing to modify") },
+            { Template, QObject::tr("Template modification") },
+            { Selection, QObject::tr("Selection modification") }
         };
 
         AtomsSelectionDescriptor _currentSelectionDescr;

@@ -16,8 +16,16 @@ class AbilitiesSheet : public QTableWidget {
     public:
         AbilitiesSheet() : QTableWidget(0, 4) {
             
-            this->_addRowAction = new QAction(QIcon(":/icons/app/other/add.png"), "Ajouter une nouvelle compétence"); 
-            this->_removeRowAction = new QAction(QIcon(":/icons/app/tools/bin.png"), "Supprimer les compétences selectionnées");
+            this->_addRowAction = new QAction(
+                QIcon(":/icons/app/other/add.png"), 
+                tr("Add a new ability")
+            ); 
+
+            this->_removeRowAction = new QAction(
+                QIcon(":/icons/app/tools/bin.png"), 
+                tr("Remove selected abilities")
+            );
+
             QObject::connect(
                 this->_addRowAction, &QAction::triggered,
                 [=]() {this->_addRow();}
@@ -34,7 +42,12 @@ class AbilitiesSheet : public QTableWidget {
             
             this->verticalHeader()->hide();
             
-            this->setHorizontalHeaderLabels({ "Nom", "Catégorie", "Favoris", "Description" });
+            this->setHorizontalHeaderLabels({ 
+                tr("Name"), 
+                tr("Category"), 
+                tr("Favorite"), 
+                tr("Description") 
+            });
 
             this->horizontalHeader()->setStretchLastSection(false);
             this->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeMode::Interactive);
@@ -143,8 +156,8 @@ class AbilitiesSheet : public QTableWidget {
             //ask for validation
             auto result = QMessageBox::warning(
                 this, 
-                "Suppression de(s) compétence(s)", 
-                "Voulez-vous vraiment supprimer ce(s) compétence(s) ?", 
+                tr("Deletion of abilities"), 
+                tr("Do you really want to delete those abilities ?"), 
                 QMessageBox::Yes|QMessageBox::No, 
                 QMessageBox::No
             );

@@ -18,18 +18,18 @@ ConnectWidget::ConnectWidget(MapHint* hintToControlStateOf, QWidget *parent) : Q
 
     //name target
     this->_nameTarget->addAction(QIcon(":/icons/app/connectivity/user.png"), QLineEdit::LeadingPosition);
-    this->_nameTarget->setPlaceholderText("Nom de joueur");
-    this->_nameTarget->setToolTip("Nom de joueur");
+    this->_nameTarget->setPlaceholderText(tr("Player name"));
+    this->_nameTarget->setToolTip(this->_nameTarget->placeholderText());
     this->_nameTarget->setText(AppContext::settings()->value("name", "").toString());
 
     //domain target
     this->_domainTarget->addAction(QIcon(":/icons/app/connectivity/server.png"), QLineEdit::LeadingPosition);
-    this->_domainTarget->setPlaceholderText("IP ou domaine du serveur");
-    this->_domainTarget->setPlaceholderText("IP ou domaine du serveur");
+    this->_domainTarget->setPlaceholderText("IP or server hostname");
+    this->_domainTarget->setPlaceholderText(this->_domainTarget->placeholderText());
     this->_domainTarget->setText(AppContext::settings()->value("domain", "localhost").toString());
 
     //character sheet target
-    this->_characterSheetTarget->setToolTip("Personnage à incarner");
+    this->_characterSheetTarget->setToolTip("Character to embody");
     this->_fillCharacterSheetCombo();
        
         //define preferences
@@ -177,7 +177,7 @@ void ConnectWidget::_onRPZClientStatus(const QString &statusMsg, bool isError) {
 
     if(this->_state == State::Connecting) {
         QMessageBox::information(this, 
-            QString("Erreur lors de la connexion"), 
+            tr("Error while connecting to server"), 
             statusMsg, 
             QMessageBox::Ok, QMessageBox::Ok);
     }
@@ -203,13 +203,13 @@ void ConnectWidget::_changeState(ConnectWidget::State newState) {
     QString btnText; 
     switch(newState) {
         case ConnectWidget::State::NotConnected:
-            btnText = "Se connecter";
+            btnText = tr("Connect");
             break;
         case ConnectWidget::State::Connecting:
-            btnText = QString("Annuler (Connexion à %1...)").arg(this->_domainTarget->text());
+            btnText = tr("Cancel (Connecting to %1...)").arg(this->_domainTarget->text());
             break;
         case ConnectWidget::State::Connected:
-            btnText = QString("Se déconnecter de [%1]").arg(this->_domainTarget->text());
+            btnText = tr("Disconnect from [%1]").arg(this->_domainTarget->text());
             break;
     }
     this->_connectBtn->setText(btnText);
@@ -260,7 +260,7 @@ void ConnectWidget::_fillCharacterSheetCombo() {
     }
 
     //default selection
-    this->_characterSheetTarget->insertItem(0, " Se connecter sans personnage", 0);
+    this->_characterSheetTarget->insertItem(0, tr(" Log in without a character"), 0);
     if(previouslySelectedCharacterId == 0) {
         this->_characterSheetTarget->setCurrentIndex(0);
     }

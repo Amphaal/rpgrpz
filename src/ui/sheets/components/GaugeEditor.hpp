@@ -25,29 +25,29 @@ class GaugeEditor : public QWidget {
             _visibleOnPortraitChk(new QCheckBox) {
                 
                 //bar name 
-                this->_barNameEdit->setPlaceholderText(" Nom de la jauge");
+                this->_barNameEdit->setPlaceholderText(tr(" Gauge name"));
                 this->_barNameEdit->setText(gauge.name());
                 this->_barNameEdit->setMinimumWidth(80);
 
                 //visible on portrait
-                this->_visibleOnPortraitChk->setText("Fav.");
-                this->_visibleOnPortraitChk->setToolTip("Visible sous le portrait ?");
+                this->_visibleOnPortraitChk->setText(tr("Fav."));
+                this->_visibleOnPortraitChk->setToolTip(tr("Visible under portrait ?"));
                 this->_visibleOnPortraitChk->setChecked(gauge.isVisibleUnderPortrait());
                 
                 //minimum
-                this->_minBarValSpin->setToolTip("Minimum de la jauge");
+                this->_minBarValSpin->setToolTip(tr("Gauge minimum"));
                 this->_minBarValSpin->setMinimum(-9999);
                 this->_minBarValSpin->setValue(gauge.minGaugeValue());
                 QObject::connect(this->_minBarValSpin, qOverload<int>(&QSpinBox::valueChanged), this, &GaugeEditor::_applyMinMaxLimitsOnSpinBoxes);
 
                 //maximum
-                this->_maxBarValSpin->setToolTip("Maximum de la jauge");
+                this->_maxBarValSpin->setToolTip(tr("Gauge maximum"));
                 this->_maxBarValSpin->setMaximum(9999);
                 this->_maxBarValSpin->setValue(gauge.maxGaugeValue());
                 QObject::connect(this->_maxBarValSpin, qOverload<int>(&QSpinBox::valueChanged), this, &GaugeEditor::_applyMinMaxLimitsOnSpinBoxes);
 
                 //current
-                this->_currentValSpin->setToolTip("Valeur de la jauge");
+                this->_currentValSpin->setToolTip(tr("Gauge value"));
                 this->_currentValSpin->setValue(gauge.gaugeValue());
                 QObject::connect(this->_currentValSpin, qOverload<int>(&QSpinBox::valueChanged), this, &GaugeEditor::_applyMinMaxLimitsOnSpinBoxes);
 
@@ -64,7 +64,7 @@ class GaugeEditor : public QWidget {
                 //remove bar button
                 auto removeBarBtn = new QPushButton;
                 removeBarBtn->setIcon(QIcon(":/icons/app/other/remove.png"));
-                removeBarBtn->setToolTip("Supprimer la jauge");
+                removeBarBtn->setToolTip(tr("Delete gauge"));
                 QObject::connect(
                     removeBarBtn, &QPushButton::pressed,
                     this, &GaugeEditor::_onDeleteButonPressed
@@ -130,7 +130,7 @@ class GaugeEditor : public QWidget {
             auto selectedColor = QColorDialog::getColor(
                 this->_currentColor,
                 this,
-                "Couleur de la jauge"
+                tr("Gauge color")
             );
             if(!selectedColor.isValid()) return;
 
@@ -142,8 +142,8 @@ class GaugeEditor : public QWidget {
 
             auto result = QMessageBox::warning(
                 this, 
-                "Suppression de jauge", 
-                "Voulez-vous vraiment supprimer cette jauge ?",
+                tr("Gauge deletion"), 
+                tr("Do you really want to delete this gauge ?"),
                 QMessageBox::Yes|QMessageBox::No, 
                 QMessageBox::No
             );

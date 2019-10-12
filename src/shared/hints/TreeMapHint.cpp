@@ -239,7 +239,7 @@ void TreeMapHint::_mayCreateLayerItem(int layer) {
     layerElem = new LayerTreeItem();
     layerElem->setTextAlignment(1, Qt::AlignRight);
     layerElem->setTextAlignment(2, Qt::AlignRight);
-    layerElem->setText(0, "Calque " + QString::number(layer));
+    layerElem->setText(0, tr("Layer %1").arg(layer));
     layerElem->setData(0, RPZUserRoles::AtomLayer, layer);
     layerElem->setIcon(0, *this->_layerIcon);
     layerElem->setFlags(

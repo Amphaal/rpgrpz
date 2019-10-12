@@ -1,6 +1,6 @@
 #include "AudioProbeController.h"
 
-AudioProbeController::AudioProbeController(QWidget * parent) : QGroupBox("Musique actuellement jouée", parent), 
+AudioProbeController::AudioProbeController(QWidget * parent) : QGroupBox(tr("Playing now"), parent), 
     _descr(new QLabel),
     _playIconLbl(new QLabel),
     _playIcon(new QMovie(":/icons/app/audio/musicPlaying.gif")),
@@ -44,7 +44,7 @@ void AudioProbeController::updatePlayedMusic(const QString &musicName) {
     auto musicIsPlaying = !musicName.isNull();
     
     if(!musicIsPlaying) {
-        this->_descr->setText("Pas de musique jouée");
+        this->_descr->setText(tr("Nothing playing"));
         this->_playIcon->stop();
     }
     else {

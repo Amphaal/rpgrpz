@@ -209,7 +209,7 @@ void AssetsTreeView::_generateStaticContainerMoveActions() {
         auto targetIndex = this->_model->getStaticContainerTypesIndex(toCreate);
         auto icon = this->_model->data(targetIndex, Qt::DecorationRole).value<QIcon>();
         auto name = this->_model->data(targetIndex, Qt::DisplayRole).toString();
-        auto action = new QAction(icon, QString("<< Déplacer vers \"%1\"").arg(name));
+        auto action = new QAction(icon, tr("<< Move to \"%1\"").arg(name));
         
         QObject::connect(
             action, &QAction::triggered,
@@ -325,8 +325,8 @@ void AssetsTreeView::_onRowInsert(const QModelIndex &parent, int first, int last
 
 void AssetsTreeView::_requestDeletion(const QModelIndexList &itemsIndexesToDelete) {
 
-    QString title = "Suppression des éléments de la boîte à jouets";
-    QString content = "Voulez-vous vraiment supprimer les " + QString::number(itemsIndexesToDelete.count()) + " éléments selectionnés ?";
+    QString title = tr("Delete elements in toy box");
+    QString content = tr("Do you confirm deletion of the %1 selected elements ?").arg(itemsIndexesToDelete.count());
 
     auto userResponse = QMessageBox::warning(this, title, content, QMessageBox::Yes|QMessageBox::No, QMessageBox::No);
     if(userResponse == QMessageBox::Yes) {

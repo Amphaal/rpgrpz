@@ -30,7 +30,7 @@ class YoutubePlaylistItemInsertor : public QWidget {
             auto match = this->_ytUrlMatcher->match(url);
             auto ss = match.isValid();
             if(!match.hasMatch()) {
-                QToolTip::showText(this->_ytUrlEdit->mapToGlobal(QPoint()), "Lien Youtube incorrect!");
+                QToolTip::showText(this->_ytUrlEdit->mapToGlobal(QPoint()), tr("Invalid Youtube URL !"));
                 return;
             }
 
@@ -45,15 +45,15 @@ class YoutubePlaylistItemInsertor : public QWidget {
             
             this->setLayout(new QHBoxLayout);
 
-            this->_ytUrlEdit->setPlaceholderText("Coller ici un lien de video Youtube...");
-            this->_ytUrlEdit->setToolTip("Coller ici un lien de video Youtube...");
+            this->_ytUrlEdit->setPlaceholderText(tr("Paste here a Youtube URL..."));
+            this->_ytUrlEdit->setToolTip(this->_ytUrlEdit->placeholderText());
             QObject::connect(
                 this->_ytUrlEdit, &QLineEdit::returnPressed, 
                 this, &YoutubePlaylistItemInsertor::_handleLinkInsertionAttempt
             );
 
             this->_insertLinkBtn->setIcon(QIcon(":/icons/app/other/add.png"));
-            this->_insertLinkBtn->setToolTip("Cliquer pour ajouter un lien à la liste de lecture");
+            this->_insertLinkBtn->setToolTip(tr("Click to add to playlist"));
 
             QObject::connect(
                 this->_insertLinkBtn, &QPushButton::clicked,

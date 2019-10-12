@@ -137,7 +137,7 @@ void Playlist::addYoutubeVideo(const QString &url) {
 
     //handle duplicates
     if(this->_playlistVideoIds.contains(videoId)) {
-        QToolTip::showText(this->mapToGlobal(QPoint()), "Ce lien Youtube a déjà été inclu !");
+        QToolTip::showText(this->mapToGlobal(QPoint()), tr("This Youtube video is already in playlist !"));
         delete data;
         return;
     }
@@ -179,7 +179,7 @@ void Playlist::addYoutubeVideo(const QString &url) {
         data, &YoutubeVideoMetadata::metadataFetching,
         [=]() {  
             playlistItem->setIcon(*this->_ytIconGrey);
-            playlistItem->setText(pos + "(Chargement des métadonnées...) " + data->url()); 
+            playlistItem->setText(pos + tr("(Loading metadata...) ") + data->url()); 
         }
     );
 
@@ -189,7 +189,7 @@ void Playlist::addYoutubeVideo(const QString &url) {
             //add delay for user ack
             QTimer::singleShot(100, [=]() {
                 playlistItem->setIcon(*this->_ytIconErr);
-                playlistItem->setText(pos + "(Erreur) " + data->url()); 
+                playlistItem->setText(pos + tr("(Error) ") + data->url()); 
             });  
         }
     );

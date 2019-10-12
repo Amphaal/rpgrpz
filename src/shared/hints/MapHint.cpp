@@ -37,7 +37,7 @@ void MapHint::mayWantToSavePendingState(QWidget* parent, MapHint* hint) {
     auto result = QMessageBox::warning(
         parent, 
         hint->RPZMapFilePath(), 
-        "Voulez-vous sauvegarder les modifications effectuées sur la carte ?", 
+        tr("Do you want to save changes done to this map ?"), 
         QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes
     );
 

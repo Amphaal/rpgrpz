@@ -205,7 +205,7 @@ void AtomEditor::_updateEditMode() {
     switch(this->_currentEditMode) {
         
         case EditMode::Selection:
-            title += QString(" (%1 élement%2)").arg(selectedIdsCount).arg(selectedIdsCount > 1 ? "s" : "");
+            title += tr(" (%n element(s))", "", selectedIdsCount);
         break;
 
         case EditMode::Template:

@@ -41,7 +41,7 @@ class PlayersModel : public BaseUsersModel {
                 }
 
                 case Qt::ToolTipRole: {
-                    return QString("[%1] en tant que \"%2\"").arg(user.name()).arg(character.name());
+                    return tr("[%1] as \"%2\"").arg(user.name()).arg(character.name());
                 }
 
                 case Qt::UserRole: {

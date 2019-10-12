@@ -20,10 +20,23 @@ class InventorySheet : public QTableWidget {
     public:
         InventorySheet() : QTableWidget(0, 5) {
 
-            this->_addRowAction = new QAction(QIcon(":/icons/app/other/add.png"), "Ajouter un objet"); 
-            this->_removeRowAction = new QAction(QIcon(":/icons/app/tools/bin.png"), "Supprimer les objets selectionnées");
-            this->_moveItemsAction = new QAction(QIcon(":/icons/app/other/move.png"), "Déplacer vers...");
-            this->_splitItemAction = new QAction(QIcon(":/icons/app/other/split.png"), "Diviser vers...");
+            this->_addRowAction = new QAction(
+                QIcon(":/icons/app/other/add.png"), 
+                tr("Add item")
+            ); 
+            this->_removeRowAction = new QAction(
+                QIcon(":/icons/app/tools/bin.png"), 
+                tr("Delete selected items")
+            );
+            this->_moveItemsAction = new QAction(
+                QIcon(":/icons/app/other/move.png"), 
+                tr("Move to...")
+            );
+            this->_splitItemAction = new QAction(
+                QIcon(":/icons/app/other/split.png"), 
+                tr("Split to...")
+            );
+
             QObject::connect(
                 this->_addRowAction, &QAction::triggered,
                 [=]() {this->_addRow();}
@@ -48,8 +61,14 @@ class InventorySheet : public QTableWidget {
 
             this->verticalHeader()->hide();
 
-            this->setHorizontalHeaderLabels({ QString::fromUtf8("Nom*"), "Catégorie", "Nbr", "Pds", "Description",});
-            this->horizontalHeaderItem(0)->setToolTip("Requis!");
+            this->setHorizontalHeaderLabels({ 
+                tr("Name*"), 
+                tr("Category"), 
+                tr("Nbr"), 
+                tr("Wgt"), 
+                tr("Description")
+            });
+            this->horizontalHeaderItem(0)->setToolTip(tr("Required!"));
 
             this->horizontalHeader()->setStretchLastSection(false);
             this->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeMode::Interactive);
@@ -261,8 +280,8 @@ class InventorySheet : public QTableWidget {
                 //ask for validation
                 auto result = QMessageBox::warning(
                     this, 
-                    "Suppression de(s) objet(s)", 
-                    "Voulez-vous vraiment supprimer ce(s) objet(s) ?", 
+                    tr("Items deletion"), 
+                    tr("Do you really want to delete these items"), 
                     QMessageBox::Yes|QMessageBox::No, 
                     QMessageBox::No
                 );

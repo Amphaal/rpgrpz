@@ -17,7 +17,7 @@ class RPZCharacter : public Serializable {
 
         const QString toString() const {
             auto out = this->name();
-            if(out.isEmpty()) return "Nouveau Personnage [#" + this->idAsStr() + "]";
+            if(out.isEmpty()) return QObject::tr("New character [#%1]").arg(this->idAsStr());
 
             auto arch = this->archtype();
             if(!arch.isEmpty()) out += " [" + arch + "]";

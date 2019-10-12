@@ -25,7 +25,7 @@ QString RPZResponse::toString() const{
     switch(this->responseCode()) {
 
         case UnknownCommand: {
-            return "Le serveur n'a pas compris. Faites \"/h\" pour obtenir de l'aide !";
+            return QObject::tr("Server has not understood your command. Type \"/h\" for help.");
         }
 
         case ErrorRecipients: {
@@ -33,15 +33,15 @@ QString RPZResponse::toString() const{
             QList<QString> rcpts;
             for(auto &e : this->responseData().toList()) rcpts.append(e.toString());
 
-            return QString("Les utilisateurs cibles n'ont pas été trouvés : ") + rcpts.join(", ");
+            return QObject::tr("Target users could not be found : ") + rcpts.join(", ");
         }
 
         case ConnectedToServer: {
-            return QString("Connecté au serveur (") + this->responseData().toString() + ")";
+            return QObject::tr("Logged to the server (%1)").arg(this->responseData().toString());
         }
 
         case Error: {
-            return QString("Une erreur est survenue : ") + this->responseData().toString();
+            return QObject::tr("Error has occured : ") + this->responseData().toString();
         }
 
         default: {

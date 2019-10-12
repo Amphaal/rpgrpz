@@ -1,6 +1,6 @@
 #include "PlaylistController.h"
 
-PlaylistController::PlaylistController(QWidget * parent) : QGroupBox("Liste de lecture", parent), 
+PlaylistController::PlaylistController(QWidget * parent) : QGroupBox(tr("Playlist"), parent), 
     playlist(new Playlist(this)), 
     toolbar(new TrackToolbar(this)),
     linkInserter(new YoutubePlaylistItemInsertor(this)) {

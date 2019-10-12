@@ -60,7 +60,7 @@ void MainWindow::_barVisibilityToolTip() {
     //display it
     QToolTip::showText(
         pos, 
-        "Appuyez sur la touche ALT pour afficher le menu !",
+        tr("Press ALT key to display the menu !"),
         this,
         this->geometry(),
         3000
@@ -126,7 +126,7 @@ void MainWindow::_initConnectivity() {
     if(appArgs.contains("noServer")) {    
         this->_mustLaunchServer = false;
         qDebug() << "RPZServer : No server to start because the user said so.";
-        this->_sb->updateServerStateLabel("Non", SLState::SL_Finished);
+        this->_sb->updateServerStateLabel(tr("No"), SLState::SL_Finished);
     }
 
     ////////////////////////////
@@ -174,7 +174,7 @@ void MainWindow::_initConnectivity() {
             [&]() {
 
                 QMetaObject::invokeMethod(this->_sb, "updateServerStateLabel",
-                    Q_ARG(QString, "Erreur"), 
+                    Q_ARG(QString, tr("Error")), 
                     Q_ARG(SLState, SLState::SL_Error)
                 );
 
@@ -260,16 +260,16 @@ void MainWindow::_initUIApp() {
     
     //left tabs
     auto lTab = new QTabWidget(this);
-    lTab->addTab(this->_assetsManager, QIcon(":/icons/app/tabs/box.png"), "Boite à jouets");
-    lTab->addTab(this->_audioManager, QIcon(":/icons/app/tabs/playlist.png"), "Audio");
+    lTab->addTab(this->_assetsManager, QIcon(":/icons/app/tabs/box.png"), tr("Toy box"));
+    lTab->addTab(this->_audioManager, QIcon(":/icons/app/tabs/playlist.png"), tr("Audio"));
     auto charactersSheetTabIndex = 2;
-    lTab->insertTab(charactersSheetTabIndex, this->_characterEditor, QIcon(":/icons/app/tabs/scroll.png"), "Fiches");
+    lTab->insertTab(charactersSheetTabIndex, this->_characterEditor, QIcon(":/icons/app/tabs/scroll.png"), tr("Sheets"));
 
     //right tabs
     auto rTab = new QTabWidget(this);
     rTab->setLayoutDirection(Qt::LayoutDirection::RightToLeft);
-    rTab->addTab(this->_mlManager, QIcon(":/icons/app/tabs/list.png"), "Atomes de la carte");
-    rTab->addTab(this->_atomEditManager, QIcon(":/icons/app/tabs/config.png"), "Editeur d'atome");
+    rTab->addTab(this->_mlManager, QIcon(":/icons/app/tabs/list.png"), tr("Map Atoms"));
+    rTab->addTab(this->_atomEditManager, QIcon(":/icons/app/tabs/config.png"), tr("Atom Editor"));
     
     auto logLayout = new QVBoxLayout(this);
     logLayout->addWidget(this->_connectWidget); 
@@ -283,7 +283,7 @@ void MainWindow::_initUIApp() {
 
     auto CCw = new QWidget(this);
     CCw->setLayout(CCwLayout);
-    rTab->addTab(CCw, QIcon(":/icons/app/tabs/chat.png"), "Connexion / Chat");
+    rTab->addTab(CCw, QIcon(":/icons/app/tabs/chat.png"), tr("Connection / Chat"));
 
     //designer
     auto designer = new QWidget(this);
@@ -388,7 +388,7 @@ void MainWindow::_initUIStatusBar() {
 
 QMenu* MainWindow::_getMapMenu() {
 
-    auto mapMenuItem = new QMenu("Carte", this);
+    auto mapMenuItem = new QMenu(tr("Map"), this);
 
     //create map
     auto cmRPZmAction = RPZActions::createANewMap();
@@ -402,7 +402,7 @@ QMenu* MainWindow::_getMapMenu() {
             //dialog
             auto picked = QFileDialog::getSaveFileName(
                 this, 
-                "Créer une nouvelle carte", 
+                tr("Create a new map"), 
                 AppContext::getMapsFolderLocation(), 
                 tr("Game map (*%1)").arg(AppContext::RPZ_MAP_FILE_EXT)
             );
@@ -428,7 +428,7 @@ QMenu* MainWindow::_getMapMenu() {
             //dialog
             auto picked = QFileDialog::getOpenFileName(
                 this, 
-                "Ouvrir une carte", 
+                tr("Load a new map"), 
                 AppContext::getMapsFolderLocation(), 
                 tr("Game map (*%1)").arg(AppContext::RPZ_MAP_FILE_EXT)
             );
@@ -456,13 +456,15 @@ QMenu* MainWindow::_getMapMenu() {
         [=]() {
             auto picked = QFileDialog::getSaveFileName(
                 this,
-                "Enregistrer sous...",
+                tr("Save as..."),
                 this->_mapView->hints()->RPZMapFilePath(), 
                 tr("Game map (*%1)").arg(AppContext::RPZ_MAP_FILE_EXT)
             );
 
             if(!picked.isNull()) {
-                QMetaObject::invokeMethod(this->_mapView->hints(), "saveRPZMapAs", Q_ARG(QString, picked));
+                QMetaObject::invokeMethod(this->_mapView->hints(), "saveRPZMapAs", 
+                    Q_ARG(QString, picked)
+                );
             }
         }
     );
@@ -490,7 +492,7 @@ QMenu* MainWindow::_getMapMenu() {
 
 QMenu* MainWindow::_getToolsMenu() {
 
-    auto toolsMenuItem = new QMenu("Tools", this);
+    auto toolsMenuItem = new QMenu(tr("Tools"), this);
 
     //maintenance tool
     auto openMaintenanceToolAction = RPZActions::openMaintenanceTool();
@@ -545,7 +547,7 @@ QMenu* MainWindow::_getToolsMenu() {
 
 QMenu* MainWindow::_getHelpMenu() {
 
-    auto helpMenuItem = new QMenu("Help", this);
+    auto helpMenuItem = new QMenu(tr("Help"), this);
 
     //for checking the upgrades available
     this->cfugAction = RPZActions::checkUpdates();

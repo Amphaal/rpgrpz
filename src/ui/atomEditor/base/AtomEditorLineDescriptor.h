@@ -9,7 +9,7 @@
 
 class AtomEditorLineDescriptor : public QWidget {
     public:
-        AtomEditorLineDescriptor(const QString &description, const QString &suffix, const QString &iconPath = QString());
+        AtomEditorLineDescriptor(const QString &untranslatedDescription, const QString &suffix, const QString &iconPath = QString());
         AtomEditorLineDescriptor(const AtomParameter &paramType);
         void updateValue(double value);
         void cannotDisplayValue();
@@ -18,16 +18,16 @@ class AtomEditorLineDescriptor : public QWidget {
         QString _suffix;
         QLabel* _valLbl = nullptr;
 
-        static inline QHash<AtomParameter, QString> _ParamDescr = {
-            { AtomParameter::Rotation, "Rotation" },
-            { AtomParameter::Scale, "Taille de l'atome" },
-            { AtomParameter::AssetRotation, "Rotation la texture" },
-            { AtomParameter::AssetScale, "Taille de la texture" },
-            { AtomParameter::PenWidth, "Taille du pinceau" },
-            { AtomParameter::TextSize, "Taille du texte" },
-            { AtomParameter::BrushPenWidth, "Taille de la brosse" },
-            { AtomParameter::BrushStyle, "Outil de terrain" },
-            { AtomParameter::Text, "Texte" }
+        static inline QHash<AtomParameter, QString> _paramDescr = {
+            { AtomParameter::Rotation, QT_TR_NOOP("Rotation") },
+            { AtomParameter::Scale, QT_TR_NOOP("Atom size") },
+            { AtomParameter::AssetRotation, QT_TR_NOOP("Texture rotation") },
+            { AtomParameter::AssetScale, QT_TR_NOOP("Texture size") },
+            { AtomParameter::PenWidth, QT_TR_NOOP("Pen size") },
+            { AtomParameter::TextSize, QT_TR_NOOP("Text size") },
+            { AtomParameter::BrushPenWidth, QT_TR_NOOP("Brush width") },
+            { AtomParameter::BrushStyle, QT_TR_NOOP("Brush tool") },
+            { AtomParameter::Text, QT_TR_NOOP("Text") }
         };
 
         static inline QHash<AtomParameter, QString> _valSuffix = {

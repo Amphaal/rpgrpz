@@ -11,7 +11,7 @@ RPZStatusLabel::RPZStatusLabel(QString descriptor, QWidget* parent) : QWidget(pa
     this->layout()->addWidget(this->_dataLbl);
     
     //default state
-    this->updateState("<En attente...>", SL_Waiting);
+    this->updateState(tr("<Pending...>"), SL_Waiting);
 }
 
 void RPZStatusLabel::updateState(const QString &stateText, SLState state) {

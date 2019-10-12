@@ -13,7 +13,7 @@ class NoEditorMessageWidget : public QWidget {
             this->setLayout(layout);
 
             //description
-            auto descrLbl = new QLabel("Pas de modifications possibles !");
+            auto descrLbl = new QLabel(tr("No modifications are possible !"));
             descrLbl->setStyleSheet("font-weight: bold; color: red");
             layout->addWidget(descrLbl, 1, Qt::AlignHCenter);
         }
