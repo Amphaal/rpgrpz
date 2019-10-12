@@ -8,12 +8,20 @@ class GaugeWidget : public QProgressBar {
     public:
         GaugeWidget(const RPZGauge &gauge = RPZGauge()) {
 
+            auto max = gauge.maxGaugeValue();
+            auto val = gauge.gaugeValue();
+
             //bar
             this->setMinimum(gauge.minGaugeValue());
-            this->setMaximum(gauge.maxGaugeValue());
-            this->setValue(gauge.gaugeValue());
+            this->setMaximum(max);
+            this->setValue(val);
             this->setFormat("%v/%m ");
-            this->setToolTip(gauge.name());
+            this->setToolTip(
+                QString("%1 (%2/%3)")
+                    .arg(gauge.name())
+                    .arg(val)
+                    .arg(max)
+            );
             
             this->_applyColor(gauge.color());
 

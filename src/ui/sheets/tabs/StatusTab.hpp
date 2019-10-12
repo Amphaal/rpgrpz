@@ -125,6 +125,7 @@ class StatusTab : public QWidget {
                 toLoad.gauges(), 
                 isReadOnly
             );
+            this->_addBarBtn->setVisible(!isReadOnly); //insert gauge
 
             //abilities
             this->_abilitiesSheet->loadCharacter(
@@ -132,8 +133,6 @@ class StatusTab : public QWidget {
                 isReadOnly
             );
             
-            //insert gauge
-            this->_addBarBtn->setVisible(!isReadOnly);
         }
 
 

@@ -84,6 +84,8 @@ class InventoryPicker : public QWidget {
 
         void loadCharacter(const RPZCharacter &character, bool isReadOnly) {
             
+            this->_readOnly = isReadOnly;
+
             this->_loadInventories(character.inventories());
 
             this->_newInventoryBtn->setVisible(!isReadOnly);
@@ -101,6 +103,7 @@ class InventoryPicker : public QWidget {
         }
     
     private:
+        bool _readOnly = false;
         QIcon _icon = QIcon(":/icons/app/other/bag.png");
 
         QComboBox* _inventoryListCombo = nullptr;
@@ -113,7 +116,7 @@ class InventoryPicker : public QWidget {
         void _addButtonPressed() {
             this->_autoSave();
             this->_inventories.append(RPZInventory());
-            this->_loadInventories(this->_inventories);
+            this->_reloadInventories();
         }
 
         void _deleteButtonPressed() {
@@ -135,7 +138,7 @@ class InventoryPicker : public QWidget {
                 
                 this->_bufferedSelectedInventory = nullptr;
                 this->_bufferedSelectedIndex = -1;
-                this->_loadInventories(this->_inventories);
+                this->_reloadInventories();
 
             }
 
@@ -143,6 +146,7 @@ class InventoryPicker : public QWidget {
 
         bool _autoSave() {
             if(!this->_bufferedSelectedInventory) return false;
+            if(this->_readOnly) return false;
 
             emit requestSave(this->_bufferedSelectedInventory);
             
@@ -163,6 +167,10 @@ class InventoryPicker : public QWidget {
             emit selectionChanged(newInventory);
         }
         
+        void _reloadInventories() {
+            this->_loadInventories(this->_inventories);
+        }
+
         void _loadInventories(const QVector<RPZInventory> &inventories) {
             
             //clear
@@ -178,7 +186,7 @@ class InventoryPicker : public QWidget {
             
             //if no inventory in DB
             if(this->_inventories.isEmpty()) {
-                this->_inventoryListCombo->addItem("Aucun inventaire existant, créez en un !");
+                this->_inventoryListCombo->addItem(this->_readOnly ? "Aucun inventaire existant" : "Aucun inventaire existant, créez en un !");
                 this->_inventoryListCombo->setEnabled(false);
                 return;
             }

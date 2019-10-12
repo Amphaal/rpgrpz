@@ -89,6 +89,12 @@ class InventorySheet : public QTableWidget {
                 this->_addRow(slot);
             }
 
+            //prevent edition if readOnly
+            this->setEditTriggers(isReadOnly ? 
+                QAbstractItemView::NoEditTriggers : 
+                QAbstractItemView::EditTrigger::AllEditTriggers
+            );
+
         }
 
     protected:
@@ -110,9 +116,10 @@ class InventorySheet : public QTableWidget {
             bool splitable = singleSelection && this->_selectedSlots().first().second.howMany() > 1;
             bool targetsAvailable = this->_inventoryTargets.count();
             
-            this->_removeRowAction->setEnabled(selectedItemCount);
-            this->_moveItemsAction->setEnabled(selectedItemCount && targetsAvailable);
-            this->_splitItemAction->setEnabled(singleSelection && targetsAvailable && splitable);
+            this->_removeRowAction->setEnabled(!this->_readOnly && selectedItemCount);
+            this->_moveItemsAction->setEnabled(!this->_readOnly && selectedItemCount && targetsAvailable);
+            this->_splitItemAction->setEnabled(!this->_readOnly && singleSelection && targetsAvailable && splitable);
+            this->_addRowAction->setEnabled(!this->_readOnly);
             
             QMenu menu(this);
             auto pos = this->viewport()->mapToGlobal(
@@ -142,6 +149,8 @@ class InventorySheet : public QTableWidget {
 
         void _moveInventoryItem() {
             
+            if(this->_readOnly) return;
+
             //ask via dialog
             InventorySlotMoveModal modal(this->_self, this->_inventoryTargets, this->_selectedSlots());
             auto validated = modal.exec();
@@ -182,6 +191,8 @@ class InventorySheet : public QTableWidget {
         }
         
         void _splitInventoryItem() {
+            
+            if(this->_readOnly) return;
 
             auto toUpdate = this->_selectedSlots().first();
 
@@ -240,6 +251,8 @@ class InventorySheet : public QTableWidget {
         
         void _removeSelection(bool askUser = true) {
            
+            if(this->_readOnly) return;
+
             //check if selection is done
             auto selected = this->selectedIndexes();
             if(!selected.count()) return;

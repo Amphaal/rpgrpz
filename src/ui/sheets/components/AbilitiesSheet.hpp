@@ -75,16 +75,24 @@ class AbilitiesSheet : public QTableWidget {
         }   
 
         void loadCharacter(const RPZCharacter &toLoad, bool isReadOnly) {
-            
+
             this->_readOnly = isReadOnly;
 
+            //clear
             while(this->rowCount() != 0) {
                 this->removeRow(0);
             }
             
+            //fill
             for(auto &ability : toLoad.abilities()) {
                 this->_addRow(ability);
             }
+
+            //prevent edition if readOnly
+            this->setEditTriggers(isReadOnly ? 
+                QAbstractItemView::NoEditTriggers : 
+                QAbstractItemView::EditTrigger::AllEditTriggers
+            );
 
         }
 
@@ -102,8 +110,9 @@ class AbilitiesSheet : public QTableWidget {
 
         void contextMenuEvent(QContextMenuEvent *event) override {
             
-            this->_removeRowAction->setEnabled(this->selectedIndexes().count());
-            
+            this->_removeRowAction->setEnabled(!this->_readOnly && this->selectedIndexes().count());
+            this->_addRowAction->setEnabled(!this->_readOnly);
+
             QMenu menu(this);
             auto pos = this->viewport()->mapToGlobal(
                 event->pos()
@@ -124,7 +133,9 @@ class AbilitiesSheet : public QTableWidget {
         QAction* _removeRowAction = nullptr;
 
         void _removeSelection() {
-           
+            
+            if(this->_readOnly) return;
+
             //check if selection is done
             auto selected = this->selectedIndexes();
             if(!selected.count()) return;

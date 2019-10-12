@@ -80,23 +80,26 @@ class LoreTab : public QWidget {
 
         void loadCharacter(const RPZCharacter &toLoad, bool isReadOnly) {
             
+            //portrait
             this->_customPortrait = QPixmap();
             this->_customPortraitExt.clear();
-
             auto portrait = RPZCharacter::getPortrait(toLoad);
             this->_imgLbl->setPixmap(portrait);
-
             this->_changePortraitBtn->setVisible(!isReadOnly);
 
+            //name
             this->_sheetNameEdit->setText(toLoad.name());
             this->_sheetNameEdit->setReadOnly(isReadOnly);
 
+            //archtype
             this->_archtypeEdit->setText(toLoad.archtype());
             this->_archtypeEdit->setReadOnly(isReadOnly);
 
+            //descr
             this->_descriptionEdit->setPlainText(toLoad.description());
             this->_descriptionEdit->setReadOnly(isReadOnly);
 
+            //story
             this->_storyEdit->setPlainText(toLoad.story());
             this->_storyEdit->setReadOnly(isReadOnly);
 
