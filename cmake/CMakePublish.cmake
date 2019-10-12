@@ -89,7 +89,7 @@ SET(CPACK_IFW_VERBOSE ON)
         FORCED_INSTALLATION
         SCRIPT "src/_ifw/install.js"
         USER_INTERFACES "src/_ifw/install.ui"
-        TRANSLATIONS "${CMAKE_BINARY_DIR}/install_fr.qm"
+        TRANSLATIONS "${CMAKE_BINARY_DIR}/fr.qm"
         DESCRIPTION ${APP_DESCRIPTION}
     )
     cpack_ifw_add_repository(coreRepo URL "${APP_ROOT_URL}/RPGRPZ/packages/${APP_REMOTE_SERVER_PLATFORM_FOLDER}")

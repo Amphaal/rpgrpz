@@ -134,7 +134,7 @@ QAction* RPZActions::checkUpdates() {
 
 QAction* RPZActions::openInternalDataFolder() {
     return new QAction(
-        QObject::tr("Open Data Folder (%1)")
+        QObject::tr("Open application data folder (%1)")
             .arg(AppContext::getAppDataLocation())
     );
 }

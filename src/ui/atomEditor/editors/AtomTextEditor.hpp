@@ -6,8 +6,10 @@
 #include "src/ui/atomEditor/base/AtomSubEditor.h"
 
 class AtomTextEditor : public AtomSubEditor  {
-    public:
+    
+    Q_OBJECT
 
+    public:
         QTextEdit* textEdit() {
             return (QTextEdit*)this->_dataEditor;
         }

@@ -11,6 +11,8 @@ enum SLState {SL_Finished = 0, SL_Waiting, SL_Processing, SL_Error };
 
 class RPZStatusLabel : public QWidget {
 
+    Q_OBJECT
+
     public:
         RPZStatusLabel(QString descriptor, QWidget* parent = nullptr);
 

@@ -93,5 +93,5 @@ class AppContext {
         static void openFileInOS(const QString &cpURL);
         static void openFolderInOS(const QString &cpURL);
 
-        static QTranslator* installTranslations(QApplication &app);
+        static QVector<QTranslator*> installTranslations(QApplication &app);
 };

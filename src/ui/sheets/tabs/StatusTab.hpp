@@ -15,6 +15,9 @@
 #include "../components/AbilitiesSheet.hpp"
 
 class StatusTab : public QWidget {
+    
+    Q_OBJECT
+    
     public:
         StatusTab() {
             

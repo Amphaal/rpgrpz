@@ -15,6 +15,9 @@
 #include "src/helpers/_appContext.h"
 
 class LoreTab : public QWidget {
+
+    Q_OBJECT
+
     public:
         LoreTab() {
 

@@ -13,6 +13,9 @@
 #include "src/shared/models/character/RPZAbility.hpp"
 
 class AbilitiesSheet : public QTableWidget {
+
+    Q_OBJECT
+    
     public:
         AbilitiesSheet() : QTableWidget(0, 4) {
             

@@ -6,6 +6,9 @@
 #include <QVBoxLayout>
 
 class NoEditorMessageWidget : public QWidget {
+    
+    Q_OBJECT
+
     public:
         NoEditorMessageWidget() {
     

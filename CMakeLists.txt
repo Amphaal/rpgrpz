@@ -175,10 +175,6 @@ list(APPEND EXT_LIBS
     Qt5::OpenGL
 )
 
-#generate translation
-qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR}/src src/_i18n/fr.ts)
-
-
 #####################
 # list source files #
 #####################
@@ -197,12 +193,15 @@ list(APPEND SOURCES
 #     "src/_tests/main.cpp"
 # )
 
+#generate translations
+qt5_create_translation(QM_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/src/_i18n/fr.ts)
+
 #########################
 # Executable Generation #
 #########################
 
 # Create executable
-add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES})
+add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES} ${QM_FILES})
 
 #link !
 conan_target_link_libraries(${PROJECT_NAME})
@@ -218,15 +217,6 @@ if(WIN32)
     include(cotire)
     cotire(${PROJECT_NAME})
 endif()
-
-################
-# INSTALL COPY #
-################
-
-#CA CERT
-add_custom_command(TARGET ${PROJECT_NAME}       
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CACERT_FP} $<TARGET_FILE_DIR:${PROJECT_NAME}>
-)
 
 #####################
 # QT LIBRARIES COPY #
@@ -244,6 +234,19 @@ endif()
 include(deployqt)
 deployqt(${PROJECT_NAME})
 
+###############
+# OTHERS COPY #
+###############
+
+#CA CERT
+add_custom_command(TARGET ${PROJECT_NAME}       
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CACERT_FP} $<TARGET_FILE_DIR:${PROJECT_NAME}>
+)
+
+#translations
+add_custom_command(TARGET ${PROJECT_NAME}   
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QM_FILES} $<TARGET_FILE_DIR:${PROJECT_NAME}>/translations
+)
 
 ######################
 # GST LIBRARIES COPY #

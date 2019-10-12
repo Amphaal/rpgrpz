@@ -10,8 +10,10 @@
 #include "playlist/YoutubePlaylistItemInsertor.hpp"
 
 class PlaylistController : public QGroupBox {
+    
+    Q_OBJECT
+    
     public:
-
         PlaylistController(QWidget * parent = nullptr);
 
         TrackToolbar* toolbar = nullptr;

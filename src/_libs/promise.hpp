@@ -539,7 +539,7 @@ struct Promise {
         kRejected   = 2,
         kFinished   = 3
     };
-    uint8_t status_      ;//: 2;
+    uint8_t status_;
 
 #ifdef PM_DEBUG
     uint32_t type_;

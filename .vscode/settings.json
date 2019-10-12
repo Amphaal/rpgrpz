@@ -1,6 +1,7 @@
 {
     "terminal.integrated.shell.windows": "C:/Program Files/PowerShell/6/pwsh.exe",
     "files.associations": {
+        "*.ts": "xml",
         "qdir": "cpp",
         "xstring": "cpp",
         "qobject": "cpp",

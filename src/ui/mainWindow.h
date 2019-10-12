@@ -45,6 +45,9 @@
 #include "src/ui/sheets/CharacterEditor.hpp"
 
 class MainWindow : public QMainWindow { 
+    
+    Q_OBJECT
+    
     public:
         MainWindow();
         ~MainWindow();

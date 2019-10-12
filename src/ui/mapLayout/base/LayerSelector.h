@@ -8,6 +8,9 @@
 #include "src/helpers/_appContext.h"
 
 class LayerSelector : public QWidget {
+    
+    Q_OBJECT
+    
     public:
         LayerSelector(QWidget *parent = nullptr);
         ~LayerSelector();

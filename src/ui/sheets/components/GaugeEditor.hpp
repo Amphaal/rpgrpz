@@ -15,6 +15,9 @@
 #include "src/shared/models/character/RPZGauge.hpp"
 
 class GaugeEditor : public QWidget {
+
+    Q_OBJECT
+    
     public:
         GaugeEditor(const RPZGauge &gauge) : 
             _barNameEdit(new QLineEdit), 

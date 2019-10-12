@@ -3,6 +3,9 @@
 #include "InventorySheet.hpp"
 
 class InventoryEditor : public QWidget {
+
+    Q_OBJECT
+
     public:
         InventoryEditor() : _inventoryNameEdit(new QLineEdit), _inventory(new InventorySheet) {
             

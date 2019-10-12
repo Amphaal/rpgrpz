@@ -5,6 +5,8 @@
 
 class PlayersModel : public BaseUsersModel {
     
+    Q_OBJECT
+
     public:
         PlayersModel() { };
 

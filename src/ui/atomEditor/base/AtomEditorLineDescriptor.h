@@ -8,6 +8,9 @@
 #include "src/shared/models/RPZAtom.h"
 
 class AtomEditorLineDescriptor : public QWidget {
+
+    Q_OBJECT
+
     public:
         AtomEditorLineDescriptor(const QString &untranslatedDescription, const QString &suffix, const QString &iconPath = QString());
         AtomEditorLineDescriptor(const AtomParameter &paramType);

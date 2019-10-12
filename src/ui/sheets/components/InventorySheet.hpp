@@ -17,6 +17,9 @@
 #include "InventoryModal.hpp"
 
 class InventorySheet : public QTableWidget {
+    
+    Q_OBJECT
+    
     public:
         InventorySheet() : QTableWidget(0, 5) {
 

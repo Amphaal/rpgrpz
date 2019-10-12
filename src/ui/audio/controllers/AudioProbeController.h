@@ -16,6 +16,8 @@
 
 class AudioProbeController : public QGroupBox {
 
+    Q_OBJECT
+
     public:
         AudioProbeController(QWidget * parent = nullptr);
         

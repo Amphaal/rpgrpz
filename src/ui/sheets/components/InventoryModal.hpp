@@ -21,6 +21,9 @@
 #include "src/shared/models/character/RPZCharacter.hpp"
 
 class InventorySlotModal : public QDialog {
+    
+    Q_OBJECT
+
     public:
         InventorySlotModal(const RPZInventory* from, const QVector<RPZInventory*> &targets, const QVector<QPair<int, RPZInventorySlot>> &toAlter) : 
             _targets(targets), 
@@ -91,6 +94,9 @@ class InventorySlotModal : public QDialog {
 };
 
 class InventorySlotMoveModal : public InventorySlotModal {
+    
+    Q_OBJECT
+    
     public:
         InventorySlotMoveModal(
             const RPZInventory* from, 
@@ -141,6 +147,9 @@ class InventorySlotMoveModal : public InventorySlotModal {
 };
 
 class InventorySlotSplitModal : public InventorySlotModal {
+    
+    Q_OBJECT
+    
     public:
         InventorySlotSplitModal(
             const RPZInventory* from, 
