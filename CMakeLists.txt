@@ -350,15 +350,20 @@ endif()
 
 if(WIN32)
 
+    #override
+    IF(NOT DEFINED OPENSSL_BIN_DIR)
+        SET(OPENSSL_BIN_DIR "C:/Qt/Tools/OpenSSL/Win_x64/bin")
+    endif()
+
     add_custom_command(TARGET ${PROJECT_NAME}       
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-        "C:/Qt/Tools/OpenSSL/Win_x64/bin/libcrypto-1_1-x64.dll"
+        "${OPENSSL_BIN_DIR}/libcrypto-1_1-x64.dll"
         $<TARGET_FILE_DIR:${PROJECT_NAME}>
     )
 
     add_custom_command(TARGET ${PROJECT_NAME}       
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-        "C:/Qt/Tools/OpenSSL/Win_x64/bin/libssl-1_1-x64.dll"
+        "${OPENSSL_BIN_DIR}/libssl-1_1-x64.dll"
         $<TARGET_FILE_DIR:${PROJECT_NAME}>
     )
 

@@ -1,6 +1,9 @@
 version: 0.19.1.{build}
 image: Visual Studio 2017
 platform: x64
+environment:
+  global:
+    APPVEYOR_SAVE_CACHE_ON_ERROR: true
 cache:
   - C:\gstreamer\1.0\x86_64
 install:
@@ -18,7 +21,7 @@ build_script:
   - cmd: mkdir build
   - cmd: cd build
   - cmd: conan install .. -s build_type=Release --build missing
-  - cmd: cmake --config Release -DQT_MAIN_DIR="C:\Qt\5.13" -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 15 2017 Win64" .. 
+  - cmd: cmake --config Release -DOPENSSL_BIN_DIR="C:\OpenSSL-v111-Win64\bin" -DQT_MAIN_DIR="C:\Qt\5.13" -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 15 2017 Win64" .. 
   - cmd: cd ..
   - cmd: cmake --build ./build --target package --config Release
 test_script:
