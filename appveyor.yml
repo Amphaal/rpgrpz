@@ -1,7 +1,8 @@
 version: 0.19.1.{build}
 image: Visual Studio 2019
-platform:
-  - x64
+build:
+  verbosity: detailed
+platform: x64
 install:
   - cmd: echo "Downloading conan..."
   - cmd: set PATH=%PATH%;%PYTHON%/Scripts/
