@@ -26,15 +26,15 @@ build_script:
   - cmd: cd ..
   - cmd: cmake --build ./build --target package --config Release
 artifacts:
-  - path: _CPack_Packages/win64/IFW/*.exe
+  - path: build/_CPack_Packages/win64/IFW/*.exe
     name: EXE
-  - path: _CPack_Packages/win64/IFW/RPGRPZ-*-win64/repository
+  - path: build/_CPack_Packages/win64/IFW/RPGRPZ-*-win64/repository
     name: IFW_Repo
 deploy:
   - provider: BinTray
     username: amphaal
     api_key:
-      secure: a8fb0fee73eb58aa040e4d50a62c117db0043e5a
+      secure: yNlQ0sbe2mYcm13rWA7wKuISHE93lndKeIEyGPbHz3mr2oDYQWCNTWXVsExiSJan
     subject: BinTray alpha EXE
     repo: rpgrpz
     package: rpgrpz-alpha-installer
@@ -45,7 +45,7 @@ deploy:
   - provider: BinTray
     username: amphaal
     api_key:
-      secure: a8fb0fee73eb58aa040e4d50a62c117db0043e5a
+      secure: yNlQ0sbe2mYcm13rWA7wKuISHE93lndKeIEyGPbHz3mr2oDYQWCNTWXVsExiSJan
     subject: BinTray alpha IFW
     repo: rpgrpz
     package: rpgrpz-alpha-ifw
