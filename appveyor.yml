@@ -1,4 +1,4 @@
-version: 0.19.1.{build}
+version: {build}
 skip_non_tags: true
 image: Visual Studio 2017
 platform: x64
@@ -9,7 +9,6 @@ cache:
   - C:\gstreamer\1.0\x86_64
   - C:\ProgramData\chocolatey\bin
   - C:\ProgramData\chocolatey\lib
-  - C:\.conan
 install:
   #- cmd: choco install pkgconfiglite
   - cmd: set PATH=%PATH%;%PYTHON%/Scripts/

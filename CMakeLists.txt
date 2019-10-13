@@ -41,7 +41,7 @@ endif()
 
 #config file to source code
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/templates/version.h.in 
+    ${CMAKE_CURRENT_SOURCE_DIR}/templates/_version.h 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/version.h
 )
 
@@ -222,7 +222,7 @@ target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
 
 if(APPLE)
     #add highdpi support / menu behavior via plist template (MACOS)
-    set_target_properties(${PROJECT_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/templates/Info.plist.in) 
+    set_target_properties(${PROJECT_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/templates/_Info.plist.in) 
 endif()
 
 if(WIN32)
