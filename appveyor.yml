@@ -1,4 +1,5 @@
 version: 0.19.1.{build}
+skip_non_tags: true
 image: Visual Studio 2017
 platform: x64
 environment:
@@ -6,6 +7,24 @@ environment:
     APPVEYOR_SAVE_CACHE_ON_ERROR: true
 cache:
   - C:\gstreamer\1.0\x86_64
+deploy:
+  - provider: BinTray
+    username: amphaal
+    api_key:
+      secure: a8fb0fee73eb58aa040e4d50a62c117db0043e5a
+    subject: BinTray alpha EXE
+    repo: rpgrpz
+    package: rpgrpz-alpha-installer
+    publish: true
+  - provider: BinTray
+    username: amphaal
+    api_key:
+      secure: a8fb0fee73eb58aa040e4d50a62c117db0043e5a
+    subject: BinTray alpha IFW
+    repo: rpgrpz
+    package: rpgrpz-alpha-ifw
+    version: latest
+    publish: true
 install:
   - cmd: choco install pkgconfiglite
   - cmd: set PATH=%PATH%;%PYTHON%/Scripts/
@@ -24,6 +43,8 @@ build_script:
   - cmd: cmake --config Release -DOPENSSL_BIN_DIR="C:\OpenSSL-v111-Win64\bin" -DQT_MAIN_DIR="C:\Qt\5.13" -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 15 2017 Win64" .. 
   - cmd: cd ..
   - cmd: cmake --build ./build --target package --config Release
-test_script:
-  - cmd: cd build/bin
-  - cmd: ls
+artifacts:
+  - path: _CPack_Packages/win64/IFW/*.exe
+    name: EXE
+  - path: _CPack_Packages/win64/IFW/RPGRPZ-*-win64/repository/**
+    name: IFW_Repo
