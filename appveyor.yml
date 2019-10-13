@@ -1,26 +1,22 @@
 version: 0.19.1.{build}
 image: Visual Studio 2019
-
-    platform:
-      - x64
-
-    install:
-      - cmmd: echo "Downloading conan..."
-      - cmmd: set PATH=%PATH%;%PYTHON%/Scripts/
-      - cmmd: pip.exe install conan
-      - cmmd: conan user # Create the conan data directory
-      - cmmd: conan --version
-      - cmmd: conan remote add --force bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-      - cmmd: conan remote add --force rhard https://api.bintray.com/conan/rhard/conan
-
-    build_script:
-      - cmmd: mkdir build
-      - cmmd: cd build
-      - cmmd: conan install .. -s build_type=Release --build missing
-      - cmmd: cmake -DCMAKE_BUILD_TYPE=Release .. -G "Visual Studio 14 2019 Win64"
-      - cmmd: cd ..
-      - cmmd: cmake --build ./build --config Release --target package
-
-    test_script:
-      - cmmd: cd build/bin
-      - cmmd: ls
+platform:
+  - x64
+install:
+  - cmmd: echo "Downloading conan..."
+  - cmmd: set PATH=%PATH%;%PYTHON%/Scripts/
+  - cmmd: pip.exe install conan
+  - cmmd: conan user # Create the conan data directory
+  - cmmd: conan --version
+  - cmmd: conan remote add --force bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+  - cmmd: conan remote add --force rhard https://api.bintray.com/conan/rhard/conan
+build_script:
+  - cmmd: mkdir build
+  - cmmd: cd build
+  - cmmd: conan install .. -s build_type=Release --build missing
+  - cmmd: cmake -DCMAKE_BUILD_TYPE=Release .. -G "Visual Studio 14 2019 Win64"
+  - cmmd: cd ..
+  - cmmd: cmake --build ./build --config Release --target package
+test_script:
+  - cmmd: cd build/bin
+  - cmmd: ls
