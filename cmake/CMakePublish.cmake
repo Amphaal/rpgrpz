@@ -86,7 +86,7 @@ SET(CPACK_IFW_VERBOSE ON)
         TRANSLATIONS "${CMAKE_BINARY_DIR}/fr.qm"
         DESCRIPTION ${APP_DESCRIPTION}
     )
-    cpack_ifw_add_repository(coreRepo URL "${APP_ROOT_URL}/RPGRPZ/packages/${APP_REMOTE_SERVER_PLATFORM_FOLDER}")
+    cpack_ifw_add_repository(coreRepo URL "https://dl.bintray.com/amphaal/rpgrpz")
 
 ########################
 ## ZIP FOR DEPLOYMENT ## 
@@ -106,5 +106,10 @@ add_custom_target(zipForDeploy
     ${APP_PACKAGED_REPOSITORY_PATH}/Updates.xml
     ${APP_PACKAGED_REPOSITORY_PATH}/${PROJECT_NAME}
     WORKING_DIRECTORY ${APP_PACKAGED_REPOSITORY_PATH}
+
+    #zip
+    COMMAND ${CMAKE_COMMAND} -E tar "c" "${CMAKE_BINARY_DIR}/app.zip" "--format=zip" 
+    ${APP_PACKAGED_INSTALLER_PATH}
+    WORKING_DIRECTORY ${APP_PACKAGED_IFW}
 
 )

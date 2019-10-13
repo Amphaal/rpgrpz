@@ -32,6 +32,8 @@ build_script:
 artifacts:
   - path: build/repository.zip
     name: IFW_Repo
+  - path: build/app.zip
+    name: Win_exe
 deploy:
   - provider: BinTray
     username: amphaal
@@ -45,3 +47,15 @@ deploy:
     override: true
     explode: true
     artifact: IFW_Repo
+  - provider: BinTray
+    username: amphaal
+    api_key:
+      secure: yNlQ0sbe2mYcm13rWA7wKuISHE93lndKeIEyGPbHz3mr2oDYQWCNTWXVsExiSJan
+    subject: amphaal
+    repo: rpgrpz
+    package: rpgrpz-win
+    version: latest
+    publish: true
+    override: true
+    explode: true
+    artifact: Win_exe
