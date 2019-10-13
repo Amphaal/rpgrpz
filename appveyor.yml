@@ -9,7 +9,7 @@ cache:
   - C:\gstreamer\1.0\x86_64
   - C:\ProgramData\chocolatey\bin
   - C:\ProgramData\chocolatey\lib
-  - '%LOCALAPPDATA%\pip\Cache'
+  - C:\.conan
 install:
   #- cmd: choco install pkgconfiglite
   - cmd: set PATH=%PATH%;%PYTHON%/Scripts/
@@ -28,10 +28,9 @@ build_script:
   - cmd: cmake --config Release -DOPENSSL_BIN_DIR="C:\OpenSSL-v111-Win64\bin" -DQT_MAIN_DIR="C:\Qt\5.13" -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 15 2017 Win64" .. 
   - cmd: cd ..
   - cmd: cmake --build ./build --target package --config Release
+  - cmd: cmake --build ./build --target zipForDeploy --config Release
 artifacts:
-  - path: build/_CPack_Packages/win64/IFW/*.exe
-    name: EXE
-  - path: build/_CPack_Packages/win64/IFW/**/repository
+  - path: build/repository.zip
     name: IFW_Repo
 deploy:
   - provider: BinTray
@@ -40,18 +39,7 @@ deploy:
       secure: yNlQ0sbe2mYcm13rWA7wKuISHE93lndKeIEyGPbHz3mr2oDYQWCNTWXVsExiSJan
     subject: amphaal
     repo: rpgrpz
-    package: rpgrpz-alpha-installer
-    publish: true
-    override: true
-    explode: true
-    artifact: EXE
-  - provider: BinTray
-    username: amphaal
-    api_key:
-      secure: yNlQ0sbe2mYcm13rWA7wKuISHE93lndKeIEyGPbHz3mr2oDYQWCNTWXVsExiSJan
-    subject: amphaal
-    repo: rpgrpz
-    package: rpgrpz-alpha-ifw
+    package: rpgrpz-ifw-win
     version: latest
     publish: true
     override: true

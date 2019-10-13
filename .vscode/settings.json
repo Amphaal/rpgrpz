@@ -165,7 +165,8 @@
         "qtooltip": "cpp",
         "qabstractlistmodel": "cpp",
         "qvector": "cpp",
-        "qmimedata": "cpp"
+        "qmimedata": "cpp",
+        "*.in": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

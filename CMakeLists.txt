@@ -16,8 +16,7 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 #app dest path
 SET(APP_PUBLISHER "LVWL")
-SET(APP_ROOT_URL "https://zonme.to2x.ovh")
-SET(APP_MAIN_URL ${APP_ROOT_URL}/rpgrpz)
+SET(APP_DEFAULT_URL "https://github.com/Amphaal/rpgrpz")
 SET(APP_PATCHNOTE_URL "https://github.com/Amphaal/rpgrpz/releases")
 SET(PEM_CERT_NAME "cacert.pem")
 
