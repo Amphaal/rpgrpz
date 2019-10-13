@@ -2,11 +2,10 @@ version: 0.19.1.{build}
 image: Visual Studio 2017
 platform: x64
 install:
-  - cmd: echo "Downloading conan..."
+  - cmd: choco install pkgconfiglite
   - cmd: set PATH=%PATH%;%PYTHON%/Scripts/
   - cmd: pip.exe install conan
   - cmd: conan user # Create the conan data directory
-  - cmd: conan --version
   - cmd: conan remote add --force bincrafters https://api.bintray.com/conan/bincrafters/public-conan
   - cmd: conan remote add --force rhard https://api.bintray.com/conan/rhard/conan
   - appveyor DownloadFile https://gstreamer.freedesktop.org/data/pkg/windows/1.16.1/gstreamer-1.0-devel-msvc-x86_64-1.16.1.msi
