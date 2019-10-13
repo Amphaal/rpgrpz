@@ -13,7 +13,7 @@ cache:
 install:
   #- cmd: choco install pkgconfiglite
   - cmd: set PATH=%PATH%;%PYTHON%/Scripts/
-  #- cmd: pip.exe install conan
+  - cmd: pip.exe install conan
   - cmd: conan user # Create the conan data directory
   - cmd: conan remote add --force bincrafters https://api.bintray.com/conan/bincrafters/public-conan
   - cmd: conan remote add --force rhard https://api.bintray.com/conan/rhard/conan
