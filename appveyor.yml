@@ -11,9 +11,9 @@ cache:
   - C:\ProgramData\chocolatey\lib
   - '%LOCALAPPDATA%\pip\Cache'
 install:
-  - cmd: choco install pkgconfiglite
+  #- cmd: choco install pkgconfiglite
   - cmd: set PATH=%PATH%;%PYTHON%/Scripts/
-  - cmd: pip.exe install conan
+  #- cmd: pip.exe install conan
   - cmd: conan user # Create the conan data directory
   - cmd: conan remote add --force bincrafters https://api.bintray.com/conan/bincrafters/public-conan
   - cmd: conan remote add --force rhard https://api.bintray.com/conan/rhard/conan
@@ -31,14 +31,14 @@ build_script:
 artifacts:
   - path: build/_CPack_Packages/win64/IFW/*.exe
     name: EXE
-  - path: build/_CPack_Packages/win64/IFW/RPGRPZ-*-win64/repository
+  - path: build/_CPack_Packages/win64/IFW/**/repository
     name: IFW_Repo
 deploy:
   - provider: BinTray
     username: amphaal
     api_key:
       secure: yNlQ0sbe2mYcm13rWA7wKuISHE93lndKeIEyGPbHz3mr2oDYQWCNTWXVsExiSJan
-    subject: BinTray alpha EXE
+    subject: amphaal
     repo: rpgrpz
     package: rpgrpz-alpha-installer
     publish: true
@@ -49,7 +49,7 @@ deploy:
     username: amphaal
     api_key:
       secure: yNlQ0sbe2mYcm13rWA7wKuISHE93lndKeIEyGPbHz3mr2oDYQWCNTWXVsExiSJan
-    subject: BinTray alpha IFW
+    subject: amphaal
     repo: rpgrpz
     package: rpgrpz-alpha-ifw
     version: latest
