@@ -1,6 +1,8 @@
 version: 0.19.1.{build}
 image: Visual Studio 2017
 platform: x64
+cache:
+  - C:\gstreamer\1.0\x86_64
 install:
   - cmd: choco install pkgconfiglite
   - cmd: set PATH=%PATH%;%PYTHON%/Scripts/
