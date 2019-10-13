@@ -7,6 +7,9 @@ environment:
     APPVEYOR_SAVE_CACHE_ON_ERROR: true
 cache:
   - C:\gstreamer\1.0\x86_64
+  - C:\ProgramData\chocolatey\bin
+  - C:\ProgramData\chocolatey\lib
+  - '%LOCALAPPDATA%\pip\Cache'
 install:
   - cmd: choco install pkgconfiglite
   - cmd: set PATH=%PATH%;%PYTHON%/Scripts/
