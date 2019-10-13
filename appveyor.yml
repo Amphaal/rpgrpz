@@ -20,7 +20,7 @@ build_script:
   - cmd: conan install .. -s build_type=Release --build missing
   - cmd: cmake --config Release -DQT_MAIN_DIR="C:\Qt\5.13" -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 15 2017 Win64" .. 
   - cmd: cd ..
-  - cmd: cmake --build ./build --target package --config Release -DQT_MAIN_DIR="C:\Qt\5.13"
+  - cmd: cmake --build ./build --target package --config Release
 test_script:
   - cmd: cd build/bin
   - cmd: ls
