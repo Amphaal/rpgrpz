@@ -13,7 +13,7 @@ build_script:
   - cmd: mkdir build
   - cmd: cd build
   - cmd: conan install .. -s build_type=Release --build missing
-  - cmd: cmake -DCMAKE_BUILD_TYPE=Release .. -G "Visual Studio 16 2019" -A Win64 --config Release
+  - cmd: cmake --config Release -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 16 2019" .. 
   - cmd: cd ..
   - cmd: cmake --build ./build --config Release --target package
 test_script:
