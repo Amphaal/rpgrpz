@@ -1,7 +1,10 @@
 #include "AtomEditor.h"
 
-AtomEditor::AtomEditor(QWidget* parent) : QGroupBox(_strEM[None], parent), AlterationActor(AlterationPayload::Source::Local_AtomEditor) {
+AtomEditor::AtomEditor(QWidget* parent) : QGroupBox(parent), AlterationActor(AlterationPayload::Source::Local_AtomEditor) {
 
+    this->setTitle(
+        tr(qUtf8Printable(_strEM[None]))
+    );
     this->setAlignment(Qt::AlignHCenter);
 
     this->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
@@ -200,7 +203,7 @@ void AtomEditor::_updateEditMode() {
     }
 
     //update title
-    auto title = _strEM[this->_currentEditMode];
+    auto title = tr(qUtf8Printable(_strEM[this->_currentEditMode]));
     
     switch(this->_currentEditMode) {
         

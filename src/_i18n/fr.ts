@@ -45,6 +45,59 @@
     </message>
 </context>
 <context>
+    <name>AssetsDatabaseElement</name>
+    <message>
+        <location filename="../shared/assets/AssetsDatabaseElement.h" line="193"/>
+        <source>Internal</source>
+        <translation>Interne</translation>
+    </message>
+    <message>
+        <location filename="../shared/assets/AssetsDatabaseElement.h" line="194"/>
+        <source>Player</source>
+        <translation>Joueur</translation>
+    </message>
+    <message>
+        <location filename="../shared/assets/AssetsDatabaseElement.h" line="195"/>
+        <source>Event</source>
+        <translation>Evénement</translation>
+    </message>
+    <message>
+        <location filename="../shared/assets/AssetsDatabaseElement.h" line="196"/>
+        <source>Drawing</source>
+        <translation>Dessin</translation>
+    </message>
+    <message>
+        <location filename="../shared/assets/AssetsDatabaseElement.h" line="197"/>
+        <source>Text</source>
+        <translation>Texte</translation>
+    </message>
+    <message>
+        <location filename="../shared/assets/AssetsDatabaseElement.h" line="198"/>
+        <source>NPC / Portraits</source>
+        <translation>PNJ / Portraits</translation>
+    </message>
+    <message>
+        <location filename="../shared/assets/AssetsDatabaseElement.h" line="199"/>
+        <source>Objects</source>
+        <translation>Objets</translation>
+    </message>
+    <message>
+        <location filename="../shared/assets/AssetsDatabaseElement.h" line="200"/>
+        <source>Brush</source>
+        <translation>Terrains</translation>
+    </message>
+    <message>
+        <location filename="../shared/assets/AssetsDatabaseElement.h" line="201"/>
+        <source>Downloaded</source>
+        <translation>Téléchargés</translation>
+    </message>
+    <message>
+        <location filename="../shared/assets/AssetsDatabaseElement.h" line="202"/>
+        <source>Landscapes</source>
+        <translation>Paysages</translation>
+    </message>
+</context>
+<context>
     <name>AssetsTreeView</name>
     <message>
         <location filename="../ui/assets/base/AssetsTreeView.cpp" line="212"/>
@@ -65,7 +118,7 @@
 <context>
     <name>AtomEditionManager</name>
     <message>
-        <location filename="../ui/atomEditor/AtomEditionManager.hpp" line="26"/>
+        <location filename="../ui/atomEditor/AtomEditionManager.hpp" line="28"/>
         <source>Reset displayed parameters</source>
         <translation>Réinitialiser les paramètres affichés</translation>
     </message>
@@ -73,73 +126,93 @@
 <context>
     <name>AtomEditor</name>
     <message numerus="yes">
-        <location filename="../ui/atomEditor/AtomEditor.cpp" line="208"/>
+        <location filename="../ui/atomEditor/AtomEditor.cpp" line="211"/>
         <source> (%n element(s))</source>
         <translation>
             <numerusform> (%n élément)</numerusform>
             <numerusform> (%n éléments)</numerusform>
         </translation>
     </message>
+    <message>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="43"/>
+        <source>Nothing to modify</source>
+        <translation>Rien à modifier</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="44"/>
+        <source>Template modification</source>
+        <translation>Modification du modèle</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="45"/>
+        <source>Selection modification</source>
+        <translation>Modification de la sélection</translation>
+    </message>
 </context>
 <context>
     <name>AtomEditorLineDescriptor</name>
     <message>
-        <location filename="../ui/atomEditor/base/AtomEditorLineDescriptor.cpp" line="41"/>
+        <location filename="../ui/atomEditor/base/AtomEditorLineDescriptor.cpp" line="44"/>
         <source>mult. val.</source>
-        <translation type="unfinished"></translation>
+        <translation>val. mult.</translation>
     </message>
     <message>
         <location filename="../ui/atomEditor/base/AtomEditorLineDescriptor.h" line="25"/>
         <source>Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotation</translation>
     </message>
     <message>
         <location filename="../ui/atomEditor/base/AtomEditorLineDescriptor.h" line="26"/>
         <source>Atom size</source>
-        <translation type="unfinished"></translation>
+        <translation>Taille de l&apos;atome</translation>
     </message>
     <message>
         <location filename="../ui/atomEditor/base/AtomEditorLineDescriptor.h" line="27"/>
         <source>Texture rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotation de la texture</translation>
     </message>
     <message>
         <location filename="../ui/atomEditor/base/AtomEditorLineDescriptor.h" line="28"/>
         <source>Texture size</source>
-        <translation type="unfinished"></translation>
+        <translation>Taille de la texture</translation>
     </message>
     <message>
         <location filename="../ui/atomEditor/base/AtomEditorLineDescriptor.h" line="29"/>
         <source>Pen size</source>
-        <translation type="unfinished"></translation>
+        <translation>Taille du crayon</translation>
     </message>
     <message>
         <location filename="../ui/atomEditor/base/AtomEditorLineDescriptor.h" line="30"/>
         <source>Text size</source>
-        <translation type="unfinished"></translation>
+        <translation>Taille du texte</translation>
     </message>
     <message>
         <location filename="../ui/atomEditor/base/AtomEditorLineDescriptor.h" line="31"/>
         <source>Brush width</source>
-        <translation type="unfinished"></translation>
+        <translation>Taille de la brosse</translation>
     </message>
     <message>
         <location filename="../ui/atomEditor/base/AtomEditorLineDescriptor.h" line="32"/>
         <source>Brush tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Outil de brosse</translation>
     </message>
     <message>
         <location filename="../ui/atomEditor/base/AtomEditorLineDescriptor.h" line="33"/>
         <source>Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Texte</translation>
     </message>
 </context>
 <context>
     <name>AtomTextEditor</name>
     <message>
-        <location filename="../ui/atomEditor/editors/AtomTextEditor.hpp" line="18"/>
+        <location filename="../ui/atomEditor/editors/AtomTextEditor.hpp" line="20"/>
         <source>Confirm modification</source>
         <translation>Confirmer la modification</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/editors/AtomTextEditor.hpp" line="23"/>
+        <source>Type some text...</source>
+        <translation>Saisissez du texte...</translation>
     </message>
 </context>
 <context>
@@ -147,12 +220,12 @@
     <message>
         <location filename="../ui/audio/controllers/AudioProbeController.cpp" line="3"/>
         <source>Playing now</source>
-        <translation type="unfinished"></translation>
+        <translation>Joué actuellement</translation>
     </message>
     <message>
         <location filename="../ui/audio/controllers/AudioProbeController.cpp" line="47"/>
         <source>Nothing playing</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas de lecture</translation>
     </message>
 </context>
 <context>
@@ -160,32 +233,32 @@
     <message>
         <location filename="../ui/atomEditor/editors/BrushToolEditor.hpp" line="17"/>
         <source>Stamp</source>
-        <translation type="unfinished"></translation>
+        <translation>Tampon</translation>
     </message>
     <message>
         <location filename="../ui/atomEditor/editors/BrushToolEditor.hpp" line="18"/>
         <source>Rectangle</source>
-        <translation type="unfinished"></translation>
+        <translation>Rectangulaire</translation>
     </message>
     <message>
         <location filename="../ui/atomEditor/editors/BrushToolEditor.hpp" line="19"/>
         <source>Ovale</source>
-        <translation type="unfinished"></translation>
+        <translation>Cercle</translation>
     </message>
     <message>
         <location filename="../ui/atomEditor/editors/BrushToolEditor.hpp" line="20"/>
         <source>Round brush</source>
-        <translation type="unfinished"></translation>
+        <translation>Brosse ronde</translation>
     </message>
     <message>
         <location filename="../ui/atomEditor/editors/BrushToolEditor.hpp" line="21"/>
         <source>Cutter</source>
-        <translation type="unfinished"></translation>
+        <translation>Biseau</translation>
     </message>
     <message>
         <location filename="../ui/atomEditor/editors/BrushToolEditor.hpp" line="22"/>
         <source>Scissors</source>
-        <translation type="unfinished"></translation>
+        <translation>Ciseaux</translation>
     </message>
 </context>
 <context>
@@ -193,17 +266,17 @@
     <message>
         <location filename="../ui/sheets/CharacterEditor.hpp" line="43"/>
         <source>Save character sheet</source>
-        <translation type="unfinished"></translation>
+        <translation>Savegarder la fiche</translation>
     </message>
     <message>
         <location filename="../ui/sheets/CharacterEditor.hpp" line="282"/>
         <source>My characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Mes personnages</translation>
     </message>
     <message>
         <location filename="../ui/sheets/CharacterEditor.hpp" line="282"/>
         <source>Hosted characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Personnages du serveur</translation>
     </message>
 </context>
 <context>
@@ -211,32 +284,32 @@
     <message>
         <location filename="../ui/sheets/components/CharacterPicker.hpp" line="31"/>
         <source>Create a new sheet</source>
-        <translation type="unfinished"></translation>
+        <translation>Créer une nouvelle fiche</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/CharacterPicker.hpp" line="39"/>
         <source>Delete sheet</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer la fiche</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/CharacterPicker.hpp" line="116"/>
         <source>No existing character, create some !</source>
-        <translation type="unfinished"></translation>
+        <translation>Aucun personnage préexistant, créez-en un !</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/CharacterPicker.hpp" line="117"/>
-        <source>Waiting for sheet from host...</source>
-        <translation type="unfinished"></translation>
+        <source>Waiting for sheets from host...</source>
+        <translation>En attente de fiches du serveur...</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/CharacterPicker.hpp" line="191"/>
         <source>Character sheet deletion</source>
-        <translation type="unfinished"></translation>
+        <translation>Suppression de fiches de personnages</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/CharacterPicker.hpp" line="192"/>
         <source>Do you really want to delete this character ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Voulez-vous vraiment supprimer cette fiche de personnage ?</translation>
     </message>
 </context>
 <context>
@@ -244,22 +317,22 @@
     <message>
         <location filename="../ui/sheets/CharacterSheet.hpp" line="27"/>
         <source>Lore</source>
-        <translation type="unfinished"></translation>
+        <translation>Lore</translation>
     </message>
     <message>
         <location filename="../ui/sheets/CharacterSheet.hpp" line="28"/>
         <source>Status / Abilities</source>
-        <translation type="unfinished"></translation>
+        <translation>Statut / Compétences</translation>
     </message>
     <message>
         <location filename="../ui/sheets/CharacterSheet.hpp" line="29"/>
         <source>Inventories</source>
-        <translation type="unfinished"></translation>
+        <translation>Inventaires</translation>
     </message>
     <message>
         <location filename="../ui/sheets/CharacterSheet.hpp" line="30"/>
         <source>Notes / Others</source>
-        <translation type="unfinished"></translation>
+        <translation>Notes / Autres</translation>
     </message>
 </context>
 <context>
@@ -267,12 +340,12 @@
     <message>
         <location filename="../ui/chat/ChatEdit.cpp" line="5"/>
         <source>Send Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Envoyer Message</translation>
     </message>
     <message>
         <location filename="../ui/chat/ChatEdit.cpp" line="41"/>
         <source> Message to send</source>
-        <translation type="unfinished"></translation>
+        <translation> Message à envoyer</translation>
     </message>
 </context>
 <context>
@@ -280,68 +353,68 @@
     <message>
         <location filename="../ui/logIn/ConnectWidget.cpp" line="21"/>
         <source>Player name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom du joueur</translation>
     </message>
     <message>
         <location filename="../ui/logIn/ConnectWidget.cpp" line="180"/>
         <source>Error while connecting to server</source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur à la connexion au serveur</translation>
     </message>
     <message>
         <location filename="../ui/logIn/ConnectWidget.cpp" line="206"/>
         <source>Connect</source>
-        <translation type="unfinished"></translation>
+        <translation>Se connecter</translation>
     </message>
     <message>
         <location filename="../ui/logIn/ConnectWidget.cpp" line="209"/>
         <source>Cancel (Connecting to %1...)</source>
-        <translation type="unfinished"></translation>
+        <translation>Annuler (Connexion à %1...)</translation>
     </message>
     <message>
         <location filename="../ui/logIn/ConnectWidget.cpp" line="212"/>
         <source>Disconnect from [%1]</source>
-        <translation type="unfinished"></translation>
+        <translation>Se déconnecter de [%1]</translation>
     </message>
     <message>
         <location filename="../ui/logIn/ConnectWidget.cpp" line="263"/>
         <source> Log in without a character</source>
-        <translation type="unfinished"></translation>
+        <translation> Se connecter sans fiche</translation>
     </message>
 </context>
 <context>
     <name>ConnectivityHelper</name>
     <message>
-        <location filename="../network/ConnectivityHelper.cpp" line="135"/>
+        <location filename="../network/ConnectivityHelper.cpp" line="131"/>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation>Non</translation>
+    </message>
+    <message>
+        <location filename="../network/ConnectivityHelper.cpp" line="192"/>
+        <source>&lt;Searching...&gt;</source>
+        <translation>&lt;Recherche...&gt;</translation>
     </message>
     <message>
         <location filename="../network/ConnectivityHelper.cpp" line="196"/>
-        <source>&lt;Searching...&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../network/ConnectivityHelper.cpp" line="200"/>
         <source>&lt;Error&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;Erreur&gt;</translation>
     </message>
 </context>
 <context>
     <name>DownloadStatus</name>
     <message>
         <location filename="../ui/statusBar/DownloadStatus.hpp" line="96"/>
-        <source>Assets donwload</source>
-        <translation type="unfinished"></translation>
+        <source>Assets download</source>
+        <translation>Téléchargement d&apos;assets</translation>
     </message>
     <message>
         <location filename="../ui/statusBar/DownloadStatus.hpp" line="98"/>
         <source>Map download</source>
-        <translation type="unfinished"></translation>
+        <translation>Téléchargement de carte</translation>
     </message>
     <message>
         <location filename="../ui/statusBar/DownloadStatus.hpp" line="100"/>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Téléchargement</translation>
     </message>
 </context>
 <context>
@@ -357,52 +430,52 @@
     <message>
         <location filename="../ui/sheets/components/GaugeEditor.hpp" line="31"/>
         <source> Gauge name</source>
-        <translation type="unfinished"></translation>
+        <translation> Nom de la jauge</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/GaugeEditor.hpp" line="36"/>
         <source>Fav.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fav.</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/GaugeEditor.hpp" line="37"/>
         <source>Visible under portrait ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Visible sous le portrait ?</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/GaugeEditor.hpp" line="41"/>
         <source>Gauge minimum</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimum de la jauge</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/GaugeEditor.hpp" line="47"/>
         <source>Gauge maximum</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximum de la jauge</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/GaugeEditor.hpp" line="53"/>
         <source>Gauge value</source>
-        <translation type="unfinished"></translation>
+        <translation>Valeur de la jauge</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/GaugeEditor.hpp" line="70"/>
         <source>Delete gauge</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer la jauge</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/GaugeEditor.hpp" line="136"/>
         <source>Gauge color</source>
-        <translation type="unfinished"></translation>
+        <translation>Couleur de la jauge</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/GaugeEditor.hpp" line="148"/>
         <source>Gauge deletion</source>
-        <translation type="unfinished"></translation>
+        <translation>Suppresion de jauge</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/GaugeEditor.hpp" line="149"/>
         <source>Do you really want to delete this gauge ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Voulez-vous vraiment supprimer cette jauge ?</translation>
     </message>
 </context>
 <context>
@@ -418,32 +491,32 @@
     <message>
         <location filename="../ui/sheets/components/InventoryPicker.hpp" line="28"/>
         <source>Create new inventory</source>
-        <translation type="unfinished"></translation>
+        <translation>Créer un nouvel inventaire</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/InventoryPicker.hpp" line="36"/>
         <source>Delete inventory</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer l&apos;inventaire</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/InventoryPicker.hpp" line="129"/>
         <source>Inventory deletion</source>
-        <translation type="unfinished"></translation>
+        <translation>Suppression d&apos;inventaire</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/InventoryPicker.hpp" line="130"/>
         <source>Do you really want to delete this inventory ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Voulez-vous vraiment supprimer cet inventaire ?</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/InventoryPicker.hpp" line="190"/>
         <source>No existing inventory</source>
-        <translation type="unfinished"></translation>
+        <translation>Aucun inventaire préexistant</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/InventoryPicker.hpp" line="191"/>
         <source>No existing inventory, create some !</source>
-        <translation type="unfinished"></translation>
+        <translation>Aucun inventaire préexistant, créez-en un !</translation>
     </message>
 </context>
 <context>
@@ -451,62 +524,62 @@
     <message>
         <location filename="../ui/sheets/components/InventorySheet.hpp" line="28"/>
         <source>Add item</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter un objet</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/InventorySheet.hpp" line="32"/>
         <source>Delete selected items</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer les objets selectionnés</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/InventorySheet.hpp" line="36"/>
         <source>Move to...</source>
-        <translation type="unfinished"></translation>
+        <translation>Déplacer vers...</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/InventorySheet.hpp" line="40"/>
         <source>Split to...</source>
-        <translation type="unfinished"></translation>
+        <translation>Diviser vers...</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/InventorySheet.hpp" line="68"/>
         <source>Name*</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom*</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/InventorySheet.hpp" line="69"/>
         <source>Category</source>
-        <translation type="unfinished"></translation>
+        <translation>Catégorie</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/InventorySheet.hpp" line="70"/>
         <source>Nbr</source>
-        <translation type="unfinished"></translation>
+        <translation>Nbr</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/InventorySheet.hpp" line="71"/>
         <source>Wgt</source>
-        <translation type="unfinished"></translation>
+        <translation>Pds</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/InventorySheet.hpp" line="72"/>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Description</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/InventorySheet.hpp" line="74"/>
         <source>Required!</source>
-        <translation type="unfinished"></translation>
+        <translation>Requis!</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/InventorySheet.hpp" line="286"/>
         <source>Items deletion</source>
-        <translation type="unfinished"></translation>
+        <translation>Suppression d&apos;objets</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/InventorySheet.hpp" line="287"/>
-        <source>Do you really want to delete these items</source>
-        <translation type="unfinished"></translation>
+        <source>Do you really want to delete these items ?</source>
+        <translation>Voulez-vous vraiment supprimer ces objets ?</translation>
     </message>
 </context>
 <context>
@@ -514,17 +587,17 @@
     <message>
         <location filename="../ui/sheets/components/InventoryModal.hpp" line="110"/>
         <source>Move items to inventory</source>
-        <translation type="unfinished"></translation>
+        <translation>Déplacer les objets vers l&apos;inventaire</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/InventoryModal.hpp" line="136"/>
         <source>• &quot;%1&quot; (%2 to move) :</source>
-        <translation type="unfinished"></translation>
+        <translation>• &quot;%1&quot; (%2 à déplacer) :</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/InventoryModal.hpp" line="137"/>
         <source>%1 (Current number) =&gt; %2 (New Total)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 (Nombre actuel) =&gt; %2 (Nouveau Total)</translation>
     </message>
 </context>
 <context>
@@ -532,17 +605,17 @@
     <message>
         <location filename="../ui/sheets/components/InventoryModal.hpp" line="163"/>
         <source>Split item to inventory</source>
-        <translation type="unfinished"></translation>
+        <translation>Diviser l&apos;objet vers l&apos;inventaire</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/InventoryModal.hpp" line="171"/>
         <source>Current number of items</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre actuel d&apos;objets</translation>
     </message>
     <message>
         <location filename="../ui/sheets/components/InventoryModal.hpp" line="174"/>
         <source>Total number of items in dest. inventory</source>
-        <translation type="unfinished"></translation>
+        <translation>Nombre total d&apos;objets dans l&apos;inventaire de destination</translation>
     </message>
 </context>
 <context>
@@ -550,7 +623,7 @@
     <message>
         <location filename="../ui/mapLayout/base/LayerSelector.cpp" line="8"/>
         <source>Default Layer:</source>
-        <translation type="unfinished"></translation>
+        <translation>Calque par défaut:</translation>
     </message>
 </context>
 <context>
@@ -559,52 +632,52 @@
         <location filename="../ui/sheets/tabs/LoreTab.hpp" line="40"/>
         <location filename="../ui/sheets/tabs/LoreTab.hpp" line="141"/>
         <source>Change portrait</source>
-        <translation type="unfinished"></translation>
+        <translation>Changer le portrait</translation>
     </message>
     <message>
         <location filename="../ui/sheets/tabs/LoreTab.hpp" line="49"/>
         <source> Usual character name [Required!]</source>
-        <translation type="unfinished"></translation>
+        <translation> Nom usuel du personnage [Requis!]</translation>
     </message>
     <message>
         <location filename="../ui/sheets/tabs/LoreTab.hpp" line="50"/>
         <source>Character name :</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom du personnage :</translation>
     </message>
     <message>
         <location filename="../ui/sheets/tabs/LoreTab.hpp" line="54"/>
         <source> Short and gross characterization (Paladin Loyal Good, Bounty hunter...)</source>
-        <translation type="unfinished"></translation>
+        <translation> Courte et grossière caractérisation du personnage (Paladin Loyal Bon, Chasseur de Prime...)</translation>
     </message>
     <message>
         <location filename="../ui/sheets/tabs/LoreTab.hpp" line="55"/>
         <source>Archtype :</source>
-        <translation type="unfinished"></translation>
+        <translation>Archétype :</translation>
     </message>
     <message>
         <location filename="../ui/sheets/tabs/LoreTab.hpp" line="59"/>
         <source>Physical, psycological, environnemental description...</source>
-        <translation type="unfinished"></translation>
+        <translation>Description physique, psychologique, contextuelle...</translation>
     </message>
     <message>
         <location filename="../ui/sheets/tabs/LoreTab.hpp" line="60"/>
         <source>Description :</source>
-        <translation type="unfinished"></translation>
+        <translation>Description :</translation>
     </message>
     <message>
         <location filename="../ui/sheets/tabs/LoreTab.hpp" line="64"/>
         <source>Evolution of the character during his adventures...</source>
-        <translation type="unfinished"></translation>
+        <translation>Evolution du personnage durant ses aventures...</translation>
     </message>
     <message>
         <location filename="../ui/sheets/tabs/LoreTab.hpp" line="65"/>
         <source>Chronicles :</source>
-        <translation type="unfinished"></translation>
+        <translation>Histoire :</translation>
     </message>
     <message>
         <location filename="../ui/sheets/tabs/LoreTab.hpp" line="143"/>
         <source>Images (*.png *.jpg *.jpeg)</source>
-        <translation type="unfinished"></translation>
+        <translation>Images (*.png *.jpg *.jpeg)</translation>
     </message>
 </context>
 <context>
@@ -615,94 +688,94 @@
         <translation>Appuyez sur la touche ALT pour afficher le menu !</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="129"/>
+        <location filename="../ui/mainWindow.cpp" line="121"/>
         <source>No</source>
         <translation>Non</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="177"/>
+        <location filename="../ui/mainWindow.cpp" line="169"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="263"/>
+        <location filename="../ui/mainWindow.cpp" line="255"/>
         <source>Toy box</source>
         <translation>Boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="264"/>
+        <location filename="../ui/mainWindow.cpp" line="256"/>
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="266"/>
+        <location filename="../ui/mainWindow.cpp" line="258"/>
         <source>Sheets</source>
         <translation>Fiches</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="271"/>
+        <location filename="../ui/mainWindow.cpp" line="263"/>
         <source>Map Atoms</source>
         <translation>Atomes de la carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="272"/>
+        <location filename="../ui/mainWindow.cpp" line="264"/>
         <source>Atom Editor</source>
         <translation>Editeur d&apos;atomes</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="286"/>
+        <location filename="../ui/mainWindow.cpp" line="278"/>
         <source>Connection / Chat</source>
         <translation>Connexion / Chat</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="391"/>
+        <location filename="../ui/mainWindow.cpp" line="383"/>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="405"/>
+        <location filename="../ui/mainWindow.cpp" line="397"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="407"/>
-        <location filename="../ui/mainWindow.cpp" line="433"/>
-        <location filename="../ui/mainWindow.cpp" line="461"/>
+        <location filename="../ui/mainWindow.cpp" line="399"/>
+        <location filename="../ui/mainWindow.cpp" line="425"/>
+        <location filename="../ui/mainWindow.cpp" line="453"/>
         <source>Game map (*%1)</source>
         <translation>Carte de campagne (*%1)</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="431"/>
+        <location filename="../ui/mainWindow.cpp" line="423"/>
         <source>Load a new map</source>
         <translation>Charger une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="459"/>
+        <location filename="../ui/mainWindow.cpp" line="451"/>
         <source>Save as...</source>
         <translation>Savegarder sous...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="495"/>
+        <location filename="../ui/mainWindow.cpp" line="487"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="550"/>
+        <location filename="../ui/mainWindow.cpp" line="542"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="564"/>
+        <location filename="../ui/mainWindow.cpp" line="556"/>
         <source>Searching for updates...</source>
         <translation>Recherche des mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="564"/>
+        <location filename="../ui/mainWindow.cpp" line="556"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="588"/>
+        <location filename="../ui/mainWindow.cpp" line="580"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
@@ -712,7 +785,7 @@
     <message>
         <location filename="../shared/hints/MapHint.cpp" line="40"/>
         <source>Do you want to save changes done to this map ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Voulez-vous sauvegardez les modifications faites à cette carte ?</translation>
     </message>
 </context>
 <context>
@@ -720,7 +793,7 @@
     <message>
         <location filename="../ui/atomEditor/base/NoEditorMessageWidget.hpp" line="19"/>
         <source>No modifications are possible !</source>
-        <translation type="unfinished"></translation>
+        <translation>Aucune modification possible !</translation>
     </message>
 </context>
 <context>
@@ -728,7 +801,7 @@
     <message>
         <location filename="../ui/users/players/PlayersModel.hpp" line="46"/>
         <source>[%1] as &quot;%2&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>[%1] en tant que &quot;%2&quot;</translation>
     </message>
 </context>
 <context>
@@ -736,17 +809,17 @@
     <message>
         <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="140"/>
         <source>This Youtube video is already in playlist !</source>
-        <translation type="unfinished"></translation>
+        <translation>Cette vidéo Youtube est déjà dans la liste de lecture !</translation>
     </message>
     <message>
         <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="182"/>
         <source>(Loading metadata...) </source>
-        <translation type="unfinished"></translation>
+        <translation>(Chargement des métadonnées...) </translation>
     </message>
     <message>
         <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="192"/>
         <source>(Error) </source>
-        <translation type="unfinished"></translation>
+        <translation>(Erreur) </translation>
     </message>
 </context>
 <context>
@@ -754,69 +827,32 @@
     <message>
         <location filename="../ui/audio/controllers/PlaylistController.cpp" line="3"/>
         <source>Playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Liste de lecture</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../shared/assets/AssetsDatabaseElement.h" line="190"/>
-        <source>Internal</source>
-        <translation>Interne</translation>
-    </message>
-    <message>
-        <location filename="../shared/assets/AssetsDatabaseElement.h" line="191"/>
-        <source>Player</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../shared/assets/AssetsDatabaseElement.h" line="192"/>
-        <source>Event</source>
-        <translation>Evènement</translation>
-    </message>
-    <message>
-        <location filename="../shared/assets/AssetsDatabaseElement.h" line="193"/>
         <location filename="../shared/models/RPZAtom.cpp" line="30"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
-        <location filename="../shared/assets/AssetsDatabaseElement.h" line="194"/>
         <location filename="../shared/models/RPZAtom.cpp" line="32"/>
         <source>Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../shared/assets/AssetsDatabaseElement.h" line="195"/>
-        <source>NPC / Portraits</source>
-        <translation>PNJ / Portraits</translation>
-    </message>
-    <message>
-        <location filename="../shared/assets/AssetsDatabaseElement.h" line="196"/>
-        <source>Objects</source>
-        <translation>Objets</translation>
-    </message>
-    <message>
-        <location filename="../shared/assets/AssetsDatabaseElement.h" line="197"/>
         <location filename="../shared/models/RPZAtom.cpp" line="36"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../shared/assets/AssetsDatabaseElement.h" line="198"/>
-        <source>Downloaded</source>
-        <translation>Téléchargés</translation>
-    </message>
-    <message>
-        <location filename="../shared/assets/AssetsDatabaseElement.h" line="199"/>
-        <source>Landscapes</source>
-        <translation>Paysages</translation>
-    </message>
-    <message>
         <location filename="../shared/commands/MessageInterpreter.cpp" line="116"/>
         <source>Server %1 :
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Serveur %1 :
+</translation>
     </message>
     <message>
         <location filename="../shared/commands/MessageInterpreter.cpp" line="117"/>
@@ -833,12 +869,12 @@
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="4"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Rétablir</translation>
     </message>
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="12"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="20"/>
@@ -848,7 +884,7 @@
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="28"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Coller</translation>
     </message>
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="38"/>
@@ -858,12 +894,12 @@
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="45"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Supprimer</translation>
     </message>
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="53"/>
         <source>Raise (Layer %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Remonter (Calque %1)</translation>
     </message>
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="63"/>
@@ -873,7 +909,7 @@
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="75"/>
         <source>Show</source>
-        <translation type="unfinished"></translation>
+        <translation>Montrer</translation>
     </message>
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="82"/>
@@ -883,7 +919,7 @@
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="89"/>
         <source>Reset the view</source>
-        <translation type="unfinished"></translation>
+        <translation>Réinitialiser la vue</translation>
     </message>
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="96"/>
@@ -893,17 +929,17 @@
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="103"/>
         <source>Lock</source>
-        <translation>Verouiller</translation>
+        <translation>Verrouiller</translation>
     </message>
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="110"/>
         <source>Unlock</source>
-        <translation type="unfinished"></translation>
+        <translation>Déverrouiller</translation>
     </message>
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="117"/>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>Quitter</translation>
     </message>
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="126"/>
@@ -917,18 +953,18 @@
     </message>
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="137"/>
-        <source>Open Data Folder (%1)</source>
-        <translation type="unfinished"></translation>
+        <source>Open application data folder (%1)</source>
+        <translation>Ouvrir le dossier de données de l&apos;application (%1)</translation>
     </message>
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="143"/>
         <source>Show session log</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher le journal d&apos;événements de session</translation>
     </message>
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="147"/>
         <source>Show full log</source>
-        <translation type="unfinished"></translation>
+        <translation>Afficher le journal d&apos;événements</translation>
     </message>
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="151"/>
@@ -948,17 +984,17 @@
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="169"/>
         <source>Save map</source>
-        <translation type="unfinished"></translation>
+        <translation>Sauvegarder la carte</translation>
     </message>
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="176"/>
         <source>Save as map...</source>
-        <translation type="unfinished"></translation>
+        <translation>Sauvegarder la carte sous...</translation>
     </message>
     <message>
         <location filename="../shared/models/character/RPZCharacter.hpp" line="20"/>
         <source>New character [#%1]</source>
-        <translation>Nouveau personnage</translation>
+        <translation>Nouveau personnager [#%1]</translation>
     </message>
     <message>
         <location filename="../shared/models/character/RPZInventory.hpp" line="38"/>
@@ -976,39 +1012,34 @@
         <translation>Atome</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="127"/>
-        <source>Type some text</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../shared/models/RPZMessage.cpp" line="30"/>
         <source> said : </source>
-        <translation type="unfinished"></translation>
+        <translation> a dit : </translation>
     </message>
     <message>
         <location filename="../shared/models/RPZMessage.cpp" line="30"/>
         <source>you said : </source>
-        <translation type="unfinished"></translation>
+        <translation>vous dites : </translation>
     </message>
     <message>
         <location filename="../shared/models/RPZMessage.cpp" line="35"/>
         <source> whispers to you : </source>
-        <translation type="unfinished"></translation>
+        <translation> vous chuchotte : </translation>
     </message>
     <message>
         <location filename="../shared/models/RPZMessage.cpp" line="39"/>
         <source>your whisper to </source>
-        <translation type="unfinished"></translation>
+        <translation>vous chuchottez à </translation>
     </message>
     <message>
         <location filename="../shared/models/RPZResponse.cpp" line="28"/>
         <source>Server has not understood your command. Type &quot;/h&quot; for help.</source>
-        <translation type="unfinished"></translation>
+        <translation>Le serveur n&apos;a pas compris la commande. Entrez &quot;/h&quot; pour afficher l&apos;aide.</translation>
     </message>
     <message>
         <location filename="../shared/models/RPZResponse.cpp" line="36"/>
         <source>Target users could not be found : </source>
-        <translation type="unfinished"></translation>
+        <translation>Les utilisateurs destinataires n&apos;ont pas pu être trouvé : </translation>
     </message>
     <message>
         <location filename="../shared/models/RPZResponse.cpp" line="40"/>
@@ -1020,51 +1051,36 @@
         <source>Error has occured : </source>
         <translation>Une erreur est survenue : </translation>
     </message>
-    <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="43"/>
-        <source>Nothing to modify</source>
-        <translation>Rien à modifier</translation>
-    </message>
-    <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="44"/>
-        <source>Template modification</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="45"/>
-        <source>Selection modification</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>RPZClient</name>
     <message>
         <location filename="../network/rpz/client/RPZClient.cpp" line="361"/>
         <source>Host closed the connection.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;hôte a fermé la connexion.</translation>
     </message>
     <message>
         <location filename="../network/rpz/client/RPZClient.cpp" line="364"/>
         <source>Host could not be found. Please check the hostname and port number.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;hôte n&apos;a pas pu être trouvé. Merci de vérifier le nom d&apos;hôte et le numéro de port.</translation>
     </message>
     <message>
         <location filename="../network/rpz/client/RPZClient.cpp" line="367"/>
         <source>Connection has been refused by remote host.</source>
-        <translation type="unfinished"></translation>
+        <translation>La connexion a été refusée par l&apos;hôte distant.</translation>
     </message>
     <message>
         <location filename="../network/rpz/client/RPZClient.cpp" line="370"/>
         <source>An error has occured : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Une erreur est survenue : %1</translation>
     </message>
 </context>
 <context>
     <name>RPZServer</name>
     <message>
-        <location filename="../network/rpz/server/RPZServer.cpp" line="234"/>
-        <source>Versions between host and client are different : v%1 (client) / v%2 (host) !</source>
-        <translation type="unfinished"></translation>
+        <location filename="../network/rpz/server/RPZServer.cpp" line="235"/>
+        <source>Your software version is different from the server&apos;s one : v%1 (you) / v%2 (server) !</source>
+        <translation>Votre version logicielle diffère de la version du serveur : v%1 (vous) / v%2 (serveur) !</translation>
     </message>
 </context>
 <context>
@@ -1072,27 +1088,27 @@
     <message>
         <location filename="../ui/statusBar/RPZStatusBar.cpp" line="21"/>
         <source>External IP</source>
-        <translation type="unfinished"></translation>
+        <translation>IP Externe</translation>
     </message>
     <message>
         <location filename="../ui/statusBar/RPZStatusBar.cpp" line="22"/>
         <source>Copy IP</source>
-        <translation type="unfinished"></translation>
+        <translation>Copier l&apos;IP</translation>
     </message>
     <message>
         <location filename="../ui/statusBar/RPZStatusBar.cpp" line="33"/>
         <source>IP copied !</source>
-        <translation type="unfinished"></translation>
+        <translation>IP copiée !</translation>
     </message>
     <message>
         <location filename="../ui/statusBar/RPZStatusBar.cpp" line="37"/>
         <source>Map</source>
-        <translation type="unfinished">Carte</translation>
+        <translation>Carte</translation>
     </message>
     <message>
         <location filename="../ui/statusBar/RPZStatusBar.cpp" line="40"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Serveur</translation>
     </message>
 </context>
 <context>
@@ -1100,7 +1116,7 @@
     <message>
         <location filename="../ui/statusBar/RPZStatusLabel.cpp" line="14"/>
         <source>&lt;Pending...&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;En attente...&gt;</translation>
     </message>
 </context>
 <context>
@@ -1108,52 +1124,52 @@
     <message>
         <location filename="../ui/sheets/tabs/StatusTab.hpp" line="32"/>
         <source>Level</source>
-        <translation type="unfinished"></translation>
+        <translation>Niveau</translation>
     </message>
     <message>
         <location filename="../ui/sheets/tabs/StatusTab.hpp" line="35"/>
         <source>Alterations</source>
-        <translation type="unfinished"></translation>
+        <translation>Altérations</translation>
     </message>
     <message>
         <location filename="../ui/sheets/tabs/StatusTab.hpp" line="43"/>
         <source> Under the influence of a potion, filled with determination ...</source>
-        <translation type="unfinished"></translation>
+        <translation> Sous l&apos;effet d&apos;une potion, Rempli de détermination ...</translation>
     </message>
     <message>
         <location filename="../ui/sheets/tabs/StatusTab.hpp" line="44"/>
         <source>State bonus :</source>
-        <translation type="unfinished"></translation>
+        <translation>Bonus d&apos;état :</translation>
     </message>
     <message>
         <location filename="../ui/sheets/tabs/StatusTab.hpp" line="48"/>
         <source> Broken leg, poisoned ...</source>
-        <translation type="unfinished"></translation>
+        <translation> Jambe cassée, empoisonné ...</translation>
     </message>
     <message>
         <location filename="../ui/sheets/tabs/StatusTab.hpp" line="49"/>
         <source>State malus :</source>
-        <translation type="unfinished"></translation>
+        <translation>Malus d&apos;état :</translation>
     </message>
     <message>
         <location filename="../ui/sheets/tabs/StatusTab.hpp" line="52"/>
         <source>Gauges</source>
-        <translation type="unfinished"></translation>
+        <translation>Jauges</translation>
     </message>
     <message>
         <location filename="../ui/sheets/tabs/StatusTab.hpp" line="67"/>
         <source>Add a new gauge</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajouter une nouvelle jauge</translation>
     </message>
     <message>
         <location filename="../ui/sheets/tabs/StatusTab.hpp" line="74"/>
         <source>No gauge bound to the character</source>
-        <translation type="unfinished"></translation>
+        <translation>Aucune jauge liée au personnage</translation>
     </message>
     <message>
         <location filename="../ui/sheets/tabs/StatusTab.hpp" line="84"/>
         <source>Abilities</source>
-        <translation type="unfinished"></translation>
+        <translation>Compétences</translation>
     </message>
 </context>
 <context>
@@ -1161,7 +1177,7 @@
     <message>
         <location filename="../shared/hints/TreeMapHint.cpp" line="242"/>
         <source>Layer %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Calque %1</translation>
     </message>
 </context>
 <context>
@@ -1169,17 +1185,17 @@
     <message>
         <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="44"/>
         <source>Check for updates...</source>
-        <translation type="unfinished"></translation>
+        <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
         <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="67"/>
         <source>Update Available</source>
-        <translation type="unfinished"></translation>
+        <translation>Mise à jour disponible</translation>
     </message>
     <message>
         <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="68"/>
         <source>An update is available for %1. Would you like to install it now ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Une mise à jour est disponible pour %1. Voulez-vous l&apos;installer maintenant ?</translation>
     </message>
 </context>
 <context>
@@ -1187,17 +1203,17 @@
     <message>
         <location filename="../ui/audio/controllers/playlist/YoutubePlaylistItemInsertor.hpp" line="33"/>
         <source>Invalid Youtube URL !</source>
-        <translation type="unfinished"></translation>
+        <translation>URL Youtube invalide !</translation>
     </message>
     <message>
         <location filename="../ui/audio/controllers/playlist/YoutubePlaylistItemInsertor.hpp" line="48"/>
         <source>Paste here a Youtube URL...</source>
-        <translation type="unfinished"></translation>
+        <translation>Collez ici une URL Youtube...</translation>
     </message>
     <message>
         <location filename="../ui/audio/controllers/playlist/YoutubePlaylistItemInsertor.hpp" line="56"/>
         <source>Click to add to playlist</source>
-        <translation type="unfinished"></translation>
+        <translation>Cliquez pour ajouter à la liste de lecture</translation>
     </message>
 </context>
 </TS>

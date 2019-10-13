@@ -15,9 +15,13 @@ class AtomTextEditor : public AtomSubEditor  {
         }
 
         AtomTextEditor(const AtomParameter &parameter) : AtomSubEditor(parameter), 
-            _validateButton(new QPushButton(tr("Confirm modification"))) {
+            _validateButton(new QPushButton(this)) {
             
-            this->_setAsDataEditor(new QTextEdit(this));
+            this->_validateButton->setText(tr("Confirm modification"));
+
+            auto edit = new QTextEdit(this);
+            edit->setPlaceholderText(tr("Type some text..."));
+            this->_setAsDataEditor(edit);
 
             this->layout()->addWidget(this->_validateButton);
 

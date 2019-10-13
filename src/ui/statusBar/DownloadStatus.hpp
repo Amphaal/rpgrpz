@@ -93,7 +93,7 @@ class DownloadStatus : public QProgressBar {
         static QString kindToText(const ProgressTracker::Kind &kind) {
             switch (kind) {
                 case ProgressTracker::Kind::Asset:
-                    return tr("Assets donwload");
+                    return tr("Assets download");
                 case ProgressTracker::Kind::Map:
                     return tr("Map download");
                 default:

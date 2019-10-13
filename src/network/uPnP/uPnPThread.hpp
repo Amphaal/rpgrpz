@@ -12,6 +12,6 @@ class uPnPThread : public QThread {
     signals:
         void uPnPError(int errorCode);
         void uPnPExtIpFound(const QString &extIP);
-        void uPnPSuccess(const char * protocol, const char * negociatedPort);
+        void uPnPSuccess(const QString &protocol, const QString &negociatedPort);
         
 };

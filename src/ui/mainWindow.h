@@ -53,7 +53,6 @@ class MainWindow : public QMainWindow {
         ~MainWindow();
 
     private:
-        void _trueShow();
         void closeEvent(QCloseEvent *event) override;
         
         void _initUI();

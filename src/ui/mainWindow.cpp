@@ -95,15 +95,7 @@ void MainWindow::_loadWindowState() {
     AppContext::settings()->endGroup();
 
     this->show();
-    QTimer::singleShot(1000, [=]() {
-        this->_barVisibilityToolTip();
-    });
-}
 
-void MainWindow::_trueShow() {
-    this->showNormal();
-    this->activateWindow();
-    this->raise();
 }
 
 //handle clean close
@@ -271,12 +263,12 @@ void MainWindow::_initUIApp() {
     rTab->addTab(this->_mlManager, QIcon(":/icons/app/tabs/list.png"), tr("Map Atoms"));
     rTab->addTab(this->_atomEditManager, QIcon(":/icons/app/tabs/config.png"), tr("Atom Editor"));
     
-    auto logLayout = new QVBoxLayout(this);
+    auto logLayout = new QVBoxLayout;
     logLayout->addWidget(this->_connectWidget); 
     logLayout->addWidget(this->_usersView);
     logLayout->addWidget(this->_cw, 1);
 
-    auto CCwLayout = new QHBoxLayout(this);
+    auto CCwLayout = new QHBoxLayout;
     CCwLayout->setDirection(QBoxLayout::RightToLeft);
     CCwLayout->addLayout(logLayout, 1);
     CCwLayout->addWidget(this->_playersView);
@@ -287,12 +279,12 @@ void MainWindow::_initUIApp() {
 
     //designer
     auto designer = new QWidget(this);
-    designer->setLayout(new QVBoxLayout(this));
+    designer->setLayout(new QVBoxLayout);
     designer->layout()->setMargin(0);
     designer->layout()->setSpacing(2);
 
         auto toolbar = new QWidget(this);
-        auto toolbarLayout = new QHBoxLayout(this);
+        auto toolbarLayout = new QHBoxLayout;
         toolbar->setLayout(toolbarLayout);
         toolbarLayout->setMargin(0);
         toolbarLayout->setSpacing(0);

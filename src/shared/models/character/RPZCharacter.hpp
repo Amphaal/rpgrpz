@@ -43,7 +43,7 @@ class RPZCharacter : public Serializable {
 
             //write into buffer
             buffer.open(QIODevice::WriteOnly);
-                portrait.save(&buffer, ext.toStdString().c_str());
+                portrait.save(&buffer, qUtf8Printable(ext));
             buffer.close();
             
             auto base64Img = bArray.toBase64();
@@ -62,7 +62,7 @@ class RPZCharacter : public Serializable {
             auto ext = this->value("img_ext").toString();
             
             QPixmap out;
-            out.loadFromData(imgData, ext.toStdString().c_str());
+            out.loadFromData(imgData, qUtf8Printable(ext));
             return out;
 
         }

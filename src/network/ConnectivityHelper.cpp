@@ -94,17 +94,13 @@ void ConnectivityHelper::_tryNegociateUPnPPort() {
     this->_clearUPnPRequester();
 
     qDebug() << "Connectivity : Trying to open uPnP port" 
-             << AppContext::UPNP_DEFAULT_TARGET_PORT 
+             << qUtf8Printable(AppContext::UPNP_DEFAULT_TARGET_PORT) 
              << "as" 
-             << AppContext::UPNP_REQUEST_DESCRIPTION;
-
-    this->_requestedUPnPPort = AppContext::UPNP_DEFAULT_TARGET_PORT.toStdString();
-    this->_requestedDescription = AppContext::UPNP_REQUEST_DESCRIPTION.toStdString();
+             << qUtf8Printable(AppContext::UPNP_REQUEST_DESCRIPTION);
 
     this->_upnpThread = new uPnPRequester(
-        this->_requestedUPnPPort.c_str(), 
-        this->_requestedDescription.c_str(), 
-        this
+        AppContext::UPNP_DEFAULT_TARGET_PORT, 
+        AppContext::UPNP_REQUEST_DESCRIPTION
     );
 
     QObject::connect(
@@ -135,14 +131,14 @@ void ConnectivityHelper::_onUPnPError(int errorCode) {
     emit uPnPStateChanged(tr("No"));
 }
 
-void ConnectivityHelper::_onUPnPSuccess(const char * protocol, const char * negociatedPort) {
+void ConnectivityHelper::_onUPnPSuccess(const QString &protocol, const QString &negociatedPort) {
     
     QString out("OK [port: %1]");
     out = out.arg(negociatedPort);
 
     qDebug() << "Connectivity : uPnP" 
-             << protocol 
-             << out.toStdString().c_str();
+             << qUtf8Printable(protocol) 
+             << qUtf8Printable(out);
 
     emit uPnPStateChanged(out);
 
@@ -209,7 +205,7 @@ void ConnectivityHelper::_debugNetworkConfig() {
                      .arg(config.state())
                      .arg(config.type())
                      .arg(config.bearerTypeName());
-        qDebug() << model.toStdString().c_str();
+        qDebug() << qUtf8Printable(model);
     };
 
     for (auto &config : this->_getDefinedConfiguration()) {

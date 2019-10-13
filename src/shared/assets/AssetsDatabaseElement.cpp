@@ -511,7 +511,7 @@ QList<AssetsDatabaseElement::Type> AssetsDatabaseElement::internalItemTypes() {
 }
 
 QString AssetsDatabaseElement::typeDescription(AssetsDatabaseElement::Type &type) {
-    return _typeDescriptions[type];
+    return tr(qUtf8Printable(_typeDescriptions[type]));
 }
 
 bool AssetsDatabaseElement::isAcceptableNameChange(QString &newName) {

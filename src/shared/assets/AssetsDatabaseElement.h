@@ -9,7 +9,10 @@
 #include "src/shared/models/RPZAtom.h"
 #include "src/shared/models/RPZToyMetadata.h"
 
-class AssetsDatabaseElement {
+class AssetsDatabaseElement : public QObject {
+
+    Q_OBJECT
+
     public:
         enum Type { 
             T_Unknown = 0,
@@ -187,16 +190,16 @@ class AssetsDatabaseElement {
         };
 
         static const inline QHash<AssetsDatabaseElement::Type, QString> _typeDescriptions = {
-            { InternalContainer, QObject::tr("Internal") },
-            { Player, QObject::tr("Player") },
-            { Event, QObject::tr("Event") },
-            { FreeDraw, QObject::tr("Drawing") },
-            { Text, QObject::tr("Text") },
-            { NPC_Container, QObject::tr("NPC / Portraits") },
-            { ObjectContainer, QObject::tr("Objects") },
-            { FloorBrushContainer, QObject::tr("Brush") },
-            { DownloadedContainer, QObject::tr("Downloaded") },
-            { BackgroundContainer, QObject::tr("Landscapes") }
+            { InternalContainer, QT_TR_NOOP("Internal") },
+            { Player, QT_TR_NOOP("Player") },
+            { Event, QT_TR_NOOP("Event") },
+            { FreeDraw, QT_TR_NOOP("Drawing") },
+            { Text, QT_TR_NOOP("Text") },
+            { NPC_Container, QT_TR_NOOP("NPC / Portraits") },
+            { ObjectContainer, QT_TR_NOOP("Objects") },
+            { FloorBrushContainer, QT_TR_NOOP("Brush") },
+            { DownloadedContainer, QT_TR_NOOP("Downloaded") },
+            { BackgroundContainer, QT_TR_NOOP("Landscapes") }
         };
 
 };

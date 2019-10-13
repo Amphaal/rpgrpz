@@ -325,7 +325,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
                 
                 //if missing assets, request them
                 if(auto count = missingAssetIds.count()) {
-                    qDebug() << "Assets : missing" << QString::number(count).toStdString().c_str() << "asset(s)";
+                    qDebug() << qUtf8Printable(QString("Assets : missing %1 asset(s)").arg(count));
                     this->_askForAssets(missingAssetIds);
                 }
 
@@ -372,7 +372,7 @@ void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
     }
 
     emit connectionStatus(msg, true);
-    qDebug() << "RPZClient : :" << msg.toStdString().c_str();
+    qDebug() << "RPZClient : :" << qUtf8Printable(msg);
 
     emit closed();
 }

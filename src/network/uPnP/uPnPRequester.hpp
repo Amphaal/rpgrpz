@@ -12,21 +12,19 @@ class uPnPRequester : public uPnPThread {
         struct UPNPDev * devlist = 0;
         char lanaddr[64] = "unset";	/* my ip address on the LAN */
         int i;
-        const char * rootdescurl = 0;
-        const char * multicastif = 0;
-        const char * minissdpdpath = 0;
+        char * rootdescurl = 0;
+        char * multicastif = 0;
+        char * minissdpdpath = 0;
         int localport = UPNP_LOCAL_PORT_ANY;
         int retcode = 0;
         int error = 0;
         int ipv6 = 0;
         unsigned char ttl = 2;	/* defaulting to 2 */
-        const char * description = 0;
-        const char * targetPort = 0;
+        QString description = 0;
+        QString targetPort = 0;
 
-        uPnPRequester(const char * tPort, const char * descr, QObject * parent = nullptr) :
-            targetPort(tPort), 
-            description(descr) {
-            this->setParent(parent);
+        uPnPRequester(const QString &tPort, const QString &descr) : targetPort(tPort), description(descr) { 
+
         }
         
         void run() override {
@@ -151,8 +149,8 @@ class uPnPRequester : public uPnPThread {
         }
 
         int SetRedirectAndTest(const char * iaddr,
-                        const char * iport,
-                        const char * eport,
+                        const QString &iport,
+                        QString eport,
                         const char * proto,
                         const char * leaseDuration,
                         int addAny) {
@@ -164,7 +162,7 @@ class uPnPRequester : public uPnPThread {
             char duration[16];
             int r;
 
-            if(!iaddr || !iport || !eport || !proto) {
+            if(!iaddr || iport.isEmpty() || eport.isEmpty() || !proto) {
                 qDebug() << "UPNP AskRedirect : Wrong arguments";
                 return -1;
             }
@@ -181,28 +179,52 @@ class uPnPRequester : public uPnPThread {
                 qDebug() << "UPNP AskRedirect : GetExternalIPAddress No IGD UPnP Device.";
 
             if (addAny) {
-                r = UPNP_AddAnyPortMapping(urls.controlURL, data.first.servicetype,
-                            eport, iport, iaddr, description,
-                            proto, 0, leaseDuration, reservedPort);
+                r = UPNP_AddAnyPortMapping(
+                            urls.controlURL, 
+                            data.first.servicetype,
+                            qUtf8Printable(eport), 
+                            qUtf8Printable(iport), 
+                            iaddr, 
+                            qUtf8Printable(description),
+                            proto, 
+                            0, 
+                            leaseDuration, 
+                            reservedPort
+                    );
                 if(r==UPNPCOMMAND_SUCCESS)
                     eport = reservedPort;
                 else
                     qDebug() << "UPNP AskRedirect : AddAnyPortMapping(" << eport << "," << iport << "," << iaddr << ") failed with code" << r << "(" << strupnperror(r) << ")";
             } else {
-                r = UPNP_AddPortMapping(urls.controlURL, data.first.servicetype,
-                            eport, iport, iaddr, description,
-                            proto, NULL/*remoteHost*/, leaseDuration);
+                r = UPNP_AddPortMapping(
+                        urls.controlURL, 
+                        data.first.servicetype,
+                        qUtf8Printable(eport), 
+                        qUtf8Printable(iport), 
+                        iaddr, 
+                        qUtf8Printable(description),
+                        proto, 
+                        NULL/*remoteHost*/, 
+                        leaseDuration
+                    );
                 if(r!=UPNPCOMMAND_SUCCESS) {
                     qDebug() << "UPNP AskRedirect : AddPortMapping(" << eport << "," << iport << "," << iaddr << ") failed with code" << r << "(" << strupnperror(r) << ")";
                     return -2;
                 }
             }
 
-            r = UPNP_GetSpecificPortMappingEntry(urls.controlURL,
-                                data.first.servicetype,
-                                eport, proto, NULL/*remoteHost*/,
-                                intClient, intPort, NULL/*desc*/,
-                                NULL/*enabled*/, duration);
+            r = UPNP_GetSpecificPortMappingEntry(
+                    urls.controlURL,
+                    data.first.servicetype,
+                    qUtf8Printable(eport), 
+                    proto, 
+                    NULL/*remoteHost*/,
+                    intClient, 
+                    intPort, 
+                    NULL/*desc*/,
+                    NULL/*enabled*/, 
+                    duration
+                );
             if(r!=UPNPCOMMAND_SUCCESS) {
                 qDebug() << "UPNP AskRedirect : GetSpecificPortMappingEntry() failed with code" << r <<"(" << strupnperror(r) << ")";
                 return -2;
@@ -212,11 +234,11 @@ class uPnPRequester : public uPnPThread {
             return 0;
         }
 
-        int RemoveRedirect(const char * eport,
+        int RemoveRedirect(const QString &eport,
                     const char * proto,
                     const char * remoteHost) {
             int r;
-            if(!proto || !eport)
+            if(!proto || eport.isEmpty())
             {
                 qDebug() << "UPNP RemoveRedirect : invalid arguments";
                 return -1;
@@ -227,7 +249,13 @@ class uPnPRequester : public uPnPThread {
                 qDebug() << "UPNP RemoveRedirect : protocol invalid";
                 return -1;
             }
-            r = UPNP_DeletePortMapping(urls.controlURL, data.first.servicetype, eport, proto, remoteHost);
+            r = UPNP_DeletePortMapping(
+                urls.controlURL, 
+                data.first.servicetype, 
+                qUtf8Printable(eport), 
+                proto, 
+                remoteHost
+            );
             if(r!=UPNPCOMMAND_SUCCESS) {
                 qDebug() << "UPNP RemoveRedirect : UPNP_DeletePortMapping() failed with code :" << r << "";
                 return -2;

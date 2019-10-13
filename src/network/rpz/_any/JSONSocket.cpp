@@ -29,14 +29,14 @@ void JSONSocket::sendJSON(const JSONMethod &method, const QVariant &data) {
 
     //ignore emission when socket is not connected
     if(this->socket()->state() != QAbstractSocket::ConnectedState) {
-        qWarning() << this->_logId.toStdString().c_str() << ": cannot send JSON as the socket is not connected !";  
+        qWarning() << qUtf8Printable(this->_logId) << ": cannot send JSON as the socket is not connected !";  
         emit sent();
         return;
     }
 
     //checks
     if(data.isNull()) {
-        qWarning() << this->_logId.toStdString().c_str() << ": cannot send JSON as input values are unexpected";  
+        qWarning() << qUtf8Printable(this->_logId) << ": cannot send JSON as input values are unexpected";  
         emit sent();
         return;
     }
@@ -68,9 +68,10 @@ void JSONSocket::sendJSON(const JSONMethod &method, const QVariant &data) {
 }
 
 void JSONSocket::_debugLog(const QString &logId, const JSONMethod &method, const QString &msg) {
-    qDebug() << logId.toStdString().c_str() 
-             << QString("[" + JSONMethodAsArray[method] + "]").toStdString().c_str() 
-             << ":" << msg.toStdString().c_str();
+    qDebug() << qUtf8Printable(logId) 
+             << qUtf8Printable(QString("[%1]").arg(JSONMethodAsArray[method])) 
+             << " : " 
+             << qUtf8Printable(msg);
 }
 
 void JSONSocket::_debugLog(const JSONMethod &method, const QString &msg) {
@@ -138,13 +139,13 @@ void JSONSocket::_processIncomingAsJson(const QByteArray &data) {
     //parse to json
     auto json = QJsonDocument::fromJson(data);
     if(json.isNull()) {
-        qWarning() << this->_logId.toStdString().c_str() << ": Data received was not JSON and thus cannot be read.";
+        qWarning() << qUtf8Printable(this->_logId) << ": Data received was not JSON and thus cannot be read.";
         return;
     }
 
     //prepare
     if(!json.isObject()) {
-        qWarning() << this->_logId.toStdString().c_str() << ": JSON received is not Object and thus cannot be handled.";
+        qWarning() << qUtf8Printable(this->_logId) << ": JSON received is not Object and thus cannot be handled.";
         return;
     }
 
@@ -154,14 +155,14 @@ void JSONSocket::_processIncomingAsJson(const QByteArray &data) {
     //check requirements
     auto required = mainKeys.contains("_m") && mainKeys.contains("_d");
     if(!required) {
-        qWarning() << this->_logId.toStdString().c_str() << ": JSON received has missing keys and thus cannot be handled.";
+        qWarning() << qUtf8Printable(this->_logId) << ": JSON received has missing keys and thus cannot be handled.";
         return;
     }
 
     //check value types
     auto okTypes = content["_m"].isDouble();
     if(!okTypes) {
-        qWarning() << this->_logId.toStdString().c_str() << ": JSON received has unexpected data and thus cannot be handled.";
+        qWarning() << qUtf8Printable(this->_logId) << ": JSON received has unexpected data and thus cannot be handled.";
         return;
     }
 

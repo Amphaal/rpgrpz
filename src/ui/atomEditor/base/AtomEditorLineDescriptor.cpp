@@ -24,7 +24,10 @@ AtomEditorLineDescriptor::AtomEditorLineDescriptor(const QString &untranslatedDe
     }
 
     //description
-    auto descrLbl = new QLabel(tr(untranslatedDescription.toStdString().c_str()));
+    auto descrLbl = new QLabel;
+    descrLbl->setText(
+        tr(qUtf8Printable(untranslatedDescription))
+    );
     hLayout->addWidget(descrLbl);
    
     hLayout->addStretch(0);

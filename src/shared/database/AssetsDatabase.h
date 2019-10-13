@@ -20,7 +20,7 @@ struct SizeAndCenter { QPointF center; QSize size; };
 
 class RPZToyMetadata;
 
-class AssetsDatabase : public QObject, public JSONDatabase, public AssetsDatabaseElement {
+class AssetsDatabase : public AssetsDatabaseElement, public JSONDatabase {
     
     Q_OBJECT
 

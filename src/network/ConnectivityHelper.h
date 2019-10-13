@@ -36,9 +36,6 @@ class ConnectivityHelper : public QObject
     private:
         QNetworkAccessManager* _nam = nullptr;
         QNetworkConfigurationManager* _ncm = nullptr;
-
-        std::string _requestedUPnPPort;
-        std::string _requestedDescription;
         uPnPRequester* _upnpThread = nullptr;
 
         void _debugNetworkConfig();
@@ -50,7 +47,7 @@ class ConnectivityHelper : public QObject
         void _clearUPnPRequester();
         void _pickPreferedConfiguration();
 
-        void _onUPnPSuccess(const char * protocol, const char * negociatedPort);
+        void _onUPnPSuccess(const QString &protocol, const QString &negociatedPort);
         void _onUPnPError(int errorCode);
         QString _upnp_extIp;
         void _onUPnPExtIpFound(const QString &extIp);

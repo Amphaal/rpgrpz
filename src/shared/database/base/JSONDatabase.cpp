@@ -112,7 +112,7 @@ bool JSONDatabase::_handleVersionMissmatch(QJsonDocument &databaseToUpdate, int 
 
 void JSONDatabase::_createEmptyDbFile() {
     this->_destfile->open(QFile::WriteOnly);
-    this->_destfile->write(this->defaultJsonDoc().toStdString().c_str());
+    this->_destfile->write(qUtf8Printable(this->defaultJsonDoc()));
     this->_destfile->close();
 }
 

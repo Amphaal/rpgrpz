@@ -114,7 +114,7 @@ class CharacterPicker : public QWidget {
 
                 auto emptyItemText = isLocal ? 
                     tr("No existing character, create some !") : 
-                    tr("Waiting for sheet from host...");
+                    tr("Waiting for sheets from host...");
                 this->_characterListCombo->addItem(emptyItemText);
                 this->_characterListCombo->setEnabled(false);
                 

@@ -17,9 +17,9 @@ class LogWriter {
     private:
         static inline std::mutex _m;
         
-        static void _fprtint(const QString &channel, const QMessageLogContext &context, const QString &msg);
+        static void _fprtint(const QString &channel, const QMessageLogContext &context, QString msg);
         static void _openFileAndLog(QString* logFilePath, const QString &channel, const QMessageLogContext &context, const QString &msg, bool* sessionlogToken = nullptr);
-            static void _fprintf_to_file(FILE* _fs, const QString &channel, const QMessageLogContext &context, const QString &msg);
+            static void _fprintf_to_file(FILE* _fs, const QString &channel, const QMessageLogContext &context, QString msg);
 
         static inline QString* _fullLogFilePath = nullptr;
         static QString* _getFullLogFilePath();

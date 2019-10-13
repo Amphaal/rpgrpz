@@ -284,7 +284,7 @@ class InventorySheet : public QTableWidget {
                 auto result = QMessageBox::warning(
                     this, 
                     tr("Items deletion"), 
-                    tr("Do you really want to delete these items"), 
+                    tr("Do you really want to delete these items ?"), 
                     QMessageBox::Yes|QMessageBox::No, 
                     QMessageBox::No
                 );

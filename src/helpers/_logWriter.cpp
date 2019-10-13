@@ -52,18 +52,17 @@ void LogWriter::customMO(QtMsgType type, const QMessageLogContext &context, cons
 }
 
 
-void LogWriter::_fprtint(const QString &channel, const QMessageLogContext &context, const QString &msg) {
+void LogWriter::_fprtint(const QString &channel, const QMessageLogContext &context, QString msg) {
     
-    auto localMsg = msg.toStdString();
-    localMsg.erase(std::remove(localMsg.begin(), localMsg.end(), '\n'), localMsg.end());
-
-    const auto currentTime = QDateTime::currentDateTime().toString("dd.MM.yyyy-hh:mm:ss.zzz").toStdString();
+    msg = msg.replace("\n", "");
+    auto currentTime = QDateTime::currentDateTime().toString("dd.MM.yyyy-hh:mm:ss.zzz");
 
     fprintf(stderr, "%s %s | %s\n", 
-        currentTime.c_str(), 
-        channel.toStdString().c_str(), 
-        localMsg.c_str()
+        qUtf8Printable(currentTime), 
+        qUtf8Printable(channel), 
+        qUtf8Printable(msg)
     );
+
 }
 
 void LogWriter::_openFileAndLog(QString* logFilePath, const QString &channel, const QMessageLogContext &context, const QString &msg, bool* sessionlogToken) {
@@ -91,18 +90,18 @@ void LogWriter::_openFileAndLog(QString* logFilePath, const QString &channel, co
 
 }
 
-void LogWriter::_fprintf_to_file(FILE* _fs, const QString &channel, const QMessageLogContext &context, const QString &msg) {
-
-    auto localMsg = msg.toStdString();
-    localMsg.erase(std::remove(localMsg.begin(), localMsg.end(), '\n'), localMsg.end());
+void LogWriter::_fprintf_to_file(FILE* _fs, const QString &channel, const QMessageLogContext &context, QString msg) {
 
     const char * file = context.file ? context.file : "";
     const char * function = context.function ? context.function : "";
-    const auto currentTime = QDateTime::currentDateTime().toString("dd.MM.yyyy-hh:mm:ss.zzz").toStdString();
+
+    msg = msg.replace("\n", "");
+    auto currentTime = QDateTime::currentDateTime().toString("dd.MM.yyyy-hh:mm:ss.zzz");
 
     fprintf(_fs, "%s %s | %s\n", 
-        currentTime.c_str(), 
-        channel.toStdString().c_str(), 
-        localMsg.c_str()
+        qUtf8Printable(currentTime), 
+        qUtf8Printable(channel), 
+        qUtf8Printable(msg)
     );
+
 }

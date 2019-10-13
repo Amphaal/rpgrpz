@@ -155,7 +155,7 @@ void AppContext::init(const QString &customContext) {
 
 void AppContext::_makeSureDirPathExists(const QString &path) {
     struct stat buffer;
-    auto pathExists = (stat(path.toStdString().c_str(), &buffer) == 0);
+    auto pathExists = (stat(qUtf8Printable(path), &buffer) == 0);
     if(!pathExists) QDir().mkpath(path);
 }
 

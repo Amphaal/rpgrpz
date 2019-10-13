@@ -23,12 +23,12 @@ GStreamerClient::GStreamerClient(QObject* parent) : QObject(parent), _elapsedTim
 void GStreamerClient::_initGst() {   
 
     //add plugin dir detection
-    auto td = QCoreApplication::applicationDirPath().toStdString() + "/gst-plugins";
-    qputenv("GST_PLUGIN_PATH", td.c_str());
+    auto td = QCoreApplication::applicationDirPath() + "/gst-plugins";
+    qputenv("GST_PLUGIN_PATH", qUtf8Printable(td));
 
     //gio module dir
-    auto gio_ = QCoreApplication::applicationDirPath().toStdString() + "/gio";
-    qputenv("GIO_MODULE_DIR", gio_.c_str());
+    auto gio_ = QCoreApplication::applicationDirPath() + "/gio";
+    qputenv("GIO_MODULE_DIR", qUtf8Printable(gio_));
 
     //debug log
     qputenv("GST_DEBUG", "3");
@@ -106,7 +106,7 @@ void GStreamerClient::_changeBinState(const GstState &state) {
 void GStreamerClient::useSource(QString uri) {
 
     //set new source
-    g_object_set(G_OBJECT(this->_bin), "uri", uri.toStdString().c_str(), NULL);
+    g_object_set(G_OBJECT(this->_bin), "uri", qUtf8Printable(uri), NULL);
 
     {
         QMutexLocker l(&this->_m_seek);
