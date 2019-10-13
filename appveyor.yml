@@ -10,10 +10,10 @@ install:
   - cmd: conan user # Create the conan data directory
   - cmd: conan remote add --force bincrafters https://api.bintray.com/conan/bincrafters/public-conan
   - cmd: conan remote add --force rhard https://api.bintray.com/conan/rhard/conan
-  # - appveyor DownloadFile https://gstreamer.freedesktop.org/data/pkg/windows/1.16.1/gstreamer-1.0-devel-msvc-x86_64-1.16.1.msi
-  # - appveyor DownloadFile https://gstreamer.freedesktop.org/data/pkg/windows/1.16.1/gstreamer-1.0-msvc-x86_64-1.16.1.msi
-  # - msiexec /i gstreamer-1.0-devel-msvc-x86_64-1.16.1.msi /quiet /qn /norestart /log install-devel.log ADDLOCAL=ALL
-  # - msiexec /i gstreamer-1.0-msvc-x86_64-1.16.1.msi /quiet /qn /norestart /log install.log ADDLOCAL=ALL
+  - appveyor DownloadFile https://gstreamer.freedesktop.org/data/pkg/windows/1.16.1/gstreamer-1.0-devel-msvc-x86_64-1.16.1.msi
+  - appveyor DownloadFile https://gstreamer.freedesktop.org/data/pkg/windows/1.16.1/gstreamer-1.0-msvc-x86_64-1.16.1.msi
+  - msiexec /i gstreamer-1.0-devel-msvc-x86_64-1.16.1.msi /quiet /qn /norestart /log install-devel.log ADDLOCAL=ALL
+  - msiexec /i gstreamer-1.0-msvc-x86_64-1.16.1.msi /quiet /qn /norestart /log install.log ADDLOCAL=ALL
 build_script:
   - cmd: mkdir build
   - cmd: cd build
