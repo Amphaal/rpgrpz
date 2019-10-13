@@ -157,12 +157,23 @@ list(APPEND EXT_LIBS
 # QT 5 #
 ########
 
+#override maindir
+IF(NOT DEFINED QT_MAIN_DIR)
+    IF(WIN32)
+        SET(QT_MAIN_DIR "C:/Qt/5.13.1")
+    endif()
+    IF(APPLE)
+        SET(Qt5_DIR "/Qt/5.13.1")
+    endif()
+endif()
+
+
 #force official binaires from Qt
 IF(WIN32)
-    SET(Qt5_DIR "C:/Qt/5.13.1/msvc2017_64/lib/cmake/Qt5")
+    SET(Qt5_DIR "${QT_MAIN_DIR}/msvc2017_64/lib/cmake/Qt5")
 endif()
 IF(APPLE)
-    SET(Qt5_DIR "/Qt/5.13.1/clang_64/lib/cmake/Qt5")
+    SET(Qt5_DIR "${QT_MAIN_DIR}/clang_64/lib/cmake/Qt5")
 endif()
 
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL LinguistTools)
@@ -223,11 +234,11 @@ endif()
 #####################
 
 IF(WIN32)
-    SET(QT_DEPLOY_BIN_PATH "C:/Qt/5.13.1/msvc2017_64/bin")
+    SET(QT_DEPLOY_BIN_PATH "${QT_MAIN_DIR}/msvc2017_64/bin")
 endif()
 
 IF(APPLE)
-    SET(QT_DEPLOY_BIN_PATH "/Qt/5.13.1/clang_64/bin")
+    SET(QT_DEPLOY_BIN_PATH "${QT_MAIN_DIR}/clang_64/bin")
 endif()
 
 #using deployqt to import all the QT ${CMAKE_SHARED_LIBRARY_SUFFIX} requirements based on used components
