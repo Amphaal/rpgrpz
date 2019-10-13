@@ -7,24 +7,6 @@ environment:
     APPVEYOR_SAVE_CACHE_ON_ERROR: true
 cache:
   - C:\gstreamer\1.0\x86_64
-deploy:
-  - provider: BinTray
-    username: amphaal
-    api_key:
-      secure: a8fb0fee73eb58aa040e4d50a62c117db0043e5a
-    subject: BinTray alpha EXE
-    repo: rpgrpz
-    package: rpgrpz-alpha-installer
-    publish: true
-  - provider: BinTray
-    username: amphaal
-    api_key:
-      secure: a8fb0fee73eb58aa040e4d50a62c117db0043e5a
-    subject: BinTray alpha IFW
-    repo: rpgrpz
-    package: rpgrpz-alpha-ifw
-    version: latest
-    publish: true
 install:
   - cmd: choco install pkgconfiglite
   - cmd: set PATH=%PATH%;%PYTHON%/Scripts/
@@ -46,5 +28,29 @@ build_script:
 artifacts:
   - path: _CPack_Packages/win64/IFW/*.exe
     name: EXE
-  - path: _CPack_Packages/win64/IFW/RPGRPZ-*-win64/repository/**
+  - path: _CPack_Packages/win64/IFW/RPGRPZ-*-win64/repository
     name: IFW_Repo
+deploy:
+  - provider: BinTray
+    username: amphaal
+    api_key:
+      secure: a8fb0fee73eb58aa040e4d50a62c117db0043e5a
+    subject: BinTray alpha EXE
+    repo: rpgrpz
+    package: rpgrpz-alpha-installer
+    publish: true
+    override: true
+    explode: true
+    artifact: EXE
+  - provider: BinTray
+    username: amphaal
+    api_key:
+      secure: a8fb0fee73eb58aa040e4d50a62c117db0043e5a
+    subject: BinTray alpha IFW
+    repo: rpgrpz
+    package: rpgrpz-alpha-ifw
+    version: latest
+    publish: true
+    override: true
+    explode: true
+    artifact: IFW_Repo
