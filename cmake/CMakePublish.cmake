@@ -43,13 +43,13 @@ SET(CPACK_IFW_VERBOSE ON)
     INCLUDE(CPackIFW)
 
     #find and install redist deps
-    # IF(WIN32)
-    #     SET(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT "vc_runtime")
-    #     SET(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ".")
-    #     include(InstallRequiredSystemLibraries) #find MSVC_CRT_DIR
-    #     SET(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS "${MSVC_CRT_DIR}/vcruntime140_1.dll") #replace CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS content with dep
-    #     include(InstallRequiredSystemLibraries)
-    # endif()
+    IF(WIN32)
+        SET(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT "vc_runtime")
+        SET(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ".")
+        #include(InstallRequiredSystemLibraries) #find MSVC_CRT_DIR
+        #SET(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS "${MSVC_CRT_DIR}/vcruntime140_1.dll") #replace CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS content with dep (specific to VS2019, CMake bug ?)
+        include(InstallRequiredSystemLibraries)
+    endif()
 
     #install bin + libs
     install(
@@ -99,17 +99,18 @@ SET(APP_PACKAGED_PATH "${APP_PACKAGED_IFW}/${APP_PACKAGE_FILE_NAME}")
 SET(APP_PACKAGED_INSTALLER_PATH "${APP_PACKAGED_PATH}${APP_INSTALLER_EXTENSION}")
 SET(APP_PACKAGED_REPOSITORY_PATH "${APP_PACKAGED_PATH}/repository")
 
-add_custom_target(zipForDeploy 
-
-    #zip
-    COMMAND ${CMAKE_COMMAND} -E tar "c" "${CMAKE_BINARY_DIR}/repository.zip" "--format=zip" 
-    ${APP_PACKAGED_REPOSITORY_PATH}/Updates.xml
-    ${APP_PACKAGED_REPOSITORY_PATH}/${PROJECT_NAME}
-    WORKING_DIRECTORY ${APP_PACKAGED_REPOSITORY_PATH}
-
-    #zip
-    COMMAND ${CMAKE_COMMAND} -E tar "c" "${CMAKE_BINARY_DIR}/app.zip" "--format=zip" 
-    ${APP_PACKAGED_INSTALLER_PATH}
-    WORKING_DIRECTORY ${APP_PACKAGED_IFW}
-
-)
+#zip
+add_custom_target(zipForDeploy)
+    #installer
+    add_custom_command(TARGET zipForDeploy
+        COMMAND ${CMAKE_COMMAND} -E tar "c" "${CMAKE_BINARY_DIR}/app.zip" "--format=zip" 
+        ${APP_PACKAGED_INSTALLER_PATH}
+        WORKING_DIRECTORY ${APP_PACKAGED_IFW}
+    )
+    #repository
+    add_custom_command(TARGET zipForDeploy
+        COMMAND ${CMAKE_COMMAND} -E tar "c" "${CMAKE_BINARY_DIR}/repository.zip" "--format=zip" 
+        ${APP_PACKAGED_REPOSITORY_PATH}/Updates.xml
+        ${APP_PACKAGED_REPOSITORY_PATH}/${PROJECT_NAME}
+        WORKING_DIRECTORY ${APP_PACKAGED_REPOSITORY_PATH}
+    )
