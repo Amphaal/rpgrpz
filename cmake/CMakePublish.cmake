@@ -49,13 +49,13 @@ SET(CPACK_IFW_VERBOSE ON)
     INCLUDE(CPackIFW)
 
     #find and install redist deps
-    IF(WIN32)
-        SET(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT "vc_runtime")
-        SET(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ".")
-        include(InstallRequiredSystemLibraries) #find MSVC_CRT_DIR
-        SET(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS "${MSVC_CRT_DIR}/vcruntime140_1.dll") #replace CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS content with dep
-        include(InstallRequiredSystemLibraries)
-    endif()
+    # IF(WIN32)
+    #     SET(CMAKE_INSTALL_SYSTEM_RUNTIME_COMPONENT "vc_runtime")
+    #     SET(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ".")
+    #     include(InstallRequiredSystemLibraries) #find MSVC_CRT_DIR
+    #     SET(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS "${MSVC_CRT_DIR}/vcruntime140_1.dll") #replace CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS content with dep
+    #     include(InstallRequiredSystemLibraries)
+    # endif()
 
     #install bin + libs
     install(
@@ -69,17 +69,17 @@ SET(CPACK_IFW_VERBOSE ON)
 ##############
 
 # vc_runtime #
-    IF(WIN32)
-        SET(REDIST_COMPONENT_NAME "Visual C++ Redist"
-            fr "Redistribuables Visual C++"
-        )
-        cpack_add_component(vc_runtime)
-        cpack_ifw_configure_component(vc_runtime 
-            FORCED_INSTALLATION
-            VIRTUAL
-            DISPLAY_NAME ${REDIST_COMPONENT_NAME}
-        )
-    endif()
+    # IF(WIN32)
+    #     SET(REDIST_COMPONENT_NAME "Visual C++ Redist"
+    #         fr "Redistribuables Visual C++"
+    #     )
+    #     cpack_add_component(vc_runtime)
+    #     cpack_ifw_configure_component(vc_runtime 
+    #         FORCED_INSTALLATION
+    #         VIRTUAL
+    #         DISPLAY_NAME ${REDIST_COMPONENT_NAME}
+    #     )
+    # endif()
 
 # app #
     cpack_add_component(${PROJECT_NAME}
