@@ -103,7 +103,7 @@ SET(APP_PACKAGED_REPOSITORY_PATH "${APP_PACKAGED_PATH}/repository")
 add_custom_target(zipForDeploy)
     #installer
     add_custom_command(TARGET zipForDeploy
-        COMMAND ${CMAKE_COMMAND} -E tar "c" "${CMAKE_BINARY_DIR}/app.zip" "--format=zip" 
+        COMMAND ${CMAKE_COMMAND} -E tar "c" "${CMAKE_BINARY_DIR}/installer.zip" "--format=zip" 
         ${APP_PACKAGED_INSTALLER_PATH}
         WORKING_DIRECTORY ${APP_PACKAGED_IFW}
     )

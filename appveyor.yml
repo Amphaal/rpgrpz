@@ -1,4 +1,4 @@
-version: "{build}"
+version: "0.alpha.{build}"
 skip_non_tags: true
 image: Visual Studio 2017
 platform: x64
@@ -31,8 +31,8 @@ build_script:
 artifacts:
   - path: build/repository.zip
     name: IFW_Repo
-  - path: build/app.zip
-    name: Win_exe
+  - path: build/installer.zip
+    name: IFW_Installer
 deploy:
   - provider: BinTray
     username: amphaal
@@ -57,4 +57,4 @@ deploy:
     publish: true
     override: true
     explode: true
-    artifact: Win_exe
+    artifact: IFW_Installer
