@@ -63,17 +63,17 @@ SET(CPACK_IFW_VERBOSE ON)
 ##############
 
 # vc_runtime #
-    # IF(WIN32)
-    #     SET(REDIST_COMPONENT_NAME "Visual C++ Redist"
-    #         fr "Redistribuables Visual C++"
-    #     )
-    #     cpack_add_component(vc_runtime)
-    #     cpack_ifw_configure_component(vc_runtime 
-    #         FORCED_INSTALLATION
-    #         VIRTUAL
-    #         DISPLAY_NAME ${REDIST_COMPONENT_NAME}
-    #     )
-    # endif()
+    IF(WIN32)
+        SET(REDIST_COMPONENT_NAME "Visual C++ Redist"
+            fr "Redistribuables Visual C++"
+        )
+        cpack_add_component(vc_runtime)
+        cpack_ifw_configure_component(vc_runtime 
+            FORCED_INSTALLATION
+            VIRTUAL
+            DISPLAY_NAME ${REDIST_COMPONENT_NAME}
+        )
+    endif()
 
 # app #
     cpack_add_component(${PROJECT_NAME}
