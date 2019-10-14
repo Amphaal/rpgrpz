@@ -82,6 +82,8 @@ class MapView : public QGraphicsView, public ClientBindable {
         void resizeEvent(QResizeEvent * event) override;
         void mouseDoubleClickEvent(QMouseEvent *event) override;
 
+        void drawBackground(QPainter *painter, const QRectF &rect) override;
+
     private slots:
         void _displayLoader();
         void _onUIAlterationRequest(const PayloadAlteration &type, const QList<QGraphicsItem*> &toAlter);
@@ -94,7 +96,7 @@ class MapView : public QGraphicsView, public ClientBindable {
         void _onIdentityReceived(const RPZUser &self);
 
     private:
-        QBrush* _hiddingBrush = nullptr;
+        QBrush _hiddingBrush;
         MapHint* _hints = nullptr;
         AtomsContextualMenuHandler* _menuHandler = nullptr;
         static inline constexpr int _defaultSceneSize = 36000;
@@ -102,8 +104,13 @@ class MapView : public QGraphicsView, public ClientBindable {
         void _handleHintsSignalsAndSlots();
         void _updateItemValue(QGraphicsItem* item, const AtomUpdates &updates);
 
+        //manipulation and storage of standard items
+        QSet<QGraphicsItem*> _nonHUDItems;
+        void _addNonHUDItem(QGraphicsItem* toAdd);
+        void _removeNonHUDItem(QGraphicsItem* toRemove);
+        void _clearNonHUDItems();
+
         //helper
-        void _addItem(QGraphicsItem* toAdd);
         void _centerItemToPoint(QGraphicsItem* item, const QPoint &eventPos);
         QTimer _debounceSelection;
         void _goToDefaultViewState();

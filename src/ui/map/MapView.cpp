@@ -1,13 +1,24 @@
 #include "MapView.h"
 
 MapView::MapView(QWidget *parent) : QGraphicsView(parent),
-    _hiddingBrush(new QBrush("#EEE", Qt::BrushStyle::SolidPattern)),
+    _hiddingBrush("#EEE", Qt::BrushStyle::SolidPattern),
     _hints(new MapHint),
     _menuHandler(new AtomsContextualMenuHandler(_hints, this)) {
+
+    //OpenGL backend activation
+    QGLFormat format;
+    format.setSampleBuffers(true);
+    format.setDirectRendering(true);
+    format.setAlpha(true);
+    this->setViewport(new QGLWidget(format));
 
     //hide scrollbars
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    
+    this->setRubberBandSelectionMode(Qt::ItemSelectionMode::ContainsItemBoundingRect); //rubberband UC optimization
+    this->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate); //force viewport update mode
+    this->setMouseTracking(true); //activate mouse tracking for ghost 
 
     //thread
     this->_hints->moveToThread(new QThread);
@@ -23,30 +34,12 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent),
     );
     this->setScene(scene);
     this->_resetTool();
-    
-    //openGL activation
-    QGLFormat format;
-    format.setSampleBuffers(true);
-    format.setDirectRendering(true);
-    format.setAlpha(true);
-    this->setViewport(new QGLWidget(format));
-    this->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
-    this->update();
-
-    //rubberband UC optimization
-    this->setRubberBandSelectionMode(Qt::ItemSelectionMode::ContainsItemBoundingRect);
-
-    //background / foreground
-    this->setBackgroundBrush(QBrush("#EEE", Qt::BrushStyle::CrossPattern));
 
     this->_handleHintsSignalsAndSlots();
 
     //default state
     this->scale(this->_defaultScale, this->_defaultScale);
     this->_goToDefaultViewState();
-
-    //activate mouse tracking for ghost 
-    this->setMouseTracking(true);
 
     //animator configuration 
     this->_configureMoveAnimator();
@@ -60,6 +53,10 @@ MapView::~MapView() {
     }
 }
 
+
+void MapView::drawBackground(QPainter *painter, const QRectF &rect) {
+
+}
 
 void MapView::_updateItemValue(QGraphicsItem* item, const AtomUpdates &updates) {
     
@@ -130,7 +127,7 @@ void MapView::_hideLoader() {
 
 void MapView::_displayLoader() {
     this->_isLoading = true;
-    this->setForegroundBrush(*this->_hiddingBrush);
+    this->setForegroundBrush(this->_hiddingBrush);
 }
 
 void MapView::_onUIUpdateRequest(const QHash<QGraphicsItem*, AtomUpdates> &toUpdate) {
@@ -171,14 +168,14 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
     QSignalBlocker b(this->scene());
 
     if(type == PA_Selected) this->scene()->clearSelection();
-    if(type == PA_Reset) this->scene()->clear();
+    if(type == PA_Reset) this->_clearNonHUDItems();
 
     for(auto item : toAlter) {
         switch(type) {
 
             case PA_Reset:
             case PA_Added: {
-                this->_addItem(item);
+                this->_addNonHUDItem(item);
             }
             break;
 
@@ -193,7 +190,7 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
             break;
 
             case PA_Removed: {
-                this->scene()->removeItem(item);
+                this->_removeNonHUDItem(item);
                 delete item;
             }
             break;
@@ -201,7 +198,7 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
             case PA_AssetSelected: {
                 Tool newTool = item ? Tool::Atom : Tool::Default;
                 auto selectedAtom = item ? this->_hints->templateAtom() : RPZAtom();
-                if(item) this->_addItem(item);
+                if(item) this->_addNonHUDItem(item);
 
                 //change tool, proceed to unselect items
                 this->_changeTool(newTool);
@@ -242,8 +239,21 @@ void MapView::_focusItem(QGraphicsItem* toFocus) {
 
 }
 
-void MapView::_addItem(QGraphicsItem* toAdd) {
+void MapView::_addNonHUDItem(QGraphicsItem* toAdd) {
     this->scene()->addItem(toAdd);
+    this->_nonHUDItems.insert(toAdd);
+}
+
+void MapView::_removeNonHUDItem(QGraphicsItem* toRemove) {
+    this->scene()->removeItem(toRemove);
+    this->_nonHUDItems.remove(toRemove);
+}
+
+void MapView::_clearNonHUDItems() {
+    for(auto item : this->_nonHUDItems) {
+        this->scene()->removeItem(item);
+    }
+    this->_nonHUDItems.clear();
 }
 
 void MapView::contextMenuEvent(QContextMenuEvent *event) {
@@ -839,13 +849,13 @@ void MapView::_destroyTempDrawing() {
     
     //remove helpers
     for(auto helper : this->_tempDrawingHelpers) {
-        this->scene()->removeItem(helper);
+        this->_removeNonHUDItem(helper);
         delete helper;
     }
     this->_tempDrawingHelpers.clear();
         
     //remove drawing
-    this->scene()->removeItem(this->_tempDrawing);
+    this->_removeNonHUDItem(this->_tempDrawing);
     delete this->_tempDrawing;
     this->_tempDrawing = nullptr;
 
@@ -864,7 +874,7 @@ void MapView::_beginDrawing(const QPoint &lastPointMousePressed) {
 
     //create base and store it
     auto item = this->_hints->generateTemporaryItemFromTemplateBuffer();
-    this->_addItem(item);
+    this->_addNonHUDItem(item);
     this->_tempDrawing = static_cast<MapViewGraphicsPathItem*>(item);
 
     //determine if it must be sticky
@@ -878,7 +888,7 @@ void MapView::_beginDrawing(const QPoint &lastPointMousePressed) {
     if(this->_stickyBrushIsDrawing) {
         auto pos = this->_tempDrawing->pos();
         auto outline = CustomGraphicsItemHelper::createOutlineRectItem(pos);
-        this->_addItem(outline);
+        this->_addNonHUDItem(outline);
         this->_tempDrawingHelpers.append(outline);
     }
 }
@@ -1016,7 +1026,7 @@ void MapView::_savePosAsStickyNode(const QPoint &evtPoint) {
     
     //add visual helper
     auto outline = CustomGraphicsItemHelper::createOutlineRectItem(sceneCoord);
-    this->_addItem(outline);
+    this->_addNonHUDItem(outline);
     this->_tempDrawingHelpers.append(outline);
 
     //update

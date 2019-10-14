@@ -2,7 +2,7 @@
 
 #include <QVariantHash>
 
-#include "src/shared/models/RPZAtom.h"
+#include "RPZAtom.h"
 
 class AssetsDatabaseElement;
 

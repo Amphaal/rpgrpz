@@ -44,28 +44,22 @@ void AppContext::configureApp(QCoreApplication &app) {
     AppContext::init();
 }
 
- QVector<QTranslator*> AppContext::installTranslations(QApplication &app) {
+ void AppContext::installTranslations(QApplication &app) {
     
     QString translationsPath(QLibraryInfo::location(QLibraryInfo::TranslationsPath));
     QLocale locale = QLocale::system();
-    QVector<QTranslator*> out;
     
     //Qt
     auto qtTranslator = new QTranslator;
     if (qtTranslator->load(locale, "qt", "_", translationsPath)) {
         auto installed = app.installTranslator(qtTranslator);
-        if(installed) out += qtTranslator;
     }
 
     //app
     auto appTranslator = new QTranslator;
-    if (qtTranslator->load(locale, "", "", translationsPath)) {
-        auto installed = app.installTranslator(qtTranslator);
-        if(installed) out += appTranslator;
+    if (appTranslator->load(locale, "", "", translationsPath)) {
+        auto installed = app.installTranslator(appTranslator);
     }
-
-    //must be 
-    return out;
 
  }
 
