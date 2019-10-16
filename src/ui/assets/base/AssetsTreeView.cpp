@@ -325,8 +325,8 @@ void AssetsTreeView::_onRowInsert(const QModelIndex &parent, int first, int last
 
 void AssetsTreeView::_requestDeletion(const QModelIndexList &itemsIndexesToDelete) {
 
-    QString title = tr("Delete elements in toy box");
-    QString content = tr("Do you confirm deletion of the %1 selected elements ?").arg(itemsIndexesToDelete.count());
+    auto title = tr("Delete elements in toy box");
+    auto content = tr("Do you confirm deletion of the %1 selected elements ?").arg(itemsIndexesToDelete.count());
 
     auto userResponse = QMessageBox::warning(this, title, content, QMessageBox::Yes|QMessageBox::No, QMessageBox::No);
     if(userResponse == QMessageBox::Yes) {

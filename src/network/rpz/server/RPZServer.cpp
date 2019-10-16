@@ -468,7 +468,7 @@ void RPZServer::_maySendAndStoreDiceThrows(const QString &text) {
                         .arg(StringHelper::toSuperScript(pair.second))
                         .arg(pair.first);
         }
-        QString subJoin = sub.join(", ");
+        auto subJoin = sub.join(", ");
 
         //join values
         auto joined = QStringLiteral(u"%1 : {%2}").arg(dThrow.name).arg(subJoin);

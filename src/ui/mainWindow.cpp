@@ -553,7 +553,7 @@ QMenu* MainWindow::_getHelpMenu() {
         this->_updateIntegrator, &UpdaterUIIntegrator::stateChanged,
         [&](const bool isSearching) {
             this->cfugAction->setEnabled(!isSearching);
-            const QString descr = isSearching ? tr("Searching for updates...") : tr("Check for updates...");
+            auto descr = isSearching ? tr("Searching for updates...") : tr("Check for updates...");
             this->cfugAction->setText(descr);
         }
     );

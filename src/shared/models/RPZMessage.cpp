@@ -27,12 +27,12 @@ QString RPZMessage::toString() const {
     switch(this->_command) {
         
         case MessageInterpreter::Say: {
-            QString textPrefix = ownerExist ? QObject::tr(" said : ") : QObject::tr("you said : ");
+            auto textPrefix = ownerExist ? QObject::tr(" said : ") : QObject::tr("you said : ");
             return base + textPrefix + QChar(0x201C) + text + QChar(0x201D);
         }
 
         case MessageInterpreter::Whisper: {
-            QString textPrefix = QObject::tr(" whispers to you : ");
+            auto textPrefix = QObject::tr(" whispers to you : ");
             
             if(!ownerExist) {
                 auto recipientList = MessageInterpreter::findRecipentsFromText(text).join(", ");

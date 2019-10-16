@@ -41,20 +41,27 @@ void UpdaterUIIntegrator::_onUpdateChecked(const bool hasUpdate, const bool hasE
     if(this->_userNotificationOnUpdateCheck) {
         this->_userNotificationOnUpdateCheck = false;
         
-        const QString title = QString(APP_NAME) + " - " + tr("Check for updates...");
-        const QString content = this->_updater->errorLog();
+        auto title = QString(APP_NAME) + " - " + tr("Check for updates...");
+        auto content = QString::fromUtf8(this->_updater->errorLog());
 
         if(!hasUpdate && !hasError) {
-            QMessageBox::information(this->_wParent, 
+            QMessageBox::information(
+                this->_wParent, 
                 title, 
                 content, 
-                QMessageBox::Ok, QMessageBox::Ok);
-        } else if (hasError) {
-            QMessageBox::warning(this->_wParent, 
+                QMessageBox::Ok, QMessageBox::Ok
+            );
+        } 
+        
+        else if (hasError) {
+            QMessageBox::warning(
+                this->_wParent, 
                 title, 
                 content, 
-                QMessageBox::Ok, QMessageBox::Ok);
+                QMessageBox::Ok, QMessageBox::Ok
+            );
         }
+
     }
 
     //no update, no go
@@ -64,13 +71,14 @@ void UpdaterUIIntegrator::_onUpdateChecked(const bool hasUpdate, const bool hasE
     }
 
     //if has update
-    const QString title = QString(APP_NAME) + " - " + tr("Update Available");
-    const QString content = tr("An update is available for %1. Would you like to install it now ?").arg(APP_NAME);
+    auto title = QString(APP_NAME) + " - " + tr("Update Available");
+    auto content = tr("An update is available for %1. Would you like to install it now ?").arg(APP_NAME);
 
-    auto msgboxRslt = QMessageBox::information(this->_wParent, 
-                title, 
-                content, 
-                QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes
+    auto msgboxRslt = QMessageBox::information(
+        this->_wParent, 
+        title, 
+        content, 
+        QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes
     );
     
     if(msgboxRslt == QMessageBox::Yes) {

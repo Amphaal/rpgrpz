@@ -112,7 +112,7 @@ QHash<QString, QString> AppContext::getOptionArgs(int argc, char** argv) {
 
 void AppContext::initRandomContext() {
     
-    QString templateStr("%1/r_%2");
+    auto templateStr = QStringLiteral(u"%1/r_%2");
     auto randomSF = QString::number(
         SnowFlake::get()->nextId()
     );

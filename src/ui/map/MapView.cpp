@@ -164,7 +164,7 @@ void MapView::_mayUpdateHUD(QPainter* painter, const QRectF &rect) {
         painter->setTransform(t);
 
         //zoom indic
-        QString templt("Zoom : %1x");
+        auto templt = QStringLiteral(u"Zoom : %1x");
         templt = templt.arg(currentScale - this->_defaultScale, 0, 0, 2, 0);
 
             //background

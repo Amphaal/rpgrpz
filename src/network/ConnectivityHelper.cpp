@@ -133,7 +133,7 @@ void ConnectivityHelper::_onUPnPError(int errorCode) {
 
 void ConnectivityHelper::_onUPnPSuccess(const QString &protocol, const QString &negociatedPort) {
     
-    QString out("OK [port: %1]");
+    auto out = QStringLiteral(u"OK [port: %1]");
     out = out.arg(negociatedPort);
 
     qDebug() << "Connectivity : uPnP" 
