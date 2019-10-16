@@ -11,7 +11,7 @@ RPZMessage::RPZMessage(const QString &message, const MessageInterpreter::Command
 };
 
 QString RPZMessage::text() const {
-    return this->value("txt").toString();
+    return this->value(QStringLiteral(u"txt")).toString();
 }
 
 MessageInterpreter::Command RPZMessage::commandType() const {
@@ -82,15 +82,15 @@ QPalette RPZMessage::palette() const {
 }
 
 void RPZMessage::_setText(const QString &text) {
-    this->insert("txt", text);
+    this->insert(QStringLiteral(u"txt"), text);
     this->_interpretTextAsCommand();
 }
 
 void RPZMessage::_forceCommand(const MessageInterpreter::Command &forced) {
-    this->insert("cmd", (int)forced);
+    this->insert(QStringLiteral(u"cmd"), (int)forced);
 }
 
 void RPZMessage::_interpretTextAsCommand() {
-    auto forcedCommand = (MessageInterpreter::Command)this->value("cmd").toInt();
+    auto forcedCommand = (MessageInterpreter::Command)this->value(QStringLiteral(u"cmd")).toInt();
     this->_command = forcedCommand ? forcedCommand : MessageInterpreter::interpretText(this->text());
 }

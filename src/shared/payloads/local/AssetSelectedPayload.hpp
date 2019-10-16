@@ -10,10 +10,10 @@ class AssetSelectedPayload : public AlterationPayload {
     public:
         AssetSelectedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
         AssetSelectedPayload(const RPZToyMetadata &asset) : AlterationPayload(PayloadAlteration::PA_AssetSelected) {
-            this->insert("as", asset);
+            this->insert(QStringLiteral(u"as"), asset);
         }
     
         RPZToyMetadata selectedAsset() const {
-            return RPZAtom(this->value("as").toHash());
+            return RPZAtom(this->value(QStringLiteral(u"as")).toHash());
         }
 };

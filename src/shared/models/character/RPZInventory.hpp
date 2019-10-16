@@ -12,20 +12,20 @@ class RPZInventorySlot : public QVariantHash {
             return this->name();
         }
 
-        void setName(const QString &name) {this->insert("n", name);}
-        const QString name() const {return this->value("n").toString().trimmed();} 
+        void setName(const QString &name) {this->insert(QStringLiteral(u"n"), name);}
+        const QString name() const {return this->value(QStringLiteral(u"n")).toString().trimmed();} 
 
-        void setCategory(const QString &archtype) { this->insert("c", archtype); }
-        const QString category() const {return this->value("c").toString();}
+        void setCategory(const QString &archtype) { this->insert(QStringLiteral(u"c"), archtype); }
+        const QString category() const {return this->value(QStringLiteral(u"c")).toString();}
 
-        void setDescription(const QString &descr) { this->insert("d", descr); }
-        const QString description() const {return this->value("d").toString();}
+        void setDescription(const QString &descr) { this->insert(QStringLiteral(u"d"), descr); }
+        const QString description() const {return this->value(QStringLiteral(u"d")).toString();}
 
-        void setHowMany(const uint &number) {this->insert("nb", number);}
-        const uint howMany() const {return this->value("nb").toUInt();}
+        void setHowMany(const uint &number) {this->insert(QStringLiteral(u"nb"), number);}
+        const uint howMany() const {return this->value(QStringLiteral(u"nb")).toUInt();}
 
-        void setWeight(const double &weight) {this->insert("w", weight);}
-        const double weight() const {return this->value("w").toDouble();}
+        void setWeight(const double &weight) {this->insert(QStringLiteral(u"w"), weight);}
+        const double weight() const {return this->value(QStringLiteral(u"w")).toDouble();}
 };
 
 class RPZInventory : public QVariantHash {
@@ -38,21 +38,21 @@ class RPZInventory : public QVariantHash {
              return nameStr.isEmpty() ? QObject::tr("New Inventory") : nameStr;
         }
 
-        void setName(const QString &name) {this->insert("n", name);}
-        const QString name() const {return this->value("n").toString();} 
+        void setName(const QString &name) {this->insert(QStringLiteral(u"n"), name);}
+        const QString name() const {return this->value(QStringLiteral(u"n")).toString();} 
 
         void setInventorySlots(const QMap<QString, RPZInventorySlot> &iSlots) {
             QVariantMap in;
             for(auto i = iSlots.begin(); i != iSlots.end(); i++) {
                 in.insert(i.key(), i.value());
             }
-            this->insert("s", in);
+            this->insert(QStringLiteral(u"s"), in);
         };
         
         const QMap<QString, RPZInventorySlot> inventorySlots() const {
             QMap<QString, RPZInventorySlot> out;
 
-            auto mapped = this->value("s").toMap();
+            auto mapped = this->value(QStringLiteral(u"s")).toMap();
             for(auto i = mapped.begin(); i != mapped.end(); i++) {
                 auto slot = RPZInventorySlot(i.value().toHash());
                 out.insert(i.key(), slot);

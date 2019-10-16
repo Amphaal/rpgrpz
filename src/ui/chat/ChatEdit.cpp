@@ -61,7 +61,7 @@ void ChatEdit::_onWhisperTargetsChanged() {
     
     QSet<QString> usernamesList;
     for(auto &user : this->_rpzClient->sessionUsers()) {
-        usernamesList.insert("@" + user.whisperTargetName());
+        usernamesList.insert(QStringLiteral(u"@") + user.whisperTargetName());
     }
 
     auto model = new QStringListModel(usernamesList.toList());

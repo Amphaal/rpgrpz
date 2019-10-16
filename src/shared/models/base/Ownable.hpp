@@ -17,10 +17,10 @@ class Ownable : public Serializable {
         };
 
         RPZUser owner() const { 
-            return this->value("owner", RPZUser()).toHash(); 
+            return this->value(QStringLiteral(u"owner"), RPZUser()).toHash(); 
         };
 
         void setOwnership(const RPZUser &user) { 
-            this->insert("owner", user);
+            this->insert(QStringLiteral(u"owner"), user);
         };
 };

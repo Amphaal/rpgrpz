@@ -133,14 +133,14 @@ int main(int argc, char** argv) {
     auto args = AppContext::getOptionArgs(argc, argv);
 
     //conditionnal
-    if(args.contains("test")) {
+    if(args.contains(QStringLiteral(u"test"))) {
         
         //test app
         return testApp(argc, argv);
 
     } 
     
-    else if (args.contains("serverOnly")) {
+    else if (args.contains(QStringLiteral(u"serverOnly"))) {
         
         //as server console
         return serverConsole(argc, argv);

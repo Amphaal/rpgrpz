@@ -17,22 +17,22 @@ RPZToyMetadata::RPZToyMetadata(
         const QPointF &center
     ) : _parentContainer(parentContainer) {
     
-    this->insert("aId", assetId);
-    this->insert("nm", assetName);
-    this->insert("shp", dimensions);
-    this->insert("ctr", center);
-    this->insert("pth", pathToAsset);
+    this->insert(QStringLiteral(u"aId"), assetId);
+    this->insert(QStringLiteral(u"nm"), assetName);
+    this->insert(QStringLiteral(u"shp"), dimensions);
+    this->insert(QStringLiteral(u"ctr"), center);
+    this->insert(QStringLiteral(u"pth"), pathToAsset);
 
     this->setAtomType(type);
 
 }
 
 QPointF RPZToyMetadata::center() const {
-    return this->value("ctr").toPointF();
+    return this->value(QStringLiteral(u"ctr")).toPointF();
 }
 
 QSize RPZToyMetadata::shapeSize() const {
-    return this->value("shp").toSize();
+    return this->value(QStringLiteral(u"shp")).toSize();
 }
 
 AssetsDatabaseElement* RPZToyMetadata::associatedParent() const {
@@ -40,21 +40,21 @@ AssetsDatabaseElement* RPZToyMetadata::associatedParent() const {
 }
 
 QString RPZToyMetadata::pathToAssetFile() const {
-    return this->value("pth").toString();
+    return this->value(QStringLiteral(u"pth")).toString();
 }
 
 QString RPZToyMetadata::assetName() const {
-    return this->value("nm").toString();
+    return this->value(QStringLiteral(u"nm")).toString();
 }
 
 RPZAssetHash RPZToyMetadata::assetId() const {
-    return this->value("aId").toString();
+    return this->value(QStringLiteral(u"aId")).toString();
 }
 
 AtomType RPZToyMetadata::atomType() const {
-    return (AtomType)this->value("t").toInt();
+    return (AtomType)this->value(QStringLiteral(u"t")).toInt();
 }
 
 void RPZToyMetadata::setAtomType(const AtomType &type) {
-    this->insert("t", (int)type);
+    this->insert(QStringLiteral(u"t"), (int)type);
 }

@@ -12,7 +12,7 @@ class BulkMetadataChangedPayload : public AlterationPayload {
         }
 
         AtomsUpdates atomsUpdates() const {
-            auto rawData = this->value("changes").toHash();
+            auto rawData = this->value(QStringLiteral(u"changes")).toHash();
             AtomsUpdates out;
 
             for(auto i = rawData.constBegin(); i != rawData.constEnd(); i++) {
@@ -44,6 +44,6 @@ class BulkMetadataChangedPayload : public AlterationPayload {
 
             }
 
-            this->insert("changes", hash);
+            this->insert(QStringLiteral(u"changes"), hash);
         }
 };

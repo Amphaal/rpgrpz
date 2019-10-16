@@ -15,14 +15,14 @@ class AtomsWielderPayload : public AlterationPayload {
 
             QVariantList assetIds;
             for(auto &i : includedAssetIds) assetIds += i;
-            this->insert("assets", assetIds);
+            this->insert(QStringLiteral(u"assets"), assetIds);
 
         }
 
         const QSet<RPZAssetHash> assetIds() const {
             QSet<RPZAssetHash> out;
 
-            for(auto &i : this->value("assets").toList()) out += i.toString();
+            for(auto &i : this->value(QStringLiteral(u"assets")).toList()) out += i.toString();
             
             return out;
         }
@@ -30,7 +30,7 @@ class AtomsWielderPayload : public AlterationPayload {
         RPZMap<RPZAtom> atoms() const {
             RPZMap<RPZAtom> out;
             
-            auto map = this->value("atoms").toMap();
+            auto map = this->value(QStringLiteral(u"atoms")).toMap();
 
             for(auto i = map.begin(); i != map.end(); ++i) {    
                 auto snowflakeId = i.key().toULongLong();
@@ -74,6 +74,6 @@ class AtomsWielderPayload : public AlterationPayload {
                 auto maybePartialAtom = i.value();
                 list.insert(snowflakeAsStr, maybePartialAtom);
             }
-            this->insert("atoms", list);
+            this->insert(QStringLiteral(u"atoms"), list);
         }
 };

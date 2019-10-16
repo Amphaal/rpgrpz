@@ -12,23 +12,23 @@ RPZUser::RPZUser(RPZUserId id, const QString &name, const Role &role, const QCol
 void RPZUser::setName(const QString &name) {
     
     //default name
-    this->insert("name", name);
+    this->insert(QStringLiteral(u"name"), name);
     
     //whisp name
     auto adapted = MessageInterpreter::usernameToCommandCompatible(name);
     adapted = adapted + this->color().name();
-    this->insert("wname", adapted);
+    this->insert(QStringLiteral(u"wname"), adapted);
         
 };
 
 void RPZUser::setRole(const Role &role) {
-    this->insert("role", (int)role);
+    this->insert(QStringLiteral(u"role"), (int)role);
 };
 
 
 QString RPZUser::name() const { 
 
-    auto name = this->value("name").toString();
+    auto name = this->value(QStringLiteral(u"name")).toString();
     if(!name.isEmpty()) return name;
 
     return NULL;
@@ -36,11 +36,11 @@ QString RPZUser::name() const {
 };
 
 RPZUser::Role RPZUser::role() const {
-    return (Role)this->value("role").toInt(); 
+    return (Role)this->value(QStringLiteral(u"role")).toInt(); 
 };
 
 QColor RPZUser::color() const { 
-    auto colorAsStr = this->value("color").toString();
+    auto colorAsStr = this->value(QStringLiteral(u"color")).toString();
     return colorAsStr.isEmpty() ? QColor() : QColor(colorAsStr); 
 };
 
@@ -60,7 +60,7 @@ QString RPZUser::toString() const {
 }
 
 QString RPZUser::whisperTargetName() const {
-    return this->value("wname").toString();
+    return this->value(QStringLiteral(u"wname")).toString();
 }
 
 void RPZUser::randomiseColor() {
@@ -69,13 +69,13 @@ void RPZUser::randomiseColor() {
 
 void RPZUser::_setColor(const QColor &color) {
     auto colorToUse = color.isValid() ? color.name() : RandomColor::getRandomColor().name();
-    this->insert("color", colorToUse);
+    this->insert(QStringLiteral(u"color"), colorToUse);
 }
 
 void RPZUser::setCharacter(const RPZCharacter &character) {
-    this->insert("char", character);
+    this->insert(QStringLiteral(u"char"), character);
 }
 
 const RPZCharacter RPZUser::character() const {
-    return RPZCharacter(this->value("char").toHash());
+    return RPZCharacter(this->value(QStringLiteral(u"char")).toHash());
 }

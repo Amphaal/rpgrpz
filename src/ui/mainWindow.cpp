@@ -78,7 +78,7 @@ void MainWindow::_saveWindowState() {
 void MainWindow::_loadWindowState() {
 
     //default state to save
-    if(!AppContext::settings()->childGroups().contains("mainWindow")) {
+    if(!AppContext::settings()->childGroups().contains(QStringLiteral(u"mainWindow"))) {
         this->showMaximized();
         this->_saveWindowState();
         return;
@@ -87,10 +87,10 @@ void MainWindow::_loadWindowState() {
     //load...
     AppContext::settings()->beginGroup("mainWindow");
     this->restoreGeometry(
-        AppContext::settings()->value("windowGeometry").toByteArray()
+        AppContext::settings()->value(QStringLiteral(u"windowGeometry")).toByteArray()
     );
     this->restoreState(
-        AppContext::settings()->value("windowState").toByteArray()
+        AppContext::settings()->value(QStringLiteral(u"windowState")).toByteArray()
     );
     AppContext::settings()->endGroup();
 
@@ -115,7 +115,7 @@ void MainWindow::_initConnectivity() {
     
     //check if we must use server capabilities
     auto appArgs = AppContext::getOptionArgs(*QApplication::instance());
-    if(appArgs.contains("noServer")) {    
+    if(appArgs.contains(QStringLiteral(u"noServer"))) {    
         this->_mustLaunchServer = false;
         qDebug() << "RPZServer : No server to start because the user said so.";
         this->_sb->updateServerStateLabel(tr("No"), SLState::SL_Finished);

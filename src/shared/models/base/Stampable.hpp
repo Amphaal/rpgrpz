@@ -15,7 +15,7 @@ class Stampable : public Ownable {
         Stampable(const QVariantHash &hash) : Ownable(hash) {}
 
         QDateTime timestamp() const {
-            return this->value("dt").toDateTime();
+            return this->value(QStringLiteral(u"dt")).toDateTime();
         }
 
         virtual QString toString() const {
@@ -33,7 +33,7 @@ class Stampable : public Ownable {
 
     private:
         void _setTimestamp(const QDateTime &dt) {
-            this->insert("dt", dt);
+            this->insert(QStringLiteral(u"dt"), dt);
         }
 
 };

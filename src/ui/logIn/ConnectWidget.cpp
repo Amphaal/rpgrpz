@@ -20,20 +20,20 @@ ConnectWidget::ConnectWidget(MapHint* hintToControlStateOf, QWidget *parent) : Q
     this->_nameTarget->addAction(QIcon(":/icons/app/connectivity/user.png"), QLineEdit::LeadingPosition);
     this->_nameTarget->setPlaceholderText(tr("Player name"));
     this->_nameTarget->setToolTip(this->_nameTarget->placeholderText());
-    this->_nameTarget->setText(AppContext::settings()->value("name", "").toString());
+    this->_nameTarget->setText(AppContext::settings()->value(QStringLiteral(u"name")).toString());
 
     //domain target
     this->_domainTarget->addAction(QIcon(":/icons/app/connectivity/server.png"), QLineEdit::LeadingPosition);
     this->_domainTarget->setPlaceholderText("IP or server hostname");
     this->_domainTarget->setPlaceholderText(this->_domainTarget->placeholderText());
-    this->_domainTarget->setText(AppContext::settings()->value("domain", "localhost").toString());
+    this->_domainTarget->setText(AppContext::settings()->value(QStringLiteral(u"domain"), "localhost").toString());
 
     //character sheet target
     this->_characterSheetTarget->setToolTip("Character to embody");
     this->_fillCharacterSheetCombo();
        
         //define preferences
-        auto favChar = AppContext::settings()->value("favChar").toULongLong();
+        auto favChar = AppContext::settings()->value(QStringLiteral(u"favChar")).toULongLong();
         for(auto i = 0; i < this->_characterSheetTarget->count(); i++) {
             
             auto charId = this->_characterSheetTarget->itemData(i).toULongLong();

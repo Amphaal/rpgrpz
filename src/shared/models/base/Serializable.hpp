@@ -16,7 +16,7 @@ class Serializable : public QVariantHash {
         };
 
         snowflake_uid id() const { 
-            return this->value("id").toULongLong(); 
+            return this->value(QStringLiteral(u"id")).toULongLong(); 
         };
 
         QString idAsStr() const { 
@@ -29,6 +29,6 @@ class Serializable : public QVariantHash {
     
     private:
         void _setId(snowflake_uid id) {
-            this->insert("id", QString::number(id));
+            this->insert(QStringLiteral(u"id"), QString::number(id));
         }
 };

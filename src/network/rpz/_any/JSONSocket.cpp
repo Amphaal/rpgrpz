@@ -153,7 +153,7 @@ void JSONSocket::_processIncomingAsJson(const QByteArray &data) {
     auto mainKeys = content.keys();
 
     //check requirements
-    auto required = mainKeys.contains("_m") && mainKeys.contains("_d");
+    auto required = mainKeys.contains(QStringLiteral(u"_m")) && mainKeys.contains(QStringLiteral(u"_d"));
     if(!required) {
         qWarning() << qUtf8Printable(this->_logId) << ": JSON received has missing keys and thus cannot be handled.";
         return;

@@ -17,7 +17,7 @@ class OwnerChangedPayload : public MultipleAtomTargetsPayload {
     
     private:
         void _setOwner(const RPZUser &newOwner) {
-            this->insert("args", newOwner);
+            this->insert(QStringLiteral(u"args"), newOwner);
         }
 
 };

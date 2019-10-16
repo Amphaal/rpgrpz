@@ -14,7 +14,7 @@ class MultipleAtomTargetsPayload : public AlterationPayload {
     
         QVector<RPZAtomId> targetRPZAtomIds() const {
             
-            auto list = this->value("ids").toList();
+            auto list = this->value(QStringLiteral(u"ids")).toList();
 
             QVector<RPZAtomId> out;
             for(auto &e : list) {
@@ -26,7 +26,7 @@ class MultipleAtomTargetsPayload : public AlterationPayload {
         }
 
         virtual QVariant args() const {
-            return this->value("args");
+            return this->value(QStringLiteral(u"args"));
         }
     
     private:
@@ -37,6 +37,6 @@ class MultipleAtomTargetsPayload : public AlterationPayload {
                     QString::number(id)
                 );
             }
-            this->insert("ids", cast);
+            this->insert(QStringLiteral(u"ids"), cast);
         }
 };

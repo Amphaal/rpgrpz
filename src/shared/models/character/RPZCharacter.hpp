@@ -49,17 +49,17 @@ class RPZCharacter : public Serializable {
             auto base64Img = bArray.toBase64();
             auto utf8Img = QString::fromUtf8(base64Img);
 
-            this->insert("img", utf8Img);
-            this->insert("img_ext", ext);
+            this->insert(QStringLiteral(u"img"), utf8Img);
+            this->insert(QStringLiteral(u"img_ext"), ext);
 
         }
         const QPixmap portrait() const { 
             
-            auto imgDataStr = this->value("img").toString();
+            auto imgDataStr = this->value(QStringLiteral(u"img")).toString();
             auto imgDataBase64 = imgDataStr.toUtf8();
             auto imgData = QByteArray::fromBase64(imgDataBase64); 
 
-            auto ext = this->value("img_ext").toString();
+            auto ext = this->value(QStringLiteral(u"img_ext")).toString();
             
             QPixmap out;
             out.loadFromData(imgData, qUtf8Printable(ext));
@@ -67,32 +67,32 @@ class RPZCharacter : public Serializable {
 
         }
         
-        void setName(const QString &name) {this->insert("nm", name);}
+        void setName(const QString &name) {this->insert(QStringLiteral(u"nm"), name);}
         const QString name() const {
-            return this->value("nm").toString();
+            return this->value(QStringLiteral(u"nm")).toString();
         } 
 
-        void setArchtype(const QString &archtype) { this->insert("arch", archtype); }
-        const QString archtype() const {return this->value("arch").toString();}
+        void setArchtype(const QString &archtype) { this->insert(QStringLiteral(u"arch"), archtype); }
+        const QString archtype() const {return this->value(QStringLiteral(u"arch")).toString();}
 
-        void setDescription(const QString &descr) { this->insert("descr", descr); }
-        const QString description() const {return this->value("descr").toString();}
+        void setDescription(const QString &descr) { this->insert(QStringLiteral(u"descr"), descr); }
+        const QString description() const {return this->value(QStringLiteral(u"descr")).toString();}
 
-        void setStory(const QString &story) {this->insert("stry", story);}
-        const QString story() const {return this->value("stry").toString();}
+        void setStory(const QString &story) {this->insert(QStringLiteral(u"stry"), story);}
+        const QString story() const {return this->value(QStringLiteral(u"stry")).toString();}
 
         //
 
-        void setLevel(int level) {this->insert("lvl", level);};
+        void setLevel(int level) {this->insert(QStringLiteral(u"lvl"), level);};
         const int level() const {
-            return this->value("lvl", -1).toInt();
+            return this->value(QStringLiteral(u"lvl"), -1).toInt();
         }
 
-        void setBonus(const QString &bonus) {this->insert("bonus", bonus);}
-        const QString bonus() const {return this->value("bonus").toString();};
+        void setBonus(const QString &bonus) {this->insert(QStringLiteral(u"bonus"), bonus);}
+        const QString bonus() const {return this->value(QStringLiteral(u"bonus")).toString();};
 
-        void setMalus(const QString &malus) {this->insert("malus", malus);}
-        const QString malus() const {return this->value("malus").toString();}
+        void setMalus(const QString &malus) {this->insert(QStringLiteral(u"malus"), malus);}
+        const QString malus() const {return this->value(QStringLiteral(u"malus")).toString();}
 
         void setGauges(const QVector<RPZGauge> &gauges) {
             
@@ -104,27 +104,27 @@ class RPZCharacter : public Serializable {
                 in += gauge;
             }
 
-            this->insert("g", in);
-            this->insert("gfavc", favGaugesCount);
+            this->insert(QStringLiteral(u"g"), in);
+            this->insert(QStringLiteral(u"gfavc"), favGaugesCount);
 
         }
         const QVector<RPZGauge> gauges() const {
             QVector<RPZGauge> out;
-            for(auto &gauge : this->value("g").toList()) out += RPZGauge(gauge.toHash());
+            for(auto &gauge : this->value(QStringLiteral(u"g")).toList()) out += RPZGauge(gauge.toHash());
             return out;
         }
         const int favGaugesCount() const {
-            return this->value("gfavc", 0).toInt();
+            return this->value(QStringLiteral(u"gfavc"), 0).toInt();
         }
 
         void setAbilities(const QVector<RPZAbility> &abilities) {
             QVariantList in;
             for(auto &ability : abilities) in += ability;
-            this->insert("ab", in);
+            this->insert(QStringLiteral(u"ab"), in);
         }
         const QVector<RPZAbility> abilities() const {
             QVector<RPZAbility> out;
-            for(auto &ability : this->value("ab").toList()) out += RPZAbility(ability.toHash());
+            for(auto &ability : this->value(QStringLiteral(u"ab")).toList()) out += RPZAbility(ability.toHash());
             return out;
         }
 
@@ -133,17 +133,17 @@ class RPZCharacter : public Serializable {
         void setInventories(const QVector<RPZInventory> &inventories) {
             QVariantList in;
             for(auto &inventory : inventories) in += inventory;
-            this->insert("inv", in);
+            this->insert(QStringLiteral(u"inv"), in);
         }
         const QVector<RPZInventory> inventories() const {
             QVector<RPZInventory> out;
-            for(auto &inv : this->value("inv").toList()) out += RPZInventory(inv.toHash());
+            for(auto &inv : this->value(QStringLiteral(u"inv")).toList()) out += RPZInventory(inv.toHash());
             return out;
         }
 
         //
-        void setNotes(const QString &notes) {this->insert("notes", notes);}
-        const QString notes() const {return this->value("notes").toString();}
+        void setNotes(const QString &notes) {this->insert(QStringLiteral(u"notes"), notes);}
+        const QString notes() const {return this->value(QStringLiteral(u"notes")).toString();}
 
         static const QPixmap getDefaultPortrait() {
             if(!_defaultPortrait) _defaultPortrait = new QPixmap(":/asset/default.jpg");

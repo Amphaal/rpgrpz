@@ -57,7 +57,7 @@ int Playlist::_tempHashDnDFromUrlList(QList<QUrl> &list) {
         if(!url.isValid()) continue;
 
         //for local files...
-        if (url.host().contains("youtu")) {
+        if (url.host().contains(QStringLiteral(u"youtu"))) {
 
             //check if video or playlist link
             auto query = QUrlQuery(url);

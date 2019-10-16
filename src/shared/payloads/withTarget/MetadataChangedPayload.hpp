@@ -21,7 +21,7 @@ class MetadataChangedPayload : public MultipleAtomTargetsPayload {
 
     private:
         void _setMetadataChanges(const AtomUpdates &changes) {
-            this->insert("args", 
+            this->insert(QStringLiteral(u"args"), 
                 JSONSerializer::serializeUpdates(changes)
             );
         }

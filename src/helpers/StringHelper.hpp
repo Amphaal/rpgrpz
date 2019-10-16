@@ -5,7 +5,7 @@
 class StringHelper {
     public:
 
-        static QString fromcentimeters(qulonglong cm) {
+        static QString fromcentimeters(double cm) {
 
             auto numberLength = QString::number(cm).count();
             if(numberLength < 3) {

@@ -50,11 +50,11 @@ void ConnectivityHelper::_pickPreferedConfiguration() {
         auto isIAP = type == QNetworkConfiguration::InternetAccessPoint;
         if(!isIAP) continue;
 
-        auto unauthorizedInterface = name.contains("npcap", Qt::CaseInsensitive) ||
-                                     name.contains("virtualbox", Qt::CaseInsensitive) ||
-                                     name.contains("bluetooth", Qt::CaseInsensitive) ||
-                                     name.contains("pseudo", Qt::CaseInsensitive) ||
-                                     name.contains("WAN", Qt::CaseSensitive);
+        auto unauthorizedInterface = name.contains(QStringLiteral(u"npcap"), Qt::CaseInsensitive) ||
+                                     name.contains(QStringLiteral(u"virtualbox"), Qt::CaseInsensitive) ||
+                                     name.contains(QStringLiteral(u"bluetooth"), Qt::CaseInsensitive) ||
+                                     name.contains(QStringLiteral(u"pseudo"), Qt::CaseInsensitive) ||
+                                     name.contains(QStringLiteral(u"WAN"), Qt::CaseSensitive);
         if(unauthorizedInterface) continue;
         
         //define new config

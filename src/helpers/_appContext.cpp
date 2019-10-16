@@ -3,7 +3,7 @@
 AppSettings::AppSettings(const QString &path) : QSettings(path, QSettings::IniFormat) {}
 
 int AppSettings::audioVolume() {
-    return this->value("volume", 50).toInt();
+    return this->value(QStringLiteral(u"volume"), 50).toInt();
 }
 
 void AppSettings::setAudioVolume(int volume) {
@@ -11,7 +11,7 @@ void AppSettings::setAudioVolume(int volume) {
 }
 
 int AppSettings::defaultLayer() {
-    return this->value("defaultLayer", 0).toInt();
+    return this->value(QStringLiteral(u"defaultLayer"), 0).toInt();
 }
 void AppSettings::setDefaultLayer(int layer) {
     this->setValue("defaultLayer", layer);
@@ -31,11 +31,11 @@ void AppContext::configureApp(QCoreApplication &app) {
     auto args = AppContext::getOptionArgs(app);
 
     //if custom context is set
-    if(args.contains("randomContext")) {
+    if(args.contains(QStringLiteral(u"randomContext"))) {
         return AppContext::initRandomContext();
     } 
     
-    else if(args.contains("customContext")) {
+    else if(args.contains(QStringLiteral(u"customContext"))) {
         auto customContext = args["customContext"];
         return AppContext::initCustomContext(customContext);
     }

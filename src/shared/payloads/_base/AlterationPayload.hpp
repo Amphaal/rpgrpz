@@ -69,15 +69,15 @@ class AlterationPayload : public QVariantHash {
         }
 
         PayloadAlteration type() const {
-            return (PayloadAlteration)this->value("t").toInt();
+            return (PayloadAlteration)this->value(QStringLiteral(u"t")).toInt();
         };
 
         void changeSource(const Source &newSource) {
-            this->insert("s", (int)newSource);
+            this->insert(QStringLiteral(u"s"), (int)newSource);
         }
 
         Source source() const {
-            return (Source)this->value("s").toInt();
+            return (Source)this->value(QStringLiteral(u"s")).toInt();
         }
 
         bool isNetworkRoutable() const {
@@ -85,11 +85,11 @@ class AlterationPayload : public QVariantHash {
         }
 
         void tagAsFromTimeline() {
-            this->insert("h", true);
+            this->insert(QStringLiteral(u"h"), true);
         }
 
         bool isFromTimeline() const {
-            return this->value("h").toBool();
+            return this->value(QStringLiteral(u"h")).toBool();
         }
 
         //necessary for dynamic_cast operations
@@ -107,7 +107,7 @@ class AlterationPayload : public QVariantHash {
         };
         
         void _setType(const PayloadAlteration &type) {
-            this->insert("t", (int)type);
+            this->insert(QStringLiteral(u"t"), (int)type);
         }
 };
 

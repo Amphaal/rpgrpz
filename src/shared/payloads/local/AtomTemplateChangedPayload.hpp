@@ -15,7 +15,7 @@ class AtomTemplateChangedPayload : public AlterationPayload {
         AtomUpdates updates() const {
             
             AtomUpdates out;
-            auto base = this->value("changes").toHash();  
+            auto base = this->value(QStringLiteral(u"changes")).toHash();  
 
             for (auto i = base.begin(); i != base.end(); ++i) {
                 auto param = (AtomParameter)i.key().toInt();
@@ -35,7 +35,7 @@ class AtomTemplateChangedPayload : public AlterationPayload {
                 in.insert(QString::number((int)i.key()), i.value());
             }
 
-            this->insert("changes", in);
+            this->insert(QStringLiteral(u"changes"), in);
 
         }
 };

@@ -2,19 +2,19 @@
 
 RPZHandshake::RPZHandshake(const QVariantHash &hash) : QVariantHash(hash) {}
 RPZHandshake::RPZHandshake(const QString &requestedUsername, const RPZCharacter &toIncarnate) {
-    this->insert("v", QString(APP_CURRENT_VERSION));
-    this->insert("un", requestedUsername);
-    this->insert("char", toIncarnate);
+    this->insert(QStringLiteral(u"v"), QString(APP_CURRENT_VERSION));
+    this->insert(QStringLiteral(u"un"), requestedUsername);
+    this->insert(QStringLiteral(u"char"), toIncarnate);
 }
 
 const QString RPZHandshake::clientVersion() const {
-    return this->value("v").toString();
+    return this->value(QStringLiteral(u"v")).toString();
 }
 
 const QString RPZHandshake::requestedUsername() const {
-    return this->value("un").toString();
+    return this->value(QStringLiteral(u"un")).toString();
 }
 
 const RPZCharacter RPZHandshake::incarnatingAs() const {
-    return RPZCharacter(this->value("char").toHash());
+    return RPZCharacter(this->value(QStringLiteral(u"char")).toHash());
 }

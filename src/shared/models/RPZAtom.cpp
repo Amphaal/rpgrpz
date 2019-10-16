@@ -43,8 +43,8 @@ QVariant RPZAtom::getDefaultValueForParam(const AtomParameter &param) {
     return _defaultVal[param];
 }
 
-AtomType RPZAtom::type() const {return (AtomType)this->value("t").toInt();}
-void RPZAtom::_setType(const AtomType &type) { this->insert("t", (int)type); }
+AtomType RPZAtom::type() const {return (AtomType)this->value(QStringLiteral(u"t")).toInt();}
+void RPZAtom::_setType(const AtomType &type) { this->insert(QStringLiteral(u"t"), (int)type); }
 void RPZAtom::changeType(const AtomType &type) { this->_setType(type);}
 
 void RPZAtom::unsetMetadata(const AtomParameter &key) {

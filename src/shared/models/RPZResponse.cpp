@@ -9,15 +9,15 @@ RPZResponse::RPZResponse(RPZStampableId answererTo, const ResponseCode &code, co
 RPZResponse::RPZResponse(const QVariantHash &hash) : Stampable(hash) {}
 
 RPZResponse::ResponseCode RPZResponse::responseCode() const {
-    return (ResponseCode)this->value("r").toInt();
+    return (ResponseCode)this->value(QStringLiteral(u"r")).toInt();
 }
 
 QVariant RPZResponse::responseData() const {
-    return this->value("rdata");
+    return this->value(QStringLiteral(u"rdata"));
 }
 
 RPZStampableId RPZResponse::answerer() const {
-    return this->value("aswr").toULongLong();
+    return this->value(QStringLiteral(u"aswr")).toULongLong();
 }
 
 QString RPZResponse::toString() const{
@@ -79,13 +79,13 @@ QPalette RPZResponse::palette() const {
 }
 
 void RPZResponse::_setAnswerer(RPZStampableId answererStampableId) {
-    this->insert("aswr", QString::number(answererStampableId));
+    this->insert(QStringLiteral(u"aswr"), QString::number(answererStampableId));
 }
 
 void RPZResponse::_setResponseCode(const ResponseCode &code) {
-    this->insert("r", (int)code);
+    this->insert(QStringLiteral(u"r"), (int)code);
 }
 
 void RPZResponse::_setResponseData(const QVariant &data) {
-    this->insert("rdata", data);
+    this->insert(QStringLiteral(u"rdata"), data);
 }

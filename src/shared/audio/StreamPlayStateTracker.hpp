@@ -65,53 +65,53 @@ class StreamPlayStateTracker : public QVariantHash {
         }
 
         const int durationInSecs() const {
-            return this->value("dur", -1).toInt();
+            return this->value(QStringLiteral(u"dur"), -1).toInt();
         }
 
         const bool isPlaying() const {
-            return this->value("plyn", false).toBool();
+            return this->value(QStringLiteral(u"plyn"), false).toBool();
         }
 
         const QString title() const {
-            return this->value("titl").toString();
+            return this->value(QStringLiteral(u"titl")).toString();
         }
 
         const QString url() const {
-            return this->value("url").toString();
+            return this->value(QStringLiteral(u"url")).toString();
         }
 
         const QDateTime lastUpdate() const {
-            return this->value("lu").toDateTime();
+            return this->value(QStringLiteral(u"lu")).toDateTime();
         };
 
     private:
 
         const qint64 _posInMsecs() const {
-            return this->value("pos", -1).value<qint64>();
+            return this->value(QStringLiteral(u"pos"), -1).value<qint64>();
         };
 
         void _setDurationInSecs(int newDurationInSecs) {
-            this->insert("dur", newDurationInSecs);
+            this->insert(QStringLiteral(u"dur"), newDurationInSecs);
         };
 
         void _setIsPlaying(bool newIsPlaying) {
-            this->insert("plyn", newIsPlaying);
+            this->insert(QStringLiteral(u"plyn"), newIsPlaying);
         };
         
         void _setTitle(const QString &newTitle) {
-            this->insert("titl", newTitle);
+            this->insert(QStringLiteral(u"titl"), newTitle);
         }
 
         void _setUrl(const QString &newUrl) {
-            this->insert("url", newUrl);
+            this->insert(QStringLiteral(u"url"), newUrl);
         }
 
         void _refreshUpdateTS() {
-            this->insert("lu", QDateTime::currentDateTime());
+            this->insert(QStringLiteral(u"lu"), QDateTime::currentDateTime());
         }
         
         void _setPosInMsecs(qint64 newPosInMsecs) {
-            this->insert("pos", newPosInMsecs);
+            this->insert(QStringLiteral(u"pos"), newPosInMsecs);
         }
 
 };
