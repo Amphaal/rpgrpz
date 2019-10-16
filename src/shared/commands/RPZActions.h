@@ -32,4 +32,6 @@ class RPZActions {
         static QAction* loadAMap();
         static QAction* saveTheMap();
         static QAction* saveTheMapAs();
+        static QAction* activateGridIndicator();
+        static QAction* activateScaleIndicator();
 };

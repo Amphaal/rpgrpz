@@ -39,7 +39,6 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent),
     this->_handleHintsSignalsAndSlots();
 
     //default state
-    this->scale(this->_defaultScale, this->_defaultScale);
     this->_goToDefaultViewState();
 
     //animator configuration 
@@ -154,72 +153,151 @@ void MapView::drawBackground(QPainter *painter, const QRectF &rect) {
 }
 
 void MapView::_mayDrawZoomIndic(QPainter* painter, const QRect &viewportRect, double currentScale) {
-    //zoom indic
-    auto templt = QStringLiteral(u"Zoom : %1x");
-    templt = templt.arg(currentScale - this->_defaultScale, 0, 0, 2, 0);
+    
+    if(!AppContext::settings()->scaleActive()) return;
+
+    painter->save();
+
+        //zoom indic
+        auto templt = QStringLiteral(u"Zoom : %1x");
+        templt = templt.arg(currentScale, 0, 0, 2, 0);
 
         //background
         painter->setOpacity(.75);
         painter->setPen(Qt::NoPen);
         painter->setBrush(QBrush("#FFF", Qt::SolidPattern));
         auto bgRect = painter->boundingRect(viewportRect, templt, QTextOption(Qt::AlignTop | Qt::AlignRight));
-        bgRect = bgRect.marginsAdded(QMargins(5, 0, 5, 0));
+        bgRect = bgRect.marginsAdded(QMargins(5, 5, 5, 2));
         bgRect.moveTopRight(viewportRect.topRight());
-        painter->drawRect(bgRect);
+        painter->drawRoundedRect(bgRect, 2, 2);
         
         //text
         painter->setOpacity(1);
         painter->setPen(QPen(Qt::SolidPattern, 0));
         painter->setBrush(Qt::NoBrush);
         painter->drawText(bgRect, templt, QTextOption(Qt::AlignCenter));
+
+    painter->restore();
+
 }
 
 void MapView::_mayDrawScaleIndic(QPainter* painter, const QRect &viewportRect, double currentScale) {
     
-    //cover
-    painter->setOpacity(.5);
-    painter->setPen(Qt::NoPen);
-    painter->setBrush(QBrush("#FFF", Qt::SolidPattern));
-    painter->drawEllipse(viewportRect.bottomLeft(), 250, 250);
-    painter->setOpacity(1);
+    if(!AppContext::settings()->scaleActive()) return;
 
-    auto scalePos = viewportRect.bottomLeft();
-    scalePos.setX(scalePos.x() + 15);
-    scalePos.setY(scalePos.y() - 20);
+    painter->save();
 
-    auto zeroRect = painter->boundingRect(viewportRect, QStringLiteral(u"0"));
-    zeroRect.moveCenter(scalePos);
-    zeroRect.moveTop(scalePos.y());
+        auto tileWidth = (int)this->_stdTileSize.width();
+        auto stops = 5;
+        auto rulerSize = (int)(tileWidth * stops);
+        auto elipseSize = rulerSize + 50;
+        auto ratio = this->_hints->tileToMeterRatio() * (1 / currentScale);
 
-    auto scaleDestX = scalePos;
-    scaleDestX.setX(scalePos.x() + 200);
+        //cover
+        painter->setOpacity(.5);
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(QBrush("#FFF", Qt::SolidPattern));
+        painter->drawEllipse(viewportRect.bottomLeft(), elipseSize, elipseSize);
+        painter->setOpacity(1);
 
-    auto scaleDestY = scalePos;
-    scaleDestY.setY(scalePos.y() - 200);
+        auto scalePos = viewportRect.bottomLeft();
+        scalePos.setX(scalePos.x() + 15);
+        scalePos.setY(scalePos.y() - 20);
 
-    painter->setPen(QPen(Qt::SolidPattern, 0));
-    painter->setBrush(Qt::NoBrush);
-    painter->drawLine(scalePos, scaleDestX);
-    painter->drawLine(scalePos, scaleDestY);
-    painter->drawText(zeroRect, QStringLiteral(u"0"));
+        auto scaleDestX = scalePos;
+        scaleDestX.setX(scalePos.x() + rulerSize);
+
+        auto scaleDestY = scalePos;
+        scaleDestY.setY(scalePos.y() - rulerSize);
+
+        painter->setPen(QPen(Qt::SolidPattern, 0));
+        painter->setBrush(Qt::NoBrush);
+        painter->drawLine(scalePos, scaleDestX);
+        painter->drawLine(scalePos, scaleDestY);
+
+        //zero
+        auto zeroRect = painter->boundingRect(viewportRect, QStringLiteral(u"0"));
+        zeroRect.moveCenter(scalePos);
+        zeroRect.moveTop(scalePos.y());
+        painter->drawText(zeroRect, QStringLiteral(u"0"));
+
+        for(auto stop = 1; stop <= stops; stop++) {
+            
+            auto pos = scalePos;
+            pos.setX(
+                pos.x() + (stop * tileWidth)
+            );
+
+            auto txtStr = StringHelper::fromMeters(ratio * stop);
+            auto textRect = painter->boundingRect(viewportRect, txtStr);
+            textRect.moveCenter(pos);
+            textRect.moveTop(pos.y());
+            painter->drawText(textRect, txtStr);
+
+            auto tickDest = pos;
+            tickDest.setY(
+                tickDest.y() - 5
+            );
+            painter->drawLine(pos, tickDest);
+            
+        }
 
 
 
+    painter->restore();
 }
 
-void MapView::_mayDrawGridIndic(QPainter* painter, const QRectF &rect) {
-    painter->setOpacity(1);
-    painter->setPen(QPen(Qt::NoBrush, 10));
-    painter->setBrush(Qt::NoBrush);
+void MapView::_mayDrawGridIndic(QPainter* painter, const QRectF &rect, double currentScale) {
+    
+    if(!AppContext::settings()->gridActive()) return;
+    if(currentScale < .1) return; //prevent if scale is too far
 
-    for(int x = 0; x <= rect.width(); x += 10){
-        painter->drawLine(QLineF(x, 0, x, rect.height()));
-    }
-    for(int y = 0; y <= rect.height(); y += 10){
-        painter->drawLine(QLineF(0, y, rect.width(), y));
-    }
+    painter->save();
 
-    painter->setOpacity(1);
+        QPen pen(Qt::SolidPattern, 0);
+        pen.setColor("#222");
+        painter->setPen(pen);
+        painter->setBrush(Qt::NoBrush);
+        
+        auto sceneRect = this->sceneRect();
+        auto center = sceneRect.center();
+
+        auto sceneBottom = sceneRect.bottom();
+        auto sceneRight = sceneRect.right();
+        auto centerX = center.x();
+        auto centerY = center.y();
+        auto tileWidth = this->_stdTileSize.width();
+        auto tileHeight = this->_stdTileSize.height();
+
+        auto numberOfLinesX = (int)(centerX / tileWidth);
+        auto numberOfLinesY = (int)(centerY / tileHeight);
+
+        //origin lines
+        auto horizontalOriginLine = QLineF(centerX, 0, centerX, sceneBottom);
+        auto verticalOriginLine = QLineF(0, centerY, sceneRight, centerY);
+        painter->drawLine(horizontalOriginLine); //x
+        painter->drawLine(verticalOriginLine); //y
+
+        //horizontal
+        for(auto x = 1; x <= numberOfLinesX; x++) {
+            auto step = x * tileWidth;
+            auto centerXMore = centerX + step;
+            auto centerXLess = centerX - step;
+            painter->drawLine(QLineF(centerXMore, 0, centerXMore, sceneBottom));
+            painter->drawLine(QLineF(centerXLess, 0, centerXLess, sceneBottom));
+        }
+
+        //vertical
+        for(int y = 1; y <= numberOfLinesY; y++) {
+            auto step = y * tileHeight;
+            auto centerYMore = centerY + step;
+            auto centerYLess = centerY - step;
+            painter->drawLine(QLineF(0, centerYMore, sceneRight, centerYMore));
+            painter->drawLine(QLineF(0, centerYLess, sceneRight, centerYLess));
+        }
+
+    painter->restore();
+
 }
 
 void MapView::_mayUpdateHUD(QPainter* painter, const QRectF &rect) {
@@ -231,7 +309,7 @@ void MapView::_mayUpdateHUD(QPainter* painter, const QRectF &rect) {
         auto viewportRect = this->rect();
         auto currentScale = this->transform().m11();
 
-        this->_mayDrawGridIndic(painter, rect);
+        this->_mayDrawGridIndic(painter, rect, currentScale);
 
         //ignore transformations
         QTransform t;
@@ -842,6 +920,10 @@ void MapView::onActionRequested(const MapTools::Actions &action) {
         default:
             break;
     }
+}
+
+void MapView::onHelperActionTriggered(QAction *action) {
+    this->setForegroundBrush(Qt::NoBrush); //force foreground re-drawing
 }
 
 //////////////

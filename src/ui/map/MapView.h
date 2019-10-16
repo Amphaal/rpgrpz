@@ -40,6 +40,8 @@
 #include "src/shared/commands/AtomsContextualMenuHandler.h"
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 
+#include "src/helpers/StringHelper.hpp"
+
 class MapView : public QGraphicsView, public ClientBindable {
 
     Q_OBJECT
@@ -59,6 +61,7 @@ class MapView : public QGraphicsView, public ClientBindable {
 
     public slots:
         void onActionRequested(const MapTools::Actions &action);
+        void onHelperActionTriggered(QAction *action);
     
     signals:
         void remoteChanged(bool isRemote);
@@ -129,7 +132,7 @@ class MapView : public QGraphicsView, public ClientBindable {
             //drawing HUD helpers
             void _mayDrawZoomIndic(QPainter* painter, const QRect &viewportRect, double currentScale);
             void _mayDrawScaleIndic(QPainter* painter, const QRect &viewportRect, double currentScale);
-            void _mayDrawGridIndic(QPainter* painter, const QRectF &rect);
+            void _mayDrawGridIndic(QPainter* painter, const QRectF &rect, double currentScale);
 
         //ghost
             void _mightCenterGhostWithCursor();
@@ -161,7 +164,6 @@ class MapView : public QGraphicsView, public ClientBindable {
             QRectF _getVisibleRect();
 
         //zooming...
-            const double _defaultScale = 5;
             double _currentRelScale = 1;
             void _goToDefaultZoom();
 

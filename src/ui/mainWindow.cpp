@@ -69,9 +69,9 @@ void MainWindow::_barVisibilityToolTip() {
 }
 
 void MainWindow::_saveWindowState() {
-    AppContext::settings()->beginGroup("mainWindow");
-    AppContext::settings()->setValue("windowGeometry", this->saveGeometry());
-    AppContext::settings()->setValue("windowState", this->saveState());
+    AppContext::settings()->beginGroup(QStringLiteral(u"mainWindow"));
+    AppContext::settings()->setValue(QStringLiteral(u"windowGeometry"), this->saveGeometry());
+    AppContext::settings()->setValue(QStringLiteral(u"windowState"), this->saveState());
     AppContext::settings()->endGroup();
 }
 
@@ -85,7 +85,7 @@ void MainWindow::_loadWindowState() {
     }
 
     //load...
-    AppContext::settings()->beginGroup("mainWindow");
+    AppContext::settings()->beginGroup(QStringLiteral(u"mainWindow"));
     this->restoreGeometry(
         AppContext::settings()->value(QStringLiteral(u"windowGeometry")).toByteArray()
     );
@@ -243,6 +243,7 @@ void MainWindow::_initUIApp() {
     this->_audioManager = new AudioManager(this);
     this->_assetsManager = new AssetsManager(this);
     this->_mapTools = new MapTools(this);
+    this->_mapHelpers = new MapHelpers(this);
     this->_mlManager = new MapLayoutManager(this->_mapView->hints(), this);
     this->_connectWidget = new ConnectWidget(this->_mapView->hints(), this);
     this->_atomEditManager = new AtomEditionManager(this->_mapView->hints(), this);
@@ -289,6 +290,7 @@ void MainWindow::_initUIApp() {
         toolbarLayout->setMargin(0);
         toolbarLayout->setSpacing(0);
 
+        toolbarLayout->addWidget(this->_mapHelpers);
         toolbarLayout->addStretch(0);
         toolbarLayout->addWidget(this->_mapTools);
         
@@ -308,6 +310,11 @@ void MainWindow::_initUIApp() {
     //
     // EVENTS
     //
+
+    QObject::connect(
+        this->_mapHelpers, &QToolBar::actionTriggered,
+        this->_mapView, &MapView::onHelperActionTriggered
+    );
 
     //bind RPZClient to widget once a connection starts
     QObject::connect(

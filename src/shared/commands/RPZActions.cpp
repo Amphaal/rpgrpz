@@ -1,5 +1,54 @@
 #include "RPZActions.h"
 
+QAction* RPZActions::activateGridIndicator() {
+    
+    auto action = new QAction(
+        QIcon(":/icons/app/tools/grid.png"), 
+        QObject::tr("Display grid indicators")
+    );
+
+    action->setData("grid");
+    action->setCheckable(true);
+    action->setChecked(AppContext::settings()->gridActive());
+
+    QObject::connect(
+        action, &QAction::triggered,
+        [=](auto checked) {
+            AppContext::settings()->setValue(
+                action->data().toString(), 
+                checked
+            );
+        }
+    );
+
+    return action;
+
+}
+QAction* RPZActions::activateScaleIndicator() {
+    
+    auto action = new QAction(
+        QIcon(":/icons/app/tools/ruler.png"), 
+        QObject::tr("Display scale indicators")
+    );
+
+    action->setData("scale");
+    action->setCheckable(true);
+    action->setChecked(AppContext::settings()->scaleActive());
+
+    QObject::connect(
+        action, &QAction::triggered,
+        [=](auto checked) {
+            AppContext::settings()->setValue(
+                action->data().toString(), 
+                checked
+            );
+        }
+    );
+
+    return action;
+
+}
+
 QAction* RPZActions::redo() {
     auto action = new QAction(QObject::tr("Redo"));
     action->setShortcut(QKeySequence::Redo);

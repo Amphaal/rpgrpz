@@ -7,7 +7,7 @@ ConnectWidget::ConnectWidget(MapHint* hintToControlStateOf, QWidget *parent) : Q
     _connectBtn(new QPushButton(this)),
     _characterSheetTarget(new QComboBox(this)) {
                                                     
-    AppContext::settings()->beginGroup("ConnectWidget");
+    AppContext::settings()->beginGroup(QStringLiteral(u"ConnectWidget"));
 
     //this
     this->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
@@ -87,16 +87,16 @@ void ConnectWidget::_onConnectButtonPressed() {
 void ConnectWidget::_saveValuesAsSettings() {
     
     //register default values
-    AppContext::settings()->beginGroup("ConnectWidget");
+    AppContext::settings()->beginGroup(QStringLiteral(u"ConnectWidget"));
 
     auto dt_text = this->_domainTarget->text();
-    if(!dt_text.isEmpty()) AppContext::settings()->setValue("domain", dt_text);
+    if(!dt_text.isEmpty()) AppContext::settings()->setValue(QStringLiteral(u"domain"), dt_text);
 
     auto nt_text = this->_nameTarget->text();
-    if(!nt_text.isEmpty()) AppContext::settings()->setValue("name", nt_text);
+    if(!nt_text.isEmpty()) AppContext::settings()->setValue(QStringLiteral(u"name"), nt_text);
 
     auto favoriteCharacterId = this->_characterSheetTarget->currentData().toULongLong();
-    AppContext::settings()->setValue("favChar", favoriteCharacterId);
+    AppContext::settings()->setValue(QStringLiteral(u"favChar"), favoriteCharacterId);
 
     AppContext::settings()->endGroup();
 }

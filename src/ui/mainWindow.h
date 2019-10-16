@@ -27,6 +27,7 @@
 #include "src/ui/audio/AudioManager.h"
 #include "src/ui/map/MapView.h"
 #include "src/ui/map/MapTools.h"
+#include "src/ui/map/MapHelpers.hpp"
 #include "src/ui/mapLayout/MapLayoutManager.h"
 #include "src/ui/users/players/PlayersListView.hpp"
 #include "src/ui/users/standard/StandardUsersListView.hpp"
@@ -65,6 +66,7 @@ class MainWindow : public QMainWindow {
         bool _mustLaunchServer = true;
         void _initConnectivity();
 
+        MapHelpers* _mapHelpers = nullptr;
         PlayersListView* _playersView = nullptr;
         StandardUsersListView* _usersView = nullptr;
         MapView* _mapView = nullptr;

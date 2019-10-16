@@ -6,18 +6,28 @@
 class StringHelper {
     public:
 
-        static QString fromcentimeters(double cm) {
+        static QString fromMeters(double meters) {
 
-            auto numberLength = QString::number(cm).count();
-            if(numberLength < 3) {
-                return QStringLiteral(u"%1 cm").arg(cm);
-            } 
-            
-            else {
-                return QStringLiteral(u"%1 m").arg(cm, 0, 0, 3, 0);
+            if(meters < 0.1) {
+                auto asMm = meters * 1000;
+                return QStringLiteral(u"%1 mm").arg(asMm, 4, 0, 1, 0);
             }
 
+            else if(meters < 1) {
+                auto asCm = meters * 100;
+                return QStringLiteral(u"%1 cm").arg(asCm, 4, 0, 1, 0);
+            } 
 
+            else if (meters > 1000){
+                auto asKm = meters / 1000;
+                return QStringLiteral(u"%1 km").arg(asKm, 4, 0, 1, 0);
+            }
+
+            else {
+                return QStringLiteral(u"%1 m").arg(meters, 4, 0, 1, 0);
+            }
+
+            
         }
 
         static QString secondsToTrackDuration(int durationInSeconds) {

@@ -1,26 +1,5 @@
 #include "_appContext.h"
 
-AppSettings::AppSettings(const QString &path) : QSettings(path, QSettings::IniFormat) {}
-
-int AppSettings::audioVolume() {
-    return this->value(QStringLiteral(u"volume"), 50).toInt();
-}
-
-void AppSettings::setAudioVolume(int volume) {
-    this->setValue("volume", volume);
-}
-
-int AppSettings::defaultLayer() {
-    return this->value(QStringLiteral(u"defaultLayer"), 0).toInt();
-}
-void AppSettings::setDefaultLayer(int layer) {
-    this->setValue("defaultLayer", layer);
-}
-
-///
-///
-///
-
 void AppContext::configureApp(QCoreApplication &app) {
     
     //context preparation

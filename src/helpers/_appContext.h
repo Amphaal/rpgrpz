@@ -28,19 +28,10 @@
 
 #include <QRegularExpression>
 
+#include "_appSettings.hpp"
+
 #include "RPZUserRoles.h"
 #include "src/_libs/snowflake/snowflake.h"
-
-class AppSettings : public QSettings {
-    public:
-        AppSettings(const QString &path);
-
-        int audioVolume();
-        void setAudioVolume(int volume = 100);
-
-        int defaultLayer();
-        void setDefaultLayer(int layer = 0);
-};
 
 class AppContext {
     

@@ -121,6 +121,10 @@ bool MapHint::loadRPZMap(const QString &filePath) {
     return true;
 }
 
+double MapHint::tileToMeterRatio() {
+    return 1.5;
+}
+
 
 bool MapHint::defineAsRemote(const QString &remoteMapDescriptor) {
     
