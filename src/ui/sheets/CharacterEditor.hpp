@@ -264,6 +264,9 @@ class CharacterEditor : public QWidget, public ClientBindable {
                 }
                 break;
 
+                default:
+                break;
+
             }         
 
             this->_saveCharacterBtn->setVisible(enableSave);
@@ -299,6 +302,9 @@ class CharacterEditor : public QWidget, public ClientBindable {
                     this->setEnabled(false); 
 
                 }
+                break;
+
+                default:
                 break;
 
             }

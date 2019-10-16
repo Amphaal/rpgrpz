@@ -25,7 +25,11 @@ class InventorySlotModal : public QDialog {
     Q_OBJECT
 
     public:
-        InventorySlotModal(const RPZInventory* from, const QVector<RPZInventory*> &targets, const QVector<QPair<int, RPZInventorySlot>> &toAlter) : 
+        InventorySlotModal(
+            const RPZInventory* from, 
+            const QVector<RPZInventory*> &targets, 
+            const QVector<QPair<int, RPZInventorySlot>> &toAlter
+        ) : 
             _targets(targets), 
             _targetsCombo(new QComboBox), 
             _recipientCombo(new QComboBox) {
@@ -101,7 +105,7 @@ class InventorySlotMoveModal : public InventorySlotModal {
         InventorySlotMoveModal(
             const RPZInventory* from, 
             const QVector<RPZInventory*> &targets, 
-            QVector<QPair<int, RPZInventorySlot>> &toAlter
+            const QVector<QPair<int, RPZInventorySlot>> &toAlter
         ) : InventorySlotModal(from, targets, toAlter) {
             
             this->_subLayout = new QFormLayout;

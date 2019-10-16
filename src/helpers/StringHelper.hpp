@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QString>
+#include <QTime>
 
 class StringHelper {
     public:
@@ -41,7 +42,7 @@ class StringHelper {
         }
 
         static QString fromSecondsToTime(int lengthInSeconds) {
-            return QTime::fromMSecsSinceStartOfDay(lengthInSeconds * 1000).toString("hh:mm:ss");
+            return QTime::fromMSecsSinceStartOfDay(lengthInSeconds * 1000).toString(QStringLiteral(u"hh:mm:ss"));
         }
 
         static QString toSuperScript(uint num) {

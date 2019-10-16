@@ -269,12 +269,12 @@
         <translation>Savegarder la fiche</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/CharacterEditor.hpp" line="282"/>
+        <location filename="../ui/sheets/CharacterEditor.hpp" line="285"/>
         <source>My characters</source>
         <translation>Mes personnages</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/CharacterEditor.hpp" line="282"/>
+        <location filename="../ui/sheets/CharacterEditor.hpp" line="285"/>
         <source>Hosted characters</source>
         <translation>Personnages du serveur</translation>
     </message>
@@ -585,17 +585,17 @@
 <context>
     <name>InventorySlotMoveModal</name>
     <message>
-        <location filename="../ui/sheets/components/InventoryModal.hpp" line="110"/>
+        <location filename="../ui/sheets/components/InventoryModal.hpp" line="114"/>
         <source>Move items to inventory</source>
         <translation>Déplacer les objets vers l&apos;inventaire</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventoryModal.hpp" line="136"/>
+        <location filename="../ui/sheets/components/InventoryModal.hpp" line="140"/>
         <source>• &quot;%1&quot; (%2 to move) :</source>
         <translation>• &quot;%1&quot; (%2 à déplacer) :</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventoryModal.hpp" line="137"/>
+        <location filename="../ui/sheets/components/InventoryModal.hpp" line="141"/>
         <source>%1 (Current number) =&gt; %2 (New Total)</source>
         <translation>%1 (Nombre actuel) =&gt; %2 (Nouveau Total)</translation>
     </message>
@@ -603,17 +603,17 @@
 <context>
     <name>InventorySlotSplitModal</name>
     <message>
-        <location filename="../ui/sheets/components/InventoryModal.hpp" line="163"/>
+        <location filename="../ui/sheets/components/InventoryModal.hpp" line="167"/>
         <source>Split item to inventory</source>
         <translation>Diviser l&apos;objet vers l&apos;inventaire</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventoryModal.hpp" line="171"/>
+        <location filename="../ui/sheets/components/InventoryModal.hpp" line="175"/>
         <source>Current number of items</source>
         <translation>Nombre actuel d&apos;objets</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventoryModal.hpp" line="174"/>
+        <location filename="../ui/sheets/components/InventoryModal.hpp" line="178"/>
         <source>Total number of items in dest. inventory</source>
         <translation>Nombre total d&apos;objets dans l&apos;inventaire de destination</translation>
     </message>
@@ -1188,12 +1188,12 @@
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="67"/>
+        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="74"/>
         <source>Update Available</source>
         <translation>Mise à jour disponible</translation>
     </message>
     <message>
-        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="68"/>
+        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="75"/>
         <source>An update is available for %1. Would you like to install it now ?</source>
         <translation>Une mise à jour est disponible pour %1. Voulez-vous l&apos;installer maintenant ?</translation>
     </message>

@@ -165,7 +165,7 @@ IF(NOT DEFINED QT_MAIN_DIR)
         SET(QT_MAIN_DIR "C:/Qt/5.13.1")
     endif()
     IF(APPLE)
-        SET(Qt5_DIR "$ENV{HOME}/Qt/5.13.1")
+        SET(QT_MAIN_DIR "$ENV{HOME}/Qt/5.13.1")
     endif()
 endif()
 
@@ -207,7 +207,10 @@ list(APPEND SOURCES
 # )
 
 #generate translations
-qt5_create_translation(QM_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/src/_i18n/fr.ts)
+qt5_create_translation(QM_FILES 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/_i18n/fr.ts
+)
 
 #########################
 # Executable Generation #
@@ -222,7 +225,9 @@ target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
 
 if(APPLE)
     #add highdpi support / menu behavior via plist template (MACOS)
-    set_target_properties(${PROJECT_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/templates/_Info.plist.in) 
+    set_target_properties(${PROJECT_NAME} PROPERTIES 
+        MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/templates/_Info.plist
+    ) 
 endif()
 
 if(WIN32)
