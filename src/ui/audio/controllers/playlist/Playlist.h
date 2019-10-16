@@ -9,7 +9,7 @@
 #include <QMimeData>
 #include <QTimer>
 
-#include "src/helpers/DurationHelper.hpp"
+#include "src/helpers/StringHelper.hpp"
 
 #include <QHash>
 #include <QPair>

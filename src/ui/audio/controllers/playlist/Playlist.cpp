@@ -161,7 +161,7 @@ void Playlist::addYoutubeVideo(const QString &url) {
         data, &YoutubeVideoMetadata::metadataRefreshed,
         [=]() {
 
-            auto durationStr = DurationHelper::secondsToTrackDuration(data->duration());
+            auto durationStr = StringHelper::secondsToTrackDuration(data->duration());
 
             auto title = QString("%1 [%2]")
                             .arg(data->title())

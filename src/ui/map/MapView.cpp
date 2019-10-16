@@ -1,7 +1,7 @@
 #include "MapView.h"
 
 MapView::MapView(QWidget *parent) : QGraphicsView(parent),
-    _hiddingBrush("#EEE", Qt::BrushStyle::SolidPattern),
+    _heavyLoadImage(QPixmap(":/icons/app_64.png")),
     _hints(new MapHint),
     _menuHandler(new AtomsContextualMenuHandler(_hints, this)) {
 
@@ -17,7 +17,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent),
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     
     this->setRubberBandSelectionMode(Qt::ItemSelectionMode::ContainsItemBoundingRect); //rubberband UC optimization
-    this->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate); //force viewport update mode
+    this->setViewportUpdateMode(QGraphicsView::ViewportUpdateMode::SmartViewportUpdate); //force viewport update mode
     this->setMouseTracking(true); //activate mouse tracking for ghost 
 
     //thread
@@ -54,10 +54,6 @@ MapView::~MapView() {
 }
 
 
-void MapView::drawBackground(QPainter *painter, const QRectF &rect) {
-
-}
-
 void MapView::_updateItemValue(QGraphicsItem* item, const AtomUpdates &updates) {
     
     for(auto i = updates.constBegin(); i != updates.constEnd(); ++i) {
@@ -79,7 +75,7 @@ void MapView::_handleHintsSignalsAndSlots() {
     //on map loading, set placeholder...
     QObject::connect(
         ProgressTracker::get(), &ProgressTracker::heavyAlterationProcessing,
-        this, &MapView::_displayLoader
+        this, &MapView::_displayHeavyLoadPlaceholder
     );
 
     //define selection debouncer
@@ -119,16 +115,161 @@ void MapView::_handleHintsSignalsAndSlots() {
 
 }
 
-void MapView::_hideLoader() {
-    if(!this->_isLoading) return;
-    this->setForegroundBrush(QBrush());
-    this->_isLoading = false;
+//////////////////
+// UI rendering //
+//////////////////
+
+
+void MapView::drawForeground(QPainter *painter, const QRectF &rect) {
+    this->_mayUpdateHeavyLoadPlaceholder(painter);
+    this->_mayUpdateHUD(painter, rect);
 }
 
-void MapView::_displayLoader() {
-    this->_isLoading = true;
-    this->setForegroundBrush(this->_hiddingBrush);
+void MapView::drawBackground(QPainter *painter, const QRectF &rect) {
+    
+    painter->save();
+
+        //set opacity
+        painter->setOpacity(0.1);
+
+        //pattern
+        QBrush brush;
+        brush.setStyle(Qt::Dense4Pattern);
+        brush.setColor(Qt::GlobalColor::black);
+        painter->setBrush(brush);
+
+        //override pen
+        painter->setPen(Qt::NoPen);
+
+        //ignore transformations
+        QTransform t;
+        t.scale(10, 10);
+        painter->setTransform(t);
+
+        painter->drawRect(this->rect());
+
+    painter->restore();
+
 }
+
+void MapView::_mayUpdateHUD(QPainter* painter, const QRectF &rect) {
+
+    if(this->_heavyLoadExpectedCount > -1) return;
+
+    painter->save();
+
+        //ignore transformations
+        QTransform t;
+        auto currentScale = this->transform().m11();
+        painter->setTransform(t);
+
+        //zoom indic
+        QString templt("Zoom : %1x");
+        templt = templt.arg(currentScale - this->_defaultScale, 0, 0, 2, 0);
+
+            //background
+            painter->setOpacity(.75);
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(QBrush("#FFF", Qt::SolidPattern));
+            auto bgRect = painter->boundingRect(this->rect(), templt, QTextOption(Qt::AlignTop | Qt::AlignRight));
+            bgRect = bgRect.marginsAdded(QMargins(5, 0, 5, 0));
+            bgRect.moveTopRight(this->rect().topRight());
+            painter->drawRect(bgRect);
+            
+            //text
+            painter->setOpacity(1);
+            painter->setPen(QPen(Qt::SolidPattern, 0));
+            painter->setBrush(Qt::NoBrush);
+            painter->drawText(bgRect, templt, QTextOption(Qt::AlignCenter));
+
+        
+        //scale indic
+        //TODO
+
+    painter->restore();
+
+}
+
+void MapView::_updateHeavyLoadPlaceholder() {
+    QPainter p(this->viewport());
+    this->_mayUpdateHeavyLoadPlaceholder(&p);
+}
+
+void MapView::_mayUpdateHeavyLoadPlaceholder(QPainter* painter) {
+    
+    if(this->_heavyLoadExpectedCount < 0) return;
+
+    auto viewportRect = this->rect();
+    auto viewportCenter = viewportRect.center();
+
+    painter->save();
+
+        //hide
+        painter->setBrush(QBrush("#EEE", Qt::SolidPattern));
+        painter->setPen(Qt::NoPen);
+        painter->setTransform(QTransform()); //ignore transformations
+        painter->drawRect(viewportRect);
+        
+        //draw gauge
+        if(this->_heavyLoadExpectedCount > 0) {
+            
+            //ext gauge
+            QRect extGauge(QPoint(0, 0), QSize(102, 12));
+            extGauge.moveCenter(viewportCenter);
+            painter->setBrush(QBrush("#DDD", Qt::SolidPattern));
+            painter->setPen(QPen(Qt::NoBrush, 0));
+            painter->drawRect(extGauge);
+
+            //draw inner
+            if(this->_heavyLoadCurrentCount > 0) {
+                
+                painter->setOpacity(.5);
+
+                //define inner gauge
+                auto innerGauge = extGauge.marginsRemoved(QMargins(1, 1, 1, 1));
+                auto ratio = (double)this->_heavyLoadCurrentCount / this->_heavyLoadExpectedCount;
+                auto newWidth = (int)(ratio * innerGauge.width());
+                innerGauge.setWidth(newWidth);
+
+                //draw it
+                painter->setBrush(QBrush(this->_heavyLoadColor, Qt::SolidPattern));
+                painter->setPen(Qt::NoPen);
+                painter->drawRect(innerGauge);
+
+                painter->setOpacity(1);
+
+            }
+
+        }
+
+        //draw pixmap
+        auto pixmapRect = this->_heavyLoadImage.rect();
+        auto alteredCenter = viewportCenter;
+        alteredCenter.setY(
+            viewportCenter.y() - 6 - 32
+        );
+        pixmapRect.moveCenter(alteredCenter);
+        painter->drawPixmap(pixmapRect, this->_heavyLoadImage);
+
+    painter->restore();
+
+}
+
+void MapView::_endHeavyLoadPlaceholder() {
+    this->_heavyLoadExpectedCount = -1;
+    this->_heavyLoadCurrentCount = -1;
+    this->_heavyLoadColor = QColor();
+}
+
+void MapView::_displayHeavyLoadPlaceholder() {
+    this->_heavyLoadColor = RandomColor::getRandomColor();
+    this->_heavyLoadExpectedCount = 0;
+    this->_heavyLoadCurrentCount = 0;
+}
+
+//////////////////////
+// End UI rendering //
+//////////////////////
 
 void MapView::_onUIUpdateRequest(const QHash<QGraphicsItem*, AtomUpdates> &toUpdate) {
     
@@ -136,14 +277,16 @@ void MapView::_onUIUpdateRequest(const QHash<QGraphicsItem*, AtomUpdates> &toUpd
         this->_updateItemValue(i.key(), i.value());
     }
     
-    this->_hideLoader();
+    this->_endHeavyLoadPlaceholder();
 }
 
 void MapView::_onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const AtomUpdates &updates) {
     for(auto item : toUpdate) {
         this->_updateItemValue(item, updates);
     }
-    this->_hideLoader();
+
+    this->_endHeavyLoadPlaceholder();
+
 }
 
 void MapView::_onUIUserChangeRequest(const QList<QGraphicsItem*> &toUpdate, const RPZUser &newUser) {
@@ -158,7 +301,7 @@ void MapView::_onUIUserChangeRequest(const QList<QGraphicsItem*> &toUpdate, cons
         } 
     }
 
-    this->_hideLoader();
+    this->_endHeavyLoadPlaceholder();
     
 }
 
@@ -168,7 +311,11 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
     QSignalBlocker b(this->scene());
 
     if(type == PA_Selected) this->scene()->clearSelection();
-    if(type == PA_Reset) this->_clearNonHUDItems();
+    if(type == PA_Reset) {
+        this->_clearNonHUDItems();
+        this->_heavyLoadExpectedCount = toAlter.count();
+        this->_heavyLoadCurrentCount = 0;
+    }
 
     for(auto item : toAlter) {
         switch(type) {
@@ -176,6 +323,10 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
             case PA_Reset:
             case PA_Added: {
                 this->_addNonHUDItem(item);
+                
+                this->_heavyLoadCurrentCount++;
+                this->_updateHeavyLoadPlaceholder();
+
             }
             break;
 
@@ -214,7 +365,7 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
         }
     }
 
-    this->_hideLoader();
+    this->_endHeavyLoadPlaceholder();
 }
 
 QRectF MapView::_getVisibleRect() {

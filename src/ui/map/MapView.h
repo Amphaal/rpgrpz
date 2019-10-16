@@ -83,9 +83,10 @@ class MapView : public QGraphicsView, public ClientBindable {
         void mouseDoubleClickEvent(QMouseEvent *event) override;
 
         void drawBackground(QPainter *painter, const QRectF &rect) override;
+        void drawForeground(QPainter *painter, const QRectF &rect) override;
 
     private slots:
-        void _displayLoader();
+        void _displayHeavyLoadPlaceholder();
         void _onUIAlterationRequest(const PayloadAlteration &type, const QList<QGraphicsItem*> &toAlter);
         void _onUIUpdateRequest(const QHash<QGraphicsItem*, AtomUpdates> &toUpdate);
         void _onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const AtomUpdates &updates);
@@ -96,7 +97,6 @@ class MapView : public QGraphicsView, public ClientBindable {
         void _onIdentityReceived(const RPZUser &self);
 
     private:
-        QBrush _hiddingBrush;
         MapHint* _hints = nullptr;
         AtomsContextualMenuHandler* _menuHandler = nullptr;
         static inline constexpr int _defaultSceneSize = 36000;
@@ -115,8 +115,15 @@ class MapView : public QGraphicsView, public ClientBindable {
         QTimer _debounceSelection;
         void _goToDefaultViewState();
         
-        bool _isLoading = false;
-        void _hideLoader();
+        //background / foreground
+        QPixmap _heavyLoadImage;
+        int _heavyLoadExpectedCount = -1;
+        int _heavyLoadCurrentCount = -1;
+        QColor _heavyLoadColor;
+        void _endHeavyLoadPlaceholder();
+        void _mayUpdateHeavyLoadPlaceholder(QPainter* painter);
+        void _updateHeavyLoadPlaceholder();
+        void _mayUpdateHUD(QPainter* painter, const QRectF &rect);
 
         //ghost
             void _mightCenterGhostWithCursor();

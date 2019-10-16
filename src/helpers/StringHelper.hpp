@@ -4,6 +4,46 @@
 
 class StringHelper {
     public:
+
+        static QString fromcentimeters(qulonglong cm) {
+
+            auto numberLength = QString::number(cm).count();
+            if(numberLength < 3) {
+                return QString("%1 cm").arg(cm);
+            } 
+            
+            else {
+                return QString("%1 m").arg(cm, 0, 0, 3, 0);
+            }
+
+
+        }
+
+        static QString secondsToTrackDuration(int durationInSeconds) {
+            QString durationStr;
+
+            int secondsPart = durationInSeconds % 60;
+            int minutesPart = (durationInSeconds / 60) % 60;
+            int hoursPart = (durationInSeconds / (60 * 60));
+
+            //seconds
+            durationStr = ":" + QString::number(secondsPart).rightJustified(2, '0');
+
+            //minutes
+            durationStr = QString::number(minutesPart).rightJustified(2, '0') + durationStr;
+
+            if(!hoursPart) return durationStr; //optionnal hours
+
+            //hours
+            durationStr = QString::number(hoursPart) + ":" + durationStr;
+
+            return durationStr;
+        }
+
+        static QString fromSecondsToTime(int lengthInSeconds) {
+            return QTime::fromMSecsSinceStartOfDay(lengthInSeconds * 1000).toString("hh:mm:ss");
+        }
+
         static QString toSuperScript(uint num) {
             QString out;
             for(auto &character : QString::number(num)) {

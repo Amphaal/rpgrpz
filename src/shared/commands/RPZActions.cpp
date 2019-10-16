@@ -85,7 +85,7 @@ QAction* RPZActions::hideAtom() {
 
 QAction* RPZActions::resetView() {
     auto action = new QAction;
-    action->setIcon(QIcon(":/icons/app/tools/reset.png"));
+    action->setIcon(QIcon(":/icons/app/tools/reset_view.png"));
     action->setIconText(QObject::tr("Reset the view"));
     return action;
 }

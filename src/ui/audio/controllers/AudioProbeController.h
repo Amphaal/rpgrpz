@@ -12,7 +12,7 @@
 #include "src/ui/_others/ClientBindable.h"
 
 #include "base/VolumeToolbar.h"
-#include "src/helpers/DurationHelper.hpp"
+#include "src/helpers/StringHelper.hpp"
 
 class AudioProbeController : public QGroupBox {
 

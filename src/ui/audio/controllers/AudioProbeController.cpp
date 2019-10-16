@@ -35,7 +35,7 @@ AudioProbeController::AudioProbeController(QWidget * parent) : QGroupBox(tr("Pla
 }
 
 void AudioProbeController::changeTrackPosition(int posInSecs) {
-    auto text = posInSecs < 0 ? _defaultNoTime : DurationHelper::secondsToTrackDuration(posInSecs);
+    auto text = posInSecs < 0 ? _defaultNoTime : StringHelper::secondsToTrackDuration(posInSecs);
     this->_posInTrackLbl->setText(text);
 }
 

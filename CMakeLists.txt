@@ -165,7 +165,7 @@ IF(NOT DEFINED QT_MAIN_DIR)
         SET(QT_MAIN_DIR "C:/Qt/5.13.1")
     endif()
     IF(APPLE)
-        SET(Qt5_DIR "/Qt/5.13.1")
+        SET(Qt5_DIR "$ENV{HOME}/Qt/5.13.1")
     endif()
 endif()
 

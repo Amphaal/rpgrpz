@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
     <qresource>
+        <file>icons/app_64.png</file>
         <file>icons/app/rpgrpz.png</file>
         <file>icons/app/rpgrpz_32.png</file>
         <file>icons/app/connectivity/user.png</file>
@@ -15,7 +16,7 @@
         <file>icons/app/connectivity/uploadG.png</file>
         <file>icons/app/tools/rotate.png</file>
         <file>icons/app/tools/pen.png</file>
-        <file>icons/app/tools/reset.png</file>
+        <file>icons/app/tools/reset_view.png</file>
         <file>icons/app/tools/cursor.png</file>
         <file>icons/app/tools/text.png</file>
         <file>icons/app/tools/hidden.png</file>

@@ -10,7 +10,7 @@
 #include <QSlider>
 #include <QToolButton>
 
-#include "src/helpers/DurationHelper.hpp"
+#include "src/helpers/StringHelper.hpp"
 
 class TrackToolbar : public QWidget {
     

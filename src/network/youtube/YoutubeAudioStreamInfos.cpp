@@ -7,11 +7,11 @@ YoutubeAudioStreamInfos::YoutubeAudioStreamInfos(const QString &adaptativeStream
 
     //filter, only audio
     for(auto &streamInfos : streamInfosByType) {
-        auto type = streamInfos["type"];
+        auto type = streamInfos[QStringLiteral(u"type")];
         
         //exclude
         if(type.isEmpty()) continue;
-        if(!type.contains("audio")) continue;
+        if(!type.contains(QStringLiteral(u"audio"))) continue;
 
         //add to internal
         streamInfos.remove(type);
@@ -22,36 +22,36 @@ YoutubeAudioStreamInfos::YoutubeAudioStreamInfos(const QString &adaptativeStream
     for(auto &audioStreamInfos : this->_InfosByAudioMime) { 
         
         //signature
-        auto baseSignature = audioStreamInfos["s"];
+        auto baseSignature = audioStreamInfos[QStringLiteral(u"s")];
         if(baseSignature.isEmpty()) continue;
 
         //modify signature
         auto newSignature = decipherer->decipher(baseSignature);
-        audioStreamInfos["s_deciphered"] = newSignature;
+        audioStreamInfos[QStringLiteral(u"s_deciphered")] = newSignature;
 
         //update url accordingly
-        auto signatureParam = audioStreamInfos.value("sp", "signature");
-        auto baseUrl = QUrl(audioStreamInfos["url"]);
+        auto signatureParam = audioStreamInfos.value(QStringLiteral(u"sp"), QStringLiteral(u"signature"));
+        auto baseUrl = QUrl(audioStreamInfos[QStringLiteral(u"url")]);
 
             auto baseUrl_query = QUrlQuery(baseUrl.query());
             baseUrl_query.addQueryItem(signatureParam, newSignature);
             baseUrl.setQuery(baseUrl_query);
 
-        audioStreamInfos["url"] = baseUrl.toString();
+        audioStreamInfos[QStringLiteral(u"url")] = baseUrl.toString();
     }
 
 }
 
 QPair<QString, QString> YoutubeAudioStreamInfos::getPreferedMineSourcePair() {
     auto available = this->availableAudioMimes();
-    auto mp4Audio = available.filter(QRegularExpression("opus"));
+    auto mp4Audio = available.filter(QRegularExpression(QStringLiteral(u"opus")));
     auto selectedMime = mp4Audio.count() ? mp4Audio.at(0) : available.at(0);
     auto selectedUrl = this->streamUrl(selectedMime);
     return QPair<QString, QString>(selectedMime, selectedUrl);
 }
 
 QString YoutubeAudioStreamInfos::streamUrl(const QString &mime) {
-    return this->_InfosByAudioMime[mime]["url"];
+    return this->_InfosByAudioMime[mime][QStringLiteral(u"url")];
 }
 
 QList<QString> YoutubeAudioStreamInfos::availableAudioMimes() {
@@ -63,17 +63,27 @@ QList<QHash<QString, QString>> YoutubeAudioStreamInfos::_generatRawAdaptativeStr
     auto out = QList<QHash<QString, QString>>();
 
     //for each group
-    auto itagsDataGroupsAsStr = adaptativeStreamInfosAsStr.split(",", QString::SplitBehavior::SkipEmptyParts);
+    auto itagsDataGroupsAsStr = adaptativeStreamInfosAsStr.split(
+        QStringLiteral(u","), 
+        QString::SplitBehavior::SkipEmptyParts
+    );
     for( auto &dataGroupAsString : itagsDataGroupsAsStr) {
 
         QHash<QString, QString> group;
         
         //for each pair
-        auto pairs = dataGroupAsString.split("&", QString::SplitBehavior::SkipEmptyParts);
+        auto pairs = dataGroupAsString.split(
+            QStringLiteral(u"&"), 
+            QString::SplitBehavior::SkipEmptyParts
+        );
+
         for(auto &pair : pairs) {
             
             //current key/value pair
-            auto kvpAsList = pair.split("=", QString::SplitBehavior::KeepEmptyParts);
+            auto kvpAsList = pair.split(
+                QStringLiteral(u"="), 
+                QString::SplitBehavior::KeepEmptyParts
+            );
             auto kvp = QPair<QString, QString>(kvpAsList[0], kvpAsList[1]);
 
             //add to temporary group

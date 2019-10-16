@@ -77,7 +77,7 @@ TrackToolbar::TrackToolbar(QWidget* parent) : QWidget(parent),
 void TrackToolbar::_updateTrackTimeStateDescriptor(int stateInSeconds) {
     
     //formated
-    auto current = stateInSeconds < 0 ? TrackToolbar::_defaultNoTime : DurationHelper::fromSecondsToTime(stateInSeconds);
+    auto current = stateInSeconds < 0 ? TrackToolbar::_defaultNoTime : StringHelper::fromSecondsToTime(stateInSeconds);
     
     //update lbl
     this->_trackPlayStateLbl->setText(
@@ -129,7 +129,7 @@ void TrackToolbar::newTrack(int lengthInSeconds) {
     }
 
     //update descriptor and UI state
-    this->_playStateDescriptor = _trackPlayStateTemplator.arg("%1", DurationHelper::fromSecondsToTime(lengthInSeconds));
+    this->_playStateDescriptor = _trackPlayStateTemplator.arg("%1", StringHelper::fromSecondsToTime(lengthInSeconds));
     this->updatePlayerPosition(0);
     this->_setPlayButtonState(true);
 
