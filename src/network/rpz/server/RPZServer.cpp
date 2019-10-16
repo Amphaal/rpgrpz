@@ -191,7 +191,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
                 //log
                 qDebug() << qUtf8Printable(
-                    QString("Assets : %1 / %2 requested asset(s) ready to upload")
+                    QStringLiteral(u"Assets : %1 / %2 requested asset(s) ready to upload")
                         .arg(toUploadCount)
                         .arg(requestedCount)
                 );
@@ -292,7 +292,7 @@ void RPZServer::_newUserAcknoledged(JSONSocket* socket, const RPZUser &userToAck
     auto method = JSONMethod::AllConnectedUsers;
     auto toSend = this->_usersById.toVList();
     this->_sendToAll(method, toSend);
-    auto msgLog = QString("Now %1 clients logged").arg(toSend.count());
+    auto msgLog = QStringLiteral(u"Now %1 clients logged").arg(toSend.count());
     JSONSocket::_debugLog("RPZServer", method, msgLog);
 
     //tell the others that this user exists
@@ -309,7 +309,7 @@ void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
 
     //log
     auto countMsgs = this->_messages.count();
-    auto logMsg = QString("%1 stored messages sent to \"%2\"")
+    auto logMsg = QStringLiteral(u"%1 stored messages sent to \"%2\"")
                         .arg(countMsgs)
                         .arg(clientSocket->socket()->peerAddress().toString());
     JSONSocket::_debugLog("RPZServer", method, logMsg);
@@ -464,17 +464,17 @@ void RPZServer::_maySendAndStoreDiceThrows(const QString &text) {
         //sub list of values
         QList<QString> sub;
         for(auto &pair : dThrow.pairedValues) {
-            sub += QString("%1%2")
+            sub += QStringLiteral(u"%1%2")
                         .arg(StringHelper::toSuperScript(pair.second))
                         .arg(pair.first);
         }
         QString subJoin = sub.join(", ");
 
         //join values
-        auto joined = QString("%1 : {%2}").arg(dThrow.name).arg(subJoin);
+        auto joined = QStringLiteral(u"%1 : {%2}").arg(dThrow.name).arg(subJoin);
 
         //display avg if multiple values
-        if(sub.count() > 1) joined += QString(" x̄ ") + QString::number(dThrow.avg, 'f', 2);
+        if(sub.count() > 1) joined += QStringLiteral(u" x̄ ") + QString::number(dThrow.avg, 'f', 2);
 
         //add to topmost list
         throwsMsgList += joined;

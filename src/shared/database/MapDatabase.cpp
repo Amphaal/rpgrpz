@@ -5,7 +5,7 @@ MapDatabase::MapDatabase(const QString &filePath) : _filePath(filePath) {
 };
 
 const QSet<RPZAssetHash> MapDatabase::getUsedAssetsIds() const {
-    auto arr = this->_db["assets"].toArray();
+    auto arr = this->_db[QStringLiteral(u"assets")].toArray();
     QSet<RPZAssetHash> out;
 
     for(auto id : arr) {
@@ -34,11 +34,11 @@ QJsonObject MapDatabase::toObject(const RPZMap<RPZAtom> &atoms, const QJsonDocum
 
     //fill copy
     QJsonObject copy;
-    copy["assets_c"] = unique_assetIds.count();
-    copy["atoms_c"] = db_atoms.count();
-    copy["assets"] = QJsonArray::fromStringList(unique_assetIds.toList());
-    copy["atoms"] = db_atoms;
-    copy["version"] = doc["version"];
+    copy[QStringLiteral(u"assets_c")] = unique_assetIds.count();
+    copy[QStringLiteral(u"atoms_c")] = db_atoms.count();
+    copy[QStringLiteral(u"assets")] = QJsonArray::fromStringList(unique_assetIds.toList());
+    copy[QStringLiteral(u"atoms")] = db_atoms;
+    copy[QStringLiteral(u"version")] = doc[QStringLiteral(u"version")];
     
     return copy;
 
@@ -64,7 +64,7 @@ RPZMap<RPZAtom> MapDatabase::toAtoms() {
 RPZMap<RPZAtom> MapDatabase::toAtoms(const QJsonDocument &doc) {
     RPZMap<RPZAtom> out;
 
-    auto db_atoms = doc["atoms"].toArray();
+    auto db_atoms = doc[QStringLiteral(u"atoms")].toArray();
 
     for(const auto &e : db_atoms) {
         auto atom = RPZAtom(e.toObject().toVariantHash());

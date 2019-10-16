@@ -20,7 +20,7 @@ class RPZCharacter : public Serializable {
             if(out.isEmpty()) return QObject::tr("New character [#%1]").arg(this->idAsStr());
 
             auto arch = this->archtype();
-            if(!arch.isEmpty()) out += " [" + arch + "]";
+            if(!arch.isEmpty()) out += QStringLiteral(u" [%1]").arg(arch);
             return out;
         }
 

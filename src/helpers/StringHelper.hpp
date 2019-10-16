@@ -9,11 +9,11 @@ class StringHelper {
 
             auto numberLength = QString::number(cm).count();
             if(numberLength < 3) {
-                return QString("%1 cm").arg(cm);
+                return QStringLiteral(u"%1 cm").arg(cm);
             } 
             
             else {
-                return QString("%1 m").arg(cm, 0, 0, 3, 0);
+                return QStringLiteral(u"%1 m").arg(cm, 0, 0, 3, 0);
             }
 
 

@@ -120,10 +120,10 @@ class PlayerItemDelegate : public QStyledItemDelegate {
                     pen.setColor("#000");
                     painter->setPen(pen);
                     
-                    // auto textContent = QString("%1% ").arg(
+                    // auto textContent = QStringLiteral(u"%1% ").arg(
                     //     QLocale::system().toString(gaugeRatio * 100, 'g', 3)
                     // );
-                    auto textContent = QString("%1/%2 ").arg(gVal).arg(gMax);
+                    auto textContent = QStringLiteral(u"%1/%2 ").arg(gVal).arg(gMax);
 
                     painter->drawText(innerGaugeRect, textContent, tOption);
                 

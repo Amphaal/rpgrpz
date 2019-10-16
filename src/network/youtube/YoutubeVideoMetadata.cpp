@@ -16,7 +16,7 @@ YoutubeVideoMetadata* YoutubeVideoMetadata::fromVideoUrl(const QString &url) {
 }
 
 QString YoutubeVideoMetadata::urlFromVideoId(const QString &videoId) {
-    return QString("https://www.youtube.com/watch?v=") + videoId;
+    return QStringLiteral(u"https://www.youtube.com/watch?v=") + videoId;
 }
 
 YoutubeVideoMetadata::YoutubeVideoMetadata(const YoutubeVideoID &videoId) : _videoId(videoId), _url(urlFromVideoId(videoId)) { };

@@ -7,7 +7,7 @@ const int JSONDatabase::dbVersion() {
 }
 
 JSONDatabaseVersion JSONDatabase::getDbVersion(QJsonDocument &db) {
-    auto version = db["version"].toInt();
+    auto version = db[QStringLiteral(u"version")].toInt();
     return version;
 }
 
@@ -101,7 +101,7 @@ bool JSONDatabase::_handleVersionMissmatch(QJsonDocument &databaseToUpdate, int 
 
     //force version update
     auto out = databaseToUpdate.object();
-    out["version"] = aimedAPIVersion;
+    out[QStringLiteral(u"version")] = aimedAPIVersion;
     
     //save into file
     this->_updateDbFile(out);

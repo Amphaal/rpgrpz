@@ -220,7 +220,7 @@ class InventorySlotSplitModal : public InventorySlotModal {
         QSpinBox* _splitterTo = nullptr;
 
         void _updateMovingLabel() {
-            this->_movingLbl->setText(QString("+%1").arg(this->_moving));
+            this->_movingLbl->setText(QStringLiteral(u"+%1").arg(this->_moving));
         }
 
         void _updateSplitterToValue() {

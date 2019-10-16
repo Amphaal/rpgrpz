@@ -58,5 +58,5 @@ void VolumeToolbar::_onMuteButtonClick() {
 }
 
 void VolumeToolbar::_setAudioValLbl(int sliderVal) {
-    this->_volumeStr->setText(QString::number(sliderVal) + QString("%"));
+    this->_volumeStr->setText(QString::number(sliderVal) + QStringLiteral(u"%"));
 }

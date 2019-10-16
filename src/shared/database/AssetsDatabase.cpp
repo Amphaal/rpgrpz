@@ -37,22 +37,22 @@ RPZToyMetadata AssetsDatabase::importAsset(const RPZAssetImportPackage &package)
         return RPZToyMetadata();
     }
     
-    RPZAssetHash asset_id = package["_id"].toString();
+    RPZAssetHash asset_id = package[QStringLiteral(u"_id")].toString();
 
     //check content
-    auto fileBytes = package["_fileContent"].toByteArray();
+    auto fileBytes = package[QStringLiteral(u"_fileContent")].toByteArray();
     if(!fileBytes.size()) {
         qDebug() << "Asset : requested" << asset_id << "cannot be found by server";
         return RPZToyMetadata();
     }
 
     //asset
-    auto asset = QJsonDocument::fromVariant(package["_meta"]).object();
+    auto asset = QJsonDocument::fromVariant(package[QStringLiteral(u"_meta")]).object();
 
     //save file
     auto fileAsRawData = QByteArray::fromBase64(fileBytes);
-    auto destFileExt = asset["ext"].toString();
-    auto destFileName = asset["name"].toString();
+    auto destFileExt = asset[QStringLiteral(u"ext")].toString();
+    auto destFileName = asset[QStringLiteral(u"name")].toString();
     auto destUrl = this->_moveFileToDbFolder(fileAsRawData, destFileExt, asset_id);
 
     //copy into db
@@ -76,7 +76,7 @@ RPZAssetImportPackage AssetsDatabase::prepareAssetPackage(const RPZAssetHash &id
     
     //json obj
     RPZAssetImportPackage package;
-    package["_id"] = id;
+    package[QStringLiteral(u"_id")] = id;
 
     //determine id existance by fetching the file path
     auto pathToFile = this->getFilePathToAsset(id);
@@ -90,11 +90,11 @@ RPZAssetImportPackage AssetsDatabase::prepareAssetPackage(const RPZAssetHash &id
     assetFile.open(QFile::ReadOnly);
 
         auto fileContent = assetFile.readAll().toBase64();
-        package["_fileContent"] = QString(fileContent);
+        package[QStringLiteral(u"_fileContent")] = QString(fileContent);
 
     assetFile.close();
 
-    package["_meta"] = this->assets()[id].toObject();
+    package[QStringLiteral(u"_meta")] = this->assets()[id].toObject();
     return package;
 }
 
@@ -103,7 +103,7 @@ QString AssetsDatabase::getFilePathToAsset(const RPZAssetHash &id) {
     if(!db_assets.contains(id)) return NULL;
 
     auto assetJSON = db_assets[id].toObject();
-    auto fileExtension =  assetJSON["ext"].toString();
+    auto fileExtension =  assetJSON[QStringLiteral(u"ext")].toString();
 
     return getFilePathToAsset(id, fileExtension);
 }
@@ -113,7 +113,7 @@ QString AssetsDatabase::getFilePathToAsset(AssetsDatabaseElement* asset) {
 }
 
 QString AssetsDatabase::getFilePathToAsset(const RPZAssetHash &id, const QString &ext) {
-	return QString("%1/%2.%3")
+	return QStringLiteral(u"%1/%2.%3")
 					.arg(AppContext::getAssetsFolderLocation())
 					.arg(id)
 					.arg(ext);
@@ -124,7 +124,7 @@ QString AssetsDatabase::getFilePathToAsset(const RPZAssetHash &id, const QString
 ///
 
 QJsonObject AssetsDatabase::paths() {
-    return this->_db["paths"].toObject();
+    return this->_db[QStringLiteral(u"paths")].toObject();
 }
 
 QJsonObject AssetsDatabase::assets() {
@@ -132,7 +132,7 @@ QJsonObject AssetsDatabase::assets() {
 }
 
 QJsonObject AssetsDatabase::assets(QJsonDocument &doc) {
-    return doc["assets"].toObject();
+    return doc[QStringLiteral(u"assets")].toObject();
 }
 
 ///
@@ -277,10 +277,10 @@ void AssetsDatabase::_generateItemsFromDb(const QHash<RPZAssetPath, AssetsDataba
                 lastContainer,
                 AssetsDatabaseElement::toAtomType(lastContainer->insertType()),
                 idStr,
-                asset["name"].toString(),
-                getFilePathToAsset(idStr, asset["ext"].toString()),
-                JSONSerializer::toQSize(asset["shape"].toArray()),
-                JSONSerializer::pointFromDoublePair(asset["center"].toArray())
+                asset[QStringLiteral(u"name")].toString(),
+                getFilePathToAsset(idStr, asset[QStringLiteral(u"ext")].toString()),
+                JSONSerializer::toQSize(asset[QStringLiteral(u"shape")].toArray()),
+                JSONSerializer::pointFromDoublePair(asset[QStringLiteral(u"center")].toArray())
             );
 
             auto elem = new AssetsDatabaseElement(metadata);
@@ -380,15 +380,15 @@ RPZToyMetadata AssetsDatabase::_addAssetToDb(
 
         //define new asset item
         QJsonObject newAsset;
-        newAsset["ext"] = fInfo.suffix();
+        newAsset[QStringLiteral(u"ext")] = fInfo.suffix();
 
         auto assetName = forcedName.isEmpty() ? fInfo.baseName() : forcedName;
-        newAsset["name"] = assetName;
+        newAsset[QStringLiteral(u"name")] = assetName;
 
         auto assetSizeAndCenter = _defineSizeAndCenterToDbAsset(pathToAsset, newAsset);
 
     assets.insert(id, newAsset);
-    obj["assets"] = assets;
+    obj[QStringLiteral(u"assets")] = assets;
         
     //check path existance, create it if non existant
     QJsonArray objsInPath = db_paths.contains(folderParentPath) ? db_paths[folderParentPath].toArray() : QJsonArray();
@@ -397,7 +397,7 @@ RPZToyMetadata AssetsDatabase::_addAssetToDb(
         //2. update path status
         objsInPath.append(id);
         db_paths[folderParentPath] = objsInPath;
-        obj["paths"] = db_paths;
+        obj[QStringLiteral(u"paths")] = db_paths;
     }
 
 
@@ -456,7 +456,7 @@ bool AssetsDatabase::createFolder(AssetsDatabaseElement* parent) {
     auto obj = this->_db.object();
     auto db_paths = this->paths();
     db_paths[generatedPath] = QJsonArray();
-    obj["paths"] = db_paths;
+    obj[QStringLiteral(u"paths")] = db_paths;
     this->_updateDbFile(obj);
 
     //create elem
@@ -507,9 +507,9 @@ void AssetsDatabase::_renameItem(const QString &name, AssetsDatabaseElement* tar
 
     //save with new name
     auto asset = db_assets[targetId].toObject();
-    asset["name"] = name;
+    asset[QStringLiteral(u"name")] = name;
     db_assets[targetId] = asset;
-    obj["assets"] = db_assets;
+    obj[QStringLiteral(u"assets")] = db_assets;
 
     //update db
     this->_updateDbFile(obj);
@@ -555,7 +555,7 @@ void AssetsDatabase::_renameFolder(const QString &name, AssetsDatabaseElement* t
         db_paths[rebuiltPath] = tempPathContent;
     }
 
-    obj["paths"] = db_paths;
+    obj[QStringLiteral(u"paths")] = db_paths;
 
     //update db
     this->_updateDbFile(obj);
@@ -588,7 +588,7 @@ bool AssetsDatabase::rename(QString &name, AssetsDatabaseElement* target) {
 void AssetsDatabase::_removeAssetFile(const RPZAssetHash &id, const QJsonObject &asset) {
     
     //prepare
-    auto ext = asset["ext"].toString();
+    auto ext = asset[QStringLiteral(u"ext")].toString();
     auto fp = AssetsDatabase::getFilePathToAsset(id, ext);
 
     QFile fileToRemove(fp);
@@ -729,8 +729,8 @@ bool AssetsDatabase::removeItems(QList<AssetsDatabaseElement*> elemsToRemove) {
 
     //save changes
     auto obj = this->_db.object();
-    obj["assets"] = db_assets;
-    obj["paths"] = db_paths;
+    obj[QStringLiteral(u"assets")] = db_assets;
+    obj[QStringLiteral(u"paths")] = db_paths;
     this->_updateDbFile(obj);
 
     //sort items by path length (number of slashes); delete them first
@@ -808,7 +808,7 @@ bool AssetsDatabase::moveItemsToContainer(QList<AssetsDatabaseElement*> selected
 
     //update db
     auto obj = this->_db.object();
-    obj["paths"] = db_paths;
+    obj[QStringLiteral(u"paths")] = db_paths;
     this->_updateDbFile(obj);
 
     //update model
@@ -866,7 +866,7 @@ QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> AssetsDatabase::_getUpdate
                 //get the filepath to the asset
                 auto fpAsset = getFilePathToAsset(
                     i.key(),
-                    assetDataRef.toObject()["ext"].toString()
+                    assetDataRef.toObject()[QStringLiteral(u"ext")].toString()
                 );
 
                 //add shape + center data
@@ -878,7 +878,7 @@ QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> AssetsDatabase::_getUpdate
 
             //update doc
             auto copy = doc.object();
-            copy["assets"] = assets;
+            copy[QStringLiteral(u"assets")] = assets;
             doc.setObject(copy);
 
         }
@@ -899,8 +899,8 @@ SizeAndCenter AssetsDatabase::_defineSizeAndCenterToDbAsset(const QString &asset
         (qreal)out.size.height() / 2
     );
 
-    toUpdate["shape"] = JSONSerializer::fromQSize(out.size);
-    toUpdate["center"] = JSONSerializer::pointToDoublePairJSON(out.center);
+    toUpdate[QStringLiteral(u"shape")] = JSONSerializer::fromQSize(out.size);
+    toUpdate[QStringLiteral(u"center")] = JSONSerializer::pointToDoublePairJSON(out.center);
 
     return out;
 }

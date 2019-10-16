@@ -163,7 +163,7 @@ void Playlist::addYoutubeVideo(const QString &url) {
 
             auto durationStr = StringHelper::secondsToTrackDuration(data->duration());
 
-            auto title = QString("%1 [%2]")
+            auto title = QStringLiteral(u"%1 [%2]")
                             .arg(data->title())
                             .arg(durationStr);
 

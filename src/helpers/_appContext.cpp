@@ -36,7 +36,7 @@ void AppContext::configureApp(QCoreApplication &app) {
     } 
     
     else if(args.contains(QStringLiteral(u"customContext"))) {
-        auto customContext = args["customContext"];
+        auto customContext = args[QStringLiteral(u"customContext")];
         return AppContext::initCustomContext(customContext);
     }
 

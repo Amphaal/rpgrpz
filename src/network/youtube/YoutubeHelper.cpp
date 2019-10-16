@@ -34,7 +34,7 @@ promise::Defer YoutubeHelper::refreshMetadata(YoutubeVideoMetadata* toRefresh, b
 
 
 promise::Defer YoutubeHelper::_getVideoEmbedPageRawData(YoutubeVideoMetadata* metadata) {
-    auto videoEmbedPageHtmlUrl = QString("https://www.youtube.com/embed/" + metadata->id() + "?disable_polymer=true&hl=en");
+    auto videoEmbedPageHtmlUrl = QStringLiteral(u"https://www.youtube.com/embed/%1?disable_polymer=true&hl=en").arg(metadata->id());
     return download(videoEmbedPageHtmlUrl);
 }
 
@@ -46,13 +46,13 @@ YoutubeVideoMetadata* YoutubeHelper::_augmentMetadataWithPlayerConfiguration(You
     QRegularExpression re("yt\\.setConfig\\({'PLAYER_CONFIG': (?<playerConfig>.*?)}\\);");
     auto playerConfigAsStr = re.match(str).captured("playerConfig");
     auto playerConfig = QJsonDocument::fromJson(playerConfigAsStr.toUtf8()).object();
-    auto args = playerConfig["args"].toObject();
+    auto args = playerConfig[QStringLiteral(u"args")].toObject();
 
     //get valuable data from it
-    auto sts = args["cver"].toString();
-    auto playerSourceUrl = playerConfig["assets"].toObject()["js"].toString();
-    auto title = args["title"].toString();
-    auto length = args["length_seconds"].toInt();
+    auto sts = args[QStringLiteral(u"cver")].toString();
+    auto playerSourceUrl = playerConfig[QStringLiteral(u"assets")].toObject()[QStringLiteral(u"js")].toString();
+    auto title = args[QStringLiteral(u"title")].toString();
+    auto length = args[QStringLiteral(u"length_seconds")].toInt();
 
     //check values exist
     if(sts.isEmpty() || playerSourceUrl.isEmpty() || title.isEmpty() || !length) {
@@ -91,13 +91,13 @@ YoutubeVideoMetadata* YoutubeHelper::_augmentMetadataWithVideoInfos(
     //player response as JSON, check if error
     auto playerResponseAsStr = videoInfos.queryItemValue("player_response", QUrl::ComponentFormattingOption::FullyDecoded);
     auto playerResponse = QJsonDocument::fromJson(playerResponseAsStr.toUtf8());
-    auto pStatus = playerResponse["playabilityStatus"].toObject()["reason"].toString();
+    auto pStatus = playerResponse[QStringLiteral(u"playabilityStatus")].toObject()[QStringLiteral(u"reason")].toString();
     if(!pStatus.isNull()) {
         throw new std::logic_error("An error occured while fetching video infos");
     }
 
     //set expiration flag
-    auto expiresIn = playerResponse["streamingData"].toObject()["expiresInSeconds"].toString().toDouble();
+    auto expiresIn = playerResponse[QStringLiteral(u"streamingData")].toObject()[QStringLiteral(u"expiresInSeconds")].toString().toDouble();
     metadata->setExpirationDate(
         tsRequest.addSecs((qint64)expiresIn)
     );
@@ -141,13 +141,25 @@ promise::Defer YoutubeHelper::_downloadVideoInfosAndAugmentMetadata(YoutubeVideo
 }
 
 QString YoutubeHelper::_getApiUrl(const QString &videoId) {
-    return QString("https://youtube.googleapis.com/v/") +videoId;
+    return QStringLiteral(u"https://youtube.googleapis.com/v/") +videoId;
 }
 
 promise::Defer YoutubeHelper::_getVideoInfosRawData(YoutubeVideoMetadata* metadata) {
-    auto encodedApiUrl = QUrl::toPercentEncoding(_getApiUrl(metadata->id()));
-    auto requestUrl = QString("https://www.youtube.com/get_video_info?video_id=" + metadata->id() + "&el=embedded&sts=" + metadata->sts() + "&eurl=" + encodedApiUrl + "&hl=en");
+    
+    auto id = metadata->id();
+    auto apiUrl = _getApiUrl(id);
+    
+    auto encodedApiUrl = QString::fromUtf8(
+        QUrl::toPercentEncoding(apiUrl)
+    );
+
+    auto requestUrl = QStringLiteral(u"https://www.youtube.com/get_video_info?video_id=%1&el=embedded&sts=%2&eurl=%3&hl=en")
+        .arg(id)
+        .arg(metadata->sts())
+        .arg(encodedApiUrl);
+    
     return download(requestUrl);
+
 }
 
 

@@ -212,7 +212,7 @@ void AtomEditor::_updateEditMode() {
         break;
 
         case EditMode::Template:
-            title += QString(" [%1]").arg(this->_currentSelectionDescr.templateAtom.descriptor());
+            title += QStringLiteral(u" [%1]").arg(this->_currentSelectionDescr.templateAtom.descriptor());
         break;
 
         default:

@@ -16,7 +16,7 @@ QString RPZAtom::descriptor() const {
     auto asname = this->assetName();
     if(!asname.isEmpty()) {
 		auto descriptor = this->_defaultDescriptor();
-		return QString("%1 (%2)")
+		return QStringLiteral(u"%1 (%2)")
 					.arg(asname)
 					.arg(descriptor);
     }

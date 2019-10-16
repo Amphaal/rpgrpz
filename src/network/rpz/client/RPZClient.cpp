@@ -12,7 +12,7 @@ RPZClient::RPZClient(const QString &socketStr, const QString &displayName, const
 }
 
 void RPZClient::_initSock() {
-    this->_sock = new JSONSocket(this, "RPZClient");
+    this->_sock = new JSONSocket(this, QStringLiteral(u"RPZClient"));
 
     QObject::connect(
         this->_sock, &JSONSocket::JSONReceived,
@@ -325,7 +325,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
                 
                 //if missing assets, request them
                 if(auto count = missingAssetIds.count()) {
-                    qDebug() << qUtf8Printable(QString("Assets : missing %1 asset(s)").arg(count));
+                    qDebug() << qUtf8Printable(QStringLiteral(u"Assets : missing %1 asset(s)").arg(count));
                     this->_askForAssets(missingAssetIds);
                 }
 

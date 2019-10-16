@@ -17,7 +17,7 @@ class GaugeWidget : public QProgressBar {
             this->setValue(val);
             this->setFormat("%v/%m ");
             this->setToolTip(
-                QString("%1 (%2/%3)")
+                QStringLiteral(u"%1 (%2/%3)")
                     .arg(gauge.name())
                     .arg(val)
                     .arg(max)

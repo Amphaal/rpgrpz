@@ -5,7 +5,7 @@ AssetsDatabaseElement* AssetsDatabaseElement::fromIndex(const QModelIndex &index
     return static_cast<AssetsDatabaseElement*>(ip);
 }
 
-AssetsDatabaseElement::AssetsDatabaseElement() : AssetsDatabaseElement(QString(""), nullptr, Root) { };
+AssetsDatabaseElement::AssetsDatabaseElement() : AssetsDatabaseElement(QStringLiteral(u""), nullptr, Root) { };
 
 AssetsDatabaseElement::~AssetsDatabaseElement(){
     
