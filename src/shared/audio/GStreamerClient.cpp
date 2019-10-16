@@ -283,6 +283,7 @@ void GStreamerClient::stopTimer(const GstMessageType &reason) {
     this->_elapsedTimer->stop();
 
     switch(reason) {
+        
         case GST_MESSAGE_ERROR:
             qWarning() << "Error from Stream";
             emit streamError();
@@ -291,6 +292,10 @@ void GStreamerClient::stopTimer(const GstMessageType &reason) {
         case GST_MESSAGE_EOS:
             emit streamEnded();
         break;
+
+        default:
+        break;
+
     }
 
 }

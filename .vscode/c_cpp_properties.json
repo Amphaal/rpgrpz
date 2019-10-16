@@ -5,8 +5,8 @@
             "browse": {
                 "path": [
                     "/Library/Frameworks/GStreamer.framework/Headers",
-                    "/Qt/5.13.1/clang_64/include",
-                    "/Qt/5.13.1/clang_64/lib",
+                    "/Users/Amphaal/Qt/5.13.1/clang_64/include",
+                    "/Users/Amphaal/Qt/5.13.1/clang_64/lib",
                     "/Users/Amphaal/.conan/data"
                 ],
                 "limitSymbolsToIncludedHeaders": true
@@ -14,7 +14,7 @@
             "macFrameworkPath": [
                 "/System/Library/Frameworks",
                 "/Library/Frameworks",
-                "/Qt/5.13.1/clang_64/lib"
+                "/Users/Amphaal/Qt/5.13.1/clang_64/lib"
             ],
             "cStandard": "c11",
             "cppStandard": "c++17",
@@ -23,14 +23,15 @@
             "includePath": [
                 "${workspaceFolder}",
                 "${workspaceRoot}",
-                "/Qt/5.13.1/clang_64/lib/QtNetwork.framework/Versions/5/Headers",
-                "/Qt/5.13.1/clang_64/lib/QtCore.framework/Versions/5/Headers",
-                "/Qt/5.13.1/clang_64/lib/QtWidgets.framework/Versions/5/Headers",
-                "/Qt/5.13.1/clang_64/lib/QtGui.framework/Versions/5/Headers",
-                "/Qt/5.13.1/clang_64/lib/QtOpenGL.framework/Versions/5/Headers",
-                "/Qt/5.13.1/clang_64/lib/QtSvg.framework/Versions/5/Headers",
                 "/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/build/1513b3452ef7e2a2dd5f931247c5e02edeb98cc9/miniupnp/miniupnpc",
-                "/Library/Frameworks/GStreamer.framework/Versions/1.0/Headers"
+                "/Library/Frameworks/GStreamer.framework/Versions/1.0/Headers",
+                "/Users/Amphaal/Qt/5.13.1/clang_64/lib/QtCore.framework/Versions/5/Headers",
+                "/Users/Amphaal/Qt/5.13.1/clang_64/lib/QtWidgets.framework/Versions/5/Headers",
+                "/Users/Amphaal/Qt/5.13.1/clang_64/lib/QtGui.framework/Versions/5/Headers",
+                "/Users/Amphaal/Qt/5.13.1/clang_64/lib/QtNetwork.framework/Versions/5/Headers",
+                "/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/source/miniupnp/miniupnpc",
+                "/Users/Amphaal/Qt/5.13.1/clang_64/lib/QtSvg.framework/Versions/5/Headers",
+                "/Users/Amphaal/Qt/5.13.1/clang_64/lib/QtOpenGL.framework/Versions/5/Headers"
             ]
         },
         {

@@ -46,9 +46,7 @@ function(deployqt target)
     if(APPLE)
 
         #use debug libs
-        if(DEPLOYQT_TARGET STREQUAL "debug")
-            SET(QT_DEPLOY_MUST_BE_DEBUG "-use-debug-libs")
-        endif()
+
 
         add_custom_command(TARGET ${target} POST_BUILD
             COMMAND "${CMAKE_COMMAND}" -E

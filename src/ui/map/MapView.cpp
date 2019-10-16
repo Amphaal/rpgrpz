@@ -968,6 +968,9 @@ QList<MapView::MoveInstruction> MapView::_getMoveInstructions(const QSet<MapView
                 temp.correction = 1;
             break;
 
+            default:
+            break;
+
         }
 
         out += temp;
