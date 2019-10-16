@@ -3,6 +3,7 @@
 MapView::MapView(QWidget *parent) : QGraphicsView(parent),
     _heavyLoadImage(QPixmap(":/icons/app_64.png")),
     _hints(new MapHint),
+    _stdTileSize(AppContext::standardTileSize(this)),
     _menuHandler(new AtomsContextualMenuHandler(_hints, this)) {
 
     //OpenGL backend activation
@@ -152,39 +153,92 @@ void MapView::drawBackground(QPainter *painter, const QRectF &rect) {
 
 }
 
+void MapView::_mayDrawZoomIndic(QPainter* painter, const QRect &viewportRect, double currentScale) {
+    //zoom indic
+    auto templt = QStringLiteral(u"Zoom : %1x");
+    templt = templt.arg(currentScale - this->_defaultScale, 0, 0, 2, 0);
+
+        //background
+        painter->setOpacity(.75);
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(QBrush("#FFF", Qt::SolidPattern));
+        auto bgRect = painter->boundingRect(viewportRect, templt, QTextOption(Qt::AlignTop | Qt::AlignRight));
+        bgRect = bgRect.marginsAdded(QMargins(5, 0, 5, 0));
+        bgRect.moveTopRight(viewportRect.topRight());
+        painter->drawRect(bgRect);
+        
+        //text
+        painter->setOpacity(1);
+        painter->setPen(QPen(Qt::SolidPattern, 0));
+        painter->setBrush(Qt::NoBrush);
+        painter->drawText(bgRect, templt, QTextOption(Qt::AlignCenter));
+}
+
+void MapView::_mayDrawScaleIndic(QPainter* painter, const QRect &viewportRect, double currentScale) {
+    
+    //cover
+    painter->setOpacity(.5);
+    painter->setPen(Qt::NoPen);
+    painter->setBrush(QBrush("#FFF", Qt::SolidPattern));
+    painter->drawEllipse(viewportRect.bottomLeft(), 250, 250);
+    painter->setOpacity(1);
+
+    auto scalePos = viewportRect.bottomLeft();
+    scalePos.setX(scalePos.x() + 15);
+    scalePos.setY(scalePos.y() - 20);
+
+    auto zeroRect = painter->boundingRect(viewportRect, QStringLiteral(u"0"));
+    zeroRect.moveCenter(scalePos);
+    zeroRect.moveTop(scalePos.y());
+
+    auto scaleDestX = scalePos;
+    scaleDestX.setX(scalePos.x() + 200);
+
+    auto scaleDestY = scalePos;
+    scaleDestY.setY(scalePos.y() - 200);
+
+    painter->setPen(QPen(Qt::SolidPattern, 0));
+    painter->setBrush(Qt::NoBrush);
+    painter->drawLine(scalePos, scaleDestX);
+    painter->drawLine(scalePos, scaleDestY);
+    painter->drawText(zeroRect, QStringLiteral(u"0"));
+
+
+
+}
+
+void MapView::_mayDrawGridIndic(QPainter* painter, const QRectF &rect) {
+    painter->setOpacity(1);
+    painter->setPen(QPen(Qt::NoBrush, 10));
+    painter->setBrush(Qt::NoBrush);
+
+    for(int x = 0; x <= rect.width(); x += 10){
+        painter->drawLine(QLineF(x, 0, x, rect.height()));
+    }
+    for(int y = 0; y <= rect.height(); y += 10){
+        painter->drawLine(QLineF(0, y, rect.width(), y));
+    }
+
+    painter->setOpacity(1);
+}
+
 void MapView::_mayUpdateHUD(QPainter* painter, const QRectF &rect) {
 
     if(this->_heavyLoadExpectedCount > -1) return;
 
     painter->save();
 
+        auto viewportRect = this->rect();
+        auto currentScale = this->transform().m11();
+
+        this->_mayDrawGridIndic(painter, rect);
+
         //ignore transformations
         QTransform t;
-        auto currentScale = this->transform().m11();
         painter->setTransform(t);
 
-        //zoom indic
-        auto templt = QStringLiteral(u"Zoom : %1x");
-        templt = templt.arg(currentScale - this->_defaultScale, 0, 0, 2, 0);
-
-            //background
-            painter->setOpacity(.75);
-            painter->setPen(Qt::NoPen);
-            painter->setBrush(QBrush("#FFF", Qt::SolidPattern));
-            auto bgRect = painter->boundingRect(this->rect(), templt, QTextOption(Qt::AlignTop | Qt::AlignRight));
-            bgRect = bgRect.marginsAdded(QMargins(5, 0, 5, 0));
-            bgRect.moveTopRight(this->rect().topRight());
-            painter->drawRect(bgRect);
-            
-            //text
-            painter->setOpacity(1);
-            painter->setPen(QPen(Qt::SolidPattern, 0));
-            painter->setBrush(Qt::NoBrush);
-            painter->drawText(bgRect, templt, QTextOption(Qt::AlignCenter));
-
-        
-        //scale indic
-        //TODO
+        this->_mayDrawZoomIndic(painter, viewportRect, currentScale);
+        this->_mayDrawScaleIndic(painter, viewportRect, currentScale);
 
     painter->restore();
 

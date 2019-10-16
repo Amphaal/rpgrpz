@@ -76,6 +76,8 @@ class AppContext {
         static QHash<QString, QString> getOptionArgs(int argc, char** argv);
         static void configureApp(QCoreApplication &app);
 
+        static QSizeF standardTileSize(QPaintDevice* device);
+
         void static initRandomContext();
         void static initCustomContext(const QString &customContextSuffix);
         void static init(const QString &customContext = QString());

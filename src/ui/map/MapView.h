@@ -97,6 +97,7 @@ class MapView : public QGraphicsView, public ClientBindable {
         void _onIdentityReceived(const RPZUser &self);
 
     private:
+        QSizeF _stdTileSize;
         MapHint* _hints = nullptr;
         AtomsContextualMenuHandler* _menuHandler = nullptr;
         static inline constexpr int _defaultSceneSize = 36000;
@@ -124,6 +125,11 @@ class MapView : public QGraphicsView, public ClientBindable {
         void _mayUpdateHeavyLoadPlaceholder(QPainter* painter);
         void _updateHeavyLoadPlaceholder();
         void _mayUpdateHUD(QPainter* painter, const QRectF &rect);
+
+            //drawing HUD helpers
+            void _mayDrawZoomIndic(QPainter* painter, const QRect &viewportRect, double currentScale);
+            void _mayDrawScaleIndic(QPainter* painter, const QRect &viewportRect, double currentScale);
+            void _mayDrawGridIndic(QPainter* painter, const QRectF &rect);
 
         //ghost
             void _mightCenterGhostWithCursor();

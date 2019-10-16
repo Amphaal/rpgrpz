@@ -1188,12 +1188,12 @@
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="67"/>
+        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="74"/>
         <source>Update Available</source>
         <translation>Mise à jour disponible</translation>
     </message>
     <message>
-        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="68"/>
+        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="75"/>
         <source>An update is available for %1. Would you like to install it now ?</source>
         <translation>Une mise à jour est disponible pour %1. Voulez-vous l&apos;installer maintenant ?</translation>
     </message>

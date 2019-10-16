@@ -44,6 +44,12 @@ void AppContext::configureApp(QCoreApplication &app) {
     AppContext::init();
 }
 
+QSizeF AppContext::standardTileSize(QPaintDevice* device) {
+    auto x = ((double)device->logicalDpiX() / 2.54) * 1.3;
+    auto y = ((double)device->logicalDpiY() / 2.54) * 1.3;
+    return QSizeF(x, y);
+}
+
  void AppContext::installTranslations(QApplication &app) {
     
     QString translationsPath(QLibraryInfo::location(QLibraryInfo::TranslationsPath));
