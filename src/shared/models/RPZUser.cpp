@@ -36,7 +36,7 @@ QString RPZUser::name() const {
 };
 
 RPZUser::Role RPZUser::role() const {
-    return (Role)this->value(QStringLiteral(u"role")).toInt(); 
+    return (Role)this->value(QStringLiteral(u"role"), 0).toInt(); 
 };
 
 QColor RPZUser::color() const { 

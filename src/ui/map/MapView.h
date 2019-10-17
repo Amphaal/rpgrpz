@@ -40,19 +40,18 @@
 #include "src/shared/commands/AtomsContextualMenuHandler.h"
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 
+#include "modules/MV_Manipulation.hpp"
+#include "modules/MV_HUDLayout.hpp"
+#include "modules/MV_Drawing.hpp"
+
 #include "src/helpers/StringHelper.hpp"
 
-class MapView : public QGraphicsView, public ClientBindable {
+class MapView : public QGraphicsView, public ClientBindable, public MV_Manipulation, public MV_HUDLayout {
 
     Q_OBJECT
 
     public:
         enum Tool { Default, Atom, Scroll };
-        enum MoveDirection { GoUndefined, GoLeft, GoUp, GoRight, GoDown };
-        struct MoveInstruction {
-            QScrollBar* affectedScroll;
-            int correction;
-        };
 
         MapView(QWidget *parent = nullptr);
         ~MapView();
@@ -115,9 +114,7 @@ class MapView : public QGraphicsView, public ClientBindable {
         void _clearNonHUDItems();
 
         //helper
-        void _centerItemToPoint(QGraphicsItem* item, const QPoint &eventPos);
         QTimer _debounceSelection;
-        void _goToDefaultViewState();
         
         //background / foreground
         QPixmap _heavyLoadImage;
@@ -146,26 +143,6 @@ class MapView : public QGraphicsView, public ClientBindable {
             Tool _getCurrentTool() const;
             void _changeTool(Tool newTool, bool quickChange = false);
             void _resetTool();
-            
-        //moving...
-            void _goToSceneCenter();
-            void _addAnimatedMove(const MapView::MoveDirection &direction);
-            void _removeAnimatedMove(const MapView::MoveDirection &direction);
-            QList<MapView::MoveInstruction> _getMoveInstructions(const QSet<MapView::MoveDirection> &directions);
-            QSet<MapView::MoveDirection> _currentMoveDirections;
-            QList<MapView::MoveInstruction> _currentMoveInstructions;
-            MapView::MoveDirection _getOppositeDirection(const MapView::MoveDirection &direction);
-            QTimeLine _moveAnimator;
-            QTimer _stiffMove;
-            void _configureMoveAnimator();
-
-        //focusing...
-            void _focusItem(QGraphicsItem* toFocus);
-            QRectF _getVisibleRect();
-
-        //zooming...
-            double _currentRelScale = 1;
-            void _goToDefaultZoom();
 
         //drawing...
             MapViewGraphicsPathItem* _tempDrawing = nullptr;
@@ -179,4 +156,7 @@ class MapView : public QGraphicsView, public ClientBindable {
             void _updateDrawingPath(const QPoint &evtPoint);
             void _updateDrawingPathForBrush(const QPointF &pathCoord, QPainterPath &pathToAlter, MapViewGraphicsPathItem* sourceTemplate);
             void _savePosAsStickyNode(const QPoint &evtPoint);
+        
+        //on move
+        void onAnimationManipulationTickDone() override;
 };

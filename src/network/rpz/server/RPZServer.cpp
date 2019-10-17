@@ -337,6 +337,10 @@ void RPZServer::_alterIncomingPayloadWithUpdatedOwners(AtomsWielderPayload &wPay
 
 void RPZServer::_broadcastMapChanges(JSONMethod method, AlterationPayload &payload, JSONSocket * senderSocket) {
 
+    //prevent alteration ack if sender is not host
+    if(this->_getUser(senderSocket).role() != RPZUser::Role::Host) return;
+
+    //update owners if necessary
     if(auto wPayload = dynamic_cast<AtomsWielderPayload*>(&payload)) {
         this->_alterIncomingPayloadWithUpdatedOwners(*wPayload, senderSocket);
     }

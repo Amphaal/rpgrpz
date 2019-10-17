@@ -167,7 +167,8 @@
         "qvector": "cpp",
         "qmimedata": "cpp",
         "*.in": "cpp",
-        "qtime": "cpp"
+        "qtime": "cpp",
+        "qgraphicsview": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

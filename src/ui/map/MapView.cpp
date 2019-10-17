@@ -1,6 +1,6 @@
 #include "MapView.h"
 
-MapView::MapView(QWidget *parent) : QGraphicsView(parent),
+MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this), MV_HUDLayout(this),
     _heavyLoadImage(QPixmap(":/icons/app_64.png")),
     _hints(new MapHint),
     _stdTileSize(AppContext::standardTileSize(this)),
@@ -37,12 +37,6 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent),
     this->_resetTool();
 
     this->_handleHintsSignalsAndSlots();
-
-    //default state
-    this->_goToDefaultViewState();
-
-    //animator configuration 
-    this->_configureMoveAnimator();
 
 }
 
@@ -463,7 +457,7 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
             break;
 
             case PA_Focused: {
-                this->_focusItem(item);
+                this->focusItem(item);
             }
             break;
 
@@ -500,27 +494,6 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
     this->_endHeavyLoadPlaceholder();
 }
 
-QRectF MapView::_getVisibleRect() {
-    return mapToScene(viewport()->rect()).boundingRect();
-}
-
-void MapView::_focusItem(QGraphicsItem* toFocus) {
-    
-    this->centerOn(toFocus);
-    
-    auto bound = toFocus->sceneBoundingRect();
-    bound = bound.marginsAdded(
-        QMarginsF(
-            bound.width() / 2,
-            bound.height() / 2,
-            bound.width() / 2,
-            bound.height() / 2
-        )
-    );
-    
-    this->fitInView(bound, Qt::AspectRatioMode::KeepAspectRatio);
-
-}
 
 void MapView::_addNonHUDItem(QGraphicsItem* toAdd) {
     this->scene()->addItem(toAdd);
@@ -568,12 +541,7 @@ void MapView::mouseDoubleClickEvent(QMouseEvent *event) {
 }
 
 void MapView::resizeEvent(QResizeEvent * event) {
-    this->_goToSceneCenter();
-}
-
-void MapView::_goToDefaultViewState() {
-    this->_goToSceneCenter();
-    this->_goToDefaultZoom();
+    this->goToSceneCenter();
 }
 
 MapHint* MapView::hints() const {
@@ -584,23 +552,11 @@ void MapView::keyReleaseEvent(QKeyEvent *event) {
 
     switch(event->key()) {
         case Qt::Key::Key_Up:
-            event->ignore();
-            return this->_removeAnimatedMove(GoUp);
-            break;
-        
         case Qt::Key::Key_Down:
-            event->ignore();
-            return this->_removeAnimatedMove(GoDown);
-            break;
-
         case Qt::Key::Key_Left:
-            event->ignore();
-            return this->_removeAnimatedMove(GoLeft);
-            break;
-
         case Qt::Key::Key_Right:
             event->ignore();
-            return this->_removeAnimatedMove(GoRight);
+            return this->removeAnimatedMove(event);
             break;
     }
 
@@ -623,23 +579,11 @@ void MapView::keyPressEvent(QKeyEvent * event) {
             break;
         
         case Qt::Key::Key_Up:
-            event->ignore();
-            return this->_addAnimatedMove(GoUp);
-            break;
-        
         case Qt::Key::Key_Down:
-            event->ignore();
-            return this->_addAnimatedMove(GoDown);
-            break;
-
         case Qt::Key::Key_Left:
-            event->ignore();
-            return this->_addAnimatedMove(GoLeft);
-            break;
-
         case Qt::Key::Key_Right:
             event->ignore();
-            return this->_addAnimatedMove(GoRight);
+            return this->addAnimatedMove(event);
             break;
 
     }
@@ -649,10 +593,15 @@ void MapView::keyPressEvent(QKeyEvent * event) {
 }
 
 void MapView::_mightCenterGhostWithCursor() {
+    
     //update ghost item position relative to cursor
     if(auto ghost = this->_hints->ghostItem()) {
-        this->_centerItemToPoint(ghost, this->mapFromGlobal(QCursor::pos()));
+        this->centerItemToPoint(
+            ghost, 
+            this->mapFromGlobal(QCursor::pos())
+        );
     }
+
 }
 
 void MapView::enterEvent(QEvent *event) {
@@ -912,7 +861,7 @@ void MapView::_changeTool(Tool newTool, const bool quickChange) {
 void MapView::onActionRequested(const MapTools::Actions &action) {
     switch(action) {
         case MapTools::Actions::ResetView:
-            this->_goToDefaultViewState();
+            this->goToDefaultViewState();
             break;
         case MapTools::Actions::ResetTool:
             this->_resetTool();
@@ -930,198 +879,20 @@ void MapView::onHelperActionTriggered(QAction *action) {
 /* END TOOL */
 //////////////
 
-//////////
-/* MOVE */
-//////////
-
-void MapView::_goToSceneCenter() {
-    auto center = this->scene()->sceneRect().center();
-    this->centerOn(center);
+void MapView::onAnimationManipulationTickDone() {
+    this->_mightCenterGhostWithCursor();
 }
-
-void MapView::_addAnimatedMove(const MapView::MoveDirection &direction) {
-
-    //set direction, remove opposite
-    this->_currentMoveDirections.insert(direction);
-    auto opposite = this->_getOppositeDirection(direction);
-    this->_currentMoveDirections.remove(opposite);
-
-    //update instructions
-    this->_currentMoveInstructions = this->_getMoveInstructions(this->_currentMoveDirections);
-
-    //start if necessary
-    this->_moveAnimator.stop();
-    this->_stiffMove.start();
-
-}
-
-void MapView::_removeAnimatedMove(const MapView::MoveDirection &direction) {
-    
-    //remove direction
-    this->_currentMoveDirections.remove(direction);
-
-    //update instructions
-    if(this->_currentMoveDirections.isEmpty()) {
-        this->_moveAnimator.start();
-        this->_stiffMove.stop();
-    } else {
-        this->_currentMoveInstructions = this->_getMoveInstructions(this->_currentMoveDirections);
-    }
-    
-}
-
-void MapView::_configureMoveAnimator() {
-    
-    //define animation
-    auto animation = [=](qreal x = 1) {
-            
-        for(auto &inst : this->_currentMoveInstructions) {
-            
-            //loss acceptable
-            auto castedDelta = (int)(inst.correction * 5 * x);
-
-            //update scrollbar
-            inst.affectedScroll->setValue(
-                inst.affectedScroll->value() + castedDelta
-            );
-
-        }
-        
-        this->_mightCenterGhostWithCursor();
-
-    };
-
-    //define stiff animation
-    this->_stiffMove.setInterval(10);
-    QObject::connect(
-        &this->_stiffMove, &QTimer::timeout,
-        animation
-    );
-    
-    //define
-    this->_moveAnimator.setDuration(300);
-    this->_moveAnimator.setUpdateInterval(10);
-    this->_moveAnimator.setDirection(QTimeLine::Direction::Backward);
-    this->_moveAnimator.setCurveShape(QTimeLine::CurveShape::EaseOutCurve);
-
-    //on finished, reset any move
-    QObject::connect(
-        &this->_moveAnimator, &QTimeLine::finished,
-        [=](){
-            this->_currentMoveDirections.clear();
-            this->_currentMoveInstructions.clear();
-        }
-    );
-
-    //on animation going
-    QObject::connect(
-        &this->_moveAnimator, &QTimeLine::valueChanged,
-        animation
-    );
-}
-
-
-QList<MapView::MoveInstruction> MapView::_getMoveInstructions(const QSet<MapView::MoveDirection> &directions) {
-    QList<MapView::MoveInstruction> out;
-
-    for(auto &direction : directions) {
-        
-        MapView::MoveInstruction temp;
-
-        switch(direction) {
-            
-            case GoLeft:
-                temp.affectedScroll = this->horizontalScrollBar();
-                temp.correction = -1;
-            break;
-
-            case GoUp:
-                temp.affectedScroll = this->verticalScrollBar();
-                temp.correction = -1;
-            break;
-
-            case GoRight:
-                temp.affectedScroll = this->horizontalScrollBar();
-                temp.correction = 1;
-            break;
-
-            case GoDown:
-                temp.affectedScroll = this->verticalScrollBar();
-                temp.correction = 1;
-            break;
-
-            default:
-            break;
-
-        }
-
-        out += temp;
-
-    }
-
-    return out;
-}
-
-MapView::MoveDirection MapView::_getOppositeDirection(const MapView::MoveDirection &direction) {
-    switch(direction) {
-        case MapView::MoveDirection::GoLeft:
-            return MapView::MoveDirection::GoRight;
-        break;
-
-        case MapView::MoveDirection::GoUp:
-            return MapView::MoveDirection::GoDown;
-        break;
-
-        case MapView::MoveDirection::GoRight:
-            return MapView::MoveDirection::GoLeft;
-        break;
-
-        case MapView::MoveDirection::GoDown:
-            return MapView::MoveDirection::GoUp;
-        break;
-
-        default:
-            return MapView::MoveDirection::GoUndefined;
-        break;
-    }
-}
-
-
-//////////////
-/* END MOVE */
-//////////////
 
 //////////
 /* ZOOM */
 //////////
-
-void MapView::_goToDefaultZoom() {
-    auto corrected = 1/(this->_currentRelScale);
-    this->scale(corrected, corrected);
-    this->_currentRelScale = 1;
-}
 
 void MapView::wheelEvent(QWheelEvent *event) {
 
     //make sure no button is pressed
     if(this->_isMousePressed) return;
 
-    //cap acceleration to 5% per tick
-    auto delta = event->delta();
-    auto modifier = ((double)delta / 5000);
-    modifier = std::clamp(modifier, -.05, .05);
-
-    //define animation handler
-    AnimationTimeLine::use(
-        AnimationTimeLine::Type::Zoom, 
-        modifier, 
-        [&](qreal base, qreal prc) {
-            auto factor = 1.0 + (prc * base);
-            this->_currentRelScale = factor * this->_currentRelScale;
-            this->scale(factor, factor);
-            this->_mightCenterGhostWithCursor();
-        }
-    );
+    this->animateScroll(event);
 
 };
 
@@ -1172,7 +943,7 @@ void MapView::_beginDrawing(const QPoint &lastPointMousePressed) {
     this->_stickyBrushValidNodeCount = this->_stickyBrushIsDrawing ? this->_tempDrawing->path().elementCount() : 0;
 
     //update position
-    this->_centerItemToPoint(this->_tempDrawing, lastPointMousePressed);
+    this->centerItemToPoint(this->_tempDrawing, lastPointMousePressed);
 
     //add outline
     if(this->_stickyBrushIsDrawing) {
@@ -1336,9 +1107,3 @@ void MapView::_savePosAsStickyNode(const QPoint &evtPoint) {
 /////////////////
 /* END DRAWING */
 /////////////////
-
-void MapView::_centerItemToPoint(QGraphicsItem* item, const QPoint &eventPos) {
-    QPointF point = this->mapToScene(eventPos);
-    point = point - item->boundingRect().center();
-    item->setPos(point);
-}
