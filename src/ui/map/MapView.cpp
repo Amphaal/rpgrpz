@@ -20,11 +20,10 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
     this->setRubberBandSelectionMode(Qt::ItemSelectionMode::ContainsItemBoundingRect); //rubberband UC optimization
     this->setViewportUpdateMode(QGraphicsView::ViewportUpdateMode::SmartViewportUpdate); //force viewport update mode
     this->setMouseTracking(true); //activate mouse tracking for ghost 
-    this->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
     //thread
     this->_hints->moveToThread(new QThread);
-    this->_hints->thread()->setObjectName("MapThread");
+    this->_hints->thread()->setObjectName(QStringLiteral(u"MapThread"));
     this->_hints->thread()->start();
 
     //default

@@ -183,7 +183,7 @@ void MainWindow::_initConnectivity() {
 
         //create a separate thread to run the server into
         auto serverThread = new QThread;
-        serverThread->setObjectName("RPZServer Thread");
+        serverThread->setObjectName(QStringLiteral(u"RPZServer Thread"));
         this->_rpzServer->moveToThread(serverThread);
         
         //events...

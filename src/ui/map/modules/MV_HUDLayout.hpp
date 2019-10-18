@@ -69,8 +69,8 @@ class MV_HUDLayout {
             
             painter->save();
 
-                //no antialisation nor smothing
-                painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform, false);
+                //disable render hints from view
+                painter->setRenderHints(this->_view->renderHints(), false);
 
                 //set opacity
                 painter->setOpacity(0.1);
@@ -205,8 +205,8 @@ class MV_HUDLayout {
 
             painter->save();
 
-                //no antialisation nor smothing
-                painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform, false);
+                //disable render hints from view
+                painter->setRenderHints(this->_view->renderHints(), false);
 
                 auto tileWidth = (int)this->_stdTileSize.width();
                 auto stops = 5;
