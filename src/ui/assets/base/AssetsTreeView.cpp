@@ -335,11 +335,9 @@ void AssetsTreeView::_requestDeletion(const QModelIndexList &itemsIndexesToDelet
 }
 
 void AssetsTreeView::keyPressEvent(QKeyEvent * event) {
-    
-    auto key = (Qt::Key)event->key();
 
     //switch
-    switch(key) {
+    switch(event->key()) {
         
         case Qt::Key::Key_Delete: {
             auto selectedIndexes = this->selectedElementsIndexes();
@@ -358,7 +356,7 @@ void AssetsTreeView::keyPressEvent(QKeyEvent * event) {
             break;
     }
 
-    return QTreeView::keyPressEvent(event);
+    QTreeView::keyPressEvent(event);
 }
 
 void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) {

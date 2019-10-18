@@ -27,7 +27,7 @@ class CharacterPicker : public QWidget {
             _newCharacterBtn(new QPushButton) {
 
             //add new character
-            this->_newCharacterBtn->setIcon(QIcon(":/icons/app/other/add.png"));
+            this->_newCharacterBtn->setIcon(QIcon(QStringLiteral(u":/icons/app/other/add.png")));
             this->_newCharacterBtn->setToolTip(tr("Create a new sheet"));
             this->_newCharacterBtn->setMaximumWidth(25);
             QObject::connect(
@@ -38,7 +38,7 @@ class CharacterPicker : public QWidget {
             //delete character
             this->_deleteCharacterBtn->setToolTip(tr("Delete sheet"));
             this->_deleteCharacterBtn->setMaximumWidth(25);
-            this->_deleteCharacterBtn->setIcon(QIcon(":/icons/app/other/remove.png"));
+            this->_deleteCharacterBtn->setIcon(QIcon(QStringLiteral(u":/icons/app/other/remove.png")));
             this->_deleteCharacterBtn->setEnabled(false);
             QObject::connect(
                 this->_deleteCharacterBtn, &QPushButton::pressed,
@@ -173,8 +173,8 @@ class CharacterPicker : public QWidget {
         QPushButton* _deleteCharacterBtn = nullptr;
         QPushButton* _newCharacterBtn = nullptr;
 
-        QIcon _standardClockIcon = QIcon(":/icons/app/connectivity/cloak.png");
-        QIcon _selfCloakIcon = QIcon(":/icons/app/connectivity/self_cloak.png");
+        QIcon _standardClockIcon = QIcon(QStringLiteral(u":/icons/app/connectivity/cloak.png"));
+        QIcon _selfCloakIcon = QIcon(QStringLiteral(u":/icons/app/connectivity/self_cloak.png"));
 
         void _addButtonPressed() {
             this->_autoSave();

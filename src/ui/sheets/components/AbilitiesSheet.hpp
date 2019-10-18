@@ -20,12 +20,12 @@ class AbilitiesSheet : public QTableWidget {
         AbilitiesSheet() : QTableWidget(0, 4) {
             
             this->_addRowAction = new QAction(
-                QIcon(":/icons/app/other/add.png"), 
+                QIcon(QStringLiteral(u":/icons/app/other/add.png")), 
                 tr("Add a new ability")
             ); 
 
             this->_removeRowAction = new QAction(
-                QIcon(":/icons/app/tools/bin.png"), 
+                QIcon(QStringLiteral(u":/icons/app/tools/bin.png")), 
                 tr("Remove selected abilities")
             );
 

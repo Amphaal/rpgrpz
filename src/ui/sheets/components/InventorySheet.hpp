@@ -24,19 +24,19 @@ class InventorySheet : public QTableWidget {
         InventorySheet() : QTableWidget(0, 5) {
 
             this->_addRowAction = new QAction(
-                QIcon(":/icons/app/other/add.png"), 
+                QIcon(QStringLiteral(u":/icons/app/other/add.png")), 
                 tr("Add item")
             ); 
             this->_removeRowAction = new QAction(
-                QIcon(":/icons/app/tools/bin.png"), 
+                QIcon(QStringLiteral(u":/icons/app/tools/bin.png")), 
                 tr("Delete selected items")
             );
             this->_moveItemsAction = new QAction(
-                QIcon(":/icons/app/other/move.png"), 
+                QIcon(QStringLiteral(u":/icons/app/other/move.png")), 
                 tr("Move to...")
             );
             this->_splitItemAction = new QAction(
-                QIcon(":/icons/app/other/split.png"), 
+                QIcon(QStringLiteral(u":/icons/app/other/split.png")), 
                 tr("Split to...")
             );
 

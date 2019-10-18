@@ -1,9 +1,9 @@
 #include "Playlist.h"
 
 Playlist::Playlist(QWidget* parent) : QListWidget(parent),
-    _ytIconGrey(new QIcon(":/icons/app/audio/youtubeGrey.png")),
-    _ytIcon(new QIcon(":/icons/app/audio/youtube.png")),
-    _ytIconErr(new QIcon(":/icons/app/audio/youtubeError.png")) {
+    _ytIconGrey(new QIcon(QStringLiteral(u":/icons/app/audio/youtubeGrey.png"))),
+    _ytIcon(new QIcon(QStringLiteral(u":/icons/app/audio/youtube.png"))),
+    _ytIconErr(new QIcon(QStringLiteral(u":/icons/app/audio/youtubeError.png"))) {
 
     //self
     this->setAcceptDrops(true);

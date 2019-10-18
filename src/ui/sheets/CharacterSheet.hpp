@@ -24,10 +24,10 @@ class CharacterSheet : public QTabWidget {
             this->setVisible(false);
 
             //tabs
-            this->addTab(this->_characterTab, QIcon(":/icons/app/tabs/feather.png"), tr("Lore"));
-            this->addTab(_defineScroller(this->_statusTab), QIcon(":/icons/app/tabs/status.png"), tr("Status / Abilities"));
-            this->addTab(this->_inventoriesTab, QIcon(":/icons/app/tabs/chest.png"), tr("Inventories"));
-            this->addTab(this->_noteTab, QIcon(":/icons/app/tabs/noting.png"), tr("Notes / Others"));
+            this->addTab(this->_characterTab, QIcon(QStringLiteral(u":/icons/app/tabs/feather.png")), tr("Lore"));
+            this->addTab(_defineScroller(this->_statusTab), QIcon(QStringLiteral(u":/icons/app/tabs/status.png")), tr("Status / Abilities"));
+            this->addTab(this->_inventoriesTab, QIcon(QStringLiteral(u":/icons/app/tabs/chest.png")), tr("Inventories"));
+            this->addTab(this->_noteTab, QIcon(QStringLiteral(u":/icons/app/tabs/noting.png")), tr("Notes / Others"));
 
         };
 

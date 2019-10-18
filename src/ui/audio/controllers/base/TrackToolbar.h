@@ -34,8 +34,8 @@ class TrackToolbar : public QWidget {
         static inline const QString _trackPlayStateTemplator = " %1 / %2 ";
 
         QToolButton* _playBtn;
-        QIcon _playIcon = QIcon(":/icons/app/audio/play.png");
-        QIcon _pauseIcon = QIcon(":/icons/app/audio/pause.png");
+        QIcon _playIcon = QIcon(QStringLiteral(u":/icons/app/audio/play.png"));
+        QIcon _pauseIcon = QIcon(QStringLiteral(u":/icons/app/audio/pause.png"));
 
         QToolButton* _rewindBtn;
         QToolButton* _forwardBtn;

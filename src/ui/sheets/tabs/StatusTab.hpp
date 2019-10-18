@@ -63,7 +63,7 @@ class StatusTab : public QWidget {
 
                     //add bar button
                     this->_addBarBtn = new QPushButton;
-                    this->_addBarBtn->setIcon(QIcon(":/icons/app/other/add.png"));
+                    this->_addBarBtn->setIcon(QIcon(QStringLiteral(u":/icons/app/other/add.png")));
                     this->_addBarBtn->setToolTip(tr("Add a new gauge"));
                     QObject::connect(
                         this->_addBarBtn, &QPushButton::pressed,

@@ -24,7 +24,7 @@ class InventoryPicker : public QWidget {
             _newInventoryBtn(new QPushButton) {
             
             //add new inventory
-            this->_newInventoryBtn->setIcon(QIcon(":/icons/app/other/add.png"));
+            this->_newInventoryBtn->setIcon(QIcon(QStringLiteral(u":/icons/app/other/add.png")));
             this->_newInventoryBtn->setToolTip(tr("Create new inventory"));
             this->_newInventoryBtn->setMaximumWidth(25);
             QObject::connect(
@@ -35,7 +35,7 @@ class InventoryPicker : public QWidget {
             //delete inventory
             this->_deleteInventoryBtn->setToolTip(tr("Delete inventory"));
             this->_deleteInventoryBtn->setMaximumWidth(25);
-            this->_deleteInventoryBtn->setIcon(QIcon(":/icons/app/other/remove.png"));
+            this->_deleteInventoryBtn->setIcon(QIcon(QStringLiteral(u":/icons/app/other/remove.png")));
             this->_deleteInventoryBtn->setEnabled(false);
             QObject::connect(
                 this->_deleteInventoryBtn, &QPushButton::pressed,
@@ -104,7 +104,7 @@ class InventoryPicker : public QWidget {
     
     private:
         bool _readOnly = false;
-        QIcon _icon = QIcon(":/icons/app/other/bag.png");
+        QIcon _icon = QIcon(QStringLiteral(u":/icons/app/other/bag.png"));
 
         QComboBox* _inventoryListCombo = nullptr;
         QPushButton* _deleteInventoryBtn = nullptr;

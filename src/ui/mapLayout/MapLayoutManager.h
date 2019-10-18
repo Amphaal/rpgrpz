@@ -4,16 +4,20 @@
 #include <QVBoxLayout>
 
 #include "MapLayoutTree.h"
+#include "MiniMapView.hpp"
 #include "base/LayerSelector.h"
+
 
 class MapLayoutManager : public QWidget {
     public:
-        MapLayoutManager(AtomsStorage* mapMaster, QWidget *parent = nullptr);
+        MapLayoutManager(QGraphicsScene* scene, AtomsStorage* mapMaster, QWidget *parent = nullptr);
 
         MapLayoutTree* tree();
         LayerSelector* layerSelector();
+        MiniMapView* minimap();
     
     private:
         MapLayoutTree* _tree = nullptr;
         LayerSelector* _layerSelector = nullptr;
+        MiniMapView* _minimap = nullptr;
 };

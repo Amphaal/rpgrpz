@@ -66,7 +66,7 @@ class GaugeEditor : public QWidget {
 
                 //remove bar button
                 auto removeBarBtn = new QPushButton;
-                removeBarBtn->setIcon(QIcon(":/icons/app/other/remove.png"));
+                removeBarBtn->setIcon(QIcon(QStringLiteral(u":/icons/app/other/remove.png")));
                 removeBarBtn->setToolTip(tr("Delete gauge"));
                 QObject::connect(
                     removeBarBtn, &QPushButton::pressed,

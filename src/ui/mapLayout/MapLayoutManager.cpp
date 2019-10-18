@@ -1,15 +1,19 @@
 #include "MapLayoutManager.h"
 
-MapLayoutManager::MapLayoutManager(AtomsStorage* mapMaster, QWidget *parent) : QWidget(parent), 
-                                                        _tree(new MapLayoutTree(mapMaster, this)), 
-                                                        _layerSelector(new LayerSelector(this)) {
-        
-    this->setLayout(new QVBoxLayout);
-    this->layout()->addWidget(this->_layerSelector);
-    this->layout()->addWidget(this->_tree);
+MapLayoutManager::MapLayoutManager(QGraphicsScene* scene, AtomsStorage* mapMaster, QWidget *parent) : QWidget(parent) {
 
-    this->layout()->setSpacing(2);
-    this->layout()->setMargin(5);
+    this->_tree = new MapLayoutTree(mapMaster, this);
+    this->_layerSelector = new LayerSelector(this);
+    this->_minimap = new MiniMapView(scene);
+    
+    auto layout = new QVBoxLayout;
+    this->setLayout(layout);
+    layout->addWidget(this->_layerSelector);
+    layout->addWidget(this->_tree, 1);
+    layout->addWidget(this->_minimap, 0, Qt::AlignCenter);
+
+    layout->setSpacing(2);
+    layout->setMargin(5);
 
     this->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
 }
@@ -20,4 +24,8 @@ MapLayoutTree* MapLayoutManager::tree() {
 
 LayerSelector* MapLayoutManager::layerSelector(){
     return this->_layerSelector;
+}
+
+MiniMapView* MapLayoutManager::minimap() {
+    return this->_minimap;
 }

@@ -3,7 +3,7 @@
 QAction* RPZActions::activateGridIndicator() {
     
     auto action = new QAction(
-        QIcon(":/icons/app/tools/grid.png"), 
+        QIcon(QStringLiteral(u":/icons/app/tools/grid.png")), 
         QObject::tr("Display grid indicators")
     );
 
@@ -27,7 +27,7 @@ QAction* RPZActions::activateGridIndicator() {
 QAction* RPZActions::activateScaleIndicator() {
     
     auto action = new QAction(
-        QIcon(":/icons/app/tools/ruler.png"), 
+        QIcon(QStringLiteral(u":/icons/app/tools/ruler.png")), 
         QObject::tr("Display scale indicators")
     );
 
@@ -83,14 +83,14 @@ QAction* RPZActions::paste() {
 
 QAction* RPZActions::createFolder() {
     return new QAction(
-        QIcon(":/icons/app/manager/folder.png"), 
+        QIcon(QStringLiteral(u":/icons/app/manager/folder.png")), 
         QObject::tr("Create a folder")
     );
 }
 
 QAction* RPZActions::remove() {
     auto action = new QAction(
-        QIcon(":/icons/app/tools/bin.png"), 
+        QIcon(QStringLiteral(u":/icons/app/tools/bin.png")), 
         QObject::tr("Remove")
     );
     action->setShortcut(QKeySequence::Delete);
@@ -103,7 +103,7 @@ QAction* RPZActions::raiseAtom(int targetLayer) {
     descr = descr.arg(QString::number(targetLayer));
 
     return new QAction(
-        QIcon(":/icons/app/tools/raise.png"),
+        QIcon(QStringLiteral(u":/icons/app/tools/raise.png")),
         descr
     );
 }
@@ -113,56 +113,56 @@ QAction* RPZActions::lowerAtom(int targetLayer) {
     descr = descr.arg(QString::number(targetLayer));
 
     return new QAction(
-        QIcon(":/icons/app/tools/lower.png"),
+        QIcon(QStringLiteral(u":/icons/app/tools/lower.png")),
         descr
     );
 }
 
 QAction* RPZActions::showAtom() {
     return new QAction(
-        QIcon(":/icons/app/tools/shown.png"),
+        QIcon(QStringLiteral(u":/icons/app/tools/shown.png")),
         QObject::tr("Show")
     );
 }
 
 QAction* RPZActions::hideAtom() {
     return new QAction(
-        QIcon(":/icons/app/tools/hidden.png"),
+        QIcon(QStringLiteral(u":/icons/app/tools/hidden.png")),
         QObject::tr("Hide")
     );
 }
 
 QAction* RPZActions::resetView() {
     auto action = new QAction;
-    action->setIcon(QIcon(":/icons/app/tools/reset_view.png"));
+    action->setIcon(QIcon(QStringLiteral(u":/icons/app/tools/reset_view.png")));
     action->setIconText(QObject::tr("Reset the view"));
     return action;
 }
 
 QAction* RPZActions::resetTool() {
     auto action = new QAction;
-    action->setIcon(QIcon(":/icons/app/tools/cursor.png"));
+    action->setIcon(QIcon(QStringLiteral(u":/icons/app/tools/cursor.png")));
     action->setIconText(QObject::tr("Back to Select tool"));
     return action;
 }
 
 QAction* RPZActions::lockAtom() {
     return new QAction(
-        QIcon(":/icons/app/tools/lock.png"),
+        QIcon(QStringLiteral(u":/icons/app/tools/lock.png")),
         QObject::tr("Lock")
     );
 }
 
 QAction* RPZActions::unlockAtom() {
     return new QAction(
-        QIcon(":/icons/app/tools/unlock.png"),
+        QIcon(QStringLiteral(u":/icons/app/tools/unlock.png")),
         QObject::tr("Unlock")
     );
 }
 
 QAction* RPZActions::quit() {
     auto action = new QAction(
-        QIcon(":/icons/app/tools/exit.png"),
+        QIcon(QStringLiteral(u":/icons/app/tools/exit.png")),
         QObject::tr("Quit")
     );
     action->setShortcut(QKeySequence::Close);

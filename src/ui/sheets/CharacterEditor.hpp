@@ -41,7 +41,7 @@ class CharacterEditor : public QWidget, public ClientBindable {
 
             //save character
             this->_saveCharacterBtn->setToolTip(tr("Save character sheet"));
-            this->_saveCharacterBtn->setIcon(QIcon(":/icons/app/other/save.png"));
+            this->_saveCharacterBtn->setIcon(QIcon(QStringLiteral(u":/icons/app/other/save.png")));
             this->_saveCharacterBtn->setVisible(false);
             
             QObject::connect(

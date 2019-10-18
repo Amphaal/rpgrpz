@@ -12,6 +12,9 @@ MainWindow::~MainWindow() {
 
 MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 
+    //shortcuts
+    auto barvisibilityShortcut = new QShortcut(QKeySequence(Qt::Key_W), this, "_triggerBarsVisibility");
+
     //bind AlterationHandler / ProgressTracker / ClientBindableMain to UI Thread
     AlterationHandler::get();
     ProgressTracker::get();
@@ -32,21 +35,8 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 
 }
 
-void MainWindow::keyPressEvent(QKeyEvent * event) {
-    switch(event->key()) {
-        
-        case Qt::Key_Alt: {
-            this->_showBars = !this->_showBars;
-            this->_triggerBarsVisibility();
-        }
-        break;
-
-        default:
-        break;
-    }
-}
-
 void MainWindow::_triggerBarsVisibility() {
+    this->_showBars = !this->_showBars;
     this->menuBar()->setVisible(this->_showBars);
     this->statusBar()->setVisible(this->_showBars);
 }
@@ -216,7 +206,7 @@ void MainWindow::_initConnectivity() {
 void MainWindow::_initUI() {
     
     this->setWindowTitle(AppContext::getWindowTitle());
-    this->setWindowIcon(QIcon(":/icons/app/rpgrpz_32.png"));
+    this->setWindowIcon(QIcon(QStringLiteral(u":/icons/app/rpgrpz_32.png")));
 
     //central widget
     auto centralW = new RestoringSplitter("MainWindowSplitter");
@@ -240,12 +230,11 @@ void MainWindow::_initUIApp() {
     //init components
     this->_cw = new ChatWidget(this);
     this->_mapView = new MapView(this);
-    this->_minimap = new MiniMapView(this->_mapView->scene(), this);
     this->_audioManager = new AudioManager(this);
     this->_assetsManager = new AssetsManager(this);
     this->_mapTools = new MapTools(this);
     this->_mapHelpers = new MapHelpers(this);
-    this->_mlManager = new MapLayoutManager(this->_mapView->hints(), this);
+    this->_mlManager = new MapLayoutManager(this->_mapView->scene(), this->_mapView->hints(), this);
     this->_connectWidget = new ConnectWidget(this->_mapView->hints(), this);
     this->_atomEditManager = new AtomEditionManager(this->_mapView->hints(), this);
     this->_characterEditor = new CharacterEditor(this);
@@ -254,16 +243,21 @@ void MainWindow::_initUIApp() {
     
     //left tabs
     auto lTab = new QTabWidget(this);
-    lTab->addTab(this->_assetsManager, QIcon(":/icons/app/tabs/box.png"), tr("Toy box"));
-    lTab->addTab(this->_audioManager, QIcon(":/icons/app/tabs/playlist.png"), tr("Audio"));
+    lTab->addTab(this->_assetsManager, QIcon(QStringLiteral(u":/icons/app/tabs/box.png")), tr("Toy box"));
+    lTab->addTab(this->_audioManager, QIcon(QStringLiteral(u":/icons/app/tabs/playlist.png")), tr("Audio"));
     auto charactersSheetTabIndex = 2;
-    lTab->insertTab(charactersSheetTabIndex, this->_characterEditor, QIcon(":/icons/app/tabs/scroll.png"), tr("Sheets"));
+    lTab->insertTab(
+        charactersSheetTabIndex, 
+        this->_characterEditor, 
+        QIcon(QStringLiteral(u":/icons/app/tabs/scroll.png")), 
+        tr("Sheets")
+    );
 
     //right tabs
     auto rTab = new QTabWidget(this);
     rTab->setLayoutDirection(Qt::LayoutDirection::RightToLeft);
-    rTab->addTab(this->_mlManager, QIcon(":/icons/app/tabs/list.png"), tr("Map Atoms"));
-    rTab->addTab(this->_atomEditManager, QIcon(":/icons/app/tabs/config.png"), tr("Atom Editor"));
+    rTab->addTab(this->_mlManager, QIcon(QStringLiteral(u":/icons/app/tabs/list.png")), tr("Map Atoms"));
+    rTab->addTab(this->_atomEditManager, QIcon(QStringLiteral(u":/icons/app/tabs/config.png")), tr("Atom Editor"));
     
     auto logLayout = new QVBoxLayout;
     logLayout->addWidget(this->_connectWidget); 
@@ -277,7 +271,7 @@ void MainWindow::_initUIApp() {
 
     auto CCw = new QWidget(this);
     CCw->setLayout(CCwLayout);
-    rTab->addTab(CCw, QIcon(":/icons/app/tabs/chat.png"), tr("Connection / Chat"));
+    rTab->addTab(CCw, QIcon(QStringLiteral(u":/icons/app/tabs/chat.png")), tr("Connection / Chat"));
 
     //designer
     auto designer = new QWidget(this);

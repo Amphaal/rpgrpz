@@ -17,13 +17,13 @@ ConnectWidget::ConnectWidget(MapHint* hintToControlStateOf, QWidget *parent) : Q
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
 
     //name target
-    this->_nameTarget->addAction(QIcon(":/icons/app/connectivity/user.png"), QLineEdit::LeadingPosition);
+    this->_nameTarget->addAction(QIcon(QStringLiteral(u":/icons/app/connectivity/user.png")), QLineEdit::LeadingPosition);
     this->_nameTarget->setPlaceholderText(tr("Player name"));
     this->_nameTarget->setToolTip(this->_nameTarget->placeholderText());
     this->_nameTarget->setText(AppContext::settings()->value(QStringLiteral(u"name")).toString());
 
     //domain target
-    this->_domainTarget->addAction(QIcon(":/icons/app/connectivity/server.png"), QLineEdit::LeadingPosition);
+    this->_domainTarget->addAction(QIcon(QStringLiteral(u":/icons/app/connectivity/server.png")), QLineEdit::LeadingPosition);
     this->_domainTarget->setPlaceholderText("IP or server hostname");
     this->_domainTarget->setPlaceholderText(this->_domainTarget->placeholderText());
     this->_domainTarget->setText(AppContext::settings()->value(QStringLiteral(u"domain"), "localhost").toString());
@@ -248,7 +248,7 @@ void ConnectWidget::_fillCharacterSheetCombo() {
         auto toBeInsertedIndex = this->_characterSheetTarget->count();
 
         this->_characterSheetTarget->addItem(
-            QIcon(":/icons/app/connectivity/self_cloak.png"), 
+            QIcon(QStringLiteral(u":/icons/app/connectivity/self_cloak.png")), 
             character.toString(), 
             id
         );

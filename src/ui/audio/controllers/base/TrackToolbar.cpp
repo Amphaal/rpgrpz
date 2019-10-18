@@ -18,7 +18,7 @@ TrackToolbar::TrackToolbar(QWidget* parent) : QWidget(parent),
     );
     
     //rewind
-    this->_rewindBtn->setIcon(QIcon(":/icons/app/audio/rewind.png"));
+    this->_rewindBtn->setIcon(QIcon(QStringLiteral(u":/icons/app/audio/rewind.png")));
     QObject::connect(
         this->_rewindBtn, &QAbstractButton::clicked,
         [&]() {
@@ -27,7 +27,7 @@ TrackToolbar::TrackToolbar(QWidget* parent) : QWidget(parent),
     );
 
     //forward
-    this->_forwardBtn->setIcon(QIcon(":/icons/app/audio/forward.png"));
+    this->_forwardBtn->setIcon(QIcon(QStringLiteral(u":/icons/app/audio/forward.png")));
     QObject::connect(
         this->_forwardBtn, &QAbstractButton::clicked,
         [&]() {

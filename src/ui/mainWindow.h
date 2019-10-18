@@ -45,8 +45,6 @@
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 #include "src/ui/sheets/CharacterEditor.hpp"
 
-#include "src/ui/minimap/MiniMapView.hpp"
-
 class MainWindow : public QMainWindow { 
     
     Q_OBJECT
@@ -68,7 +66,6 @@ class MainWindow : public QMainWindow {
         bool _mustLaunchServer = true;
         void _initConnectivity();
 
-        MiniMapView* _minimap = nullptr;
         MapHelpers* _mapHelpers = nullptr;
         PlayersListView* _playersView = nullptr;
         StandardUsersListView* _usersView = nullptr;
@@ -96,10 +93,8 @@ class MainWindow : public QMainWindow {
         QMenu* _getMapMenu();
 
         UpdaterUIIntegrator* _updateIntegrator = nullptr;
-
-        void keyPressEvent(QKeyEvent * event) override;
         
-        bool _showBars = false;
+        bool _showBars = true;
         void _triggerBarsVisibility();
         void _barVisibilityToolTip();
 };

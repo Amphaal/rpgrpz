@@ -92,7 +92,7 @@ class InventorySlotModal : public QDialog {
         QComboBox* _targetsCombo = nullptr;
 
         void _addInventoryToCombo(QComboBox* target, const RPZInventory* toAdd) {
-            target->addItem(QIcon(":/icons/app/other/bag.png"), toAdd->toString());
+            target->addItem(QIcon(QStringLiteral(u":/icons/app/other/bag.png")), toAdd->toString());
         }
 
 };

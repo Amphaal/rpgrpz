@@ -1,9 +1,9 @@
 #include "TreeMapHint.h"
 
 TreeMapHint::TreeMapHint() : AlterationAcknoledger(AlterationPayload::Source::Local_MapLayout), 
-    _layerIcon(new QIcon(":/icons/app/manager/layer.png")),
-    _textIcon(new QIcon(":/icons/app/tools/text.png")),
-    _drawingIcon(new QIcon(":/icons/app/manager/drawing.png")) { 
+    _layerIcon(new QIcon(QStringLiteral(u":/icons/app/manager/layer.png"))),
+    _textIcon(new QIcon(QStringLiteral(u":/icons/app/tools/text.png"))),
+    _drawingIcon(new QIcon(QStringLiteral(u":/icons/app/manager/drawing.png"))) { 
 
     //on rename
     QObject::connect(
