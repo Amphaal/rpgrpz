@@ -72,11 +72,11 @@ class MiniMapView : public QGraphicsView, public MV_HUDLayout {
         void keyPressEvent(QKeyEvent *event) override {};
         void mousePressEvent(QMouseEvent *event) override {};
 
-        void drawForeground(QPainter *painter, const QRectF &rect) {
+        void drawForeground(QPainter *painter, const QRectF &rect) override {
             this->mayUpdateHeavyLoadPlaceholder(painter);
         }
 
-        void drawBackground(QPainter *painter, const QRectF &rect) {
+        void drawBackground(QPainter *painter, const QRectF &rect) override {
             this->drawBackgroundCheckerboard(painter, rect);
         }
 };

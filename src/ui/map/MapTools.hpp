@@ -37,7 +37,7 @@ class MapTools : public QToolBar {
         void toolRequested(const MapTool &tool, bool enabled);
 
     private:
-        void MapTools::_onToolSelectionChanged(QAction *action) {
+        void _onToolSelectionChanged(QAction *action) {
             return emit toolRequested(
                 (MapTool)action->data().toInt(),
                 action->isChecked()

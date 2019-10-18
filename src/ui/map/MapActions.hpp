@@ -43,7 +43,7 @@ class MapActions : public QToolBar {
         void actionRequested(const MapAction &action);
 
     private:
-        void MapActions::_onActionSelectionChanged(QAction *action) {
+        void _onActionSelectionChanged(QAction *action) {
             return emit actionRequested((MapAction)action->data().toInt());
         }
 
