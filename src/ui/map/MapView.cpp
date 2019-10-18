@@ -160,6 +160,7 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
     if(type == PA_Selected) this->scene()->clearSelection();
     if(type == PA_Reset) {
         this->_resetTool();
+        this->_drawingAssist->clearDrawing(); //before clearing whole scene
         this->scene()->clear();
         this->extractMapParametersForHUDLayout(this->_hints);
         this->setupHeavyLoadPlaceholder(toAlter.count());
@@ -616,10 +617,12 @@ void MapView::_mightCenterGhostWithCursor() {
     
     //update ghost item position relative to cursor
     if(auto ghost = this->_hints->ghostItem()) {
-        this->centerItemToPoint(
-            ghost, 
-            this->mapFromGlobal(QCursor::pos())
-        );
+
+        auto cursorPos = this->mapFromGlobal(QCursor::pos());
+        auto cursorPosInScene = this->mapToScene(cursorPos);
+        cursorPosInScene = cursorPosInScene - ghost->boundingRect().center();
+        ghost->setPos(cursorPosInScene);
+
     }
 
 }

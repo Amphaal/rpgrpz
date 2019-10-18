@@ -240,6 +240,7 @@ void MainWindow::_initUIApp() {
     //init components
     this->_cw = new ChatWidget(this);
     this->_mapView = new MapView(this);
+    this->_minimap = new MiniMapView(this->_mapView->scene(), this);
     this->_audioManager = new AudioManager(this);
     this->_assetsManager = new AssetsManager(this);
     this->_mapTools = new MapTools(this);

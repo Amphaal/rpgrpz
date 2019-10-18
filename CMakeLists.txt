@@ -18,7 +18,6 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 SET(APP_PUBLISHER "LVWL")
 SET(APP_DEFAULT_URL "https://github.com/Amphaal/rpgrpz")
 SET(APP_PATCHNOTE_URL "https://github.com/Amphaal/rpgrpz/releases")
-SET(PEM_CERT_NAME "cacert.pem")
 
 #set default maintenance tool path
 SET(MAINTENANCE_TOOL_LOCATION "")
@@ -44,14 +43,6 @@ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/templates/_version.h 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/version.h
 )
-
-#download cacert file to source code
-file(DOWNLOAD 
-    "https://crt.sh/?d=0687260331A72403D909F105E69BCF0D32E1BD2493FFC6D9206D11BCD6770739" 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/${PEM_CERT_NAME}
-)
-SET(CACERT src/${PEM_CERT_NAME})
-get_filename_component(CACERT_FP ${CACERT} ABSOLUTE)
 
 ##################
 ## Enable Conan ##
@@ -107,7 +98,6 @@ IF(APPLE)
     SET(MACOSX_BUNDLE_ICON_FILE "app.icns") #define icon
     SET(APP_ICO ${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/app.icns) #add icon
     set_source_files_properties(${APP_ICO} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources") #locate icon in package
-    set_source_files_properties(${CACERT} PROPERTIES MACOSX_PACKAGE_LOCATION "MacOS") #locate cert in package
 endif()
 
 #default source contains
@@ -255,11 +245,6 @@ deployqt(${PROJECT_NAME})
 ###############
 # OTHERS COPY #
 ###############
-
-#CA CERT
-add_custom_command(TARGET ${PROJECT_NAME}       
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CACERT_FP} $<TARGET_FILE_DIR:${PROJECT_NAME}>
-)
 
 #translations
 add_custom_command(TARGET ${PROJECT_NAME}   

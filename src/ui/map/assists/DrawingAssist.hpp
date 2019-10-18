@@ -7,14 +7,16 @@ class DrawingAssist {
     public:
         DrawingAssist(MapHint* hints, QGraphicsView* view) : _hints(hints), _view(view) { }
 
-        void addDrawingPoint(const QPoint &pos) {
+        void addDrawingPoint(const QPoint &cursorPosInWindow) {
             
+            auto scenePos = this->_view->mapToScene(cursorPosInWindow);
+
             if(this->_stickyBrushIsDrawing) {
-                this->_savePosAsStickyNode(pos);
+                this->_savePosAsStickyNode(scenePos, cursorPosInWindow);
             } 
             
             else {
-                this->_beginDrawing(pos);
+                this->_beginDrawing(scenePos);
             }
 
         }
@@ -80,6 +82,11 @@ class DrawingAssist {
 
         }
 
+        void clearDrawing() {
+            this->_destroyTempDrawing();
+            this->_commitedDrawingId = 0;
+        }
+
     private:
         QGraphicsView* _view = nullptr;
         MapHint* _hints = nullptr;
@@ -112,27 +119,31 @@ class DrawingAssist {
             
         }
 
-        void _beginDrawing(const QPoint &lastPointMousePressed) {
+        void _beginDrawing(const QPointF &scenePos) {
 
             //destroy temp
             this->_destroyTempDrawing();
 
-            //create base and store it
-            auto item = this->_hints->generateTemporaryItemFromTemplateBuffer();
-            this->_view->scene()->addItem(item);
-            this->_tempDrawing = static_cast<MapViewGraphicsPathItem*>(item);
+            //create item 
+            this->_tempDrawing = static_cast<MapViewGraphicsPathItem*>(this->_hints->generateTemporaryItemFromTemplateBuffer());
+                
+                //define pos
+                auto centerScenePos = scenePos;
+                centerScenePos = centerScenePos - this->_tempDrawing->boundingRect().center();
+                this->_tempDrawing->setPos(centerScenePos);
+
+            //add to scene
+            this->_view->scene()->addItem(this->_tempDrawing);
 
             //determine if it must be sticky
             this->_stickyBrushIsDrawing = this->_hints->templateAtom().brushType() == BrushType::Cutter;
             this->_stickyBrushValidNodeCount = this->_stickyBrushIsDrawing ? this->_tempDrawing->path().elementCount() : 0;
 
-            //add outline
+            //add outline if sticky
             if(this->_stickyBrushIsDrawing) {
-                auto pos = this->_tempDrawing->pos();
-                auto outline = CustomGraphicsItemHelper::createOutlineRectItem(pos);
-                this->_view->scene()->addItem(outline);
-                this->_tempDrawingHelpers.append(outline);
+                this->_addOutlineRect(scenePos);
             }
+
         }
 
         void _updateDrawingPathForBrush(const QPointF &pathCoord, QPainterPath &pathToAlter, MapViewGraphicsPathItem* sourceTemplate) {
@@ -206,11 +217,16 @@ class DrawingAssist {
             }
         }
 
-        void _savePosAsStickyNode(const QPoint &evtPoint) {
+        void _addOutlineRect(const QPointF &scenePos) {
+            auto outline = CustomGraphicsItemHelper::createOutlineRectItem(scenePos);
+            this->_view->scene()->addItem(outline);
+            this->_tempDrawingHelpers.append(outline);
+        }
+
+        void _savePosAsStickyNode(const QPointF &scenePos, const QPoint &cursorPosInWindow) {
             
             //dest pos
-            auto sceneCoord = this->_view->mapToScene(evtPoint);
-            auto destCoord = this->_tempDrawing->mapFromScene(sceneCoord);
+            auto destCoord = this->_tempDrawing->mapFromScene(scenePos);
             
             //Update
             auto path = this->_tempDrawing->path();
@@ -219,9 +235,7 @@ class DrawingAssist {
             this->_tempDrawing->setPath(path);
             
             //add visual helper
-            auto outline = CustomGraphicsItemHelper::createOutlineRectItem(sceneCoord);
-            this->_view->scene()->addItem(outline);
-            this->_tempDrawingHelpers.append(outline);
+            this->_addOutlineRect(scenePos);
 
             //update
             this->_stickyBrushValidNodeCount = count;
@@ -229,13 +243,12 @@ class DrawingAssist {
             //check vicinity between last node and first node
             auto firstNode = this->_tempDrawing->mapToScene(path.elementAt(0));
             auto firstNodeGlobalPos = this->_view->mapFromScene(firstNode);
-            auto gap = evtPoint - firstNodeGlobalPos;
+            auto gap = cursorPosInWindow - firstNodeGlobalPos;
 
             //if gap is minimal, understand that the users wants to end the drawing
             if(gap.manhattanLength() < 20) {
                 this->mayCommitDrawing();
             }
         }
-
 
 };

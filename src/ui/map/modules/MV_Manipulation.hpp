@@ -60,14 +60,6 @@ class MV_Manipulation {
 
         }
 
-        void centerItemToPoint(QGraphicsItem* item, const QPoint &eventPos) {
-
-            QPointF point = this->_view->mapToScene(eventPos);
-            point = point - item->boundingRect().center();
-            item->setPos(point);
-
-        }
-
         void goToDefaultViewState() {
             this->goToSceneCenter();
             this->goToDefaultZoom();

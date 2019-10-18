@@ -45,6 +45,8 @@
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 #include "src/ui/sheets/CharacterEditor.hpp"
 
+#include "src/ui/minimap/MiniMapView.hpp"
+
 class MainWindow : public QMainWindow { 
     
     Q_OBJECT
@@ -66,6 +68,7 @@ class MainWindow : public QMainWindow {
         bool _mustLaunchServer = true;
         void _initConnectivity();
 
+        MiniMapView* _minimap = nullptr;
         MapHelpers* _mapHelpers = nullptr;
         PlayersListView* _playersView = nullptr;
         StandardUsersListView* _usersView = nullptr;
