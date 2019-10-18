@@ -20,6 +20,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
     this->setRubberBandSelectionMode(Qt::ItemSelectionMode::ContainsItemBoundingRect); //rubberband UC optimization
     this->setViewportUpdateMode(QGraphicsView::ViewportUpdateMode::SmartViewportUpdate); //force viewport update mode
     this->setMouseTracking(true); //activate mouse tracking for ghost 
+    this->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
     //thread
     this->_hints->moveToThread(new QThread);
@@ -54,12 +55,15 @@ MapHint* MapView::hints() const {
 
 void MapView::_handleHintsSignalsAndSlots() {
 
-    //on map loading, set placeholder...
+    //on map loading, set/unset placeholder...
     QObject::connect(
         ProgressTracker::get(), &ProgressTracker::heavyAlterationProcessing,
         [=]() {this->displayHeavyLoadPlaceholder();}
     );
-
+    QObject::connect(
+        ProgressTracker::get(), &ProgressTracker::heavyAlterationProcessed,
+        [=]() {this->endHeavyLoadPlaceholder();}
+    );
 
     //define selection debouncer
     this->_selectionDebouncer.setInterval(100);
@@ -119,21 +123,15 @@ void MapView::_updateItemValue(QGraphicsItem* item, const AtomUpdates &updates) 
 }
 
 void MapView::_onUIUpdateRequest(const QHash<QGraphicsItem*, AtomUpdates> &toUpdate) {
-    
     for(auto i = toUpdate.constBegin(); i != toUpdate.constEnd(); i++) {
         this->_updateItemValue(i.key(), i.value());
     }
-    
-    this->endHeavyLoadPlaceholder();
 }
 
 void MapView::_onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const AtomUpdates &updates) {
     for(auto item : toUpdate) {
         this->_updateItemValue(item, updates);
     }
-
-    this->endHeavyLoadPlaceholder();
-
 }
 
 void MapView::_onUIUserChangeRequest(const QList<QGraphicsItem*> &toUpdate, const RPZUser &newUser) {
@@ -147,8 +145,6 @@ void MapView::_onUIUserChangeRequest(const QList<QGraphicsItem*> &toUpdate, cons
             pathItem->setPen(c_pen);
         } 
     }
-
-    this->endHeavyLoadPlaceholder();
     
 }
 
@@ -215,7 +211,10 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
         }
     }
 
-    this->endHeavyLoadPlaceholder();
+    if(type == PA_Reset) {
+        ProgressTracker::get()->heavyAlterationEnded();
+    }
+
 }
 
 //

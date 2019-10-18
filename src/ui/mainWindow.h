@@ -94,7 +94,9 @@ class MainWindow : public QMainWindow {
 
         UpdaterUIIntegrator* _updateIntegrator = nullptr;
         
-        bool _showBars = true;
+        bool _showBars = false;
         void _triggerBarsVisibility();
         void _barVisibilityToolTip();
+
+        void keyPressEvent(QKeyEvent * event) override;
 };

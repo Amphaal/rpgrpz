@@ -10,7 +10,7 @@
 
 class MapLayoutManager : public QWidget {
     public:
-        MapLayoutManager(QGraphicsScene* scene, AtomsStorage* mapMaster, QWidget *parent = nullptr);
+        MapLayoutManager(QGraphicsView* viewToMimic, AtomsStorage* mapMaster, QWidget *parent = nullptr);
 
         MapLayoutTree* tree();
         LayerSelector* layerSelector();

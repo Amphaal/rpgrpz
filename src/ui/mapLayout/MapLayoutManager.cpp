@@ -1,10 +1,10 @@
 #include "MapLayoutManager.h"
 
-MapLayoutManager::MapLayoutManager(QGraphicsScene* scene, AtomsStorage* mapMaster, QWidget *parent) : QWidget(parent) {
+MapLayoutManager::MapLayoutManager(QGraphicsView* viewToMimic, AtomsStorage* mapMaster, QWidget *parent) : QWidget(parent) {
 
     this->_tree = new MapLayoutTree(mapMaster, this);
     this->_layerSelector = new LayerSelector(this);
-    this->_minimap = new MiniMapView(scene);
+    this->_minimap = new MiniMapView(viewToMimic);
     
     auto layout = new QVBoxLayout;
     this->setLayout(layout);

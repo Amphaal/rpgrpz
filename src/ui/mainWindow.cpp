@@ -10,10 +10,25 @@ MainWindow::~MainWindow() {
     ClientBindable::unbindAll();
 }
 
-MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 
-    //shortcuts
-    auto barvisibilityShortcut = new QShortcut(QKeySequence(Qt::Key_W), this, "_triggerBarsVisibility");
+void MainWindow::keyPressEvent(QKeyEvent * event) {
+    
+    switch(event->key()) {
+
+        case Qt::Key_Alt: {
+            this->_showBars = !this->_showBars;
+            this->_triggerBarsVisibility();
+        }
+        break;
+
+        default:
+        break;
+
+    }
+    
+}
+
+MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 
     //bind AlterationHandler / ProgressTracker / ClientBindableMain to UI Thread
     AlterationHandler::get();
@@ -27,6 +42,8 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
     //initial show
     this->_loadWindowState();
 
+    this->_triggerBarsVisibility();
+
     //load default map
     QMetaObject::invokeMethod(this->_mapView->hints(), "loadDefaultRPZMap");
 
@@ -36,7 +53,6 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 }
 
 void MainWindow::_triggerBarsVisibility() {
-    this->_showBars = !this->_showBars;
     this->menuBar()->setVisible(this->_showBars);
     this->statusBar()->setVisible(this->_showBars);
 }
@@ -234,7 +250,7 @@ void MainWindow::_initUIApp() {
     this->_assetsManager = new AssetsManager(this);
     this->_mapTools = new MapTools(this);
     this->_mapHelpers = new MapHelpers(this);
-    this->_mlManager = new MapLayoutManager(this->_mapView->scene(), this->_mapView->hints(), this);
+    this->_mlManager = new MapLayoutManager(this->_mapView, this->_mapView->hints(), this);
     this->_connectWidget = new ConnectWidget(this->_mapView->hints(), this);
     this->_atomEditManager = new AtomEditionManager(this->_mapView->hints(), this);
     this->_characterEditor = new CharacterEditor(this);

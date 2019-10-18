@@ -19,6 +19,10 @@ class ProgressTracker : public QObject {
             emit heavyAlterationProcessing();
         }
 
+        void heavyAlterationEnded() {
+            emit heavyAlterationProcessed();
+        }
+
         void serverIsActive() {
             emit serverActive();
         }
@@ -57,6 +61,7 @@ class ProgressTracker : public QObject {
 
     signals:
         void heavyAlterationProcessing();
+        void heavyAlterationProcessed();
         
         void serverActive();
         void serverInactive();
