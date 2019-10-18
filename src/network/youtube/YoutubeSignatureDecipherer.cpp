@@ -25,8 +25,8 @@ QString YoutubeSignatureDecipherer::decipher(const QString &signature) {
                 auto firstIndex = 0;
                 auto secondIndex = operation.second.toInt();
 
-                auto first = QString(modifiedSignature[firstIndex]);
-                auto second = QString(modifiedSignature[secondIndex]);
+                auto first = QString(modifiedSignature.at(firstIndex));
+                auto second = QString(modifiedSignature.at(secondIndex));
                 
                 modifiedSignature.replace(firstIndex, 1, second);
                 modifiedSignature.replace(secondIndex, 1, first);
@@ -46,17 +46,13 @@ QString YoutubeSignatureDecipherer::decipher(const QString &signature) {
 YoutubeSignatureDecipherer* YoutubeSignatureDecipherer::create(const QString &clientPlayerUrl, const QString &ytPlayerSourceCode) {
     auto newDecipher = new YoutubeSignatureDecipherer(ytPlayerSourceCode);
     
-    if(_cache.contains(clientPlayerUrl)) {
-        _cache[clientPlayerUrl] = newDecipher;
-    } else {
-        _cache.insert(clientPlayerUrl, newDecipher);
-    }
+     _cache.insert(clientPlayerUrl, newDecipher);
     
     return newDecipher;
 }
 
 YoutubeSignatureDecipherer* YoutubeSignatureDecipherer::fromCache(const QString &clientPlayerUrl) {
-    return _cache[clientPlayerUrl];
+    return _cache.value(clientPlayerUrl);
 }
 
 YTClientMethod YoutubeSignatureDecipherer::_findObfuscatedDecipheringFunctionName(const QString &ytPlayerSourceCode) {

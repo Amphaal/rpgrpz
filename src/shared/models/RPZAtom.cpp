@@ -40,7 +40,7 @@ QString RPZAtom::_defaultDescriptor() const {
 }
 
 QVariant RPZAtom::getDefaultValueForParam(const AtomParameter &param) {
-    return _defaultVal[param];
+    return _defaultVal.value(param);
 }
 
 AtomType RPZAtom::type() const {return (AtomType)this->value(QStringLiteral(u"t")).toInt();}
@@ -48,7 +48,7 @@ void RPZAtom::_setType(const AtomType &type) { this->insert(QStringLiteral(u"t")
 void RPZAtom::changeType(const AtomType &type) { this->_setType(type);}
 
 void RPZAtom::unsetMetadata(const AtomParameter &key) {
-    this->remove(_str[key]);
+    this->remove(_str.value(key));
 }
 
 void RPZAtom::setMetadata(const AtomParameter &key, RPZAtom &base) {
@@ -65,13 +65,13 @@ void RPZAtom::setMetadata(const AtomUpdates &metadata) {
 void RPZAtom::setMetadata(const AtomParameter &key, const QVariant &value) {
     if(value.isNull()) return this->unsetMetadata(key);
     this->insert(
-        _str[key],
+        _str.value(key),
         JSONSerializer::toSerialized(key, value)
     );
 }
 
 QVariant RPZAtom::metadata(const AtomParameter &key) const {
-    auto serialiedVal = this->value(_str[key], _defaultVal[key]);
+    auto serialiedVal = this->value(_str.value(key), getDefaultValueForParam(key));
     return JSONSerializer::fromSerialized(key, serialiedVal);
 }
 

@@ -302,11 +302,13 @@ void ViewMapHint::handlePreviewRequest(const AtomsSelectionDescriptor &selection
 
     //selected atoms to change
     else {
+        
         QMutexLocker l(&this->_m_GItemsByRPZAtomId);
 
         for(auto &id : selectionDescriptor.selectedAtomIds) {
             toUpdate += this->_GItemsByRPZAtomId.value(id);
         }
+
     }
 
     emit requestingUIUpdate(toUpdate, updates);
@@ -323,7 +325,7 @@ void ViewMapHint::handlePreviewRequest(const AtomsSelectionDescriptor &selection
 
 void ViewMapHint::_crossBindingAtomWithGI(RPZAtom* atom, QGraphicsItem* gi) {
     auto id = atom->id();
-    this->_GItemsByRPZAtomId[id] = gi;
+    this->_GItemsByRPZAtomId.insert(id, gi);
     gi->setData(RPZUserRoles::AtomId, id);
 }
 

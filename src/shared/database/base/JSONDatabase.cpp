@@ -92,7 +92,7 @@ bool JSONDatabase::_handleVersionMissmatch(QJsonDocument &databaseToUpdate, int 
                  << "to" << QString::number(targetUpdateVersion) 
                  << "...";
                  
-        handlers[targetUpdateVersion](databaseToUpdate);
+        handlers.value(targetUpdateVersion)(databaseToUpdate);
         updateApplied = true;
     }
 
@@ -101,7 +101,7 @@ bool JSONDatabase::_handleVersionMissmatch(QJsonDocument &databaseToUpdate, int 
 
     //force version update
     auto out = databaseToUpdate.object();
-    out[QStringLiteral(u"version")] = aimedAPIVersion;
+    out.insert(QStringLiteral(u"version"), aimedAPIVersion);
     
     //save into file
     this->_updateDbFile(out);

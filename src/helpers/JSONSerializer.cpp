@@ -22,8 +22,8 @@ QJsonArray JSONSerializer::fromQSize(const QSize &size) {
 QSize JSONSerializer::toQSize(const QJsonArray &JSONArray) {
     if(JSONArray.count() != 2) return QSize();
     return QSize(
-        JSONArray[0].toInt(), 
-        JSONArray[0].toInt()
+        JSONArray.at(0).toInt(), 
+        JSONArray.at(1).toInt()
     );
 }
 
@@ -31,8 +31,8 @@ QPointF JSONSerializer::pointFromDoublePair(const QVariant &doubleList) {
     auto casted = doubleList.toList();
     if(casted.count() != 2) return QPointF();
     return QPointF(
-        casted[0].toReal(), 
-        casted[1].toReal()
+        casted.value(0).toReal(), 
+        casted.value(1).toReal()
     );
 }
 
@@ -43,8 +43,8 @@ QVariant JSONSerializer::pointToDoublePair(const QPointF &point) {
 QPointF JSONSerializer::pointFromDoublePair(const QJsonArray &doubleList) {
     if(doubleList.count() != 2) return QPointF();
     return QPointF(
-        doubleList[0].toDouble(), 
-        doubleList[1].toDouble()
+        doubleList.at(0).toDouble(), 
+        doubleList.at(1).toDouble()
     );
 }
 

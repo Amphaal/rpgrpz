@@ -1,10 +1,10 @@
 #include "AtomEditorLineDescriptor.h"
 
 AtomEditorLineDescriptor::AtomEditorLineDescriptor(const AtomParameter &paramType) : AtomEditorLineDescriptor(
-    _paramDescr[paramType], 
-    _valSuffix[paramType], 
-    _icons[paramType]
-) { }
+        _paramDescr.value(paramType), 
+        _valSuffix.value(paramType), 
+        _icons.value(paramType)
+    ) { }
 
 AtomEditorLineDescriptor::AtomEditorLineDescriptor(const QString &untranslatedDescription, const QString &suffix, const QString &iconPath) : 
     _suffix(suffix),

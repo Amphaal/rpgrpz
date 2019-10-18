@@ -3,7 +3,7 @@
 AtomEditor::AtomEditor(QWidget* parent) : QGroupBox(parent), AlterationActor(AlterationPayload::Source::Local_AtomEditor) {
 
     this->setTitle(
-        tr(qUtf8Printable(_strEM[None]))
+        tr(qUtf8Printable(_strEM.value(None)))
     );
     this->setAlignment(Qt::AlignHCenter);
 
@@ -95,18 +95,18 @@ void AtomEditor::resetParams() {
 
 void AtomEditor::_createEditorsFromAtomParameters() {
 
-    this->_editorsByParam[AtomParameter::BrushStyle] = new BrushToolEditor;
-    this->_editorsByParam[AtomParameter::BrushPenWidth] = new AtomSliderEditor(AtomParameter::BrushPenWidth, 1, 500);
+    this->_editorsByParam.insert(AtomParameter::BrushStyle, new BrushToolEditor);
+    this->_editorsByParam.insert(AtomParameter::BrushPenWidth, new AtomSliderEditor(AtomParameter::BrushPenWidth, 1, 500));
 
-    this->_editorsByParam[AtomParameter::Rotation] = new AtomSliderEditor(AtomParameter::Rotation, 0, 359);
-    this->_editorsByParam[AtomParameter::Scale] = new NonLinearAtomSliderEditor(AtomParameter::Scale, 1, 1000);
+    this->_editorsByParam.insert(AtomParameter::Rotation, new AtomSliderEditor(AtomParameter::Rotation, 0, 359));
+    this->_editorsByParam.insert(AtomParameter::Scale, new NonLinearAtomSliderEditor(AtomParameter::Scale, 1, 1000));
     
-    this->_editorsByParam[AtomParameter::AssetRotation] = new AtomSliderEditor(AtomParameter::AssetRotation, 0, 359);
-    this->_editorsByParam[AtomParameter::AssetScale] = new NonLinearAtomSliderEditor(AtomParameter::AssetScale, 1, 1000);
+    this->_editorsByParam.insert(AtomParameter::AssetRotation, new AtomSliderEditor(AtomParameter::AssetRotation, 0, 359));
+    this->_editorsByParam.insert(AtomParameter::AssetScale, new NonLinearAtomSliderEditor(AtomParameter::AssetScale, 1, 1000));
 
-    this->_editorsByParam[AtomParameter::PenWidth] = new AtomSliderEditor(AtomParameter::PenWidth, 1, 50);
-    this->_editorsByParam[AtomParameter::TextSize] = new AtomSliderEditor(AtomParameter::TextSize, 1, 50);
-    this->_editorsByParam[AtomParameter::Text] = new AtomTextEditor(AtomParameter::Text);
+    this->_editorsByParam.insert(AtomParameter::PenWidth, new AtomSliderEditor(AtomParameter::PenWidth, 1, 50));
+    this->_editorsByParam.insert(AtomParameter::TextSize, new AtomSliderEditor(AtomParameter::TextSize, 1, 50));
+    this->_editorsByParam.insert(AtomParameter::Text, new AtomTextEditor(AtomParameter::Text));
 
     for(auto editor : this->_editorsByParam) {
 
@@ -203,7 +203,7 @@ void AtomEditor::_updateEditMode() {
     }
 
     //update title
-    auto title = tr(qUtf8Printable(_strEM[this->_currentEditMode]));
+    auto title = tr(qUtf8Printable(_strEM.value(this->_currentEditMode)));
     
     switch(this->_currentEditMode) {
         

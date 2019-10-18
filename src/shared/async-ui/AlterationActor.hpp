@@ -18,9 +18,9 @@ class AlterationActor {
             auto payloadSource = payload.source();
             auto payloadType = payload.type();
 
-            auto selfStr = AlterationPayload::SourceAsStr[this->_source];
-            auto sourceStr = AlterationPayload::SourceAsStr[payloadSource];
-            auto alterationTypeStr = PayloadAlterationAsStr[payloadType];
+            auto selfStr = AlterationPayload::SourceAsStr.value(this->_source);
+            auto sourceStr = AlterationPayload::SourceAsStr.value(payloadSource);
+            auto alterationTypeStr = PayloadAlterationAsStr.value(payloadType);
             qDebug() << "Alteration :" << selfStr << "received" << alterationTypeStr << "from" << sourceStr;
         }
 

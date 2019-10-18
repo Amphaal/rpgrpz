@@ -46,7 +46,7 @@ class BrushToolEditor : public AtomSubEditor {
                 auto tool = i.key();
                 
                 auto translatedName = tr(qUtf8Printable(i.value()));
-                auto associatedIcon = QIcon(_BTicons[tool]);
+                auto associatedIcon = QIcon(_BTicons.value(tool));
 
                 this->_combo->addItem(associatedIcon, translatedName, tool);
 

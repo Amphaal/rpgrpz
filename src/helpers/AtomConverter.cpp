@@ -287,7 +287,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
             case AtomParameter::AssetRotation: {
             case AtomParameter::AssetScale: {
                 auto transforms = itemToUpdate->data((int)AtomConverterDataIndex::BrushTransform).toHash();
-                transforms[QString::number(param)] = val;
+                transforms.insert(QString::number(param), val);
                 itemToUpdate->setData((int)AtomConverterDataIndex::BrushTransform, transforms);
                 return true;
             }
@@ -374,7 +374,7 @@ void AtomConverter::_setParamToAtomFromGraphicsItem(const AtomParameter &param, 
             auto transforms = blueprint->data((int)AtomConverterDataIndex::BrushTransform).toHash();
             if(transforms.isEmpty()) return;
 
-            auto transform = transforms[QString::number(param)];
+            auto transform = transforms.value(QString::number(param));
             if(transform.isNull()) return;
             
             atomToUpdate.setMetadata(param, transform); 

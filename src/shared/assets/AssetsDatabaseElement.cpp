@@ -381,7 +381,7 @@ void AssetsDatabaseElement::_defineFullPath() {
 
 
 void AssetsDatabaseElement::_defineIconPath() {
-    this->_iconPath = _iconPathByElementType[this->_type];
+    this->_iconPath = _iconPathByElementType.value(this->_type);
 }
 
 void AssetsDatabaseElement::_resetSubjacentItemsType(const AssetsDatabaseElement::Type &replacingType, AssetsDatabaseElement* target) {
@@ -511,7 +511,7 @@ QList<AssetsDatabaseElement::Type> AssetsDatabaseElement::internalItemTypes() {
 }
 
 QString AssetsDatabaseElement::typeDescription(AssetsDatabaseElement::Type &type) {
-    return tr(qUtf8Printable(_typeDescriptions[type]));
+    return tr(qUtf8Printable(_typeDescriptions.value(type)));
 }
 
 bool AssetsDatabaseElement::isAcceptableNameChange(QString &newName) {

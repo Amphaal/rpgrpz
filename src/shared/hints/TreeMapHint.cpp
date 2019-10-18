@@ -70,7 +70,7 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
     else if(auto mPayload = dynamic_cast<OwnerChangedPayload*>(&payload)) {
 
         for (auto &id : mPayload->targetRPZAtomIds()) {
-            out += this->_atomTreeItemsById[id];
+            out += this->_atomTreeItemsById.value(id);
         }
 
         emit requestingUIUserChange(out, mPayload->newOwner());
@@ -108,7 +108,7 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
         auto updates = mPayload->updates();
         
         for (auto &id : mPayload->targetRPZAtomIds()) {
-            auto item = this->_atomTreeItemsById[id];
+            auto item = this->_atomTreeItemsById.value(id);
             out += item;
             this->_handleItemMove(item, updates, mvHelper);
         }
@@ -125,7 +125,7 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
         
         for (auto i = updatesById.begin(); i != updatesById.end(); i++) {
             
-            auto item = this->_atomTreeItemsById[i.key()];
+            auto item = this->_atomTreeItemsById.value(i.key());
             auto updates = i.value();
 
             toUpdate.insert(item, updates);
@@ -139,7 +139,7 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
     else if(auto mPayload = dynamic_cast<MultipleAtomTargetsPayload*>(&payload)) {
         
         for (auto &id : mPayload->targetRPZAtomIds()) {
-            auto item = this->_atomTreeItemsById[id];
+            auto item = this->_atomTreeItemsById.value(id);
             out += item;
         }
 
@@ -157,7 +157,7 @@ void TreeMapHint::_handleItemMove(QTreeWidgetItem* toUpdate, const AtomUpdates &
     
     auto layerItem = toUpdate->parent();
     auto currentLayer = layerItem->data(0, RPZUserRoles::AtomLayer).toInt();
-    auto requestedLayer = updatesMightContainMove[Layer].toInt();
+    auto requestedLayer = updatesMightContainMove.value(Layer).toInt();
     
     if(currentLayer == requestedLayer) return;
 
@@ -218,8 +218,8 @@ void TreeMapHint::_onRenamedAsset(const QString &assetId, const QString &newName
     QList<QTreeWidgetItem*> toUpdate;
     AtomUpdates updates {{ AssetName, newName }};
 
-    for(auto &RPZAtomId : this->_RPZAtomIdsBoundByRPZAssetHash[assetId]) {
-        toUpdate += this->_atomTreeItemsById[RPZAtomId];
+    for(auto &RPZAtomId : this->_RPZAtomIdsBoundByRPZAssetHash.value(assetId)) {
+        toUpdate += this->_atomTreeItemsById.value(RPZAtomId);
     }
 
     emit requestingUIUpdate(toUpdate, updates);

@@ -15,7 +15,7 @@ void AppContext::configureApp(QCoreApplication &app) {
     } 
     
     else if(args.contains(QStringLiteral(u"customContext"))) {
-        auto customContext = args[QStringLiteral(u"customContext")];
+        auto customContext = args.value(QStringLiteral(u"customContext"));
         return AppContext::initCustomContext(customContext);
     }
 
@@ -65,7 +65,7 @@ QString AppContext::_defaultAppDataLocation() {
 QHash<QString, QString> AppContext::getOptionArgs(QCoreApplication &source) {
     auto args = source.arguments();
     if(args.count() < 2) return QHash<QString, QString>();
-    return _getOptionArgs(args[1]);
+    return _getOptionArgs(args.value(1));
 }
 
 QHash<QString, QString> AppContext::_getOptionArgs(const QString &argsAsStr) {
@@ -80,8 +80,8 @@ QHash<QString, QString> AppContext::_getOptionArgs(const QString &argsAsStr) {
         auto arg = splitMatch.captured();
         auto kvpSplit = arg.split("=", QString::SkipEmptyParts);
 
-        auto key = kvpSplit[0].mid(2).trimmed();
-        QString value = kvpSplit.count() > 1 ? kvpSplit[1].trimmed() : "";
+        auto key = kvpSplit.value(0).mid(2).trimmed();
+        QString value = kvpSplit.count() > 1 ? kvpSplit.value(1).trimmed() : "";
 
         out.insert(key, value);
     }
@@ -90,9 +90,13 @@ QHash<QString, QString> AppContext::_getOptionArgs(const QString &argsAsStr) {
 }
 
 QHash<QString, QString> AppContext::getOptionArgs(int argc, char** argv) {
+    
     if(argc < 2) return QHash<QString, QString>();
 
-    return _getOptionArgs(QString(argv[1]));
+    return _getOptionArgs(
+        QString(argv[1])
+    );
+
 }
 
 void AppContext::initRandomContext() {

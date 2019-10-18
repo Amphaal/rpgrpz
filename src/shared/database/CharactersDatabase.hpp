@@ -57,7 +57,7 @@ class CharactersDatabase : public QObject, public JSONDatabase {
                 auto chars = this->_characters();
                 auto idToRemove = QString::number(toRemove);
                 chars.remove(idToRemove);
-                obj[QStringLiteral(u"characters")] = chars;
+                obj.insert(QStringLiteral(u"characters"), chars);
             
             //save
             this->_updateDbFile(obj);
@@ -76,7 +76,7 @@ class CharactersDatabase : public QObject, public JSONDatabase {
                     QString::number(updated.id()),
                     QJsonObject::fromVariantHash(updated)
                 );
-                obj[QStringLiteral(u"characters")] = chars;
+                obj.insert(QStringLiteral(u"characters"), chars);
             
             //save
             this->_updateDbFile(obj);

@@ -43,8 +43,8 @@ void JSONSocket::sendJSON(const JSONMethod &method, const QVariant &data) {
 
     //format document
     QJsonObject json_payload;
-    json_payload[QStringLiteral(u"_m")] = method;
-    json_payload[QStringLiteral(u"_d")] = data.toJsonValue();
+    json_payload.value(QStringLiteral(u"_m")) = method;
+    json_payload.value(QStringLiteral(u"_d")) = data.toJsonValue();
     QJsonDocument payload_doc(json_payload);
 
     //send !
@@ -69,7 +69,7 @@ void JSONSocket::sendJSON(const JSONMethod &method, const QVariant &data) {
 
 void JSONSocket::_debugLog(const QString &logId, const JSONMethod &method, const QString &msg) {
     qDebug() << qUtf8Printable(logId) 
-             << qUtf8Printable(QStringLiteral(u"[%1]").arg(JSONMethodAsArray[method])) 
+             << qUtf8Printable(QStringLiteral(u"[%1]").arg(JSONMethodAsArray.value(method))) 
              << " : " 
              << qUtf8Printable(msg);
 }
@@ -153,25 +153,30 @@ void JSONSocket::_processIncomingAsJson(const QByteArray &data) {
     auto mainKeys = content.keys();
 
     //check requirements
-    auto required = mainKeys.contains(QStringLiteral(u"_m")) && mainKeys.contains(QStringLiteral(u"_d"));
+    auto required = mainKeys.contains(_methodKey) && mainKeys.contains(_dataKey);
     if(!required) {
         qWarning() << qUtf8Printable(this->_logId) << ": JSON received has missing keys and thus cannot be handled.";
         return;
     }
 
     //check value types
-    auto okTypes = content[QStringLiteral(u"_m")].isDouble();
-    if(!okTypes) {
+    auto rawMethod = content.value(_methodKey);
+    if(!rawMethod.isDouble()) {
         qWarning() << qUtf8Printable(this->_logId) << ": JSON received has unexpected data and thus cannot be handled.";
         return;
     }
 
     //log
-    auto method = static_cast<JSONMethod>((int)content[QStringLiteral(u"_m")].toDouble());
+    auto method = (JSONMethod)content.value(_methodKey).toInt();
     this->_debugLog(method, "received");
 
     //bind
-    emit JSONReceived(this, method, content[QStringLiteral(u"_d")].toVariant());
+    emit JSONReceived(
+        this, 
+        method, 
+        content.value(_dataKey).toVariant()
+    );
+
 }
 
 QTcpSocket * JSONSocket::socket() {

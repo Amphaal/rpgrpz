@@ -37,7 +37,7 @@ QVBoxLayout* LogContainer::_getLayout() {
 LogItem* LogContainer::_addLine(const Stampable &element, RPZStampableId putUnder) {
     
     auto eId = element.id();
-    auto found = this->_linesBySerializableId[eId];
+    auto found = this->_linesBySerializableId.value(eId);
 
     //if non existant
     if(!found) {
@@ -56,10 +56,10 @@ LogItem* LogContainer::_addLine(const Stampable &element, RPZStampableId putUnde
             found->layout()->addWidget(cr);
 
             //find position to put the line under
-            auto targetPos = this->_linesBySerializableId[putUnder]->positionInLog();
+            auto targetPos = this->_linesBySerializableId.value(putUnder)->positionInLog();
             
             //add at pos
-            this->_vLayout->insertWidget(targetPos+1, found);
+            this->_vLayout->insertWidget(targetPos + 1, found);
         }
         
         //set position
@@ -77,7 +77,7 @@ LogItem* LogContainer::_getLine(const Stampable &element) {
 }
 
 LogItem* LogContainer::_getLine(RPZStampableId elementId) {
-    return this->_linesBySerializableId[elementId];
+    return this->_linesBySerializableId.value(elementId);
 }
 
 void LogContainer::clearLines() {

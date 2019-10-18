@@ -34,11 +34,11 @@ QJsonObject MapDatabase::toObject(const RPZMap<RPZAtom> &atoms, const QJsonDocum
 
     //fill copy
     QJsonObject copy;
-    copy[QStringLiteral(u"assets_c")] = unique_assetIds.count();
-    copy[QStringLiteral(u"atoms_c")] = db_atoms.count();
-    copy[QStringLiteral(u"assets")] = QJsonArray::fromStringList(unique_assetIds.toList());
-    copy[QStringLiteral(u"atoms")] = db_atoms;
-    copy[QStringLiteral(u"version")] = doc[QStringLiteral(u"version")];
+    copy.insert(QStringLiteral(u"assets_c"), unique_assetIds.count());
+    copy.insert(QStringLiteral(u"atoms_c"), db_atoms.count());
+    copy.insert(QStringLiteral(u"assets"), QJsonArray::fromStringList(unique_assetIds.toList()));
+    copy.insert(QStringLiteral(u"atoms"), db_atoms);
+    copy.insert(QStringLiteral(u"version"), doc[QStringLiteral(u"version")]);
     
     return copy;
 

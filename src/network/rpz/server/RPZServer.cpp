@@ -526,7 +526,7 @@ void RPZServer::_sendToAll(const JSONMethod &method, const QVariant &data) {
 
 JSONSocket* RPZServer::_getUserSocket(const QString &formatedUsername) {
     auto id = this->_formatedUsernamesByUserId.value(formatedUsername);
-    return this->_clientSocketById[id];
+    return this->_clientSocketById.value(id);
 }
 
 RPZUser& RPZServer::_getUser(JSONSocket* socket) {

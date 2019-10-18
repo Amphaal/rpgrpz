@@ -78,7 +78,7 @@ class InventorySlotModal : public QDialog {
     RPZInventory* getSelectedTargetInventory() {
         auto i = this->_targetsCombo->currentIndex();
         if(i >= this->_targets.count()) return nullptr;
-        return this->_targets[i];
+        return this->_targets.value(i);
     }
 
     protected:

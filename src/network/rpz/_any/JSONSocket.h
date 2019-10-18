@@ -40,4 +40,7 @@ class JSONSocket : public QObject {
 
         void _processIncomingData();
         void _processIncomingAsJson(const QByteArray &data);
+
+        static inline QString _dataKey = QStringLiteral(u"_d");
+        static inline QString _methodKey = QStringLiteral(u"_m");
 };

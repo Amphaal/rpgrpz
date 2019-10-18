@@ -39,6 +39,7 @@ PossibleActionsOnAtomList AtomsStorage::getPossibleActions(const QVector<RPZAtom
         //get atom
         auto atom = this->_getAtomFromId(id);
         if(!atom) continue;
+
         atomList += atom;
 
         //if is locked, break
@@ -99,7 +100,7 @@ const AtomsSelectionDescriptor AtomsStorage::getAtomSelectionDescriptor(const QV
         QMutexLocker m(&this->_m_handlingLock);
         
         if(selectedIds.count() == 1) {
-            out.templateAtom = this->_atomsById[selectedIds[0]];
+            out.templateAtom = this->_atomsById.value(selectedIds.at(0));
             out.representedTypes.insert(
                 out.templateAtom.type()
             );
@@ -108,7 +109,7 @@ const AtomsSelectionDescriptor AtomsStorage::getAtomSelectionDescriptor(const QV
         else {
             for(auto id : selectedIds) {
                 out.representedTypes.insert(
-                    this->_atomsById[id].type()
+                    this->_atomsById.value(id).type()
                 );
             }
         }
@@ -230,7 +231,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &fromHist
                 auto snowflakeId = i.key();
                 auto updates = i.value(); 
 
-                auto refAtom = this->_atomsById[snowflakeId];
+                auto refAtom = this->_atomsById.value(snowflakeId);
 
                 AtomUpdates oldValues;
 
@@ -256,7 +257,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &fromHist
             for(auto id : casted->targetRPZAtomIds()) {
 
                 AtomUpdates oldValues;
-                auto refAtom = this->_atomsById[id];
+                auto refAtom = this->_atomsById.value(id);
 
                 for(auto i = changes.begin(); i != changes.end(); i++) {
                     auto param = i.key();
@@ -282,7 +283,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &fromHist
             auto casted = (RemovedPayload*)&fromHistoryPayload;
             QList<RPZAtom> out;
             for(auto &id : casted->targetRPZAtomIds()) {
-                out += this->_atomsById[id];
+                out += this->_atomsById.value(id);
             }
             return AddedPayload(out);
         }
@@ -308,13 +309,12 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &fromHist
 
 RPZAtom* AtomsStorage::_getAtomFromId(const RPZAtomId &id) {
     
-    if(!id) {
-        qWarning() << "Atoms: targeted Atom Id is null !";
+    if(!id || !this->_atomsById.contains(id)) {
         return nullptr;
     }
 
-    if(!this->_atomsById.contains(id)) return nullptr;
     return &this->_atomsById[id];
+
 }
 
 void AtomsStorage::_bindDefaultOwner(const RPZUser &newOwner) {
@@ -368,10 +368,11 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
         auto updatesById = mPayload->atomsUpdates();
         for (auto i = updatesById.begin(); i != updatesById.end(); i++) {
             
-            auto id = i.key();
-            auto atom = this->_getAtomFromId(id);
+            auto atom = this->_getAtomFromId(i.key());
+            if(!atom) continue;
 
             this->_updateAtom(atom, i.value());
+            
         }
 
         this->_updatesDone(updatesById);
@@ -386,19 +387,21 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
         
         if(auto nPayload = dynamic_cast<MetadataChangedPayload*>(&payload)) {
             maybeUpdates = nPayload->updates();
-        } else if (auto nPayload = dynamic_cast<OwnerChangedPayload*>(&payload)) {
+        } 
+        else if (auto nPayload = dynamic_cast<OwnerChangedPayload*>(&payload)) {
             maybeNewUser = nPayload->newOwner();
         }
 
         for (const auto &id : ids) {
+
             auto atom = this->_getAtomFromId(id);
+            if(!atom) continue;
             
             if(pType == PayloadAlteration::PA_Selected) this->_ackSelection(atom);
             if(pType == PayloadAlteration::PA_Removed) this->_removeAtom(atom);
             if(pType == PayloadAlteration::PA_MetadataChanged) this->_updateAtom(atom, maybeUpdates);
             if(pType == PayloadAlteration::PA_OwnerChanged) atom = this->_changeOwner(atom, maybeNewUser);
 
-            if(atom) alterationsIds += id;
         }
 
         if(!maybeUpdates.isEmpty()) this->_updatesDone(alterationsIds, maybeUpdates);
@@ -519,7 +522,7 @@ RPZMap<RPZAtom> AtomsStorage::_generateAtomDuplicates(const QVector<RPZAtomId> &
         if(!this->_atomsById.contains(RPZAtomId)) continue;
         
         //create copy atom, change ownership to self and update its id
-        RPZAtom newAtom(this->_atomsById[RPZAtomId]);
+        RPZAtom newAtom(this->_atomsById.value(RPZAtomId));
         newAtom.shuffleId();
         newAtom.setOwnership(this->_defaultOwner);
 

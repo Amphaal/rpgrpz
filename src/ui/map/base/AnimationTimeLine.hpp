@@ -30,7 +30,7 @@ class AnimationTimeLine : public QTimeLine {
             } else {
 
                 //get existing one and update modifier
-                handler = _handlers[controllerType];
+                handler = _handlers.value(controllerType);
                 handler->setStateModifier(stateModifier);
 
             }

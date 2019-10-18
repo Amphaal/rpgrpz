@@ -379,7 +379,7 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
     //if only a single selection
     else if(indexesCount == 1) {
 
-        auto elem = AssetsDatabaseElement::fromIndex(selectedElems[0]);
+        auto elem = AssetsDatabaseElement::fromIndex(selectedElems.value(0));
         auto atomType = elem->atomType();
 
         if(atomType != AtomType::Undefined) {

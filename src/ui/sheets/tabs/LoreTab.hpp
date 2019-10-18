@@ -145,7 +145,7 @@ class LoreTab : public QWidget {
             portraitPicker.setFileMode(QFileDialog::FileMode::ExistingFile);
             portraitPicker.setAcceptMode(QFileDialog::AcceptOpen);
             if(!portraitPicker.exec()) return;
-            auto portraitFP = portraitPicker.selectedFiles()[0];
+            auto portraitFP = portraitPicker.selectedFiles().at(0);
             
             //resize Pixmap and apply
             QPixmap newPortrait(portraitFP);

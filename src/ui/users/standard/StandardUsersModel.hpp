@@ -23,7 +23,7 @@ class StandardUsersModel : public BaseUsersModel {
                 }
 
                 case Qt::DecorationRole: {
-                    return QIcon(RPZUser::IconsByRoles[user.role()]);
+                    return QIcon(RPZUser::IconsByRoles.value(user.role()));
                 }
 
             }

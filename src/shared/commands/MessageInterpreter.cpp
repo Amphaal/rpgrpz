@@ -12,10 +12,10 @@ MessageInterpreter::Command MessageInterpreter::interpretText(const QString &tex
     if(!cp_text.startsWith("/")) return Say;
 
     //extract command
-    auto command = cp_text.split(" ", QString::SplitBehavior::SkipEmptyParts)[0];
+    auto command = cp_text.split(" ", QString::SplitBehavior::SkipEmptyParts).value(0);
 
     //returns command   
-    return _textByCommand[command];
+    return _textByCommand.value(command);
 }
 
 void MessageInterpreter::generateValuesOnDiceThrows(QVector<DiceThrow> &throws) {
