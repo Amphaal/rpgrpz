@@ -63,10 +63,13 @@ class AtomEditionManager : public QWidget {
                 AtomsSelectionDescriptor descr;
                 
                 if(!atom_template.isEmpty()) {
+
                     descr.representedTypes.insert(
                         atom_template.type()
                     );
+
                     descr.templateAtom = atom_template;
+
                 }
 
                 this->_handleSubjectChange(descr);
@@ -83,11 +86,17 @@ class AtomEditionManager : public QWidget {
             //if deletion happened
             else if(auto mPayload = dynamic_cast<RemovedPayload*>(casted.data())) {
                 
-                auto removed = mPayload->targetRPZAtomIds().toList().toSet();
-                auto current = this->_editor->currentSelectionDescriptor().selectedAtomIds.toList().toSet();
-                auto truncated = current.subtract(removed).toList().toVector();
+                auto currSelectionDescr = this->_editor->currentSelectionDescriptor();
 
+                auto removed = mPayload->targetRPZAtomIds().toList().toSet();
+                auto current = currSelectionDescr.selectedAtomIds.toList().toSet();
+                
+                //if no previous selection and has template atom, keep current description
+                if(!currSelectionDescr.templateAtom.isEmpty() && !current.count()) return;
+
+                auto truncated = current.subtract(removed).toList().toVector();
                 auto descr = this->_storage->getAtomSelectionDescriptor(truncated);
+
                 this->_handleSubjectChange(descr);
             }
             
