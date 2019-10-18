@@ -250,6 +250,7 @@ void MainWindow::_initUIApp() {
     this->_assetsManager = new AssetsManager(this);
     this->_mapTools = new MapTools(this);
     this->_mapHelpers = new MapHelpers(this);
+    this->_mapActions = new MapActions(this);
     this->_mlManager = new MapLayoutManager(this->_mapView, this->_mapView->hints(), this);
     this->_connectWidget = new ConnectWidget(this->_mapView->hints(), this);
     this->_atomEditManager = new AtomEditionManager(this->_mapView->hints(), this);
@@ -304,6 +305,7 @@ void MainWindow::_initUIApp() {
         toolbarLayout->addWidget(this->_mapHelpers);
         toolbarLayout->addStretch(0);
         toolbarLayout->addWidget(this->_mapTools);
+        toolbarLayout->addWidget(this->_mapActions);
         
     designer->layout()->addWidget(toolbar);
     designer->layout()->addWidget(this->_mapView);
@@ -347,7 +349,7 @@ void MainWindow::_initUIApp() {
 
     //bind toolbar to mapview
     QObject::connect(
-        this->_mapTools, &MapTools::actionRequested,
+        this->_mapActions, &MapActions::actionRequested,
         this->_mapView, &MapView::onActionRequested
     );
 

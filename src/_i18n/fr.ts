@@ -356,6 +356,16 @@
         <translation>Nom du joueur</translation>
     </message>
     <message>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="27"/>
+        <source>IP or server hostname</source>
+        <translation>IP ou nom de serveur</translation>
+    </message>
+    <message>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="32"/>
+        <source>Character to embody</source>
+        <translation>Personnage à incarner</translation>
+    </message>
+    <message>
         <location filename="../ui/logIn/ConnectWidget.cpp" line="180"/>
         <source>Error while connecting to server</source>
         <translation>Erreur à la connexion au serveur</translation>
@@ -698,84 +708,84 @@
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="262"/>
+        <location filename="../ui/mainWindow.cpp" line="263"/>
         <source>Toy box</source>
         <translation>Boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="263"/>
+        <location filename="../ui/mainWindow.cpp" line="264"/>
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="269"/>
+        <location filename="../ui/mainWindow.cpp" line="270"/>
         <source>Sheets</source>
         <translation>Fiches</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="275"/>
+        <location filename="../ui/mainWindow.cpp" line="276"/>
         <source>Map Atoms</source>
         <translation>Atomes de la carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="276"/>
+        <location filename="../ui/mainWindow.cpp" line="277"/>
         <source>Atom Editor</source>
         <translation>Editeur d&apos;atomes</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="290"/>
+        <location filename="../ui/mainWindow.cpp" line="291"/>
         <source>Connection / Chat</source>
         <translation>Connexion / Chat</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="401"/>
+        <location filename="../ui/mainWindow.cpp" line="403"/>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="415"/>
+        <location filename="../ui/mainWindow.cpp" line="417"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="417"/>
-        <location filename="../ui/mainWindow.cpp" line="443"/>
-        <location filename="../ui/mainWindow.cpp" line="471"/>
+        <location filename="../ui/mainWindow.cpp" line="419"/>
+        <location filename="../ui/mainWindow.cpp" line="445"/>
+        <location filename="../ui/mainWindow.cpp" line="473"/>
         <source>Game map (*%1)</source>
         <translation>Carte de campagne (*%1)</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="441"/>
+        <location filename="../ui/mainWindow.cpp" line="443"/>
         <source>Load a new map</source>
         <translation>Charger une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="469"/>
+        <location filename="../ui/mainWindow.cpp" line="471"/>
         <source>Save as...</source>
         <translation>Savegarder sous...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="505"/>
+        <location filename="../ui/mainWindow.cpp" line="507"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="560"/>
+        <location filename="../ui/mainWindow.cpp" line="562"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="574"/>
+        <location filename="../ui/mainWindow.cpp" line="576"/>
         <source>Searching for updates...</source>
         <translation>Recherche des mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="574"/>
+        <location filename="../ui/mainWindow.cpp" line="576"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="598"/>
+        <location filename="../ui/mainWindow.cpp" line="600"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
@@ -868,136 +878,151 @@
     </message>
     <message>
         <location filename="../shared/commands/RPZActions.cpp" line="7"/>
+        <source>Notify interest point to players</source>
+        <translation>Notifier un point d&apos;interêt aux joueurs</translation>
+    </message>
+    <message>
+        <location filename="../shared/commands/RPZActions.cpp" line="21"/>
+        <source>Measure distances</source>
+        <translation>Mesurer les distances</translation>
+    </message>
+    <message>
+        <location filename="../shared/commands/RPZActions.cpp" line="36"/>
+        <source>Quick draw</source>
+        <translation>Dessin Rapide</translation>
+    </message>
+    <message>
+        <location filename="../shared/commands/RPZActions.cpp" line="51"/>
         <source>Display grid indicators</source>
         <translation>Afficher la grille</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="31"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="75"/>
         <source>Display scale indicators</source>
         <translation>Afficher les indicateurs d&apos;échelle</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="53"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="97"/>
         <source>Redo</source>
         <translation>Rétablir</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="61"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="105"/>
         <source>Undo</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="69"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="113"/>
         <source>Copy</source>
         <translation>Copier</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="77"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="121"/>
         <source>Paste</source>
         <translation>Coller</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="87"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="131"/>
         <source>Create a folder</source>
         <translation>Créer un dossier</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="94"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="138"/>
         <source>Remove</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="102"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="146"/>
         <source>Raise (Layer %1)</source>
         <translation>Remonter (Calque %1)</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="112"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="156"/>
         <source>Lower (Layer %1)</source>
         <translation>Abaisser (Calque %1)</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="124"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="168"/>
         <source>Show</source>
         <translation>Montrer</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="131"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="175"/>
         <source>Hide</source>
         <translation>Cacher</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="138"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="182"/>
         <source>Reset the view</source>
         <translation>Réinitialiser la vue</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="145"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="190"/>
         <source>Back to Select tool</source>
         <translation>Retour à l&apos;outil de sélection</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="152"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="198"/>
         <source>Lock</source>
         <translation>Verrouiller</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="159"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="205"/>
         <source>Unlock</source>
         <translation>Déverrouiller</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="166"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="212"/>
         <source>Quit</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="175"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="221"/>
         <source>%1 - Patch Notes</source>
         <translation>%1 - Notes de patch</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="181"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="227"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="186"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="232"/>
         <source>Open application data folder (%1)</source>
         <translation>Ouvrir le dossier de données de l&apos;application (%1)</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="192"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="238"/>
         <source>Show session log</source>
         <translation>Afficher le journal d&apos;événements de session</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="196"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="242"/>
         <source>Show full log</source>
         <translation>Afficher le journal d&apos;événements</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="200"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="246"/>
         <source>Launch maintenance tool</source>
         <translation>Lancer l&apos;outil de maintenance</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="204"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="250"/>
         <source>Load a map</source>
         <translation>Charger une carte</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="211"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="257"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="218"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="264"/>
         <source>Save map</source>
         <translation>Sauvegarder la carte</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="225"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="271"/>
         <source>Save as map...</source>
         <translation>Sauvegarder la carte sous...</translation>
     </message>

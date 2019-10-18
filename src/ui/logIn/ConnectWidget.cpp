@@ -24,12 +24,12 @@ ConnectWidget::ConnectWidget(MapHint* hintToControlStateOf, QWidget *parent) : Q
 
     //domain target
     this->_domainTarget->addAction(QIcon(QStringLiteral(u":/icons/app/connectivity/server.png")), QLineEdit::LeadingPosition);
-    this->_domainTarget->setPlaceholderText("IP or server hostname");
+    this->_domainTarget->setPlaceholderText(tr("IP or server hostname"));
     this->_domainTarget->setPlaceholderText(this->_domainTarget->placeholderText());
     this->_domainTarget->setText(AppContext::settings()->value(QStringLiteral(u"domain"), "localhost").toString());
 
     //character sheet target
-    this->_characterSheetTarget->setToolTip("Character to embody");
+    this->_characterSheetTarget->setToolTip(tr("Character to embody"));
     this->_fillCharacterSheetCombo();
        
         //define preferences

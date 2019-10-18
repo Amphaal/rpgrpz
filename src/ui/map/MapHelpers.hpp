@@ -27,3 +27,5 @@ class MapHelpers : public QToolBar {
         }
         
 };
+
+

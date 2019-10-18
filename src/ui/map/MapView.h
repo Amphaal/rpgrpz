@@ -20,7 +20,7 @@
 
 #include "graphics/CustomGraphicsItemHelper.h"
 
-#include "MapTools.h"
+#include "MapTools.hpp"
 #include "base/AnimationTimeLine.hpp"
 
 #include "src/shared/hints/MapHint.h"
@@ -50,15 +50,13 @@ class MapView : public QGraphicsView, public ClientBindable, public MV_Manipulat
     Q_OBJECT
 
     public:
-        enum Tool { Default, Atom, Scroll };
-
         MapView(QWidget *parent = nullptr);
         ~MapView();
 
         MapHint* hints() const;
 
     public slots:
-        void onActionRequested(const MapTools::Actions &action);
+        void onActionRequested(const MapAction &action);
         void onHelperActionTriggered(QAction *action);
     
     signals:
@@ -115,10 +113,10 @@ class MapView : public QGraphicsView, public ClientBindable, public MV_Manipulat
             bool _isMousePressed = false;
 
         //tool
-            Tool _tool = (Tool)0;
-            Tool _quickTool = (Tool)0;
-            Tool _getCurrentTool() const;
-            void _changeTool(Tool newTool, bool quickChange = false);
+            MapTool _tool = (MapTool)0;
+            MapTool _quickTool = (MapTool)0;
+            MapTool _getCurrentTool() const;
+            void _changeTool(MapTool newTool, bool quickChange = false);
             void _resetTool();
         
         bool _canCUDMapItems();

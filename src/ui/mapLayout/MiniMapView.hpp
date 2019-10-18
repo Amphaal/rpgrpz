@@ -18,7 +18,11 @@ class MiniMapView : public QGraphicsView, public MV_HUDLayout {
             );
             QObject::connect(
                 ProgressTracker::get(), &ProgressTracker::heavyAlterationProcessed,
-                [=]() {this->endHeavyLoadPlaceholder();}
+                [=]() {
+                    this->endHeavyLoadPlaceholder();
+                    auto i = this->_getMinimumSizeSceneRect();
+                    this->fitInView(i);
+                }
             );
 
             //OpenGL backend activation
@@ -41,12 +45,27 @@ class MiniMapView : public QGraphicsView, public MV_HUDLayout {
             this->setDragMode(QGraphicsView::NoDrag);
             this->setFixedSize(QSize(240, 240));
 
-            this->fitInView(this->scene()->sceneRect());
-
         }
 
     private:
         QGraphicsView* _view = nullptr;
+
+        QRectF _getMinimumSizeSceneRect() {
+            QRectF minimalSize(QPointF(0, 0), QSizeF(640, 640));
+            minimalSize.moveCenter(this->scene()->sceneRect().center());
+
+            auto itemsBoundingRect = this->scene()->itemsBoundingRect();
+            auto rectSize = itemsBoundingRect.size();
+
+            //TODO itemsBoundingRect claqué ?
+
+            if(rectSize.width() < minimalSize.width() || rectSize.height() < minimalSize.height()) {
+                return minimalSize;
+            }
+
+            return itemsBoundingRect;
+            
+        }
 
     protected:
         void wheelEvent(QWheelEvent * event) override {};

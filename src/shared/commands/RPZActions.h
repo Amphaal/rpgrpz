@@ -5,6 +5,20 @@
 #include <QIcon>
 #include "src/helpers/_appContext.h"
 
+enum MapAction { 
+    ResetView,
+    ResetTool
+};
+
+enum MapTool {
+    Default, 
+    Atom, 
+    Scroll,
+    Ping,
+    Measure,
+    QuickDraw
+};
+
 class RPZActions {
     public:
         static QAction* redo();
@@ -34,4 +48,7 @@ class RPZActions {
         static QAction* saveTheMapAs();
         static QAction* activateGridIndicator();
         static QAction* activateScaleIndicator();
+        static QAction* usePingTool();
+        static QAction* useMeasurementTool();
+        static QAction* useQuickDrawTool();
 };

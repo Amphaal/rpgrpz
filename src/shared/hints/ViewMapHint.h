@@ -24,8 +24,6 @@
 
 #include "AtomsStorage.h"
 
-#include "src/ui/map/MapTools.h"
-
 class ViewMapHint : public AtomsStorage {
 
     Q_OBJECT

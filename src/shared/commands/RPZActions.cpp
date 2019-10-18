@@ -1,5 +1,49 @@
 #include "RPZActions.h"
 
+QAction* RPZActions::usePingTool() {
+    
+    auto action = new QAction(
+        QIcon(QStringLiteral(u":/icons/app/tools/ping.png")), 
+        QObject::tr("Notify interest point to players")
+    );
+    
+    action->setCheckable(true);
+    action->setEnabled(false);
+    action->setData(MapTool::Ping);
+
+    return action;
+}
+
+QAction* RPZActions::useMeasurementTool() {
+    
+    auto action = new QAction(
+        QIcon(QStringLiteral(u":/icons/app/tools/measuring.png")), 
+        QObject::tr("Measure distances")
+    );
+
+    action->setCheckable(true);
+    action->setEnabled(false);
+    action->setData(MapTool::Measure);
+
+    return action;
+
+}
+
+QAction* RPZActions::useQuickDrawTool() {
+    
+    auto action = new QAction(
+        QIcon(QStringLiteral(u":/icons/app/tools/pencil.png")), 
+        QObject::tr("Quick draw")
+    );
+
+    action->setCheckable(true);
+    action->setEnabled(false);
+    action->setData(MapTool::QuickDraw);
+
+    return action;
+
+}
+
 QAction* RPZActions::activateGridIndicator() {
     
     auto action = new QAction(
@@ -136,6 +180,7 @@ QAction* RPZActions::resetView() {
     auto action = new QAction;
     action->setIcon(QIcon(QStringLiteral(u":/icons/app/tools/reset_view.png")));
     action->setIconText(QObject::tr("Reset the view"));
+    action->setData(MapAction::ResetView);
     return action;
 }
 
@@ -143,6 +188,7 @@ QAction* RPZActions::resetTool() {
     auto action = new QAction;
     action->setIcon(QIcon(QStringLiteral(u":/icons/app/tools/cursor.png")));
     action->setIconText(QObject::tr("Back to Select tool"));
+    action->setData(MapAction::ResetTool);
     return action;
 }
 

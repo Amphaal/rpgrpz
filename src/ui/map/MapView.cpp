@@ -193,7 +193,7 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
             break;
 
             case PA_AssetSelected: {
-                Tool newTool = item ? Tool::Atom : Tool::Default;
+                auto newTool = item ? MapTool::Atom : MapTool::Default;
                 auto selectedAtom = item ? this->_hints->templateAtom() : RPZAtom();
                 if(item) this->scene()->addItem(item);
 
@@ -354,7 +354,7 @@ void MapView::mousePressEvent(QMouseEvent *event) {
     switch(event->button()) {
 
         case Qt::MouseButton::MiddleButton: {
-            auto tool = this->_quickTool == Default ? Tool::Scroll : Tool::Default;
+            auto tool = this->_quickTool == Default ? MapTool::Scroll : MapTool::Default;
             this->_changeTool(tool, true);
         }
         break;
@@ -397,7 +397,7 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
 
     this->_mightCenterGhostWithCursor();
 
-    if(this->_getCurrentTool() == Tool::Atom) {
+    if(this->_getCurrentTool() == MapTool::Atom) {
         
         auto type = this->_hints->templateAtom().type();
         switch(type) {
@@ -512,16 +512,16 @@ void MapView::_sendMapHistory() {
 //////////
 
 //returns tool
-MapView::Tool MapView::_getCurrentTool() const {
-    return this->_quickTool == Tool::Default ? this->_tool : this->_quickTool;
+MapTool MapView::_getCurrentTool() const {
+    return this->_quickTool == MapTool::Default ? this->_tool : this->_quickTool;
 }
 
 void MapView::_resetTool() {
-    this->_quickTool = Tool::Default;
-    this->_changeTool(Tool::Default);
+    this->_quickTool = MapTool::Default;
+    this->_changeTool(MapTool::Default);
 }
 
-void MapView::_changeTool(Tool newTool, const bool quickChange) {
+void MapView::_changeTool(MapTool newTool, const bool quickChange) {
 
     //end drawing if any
     this->_drawingAssist->mayCommitDrawing();
@@ -532,7 +532,7 @@ void MapView::_changeTool(Tool newTool, const bool quickChange) {
         this->_quickTool = newTool;
 
         //if unselecting quicktool
-        if(newTool == Tool::Default) newTool = this->_tool;
+        if(newTool == MapTool::Default) newTool = this->_tool;
 
     } 
     
@@ -551,13 +551,13 @@ void MapView::_changeTool(Tool newTool, const bool quickChange) {
     }    
 
     //if a quicktool is selected
-    if(this->_quickTool != Tool::Default) {
+    if(this->_quickTool != MapTool::Default) {
         newTool = this->_quickTool;
     }
     
     //depending on tool
     switch(newTool) {
-        case Tool::Atom: {
+        case MapTool::Atom: {
             
             this->setInteractive(false);
             this->setDragMode(QGraphicsView::DragMode::NoDrag);
@@ -579,11 +579,11 @@ void MapView::_changeTool(Tool newTool, const bool quickChange) {
 
         }
         break;
-        case Tool::Scroll:
+        case MapTool::Scroll:
             this->setInteractive(false);
             this->setDragMode(QGraphicsView::DragMode::ScrollHandDrag);
             break;
-        case Tool::Default:
+        case MapTool::Default:
         default:
             this->setInteractive(true);
             this->setDragMode(QGraphicsView::DragMode::RubberBandDrag);
@@ -594,17 +594,23 @@ void MapView::_changeTool(Tool newTool, const bool quickChange) {
 
 
 //on received action
-void MapView::onActionRequested(const MapTools::Actions &action) {
+void MapView::onActionRequested(const MapAction &action) {
+    
     switch(action) {
-        case MapTools::Actions::ResetView:
+        
+        case MapAction::ResetView:
             this->goToDefaultViewState();
             break;
-        case MapTools::Actions::ResetTool:
+
+        case MapAction::ResetTool:
             this->_resetTool();
             break;
+
         default:
             break;
+            
     }
+
 }
 
 void MapView::onHelperActionTriggered(QAction *action) {

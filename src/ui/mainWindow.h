@@ -26,8 +26,11 @@
 #include "src/ui/chat/ChatWidget.h"
 #include "src/ui/audio/AudioManager.h"
 #include "src/ui/map/MapView.h"
-#include "src/ui/map/MapTools.h"
+
+#include "src/ui/map/MapTools.hpp"
 #include "src/ui/map/MapHelpers.hpp"
+#include "src/ui/map/MapActions.hpp"
+
 #include "src/ui/mapLayout/MapLayoutManager.h"
 #include "src/ui/users/players/PlayersListView.hpp"
 #include "src/ui/users/standard/StandardUsersListView.hpp"
@@ -66,6 +69,7 @@ class MainWindow : public QMainWindow {
         bool _mustLaunchServer = true;
         void _initConnectivity();
 
+        MapActions* _mapActions = nullptr;
         MapHelpers* _mapHelpers = nullptr;
         PlayersListView* _playersView = nullptr;
         StandardUsersListView* _usersView = nullptr;
