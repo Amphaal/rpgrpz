@@ -121,8 +121,8 @@ bool MapHint::loadRPZMap(const QString &filePath) {
     return true;
 }
 
-double MapHint::tileToMeterRatio() {
-    return 1.5;
+double MapHint::tileToMeterRatio() const {
+    return AppContext::DEFAULT_TILE_TO_METER_RATIO;
 }
 
 

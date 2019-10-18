@@ -26,7 +26,7 @@
 #include "src/shared/commands/AtomsContextualMenuHandler.h"
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 
-class MapLayoutTree : public RPZTree, public AtomsContextualMenuHandler {
+class MapLayoutTree : public RPZTree {
 
     public:
         MapLayoutTree(AtomsStorage* mapMaster, QWidget* parent = nullptr);
@@ -48,6 +48,7 @@ class MapLayoutTree : public RPZTree, public AtomsContextualMenuHandler {
     private:
         void _resizeSections();
 
+        AtomsContextualMenuHandler* _menuHandler = nullptr;
         TreeMapHint* _hints = nullptr;
         void _handleHintsSignalsAndSlots();
 

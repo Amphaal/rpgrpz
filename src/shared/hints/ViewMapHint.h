@@ -34,12 +34,12 @@ class ViewMapHint : public AtomsStorage {
         ViewMapHint();
 
         //might be called by another thread, safe
-        void deleteCurrentSelectionItems() const;
-        void integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem) const;
+        RPZAtomId integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem) const;
         const RPZAtom templateAtom() const;
         QGraphicsItem* ghostItem() const;
 
         const QVector<RPZAtomId> getAtomIdsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const; //safe
+        const RPZAtomId getAtomIdFromGraphicsItem(const QGraphicsItem* toFetch) const; 
 
         QGraphicsItem* generateTemporaryItemFromTemplateBuffer(); //safe
 
@@ -95,5 +95,4 @@ class ViewMapHint : public AtomsStorage {
         virtual void _updatesDone(const AtomsUpdates &updates) override;
         virtual void _ownerChangeDone(const QList<RPZAtomId> &updatedIds, const RPZUser &newUser) override;
 
-        const RPZAtomId _getAtomIdFromGraphicsItem(const QGraphicsItem* toFetch) const;
 };

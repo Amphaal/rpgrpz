@@ -42,9 +42,8 @@
 
 #include "modules/MV_Manipulation.hpp"
 #include "modules/MV_HUDLayout.hpp"
-#include "modules/MV_Drawing.hpp"
 
-#include "src/helpers/StringHelper.hpp"
+#include "assists/DrawingAssist.hpp"
 
 class MapView : public QGraphicsView, public ClientBindable, public MV_Manipulation, public MV_HUDLayout {
 
@@ -88,7 +87,6 @@ class MapView : public QGraphicsView, public ClientBindable, public MV_Manipulat
         void drawForeground(QPainter *painter, const QRectF &rect) override;
 
     private slots:
-        void _displayHeavyLoadPlaceholder();
         void _onUIAlterationRequest(const PayloadAlteration &type, const QList<QGraphicsItem*> &toAlter);
         void _onUIUpdateRequest(const QHash<QGraphicsItem*, AtomUpdates> &toUpdate);
         void _onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const AtomUpdates &updates);
@@ -99,7 +97,7 @@ class MapView : public QGraphicsView, public ClientBindable, public MV_Manipulat
         void _onIdentityReceived(const RPZUser &self);
 
     private:
-        QSizeF _stdTileSize;
+        DrawingAssist* _drawingAssist = nullptr;
         MapHint* _hints = nullptr;
         AtomsContextualMenuHandler* _menuHandler = nullptr;
         static inline constexpr int _defaultSceneSize = 36000;
@@ -107,29 +105,8 @@ class MapView : public QGraphicsView, public ClientBindable, public MV_Manipulat
         void _handleHintsSignalsAndSlots();
         void _updateItemValue(QGraphicsItem* item, const AtomUpdates &updates);
 
-        //manipulation and storage of standard items
-        QSet<QGraphicsItem*> _nonHUDItems;
-        void _addNonHUDItem(QGraphicsItem* toAdd);
-        void _removeNonHUDItem(QGraphicsItem* toRemove);
-        void _clearNonHUDItems();
-
-        //helper
-        QTimer _debounceSelection;
-        
-        //background / foreground
-        QPixmap _heavyLoadImage;
-        int _heavyLoadExpectedCount = -1;
-        int _heavyLoadCurrentCount = -1;
-        QColor _heavyLoadColor;
-        void _endHeavyLoadPlaceholder();
-        void _mayUpdateHeavyLoadPlaceholder(QPainter* painter);
-        void _updateHeavyLoadPlaceholder();
-        void _mayUpdateHUD(QPainter* painter, const QRectF &rect);
-
-            //drawing HUD helpers
-            void _mayDrawZoomIndic(QPainter* painter, const QRect &viewportRect, double currentScale);
-            void _mayDrawScaleIndic(QPainter* painter, const QRect &viewportRect, double currentScale);
-            void _mayDrawGridIndic(QPainter* painter, const QRectF &rect, double currentScale);
+        //selection...
+        QTimer _selectionDebouncer;
 
         //ghost
             void _mightCenterGhostWithCursor();
@@ -143,20 +120,7 @@ class MapView : public QGraphicsView, public ClientBindable, public MV_Manipulat
             Tool _getCurrentTool() const;
             void _changeTool(Tool newTool, bool quickChange = false);
             void _resetTool();
-
-        //drawing...
-            MapViewGraphicsPathItem* _tempDrawing = nullptr;
-            QList<QGraphicsItem*> _tempDrawingHelpers;
-            bool _stickyBrushIsDrawing = false;
-            int _stickyBrushValidNodeCount = 0;
-
-            void _destroyTempDrawing();
-            void _beginDrawing(const QPoint &lastPointMousePressed);
-            void _endDrawing();
-            void _updateDrawingPath(const QPoint &evtPoint);
-            void _updateDrawingPathForBrush(const QPointF &pathCoord, QPainterPath &pathToAlter, MapViewGraphicsPathItem* sourceTemplate);
-            void _savePosAsStickyNode(const QPoint &evtPoint);
         
-        //on move
+        bool _canCUDMapItems();
         void onAnimationManipulationTickDone() override;
 };

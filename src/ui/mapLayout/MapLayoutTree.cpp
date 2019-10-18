@@ -1,9 +1,9 @@
 #include "MapLayoutTree.h"
 
-MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) : 
-    RPZTree(parent), 
-    AtomsContextualMenuHandler(mapMaster, this),
-    _hints(new TreeMapHint) {
+MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) : RPZTree(parent) {
+    
+    this->_hints = new TreeMapHint;
+    this->_menuHandler = new AtomsContextualMenuHandler(mapMaster, this);
     
     this->_hints->moveToThread(new QThread);
     this->_hints->thread()->setObjectName("TreeLayoutThread");
@@ -299,7 +299,7 @@ void MapLayoutTree::contextMenuEvent(QContextMenuEvent *event) {
     );
 
     //create menu
-    this->invokeMenu(ids, pos);
+    this->_menuHandler->invokeMenu(ids, pos);
 
 }
 
@@ -312,7 +312,7 @@ void MapLayoutTree::keyPressEvent(QKeyEvent * event) {
 
         //deletion handling
         case Qt::Key::Key_Delete:
-            this->removeSelectedAtoms();
+            this->_menuHandler->removeSelectedAtoms();
             break;
     }
 

@@ -30,7 +30,6 @@ class AtomsContextualMenuHandler {
         AtomsStorage* _mapMaster = nullptr;  
 
         static inline QVector<RPZAtomId> _copyClipboard;
-        static inline QVector<RPZAtomId> _latestInvokedAtomIds;
         static inline PossibleActionsOnAtomList _latestPossibleActions;
 
         QAction* _removeAction = nullptr;

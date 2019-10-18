@@ -40,7 +40,7 @@ void ViewMapHint::setDefaultLayer(int layer) {
 void ViewMapHint::notifyFocusedItem(QGraphicsItem* focusedItem) {
     
     //extract id
-    auto id = this->_getAtomIdFromGraphicsItem(focusedItem);
+    auto id = this->getAtomIdFromGraphicsItem(focusedItem);
     if(!id) return;
 
     //send payload
@@ -57,7 +57,7 @@ void ViewMapHint::mightNotifyMovement(const QList<QGraphicsItem*> &itemsWhoMight
     for(auto gi : itemsWhoMightHaveMoved) {
         
         //find id
-        auto id = this->_getAtomIdFromGraphicsItem(gi);
+        auto id = this->getAtomIdFromGraphicsItem(gi);
         if(!id) continue;
 
         //find corresponding atom
@@ -104,11 +104,8 @@ void ViewMapHint::setDefaultUser(const RPZUser &user) {
         this->_templateAtom.setOwnership(user); //update template
     }
 
-    this->_m_ghostItem.lock();
-    auto ghostItem = this->_ghostItem;
-    this->_m_ghostItem.unlock();
-
-    if(ghostItem) {
+    //if ghost item exists, tell it may have been updated
+    if(auto ghostItem = this->ghostItem()) {
         emit requestingUIUserChange({ghostItem}, user);
     }
 
@@ -121,11 +118,6 @@ void ViewMapHint::setDefaultUser(const RPZUser &user) {
 /////////////////////////////
 // Atom insertion helpers //
 /////////////////////////////
-
-void ViewMapHint::deleteCurrentSelectionItems() const {
-    RemovedPayload payload(this->bufferedSelectedAtomIds());
-    AlterationHandler::get()->queueAlteration(this, payload);
-}
 
 QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZToyMetadata &assetMetadata) {
 
@@ -180,22 +172,29 @@ QGraphicsItem* ViewMapHint::generateTemporaryItemFromTemplateBuffer() {
     QMutexLocker l2(&this->_m_templateAsset);
 
     return CustomGraphicsItemHelper::createGraphicsItem(
-                this->_templateAtom, 
-                this->_templateAsset, 
-                true
-            );
+        this->_templateAtom, 
+        this->_templateAsset, 
+        true
+    );
 }
 
-void ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsItem) const {
-    if(!graphicsItem) return;
+RPZAtomId ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsItem) const {
     
-    QMutexLocker l1(&this->_m_templateAtom);
-
+    if(!graphicsItem) return 0;
+    
     //from ghost item / temporary drawing
-    auto newAtom = AtomConverter::graphicsToAtom(graphicsItem, this->_templateAtom);
-    AddedPayload payload(newAtom);
+    RPZAtom newAtom;
+    {
+        QMutexLocker l1(&this->_m_templateAtom);
+        newAtom = AtomConverter::graphicsToAtom(graphicsItem, this->_templateAtom);
+    }
 
+    //queue
+    AddedPayload payload(newAtom);
     AlterationHandler::get()->queueAlteration(this, payload);
+
+    return newAtom.id();
+    
 }
 
 /////////////////////////////////
@@ -235,7 +234,10 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuil
     }
 
     //save pointer ref
-    this->_crossBindingAtomWithGI((RPZAtom*)&atomToBuildFrom, newItem);
+    this->_crossBindingAtomWithGI(
+        (RPZAtom*)&atomToBuildFrom, 
+        newItem
+    );
 
     return newItem;
 }
@@ -258,7 +260,7 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZToyMetadata &metadat
     for(auto item : setOfGraphicsItemsToReplace) {
         
         //find id
-        auto id = this->_getAtomIdFromGraphicsItem(item);
+        auto id = this->getAtomIdFromGraphicsItem(item);
         if(!id) continue;
 
         //find corresponding atom
@@ -330,7 +332,7 @@ const QVector<RPZAtomId> ViewMapHint::getAtomIdsFromGraphicsItems(const QList<QG
     QVector<RPZAtomId> list;
 
     for(auto e : listToFetch) {
-        auto id = _getAtomIdFromGraphicsItem(e);
+        auto id = this->getAtomIdFromGraphicsItem(e);
         if(id) list += id;
     }
 
@@ -338,7 +340,7 @@ const QVector<RPZAtomId> ViewMapHint::getAtomIdsFromGraphicsItems(const QList<QG
 
 }
 
-const RPZAtomId ViewMapHint::_getAtomIdFromGraphicsItem(const QGraphicsItem* toFetch) const {
+const RPZAtomId ViewMapHint::getAtomIdFromGraphicsItem(const QGraphicsItem* toFetch) const {
     
     if(!toFetch) {
         qWarning() << "Cannot fetch Atom Id from this non-existant GraphicsItem...";

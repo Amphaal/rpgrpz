@@ -17,7 +17,7 @@ class MapHint : public ViewMapHint {
         static void mayWantToSavePendingState(QWidget* parent, MapHint* hint); //must block UI
         
         bool defineAsRemote(const QString &remoteMapDescriptor = QString());
-        double tileToMeterRatio();
+        double tileToMeterRatio() const;
 
     public slots:
         bool loadDefaultRPZMap(); //to invoke
