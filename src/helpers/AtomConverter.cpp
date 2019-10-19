@@ -164,7 +164,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
             case AtomParameter::Hidden: {
                 if(!_isTemporary(itemToUpdate)) {
                     auto hidden = val.toBool();
-                    auto opacity = hidden ? .05 : 1;
+                    auto opacity = hidden ? 0 : 1;
                     itemToUpdate->setOpacity(opacity);
                 }
             }
