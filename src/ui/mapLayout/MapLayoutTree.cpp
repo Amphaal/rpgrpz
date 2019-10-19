@@ -290,16 +290,13 @@ TreeMapHint* MapLayoutTree::hints() const {
 }
 
 void MapLayoutTree::contextMenuEvent(QContextMenuEvent *event) {
-    
-    auto pos = this->viewport()->mapToGlobal(
-        event->pos()
-    );
+
     auto ids = this->_extractRPZAtomIdFromItems(
         this->selectedItems()
     );
 
     //create menu
-    this->_menuHandler->invokeMenu(ids, pos);
+    this->_menuHandler->invokeMenu(ids, event->globalPos());
 
 }
 

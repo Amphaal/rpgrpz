@@ -18,7 +18,7 @@ void AtomsContextualMenuHandler::redoAlteration() {
 }
 
 void AtomsContextualMenuHandler::copySelectedAtomsToClipboard() {
-    _copyClipboard = this->_mapMaster->bufferedSelectedAtomIds();
+    _copyClipboard = _latestInvokedAtomIds;
 }
 
 void AtomsContextualMenuHandler::pasteAtomsFromClipboard() {
@@ -32,25 +32,25 @@ void AtomsContextualMenuHandler::pasteAtomsFromClipboard() {
 }
 
 void AtomsContextualMenuHandler::removeSelectedAtoms() {
-    RemovedPayload payload(this->_mapMaster->bufferedSelectedAtomIds());
+    RemovedPayload payload(_latestInvokedAtomIds);
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 
 }
 
 void AtomsContextualMenuHandler::moveSelectedAtomsToLayer(int targetLayer) {
-    MetadataChangedPayload payload(this->_mapMaster->bufferedSelectedAtomIds(), {{AtomParameter::Layer, targetLayer}});
+    MetadataChangedPayload payload(_latestInvokedAtomIds, {{AtomParameter::Layer, targetLayer}});
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 
 }
 
 void AtomsContextualMenuHandler::alterSelectedAtomsVisibility(bool isHidden) {
-    MetadataChangedPayload payload(this->_mapMaster->bufferedSelectedAtomIds(), {{AtomParameter::Hidden, isHidden}});
+    MetadataChangedPayload payload(_latestInvokedAtomIds, {{AtomParameter::Hidden, isHidden}});
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 
 }
 
 void AtomsContextualMenuHandler::alterSelectedAtomsAvailability(bool isLocked) {
-    MetadataChangedPayload payload(this->_mapMaster->bufferedSelectedAtomIds(), {{AtomParameter::Locked, isLocked}});
+    MetadataChangedPayload payload(_latestInvokedAtomIds, {{AtomParameter::Locked, isLocked}});
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 
 }
@@ -59,6 +59,7 @@ void AtomsContextualMenuHandler::invokeMenu(const QVector<RPZAtomId> &toManipula
     
     //get instr
     _latestPossibleActions = this->_mapMaster->getPossibleActions(toManipulate);
+    _latestInvokedAtomIds = toManipulate;
     
     //display menu
     QMenu menu(this->_menuParent);

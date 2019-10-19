@@ -244,15 +244,12 @@ void MapView::drawBackground(QPainter *painter, const QRectF &rect) {
 
 void MapView::contextMenuEvent(QContextMenuEvent *event) {
 
-    auto pos = this->viewport()->mapToGlobal(
-        event->pos()
-    );
     auto ids = this->_hints->getAtomIdsFromGraphicsItems(
         this->scene()->selectedItems()
     );
 
     //create menu
-    this->_menuHandler->invokeMenu(ids, pos);
+    this->_menuHandler->invokeMenu(ids, event->globalPos());
 
 }
 

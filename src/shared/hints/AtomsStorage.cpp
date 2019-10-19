@@ -119,11 +119,6 @@ const AtomsSelectionDescriptor AtomsStorage::getAtomSelectionDescriptor(const QV
     return out;
 }
 
-QVector<RPZAtomId> AtomsStorage::bufferedSelectedAtomIds() const {
-    QMutexLocker l(&this->_m_handlingLock);
-    return this->_selectedRPZAtomIds.toList().toVector();
-}
-
 /////////////
 // HISTORY //
 /////////////
@@ -343,24 +338,21 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
         this->_redoHistory.clear();
     }
 
-    //on selection changed
-    if(pType == PayloadAlteration::PA_Selected) {
-        this->_selectedRPZAtomIds.clear();
-    }
-
-    QList<RPZAtomId> alterationsIds;
-
     //reset/insert types
     if(auto mPayload = dynamic_cast<AtomsWielderPayload*>(&payload)) {
+        
+        QList<RPZAtomId> insertedIds;
+        
         for (const auto &atom : mPayload->atoms()) {
 
             auto storedAtom = this->_insertAtom(atom);
             auto id = atom.id();
             
-            alterationsIds += id;
+            insertedIds += id;
+
         }
 
-        this->_basicAlterationDone(alterationsIds, pType);
+        this->_basicAlterationDone(insertedIds, pType);
     }
 
     //bulk
@@ -380,19 +372,20 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
 
     //multi target format
     else if(auto mPayload = dynamic_cast<MultipleAtomTargetsPayload*>(&payload)) {
-        auto ids = mPayload->targetRPZAtomIds();      
-
+        
+        QList<RPZAtomId> alteredIds;
         AtomUpdates maybeUpdates;
         RPZUser maybeNewUser;
         
         if(auto nPayload = dynamic_cast<MetadataChangedPayload*>(&payload)) {
             maybeUpdates = nPayload->updates();
         } 
+
         else if (auto nPayload = dynamic_cast<OwnerChangedPayload*>(&payload)) {
             maybeNewUser = nPayload->newOwner();
         }
 
-        for (const auto &id : ids) {
+        for (const auto &id : mPayload->targetRPZAtomIds()) {
 
             auto atom = this->_getAtomFromId(id);
             if(!atom) continue;
@@ -402,11 +395,13 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
             if(pType == PayloadAlteration::PA_MetadataChanged) this->_updateAtom(atom, maybeUpdates);
             if(pType == PayloadAlteration::PA_OwnerChanged) atom = this->_changeOwner(atom, maybeNewUser);
 
+            alteredIds += id;
+
         }
 
-        if(!maybeUpdates.isEmpty()) this->_updatesDone(alterationsIds, maybeUpdates);
-        else if(!maybeNewUser.isEmpty()) this->_ownerChangeDone(alterationsIds, maybeNewUser);
-        else this->_basicAlterationDone(alterationsIds, pType);
+        if(!maybeUpdates.isEmpty()) this->_updatesDone(alteredIds, maybeUpdates);
+        else if(!maybeNewUser.isEmpty()) this->_ownerChangeDone(alteredIds, maybeNewUser);
+        else this->_basicAlterationDone(alteredIds, pType);
 
     }
 }
@@ -436,8 +431,6 @@ RPZAtom* AtomsStorage::_insertAtom(const RPZAtom &newAtom) {
 }
 
 RPZAtomId AtomsStorage::_ackSelection(RPZAtom* selectedAtom) {
-    auto id = selectedAtom->id();
-    this->_selectedRPZAtomIds.insert(id);
     return selectedAtom->id();
 }
 
@@ -460,9 +453,6 @@ RPZAtomId AtomsStorage::_removeAtom(RPZAtom* toRemove) {
 
     //unbind from owners
     this->_RPZAtomIdsByOwnerId[storedAtomOwner.id()].remove(id);
-
-    //remove from selection
-    this->_selectedRPZAtomIds.remove(id);
 
     //update atom inner hash
     this->_atomsById.remove(id); 
@@ -500,6 +490,7 @@ void AtomsStorage::duplicateAtoms(const QVector<RPZAtomId> &RPZAtomIdList) {
     
     //generate duplicated atoms
     auto newAtoms = this->_generateAtomDuplicates(RPZAtomIdList);
+    if(!newAtoms.count()) return;
 
     //request insertion
     AddedPayload added(newAtoms.values());
@@ -516,13 +507,13 @@ RPZMap<RPZAtom> AtomsStorage::_generateAtomDuplicates(const QVector<RPZAtomId> &
     RPZMap<RPZAtom> newAtoms;
 
     //create the new atoms from the selection
-    for(auto RPZAtomId : RPZAtomIdsToDuplicate) {
+    for(auto &atomId : RPZAtomIdsToDuplicate) {
         
         //skip if RPZAtomId does not exist
-        if(!this->_atomsById.contains(RPZAtomId)) continue;
+        if(!this->_atomsById.contains(atomId)) continue;
         
         //create copy atom, change ownership to self and update its id
-        RPZAtom newAtom(this->_atomsById.value(RPZAtomId));
+        RPZAtom newAtom(this->_atomsById.value(atomId));
         newAtom.shuffleId();
         newAtom.setOwnership(this->_defaultOwner);
 
