@@ -94,11 +94,6 @@ void MapView::_handleHintsSignalsAndSlots() {
         this, QOverload<const QList<QGraphicsItem*>&, const AtomUpdates&>::of(&MapView::_onUIUpdateRequest)
     );
 
-    QObject::connect(
-        this->_hints, &ViewMapHint::requestingUIUserChange,
-        this, &MapView::_onUIUserChangeRequest
-    );
-
 }
 
 //
@@ -131,20 +126,6 @@ void MapView::_onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const At
     for(auto item : toUpdate) {
         this->_updateItemValue(item, updates);
     }
-}
-
-void MapView::_onUIUserChangeRequest(const QList<QGraphicsItem*> &toUpdate, const RPZUser &newUser) {
-    
-    auto newColor = newUser.color();
-    
-    for(auto item : toUpdate) {
-        if(auto pathItem = dynamic_cast<QGraphicsPathItem*>(item)) {
-            auto c_pen = pathItem->pen();
-            c_pen.setColor(newColor);
-            pathItem->setPen(c_pen);
-        } 
-    }
-    
 }
 
 void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<QGraphicsItem*> &toAlter) {
@@ -468,9 +449,6 @@ void MapView::_onIdentityReceived(const RPZUser &self) {
         this->_sendMapHistory();
     }
 
-    //define default creation user
-    this->_hints->setDefaultUser(self);
-
     //if host
     auto descriptor = self.role() == RPZUser::Role::Host ? NULL : this->_rpzClient->getConnectedSocketAddress();
     bool is_remote = this->_hints->defineAsRemote(descriptor);
@@ -536,7 +514,7 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
     else {
 
         //since clearSelection wont trigger notification, hard call notification on reset
-        if(this->_tool == Atom && newTool == Default) {
+        if(this->_tool == MapTool::Atom && newTool == MapTool::Default) {
             this->_hints->notifySelectedItems(
                 this->scene()->selectedItems()
             );
@@ -637,7 +615,7 @@ void MapView::onAnimationManipulationTickDone() {
 }
 
 bool MapView::_canCUDMapItems() {
-    if(this->_getCurrentTool() != Atom) return false;
+    if(this->_getCurrentTool() != MapTool::Atom) return false;
     if(!this->_rpzClient) return true;
     return this->_rpzClient->identity().role() == RPZUser::Role::Host;
 }

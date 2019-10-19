@@ -88,7 +88,6 @@ class MapView : public QGraphicsView, public ClientBindable, public MV_Manipulat
         void _onUIAlterationRequest(const PayloadAlteration &type, const QList<QGraphicsItem*> &toAlter);
         void _onUIUpdateRequest(const QHash<QGraphicsItem*, AtomUpdates> &toUpdate);
         void _onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const AtomUpdates &updates);
-        void _onUIUserChangeRequest(const QList<QGraphicsItem*> &toUpdate, const RPZUser &newUser);
 
         //network
         void _sendMapHistory();

@@ -27,7 +27,6 @@ class TreeMapHint : public AlterationAcknoledger {
         TreeMapHint();
 
         QTreeWidgetItem* getLayerItem(int layer) const; //safe
-        void updateOwnerFromItems(QVector<QTreeWidgetItem*> items, const RPZUser &owner); //safe
         void updateLockedState(QTreeWidgetItem* item, bool isLocked); //safe
         void propagateFocus(RPZAtomId focusedRPZAtomId); //safe
         void propagateSelection(QVector<RPZAtomId> &selectedIds); //safe
@@ -36,7 +35,6 @@ class TreeMapHint : public AlterationAcknoledger {
         void requestingUIAlteration(const PayloadAlteration &type, const QList<QTreeWidgetItem*> &toAlter);
         void requestingUIUpdate(const QHash<QTreeWidgetItem*, AtomUpdates> &toUpdate);
         void requestingUIUpdate(const QList<QTreeWidgetItem*> &toUpdate, const AtomUpdates &updates);
-        void requestingUIUserChange(const QList<QTreeWidgetItem*> &toUpdate, const RPZUser &newUser);
         void requestingUIMove(const QHash<int, QList<QTreeWidgetItem*>> &childrenMovedToLayer);
 
     private slots:

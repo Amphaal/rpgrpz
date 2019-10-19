@@ -1,11 +1,11 @@
 #include "RPZAtom.h"
 
 RPZAtom::RPZAtom() {}
-RPZAtom::RPZAtom(const QVariantHash &hash) : Ownable(hash) {}
-RPZAtom::RPZAtom(RPZAtomId id, const AtomType &type, const RPZUser &owner) : Ownable(id, owner) {
+RPZAtom::RPZAtom(const QVariantHash &hash) : Serializable(hash) {}
+RPZAtom::RPZAtom(RPZAtomId id, const AtomType &type) : Serializable(id) {
     this->_setType(type);
 };
-RPZAtom::RPZAtom(const AtomType &type) : Ownable(SnowFlake::get()->nextId()) {
+RPZAtom::RPZAtom(const AtomType &type) : Serializable(SnowFlake::get()->nextId()) {
     this->_setType(type);  
 };
 

@@ -315,35 +315,10 @@ void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
     JSONSocket::_debugLog("RPZServer", method, logMsg);
 }
 
-
-void RPZServer::_alterIncomingPayloadWithUpdatedOwners(AtomsWielderPayload &wPayload, JSONSocket * senderSocket) {
-    
-    auto &defaultOwner = this->_getUser(senderSocket); 
-    auto updated = wPayload.updateEmptyUser(defaultOwner);
-    
-    //if sender sent no user atoms
-    if(updated.count()) {
-
-        //tell him that he owns them now
-        OwnerChangedPayload OCPayload(updated, defaultOwner);
-        auto source = this->_hints->source();
-        OCPayload.changeSource(source);
-
-        //send...
-        this->_sendToAll(JSONMethod::MapChanged, OCPayload);
-
-    }
-}
-
 void RPZServer::_broadcastMapChanges(JSONMethod method, AlterationPayload &payload, JSONSocket * senderSocket) {
 
     //prevent alteration ack if sender is not host
     if(this->_getUser(senderSocket).role() != RPZUser::Role::Host) return;
-
-    //update owners if necessary
-    if(auto wPayload = dynamic_cast<AtomsWielderPayload*>(&payload)) {
-        this->_alterIncomingPayloadWithUpdatedOwners(*wPayload, senderSocket);
-    }
 
     //save for history
     this->_hints->handleAlterationRequest(payload);

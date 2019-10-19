@@ -19,7 +19,7 @@ class Stampable : public Ownable {
         }
 
         virtual QString toString() const {
-            const auto ts = this->timestamp().toString("dd.MM.yyyy-hh:mm:ss");
+            const auto ts = this->timestamp().toString(QStringLiteral(u"dd.MM.yyyy-hh:mm:ss"));
             const auto name = this->owner().name();
             return QStringLiteral(u"[%1] %2").arg(ts).arg(name);
         }

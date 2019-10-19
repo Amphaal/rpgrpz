@@ -45,12 +45,12 @@ enum class BrushType {
 typedef QString RPZAssetHash; //file hash of the asset
 typedef snowflake_uid RPZAtomId;
 
-class RPZAtom : public Ownable {
+class RPZAtom : public Serializable {
     
     public:
         RPZAtom();
         RPZAtom(const QVariantHash &hash);
-        RPZAtom(RPZAtomId id, const AtomType &type, const RPZUser &owner);
+        RPZAtom(RPZAtomId id, const AtomType &type);
         RPZAtom(const AtomType &type);
 
         AtomType type() const;

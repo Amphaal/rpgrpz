@@ -55,7 +55,7 @@ void LogWriter::customMO(QtMsgType type, const QMessageLogContext &context, cons
 void LogWriter::_fprtint(const QString &channel, const QMessageLogContext &context, QString msg) {
     
     msg = msg.replace("\n", "");
-    auto currentTime = QDateTime::currentDateTime().toString("dd.MM.yyyy-hh:mm:ss.zzz");
+    auto currentTime = QDateTime::currentDateTime().toString(QStringLiteral(u"dd.MM.yyyy-hh:mm:ss.zzz"));
 
     fprintf(stderr, "%s %s | %s\n", 
         qUtf8Printable(currentTime), 
@@ -96,7 +96,7 @@ void LogWriter::_fprintf_to_file(FILE* _fs, const QString &channel, const QMessa
     const char * function = context.function ? context.function : "";
 
     msg = msg.replace("\n", "");
-    auto currentTime = QDateTime::currentDateTime().toString("dd.MM.yyyy-hh:mm:ss.zzz");
+    auto currentTime = QDateTime::currentDateTime().toString(QStringLiteral(u"dd.MM.yyyy-hh:mm:ss.zzz"));
 
     fprintf(_fs, "%s %s | %s\n", 
         qUtf8Printable(currentTime), 

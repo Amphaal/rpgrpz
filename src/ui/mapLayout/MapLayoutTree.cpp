@@ -20,7 +20,6 @@ MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) : RPZTre
 
     this->setColumnCount(3);
     this->setItemDelegateForColumn(1, new LockAndVisibilityDelegate);
-    this->setItemDelegateForColumn(2, new OwnerDelegate);
     
     this->setSelectionBehavior(QAbstractItemView::SelectRows);
     this->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -57,12 +56,6 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
     QObject::connect(
         this->_hints, &TreeMapHint::requestingUIMove,
         this, &MapLayoutTree::_onUIMoveRequest
-    );
-
-    //owner change
-    QObject::connect(
-        this->_hints, &TreeMapHint::requestingUIUserChange,
-        this, &MapLayoutTree::_onUIUserChangeRequest
     );
 
     //on updates
@@ -186,11 +179,6 @@ void MapLayoutTree::_onUIUpdateRequest(const QList<QTreeWidgetItem*> &toUpdate, 
 
     this->_resizeSections();
 
-}
-
-void MapLayoutTree::_onUIUserChangeRequest(const QList<QTreeWidgetItem*> &toUpdate, const RPZUser &newUser) {
-    this->_hints->updateOwnerFromItems(toUpdate.toVector(), newUser);
-    this->_resizeSections();
 }
 
 void MapLayoutTree::_onUIMoveRequest(const QHash<int, QList<QTreeWidgetItem*>> &childrenMovedToLayer) {

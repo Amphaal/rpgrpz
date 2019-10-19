@@ -58,21 +58,17 @@ class AtomsStorage : public AlterationAcknoledger {
     protected:
         RPZAtom* _getAtomFromId(const RPZAtomId &id);
 
-        void _bindDefaultOwner(const RPZUser &newOwner);
-
         virtual void _handleAlterationRequest(AlterationPayload &payload) override;
         virtual void _atomsCreated() {};
 
         virtual RPZAtom* _insertAtom(const RPZAtom &newAtom);
         RPZAtomId _ackSelection(RPZAtom* selectedAtom);
-        virtual RPZAtom* _changeOwner(RPZAtom* atomWithNewOwner, const RPZUser &newOwner);
         RPZAtomId _removeAtom(RPZAtom* toRemove);
         RPZAtomId _updateAtom(RPZAtom* toUpdate, const AtomUpdates &updates);
         
         virtual void _basicAlterationDone(const QList<RPZAtomId> &updatedIds, const PayloadAlteration &type) {};
         virtual void _updatesDone(const QList<RPZAtomId> &updatedIds, const AtomUpdates &updates) {};
         virtual void _updatesDone(const AtomsUpdates &updates) {};
-        virtual void _ownerChangeDone(const QList<RPZAtomId> &updatedIds, const RPZUser &newUser) {};
 
     private:
         mutable QMutex _m_handlingLock;
@@ -80,10 +76,6 @@ class AtomsStorage : public AlterationAcknoledger {
         //atoms list 
         QHash<RPZAssetHash, int> _assetIdsUsed;
         RPZMap<RPZAtom> _atomsById;
-
-        //credentials handling
-        QHash<RPZUserId, QSet<RPZAtomId>> _RPZAtomIdsByOwnerId;
-        RPZUser _defaultOwner;
 
         // redo/undo
         QStack<AlterationPayload> _redoHistory;

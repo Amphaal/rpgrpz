@@ -18,27 +18,6 @@ void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZA
         updateGraphicsItemFromMetadata(target, param, val);
     }
 
-    //specific update on type 
-    switch(blueprint.type()) {
-        
-        //on drawing...
-        case AtomType::Drawing: {
-
-            //update pen color to owner
-            if(auto casted = dynamic_cast<MapViewGraphicsPathItem*>(target)) {      
-                auto pen = casted->pen();
-                pen.setColor(blueprint.owner().color());
-                casted->setPen(pen);
-            }
-
-        }
-        break;
-
-        default:
-            break;
-
-    }
-
     //update transform origin
     auto center = blueprint.shapeCenter();
     target->setTransformOriginPoint(center);

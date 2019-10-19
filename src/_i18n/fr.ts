@@ -1210,7 +1210,7 @@
 <context>
     <name>TreeMapHint</name>
     <message>
-        <location filename="../shared/hints/TreeMapHint.cpp" line="242"/>
+        <location filename="../shared/hints/TreeMapHint.cpp" line="231"/>
         <source>Layer %1</source>
         <translation>Calque %1</translation>
     </message>

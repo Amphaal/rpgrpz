@@ -45,7 +45,6 @@ class ViewMapHint : public AtomsStorage {
         void mightNotifyMovement(const QList<QGraphicsItem*> &itemsWhoMightHaveMoved); //safe
         void notifySelectedItems(const QList<QGraphicsItem*> &selectedItems); //safe
         void notifyFocusedItem(QGraphicsItem* focusedItem); //safe
-        void setDefaultUser(const RPZUser &user); //safe
         void setDefaultLayer(int layer); //safe
 
         //handle preview alteration before real payload
@@ -55,7 +54,6 @@ class ViewMapHint : public AtomsStorage {
         void requestingUIAlteration(const PayloadAlteration &type, const QList<QGraphicsItem*> &toAlter);
         void requestingUIUpdate(const QHash<QGraphicsItem*, AtomUpdates> &toUpdate);
         void requestingUIUpdate(const QList<QGraphicsItem*> &toUpdate, const AtomUpdates &updates);
-        void requestingUIUserChange(const QList<QGraphicsItem*> &toUpdate, const RPZUser &newUser);
 
     protected:
         virtual void _handleAlterationRequest(AlterationPayload &payload) override;
@@ -86,11 +84,9 @@ class ViewMapHint : public AtomsStorage {
 
         //augmenting AtomsStorage
         virtual RPZAtom* _insertAtom(const RPZAtom &newAtom) override;
-        virtual RPZAtom* _changeOwner(RPZAtom* atomWithNewOwner, const RPZUser &newOwner) override;
 
         virtual void _basicAlterationDone(const QList<RPZAtomId> &updatedIds, const PayloadAlteration &type) override;
         virtual void _updatesDone(const QList<RPZAtomId> &updatedIds, const AtomUpdates &updates) override;
         virtual void _updatesDone(const AtomsUpdates &updates) override;
-        virtual void _ownerChangeDone(const QList<RPZAtomId> &updatedIds, const RPZUser &newUser) override;
 
 };

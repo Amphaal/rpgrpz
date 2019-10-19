@@ -66,17 +66,6 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
 
     }
 
-    //on owner changing
-    else if(auto mPayload = dynamic_cast<OwnerChangedPayload*>(&payload)) {
-
-        for (auto &id : mPayload->targetRPZAtomIds()) {
-            out += this->_atomTreeItemsById.value(id);
-        }
-
-        emit requestingUIUserChange(out, mPayload->newOwner());
-    
-    }
-
     //on remove
     else if(auto mPayload = dynamic_cast<RemovedPayload*>(&payload)) {
 
@@ -250,20 +239,7 @@ void TreeMapHint::_mayCreateLayerItem(int layer) {
         
     //add to layout
     this->_layersItems.insert(layer, layerElem);
-}
-
-void TreeMapHint::updateOwnerFromItems(QVector<QTreeWidgetItem*> items, const RPZUser &owner) {
     
-    auto ownerId = owner.id();
-    auto ownerColor = owner.color();
-    auto ownerAsStr = owner.toString();
-
-    for(auto item : items) {
-        item->setData(2, RPZUserRoles::OwnerId, ownerId);
-        item->setData(2, RPZUserRoles::UserColor, ownerColor);
-        item->setData(2, Qt::ToolTipRole, ownerAsStr);
-    }
-
 }
 
 QTreeWidgetItem* TreeMapHint::_createTreeItem(const RPZAtom &atom) {
@@ -291,7 +267,6 @@ QTreeWidgetItem* TreeMapHint::_createTreeItem(const RPZAtom &atom) {
 
     item->setData(1, RPZUserRoles::AtomVisibility, atom.isHidden());
     this->updateLockedState(item, atom.isLocked());
-    this->updateOwnerFromItems({item}, atom.owner());
 
     switch(type) {
         case AtomType::Drawing:

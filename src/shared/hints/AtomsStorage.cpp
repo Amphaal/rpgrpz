@@ -312,10 +312,6 @@ RPZAtom* AtomsStorage::_getAtomFromId(const RPZAtomId &id) {
 
 }
 
-void AtomsStorage::_bindDefaultOwner(const RPZUser &newOwner) {
-    this->_defaultOwner = newOwner;
-}
-
 void AtomsStorage::handleAlterationRequest(AlterationPayload &payload) { 
     return this->_handleAlterationRequest(payload);
 }
@@ -333,7 +329,6 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
     if(pType == PayloadAlteration::PA_Reset) {
         this->_atomsById.clear();
         this->_assetIdsUsed.clear();
-        this->_RPZAtomIdsByOwnerId.clear();
         this->_undoHistory.clear();
         this->_redoHistory.clear();
     }
@@ -375,15 +370,10 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
         
         QList<RPZAtomId> alteredIds;
         AtomUpdates maybeUpdates;
-        RPZUser maybeNewUser;
         
         if(auto nPayload = dynamic_cast<MetadataChangedPayload*>(&payload)) {
             maybeUpdates = nPayload->updates();
         } 
-
-        else if (auto nPayload = dynamic_cast<OwnerChangedPayload*>(&payload)) {
-            maybeNewUser = nPayload->newOwner();
-        }
 
         for (const auto &id : mPayload->targetRPZAtomIds()) {
 
@@ -393,14 +383,12 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
             if(pType == PayloadAlteration::PA_Selected) this->_ackSelection(atom);
             if(pType == PayloadAlteration::PA_Removed) this->_removeAtom(atom);
             if(pType == PayloadAlteration::PA_MetadataChanged) this->_updateAtom(atom, maybeUpdates);
-            if(pType == PayloadAlteration::PA_OwnerChanged) atom = this->_changeOwner(atom, maybeNewUser);
 
             alteredIds += id;
 
         }
 
         if(!maybeUpdates.isEmpty()) this->_updatesDone(alteredIds, maybeUpdates);
-        else if(!maybeNewUser.isEmpty()) this->_ownerChangeDone(alteredIds, maybeNewUser);
         else this->_basicAlterationDone(alteredIds, pType);
 
     }
@@ -412,11 +400,8 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
 //
 
 RPZAtom* AtomsStorage::_insertAtom(const RPZAtom &newAtom) {
-    auto owner = newAtom.owner();
-    auto RPZAtomId = newAtom.id();
 
-    //bind to owners
-    this->_RPZAtomIdsByOwnerId[owner.id()].insert(RPZAtomId);
+    auto RPZAtomId = newAtom.id();
 
     //bind elem
     this->_atomsById.insert(RPZAtomId, newAtom);
@@ -428,31 +413,17 @@ RPZAtom* AtomsStorage::_insertAtom(const RPZAtom &newAtom) {
     }
     
     return &this->_atomsById[RPZAtomId];
+    
 }
 
 RPZAtomId AtomsStorage::_ackSelection(RPZAtom* selectedAtom) {
     return selectedAtom->id();
 }
 
-RPZAtom* AtomsStorage::_changeOwner(RPZAtom* atomWithNewOwner, const RPZUser &newOwner) {
-    auto currentOwnerId = atomWithNewOwner->owner().id();
-    auto RPZAtomId = atomWithNewOwner->id();
-
-    atomWithNewOwner->setOwnership(newOwner);
-
-    this->_RPZAtomIdsByOwnerId[currentOwnerId].remove(RPZAtomId);
-    this->_RPZAtomIdsByOwnerId[newOwner.id()].insert(RPZAtomId);
-
-    return atomWithNewOwner;
-}
-
 RPZAtomId AtomsStorage::_removeAtom(RPZAtom* toRemove) {
-    auto storedAtomOwner = toRemove->owner();
+
     auto id = toRemove->id();
     auto assetId = toRemove->assetId();
-
-    //unbind from owners
-    this->_RPZAtomIdsByOwnerId[storedAtomOwner.id()].remove(id);
 
     //update atom inner hash
     this->_atomsById.remove(id); 
@@ -465,6 +436,7 @@ RPZAtomId AtomsStorage::_removeAtom(RPZAtom* toRemove) {
     }
 
     return id;
+
 }
 
 RPZAtomId AtomsStorage::_updateAtom(RPZAtom* toUpdate, const AtomUpdates &updates) {
@@ -512,10 +484,9 @@ RPZMap<RPZAtom> AtomsStorage::_generateAtomDuplicates(const QVector<RPZAtomId> &
         //skip if RPZAtomId does not exist
         if(!this->_atomsById.contains(atomId)) continue;
         
-        //create copy atom, change ownership to self and update its id
+        //create copy atom, update its id
         RPZAtom newAtom(this->_atomsById.value(atomId));
         newAtom.shuffleId();
-        newAtom.setOwnership(this->_defaultOwner);
 
         //find new position for the duplicated atom
         auto newPos = _getPositionFromAtomDuplication(newAtom, this->_duplicationCount);

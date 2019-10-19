@@ -8,7 +8,6 @@
 #include "withTarget/FocusedPayload.hpp"
 #include "withTarget/RemovedPayload.hpp"
 #include "withTarget/SelectedPayload.hpp"
-#include "withTarget/OwnerChangedPayload.hpp"
 #include "withTarget/MetadataChangedPayload.hpp"
 #include "local/AssetChangedPayload.hpp"
 #include "local/AtomTemplateChangedPayload.hpp"
@@ -62,10 +61,6 @@ class Payloads {
 
                 case PayloadAlteration::PA_Selected:
                     return QSharedPointer<SelectedPayload>(new SelectedPayload(hash));
-                break;
-
-                case PayloadAlteration::PA_OwnerChanged:
-                    return QSharedPointer<OwnerChangedPayload>(new OwnerChangedPayload(hash));
                 break;
 
                 case PayloadAlteration::PA_MetadataChanged:

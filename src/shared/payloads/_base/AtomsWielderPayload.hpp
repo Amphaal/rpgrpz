@@ -41,31 +41,6 @@ class AtomsWielderPayload : public AlterationPayload {
             return out;
         }
 
-        QVector<RPZAtomId> updateEmptyUser(const RPZUser &user) {
-            
-            auto atoms = this->atoms();
-
-            QVector<RPZAtomId> updatedRPZAtomIds;
-
-            for(auto &atom : atoms) {
-
-                auto currentOwner = atom.owner();
-
-                //override ownership on absent owner data
-                if(currentOwner.isEmpty()) {
-
-                    atom.setOwnership(user);
-                    updatedRPZAtomIds.append(atom.id());
-
-                }
-
-            }
-
-            this->_setAddedAtoms(atoms);
-
-            return updatedRPZAtomIds;
-        }
-
     private:
         void _setAddedAtoms(const RPZMap<RPZAtom> &atoms) {
             QVariantMap list;

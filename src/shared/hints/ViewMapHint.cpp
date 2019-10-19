@@ -90,31 +90,6 @@ void ViewMapHint::notifySelectedItems(const QList<QGraphicsItem*> &selectedItems
     AlterationHandler::get()->queueAlteration(this, payload);
 }
 
-//////////////////
-// Pen handling //
-//////////////////
-
-
-void ViewMapHint::setDefaultUser(const RPZUser &user) {
-    
-    this->_bindDefaultOwner(user);
-    
-    {
-        QMutexLocker m(&this->_m_templateAtom);
-        this->_templateAtom.setOwnership(user); //update template
-    }
-
-    //if ghost item exists, tell it may have been updated
-    if(auto ghostItem = this->ghostItem()) {
-        emit requestingUIUserChange({ghostItem}, user);
-    }
-
-}
-
-//////////////////////
-// END Pen handling //
-//////////////////////
-
 /////////////////////////////
 // Atom insertion helpers //
 /////////////////////////////
@@ -449,17 +424,6 @@ RPZAtom* ViewMapHint::_insertAtom(const RPZAtom &newAtom) {
     return updatedAtom;
 }
 
-RPZAtom* ViewMapHint::_changeOwner(RPZAtom* atomWithNewOwner, const RPZUser &newOwner) {
-    auto updatedAtom = AtomsStorage::_changeOwner(atomWithNewOwner, newOwner);
-    
-    //filter by determining if is a drawing type if it must be altered
-    if(updatedAtom->type() != AtomType::Drawing) {
-        return nullptr;
-    }
-
-    return updatedAtom;
-}
-
 void ViewMapHint::_basicAlterationDone(const QList<RPZAtomId> &updatedIds, const PayloadAlteration &type) {
     QList<QGraphicsItem*> toUpdate;
     for(auto id : updatedIds) {
@@ -484,14 +448,6 @@ void ViewMapHint::_updatesDone(const AtomsUpdates &updates) {
         toUpdate.insert(gi, i.value());
     }
     emit requestingUIUpdate(toUpdate);
-}
-
-void ViewMapHint::_ownerChangeDone(const QList<RPZAtomId> &updatedIds, const RPZUser &newUser) {
-    QList<QGraphicsItem*> toUpdate;
-    for(auto id : updatedIds) {
-        toUpdate += this->_GItemsByRPZAtomId.value(id);
-    }
-    emit requestingUIUserChange(toUpdate, newUser);
 }
 
 /////////////////////////////////
