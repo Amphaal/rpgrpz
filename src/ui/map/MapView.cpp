@@ -339,7 +339,8 @@ void MapView::mousePressEvent(QMouseEvent *event) {
         case Qt::MouseButton::LeftButton: {
             
             //check if inserts are allowed
-            if(!this->_canCUDMapItems()) break;
+            if(this->_getCurrentTool() != MapTool::Atom) break;
+            if(!ClientBindable::isHostAble()) break;
             
             //conditionnal drawing
             auto type = this->_hints->templateAtom().type();
@@ -612,10 +613,4 @@ void MapView::_mightCenterGhostWithCursor() {
 
 void MapView::onAnimationManipulationTickDone() {
     this->_mightCenterGhostWithCursor();
-}
-
-bool MapView::_canCUDMapItems() {
-    if(this->_getCurrentTool() != MapTool::Atom) return false;
-    if(!this->_rpzClient) return true;
-    return this->_rpzClient->identity().role() == RPZUser::Role::Host;
 }

@@ -10,6 +10,8 @@ class ClientBindable {
         static void bindAll(RPZClient* cc);
         static void unbindAll();
 
+        static bool isHostAble();
+
         static QVector<ClientBindable*> boundWidgets();
 
     virtual void onRPZClientDisconnect();

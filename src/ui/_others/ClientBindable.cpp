@@ -25,6 +25,11 @@ void ClientBindable::bindAll(RPZClient* cc) {
 
 }
 
+bool ClientBindable::isHostAble() {
+    if(!_rpzClient) return true;
+    return _rpzClient->identity().role() == RPZUser::Role::Host;
+}
+
 void ClientBindable::_onClientThreadFinished() {
     _rpzClient = nullptr;
     QMetaObject::invokeMethod(ClientBindableMain::get(), "trigger");

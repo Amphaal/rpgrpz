@@ -118,6 +118,5 @@ class MapView : public QGraphicsView, public ClientBindable, public MV_Manipulat
             void _changeTool(MapTool newTool, bool quickChange = false);
             void _resetTool();
         
-        bool _canCUDMapItems();
         void onAnimationManipulationTickDone() override;
 };
