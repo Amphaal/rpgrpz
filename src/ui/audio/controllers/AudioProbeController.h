@@ -9,7 +9,7 @@
 #include <QDragMoveEvent>
 #include <QDragEnterEvent>
 
-#include "src/ui/_others/ClientBindable.h"
+#include "src/ui/_others/ConnectivityObserver.h"
 
 #include "base/VolumeToolbar.h"
 #include "src/helpers/StringHelper.hpp"

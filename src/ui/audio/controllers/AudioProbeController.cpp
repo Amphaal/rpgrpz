@@ -8,6 +8,7 @@ AudioProbeController::AudioProbeController(QWidget * parent) : QGroupBox(tr("Pla
     toolbar(new VolumeToolbar) {
 
     //bind animation to label
+    this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     this->setAlignment(Qt::AlignHCenter);
     this->_playIconLbl->setMovie(this->_playIcon);
     

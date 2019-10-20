@@ -11,10 +11,10 @@
 #include "RPZStatusLabel.h"
 #include "ClientActivityIndicator.hpp"
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
-#include "src/ui/_others/ClientBindable.h"
+#include "src/ui/_others/ConnectivityObserver.h"
 #include "DownloadStatus.hpp"
 
-class RPZStatusBar : public QStatusBar, public ClientBindable {
+class RPZStatusBar : public QStatusBar, public ConnectivityObserver {
 
     Q_OBJECT
 
@@ -40,7 +40,7 @@ class RPZStatusBar : public QStatusBar, public ClientBindable {
         void _installComponents();
         void _installLayout();
 
-        virtual void onRPZClientConnecting() override;
-        virtual void onRPZClientDisconnect() override;
+        virtual void connectingToServer() override;
+        virtual void connectionClosed() override;
 
 }; 

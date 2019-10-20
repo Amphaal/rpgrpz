@@ -13,7 +13,7 @@
 #include "src/shared/database/AssetsDatabase.h"
 
 #include "src/shared/async-ui/AlterationActor.hpp"
-#include "src/ui/_others/ClientBindable.h"
+#include "src/ui/_others/ConnectivityObserver.h"
 
 class AssetsTreeViewModel : public QAbstractItemModel {
     

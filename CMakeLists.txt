@@ -190,12 +190,6 @@ list(APPEND SOURCES
     ${HPP_FILES}
 )
 
-# #Debug files
-# list(APPEND SOURCES
-#     "src/helpers/_appContext.cpp"
-#     "src/_tests/main.cpp"
-# )
-
 #generate translations
 qt5_create_translation(QM_FILES 
     ${CMAKE_CURRENT_SOURCE_DIR}/src 

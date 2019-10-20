@@ -89,7 +89,7 @@ class DownloadStatus : public QProgressBar {
 
         }
 
-        static inline QString _tooltipDescriptionTemplate = "%1 : %2/%3";
+        static inline QString _tooltipDescriptionTemplate = QStringLiteral(u"%1 : %2/%3");
         static QString kindToText(const ProgressTracker::Kind &kind) {
             switch (kind) {
                 case ProgressTracker::Kind::Asset:

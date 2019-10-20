@@ -9,11 +9,11 @@
 #include <QCompleter>
 #include <QStringListModel>
 
-#include "src/ui/_others/ClientBindable.h"
+#include "src/ui/_others/ConnectivityObserver.h"
 
 #include "src/shared/models/base/RPZList.hpp"
 
-class ChatEdit : public QWidget, public ClientBindable {
+class ChatEdit : public QWidget, public ConnectivityObserver {
 
     Q_OBJECT
 
@@ -25,7 +25,7 @@ class ChatEdit : public QWidget, public ClientBindable {
     
     protected:
         void changeEvent(QEvent *event) override;
-        void onRPZClientConnecting() override;
+        void connectingToServer() override;
 
     private:
         QLineEdit* _msgEdit = nullptr;

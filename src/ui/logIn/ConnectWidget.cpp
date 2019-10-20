@@ -156,7 +156,7 @@ void ConnectWidget::_tryConnectToServer() {
 
     QObject::connect(
         this->_cc, &RPZClient::receivedLogHistory, 
-        this, &ConnectWidget::_onRPZClientConnecting
+        this, &ConnectWidget::_connectingToServer
     );
 
     QObject::connect(
@@ -185,7 +185,7 @@ void ConnectWidget::_onRPZClientStatus(const QString &statusMsg, bool isError) {
     this->_changeState(State::NotConnected);
 
 }
-void ConnectWidget::_onRPZClientConnecting() {
+void ConnectWidget::_connectingToServer() {
     this->_changeState(State::Connected);
 }
 

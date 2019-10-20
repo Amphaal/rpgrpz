@@ -54,7 +54,7 @@ void ChatWidget::_onReceivedLogHistory(const QVector<RPZMessage> &messages) {
     this->_chatLog->handleResponse(response);
 }
 
-void ChatWidget::onRPZClientConnecting() {
+void ChatWidget::connectingToServer() {
     
     this->serverName = _rpzClient->getConnectedSocketAddress();
     

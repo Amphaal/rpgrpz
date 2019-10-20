@@ -39,7 +39,7 @@ class AssetsDatabaseElement : public QObject {
         static QList<AssetsDatabaseElement::Type> movableStaticContainerTypes();
 
         static AssetsDatabaseElement* fromIndex(const QModelIndex &index);
-        static inline const QString listMimeType = "application/x-assets-db-elem-list";
+        static inline const QString listMimeType = QStringLiteral(u"application/x-assets-db-elem-list");
         static AtomType toAtomType(const AssetsDatabaseElement::Type &type);
 
         AssetsDatabaseElement(const QString &name, AssetsDatabaseElement* parent, const AssetsDatabaseElement::Type &type = Folder);

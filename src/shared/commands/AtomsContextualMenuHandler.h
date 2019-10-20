@@ -4,7 +4,7 @@
 #include "src/shared/commands/RPZActions.h"
 #include "src/shared/payloads/Payloads.h"
 
-#include "src/ui/_others/ClientBindable.h"
+#include "src/ui/_others/ConnectivityObserver.h"
 
 #include <QAction>
 #include <QWidget>

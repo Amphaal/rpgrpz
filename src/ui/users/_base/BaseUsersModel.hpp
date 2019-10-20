@@ -5,9 +5,9 @@
 #include <QIcon>
 
 #include "src/shared/models/character/RPZCharacter.hpp"
-#include "src/ui/_others/ClientBindable.h"
+#include "src/ui/_others/ConnectivityObserver.h"
 
-class BaseUsersModel : public QAbstractListModel, public ClientBindable {
+class BaseUsersModel : public QAbstractListModel, public ConnectivityObserver {
     
     public:
         BaseUsersModel() { };
@@ -22,13 +22,13 @@ class BaseUsersModel : public QAbstractListModel, public ClientBindable {
 
         virtual bool _isUserInvalidForInsert(const RPZUser &user) = 0;
 
-        void onRPZClientDisconnect() override {
+        void connectionClosed() override {
             this->beginResetModel();
                 this->_users.clear();
             this->endResetModel();
         }
 
-        void onRPZClientConnecting() override {
+        void connectingToServer() override {
             
             //update all users
             QObject::connect(

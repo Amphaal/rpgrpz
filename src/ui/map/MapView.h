@@ -25,7 +25,7 @@
 
 #include "src/shared/hints/MapHint.h"
 #include "src/shared/models/RPZAtom.h"
-#include "src/ui/_others/ClientBindable.h"
+#include "src/ui/_others/ConnectivityObserver.h"
 
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/network/rpz/client/RPZClient.h"
@@ -45,7 +45,7 @@
 
 #include "assists/DrawingAssist.hpp"
 
-class MapView : public QGraphicsView, public ClientBindable, public MV_Manipulation, public MV_HUDLayout {
+class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Manipulation, public MV_HUDLayout {
 
     Q_OBJECT
 
@@ -66,8 +66,8 @@ class MapView : public QGraphicsView, public ClientBindable, public MV_Manipulat
         void enterEvent(QEvent *event) override;
         void leaveEvent(QEvent *event) override;
 
-        void onRPZClientConnecting() override;
-        void onRPZClientDisconnect() override;
+        void connectingToServer() override;
+        void connectionClosed() override;
 
         void contextMenuEvent(QContextMenuEvent *event) override;
 

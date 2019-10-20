@@ -47,11 +47,11 @@ void RPZStatusBar::updateMapFileLabel(const QString &mapDescriptor, bool isMapDi
     this->_mapFileLabel->updateState(reflectDirtiness);
 }
 
-void RPZStatusBar::onRPZClientConnecting() {
+void RPZStatusBar::connectingToServer() {
     this->_activityIndicators->setVisible(true);
 }
 
-void RPZStatusBar::onRPZClientDisconnect() {
+void RPZStatusBar::connectionClosed() {
     this->_activityIndicators->setVisible(false);
     this->_dlStatus->setVisible(false);
 }

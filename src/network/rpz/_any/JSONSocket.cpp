@@ -43,8 +43,8 @@ void JSONSocket::sendJSON(const JSONMethod &method, const QVariant &data) {
 
     //format document
     QJsonObject json_payload;
-    json_payload.value(QStringLiteral(u"_m")) = method;
-    json_payload.value(QStringLiteral(u"_d")) = data.toJsonValue();
+    json_payload.insert(QStringLiteral(u"_m"), method);
+    json_payload.insert(QStringLiteral(u"_d"), data.toJsonValue());
     QJsonDocument payload_doc(json_payload);
 
     //send !

@@ -24,7 +24,7 @@ ChatEdit::ChatEdit(QWidget * parent) : QWidget(parent),
 
 }
 
-void ChatEdit::onRPZClientConnecting() {
+void ChatEdit::connectingToServer() {
 
     //on user connected
     QObject::connect(

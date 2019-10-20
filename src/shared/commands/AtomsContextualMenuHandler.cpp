@@ -11,23 +11,23 @@ AtomsContextualMenuHandler::AtomsContextualMenuHandler(AtomsStorage* mapMaster, 
     }
 
 void AtomsContextualMenuHandler::undoAlteration() {
-    if(!ClientBindable::isHostAble()) return;
+    if(!ConnectivityObserver::isHostAble()) return;
     QMetaObject::invokeMethod(this->_mapMaster, "undo");
 }
 void AtomsContextualMenuHandler::redoAlteration() {
-    if(!ClientBindable::isHostAble()) return;
+    if(!ConnectivityObserver::isHostAble()) return;
     QMetaObject::invokeMethod(this->_mapMaster, "redo");
 }
 
 void AtomsContextualMenuHandler::copySelectedAtomsToClipboard() {
-    if(!ClientBindable::isHostAble()) return;
+    if(!ConnectivityObserver::isHostAble()) return;
     _copyClipboard = _latestInvokedAtomIds;
 }
 
 void AtomsContextualMenuHandler::pasteAtomsFromClipboard() {
     
     if(!_copyClipboard.count()) return;
-    if(!ClientBindable::isHostAble()) return;
+    if(!ConnectivityObserver::isHostAble()) return;
     
     QMetaObject::invokeMethod(this->_mapMaster, "duplicateAtoms", 
         Q_ARG(QVector<RPZAtomId>, _copyClipboard)
@@ -36,28 +36,28 @@ void AtomsContextualMenuHandler::pasteAtomsFromClipboard() {
 }
 
 void AtomsContextualMenuHandler::removeSelectedAtoms() {
-    if(!ClientBindable::isHostAble()) return;
+    if(!ConnectivityObserver::isHostAble()) return;
     RemovedPayload payload(_latestInvokedAtomIds);
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 
 }
 
 void AtomsContextualMenuHandler::moveSelectedAtomsToLayer(int targetLayer) {
-    if(!ClientBindable::isHostAble()) return;
+    if(!ConnectivityObserver::isHostAble()) return;
     MetadataChangedPayload payload(_latestInvokedAtomIds, {{AtomParameter::Layer, targetLayer}});
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 
 }
 
 void AtomsContextualMenuHandler::alterSelectedAtomsVisibility(bool isHidden) {
-    if(!ClientBindable::isHostAble()) return;
+    if(!ConnectivityObserver::isHostAble()) return;
     MetadataChangedPayload payload(_latestInvokedAtomIds, {{AtomParameter::Hidden, isHidden}});
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 
 }
 
 void AtomsContextualMenuHandler::alterSelectedAtomsAvailability(bool isLocked) {
-    if(!ClientBindable::isHostAble()) return;
+    if(!ConnectivityObserver::isHostAble()) return;
     MetadataChangedPayload payload(_latestInvokedAtomIds, {{AtomParameter::Locked, isLocked}});
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 
@@ -66,7 +66,7 @@ void AtomsContextualMenuHandler::alterSelectedAtomsAvailability(bool isLocked) {
 void AtomsContextualMenuHandler::invokeMenu(const QVector<RPZAtomId> &toManipulate, const QPoint &whereToDisplay) {
     
     //get instr
-    _latestPossibleActions = ClientBindable::isHostAble() ? 
+    _latestPossibleActions = ConnectivityObserver::isHostAble() ? 
                                 this->_mapMaster->getPossibleActions(toManipulate) :
                                 PossibleActionsOnAtomList();
     _latestInvokedAtomIds = toManipulate;

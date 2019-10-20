@@ -7,24 +7,24 @@
 #include "src/_libs/promise.hpp"
 
 #include "src/ui/audio/controllers/AudioProbeController.h"
-#include "src/ui/audio/controllers/PlaylistController.h"
+#include "src/ui/audio/controllers/YoutubePlayer.h"
 
 #include "src/shared/audio/GStreamerClient.h"
 
 #include "src/network/youtube/YoutubeHelper.h"
 
-#include "src/ui/_others/ClientBindable.h"
+#include "src/ui/_others/ConnectivityObserver.h"
 
 #include "src/shared/audio/StreamPlayStateTracker.hpp"
 
-class AudioManager : public QWidget, public ClientBindable {
+class AudioManager : public QWidget, public ConnectivityObserver {
     
     Q_OBJECT
     
     public:
         AudioManager(QWidget *parent = nullptr);
 
-        PlaylistController* _plCtrl = nullptr;
+        YoutubePlayer* player();
 
     private slots:
         void _onIdentityAck(const RPZUser &user);
@@ -34,15 +34,17 @@ class AudioManager : public QWidget, public ClientBindable {
         void _onAudioSourceStateChanged(const StreamPlayStateTracker &state);
 
     private:
-        StreamPlayStateTracker _state;
         AudioProbeController* _asCtrl = nullptr;
+        YoutubePlayer* _plCtrl = nullptr;
+
+        StreamPlayStateTracker _state;
         GStreamerClient* _cli = nullptr;
 
 
         bool _isLocalOnly = true;
         bool _isNetworkMaster = false;
-        void onRPZClientConnecting() override;
-        void onRPZClientDisconnect() override;
+        void connectingToServer() override;
+        void connectionClosed() override;
 
         void _link();
 

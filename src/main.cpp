@@ -16,8 +16,6 @@
 #include "ui/mainWindow.h"
 #include "ui/_others/AppLoader.hpp"
 
-#include "_tests/tests.hpp"
-
 #include <QDir>
 #include <QtCore/QLockFile>
 
@@ -132,15 +130,7 @@ int main(int argc, char** argv) {
     //default
     auto args = AppContext::getOptionArgs(argc, argv);
 
-    //conditionnal
-    if(args.contains(QStringLiteral(u"test"))) {
-        
-        //test app
-        return testApp(argc, argv);
-
-    } 
-    
-    else if (args.contains(QStringLiteral(u"serverOnly"))) {
+    if (args.contains(QStringLiteral(u"serverOnly"))) {
         
         //as server console
         return serverConsole(argc, argv);

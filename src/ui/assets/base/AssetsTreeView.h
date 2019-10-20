@@ -18,7 +18,7 @@
 
 #include "src/shared/models/RPZToyMetadata.h"
 
-class AssetsTreeView : public QTreeView, public ClientBindable, public AlterationActor {
+class AssetsTreeView : public QTreeView, public ConnectivityObserver, public AlterationActor {
 
     Q_OBJECT
 
@@ -36,7 +36,7 @@ class AssetsTreeView : public QTreeView, public ClientBindable, public Alteratio
         int _expectedAssetsTBDownloaded = 0;
         int _expectedAssetsDownloaded = 0;
 
-        void onRPZClientConnecting() override;
+        void connectingToServer() override;
 
         ///////////////////
         // drag and drop //

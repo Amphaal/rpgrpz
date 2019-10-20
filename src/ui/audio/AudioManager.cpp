@@ -2,18 +2,24 @@
 
 AudioManager::AudioManager(QWidget *parent) : QWidget(parent), 
     _cli(new GStreamerClient),   
-    _plCtrl(new PlaylistController), 
+    _plCtrl(new YoutubePlayer), 
     _asCtrl(new AudioProbeController) {
 
     //UI init
     this->_plCtrl->setEnabled(true);
-    this->setLayout(new QVBoxLayout);
+
+    auto layout = new QVBoxLayout;
+    this->setLayout(layout);
     this->setContentsMargins(0, 0, 0, 0);
-    this->layout()->addWidget(_plCtrl);
-    this->layout()->addWidget(_asCtrl);
+    layout->addWidget(_plCtrl, 1);
+    layout->addWidget(_asCtrl, 0, Qt::AlignBottom);
 
     //link between inner elements
     this->_link();
+}
+
+YoutubePlayer* AudioManager::player() {
+    return this->_plCtrl;
 }
 
 void AudioManager::_onIdentityAck(const RPZUser &user) {
@@ -34,10 +40,13 @@ void AudioManager::_onIdentityAck(const RPZUser &user) {
         );
 
     }
+
+    auto able = ConnectivityObserver::isHostAble();
+    //TODO
     
 }
 
-void AudioManager::onRPZClientConnecting() {
+void AudioManager::connectingToServer() {
     
     //reset state
     this->_isLocalOnly = false;
@@ -94,7 +103,7 @@ void AudioManager::_onAudioPlayStateChanged(bool isPlaying) {
     else this->_cli->pause();
 }
 
-void AudioManager::onRPZClientDisconnect() {
+void AudioManager::connectionClosed() {
     
     if(!this->_isNetworkMaster) {
         this->_stopPlayingMusic();
@@ -111,19 +120,19 @@ void AudioManager::_link() {
     
     //on play requested from playlist
     QObject::connect(
-        this->_plCtrl->playlist, &Playlist::playRequested,
+        this->_plCtrl->playlist(), &Playlist::playRequested,
         this, &AudioManager::_onToolbarPlayRequested
     );
 
         //on action required from toolbar
     QObject::connect(
-        this->_plCtrl->toolbar, &TrackToolbar::actionRequired,
+        this->_plCtrl->toolbar(), &TrackToolbar::actionRequired,
         this, &AudioManager::_onToolbarActionRequested
     );
 
     //on seeking from toolbar
     QObject::connect(
-        this->_plCtrl->toolbar, &TrackToolbar::seeking,
+        this->_plCtrl->toolbar(), &TrackToolbar::seeking,
         this, qOverload<int>(&AudioManager::_onSeekingRequested)
     );
 
@@ -243,7 +252,7 @@ void AudioManager::_onToolbarPlayRequested(YoutubeVideoMetadata* metadata) {
         this->_state.registerNewPlay(streamUrl, title, duration);
 
         //update UI
-        this->_plCtrl->toolbar->newTrack(duration);
+        this->_plCtrl->toolbar()->newTrack(duration);
 
         //play audio cli
         this->_playAudio(streamUrl, title, 0);
@@ -268,11 +277,11 @@ void AudioManager::_onStreamError() {
     this->_state.clear();
 
     //update UI
-    this->_plCtrl->toolbar->endTrack();
+    this->_plCtrl->toolbar()->endTrack();
     this->_asCtrl->updatePlayedMusic(NULL);
 
     //tells that current play failed
-    auto currentPlay = this->_plCtrl->playlist->currentPlay();
+    auto currentPlay = this->_plCtrl->playlist()->currentPlay();
     currentPlay->setFailure(true);
 }
 
@@ -285,7 +294,7 @@ void AudioManager::_stopPlayingMusic() {
     this->_cli->stop();
 
     //update UI
-    this->_plCtrl->toolbar->endTrack();
+    this->_plCtrl->toolbar()->endTrack();
     this->_asCtrl->updatePlayedMusic(NULL);
 
 }
@@ -296,7 +305,7 @@ void AudioManager::_onStreamPlayEnded() {
     
     //auto play
     if(this->_isNetworkMaster || this->_isLocalOnly) {
-        this->_plCtrl->playlist->playNext();
+        this->_plCtrl->playlist()->playNext();
     }
 
 }
@@ -305,7 +314,7 @@ void AudioManager::_onPlayerPositionChanged(int positionInSecs) {
     
     //update UI
     if(this->_isNetworkMaster || this->_isLocalOnly) {
-        this->_plCtrl->toolbar->updatePlayerPosition(positionInSecs);
+        this->_plCtrl->toolbar()->updatePlayerPosition(positionInSecs);
     }
 
     this->_asCtrl->changeTrackPosition(positionInSecs);

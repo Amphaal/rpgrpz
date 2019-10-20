@@ -6,11 +6,11 @@
 #include "CharacterSheet.hpp"
 #include "src/shared/database/CharactersDatabase.hpp"
 
-#include "src/ui/_others/ClientBindable.h"
+#include "src/ui/_others/ConnectivityObserver.h"
 
 #include "components/CharacterPicker.hpp"
 
-class CharacterEditor : public QWidget, public ClientBindable {
+class CharacterEditor : public QWidget, public ConnectivityObserver {
     
     Q_OBJECT
 
@@ -20,6 +20,8 @@ class CharacterEditor : public QWidget, public ClientBindable {
             _sheet(new CharacterSheet), 
             _saveCharacterBtn(new QPushButton),
             _characterPickerGrpBox(new QGroupBox) {
+
+            this->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
 
             //picker        
                 QObject::connect(
@@ -79,7 +81,7 @@ class CharacterEditor : public QWidget, public ClientBindable {
         }
 
     protected:
-        void onRPZClientConnecting() override {
+        void connectingToServer() override {
             
             QObject::connect(
                 this->_rpzClient, &RPZClient::allUsersReceived,
@@ -105,7 +107,7 @@ class CharacterEditor : public QWidget, public ClientBindable {
 
         }
 
-        void onRPZClientDisconnect() override {
+        void connectionClosed() override {
             this->_setMode(CharacterPicker::Mode::Local);
         }
 

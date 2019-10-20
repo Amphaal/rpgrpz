@@ -46,7 +46,7 @@ class ConnectWidget : public QWidget {
 
         void _onConnectButtonPressed();
         void _onRPZClientStatus(const QString &statusMsg, bool isError);
-        void _onRPZClientConnecting();
+        void _connectingToServer();
 
         void _saveValuesAsSettings();
 

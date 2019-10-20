@@ -13,7 +13,7 @@
 #include "src/shared/models/RPZResponse.h"
 
 #include "src/shared/models/RPZUser.h"
-#include "src/ui/_others/ClientBindable.h"
+#include "src/ui/_others/ConnectivityObserver.h"
 
 #include "ChatEdit.h"
 
@@ -21,12 +21,12 @@
 #include "logs/MessagesLog.h"
 
 
-class ChatWidget : public QWidget, public ClientBindable {
+class ChatWidget : public QWidget, public ConnectivityObserver {
 
     public:
         ChatWidget(QWidget *parent = nullptr);
 
-        void onRPZClientConnecting() override;
+        void connectingToServer() override;
 
     private:
         MessagesLog *_chatLog;

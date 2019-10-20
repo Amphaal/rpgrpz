@@ -5,8 +5,8 @@ RPZClient::RPZClient(const QString &socketStr, const QString &displayName, const
     _characterToIncarnate(toIncarnate) { 
     
     //split socket str
-    auto parts = socketStr.split(":", QString::SplitBehavior::SkipEmptyParts);
-    this->_domain = parts.value(0, "localhost");
+    auto parts = socketStr.split(QStringLiteral(u":"), QString::SplitBehavior::SkipEmptyParts);
+    this->_domain = parts.value(0, QStringLiteral(u"localhost"));
     this->_port = parts.value(1, AppContext::UPNP_DEFAULT_TARGET_PORT);
 
 }
@@ -90,7 +90,7 @@ void RPZClient::run() {
 
     //prerequisites
     if(this->_userDisplayName.isEmpty()) {
-        emit connectionStatus("Nom de joueur requis !", true);
+        emit connectionStatus(tr("Username required !"), true);
         emit closed();
     }
 
@@ -102,19 +102,21 @@ void RPZClient::run() {
 }
 
 void RPZClient::_onDisconnect() {
-    const QString msg = "Déconnecté du serveur";
-    emit connectionStatus(msg);
+    emit connectionStatus(tr("Disconnected from server"));
     qDebug() << "RPZClient : disconnected from server";
 }
 
 void RPZClient::_onConnected() {
     
+    RPZHandshake handshake(
+        this->_userDisplayName,
+        this->_characterToIncarnate
+    );
+
     //tell the server your username
-    this->_sock->sendJSON(JSONMethod::Handshake, 
-        RPZHandshake(
-            this->_userDisplayName,
-            this->_characterToIncarnate
-        )
+    this->_sock->sendJSON(
+        JSONMethod::Handshake,
+        handshake
     );
 
 }

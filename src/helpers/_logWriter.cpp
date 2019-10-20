@@ -20,22 +20,22 @@ void LogWriter::customMO(QtMsgType type, const QMessageLogContext &context, cons
     std::unique_lock<std::mutex> lock(_m);
 
     //channel
-    QString channel = "Default";
+    QString channel = QStringLiteral(u"Default");
     switch (type) {
         case QtDebugMsg:
-            channel = "Debug";
+            channel = QStringLiteral(u"Debug");
             break;
         case QtInfoMsg:
-            channel = "Info";
+            channel = QStringLiteral(u"Info");
             break;
         case QtWarningMsg:
-            channel = "Warning";
+            channel = QStringLiteral(u"Warning");
             break;
         case QtCriticalMsg:
-            channel = "Critical";
+            channel = QStringLiteral(u"Critical");
             break;
         case QtFatalMsg:
-            channel = "Fatal";
+            channel = QStringLiteral(u"Fatal");
             break;
     }
 

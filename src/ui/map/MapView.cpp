@@ -340,7 +340,7 @@ void MapView::mousePressEvent(QMouseEvent *event) {
             
             //check if inserts are allowed
             if(this->_getCurrentTool() != MapTool::Atom) break;
-            if(!ClientBindable::isHostAble()) break;
+            if(!ConnectivityObserver::isHostAble()) break;
             
             //conditionnal drawing
             auto type = this->_hints->templateAtom().type();
@@ -434,7 +434,7 @@ void MapView::wheelEvent(QWheelEvent *event) {
 /* NETWORK */
 /////////////
 
-void MapView::onRPZClientConnecting() {
+void MapView::connectingToServer() {
 
     //when self user send
     QObject::connect(
@@ -458,7 +458,7 @@ void MapView::_onIdentityReceived(const RPZUser &self) {
     
 }
 
-void MapView::onRPZClientDisconnect() {
+void MapView::connectionClosed() {
 
     //back to default state
     QMetaObject::invokeMethod(this->_hints, "loadDefaultRPZMap");

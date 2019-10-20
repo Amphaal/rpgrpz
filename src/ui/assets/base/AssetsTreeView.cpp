@@ -59,7 +59,7 @@ AssetsTreeView::AssetsTreeView(QWidget *parent) : QTreeView(parent),
 }
 
 
-void AssetsTreeView::onRPZClientConnecting() {
+void AssetsTreeView::connectingToServer() {
 
     //when server responded on available
     QObject::connect(

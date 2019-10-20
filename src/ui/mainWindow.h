@@ -16,6 +16,7 @@
 #include <QApplication>
 #include <QShortcut>
 #include <QToolTip>
+#include <QStackedWidget>
 
 #include <QFileDialog>
 
@@ -48,13 +49,21 @@
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 #include "src/ui/sheets/CharacterEditor.hpp"
 
-class MainWindow : public QMainWindow { 
+class MainWindow : public QMainWindow, public ConnectivityObserver { 
     
     Q_OBJECT
     
     public:
+        enum UIMode { Unset, Full, Player };
         MainWindow();
         ~MainWindow();
+    
+    protected:
+        void connectingToServer() override;
+        void connectionClosed() override;
+
+    private slots:
+        void _onConnectionToServer();
 
     private:
         void closeEvent(QCloseEvent *event) override;
@@ -69,20 +78,28 @@ class MainWindow : public QMainWindow {
         bool _mustLaunchServer = true;
         void _initConnectivity();
 
-        MapActions* _mapActions = nullptr;
-        MapHelpers* _mapHelpers = nullptr;
-        PlayersListView* _playersView = nullptr;
-        StandardUsersListView* _usersView = nullptr;
-        MapView* _mapView = nullptr;
-        ConnectWidget* _connectWidget = nullptr;
-        AudioManager* _audioManager = nullptr;
-        ChatWidget* _cw = nullptr;
-        AssetsManager* _assetsManager = nullptr;
-        MapTools* _mapTools = nullptr;
-        MapLayoutManager* _mlManager = nullptr;
-        AtomEditionManager* _atomEditManager = nullptr;
-        CharacterEditor* _characterEditor = nullptr;
-        void _initUIApp();
+        void _initAppComponents();
+            MapActions* _mapActions = nullptr;
+            MapHelpers* _mapHelpers = nullptr;
+            PlayersListView* _playersView = nullptr;
+            StandardUsersListView* _usersView = nullptr;
+            MapView* _mapView = nullptr;
+            ConnectWidget* _connectWidget = nullptr;
+            AudioManager* _audioManager = nullptr;
+            ChatWidget* _chatWidget = nullptr;
+            AssetsManager* _assetsManager = nullptr;
+            MapTools* _mapTools = nullptr;
+            MapLayoutManager* _mlManager = nullptr;
+            AtomEditionManager* _atomEditManager = nullptr;
+            CharacterEditor* _characterEditor = nullptr;
+
+        void _initAppUnmovableUI();
+        QTabWidget* _leftTab = nullptr;
+        QTabWidget* _rightTab = nullptr;
+
+        UIMode _currentAppUIMode = (UIMode)0;
+        const UIMode _defaultAppUIMode = UIMode::Full;
+        void _setupAppUI(UIMode mode);
 
         /*statusbar*/
         RPZStatusBar* _sb = nullptr;

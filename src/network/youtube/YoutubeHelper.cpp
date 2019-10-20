@@ -91,13 +91,16 @@ YoutubeVideoMetadata* YoutubeHelper::_augmentMetadataWithVideoInfos(
     //player response as JSON, check if error
     auto playerResponseAsStr = videoInfos.queryItemValue("player_response", QUrl::ComponentFormattingOption::FullyDecoded);
     auto playerResponse = QJsonDocument::fromJson(playerResponseAsStr.toUtf8());
-    auto pStatus = playerResponse[QStringLiteral(u"playabilityStatus")].toObject()[QStringLiteral(u"reason")].toString();
+    auto playabilityStatus = playerResponse[QStringLiteral(u"playabilityStatus")].toObject();
+    auto pStatus = playabilityStatus.value(QStringLiteral(u"reason")).toString();
+    
     if(!pStatus.isNull()) {
         throw new std::logic_error("An error occured while fetching video infos");
     }
 
     //set expiration flag
-    auto expiresIn = playerResponse[QStringLiteral(u"streamingData")].toObject()[QStringLiteral(u"expiresInSeconds")].toString().toDouble();
+    auto streamingData = playerResponse[QStringLiteral(u"streamingData")].toObject();
+    auto expiresIn = streamingData.value(QStringLiteral(u"expiresInSeconds")).toString().toDouble();
     metadata->setExpirationDate(
         tsRequest.addSecs((qint64)expiresIn)
     );
