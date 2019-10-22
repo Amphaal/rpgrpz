@@ -20,7 +20,7 @@
 #include "base/Ownable.hpp"
 #include "src/helpers/JSONSerializer.h"
 
-// defined values shared with AssetsDatabaseElement type for static casts
+// defined values shared with AssetsTreeViewItem type for static casts
 enum class AtomType { 
     Undefined, 
     Drawing,

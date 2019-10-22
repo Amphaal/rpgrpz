@@ -45,54 +45,54 @@
     </message>
 </context>
 <context>
-    <name>AssetsDatabaseElement</name>
+    <name>AssetsTreeViewItem</name>
     <message>
-        <location filename="../shared/assets/AssetsDatabaseElement.h" line="193"/>
+        <location filename="../shared/assets/AssetsTreeViewItem.h" line="193"/>
         <source>Internal</source>
         <translation>Interne</translation>
     </message>
     <message>
-        <location filename="../shared/assets/AssetsDatabaseElement.h" line="194"/>
+        <location filename="../shared/assets/AssetsTreeViewItem.h" line="194"/>
         <source>Player</source>
         <translation>Joueur</translation>
     </message>
     <message>
-        <location filename="../shared/assets/AssetsDatabaseElement.h" line="195"/>
+        <location filename="../shared/assets/AssetsTreeViewItem.h" line="195"/>
         <source>Event</source>
         <translation>Evénement</translation>
     </message>
     <message>
-        <location filename="../shared/assets/AssetsDatabaseElement.h" line="196"/>
+        <location filename="../shared/assets/AssetsTreeViewItem.h" line="196"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
-        <location filename="../shared/assets/AssetsDatabaseElement.h" line="197"/>
+        <location filename="../shared/assets/AssetsTreeViewItem.h" line="197"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../shared/assets/AssetsDatabaseElement.h" line="198"/>
+        <location filename="../shared/assets/AssetsTreeViewItem.h" line="198"/>
         <source>NPC / Portraits</source>
         <translation>PNJ / Portraits</translation>
     </message>
     <message>
-        <location filename="../shared/assets/AssetsDatabaseElement.h" line="199"/>
+        <location filename="../shared/assets/AssetsTreeViewItem.h" line="199"/>
         <source>Objects</source>
         <translation>Objets</translation>
     </message>
     <message>
-        <location filename="../shared/assets/AssetsDatabaseElement.h" line="200"/>
+        <location filename="../shared/assets/AssetsTreeViewItem.h" line="200"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../shared/assets/AssetsDatabaseElement.h" line="201"/>
+        <location filename="../shared/assets/AssetsTreeViewItem.h" line="201"/>
         <source>Downloaded</source>
         <translation>Téléchargés</translation>
     </message>
     <message>
-        <location filename="../shared/assets/AssetsDatabaseElement.h" line="202"/>
+        <location filename="../shared/assets/AssetsTreeViewItem.h" line="202"/>
         <source>Landscapes</source>
         <translation>Paysages</translation>
     </message>

@@ -4,14 +4,14 @@
 
 #include "RPZAtom.h"
 
-class AssetsDatabaseElement;
+class AssetsTreeViewItem;
 
 class RPZToyMetadata : public QVariantHash {
     public:
         RPZToyMetadata();
         RPZToyMetadata(const QVariantHash &hash);
         RPZToyMetadata(
-            AssetsDatabaseElement* parentContainer,
+            AssetsTreeViewItem* parentContainer,
             const AtomType &type, 
             const RPZAssetHash &assetId, 
             const QString &assetName, 
@@ -28,10 +28,10 @@ class RPZToyMetadata : public QVariantHash {
         QPointF center() const;
         QSize shapeSize() const;
 
-        AssetsDatabaseElement* associatedParent() const;
+        AssetsTreeViewItem* associatedParent() const;
 
         void setAtomType(const AtomType &type);
 
     private:
-        AssetsDatabaseElement* _parentContainer = nullptr;
+        AssetsTreeViewItem* _parentContainer = nullptr;
 };

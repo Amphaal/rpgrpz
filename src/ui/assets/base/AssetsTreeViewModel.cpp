@@ -8,9 +8,9 @@ AssetsDatabase* AssetsTreeViewModel::database() const {
     return this->_db;
 }
 
-QModelIndex AssetsTreeViewModel::getStaticContainerTypesIndex(const AssetsDatabaseElement::Type &staticContainerType) {
+QModelIndex AssetsTreeViewModel::getStaticContainerTypesIndex(const AssetsTreeViewItem::Type &staticContainerType) {
     
-    auto indexOf = AssetsDatabaseElement::staticContainerTypes().indexOf(staticContainerType);
+    auto indexOf = AssetsTreeViewItem::staticContainerTypes().indexOf(staticContainerType);
     
     auto root = this->index(0, 0);
     auto out = this->index(indexOf, 0, root);
@@ -21,8 +21,8 @@ QModelIndex AssetsTreeViewModel::getStaticContainerTypesIndex(const AssetsDataba
 RPZToyMetadata AssetsTreeViewModel::integrateAsset(const RPZAssetImportPackage &package) {
     
     //get where exactly the new asset is supposed to be
-    auto dlFolderIndex = this->getStaticContainerTypesIndex(AssetsDatabaseElement::Type::DownloadedContainer);
-    auto dlFolder = AssetsDatabaseElement::fromIndex(dlFolderIndex);
+    auto dlFolderIndex = this->getStaticContainerTypesIndex(AssetsTreeViewItem::Type::DownloadedContainer);
+    auto dlFolder = AssetsTreeViewItem::fromIndex(dlFolderIndex);
     auto posToInsert = dlFolder->childCount();
     
     this->beginInsertRows(dlFolderIndex, posToInsert, posToInsert);
@@ -36,7 +36,7 @@ RPZToyMetadata AssetsTreeViewModel::integrateAsset(const RPZAssetImportPackage &
 /// HELPERS ///
 ///////////////
 
-QPixmap AssetsTreeViewModel::getAssetIcon(AssetsDatabaseElement* target, QSize &sizeToApply) const {
+QPixmap AssetsTreeViewModel::getAssetIcon(AssetsTreeViewItem* target, QSize &sizeToApply) const {
     
     QPixmap toFind;
 
@@ -66,7 +66,7 @@ QPixmap AssetsTreeViewModel::getAssetIcon(AssetsDatabaseElement* target, QSize &
 bool AssetsTreeViewModel::createFolder(QModelIndex &parentIndex) {
     this->beginInsertRows(parentIndex, 0, 0);
     
-        auto data = AssetsDatabaseElement::fromIndex(parentIndex);
+        auto data = AssetsTreeViewItem::fromIndex(parentIndex);
         auto result = this->_db->createFolder(data);
 
     this->endInsertRows();
@@ -107,8 +107,8 @@ QPair<int, int> AssetsTreeViewModel::_anticipateInserts(const QModelIndexList &t
     int insertAtEnd = 0;
     
     for(auto &index : tbi) {
-        auto elem = AssetsDatabaseElement::fromIndex(index);
-        if(elem->type() == AssetsDatabaseElement::Type::Folder) insertAtBegin++;
+        auto elem = AssetsTreeViewItem::fromIndex(index);
+        if(elem->type() == AssetsTreeViewItem::Type::Folder) insertAtBegin++;
         else insertAtEnd++;
     }
 
@@ -121,11 +121,11 @@ bool AssetsTreeViewModel::moveItemsToContainer(const QModelIndex &parentIndex, c
     auto topMostIndexes = this->_getTopMostIndexes(indexesToMove);
 
     //to move indexes to elem list
-    QList<AssetsDatabaseElement*> elementsToMove;
-    for(auto &index : topMostIndexes) elementsToMove += AssetsDatabaseElement::fromIndex(index);
+    QList<AssetsTreeViewItem*> elementsToMove;
+    for(auto &index : topMostIndexes) elementsToMove += AssetsTreeViewItem::fromIndex(index);
 
     //parent index to elem
-    auto parentElem = AssetsDatabaseElement::fromIndex(parentIndex);
+    auto parentElem = AssetsTreeViewItem::fromIndex(parentIndex);
 
     //begin removes...
     for(auto &i : topMostIndexes) {
@@ -160,7 +160,7 @@ bool AssetsTreeViewModel::moveItemsToContainer(const QModelIndex &parentIndex, c
 bool AssetsTreeViewModel::insertAssets(QList<QUrl> &urls, const QModelIndex &parentIndex) {
     
     //data
-    auto dest = AssetsDatabaseElement::fromIndex(parentIndex);
+    auto dest = AssetsTreeViewItem::fromIndex(parentIndex);
     this->beginInsertRows(parentIndex, 0, urls.count());
 
     //for each url, insert
@@ -178,13 +178,13 @@ bool AssetsTreeViewModel::insertAssets(QList<QUrl> &urls, const QModelIndex &par
 bool AssetsTreeViewModel::removeItems(const QList<QModelIndex> &itemsIndexesToRemove) {
 
         //create list
-        QList<AssetsDatabaseElement*> items;
+        QList<AssetsTreeViewItem*> items;
         for(auto &index : itemsIndexesToRemove) {
             
             this->beginRemoveRows(index.parent(), index.row(), index.row());
 
             items.append(
-                AssetsDatabaseElement::fromIndex(index)
+                AssetsTreeViewItem::fromIndex(index)
             );
         }
         
@@ -209,11 +209,11 @@ QModelIndex AssetsTreeViewModel::index(int row, int column, const QModelIndex &p
     
     //if root element requested..
     if(!parent.isValid()) {
-        return this->createIndex(row, column, (AssetsDatabaseElement*)this->_db);
+        return this->createIndex(row, column, (AssetsTreeViewItem*)this->_db);
     }
     
     //prepare data
-    auto data = AssetsDatabaseElement::fromIndex(parent);
+    auto data = AssetsTreeViewItem::fromIndex(parent);
     return this->createIndex(row, column, data->child(row)); 
     
 }
@@ -224,7 +224,7 @@ QModelIndex AssetsTreeViewModel::parent(const QModelIndex &index) const {
     if(!index.isValid()) return QModelIndex();
 
     //prepare data
-    auto data = AssetsDatabaseElement::fromIndex(index);
+    auto data = AssetsTreeViewItem::fromIndex(index);
 
     //if root element requested..
     if(!data || data->isRoot()) {
@@ -245,7 +245,7 @@ Qt::ItemFlags AssetsTreeViewModel::flags(const QModelIndex &index) const {
     if(index.column()) return 0;
 
     //if no data pointer, return
-    auto data = AssetsDatabaseElement::fromIndex(index);
+    auto data = AssetsTreeViewItem::fromIndex(index);
     if(!data) return 0;
 
     //fetch flags
@@ -256,7 +256,7 @@ Qt::ItemFlags AssetsTreeViewModel::flags(const QModelIndex &index) const {
 QVariant AssetsTreeViewModel::data(const QModelIndex &index, int role) const {
     
     //bound data...
-    auto data = AssetsDatabaseElement::fromIndex(index);
+    auto data = AssetsTreeViewItem::fromIndex(index);
 
     //if no data pointer, return default
     if(!data) return QVariant();
@@ -290,14 +290,14 @@ QVariant AssetsTreeViewModel::data(const QModelIndex &index, int role) const {
             if(!iconPath.isEmpty()) return QIcon(iconPath);
 
             auto type = data->type();
-            QSize defaultQSize = type == AssetsDatabaseElement::Type::FloorBrush ? QSize(32, 32) : QSize(55, 55);
+            QSize defaultQSize = type == AssetsTreeViewItem::Type::FloorBrush ? QSize(32, 32) : QSize(55, 55);
 
             switch(type) {
-                case AssetsDatabaseElement::Type::NPC:
-                case AssetsDatabaseElement::Type::FloorBrush:
-                case AssetsDatabaseElement::Type::Object:
-                case AssetsDatabaseElement::Type::Background:
-                case AssetsDatabaseElement::Type::Downloaded: {  
+                case AssetsTreeViewItem::Type::NPC:
+                case AssetsTreeViewItem::Type::FloorBrush:
+                case AssetsTreeViewItem::Type::Object:
+                case AssetsTreeViewItem::Type::Background:
+                case AssetsTreeViewItem::Type::Downloaded: {  
                     
                     auto cachedPixmap = getAssetIcon(data, defaultQSize);
                     if(!cachedPixmap.isNull()) return cachedPixmap;
@@ -316,7 +316,7 @@ QVariant AssetsTreeViewModel::data(const QModelIndex &index, int role) const {
 
         case Qt::SizeHintRole: {
             auto type = data->type();
-            if(type == AssetsDatabaseElement::Type::NPC || type == AssetsDatabaseElement::Type::Object || type == AssetsDatabaseElement::Type::Downloaded)  {
+            if(type == AssetsTreeViewItem::Type::NPC || type == AssetsTreeViewItem::Type::Object || type == AssetsTreeViewItem::Type::Downloaded)  {
                 return QSize(0, 64);
             }
             return QVariant();
@@ -333,7 +333,7 @@ QVariant AssetsTreeViewModel::data(const QModelIndex &index, int role) const {
 bool AssetsTreeViewModel::setData(const QModelIndex &index, const QVariant &value, int role) {
     
     //bound data...
-    auto data = AssetsDatabaseElement::fromIndex(index);
+    auto data = AssetsTreeViewItem::fromIndex(index);
 
     //if not main column, default behavior
     if(index.column()) return QAbstractItemModel::setData(index, value, role);
@@ -362,7 +362,7 @@ int AssetsTreeViewModel::rowCount(const QModelIndex &parent) const {
     }
 
     //is inner element
-    auto data = AssetsDatabaseElement::fromIndex(parent);
+    auto data = AssetsTreeViewItem::fromIndex(parent);
     return data->childCount();
 }
 
@@ -377,7 +377,7 @@ int AssetsTreeViewModel::rowCount(const QModelIndex &parent) const {
 bool AssetsTreeViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) {
     
     //internal drop
-    if(data->hasFormat(AssetsDatabaseElement::listMimeType)) {
+    if(data->hasFormat(AssetsTreeViewItem::listMimeType)) {
 
         //move
         return this->moveItemsToContainer(parent, this->_bufferedDraggedIndexes);
@@ -398,18 +398,18 @@ bool AssetsTreeViewModel::dropMimeData(const QMimeData *data, Qt::DropAction act
 
 }
 
-QList<AssetsDatabaseElement*> AssetsTreeViewModel::fromMimeData(const QMimeData *data) {
+QList<AssetsTreeViewItem*> AssetsTreeViewModel::fromMimeData(const QMimeData *data) {
 
     //get bound data
     auto asString = QString::fromUtf8(
-        data->data(AssetsDatabaseElement::listMimeType)
+        data->data(AssetsTreeViewItem::listMimeType)
     );
     auto pointerList = asString.split(";");
 
     //iterate through list
-    QList<AssetsDatabaseElement*> list;
+    QList<AssetsTreeViewItem*> list;
     for(auto &pointerAsString : pointerList) {
-        auto ptr = (AssetsDatabaseElement*)pointerAsString.toULongLong();
+        auto ptr = (AssetsTreeViewItem*)pointerAsString.toULongLong();
         list << ptr;
     }
 
@@ -429,12 +429,12 @@ bool AssetsTreeViewModel::canDropMimeData(const QMimeData *data, Qt::DropAction 
     }
 
     //if inner drop is not expected
-    if(!data->hasFormat(AssetsDatabaseElement::listMimeType)) {
+    if(!data->hasFormat(AssetsTreeViewItem::listMimeType)) {
         return false;
     }
 
     
-    auto dest = AssetsDatabaseElement::fromIndex(parent);
+    auto dest = AssetsTreeViewItem::fromIndex(parent);
 
     //if is root or not corresponding to a tree element
     if(!dest || dest->isRoot()) {
@@ -464,7 +464,7 @@ QMimeData* AssetsTreeViewModel::mimeData(const QModelIndexList &indexes) const {
         //only first column
         if(i.column() > 0) continue;
         
-        auto elem = AssetsDatabaseElement::fromIndex(i);
+        auto elem = AssetsTreeViewItem::fromIndex(i);
         
         //reject undeletable elements from drop
         if(!elem->isDeletable()) continue;
@@ -479,7 +479,7 @@ QMimeData* AssetsTreeViewModel::mimeData(const QModelIndexList &indexes) const {
     if(pointersList.count()) {
 
         //apply data
-        mimeData->setData(AssetsDatabaseElement::listMimeType, pointersList.join(";").toUtf8());
+        mimeData->setData(AssetsTreeViewItem::listMimeType, pointersList.join(";").toUtf8());
 
     }
 

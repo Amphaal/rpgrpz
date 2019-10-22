@@ -204,7 +204,7 @@ void AssetsTreeView::_generateStaticContainerMoveActions() {
 
     QList<QAction*> out;
 
-    for(auto &toCreate : AssetsDatabaseElement::movableStaticContainerTypes()) {
+    for(auto &toCreate : AssetsTreeViewItem::movableStaticContainerTypes()) {
         
         auto targetIndex = this->_model->getStaticContainerTypesIndex(toCreate);
         auto icon = this->_model->data(targetIndex, Qt::DecorationRole).value<QIcon>();
@@ -260,10 +260,10 @@ void AssetsTreeView::_generateMenu(const QList<QModelIndex> &targetIndexes, cons
         
         //sigle selected item
         auto firstItemIndex = targetIndexes.first();
-        auto firstItem = AssetsDatabaseElement::fromIndex(firstItemIndex);
+        auto firstItem = AssetsTreeViewItem::fromIndex(firstItemIndex);
 
         //container actions...
-        if(firstItem->isContainer() && firstItem->type() != AssetsDatabaseElement::Type::DownloadedContainer) {
+        if(firstItem->isContainer() && firstItem->type() != AssetsTreeViewItem::Type::DownloadedContainer) {
             
             //folder creation
             auto createFolder = RPZActions::createFolder();
@@ -280,7 +280,7 @@ void AssetsTreeView::_generateMenu(const QList<QModelIndex> &targetIndexes, cons
     // check if all selected are deletable type...
     auto areAllDeletable = [targetIndexes]() {
         for(auto &elemIndex : targetIndexes) {
-            auto elem = AssetsDatabaseElement::fromIndex(elemIndex);
+            auto elem = AssetsTreeViewItem::fromIndex(elemIndex);
             if(!elem->isDeletable()) return false;
         }
         return true;
@@ -379,7 +379,7 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
     //if only a single selection
     else if(indexesCount == 1) {
 
-        auto elem = AssetsDatabaseElement::fromIndex(selectedElems.value(0));
+        auto elem = AssetsTreeViewItem::fromIndex(selectedElems.value(0));
         auto atomType = elem->atomType();
 
         if(atomType != AtomType::Undefined) {

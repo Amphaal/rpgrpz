@@ -9,7 +9,7 @@
 #include <QLabel>
 #include <QString>
 
-#include "src/shared/assets/AssetsDatabaseElement.h"
+#include "AssetsTreeViewItem.h"
 #include "src/shared/database/AssetsDatabase.h"
 
 #include "src/shared/async-ui/AlterationActor.hpp"
@@ -23,14 +23,14 @@ class AssetsTreeViewModel : public QAbstractItemModel {
         AssetsTreeViewModel(QObject *parent = nullptr);
         
         QModelIndexList getPersistentIndexList() const;
-        QModelIndex getStaticContainerTypesIndex(const AssetsDatabaseElement::Type &staticContainerType); 
+        QModelIndex getStaticContainerTypesIndex(const AssetsTreeViewItem::Type &staticContainerType); 
         AssetsDatabase* database() const;
 
         ///////////////
         /// HELPERS ///
         ///////////////
 
-        QPixmap getAssetIcon(AssetsDatabaseElement* target, QSize &sizeToApply) const;
+        QPixmap getAssetIcon(AssetsTreeViewItem* target, QSize &sizeToApply) const;
         bool createFolder(QModelIndex &parentIndex);
         bool moveItemsToContainer(const QModelIndex &parentIndex, const QList<QModelIndex> &indexesToMove);
         bool insertAssets(QList<QUrl> &urls, const QModelIndex &parentIndex);
@@ -72,7 +72,7 @@ class AssetsTreeViewModel : public QAbstractItemModel {
         /// DROP HANDLING ///
         /////////////////////
 
-        static QList<AssetsDatabaseElement*> fromMimeData(const QMimeData *data);
+        static QList<AssetsTreeViewItem*> fromMimeData(const QMimeData *data);
 
         bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
         bool canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const override;

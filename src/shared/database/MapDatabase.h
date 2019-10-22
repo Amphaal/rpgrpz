@@ -14,7 +14,6 @@ class MapDatabase : public JSONDatabase {
     public:
         MapDatabase(const QString &filePath);
         MapDatabase(const QJsonObject &obj);
-        MapDatabase(const QVariantHash &hash);
         MapDatabase();
 
         virtual void addAtom(const RPZAtom &toAdd);

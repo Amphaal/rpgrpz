@@ -8,7 +8,7 @@ RPZToyMetadata::RPZToyMetadata(const AtomType &type) {
 }
 
 RPZToyMetadata::RPZToyMetadata(
-        AssetsDatabaseElement* parentContainer,
+        AssetsTreeViewItem* parentContainer,
         const AtomType &type,
         const RPZAssetHash &assetId, 
         const QString &assetName, 
@@ -35,7 +35,7 @@ QSize RPZToyMetadata::shapeSize() const {
     return this->value(QStringLiteral(u"shp")).toSize();
 }
 
-AssetsDatabaseElement* RPZToyMetadata::associatedParent() const {
+AssetsTreeViewItem* RPZToyMetadata::associatedParent() const {
     return this->_parentContainer;
 }
 

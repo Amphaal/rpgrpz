@@ -7,8 +7,9 @@ AssetsDatabase* AssetsDatabase::get() {
     return _singleton;
 }
 
-AssetsDatabase::AssetsDatabase() { 
-    this->_instanciateDb();
+AssetsDatabase::AssetsDatabase(const QJsonObject &doc) : JSONDatabase(doc) { }
+
+AssetsDatabase::AssetsDatabase() : JSONDatabase(AppContext::getAssetsFileCoordinatorLocation()) { 
     this->_injectStaticStructure();
     this->_injectDbStructure();
 };
@@ -25,14 +26,11 @@ void AssetsDatabase::_removeDatabaseLinkedFiles() {
 
 JSONDatabaseModel AssetsDatabase::_getDatabaseModel() {
     return {
-        { QStringLiteral(u"paths"), this->_paths },
-        { QStringLiteral(u"assets"), this->_assets }
-    }
+        { { QStringLiteral(u"paths"), ET_Array }, this->_paths },
+        { { QStringLiteral(u"assets"), ET_Object }, this->_assets }
+    };
 }
 
-const QString AssetsDatabase::dbPath() {
-    return AppContext::getAssetsFileCoordinatorLocation();
-};
 
 RPZToyMetadata AssetsDatabase::importAsset(const RPZAssetImportPackage &package) {
     
@@ -66,7 +64,7 @@ RPZToyMetadata AssetsDatabase::importAsset(const RPZAssetImportPackage &package)
     auto metadata = this->_addAssetToDb(asset_id, destUrl, parent, destFileName);
 
     //add to tree
-    auto element = new AssetsDatabaseElement(metadata);
+    auto element = new AssetsTreeViewItem(metadata);
     this->_trackAssetByElem(asset_id, element);
 
     auto destUrlPath = destUrl.toString();
@@ -74,7 +72,7 @@ RPZToyMetadata AssetsDatabase::importAsset(const RPZAssetImportPackage &package)
     return metadata;
 }
 
-void AssetsDatabase::_trackAssetByElem(const RPZAssetHash &assetId, AssetsDatabaseElement* elem) {
+void AssetsDatabase::_trackAssetByElem(const RPZAssetHash &assetId, AssetsTreeViewItem* elem) {
     this->_withAssetsElems.insert(assetId, elem);
 }
 
@@ -114,7 +112,7 @@ QString AssetsDatabase::getFilePathToAsset(const RPZAssetHash &id) {
     return getFilePathToAsset(id, fileExtension);
 }
 
-QString AssetsDatabase::getFilePathToAsset(AssetsDatabaseElement* asset) {
+QString AssetsDatabase::getFilePathToAsset(AssetsTreeViewItem* asset) {
     return this->getFilePathToAsset(asset->id());
 }
 
@@ -147,14 +145,14 @@ QJsonObject AssetsDatabase::assets(QJsonDocument &doc) {
 
 void AssetsDatabase::_injectStaticStructure() {
 
-    for(auto &staticType : AssetsDatabaseElement::staticContainerTypes()) {
+    for(auto &staticType : AssetsTreeViewItem::staticContainerTypes()) {
 
-        auto staticFolder = new AssetsDatabaseElement(AssetsDatabaseElement::typeDescription(staticType), this, staticType);
+        auto staticFolder = new AssetsTreeViewItem(AssetsTreeViewItem::typeDescription(staticType), this, staticType);
         this->_staticElements.insert(staticType, staticFolder);
 
         if(staticType == InternalContainer) {
-            for(auto &type : AssetsDatabaseElement::internalItemTypes()) {
-                auto internalItem = new AssetsDatabaseElement(AssetsDatabaseElement::typeDescription(type), staticFolder, type);
+            for(auto &type : AssetsTreeViewItem::internalItemTypes()) {
+                auto internalItem = new AssetsTreeViewItem(AssetsTreeViewItem::typeDescription(type), staticFolder, type);
             }
         }
 
@@ -173,23 +171,23 @@ void AssetsDatabase::_injectDbStructure() {
 
 }
 
-QHash<RPZAssetPath, AssetsDatabaseElement*> AssetsDatabase::_generateFolderTreeFromDb() {
+QHash<RPZAssetPath, AssetsTreeViewItem*> AssetsDatabase::_generateFolderTreeFromDb() {
     
     //sort the keys
     auto paths = this->paths().keys();
     paths.sort();
 
     //to be created items
-    QHash<RPZAssetPath, AssetsDatabaseElement*> containersToFill;
+    QHash<RPZAssetPath, AssetsTreeViewItem*> containersToFill;
 
     //create folders arbo
     for(auto &path : paths) {
         
         //split the path
-        auto split = AssetsDatabaseElement::pathAsList(path);
+        auto split = AssetsTreeViewItem::pathAsList(path);
         
         //make sure first split is a type
-        auto staticCType = AssetsDatabaseElement::pathChunktoType(split.takeFirst());
+        auto staticCType = AssetsTreeViewItem::pathChunktoType(split.takeFirst());
 
         //get element from static source
         if(!this->_staticElements.contains(staticCType)) {
@@ -209,7 +207,7 @@ QHash<RPZAssetPath, AssetsDatabaseElement*> AssetsDatabase::_generateFolderTreeF
     return containersToFill;
 }
 
-AssetsDatabaseElement* AssetsDatabase::_recursiveElementCreator(AssetsDatabaseElement* parent, QList<QString> &pathChunks) {
+AssetsTreeViewItem* AssetsDatabase::_recursiveElementCreator(AssetsTreeViewItem* parent, QList<QString> &pathChunks) {
     
     //if no more folders in path to create...
     if(!pathChunks.count()) return parent;
@@ -218,7 +216,7 @@ AssetsDatabaseElement* AssetsDatabase::_recursiveElementCreator(AssetsDatabaseEl
     auto part = pathChunks.takeFirst();
 
     //search if already exist
-    AssetsDatabaseElement* found = nullptr;
+    AssetsTreeViewItem* found = nullptr;
     for(auto container : parent->childrenContainers()) {
         if(container->displayName() == part) {
             found = container;
@@ -228,7 +226,7 @@ AssetsDatabaseElement* AssetsDatabase::_recursiveElementCreator(AssetsDatabaseEl
 
     //if not found, create it
     if(!found) {
-        found = new AssetsDatabaseElement(part, parent);
+        found = new AssetsTreeViewItem(part, parent);
     }
 
     //iterate through...
@@ -248,7 +246,7 @@ const QSet<RPZAssetHash> AssetsDatabase::getStoredAssetsIds() const {
     return out;
 }
 
-void AssetsDatabase::_generateItemsFromDb(const QHash<RPZAssetPath, AssetsDatabaseElement*> &pathsToFillWithItems) {
+void AssetsDatabase::_generateItemsFromDb(const QHash<RPZAssetPath, AssetsTreeViewItem*> &pathsToFillWithItems) {
     
     auto db_paths = this->paths();
     auto assets_db = this->assets();
@@ -281,7 +279,7 @@ void AssetsDatabase::_generateItemsFromDb(const QHash<RPZAssetPath, AssetsDataba
 
             auto metadata = RPZToyMetadata(
                 lastContainer,
-                AssetsDatabaseElement::toAtomType(lastContainer->insertType()),
+                AssetsTreeViewItem::toAtomType(lastContainer->insertType()),
                 idStr,
                 asset[QStringLiteral(u"name")].toString(),
                 getFilePathToAsset(idStr, asset[QStringLiteral(u"ext")].toString()),
@@ -289,7 +287,7 @@ void AssetsDatabase::_generateItemsFromDb(const QHash<RPZAssetPath, AssetsDataba
                 JSONSerializer::pointFromDoublePair(asset[QStringLiteral(u"center")].toArray())
             );
 
-            auto elem = new AssetsDatabaseElement(metadata);
+            auto elem = new AssetsTreeViewItem(metadata);
 
             this->_trackAssetByElem(idStr, elem);
 
@@ -368,7 +366,7 @@ bool AssetsDatabase::_moveFileToDbFolder(const QUrl &url, const RPZAssetHash &id
 RPZToyMetadata AssetsDatabase::_addAssetToDb(
         const RPZAssetHash &id, 
         const QUrl &url, 
-        AssetsDatabaseElement* parent, 
+        AssetsTreeViewItem* parent, 
         const QString &forcedName
     ) {
 
@@ -413,7 +411,7 @@ RPZToyMetadata AssetsDatabase::_addAssetToDb(
     
     auto metadata = RPZToyMetadata(
         parent,
-        AssetsDatabaseElement::toAtomType(parent->insertType()),
+        AssetsTreeViewItem::toAtomType(parent->insertType()),
         id,
         assetName,
         pathToAsset,
@@ -424,7 +422,7 @@ RPZToyMetadata AssetsDatabase::_addAssetToDb(
     return metadata;
 }
 
-bool AssetsDatabase::insertAsset(const QUrl &url, AssetsDatabaseElement* parent) {
+bool AssetsDatabase::insertAsset(const QUrl &url, AssetsTreeViewItem* parent) {
 
     QMutexLocker l(&this->_m_withAssetsElems);
 
@@ -446,14 +444,14 @@ bool AssetsDatabase::insertAsset(const QUrl &url, AssetsDatabaseElement* parent)
     auto metadata = this->_addAssetToDb(fileSignature, url, parent);
 
     //add element
-    auto element = new AssetsDatabaseElement(metadata);
+    auto element = new AssetsTreeViewItem(metadata);
     this->_trackAssetByElem(fileSignature, element);
 
     return true;
 }
 
 
-bool AssetsDatabase::createFolder(AssetsDatabaseElement* parent) {
+bool AssetsDatabase::createFolder(AssetsTreeViewItem* parent) {
     
     //data template
     auto generatedPath = this->_generateNonExistingPath(parent, "Dossier");
@@ -466,13 +464,13 @@ bool AssetsDatabase::createFolder(AssetsDatabaseElement* parent) {
     this->_updateDbFile(obj);
 
     //create elem
-    auto generatedName = AssetsDatabaseElement::pathAsList(generatedPath).takeLast();
-    auto folder = new AssetsDatabaseElement(generatedName, parent);
+    auto generatedName = AssetsTreeViewItem::pathAsList(generatedPath).takeLast();
+    auto folder = new AssetsTreeViewItem(generatedName, parent);
 
     return true;
 }
 
-QString AssetsDatabase::_generateNonExistingPath(AssetsDatabaseElement* parent, const QString &prefix) {
+QString AssetsDatabase::_generateNonExistingPath(AssetsTreeViewItem* parent, const QString &prefix) {
     
     QString generatedPath = "";
     RPZAssetPath destPath = parent->path();
@@ -495,7 +493,7 @@ QString AssetsDatabase::_generateNonExistingPath(AssetsDatabaseElement* parent, 
     return generatedPath;
 }
 
-void AssetsDatabase::_renameItem(const QString &name, AssetsDatabaseElement* target) {
+void AssetsDatabase::_renameItem(const QString &name, AssetsTreeViewItem* target) {
     
     //data template
     auto obj = this->_db.object();
@@ -523,7 +521,7 @@ void AssetsDatabase::_renameItem(const QString &name, AssetsDatabaseElement* tar
     emit assetRenamed(target->id(), name);
 }
 
-void AssetsDatabase::_renameFolder(const QString &name, AssetsDatabaseElement* target) {
+void AssetsDatabase::_renameFolder(const QString &name, AssetsTreeViewItem* target) {
 
     //data template
     auto obj = this->_db.object();
@@ -540,7 +538,7 @@ void AssetsDatabase::_renameFolder(const QString &name, AssetsDatabaseElement* t
     }
 
     //update path
-    auto pathAsList = AssetsDatabaseElement::pathAsList(currentPath);
+    auto pathAsList = AssetsTreeViewItem::pathAsList(currentPath);
     pathAsList.takeLast();
     pathAsList.append(name);
     auto updatedPath = "/" + pathAsList.join("/");
@@ -567,7 +565,7 @@ void AssetsDatabase::_renameFolder(const QString &name, AssetsDatabaseElement* t
     this->_updateDbFile(obj);
 }
 
-bool AssetsDatabase::rename(QString &name, AssetsDatabaseElement* target) { 
+bool AssetsDatabase::rename(QString &name, AssetsTreeViewItem* target) { 
 
     //check if acceptable name change
     if(!target->isAcceptableNameChange(name)) return false;
@@ -606,7 +604,7 @@ void AssetsDatabase::_removeAssetFile(const RPZAssetHash &id, const QJsonObject 
     
 }
 
-QSet<RPZAssetPath> AssetsDatabase::_getPathsToAlterFromList(const QList<AssetsDatabaseElement*> &elemsToAlter) {
+QSet<RPZAssetPath> AssetsDatabase::_getPathsToAlterFromList(const QList<AssetsTreeViewItem*> &elemsToAlter) {
     
     auto out = QSet<RPZAssetPath>();
     
@@ -619,7 +617,7 @@ QSet<RPZAssetPath> AssetsDatabase::_getPathsToAlterFromList(const QList<AssetsDa
     return out;
 }
 
-QHash<RPZAssetPath, QSet<RPZAssetHash>> AssetsDatabase::_getAssetsToAlterFromList(const QList<AssetsDatabaseElement*> &elemsToAlter) {
+QHash<RPZAssetPath, QSet<RPZAssetHash>> AssetsDatabase::_getAssetsToAlterFromList(const QList<AssetsTreeViewItem*> &elemsToAlter) {
     auto out = QHash<RPZAssetPath, QSet<RPZAssetHash>>();
     
     for(auto &elem : elemsToAlter) {
@@ -704,7 +702,7 @@ void AssetsDatabase::_removeAssetsFromDb(QJsonObject &db_assets, const QList<RPZ
     }
 }
 
-bool AssetsDatabase::removeItems(QList<AssetsDatabaseElement*> elemsToRemove) {
+bool AssetsDatabase::removeItems(QList<AssetsTreeViewItem*> elemsToRemove) {
 
     //prepare
     auto db_paths = this->paths();
@@ -740,7 +738,7 @@ bool AssetsDatabase::removeItems(QList<AssetsDatabaseElement*> elemsToRemove) {
     this->_updateDbFile(obj);
 
     //sort items by path length (number of slashes); delete them first
-    AssetsDatabaseElement::sortByPathLengthDesc(elemsToRemove);
+    AssetsTreeViewItem::sortByPathLengthDesc(elemsToRemove);
     for(auto elem : elemsToRemove) {
         //finally delete elems
         delete elem;
@@ -751,12 +749,12 @@ bool AssetsDatabase::removeItems(QList<AssetsDatabaseElement*> elemsToRemove) {
 
 
 
-bool AssetsDatabase::moveItemsToContainer(QList<AssetsDatabaseElement*> selectedItemsToMove, AssetsDatabaseElement* target) {
+bool AssetsDatabase::moveItemsToContainer(QList<AssetsTreeViewItem*> selectedItemsToMove, AssetsTreeViewItem* target) {
     
     auto db_paths = this->paths();
 
     //reduce targetedItems list to only the higher in order for each node
-    auto higherElems = AssetsDatabaseElement::filterTopMostOnly(selectedItemsToMove).toList();
+    auto higherElems = AssetsTreeViewItem::filterTopMostOnly(selectedItemsToMove).toList();
 
     //move assets
     auto idsToMove = this->_getAssetsToAlterFromList(higherElems);
@@ -783,7 +781,7 @@ bool AssetsDatabase::moveItemsToContainer(QList<AssetsDatabaseElement*> selected
         this->_augmentPathsSetWithMissingDescendents(augmentedList);
 
         //define new path
-        auto displayName = AssetsDatabaseElement::pathAsList(pathToMove).takeLast();
+        auto displayName = AssetsTreeViewItem::pathAsList(pathToMove).takeLast();
         auto newPath = parentPath + "/" + displayName;
 
         for(auto &path : augmentedList) {
@@ -859,9 +857,9 @@ QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> AssetsDatabase::_getUpdate
     //to v5
     out.insert(
         5,
-        [&](QJsonDocument &doc) {
+        [&](QJsonObject &doc) {
             
-            auto assets = AssetsDatabase::assets(doc);
+            AssetsDatabase db(doc);
 
             //iterate assets
             for(auto i = assets.begin(); i != assets.end(); i++) {
