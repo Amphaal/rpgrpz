@@ -15,6 +15,7 @@ class PlayerItemDelegate : public QStyledItemDelegate {
         static inline const int gaugeHeight = 14;
         static inline const int portraitFrameMargin = 2;
         static inline const int portraitFramePenSize = 2;
+        static inline const int gaugeMargin = 2;
         static inline const int spaceBetweenGauges = 2;
 
         void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override {
@@ -70,17 +71,19 @@ class PlayerItemDelegate : public QStyledItemDelegate {
             if(!character.favGaugesCount()) return;
 
             QRect gaugeRect;
-            gaugeRect.setHeight(PlayerItemDelegate::gaugeHeight);
+            gaugeRect.setHeight(gaugeHeight);
             gaugeRect.setWidth(
                 option.rect.width() 
                 - (portraitFrameMargin * 2) 
                 - (portraitFramePenSize * 2)
-                - 1
+                - (gaugeMargin * 2)
             );
 
             auto startPoint = option.rect.topLeft();
-            startPoint = startPoint + QPoint(0, defaultPortraitSize.height());
-            startPoint = startPoint + QPoint(PlayerItemDelegate::portraitFrameMargin + PlayerItemDelegate::portraitFramePenSize, 0);
+            startPoint = startPoint + QPoint(
+                portraitFrameMargin + portraitFramePenSize + gaugeMargin, 
+                defaultPortraitSize.height()
+            );
             gaugeRect.moveTo(startPoint);
 
             painter->save();
@@ -89,7 +92,7 @@ class PlayerItemDelegate : public QStyledItemDelegate {
                 pen.setWidth(1);
                 
                 auto font = painter->font();
-                font.setPixelSize(PlayerItemDelegate::gaugeHeight - 4);
+                font.setPixelSize(gaugeHeight - 4);
                 painter->setFont(font);
 
                 QTextOption tOption(Qt::AlignVCenter | Qt::AlignRight);
@@ -143,7 +146,7 @@ class PlayerItemDelegate : public QStyledItemDelegate {
                     }
 
                     //prepare for next
-                    gaugeRect.translate(0, PlayerItemDelegate::gaugeHeight + PlayerItemDelegate::spaceBetweenGauges);
+                    gaugeRect.translate(0, gaugeHeight + spaceBetweenGauges);
 
                 }
 
@@ -160,7 +163,7 @@ class PlayerItemDelegate : public QStyledItemDelegate {
                 }
                 
                 auto portrait = RPZCharacter::getPortrait(character);
-                QRect portraitRect(option.rect.topLeft(), PlayerItemDelegate::defaultPortraitSize);
+                QRect portraitRect(option.rect.topLeft(), defaultPortraitSize);
 
                 painter->drawPixmap(portraitRect, portrait);
 

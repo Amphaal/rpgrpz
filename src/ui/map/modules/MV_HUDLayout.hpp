@@ -52,7 +52,7 @@ class MV_HUDLayout {
                 auto viewportRect = this->_view->rect();
                 auto currentScale = this->_view->transform().m11();
 
-                this->_mayDrawGridIndic(painter, rect, currentScale);
+                this->_mayDrawGridIndic(painter, rect, currentScale, viewportRect);
 
                 //ignore transformations
                 QTransform t;
@@ -268,10 +268,40 @@ class MV_HUDLayout {
             painter->restore();
         }
 
-        void _mayDrawGridIndic(QPainter* painter, const QRectF &rect, double currentScale) {
+        void _mayDrawGridIndic(QPainter* painter, const QRectF &rect, double currentScale, const QRect &viewportRect) {
             
             if(!AppContext::settings()->gridActive()) return;
-            if(currentScale < .1) return; //prevent if scale is too far
+            
+            //prevent if scale is too far
+            if(currentScale < .1) {
+                
+                painter->save();
+                
+                    QTransform t;
+                    painter->setTransform(t);
+
+                    auto txtStr = QObject::tr("Too far to display grid !");
+                    auto textRect = painter->boundingRect(viewportRect, txtStr);
+                    textRect.moveLeft(textRect.x() + 5);
+                    textRect.moveTop(textRect.y() + 5);
+
+                    painter->setOpacity(.75);
+                        painter->setPen(Qt::NoPen);
+                        painter->setBrush(QBrush("#FFF", Qt::SolidPattern));
+                        painter->drawRoundedRect(textRect.marginsAdded(QMargins(5, 5, 5, 5)), 2, 2);
+                    painter->setOpacity(1);
+
+                    QPen pen(Qt::SolidPattern, 0);
+                    pen.setColor(Qt::red);
+                    painter->setPen(pen);
+                    painter->setBrush(Qt::NoBrush);
+                    painter->drawText(textRect, txtStr);
+
+                painter->restore();
+
+                return;
+
+            } 
 
             painter->save();
 

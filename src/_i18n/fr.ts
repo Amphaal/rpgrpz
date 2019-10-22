@@ -1083,13 +1083,18 @@
         <source>Error has occured : </source>
         <translation>Une erreur est survenue : </translation>
     </message>
+    <message>
+        <location filename="../ui/map/modules/MV_HUDLayout.hpp" line="283"/>
+        <source>Too far to display grid !</source>
+        <translation>Trop éloigné pour afficher la grille !</translation>
+    </message>
 </context>
 <context>
     <name>RPZClient</name>
     <message>
         <location filename="../network/rpz/client/RPZClient.cpp" line="93"/>
         <source>Username required !</source>
-        <translation>Nom d'utilisateur requis !</translation>
+        <translation>Nom d&apos;utilisateur requis !</translation>
     </message>
     <message>
         <location filename="../network/rpz/client/RPZClient.cpp" line="105"/>
