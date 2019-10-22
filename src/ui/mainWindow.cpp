@@ -291,9 +291,10 @@ void MainWindow::_initAppUnmovableUI() {
 
     auto designerWidget = [=]() {
         auto designer = new QWidget(this);
-        designer->setLayout(new QVBoxLayout);
-        designer->layout()->setMargin(0);
-        designer->layout()->setSpacing(2);
+        auto layout = new QVBoxLayout;
+        designer->setLayout(layout);
+        layout->setMargin(0);
+        layout->setSpacing(2);
 
             auto toolbar = new QWidget(this);
             auto toolbarLayout = new QHBoxLayout;
@@ -306,8 +307,8 @@ void MainWindow::_initAppUnmovableUI() {
             toolbarLayout->addWidget(this->_mapTools);
             toolbarLayout->addWidget(this->_mapActions);
             
-        designer->layout()->addWidget(toolbar);
-        designer->layout()->addWidget(this->_mapView);
+        layout->addWidget(toolbar, 0, Qt::AlignTop);
+        layout->addWidget(this->_mapViewContainer, 1);
 
         return designer;
     }();
@@ -384,13 +385,22 @@ void MainWindow::_setupAppUI(UIMode mode) {
 void MainWindow::_initAppComponents() {
     
     //init components
+        this->_mapViewContainer = new QWidget(this);
+        this->_mapViewContainer->setLayout(new OverlayingLayout);
+
+        this->_mapView = new MapView(this);
+        this->_minimap = new MiniMapView(this->_mapView->scene(), this);
+
+        this->_mapViewContainer->layout()->addWidget(this->_mapView);
+        this->_mapViewContainer->layout()->addWidget(this->_minimap);
+        
+        this->_mapHelpers = new MapHelpers(this->_minimap, this);
+        this->_mapActions = new MapActions(this);
+    
     this->_chatWidget = new ChatWidget(this);
-    this->_mapView = new MapView(this);
     this->_audioManager = new AudioManager(this);
     this->_assetsManager = new AssetsManager(this);
     this->_mapTools = new MapTools(this);
-    this->_mapHelpers = new MapHelpers(this);
-    this->_mapActions = new MapActions(this);
     this->_mlManager = new MapLayoutManager(this->_mapView, this->_mapView->hints(), this);
     this->_connectWidget = new ConnectWidget(this->_mapView->hints(), this);
     this->_atomEditManager = new AtomEditionManager(this->_mapView->hints(), this);

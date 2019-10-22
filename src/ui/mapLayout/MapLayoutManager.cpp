@@ -4,13 +4,11 @@ MapLayoutManager::MapLayoutManager(QGraphicsView* viewToMimic, AtomsStorage* map
 
     this->_tree = new MapLayoutTree(mapMaster, this);
     this->_layerSelector = new LayerSelector(this);
-    this->_minimap = new MiniMapView(viewToMimic);
     
     auto layout = new QVBoxLayout;
     this->setLayout(layout);
     layout->addWidget(this->_layerSelector);
     layout->addWidget(this->_tree, 1);
-    layout->addWidget(this->_minimap, 0, Qt::AlignCenter);
 
     layout->setSpacing(2);
     layout->setMargin(5);
@@ -24,8 +22,4 @@ MapLayoutTree* MapLayoutManager::tree() {
 
 LayerSelector* MapLayoutManager::layerSelector(){
     return this->_layerSelector;
-}
-
-MiniMapView* MapLayoutManager::minimap() {
-    return this->_minimap;
 }

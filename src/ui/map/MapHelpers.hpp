@@ -8,13 +8,15 @@
 #include <QAction>
 
 #include "src/shared/commands/RPZActions.h"
+#include "src/ui/map/MiniMapView.hpp"
+
 
 class MapHelpers : public QToolBar {
 
     Q_OBJECT
 
     public:    
-        MapHelpers(QWidget * parent = nullptr) : QToolBar(parent) {  
+        MapHelpers(MiniMapView* minimap, QWidget * parent = nullptr) : QToolBar(parent) {  
 
             this->layout()->setMargin(0);
             this->setIconSize(QSize(16, 16));
@@ -23,6 +25,7 @@ class MapHelpers : public QToolBar {
 
             this->addAction(RPZActions::activateGridIndicator());
             this->addAction(RPZActions::activateScaleIndicator());
+            this->addAction(RPZActions::activateMinimap(minimap));
             
         }
         

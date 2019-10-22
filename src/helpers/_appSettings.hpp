@@ -24,6 +24,10 @@ class AppSettings : public QSettings {
             return this->value(QStringLiteral(u"grid"), false).toBool();
         }
 
+        bool minimapActive() {
+            return this->value(QStringLiteral(u"minimap"), false).toBool();
+        }
+
         bool scaleActive() {
             return this->value(QStringLiteral(u"scale"), false).toBool();
         }

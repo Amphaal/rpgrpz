@@ -2,6 +2,16 @@
 
 MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this), MV_HUDLayout(this) {
 
+    //default
+    auto scene = new QGraphicsScene(
+        this->_defaultSceneSize, 
+        this->_defaultSceneSize, 
+        this->_defaultSceneSize, 
+        this->_defaultSceneSize
+    );
+    this->setScene(scene);
+
+    //init
     this->_hints = new MapHint;
     this->_menuHandler = new AtomsContextualMenuHandler(this->_hints, this);
     this->_drawingAssist = new DrawingAssist(this->_hints, this);
@@ -26,14 +36,6 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
     this->_hints->thread()->setObjectName(QStringLiteral(u"MapThread"));
     this->_hints->thread()->start();
 
-    //default
-    auto scene = new QGraphicsScene(
-        this->_defaultSceneSize, 
-        this->_defaultSceneSize, 
-        this->_defaultSceneSize, 
-        this->_defaultSceneSize
-    );
-    this->setScene(scene);
     this->_resetTool();
 
     this->_handleHintsSignalsAndSlots();

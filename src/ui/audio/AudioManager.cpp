@@ -40,9 +40,6 @@ void AudioManager::_onIdentityAck(const RPZUser &user) {
         );
 
     }
-
-    auto able = ConnectivityObserver::isHostAble();
-    //TODO
     
 }
 

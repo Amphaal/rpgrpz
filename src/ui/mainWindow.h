@@ -49,6 +49,9 @@
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 #include "src/ui/sheets/CharacterEditor.hpp"
 
+#include "src/ui/map/MiniMapView.hpp"
+#include "src/ui/map/base/OverlayingLayout.hpp"
+
 class MainWindow : public QMainWindow, public ConnectivityObserver { 
     
     Q_OBJECT
@@ -79,11 +82,14 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
         void _initConnectivity();
 
         void _initAppComponents();
+            QWidget* _mapViewContainer = nullptr;
+            MapView* _mapView = nullptr;
+            MiniMapView* _minimap = nullptr;
+
             MapActions* _mapActions = nullptr;
             MapHelpers* _mapHelpers = nullptr;
             PlayersListView* _playersView = nullptr;
             StandardUsersListView* _usersView = nullptr;
-            MapView* _mapView = nullptr;
             ConnectWidget* _connectWidget = nullptr;
             AudioManager* _audioManager = nullptr;
             ChatWidget* _chatWidget = nullptr;
