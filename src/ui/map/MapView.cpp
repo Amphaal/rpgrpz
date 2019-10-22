@@ -243,7 +243,7 @@ void MapView::mouseDoubleClickEvent(QMouseEvent *event) {
     if(!item) return;
 
     //check item is not temporary !
-    auto isTemporary = item->data((int)AtomConverterDataIndex::IsTemporary).toBool();
+    auto isTemporary = item->data((int)AtomConverter::DataIndex::IsTemporary).toBool();
     if(isTemporary) return;
 
     //notify focus

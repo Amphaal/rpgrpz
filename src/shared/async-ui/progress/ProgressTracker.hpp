@@ -7,7 +7,7 @@ class ProgressTracker : public QObject {
     Q_OBJECT
     
     public:
-        enum Kind { Map, Asset };
+        enum class Kind { Map, Asset };
 
         static ProgressTracker* get() {
             if(!_inst) _inst = new ProgressTracker;

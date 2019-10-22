@@ -1,6 +1,6 @@
 #pragma once
 
-enum RPZUserRoles {
+enum class RPZUserRoles {
     UserColor = 1000,
     AtomLayer = 1001,
     AssetHash = 1003,

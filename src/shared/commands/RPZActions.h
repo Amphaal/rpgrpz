@@ -7,12 +7,12 @@
 
 #include "src/ui/map/MiniMapView.hpp"
 
-enum MapAction { 
+enum class MapAction { 
     ResetView,
     ResetTool
 };
 
-enum MapTool {
+enum class MapTool {
     Default, 
     Atom, 
     Scroll,

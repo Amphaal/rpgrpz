@@ -112,8 +112,8 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
             bool _isMousePressed = false;
 
         //tool
-            MapTool _tool = (MapTool)0;
-            MapTool _quickTool = (MapTool)0;
+            MapTool _tool = MapTool::Default;
+            MapTool _quickTool = MapTool::Default;
             MapTool _getCurrentTool() const;
             void _changeTool(MapTool newTool, bool quickChange = false);
             void _resetTool();

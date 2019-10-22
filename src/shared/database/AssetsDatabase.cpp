@@ -24,7 +24,7 @@ void AssetsDatabase::_removeDatabaseLinkedFiles() {
     QDir(AppContext::getAssetsFolderLocation()).removeRecursively();
 }
 
-JSONDatabaseModel AssetsDatabase::_getDatabaseModel() {
+JSONDatabase::Model AssetsDatabase::_getDatabaseModel() {
     return {
         { { QStringLiteral(u"paths"), ET_Array }, this->_paths },
         { { QStringLiteral(u"assets"), ET_Object }, this->_assets }
@@ -850,9 +850,9 @@ QSet<RPZAssetPath> AssetsDatabase::_augmentPathsSetWithMissingDescendents(QSet<R
     return inheritedPathAlterations;
 }
 
-QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> AssetsDatabase::_getUpdateHandlers() {
+QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> AssetsDatabase::_getUpdateHandlers() {
     
-    auto out = QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler>();
+    auto out = QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler>();
 
     //to v5
     out.insert(

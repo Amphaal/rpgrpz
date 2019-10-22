@@ -6,7 +6,7 @@
 
 class AnimationTimeLine : public QTimeLine {
     public:
-        enum Type { Zoom };
+        enum class Type { Zoom };
 
         void setStateModifier(const qreal modifier) { this->_currentModifier = modifier; };
 

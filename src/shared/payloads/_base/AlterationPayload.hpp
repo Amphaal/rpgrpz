@@ -5,7 +5,7 @@
 #include "src/_libs/snowflake/snowflake.h"
 #include "src/shared/models/RPZAtom.h"
 
-enum PayloadAlteration {
+enum class PayloadAlteration {
     PA_Unknown,
     PA_Focused,
     PA_Selected,
@@ -38,7 +38,7 @@ static const QStringList PayloadAlterationAsStr {
 class AlterationPayload : public QVariantHash { 
     
     public:
-        enum Source {
+        enum class Source {
             Undefined,
             Local_MapLayout,
             Local_Map,

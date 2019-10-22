@@ -2,7 +2,7 @@
 
 #include <QString>
 
-enum JSONMethod { 
+enum class JSONMethod { 
     Message,
     ServerStatus,
     ServerResponse, 

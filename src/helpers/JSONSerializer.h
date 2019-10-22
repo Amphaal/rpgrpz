@@ -8,7 +8,7 @@
 #include <QPointF>
 
 //order is important for transform handling
-enum AtomParameter {
+enum class AtomParameter {
     AssetId,
     AssetName,
     BrushStyle,

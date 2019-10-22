@@ -17,18 +17,18 @@
 #include "src/helpers/_appContext.h"
 #include "src/shared/models/base/RPZMap.hpp"
 
-enum JSONDatabaseEntityType {
-    ET_Object,
-    ET_Array
-};
-
-typedef int JSONDatabaseVersion;
-typedef std::function<void(QJsonObject&)> JSONDatabaseUpdateHandler;
-typedef QHash<QPair<QString, JSONDatabaseEntityType>, void*> JSONDatabaseModel;
-
 class JSONDatabase {
 
     public:
+        enum class EntityType {
+            Object,
+            Array
+        };
+
+        typedef QHash<QPair<QString, JSONDatabase::EntityType>, void*> Model;
+        typedef std::function<void(QJsonObject&)> UpdateHandler;
+        typedef int JSONDatabase::Version;
+
         //remove from the array the elements in the set
         static QJsonArray diff(QJsonArray &target, QSet<QString> &toRemoveFromTarget);
 
@@ -52,12 +52,12 @@ class JSONDatabase {
         virtual void _removeDatabaseLinkedFiles();
 
         //create new file formated for new API expected version if possible
-        virtual QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> _getUpdateHandlers();
+        virtual QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> _getUpdateHandlers();
         bool _handleVersionMissmatch(QJsonObject &databaseToUpdate, int databaseToUpdateVersion);
 
         //pure, replace
         virtual void _setupLocalData() = 0;
-        virtual JSONDatabaseModel _getDatabaseModel() = 0;
+        virtual JSONDatabase::Model _getDatabaseModel() = 0;
         virtual const int apiVersion() = 0;
         const int dbVersion();
 
@@ -74,7 +74,7 @@ class JSONDatabase {
         void _defineDatabaseObject(const QJsonDocument &document);
 
         const QString _defaultEmptyDoc();
-        JSONDatabaseVersion _getDbVersion(const QJsonObject &db);
+        JSONDatabase::Version _getDbVersion(const QJsonObject &db);
         void _setupFromDbCopy(const QJsonObject &copy);
 
 };

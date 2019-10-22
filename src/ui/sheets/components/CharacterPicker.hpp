@@ -19,7 +19,7 @@ class CharacterPicker : public QWidget {
         void requestInsert();
 
     public:
-        enum Mode { Unknown, Local, Remote };
+        enum class Mode { Unknown, Local, Remote };
 
         CharacterPicker() : 
             _characterListCombo(new QComboBox), 

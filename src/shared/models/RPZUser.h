@@ -16,11 +16,11 @@ typedef snowflake_uid RPZUserId;
 class RPZUser : public Serializable {
 
     public:
-        enum Role { Observer, Host, Player };
+        enum class Role { Observer, Host, Player };
         static const inline QHash<Role, QString> IconsByRoles = { 
-            {Observer, ":/icons/app/connectivity/observer.png"},
-            {Host, ":/icons/app/connectivity/crown.png"},
-            {Player, ":/icons/app/connectivity/cloak.png"}
+            {Role::Observer, ":/icons/app/connectivity/observer.png"},
+            {Role::Host, ":/icons/app/connectivity/crown.png"},
+            {Role::Player, ":/icons/app/connectivity/cloak.png"}
         };
         
         RPZUser();

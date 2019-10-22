@@ -29,9 +29,9 @@ class ConnectivityHelper : public QObject
         void init();
 
     signals:
-        void localAddressStateChanged(const QString &stateText, SLState state = SL_Finished);
-        void remoteAddressStateChanged(const QString &stateText, SLState state = SL_Finished);
-        void uPnPStateChanged(const QString &stateText, SLState state = SL_Finished);
+        void localAddressStateChanged(const QString &stateText, RPZStatusLabel::State state = Finished);
+        void remoteAddressStateChanged(const QString &stateText, RPZStatusLabel::State state = Finished);
+        void uPnPStateChanged(const QString &stateText, RPZStatusLabel::State state = Finished);
 
     private:
         QNetworkAccessManager* _nam = nullptr;

@@ -140,7 +140,7 @@ void MainWindow::_initConnectivity() {
     if(appArgs.contains(QStringLiteral(u"noServer"))) {    
         this->_mustLaunchServer = false;
         qDebug() << "RPZServer : No server to start because the user said so.";
-        this->_sb->updateServerStateLabel(tr("No"), SLState::SL_Finished);
+        this->_sb->updateServerStateLabel(tr("No"), RPZStatusLabel::State::Finished);
     }
 
     ////////////////////////////
@@ -177,7 +177,7 @@ void MainWindow::_initConnectivity() {
             [&]() {
                 QMetaObject::invokeMethod(this->_sb, "updateServerStateLabel",
                     Q_ARG(QString, "OK"), 
-                    Q_ARG(SLState, SLState::SL_Finished)
+                    Q_ARG(RPZStatusLabel::State, RPZStatusLabel::State::Finished)
                 );
             }
         );
@@ -189,7 +189,7 @@ void MainWindow::_initConnectivity() {
 
                 QMetaObject::invokeMethod(this->_sb, "updateServerStateLabel",
                     Q_ARG(QString, tr("Error")), 
-                    Q_ARG(SLState, SLState::SL_Error)
+                    Q_ARG(RPZStatusLabel::State, RPZStatusLabel::State::Error)
                 );
 
                 this->_rpzServer = nullptr;

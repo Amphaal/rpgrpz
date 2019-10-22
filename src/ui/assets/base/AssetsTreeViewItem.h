@@ -9,48 +9,48 @@
 #include "src/shared/models/RPZAtom.h"
 #include "src/shared/models/RPZToyMetadata.h"
 
-class AssetsDatabaseElement : public QObject {
+#include "src/shared/database/MapDatabase.h"
+
+class AssetsTreeViewItem : public QObject {
 
     Q_OBJECT
 
     public:
-        enum Type { 
+        enum class Type { 
             T_Unknown = 0,
             Root = 100,
             Folder = 101,
             InternalContainer = 201,
-                Player = 250,
-                Event = 251,
-                FreeDraw = 252,
-                Text = 253,
-            NPC_Container = 301,
-                NPC = 350,
-            FloorBrushContainer = 401,
-                FloorBrush = 450,
-            ObjectContainer = 501,
-                Object = 550,
-            DownloadedContainer = 601,
+                Event = (int)AtomType::Event,
+                FreeDraw = (int)AtomType::Drawing,
+                Text = (int)AtomType::Text,
+            NPC_Container = (int)AssetsDatabase::StorageContainer::NPC,
+                NPC = (int)AtomType::NPC,
+            FloorBrushContainer = (int)AssetsDatabase::StorageContainer::FloorBrush,
+                FloorBrush = (int)AtomType::Brush,
+            ObjectContainer = (int)AssetsDatabase::StorageContainer::Object,
+                Object = (int)AtomType::Object,
+            DownloadedContainer = (int)AssetsDatabase::StorageContainer::Downloaded,
                 Downloaded = 650,
-            BackgroundContainer = 701,
-                Background = 750 
+            BackgroundContainer = (int)AssetsDatabase::StorageContainer::Background,
+                Background = (int)AtomType::Background 
         };
         
-        static QList<AssetsDatabaseElement::Type> staticContainerTypes();
-        static QList<AssetsDatabaseElement::Type> movableStaticContainerTypes();
+        static QList<AssetsTreeViewItem::Type> staticContainerTypes();
+        static QList<AssetsTreeViewItem::Type> movableStaticContainerTypes();
 
-        static AssetsDatabaseElement* fromIndex(const QModelIndex &index);
+        static AssetsTreeViewItem* fromIndex(const QModelIndex &index);
         static inline const QString listMimeType = QStringLiteral(u"application/x-assets-db-elem-list");
-        static AtomType toAtomType(const AssetsDatabaseElement::Type &type);
 
-        AssetsDatabaseElement(const QString &name, AssetsDatabaseElement* parent, const AssetsDatabaseElement::Type &type = Folder);
-        AssetsDatabaseElement(const RPZToyMetadata &assetMetadata);
-        AssetsDatabaseElement();
-        ~AssetsDatabaseElement();
+        AssetsTreeViewItem(const QString &name, AssetsTreeViewItem* parent, const AssetsTreeViewItem::Type &type = Folder);
+        AssetsTreeViewItem(const RPZToyMetadata &assetMetadata);
+        AssetsTreeViewItem();
+        ~AssetsTreeViewItem();
 
-        AssetsDatabaseElement::Type type() const;
+        AssetsTreeViewItem::Type type() const;
         AtomType atomType() const;
-        AssetsDatabaseElement::Type insertType() const;
-        AssetsDatabaseElement::Type rootStaticContainer() const;
+        AssetsTreeViewItem::Type insertType() const;
+        AssetsTreeViewItem::Type rootStaticContainer() const;
         QString iconPath() const;
         QString displayName() const;
         QString path() const;
@@ -66,46 +66,46 @@ class AssetsDatabaseElement : public QObject {
         bool isStaticContainer() const;
         bool isDeletable() const;
 
-        AssetsDatabaseElement* parent();
+        AssetsTreeViewItem* parent();
         int row() const;
-        AssetsDatabaseElement* child(int row);
+        AssetsTreeViewItem* child(int row);
         int childCount() const;
         int itemChildrenCount() const;
-        QList<AssetsDatabaseElement*> childrenContainers();
-        QList<AssetsDatabaseElement*> childrenItems();
+        QList<AssetsTreeViewItem*> childrenContainers();
+        QList<AssetsTreeViewItem*> childrenItems();
         
         bool isAcceptableNameChange(QString &newName); //sanitize and check if the name change is OK
         void rename(const QString &newName); //prefer using rename() with AssetsDatabase for db interaction
-        void appendChild(AssetsDatabaseElement* child); //prefer using insertAsset() with AssetsDatabase for parallel db insertion
+        void appendChild(AssetsTreeViewItem* child); //prefer using insertAsset() with AssetsDatabase for parallel db insertion
 
-        bool contains(AssetsDatabaseElement* toCheck, AssetsDatabaseElement* toBeChecked = nullptr);
-        bool containsAny(const QList<AssetsDatabaseElement*> toCheck);
+        bool contains(AssetsTreeViewItem* toCheck, AssetsTreeViewItem* toBeChecked = nullptr);
+        bool containsAny(const QList<AssetsTreeViewItem*> toCheck);
 
     protected:
-        QList<AssetsDatabaseElement*> _subElements;
-        AssetsDatabaseElement* _parentElement = nullptr;
+        QList<AssetsTreeViewItem*> _subElements;
+        AssetsTreeViewItem* _parentElement = nullptr;
 
        //sort items by path length (number of slashes)
-        static void sortByPathLengthDesc(QList<AssetsDatabaseElement*> &listToSort);
+        static void sortByPathLengthDesc(QList<AssetsTreeViewItem*> &listToSort);
 
         //interpret path element as corresponding type
-        static AssetsDatabaseElement::Type pathChunktoType(const QString &chunk);
+        static AssetsTreeViewItem::Type pathChunktoType(const QString &chunk);
 
         //returns elements of a path
         static QList<QString> pathAsList(const QString &path);
 
         //returns a list of single elements by node path
-        static QSet<AssetsDatabaseElement*> filterTopMostOnly(QList<AssetsDatabaseElement*> elemsToFilter);
+        static QSet<AssetsTreeViewItem*> filterTopMostOnly(QList<AssetsTreeViewItem*> elemsToFilter);
 
-        static QList<AssetsDatabaseElement::Type> internalItemTypes();
-        static QString typeDescription(AssetsDatabaseElement::Type &type);
+        static QList<AssetsTreeViewItem::Type> internalItemTypes();
+        static QString typeDescription(AssetsTreeViewItem::Type &type);
 
-        void unrefChild(AssetsDatabaseElement* child);
+        void unrefChild(AssetsTreeViewItem* child);
 
     private:
-        AssetsDatabaseElement::Type _type = T_Unknown;
-        AssetsDatabaseElement::Type _insertType = T_Unknown;
-        AssetsDatabaseElement::Type _rootStaticContainerType = T_Unknown;
+        AssetsTreeViewItem::Type _type = AssetsTreeViewItem::Type::T_Unknown;
+        AssetsTreeViewItem::Type _insertType = AssetsTreeViewItem::Type::T_Unknown;
+        AssetsTreeViewItem::Type _rootStaticContainerType = AssetsTreeViewItem::Type::T_Unknown;
         AtomType _atomType = AtomType::Undefined;
         RPZAssetHash _id = "";
         QString _name = "";
@@ -124,7 +124,7 @@ class AssetsDatabaseElement : public QObject {
         bool _isDeletable = false;
 
         void _defineAtomType();
-        void _defineParent(AssetsDatabaseElement* parent);
+        void _defineParent(AssetsTreeViewItem* parent);
         void _defineFlags();
         void _definePath();
         void _defineFullPath();
@@ -139,67 +139,64 @@ class AssetsDatabaseElement : public QObject {
         void _defineIsStaticContainer();
         void _defineIsDeletable();
         
-        void _setType(const AssetsDatabaseElement::Type &type);
-        static void _resetSubjacentItemsType(const AssetsDatabaseElement::Type &replacingType, AssetsDatabaseElement* target); //recursive
+        void _setType(const AssetsTreeViewItem::Type &type);
+        static void _resetSubjacentItemsType(const AssetsTreeViewItem::Type &replacingType, AssetsTreeViewItem* target); //recursive
 
         ///
         ///
         //
 
-        static const inline QList<AssetsDatabaseElement::Type> _staticContainerTypes = {
-            InternalContainer,
-            NPC_Container, 
-            FloorBrushContainer, 
-            BackgroundContainer,
-            ObjectContainer,
-            DownloadedContainer
+        static const inline QList<AssetsTreeViewItem::Type> _staticContainerTypes = {
+            AssetsTreeViewItem::Type::InternalContainer,
+            AssetsTreeViewItem::Type::NPC_Container, 
+            AssetsTreeViewItem::Type::FloorBrushContainer, 
+            AssetsTreeViewItem::Type::BackgroundContainer,
+            AssetsTreeViewItem::Type::ObjectContainer,
+            AssetsTreeViewItem::Type::DownloadedContainer
         };
 
-        static const inline QList<AssetsDatabaseElement::Type> _movableStaticContainerTypes = {
-            FloorBrushContainer, 
-            ObjectContainer
+        static const inline QList<AssetsTreeViewItem::Type> _movableStaticContainerTypes = {
+            AssetsTreeViewItem::Type::FloorBrushContainer, 
+            AssetsTreeViewItem::Type::ObjectContainer
         };
 
-        static const inline QList<AssetsDatabaseElement::Type> _itemTypes = {
-            NPC, 
-            FloorBrush,
-            Object,
-            Downloaded,
-            Background
+        static const inline QList<AssetsTreeViewItem::Type> _itemTypes = {
+            AssetsTreeViewItem::Type::NPC, 
+            AssetsTreeViewItem::Type::FloorBrush,
+            AssetsTreeViewItem::Type::Object,
+            AssetsTreeViewItem::Type::Downloaded,
+            AssetsTreeViewItem::Type::Background
         };
 
-        static const inline QList<AssetsDatabaseElement::Type> _internalItemsTypes = {
-            Player, 
-            Event,
-            FreeDraw,
-            Text
+        static const inline QList<AssetsTreeViewItem::Type> _internalItemsTypes = {
+            AssetsTreeViewItem::Type::Event,
+            AssetsTreeViewItem::Type::FreeDraw,
+            AssetsTreeViewItem::Type::Text
         };
 
-        static const inline QHash<AssetsDatabaseElement::Type, QString> _iconPathByElementType = {
-            { Player, ":/icons/app/manager/character.png" },
-            { Event, ":/icons/app/manager/event.png" },
-            { NPC_Container, ":/icons/app/manager/npc.png" },
-            { ObjectContainer, ":/icons/app/manager/asset.png" },
-            { FloorBrushContainer, ":/icons/app/manager/brushes.png" },
-            { FreeDraw, ":/icons/app/tools/pen.png" },
-            { Text, ":/icons/app/tools/text.png" },
-            { Folder, ":/icons/app/manager/folder.png" }, 
-            { InternalContainer, ":/icons/app/manager/internal.png" },
-            { DownloadedContainer, ":/icons/app/manager/downloaded.png" },
-            { BackgroundContainer, ":/icons/app/manager/background.png" }
+        static const inline QHash<AssetsTreeViewItem::Type, QString> _iconPathByElementType = {
+            { AssetsTreeViewItem::Type::Event, ":/icons/app/manager/event.png" },
+            { AssetsTreeViewItem::Type::NPC_Container, ":/icons/app/manager/npc.png" },
+            { AssetsTreeViewItem::Type::ObjectContainer, ":/icons/app/manager/asset.png" },
+            { AssetsTreeViewItem::Type::FloorBrushContainer, ":/icons/app/manager/brushes.png" },
+            { AssetsTreeViewItem::Type::FreeDraw, ":/icons/app/tools/pen.png" },
+            { AssetsTreeViewItem::Type::Text, ":/icons/app/tools/text.png" },
+            { AssetsTreeViewItem::Type::Folder, ":/icons/app/manager/folder.png" }, 
+            { AssetsTreeViewItem::Type::InternalContainer, ":/icons/app/manager/internal.png" },
+            { AssetsTreeViewItem::Type::DownloadedContainer, ":/icons/app/manager/downloaded.png" },
+            { AssetsTreeViewItem::Type::BackgroundContainer, ":/icons/app/manager/background.png" }
         };
 
-        static const inline QHash<AssetsDatabaseElement::Type, QString> _typeDescriptions = {
-            { InternalContainer, QT_TR_NOOP("Internal") },
-            { Player, QT_TR_NOOP("Player") },
-            { Event, QT_TR_NOOP("Event") },
-            { FreeDraw, QT_TR_NOOP("Drawing") },
-            { Text, QT_TR_NOOP("Text") },
-            { NPC_Container, QT_TR_NOOP("NPC / Portraits") },
-            { ObjectContainer, QT_TR_NOOP("Objects") },
-            { FloorBrushContainer, QT_TR_NOOP("Brush") },
-            { DownloadedContainer, QT_TR_NOOP("Downloaded") },
-            { BackgroundContainer, QT_TR_NOOP("Landscapes") }
+        static const inline QHash<AssetsTreeViewItem::Type, QString> _typeDescriptions = {
+            { AssetsTreeViewItem::Type::InternalContainer, QT_TR_NOOP("Internal") },
+            { AssetsTreeViewItem::Type::Event, QT_TR_NOOP("Event") },
+            { AssetsTreeViewItem::Type::FreeDraw, QT_TR_NOOP("Drawing") },
+            { AssetsTreeViewItem::Type::Text, QT_TR_NOOP("Text") },
+            { AssetsTreeViewItem::Type::NPC_Container, QT_TR_NOOP("NPC / Portraits") },
+            { AssetsTreeViewItem::Type::ObjectContainer, QT_TR_NOOP("Objects") },
+            { AssetsTreeViewItem::Type::FloorBrushContainer, QT_TR_NOOP("Brush") },
+            { AssetsTreeViewItem::Type::DownloadedContainer, QT_TR_NOOP("Downloaded") },
+            { AssetsTreeViewItem::Type::BackgroundContainer, QT_TR_NOOP("Landscapes") }
         };
 
 };

@@ -63,7 +63,7 @@ class CharactersDatabase : public QObject, public JSONDatabase {
             return 1;
         };
 
-        JSONDatabaseModel _getDatabaseModel() {
+        JSONDatabase::Model _getDatabaseModel() {
             return {
                 { { QStringLiteral(u"characters"), ET_Object }, &this->_characters }
             };

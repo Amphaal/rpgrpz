@@ -110,7 +110,7 @@ int main(int argc, char** argv) {
     qRegisterMetaType<QHash<QGraphicsItem*,AtomUpdates>>("QHash<QGraphicsItem*,AtomUpdates>");
     qRegisterMetaType<AtomsSelectionDescriptor>("AtomsSelectionDescriptor");
     qRegisterMetaType<QHash<int,QList<QTreeWidgetItem*>>>("QHash<int,QList<QTreeWidgetItem*>>");
-    qRegisterMetaType<SLState>("SLState");
+    qRegisterMetaType<RPZStatusLabel::State>("RPZStatusLabel::State");
     qRegisterMetaType<QList<RPZAssetHash>>("QList<RPZAssetHash>");
     qRegisterMetaType<ProgressTracker::Kind>("ProgressTracker::Kind");
     qRegisterMetaType<QVector<RPZAssetHash>>("QVector<RPZAssetHash>");

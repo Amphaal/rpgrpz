@@ -79,7 +79,7 @@ QJsonArray JSONDatabase::entityAsArray(const QString &entityKey) {
     return this->db().value(entityKey).toArray();
 }
 
-JSONDatabaseVersion JSONDatabase::_getDbVersion(const QJsonObject &db) {
+JSONDatabase::Version JSONDatabase::_getDbVersion(const QJsonObject &db) {
     auto version = db.value(QStringLiteral(u"version")).toInt();
     return version;
 }
@@ -94,8 +94,8 @@ void JSONDatabase::updateFrom(QJsonObject &base, const QString &entityKey, const
 
 
 
-QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> JSONDatabase::_getUpdateHandlers() {
-    return QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler>();
+QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> JSONDatabase::_getUpdateHandlers() {
+    return QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler>();
 }
 
 bool JSONDatabase::_handleVersionMissmatch(QJsonObject &databaseToUpdate, int databaseToUpdateVersion) {
@@ -161,11 +161,11 @@ void JSONDatabase::_createEmptyDbFile() {
         
         QJsonValue val;
         switch (key.second) {
-            case ET_Object:
+            case JSONDatabase::EntityType::Object:
                 val = QJsonObject();
                 break;
             
-            case ET_Array:
+            case JSONDatabase::EntityType::Array:
                 val = QJsonArray();
                 break;
         }

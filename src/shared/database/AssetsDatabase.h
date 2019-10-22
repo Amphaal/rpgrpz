@@ -25,6 +25,14 @@ class AssetsDatabase : public JSONDatabase {
     Q_OBJECT
 
     public:
+        enum class StorageContainer {
+            NPC = 301,
+            FloorBrush = 401,
+            Object = 501,
+            Downloaded = 601,
+            Background = 701
+        };
+
         //singleton
         static AssetsDatabase* get();
 
@@ -67,8 +75,8 @@ class AssetsDatabase : public JSONDatabase {
         void _trackAssetByElem(const RPZAssetHash &assetId, AssetsTreeViewItem* elem);
 
         //updates handlers
-        QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> _getUpdateHandlers() override;
-        JSONDatabaseModel _getDatabaseModel() override;
+        QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> _getUpdateHandlers() override;
+        JSONDatabase::Model _getDatabaseModel() override;
         void _setupLocalData() override;
         
         //helpers

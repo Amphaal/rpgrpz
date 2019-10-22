@@ -1,11 +1,15 @@
 #pragma once
 
 #include <QGraphicsView>
+#include <QGraphicsItem>
 #include <QSet>
 #include <QTimeLine>
 #include <QTimer>
 #include <QKeyEvent>
 #include <QWheelEvent>
+#include <QScrollBar>
+
+#include "src/ui/map/base/AnimationTimeLine.hpp"
 
 class MV_Manipulation {
     public:
@@ -139,7 +143,7 @@ class MV_Manipulation {
 
 
     private:
-        enum MoveDirection { GoUndefined, GoLeft, GoUp, GoRight, GoDown };
+        enum class MoveDirection { GoUndefined, GoLeft, GoUp, GoRight, GoDown };
         struct MoveInstruction {
             QScrollBar* affectedScroll;
             int correction;
@@ -156,19 +160,19 @@ class MV_Manipulation {
         MoveDirection _keyPressEventToMoveDirection(const QKeyEvent *event) {
             switch(event->key()) {
                 case Qt::Key::Key_Up:
-                    return GoUp;
+                    return MoveDirection::GoUp;
                 
                 case Qt::Key::Key_Down:
-                    return GoDown;
+                    return MoveDirection::GoDown;
 
                 case Qt::Key::Key_Left:
-                    return GoLeft;
+                    return MoveDirection::GoLeft;
 
                 case Qt::Key::Key_Right:
-                    return GoRight;
+                    return MoveDirection::GoRight;
 
                 default:
-                    return GoUndefined;
+                    return MoveDirection::GoUndefined;
             }
         }
 
@@ -201,22 +205,22 @@ class MV_Manipulation {
 
                 switch(direction) {
                     
-                    case GoLeft:
+                    case MoveDirection::GoLeft:
                         temp.affectedScroll = this->_view->horizontalScrollBar();
                         temp.correction = -1;
                     break;
 
-                    case GoUp:
+                    case MoveDirection::GoUp:
                         temp.affectedScroll = this->_view->verticalScrollBar();
                         temp.correction = -1;
                     break;
 
-                    case GoRight:
+                    case MoveDirection::GoRight:
                         temp.affectedScroll = this->_view->horizontalScrollBar();
                         temp.correction = 1;
                     break;
 
-                    case GoDown:
+                    case MoveDirection::GoDown:
                         temp.affectedScroll = this->_view->verticalScrollBar();
                         temp.correction = 1;
                     break;

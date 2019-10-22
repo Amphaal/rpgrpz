@@ -146,9 +146,9 @@ void ConnectivityHelper::_onUPnPSuccess(const QString &protocol, const QString &
 
 void ConnectivityHelper::networkChanged(const QNetworkAccessManager::NetworkAccessibility accessible) {
     
-    emit localAddressStateChanged(this->_getWaitingText(), SLState::SL_Processing);
-    emit remoteAddressStateChanged(this->_getWaitingText(), SLState::SL_Processing);
-    emit uPnPStateChanged(this->_getWaitingText(), SLState::SL_Processing);
+    emit localAddressStateChanged(this->_getWaitingText(), RPZStatusLabel::State::Processing);
+    emit remoteAddressStateChanged(this->_getWaitingText(), RPZStatusLabel::State::Processing);
+    emit uPnPStateChanged(this->_getWaitingText(), RPZStatusLabel::State::Processing);
 
     if(!accessible) {
 
@@ -177,7 +177,7 @@ void ConnectivityHelper::_getLocalAddress() {
 
     if(rtrn.isNull()) {
         qDebug() << "Connectivity : Local IP not found !";
-        emit localAddressStateChanged(this->_getErrorText(), SLState::SL_Error);
+        emit localAddressStateChanged(this->_getErrorText(), RPZStatusLabel::State::Error);
     } else {
         qDebug() << "Connectivity : Local IP" << rtrn;
         emit localAddressStateChanged(rtrn);

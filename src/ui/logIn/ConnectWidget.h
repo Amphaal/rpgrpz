@@ -21,14 +21,14 @@ class ConnectWidget : public QWidget {
     Q_OBJECT
 
     public:
-        enum State { NotConnected, Connecting, Connected };
-
         ConnectWidget(MapHint* hintToControlStateOf, QWidget *parent = nullptr);
 
     signals:
         void startingConnection(RPZClient* cc);
 
     private:
+        enum class State { NotConnected, Connecting, Connected };
+
         QLineEdit* _domainTarget = nullptr;
         QLineEdit* _nameTarget = nullptr;
         QComboBox* _characterSheetTarget = nullptr;
@@ -36,7 +36,7 @@ class ConnectWidget : public QWidget {
         QPushButton* _connectBtn = nullptr;
 
         RPZClient* _cc = nullptr;
-        ConnectWidget::State _state = ConnectWidget::State::NotConnected;
+        ConnectWidget::State _state = NotConnected;
         
         void _tryConnectToServer();
         void _tryDisconnectingFromServer();

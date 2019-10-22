@@ -57,7 +57,6 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
     Q_OBJECT
     
     public:
-        enum UIMode { Unset, Full, Player };
         MainWindow();
         ~MainWindow();
     
@@ -69,6 +68,7 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
         void _onConnectionToServer();
 
     private:
+        enum class UIMode { Unset, Full, Player };
         void closeEvent(QCloseEvent *event) override;
         
         void _initUI();
@@ -103,7 +103,7 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
         QTabWidget* _leftTab = nullptr;
         QTabWidget* _rightTab = nullptr;
 
-        UIMode _currentAppUIMode = (UIMode)0;
+        UIMode _currentAppUIMode = UIMode::Unset;
         const UIMode _defaultAppUIMode = UIMode::Full;
         void _setupAppUI(UIMode mode);
 

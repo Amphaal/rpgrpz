@@ -103,28 +103,28 @@ void RPZStatusBar::_installLayout() {
 ///
 ///
 
-void RPZStatusBar::updateServerStateLabel(const QString &stateText, SLState state) {
+void RPZStatusBar::updateServerStateLabel(const QString &stateText, RPZStatusLabel::State state) {
     this->_serverStateLabel->updateState(
         stateText, 
         state
     );
 }
 
-void RPZStatusBar::updateUPnPLabel(const QString &stateText, SLState state) {
+void RPZStatusBar::updateUPnPLabel(const QString &stateText, RPZStatusLabel::State state) {
     this->_upnpStateLabel->updateState(
         stateText, 
         state
     );
 }
 
-void RPZStatusBar::updateExtIPLabel(const QString &stateText, SLState state) {
+void RPZStatusBar::updateExtIPLabel(const QString &stateText, RPZStatusLabel::State state) {
     
     auto asHTMLLink = [stateText]() {
         return "<a href='" + stateText + "'>" + stateText + "</a>";
     };
 
     this->_extIpLabel->updateState( 
-        state == SLState::SL_Finished ? asHTMLLink() : stateText,
+        state == RPZStatusLabel::State::Finished ? asHTMLLink() : stateText,
         state
     );
 }

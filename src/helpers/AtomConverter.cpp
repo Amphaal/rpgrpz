@@ -6,7 +6,7 @@ void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZA
     target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, true);
 
     //bind a copy of the template to the item
-    target->setData((int)AtomConverterDataIndex::IsTemporary, isTargetTemporary);
+    target->setData((int)AtomConverter::DataIndex::IsTemporary, isTargetTemporary);
 
     //refresh all legal if temporary
     auto paramsToUpdate = blueprint.legalParameters().toList();
@@ -60,7 +60,7 @@ RPZAtom AtomConverter::graphicsToAtom(QGraphicsItem* blueprint, RPZAtom template
 
 
 bool AtomConverter::_isTemporary(QGraphicsItem* item) {
-    return item->data((int)AtomConverterDataIndex::IsTemporary).toBool();
+    return item->data((int)AtomConverter::DataIndex::IsTemporary).toBool();
 }
 
 void AtomConverter::_bulkTransformApply(QGraphicsItem* itemBrushToUpdate) {
@@ -70,7 +70,7 @@ void AtomConverter::_bulkTransformApply(QGraphicsItem* itemBrushToUpdate) {
     if(!cItem) return;
 
     //extract transform instructions
-    auto transforms = itemBrushToUpdate->data((int)AtomConverterDataIndex::BrushTransform).toHash();
+    auto transforms = itemBrushToUpdate->data((int)AtomConverter::DataIndex::BrushTransform).toHash();
     
     
     QTransform toApply;
@@ -78,16 +78,16 @@ void AtomConverter::_bulkTransformApply(QGraphicsItem* itemBrushToUpdate) {
     //apply transforms to instruction object
     for(auto i = transforms.begin(); i != transforms.end(); i++) {
         
-        auto param = (AtomParameter)i.key().toInt();
+        auto param = static_cast<AtomParameter>(i.key().toInt());
         
         switch(param) {
-            case AssetScale: {
+            case AtomParameter::AssetScale: {
                 auto scaleRatio = i.value().toDouble();
                 toApply.scale(scaleRatio, scaleRatio);
             }
             break;
 
-            case AssetRotation: {
+            case AtomParameter::AssetRotation: {
                 auto degrees = i.value().toInt();
                 toApply.rotate(degrees);
             }
@@ -100,7 +100,7 @@ void AtomConverter::_bulkTransformApply(QGraphicsItem* itemBrushToUpdate) {
     }
 
     //extract brush type
-    auto type = (BrushType)itemBrushToUpdate->data((int)AtomConverterDataIndex::BrushDrawStyle).toInt();
+    auto type = (BrushType)itemBrushToUpdate->data((int)AtomConverter::DataIndex::BrushDrawStyle).toInt();
     
     //apply to pen
     if(type == BrushType::RoundBrush) {
@@ -193,7 +193,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
                 if(auto cItem = dynamic_cast<MapViewGraphicsPathItem*>(itemToUpdate)) {
                     
                     auto type = (BrushType)val.toInt();
-                    itemToUpdate->setData((int)AtomConverterDataIndex::BrushDrawStyle, val);
+                    itemToUpdate->setData((int)AtomConverter::DataIndex::BrushDrawStyle, val);
                     
                     //use pen as brush
                     if(type == BrushType::RoundBrush) {
@@ -265,9 +265,9 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
             //on asset rotation / scale, store metadata for all-in transform update in main method
             case AtomParameter::AssetRotation: {
             case AtomParameter::AssetScale: {
-                auto transforms = itemToUpdate->data((int)AtomConverterDataIndex::BrushTransform).toHash();
-                transforms.insert(QString::number(param), val);
-                itemToUpdate->setData((int)AtomConverterDataIndex::BrushTransform, transforms);
+                auto transforms = itemToUpdate->data((int)AtomConverter::DataIndex::BrushTransform).toHash();
+                transforms.insert(QString::number((int)param), val);
+                itemToUpdate->setData((int)AtomConverter::DataIndex::BrushTransform, transforms);
                 return true;
             }
             break;
@@ -314,7 +314,7 @@ void AtomConverter::_setParamToAtomFromGraphicsItem(const AtomParameter &param, 
         break;
 
         case AtomParameter::BrushStyle: {
-            auto brushStyle = blueprint->data((int)AtomConverterDataIndex::BrushDrawStyle).toInt();
+            auto brushStyle = blueprint->data((int)AtomConverter::DataIndex::BrushDrawStyle).toInt();
             atomToUpdate.setMetadata(param, brushStyle);
         }
         break;
@@ -350,10 +350,10 @@ void AtomConverter::_setParamToAtomFromGraphicsItem(const AtomParameter &param, 
         
         case AtomParameter::AssetScale:
         case AtomParameter::AssetRotation: {
-            auto transforms = blueprint->data((int)AtomConverterDataIndex::BrushTransform).toHash();
+            auto transforms = blueprint->data((int)AtomConverter::DataIndex::BrushTransform).toHash();
             if(transforms.isEmpty()) return;
 
-            auto transform = transforms.value(QString::number(param));
+            auto transform = transforms.value((int)QString::number(param));
             if(transform.isNull()) return;
             
             atomToUpdate.setMetadata(param, transform); 

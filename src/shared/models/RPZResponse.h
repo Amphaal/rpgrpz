@@ -4,7 +4,7 @@
 
 class RPZResponse : public Stampable {
     public:
-        enum ResponseCode {
+        enum class ResponseCode {
             UnknownCommand, 
             HelpManifest, 
             Ack, 
@@ -15,7 +15,7 @@ class RPZResponse : public Stampable {
         };
         
         RPZResponse();
-        RPZResponse(RPZStampableId answererTo, const ResponseCode &code = Ack, const QVariant &data = QVariant());
+        RPZResponse(RPZStampableId answererTo, const ResponseCode &code = ResponseCode::Ack, const QVariant &data = QVariant());
         RPZResponse(const QVariantHash &hash);
 
         ResponseCode responseCode() const;

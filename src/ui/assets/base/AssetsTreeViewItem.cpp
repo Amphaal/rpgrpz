@@ -1,13 +1,13 @@
-#include "AssetsDatabaseElement.h"
+#include "AssetsTreeViewItem.h"
 
-AssetsDatabaseElement* AssetsDatabaseElement::fromIndex(const QModelIndex &index) {
+AssetsTreeViewItem* AssetsTreeViewItem::fromIndex(const QModelIndex &index) {
     auto ip = index.internalPointer();
-    return static_cast<AssetsDatabaseElement*>(ip);
+    return static_cast<AssetsTreeViewItem*>(ip);
 }
 
-AssetsDatabaseElement::AssetsDatabaseElement() : AssetsDatabaseElement(QStringLiteral(u""), nullptr, Root) { };
+AssetsTreeViewItem::AssetsTreeViewItem() : AssetsTreeViewItem(QStringLiteral(u""), nullptr, Root) { };
 
-AssetsDatabaseElement::~AssetsDatabaseElement(){
+AssetsTreeViewItem::~AssetsTreeViewItem(){
     
     if(this->_parentElement) {
         this->_parentElement->unrefChild(this);
@@ -16,8 +16,8 @@ AssetsDatabaseElement::~AssetsDatabaseElement(){
     qDeleteAll(this->_subElements);
 }
 
-AssetsDatabaseElement::AssetsDatabaseElement(const RPZToyMetadata &assetMetadata) : 
-    AssetsDatabaseElement(
+AssetsTreeViewItem::AssetsTreeViewItem(const RPZToyMetadata &assetMetadata) : 
+    AssetsTreeViewItem(
         assetMetadata.assetName(), 
         assetMetadata.associatedParent(), 
         assetMetadata.associatedParent()->insertType()
@@ -28,10 +28,10 @@ AssetsDatabaseElement::AssetsDatabaseElement(const RPZToyMetadata &assetMetadata
 
 }
 
-AssetsDatabaseElement::AssetsDatabaseElement(
+AssetsTreeViewItem::AssetsTreeViewItem(
     const QString &name, 
-    AssetsDatabaseElement* parent,
-    const AssetsDatabaseElement::Type &type
+    AssetsTreeViewItem* parent,
+    const AssetsTreeViewItem::Type &type
 ) { 
     //define type
     this->_setType(type);
@@ -46,7 +46,7 @@ AssetsDatabaseElement::AssetsDatabaseElement(
 
 };
 
-void AssetsDatabaseElement::_setType(const AssetsDatabaseElement::Type &type) {
+void AssetsTreeViewItem::_setType(const AssetsTreeViewItem::Type &type) {
     this->_type = type; 
 
     // types-related definitions
@@ -70,115 +70,84 @@ void AssetsDatabaseElement::_setType(const AssetsDatabaseElement::Type &type) {
 // RO Properties //
 ///////////////////
 
-RPZToyMetadata AssetsDatabaseElement::toyMetadata() const {
+RPZToyMetadata AssetsTreeViewItem::toyMetadata() const {
     if(this->_toyMetadata.isEmpty() && !this->isContainer()) return RPZToyMetadata(this->atomType());
     return this->_toyMetadata;
 }
 
-Qt::ItemFlags AssetsDatabaseElement::flags() const {
+Qt::ItemFlags AssetsTreeViewItem::flags() const {
     return this->_flags;
 }
 
-QString AssetsDatabaseElement::displayName() const {
+QString AssetsTreeViewItem::displayName() const {
     return this->_name;
 }
 
-RPZAssetHash AssetsDatabaseElement::id() const {
+RPZAssetHash AssetsTreeViewItem::id() const {
     return this->_id;
 }
 
-AssetsDatabaseElement::Type AssetsDatabaseElement::type() const {
+AssetsTreeViewItem::Type AssetsTreeViewItem::type() const {
     return this->_type;
 }
 
-AtomType AssetsDatabaseElement::atomType() const {
+AtomType AssetsTreeViewItem::atomType() const {
     return this->_atomType;
 }
 
-AssetsDatabaseElement* AssetsDatabaseElement::parent() {
+AssetsTreeViewItem* AssetsTreeViewItem::parent() {
     return this->_parentElement;
 }
 
-QString AssetsDatabaseElement::fullPath() const {
+QString AssetsTreeViewItem::fullPath() const {
     return this->_fullPath;
 }
 
-QString AssetsDatabaseElement::path() const {
+QString AssetsTreeViewItem::path() const {
     return this->_path;
 }
 
-QString AssetsDatabaseElement::iconPath() const {
+QString AssetsTreeViewItem::iconPath() const {
     return this->_iconPath;
 }
 
-bool AssetsDatabaseElement::isContainer() const {
+bool AssetsTreeViewItem::isContainer() const {
     return this->_isContainer;
 }
 
-bool AssetsDatabaseElement::isInternal() const {
+bool AssetsTreeViewItem::isInternal() const {
     return this->_isInternal;
 }
 
-bool AssetsDatabaseElement::isRoot() const {
+bool AssetsTreeViewItem::isRoot() const {
     return this->_isRoot;
 }
 
-bool AssetsDatabaseElement::isIdentifiable() const {
+bool AssetsTreeViewItem::isIdentifiable() const {
     return this->_isIdentifiable;
 }
 
-bool AssetsDatabaseElement::isStaticContainer() const {
+bool AssetsTreeViewItem::isStaticContainer() const {
     return this->_isStaticContainer;
 }
 
-bool AssetsDatabaseElement::isDeletable() const {
+bool AssetsTreeViewItem::isDeletable() const {
     return this->_isDeletable;
 }
 
-AssetsDatabaseElement::Type AssetsDatabaseElement::insertType() const {
+AssetsTreeViewItem::Type AssetsTreeViewItem::insertType() const {
     return this->_insertType;
 }
 
-AssetsDatabaseElement::Type AssetsDatabaseElement::rootStaticContainer() const {
+AssetsTreeViewItem::Type AssetsTreeViewItem::rootStaticContainer() const {
     return this->_rootStaticContainerType;
-}
-
-AtomType AssetsDatabaseElement::toAtomType(const AssetsDatabaseElement::Type &type) {
-    switch(type) {
-        case Player:
-            return AtomType::PC;
-            break;
-        case Event:
-            return AtomType::Event;
-            break;
-        case NPC:
-            return AtomType::NPC;
-            break;
-        case FloorBrush:
-            return AtomType::Brush;
-            break;
-        case Object:
-            return AtomType::Object;
-            break;
-        case FreeDraw:
-            return AtomType::Drawing;
-            break;
-        case Text:
-            return AtomType::Text;
-            break;
-        case Background:
-            return AtomType::Background;
-            break;
-        default:
-            return AtomType::Undefined;
-    }
 }
 
 ///////////////////////
 // END RO Properties //
 ///////////////////////
 
-bool AssetsDatabaseElement::contains(AssetsDatabaseElement* toCheck, AssetsDatabaseElement* toBeChecked) {
+bool AssetsTreeViewItem::contains(AssetsTreeViewItem* toCheck, AssetsTreeViewItem* toBeChecked) {
     if(!toBeChecked) toBeChecked = this;
     
     //check if self
@@ -191,7 +160,7 @@ bool AssetsDatabaseElement::contains(AssetsDatabaseElement* toCheck, AssetsDatab
     return false;
 }
 
-bool AssetsDatabaseElement::containsAny(const QList<AssetsDatabaseElement*> toCheck) {
+bool AssetsTreeViewItem::containsAny(const QList<AssetsTreeViewItem*> toCheck) {
     
     for(auto i : toCheck) {
         auto doesContain = this->contains(i);
@@ -202,32 +171,32 @@ bool AssetsDatabaseElement::containsAny(const QList<AssetsDatabaseElement*> toCh
 
 }
 
-AssetsDatabaseElement* AssetsDatabaseElement::child(int row) {
+AssetsTreeViewItem* AssetsTreeViewItem::child(int row) {
     return this->_subElements.value(row);
 }
 
-int AssetsDatabaseElement::childCount() const {
+int AssetsTreeViewItem::childCount() const {
     return this->_subElements.count();
 }
 
-int AssetsDatabaseElement::itemChildrenCount() const {
+int AssetsTreeViewItem::itemChildrenCount() const {
     return this->_itemChildrenCount;
 }
 
-int AssetsDatabaseElement::row() const {
+int AssetsTreeViewItem::row() const {
     if (this->_parentElement) {
-        return this->_parentElement->_subElements.indexOf(const_cast<AssetsDatabaseElement*>(this));
+        return this->_parentElement->_subElements.indexOf(const_cast<AssetsTreeViewItem*>(this));
     }
 
     return 0;
 }
 
-void AssetsDatabaseElement::appendChild(AssetsDatabaseElement* child) {
+void AssetsTreeViewItem::appendChild(AssetsTreeViewItem* child) {
     
     child->_defineParent(this);
 
     //add to list
-    if(child->type() == Folder) {
+    if(child->type() == AssetsTreeViewItem::Type::Folder) {
         this->_subElements.prepend(child);
     } else {
         this->_subElements.append(child);
@@ -238,7 +207,7 @@ void AssetsDatabaseElement::appendChild(AssetsDatabaseElement* child) {
 };
 
 
-void AssetsDatabaseElement::unrefChild(AssetsDatabaseElement* child) {
+void AssetsTreeViewItem::unrefChild(AssetsTreeViewItem* child) {
 
     //find child in subelements
     auto foundIndex = this->_subElements.indexOf(child);
@@ -254,8 +223,8 @@ void AssetsDatabaseElement::unrefChild(AssetsDatabaseElement* child) {
     }
 }
 
-QList<AssetsDatabaseElement*> AssetsDatabaseElement::childrenContainers() {
-    QList<AssetsDatabaseElement*> list;
+QList<AssetsTreeViewItem*> AssetsTreeViewItem::childrenContainers() {
+    QList<AssetsTreeViewItem*> list;
     
     for(auto &elem : this->_subElements) {
         if(elem->isContainer()) list.append(elem);
@@ -264,8 +233,8 @@ QList<AssetsDatabaseElement*> AssetsDatabaseElement::childrenContainers() {
     return list;
 }
 
-QList<AssetsDatabaseElement*> AssetsDatabaseElement::childrenItems() {
-    QList<AssetsDatabaseElement*> list;
+QList<AssetsTreeViewItem*> AssetsTreeViewItem::childrenItems() {
+    QList<AssetsTreeViewItem*> list;
     auto filterType = this->insertType();
     
     for(auto &elem : this->_subElements) {
@@ -275,7 +244,7 @@ QList<AssetsDatabaseElement*> AssetsDatabaseElement::childrenItems() {
     return list;
 }
 
-void AssetsDatabaseElement::rename(const QString &newName) {
+void AssetsTreeViewItem::rename(const QString &newName) {
     this->_name = newName;
 
     //redefine paths
@@ -287,47 +256,46 @@ void AssetsDatabaseElement::rename(const QString &newName) {
 /// DEFINES //
 //////////////
 
-void AssetsDatabaseElement::_defineFlags() {
+void AssetsTreeViewItem::_defineFlags() {
 
     //flags definition
     switch(this->_type) {
         
-        case InternalContainer:
-        case DownloadedContainer:
+        case AssetsTreeViewItem::Type::InternalContainer:
+        case AssetsTreeViewItem::Type::DownloadedContainer:
             this->_flags = Qt::ItemIsEnabled;
             break;
         
         //disabled for now
-        case Text:
-        case Player:
-        case Event:
-        case NPC_Container:
-        case BackgroundContainer:
-        case Background:
-        case NPC:
+        case AssetsTreeViewItem::Type::Text:
+        case AssetsTreeViewItem::Type::Event:
+        case AssetsTreeViewItem::Type::NPC_Container:
+        case AssetsTreeViewItem::Type::BackgroundContainer:
+        case AssetsTreeViewItem::Type::Background:
+        case AssetsTreeViewItem::Type::NPC:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemNeverHasChildren);
             break;
         
-        case FreeDraw:
+        case AssetsTreeViewItem::Type::FreeDraw:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable);
             break;
         
-        case Object:
-        case FloorBrush:
-        case Downloaded:
+        case AssetsTreeViewItem::Type::Object:
+        case AssetsTreeViewItem::Type::FloorBrush:
+        case AssetsTreeViewItem::Type::Downloaded:
         // case Background:
         // case NPC:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
             break;
         
-        case FloorBrushContainer:
-        case ObjectContainer:
+        case AssetsTreeViewItem::Type::FloorBrushContainer:
+        case AssetsTreeViewItem::Type::ObjectContainer:
         // case NPC_Container:
         // case BackgroundContainer:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDropEnabled);
             break;
         
-        case Folder:
+        case AssetsTreeViewItem::Type::Folder:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
             break;
         
@@ -337,11 +305,11 @@ void AssetsDatabaseElement::_defineFlags() {
     }
 }
 
-void AssetsDatabaseElement::_defineAtomType() {
+void AssetsTreeViewItem::_defineAtomType() {
     this->_atomType = toAtomType(this->_type);
 }
 
-void AssetsDatabaseElement::_definePath() {
+void AssetsTreeViewItem::_definePath() {
 
     //assimilated root, let default...
     if(!this->_parentElement) {
@@ -355,7 +323,7 @@ void AssetsDatabaseElement::_definePath() {
 
         if(this->isStaticContainer()) {
             //if is static, dont use name
-            path = "/{" + QString::number(this->type()) + "}";
+            path = "/{" + QString::number((int)this->type()) + "}";
         } else {
             //use name for other container types
             path = "/" + this->displayName();
@@ -373,29 +341,29 @@ void AssetsDatabaseElement::_definePath() {
     }
 }
 
-void AssetsDatabaseElement::_defineFullPath() {
+void AssetsTreeViewItem::_defineFullPath() {
     this->_fullPath = this->isIdentifiable() ? 
                             this->path() + "/" + this->_name : 
                             this->path();
 }
 
 
-void AssetsDatabaseElement::_defineIconPath() {
+void AssetsTreeViewItem::_defineIconPath() {
     this->_iconPath = _iconPathByElementType.value(this->_type);
 }
 
-void AssetsDatabaseElement::_resetSubjacentItemsType(const AssetsDatabaseElement::Type &replacingType, AssetsDatabaseElement* target) {
+void AssetsTreeViewItem::_resetSubjacentItemsType(const AssetsTreeViewItem::Type &replacingType, AssetsTreeViewItem* target) {
     //update children
     for(auto elem : target->_subElements) {
         if(elem->isContainer()) {
-            AssetsDatabaseElement::_resetSubjacentItemsType(replacingType, elem);
+            AssetsTreeViewItem::_resetSubjacentItemsType(replacingType, elem);
         } else if(elem->isIdentifiable()) {
             elem->_setType(replacingType);
         }
     }
 }
 
-void AssetsDatabaseElement::_defineParent(AssetsDatabaseElement* parent) {
+void AssetsTreeViewItem::_defineParent(AssetsTreeViewItem* parent) {
     
     //if already existing parent, tell him to deref child
     if(this->_parentElement) {
@@ -411,7 +379,7 @@ void AssetsDatabaseElement::_defineParent(AssetsDatabaseElement* parent) {
             }
 
             //update children
-            AssetsDatabaseElement::_resetSubjacentItemsType(replacingType, this);
+            AssetsTreeViewItem::_resetSubjacentItemsType(replacingType, this);
         }
     }
 
@@ -425,31 +393,31 @@ void AssetsDatabaseElement::_defineParent(AssetsDatabaseElement* parent) {
     this->_defineInsertType();
 }
 
-void AssetsDatabaseElement::_defineIsContainer() {
-    this->_isContainer = this->_staticContainerTypes.contains(this->_type) || this->_type == Folder;
+void AssetsTreeViewItem::_defineIsContainer() {
+    this->_isContainer = this->_staticContainerTypes.contains(this->_type) || this->_type == AssetsTreeViewItem::Type::Folder;
 }
-void AssetsDatabaseElement::_defineIsInternal() {
-    this->_isInternal = this->rootStaticContainer() == InternalContainer;
+void AssetsTreeViewItem::_defineIsInternal() {
+    this->_isInternal = this->rootStaticContainer() == AssetsTreeViewItem::Type::InternalContainer;
 }
-void AssetsDatabaseElement::_defineIsRoot() {
-    this->_isRoot = this->_type == AssetsDatabaseElement::Type::Root;
+void AssetsTreeViewItem::_defineIsRoot() {
+    this->_isRoot = this->_type == AssetsTreeViewItem::Type::Root;
 }
-void AssetsDatabaseElement::_defineIsIdentifiable() {
+void AssetsTreeViewItem::_defineIsIdentifiable() {
     this->_isIdentifiable = this->_itemTypes.contains(this->_type);
 }
-void AssetsDatabaseElement::_defineIsStaticContainer() {
+void AssetsTreeViewItem::_defineIsStaticContainer() {
     this->_isStaticContainer = this->_staticContainerTypes.contains(this->_type);
 }
-void AssetsDatabaseElement::_defineIsDeletable() {
-    this->_isDeletable = this->_itemTypes.contains(this->_type) || this->_type == Folder;
+void AssetsTreeViewItem::_defineIsDeletable() {
+    this->_isDeletable = this->_itemTypes.contains(this->_type) || this->_type == AssetsTreeViewItem::Type::Folder;
 }
 
 
-void AssetsDatabaseElement::_defineRootStaticContainer() {
+void AssetsTreeViewItem::_defineRootStaticContainer() {
      
     //if no parent, let default
     if(!this->_parentElement){
-        this->_rootStaticContainerType = T_Unknown;
+        this->_rootStaticContainerType = AssetsTreeViewItem::Type::T_Unknown;
         return;
     }
 
@@ -466,25 +434,25 @@ void AssetsDatabaseElement::_defineRootStaticContainer() {
 }
 
 
-void AssetsDatabaseElement::_defineInsertType() {
+void AssetsTreeViewItem::_defineInsertType() {
     switch(this->rootStaticContainer()) {
-        case NPC_Container:
-            this->_insertType = NPC;
+        case AssetsTreeViewItem::Type::NPC_Container:
+            this->_insertType = AssetsTreeViewItem::Type::NPC;
             break;
-        case FloorBrushContainer:
-            this->_insertType = FloorBrush;
+        case AssetsTreeViewItem::Type::FloorBrushContainer:
+            this->_insertType = AssetsTreeViewItem::Type::FloorBrush;
             break;
-        case ObjectContainer:
-            this->_insertType = Object;
+        case AssetsTreeViewItem::Type::ObjectContainer:
+            this->_insertType = AssetsTreeViewItem::Type::Object;
             break;
-        case DownloadedContainer:
-            this->_insertType = Downloaded;
+        case AssetsTreeViewItem::Type::DownloadedContainer:
+            this->_insertType = AssetsTreeViewItem::Type::Downloaded;
             break;
-        case BackgroundContainer:
-            this->_insertType = Background;
+        case AssetsTreeViewItem::Type::BackgroundContainer:
+            this->_insertType = AssetsTreeViewItem::Type::Background;
             break;
         default:
-            this->_insertType = T_Unknown;
+            this->_insertType = AssetsTreeViewItem::Type::T_Unknown;
             break;
     }
 }
@@ -498,23 +466,23 @@ void AssetsDatabaseElement::_defineInsertType() {
 //////////////
 
 
-QList<AssetsDatabaseElement::Type> AssetsDatabaseElement::staticContainerTypes() {
+QList<AssetsTreeViewItem::Type> AssetsTreeViewItem::staticContainerTypes() {
     return _staticContainerTypes;
 }
 
-QList<AssetsDatabaseElement::Type> AssetsDatabaseElement::movableStaticContainerTypes() {
+QList<AssetsTreeViewItem::Type> AssetsTreeViewItem::movableStaticContainerTypes() {
     return _movableStaticContainerTypes;
 }
 
-QList<AssetsDatabaseElement::Type> AssetsDatabaseElement::internalItemTypes() {
+QList<AssetsTreeViewItem::Type> AssetsTreeViewItem::internalItemTypes() {
     return _internalItemsTypes;
 }
 
-QString AssetsDatabaseElement::typeDescription(AssetsDatabaseElement::Type &type) {
+QString AssetsTreeViewItem::typeDescription(AssetsTreeViewItem::Type &type) {
     return tr(qUtf8Printable(_typeDescriptions.value(type)));
 }
 
-bool AssetsDatabaseElement::isAcceptableNameChange(QString &newName) {
+bool AssetsTreeViewItem::isAcceptableNameChange(QString &newName) {
     
     //strip name from slashes and double quotes
     newName.replace("\"", "");
@@ -530,11 +498,11 @@ bool AssetsDatabaseElement::isAcceptableNameChange(QString &newName) {
     
 }
 
-void AssetsDatabaseElement::sortByPathLengthDesc(QList<AssetsDatabaseElement*> &listToSort) {
+void AssetsTreeViewItem::sortByPathLengthDesc(QList<AssetsTreeViewItem*> &listToSort) {
     
     //sort algorythm
     struct {
-        bool operator()(AssetsDatabaseElement* a, AssetsDatabaseElement* b) const {   
+        bool operator()(AssetsTreeViewItem* a, AssetsTreeViewItem* b) const {   
             return a->fullPath().count("/") > b->fullPath().count("/");
         }   
     } pathLength;
@@ -544,16 +512,16 @@ void AssetsDatabaseElement::sortByPathLengthDesc(QList<AssetsDatabaseElement*> &
 
 }
 
-QList<QString> AssetsDatabaseElement::pathAsList(const QString &path) {
+QList<QString> AssetsTreeViewItem::pathAsList(const QString &path) {
     return path.split("/", QString::SplitBehavior::SkipEmptyParts);
 }
 
-AssetsDatabaseElement::Type AssetsDatabaseElement::pathChunktoType(const QString &chunk) {
+AssetsTreeViewItem::Type AssetsTreeViewItem::pathChunktoType(const QString &chunk) {
     
     auto expected = chunk.startsWith("{") && chunk.endsWith("}");
     if(!expected) {
         qDebug() << "Assets : ignoring path, as its structure is not expected.";
-        return T_Unknown;
+        return AssetsTreeViewItem::Type::T_Unknown;
     }
     
     //type cast and get element type
@@ -561,18 +529,18 @@ AssetsDatabaseElement::Type AssetsDatabaseElement::pathChunktoType(const QString
     cp_chunk.replace("{", "");
     cp_chunk.replace("}", "");
     auto castOk = false;
-    auto staticCType = (AssetsDatabaseElement::Type)cp_chunk.toInt(&castOk);
+    auto staticCType = (AssetsTreeViewItem::Type)cp_chunk.toInt(&castOk);
     if(!castOk) {
         qDebug() << "Assets : ignoring path, as static container type was impossible to deduce";
-        return T_Unknown;
+        return AssetsTreeViewItem::Type::T_Unknown;
     }
 
     return staticCType;
 }
 
-QSet<AssetsDatabaseElement*> AssetsDatabaseElement::filterTopMostOnly(QList<AssetsDatabaseElement*> elemsToFilter) {
+QSet<AssetsTreeViewItem*> AssetsTreeViewItem::filterTopMostOnly(QList<AssetsTreeViewItem*> elemsToFilter) {
 
-    QSet<AssetsDatabaseElement*> higher;
+    QSet<AssetsTreeViewItem*> higher;
     while(elemsToFilter.count()) {
 
         //take first
@@ -589,7 +557,7 @@ QSet<AssetsDatabaseElement*> AssetsDatabaseElement::filterTopMostOnly(QList<Asse
         auto isForeigner = true;
 
         //iterate
-        QSet<AssetsDatabaseElement*> obsoletePointers;
+        QSet<AssetsTreeViewItem*> obsoletePointers;
         for(auto &st : higher) {
 
             auto st_path = st->fullPath();

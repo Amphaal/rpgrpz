@@ -77,7 +77,7 @@ void MapDatabase::clear() {
     this->_assetHashes.clear();
 }
 
-JSONDatabaseModel MapDatabase::_getDatabaseModel() {
+JSONDatabase::Model MapDatabase::_getDatabaseModel() {
     return {
         { { QStringLiteral(u"atoms"), ET_Object }, &this->_atomsById },
         { { QStringLiteral(u"assets"), ET_Array }, &this->_assetHashes }
@@ -88,9 +88,9 @@ const int MapDatabase::apiVersion() {
     return 7;
 }
 
-QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> MapDatabase::_getUpdateHandlers() {
+QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> MapDatabase::_getUpdateHandlers() {
     
-    auto out = QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler>();
+    auto out = QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler>();
 
     //to v7
     out.insert(

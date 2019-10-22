@@ -34,8 +34,8 @@ class MapDatabase : public JSONDatabase {
         RPZMap<RPZAtom> _atomsById;
         QSet<RPZAssetHash> _assetHashes;
 
-        QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> _getUpdateHandlers() override;
-        JSONDatabaseModel _getDatabaseModel() override;
+        QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> _getUpdateHandlers() override;
+        JSONDatabase::Model _getDatabaseModel() override;
         void _setupLocalData() override;
 
 };
