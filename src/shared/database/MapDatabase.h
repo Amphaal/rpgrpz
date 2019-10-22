@@ -23,12 +23,15 @@ class MapDatabase : public JSONDatabase {
         void removeAtom(const RPZAtomId &toRemove);
         void clear();
 
-        const RPZMap<RPZAtom>& atoms() const;
-        const QSet<RPZAssetHash>& usedAssetsIds() const;
+        virtual const RPZMap<RPZAtom> safe_atoms() const;
+        virtual const QSet<RPZAssetHash> safe_usedAssetsIds() const;
 
     protected:
         void saveIntoFile();
         const int apiVersion() override;
+
+        const RPZMap<RPZAtom>& _atoms() const;
+        const QSet<RPZAssetHash>& _usedAssetsIds() const;
 
     private:
         RPZMap<RPZAtom> _atomsById;

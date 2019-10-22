@@ -169,7 +169,8 @@
         "*.in": "cpp",
         "qtime": "cpp",
         "qgraphicsview": "cpp",
-        "qstack": "cpp"
+        "qstack": "cpp",
+        "qtreewidgetitem": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

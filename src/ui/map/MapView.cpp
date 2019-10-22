@@ -135,8 +135,8 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
     //prevent circual selection
     QSignalBlocker b(this->scene());
 
-    if(type == PA_Selected) this->scene()->clearSelection();
-    if(type == PA_Reset) {
+    if(type == PayloadAlteration::Selected) this->scene()->clearSelection();
+    if(type == PayloadAlteration::Reset) {
         this->_resetTool();
         this->_drawingAssist->clearDrawing(); //before clearing whole scene
         this->scene()->clear();
@@ -147,34 +147,34 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
     for(auto item : toAlter) {
         switch(type) {
 
-            case PA_Reset: {
+            case PayloadAlteration::Reset: {
                 this->scene()->addItem(item);        
                 this->incrementHeavyLoadPlaceholder();
             }
             break;
 
-            case PA_Added: {
+            case PayloadAlteration::Added: {
                 this->scene()->addItem(item);        
                 this->_drawingAssist->compareItemToCommitedDrawing(item);
             }
             break;
 
-            case PA_Focused: {
+            case PayloadAlteration::Focused: {
                 this->focusItem(item);
             }
             break;
 
-            case PA_Selected: {
+            case PayloadAlteration::Selected: {
                 item->setSelected(true);
             }
             break;
 
-            case PA_Removed: {
+            case PayloadAlteration::Removed: {
                 delete item;
             }
             break;
 
-            case PA_AssetSelected: {
+            case PayloadAlteration::AssetSelected: {
                 auto newTool = item ? MapTool::Atom : MapTool::Default;
                 auto selectedAtom = item ? this->_hints->templateAtom() : RPZAtom();
                 if(item) this->scene()->addItem(item);
@@ -193,7 +193,7 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
         }
     }
 
-    if(type == PA_Reset) {
+    if(type == PayloadAlteration::Reset) {
         ProgressTracker::get()->heavyAlterationEnded();
     }
 
@@ -243,8 +243,7 @@ void MapView::mouseDoubleClickEvent(QMouseEvent *event) {
     if(!item) return;
 
     //check item is not temporary !
-    auto isTemporary = item->data((int)AtomConverter::DataIndex::IsTemporary).toBool();
-    if(isTemporary) return;
+    if(AtomConverter::isTemporary(item)) return;
 
     //notify focus
     this->_hints->notifyFocusedItem(item);
@@ -333,7 +332,7 @@ void MapView::mousePressEvent(QMouseEvent *event) {
     switch(event->button()) {
 
         case Qt::MouseButton::MiddleButton: {
-            auto tool = this->_quickTool == Default ? MapTool::Scroll : MapTool::Default;
+            auto tool = this->_quickTool == MapTool::Default ? MapTool::Scroll : MapTool::Default;
             this->_changeTool(tool, true);
         }
         break;
@@ -470,7 +469,7 @@ void MapView::connectionClosed() {
 void MapView::_sendMapHistory() {
     
     //generate payload
-    auto payload = this->_hints->createStatePayload();
+    ResetPayload payload(*this->_hints);
    
    //send it
     QMetaObject::invokeMethod(this->_rpzClient, "sendMapHistory", 

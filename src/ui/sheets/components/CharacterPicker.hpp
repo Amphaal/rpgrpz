@@ -211,11 +211,11 @@ class CharacterPicker : public QWidget {
             auto currentId = this->currentCharacterId();
             if(!currentId) return;
             
-            if(this->_mode == Local) {
+            if(this->_mode == Mode::Local) {
                 emit requestSave();
             } 
             
-            else if(this->_mode == Remote) {
+            else if(this->_mode == Mode::Remote) {
                 if(this->_localCharacterIdFromRemote != currentId) return;
                 emit requestSave();
             }

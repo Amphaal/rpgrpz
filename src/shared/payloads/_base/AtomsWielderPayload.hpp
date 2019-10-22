@@ -49,21 +49,30 @@ class AtomsWielderPayload : public AlterationPayload {
             }
 
             void _setAssetsIds(const MapDatabase &map) {
+                
                 QVariantList vList;
-                for (auto &hash : map.usedAssetsIds()) {
+                auto assetsIds = map.safe_usedAssetsIds();
+                
+                for (auto &hash : assetsIds) {
                     vList += hash;
                 }
                 this->insert(QStringLiteral(u"assets"), vList);
+                
             }
 
             void _setAtoms(const MapDatabase &map) {
+                
                 QVariantMap vMap;
-                for (auto i = map.atoms().constBegin(); i != map.atoms().constEnd(); ++i) {
+                auto atoms = map.safe_atoms();
+
+                for (auto i = atoms.constBegin(); i != atoms.constEnd(); ++i) {
                     auto snowflakeAsStr = QString::number(i.key());
                     auto maybePartialAtom = i.value();
                     vMap.insert(snowflakeAsStr, maybePartialAtom);
                 }
+
                 this->insert(QStringLiteral(u"atoms"), vMap);
+
             }
 
 };

@@ -38,7 +38,7 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
         {
             QMutexLocker l(&this->_m_layersItems);
 
-            if(type == PayloadAlteration::PA_Reset) {
+            if(type == PayloadAlteration::Reset) {
                 this->_layersItems.clear();
                 this->_atomTreeItemsById.clear();
                 this->_RPZAtomIdsBoundByRPZAssetHash.clear();
@@ -75,9 +75,8 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
             auto item = this->_atomTreeItemsById.take(id);
             out += item;
 
-            RPZAssetHash tbrAtom_assetId = item->data(0, RPZUserRoles::AssetHash).toString();
-
             //if has assetId, remove it from tracking list
+            auto tbrAtom_assetId = RPZQVariant::assetHash(item);
             if(!tbrAtom_assetId.isNull()) {
                 this->_RPZAtomIdsBoundByRPZAssetHash[tbrAtom_assetId].remove(id);
             }
@@ -142,11 +141,11 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
 
 void TreeMapHint::_handleItemMove(QTreeWidgetItem* toUpdate, const AtomUpdates &updatesMightContainMove, LayerManipulationHelper &mvHelper) {
     
-    if(!updatesMightContainMove.contains(Layer)) return;
+    if(!updatesMightContainMove.contains(AtomParameter::Layer)) return;
     
     auto layerItem = toUpdate->parent();
-    auto currentLayer = layerItem->data(0, RPZUserRoles::AtomLayer).toInt();
-    auto requestedLayer = updatesMightContainMove.value(Layer).toInt();
+    auto currentLayer =  RPZQVariant::atomLayer(layerItem);
+    auto requestedLayer = updatesMightContainMove.value(AtomParameter::Layer).toInt();
     
     if(currentLayer == requestedLayer) return;
 
@@ -189,12 +188,12 @@ void TreeMapHint::_applyMove(LayerManipulationHelper &mvHelper) {
             {
                 QMutexLocker l(&this->_m_layersItems);
                 for(auto toDelete : mightDelete) {
-                    auto layer = toDelete->data(0, RPZUserRoles::AtomLayer).toInt();
+                    auto layer = RPZQVariant::atomLayer(toDelete);
                     this->_layersItems.remove(layer);
                 }
             }
 
-            emit requestingUIAlteration(PA_Removed, mightDelete);
+            emit requestingUIAlteration(Removed, mightDelete);
         }
 
     }
@@ -205,7 +204,7 @@ void TreeMapHint::_onRenamedAsset(const QString &assetId, const QString &newName
     if(!this->_RPZAtomIdsBoundByRPZAssetHash.contains(assetId)) return;
 
     QList<QTreeWidgetItem*> toUpdate;
-    AtomUpdates updates {{ AssetName, newName }};
+    AtomUpdates updates {{ AtomParameter::AssetName, newName }};
 
     for(auto &RPZAtomId : this->_RPZAtomIdsBoundByRPZAssetHash.value(assetId)) {
         toUpdate += this->_atomTreeItemsById.value(RPZAtomId);
@@ -229,7 +228,7 @@ void TreeMapHint::_mayCreateLayerItem(int layer) {
     layerElem->setTextAlignment(1, Qt::AlignRight);
     layerElem->setTextAlignment(2, Qt::AlignRight);
     layerElem->setText(0, tr("Layer %1").arg(layer));
-    layerElem->setData(0, RPZUserRoles::AtomLayer, layer);
+    RPZQVariant::setAtomLayer(layerElem, layer);
     layerElem->setIcon(0, *this->_layerIcon);
     layerElem->setFlags(
         QFlags<Qt::ItemFlag>(
@@ -261,12 +260,11 @@ QTreeWidgetItem* TreeMapHint::_createTreeItem(const RPZAtom &atom) {
     );
 
     item->setText(0, atom.descriptor());
-    item->setData(0, RPZUserRoles::AtomId, atom.id());
-    item->setData(0, RPZUserRoles::AssetHash, atom.assetId());
-    item->setData(0, RPZUserRoles::AtomLayer, layer);
-
-    item->setData(1, RPZUserRoles::AtomVisibility, atom.isHidden());
-    this->updateLockedState(item, atom.isLocked());
+    RPZQVariant::setAtomId(item, atom.id());
+    RPZQVariant::setAssetHash(item, atom.assetId());
+    RPZQVariant::setAtomLayer(item, layer);
+    RPZQVariant::setAtomVisibility(item, atom.isHidden());
+    RPZQVariant::setAtomAvailability(item, atom.isLocked());
 
     switch(type) {
         case AtomType::Drawing:
@@ -282,11 +280,4 @@ QTreeWidgetItem* TreeMapHint::_createTreeItem(const RPZAtom &atom) {
     this->_mayCreateLayerItem(layer);
 
     return item;
-}
-
-void TreeMapHint::updateLockedState(QTreeWidgetItem* item, bool isLocked) {
-    
-    //set data
-    item->setData(1, RPZUserRoles::AtomAvailability, isLocked);
-
 }

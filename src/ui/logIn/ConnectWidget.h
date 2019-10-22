@@ -36,7 +36,7 @@ class ConnectWidget : public QWidget {
         QPushButton* _connectBtn = nullptr;
 
         RPZClient* _cc = nullptr;
-        ConnectWidget::State _state = NotConnected;
+        ConnectWidget::State _state = ConnectWidget::State::NotConnected;
         
         void _tryConnectToServer();
         void _tryDisconnectingFromServer();

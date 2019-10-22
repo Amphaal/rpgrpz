@@ -5,7 +5,7 @@
 class AddedPayload : public AtomsWielderPayload {
     public:
         AddedPayload(const QVariantHash &hash) : AtomsWielderPayload(hash) { }
-        AddedPayload(const MapDatabase &map) : AtomsWielderPayload(PayloadAlteration::PA_Added, map) { }
+        AddedPayload(const MapDatabase &map) : AtomsWielderPayload(PayloadAlteration::Added, map) { }
         
         static AddedPayload fromAtom(const RPZAtom &atom) {
             MapDatabase fakeDb;

@@ -9,7 +9,7 @@ class MetadataChangedPayload : public MultipleAtomTargetsPayload {
     public:
         MetadataChangedPayload(const QVariantHash &hash) : MultipleAtomTargetsPayload(hash) {}
         MetadataChangedPayload(const QVector<RPZAtomId> &targetedRPZAtomIds, const AtomUpdates &changes) : 
-            MultipleAtomTargetsPayload(PayloadAlteration::PA_MetadataChanged, targetedRPZAtomIds) {
+            MultipleAtomTargetsPayload(PayloadAlteration::MetadataChanged, targetedRPZAtomIds) {
             
             this->_setMetadataChanges(changes);
             

@@ -42,7 +42,7 @@ class AssetsTreeViewItem : public QObject {
         static AssetsTreeViewItem* fromIndex(const QModelIndex &index);
         static inline const QString listMimeType = QStringLiteral(u"application/x-assets-db-elem-list");
 
-        AssetsTreeViewItem(const QString &name, AssetsTreeViewItem* parent, const AssetsTreeViewItem::Type &type = Folder);
+        AssetsTreeViewItem(const QString &name, AssetsTreeViewItem* parent, const AssetsTreeViewItem::Type &type = AssetsTreeViewItem::Type::Folder);
         AssetsTreeViewItem(const RPZToyMetadata &assetMetadata);
         AssetsTreeViewItem();
         ~AssetsTreeViewItem();

@@ -47,6 +47,9 @@ class AtomsStorage : public AlterationAcknoledger, public MapDatabase {
         
         PossibleActionsOnAtomList getPossibleActions(const QVector<RPZAtomId> &ids);
 
+        const RPZMap<RPZAtom> safe_atoms() const override;
+        const QSet<RPZAssetHash> safe_usedAssetsIds() const override;
+
     public slots:    
         void redo();
         void undo();

@@ -148,10 +148,7 @@ void Playlist::addYoutubeVideo(const QString &url) {
     auto playlistItem = new QListWidgetItem(pos + url);   
 
     //define inner data
-    playlistItem->setData(
-        RPZUserRoles::YTVideoMetadataPtr, 
-        QVariant::fromValue<YoutubeVideoMetadata*>(data)
-    );
+    RPZQVariant::setYTVideoMetadata(playlistItem, data);
 
     //define default icon
     playlistItem->setIcon(*this->_ytIconGrey);
@@ -255,5 +252,5 @@ void Playlist::_onItemDoubleClicked(QListWidgetItem * item) {
 
 YoutubeVideoMetadata* Playlist::currentPlay() {
     if(!this->_playlistItemToUse) return nullptr;
-    return this->_playlistItemToUse->data(RPZUserRoles::YTVideoMetadataPtr).value<YoutubeVideoMetadata*>();
+    return RPZQVariant::ytVideoMetadata(this->_playlistItemToUse);
 }

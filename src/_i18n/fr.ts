@@ -45,59 +45,6 @@
     </message>
 </context>
 <context>
-    <name>AssetsTreeViewItem</name>
-    <message>
-        <location filename="../shared/assets/AssetsTreeViewItem.h" line="193"/>
-        <source>Internal</source>
-        <translation>Interne</translation>
-    </message>
-    <message>
-        <location filename="../shared/assets/AssetsTreeViewItem.h" line="194"/>
-        <source>Player</source>
-        <translation>Joueur</translation>
-    </message>
-    <message>
-        <location filename="../shared/assets/AssetsTreeViewItem.h" line="195"/>
-        <source>Event</source>
-        <translation>Evénement</translation>
-    </message>
-    <message>
-        <location filename="../shared/assets/AssetsTreeViewItem.h" line="196"/>
-        <source>Drawing</source>
-        <translation>Dessin</translation>
-    </message>
-    <message>
-        <location filename="../shared/assets/AssetsTreeViewItem.h" line="197"/>
-        <source>Text</source>
-        <translation>Texte</translation>
-    </message>
-    <message>
-        <location filename="../shared/assets/AssetsTreeViewItem.h" line="198"/>
-        <source>NPC / Portraits</source>
-        <translation>PNJ / Portraits</translation>
-    </message>
-    <message>
-        <location filename="../shared/assets/AssetsTreeViewItem.h" line="199"/>
-        <source>Objects</source>
-        <translation>Objets</translation>
-    </message>
-    <message>
-        <location filename="../shared/assets/AssetsTreeViewItem.h" line="200"/>
-        <source>Brush</source>
-        <translation>Terrains</translation>
-    </message>
-    <message>
-        <location filename="../shared/assets/AssetsTreeViewItem.h" line="201"/>
-        <source>Downloaded</source>
-        <translation>Téléchargés</translation>
-    </message>
-    <message>
-        <location filename="../shared/assets/AssetsTreeViewItem.h" line="202"/>
-        <source>Landscapes</source>
-        <translation>Paysages</translation>
-    </message>
-</context>
-<context>
     <name>AssetsTreeView</name>
     <message>
         <location filename="../ui/assets/base/AssetsTreeView.cpp" line="212"/>
@@ -113,6 +60,58 @@
         <location filename="../ui/assets/base/AssetsTreeView.cpp" line="329"/>
         <source>Do you confirm deletion of the %1 selected elements ?</source>
         <translation>Confirmez-vous la suppression des %1 éléments selectionnés ?</translation>
+    </message>
+</context>
+<context>
+    <name>AssetsTreeViewItem</name>
+    <message>
+        <location filename="../ui/assets/base/AssetsTreeViewItem.h" line="191"/>
+        <source>Internal</source>
+        <translation>Interne</translation>
+    </message>
+    <message>
+        <source>Player</source>
+        <translation type="vanished">Joueur</translation>
+    </message>
+    <message>
+        <location filename="../ui/assets/base/AssetsTreeViewItem.h" line="192"/>
+        <source>Event</source>
+        <translation>Evénement</translation>
+    </message>
+    <message>
+        <location filename="../ui/assets/base/AssetsTreeViewItem.h" line="193"/>
+        <source>Drawing</source>
+        <translation>Dessin</translation>
+    </message>
+    <message>
+        <location filename="../ui/assets/base/AssetsTreeViewItem.h" line="194"/>
+        <source>Text</source>
+        <translation>Texte</translation>
+    </message>
+    <message>
+        <location filename="../ui/assets/base/AssetsTreeViewItem.h" line="195"/>
+        <source>NPC / Portraits</source>
+        <translation>PNJ / Portraits</translation>
+    </message>
+    <message>
+        <location filename="../ui/assets/base/AssetsTreeViewItem.h" line="196"/>
+        <source>Objects</source>
+        <translation>Objets</translation>
+    </message>
+    <message>
+        <location filename="../ui/assets/base/AssetsTreeViewItem.h" line="197"/>
+        <source>Brush</source>
+        <translation>Terrains</translation>
+    </message>
+    <message>
+        <location filename="../ui/assets/base/AssetsTreeViewItem.h" line="198"/>
+        <source>Downloaded</source>
+        <translation>Téléchargés</translation>
+    </message>
+    <message>
+        <location filename="../ui/assets/base/AssetsTreeViewItem.h" line="199"/>
+        <source>Landscapes</source>
+        <translation>Paysages</translation>
     </message>
 </context>
 <context>
@@ -793,7 +792,7 @@
 <context>
     <name>MapHint</name>
     <message>
-        <location filename="../shared/hints/MapHint.cpp" line="40"/>
+        <location filename="../shared/hints/MapHint.cpp" line="36"/>
         <source>Do you want to save changes done to this map ?</source>
         <translation>Voulez-vous sauvegardez les modifications faites à cette carte ?</translation>
     </message>
@@ -822,12 +821,12 @@
         <translation>Cette vidéo Youtube est déjà dans la liste de lecture !</translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="182"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="179"/>
         <source>(Loading metadata...) </source>
         <translation>(Chargement des métadonnées...) </translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="192"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="189"/>
         <source>(Error) </source>
         <translation>(Erreur) </translation>
     </message>
@@ -1222,7 +1221,7 @@
 <context>
     <name>TreeMapHint</name>
     <message>
-        <location filename="../shared/hints/TreeMapHint.cpp" line="231"/>
+        <location filename="../shared/hints/TreeMapHint.cpp" line="230"/>
         <source>Layer %1</source>
         <translation>Calque %1</translation>
     </message>

@@ -12,8 +12,8 @@ void LockAndVisibilityDelegate::paint(QPainter *painter, const QStyleOptionViewI
     QStyledItemDelegate::paint(painter, option, index);
 
     //fetch data
-    auto isHidden = index.data(RPZUserRoles::AtomVisibility).toBool();
-    auto isLocked = index.data(RPZUserRoles::AtomAvailability).toBool();
+    auto isHidden = RPZQVariant::atomVisibility(index);
+    auto isLocked = RPZQVariant::atomAvailability(index);
 
     //may draw "hide" icon
     if(isHidden) painter->drawPixmap(option.rect.topLeft(), *_hiddenPix);

@@ -6,18 +6,18 @@
 #include "src/shared/models/RPZAtom.h"
 
 enum class PayloadAlteration {
-    PA_Unknown,
-    PA_Focused,
-    PA_Selected,
-    PA_Removed,
-    PA_Added, 
-    PA_Reset,
-    PA_MetadataChanged,
-    PA_BulkMetadataChanged,
-    PA_AssetChanged,
-    PA_AtomTemplateChanged,
-    PA_AtomTemplateSelected,
-    PA_AssetSelected
+    Unknown,
+    Focused,
+    Selected,
+    Removed,
+    Added, 
+    Reset,
+    MetadataChanged,
+    BulkMetadataChanged,
+    AssetChanged,
+    AtomTemplateChanged,
+    AtomTemplateSelected,
+    AssetSelected
 }; 
 
 static const QStringList PayloadAlterationAsStr {
@@ -97,11 +97,11 @@ class AlterationPayload : public QVariantHash {
         bool _isFromTimeline = false; //client only
 
         static inline const QList<PayloadAlteration> _networkAlterations = { 
-            PayloadAlteration::PA_Added, 
-            PayloadAlteration::PA_Removed, 
-            PayloadAlteration::PA_Reset,
-            PayloadAlteration::PA_MetadataChanged,
-            PayloadAlteration::PA_BulkMetadataChanged
+            PayloadAlteration::Added, 
+            PayloadAlteration::Removed, 
+            PayloadAlteration::Reset,
+            PayloadAlteration::MetadataChanged,
+            PayloadAlteration::BulkMetadataChanged
         };
         
         void _setType(const PayloadAlteration &type) {

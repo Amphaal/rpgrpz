@@ -114,7 +114,7 @@ class CharacterEditor : public QWidget, public ConnectivityObserver {
     private slots:
         void _onAllUsersReceived() {
             
-            auto dbCharacterIds = CharactersDatabase::get()->characterIds();
+            auto dbCharacterIds = CharactersDatabase::get()->characters().keys();
             
             RPZMap<RPZCharacter> out;
             for(auto &remoteUser : this->_rpzClient->sessionUsers()) {

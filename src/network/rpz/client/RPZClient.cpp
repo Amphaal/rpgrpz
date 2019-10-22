@@ -139,7 +139,7 @@ void RPZClient::_handleAlterationRequest(const AlterationPayload &payload) {
     this->payloadTrace(payload);
 
     //send json
-    auto method = payload.type() == PA_Reset ? JSONMethod::MapChangedHeavily : JSONMethod::MapChanged;
+    auto method = payload.type() == PayloadAlteration::Reset ? JSONMethod::MapChangedHeavily : JSONMethod::MapChanged;
     return this->_sock->sendJSON(method, payload);
 }
 

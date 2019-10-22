@@ -12,11 +12,11 @@ void AlterationHandler::queueAlteration(const AlterationActor* sender, Alteratio
 void AlterationHandler::_queueAlteration(const AlterationPayload::Source &senderSource, AlterationPayload &payload) {
     
     //if initial payload emission, apply sender source for send
-    if(payload.source() == AlterationPayload::Source::Undefined && senderSource) {
+    if(payload.source() == AlterationPayload::Source::Undefined && senderSource != AlterationPayload::Source::Undefined) {
         payload.changeSource(senderSource); 
     }
 
-    if(payload.type() == PayloadAlteration::PA_Reset) QMetaObject::invokeMethod(ProgressTracker::get(), "heavyAlterationStarted");
+    if(payload.type() == PayloadAlteration::Reset) QMetaObject::invokeMethod(ProgressTracker::get(), "heavyAlterationStarted");
 
     emit requiresPayloadHandling(payload);
     

@@ -7,7 +7,7 @@ typedef QHash<RPZAtomId, AtomUpdates> AtomsUpdates;
 class BulkMetadataChangedPayload : public AlterationPayload {
     public:
         BulkMetadataChangedPayload(const QVariantHash &hash) : AlterationPayload(hash) { }
-        BulkMetadataChangedPayload(const AtomsUpdates &changes) : AlterationPayload(PayloadAlteration::PA_BulkMetadataChanged) { 
+        BulkMetadataChangedPayload(const AtomsUpdates &changes) : AlterationPayload(PayloadAlteration::BulkMetadataChanged) { 
             this->_defineAtomsUpdates(changes);
         }
 

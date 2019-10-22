@@ -9,7 +9,7 @@ class AssetSelectedPayload : public AlterationPayload {
     
     public:
         AssetSelectedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        AssetSelectedPayload(const RPZToyMetadata &asset) : AlterationPayload(PayloadAlteration::PA_AssetSelected) {
+        AssetSelectedPayload(const RPZToyMetadata &asset) : AlterationPayload(PayloadAlteration::AssetSelected) {
             this->insert(QStringLiteral(u"as"), asset);
         }
     

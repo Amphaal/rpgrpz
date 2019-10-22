@@ -253,10 +253,10 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZToyMetadata &metadat
     this->_missingAssetsIdsFromDb.remove(assetId);
 
     //remove old
-    emit requestingUIAlteration(PA_Removed, setOfGraphicsItemsToReplace.toList());
+    emit requestingUIAlteration(PayloadAlteration::Removed, setOfGraphicsItemsToReplace.toList());
 
     //replace by new
-    emit requestingUIAlteration(PA_Added, newGis);
+    emit requestingUIAlteration(PayloadAlteration::Added, newGis);
 }
 
 void ViewMapHint::handlePreviewRequest(const AtomsSelectionDescriptor &selectionDescriptor, const AtomParameter &parameter, const QVariant &value) {
@@ -301,7 +301,7 @@ void ViewMapHint::handlePreviewRequest(const AtomsSelectionDescriptor &selection
 void ViewMapHint::_crossBindingAtomWithGI(const RPZAtom &atom, QGraphicsItem* gi) {
     auto id = atom.id();
     this->_GItemsByRPZAtomId.insert(id, gi);
-    gi->setData(RPZUserRoles::AtomId, id);
+    RPZQVariant::setAtomId(gi, id);
 }
 
 const QVector<RPZAtomId> ViewMapHint::getAtomIdsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const {
@@ -324,8 +324,7 @@ const RPZAtomId ViewMapHint::getAtomIdFromGraphicsItem(const QGraphicsItem* toFe
         return 0;
     }
 
-    auto id = toFetch->data(RPZUserRoles::AtomId).toULongLong();
-
+    auto id = RPZQVariant::atomId(toFetch);
     if(!id) qWarning() << "No atom assigned to this graphics item...";
 
     return id;
@@ -384,7 +383,7 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
         
         //request deletion previous ghost
         if(mightDelete) {
-            emit requestingUIAlteration(PayloadAlteration::PA_Removed, {mightDelete});
+            emit requestingUIAlteration(PayloadAlteration::Removed, {mightDelete});
         }
 
         this->_m_ghostItem.lock();
@@ -392,7 +391,7 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
         this->_m_ghostItem.unlock();
 
         //request addition of new ghost
-        emit requestingUIAlteration(PayloadAlteration::PA_AssetSelected, {ghostItem});
+        emit requestingUIAlteration(PayloadAlteration::AssetSelected, {ghostItem});
     }
     
     //if template changed
@@ -426,7 +425,7 @@ void ViewMapHint::addAtom(const RPZAtom &toAdd) {
 void ViewMapHint::_basicAlterationDone(const QList<RPZAtomId> &updatedIds, const PayloadAlteration &type) {
     QList<QGraphicsItem*> toUpdate;
     for(auto id : updatedIds) {
-        if(type == PA_Removed) toUpdate += this->_GItemsByRPZAtomId.take(id);
+        if(type == PayloadAlteration::Removed) toUpdate += this->_GItemsByRPZAtomId.take(id);
         else toUpdate += this->_GItemsByRPZAtomId.value(id);
     }
     emit requestingUIAlteration(type, toUpdate);

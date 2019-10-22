@@ -107,7 +107,7 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
 }
 
 bool MapLayoutTree::_isAssociatedAtomSelectable(QTreeWidgetItem* item) {
-    return !item->data(1, RPZUserRoles::AtomAvailability).toBool();
+    return !RPZQVariant::atomAvailability(item);
 }
 
 void MapLayoutTree::_onUIAlterationRequest(const PayloadAlteration &type, const QList<QTreeWidgetItem*> &toAlter) {
@@ -115,29 +115,29 @@ void MapLayoutTree::_onUIAlterationRequest(const PayloadAlteration &type, const 
     //prevent circual selection/focus
     QSignalBlocker b(this);
 
-    if(type == PA_Selected || type == PA_Focused) this->_clearSelectedItems();
-    if(type == PA_Reset) this->clear();
+    if(type == PayloadAlteration::Selected || type == PayloadAlteration::Focused) this->_clearSelectedItems();
+    if(type == PayloadAlteration::Reset) this->clear();
 
     for(auto item : toAlter) {
         switch(type) {
             
-            case PA_Selected:
+            case PayloadAlteration::Selected:
                 this->_selectAtomItem(item);
             break;
 
-            case PA_Focused: {
+            case PayloadAlteration::Focused: {
                 auto itemIndex = this->indexFromItem(item);
                 this->scrollTo(itemIndex, QAbstractItemView::ScrollHint::PositionAtCenter);
                 this->_selectAtomItem(item);
             }
             break;
 
-            case PA_Added:
-            case PA_Reset:
+            case PayloadAlteration::Added:
+            case PayloadAlteration::Reset:
                 this->_insertAtomItem(item);
             break;
 
-            case PA_Removed:
+            case PayloadAlteration::Removed:
                 this->_removeItem(item);
             break;
 
@@ -150,8 +150,8 @@ void MapLayoutTree::_onUIAlterationRequest(const PayloadAlteration &type, const 
     //in case of disabling from heavy alteration
     this->setEnabled(true); 
     
-    if(type == PA_Reset || type == PA_Added) this->sortByColumn(0, Qt::SortOrder::DescendingOrder);
-    if(type == PA_Reset || type == PA_Added || type == PA_Removed) this->_updateLayersDisplayedCount();
+    if(type == PayloadAlteration::Reset || type == PayloadAlteration::Added) this->sortByColumn(0, Qt::SortOrder::DescendingOrder);
+    if(type == PayloadAlteration::Reset || type == PayloadAlteration::Added || type == PayloadAlteration::Removed) this->_updateLayersDisplayedCount();
 
     this->_resizeSections();
 
@@ -216,13 +216,13 @@ void MapLayoutTree::_updateAtomItemValues(QTreeWidgetItem* toUpdate, const AtomU
             
             case AtomParameter::Hidden: {
                 auto isHidden = i.value().toBool();
-                toUpdate->setData(1, RPZUserRoles::AtomVisibility, isHidden);
+                RPZQVariant::setAtomVisibility(toUpdate, isHidden);
             }
             break;
 
             case AtomParameter::Locked: {
                 auto isLocked = i.value().toBool();
-                this->_hints->updateLockedState(toUpdate, isLocked);
+                RPZQVariant::setAtomAvailability(toUpdate, isLocked);
             }
             break;
 
@@ -236,7 +236,7 @@ void MapLayoutTree::_updateAtomItemValues(QTreeWidgetItem* toUpdate, const AtomU
 }
 
 void MapLayoutTree::_insertAtomItem(QTreeWidgetItem *item) {
-    auto layer = item->data(0, RPZUserRoles::AtomLayer).toInt();
+    auto layer = RPZQVariant::atomLayer(item);
     auto layerItem = this->_hints->getLayerItem(layer);
     this->addTopLevelItem(layerItem); //try to add target layer, does nothing if already exists
     layerItem->addChild(item);
@@ -304,7 +304,7 @@ void MapLayoutTree::keyPressEvent(QKeyEvent * event) {
 }
 
 RPZAtomId MapLayoutTree::_extractRPZAtomIdFromItem(QTreeWidgetItem* item) const {
-    return item->data(0, RPZUserRoles::AtomId).toULongLong();
+    return RPZQVariant::atomId(item);
 }
 
 QVector<RPZAtomId> MapLayoutTree::_extractRPZAtomIdFromItems(const QList<QTreeWidgetItem*> &items) const {

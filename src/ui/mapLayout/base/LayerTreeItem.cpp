@@ -1,12 +1,13 @@
 #include "LayerTreeItem.h"
 
-LayerTreeItem::LayerTreeItem() : QTreeWidgetItem(1001) {}
+#include "src/helpers/RPZQVariant.hpp"
+
+LayerTreeItem::LayerTreeItem() : QTreeWidgetItem((int)RPZQVariant::Roles::AtomLayer) {}
 
 bool LayerTreeItem::operator<(const QTreeWidgetItem &other) const {
 
-    auto othersData = other.data(0, RPZUserRoles::AtomLayer);
-    if(othersData.isNull()) return false;
+    auto othersLayer = RPZQVariant::atomLayer(&other);
+    auto thisLayer = RPZQVariant::atomLayer(this);
+    return thisLayer < othersLayer;
     
-    auto layer = this->data(0, RPZUserRoles::AtomLayer).toInt();
-    return layer < othersData.toInt();
 }

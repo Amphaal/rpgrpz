@@ -4,10 +4,18 @@ MapDatabase::MapDatabase(const QString &filePath) : JSONDatabase(filePath) {};
 MapDatabase::MapDatabase(const QJsonObject &obj) : JSONDatabase(obj) {}
 MapDatabase::MapDatabase() {}
 
-const QSet<RPZAssetHash>& MapDatabase::usedAssetsIds() const {
+const RPZMap<RPZAtom> MapDatabase::safe_atoms() const {
+    return this->_atoms();
+}
+
+const QSet<RPZAssetHash> MapDatabase::safe_usedAssetsIds() const {
+    return this->_usedAssetsIds();
+}
+
+const QSet<RPZAssetHash>& MapDatabase::_usedAssetsIds() const {
     return this->_assetHashes;
 }
-const RPZMap<RPZAtom>& MapDatabase::atoms() const {
+const RPZMap<RPZAtom>& MapDatabase::_atoms() const {
     return this->_atomsById;
 }
 
@@ -79,8 +87,8 @@ void MapDatabase::clear() {
 
 JSONDatabase::Model MapDatabase::_getDatabaseModel() {
     return {
-        { { QStringLiteral(u"atoms"), ET_Object }, &this->_atomsById },
-        { { QStringLiteral(u"assets"), ET_Array }, &this->_assetHashes }
+        { { QStringLiteral(u"atoms"), JSONDatabase::EntityType::Object }, &this->_atomsById },
+        { { QStringLiteral(u"assets"), JSONDatabase::EntityType::Array }, &this->_assetHashes }
     };
 };
 
@@ -100,7 +108,7 @@ QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> MapDatabase::_getUpdat
             MapDatabase db(doc);
 
             //iterate atoms
-            for(auto atom : db.atoms()) {
+            for(auto atom : db._atoms()) {
                 
                 auto shape = atom.shape();
 
@@ -118,7 +126,7 @@ QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> MapDatabase::_getUpdat
             updateFrom(
                 doc,
                 QStringLiteral(u"atoms"),
-                db.atoms().toVMap()
+                db._atoms().toVMap()
             );
 
         }

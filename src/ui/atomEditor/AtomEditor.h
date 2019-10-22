@@ -40,9 +40,9 @@ class AtomEditor : public QGroupBox, public AlterationActor {
 
     private:
         static inline QHash<EditMode, QString> _strEM {
-            { None, QT_TR_NOOP("Nothing to modify") },
-            { Template, QT_TR_NOOP("Template modification") },
-            { Selection, QT_TR_NOOP("Selection modification") }
+            { EditMode::None, QT_TR_NOOP("Nothing to modify") },
+            { EditMode::Template, QT_TR_NOOP("Template modification") },
+            { EditMode::Selection, QT_TR_NOOP("Selection modification") }
         };
 
         AtomsSelectionDescriptor _currentSelectionDescr;
@@ -59,7 +59,7 @@ class AtomEditor : public QGroupBox, public AlterationActor {
         void _emitPayload(const AtomUpdates &changesToEmit);
         void _emitPayloadCB(const AtomParameter &parameter, const QVariant &value);
 
-        EditMode _currentEditMode = None;
+        EditMode _currentEditMode = EditMode::None;
         void _updateEditMode();
 
         void _mustShowBrushPenWidthEditor(const AtomParameter &paramToCheck, const QVariant &defaultValue);

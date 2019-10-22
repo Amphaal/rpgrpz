@@ -30,7 +30,7 @@
 
 #include "_appSettings.hpp"
 
-#include "RPZUserRoles.h"
+#include "RPZQVariant.hpp"
 #include "src/_libs/snowflake/snowflake.h"
 
 class AppContext {

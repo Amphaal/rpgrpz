@@ -401,7 +401,7 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
 void AssetsTreeView::_handleAlterationRequest(const AlterationPayload &payload) {
     
     auto type = payload.type();
-    auto listenedForTypes = (type == PA_Selected || type == PA_Reset);
+    auto listenedForTypes = (type == PayloadAlteration::Selected || type == PayloadAlteration::Reset);
     if(!listenedForTypes) return;
 
     auto isAssetSelected = !this->_selectedAsset.isEmpty();

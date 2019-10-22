@@ -23,7 +23,7 @@ class MessageInterpreter {
         enum class Command { C_Unknown, Say, Whisper, Help, C_DiceThrow };
         
         static inline const QHash<QString, Command> _textByCommand = {
-            { "/h", Help }
+            { "/h", Command::Help }
         };
 
         static Command interpretText(const QString &text);

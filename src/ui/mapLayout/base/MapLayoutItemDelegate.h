@@ -4,7 +4,7 @@
 
 #include <QStyledItemDelegate>
 
-#include "src/helpers/RPZUserRoles.h"
+#include "src/helpers/RPZQVariant.hpp"
 
 class LockAndVisibilityDelegate  : public QStyledItemDelegate {
     

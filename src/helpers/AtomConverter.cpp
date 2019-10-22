@@ -1,12 +1,33 @@
 #include "AtomConverter.h"
 
+QVariantHash AtomConverter::brushTransform(QGraphicsItem *item) {
+    return item->data((int)AtomConverter::DataIndex::BrushTransform).toHash();
+}
+void AtomConverter::setBrushTransform(QGraphicsItem *item, const QVariantHash &transforms) {
+    item->setData((int)AtomConverter::DataIndex::BrushTransform, transforms);
+}
+
+bool AtomConverter::isTemporary(QGraphicsItem* item) {
+    return item->data((int)AtomConverter::DataIndex::IsTemporary).toBool();
+}
+void AtomConverter::setIsTemporary(QGraphicsItem* item, bool isTemporary) {
+    item->setData((int)AtomConverter::DataIndex::IsTemporary, isTemporary);
+}
+
+BrushType AtomConverter::brushDrawStyle(QGraphicsItem* item) {
+    return (BrushType)item->data((int)AtomConverter::DataIndex::BrushDrawStyle).toInt();
+}
+void AtomConverter::setBrushDrawStyle(QGraphicsItem* item, const BrushType &style) {
+    item->setData((int)AtomConverter::DataIndex::BrushDrawStyle, (int)style);
+}
+
 void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZAtom &blueprint, bool isTargetTemporary) {
     
     //set movable
     target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, true);
 
     //bind a copy of the template to the item
-    target->setData((int)AtomConverter::DataIndex::IsTemporary, isTargetTemporary);
+    setIsTemporary(target, isTargetTemporary);
 
     //refresh all legal if temporary
     auto paramsToUpdate = blueprint.legalParameters().toList();
@@ -58,11 +79,6 @@ RPZAtom AtomConverter::graphicsToAtom(QGraphicsItem* blueprint, RPZAtom template
     return templateCopy;
 }
 
-
-bool AtomConverter::_isTemporary(QGraphicsItem* item) {
-    return item->data((int)AtomConverter::DataIndex::IsTemporary).toBool();
-}
-
 void AtomConverter::_bulkTransformApply(QGraphicsItem* itemBrushToUpdate) {
     
     //cast to dest GI type
@@ -70,8 +86,7 @@ void AtomConverter::_bulkTransformApply(QGraphicsItem* itemBrushToUpdate) {
     if(!cItem) return;
 
     //extract transform instructions
-    auto transforms = itemBrushToUpdate->data((int)AtomConverter::DataIndex::BrushTransform).toHash();
-    
+    auto transforms = brushTransform(itemBrushToUpdate);
     
     QTransform toApply;
 
@@ -100,7 +115,7 @@ void AtomConverter::_bulkTransformApply(QGraphicsItem* itemBrushToUpdate) {
     }
 
     //extract brush type
-    auto type = (BrushType)itemBrushToUpdate->data((int)AtomConverter::DataIndex::BrushDrawStyle).toInt();
+    auto type = brushDrawStyle(itemBrushToUpdate);
     
     //apply to pen
     if(type == BrushType::RoundBrush) {
@@ -141,7 +156,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
             
             // on changing visibility
             case AtomParameter::Hidden: {
-                if(!_isTemporary(itemToUpdate)) {
+                if(!isTemporary(itemToUpdate)) {
                     auto hidden = val.toBool();
                     auto opacity = hidden ? 0 : 1;
                     itemToUpdate->setOpacity(opacity);
@@ -193,7 +208,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
                 if(auto cItem = dynamic_cast<MapViewGraphicsPathItem*>(itemToUpdate)) {
                     
                     auto type = (BrushType)val.toInt();
-                    itemToUpdate->setData((int)AtomConverter::DataIndex::BrushDrawStyle, val);
+                    setBrushDrawStyle(itemToUpdate, type);
                     
                     //use pen as brush
                     if(type == BrushType::RoundBrush) {
@@ -220,7 +235,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
                     }
 
                     //define default shape for temporary
-                    if(_isTemporary(itemToUpdate)) {
+                    if(isTemporary(itemToUpdate)) {
                         
                         QPainterPath path;
 
@@ -255,7 +270,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
                 auto newLayer = val.toInt();
 
                 //always force temporary item on top of his actual set layer index
-                if(_isTemporary(itemToUpdate)) newLayer++;
+                if(isTemporary(itemToUpdate)) newLayer++;
 
                 itemToUpdate->setZValue(newLayer);
 
@@ -265,9 +280,9 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
             //on asset rotation / scale, store metadata for all-in transform update in main method
             case AtomParameter::AssetRotation: {
             case AtomParameter::AssetScale: {
-                auto transforms = itemToUpdate->data((int)AtomConverter::DataIndex::BrushTransform).toHash();
+                auto transforms = brushTransform(itemToUpdate);
                 transforms.insert(QString::number((int)param), val);
-                itemToUpdate->setData((int)AtomConverter::DataIndex::BrushTransform, transforms);
+                setBrushTransform(itemToUpdate, transforms);
                 return true;
             }
             break;
@@ -306,7 +321,7 @@ void AtomConverter::_setParamToAtomFromGraphicsItem(const AtomParameter &param, 
             auto layer = blueprint->zValue();
 
             //if is a temporary, reset layer to expected value
-            if(_isTemporary(blueprint)) layer--;
+            if(isTemporary(blueprint)) layer--;
 
             atomToUpdate.setMetadata(param, layer);     
 
@@ -314,8 +329,8 @@ void AtomConverter::_setParamToAtomFromGraphicsItem(const AtomParameter &param, 
         break;
 
         case AtomParameter::BrushStyle: {
-            auto brushStyle = blueprint->data((int)AtomConverter::DataIndex::BrushDrawStyle).toInt();
-            atomToUpdate.setMetadata(param, brushStyle);
+            auto brushStyle = brushDrawStyle(blueprint);
+            atomToUpdate.setMetadata(param, (int)brushStyle);
         }
         break;
 
@@ -350,10 +365,10 @@ void AtomConverter::_setParamToAtomFromGraphicsItem(const AtomParameter &param, 
         
         case AtomParameter::AssetScale:
         case AtomParameter::AssetRotation: {
-            auto transforms = blueprint->data((int)AtomConverter::DataIndex::BrushTransform).toHash();
+            auto transforms = brushTransform(blueprint);
             if(transforms.isEmpty()) return;
 
-            auto transform = transforms.value((int)QString::number(param));
+            auto transform = transforms.value(QString::number((int)param));
             if(transform.isNull()) return;
             
             atomToUpdate.setMetadata(param, transform); 
