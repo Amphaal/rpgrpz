@@ -5,24 +5,21 @@
 
 #include "AlterationPayload.hpp"
 
+#include "src/shared/database/MapDatabase.h"
+
 class AtomsWielderPayload : public AlterationPayload {
     public:
         AtomsWielderPayload() {}
         AtomsWielderPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        AtomsWielderPayload(const PayloadAlteration &alteration, const RPZMap<RPZAtom> &atoms, const QSet<RPZAssetHash> &includedAssetIds) : AlterationPayload(alteration) {
-            
-            this->_setAddedAtoms(atoms);
-
-            QVariantList assetIds;
-            for(auto &i : includedAssetIds) assetIds += i;
-            this->insert(QStringLiteral(u"assets"), assetIds);
-
+        AtomsWielderPayload(const PayloadAlteration &alteration, const MapDatabase &map) : AlterationPayload(alteration) {
+            this->_setAssetsIds(map);
+            this->_setAtoms(map);
         }
 
         const QSet<RPZAssetHash> assetIds() const {
             QSet<RPZAssetHash> out;
-
-            for(auto &i : this->value(QStringLiteral(u"assets")).toList()) out += i.toString();
+        
+            for(auto &i : this->_assetsIds()) out += i.toString();
             
             return out;
         }
@@ -30,25 +27,43 @@ class AtomsWielderPayload : public AlterationPayload {
         RPZMap<RPZAtom> atoms() const {
             RPZMap<RPZAtom> out;
             
-            auto map = this->value(QStringLiteral(u"atoms")).toMap();
-
+            auto map = this->_atoms();
             for(auto i = map.begin(); i != map.end(); ++i) {    
+                
                 auto snowflakeId = i.key().toULongLong();
                 RPZAtom atom(i.value().toHash());
                 out.insert(snowflakeId, atom);
+
             }
             
             return out;
         }
 
-    private:
-        void _setAddedAtoms(const RPZMap<RPZAtom> &atoms) {
-            QVariantMap list;
-            for (RPZMap<RPZAtom>::const_iterator i = atoms.constBegin(); i != atoms.constEnd(); ++i) {
-                auto snowflakeAsStr = QString::number(i.key());
-                auto maybePartialAtom = i.value();
-                list.insert(snowflakeAsStr, maybePartialAtom);
+        private:
+            QVariantList _assetsIds() const {
+                return this->value(QStringLiteral(u"assets")).toList();
             }
-            this->insert(QStringLiteral(u"atoms"), list);
-        }
+
+            QVariantMap _atoms() const {
+                return this->value(QStringLiteral(u"atoms")).toMap();
+            }
+
+            void _setAssetsIds(const MapDatabase &map) {
+                QVariantList vList;
+                for (auto &hash : map.usedAssetsIds()) {
+                    vList += hash;
+                }
+                this->insert(QStringLiteral(u"assets"), vList);
+            }
+
+            void _setAtoms(const MapDatabase &map) {
+                QVariantMap vMap;
+                for (auto i = map.atoms().constBegin(); i != map.atoms().constEnd(); ++i) {
+                    auto snowflakeAsStr = QString::number(i.key());
+                    auto maybePartialAtom = i.value();
+                    vMap.insert(snowflakeAsStr, maybePartialAtom);
+                }
+                this->insert(QStringLiteral(u"atoms"), vMap);
+            }
+
 };

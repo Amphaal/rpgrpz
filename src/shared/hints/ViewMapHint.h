@@ -20,8 +20,6 @@
 #include "src/shared/payloads/Payloads.h"
 #include "src/ui/assets/base/AssetsTreeViewModel.h"
 
-#include "src/shared/database/MapDatabase.h"
-
 #include "AtomsStorage.h"
 
 class ViewMapHint : public AtomsStorage {
@@ -77,13 +75,13 @@ class ViewMapHint : public AtomsStorage {
         //helpers
         QGraphicsItem* _generateGhostItem(const RPZToyMetadata &assetMetadata);
         QGraphicsItem* _buildGraphicsItemFromAtom(const RPZAtom &atomToBuildFrom);
-        void _crossBindingAtomWithGI(RPZAtom* atom, QGraphicsItem* gi);
+        void _crossBindingAtomWithGI(const RPZAtom &atom, QGraphicsItem* gi);
 
         //missing assets tracking
         void _replaceMissingAssetPlaceholders(const RPZToyMetadata &metadata); //safe
 
         //augmenting AtomsStorage
-        virtual RPZAtom* _insertAtom(const RPZAtom &newAtom) override;
+        void addAtom(const RPZAtom &toAdd) override;
 
         virtual void _basicAlterationDone(const QList<RPZAtomId> &updatedIds, const PayloadAlteration &type) override;
         virtual void _updatesDone(const QList<RPZAtomId> &updatedIds, const AtomUpdates &updates) override;

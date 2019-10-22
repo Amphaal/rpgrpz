@@ -1,8 +1,19 @@
 #include "JSONDatabase.h"
 
+JSONDatabase::JSONDatabase() {}
+
+JSONDatabase::JSONDatabase(const QJsonObject &obj) {
+    this->_setupFromDbCopy(obj);
+}
+
 JSONDatabase::JSONDatabase(const QString &dbFilePath) {
+    this->_initDatabaseFromJSONFile(dbFilePath);
+}
+
+void JSONDatabase::_initDatabaseFromJSONFile(const QString &dbFilePath) {
     
     //read database file as JSON
+    if(this->_destfile) delete this->_destfile;
     this->_destfile = new QFile(dbFilePath);
 
     //if file is empty or doesnt exist
@@ -42,13 +53,14 @@ JSONDatabase::JSONDatabase(const QString &dbFilePath) {
 
 }
 
-JSONDatabase::JSONDatabase(const QJsonObject &obj) {
-    this->_setupFromDbCopy(obj);
-}
-
 void JSONDatabase::_setupFromDbCopy(const QJsonObject &copy) {
     this->_dbCopy = copy;
     this->_setupLocalData();
+}
+
+const QString JSONDatabase::dbFilePath() {
+    if(!this->_destfile) return QString();
+    return this->_destfile->fileName();
 }
 
 const int JSONDatabase::dbVersion() {
@@ -195,6 +207,8 @@ void JSONDatabase::_removeDatabaseLinkedFiles() {
 
 void JSONDatabase::_updateDbFile(const QJsonObject &updatedFullDatabase) {
     
+    this->_dbCopy = updatedFullDatabase;
+
     if(!this->_destfile) return;
 
     QJsonDocument doc(updatedFullDatabase);

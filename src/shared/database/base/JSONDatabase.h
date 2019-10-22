@@ -32,6 +32,9 @@ class JSONDatabase {
         //remove from the array the elements in the set
         static QJsonArray diff(QJsonArray &target, QSet<QString> &toRemoveFromTarget);
 
+        JSONDatabase();
+        const QString dbFilePath();
+
     protected:
         JSONDatabase(const QString &dbFilePath);
         JSONDatabase(const QJsonObject &obj);
@@ -58,6 +61,9 @@ class JSONDatabase {
         virtual const int apiVersion() = 0;
         const int dbVersion();
 
+        void _initDatabaseFromJSONFile(const QString &dbFilePath);
+
+
     private:
         QJsonObject _dbCopy;
         QFile* _destfile = nullptr;
@@ -70,4 +76,5 @@ class JSONDatabase {
         const QString _defaultEmptyDoc();
         JSONDatabaseVersion _getDbVersion(const QJsonObject &db);
         void _setupFromDbCopy(const QJsonObject &copy);
+
 };

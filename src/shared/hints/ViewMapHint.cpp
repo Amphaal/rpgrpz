@@ -210,7 +210,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuil
 
     //save pointer ref
     this->_crossBindingAtomWithGI(
-        (RPZAtom*)&atomToBuildFrom, 
+        atomToBuildFrom, 
         newItem
     );
 
@@ -244,7 +244,7 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZToyMetadata &metadat
 
         //create the new graphics item
         auto newGi = CustomGraphicsItemHelper::createGraphicsItem(*atom, metadata);
-        this->_crossBindingAtomWithGI(atom, newGi);
+        this->_crossBindingAtomWithGI(*atom, newGi);
         newGis.append(newGi);
 
     }
@@ -298,8 +298,8 @@ void ViewMapHint::handlePreviewRequest(const AtomsSelectionDescriptor &selection
 // Internal Helpers //
 //////////////////////
 
-void ViewMapHint::_crossBindingAtomWithGI(RPZAtom* atom, QGraphicsItem* gi) {
-    auto id = atom->id();
+void ViewMapHint::_crossBindingAtomWithGI(const RPZAtom &atom, QGraphicsItem* gi) {
+    auto id = atom.id();
     this->_GItemsByRPZAtomId.insert(id, gi);
     gi->setData(RPZUserRoles::AtomId, id);
 }
@@ -418,10 +418,9 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
 
 }
 
-RPZAtom* ViewMapHint::_insertAtom(const RPZAtom &newAtom) {
-    auto updatedAtom = AtomsStorage::_insertAtom(newAtom);
-    this->_buildGraphicsItemFromAtom(*updatedAtom);
-    return updatedAtom;
+void ViewMapHint::addAtom(const RPZAtom &toAdd) {
+    MapDatabase::addAtom(toAdd);
+    this->_buildGraphicsItemFromAtom(toAdd);
 }
 
 void ViewMapHint::_basicAlterationDone(const QList<RPZAtomId> &updatedIds, const PayloadAlteration &type) {

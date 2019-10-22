@@ -15,6 +15,8 @@
 
 #include "src/shared/async-ui/AlterationAcknoledger.h"
 
+#include "src/shared/database/MapDatabase.h"
+
 struct AtomsSelectionDescriptor {
     std::set<AtomType> representedTypes; //prefer std::set to QSet since it handles enum class
     RPZAtom templateAtom;
@@ -33,7 +35,7 @@ struct PossibleActionsOnAtomList {
     int targetDownLayer = 0;
 };
 
-class AtomsStorage : public AlterationAcknoledger {
+class AtomsStorage : public AlterationAcknoledger, public MapDatabase {
 
     Q_OBJECT
 
@@ -43,10 +45,6 @@ class AtomsStorage : public AlterationAcknoledger {
         QVector<RPZAtomId> bufferedSelectedAtomIds() const; //safe
         const AtomsSelectionDescriptor getAtomSelectionDescriptor(const QVector<RPZAtomId> &selectedIds) const; //safe
         
-        RPZMap<RPZAtom> atoms() const; //safe
-        const QSet<RPZAssetHash> usedAssetIds() const; //safe
-        
-        ResetPayload createStatePayload() const; //safe
         PossibleActionsOnAtomList getPossibleActions(const QVector<RPZAtomId> &ids);
 
     public slots:    
@@ -56,15 +54,10 @@ class AtomsStorage : public AlterationAcknoledger {
         void handleAlterationRequest(AlterationPayload &payload);
 
     protected:
-        RPZAtom* _getAtomFromId(const RPZAtomId &id);
+        const RPZAtom* _getAtomFromId(const RPZAtomId &id);
 
         virtual void _handleAlterationRequest(AlterationPayload &payload) override;
         virtual void _atomsCreated() {};
-
-        virtual RPZAtom* _insertAtom(const RPZAtom &newAtom);
-        RPZAtomId _ackSelection(RPZAtom* selectedAtom);
-        RPZAtomId _removeAtom(RPZAtom* toRemove);
-        RPZAtomId _updateAtom(RPZAtom* toUpdate, const AtomUpdates &updates);
         
         virtual void _basicAlterationDone(const QList<RPZAtomId> &updatedIds, const PayloadAlteration &type) {};
         virtual void _updatesDone(const QList<RPZAtomId> &updatedIds, const AtomUpdates &updates) {};
@@ -72,10 +65,6 @@ class AtomsStorage : public AlterationAcknoledger {
 
     private:
         mutable QMutex _m_handlingLock;
-
-        //atoms list 
-        QHash<RPZAssetHash, int> _assetIdsUsed;
-        RPZMap<RPZAtom> _atomsById;
 
         // redo/undo
         QStack<AlterationPayload> _redoHistory;
@@ -97,5 +86,5 @@ class AtomsStorage : public AlterationAcknoledger {
         static QPointF _getPositionFromAtomDuplication(const RPZAtom &atomToDuplicate, int duplicateCount);
 
         //
-        QPair<int, int> _determineMinMaxLayer(const QList<RPZAtom*> &atoms);
+        QPair<int, int> _determineMinMaxLayer(const QList<const RPZAtom*> &atoms);
 };

@@ -17,10 +17,6 @@ void MapHint::_handleAlterationRequest(AlterationPayload &payload) {
 // State handling //
 ////////////////////
 
-QString MapHint::RPZMapFilePath() const {
-    return this->_mapFilePath;
-}
-
 bool MapHint::isRemote() const {
     return this->_isRemote;
 }
@@ -36,7 +32,7 @@ void MapHint::mayWantToSavePendingState(QWidget* parent, MapHint* hint) {
     //popup
     auto result = QMessageBox::warning(
         parent, 
-        hint->RPZMapFilePath(), 
+        hint->dbFilePath(), 
         tr("Do you want to save changes done to this map ?"), 
         QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes
     );
@@ -53,9 +49,7 @@ bool MapHint::saveRPZMap() {
     if(this->_isRemote) return false;
 
     //save into file
-    MapDatabase mapDb(this->_mapFilePath);
-    auto atoms = this->atoms();
-    mapDb.saveIntoFile(atoms);
+    this->saveIntoFile();
 
     //define as clean
     this->_setMapDirtiness(false);
@@ -69,7 +63,6 @@ bool MapHint::createNewRPZMapAs(const QString &newFilePath) {
     if(this->_isRemote) return false;
 
     //define descr
-    this->_mapFilePath = newFilePath;
     this->_mapDescriptor = QFileInfo(newFilePath).fileName();
 
     //load
@@ -83,7 +76,6 @@ bool MapHint::saveRPZMapAs(const QString &newFilePath) {
     if(this->_isRemote) return false;
 
     //define descr
-    this->_mapFilePath = newFilePath;
     this->_mapDescriptor = QFileInfo(newFilePath).fileName();
     
     //save
@@ -105,17 +97,11 @@ bool MapHint::loadRPZMap(const QString &filePath) {
         QMetaObject::invokeMethod(ProgressTracker::get(), "heavyAlterationStarted");
 
         //load file and parse it
-        MapDatabase mapDb(filePath);
-        this->_mapFilePath = filePath;
         this->_mapDescriptor = QFileInfo(filePath).fileName();
         this->_setMapDirtiness(false);
 
-        //extract information
-        auto allAtoms = mapDb.toAtoms();
-        auto participatingAssetIds = mapDb.getUsedAssetsIds();
-
         //create payload and queue it
-        ResetPayload payload(allAtoms, participatingAssetIds);
+        ResetPayload payload(*this);
         AlterationHandler::get()->queueAlteration(this->_sysActor, payload);
 
     return true;
@@ -133,7 +119,6 @@ bool MapHint::defineAsRemote(const QString &remoteMapDescriptor) {
 
     //change map descriptor if is a remote session
     if(this->_isRemote) {
-        this->_mapFilePath.clear();
         this->_mapDescriptor = remoteMapDescriptor;
     }
 

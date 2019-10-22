@@ -30,7 +30,6 @@ class MapHint : public ViewMapHint {
         void mapStateChanged(const QString &mapDescriptor, bool isMapDirty);
 
     private: 
-        QString _mapFilePath;
         QString _mapDescriptor;
         bool _isRemote = false;
         bool _isMapDirty = false;

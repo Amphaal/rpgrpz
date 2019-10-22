@@ -5,17 +5,19 @@
 class AddedPayload : public AtomsWielderPayload {
     public:
         AddedPayload(const QVariantHash &hash) : AtomsWielderPayload(hash) { }
-        AddedPayload(const RPZMap<RPZAtom> &atoms, const QSet<RPZAssetHash> &includedAssetIds) : AtomsWielderPayload(PayloadAlteration::PA_Added, atoms, includedAssetIds) { }
+        AddedPayload(const MapDatabase &map) : AtomsWielderPayload(PayloadAlteration::PA_Added, map) { }
         
-        AddedPayload(const RPZAtom &atom) : AddedPayload(
-            RPZMap<RPZAtom>(atom), 
-            {atom.assetId()}
-        ) { }
-        
-        AddedPayload(const QList<RPZAtom> &atoms) : AddedPayload(
-            RPZMap<RPZAtom>(atoms),
-            assetIdsFromAtoms(atoms) 
-        ) { }
+        static AddedPayload fromAtom(const RPZAtom &atom) {
+            MapDatabase fakeDb;
+            fakeDb.addAtom(atom);
+            return AddedPayload(fakeDb);
+        }
+
+        static AddedPayload fromAtoms(const QList<RPZAtom> &atoms) {
+            MapDatabase fakeDb;
+            fakeDb.addAtoms(atoms);
+            return AddedPayload(fakeDb);
+        }
     
     private:
         const QSet<RPZAssetHash> assetIdsFromAtoms(const QList<RPZAtom> &atoms) const {
