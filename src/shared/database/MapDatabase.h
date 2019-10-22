@@ -13,22 +13,25 @@ class MapDatabase : public JSONDatabase {
     
     public:
         MapDatabase(const QString &filePath);
+        MapDatabase(const QJsonObject &obj);
 
-        void saveIntoFile(const RPZMap<RPZAtom> &atoms);
-        static QJsonObject toObject(const RPZMap<RPZAtom> &atoms, const QJsonDocument &doc);
-
-        RPZMap<RPZAtom> toAtoms();
-        static RPZMap<RPZAtom> toAtoms(const QJsonDocument &doc);
-
-        const QSet<RPZAssetHash> getUsedAssetsIds() const;
+        void addAtom(const RPZAtom &toAdd);
+        void updateAtom(const RPZAtom &updated);
+        void removeAtom(const RPZAtomId &idToRemove);
 
     protected:
-        const QString dbPath() override;
+        void saveIntoFile();
         const int apiVersion() override;
 
+        const RPZMap<RPZAtom>& atoms() const;
+        const QSet<RPZAssetHash>& getUsedAssetsIds() const;
+
     private:
-        QString _filePath;
+        RPZMap<RPZAtom> _atoms;
+        QSet<RPZAssetHash> _assetHashes;
 
         QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> _getUpdateHandlers() override;
         JSONDatabaseModel _getDatabaseModel() override;
+        void _setupLocalData() override;
+
 };

@@ -71,6 +71,7 @@ class AssetsDatabase : public AssetsDatabaseElement, public JSONDatabase {
         //updates handlers
         QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> _getUpdateHandlers() override;
         JSONDatabaseModel _getDatabaseModel() override;
+        void _setupLocalData() override;
         
         //helpers
         static SizeAndCenter _defineSizeAndCenterToDbAsset(const QString &assetFilePath, QJsonObject &toUpdate);

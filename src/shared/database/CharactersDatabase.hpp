@@ -15,7 +15,7 @@ class CharactersDatabase : public QObject, public JSONDatabase {
 
     public:
         static CharactersDatabase* get() {
-            if(!_singleton) _singleton = new CharactersDatabase;
+            if(!_singleton) _singleton = new CharactersDatabase(AppContext::getCharacterDatabaseLocation());
             return _singleton;
         };
 
@@ -58,9 +58,6 @@ class CharactersDatabase : public QObject, public JSONDatabase {
         }
 
     protected:
-        const QString dbPath() {
-            return AppContext::getCharacterDatabaseLocation();
-        };
 
         const int apiVersion() {
             return 1;
@@ -68,8 +65,18 @@ class CharactersDatabase : public QObject, public JSONDatabase {
 
         JSONDatabaseModel _getDatabaseModel() {
             return {
-                { QStringLiteral(u"characters"), &this->_characters }
+                { { QStringLiteral(u"characters"), ET_Object }, &this->_characters }
             };
+        }
+
+        void _setupLocalData() override {
+
+            //fill characters...
+            for(auto &i : this->entityAsObject(QStringLiteral(u"characters"))) {
+                auto character = RPZCharacter(i.toVariant().toHash());
+                this->_characters.insert(character.id(), character);
+            }
+
         }
 
     private:
@@ -77,16 +84,7 @@ class CharactersDatabase : public QObject, public JSONDatabase {
         
         RPZMap<RPZCharacter> _characters;
         
-        CharactersDatabase() {
-            this->_instanciateDb();
-
-            //fill
-            for(auto &i : this->entity(QStringLiteral(u"characters"))) {
-                auto character = RPZCharacter(i.toVariant().toHash());
-                this->_characters.insert(character.id(), character);
-            }
-
-        }
+        CharactersDatabase(const QString &dbFilePath) : JSONDatabase(dbFilePath) {}
 
         void _writeCharactersToDb() {
 

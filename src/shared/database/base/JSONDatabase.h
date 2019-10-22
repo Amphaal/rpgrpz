@@ -17,35 +17,34 @@
 #include "src/helpers/_appContext.h"
 #include "src/shared/models/base/RPZMap.hpp"
 
+enum JSONDatabaseEntityType {
+    ET_Object,
+    ET_Array
+};
+
 typedef int JSONDatabaseVersion;
 typedef std::function<void(QJsonObject&)> JSONDatabaseUpdateHandler;
-typedef QHash<QString, void*> JSONDatabaseModel;
+typedef QHash<QPair<QString, JSONDatabaseEntityType>, void*> JSONDatabaseModel;
 
 class JSONDatabase {
 
     public:
-        JSONDatabase();
-
         //remove from the array the elements in the set
         static QJsonArray diff(QJsonArray &target, QSet<QString> &toRemoveFromTarget);
 
-        static JSONDatabaseVersion getDbVersion(const QJsonObject &db); 
-
     protected:
+        JSONDatabase(const QString &dbFilePath);
+        JSONDatabase(const QJsonObject &obj);
+
         static void updateFrom(QJsonObject &base, const QString &entityKey, const QVariantMap &entity);
+        static void updateFrom(QJsonObject &base, const QString &entityKey, const QSet<QString> &entity);
 
         const QJsonObject& db();
-        QJsonObject entity(const QString &entityKey);
-
-        //must be called from inherited constructor
-        void _instanciateDb();
+        QJsonObject entityAsObject(const QString &entityKey);
+        QJsonArray entityAsArray(const QString &entityKey);
 
         //update the physical file
         void _updateDbFile(const QJsonObject &updatedFullDatabase);
-        void _updateDbFile(const QVariantHash &updatedFullDatabase);
-
-        //recreate file if doesnt exist
-        void _checkFileExistance();
 
         virtual void _removeDatabaseLinkedFiles();
 
@@ -54,8 +53,8 @@ class JSONDatabase {
         bool _handleVersionMissmatch(QJsonObject &databaseToUpdate, int databaseToUpdateVersion);
 
         //pure, replace
+        virtual void _setupLocalData() = 0;
         virtual JSONDatabaseModel _getDatabaseModel() = 0;
-        virtual const QString dbPath() = 0;
         virtual const int apiVersion() = 0;
         const int dbVersion();
 
@@ -69,4 +68,6 @@ class JSONDatabase {
         void _defineDatabaseObject(const QJsonDocument &document);
 
         const QString _defaultEmptyDoc();
+        JSONDatabaseVersion _getDbVersion(const QJsonObject &db);
+        void _setupFromDbCopy(const QJsonObject &copy);
 };

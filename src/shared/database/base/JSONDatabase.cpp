@@ -1,33 +1,9 @@
 #include "JSONDatabase.h"
 
-JSONDatabase::JSONDatabase() {}
-
-const int JSONDatabase::dbVersion() {
-    return getDbVersion(this->_dbCopy);
-}
-
-const QJsonObject& JSONDatabase::db() {
-    return this->_dbCopy;
-}
-
-QJsonObject JSONDatabase::entity(const QString &entityKey) {
-    return this->db().value(entityKey).toObject();
-}
-
-JSONDatabaseVersion JSONDatabase::getDbVersion(const QJsonObject &db) {
-    auto version = db.value(QStringLiteral(u"version")).toInt();
-    return version;
-}
-
-void JSONDatabase::updateFrom(QJsonObject &base, const QString &entityKey, const QVariantMap &entity) {
-    base.insert(entityKey, QJsonObject::fromVariantMap(entity));
-}
-
-void JSONDatabase::_instanciateDb() {
+JSONDatabase::JSONDatabase(const QString &dbFilePath) {
     
     //read database file as JSON
-    auto dbPath = this->dbPath();
-    this->_destfile = new QFile(dbPath);
+    this->_destfile = new QFile(dbFilePath);
 
     //if file is empty or doesnt exist
     if(!this->_destfile->size() || !this->_destfile->exists()) {
@@ -48,7 +24,7 @@ void JSONDatabase::_instanciateDb() {
 
     //compare versions
     auto dbCopy = document.object();
-    auto currentVersion = getDbVersion(dbCopy);
+    auto currentVersion = _getDbVersion(dbCopy);
     auto expectedVersion = this->apiVersion();
     if(expectedVersion != currentVersion) {
         
@@ -62,9 +38,49 @@ void JSONDatabase::_instanciateDb() {
         return;
     }
 
-    //bind
-    this->_dbCopy = dbCopy;
+    this->_setupFromDbCopy(dbCopy);
+
 }
+
+JSONDatabase::JSONDatabase(const QJsonObject &obj) {
+    this->_setupFromDbCopy(obj);
+}
+
+void JSONDatabase::_setupFromDbCopy(const QJsonObject &copy) {
+    this->_dbCopy = copy;
+    this->_setupLocalData();
+}
+
+const int JSONDatabase::dbVersion() {
+    return _getDbVersion(this->_dbCopy);
+}
+
+const QJsonObject& JSONDatabase::db() {
+    return this->_dbCopy;
+}
+
+QJsonObject JSONDatabase::entityAsObject(const QString &entityKey) {
+    return this->db().value(entityKey).toObject();
+}
+
+QJsonArray JSONDatabase::entityAsArray(const QString &entityKey) {
+    return this->db().value(entityKey).toArray();
+}
+
+JSONDatabaseVersion JSONDatabase::_getDbVersion(const QJsonObject &db) {
+    auto version = db.value(QStringLiteral(u"version")).toInt();
+    return version;
+}
+
+void JSONDatabase::updateFrom(QJsonObject &base, const QString &entityKey, const QVariantMap &entity) {
+    base.insert(entityKey, QJsonObject::fromVariantMap(entity));
+}
+
+void JSONDatabase::updateFrom(QJsonObject &base, const QString &entityKey, const QSet<QString> &entity) {
+    base.insert(entityKey, QJsonArray::fromStringList(entity.toList()));
+}
+
+
 
 QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> JSONDatabase::_getUpdateHandlers() {
     return QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler>();
@@ -130,7 +146,20 @@ void JSONDatabase::_createEmptyDbFile() {
     //iterate through model
     auto model = this->_getDatabaseModel();
     for(auto &key : this->_getDatabaseModel().keys()) {
-        defaultDoc.insert(key, QJsonObject());
+        
+        QJsonValue val;
+        switch (key.second) {
+            case ET_Object:
+                val = QJsonObject();
+                break;
+            
+            case ET_Array:
+                val = QJsonArray();
+                break;
+        }
+        
+        defaultDoc.insert(key.first, val);
+        
     }
 
     //update or create file
@@ -140,6 +169,8 @@ void JSONDatabase::_createEmptyDbFile() {
 
 QJsonDocument JSONDatabase::_readAsDocument() {
     
+    if(!this->_destfile) return;
+
     this->_destfile->open(QFile::ReadOnly);
         auto readBytes = this->_destfile->readAll();
     this->_destfile->close();
@@ -150,28 +181,22 @@ QJsonDocument JSONDatabase::_readAsDocument() {
 
 
 void JSONDatabase::_duplicateDbFile(QString destSuffix) {
-    QDir fHandler;
-    const auto withSuffixPath = this->dbPath() + "_" + destSuffix;
-    fHandler.remove(withSuffixPath); //remove previous instance of the file if exists
-    fHandler.rename(this->dbPath(), withSuffixPath); //rename current file
-}
+    if(!this->_destfile) return;
 
-void JSONDatabase::_checkFileExistance() {
-    if(!this->_destfile->exists()) this->_instanciateDb();
+    QDir fHandler;
+    const auto withSuffixPath = this->_destfile->fileName() + "_" + destSuffix;
+    fHandler.remove(withSuffixPath); //remove previous instance of the file if exists
+    fHandler.rename(this->_destfile->fileName(), withSuffixPath); //rename current file
 }
 
 void JSONDatabase::_removeDatabaseLinkedFiles() {
     //to implement from inheritors
 }
 
-
-void JSONDatabase::_updateDbFile(const QVariantHash &updatedFullDatabase) {
-    auto obj = QJsonObject::fromVariantHash(updatedFullDatabase);
-    this->_updateDbFile(obj);
-}
-
 void JSONDatabase::_updateDbFile(const QJsonObject &updatedFullDatabase) {
     
+    if(!this->_destfile) return;
+
     QJsonDocument doc(updatedFullDatabase);
     auto format = IS_DEBUG_APP ? QJsonDocument::JsonFormat::Indented : QJsonDocument::JsonFormat::Compact;
     auto bytes = doc.toJson(format);

@@ -1,88 +1,69 @@
 #include "MapDatabase.h"
 
-MapDatabase::MapDatabase(const QString &filePath) : _filePath(filePath) {
-    JSONDatabase::_instanciateDb();
-};
+MapDatabase::MapDatabase(const QString &filePath) : JSONDatabase(filePath) {};
+MapDatabase::MapDatabase(const QJsonObject &obj) : JSONDatabase(obj) {}
 
-const QSet<RPZAssetHash> MapDatabase::getUsedAssetsIds() const {
-    auto arr = this->_db[QStringLiteral(u"assets")].toArray();
-    QSet<RPZAssetHash> out;
-
-    for(auto id : arr) {
-        out += id.toString();
-    }
-
-    return out;
+const QSet<RPZAssetHash>& MapDatabase::getUsedAssetsIds() const {
+    return this->_assetHashes;
 }
 
-QJsonObject MapDatabase::toObject(const RPZMap<RPZAtom> &atoms, const QJsonDocument &doc) {
+void MapDatabase::_setupLocalData() {
 
-    //reseting "atoms" object
-    QJsonArray db_atoms;
-    QSet<RPZAssetHash> unique_assetIds;
-    for(auto &atom : atoms) {
-        
-        //list asset id
-        auto assetId = atom.assetId();
-        if(!assetId.isEmpty()) unique_assetIds.insert(assetId);
-
-        //fill db
-        auto casted = QJsonObject::fromVariantHash(atom);
-        db_atoms.append(casted);
-
+    //atoms
+    for(const auto &atom : this->entityAsObject(QStringLiteral(u"atoms"))) {
+        RPZAtom atom(atom.toObject().toVariantHash());
+        this->_atoms.insert(atom.id(), atom);
     }
 
-    //fill copy
-    QJsonObject copy;
-    copy.insert(QStringLiteral(u"assets_c"), unique_assetIds.count());
-    copy.insert(QStringLiteral(u"atoms_c"), db_atoms.count());
-    copy.insert(QStringLiteral(u"assets"), QJsonArray::fromStringList(unique_assetIds.toList()));
-    copy.insert(QStringLiteral(u"atoms"), db_atoms);
-    copy.insert(QStringLiteral(u"version"), doc[QStringLiteral(u"version")]);
-    
-    return copy;
+    //hashes
+    for(const auto &id : this->entityAsArray(QStringLiteral(u"assets"))) {
+        auto hash = id.toString();
+        this->_assetHashes += hash;
+    }
 
+    qDebug() << "MapDB : read" << this->_atoms.count() << "atoms";
 }
 
-void MapDatabase::saveIntoFile(const RPZMap<RPZAtom> &atoms) {
+void MapDatabase::saveIntoFile() {
     
-    auto copy = MapDatabase::toObject(atoms, this->_db);
+    auto db = this->db();
 
-    //saving...
-    this->_updateDbFile(copy);
+    updateFrom(db, QStringLiteral(u"atoms"), this->_atoms.toVMap());
+    updateFrom(db, QStringLiteral(u"assets"), this->_assetHashes);
 
-    qDebug() << "Map database : saving " << atoms.count() << " atoms";
+    this->_updateDbFile(db);
+
+    qDebug() << "Map database : saving " << this->_atoms.count() << " atoms";
 
 };
 
-RPZMap<RPZAtom> MapDatabase::toAtoms() {
-    RPZMap<RPZAtom> out = MapDatabase::toAtoms(this->_db);
-    qDebug() << "MapDB : read" << out.count() << "atoms";
-    return out;
-}
+void MapDatabase::addAtom(const RPZAtom &toAdd) {
+    
+    this->_atoms.insert(toAdd.id(), toAdd);
 
-RPZMap<RPZAtom> MapDatabase::toAtoms(const QJsonDocument &doc) {
-    RPZMap<RPZAtom> out;
-
-    auto db_atoms = doc[QStringLiteral(u"atoms")].toArray();
-
-    for(const auto &e : db_atoms) {
-        auto atom = RPZAtom(e.toObject().toVariantHash());
-        out.insert(atom.id(), atom);
+    auto hash = toAdd.assetId();
+    if(!hash.isEmpty()) {
+        this->_assetHashes += hash;
     }
 
-    return out;
 }
+
+void MapDatabase::updateAtom(const RPZAtom &updated) {
+    this->_atoms.insert(updated.id(), updated);
+}
+
+void MapDatabase::removeAtom(const RPZAtomId &idToRemove) {
+    auto removed = this->_atoms.take(idToRemove);
+    this->_assetHashes.remove(removed.assetId());
+}
+
 
 JSONDatabaseModel MapDatabase::_getDatabaseModel() {
     return {
-        { QStringLiteral(u"atoms"), &this->_atoms }
-    }
+        { { QStringLiteral(u"atoms"), ET_Object }, &this->_atoms },
+        { { QStringLiteral(u"assets"), ET_Array }, &this->_assetHashes }
+    };
 };
-
-const QString MapDatabase::dbPath() {
-    return this->_filePath;
-}
 
 const int MapDatabase::apiVersion() {
     return 7;
@@ -95,11 +76,12 @@ QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> MapDatabase::_getUpdateHan
     //to v7
     out.insert(
         7,
-        [&](QJsonDocument &doc) {
+        [&](QJsonObject &doc) {
             
+            MapDatabase db(doc);
+
             //iterate atoms
-            auto atoms = MapDatabase::toAtoms(doc);
-            for(auto &atom : atoms) {
+            for(auto atom : db.atoms()) {
                 
                 auto shape = atom.shape();
 
@@ -109,11 +91,16 @@ QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> MapDatabase::_getUpdateHan
                     shape.boundingRect().center()
                 );
 
+                db.updateAtom(atom);
+
             }
 
-            //update doc
-            auto duplicated = MapDatabase::toObject(atoms, doc);
-            doc.setObject(duplicated);
+            //update json obj
+            updateFrom(
+                doc,
+                QStringLiteral(u"atoms"),
+                db.atoms().toVMap()
+            );
 
         }
     );

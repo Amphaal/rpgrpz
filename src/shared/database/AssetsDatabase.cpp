@@ -17,6 +17,8 @@ const int AssetsDatabase::apiVersion() {
     return 5;
 }
 
+void _setupLocalData() override;
+
 void AssetsDatabase::_removeDatabaseLinkedFiles() {
     QDir(AppContext::getAssetsFolderLocation()).removeRecursively();
 }
