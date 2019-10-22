@@ -15,7 +15,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-#include "base/_NetworkHelper.h"
+#include "src/network/youtube/_base/_NetworkHelper.h"
 
 #include "YoutubeVideoMetadata.h"
 

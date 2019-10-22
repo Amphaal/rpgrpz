@@ -4,7 +4,7 @@
 #include <QPixmap>
 #include <QBuffer>
 
-#include "../base/Serializable.hpp"
+#include "src/shared/models/_base/Serializable.hpp"
 
 #include "RPZAbility.hpp"
 #include "RPZGauge.hpp"

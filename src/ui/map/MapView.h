@@ -18,10 +18,10 @@
 #include <QVariant>
 #include <QVector>
 
-#include "graphics/CustomGraphicsItemHelper.h"
+#include "src/ui/map/graphics/CustomGraphicsItemHelper.h"
 
 #include "MapTools.hpp"
-#include "base/AnimationTimeLine.hpp"
+#include "src/ui/map/_base/AnimationTimeLine.hpp"
 
 #include "src/shared/hints/MapHint.h"
 #include "src/shared/models/RPZAtom.h"
@@ -30,7 +30,7 @@
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/network/rpz/client/RPZClient.h"
 
-#include "src/ui/assets/base/AssetsTreeView.h"
+#include "src/ui/assets/_base/AssetsTreeView.h"
 
 #include "src/shared/payloads/Payloads.h"
 
@@ -40,10 +40,10 @@
 #include "src/shared/commands/AtomsContextualMenuHandler.h"
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 
-#include "modules/MV_Manipulation.hpp"
-#include "modules/MV_HUDLayout.hpp"
+#include "src/ui/map/modules/MV_Manipulation.hpp"
+#include "src/ui/map/modules/MV_HUDLayout.hpp"
 
-#include "assists/DrawingAssist.hpp"
+#include "src/ui/map/assists/DrawingAssist.hpp"
 
 class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Manipulation, public MV_HUDLayout {
 

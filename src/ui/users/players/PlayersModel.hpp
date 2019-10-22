@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../_base/BaseUsersModel.hpp"
+#include "src/ui/users/_base/BaseUsersModel.hpp"
 #include "PlayerItemDelegate.hpp"
 
 class PlayersModel : public BaseUsersModel {

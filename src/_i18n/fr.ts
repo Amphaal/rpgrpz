@@ -47,17 +47,17 @@
 <context>
     <name>AssetsTreeView</name>
     <message>
-        <location filename="../ui/assets/base/AssetsTreeView.cpp" line="212"/>
+        <location filename="../ui/assets/_base/AssetsTreeView.cpp" line="212"/>
         <source>&lt;&lt; Move to &quot;%1&quot;</source>
         <translation>&lt;&lt; Déplacer vers&quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../ui/assets/base/AssetsTreeView.cpp" line="328"/>
+        <location filename="../ui/assets/_base/AssetsTreeView.cpp" line="328"/>
         <source>Delete elements in toy box</source>
         <translation>Supprimer des elements de la boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/assets/base/AssetsTreeView.cpp" line="329"/>
+        <location filename="../ui/assets/_base/AssetsTreeView.cpp" line="329"/>
         <source>Do you confirm deletion of the %1 selected elements ?</source>
         <translation>Confirmez-vous la suppression des %1 éléments selectionnés ?</translation>
     </message>
@@ -65,7 +65,7 @@
 <context>
     <name>AssetsTreeViewItem</name>
     <message>
-        <location filename="../ui/assets/base/AssetsTreeViewItem.h" line="191"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="191"/>
         <source>Internal</source>
         <translation>Interne</translation>
     </message>
@@ -74,42 +74,42 @@
         <translation type="vanished">Joueur</translation>
     </message>
     <message>
-        <location filename="../ui/assets/base/AssetsTreeViewItem.h" line="192"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="192"/>
         <source>Event</source>
         <translation>Evénement</translation>
     </message>
     <message>
-        <location filename="../ui/assets/base/AssetsTreeViewItem.h" line="193"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="193"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
-        <location filename="../ui/assets/base/AssetsTreeViewItem.h" line="194"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="194"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../ui/assets/base/AssetsTreeViewItem.h" line="195"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="195"/>
         <source>NPC / Portraits</source>
         <translation>PNJ / Portraits</translation>
     </message>
     <message>
-        <location filename="../ui/assets/base/AssetsTreeViewItem.h" line="196"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="196"/>
         <source>Objects</source>
         <translation>Objets</translation>
     </message>
     <message>
-        <location filename="../ui/assets/base/AssetsTreeViewItem.h" line="197"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="197"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../ui/assets/base/AssetsTreeViewItem.h" line="198"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="198"/>
         <source>Downloaded</source>
         <translation>Téléchargés</translation>
     </message>
     <message>
-        <location filename="../ui/assets/base/AssetsTreeViewItem.h" line="199"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="199"/>
         <source>Landscapes</source>
         <translation>Paysages</translation>
     </message>
@@ -151,52 +151,52 @@
 <context>
     <name>AtomEditorLineDescriptor</name>
     <message>
-        <location filename="../ui/atomEditor/base/AtomEditorLineDescriptor.cpp" line="44"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.cpp" line="44"/>
         <source>mult. val.</source>
         <translation>val. mult.</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/base/AtomEditorLineDescriptor.h" line="25"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="25"/>
         <source>Rotation</source>
         <translation>Rotation</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/base/AtomEditorLineDescriptor.h" line="26"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="26"/>
         <source>Atom size</source>
         <translation>Taille de l&apos;atome</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/base/AtomEditorLineDescriptor.h" line="27"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="27"/>
         <source>Texture rotation</source>
         <translation>Rotation de la texture</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/base/AtomEditorLineDescriptor.h" line="28"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="28"/>
         <source>Texture size</source>
         <translation>Taille de la texture</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/base/AtomEditorLineDescriptor.h" line="29"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="29"/>
         <source>Pen size</source>
         <translation>Taille du crayon</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/base/AtomEditorLineDescriptor.h" line="30"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="30"/>
         <source>Text size</source>
         <translation>Taille du texte</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/base/AtomEditorLineDescriptor.h" line="31"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="31"/>
         <source>Brush width</source>
         <translation>Taille de la brosse</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/base/AtomEditorLineDescriptor.h" line="32"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="32"/>
         <source>Brush tool</source>
         <translation>Outil de brosse</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/base/AtomEditorLineDescriptor.h" line="33"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="33"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
@@ -630,7 +630,7 @@
 <context>
     <name>LayerSelector</name>
     <message>
-        <location filename="../ui/mapLayout/base/LayerSelector.cpp" line="8"/>
+        <location filename="../ui/mapLayout/_base/LayerSelector.cpp" line="8"/>
         <source>Default Layer:</source>
         <translation>Calque par défaut:</translation>
     </message>
@@ -800,7 +800,7 @@
 <context>
     <name>NoEditorMessageWidget</name>
     <message>
-        <location filename="../ui/atomEditor/base/NoEditorMessageWidget.hpp" line="19"/>
+        <location filename="../ui/atomEditor/_base/NoEditorMessageWidget.hpp" line="19"/>
         <source>No modifications are possible !</source>
         <translation>Aucune modification possible !</translation>
     </message>

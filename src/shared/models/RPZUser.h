@@ -6,7 +6,7 @@
 #include <QHostAddress>
 
 #include "src/helpers/RandomColor.h"
-#include "base/Serializable.hpp"
+#include "src/shared/models/_base/Serializable.hpp"
 #include "src/shared/commands/MessageInterpreter.h"
 
 #include "src/shared/models/character/RPZCharacter.hpp"

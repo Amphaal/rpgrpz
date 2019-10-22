@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/ui/atomEditor/base/AtomEditorLineDescriptor.h"
+#include "src/ui/atomEditor/_base/AtomEditorLineDescriptor.h"
 #include <QVBoxLayout>
 #include <QComboBox>
 

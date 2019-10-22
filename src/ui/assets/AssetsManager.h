@@ -8,7 +8,7 @@
 #include <QJsonObject>
 
 #include "src/helpers/_appContext.h"
-#include "base/AssetsTreeView.h"
+#include "src/ui/assets/_base/AssetsTreeView.h"
 
 class AssetsManager : public QWidget {
 

@@ -9,16 +9,16 @@
 
 #include "src/network/rpz/client/RPZClient.h"
 
-#include "src/shared/models/RPZMessage.h"
-#include "src/shared/models/RPZResponse.h"
+#include "src/shared/models/messaging/RPZMessage.h"
+#include "src/shared/models/messaging/RPZResponse.h"
 
 #include "src/shared/models/RPZUser.h"
 #include "src/ui/_others/ConnectivityObserver.h"
 
 #include "ChatEdit.h"
 
-#include "logs/base/LogScrollView.h"
-#include "logs/MessagesLog.h"
+#include "src/ui/chat/logs/_base/LogScrollView.h"
+#include "src/ui/chat/logs/MessagesLog.h"
 
 
 class ChatWidget : public QWidget, public ConnectivityObserver {

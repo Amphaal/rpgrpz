@@ -15,11 +15,11 @@
 #include "src/shared/models/RPZAtom.h"
 #include "src/shared/payloads/Payloads.h"
 
-#include "src/ui/map/base/RPZTree.hpp"
+#include "src/ui/map/_base/RPZTree.hpp"
 
 #include "src/ui/_others/ConnectivityObserver.h"
 
-#include "base/MapLayoutItemDelegate.h"
+#include "src/ui/mapLayout/_base/MapLayoutItemDelegate.h"
 
 #include "src/shared/hints/TreeMapHint.h"
 

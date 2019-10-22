@@ -4,9 +4,9 @@
 #include <QVector>
 #include "src/shared/models/RPZAtom.h"
 
-#include "src/shared/models/base/RPZMap.hpp"
+#include "src/shared/models/_base/RPZMap.hpp"
 
-#include "base/JSONDatabase.h"
+#include "src/shared/database/_base/JSONDatabase.h"
 #include "src/helpers/JSONSerializer.h"
 
 class MapDatabase : public JSONDatabase {

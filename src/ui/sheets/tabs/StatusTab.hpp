@@ -10,9 +10,10 @@
 
 #include "src/shared/models/character/RPZCharacter.hpp"
 
-#include "../components/GaugeEditor.hpp"
-#include "../components/GaugeWidget.hpp"
-#include "../components/AbilitiesSheet.hpp"
+#include "src/ui/sheets/components/GaugeEditor.hpp"
+#include "src/ui/sheets/components/GaugeWidget.hpp"
+#include "src/ui/sheets/components/AbilitiesSheet.hpp"
+
 
 class StatusTab : public QWidget {
     

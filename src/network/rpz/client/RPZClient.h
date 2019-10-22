@@ -16,9 +16,9 @@
 
 #include "src/shared/database/AssetsDatabase.h"
 
-#include "src/shared/models/RPZMessage.h"
-#include "src/shared/models/RPZResponse.h"
-#include "src/shared/models/RPZHandshake.h"
+#include "src/shared/models/messaging/RPZMessage.h"
+#include "src/shared/models/messaging/RPZResponse.h"
+#include "src/shared/models/messaging/RPZHandshake.h"
 
 #include "src/helpers/_appContext.h"
 #include "src/shared/async-ui/AlterationActor.hpp"

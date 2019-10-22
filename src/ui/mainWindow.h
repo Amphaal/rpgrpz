@@ -50,7 +50,7 @@
 #include "src/ui/sheets/CharacterEditor.hpp"
 
 #include "src/ui/map/MiniMapView.hpp"
-#include "src/ui/map/base/OverlayingLayout.hpp"
+#include "src/ui/map/_base/OverlayingLayout.hpp"
 
 class MainWindow : public QMainWindow, public ConnectivityObserver { 
     

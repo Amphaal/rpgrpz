@@ -3,9 +3,8 @@
 #include <QString>
 #include <QDateTime>
 
-#include "RPZUser.h"
-#include "base/Stampable.hpp"
-
+#include "src/shared/models/RPZUser.h"
+#include "src/shared/models/_base/Stampable.hpp"
 #include "src/shared/commands/MessageInterpreter.h"
 
 class RPZMessage : public Stampable {

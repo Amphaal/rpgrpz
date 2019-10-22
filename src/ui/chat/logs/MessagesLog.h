@@ -1,9 +1,9 @@
 #pragma once
 
-#include "base/LogContainer.h"
+#include "src/ui/chat/logs/_base/LogContainer.h"
 
-#include "src/shared/models/RPZMessage.h"
-#include "src/shared/models/RPZResponse.h"
+#include "src/shared/models/messaging/RPZMessage.h"
+#include "src/shared/models/messaging/RPZResponse.h"
 
 #include <QBoxLayout>
 

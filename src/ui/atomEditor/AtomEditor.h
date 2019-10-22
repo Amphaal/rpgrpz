@@ -13,12 +13,12 @@
 #include "src/shared/payloads/Payloads.h"
 #include "src/shared/models/RPZAtom.h"
 
-#include "base/AtomSubEditor.h"
-#include "editors/AtomSliderEditor.h"
-#include "editors/NonLinearAtomSliderEditor.hpp"
-#include "editors/BrushToolEditor.hpp"
-#include "editors/AtomTextEditor.hpp"
-#include "base/NoEditorMessageWidget.hpp"
+#include "src/ui/atomEditor/_base/AtomSubEditor.h"
+#include "src/ui/atomEditor/editors/AtomSliderEditor.h"
+#include "src/ui/atomEditor/editors/NonLinearAtomSliderEditor.hpp"
+#include "src/ui/atomEditor/editors/BrushToolEditor.hpp"
+#include "src/ui/atomEditor/editors/AtomTextEditor.hpp"
+#include "src/ui/atomEditor/_base/NoEditorMessageWidget.hpp"
 
 #include "src/shared/async-ui/AlterationActor.hpp"
 

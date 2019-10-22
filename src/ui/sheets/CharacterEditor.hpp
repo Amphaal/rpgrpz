@@ -8,7 +8,7 @@
 
 #include "src/ui/_others/ConnectivityObserver.h"
 
-#include "components/CharacterPicker.hpp"
+#include "src/ui/sheets/components/CharacterPicker.hpp"
 
 class CharacterEditor : public QWidget, public ConnectivityObserver {
     

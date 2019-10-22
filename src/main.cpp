@@ -13,15 +13,15 @@
 
 #include "src/network/rpz/server/RPZServer.h"
 
-#include "ui/mainWindow.h"
-#include "ui/_others/AppLoader.hpp"
+#include "src/ui/mainWindow.h"
+#include "src/ui/_others/AppLoader.hpp"
 
 #include <QDir>
 #include <QtCore/QLockFile>
 
-#include "_libs/snowflake/snowflake.h"
+#include "src/_libs/snowflake/snowflake.h"
 
-#include "version.h"
+#include "src/version.h"
 
 ////////////
 // SERVER //

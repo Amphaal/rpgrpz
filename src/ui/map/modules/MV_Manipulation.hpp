@@ -9,7 +9,7 @@
 #include <QWheelEvent>
 #include <QScrollBar>
 
-#include "src/ui/map/base/AnimationTimeLine.hpp"
+#include "src/ui/map/_base/AnimationTimeLine.hpp"
 
 class MV_Manipulation {
     public:

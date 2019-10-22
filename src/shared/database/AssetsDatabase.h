@@ -8,7 +8,7 @@
 #include <QMutexLocker>
 
 #include "src/shared/models/RPZToyMetadata.h"
-#include "base/JSONDatabase.h"
+#include "src/shared/database/_base/JSONDatabase.h"
 
 #include "src/helpers/_appContext.h"
 
@@ -50,11 +50,6 @@ class AssetsDatabase : public JSONDatabase {
         //network import/export
         RPZToyMetadata importAsset(const RPZAssetImportPackage &package);
         RPZAssetImportPackage prepareAssetPackage(const RPZAssetHash &id);
-        
-        //read
-        QJsonObject paths();
-        QJsonObject assets();
-        static QJsonObject assets(QJsonDocument &doc);
 
         //fpa
         QString getFilePathToAsset(AssetsTreeViewItem* asset);
@@ -67,6 +62,9 @@ class AssetsDatabase : public JSONDatabase {
     protected:
         const int apiVersion() override;
         void _removeDatabaseLinkedFiles() override;
+
+        QMap<QString, QList<RPZAssetHash>> _paths;
+        QHash<RPZAssetHash, > _assets;
     
     private:
         //

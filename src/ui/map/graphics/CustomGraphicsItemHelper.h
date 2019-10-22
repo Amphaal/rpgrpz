@@ -1,6 +1,6 @@
 #pragma once
 
-#include "items/MapViewGraphicsItems.h"
+#include "src/ui/map/graphics/items/MapViewGraphicsItems.h"
 
 #include "src/shared/models/RPZAtom.h"
 #include "src/shared/models/RPZToyMetadata.h"

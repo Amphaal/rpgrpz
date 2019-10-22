@@ -4,7 +4,7 @@
 #include <QVBoxLayout>
 
 #include "MapLayoutTree.h"
-#include "base/LayerSelector.h"
+#include "src/ui/mapLayout/_base/LayerSelector.h"
 
 
 class MapLayoutManager : public QWidget {

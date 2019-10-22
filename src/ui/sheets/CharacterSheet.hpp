@@ -4,9 +4,9 @@
 #include <QTabWidget>
 #include <QScrollArea>
 
-#include "tabs/LoreTab.hpp"
-#include "tabs/StatusTab.hpp"
-#include "tabs/InventoriesTab.hpp"
+#include "src/ui/sheets/tabs/LoreTab.hpp"
+#include "src/ui/sheets/tabs/StatusTab.hpp"
+#include "src/ui/sheets/tabs/InventoriesTab.hpp"
 
 #include "src/shared/models/character/RPZCharacter.hpp"
 

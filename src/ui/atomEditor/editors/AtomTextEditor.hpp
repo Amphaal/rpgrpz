@@ -3,7 +3,7 @@
 #include <QTextEdit>
 #include <QPushButton>
 
-#include "src/ui/atomEditor/base/AtomSubEditor.h"
+#include "src/ui/atomEditor/_base/AtomSubEditor.h"
 
 class AtomTextEditor : public AtomSubEditor  {
     

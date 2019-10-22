@@ -5,9 +5,9 @@
 
 #include "src/ui/_others/ConnectivityObserver.h"
 
-#include "base/TrackToolbar.h"
-#include "playlist/Playlist.h"
-#include "playlist/YoutubePlaylistItemInsertor.hpp"
+#include "src/ui/audio/controllers/_base/TrackToolbar.h"
+#include "src/ui/audio/controllers/playlist/Playlist.h"
+#include "src/ui/audio/controllers/playlist/YoutubePlaylistItemInsertor.hpp"
 
 class YoutubePlayer : public QGroupBox {
     

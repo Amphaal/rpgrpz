@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#include "../delegates/CheckBoxDelegate.hpp"
+#include "src/ui/sheets/delegates/CheckBoxDelegate.hpp"
 #include "src/shared/models/character/RPZCharacter.hpp"
 #include "src/shared/models/character/RPZAbility.hpp"
 

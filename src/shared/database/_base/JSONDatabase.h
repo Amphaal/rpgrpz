@@ -15,7 +15,7 @@
 #include <QJsonArray>
 
 #include "src/helpers/_appContext.h"
-#include "src/shared/models/base/RPZMap.hpp"
+#include "src/shared/models/_base/RPZMap.hpp"
 
 class JSONDatabase {
 

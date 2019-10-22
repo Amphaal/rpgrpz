@@ -1,6 +1,6 @@
 #pragma once
 
-#include "base/Stampable.hpp"
+#include "src/shared/models/_base/Stampable.hpp"
 
 class RPZResponse : public Stampable {
     public:

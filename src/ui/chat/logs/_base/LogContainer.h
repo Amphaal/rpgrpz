@@ -6,7 +6,7 @@
 #include <QString>
 #include <QWidget>
 
-#include "src/shared/models/base/Stampable.hpp"
+#include "src/shared/models/_base/Stampable.hpp"
 
 class LogItem : public QWidget {
     

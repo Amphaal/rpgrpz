@@ -18,7 +18,9 @@ const int AssetsDatabase::apiVersion() {
     return 5;
 }
 
-void _setupLocalData() override;
+void AssetsDatabase::_setupLocalData() override {
+
+}
 
 void AssetsDatabase::_removeDatabaseLinkedFiles() {
     QDir(AppContext::getAssetsFolderLocation()).removeRecursively();
@@ -26,8 +28,8 @@ void AssetsDatabase::_removeDatabaseLinkedFiles() {
 
 JSONDatabase::Model AssetsDatabase::_getDatabaseModel() {
     return {
-        { { QStringLiteral(u"paths"), ET_Array }, this->_paths },
-        { { QStringLiteral(u"assets"), ET_Object }, this->_assets }
+        { { QStringLiteral(u"paths"), JSONDatabase::EntityType::Array }, this->_paths },
+        { { QStringLiteral(u"assets"), JSONDatabase::EntityType::Object }, this->_assets }
     };
 }
 

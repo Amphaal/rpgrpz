@@ -1,10 +1,10 @@
 #pragma once
 
 #include "src/helpers/_appContext.h"
-#include "base/JSONDatabase.h"
+#include "src/shared/database/_base/JSONDatabase.h"
 
 #include "src/shared/models/character/RPZCharacter.hpp"
-#include "src/shared/models/base/RPZMap.hpp"
+#include "src/shared/models/_base/RPZMap.hpp"
 
 class CharactersDatabase : public QObject, public JSONDatabase {
     

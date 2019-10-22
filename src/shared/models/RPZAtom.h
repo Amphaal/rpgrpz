@@ -17,7 +17,7 @@
 #include <QGraphicsItem>
 
 #include "src/_libs/snowflake/snowflake.h"
-#include "base/Ownable.hpp"
+#include "src/shared/models/_base/Ownable.hpp"
 #include "src/helpers/JSONSerializer.h"
 
 // defined values shared with AssetsTreeViewItem type for static casts

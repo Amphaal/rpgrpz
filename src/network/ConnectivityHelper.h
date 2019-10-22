@@ -4,7 +4,7 @@
 
 #include <QString>
 #include <QLabel>
-#include "uPnP/uPnPRequester.hpp"
+#include "src/network/uPnP/uPnPRequester.hpp"
 
 #include <QJsonDocument>
 #include <QJsonObject>

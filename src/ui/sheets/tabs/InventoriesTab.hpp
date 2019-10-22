@@ -6,8 +6,8 @@
 
 #include "src/shared/models/character/RPZCharacter.hpp"
 
-#include "../components/InventoryEditor.hpp"
-#include "../components/InventoryPicker.hpp"
+#include "src/ui/sheets/components/InventoryEditor.hpp"
+#include "src/ui/sheets/components/InventoryPicker.hpp"
 
 class InventoriesTab : public QWidget {
     public:

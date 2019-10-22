@@ -14,7 +14,6 @@
 #include "local/AtomTemplateSelectedPayload.hpp"
 #include "local/AssetSelectedPayload.hpp"
 
-
 class Payloads {
     public:
         static QSharedPointer<AlterationPayload> autoCast(const QVariantHash &hash) {

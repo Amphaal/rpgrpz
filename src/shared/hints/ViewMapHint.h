@@ -18,7 +18,7 @@
 #include "src/ui/map/graphics/CustomGraphicsItemHelper.h"
 
 #include "src/shared/payloads/Payloads.h"
-#include "src/ui/assets/base/AssetsTreeViewModel.h"
+#include "src/ui/assets/_base/AssetsTreeViewModel.h"
 
 #include "AtomsStorage.h"
 

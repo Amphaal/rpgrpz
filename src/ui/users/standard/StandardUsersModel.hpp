@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../_base/BaseUsersModel.hpp"
-
+#include "src/ui/users/_base/BaseUsersModel.hpp"
+ 
 class StandardUsersModel : public BaseUsersModel {
     
     public:
