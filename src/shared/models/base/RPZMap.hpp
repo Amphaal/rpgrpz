@@ -3,7 +3,7 @@
 #include "Serializable.hpp"
 #include <QList>
 
-template<typename T>
+template<class T>
 class RPZMap : public QMap<snowflake_uid, T> {
 
     static_assert(std::is_base_of<Serializable, T>::value, "Must derive from Serializable");
@@ -25,6 +25,14 @@ class RPZMap : public QMap<snowflake_uid, T> {
             QVariantList out;
             for(T &base : this->values()) {
                 out.append(base);
+            }
+            return out;
+        }
+
+        QVariantMap toVMap() const {
+            QVariantMap out;
+            for(auto i = this->begin(); i != this->end(); i++) {
+                out.insert(QString::number(i.key()), i.value());
             }
             return out;
         }

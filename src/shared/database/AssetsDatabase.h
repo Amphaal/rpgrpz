@@ -57,7 +57,6 @@ class AssetsDatabase : public AssetsDatabaseElement, public JSONDatabase {
         void assetRenamed(const RPZAssetHash &id, const QString &newName);
 
     protected:
-        const QString defaultJsonDoc() override;
         const QString dbPath() override;
         const int apiVersion() override;
 
@@ -71,6 +70,7 @@ class AssetsDatabase : public AssetsDatabaseElement, public JSONDatabase {
 
         //updates handlers
         QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> _getUpdateHandlers() override;
+        JSONDatabaseModel _getDatabaseModel() override;
         
         //helpers
         static SizeAndCenter _defineSizeAndCenterToDbAsset(const QString &assetFilePath, QJsonObject &toUpdate);

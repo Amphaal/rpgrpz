@@ -11,8 +11,6 @@
 
 #include "src/ui/_others/ConnectivityObserver.h"
 
-#include "src/shared/models/base/RPZList.hpp"
-
 class ChatEdit : public QWidget, public ConnectivityObserver {
 
     Q_OBJECT

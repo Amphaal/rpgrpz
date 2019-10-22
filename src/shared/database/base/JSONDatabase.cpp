@@ -3,12 +3,24 @@
 JSONDatabase::JSONDatabase() {}
 
 const int JSONDatabase::dbVersion() {
-    return getDbVersion(this->_db);
+    return getDbVersion(this->_dbCopy);
 }
 
-JSONDatabaseVersion JSONDatabase::getDbVersion(QJsonDocument &db) {
-    auto version = db[QStringLiteral(u"version")].toInt();
+const QJsonObject& JSONDatabase::db() {
+    return this->_dbCopy;
+}
+
+QJsonObject JSONDatabase::entity(const QString &entityKey) {
+    return this->db().value(entityKey).toObject();
+}
+
+JSONDatabaseVersion JSONDatabase::getDbVersion(const QJsonObject &db) {
+    auto version = db.value(QStringLiteral(u"version")).toInt();
     return version;
+}
+
+void JSONDatabase::updateFrom(QJsonObject &base, const QString &entityKey, const QVariantMap &entity) {
+    base.insert(entityKey, QJsonObject::fromVariantMap(entity));
 }
 
 void JSONDatabase::_instanciateDb() {
@@ -23,19 +35,20 @@ void JSONDatabase::_instanciateDb() {
     }
 
     //try to read the file
-    auto database = this->_readDbFile();
+    auto document = this->_readAsDocument();
 
     //corrupted file, move it and create a new one
-    if(database.isNull()) {
+    if(document.isNull()) {
         qDebug() << "JSON Database : Cannot read database, creating a new one...";
         this->_duplicateDbFile("error");
         this->_createEmptyDbFile();
-        this->_db = this->_readDbFile();
+        this->_dbCopy = this->_readAsDocument().object();
         return;
     }
 
     //compare versions
-    auto currentVersion = getDbVersion(database);
+    auto dbCopy = document.object();
+    auto currentVersion = getDbVersion(dbCopy);
     auto expectedVersion = this->apiVersion();
     if(expectedVersion != currentVersion) {
         
@@ -44,22 +57,22 @@ void JSONDatabase::_instanciateDb() {
         this->_duplicateDbFile("oldVersion");
 
         //handle missmatch and update temporary database accordingly
-        auto error = this->_handleVersionMissmatch(database, currentVersion);
-        if(error) this->_db = this->_readDbFile();
+        auto error = this->_handleVersionMissmatch(dbCopy, currentVersion);
+        if(error) this->_dbCopy = this->_readAsDocument().object();
         return;
     }
 
     //bind
-    this->_db = database;
+    this->_dbCopy = dbCopy;
 }
 
 QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> JSONDatabase::_getUpdateHandlers() {
     return QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler>();
 }
 
-bool JSONDatabase::_handleVersionMissmatch(QJsonDocument &databaseToUpdate, int databaseToUpdateVersion) {
+bool JSONDatabase::_handleVersionMissmatch(QJsonObject &databaseToUpdate, int databaseToUpdateVersion) {
     
-    auto defaultBehavior = [&](QString reason){
+    auto defaultBehavior = [&](const QString &reason){
         qDebug() << "JSON Database : Database have not been updated :" << reason;
         this->_createEmptyDbFile();
         qDebug() << "JSON Database : Empty database created !";
@@ -100,28 +113,39 @@ bool JSONDatabase::_handleVersionMissmatch(QJsonDocument &databaseToUpdate, int 
     if(!updateApplied) return defaultBehavior("No later handlers found");
 
     //force version update
-    auto out = databaseToUpdate.object();
-    out.insert(QStringLiteral(u"version"), aimedAPIVersion);
+    databaseToUpdate.insert(QStringLiteral(u"version"), aimedAPIVersion);
     
     //save into file
-    this->_updateDbFile(out);
+    this->_updateDbFile(databaseToUpdate);
     qDebug() << "JSON Database : Update complete !";
     return false;
 
 }
 
 void JSONDatabase::_createEmptyDbFile() {
-    this->_destfile->open(QFile::WriteOnly);
-    this->_destfile->write(qUtf8Printable(this->defaultJsonDoc()));
-    this->_destfile->close();
+
+    QJsonObject defaultDoc;
+    defaultDoc.insert("version", this->apiVersion()); //base mandatory values
+    
+    //iterate through model
+    auto model = this->_getDatabaseModel();
+    for(auto &key : this->_getDatabaseModel().keys()) {
+        defaultDoc.insert(key, QJsonObject());
+    }
+
+    //update or create file
+    this->_updateDbFile(defaultDoc);
+
 }
 
-QJsonDocument JSONDatabase::_readDbFile() {
+QJsonDocument JSONDatabase::_readAsDocument() {
+    
     this->_destfile->open(QFile::ReadOnly);
-    auto readBytes = this->_destfile->readAll();
-    auto database = QJsonDocument::fromJson(readBytes);
+        auto readBytes = this->_destfile->readAll();
     this->_destfile->close();
-    return database;
+
+    return QJsonDocument::fromJson(readBytes);
+    
 }
 
 
@@ -140,19 +164,22 @@ void JSONDatabase::_removeDatabaseLinkedFiles() {
     //to implement from inheritors
 }
 
-void JSONDatabase::_updateDbFile(const QJsonObject &newData) {
-    this->_destfile->open(QFile::WriteOnly);
-    
-        this->_db.setObject(newData);
-        
-        this->_destfile->write(
-            this->_db.toJson(
-                QJsonDocument::JsonFormat::Compact
-                //QJsonDocument::JsonFormat::Indented
-            )
-        );
 
+void JSONDatabase::_updateDbFile(const QVariantHash &updatedFullDatabase) {
+    auto obj = QJsonObject::fromVariantHash(updatedFullDatabase);
+    this->_updateDbFile(obj);
+}
+
+void JSONDatabase::_updateDbFile(const QJsonObject &updatedFullDatabase) {
+    
+    QJsonDocument doc(updatedFullDatabase);
+    auto format = IS_DEBUG_APP ? QJsonDocument::JsonFormat::Indented : QJsonDocument::JsonFormat::Compact;
+    auto bytes = doc.toJson(format);
+
+    this->_destfile->open(QFile::WriteOnly);
+        this->_destfile->write(bytes);
     this->_destfile->close();
+
 }
 
 QJsonArray JSONDatabase::diff(QJsonArray &target, QSet<QString> &toRemoveFromTarget) {

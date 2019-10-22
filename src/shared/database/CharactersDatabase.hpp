@@ -15,27 +15,16 @@ class CharactersDatabase : public QObject, public JSONDatabase {
 
     public:
         static CharactersDatabase* get() {
-            if(!_singleton) {_singleton = new CharactersDatabase;}
+            if(!_singleton) _singleton = new CharactersDatabase;
             return _singleton;
         };
 
-        RPZMap<RPZCharacter> characters() {
-            RPZMap<RPZCharacter> out;
-            for(auto &i : this->_characters().toVariantHash()) {
-                auto character = RPZCharacter(i.toHash());
-                out.insert(character.id(), character);
-            }
-            return out;
+        const RPZMap<RPZCharacter>& characters() const {
+            return this->_characters;
         }
-
-        const QVector<snowflake_uid> characterIds() const {
-            QVector<snowflake_uid> out;
-            for(auto &key : this->_characters().keys()) out += key.toULongLong();
-            return out;
-        }
-
-        RPZCharacter character(snowflake_uid characterId) {
-            return this->characters().value(characterId);
+        
+        const RPZCharacter& character(snowflake_uid characterId) {
+            return this->characters()[characterId];
         }
 
         RPZCharacter addNewCharacter() {
@@ -44,45 +33,27 @@ class CharactersDatabase : public QObject, public JSONDatabase {
             character.shuffleId();
 
             //update
-            return this->updateCharacter(character);
+            this->updateCharacter(character);
+
+            return character;
 
         }
 
         void removeCharacter(const snowflake_uid &toRemove) {
             
-            //copy
-            auto obj = this->_db.object();
+            //remove...
+            this->_characters.remove(toRemove);
 
-                //insert in db
-                auto chars = this->_characters();
-                auto idToRemove = QString::number(toRemove);
-                chars.remove(idToRemove);
-                obj.insert(QStringLiteral(u"characters"), chars);
-            
-            //save
-            this->_updateDbFile(obj);
-            emit databaseChanged();
+            this->_writeCharactersToDb();
             
         }
 
-        RPZCharacter updateCharacter(const RPZCharacter &updated) {
+        void updateCharacter(const RPZCharacter &updated) {
             
-            //copy
-            auto obj = this->_db.object();
+            //update...
+            this->_characters.insert(updated.id(), updated);
 
-                //insert in db
-                auto chars = this->_characters();
-                chars.insert(
-                    QString::number(updated.id()),
-                    QJsonObject::fromVariantHash(updated)
-                );
-                obj.insert(QStringLiteral(u"characters"), chars);
-            
-            //save
-            this->_updateDbFile(obj);
-            emit databaseChanged();
-
-            return updated;
+            this->_writeCharactersToDb();
 
         }
 
@@ -95,19 +66,41 @@ class CharactersDatabase : public QObject, public JSONDatabase {
             return 1;
         };
 
-        const QString defaultJsonDoc() { 
-            return "{\"version\":" + QString::number(this->apiVersion()) + ",\"characters\":{}}"; 
-        };
+        JSONDatabaseModel _getDatabaseModel() {
+            return {
+                { QStringLiteral(u"characters"), &this->_characters }
+            };
+        }
 
     private:
         static inline CharactersDatabase* _singleton = nullptr;
         
+        RPZMap<RPZCharacter> _characters;
+        
         CharactersDatabase() {
             this->_instanciateDb();
-        }
-        
-        QJsonObject _characters() const {
-            return this->_db[QStringLiteral(u"characters")].toObject();
+
+            //fill
+            for(auto &i : this->entity(QStringLiteral(u"characters"))) {
+                auto character = RPZCharacter(i.toVariant().toHash());
+                this->_characters.insert(character.id(), character);
+            }
+
         }
 
+        void _writeCharactersToDb() {
+
+            auto obj = this->db();
+
+                updateFrom(
+                    obj, 
+                    QStringLiteral(u"characters"), 
+                    this->_characters.toVMap()
+                );
+            
+            this->_updateDbFile(obj);
+            emit databaseChanged();
+
+        }
+        
 };

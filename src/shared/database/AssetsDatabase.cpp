@@ -21,9 +21,13 @@ void AssetsDatabase::_removeDatabaseLinkedFiles() {
     QDir(AppContext::getAssetsFolderLocation()).removeRecursively();
 }
 
-const QString AssetsDatabase::defaultJsonDoc() {
-    return "{\"version\":" + QString::number(this->apiVersion()) + ",\"paths\":{},\"assets\":{}}";
-};
+JSONDatabaseModel AssetsDatabase::_getDatabaseModel() {
+    return {
+        { QStringLiteral(u"paths"), this->_paths },
+        { QStringLiteral(u"assets"), this->_assets }
+    }
+}
+
 const QString AssetsDatabase::dbPath() {
     return AppContext::getAssetsFileCoordinatorLocation();
 };

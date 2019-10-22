@@ -23,7 +23,6 @@ class MapDatabase : public JSONDatabase {
         const QSet<RPZAssetHash> getUsedAssetsIds() const;
 
     protected:
-        const QString defaultJsonDoc() override;
         const QString dbPath() override;
         const int apiVersion() override;
 
@@ -31,4 +30,5 @@ class MapDatabase : public JSONDatabase {
         QString _filePath;
 
         QHash<JSONDatabaseVersion, JSONDatabaseUpdateHandler> _getUpdateHandlers() override;
+        JSONDatabaseModel _getDatabaseModel() override;
 };

@@ -74,9 +74,11 @@ RPZMap<RPZAtom> MapDatabase::toAtoms(const QJsonDocument &doc) {
     return out;
 }
 
-const QString MapDatabase::defaultJsonDoc() {
-    return "{\"version\":" + QString::number(this->apiVersion()) + ",\"atoms\":{}}";
-}
+JSONDatabaseModel MapDatabase::_getDatabaseModel() {
+    return {
+        { QStringLiteral(u"atoms"), &this->_atoms }
+    }
+};
 
 const QString MapDatabase::dbPath() {
     return this->_filePath;
