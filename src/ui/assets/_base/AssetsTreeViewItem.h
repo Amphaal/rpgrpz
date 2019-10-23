@@ -7,7 +7,7 @@
 #include <QDebug>
 
 #include "src/shared/models/RPZAtom.h"
-#include "src/shared/models/RPZToyMetadata.h"
+#include "src/shared/models/toy/RPZToyMetadata.h"
 
 #include "src/shared/database/MapDatabase.h"
 

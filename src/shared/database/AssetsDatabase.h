@@ -7,7 +7,7 @@
 #include <QCryptographicHash>
 #include <QMutexLocker>
 
-#include "src/shared/models/RPZToyMetadata.h"
+#include "src/shared/models/toy/RPZToyMetadata.h"
 #include "src/shared/database/_base/JSONDatabase.h"
 
 #include "src/helpers/_appContext.h"
@@ -94,7 +94,6 @@ class AssetsDatabase : public JSONDatabase {
         void _renameFolder(const QString &name, AssetsTreeViewItem* target);
 
         //insertAsset() helpers
-        RPZAssetHash _getFileSignatureFromFileUri(const QUrl &url); //return the hash
         bool _moveFileToDbFolder(const QUrl &url, const RPZAssetHash &id);
         QUrl _moveFileToDbFolder(const QByteArray &data, const QString &fileExt, const RPZAssetHash &id);
         RPZToyMetadata _addAssetToDb(const RPZAssetHash &id, const QUrl &url, AssetsTreeViewItem* parent, const QString &forcedName = QString()); //returns asset metadata

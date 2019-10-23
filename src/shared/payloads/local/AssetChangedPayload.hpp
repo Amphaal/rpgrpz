@@ -1,7 +1,7 @@
 #pragma once
 
 #include "src/shared/payloads/_base/AlterationPayload.hpp"
-#include "src/shared/models/RPZToyMetadata.h"
+#include "src/shared/models/toy/RPZToyMetadata.h"
 
 class AssetChangedPayload : public AlterationPayload {
     

@@ -13,7 +13,7 @@
 #include <QGraphicsSvgItem>
 #include <QPixmap>
 
-#include "src/shared/models/RPZToyMetadata.h"
+#include "src/shared/models/toy/RPZToyMetadata.h"
 
 #include "src/ui/map/graphics/CustomGraphicsItemHelper.h"
 

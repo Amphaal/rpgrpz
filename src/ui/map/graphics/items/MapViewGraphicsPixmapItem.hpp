@@ -7,7 +7,7 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsTextItem>
 
-#include "src/shared/models/RPZToyMetadata.h"
+#include "src/shared/models/toy/RPZToyMetadata.h"
 
 #include <QVariant>
 #include <QBrush>

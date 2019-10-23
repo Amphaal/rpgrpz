@@ -20,6 +20,8 @@
 #include "src/shared/models/_base/Ownable.hpp"
 #include "src/helpers/JSONSerializer.h"
 
+#include "src/shared/models/toy/RPZAsset.hpp"
+
 // defined values shared with AssetsTreeViewItem type for static casts
 enum class AtomType { 
     Undefined, 
@@ -42,7 +44,7 @@ enum class BrushType {
     Scissors 
 };
 
-typedef QString RPZAssetHash; //file hash of the asset
+
 typedef snowflake_uid RPZAtomId;
 
 class RPZAtom : public Serializable {

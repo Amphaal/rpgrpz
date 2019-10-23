@@ -303,35 +303,6 @@ void AssetsDatabase::_generateItemsFromDb(const QHash<RPZAssetPath, AssetsTreeVi
 ///
 ///
 
-RPZAssetHash AssetsDatabase::_getFileSignatureFromFileUri(const QUrl &url) {
-    
-    if(!url.isLocalFile()) {
-        qDebug() << "Assets : cannot insert, uri is not a file !";
-        return NULL;
-    }
-
-    //check file exists
-    auto sourceFile = QFile(url.toLocalFile());
-    if(!sourceFile.exists()) {
-        qDebug() << "Assets : cannot insert, uri file does not exist !";
-        return NULL;
-    }
-
-    sourceFile.open(QFile::ReadOnly);
-        
-        //read signature...
-        RPZAssetHash signature = QString::fromUtf8(
-            QCryptographicHash::hash(
-                sourceFile.readAll(), 
-                QCryptographicHash::Keccak_224
-            ).toHex()
-        );
-
-    sourceFile.close();
-
-    return signature;
-}
-
 QUrl AssetsDatabase::_moveFileToDbFolder(const QByteArray &data, const QString &fileExt, const RPZAssetHash &id) {
     
     //turn encoded file from JSON into file

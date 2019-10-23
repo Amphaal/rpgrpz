@@ -3,7 +3,7 @@
 #include "src/ui/map/graphics/items/MapViewGraphicsItems.h"
 
 #include "src/shared/models/RPZAtom.h"
-#include "src/shared/models/RPZToyMetadata.h"
+#include "src/shared/models/toy/RPZToyMetadata.h"
 
 #include "src/helpers/AtomConverter.h"
 

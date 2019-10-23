@@ -3,7 +3,7 @@
 #include <QPainterPath>
 #include <QByteArray>
 #include <QVariant>
-#include <QJsonArray>
+#include <QVariantList>
 #include <QSize>
 #include <QPointF>
 
@@ -35,14 +35,11 @@ class JSONSerializer {
         static QByteArray asBase64(const QPainterPath &path);
         static QPainterPath fromByteArray(const QByteArray &base64);
 
-        static QJsonArray fromQSize(const QSize &size);
-        static QSize toQSize(const QJsonArray &JSONArray); 
-
-        static QPointF pointFromDoublePair(const QJsonArray &doubleList);
-        static QPointF pointFromDoublePair(const QVariant &doubleList);
+        static QVariant fromQSize(const QSize &size);
+        static QSize toQSize(const QVariantList &integerList);
         
-        static QVariant pointToDoublePair(const QPointF &point);
-        static QJsonArray pointToDoublePairJSON(const QPointF &point);
+        static QVariant fromPointF(const QPointF &point);
+        static QPointF toPointF(const QVariantList &doubleList);
 
         static QVariantHash serializeUpdates(const AtomUpdates &updates);
         static AtomUpdates unserializeUpdates(const QVariantHash &serializedUpdates);

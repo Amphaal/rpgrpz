@@ -3,7 +3,7 @@
 #include "src/shared/payloads/_base/AlterationPayload.hpp"
 #include <QPair>
 #include "src/shared/models/RPZAtom.h"
-#include "src/shared/models/RPZToyMetadata.h"
+#include "src/shared/models/toy/RPZToyMetadata.h"
 
 class AssetSelectedPayload : public AlterationPayload {
     
