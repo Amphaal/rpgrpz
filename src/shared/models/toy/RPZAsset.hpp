@@ -4,7 +4,9 @@
 #include <QPointF>
 #include <QVariantHash>
 #include <QUrl>
+#include <QFile>
 #include <QCryptographicHash>
+#include <QImageReader>
 
 #include "src/helpers/JSONSerializer.h"
 #include "src/helpers/_appContext.h"
@@ -16,7 +18,7 @@ class RPZAsset : public QVariantHash {
         RPZAsset() {}
         RPZAsset(const QVariantHash &hash) : QVariantHash(hash) {}
         RPZAsset(const QUrl &uri) {
-            this->_initFromFile(uri);
+            this->_integrateFrom(uri);
         }
         
         const QSize shape() const { 
@@ -35,30 +37,96 @@ class RPZAsset : public QVariantHash {
             return this->value(QStringLiteral(u"hash")).toString(); 
         }
 
-        static QByteArray assetAsBase64();
+        const QString filepath() const {
+            
+            auto expected = _getFilePathToAsset(
+                this->hash(),
+                this->fileExtension()
+            );
+            
+            auto exists = QFileInfo::exists(expected);
+            if(!exists) {
+                qWarning() << "Assets : non existent asset file being invoked";
+            }
+
+            return exists ? expected : QString();
+
+        }
+
+        void updateAssetGeometryData() {
+            
+            auto ext = this->fileExtension();
+            auto filePath = this->filepath();
+            
+            QFile fileReader(filePath);
+            if(!fileReader.exists()) {
+                qDebug() << "Assets : cannot update geometry, asset file does not exist !";
+                return;
+            }
+
+            this->_updateAssetGeometryData(&fileReader, ext);
+
+        }
+
+    protected:
+        bool _integrateFrom(const QByteArray &assetAsRawBytes, const RPZAsset &asset) const {
+
+            auto dest = asset.filepath();
+            if(dest.isEmpty()) return false;
+
+            QFile writer(dest);
+            writer.open(QIODevice::WriteOnly);
+                writer.write(assetAsRawBytes);
+            writer.close();
+
+            return true;
+
+        }
 
     private:
-        void _initFromFile(const QUrl &uri) {
+        void _updateAssetGeometryData(QFile *fileReader, const QString &fileExtension) {
             
-            QFile fileReader;
+            //image metadata
+            QImageReader imgReader(fileReader, qUtf8Printable(fileExtension));
+            auto assetSize = imgReader.size();
+            if(!assetSize.isValid()) {
+                qDebug() << "Assets : cannot update asset geometry as the geometry is unoptainable !";
+                return;
+            }
+
+            auto assetCenter = QPointF(
+                (qreal)assetSize.width() / 2,
+                (qreal)assetSize.height() / 2
+            );
+
+            this->insert(QStringLiteral(u"shape"), JSONSerializer::fromQSize(assetSize));
+            this->insert(QStringLiteral(u"center"), JSONSerializer::fromPointF(assetCenter));
+
+        }
+
+        void _integrateFrom(const QUrl &uri) {
+            
+            QFile* fileReader = nullptr;
 
             auto success = _createFileHandler(uri, fileReader);
-            if(!succcess) return;
+            QSharedPointer<QFile> ptr(fileReader); //ensure autodelete on return
+            if(!success) return;
 
             //ext + name
-            QFileInfo fInfo(url.fileName());
+            QFileInfo fInfo(uri.fileName());
             auto ext = fInfo.suffix();
             auto name = fInfo.baseName();
             
             //hash
-            auto hash = _getFileHash(fileReader);
+            auto hash = _getFileHash(*fileReader);
 
             //move
             auto expectedStoragePath = _getFilePathToAsset(hash, ext);
-            auto success = _moveFileToStore(fileReader, expectedStoragePath);
-            if(!succcess) return;
+            success = _moveFileToStore(*fileReader, expectedStoragePath);
+            if(!success) return;
 
             //add data
+            this->_updateAssetGeometryData(fileReader, ext);
             this->insert(QStringLiteral(u"ext"), ext);
             this->insert(QStringLiteral(u"name"), name);
             this->insert(QStringLiteral(u"hash"), hash);
@@ -72,7 +140,7 @@ class RPZAsset : public QVariantHash {
             }
         }
 
-        static bool _createFileHandler(const QUrl &url, QFile &fileReader) {
+        static bool _createFileHandler(const QUrl &url, QFile* fileReader) {
     
             if(!url.isLocalFile()) {
                 qDebug() << "Assets : cannot create asset, source URI is not a file !";
@@ -80,8 +148,8 @@ class RPZAsset : public QVariantHash {
             }
 
             //check file exists
-            fileReader = QFile(url.toLocalFile());
-            if(!fileReader.exists()) {
+            fileReader = new QFile(url.toLocalFile());
+            if(!fileReader->exists()) {
                 qDebug() << "Assets : cannot create asset, source URI file does not exist !";
                 return false;
             }
@@ -92,17 +160,17 @@ class RPZAsset : public QVariantHash {
 
         static RPZAssetHash _getFileHash(QFile &fileReader) {
 
-            sourceFile.open(QFile::ReadOnly);
+            fileReader.open(QFile::ReadOnly);
                 
                 //read signature...
                 RPZAssetHash hash = QString::fromUtf8(
                     QCryptographicHash::hash(
-                        sourceFile.readAll(), 
+                        fileReader.readAll(), 
                         QCryptographicHash::Keccak_224
                     ).toHex()
                 );
 
-            sourceFile.close();
+            fileReader.close();
 
             return hash;
 
@@ -114,6 +182,5 @@ class RPZAsset : public QVariantHash {
                             .arg(id)
                             .arg(ext);
         }
-
 
 };

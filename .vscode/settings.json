@@ -171,7 +171,8 @@
         "qgraphicsview": "cpp",
         "qstack": "cpp",
         "qtreewidgetitem": "cpp",
-        "qcryptographichash": "cpp"
+        "qcryptographichash": "cpp",
+        "qimagereader": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

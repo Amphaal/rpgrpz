@@ -2,7 +2,7 @@
 
 #include <QVariantHash>
 
-#include "RPZAtom.h"
+#include "src/shared/models/RPZAtom.h"
 
 class AssetsTreeViewItem;
 

@@ -207,8 +207,13 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
             //package each asset and send it to user
             for(auto &assetId : requested) {
+
                 auto package = AssetsDatabase::get()->prepareAssetPackage(assetId);
+
+                if(!package.isPackageCreationSuccessful()) continue;
+
                 target->sendJSON(JSONMethod::RequestedAsset, package);
+                
             }
 
         }
@@ -333,8 +338,8 @@ void RPZServer::_broadcastMapChanges(JSONMethod method, AlterationPayload &paylo
 
 void RPZServer::_sendMapHistory(JSONSocket * clientSocket) {
 
-    //fetch payload
-    auto payload = this->_hints->createStatePayload();
+    //generate payload
+    ResetPayload payload(*this->_hints);
 
     //send it
     clientSocket->sendJSON(JSONMethod::MapChangedHeavily, payload);
@@ -349,19 +354,22 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
     switch(msg.commandType()) {
         
         //on unknown command
-        case MessageInterpreter::C_Unknown: {
-            response = RPZResponse(msgId, RPZResponse::UnknownCommand);
+        case MessageInterpreter::Command::C_Unknown: {
+            response = RPZResponse(msgId, RPZResponse::ResponseCode::UnknownCommand);
         }
         break;
 
         //on help
-        case MessageInterpreter::Help: {
-            response = RPZResponse(msgId, RPZResponse::HelpManifest, MessageInterpreter::help());
+        case MessageInterpreter::Command::Help: {
+            response = RPZResponse(msgId, 
+            RPZResponse::ResponseCode::HelpManifest, 
+            MessageInterpreter::help()
+            );
         }
         break;
 
         //on whisper
-        case MessageInterpreter::Whisper: {
+        case MessageInterpreter::Command::Whisper: {
             
             //get recipients usernames
             auto textCommand = msg.text();
@@ -383,7 +391,7 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
                 auto textOnly = MessageInterpreter::sanitizeText(textCommand);
                 
                 //create a new message 
-                auto newMessage = RPZMessage(textOnly, MessageInterpreter::Whisper);
+                auto newMessage = RPZMessage(textOnly, MessageInterpreter::Command::Whisper);
                 newMessage.setOwnership(initialOwner);
 
                 //send new message
@@ -396,7 +404,10 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
                 QVariantList usernamesNotFound;
                 for( auto &un : notFound) usernamesNotFound.append(un);
 
-                response = RPZResponse(msgId, RPZResponse::ErrorRecipients, usernamesNotFound);
+                response = RPZResponse(msgId, 
+                    RPZResponse::ResponseCode::ErrorRecipients, 
+                    usernamesNotFound
+                );
                 
             }
             
@@ -404,7 +415,7 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
         break;
 
         //on standard message
-        case MessageInterpreter::Say:
+        case MessageInterpreter::Command::Say:
         default: {
             
             //store message

@@ -79,8 +79,6 @@ class MiniMapView : public QGraphicsView {
             auto itemsBoundingRect = this->scene()->itemsBoundingRect();
             auto rectSize = itemsBoundingRect.size();
 
-            //TODO itemsBoundingRect claqué ?
-
             if(rectSize.width() < minimalSize.width() || rectSize.height() < minimalSize.height()) {
                 return minimalSize;
             }

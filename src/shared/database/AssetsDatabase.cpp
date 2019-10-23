@@ -1,5 +1,8 @@
 #include "AssetsDatabase.h"
 
+AssetsDatabase::AssetsDatabase(const QJsonObject &doc) : JSONDatabase(doc) { }
+AssetsDatabase::AssetsDatabase() : JSONDatabase(AppContext::getAssetsFileCoordinatorLocation()) {};
+
 AssetsDatabase* AssetsDatabase::get() {
     if(!_singleton) {
         _singleton = new AssetsDatabase();
@@ -7,18 +10,67 @@ AssetsDatabase* AssetsDatabase::get() {
     return _singleton;
 }
 
-AssetsDatabase::AssetsDatabase(const QJsonObject &doc) : JSONDatabase(doc) { }
-
-AssetsDatabase::AssetsDatabase() : JSONDatabase(AppContext::getAssetsFileCoordinatorLocation()) { 
-    this->_injectStaticStructure();
-    this->_injectDbStructure();
-};
-
 const int AssetsDatabase::apiVersion() {
     return 5;
 }
 
-void AssetsDatabase::_setupLocalData() override {
+JSONDatabase::Model AssetsDatabase::_getDatabaseModel() {
+    return {
+        { { QStringLiteral(u"paths"), JSONDatabase::EntityType::Object }, &this->_paths },
+        { { QStringLiteral(u"assets"), JSONDatabase::EntityType::Object }, &this->_assets }
+    };
+}
+
+void AssetsDatabase::_saveIntoFile() {
+    
+    auto db = this->db();
+
+        //assets
+        QVariantHash assets;
+        for(auto &asset : this->_assets) {
+            assets.insert(asset.hash(), asset);
+        }
+        updateFrom(db, QStringLiteral(u"assets"), assets);
+
+        //paths
+        QVariantMap paths;
+        for(auto i = this->_paths.begin(); i != this->_paths.end(); i++) {
+            
+            QVariantList hashes;
+            for(auto &hash : i.value()) hashes += hash;
+
+            paths.insert(i.key(), hashes);
+
+        }
+        updateFrom(db, QStringLiteral(u"paths"), paths);
+
+    this->_updateDbFile(db);
+
+};
+
+void AssetsDatabase::_setupLocalData() {
+    
+    //assets
+    for(auto &i : this->entityAsObject(QStringLiteral(u"assets"))) {
+        auto asset = RPZAsset(i.toVariant().toHash());
+        this->_assets.insert(asset.hash(), asset);
+    }
+
+    //paths
+    for(auto &i : this->entityAsObject(QStringLiteral(u"paths"))) {
+        
+        auto paths = i.toObject();
+        
+        for(auto &path : paths.keys()) {
+            
+            auto assetHashes = paths.value(path);
+            auto uniqueHashes = assetHashes.toVariant().toStringList().toSet();
+
+            this->_paths.insert(path, uniqueHashes);
+
+        }
+
+    }
 
 }
 
@@ -26,444 +78,80 @@ void AssetsDatabase::_removeDatabaseLinkedFiles() {
     QDir(AppContext::getAssetsFolderLocation()).removeRecursively();
 }
 
-JSONDatabase::Model AssetsDatabase::_getDatabaseModel() {
-    return {
-        { { QStringLiteral(u"paths"), JSONDatabase::EntityType::Array }, this->_paths },
-        { { QStringLiteral(u"assets"), JSONDatabase::EntityType::Object }, this->_assets }
-    };
-}
-
-
-RPZToyMetadata AssetsDatabase::importAsset(const RPZAssetImportPackage &package) {
-    
-    QMutexLocker l(&this->_m_withAssetsElems);
-
-    if(package.isEmpty()) {
-        qDebug() << "Asset : received empty import package !";
-        return RPZToyMetadata();
-    }
-    
-    RPZAssetHash asset_id = package[QStringLiteral(u"_id")].toString();
-
-    //check content
-    auto fileBytes = package[QStringLiteral(u"_fileContent")].toByteArray();
-    if(!fileBytes.size()) {
-        qDebug() << "Asset : requested" << asset_id << "cannot be found by server";
-        return RPZToyMetadata();
-    }
-
-    //asset
-    auto asset = QJsonDocument::fromVariant(package[QStringLiteral(u"_meta")]).object();
-
-    //save file
-    auto fileAsRawData = QByteArray::fromBase64(fileBytes);
-    auto destFileExt = asset[QStringLiteral(u"ext")].toString();
-    auto destFileName = asset[QStringLiteral(u"name")].toString();
-    auto destUrl = this->_moveFileToDbFolder(fileAsRawData, destFileExt, asset_id);
-
-    //copy into db
-    auto parent = this->_staticElements[DownloadedContainer];
-    auto metadata = this->_addAssetToDb(asset_id, destUrl, parent, destFileName);
-
-    //add to tree
-    auto element = new AssetsTreeViewItem(metadata);
-    this->_trackAssetByElem(asset_id, element);
-
-    auto destUrlPath = destUrl.toString();
-    qDebug() << "Assets :" << destFileName << "imported";
-    return metadata;
-}
-
-void AssetsDatabase::_trackAssetByElem(const RPZAssetHash &assetId, AssetsTreeViewItem* elem) {
-    this->_withAssetsElems.insert(assetId, elem);
-}
-
-RPZAssetImportPackage AssetsDatabase::prepareAssetPackage(const RPZAssetHash &id) {
-    
-    //json obj
-    RPZAssetImportPackage package;
-    package[QStringLiteral(u"_id")] = id;
-
-    //determine id existance by fetching the file path
-    auto pathToFile = this->getFilePathToAsset(id);
-    if(pathToFile.isNull()) {
-        qDebug() << "Asset : requested" << id << "not found";
-        return package;
-    }
-
-    //append file as base64
-    QFile assetFile(pathToFile);
-    assetFile.open(QFile::ReadOnly);
-
-        auto fileContent = assetFile.readAll().toBase64();
-        package[QStringLiteral(u"_fileContent")] = QString(fileContent);
-
-    assetFile.close();
-
-    package[QStringLiteral(u"_meta")] = this->assets()[id].toObject();
-    return package;
-}
-
-QString AssetsDatabase::getFilePathToAsset(const RPZAssetHash &id) {
-    auto db_assets = this->assets();
-    if(!db_assets.contains(id)) return NULL;
-
-    auto assetJSON = db_assets[id].toObject();
-    auto fileExtension =  assetJSON[QStringLiteral(u"ext")].toString();
-
-    return getFilePathToAsset(id, fileExtension);
-}
-
-QString AssetsDatabase::getFilePathToAsset(AssetsTreeViewItem* asset) {
-    return this->getFilePathToAsset(asset->id());
-}
-
-QString AssetsDatabase::getFilePathToAsset(const RPZAssetHash &id, const QString &ext) {
-	return QStringLiteral(u"%1/%2.%3")
-					.arg(AppContext::getAssetsFolderLocation())
-					.arg(id)
-					.arg(ext);
-}
-
-///
-///
-///
-
-QJsonObject AssetsDatabase::paths() {
-    return this->_db[QStringLiteral(u"paths")].toObject();
-}
-
-QJsonObject AssetsDatabase::assets() {
-    return assets(this->_db);
-}
-
-QJsonObject AssetsDatabase::assets(QJsonDocument &doc) {
-    return doc[QStringLiteral(u"assets")].toObject();
-}
-
-///
-///
-///
-
-void AssetsDatabase::_injectStaticStructure() {
-
-    for(auto &staticType : AssetsTreeViewItem::staticContainerTypes()) {
-
-        auto staticFolder = new AssetsTreeViewItem(AssetsTreeViewItem::typeDescription(staticType), this, staticType);
-        this->_staticElements.insert(staticType, staticFolder);
-
-        if(staticType == InternalContainer) {
-            for(auto &type : AssetsTreeViewItem::internalItemTypes()) {
-                auto internalItem = new AssetsTreeViewItem(AssetsTreeViewItem::typeDescription(type), staticFolder, type);
-            }
-        }
-
-    }
-
-}
-
-
-void AssetsDatabase::_injectDbStructure() {
-
-    //get containers to fill, not inbetween folders
-    auto containersToFill = this->_generateFolderTreeFromDb();
-
-    //then fill with items
-    this->_generateItemsFromDb(containersToFill);
-
-}
-
-QHash<RPZAssetPath, AssetsTreeViewItem*> AssetsDatabase::_generateFolderTreeFromDb() {
-    
-    //sort the keys
-    auto paths = this->paths().keys();
-    paths.sort();
-
-    //to be created items
-    QHash<RPZAssetPath, AssetsTreeViewItem*> containersToFill;
-
-    //create folders arbo
-    for(auto &path : paths) {
-        
-        //split the path
-        auto split = AssetsTreeViewItem::pathAsList(path);
-        
-        //make sure first split is a type
-        auto staticCType = AssetsTreeViewItem::pathChunktoType(split.takeFirst());
-
-        //get element from static source
-        if(!this->_staticElements.contains(staticCType)) {
-            qDebug() << "Assets : ignoring path, as the static container it points to doesnt exist";
-            continue;
-        }
-        auto staticContainerElem = this->_staticElements[staticCType];
-
-        //create path
-        auto lastContainer = this->_recursiveElementCreator(staticContainerElem, split);
-        
-        //append to list
-        containersToFill.insert(path, lastContainer);
-    }
-
-    //returns
-    return containersToFill;
-}
-
-AssetsTreeViewItem* AssetsDatabase::_recursiveElementCreator(AssetsTreeViewItem* parent, QList<QString> &pathChunks) {
-    
-    //if no more folders in path to create...
-    if(!pathChunks.count()) return parent;
-
-    //take first part
-    auto part = pathChunks.takeFirst();
-
-    //search if already exist
-    AssetsTreeViewItem* found = nullptr;
-    for(auto container : parent->childrenContainers()) {
-        if(container->displayName() == part) {
-            found = container;
-            break;
-        }
-    }
-
-    //if not found, create it
-    if(!found) {
-        found = new AssetsTreeViewItem(part, parent);
-    }
-
-    //iterate through...
-    return this->_recursiveElementCreator(found, pathChunks);
-
-}
-
-RPZToyMetadata AssetsDatabase::getAssetMetadata(const RPZAssetHash &id) {
-    QMutexLocker l(&this->_m_withAssetsElems);
-    auto ptr = this->_withAssetsElems.value(id);
-    return ptr ? ptr->toyMetadata() : RPZToyMetadata();
+const RPZAsset AssetsDatabase::asset(const RPZAssetHash &hash) const {
+    return this->_assets.value(hash);
 }
 
 const QSet<RPZAssetHash> AssetsDatabase::getStoredAssetsIds() const {
-    QMutexLocker l(&this->_m_withAssetsElems);
-    auto out = this->_withAssetsElems.keys().toSet();
-    return out;
+    return this->_assets.keys().toSet();
 }
 
-void AssetsDatabase::_generateItemsFromDb(const QHash<RPZAssetPath, AssetsTreeViewItem*> &pathsToFillWithItems) {
-    
-    auto db_paths = this->paths();
-    auto assets_db = this->assets();
 
-    QMutexLocker l(&this->_m_withAssetsElems);
-
-    //create items for each end-containers
-    for (auto i = pathsToFillWithItems.constBegin(); i != pathsToFillWithItems.constEnd(); ++i) {
-        
-        //define
-        auto path = i.key();
-        auto lastContainer = i.value();
-
-        //preapre for search
-        auto items_ids = db_paths[path].toArray();
-        
-        //find items in db and create them
-        for(auto id : items_ids) {
-            
-            auto idStr = id.toString();
-
-            //if ID doesnt exist
-            if(!assets_db.contains(idStr)) {
-                qDebug() << "Assets : cannot insert an item as its ID is not found in the assets DB";
-                continue;
-            }
-
-            //create
-            auto asset = assets_db[idStr].toObject();
-
-            auto metadata = RPZToyMetadata(
-                lastContainer,
-                AssetsTreeViewItem::toAtomType(lastContainer->insertType()),
-                idStr,
-                asset[QStringLiteral(u"name")].toString(),
-                getFilePathToAsset(idStr, asset[QStringLiteral(u"ext")].toString()),
-                JSONSerializer::toQSize(asset[QStringLiteral(u"shape")].toArray()),
-                JSONSerializer::pointFromDoublePair(asset[QStringLiteral(u"center")].toArray())
-            );
-
-            auto elem = new AssetsTreeViewItem(metadata);
-
-            this->_trackAssetByElem(idStr, elem);
-
-        }
+const RPZAsset* AssetsDatabase::_asset(const RPZAssetHash &hash) const {
+    if(!this->_assets.contains(hash)) {
+        qDebug() << "Assets: cannot find asset !";
+        return nullptr;
     }
-
+    return &this->_assets[hash];
 }
 
+const QString AssetsDatabase::_path(const StorageContainer &targetContainer) const {
+    auto path = QStringLiteral(u"/{%1}").arg(QString::number((int)targetContainer));
+    return path;
+}
+
+const RPZAssetImportPackage AssetsDatabase::prepareAssetPackage(const RPZAssetHash &id) const {
+    
+    auto asset = this->_asset(id);
+    if(!asset) return;
+
+    RPZAssetImportPackage package(*asset);
+    return package;
+
+}
 
 ///
 ///
 ///
 
-QUrl AssetsDatabase::_moveFileToDbFolder(const QByteArray &data, const QString &fileExt, const RPZAssetHash &id) {
+void AssetsDatabase::addAsset(const RPZAsset &asset, const RPZFolderPath &internalPathToAddTo) {
     
-    //turn encoded file from JSON into file
-    auto dest = getFilePathToAsset(id, fileExt);
-
-    //write file
-    QFile assetFile(dest);
-    auto isOpen = assetFile.open(QIODevice::WriteOnly);
-        auto written = assetFile.write(data);
-    assetFile.close();
+    //asset
+    auto hash = asset.hash();
+    this->_assets.insert(hash, asset);
     
-    //dummy
-    return QUrl(dest);
-}
-
-bool AssetsDatabase::_moveFileToDbFolder(const QUrl &url, const RPZAssetHash &id) {
-
-    //dest file suffix
-    QFileInfo fInfo(url.fileName());
-    auto destFileExt = fInfo.suffix();
-    auto destFileName = fInfo.baseName();
-    
-    //file as raw data
-    QFile assetFile(url.toLocalFile());
-    assetFile.open(QFile::ReadOnly);
-        auto data = assetFile.readAll();
-    assetFile.close();
-
-    //
-    auto destUrl = this->_moveFileToDbFolder(data, destFileExt, id);
-    return !destUrl.isEmpty();
-}
-
-RPZToyMetadata AssetsDatabase::_addAssetToDb(
-        const RPZAssetHash &id, 
-        const QUrl &url, 
-        AssetsTreeViewItem* parent, 
-        const QString &forcedName
-    ) {
-
-    //prepare
-    auto db_paths = this->paths();
-    auto obj = this->_db.object();
-    auto folderParentPath = parent->path();
-
-    //extract path from URL
-    QString pathToAsset = url.isLocalFile() ? url.toLocalFile() : url.toString();
-    QFileInfo fInfo(url.fileName());
-
-    //1.save new asset
-    auto assets = this->assets();
-
-        //define new asset item
-        QJsonObject newAsset;
-        newAsset[QStringLiteral(u"ext")] = fInfo.suffix();
-
-        auto assetName = forcedName.isEmpty() ? fInfo.baseName() : forcedName;
-        newAsset[QStringLiteral(u"name")] = assetName;
-
-        auto assetSizeAndCenter = _defineSizeAndCenterToDbAsset(pathToAsset, newAsset);
-
-    assets.insert(id, newAsset);
-    obj[QStringLiteral(u"assets")] = assets;
-        
-    //check path existance, create it if non existant
-    QJsonArray objsInPath = db_paths.contains(folderParentPath) ? db_paths[folderParentPath].toArray() : QJsonArray();
-    if(!objsInPath.contains(id)) {
-
-        //2. update path status
-        objsInPath.append(id);
-        db_paths[folderParentPath] = objsInPath;
-        obj[QStringLiteral(u"paths")] = db_paths;
-    }
-
-
-    //update db file
-    this->_updateDbFile(obj);
-    qDebug() << "Assets :" << fInfo.filePath() << "inserted !";
-    
-    auto metadata = RPZToyMetadata(
-        parent,
-        AssetsTreeViewItem::toAtomType(parent->insertType()),
-        id,
-        assetName,
-        pathToAsset,
-        assetSizeAndCenter.size,
-        assetSizeAndCenter.center
-    );
-
-    return metadata;
-}
-
-bool AssetsDatabase::insertAsset(const QUrl &url, AssetsTreeViewItem* parent) {
-
-    QMutexLocker l(&this->_m_withAssetsElems);
-
-    //get the corresponding signature
-    auto fileSignature = this->_getFileSignatureFromFileUri(url);
-    if(fileSignature.isNull()) return false;
-
-    // comparaison from db
-    auto fileSignatures = this->assets().keys();
-    if(fileSignatures.contains(fileSignature)) {
-        qDebug() << "Assets : will not insert, file signature has been found in db !";
-        return false;
-    }
-
-    //copy file
-    if(!this->_moveFileToDbFolder(url, fileSignature)) return false;
-
-    //insert into db
-    auto metadata = this->_addAssetToDb(fileSignature, url, parent);
-
-    //add element
-    auto element = new AssetsTreeViewItem(metadata);
-    this->_trackAssetByElem(fileSignature, element);
-
-    return true;
-}
-
-
-bool AssetsDatabase::createFolder(AssetsTreeViewItem* parent) {
-    
-    //data template
-    auto generatedPath = this->_generateNonExistingPath(parent, "Dossier");
+    //path
+    auto &assetsOfPath = this->_paths[internalPathToAddTo];
+    assetsOfPath.insert(hash);
 
     //save
-    auto obj = this->_db.object();
-    auto db_paths = this->paths();
-    db_paths[generatedPath] = QJsonArray();
-    obj[QStringLiteral(u"paths")] = db_paths;
-    this->_updateDbFile(obj);
+    this->_saveIntoFile();
 
-    //create elem
-    auto generatedName = AssetsTreeViewItem::pathAsList(generatedPath).takeLast();
-    auto folder = new AssetsTreeViewItem(generatedName, parent);
-
-    return true;
 }
 
-QString AssetsDatabase::_generateNonExistingPath(AssetsTreeViewItem* parent, const QString &prefix) {
+void AssetsDatabase::importAsset(RPZAssetImportPackage &package) {
     
-    QString generatedPath = "";
-    RPZAssetPath destPath = parent->path();
+    auto success = package.tryIntegratePackage();
+    if(!success) return;
+
+    this->addAsset(
+        package, 
+        this->_path(StorageContainer::Downloaded)
+    );
+
+}
+
+void AssetsDatabase::createFolder(const RPZFolderPath &parentPath) {
     
-    //prepare path generation
-    auto generateNewPath = [destPath, prefix]() {
-        auto newPath = destPath;
-        newPath += "/" + prefix + "_";
-        newPath += QString::number(QDateTime().currentMSecsSinceEpoch());
-        return newPath;
-    }; 
+    //get a unique folder
+    auto uniquePath = this->_generateNonExistingPath(parentPath, tr("Folder"));
 
-    //generate non existing path in db
-    auto db_paths = this->paths();
-    do {
-        generatedPath = generateNewPath();
-    } while(db_paths.contains(generatedPath));
+    //add
+    this->_paths.insert(uniquePath, {});
 
-    //returns
-    return generatedPath;
+    //save
+    this->_saveIntoFile();
+
 }
 
 void AssetsDatabase::_renameItem(const QString &name, AssetsTreeViewItem* target) {
@@ -577,9 +265,9 @@ void AssetsDatabase::_removeAssetFile(const RPZAssetHash &id, const QJsonObject 
     
 }
 
-QSet<RPZAssetPath> AssetsDatabase::_getPathsToAlterFromList(const QList<AssetsTreeViewItem*> &elemsToAlter) {
+QSet<RPZFolderPath> AssetsDatabase::_getPathsToAlterFromList(const QList<AssetsTreeViewItem*> &elemsToAlter) {
     
-    auto out = QSet<RPZAssetPath>();
+    auto out = QSet<RPZFolderPath>();
     
     for(auto &elem : elemsToAlter) {
         if(elem->isContainer()) {
@@ -590,8 +278,8 @@ QSet<RPZAssetPath> AssetsDatabase::_getPathsToAlterFromList(const QList<AssetsTr
     return out;
 }
 
-QHash<RPZAssetPath, QSet<RPZAssetHash>> AssetsDatabase::_getAssetsToAlterFromList(const QList<AssetsTreeViewItem*> &elemsToAlter) {
-    auto out = QHash<RPZAssetPath, QSet<RPZAssetHash>>();
+QHash<RPZFolderPath, QSet<RPZAssetHash>> AssetsDatabase::_getAssetsToAlterFromList(const QList<AssetsTreeViewItem*> &elemsToAlter) {
+    auto out = QHash<RPZFolderPath, QSet<RPZAssetHash>>();
     
     for(auto &elem : elemsToAlter) {
         if(elem->isIdentifiable()) {
@@ -602,7 +290,7 @@ QHash<RPZAssetPath, QSet<RPZAssetHash>> AssetsDatabase::_getAssetsToAlterFromLis
     return out;
 }
 
-void AssetsDatabase::_augmentAssetsHashWithMissingDescendents(QHash<RPZAssetPath, QSet<RPZAssetHash>> &hashToAugment, const QSet<RPZAssetPath> &morePathsToDelete) {
+void AssetsDatabase::_augmentAssetsHashWithMissingDescendents(QHash<RPZFolderPath, QSet<RPZAssetHash>> &hashToAugment, const QSet<RPZFolderPath> &morePathsToDelete) {
     
     auto db_paths = this->paths();
 
@@ -621,7 +309,7 @@ void AssetsDatabase::_augmentAssetsHashWithMissingDescendents(QHash<RPZAssetPath
 
 }
 
-QList<RPZAssetHash> AssetsDatabase::_removeIdsFromPaths(QJsonObject &db_paths, const QHash<RPZAssetPath, QSet<RPZAssetHash>> &idsToRemoveByPath) {
+QList<RPZAssetHash> AssetsDatabase::_removeIdsFromPaths(QJsonObject &db_paths, const QHash<RPZFolderPath, QSet<RPZAssetHash>> &idsToRemoveByPath) {
     
     QList<RPZAssetHash> ids;
 
@@ -750,7 +438,7 @@ bool AssetsDatabase::moveItemsToContainer(QList<AssetsTreeViewItem*> selectedIte
     for(auto &pathToMove : pathsToMove) {
 
         //for each higher elem, augment with descendants
-        auto augmentedList = QSet<RPZAssetPath> { pathToMove };
+        auto augmentedList = QSet<RPZFolderPath> { pathToMove };
         this->_augmentPathsSetWithMissingDescendents(augmentedList);
 
         //define new path
@@ -796,10 +484,10 @@ bool AssetsDatabase::moveItemsToContainer(QList<AssetsTreeViewItem*> selectedIte
     return true;
 }
 
-QSet<RPZAssetPath> AssetsDatabase::_augmentPathsSetWithMissingDescendents(QSet<RPZAssetPath> &setToAugment) {
+QSet<RPZFolderPath> AssetsDatabase::_augmentPathsSetWithMissingDescendents(QSet<RPZFolderPath> &setToAugment) {
         
     //remove already planned alterations
-    QSet<RPZAssetPath> inheritedPathAlterations;
+    QSet<RPZFolderPath> inheritedPathAlterations;
     auto remaining_db_paths = this->paths().keys().toSet().subtract(setToAugment);
 
     //check if a path to be remove is a part of a remaining path 
@@ -823,6 +511,19 @@ QSet<RPZAssetPath> AssetsDatabase::_augmentPathsSetWithMissingDescendents(QSet<R
     return inheritedPathAlterations;
 }
 
+QString AssetsDatabase::_generateNonExistingPath(const RPZFolderPath &parentPath, const QString &prefix) {
+    
+    auto newPath = parentPath;
+    newPath += QStringLiteral(u"/%1_%2").arg(prefix)
+                                        .arg(QDateTime().currentMSecsSinceEpoch());
+
+    //recursive until unique
+    if(this->_paths.contains(newPath)) return this->_generateNonExistingPath(parentPath, prefix);
+
+    return newPath;
+
+}
+
 QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> AssetsDatabase::_getUpdateHandlers() {
     
     auto out = QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler>();
@@ -835,49 +536,25 @@ QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> AssetsDatabase::_getUp
             AssetsDatabase db(doc);
 
             //iterate assets
-            for(auto i = assets.begin(); i != assets.end(); i++) {
-                
-                auto assetId = i.key();
-                auto assetDataRef = i.value();
+            QVariantHash compiled;
+            for(auto &asset : db._assets) {
 
-                //get the filepath to the asset
-                auto fpAsset = getFilePathToAsset(
-                    i.key(),
-                    assetDataRef.toObject()[QStringLiteral(u"ext")].toString()
-                );
-
-                //add shape + center data
-                auto copy = assetDataRef.toObject();
-                _defineSizeAndCenterToDbAsset(fpAsset, copy);
-                assetDataRef = copy;
+                //try to read associated asset and define geometry
+                asset.updateAssetGeometryData();
+                compiled.insert(asset.hash(), asset);
 
             }
 
-            //update doc
-            auto copy = doc.object();
-            copy[QStringLiteral(u"assets")] = assets;
-            doc.setObject(copy);
+            //update json obj
+            updateFrom(
+                doc,
+                QStringLiteral(u"assets"),
+                compiled
+            );
 
         }
     );
 
     return out;
 
-}
-
-SizeAndCenter AssetsDatabase::_defineSizeAndCenterToDbAsset(const QString &assetFilePath, QJsonObject &toUpdate) {
-    
-    SizeAndCenter out;
-    QImage image(assetFilePath);
-    
-    out.size = image.size();
-    out.center = QPointF (
-        (qreal)out.size.width() / 2,
-        (qreal)out.size.height() / 2
-    );
-
-    toUpdate[QStringLiteral(u"shape")] = JSONSerializer::fromQSize(out.size);
-    toUpdate[QStringLiteral(u"center")] = JSONSerializer::pointToDoublePairJSON(out.center);
-
-    return out;
 }
