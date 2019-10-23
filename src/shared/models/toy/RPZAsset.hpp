@@ -68,6 +68,10 @@ class RPZAsset : public QVariantHash {
 
         }
 
+        void rename(const QString &newName) {
+            this->insert(QStringLiteral(u"name"), newName);
+        }
+
     protected:
         bool _integrateFrom(const QByteArray &assetAsRawBytes, const RPZAsset &asset) const {
 
@@ -128,7 +132,7 @@ class RPZAsset : public QVariantHash {
             //add data
             this->_updateAssetGeometryData(fileReader, ext);
             this->insert(QStringLiteral(u"ext"), ext);
-            this->insert(QStringLiteral(u"name"), name);
+            this->rename(name);
             this->insert(QStringLiteral(u"hash"), hash);
 
         }

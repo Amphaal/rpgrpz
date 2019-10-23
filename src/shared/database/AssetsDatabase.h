@@ -35,13 +35,14 @@ class AssetsDatabase : public JSONDatabase {
         void addAsset(const RPZAsset &asset, const RPZFolderPath &internalPathToAddTo);
         void createFolder(const RPZFolderPath &parentPath);
 
-        bool renameFolder(const QString &newName, const RPZFolderPath &folderToRename);
-        bool renameAsset(const QString &newName, const RPZAssetHash &hash);
+        bool renameFolder(const QString &requestedNewFolderName, const RPZFolderPath &pathToRename);
+        void renameAsset(const QString &newName, const RPZAssetHash &hash);
 
-        bool removeAssets(const QList<RPZAssetHash> &hashesToRemove);
-        bool removeFolders(const QList<RPZFolderPath> &pathsToRemove);
+        void removeAssets(const QList<RPZAssetHash> &hashesToRemove);
+        void removeFolders(const QList<RPZFolderPath> &pathsToRemove);
 
-        bool moveItemsTo(const RPZFolderPath &internalPathToMoveTo, const QList<RPZFolderPath> &topmostPathsToMove, const QList<RPZAssetHash> &topmostHashesToMove);
+        void moveAssetsTo(const RPZFolderPath &internalPathToMoveTo, const QList<RPZAssetHash> &hashesToMove);
+        void moveFoldersTo(const RPZFolderPath &internalPathToMoveTo, const QList<RPZFolderPath> &pathsToMove);
         
         //
         const RPZAsset asset(const RPZAssetHash &hash) const;
@@ -60,9 +61,13 @@ class AssetsDatabase : public JSONDatabase {
 
         QMap<RPZFolderPath, QSet<RPZAssetHash>> _paths;
         QHash<RPZAssetHash, RPZAsset> _assets;
+        QHash<RPZAssetHash, RPZFolderPath> _w_assetToPath;
 
-        const RPZAsset* _asset(const RPZAssetHash &hash) const; 
+        RPZAsset* _asset(const RPZAssetHash &hash); 
         const QString _path(const StorageContainer &targetContainer) const;
+        const QString _parentPath(const RPZFolderPath &toExtractParentFrom);
+
+        void _addAsset(const RPZAsset &asset, const RPZFolderPath &internalPathToAddTo);
 
         void _saveIntoFile();
     
@@ -80,5 +85,6 @@ class AssetsDatabase : public JSONDatabase {
 
         //helpers
         QString _generateNonExistingPath(const RPZFolderPath &parentPath, const QString &prefix);
+        void _removeAssetFiles(const QList<RPZAsset> &toRemoveFromStorage);
 
 };
