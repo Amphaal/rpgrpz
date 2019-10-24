@@ -1,7 +1,7 @@
 #include "CharactersDatabase.h"
 
 CharactersDatabase* CharactersDatabase::get() {
-    if(!_singleton) _singleton = new CharactersDatabase(AppContext::getCharacterDatabaseLocation());
+    if(!_singleton) _singleton = new CharactersDatabase;
     return _singleton;
 };
 
@@ -44,7 +44,7 @@ void CharactersDatabase::updateCharacter(const RPZCharacter &updated) {
 }
 
 
-const JSONDatabase::Version CharactersDatabase::apiVersion() {
+const JSONDatabase::Version CharactersDatabase::apiVersion() const {
     return 1;
 }
 
@@ -64,7 +64,9 @@ void CharactersDatabase::_setupLocalData() {
 
 }
 
-CharactersDatabase::CharactersDatabase(const QString &dbFilePath) : JSONDatabase(dbFilePath) {}
+CharactersDatabase::CharactersDatabase() {
+    this->_initDatabaseFromJSONFile(AppContext::getCharacterDatabaseLocation());
+}
 
 void CharactersDatabase::_writeCharactersToDb() {
 

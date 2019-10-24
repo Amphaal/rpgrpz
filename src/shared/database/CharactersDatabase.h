@@ -23,7 +23,7 @@ class CharactersDatabase : public QObject, public JSONDatabase {
         void updateCharacter(const RPZCharacter &updated);
 
     protected:
-        const JSONDatabase::Version apiVersion() override;
+        const JSONDatabase::Version apiVersion() const override;
         JSONDatabase::Model _getDatabaseModel() override;
         void _setupLocalData() override;
 
@@ -32,7 +32,7 @@ class CharactersDatabase : public QObject, public JSONDatabase {
         
         RPZMap<RPZCharacter> _characters;
         
-        CharactersDatabase(const QString &dbFilePath);
+        CharactersDatabase();
 
         void _writeCharactersToDb();
         

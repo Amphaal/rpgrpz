@@ -36,8 +36,6 @@ class JSONDatabase {
         const QString dbFilePath();
 
     protected:
-        JSONDatabase(const QString &dbFilePath);
-        JSONDatabase(const QJsonObject &obj);
 
         static void updateFrom(QJsonObject &base, const QString &entityKey, const QVariantMap &entity);
         static void updateFrom(QJsonObject &base, const QString &entityKey, const QSet<QString> &entity);
@@ -59,11 +57,12 @@ class JSONDatabase {
         //pure, replace
         virtual void _setupLocalData() = 0;
         virtual JSONDatabase::Model _getDatabaseModel() = 0;
-        virtual const JSONDatabase::Version apiVersion() = 0;
+        virtual const JSONDatabase::Version apiVersion() const = 0;
         const JSONDatabase::Version dbVersion();
-
+        
+        /*to call from inheritors*/
         void _initDatabaseFromJSONFile(const QString &dbFilePath);
-
+        void _setupFromDbCopy(const QJsonObject &copy);
 
     private:
         QJsonObject _dbCopy;
@@ -76,7 +75,6 @@ class JSONDatabase {
 
         const QString _defaultEmptyDoc();
         JSONDatabase::Version _getDbVersion(const QJsonObject &db);
-        void _setupFromDbCopy(const QJsonObject &copy);
-
+        
 };
 inline uint qHash(const JSONDatabase::EntityType &key, uint seed = 0) {return uint(key) ^ seed;}

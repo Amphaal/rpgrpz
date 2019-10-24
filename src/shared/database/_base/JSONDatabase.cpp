@@ -2,14 +2,6 @@
 
 JSONDatabase::JSONDatabase() {}
 
-JSONDatabase::JSONDatabase(const QJsonObject &obj) {
-    this->_setupFromDbCopy(obj);
-}
-
-JSONDatabase::JSONDatabase(const QString &dbFilePath) {
-    this->_initDatabaseFromJSONFile(dbFilePath);
-}
-
 void JSONDatabase::_initDatabaseFromJSONFile(const QString &dbFilePath) {
     
     //read database file as JSON
@@ -35,7 +27,7 @@ void JSONDatabase::_initDatabaseFromJSONFile(const QString &dbFilePath) {
 
     //compare versions
     auto dbCopy = document.object();
-    auto currentVersion = _getDbVersion(dbCopy);
+    auto currentVersion = this->_getDbVersion(dbCopy);
     auto expectedVersion = this->apiVersion();
     if(expectedVersion != currentVersion) {
         

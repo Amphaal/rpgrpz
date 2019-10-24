@@ -19,6 +19,9 @@ class RPZAsset : public QVariantHash {
     public:
         RPZAsset() {}
         RPZAsset(const QVariantHash &hash) : QVariantHash(hash) {}
+        RPZAsset(const QVariantHash &hash, const RPZAssetHash &id) : QVariantHash(hash) {
+            this->_setHash(id);
+        }
         RPZAsset(const QUrl &uri) {
             this->_integrateFrom(uri);
         }
@@ -90,7 +93,7 @@ class RPZAsset : public QVariantHash {
             
             auto exists = QFileInfo::exists(expected);
             if(!exists) {
-                qWarning() << "Assets : non existent asset file being invoked";
+                qWarning() << qUtf8Printable(QString("Assets : non-existent %1 asset file being invoked").arg(expected));
             }
 
             return exists ? expected : QString();
@@ -132,6 +135,10 @@ class RPZAsset : public QVariantHash {
         }
 
     private:
+        void _setHash(const RPZAssetHash &hash) {
+            this->insert(QStringLiteral(u"hash"), hash);
+        }
+
         void _updateAssetGeometryData(QFile *fileReader, const QString &fileExtension) {
             
             //image metadata
@@ -177,7 +184,7 @@ class RPZAsset : public QVariantHash {
             this->_updateAssetGeometryData(fileReader, ext);
             this->insert(QStringLiteral(u"ext"), ext.toLower());
             this->rename(name);
-            this->insert(QStringLiteral(u"hash"), hash);
+            this->_setHash(hash);
 
         }
 

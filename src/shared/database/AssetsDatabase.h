@@ -60,7 +60,7 @@ class AssetsDatabase : public QObject, public JSONDatabase {
         void assetRenamed(const RPZAssetHash &id, const QString &newName);
 
     protected:
-        const JSONDatabase::Version apiVersion() override;
+        const JSONDatabase::Version apiVersion() const override;
         void _removeDatabaseLinkedFiles() override;
     
         QMap<RPZFolderPath, QSet<RPZAssetHash>> _paths;

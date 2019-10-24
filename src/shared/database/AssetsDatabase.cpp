@@ -1,7 +1,11 @@
 #include "AssetsDatabase.h"
 
-AssetsDatabase::AssetsDatabase(const QJsonObject &doc) : JSONDatabase(doc) { }
-AssetsDatabase::AssetsDatabase() : JSONDatabase(AppContext::getAssetsFileCoordinatorLocation()) {};
+AssetsDatabase::AssetsDatabase(const QJsonObject &doc) { 
+    this->_setupFromDbCopy(doc);
+}
+AssetsDatabase::AssetsDatabase() {
+    this->_initDatabaseFromJSONFile(AppContext::getAssetsFileCoordinatorLocation());
+};
 
 AssetsDatabase* AssetsDatabase::get() {
     if(!_singleton) {
@@ -10,7 +14,7 @@ AssetsDatabase* AssetsDatabase::get() {
     return _singleton;
 }
 
-const JSONDatabase::Version AssetsDatabase::apiVersion() {
+const JSONDatabase::Version AssetsDatabase::apiVersion() const {
     return 5;
 }
 
@@ -51,25 +55,25 @@ void AssetsDatabase::_saveIntoFile() {
 void AssetsDatabase::_setupLocalData() {
 
     //paths
-    for(auto i : this->entityAsObject(QStringLiteral(u"paths"))) {
+    auto paths = this->entityAsObject(QStringLiteral(u"paths"));
+    for(auto i = paths.begin(); i != paths.end(); i++) {
         
-        auto paths = i.toObject();
+        auto path = i.key();
+        auto hashes = i.value().toVariant().toStringList().toSet();
         
-        for(auto &path : paths.keys()) {
-            
-            auto assetHashes = paths.value(path);
-            auto uniqueHashes = assetHashes.toVariant().toStringList().toSet();
-
-            this->_paths.insert(path, uniqueHashes);
-
-        }
+        this->_paths.insert(path, hashes);
 
     }
 
     //assets
-    for(auto i : this->entityAsObject(QStringLiteral(u"assets"))) {
-        auto asset = RPZAsset(i.toVariant().toHash());
-        this->_assets.insert(asset.hash(), asset);
+    auto assets = this->entityAsObject(QStringLiteral(u"assets"));
+    for(auto i = assets.begin(); i != assets.end(); i++) {
+        
+        auto hash = i.key();
+        RPZAsset asset(i.value().toVariant().toHash(), hash);
+
+        this->_assets.insert(hash, asset);
+
     }
 
     //wlink, internal only

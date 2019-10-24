@@ -1,6 +1,6 @@
 #include "AssetsTreeViewModel.h"
 
-AssetsTreeViewModel::AssetsTreeViewModel(QObject *parent) : QAbstractItemModel(parent) {
+AssetsTreeViewModel::AssetsTreeViewModel(QObject *parent) : QAbstractItemModel(parent), _rootItem(new AssetsTreeViewItem) {
     this->_injectStaticStructure();
     this->_injectDbStructure();
 };

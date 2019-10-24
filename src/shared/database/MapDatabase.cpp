@@ -1,7 +1,11 @@
 #include "MapDatabase.h"
 
-MapDatabase::MapDatabase(const QString &filePath) : JSONDatabase(filePath) {};
-MapDatabase::MapDatabase(const QJsonObject &obj) : JSONDatabase(obj) {}
+MapDatabase::MapDatabase(const QString &filePath) {
+    this->_initDatabaseFromJSONFile(filePath);
+};
+MapDatabase::MapDatabase(const QJsonObject &obj) {
+    this->_setupFromDbCopy(obj);
+}
 MapDatabase::MapDatabase() {}
 
 const RPZMap<RPZAtom> MapDatabase::safe_atoms() const {
@@ -85,7 +89,7 @@ JSONDatabase::Model MapDatabase::_getDatabaseModel() {
     };
 };
 
-const JSONDatabase::Version MapDatabase::apiVersion() {
+const JSONDatabase::Version MapDatabase::apiVersion() const {
     return 7;
 }
 
