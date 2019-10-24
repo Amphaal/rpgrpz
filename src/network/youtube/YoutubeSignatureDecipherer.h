@@ -16,12 +16,13 @@
 class YoutubeSignatureDecipherer {
     
     public:
+        enum class CipherOperation { CO_Unknown, Reverse, Slice, Swap };
+
         QString decipher(const QString &signature);
         static YoutubeSignatureDecipherer* create(const QString &clientPlayerUrl, const QString &rawPlayerSourceData);
         static YoutubeSignatureDecipherer* fromCache(const QString &clientPlayerUrl);
 
     private:
-        enum class CipherOperation { CO_Unknown, Reverse, Slice, Swap };
         typedef QQueue<QPair<YoutubeSignatureDecipherer::CipherOperation, QVariant>> YTDecipheringOperations;
         typedef QString YTClientMethod;
 

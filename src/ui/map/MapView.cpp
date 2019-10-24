@@ -174,7 +174,7 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
             }
             break;
 
-            case PayloadAlteration::AssetSelected: {
+            case PayloadAlteration::ToySelected: {
                 auto newTool = item ? MapTool::Atom : MapTool::Default;
                 auto selectedAtom = item ? this->_hints->templateAtom() : RPZAtom();
                 if(item) this->scene()->addItem(item);
@@ -347,8 +347,8 @@ void MapView::mousePressEvent(QMouseEvent *event) {
             auto type = this->_hints->templateAtom().type();
             switch(type) {
 
-                case AtomType::Drawing:
-                case AtomType::Brush:
+                case RPZAtomType::Drawing:
+                case RPZAtomType::Brush:
                     this->_drawingAssist->addDrawingPoint(event->pos());
                 break;
 
@@ -380,8 +380,8 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
         
         auto type = this->_hints->templateAtom().type();
         switch(type) {
-            case AtomType::Drawing:
-            case AtomType::Brush:
+            case RPZAtomType::Drawing:
+            case RPZAtomType::Brush:
                 this->_drawingAssist->updateDrawingPath(event->pos(), type);
             break;
 
@@ -539,13 +539,13 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
             this->setDragMode(QGraphicsView::DragMode::NoDrag);
             
             switch(this->_hints->templateAtom().type()) {
-                case AtomType::Drawing:
+                case RPZAtomType::Drawing:
                     this->setCursor(Qt::CrossCursor);
                     break;
-                case AtomType::Object:
+                case RPZAtomType::Object:
                     this->setCursor(Qt::ClosedHandCursor);
                     break;
-                case AtomType::Text:
+                case RPZAtomType::Text:
                     this->setCursor(Qt::IBeamCursor);
                     break;
                 default:

@@ -21,7 +21,7 @@ class DrawingAssist {
 
         }
 
-        void updateDrawingPath(const QPoint &evtPoint, const AtomType &type) {
+        void updateDrawingPath(const QPoint &evtPoint, const RPZAtomType &type) {
             
             //if no temp, stop
             if(!this->_tempDrawing) return;
@@ -35,11 +35,11 @@ class DrawingAssist {
 
             switch(type) {
                 
-                case AtomType::Drawing:
+                case RPZAtomType::Drawing:
                     existingPath.lineTo(pathCoord);
                 break;
 
-                case AtomType::Brush:
+                case RPZAtomType::Brush:
                     this->_updateDrawingPathForBrush(pathCoord, existingPath, this->_tempDrawing);
                 break;
 

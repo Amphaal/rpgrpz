@@ -65,3 +65,5 @@ class AtomEditor : public QGroupBox, public AlterationActor {
 
         void _mustShowBrushPenWidthEditor(const AtomParameter &paramToCheck, const QVariant &defaultValue);
 };
+
+inline uint qHash(const AtomEditor::EditMode &key, uint seed = 0) {return uint(key) ^ seed;}

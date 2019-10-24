@@ -7,19 +7,19 @@ QGraphicsItem* CustomGraphicsItemHelper::createGraphicsItem(const RPZAtom &atom,
 
     switch(type) {
         
-        case AtomType::Object:
+        case RPZAtomType::Object:
             out = _createGenericImageBasedItem(atom, assetMetadata);
         break;
         
-        case AtomType::Brush:
+        case RPZAtomType::Brush:
             out = _createBrushItem(atom, assetMetadata);
         break;
 
-        case AtomType::Drawing:
+        case RPZAtomType::Drawing:
             out = _createDrawingItem(atom);
         break;
 
-        case AtomType::Text:
+        case RPZAtomType::Text:
             out = _createTextItem(atom);
         break;
 
@@ -94,13 +94,12 @@ QGraphicsRectItem* CustomGraphicsItemHelper::createMissingAssetPlaceholderItem(c
 QGraphicsItem* CustomGraphicsItemHelper::_createGenericImageBasedItem(const RPZAtom &atom, const RPZAsset &assetMetadata) {
 
     //get file infos
-    auto pathToImageFile = assetMetadata.pathToAssetFile();
-    QFileInfo pathInfo(pathToImageFile);
+    auto filepathToAsset = assetMetadata.filepath();
     
     //define graphicsitem
     QGraphicsItem* item = nullptr;
-    if(pathInfo.suffix() == "svg") {
-        item = new MapViewGraphicsSvgItem(pathToImageFile);
+    if(assetMetadata.fileExtension() == "svg") {
+        item = new MapViewGraphicsSvgItem(filepathToAsset);
     } 
     else {
         item = new MapViewGraphicsPixmapItem(assetMetadata);
@@ -123,16 +122,7 @@ QGraphicsPathItem* CustomGraphicsItemHelper::_createBrushItem(const RPZAtom &ato
 
     //configure brush
     QBrush brush;
-    
-        //get texture from cache
-        QPixmap cached;
-        auto assetId = assetMetadata.assetId();
-        auto found = QPixmapCache::find(assetId, &cached);
-        if(!found) {
-            cached = QPixmap(assetMetadata.pathToAssetFile());
-            QPixmapCache::insert(assetId, cached);
-        }
-        brush.setTexture(cached);
+    brush.setTexture(*RPZAsset::cachedPixmap(assetMetadata));
     
     //create path
     auto newPath = new MapViewGraphicsPathItem(shape, pen, brush);

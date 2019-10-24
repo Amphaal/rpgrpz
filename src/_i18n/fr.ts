@@ -65,51 +65,47 @@
 <context>
     <name>AssetsTreeViewItem</name>
     <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="187"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="188"/>
         <source>Internal</source>
         <translation>Interne</translation>
     </message>
     <message>
-        <source>Player</source>
-        <translation type="vanished">Joueur</translation>
-    </message>
-    <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="188"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="189"/>
         <source>Event</source>
         <translation>Evénement</translation>
     </message>
     <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="189"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="190"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="190"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="191"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="191"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="192"/>
         <source>NPC / Portraits</source>
         <translation>PNJ / Portraits</translation>
     </message>
     <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="192"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="193"/>
         <source>Objects</source>
         <translation>Objets</translation>
     </message>
     <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="193"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="194"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="194"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="195"/>
         <source>Downloaded</source>
         <translation>Téléchargés</translation>
     </message>
     <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="195"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="196"/>
         <source>Landscapes</source>
         <translation>Paysages</translation>
     </message>
@@ -125,7 +121,7 @@
 <context>
     <name>AtomEditor</name>
     <message numerus="yes">
-        <location filename="../ui/atomEditor/AtomEditor.cpp" line="211"/>
+        <location filename="../ui/atomEditor/AtomEditor.cpp" line="210"/>
         <source> (%n element(s))</source>
         <translation>
             <numerusform> (%n élément)</numerusform>
@@ -133,17 +129,17 @@
         </translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="43"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="44"/>
         <source>Nothing to modify</source>
         <translation>Rien à modifier</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="44"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="45"/>
         <source>Template modification</source>
         <translation>Modification du modèle</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="45"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="46"/>
         <source>Selection modification</source>
         <translation>Modification de la sélection</translation>
     </message>
@@ -281,32 +277,32 @@
 <context>
     <name>CharacterPicker</name>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="31"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="32"/>
         <source>Create a new sheet</source>
         <translation>Créer une nouvelle fiche</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="39"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="40"/>
         <source>Delete sheet</source>
         <translation>Supprimer la fiche</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="116"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="117"/>
         <source>No existing character, create some !</source>
         <translation>Aucun personnage préexistant, créez-en un !</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="117"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="118"/>
         <source>Waiting for sheets from host...</source>
         <translation>En attente de fiches du serveur...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="191"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="192"/>
         <source>Character sheet deletion</source>
         <translation>Suppression de fiches de personnages</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="192"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="193"/>
         <source>Do you really want to delete this character ?</source>
         <translation>Voulez-vous vraiment supprimer cette fiche de personnage ?</translation>
     </message>
@@ -1088,7 +1084,7 @@
         <translation>Trop éloigné pour afficher la grille !</translation>
     </message>
     <message>
-        <location filename="../shared/database/AssetsDatabase.cpp" line="161"/>
+        <location filename="../shared/database/AssetsDatabase.cpp" line="160"/>
         <source>Folder</source>
         <translation>Dossier</translation>
     </message>

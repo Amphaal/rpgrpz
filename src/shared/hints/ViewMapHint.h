@@ -22,6 +22,8 @@
 
 #include "AtomsStorage.h"
 
+#include "src/helpers/RPZQVariant.hpp"
+
 class ViewMapHint : public AtomsStorage {
 
     Q_OBJECT

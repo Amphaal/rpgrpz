@@ -24,11 +24,11 @@ QString RPZResponse::toString() const{
     
     switch(this->responseCode()) {
 
-        case UnknownCommand: {
+        case ResponseCode::UnknownCommand: {
             return QObject::tr("Server has not understood your command. Type \"/h\" for help.");
         }
 
-        case ErrorRecipients: {
+        case ResponseCode::ErrorRecipients: {
 
             QList<QString> rcpts;
             for(auto &e : this->responseData().toList()) rcpts.append(e.toString());
@@ -36,11 +36,11 @@ QString RPZResponse::toString() const{
             return QObject::tr("Target users could not be found : ") + rcpts.join(", ");
         }
 
-        case ConnectedToServer: {
+        case ResponseCode::ConnectedToServer: {
             return QObject::tr("Logged to the server (%1)").arg(this->responseData().toString());
         }
 
-        case Error: {
+        case ResponseCode::Error: {
             return QObject::tr("Error has occured : ") + this->responseData().toString();
         }
 
@@ -59,14 +59,14 @@ QPalette RPZResponse::palette() const {
     //switch by resp code...
     switch(this->responseCode()) {
         
-        case Error:
-        case ErrorRecipients:
+        case ResponseCode::Error:
+        case ResponseCode::ErrorRecipients:
             palette.setColor(QPalette::Window, "#f9dad4");
             palette.setColor(QPalette::WindowText, "#FF0000");
             break;
 
-        case ConnectedToServer:
-        case Status:
+        case ResponseCode::ConnectedToServer:
+        case ResponseCode::Status:
             palette.setColor(QPalette::Window, "#71ed55");
             palette.setColor(QPalette::WindowText, "#0f4706");
             break;

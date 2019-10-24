@@ -21,20 +21,19 @@ class AssetsTreeViewItem : public QObject {
             Root = 100,
             Folder = 101,
             InternalContainer = 201,
-                Event = (int)AtomType::Event,
-                FreeDraw = (int)AtomType::Drawing,
-                Text = (int)AtomType::Text,
+                Event = (int)RPZAtomType::Event,
+                FreeDraw = (int)RPZAtomType::Drawing,
+                Text = (int)RPZAtomType::Text,
             NPC_Container = (int)AssetsDatabase::StorageContainer::NPC,
-                NPC = (int)AtomType::NPC,
+                NPC = (int)RPZAtomType::NPC,
             FloorBrushContainer = (int)AssetsDatabase::StorageContainer::FloorBrush,
-                FloorBrush = (int)AtomType::Brush,
+                FloorBrush = (int)RPZAtomType::Brush,
             ObjectContainer = (int)AssetsDatabase::StorageContainer::Object,
-                Object = (int)AtomType::Object,
+                Object = (int)RPZAtomType::Object,
             DownloadedContainer = (int)AssetsDatabase::StorageContainer::Downloaded,
-                Downloaded = 650,
-            BackgroundContainer = (int)AssetsDatabase::StorageContainer::Background,
-                Background = (int)AtomType::Background 
+                Downloaded = 650
         };
+        //TODO DELETE bound types, add more constructors ?
         Q_ENUM(Type)
         
         static QList<AssetsTreeViewItem::Type> staticContainerTypes();
@@ -49,7 +48,7 @@ class AssetsTreeViewItem : public QObject {
         ~AssetsTreeViewItem();
 
         const AssetsTreeViewItem::Type type() const;
-        const AtomType atomType() const;
+        const RPZAtomType atomType() const;
         const AssetsTreeViewItem::Type insertType() const;
         const AssetsTreeViewItem::Type rootStaticContainer() const;
         const QString iconPath() const;
@@ -104,7 +103,7 @@ class AssetsTreeViewItem : public QObject {
         AssetsTreeViewItem::Type _type = AssetsTreeViewItem::Type::T_Unknown;
         AssetsTreeViewItem::Type _insertType = AssetsTreeViewItem::Type::T_Unknown;
         AssetsTreeViewItem::Type _rootStaticContainerType = AssetsTreeViewItem::Type::T_Unknown;
-        AtomType _atomType = AtomType::Undefined;
+        RPZAtomType _atomType = RPZAtomType::Undefined;
         RPZAssetHash _hash;
         QString _name;
         QString _path;

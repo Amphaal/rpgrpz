@@ -8,6 +8,7 @@
 #include <QCryptographicHash>
 #include <QImageReader>
 #include <QFileInfo>
+#include <QPixmapCache>
 
 #include "src/helpers/_appContext.h"
 #include "src/helpers/JSONSerializer.h"
@@ -22,6 +23,44 @@ class RPZAsset : public QVariantHash {
             this->_integrateFrom(uri);
         }
         
+        static const QPixmap* cachedPixmap(const RPZAsset &asset) {
+            QPixmap* cached = nullptr;
+
+            auto hash = asset.hash();
+            auto foundInCache = QPixmapCache::find(hash, cached);
+            if(foundInCache) return cached;
+
+            QPixmap pix(asset.filepath());
+            QPixmapCache::insert(hash, pix);
+            QPixmapCache::find(hash, cached);
+            return cached;
+        }
+
+        static const QPixmap* cachedIconPixmap(const RPZAsset &asset, QSize &sizeToApply) {
+            
+            QPixmap* cached = nullptr;
+
+            //search in cache
+            auto idToSearch = asset.hash() + QStringLiteral(u"_ico");
+            auto isFound = QPixmapCache::find(idToSearch, cached);
+            if(isFound) return cached;
+
+            //get asset from filepath
+            QPixmap pixmap(asset.filepath());
+
+            //resize it to hint
+            pixmap = pixmap.scaled(
+                sizeToApply,
+                Qt::AspectRatioMode::KeepAspectRatio 
+            );
+
+            //cache pixmap and return it
+            QPixmapCache::insert(idToSearch, pixmap);
+            QPixmapCache::find(idToSearch, cached);
+            return cached;
+
+        }
+
         const QSize shape() const { 
             return JSONSerializer::toQSize(this->value(QStringLiteral(u"shape")).toList()); 
         }
@@ -132,7 +171,7 @@ class RPZAsset : public QVariantHash {
 
             //add data
             this->_updateAssetGeometryData(fileReader, ext);
-            this->insert(QStringLiteral(u"ext"), ext);
+            this->insert(QStringLiteral(u"ext"), ext.toLower());
             this->rename(name);
             this->insert(QStringLiteral(u"hash"), hash);
 

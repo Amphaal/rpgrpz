@@ -2,9 +2,8 @@
 
 AtomEditor::AtomEditor(QWidget* parent) : QGroupBox(parent), AlterationActor(AlterationPayload::Source::Local_AtomEditor) {
 
-    this->setTitle(
-        tr(qUtf8Printable(_strEM.value(None)))
-    );
+    auto title = _strEM.value(EditMode::None);
+    this->setTitle(tr(qUtf8Printable(title)));
     this->setAlignment(Qt::AlignHCenter);
 
     this->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
@@ -140,7 +139,7 @@ void AtomEditor::_onPreviewRequested(const AtomParameter &parameter, const QVari
 
 void AtomEditor::_emitPayload(const AtomUpdates &changesToEmit) {
 
-    if(this->_currentEditMode == Template) {
+    if(this->_currentEditMode == EditMode::Template) {
         AtomTemplateChangedPayload payload(changesToEmit);
         AlterationHandler::get()->queueAlteration(this, payload);
     } 
@@ -212,7 +211,7 @@ void AtomEditor::_updateEditMode() {
         break;
 
         case EditMode::Template:
-            title += QStringLiteral(u" [%1]").arg(this->_currentSelectionDescr.templateAtom.descriptor());
+            title += QStringLiteral(u" [%1]").arg(this->_currentSelectionDescr.templateAtom.toString());
         break;
 
         default:

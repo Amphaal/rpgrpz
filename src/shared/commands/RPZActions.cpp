@@ -9,7 +9,7 @@ QAction* RPZActions::usePingTool() {
     
     action->setCheckable(true);
     action->setEnabled(false);
-    action->setData(MapTool::Ping);
+    action->setData((int)MapTool::Ping);
 
     return action;
 }
@@ -23,7 +23,7 @@ QAction* RPZActions::useMeasurementTool() {
 
     action->setCheckable(true);
     action->setEnabled(false);
-    action->setData(MapTool::Measure);
+    action->setData((int)MapTool::Measure);
 
     return action;
 
@@ -38,7 +38,7 @@ QAction* RPZActions::useQuickDrawTool() {
 
     action->setCheckable(true);
     action->setEnabled(false);
-    action->setData(MapTool::QuickDraw);
+    action->setData((int)MapTool::QuickDraw);
 
     return action;
 
@@ -207,7 +207,7 @@ QAction* RPZActions::resetView() {
     auto action = new QAction;
     action->setIcon(QIcon(QStringLiteral(u":/icons/app/tools/reset_view.png")));
     action->setIconText(QObject::tr("Reset the view"));
-    action->setData(MapAction::ResetView);
+    action->setData((int)MapAction::ResetView);
     return action;
 }
 
@@ -215,7 +215,7 @@ QAction* RPZActions::resetTool() {
     auto action = new QAction;
     action->setIcon(QIcon(QStringLiteral(u":/icons/app/tools/cursor.png")));
     action->setIconText(QObject::tr("Back to Select tool"));
-    action->setData(MapAction::ResetTool);
+    action->setData((int)MapAction::ResetTool);
     return action;
 }
 

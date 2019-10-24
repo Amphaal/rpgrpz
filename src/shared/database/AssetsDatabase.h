@@ -45,12 +45,12 @@ class AssetsDatabase : public QObject, public JSONDatabase {
         void moveFoldersTo(const RPZFolderPath &internalPathToMoveTo, const QList<RPZFolderPath> &topmostPathsToMove);
         
         //
-        const RPZAsset* asset(const RPZAssetHash &hash) const;
+        const RPZAsset* asset(const RPZAssetHash &hash);
         const QSet<RPZAssetHash> getStoredAssetsIds() const;
 
         //network import/export
         bool importAsset(RPZAssetImportPackage &package);
-        const RPZAssetImportPackage prepareAssetPackage(const RPZAssetHash &id) const;
+        const RPZAssetImportPackage prepareAssetPackage(const RPZAssetHash &hash) const;
 
     signals:
         void assetRenamed(const RPZAssetHash &id, const QString &newName);

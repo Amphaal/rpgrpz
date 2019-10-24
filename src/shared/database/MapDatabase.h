@@ -30,12 +30,10 @@ class MapDatabase : public JSONDatabase {
         void saveIntoFile();
         const JSONDatabase::Version apiVersion() override;
 
-        const RPZMap<RPZAtom>& _atoms() const;
-        const QSet<RPZAssetHash>& _usedAssetsIds() const;
-
-    private:
         RPZMap<RPZAtom> _atomsById;
         QSet<RPZAssetHash> _assetHashes;
+
+    private:
 
         QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> _getUpdateHandlers() override;
         JSONDatabase::Model _getDatabaseModel() override;

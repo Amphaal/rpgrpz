@@ -6,7 +6,7 @@ RPZMessage::RPZMessage(const QVariantHash &hash) : Stampable(hash) {
 }
 
 RPZMessage::RPZMessage(const QString &message, const MessageInterpreter::Command &forceCommand) : Stampable() { 
-    if(forceCommand) this->_forceCommand(forceCommand);
+    if((int)forceCommand) this->_forceCommand(forceCommand);
     this->_setText(message);
 };
 
@@ -26,12 +26,12 @@ QString RPZMessage::toString() const {
 
     switch(this->_command) {
         
-        case MessageInterpreter::Say: {
+        case MessageInterpreter::Command::Say: {
             auto textPrefix = ownerExist ? QObject::tr(" said : ") : QObject::tr("you said : ");
             return base + textPrefix + QChar(0x201C) + text + QChar(0x201D);
         }
 
-        case MessageInterpreter::Whisper: {
+        case MessageInterpreter::Command::Whisper: {
             auto textPrefix = QObject::tr(" whispers to you : ");
             
             if(!ownerExist) {
@@ -58,17 +58,17 @@ QPalette RPZMessage::palette() const {
     //switch by resp code...
     switch(this->_command) {
         
-        case MessageInterpreter::Whisper:
+        case MessageInterpreter::Command::Whisper:
             palette.setColor(QPalette::Window, "#f2e8f9");
             palette.setColor(QPalette::WindowText, "#a12ded");
             break;
         
-        case MessageInterpreter::Say:
+        case MessageInterpreter::Command::Say:
             palette.setColor(QPalette::Window, "#FFFFFF");
             palette.setColor(QPalette::WindowText, "#000000");
             break;
         
-        case MessageInterpreter::C_DiceThrow:
+        case MessageInterpreter::Command::C_DiceThrow:
             palette.setColor(QPalette::Window, "#87CEEB");
             palette.setColor(QPalette::WindowText, "#000080");
             break;
@@ -92,5 +92,5 @@ void RPZMessage::_forceCommand(const MessageInterpreter::Command &forced) {
 
 void RPZMessage::_interpretTextAsCommand() {
     auto forcedCommand = (MessageInterpreter::Command)this->value(QStringLiteral(u"cmd")).toInt();
-    this->_command = forcedCommand ? forcedCommand : MessageInterpreter::interpretText(this->text());
+    this->_command = (int)forcedCommand ? forcedCommand : MessageInterpreter::interpretText(this->text());
 }

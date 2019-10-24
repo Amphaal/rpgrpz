@@ -30,34 +30,6 @@ bool AssetsTreeViewModel::integrateAsset(RPZAssetImportPackage &package) {
 /// HELPERS ///
 ///////////////
 
-const QPixmap* AssetsTreeViewModel::_getAssetIcon(AssetsTreeViewItem* target, QSize &sizeToApply) {
-    
-    QPixmap* toFind = nullptr;
-
-    //if selected elem is no item, skip
-    if(!target->isIdentifiable()) return toFind;
-
-    //search in cache
-    auto idToSearch = target->id() + QStringLiteral(u"_ico");
-    auto isFound = QPixmapCache::find(idToSearch, toFind);
-    if(isFound) return toFind;
-
-    //get asset from filepath
-    auto asset = AssetsDatabase::get()->asset(target->id());
-    QPixmap pixmap(asset->filepath());
-
-    //resize it to hint
-    pixmap = pixmap.scaled(
-        sizeToApply,
-        Qt::AspectRatioMode::KeepAspectRatio 
-    );
-
-    //cache pixmap and return it
-    QPixmapCache::insert(idToSearch, pixmap);
-    
-    return toFind;
-}
-
 void AssetsTreeViewModel::createFolder(QModelIndex &parentIndex) {
     this->beginInsertRows(parentIndex, 0, 0);
     
@@ -286,24 +258,13 @@ QVariant AssetsTreeViewModel::data(const QModelIndex &index, int role) const {
             auto type = data->type();
             QSize defaultQSize = type == AssetsTreeViewItem::Type::FloorBrush ? QSize(32, 32) : QSize(55, 55);
 
-            switch(type) {
-                case AssetsTreeViewItem::Type::NPC:
-                case AssetsTreeViewItem::Type::FloorBrush:
-                case AssetsTreeViewItem::Type::Object:
-                case AssetsTreeViewItem::Type::Background:
-                case AssetsTreeViewItem::Type::Downloaded: {  
-                    
-                    auto cachedPixmap = _getAssetIcon(data, defaultQSize);
-                    if(cachedPixmap) return *cachedPixmap;
-
-                    return QVariant();
-
-                }
-                break;
-                
-                default:
-                    return QVariant();
+            auto asset = data->asset();
+            if(asset) {
+                auto cachedPixmap = RPZAsset::cachedIconPixmap(*asset, defaultQSize);
+                if(cachedPixmap) return *cachedPixmap;
             }
+                    
+            return QVariant();
 
         }
         break;

@@ -70,10 +70,10 @@ class RPZQVariant {
             item->setData(1, (int)RPZQVariant::Roles::AtomAvailability, availability);
         }
 
-        static AtomType atomType(const QTreeWidgetItem* item) {
-            return (AtomType)item->data(0, (int)RPZQVariant::Roles::AtomType).toInt();
+        static RPZAtomType atomType(const QTreeWidgetItem* item) {
+            return (RPZAtomType)item->data(0, (int)RPZQVariant::Roles::AtomType).toInt();
         }
-        static void setAtomType(QTreeWidgetItem* item, const AtomType &type) {
+        static void setAtomType(QTreeWidgetItem* item, const RPZAtomType &type) {
             item->setData(0, (int)RPZQVariant::Roles::AtomType, (int)type);
         }
 };

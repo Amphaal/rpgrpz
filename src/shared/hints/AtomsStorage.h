@@ -18,7 +18,7 @@
 #include "src/shared/database/MapDatabase.h"
 
 struct AtomsSelectionDescriptor {
-    QSet<AtomType> representedTypes;
+    QSet<RPZAtomType> representedTypes;
     RPZAtom templateAtom;
     QVector<RPZAtomId> selectedAtomIds;
 };

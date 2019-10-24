@@ -369,7 +369,7 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
     auto selectedElems = this->selectedElementsIndexes();
     auto indexesCount = selectedElems.count();
     
-    RPZAsset defSelect;
+    RPZToy defSelect;
 
     //if no selection
     if(!indexesCount) {
@@ -380,21 +380,23 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
     else if(indexesCount == 1) {
 
         auto elem = AssetsTreeViewItem::fromIndex(selectedElems.value(0));
+        
         auto atomType = elem->atomType();
+        auto asset = elem->asset();
 
-        if(atomType != AtomType::Undefined) {
-            defSelect = elem->asset();
+        if(asset && atomType != RPZAtomType::Undefined) {
+            defSelect = RPZToy(*asset, atomType);
         }
 
     }
 
-    //if different, send
-    if(this->_selectedAsset != defSelect) {
-        this->_selectedAsset = defSelect;
-
-        AssetSelectedPayload payload(this->_selectedAsset);
-        AlterationHandler::get()->queueAlteration(this, payload);
-    }
+    //if still the same, dont send
+    if(this->_selectedToy == defSelect) return;
+    
+    //send
+    this->_selectedToy = defSelect;
+    ToySelectedPayload payload(this->_selectedToy);
+    AlterationHandler::get()->queueAlteration(this, payload);
    
 }
 
@@ -404,7 +406,7 @@ void AssetsTreeView::_handleAlterationRequest(const AlterationPayload &payload) 
     auto listenedForTypes = (type == PayloadAlteration::Selected || type == PayloadAlteration::Reset);
     if(!listenedForTypes) return;
 
-    auto isAssetSelected = !this->_selectedAsset.isEmpty();
+    auto isAssetSelected = !this->_selectedToy.isEmpty();
     if(!isAssetSelected) return;
     
     this->clearSelection();

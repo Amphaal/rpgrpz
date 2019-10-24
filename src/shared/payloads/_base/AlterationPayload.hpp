@@ -17,7 +17,7 @@ enum class PayloadAlteration {
     AssetChanged,
     AtomTemplateChanged,
     AtomTemplateSelected,
-    AssetSelected
+    ToySelected
 }; 
 
 static const QStringList PayloadAlterationAsStr {
@@ -32,7 +32,7 @@ static const QStringList PayloadAlterationAsStr {
     "AssetChanged",
     "AtomTemplateChanged",
     "AtomTemplateSelected",
-    "AssetSelected"
+    "ToySelected"
 };
 
 class AlterationPayload : public QVariantHash { 

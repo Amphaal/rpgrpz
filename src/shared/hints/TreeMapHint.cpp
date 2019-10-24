@@ -268,10 +268,10 @@ QTreeWidgetItem* TreeMapHint::_createTreeItem(const RPZAtom &atom) {
     RPZQVariant::setAtomAvailability(item, atom.isLocked());
 
     switch(type) {
-        case AtomType::Drawing:
+        case RPZAtomType::Drawing:
             item->setIcon(0, *this->_drawingIcon);
             break;
-        case AtomType::Text:
+        case RPZAtomType::Text:
             item->setIcon(0, *this->_textIcon);
             break;
         default:

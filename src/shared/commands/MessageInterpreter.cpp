@@ -6,10 +6,10 @@ MessageInterpreter::Command MessageInterpreter::interpretText(const QString &tex
     cp_text = cp_text.trimmed();
     
     //if has whisper command
-    if(_hasWhispRegex.match(cp_text).hasMatch()) return Whisper;
+    if(_hasWhispRegex.match(cp_text).hasMatch()) return Command::Whisper;
 
     //if not a command
-    if(!cp_text.startsWith("/")) return Say;
+    if(!cp_text.startsWith("/")) return Command::Say;
 
     //extract command
     auto command = cp_text.split(" ", QString::SplitBehavior::SkipEmptyParts).value(0);

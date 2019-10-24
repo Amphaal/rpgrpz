@@ -23,7 +23,7 @@
 #include "src/shared/models/toy/RPZAsset.hpp"
 
 // defined values shared with AssetsTreeViewItem type for static casts
-enum class AtomType { 
+enum class RPZAtomType { 
     Undefined, 
     Drawing,
     Text,
@@ -34,6 +34,7 @@ enum class AtomType {
     PC,
     Background
 };
+inline uint qHash(const RPZAtomType &key, uint seed = 0) {return uint(key) ^ seed;}
 
 enum class BrushType { 
     Stamp, 
@@ -43,6 +44,7 @@ enum class BrushType {
     Cutter, 
     Scissors 
 };
+inline uint qHash(const BrushType &key, uint seed = 0) {return uint(key) ^ seed;}
 
 
 typedef snowflake_uid RPZAtomId;
@@ -52,14 +54,14 @@ class RPZAtom : public Serializable {
     public:
         RPZAtom();
         RPZAtom(const QVariantHash &hash);
-        RPZAtom(RPZAtomId id, const AtomType &type);
-        RPZAtom(const AtomType &type);
+        RPZAtom(RPZAtomId id, const RPZAtomType &type);
+        RPZAtom(const RPZAtomType &type);
 
-        AtomType type() const;
-        void changeType(const AtomType &type);
+        RPZAtomType type() const;
+        void changeType(const RPZAtomType &type);
 
-        static const QString atomTypeToText(const AtomType &type);
-        static const QString toString(const AtomType &type, const QString &assetName);
+        static const QString atomTypeToText(const RPZAtomType &type);
+        static const QString toString(const RPZAtomType &type, const QString &assetName);
         const QString toString() const;
 
         //
@@ -80,7 +82,7 @@ class RPZAtom : public Serializable {
         QSet<AtomParameter> legalParameters() const;
         
         QSet<AtomParameter> customizableParams() const;
-        static QSet<AtomParameter> customizableParams(const AtomType &type);
+        static QSet<AtomParameter> customizableParams(const RPZAtomType &type);
 
         RPZAssetHash assetId() const;
         QString assetName() const;
@@ -144,7 +146,7 @@ class RPZAtom : public Serializable {
             { AtomParameter::ShapeCenter, QVariant() }
         };
 
-        void _setType(const AtomType &type);
+        void _setType(const RPZAtomType &type);
 };
 
 Q_DECLARE_METATYPE(RPZAtom*)

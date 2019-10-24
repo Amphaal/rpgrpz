@@ -183,7 +183,7 @@ void JSONDatabase::_createEmptyDbFile() {
 
 QJsonDocument JSONDatabase::_readAsDocument() {
     
-    if(!this->_destfile) return;
+    if(!this->_destfile) return QJsonDocument();
 
     this->_destfile->open(QFile::ReadOnly);
         auto readBytes = this->_destfile->readAll();

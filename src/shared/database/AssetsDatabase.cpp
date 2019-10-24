@@ -91,7 +91,7 @@ const QSet<RPZAssetHash> AssetsDatabase::getStoredAssetsIds() const {
     return this->_assets.keys().toSet();
 }
 
-const RPZAsset* AssetsDatabase::asset(const RPZAssetHash &hash) const {
+const RPZAsset* AssetsDatabase::asset(const RPZAssetHash &hash) {
     if(!this->_assets.contains(hash)) {
         qDebug() << "Assets: cannot find asset !";
         return nullptr;
@@ -112,12 +112,11 @@ const QString AssetsDatabase::_path(const StorageContainer &targetContainer) con
     return path;
 }
 
-const RPZAssetImportPackage AssetsDatabase::prepareAssetPackage(const RPZAssetHash &id) const {
+const RPZAssetImportPackage AssetsDatabase::prepareAssetPackage(const RPZAssetHash &hash) const {
     
-    auto asset = this->asset(id);
-    if(!asset) return;
+    if(!this->_assets.contains(hash)) return RPZAssetImportPackage();
 
-    RPZAssetImportPackage package(*asset);
+    RPZAssetImportPackage package(this->_assets.value(hash));
     return package;
 
 }
@@ -177,6 +176,8 @@ bool AssetsDatabase::renameFolder(const QString &requestedNewFolderName, const R
     //get all paths starting with renamed path
     auto oldPathsToReroute = this->_getPathsStartingWith(pathToRename);
     this->_reroutePaths(pathToRename, toRequest, oldPathsToReroute);
+
+    return true;
 
 }
 
@@ -342,6 +343,8 @@ QPair<AssetsDatabase::HashesByPathToRemove, AssetsDatabase::RemovedAssets> Asset
 
     }
 
+    return { hashesToRemoveFromPaths, removedAssets };
+
 }
 
 void AssetsDatabase::_removeHashesFromPaths(const HashesByPathToRemove &hashesToRemoveFromPaths) {
@@ -376,6 +379,9 @@ const QString AssetsDatabase::_parentPath(const RPZFolderPath &toExtractParentFr
     if(toCropFrom < 0) return QStringLiteral(u"/");
 
     auto out = toExtractParentFrom.mid(0, toCropFrom);
+
+    return out;
+    
 }
 
 void AssetsDatabase::_removeAssetFiles(const QList<RPZAsset> &toRemoveFromStorage) {

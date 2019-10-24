@@ -55,7 +55,7 @@ YoutubeSignatureDecipherer* YoutubeSignatureDecipherer::fromCache(const QString 
     return _cache.value(clientPlayerUrl);
 }
 
-YTClientMethod YoutubeSignatureDecipherer::_findObfuscatedDecipheringFunctionName(const QString &ytPlayerSourceCode) {
+YoutubeSignatureDecipherer::YTClientMethod YoutubeSignatureDecipherer::_findObfuscatedDecipheringFunctionName(const QString &ytPlayerSourceCode) {
     
     auto regex = R"((\w+)=function\(\w+\){(\w+)=\2\.split\(\x22{2}\);.*?return\s+\2\.join\(\x22{2}\)})";
     QRegularExpression findFunctionName(regex);
@@ -95,7 +95,7 @@ QList<QString> YoutubeSignatureDecipherer::_findJSDecipheringOperations(const QS
     return javascriptFunctionCalls;
 }
 
-QHash<YoutubeSignatureDecipherer::CipherOperation, YTClientMethod> YoutubeSignatureDecipherer::_findObfuscatedDecipheringOperationsFunctionName(const QString &ytPlayerSourceCode, QList<QString> &javascriptDecipheringOperations) {
+QHash<YoutubeSignatureDecipherer::CipherOperation, YoutubeSignatureDecipherer::YTClientMethod> YoutubeSignatureDecipherer::_findObfuscatedDecipheringOperationsFunctionName(const QString &ytPlayerSourceCode, QList<QString> &javascriptDecipheringOperations) {
     
     QHash<YoutubeSignatureDecipherer::CipherOperation, YTClientMethod> functionNamesByOperation;
     
@@ -147,7 +147,7 @@ QHash<YoutubeSignatureDecipherer::CipherOperation, YTClientMethod> YoutubeSignat
     return functionNamesByOperation;
 }
 
-YTDecipheringOperations YoutubeSignatureDecipherer::_buildOperations(
+YoutubeSignatureDecipherer::YTDecipheringOperations YoutubeSignatureDecipherer::_buildOperations(
         QHash<YoutubeSignatureDecipherer::CipherOperation, YTClientMethod> &functionNamesByOperation,
         QList<QString> &javascriptOperations
     ) {
@@ -226,3 +226,5 @@ YoutubeSignatureDecipherer::YoutubeSignatureDecipherer(const QString &ytPlayerSo
     this->_operations = operations;
 
 };
+
+inline uint qHash(const YoutubeSignatureDecipherer::CipherOperation &key, uint seed = 0) {return uint(key) ^ seed;}

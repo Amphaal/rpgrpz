@@ -25,7 +25,7 @@ void MessagesLog::handleResponse(const RPZResponse &response) {
 
     //if response code is ask, stop here
     auto respCode = response.responseCode();
-    if(respCode == RPZResponse::Ack) return;
+    if(respCode == RPZResponse::ResponseCode::Ack) return;
 
     //get new line
     auto newLine = LogContainer::_addLine(response, respToId);

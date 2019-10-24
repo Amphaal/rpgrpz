@@ -79,7 +79,7 @@ const AssetsTreeViewItem::Type AssetsTreeViewItem::type() const {
     return this->_type;
 }
 
-const AtomType AssetsTreeViewItem::atomType() const {
+const RPZAtomType AssetsTreeViewItem::atomType() const {
     return this->_atomType;
 }
 

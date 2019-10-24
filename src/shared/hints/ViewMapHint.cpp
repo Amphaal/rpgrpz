@@ -376,7 +376,7 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
     }
 
     //if asset selected
-    else if(auto mPayload = dynamic_cast<AssetSelectedPayload*>(&payload)) {
+    else if(auto mPayload = dynamic_cast<ToySelectedPayload*>(&payload)) {
         
         //generate ghost
         auto mightDelete = this->_generateGhostItem(mPayload->selectedAsset());
@@ -391,7 +391,7 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
         this->_m_ghostItem.unlock();
 
         //request addition of new ghost
-        emit requestingUIAlteration(PayloadAlteration::AssetSelected, {ghostItem});
+        emit requestingUIAlteration(PayloadAlteration::ToySelected, {ghostItem});
     }
     
     //if template changed

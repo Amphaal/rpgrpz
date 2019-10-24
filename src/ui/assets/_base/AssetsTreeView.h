@@ -16,7 +16,7 @@
 #include "AssetsTreeViewModel.h"
 #include "src/shared/commands/RPZActions.h"
 
-#include "src/shared/models/toy/RPZAsset.hpp"
+#include "src/shared/models/toy/RPZToy.hpp"
 
 class AssetsTreeView : public QTreeView, public ConnectivityObserver, public AlterationActor {
 
@@ -29,7 +29,7 @@ class AssetsTreeView : public QTreeView, public ConnectivityObserver, public Alt
 
     private slots:
         void _onAssetsAboutToBeDownloaded(const QVector<QString> &availableIds);
-        void _onReceivedAsset(const RPZAssetImportPackage &package);
+        void _onReceivedAsset(RPZAssetImportPackage package);
         void _handleAlterationRequest(const AlterationPayload &payload);
 
     private:
@@ -73,6 +73,6 @@ class AssetsTreeView : public QTreeView, public ConnectivityObserver, public Alt
 
         void keyPressEvent(QKeyEvent * event) override;
 
-        RPZAsset _selectedAsset;
+        RPZToy _selectedToy;
         void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
 };

@@ -5,18 +5,11 @@ MapDatabase::MapDatabase(const QJsonObject &obj) : JSONDatabase(obj) {}
 MapDatabase::MapDatabase() {}
 
 const RPZMap<RPZAtom> MapDatabase::safe_atoms() const {
-    return this->_atoms();
+    return this->_atomsById;
 }
 
 const QSet<RPZAssetHash> MapDatabase::safe_usedAssetsIds() const {
-    return this->_usedAssetsIds();
-}
-
-const QSet<RPZAssetHash>& MapDatabase::_usedAssetsIds() const {
     return this->_assetHashes;
-}
-const RPZMap<RPZAtom>& MapDatabase::_atoms() const {
-    return this->_atomsById;
 }
 
 void MapDatabase::_setupLocalData() {
@@ -108,7 +101,7 @@ QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> MapDatabase::_getUpdat
             MapDatabase db(doc);
 
             //iterate atoms
-            for(auto atom : db._atoms()) {
+            for(auto atom : db.safe_atoms()) {
                 
                 auto shape = atom.shape();
 
@@ -126,7 +119,7 @@ QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> MapDatabase::_getUpdat
             updateFrom(
                 doc,
                 QStringLiteral(u"atoms"),
-                db._atoms().toVMap()
+                db.safe_atoms().toVMap()
             );
 
         }

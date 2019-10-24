@@ -79,3 +79,4 @@ class JSONDatabase {
         void _setupFromDbCopy(const QJsonObject &copy);
 
 };
+inline uint qHash(const JSONDatabase::EntityType &key, uint seed = 0) {return uint(key) ^ seed;}

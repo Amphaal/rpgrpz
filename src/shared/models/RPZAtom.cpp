@@ -2,14 +2,14 @@
 
 RPZAtom::RPZAtom() {}
 RPZAtom::RPZAtom(const QVariantHash &hash) : Serializable(hash) {}
-RPZAtom::RPZAtom(RPZAtomId id, const AtomType &type) : Serializable(id) {
+RPZAtom::RPZAtom(RPZAtomId id, const RPZAtomType &type) : Serializable(id) {
     this->_setType(type);
 };
-RPZAtom::RPZAtom(const AtomType &type) : Serializable(SnowFlake::get()->nextId()) {
+RPZAtom::RPZAtom(const RPZAtomType &type) : Serializable(SnowFlake::get()->nextId()) {
     this->_setType(type);  
 };
 
-const QString RPZAtom::toString(const AtomType &type, const QString &assetName) { 
+const QString RPZAtom::toString(const RPZAtomType &type, const QString &assetName) { 
 
     auto out = atomTypeToText(type);
 
@@ -28,15 +28,15 @@ const QString RPZAtom::toString() const {
     return toString(this->type(), this->assetName());
 }
 
-const QString RPZAtom::atomTypeToText(const AtomType &type) {
+const QString RPZAtom::atomTypeToText(const RPZAtomType &type) {
     switch(type) {
-        case AtomType::Drawing:
+        case RPZAtomType::Drawing:
             return QObject::tr("Drawing");
-        case AtomType::Text:
+        case RPZAtomType::Text:
             return QObject::tr("Text");
-        case AtomType::Object:
+        case RPZAtomType::Object:
             return QObject::tr("Object");
-        case AtomType::Brush:
+        case RPZAtomType::Brush:
             return QObject::tr("Brush");
         default:
             return QObject::tr("Atom");
@@ -47,9 +47,9 @@ QVariant RPZAtom::getDefaultValueForParam(const AtomParameter &param) {
     return _defaultVal.value(param);
 }
 
-AtomType RPZAtom::type() const {return (AtomType)this->value(QStringLiteral(u"t")).toInt();}
-void RPZAtom::_setType(const AtomType &type) { this->insert(QStringLiteral(u"t"), (int)type); }
-void RPZAtom::changeType(const AtomType &type) { this->_setType(type);}
+RPZAtomType RPZAtom::type() const {return (RPZAtomType)this->value(QStringLiteral(u"t")).toInt();}
+void RPZAtom::_setType(const RPZAtomType &type) { this->insert(QStringLiteral(u"t"), (int)type); }
+void RPZAtom::changeType(const RPZAtomType &type) { this->_setType(type);}
 
 void RPZAtom::unsetMetadata(const AtomParameter &key) {
     this->remove(_str.value(key));
@@ -114,30 +114,30 @@ void RPZAtom::setShape(const QRectF &rect) {
 //
 //
 
-QSet<AtomParameter> RPZAtom::customizableParams(const AtomType &type) {
+QSet<AtomParameter> RPZAtom::customizableParams(const RPZAtomType &type) {
     QSet<AtomParameter> out;
     
     switch(type) {
 
-        case AtomType::Drawing: {
+        case RPZAtomType::Drawing: {
             out.insert(AtomParameter::PenWidth);
         }
         break;
 
-        case AtomType::Object: {
+        case RPZAtomType::Object: {
             out.insert(AtomParameter::Rotation);
             out.insert(AtomParameter::Scale);
         }
         break;
 
-        case AtomType::Text: {
+        case RPZAtomType::Text: {
             out.insert(AtomParameter::TextSize);
             out.insert(AtomParameter::Text);
             out.insert(AtomParameter::Rotation);
         }
         break;
 
-        case AtomType::Brush: {
+        case RPZAtomType::Brush: {
             out.insert(AtomParameter::AssetRotation);
             out.insert(AtomParameter::AssetScale);
             out.insert(AtomParameter::BrushStyle);
@@ -170,18 +170,18 @@ QSet<AtomParameter> RPZAtom::legalParameters() const {
     
     switch(this->type()) {
 
-        case AtomType::Text: {
+        case RPZAtomType::Text: {
             base.insert(AtomParameter::Text);
         }
         break;
 
-        case AtomType::Object: {
+        case RPZAtomType::Object: {
             base.insert(AtomParameter::AssetId);
             base.insert(AtomParameter::AssetName);
         }
         break;
 
-        case AtomType::Brush: {
+        case RPZAtomType::Brush: {
             base.insert(AtomParameter::AssetId);
             base.insert(AtomParameter::AssetName);
             base.insert(AtomParameter::BrushStyle);

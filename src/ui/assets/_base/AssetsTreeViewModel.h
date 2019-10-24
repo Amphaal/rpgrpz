@@ -83,8 +83,5 @@ class AssetsTreeViewModel : public QAbstractItemModel {
         QModelIndexList _getTopMostIndexes(const QModelIndexList &indexesList);
         bool _indexListContainsIndexOrParent(const QModelIndexList &base, const QModelIndex &index);
         QPair<int, int> _anticipateInserts(const QModelIndexList &tbi);
-    
-    private:
-        static const QPixmap* _getAssetIcon(AssetsTreeViewItem* target, QSize &sizeToApply);
 
 };

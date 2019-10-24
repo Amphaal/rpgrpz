@@ -19,6 +19,8 @@
 
 #include "src/network/youtube/YoutubeHelper.h"
 
+#include "src/helpers/RPZQVariant.hpp"
+
 class Playlist : public QListWidget {
 
     Q_OBJECT
