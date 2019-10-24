@@ -42,7 +42,7 @@ class AssetsDatabase : public JSONDatabase {
         void removeFolders(const QList<RPZFolderPath> &pathsToRemove);
 
         void moveAssetsTo(const RPZFolderPath &internalPathToMoveTo, const QList<RPZAssetHash> &hashesToMove);
-        void moveFoldersTo(const RPZFolderPath &internalPathToMoveTo, const QList<RPZFolderPath> &pathsToMove);
+        void moveFoldersTo(const RPZFolderPath &internalPathToMoveTo, const QList<RPZFolderPath> &topmostPathsToMove);
         
         //
         const RPZAsset asset(const RPZAssetHash &hash) const;
@@ -58,16 +58,15 @@ class AssetsDatabase : public JSONDatabase {
     protected:
         const int apiVersion() override;
         void _removeDatabaseLinkedFiles() override;
-
+    
         QMap<RPZFolderPath, QSet<RPZAssetHash>> _paths;
         QHash<RPZAssetHash, RPZAsset> _assets;
         QHash<RPZAssetHash, RPZFolderPath> _w_assetToPath;
 
         RPZAsset* _asset(const RPZAssetHash &hash); 
         const QString _path(const StorageContainer &targetContainer) const;
-        const QString _parentPath(const RPZFolderPath &toExtractParentFrom);
-
-        void _addAsset(const RPZAsset &asset, const RPZFolderPath &internalPathToAddTo);
+        static const QString _parentPath(const RPZFolderPath &toExtractParentFrom);
+        static const QString _folderName(const RPZFolderPath &toExtractNameFrom);
 
         void _saveIntoFile();
     
@@ -87,4 +86,17 @@ class AssetsDatabase : public JSONDatabase {
         QString _generateNonExistingPath(const RPZFolderPath &parentPath, const QString &prefix);
         void _removeAssetFiles(const QList<RPZAsset> &toRemoveFromStorage);
 
+        //
+        typedef QHash<RPZFolderPath, QSet<RPZAssetHash>> HashesByPathToRemove;
+        typedef QList<RPZAsset> RemovedAssets;
+
+        void _removeHashesFromPaths(const HashesByPathToRemove &hashesToRemoveFromPaths);
+        QPair<HashesByPathToRemove, RemovedAssets> _removeAssets(const QList<RPZAssetHash> &hashesToRemove, bool onlyRemoveReference = false);
+
+        //
+        typedef QHash<RPZFolderPath, QSet<RPZFolderPath>> StartingWithPathRequestResults;
+        QSet<RPZFolderPath> _getPathsStartingWith(const RPZFolderPath &toRequest);
+        StartingWithPathRequestResults _getPathsStartingWith(const QList<RPZFolderPath> &toRequest);
+
+        void _reroutePaths(const RPZFolderPath &ancestor, const RPZFolderPath &toReplaceAncestor, const QSet<RPZFolderPath> &subjects);
 };

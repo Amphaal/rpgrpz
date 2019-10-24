@@ -118,7 +118,7 @@ const RPZAssetImportPackage AssetsDatabase::prepareAssetPackage(const RPZAssetHa
 ///
 ///
 
-void AssetsDatabase::_addAsset(const RPZAsset &asset, const RPZFolderPath &internalPathToAddTo) {
+void AssetsDatabase::addAsset(const RPZAsset &asset, const RPZFolderPath &internalPathToAddTo) {
     
     //asset
     auto hash = asset.hash();
@@ -126,20 +126,10 @@ void AssetsDatabase::_addAsset(const RPZAsset &asset, const RPZFolderPath &inter
 
     //weak link
     this->_w_assetToPath.insert(hash, internalPathToAddTo);
-
-}
-
-void AssetsDatabase::addAsset(const RPZAsset &asset, const RPZFolderPath &internalPathToAddTo) {
-    
-    //asset
-    this->_addAsset(asset, internalPathToAddTo);
     
     //path
     auto &assetsOfPath = this->_paths[internalPathToAddTo];
     assetsOfPath.insert(asset.hash());
-
-    //save
-    this->_saveIntoFile();
 
 }
 
@@ -163,9 +153,6 @@ void AssetsDatabase::createFolder(const RPZFolderPath &parentPath) {
     //add
     this->_paths.insert(uniquePath, {});
 
-    //save
-    this->_saveIntoFile();
-
 }
 
 bool AssetsDatabase::renameFolder(const QString &requestedNewFolderName, const RPZFolderPath &pathToRename) {
@@ -174,15 +161,12 @@ bool AssetsDatabase::renameFolder(const QString &requestedNewFolderName, const R
     if(requestedNewFolderName.contains(QStringLiteral(u"/"))) return false;
 
     //check if path already exists
-    auto toRequest = this->_parentPath(pathToRename) + requestedNewFolderName;
+    auto toRequest = _parentPath(pathToRename) + requestedNewFolderName;
     if(this->_paths.contains(toRequest)) return false;
 
-    //apply
-    auto linkedHashes = this->_paths.take(pathToRename);
-    this->_paths.insert(toRequest, linkedHashes);
-
-    //save
-    this->_saveIntoFile();
+    //get all paths starting with renamed path
+    auto oldPathsToReroute = this->_getPathsStartingWith(pathToRename);
+    this->_reroutePaths(pathToRename, toRequest, oldPathsToReroute);
 
 }
 
@@ -195,31 +179,156 @@ void AssetsDatabase::renameAsset(const QString &newName, const RPZAssetHash &has
     //apply
     assetToRename->rename(newName);
 
-    //save
-    this->_saveIntoFile();
-
 }
 
 void AssetsDatabase::removeAssets(const QList<RPZAssetHash> &hashesToRemove) {
     
-    QList<RPZAsset> removedAssets;
-    QHash<RPZFolderPath, QSet<RPZAssetHash>> hashesToRemoveFromPaths;
+    //clear assets
+    auto result = this->_removeAssets(hashesToRemove);
+
+    //clear paths
+    this->_removeHashesFromPaths(result.first);
+
+    //remove stored files
+    this->_removeAssetFiles(result.second);
+
+}
+
+void AssetsDatabase::removeFolders(const QList<RPZFolderPath> &pathsToRemove) {
+    
+    QSet<RPZAssetHash> hashesToRemove;
+
+    //traverse paths
+    for(auto &path : pathsToRemove) {
+
+        if(!this->_paths.contains(path)) continue;
+
+        //through assets
+        hashesToRemove += this->_paths.take(path);
+    
+    }
+
+    //remove referenced assets
+    auto result = this->_removeAssets(hashesToRemove.toList());
+
+    //remove stored files
+    this->_removeAssetFiles(result.second);
+
+}
+
+void AssetsDatabase::moveAssetsTo(const RPZFolderPath &internalPathToMoveTo, const QList<RPZAssetHash> &hashesToMove) {
+    
+    //remove references to assets
+    auto result = this->_removeAssets(hashesToMove, true);
+
+    //remove hashes from paths
+    this->_removeHashesFromPaths(result.first);
+
+    //add new wlink and strong link
+    auto &dest = this->_paths[internalPathToMoveTo];
+    for(auto &hash : hashesToMove) {
+        dest += hash;
+        this->_w_assetToPath.insert(hash, internalPathToMoveTo);
+    }
+
+}
+
+void AssetsDatabase::moveFoldersTo(const RPZFolderPath &internalPathToMoveTo, const QList<RPZFolderPath> &topmostPathsToMove) {
+    
+    auto results = this->_getPathsStartingWith(topmostPathsToMove);
+
+    for(auto i = results.begin(); i != results.end(); i++) {
+        
+        auto topmost = i.key();
+        auto newTopmostPath = internalPathToMoveTo + "/" + _folderName(topmost);
+        
+        this->_reroutePaths(topmost, newTopmostPath, i.value());
+
+    }
+
+}
+
+////
+///
+///
+////
+
+void AssetsDatabase::_reroutePaths(const RPZFolderPath &ancestor, const RPZFolderPath &toReplaceAncestor, const QSet<RPZFolderPath> &subjects) {
+    
+    for(auto &oldPath : subjects) {
+
+        //remove old path content
+        auto linkedHashes = this->_paths.take(oldPath);
+        if(linkedHashes.isEmpty()) continue;
+        
+        //build new dest path
+        auto newPath = oldPath;
+        newPath.replace(ancestor, toReplaceAncestor);
+
+        //increment dest set 
+        this->_paths[newPath] += linkedHashes;
+
+        //update wlink
+        for(auto &hash : linkedHashes) {
+            this->_w_assetToPath.insert(hash, newPath);
+        }
+
+    }
+
+}
+
+QSet<RPZFolderPath> AssetsDatabase::_getPathsStartingWith(const RPZFolderPath &toRequest) {
+    
+    QSet<RPZFolderPath> out;
+    
+    for(auto &path : this->_paths.keys()) {
+        if(!path.startsWith(toRequest)) continue;
+        out += path;
+    }
+
+    return out;
+
+}
+
+AssetsDatabase::StartingWithPathRequestResults AssetsDatabase::_getPathsStartingWith(const QList<RPZFolderPath> &topmostPathsToMove) {
+    
+    //setup request container
+    StartingWithPathRequestResults startingWithPath;
+    for(auto &topmost : topmostPathsToMove) startingWithPath.insert(topmost, {});
+
+    //iterate
+    for(auto &path : this->_paths.keys()) {
+        for(auto &topmost : topmostPathsToMove) {
+            if(!path.startsWith(topmost)) continue;
+            startingWithPath[topmost] += path;
+        }
+    }
+
+    return startingWithPath;
+
+}
+
+QPair<AssetsDatabase::HashesByPathToRemove, AssetsDatabase::RemovedAssets> AssetsDatabase::_removeAssets(const QList<RPZAssetHash> &hashesToRemove, bool onlyRemoveReference) {
+    
+    RemovedAssets removedAssets;
+    HashesByPathToRemove hashesToRemoveFromPaths;
     
     //clear assets
     for(auto &hash : hashesToRemove) {
 
         if(!this->_assets.contains(hash)) continue;
-        removedAssets += this->_assets.take(hash);
-        this->_w_assetToPath.remove(hash);
+        if(!onlyRemoveReference) removedAssets += this->_assets.take(hash);
         
-        auto associatedPath = this->_w_assetToPath.value(hash);
+        auto associatedPath = this->_w_assetToPath.take(hash);
         if(associatedPath.isEmpty()) continue;
 
         hashesToRemoveFromPaths[associatedPath] += hash;
 
     }
 
-    //clear paths
+}
+
+void AssetsDatabase::_removeHashesFromPaths(const HashesByPathToRemove &hashesToRemoveFromPaths) {
     for(auto i = hashesToRemoveFromPaths.begin(); i != hashesToRemoveFromPaths.end(); i++) {
         
         auto path = i.key();
@@ -233,58 +342,18 @@ void AssetsDatabase::removeAssets(const QList<RPZAssetHash> &hashesToRemove) {
         if(existingAssociatedHashes.isEmpty()) this->_paths.remove(path);
 
     }
-
-    //remove stored files
-    this->_removeAssetFiles(removedAssets);
-
-    //save
-    this->_saveIntoFile();
-
 }
+        
 
-void AssetsDatabase::removeFolders(const QList<RPZFolderPath> &pathsToRemove) {
-    
-    QList<RPZAsset> removedAssets;
-
-    //traverse paths
-    for(auto &path : pathsToRemove) {
-
-        if(!this->_paths.contains(path)) continue;
-
-        //through assets
-        auto hashesToRemove = this->_paths.take(path);
-        for(auto &hash : hashesToRemove) {
-            
-            if(!this->_assets.contains(hash)) continue;
-
-            removedAssets += this->_assets.take(hash);
-            this->_w_assetToPath.remove(hash);
-
-        }
-
-    }
-
-    //remove stored files
-    this->_removeAssetFiles(removedAssets);
-
-    //save
-    this->_saveIntoFile();
-}
-
-void AssetsDatabase::moveAssetsTo(const RPZFolderPath &internalPathToMoveTo, const QList<RPZAssetHash> &hashesToMove) {
-    //TODO
-}
-
-void AssetsDatabase::moveFoldersTo(const RPZFolderPath &internalPathToMoveTo, const QList<RPZFolderPath> &pathsToMove) {
-    //TODO
-}
-
-////
 ///
-///
-////
 
-const QString _parentPath(const RPZFolderPath &toExtractParentFrom) {
+const QString AssetsDatabase::_folderName(const RPZFolderPath &toExtractNameFrom) {
+    auto toCropFrom = toExtractNameFrom.lastIndexOf(QStringLiteral(u"/"));
+    auto out = toExtractNameFrom.mid(toCropFrom + 1);
+    return out;
+}
+
+const QString AssetsDatabase::_parentPath(const RPZFolderPath &toExtractParentFrom) {
 
     auto toCropFrom = toExtractParentFrom.lastIndexOf(QStringLiteral(u"/"));
     
