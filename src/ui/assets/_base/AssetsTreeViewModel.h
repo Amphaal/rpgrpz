@@ -32,13 +32,12 @@ class AssetsTreeViewModel : public QAbstractItemModel {
         void createFolder(QModelIndex &parentIndex);
         bool moveItemsToContainer(const QModelIndex &parentIndex, const QList<QModelIndex> &indexesToMove);
         bool insertAssets(QList<QUrl> &urls, const QModelIndex &parentIndex);
-        bool removeItems(const QList<QModelIndex> &itemsIndexesToRemove);
+        void removeItems(const QList<QModelIndex> &itemsIndexesToRemove);
         bool integrateAsset(RPZAssetImportPackage &package);
         
         ///////////////////
         /// END HELPERS ///
         ///////////////////
-
 
         ////////////////////////
         /// REIMPLEMENTATION ///
@@ -83,5 +82,21 @@ class AssetsTreeViewModel : public QAbstractItemModel {
         QModelIndexList _getTopMostIndexes(const QModelIndexList &indexesList);
         bool _indexListContainsIndexOrParent(const QModelIndexList &base, const QModelIndex &index);
         QPair<int, int> _anticipateInserts(const QModelIndexList &tbi);
+
+    private:
+        AssetsTreeViewItem* _rootItem = nullptr;
+        QHash<AssetsTreeViewItem::Type, AssetsTreeViewItem*> _staticElements;  
+
+        void _injectStaticStructure();
+        void _injectDbStructure();              
+            
+            //returns last elem by path created
+            QHash<RPZFolderPath, AssetsTreeViewItem*> _generateFolderTreeFromDb();
+
+            //iterate through paths chunks and create missing folders at each pass, returns last folder found/created
+            AssetsTreeViewItem* _recursiveElementCreator(AssetsTreeViewItem* parent, QList<QString> &pathChunks); 
+
+            //from definitive paths, fetch items from db and generate elements
+            void _generateItemsFromDb(const QHash<RPZFolderPath, AssetsTreeViewItem*> &pathsToFillWithItems);
 
 };

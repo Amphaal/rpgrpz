@@ -91,6 +91,14 @@ const QSet<RPZAssetHash> AssetsDatabase::getStoredAssetsIds() const {
     return this->_assets.keys().toSet();
 }
 
+const QMap<RPZFolderPath, QSet<RPZAssetHash>> AssetsDatabase::paths() const {
+    return this->_paths;
+}
+
+const QHash<RPZAssetHash, RPZAsset> AssetsDatabase::assets() const {
+    return this->_assets;
+}
+
 const RPZAsset* AssetsDatabase::asset(const RPZAssetHash &hash) {
     if(!this->_assets.contains(hash)) {
         qDebug() << "Assets: cannot find asset !";

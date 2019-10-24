@@ -1,6 +1,9 @@
 #include "AssetsTreeViewModel.h"
 
-AssetsTreeViewModel::AssetsTreeViewModel(QObject *parent) : QAbstractItemModel(parent) {};
+AssetsTreeViewModel::AssetsTreeViewModel(QObject *parent) : QAbstractItemModel(parent) {
+    this->_injectStaticStructure();
+    this->_injectDbStructure();
+};
 
 QModelIndex AssetsTreeViewModel::getStaticContainerTypesIndex(const AssetsTreeViewItem::Type &staticContainerType) {
     
@@ -86,12 +89,26 @@ bool AssetsTreeViewModel::moveItemsToContainer(const QModelIndex &parentIndex, c
     //get topmost only
     auto topMostIndexes = this->_getTopMostIndexes(indexesToMove);
 
-    //to move indexes to elem list
-    QList<AssetsTreeViewItem*> elementsToMove;
-    for(auto &index : topMostIndexes) elementsToMove += AssetsTreeViewItem::fromIndex(index);
+    //triage
+    QList<RPZFolderPath> folderPathsToMove;
+    QList<RPZAssetHash> assetHashesToMove;
+    for(auto &index : topMostIndexes) {
+        
+        auto item = AssetsTreeViewItem::fromIndex(index);
+
+        if(item->type() == AssetsTreeViewItem::Type::Folder) {
+            folderPathsToMove += item->path();
+        } 
+        
+        else if(auto asset = item->asset()) {
+            assetHashesToMove += asset->hash();
+        }
+
+    }
 
     //parent index to elem
     auto parentElem = AssetsTreeViewItem::fromIndex(parentIndex);
+    auto parentElemPath = parentElem->path();
 
     //begin removes...
     for(auto &i : topMostIndexes) {
@@ -113,12 +130,13 @@ bool AssetsTreeViewModel::moveItemsToContainer(const QModelIndex &parentIndex, c
     }
 
     //move
-    auto result = AssetsDatabase::get()->moveItemsToContainer(elementsToMove, parentElem);
+    AssetsDatabase::get()->moveAssetsTo(parentElemPath, assetHashesToMove);
+    AssetsDatabase::get()->moveFoldersTo(parentElemPath, folderPathsToMove);
 
     this->endRemoveRows();
     this->endInsertRows();
 
-    return result;
+    return topMostIndexes.count() == assetHashesToMove.count() + folderPathsToMove.count();
 
 }
 
@@ -132,33 +150,48 @@ bool AssetsTreeViewModel::insertAssets(QList<QUrl> &urls, const QModelIndex &par
     //for each url, insert
     auto allResultsOK = 0;
     for(auto &url : urls) {
-        auto result = AssetsDatabase::get()->insertAsset(url, dest);
-        if(result) allResultsOK++;
+
+        RPZAsset asset(url);
+        if(!asset.isValidAsset()) continue;
+        
+        AssetsDatabase::get()->addAsset(asset, dest->path());
+        allResultsOK++;
+
     }
 
     //end inserting
     this->endInsertRows();
     return allResultsOK == urls.count();
+
 }
 
-bool AssetsTreeViewModel::removeItems(const QList<QModelIndex> &itemsIndexesToRemove) {
+void AssetsTreeViewModel::removeItems(const QList<QModelIndex> &itemsIndexesToRemove) {
+    
+    auto topmost = this->_getTopMostIndexes(itemsIndexesToRemove);
 
         //create list
-        QList<AssetsTreeViewItem*> items;
-        for(auto &index : itemsIndexesToRemove) {
-            
-            this->beginRemoveRows(index.parent(), index.row(), index.row());
+        QList<RPZFolderPath> pathsToRemove;
+        QList<RPZAssetHash> hashesToRemove;
 
-            items.append(
-                AssetsTreeViewItem::fromIndex(index)
-            );
+        for(auto &index : topmost) {
+            this->beginRemoveRows(index.parent(), index.row(), index.row());
+            auto item = AssetsTreeViewItem::fromIndex(index);
+            
+            if(item->type() == AssetsTreeViewItem::Type::Folder) {
+                pathsToRemove += item->path();
+            } 
+            
+            else if(auto asset = item->asset()) {
+                hashesToRemove += asset->hash();
+            }
+
         }
-        
-        auto result = AssetsDatabase::get()->removeItems(items);
+
+        AssetsDatabase::get()->removeFolders(pathsToRemove);
+        AssetsDatabase::get()->removeAssets(hashesToRemove);
     
     this->endRemoveRows();
 
-    return result;
 }
 
 ///////////////////
@@ -175,7 +208,7 @@ QModelIndex AssetsTreeViewModel::index(int row, int column, const QModelIndex &p
     
     //if root element requested..
     if(!parent.isValid()) {
-        return this->createIndex(row, column, (AssetsTreeViewItem*)this->_db);
+        return this->createIndex(row, column, this->_rootItem);
     }
     
     //prepare data
@@ -467,3 +500,126 @@ Qt::DropActions AssetsTreeViewModel::supportedDropActions() const {
 /////////////////////////
 /// END DROP HANDLING ///
 /////////////////////////
+
+void AssetsTreeViewModel::_injectStaticStructure() {
+
+    for(auto &staticType : AssetsTreeViewItem::staticContainerTypes()) {
+
+        auto staticFolderItem = new AssetsTreeViewItem(this->_rootItem, staticType);
+        this->_staticElements.insert(staticType, staticFolderItem);
+
+        if(staticType == AssetsTreeViewItem::Type::InternalContainer) {
+            
+            for(auto &type : AssetsTreeViewItem::internalItemTypes()) {
+                auto internalItem = new AssetsTreeViewItem(staticFolderItem, type);
+            }
+
+        }
+
+    }
+
+}
+
+
+void AssetsTreeViewModel::_injectDbStructure() {
+
+    //get containers to fill, not inbetween folders
+    auto containersToFill = this->_generateFolderTreeFromDb();
+
+    //then fill with items
+    this->_generateItemsFromDb(containersToFill);
+
+}
+
+QHash<RPZFolderPath, AssetsTreeViewItem*> AssetsTreeViewModel::_generateFolderTreeFromDb() {
+    
+    //sort the keys
+    auto paths = AssetsDatabase::get()->paths().keys();
+    paths.sort();
+
+    //to be created items
+    QHash<RPZFolderPath, AssetsTreeViewItem*> containersToFill;
+
+    //create folders arbo
+    for(auto &path : paths) {
+        
+        //split the path
+        auto split = AssetsTreeViewItem::pathAsList(path);
+        
+        //make sure first split is a type
+        auto staticCType = AssetsTreeViewItem::pathChunktoType(split.takeFirst());
+
+        //get element from static source
+        if(!this->_staticElements.contains(staticCType)) {
+            qDebug() << "Assets : ignoring path, as the static container it points to doesnt exist";
+            continue;
+        }
+        auto staticContainerElem = this->_staticElements[staticCType];
+
+        //create path
+        auto lastContainer = this->_recursiveElementCreator(staticContainerElem, split);
+        
+        //append to list
+        containersToFill.insert(path, lastContainer);
+    }
+
+    //returns
+    return containersToFill;
+}
+
+AssetsTreeViewItem* AssetsTreeViewModel::_recursiveElementCreator(AssetsTreeViewItem* parent, QList<QString> &pathChunks) {
+    
+    //if no more folders in path to create...
+    if(!pathChunks.count()) return parent;
+
+    //take first part
+    auto part = pathChunks.takeFirst();
+
+    //search if already exist
+    AssetsTreeViewItem* found = nullptr;
+    for(auto container : parent->childrenContainers()) {
+        if(container->displayName() == part) {
+            found = container;
+            break;
+        }
+    }
+
+    //if not found, create it
+    if(!found) {
+        found = new AssetsTreeViewItem(parent, part);
+    }
+
+    //iterate through...
+    return this->_recursiveElementCreator(found, pathChunks);
+
+}
+
+void AssetsTreeViewModel::_generateItemsFromDb(const QHash<RPZFolderPath, AssetsTreeViewItem*> &pathsToFillWithItems) {
+    
+    auto db_paths = AssetsDatabase::get()->paths();
+
+    //create items for each end-containers
+    for (auto i = pathsToFillWithItems.constBegin(); i != pathsToFillWithItems.constEnd(); ++i) {
+        
+        //define
+        auto path = i.key();
+        auto parent = i.value();
+        
+        //find items in db and create them
+        for(auto &id : db_paths.value(path)) {
+
+            auto asset = AssetsDatabase::get()->asset(id);
+
+            //if ID doesnt exist
+            if(!asset) {
+                qDebug() << "Assets : cannot insert an item as its ID is not found in the assets DB";
+                continue;
+            }
+
+            //create
+            auto elem = new AssetsTreeViewItem(parent, asset);
+
+        }
+    }
+
+}

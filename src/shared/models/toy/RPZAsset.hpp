@@ -77,6 +77,10 @@ class RPZAsset : public QVariantHash {
             return this->value(QStringLiteral(u"hash")).toString(); 
         }
 
+        bool isValidAsset() const {
+            return !this->hash().isEmpty();
+        }
+
         const QString filepath() const {
             
             auto expected = _getFilePathToAsset(

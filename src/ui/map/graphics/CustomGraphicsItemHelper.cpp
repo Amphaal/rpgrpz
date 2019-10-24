@@ -1,6 +1,6 @@
 #include "CustomGraphicsItemHelper.h"
 
-QGraphicsItem* CustomGraphicsItemHelper::createGraphicsItem(const RPZAtom &atom, const RPZAsset &assetMetadata, bool isTemporary) {
+QGraphicsItem* CustomGraphicsItemHelper::createGraphicsItem(const RPZAtom &atom, const RPZAsset &asset, bool isTemporary) {
     
     QGraphicsItem* out;
     auto type = atom.type();
@@ -8,11 +8,11 @@ QGraphicsItem* CustomGraphicsItemHelper::createGraphicsItem(const RPZAtom &atom,
     switch(type) {
         
         case RPZAtomType::Object:
-            out = _createGenericImageBasedItem(atom, assetMetadata);
+            out = _createGenericImageBasedItem(atom, asset);
         break;
         
         case RPZAtomType::Brush:
-            out = _createBrushItem(atom, assetMetadata);
+            out = _createBrushItem(atom, asset);
         break;
 
         case RPZAtomType::Drawing:
@@ -91,24 +91,24 @@ QGraphicsRectItem* CustomGraphicsItemHelper::createMissingAssetPlaceholderItem(c
 }
 
 
-QGraphicsItem* CustomGraphicsItemHelper::_createGenericImageBasedItem(const RPZAtom &atom, const RPZAsset &assetMetadata) {
+QGraphicsItem* CustomGraphicsItemHelper::_createGenericImageBasedItem(const RPZAtom &atom, const RPZAsset &asset) {
 
     //get file infos
-    auto filepathToAsset = assetMetadata.filepath();
+    auto filepathToAsset = asset.filepath();
     
     //define graphicsitem
     QGraphicsItem* item = nullptr;
-    if(assetMetadata.fileExtension() == "svg") {
+    if(asset.fileExtension() == "svg") {
         item = new MapViewGraphicsSvgItem(filepathToAsset);
     } 
     else {
-        item = new MapViewGraphicsPixmapItem(assetMetadata);
+        item = new MapViewGraphicsPixmapItem(asset);
     };
 
     return item;
 }
 
-QGraphicsPathItem* CustomGraphicsItemHelper::_createBrushItem(const RPZAtom &atom, const RPZAsset &assetMetadata) {
+QGraphicsPathItem* CustomGraphicsItemHelper::_createBrushItem(const RPZAtom &atom, const RPZAsset &asset) {
 
     //define a ped
     QPen pen;
@@ -122,7 +122,7 @@ QGraphicsPathItem* CustomGraphicsItemHelper::_createBrushItem(const RPZAtom &ato
 
     //configure brush
     QBrush brush;
-    brush.setTexture(*RPZAsset::cachedPixmap(assetMetadata));
+    brush.setTexture(*RPZAsset::cachedPixmap(asset));
     
     //create path
     auto newPath = new MapViewGraphicsPathItem(shape, pen, brush);

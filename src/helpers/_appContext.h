@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sys/stat.h>
+
 #include "src/version.h"
 
 #include <QDir>
@@ -8,6 +10,9 @@
 #include <QTranslator>
 #include <QLibraryInfo>
 #include <QApplication>
+#include <QPaintDevice>
+#include <QRegularExpression>
+#include <QUrl>
 
 #include "src/helpers/_appSettings.hpp"
 #include "src/_libs/snowflake/snowflake.h"

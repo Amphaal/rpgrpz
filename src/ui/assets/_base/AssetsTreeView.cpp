@@ -381,10 +381,10 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
 
         auto elem = AssetsTreeViewItem::fromIndex(selectedElems.value(0));
         
-        auto atomType = elem->atomType();
+        auto atomType = (RPZAtomType)elem->type();
         auto asset = elem->asset();
 
-        if(asset && atomType != RPZAtomType::Undefined) {
+        if(asset) {
             defSelect = RPZToy(*asset, atomType);
         }
 

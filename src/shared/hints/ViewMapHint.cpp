@@ -94,17 +94,17 @@ void ViewMapHint::notifySelectedItems(const QList<QGraphicsItem*> &selectedItems
 // Atom insertion helpers //
 /////////////////////////////
 
-QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZAsset &assetMetadata) {
+QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZToy &toy) {
 
-    if(!assetMetadata.isEmpty()){
+    if(!toy.isEmpty()){
         QMutexLocker m(&this->_m_templateAtom);
 
         //update template
-        this->_templateAtom.changeType(assetMetadata.atomType());
+        this->_templateAtom.changeType(toy.atomType());
 
-        this->_templateAtom.setMetadata(AtomParameter::ShapeCenter, assetMetadata.center());
+        this->_templateAtom.setMetadata(AtomParameter::ShapeCenter, toy.shapeCenter());
         
-        auto sSize = assetMetadata.shapeSize();
+        auto sSize = toy.shape();
         if(!sSize.isEmpty()) {
             this->_templateAtom.setShape(
                 QRectF(QPointF(), sSize)
@@ -113,8 +113,8 @@ QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZAsset &assetMetadata) {
             this->_templateAtom.setShape(QRectF()); 
         }
 
-        this->_templateAtom.setMetadata(AtomParameter::AssetId, assetMetadata.assetId());
-        this->_templateAtom.setMetadata(AtomParameter::AssetName, assetMetadata.assetName());
+        this->_templateAtom.setMetadata(AtomParameter::AssetId, toy.hash());
+        this->_templateAtom.setMetadata(AtomParameter::AssetName, toy.name());
     }
     
     QGraphicsItem* toDelete = nullptr;
@@ -125,11 +125,11 @@ QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZAsset &assetMetadata) {
         //delete if ghost item exist
         if(this->_ghostItem) toDelete = this->_ghostItem;
 
-        if(!assetMetadata.isEmpty()) {
+        if(!toy.isEmpty()) {
             
             {
                 QMutexLocker l2(&this->_m_templateAsset);
-                this->_templateAsset = assetMetadata;
+                this->_templateToy = toy;
             }
          
             //add to scene
@@ -148,7 +148,7 @@ QGraphicsItem* ViewMapHint::generateTemporaryItemFromTemplateBuffer() {
 
     return CustomGraphicsItemHelper::createGraphicsItem(
         this->_templateAtom, 
-        this->_templateAsset, 
+        this->_templateToy, 
         true
     );
 }
@@ -185,8 +185,8 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuil
 
     QGraphicsItem* newItem = nullptr;
     auto assetId = atomToBuildFrom.assetId();
-    auto assetMetadata = AssetsDatabase::get()->(assetId);
-    auto hasMissingAsset = !assetId.isEmpty() && assetMetadata.pathToAssetFile().isEmpty();
+    auto asset = AssetsDatabase::get()->asset(atomToBuildFrom.assetId());
+    auto hasMissingAsset = !assetId.isEmpty() && !asset;
 
     //atom links to missing asset from DB
     if(hasMissingAsset) {
@@ -204,7 +204,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuil
     else {
         newItem = CustomGraphicsItemHelper::createGraphicsItem(
             atomToBuildFrom, 
-            assetMetadata
+            *asset
         );
     }
 
@@ -220,16 +220,16 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuil
 void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &metadata) {
     
     QList<QGraphicsItem*> newGis;
-    QSet<QGraphicsItem *> setOfGraphicsItemsToReplace;
+    QSet<QGraphicsItem*> setOfGraphicsItemsToReplace;
 
-    auto assetId = metadata.assetId();
-    auto pathToFile = metadata.pathToAssetFile();
+    auto hash = metadata.hash();
+    auto pathToFile = metadata.filepath();
 
-    if(!this->_missingAssetsIdsFromDb.contains(assetId)) return; //no assetId, skip
+    if(!this->_missingAssetsIdsFromDb.contains(hash)) return; //no assetId, skip
     if(pathToFile.isNull()) return; //path to file empty, skip
     
     //get uniques ids
-    setOfGraphicsItemsToReplace = this->_missingAssetsIdsFromDb.values(assetId).toSet();
+    setOfGraphicsItemsToReplace = this->_missingAssetsIdsFromDb.values(hash).toSet();
     
     //iterate through the list of GI to replace
     for(auto item : setOfGraphicsItemsToReplace) {
@@ -250,7 +250,7 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &metadata) {
     }
 
     //clear the id from the missing list
-    this->_missingAssetsIdsFromDb.remove(assetId);
+    this->_missingAssetsIdsFromDb.remove(hash);
 
     //remove old
     emit requestingUIAlteration(PayloadAlteration::Removed, setOfGraphicsItemsToReplace.toList());
@@ -379,7 +379,7 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
     else if(auto mPayload = dynamic_cast<ToySelectedPayload*>(&payload)) {
         
         //generate ghost
-        auto mightDelete = this->_generateGhostItem(mPayload->selectedAsset());
+        auto mightDelete = this->_generateGhostItem(mPayload->selectedToy());
         
         //request deletion previous ghost
         if(mightDelete) {

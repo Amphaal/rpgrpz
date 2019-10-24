@@ -26,6 +26,8 @@ class AssetsTreeViewItem : public QObject {
                 Text = (int)RPZAtomType::Text,
             NPC_Container = (int)AssetsDatabase::StorageContainer::NPC,
                 NPC = (int)RPZAtomType::NPC,
+            BackgroundContainer = (int)AssetsDatabase::StorageContainer::Background,
+                Background = (int)RPZAtomType::Background,
             FloorBrushContainer = (int)AssetsDatabase::StorageContainer::FloorBrush,
                 FloorBrush = (int)RPZAtomType::Brush,
             ObjectContainer = (int)AssetsDatabase::StorageContainer::Object,
@@ -42,13 +44,13 @@ class AssetsTreeViewItem : public QObject {
         static AssetsTreeViewItem* fromIndex(const QModelIndex &index);
         static inline const QString listMimeType = QStringLiteral(u"application/x-assets-db-elem-list");
 
-        AssetsTreeViewItem(const QString &name, AssetsTreeViewItem* parent, const AssetsTreeViewItem::Type &type = AssetsTreeViewItem::Type::Folder);
-        AssetsTreeViewItem(const RPZAsset* assetMetadata, AssetsTreeViewItem* parent);
+        AssetsTreeViewItem(AssetsTreeViewItem* parent, const QString &folderName);
+        AssetsTreeViewItem(AssetsTreeViewItem* parent, const AssetsTreeViewItem::Type &type);
+        AssetsTreeViewItem(AssetsTreeViewItem* parent, const RPZAsset* assetMetadata);
         AssetsTreeViewItem();
         ~AssetsTreeViewItem();
 
         const AssetsTreeViewItem::Type type() const;
-        const RPZAtomType atomType() const;
         const AssetsTreeViewItem::Type insertType() const;
         const AssetsTreeViewItem::Type rootStaticContainer() const;
         const QString iconPath() const;
@@ -78,24 +80,22 @@ class AssetsTreeViewItem : public QObject {
         bool contains(AssetsTreeViewItem* toCheck, AssetsTreeViewItem* toBeChecked = nullptr);
         bool containsAny(const QList<AssetsTreeViewItem*> toCheck);
 
+        static const QString typeDescription(const AssetsTreeViewItem::Type &type);
+        static const QList<AssetsTreeViewItem::Type> internalItemTypes();
+        static AssetsTreeViewItem::Type pathChunktoType(const QString &chunk); //interpret path element as corresponding type
+        static QList<QString> pathAsList(const QString &path); //returns elements of a path
+
     protected:
+        AssetsTreeViewItem(AssetsTreeViewItem* parent, const AssetsTreeViewItem::Type &type, const QString &name);
+
         QList<AssetsTreeViewItem*> _subElements;
         AssetsTreeViewItem* _parentElement = nullptr;
 
        //sort items by path length (number of slashes)
         static void sortByPathLengthDesc(QList<AssetsTreeViewItem*> &listToSort);
 
-        //interpret path element as corresponding type
-        static AssetsTreeViewItem::Type pathChunktoType(const QString &chunk);
-
-        //returns elements of a path
-        static QList<QString> pathAsList(const QString &path);
-
         //returns a list of single elements by node path
         static QSet<AssetsTreeViewItem*> filterTopMostOnly(QList<AssetsTreeViewItem*> elemsToFilter);
-
-        static QList<AssetsTreeViewItem::Type> internalItemTypes();
-        static QString typeDescription(AssetsTreeViewItem::Type &type);
 
         void unrefChild(AssetsTreeViewItem* child);
 
@@ -119,7 +119,6 @@ class AssetsTreeViewItem : public QObject {
         bool _isStaticContainer = false;
         bool _isDeletable = false;
 
-        void _defineAtomType();
         void _defineParent(AssetsTreeViewItem* parent);
         void _defineFlags();
         void _definePath();

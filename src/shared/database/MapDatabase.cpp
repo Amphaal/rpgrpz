@@ -15,8 +15,8 @@ const QSet<RPZAssetHash> MapDatabase::safe_usedAssetsIds() const {
 void MapDatabase::_setupLocalData() {
 
     //atoms
-    for(const auto &atom : this->entityAsObject(QStringLiteral(u"atoms"))) {
-        RPZAtom atom(atom.toObject().toVariantHash());
+    for(const auto &atomAsJson : this->entityAsObject(QStringLiteral(u"atoms"))) {
+        RPZAtom atom(atomAsJson.toObject().toVariantHash());
         this->_atomsById.insert(atom.id(), atom);
     }
 

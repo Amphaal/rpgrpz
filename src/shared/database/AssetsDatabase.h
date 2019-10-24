@@ -45,6 +45,10 @@ class AssetsDatabase : public QObject, public JSONDatabase {
         void moveFoldersTo(const RPZFolderPath &internalPathToMoveTo, const QList<RPZFolderPath> &topmostPathsToMove);
         
         //
+        const QMap<RPZFolderPath, QSet<RPZAssetHash>> paths() const;
+        const QHash<RPZAssetHash, RPZAsset> assets() const;
+
+        //
         const RPZAsset* asset(const RPZAssetHash &hash);
         const QSet<RPZAssetHash> getStoredAssetsIds() const;
 

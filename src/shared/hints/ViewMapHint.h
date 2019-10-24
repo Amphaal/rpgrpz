@@ -64,7 +64,7 @@ class ViewMapHint : public AtomsStorage {
         QGraphicsItem* _ghostItem = nullptr;
         
         mutable QMutex _m_templateAsset;
-        RPZAsset _templateAsset;
+        RPZToy _templateToy;
 
         mutable QMutex _m_templateAtom;
         RPZAtom _templateAtom;
@@ -75,7 +75,7 @@ class ViewMapHint : public AtomsStorage {
         QMultiHash<RPZAssetHash, QGraphicsItem*> _missingAssetsIdsFromDb;
         
         //helpers
-        QGraphicsItem* _generateGhostItem(const RPZAsset &assetMetadata);
+        QGraphicsItem* _generateGhostItem(const RPZToy &toy);
         QGraphicsItem* _buildGraphicsItemFromAtom(const RPZAtom &atomToBuildFrom);
         void _crossBindingAtomWithGI(const RPZAtom &atom, QGraphicsItem* gi);
 

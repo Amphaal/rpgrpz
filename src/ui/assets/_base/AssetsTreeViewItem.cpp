@@ -1,31 +1,7 @@
 #include "AssetsTreeViewItem.h"
 
-AssetsTreeViewItem::AssetsTreeViewItem(const RPZAsset* asset, AssetsTreeViewItem* parent) : AssetsTreeViewItem(
-        asset->name(), 
-        parent, 
-        parent->insertType()
-    ) {
- 
-    this->_hash = asset->hash();
-
-}
-
-AssetsTreeViewItem::AssetsTreeViewItem() : AssetsTreeViewItem(QString(), nullptr, AssetsTreeViewItem::Type::Root) {};
-
-AssetsTreeViewItem::~AssetsTreeViewItem(){
+AssetsTreeViewItem::AssetsTreeViewItem(AssetsTreeViewItem* parent, const AssetsTreeViewItem::Type &type, const QString &name) {
     
-    if(this->_parentElement) {
-        this->_parentElement->unrefChild(this);
-    }
-
-    qDeleteAll(this->_subElements);
-}
-
-AssetsTreeViewItem::AssetsTreeViewItem(
-    const QString &name, 
-    AssetsTreeViewItem* parent,
-    const AssetsTreeViewItem::Type &type
-) { 
     //define type
     this->_setType(type);
 
@@ -37,13 +13,36 @@ AssetsTreeViewItem::AssetsTreeViewItem(
         parent->appendChild(this);
     }
 
-};
+}
+
+AssetsTreeViewItem::AssetsTreeViewItem(AssetsTreeViewItem* parent, const QString &folderName) :
+    AssetsTreeViewItem(parent, AssetsTreeViewItem::Type::Folder, folderName) {}
+
+AssetsTreeViewItem::AssetsTreeViewItem(AssetsTreeViewItem* parent, const AssetsTreeViewItem::Type &type) :
+    AssetsTreeViewItem(parent, type, AssetsTreeViewItem::typeDescription(type)) {}
+
+AssetsTreeViewItem::AssetsTreeViewItem(AssetsTreeViewItem* parent, const RPZAsset* asset) : 
+    AssetsTreeViewItem(parent, parent->insertType(), asset->name()) {
+ 
+    this->_hash = asset->hash();
+
+}
+
+AssetsTreeViewItem::AssetsTreeViewItem() : AssetsTreeViewItem(nullptr, AssetsTreeViewItem::Type::Root) {};
+
+AssetsTreeViewItem::~AssetsTreeViewItem(){
+    
+    if(this->_parentElement) {
+        this->_parentElement->unrefChild(this);
+    }
+
+    qDeleteAll(this->_subElements);
+}
 
 void AssetsTreeViewItem::_setType(const AssetsTreeViewItem::Type &type) {
     this->_type = type; 
 
     // types-related definitions
-    this->_defineAtomType();
     this->_defineIconPath();
     this->_defineFlags();
     this->_defineIsContainer();
@@ -51,11 +50,6 @@ void AssetsTreeViewItem::_setType(const AssetsTreeViewItem::Type &type) {
     this->_defineIsIdentifiable();
     this->_defineIsStaticContainer();
     this->_defineIsDeletable();
-
-    //redefine RPZAsset
-    if(!this->_asset.isEmpty()) {
-        this->_asset.setAtomType(this->atomType());
-    }
     
 }
 
@@ -64,7 +58,7 @@ void AssetsTreeViewItem::_setType(const AssetsTreeViewItem::Type &type) {
 ///////////////////
 
 const RPZAsset* AssetsTreeViewItem::asset() const {
-    return AssetsDatabase::get()->asset();
+    return AssetsDatabase::get()->asset(this->_hash);
 }
 
 const Qt::ItemFlags AssetsTreeViewItem::flags() const {
@@ -77,10 +71,6 @@ const QString AssetsTreeViewItem::displayName() const {
 
 const AssetsTreeViewItem::Type AssetsTreeViewItem::type() const {
     return this->_type;
-}
-
-const RPZAtomType AssetsTreeViewItem::atomType() const {
-    return this->_atomType;
 }
 
 AssetsTreeViewItem* AssetsTreeViewItem::parent() {
@@ -285,10 +275,6 @@ void AssetsTreeViewItem::_defineFlags() {
     }
 }
 
-void AssetsTreeViewItem::_defineAtomType() {
-    this->_atomType = toAtomType(this->_type);
-}
-
 void AssetsTreeViewItem::_definePath() {
 
     //assimilated root, let default...
@@ -454,11 +440,11 @@ QList<AssetsTreeViewItem::Type> AssetsTreeViewItem::movableStaticContainerTypes(
     return _movableStaticContainerTypes;
 }
 
-QList<AssetsTreeViewItem::Type> AssetsTreeViewItem::internalItemTypes() {
+const QList<AssetsTreeViewItem::Type> AssetsTreeViewItem::internalItemTypes() {
     return _internalItemsTypes;
 }
 
-QString AssetsTreeViewItem::typeDescription(AssetsTreeViewItem::Type &type) {
+const QString AssetsTreeViewItem::typeDescription(const AssetsTreeViewItem::Type &type) {
     return tr(qUtf8Printable(_typeDescriptions.value(type)));
 }
 
