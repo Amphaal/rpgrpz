@@ -27,6 +27,7 @@ enum class AtomParameter {
     AssetScale,
     ShapeCenter
 };
+inline uint qHash(const AtomParameter &key, uint seed = 0) {return uint(key) ^ seed;}
 
 typedef QHash<AtomParameter, QVariant> AtomUpdates;
 

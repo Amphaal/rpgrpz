@@ -35,6 +35,7 @@ class AssetsTreeViewItem : public QObject {
             BackgroundContainer = (int)AssetsDatabase::StorageContainer::Background,
                 Background = (int)AtomType::Background 
         };
+        Q_ENUM(Type)
         
         static QList<AssetsTreeViewItem::Type> staticContainerTypes();
         static QList<AssetsTreeViewItem::Type> movableStaticContainerTypes();
@@ -196,3 +197,4 @@ class AssetsTreeViewItem : public QObject {
         };
 
 };
+inline uint qHash(const AssetsTreeViewItem::Type &key, uint seed = 0) {return uint(key) ^ seed;}

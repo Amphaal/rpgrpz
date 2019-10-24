@@ -36,7 +36,7 @@ static const QStringList PayloadAlterationAsStr {
 };
 
 class AlterationPayload : public QVariantHash { 
-    
+
     public:
         enum class Source {
             Undefined,
@@ -111,3 +111,5 @@ class AlterationPayload : public QVariantHash {
 
 Q_DECLARE_METATYPE(PayloadAlteration)
 Q_DECLARE_METATYPE(AlterationPayload)
+
+inline uint qHash(const AlterationPayload::Source &key, uint seed = 0) {return uint(key) ^ seed;}

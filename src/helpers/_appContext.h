@@ -10,7 +10,6 @@
 #include <QApplication>
 
 #include "src/helpers/_appSettings.hpp"
-#include "src/helpers/RPZQVariant.hpp"
 #include "src/_libs/snowflake/snowflake.h"
 
 class AppContext {

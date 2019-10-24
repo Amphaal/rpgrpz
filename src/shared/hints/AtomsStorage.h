@@ -18,7 +18,7 @@
 #include "src/shared/database/MapDatabase.h"
 
 struct AtomsSelectionDescriptor {
-    std::set<AtomType> representedTypes; //prefer std::set to QSet since it handles enum class
+    QSet<AtomType> representedTypes;
     RPZAtom templateAtom;
     QVector<RPZAtomId> selectedAtomIds;
 };

@@ -7,6 +7,8 @@
 
 class AtomConverter {
     public:   
+        enum class DataIndex { BrushTransform = 2555, IsTemporary = 2666, BrushDrawStyle = 2767 };
+
             static QVariantHash brushTransform(QGraphicsItem *item);
             static void setBrushTransform(QGraphicsItem *item, const QVariantHash &transforms);
 
@@ -22,10 +24,9 @@ class AtomConverter {
         static RPZAtom graphicsToAtom(QGraphicsItem* blueprint, RPZAtom templateCopy);
 
     private:
-        enum class DataIndex { BrushTransform = 2555, IsTemporary = 2666, BrushDrawStyle = 2767 };
-
         static void _bulkTransformApply(QGraphicsItem* itemBrushToUpdate);
         static bool _setParamToGraphicsItemFromAtom(const AtomParameter &param, QGraphicsItem* itemToUpdate, const QVariant &val);
         static void _setParamToAtomFromGraphicsItem(const AtomParameter &param, RPZAtom &atomToUpdate, QGraphicsItem* blueprint);
 
 };
+inline uint qHash(const AtomConverter::DataIndex &key, uint seed = 0) {return uint(key) ^ seed;}

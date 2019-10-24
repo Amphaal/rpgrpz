@@ -27,7 +27,7 @@ class JSONDatabase {
 
         typedef QHash<QPair<QString, JSONDatabase::EntityType>, void*> Model;
         typedef std::function<void(QJsonObject&)> UpdateHandler;
-        typedef int JSONDatabase::Version;
+        typedef int Version;
 
         //remove from the array the elements in the set
         static QJsonArray diff(QJsonArray &target, QSet<QString> &toRemoveFromTarget);
@@ -54,13 +54,13 @@ class JSONDatabase {
 
         //create new file formated for new API expected version if possible
         virtual QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> _getUpdateHandlers();
-        bool _handleVersionMissmatch(QJsonObject &databaseToUpdate, int databaseToUpdateVersion);
+        bool _handleVersionMissmatch(QJsonObject &databaseToUpdate, JSONDatabase::Version databaseToUpdateVersion);
 
         //pure, replace
         virtual void _setupLocalData() = 0;
         virtual JSONDatabase::Model _getDatabaseModel() = 0;
-        virtual const int apiVersion() = 0;
-        const int dbVersion();
+        virtual const JSONDatabase::Version apiVersion() = 0;
+        const JSONDatabase::Version dbVersion();
 
         void _initDatabaseFromJSONFile(const QString &dbFilePath);
 

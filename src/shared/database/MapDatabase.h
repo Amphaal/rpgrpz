@@ -28,7 +28,7 @@ class MapDatabase : public JSONDatabase {
 
     protected:
         void saveIntoFile();
-        const int apiVersion() override;
+        const JSONDatabase::Version apiVersion() override;
 
         const RPZMap<RPZAtom>& _atoms() const;
         const QSet<RPZAssetHash>& _usedAssetsIds() const;

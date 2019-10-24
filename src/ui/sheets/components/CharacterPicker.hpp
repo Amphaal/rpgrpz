@@ -6,7 +6,7 @@
 #include <QPushButton>
 #include <QMessageBox>
 
-#include "src/shared/database/CharactersDatabase.hpp"
+#include "src/shared/database/CharactersDatabase.h"
 
 class CharacterPicker : public QWidget {
 
@@ -20,6 +20,7 @@ class CharacterPicker : public QWidget {
 
     public:
         enum class Mode { Unknown, Local, Remote };
+        Q_ENUM(Mode)
 
         CharacterPicker() : 
             _characterListCombo(new QComboBox), 

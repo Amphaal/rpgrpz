@@ -14,21 +14,22 @@
 
 #include "src/shared/hints/MapHint.h"
 
-#include "src/shared/database/CharactersDatabase.hpp"
+#include "src/shared/database/CharactersDatabase.h"
 
 class ConnectWidget : public QWidget {
 
     Q_OBJECT
 
     public:
+        enum class State { NotConnected, Connecting, Connected };
+        Q_ENUM(State)
+
         ConnectWidget(MapHint* hintToControlStateOf, QWidget *parent = nullptr);
 
     signals:
         void startingConnection(RPZClient* cc);
 
     private:
-        enum class State { NotConnected, Connecting, Connected };
-
         QLineEdit* _domainTarget = nullptr;
         QLineEdit* _nameTarget = nullptr;
         QComboBox* _characterSheetTarget = nullptr;

@@ -26,6 +26,7 @@ class AssetsDatabase : public QObject, public JSONDatabase {
             Downloaded = 601,
             Background = 701
         };
+        Q_ENUM(StorageContainer)
 
         //singleton
         static AssetsDatabase* get();
@@ -55,7 +56,7 @@ class AssetsDatabase : public QObject, public JSONDatabase {
         void assetRenamed(const RPZAssetHash &id, const QString &newName);
 
     protected:
-        const int apiVersion() override;
+        const JSONDatabase::Version apiVersion() override;
         void _removeDatabaseLinkedFiles() override;
     
         QMap<RPZFolderPath, QSet<RPZAssetHash>> _paths;

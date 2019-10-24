@@ -25,6 +25,8 @@ class Playlist : public QListWidget {
 
     public:
         enum class YoutubeUrlType { YoutubePlaylist, YoutubeVideo };
+        Q_ENUM(YoutubeUrlType)
+
         Playlist(QWidget* parent = nullptr);
 
         void playNext();

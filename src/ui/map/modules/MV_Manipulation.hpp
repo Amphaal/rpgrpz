@@ -13,6 +13,8 @@
 
 class MV_Manipulation {
     public:
+        enum class MoveDirection { GoUndefined, GoLeft, GoUp, GoRight, GoDown };
+        
         MV_Manipulation(QGraphicsView* view) : _view(view) {
 
             //define stiff animation
@@ -141,9 +143,7 @@ class MV_Manipulation {
 
         virtual void onAnimationManipulationTickDone() {} //overidable
 
-
     private:
-        enum class MoveDirection { GoUndefined, GoLeft, GoUp, GoRight, GoDown };
         struct MoveInstruction {
             QScrollBar* affectedScroll;
             int correction;
@@ -175,7 +175,6 @@ class MV_Manipulation {
                     return MoveDirection::GoUndefined;
             }
         }
-
         
         void _runAnimationOnKeyMove(qreal x = 1) {
             
@@ -194,7 +193,6 @@ class MV_Manipulation {
             this->onAnimationManipulationTickDone();
 
         }
-
 
         QList<MoveInstruction> _getMoveInstructions(const QSet<MoveDirection> &directions) {
             QList<MoveInstruction> out;
@@ -262,3 +260,5 @@ class MV_Manipulation {
         }
 
 };
+
+inline uint qHash(const MV_Manipulation::MoveDirection &key, uint seed = 0) {return uint(key) ^ seed;}

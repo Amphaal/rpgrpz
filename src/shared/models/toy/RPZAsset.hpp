@@ -143,6 +143,7 @@ class RPZAsset : public QVariantHash {
             if(!success) {
                 qDebug() << "Assets : cannot copy asset to storage, it already exists !";
             }
+            return success;
         }
 
         static bool _createFileHandler(const QUrl &url, QFile* fileReader) {

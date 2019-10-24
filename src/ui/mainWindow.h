@@ -45,6 +45,9 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
     Q_OBJECT
     
     public:
+        enum class UIMode { Unset, Full, Player };
+        Q_ENUM(UIMode)
+
         MainWindow();
         ~MainWindow();
     
@@ -56,7 +59,6 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
         void _onConnectionToServer();
 
     private:
-        enum class UIMode { Unset, Full, Player };
         void closeEvent(QCloseEvent *event) override;
         
         void _initUI();

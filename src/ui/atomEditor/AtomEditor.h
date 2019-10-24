@@ -28,6 +28,7 @@ class AtomEditor : public QGroupBox, public AlterationActor {
 
     public:
         enum class EditMode { None, Template, Selection };
+        Q_ENUM(EditMode)
 
         AtomEditor(QWidget* parent = nullptr);
         void buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr);

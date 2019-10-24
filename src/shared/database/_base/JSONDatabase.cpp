@@ -63,7 +63,7 @@ const QString JSONDatabase::dbFilePath() {
     return this->_destfile->fileName();
 }
 
-const int JSONDatabase::dbVersion() {
+const JSONDatabase::Version JSONDatabase::dbVersion() {
     return _getDbVersion(this->_dbCopy);
 }
 
@@ -100,7 +100,7 @@ QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> JSONDatabase::_getUpda
     return QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler>();
 }
 
-bool JSONDatabase::_handleVersionMissmatch(QJsonObject &databaseToUpdate, int databaseToUpdateVersion) {
+bool JSONDatabase::_handleVersionMissmatch(QJsonObject &databaseToUpdate, JSONDatabase::Version databaseToUpdateVersion) {
     
     auto defaultBehavior = [&](const QString &reason){
         qDebug() << "JSON Database : Database have not been updated :" << reason;

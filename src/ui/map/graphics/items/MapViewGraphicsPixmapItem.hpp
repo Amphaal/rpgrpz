@@ -18,18 +18,18 @@ class MapViewGraphicsPixmapItem : public QGraphicsPixmapItem {
     
     public:
         MapViewGraphicsPixmapItem(const RPZAsset &assetMetadata) : 
-            QGraphicsPixmapItem(fetchCachedPixmap(assetMetadata)) { }
+            QGraphicsPixmapItem(*fetchCachedPixmap(assetMetadata)) { }
 
     private:
 
-        static QPixmap fetchCachedPixmap(const RPZAsset &assetMetadata) {
-            QPixmap cached;
+        static const QPixmap* fetchCachedPixmap(const RPZAsset &assetMetadata) {
+            QPixmap* cached = nullptr;
 
-            auto assetId = assetMetadata.assetId();
-            auto foundInCache = QPixmapCache::find(assetId, &cached);
+            auto hash = assetMetadata.hash();
+            auto foundInCache = QPixmapCache::find(hash, cached);
             if(!foundInCache) {
-                cached = QPixmap(assetMetadata.pathToAssetFile());
-                QPixmapCache::insert(assetId, cached);
+                QPixmap pix(assetMetadata.filepath());
+                QPixmapCache::insert(hash, pix);
             }
 
             return cached;

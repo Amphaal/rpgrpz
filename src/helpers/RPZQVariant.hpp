@@ -77,3 +77,4 @@ class RPZQVariant {
             item->setData(0, (int)RPZQVariant::Roles::AtomType, (int)type);
         }
 };
+inline uint qHash(const RPZQVariant::Roles &key, uint seed = 0) {return uint(key) ^ seed;}

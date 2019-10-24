@@ -18,6 +18,7 @@ class TrackToolbar : public QWidget {
 
     public:
         enum class Action { Rewind, Forward, Play, Pause };
+        Q_ENUM(Action)
 
         TrackToolbar(QWidget* parent = nullptr);
     

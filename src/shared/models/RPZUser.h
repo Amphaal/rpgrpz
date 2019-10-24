@@ -17,10 +17,11 @@ class RPZUser : public Serializable {
 
     public:
         enum class Role { Observer, Host, Player };
-        static const inline QHash<Role, QString> IconsByRoles = { 
-            {Role::Observer, ":/icons/app/connectivity/observer.png"},
-            {Role::Host, ":/icons/app/connectivity/crown.png"},
-            {Role::Player, ":/icons/app/connectivity/cloak.png"}
+
+        static const inline QHash<RPZUser::Role, QString> IconsByRoles { 
+            { Role::Observer, QStringLiteral(u":/icons/app/connectivity/observer.png") },
+            { Role::Host, QStringLiteral(u":/icons/app/connectivity/crown.png") },
+            { Role::Player, QStringLiteral(u":/icons/app/connectivity/cloak.png") }
         };
         
         RPZUser();
@@ -43,3 +44,5 @@ class RPZUser : public Serializable {
         void _setColor(const QColor &color = QColor());
 
 };
+
+inline uint qHash(const RPZUser::Role &key, uint seed = 0) {return uint(key) ^ seed;}

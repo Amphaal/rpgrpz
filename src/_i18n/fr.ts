@@ -65,7 +65,7 @@
 <context>
     <name>AssetsTreeViewItem</name>
     <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="191"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="187"/>
         <source>Internal</source>
         <translation>Interne</translation>
     </message>
@@ -74,42 +74,42 @@
         <translation type="vanished">Joueur</translation>
     </message>
     <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="192"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="188"/>
         <source>Event</source>
         <translation>Evénement</translation>
     </message>
     <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="193"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="189"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="194"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="190"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="195"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="191"/>
         <source>NPC / Portraits</source>
         <translation>PNJ / Portraits</translation>
     </message>
     <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="196"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="192"/>
         <source>Objects</source>
         <translation>Objets</translation>
     </message>
     <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="197"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="193"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="198"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="194"/>
         <source>Downloaded</source>
         <translation>Téléchargés</translation>
     </message>
     <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="199"/>
+        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="195"/>
         <source>Landscapes</source>
         <translation>Paysages</translation>
     </message>
@@ -692,99 +692,99 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="85"/>
+        <location filename="../ui/mainWindow.cpp" line="89"/>
         <source>Press ALT key to display the menu !</source>
         <translation>Appuyez sur la touche ALT pour afficher le menu !</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="143"/>
+        <location filename="../ui/mainWindow.cpp" line="147"/>
         <source>No</source>
         <translation>Non</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="191"/>
+        <location filename="../ui/mainWindow.cpp" line="195"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="266"/>
+        <location filename="../ui/mainWindow.cpp" line="270"/>
         <source>Toy box</source>
         <translation>Boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="339"/>
+        <location filename="../ui/mainWindow.cpp" line="343"/>
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="338"/>
+        <location filename="../ui/mainWindow.cpp" line="342"/>
         <source>Sheets</source>
         <translation>Fiches</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="353"/>
+        <location filename="../ui/mainWindow.cpp" line="357"/>
         <source>Map Atoms</source>
         <translation>Atomes de la carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="354"/>
+        <location filename="../ui/mainWindow.cpp" line="358"/>
         <source>Atom Editor</source>
         <translation>Editeur d&apos;atomes</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="290"/>
+        <location filename="../ui/mainWindow.cpp" line="294"/>
         <source>Game Hub</source>
         <translation>Hub de jeu</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="492"/>
+        <location filename="../ui/mainWindow.cpp" line="496"/>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="506"/>
+        <location filename="../ui/mainWindow.cpp" line="510"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="508"/>
-        <location filename="../ui/mainWindow.cpp" line="534"/>
-        <location filename="../ui/mainWindow.cpp" line="562"/>
+        <location filename="../ui/mainWindow.cpp" line="512"/>
+        <location filename="../ui/mainWindow.cpp" line="538"/>
+        <location filename="../ui/mainWindow.cpp" line="566"/>
         <source>Game map (*%1)</source>
         <translation>Carte de campagne (*%1)</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="532"/>
+        <location filename="../ui/mainWindow.cpp" line="536"/>
         <source>Load a new map</source>
         <translation>Charger une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="560"/>
+        <location filename="../ui/mainWindow.cpp" line="564"/>
         <source>Save as...</source>
         <translation>Savegarder sous...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="596"/>
+        <location filename="../ui/mainWindow.cpp" line="600"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="651"/>
+        <location filename="../ui/mainWindow.cpp" line="655"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="665"/>
+        <location filename="../ui/mainWindow.cpp" line="669"/>
         <source>Searching for updates...</source>
         <translation>Recherche des mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="665"/>
+        <location filename="../ui/mainWindow.cpp" line="669"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="689"/>
+        <location filename="../ui/mainWindow.cpp" line="693"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
@@ -1088,7 +1088,7 @@
         <translation>Trop éloigné pour afficher la grille !</translation>
     </message>
     <message>
-        <location filename="../shared/database/AssetsDatabase.cpp" line="151"/>
+        <location filename="../shared/database/AssetsDatabase.cpp" line="161"/>
         <source>Folder</source>
         <translation>Dossier</translation>
     </message>

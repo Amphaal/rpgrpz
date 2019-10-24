@@ -4,7 +4,7 @@
 #include <QGroupBox>
 
 #include "CharacterSheet.hpp"
-#include "src/shared/database/CharactersDatabase.hpp"
+#include "src/shared/database/CharactersDatabase.h"
 
 #include "src/ui/_others/ConnectivityObserver.h"
 

@@ -10,7 +10,7 @@ AssetsDatabase* AssetsDatabase::get() {
     return _singleton;
 }
 
-const int AssetsDatabase::apiVersion() {
+const JSONDatabase::Version AssetsDatabase::apiVersion() {
     return 5;
 }
 
@@ -51,7 +51,7 @@ void AssetsDatabase::_saveIntoFile() {
 void AssetsDatabase::_setupLocalData() {
 
     //paths
-    for(auto &i : this->entityAsObject(QStringLiteral(u"paths"))) {
+    for(auto i : this->entityAsObject(QStringLiteral(u"paths"))) {
         
         auto paths = i.toObject();
         
@@ -67,7 +67,7 @@ void AssetsDatabase::_setupLocalData() {
     }
 
     //assets
-    for(auto &i : this->entityAsObject(QStringLiteral(u"assets"))) {
+    for(auto i : this->entityAsObject(QStringLiteral(u"assets"))) {
         auto asset = RPZAsset(i.toVariant().toHash());
         this->_assets.insert(asset.hash(), asset);
     }

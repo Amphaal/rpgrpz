@@ -7,6 +7,7 @@
 class AnimationTimeLine : public QTimeLine {
     public:
         enum class Type { Zoom };
+        Q_ENUM(Type)
 
         void setStateModifier(const qreal modifier) { this->_currentModifier = modifier; };
 
@@ -77,3 +78,5 @@ class AnimationTimeLine : public QTimeLine {
         qreal _currentModifier = 0;
 
 };
+
+inline uint qHash(const AnimationTimeLine::Type &key, uint seed = 0) {return uint(key) ^ seed;}
