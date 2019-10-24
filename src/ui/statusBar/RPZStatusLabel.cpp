@@ -1,13 +1,13 @@
 #include "RPZStatusLabel.h"
 
-RPZStatusLabel::RPZStatusLabel(QString descriptor, QWidget* parent) : QWidget(parent), 
-    _descriptorLbl(new QLabel(descriptor + ":")), 
+RPZStatusLabel::RPZStatusLabel(const QString &description, QWidget* parent) : QWidget(parent), 
+    _descriptionLbl(new QLabel(description + ":")), 
     _dataLbl(new QLabel),
     _loaderLbl(new QLabel) {
 
     this->setLayout(new QHBoxLayout);
     this->layout()->setContentsMargins(0, 0, 0, 0);
-    this->layout()->addWidget(this->_descriptorLbl);
+    this->layout()->addWidget(this->_descriptionLbl);
     this->layout()->addWidget(this->_dataLbl);
     
     //default state

@@ -9,23 +9,27 @@ RPZAtom::RPZAtom(const AtomType &type) : Serializable(SnowFlake::get()->nextId()
     this->_setType(type);  
 };
 
-//overrides descriptor
-QString RPZAtom::descriptor() const { 
+const QString RPZAtom::toString(const AtomType &type, const QString &assetName) { 
 
-    //displays asset name
-    auto asname = this->assetName();
-    if(!asname.isEmpty()) {
-		auto descriptor = this->_defaultDescriptor();
+    auto out = atomTypeToText(type);
+
+    if(!assetName.isEmpty()) {
+		
 		return QStringLiteral(u"%1 (%2)")
-					.arg(asname)
-					.arg(descriptor);
+					.arg(assetName)
+					.arg(out);
     }
 
-    return this->_defaultDescriptor();
+    return out;
+    
 };
 
-QString RPZAtom::_defaultDescriptor() const {
-    switch(this->type()) {
+const QString RPZAtom::toString() const {
+    return toString(this->type(), this->assetName());
+}
+
+const QString RPZAtom::atomTypeToText(const AtomType &type) {
+    switch(type) {
         case AtomType::Drawing:
             return QObject::tr("Drawing");
         case AtomType::Text:

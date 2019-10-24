@@ -16,14 +16,14 @@ class RPZStatusLabel : public QWidget {
     public:
         enum State {Finished = 0, Waiting, Processing, Error };
 
-        RPZStatusLabel(QString descriptor, QWidget* parent = nullptr);
+        RPZStatusLabel(const QString &description, QWidget* parent = nullptr);
 
         void updateState(const QString &stateText, RPZStatusLabel::State state = Finished);
         void setWaiting(bool waiting);
         QLabel* dataLabel();
 
     private:
-        QLabel* _descriptorLbl = nullptr;
+        QLabel* _descriptionLbl = nullptr;
         QLabel* _dataLbl = nullptr;
         QLabel* _loaderLbl = nullptr;
         QMovie* _loader = nullptr;

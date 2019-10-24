@@ -7,6 +7,10 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
     ProgressTracker::get();
     ConnectivityObserverSynchronizer::get();
 
+    //init databases
+    AssetsDatabase::get();
+    CharactersDatabase::get();
+
     //init...
     this->_initUI();
     this->_initConnectivity();

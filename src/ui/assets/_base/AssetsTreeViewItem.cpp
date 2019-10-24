@@ -1,11 +1,16 @@
 #include "AssetsTreeViewItem.h"
 
-AssetsTreeViewItem* AssetsTreeViewItem::fromIndex(const QModelIndex &index) {
-    auto ip = index.internalPointer();
-    return static_cast<AssetsTreeViewItem*>(ip);
+AssetsTreeViewItem::AssetsTreeViewItem(const RPZAsset* asset, AssetsTreeViewItem* parent) : AssetsTreeViewItem(
+        asset->name(), 
+        parent, 
+        parent->insertType()
+    ) {
+ 
+    this->_hash = asset->hash();
+
 }
 
-AssetsTreeViewItem::AssetsTreeViewItem() : AssetsTreeViewItem(QStringLiteral(u""), nullptr, Root) { };
+AssetsTreeViewItem::AssetsTreeViewItem() : AssetsTreeViewItem(QString(), nullptr, AssetsTreeViewItem::Type::Root) {};
 
 AssetsTreeViewItem::~AssetsTreeViewItem(){
     
@@ -14,18 +19,6 @@ AssetsTreeViewItem::~AssetsTreeViewItem(){
     }
 
     qDeleteAll(this->_subElements);
-}
-
-AssetsTreeViewItem::AssetsTreeViewItem(const RPZToyMetadata &assetMetadata) : 
-    AssetsTreeViewItem(
-        assetMetadata.assetName(), 
-        assetMetadata.associatedParent(), 
-        assetMetadata.associatedParent()->insertType()
-    ) {
- 
-    this->_id = assetMetadata.assetId();
-    this->_toyMetadata = assetMetadata;
-
 }
 
 AssetsTreeViewItem::AssetsTreeViewItem(
@@ -59,9 +52,9 @@ void AssetsTreeViewItem::_setType(const AssetsTreeViewItem::Type &type) {
     this->_defineIsStaticContainer();
     this->_defineIsDeletable();
 
-    //redefine RPZToyMetadata
-    if(!this->_toyMetadata.isEmpty()) {
-        this->_toyMetadata.setAtomType(this->atomType());
+    //redefine RPZAsset
+    if(!this->_asset.isEmpty()) {
+        this->_asset.setAtomType(this->atomType());
     }
     
 }
@@ -70,28 +63,23 @@ void AssetsTreeViewItem::_setType(const AssetsTreeViewItem::Type &type) {
 // RO Properties //
 ///////////////////
 
-RPZToyMetadata AssetsTreeViewItem::toyMetadata() const {
-    if(this->_toyMetadata.isEmpty() && !this->isContainer()) return RPZToyMetadata(this->atomType());
-    return this->_toyMetadata;
+const RPZAsset* AssetsTreeViewItem::asset() const {
+    return AssetsDatabase::get()->asset();
 }
 
-Qt::ItemFlags AssetsTreeViewItem::flags() const {
+const Qt::ItemFlags AssetsTreeViewItem::flags() const {
     return this->_flags;
 }
 
-QString AssetsTreeViewItem::displayName() const {
+const QString AssetsTreeViewItem::displayName() const {
     return this->_name;
 }
 
-RPZAssetHash AssetsTreeViewItem::id() const {
-    return this->_id;
-}
-
-AssetsTreeViewItem::Type AssetsTreeViewItem::type() const {
+const AssetsTreeViewItem::Type AssetsTreeViewItem::type() const {
     return this->_type;
 }
 
-AtomType AssetsTreeViewItem::atomType() const {
+const AtomType AssetsTreeViewItem::atomType() const {
     return this->_atomType;
 }
 
@@ -99,15 +87,11 @@ AssetsTreeViewItem* AssetsTreeViewItem::parent() {
     return this->_parentElement;
 }
 
-QString AssetsTreeViewItem::fullPath() const {
-    return this->_fullPath;
-}
-
-QString AssetsTreeViewItem::path() const {
+const QString AssetsTreeViewItem::path() const {
     return this->_path;
 }
 
-QString AssetsTreeViewItem::iconPath() const {
+const QString AssetsTreeViewItem::iconPath() const {
     return this->_iconPath;
 }
 
@@ -127,19 +111,15 @@ bool AssetsTreeViewItem::isIdentifiable() const {
     return this->_isIdentifiable;
 }
 
-bool AssetsTreeViewItem::isStaticContainer() const {
-    return this->_isStaticContainer;
-}
-
 bool AssetsTreeViewItem::isDeletable() const {
     return this->_isDeletable;
 }
 
-AssetsTreeViewItem::Type AssetsTreeViewItem::insertType() const {
+const AssetsTreeViewItem::Type AssetsTreeViewItem::insertType() const {
     return this->_insertType;
 }
 
-AssetsTreeViewItem::Type AssetsTreeViewItem::rootStaticContainer() const {
+const AssetsTreeViewItem::Type AssetsTreeViewItem::rootStaticContainer() const {
     return this->_rootStaticContainerType;
 }
 
@@ -321,7 +301,7 @@ void AssetsTreeViewItem::_definePath() {
     auto path = QString();
     if(this->isContainer()) {
 
-        if(this->isStaticContainer()) {
+        if(this->_isStaticContainer) {
             //if is static, dont use name
             path = "/{" + QString::number((int)this->type()) + "}";
         } else {
@@ -422,13 +402,13 @@ void AssetsTreeViewItem::_defineRootStaticContainer() {
     }
 
     //if self is bound
-    if(this->isStaticContainer()) {
+    if(this->_isStaticContainer) {
         this->_rootStaticContainerType = this->_type;
         return;
     }
 
     //fetch the information from parent
-    this->_rootStaticContainerType = this->_parentElement->isStaticContainer() ? 
+    this->_rootStaticContainerType = this->_parentElement->_isStaticContainer ? 
             this->_parentElement->type() : 
             this->_parentElement->rootStaticContainer();
 }
@@ -503,7 +483,7 @@ void AssetsTreeViewItem::sortByPathLengthDesc(QList<AssetsTreeViewItem*> &listTo
     //sort algorythm
     struct {
         bool operator()(AssetsTreeViewItem* a, AssetsTreeViewItem* b) const {   
-            return a->fullPath().count("/") > b->fullPath().count("/");
+            return a->_fullPath.count("/") > b->_fullPath.count("/");
         }   
     } pathLength;
 
@@ -551,7 +531,7 @@ QSet<AssetsTreeViewItem*> AssetsTreeViewItem::filterTopMostOnly(QList<AssetsTree
 
         //compare
         auto toCompareTo = elemsToFilter.takeFirst();
-            auto compare_path = toCompareTo->fullPath();
+            auto compare_path = toCompareTo->_fullPath;
             auto compare_length = compare_path.length();
         
         auto isForeigner = true;
@@ -560,7 +540,7 @@ QSet<AssetsTreeViewItem*> AssetsTreeViewItem::filterTopMostOnly(QList<AssetsTree
         QSet<AssetsTreeViewItem*> obsoletePointers;
         for(auto &st : higher) {
 
-            auto st_path = st->fullPath();
+            auto st_path = st->_fullPath;
             auto st_length = st_path.length();
 
             auto outputArrayContainsBuffered = st_path.startsWith(compare_path);
@@ -594,3 +574,8 @@ QSet<AssetsTreeViewItem*> AssetsTreeViewItem::filterTopMostOnly(QList<AssetsTree
 //////////////////
 /// END HELPERS //
 //////////////////
+
+AssetsTreeViewItem* AssetsTreeViewItem::fromIndex(const QModelIndex &index) {
+    auto ip = index.internalPointer();
+    return static_cast<AssetsTreeViewItem*>(ip);
+}

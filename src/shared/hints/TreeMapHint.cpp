@@ -193,7 +193,7 @@ void TreeMapHint::_applyMove(LayerManipulationHelper &mvHelper) {
                 }
             }
 
-            emit requestingUIAlteration(Removed, mightDelete);
+            emit requestingUIAlteration(PayloadAlteration::Removed, mightDelete);
         }
 
     }
@@ -259,7 +259,8 @@ QTreeWidgetItem* TreeMapHint::_createTreeItem(const RPZAtom &atom) {
         )
     );
 
-    item->setText(0, atom.descriptor());
+    item->setText(0, atom.toString());
+    RPZQVariant::setAtomType(item, atom.type());
     RPZQVariant::setAtomId(item, atom.id());
     RPZQVariant::setAssetHash(item, atom.assetId());
     RPZQVariant::setAtomLayer(item, layer);

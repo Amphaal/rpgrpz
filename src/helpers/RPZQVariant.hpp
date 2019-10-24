@@ -15,7 +15,8 @@ class RPZQVariant {
             AtomVisibility = 1004,
             AtomAvailability = 1005,
             AtomId = 1006,
-            YTVideoMetadataPtr = 1007
+            YTVideoMetadataPtr = 1007,
+            AtomType = 1008
         };
 
         static YoutubeVideoMetadata* ytVideoMetadata(QListWidgetItem* item) {
@@ -67,5 +68,12 @@ class RPZQVariant {
         }
         static void setAtomAvailability(QTreeWidgetItem* item, bool availability) {
             item->setData(1, (int)RPZQVariant::Roles::AtomAvailability, availability);
+        }
+
+        static AtomType atomType(const QTreeWidgetItem* item) {
+            return (AtomType)item->data(0, (int)RPZQVariant::Roles::AtomType).toInt();
+        }
+        static void setAtomType(QTreeWidgetItem* item, const AtomType &type) {
+            item->setData(0, (int)RPZQVariant::Roles::AtomType, (int)type);
         }
 };

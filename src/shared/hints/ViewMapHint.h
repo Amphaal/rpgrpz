@@ -13,7 +13,7 @@
 #include <QGraphicsSvgItem>
 #include <QPixmap>
 
-#include "src/shared/models/toy/RPZToyMetadata.h"
+#include "src/shared/models/toy/RPZAsset.hpp"
 
 #include "src/ui/map/graphics/CustomGraphicsItemHelper.h"
 
@@ -62,7 +62,7 @@ class ViewMapHint : public AtomsStorage {
         QGraphicsItem* _ghostItem = nullptr;
         
         mutable QMutex _m_templateAsset;
-        RPZToyMetadata _templateAsset;
+        RPZAsset _templateAsset;
 
         mutable QMutex _m_templateAtom;
         RPZAtom _templateAtom;
@@ -73,12 +73,12 @@ class ViewMapHint : public AtomsStorage {
         QMultiHash<RPZAssetHash, QGraphicsItem*> _missingAssetsIdsFromDb;
         
         //helpers
-        QGraphicsItem* _generateGhostItem(const RPZToyMetadata &assetMetadata);
+        QGraphicsItem* _generateGhostItem(const RPZAsset &assetMetadata);
         QGraphicsItem* _buildGraphicsItemFromAtom(const RPZAtom &atomToBuildFrom);
         void _crossBindingAtomWithGI(const RPZAtom &atom, QGraphicsItem* gi);
 
         //missing assets tracking
-        void _replaceMissingAssetPlaceholders(const RPZToyMetadata &metadata); //safe
+        void _replaceMissingAssetPlaceholders(const RPZAsset &metadata); //safe
 
         //augmenting AtomsStorage
         void addAtom(const RPZAtom &toAdd) override;

@@ -7,7 +7,7 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsTextItem>
 
-#include "src/shared/models/toy/RPZToyMetadata.h"
+#include "src/shared/models/toy/RPZAsset.hpp"
 
 #include <QVariant>
 #include <QBrush>
@@ -17,12 +17,12 @@
 class MapViewGraphicsPixmapItem : public QGraphicsPixmapItem {
     
     public:
-        MapViewGraphicsPixmapItem(const RPZToyMetadata &assetMetadata) : 
+        MapViewGraphicsPixmapItem(const RPZAsset &assetMetadata) : 
             QGraphicsPixmapItem(fetchCachedPixmap(assetMetadata)) { }
 
     private:
 
-        static QPixmap fetchCachedPixmap(const RPZToyMetadata &assetMetadata) {
+        static QPixmap fetchCachedPixmap(const RPZAsset &assetMetadata) {
             QPixmap cached;
 
             auto assetId = assetMetadata.assetId();

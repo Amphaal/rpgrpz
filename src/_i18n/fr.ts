@@ -834,17 +834,17 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../shared/models/RPZAtom.cpp" line="30"/>
+        <location filename="../shared/models/RPZAtom.cpp" line="34"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.cpp" line="32"/>
+        <location filename="../shared/models/RPZAtom.cpp" line="36"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.cpp" line="36"/>
+        <location filename="../shared/models/RPZAtom.cpp" line="40"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
@@ -1033,52 +1033,52 @@
         <translation>Nouvel Inventaire</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.cpp" line="34"/>
+        <location filename="../shared/models/RPZAtom.cpp" line="38"/>
         <source>Object</source>
         <translation>Objet</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.cpp" line="38"/>
+        <location filename="../shared/models/RPZAtom.cpp" line="42"/>
         <source>Atom</source>
         <translation>Atome</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZMessage.cpp" line="30"/>
+        <location filename="../shared/models/messaging/RPZMessage.cpp" line="30"/>
         <source> said : </source>
         <translation> a dit : </translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZMessage.cpp" line="30"/>
+        <location filename="../shared/models/messaging/RPZMessage.cpp" line="30"/>
         <source>you said : </source>
         <translation>vous dites : </translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZMessage.cpp" line="35"/>
+        <location filename="../shared/models/messaging/RPZMessage.cpp" line="35"/>
         <source> whispers to you : </source>
         <translation> vous chuchotte : </translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZMessage.cpp" line="39"/>
+        <location filename="../shared/models/messaging/RPZMessage.cpp" line="39"/>
         <source>your whisper to </source>
         <translation>vous chuchottez à </translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZResponse.cpp" line="28"/>
+        <location filename="../shared/models/messaging/RPZResponse.cpp" line="28"/>
         <source>Server has not understood your command. Type &quot;/h&quot; for help.</source>
         <translation>Le serveur n&apos;a pas compris la commande. Entrez &quot;/h&quot; pour afficher l&apos;aide.</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZResponse.cpp" line="36"/>
+        <location filename="../shared/models/messaging/RPZResponse.cpp" line="36"/>
         <source>Target users could not be found : </source>
         <translation>Les utilisateurs destinataires n&apos;ont pas pu être trouvé : </translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZResponse.cpp" line="40"/>
+        <location filename="../shared/models/messaging/RPZResponse.cpp" line="40"/>
         <source>Logged to the server (%1)</source>
         <translation>Connecté au serveur (%1)</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZResponse.cpp" line="44"/>
+        <location filename="../shared/models/messaging/RPZResponse.cpp" line="44"/>
         <source>Error has occured : </source>
         <translation>Une erreur est survenue : </translation>
     </message>
@@ -1086,6 +1086,11 @@
         <location filename="../ui/map/modules/MV_HUDLayout.hpp" line="283"/>
         <source>Too far to display grid !</source>
         <translation>Trop éloigné pour afficher la grille !</translation>
+    </message>
+    <message>
+        <location filename="../shared/database/AssetsDatabase.cpp" line="151"/>
+        <source>Folder</source>
+        <translation>Dossier</translation>
     </message>
 </context>
 <context>
@@ -1124,7 +1129,7 @@
 <context>
     <name>RPZServer</name>
     <message>
-        <location filename="../network/rpz/server/RPZServer.cpp" line="235"/>
+        <location filename="../network/rpz/server/RPZServer.cpp" line="240"/>
         <source>Your software version is different from the server&apos;s one : v%1 (you) / v%2 (server) !</source>
         <translation>Votre version logicielle diffère de la version du serveur : v%1 (vous) / v%2 (serveur) !</translation>
     </message>
@@ -1168,52 +1173,52 @@
 <context>
     <name>StatusTab</name>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="32"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="33"/>
         <source>Level</source>
         <translation>Niveau</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="35"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="36"/>
         <source>Alterations</source>
         <translation>Altérations</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="43"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="44"/>
         <source> Under the influence of a potion, filled with determination ...</source>
         <translation> Sous l&apos;effet d&apos;une potion, Rempli de détermination ...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="44"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="45"/>
         <source>State bonus :</source>
         <translation>Bonus d&apos;état :</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="48"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="49"/>
         <source> Broken leg, poisoned ...</source>
         <translation> Jambe cassée, empoisonné ...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="49"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="50"/>
         <source>State malus :</source>
         <translation>Malus d&apos;état :</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="52"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="53"/>
         <source>Gauges</source>
         <translation>Jauges</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="67"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="68"/>
         <source>Add a new gauge</source>
         <translation>Ajouter une nouvelle jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="74"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="75"/>
         <source>No gauge bound to the character</source>
         <translation>Aucune jauge liée au personnage</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="84"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="85"/>
         <source>Abilities</source>
         <translation>Compétences</translation>
     </message>

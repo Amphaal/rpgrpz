@@ -172,7 +172,9 @@
         "qstack": "cpp",
         "qtreewidgetitem": "cpp",
         "qcryptographichash": "cpp",
-        "qimagereader": "cpp"
+        "qimagereader": "cpp",
+        "qstandardpaths": "cpp",
+        "qfileinfo": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

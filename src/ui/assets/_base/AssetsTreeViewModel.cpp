@@ -1,12 +1,6 @@
 #include "AssetsTreeViewModel.h"
 
-AssetsTreeViewModel::AssetsTreeViewModel(QObject *parent) : 
-    QAbstractItemModel(parent), 
-    _db(AssetsDatabase::get()) { };
-
-AssetsDatabase* AssetsTreeViewModel::database() const {
-    return this->_db;
-}
+AssetsTreeViewModel::AssetsTreeViewModel(QObject *parent) : QAbstractItemModel(parent) {};
 
 QModelIndex AssetsTreeViewModel::getStaticContainerTypesIndex(const AssetsTreeViewItem::Type &staticContainerType) {
     
@@ -18,7 +12,7 @@ QModelIndex AssetsTreeViewModel::getStaticContainerTypesIndex(const AssetsTreeVi
     return out;
 }
 
-RPZToyMetadata AssetsTreeViewModel::integrateAsset(const RPZAssetImportPackage &package) {
+bool AssetsTreeViewModel::integrateAsset(RPZAssetImportPackage &package) {
     
     //get where exactly the new asset is supposed to be
     auto dlFolderIndex = this->getStaticContainerTypesIndex(AssetsTreeViewItem::Type::DownloadedContainer);
@@ -26,31 +20,31 @@ RPZToyMetadata AssetsTreeViewModel::integrateAsset(const RPZAssetImportPackage &
     auto posToInsert = dlFolder->childCount();
     
     this->beginInsertRows(dlFolderIndex, posToInsert, posToInsert);
-        auto metadata = this->_db->importAsset(package); 
+        auto success = AssetsDatabase::get()->importAsset(package); 
     this->endInsertRows();
 
-    return metadata;
+    return success;
 }
 
 ///////////////
 /// HELPERS ///
 ///////////////
 
-QPixmap AssetsTreeViewModel::getAssetIcon(AssetsTreeViewItem* target, QSize &sizeToApply) const {
+const QPixmap* AssetsTreeViewModel::_getAssetIcon(AssetsTreeViewItem* target, QSize &sizeToApply) {
     
-    QPixmap toFind;
+    QPixmap* toFind = nullptr;
 
     //if selected elem is no item, skip
     if(!target->isIdentifiable()) return toFind;
 
     //search in cache
-    auto idToSearch = target->id() + "_ico";
-    auto isFound = QPixmapCache::find(idToSearch, &toFind);
+    auto idToSearch = target->id() + QStringLiteral(u"_ico");
+    auto isFound = QPixmapCache::find(idToSearch, toFind);
     if(isFound) return toFind;
 
     //get asset from filepath
-    auto fpToAssetFile = AssetsDatabase::get()->getFilePathToAsset(target);
-    QPixmap pixmap(fpToAssetFile);
+    auto asset = AssetsDatabase::get()->asset(target->id());
+    QPixmap pixmap(asset->filepath());
 
     //resize it to hint
     pixmap = pixmap.scaled(
@@ -60,17 +54,17 @@ QPixmap AssetsTreeViewModel::getAssetIcon(AssetsTreeViewItem* target, QSize &siz
 
     //cache pixmap and return it
     QPixmapCache::insert(idToSearch, pixmap);
-    return pixmap;
+    
+    return toFind;
 }
 
-bool AssetsTreeViewModel::createFolder(QModelIndex &parentIndex) {
+void AssetsTreeViewModel::createFolder(QModelIndex &parentIndex) {
     this->beginInsertRows(parentIndex, 0, 0);
     
-        auto data = AssetsTreeViewItem::fromIndex(parentIndex);
-        auto result = this->_db->createFolder(data);
+        auto item = AssetsTreeViewItem::fromIndex(parentIndex);
+        AssetsDatabase::get()->createFolder(item->path());
 
     this->endInsertRows();
-    return result;
 }
 
 bool AssetsTreeViewModel::_indexListContainsIndexOrParent(const QModelIndexList &base, const QModelIndex &index) {
@@ -147,7 +141,7 @@ bool AssetsTreeViewModel::moveItemsToContainer(const QModelIndex &parentIndex, c
     }
 
     //move
-    auto result = this->_db->moveItemsToContainer(elementsToMove, parentElem);
+    auto result = AssetsDatabase::get()->moveItemsToContainer(elementsToMove, parentElem);
 
     this->endRemoveRows();
     this->endInsertRows();
@@ -166,7 +160,7 @@ bool AssetsTreeViewModel::insertAssets(QList<QUrl> &urls, const QModelIndex &par
     //for each url, insert
     auto allResultsOK = 0;
     for(auto &url : urls) {
-        auto result = this->_db->insertAsset(url, dest);
+        auto result = AssetsDatabase::get()->insertAsset(url, dest);
         if(result) allResultsOK++;
     }
 
@@ -188,7 +182,7 @@ bool AssetsTreeViewModel::removeItems(const QList<QModelIndex> &itemsIndexesToRe
             );
         }
         
-        auto result = this->_db->removeItems(items);
+        auto result = AssetsDatabase::get()->removeItems(items);
     
     this->endRemoveRows();
 
@@ -299,8 +293,8 @@ QVariant AssetsTreeViewModel::data(const QModelIndex &index, int role) const {
                 case AssetsTreeViewItem::Type::Background:
                 case AssetsTreeViewItem::Type::Downloaded: {  
                     
-                    auto cachedPixmap = getAssetIcon(data, defaultQSize);
-                    if(!cachedPixmap.isNull()) return cachedPixmap;
+                    auto cachedPixmap = _getAssetIcon(data, defaultQSize);
+                    if(cachedPixmap) return *cachedPixmap;
 
                     return QVariant();
 
@@ -333,20 +327,34 @@ QVariant AssetsTreeViewModel::data(const QModelIndex &index, int role) const {
 bool AssetsTreeViewModel::setData(const QModelIndex &index, const QVariant &value, int role) {
     
     //bound data...
-    auto data = AssetsTreeViewItem::fromIndex(index);
+    auto item = AssetsTreeViewItem::fromIndex(index);
 
     //if not main column, default behavior
     if(index.column()) return QAbstractItemModel::setData(index, value, role);
 
     switch(role) {
+        
         case Qt::EditRole: {
-            auto name = value.toString();
-            return this->_db->rename(name, data);
+
+            auto newName = value.toString();
+
+            if(auto asset = item->asset()) {
+                AssetsDatabase::get()->renameAsset(newName, asset->hash());
+                return true;
+            }
+
+            else if(item->type() == AssetsTreeViewItem::Type::Folder) {
+                AssetsDatabase::get()->renameFolder(newName, item->path());
+            }
+
+            return false;
+
         }
         break;
 
         default:
             return QAbstractItemModel::setData(index, value, role);
+
     }
 }
 

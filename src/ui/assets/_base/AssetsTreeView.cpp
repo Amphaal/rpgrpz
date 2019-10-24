@@ -80,10 +80,10 @@ void AssetsTreeView::_onAssetsAboutToBeDownloaded(const QVector<QString> &availa
     this->_expectedAssetsDownloaded = 0;
 }
 
-void AssetsTreeView::_onReceivedAsset(const RPZAssetImportPackage &package) {
+void AssetsTreeView::_onReceivedAsset(RPZAssetImportPackage package) {
     
     //integrate
-    auto toyModel = this->assetsModel()->integrateAsset(package);
+    auto success = this->assetsModel()->integrateAsset(package);
     this->_expectedAssetsDownloaded++;
 
     //update UI for progress
@@ -100,7 +100,7 @@ void AssetsTreeView::_onReceivedAsset(const RPZAssetImportPackage &package) {
     }
     
     //indicate change
-    auto payload = AssetChangedPayload(toyModel);
+    AssetChangedPayload payload(package);
     AlterationHandler::get()->queueAlteration(this, payload);
 }
 
@@ -369,7 +369,7 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
     auto selectedElems = this->selectedElementsIndexes();
     auto indexesCount = selectedElems.count();
     
-    RPZToyMetadata defSelect;
+    RPZAsset defSelect;
 
     //if no selection
     if(!indexesCount) {
@@ -383,7 +383,7 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
         auto atomType = elem->atomType();
 
         if(atomType != AtomType::Undefined) {
-            defSelect = elem->toyMetadata();
+            defSelect = elem->asset();
         }
 
     }

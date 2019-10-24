@@ -91,6 +91,14 @@ const QSet<RPZAssetHash> AssetsDatabase::getStoredAssetsIds() const {
     return this->_assets.keys().toSet();
 }
 
+const RPZAsset* AssetsDatabase::asset(const RPZAssetHash &hash) const {
+    if(!this->_assets.contains(hash)) {
+        qDebug() << "Assets: cannot find asset !";
+        return nullptr;
+    }
+    return &this->_assets[hash];
+}
+
 RPZAsset* AssetsDatabase::_asset(const RPZAssetHash &hash) {
     if(!this->_assets.contains(hash)) {
         qDebug() << "Assets: cannot find asset !";
@@ -107,9 +115,9 @@ const QString AssetsDatabase::_path(const StorageContainer &targetContainer) con
 const RPZAssetImportPackage AssetsDatabase::prepareAssetPackage(const RPZAssetHash &id) const {
     
     auto asset = this->asset(id);
-    if(asset.isEmpty()) return;
+    if(!asset) return;
 
-    RPZAssetImportPackage package(asset);
+    RPZAssetImportPackage package(*asset);
     return package;
 
 }
@@ -133,22 +141,24 @@ void AssetsDatabase::addAsset(const RPZAsset &asset, const RPZFolderPath &intern
 
 }
 
-void AssetsDatabase::importAsset(RPZAssetImportPackage &package) {
+bool AssetsDatabase::importAsset(RPZAssetImportPackage &package) {
     
     auto success = package.tryIntegratePackage();
-    if(!success) return;
+    if(!success) return false;
 
     this->addAsset(
         package, 
         this->_path(StorageContainer::Downloaded)
     );
 
+    return true;
+
 }
 
 void AssetsDatabase::createFolder(const RPZFolderPath &parentPath) {
     
     //get a unique folder
-    auto uniquePath = this->_generateNonExistingPath(parentPath, tr("Folder"));
+    auto uniquePath = this->_generateNonExistingPath(parentPath, QObject::tr("Folder"));
 
     //add
     this->_paths.insert(uniquePath, {});
@@ -178,6 +188,12 @@ void AssetsDatabase::renameAsset(const QString &newName, const RPZAssetHash &has
 
     //apply
     assetToRename->rename(newName);
+
+    //emit
+    emit assetRenamed(
+        assetToRename->hash(), 
+        newName
+    );
 
 }
 

@@ -1,39 +1,19 @@
 #pragma once
 
-#include <sys/stat.h>
-
 #include "src/version.h"
-#include <iostream>
 
-#include <QtCore/QCoreApplication>
-
-#include <QtCore/QSettings>
-
-#include <QtCore/QStandardPaths>
-#include <QtCore/QTemporaryDir>
-#include <QtCore/QString>
-#include <QtCore/QDebug>
-#include <QtCore/QDir>
-#include <QtCore/QDateTime>
-
-#include <QtGui/QDesktopServices>
-#include <QtCore/QProcess>
-#include <QtCore/QUrl>
+#include <QDir>
+#include <QDesktopServices>
+#include <QProcess>
 #include <QTranslator>
-#include <QMessageBox>
-#include <QApplication>
 #include <QLibraryInfo>
-
-#include <QHash>
-
-#include <QRegularExpression>
+#include <QApplication>
 
 #include "src/helpers/_appSettings.hpp"
 #include "src/helpers/RPZQVariant.hpp"
 #include "src/_libs/snowflake/snowflake.h"
 
 class AppContext {
-    
     private:
         static inline AppSettings* _settings = nullptr;
 

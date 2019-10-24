@@ -7,9 +7,10 @@
 #include <QFile>
 #include <QCryptographicHash>
 #include <QImageReader>
+#include <QFileInfo>
 
-#include "src/helpers/JSONSerializer.h"
 #include "src/helpers/_appContext.h"
+#include "src/helpers/JSONSerializer.h"
 
 typedef QString RPZAssetHash; //file hash of the asset
 

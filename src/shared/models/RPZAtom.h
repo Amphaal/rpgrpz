@@ -57,7 +57,10 @@ class RPZAtom : public Serializable {
 
         AtomType type() const;
         void changeType(const AtomType &type);
-        QString descriptor() const;
+
+        static const QString atomTypeToText(const AtomType &type);
+        static const QString toString(const AtomType &type, const QString &assetName);
+        const QString toString() const;
 
         //
         //
@@ -141,7 +144,6 @@ class RPZAtom : public Serializable {
             { AtomParameter::ShapeCenter, QVariant() }
         };
 
-        QString _defaultDescriptor() const;
         void _setType(const AtomType &type);
 };
 

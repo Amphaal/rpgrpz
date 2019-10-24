@@ -24,18 +24,16 @@ class AssetsTreeViewModel : public QAbstractItemModel {
         
         QModelIndexList getPersistentIndexList() const;
         QModelIndex getStaticContainerTypesIndex(const AssetsTreeViewItem::Type &staticContainerType); 
-        AssetsDatabase* database() const;
 
         ///////////////
         /// HELPERS ///
         ///////////////
 
-        QPixmap getAssetIcon(AssetsTreeViewItem* target, QSize &sizeToApply) const;
-        bool createFolder(QModelIndex &parentIndex);
+        void createFolder(QModelIndex &parentIndex);
         bool moveItemsToContainer(const QModelIndex &parentIndex, const QList<QModelIndex> &indexesToMove);
         bool insertAssets(QList<QUrl> &urls, const QModelIndex &parentIndex);
         bool removeItems(const QList<QModelIndex> &itemsIndexesToRemove);
-        RPZToyMetadata integrateAsset(const RPZAssetImportPackage &package);
+        bool integrateAsset(RPZAssetImportPackage &package);
         
         ///////////////////
         /// END HELPERS ///
@@ -66,8 +64,6 @@ class AssetsTreeViewModel : public QAbstractItemModel {
         ////////////////////////////
 
     protected:
-        AssetsDatabase* _db = nullptr;
-
         /////////////////////
         /// DROP HANDLING ///
         /////////////////////
@@ -87,5 +83,8 @@ class AssetsTreeViewModel : public QAbstractItemModel {
         QModelIndexList _getTopMostIndexes(const QModelIndexList &indexesList);
         bool _indexListContainsIndexOrParent(const QModelIndexList &base, const QModelIndex &index);
         QPair<int, int> _anticipateInserts(const QModelIndexList &tbi);
+    
+    private:
+        static const QPixmap* _getAssetIcon(AssetsTreeViewItem* target, QSize &sizeToApply);
 
 };

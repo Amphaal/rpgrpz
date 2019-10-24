@@ -1,27 +1,9 @@
-#include <QDebug>
-#include <QString>
-#include <QApplication>
-#include <QStyleFactory>
-#include <QSplashScreen>
-#include <QImageReader>
 #include <QLockFile>
-#include <QPixmapCache>
-#include <QSslSocket>
-
-#include "src/helpers/_appContext.h"
-#include "src/helpers/_logWriter.h"
-
-#include "src/network/rpz/server/RPZServer.h"
+#include <QStyleFactory>
 
 #include "src/ui/mainWindow.h"
 #include "src/ui/_others/AppLoader.hpp"
-
-#include <QDir>
-#include <QtCore/QLockFile>
-
-#include "src/_libs/snowflake/snowflake.h"
-
-#include "src/version.h"
+#include "src/helpers/_logWriter.h"
 
 ////////////
 // SERVER //

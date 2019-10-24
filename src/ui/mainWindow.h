@@ -1,24 +1,12 @@
 #pragma once
 
+#include <QMainWindow>
+#include <QMenuBar>
+#include <QStackedWidget>
+
 #include "src/helpers/_appContext.h"
 
 #include "src/shared/commands/RPZActions.h"
-
-#include <QMainWindow>
-#include <QMenuBar>
-#include <QMessageBox>
-#include <QGraphicsItem>
-#include <QGraphicsScene>
-#include <QDesktopServices>
-#include <QTabWidget>
-#include <QLabel>
-#include <QStatusBar>
-#include <QApplication>
-#include <QShortcut>
-#include <QToolTip>
-#include <QStackedWidget>
-
-#include <QFileDialog>
 
 #include "src/network/ConnectivityHelper.h"
 #include "src/network/rpz/server/RPZServer.h"

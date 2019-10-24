@@ -1,6 +1,6 @@
 #include "CustomGraphicsItemHelper.h"
 
-QGraphicsItem* CustomGraphicsItemHelper::createGraphicsItem(const RPZAtom &atom, const RPZToyMetadata &assetMetadata, bool isTemporary) {
+QGraphicsItem* CustomGraphicsItemHelper::createGraphicsItem(const RPZAtom &atom, const RPZAsset &assetMetadata, bool isTemporary) {
     
     QGraphicsItem* out;
     auto type = atom.type();
@@ -91,7 +91,7 @@ QGraphicsRectItem* CustomGraphicsItemHelper::createMissingAssetPlaceholderItem(c
 }
 
 
-QGraphicsItem* CustomGraphicsItemHelper::_createGenericImageBasedItem(const RPZAtom &atom, const RPZToyMetadata &assetMetadata) {
+QGraphicsItem* CustomGraphicsItemHelper::_createGenericImageBasedItem(const RPZAtom &atom, const RPZAsset &assetMetadata) {
 
     //get file infos
     auto pathToImageFile = assetMetadata.pathToAssetFile();
@@ -109,7 +109,7 @@ QGraphicsItem* CustomGraphicsItemHelper::_createGenericImageBasedItem(const RPZA
     return item;
 }
 
-QGraphicsPathItem* CustomGraphicsItemHelper::_createBrushItem(const RPZAtom &atom, const RPZToyMetadata &assetMetadata) {
+QGraphicsPathItem* CustomGraphicsItemHelper::_createBrushItem(const RPZAtom &atom, const RPZAsset &assetMetadata) {
 
     //define a ped
     QPen pen;

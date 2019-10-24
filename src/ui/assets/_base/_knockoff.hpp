@@ -40,7 +40,7 @@
 //         bool moveItemsToContainer(const QList<AssetsTreeViewItem*> selectedItemsToMove, AssetsTreeViewItem* target);
 
 //         //
-//         RPZToyMetadata getAssetMetadata(const RPZAssetHash &id);
+//         RPZAsset getAssetMetadata(const RPZAssetHash &id);
 //         const QSet<RPZAssetHash> getStoredAssetsIds() const;
 
 //         //network import/export
@@ -85,7 +85,7 @@
 //         //insertAsset() helpers
 //         bool _moveFileToDbFolder(const QUrl &url, const RPZAssetHash &id);
 //         QUrl _moveFileToDbFolder(const QByteArray &data, const QString &fileExt, const RPZAssetHash &id);
-//         RPZToyMetadata _addAssetToDb(const RPZAssetHash &id, const QUrl &url, AssetsTreeViewItem* parent, const QString &forcedName = QString()); //returns asset metadata
+//         RPZAsset _addAssetToDb(const RPZAssetHash &id, const QUrl &url, AssetsTreeViewItem* parent, const QString &forcedName = QString()); //returns asset metadata
 
 //         //removeItems() helpers
 //         QSet<RPZFolderPath> _getPathsToAlterFromList(const QList<AssetsTreeViewItem*> &elemsToAlter);
@@ -312,10 +312,10 @@
 
 // }
 
-// RPZToyMetadata AssetsDatabase::getAssetMetadata(const RPZAssetHash &id) {
+// RPZAsset AssetsDatabase::getAssetMetadata(const RPZAssetHash &id) {
 //     QMutexLocker l(&this->_m_withAssetsElems);
 //     auto ptr = this->_withAssetsElems.value(id);
-//     return ptr ? ptr->toyMetadata() : RPZToyMetadata();
+//     return ptr ? ptr->asset() : RPZAsset();
 // }
 
 // const QSet<RPZAssetHash> AssetsDatabase::getStoredAssetsIds() const {
@@ -355,7 +355,7 @@
 //             //create
 //             auto asset = assets_db[idStr].toObject();
 
-//             auto metadata = RPZToyMetadata(
+//             auto metadata = RPZAsset(
 //                 lastContainer,
 //                 AssetsTreeViewItem::toAtomType(lastContainer->insertType()),
 //                 idStr,
@@ -412,7 +412,7 @@
 //     return !destUrl.isEmpty();
 // }
 
-// RPZToyMetadata AssetsDatabase::_addAssetToDb(
+// RPZAsset AssetsDatabase::_addAssetToDb(
 //         const RPZAssetHash &id, 
 //         const QUrl &url, 
 //         AssetsTreeViewItem* parent, 
@@ -458,7 +458,7 @@
 //     this->_updateDbFile(obj);
 //     qDebug() << "Assets :" << fInfo.filePath() << "inserted !";
     
-//     auto metadata = RPZToyMetadata(
+//     auto metadata = RPZAsset(
 //         parent,
 //         AssetsTreeViewItem::toAtomType(parent->insertType()),
 //         id,

@@ -7,9 +7,9 @@
 #include <QDebug>
 
 #include "src/shared/models/RPZAtom.h"
-#include "src/shared/models/toy/RPZToyMetadata.h"
+#include "src/shared/models/toy/RPZAsset.hpp"
 
-#include "src/shared/database/MapDatabase.h"
+#include "src/shared/database/AssetsDatabase.h"
 
 class AssetsTreeViewItem : public QObject {
 
@@ -43,27 +43,24 @@ class AssetsTreeViewItem : public QObject {
         static inline const QString listMimeType = QStringLiteral(u"application/x-assets-db-elem-list");
 
         AssetsTreeViewItem(const QString &name, AssetsTreeViewItem* parent, const AssetsTreeViewItem::Type &type = AssetsTreeViewItem::Type::Folder);
-        AssetsTreeViewItem(const RPZToyMetadata &assetMetadata);
+        AssetsTreeViewItem(const RPZAsset* assetMetadata, AssetsTreeViewItem* parent);
         AssetsTreeViewItem();
         ~AssetsTreeViewItem();
 
-        AssetsTreeViewItem::Type type() const;
-        AtomType atomType() const;
-        AssetsTreeViewItem::Type insertType() const;
-        AssetsTreeViewItem::Type rootStaticContainer() const;
-        QString iconPath() const;
-        QString displayName() const;
-        QString path() const;
-        QString fullPath() const;
-        RPZAssetHash id() const;
-        Qt::ItemFlags flags() const;
-        RPZToyMetadata toyMetadata() const;
+        const AssetsTreeViewItem::Type type() const;
+        const AtomType atomType() const;
+        const AssetsTreeViewItem::Type insertType() const;
+        const AssetsTreeViewItem::Type rootStaticContainer() const;
+        const QString iconPath() const;
+        const QString displayName() const;
+        const QString path() const;
+        const Qt::ItemFlags flags() const;
+        const RPZAsset* asset() const;
                 
         bool isContainer() const;
         bool isInternal() const;
         bool isRoot() const;
         bool isIdentifiable() const;
-        bool isStaticContainer() const;
         bool isDeletable() const;
 
         AssetsTreeViewItem* parent();
@@ -107,14 +104,13 @@ class AssetsTreeViewItem : public QObject {
         AssetsTreeViewItem::Type _insertType = AssetsTreeViewItem::Type::T_Unknown;
         AssetsTreeViewItem::Type _rootStaticContainerType = AssetsTreeViewItem::Type::T_Unknown;
         AtomType _atomType = AtomType::Undefined;
-        RPZAssetHash _id = "";
-        QString _name = "";
-        QString _path = "";
-        QString _fullPath = "";
-        QString _iconPath = "";
+        RPZAssetHash _hash;
+        QString _name;
+        QString _path;
+        QString _fullPath;
+        QString _iconPath;
         Qt::ItemFlags _flags = 0;
         int _itemChildrenCount = 0;
-        RPZToyMetadata _toyMetadata;
 
         bool _isContainer = false;
         bool _isInternal = false;

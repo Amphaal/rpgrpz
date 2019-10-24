@@ -7,15 +7,14 @@
 #include <QCryptographicHash>
 #include <QMutexLocker>
 
-#include "src/shared/models/toy/RPZAsset.hpp"
-#include "src/shared/models/toy/RPZAssetImportPackage.hpp"
 #include "src/shared/database/_base/JSONDatabase.h"
 
-#include "src/helpers/_appContext.h"
+#include "src/shared/models/toy/RPZAsset.hpp"
+#include "src/shared/models/toy/RPZAssetImportPackage.hpp"
 
 typedef QString RPZFolderPath; //internal DB arborescence path (only containers)
 
-class AssetsDatabase : public JSONDatabase {
+class AssetsDatabase : public QObject, public JSONDatabase {
     
     Q_OBJECT
 
@@ -45,11 +44,11 @@ class AssetsDatabase : public JSONDatabase {
         void moveFoldersTo(const RPZFolderPath &internalPathToMoveTo, const QList<RPZFolderPath> &topmostPathsToMove);
         
         //
-        const RPZAsset asset(const RPZAssetHash &hash) const;
+        const RPZAsset* asset(const RPZAssetHash &hash) const;
         const QSet<RPZAssetHash> getStoredAssetsIds() const;
 
         //network import/export
-        void importAsset(RPZAssetImportPackage &package);
+        bool importAsset(RPZAssetImportPackage &package);
         const RPZAssetImportPackage prepareAssetPackage(const RPZAssetHash &id) const;
 
     signals:
@@ -71,7 +70,6 @@ class AssetsDatabase : public JSONDatabase {
         void _saveIntoFile();
     
     private:
-
         //singleton
         AssetsDatabase();
         AssetsDatabase(const QJsonObject &doc);

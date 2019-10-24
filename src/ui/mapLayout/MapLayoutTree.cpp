@@ -211,7 +211,7 @@ void MapLayoutTree::_updateAtomItemValues(QTreeWidgetItem* toUpdate, const AtomU
         switch(i.key()) {
             
             case AtomParameter::AssetName:
-                this->_renameAtomItem(toUpdate, i.value().toString());
+                this->_onAssetRename(toUpdate, i.value().toString());
             break;
             
             case AtomParameter::Hidden: {
@@ -269,8 +269,15 @@ void MapLayoutTree::_updateLayersDisplayedCount() {
     }
 }
 
-void MapLayoutTree::_renameAtomItem(QTreeWidgetItem* toRename, const QString &newName) {
-    toRename->setText(0, newName);
+void MapLayoutTree::_onAssetRename(QTreeWidgetItem* toRename, const QString &newAssetName) {
+    
+    auto text = RPZAtom::toString(
+        RPZQVariant::atomType(toRename),
+        newAssetName
+    );
+    
+    toRename->setText(0, text);
+    
 }
 
 TreeMapHint* MapLayoutTree::hints() const {

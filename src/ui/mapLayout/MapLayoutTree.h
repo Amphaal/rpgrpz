@@ -10,8 +10,6 @@
 
 #include "src/shared/commands/RPZActions.h"
 
-#include "src/shared/commands/RPZActions.h"
-
 #include "src/shared/models/RPZAtom.h"
 #include "src/shared/payloads/Payloads.h"
 
@@ -61,7 +59,7 @@ class MapLayoutTree : public RPZTree {
 
         //helpers
         void _insertAtomItem(QTreeWidgetItem *item);
-        void _renameAtomItem(QTreeWidgetItem* toRename, const QString &newName);
+        void _onAssetRename(QTreeWidgetItem* toRename, const QString &newAssetName);
         void _removeItem(QTreeWidgetItem* toRemove);
         void _selectAtomItem(QTreeWidgetItem* toSelect);
         void _updateAtomItemValues(QTreeWidgetItem* toUpdate, const AtomUpdates &updates);

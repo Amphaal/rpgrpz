@@ -29,7 +29,7 @@ QSizeF AppContext::standardTileSize(QPaintDevice* device) {
     return QSizeF(x, y);
 }
 
- void AppContext::installTranslations(QApplication &app) {
+void AppContext::installTranslations(QApplication &app) {
     
     QString translationsPath(QLibraryInfo::location(QLibraryInfo::TranslationsPath));
     QLocale locale = QLocale::system();
@@ -46,7 +46,7 @@ QSizeF AppContext::standardTileSize(QPaintDevice* device) {
         auto installed = app.installTranslator(appTranslator);
     }
 
- }
+}
 
 AppSettings* AppContext::settings() {
 
@@ -185,9 +185,9 @@ QString AppContext::getLatestLogFileLocation() {
 void AppContext::openFileInOS(const QString &cpURL) {
     QUrl url("file:///" + cpURL, QUrl::TolerantMode);
     QDesktopServices::openUrl(url);
-};
+}
 
 void AppContext::openFolderInOS(const QString &cpURL) {
     auto toOpen = QDir::toNativeSeparators(cpURL);
     QProcess::startDetached("explorer.exe", {toOpen});
-};
+}

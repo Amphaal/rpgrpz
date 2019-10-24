@@ -94,7 +94,7 @@ void ViewMapHint::notifySelectedItems(const QList<QGraphicsItem*> &selectedItems
 // Atom insertion helpers //
 /////////////////////////////
 
-QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZToyMetadata &assetMetadata) {
+QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZAsset &assetMetadata) {
 
     if(!assetMetadata.isEmpty()){
         QMutexLocker m(&this->_m_templateAtom);
@@ -185,7 +185,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuil
 
     QGraphicsItem* newItem = nullptr;
     auto assetId = atomToBuildFrom.assetId();
-    auto assetMetadata = AssetsDatabase::get()->getAssetMetadata(assetId);
+    auto assetMetadata = AssetsDatabase::get()->(assetId);
     auto hasMissingAsset = !assetId.isEmpty() && assetMetadata.pathToAssetFile().isEmpty();
 
     //atom links to missing asset from DB
@@ -217,7 +217,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuil
     return newItem;
 }
 
-void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZToyMetadata &metadata) {
+void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &metadata) {
     
     QList<QGraphicsItem*> newGis;
     QSet<QGraphicsItem *> setOfGraphicsItemsToReplace;

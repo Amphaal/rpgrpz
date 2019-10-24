@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Serializable.hpp"
 #include <QList>
+
+#include "Serializable.hpp"
 
 template<class T>
 class RPZMap : public QMap<snowflake_uid, T> {
