@@ -10,13 +10,15 @@ class MapHint : public ViewMapHint {
         MapHint();
 
         //load/unload
-        QString RPZMapFilePath() const;
         bool isRemote() const;
         bool isMapDirty() const;
+        const QString mapFilePath() const;
 
         static void mayWantToSavePendingState(QWidget* parent, MapHint* hint); //must block UI
         
-        bool defineAsRemote(const QString &remoteMapDescriptor = QString());
+        bool ackRemoteness(const RPZUser &connectedUser, RPZClient* client);
+        bool ackRemoteness(const QString &tblMapFilePath);
+
         double tileToMeterRatio() const;
 
     public slots:
@@ -30,7 +32,11 @@ class MapHint : public ViewMapHint {
         void mapStateChanged(const QString &mapDescriptor, bool isMapDirty);
 
     private: 
+        bool _ackRemoteness();
+
         QString _mapDescriptor;
+        QString _cachedMapFilePath;
+
         bool _isRemote = false;
         bool _isMapDirty = false;
 

@@ -5,77 +5,27 @@
 #include "src/_libs/snowflake/snowflake.h"
 #include "src/shared/models/RPZAtom.h"
 
-enum class PayloadAlteration {
-    Unknown,
-    Focused,
-    Selected,
-    Removed,
-    Added, 
-    Reset,
-    MetadataChanged,
-    BulkMetadataChanged,
-    AssetChanged,
-    AtomTemplateChanged,
-    AtomTemplateSelected,
-    ToySelected
-}; 
-
-static const QStringList PayloadAlterationAsStr {
-    "Unknown",
-    "Focused",
-    "Selected",
-    "Removed",
-    "Added", 
-    "Reset",
-    "MetadataChanged",
-    "BulkMetadataChanged",
-    "AssetChanged",
-    "AtomTemplateChanged",
-    "AtomTemplateSelected",
-    "ToySelected"
-};
+#include "Payload.hpp"
 
 class AlterationPayload : public QVariantHash { 
 
     public:
-        enum class Source {
-            Undefined,
-            Local_MapLayout,
-            Local_Map,
-            Local_AtomEditor,
-            Local_AtomDB,
-            RPZServer,
-            RPZClient,
-            Local_System
-        };
-
-        static inline QStringList SourceAsStr {
-            "Undefined",
-            "Local_MapLayout",
-            "Local_Map",
-            "Local_AtomEditor",
-            "Local_AtomDB",
-            "RPZServer",
-            "RPZClient",
-            "Local_System"
-        };
-
         AlterationPayload() {}
         AlterationPayload(const QVariantHash &hash) : QVariantHash(hash) {}
-        AlterationPayload(const PayloadAlteration &type) : QVariantHash() {
+        AlterationPayload(const Payload::Alteration &type) : QVariantHash() {
             this->_setType(type);
         }
 
-        PayloadAlteration type() const {
-            return (PayloadAlteration)this->value(QStringLiteral(u"t")).toInt();
-        };
+        Payload::Alteration type() const {
+            return (Payload::Alteration)this->value(QStringLiteral(u"t")).toInt();
+        }
 
-        void changeSource(const Source &newSource) {
+        void changeSource(const Payload::Source &newSource) {
             this->insert(QStringLiteral(u"s"), (int)newSource);
         }
 
-        Source source() const {
-            return (Source)this->value(QStringLiteral(u"s")).toInt();
+        Payload::Source source() const {
+            return (Payload::Source)this->value(QStringLiteral(u"s")).toInt();
         }
 
         bool isNetworkRoutable() const {
@@ -96,20 +46,19 @@ class AlterationPayload : public QVariantHash {
     private:      
         bool _isFromTimeline = false; //client only
 
-        static inline const QList<PayloadAlteration> _networkAlterations = { 
-            PayloadAlteration::Added, 
-            PayloadAlteration::Removed, 
-            PayloadAlteration::Reset,
-            PayloadAlteration::MetadataChanged,
-            PayloadAlteration::BulkMetadataChanged
+        static inline const QList<Payload::Alteration> _networkAlterations = { 
+            Payload::Alteration::Added, 
+            Payload::Alteration::Removed, 
+            Payload::Alteration::Reset,
+            Payload::Alteration::MetadataChanged,
+            Payload::Alteration::BulkMetadataChanged
         };
         
-        void _setType(const PayloadAlteration &type) {
+        void _setType(const Payload::Alteration &type) {
             this->insert(QStringLiteral(u"t"), (int)type);
         }
 };
 
-Q_DECLARE_METATYPE(PayloadAlteration)
 Q_DECLARE_METATYPE(AlterationPayload)
 
-inline uint qHash(const AlterationPayload::Source &key, uint seed = 0) {return uint(key) ^ seed;}
+inline uint qHash(const Payload::Source &key, uint seed = 0) {return uint(key) ^ seed;}

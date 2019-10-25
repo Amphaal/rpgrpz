@@ -1,6 +1,6 @@
 #include "TreeMapHint.h"
 
-TreeMapHint::TreeMapHint() : AlterationAcknoledger(AlterationPayload::Source::Local_MapLayout), 
+TreeMapHint::TreeMapHint() : AlterationAcknoledger(Payload::Source::Local_MapLayout), 
     _layerIcon(new QIcon(QStringLiteral(u":/icons/app/manager/layer.png"))),
     _textIcon(new QIcon(QStringLiteral(u":/icons/app/tools/text.png"))),
     _drawingIcon(new QIcon(QStringLiteral(u":/icons/app/manager/drawing.png"))) { 
@@ -38,7 +38,7 @@ void TreeMapHint::_handleAlterationRequest(AlterationPayload &payload) {
         {
             QMutexLocker l(&this->_m_layersItems);
 
-            if(type == PayloadAlteration::Reset) {
+            if(type == Payload::Alteration::Reset) {
                 this->_layersItems.clear();
                 this->_atomTreeItemsById.clear();
                 this->_RPZAtomIdsBoundByRPZAssetHash.clear();
@@ -193,7 +193,7 @@ void TreeMapHint::_applyMove(LayerManipulationHelper &mvHelper) {
                 }
             }
 
-            emit requestingUIAlteration(PayloadAlteration::Removed, mightDelete);
+            emit requestingUIAlteration(Payload::Alteration::Removed, mightDelete);
         }
 
     }

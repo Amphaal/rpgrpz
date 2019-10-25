@@ -33,7 +33,7 @@ class JSONDatabase {
         static QJsonArray diff(QJsonArray &target, QSet<QString> &toRemoveFromTarget);
 
         JSONDatabase();
-        const QString dbFilePath();
+        const QString dbFilePath() const;
 
     protected:
 

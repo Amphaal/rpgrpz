@@ -562,7 +562,7 @@ QMenu* MainWindow::_getMapMenu() {
             auto picked = QFileDialog::getSaveFileName(
                 this,
                 tr("Save as..."),
-                this->_mapView->hints()->dbFilePath(), 
+                this->_mapView->hints()->mapFilePath(), 
                 tr("Game map (*%1)").arg(AppContext::RPZ_MAP_FILE_EXT)
             );
 

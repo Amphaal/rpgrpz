@@ -1,6 +1,6 @@
 #include "RPZClient.h"
 
-RPZClient::RPZClient(const QString &socketStr, const QString &displayName, const RPZCharacter &toIncarnate) : AlterationActor(AlterationPayload::Source::RPZClient), 
+RPZClient::RPZClient(const QString &socketStr, const QString &displayName, const RPZCharacter &toIncarnate) : AlterationActor(Payload::Source::RPZClient), 
     _userDisplayName(displayName),
     _characterToIncarnate(toIncarnate) { 
     
@@ -60,9 +60,9 @@ void RPZClient::_initSock() {
     );
 }
 
-void RPZClient::_onBatchAcked(JSONMethod method, qint64 batchSize) {
+void RPZClient::_onBatchAcked(RPZJSON::Method method, qint64 batchSize) {
     
-    if(method != JSONMethod::MapChangedHeavily) return;
+    if(method != RPZJSON::Method::MapChangedHeavily) return;
 
     QMetaObject::invokeMethod(ProgressTracker::get(), "downloadIsStarting", 
         Q_ARG(ProgressTracker::Kind, ProgressTracker::Kind::Map), 
@@ -71,9 +71,9 @@ void RPZClient::_onBatchAcked(JSONMethod method, qint64 batchSize) {
 
 }
 
-void RPZClient::_onBatchDownloading(JSONMethod method, qint64 downloaded) {
+void RPZClient::_onBatchDownloading(RPZJSON::Method method, qint64 downloaded) {
     
-    if(method != JSONMethod::MapChangedHeavily) return;
+    if(method != RPZJSON::Method::MapChangedHeavily) return;
 
     QMetaObject::invokeMethod(ProgressTracker::get(), "downloadIsProgressing", 
         Q_ARG(ProgressTracker::Kind, ProgressTracker::Kind::Map), 
@@ -115,7 +115,7 @@ void RPZClient::_onConnected() {
 
     //tell the server your username
     this->_sock->sendJSON(
-        JSONMethod::Handshake,
+        RPZJSON::Method::Handshake,
         handshake
     );
 
@@ -125,7 +125,7 @@ void RPZClient::_handleAlterationRequest(const AlterationPayload &payload) {
 
     //ignore packages from server
     if(payload.source() == this->source()) return;
-    if(payload.source() == AlterationPayload::Source::RPZServer) return;
+    if(payload.source() == Payload::Source::RPZServer) return;
 
     //prevent alteration propagation to server if not host
     if(this->_self.role() != RPZUser::Role::Host) return;
@@ -139,7 +139,7 @@ void RPZClient::_handleAlterationRequest(const AlterationPayload &payload) {
     this->payloadTrace(payload);
 
     //send json
-    auto method = payload.type() == PayloadAlteration::Reset ? JSONMethod::MapChangedHeavily : JSONMethod::MapChanged;
+    auto method = payload.type() == Payload::Alteration::Reset ? RPZJSON::Method::MapChangedHeavily : RPZJSON::Method::MapChanged;
     return this->_sock->sendJSON(method, payload);
 }
 
@@ -157,13 +157,13 @@ const RPZMap<RPZUser> RPZClient::sessionUsers() const {
     return this->_sessionUsers;
 }
 
-void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) {
+void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data) {
     
     QMetaObject::invokeMethod(ProgressTracker::get(), "clientIsReceiving");
 
     switch(method) {
 
-        case JSONMethod::AvailableAssetsToUpload: {
+        case RPZJSON::Method::AvailableAssetsToUpload: {
             
             //cast
             QVector<RPZAssetHash> out;
@@ -181,31 +181,31 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         }
         break;
 
-        case JSONMethod::ServerStatus: {
+        case RPZJSON::Method::ServerStatus: {
             emit connectionStatus(data.toString(), true);
             this->_sock->socket()->disconnectFromHost();
         }
         break;
 
-        case JSONMethod::AudioStreamPositionChanged: {
+        case RPZJSON::Method::AudioStreamPositionChanged: {
             auto newPos = data.value<qint64>();
             emit audioPositionChanged(newPos);
         }
         break;
 
-        case JSONMethod::AudioStreamPlayingStateChanged: {
+        case RPZJSON::Method::AudioStreamPlayingStateChanged: {
             auto isPlaying = data.toBool();
             emit audioPlayStateChanged(isPlaying);
         }
         break;
 
-        case JSONMethod::AudioStreamUrlChanged: {
+        case RPZJSON::Method::AudioStreamUrlChanged: {
             auto payload = data.toHash();
             emit audioSourceStateChanged(payload);
         }
         break;
         
-        case JSONMethod::ChatLogHistory: {
+        case RPZJSON::Method::ChatLogHistory: {
             QVector<RPZMessage> msgs;
             for(auto &rawMsg : data.toList()) {
                 RPZMessage msg(rawMsg.toHash());
@@ -215,7 +215,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         }
         break;
 
-        case JSONMethod::AllConnectedUsers: {
+        case RPZJSON::Method::AllConnectedUsers: {
             
             {
                 QMutexLocker l(&this->_m_sessionUsers);
@@ -234,7 +234,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         }
         break;
 
-        case JSONMethod::UserIn: {
+        case RPZJSON::Method::UserIn: {
             
             RPZUser user(data.toHash());
             
@@ -251,7 +251,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         }
         break;
 
-        case JSONMethod::UserOut: {
+        case RPZJSON::Method::UserOut: {
             auto idToRemove = data.toULongLong();
 
             RPZUser out;
@@ -270,7 +270,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         }
         break;
 
-        case JSONMethod::UserDataChanged: {
+        case RPZJSON::Method::UserDataChanged: {
            
             RPZUser updated(data.toHash());
             auto updatedId = updated.id();
@@ -295,7 +295,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         }
         break;
 
-        case JSONMethod::AckIdentity: {
+        case RPZJSON::Method::AckIdentity: {
             
             {
                 //store our identity
@@ -308,14 +308,14 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         }
         break;
 
-        case JSONMethod::Message: {
+        case RPZJSON::Method::Message: {
             RPZMessage msg(data.toHash());
             emit receivedMessage(msg);
         }
         break;
 
-        case JSONMethod::MapChangedHeavily:
-        case JSONMethod::MapChanged: {
+        case RPZJSON::Method::MapChangedHeavily:
+        case RPZJSON::Method::MapChanged: {
             
             //to sharedPointer for type casts
             auto payload = Payloads::autoCast(data.toHash());
@@ -340,12 +340,12 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         }   
         break;
 
-        case JSONMethod::RequestedAsset: {
+        case RPZJSON::Method::RequestedAsset: {
             emit receivedAsset(data.toHash());
         }
         break;
 
-        case JSONMethod::ServerResponse: {
+        case RPZJSON::Method::ServerResponse: {
             emit serverResponseReceived(data.toHash());
         }
         break;
@@ -385,11 +385,11 @@ void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
 
 void RPZClient::sendMessage(const RPZMessage &message) {
     auto msg = RPZMessage(message);
-    this->_sock->sendJSON(JSONMethod::Message, msg);
+    this->_sock->sendJSON(RPZJSON::Method::Message, msg);
 }
 
 void RPZClient::sendMapHistory(const ResetPayload &historyPayload) {
-    this->_sock->sendJSON(JSONMethod::MapChangedHeavily, historyPayload);
+    this->_sock->sendJSON(RPZJSON::Method::MapChangedHeavily, historyPayload);
 }
 
 void RPZClient::notifyCharacterChange(const RPZCharacter &changed) {
@@ -401,25 +401,25 @@ void RPZClient::notifyCharacterChange(const RPZCharacter &changed) {
 
     emit selfIdentityChanged(this->_self);
 
-    this->_sock->sendJSON(JSONMethod::CharacterChanged, changed);
+    this->_sock->sendJSON(RPZJSON::Method::CharacterChanged, changed);
 }
 
 void RPZClient::_askForAssets(const QSet<RPZAssetHash> &ids) {
     QVariantList list;
     for(auto &id : ids) list.append(id);
-    this->_sock->sendJSON(JSONMethod::AskForAssets, list);
+    this->_sock->sendJSON(RPZJSON::Method::AskForAssets, list);
 }
 
 void RPZClient::changeAudioPosition(qint64 newPositionInMsecs) {
-    this->_sock->sendJSON(JSONMethod::AudioStreamPositionChanged, newPositionInMsecs);
+    this->_sock->sendJSON(RPZJSON::Method::AudioStreamPositionChanged, newPositionInMsecs);
 }
 
 void RPZClient::setAudioStreamPlayState(bool isPlaying) {
-    this->_sock->sendJSON(JSONMethod::AudioStreamPlayingStateChanged, isPlaying);
+    this->_sock->sendJSON(RPZJSON::Method::AudioStreamPlayingStateChanged, isPlaying);
 }
 
 void RPZClient::defineAudioSourceState(const StreamPlayStateTracker &state) {
-    this->_sock->sendJSON(JSONMethod::AudioStreamUrlChanged, state);
+    this->_sock->sendJSON(RPZJSON::Method::AudioStreamUrlChanged, state);
 }
 
 void RPZClient::_onSending() {

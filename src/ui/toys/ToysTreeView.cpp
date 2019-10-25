@@ -1,7 +1,7 @@
 #include "ToysTreeView.h"
 
 ToysTreeView::ToysTreeView(QWidget *parent) : QTreeView(parent), 
-    AlterationActor(AlterationPayload::Source::Local_AtomDB),
+    AlterationActor(Payload::Source::Local_AtomDB),
     _MIMEDb(new QMimeDatabase), 
     _model(new ToysTreeViewModel) {     
     
@@ -403,7 +403,7 @@ void ToysTreeView::selectionChanged(const QItemSelection &selected, const QItemS
 void ToysTreeView::_handleAlterationRequest(const AlterationPayload &payload) {
     
     auto type = payload.type();
-    auto listenedForTypes = (type == PayloadAlteration::Selected || type == PayloadAlteration::Reset);
+    auto listenedForTypes = (type == Payload::Alteration::Selected || type == Payload::Alteration::Reset);
     if(!listenedForTypes) return;
 
     auto isAssetSelected = !this->_selectedToy.isEmpty();

@@ -8,7 +8,7 @@
 class AtomTemplateChangedPayload : public AlterationPayload {
     public:
         AtomTemplateChangedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        AtomTemplateChangedPayload(const AtomUpdates &changes) : AlterationPayload(PayloadAlteration::AtomTemplateChanged) {
+        AtomTemplateChangedPayload(const AtomUpdates &changes) : AlterationPayload(Payload::Alteration::AtomTemplateChanged) {
             this->_setMetadataChanges(changes);
         }
 

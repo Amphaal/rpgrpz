@@ -5,5 +5,5 @@
 class FocusedPayload : public MultipleAtomTargetsPayload {
     public:
         FocusedPayload(const QVariantHash &hash) : MultipleAtomTargetsPayload(hash) {}
-        FocusedPayload(RPZAtomId targetedRPZAtomId) : MultipleAtomTargetsPayload(PayloadAlteration::Focused, QVector<RPZAtomId>({targetedRPZAtomId})) {}
+        FocusedPayload(RPZAtomId targetedRPZAtomId) : MultipleAtomTargetsPayload(Payload::Alteration::Focused, QVector<RPZAtomId>({targetedRPZAtomId})) {}
 };

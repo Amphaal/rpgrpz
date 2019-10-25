@@ -722,7 +722,7 @@
 <context>
     <name>MapHint</name>
     <message>
-        <location filename="../shared/hints/MapHint.cpp" line="36"/>
+        <location filename="../shared/hints/MapHint.cpp" line="42"/>
         <source>Do you want to save changes done to this map ?</source>
         <translation>Voulez-vous sauvegardez les modifications faites à cette carte ?</translation>
     </message>

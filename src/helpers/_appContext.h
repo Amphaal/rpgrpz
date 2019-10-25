@@ -63,7 +63,7 @@ class AppContext {
         static QString getCharacterDatabaseLocation();
         static QString getAssetsFolderLocation();
         static QString getMapsFolderLocation();
-        static QString getDefaultMapFile();
+        static QString getDefaultMapFilePath();
         static QString getLogFileLocation();
         static QString getLatestLogFileLocation();
 

@@ -37,7 +37,7 @@ class MapLayoutTree : public RPZTree {
         void contextMenuEvent(QContextMenuEvent *event) override;
 
     private slots:
-        void _onUIAlterationRequest(const PayloadAlteration &type, const QList<QTreeWidgetItem*> &toAlter);
+        void _onUIAlterationRequest(const Payload::Alteration &type, const QList<QTreeWidgetItem*> &toAlter);
         void _onUIUpdateRequest(const QHash<QTreeWidgetItem*, AtomUpdates> &toUpdate);
         void _onUIUpdateRequest(const QList<QTreeWidgetItem*> &toUpdate, const AtomUpdates &updates);
         void _onUIMoveRequest(const QHash<int, QList<QTreeWidgetItem*>> &childrenMovedToLayer);

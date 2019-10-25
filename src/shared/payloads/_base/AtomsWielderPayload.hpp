@@ -11,7 +11,7 @@ class AtomsWielderPayload : public AlterationPayload {
     public:
         AtomsWielderPayload() {}
         AtomsWielderPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        AtomsWielderPayload(const PayloadAlteration &alteration, const MapDatabase &map) : AlterationPayload(alteration) {
+        AtomsWielderPayload(const Payload::Alteration &alteration, const MapDatabase &map) : AlterationPayload(alteration) {
             this->_setAssetsIds(map);
             this->_setAtoms(map);
         }
@@ -51,7 +51,7 @@ class AtomsWielderPayload : public AlterationPayload {
             void _setAssetsIds(const MapDatabase &map) {
                 
                 QVariantList vList;
-                auto assetsIds = map.safe_usedAssetsIds();
+                auto assetsIds = map.usedAssetsIds();
                 
                 for (auto &hash : assetsIds) {
                     vList += hash;
@@ -63,7 +63,7 @@ class AtomsWielderPayload : public AlterationPayload {
             void _setAtoms(const MapDatabase &map) {
                 
                 QVariantMap vMap;
-                auto atoms = map.safe_atoms();
+                auto atoms = map.atoms();
 
                 for (auto i = atoms.constBegin(); i != atoms.constEnd(); ++i) {
                     auto snowflakeAsStr = QString::number(i.key());

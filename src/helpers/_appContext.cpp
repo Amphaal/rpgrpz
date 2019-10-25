@@ -170,7 +170,7 @@ QString AppContext::getMapsFolderLocation() {
     return dest;
 }
 
-QString AppContext::getDefaultMapFile() {
+QString AppContext::getDefaultMapFilePath() {
     return getMapsFolderLocation() + "/default" + RPZ_MAP_FILE_EXT;
 }
 

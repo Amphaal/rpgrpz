@@ -130,13 +130,13 @@ void MapView::_onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const At
     }
 }
 
-void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<QGraphicsItem*> &toAlter) {
+void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QList<QGraphicsItem*> &toAlter) {
     
     //prevent circual selection
     QSignalBlocker b(this->scene());
 
-    if(type == PayloadAlteration::Selected) this->scene()->clearSelection();
-    if(type == PayloadAlteration::Reset) {
+    if(type == Payload::Alteration::Selected) this->scene()->clearSelection();
+    if(type == Payload::Alteration::Reset) {
         this->_resetTool();
         this->_drawingAssist->clearDrawing(); //before clearing whole scene
         this->scene()->clear();
@@ -147,34 +147,34 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
     for(auto item : toAlter) {
         switch(type) {
 
-            case PayloadAlteration::Reset: {
+            case Payload::Alteration::Reset: {
                 this->scene()->addItem(item);        
                 this->incrementHeavyLoadPlaceholder();
             }
             break;
 
-            case PayloadAlteration::Added: {
+            case Payload::Alteration::Added: {
                 this->scene()->addItem(item);        
                 this->_drawingAssist->compareItemToCommitedDrawing(item);
             }
             break;
 
-            case PayloadAlteration::Focused: {
+            case Payload::Alteration::Focused: {
                 this->focusItem(item);
             }
             break;
 
-            case PayloadAlteration::Selected: {
+            case Payload::Alteration::Selected: {
                 item->setSelected(true);
             }
             break;
 
-            case PayloadAlteration::Removed: {
+            case Payload::Alteration::Removed: {
                 delete item;
             }
             break;
 
-            case PayloadAlteration::ToySelected: {
+            case Payload::Alteration::ToySelected: {
                 auto newTool = item ? MapTool::Atom : MapTool::Default;
                 auto selectedAtom = item ? this->_hints->templateAtom() : RPZAtom();
                 if(item) this->scene()->addItem(item);
@@ -193,7 +193,7 @@ void MapView::_onUIAlterationRequest(const PayloadAlteration &type, const QList<
         }
     }
 
-    if(type == PayloadAlteration::Reset) {
+    if(type == Payload::Alteration::Reset) {
         ProgressTracker::get()->heavyAlterationEnded();
     }
 
@@ -452,8 +452,7 @@ void MapView::_onIdentityReceived(const RPZUser &self) {
     }
 
     //if host
-    auto descriptor = self.role() == RPZUser::Role::Host ? NULL : this->_rpzClient->getConnectedSocketAddress();
-    bool is_remote = this->_hints->defineAsRemote(descriptor);
+    bool is_remote = this->_hints->ackRemoteness(self, _rpzClient);
 
     emit remoteChanged(is_remote);
     
@@ -469,7 +468,7 @@ void MapView::connectionClosed() {
 void MapView::_sendMapHistory() {
     
     //generate payload
-    ResetPayload payload(*this->_hints);
+    auto payload = this->_hints->generateResetPayload();
    
    //send it
     QMetaObject::invokeMethod(this->_rpzClient, "sendMapHistory", 

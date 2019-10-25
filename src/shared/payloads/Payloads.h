@@ -22,47 +22,47 @@ class Payloads {
             
             switch(lowCast.type()) {
 
-                case PayloadAlteration::BulkMetadataChanged:
+                case Payload::Alteration::BulkMetadataChanged:
                     return QSharedPointer<BulkMetadataChangedPayload>(new BulkMetadataChangedPayload(hash));
                 break;
 
-                case PayloadAlteration::AtomTemplateChanged:
+                case Payload::Alteration::AtomTemplateChanged:
                     return QSharedPointer<AtomTemplateChangedPayload>(new AtomTemplateChangedPayload(hash));
                 break;
 
-                case PayloadAlteration::AtomTemplateSelected:
+                case Payload::Alteration::AtomTemplateSelected:
                     return QSharedPointer<AtomTemplateSelectedPayload>(new AtomTemplateSelectedPayload(hash));
                 break;
 
-                case PayloadAlteration::AssetChanged:
+                case Payload::Alteration::AssetChanged:
                     return QSharedPointer<AssetChangedPayload>(new AssetChangedPayload(hash));
                 break;
 
-                case PayloadAlteration::ToySelected:
+                case Payload::Alteration::ToySelected:
                     return QSharedPointer<ToySelectedPayload>(new ToySelectedPayload(hash));
                 break;
 
-                case PayloadAlteration::Added:
+                case Payload::Alteration::Added:
                     return QSharedPointer<AddedPayload>(new AddedPayload(hash));
                 break;
 
-                case PayloadAlteration::Reset:
+                case Payload::Alteration::Reset:
                     return QSharedPointer<ResetPayload>(new ResetPayload(hash));
                 break;
 
-                case PayloadAlteration::Focused:
+                case Payload::Alteration::Focused:
                     return QSharedPointer<FocusedPayload>(new FocusedPayload(hash));
                 break;
 
-                case PayloadAlteration::Removed:
+                case Payload::Alteration::Removed:
                     return QSharedPointer<RemovedPayload>(new RemovedPayload(hash));
                 break;
 
-                case PayloadAlteration::Selected:
+                case Payload::Alteration::Selected:
                     return QSharedPointer<SelectedPayload>(new SelectedPayload(hash));
                 break;
 
-                case PayloadAlteration::MetadataChanged:
+                case Payload::Alteration::MetadataChanged:
                     return QSharedPointer<MetadataChangedPayload>(new MetadataChangedPayload(hash));
                 break;
 

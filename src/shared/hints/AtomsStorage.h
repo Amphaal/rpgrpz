@@ -35,20 +35,19 @@ struct PossibleActionsOnAtomList {
     int targetDownLayer = 0;
 };
 
-class AtomsStorage : public AlterationAcknoledger, public MapDatabase {
+class AtomsStorage : public AlterationAcknoledger {
 
     Q_OBJECT
 
     public:
-        AtomsStorage(const AlterationPayload::Source &boundSource);
+        AtomsStorage(const Payload::Source &boundSource);
         
         QVector<RPZAtomId> bufferedSelectedAtomIds() const; //safe
         const AtomsSelectionDescriptor getAtomSelectionDescriptor(const QVector<RPZAtomId> &selectedIds) const; //safe
         
         PossibleActionsOnAtomList getPossibleActions(const QVector<RPZAtomId> &ids);
 
-        const RPZMap<RPZAtom> safe_atoms() const override;
-        const QSet<RPZAssetHash> safe_usedAssetsIds() const override;
+        const ResetPayload generateResetPayload() const;
 
     public slots:    
         void redo();
@@ -57,12 +56,12 @@ class AtomsStorage : public AlterationAcknoledger, public MapDatabase {
         void handleAlterationRequest(AlterationPayload &payload);
 
     protected:
-        const RPZAtom* _getAtomFromId(const RPZAtomId &id);
+        MapDatabase _map;
 
         virtual void _handleAlterationRequest(AlterationPayload &payload) override;
-        virtual void _atomsCreated() {};
-        
-        virtual void _basicAlterationDone(const QList<RPZAtomId> &updatedIds, const PayloadAlteration &type) {};
+        virtual void _atomAdded(const RPZAtom &added) {};
+
+        virtual void _basicAlterationDone(const QList<RPZAtomId> &updatedIds, const Payload::Alteration &type) {};
         virtual void _updatesDone(const QList<RPZAtomId> &updatedIds, const AtomUpdates &updates) {};
         virtual void _updatesDone(const AtomsUpdates &updates) {};
 

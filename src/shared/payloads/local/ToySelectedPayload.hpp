@@ -8,7 +8,7 @@ class ToySelectedPayload : public AlterationPayload {
     
     public:
         ToySelectedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        ToySelectedPayload(const RPZToy &toy) : AlterationPayload(PayloadAlteration::ToySelected) {
+        ToySelectedPayload(const RPZToy &toy) : AlterationPayload(Payload::Alteration::ToySelected) {
             this->insert(QStringLiteral(u"toy"), toy);
         }
     

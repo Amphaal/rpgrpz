@@ -71,9 +71,9 @@ int main(int argc, char** argv) {
     qDebug() << QSslSocket::sslLibraryVersionString();   
 
     //registering metatypes
-    qRegisterMetaType<JSONMethod>("JSONMethod");
+    qRegisterMetaType<RPZJSON::Method>("RPZJSON::Method");
     qRegisterMetaType<AlterationPayload>("AlterationPayload");
-    qRegisterMetaType<PayloadAlteration>("PayloadAlteration");
+    qRegisterMetaType<Payload::Alteration>("Payload::Alteration");
     qRegisterMetaType<AtomUpdates>("AtomUpdates");
     qRegisterMetaType<AtomsUpdates>("AtomsUpdates");
     qRegisterMetaType<RPZUser>("RPZUser");

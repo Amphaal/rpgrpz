@@ -9,14 +9,14 @@ void AlterationHandler::queueAlteration(const AlterationActor* sender, Alteratio
     return this->_queueAlteration(sender->source(), payload);
 }
 
-void AlterationHandler::_queueAlteration(const AlterationPayload::Source &senderSource, AlterationPayload &payload) {
+void AlterationHandler::_queueAlteration(const Payload::Source &senderSource, AlterationPayload &payload) {
     
     //if initial payload emission, apply sender source for send
-    if(payload.source() == AlterationPayload::Source::Undefined && senderSource != AlterationPayload::Source::Undefined) {
+    if(payload.source() == Payload::Source::Undefined && senderSource != Payload::Source::Undefined) {
         payload.changeSource(senderSource); 
     }
 
-    if(payload.type() == PayloadAlteration::Reset) QMetaObject::invokeMethod(ProgressTracker::get(), "heavyAlterationStarted");
+    if(payload.type() == Payload::Alteration::Reset) QMetaObject::invokeMethod(ProgressTracker::get(), "heavyAlterationStarted");
 
     emit requiresPayloadHandling(payload);
     

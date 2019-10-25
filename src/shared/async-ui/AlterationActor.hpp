@@ -10,20 +10,18 @@ class AlterationHandler;
 
 class AlterationActor {
     public:
-        AlterationActor(const AlterationPayload::Source &source) : _source(source) {};
-        AlterationPayload::Source source() const { return this->_source; }
+        AlterationActor(const Payload::Source &source) : _source(source) {};
+        Payload::Source source() const { return this->_source; }
 
         void payloadTrace(const AlterationPayload &payload) {
 
             auto payloadSource = payload.source();
             auto payloadType = payload.type();
 
-            auto selfStr = AlterationPayload::SourceAsStr.value((int)this->_source);
-            auto sourceStr = AlterationPayload::SourceAsStr.value((int)payloadSource);
-            auto alterationTypeStr = PayloadAlterationAsStr.value((int)payloadType);
-            qDebug() << "Alteration :" << selfStr << "received" << alterationTypeStr << "from" << sourceStr;
+            qDebug() << "Alteration :" << this->_source << "|<<" << payloadType << "[" << payloadSource << "]";
+            
         }
 
     private:
-        AlterationPayload::Source _source = AlterationPayload::Source::Undefined;
+        Payload::Source _source = Payload::Source::Undefined;
 };

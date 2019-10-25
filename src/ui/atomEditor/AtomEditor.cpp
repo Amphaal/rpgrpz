@@ -1,6 +1,6 @@
 #include "AtomEditor.h"
 
-AtomEditor::AtomEditor(QWidget* parent) : QGroupBox(parent), AlterationActor(AlterationPayload::Source::Local_AtomEditor) {
+AtomEditor::AtomEditor(QWidget* parent) : QGroupBox(parent), AlterationActor(Payload::Source::Local_AtomEditor) {
 
     auto title = _strEM.value(EditMode::None);
     this->setTitle(tr(qUtf8Printable(title)));

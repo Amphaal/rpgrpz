@@ -50,7 +50,7 @@ void JSONDatabase::_setupFromDbCopy(const QJsonObject &copy) {
     this->_setupLocalData();
 }
 
-const QString JSONDatabase::dbFilePath() {
+const QString JSONDatabase::dbFilePath() const {
     if(!this->_destfile) return QString();
     return this->_destfile->fileName();
 }

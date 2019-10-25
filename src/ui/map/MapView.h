@@ -84,7 +84,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         void drawForeground(QPainter *painter, const QRectF &rect) override;
 
     private slots:
-        void _onUIAlterationRequest(const PayloadAlteration &type, const QList<QGraphicsItem*> &toAlter);
+        void _onUIAlterationRequest(const Payload::Alteration &type, const QList<QGraphicsItem*> &toAlter);
         void _onUIUpdateRequest(const QHash<QGraphicsItem*, AtomUpdates> &toUpdate);
         void _onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const AtomUpdates &updates);
 

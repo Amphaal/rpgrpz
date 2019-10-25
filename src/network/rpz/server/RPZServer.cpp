@@ -18,7 +18,7 @@ RPZServer::~RPZServer() {
 void RPZServer::run() { 
 
     //init
-    this->_hints = new AtomsStorage(AlterationPayload::Source::RPZServer);
+    this->_hints = new AtomsStorage(Payload::Source::RPZServer);
 
     qDebug() << "RPZServer : Starting server...";
 
@@ -112,17 +112,17 @@ void RPZServer::_onClientSocketDisconnected(JSONSocket* disconnectedSocket) {
     delete disconnectedSocket;
 
     //tell other clients that the user is gone
-    this->_sendToAll(JSONMethod::UserOut, idToRemove);
+    this->_sendToAll(RPZJSON::Method::UserOut, idToRemove);
 
 }
 
-void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) {
+void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data) {
 
     QMetaObject::invokeMethod(ProgressTracker::get(), "serverIsActive");
 
     switch(method) {
         
-        case JSONMethod::CharacterChanged: {
+        case RPZJSON::Method::CharacterChanged: {
             
             //update character of the user
             RPZCharacter character(data.toHash());
@@ -130,12 +130,12 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             user.setCharacter(character);
 
             //notify everyone else
-            this->_sendToAllButSelf(target, JSONMethod::UserDataChanged, user);
+            this->_sendToAllButSelf(target, RPZJSON::Method::UserDataChanged, user);
 
         }
         break;
 
-        case JSONMethod::Message: {
+        case RPZJSON::Method::Message: {
             RPZMessage message(data.toHash());
             auto &user = this->_getUser(target);
             message.setOwnership(user); //force corresponding user to it then store it
@@ -143,37 +143,37 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
         }
         break;
 
-        case JSONMethod::AudioStreamUrlChanged: {
+        case RPZJSON::Method::AudioStreamUrlChanged: {
             
             StreamPlayStateTracker tracker(data.toHash());
             this->_tracker = tracker;
 
-            this->_sendToAllButSelf(target, JSONMethod::AudioStreamUrlChanged, this->_tracker);
+            this->_sendToAllButSelf(target, RPZJSON::Method::AudioStreamUrlChanged, this->_tracker);
 
         }
         break;
 
-        case JSONMethod::AudioStreamPlayingStateChanged: {
+        case RPZJSON::Method::AudioStreamPlayingStateChanged: {
             
             auto isPlaying = data.toBool();
             this->_tracker.updatePlayingState(isPlaying);
             
-            this->_sendToAllButSelf(target, JSONMethod::AudioStreamPlayingStateChanged, data);
+            this->_sendToAllButSelf(target, RPZJSON::Method::AudioStreamPlayingStateChanged, data);
 
         }
         break;
 
-        case JSONMethod::AudioStreamPositionChanged: {
+        case RPZJSON::Method::AudioStreamPositionChanged: {
             
             auto newPosInMs = data.value<qint64>();
             this->_tracker.updatePositionInMSecs(newPosInMs);
 
-            this->_sendToAllButSelf(target, JSONMethod::AudioStreamPositionChanged, data);
+            this->_sendToAllButSelf(target, RPZJSON::Method::AudioStreamPositionChanged, data);
 
         }
         break;
 
-        case JSONMethod::AskForAssets: {   
+        case RPZJSON::Method::AskForAssets: {   
 
             //cast
             QSet<RPZAssetHash> requested;
@@ -201,7 +201,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
                 for(auto &i : requested) remaining += i;
 
                 //send
-                target->sendJSON(JSONMethod::AvailableAssetsToUpload, remaining);
+                target->sendJSON(RPZJSON::Method::AvailableAssetsToUpload, remaining);
 
             }
 
@@ -212,21 +212,21 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 
                 if(!package.isPackageCreationSuccessful()) continue;
 
-                target->sendJSON(JSONMethod::RequestedAsset, package);
+                target->sendJSON(RPZJSON::Method::RequestedAsset, package);
                 
             }
 
         }
         break;
 
-        case JSONMethod::MapChangedHeavily:
-        case JSONMethod::MapChanged: {
+        case RPZJSON::Method::MapChangedHeavily:
+        case RPZJSON::Method::MapChanged: {
             auto aPayload = Payloads::autoCast(data.toHash());
             this->_broadcastMapChanges(method, *aPayload, target);
         }
         break;
 
-        case JSONMethod::Handshake: {   
+        case RPZJSON::Method::Handshake: {   
             
             //prepare
             auto &targetUser = this->_getUser(target);
@@ -236,7 +236,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
             auto serverVersion = QString(APP_CURRENT_VERSION);
             auto clientVersion = handshakePkg.clientVersion();
             if(clientVersion != serverVersion) {
-                target->sendJSON(JSONMethod::ServerStatus, 
+                target->sendJSON(RPZJSON::Method::ServerStatus, 
                     tr("Your software version is different from the server's one : v%1 (you) / v%2 (server) !")
                     .arg(clientVersion)
                     .arg(serverVersion)
@@ -291,17 +291,17 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const JSONMethod &method,
 void RPZServer::_newUserAcknoledged(JSONSocket* socket, const RPZUser &userToAck) {
     
     //tell associated user's socket his identity
-    socket->sendJSON(JSONMethod::AckIdentity, userToAck);
+    socket->sendJSON(RPZJSON::Method::AckIdentity, userToAck);
 
     //send whole users database to socket
-    auto method = JSONMethod::AllConnectedUsers;
+    auto method = RPZJSON::Method::AllConnectedUsers;
     auto toSend = this->_usersById.toVList();
     this->_sendToAll(method, toSend);
     auto msgLog = QStringLiteral(u"Now %1 clients logged").arg(toSend.count());
     JSONSocket::_debugLog("RPZServer", method, msgLog);
 
     //tell the others that this user exists
-    this->_sendToAllButSelf(socket, JSONMethod::UserIn, userToAck);
+    this->_sendToAllButSelf(socket, RPZJSON::Method::UserIn, userToAck);
 
 }
 
@@ -309,7 +309,7 @@ void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
     
     //send messages...
     auto messagesToSend = this->_messages.toVList();
-    auto method = JSONMethod::ChatLogHistory;
+    auto method = RPZJSON::Method::ChatLogHistory;
     clientSocket->sendJSON(method, messagesToSend);
 
     //log
@@ -320,7 +320,7 @@ void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
     JSONSocket::_debugLog("RPZServer", method, logMsg);
 }
 
-void RPZServer::_broadcastMapChanges(JSONMethod method, AlterationPayload &payload, JSONSocket * senderSocket) {
+void RPZServer::_broadcastMapChanges(RPZJSON::Method method, AlterationPayload &payload, JSONSocket * senderSocket) {
 
     //prevent alteration ack if sender is not host
     if(this->_getUser(senderSocket).role() != RPZUser::Role::Host) return;
@@ -339,10 +339,10 @@ void RPZServer::_broadcastMapChanges(JSONMethod method, AlterationPayload &paylo
 void RPZServer::_sendMapHistory(JSONSocket * clientSocket) {
 
     //generate payload
-    ResetPayload payload(*this->_hints);
+    auto payload = this->_hints->generateResetPayload();
 
     //send it
-    clientSocket->sendJSON(JSONMethod::MapChangedHeavily, payload);
+    clientSocket->sendJSON(RPZJSON::Method::MapChangedHeavily, payload);
 
 }
 
@@ -395,7 +395,7 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
                 newMessage.setOwnership(initialOwner);
 
                 //send new message
-                userSocket->sendJSON(JSONMethod::Message, newMessage);
+                userSocket->sendJSON(RPZJSON::Method::Message, newMessage);
             }
 
             //inform whisperer of any unfound users
@@ -422,7 +422,7 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
             this->_messages.insert(msgId, msg);
 
             //push to all sockets
-            this->_sendToAllButSelf(sender, JSONMethod::Message, msg);
+            this->_sendToAllButSelf(sender, RPZJSON::Method::Message, msg);
 
             //send dices throws if requested
             this->_maySendAndStoreDiceThrows(msg.text());
@@ -435,7 +435,7 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
     if(!response.answerer()) response = RPZResponse(msgId);
 
     //send response
-    sender->sendJSON(JSONMethod::ServerResponse, response);
+    sender->sendJSON(RPZJSON::Method::ServerResponse, response);
 }
 
 void RPZServer::_maySendAndStoreDiceThrows(const QString &text) {
@@ -479,7 +479,7 @@ void RPZServer::_maySendAndStoreDiceThrows(const QString &text) {
     this->_messages.insert(dThrowMsg.id(), dThrowMsg);
 
     //send to all
-    this->_sendToAll(JSONMethod::Message, dThrowMsg);
+    this->_sendToAll(RPZJSON::Method::Message, dThrowMsg);
 
 }
 
@@ -491,7 +491,7 @@ void RPZServer::_maySendAndStoreDiceThrows(const QString &text) {
 // LOW Helpers
 //
 
-void RPZServer::_sendToAllButSelf(JSONSocket* toExclude, const JSONMethod &method, const QVariant &data) {
+void RPZServer::_sendToAllButSelf(JSONSocket* toExclude, const RPZJSON::Method &method, const QVariant &data) {
     for(auto socket : this->_clientSocketById) {
         
         //prevent self send
@@ -504,7 +504,7 @@ void RPZServer::_sendToAllButSelf(JSONSocket* toExclude, const JSONMethod &metho
     }
 }
 
-void RPZServer::_sendToAll(const JSONMethod &method, const QVariant &data) {
+void RPZServer::_sendToAll(const RPZJSON::Method &method, const QVariant &data) {
     for(auto socket : this->_clientSocketById) {
         socket->sendJSON(method, data);
     }
@@ -522,5 +522,5 @@ RPZUser& RPZServer::_getUser(JSONSocket* socket) {
 
 void RPZServer::_sendPlayedStream(JSONSocket* socket) {
     if(!this->_tracker.isSomethingPlaying()) return;   
-    socket->sendJSON(JSONMethod::AudioStreamUrlChanged, this->_tracker);
+    socket->sendJSON(RPZJSON::Method::AudioStreamUrlChanged, this->_tracker);
 }

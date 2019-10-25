@@ -7,7 +7,7 @@ class AssetChangedPayload : public AlterationPayload {
     
     public:
         AssetChangedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        AssetChangedPayload(const RPZAsset &metadata) : AlterationPayload(PayloadAlteration::AssetChanged) {
+        AssetChangedPayload(const RPZAsset &metadata) : AlterationPayload(Payload::Alteration::AssetChanged) {
             this->insert(QStringLiteral(u"m"), metadata);
         }
     

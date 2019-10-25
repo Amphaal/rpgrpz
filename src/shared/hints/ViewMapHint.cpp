@@ -1,6 +1,6 @@
 #include "ViewMapHint.h"
 
-ViewMapHint::ViewMapHint() : AtomsStorage(AlterationPayload::Source::Local_Map) {
+ViewMapHint::ViewMapHint() : AtomsStorage(Payload::Source::Local_Map) {
     
     //default layer from settings
     this->setDefaultLayer(AppContext::settings()->defaultLayer());
@@ -61,7 +61,7 @@ void ViewMapHint::mightNotifyMovement(const QList<QGraphicsItem*> &itemsWhoMight
         if(!id) continue;
 
         //find corresponding atom
-        auto cAtom = this->_getAtomFromId(id);
+        auto cAtom = this->_map.atom(id);
         if(!cAtom) continue;
         
         //pos have not changed
@@ -239,7 +239,7 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &metadata) {
         if(!id) continue;
 
         //find corresponding atom
-        auto atom = this->_getAtomFromId(id);
+        auto atom = this->_map.atom(id);
         if(!atom) continue;
 
         //create the new graphics item
@@ -253,10 +253,10 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &metadata) {
     this->_missingAssetsIdsFromDb.remove(hash);
 
     //remove old
-    emit requestingUIAlteration(PayloadAlteration::Removed, setOfGraphicsItemsToReplace.toList());
+    emit requestingUIAlteration(Payload::Alteration::Removed, setOfGraphicsItemsToReplace.toList());
 
     //replace by new
-    emit requestingUIAlteration(PayloadAlteration::Added, newGis);
+    emit requestingUIAlteration(Payload::Alteration::Added, newGis);
 }
 
 void ViewMapHint::handlePreviewRequest(const AtomsSelectionDescriptor &selectionDescriptor, const AtomParameter &parameter, const QVariant &value) {
@@ -383,7 +383,7 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
         
         //request deletion previous ghost
         if(mightDelete) {
-            emit requestingUIAlteration(PayloadAlteration::Removed, {mightDelete});
+            emit requestingUIAlteration(Payload::Alteration::Removed, {mightDelete});
         }
 
         this->_m_ghostItem.lock();
@@ -391,7 +391,7 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
         this->_m_ghostItem.unlock();
 
         //request addition of new ghost
-        emit requestingUIAlteration(PayloadAlteration::ToySelected, {ghostItem});
+        emit requestingUIAlteration(Payload::Alteration::ToySelected, {ghostItem});
     }
     
     //if template changed
@@ -417,17 +417,18 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
 
 }
 
-void ViewMapHint::addAtom(const RPZAtom &toAdd) {
-    MapDatabase::addAtom(toAdd);
-    this->_buildGraphicsItemFromAtom(toAdd);
+void ViewMapHint::_atomAdded(const RPZAtom &added) {
+    this->_buildGraphicsItemFromAtom(added);
 }
 
-void ViewMapHint::_basicAlterationDone(const QList<RPZAtomId> &updatedIds, const PayloadAlteration &type) {
+void ViewMapHint::_basicAlterationDone(const QList<RPZAtomId> &updatedIds, const Payload::Alteration &type) {
     QList<QGraphicsItem*> toUpdate;
+    
     for(auto id : updatedIds) {
-        if(type == PayloadAlteration::Removed) toUpdate += this->_GItemsByRPZAtomId.take(id);
+        if(type == Payload::Alteration::Removed) toUpdate += this->_GItemsByRPZAtomId.take(id);
         else toUpdate += this->_GItemsByRPZAtomId.value(id);
     }
+
     emit requestingUIAlteration(type, toUpdate);
 }
 

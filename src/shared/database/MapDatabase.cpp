@@ -8,18 +8,36 @@ MapDatabase::MapDatabase(const QJsonObject &obj) {
 }
 MapDatabase::MapDatabase() {}
 
-const RPZMap<RPZAtom> MapDatabase::safe_atoms() const {
+RPZMap<RPZAtom>& MapDatabase::atoms() {
     return this->_atomsById;
 }
 
-const QSet<RPZAssetHash> MapDatabase::safe_usedAssetsIds() const {
+const RPZMap<RPZAtom>& MapDatabase::atoms() const {
+    return this->_atomsById;
+}
+
+const QSet<RPZAssetHash>& MapDatabase::usedAssetsIds() const {
     return this->_assetHashes;
+}
+
+const RPZAtom* MapDatabase::atom(const RPZAtomId &id) {
+    
+    if(!id || !this->_atomsById.contains(id)) {
+        return nullptr;
+    }
+
+    return &this->_atomsById[id];
+
+}
+
+const RPZAtom MapDatabase::atomAsCopy(const RPZAtomId &id) const {
+    return this->_atomsById[id];
 }
 
 void MapDatabase::_setupLocalData() {
 
     //atoms
-    for(const auto &atomAsJson : this->entityAsObject(QStringLiteral(u"atoms"))) {
+    for(const auto &atomAsJson : this->entityAsArray(QStringLiteral(u"atoms"))) {
         RPZAtom atom(atomAsJson.toObject().toVariantHash());
         this->_atomsById.insert(atom.id(), atom);
     }
@@ -31,6 +49,7 @@ void MapDatabase::_setupLocalData() {
     }
 
     qDebug() << "MapDB : read" << this->_atomsById.count() << "atoms";
+
 }
 
 void MapDatabase::saveIntoFile() {
@@ -84,7 +103,7 @@ void MapDatabase::clear() {
 
 JSONDatabase::Model MapDatabase::_getDatabaseModel() {
     return {
-        { { QStringLiteral(u"atoms"), JSONDatabase::EntityType::Object }, &this->_atomsById },
+        { { QStringLiteral(u"atoms"), JSONDatabase::EntityType::Array }, &this->_atomsById },
         { { QStringLiteral(u"assets"), JSONDatabase::EntityType::Array }, &this->_assetHashes }
     };
 };
@@ -105,7 +124,7 @@ QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> MapDatabase::_getUpdat
             MapDatabase db(doc);
 
             //iterate atoms
-            for(auto atom : db.safe_atoms()) {
+            for(auto atom : db.atoms()) {
                 
                 auto shape = atom.shape();
 
@@ -123,7 +142,7 @@ QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> MapDatabase::_getUpdat
             updateFrom(
                 doc,
                 QStringLiteral(u"atoms"),
-                db.safe_atoms().toVMap()
+                db.atoms().toVMap()
             );
 
         }

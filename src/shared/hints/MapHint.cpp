@@ -1,6 +1,6 @@
 #include "MapHint.h"
 
-MapHint::MapHint() : _sysActor(new AlterationActor(AlterationPayload::Source::Local_System)) { 
+MapHint::MapHint() : _sysActor(new AlterationActor(Payload::Source::Local_System)) { 
     this->connectToAlterationEmissions();
 }
 
@@ -25,6 +25,12 @@ bool MapHint::isMapDirty() const {
     return this->_isMapDirty;
 }
 
+const QString MapHint::mapFilePath() const {
+    return this->_cachedMapFilePath.isEmpty() ? 
+                AppContext::getDefaultMapFilePath() : 
+                this->_cachedMapFilePath;
+}
+
 void MapHint::mayWantToSavePendingState(QWidget* parent, MapHint* hint) {
     
     if(!hint->isMapDirty() || hint->isRemote()) return;
@@ -32,7 +38,7 @@ void MapHint::mayWantToSavePendingState(QWidget* parent, MapHint* hint) {
     //popup
     auto result = QMessageBox::warning(
         parent, 
-        hint->dbFilePath(), 
+        hint->_map.dbFilePath(), 
         tr("Do you want to save changes done to this map ?"), 
         QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes
     );
@@ -49,7 +55,7 @@ bool MapHint::saveRPZMap() {
     if(this->_isRemote) return false;
 
     //save into file
-    this->saveIntoFile();
+    this->_map.saveIntoFile();
 
     //define as clean
     this->_setMapDirtiness(false);
@@ -84,9 +90,9 @@ bool MapHint::saveRPZMapAs(const QString &newFilePath) {
 }
 
 bool MapHint::loadDefaultRPZMap() {
-    this->defineAsRemote();
-	auto map = AppContext::getDefaultMapFile();
-	return this->loadRPZMap(map);
+    auto fp = this->mapFilePath();
+    this->ackRemoteness(fp);
+	return this->loadRPZMap(fp);
 }
 
 bool MapHint::loadRPZMap(const QString &filePath) {
@@ -100,8 +106,12 @@ bool MapHint::loadRPZMap(const QString &filePath) {
         this->_mapDescriptor = QFileInfo(filePath).fileName();
         this->_setMapDirtiness(false);
 
+        //fill database
+        MapDatabase db(filePath);
+        this->_cachedMapFilePath = filePath;
+
         //create payload and queue it
-        ResetPayload payload(*this);
+        ResetPayload payload(db);
         AlterationHandler::get()->queueAlteration(this->_sysActor, payload);
 
     return true;
@@ -111,23 +121,36 @@ double MapHint::tileToMeterRatio() const {
     return AppContext::DEFAULT_TILE_TO_METER_RATIO;
 }
 
+bool  MapHint::ackRemoteness(const QString &tblMapFilePath) {
+    
+    this->_isRemote = false;
+    this->_mapDescriptor = tblMapFilePath;
 
-bool MapHint::defineAsRemote(const QString &remoteMapDescriptor) {
+    return this->_ackRemoteness();
+
+}
+
+bool MapHint::ackRemoteness(const RPZUser &connectedUser, RPZClient* client) {
     
     //define remote flag
-    this->_isRemote = !remoteMapDescriptor.isEmpty();
+    this->_isRemote = connectedUser.role() != RPZUser::Role::Host;
 
     //change map descriptor if is a remote session
-    if(this->_isRemote) {
-        this->_mapDescriptor = remoteMapDescriptor;
-    }
+    if(this->_isRemote) this->_mapDescriptor = client->getConnectedSocketAddress();
 
+    return this->_ackRemoteness();
+
+}
+
+bool MapHint::_ackRemoteness() {
+    
     //anyway, unset dirty
     this->_setMapDirtiness(false);
     
+    //return remoteness
     return this->_isRemote;
-}
 
+}
 
 void MapHint::_shouldMakeMapDirty(AlterationPayload &payload) {
 
@@ -138,7 +161,7 @@ void MapHint::_shouldMakeMapDirty(AlterationPayload &payload) {
     if(!payload.isNetworkRoutable()) return;
 
     //always not dirty if reset
-    if(payload.type() == PayloadAlteration::Reset) return;
+    if(payload.type() == Payload::Alteration::Reset) return;
 
     this->_setMapDirtiness();
 }

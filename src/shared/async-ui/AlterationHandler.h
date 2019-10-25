@@ -23,6 +23,6 @@ class AlterationHandler : public QObject {
 
     private:
         static inline AlterationHandler* _inst = nullptr;
-        void _queueAlteration(const AlterationPayload::Source &senderSource, AlterationPayload &payload);
+        void _queueAlteration(const Payload::Source &senderSource, AlterationPayload &payload);
 
 };

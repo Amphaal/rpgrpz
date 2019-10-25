@@ -51,7 +51,7 @@ class ViewMapHint : public AtomsStorage {
         void handlePreviewRequest(const AtomsSelectionDescriptor &selectionDescriptor, const AtomParameter &parameter, const QVariant &value);
 
     signals:
-        void requestingUIAlteration(const PayloadAlteration &type, const QList<QGraphicsItem*> &toAlter);
+        void requestingUIAlteration(const Payload::Alteration &type, const QList<QGraphicsItem*> &toAlter);
         void requestingUIUpdate(const QHash<QGraphicsItem*, AtomUpdates> &toUpdate);
         void requestingUIUpdate(const QList<QGraphicsItem*> &toUpdate, const AtomUpdates &updates);
 
@@ -83,9 +83,9 @@ class ViewMapHint : public AtomsStorage {
         void _replaceMissingAssetPlaceholders(const RPZAsset &metadata); //safe
 
         //augmenting AtomsStorage
-        void addAtom(const RPZAtom &toAdd) override;
+        void _atomAdded(const RPZAtom &added) override;
 
-        virtual void _basicAlterationDone(const QList<RPZAtomId> &updatedIds, const PayloadAlteration &type) override;
+        virtual void _basicAlterationDone(const QList<RPZAtomId> &updatedIds, const Payload::Alteration &type) override;
         virtual void _updatesDone(const QList<RPZAtomId> &updatedIds, const AtomUpdates &updates) override;
         virtual void _updatesDone(const AtomsUpdates &updates) override;
 

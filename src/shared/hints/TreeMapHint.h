@@ -31,7 +31,7 @@ class TreeMapHint : public AlterationAcknoledger {
         void propagateSelection(QVector<RPZAtomId> &selectedIds); //safe
 
     signals:
-        void requestingUIAlteration(const PayloadAlteration &type, const QList<QTreeWidgetItem*> &toAlter);
+        void requestingUIAlteration(const Payload::Alteration &type, const QList<QTreeWidgetItem*> &toAlter);
         void requestingUIUpdate(const QHash<QTreeWidgetItem*, AtomUpdates> &toUpdate);
         void requestingUIUpdate(const QList<QTreeWidgetItem*> &toUpdate, const AtomUpdates &updates);
         void requestingUIMove(const QHash<int, QList<QTreeWidgetItem*>> &childrenMovedToLayer);

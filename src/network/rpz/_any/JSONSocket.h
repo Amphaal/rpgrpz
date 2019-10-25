@@ -6,7 +6,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-#include "JSONMethod.h"
+#include "RPZJSON.hpp"
 
 class JSONSocket : public QObject {
 
@@ -15,20 +15,20 @@ class JSONSocket : public QObject {
     public:
         JSONSocket(QObject* parent, const QString &logId, QTcpSocket * socketToHandle = nullptr);
         ~JSONSocket();
-        void sendJSON(const JSONMethod &method, const QVariant &data);
+        void sendJSON(const RPZJSON::Method &method, const QVariant &data);
         QTcpSocket* socket();
 
-        static void _debugLog(const QString &logId, const JSONMethod &method, const QString &msg);
+        static void _debugLog(const QString &logId, const RPZJSON::Method &method, const QString &msg);
 
     signals:
-        void JSONReceived(JSONSocket* target, const JSONMethod &method, const QVariant &data);
-        void ackedBatch(JSONMethod method, qint64 batchSize);
-        void batchDownloading(JSONMethod method, qint64 downloaded);
+        void JSONReceived(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data);
+        void ackedBatch(RPZJSON::Method method, qint64 batchSize);
+        void batchDownloading(RPZJSON::Method method, qint64 downloaded);
         void sending();
         void sent();
 
     protected:
-        void _debugLog(const JSONMethod &method, const QString &msg);
+        void _debugLog(const RPZJSON::Method &method, const QString &msg);
 
     private:
         bool _batchComplete = false;

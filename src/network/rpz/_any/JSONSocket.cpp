@@ -23,7 +23,7 @@ JSONSocket::~JSONSocket() {
     }
 }
 
-void JSONSocket::sendJSON(const JSONMethod &method, const QVariant &data) {
+void JSONSocket::sendJSON(const RPZJSON::Method &method, const QVariant &data) {
 
     emit sending();
 
@@ -67,14 +67,14 @@ void JSONSocket::sendJSON(const JSONMethod &method, const QVariant &data) {
     emit sent();
 }
 
-void JSONSocket::_debugLog(const QString &logId, const JSONMethod &method, const QString &msg) {
+void JSONSocket::_debugLog(const QString &logId, const RPZJSON::Method &method, const QString &msg) {
     qDebug() << qUtf8Printable(logId) 
-             << qUtf8Printable(QStringLiteral(u"[%1]").arg(JSONMethodAsArray.value((int)method))) 
+             << method
              << " : " 
              << qUtf8Printable(msg);
 }
 
-void JSONSocket::_debugLog(const JSONMethod &method, const QString &msg) {
+void JSONSocket::_debugLog(const RPZJSON::Method &method, const QString &msg) {
     JSONSocket::_debugLog(this->_logId, method, msg);
 }
 
@@ -98,7 +98,7 @@ void JSONSocket::_processIncomingData() {
         quint32 methodAsInt, jsonSize;
         in >> methodAsInt >> jsonSize;
 
-        auto method = (JSONMethod)methodAsInt;
+        auto method = (RPZJSON::Method)methodAsInt;
         auto fullSize = jsonSize + 8;
 
         //tell that download started, prevent resend on same batch
@@ -167,7 +167,7 @@ void JSONSocket::_processIncomingAsJson(const QByteArray &data) {
     }
 
     //log
-    auto method = (JSONMethod)content.value(_methodKey).toInt();
+    auto method = (RPZJSON::Method)content.value(_methodKey).toInt();
     this->_debugLog(method, "received");
 
     //bind

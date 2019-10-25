@@ -12,7 +12,7 @@ class AlterationAcknoledger : public QObject, public AlterationActor {
     Q_OBJECT
 
     public:
-        AlterationAcknoledger(const AlterationPayload::Source &source);
+        AlterationAcknoledger(const Payload::Source &source);
 
     public slots:
         void connectToAlterationEmissions();

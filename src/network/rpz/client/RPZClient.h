@@ -12,7 +12,6 @@
 
 
 #include "src/network/rpz/_any/JSONSocket.h"
-#include "src/network/rpz/_any/JSONRouter.h"
 
 #include "src/shared/database/AssetsDatabase.h"
 
@@ -25,7 +24,7 @@
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 #include "src/shared/audio/StreamPlayStateTracker.hpp"
 
-class RPZClient : public QObject, public AlterationActor, public JSONRouter {
+class RPZClient : public QObject, public AlterationActor {
 
     Q_OBJECT
 
@@ -95,10 +94,10 @@ class RPZClient : public QObject, public AlterationActor, public JSONRouter {
         void _onDisconnect();
         void _onSending();
         void _onSent();
-        void _onBatchAcked(JSONMethod method, qint64 batchSize);
-        void _onBatchDownloading(JSONMethod method, qint64 downloaded);
+        void _onBatchAcked(RPZJSON::Method method, qint64 batchSize);
+        void _onBatchDownloading(RPZJSON::Method method, qint64 downloaded);
 
-        void _routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) override;
+        void _routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data);
 
     private slots:
         void _handleAlterationRequest(const AlterationPayload &payload);

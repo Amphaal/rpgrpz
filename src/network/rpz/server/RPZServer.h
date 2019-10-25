@@ -13,7 +13,6 @@
 #include <QVector>
 
 #include "src/network/rpz/_any/JSONSocket.h"
-#include "src/network/rpz/_any/JSONRouter.h"
 
 #include "src/shared/hints/AtomsStorage.h"
 #include "src/shared/payloads/Payloads.h"
@@ -32,7 +31,7 @@
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 #include "src/helpers/StringHelper.hpp"
 
-class RPZServer : public QTcpServer, public JSONRouter { 
+class RPZServer : public QTcpServer { 
     
     Q_OBJECT
 
@@ -67,7 +66,7 @@ class RPZServer : public QTcpServer, public JSONRouter {
 
         //map atoms
         AtomsStorage* _hints = nullptr;
-        void _broadcastMapChanges(JSONMethod method, AlterationPayload &payload, JSONSocket * senderSocket);
+        void _broadcastMapChanges(RPZJSON::Method method, AlterationPayload &payload, JSONSocket * senderSocket);
         void _sendMapHistory(JSONSocket * clientSocket);
         
         //messages
@@ -79,8 +78,8 @@ class RPZServer : public QTcpServer, public JSONRouter {
         //internal
         void _onNewConnection();
         void _onClientSocketDisconnected(JSONSocket* disconnectedSocket);
-        void _routeIncomingJSON(JSONSocket* target, const JSONMethod &method, const QVariant &data) override;
+        void _routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data);
         
-        void _sendToAll(const JSONMethod &method, const QVariant &data);
-        void _sendToAllButSelf(JSONSocket* toExclude, const JSONMethod &method, const QVariant &data);
+        void _sendToAll(const RPZJSON::Method &method, const QVariant &data);
+        void _sendToAllButSelf(JSONSocket* toExclude, const RPZJSON::Method &method, const QVariant &data);
 };

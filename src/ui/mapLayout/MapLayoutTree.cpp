@@ -110,34 +110,34 @@ bool MapLayoutTree::_isAssociatedAtomSelectable(QTreeWidgetItem* item) {
     return !RPZQVariant::atomAvailability(item);
 }
 
-void MapLayoutTree::_onUIAlterationRequest(const PayloadAlteration &type, const QList<QTreeWidgetItem*> &toAlter) {
+void MapLayoutTree::_onUIAlterationRequest(const Payload::Alteration &type, const QList<QTreeWidgetItem*> &toAlter) {
     
     //prevent circual selection/focus
     QSignalBlocker b(this);
 
-    if(type == PayloadAlteration::Selected || type == PayloadAlteration::Focused) this->_clearSelectedItems();
-    if(type == PayloadAlteration::Reset) this->clear();
+    if(type == Payload::Alteration::Selected || type == Payload::Alteration::Focused) this->_clearSelectedItems();
+    if(type == Payload::Alteration::Reset) this->clear();
 
     for(auto item : toAlter) {
         switch(type) {
             
-            case PayloadAlteration::Selected:
+            case Payload::Alteration::Selected:
                 this->_selectAtomItem(item);
             break;
 
-            case PayloadAlteration::Focused: {
+            case Payload::Alteration::Focused: {
                 auto itemIndex = this->indexFromItem(item);
                 this->scrollTo(itemIndex, QAbstractItemView::ScrollHint::PositionAtCenter);
                 this->_selectAtomItem(item);
             }
             break;
 
-            case PayloadAlteration::Added:
-            case PayloadAlteration::Reset:
+            case Payload::Alteration::Added:
+            case Payload::Alteration::Reset:
                 this->_insertAtomItem(item);
             break;
 
-            case PayloadAlteration::Removed:
+            case Payload::Alteration::Removed:
                 this->_removeItem(item);
             break;
 
@@ -150,8 +150,8 @@ void MapLayoutTree::_onUIAlterationRequest(const PayloadAlteration &type, const 
     //in case of disabling from heavy alteration
     this->setEnabled(true); 
     
-    if(type == PayloadAlteration::Reset || type == PayloadAlteration::Added) this->sortByColumn(0, Qt::SortOrder::DescendingOrder);
-    if(type == PayloadAlteration::Reset || type == PayloadAlteration::Added || type == PayloadAlteration::Removed) this->_updateLayersDisplayedCount();
+    if(type == Payload::Alteration::Reset || type == Payload::Alteration::Added) this->sortByColumn(0, Qt::SortOrder::DescendingOrder);
+    if(type == Payload::Alteration::Reset || type == Payload::Alteration::Added || type == Payload::Alteration::Removed) this->_updateLayersDisplayedCount();
 
     this->_resizeSections();
 

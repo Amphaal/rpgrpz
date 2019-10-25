@@ -1,6 +1,6 @@
 #include "AlterationAcknoledger.h"
 
-AlterationAcknoledger::AlterationAcknoledger(const AlterationPayload::Source &source) : AlterationActor(source) {}
+AlterationAcknoledger::AlterationAcknoledger(const Payload::Source &source) : AlterationActor(source) {}
 
 void AlterationAcknoledger::connectToAlterationEmissions() {
     QObject::connect(
