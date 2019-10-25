@@ -1,9 +1,9 @@
-#include "AssetsTreeView.h"
+#include "ToysTreeView.h"
 
-AssetsTreeView::AssetsTreeView(QWidget *parent) : QTreeView(parent), 
+ToysTreeView::ToysTreeView(QWidget *parent) : QTreeView(parent), 
     AlterationActor(AlterationPayload::Source::Local_AtomDB),
     _MIMEDb(new QMimeDatabase), 
-    _model(new AssetsTreeViewModel) {     
+    _model(new ToysTreeViewModel) {     
     
     //generate raw actions
     this->_generateStaticContainerMoveActions();
@@ -23,7 +23,7 @@ AssetsTreeView::AssetsTreeView(QWidget *parent) : QTreeView(parent),
     //auto expand on insert
     QObject::connect(
         this->_model, &QAbstractItemModel::rowsInserted,
-        this, &AssetsTreeView::_onRowInsert
+        this, &ToysTreeView::_onRowInsert
     );
 
     //ui config
@@ -44,13 +44,13 @@ AssetsTreeView::AssetsTreeView(QWidget *parent) : QTreeView(parent),
     this->setContextMenuPolicy(Qt::CustomContextMenu);
     QObject::connect(
         this, &QWidget::customContextMenuRequested,
-        this, &AssetsTreeView::_renderCustomContextMenu
+        this, &ToysTreeView::_renderCustomContextMenu
     );
 
     //handle alteration
     QObject::connect(
         AlterationHandler::get(), &AlterationHandler::requiresPayloadHandling,
-        this, &AssetsTreeView::_handleAlterationRequest
+        this, &ToysTreeView::_handleAlterationRequest
     );
 
     //selection
@@ -59,28 +59,28 @@ AssetsTreeView::AssetsTreeView(QWidget *parent) : QTreeView(parent),
 }
 
 
-void AssetsTreeView::connectingToServer() {
+void ToysTreeView::connectingToServer() {
 
     //when server responded on available
     QObject::connect(
         _rpzClient, &RPZClient::availableAssetsFromServer,
-        this, &AssetsTreeView::_onAssetsAboutToBeDownloaded
+        this, &ToysTreeView::_onAssetsAboutToBeDownloaded
     );
 
     //import asset
     QObject::connect(
         this->_rpzClient, &RPZClient::receivedAsset,
-        this, &AssetsTreeView::_onReceivedAsset
+        this, &ToysTreeView::_onReceivedAsset
     );
 
 }
 
-void AssetsTreeView::_onAssetsAboutToBeDownloaded(const QVector<QString> &availableIds) {
+void ToysTreeView::_onAssetsAboutToBeDownloaded(const QVector<QString> &availableIds) {
     this->_expectedAssetsTBDownloaded = availableIds.count();
     this->_expectedAssetsDownloaded = 0;
 }
 
-void AssetsTreeView::_onReceivedAsset(RPZAssetImportPackage package) {
+void ToysTreeView::_onReceivedAsset(RPZAssetImportPackage package) {
     
     //integrate
     auto success = this->assetsModel()->integrateAsset(package);
@@ -104,11 +104,11 @@ void AssetsTreeView::_onReceivedAsset(RPZAssetImportPackage package) {
     AlterationHandler::get()->queueAlteration(this, payload);
 }
 
-AssetsTreeViewModel* AssetsTreeView::assetsModel() {
+ToysTreeViewModel* ToysTreeView::assetsModel() {
     return this->_model;
 }
 
-QModelIndexList AssetsTreeView::selectedElementsIndexes() {
+QModelIndexList ToysTreeView::selectedElementsIndexes() {
     QList<QModelIndex> indexes;
 
     //get list of items
@@ -129,7 +129,7 @@ QModelIndexList AssetsTreeView::selectedElementsIndexes() {
 // drag and drop //
 ///////////////////
 
-void AssetsTreeView::startDrag(Qt::DropActions supportedActions) {
+void ToysTreeView::startDrag(Qt::DropActions supportedActions) {
     
     auto indexes = this->selectedIndexes();
     QMimeData *data = model()->mimeData(indexes);
@@ -151,7 +151,7 @@ void AssetsTreeView::startDrag(Qt::DropActions supportedActions) {
 
 }
 
-void AssetsTreeView::dragEnterEvent(QDragEnterEvent *event) {
+void ToysTreeView::dragEnterEvent(QDragEnterEvent *event) {
 
     //if dragged from OS
     auto md = event->mimeData();
@@ -181,7 +181,7 @@ void AssetsTreeView::dragEnterEvent(QDragEnterEvent *event) {
 
 }
 
-void AssetsTreeView::dragMoveEvent(QDragMoveEvent *event) {
+void ToysTreeView::dragMoveEvent(QDragMoveEvent *event) {
     
     QAbstractItemView::dragMoveEvent(event); //mandatory for external drop visual features
 
@@ -200,11 +200,11 @@ void AssetsTreeView::dragMoveEvent(QDragMoveEvent *event) {
 /////////////////////
 
 
-void AssetsTreeView::_generateStaticContainerMoveActions() {
+void ToysTreeView::_generateStaticContainerMoveActions() {
 
     QList<QAction*> out;
 
-    for(auto &toCreate : AssetsTreeViewItem::movableStaticContainerTypes()) {
+    for(auto &toCreate : ToysTreeViewItem::movableStaticContainerTypes()) {
         
         auto targetIndex = this->_model->getStaticContainerTypesIndex(toCreate);
         auto icon = this->_model->data(targetIndex, Qt::DecorationRole).value<QIcon>();
@@ -229,7 +229,7 @@ void AssetsTreeView::_generateStaticContainerMoveActions() {
 
 }
 
-void AssetsTreeView::_renderCustomContextMenu(const QPoint &pos) {
+void ToysTreeView::_renderCustomContextMenu(const QPoint &pos) {
     
     auto indexesToProcess = this->selectedElementsIndexes();
 
@@ -248,7 +248,7 @@ void AssetsTreeView::_renderCustomContextMenu(const QPoint &pos) {
     this->_generateMenu(indexesToProcess, this->viewport()->mapToGlobal(pos));
 }
 
-void AssetsTreeView::_generateMenu(const QList<QModelIndex> &targetIndexes, const QPoint &whereToDisplay) {
+void ToysTreeView::_generateMenu(const QList<QModelIndex> &targetIndexes, const QPoint &whereToDisplay) {
     
     //if no items selected, cancel menu creation
     if(!targetIndexes.count()) return;
@@ -260,10 +260,10 @@ void AssetsTreeView::_generateMenu(const QList<QModelIndex> &targetIndexes, cons
         
         //sigle selected item
         auto firstItemIndex = targetIndexes.first();
-        auto firstItem = AssetsTreeViewItem::fromIndex(firstItemIndex);
+        auto firstItem = ToysTreeViewItem::fromIndex(firstItemIndex);
 
         //container actions...
-        if(firstItem->isContainer() && firstItem->type() != AssetsTreeViewItem::Type::DownloadedContainer) {
+        if(firstItem->isContainer() && firstItem->type() != ToysTreeViewItem::Type::DownloadedContainer) {
             
             //folder creation
             auto createFolder = RPZActions::createFolder();
@@ -280,7 +280,7 @@ void AssetsTreeView::_generateMenu(const QList<QModelIndex> &targetIndexes, cons
     // check if all selected are deletable type...
     auto areAllDeletable = [targetIndexes]() {
         for(auto &elemIndex : targetIndexes) {
-            auto elem = AssetsTreeViewItem::fromIndex(elemIndex);
+            auto elem = ToysTreeViewItem::fromIndex(elemIndex);
             if(!elem->isDeletable()) return false;
         }
         return true;
@@ -316,14 +316,14 @@ void AssetsTreeView::_generateMenu(const QList<QModelIndex> &targetIndexes, cons
 /////////////////////////
 
 //auto expand on row insert
-void AssetsTreeView::_onRowInsert(const QModelIndex &parent, int first, int last) {
+void ToysTreeView::_onRowInsert(const QModelIndex &parent, int first, int last) {
     for (; first <= last; ++first) {
         auto index = this->_model->index(first, 0, parent);
         this->expand(index);
     }
 }
 
-void AssetsTreeView::_requestDeletion(const QModelIndexList &itemsIndexesToDelete) {
+void ToysTreeView::_requestDeletion(const QModelIndexList &itemsIndexesToDelete) {
 
     auto title = tr("Delete elements in toy box");
     auto content = tr("Do you confirm deletion of the %1 selected elements ?").arg(itemsIndexesToDelete.count());
@@ -334,7 +334,7 @@ void AssetsTreeView::_requestDeletion(const QModelIndexList &itemsIndexesToDelet
     }
 }
 
-void AssetsTreeView::keyPressEvent(QKeyEvent * event) {
+void ToysTreeView::keyPressEvent(QKeyEvent * event) {
 
     //switch
     switch(event->key()) {
@@ -359,7 +359,7 @@ void AssetsTreeView::keyPressEvent(QKeyEvent * event) {
     QTreeView::keyPressEvent(event);
 }
 
-void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) {
+void ToysTreeView::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) {
     
     auto i = selected.count();
     auto y = deselected.count();
@@ -379,7 +379,7 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
     //if only a single selection
     else if(indexesCount == 1) {
 
-        auto elem = AssetsTreeViewItem::fromIndex(selectedElems.value(0));
+        auto elem = ToysTreeViewItem::fromIndex(selectedElems.value(0));
         
         auto atomType = (RPZAtomType)elem->type();
         auto asset = elem->asset();
@@ -400,7 +400,7 @@ void AssetsTreeView::selectionChanged(const QItemSelection &selected, const QIte
    
 }
 
-void AssetsTreeView::_handleAlterationRequest(const AlterationPayload &payload) {
+void ToysTreeView::_handleAlterationRequest(const AlterationPayload &payload) {
     
     auto type = payload.type();
     auto listenedForTypes = (type == PayloadAlteration::Selected || type == PayloadAlteration::Reset);

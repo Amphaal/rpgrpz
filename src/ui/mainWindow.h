@@ -24,7 +24,7 @@
 #include "src/ui/users/players/PlayersListView.hpp"
 #include "src/ui/users/standard/StandardUsersListView.hpp"
 
-#include "src/ui/assets/AssetsManager.h"
+#include "src/ui/toys/ToysTreeView.h"
 
 #include "src/ui/atomEditor/AtomEditionManager.hpp"
 
@@ -83,7 +83,7 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
             ConnectWidget* _connectWidget = nullptr;
             AudioManager* _audioManager = nullptr;
             ChatWidget* _chatWidget = nullptr;
-            AssetsManager* _assetsManager = nullptr;
+            ToysTreeView* _toys = nullptr;
             MapTools* _mapTools = nullptr;
             MapLayoutManager* _mlManager = nullptr;
             AtomEditionManager* _atomEditManager = nullptr;

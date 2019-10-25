@@ -267,7 +267,7 @@ void MainWindow::_initAppUnmovableUI() {
     
     //left tabs
     this->_leftTab = new QTabWidget(this);
-    this->_leftTab->addTab(this->_assetsManager, QIcon(QStringLiteral(u":/icons/app/tabs/box.png")), tr("Toy box"));
+    this->_leftTab->addTab(this->_toys, QIcon(QStringLiteral(u":/icons/app/tabs/box.png")), tr("Toy box"));
 
     //right tabs
     this->_rightTab = new QTabWidget(this);
@@ -403,7 +403,7 @@ void MainWindow::_initAppComponents() {
     
     this->_chatWidget = new ChatWidget(this);
     this->_audioManager = new AudioManager(this);
-    this->_assetsManager = new AssetsManager(this);
+    this->_toys = new ToysTreeView(this);
     this->_mapTools = new MapTools(this);
     this->_mlManager = new MapLayoutManager(this->_mapView, this->_mapView->hints(), this);
     this->_connectWidget = new ConnectWidget(this->_mapView->hints(), this);

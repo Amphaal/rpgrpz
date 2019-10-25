@@ -30,7 +30,7 @@
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/network/rpz/client/RPZClient.h"
 
-#include "src/ui/assets/_base/AssetsTreeView.h"
+#include "src/ui/toys/ToysTreeView.h"
 
 #include "src/shared/payloads/Payloads.h"
 

@@ -25,27 +25,14 @@ class RPZAsset : public QVariantHash {
         RPZAsset(const QUrl &uri) {
             this->_integrateFrom(uri);
         }
-        
-        static const QPixmap* cachedPixmap(const RPZAsset &asset) {
-            QPixmap* cached = nullptr;
 
-            auto hash = asset.hash();
-            auto foundInCache = QPixmapCache::find(hash, cached);
-            if(foundInCache) return cached;
-
-            QPixmap pix(asset.filepath());
-            QPixmapCache::insert(hash, pix);
-            QPixmapCache::find(hash, cached);
-            return cached;
-        }
-
-        static const QPixmap* cachedIconPixmap(const RPZAsset &asset, QSize &sizeToApply) {
+        static const QPixmap cachedIconPixmap(const RPZAsset &asset, QSize &sizeToApply) {
             
-            QPixmap* cached = nullptr;
+            QPixmap cached;
 
             //search in cache
             auto idToSearch = asset.hash() + QStringLiteral(u"_ico");
-            auto isFound = QPixmapCache::find(idToSearch, cached);
+            auto isFound = QPixmapCache::find(idToSearch, &cached);
             if(isFound) return cached;
 
             //get asset from filepath
@@ -59,8 +46,7 @@ class RPZAsset : public QVariantHash {
 
             //cache pixmap and return it
             QPixmapCache::insert(idToSearch, pixmap);
-            QPixmapCache::find(idToSearch, cached);
-            return cached;
+            return pixmap;
 
         }
 
@@ -111,7 +97,7 @@ class RPZAsset : public QVariantHash {
                 return;
             }
 
-            this->_updateAssetGeometryData(&fileReader, ext);
+            this->_updateAssetGeometryData(fileReader, ext);
 
         }
 
@@ -139,10 +125,10 @@ class RPZAsset : public QVariantHash {
             this->insert(QStringLiteral(u"hash"), hash);
         }
 
-        void _updateAssetGeometryData(QFile *fileReader, const QString &fileExtension) {
+        void _updateAssetGeometryData(QFile &fileReader, const QString &fileExtension) {
             
             //image metadata
-            QImageReader imgReader(fileReader, qUtf8Printable(fileExtension));
+            QImageReader imgReader(&fileReader, qUtf8Printable(fileExtension));
             auto assetSize = imgReader.size();
             if(!assetSize.isValid()) {
                 qDebug() << "Assets : cannot update asset geometry as the geometry is unoptainable !";
@@ -161,11 +147,17 @@ class RPZAsset : public QVariantHash {
 
         void _integrateFrom(const QUrl &uri) {
             
-            QFile* fileReader = nullptr;
+            if(!uri.isLocalFile()) {
+                qDebug() << "Assets : cannot create asset, source URI is not a file !";
+                return;
+            }
 
-            auto success = _createFileHandler(uri, fileReader);
-            QSharedPointer<QFile> ptr(fileReader); //ensure autodelete on return
-            if(!success) return;
+            //check file exists
+            QFile fileReader(uri.toLocalFile());
+            if(!fileReader.exists()) {
+                qDebug() << "Assets : cannot create asset, source URI file does not exist !";
+                return;
+            }
 
             //ext + name
             QFileInfo fInfo(uri.fileName());
@@ -173,11 +165,11 @@ class RPZAsset : public QVariantHash {
             auto name = fInfo.baseName();
             
             //hash
-            auto hash = _getFileHash(*fileReader);
+            auto hash = _getFileHash(fileReader);
 
             //move
             auto expectedStoragePath = _getFilePathToAsset(hash, ext);
-            success = _moveFileToStore(*fileReader, expectedStoragePath);
+            auto success = _moveFileToStore(fileReader, expectedStoragePath);
             if(!success) return;
 
             //add data
@@ -194,24 +186,6 @@ class RPZAsset : public QVariantHash {
                 qDebug() << "Assets : cannot copy asset to storage, it already exists !";
             }
             return success;
-        }
-
-        static bool _createFileHandler(const QUrl &url, QFile* fileReader) {
-    
-            if(!url.isLocalFile()) {
-                qDebug() << "Assets : cannot create asset, source URI is not a file !";
-                return false;
-            }
-
-            //check file exists
-            fileReader = new QFile(url.toLocalFile());
-            if(!fileReader->exists()) {
-                qDebug() << "Assets : cannot create asset, source URI file does not exist !";
-                return false;
-            }
-
-            return true;
-
         }
 
         static RPZAssetHash _getFileHash(QFile &fileReader) {

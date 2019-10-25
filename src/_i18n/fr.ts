@@ -45,72 +45,6 @@
     </message>
 </context>
 <context>
-    <name>AssetsTreeView</name>
-    <message>
-        <location filename="../ui/assets/_base/AssetsTreeView.cpp" line="212"/>
-        <source>&lt;&lt; Move to &quot;%1&quot;</source>
-        <translation>&lt;&lt; Déplacer vers&quot;%1&quot;</translation>
-    </message>
-    <message>
-        <location filename="../ui/assets/_base/AssetsTreeView.cpp" line="328"/>
-        <source>Delete elements in toy box</source>
-        <translation>Supprimer des elements de la boite à jouets</translation>
-    </message>
-    <message>
-        <location filename="../ui/assets/_base/AssetsTreeView.cpp" line="329"/>
-        <source>Do you confirm deletion of the %1 selected elements ?</source>
-        <translation>Confirmez-vous la suppression des %1 éléments selectionnés ?</translation>
-    </message>
-</context>
-<context>
-    <name>AssetsTreeViewItem</name>
-    <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="186"/>
-        <source>Internal</source>
-        <translation>Interne</translation>
-    </message>
-    <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="187"/>
-        <source>Event</source>
-        <translation>Evénement</translation>
-    </message>
-    <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="188"/>
-        <source>Drawing</source>
-        <translation>Dessin</translation>
-    </message>
-    <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="189"/>
-        <source>Text</source>
-        <translation>Texte</translation>
-    </message>
-    <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="190"/>
-        <source>NPC / Portraits</source>
-        <translation>PNJ / Portraits</translation>
-    </message>
-    <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="191"/>
-        <source>Objects</source>
-        <translation>Objets</translation>
-    </message>
-    <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="192"/>
-        <source>Brush</source>
-        <translation>Terrains</translation>
-    </message>
-    <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="193"/>
-        <source>Downloaded</source>
-        <translation>Téléchargés</translation>
-    </message>
-    <message>
-        <location filename="../ui/assets/_base/AssetsTreeViewItem.h" line="194"/>
-        <source>Landscapes</source>
-        <translation>Paysages</translation>
-    </message>
-</context>
-<context>
     <name>AtomEditionManager</name>
     <message>
         <location filename="../ui/atomEditor/AtomEditionManager.hpp" line="28"/>
@@ -1084,7 +1018,7 @@
         <translation>Trop éloigné pour afficher la grille !</translation>
     </message>
     <message>
-        <location filename="../shared/database/AssetsDatabase.cpp" line="172"/>
+        <location filename="../shared/database/AssetsDatabase.cpp" line="175"/>
         <source>Folder</source>
         <translation>Dossier</translation>
     </message>
@@ -1217,6 +1151,72 @@
         <location filename="../ui/sheets/tabs/StatusTab.hpp" line="85"/>
         <source>Abilities</source>
         <translation>Compétences</translation>
+    </message>
+</context>
+<context>
+    <name>ToysTreeView</name>
+    <message>
+        <location filename="../ui/toys/ToysTreeView.cpp" line="212"/>
+        <source>&lt;&lt; Move to &quot;%1&quot;</source>
+        <translation>&lt;&lt; Déplacer vers&quot;%1&quot;</translation>
+    </message>
+    <message>
+        <location filename="../ui/toys/ToysTreeView.cpp" line="328"/>
+        <source>Delete elements in toy box</source>
+        <translation>Supprimer des elements de la boite à jouets</translation>
+    </message>
+    <message>
+        <location filename="../ui/toys/ToysTreeView.cpp" line="329"/>
+        <source>Do you confirm deletion of the %1 selected elements ?</source>
+        <translation>Confirmez-vous la suppression des %1 éléments selectionnés ?</translation>
+    </message>
+</context>
+<context>
+    <name>ToysTreeViewItem</name>
+    <message>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="188"/>
+        <source>Internal</source>
+        <translation>Interne</translation>
+    </message>
+    <message>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="189"/>
+        <source>Event</source>
+        <translation>Evénement</translation>
+    </message>
+    <message>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="190"/>
+        <source>Drawing</source>
+        <translation>Dessin</translation>
+    </message>
+    <message>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="191"/>
+        <source>Text</source>
+        <translation>Texte</translation>
+    </message>
+    <message>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="192"/>
+        <source>NPC / Portraits</source>
+        <translation>PNJ / Portraits</translation>
+    </message>
+    <message>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="193"/>
+        <source>Objects</source>
+        <translation>Objets</translation>
+    </message>
+    <message>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="194"/>
+        <source>Brush</source>
+        <translation>Terrains</translation>
+    </message>
+    <message>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="195"/>
+        <source>Downloaded</source>
+        <translation>Téléchargés</translation>
+    </message>
+    <message>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="196"/>
+        <source>Landscapes</source>
+        <translation>Paysages</translation>
     </message>
 </context>
 <context>

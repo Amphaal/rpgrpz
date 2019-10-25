@@ -150,6 +150,9 @@ void AssetsDatabase::addAsset(const RPZAsset &asset, const RPZFolderPath &intern
     auto &assetsOfPath = this->_paths[internalPathToAddTo];
     assetsOfPath.insert(asset.hash());
 
+    //save
+    this->_saveIntoFile();
+
 }
 
 bool AssetsDatabase::importAsset(RPZAssetImportPackage &package) {
@@ -166,13 +169,18 @@ bool AssetsDatabase::importAsset(RPZAssetImportPackage &package) {
 
 }
 
-void AssetsDatabase::createFolder(const RPZFolderPath &parentPath) {
+const QString AssetsDatabase::createFolder(const RPZFolderPath &parentPath) {
     
     //get a unique folder
     auto uniquePath = this->_generateNonExistingPath(parentPath, QObject::tr("Folder"));
 
     //add
     this->_paths.insert(uniquePath, {});
+
+    //save
+    this->_saveIntoFile();
+
+    return this->_folderName(uniquePath);
 
 }
 
@@ -189,6 +197,8 @@ bool AssetsDatabase::renameFolder(const QString &requestedNewFolderName, const R
     auto oldPathsToReroute = this->_getPathsStartingWith(pathToRename);
     this->_reroutePaths(pathToRename, toRequest, oldPathsToReroute);
 
+    //save
+    this->_saveIntoFile();
     return true;
 
 }
@@ -208,6 +218,9 @@ void AssetsDatabase::renameAsset(const QString &newName, const RPZAssetHash &has
         newName
     );
 
+    //save
+    this->_saveIntoFile();
+
 }
 
 void AssetsDatabase::removeAssets(const QList<RPZAssetHash> &hashesToRemove) {
@@ -220,6 +233,9 @@ void AssetsDatabase::removeAssets(const QList<RPZAssetHash> &hashesToRemove) {
 
     //remove stored files
     this->_removeAssetFiles(result.second);
+
+    //save
+    this->_saveIntoFile();
 
 }
 
@@ -243,6 +259,9 @@ void AssetsDatabase::removeFolders(const QList<RPZFolderPath> &pathsToRemove) {
     //remove stored files
     this->_removeAssetFiles(result.second);
 
+    //save
+    this->_saveIntoFile();
+
 }
 
 void AssetsDatabase::moveAssetsTo(const RPZFolderPath &internalPathToMoveTo, const QList<RPZAssetHash> &hashesToMove) {
@@ -260,6 +279,9 @@ void AssetsDatabase::moveAssetsTo(const RPZFolderPath &internalPathToMoveTo, con
         this->_w_assetToPath.insert(hash, internalPathToMoveTo);
     }
 
+    //save
+    this->_saveIntoFile();
+
 }
 
 void AssetsDatabase::moveFoldersTo(const RPZFolderPath &internalPathToMoveTo, const QList<RPZFolderPath> &topmostPathsToMove) {
@@ -274,6 +296,9 @@ void AssetsDatabase::moveFoldersTo(const RPZFolderPath &internalPathToMoveTo, co
         this->_reroutePaths(topmost, newTopmostPath, i.value());
 
     }
+
+    //save
+    this->_saveIntoFile();
 
 }
 
@@ -399,9 +424,11 @@ const QString AssetsDatabase::_parentPath(const RPZFolderPath &toExtractParentFr
 void AssetsDatabase::_removeAssetFiles(const QList<RPZAsset> &toRemoveFromStorage) {
     
     for(auto &asset : toRemoveFromStorage) {
+        
         QFile fileToRemove(asset.filepath());
         if(!fileToRemove.exists()) continue;
         fileToRemove.remove();
+        
     }
     
 }

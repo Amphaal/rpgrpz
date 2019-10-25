@@ -122,7 +122,7 @@ QGraphicsPathItem* CustomGraphicsItemHelper::_createBrushItem(const RPZAtom &ato
 
     //configure brush
     QBrush brush;
-    brush.setTexture(*RPZAsset::cachedPixmap(asset));
+    brush.setTexture(asset.filepath());
     
     //create path
     auto newPath = new MapViewGraphicsPathItem(shape, pen, brush);

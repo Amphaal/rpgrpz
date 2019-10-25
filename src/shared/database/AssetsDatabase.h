@@ -33,7 +33,7 @@ class AssetsDatabase : public QObject, public JSONDatabase {
 
         //CRUD methods
         void addAsset(const RPZAsset &asset, const RPZFolderPath &internalPathToAddTo);
-        void createFolder(const RPZFolderPath &parentPath);
+        const QString createFolder(const RPZFolderPath &parentPath);
 
         bool renameFolder(const QString &requestedNewFolderName, const RPZFolderPath &pathToRename);
         void renameAsset(const QString &newName, const RPZAssetHash &hash);

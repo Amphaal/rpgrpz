@@ -13,18 +13,18 @@
 #include <QDragMoveEvent>
 #include <QDropEvent>
 
-#include "AssetsTreeViewModel.h"
+#include "src/ui/toys/_base/ToysTreeViewModel.h"
 #include "src/shared/commands/RPZActions.h"
 
 #include "src/shared/models/toy/RPZToy.hpp"
 
-class AssetsTreeView : public QTreeView, public ConnectivityObserver, public AlterationActor {
+class ToysTreeView : public QTreeView, public ConnectivityObserver, public AlterationActor {
 
     Q_OBJECT
 
     public:
-        AssetsTreeView(QWidget *parent = nullptr);
-        AssetsTreeViewModel* assetsModel();
+        ToysTreeView(QWidget *parent = nullptr);
+        ToysTreeViewModel* assetsModel();
         QModelIndexList selectedElementsIndexes();
 
     private slots:
@@ -43,7 +43,7 @@ class AssetsTreeView : public QTreeView, public ConnectivityObserver, public Alt
         ///////////////////
 
         QMimeDatabase* _MIMEDb = nullptr;
-        AssetsTreeViewModel* _model = nullptr;
+        ToysTreeViewModel* _model = nullptr;
 
         void dragEnterEvent(QDragEnterEvent *event) override;
         void dragMoveEvent(QDragMoveEvent *event) override;

@@ -16,5 +16,5 @@
 
 class MapViewGraphicsPixmapItem : public QGraphicsPixmapItem {
     public:
-        MapViewGraphicsPixmapItem(const RPZAsset &assetMetadata) : QGraphicsPixmapItem(*RPZAsset::cachedPixmap(assetMetadata)) {}
+        MapViewGraphicsPixmapItem(const RPZAsset &assetMetadata) : QGraphicsPixmapItem(assetMetadata.filepath()) {}
 };

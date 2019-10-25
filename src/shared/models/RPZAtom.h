@@ -22,7 +22,7 @@
 
 #include "src/shared/models/toy/RPZAsset.hpp"
 
-// defined values shared with AssetsTreeViewItem type for static casts
+// defined values shared with ToysTreeViewItem type for static casts
 enum class RPZAtomType { 
     Undefined, 
     Drawing,
