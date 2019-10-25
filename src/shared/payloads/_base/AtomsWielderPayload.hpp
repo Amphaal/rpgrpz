@@ -10,16 +10,6 @@
 class AtomsWielderPayload : public AlterationPayload {
     public:
         AtomsWielderPayload() {}
-        explicit AtomsWielderPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        AtomsWielderPayload(const MapDatabase &map) : AlterationPayload(Payload::Alteration::Reset) {
-            this->_setAssetHashes(map.usedAssetHashes());
-            this->_setAtoms(map.atoms().toVMap());
-        }
-
-        AtomsWielderPayload(const QList<RPZAtom> &atoms) : AlterationPayload(Payload::Alteration::Added) {
-            this->_setAssetHashes(atoms);
-            this->_setAtoms(atoms);
-        }
 
         const QSet<RPZAssetHash> assetHashes() const {
             
@@ -49,6 +39,18 @@ class AtomsWielderPayload : public AlterationPayload {
             
             return out;
 
+        }
+
+        protected:
+        explicit AtomsWielderPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
+        AtomsWielderPayload(const MapDatabase &map) : AlterationPayload(Payload::Alteration::Reset) {
+            this->_setAssetHashes(map.usedAssetHashes());
+            this->_setAtoms(map.atoms().toVMap());
+        }
+
+        AtomsWielderPayload(const QList<RPZAtom> &atoms) : AlterationPayload(Payload::Alteration::Added) {
+            this->_setAssetHashes(atoms);
+            this->_setAtoms(atoms);
         }
 
         private:

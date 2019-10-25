@@ -5,12 +5,7 @@
 #include <QList>
 
 class MultipleAtomTargetsPayload : public AlterationPayload {
-    public:
-        explicit MultipleAtomTargetsPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        MultipleAtomTargetsPayload(const Payload::Alteration &alteration, const QVector<RPZAtomId> &targetedRPZAtomIds) : AlterationPayload(alteration) {
-            this->_setTargetRPZAtomIds(targetedRPZAtomIds);
-        }
-    
+    public:   
         QVector<RPZAtomId> targetRPZAtomIds() const {
             
             auto list = this->value(QStringLiteral(u"ids")).toList();
@@ -26,6 +21,12 @@ class MultipleAtomTargetsPayload : public AlterationPayload {
 
         virtual QVariant args() const {
             return this->value(QStringLiteral(u"args"));
+        }
+
+    protected:
+        explicit MultipleAtomTargetsPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
+        MultipleAtomTargetsPayload(const Payload::Alteration &alteration, const QVector<RPZAtomId> &targetedRPZAtomIds) : AlterationPayload(alteration) {
+            this->_setTargetRPZAtomIds(targetedRPZAtomIds);
         }
     
     private:

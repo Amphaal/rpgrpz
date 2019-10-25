@@ -21,7 +21,7 @@ class AlterationPayload : public QVariantHash {
         }
 
         static Payload::Alteration extractType(const QVariantHash &hash) {
-            return (Payload::Alteration)hash.value(QStringLiteral(u"t")).toInt();
+            return (Payload::Alteration)hash.value(QStringLiteral(u"t"), 0).toInt();
         }
 
         void changeSource(const Payload::Source &newSource) {
@@ -29,7 +29,7 @@ class AlterationPayload : public QVariantHash {
         }
 
         Payload::Source source() const {
-            return (Payload::Source)this->value(QStringLiteral(u"s")).toInt();
+            return (Payload::Source)this->value(QStringLiteral(u"s"), 0).toInt();
         }
 
         bool isNetworkRoutable() const {
