@@ -10,14 +10,14 @@ class Ownable : public Serializable {
 
     public:
         Ownable() {};
-        Ownable(const QVariantHash &hash) : Serializable(hash) {}
+        explicit Ownable(const QVariantHash &hash) : Serializable(hash) {}
         Ownable(snowflake_uid id) : Serializable(id) {}
         Ownable(snowflake_uid id, const RPZUser &user) : Ownable(id) {
             this->setOwnership(user);
         };
 
         RPZUser owner() const { 
-            return this->value(QStringLiteral(u"owner"), RPZUser()).toHash(); 
+            return RPZUser(this->value(QStringLiteral(u"owner"), RPZUser()).toHash()); 
         };
 
         void setOwnership(const RPZUser &user) { 

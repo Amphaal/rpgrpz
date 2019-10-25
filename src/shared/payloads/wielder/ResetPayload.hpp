@@ -5,6 +5,12 @@
 class ResetPayload : public AtomsWielderPayload {
     public:
         ResetPayload() {}
-        ResetPayload(const QVariantHash &hash) : AtomsWielderPayload(hash) {}
-        ResetPayload(const MapDatabase &map) : AtomsWielderPayload(Payload::Alteration::Reset, map) { }
+        explicit ResetPayload(const QVariantHash &hash) : AtomsWielderPayload(hash) {}
+        ResetPayload(const MapDatabase &map) : AtomsWielderPayload(map) {}
+        
+        friend QDebug operator<<(QDebug debug, const ResetPayload &c) {
+            QDebugStateSaver saver(debug);
+            debug.nospace() << c.type() << ", count:" << c.atoms().count();
+            return debug;
+        }
 };

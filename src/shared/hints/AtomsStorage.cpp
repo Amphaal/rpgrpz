@@ -109,7 +109,7 @@ const AtomsSelectionDescriptor AtomsStorage::getAtomSelectionDescriptor(const QV
 // HISTORY //
 /////////////
 
-void AtomsStorage::_registerPayloadForHistory(AlterationPayload &payload) {
+void AtomsStorage::_registerPayloadForHistory(const AlterationPayload &payload) {
     
     //do not register again if payload is already from timeline
     if(payload.isFromTimeline()) return;
@@ -197,7 +197,7 @@ void AtomsStorage::redo() {
     AlterationHandler::get()->queueAlteration(this, st_payload);
 }
 
-AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &fromHistoryPayload) {
+AlterationPayload AtomsStorage::_generateUndoPayload(const AlterationPayload &fromHistoryPayload) {
 
     switch(fromHistoryPayload.type()) {
 
@@ -275,7 +275,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &fromHist
 
             }
 
-            return AddedPayload::fromAtoms(out);
+            return AddedPayload(out);
 
         }
         break; 
@@ -298,11 +298,11 @@ AlterationPayload AtomsStorage::_generateUndoPayload(AlterationPayload &fromHist
 /* ELEMENTS */
 //////////////
 
-void AtomsStorage::handleAlterationRequest(AlterationPayload &payload) { 
+void AtomsStorage::handleAlterationRequest(const AlterationPayload &payload) { 
     return this->_handleAlterationRequest(payload);
 }
 
-void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
+void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
 
     QMutexLocker lock(&this->_m_handlingLock);
     
@@ -319,7 +319,7 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
     }
 
     //reset/insert types
-    if(auto mPayload = dynamic_cast<AtomsWielderPayload*>(&payload)) {
+    if(auto mPayload = dynamic_cast<const AtomsWielderPayload*>(&payload)) {
         
         QList<RPZAtomId> insertedIds;
         
@@ -338,7 +338,7 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
     }
 
     //bulk
-    else if(auto mPayload = dynamic_cast<BulkMetadataChangedPayload*>(&payload)) {
+    else if(auto mPayload = dynamic_cast<const BulkMetadataChangedPayload*>(&payload)) {
         auto updatesById = mPayload->atomsUpdates();
         for (auto i = updatesById.begin(); i != updatesById.end(); i++) {
             
@@ -354,12 +354,12 @@ void AtomsStorage::_handleAlterationRequest(AlterationPayload &payload) {
     }
 
     //multi target format
-    else if(auto mPayload = dynamic_cast<MultipleAtomTargetsPayload*>(&payload)) {
+    else if(auto mPayload = dynamic_cast<const MultipleAtomTargetsPayload*>(&payload)) {
         
         QList<RPZAtomId> alteredIds;
         AtomUpdates maybeUpdates;
         
-        if(auto nPayload = dynamic_cast<MetadataChangedPayload*>(&payload)) {
+        if(auto nPayload = dynamic_cast<const MetadataChangedPayload*>(&payload)) {
             maybeUpdates = nPayload->updates();
         } 
 
@@ -403,7 +403,7 @@ void AtomsStorage::duplicateAtoms(const QVector<RPZAtomId> &RPZAtomIdList) {
     if(!newAtoms.count()) return;
 
     //request insertion
-    auto added = AddedPayload::fromAtoms(newAtoms.values());
+    AddedPayload added(newAtoms.values());
     AlterationHandler::get()->queueAlteration(this, added);
 
     //request selection

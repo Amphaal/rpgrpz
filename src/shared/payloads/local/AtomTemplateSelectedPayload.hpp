@@ -8,7 +8,7 @@
 class AtomTemplateSelectedPayload : public AlterationPayload {
     
     public:
-        AtomTemplateSelectedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
+        explicit AtomTemplateSelectedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
         AtomTemplateSelectedPayload(const RPZAtom &templateAtom) : AlterationPayload(Payload::Alteration::AtomTemplateSelected) {
             this->insert(QStringLiteral(u"templ"), QVariant::fromValue<RPZAtom>(templateAtom));
         }

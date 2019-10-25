@@ -183,7 +183,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
             auto requestedCount = requested.count();
 
             //determine available assets to upload
-            auto available = AssetsDatabase::get()->getStoredAssetsIds();
+            auto available = AssetsDatabase::get()->getStoredAssetHashes();
             requested.intersect(available);
 
             //if there are any, tell the client
@@ -206,9 +206,9 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
             }
 
             //package each asset and send it to user
-            for(auto &assetId : requested) {
+            for(auto &assetHash : requested) {
 
-                auto package = AssetsDatabase::get()->prepareAssetPackage(assetId);
+                auto package = AssetsDatabase::get()->prepareAssetPackage(assetHash);
 
                 if(!package.isPackageCreationSuccessful()) continue;
 

@@ -53,12 +53,12 @@ class AtomsStorage : public AlterationAcknoledger {
         void redo();
         void undo();
         void duplicateAtoms(const QVector<RPZAtomId> &RPZAtomIdList);
-        void handleAlterationRequest(AlterationPayload &payload);
+        void handleAlterationRequest(const AlterationPayload &payload);
 
     protected:
         MapDatabase _map;
 
-        virtual void _handleAlterationRequest(AlterationPayload &payload) override;
+        virtual void _handleAlterationRequest(const AlterationPayload &payload) override;
         virtual void _atomAdded(const RPZAtom &added) {};
 
         virtual void _basicAlterationDone(const QList<RPZAtomId> &updatedIds, const Payload::Alteration &type) {};
@@ -72,8 +72,8 @@ class AtomsStorage : public AlterationAcknoledger {
         QStack<AlterationPayload> _redoHistory;
         QStack<AlterationPayload> _undoHistory;
         int _payloadHistoryIndex = 0;
-        void _registerPayloadForHistory(AlterationPayload &payload);
-        AlterationPayload _generateUndoPayload(AlterationPayload &historyPayload);
+        void _registerPayloadForHistory(const AlterationPayload &payload);
+        AlterationPayload _generateUndoPayload(const AlterationPayload &historyPayload);
         int _canRedo();
         int _canUndo();
 

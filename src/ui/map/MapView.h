@@ -20,7 +20,7 @@
 
 #include "src/ui/map/graphics/CustomGraphicsItemHelper.h"
 
-#include "MapTools.hpp"
+#include "src/ui/map/toolbars/MapTools.hpp"
 #include "src/ui/map/_base/AnimationTimeLine.hpp"
 
 #include "src/shared/hints/MapHint.h"

@@ -113,7 +113,7 @@ QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZToy &toy) {
             this->_templateAtom.setShape(QRectF()); 
         }
 
-        this->_templateAtom.setMetadata(AtomParameter::AssetId, toy.hash());
+        this->_templateAtom.setMetadata(AtomParameter::AssetHash, toy.hash());
         this->_templateAtom.setMetadata(AtomParameter::AssetName, toy.name());
     }
     
@@ -184,9 +184,9 @@ RPZAtomId ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsIte
 QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuildFrom) {
 
     QGraphicsItem* newItem = nullptr;
-    auto assetId = atomToBuildFrom.assetId();
-    auto asset = AssetsDatabase::get()->asset(atomToBuildFrom.assetId());
-    auto hasMissingAsset = !assetId.isEmpty() && !asset;
+    auto assetHash = atomToBuildFrom.assetHash();
+    auto asset = AssetsDatabase::get()->asset(atomToBuildFrom.assetHash());
+    auto hasMissingAsset = !assetHash.isEmpty() && !asset;
 
     //atom links to missing asset from DB
     if(hasMissingAsset) {
@@ -196,7 +196,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuil
         newItem = placeholder;
 
         //add graphic item to list of items to replace at times
-        this->_missingAssetsIdsFromDb.insert(assetId, placeholder);
+        this->_missingAssetHashesFromDb.insert(assetHash, placeholder);
 
     } 
     
@@ -225,11 +225,11 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &metadata) {
     auto hash = metadata.hash();
     auto pathToFile = metadata.filepath();
 
-    if(!this->_missingAssetsIdsFromDb.contains(hash)) return; //no assetId, skip
+    if(!this->_missingAssetHashesFromDb.contains(hash)) return; //no assetHash, skip
     if(pathToFile.isNull()) return; //path to file empty, skip
     
     //get uniques ids
-    setOfGraphicsItemsToReplace = this->_missingAssetsIdsFromDb.values(hash).toSet();
+    setOfGraphicsItemsToReplace = this->_missingAssetHashesFromDb.values(hash).toSet();
     
     //iterate through the list of GI to replace
     for(auto item : setOfGraphicsItemsToReplace) {
@@ -250,7 +250,7 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &metadata) {
     }
 
     //clear the id from the missing list
-    this->_missingAssetsIdsFromDb.remove(hash);
+    this->_missingAssetHashesFromDb.remove(hash);
 
     //remove old
     emit requestingUIAlteration(Payload::Alteration::Removed, setOfGraphicsItemsToReplace.toList());
@@ -340,13 +340,13 @@ const RPZAtomId ViewMapHint::getAtomIdFromGraphicsItem(const QGraphicsItem* toFe
 /////////////////////////////
 
 //alter Scene
-void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
+void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
 
     //if reset (before)
-    if(auto mPayload = dynamic_cast<ResetPayload*>(&payload)) {
+    if(auto mPayload = dynamic_cast<const ResetPayload*>(&payload)) {
         
         //clear cache of missing qGraphicsItem
-        this->_missingAssetsIdsFromDb.clear();
+        this->_missingAssetHashesFromDb.clear();
 
         //delete ghost
         QMutexLocker l(&this->_m_ghostItem);
@@ -361,7 +361,7 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
     }
 
     //if reset (afterward)
-    if(auto mPayload = dynamic_cast<ResetPayload*>(&payload)) {
+    if(auto mPayload = dynamic_cast<const ResetPayload*>(&payload)) {
         
         //tell UI that download ended
         QMetaObject::invokeMethod(ProgressTracker::get(), "downloadHasEnded", 
@@ -371,12 +371,12 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
     }
 
     //if asset changed
-    if(auto mPayload = dynamic_cast<AssetChangedPayload*>(&payload)) {
+    if(auto mPayload = dynamic_cast<const AssetChangedPayload*>(&payload)) {
         this->_replaceMissingAssetPlaceholders(mPayload->assetMetadata());
     }
 
     //if asset selected
-    else if(auto mPayload = dynamic_cast<ToySelectedPayload*>(&payload)) {
+    else if(auto mPayload = dynamic_cast<const ToySelectedPayload*>(&payload)) {
         
         //generate ghost
         auto mightDelete = this->_generateGhostItem(mPayload->selectedToy());
@@ -395,7 +395,7 @@ void ViewMapHint::_handleAlterationRequest(AlterationPayload &payload) {
     }
     
     //if template changed
-    else if(auto mPayload = dynamic_cast<AtomTemplateChangedPayload*>(&payload)) {
+    else if(auto mPayload = dynamic_cast<const AtomTemplateChangedPayload*>(&payload)) {
 
         auto updates = mPayload->updates();
 

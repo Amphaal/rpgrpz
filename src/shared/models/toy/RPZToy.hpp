@@ -6,7 +6,7 @@
 class RPZToy : public RPZAsset {
     public:
         RPZToy() {}
-        RPZToy(const QVariantHash &hash) : RPZAsset(hash) {}
+        explicit RPZToy(const QVariantHash &hash) : RPZAsset(hash) {}
         RPZToy(const RPZAsset &asset, const RPZAtomType &type = RPZAtomType::Undefined) : RPZAsset(asset) {
             this->insert(QStringLiteral(u"at"), (int)type);
         }

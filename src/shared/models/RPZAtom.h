@@ -53,7 +53,7 @@ class RPZAtom : public Serializable {
     
     public:
         RPZAtom();
-        RPZAtom(const QVariantHash &hash);
+        explicit RPZAtom(const QVariantHash &hash);
         RPZAtom(RPZAtomId id, const RPZAtomType &type);
         RPZAtom(const RPZAtomType &type);
 
@@ -84,7 +84,7 @@ class RPZAtom : public Serializable {
         QSet<AtomParameter> customizableParams() const;
         static QSet<AtomParameter> customizableParams(const RPZAtomType &type);
 
-        RPZAssetHash assetId() const;
+        RPZAssetHash assetHash() const;
         QString assetName() const;
         double scale() const;
         double rotation() const;
@@ -107,27 +107,27 @@ class RPZAtom : public Serializable {
 
     private:
         static inline const QHash<AtomParameter, QString> _str = {
-            { AtomParameter::AssetId, "a_id" },
-            { AtomParameter::AssetName, "a_name" },
-            { AtomParameter::Scale, "scl" },
-            { AtomParameter::Rotation, "deg" },
-            { AtomParameter::Text, "txt" },
-            { AtomParameter::TextSize, "txt_s" },
-            { AtomParameter::Layer, "lyr" },
-            { AtomParameter::Position, "pos" },
-            { AtomParameter::PenWidth, "pen_w" },
-            { AtomParameter::Shape, "shape" },
-            { AtomParameter::Hidden, "hid" },
-            { AtomParameter::Locked, "lck" },
-            { AtomParameter::AssetRotation, "a_deg" },
-            { AtomParameter::AssetScale, "a_scl" },
-            { AtomParameter::BrushStyle, "brush_t" },
-            { AtomParameter::BrushPenWidth, "brush_w" },
-            { AtomParameter::ShapeCenter, "shape_c" }
+            { AtomParameter::AssetHash, QStringLiteral(u"a_id") },
+            { AtomParameter::AssetName, QStringLiteral(u"a_name") },
+            { AtomParameter::Scale, QStringLiteral(u"scl") },
+            { AtomParameter::Rotation, QStringLiteral(u"deg") },
+            { AtomParameter::Text, QStringLiteral(u"txt") },
+            { AtomParameter::TextSize, QStringLiteral(u"txt_s") },
+            { AtomParameter::Layer, QStringLiteral(u"lyr") },
+            { AtomParameter::Position, QStringLiteral(u"pos") },
+            { AtomParameter::PenWidth, QStringLiteral(u"pen_w") },
+            { AtomParameter::Shape, QStringLiteral(u"shape") },
+            { AtomParameter::Hidden, QStringLiteral(u"hid") },
+            { AtomParameter::Locked, QStringLiteral(u"lck") },
+            { AtomParameter::AssetRotation, QStringLiteral(u"a_deg") },
+            { AtomParameter::AssetScale, QStringLiteral(u"a_scl") },
+            { AtomParameter::BrushStyle, QStringLiteral(u"brush_t") },
+            { AtomParameter::BrushPenWidth, QStringLiteral(u"brush_w") },
+            { AtomParameter::ShapeCenter, QStringLiteral(u"shape_c") }
         };
 
         static inline const AtomUpdates _defaultVal = {
-            { AtomParameter::AssetId, "" },
+            { AtomParameter::AssetHash, "" },
             { AtomParameter::AssetName, "" },
             { AtomParameter::Scale, 1.0 },
             { AtomParameter::Rotation, 0.0 },

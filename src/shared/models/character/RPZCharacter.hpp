@@ -13,7 +13,7 @@
 class RPZCharacter : public Serializable {
     public:
         RPZCharacter() {};
-        RPZCharacter(const QVariantHash &hash) : Serializable(hash) {};
+        explicit RPZCharacter(const QVariantHash &hash) : Serializable(hash) {};
 
         const QString toString() const {
             auto out = this->name();

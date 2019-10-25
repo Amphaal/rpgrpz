@@ -18,7 +18,7 @@ class AlterationAcknoledger : public QObject, public AlterationActor {
         void connectToAlterationEmissions();
 
     protected:
-        virtual void _handleAlterationRequest(AlterationPayload &payload) = 0;
+        virtual void _handleAlterationRequest(const AlterationPayload &payload) = 0;
 
     private slots:
         void _ackAlteration(const AlterationPayload &payload);

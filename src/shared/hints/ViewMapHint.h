@@ -56,7 +56,7 @@ class ViewMapHint : public AtomsStorage {
         void requestingUIUpdate(const QList<QGraphicsItem*> &toUpdate, const AtomUpdates &updates);
 
     protected:
-        virtual void _handleAlterationRequest(AlterationPayload &payload) override;
+        virtual void _handleAlterationRequest(const AlterationPayload &payload) override;
 
     private:
         //alter template Atom
@@ -72,7 +72,7 @@ class ViewMapHint : public AtomsStorage {
         mutable QMutex _m_GItemsByRPZAtomId;
         QMap<RPZAtomId, QGraphicsItem*> _GItemsByRPZAtomId;
 
-        QMultiHash<RPZAssetHash, QGraphicsItem*> _missingAssetsIdsFromDb;
+        QMultiHash<RPZAssetHash, QGraphicsItem*> _missingAssetHashesFromDb;
         
         //helpers
         QGraphicsItem* _generateGhostItem(const RPZToy &toy);

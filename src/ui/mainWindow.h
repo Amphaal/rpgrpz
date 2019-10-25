@@ -16,9 +16,9 @@
 #include "src/ui/audio/AudioManager.h"
 #include "src/ui/map/MapView.h"
 
-#include "src/ui/map/MapTools.hpp"
-#include "src/ui/map/MapHelpers.hpp"
-#include "src/ui/map/MapActions.hpp"
+#include "src/ui/map/toolbars/MapTools.hpp"
+#include "src/ui/map/toolbars/MapHelpers.hpp"
+#include "src/ui/map/toolbars/MapActions.hpp"
 
 #include "src/ui/mapLayout/MapLayoutManager.h"
 #include "src/ui/users/players/PlayersListView.hpp"

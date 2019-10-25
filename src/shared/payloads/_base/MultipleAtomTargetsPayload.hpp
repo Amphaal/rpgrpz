@@ -6,8 +6,7 @@
 
 class MultipleAtomTargetsPayload : public AlterationPayload {
     public:
-
-        MultipleAtomTargetsPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
+        explicit MultipleAtomTargetsPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
         MultipleAtomTargetsPayload(const Payload::Alteration &alteration, const QVector<RPZAtomId> &targetedRPZAtomIds) : AlterationPayload(alteration) {
             this->_setTargetRPZAtomIds(targetedRPZAtomIds);
         }

@@ -50,7 +50,7 @@ class AssetsDatabase : public QObject, public JSONDatabase {
 
         //
         const RPZAsset* asset(const RPZAssetHash &hash);
-        const QSet<RPZAssetHash> getStoredAssetsIds() const;
+        const QSet<RPZAssetHash> getStoredAssetHashes() const;
 
         //network import/export
         bool importAsset(RPZAssetImportPackage &package);

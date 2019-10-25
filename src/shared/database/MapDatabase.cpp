@@ -16,7 +16,7 @@ const RPZMap<RPZAtom>& MapDatabase::atoms() const {
     return this->_atomsById;
 }
 
-const QSet<RPZAssetHash>& MapDatabase::usedAssetsIds() const {
+const QSet<RPZAssetHash>& MapDatabase::usedAssetHashes() const {
     return this->_assetHashes;
 }
 
@@ -75,7 +75,7 @@ void MapDatabase::addAtom(const RPZAtom &toAdd) {
     
     this->_atomsById.insert(toAdd.id(), toAdd);
 
-    auto hash = toAdd.assetId();
+    auto hash = toAdd.assetHash();
     if(!hash.isEmpty()) {
         this->_assetHashes += hash;
     }
@@ -93,7 +93,7 @@ void MapDatabase::updateAtom(const RPZAtomId &toUpdate, const AtomUpdates &updat
 
 void MapDatabase::removeAtom(const RPZAtomId &toRemove) {
     auto removed = this->_atomsById.take(toRemove);
-    this->_assetHashes.remove(removed.assetId());
+    this->_assetHashes.remove(removed.assetHash());
 }
 
 void MapDatabase::clear() {

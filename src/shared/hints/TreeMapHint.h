@@ -27,8 +27,8 @@ class TreeMapHint : public AlterationAcknoledger {
         TreeMapHint();
 
         QTreeWidgetItem* getLayerItem(int layer) const; //safe
-        void propagateFocus(RPZAtomId focusedRPZAtomId); //safe
-        void propagateSelection(QVector<RPZAtomId> &selectedIds); //safe
+        void propagateFocus(const RPZAtomId &focusedRPZAtomId); //safe
+        void propagateSelection(const QVector<RPZAtomId> &selectedIds); //safe
 
     signals:
         void requestingUIAlteration(const Payload::Alteration &type, const QList<QTreeWidgetItem*> &toAlter);
@@ -50,7 +50,7 @@ class TreeMapHint : public AlterationAcknoledger {
         QHash<RPZAssetHash, QSet<RPZAtomId>> _RPZAtomIdsBoundByRPZAssetHash;
 
         //handling
-        virtual void _handleAlterationRequest(AlterationPayload &payload) override;
+        virtual void _handleAlterationRequest(const AlterationPayload &payload) override;
 
         //move helpers
         void _handleItemMove(QTreeWidgetItem* toUpdate, const AtomUpdates &updatesMightContainMove, LayerManipulationHelper &mvHelper);

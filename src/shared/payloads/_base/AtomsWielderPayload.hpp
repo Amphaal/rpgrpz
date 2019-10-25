@@ -10,25 +10,36 @@
 class AtomsWielderPayload : public AlterationPayload {
     public:
         AtomsWielderPayload() {}
-        AtomsWielderPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        AtomsWielderPayload(const Payload::Alteration &alteration, const MapDatabase &map) : AlterationPayload(alteration) {
-            this->_setAssetsIds(map);
-            this->_setAtoms(map);
+        explicit AtomsWielderPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
+        AtomsWielderPayload(const MapDatabase &map) : AlterationPayload(Payload::Alteration::Reset) {
+            this->_setAssetHashes(map.usedAssetHashes());
+            this->_setAtoms(map.atoms().toVMap());
         }
 
-        const QSet<RPZAssetHash> assetIds() const {
+        AtomsWielderPayload(const QList<RPZAtom> &atoms) : AlterationPayload(Payload::Alteration::Added) {
+            this->_setAssetHashes(atoms);
+            this->_setAtoms(atoms);
+        }
+
+        const QSet<RPZAssetHash> assetHashes() const {
+            
             QSet<RPZAssetHash> out;
-        
-            for(auto &i : this->_assetsIds()) out += i.toString();
+
+            auto hashes = this->value(QStringLiteral(u"assets")).toList();
+
+            for(auto &i : hashes) out += i.toString();
             
             return out;
+
         }
             
-        RPZMap<RPZAtom> atoms() const {
+        const RPZMap<RPZAtom> atoms() const {
+            
             RPZMap<RPZAtom> out;
             
-            auto map = this->_atoms();
-            for(auto i = map.begin(); i != map.end(); ++i) {    
+            auto atoms = this->value(QStringLiteral(u"atoms")).toMap();
+            
+            for(auto i = atoms.begin(); i != atoms.end(); ++i) {    
                 
                 auto snowflakeId = i.key().toULongLong();
                 RPZAtom atom(i.value().toHash());
@@ -37,42 +48,53 @@ class AtomsWielderPayload : public AlterationPayload {
             }
             
             return out;
+
         }
 
         private:
-            QVariantList _assetsIds() const {
-                return this->value(QStringLiteral(u"assets")).toList();
-            }
 
-            QVariantMap _atoms() const {
-                return this->value(QStringLiteral(u"atoms")).toMap();
-            }
-
-            void _setAssetsIds(const MapDatabase &map) {
+            void _setAssetHashes(const QList<RPZAtom> &toExtractFrom) {
                 
                 QVariantList vList;
-                auto assetsIds = map.usedAssetsIds();
                 
-                for (auto &hash : assetsIds) {
-                    vList += hash;
+                for (auto &atom : toExtractFrom) {
+                    vList += atom.assetHash();
                 }
-                this->insert(QStringLiteral(u"assets"), vList);
+
+                this->_setAssetHashes(vList);
                 
             }
 
-            void _setAtoms(const MapDatabase &map) {
+            void _setAssetHashes(const QSet<RPZAssetHash> &hashes) {
                 
-                QVariantMap vMap;
-                auto atoms = map.atoms();
-
-                for (auto i = atoms.constBegin(); i != atoms.constEnd(); ++i) {
-                    auto snowflakeAsStr = QString::number(i.key());
-                    auto maybePartialAtom = i.value();
-                    vMap.insert(snowflakeAsStr, maybePartialAtom);
+                QVariantList vList;
+                
+                for (auto &hash : hashes) {
+                    vList += hash;
                 }
 
-                this->insert(QStringLiteral(u"atoms"), vMap);
+                this->_setAssetHashes(vList);
+                
+            }
 
+            void _setAtoms(const QList<RPZAtom> &atoms) {
+                
+                QVariantMap vMap;
+
+                for (auto &atom : atoms) {
+                    vMap.insert(atom.idAsStr(), atom);
+                }
+
+                this->_setAtoms(vMap);
+
+            }
+
+            void _setAssetHashes(const QVariantList &hashes) {
+                this->insert(QStringLiteral(u"assets"), hashes);
+            }
+
+            void _setAtoms(const QVariantMap &atoms) {
+                this->insert(QStringLiteral(u"atoms"), atoms);
             }
 
 };

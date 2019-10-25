@@ -9,7 +9,7 @@ class StreamPlayStateTracker : public QVariantHash {
     
     public: 
         StreamPlayStateTracker() {};
-        StreamPlayStateTracker(const QVariantHash &hash) : QVariantHash(hash) {};
+        explicit StreamPlayStateTracker(const QVariantHash &hash) : QVariantHash(hash) {};
 
         void registerNewPlay(const QString &audioSourceUrl, const QString &sourceTitle, int durationInSecs) {
             this->_setPosInMsecs(0);

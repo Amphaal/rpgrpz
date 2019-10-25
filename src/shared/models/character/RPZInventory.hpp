@@ -6,7 +6,7 @@
 class RPZInventorySlot : public QVariantHash {
     public:
         RPZInventorySlot() {}
-        RPZInventorySlot(const QVariantHash &hash) : QVariantHash(hash) {}
+        explicit RPZInventorySlot(const QVariantHash &hash) : QVariantHash(hash) {}
 
         const QString id() const {
             return this->name();
@@ -31,7 +31,7 @@ class RPZInventorySlot : public QVariantHash {
 class RPZInventory : public QVariantHash {
     public:
         RPZInventory() {}
-        RPZInventory(const QVariantHash &hash) : QVariantHash(hash) {}
+        explicit RPZInventory(const QVariantHash &hash) : QVariantHash(hash) {}
 
         const QString toString() const {
              auto nameStr = this->name();

@@ -7,7 +7,7 @@
 class RPZAssetImportPackage : public RPZAsset {
     public:
         RPZAssetImportPackage() {}
-        RPZAssetImportPackage(const QVariantHash &hash) : RPZAsset(hash) {}
+        explicit RPZAssetImportPackage(const QVariantHash &hash) : RPZAsset(hash) {}
         RPZAssetImportPackage(const RPZAsset &asset) : RPZAsset(asset) {
             
             //check asset file existance

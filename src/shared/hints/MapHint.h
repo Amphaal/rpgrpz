@@ -41,9 +41,9 @@ class MapHint : public ViewMapHint {
         bool _isMapDirty = false;
 
         void _setMapDirtiness(bool dirty = true);
-        void _shouldMakeMapDirty(AlterationPayload &payload);
+        void _shouldMakeMapDirty(const AlterationPayload &payload);
     
-        void _handleAlterationRequest(AlterationPayload &payload) final;
+        void _handleAlterationRequest(const AlterationPayload &payload) final;
 
         AlterationActor* _sysActor = nullptr;
 };

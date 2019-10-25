@@ -4,7 +4,7 @@ MapHint::MapHint() : _sysActor(new AlterationActor(Payload::Source::Local_System
     this->connectToAlterationEmissions();
 }
 
-void MapHint::_handleAlterationRequest(AlterationPayload &payload) { 
+void MapHint::_handleAlterationRequest(const AlterationPayload &payload) { 
 
     ViewMapHint::_handleAlterationRequest(payload);
 
@@ -152,7 +152,7 @@ bool MapHint::_ackRemoteness() {
 
 }
 
-void MapHint::_shouldMakeMapDirty(AlterationPayload &payload) {
+void MapHint::_shouldMakeMapDirty(const AlterationPayload &payload) {
 
     //if remote, never dirty
     if(this->_isRemote) return;

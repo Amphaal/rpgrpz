@@ -79,7 +79,7 @@ QVariant RPZAtom::metadata(const AtomParameter &key) const {
     return JSONSerializer::fromSerialized(key, serialiedVal);
 }
 
-RPZAssetHash RPZAtom::assetId() const { return this->metadata(AtomParameter::AssetId).toString(); }
+RPZAssetHash RPZAtom::assetHash() const { return this->metadata(AtomParameter::AssetHash).toString(); }
 QString RPZAtom::assetName() const { return this->metadata(AtomParameter::AssetName).toString();}
 double RPZAtom::scale() const { return this->metadata(AtomParameter::Scale).toDouble();}
 double RPZAtom::rotation() const { return this->metadata(AtomParameter::Rotation).toDouble(); }
@@ -176,13 +176,13 @@ QSet<AtomParameter> RPZAtom::legalParameters() const {
         break;
 
         case RPZAtomType::Object: {
-            base.insert(AtomParameter::AssetId);
+            base.insert(AtomParameter::AssetHash);
             base.insert(AtomParameter::AssetName);
         }
         break;
 
         case RPZAtomType::Brush: {
-            base.insert(AtomParameter::AssetId);
+            base.insert(AtomParameter::AssetHash);
             base.insert(AtomParameter::AssetName);
             base.insert(AtomParameter::BrushStyle);
             base.insert(AtomParameter::BrushPenWidth);

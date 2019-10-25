@@ -25,7 +25,7 @@ class RPZUser : public Serializable {
         };
         
         RPZUser();
-        RPZUser(const QVariantHash &hash);
+        explicit RPZUser(const QVariantHash &hash);
         RPZUser(RPZUserId id, const QString &name, const Role &role, const QColor &color);
 
         void setName(const QString &name);

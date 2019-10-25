@@ -11,13 +11,17 @@ class AlterationPayload : public QVariantHash {
 
     public:
         AlterationPayload() {}
-        AlterationPayload(const QVariantHash &hash) : QVariantHash(hash) {}
-        AlterationPayload(const Payload::Alteration &type) : QVariantHash() {
+        explicit AlterationPayload(const QVariantHash &hash) : QVariantHash(hash) {}
+        AlterationPayload(const Payload::Alteration &type) {
             this->_setType(type);
         }
 
         Payload::Alteration type() const {
-            return (Payload::Alteration)this->value(QStringLiteral(u"t")).toInt();
+            return extractType(*this);
+        }
+
+        static Payload::Alteration extractType(const QVariantHash &hash) {
+            return (Payload::Alteration)hash.value(QStringLiteral(u"t")).toInt();
         }
 
         void changeSource(const Payload::Source &newSource) {
@@ -42,6 +46,12 @@ class AlterationPayload : public QVariantHash {
 
         //necessary for dynamic_cast operations
         virtual ~AlterationPayload() {}
+
+        // friend QDebug operator<<(QDebug debug, const AlterationPayload &c) {
+        //     QDebugStateSaver saver(debug);
+        //     debug.nospace() << c.type() << ", keys : " << c.keys();
+        //     return debug;
+        // }
 
     private:      
         bool _isFromTimeline = false; //client only

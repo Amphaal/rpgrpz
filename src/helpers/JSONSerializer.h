@@ -9,7 +9,7 @@
 
 //order is important for transform handling
 enum class AtomParameter {
-    AssetId,
+    AssetHash,
     AssetName,
     BrushStyle,
     BrushPenWidth,

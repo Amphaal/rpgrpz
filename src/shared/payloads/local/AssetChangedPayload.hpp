@@ -6,12 +6,12 @@
 class AssetChangedPayload : public AlterationPayload {
     
     public:
-        AssetChangedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
+        explicit AssetChangedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
         AssetChangedPayload(const RPZAsset &metadata) : AlterationPayload(Payload::Alteration::AssetChanged) {
             this->insert(QStringLiteral(u"m"), metadata);
         }
     
         RPZAsset assetMetadata() const {
-            return this->value(QStringLiteral(u"m")).toHash();
+            return RPZAsset(this->value(QStringLiteral(u"m")).toHash());
         }
 };

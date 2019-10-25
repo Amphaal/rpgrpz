@@ -6,7 +6,7 @@
 class RPZGauge : public QVariantHash {
     public:
         RPZGauge() {}
-        RPZGauge(const QVariantHash &hash) : QVariantHash(hash) {}
+        explicit RPZGauge(const QVariantHash &hash) : QVariantHash(hash) {}
 
         void setName(const QString &name) {this->insert(QStringLiteral(u"n"), name);}
         const QString name() const {return this->value(QStringLiteral(u"n")).toString();} 

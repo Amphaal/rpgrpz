@@ -5,7 +5,7 @@
 class RPZAbility : public QVariantHash {
     public:
         RPZAbility() {}
-        RPZAbility(const QVariantHash &hash) : QVariantHash(hash) {}
+        explicit RPZAbility(const QVariantHash &hash) : QVariantHash(hash) {}
 
         void setName(const QString &name) {this->insert(QStringLiteral(u"n"), name);}
         const QString name() const {return this->value(QStringLiteral(u"n")).toString();} 

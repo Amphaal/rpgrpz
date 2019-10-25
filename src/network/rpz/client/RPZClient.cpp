@@ -200,8 +200,8 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
         break;
 
         case RPZJSON::Method::AudioStreamUrlChanged: {
-            auto payload = data.toHash();
-            emit audioSourceStateChanged(payload);
+            StreamPlayStateTracker state(data.toHash());
+            emit audioSourceStateChanged(state);
         }
         break;
         
@@ -324,14 +324,14 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
             if(auto mPayload = dynamic_cast<AtomsWielderPayload*>(payload.data())) { 
                 
                 //compare assets in map with assets in db 
-                auto missingAssetIds = mPayload->assetIds();
-                auto handledMissingAssetIds = AssetsDatabase::get()->getStoredAssetsIds();
-                missingAssetIds.subtract(handledMissingAssetIds);
+                auto missingAssetHashes = mPayload->assetHashes();
+                auto handledMissingAssetHashes = AssetsDatabase::get()->getStoredAssetHashes();
+                missingAssetHashes.subtract(handledMissingAssetHashes);
                 
                 //if missing assets, request them
-                if(auto count = missingAssetIds.count()) {
+                if(auto count = missingAssetHashes.count()) {
                     qDebug() << qUtf8Printable(QStringLiteral(u"Assets : missing %1 asset(s)").arg(count));
-                    this->_askForAssets(missingAssetIds);
+                    this->_askForAssets(missingAssetHashes);
                 }
 
             }
@@ -341,12 +341,14 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
         break;
 
         case RPZJSON::Method::RequestedAsset: {
-            emit receivedAsset(data.toHash());
+            RPZAssetImportPackage package(data.toHash());
+            emit receivedAsset(package);
         }
         break;
 
         case RPZJSON::Method::ServerResponse: {
-            emit serverResponseReceived(data.toHash());
+            RPZResponse response(data.toHash());
+            emit serverResponseReceived(response);
         }
         break;
 

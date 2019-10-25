@@ -18,7 +18,7 @@ typedef QString RPZAssetHash; //file hash of the asset
 class RPZAsset : public QVariantHash {
     public:
         RPZAsset() {}
-        RPZAsset(const QVariantHash &hash) : QVariantHash(hash) {}
+        explicit RPZAsset(const QVariantHash &hash) : QVariantHash(hash) {}
         RPZAsset(const QVariantHash &hash, const RPZAssetHash &id) : QVariantHash(hash) {
             this->_setHash(id);
         }

@@ -91,7 +91,7 @@ void AssetsDatabase::_removeDatabaseLinkedFiles() {
     QDir(AppContext::getAssetsFolderLocation()).removeRecursively();
 }
 
-const QSet<RPZAssetHash> AssetsDatabase::getStoredAssetsIds() const {
+const QSet<RPZAssetHash> AssetsDatabase::getStoredAssetHashes() const {
     return this->_assets.keys().toSet();
 }
 

@@ -7,7 +7,7 @@
 
 class RPZHandshake : public QVariantHash {
     public:
-        RPZHandshake(const QVariantHash &hash);
+        explicit RPZHandshake(const QVariantHash &hash);
         RPZHandshake(const QString &requestedUsername, const RPZCharacter &toIncarnate);
 
         const QString clientVersion() const;

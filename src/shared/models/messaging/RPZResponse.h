@@ -16,7 +16,7 @@ class RPZResponse : public Stampable {
         
         RPZResponse();
         RPZResponse(RPZStampableId answererTo, const ResponseCode &code = ResponseCode::Ack, const QVariant &data = QVariant());
-        RPZResponse(const QVariantHash &hash);
+        explicit RPZResponse(const QVariantHash &hash);
 
         ResponseCode responseCode() const;
         QVariant responseData() const;

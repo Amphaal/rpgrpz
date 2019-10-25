@@ -29,7 +29,7 @@ class MapDatabase : public JSONDatabase {
         const RPZAtom atomAsCopy(const RPZAtomId &id) const;
         RPZMap<RPZAtom>& atoms();
         const RPZMap<RPZAtom>& atoms() const;
-        const QSet<RPZAssetHash>& usedAssetsIds() const;
+        const QSet<RPZAssetHash>& usedAssetHashes() const;
 
     protected:
         const JSONDatabase::Version apiVersion() const override;

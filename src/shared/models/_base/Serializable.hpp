@@ -9,7 +9,7 @@ class Serializable : public QVariantHash {
     
     public:
         Serializable() {};
-        Serializable(const QVariantHash &hash) : QVariantHash(hash) {}
+        explicit Serializable(const QVariantHash &hash) : QVariantHash(hash) {}
         
         Serializable(snowflake_uid id) {
             this->_setId(id);
