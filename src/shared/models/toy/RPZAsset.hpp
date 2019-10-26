@@ -70,13 +70,15 @@ class RPZAsset : public QVariantHash {
             return !this->hash().isEmpty();
         }
 
-        const QString filepath() const {
+        const QString filepath(bool checkExistance = true) const {
             
             auto expected = _getFilePathToAsset(
                 this->hash(),
                 this->fileExtension()
             );
             
+            if(!checkExistance) return expected;
+
             auto exists = QFileInfo::exists(expected);
             if(!exists) {
                 qWarning() << qUtf8Printable(QString("Assets : non-existent %1 asset file being invoked").arg(expected));
@@ -108,13 +110,16 @@ class RPZAsset : public QVariantHash {
     protected:
         bool _integrateFrom(const QByteArray &assetAsRawBytes, const RPZAsset &asset) const {
 
-            auto dest = asset.filepath();
-            if(dest.isEmpty()) return false;
+            auto dest = asset.filepath(false);
+            QFile fileWriter(dest);
 
-            QFile writer(dest);
-            writer.open(QIODevice::WriteOnly);
-                writer.write(assetAsRawBytes);
-            writer.close();
+            //check existance
+            if(fileWriter.exists()) return false;
+
+            //write asset            
+            fileWriter.open(QIODevice::WriteOnly);
+                fileWriter.write(assetAsRawBytes);
+            fileWriter.close();
 
             return true;
 

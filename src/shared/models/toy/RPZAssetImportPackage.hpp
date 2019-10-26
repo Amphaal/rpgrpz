@@ -10,15 +10,18 @@ class RPZAssetImportPackage : public RPZAsset {
         explicit RPZAssetImportPackage(const QVariantHash &hash) : RPZAsset(hash) {}
         RPZAssetImportPackage(const RPZAsset &asset) : RPZAsset(asset) {
             
-            //check asset file existance
-            auto fp = this->filepath();
-            if(fp.isEmpty()) return;
-
+            auto fp = this->filepath(false);
             QFile assetFile(fp);
+
+            //check asset file existance
+            if(!assetFile.exists()) return;
+
+            //read
             assetFile.open(QFile::ReadOnly);
                 auto asBase64 = assetFile.readAll().toBase64();
             assetFile.close();
 
+            //add to content
             this->insert(
                 QStringLiteral(u"_content"), 
                 QString(asBase64)

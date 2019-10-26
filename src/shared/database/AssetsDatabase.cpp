@@ -420,7 +420,7 @@ void AssetsDatabase::_removeAssetFiles(const QList<RPZAsset> &toRemoveFromStorag
     
     for(auto &asset : toRemoveFromStorage) {
         
-        QFile fileToRemove(asset.filepath());
+        QFile fileToRemove(asset.filepath(false));
         if(!fileToRemove.exists()) continue;
         fileToRemove.remove();
         
