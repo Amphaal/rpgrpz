@@ -1,6 +1,6 @@
 #include "MapLayoutTree.h"
 
-MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) : RPZTree(parent) {
+MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) : QTreeView(parent) {
     
     this->_hints = new TreeMapHint;
     this->_menuHandler = new AtomsContextualMenuHandler(mapMaster, this);
@@ -86,7 +86,7 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
         [=]() {
 
             //clear focus if empty
-            auto selected = this->selectedItems();
+            auto selected = this->selectedIndexes();
             if(!selected.count()) this->clearFocus();
 
             //restrict list of selected item to unlocked ones
@@ -298,8 +298,6 @@ void MapLayoutTree::contextMenuEvent(QContextMenuEvent *event) {
 
 void MapLayoutTree::keyPressEvent(QKeyEvent * event) {
     
-    RPZTree::keyPressEvent(event);
-
     switch(event->key()) {
 
         //deletion handling

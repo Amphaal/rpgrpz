@@ -354,7 +354,7 @@ void MainWindow::_setupAppUI(UIMode mode) {
             removeFromTab(this->_rightTab, this->_characterEditor);
             addCharacterEditor(this->_leftTab);
 
-            this->_rightTab->insertTab(0, this->_mlManager, QIcon(QStringLiteral(u":/icons/app/tabs/list.png")), tr("Map Atoms"));
+            this->_rightTab->insertTab(0, this->_mlManager, QIcon(QStringLiteral(u":/icons/app/tabs/atom.png")), tr("Map Atoms"));
             this->_rightTab->insertTab(0, this->_atomEditManager, QIcon(QStringLiteral(u":/icons/app/tabs/config.png")), tr("Atom Editor"));
 
         }

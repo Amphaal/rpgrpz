@@ -7,13 +7,12 @@
 #include <QGraphicsItem>
 #include <QMenu>
 #include <QHeaderView>
+#include <QKeyEvent>
 
 #include "src/shared/commands/RPZActions.h"
 
 #include "src/shared/models/RPZAtom.h"
 #include "src/shared/payloads/Payloads.h"
-
-#include "src/ui/map/_base/RPZTree.hpp"
 
 #include "src/ui/_others/ConnectivityObserver.h"
 
@@ -24,7 +23,7 @@
 #include "src/shared/commands/AtomsContextualMenuHandler.h"
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 
-class MapLayoutTree : public RPZTree {
+class MapLayoutTree : public QTreeView {
 
     public:
         MapLayoutTree(AtomsStorage* mapMaster, QWidget* parent = nullptr);

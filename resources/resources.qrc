@@ -53,6 +53,7 @@
         <file>icons/app/manager/downloaded.png</file>
         <file>icons/app/tabs/noting.png</file>
         <file>icons/app/tabs/list.png</file>
+        <file>icons/app/tabs/atom.png</file>
         <file>icons/app/tabs/playlist.png</file>
         <file>icons/app/tabs/chat.png</file>
         <file>icons/app/tabs/box.png</file>
