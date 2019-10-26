@@ -1018,7 +1018,7 @@
         <translation>Trop éloigné pour afficher la grille !</translation>
     </message>
     <message>
-        <location filename="../shared/database/AssetsDatabase.cpp" line="175"/>
+        <location filename="../shared/database/AssetsDatabase.cpp" line="170"/>
         <source>Folder</source>
         <translation>Dossier</translation>
     </message>
@@ -1026,32 +1026,32 @@
 <context>
     <name>RPZClient</name>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="93"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="95"/>
         <source>Username required !</source>
         <translation>Nom d&apos;utilisateur requis !</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="105"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="107"/>
         <source>Disconnected from server</source>
         <translation>Déconnecté du serveur</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="368"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="370"/>
         <source>Host closed the connection.</source>
         <translation>L&apos;hôte a fermé la connexion.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="371"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="373"/>
         <source>Host could not be found. Please check the hostname and port number.</source>
         <translation>L&apos;hôte n&apos;a pas pu être trouvé. Merci de vérifier le nom d&apos;hôte et le numéro de port.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="374"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="376"/>
         <source>Connection has been refused by remote host.</source>
         <translation>La connexion a été refusée par l&apos;hôte distant.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="377"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="379"/>
         <source>An error has occured : %1</source>
         <translation>Une erreur est survenue : %1</translation>
     </message>

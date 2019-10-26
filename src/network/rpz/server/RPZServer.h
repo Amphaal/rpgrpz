@@ -31,7 +31,9 @@
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 #include "src/helpers/StringHelper.hpp"
 
-class RPZServer : public QTcpServer { 
+#include "src/network/rpz/_any/JSONLogger.hpp"
+
+class RPZServer : public QTcpServer, public JSONLogger { 
     
     Q_OBJECT
 

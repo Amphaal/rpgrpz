@@ -1,6 +1,6 @@
 #include "JSONSocket.h"
 
-JSONSocket::JSONSocket(QObject* parent, const QString &logId, QTcpSocket* socketToHandle) : QObject(parent), _logId(logId) {
+JSONSocket::JSONSocket(QObject* parent, JSONLogger* logger, QTcpSocket* socketToHandle) : QObject(parent), _logger(logger) {
 
     if (socketToHandle) {
         this->_isWrapper = true;
@@ -23,22 +23,56 @@ JSONSocket::~JSONSocket() {
     }
 }
 
-void JSONSocket::sendJSON(const RPZJSON::Method &method, const QVariant &data) {
+bool JSONSocket::sendToSocket(const RPZJSON::Method &method, const QVariant &data) {
+    auto success =_sendToSocket(this, this->_logger, method, data);
+    if(success) this->_logger->log(method, "sent");
+    return success;
+}
 
-    emit sending();
+int JSONSocket::sendToSockets(
+        JSONLogger* logger, 
+        const QList<JSONSocket*> toSendTo, 
+        const RPZJSON::Method &method, 
+        const QVariant &data, 
+        const JSONSocket* toExclude
+    ) {
+    
+    auto expected = toSendTo.count();
+    int sent = 0;
+
+    for(auto socket : toSendTo) {
+
+        if(toExclude == socket) {
+            expected--;
+            continue;
+        }
+
+        auto success = _sendToSocket(socket, logger, method, data);
+        sent += (int)success;
+        
+    }
+
+    logger->log(method, QStringLiteral(u"sent to [%1/%2] clients").arg(sent).arg(expected));
+    return sent;
+    
+}
+
+bool JSONSocket::_sendToSocket(JSONSocket* socket, JSONLogger* logger, const RPZJSON::Method &method, const QVariant &data) {
+
+    emit socket->sending();
 
     //ignore emission when socket is not connected
-    if(this->socket()->state() != QAbstractSocket::ConnectedState) {
-        qWarning() << qUtf8Printable(this->_logId) << ": cannot send JSON as the socket is not connected !";  
-        emit sent();
-        return;
+    if(socket->socket()->state() != QAbstractSocket::ConnectedState) {
+        logger->log("cannot send JSON as the socket is not connected");
+        emit socket->sent(false);
+        return false;
     }
 
     //checks
     if(data.isNull()) {
-        qWarning() << qUtf8Printable(this->_logId) << ": cannot send JSON as input values are unexpected";  
-        emit sent();
-        return;
+        logger->log("cannot send JSON as input values are unexpected");  
+        emit socket->sent(false);
+        return false;
     }
 
     //format document
@@ -48,7 +82,7 @@ void JSONSocket::sendJSON(const RPZJSON::Method &method, const QVariant &data) {
     QJsonDocument payload_doc(json_payload);
 
     //send !
-    QDataStream out(this->_innerSocket);
+    QDataStream out(socket->socket());
     out.setVersion(QDataStream::Qt_5_13);
 
         //json to bytes
@@ -62,20 +96,9 @@ void JSONSocket::sendJSON(const RPZJSON::Method &method, const QVariant &data) {
         //write data
         out << bytes;
     
-    //log
-    this->_debugLog(method, "sent");
-    emit sent();
-}
-
-void JSONSocket::_debugLog(const QString &logId, const RPZJSON::Method &method, const QString &msg) {
-    qDebug() << qUtf8Printable(logId) 
-             << method
-             << " : " 
-             << qUtf8Printable(msg);
-}
-
-void JSONSocket::_debugLog(const RPZJSON::Method &method, const QString &msg) {
-    JSONSocket::_debugLog(this->_logId, method, msg);
+    //ack success
+    emit socket->sent(true);
+    return true;
 }
 
 void JSONSocket::_processIncomingData() {
@@ -139,13 +162,13 @@ void JSONSocket::_processIncomingAsJson(const QByteArray &data) {
     //parse to json
     auto json = QJsonDocument::fromJson(data);
     if(json.isNull()) {
-        qWarning() << qUtf8Printable(this->_logId) << ": Data received was not JSON and thus cannot be read.";
+        this->_logger->log("Data received was not JSON and thus cannot be read");
         return;
     }
 
     //prepare
     if(!json.isObject()) {
-        qWarning() << qUtf8Printable(this->_logId) << ": JSON received is not Object and thus cannot be handled.";
+        this->_logger->log("JSON received is not Object and thus cannot be handled");
         return;
     }
 
@@ -155,20 +178,19 @@ void JSONSocket::_processIncomingAsJson(const QByteArray &data) {
     //check requirements
     auto required = mainKeys.contains(_methodKey) && mainKeys.contains(_dataKey);
     if(!required) {
-        qWarning() << qUtf8Printable(this->_logId) << ": JSON received has missing keys and thus cannot be handled.";
+        this->_logger->log("JSON received has missing keys and thus cannot be handled");
         return;
     }
 
     //check value types
     auto rawMethod = content.value(_methodKey);
     if(!rawMethod.isDouble()) {
-        qWarning() << qUtf8Printable(this->_logId) << ": JSON received has unexpected data and thus cannot be handled.";
+        this->_logger->log("JSON received has unexpected data and thus cannot be handled");
         return;
     }
 
     //log
     auto method = (RPZJSON::Method)content.value(_methodKey).toInt();
-    this->_debugLog(method, "received");
 
     //bind
     emit JSONReceived(

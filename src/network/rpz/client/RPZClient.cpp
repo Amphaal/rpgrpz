@@ -1,6 +1,8 @@
 #include "RPZClient.h"
 
-RPZClient::RPZClient(const QString &socketStr, const QString &displayName, const RPZCharacter &toIncarnate) : AlterationActor(Payload::Source::RPZClient), 
+RPZClient::RPZClient(const QString &socketStr, const QString &displayName, const RPZCharacter &toIncarnate) : 
+    AlterationActor(Payload::Source::RPZClient),
+    JSONLogger(QStringLiteral(u"[Client]")), 
     _userDisplayName(displayName),
     _characterToIncarnate(toIncarnate) { 
     
@@ -12,7 +14,7 @@ RPZClient::RPZClient(const QString &socketStr, const QString &displayName, const
 }
 
 void RPZClient::_initSock() {
-    this->_sock = new JSONSocket(this, QStringLiteral(u"RPZClient"));
+    this->_sock = new JSONSocket(this, this);
 
     QObject::connect(
         this->_sock, &JSONSocket::JSONReceived,
@@ -103,7 +105,7 @@ void RPZClient::run() {
 
 void RPZClient::_onDisconnect() {
     emit connectionStatus(tr("Disconnected from server"));
-    qDebug() << "RPZClient : disconnected from server";
+    this->log("disconnected from server");
 }
 
 void RPZClient::_onConnected() {
@@ -114,7 +116,7 @@ void RPZClient::_onConnected() {
     );
 
     //tell the server your username
-    this->_sock->sendJSON(
+    this->_sock->sendToSocket(
         RPZJSON::Method::Handshake,
         handshake
     );
@@ -140,7 +142,7 @@ void RPZClient::_handleAlterationRequest(const AlterationPayload &payload) {
 
     //send json
     auto method = payload.type() == Payload::Alteration::Reset ? RPZJSON::Method::MapChangedHeavily : RPZJSON::Method::MapChanged;
-    return this->_sock->sendJSON(method, payload);
+    this->_sock->sendToSocket(method, payload);
 }
 
 const QString RPZClient::getConnectedSocketAddress() const {
@@ -330,7 +332,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
                 
                 //if missing assets, request them
                 if(auto count = missingAssetHashes.count()) {
-                    qDebug() << qUtf8Printable(QStringLiteral(u"Assets : missing %1 asset(s)").arg(count));
+                    this->log(QStringLiteral(u"Assets : missing %1 asset(s)").arg(count));
                     this->_askForAssets(missingAssetHashes);
                 }
 
@@ -378,8 +380,8 @@ void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
                                    
     }
 
+    this->log(msg);
     emit connectionStatus(msg, true);
-    qDebug() << "RPZClient : :" << qUtf8Printable(msg);
 
     emit closed();
 }
@@ -387,11 +389,11 @@ void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
 
 void RPZClient::sendMessage(const RPZMessage &message) {
     auto msg = RPZMessage(message);
-    this->_sock->sendJSON(RPZJSON::Method::Message, msg);
+    this->_sock->sendToSocket(RPZJSON::Method::Message, msg);
 }
 
 void RPZClient::sendMapHistory(const ResetPayload &historyPayload) {
-    this->_sock->sendJSON(RPZJSON::Method::MapChangedHeavily, historyPayload);
+    this->_sock->sendToSocket(RPZJSON::Method::MapChangedHeavily, historyPayload);
 }
 
 void RPZClient::notifyCharacterChange(const RPZCharacter &changed) {
@@ -403,31 +405,31 @@ void RPZClient::notifyCharacterChange(const RPZCharacter &changed) {
 
     emit selfIdentityChanged(this->_self);
 
-    this->_sock->sendJSON(RPZJSON::Method::CharacterChanged, changed);
+    this->_sock->sendToSocket(RPZJSON::Method::CharacterChanged, changed);
 }
 
 void RPZClient::_askForAssets(const QSet<RPZAssetHash> &ids) {
     QVariantList list;
     for(auto &id : ids) list.append(id);
-    this->_sock->sendJSON(RPZJSON::Method::AskForAssets, list);
+    this->_sock->sendToSocket(RPZJSON::Method::AskForAssets, list);
 }
 
 void RPZClient::changeAudioPosition(qint64 newPositionInMsecs) {
-    this->_sock->sendJSON(RPZJSON::Method::AudioStreamPositionChanged, newPositionInMsecs);
+    this->_sock->sendToSocket(RPZJSON::Method::AudioStreamPositionChanged, newPositionInMsecs);
 }
 
 void RPZClient::setAudioStreamPlayState(bool isPlaying) {
-    this->_sock->sendJSON(RPZJSON::Method::AudioStreamPlayingStateChanged, isPlaying);
+    this->_sock->sendToSocket(RPZJSON::Method::AudioStreamPlayingStateChanged, isPlaying);
 }
 
 void RPZClient::defineAudioSourceState(const StreamPlayStateTracker &state) {
-    this->_sock->sendJSON(RPZJSON::Method::AudioStreamUrlChanged, state);
+    this->_sock->sendToSocket(RPZJSON::Method::AudioStreamUrlChanged, state);
 }
 
 void RPZClient::_onSending() {
     QMetaObject::invokeMethod(ProgressTracker::get(), "clientIsSending");
 }
 
-void RPZClient::_onSent() {
+void RPZClient::_onSent(bool success) {
     QMetaObject::invokeMethod(ProgressTracker::get(), "clientStoppedSending");
 }

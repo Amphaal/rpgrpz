@@ -104,16 +104,11 @@ const QHash<RPZAssetHash, RPZAsset> AssetsDatabase::assets() const {
 }
 
 const RPZAsset* AssetsDatabase::asset(const RPZAssetHash &hash) {
-    if(!this->_assets.contains(hash)) {
-        qDebug() << "Assets: cannot find asset !";
-        return nullptr;
-    }
-    return &this->_assets[hash];
+    return this->_asset(hash);
 }
 
 RPZAsset* AssetsDatabase::_asset(const RPZAssetHash &hash) {
     if(!this->_assets.contains(hash)) {
-        qDebug() << "Assets: cannot find asset !";
         return nullptr;
     }
     return &this->_assets[hash];

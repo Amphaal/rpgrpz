@@ -24,7 +24,9 @@
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 #include "src/shared/audio/StreamPlayStateTracker.hpp"
 
-class RPZClient : public QObject, public AlterationActor {
+#include "src/network/rpz/_any/JSONLogger.hpp"
+
+class RPZClient : public QObject, public AlterationActor, public JSONLogger {
 
     Q_OBJECT
 
@@ -93,14 +95,13 @@ class RPZClient : public QObject, public AlterationActor {
         void _error(QAbstractSocket::SocketError _socketError);
         void _onDisconnect();
         void _onSending();
-        void _onSent();
+        void _onSent(bool success);
         void _onBatchAcked(RPZJSON::Method method, qint64 batchSize);
         void _onBatchDownloading(RPZJSON::Method method, qint64 downloaded);
+        void _askForAssets(const QSet<RPZAssetHash> &ids);
 
         void _routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data);
 
     private slots:
         void _handleAlterationRequest(const AlterationPayload &payload);
-        void _askForAssets(const QSet<RPZAssetHash> &ids);
-
 };

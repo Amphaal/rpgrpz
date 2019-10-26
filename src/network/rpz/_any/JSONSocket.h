@@ -7,39 +7,47 @@
 #include <QJsonObject>
 
 #include "RPZJSON.hpp"
+#include "JSONLogger.hpp"
 
 class JSONSocket : public QObject {
 
     Q_OBJECT
 
     public:
-        JSONSocket(QObject* parent, const QString &logId, QTcpSocket * socketToHandle = nullptr);
+        JSONSocket(QObject* parent, JSONLogger* logger, QTcpSocket * socketToHandle = nullptr);
         ~JSONSocket();
-        void sendJSON(const RPZJSON::Method &method, const QVariant &data);
+        
         QTcpSocket* socket();
 
-        static void _debugLog(const QString &logId, const RPZJSON::Method &method, const QString &msg);
+        bool sendToSocket(const RPZJSON::Method &method, const QVariant &data);
+        static int sendToSockets(
+            JSONLogger* logger, 
+            const QList<JSONSocket*> toSendTo, 
+            const RPZJSON::Method &method, 
+            const QVariant &data,
+            const JSONSocket* toExclude = nullptr
+        );
 
     signals:
         void JSONReceived(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data);
         void ackedBatch(RPZJSON::Method method, qint64 batchSize);
         void batchDownloading(RPZJSON::Method method, qint64 downloaded);
         void sending();
-        void sent();
+        void sent(bool success);
 
-    protected:
-        void _debugLog(const RPZJSON::Method &method, const QString &msg);
 
     private:
         bool _batchComplete = false;
         bool _ackHeader = false;
 
-        QString _logId;
+        JSONLogger* _logger = nullptr;
         bool _isWrapper = false;
         QTcpSocket* _innerSocket = nullptr;
 
         void _processIncomingData();
         void _processIncomingAsJson(const QByteArray &data);
+
+        static bool _sendToSocket(JSONSocket* socket, JSONLogger* logger, const RPZJSON::Method &method, const QVariant &data);
 
         static inline QString _dataKey = QStringLiteral(u"_d");
         static inline QString _methodKey = QStringLiteral(u"_m");
