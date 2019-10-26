@@ -1174,47 +1174,47 @@
 <context>
     <name>ToysTreeViewItem</name>
     <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="188"/>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="189"/>
         <source>Internal</source>
         <translation>Interne</translation>
     </message>
     <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="189"/>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="190"/>
         <source>Event</source>
         <translation>Evénement</translation>
     </message>
     <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="190"/>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="191"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="191"/>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="192"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="192"/>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="193"/>
         <source>NPC / Portraits</source>
         <translation>PNJ / Portraits</translation>
     </message>
     <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="193"/>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="194"/>
         <source>Objects</source>
         <translation>Objets</translation>
     </message>
     <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="194"/>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="195"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="195"/>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="196"/>
         <source>Downloaded</source>
         <translation>Téléchargés</translation>
     </message>
     <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="196"/>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="197"/>
         <source>Landscapes</source>
         <translation>Paysages</translation>
     </message>

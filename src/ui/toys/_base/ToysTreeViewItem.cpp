@@ -60,6 +60,11 @@ void ToysTreeViewItem::_setType(const ToysTreeViewItem::Type &type) {
 const RPZAsset* ToysTreeViewItem::asset() const {
     return AssetsDatabase::get()->asset(this->_hash);
 }
+const RPZAsset ToysTreeViewItem::assetCopy() const {
+    auto asset = this->asset();
+    if(asset) return *asset;
+    return RPZAsset();
+}
 
 const Qt::ItemFlags ToysTreeViewItem::flags() const {
     return this->_flags;

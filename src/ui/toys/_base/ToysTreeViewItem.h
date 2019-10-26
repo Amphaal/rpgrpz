@@ -58,6 +58,7 @@ class ToysTreeViewItem : private QObject {
         const QString fullPath() const;
         const Qt::ItemFlags flags() const;
         const RPZAsset* asset() const;
+        const RPZAsset assetCopy() const;
                 
         bool isContainer() const;
         bool isInternal() const;

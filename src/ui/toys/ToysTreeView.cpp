@@ -382,12 +382,10 @@ void ToysTreeView::selectionChanged(const QItemSelection &selected, const QItemS
         auto elem = ToysTreeViewItem::fromIndex(selectedElems.value(0));
         
         auto atomType = (RPZAtomType)elem->type();
-        auto asset = elem->asset();
+        auto asset = elem->assetCopy();
 
-        if(asset) {
-            defSelect = RPZToy(*asset, atomType);
-        }
-
+        defSelect = RPZToy(asset, atomType);
+        
     }
 
     //if still the same, dont send

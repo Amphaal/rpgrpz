@@ -128,7 +128,7 @@ QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZToy &toy) {
         if(!toy.isEmpty()) {
             
             {
-                QMutexLocker l2(&this->_m_templateAsset);
+                QMutexLocker l2(&this->_m_templateToy);
                 this->_templateToy = toy;
             }
          
@@ -144,7 +144,7 @@ QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZToy &toy) {
 
 QGraphicsItem* ViewMapHint::generateTemporaryItemFromTemplateBuffer() {
     QMutexLocker l1(&this->_m_templateAtom);
-    QMutexLocker l2(&this->_m_templateAsset);
+    QMutexLocker l2(&this->_m_templateToy);
 
     return CustomGraphicsItemHelper::createGraphicsItem(
         this->_templateAtom, 

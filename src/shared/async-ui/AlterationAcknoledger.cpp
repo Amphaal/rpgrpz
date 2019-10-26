@@ -12,7 +12,7 @@ void AlterationAcknoledger::connectToAlterationEmissions() {
 void AlterationAcknoledger::_ackAlteration(const AlterationPayload &payload) {
 
     //trace
-    this->payloadTrace(payload);
+    // this->payloadTrace(payload);
 
     //handle
     auto casted = Payloads::autoCast(payload);

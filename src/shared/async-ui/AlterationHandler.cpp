@@ -16,7 +16,7 @@ void AlterationHandler::_queueAlteration(const Payload::Source &senderSource, Al
     if(source == Payload::Source::Undefined && senderSource != Payload::Source::Undefined) {
         payload.changeSource(senderSource); 
     }
-    
+
     auto type = payload.type();
     if(type == Payload::Alteration::Reset) {
         QMetaObject::invokeMethod(ProgressTracker::get(), "heavyAlterationStarted");
