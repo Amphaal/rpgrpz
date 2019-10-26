@@ -34,6 +34,7 @@ class MapLayoutTree : public QTreeView {
     protected:
         void keyPressEvent(QKeyEvent * event) override;
         void contextMenuEvent(QContextMenuEvent *event) override;
+        void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
 
     private slots:
         void _onUIAlterationRequest(const Payload::Alteration &type, const QList<QTreeWidgetItem*> &toAlter);

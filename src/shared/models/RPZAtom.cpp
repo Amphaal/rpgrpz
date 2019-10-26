@@ -9,6 +9,10 @@ RPZAtom::RPZAtom(const RPZAtomType &type) : Serializable(SnowFlake::get()->nextI
     this->_setType(type);  
 };
 
+bool RPZAtom::isLayoutAtom() {
+    return layoutAtom.contains(this->type());
+}
+
 const QString RPZAtom::toString(const RPZAtomType &type, const QString &assetName) { 
 
     auto out = atomTypeToText(type);

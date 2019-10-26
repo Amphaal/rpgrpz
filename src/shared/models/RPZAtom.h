@@ -64,6 +64,15 @@ class RPZAtom : public Serializable {
         static const QString toString(const RPZAtomType &type, const QString &assetName);
         const QString toString() const;
 
+        static inline const QList<RPZAtomType> layoutAtom {
+            RPZAtomType::Drawing,
+            RPZAtomType::Text,
+            RPZAtomType::Object, 
+            RPZAtomType::Brush,
+            RPZAtomType::Background
+        };
+        bool isLayoutAtom();
+
         //
         //
         //

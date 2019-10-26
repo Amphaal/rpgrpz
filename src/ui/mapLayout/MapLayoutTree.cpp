@@ -72,38 +72,33 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
     
     //focus
     QObject::connect(
-        this, &QTreeWidget::itemDoubleClicked,
-        [=](QTreeWidgetItem *item, int column) {
+        this, &QTreeView::doubleClicked,
+        [=](const QModelIndex &index) {
             auto focusedRPZAtomId = this->_extractRPZAtomIdFromItem(item);
             if(!focusedRPZAtomId) return;
             this->_hints->propagateFocus(focusedRPZAtomId);
         }
     );
 
-    //selection
-    QObject::connect(
-        this, &QTreeWidget::itemSelectionChanged,
-        [=]() {
+}
 
-            //clear focus if empty
-            auto selected = this->selectedIndexes();
-            if(!selected.count()) this->clearFocus();
+void MapLayoutTree::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) {
 
-            //restrict list of selected item to unlocked ones
-            QList<QTreeWidgetItem *> filtered;
-            for(auto i : selected) {
-                if(this->_isAssociatedAtomSelectable(i)) filtered += i;
-            }
+    //clear focus if empty
+    auto selected = this->selectedIndexes();
+    if(!selected.count()) this->clearFocus();
 
-            //propagate with filtered list
-            if(!filtered.isEmpty()) {
-                auto filteredIds = _extractRPZAtomIdFromItems(filtered);
-                this->_hints->propagateSelection(filteredIds);
-            }
+    //restrict list of selected item to unlocked ones
+    QList<QTreeWidgetItem *> filtered;
+    for(auto i : selected) {
+        if(this->_isAssociatedAtomSelectable(i)) filtered += i;
+    }
 
-        }
-    );
-
+    //propagate with filtered list
+    if(!filtered.isEmpty()) {
+        auto filteredIds = _extractRPZAtomIdFromItems(filtered);
+        this->_hints->propagateSelection(filteredIds);
+    }
 }
 
 bool MapLayoutTree::_isAssociatedAtomSelectable(QTreeWidgetItem* item) {
@@ -287,7 +282,7 @@ TreeMapHint* MapLayoutTree::hints() const {
 void MapLayoutTree::contextMenuEvent(QContextMenuEvent *event) {
 
     auto ids = this->_extractRPZAtomIdFromItems(
-        this->selectedItems()
+        this->selectedIndexes()
     );
 
     //create menu
@@ -306,9 +301,11 @@ void MapLayoutTree::keyPressEvent(QKeyEvent * event) {
             break;
     }
 
+    QTreeView::keyPressEvent(event);
+
 }
 
-RPZAtomId MapLayoutTree::_extractRPZAtomIdFromItem(QTreeWidgetItem* item) const {
+RPZAtomId MapLayoutTree::_extractRPZAtomIdFromItem(const QModelIndex &index) const {
     return RPZQVariant::atomId(item);
 }
 

@@ -1,7 +1,19 @@
 #pragma once
 
-#pragma <Q
+#include <QAbstractItemModel>
 
-class MapLayoutModel {
+#include "MapLayoutItem.hpp"
 
+typedef QHash<RPZAtomLayer, MapLayoutItem*> MapLayoutHash;
+typedef QHash<RPZAtomType, MapLayoutItem*> MapInteractiveHash;
+
+class MapLayoutModel : public QAbstractItemModel {
+    public:
+        MapLayoutModel() {
+
+        }
+    
+    private:
+        MapLayoutHash _atomsByLayer;
+        MapInteractiveHash _atomsByType;
 };
