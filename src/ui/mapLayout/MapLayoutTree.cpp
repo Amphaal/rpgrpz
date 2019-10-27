@@ -45,7 +45,7 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
     //focus
     QObject::connect(
         this, &QTreeView::doubleClicked,
-        this->_model, MapLayoutModel::propagateFocus
+        this->_model, &MapLayoutModel::propagateFocus
     );
 
 }

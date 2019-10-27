@@ -5,6 +5,8 @@
 #include "src/shared/async-ui/AlterationHandler.h"
 #include "src/shared/database/AssetsDatabase.h"
 
+typedef QHash<RPZAtomLayer, QPair<int, int>> LayerMoves;
+
 class MapLayoutModel : public MapLayoutModelBase {
 
     Q_OBJECT
@@ -41,68 +43,107 @@ class MapLayoutModel : public MapLayoutModelBase {
             //atom wielders format (eg INSERT / RESET)
             if(auto mPayload = dynamic_cast<const AtomsWielderPayload*>(payload)) {
                 
+                //RESET
                 if(type == Payload::Alteration::Reset) {
                     
-                    qDeleteAll(this->_atomsByAtomId);
-                    this->_atomsByAtomId.clear();    
-
-                    this->_atomsByAssetHash.clear();  
-
-                    for(auto &category : this->_categories) {
-                        qDeleteAll(category);
-                    }
-                    this->_categories.clear();
+                    this->_clearAll();
 
                     this->beginResetModel();
 
-                }
+                        for (auto &atom : mPayload->atoms()) {
+                            this->_createAtom(atom);
+                        }
 
-                for (auto &atom : mPayload->atoms()) {
-                    this->_createAtom(atom);
-                }
+                    this->endResetModel();
 
-                if(type == Payload::Alteration::Reset) this->endResetModel();
-                else this->endInsertRows();
+                } 
+                
+                //INSERT
+                else if (type == Payload::Alteration::Added) {
+                    
+                    QHash<QModelIndex, int> inserts;
+
+                    //inserts
+                    for (auto &atom : mPayload->atoms()) {
+                        auto index = this->_createAtom(atom, true);
+                        inserts[index.parent()]++;
+                    }
+
+                    //redraws
+                    for(auto i = inserts.begin(); i != inserts.end(); i++) {
+                        auto category = MapLayoutCategory::fromIndex(i.key());
+                        
+                        auto begin = category->atomsCount() - i.value();
+                        auto end = category->atomsCount() - 1;
+                        
+                        this->beginInsertRows(i.key(), begin, end);
+                    }
+
+                    this->endInsertRows();
+
+                }
 
             }
 
             //on remove
             else if(auto mPayload = dynamic_cast<const RemovedPayload*>(payload)) {
-
+                
+                QHash<MapLayoutCategory*, int> countRemovesByCategory;
+                
+                //remove atoms
                 for (auto &id : mPayload->targetRPZAtomIds()) {
                     
-                    //remove from internal list
-                    auto atom = this->_atomsByAtomId.take(id);
-                    auto atomId = atom->atomId();
-
-                    if(RPZAtom::isLayoutAtom(atom->type())) {
-                        this->_atomsByType[atom->type()].remove(atomId);
-                    } 
-                    
-                    else {
-                        this->_atomsByLayer[atom->layer()].remove(atomId);
-                    }
-
-                    //if has assetHash, remove it from tracking list
-                    auto hash = atom->assetHash();
-                    if(!hash.isNull()) {
-                        this->_atomsByAssetHash[hash].remove(atomId);
-                    }
+                    auto alteredCategory = this->_removeAtom(id);
+                    countRemovesByCategory[alteredCategory]++;
 
                 }
+
+                //define redraws
+                auto mustRemoveFromRoot = false;
+                for(auto i = countRemovesByCategory.begin(); i != countRemovesByCategory.end(); i++) {
+                    
+                    auto remainingAtoms = i.key()->atomsCount();
+                    
+                    //no atoms, delete category
+                    if(!remainingAtoms) {
+                        this->_removeCategory(i.key());
+                        mustRemoveFromRoot = true;
+                        continue;
+                    }
+
+                    //get category index
+                    auto categoryRow = this->_getRow(i.key());
+                    auto categoryIndex = this->index(categoryRow, 0, QModelIndex());
+
+                    //update atom count
+                    auto categoryIndexAtomCountIndex = categoryIndex.siblingAtColumn(2);
+                    emit dataChanged(categoryIndexAtomCountIndex, categoryIndexAtomCountIndex, {Qt::DisplayRole});
+
+                    //redraw
+                    auto end = remainingAtoms - 1 + i.value();
+                    this->beginRemoveRows(categoryIndex, 0, end);
+                    
+                }
+
+                if(mustRemoveFromRoot) {
+                    this->beginRemoveRows(QModelIndex(), 0, this->countCategories() - 1);
+                }
+
+                this->endRemoveRows();
+
             }
 
             //on metadata change
             else if(auto mPayload = dynamic_cast<const MetadataChangedPayload*>(payload)) {
                 
+                LayerMoves categoryMoves;
+
                 auto updates = mPayload->updates();
-                
                 for (auto &id : mPayload->targetRPZAtomIds()) {
-                    auto atom = this->_atomsByAtomId.value(id);
-                    auto updated = atom->updateFrom(updates);
-                    emit dataChanged(index, index, {Qt::DisplayRole});
-                    //TODO
+                    this->_handleUpdates(id, updates, categoryMoves);
                 }
+
+                this->_handleLayerMoves(categoryMoves);
 
             }
 
@@ -110,22 +151,66 @@ class MapLayoutModel : public MapLayoutModelBase {
             //on metadata change (bulk)
             else if(auto mPayload = dynamic_cast<const BulkMetadataChangedPayload*>(payload)) {
                 
-                QHash<QTreeWidgetatom*, AtomUpdates> toUpdate;
-                auto updatesById = mPayload->atomsUpdates();
-                
-                for (auto i = updatesById.begin(); i != updatesById.end(); i++) {
-                    
-                    auto atom = this->_atomsByAtomId.value(i.key());
-                    auto updates = i.value();
+                LayerMoves categoryMoves;
 
-                    toUpdate.insert(atom, updates);
-                    this->_handleatomMove(atom, updates, mvHelper);
+                auto updatesById = mPayload->atomsUpdates();
+                for (auto i = updatesById.begin(); i != updatesById.end(); i++) {
+                    this->_handleUpdates(i.key(), i.value(), categoryMoves);
                 }
+
+                this->_handleLayerMoves(categoryMoves);
 
             }
             
         }
         
+    private:
+        void _handleLayerMoves(const LayerMoves &moves) {
+            
+            //no moves, stop
+            if(!moves.count()) return;
+
+            this->beginResetModel();
+
+                //create non existing layers
+                for(auto i = moves.begin(); i != moves.end(); i++) {
+                    auto category = this->_mayCreateCategory(i.key());
+                }
+
+            this->endResetModel();
+
+
+        }
+
+        void _handleUpdates(const RPZAtomId &id, const AtomUpdates &updates, LayerMoves &moves) {
+            
+            auto atom = this->_atomsByAtomId.value(id);
+            
+            //update category
+            if(updates.contains(AtomParameter::Layer)) {
+                
+                auto newLayer = updates.value(AtomParameter::Layer).toInt();
+                auto oldLayer = atom->parent()->sorter();
+                
+                moves[oldLayer].second++; //out
+                moves[newLayer].first++;  //in                 
+
+            };
+
+            //update atom
+            auto colsToUpdate = atom->updateFrom(updates);
+            if(!colsToUpdate.count()) return;
+
+            auto atomIndex = this->toIndex(id);
+            
+            //signal redraw
+            for(auto &col : colsToUpdate) {
+                auto simbling = atomIndex.siblingAtColumn(col);
+                emit dataChanged(simbling, simbling, {Qt::DisplayRole});
+            }
+
+        }
+    
     private slots:
         void _onRenamedAsset(const RPZAssetHash &id, const QString &newName) {
 

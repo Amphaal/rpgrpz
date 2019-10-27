@@ -6,10 +6,10 @@ AlterationHandler* AlterationHandler::get() {
 }
 
 void AlterationHandler::queueAlteration(const AlterationActor* sender, AlterationPayload &payload) {
-    return this->_queueAlteration(sender->source(), payload);
+    return this->queueAlteration(sender->source(), payload);
 }
 
-void AlterationHandler::_queueAlteration(const Payload::Source &senderSource, AlterationPayload &payload) {
+void AlterationHandler::queueAlteration(const Payload::Source &senderSource, AlterationPayload &payload) {
     
     //if initial payload emission, apply sender source for send
     auto source = payload.source();

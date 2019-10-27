@@ -10,7 +10,6 @@
 #include <QTimer>
 
 #include <QWheelEvent>
-#include <QTreeWidgetItem>
 #include <QTimeLine>
 #include <QGLWidget>
 #include <QCursor>

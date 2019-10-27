@@ -4,7 +4,7 @@
 
 #include <QStyledItemDelegate>
 
-#include "src/helpers/RPZQVariant.hpp"
+#include "src/ui/mapLayout/model/MapLayoutAtom.h"
 
 class LockAndVisibilityDelegate  : public QStyledItemDelegate {
     

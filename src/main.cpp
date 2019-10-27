@@ -81,17 +81,14 @@ int main(int argc, char** argv) {
     qRegisterMetaType<RPZMessage>("RPZMessage");
     qRegisterMetaType<RPZResponse>("RPZResponse");
     qRegisterMetaType<RPZAssetImportPackage>("RPZAssetImportPackage");
-    qRegisterMetaType<QList<QTreeWidgetItem*>>("QList<QTreeWidgetItem*>");
     qRegisterMetaType<QList<QGraphicsItem*>>("QList<QGraphicsItem*>");
     qRegisterMetaType<ResetPayload>("ResetPayload");
     qRegisterMetaType<QVector<RPZAtomId>>("QVector<RPZAtomId>");
     qRegisterMetaType<QVector<RPZUser>>("QVector<RPZUser>");
     qRegisterMetaType<RPZMap<RPZUser>>("RPZMap<RPZUser>");
     qRegisterMetaType<QVector<RPZMessage>>("QVector<RPZMessage>");
-    qRegisterMetaType<QHash<QTreeWidgetItem*,AtomUpdates>>("QHash<QTreeWidgetItem*,AtomUpdates>");
     qRegisterMetaType<QHash<QGraphicsItem*,AtomUpdates>>("QHash<QGraphicsItem*,AtomUpdates>");
     qRegisterMetaType<AtomsSelectionDescriptor>("AtomsSelectionDescriptor");
-    qRegisterMetaType<QHash<int,QList<QTreeWidgetItem*>>>("QHash<int,QList<QTreeWidgetItem*>>");
     qRegisterMetaType<RPZStatusLabel::State>("RPZStatusLabel::State");
     qRegisterMetaType<QList<RPZAssetHash>>("QList<RPZAssetHash>");
     qRegisterMetaType<ProgressTracker::Kind>("ProgressTracker::Kind");

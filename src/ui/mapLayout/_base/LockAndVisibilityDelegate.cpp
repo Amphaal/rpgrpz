@@ -1,4 +1,4 @@
-#include "MapLayoutAtomDelegate.h"
+#include "LockAndVisibilityDelegate.h"
 
 LockAndVisibilityDelegate::LockAndVisibilityDelegate(QWidget *parent) : QStyledItemDelegate(parent) {
     if(!_hiddenPix && !_lockPix) {
@@ -12,14 +12,18 @@ void LockAndVisibilityDelegate::paint(QPainter *painter, const QStyleOptionViewI
     QStyledItemDelegate::paint(painter, option, index);
 
     //fetch data
-    auto isHidden = RPZQVariant::atomVisibility(index);
-    auto isLocked = RPZQVariant::atomAvailability(index);
+    auto item = MapLayoutItem::fromIndex(index);
+    if(!item) return;
+
+    //check if atom
+    auto atom = dynamic_cast<MapLayoutAtom*>(item);
+    if(!atom) return;
 
     //may draw "hide" icon
-    if(isHidden) painter->drawPixmap(option.rect.topLeft(), *_hiddenPix);
+    if(atom->isHidden()) painter->drawPixmap(option.rect.topLeft(), *_hiddenPix);
     
     //may draw "lock" icon
-    if(isLocked) {
+    if(atom->isLocked()) {
         auto startPoint = QPoint(
             option.rect.right() - 16, 
             option.rect.top()

@@ -1023,7 +1023,7 @@
         <translation>Dossier</translation>
     </message>
     <message>
-        <location filename="../ui/mapLayout/model/MapLayoutCategory.hpp" line="10"/>
+        <location filename="../ui/mapLayout/model/MapLayoutCategory.cpp" line="32"/>
         <source>Layer %1</source>
         <translation type="unfinished">Calque %1</translation>
     </message>
