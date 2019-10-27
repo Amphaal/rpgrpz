@@ -1,4 +1,4 @@
-#include "MapLayoutItemDelegate.h"
+#include "MapLayoutAtomDelegate.h"
 
 LockAndVisibilityDelegate::LockAndVisibilityDelegate(QWidget *parent) : QStyledItemDelegate(parent) {
     if(!_hiddenPix && !_lockPix) {

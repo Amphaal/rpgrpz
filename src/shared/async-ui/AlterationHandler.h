@@ -17,12 +17,12 @@ class AlterationHandler : public QObject {
     public:
         static AlterationHandler* get();
         void queueAlteration(const AlterationActor* sender, AlterationPayload &payload);
+        void queueAlteration(const Payload::Source &senderSource, AlterationPayload &payload);
 
     signals:
         void requiresPayloadHandling(const AlterationPayload &payload);
 
     private:
         static inline AlterationHandler* _inst = nullptr;
-        void _queueAlteration(const Payload::Source &senderSource, AlterationPayload &payload);
 
 };

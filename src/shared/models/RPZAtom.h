@@ -48,10 +48,18 @@ inline uint qHash(const BrushType &key, uint seed = 0) {return uint(key) ^ seed;
 
 
 typedef snowflake_uid RPZAtomId;
+typedef int RPZAtomLayer;
 
 class RPZAtom : public Serializable {
     
     public:
+        enum class Category {
+            Unknown,
+            Interactive,
+            Layout
+        };
+        
+        
         RPZAtom();
         explicit RPZAtom(const QVariantHash &hash);
         RPZAtom(RPZAtomId id, const RPZAtomType &type);
@@ -61,7 +69,7 @@ class RPZAtom : public Serializable {
         void changeType(const RPZAtomType &type);
 
         static const QString atomTypeToText(const RPZAtomType &type);
-        static const QString toString(const RPZAtomType &type, const QString &assetName);
+        static const QString toString(const RPZAtomType &type, const QString &assetName = QString());
         const QString toString() const;
 
         static inline const QList<RPZAtomType> layoutAtom {
@@ -71,7 +79,19 @@ class RPZAtom : public Serializable {
             RPZAtomType::Brush,
             RPZAtomType::Background
         };
-        bool isLayoutAtom();
+
+        static const inline QHash<RPZAtomType, QString> iconPathByAtomType = {
+            { RPZAtomType::Event, ":/icons/app/manager/event.png" },
+            { RPZAtomType::NPC, ":/icons/app/manager/npc.png" },
+            { RPZAtomType::Object, ":/icons/app/manager/asset.png" },
+            { RPZAtomType::Brush, ":/icons/app/manager/brushes.png" },
+            { RPZAtomType::Drawing, ":/icons/app/tools/pen.png" },
+            { RPZAtomType::Text, ":/icons/app/tools/text.png" },
+            { RPZAtomType::Background, ":/icons/app/manager/background.png" }
+        };
+
+        RPZAtom::Category category() const;
+        static RPZAtom::Category category(const RPZAtomType &type);
 
         //
         //
@@ -101,7 +121,7 @@ class RPZAtom : public Serializable {
         double assetRotation() const;
         QString text() const;
         int textSize() const;
-        int layer() const;
+        RPZAtomLayer layer() const;
         QPointF pos() const;
         int penWidth() const;
         bool isHidden() const;
@@ -157,6 +177,7 @@ class RPZAtom : public Serializable {
 
         void _setType(const RPZAtomType &type);
 };
+inline uint qHash(const RPZAtom::Category &key, uint seed = 0) {return uint(key) ^ seed;}
 
 Q_DECLARE_METATYPE(RPZAtom*)
 Q_DECLARE_METATYPE(RPZAtom)

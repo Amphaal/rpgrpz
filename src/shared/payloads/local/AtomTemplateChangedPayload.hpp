@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/shared/payloads/_base/MultipleAtomTargetsPayload.hpp"
+#include "src/shared/payloads/_base/AlterationPayload.hpp"
 #include "src/shared/models/RPZAtom.h"
 
 #include <QString>

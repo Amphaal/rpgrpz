@@ -9,8 +9,12 @@ RPZAtom::RPZAtom(const RPZAtomType &type) : Serializable(SnowFlake::get()->nextI
     this->_setType(type);  
 };
 
-bool RPZAtom::isLayoutAtom() {
-    return layoutAtom.contains(this->type());
+RPZAtom::Category RPZAtom::category() const {
+    return category(this->type());
+}
+RPZAtom::Category RPZAtom::category(const RPZAtomType &type) {
+    if(layoutAtom.contains(type)) return Category::Layout;
+    return Category::Interactive;
 }
 
 const QString RPZAtom::toString(const RPZAtomType &type, const QString &assetName) { 
@@ -89,7 +93,7 @@ double RPZAtom::scale() const { return this->metadata(AtomParameter::Scale).toDo
 double RPZAtom::rotation() const { return this->metadata(AtomParameter::Rotation).toDouble(); }
 QString RPZAtom::text() const { return this->metadata(AtomParameter::Text).toString(); }
 int RPZAtom::textSize() const { return this->metadata(AtomParameter::TextSize).toInt(); }
-int RPZAtom::layer() const { return this->metadata(AtomParameter::Layer).toInt(); }
+RPZAtomLayer RPZAtom::layer() const { return this->metadata(AtomParameter::Layer).toInt(); }
 QPointF RPZAtom::pos() const { return this->metadata(AtomParameter::Position).toPointF();}
 int RPZAtom::penWidth() const { return this->metadata(AtomParameter::PenWidth).toInt(); }
 bool RPZAtom::isHidden() const { return this->metadata(AtomParameter::Hidden).toBool(); }

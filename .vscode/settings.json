@@ -174,7 +174,8 @@
         "qcryptographichash": "cpp",
         "qimagereader": "cpp",
         "qstandardpaths": "cpp",
-        "qfileinfo": "cpp"
+        "qfileinfo": "cpp",
+        "qmodelindex": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }
