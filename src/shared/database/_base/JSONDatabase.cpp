@@ -1,6 +1,10 @@
 #include "JSONDatabase.h"
 
-JSONDatabase::JSONDatabase() {}
+JSONDatabase::JSONDatabase(const QString &logId) : _logId(logId) {}
+
+void JSONDatabase::log(const QString &msg) {
+    qDebug() << qUtf8Printable(this->_logId) << ":" << qUtf8Printable(msg);
+}
 
 void JSONDatabase::_initDatabaseFromJSONFile(const QString &dbFilePath) {
     
@@ -18,7 +22,7 @@ void JSONDatabase::_initDatabaseFromJSONFile(const QString &dbFilePath) {
 
     //corrupted file, move it and create a new one
     if(document.isNull()) {
-        qDebug() << "JSON Database : Cannot read database, creating a new one...";
+        this->log("Cannot read database, creating a new one...");
         this->_duplicateDbFile("error");
         this->_createEmptyDbFile();
         this->_dbCopy = this->_readAsDocument().object();
@@ -29,16 +33,11 @@ void JSONDatabase::_initDatabaseFromJSONFile(const QString &dbFilePath) {
     auto dbCopy = document.object();
     auto currentVersion = this->_getDbVersion(dbCopy);
     auto expectedVersion = this->apiVersion();
-    if(expectedVersion != currentVersion) {
-        
-        //duplicate file to migrate
-        qDebug() << "JSON Database : Database does not match API version !";
-        this->_duplicateDbFile("oldVersion");
-
-        //handle missmatch and update temporary database accordingly
+    
+    //handle missmatch and update temporary database accordingly
+    if(expectedVersion != currentVersion) {       
         auto error = this->_handleVersionMissmatch(dbCopy, currentVersion);
-        if(error) this->_dbCopy = this->_readAsDocument().object();
-        return;
+        if(error) dbCopy = this->_emptyDbFile();
     }
 
     this->_setupFromDbCopy(dbCopy);
@@ -93,12 +92,25 @@ QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> JSONDatabase::_getUpda
 }
 
 bool JSONDatabase::_handleVersionMissmatch(QJsonObject &databaseToUpdate, JSONDatabase::Version databaseToUpdateVersion) {
-    
+        
+    this->log("Database does not match API version !");
+
+    //duplicate file to migrate
+    if(!IS_DEBUG_APP) {
+        this->_duplicateDbFile("oldVersion");
+    }
+
     auto defaultBehavior = [&](const QString &reason){
-        qDebug() << "JSON Database : Database have not been updated :" << reason;
-        this->_createEmptyDbFile();
-        qDebug() << "JSON Database : Empty database created !";
+        
+        this->log(QStringLiteral(u"Database have not been updated : %1").arg(reason));
+        
+        if(!IS_DEBUG_APP) {
+            this->_createEmptyDbFile();
+            this->log("Empty database created !");
+        }
+
         return true;
+
     };
 
     //get handlers
@@ -122,10 +134,10 @@ bool JSONDatabase::_handleVersionMissmatch(QJsonObject &databaseToUpdate, JSONDa
         if(targetUpdateVersion <= databaseToUpdateVersion) continue;
 
         //update...
-        qDebug() << "JSON Database : updating from" 
-                 << QString::number(databaseToUpdateVersion) 
-                 << "to" << QString::number(targetUpdateVersion) 
-                 << "...";
+        auto msg = QStringLiteral(u"updating from %1 to %2 ...")
+                        .arg(databaseToUpdateVersion)
+                        .arg(targetUpdateVersion);
+        this->log(msg);
                  
         handlers.value(targetUpdateVersion)(databaseToUpdate);
         updateApplied = true;
@@ -137,15 +149,23 @@ bool JSONDatabase::_handleVersionMissmatch(QJsonObject &databaseToUpdate, JSONDa
     //force version update
     databaseToUpdate.insert(QStringLiteral(u"version"), aimedAPIVersion);
     
+    if(!IS_DEBUG_APP) {
+        this->_duplicateDbFile("oldVersion");
+    }
+
     //save into file
-    this->_updateDbFile(databaseToUpdate);
-    qDebug() << "JSON Database : Update complete !";
+    if(!IS_DEBUG_APP) {
+        this->_updateDbFile(databaseToUpdate);
+    }
+
+    //end...
+    this->log("Update complete !");
     return false;
 
 }
 
-void JSONDatabase::_createEmptyDbFile() {
-
+QJsonObject JSONDatabase::_emptyDbFile() {
+    
     QJsonObject defaultDoc;
     defaultDoc.insert("version", this->apiVersion()); //base mandatory values
     
@@ -168,8 +188,16 @@ void JSONDatabase::_createEmptyDbFile() {
         
     }
 
+    return defaultDoc;
+
+}
+
+void JSONDatabase::_createEmptyDbFile() {
+
     //update or create file
-    this->_updateDbFile(defaultDoc);
+    this->_updateDbFile(
+        this->_emptyDbFile()
+    );
 
 }
 

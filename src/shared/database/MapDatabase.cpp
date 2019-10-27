@@ -1,12 +1,16 @@
 #include "MapDatabase.h"
 
-MapDatabase::MapDatabase(const QString &filePath) {
+MapDatabase::MapDatabase(const QString &filePath) : JSONDatabase(QStringLiteral(u"MapDB")) {
+    
     this->_initDatabaseFromJSONFile(filePath);
+    
+    this->log(QStringLiteral(u"read %1 atoms").arg(this->_atomsById.count()));
+
 };
-MapDatabase::MapDatabase(const QJsonObject &obj) {
+MapDatabase::MapDatabase(const QJsonObject &obj) : JSONDatabase(QStringLiteral(u"MapDB")) {
     this->_setupFromDbCopy(obj);
 }
-MapDatabase::MapDatabase() {}
+MapDatabase::MapDatabase(): JSONDatabase(QStringLiteral(u"MapDB")) {}
 
 RPZMap<RPZAtom>& MapDatabase::atoms() {
     return this->_atomsById;
@@ -47,8 +51,6 @@ void MapDatabase::_setupLocalData() {
         auto hash = id.toString();
         this->_assetHashes += hash;
     }
-
-    qDebug() << "MapDB : read" << this->_atomsById.count() << "atoms";
 
 }
 

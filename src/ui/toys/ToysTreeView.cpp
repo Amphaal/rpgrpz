@@ -380,11 +380,14 @@ void ToysTreeView::selectionChanged(const QItemSelection &selected, const QItemS
     else if(indexesCount == 1) {
 
         auto elem = ToysTreeViewItem::fromIndex(selectedElems.value(0));
-        
-        auto atomType = (RPZAtomType)elem->type();
-        auto asset = elem->assetCopy();
+        auto elemType = elem->type();
 
-        defSelect = RPZToy(asset, atomType);
+        if(elem->isIdentifiable() && elem->type() != ToysTreeViewItem::Type::Downloaded) {           
+            defSelect = RPZToy(
+                elem->assetCopy(),
+                (RPZAtomType)elemType
+            );
+        }
         
     }
 

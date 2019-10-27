@@ -32,11 +32,10 @@ class JSONDatabase {
         //remove from the array the elements in the set
         static QJsonArray diff(QJsonArray &target, QSet<QString> &toRemoveFromTarget);
 
-        JSONDatabase();
+        JSONDatabase(const QString &logId);
         const QString dbFilePath() const;
 
     protected:
-
         static void updateFrom(QJsonObject &base, const QString &entityKey, const QVariantMap &entity);
         static void updateFrom(QJsonObject &base, const QString &entityKey, const QSet<QString> &entity);
         static void updateFrom(QJsonObject &base, const QString &entityKey, const QVariantHash &entity);
@@ -64,11 +63,16 @@ class JSONDatabase {
         void _initDatabaseFromJSONFile(const QString &dbFilePath);
         void _setupFromDbCopy(const QJsonObject &copy);
 
+        void log(const QString &msg);
+
     private:
+        QString _logId;
         QJsonObject _dbCopy;
         QFile* _destfile = nullptr;
 
+        QJsonObject _emptyDbFile();
         void _createEmptyDbFile();
+
         QJsonDocument _readAsDocument();
         void _duplicateDbFile(QString destSuffix);
         void _defineDatabaseObject(const QJsonDocument &document);

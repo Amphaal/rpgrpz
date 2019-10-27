@@ -1,10 +1,12 @@
 #include "AssetsDatabase.h"
 
-AssetsDatabase::AssetsDatabase(const QJsonObject &doc) { 
+AssetsDatabase::AssetsDatabase(const QJsonObject &doc) : JSONDatabase(QStringLiteral(u"AssetsDB")) { 
     this->_setupFromDbCopy(doc);
 }
-AssetsDatabase::AssetsDatabase() {
-    this->_initDatabaseFromJSONFile(AppContext::getAssetsFileCoordinatorLocation());
+AssetsDatabase::AssetsDatabase() : JSONDatabase(QStringLiteral(u"AssetsDB")) {
+    this->_initDatabaseFromJSONFile(
+        AppContext::getAssetsFileCoordinatorLocation()
+    );
 };
 
 AssetsDatabase* AssetsDatabase::get() {

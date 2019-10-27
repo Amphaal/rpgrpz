@@ -64,7 +64,7 @@ void CharactersDatabase::_setupLocalData() {
 
 }
 
-CharactersDatabase::CharactersDatabase() {
+CharactersDatabase::CharactersDatabase() : JSONDatabase(QStringLiteral(u"CharacterDB")) {
     this->_initDatabaseFromJSONFile(AppContext::getCharacterDatabaseLocation());
 }
 
