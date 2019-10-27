@@ -74,7 +74,7 @@ class MapLayoutAtom : public MapLayoutItem {
         }
 
         const QString name() const override {
-            return this->name;
+            return this->_name;
         }
 
         void setName(const QString assetName) {

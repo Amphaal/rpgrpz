@@ -23,17 +23,25 @@ class MapLayoutModelBase : public QAbstractItemModel {
             return atom->atomId();
         }
 
-        // const QModelIndex toIndex(const RPZAtomId &id) {
-        //     //TODO
-        // }
+        const QModelIndex toIndex(const RPZAtomId &id) {
+            //TODO
+            auto atom = this->_atomsByAtomId.value(id);
+            auto category = atom->parent();
 
-        // const QModelIndexList toIndexes(const QVector<RPZAtomId> &ids) {
-        //     QModelIndexList out;
-        //     for(auto &id : ids) {
-        //         out += this->toIndex(id);
-        //     }
-        //     return out;
-        // }
+            auto categoryRow = this->_getRow(category);
+            auto atomRow = category->rowOfAtom(atom);
+
+            auto categoryIndex = this->index(categoryRow, 0);
+            auto atomIndex = 
+        }
+
+        const QModelIndexList toIndexes(const QVector<RPZAtomId> &ids) {
+            QModelIndexList out;
+            for(auto &id : ids) {
+                out += this->toIndex(id);
+            }
+            return out;
+        }
 
         QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override {
             
@@ -142,7 +150,7 @@ class MapLayoutModelBase : public QAbstractItemModel {
 
         }
 
-        Qt::ItemFlags flags(const QModelIndex &index) const {
+        Qt::ItemFlags flags(const QModelIndex &index) const override {
 
             //root
             if(!index.isValid()) {
@@ -240,6 +248,9 @@ class MapLayoutModelBase : public QAbstractItemModel {
                         this->_categories[category].insert((int)type, catatom);
                     }
                 }
+                break;
+
+                default:
                 break;
 
             }

@@ -100,7 +100,7 @@ class MapLayoutModel : public MapLayoutModelBase {
                 for (auto &id : mPayload->targetRPZAtomIds()) {
                     auto atom = this->_atomsByAtomId.value(id);
                     auto updated = atom->updateFrom(updates);
-
+                    emit dataChanged(index, index, {Qt::DisplayRole});
                     //TODO
                 }
 

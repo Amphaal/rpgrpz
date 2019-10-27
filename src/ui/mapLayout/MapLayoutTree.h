@@ -16,7 +16,7 @@
 
 #include "src/ui/_others/ConnectivityObserver.h"
 
-#include "src/ui/mapLayout/_base/MapLayoutAtomDelegate.h"
+#include "src/ui/mapLayout/_base/MapLayoutItemDelegate.h"
 
 #include "src/ui/mapLayout/model/MapLayoutModel.hpp"
 

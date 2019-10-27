@@ -51,6 +51,17 @@ class MapLayoutCategory : public MapLayoutItem {
             return nullptr;
         }
 
+        int rowOfAtom(MapLayoutAtom* atomToFind) const {
+            auto internal = -1;
+            
+            for(auto atom : this->_atoms) {
+                internal++;
+                if(atom == atomToFind) return internal;
+            }
+
+            return -1;
+        }
+
         const QString name() const override {
             return this->_name;
         }
@@ -67,7 +78,7 @@ class MapLayoutCategory : public MapLayoutItem {
         QPixmap _pixmap;
 
         MapLayoutCategory(const RPZAtom::Category &category, int sorter) {
-            this->_category = _category;
+            this->_category = category;
             this->_sorter = sorter;
         }
     

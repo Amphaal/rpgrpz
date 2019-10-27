@@ -764,17 +764,17 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../shared/models/RPZAtom.cpp" line="34"/>
+        <location filename="../shared/models/RPZAtom.cpp" line="42"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.cpp" line="36"/>
+        <location filename="../shared/models/RPZAtom.cpp" line="44"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.cpp" line="40"/>
+        <location filename="../shared/models/RPZAtom.cpp" line="48"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
@@ -963,12 +963,12 @@
         <translation>Nouvel Inventaire</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.cpp" line="38"/>
+        <location filename="../shared/models/RPZAtom.cpp" line="46"/>
         <source>Object</source>
         <translation>Objet</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.cpp" line="42"/>
+        <location filename="../shared/models/RPZAtom.cpp" line="50"/>
         <source>Atom</source>
         <translation>Atome</translation>
     </message>
@@ -1021,6 +1021,11 @@
         <location filename="../shared/database/AssetsDatabase.cpp" line="170"/>
         <source>Folder</source>
         <translation>Dossier</translation>
+    </message>
+    <message>
+        <location filename="../ui/mapLayout/model/MapLayoutCategory.hpp" line="10"/>
+        <source>Layer %1</source>
+        <translation type="unfinished">Calque %1</translation>
     </message>
 </context>
 <context>
@@ -1222,9 +1227,8 @@
 <context>
     <name>TreeMapHint</name>
     <message>
-        <location filename="../shared/hints/TreeMapHint.cpp" line="230"/>
         <source>Layer %1</source>
-        <translation>Calque %1</translation>
+        <translation type="vanished">Calque %1</translation>
     </message>
 </context>
 <context>
