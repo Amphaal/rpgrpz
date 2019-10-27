@@ -99,6 +99,8 @@ bool MapHint::loadRPZMap(const QString &filePath) {
     
     if(this->_isRemote) return false;
 
+        qDebug() << qUtf8Printable(QStringLiteral(u"Loading map \"%1\"...").arg(filePath));
+
         //tells UI that map is loading
         QMetaObject::invokeMethod(ProgressTracker::get(), "heavyAlterationStarted");
 

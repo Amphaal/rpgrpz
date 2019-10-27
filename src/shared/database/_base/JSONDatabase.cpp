@@ -83,6 +83,10 @@ void JSONDatabase::updateFrom(QJsonObject &base, const QString &entityKey, const
     base.insert(entityKey, QJsonArray::fromStringList(entity.toList()));
 }
 
+void JSONDatabase::updateFrom(QJsonObject &base, const QString &entityKey, const QVariantList &entity) {
+    base.insert(entityKey, QJsonArray::fromVariantList(entity));
+}
+
 void JSONDatabase::updateFrom(QJsonObject &base, const QString &entityKey, const QVariantHash &entity) {
     base.insert(entityKey, QJsonObject::fromVariantHash(entity));
 }

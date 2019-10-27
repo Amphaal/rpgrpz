@@ -144,7 +144,7 @@ QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> MapDatabase::_getUpdat
             updateFrom(
                 doc,
                 QStringLiteral(u"atoms"),
-                db.atoms().toVMap()
+                db.atoms().toVList()
             );
 
         }
