@@ -12,19 +12,30 @@
 
 #include <QMetaObject>
 
+#include "AtomActionsHandler.h"
+
 class AtomsContextualMenuHandler {
     public:
         AtomsContextualMenuHandler(AtomsStorage* mapMaster, QWidget* menuParent);
 
         void invokeMenu(const QVector<RPZAtomId> &toManipulate, const QPoint &whereToDisplay);
 
+    protected:
+        void _moveAtomsToLayer(int layer);
+        void _removeAtoms();
+        void _undo();
+        void _redo();
+        void _copy();
+        void _paste();
+        void _setVisibility(bool hide);
+        void _setAvailability(bool lock);
+
     private:
         QWidget* _menuParent = nullptr;
         AtomsStorage* _mapMaster = nullptr;  
 
-        static inline QVector<RPZAtomId> _copyClipboard;
-        static inline QVector<RPZAtomId> _latestInvokedAtomIds;
-        static inline PossibleActionsOnAtomList _latestPossibleActions;
+        QVector<RPZAtomId> _latestInvokedAtomIds;
+        PossibleActionsOnAtomList _latestPossibleActions;
 
         QAction* _removeAction = nullptr;
         QAction* _copyAction = nullptr;
@@ -38,22 +49,11 @@ class AtomsContextualMenuHandler {
         QAction* _lockAction = nullptr;
         QAction* _unlockAction = nullptr;
 
-        QAction* _genRemoveAction(bool isEnabled);
-        QList<QAction*> _genLayerActions(int riseLayoutTarget, int lowerLayoutTarget);
-        QList<QAction*> _genUndoRedoActions(bool canUndo, bool canRedo);
-        QList<QAction*> _genCopyPasteActions(bool canCopy, bool canPaste);
-        QList<QAction*> _genVisibilityActions(bool areEnabled);
-        QList<QAction*> _genAvailabilityActions(bool areEnabled);
+        QAction* _genRemoveAction();
+        QList<QAction*> _genLayerActions();
+        QList<QAction*> _genUndoRedoActions();
+        QList<QAction*> _genCopyPasteActions();
+        QList<QAction*> _genVisibilityActions();
+        QList<QAction*> _genAvailabilityActions();
 
-        void _addCopyPasteActionsToShortcuts();
-        void _addUndoRedoActionsToShortcuts();
-
-        void _undoAlteration();
-        void _redoAlteration();
-        void _copySelectedAtomsToClipboard();
-        void _pasteAtomsFromClipboard();
-        void _removeSelectedAtoms();
-        void _moveSelectedAtomsToLayer(int targetLayer);
-        void _alterSelectedAtomsVisibility(bool isHidden);
-        void _alterSelectedAtomsAvailability(bool isLocked);
 };

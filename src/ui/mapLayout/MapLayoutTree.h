@@ -23,15 +23,16 @@
 #include "src/shared/commands/AtomsContextualMenuHandler.h"
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 
-class MapLayoutTree : public QTreeView {
+class MapLayoutTree : public QTreeView, public AtomSelector {
 
     Q_OBJECT
 
     public:
         MapLayoutTree(AtomsStorage* mapMaster, QWidget* parent = nullptr);
 
+        const QVector<RPZAtomId> selectedIds() const override;
+
     protected:
-        void keyPressEvent(QKeyEvent * event) override;
         void contextMenuEvent(QContextMenuEvent *event) override;
         void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
@@ -40,9 +41,9 @@ class MapLayoutTree : public QTreeView {
 
     private:
         AtomsContextualMenuHandler* _menuHandler = nullptr;
+        AtomActionsHandler* _atomActionsHandler = nullptr;
         MapLayoutModel* _model = nullptr;
+        
         void _handleHintsSignalsAndSlots();
-
-        const QVector<RPZAtomId> _selectedIds() const;
 
 };

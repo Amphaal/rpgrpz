@@ -858,97 +858,97 @@
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="173"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="174"/>
         <source>Raise (Layer %1)</source>
         <translation>Remonter (Calque %1)</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="183"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="184"/>
         <source>Lower (Layer %1)</source>
         <translation>Abaisser (Calque %1)</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="195"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="196"/>
         <source>Show</source>
         <translation>Montrer</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="202"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="203"/>
         <source>Hide</source>
         <translation>Cacher</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="209"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="210"/>
         <source>Reset the view</source>
         <translation>Réinitialiser la vue</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="217"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="218"/>
         <source>Back to Select tool</source>
         <translation>Retour à l&apos;outil de sélection</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="225"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="226"/>
         <source>Lock</source>
         <translation>Verrouiller</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="232"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="233"/>
         <source>Unlock</source>
         <translation>Déverrouiller</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="239"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="240"/>
         <source>Quit</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="248"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="249"/>
         <source>%1 - Patch Notes</source>
         <translation>%1 - Notes de patch</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="254"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="255"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="259"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="260"/>
         <source>Open application data folder (%1)</source>
         <translation>Ouvrir le dossier de données de l&apos;application (%1)</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="265"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="266"/>
         <source>Show session log</source>
         <translation>Afficher le journal d&apos;événements de session</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="269"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="270"/>
         <source>Show full log</source>
         <translation>Afficher le journal d&apos;événements</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="273"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="274"/>
         <source>Launch maintenance tool</source>
         <translation>Lancer l&apos;outil de maintenance</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="277"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="278"/>
         <source>Load a map</source>
         <translation>Charger une carte</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="284"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="285"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="291"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="292"/>
         <source>Save map</source>
         <translation>Sauvegarder la carte</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="298"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="299"/>
         <source>Save as map...</source>
         <translation>Sauvegarder la carte sous...</translation>
     </message>

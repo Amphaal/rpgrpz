@@ -14,6 +14,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
     //init
     this->_hints = new MapHint;
     this->_menuHandler = new AtomsContextualMenuHandler(this->_hints, this);
+    this->_atomActionsHandler = new AtomActionsHandler(this->_hints, this, this);
     this->_drawingAssist = new DrawingAssist(this->_hints, this);
 
     //OpenGL backend activation
@@ -59,7 +60,10 @@ void MapView::_handleHintsSignalsAndSlots() {
     //on map loading, set/unset placeholder...
     QObject::connect(
         ProgressTracker::get(), &ProgressTracker::heavyAlterationProcessing,
-        [=]() {this->displayHeavyLoadPlaceholder();}
+        [=]() {
+            Clipboard::clear();
+            this->displayHeavyLoadPlaceholder();
+        }
     );
     QObject::connect(
         ProgressTracker::get(), &ProgressTracker::heavyAlterationProcessed,
@@ -228,7 +232,10 @@ void MapView::drawBackground(QPainter *painter, const QRectF &rect) {
 void MapView::contextMenuEvent(QContextMenuEvent *event) {
 
     //create menu
-    this->_menuHandler->invokeMenu(this->_selectedIds(), event->globalPos());
+    this->_menuHandler->invokeMenu(
+        this->selectedIds(), 
+        event->globalPos()
+    );
 
 }
 
@@ -265,7 +272,7 @@ void MapView::keyReleaseEvent(QKeyEvent *event) {
 
 }
 
-const QVector<RPZAtomId> MapView::_selectedIds() const {
+const QVector<RPZAtomId> MapView::selectedIds() const {
     return this->_hints->getAtomIdsFromGraphicsItems(
         this->scene()->selectedItems()
     );
@@ -275,12 +282,6 @@ void MapView::keyPressEvent(QKeyEvent * event) {
 
     switch(event->key()) {
 
-        //deletion handling
-        case Qt::Key::Key_Delete: {
-            this->_menuHandler->removeSelectedAtoms(this->_selectedIds());
-        }
-        break;
-        
         //ask unselection of current tool
         case Qt::Key::Key_Escape:
             this->_resetTool();

@@ -6,6 +6,7 @@ MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) : QTreeV
     this->setModel(this->_model);
 
     this->_menuHandler = new AtomsContextualMenuHandler(mapMaster, this);
+    this->_atomActionsHandler = new AtomActionsHandler(mapMaster, this, this);
 
     this->setHeaderHidden(true);
     this->setUniformRowHeights(true);
@@ -143,21 +144,6 @@ void MapLayoutTree::contextMenuEvent(QContextMenuEvent *event) {
 
 }
 
-void MapLayoutTree::keyPressEvent(QKeyEvent * event) {
-    
-    switch(event->key()) {
-
-        //deletion handling
-        case Qt::Key::Key_Delete: {
-            this->_menuHandler->removeSelectedAtoms(this->_selectedIds());
-        }
-        break;
-    }
-
-    QTreeView::keyPressEvent(event);
-    
-}
-
-const QVector<RPZAtomId> MapLayoutTree::_selectedIds() const {
+const QVector<RPZAtomId> MapLayoutTree::selectedIds() const {
     return MapLayoutModel::fromIndexes(this->selectedIndexes());
 }

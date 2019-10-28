@@ -43,7 +43,7 @@
 
 #include "src/ui/map/assists/DrawingAssist.hpp"
 
-class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Manipulation, public MV_HUDLayout {
+class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Manipulation, public MV_HUDLayout, public AtomSelector {
 
     Q_OBJECT
 
@@ -52,6 +52,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         ~MapView();
 
         MapHint* hints() const;
+        const QVector<RPZAtomId> selectedIds() const override;
 
     public slots:
         void onActionRequested(const MapAction &action);
@@ -95,6 +96,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         DrawingAssist* _drawingAssist = nullptr;
         MapHint* _hints = nullptr;
         AtomsContextualMenuHandler* _menuHandler = nullptr;
+        AtomActionsHandler* _atomActionsHandler = nullptr;
         static inline constexpr int _defaultSceneSize = 36000;
         
         void _handleHintsSignalsAndSlots();
@@ -117,5 +119,5 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
             void _resetTool();
         
         void onAnimationManipulationTickDone() override;
-        const QVector<RPZAtomId> _selectedIds() const;
+        
 };

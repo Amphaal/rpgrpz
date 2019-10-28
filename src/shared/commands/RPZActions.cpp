@@ -165,6 +165,7 @@ QAction* RPZActions::remove() {
         QObject::tr("Remove")
     );
     action->setShortcut(QKeySequence::Delete);
+    action->setShortcutContext(Qt::ShortcutContext::WidgetWithChildrenShortcut);
     action->setShortcutVisibleInContextMenu(true);
     return action;
 }
