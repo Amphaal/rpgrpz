@@ -25,8 +25,8 @@ class MapDatabase : public JSONDatabase {
         void removeAtom(const RPZAtomId &toRemove);
         void clear();
 
-        const RPZAtom* atom(const RPZAtomId &id);
-        const RPZAtom atomAsCopy(const RPZAtomId &id) const;
+        const RPZAtom atom(const RPZAtomId &id) const;
+        RPZAtom* atomPtr(const RPZAtomId &id);
         RPZMap<RPZAtom>& atoms();
         const RPZMap<RPZAtom>& atoms() const;
         const QSet<RPZAssetHash>& usedAssetHashes() const;

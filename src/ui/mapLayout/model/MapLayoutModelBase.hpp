@@ -17,8 +17,9 @@ class MapLayoutModelBase : public QAbstractItemModel {
             QVector<RPZAtomId> selectedIds;
             
             for(auto &index : selectedIndexes) {
+                if(index.column()) continue;
                 auto id = fromIndex(index);
-                if(!id) selectedIds += id;
+                if(id) selectedIds += id;
             }
 
             return selectedIds;
@@ -27,7 +28,9 @@ class MapLayoutModelBase : public QAbstractItemModel {
 
         static const RPZAtomId fromIndex(const QModelIndex &index) {
             
-            auto atom = MapLayoutAtom::fromIndex(index);
+            auto item = MapLayoutItem::fromIndex(index);
+
+            auto atom = dynamic_cast<MapLayoutAtom*>(item);
             if(!atom) return 0;
             
             return atom->atomId();
@@ -106,9 +109,7 @@ class MapLayoutModelBase : public QAbstractItemModel {
             
             //from root, count categories to display
             if(!parent.isValid()) {
-                auto count = 0;
-                for(auto &set : this->_categories) count += set.count();
-                return count;
+                return this->countCategories();
             }
 
             //from category, count atoms
@@ -138,7 +139,7 @@ class MapLayoutModelBase : public QAbstractItemModel {
             switch (role) {
                 
                 case Qt::TextAlignmentRole: {
-                    return index.column() == 1 ? Qt::AlignRight : QVariant();
+                    return index.column() == 2 ? Qt::AlignRight : QVariant();
                 }
                 break;
                 
@@ -174,6 +175,9 @@ class MapLayoutModelBase : public QAbstractItemModel {
         }
 
         Qt::ItemFlags flags(const QModelIndex &index) const override {
+
+            //if not first column
+            if(index.column()) return 0;
 
             //root
             if(!index.isValid()) {
@@ -221,6 +225,7 @@ class MapLayoutModelBase : public QAbstractItemModel {
         }
 
         MapLayoutCategory* _removeAtom(const RPZAtomId &toRemove) {
+            
             auto atom = this->_atomsByAtomId.take(toRemove);
             auto atomId = atom->atomId();
 
@@ -248,7 +253,8 @@ class MapLayoutModelBase : public QAbstractItemModel {
                     continue;
                 }
 
-                return categoryItems.value(row);
+                auto sorter = categoryItems.keys().at(row);
+                return categoryItems.value(sorter);
 
             }
 
@@ -256,7 +262,7 @@ class MapLayoutModelBase : public QAbstractItemModel {
 
         }
 
-        int countCategories() {
+        int countCategories() const {
             auto total = 0;
             for(auto &categoryItems : this->_categories) {
                 total += categoryItems.count();
@@ -324,6 +330,7 @@ class MapLayoutModelBase : public QAbstractItemModel {
         }
 
         MapLayoutCategory* _mayCreateCategory(const RPZAtom::Category &category, const int &sorter) {
+            
             auto categoryItem = this->_categories[category].value(sorter);
                 
             if(!categoryItem) {
@@ -332,6 +339,7 @@ class MapLayoutModelBase : public QAbstractItemModel {
             }
 
             return categoryItem;
+
         }
 
 

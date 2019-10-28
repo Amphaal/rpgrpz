@@ -722,7 +722,7 @@
 <context>
     <name>MapHint</name>
     <message>
-        <location filename="../shared/hints/MapHint.cpp" line="42"/>
+        <location filename="../shared/hints/MapHint.cpp" line="41"/>
         <source>Do you want to save changes done to this map ?</source>
         <translation>Voulez-vous sauvegardez les modifications faites à cette carte ?</translation>
     </message>
@@ -1161,17 +1161,17 @@
 <context>
     <name>ToysTreeView</name>
     <message>
-        <location filename="../ui/toys/ToysTreeView.cpp" line="212"/>
+        <location filename="../ui/toys/ToysTreeView.cpp" line="217"/>
         <source>&lt;&lt; Move to &quot;%1&quot;</source>
         <translation>&lt;&lt; Déplacer vers&quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../ui/toys/ToysTreeView.cpp" line="328"/>
+        <location filename="../ui/toys/ToysTreeView.cpp" line="314"/>
         <source>Delete elements in toy box</source>
         <translation>Supprimer des elements de la boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/toys/ToysTreeView.cpp" line="329"/>
+        <location filename="../ui/toys/ToysTreeView.cpp" line="315"/>
         <source>Do you confirm deletion of the %1 selected elements ?</source>
         <translation>Confirmez-vous la suppression des %1 éléments selectionnés ?</translation>
     </message>

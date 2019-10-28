@@ -24,18 +24,13 @@ const QSet<RPZAssetHash>& MapDatabase::usedAssetHashes() const {
     return this->_assetHashes;
 }
 
-const RPZAtom* MapDatabase::atom(const RPZAtomId &id) {
-    
-    if(!id || !this->_atomsById.contains(id)) {
-        return nullptr;
-    }
-
-    return &this->_atomsById[id];
-
+const RPZAtom MapDatabase::atom(const RPZAtomId &id) const {
+    return this->_atomsById.value(id);
 }
 
-const RPZAtom MapDatabase::atomAsCopy(const RPZAtomId &id) const {
-    return this->_atomsById[id];
+RPZAtom* MapDatabase::atomPtr(const RPZAtomId &id) {
+    if(!this->_atomsById.contains(id)) return nullptr;
+    return &this->_atomsById[id];
 }
 
 void MapDatabase::_setupLocalData() {
@@ -58,12 +53,10 @@ void MapDatabase::saveIntoFile() {
     
     auto db = this->db();
 
-    updateFrom(db, QStringLiteral(u"atoms"), this->_atomsById.toVMap());
+    updateFrom(db, QStringLiteral(u"atoms"), this->_atomsById.toVList());
     updateFrom(db, QStringLiteral(u"assets"), this->_assetHashes);
 
     this->_updateDbFile(db);
-
-    qDebug() << "Map database : saving " << this->_atomsById.count() << " atoms";
 
 };
 

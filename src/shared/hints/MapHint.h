@@ -35,7 +35,6 @@ class MapHint : public ViewMapHint {
         bool _ackRemoteness();
 
         QString _mapDescriptor;
-        QString _cachedMapFilePath;
 
         bool _isRemote = false;
         bool _isMapDirty = false;

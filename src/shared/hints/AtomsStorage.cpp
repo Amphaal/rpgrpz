@@ -7,6 +7,19 @@ const ResetPayload AtomsStorage::generateResetPayload() const {
     return ResetPayload(this->_map);
 }
 
+MapDatabase& AtomsStorage::map() {
+    return this->_map;
+}
+
+const MapDatabase& AtomsStorage::map() const {
+    return this->_map;
+}
+
+void AtomsStorage::_replaceMap(const MapDatabase &map) {
+    QMutexLocker l(&_m_handlingLock);
+    this->_map = map;
+}
+
 PossibleActionsOnAtomList AtomsStorage::getPossibleActions(const QVector<RPZAtomId> &ids) {
     
     QMutexLocker l(&_m_handlingLock);
@@ -25,7 +38,7 @@ PossibleActionsOnAtomList AtomsStorage::getPossibleActions(const QVector<RPZAtom
     for(auto &id : ids) {
 
         //get atom
-        auto atom = this->_map.atom(id);
+        auto atom = this->_map.atomPtr(id);
         if(!atom) continue;
 
         atomList += atom;
@@ -91,7 +104,7 @@ const AtomsSelectionDescriptor AtomsStorage::getAtomSelectionDescriptor(const QV
         
         for(auto id : selectedIds) {
 
-            auto atom = this->_map.atomAsCopy(id);
+            auto atom = this->_map.atom(id);
             if(atom.isEmpty()) continue;
 
             out.representedTypes.insert(atom.type());
@@ -211,7 +224,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(const AlterationPayload &fr
                 
                 //get atom
                 auto snowflakeId = i.key();
-                auto atom = this->_map.atom(snowflakeId);
+                auto atom = this->_map.atomPtr(snowflakeId);
                 if(!atom) continue;
 
                 //init hash with old values
@@ -237,7 +250,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(const AlterationPayload &fr
             for(auto &id : casted->targetRPZAtomIds()) {
 
                 //get atom
-                auto atom = this->_map.atom(id);
+                auto atom = this->_map.atomPtr(id);
                 if(!atom) continue;
 
                 AtomUpdates oldValues;
@@ -269,9 +282,9 @@ AlterationPayload AtomsStorage::_generateUndoPayload(const AlterationPayload &fr
             for(auto &id : casted->targetRPZAtomIds()) {
                 
                 auto atom = this->_map.atom(id);
-                if(!atom) continue;
+                if(atom.isEmpty()) continue;
 
-                out += *atom;
+                out += atom;
 
             }
 
@@ -344,7 +357,7 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
             
             auto id = i.key();
             auto atom = this->_map.atom(i.key());
-            if(!atom) continue;
+            if(atom.isEmpty()) continue;
 
             this->_map.updateAtom(id, i.value());
             
@@ -366,7 +379,7 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
         for (const auto &id : mPayload->targetRPZAtomIds()) {
 
             auto atom = this->_map.atom(id);
-            if(!atom) continue;
+            if(atom.isEmpty()) continue;
             
             if(pType == Payload::Alteration::Removed) this->_map.removeAtom(id);
             if(pType == Payload::Alteration::MetadataChanged) this->_map.updateAtom(id, maybeUpdates);
@@ -420,7 +433,7 @@ RPZMap<RPZAtom> AtomsStorage::_generateAtomDuplicates(const QVector<RPZAtomId> &
     for(auto &atomId : RPZAtomIdsToDuplicate) {
         
         //skip if RPZAtomId does not exist
-        auto atom = this->_map.atomAsCopy(atomId);
+        auto atom = this->_map.atom(atomId);
         if(atom.isEmpty()) continue;
         
         //create copy atom, update its id

@@ -32,32 +32,27 @@ class ToysTreeView : public QTreeView, public ConnectivityObserver, public Alter
         void _onReceivedAsset(RPZAssetImportPackage package);
         void _handleAlterationRequest(const AlterationPayload &payload);
 
+    protected:
+        void contextMenuEvent(QContextMenuEvent *event) override;
+        void keyPressEvent(QKeyEvent * event) override;
+        void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
+        void dragEnterEvent(QDragEnterEvent *event) override;
+        void dragMoveEvent(QDragMoveEvent *event) override;
+        void startDrag(Qt::DropActions supportedActions) override;
+
     private:
         int _expectedAssetsTBDownloaded = 0;
         int _expectedAssetsDownloaded = 0;
 
         void connectingToServer() override;
 
-        ///////////////////
-        // drag and drop //
-        ///////////////////
-
         QMimeDatabase* _MIMEDb = nullptr;
         ToysTreeViewModel* _model = nullptr;
-
-        void dragEnterEvent(QDragEnterEvent *event) override;
-        void dragMoveEvent(QDragMoveEvent *event) override;
-        void startDrag(Qt::DropActions supportedActions) override;
-
-        ///////////////////////
-        // END drag and drop //
-        ///////////////////////
 
         /////////////////////
         // Contextual menu //
         /////////////////////
 
-        void _renderCustomContextMenu(const QPoint &pos);
         void _generateMenu(const QList<QModelIndex> &targetIndexes, const QPoint &whereToDisplay);
 
         QList<QAction*> _staticContainerMoveActions;
@@ -71,8 +66,6 @@ class ToysTreeView : public QTreeView, public ConnectivityObserver, public Alter
         void _onRowInsert(const QModelIndex &parent, int first, int last);
         void _requestDeletion(const QModelIndexList &itemsIndexesToDelete);
 
-        void keyPressEvent(QKeyEvent * event) override;
-
         RPZToy _selectedToy;
-        void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
+
 };

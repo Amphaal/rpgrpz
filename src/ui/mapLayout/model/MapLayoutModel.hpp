@@ -13,7 +13,10 @@ class MapLayoutModel : public MapLayoutModelBase {
 
     public slots:
         void propagateFocus(const QModelIndex &focusedIndex) {
+            
             auto id = fromIndex(focusedIndex);
+            if(!id) return;
+
             FocusedPayload payload(id);
             AlterationHandler::get()->queueAlteration(Payload::Source::Local_MapLayout, payload);
 

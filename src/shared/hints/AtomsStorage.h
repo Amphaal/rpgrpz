@@ -56,7 +56,9 @@ class AtomsStorage : public AlterationAcknoledger {
         void handleAlterationRequest(const AlterationPayload &payload);
 
     protected:
-        MapDatabase _map;
+        MapDatabase& map();
+        const MapDatabase& map() const;
+        void _replaceMap(const MapDatabase &map);
 
         virtual void _handleAlterationRequest(const AlterationPayload &payload) override;
         virtual void _atomAdded(const RPZAtom &added) {};
@@ -67,6 +69,7 @@ class AtomsStorage : public AlterationAcknoledger {
 
     private:
         mutable QMutex _m_handlingLock;
+        MapDatabase _map;
 
         // redo/undo
         QStack<AlterationPayload> _redoHistory;

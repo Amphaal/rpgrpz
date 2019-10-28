@@ -2,10 +2,14 @@
 #include "MapLayoutAtom.h"
 
 MapLayoutAtom::MapLayoutAtom(MapLayoutCategory* parent, const RPZAtom &atom) {
+    
     this->_assetHash = atom.assetHash();
     this->_id = atom.id();
     this->_type = atom.type();
     this->updateFrom(atom.editedMetadataWithValues());
+
+    this->setParent(parent);
+
 }
 
 MapLayoutAtom::~MapLayoutAtom() {
@@ -20,6 +24,7 @@ MapLayoutAtom* MapLayoutAtom::fromIndex(const QModelIndex &index) {
 void MapLayoutAtom::setParent(MapLayoutCategory* parent) {
     if(this->_parent) this->_parent->removeAsChild(this);
     this->_parent = parent;
+    this->_parent->addAsChild(this);
 }
 
 MapLayoutCategory* MapLayoutAtom::parent() const {

@@ -45,7 +45,6 @@ bool MapLayoutCategory::operator<(const MapLayoutCategory &other) const {
 }
 
 void MapLayoutCategory::addAsChild(MapLayoutAtom* child) {
-    child->setParent(this);
     this->_atoms.append(child);
 };
 

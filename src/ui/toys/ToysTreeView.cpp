@@ -10,15 +10,8 @@ ToysTreeView::ToysTreeView(QWidget *parent) : QTreeView(parent),
 
     //model
     this->setModel(this->_model);
-
-        //helper for root definition
-        auto defineRoot = [&]() {
-            auto root = this->_model->index(0,0);
-            this->setRootIndex(root);
-        };
-        
-        this->expandAll();
-        defineRoot();
+    this->setRootIndex(this->_model->index(0, 0));
+    this->expandAll();
     
     //auto expand on insert
     QObject::connect(
@@ -40,12 +33,9 @@ ToysTreeView::ToysTreeView(QWidget *parent) : QTreeView(parent),
     this->setDragDropMode(QAbstractItemView::DragDropMode::DragDrop);
     this->setDropIndicatorShown(true);
 
-    //context menu
-    this->setContextMenuPolicy(Qt::CustomContextMenu);
-    QObject::connect(
-        this, &QWidget::customContextMenuRequested,
-        this, &ToysTreeView::_renderCustomContextMenu
-    );
+    //selection
+    this->setSelectionBehavior(QAbstractItemView::SelectRows);
+    this->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     //handle alteration
     QObject::connect(
@@ -53,11 +43,26 @@ ToysTreeView::ToysTreeView(QWidget *parent) : QTreeView(parent),
         this, &ToysTreeView::_handleAlterationRequest
     );
 
-    //selection
-    this->setSelectionBehavior(QAbstractItemView::SelectRows);
-    this->setSelectionMode(QAbstractItemView::ExtendedSelection);
 }
 
+void ToysTreeView::contextMenuEvent(QContextMenuEvent *event) {
+    
+    auto indexesToProcess = this->selectedElementsIndexes();
+
+    //check selected items (autoselected on right click)
+    if(!indexesToProcess.count()) {
+    
+        //get elem under cursor
+        auto index = this->indexAt(event->pos());
+        if(index.isValid()) {
+            indexesToProcess.append(index);
+        }
+
+    }
+
+    //create menu
+    this->_generateMenu(indexesToProcess, event->globalPos());
+}
 
 void ToysTreeView::connectingToServer() {
 
@@ -229,25 +234,6 @@ void ToysTreeView::_generateStaticContainerMoveActions() {
 
 }
 
-void ToysTreeView::_renderCustomContextMenu(const QPoint &pos) {
-    
-    auto indexesToProcess = this->selectedElementsIndexes();
-
-    //check selected items (autoselected on right click)
-    if(!indexesToProcess.count()) {
-    
-        //get elem under cursor
-        auto index = this->indexAt(pos);
-        if(index.isValid()) {
-            indexesToProcess.append(index);
-        }
-
-    }
-
-    //create menu
-    this->_generateMenu(indexesToProcess, this->viewport()->mapToGlobal(pos));
-}
-
 void ToysTreeView::_generateMenu(const QList<QModelIndex> &targetIndexes, const QPoint &whereToDisplay) {
     
     //if no items selected, cancel menu creation
@@ -360,24 +346,19 @@ void ToysTreeView::keyPressEvent(QKeyEvent * event) {
 }
 
 void ToysTreeView::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) {
-    
-    auto i = selected.count();
-    auto y = deselected.count();
 
     QTreeView::selectionChanged(selected, deselected);
+
+    auto i = selected.count();
+    auto y = deselected.count();
 
     auto selectedElems = this->selectedElementsIndexes();
     auto indexesCount = selectedElems.count();
     
     RPZToy defSelect;
 
-    //if no selection
-    if(!indexesCount) {
-        this->clearFocus();
-    } 
-    
     //if only a single selection
-    else if(indexesCount == 1) {
+    if(indexesCount == 1) {
 
         auto elem = ToysTreeViewItem::fromIndex(selectedElems.value(0));
         auto elemType = elem->type();

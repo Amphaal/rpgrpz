@@ -26,9 +26,8 @@ bool MapHint::isMapDirty() const {
 }
 
 const QString MapHint::mapFilePath() const {
-    return this->_cachedMapFilePath.isEmpty() ? 
-                AppContext::getDefaultMapFilePath() : 
-                this->_cachedMapFilePath;
+    auto mapPath = this->map().dbFilePath();
+    return mapPath.isEmpty() ? AppContext::getDefaultMapFilePath() : mapPath;
 }
 
 void MapHint::mayWantToSavePendingState(QWidget* parent, MapHint* hint) {
@@ -38,7 +37,7 @@ void MapHint::mayWantToSavePendingState(QWidget* parent, MapHint* hint) {
     //popup
     auto result = QMessageBox::warning(
         parent, 
-        hint->_map.dbFilePath(), 
+        hint->map().dbFilePath(), 
         tr("Do you want to save changes done to this map ?"), 
         QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes
     );
@@ -55,7 +54,7 @@ bool MapHint::saveRPZMap() {
     if(this->_isRemote) return false;
 
     //save into file
-    this->_map.saveIntoFile();
+    this->map().saveIntoFile();
 
     //define as clean
     this->_setMapDirtiness(false);
@@ -109,11 +108,10 @@ bool MapHint::loadRPZMap(const QString &filePath) {
         this->_setMapDirtiness(false);
 
         //fill database
-        MapDatabase db(filePath);
-        this->_cachedMapFilePath = filePath;
+        this->_replaceMap(MapDatabase(filePath));
 
         //create payload and queue it
-        ResetPayload payload(db);
+        ResetPayload payload(this->map());
         AlterationHandler::get()->queueAlteration(this->_sysActor, payload);
 
     return true;

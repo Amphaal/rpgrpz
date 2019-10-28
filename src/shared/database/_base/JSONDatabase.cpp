@@ -245,6 +245,8 @@ void JSONDatabase::_updateDbFile(const QJsonObject &updatedFullDatabase) {
         this->_destfile->write(bytes);
     this->_destfile->close();
 
+    this->log("saved!");
+
 }
 
 QJsonArray JSONDatabase::diff(QJsonArray &target, QSet<QString> &toRemoveFromTarget) {

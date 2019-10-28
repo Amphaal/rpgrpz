@@ -246,7 +246,7 @@ void ToysTreeViewItem::_defineFlags() {
         
         case ToysTreeViewItem::Type::InternalContainer:
         case ToysTreeViewItem::Type::DownloadedContainer:
-            this->_flags = Qt::ItemIsEnabled;
+            this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled);
             break;
         
         //disabled for now

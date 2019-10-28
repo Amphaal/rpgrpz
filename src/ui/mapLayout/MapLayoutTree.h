@@ -33,14 +33,12 @@ class MapLayoutTree : public QTreeView {
     protected:
         void keyPressEvent(QKeyEvent * event) override;
         void contextMenuEvent(QContextMenuEvent *event) override;
-        void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
+        void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
     private slots:
         void _handleAlterationRequest(const AlterationPayload &payload);
 
     private:
-        void _resizeSections();
-
         AtomsContextualMenuHandler* _menuHandler = nullptr;
         MapLayoutModel* _model = nullptr;
         void _handleHintsSignalsAndSlots();

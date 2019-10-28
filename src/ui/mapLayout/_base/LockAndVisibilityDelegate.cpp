@@ -20,7 +20,9 @@ void LockAndVisibilityDelegate::paint(QPainter *painter, const QStyleOptionViewI
     if(!atom) return;
 
     //may draw "hide" icon
-    if(atom->isHidden()) painter->drawPixmap(option.rect.topLeft(), *_hiddenPix);
+    if(atom->isHidden()) {
+        painter->drawPixmap(option.rect.topLeft(), *_hiddenPix);
+    }
     
     //may draw "lock" icon
     if(atom->isLocked()) {
@@ -34,5 +36,5 @@ void LockAndVisibilityDelegate::paint(QPainter *painter, const QStyleOptionViewI
 }
 
 QSize LockAndVisibilityDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    return QSize(32, 16);
+    return QSize(4, 4);
 }

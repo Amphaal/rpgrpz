@@ -61,17 +61,17 @@ void ViewMapHint::mightNotifyMovement(const QList<QGraphicsItem*> &itemsWhoMight
         if(!id) continue;
 
         //find corresponding atom
-        auto cAtom = this->_map.atom(id);
-        if(!cAtom) continue;
+        auto cAtom = this->map().atom(id);
+        if(cAtom.isEmpty()) continue;
         
         //pos have not changed
         auto newPos = gi->pos();
-        auto oldPos = cAtom->pos();
+        auto oldPos = cAtom.pos();
         if(oldPos == newPos) continue;
 
         //add update into alteration
         AtomUpdates updates {{ AtomParameter::Position, newPos }};
-        coords.insert(cAtom->id(), updates);
+        coords.insert(cAtom.id(), updates);
 
     }
 
@@ -239,12 +239,12 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &metadata) {
         if(!id) continue;
 
         //find corresponding atom
-        auto atom = this->_map.atom(id);
-        if(!atom) continue;
+        auto atom = this->map().atom(id);
+        if(atom.isEmpty()) continue;
 
         //create the new graphics item
-        auto newGi = CustomGraphicsItemHelper::createGraphicsItem(*atom, metadata);
-        this->_crossBindingAtomWithGI(*atom, newGi);
+        auto newGi = CustomGraphicsItemHelper::createGraphicsItem(atom, metadata);
+        this->_crossBindingAtomWithGI(atom, newGi);
         newGis.append(newGi);
 
     }
