@@ -10,21 +10,21 @@ AtomsContextualMenuHandler::AtomsContextualMenuHandler(AtomsStorage* mapMaster, 
 
     }
 
-void AtomsContextualMenuHandler::undoAlteration() {
+void AtomsContextualMenuHandler::_undoAlteration() {
     if(!ConnectivityObserver::isHostAble()) return;
     QMetaObject::invokeMethod(this->_mapMaster, "undo");
 }
-void AtomsContextualMenuHandler::redoAlteration() {
+void AtomsContextualMenuHandler::_redoAlteration() {
     if(!ConnectivityObserver::isHostAble()) return;
     QMetaObject::invokeMethod(this->_mapMaster, "redo");
 }
 
-void AtomsContextualMenuHandler::copySelectedAtomsToClipboard() {
+void AtomsContextualMenuHandler::_copySelectedAtomsToClipboard() {
     if(!ConnectivityObserver::isHostAble()) return;
     _copyClipboard = _latestInvokedAtomIds;
 }
 
-void AtomsContextualMenuHandler::pasteAtomsFromClipboard() {
+void AtomsContextualMenuHandler::_pasteAtomsFromClipboard() {
     
     if(!_copyClipboard.count()) return;
     if(!ConnectivityObserver::isHostAble()) return;
@@ -35,28 +35,27 @@ void AtomsContextualMenuHandler::pasteAtomsFromClipboard() {
 
 }
 
-void AtomsContextualMenuHandler::removeSelectedAtoms() {
+void AtomsContextualMenuHandler::_removeSelectedAtoms() {
     if(!ConnectivityObserver::isHostAble()) return;
     RemovedPayload payload(_latestInvokedAtomIds);
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
-
 }
 
-void AtomsContextualMenuHandler::moveSelectedAtomsToLayer(int targetLayer) {
+void AtomsContextualMenuHandler::_moveSelectedAtomsToLayer(int targetLayer) {
     if(!ConnectivityObserver::isHostAble()) return;
     MetadataChangedPayload payload(_latestInvokedAtomIds, {{AtomParameter::Layer, targetLayer}});
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 
 }
 
-void AtomsContextualMenuHandler::alterSelectedAtomsVisibility(bool isHidden) {
+void AtomsContextualMenuHandler::_alterSelectedAtomsVisibility(bool isHidden) {
     if(!ConnectivityObserver::isHostAble()) return;
     MetadataChangedPayload payload(_latestInvokedAtomIds, {{AtomParameter::Hidden, isHidden}});
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
 
 }
 
-void AtomsContextualMenuHandler::alterSelectedAtomsAvailability(bool isLocked) {
+void AtomsContextualMenuHandler::_alterSelectedAtomsAvailability(bool isLocked) {
     if(!ConnectivityObserver::isHostAble()) return;
     MetadataChangedPayload payload(_latestInvokedAtomIds, {{AtomParameter::Locked, isLocked}});
     AlterationHandler::get()->queueAlteration(this->_mapMaster, payload);
@@ -113,7 +112,7 @@ QAction* AtomsContextualMenuHandler::_genRemoveAction(bool isEnabled) {
         this->_removeAction = RPZActions::remove();
         QObject::connect(
             this->_removeAction, &QAction::triggered,
-            [=]() {this->removeSelectedAtoms();}
+            [=]() {this->_removeSelectedAtoms();}
         );
     }
 
@@ -132,12 +131,12 @@ QList<QAction*> AtomsContextualMenuHandler::_genLayerActions(int riseLayoutTarge
 
     QObject::connect(
         this->_riseAction, &QAction::triggered,
-        [=]() {this->moveSelectedAtomsToLayer(riseLayoutTarget);}
+        [=]() {this->_moveSelectedAtomsToLayer(riseLayoutTarget);}
     );
     
     QObject::connect(
         this->_lowerAction, &QAction::triggered,
-        [=]() {this->moveSelectedAtomsToLayer(lowerLayoutTarget);}
+        [=]() {this->_moveSelectedAtomsToLayer(lowerLayoutTarget);}
     );
 
     QList<QAction*> layerActions;    
@@ -153,7 +152,7 @@ QList<QAction*> AtomsContextualMenuHandler::_genUndoRedoActions(bool canUndo, bo
         this->_undoAction = RPZActions::undo();
         QObject::connect(
             this->_undoAction, &QAction::triggered,
-            [=]() {this->undoAlteration();}
+            [=]() {this->_undoAlteration();}
         );
     }
 
@@ -161,7 +160,7 @@ QList<QAction*> AtomsContextualMenuHandler::_genUndoRedoActions(bool canUndo, bo
         this->_redoAction = RPZActions::redo();
         QObject::connect(
             this->_redoAction, &QAction::triggered,
-            [=]() {this->redoAlteration();}
+            [=]() {this->_redoAlteration();}
         );
     }
 
@@ -194,7 +193,7 @@ QList<QAction*> AtomsContextualMenuHandler::_genCopyPasteActions(bool canCopy, b
         this->_copyAction = RPZActions::copy();
         QObject::connect(
             this->_copyAction, &QAction::triggered,
-            [=]() {this->copySelectedAtomsToClipboard();}
+            [=]() {this->_copySelectedAtomsToClipboard();}
         );
     }
 
@@ -202,7 +201,7 @@ QList<QAction*> AtomsContextualMenuHandler::_genCopyPasteActions(bool canCopy, b
         this->_pasteAction = RPZActions::paste();
         QObject::connect(
             this->_pasteAction, &QAction::triggered,
-            [=]() {this->pasteAtomsFromClipboard();}
+            [=]() {this->_pasteAtomsFromClipboard();}
         );
     }
 
@@ -221,7 +220,7 @@ QList<QAction*> AtomsContextualMenuHandler::_genVisibilityActions(bool areEnable
         this->_showAction = RPZActions::showAtom();
         QObject::connect(
             this->_showAction, &QAction::triggered,
-            [=]() {this->alterSelectedAtomsVisibility(false);}
+            [=]() {this->_alterSelectedAtomsVisibility(false);}
         );
     }
     
@@ -229,7 +228,7 @@ QList<QAction*> AtomsContextualMenuHandler::_genVisibilityActions(bool areEnable
         this->_hideAction = RPZActions::hideAtom();
         QObject::connect(
             this->_hideAction, &QAction::triggered,
-            [=]() {this->alterSelectedAtomsVisibility(true);}
+            [=]() {this->_alterSelectedAtomsVisibility(true);}
         );
     }
 
@@ -248,7 +247,7 @@ QList<QAction*> AtomsContextualMenuHandler::_genAvailabilityActions(bool areEnab
         this->_lockAction = RPZActions::lockAtom();
         QObject::connect(
             this->_lockAction, &QAction::triggered,
-            [=]() {this->alterSelectedAtomsAvailability(true);}
+            [=]() {this->_alterSelectedAtomsAvailability(true);}
         );
     }
     
@@ -256,7 +255,7 @@ QList<QAction*> AtomsContextualMenuHandler::_genAvailabilityActions(bool areEnab
         this->_unlockAction = RPZActions::unlockAtom();
         QObject::connect(
             this->_unlockAction, &QAction::triggered,
-            [=]() {this->alterSelectedAtomsAvailability(false);}
+            [=]() {this->_alterSelectedAtomsAvailability(false);}
         );
     }
 

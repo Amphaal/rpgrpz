@@ -227,12 +227,8 @@ void MapView::drawBackground(QPainter *painter, const QRectF &rect) {
 
 void MapView::contextMenuEvent(QContextMenuEvent *event) {
 
-    auto ids = this->_hints->getAtomIdsFromGraphicsItems(
-        this->scene()->selectedItems()
-    );
-
     //create menu
-    this->_menuHandler->invokeMenu(ids, event->globalPos());
+    this->_menuHandler->invokeMenu(this->_selectedIds(), event->globalPos());
 
 }
 
@@ -269,14 +265,21 @@ void MapView::keyReleaseEvent(QKeyEvent *event) {
 
 }
 
+const QVector<RPZAtomId> MapView::_selectedIds() const {
+    return this->_hints->getAtomIdsFromGraphicsItems(
+        this->scene()->selectedItems()
+    );
+}
+
 void MapView::keyPressEvent(QKeyEvent * event) {
 
     switch(event->key()) {
 
         //deletion handling
-        case Qt::Key::Key_Delete:
-            this->_menuHandler->removeSelectedAtoms();
-            break;
+        case Qt::Key::Key_Delete: {
+            this->_menuHandler->removeSelectedAtoms(this->_selectedIds());
+        }
+        break;
         
         //ask unselection of current tool
         case Qt::Key::Key_Escape:

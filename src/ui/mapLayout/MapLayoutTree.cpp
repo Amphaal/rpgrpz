@@ -55,6 +55,15 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
         this, &QTreeView::doubleClicked,
         this->_model, &MapLayoutModel::propagateFocus
     );
+
+    //after reset
+    QObject::connect(
+        this->_model, &QAbstractItemModel::modelReset,
+        [=]() {
+            this->expandAll();
+        }
+    );
+
 }
 
 void MapLayoutTree::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) {
@@ -122,11 +131,6 @@ void MapLayoutTree::_handleAlterationRequest(const AlterationPayload &payload) {
         }
 
     }
-    
-
-    if(type == Payload::Alteration::Reset) {
-        this->expandAll();
-    }
 
 }
 
@@ -144,11 +148,16 @@ void MapLayoutTree::keyPressEvent(QKeyEvent * event) {
     switch(event->key()) {
 
         //deletion handling
-        case Qt::Key::Key_Delete:
-            this->_menuHandler->removeSelectedAtoms();
-            break;
+        case Qt::Key::Key_Delete: {
+            this->_menuHandler->removeSelectedAtoms(this->_selectedIds());
+        }
+        break;
     }
 
     QTreeView::keyPressEvent(event);
     
+}
+
+const QVector<RPZAtomId> MapLayoutTree::_selectedIds() const {
+    return MapLayoutModel::fromIndexes(this->selectedIndexes());
 }

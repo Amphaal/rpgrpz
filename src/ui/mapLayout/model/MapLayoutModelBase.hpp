@@ -336,6 +336,10 @@ class MapLayoutModelBase : public QAbstractItemModel {
             if(!categoryItem) {
                 categoryItem = new MapLayoutCategory(category, sorter);
                 this->_categories[category].insert(sorter, categoryItem);
+
+                auto begin = this->_getRow(categoryItem);
+                this->beginInsertRows(QModelIndex(), begin, begin);
+                this->endInsertRows();
             }
 
             return categoryItem;

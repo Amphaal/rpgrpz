@@ -92,7 +92,7 @@ class MapLayoutModel : public MapLayoutModelBase {
             else if(auto mPayload = dynamic_cast<const RemovedPayload*>(payload)) {
                 
                 QHash<MapLayoutCategory*, int> countRemovesByCategory;
-                
+
                 //remove atoms
                 for (auto &id : mPayload->targetRPZAtomIds()) {
                     

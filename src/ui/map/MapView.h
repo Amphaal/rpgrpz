@@ -117,4 +117,5 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
             void _resetTool();
         
         void onAnimationManipulationTickDone() override;
+        const QVector<RPZAtomId> _selectedIds() const;
 };

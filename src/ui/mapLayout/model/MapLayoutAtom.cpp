@@ -24,7 +24,7 @@ MapLayoutAtom* MapLayoutAtom::fromIndex(const QModelIndex &index) {
 void MapLayoutAtom::setParent(MapLayoutCategory* parent) {
     if(this->_parent) this->_parent->removeAsChild(this);
     this->_parent = parent;
-    this->_parent->addAsChild(this);
+    if(parent) parent->addAsChild(this);
 }
 
 MapLayoutCategory* MapLayoutAtom::parent() const {

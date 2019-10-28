@@ -16,15 +16,6 @@ class AtomsContextualMenuHandler {
     public:
         AtomsContextualMenuHandler(AtomsStorage* mapMaster, QWidget* menuParent);
 
-        void undoAlteration();
-        void redoAlteration();
-        void copySelectedAtomsToClipboard();
-        void pasteAtomsFromClipboard();
-        void removeSelectedAtoms();
-        void moveSelectedAtomsToLayer(int targetLayer);
-        void alterSelectedAtomsVisibility(bool isHidden);
-        void alterSelectedAtomsAvailability(bool isLocked);
-
         void invokeMenu(const QVector<RPZAtomId> &toManipulate, const QPoint &whereToDisplay);
 
     private:
@@ -56,4 +47,13 @@ class AtomsContextualMenuHandler {
 
         void _addCopyPasteActionsToShortcuts();
         void _addUndoRedoActionsToShortcuts();
+
+        void _undoAlteration();
+        void _redoAlteration();
+        void _copySelectedAtomsToClipboard();
+        void _pasteAtomsFromClipboard();
+        void _removeSelectedAtoms();
+        void _moveSelectedAtomsToLayer(int targetLayer);
+        void _alterSelectedAtomsVisibility(bool isHidden);
+        void _alterSelectedAtomsAvailability(bool isLocked);
 };

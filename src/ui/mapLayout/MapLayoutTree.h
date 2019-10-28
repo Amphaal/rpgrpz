@@ -43,4 +43,6 @@ class MapLayoutTree : public QTreeView {
         MapLayoutModel* _model = nullptr;
         void _handleHintsSignalsAndSlots();
 
+        const QVector<RPZAtomId> _selectedIds() const;
+
 };
