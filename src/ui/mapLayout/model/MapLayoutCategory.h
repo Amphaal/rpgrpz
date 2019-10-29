@@ -24,7 +24,7 @@ class MapLayoutCategory : public MapLayoutItem {
 
         MapLayoutAtom* atom(int row) const;
 
-        int rowOfAtom(MapLayoutAtom* atomToFind) const;
+        const int rowOfAtom(MapLayoutAtom* atomToFind) const;
 
         const QString name() const override;
 

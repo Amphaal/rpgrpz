@@ -65,6 +65,13 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
         }
     );
 
+    QObject::connect(
+        this->_model, &QAbstractItemModel::rowsInserted,
+        [=](const QModelIndex &parent, int first, int last) {
+            if(parent.isValid()) this->expand(parent);
+        }
+    );
+
 }
 
 void MapLayoutTree::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) {
@@ -90,8 +97,7 @@ void MapLayoutTree::_handleAlterationRequest(const AlterationPayload &payload) {
 
     //handle in database
     this->_model->handleAlterationRequest(pl.data());
-    
-    
+
     //handle in UI
     switch(type) {
         

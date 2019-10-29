@@ -5,7 +5,7 @@
 #include "src/shared/async-ui/AlterationHandler.h"
 #include "src/shared/database/AssetsDatabase.h"
 
-typedef QHash<RPZAtomLayer, QPair<int, int>> LayerMoves;
+typedef QHash<RPZAtomLayer, QPair<QSet<MapLayoutAtom*>, QSet<MapLayoutAtom*>>> LayerMoves;
 
 class MapLayoutModel : public MapLayoutModelBase {
 
@@ -49,12 +49,12 @@ class MapLayoutModel : public MapLayoutModelBase {
                 //RESET
                 if(type == Payload::Alteration::Reset) {
                     
-                    this->_clearAll();
-
                     this->beginResetModel();
 
+                        this->_clearAll();
+
                         for (auto &atom : mPayload->atoms()) {
-                            this->_createAtom(atom);
+                            this->_createAtom(atom, false);
                         }
 
                     this->endResetModel();
@@ -64,25 +64,10 @@ class MapLayoutModel : public MapLayoutModelBase {
                 //INSERT
                 else if (type == Payload::Alteration::Added) {
                     
-                    QHash<QModelIndex, int> inserts;
-
                     //inserts
                     for (auto &atom : mPayload->atoms()) {
-                        auto index = this->_createAtom(atom, true);
-                        inserts[index.parent()]++;
-                    }
-
-                    //redraws
-                    for(auto i = inserts.begin(); i != inserts.end(); i++) {
-                        auto category = MapLayoutCategory::fromIndex(i.key());
-                        
-                        auto begin = category->atomsCount() - i.value();
-                        auto end = category->atomsCount() - 1;
-                        
-                        this->beginInsertRows(i.key(), begin, end);
-                    }
-
-                    this->endInsertRows();
+                        this->_createAtom(atom);
+                    }         
 
                 }
 
@@ -91,49 +76,19 @@ class MapLayoutModel : public MapLayoutModelBase {
             //on remove
             else if(auto mPayload = dynamic_cast<const RemovedPayload*>(payload)) {
                 
-                QHash<MapLayoutCategory*, int> countRemovesByCategory;
+                QSet<MapLayoutCategory*> alteredCategories;
 
                 //remove atoms
                 for (auto &id : mPayload->targetRPZAtomIds()) {
-                    
                     auto alteredCategory = this->_removeAtom(id);
-                    countRemovesByCategory[alteredCategory]++;
-
+                    alteredCategories.insert(alteredCategory);
                 }
 
-                //define redraws
-                auto mustRemoveFromRoot = false;
-                for(auto i = countRemovesByCategory.begin(); i != countRemovesByCategory.end(); i++) {
-                    
-                    auto remainingAtoms = i.key()->atomsCount();
-                    
-                    //no atoms, delete category
-                    if(!remainingAtoms) {
-                        this->_removeCategory(i.key());
-                        mustRemoveFromRoot = true;
-                        continue;
-                    }
-
-                    //get category index
-                    auto categoryRow = this->_getRow(i.key());
-                    auto categoryIndex = this->index(categoryRow, 0, QModelIndex());
-
-                    //update atom count
-                    auto categoryIndexAtomCountIndex = categoryIndex.siblingAtColumn(2);
-                    emit dataChanged(categoryIndexAtomCountIndex, categoryIndexAtomCountIndex, {Qt::DisplayRole});
-
-                    //redraw
-                    auto end = remainingAtoms - 1 + i.value();
-                    this->beginRemoveRows(categoryIndex, 0, end);
-                    
+                //clean empty categories
+                for(auto category : alteredCategories) {
+                    this->_maybeRemoveCategory(category);
                 }
-
-                if(mustRemoveFromRoot) {
-                    this->beginRemoveRows(QModelIndex(), 0, this->countCategories() - 1);
-                }
-
-                this->endRemoveRows();
-
+                
             }
 
             //on metadata change
@@ -168,35 +123,110 @@ class MapLayoutModel : public MapLayoutModelBase {
         }
         
     private:
+        struct LayerMoveContext {
+            bool isCategoryCreated = false;
+            QModelIndex categoryIndex;
+            MapLayoutCategory* category = nullptr;
+            QSet<MapLayoutAtom*> in;
+            QSet<MapLayoutAtom*> out;
+        };
+
         void _handleLayerMoves(const LayerMoves &moves) {
             
             //no moves, stop
             if(!moves.count()) return;
 
-            this->beginResetModel();
+                QList<LayerMoveContext> contexts;
 
-                //create non existing layers
+                //generate contexts
                 for(auto i = moves.begin(); i != moves.end(); i++) {
-                    auto category = this->_mayCreateCategory(i.key());
+                    
+                    LayerMoveContext context;
+
+                    context.categoryIndex = this->_getCategoryIndex(i.key(), &context.isCategoryCreated); //create non existing layers
+                    context.category = MapLayoutCategory::fromIndex(context.categoryIndex);
+                    context.in = i.value().first;
+                    context.out = i.value().second;
+                
+                    //add to contexts
+                    contexts += context;
+
                 }
 
-            this->endResetModel();
+                //deletes
+                for(auto &context : contexts) {
+                    
+                    //skip if no out
+                    if(!context.out.count()) continue;
+                    
+                    auto end = context.category->atomsCount() - 1;
 
+                    this->beginRemoveRows(context.categoryIndex, 0, end);
+                        for(auto outAtom : context.out) {
+                            outAtom->setParent(nullptr);
+                        }
+                    this->endRemoveRows(); 
+
+                }
+
+                //inserts + tree clearing + updates
+                for(auto &context : contexts) {
+
+                    //inserts if necessary
+                    auto inCount = context.in.count();
+                    if(inCount) {
+                        
+                        //prepare insert ranges
+                        auto begin = context.category->atomsCount();
+                        auto end = begin + inCount;
+                        
+                        this->beginInsertRows(context.categoryIndex, begin, end);
+                            for(auto inAtom : context.in) {
+                                inAtom->setParent(context.category);
+                            }
+                        this->endInsertRows();
+
+                    }
+
+                    //check if remove is necessary, if so, delete it and skip the rest
+                    if(this->_maybeRemoveCategory(context.category)) continue;
+
+                    // check if sold has evolved
+                    auto inOutSold = inCount - context.out.count();
+                    
+                    //if so, refresh atom count on that category
+                    if(inOutSold != 0 && !context.isCategoryCreated) {
+                        auto categoryCountIndex = context.categoryIndex.siblingAtRow(2);
+                        emit dataChanged(categoryCountIndex, categoryCountIndex, {Qt::DisplayRole});
+                    }
+
+                }
+
+        }
+        
+        bool _maybeRemoveCategory(MapLayoutCategory* maybeToRemove) {
+                
+            //has atoms, skip
+            if(maybeToRemove->atomsCount()) return false;
+            
+            //no more atoms, delete category
+            this->_removeCategory(maybeToRemove);
+            return true;
 
         }
 
         void _handleUpdates(const RPZAtomId &id, const AtomUpdates &updates, LayerMoves &moves) {
             
             auto atom = this->_atomsByAtomId.value(id);
-            
+
             //update category
             if(updates.contains(AtomParameter::Layer)) {
                 
                 auto newLayer = updates.value(AtomParameter::Layer).toInt();
                 auto oldLayer = atom->parent()->sorter();
                 
-                moves[oldLayer].second++; //out
-                moves[newLayer].first++;  //in                 
+                moves[newLayer].first += atom;  //in   
+                moves[oldLayer].second += atom; //out
 
             };
 

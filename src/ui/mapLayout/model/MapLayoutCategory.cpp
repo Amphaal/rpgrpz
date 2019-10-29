@@ -22,6 +22,9 @@ MapLayoutCategory::MapLayoutCategory(const RPZAtom::Category &category, int sort
     }
 }
 
+const int MapLayoutCategory::rowOfAtom(MapLayoutAtom* atom) const {
+    return this->_atoms.indexOf(atom);
+}
 
 void MapLayoutCategory::updateSorter(RPZAtomLayer newLayer) {
     this->_sorter = newLayer;
@@ -65,17 +68,6 @@ MapLayoutAtom* MapLayoutCategory::atom(int row) const {
     }
 
     return nullptr;
-}
-
-int MapLayoutCategory::rowOfAtom(MapLayoutAtom* atomToFind) const {
-    auto internal = -1;
-    
-    for(auto atom : this->_atoms) {
-        internal++;
-        if(atom == atomToFind) return internal;
-    }
-
-    return -1;
 }
 
 const QString MapLayoutCategory::name() const {

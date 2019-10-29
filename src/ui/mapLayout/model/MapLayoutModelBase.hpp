@@ -206,39 +206,78 @@ class MapLayoutModelBase : public QAbstractItemModel {
         QHash<RPZAssetHash, QSet<RPZAtomId>> _atomsByAssetHash;
         QMap<RPZAtom::Category, QMap<int, MapLayoutCategory*>> _categories;
 
-        QModelIndex _createAtom(const RPZAtom &atom, bool fetchIndex = false) {
+        void _createAtom(const RPZAtom &atom, bool triggerRowInsert = true) {
             
-            auto category = this->_mayCreateCategory(atom);
-            auto mAtom = new MapLayoutAtom(category, atom);
-            auto atomId = mAtom->atomId();
+            //preapre
+            auto categoryIndex = this->_mayCreateCategory(atom);
+            auto category = MapLayoutCategory::fromIndex(categoryIndex);
+            auto expectedRow = category->atomsCount();
 
-            this->_atomsByAtomId.insert(atomId, mAtom);
-            
-            //if has assetHash, add it
-            auto assetHash = mAtom->assetHash();
-            if(!assetHash.isNull()) {
-                this->_atomsByAssetHash[assetHash].insert(atomId);
-            }
-            
-            return fetchIndex ? this->toIndex(atomId) : QModelIndex();
+            //start insert
+            if(triggerRowInsert) this->beginInsertRows(categoryIndex, expectedRow, expectedRow);
+                
+                //add to tree
+                auto mAtom = new MapLayoutAtom(category, atom);
+
+                //add to catalog
+                auto atomId = mAtom->atomId();
+                this->_atomsByAtomId.insert(atomId, mAtom);
+                
+                //if has assetHash, add it
+                auto assetHash = mAtom->assetHash();
+                if(!assetHash.isNull()) {
+                    this->_atomsByAssetHash[assetHash].insert(atomId);
+                }
+
+            if(triggerRowInsert) this->endInsertRows();
 
         }
 
         MapLayoutCategory* _removeAtom(const RPZAtomId &toRemove) {
             
-            auto atom = this->_atomsByAtomId.take(toRemove);
-            auto atomId = atom->atomId();
-
-            //if has assetHash, remove it from tracking list
-            auto hash = atom->assetHash();
-            if(!hash.isNull()) {
-                this->_atomsByAssetHash[hash].remove(atomId);
-            }
-
+            //prepare
+            auto atom = this->_atomsByAtomId.value(toRemove);
             auto category = atom->parent();
-            delete atom;
+            auto categoryIndex = this->_getCategoryIndex(category);
+            auto begin = category->rowOfAtom(atom);
+            
+            //start deletion
+            this->beginRemoveRows(categoryIndex, begin, begin);
+
+                //remove atom from catalog
+                this->_atomsByAtomId.remove(toRemove);
+
+                //if has assetHash, remove it from tracking list
+                auto hash = atom->assetHash();
+                if(!hash.isNull()) {
+                    this->_atomsByAssetHash[hash].remove(toRemove);
+                }
+
+                //delete in tree
+                delete atom;
+
+            this->endRemoveRows();
+
+            //update row count in category
+            auto categoryCountIndex = categoryIndex.siblingAtColumn(2);
+            emit dataChanged(categoryCountIndex, categoryCountIndex, {Qt::DisplayRole});
 
             return category;
+
+        }
+
+        
+        void _removeCategory(MapLayoutCategory* toRemove) {
+            
+            //prepare
+            auto rowToRemoveFrom = this->_getRow(toRemove);
+            
+            this->beginRemoveRows(QModelIndex(), rowToRemoveFrom, rowToRemoveFrom);
+                
+                this->_categories[toRemove->category()].remove(toRemove->sorter()); //remove from catalog
+                delete toRemove; //remove from tree
+
+            this->endRemoveRows();
 
         }
 
@@ -270,19 +309,6 @@ class MapLayoutModelBase : public QAbstractItemModel {
             return total;
         }
 
-        int _getRow(MapLayoutCategory* category) const {
-            auto row = -1;
-            
-            for(auto &categoryItems : this->_categories) {
-                for(auto &item : categoryItems) {
-                    row++;
-                    if(item == category) return row;
-                }
-            }
-
-            return -1;
-        }
-
         void _clearAll() {
 
             qDeleteAll(this->_atomsByAtomId);
@@ -297,52 +323,71 @@ class MapLayoutModelBase : public QAbstractItemModel {
 
         }
 
-        void _removeCategory(MapLayoutCategory* toRemove) {
-            this->_categories[toRemove->category()].remove(toRemove->sorter());
-            delete toRemove;
+        QModelIndex _getCategoryIndex(const RPZAtomLayer &layer, bool* created) {
+            return this->_mayCreateCategory(RPZAtom::Category::Layout, layer, created);
         }
 
-
-        MapLayoutCategory* _mayCreateCategory(const RPZAtomLayer &layer) {
-            return this->_mayCreateCategory(RPZAtom::Category::Layout, layer);
+        QModelIndex _getCategoryIndex(MapLayoutCategory* category) {
+            return this->index(this->_getRow(category), 0);
         }
 
     private:
-        MapLayoutCategory* _mayCreateCategory(const RPZAtom &atom) {
+        int _getRow(MapLayoutCategory* category) const {
+            auto row = -1;
             
-            MapLayoutCategory * categoryItem = nullptr;
+            for(auto &categoryItems : this->_categories) {
+                for(auto &item : categoryItems) {
+                    row++;
+                    if(item == category) return row;
+                }
+            }
+
+            return -1;
+        }
+
+        QModelIndex _mayCreateCategory(const RPZAtom &atom) {
+            
+            QModelIndex out;
             
             auto category = atom.category();
             switch(category) {
                 case RPZAtom::Category::Layout: {
-                    categoryItem = this->_mayCreateCategory(category, atom.layer());
+                    out = this->_mayCreateCategory(category, atom.layer());
                 }
                 break;
 
                 case RPZAtom::Category::Interactive: {
-                    categoryItem = this->_mayCreateCategory(category, (int)atom.type());
+                    out = this->_mayCreateCategory(category, (int)atom.type());
                 }
                 break;
             }
 
-            return categoryItem;
+            return out;
 
         }
 
-        MapLayoutCategory* _mayCreateCategory(const RPZAtom::Category &category, const int &sorter) {
+        QModelIndex _mayCreateCategory(const RPZAtom::Category &category, const int &sorter, bool* created = nullptr) {
             
+            auto begin = -1;
             auto categoryItem = this->_categories[category].value(sorter);
                 
             if(!categoryItem) {
                 categoryItem = new MapLayoutCategory(category, sorter);
                 this->_categories[category].insert(sorter, categoryItem);
 
-                auto begin = this->_getRow(categoryItem);
+                begin = this->_getRow(categoryItem);
                 this->beginInsertRows(QModelIndex(), begin, begin);
                 this->endInsertRows();
+
+                if(created) *created = true;
+
+            } 
+            
+            else {
+                begin = this->_getRow(categoryItem);
             }
 
-            return categoryItem;
+            return this->index(begin, 0);
 
         }
 
