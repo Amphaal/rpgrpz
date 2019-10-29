@@ -20,22 +20,22 @@ class MapDatabase : public JSONDatabase {
 
         void addAtom(const RPZAtom &toAdd);
         void addAtoms(const QList<RPZAtom> &toAdd);
-        void updateAtom(const RPZAtomId &toUpdate, const AtomUpdates &updates);
+        void updateAtom(const RPZAtom::Id &toUpdate, const RPZAtom::Updates &updates);
         void updateAtom(const RPZAtom &updated);
-        void removeAtom(const RPZAtomId &toRemove);
+        void removeAtom(const RPZAtom::Id &toRemove);
         void clear();
 
-        const RPZAtom atom(const RPZAtomId &id) const;
-        RPZAtom* atomPtr(const RPZAtomId &id);
+        const RPZAtom atom(const RPZAtom::Id &id) const;
+        RPZAtom* atomPtr(const RPZAtom::Id &id);
         RPZMap<RPZAtom>& atoms();
         const RPZMap<RPZAtom>& atoms() const;
-        const QSet<RPZAssetHash>& usedAssetHashes() const;
+        const QSet<RPZAsset::Hash>& usedAssetHashes() const;
 
     protected:
         const JSONDatabase::Version apiVersion() const override;
 
         RPZMap<RPZAtom> _atomsById;
-        QSet<RPZAssetHash> _assetHashes;
+        QSet<RPZAsset::Hash> _assetHashes;
 
     private:
         QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> _getUpdateHandlers() override;

@@ -34,7 +34,7 @@ QVBoxLayout* LogContainer::_getLayout() {
     return this->_vLayout;
 }
 
-LogItem* LogContainer::_addLine(const Stampable &element, RPZStampableId putUnder) {
+LogItem* LogContainer::_addLine(const Stampable &element, Stampable::Id putUnder) {
     
     auto eId = element.id();
     auto found = this->_linesBySerializableId.value(eId);
@@ -76,7 +76,7 @@ LogItem* LogContainer::_getLine(const Stampable &element) {
     return this->_getLine(element.id());
 }
 
-LogItem* LogContainer::_getLine(RPZStampableId elementId) {
+LogItem* LogContainer::_getLine(Stampable::Id elementId) {
     return this->_linesBySerializableId.value(elementId);
 }
 

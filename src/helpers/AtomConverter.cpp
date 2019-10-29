@@ -14,10 +14,10 @@ void AtomConverter::setIsTemporary(QGraphicsItem* item, bool isTemporary) {
     item->setData((int)AtomConverter::DataIndex::IsTemporary, isTemporary);
 }
 
-BrushType AtomConverter::brushDrawStyle(QGraphicsItem* item) {
-    return (BrushType)item->data((int)AtomConverter::DataIndex::BrushDrawStyle).toInt();
+RPZAtom::BrushType AtomConverter::brushDrawStyle(QGraphicsItem* item) {
+    return (RPZAtom::BrushType)item->data((int)AtomConverter::DataIndex::BrushDrawStyle).toInt();
 }
-void AtomConverter::setBrushDrawStyle(QGraphicsItem* item, const BrushType &style) {
+void AtomConverter::setBrushDrawStyle(QGraphicsItem* item, const RPZAtom::BrushType &style) {
     item->setData((int)AtomConverter::DataIndex::BrushDrawStyle, (int)style);
 }
 
@@ -51,14 +51,14 @@ void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZA
             
 }
 
-void AtomConverter::updateGraphicsItemFromMetadata(QGraphicsItem* item, const AtomUpdates &updates) {
+void AtomConverter::updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom::Updates &updates) {
     //update GI
     for(auto i = updates.begin(); i != updates.end(); i++) {
         updateGraphicsItemFromMetadata(item, i.key(), i.value());
     }
 }
 
-void AtomConverter::updateGraphicsItemFromMetadata(QGraphicsItem* item, const AtomParameter &param, const QVariant &val) {
+void AtomConverter::updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom::Parameter &param, const QVariant &val) {
     
     if(!item) return;
     
@@ -70,8 +70,8 @@ void AtomConverter::updateGraphicsItemFromMetadata(QGraphicsItem* item, const At
 RPZAtom AtomConverter::graphicsToAtom(QGraphicsItem* blueprint, RPZAtom templateCopy) {
     
     //update the 3 only parameters who might have changed from the template
-    _setParamToAtomFromGraphicsItem(AtomParameter::Position, templateCopy, blueprint);
-    _setParamToAtomFromGraphicsItem(AtomParameter::Shape, templateCopy, blueprint);
+    _setParamToAtomFromGraphicsItem(RPZAtom::Parameter::Position, templateCopy, blueprint);
+    _setParamToAtomFromGraphicsItem(RPZAtom::Parameter::Shape, templateCopy, blueprint);
                 
     //finally, give it ID for storage
     templateCopy.shuffleId();
@@ -93,16 +93,16 @@ void AtomConverter::_bulkTransformApply(QGraphicsItem* itemBrushToUpdate) {
     //apply transforms to instruction object
     for(auto i = transforms.begin(); i != transforms.end(); i++) {
         
-        auto param = static_cast<AtomParameter>(i.key().toInt());
+        auto param = static_cast<RPZAtom::Parameter>(i.key().toInt());
         
         switch(param) {
-            case AtomParameter::AssetScale: {
+            case RPZAtom::Parameter::AssetScale: {
                 auto scaleRatio = i.value().toDouble();
                 toApply.scale(scaleRatio, scaleRatio);
             }
             break;
 
-            case AtomParameter::AssetRotation: {
+            case RPZAtom::Parameter::AssetRotation: {
                 auto degrees = i.value().toInt();
                 toApply.rotate(degrees);
             }
@@ -118,7 +118,7 @@ void AtomConverter::_bulkTransformApply(QGraphicsItem* itemBrushToUpdate) {
     auto type = brushDrawStyle(itemBrushToUpdate);
     
     //apply to pen
-    if(type == BrushType::RoundBrush) {
+    if(type == RPZAtom::BrushType::RoundBrush) {
         auto pen = cItem->pen();
         auto brush = pen.brush();
         brush.setTransform(toApply);
@@ -135,19 +135,19 @@ void AtomConverter::_bulkTransformApply(QGraphicsItem* itemBrushToUpdate) {
 
 }
 
-bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, QGraphicsItem* itemToUpdate, const QVariant &val) {
+bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &param, QGraphicsItem* itemToUpdate, const QVariant &val) {
     
     switch(param) {
                         
             //on moving
-            case AtomParameter::Position: {
+            case RPZAtom::Parameter::Position: {
                 auto destPos = val.toPointF();
                 itemToUpdate->setPos(destPos);  
             }
             break;
 
             // on locking change
-            case AtomParameter::Locked: {
+            case RPZAtom::Parameter::Locked: {
                 auto locked = val.toBool();
                 itemToUpdate->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, !locked);
                 itemToUpdate->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, !locked);
@@ -155,7 +155,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
             break;
             
             // on changing visibility
-            case AtomParameter::Hidden: {
+            case RPZAtom::Parameter::Hidden: {
                 if(!isTemporary(itemToUpdate)) {
                     auto hidden = val.toBool();
                     auto opacity = hidden ? 0 : 1;
@@ -165,21 +165,21 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
             break;
 
             //on rotation
-            case AtomParameter::Rotation: {
+            case RPZAtom::Parameter::Rotation: {
                 auto destRotation = val.toInt();
                 itemToUpdate->setRotation(destRotation);
             }
             break;
 
             //on scaling
-            case AtomParameter::Scale: {
+            case RPZAtom::Parameter::Scale: {
                 auto destScale = val.toDouble();
                 itemToUpdate->setScale(destScale);
             }
             break;
 
             //on text size change
-            case AtomParameter::TextSize: {
+            case RPZAtom::Parameter::TextSize: {
                 if(auto cItem = dynamic_cast<QGraphicsTextItem*>(itemToUpdate)) {
                     auto newSize = val.toInt();
                     auto font = cItem->font();
@@ -193,8 +193,8 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
             break;
 
             //on pen width change
-            case AtomParameter::BrushPenWidth:
-            case AtomParameter::PenWidth: {
+            case RPZAtom::Parameter::BrushPenWidth:
+            case RPZAtom::Parameter::PenWidth: {
                 if(auto cItem = dynamic_cast<MapViewGraphicsPathItem*>(itemToUpdate)) {
                     auto newWidth = val.toInt();
                     auto pen = cItem->pen();
@@ -204,14 +204,14 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
             }
             break;
 
-            case AtomParameter::BrushStyle: {
+            case RPZAtom::Parameter::BrushStyle: {
                 if(auto cItem = dynamic_cast<MapViewGraphicsPathItem*>(itemToUpdate)) {
                     
-                    auto type = (BrushType)val.toInt();
+                    auto type = (RPZAtom::BrushType)val.toInt();
                     setBrushDrawStyle(itemToUpdate, type);
                     
                     //use pen as brush
-                    if(type == BrushType::RoundBrush) {
+                    if(type == RPZAtom::BrushType::RoundBrush) {
                         
                         //reset brush
                         cItem->setBrush(QBrush());
@@ -239,7 +239,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
                         
                         QPainterPath path;
 
-                        if(type == BrushType::Stamp) {
+                        if(type == RPZAtom::BrushType::Stamp) {
                             QRectF rect(QPointF(0,0), cItem->sourceBrushSize());
                             path.addRect(rect);
                         } 
@@ -256,7 +256,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
             break;
 
             //on text change
-            case AtomParameter::Text: {
+            case RPZAtom::Parameter::Text: {
                 if(auto cItem = dynamic_cast<QGraphicsTextItem*>(itemToUpdate)) {
                     auto newText = val.toString();
                     cItem->setPlainText(newText);
@@ -265,7 +265,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
             break;
 
             //on layer change
-            case AtomParameter::Layer: {
+            case RPZAtom::Parameter::Layer: {
                 
                 auto newLayer = val.toInt();
 
@@ -278,8 +278,8 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
             break;
             
             //on asset rotation / scale, store metadata for all-in transform update in main method
-            case AtomParameter::AssetRotation: {
-            case AtomParameter::AssetScale: {
+            case RPZAtom::Parameter::AssetRotation: {
+            case RPZAtom::Parameter::AssetScale: {
                 auto transforms = brushTransform(itemToUpdate);
                 transforms.insert(QString::number((int)param), val);
                 setBrushTransform(itemToUpdate, transforms);
@@ -296,27 +296,27 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const AtomParameter &param, 
     return false;
 }
 
-void AtomConverter::_setParamToAtomFromGraphicsItem(const AtomParameter &param, RPZAtom &atomToUpdate, QGraphicsItem* blueprint) {
+void AtomConverter::_setParamToAtomFromGraphicsItem(const RPZAtom::Parameter &param, RPZAtom &atomToUpdate, QGraphicsItem* blueprint) {
     switch(param) {
         
-        case AtomParameter::Scale: {
+        case RPZAtom::Parameter::Scale: {
             atomToUpdate.setMetadata(param, blueprint->scale());
         }
         break;
 
-        case AtomParameter::Rotation: {
+        case RPZAtom::Parameter::Rotation: {
             atomToUpdate.setMetadata(param, blueprint->rotation());
         }
         break;
 
-        case AtomParameter::TextSize: {
+        case RPZAtom::Parameter::TextSize: {
             if(auto casted = dynamic_cast<QGraphicsTextItem*>(blueprint)) {
                 atomToUpdate.setMetadata(param, casted->font().pointSize());
             }
         }
         break;
 
-        case AtomParameter::Layer: {
+        case RPZAtom::Parameter::Layer: {
 
             auto layer = blueprint->zValue();
 
@@ -328,14 +328,14 @@ void AtomConverter::_setParamToAtomFromGraphicsItem(const AtomParameter &param, 
         }
         break;
 
-        case AtomParameter::BrushStyle: {
+        case RPZAtom::Parameter::BrushStyle: {
             auto brushStyle = brushDrawStyle(blueprint);
             atomToUpdate.setMetadata(param, (int)brushStyle);
         }
         break;
 
-        case AtomParameter::BrushPenWidth:
-        case AtomParameter::PenWidth: {
+        case RPZAtom::Parameter::BrushPenWidth:
+        case RPZAtom::Parameter::PenWidth: {
             if(auto pathItem = dynamic_cast<MapViewGraphicsPathItem*>(blueprint)) {
                 atomToUpdate.setMetadata(param, pathItem->pen().width()); 
             }
@@ -343,7 +343,7 @@ void AtomConverter::_setParamToAtomFromGraphicsItem(const AtomParameter &param, 
         break;
 
         //add shapeCenter too
-        case AtomParameter::Shape: {
+        case RPZAtom::Parameter::Shape: {
 
             if(auto pathItem = dynamic_cast<MapViewGraphicsPathItem*>(blueprint)) {
                 auto path = pathItem->path();
@@ -358,13 +358,13 @@ void AtomConverter::_setParamToAtomFromGraphicsItem(const AtomParameter &param, 
         }
         break;
 
-        case AtomParameter::Position: {
+        case RPZAtom::Parameter::Position: {
             atomToUpdate.setMetadata(param, blueprint->pos());     
         }
         break;
         
-        case AtomParameter::AssetScale:
-        case AtomParameter::AssetRotation: {
+        case RPZAtom::Parameter::AssetScale:
+        case RPZAtom::Parameter::AssetRotation: {
             auto transforms = brushTransform(blueprint);
             if(transforms.isEmpty()) return;
 

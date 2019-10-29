@@ -21,17 +21,17 @@ class ToysTreeViewItem : private QObject {
             Root = 100,
             Folder = 101,
             InternalContainer = 201,
-                Event = (int)RPZAtomType::Event,
-                FreeDraw = (int)RPZAtomType::Drawing,
-                Text = (int)RPZAtomType::Text,
+                Event = (int)RPZAtom::Type::Event,
+                FreeDraw = (int)RPZAtom::Type::Drawing,
+                Text = (int)RPZAtom::Type::Text,
             NPC_Container = (int)AssetsDatabase::StorageContainer::NPC,
-                NPC = (int)RPZAtomType::NPC,
+                NPC = (int)RPZAtom::Type::NPC,
             BackgroundContainer = (int)AssetsDatabase::StorageContainer::Background,
-                Background = (int)RPZAtomType::Background,
+                Background = (int)RPZAtom::Type::Background,
             FloorBrushContainer = (int)AssetsDatabase::StorageContainer::FloorBrush,
-                FloorBrush = (int)RPZAtomType::Brush,
+                FloorBrush = (int)RPZAtom::Type::Brush,
             ObjectContainer = (int)AssetsDatabase::StorageContainer::Object,
-                Object = (int)RPZAtomType::Object,
+                Object = (int)RPZAtom::Type::Object,
             DownloadedContainer = (int)AssetsDatabase::StorageContainer::Downloaded,
                 Downloaded = 650
         };
@@ -106,8 +106,8 @@ class ToysTreeViewItem : private QObject {
         ToysTreeViewItem::Type _type = ToysTreeViewItem::Type::T_Unknown;
         ToysTreeViewItem::Type _insertType = ToysTreeViewItem::Type::T_Unknown;
         ToysTreeViewItem::Type _rootStaticContainerType = ToysTreeViewItem::Type::T_Unknown;
-        RPZAtomType _atomType = RPZAtomType::Undefined;
-        RPZAssetHash _hash;
+        RPZAtom::Type _atomType = RPZAtom::Type::Undefined;
+        RPZAsset::Hash _hash;
         QString _name;
         QString _path;
         QString _fullPath;
@@ -175,12 +175,12 @@ class ToysTreeViewItem : private QObject {
         };
 
         static const inline QHash<ToysTreeViewItem::Type, QString> _iconPathByElementType = {
-            { ToysTreeViewItem::Type::Event, RPZAtom::iconPathByAtomType.value(RPZAtomType::Event) },
-            { ToysTreeViewItem::Type::NPC_Container, RPZAtom::iconPathByAtomType.value(RPZAtomType::NPC) },
+            { ToysTreeViewItem::Type::Event, RPZAtom::iconPathByAtomType.value(RPZAtom::Type::Event) },
+            { ToysTreeViewItem::Type::NPC_Container, RPZAtom::iconPathByAtomType.value(RPZAtom::Type::NPC) },
             { ToysTreeViewItem::Type::ObjectContainer, QStringLiteral(u":/icons/app/manager/asset.png") },
             { ToysTreeViewItem::Type::FloorBrushContainer, QStringLiteral(u":/icons/app/manager/brushes.png") },
-            { ToysTreeViewItem::Type::FreeDraw, RPZAtom::iconPathByAtomType.value(RPZAtomType::Drawing) },
-            { ToysTreeViewItem::Type::Text, RPZAtom::iconPathByAtomType.value(RPZAtomType::Text) },
+            { ToysTreeViewItem::Type::FreeDraw, RPZAtom::iconPathByAtomType.value(RPZAtom::Type::Drawing) },
+            { ToysTreeViewItem::Type::Text, RPZAtom::iconPathByAtomType.value(RPZAtom::Type::Text) },
             { ToysTreeViewItem::Type::Folder, QStringLiteral(u":/icons/app/manager/folder.png") }, 
             { ToysTreeViewItem::Type::InternalContainer, QStringLiteral(u":/icons/app/manager/internal.png") },
             { ToysTreeViewItem::Type::DownloadedContainer, QStringLiteral(u":/icons/app/manager/downloaded.png") },

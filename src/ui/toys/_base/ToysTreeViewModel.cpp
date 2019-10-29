@@ -96,8 +96,8 @@ void ToysTreeViewModel::removeItems(const QList<QModelIndex> &itemsIndexesToRemo
     auto topmost = this->_getTopMostIndexes(itemsIndexesToRemove);
 
         //create list
-        QList<RPZFolderPath> pathsToRemove;
-        QList<RPZAssetHash> hashesToRemove;
+        QList<AssetsDatabase::FolderPath> pathsToRemove;
+        QList<RPZAsset::Hash> hashesToRemove;
         QList<ToysTreeViewItem*> itemsToRemove;
 
         for(auto &index : topmost) {
@@ -141,8 +141,8 @@ bool ToysTreeViewModel::moveItemsToContainer(const QModelIndex &parentIndex, con
     auto parentElemPath = parentElem->path();
 
     //triage
-    QList<RPZFolderPath> folderPathsToMove;
-    QList<RPZAssetHash> assetHashesToMove;
+    QList<AssetsDatabase::FolderPath> folderPathsToMove;
+    QList<RPZAsset::Hash> assetHashesToMove;
     QList<ToysTreeViewItem*> topmostItems;
 
     for(auto &index : topMostIndexes) {
@@ -517,14 +517,14 @@ void ToysTreeViewModel::_injectDbStructure() {
 
 }
 
-QHash<RPZFolderPath, ToysTreeViewItem*> ToysTreeViewModel::_generateFolderTreeFromDb() {
+QHash<AssetsDatabase::FolderPath, ToysTreeViewItem*> ToysTreeViewModel::_generateFolderTreeFromDb() {
     
     //sort the keys
     auto paths = AssetsDatabase::get()->paths().keys();
     paths.sort();
 
     //to be created items
-    QHash<RPZFolderPath, ToysTreeViewItem*> containersToFill;
+    QHash<AssetsDatabase::FolderPath, ToysTreeViewItem*> containersToFill;
 
     //create folders arbo
     for(auto &path : paths) {
@@ -623,7 +623,7 @@ QPair<int, int> ToysTreeViewModel::_anticipateInserts(const QModelIndexList &tbi
     return QPair<int, int>(insertAtBegin, insertAtEnd);
 }
 
-void ToysTreeViewModel::_generateItemsFromDb(const QHash<RPZFolderPath, ToysTreeViewItem*> &pathsToFillWithItems) {
+void ToysTreeViewModel::_generateItemsFromDb(const QHash<AssetsDatabase::FolderPath, ToysTreeViewItem*> &pathsToFillWithItems) {
     
     auto db_paths = AssetsDatabase::get()->paths();
 

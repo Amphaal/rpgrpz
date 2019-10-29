@@ -7,30 +7,6 @@
 #include <QSize>
 #include <QPointF>
 
-//order is important for transform handling
-enum class AtomParameter {
-    AssetHash,
-    AssetName,
-    BrushStyle,
-    BrushPenWidth,
-    Scale,
-    Rotation,
-    Text,
-    TextSize,
-    Layer,
-    PenWidth,
-    Hidden,
-    Locked,
-    Shape,
-    Position,
-    AssetRotation,
-    AssetScale,
-    ShapeCenter
-};
-inline uint qHash(const AtomParameter &key, uint seed = 0) {return uint(key) ^ seed;}
-
-typedef QHash<AtomParameter, QVariant> AtomUpdates;
-
 class JSONSerializer {
     public:
         static QByteArray asBase64(const QPainterPath &path);
@@ -41,10 +17,4 @@ class JSONSerializer {
         
         static QVariant fromPointF(const QPointF &point);
         static QPointF toPointF(const QVariantList &doubleList);
-
-        static QVariantHash serializeUpdates(const AtomUpdates &updates);
-        static AtomUpdates unserializeUpdates(const QVariantHash &serializedUpdates);
-
-        static QVariant toSerialized(const AtomParameter &param, const QVariant &unserialized);
-        static QVariant fromSerialized(const AtomParameter &param, const QVariant &serialized);
 };

@@ -54,5 +54,5 @@ class ConnectWidget : public QWidget {
         MapHint* _toControlStateOf = nullptr; 
 
         void _fillCharacterSheetCombo();
-        snowflake_uid _getSelectedCharacterId();
+        SnowFlake::Id _getSelectedCharacterId();
 };  

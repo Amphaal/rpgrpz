@@ -91,12 +91,12 @@ class ToysTreeViewModel : public QAbstractItemModel {
         void _injectDbStructure();              
             
             //returns last elem by path created
-            QHash<RPZFolderPath, ToysTreeViewItem*> _generateFolderTreeFromDb();
+            QHash<AssetsDatabase::FolderPath, ToysTreeViewItem*> _generateFolderTreeFromDb();
 
             //iterate through paths chunks and create missing folders at each pass, returns last folder found/created
             ToysTreeViewItem* _recursiveElementCreator(ToysTreeViewItem* parent, QList<QString> &pathChunks); 
 
             //from definitive paths, fetch items from db and generate elements
-            void _generateItemsFromDb(const QHash<RPZFolderPath, ToysTreeViewItem*> &pathsToFillWithItems);
+            void _generateItemsFromDb(const QHash<AssetsDatabase::FolderPath, ToysTreeViewItem*> &pathsToFillWithItems);
 
 };

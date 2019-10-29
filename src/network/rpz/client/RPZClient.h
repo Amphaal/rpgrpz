@@ -60,7 +60,7 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
         
         void mapChanged(const AlterationPayload &payload);
 
-        void availableAssetsFromServer(const QVector<RPZAssetHash> &availableIds);
+        void availableAssetsFromServer(const QVector<RPZAsset::Hash> &availableIds);
         void receivedAsset(const RPZAssetImportPackage &package);
 
         void allUsersReceived();
@@ -98,7 +98,7 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
         void _onSent(bool success);
         void _onBatchAcked(RPZJSON::Method method, qint64 batchSize);
         void _onBatchDownloading(RPZJSON::Method method, qint64 downloaded);
-        void _askForAssets(const QSet<RPZAssetHash> &ids);
+        void _askForAssets(const QSet<RPZAsset::Hash> &ids);
 
         void _routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data);
 

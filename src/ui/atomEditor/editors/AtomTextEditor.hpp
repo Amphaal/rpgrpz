@@ -14,7 +14,7 @@ class AtomTextEditor : public AtomSubEditor  {
             return (QTextEdit*)this->_dataEditor;
         }
 
-        AtomTextEditor(const AtomParameter &parameter) : AtomSubEditor(parameter), 
+        AtomTextEditor(const RPZAtom::Parameter &parameter) : AtomSubEditor(parameter), 
             _validateButton(new QPushButton(this)) {
             
             this->_validateButton->setText(tr("Confirm modification"));
@@ -39,7 +39,7 @@ class AtomTextEditor : public AtomSubEditor  {
 
         QPushButton* _validateButton = nullptr;
 
-        QVariant loadTemplate(const AtomUpdates &defaultValues, bool updateMode) override {
+        QVariant loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) override {
             
             auto defaultValue = AtomSubEditor::loadTemplate(defaultValues, updateMode);
             auto castedVal = defaultValue.toString();

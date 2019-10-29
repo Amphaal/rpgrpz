@@ -73,7 +73,7 @@ void AtomEditor::buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr
 void AtomEditor::resetParams() {
 
     //reset displayed params
-    AtomUpdates changes;
+    RPZAtom::Updates changes;
     for(auto param : this->_visibleEditors) {
         changes.insert(
             param, 
@@ -94,18 +94,18 @@ void AtomEditor::resetParams() {
 
 void AtomEditor::_createEditorsFromAtomParameters() {
 
-    this->_editorsByParam.insert(AtomParameter::BrushStyle, new BrushToolEditor);
-    this->_editorsByParam.insert(AtomParameter::BrushPenWidth, new AtomSliderEditor(AtomParameter::BrushPenWidth, 1, 500));
+    this->_editorsByParam.insert(RPZAtom::Parameter::BrushStyle, new BrushToolEditor);
+    this->_editorsByParam.insert(RPZAtom::Parameter::BrushPenWidth, new AtomSliderEditor(RPZAtom::Parameter::BrushPenWidth, 1, 500));
 
-    this->_editorsByParam.insert(AtomParameter::Rotation, new AtomSliderEditor(AtomParameter::Rotation, 0, 359));
-    this->_editorsByParam.insert(AtomParameter::Scale, new NonLinearAtomSliderEditor(AtomParameter::Scale, 1, 1000));
+    this->_editorsByParam.insert(RPZAtom::Parameter::Rotation, new AtomSliderEditor(RPZAtom::Parameter::Rotation, 0, 359));
+    this->_editorsByParam.insert(RPZAtom::Parameter::Scale, new NonLinearAtomSliderEditor(RPZAtom::Parameter::Scale, 1, 1000));
     
-    this->_editorsByParam.insert(AtomParameter::AssetRotation, new AtomSliderEditor(AtomParameter::AssetRotation, 0, 359));
-    this->_editorsByParam.insert(AtomParameter::AssetScale, new NonLinearAtomSliderEditor(AtomParameter::AssetScale, 1, 1000));
+    this->_editorsByParam.insert(RPZAtom::Parameter::AssetRotation, new AtomSliderEditor(RPZAtom::Parameter::AssetRotation, 0, 359));
+    this->_editorsByParam.insert(RPZAtom::Parameter::AssetScale, new NonLinearAtomSliderEditor(RPZAtom::Parameter::AssetScale, 1, 1000));
 
-    this->_editorsByParam.insert(AtomParameter::PenWidth, new AtomSliderEditor(AtomParameter::PenWidth, 1, 50));
-    this->_editorsByParam.insert(AtomParameter::TextSize, new AtomSliderEditor(AtomParameter::TextSize, 1, 50));
-    this->_editorsByParam.insert(AtomParameter::Text, new AtomTextEditor(AtomParameter::Text));
+    this->_editorsByParam.insert(RPZAtom::Parameter::PenWidth, new AtomSliderEditor(RPZAtom::Parameter::PenWidth, 1, 50));
+    this->_editorsByParam.insert(RPZAtom::Parameter::TextSize, new AtomSliderEditor(RPZAtom::Parameter::TextSize, 1, 50));
+    this->_editorsByParam.insert(RPZAtom::Parameter::Text, new AtomTextEditor(RPZAtom::Parameter::Text));
 
     for(auto editor : this->_editorsByParam) {
 
@@ -125,11 +125,11 @@ void AtomEditor::_createEditorsFromAtomParameters() {
 
 }
 
-void AtomEditor::_onPreviewRequested(const AtomParameter &parameter, const QVariant &value) {
+void AtomEditor::_onPreviewRequested(const RPZAtom::Parameter &parameter, const QVariant &value) {
     emit requiresPreview(this->_currentSelectionDescr, parameter, value);
 }
 
- void AtomEditor::_emitPayloadCB(const AtomParameter &parameter, const QVariant &value) {
+ void AtomEditor::_emitPayloadCB(const RPZAtom::Parameter &parameter, const QVariant &value) {
     
     //intercept combo change for visibility
     this->_mustShowBrushPenWidthEditor(parameter, value);
@@ -137,7 +137,7 @@ void AtomEditor::_onPreviewRequested(const AtomParameter &parameter, const QVari
     return _emitPayload({{parameter, value}});
  }
 
-void AtomEditor::_emitPayload(const AtomUpdates &changesToEmit) {
+void AtomEditor::_emitPayload(const RPZAtom::Updates &changesToEmit) {
 
     if(this->_currentEditMode == EditMode::Template) {
         AtomTemplateChangedPayload payload(changesToEmit);
@@ -156,12 +156,12 @@ void AtomEditor::_emitPayload(const AtomUpdates &changesToEmit) {
 
 }
 
-AtomUpdates AtomEditor::_findDefaultValuesToBind() {
+RPZAtom::Updates AtomEditor::_findDefaultValuesToBind() {
     
-    AtomUpdates out;
+    RPZAtom::Updates out;
 
     //intersect represented atom types in selection to determine which editors to display
-    QSet<AtomParameter> paramsToDisplay;
+    QSet<RPZAtom::Parameter> paramsToDisplay;
     for(auto &type : this->_currentSelectionDescr.representedTypes) {
         
         auto associatedCustomParams = RPZAtom::customizableParams(type);
@@ -230,13 +230,13 @@ AtomsSelectionDescriptor AtomEditor::currentSelectionDescriptor() {
     return this->_currentSelectionDescr;
 }
 
-void AtomEditor::_mustShowBrushPenWidthEditor(const AtomParameter &paramToCheck, const QVariant &defaultValue) {
+void AtomEditor::_mustShowBrushPenWidthEditor(const RPZAtom::Parameter &paramToCheck, const QVariant &defaultValue) {
 
     //check if param is tool combo
-    if(paramToCheck != AtomParameter::BrushStyle) return;
+    if(paramToCheck != RPZAtom::Parameter::BrushStyle) return;
 
     //check if pen size editor exists
-    auto brushPenWidthEditor = this->_editorsByParam.value(AtomParameter::BrushPenWidth);
+    auto brushPenWidthEditor = this->_editorsByParam.value(RPZAtom::Parameter::BrushPenWidth);
     if(!brushPenWidthEditor) return;
 
     //set visibility

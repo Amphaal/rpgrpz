@@ -20,10 +20,10 @@ class RPZQVariant {
             item->setData((int)RPZQVariant::Roles::YTVideoMetadataPtr, QVariant::fromValue<YoutubeVideoMetadata*>(metadata));
         }
 
-        static RPZAtomId atomId(const QGraphicsItem* item) {
+        static RPZAtom::Id atomId(const QGraphicsItem* item) {
             return item->data((int)RPZQVariant::Roles::AtomId).toULongLong();
         }
-        static void setAtomId(QGraphicsItem* item, const RPZAtomId &id) {
+        static void setAtomId(QGraphicsItem* item, const RPZAtom::Id &id) {
             item->setData((int)RPZQVariant::Roles::AtomId, id);
         }
 

@@ -15,17 +15,17 @@ class RPZResponse : public Stampable {
         };
         
         RPZResponse();
-        RPZResponse(RPZStampableId answererTo, const ResponseCode &code = ResponseCode::Ack, const QVariant &data = QVariant());
+        RPZResponse(Stampable::Id answererTo, const ResponseCode &code = ResponseCode::Ack, const QVariant &data = QVariant());
         explicit RPZResponse(const QVariantHash &hash);
 
         ResponseCode responseCode() const;
         QVariant responseData() const;
-        RPZStampableId answerer() const;
+        Stampable::Id answerer() const;
         QString toString() const override;
         QPalette palette() const override;
 
     private:
-        void _setAnswerer(RPZStampableId answererStampableId);
+        void _setAnswerer(Stampable::Id answererStampableId);
         void _setResponseCode(const ResponseCode &code);
         void _setResponseData(const QVariant &data);
 };

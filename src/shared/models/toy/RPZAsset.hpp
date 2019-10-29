@@ -13,13 +13,13 @@
 #include "src/helpers/_appContext.h"
 #include "src/helpers/JSONSerializer.h"
 
-typedef QString RPZAssetHash; //file hash of the asset
-
 class RPZAsset : public QVariantHash {
     public:
+        typedef QString Hash; //file hash of the asset
+
         RPZAsset() {}
         explicit RPZAsset(const QVariantHash &hash) : QVariantHash(hash) {}
-        RPZAsset(const QVariantHash &hash, const RPZAssetHash &id) : QVariantHash(hash) {
+        RPZAsset(const QVariantHash &hash, const RPZAsset::Hash &id) : QVariantHash(hash) {
             this->_setHash(id);
         }
         RPZAsset(const QUrl &uri) {
@@ -62,7 +62,7 @@ class RPZAsset : public QVariantHash {
         const QString name() const {
             return this->value(QStringLiteral(u"name")).toString();
         }
-        const RPZAssetHash hash() const { 
+        const RPZAsset::Hash hash() const { 
             return this->value(QStringLiteral(u"hash")).toString(); 
         }
 
@@ -126,7 +126,7 @@ class RPZAsset : public QVariantHash {
         }
 
     private:
-        void _setHash(const RPZAssetHash &hash) {
+        void _setHash(const RPZAsset::Hash &hash) {
             this->insert(QStringLiteral(u"hash"), hash);
         }
 
@@ -193,12 +193,12 @@ class RPZAsset : public QVariantHash {
             return success;
         }
 
-        static RPZAssetHash _getFileHash(QFile &fileReader) {
+        static RPZAsset::Hash _getFileHash(QFile &fileReader) {
 
             fileReader.open(QFile::ReadOnly);
                 
                 //read signature...
-                RPZAssetHash hash = QString::fromUtf8(
+                RPZAsset::Hash hash = QString::fromUtf8(
                     QCryptographicHash::hash(
                         fileReader.readAll(), 
                         QCryptographicHash::Keccak_224
@@ -211,7 +211,7 @@ class RPZAsset : public QVariantHash {
 
         }
 
-        static QString _getFilePathToAsset(const RPZAssetHash &id, const QString &ext) {
+        static QString _getFilePathToAsset(const RPZAsset::Hash &id, const QString &ext) {
             return QStringLiteral(u"%1/%2.%3")
                             .arg(AppContext::getAssetsFolderLocation())
                             .arg(id)

@@ -51,9 +51,9 @@ class RPZServer : public QTcpServer, public JSONLogger {
 
     private:
         RPZMap<RPZUser> _usersById;
-        QHash<JSONSocket*, RPZUserId> _idsByClientSocket;
-        QHash<RPZUserId, JSONSocket*> _clientSocketById;
-        QHash<QString, RPZUserId> _formatedUsernamesByUserId;
+        QHash<JSONSocket*, RPZUser::Id> _idsByClientSocket;
+        QHash<RPZUser::Id, JSONSocket*> _clientSocketById;
+        QHash<QString, RPZUser::Id> _formatedUsernamesByUserId;
         JSONSocket* _hostSocket = nullptr;
         
         //music

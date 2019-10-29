@@ -5,7 +5,7 @@
 #include "Serializable.hpp"
 
 template<class T>
-class RPZMap : public QMap<snowflake_uid, T> {
+class RPZMap : public QMap<SnowFlake::Id, T> {
 
     static_assert(std::is_base_of<Serializable, T>::value, "Must derive from Serializable");
     T element;

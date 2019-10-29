@@ -11,11 +11,11 @@
 
 #include "src/shared/models/character/RPZCharacter.hpp"
 
-typedef snowflake_uid RPZUserId;
-
 class RPZUser : public Serializable {
 
     public:
+        typedef SnowFlake::Id Id;
+
         enum class Role { Observer, Host, Player };
 
         static const inline QHash<RPZUser::Role, QString> IconsByRoles { 
@@ -26,7 +26,7 @@ class RPZUser : public Serializable {
         
         RPZUser();
         explicit RPZUser(const QVariantHash &hash);
-        RPZUser(RPZUserId id, const QString &name, const Role &role, const QColor &color);
+        RPZUser(RPZUser::Id id, const QString &name, const Role &role, const QColor &color);
 
         void setName(const QString &name);
         void setRole(const Role &role);

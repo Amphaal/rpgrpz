@@ -74,29 +74,29 @@ int main(int argc, char** argv) {
     qRegisterMetaType<RPZJSON::Method>("RPZJSON::Method");
     qRegisterMetaType<AlterationPayload>("AlterationPayload");
     qRegisterMetaType<Payload::Alteration>("Payload::Alteration");
-    qRegisterMetaType<AtomUpdates>("AtomUpdates");
-    qRegisterMetaType<AtomsUpdates>("AtomsUpdates");
+    qRegisterMetaType<RPZAtom::Updates>("RPZAtom::Updates");
+    qRegisterMetaType<RPZAtom::ManyUpdates>("RPZAtom::ManyUpdates");
     qRegisterMetaType<RPZUser>("RPZUser");
-    qRegisterMetaType<AtomParameter>("AtomParameter");
+    qRegisterMetaType<RPZAtom::Parameter>("RPZAtom::Parameter");
     qRegisterMetaType<RPZMessage>("RPZMessage");
     qRegisterMetaType<RPZResponse>("RPZResponse");
     qRegisterMetaType<RPZAssetImportPackage>("RPZAssetImportPackage");
     qRegisterMetaType<QList<QGraphicsItem*>>("QList<QGraphicsItem*>");
     qRegisterMetaType<ResetPayload>("ResetPayload");
-    qRegisterMetaType<QVector<RPZAtomId>>("QVector<RPZAtomId>");
+    qRegisterMetaType<QVector<RPZAtom::Id>>("QVector<RPZAtom::Id>");
     qRegisterMetaType<QVector<RPZUser>>("QVector<RPZUser>");
     qRegisterMetaType<RPZMap<RPZUser>>("RPZMap<RPZUser>");
     qRegisterMetaType<QVector<RPZMessage>>("QVector<RPZMessage>");
-    qRegisterMetaType<QHash<QGraphicsItem*,AtomUpdates>>("QHash<QGraphicsItem*,AtomUpdates>");
+    qRegisterMetaType<QHash<QGraphicsItem*,RPZAtom::Updates>>("QHash<QGraphicsItem*,RPZAtom::Updates>");
     qRegisterMetaType<AtomsSelectionDescriptor>("AtomsSelectionDescriptor");
     qRegisterMetaType<RPZStatusLabel::State>("RPZStatusLabel::State");
-    qRegisterMetaType<QList<RPZAssetHash>>("QList<RPZAssetHash>");
+    qRegisterMetaType<QList<RPZAsset::Hash>>("QList<RPZAsset::Hash>");
     qRegisterMetaType<ProgressTracker::Kind>("ProgressTracker::Kind");
-    qRegisterMetaType<QVector<RPZAssetHash>>("QVector<RPZAssetHash>");
+    qRegisterMetaType<QVector<RPZAsset::Hash>>("QVector<RPZAsset::Hash>");
     qRegisterMetaType<GstMessageType>("GstMessageType");
     qRegisterMetaType<StreamPlayStateTracker>("StreamPlayStateTracker");
     qRegisterMetaType<gint64>("gint64");
-    qRegisterMetaType<snowflake_uid>("snowflake_uid");
+    qRegisterMetaType<SnowFlake::Id>("SnowFlake::Id");
     qRegisterMetaType<RPZCharacter>("RPZCharacter");
 
     //message handler

@@ -70,7 +70,7 @@ SnowFlake* SnowFlake::get() {
     return _self;
 }
 
-snowflake_uid SnowFlake::nextId() {
+SnowFlake::Id SnowFlake::nextId() {
     std::unique_lock<std::mutex> lock(mutex_);
     uint64_t currStmp = getNewstmp();
     if (currStmp < lastStmp) {

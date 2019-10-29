@@ -57,7 +57,7 @@ void AtomsContextualMenuHandler::_setAvailability(bool lock) {
 ///
 ///
 
-void AtomsContextualMenuHandler::invokeMenu(const QVector<RPZAtomId> &toManipulate, const QPoint &whereToDisplay) {
+void AtomsContextualMenuHandler::invokeMenu(const QVector<RPZAtom::Id> &toManipulate, const QPoint &whereToDisplay) {
 
     //get instr
     this->_latestPossibleActions = ConnectivityObserver::isHostAble() ? this->_mapMaster->getPossibleActions(toManipulate) : PossibleActionsOnAtomList();

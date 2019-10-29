@@ -3,7 +3,7 @@
 RPZUser::RPZUser() {};
 RPZUser::RPZUser(const QVariantHash &hash) : Serializable(hash) {}
 
-RPZUser::RPZUser(RPZUserId id, const QString &name, const Role &role, const QColor &color) : Serializable(id) { 
+RPZUser::RPZUser(RPZUser::Id id, const QString &name, const Role &role, const QColor &color) : Serializable(id) { 
     this->setName(name);
     this->setRole(role);
     this->_setColor(color);

@@ -168,7 +168,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
         case RPZJSON::Method::AvailableAssetsToUpload: {
             
             //cast
-            QVector<RPZAssetHash> out;
+            QVector<RPZAsset::Hash> out;
             for(auto &e : data.toList()) out += e.toString();
 
             //update ui
@@ -408,7 +408,7 @@ void RPZClient::notifyCharacterChange(const RPZCharacter &changed) {
     this->_sock->sendToSocket(RPZJSON::Method::CharacterChanged, changed);
 }
 
-void RPZClient::_askForAssets(const QSet<RPZAssetHash> &ids) {
+void RPZClient::_askForAssets(const QSet<RPZAsset::Hash> &ids) {
     QVariantList list;
     for(auto &id : ids) list.append(id);
     this->_sock->sendToSocket(RPZJSON::Method::AskForAssets, list);

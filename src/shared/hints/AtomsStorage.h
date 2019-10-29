@@ -18,9 +18,9 @@
 #include "src/shared/database/MapDatabase.h"
 
 struct AtomsSelectionDescriptor {
-    QSet<RPZAtomType> representedTypes;
+    QSet<RPZAtom::Type> representedTypes;
     RPZAtom templateAtom;
-    QVector<RPZAtomId> selectedAtomIds;
+    QVector<RPZAtom::Id> selectedAtomIds;
 };
 
 struct PossibleActionsOnAtomList {
@@ -42,17 +42,17 @@ class AtomsStorage : public AlterationAcknoledger {
     public:
         AtomsStorage(const Payload::Source &boundSource);
         
-        QVector<RPZAtomId> bufferedSelectedAtomIds() const; //safe
-        const AtomsSelectionDescriptor getAtomSelectionDescriptor(const QVector<RPZAtomId> &selectedIds) const; //safe
+        QVector<RPZAtom::Id> bufferedSelectedAtomIds() const; //safe
+        const AtomsSelectionDescriptor getAtomSelectionDescriptor(const QVector<RPZAtom::Id> &selectedIds) const; //safe
         
-        PossibleActionsOnAtomList getPossibleActions(const QVector<RPZAtomId> &ids);
+        PossibleActionsOnAtomList getPossibleActions(const QVector<RPZAtom::Id> &ids);
 
         const ResetPayload generateResetPayload() const;
 
     public slots:    
         void redo();
         void undo();
-        void duplicateAtoms(const QVector<RPZAtomId> &RPZAtomIdList);
+        void duplicateAtoms(const QVector<RPZAtom::Id> &RPZAtomIdList);
         void handleAlterationRequest(const AlterationPayload &payload);
 
     protected:
@@ -63,9 +63,9 @@ class AtomsStorage : public AlterationAcknoledger {
         virtual void _handleAlterationRequest(const AlterationPayload &payload) override;
         virtual void _atomAdded(const RPZAtom &added) {};
 
-        virtual void _basicAlterationDone(const QList<RPZAtomId> &updatedIds, const Payload::Alteration &type) {};
-        virtual void _updatesDone(const QList<RPZAtomId> &updatedIds, const AtomUpdates &updates) {};
-        virtual void _updatesDone(const AtomsUpdates &updates) {};
+        virtual void _basicAlterationDone(const QList<RPZAtom::Id> &updatedIds, const Payload::Alteration &type) {};
+        virtual void _updatesDone(const QList<RPZAtom::Id> &updatedIds, const RPZAtom::Updates &updates) {};
+        virtual void _updatesDone(const RPZAtom::ManyUpdates &updates) {};
 
     private:
         mutable QMutex _m_handlingLock;
@@ -81,12 +81,12 @@ class AtomsStorage : public AlterationAcknoledger {
         int _canUndo();
 
         //selected
-        QSet<RPZAtomId> _selectedRPZAtomIds;
+        QSet<RPZAtom::Id> _selectedRPZAtomIds;
 
         //duplication
         int _duplicationCount = 0;
-        QVector<RPZAtomId> _latestDuplication;
-        RPZMap<RPZAtom> _generateAtomDuplicates(const QVector<RPZAtomId> &RPZAtomIdsToDuplicate) const;
+        QVector<RPZAtom::Id> _latestDuplication;
+        RPZMap<RPZAtom> _generateAtomDuplicates(const QVector<RPZAtom::Id> &RPZAtomIdsToDuplicate) const;
         static constexpr int _pixelStepPosDuplication = 10;
         static QPointF _getPositionFromAtomDuplication(const RPZAtom &atomToDuplicate, int duplicateCount);
 

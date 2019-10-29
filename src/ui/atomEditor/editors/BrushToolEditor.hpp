@@ -14,27 +14,27 @@ class BrushToolEditor : public AtomSubEditor {
 
     private:    
         static inline QMap<int, QString> _strBT {
-            { (int)BrushType::Stamp, QT_TR_NOOP("Stamp") },
-            { (int)BrushType::Rectangle, QT_TR_NOOP("Rectangle") },
-            { (int)BrushType::Ovale, QT_TR_NOOP("Ovale") },
-            { (int)BrushType::RoundBrush, QT_TR_NOOP("Round brush") },
-            { (int)BrushType::Cutter, QT_TR_NOOP("Cutter") },
-            { (int)BrushType::Scissors, QT_TR_NOOP("Scissors") }
+            { (int)RPZAtom::BrushType::Stamp, QT_TR_NOOP("Stamp") },
+            { (int)RPZAtom::BrushType::Rectangle, QT_TR_NOOP("Rectangle") },
+            { (int)RPZAtom::BrushType::Ovale, QT_TR_NOOP("Ovale") },
+            { (int)RPZAtom::BrushType::RoundBrush, QT_TR_NOOP("Round brush") },
+            { (int)RPZAtom::BrushType::Cutter, QT_TR_NOOP("Cutter") },
+            { (int)RPZAtom::BrushType::Scissors, QT_TR_NOOP("Scissors") }
         };
 
         static inline QHash<int, QString> _BTicons {
-            { (int)BrushType::Stamp, ":/icons/app/tools/stamp.png" },
-            { (int)BrushType::Rectangle, ":/icons/app/tools/rectangle.png" },
-            { (int)BrushType::Ovale, ":/icons/app/tools/ovale.png" },
-            { (int)BrushType::RoundBrush, ":/icons/app/tools/roundBrush.png" },
-            { (int)BrushType::Cutter, ":/icons/app/tools/cutter.png" },
-            { (int)BrushType::Scissors, ":/icons/app/tools/scissors.png" }
+            { (int)RPZAtom::BrushType::Stamp, ":/icons/app/tools/stamp.png" },
+            { (int)RPZAtom::BrushType::Rectangle, ":/icons/app/tools/rectangle.png" },
+            { (int)RPZAtom::BrushType::Ovale, ":/icons/app/tools/ovale.png" },
+            { (int)RPZAtom::BrushType::RoundBrush, ":/icons/app/tools/roundBrush.png" },
+            { (int)RPZAtom::BrushType::Cutter, ":/icons/app/tools/cutter.png" },
+            { (int)RPZAtom::BrushType::Scissors, ":/icons/app/tools/scissors.png" }
         };
 
         QComboBox* _combo = nullptr;
 
     public:
-        BrushToolEditor() : AtomSubEditor(AtomParameter::BrushStyle) { 
+        BrushToolEditor() : AtomSubEditor(RPZAtom::Parameter::BrushStyle) { 
 
             this->setVisible(false);
 
@@ -63,7 +63,7 @@ class BrushToolEditor : public AtomSubEditor {
             this->layout()->addWidget(this->_combo);
         };
 
-        QVariant loadTemplate(const AtomUpdates &defaultValues, bool updateMode) override {
+        QVariant loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) override {
             
             auto defaultValue = AtomSubEditor::loadTemplate(defaultValues, updateMode);
 

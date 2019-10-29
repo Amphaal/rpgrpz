@@ -232,8 +232,8 @@ void ConnectWidget::_changeState(ConnectWidget::State newState) {
 }
 
 
-snowflake_uid ConnectWidget::_getSelectedCharacterId() {
-    return (snowflake_uid)this->_characterSheetTarget->currentData().toULongLong();
+SnowFlake::Id ConnectWidget::_getSelectedCharacterId() {
+    return (SnowFlake::Id)this->_characterSheetTarget->currentData().toULongLong();
 }
 
 void ConnectWidget::_fillCharacterSheetCombo() {

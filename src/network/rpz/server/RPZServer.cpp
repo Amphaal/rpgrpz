@@ -176,7 +176,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
         case RPZJSON::Method::AskForAssets: {   
 
             //cast
-            QSet<RPZAssetHash> requested;
+            QSet<RPZAsset::Hash> requested;
             for(auto &var : data.toList()) {
                 requested += var.toString();
             }

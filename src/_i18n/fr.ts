@@ -1003,27 +1003,27 @@
         <translation>Calque %1</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="40"/>
+        <location filename="../shared/models/RPZAtom.h" line="170"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="41"/>
+        <location filename="../shared/models/RPZAtom.h" line="171"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="42"/>
+        <location filename="../shared/models/RPZAtom.h" line="172"/>
         <source>Object</source>
         <translation>Objet</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="43"/>
+        <location filename="../shared/models/RPZAtom.h" line="173"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="44"/>
+        <location filename="../shared/models/RPZAtom.h" line="174"/>
         <source>Atom</source>
         <translation>Atome</translation>
     </message>

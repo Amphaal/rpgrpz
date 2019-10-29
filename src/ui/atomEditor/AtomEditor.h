@@ -37,7 +37,7 @@ class AtomEditor : public QGroupBox, public AlterationActor {
         AtomsSelectionDescriptor currentSelectionDescriptor();
     
     signals:
-        void requiresPreview(const AtomsSelectionDescriptor &selectionDescriptor, const AtomParameter &parameter, const QVariant &value);
+        void requiresPreview(const AtomsSelectionDescriptor &selectionDescriptor, const RPZAtom::Parameter &parameter, const QVariant &value);
 
     private:
         static inline QHash<EditMode, QString> _strEM {
@@ -48,22 +48,22 @@ class AtomEditor : public QGroupBox, public AlterationActor {
 
         AtomsSelectionDescriptor _currentSelectionDescr;
 
-        QMap<AtomParameter, AtomSubEditor*> _editorsByParam;
+        QMap<RPZAtom::Parameter, AtomSubEditor*> _editorsByParam;
         NoEditorMessageWidget* _noEditorMsgWidget = nullptr;
 
-        QList<AtomParameter> _visibleEditors;
+        QList<RPZAtom::Parameter> _visibleEditors;
 
-        AtomUpdates _findDefaultValuesToBind();
+        RPZAtom::Updates _findDefaultValuesToBind();
         void _createEditorsFromAtomParameters();
 
-        void _onPreviewRequested(const AtomParameter &parameter, const QVariant &value);
-        void _emitPayload(const AtomUpdates &changesToEmit);
-        void _emitPayloadCB(const AtomParameter &parameter, const QVariant &value);
+        void _onPreviewRequested(const RPZAtom::Parameter &parameter, const QVariant &value);
+        void _emitPayload(const RPZAtom::Updates &changesToEmit);
+        void _emitPayloadCB(const RPZAtom::Parameter &parameter, const QVariant &value);
 
         EditMode _currentEditMode = EditMode::None;
         void _updateEditMode();
 
-        void _mustShowBrushPenWidthEditor(const AtomParameter &paramToCheck, const QVariant &defaultValue);
+        void _mustShowBrushPenWidthEditor(const RPZAtom::Parameter &paramToCheck, const QVariant &defaultValue);
 };
 
 inline uint qHash(const AtomEditor::EditMode &key, uint seed = 0) {return uint(key) ^ seed;}

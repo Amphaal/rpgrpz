@@ -12,13 +12,13 @@
 #include "src/shared/models/toy/RPZAsset.hpp"
 #include "src/shared/models/toy/RPZAssetImportPackage.hpp"
 
-typedef QString RPZFolderPath; //internal DB arborescence path (only containers)
-
 class AssetsDatabase : public QObject, public JSONDatabase {
     
     Q_OBJECT
 
     public:
+        typedef QString AssetsDatabase::FolderPath; //internal DB arborescence path (only containers)
+
         enum class StorageContainer {
             NPC = 301,
             FloorBrush = 401,
@@ -32,45 +32,45 @@ class AssetsDatabase : public QObject, public JSONDatabase {
         static AssetsDatabase* get();
 
         //CRUD methods
-        void addAsset(const RPZAsset &asset, const RPZFolderPath &internalPathToAddTo);
-        const QString createFolder(const RPZFolderPath &parentPath);
+        void addAsset(const RPZAsset &asset, const AssetsDatabase::FolderPath &internalPathToAddTo);
+        const QString createFolder(const AssetsDatabase::FolderPath &parentPath);
 
-        bool renameFolder(const QString &requestedNewFolderName, const RPZFolderPath &pathToRename);
-        void renameAsset(const QString &newName, const RPZAssetHash &hash);
+        bool renameFolder(const QString &requestedNewFolderName, const AssetsDatabase::FolderPath &pathToRename);
+        void renameAsset(const QString &newName, const RPZAsset::Hash &hash);
 
-        void removeAssets(const QList<RPZAssetHash> &hashesToRemove);
-        void removeFolders(const QList<RPZFolderPath> &pathsToRemove);
+        void removeAssets(const QList<RPZAsset::Hash> &hashesToRemove);
+        void removeFolders(const QList<AssetsDatabase::FolderPath> &pathsToRemove);
 
-        void moveAssetsTo(const RPZFolderPath &internalPathToMoveTo, const QList<RPZAssetHash> &hashesToMove);
-        void moveFoldersTo(const RPZFolderPath &internalPathToMoveTo, const QList<RPZFolderPath> &topmostPathsToMove);
+        void moveAssetsTo(const AssetsDatabase::FolderPath &internalPathToMoveTo, const QList<RPZAsset::Hash> &hashesToMove);
+        void moveFoldersTo(const AssetsDatabase::FolderPath &internalPathToMoveTo, const QList<AssetsDatabase::FolderPath> &topmostPathsToMove);
         
         //
-        const QMap<RPZFolderPath, QSet<RPZAssetHash>> paths() const;
-        const QHash<RPZAssetHash, RPZAsset> assets() const;
+        const QMap<AssetsDatabase::FolderPath, QSet<RPZAsset::Hash>> paths() const;
+        const QHash<RPZAsset::Hash, RPZAsset> assets() const;
 
         //
-        const RPZAsset* asset(const RPZAssetHash &hash);
-        const QSet<RPZAssetHash> getStoredAssetHashes() const;
+        const RPZAsset* asset(const RPZAsset::Hash &hash);
+        const QSet<RPZAsset::Hash> getStoredAssetHashes() const;
 
         //network import/export
         bool importAsset(RPZAssetImportPackage &package);
-        const RPZAssetImportPackage prepareAssetPackage(const RPZAssetHash &hash) const;
+        const RPZAssetImportPackage prepareAssetPackage(const RPZAsset::Hash &hash) const;
 
     signals:
-        void assetRenamed(const RPZAssetHash &id, const QString &newName);
+        void assetRenamed(const RPZAsset::Hash &id, const QString &newName);
 
     protected:
         const JSONDatabase::Version apiVersion() const override;
         void _removeDatabaseLinkedFiles() override;
     
-        QMap<RPZFolderPath, QSet<RPZAssetHash>> _paths;
-        QHash<RPZAssetHash, RPZAsset> _assets;
-        QHash<RPZAssetHash, RPZFolderPath> _w_assetToPath;
+        QMap<AssetsDatabase::FolderPath, QSet<RPZAsset::Hash>> _paths;
+        QHash<RPZAsset::Hash, RPZAsset> _assets;
+        QHash<RPZAsset::Hash, AssetsDatabase::FolderPath> _w_assetToPath;
 
-        RPZAsset* _asset(const RPZAssetHash &hash); 
+        RPZAsset* _asset(const RPZAsset::Hash &hash); 
         const QString _path(const StorageContainer &targetContainer) const;
-        static const QString _parentPath(const RPZFolderPath &toExtractParentFrom);
-        static const QString _folderName(const RPZFolderPath &toExtractNameFrom);
+        static const QString _parentPath(const AssetsDatabase::FolderPath &toExtractParentFrom);
+        static const QString _folderName(const AssetsDatabase::FolderPath &toExtractNameFrom);
 
         void _saveIntoFile();
     
@@ -86,20 +86,20 @@ class AssetsDatabase : public QObject, public JSONDatabase {
         void _setupLocalData() override;
 
         //helpers
-        QString _generateNonExistingPath(const RPZFolderPath &parentPath, const QString &prefix);
+        QString _generateNonExistingPath(const AssetsDatabase::FolderPath &parentPath, const QString &prefix);
         void _removeAssetFiles(const QList<RPZAsset> &toRemoveFromStorage);
 
         //
-        typedef QHash<RPZFolderPath, QSet<RPZAssetHash>> HashesByPathToRemove;
+        typedef QHash<AssetsDatabase::FolderPath, QSet<RPZAsset::Hash>> HashesByPathToRemove;
         typedef QList<RPZAsset> RemovedAssets;
 
         void _removeHashesFromPaths(const HashesByPathToRemove &hashesToRemoveFromPaths);
-        QPair<HashesByPathToRemove, RemovedAssets> _removeAssets(const QList<RPZAssetHash> &hashesToRemove, bool onlyRemoveReference = false);
+        QPair<HashesByPathToRemove, RemovedAssets> _removeAssets(const QList<RPZAsset::Hash> &hashesToRemove, bool onlyRemoveReference = false);
 
         //
-        typedef QHash<RPZFolderPath, QSet<RPZFolderPath>> StartingWithPathRequestResults;
-        QSet<RPZFolderPath> _getPathsStartingWith(const RPZFolderPath &toRequest);
-        StartingWithPathRequestResults _getPathsStartingWith(const QList<RPZFolderPath> &toRequest);
+        typedef QHash<AssetsDatabase::FolderPath, QSet<AssetsDatabase::FolderPath>> StartingWithPathRequestResults;
+        QSet<AssetsDatabase::FolderPath> _getPathsStartingWith(const AssetsDatabase::FolderPath &toRequest);
+        StartingWithPathRequestResults _getPathsStartingWith(const QList<AssetsDatabase::FolderPath> &toRequest);
 
-        void _reroutePaths(const RPZFolderPath &ancestor, const RPZFolderPath &toReplaceAncestor, const QSet<RPZFolderPath> &subjects);
+        void _reroutePaths(const AssetsDatabase::FolderPath &ancestor, const AssetsDatabase::FolderPath &toReplaceAncestor, const QSet<AssetsDatabase::FolderPath> &subjects);
 };

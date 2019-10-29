@@ -33,11 +33,11 @@ class LogContainer : public QWidget {
     
     protected:
         LogItem* _getLine(const Stampable &element);
-        LogItem* _getLine(RPZStampableId elementId);
-        LogItem* _addLine(const Stampable &element, RPZStampableId putUnder = 0);
+        LogItem* _getLine(Stampable::Id elementId);
+        LogItem* _addLine(const Stampable &element, Stampable::Id putUnder = 0);
         QVBoxLayout* _getLayout();
     
     private:
-        QHash<RPZStampableId, LogItem*> _linesBySerializableId;
+        QHash<Stampable::Id, LogItem*> _linesBySerializableId;
         QVBoxLayout* _vLayout = nullptr;
 };

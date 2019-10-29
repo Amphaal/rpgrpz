@@ -1,7 +1,7 @@
 #include "RPZResponse.h"
 
 RPZResponse::RPZResponse() : Stampable() {}
-RPZResponse::RPZResponse(RPZStampableId answererTo, const ResponseCode &code, const QVariant &data) : Stampable() {
+RPZResponse::RPZResponse(Stampable::Id answererTo, const ResponseCode &code, const QVariant &data) : Stampable() {
     this->_setResponseCode(code);
     if(answererTo) this->_setAnswerer(answererTo);
     if(!data.isNull()) this->_setResponseData(data);
@@ -16,7 +16,7 @@ QVariant RPZResponse::responseData() const {
     return this->value(QStringLiteral(u"rdata"));
 }
 
-RPZStampableId RPZResponse::answerer() const {
+Stampable::Id RPZResponse::answerer() const {
     return this->value(QStringLiteral(u"aswr")).toULongLong();
 }
 
@@ -78,7 +78,7 @@ QPalette RPZResponse::palette() const {
     return palette;
 }
 
-void RPZResponse::_setAnswerer(RPZStampableId answererStampableId) {
+void RPZResponse::_setAnswerer(Stampable::Id answererStampableId) {
     this->insert(QStringLiteral(u"aswr"), QString::number(answererStampableId));
 }
 

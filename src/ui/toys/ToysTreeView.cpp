@@ -368,7 +368,7 @@ void ToysTreeView::selectionChanged(const QItemSelection &selected, const QItemS
             
             defSelect = RPZToy(
                 elem->assetCopy(),
-                (RPZAtomType)elemType
+                (RPZAtom::Type)elemType
             );
             
         }

@@ -19,13 +19,12 @@
 
 #endif
 
-typedef uint64_t snowflake_uid;
-
 class SnowFlake {
 
     public:
+        typedef uint64_t Id;
         static SnowFlake* get();
-        snowflake_uid nextId();
+        SnowFlake::Id nextId();
 
     private:
         static const uint64_t start_stmp_ = 1480166465631;

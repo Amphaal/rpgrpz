@@ -20,15 +20,15 @@ const RPZMap<RPZAtom>& MapDatabase::atoms() const {
     return this->_atomsById;
 }
 
-const QSet<RPZAssetHash>& MapDatabase::usedAssetHashes() const {
+const QSet<RPZAsset::Hash>& MapDatabase::usedAssetHashes() const {
     return this->_assetHashes;
 }
 
-const RPZAtom MapDatabase::atom(const RPZAtomId &id) const {
+const RPZAtom MapDatabase::atom(const RPZAtom::Id &id) const {
     return this->_atomsById.value(id);
 }
 
-RPZAtom* MapDatabase::atomPtr(const RPZAtomId &id) {
+RPZAtom* MapDatabase::atomPtr(const RPZAtom::Id &id) {
     if(!this->_atomsById.contains(id)) return nullptr;
     return &this->_atomsById[id];
 }
@@ -81,12 +81,12 @@ void MapDatabase::updateAtom(const RPZAtom &updated) {
     this->_atomsById.insert(updated.id(), updated);
 }
 
-void MapDatabase::updateAtom(const RPZAtomId &toUpdate, const AtomUpdates &updates) {
+void MapDatabase::updateAtom(const RPZAtom::Id &toUpdate, const RPZAtom::Updates &updates) {
     if(!this->_atomsById.contains(toUpdate)) return;
     this->_atomsById[toUpdate].setMetadata(updates);
 }
 
-void MapDatabase::removeAtom(const RPZAtomId &toRemove) {
+void MapDatabase::removeAtom(const RPZAtom::Id &toRemove) {
     auto removed = this->_atomsById.take(toRemove);
     this->_assetHashes.remove(removed.assetHash());
 }
@@ -125,7 +125,7 @@ QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> MapDatabase::_getUpdat
 
                 //add center
                 atom.setMetadata(
-                    AtomParameter::ShapeCenter, 
+                    RPZAtom::Parameter::ShapeCenter, 
                     shape.boundingRect().center()
                 );
 

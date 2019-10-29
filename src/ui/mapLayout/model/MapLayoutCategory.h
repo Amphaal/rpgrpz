@@ -18,7 +18,7 @@ class MapLayoutCategory : public MapLayoutItem {
 
         void removeAsChild(MapLayoutAtom* child);
 
-        void updateSorter(RPZAtomLayer newLayer);
+        void updateSorter(RPZAtom::Layer newLayer);
 
         const int MapLayoutCategory::atomsCount() const;
 
@@ -37,5 +37,5 @@ class MapLayoutCategory : public MapLayoutItem {
         QString _name;
         QPixmap _pixmap;
 
-        void _updateLayerName(RPZAtomLayer newLayer);
+        void _updateLayerName(RPZAtom::Layer newLayer);
 };

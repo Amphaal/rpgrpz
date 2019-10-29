@@ -16,15 +16,15 @@ class MapLayoutAtom : public MapLayoutItem {
 
         MapLayoutCategory* parent() const;
 
-        const QSet<int> updateFrom(const AtomUpdates &updates);
+        const QSet<int> updateFrom(const RPZAtom::Updates &updates);
 
         bool isHidden() const;
 
         bool isLocked() const;
         
-        const RPZAssetHash assetHash() const;
+        const RPZAsset::Hash assetHash() const;
         
-        const RPZAtomId atomId() const;
+        const RPZAtom::Id atomId() const;
 
         const QString name() const override;
 
@@ -35,10 +35,10 @@ class MapLayoutAtom : public MapLayoutItem {
     private:
         MapLayoutCategory* _parent = nullptr;
         QString _name;
-        RPZAtomType _type = (RPZAtomType)0;
+        RPZAtom::Type _type = (RPZAtom::Type)0;
         bool _isHidden = false;
         bool _isLocked = false;
-        RPZAtomId _id = 0;
-        RPZAssetHash _assetHash;
+        RPZAtom::Id _id = 0;
+        RPZAsset::Hash _assetHash;
 
 };

@@ -32,12 +32,12 @@ class ViewMapHint : public AtomsStorage {
         ViewMapHint();
 
         //might be called by another thread, safe
-        RPZAtomId integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem) const;
+        RPZAtom::Id integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem) const;
         const RPZAtom templateAtom() const;
         QGraphicsItem* ghostItem() const;
 
-        const QVector<RPZAtomId> getAtomIdsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const; //safe
-        const RPZAtomId getAtomIdFromGraphicsItem(const QGraphicsItem* toFetch) const; 
+        const QVector<RPZAtom::Id> getAtomIdsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const; //safe
+        const RPZAtom::Id getAtomIdFromGraphicsItem(const QGraphicsItem* toFetch) const; 
 
         QGraphicsItem* generateTemporaryItemFromTemplateBuffer(); //safe
 
@@ -48,12 +48,12 @@ class ViewMapHint : public AtomsStorage {
         void setDefaultLayer(int layer); //safe
 
         //handle preview alteration before real payload
-        void handlePreviewRequest(const AtomsSelectionDescriptor &selectionDescriptor, const AtomParameter &parameter, const QVariant &value);
+        void handlePreviewRequest(const AtomsSelectionDescriptor &selectionDescriptor, const RPZAtom::Parameter &parameter, const QVariant &value);
 
     signals:
         void requestingUIAlteration(const Payload::Alteration &type, const QList<QGraphicsItem*> &toAlter);
-        void requestingUIUpdate(const QHash<QGraphicsItem*, AtomUpdates> &toUpdate);
-        void requestingUIUpdate(const QList<QGraphicsItem*> &toUpdate, const AtomUpdates &updates);
+        void requestingUIUpdate(const QHash<QGraphicsItem*, RPZAtom::Updates> &toUpdate);
+        void requestingUIUpdate(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates);
 
     protected:
         virtual void _handleAlterationRequest(const AlterationPayload &payload) override;
@@ -70,9 +70,9 @@ class ViewMapHint : public AtomsStorage {
         RPZAtom _templateAtom;
         
         mutable QMutex _m_GItemsByRPZAtomId;
-        QMap<RPZAtomId, QGraphicsItem*> _GItemsByRPZAtomId;
+        QMap<RPZAtom::Id, QGraphicsItem*> _GItemsByRPZAtomId;
 
-        QMultiHash<RPZAssetHash, QGraphicsItem*> _missingAssetHashesFromDb;
+        QMultiHash<RPZAsset::Hash, QGraphicsItem*> _missingAssetHashesFromDb;
         
         //helpers
         QGraphicsItem* _generateGhostItem(const RPZToy &toy);
@@ -85,8 +85,8 @@ class ViewMapHint : public AtomsStorage {
         //augmenting AtomsStorage
         void _atomAdded(const RPZAtom &added) override;
 
-        virtual void _basicAlterationDone(const QList<RPZAtomId> &updatedIds, const Payload::Alteration &type) override;
-        virtual void _updatesDone(const QList<RPZAtomId> &updatedIds, const AtomUpdates &updates) override;
-        virtual void _updatesDone(const AtomsUpdates &updates) override;
+        virtual void _basicAlterationDone(const QList<RPZAtom::Id> &updatedIds, const Payload::Alteration &type) override;
+        virtual void _updatesDone(const QList<RPZAtom::Id> &updatedIds, const RPZAtom::Updates &updates) override;
+        virtual void _updatesDone(const RPZAtom::ManyUpdates &updates) override;
 
 };

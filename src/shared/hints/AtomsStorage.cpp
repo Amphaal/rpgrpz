@@ -20,7 +20,7 @@ void AtomsStorage::_replaceMap(const MapDatabase &map) {
     this->_map = map;
 }
 
-PossibleActionsOnAtomList AtomsStorage::getPossibleActions(const QVector<RPZAtomId> &ids) {
+PossibleActionsOnAtomList AtomsStorage::getPossibleActions(const QVector<RPZAtom::Id> &ids) {
     
     QMutexLocker l(&_m_handlingLock);
     PossibleActionsOnAtomList out;
@@ -92,7 +92,7 @@ QPair<int, int> AtomsStorage::_determineMinMaxLayer(const QList<const RPZAtom*> 
     return QPair<int, int>(lowerLayoutTarget, riseLayoutTarget);
 }
 
-const AtomsSelectionDescriptor AtomsStorage::getAtomSelectionDescriptor(const QVector<RPZAtomId> &selectedIds) const {
+const AtomsSelectionDescriptor AtomsStorage::getAtomSelectionDescriptor(const QVector<RPZAtom::Id> &selectedIds) const {
     
     AtomsSelectionDescriptor out;
 
@@ -219,7 +219,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(const AlterationPayload &fr
             auto casted = (BulkMetadataChangedPayload*)&fromHistoryPayload;
             auto intialAtoms = casted->atomsUpdates();
             
-            AtomsUpdates out;
+            RPZAtom::ManyUpdates out;
             for (auto i = intialAtoms.constBegin(); i != intialAtoms.constEnd(); i++) { 
                 
                 //get atom
@@ -228,7 +228,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(const AlterationPayload &fr
                 if(!atom) continue;
 
                 //init hash with old values
-                AtomUpdates oldValues;
+                RPZAtom::Updates oldValues;
                 for(auto &param : i.value().keys()) {
                     auto oldValue = atom->metadata(param);
                     oldValues.insert(param, oldValue);
@@ -246,14 +246,14 @@ AlterationPayload AtomsStorage::_generateUndoPayload(const AlterationPayload &fr
             
             auto casted = (MetadataChangedPayload*)&fromHistoryPayload;
             
-            AtomsUpdates out;
+            RPZAtom::ManyUpdates out;
             for(auto &id : casted->targetRPZAtomIds()) {
 
                 //get atom
                 auto atom = this->_map.atomPtr(id);
                 if(!atom) continue;
 
-                AtomUpdates oldValues;
+                RPZAtom::Updates oldValues;
                 for(auto &param : casted->updates().keys()) {
                     auto oldValue = atom->metadata(param);
                     oldValues.insert(param, oldValue);
@@ -334,7 +334,7 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
     //reset/insert types
     if(auto mPayload = dynamic_cast<const AtomsWielderPayload*>(&payload)) {
         
-        QList<RPZAtomId> insertedIds;
+        QList<RPZAtom::Id> insertedIds;
         
         for (const auto &atom : mPayload->atoms()) {
 
@@ -369,8 +369,8 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
     //multi target format
     else if(auto mPayload = dynamic_cast<const MultipleAtomTargetsPayload*>(&payload)) {
         
-        QList<RPZAtomId> alteredIds;
-        AtomUpdates maybeUpdates;
+        QList<RPZAtom::Id> alteredIds;
+        RPZAtom::Updates maybeUpdates;
         
         if(auto nPayload = dynamic_cast<const MetadataChangedPayload*>(&payload)) {
             maybeUpdates = nPayload->updates();
@@ -399,7 +399,7 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
 //
 //
 
-void AtomsStorage::duplicateAtoms(const QVector<RPZAtomId> &RPZAtomIdList) {
+void AtomsStorage::duplicateAtoms(const QVector<RPZAtom::Id> &RPZAtomIdList) {
     
     //check if a recent duplication have been made, and if it was about the same atoms
     if(this->_latestDuplication != RPZAtomIdList) { //if not
@@ -425,14 +425,14 @@ void AtomsStorage::duplicateAtoms(const QVector<RPZAtomId> &RPZAtomIdList) {
 }
 
 
-RPZMap<RPZAtom> AtomsStorage::_generateAtomDuplicates(const QVector<RPZAtomId> &RPZAtomIdsToDuplicate) const {
+RPZMap<RPZAtom> AtomsStorage::_generateAtomDuplicates(const QVector<RPZAtom::Id> &RPZAtomIdsToDuplicate) const {
     
     RPZMap<RPZAtom> newAtoms;
 
     //create the new atoms from the selection
     for(auto &atomId : RPZAtomIdsToDuplicate) {
         
-        //skip if RPZAtomId does not exist
+        //skip if RPZAtom::Id does not exist
         auto atom = this->_map.atom(atomId);
         if(atom.isEmpty()) continue;
         
@@ -442,7 +442,7 @@ RPZMap<RPZAtom> AtomsStorage::_generateAtomDuplicates(const QVector<RPZAtomId> &
 
         //find new position for the duplicated atom
         auto newPos = _getPositionFromAtomDuplication(newAtom, this->_duplicationCount);
-        newAtom.setMetadata(AtomParameter::Position, newPos);
+        newAtom.setMetadata(RPZAtom::Parameter::Position, newPos);
 
         //adds it to the final list
         newAtoms.insert(newAtom.id(), newAtom);

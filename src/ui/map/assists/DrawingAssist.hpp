@@ -21,7 +21,7 @@ class DrawingAssist {
 
         }
 
-        void updateDrawingPath(const QPoint &evtPoint, const RPZAtomType &type) {
+        void updateDrawingPath(const QPoint &evtPoint, const RPZAtom::Type &type) {
             
             //if no temp, stop
             if(!this->_tempDrawing) return;
@@ -35,11 +35,11 @@ class DrawingAssist {
 
             switch(type) {
                 
-                case RPZAtomType::Drawing:
+                case RPZAtom::Type::Drawing:
                     existingPath.lineTo(pathCoord);
                 break;
 
-                case RPZAtomType::Brush:
+                case RPZAtom::Type::Brush:
                     this->_updateDrawingPathForBrush(pathCoord, existingPath, this->_tempDrawing);
                 break;
 
@@ -90,7 +90,7 @@ class DrawingAssist {
     private:
         QGraphicsView* _view = nullptr;
         MapHint* _hints = nullptr;
-        RPZAtomId _commitedDrawingId = 0;
+        RPZAtom::Id _commitedDrawingId = 0;
 
         //drawing...
         MapViewGraphicsPathItem* _tempDrawing = nullptr;
@@ -136,7 +136,7 @@ class DrawingAssist {
             this->_view->scene()->addItem(this->_tempDrawing);
 
             //determine if it must be sticky
-            this->_stickyBrushIsDrawing = this->_hints->templateAtom().brushType() == BrushType::Cutter;
+            this->_stickyBrushIsDrawing = this->_hints->templateAtom().brushType() == RPZAtom::BrushType::Cutter;
             this->_stickyBrushValidNodeCount = this->_stickyBrushIsDrawing ? this->_tempDrawing->path().elementCount() : 0;
 
             //add outline if sticky
@@ -150,7 +150,7 @@ class DrawingAssist {
             
             switch(this->_hints->templateAtom().brushType()) {
                 
-                case BrushType::Stamp: {
+                case RPZAtom::BrushType::Stamp: {
                     
                     //if contained in path, nothing to do
                     if(pathToAlter.contains(pathCoord)) return;
@@ -172,7 +172,7 @@ class DrawingAssist {
                 }
                 break;
 
-                case BrushType::Cutter: {
+                case RPZAtom::BrushType::Cutter: {
                     auto count = pathToAlter.elementCount();
                     
                     //if no temporary node, create it
@@ -187,26 +187,26 @@ class DrawingAssist {
                 }                
                 break;
 
-                case BrushType::Ovale: {
+                case RPZAtom::BrushType::Ovale: {
                     pathToAlter = QPainterPath();
                     QRectF rect(QPointF(0,0), pathCoord);
                     pathToAlter.addEllipse(rect);
                 }
                 break;
 
-                case BrushType::Rectangle: {
+                case RPZAtom::BrushType::Rectangle: {
                     pathToAlter = QPainterPath();
                     QRectF rect(QPointF(0,0), pathCoord);
                     pathToAlter.addRect(rect);
                 }
                 break;
 
-                case BrushType::Scissors: {
+                case RPZAtom::BrushType::Scissors: {
                     pathToAlter.lineTo(pathCoord);
                 }
                 break;
 
-                case BrushType::RoundBrush: {
+                case RPZAtom::BrushType::RoundBrush: {
                     pathToAlter.lineTo(pathCoord);
                 }
                 break;

@@ -30,7 +30,7 @@ class MapLayoutTree : public QTreeView, public AtomSelector {
     public:
         MapLayoutTree(AtomsStorage* mapMaster, QWidget* parent = nullptr);
 
-        const QVector<RPZAtomId> selectedIds() const override;
+        const QVector<RPZAtom::Id> selectedIds() const override;
 
     protected:
         void contextMenuEvent(QContextMenuEvent *event) override;

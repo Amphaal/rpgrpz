@@ -2,34 +2,34 @@
 
 #include "src/shared/payloads/_base/AlterationPayload.hpp"
 
-typedef QHash<RPZAtomId, AtomUpdates> AtomsUpdates;
 
 class BulkMetadataChangedPayload : public AlterationPayload {
     public:
         explicit BulkMetadataChangedPayload(const QVariantHash &hash) : AlterationPayload(hash) { }
-        BulkMetadataChangedPayload(const AtomsUpdates &changes) : AlterationPayload(Payload::Alteration::BulkMetadataChanged) { 
+        BulkMetadataChangedPayload(const RPZAtom::ManyUpdates &changes) : AlterationPayload(Payload::Alteration::BulkMetadataChanged) { 
             this->_defineAtomsUpdates(changes);
         }
 
-        AtomsUpdates atomsUpdates() const {
+        RPZAtom::ManyUpdates atomsUpdates() const {
+            
             auto rawData = this->value(QStringLiteral(u"changes")).toHash();
-            AtomsUpdates out;
+            RPZAtom::ManyUpdates out;
 
             for(auto i = rawData.constBegin(); i != rawData.constEnd(); i++) {
-                
-                RPZAtomId RPZAtomId = i.key().toULongLong();
-                
-                out.insert(RPZAtomId, 
-                    JSONSerializer::unserializeUpdates(i.value().toHash())
+
+                out.insert(
+                    i.key().toULongLong(),
+                    RPZAtom::unserializeUpdates(i.value().toHash())
                 );
 
             }
 
             return out;
+            
         }
     
     private:
-        void _defineAtomsUpdates(const AtomsUpdates &changes) {
+        void _defineAtomsUpdates(const RPZAtom::ManyUpdates &changes) {
             
             QVariantHash hash;
             
@@ -38,8 +38,9 @@ class BulkMetadataChangedPayload : public AlterationPayload {
                 auto idStr = QString::number(i.key());
                 QVariantHash changesById;
 
-                hash.insert(idStr, 
-                    JSONSerializer::serializeUpdates(i.value())
+                hash.insert(
+                    idStr, 
+                    RPZAtom::serializeUpdates(i.value())
                 );
 
             }

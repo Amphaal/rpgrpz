@@ -37,7 +37,7 @@ MapLayoutCategory* MapLayoutAtom::parent() const {
     return this->_parent;
 }
 
-const QSet<int> MapLayoutAtom::updateFrom(const AtomUpdates &updates) {
+const QSet<int> MapLayoutAtom::updateFrom(const RPZAtom::Updates &updates) {
     
     QSet<int> columnsToUpdate;
 
@@ -48,17 +48,17 @@ const QSet<int> MapLayoutAtom::updateFrom(const AtomUpdates &updates) {
         
         switch (param) {
 
-            case AtomParameter::Hidden:
+            case RPZAtom::Parameter::Hidden:
                 this->_isHidden = variant.toBool();
                 columnsToUpdate += 1;
                 break;
             
-            case AtomParameter::Locked:
+            case RPZAtom::Parameter::Locked:
                 this->_isLocked = variant.toBool();
                 columnsToUpdate += 1;
                 break;
             
-            case AtomParameter::AssetName:
+            case RPZAtom::Parameter::AssetName:
                 this->setName(variant.toString());
                 columnsToUpdate += 0;
                 break;
@@ -80,11 +80,11 @@ bool MapLayoutAtom::isLocked() const {
     return this->_isLocked;
 }
 
-const RPZAssetHash MapLayoutAtom::assetHash() const {
+const RPZAsset::Hash MapLayoutAtom::assetHash() const {
     return this->_assetHash;
 }
 
-const RPZAtomId MapLayoutAtom::atomId() const {
+const RPZAtom::Id MapLayoutAtom::atomId() const {
     return this->_id;
 }
 

@@ -19,8 +19,8 @@ QGraphicsItem* ViewMapHint::ghostItem() const {
 
 void ViewMapHint::setDefaultLayer(int layer) {
     
-    AtomUpdates updates;
-    updates.insert(AtomParameter::Layer, layer);
+    RPZAtom::Updates updates;
+    updates.insert(RPZAtom::Parameter::Layer, layer);
 
     {
         QMutexLocker m(&this->_m_templateAtom);
@@ -53,7 +53,7 @@ void ViewMapHint::notifyFocusedItem(QGraphicsItem* focusedItem) {
 void ViewMapHint::mightNotifyMovement(const QList<QGraphicsItem*> &itemsWhoMightHaveMoved) {
     
     //generate args for payload
-    AtomsUpdates coords;
+    RPZAtom::ManyUpdates coords;
     for(auto gi : itemsWhoMightHaveMoved) {
         
         //find id
@@ -70,7 +70,7 @@ void ViewMapHint::mightNotifyMovement(const QList<QGraphicsItem*> &itemsWhoMight
         if(oldPos == newPos) continue;
 
         //add update into alteration
-        AtomUpdates updates {{ AtomParameter::Position, newPos }};
+        RPZAtom::Updates updates {{ RPZAtom::Parameter::Position, newPos }};
         coords.insert(cAtom.id(), updates);
 
     }
@@ -102,7 +102,7 @@ QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZToy &toy) {
         //update template
         this->_templateAtom.changeType(toy.atomType());
 
-        this->_templateAtom.setMetadata(AtomParameter::ShapeCenter, toy.shapeCenter());
+        this->_templateAtom.setMetadata(RPZAtom::Parameter::ShapeCenter, toy.shapeCenter());
         
         auto sSize = toy.shape();
         if(!sSize.isEmpty()) {
@@ -113,8 +113,8 @@ QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZToy &toy) {
             this->_templateAtom.setShape(QRectF()); 
         }
 
-        this->_templateAtom.setMetadata(AtomParameter::AssetHash, toy.hash());
-        this->_templateAtom.setMetadata(AtomParameter::AssetName, toy.name());
+        this->_templateAtom.setMetadata(RPZAtom::Parameter::AssetHash, toy.hash());
+        this->_templateAtom.setMetadata(RPZAtom::Parameter::AssetName, toy.name());
     }
     
     QGraphicsItem* toDelete = nullptr;
@@ -153,7 +153,7 @@ QGraphicsItem* ViewMapHint::generateTemporaryItemFromTemplateBuffer() {
     );
 }
 
-RPZAtomId ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsItem) const {
+RPZAtom::Id ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsItem) const {
     
     if(!graphicsItem) return 0;
     
@@ -259,10 +259,10 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &metadata) {
     emit requestingUIAlteration(Payload::Alteration::Added, newGis);
 }
 
-void ViewMapHint::handlePreviewRequest(const AtomsSelectionDescriptor &selectionDescriptor, const AtomParameter &parameter, const QVariant &value) {
+void ViewMapHint::handlePreviewRequest(const AtomsSelectionDescriptor &selectionDescriptor, const RPZAtom::Parameter &parameter, const QVariant &value) {
     
     //create updates container
-    AtomUpdates updates; updates.insert(parameter, value);
+    RPZAtom::Updates updates; updates.insert(parameter, value);
     
     QList<QGraphicsItem*> toUpdate;
 
@@ -304,9 +304,9 @@ void ViewMapHint::_crossBindingAtomWithGI(const RPZAtom &atom, QGraphicsItem* gi
     RPZQVariant::setAtomId(gi, id);
 }
 
-const QVector<RPZAtomId> ViewMapHint::getAtomIdsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const {
+const QVector<RPZAtom::Id> ViewMapHint::getAtomIdsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const {
     
-    QVector<RPZAtomId> list;
+    QVector<RPZAtom::Id> list;
 
     for(auto e : listToFetch) {
         auto id = this->getAtomIdFromGraphicsItem(e);
@@ -317,7 +317,7 @@ const QVector<RPZAtomId> ViewMapHint::getAtomIdsFromGraphicsItems(const QList<QG
 
 }
 
-const RPZAtomId ViewMapHint::getAtomIdFromGraphicsItem(const QGraphicsItem* toFetch) const {
+const RPZAtom::Id ViewMapHint::getAtomIdFromGraphicsItem(const QGraphicsItem* toFetch) const {
     
     if(!toFetch) {
         qWarning() << "Cannot fetch Atom Id from this non-existant GraphicsItem...";
@@ -421,7 +421,7 @@ void ViewMapHint::_atomAdded(const RPZAtom &added) {
     this->_buildGraphicsItemFromAtom(added);
 }
 
-void ViewMapHint::_basicAlterationDone(const QList<RPZAtomId> &updatedIds, const Payload::Alteration &type) {
+void ViewMapHint::_basicAlterationDone(const QList<RPZAtom::Id> &updatedIds, const Payload::Alteration &type) {
     QList<QGraphicsItem*> toUpdate;
     
     for(auto id : updatedIds) {
@@ -432,7 +432,7 @@ void ViewMapHint::_basicAlterationDone(const QList<RPZAtomId> &updatedIds, const
     emit requestingUIAlteration(type, toUpdate);
 }
 
-void ViewMapHint::_updatesDone(const QList<RPZAtomId> &updatedIds, const AtomUpdates &updates) {
+void ViewMapHint::_updatesDone(const QList<RPZAtom::Id> &updatedIds, const RPZAtom::Updates &updates) {
     QList<QGraphicsItem*> toUpdate;
     for(auto id : updatedIds) {
         toUpdate += this->_GItemsByRPZAtomId.value(id);
@@ -440,8 +440,8 @@ void ViewMapHint::_updatesDone(const QList<RPZAtomId> &updatedIds, const AtomUpd
     emit requestingUIUpdate(toUpdate, updates);
 }
 
-void ViewMapHint::_updatesDone(const AtomsUpdates &updates) {
-    QHash<QGraphicsItem*, AtomUpdates> toUpdate;
+void ViewMapHint::_updatesDone(const RPZAtom::ManyUpdates &updates) {
+    QHash<QGraphicsItem*, RPZAtom::Updates> toUpdate;
     for(auto i = updates.constBegin(); i != updates.constEnd(); i++) {
         auto gi = this->_GItemsByRPZAtomId.value(i.key());
         toUpdate.insert(gi, i.value());

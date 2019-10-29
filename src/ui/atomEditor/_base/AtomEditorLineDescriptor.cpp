@@ -1,6 +1,6 @@
 #include "AtomEditorLineDescriptor.h"
 
-AtomEditorLineDescriptor::AtomEditorLineDescriptor(const AtomParameter &paramType) : AtomEditorLineDescriptor(
+AtomEditorLineDescriptor::AtomEditorLineDescriptor(const RPZAtom::Parameter &paramType) : AtomEditorLineDescriptor(
         _paramDescr.value(paramType), 
         _valSuffix.value(paramType), 
         _icons.value(paramType)

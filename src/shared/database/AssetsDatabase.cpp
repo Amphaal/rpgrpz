@@ -93,23 +93,23 @@ void AssetsDatabase::_removeDatabaseLinkedFiles() {
     QDir(AppContext::getAssetsFolderLocation()).removeRecursively();
 }
 
-const QSet<RPZAssetHash> AssetsDatabase::getStoredAssetHashes() const {
+const QSet<RPZAsset::Hash> AssetsDatabase::getStoredAssetHashes() const {
     return this->_assets.keys().toSet();
 }
 
-const QMap<RPZFolderPath, QSet<RPZAssetHash>> AssetsDatabase::paths() const {
+const QMap<AssetsDatabase::FolderPath, QSet<RPZAsset::Hash>> AssetsDatabase::paths() const {
     return this->_paths;
 }
 
-const QHash<RPZAssetHash, RPZAsset> AssetsDatabase::assets() const {
+const QHash<RPZAsset::Hash, RPZAsset> AssetsDatabase::assets() const {
     return this->_assets;
 }
 
-const RPZAsset* AssetsDatabase::asset(const RPZAssetHash &hash) {
+const RPZAsset* AssetsDatabase::asset(const RPZAsset::Hash &hash) {
     return this->_asset(hash);
 }
 
-RPZAsset* AssetsDatabase::_asset(const RPZAssetHash &hash) {
+RPZAsset* AssetsDatabase::_asset(const RPZAsset::Hash &hash) {
     if(!this->_assets.contains(hash)) {
         return nullptr;
     }
@@ -121,7 +121,7 @@ const QString AssetsDatabase::_path(const StorageContainer &targetContainer) con
     return path;
 }
 
-const RPZAssetImportPackage AssetsDatabase::prepareAssetPackage(const RPZAssetHash &hash) const {
+const RPZAssetImportPackage AssetsDatabase::prepareAssetPackage(const RPZAsset::Hash &hash) const {
     
     if(!this->_assets.contains(hash)) return RPZAssetImportPackage();
 
@@ -134,7 +134,7 @@ const RPZAssetImportPackage AssetsDatabase::prepareAssetPackage(const RPZAssetHa
 ///
 ///
 
-void AssetsDatabase::addAsset(const RPZAsset &asset, const RPZFolderPath &internalPathToAddTo) {
+void AssetsDatabase::addAsset(const RPZAsset &asset, const AssetsDatabase::FolderPath &internalPathToAddTo) {
     
     //asset
     auto hash = asset.hash();
@@ -166,7 +166,7 @@ bool AssetsDatabase::importAsset(RPZAssetImportPackage &package) {
 
 }
 
-const QString AssetsDatabase::createFolder(const RPZFolderPath &parentPath) {
+const QString AssetsDatabase::createFolder(const AssetsDatabase::FolderPath &parentPath) {
     
     //get a unique folder
     auto uniquePath = this->_generateNonExistingPath(parentPath, QObject::tr("Folder"));
@@ -181,7 +181,7 @@ const QString AssetsDatabase::createFolder(const RPZFolderPath &parentPath) {
 
 }
 
-bool AssetsDatabase::renameFolder(const QString &requestedNewFolderName, const RPZFolderPath &pathToRename) {
+bool AssetsDatabase::renameFolder(const QString &requestedNewFolderName, const AssetsDatabase::FolderPath &pathToRename) {
     
     //prevent slashes
     if(requestedNewFolderName.contains(QStringLiteral(u"/"))) return false;
@@ -200,7 +200,7 @@ bool AssetsDatabase::renameFolder(const QString &requestedNewFolderName, const R
 
 }
 
-void AssetsDatabase::renameAsset(const QString &newName, const RPZAssetHash &hash) {
+void AssetsDatabase::renameAsset(const QString &newName, const RPZAsset::Hash &hash) {
     
     //find
     auto assetToRename = this->_asset(hash);
@@ -220,7 +220,7 @@ void AssetsDatabase::renameAsset(const QString &newName, const RPZAssetHash &has
 
 }
 
-void AssetsDatabase::removeAssets(const QList<RPZAssetHash> &hashesToRemove) {
+void AssetsDatabase::removeAssets(const QList<RPZAsset::Hash> &hashesToRemove) {
     
     //clear assets
     auto result = this->_removeAssets(hashesToRemove);
@@ -236,9 +236,9 @@ void AssetsDatabase::removeAssets(const QList<RPZAssetHash> &hashesToRemove) {
 
 }
 
-void AssetsDatabase::removeFolders(const QList<RPZFolderPath> &pathsToRemove) {
+void AssetsDatabase::removeFolders(const QList<AssetsDatabase::FolderPath> &pathsToRemove) {
     
-    QSet<RPZAssetHash> hashesToRemove;
+    QSet<RPZAsset::Hash> hashesToRemove;
 
     //traverse paths
     for(auto &path : pathsToRemove) {
@@ -261,7 +261,7 @@ void AssetsDatabase::removeFolders(const QList<RPZFolderPath> &pathsToRemove) {
 
 }
 
-void AssetsDatabase::moveAssetsTo(const RPZFolderPath &internalPathToMoveTo, const QList<RPZAssetHash> &hashesToMove) {
+void AssetsDatabase::moveAssetsTo(const AssetsDatabase::FolderPath &internalPathToMoveTo, const QList<RPZAsset::Hash> &hashesToMove) {
     
     //remove references to assets
     auto result = this->_removeAssets(hashesToMove, true);
@@ -281,7 +281,7 @@ void AssetsDatabase::moveAssetsTo(const RPZFolderPath &internalPathToMoveTo, con
 
 }
 
-void AssetsDatabase::moveFoldersTo(const RPZFolderPath &internalPathToMoveTo, const QList<RPZFolderPath> &topmostPathsToMove) {
+void AssetsDatabase::moveFoldersTo(const AssetsDatabase::FolderPath &internalPathToMoveTo, const QList<AssetsDatabase::FolderPath> &topmostPathsToMove) {
     
     auto results = this->_getPathsStartingWith(topmostPathsToMove);
 
@@ -304,7 +304,7 @@ void AssetsDatabase::moveFoldersTo(const RPZFolderPath &internalPathToMoveTo, co
 ///
 ////
 
-void AssetsDatabase::_reroutePaths(const RPZFolderPath &ancestor, const RPZFolderPath &toReplaceAncestor, const QSet<RPZFolderPath> &subjects) {
+void AssetsDatabase::_reroutePaths(const AssetsDatabase::FolderPath &ancestor, const AssetsDatabase::FolderPath &toReplaceAncestor, const QSet<AssetsDatabase::FolderPath> &subjects) {
     
     for(auto &oldPath : subjects) {
 
@@ -328,9 +328,9 @@ void AssetsDatabase::_reroutePaths(const RPZFolderPath &ancestor, const RPZFolde
 
 }
 
-QSet<RPZFolderPath> AssetsDatabase::_getPathsStartingWith(const RPZFolderPath &toRequest) {
+QSet<AssetsDatabase::FolderPath> AssetsDatabase::_getPathsStartingWith(const AssetsDatabase::FolderPath &toRequest) {
     
-    QSet<RPZFolderPath> out;
+    QSet<AssetsDatabase::FolderPath> out;
     
     for(auto &path : this->_paths.keys()) {
         if(!path.startsWith(toRequest)) continue;
@@ -341,7 +341,7 @@ QSet<RPZFolderPath> AssetsDatabase::_getPathsStartingWith(const RPZFolderPath &t
 
 }
 
-AssetsDatabase::StartingWithPathRequestResults AssetsDatabase::_getPathsStartingWith(const QList<RPZFolderPath> &topmostPathsToMove) {
+AssetsDatabase::StartingWithPathRequestResults AssetsDatabase::_getPathsStartingWith(const QList<AssetsDatabase::FolderPath> &topmostPathsToMove) {
     
     //setup request container
     StartingWithPathRequestResults startingWithPath;
@@ -359,7 +359,7 @@ AssetsDatabase::StartingWithPathRequestResults AssetsDatabase::_getPathsStarting
 
 }
 
-QPair<AssetsDatabase::HashesByPathToRemove, AssetsDatabase::RemovedAssets> AssetsDatabase::_removeAssets(const QList<RPZAssetHash> &hashesToRemove, bool onlyRemoveReference) {
+QPair<AssetsDatabase::HashesByPathToRemove, AssetsDatabase::RemovedAssets> AssetsDatabase::_removeAssets(const QList<RPZAsset::Hash> &hashesToRemove, bool onlyRemoveReference) {
     
     RemovedAssets removedAssets;
     HashesByPathToRemove hashesToRemoveFromPaths;
@@ -400,13 +400,13 @@ void AssetsDatabase::_removeHashesFromPaths(const HashesByPathToRemove &hashesTo
 
 ///
 
-const QString AssetsDatabase::_folderName(const RPZFolderPath &toExtractNameFrom) {
+const QString AssetsDatabase::_folderName(const AssetsDatabase::FolderPath &toExtractNameFrom) {
     auto toCropFrom = toExtractNameFrom.lastIndexOf(QStringLiteral(u"/"));
     auto out = toExtractNameFrom.mid(toCropFrom + 1);
     return out;
 }
 
-const QString AssetsDatabase::_parentPath(const RPZFolderPath &toExtractParentFrom) {
+const QString AssetsDatabase::_parentPath(const AssetsDatabase::FolderPath &toExtractParentFrom) {
 
     auto toCropFrom = toExtractParentFrom.lastIndexOf(QStringLiteral(u"/"));
     
@@ -430,7 +430,7 @@ void AssetsDatabase::_removeAssetFiles(const QList<RPZAsset> &toRemoveFromStorag
     
 }
 
-QString AssetsDatabase::_generateNonExistingPath(const RPZFolderPath &parentPath, const QString &prefix) {
+QString AssetsDatabase::_generateNonExistingPath(const AssetsDatabase::FolderPath &parentPath, const QString &prefix) {
     
     auto newPath = parentPath;
     newPath += QStringLiteral(u"/%1_%2").arg(prefix)

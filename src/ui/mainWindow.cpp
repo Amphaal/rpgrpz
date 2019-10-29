@@ -454,7 +454,7 @@ void MainWindow::_initAppComponents() {
     //focus on character
     QObject::connect(
         this->_playersView, &PlayersListView::requestingFocusOnCharacter,
-        [=](const snowflake_uid &characterIdToFocus) {
+        [=](const SnowFlake::Id &characterIdToFocus) {
             this->_characterEditor->tryToSelectCharacter(characterIdToFocus);
             auto tab = (QStackedWidget*)this->_characterEditor->parentWidget();
             tab->setCurrentWidget(this->_characterEditor);

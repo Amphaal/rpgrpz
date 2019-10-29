@@ -10,7 +10,7 @@ AtomActionsHandler::AtomActionsHandler(AtomsStorage* master, AtomSelector* selec
 
 }
 
-const QVector<RPZAtomId> AtomActionsHandler::fromSelector() {
+const QVector<RPZAtom::Id> AtomActionsHandler::fromSelector() {
     return this->_selector->selectedIds();
 }
 
@@ -27,7 +27,7 @@ void AtomActionsHandler::redoAlteration(AtomsStorage* master) {
     QMetaObject::invokeMethod(master, "redo");
 }
 
-void AtomActionsHandler::copyToClipboard(const QVector<RPZAtomId> &ids) {
+void AtomActionsHandler::copyToClipboard(const QVector<RPZAtom::Id> &ids) {
     if(!ConnectivityObserver::isHostAble()) return;
     if(!ids.count()) return;
     Clipboard::set(ids);
@@ -41,34 +41,34 @@ void AtomActionsHandler::pasteAtomsFromClipboard(AtomsStorage* master) {
     if(!ConnectivityObserver::isHostAble()) return;
     
     QMetaObject::invokeMethod(master, "duplicateAtoms", 
-        Q_ARG(QVector<RPZAtomId>, clipboard)
+        Q_ARG(QVector<RPZAtom::Id>, clipboard)
     );
 
 }
 
-void AtomActionsHandler::removeAtoms(AtomsStorage* master, const QVector<RPZAtomId> &ids) {
+void AtomActionsHandler::removeAtoms(AtomsStorage* master, const QVector<RPZAtom::Id> &ids) {
     if(!ConnectivityObserver::isHostAble()) return;
     RemovedPayload payload(ids);
     AlterationHandler::get()->queueAlteration(master, payload);
 }
 
-void AtomActionsHandler::moveAtomsToLayer(AtomsStorage* master, const QVector<RPZAtomId> &ids, int targetLayer) {
+void AtomActionsHandler::moveAtomsToLayer(AtomsStorage* master, const QVector<RPZAtom::Id> &ids, int targetLayer) {
     if(!ConnectivityObserver::isHostAble()) return;
-    MetadataChangedPayload payload(ids, {{AtomParameter::Layer, targetLayer}});
+    MetadataChangedPayload payload(ids, {{RPZAtom::Parameter::Layer, targetLayer}});
     AlterationHandler::get()->queueAlteration(master, payload);
 
 }
 
-void AtomActionsHandler::alterAtomsVisibility(AtomsStorage* master, const QVector<RPZAtomId> &ids, bool hide) {
+void AtomActionsHandler::alterAtomsVisibility(AtomsStorage* master, const QVector<RPZAtom::Id> &ids, bool hide) {
     if(!ConnectivityObserver::isHostAble()) return;
-    MetadataChangedPayload payload(ids, {{AtomParameter::Hidden, hide}});
+    MetadataChangedPayload payload(ids, {{RPZAtom::Parameter::Hidden, hide}});
     AlterationHandler::get()->queueAlteration(master, payload);
 
 }
 
-void AtomActionsHandler::alterAtomsAvailability(AtomsStorage* master, const QVector<RPZAtomId> &ids, bool lock) {
+void AtomActionsHandler::alterAtomsAvailability(AtomsStorage* master, const QVector<RPZAtom::Id> &ids, bool lock) {
     if(!ConnectivityObserver::isHostAble()) return;
-    MetadataChangedPayload payload(ids, {{AtomParameter::Locked, lock}});
+    MetadataChangedPayload payload(ids, {{RPZAtom::Parameter::Locked, lock}});
     AlterationHandler::get()->queueAlteration(master, payload);
 
 }

@@ -91,13 +91,13 @@ void MapView::_handleHintsSignalsAndSlots() {
     );
     
     QObject::connect(
-        this->_hints, QOverload<const QHash<QGraphicsItem*, AtomUpdates>&>::of(&ViewMapHint::requestingUIUpdate),
-        this, QOverload<const QHash<QGraphicsItem*, AtomUpdates>&>::of(&MapView::_onUIUpdateRequest)
+        this->_hints, QOverload<const QHash<QGraphicsItem*, RPZAtom::Updates>&>::of(&ViewMapHint::requestingUIUpdate),
+        this, QOverload<const QHash<QGraphicsItem*, RPZAtom::Updates>&>::of(&MapView::_onUIUpdateRequest)
     );
     
     QObject::connect(
-        this->_hints, QOverload<const QList<QGraphicsItem*>&, const AtomUpdates&>::of(&ViewMapHint::requestingUIUpdate),
-        this, QOverload<const QList<QGraphicsItem*>&, const AtomUpdates&>::of(&MapView::_onUIUpdateRequest)
+        this->_hints, QOverload<const QList<QGraphicsItem*>&, const RPZAtom::Updates&>::of(&ViewMapHint::requestingUIUpdate),
+        this, QOverload<const QList<QGraphicsItem*>&, const RPZAtom::Updates&>::of(&MapView::_onUIUpdateRequest)
     );
 
 }
@@ -106,7 +106,7 @@ void MapView::_handleHintsSignalsAndSlots() {
 //
 //
 
-void MapView::_updateItemValue(QGraphicsItem* item, const AtomUpdates &updates) {
+void MapView::_updateItemValue(QGraphicsItem* item, const RPZAtom::Updates &updates) {
     
     for(auto i = updates.constBegin(); i != updates.constEnd(); ++i) {
     
@@ -122,13 +122,13 @@ void MapView::_updateItemValue(QGraphicsItem* item, const AtomUpdates &updates) 
     }
 }
 
-void MapView::_onUIUpdateRequest(const QHash<QGraphicsItem*, AtomUpdates> &toUpdate) {
+void MapView::_onUIUpdateRequest(const QHash<QGraphicsItem*, RPZAtom::Updates> &toUpdate) {
     for(auto i = toUpdate.constBegin(); i != toUpdate.constEnd(); i++) {
         this->_updateItemValue(i.key(), i.value());
     }
 }
 
-void MapView::_onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const AtomUpdates &updates) {
+void MapView::_onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates) {
     for(auto item : toUpdate) {
         this->_updateItemValue(item, updates);
     }
@@ -272,7 +272,7 @@ void MapView::keyReleaseEvent(QKeyEvent *event) {
 
 }
 
-const QVector<RPZAtomId> MapView::selectedIds() const {
+const QVector<RPZAtom::Id> MapView::selectedIds() const {
     return this->_hints->getAtomIdsFromGraphicsItems(
         this->scene()->selectedItems()
     );
@@ -351,8 +351,8 @@ void MapView::mousePressEvent(QMouseEvent *event) {
             auto type = this->_hints->templateAtom().type();
             switch(type) {
 
-                case RPZAtomType::Drawing:
-                case RPZAtomType::Brush:
+                case RPZAtom::Type::Drawing:
+                case RPZAtom::Type::Brush:
                     this->_drawingAssist->addDrawingPoint(event->pos());
                 break;
 
@@ -384,8 +384,8 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
         
         auto type = this->_hints->templateAtom().type();
         switch(type) {
-            case RPZAtomType::Drawing:
-            case RPZAtomType::Brush:
+            case RPZAtom::Type::Drawing:
+            case RPZAtom::Type::Brush:
                 this->_drawingAssist->updateDrawingPath(event->pos(), type);
             break;
 
@@ -542,13 +542,13 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
             this->setDragMode(QGraphicsView::DragMode::NoDrag);
             
             switch(this->_hints->templateAtom().type()) {
-                case RPZAtomType::Drawing:
+                case RPZAtom::Type::Drawing:
                     this->setCursor(Qt::CrossCursor);
                     break;
-                case RPZAtomType::Object:
+                case RPZAtom::Type::Object:
                     this->setCursor(Qt::ClosedHandCursor);
                     break;
-                case RPZAtomType::Text:
+                case RPZAtom::Type::Text:
                     this->setCursor(Qt::IBeamCursor);
                     break;
                 default:

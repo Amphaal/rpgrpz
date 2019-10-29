@@ -8,17 +8,17 @@
 class AtomTemplateChangedPayload : public AlterationPayload {
     public:
         explicit AtomTemplateChangedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        AtomTemplateChangedPayload(const AtomUpdates &changes) : AlterationPayload(Payload::Alteration::AtomTemplateChanged) {
+        AtomTemplateChangedPayload(const RPZAtom::Updates &changes) : AlterationPayload(Payload::Alteration::AtomTemplateChanged) {
             this->_setMetadataChanges(changes);
         }
 
-        AtomUpdates updates() const {
+        RPZAtom::Updates updates() const {
             
-            AtomUpdates out;
+            RPZAtom::Updates out;
             auto base = this->value(QStringLiteral(u"changes")).toHash();  
 
             for (auto i = base.begin(); i != base.end(); ++i) {
-                auto param = (AtomParameter)i.key().toInt();
+                auto param = (RPZAtom::Parameter)i.key().toInt();
                 out.insert(param, i.value());
             }
 
@@ -27,7 +27,7 @@ class AtomTemplateChangedPayload : public AlterationPayload {
         }
 
     private:
-        void _setMetadataChanges(const AtomUpdates &changes) {
+        void _setMetadataChanges(const RPZAtom::Updates &changes) {
             
             QVariantHash in;
             

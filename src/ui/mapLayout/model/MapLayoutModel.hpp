@@ -5,8 +5,6 @@
 #include "src/shared/async-ui/AlterationHandler.h"
 #include "src/shared/database/AssetsDatabase.h"
 
-typedef QHash<RPZAtomLayer, QPair<QSet<MapLayoutAtom*>, QSet<MapLayoutAtom*>>> LayerMoves;
-
 class MapLayoutModel : public MapLayoutModelBase {
 
     Q_OBJECT
@@ -125,6 +123,8 @@ class MapLayoutModel : public MapLayoutModelBase {
         }
         
     private:
+        typedef QHash<RPZAtom::Layer, QPair<QSet<MapLayoutAtom*>, QSet<MapLayoutAtom*>>> LayerMoves;
+        
         struct LayerMoveContext {
             bool isCategoryCreated = false;
             QModelIndex categoryIndex;
@@ -217,14 +217,14 @@ class MapLayoutModel : public MapLayoutModelBase {
 
         }
 
-        void _handleUpdates(const RPZAtomId &id, const AtomUpdates &updates, LayerMoves &moves) {
+        void _handleUpdates(const RPZAtom::Id &id, const RPZAtom::Updates &updates, LayerMoves &moves) {
             
             auto atom = this->_atomsByAtomId.value(id);
 
             //update category
-            if(updates.contains(AtomParameter::Layer)) {
+            if(updates.contains(RPZAtom::Parameter::Layer)) {
                 
-                auto newLayer = updates.value(AtomParameter::Layer).toInt();
+                auto newLayer = updates.value(RPZAtom::Parameter::Layer).toInt();
                 auto oldLayer = atom->parent()->sorter();
                 
                 moves[newLayer].first += atom;  //in   
@@ -247,7 +247,7 @@ class MapLayoutModel : public MapLayoutModelBase {
         }
     
     private slots:
-        void _onRenamedAsset(const RPZAssetHash &id, const QString &newName) {
+        void _onRenamedAsset(const RPZAsset::Hash &id, const QString &newName) {
 
             for(auto &id : this->_atomsByAssetHash.value(id)) {
 

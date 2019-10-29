@@ -12,12 +12,12 @@ class Clipboard {
             _copyClipboard.clear();
         }
 
-        static const QVector<RPZAtomId> get() {
+        static const QVector<RPZAtom::Id> get() {
             QMutexLocker m(&_m_clipboard);
             return _copyClipboard;
         }
 
-        static void set(const QVector<RPZAtomId> &ids) {
+        static void set(const QVector<RPZAtom::Id> &ids) {
             QMutexLocker m(&_m_clipboard);
             _copyClipboard = ids;
         }
@@ -25,5 +25,5 @@ class Clipboard {
 
     private:
         static inline QMutex _m_clipboard;
-        static inline QVector<RPZAtomId> _copyClipboard;
+        static inline QVector<RPZAtom::Id> _copyClipboard;
 };

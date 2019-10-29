@@ -5,10 +5,12 @@
 
 #include <QPalette>
 
-typedef snowflake_uid RPZStampableId;
+
 
 class Stampable : public Ownable {
     public:
+        typedef SnowFlake::Id Id;
+
         Stampable() : Ownable(SnowFlake::get()->nextId()) {
             this->_setTimestamp(QDateTime::currentDateTime());
         }

@@ -1,6 +1,6 @@
 #include "AtomSubEditor.h"
 
-AtomSubEditor::AtomSubEditor(const AtomParameter &parameter) :
+AtomSubEditor::AtomSubEditor(const RPZAtom::Parameter &parameter) :
     _descr(new AtomEditorLineDescriptor(parameter)),
     _param(parameter) { 
 
@@ -13,7 +13,7 @@ AtomSubEditor::AtomSubEditor(const AtomParameter &parameter) :
 
 }
 
-AtomParameter AtomSubEditor::param() {
+RPZAtom::Parameter AtomSubEditor::param() {
     return this->_param;
 }
 
@@ -23,18 +23,18 @@ void AtomSubEditor::_setAsDataEditor(QWidget *dataEditor) {
 }
 
 bool AtomSubEditor::mustShowBrushPenWidth(const QVariant &brushTypeDefaultValue) {
-    auto cast = (BrushType)brushTypeDefaultValue.toInt();
-    return cast == BrushType::RoundBrush;
+    auto cast = (RPZAtom::BrushType)brushTypeDefaultValue.toInt();
+    return cast == RPZAtom::BrushType::RoundBrush;
 }
 
 
-void AtomSubEditor::_handleVisibilityOnLoad(const AtomUpdates &defaultValues) {
+void AtomSubEditor::_handleVisibilityOnLoad(const RPZAtom::Updates &defaultValues) {
     
     //default behavior if not a penWidth param
-    if(this->_param != AtomParameter::BrushPenWidth) return this->setVisible(true);
+    if(this->_param != RPZAtom::Parameter::BrushPenWidth) return this->setVisible(true);
 
     //check
-    auto brushStyleVal = defaultValues.value(AtomParameter::BrushStyle);
+    auto brushStyleVal = defaultValues.value(RPZAtom::Parameter::BrushStyle);
     if(brushStyleVal.isNull()) return;
 
     //visibility
@@ -43,7 +43,7 @@ void AtomSubEditor::_handleVisibilityOnLoad(const AtomUpdates &defaultValues) {
 }
 
 
-QVariant AtomSubEditor::loadTemplate(const AtomUpdates &defaultValues, bool updateMode) {
+QVariant AtomSubEditor::loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) {
     
     //handle visibility
     this->_handleVisibilityOnLoad(defaultValues);

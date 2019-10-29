@@ -7,19 +7,19 @@ QGraphicsItem* CustomGraphicsItemHelper::createGraphicsItem(const RPZAtom &atom,
 
     switch(type) {
         
-        case RPZAtomType::Object:
+        case RPZAtom::Type::Object:
             out = _createGenericImageBasedItem(atom, asset);
         break;
         
-        case RPZAtomType::Brush:
+        case RPZAtom::Type::Brush:
             out = _createBrushItem(atom, asset);
         break;
 
-        case RPZAtomType::Drawing:
+        case RPZAtom::Type::Drawing:
             out = _createDrawingItem(atom);
         break;
 
-        case RPZAtomType::Text:
+        case RPZAtom::Type::Text:
             out = _createTextItem(atom);
         break;
 

@@ -13,9 +13,9 @@ class CharacterPicker : public QWidget {
     Q_OBJECT
 
     signals:
-        void selectionChanged(const snowflake_uid selectedId);
+        void selectionChanged(const SnowFlake::Id selectedId);
         void requestSave();
-        void requestDelete(const snowflake_uid idToRemove);
+        void requestDelete(const SnowFlake::Id idToRemove);
         void requestInsert();
 
     public:
@@ -62,7 +62,7 @@ class CharacterPicker : public QWidget {
 
         }
 
-        const snowflake_uid currentCharacterId() const {
+        const SnowFlake::Id currentCharacterId() const {
             return this->_characterListCombo->currentData().toULongLong();
         }
 
@@ -83,7 +83,7 @@ class CharacterPicker : public QWidget {
             this->loadCharacters({}, CharacterPicker::Mode::Remote);
         }
 
-        void pickCharacter(const snowflake_uid &characterIdToFocus) {
+        void pickCharacter(const SnowFlake::Id &characterIdToFocus) {
 
             auto indexItemToFocus = this->_getIndexOfCharacterId(characterIdToFocus);
             
@@ -157,18 +157,18 @@ class CharacterPicker : public QWidget {
 
         }
 
-        snowflake_uid localCharacterIdFromRemote() {
+        SnowFlake::Id localCharacterIdFromRemote() {
             return this->_localCharacterIdFromRemote;
         }
 
-        void setLocalCharacterIdFromRemote(snowflake_uid localCharacterId) {
+        void setLocalCharacterIdFromRemote(SnowFlake::Id localCharacterId) {
             this->_localCharacterIdFromRemote = localCharacterId;
         };
     
     private:
-        snowflake_uid _localCharacterIdFromRemote = 0;
+        SnowFlake::Id _localCharacterIdFromRemote = 0;
         CharacterPicker::Mode _mode = CharacterPicker::Mode::Unknown;
-        QVector<snowflake_uid> _ids;
+        QVector<SnowFlake::Id> _ids;
 
         QComboBox* _characterListCombo = nullptr;
         QPushButton* _deleteCharacterBtn = nullptr;
@@ -229,7 +229,7 @@ class CharacterPicker : public QWidget {
             emit selectionChanged(id);
         }
 
-        int _getIndexOfCharacterId(const snowflake_uid &characterIdToFind) {
+        int _getIndexOfCharacterId(const SnowFlake::Id &characterIdToFind) {
             return this->_ids.indexOf(characterIdToFind);
         }
         

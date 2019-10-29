@@ -52,7 +52,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         ~MapView();
 
         MapHint* hints() const;
-        const QVector<RPZAtomId> selectedIds() const override;
+        const QVector<RPZAtom::Id> selectedIds() const override;
 
     public slots:
         void onActionRequested(const MapAction &action);
@@ -85,8 +85,8 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
 
     private slots:
         void _onUIAlterationRequest(const Payload::Alteration &type, const QList<QGraphicsItem*> &toAlter);
-        void _onUIUpdateRequest(const QHash<QGraphicsItem*, AtomUpdates> &toUpdate);
-        void _onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const AtomUpdates &updates);
+        void _onUIUpdateRequest(const QHash<QGraphicsItem*, RPZAtom::Updates> &toUpdate);
+        void _onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates);
 
         //network
         void _sendMapHistory();
@@ -100,7 +100,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         static inline constexpr int _defaultSceneSize = 36000;
         
         void _handleHintsSignalsAndSlots();
-        void _updateItemValue(QGraphicsItem* item, const AtomUpdates &updates);
+        void _updateItemValue(QGraphicsItem* item, const RPZAtom::Updates &updates);
 
         //selection...
         QTimer _selectionDebouncer;

@@ -22,102 +22,121 @@
 
 #include "src/shared/models/toy/RPZAsset.hpp"
 
-// defined values shared with ToysTreeViewItem type for static casts
-enum class RPZAtomType { 
-    Undefined, 
-    Drawing,
-    Text,
-    Object, 
-    Brush, 
-    NPC, 
-    Event, 
-    PC,
-    Background
-};
-inline uint qHash(const RPZAtomType &key, uint seed = 0) {return uint(key) ^ seed;}
-
-static const inline QHash<RPZAtomType, QString> atomTypeDescr {
-    { RPZAtomType::Drawing, QT_TRANSLATE_NOOP("QObject", "Drawing") },
-    { RPZAtomType::Text, QT_TRANSLATE_NOOP("QObject", "Text") },
-    { RPZAtomType::Object, QT_TRANSLATE_NOOP("QObject", "Object") },
-    { RPZAtomType::Brush, QT_TRANSLATE_NOOP("QObject", "Brush") },
-    { RPZAtomType::Undefined, QT_TRANSLATE_NOOP("QObject", "Atom") }
-};
-
-enum class BrushType { 
-    Stamp, 
-    Rectangle, 
-    Ovale,
-    RoundBrush,
-    Cutter, 
-    Scissors 
-};
-inline uint qHash(const BrushType &key, uint seed = 0) {return uint(key) ^ seed;}
-
-
-typedef snowflake_uid RPZAtomId;
-typedef int RPZAtomLayer;
-
 class RPZAtom : public Serializable {
 
     public:
+        //order is important for transform handling
+        enum class Parameter {
+            AssetHash,
+            AssetName,
+            BrushStyle,
+            BrushPenWidth,
+            Scale,
+            Rotation,
+            Text,
+            TextSize,
+            Layer,
+            PenWidth,
+            Hidden,
+            Locked,
+            Shape,
+            Position,
+            AssetRotation,
+            AssetScale,
+            ShapeCenter,
+            Description
+        };
+
         enum class Category {
             Unknown,
             Interactive,
             Layout
         };
+
+        enum class Type { 
+            Undefined, 
+            Drawing,
+            Text,
+            Object, 
+            Brush, 
+            NPC, 
+            Event, 
+            PC,
+            Background
+        };
+
+        enum class BrushType { 
+            Stamp, 
+            Rectangle, 
+            Ovale,
+            RoundBrush,
+            Cutter, 
+            Scissors 
+        };
+
+        typedef SnowFlake::Id Id;
+        typedef int Layer;
+        typedef QHash<RPZAtom::Parameter, QVariant> Updates;
+        typedef QHash<RPZAtom::Id, RPZAtom::Updates> ManyUpdates;
         
+        static const inline QHash<RPZAtom::Type, QString> iconPathByAtomType = {
+            { RPZAtom::Type::Event, QStringLiteral(u":/icons/app/manager/event.png") },
+            { RPZAtom::Type::NPC, QStringLiteral(u":/icons/app/manager/npc.png") },
+            { RPZAtom::Type::Drawing, QStringLiteral(u":/icons/app/tools/pen.png") },
+            { RPZAtom::Type::Text, QStringLiteral(u":/icons/app/tools/text.png") },
+        };
+
+        
+        //
+        //
+        //
+
+        static QVariantHash serializeUpdates(const RPZAtom::Updates &updates);
+        static RPZAtom::Updates unserializeUpdates(const QVariantHash &serializedUpdates);
+
+        static QVariant toSerialized(const RPZAtom::Parameter &param, const QVariant &unserialized);
+        static QVariant fromSerialized(const RPZAtom::Parameter &param, const QVariant &serialized);
+
+        //
+        //
+        //
+
         RPZAtom();
         explicit RPZAtom(const QVariantHash &hash);
-        RPZAtom(RPZAtomId id, const RPZAtomType &type);
-        RPZAtom(const RPZAtomType &type);
+        RPZAtom(RPZAtom::Id id, const RPZAtom::Type &type);
+        RPZAtom(const RPZAtom::Type &type);
 
-        RPZAtomType type() const;
-        void changeType(const RPZAtomType &type);
+        RPZAtom::Type type() const;
+        void changeType(const RPZAtom::Type &type);
 
-        static const QString atomTypeToText(const RPZAtomType &type);
-        static const QString toString(const RPZAtomType &type, const QString &assetName = QString());
+        static const QString atomTypeToText(const RPZAtom::Type &type);
+        static const QString toString(const RPZAtom::Type &type, const QString &assetName = QString());
         const QString toString() const;
 
-        static inline const QList<RPZAtomType> layoutAtom {
-            RPZAtomType::Drawing,
-            RPZAtomType::Text,
-            RPZAtomType::Object, 
-            RPZAtomType::Brush,
-            RPZAtomType::Background
-        };
-
-        static const inline QHash<RPZAtomType, QString> iconPathByAtomType = {
-            { RPZAtomType::Event, QStringLiteral(u":/icons/app/manager/event.png") },
-            { RPZAtomType::NPC, QStringLiteral(u":/icons/app/manager/npc.png") },
-            { RPZAtomType::Drawing, QStringLiteral(u":/icons/app/tools/pen.png") },
-            { RPZAtomType::Text, QStringLiteral(u":/icons/app/tools/text.png") },
-        };
-
         RPZAtom::Category category() const;
-        static RPZAtom::Category category(const RPZAtomType &type);
+        static RPZAtom::Category category(const RPZAtom::Type &type);
 
         //
         //
         //
 
-        static QVariant getDefaultValueForParam(const AtomParameter &param);
+        static QVariant getDefaultValueForParam(const RPZAtom::Parameter &param);
 
-        QVariant metadata(const AtomParameter &key) const;
-        void unsetMetadata(const AtomParameter &key);
-        void setMetadata(const AtomParameter &key, const QVariant &value);
-        void setMetadata(const AtomParameter &key, RPZAtom &base);
-        void setMetadata(const AtomUpdates &metadata);
+        QVariant metadata(const RPZAtom::Parameter &key) const;
+        void unsetMetadata(const RPZAtom::Parameter &key);
+        void setMetadata(const RPZAtom::Parameter &key, const QVariant &value);
+        void setMetadata(const RPZAtom::Parameter &key, RPZAtom &base);
+        void setMetadata(const RPZAtom::Updates &metadata);
 
-        QSet<AtomParameter> editedMetadata() const;
-        AtomUpdates editedMetadataWithValues() const;
-        QSet<AtomParameter> legalEditedMetadata() const;
-        QSet<AtomParameter> legalParameters() const;
+        QSet<RPZAtom::Parameter> editedMetadata() const;
+        RPZAtom::Updates editedMetadataWithValues() const;
+        QSet<RPZAtom::Parameter> legalEditedMetadata() const;
+        QSet<RPZAtom::Parameter> legalParameters() const;
         
-        QSet<AtomParameter> customizableParams() const;
-        static QSet<AtomParameter> customizableParams(const RPZAtomType &type);
+        QSet<RPZAtom::Parameter> customizableParams() const;
+        static QSet<RPZAtom::Parameter> customizableParams(const RPZAtom::Type &type);
 
-        RPZAssetHash assetHash() const;
+        RPZAsset::Hash assetHash() const;
         QString assetName() const;
         double scale() const;
         double rotation() const;
@@ -125,12 +144,12 @@ class RPZAtom : public Serializable {
         double assetRotation() const;
         QString text() const;
         int textSize() const;
-        RPZAtomLayer layer() const;
+        RPZAtom::Layer layer() const;
         QPointF pos() const;
         int penWidth() const;
         bool isHidden() const;
         bool isLocked() const;
-        BrushType brushType() const;
+        RPZAtom::BrushType brushType() const;
         int brushPenWidth() const;
         QPointF shapeCenter() const;
 
@@ -139,50 +158,69 @@ class RPZAtom : public Serializable {
         void setShape(const QRectF &rect);
 
     private:
-
-        static inline const QHash<AtomParameter, QString> _str = {
-            { AtomParameter::AssetHash, QStringLiteral(u"a_id") },
-            { AtomParameter::AssetName, QStringLiteral(u"a_name") },
-            { AtomParameter::Scale, QStringLiteral(u"scl") },
-            { AtomParameter::Rotation, QStringLiteral(u"deg") },
-            { AtomParameter::Text, QStringLiteral(u"txt") },
-            { AtomParameter::TextSize, QStringLiteral(u"txt_s") },
-            { AtomParameter::Layer, QStringLiteral(u"lyr") },
-            { AtomParameter::Position, QStringLiteral(u"pos") },
-            { AtomParameter::PenWidth, QStringLiteral(u"pen_w") },
-            { AtomParameter::Shape, QStringLiteral(u"shape") },
-            { AtomParameter::Hidden, QStringLiteral(u"hid") },
-            { AtomParameter::Locked, QStringLiteral(u"lck") },
-            { AtomParameter::AssetRotation, QStringLiteral(u"a_deg") },
-            { AtomParameter::AssetScale, QStringLiteral(u"a_scl") },
-            { AtomParameter::BrushStyle, QStringLiteral(u"brush_t") },
-            { AtomParameter::BrushPenWidth, QStringLiteral(u"brush_w") },
-            { AtomParameter::ShapeCenter, QStringLiteral(u"shape_c") }
+        static inline const QList<RPZAtom::Type> layoutAtom {
+            RPZAtom::Type::Drawing,
+            RPZAtom::Type::Text,
+            RPZAtom::Type::Object, 
+            RPZAtom::Type::Brush,
+            RPZAtom::Type::Background
         };
 
-        static inline const AtomUpdates _defaultVal = {
-            { AtomParameter::AssetHash, "" },
-            { AtomParameter::AssetName, "" },
-            { AtomParameter::Scale, 1.0 },
-            { AtomParameter::Rotation, 0.0 },
-            { AtomParameter::Text, "" },
-            { AtomParameter::TextSize, 10 },
-            { AtomParameter::Layer, 0 },
-            { AtomParameter::Position, QVariant() },
-            { AtomParameter::PenWidth, 1 },
-            { AtomParameter::Shape, QVariant() },
-            { AtomParameter::Hidden, false },
-            { AtomParameter::Locked, false },
-            { AtomParameter::AssetRotation, 0.0 },
-            { AtomParameter::AssetScale, 1.0 },
-            { AtomParameter::BrushStyle, 0 },
-            { AtomParameter::BrushPenWidth, 1 },
-            { AtomParameter::ShapeCenter, QVariant() }
+        static const inline QHash<RPZAtom::Type, QString> atomTypeDescr {
+            { RPZAtom::Type::Drawing, QT_TRANSLATE_NOOP("QObject", "Drawing") },
+            { RPZAtom::Type::Text, QT_TRANSLATE_NOOP("QObject", "Text") },
+            { RPZAtom::Type::Object, QT_TRANSLATE_NOOP("QObject", "Object") },
+            { RPZAtom::Type::Brush, QT_TRANSLATE_NOOP("QObject", "Brush") },
+            { RPZAtom::Type::Undefined, QT_TRANSLATE_NOOP("QObject", "Atom") }
         };
 
-        void _setType(const RPZAtomType &type);
+        static inline const QHash<RPZAtom::Parameter, QString> _str = {
+            { RPZAtom::Parameter::AssetHash, QStringLiteral(u"a_id") },
+            { RPZAtom::Parameter::AssetName, QStringLiteral(u"a_name") },
+            { RPZAtom::Parameter::Scale, QStringLiteral(u"scl") },
+            { RPZAtom::Parameter::Rotation, QStringLiteral(u"deg") },
+            { RPZAtom::Parameter::Text, QStringLiteral(u"txt") },
+            { RPZAtom::Parameter::TextSize, QStringLiteral(u"txt_s") },
+            { RPZAtom::Parameter::Layer, QStringLiteral(u"lyr") },
+            { RPZAtom::Parameter::Position, QStringLiteral(u"pos") },
+            { RPZAtom::Parameter::PenWidth, QStringLiteral(u"pen_w") },
+            { RPZAtom::Parameter::Shape, QStringLiteral(u"shape") },
+            { RPZAtom::Parameter::Hidden, QStringLiteral(u"hid") },
+            { RPZAtom::Parameter::Locked, QStringLiteral(u"lck") },
+            { RPZAtom::Parameter::AssetRotation, QStringLiteral(u"a_deg") },
+            { RPZAtom::Parameter::AssetScale, QStringLiteral(u"a_scl") },
+            { RPZAtom::Parameter::BrushStyle, QStringLiteral(u"brush_t") },
+            { RPZAtom::Parameter::BrushPenWidth, QStringLiteral(u"brush_w") },
+            { RPZAtom::Parameter::ShapeCenter, QStringLiteral(u"shape_c") }
+        };
+
+        static inline const RPZAtom::Updates _defaultVal = {
+            { RPZAtom::Parameter::AssetHash, "" },
+            { RPZAtom::Parameter::AssetName, "" },
+            { RPZAtom::Parameter::Scale, 1.0 },
+            { RPZAtom::Parameter::Rotation, 0.0 },
+            { RPZAtom::Parameter::Text, "" },
+            { RPZAtom::Parameter::TextSize, 10 },
+            { RPZAtom::Parameter::Layer, 0 },
+            { RPZAtom::Parameter::Position, QVariant() },
+            { RPZAtom::Parameter::PenWidth, 1 },
+            { RPZAtom::Parameter::Shape, QVariant() },
+            { RPZAtom::Parameter::Hidden, false },
+            { RPZAtom::Parameter::Locked, false },
+            { RPZAtom::Parameter::AssetRotation, 0.0 },
+            { RPZAtom::Parameter::AssetScale, 1.0 },
+            { RPZAtom::Parameter::BrushStyle, 0 },
+            { RPZAtom::Parameter::BrushPenWidth, 1 },
+            { RPZAtom::Parameter::ShapeCenter, QVariant() }
+        };
+
+        void _setType(const RPZAtom::Type &type);
+
 };
 inline uint qHash(const RPZAtom::Category &key, uint seed = 0) {return uint(key) ^ seed;}
+inline uint qHash(const RPZAtom::Type &key, uint seed = 0) {return uint(key) ^ seed;}
+inline uint qHash(const RPZAtom::BrushType &key, uint seed = 0) {return uint(key) ^ seed;}
+inline uint qHash(const RPZAtom::Parameter &key, uint seed = 0) {return uint(key) ^ seed;}
 
 Q_DECLARE_METATYPE(RPZAtom*)
 Q_DECLARE_METATYPE(RPZAtom)

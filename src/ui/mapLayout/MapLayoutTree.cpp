@@ -137,6 +137,6 @@ void MapLayoutTree::contextMenuEvent(QContextMenuEvent *event) {
 
 }
 
-const QVector<RPZAtomId> MapLayoutTree::selectedIds() const {
+const QVector<RPZAtom::Id> MapLayoutTree::selectedIds() const {
     return MapLayoutModel::fromIndexes(this->selectedIndexes());
 }

@@ -11,9 +11,9 @@ class AtomsWielderPayload : public AlterationPayload {
     public:
         AtomsWielderPayload() {}
 
-        const QSet<RPZAssetHash> assetHashes() const {
+        const QSet<RPZAsset::Hash> assetHashes() const {
             
-            QSet<RPZAssetHash> out;
+            QSet<RPZAsset::Hash> out;
 
             auto hashes = this->value(QStringLiteral(u"assets")).toList();
 
@@ -67,7 +67,7 @@ class AtomsWielderPayload : public AlterationPayload {
                 
             }
 
-            void _setAssetHashes(const QSet<RPZAssetHash> &hashes) {
+            void _setAssetHashes(const QSet<RPZAsset::Hash> &hashes) {
                 
                 QVariantList vList;
                 

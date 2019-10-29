@@ -14,7 +14,7 @@ MapLayoutCategory::MapLayoutCategory(const RPZAtom::Category &category, int sort
         break;
 
         case RPZAtom::Category::Interactive: {
-            auto type = (RPZAtomType)sorter;
+            auto type = (RPZAtom::Type)sorter;
             this->_name = RPZAtom::toString(type);
             this->_pixmap = QPixmap(RPZAtom::iconPathByAtomType.value(type));
         }
@@ -26,12 +26,12 @@ const int MapLayoutCategory::rowOfAtom(MapLayoutAtom* atom) const {
     return this->_atoms.indexOf(atom);
 }
 
-void MapLayoutCategory::updateSorter(RPZAtomLayer newLayer) {
+void MapLayoutCategory::updateSorter(RPZAtom::Layer newLayer) {
     this->_sorter = newLayer;
     this->_updateLayerName(newLayer);
 }
 
-void MapLayoutCategory::_updateLayerName(RPZAtomLayer newLayer) {
+void MapLayoutCategory::_updateLayerName(RPZAtom::Layer newLayer) {
     this->_name = QObject::tr("Layer %1").arg(newLayer);
 }
 
