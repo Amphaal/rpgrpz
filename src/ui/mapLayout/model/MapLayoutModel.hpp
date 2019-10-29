@@ -50,8 +50,10 @@ class MapLayoutModel : public MapLayoutModelBase {
                 if(type == Payload::Alteration::Reset) {
                     
                     this->beginResetModel();
-
                         this->_clearAll();
+                    this->endResetModel();
+
+                    this->beginResetModel();
 
                         for (auto &atom : mPayload->atoms()) {
                             this->_createAtom(atom, false);

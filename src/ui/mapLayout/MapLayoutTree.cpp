@@ -62,13 +62,18 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
         this->_model, &QAbstractItemModel::modelReset,
         [=]() {
             this->expandAll();
+            this->sortByColumn(0, Qt::SortOrder::DescendingOrder);
         }
     );
 
     QObject::connect(
         this->_model, &QAbstractItemModel::rowsInserted,
         [=](const QModelIndex &parent, int first, int last) {
-            if(parent.isValid()) this->expand(parent);
+            if(parent.isValid()) {
+                this->expand(parent);
+                this->sortByColumn(0, Qt::SortOrder::DescendingOrder);
+            }
+            
         }
     );
 
@@ -116,10 +121,8 @@ void MapLayoutTree::_handleAlterationRequest(const AlterationPayload &payload) {
         }
         break;
 
-        case Payload::Alteration::Reset:
-        case Payload::Alteration::Added: {
-            this->sortByColumn(0, Qt::SortOrder::DescendingOrder);
-        }
+        default:
+        break;
 
     }
 

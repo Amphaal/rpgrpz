@@ -67,8 +67,13 @@ class MapLayoutModelBase : public QAbstractItemModel {
             
             //if parent is not valid (eg Root), requires a category
             if(!parent.isValid()) {
+
+                //if category is null, means nothing has been loaded
                 auto category = this->_getCategory(row);
+                if(!category) return QModelIndex();
+
                 return this->createIndex(row, column, category);
+
             }
 
             auto base = MapLayoutItem::fromIndex(parent);
@@ -321,6 +326,8 @@ class MapLayoutModelBase : public QAbstractItemModel {
         }
 
         void _clearAll() {
+            
+            if(!this->_atomsByAtomId.count()) return;
 
             qDeleteAll(this->_atomsByAtomId);
             this->_atomsByAtomId.clear();    
