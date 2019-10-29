@@ -37,18 +37,14 @@ const QString RPZAtom::toString() const {
 }
 
 const QString RPZAtom::atomTypeToText(const RPZAtomType &type) {
-    switch(type) {
-        case RPZAtomType::Drawing:
-            return QObject::tr("Drawing");
-        case RPZAtomType::Text:
-            return QObject::tr("Text");
-        case RPZAtomType::Object:
-            return QObject::tr("Object");
-        case RPZAtomType::Brush:
-            return QObject::tr("Brush");
-        default:
-            return QObject::tr("Atom");
-    }
+    
+    auto descr = atomTypeDescr.value(
+        type, 
+        atomTypeDescr.value(RPZAtomType::Undefined)
+    );
+
+    return QObject::tr(qUtf8Printable(descr));
+
 }
 
 QVariant RPZAtom::getDefaultValueForParam(const AtomParameter &param) {

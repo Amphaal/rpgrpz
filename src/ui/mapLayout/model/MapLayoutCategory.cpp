@@ -60,14 +60,7 @@ const int MapLayoutCategory::atomsCount() const {
 }
 
 MapLayoutAtom* MapLayoutCategory::atom(int row) const {
-    auto internal = -1;
-    
-    for(auto atom : this->_atoms) {
-        internal++;
-        if(internal == row) return atom;
-    }
-
-    return nullptr;
+    return this->_atoms.at(row);
 }
 
 const QString MapLayoutCategory::name() const {

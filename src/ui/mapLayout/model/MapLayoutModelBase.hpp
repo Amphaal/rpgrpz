@@ -67,17 +67,23 @@ class MapLayoutModelBase : public QAbstractItemModel {
             
             //if parent is not valid (eg Root), requires a category
             if(!parent.isValid()) {
-                return this->createIndex(row, column, this->_getCategory(row));
+                auto category = this->_getCategory(row);
+                return this->createIndex(row, column, category);
             }
 
             auto base = MapLayoutItem::fromIndex(parent);
-            if(!base) return QModelIndex();
+            if(!base) {
+                qDebug() << "shouldnt";
+                return QModelIndex();
+            }
             
-            //category
+            //category, requires atom
             if(auto category = dynamic_cast<MapLayoutCategory*>(base)) {
-                return this->createIndex(row, column, category->atom(row));
+                auto atom = category->atom(row);
+                return this->createIndex(row, column, atom);
             } 
 
+            qDebug() << "shouldnt";
             return QModelIndex();
     
         }
@@ -88,7 +94,10 @@ class MapLayoutModelBase : public QAbstractItemModel {
             if(!child.isValid()) return QModelIndex();
 
             auto base = MapLayoutItem::fromIndex(child);
-            if(!base) return QModelIndex();
+            if(!base) {
+                qDebug() << "shouldnt";
+                return QModelIndex();
+            }
             
             //category, root is parent
             if(auto category = dynamic_cast<MapLayoutCategory*>(base)) {
@@ -101,6 +110,7 @@ class MapLayoutModelBase : public QAbstractItemModel {
                 return this->createIndex(this->_getRow(category), 0, category);
             }
 
+            qDebug() << "shouldnt";
             return QModelIndex();
 
         }
@@ -111,16 +121,16 @@ class MapLayoutModelBase : public QAbstractItemModel {
             if(!parent.isValid()) {
                 return this->countCategories();
             }
-
-            //from category, count atoms
-            else {
-                
-                auto category = MapLayoutCategory::fromIndex(parent);
-                if(!category) return 0;
-
-                return category->atomsCount();
-
+            
+            //else, can only be atom count
+            auto category = MapLayoutCategory::fromIndex(parent);
+            if(!category) {
+                qDebug() << "shouldnt";
+                return 0;
             }
+
+            return category->atomsCount();
+
 
         }
 
@@ -293,7 +303,8 @@ class MapLayoutModelBase : public QAbstractItemModel {
                 }
 
                 auto sorter = categoryItems.keys().at(row);
-                return categoryItems.value(sorter);
+                auto ptr = categoryItems.value(sorter);
+                return ptr;
 
             }
 
@@ -345,6 +356,38 @@ class MapLayoutModelBase : public QAbstractItemModel {
             return -1;
         }
 
+        //anticipate row
+        int _getRow(const RPZAtom::Category &category, const int &sorter) const {
+            
+            auto row = 0;
+
+            for(auto i = this->_categories.begin(); i != this->_categories.end(); i++) {
+                
+                auto &map = i.value();
+
+                //if not yet the searched category
+                if(i.key() != category) {
+                    row += i.value().count();
+                    continue;
+                }
+
+                //search for lower bound
+                auto lb = map.lowerBound(sorter);
+                
+                //if cannot be found, return current row
+                if(lb == map.constEnd()) return row;
+                
+                //add index of lower bound  
+                auto lbIndex = map.keys().indexOf(lb.key());
+                return row + lbIndex + 1;
+               
+            }
+            
+            
+            return row;
+
+        }
+
         QModelIndex _mayCreateCategory(const RPZAtom &atom) {
             
             QModelIndex out;
@@ -372,11 +415,13 @@ class MapLayoutModelBase : public QAbstractItemModel {
             auto categoryItem = this->_categories[category].value(sorter);
                 
             if(!categoryItem) {
-                categoryItem = new MapLayoutCategory(category, sorter);
-                this->_categories[category].insert(sorter, categoryItem);
-
-                begin = this->_getRow(categoryItem);
+                
+                begin = this->_getRow(category, sorter);
                 this->beginInsertRows(QModelIndex(), begin, begin);
+
+                    categoryItem = new MapLayoutCategory(category, sorter);
+                    this->_categories[category].insert(sorter, categoryItem);
+   
                 this->endInsertRows();
 
                 if(created) *created = true;

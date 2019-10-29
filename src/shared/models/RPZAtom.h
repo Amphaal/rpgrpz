@@ -36,6 +36,14 @@ enum class RPZAtomType {
 };
 inline uint qHash(const RPZAtomType &key, uint seed = 0) {return uint(key) ^ seed;}
 
+static const inline QHash<RPZAtomType, QString> atomTypeDescr {
+    { RPZAtomType::Drawing, QT_TRANSLATE_NOOP("QObject", "Drawing") },
+    { RPZAtomType::Text, QT_TRANSLATE_NOOP("QObject", "Text") },
+    { RPZAtomType::Object, QT_TRANSLATE_NOOP("QObject", "Object") },
+    { RPZAtomType::Brush, QT_TRANSLATE_NOOP("QObject", "Brush") },
+    { RPZAtomType::Undefined, QT_TRANSLATE_NOOP("QObject", "Atom") }
+};
+
 enum class BrushType { 
     Stamp, 
     Rectangle, 
@@ -51,7 +59,7 @@ typedef snowflake_uid RPZAtomId;
 typedef int RPZAtomLayer;
 
 class RPZAtom : public Serializable {
-    
+
     public:
         enum class Category {
             Unknown,
@@ -131,6 +139,7 @@ class RPZAtom : public Serializable {
         void setShape(const QRectF &rect);
 
     private:
+
         static inline const QHash<AtomParameter, QString> _str = {
             { AtomParameter::AssetHash, QStringLiteral(u"a_id") },
             { AtomParameter::AssetName, QStringLiteral(u"a_name") },

@@ -764,21 +764,6 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../shared/models/RPZAtom.cpp" line="42"/>
-        <source>Drawing</source>
-        <translation>Dessin</translation>
-    </message>
-    <message>
-        <location filename="../shared/models/RPZAtom.cpp" line="44"/>
-        <source>Text</source>
-        <translation>Texte</translation>
-    </message>
-    <message>
-        <location filename="../shared/models/RPZAtom.cpp" line="48"/>
-        <source>Brush</source>
-        <translation>Terrains</translation>
-    </message>
-    <message>
         <location filename="../shared/commands/MessageInterpreter.cpp" line="116"/>
         <source>Server %1 :
 </source>
@@ -963,16 +948,6 @@
         <translation>Nouvel Inventaire</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.cpp" line="46"/>
-        <source>Object</source>
-        <translation>Objet</translation>
-    </message>
-    <message>
-        <location filename="../shared/models/RPZAtom.cpp" line="50"/>
-        <source>Atom</source>
-        <translation>Atome</translation>
-    </message>
-    <message>
         <location filename="../shared/models/messaging/RPZMessage.cpp" line="30"/>
         <source> said : </source>
         <translation> a dit : </translation>
@@ -1025,7 +1000,32 @@
     <message>
         <location filename="../ui/mapLayout/model/MapLayoutCategory.cpp" line="35"/>
         <source>Layer %1</source>
-        <translation type="unfinished">Calque %1</translation>
+        <translation>Calque %1</translation>
+    </message>
+    <message>
+        <location filename="../shared/models/RPZAtom.h" line="40"/>
+        <source>Drawing</source>
+        <translation>Dessin</translation>
+    </message>
+    <message>
+        <location filename="../shared/models/RPZAtom.h" line="41"/>
+        <source>Text</source>
+        <translation>Texte</translation>
+    </message>
+    <message>
+        <location filename="../shared/models/RPZAtom.h" line="42"/>
+        <source>Object</source>
+        <translation>Objet</translation>
+    </message>
+    <message>
+        <location filename="../shared/models/RPZAtom.h" line="43"/>
+        <source>Brush</source>
+        <translation>Terrains</translation>
+    </message>
+    <message>
+        <location filename="../shared/models/RPZAtom.h" line="44"/>
+        <source>Atom</source>
+        <translation>Atome</translation>
     </message>
 </context>
 <context>
@@ -1222,13 +1222,6 @@
         <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="199"/>
         <source>Landscapes</source>
         <translation>Paysages</translation>
-    </message>
-</context>
-<context>
-    <name>TreeMapHint</name>
-    <message>
-        <source>Layer %1</source>
-        <translation type="vanished">Calque %1</translation>
     </message>
 </context>
 <context>
