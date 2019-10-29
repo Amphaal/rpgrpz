@@ -74,23 +74,7 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
 
 }
 
-void MapLayoutTree::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) {
-
-    //TODO fix double trigger on focus out / focus in select (comes from selection model clearing...)
-
-    QTreeView::selectionChanged(selected, deselected);
-
-    //clear focus if empty
-    auto selectedIndexes = selected.indexes();
-
-    this->_model->propagateSelection(selectedIndexes);
-    
-}
-
 void MapLayoutTree::_handleAlterationRequest(const AlterationPayload &payload) {
-
-    QSignalBlocker b1(this);
-    QSignalBlocker b2(this->selectionModel());
      
     auto pl = Payloads::autoCast(payload); 
     auto type = pl->type();
