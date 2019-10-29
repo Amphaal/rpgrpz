@@ -9,8 +9,8 @@ const RPZMap<RPZCharacter>& CharactersDatabase::characters() const {
     return this->_characters;
 }
 
-const RPZCharacter& CharactersDatabase::character(snowflake_uid characterId) {
-    return this->_characters[characterId];
+const RPZCharacter CharactersDatabase::character(snowflake_uid characterId) const {
+    return this->_characters.value(characterId);
 }
 
 RPZCharacter CharactersDatabase::addNewCharacter() {
