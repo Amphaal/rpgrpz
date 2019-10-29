@@ -59,7 +59,6 @@ class RPZAtom : public Serializable {
             Layout
         };
         
-        
         RPZAtom();
         explicit RPZAtom(const QVariantHash &hash);
         RPZAtom(RPZAtomId id, const RPZAtomType &type);
@@ -81,13 +80,10 @@ class RPZAtom : public Serializable {
         };
 
         static const inline QHash<RPZAtomType, QString> iconPathByAtomType = {
-            { RPZAtomType::Event, ":/icons/app/manager/event.png" },
-            { RPZAtomType::NPC, ":/icons/app/manager/npc.png" },
-            { RPZAtomType::Object, ":/icons/app/manager/asset.png" },
-            { RPZAtomType::Brush, ":/icons/app/manager/brushes.png" },
-            { RPZAtomType::Drawing, ":/icons/app/tools/pen.png" },
-            { RPZAtomType::Text, ":/icons/app/tools/text.png" },
-            { RPZAtomType::Background, ":/icons/app/manager/background.png" }
+            { RPZAtomType::Event, QStringLiteral(u":/icons/app/manager/event.png") },
+            { RPZAtomType::NPC, QStringLiteral(u":/icons/app/manager/npc.png") },
+            { RPZAtomType::Drawing, QStringLiteral(u":/icons/app/tools/pen.png") },
+            { RPZAtomType::Text, QStringLiteral(u":/icons/app/tools/text.png") },
         };
 
         RPZAtom::Category category() const;

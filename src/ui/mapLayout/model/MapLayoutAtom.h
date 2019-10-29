@@ -28,7 +28,7 @@ class MapLayoutAtom : public MapLayoutItem {
 
         const QString name() const override;
 
-        void setName(const QString assetName);
+        void setName(const QString assetName = QString());
 
         const QPixmap icon() const override;
 

@@ -177,14 +177,14 @@ class ToysTreeViewItem : private QObject {
         static const inline QHash<ToysTreeViewItem::Type, QString> _iconPathByElementType = {
             { ToysTreeViewItem::Type::Event, RPZAtom::iconPathByAtomType.value(RPZAtomType::Event) },
             { ToysTreeViewItem::Type::NPC_Container, RPZAtom::iconPathByAtomType.value(RPZAtomType::NPC) },
-            { ToysTreeViewItem::Type::ObjectContainer, RPZAtom::iconPathByAtomType.value(RPZAtomType::Object) },
-            { ToysTreeViewItem::Type::FloorBrushContainer, RPZAtom::iconPathByAtomType.value(RPZAtomType::Brush) },
+            { ToysTreeViewItem::Type::ObjectContainer, QStringLiteral(u":/icons/app/manager/asset.png") },
+            { ToysTreeViewItem::Type::FloorBrushContainer, QStringLiteral(u":/icons/app/manager/brushes.png") },
             { ToysTreeViewItem::Type::FreeDraw, RPZAtom::iconPathByAtomType.value(RPZAtomType::Drawing) },
             { ToysTreeViewItem::Type::Text, RPZAtom::iconPathByAtomType.value(RPZAtomType::Text) },
-            { ToysTreeViewItem::Type::Folder, ":/icons/app/manager/folder.png" }, 
-            { ToysTreeViewItem::Type::InternalContainer, ":/icons/app/manager/internal.png" },
-            { ToysTreeViewItem::Type::DownloadedContainer, ":/icons/app/manager/downloaded.png" },
-            { ToysTreeViewItem::Type::BackgroundContainer, RPZAtom::iconPathByAtomType.value(RPZAtomType::Background) }
+            { ToysTreeViewItem::Type::Folder, QStringLiteral(u":/icons/app/manager/folder.png") }, 
+            { ToysTreeViewItem::Type::InternalContainer, QStringLiteral(u":/icons/app/manager/internal.png") },
+            { ToysTreeViewItem::Type::DownloadedContainer, QStringLiteral(u":/icons/app/manager/downloaded.png") },
+            { ToysTreeViewItem::Type::BackgroundContainer, QStringLiteral(u":/icons/app/manager/background.png") }
         };
 
         static const inline QHash<ToysTreeViewItem::Type, QString> _typeDescriptions = {

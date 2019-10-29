@@ -3,9 +3,15 @@
 
 MapLayoutAtom::MapLayoutAtom(MapLayoutCategory* parent, const RPZAtom &atom) {
     
-    this->_assetHash = atom.assetHash();
     this->_id = atom.id();
     this->_type = atom.type();
+    this->_assetHash = atom.assetHash();
+    
+    //if no hash associated, force descr
+    if(this->_assetHash.isEmpty()) {
+        this->setName();
+    }
+
     this->updateFrom(atom.editedMetadataWithValues());
 
     this->setParent(parent);
@@ -93,6 +99,8 @@ void MapLayoutAtom::setName(const QString assetName) {
     );
 }
 
-const QPixmap MapLayoutAtom::icon() const { return QPixmap(); }
+const QPixmap MapLayoutAtom::icon() const { 
+    return QPixmap(RPZAtom::iconPathByAtomType.value(this->_type)); 
+}
 
 
