@@ -61,10 +61,10 @@ class ToysTreeViewItem : private QObject {
         const RPZAsset assetCopy() const;
                 
         bool isContainer() const;
-        bool isInternal() const;
         bool isRoot() const;
-        bool isIdentifiable() const;
+        bool isAssetBased() const;
         bool isDeletable() const;
+        bool isInvokable() const;
 
         ToysTreeViewItem* ancestor();
         int row() const;
@@ -115,10 +115,10 @@ class ToysTreeViewItem : private QObject {
         Qt::ItemFlags _flags = 0;
         int _toySubItemCount = 0;
 
+        bool _isInvokable = false;
         bool _isContainer = false;
-        bool _isInternal = false;
         bool _isRoot = false;
-        bool _isIdentifiable = false;
+        bool _isAssetBased = false;
         bool _isStaticContainer = false;
         bool _isDeletable = false;
 
@@ -131,11 +131,11 @@ class ToysTreeViewItem : private QObject {
         void _defineRootStaticContainer();
     
         void _defineIsContainer();
-        void _defineIsInternal();
         void _defineIsRoot();
-        void _defineIsIdentifiable();
+        void _defineIsAssetBased();
         void _defineIsStaticContainer();
         void _defineIsDeletable();
+        void _defineIsInvokable();
         
         void _setType(const ToysTreeViewItem::Type &type);
         static void _resetSubjacentItemsType(const ToysTreeViewItem::Type &replacingType, ToysTreeViewItem* target); //recursive
@@ -143,6 +143,11 @@ class ToysTreeViewItem : private QObject {
         ///
         ///
         //
+
+        static const inline QList<ToysTreeViewItem::Type> _movableStaticContainerTypes = {
+            ToysTreeViewItem::Type::FloorBrushContainer, 
+            ToysTreeViewItem::Type::ObjectContainer
+        };
 
         static const inline QList<ToysTreeViewItem::Type> _staticContainerTypes = {
             ToysTreeViewItem::Type::InternalContainer,
@@ -153,18 +158,15 @@ class ToysTreeViewItem : private QObject {
             ToysTreeViewItem::Type::DownloadedContainer
         };
 
-        static const inline QList<ToysTreeViewItem::Type> _movableStaticContainerTypes = {
-            ToysTreeViewItem::Type::FloorBrushContainer, 
-            ToysTreeViewItem::Type::ObjectContainer
+        static const inline QHash<ToysTreeViewItem::Type, ToysTreeViewItem::Type> _elemTypeByContainerType {
+            { ToysTreeViewItem::Type::NPC_Container, ToysTreeViewItem::Type::NPC },
+            { ToysTreeViewItem::Type::FloorBrushContainer, ToysTreeViewItem::Type::FloorBrush },
+            { ToysTreeViewItem::Type::ObjectContainer, ToysTreeViewItem::Type::Object }, 
+            { ToysTreeViewItem::Type::DownloadedContainer, ToysTreeViewItem::Type::Downloaded },
+            { ToysTreeViewItem::Type::BackgroundContainer, ToysTreeViewItem::Type::Background }
         };
 
-        static const inline QList<ToysTreeViewItem::Type> _itemTypes = {
-            ToysTreeViewItem::Type::NPC, 
-            ToysTreeViewItem::Type::FloorBrush,
-            ToysTreeViewItem::Type::Object,
-            ToysTreeViewItem::Type::Downloaded,
-            ToysTreeViewItem::Type::Background
-        };
+        static const inline QList<ToysTreeViewItem::Type> _assetBasedTypes = _elemTypeByContainerType.values();
 
         static const inline QList<ToysTreeViewItem::Type> _internalItemsTypes = {
             ToysTreeViewItem::Type::Event,

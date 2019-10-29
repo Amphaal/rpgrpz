@@ -47,9 +47,10 @@ void ToysTreeViewItem::_setType(const ToysTreeViewItem::Type &type) {
     this->_defineFlags();
     this->_defineIsContainer();
     this->_defineIsRoot();
-    this->_defineIsIdentifiable();
+    this->_defineIsAssetBased();
     this->_defineIsStaticContainer();
     this->_defineIsDeletable();
+    this->_defineIsInvokable();
     
 }
 
@@ -68,6 +69,10 @@ const RPZAsset ToysTreeViewItem::assetCopy() const {
 
 const Qt::ItemFlags ToysTreeViewItem::flags() const {
     return this->_flags;
+}
+
+bool ToysTreeViewItem::isInvokable() const {
+    return this->_isInvokable;
 }
 
 const QString ToysTreeViewItem::displayName() const {
@@ -98,16 +103,12 @@ bool ToysTreeViewItem::isContainer() const {
     return this->_isContainer;
 }
 
-bool ToysTreeViewItem::isInternal() const {
-    return this->_isInternal;
-}
-
 bool ToysTreeViewItem::isRoot() const {
     return this->_isRoot;
 }
 
-bool ToysTreeViewItem::isIdentifiable() const {
-    return this->_isIdentifiable;
+bool ToysTreeViewItem::isAssetBased() const {
+    return this->_isAssetBased;
 }
 
 bool ToysTreeViewItem::isDeletable() const {
@@ -298,7 +299,7 @@ void ToysTreeViewItem::_definePath() {
 
     //generate path
     QString path;
-    if(this->isContainer()) {
+    if(this->_isContainer) {
         
         //if is static, dont use name
         if(this->_isStaticContainer) {      
@@ -324,9 +325,9 @@ void ToysTreeViewItem::_definePath() {
 }
 
 void ToysTreeViewItem::_defineFullPath() {
-    this->_fullPath = this->isIdentifiable() ? 
-                            this->path() + "/" + this->_name : 
-                            this->path();
+    this->_fullPath = this->_isAssetBased ? 
+                            this->_path + "/" + this->_name : 
+                            this->_path;
 }
 
 
@@ -335,14 +336,22 @@ void ToysTreeViewItem::_defineIconPath() {
 }
 
 void ToysTreeViewItem::_resetSubjacentItemsType(const ToysTreeViewItem::Type &replacingType, ToysTreeViewItem* target) {
+    
     //update subItems
     for(auto elem : target->_subItems) {
+        
+        //continue recursive
         if(elem->isContainer()) {
             ToysTreeViewItem::_resetSubjacentItemsType(replacingType, elem);
-        } else if(elem->isIdentifiable()) {
+        } 
+        
+        //stop and set new type
+        else if(elem->isAssetBased()) {
             elem->_setType(replacingType);
         }
+
     }
+
 }
 
 void ToysTreeViewItem::_defineAncestor(ToysTreeViewItem* ancestor) {
@@ -356,7 +365,7 @@ void ToysTreeViewItem::_defineAncestor(ToysTreeViewItem* ancestor) {
         if(this->insertType() != replacingType) {
 
             //update self
-            if(this->isIdentifiable()) {
+            if(this->_isAssetBased) {
                 this->_setType(replacingType);
             }
 
@@ -371,29 +380,30 @@ void ToysTreeViewItem::_defineAncestor(ToysTreeViewItem* ancestor) {
     //paths-related redefinitions
     this->_definePath();
     this->_defineRootStaticContainer();
-    this->_defineIsInternal();
     this->_defineInsertType();
 }
 
 void ToysTreeViewItem::_defineIsContainer() {
     this->_isContainer = this->_staticContainerTypes.contains(this->_type) || this->_type == ToysTreeViewItem::Type::Folder;
 }
-void ToysTreeViewItem::_defineIsInternal() {
-    this->_isInternal = this->rootStaticContainer() == ToysTreeViewItem::Type::InternalContainer;
-}
 void ToysTreeViewItem::_defineIsRoot() {
     this->_isRoot = this->_type == ToysTreeViewItem::Type::Root;
 }
-void ToysTreeViewItem::_defineIsIdentifiable() {
-    this->_isIdentifiable = this->_itemTypes.contains(this->_type);
+void ToysTreeViewItem::_defineIsAssetBased() {
+    this->_isAssetBased = this->_assetBasedTypes.contains(this->_type);
 }
 void ToysTreeViewItem::_defineIsStaticContainer() {
     this->_isStaticContainer = this->_staticContainerTypes.contains(this->_type);
 }
 void ToysTreeViewItem::_defineIsDeletable() {
-    this->_isDeletable = this->_itemTypes.contains(this->_type) || this->_type == ToysTreeViewItem::Type::Folder;
+    this->_isDeletable = this->_assetBasedTypes.contains(this->_type) || this->_type == ToysTreeViewItem::Type::Folder;
 }
 
+void ToysTreeViewItem::_defineIsInvokable() {
+    this->_isInvokable = this->_type != ToysTreeViewItem::Type::Folder && (
+        _assetBasedTypes.contains(this->_type) || _internalItemsTypes.contains(this->_type)
+    );
+}
 
 void ToysTreeViewItem::_defineRootStaticContainer() {
      
@@ -417,26 +427,12 @@ void ToysTreeViewItem::_defineRootStaticContainer() {
 
 
 void ToysTreeViewItem::_defineInsertType() {
-    switch(this->rootStaticContainer()) {
-        case ToysTreeViewItem::Type::NPC_Container:
-            this->_insertType = ToysTreeViewItem::Type::NPC;
-            break;
-        case ToysTreeViewItem::Type::FloorBrushContainer:
-            this->_insertType = ToysTreeViewItem::Type::FloorBrush;
-            break;
-        case ToysTreeViewItem::Type::ObjectContainer:
-            this->_insertType = ToysTreeViewItem::Type::Object;
-            break;
-        case ToysTreeViewItem::Type::DownloadedContainer:
-            this->_insertType = ToysTreeViewItem::Type::Downloaded;
-            break;
-        case ToysTreeViewItem::Type::BackgroundContainer:
-            this->_insertType = ToysTreeViewItem::Type::Background;
-            break;
-        default:
-            this->_insertType = ToysTreeViewItem::Type::T_Unknown;
-            break;
-    }
+
+    this->_insertType = _elemTypeByContainerType.value(
+        this->_rootStaticContainerType, 
+        ToysTreeViewItem::Type::T_Unknown
+    );
+
 }
 
 //////////////////
