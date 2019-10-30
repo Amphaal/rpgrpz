@@ -998,7 +998,7 @@
         <translation>Dossier</translation>
     </message>
     <message>
-        <location filename="../ui/mapLayout/model/MapLayoutCategory.cpp" line="35"/>
+        <location filename="../ui/mapLayout/model/MapLayoutCategory.cpp" line="39"/>
         <source>Layer %1</source>
         <translation>Calque %1</translation>
     </message>

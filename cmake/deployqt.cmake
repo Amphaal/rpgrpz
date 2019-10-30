@@ -46,13 +46,18 @@ function(deployqt target)
     if(APPLE)
 
         #use debug libs
-
+        if(DEPLOYQT_TARGET STREQUAL "debug")
+            #set(ENV{DYLD_IMAGE_SUFFIX} "_debug")
+            SET(QT_DEPLOY_MUST_BE_DEBUG "-use-debug-libs")
+        endif()
+        
 
         add_custom_command(TARGET ${target} POST_BUILD
             COMMAND "${CMAKE_COMMAND}" -E
                  env "${DEPLOYQT_EXECUTABLE}"
                     \"$<TARGET_FILE:${target}>/../../../\"
                     -verbose=1
+                    ${QT_DEPLOY_MUST_BE_DEBUG}
         )
 
     endif()

@@ -48,7 +48,11 @@
             "request": "launch",
             "osx": {
                 "program": "${workspaceFolder}/build/Debug/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ",
-                "MIMode": "lldb"
+                "MIMode": "lldb",
+                "environment": [{
+                        "name" :"DYLD_IMAGE_SUFFIX",
+                        "value": "_debug"
+                }]
             },
             "windows": {
                 "type": "cppvsdbg"

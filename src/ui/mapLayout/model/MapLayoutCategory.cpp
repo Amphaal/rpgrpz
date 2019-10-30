@@ -19,6 +19,10 @@ MapLayoutCategory::MapLayoutCategory(const RPZAtom::Category &category, int sort
             this->_pixmap = QPixmap(RPZAtom::iconPathByAtomType.value(type));
         }
         break;
+
+        default:
+        break;
+
     }
 }
 

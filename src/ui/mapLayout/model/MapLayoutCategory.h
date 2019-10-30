@@ -20,7 +20,7 @@ class MapLayoutCategory : public MapLayoutItem {
 
         void updateSorter(RPZAtom::Layer newLayer);
 
-        const int MapLayoutCategory::atomsCount() const;
+        const int atomsCount() const;
 
         MapLayoutAtom* atom(int row) const;
 

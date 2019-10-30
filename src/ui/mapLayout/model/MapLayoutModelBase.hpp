@@ -410,6 +410,9 @@ class MapLayoutModelBase : public QAbstractItemModel {
                     out = this->_mayCreateCategory(category, (int)atom.type());
                 }
                 break;
+
+                default:
+                break;
             }
 
             return out;

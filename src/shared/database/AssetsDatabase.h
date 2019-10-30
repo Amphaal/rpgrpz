@@ -17,7 +17,7 @@ class AssetsDatabase : public QObject, public JSONDatabase {
     Q_OBJECT
 
     public:
-        typedef QString AssetsDatabase::FolderPath; //internal DB arborescence path (only containers)
+        typedef QString FolderPath; //internal DB arborescence path (only containers)
 
         enum class StorageContainer {
             NPC = 301,
