@@ -62,7 +62,6 @@ class ToysTreeViewItem : private QObject {
                 
         bool isContainer() const;
         bool isRoot() const;
-        bool isAssetBased() const;
         bool isDeletable() const;
         bool isInvokable() const;
 
@@ -118,7 +117,6 @@ class ToysTreeViewItem : private QObject {
         bool _isInvokable = false;
         bool _isContainer = false;
         bool _isRoot = false;
-        bool _isAssetBased = false;
         bool _isStaticContainer = false;
         bool _isDeletable = false;
 
@@ -132,10 +130,11 @@ class ToysTreeViewItem : private QObject {
     
         void _defineIsContainer();
         void _defineIsRoot();
-        void _defineIsAssetBased();
         void _defineIsStaticContainer();
         void _defineIsDeletable();
         void _defineIsInvokable();
+        
+        bool _isAssetBased();
         
         void _setType(const ToysTreeViewItem::Type &type);
         static void _resetSubjacentItemsType(const ToysTreeViewItem::Type &replacingType, ToysTreeViewItem* target); //recursive
@@ -166,8 +165,6 @@ class ToysTreeViewItem : private QObject {
             { ToysTreeViewItem::Type::BackgroundContainer, ToysTreeViewItem::Type::Background }
         };
 
-        static const inline QList<ToysTreeViewItem::Type> _assetBasedTypes = _elemTypeByContainerType.values();
-
         static const inline QList<ToysTreeViewItem::Type> _internalItemsTypes = {
             ToysTreeViewItem::Type::Event,
             ToysTreeViewItem::Type::FreeDraw,
@@ -188,15 +185,15 @@ class ToysTreeViewItem : private QObject {
         };
 
         static const inline QHash<ToysTreeViewItem::Type, QString> _typeDescriptions = {
-            { ToysTreeViewItem::Type::InternalContainer, QT_TR_NOOP("Internal") },
-            { ToysTreeViewItem::Type::Event, QT_TR_NOOP("Event") },
-            { ToysTreeViewItem::Type::FreeDraw, QT_TR_NOOP("Drawing") },
-            { ToysTreeViewItem::Type::Text, QT_TR_NOOP("Text") },
-            { ToysTreeViewItem::Type::NPC_Container, QT_TR_NOOP("NPC / Portraits") },
-            { ToysTreeViewItem::Type::ObjectContainer, QT_TR_NOOP("Objects") },
-            { ToysTreeViewItem::Type::FloorBrushContainer, QT_TR_NOOP("Brush") },
-            { ToysTreeViewItem::Type::DownloadedContainer, QT_TR_NOOP("Downloaded") },
-            { ToysTreeViewItem::Type::BackgroundContainer, QT_TR_NOOP("Landscapes") }
+            { ToysTreeViewItem::Type::InternalContainer, QT_TRANSLATE_NOOP("QObject", "Internal") },
+            { ToysTreeViewItem::Type::Event, RPZAtom::atomTypeDescr.value(RPZAtom::Type::Event) },
+            { ToysTreeViewItem::Type::FreeDraw, RPZAtom::atomTypeDescr.value(RPZAtom::Type::Drawing) },
+            { ToysTreeViewItem::Type::Text, RPZAtom::atomTypeDescr.value(RPZAtom::Type::Text) },
+            { ToysTreeViewItem::Type::NPC_Container, QT_TRANSLATE_NOOP("QObject", "NPC / Portraits") },
+            { ToysTreeViewItem::Type::ObjectContainer, QT_TRANSLATE_NOOP("QObject", "Objects") },
+            { ToysTreeViewItem::Type::FloorBrushContainer, QT_TRANSLATE_NOOP("QObject", "Brushes") },
+            { ToysTreeViewItem::Type::DownloadedContainer, QT_TRANSLATE_NOOP("QObject", "Downloaded") },
+            { ToysTreeViewItem::Type::BackgroundContainer, QT_TRANSLATE_NOOP("QObject", "Landscapes") }
         };
 
 };

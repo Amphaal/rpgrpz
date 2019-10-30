@@ -44,8 +44,9 @@ class RPZAtom : public Serializable {
             AssetRotation,
             AssetScale,
             ShapeCenter,
-            Description,
-            PlayerId
+            ShortDescription,
+            PlayerId,
+            Description
         };
 
         enum class Category {
@@ -88,6 +89,22 @@ class RPZAtom : public Serializable {
             { RPZAtom::Type::Text, QStringLiteral(u":/icons/app/tools/text.png") },
         };
 
+        static const inline QHash<RPZAtom::Type, QString> atomTypeDescr {
+            { RPZAtom::Type::Drawing, QT_TRANSLATE_NOOP("QObject", "Drawing") },
+            { RPZAtom::Type::Text, QT_TRANSLATE_NOOP("QObject", "Text") },
+            { RPZAtom::Type::Object, QT_TRANSLATE_NOOP("QObject", "Object") },
+            { RPZAtom::Type::Brush, QT_TRANSLATE_NOOP("QObject", "Brush") },
+            { RPZAtom::Type::Undefined, QT_TRANSLATE_NOOP("QObject", "Atom") },
+            { RPZAtom::Type::Event, QT_TRANSLATE_NOOP("QObject", "Event") },
+        };
+
+        static inline const QList<RPZAtom::Type> assetBasedAtom {
+            RPZAtom::Type::Object, 
+            RPZAtom::Type::Brush,
+            RPZAtom::Type::Background,
+            RPZAtom::Type::NPC
+        };
+
         
         //
         //
@@ -112,9 +129,10 @@ class RPZAtom : public Serializable {
         void changeType(const RPZAtom::Type &type);
 
         static const QString atomTypeToText(const RPZAtom::Type &type);
-        static const QString toString(const RPZAtom::Type &type, const QString &assetName = QString());
+        static const QString toString(const RPZAtom::Type &type, const QString &description = QString());
         const QString toString() const;
 
+        bool isAssetBased() const;
         RPZAtom::Category category() const;
         static RPZAtom::Category category(const RPZAtom::Type &type);
 
@@ -160,21 +178,12 @@ class RPZAtom : public Serializable {
         void setShape(const QRectF &rect);
 
     private:
-        static inline const QList<RPZAtom::Type> layoutAtom {
+        static inline const QList<RPZAtom::Type> _layoutAtom {
             RPZAtom::Type::Drawing,
             RPZAtom::Type::Text,
             RPZAtom::Type::Object, 
             RPZAtom::Type::Brush,
             RPZAtom::Type::Background
-        };
-
-        static const inline QHash<RPZAtom::Type, QString> atomTypeDescr {
-            { RPZAtom::Type::Drawing, QT_TRANSLATE_NOOP("QObject", "Drawing") },
-            { RPZAtom::Type::Text, QT_TRANSLATE_NOOP("QObject", "Text") },
-            { RPZAtom::Type::Object, QT_TRANSLATE_NOOP("QObject", "Object") },
-            { RPZAtom::Type::Brush, QT_TRANSLATE_NOOP("QObject", "Brush") },
-            { RPZAtom::Type::Undefined, QT_TRANSLATE_NOOP("QObject", "Atom") },
-            { RPZAtom::Type::Event, QT_TRANSLATE_NOOP("QObject", "Event") }
         };
 
         static inline const QHash<RPZAtom::Parameter, QString> _str = {
@@ -194,7 +203,10 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::AssetScale, QStringLiteral(u"a_scl") },
             { RPZAtom::Parameter::BrushStyle, QStringLiteral(u"brush_t") },
             { RPZAtom::Parameter::BrushPenWidth, QStringLiteral(u"brush_w") },
-            { RPZAtom::Parameter::ShapeCenter, QStringLiteral(u"shape_c") }
+            { RPZAtom::Parameter::ShapeCenter, QStringLiteral(u"shape_c") },
+            { RPZAtom::Parameter::PlayerId, QStringLiteral(u"plyr_id") },
+            { RPZAtom::Parameter::Description, QStringLiteral(u"descr") },
+            { RPZAtom::Parameter::ShortDescription, QStringLiteral(u"s_descr") },
         };
 
         static inline const RPZAtom::Updates _defaultVal = {
@@ -214,7 +226,10 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::AssetScale, 1.0 },
             { RPZAtom::Parameter::BrushStyle, 0 },
             { RPZAtom::Parameter::BrushPenWidth, 1 },
-            { RPZAtom::Parameter::ShapeCenter, QVariant() }
+            { RPZAtom::Parameter::ShapeCenter, QVariant() },
+            { RPZAtom::Parameter::PlayerId, 0 },
+            { RPZAtom::Parameter::Description, "" },
+            { RPZAtom::Parameter::ShortDescription, "" },
         };
 
         void _setType(const RPZAtom::Type &type);

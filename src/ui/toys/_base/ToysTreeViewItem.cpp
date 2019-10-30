@@ -47,7 +47,6 @@ void ToysTreeViewItem::_setType(const ToysTreeViewItem::Type &type) {
     this->_defineFlags();
     this->_defineIsContainer();
     this->_defineIsRoot();
-    this->_defineIsAssetBased();
     this->_defineIsStaticContainer();
     this->_defineIsDeletable();
     this->_defineIsInvokable();
@@ -105,10 +104,6 @@ bool ToysTreeViewItem::isContainer() const {
 
 bool ToysTreeViewItem::isRoot() const {
     return this->_isRoot;
-}
-
-bool ToysTreeViewItem::isAssetBased() const {
-    return this->_isAssetBased;
 }
 
 bool ToysTreeViewItem::isDeletable() const {
@@ -324,8 +319,12 @@ void ToysTreeViewItem::_definePath() {
     
 }
 
+bool ToysTreeViewItem::_isAssetBased() {
+    return !this->_hash.isEmpty();
+}
+
 void ToysTreeViewItem::_defineFullPath() {
-    this->_fullPath = this->_isAssetBased ? 
+    this->_fullPath = this->_isAssetBased() ? 
                             this->_path + "/" + this->_name : 
                             this->_path;
 }
@@ -346,7 +345,7 @@ void ToysTreeViewItem::_resetSubjacentItemsType(const ToysTreeViewItem::Type &re
         } 
         
         //stop and set new type
-        else if(elem->isAssetBased()) {
+        else if(!elem->_isAssetBased()) {
             elem->_setType(replacingType);
         }
 
@@ -365,7 +364,7 @@ void ToysTreeViewItem::_defineAncestor(ToysTreeViewItem* ancestor) {
         if(this->insertType() != replacingType) {
 
             //update self
-            if(this->_isAssetBased) {
+            if(this->_isAssetBased()) {
                 this->_setType(replacingType);
             }
 
@@ -389,19 +388,17 @@ void ToysTreeViewItem::_defineIsContainer() {
 void ToysTreeViewItem::_defineIsRoot() {
     this->_isRoot = this->_type == ToysTreeViewItem::Type::Root;
 }
-void ToysTreeViewItem::_defineIsAssetBased() {
-    this->_isAssetBased = this->_assetBasedTypes.contains(this->_type);
-}
 void ToysTreeViewItem::_defineIsStaticContainer() {
     this->_isStaticContainer = this->_staticContainerTypes.contains(this->_type);
 }
 void ToysTreeViewItem::_defineIsDeletable() {
-    this->_isDeletable = this->_assetBasedTypes.contains(this->_type) || this->_type == ToysTreeViewItem::Type::Folder;
+    this->_isDeletable = _elemTypeByContainerType.values().contains(this->_type) || this->_type == ToysTreeViewItem::Type::Folder;
 }
 
 void ToysTreeViewItem::_defineIsInvokable() {
-    this->_isInvokable = this->_type != ToysTreeViewItem::Type::Folder && (
-        _assetBasedTypes.contains(this->_type) || _internalItemsTypes.contains(this->_type)
+    this->_isInvokable = (
+        RPZAtom::assetBasedAtom.contains((RPZAtom::Type)this->_type) || 
+        _internalItemsTypes.contains(this->_type)
     );
 }
 
@@ -457,7 +454,7 @@ const QList<ToysTreeViewItem::Type> ToysTreeViewItem::internalItemTypes() {
 }
 
 const QString ToysTreeViewItem::typeDescription(const ToysTreeViewItem::Type &type) {
-    return tr(qUtf8Printable(_typeDescriptions.value(type)));
+    return QObject::tr(qUtf8Printable(_typeDescriptions.value(type)));
 }
 
 bool ToysTreeViewItem::isAcceptableNameChange(QString &newName) {

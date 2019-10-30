@@ -80,7 +80,9 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
 }
 
 void MapLayoutTree::_handleAlterationRequest(const AlterationPayload &payload) {
-     
+    
+    if(payload.source() == Payload::Source::Local_MapLayout) return;
+
     auto pl = Payloads::autoCast(payload); 
     auto type = pl->type();
 
@@ -125,6 +127,14 @@ void MapLayoutTree::_handleAlterationRequest(const AlterationPayload &payload) {
         break;
 
     }
+
+}
+
+void MapLayoutTree::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) {
+    
+    QTreeView::selectionChanged(selected, deselected);
+
+    this->_model->propagateSelection(selected.indexes());
 
 }
 

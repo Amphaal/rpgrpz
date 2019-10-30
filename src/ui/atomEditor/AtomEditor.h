@@ -18,6 +18,7 @@
 #include "src/ui/atomEditor/editors/NonLinearAtomSliderEditor.hpp"
 #include "src/ui/atomEditor/editors/BrushToolEditor.hpp"
 #include "src/ui/atomEditor/editors/AtomTextEditor.hpp"
+#include "src/ui/atomEditor/editors/AtomShortTextEditor.hpp"
 #include "src/ui/atomEditor/_base/NoEditorMessageWidget.hpp"
 
 #include "src/shared/async-ui/AlterationActor.hpp"

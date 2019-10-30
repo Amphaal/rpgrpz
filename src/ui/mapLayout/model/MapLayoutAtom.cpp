@@ -58,6 +58,7 @@ const QSet<int> MapLayoutAtom::updateFrom(const RPZAtom::Updates &updates) {
                 columnsToUpdate += 1;
                 break;
             
+            case RPZAtom::Parameter::ShortDescription:
             case RPZAtom::Parameter::AssetName:
                 this->setName(variant.toString());
                 columnsToUpdate += 0;

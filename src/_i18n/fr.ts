@@ -55,7 +55,7 @@
 <context>
     <name>AtomEditor</name>
     <message numerus="yes">
-        <location filename="../ui/atomEditor/AtomEditor.cpp" line="210"/>
+        <location filename="../ui/atomEditor/AtomEditor.cpp" line="214"/>
         <source> (%n element(s))</source>
         <translation>
             <numerusform> (%n élément)</numerusform>
@@ -63,17 +63,17 @@
         </translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="44"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="45"/>
         <source>Nothing to modify</source>
         <translation>Rien à modifier</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="45"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="46"/>
         <source>Template modification</source>
         <translation>Modification du modèle</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="46"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="47"/>
         <source>Selection modification</source>
         <translation>Modification de la sélection</translation>
     </message>
@@ -129,6 +129,29 @@
         <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="33"/>
         <source>Text</source>
         <translation>Texte</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="34"/>
+        <source>Short Description</source>
+        <translation>Courte description</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="35"/>
+        <source>Description</source>
+        <translation>Description</translation>
+    </message>
+</context>
+<context>
+    <name>AtomShortTextEditor</name>
+    <message>
+        <location filename="../ui/atomEditor/editors/AtomShortTextEditor.hpp" line="20"/>
+        <source>Confirm modification</source>
+        <translation>Confirmer la modification</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/editors/AtomShortTextEditor.hpp" line="23"/>
+        <source>Type some text...</source>
+        <translation>Saisissez du texte...</translation>
     </message>
 </context>
 <context>
@@ -1003,34 +1026,64 @@
         <translation>Calque %1</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="172"/>
+        <location filename="../shared/models/RPZAtom.h" line="93"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="173"/>
+        <location filename="../shared/models/RPZAtom.h" line="94"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="174"/>
+        <location filename="../shared/models/RPZAtom.h" line="95"/>
         <source>Object</source>
         <translation>Objet</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="175"/>
+        <location filename="../shared/models/RPZAtom.h" line="96"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="176"/>
+        <location filename="../shared/models/RPZAtom.h" line="97"/>
         <source>Atom</source>
         <translation>Atome</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="177"/>
+        <location filename="../shared/models/RPZAtom.h" line="98"/>
         <source>Event</source>
         <translation>Evénement</translation>
+    </message>
+    <message>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="188"/>
+        <source>Internal</source>
+        <translation>Interne</translation>
+    </message>
+    <message>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="192"/>
+        <source>NPC / Portraits</source>
+        <translation>PNJ / Portraits</translation>
+    </message>
+    <message>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="193"/>
+        <source>Objects</source>
+        <translation>Objets</translation>
+    </message>
+    <message>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="194"/>
+        <source>Brushes</source>
+        <translation>Terrains</translation>
+    </message>
+    <message>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="195"/>
+        <source>Downloaded</source>
+        <translation>Téléchargés</translation>
+    </message>
+    <message>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="196"/>
+        <source>Landscapes</source>
+        <translation>Paysages</translation>
     </message>
 </context>
 <context>
@@ -1179,54 +1232,6 @@
         <location filename="../ui/toys/ToysTreeView.cpp" line="311"/>
         <source>Do you confirm deletion of the %1 selected elements ?</source>
         <translation>Confirmez-vous la suppression des %1 éléments selectionnés ?</translation>
-    </message>
-</context>
-<context>
-    <name>ToysTreeViewItem</name>
-    <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="191"/>
-        <source>Internal</source>
-        <translation>Interne</translation>
-    </message>
-    <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="192"/>
-        <source>Event</source>
-        <translation>Evénement</translation>
-    </message>
-    <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="193"/>
-        <source>Drawing</source>
-        <translation>Dessin</translation>
-    </message>
-    <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="194"/>
-        <source>Text</source>
-        <translation>Texte</translation>
-    </message>
-    <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="195"/>
-        <source>NPC / Portraits</source>
-        <translation>PNJ / Portraits</translation>
-    </message>
-    <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="196"/>
-        <source>Objects</source>
-        <translation>Objets</translation>
-    </message>
-    <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="197"/>
-        <source>Brush</source>
-        <translation>Terrains</translation>
-    </message>
-    <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="198"/>
-        <source>Downloaded</source>
-        <translation>Téléchargés</translation>
-    </message>
-    <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="199"/>
-        <source>Landscapes</source>
-        <translation>Paysages</translation>
     </message>
 </context>
 <context>

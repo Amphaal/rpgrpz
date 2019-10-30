@@ -14,22 +14,18 @@ RPZAtom::Category RPZAtom::category() const {
     return category(this->type());
 }
 RPZAtom::Category RPZAtom::category(const RPZAtom::Type &type) {
-    if(layoutAtom.contains(type)) return Category::Layout;
+    if(_layoutAtom.contains(type)) return Category::Layout;
     return Category::Interactive;
 }
 
-const QString RPZAtom::toString(const RPZAtom::Type &type, const QString &assetName) { 
+const QString RPZAtom::toString(const RPZAtom::Type &type, const QString &description) { 
 
-    auto out = atomTypeToText(type);
-
-    if(!assetName.isEmpty()) {
-		
-		return QStringLiteral(u"%1 (%2)")
-					.arg(assetName)
-					.arg(out);
+    if(RPZAtom::category(type) == RPZAtom::Category::Interactive) {
+        return description.isEmpty() ? atomTypeToText(type) : description;
     }
 
-    return out;
+    auto out = atomTypeToText(type);
+    return description.isEmpty() ?  out : QStringLiteral(u"%1 (%2)").arg(description).arg(out);
     
 };
 
@@ -142,7 +138,8 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams(const RPZAtom::Type &type) 
         break;
 
         case RPZAtom::Type::Event: {
-            out.insert(RPZAtom::Parameter::Description);
+            out.insert(RPZAtom::Parameter::ShortDescription);
+            out.insert(RPZAtom::Parameter::Description);   
         }
         break;
 
@@ -170,14 +167,16 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams() const {
     return customizableParams(this->type());
 }
 
+bool RPZAtom::isAssetBased() const {
+    return assetBasedAtom.contains(this->type());
+}
+
 QSet<RPZAtom::Parameter> RPZAtom::legalParameters() const {
     
     auto base = this->customizableParams();
     
     //basic
     base.insert(RPZAtom::Parameter::Position);
-    base.insert(RPZAtom::Parameter::Shape);
-    base.insert(RPZAtom::Parameter::ShapeCenter);
     
     //layout specific
     if(this->category() == RPZAtom::Category::Layout) {
@@ -186,22 +185,15 @@ QSet<RPZAtom::Parameter> RPZAtom::legalParameters() const {
         base.insert(RPZAtom::Parameter::Locked);
     }
 
-    //by type
-    switch(this->type()) {
-
-        case RPZAtom::Type::Brush:
-        case RPZAtom::Type::Object: {
-            base.insert(RPZAtom::Parameter::AssetHash);
-            base.insert(RPZAtom::Parameter::AssetName);
-        }
-        break;
-
-        default:
-        break;
-
+    if(this->isAssetBased()) {
+        base.insert(RPZAtom::Parameter::Shape);
+        base.insert(RPZAtom::Parameter::ShapeCenter);
+        base.insert(RPZAtom::Parameter::AssetHash);
+        base.insert(RPZAtom::Parameter::AssetName);
     }
-    
+
     return base;
+
 }
 
 QSet<RPZAtom::Parameter> RPZAtom::editedMetadata() const {

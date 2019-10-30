@@ -25,13 +25,17 @@ PossibleActionsOnAtomList AtomsStorage::getPossibleActions(const QVector<RPZAtom
     QMutexLocker l(&_m_handlingLock);
     PossibleActionsOnAtomList out;
 
-    //availability
+    
     auto areIdsSelected = !ids.isEmpty();
+
+    //availability
     out.canChangeAvailability = areIdsSelected;
 
     // redo/undo
     out.somethingRedoable = this->_canRedo() > -1;
     out.somethingUndoable = this->_canUndo() > -1;
+
+    auto containsAnInteractiveAtom = false;
 
     //iterate
     QList<const RPZAtom*> atomList;
@@ -39,6 +43,10 @@ PossibleActionsOnAtomList AtomsStorage::getPossibleActions(const QVector<RPZAtom
 
         //get atom
         auto atom = this->_map.atomPtr(id);
+
+        if(atom->category() == RPZAtom::Category::Interactive) 
+            containsAnInteractiveAtom = true;
+
         if(!atom) continue;
 
         atomList += atom;
@@ -51,15 +59,17 @@ PossibleActionsOnAtomList AtomsStorage::getPossibleActions(const QVector<RPZAtom
     }
 
     //else, activate most
-    out.canChangeLayer = areIdsSelected;
+    out.canChangeLayer = areIdsSelected && !containsAnInteractiveAtom;
     out.canCopy = areIdsSelected;
-    out.canChangeVisibility = areIdsSelected;
+    out.canChangeVisibility = areIdsSelected && !containsAnInteractiveAtom;
     out.canRemove = areIdsSelected;
 
     //determine min/max
-    auto minMaxLayer = this->_determineMinMaxLayer(atomList);
-    out.targetDownLayer = minMaxLayer.first;
-    out.targetUpLayer = minMaxLayer.second;
+    if(out.canChangeLayer) {
+        auto minMaxLayer = this->_determineMinMaxLayer(atomList);
+        out.targetDownLayer = minMaxLayer.first;
+        out.targetUpLayer = minMaxLayer.second;
+    }
 
     return out;
 }

@@ -13,22 +13,22 @@ class BrushToolEditor : public AtomSubEditor {
     Q_OBJECT
 
     private:    
-        static inline QMap<int, QString> _strBT {
-            { (int)RPZAtom::BrushType::Stamp, QT_TR_NOOP("Stamp") },
-            { (int)RPZAtom::BrushType::Rectangle, QT_TR_NOOP("Rectangle") },
-            { (int)RPZAtom::BrushType::Ovale, QT_TR_NOOP("Ovale") },
-            { (int)RPZAtom::BrushType::RoundBrush, QT_TR_NOOP("Round brush") },
-            { (int)RPZAtom::BrushType::Cutter, QT_TR_NOOP("Cutter") },
-            { (int)RPZAtom::BrushType::Scissors, QT_TR_NOOP("Scissors") }
+        static inline QMap<RPZAtom::BrushType, QString> _strBT {
+            { RPZAtom::BrushType::Stamp, QT_TR_NOOP("Stamp") },
+            { RPZAtom::BrushType::Rectangle, QT_TR_NOOP("Rectangle") },
+            { RPZAtom::BrushType::Ovale, QT_TR_NOOP("Ovale") },
+            { RPZAtom::BrushType::RoundBrush, QT_TR_NOOP("Round brush") },
+            { RPZAtom::BrushType::Cutter, QT_TR_NOOP("Cutter") },
+            { RPZAtom::BrushType::Scissors, QT_TR_NOOP("Scissors") }
         };
 
-        static inline QHash<int, QString> _BTicons {
-            { (int)RPZAtom::BrushType::Stamp, ":/icons/app/tools/stamp.png" },
-            { (int)RPZAtom::BrushType::Rectangle, ":/icons/app/tools/rectangle.png" },
-            { (int)RPZAtom::BrushType::Ovale, ":/icons/app/tools/ovale.png" },
-            { (int)RPZAtom::BrushType::RoundBrush, ":/icons/app/tools/roundBrush.png" },
-            { (int)RPZAtom::BrushType::Cutter, ":/icons/app/tools/cutter.png" },
-            { (int)RPZAtom::BrushType::Scissors, ":/icons/app/tools/scissors.png" }
+        static inline QHash<RPZAtom::BrushType, QString> _BTicons {
+            { RPZAtom::BrushType::Stamp, QStringLiteral(u":/icons/app/tools/stamp.png") },
+            { RPZAtom::BrushType::Rectangle, QStringLiteral(u":/icons/app/tools/rectangle.png") },
+            { RPZAtom::BrushType::Ovale, QStringLiteral(u":/icons/app/tools/ovale.png") },
+            { RPZAtom::BrushType::RoundBrush, QStringLiteral(u":/icons/app/tools/roundBrush.png") },
+            { RPZAtom::BrushType::Cutter, QStringLiteral(u":/icons/app/tools/cutter.png") },
+            { RPZAtom::BrushType::Scissors, QStringLiteral(u":/icons/app/tools/scissors.png") }
         };
 
         QComboBox* _combo = nullptr;
@@ -48,7 +48,7 @@ class BrushToolEditor : public AtomSubEditor {
                 auto translatedName = tr(qUtf8Printable(i.value()));
                 auto associatedIcon = QIcon(_BTicons.value(tool));
 
-                this->_combo->addItem(associatedIcon, translatedName, tool);
+                this->_combo->addItem(associatedIcon, translatedName, (int)tool);
 
             }
 

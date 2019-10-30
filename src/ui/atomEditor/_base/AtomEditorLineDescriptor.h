@@ -30,30 +30,32 @@ class AtomEditorLineDescriptor : public QWidget {
             { RPZAtom::Parameter::TextSize, QT_TR_NOOP("Text size") },
             { RPZAtom::Parameter::BrushPenWidth, QT_TR_NOOP("Brush width") },
             { RPZAtom::Parameter::BrushStyle, QT_TR_NOOP("Brush tool") },
-            { RPZAtom::Parameter::Text, QT_TR_NOOP("Text") }
+            { RPZAtom::Parameter::Text, QT_TR_NOOP("Text") },
+            { RPZAtom::Parameter::ShortDescription, QT_TR_NOOP("Short Description") },
+            { RPZAtom::Parameter::Description, QT_TR_NOOP("Description") }
         };
 
         static inline QHash<RPZAtom::Parameter, QString> _valSuffix = {
             { RPZAtom::Parameter::Rotation, "°" },
-            { RPZAtom::Parameter::Scale, "x" },
+            { RPZAtom::Parameter::Scale, QStringLiteral(u"x") },
             { RPZAtom::Parameter::AssetRotation, "°" },
-            { RPZAtom::Parameter::AssetScale, "x" },
-            { RPZAtom::Parameter::PenWidth, "pt" },
-            { RPZAtom::Parameter::TextSize, "pt" },
-            { RPZAtom::Parameter::BrushPenWidth, "pt" },
-            { RPZAtom::Parameter::BrushStyle, "" },
-            { RPZAtom::Parameter::Text, "" }
+            { RPZAtom::Parameter::AssetScale, QStringLiteral(u"x") },
+            { RPZAtom::Parameter::PenWidth, QStringLiteral(u"pt") },
+            { RPZAtom::Parameter::TextSize, QStringLiteral(u"pt") },
+            { RPZAtom::Parameter::BrushPenWidth, QStringLiteral(u"pt") }
         };
 
         static inline QHash<RPZAtom::Parameter, QString> _icons = {
-            { RPZAtom::Parameter::Rotation, ":/icons/app/tools/rotate.png" },
-            { RPZAtom::Parameter::Scale, ":/icons/app/tools/scale.png" },
-            { RPZAtom::Parameter::AssetRotation, ":/icons/app/tools/rotate.png" },
-            { RPZAtom::Parameter::AssetScale, ":/icons/app/tools/scale.png" },
-            { RPZAtom::Parameter::PenWidth, ":/icons/app/tools/pen.png" },
-            { RPZAtom::Parameter::TextSize, ":/icons/app/tools/text.png" },
-            { RPZAtom::Parameter::BrushPenWidth, ":/icons/app/tools/roundBrush.png" },
-            { RPZAtom::Parameter::BrushStyle, ":/icons/app/tabs/config.png" },
-            { RPZAtom::Parameter::Text, ":/icons/app/tools/text.png" }
+            { RPZAtom::Parameter::Rotation, QStringLiteral(u":/icons/app/tools/rotate.png") },
+            { RPZAtom::Parameter::Scale, QStringLiteral(u":/icons/app/tools/scale.png") },
+            { RPZAtom::Parameter::AssetRotation, QStringLiteral(u":/icons/app/tools/rotate.png") },
+            { RPZAtom::Parameter::AssetScale, QStringLiteral(u":/icons/app/tools/scale.png") },
+            { RPZAtom::Parameter::PenWidth, QStringLiteral(u":/icons/app/tools/pen.png") },
+            { RPZAtom::Parameter::TextSize, QStringLiteral(u":/icons/app/tools/text.png") },
+            { RPZAtom::Parameter::BrushPenWidth, QStringLiteral(u":/icons/app/tools/roundBrush.png") },
+            { RPZAtom::Parameter::BrushStyle, QStringLiteral(u":/icons/app/tabs/config.png") },
+            { RPZAtom::Parameter::Text, QStringLiteral(u":/icons/app/tools/text.png") },
+            { RPZAtom::Parameter::ShortDescription, QStringLiteral(u":/icons/app/tools/text.png") },
+            { RPZAtom::Parameter::Description, QStringLiteral(u":/icons/app/tools/text.png") }
         };
 };
