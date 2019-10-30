@@ -1003,29 +1003,34 @@
         <translation>Calque %1</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="170"/>
+        <location filename="../shared/models/RPZAtom.h" line="172"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="171"/>
+        <location filename="../shared/models/RPZAtom.h" line="173"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="172"/>
+        <location filename="../shared/models/RPZAtom.h" line="174"/>
         <source>Object</source>
         <translation>Objet</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="173"/>
+        <location filename="../shared/models/RPZAtom.h" line="175"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="174"/>
+        <location filename="../shared/models/RPZAtom.h" line="176"/>
         <source>Atom</source>
         <translation>Atome</translation>
+    </message>
+    <message>
+        <location filename="../shared/models/RPZAtom.h" line="177"/>
+        <source>Event</source>
+        <translation>Evénement</translation>
     </message>
 </context>
 <context>
@@ -1161,17 +1166,17 @@
 <context>
     <name>ToysTreeView</name>
     <message>
-        <location filename="../ui/toys/ToysTreeView.cpp" line="217"/>
+        <location filename="../ui/toys/ToysTreeView.cpp" line="213"/>
         <source>&lt;&lt; Move to &quot;%1&quot;</source>
         <translation>&lt;&lt; Déplacer vers&quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../ui/toys/ToysTreeView.cpp" line="314"/>
+        <location filename="../ui/toys/ToysTreeView.cpp" line="310"/>
         <source>Delete elements in toy box</source>
         <translation>Supprimer des elements de la boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/toys/ToysTreeView.cpp" line="315"/>
+        <location filename="../ui/toys/ToysTreeView.cpp" line="311"/>
         <source>Do you confirm deletion of the %1 selected elements ?</source>
         <translation>Confirmez-vous la suppression des %1 éléments selectionnés ?</translation>
     </message>

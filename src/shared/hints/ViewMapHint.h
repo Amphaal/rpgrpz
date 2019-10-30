@@ -15,7 +15,7 @@
 
 #include "src/shared/models/toy/RPZAsset.hpp"
 
-#include "src/ui/map/graphics/CustomGraphicsItemHelper.h"
+#include "src/shared/renderer/AtomRenderer.h"
 
 #include "src/shared/payloads/Payloads.h"
 #include "src/ui/toys/_base/ToysTreeViewModel.h"

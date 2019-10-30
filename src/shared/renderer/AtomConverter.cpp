@@ -21,51 +21,13 @@ void AtomConverter::setBrushDrawStyle(QGraphicsItem* item, const RPZAtom::BrushT
     item->setData((int)AtomConverter::DataIndex::BrushDrawStyle, (int)style);
 }
 
-void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZAtom &blueprint, bool isTargetTemporary) {
-    
-    //set movable
-    target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, true);
-
-    //bind a copy of the template to the item
-    setIsTemporary(target, isTargetTemporary);
-
-    //refresh all legal if temporary
-    auto paramsToUpdate = blueprint.legalParameters().toList();
-    std::sort(paramsToUpdate.begin(), paramsToUpdate.end()); 
-    
-    //update GI
-    for(auto param : paramsToUpdate) {
-        auto val = blueprint.metadata(param);
-        updateGraphicsItemFromMetadata(target, param, val);
-    }
-
-    //update transform origin
-    auto center = blueprint.shapeCenter();
-    target->setTransformOriginPoint(center);
-
-    //define transparency as it is a dummy
-    if(isTargetTemporary) {
-        target->setOpacity(.5);
-        target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
-    }
-            
-}
 
 void AtomConverter::updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom::Updates &updates) {
     //update GI
     for(auto i = updates.begin(); i != updates.end(); i++) {
-        updateGraphicsItemFromMetadata(item, i.key(), i.value());
+        _updateGraphicsItemFromMetadata(item, i.key(), i.value());
     }
 }
-
-void AtomConverter::updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom::Parameter &param, const QVariant &val) {
-    
-    if(!item) return;
-    
-    auto requiresTransform = _setParamToGraphicsItemFromAtom(param, item, val);
-    if(requiresTransform) _bulkTransformApply(item);
-
-};
 
 RPZAtom AtomConverter::graphicsToAtom(QGraphicsItem* blueprint, RPZAtom templateCopy) {
     
@@ -78,6 +40,64 @@ RPZAtom AtomConverter::graphicsToAtom(QGraphicsItem* blueprint, RPZAtom template
 
     return templateCopy;
 }
+
+
+void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZAtom &blueprint, bool isTargetTemporary) {
+    
+    //set movable as default
+    target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, true);
+
+    //bind a copy of the template to the item
+    setIsTemporary(target, isTargetTemporary);
+
+    //update
+    _updateGraphicsItemFromMetadata(target, blueprint);
+
+    //if interactive, force ZIndex to max
+    if(blueprint.category() == RPZAtom::Category::Interactive) {
+        target->setZValue(std::numeric_limits<qreal>::max());
+        target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, true);
+    }
+
+    //update transform origin
+    auto shapeCenter = blueprint.shapeCenter();
+    if(!shapeCenter.isNull()) {
+        target->setTransformOriginPoint(shapeCenter);   
+    } else {
+        // auto center = target->boundingRect().center();
+        // target->setTransformOriginPoint(center);
+    }
+
+    //define transparency as it is a dummy
+    if(isTargetTemporary) {
+        target->setOpacity(.5);
+        target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
+    }
+            
+}
+
+void AtomConverter::_updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom &blueprint) {
+    
+    //refresh all legal if temporary
+    auto paramsToUpdate = blueprint.legalParameters().toList();
+    std::sort(paramsToUpdate.begin(), paramsToUpdate.end()); 
+    
+    //update GI
+    for(auto param : paramsToUpdate) {
+        auto val = blueprint.metadata(param);
+        _updateGraphicsItemFromMetadata(item, param, val);
+    }
+
+}
+
+void AtomConverter::_updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom::Parameter &param, const QVariant &val) {
+    
+    if(!item) return;
+    
+    auto requiresTransform = _setParamToGraphicsItemFromAtom(param, item, val);
+    if(requiresTransform) _bulkTransformApply(item);
+
+};
 
 void AtomConverter::_bulkTransformApply(QGraphicsItem* itemBrushToUpdate) {
     

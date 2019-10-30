@@ -218,7 +218,7 @@ class DrawingAssist {
         }
 
         void _addOutlineRect(const QPointF &scenePos) {
-            auto outline = CustomGraphicsItemHelper::createOutlineRectItem(scenePos);
+            auto outline = AtomRenderer::createOutlineRectItem(scenePos);
             this->_view->scene()->addItem(outline);
             this->_tempDrawingHelpers.append(outline);
         }

@@ -17,7 +17,7 @@
 #include <QVariant>
 #include <QVector>
 
-#include "src/ui/map/graphics/CustomGraphicsItemHelper.h"
+#include "src/shared/renderer/AtomRenderer.h"
 
 #include "src/ui/map/toolbars/MapTools.hpp"
 #include "src/ui/map/_base/AnimationTimeLine.hpp"
@@ -33,7 +33,7 @@
 
 #include "src/shared/payloads/Payloads.h"
 
-#include "src/helpers/AtomConverter.h"
+#include "src/shared/renderer/AtomConverter.h"
 
 #include "src/shared/commands/AtomsContextualMenuHandler.h"
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
@@ -41,7 +41,7 @@
 #include "src/ui/map/modules/MV_Manipulation.hpp"
 #include "src/ui/map/modules/MV_HUDLayout.hpp"
 
-#include "src/ui/map/assists/DrawingAssist.hpp"
+#include "src/shared/renderer/DrawingAssist.hpp"
 
 class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Manipulation, public MV_HUDLayout, public AtomSelector {
 

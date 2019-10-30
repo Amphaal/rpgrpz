@@ -1,15 +1,15 @@
 #pragma once
 
-#include "src/ui/map/graphics/items/MapViewGraphicsItems.h"
+#include "AtomConverter.h"
+
+#include "src/shared/renderer/graphics/MapViewGraphicsItems.h"
 
 #include "src/shared/models/toy/RPZToy.hpp"
-
-#include "src/helpers/AtomConverter.h"
 
 #include <QApplication>
 #include <QFileInfo>
 
-class CustomGraphicsItemHelper {
+class AtomRenderer {
     public:
         static QGraphicsItem* createGraphicsItem(const RPZAtom &atom, const RPZAsset &asset, bool isTemporary = false);
         static QGraphicsRectItem* createMissingAssetPlaceholderItem(const RPZAtom &atom);
@@ -20,4 +20,5 @@ class CustomGraphicsItemHelper {
         static QGraphicsPathItem* _createBrushItem(const RPZAtom &atom, const RPZAsset &asset);
         static QGraphicsPathItem* _createDrawingItem(const RPZAtom &atom);
         static QGraphicsTextItem* _createTextItem(const RPZAtom &atom);
+        static QGraphicsPixmapItem* _createUnscalableToken(const RPZAtom &atom);
 };

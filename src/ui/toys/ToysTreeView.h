@@ -24,8 +24,6 @@ class ToysTreeView : public QTreeView, public ConnectivityObserver, public Alter
 
     public:
         ToysTreeView(QWidget *parent = nullptr);
-        ToysTreeViewModel* assetsModel();
-        QModelIndexList selectedElementsIndexes();
 
     private slots:
         void _onAssetsAboutToBeDownloaded(const QVector<QString> &availableIds);
@@ -41,6 +39,8 @@ class ToysTreeView : public QTreeView, public ConnectivityObserver, public Alter
         void startDrag(Qt::DropActions supportedActions) override;
 
     private:
+        QModelIndexList _selectedElementsIndexes();
+
         int _expectedAssetsTBDownloaded = 0;
         int _expectedAssetsDownloaded = 0;
 

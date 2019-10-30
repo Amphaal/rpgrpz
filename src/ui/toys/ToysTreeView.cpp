@@ -47,7 +47,7 @@ ToysTreeView::ToysTreeView(QWidget *parent) : QTreeView(parent),
 
 void ToysTreeView::contextMenuEvent(QContextMenuEvent *event) {
     
-    auto indexesToProcess = this->selectedElementsIndexes();
+    auto indexesToProcess = this->_selectedElementsIndexes();
 
     //check selected items (autoselected on right click)
     if(!indexesToProcess.count()) {
@@ -88,7 +88,7 @@ void ToysTreeView::_onAssetsAboutToBeDownloaded(const QVector<QString> &availabl
 void ToysTreeView::_onReceivedAsset(RPZAssetImportPackage package) {
     
     //integrate
-    auto success = this->assetsModel()->integrateAsset(package);
+    auto success = this->_model->integrateAsset(package);
     this->_expectedAssetsDownloaded++;
 
     //update UI for progress
@@ -109,11 +109,7 @@ void ToysTreeView::_onReceivedAsset(RPZAssetImportPackage package) {
     AlterationHandler::get()->queueAlteration(this, payload);
 }
 
-ToysTreeViewModel* ToysTreeView::assetsModel() {
-    return this->_model;
-}
-
-QModelIndexList ToysTreeView::selectedElementsIndexes() {
+QModelIndexList ToysTreeView::_selectedElementsIndexes() {
     QList<QModelIndex> indexes;
 
     //get list of items
@@ -219,9 +215,9 @@ void ToysTreeView::_generateStaticContainerMoveActions() {
         QObject::connect(
             action, &QAction::triggered,
             [=]() {
-                this->assetsModel()->moveItemsToContainer(
+                this->_model->moveItemsToContainer(
                     targetIndex,
-                    this->selectedElementsIndexes() 
+                    this->_selectedElementsIndexes() 
                 );
             }
         );
@@ -326,7 +322,7 @@ void ToysTreeView::keyPressEvent(QKeyEvent * event) {
     switch(event->key()) {
         
         case Qt::Key::Key_Delete: {
-            auto selectedIndexes = this->selectedElementsIndexes();
+            auto selectedIndexes = this->_selectedElementsIndexes();
             if(selectedIndexes.count()) {
                 this->_requestDeletion(selectedIndexes);
             }
@@ -352,7 +348,7 @@ void ToysTreeView::selectionChanged(const QItemSelection &selected, const QItemS
     auto i = selected.count();
     auto y = deselected.count();
 
-    auto selectedElems = this->selectedElementsIndexes();
+    auto selectedElems = this->_selectedElementsIndexes();
     auto indexesCount = selectedElems.count();
     
     RPZToy defSelect;

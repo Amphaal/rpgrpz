@@ -107,19 +107,10 @@ void MapView::_handleHintsSignalsAndSlots() {
 //
 
 void MapView::_updateItemValue(QGraphicsItem* item, const RPZAtom::Updates &updates) {
-    
-    for(auto i = updates.constBegin(); i != updates.constEnd(); ++i) {
-    
-        auto param = i.key();
-
-        //update GI
-        AtomConverter::updateGraphicsItemFromMetadata(
-            item,
-            param,
-            i.value()
-        );
-
-    }
+    AtomConverter::updateGraphicsItemFromMetadata(
+        item,
+        updates
+    );
 }
 
 void MapView::_onUIUpdateRequest(const QHash<QGraphicsItem*, RPZAtom::Updates> &toUpdate) {

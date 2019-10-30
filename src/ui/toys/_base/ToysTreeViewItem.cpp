@@ -252,7 +252,6 @@ void ToysTreeViewItem::_defineFlags() {
         
         //disabled for now
         case ToysTreeViewItem::Type::Text:
-        case ToysTreeViewItem::Type::Event:
         case ToysTreeViewItem::Type::NPC_Container:
         case ToysTreeViewItem::Type::BackgroundContainer:
         case ToysTreeViewItem::Type::Background:
@@ -260,8 +259,9 @@ void ToysTreeViewItem::_defineFlags() {
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemNeverHasChildren);
             break;
         
+        case ToysTreeViewItem::Type::Event:
         case ToysTreeViewItem::Type::FreeDraw:
-            this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable);
+            this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsSelectable);
             break;
         
         case ToysTreeViewItem::Type::Object:

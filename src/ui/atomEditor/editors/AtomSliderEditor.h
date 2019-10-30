@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/helpers/AtomConverter.h"
+#include "src/shared/renderer/AtomConverter.h"
 #include "src/ui/atomEditor/_base/AtomSubEditor.h"
 #include "src/ui/atomEditor/editors/custom/RPZCustomSlider.hpp"
 

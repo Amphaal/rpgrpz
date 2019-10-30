@@ -146,6 +146,10 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams(const RPZAtom::Type &type) 
         }
         break;
 
+        case RPZAtom::Type::Player: {
+            out.insert(RPZAtom::Parameter::PlayerId);
+        }
+
         case RPZAtom::Type::Brush: {
             out.insert(RPZAtom::Parameter::AssetRotation);
             out.insert(RPZAtom::Parameter::AssetScale);

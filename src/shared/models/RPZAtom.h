@@ -44,7 +44,8 @@ class RPZAtom : public Serializable {
             AssetRotation,
             AssetScale,
             ShapeCenter,
-            Description
+            Description,
+            PlayerId
         };
 
         enum class Category {
@@ -62,7 +63,8 @@ class RPZAtom : public Serializable {
             NPC, 
             Event, 
             PC,
-            Background
+            Background,
+            Player
         };
 
         enum class BrushType { 
@@ -171,7 +173,8 @@ class RPZAtom : public Serializable {
             { RPZAtom::Type::Text, QT_TRANSLATE_NOOP("QObject", "Text") },
             { RPZAtom::Type::Object, QT_TRANSLATE_NOOP("QObject", "Object") },
             { RPZAtom::Type::Brush, QT_TRANSLATE_NOOP("QObject", "Brush") },
-            { RPZAtom::Type::Undefined, QT_TRANSLATE_NOOP("QObject", "Atom") }
+            { RPZAtom::Type::Undefined, QT_TRANSLATE_NOOP("QObject", "Atom") },
+            { RPZAtom::Type::Event, QT_TRANSLATE_NOOP("QObject", "Event") }
         };
 
         static inline const QHash<RPZAtom::Parameter, QString> _str = {

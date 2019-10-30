@@ -146,7 +146,7 @@ QGraphicsItem* ViewMapHint::generateTemporaryItemFromTemplateBuffer() {
     QMutexLocker l1(&this->_m_templateAtom);
     QMutexLocker l2(&this->_m_templateToy);
 
-    return CustomGraphicsItemHelper::createGraphicsItem(
+    return AtomRenderer::createGraphicsItem(
         this->_templateAtom, 
         this->_templateToy, 
         true
@@ -192,7 +192,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuil
     if(hasMissingAsset) {
         
         //add placeholder
-        auto placeholder = CustomGraphicsItemHelper::createMissingAssetPlaceholderItem(atomToBuildFrom);
+        auto placeholder = AtomRenderer::createMissingAssetPlaceholderItem(atomToBuildFrom);
         newItem = placeholder;
 
         //add graphic item to list of items to replace at times
@@ -202,7 +202,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuil
     
     //default
     else {
-        newItem = CustomGraphicsItemHelper::createGraphicsItem(
+        newItem = AtomRenderer::createGraphicsItem(
             atomToBuildFrom, 
             *asset
         );
@@ -243,7 +243,7 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &metadata) {
         if(atom.isEmpty()) continue;
 
         //create the new graphics item
-        auto newGi = CustomGraphicsItemHelper::createGraphicsItem(atom, metadata);
+        auto newGi = AtomRenderer::createGraphicsItem(atom, metadata);
         this->_crossBindingAtomWithGI(atom, newGi);
         newGis.append(newGi);
 

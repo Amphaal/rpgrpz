@@ -3,7 +3,7 @@
 #include "src/shared/models/RPZAtom.h"
 
 #include <QPainterPath>
-#include "src/ui/map/graphics/items/MapViewGraphicsItems.h"
+#include "src/shared/renderer/graphics/MapViewGraphicsItems.h"
 
 class AtomConverter {
     public:   
@@ -18,15 +18,18 @@ class AtomConverter {
             static RPZAtom::BrushType brushDrawStyle(QGraphicsItem* item);
             static void setBrushDrawStyle(QGraphicsItem* item, const RPZAtom::BrushType &style);
 
-        static void updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZAtom &blueprint, bool isTargetTemporary = false);
-        static void updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom::Parameter &param, const QVariant &val);
         static void updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom::Updates &updates);
+        static void updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZAtom &blueprint, bool isTargetTemporary = false);
+
         static RPZAtom graphicsToAtom(QGraphicsItem* blueprint, RPZAtom templateCopy);
 
     private:
         static void _bulkTransformApply(QGraphicsItem* itemBrushToUpdate);
         static bool _setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &param, QGraphicsItem* itemToUpdate, const QVariant &val);
         static void _setParamToAtomFromGraphicsItem(const RPZAtom::Parameter &param, RPZAtom &atomToUpdate, QGraphicsItem* blueprint);
+
+        static void _updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom::Parameter &param, const QVariant &val);
+        static void _updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom &blueprint);
 
 };
 inline uint qHash(const AtomConverter::DataIndex &key, uint seed = 0) {return uint(key) ^ seed;}

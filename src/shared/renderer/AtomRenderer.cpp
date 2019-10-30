@@ -1,6 +1,6 @@
-#include "CustomGraphicsItemHelper.h"
+#include "AtomRenderer.h"
 
-QGraphicsItem* CustomGraphicsItemHelper::createGraphicsItem(const RPZAtom &atom, const RPZAsset &asset, bool isTemporary) {
+QGraphicsItem* AtomRenderer::createGraphicsItem(const RPZAtom &atom, const RPZAsset &asset, bool isTemporary) {
     
     QGraphicsItem* out;
     auto type = atom.type();
@@ -23,6 +23,10 @@ QGraphicsItem* CustomGraphicsItemHelper::createGraphicsItem(const RPZAtom &atom,
             out = _createTextItem(atom);
         break;
 
+        case RPZAtom::Type::Event:
+            out = _createUnscalableToken(atom);
+        break;
+
         default: {
             qWarning() << "Map : Cannot create QGraphicsItem associated with atom, because atomType have no handler associated !";
             return nullptr;
@@ -42,7 +46,7 @@ QGraphicsItem* CustomGraphicsItemHelper::createGraphicsItem(const RPZAtom &atom,
     return out;
 }
 
-QGraphicsItem* CustomGraphicsItemHelper::createOutlineRectItem(const QPointF &scenePos) {
+QGraphicsItem* AtomRenderer::createOutlineRectItem(const QPointF &scenePos) {
     
     //rect...
     QRectF rect(
@@ -66,7 +70,7 @@ QGraphicsItem* CustomGraphicsItemHelper::createOutlineRectItem(const QPointF &sc
 }
 
 
-QGraphicsRectItem* CustomGraphicsItemHelper::createMissingAssetPlaceholderItem(const RPZAtom &atom) {
+QGraphicsRectItem* AtomRenderer::createMissingAssetPlaceholderItem(const RPZAtom &atom) {
 
     //pen to draw the rect with
     QPen pen;
@@ -91,7 +95,7 @@ QGraphicsRectItem* CustomGraphicsItemHelper::createMissingAssetPlaceholderItem(c
 }
 
 
-QGraphicsItem* CustomGraphicsItemHelper::_createGenericImageBasedItem(const RPZAtom &atom, const RPZAsset &asset) {
+QGraphicsItem* AtomRenderer::_createGenericImageBasedItem(const RPZAtom &atom, const RPZAsset &asset) {
 
     //get file infos
     auto filepathToAsset = asset.filepath();
@@ -108,7 +112,7 @@ QGraphicsItem* CustomGraphicsItemHelper::_createGenericImageBasedItem(const RPZA
     return item;
 }
 
-QGraphicsPathItem* CustomGraphicsItemHelper::_createBrushItem(const RPZAtom &atom, const RPZAsset &asset) {
+QGraphicsPathItem* AtomRenderer::_createBrushItem(const RPZAtom &atom, const RPZAsset &asset) {
 
     //define a ped
     QPen pen;
@@ -130,7 +134,7 @@ QGraphicsPathItem* CustomGraphicsItemHelper::_createBrushItem(const RPZAtom &ato
     return newPath;
 }
 
-QGraphicsPathItem* CustomGraphicsItemHelper::_createDrawingItem(const RPZAtom &atom) {
+QGraphicsPathItem* AtomRenderer::_createDrawingItem(const RPZAtom &atom) {
     
     //define a ped
     QPen pen;
@@ -147,6 +151,16 @@ QGraphicsPathItem* CustomGraphicsItemHelper::_createDrawingItem(const RPZAtom &a
     return newPath;
 }
 
-QGraphicsTextItem* CustomGraphicsItemHelper::_createTextItem(const RPZAtom &atom) {
+QGraphicsTextItem* AtomRenderer::_createTextItem(const RPZAtom &atom) {
     return new MapViewGraphicsTextItem(atom.text(), atom.textSize());
+}
+
+QGraphicsPixmapItem* AtomRenderer::_createUnscalableToken(const RPZAtom &atom) {
+    
+    auto pathToIcon = RPZAtom::iconPathByAtomType.value(atom.type());
+    QGraphicsPixmapItem* out = new QGraphicsPixmapItem(pathToIcon);
+    out->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIgnoresTransformations, true);
+
+    return out;
+
 }
