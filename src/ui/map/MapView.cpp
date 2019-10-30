@@ -417,7 +417,7 @@ void MapView::wheelEvent(QWheelEvent *event) {
 
     //make sure no button is pressed
     if(this->_isMousePressed) return;
-
+    
     this->animateScroll(event);
 
 };
@@ -592,10 +592,21 @@ void MapView::_mightCenterGhostWithCursor() {
     
     //update ghost item position relative to cursor
     if(auto ghost = this->_hints->ghostItem()) {
-
+        
+        //map cursor pos to widget
         auto cursorPos = this->mapFromGlobal(QCursor::pos());
-        auto cursorPosInScene = this->mapToScene(cursorPos);
-        cursorPosInScene = cursorPosInScene - ghost->boundingRect().center();
+        auto ghostCenter = ghost->boundingRect().center();
+        QPointF cursorPosInScene;
+        
+        //check if ignores transformation
+        if(ghost->flags().testFlag(QGraphicsItem::GraphicsItemFlag::ItemIgnoresTransformations)) {
+            cursorPos -= ghostCenter.toPoint();
+            cursorPosInScene = this->mapToScene(cursorPos);
+        } else {
+            cursorPosInScene = this->mapToScene(cursorPos);
+            cursorPosInScene -= ghostCenter;
+        }
+
         ghost->setPos(cursorPosInScene);
 
     }

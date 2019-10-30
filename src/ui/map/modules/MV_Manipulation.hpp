@@ -48,21 +48,36 @@ class MV_Manipulation {
         }
 
     protected:
-        void focusItem(QGraphicsItem* toFocus) {
 
-            this->_view->centerOn(toFocus);
+        void focusItem(QGraphicsItem* toFocus) {
             
             auto bound = toFocus->sceneBoundingRect();
-            bound = bound.marginsAdded(
-                QMarginsF(
-                    bound.width() / 2,
-                    bound.height() / 2,
-                    bound.width() / 2,
-                    bound.height() / 2
-                )
-            );
-            
-            this->_view->fitInView(bound, Qt::AspectRatioMode::KeepAspectRatio);
+
+            //check if ignores transformation
+            if(toFocus->flags().testFlag(QGraphicsItem::GraphicsItemFlag::ItemIgnoresTransformations)) {
+                
+                auto newCenter = bound.center() - toFocus->boundingRect().center();
+                bound.moveCenter(newCenter);
+
+                this->_view->centerOn(bound.center());
+                
+            }
+
+            //move whole view to fit at scale
+            else {
+                
+                bound = bound.marginsAdded(
+                    QMarginsF(
+                        bound.width() / 2,
+                        bound.height() / 2,
+                        bound.width() / 2,
+                        bound.height() / 2
+                    )
+                );
+                
+                this->_view->fitInView(bound, Qt::AspectRatioMode::KeepAspectRatio);
+
+            }
 
         }
 

@@ -64,8 +64,8 @@ void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZA
     if(!shapeCenter.isNull()) {
         target->setTransformOriginPoint(shapeCenter);   
     } else {
-        // auto center = target->boundingRect().center();
-        // target->setTransformOriginPoint(center);
+        auto center = target->boundingRect().center();
+        target->setTransformOriginPoint(center);
     }
 
     //define transparency as it is a dummy

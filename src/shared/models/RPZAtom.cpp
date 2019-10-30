@@ -9,6 +9,7 @@ RPZAtom::RPZAtom(const RPZAtom::Type &type) : Serializable(SnowFlake::get()->nex
     this->_setType(type);  
 };
 
+
 RPZAtom::Category RPZAtom::category() const {
     return category(this->type());
 }
@@ -106,7 +107,6 @@ QPainterPath RPZAtom::shape() const {
 }
 void RPZAtom::setShape(const QPainterPath &path) { 
     this->setMetadata(RPZAtom::Parameter::Shape, JSONSerializer::asBase64(path));
-    //this->setMetadata(RPZAtom::Parameter::ShapeCenter, path.boundingRect().center());
 }
 void RPZAtom::setShape(const QRectF &rect) {
     QPainterPath shape;
