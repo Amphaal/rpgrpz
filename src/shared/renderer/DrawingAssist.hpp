@@ -3,8 +3,12 @@
 #include "src/shared/hints/MapHint.h"
 #include <QGraphicsView>
 
+#include "src/shared/renderer/graphics/MapViewGraphicsItems.hpp"
+
 class DrawingAssist {
     public:
+        typedef bool IsCommitedDrawing;
+
         DrawingAssist(MapHint* hints, QGraphicsView* view) : _hints(hints), _view(view) { }
 
         void addDrawingPoint(const QPoint &cursorPosInWindow) {
@@ -71,14 +75,17 @@ class DrawingAssist {
 
         }
         
-        void compareItemToCommitedDrawing(QGraphicsItem* itemInserted) {
+        DrawingAssist::IsCommitedDrawing compareItemToCommitedDrawing(QGraphicsItem* itemInserted) {
             
-            if(!this->_commitedDrawingId) return;
-            if(this->_hints->getAtomIdFromGraphicsItem(itemInserted) != this->_commitedDrawingId) return;
-
+            if(!this->_commitedDrawingId) return false;
+            
+            if(this->_hints->getAtomIdFromGraphicsItem(itemInserted) != this->_commitedDrawingId) return false;
+            
             this->_destroyTempDrawing();
 
             this->_commitedDrawingId = 0;
+
+            return true;
 
         }
 

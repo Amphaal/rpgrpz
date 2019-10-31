@@ -156,8 +156,18 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
             break;
 
             case Payload::Alteration::Added: {
-                this->scene()->addItem(item);        
-                this->_drawingAssist->compareItemToCommitedDrawing(item);
+                this->scene()->addItem(item);
+                
+                //auto remove temporary drawing
+                auto isCommitedDrawing = this->_drawingAssist->compareItemToCommitedDrawing(item);
+                
+                //if not from temporary drawing, animate path
+                if(!isCommitedDrawing) {
+                    if(auto canBeAnimated = dynamic_cast<MapViewGraphicsPathItem*>(item)) {
+                        MapViewGraphicsItems::animatePath(canBeAnimated, canBeAnimated->path());
+                    } 
+                }
+
             }
             break;
 

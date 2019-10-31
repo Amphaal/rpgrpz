@@ -176,7 +176,8 @@
         "qstandardpaths": "cpp",
         "qfileinfo": "cpp",
         "qmodelindex": "cpp",
-        "qmultihash": "cpp"
+        "qmultihash": "cpp",
+        "qpropertyanimation": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

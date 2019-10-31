@@ -17,6 +17,7 @@ class MapViewGraphicsPathItem : public QObject, public QGraphicsPathItem {
     Q_OBJECT
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
     Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
+    Q_PROPERTY(QPainterPath path READ path WRITE setPath)
 
     public:
         MapViewGraphicsPathItem(const QPainterPath &path, const QPen &pen, const QBrush &brush = QBrush()) : 

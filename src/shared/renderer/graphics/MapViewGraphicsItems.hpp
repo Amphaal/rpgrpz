@@ -8,6 +8,8 @@
 
 #include <QPropertyAnimation>
 
+#include "src/shared/renderer/animator/PathAnimator.hpp"
+
 class MapViewGraphicsItems {
     public:
         static void animateVisibility(QGraphicsItem *toAnimate, bool isHidden) {
@@ -24,6 +26,14 @@ class MapViewGraphicsItems {
             else {
                 toAnimate->setOpacity(destOpacity);
             }
+
+        }
+
+        static void animatePath(QGraphicsItem *toAnimate, const QPainterPath &pathToAnimate) {
+
+            if(auto canBeAnimated = dynamic_cast<MapViewGraphicsPathItem*>(toAnimate)) {
+                _animatePath(canBeAnimated, pathToAnimate);
+            } 
 
         }
 
@@ -58,6 +68,7 @@ class MapViewGraphicsItems {
     private:
         static inline QString _visibilityProp = QStringLiteral(u"opacity");
         static inline QString _moveProp = QStringLiteral(u"pos");
+        static inline QString _pathProp = QStringLiteral(u"path");
         
         static inline QHash<QObject*, QHash<QString, QPropertyAnimation*>> _ongoingAnimations;
 
@@ -67,7 +78,10 @@ class MapViewGraphicsItems {
 
             //no running animation found...
             if(!existingAnim) {
+
                 existingAnim = new QPropertyAnimation(toAnimate, _moveProp.toLocal8Bit());
+                _ongoingAnimations[toAnimate].insert(_moveProp, existingAnim);
+
                 existingAnim->setDuration(250);
                 existingAnim->setEasingCurve(QEasingCurve::InQuad);
                 existingAnim->setStartValue(currentScenePos);
@@ -97,7 +111,10 @@ class MapViewGraphicsItems {
 
             //no running animation found...
             if(!existingAnim) {
+
                 existingAnim = new QPropertyAnimation(toAnimate, _visibilityProp.toLocal8Bit());
+                _ongoingAnimations[toAnimate].insert(_visibilityProp, existingAnim);
+
                 existingAnim->setDuration(500);
                 existingAnim->setStartValue(currentOpacity);
                 existingAnim->setEndValue(destOpacity);
@@ -120,6 +137,39 @@ class MapViewGraphicsItems {
 
         }
 
+        static void _animatePath(MapViewGraphicsPathItem* toAnimate, const QPainterPath &pathToAnimate) {
+            
+            auto existingAnim = _ongoingAnimations[toAnimate].value(_pathProp);
+
+            //no running animation found...
+            if(!existingAnim) {
+
+                existingAnim = new PathAnimator(toAnimate, _pathProp.toLocal8Bit());
+                _ongoingAnimations[toAnimate].insert(_pathProp, existingAnim);
+
+                existingAnim->setDuration(250);
+                existingAnim->setEasingCurve(QEasingCurve::InQuad);
+                existingAnim->setStartValue(QVariant::fromValue<QPainterPath>(QPainterPath()));
+                existingAnim->setEndValue(QVariant::fromValue<QPainterPath>(pathToAnimate));
+                existingAnim->start();
+
+                QObject::connect(
+                    existingAnim, &QAbstractAnimation::finished,
+                    [=]() { _clearAnimation(toAnimate, _pathProp); }
+                );
+
+            }
+
+            //animation already exists
+            else {
+                existingAnim->pause();
+                existingAnim->setStartValue(QVariant::fromValue<QPainterPath>(QPainterPath()));
+                existingAnim->setEndValue(QVariant::fromValue<QPainterPath>(pathToAnimate));
+                existingAnim->start();
+            }
+
+        }
+
         //
         //
         //
@@ -137,3 +187,4 @@ class MapViewGraphicsItems {
 
         }
 };
+Q_DECLARE_METATYPE(QPainterPath)

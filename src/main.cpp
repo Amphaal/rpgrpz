@@ -98,6 +98,7 @@ int main(int argc, char** argv) {
     qRegisterMetaType<gint64>("gint64");
     qRegisterMetaType<SnowFlake::Id>("SnowFlake::Id");
     qRegisterMetaType<RPZCharacter>("RPZCharacter");
+    qRegisterMetaType<QPainterPath>("QPainterPath");
 
     //message handler
     qInstallMessageHandler(LogWriter::customMO);
