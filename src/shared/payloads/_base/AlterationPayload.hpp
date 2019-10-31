@@ -33,7 +33,7 @@ class AlterationPayload : public QVariantHash {
         }
 
         bool isNetworkRoutable() const {
-            return _networkAlterations.contains(this->type());
+            return Payload::networkAlterations.contains(this->type());
         }
 
         void tagAsFromTimeline() {
@@ -55,14 +55,6 @@ class AlterationPayload : public QVariantHash {
 
     private:      
         bool _isFromTimeline = false; //client only
-
-        static inline const QList<Payload::Alteration> _networkAlterations = { 
-            Payload::Alteration::Added, 
-            Payload::Alteration::Removed, 
-            Payload::Alteration::Reset,
-            Payload::Alteration::MetadataChanged,
-            Payload::Alteration::BulkMetadataChanged
-        };
         
         void _setType(const Payload::Alteration &type) {
             this->insert(QStringLiteral(u"t"), (int)type);

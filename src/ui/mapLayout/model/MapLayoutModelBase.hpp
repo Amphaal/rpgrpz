@@ -12,9 +12,9 @@ class MapLayoutModelBase : public QAbstractItemModel {
     public:
         MapLayoutModelBase() {}
 
-        static const QVector<RPZAtom::Id> fromIndexes(const QModelIndexList &selectedIndexes) {
+        static const QList<RPZAtom::Id> fromIndexes(const QModelIndexList &selectedIndexes) {
             
-            QVector<RPZAtom::Id> selectedIds;
+            QList<RPZAtom::Id> selectedIds;
             
             for(auto &index : selectedIndexes) {
                 if(index.column()) continue;
@@ -51,7 +51,7 @@ class MapLayoutModelBase : public QAbstractItemModel {
             return atomIndex;
         }
 
-        const QModelIndexList toIndexes(const QVector<RPZAtom::Id> &ids) {
+        const QModelIndexList toIndexes(const QList<RPZAtom::Id> &ids) {
             QModelIndexList out;
             for(auto &id : ids) {
                 out += this->toIndex(id);

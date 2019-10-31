@@ -33,23 +33,15 @@ int JSONSocket::sendToSockets(
         JSONLogger* logger, 
         const QList<JSONSocket*> toSendTo, 
         const RPZJSON::Method &method, 
-        const QVariant &data, 
-        const JSONSocket* toExclude
+        const QVariant &data
     ) {
     
     auto expected = toSendTo.count();
     int sent = 0;
 
     for(auto socket : toSendTo) {
-
-        if(toExclude == socket) {
-            expected--;
-            continue;
-        }
-
         auto success = _sendToSocket(socket, logger, method, data);
         sent += (int)success;
-        
     }
 
     logger->log(method, QStringLiteral(u"sent to [%1/%2] clients").arg(sent).arg(expected));

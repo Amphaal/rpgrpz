@@ -20,7 +20,7 @@
 struct AtomsSelectionDescriptor {
     QSet<RPZAtom::Type> representedTypes;
     RPZAtom templateAtom;
-    QVector<RPZAtom::Id> selectedAtomIds;
+    QList<RPZAtom::Id> selectedAtomIds;
 };
 
 struct PossibleActionsOnAtomList {
@@ -40,19 +40,22 @@ class AtomsStorage : public AlterationAcknoledger {
     Q_OBJECT
 
     public:
+        typedef bool AtomsAreLeft;
+
         AtomsStorage(const Payload::Source &boundSource);
         
-        QVector<RPZAtom::Id> bufferedSelectedAtomIds() const; //safe
-        const AtomsSelectionDescriptor getAtomSelectionDescriptor(const QVector<RPZAtom::Id> &selectedIds) const; //safe
+        QList<RPZAtom::Id> bufferedSelectedAtomIds() const; //safe
+        const AtomsSelectionDescriptor getAtomSelectionDescriptor(const QList<RPZAtom::Id> &selectedIds) const; //safe
         
-        PossibleActionsOnAtomList getPossibleActions(const QVector<RPZAtom::Id> &ids);
+        PossibleActionsOnAtomList getPossibleActions(const QList<RPZAtom::Id> &ids);
 
         const ResetPayload generateResetPayload() const;
+        AtomsStorage::AtomsAreLeft restrictPayload(AtomRelatedPayload &payloadToRestrict);
 
     public slots:    
         void redo();
         void undo();
-        void duplicateAtoms(const QVector<RPZAtom::Id> &RPZAtomIdList);
+        void duplicateAtoms(const QList<RPZAtom::Id> &RPZAtomIdList);
         void handleAlterationRequest(const AlterationPayload &payload);
 
     protected:
@@ -82,11 +85,12 @@ class AtomsStorage : public AlterationAcknoledger {
 
         //selected
         QSet<RPZAtom::Id> _selectedRPZAtomIds;
+        QSet<RPZAtom::Id> _restrictedAtomIds;
 
         //duplication
         int _duplicationCount = 0;
-        QVector<RPZAtom::Id> _latestDuplication;
-        RPZMap<RPZAtom> _generateAtomDuplicates(const QVector<RPZAtom::Id> &RPZAtomIdsToDuplicate) const;
+        QList<RPZAtom::Id> _latestDuplication;
+        RPZMap<RPZAtom> _generateAtomDuplicates(const QList<RPZAtom::Id> &RPZAtomIdsToDuplicate) const;
         static constexpr int _pixelStepPosDuplication = 10;
         static QPointF _getPositionFromAtomDuplication(const RPZAtom &atomToDuplicate, int duplicateCount);
 

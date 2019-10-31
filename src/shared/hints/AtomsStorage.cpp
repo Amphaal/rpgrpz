@@ -20,7 +20,7 @@ void AtomsStorage::_replaceMap(const MapDatabase &map) {
     this->_map = map;
 }
 
-PossibleActionsOnAtomList AtomsStorage::getPossibleActions(const QVector<RPZAtom::Id> &ids) {
+PossibleActionsOnAtomList AtomsStorage::getPossibleActions(const QList<RPZAtom::Id> &ids) {
     
     QMutexLocker l(&_m_handlingLock);
     PossibleActionsOnAtomList out;
@@ -102,7 +102,7 @@ QPair<int, int> AtomsStorage::_determineMinMaxLayer(const QList<const RPZAtom*> 
     return QPair<int, int>(lowerLayoutTarget, riseLayoutTarget);
 }
 
-const AtomsSelectionDescriptor AtomsStorage::getAtomSelectionDescriptor(const QVector<RPZAtom::Id> &selectedIds) const {
+const AtomsSelectionDescriptor AtomsStorage::getAtomSelectionDescriptor(const QList<RPZAtom::Id> &selectedIds) const {
     
     AtomsSelectionDescriptor out;
 
@@ -126,6 +126,16 @@ const AtomsSelectionDescriptor AtomsStorage::getAtomSelectionDescriptor(const QV
     }
 
     return out;
+}
+
+AtomsStorage::AtomsAreLeft AtomsStorage::restrictPayload(AtomRelatedPayload &payloadToRestrict) {
+    
+    //no need to touch
+    if(!this->_restrictedAtomIds.count()) return true;
+
+    //restrict
+    return payloadToRestrict.restrictTargetedAtoms(this->_restrictedAtomIds);
+
 }
 
 /////////////
@@ -280,7 +290,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(const AlterationPayload &fr
 
         case Payload::Alteration::Added: {
             auto casted = (AddedPayload*)&fromHistoryPayload;
-            return RemovedPayload(casted->atoms().keys().toVector());
+            return RemovedPayload(casted->atoms().keys());
         }
         break; 
 
@@ -348,10 +358,18 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
         
         for (const auto &atom : mPayload->atoms()) {
 
+            //add to Db
+            auto id = atom.id();
             this->_map.addAtom(atom);
+            
+            //add to restricted
+            if(atom.isRestrictedAtom()) {
+                this->_restrictedAtomIds += id;
+            }
+
+            //handler for inheritors
             this->_atomAdded(atom);
 
-            auto id = atom.id();
             insertedIds += id;
 
         }
@@ -391,7 +409,10 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
             auto atom = this->_map.atom(id);
             if(atom.isEmpty()) continue;
             
-            if(pType == Payload::Alteration::Removed) this->_map.removeAtom(id);
+            if(pType == Payload::Alteration::Removed) {
+                this->_map.removeAtom(id); //remove from db
+                this->_restrictedAtomIds.remove(id); //remove from restricted
+            }
             if(pType == Payload::Alteration::MetadataChanged) this->_map.updateAtom(id, maybeUpdates);
 
             alteredIds += id;
@@ -409,7 +430,7 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
 //
 //
 
-void AtomsStorage::duplicateAtoms(const QVector<RPZAtom::Id> &RPZAtomIdList) {
+void AtomsStorage::duplicateAtoms(const QList<RPZAtom::Id> &RPZAtomIdList) {
     
     //check if a recent duplication have been made, and if it was about the same atoms
     if(this->_latestDuplication != RPZAtomIdList) { //if not
@@ -430,12 +451,12 @@ void AtomsStorage::duplicateAtoms(const QVector<RPZAtom::Id> &RPZAtomIdList) {
     AlterationHandler::get()->queueAlteration(this, added);
 
     //request selection
-    SelectedPayload selected(newAtoms.keys().toVector());
+    SelectedPayload selected(newAtoms.keys());
     AlterationHandler::get()->queueAlteration(this, selected);
 }
 
 
-RPZMap<RPZAtom> AtomsStorage::_generateAtomDuplicates(const QVector<RPZAtom::Id> &RPZAtomIdsToDuplicate) const {
+RPZMap<RPZAtom> AtomsStorage::_generateAtomDuplicates(const QList<RPZAtom::Id> &RPZAtomIdsToDuplicate) const {
     
     RPZMap<RPZAtom> newAtoms;
 

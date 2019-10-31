@@ -1,12 +1,12 @@
 #pragma once
 
-#include "src/shared/payloads/_base/AlterationPayload.hpp"
+#include "src/shared/payloads/_base/AtomRelatedPayload.hpp"
 
 
-class BulkMetadataChangedPayload : public AlterationPayload {
+class BulkMetadataChangedPayload : public AtomRelatedPayload {
     public:
-        explicit BulkMetadataChangedPayload(const QVariantHash &hash) : AlterationPayload(hash) { }
-        BulkMetadataChangedPayload(const RPZAtom::ManyUpdates &changes) : AlterationPayload(Payload::Alteration::BulkMetadataChanged) { 
+        explicit BulkMetadataChangedPayload(const QVariantHash &hash) : AtomRelatedPayload(hash) { }
+        BulkMetadataChangedPayload(const RPZAtom::ManyUpdates &changes) : AtomRelatedPayload(Payload::Alteration::BulkMetadataChanged) { 
             this->_defineAtomsUpdates(changes);
         }
 
@@ -27,6 +27,20 @@ class BulkMetadataChangedPayload : public AlterationPayload {
             return out;
             
         }
+
+        AtomRelatedPayload::RemainingAtomIds restrictTargetedAtoms(const QSet<RPZAtom::Id> &idsToRemove) override {
+            
+            auto remainingUpdates = this->atomsUpdates();
+
+            for(auto &id : idsToRemove) {
+                remainingUpdates.remove(id);
+            }
+
+            this->_defineAtomsUpdates(remainingUpdates);
+
+            return remainingUpdates.count();
+
+        };
     
     private:
         void _defineAtomsUpdates(const RPZAtom::ManyUpdates &changes) {

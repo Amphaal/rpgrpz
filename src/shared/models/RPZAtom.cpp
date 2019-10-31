@@ -18,6 +18,10 @@ RPZAtom::Category RPZAtom::category(const RPZAtom::Type &type) {
     return Category::Interactive;
 }
 
+bool RPZAtom::isRestrictedAtom() const {
+    return _restrictedAtom.contains(this->type());
+}
+
 const QString RPZAtom::toString(const RPZAtom::Type &type, const QString &description) { 
 
     if(RPZAtom::category(type) == RPZAtom::Category::Interactive) {

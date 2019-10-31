@@ -2,6 +2,8 @@
 
 #include <QObject>
 
+#include "src/shared/models/RPZUser.h"
+
 class Payload : public QObject {
 
     Q_OBJECT
@@ -34,7 +36,16 @@ class Payload : public QObject {
             Local_System
         };
         Q_ENUM(Source)
+        
+        static inline const QList<Payload::Alteration> networkAlterations = { 
+            Payload::Alteration::Added, 
+            Payload::Alteration::Removed, 
+            Payload::Alteration::Reset,
+            Payload::Alteration::MetadataChanged,
+            Payload::Alteration::BulkMetadataChanged
+        };
     
 };
 
 Q_DECLARE_METATYPE(Payload::Alteration)
+Q_DECLARE_METATYPE(Payload::Source)

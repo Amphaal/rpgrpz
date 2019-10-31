@@ -52,7 +52,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         ~MapView();
 
         MapHint* hints() const;
-        const QVector<RPZAtom::Id> selectedIds() const override;
+        const QList<RPZAtom::Id> selectedIds() const override;
 
     public slots:
         void onActionRequested(const MapAction &action);

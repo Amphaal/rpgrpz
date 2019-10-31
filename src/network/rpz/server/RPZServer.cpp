@@ -11,7 +11,7 @@ RPZServer::RPZServer() : JSONLogger(QStringLiteral(u"[Server]")) {
 };
 
 RPZServer::~RPZServer() {
-    if(this->_hostSocket) delete this->_hostSocket;
+    qDeleteAll(this->_clientSocketById);
     if(this->_hints) delete this->_hints;
 }
 
@@ -38,14 +38,13 @@ void RPZServer::run() {
 void RPZServer::_attributeRoleToUser(JSONSocket* socket, RPZUser &associatedUser, const RPZHandshake &handshake) {
     
     auto isLocalConnection = socket->socket()->localAddress().isLoopback();
-    auto noHost = !this->_hostSocket;
+    auto noHost = !this->_socketsByRole.value(RPZUser::Role::Host).count();
 
     auto incarnation = handshake.incarnatingAs();
     auto wantsToIncarnate = !incarnation.isEmpty();
     
     //may elevate as Host
     if(isLocalConnection && noHost && !wantsToIncarnate) {
-        this->_hostSocket = socket;
         associatedUser.setRole(RPZUser::Role::Host);
     } 
     
@@ -54,6 +53,9 @@ void RPZServer::_attributeRoleToUser(JSONSocket* socket, RPZUser &associatedUser
         associatedUser.setCharacter(incarnation);
         associatedUser.setRole(RPZUser::Role::Player);
     }
+
+    //add to roles
+    this->_socketsByRole[associatedUser.role()].insert(socket);
 
 }
 
@@ -101,10 +103,10 @@ void RPZServer::_onClientSocketDisconnected(JSONSocket* disconnectedSocket) {
     auto removedUser = this->_usersById.take(idToRemove);
     this->_formatedUsernamesByUserId.remove(removedUser.whisperTargetName());
 
-    //desalocate host
-    if(this->_hostSocket == disconnectedSocket) {
-        this->_hostSocket = nullptr;
-    }
+    //desalocate host role
+    auto role = removedUser.role();
+    this->_socketsByRole[role].remove(disconnectedSocket);
+    if(!this->_socketsByRole.count(role)) this->_socketsByRole.remove(role);
 
     auto disconnectingAddress = disconnectedSocket->socket()->peerAddress().toString();
     this->log(QStringLiteral(u"%1 disconnected !").arg(disconnectingAddress));
@@ -130,7 +132,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
             user.setCharacter(character);
 
             //notify everyone else
-            this->_sendToAllButSelf(target, RPZJSON::Method::UserDataChanged, user);
+            this->_sendToAllExcept(target, RPZJSON::Method::UserDataChanged, user);
 
         }
         break;
@@ -148,7 +150,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
             StreamPlayStateTracker tracker(data.toHash());
             this->_tracker = tracker;
 
-            this->_sendToAllButSelf(target, RPZJSON::Method::AudioStreamUrlChanged, this->_tracker);
+            this->_sendToAllExcept(target, RPZJSON::Method::AudioStreamUrlChanged, this->_tracker);
 
         }
         break;
@@ -158,7 +160,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
             auto isPlaying = data.toBool();
             this->_tracker.updatePlayingState(isPlaying);
             
-            this->_sendToAllButSelf(target, RPZJSON::Method::AudioStreamPlayingStateChanged, data);
+            this->_sendToAllExcept(target, RPZJSON::Method::AudioStreamPlayingStateChanged, data);
 
         }
         break;
@@ -168,7 +170,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
             auto newPosInMs = data.value<qint64>();
             this->_tracker.updatePositionInMSecs(newPosInMs);
 
-            this->_sendToAllButSelf(target, RPZJSON::Method::AudioStreamPositionChanged, data);
+            this->_sendToAllExcept(target, RPZJSON::Method::AudioStreamPositionChanged, data);
 
         }
         break;
@@ -262,7 +264,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
             this->_sendStoredMessages(target);
             
             //if is not host
-            if(target != this->_hostSocket)  {
+            if(targetUser.role() != RPZUser::Role::Host)  {
                                 
                 //send data played stream informations
                 this->_sendPlayedStream(target); 
@@ -302,7 +304,7 @@ void RPZServer::_newUserAcknoledged(JSONSocket* socket, const RPZUser &userToAck
     this->log(method, QStringLiteral(u"Now %1 clients logged").arg(toSend.count()));
 
     //tell the others that this user exists
-    this->_sendToAllButSelf(socket, RPZJSON::Method::UserIn, userToAck);
+    this->_sendToAllExcept(socket, RPZJSON::Method::UserIn, userToAck);
 
 }
 
@@ -319,12 +321,10 @@ void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
                         .arg(countMsgs)
                         .arg(clientSocket->socket()->peerAddress().toString());
     this->log(method, logMsg);
+
 }
 
-void RPZServer::_broadcastMapChanges(RPZJSON::Method method, AlterationPayload &payload, JSONSocket * senderSocket) {
-
-    //prevent alteration ack if sender is not host
-    if(this->_getUser(senderSocket).role() != RPZUser::Role::Host) return;
+void RPZServer::_broadcastMapChanges(const RPZJSON::Method &method, AlterationPayload &payload, JSONSocket * senderSocket) {
 
     //save for history
     this->_hints->handleAlterationRequest(payload);
@@ -333,8 +333,38 @@ void RPZServer::_broadcastMapChanges(RPZJSON::Method method, AlterationPayload &
     auto source = this->_hints->source();
     payload.changeSource(source);
 
+    //might restrict
+    if(auto casted = dynamic_cast<AtomRelatedPayload*>(&payload)) {
+        
+        //send untouched
+        if(this->_socketsByRole.contains(RPZUser::Role::Host)) {
+            this->_sendToRoleExcept(senderSocket, RPZUser::Role::Host, method, *casted);
+        }
+
+        //send altered
+        auto containsPlayers = this->_socketsByRole.contains(RPZUser::Role::Player);
+        auto containsObservers = this->_socketsByRole.contains(RPZUser::Role::Observer);
+        if(containsPlayers || containsObservers) {
+            
+            auto atomsAreLeft = this->_hints->restrictPayload(*casted);
+            
+            //if ids are left, send
+            if(atomsAreLeft) {
+                if(containsPlayers) this->_sendToRoleExcept(senderSocket, RPZUser::Role::Player, method, *casted);
+                if(containsObservers) this->_sendToRoleExcept(senderSocket, RPZUser::Role::Observer, method, *casted);
+            }
+
+        }
+
+    } 
+    
     //send to registered users but sender...
-    this->_sendToAllButSelf(senderSocket, method, payload);
+    else {
+        this->_sendToAllExcept(senderSocket, method, payload);
+    }
+
+
+
 }
 
 void RPZServer::_sendMapHistory(JSONSocket * clientSocket) {
@@ -423,7 +453,7 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
             this->_messages.insert(msgId, msg);
 
             //push to all sockets
-            this->_sendToAllButSelf(sender, RPZJSON::Method::Message, msg);
+            this->_sendToAllExcept(sender, RPZJSON::Method::Message, msg);
 
             //send dices throws if requested
             this->_maySendAndStoreDiceThrows(msg.text());
@@ -492,8 +522,24 @@ void RPZServer::_maySendAndStoreDiceThrows(const QString &text) {
 // LOW Helpers
 //
 
-void RPZServer::_sendToAllButSelf(JSONSocket* toExclude, const RPZJSON::Method &method, const QVariant &data) {
-    JSONSocket::sendToSockets(this, this->_clientSocketById.values(), method, data, toExclude);
+void RPZServer::_sendToAllExcept(JSONSocket* toExclude, const RPZJSON::Method &method, const QVariant &data) {
+    
+    auto toSendTo = this->_clientSocketById.values();
+    toSendTo.removeOne(toExclude);
+    if(!toSendTo.count()) return;
+
+    JSONSocket::sendToSockets(this, toSendTo, method, data);
+    
+}
+
+void RPZServer::_sendToRoleExcept(JSONSocket* toExclude, const RPZUser::Role &role, const RPZJSON::Method &method, const QVariant &data) {
+    
+    auto toSendTo = this->_socketsByRole.value(role);
+    toSendTo.remove(toExclude);
+    if(!toSendTo.count()) return;
+
+    JSONSocket::sendToSockets(this, toSendTo.toList(), method, data);
+
 }
 
 void RPZServer::_sendToAll(const RPZJSON::Method &method, const QVariant &data) {

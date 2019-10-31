@@ -33,3 +33,5 @@ class RPZJSON : public QObject {
         Q_ENUM(Method)
        
 };
+
+Q_DECLARE_METATYPE(RPZJSON::Method)

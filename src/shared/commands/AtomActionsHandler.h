@@ -12,7 +12,7 @@
 
 class AtomSelector {
     public:
-        virtual const QVector<RPZAtom::Id> selectedIds() const = 0;
+        virtual const QList<RPZAtom::Id> selectedIds() const = 0;
 };
 
 class AtomActionsHandler {
@@ -26,12 +26,12 @@ class AtomActionsHandler {
 
         static void undoAlteration(AtomsStorage* master);
         static void redoAlteration(AtomsStorage* master);
-        static void copyToClipboard(const QVector<RPZAtom::Id> &ids);
+        static void copyToClipboard(const QList<RPZAtom::Id> &ids);
         static void pasteAtomsFromClipboard(AtomsStorage* master);
-        static void removeAtoms(AtomsStorage* master, const QVector<RPZAtom::Id> &ids);
-        static void moveAtomsToLayer(AtomsStorage* master, const QVector<RPZAtom::Id> &ids, int targetLayer);
-        static void alterAtomsVisibility(AtomsStorage* master, const QVector<RPZAtom::Id> &ids, bool hide);
-        static void alterAtomsAvailability(AtomsStorage* master, const QVector<RPZAtom::Id> &ids, bool lock);
+        static void removeAtoms(AtomsStorage* master, const QList<RPZAtom::Id> &ids);
+        static void moveAtomsToLayer(AtomsStorage* master, const QList<RPZAtom::Id> &ids, int targetLayer);
+        static void alterAtomsVisibility(AtomsStorage* master, const QList<RPZAtom::Id> &ids, bool hide);
+        static void alterAtomsAvailability(AtomsStorage* master, const QList<RPZAtom::Id> &ids, bool lock);
 
         ///
         ///
@@ -45,6 +45,6 @@ class AtomActionsHandler {
         void _addUndoRedoActionsToShortcuts(QWidget* toAddShortcutsTo);
         void _addRemoveActionToShortcuts(QWidget* toAddShortcutsTo);
 
-        const QVector<RPZAtom::Id> fromSelector();
+        const QList<RPZAtom::Id> fromSelector();
 
 };

@@ -304,9 +304,9 @@ void ViewMapHint::_crossBindingAtomWithGI(const RPZAtom &atom, QGraphicsItem* gi
     RPZQVariant::setAtomId(gi, id);
 }
 
-const QVector<RPZAtom::Id> ViewMapHint::getAtomIdsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const {
+const QList<RPZAtom::Id> ViewMapHint::getAtomIdsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const {
     
-    QVector<RPZAtom::Id> list;
+    QList<RPZAtom::Id> list;
 
     for(auto e : listToFetch) {
         auto id = this->getAtomIdFromGraphicsItem(e);

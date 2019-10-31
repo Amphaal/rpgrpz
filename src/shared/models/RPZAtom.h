@@ -104,7 +104,6 @@ class RPZAtom : public Serializable {
             RPZAtom::Type::Background,
             RPZAtom::Type::NPC
         };
-
         
         //
         //
@@ -135,6 +134,7 @@ class RPZAtom : public Serializable {
         bool isAssetBased() const;
         RPZAtom::Category category() const;
         static RPZAtom::Category category(const RPZAtom::Type &type);
+        bool isRestrictedAtom() const;
 
         //
         //
@@ -184,6 +184,11 @@ class RPZAtom : public Serializable {
             RPZAtom::Type::Object, 
             RPZAtom::Type::Brush,
             RPZAtom::Type::Background
+        };
+
+        
+        static inline const QList<RPZAtom::Type> _restrictedAtom {
+            RPZAtom::Type::Event
         };
 
         static inline const QHash<RPZAtom::Parameter, QString> _str = {

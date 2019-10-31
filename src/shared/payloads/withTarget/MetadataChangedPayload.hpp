@@ -8,7 +8,7 @@
 class MetadataChangedPayload : public MultipleAtomTargetsPayload {
     public:
         explicit MetadataChangedPayload(const QVariantHash &hash) : MultipleAtomTargetsPayload(hash) {}
-        MetadataChangedPayload(const QVector<RPZAtom::Id> &targetedRPZAtomIds, const RPZAtom::Updates &changes) : MultipleAtomTargetsPayload(Payload::Alteration::MetadataChanged, targetedRPZAtomIds) {
+        MetadataChangedPayload(const QList<RPZAtom::Id> &targetedRPZAtomIds, const RPZAtom::Updates &changes) : MultipleAtomTargetsPayload(Payload::Alteration::MetadataChanged, targetedRPZAtomIds) {
             Q_ASSERT(targetedRPZAtomIds.count());
             Q_ASSERT(changes.count());
 

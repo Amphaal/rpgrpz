@@ -18,7 +18,7 @@ class AtomsContextualMenuHandler {
     public:
         AtomsContextualMenuHandler(AtomsStorage* mapMaster, QWidget* menuParent);
 
-        void invokeMenu(const QVector<RPZAtom::Id> &toManipulate, const QPoint &whereToDisplay);
+        void invokeMenu(const QList<RPZAtom::Id> &toManipulate, const QPoint &whereToDisplay);
 
     protected:
         void _moveAtomsToLayer(int layer);
@@ -34,7 +34,7 @@ class AtomsContextualMenuHandler {
         QWidget* _menuParent = nullptr;
         AtomsStorage* _mapMaster = nullptr;  
 
-        QVector<RPZAtom::Id> _latestInvokedAtomIds;
+        QList<RPZAtom::Id> _latestInvokedAtomIds;
         PossibleActionsOnAtomList _latestPossibleActions;
 
         QAction* _removeAction = nullptr;

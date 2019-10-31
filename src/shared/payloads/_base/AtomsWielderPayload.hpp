@@ -3,11 +3,11 @@
 #include "src/shared/models/_base/RPZMap.hpp"
 #include "src/shared/models/RPZAtom.h"
 
-#include "AlterationPayload.hpp"
+#include "AtomRelatedPayload.hpp"
 
 #include "src/shared/database/MapDatabase.h"
 
-class AtomsWielderPayload : public AlterationPayload {
+class AtomsWielderPayload : public AtomRelatedPayload {
     public:
         AtomsWielderPayload() {}
 
@@ -41,20 +41,34 @@ class AtomsWielderPayload : public AlterationPayload {
 
         }
 
-        protected:
-        explicit AtomsWielderPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        AtomsWielderPayload(const MapDatabase &map) : AlterationPayload(Payload::Alteration::Reset) {
-            this->_setAssetHashes(map.usedAssetHashes());
-            this->_setAtoms(map.atoms().toVMap());
-        }
+        AtomRelatedPayload::RemainingAtomIds restrictTargetedAtoms(const QSet<RPZAtom::Id> &idsToRemove) override {
+            
+            auto remainingAtoms = this->atoms();
 
-        AtomsWielderPayload(const QList<RPZAtom> &atoms) : AlterationPayload(Payload::Alteration::Added) {
-            this->_setAssetHashes(atoms);
-            this->_setAtoms(atoms);
-        }
+            for(auto &id : idsToRemove) {
+                remainingAtoms.remove(id);
+            }
+
+            this->_setAtoms(remainingAtoms);
+            this->_setAssetHashes(remainingAtoms);
+
+            return remainingAtoms.count();
+
+        };
+
+        protected:
+            explicit AtomsWielderPayload(const QVariantHash &hash) : AtomRelatedPayload(hash) {}
+            AtomsWielderPayload(const MapDatabase &map) : AtomRelatedPayload(Payload::Alteration::Reset) {
+                this->_setAssetHashes(map.usedAssetHashes());
+                this->_setAtoms(map.atoms().toVMap());
+            }
+
+            AtomsWielderPayload(const QList<RPZAtom> &atoms) : AtomRelatedPayload(Payload::Alteration::Added) {
+                this->_setAssetHashes(atoms);
+                this->_setAtoms(atoms);
+            }
 
         private:
-
             void _setAssetHashes(const QList<RPZAtom> &toExtractFrom) {
                 
                 QVariantList vList;
@@ -67,6 +81,19 @@ class AtomsWielderPayload : public AlterationPayload {
                 
             }
 
+            void _setAssetHashes(const RPZMap<RPZAtom> &toExtractFrom) {
+                
+                QVariantList vList;
+                
+                for (auto &atom : toExtractFrom) {
+                    vList += atom.assetHash();
+                }
+
+                this->_setAssetHashes(vList);
+                
+            }
+
+
             void _setAssetHashes(const QSet<RPZAsset::Hash> &hashes) {
                 
                 QVariantList vList;
@@ -77,6 +104,18 @@ class AtomsWielderPayload : public AlterationPayload {
 
                 this->_setAssetHashes(vList);
                 
+            }
+
+            void _setAtoms(const RPZMap<RPZAtom> &atoms) {
+                
+                QVariantMap vMap;
+
+                for (auto &atom : atoms) {
+                    vMap.insert(atom.idAsStr(), atom);
+                }
+
+                this->_setAtoms(vMap);
+
             }
 
             void _setAtoms(const QList<RPZAtom> &atoms) {

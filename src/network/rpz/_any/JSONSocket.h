@@ -24,8 +24,7 @@ class JSONSocket : public QObject {
             JSONLogger* logger, 
             const QList<JSONSocket*> toSendTo, 
             const RPZJSON::Method &method, 
-            const QVariant &data,
-            const JSONSocket* toExclude = nullptr
+            const QVariant &data
         );
 
     signals:

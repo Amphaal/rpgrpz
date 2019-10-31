@@ -263,7 +263,7 @@ void MapView::keyReleaseEvent(QKeyEvent *event) {
 
 }
 
-const QVector<RPZAtom::Id> MapView::selectedIds() const {
+const QList<RPZAtom::Id> MapView::selectedIds() const {
     return this->_hints->getAtomIdsFromGraphicsItems(
         this->scene()->selectedItems()
     );

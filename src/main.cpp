@@ -83,7 +83,7 @@ int main(int argc, char** argv) {
     qRegisterMetaType<RPZAssetImportPackage>("RPZAssetImportPackage");
     qRegisterMetaType<QList<QGraphicsItem*>>("QList<QGraphicsItem*>");
     qRegisterMetaType<ResetPayload>("ResetPayload");
-    qRegisterMetaType<QVector<RPZAtom::Id>>("QVector<RPZAtom::Id>");
+    qRegisterMetaType<QList<RPZAtom::Id>>("QList<RPZAtom::Id>");
     qRegisterMetaType<QVector<RPZUser>>("QVector<RPZUser>");
     qRegisterMetaType<RPZMap<RPZUser>>("RPZMap<RPZUser>");
     qRegisterMetaType<QVector<RPZMessage>>("QVector<RPZMessage>");

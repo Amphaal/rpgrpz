@@ -33,7 +33,7 @@ const QVector<ConnectivityObserver*> ConnectivityObserver::observers() {
 
 bool ConnectivityObserver::isHostAble()  {
     if(!_rpzClient) return true;
-    return _rpzClient->identity().role() == RPZUser::Role::Host;
+    return _rpzClient->identity().role() == RPZUser::Role::Host;;
 }
 
 void ConnectivityObserver::receivedConnectionCloseSignal() {

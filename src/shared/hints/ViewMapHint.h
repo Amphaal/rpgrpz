@@ -36,7 +36,7 @@ class ViewMapHint : public AtomsStorage {
         const RPZAtom templateAtom() const;
         QGraphicsItem* ghostItem() const;
 
-        const QVector<RPZAtom::Id> getAtomIdsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const; //safe
+        const QList<RPZAtom::Id> getAtomIdsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const; //safe
         const RPZAtom::Id getAtomIdFromGraphicsItem(const QGraphicsItem* toFetch) const; 
 
         QGraphicsItem* generateTemporaryItemFromTemplateBuffer(); //safe

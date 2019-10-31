@@ -54,7 +54,8 @@ class RPZServer : public QTcpServer, public JSONLogger {
         QHash<JSONSocket*, RPZUser::Id> _idsByClientSocket;
         QHash<RPZUser::Id, JSONSocket*> _clientSocketById;
         QHash<QString, RPZUser::Id> _formatedUsernamesByUserId;
-        JSONSocket* _hostSocket = nullptr;
+        
+        QHash<RPZUser::Role, QSet<JSONSocket*>> _socketsByRole;
         
         //music
         StreamPlayStateTracker _tracker;
@@ -68,7 +69,7 @@ class RPZServer : public QTcpServer, public JSONLogger {
 
         //map atoms
         AtomsStorage* _hints = nullptr;
-        void _broadcastMapChanges(RPZJSON::Method method, AlterationPayload &payload, JSONSocket * senderSocket);
+        void _broadcastMapChanges(const RPZJSON::Method &method, AlterationPayload &payload, JSONSocket * senderSocket);
         void _sendMapHistory(JSONSocket * clientSocket);
         
         //messages
@@ -83,5 +84,6 @@ class RPZServer : public QTcpServer, public JSONLogger {
         void _routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data);
         
         void _sendToAll(const RPZJSON::Method &method, const QVariant &data);
-        void _sendToAllButSelf(JSONSocket* toExclude, const RPZJSON::Method &method, const QVariant &data);
+        void _sendToAllExcept(JSONSocket* toExclude, const RPZJSON::Method &method, const QVariant &data);
+        void _sendToRoleExcept(JSONSocket* toExclude, const RPZUser::Role &role, const RPZJSON::Method &method, const QVariant &data);
 };
