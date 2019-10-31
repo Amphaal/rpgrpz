@@ -1,9 +1,12 @@
 #pragma once
 
+#include <QPainterPath>
+
 #include "src/shared/models/RPZAtom.h"
 
-#include <QPainterPath>
 #include "src/shared/renderer/graphics/MapViewGraphicsItems.h"
+
+#include "src/ui/_others/ConnectivityObserver.h"
 
 class AtomConverter {
     public:   

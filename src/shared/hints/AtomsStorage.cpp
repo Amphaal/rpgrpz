@@ -25,10 +25,11 @@ PossibleActionsOnAtomList AtomsStorage::getPossibleActions(const QList<RPZAtom::
     QMutexLocker l(&_m_handlingLock);
     PossibleActionsOnAtomList out;
 
-    
-    auto areIdsSelected = !ids.isEmpty();
+    //no actions possible if not host able
+    if(ConnectivityObserver::isHostAble()) return out;
 
     //availability
+    auto areIdsSelected = !ids.isEmpty();
     out.canChangeAvailability = areIdsSelected;
 
     // redo/undo

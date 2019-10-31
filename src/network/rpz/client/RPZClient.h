@@ -1,15 +1,12 @@
 #pragma once
 
 #include <QThread>
-
 #include <QMessageBox>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QVariantList>
-
 #include <QMutex>
-
 
 #include "src/network/rpz/_any/JSONSocket.h"
 
@@ -25,6 +22,8 @@
 #include "src/shared/audio/StreamPlayStateTracker.hpp"
 
 #include "src/network/rpz/_any/JSONLogger.hpp"
+
+#include "src/ui/_others/ConnectivityObserver.h"
 
 class RPZClient : public QObject, public AlterationActor, public JSONLogger {
 

@@ -1,7 +1,8 @@
 #pragma once 
 
-#include "src/network/rpz/client/RPZClient.h"
 #include <QObject>
+
+#include "src/network/rpz/client/RPZClient.h"
 
 class ConnectivityObserver {
     public:
@@ -13,6 +14,7 @@ class ConnectivityObserver {
         static const QVector<ConnectivityObserver*> observers();
 
         static bool isHostAble();
+        static void defineHostAbility(const RPZUser &user);
 
         void receivedConnectionCloseSignal();
 
@@ -24,6 +26,9 @@ class ConnectivityObserver {
     private:
         static inline QVector<ConnectivityObserver*> _observers;
         static void _onClientThreadFinished();
+
+        static inline bool _isHostAble = true;
+
 };
 
 class ConnectivityObserverSynchronizer : public QObject {

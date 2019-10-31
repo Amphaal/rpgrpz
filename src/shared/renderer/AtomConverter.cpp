@@ -45,7 +45,7 @@ RPZAtom AtomConverter::graphicsToAtom(QGraphicsItem* blueprint, RPZAtom template
 void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZAtom &blueprint, bool isTargetTemporary) {
     
     //set movable as default
-    target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, true);
+    target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, ConnectivityObserver::isHostAble());
 
     //bind a copy of the template to the item
     setIsTemporary(target, isTargetTemporary);

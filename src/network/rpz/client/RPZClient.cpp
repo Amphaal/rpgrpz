@@ -305,6 +305,8 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
                 this->_self = RPZUser(data.toHash());
             }
 
+            ConnectivityObserver::defineHostAbility(this->_self);
+
             emit selfIdentityAcked(this->_self);
 
         }
