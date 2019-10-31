@@ -17,7 +17,7 @@
 
 #include "src/shared/database/MapDatabase.h"
 
-#include "src/ui/_others/ConnectivityObserver.h"
+#include "src/network/rpz/client/RPZClient.h"
 
 struct AtomsSelectionDescriptor {
     QSet<RPZAtom::Type> representedTypes;

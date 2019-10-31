@@ -9,8 +9,6 @@
 #include <QDragMoveEvent>
 #include <QDragEnterEvent>
 
-#include "src/ui/_others/ConnectivityObserver.h"
-
 #include "src/ui/audio/controllers/_base/VolumeToolbar.h"
 #include "src/helpers/StringHelper.hpp"
 

@@ -10,6 +10,8 @@
 
 #include "src/helpers/Clipboard.hpp"
 
+#include "src/network/rpz/client/RPZClient.h"
+
 class AtomSelector {
     public:
         virtual const QList<RPZAtom::Id> selectedIds() const = 0;

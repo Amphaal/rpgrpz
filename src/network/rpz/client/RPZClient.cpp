@@ -305,7 +305,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
                 this->_self = RPZUser(data.toHash());
             }
 
-            ConnectivityObserver::defineHostAbility(this->_self);
+            _defineHostAbility(this->_self);
 
             emit selfIdentityAcked(this->_self);
 
@@ -434,4 +434,16 @@ void RPZClient::_onSending() {
 
 void RPZClient::_onSent(bool success) {
     QMetaObject::invokeMethod(ProgressTracker::get(), "clientStoppedSending");
+}
+
+void RPZClient::resetHostAbility() {
+    _isHostAble = true;
+}
+
+bool RPZClient::isHostAble()  {
+    return _isHostAble;
+}
+
+void RPZClient::_defineHostAbility(const RPZUser &user) {
+    _isHostAble = user.role() == RPZUser::Role::Host;
 }

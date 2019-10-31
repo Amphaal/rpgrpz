@@ -13,7 +13,6 @@
 #include "src/shared/database/AssetsDatabase.h"
 
 #include "src/shared/async-ui/AlterationActor.hpp"
-#include "src/ui/_others/ConnectivityObserver.h"
 
 class ToysTreeViewModel : public QAbstractItemModel {
     

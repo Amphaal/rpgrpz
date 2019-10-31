@@ -23,8 +23,6 @@
 
 #include "src/network/rpz/_any/JSONLogger.hpp"
 
-#include "src/ui/_others/ConnectivityObserver.h"
-
 class RPZClient : public QObject, public AlterationActor, public JSONLogger {
 
     Q_OBJECT
@@ -37,6 +35,9 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
 
         const RPZUser identity() const; //safe
         const RPZMap<RPZUser> sessionUsers() const; //safe
+
+        static void resetHostAbility();
+        static bool isHostAble();
 
     public slots:
         void run();
@@ -74,7 +75,10 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
         void audioPositionChanged(qint64 newPosInMsecs);
         void audioPlayStateChanged(bool isPlaying);
 
-    private:   
+    private:
+        static inline bool _isHostAble = true;
+        static void _defineHostAbility(const RPZUser &user);
+
         JSONSocket* _sock = nullptr;   
         
         QString _domain;

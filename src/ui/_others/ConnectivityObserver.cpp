@@ -31,21 +31,13 @@ const QVector<ConnectivityObserver*> ConnectivityObserver::observers() {
     return _observers;
 }
 
-bool ConnectivityObserver::isHostAble()  {
-    return _isHostAble;
-}
-
-void ConnectivityObserver::defineHostAbility(const RPZUser &user) {
-    _isHostAble = user.role() == RPZUser::Role::Host;
-}
-
 void ConnectivityObserver::receivedConnectionCloseSignal() {
     this->connectionClosed();
 }
 
 void ConnectivityObserver::_onClientThreadFinished() {
     _rpzClient = nullptr;
-    _isHostAble = true;
+    RPZClient::resetHostAbility();
     QMetaObject::invokeMethod(ConnectivityObserverSynchronizer::get(), "triggerConnectionClosed");
 }
 

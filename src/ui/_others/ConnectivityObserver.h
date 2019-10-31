@@ -13,9 +13,6 @@ class ConnectivityObserver {
 
         static const QVector<ConnectivityObserver*> observers();
 
-        static bool isHostAble();
-        static void defineHostAbility(const RPZUser &user);
-
         void receivedConnectionCloseSignal();
 
     protected:
@@ -27,7 +24,6 @@ class ConnectivityObserver {
         static inline QVector<ConnectivityObserver*> _observers;
         static void _onClientThreadFinished();
 
-        static inline bool _isHostAble = true;
 
 };
 

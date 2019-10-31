@@ -6,7 +6,7 @@
 
 #include "src/shared/renderer/graphics/MapViewGraphicsItems.h"
 
-#include "src/ui/_others/ConnectivityObserver.h"
+#include "src/network/rpz/client/RPZClient.h"
 
 class AtomConverter {
     public:   

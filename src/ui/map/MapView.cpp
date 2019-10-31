@@ -336,7 +336,7 @@ void MapView::mousePressEvent(QMouseEvent *event) {
             
             //check if inserts are allowed
             if(this->_getCurrentTool() != MapTool::Atom) break;
-            if(!ConnectivityObserver::isHostAble()) break;
+            if(!RPZClient::isHostAble()) break;
             
             //conditionnal drawing
             auto type = this->_hints->templateAtom().type();

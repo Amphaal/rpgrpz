@@ -3,8 +3,6 @@
 #include <QGroupBox>
 #include <QVBoxLayout>
 
-#include "src/ui/_others/ConnectivityObserver.h"
-
 #include "src/ui/audio/controllers/_base/TrackToolbar.h"
 #include "src/ui/audio/controllers/playlist/Playlist.h"
 #include "src/ui/audio/controllers/playlist/YoutubePlaylistItemInsertor.hpp"

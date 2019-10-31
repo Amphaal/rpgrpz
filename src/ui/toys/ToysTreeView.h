@@ -18,6 +18,8 @@
 
 #include "src/shared/models/toy/RPZToy.hpp"
 
+#include "src/ui/_others/ConnectivityObserver.h"
+
 class ToysTreeView : public QTreeView, public ConnectivityObserver, public AlterationActor {
 
     Q_OBJECT

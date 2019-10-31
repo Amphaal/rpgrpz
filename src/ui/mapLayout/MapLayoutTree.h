@@ -14,8 +14,6 @@
 #include "src/shared/models/RPZAtom.h"
 #include "src/shared/payloads/Payloads.h"
 
-#include "src/ui/_others/ConnectivityObserver.h"
-
 #include "src/ui/mapLayout/_base/LockAndVisibilityDelegate.h"
 
 #include "src/ui/mapLayout/model/MapLayoutModel.hpp"
