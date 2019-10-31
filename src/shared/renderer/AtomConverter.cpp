@@ -163,7 +163,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
             //on moving
             case RPZAtom::Parameter::Position: {
                 auto destPos = val.toPointF();
-                itemToUpdate->setPos(destPos);  
+                MapViewGraphicsItems::animateMove(itemToUpdate, destPos);  
             }
             break;
 
