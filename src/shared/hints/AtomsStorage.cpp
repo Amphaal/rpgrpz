@@ -26,7 +26,7 @@ PossibleActionsOnAtomList AtomsStorage::getPossibleActions(const QList<RPZAtom::
     PossibleActionsOnAtomList out;
 
     //no actions possible if not host able
-    if(RPZClient::isHostAble()) return out;
+    if(!RPZClient::isHostAble()) return out;
 
     //availability
     auto areIdsSelected = !ids.isEmpty();

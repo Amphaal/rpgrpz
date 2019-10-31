@@ -10,8 +10,14 @@
 #include <QVariant>
 #include <QBrush>
 #include <QFont>
+#include <QObject>
 
-class MapViewGraphicsPathItem : public QGraphicsPathItem {
+class MapViewGraphicsPathItem : public QObject, public QGraphicsPathItem {
+
+    Q_OBJECT
+    Q_PROPERTY(QPointF pos READ pos WRITE setPos)
+    Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
+
     public:
         MapViewGraphicsPathItem(const QPainterPath &path, const QPen &pen, const QBrush &brush = QBrush()) : 
         QGraphicsPathItem(path),

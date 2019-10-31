@@ -60,9 +60,7 @@ void AtomsContextualMenuHandler::_setAvailability(bool lock) {
 void AtomsContextualMenuHandler::invokeMenu(const QList<RPZAtom::Id> &toManipulate, const QPoint &whereToDisplay) {
 
     //get instr
-    this->_latestPossibleActions = RPZClient::isHostAble() ? 
-                                    this->_mapMaster->getPossibleActions(toManipulate) : 
-                                    PossibleActionsOnAtomList();
+    this->_latestPossibleActions = this->_mapMaster->getPossibleActions(toManipulate);
     this->_latestInvokedAtomIds = toManipulate;
     
     //display menu

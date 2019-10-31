@@ -2,7 +2,7 @@
 
 #include "AtomConverter.h"
 
-#include "src/shared/renderer/graphics/MapViewGraphicsItems.h"
+#include "src/shared/renderer/graphics/MapViewGraphicsItems.hpp"
 
 #include "src/shared/models/toy/RPZToy.hpp"
 

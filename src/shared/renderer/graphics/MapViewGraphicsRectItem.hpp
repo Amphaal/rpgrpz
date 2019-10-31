@@ -11,7 +11,14 @@
 #include <QBrush>
 #include <QFont>
 
-class MapViewGraphicsRectItem : public QGraphicsRectItem {
+#include <QObject>
+
+class MapViewGraphicsRectItem : public QObject, public QGraphicsRectItem {
+
+    Q_OBJECT
+    Q_PROPERTY(QPointF pos READ pos WRITE setPos)
+    Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
+
     public:
         MapViewGraphicsRectItem(const QRectF &rect, const QPen &pen, const QBrush &brush) :
         QGraphicsRectItem(rect) {

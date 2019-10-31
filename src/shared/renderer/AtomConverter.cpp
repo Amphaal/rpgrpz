@@ -46,6 +46,8 @@ void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZA
     //set movable as default
     target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, RPZClient::isHostAble());
 
+    auto i = target->toGraphicsObject();
+
     //bind a copy of the template to the item
     setIsTemporary(target, isTargetTemporary);
 
@@ -168,7 +170,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
             // on locking change
             case RPZAtom::Parameter::Locked: {
                 auto locked = val.toBool();
-                itemToUpdate->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, !locked);
+                if(RPZClient::isHostAble()) itemToUpdate->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, !locked);
                 itemToUpdate->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, !locked);
             }
             break;
@@ -177,8 +179,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
             case RPZAtom::Parameter::Hidden: {
                 if(!isTemporary(itemToUpdate)) {
                     auto hidden = val.toBool();
-                    auto opacity = hidden ? 0 : 1;
-                    itemToUpdate->setOpacity(opacity);
+                    MapViewGraphicsItems::animateVisibility(itemToUpdate, hidden);
                 }
             }
             break;

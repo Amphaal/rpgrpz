@@ -132,11 +132,18 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
 
     if(type == Payload::Alteration::Selected) this->scene()->clearSelection();
     if(type == Payload::Alteration::Reset) {
+        
         this->_resetTool();
-        this->_drawingAssist->clearDrawing(); //before clearing whole scene
+
+        //before clearing whole scene
+        this->_drawingAssist->clearDrawing(); 
+        MapViewGraphicsItems::clearAnimations();
+
         this->scene()->clear();
+
         this->extractMapParametersForHUDLayout(this->_hints);
         this->setupHeavyLoadPlaceholder(toAlter.count());
+
     }
 
     for(auto item : toAlter) {
