@@ -12,7 +12,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
     this->setScene(scene);
 
     //init
-    this->_hints = new MapHint;
+    this->_hints = new MapHint(AppContext::standardTileSize(this));
     this->_menuHandler = new AtomsContextualMenuHandler(this->_hints, this);
     this->_atomActionsHandler = new AtomActionsHandler(this->_hints, this, this);
     this->_drawingAssist = new DrawingAssist(this->_hints, this);

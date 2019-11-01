@@ -23,4 +23,5 @@ class MapViewGraphicsPixmapItem : public QObject, public QGraphicsPixmapItem {
 
     public:
         MapViewGraphicsPixmapItem(const RPZAsset &assetMetadata) : QGraphicsPixmapItem(assetMetadata.filepath()) {}
+        MapViewGraphicsPixmapItem(const QString &filepath) : QGraphicsPixmapItem(filepath) {}
 };

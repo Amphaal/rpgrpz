@@ -1,6 +1,6 @@
 #include "AtomRenderer.h"
 
-QGraphicsItem* AtomRenderer::createGraphicsItem(const RPZAtom &atom, const RPZAsset &asset, bool isTemporary) {
+QGraphicsItem* AtomRenderer::createGraphicsItem(const RPZAtom &atom, const RPZAsset &asset, const QSizeF &tileSize, bool isTemporary) {
     
     QGraphicsItem* out;
     auto type = atom.type();
@@ -25,6 +25,10 @@ QGraphicsItem* AtomRenderer::createGraphicsItem(const RPZAtom &atom, const RPZAs
 
         case RPZAtom::Type::Event:
             out = _createUnscalableToken(atom);
+        break;
+
+        case RPZAtom::Type::Player:
+            out = _createPlayerToken(atom, tileSize);
         break;
 
         default: {
@@ -136,7 +140,7 @@ QGraphicsPathItem* AtomRenderer::_createBrushItem(const RPZAtom &atom, const RPZ
 
 QGraphicsPathItem* AtomRenderer::_createDrawingItem(const RPZAtom &atom) {
     
-    //define a ped
+    //define a pen
     QPen pen;
     pen.setCapStyle(Qt::RoundCap);
     pen.setJoinStyle(Qt::RoundJoin);
@@ -158,8 +162,23 @@ QGraphicsTextItem* AtomRenderer::_createTextItem(const RPZAtom &atom) {
 QGraphicsPixmapItem* AtomRenderer::_createUnscalableToken(const RPZAtom &atom) {
     
     auto pathToIcon = RPZAtom::iconPathByAtomType.value(atom.type());
-    QGraphicsPixmapItem* out = new QGraphicsPixmapItem(pathToIcon);
+    auto out = new MapViewGraphicsPixmapItem(pathToIcon);
     out->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIgnoresTransformations, true);
+
+    return out;
+
+}
+
+QGraphicsEllipseItem* AtomRenderer::_createPlayerToken(const RPZAtom &atom, const QSizeF &tileSize) {
+    
+    auto defaultColor = atom.defaultColor();
+    
+    //define brush
+    QBrush brush(defaultColor);
+    
+    auto out = new QGraphicsEllipseItem(QRectF({0,0}, tileSize));
+    out->setPen(Qt::NoPen);
+    out->setBrush(brush);
 
     return out;
 

@@ -11,7 +11,7 @@
 
 class AtomRenderer {
     public:
-        static QGraphicsItem* createGraphicsItem(const RPZAtom &atom, const RPZAsset &asset, bool isTemporary = false);
+        static QGraphicsItem* createGraphicsItem(const RPZAtom &atom, const RPZAsset &asset, const QSizeF &tileSize, bool isTemporary = false);
         static QGraphicsRectItem* createMissingAssetPlaceholderItem(const RPZAtom &atom);
         static QGraphicsItem* createOutlineRectItem(const QPointF &scenePos);
 
@@ -21,4 +21,5 @@ class AtomRenderer {
         static QGraphicsPathItem* _createDrawingItem(const RPZAtom &atom);
         static QGraphicsTextItem* _createTextItem(const RPZAtom &atom);
         static QGraphicsPixmapItem* _createUnscalableToken(const RPZAtom &atom);
+        static QGraphicsEllipseItem* _createPlayerToken(const RPZAtom &atom, const QSizeF &tileSize);
 };

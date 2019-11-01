@@ -63,10 +63,9 @@ class AtomEditionManager : public QWidget {
                 AtomsSelectionDescriptor descr;
                 
                 if(!atom_template.isEmpty()) {
-
-                    descr.representedTypes.insert(
-                        atom_template.type()
-                    );
+                    
+                    auto type = atom_template.type();
+                    descr.representedTypes.insert(type);
 
                     descr.templateAtom = atom_template;
 

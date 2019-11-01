@@ -256,6 +256,7 @@ void ToysTreeViewItem::_defineFlags() {
         
         case ToysTreeViewItem::Type::Event:
         case ToysTreeViewItem::Type::FreeDraw:
+        case ToysTreeViewItem::Type::Player:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsSelectable);
             break;
         

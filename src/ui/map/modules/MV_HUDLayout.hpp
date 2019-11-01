@@ -8,12 +8,12 @@
 class MV_HUDLayout {
     public:
         MV_HUDLayout(QGraphicsView* view) : _view(view),
-        _heavyLoadImage(QPixmap(":/icons/app_64.png")),
-        _stdTileSize(AppContext::standardTileSize(view)) { }
+        _heavyLoadImage(QPixmap(":/icons/app_64.png")) { }
     
     protected:
         void extractMapParametersForHUDLayout(const MapHint* hint) {
             this->_tileToMeterRatio = hint->tileToMeterRatio();
+            this->_stdTileSize = hint->standardTileSize();
         }
 
         void setupHeavyLoadPlaceholder(int expectedItemsCount) {
@@ -306,10 +306,10 @@ class MV_HUDLayout {
             painter->save();
 
                 QPen pen(Qt::SolidPattern, 0);
-                pen.setColor("#444");
+                pen.setColor("#888");
                 painter->setPen(pen);
                 painter->setBrush(Qt::NoBrush);
-                
+
                 auto sceneRect = this->_view->sceneRect();
                 auto center = sceneRect.center();
 

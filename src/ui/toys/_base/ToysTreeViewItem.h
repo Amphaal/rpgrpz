@@ -22,6 +22,7 @@ class ToysTreeViewItem : private QObject {
             Folder = 101,
             InternalContainer = 201,
                 Event = (int)RPZAtom::Type::Event,
+                Player = (int)RPZAtom::Type::Player,
                 FreeDraw = (int)RPZAtom::Type::Drawing,
                 Text = (int)RPZAtom::Type::Text,
             NPC_Container = (int)AssetsDatabase::StorageContainer::NPC,
@@ -168,7 +169,8 @@ class ToysTreeViewItem : private QObject {
         static const inline QList<ToysTreeViewItem::Type> _internalItemsTypes = {
             ToysTreeViewItem::Type::Event,
             ToysTreeViewItem::Type::FreeDraw,
-            ToysTreeViewItem::Type::Text
+            ToysTreeViewItem::Type::Text,
+            ToysTreeViewItem::Type::Player
         };
 
         static const inline QHash<ToysTreeViewItem::Type, QString> _iconPathByElementType = {
@@ -181,7 +183,8 @@ class ToysTreeViewItem : private QObject {
             { ToysTreeViewItem::Type::Folder, QStringLiteral(u":/icons/app/manager/folder.png") }, 
             { ToysTreeViewItem::Type::InternalContainer, QStringLiteral(u":/icons/app/manager/internal.png") },
             { ToysTreeViewItem::Type::DownloadedContainer, QStringLiteral(u":/icons/app/manager/downloaded.png") },
-            { ToysTreeViewItem::Type::BackgroundContainer, QStringLiteral(u":/icons/app/manager/background.png") }
+            { ToysTreeViewItem::Type::BackgroundContainer, QStringLiteral(u":/icons/app/manager/background.png") },
+            { ToysTreeViewItem::Type::Player, RPZAtom::iconPathByAtomType.value(RPZAtom::Type::Player) }
         };
 
         static const inline QHash<ToysTreeViewItem::Type, QString> _typeDescriptions = {
@@ -189,6 +192,7 @@ class ToysTreeViewItem : private QObject {
             { ToysTreeViewItem::Type::Event, RPZAtom::atomTypeDescr.value(RPZAtom::Type::Event) },
             { ToysTreeViewItem::Type::FreeDraw, RPZAtom::atomTypeDescr.value(RPZAtom::Type::Drawing) },
             { ToysTreeViewItem::Type::Text, RPZAtom::atomTypeDescr.value(RPZAtom::Type::Text) },
+            { ToysTreeViewItem::Type::Player, RPZAtom::atomTypeDescr.value(RPZAtom::Type::Player) },
             { ToysTreeViewItem::Type::NPC_Container, QT_TRANSLATE_NOOP("QObject", "NPC / Portraits") },
             { ToysTreeViewItem::Type::ObjectContainer, QT_TRANSLATE_NOOP("QObject", "Objects") },
             { ToysTreeViewItem::Type::FloorBrushContainer, QT_TRANSLATE_NOOP("QObject", "Brushes") },

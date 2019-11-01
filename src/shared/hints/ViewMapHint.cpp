@@ -1,11 +1,15 @@
 #include "ViewMapHint.h"
 
-ViewMapHint::ViewMapHint() : AtomsStorage(Payload::Source::Local_Map) {
+ViewMapHint::ViewMapHint(const QSizeF &defaultTileSize) : AtomsStorage(Payload::Source::Local_Map), _defaultTileSize(defaultTileSize) {
     
     //default layer from settings
     this->setDefaultLayer(AppContext::settings()->defaultLayer());
 
 };
+
+const QSizeF ViewMapHint::standardTileSize() const {
+    return this->_defaultTileSize;
+}
 
 const RPZAtom ViewMapHint::templateAtom() const {
     QMutexLocker m(&this->_m_templateAtom);
@@ -149,6 +153,7 @@ QGraphicsItem* ViewMapHint::generateTemporaryItemFromTemplateBuffer() {
     return AtomRenderer::createGraphicsItem(
         this->_templateAtom, 
         this->_templateToy, 
+        this->_defaultTileSize,
         true
     );
 }
@@ -204,7 +209,8 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuil
     else {
         newItem = AtomRenderer::createGraphicsItem(
             atomToBuildFrom, 
-            *asset
+            *asset,
+            this->_defaultTileSize
         );
     }
 
@@ -243,7 +249,11 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &metadata) {
         if(atom.isEmpty()) continue;
 
         //create the new graphics item
-        auto newGi = AtomRenderer::createGraphicsItem(atom, metadata);
+        auto newGi = AtomRenderer::createGraphicsItem(
+            atom, 
+            metadata, 
+            this->_defaultTileSize
+        );
         this->_crossBindingAtomWithGI(atom, newGi);
         newGis.append(newGi);
 

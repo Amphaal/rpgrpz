@@ -46,7 +46,8 @@ class RPZAtom : public Serializable {
             ShapeCenter,
             ShortDescription,
             PlayerId,
-            Description
+            Description,
+            DefaultColor
         };
 
         enum class Category {
@@ -63,9 +64,8 @@ class RPZAtom : public Serializable {
             Brush, 
             NPC, 
             Event, 
-            PC,
-            Background,
-            Player
+            Player,
+            Background
         };
 
         enum class BrushType { 
@@ -87,6 +87,7 @@ class RPZAtom : public Serializable {
             { RPZAtom::Type::NPC, QStringLiteral(u":/icons/app/manager/npc.png") },
             { RPZAtom::Type::Drawing, QStringLiteral(u":/icons/app/tools/pen.png") },
             { RPZAtom::Type::Text, QStringLiteral(u":/icons/app/tools/text.png") },
+            { RPZAtom::Type::Player, QStringLiteral(u":/icons/app/connectivity/cloak.png") },
         };
 
         static const inline QHash<RPZAtom::Type, QString> atomTypeDescr {
@@ -96,6 +97,7 @@ class RPZAtom : public Serializable {
             { RPZAtom::Type::Brush, QT_TRANSLATE_NOOP("QObject", "Brush") },
             { RPZAtom::Type::Undefined, QT_TRANSLATE_NOOP("QObject", "Atom") },
             { RPZAtom::Type::Event, QT_TRANSLATE_NOOP("QObject", "Event") },
+            { RPZAtom::Type::Player, QT_TRANSLATE_NOOP("QObject", "Player") },
         };
 
         static inline const QList<RPZAtom::Type> assetBasedAtom {
@@ -172,6 +174,7 @@ class RPZAtom : public Serializable {
         RPZAtom::BrushType brushType() const;
         int brushPenWidth() const;
         QPointF shapeCenter() const;
+        const QColor defaultColor() const;
 
         QPainterPath shape() const;
         void setShape(const QPainterPath &path);
@@ -212,6 +215,7 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::PlayerId, QStringLiteral(u"plyr_id") },
             { RPZAtom::Parameter::Description, QStringLiteral(u"descr") },
             { RPZAtom::Parameter::ShortDescription, QStringLiteral(u"s_descr") },
+            { RPZAtom::Parameter::DefaultColor,  QStringLiteral(u"color") }
         };
 
         static inline const RPZAtom::Updates _defaultVal = {
@@ -235,6 +239,7 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::PlayerId, 0 },
             { RPZAtom::Parameter::Description, "" },
             { RPZAtom::Parameter::ShortDescription, "" },
+            { RPZAtom::Parameter::DefaultColor,  QColor() }
         };
 
         void _setType(const RPZAtom::Type &type);

@@ -7,7 +7,7 @@ class MapHint : public ViewMapHint {
     Q_OBJECT
 
     public:
-        MapHint();
+        MapHint(const QSizeF &defaultTileSize);
 
         //load/unload
         bool isRemote() const;

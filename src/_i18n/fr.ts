@@ -1026,62 +1026,67 @@
         <translation>Calque %1</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="93"/>
+        <location filename="../shared/models/RPZAtom.h" line="94"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="94"/>
+        <location filename="../shared/models/RPZAtom.h" line="95"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="95"/>
+        <location filename="../shared/models/RPZAtom.h" line="96"/>
         <source>Object</source>
         <translation>Objet</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="96"/>
+        <location filename="../shared/models/RPZAtom.h" line="97"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="97"/>
+        <location filename="../shared/models/RPZAtom.h" line="98"/>
         <source>Atom</source>
         <translation>Atome</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="98"/>
+        <location filename="../shared/models/RPZAtom.h" line="99"/>
         <source>Event</source>
         <translation>Evénement</translation>
     </message>
     <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="188"/>
+        <location filename="../shared/models/RPZAtom.h" line="100"/>
+        <source>Player</source>
+        <translation>Joueur</translation>
+    </message>
+    <message>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="191"/>
         <source>Internal</source>
         <translation>Interne</translation>
     </message>
     <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="192"/>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="196"/>
         <source>NPC / Portraits</source>
         <translation>PNJ / Portraits</translation>
     </message>
     <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="193"/>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="197"/>
         <source>Objects</source>
         <translation>Objets</translation>
     </message>
     <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="194"/>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="198"/>
         <source>Brushes</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="195"/>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="199"/>
         <source>Downloaded</source>
         <translation>Téléchargés</translation>
     </message>
     <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="196"/>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="200"/>
         <source>Landscapes</source>
         <translation>Paysages</translation>
     </message>

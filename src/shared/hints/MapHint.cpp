@@ -1,6 +1,6 @@
 #include "MapHint.h"
 
-MapHint::MapHint() : _sysActor(new AlterationActor(Payload::Source::Local_System)) { 
+MapHint::MapHint(const QSizeF &defaultTileSize) : ViewMapHint(defaultTileSize), _sysActor(new AlterationActor(Payload::Source::Local_System)) { 
     this->connectToAlterationEmissions();
 }
 
