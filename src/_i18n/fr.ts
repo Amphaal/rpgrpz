@@ -963,7 +963,7 @@
     <message>
         <location filename="../shared/models/character/RPZCharacter.hpp" line="20"/>
         <source>New character [#%1]</source>
-        <translation>Nouveau personnager [#%1]</translation>
+        <translation>Nouveau personnage [#%1]</translation>
     </message>
     <message>
         <location filename="../shared/models/character/RPZInventory.hpp" line="38"/>

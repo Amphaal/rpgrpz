@@ -5,6 +5,7 @@
 #include "MapViewGraphicsRectItem.hpp"
 #include "MapViewGraphicsSvgItem.hpp"
 #include "MapViewGraphicsTextItem.hpp"
+#include "MapViewToken.hpp"
 
 #include <QPropertyAnimation>
 

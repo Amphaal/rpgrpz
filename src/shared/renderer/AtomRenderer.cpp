@@ -169,17 +169,7 @@ QGraphicsPixmapItem* AtomRenderer::_createUnscalableToken(const RPZAtom &atom) {
 
 }
 
-QGraphicsEllipseItem* AtomRenderer::_createPlayerToken(const RPZAtom &atom, const QSizeF &tileSize) {
-    
-    auto defaultColor = atom.defaultColor();
-    
-    //define brush
-    QBrush brush(defaultColor);
-    
-    auto out = new QGraphicsEllipseItem(QRectF({0,0}, tileSize));
-    out->setPen(Qt::NoPen);
-    out->setBrush(brush);
-
+MapViewToken* AtomRenderer::_createPlayerToken(const RPZAtom &atom, const QSizeF &tileSize) {
+    auto out = new MapViewToken(tileSize, atom.defaultColor());
     return out;
-
 }

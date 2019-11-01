@@ -21,5 +21,5 @@ class AtomRenderer {
         static QGraphicsPathItem* _createDrawingItem(const RPZAtom &atom);
         static QGraphicsTextItem* _createTextItem(const RPZAtom &atom);
         static QGraphicsPixmapItem* _createUnscalableToken(const RPZAtom &atom);
-        static QGraphicsEllipseItem* _createPlayerToken(const RPZAtom &atom, const QSizeF &tileSize);
+        static MapViewToken* _createPlayerToken(const RPZAtom &atom, const QSizeF &tileSize);
 };

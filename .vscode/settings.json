@@ -177,7 +177,11 @@
         "qfileinfo": "cpp",
         "qmodelindex": "cpp",
         "qmultihash": "cpp",
-        "qpropertyanimation": "cpp"
+        "qpropertyanimation": "cpp",
+        "qgradient": "cpp",
+        "qradialgradient": "cpp",
+        "qgraphicsellipseitem": "cpp",
+        "qgraphicsblureffect": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

@@ -305,6 +305,8 @@ class MV_HUDLayout {
 
             painter->save();
 
+                painter->setRenderHint(QPainter::Antialiasing, true);
+
                 QPen pen(Qt::SolidPattern, 0);
                 pen.setColor("#888");
                 painter->setPen(pen);
