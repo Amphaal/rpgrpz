@@ -21,6 +21,7 @@
 #include "src/helpers/JSONSerializer.h"
 
 #include "src/shared/models/toy/RPZAsset.hpp"
+#include "src/shared/models/character/RPZCharacter.hpp"
 
 class RPZAtom : public Serializable {
 
@@ -45,7 +46,7 @@ class RPZAtom : public Serializable {
             AssetScale,
             ShapeCenter,
             ShortDescription,
-            PlayerId,
+            CharacterId,
             Description,
             DefaultColor
         };
@@ -175,6 +176,7 @@ class RPZAtom : public Serializable {
         int brushPenWidth() const;
         QPointF shapeCenter() const;
         const QColor defaultColor() const;
+        const RPZCharacter::Id characterId() const;
 
         QPainterPath shape() const;
         void setShape(const QPainterPath &path);
@@ -212,7 +214,7 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::BrushStyle, QStringLiteral(u"brush_t") },
             { RPZAtom::Parameter::BrushPenWidth, QStringLiteral(u"brush_w") },
             { RPZAtom::Parameter::ShapeCenter, QStringLiteral(u"shape_c") },
-            { RPZAtom::Parameter::PlayerId, QStringLiteral(u"plyr_id") },
+            { RPZAtom::Parameter::CharacterId, QStringLiteral(u"chr_id") },
             { RPZAtom::Parameter::Description, QStringLiteral(u"descr") },
             { RPZAtom::Parameter::ShortDescription, QStringLiteral(u"s_descr") },
             { RPZAtom::Parameter::DefaultColor,  QStringLiteral(u"color") }
@@ -236,7 +238,7 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::BrushStyle, 0 },
             { RPZAtom::Parameter::BrushPenWidth, 1 },
             { RPZAtom::Parameter::ShapeCenter, QVariant() },
-            { RPZAtom::Parameter::PlayerId, 0 },
+            { RPZAtom::Parameter::CharacterId, 0 },
             { RPZAtom::Parameter::Description, "" },
             { RPZAtom::Parameter::ShortDescription, "" },
             { RPZAtom::Parameter::DefaultColor,  QColor() }

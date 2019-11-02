@@ -370,8 +370,32 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
         AtomsStorage::_handleAlterationRequest(payload);
     }
 
+    //if selected
+    if(auto mPayload = dynamic_cast<const SelectedPayload*>(&payload)) {
+        
+        QPair<bool, RPZCharacter::Id> out;
+        
+        auto targets = mPayload->targetRPZAtomIds();
+        
+        if(targets.count() == 1) {
+            
+            auto id = targets.first();
+                
+            //find corresponding atom
+            auto atom = this->map().atom(id);
+            if(atom.type() == RPZAtom::Type::Player) {
+                out = {true, atom.characterId()};
+            }
+
+        } else out = {false, 0};
+        
+        QMutexLocker l(&this->_m_lecios);
+        this->_lecios = out;
+
+    }
+
     //if reset (afterward)
-    if(auto mPayload = dynamic_cast<const ResetPayload*>(&payload)) {
+    else if(auto mPayload = dynamic_cast<const ResetPayload*>(&payload)) {
         
         //tell UI that download ended
         QMetaObject::invokeMethod(ProgressTracker::get(), "downloadHasEnded", 
@@ -381,7 +405,7 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
     }
 
     //if asset changed
-    if(auto mPayload = dynamic_cast<const AssetChangedPayload*>(&payload)) {
+    else if(auto mPayload = dynamic_cast<const AssetChangedPayload*>(&payload)) {
         this->_replaceMissingAssetPlaceholders(mPayload->assetMetadata());
     }
 
@@ -425,6 +449,11 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
         
     }
 
+}
+
+const QPair<bool, RPZCharacter::Id> ViewMapHint::latestEligibleCharacterIdOnSelection() const {
+    QMutexLocker l(&this->_m_lecios);
+    return this->_lecios;
 }
 
 void ViewMapHint::_atomAdded(const RPZAtom &added) {

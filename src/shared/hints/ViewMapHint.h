@@ -37,10 +37,12 @@ class ViewMapHint : public AtomsStorage {
         QGraphicsItem* ghostItem() const;
 
         const QList<RPZAtom::Id> getAtomIdsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const; //safe
-        const RPZAtom::Id getAtomIdFromGraphicsItem(const QGraphicsItem* toFetch) const; 
+        const RPZAtom::Id getAtomIdFromGraphicsItem(const QGraphicsItem* toFetch) const; //safe
 
         QGraphicsItem* generateTemporaryItemFromTemplateBuffer(); //safe
-        const QSizeF standardTileSize() const;
+        const QSizeF standardTileSize() const; //safe
+
+        const QPair<bool, RPZCharacter::Id> latestEligibleCharacterIdOnSelection() const; //safe
 
     public slots:
         void mightNotifyMovement(const QList<QGraphicsItem*> &itemsWhoMightHaveMoved); //safe
@@ -73,6 +75,9 @@ class ViewMapHint : public AtomsStorage {
         
         mutable QMutex _m_GItemsByRPZAtomId;
         QMap<RPZAtom::Id, QGraphicsItem*> _GItemsByRPZAtomId;
+
+        mutable QMutex _m_lecios;
+        QPair<bool, RPZCharacter::Id> _lecios;
 
         QMultiHash<RPZAsset::Hash, QGraphicsItem*> _missingAssetHashesFromDb;
         

@@ -961,7 +961,7 @@
         <translation>Sauvegarder la carte sous...</translation>
     </message>
     <message>
-        <location filename="../shared/models/character/RPZCharacter.hpp" line="20"/>
+        <location filename="../shared/models/character/RPZCharacter.hpp" line="22"/>
         <source>New character [#%1]</source>
         <translation>Nouveau personnage [#%1]</translation>
     </message>
@@ -1026,37 +1026,37 @@
         <translation>Calque %1</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="94"/>
+        <location filename="../shared/models/RPZAtom.h" line="95"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="95"/>
+        <location filename="../shared/models/RPZAtom.h" line="96"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="96"/>
+        <location filename="../shared/models/RPZAtom.h" line="97"/>
         <source>Object</source>
         <translation>Objet</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="97"/>
+        <location filename="../shared/models/RPZAtom.h" line="98"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="98"/>
+        <location filename="../shared/models/RPZAtom.h" line="99"/>
         <source>Atom</source>
         <translation>Atome</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="99"/>
+        <location filename="../shared/models/RPZAtom.h" line="100"/>
         <source>Event</source>
         <translation>Evénement</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="100"/>
+        <location filename="../shared/models/RPZAtom.h" line="101"/>
         <source>Player</source>
         <translation>Joueur</translation>
     </message>

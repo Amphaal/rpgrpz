@@ -101,6 +101,7 @@ RPZAtom::BrushType RPZAtom::brushType() const { return (RPZAtom::BrushType)this-
 int RPZAtom::brushPenWidth() const { return this->metadata(RPZAtom::Parameter::BrushPenWidth).toInt(); }
 QPointF RPZAtom::shapeCenter() const { return this->metadata(RPZAtom::Parameter::ShapeCenter).toPointF(); }
 const QColor RPZAtom::defaultColor() const { return this->metadata(RPZAtom::Parameter::DefaultColor).value<QColor>(); }
+const RPZCharacter::Id RPZAtom::characterId() const { return this->metadata(RPZAtom::Parameter::CharacterId).toULongLong(); }
 
 QPainterPath RPZAtom::shape() const {
     auto rawShape = this->metadata(RPZAtom::Parameter::Shape).toByteArray();
@@ -149,7 +150,7 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams(const RPZAtom::Type &type) 
         break;
 
         case RPZAtom::Type::Player: {
-            out.insert(RPZAtom::Parameter::PlayerId);
+            out.insert(RPZAtom::Parameter::CharacterId);
         }
         break;
 

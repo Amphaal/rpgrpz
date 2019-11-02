@@ -31,8 +31,7 @@ class MiniMapView : public QGraphicsView {
                     this->_alterationOngoing = false;
                     this->setVisible(this->_visibleAsap);
 
-                    auto i = this->_getMinimumSizeSceneRect();
-                    this->fitInView(i);
+                    this->_fitMapInMiniMap();
 
                 }
             );
@@ -65,6 +64,7 @@ class MiniMapView : public QGraphicsView {
             this->_visibleAsap = visible;
             if(!this->_alterationOngoing) {
                 this->setVisible(this->_visibleAsap);
+                this->_fitMapInMiniMap();
             }
         }
 
@@ -85,6 +85,11 @@ class MiniMapView : public QGraphicsView {
 
             return itemsBoundingRect;
             
+        }
+
+        void _fitMapInMiniMap() {
+            auto size = this->_getMinimumSizeSceneRect();
+            this->fitInView(size);
         }
 
     protected:

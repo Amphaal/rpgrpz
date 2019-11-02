@@ -12,6 +12,8 @@
 
 class RPZCharacter : public Serializable {
     public:
+        typedef SnowFlake::Id Id;
+
         RPZCharacter() {};
         explicit RPZCharacter(const QVariantHash &hash) : Serializable(hash) {};
 

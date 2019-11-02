@@ -2,6 +2,8 @@
 
 MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this), MV_HUDLayout(this) {
 
+    this->_walkingCursor = QCursor(QStringLiteral(u":/icons/app/tools/walking.png"));
+
     //default
     auto scene = new QGraphicsScene(
         this->_defaultSceneSize, 
@@ -207,6 +209,12 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
 
     if(type == Payload::Alteration::Reset) {
         ProgressTracker::get()->heavyAlterationEnded();
+    }
+
+    else if(type == Payload::Alteration::Selected) {
+        auto result = this->_hints->latestEligibleCharacterIdOnSelection();
+        auto can = RPZClient::isHostAble() && result.first;
+        // if(can) this->_changeTool(MapTool::Walking);
     }
 
 }
@@ -534,7 +542,11 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
         }
 
         this->_tool = newTool;
-        this->scene()->clearSelection();
+        
+        if(newTool != MapTool::Walking) {
+            this->scene()->clearSelection();
+        }
+        
     }    
 
     //if a quicktool is selected
@@ -544,6 +556,7 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
     
     //depending on tool
     switch(newTool) {
+
         case MapTool::Atom: {
             
             this->setInteractive(false);
@@ -566,10 +579,17 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
 
         }
         break;
+
         case MapTool::Scroll:
             this->setInteractive(false);
             this->setDragMode(QGraphicsView::DragMode::ScrollHandDrag);
             break;
+        
+        case MapTool::Walking:
+            this->setInteractive(true);
+            this->setDragMode(QGraphicsView::DragMode::NoDrag);
+            this->setCursor(this->_walkingCursor);
+
         case MapTool::Default:
         default:
             this->setInteractive(true);

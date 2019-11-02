@@ -38,6 +38,8 @@ class MapLayoutTree : public QTreeView, public AtomSelector {
         void _handleAlterationRequest(const AlterationPayload &payload);
 
     private:
+        bool _bufSel = false;
+
         AtomsContextualMenuHandler* _menuHandler = nullptr;
         AtomActionsHandler* _atomActionsHandler = nullptr;
         MapLayoutModel* _model = nullptr;

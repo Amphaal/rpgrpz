@@ -80,8 +80,6 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
 }
 
 void MapLayoutTree::_handleAlterationRequest(const AlterationPayload &payload) {
-    
-    if(payload.source() == Payload::Source::Local_MapLayout) return;
 
     auto pl = Payloads::autoCast(payload); 
     auto type = pl->type();
@@ -96,7 +94,7 @@ void MapLayoutTree::_handleAlterationRequest(const AlterationPayload &payload) {
 
             auto mPayload = dynamic_cast<const SelectedPayload*>(pl.data());
 
-            this->selectionModel()->clear();
+            this->_bufSel = true; //tell that next selectionChanged should not trigger reSelection
 
             QItemSelection newSelection;
             for(auto &id : mPayload->targetRPZAtomIds()) {
@@ -104,7 +102,7 @@ void MapLayoutTree::_handleAlterationRequest(const AlterationPayload &payload) {
                 newSelection.merge(QItemSelection(index, index), QItemSelectionModel::Select);
             }
 
-            this->selectionModel()->select(newSelection, QItemSelectionModel::Select);
+            this->selectionModel()->select(newSelection, QItemSelectionModel::ClearAndSelect);
             
         }
         break;
@@ -134,7 +132,8 @@ void MapLayoutTree::selectionChanged(const QItemSelection &selected, const QItem
     
     QTreeView::selectionChanged(selected, deselected);
 
-    this->_model->propagateSelection(selected.indexes());
+    if(!this->_bufSel) this->_model->propagateSelection(selected.indexes());
+    else this->_bufSel = false;
 
 }
 

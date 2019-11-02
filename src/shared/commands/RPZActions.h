@@ -18,7 +18,8 @@ enum class MapTool {
     Scroll,
     Ping,
     Measure,
-    QuickDraw
+    QuickDraw,
+    Walking
 };
 
 class RPZActions {
