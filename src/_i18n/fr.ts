@@ -1011,7 +1011,7 @@
         <translation>Une erreur est survenue : </translation>
     </message>
     <message>
-        <location filename="../ui/map/modules/MV_HUDLayout.hpp" line="285"/>
+        <location filename="../ui/map/modules/MV_HUDLayout.hpp" line="283"/>
         <source>Too far to display grid !</source>
         <translation>Trop éloigné pour afficher la grille !</translation>
     </message>

@@ -121,7 +121,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         
             //walking...
                 QCursor _walkingCursor;
-                QGraphicsLineItem* _walkingHelper;
+                MapViewWalkingHelper* _walkingHelper = nullptr;
 
         void onAnimationManipulationTickDone() override;
         

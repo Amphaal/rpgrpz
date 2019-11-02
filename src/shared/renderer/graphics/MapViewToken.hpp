@@ -20,7 +20,8 @@ class MapViewToken : public QObject, public QGraphicsItem {
     public:
         MapViewToken(const QSizeF &size, const QColor &color) {          
             
-            this->_subRect = QRectF({0,0}, size);
+            auto startPosComp = QPointF(-size.width() / 2, -size.height() / 2);
+            this->_subRect = QRectF(startPosComp, size);
 
             auto prc = this->_subRect.width() * 0.03;
             this->_rect = this->_subRect.marginsRemoved(QMarginsF(prc, prc, prc, prc));
@@ -35,7 +36,7 @@ class MapViewToken : public QObject, public QGraphicsItem {
 
         }
 
-        QRectF boundingRect() const {
+        QRectF boundingRect() const override {
             return this->_rect;
         }
 

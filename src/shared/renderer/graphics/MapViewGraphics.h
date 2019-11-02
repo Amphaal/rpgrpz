@@ -4,3 +4,4 @@
 #include "_items/MapViewGraphicsSvgItem.hpp"
 #include "_items/MapViewGraphicsTextItem.hpp"
 #include "MapViewToken.hpp"
+#include "MapViewWalkingHelper.hpp"

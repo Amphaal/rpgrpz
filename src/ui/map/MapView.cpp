@@ -5,12 +5,8 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
     this->_walkingCursor = QCursor(QStringLiteral(u":/icons/app/tools/walking.png"));
 
     //default
-    auto scene = new QGraphicsScene(
-        AppContext::DEFAULT_SCENE_SIZE, 
-        AppContext::DEFAULT_SCENE_SIZE, 
-        AppContext::DEFAULT_SCENE_SIZE, 
-        AppContext::DEFAULT_SCENE_SIZE
-    );
+    auto sceneRect = QRectF({ -AppContext::DEFAULT_SCENE_SIZE.width()/2, -AppContext::DEFAULT_SCENE_SIZE.height()/2 }, AppContext::DEFAULT_SCENE_SIZE);
+    auto scene = new QGraphicsScene(sceneRect);
     this->setScene(scene);
 
     //init
@@ -215,7 +211,11 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
     else if(type == Payload::Alteration::Selected) {
         auto result = this->_hints->latestEligibleCharacterIdOnSelection();
         auto can = RPZClient::isHostAble() && result.first;
-        if(can) this->_changeTool(MapTool::Walking);
+        if(can) {
+            this->_walkingHelper = new MapViewWalkingHelper(toAlter.first());
+            this->scene()->addItem(this->_walkingHelper);
+            this->_changeTool(MapTool::Walking);
+        }
     }
 
 }
@@ -400,9 +400,12 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
 
     this->_mightCenterGhostWithCursor();
 
-    if(this->_getCurrentTool() == MapTool::Atom) {
+    auto currentTool = this->_getCurrentTool();
+
+    if(currentTool == MapTool::Atom) {
         
         auto type = this->_hints->templateAtom().type();
+        
         switch(type) {
             case RPZAtom::Type::Drawing:
             case RPZAtom::Type::Brush:
@@ -413,6 +416,13 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
                 break;
         }
 
+    }
+
+    else if(currentTool == MapTool::Walking) {
+        if(this->_walkingHelper) {
+            auto pos = this->mapToScene(event->pos());
+            this->_walkingHelper->updateDestinationPoint(pos);
+        }
     }
 
     QGraphicsView::mouseMoveEvent(event);
@@ -561,6 +571,13 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
         newTool = this->_quickTool;
     }
     
+    //destroy / create walking helper
+    if(newTool != MapTool::Walking && this->_walkingHelper) {
+        delete this->_walkingHelper;
+        this->_walkingHelper = nullptr;
+    }
+
+
     //depending on tool
     switch(newTool) {
 
