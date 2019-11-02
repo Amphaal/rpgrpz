@@ -4,7 +4,8 @@
 
 #include "src/shared/models/RPZAtom.h"
 
-#include "src/shared/renderer/graphics/MapViewGraphicsItems.hpp"
+#include "src/shared/renderer/graphics/MapViewGraphics.h"
+#include "src/shared/renderer/animator/MapViewAnimator.hpp"
 
 #include "src/network/rpz/client/RPZClient.h"
 

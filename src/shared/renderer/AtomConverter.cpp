@@ -163,7 +163,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
             //on moving
             case RPZAtom::Parameter::Position: {
                 auto destPos = val.toPointF();
-                MapViewGraphicsItems::animateMove(itemToUpdate, destPos);  
+                MapViewAnimator::animateMove(itemToUpdate, destPos);  
             }
             break;
 
@@ -179,7 +179,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
             case RPZAtom::Parameter::Hidden: {
                 if(!isTemporary(itemToUpdate)) {
                     auto hidden = val.toBool();
-                    MapViewGraphicsItems::animateVisibility(itemToUpdate, hidden);
+                    MapViewAnimator::animateVisibility(itemToUpdate, hidden);
                 }
             }
             break;

@@ -44,6 +44,8 @@ class MV_HUDLayout {
         }
 
         void mayUpdateHUD(QPainter* painter, const QRectF &rect) {
+            
+            qDebug() << "update...";
 
             if(this->_heavyLoadExpectedCount > -1) return;
 

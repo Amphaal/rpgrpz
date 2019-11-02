@@ -3,7 +3,7 @@
 #include "src/shared/hints/MapHint.h"
 #include <QGraphicsView>
 
-#include "src/shared/renderer/graphics/MapViewGraphicsItems.hpp"
+#include "src/shared/renderer/graphics/MapViewGraphics.h"
 
 class DrawingAssist {
     public:

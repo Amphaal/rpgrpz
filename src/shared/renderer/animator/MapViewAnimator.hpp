@@ -1,17 +1,12 @@
 #pragma once
 
-#include "MapViewGraphicsPathItem.hpp"
-#include "MapViewGraphicsPixmapItem.hpp"
-#include "MapViewGraphicsRectItem.hpp"
-#include "MapViewGraphicsSvgItem.hpp"
-#include "MapViewGraphicsTextItem.hpp"
-#include "MapViewToken.hpp"
+#include "src/shared/renderer/graphics/MapViewGraphics.h"
 
 #include <QPropertyAnimation>
 
-#include "src/shared/renderer/animator/PathAnimator.hpp"
+#include "PathAnimator.hpp"
 
-class MapViewGraphicsItems {
+class MapViewAnimator {
     public:
         static void animateVisibility(QGraphicsItem *toAnimate, bool isHidden) {
             

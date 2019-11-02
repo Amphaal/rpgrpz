@@ -93,19 +93,18 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         void _onIdentityReceived(const RPZUser &self);
 
     private:
-        QCursor _walkingCursor;
-
         DrawingAssist* _drawingAssist = nullptr;
         MapHint* _hints = nullptr;
         AtomsContextualMenuHandler* _menuHandler = nullptr;
         AtomActionsHandler* _atomActionsHandler = nullptr;
-        static inline constexpr int _defaultSceneSize = 36000;
         
+        //helpers
         void _handleHintsSignalsAndSlots();
         void _updateItemValue(QGraphicsItem* item, const RPZAtom::Updates &updates);
 
-        //selection...
-        QTimer _selectionDebouncer;
+        //Selection
+            bool _ignoreSelectionChangedEvents = false;
+            void _notifySelection();
 
         //ghost
             void _mightCenterGhostWithCursor();
@@ -120,6 +119,10 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
             void _changeTool(MapTool newTool, bool quickChange = false);
             void _resetTool();
         
+            //walking...
+                QCursor _walkingCursor;
+                QGraphicsLineItem* _walkingHelper;
+
         void onAnimationManipulationTickDone() override;
         
 };

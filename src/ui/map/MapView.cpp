@@ -6,10 +6,10 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
 
     //default
     auto scene = new QGraphicsScene(
-        this->_defaultSceneSize, 
-        this->_defaultSceneSize, 
-        this->_defaultSceneSize, 
-        this->_defaultSceneSize
+        AppContext::DEFAULT_SCENE_SIZE, 
+        AppContext::DEFAULT_SCENE_SIZE, 
+        AppContext::DEFAULT_SCENE_SIZE, 
+        AppContext::DEFAULT_SCENE_SIZE
     );
     this->setScene(scene);
 
@@ -72,21 +72,6 @@ void MapView::_handleHintsSignalsAndSlots() {
         [=]() {this->endHeavyLoadPlaceholder();}
     );
 
-    //define selection debouncer
-    this->_selectionDebouncer.setInterval(100);
-    this->_selectionDebouncer.setSingleShot(true);
-    this->_selectionDebouncer.callOnTimeout([=]() {
-        this->_hints->notifySelectedItems(
-            this->scene()->selectedItems()
-        );
-    });
-
-    //call debouncer on selection
-    QObject::connect(
-        this->scene(), &QGraphicsScene::selectionChanged,
-        &this->_selectionDebouncer, qOverload<>(&QTimer::start)
-    );
-
     QObject::connect(
         this->_hints, &ViewMapHint::requestingUIAlteration,
         this, &MapView::_onUIAlterationRequest
@@ -102,11 +87,27 @@ void MapView::_handleHintsSignalsAndSlots() {
         this, QOverload<const QList<QGraphicsItem*>&, const RPZAtom::Updates&>::of(&MapView::_onUIUpdateRequest)
     );
 
+    //call debouncer on selection
+    QObject::connect(
+        this->scene(), &QGraphicsScene::selectionChanged,
+        [=]() {
+            if(this->_ignoreSelectionChangedEvents) return;
+            this->_notifySelection();
+        }
+    );
+
+
 }
 
 //
 //
 //
+
+void MapView::_notifySelection() {
+    this->_hints->notifySelectedItems(
+        this->scene()->selectedItems()
+    );
+}
 
 void MapView::_updateItemValue(QGraphicsItem* item, const RPZAtom::Updates &updates) {
     AtomConverter::updateGraphicsItemFromMetadata(
@@ -139,7 +140,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
 
         //before clearing whole scene
         this->_drawingAssist->clearDrawing(); 
-        MapViewGraphicsItems::clearAnimations();
+        MapViewAnimator::clearAnimations();
 
         this->scene()->clear();
 
@@ -166,7 +167,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
                 //if not from temporary drawing, animate path
                 if(!isCommitedDrawing) {
                     if(auto canBeAnimated = dynamic_cast<MapViewGraphicsPathItem*>(item)) {
-                        MapViewGraphicsItems::animatePath(canBeAnimated, canBeAnimated->path());
+                        MapViewAnimator::animatePath(canBeAnimated, canBeAnimated->path());
                     } 
                 }
 
@@ -214,7 +215,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
     else if(type == Payload::Alteration::Selected) {
         auto result = this->_hints->latestEligibleCharacterIdOnSelection();
         auto can = RPZClient::isHostAble() && result.first;
-        // if(can) this->_changeTool(MapTool::Walking);
+        if(can) this->_changeTool(MapTool::Walking);
     }
 
 }
@@ -359,8 +360,11 @@ void MapView::mousePressEvent(QMouseEvent *event) {
 
         case Qt::MouseButton::LeftButton: {
             
+            auto currentTool = this->_getCurrentTool();
+            if(currentTool == MapTool::Default) this->_ignoreSelectionChangedEvents = true;
+
             //check if inserts are allowed
-            if(this->_getCurrentTool() != MapTool::Atom) break;
+            if(currentTool != MapTool::Atom) break;
             if(!RPZClient::isHostAble()) break;
             
             //conditionnal drawing
@@ -425,6 +429,11 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
 
             //if something moved ?
             this->_hints->mightNotifyMovement(this->scene()->selectedItems());
+
+            if(this->_getCurrentTool() == MapTool::Default) {
+                this->_notifySelection();
+                this->_ignoreSelectionChangedEvents = false;
+            }
             
         }
         break;
@@ -536,9 +545,7 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
 
         //since clearSelection wont trigger notification, hard call notification on reset
         if(this->_tool == MapTool::Atom && newTool == MapTool::Default) {
-            this->_hints->notifySelectedItems(
-                this->scene()->selectedItems()
-            );
+            this->_notifySelection();
         }
 
         this->_tool = newTool;
@@ -586,9 +593,10 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
             break;
         
         case MapTool::Walking:
-            this->setInteractive(true);
+            this->setInteractive(false);
             this->setDragMode(QGraphicsView::DragMode::NoDrag);
             this->setCursor(this->_walkingCursor);
+            break;
 
         case MapTool::Default:
         default:
@@ -597,6 +605,7 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
             this->setCursor(Qt::ArrowCursor);
             break;
     }
+
 }
 
 

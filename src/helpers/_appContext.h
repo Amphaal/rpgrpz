@@ -44,6 +44,7 @@ class AppContext {
         static inline const QString UPNP_REQUEST_DESCRIPTION = APP_NAME;
         static inline const QString RPZ_MAP_FILE_EXT = ".mrpz";
         static inline const double DEFAULT_TILE_TO_METER_RATIO = 1.5;
+        static inline constexpr int DEFAULT_SCENE_SIZE = 36000;
 
         static inline const QString REGEX_YOUTUBE_URL = "(?:youtube\\.com|youtu.be).*?(?:v=|embed\\/)(?<videoId>[\\w\\-]+)";
 
