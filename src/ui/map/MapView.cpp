@@ -320,6 +320,7 @@ void MapView::keyPressEvent(QKeyEvent * event) {
 
 void MapView::enterEvent(QEvent *event) {
     if(auto ghost = this->_hints->ghostItem()) {
+        this->_mightCenterGhostWithCursor();
         ghost->setVisible(true);
     }  
 }

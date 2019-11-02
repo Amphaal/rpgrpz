@@ -138,6 +138,7 @@ QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZToy &toy) {
          
             //add to scene
             this->_ghostItem = generateTemporaryItemFromTemplateBuffer();
+            this->_ghostItem->setVisible(false); //default to invisible
             
         } else this->_ghostItem = nullptr;
         

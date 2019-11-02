@@ -48,7 +48,6 @@ class MV_Manipulation {
         }
 
     protected:
-
         void focusItem(QGraphicsItem* toFocus) {
             
             auto bound = toFocus->sceneBoundingRect();

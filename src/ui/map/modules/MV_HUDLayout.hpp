@@ -317,17 +317,22 @@ class MV_HUDLayout {
 
                 auto sceneBottom = sceneRect.bottom();
                 auto sceneRight = sceneRect.right();
+                auto sceneLeft = sceneRect.left();
+                auto sceneTop = sceneRect.top();
+
                 auto centerX = center.x();
                 auto centerY = center.y();
+                
                 auto tileWidth = this->_stdTileSize.width();
                 auto tileHeight = this->_stdTileSize.height();
 
-                auto numberOfLinesX = (int)(centerX / tileWidth);
-                auto numberOfLinesY = (int)(centerY / tileHeight);
+                auto size = sceneRect.size();
+                auto numberOfLinesX = (int)(size.width() / tileWidth);
+                auto numberOfLinesY = (int)(size.height() / tileHeight);
 
                 //origin lines
-                auto horizontalOriginLine = QLineF(centerX, 0, centerX, sceneBottom);
-                auto verticalOriginLine = QLineF(0, centerY, sceneRight, centerY);
+                auto horizontalOriginLine = QLineF(centerX, sceneTop, centerX, sceneBottom);
+                auto verticalOriginLine = QLineF(sceneLeft, centerY, sceneRight, centerY);
                 painter->drawLine(horizontalOriginLine); //x
                 painter->drawLine(verticalOriginLine); //y
 
@@ -336,8 +341,8 @@ class MV_HUDLayout {
                     auto step = x * tileWidth;
                     auto centerXMore = centerX + step;
                     auto centerXLess = centerX - step;
-                    painter->drawLine(QLineF(centerXMore, 0, centerXMore, sceneBottom));
-                    painter->drawLine(QLineF(centerXLess, 0, centerXLess, sceneBottom));
+                    painter->drawLine(QLineF(centerXMore, sceneTop, centerXMore, sceneBottom));
+                    painter->drawLine(QLineF(centerXLess, sceneTop, centerXLess, sceneBottom));
                 }
 
                 //vertical
@@ -345,8 +350,8 @@ class MV_HUDLayout {
                     auto step = y * tileHeight;
                     auto centerYMore = centerY + step;
                     auto centerYLess = centerY - step;
-                    painter->drawLine(QLineF(0, centerYMore, sceneRight, centerYMore));
-                    painter->drawLine(QLineF(0, centerYLess, sceneRight, centerYLess));
+                    painter->drawLine(QLineF(sceneLeft, centerYMore, sceneRight, centerYMore));
+                    painter->drawLine(QLineF(sceneLeft, centerYLess, sceneRight, centerYLess));
                 }
 
             painter->restore();
