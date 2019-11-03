@@ -1150,12 +1150,12 @@
         <translation>IP copiée !</translation>
     </message>
     <message>
-        <location filename="../ui/statusBar/RPZStatusBar.cpp" line="37"/>
+        <location filename="../ui/statusBar/RPZStatusBar.cpp" line="38"/>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../ui/statusBar/RPZStatusBar.cpp" line="40"/>
+        <location filename="../ui/statusBar/RPZStatusBar.cpp" line="41"/>
         <source>Server</source>
         <translation>Serveur</translation>
     </message>

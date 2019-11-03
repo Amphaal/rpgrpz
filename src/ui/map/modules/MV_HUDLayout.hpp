@@ -5,10 +5,11 @@
 #include "src/helpers/StringHelper.hpp"
 #include "src/shared/hints/MapHint.h"
 
+#include 
+
 class MV_HUDLayout {
     public:
-        MV_HUDLayout(QGraphicsView* view) : _view(view),
-        _heavyLoadImage(QPixmap(":/icons/app_64.png")) { }
+        MV_HUDLayout(QGraphicsView* view) : _view(view), _heavyLoadImage(QPixmap(":/icons/app_64.png")) { }
     
     protected:
         void extractMapParametersForHUDLayout(const MapHint* hint) {
@@ -101,8 +102,6 @@ class MV_HUDLayout {
     
     private:
         QGraphicsView* _view = nullptr;
-        double _tileToMeterRatio = AppContext::DEFAULT_TILE_TO_METER_RATIO;
-        QSizeF _stdTileSize;
 
         //background / foreground
         QPixmap _heavyLoadImage;

@@ -56,7 +56,7 @@ void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZA
 
     //if interactive, force ZIndex to max
     if(blueprint.category() == RPZAtom::Category::Interactive) {
-        target->setZValue(std::numeric_limits<qreal>::max());
+        target->setZValue(AppContext::TOP_Z_INDEX);
         target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, true);
     }
 

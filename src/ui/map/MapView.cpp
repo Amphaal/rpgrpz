@@ -145,6 +145,8 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
 
     }
 
+    auto currentTool = this->_getCurrentTool();
+
     for(auto item : toAlter) {
         switch(type) {
 
@@ -181,7 +183,14 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
             break;
 
             case Payload::Alteration::Removed: {
+                
+                //if walked item is about to be deleted, change tool to default
+                if(item == this->_toWalk && currentTool == MapTool::Walking) {
+                    this->_changeTool(MapTool::Default);
+                }
+
                 delete item;
+
             }
             break;
 
@@ -209,13 +218,17 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
     }
 
     else if(type == Payload::Alteration::Selected) {
+        
         auto result = this->_hints->latestEligibleCharacterIdOnSelection();
         auto can = RPZClient::isHostAble() && result.first;
+        
         if(can) {
-            this->_walkingHelper = new MapViewWalkingHelper(toAlter.first());
+            this->_toWalk = toAlter.first();
+            this->_walkingHelper = new MapViewWalkingHelper(this->_toWalk);
             this->scene()->addItem(this->_walkingHelper);
             this->_changeTool(MapTool::Walking);
         }
+
     }
 
 }
@@ -258,6 +271,9 @@ void MapView::contextMenuEvent(QContextMenuEvent *event) {
 
 void MapView::mouseDoubleClickEvent(QMouseEvent *event) {
     
+    //prevent if not using default tool
+    if(this->_getCurrentTool() != MapTool::Default) return;
+
     //check item
     auto item = this->itemAt(event->pos());
     if(!item) return;
@@ -360,28 +376,47 @@ void MapView::mousePressEvent(QMouseEvent *event) {
         break;
 
         case Qt::MouseButton::LeftButton: {
-            
-            auto currentTool = this->_getCurrentTool();
-            if(currentTool == MapTool::Default) this->_ignoreSelectionChangedEvents = true;
 
-            //check if inserts are allowed
-            if(currentTool != MapTool::Atom) break;
-            if(!RPZClient::isHostAble()) break;
-            
-            //conditionnal drawing
-            auto type = this->_hints->templateAtom().type();
-            switch(type) {
-
-                case RPZAtom::Type::Drawing:
-                case RPZAtom::Type::Brush:
-                    this->_drawingAssist->addDrawingPoint(event->pos());
+            switch(this->_getCurrentTool()) {
+                
+                case MapTool::Default: {
+                    this->_ignoreSelectionChangedEvents = true;
+                }
                 break;
 
-                default: {
-                    this->_hints->integrateGraphicsItemAsPayload(
-                        this->_hints->ghostItem()
-                    );
+                case MapTool::Walking: {
+                    auto toWalk = this->scene()->selectedItems().takeFirst();
+                    auto scenePos = this->mapToScene(event->pos());
+                    this->_hints->notifyWalk(toWalk, scenePos);
                 }
+                break;
+
+                case MapTool::Atom: {
+                    
+                    //check if inserts are allowed
+                    if(!RPZClient::isHostAble()) break;
+
+                    //conditionnal drawing
+                    switch(this->_hints->templateAtom().type()) {
+
+                        case RPZAtom::Type::Drawing:
+                        case RPZAtom::Type::Brush:
+                            this->_drawingAssist->addDrawingPoint(event->pos());
+                        break;
+
+                        default: {
+                            this->_hints->integrateGraphicsItemAsPayload(
+                                this->_hints->ghostItem()
+                            );
+                        }
+                        break;
+
+                    }
+
+                }
+                break;
+
+                default:
                 break;
 
             }
@@ -420,13 +455,18 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
     }
 
     else if(currentTool == MapTool::Walking) {
-        if(this->_walkingHelper) {
-            auto pos = this->mapToScene(event->pos());
-            this->_walkingHelper->updateDestinationPoint(pos);
-        }
+        this->_mightUpdateWalkingHelperPos();
     }
 
     QGraphicsView::mouseMoveEvent(event);
+}
+
+void MapView::_mightUpdateWalkingHelperPos() {
+    if(this->_walkingHelper) {
+        auto cursorPos = this->mapFromGlobal(QCursor::pos());
+        auto pos = this->mapToScene(cursorPos);
+        this->_walkingHelper->updateDestinationPoint(pos);
+    }
 }
 
 //mouse drop
@@ -438,13 +478,26 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
             //if was drawing...
             this->_drawingAssist->onMouseRelease();
 
-            //if something moved ?
-            this->_hints->mightNotifyMovement(this->scene()->selectedItems());
+            switch(this->_getCurrentTool()) {
+                
+                case MapTool::Default: {
 
-            if(this->_getCurrentTool() == MapTool::Default) {
-                this->_notifySelection();
-                this->_ignoreSelectionChangedEvents = false;
+                    //if something moved ?
+                    this->_hints->mightNotifyMovement(this->scene()->selectedItems()); 
+
+                    //update selection
+                    this->_notifySelection();
+                    this->_ignoreSelectionChangedEvents = false;
+
+                }
+                break;
+
+                default:
+                break;
+
             }
+
+
             
         }
         break;
@@ -574,6 +627,7 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
     
     //destroy / create walking helper
     if(newTool != MapTool::Walking && this->_walkingHelper) {
+        this->_toWalk = nullptr;
         delete this->_walkingHelper;
         this->_walkingHelper = nullptr;
     }
@@ -683,4 +737,5 @@ void MapView::_mightCenterGhostWithCursor() {
 
 void MapView::onAnimationManipulationTickDone() {
     this->_mightCenterGhostWithCursor();
+    this->_mightUpdateWalkingHelperPos();
 }

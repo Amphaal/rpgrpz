@@ -178,6 +178,12 @@ RPZAtom::Id ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsI
     
 }
 
+void ViewMapHint::notifyWalk(QGraphicsItem* toWalk, const QPointF &newPos) {
+    auto id = this->getAtomIdFromGraphicsItem(toWalk);
+    MetadataChangedPayload payload({id}, {{RPZAtom::Parameter::Position, newPos}});
+    AlterationHandler::get()->queueAlteration(this, payload);
+}
+
 /////////////////////////////////
 // END Atom insertion helpers //
 /////////////////////////////////

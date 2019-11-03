@@ -68,7 +68,7 @@ QGraphicsItem* AtomRenderer::createOutlineRectItem(const QPointF &scenePos) {
     //create item
     auto item = new QGraphicsRectItem(rect);
     item->setPen(pen);
-    item->setZValue(9999999); //hover on top
+    item->setZValue(AppContext::TOP_Z_INDEX); //hover on top
     
     return item;
 }

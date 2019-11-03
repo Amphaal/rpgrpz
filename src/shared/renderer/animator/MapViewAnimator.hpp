@@ -78,7 +78,7 @@ class MapViewAnimator {
                 existingAnim = new QPropertyAnimation(toAnimate, _moveProp.toLocal8Bit());
                 _ongoingAnimations[toAnimate].insert(_moveProp, existingAnim);
 
-                existingAnim->setDuration(250);
+                existingAnim->setDuration(400);
                 existingAnim->setEasingCurve(QEasingCurve::InQuad);
                 existingAnim->setStartValue(currentScenePos);
                 existingAnim->setEndValue(newScenePos);

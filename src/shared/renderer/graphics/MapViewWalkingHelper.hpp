@@ -4,34 +4,36 @@
 #include <QPointF>
 #include <QPainter>
 #include <QDebug>
+#include <QSizeF>
 
 class MapViewWalkingHelper : public QGraphicsItem {
     
     Q_INTERFACES(QGraphicsItem)
     
     public:
-        MapViewWalkingHelper(QGraphicsItem* toWalk) :_toWalk(toWalk) {
+        MapViewWalkingHelper(QGraphicsItem* toWalk, const QSizeF &tileSize) :_toWalk(toWalk) {
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsFocusable, false);
             this->_updateSelfPos();
+            this->setZValue(toWalk->zValue() - 1);
         }
 
         void updateDestinationPoint(const QPointF &dest) {
             
-            this->_dest = dest;
+            this->_dest = this->mapFromScene(dest);
 
-            auto pos = this->_toWalk->pos();
-            this->setPos(pos);
-
+            auto pos = this->_updateSelfPos();
+            
             auto line = QLineF(pos, this->_dest);
-            auto rect = QRectF(pos, this->_dest);
             
             auto sizePart = qAbs(line.length() * 2);
             auto size = QSizeF(sizePart, sizePart);
 
-            this->_rect = QRectF(this->_dest, size);
+            this->_rect = QRectF({0,0}, size);
             this->_rect.moveCenter(pos);
+
+            this->update();
 
         }
 
@@ -43,12 +45,20 @@ class MapViewWalkingHelper : public QGraphicsItem {
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
             
             painter->save();
-
-                auto pos = this->pos();
                 
-                qDebug() << pos;
+                QPen pen;
+                pen.setWidth(0);
+                painter->setPen(pen);
+                painter->setRenderHint(QPainter::Antialiasing, true);
 
-                painter->drawLine({ pos, this->_dest });
+                painter->drawLine({ {0,0}, this->_dest });
+
+                QBrush brush(Qt::BrushStyle::SolidPattern);
+                brush.setColor("#eb6e34");
+                painter->setBrush(brush);
+
+                painter->setOpacity(.8);
+                painter->drawEllipse(this->_rect);
 
             painter->restore();
             
@@ -59,8 +69,10 @@ class MapViewWalkingHelper : public QGraphicsItem {
         QPointF _dest;
         QRectF _rect;
 
-        void _updateSelfPos() {
-            this->setPos(this->_toWalk->pos());
+        const QPointF _updateSelfPos() {
+            auto pos = this->_toWalk->pos();
+            this->setPos(pos);
+            return this->mapFromScene(pos);
         }
 
 };

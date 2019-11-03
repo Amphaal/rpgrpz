@@ -31,6 +31,7 @@ void RPZStatusBar::_installComponents() {
 
             //show tooltip
             QToolTip::showText(QCursor::pos(), tr("IP copied !"));
+            
         }
     );
 

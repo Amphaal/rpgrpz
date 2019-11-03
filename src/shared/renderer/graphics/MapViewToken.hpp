@@ -48,13 +48,8 @@ class MapViewToken : public QObject, public QGraphicsItem {
         QBrush _subBrush;
 
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
+            
             painter->save();
-
-                if(option->state.testFlag(QStyle::StateFlag::State_Selected)) {
-                    painter->setPen(QPen(QBrush("#000"), 0, Qt::PenStyle::DashLine));
-                    painter->drawRect(this->_subRect);
-                    painter->setOpacity(.8);
-                }
 
                 painter->setRenderHint(QPainter::Antialiasing, true);
                 painter->setPen(Qt::NoPen);
