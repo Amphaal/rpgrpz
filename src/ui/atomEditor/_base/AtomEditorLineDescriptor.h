@@ -31,8 +31,8 @@ class AtomEditorLineDescriptor : public QWidget {
             { RPZAtom::Parameter::BrushPenWidth, QT_TR_NOOP("Brush width") },
             { RPZAtom::Parameter::BrushStyle, QT_TR_NOOP("Brush tool") },
             { RPZAtom::Parameter::Text, QT_TR_NOOP("Text") },
-            { RPZAtom::Parameter::ShortDescription, QT_TR_NOOP("Short Description") },
-            { RPZAtom::Parameter::Description, QT_TR_NOOP("Description") }
+            { RPZAtom::Parameter::EventShortDescription, QT_TR_NOOP("Short Description") },
+            { RPZAtom::Parameter::EventDescription, QT_TR_NOOP("Description") }
         };
 
         static inline QHash<RPZAtom::Parameter, QString> _valSuffix = {
@@ -55,7 +55,7 @@ class AtomEditorLineDescriptor : public QWidget {
             { RPZAtom::Parameter::BrushPenWidth, QStringLiteral(u":/icons/app/tools/roundBrush.png") },
             { RPZAtom::Parameter::BrushStyle, QStringLiteral(u":/icons/app/tabs/config.png") },
             { RPZAtom::Parameter::Text, QStringLiteral(u":/icons/app/tools/text.png") },
-            { RPZAtom::Parameter::ShortDescription, QStringLiteral(u":/icons/app/tools/text.png") },
-            { RPZAtom::Parameter::Description, QStringLiteral(u":/icons/app/tools/text.png") }
+            { RPZAtom::Parameter::EventShortDescription, QStringLiteral(u":/icons/app/tools/text.png") },
+            { RPZAtom::Parameter::EventDescription, QStringLiteral(u":/icons/app/tools/text.png") }
         };
 };

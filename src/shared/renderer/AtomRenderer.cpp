@@ -170,6 +170,6 @@ QGraphicsPixmapItem* AtomRenderer::_createUnscalableToken(const RPZAtom &atom) {
 }
 
 MapViewToken* AtomRenderer::_createPlayerToken(const RPZAtom &atom) {
-    auto out = new MapViewToken(AppContext::standardTileSize(), atom.defaultColor());
+    auto out = new MapViewToken(AppContext::standardTileSize(), atom.defaultPlayerColor());
     return out;
 }

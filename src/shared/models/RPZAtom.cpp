@@ -100,7 +100,7 @@ double RPZAtom::assetRotation() const { return this->metadata(RPZAtom::Parameter
 RPZAtom::BrushType RPZAtom::brushType() const { return (RPZAtom::BrushType)this->metadata(RPZAtom::Parameter::BrushStyle).toInt(); }
 int RPZAtom::brushPenWidth() const { return this->metadata(RPZAtom::Parameter::BrushPenWidth).toInt(); }
 QPointF RPZAtom::shapeCenter() const { return this->metadata(RPZAtom::Parameter::ShapeCenter).toPointF(); }
-const QColor RPZAtom::defaultColor() const { return this->metadata(RPZAtom::Parameter::DefaultColor).value<QColor>(); }
+const QColor RPZAtom::defaultPlayerColor() const { return this->metadata(RPZAtom::Parameter::DefaultPlayerColor).value<QColor>(); }
 const RPZCharacter::Id RPZAtom::characterId() const { return this->metadata(RPZAtom::Parameter::CharacterId).toULongLong(); }
 
 QPainterPath RPZAtom::shape() const {
@@ -144,13 +144,20 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams(const RPZAtom::Type &type) 
         break;
 
         case RPZAtom::Type::Event: {
-            out.insert(RPZAtom::Parameter::ShortDescription);
-            out.insert(RPZAtom::Parameter::Description);   
+            out.insert(RPZAtom::Parameter::EventShortDescription);
+            out.insert(RPZAtom::Parameter::EventDescription);   
         }
         break;
 
         case RPZAtom::Type::Player: {
             out.insert(RPZAtom::Parameter::CharacterId);
+        }
+        break;
+
+        case RPZAtom::Type::NPC: {
+            out.insert(RPZAtom::Parameter::NPCAttitude);
+            out.insert(RPZAtom::Parameter::NPCShortName);
+            out.insert(RPZAtom::Parameter::NPCDescription);
         }
         break;
 

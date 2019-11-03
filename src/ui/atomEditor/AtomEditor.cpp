@@ -107,8 +107,8 @@ void AtomEditor::_createEditorsFromAtomParameters() {
     this->_editorsByParam.insert(RPZAtom::Parameter::TextSize, new AtomSliderEditor(RPZAtom::Parameter::TextSize, 1, 50));
     this->_editorsByParam.insert(RPZAtom::Parameter::Text, new AtomTextEditor(RPZAtom::Parameter::Text));
 
-    this->_editorsByParam.insert(RPZAtom::Parameter::ShortDescription, new AtomShortTextEditor(RPZAtom::Parameter::ShortDescription));
-    this->_editorsByParam.insert(RPZAtom::Parameter::Description, new AtomTextEditor(RPZAtom::Parameter::Description));
+    this->_editorsByParam.insert(RPZAtom::Parameter::EventShortDescription, new AtomShortTextEditor(RPZAtom::Parameter::EventShortDescription));
+    this->_editorsByParam.insert(RPZAtom::Parameter::EventDescription, new AtomTextEditor(RPZAtom::Parameter::EventDescription));
 
 
     for(auto editor : this->_editorsByParam) {

@@ -45,10 +45,13 @@ class RPZAtom : public Serializable {
             AssetRotation,
             AssetScale,
             ShapeCenter,
-            ShortDescription,
+            EventShortDescription,
             CharacterId,
-            Description,
-            DefaultColor
+            EventDescription,
+            DefaultPlayerColor,
+            NPCAttitude,
+            NPCShortName,
+            NPCDescription
         };
 
         enum class Category {
@@ -76,6 +79,13 @@ class RPZAtom : public Serializable {
             RoundBrush,
             Cutter, 
             Scissors 
+        };
+
+        enum class NPCType {
+            Unknown,
+            Neutral,
+            Hostile,
+            Friendly
         };
 
         typedef SnowFlake::Id Id;
@@ -175,7 +185,7 @@ class RPZAtom : public Serializable {
         RPZAtom::BrushType brushType() const;
         int brushPenWidth() const;
         QPointF shapeCenter() const;
-        const QColor defaultColor() const;
+        const QColor defaultPlayerColor() const;
         const RPZCharacter::Id characterId() const;
 
         QPainterPath shape() const;
@@ -191,7 +201,6 @@ class RPZAtom : public Serializable {
             RPZAtom::Type::Background
         };
 
-        
         static inline const QList<RPZAtom::Type> _restrictedAtom {
             RPZAtom::Type::Event
         };
@@ -215,9 +224,12 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::BrushPenWidth, QStringLiteral(u"brush_w") },
             { RPZAtom::Parameter::ShapeCenter, QStringLiteral(u"shape_c") },
             { RPZAtom::Parameter::CharacterId, QStringLiteral(u"chr_id") },
-            { RPZAtom::Parameter::Description, QStringLiteral(u"descr") },
-            { RPZAtom::Parameter::ShortDescription, QStringLiteral(u"s_descr") },
-            { RPZAtom::Parameter::DefaultColor,  QStringLiteral(u"color") }
+            { RPZAtom::Parameter::EventDescription, QStringLiteral(u"descr") },
+            { RPZAtom::Parameter::EventShortDescription, QStringLiteral(u"s_descr") },
+            { RPZAtom::Parameter::DefaultPlayerColor, QStringLiteral(u"color") },
+            { RPZAtom::Parameter::NPCAttitude, QStringLiteral(u"npc_t") },
+            { RPZAtom::Parameter::NPCShortName, QStringLiteral(u"npc_sn") },
+            { RPZAtom::Parameter::NPCDescription, QStringLiteral(u"npc_descr") }
         };
 
         static inline const RPZAtom::Updates _defaultVal = {
@@ -239,9 +251,12 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::BrushPenWidth, 1 },
             { RPZAtom::Parameter::ShapeCenter, QVariant() },
             { RPZAtom::Parameter::CharacterId, 0 },
-            { RPZAtom::Parameter::Description, "" },
-            { RPZAtom::Parameter::ShortDescription, "" },
-            { RPZAtom::Parameter::DefaultColor,  QColor() }
+            { RPZAtom::Parameter::EventDescription, "" },
+            { RPZAtom::Parameter::EventShortDescription, "" },
+            { RPZAtom::Parameter::DefaultPlayerColor, QColor() },
+            { RPZAtom::Parameter::NPCAttitude, 0 },
+            { RPZAtom::Parameter::NPCShortName, "" },
+            { RPZAtom::Parameter::NPCDescription, "" }
         };
 
         void _setType(const RPZAtom::Type &type);
