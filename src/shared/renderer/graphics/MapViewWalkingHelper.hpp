@@ -1,78 +1,93 @@
 #pragma once
 
+#include <QGraphicsView>
 #include <QGraphicsItem>
 #include <QPointF>
 #include <QPainter>
 #include <QDebug>
 #include <QSizeF>
+#include <QFont>
+#include <QStyleOptionGraphicsItem>
 
-class MapViewWalkingHelper : public QGraphicsItem {
+class MapViewWalkingHelper : public QObject, public QGraphicsItem {
     
+    Q_OBJECT
+    Q_PROPERTY(QPointF pos READ pos WRITE setPos)
     Q_INTERFACES(QGraphicsItem)
     
     public:
-        MapViewWalkingHelper(QGraphicsItem* toWalk) :_toWalk(toWalk) {
+        MapViewWalkingHelper(QGraphicsItem* toWalk, QGraphicsView* view) {
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsFocusable, false);
-            this->_updateSelfPos();
+            this->setPos(toWalk->pos());
             this->setZValue(toWalk->zValue() - 1);
+            this->_view = view;
         }
 
-        void updateDestinationPoint(const QPointF &dest) {
+        QRectF boundingRect() const override {
             
-            this->_dest = this->mapFromScene(dest);
+            auto viewCursorPos = this->_view->mapFromGlobal(QCursor::pos());
+            auto sceneCursorPos = this->_view->mapToScene(viewCursorPos);
+            auto itemCursorPos = this->mapFromScene(sceneCursorPos);
 
-            auto pos = this->_updateSelfPos();
-            
-            auto line = QLineF(pos, this->_dest);
+            auto line = QLineF({}, itemCursorPos);
             
             auto sizePart = qAbs(line.length() * 2);
             auto size = QSizeF(sizePart, sizePart);
 
-            this->_rect = QRectF({0,0}, size);
-            this->_rect.moveCenter(pos);
+            QRectF out({}, size);
+            out.moveCenter({});
 
-            this->update();
+            return out;
 
-        }
-
-        QRectF boundingRect() const override {
-            return this->_rect;
         }
 
     protected:
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
             
+            auto viewCursorPos = this->_view->mapFromGlobal(QCursor::pos());
+            auto sceneCursorPos = this->_view->mapToScene(viewCursorPos);
+            auto itemCursorPos = this->mapFromScene(sceneCursorPos);
+
             painter->save();
                 
                 QPen pen;
                 pen.setWidth(0);
                 painter->setPen(pen);
                 painter->setRenderHint(QPainter::Antialiasing, true);
-
-                painter->drawLine({ {0,0}, this->_dest });
+                
+                QLineF line({0,0}, itemCursorPos);
+                painter->drawLine(line);
 
                 QBrush brush(Qt::BrushStyle::SolidPattern);
                 brush.setColor("#eb6e34");
                 painter->setBrush(brush);
 
                 painter->setOpacity(.8);
-                painter->drawEllipse(this->_rect);
+                painter->drawEllipse(option->exposedRect);
 
             painter->restore();
             
+            painter->save();
+
+                painter->setTransform(QTransform());
+
+                QFont font;
+                font.setPointSize(15);
+                painter->setFont(font);
+
+                auto text = QString::number(line.length());
+
+                auto displayAt = viewCursorPos;
+                displayAt += {12, 0};
+                painter->drawText(displayAt, text);
+
+            painter->restore();
+
         }
 
     private:
-        QGraphicsItem* _toWalk = nullptr;
-        QPointF _dest;
-        QRectF _rect;
-
-        const QPointF _updateSelfPos() {
-            auto pos = this->_toWalk->pos();
-            this->setPos(pos);
-            return this->mapFromScene(pos);
-        }
+        QGraphicsView* _view = nullptr;
 
 };

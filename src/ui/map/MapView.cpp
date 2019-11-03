@@ -223,7 +223,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
         
         if(can) {
             this->_toWalk = toAlter.first();
-            this->_walkingHelper = new MapViewWalkingHelper(this->_toWalk);
+            this->_walkingHelper = new MapViewWalkingHelper(this->_toWalk, this);
             this->scene()->addItem(this->_walkingHelper);
             this->_changeTool(MapTool::Walking);
         }
@@ -384,9 +384,9 @@ void MapView::mousePressEvent(QMouseEvent *event) {
                 break;
 
                 case MapTool::Walking: {
-                    auto toWalk = this->scene()->selectedItems().takeFirst();
                     auto scenePos = this->mapToScene(event->pos());
-                    this->_hints->notifyWalk(toWalk, scenePos);
+                    this->_hints->notifyWalk(this->_toWalk, scenePos);
+                    MapViewAnimator::animateMove(this->_walkingHelper, scenePos);
                 }
                 break;
 
@@ -462,9 +462,7 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
 
 void MapView::_mightUpdateWalkingHelperPos() {
     if(this->_walkingHelper) {
-        auto cursorPos = this->mapFromGlobal(QCursor::pos());
-        auto pos = this->mapToScene(cursorPos);
-        this->_walkingHelper->updateDestinationPoint(pos);
+        this->_walkingHelper->update();
     }
 }
 
