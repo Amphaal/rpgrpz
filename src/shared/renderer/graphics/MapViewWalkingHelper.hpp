@@ -8,6 +8,9 @@
 #include <QSizeF>
 #include <QFont>
 #include <QStyleOptionGraphicsItem>
+#include <QTextOption>
+
+#include "src/helpers/StringHelper.hpp"
 
 class MapViewWalkingHelper : public QObject, public QGraphicsItem {
     
@@ -16,13 +19,12 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem {
     Q_INTERFACES(QGraphicsItem)
     
     public:
-        MapViewWalkingHelper(QGraphicsItem* toWalk, QGraphicsView* view) {
+        MapViewWalkingHelper(QGraphicsItem* toWalk, QGraphicsView* view) : _view(view), _toWalk(toWalk) {
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsFocusable, false);
             this->setPos(toWalk->pos());
             this->setZValue(toWalk->zValue() - 1);
-            this->_view = view;
         }
 
         QRectF boundingRect() const override {
@@ -76,12 +78,16 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem {
                 QFont font;
                 font.setPointSize(15);
                 painter->setFont(font);
+                
+                QTextOption aa;
+                aa.setWrapMode(QTextOption::NoWrap);
 
-                auto text = QString::number(line.length());
+                auto meters = this->_distancesIntoMeters(line.length());
+                auto text = StringHelper::fromMeters(meters);
+                auto textRect = painter->boundingRect(QRectF(), text, aa);
+                textRect = this->_adjustText(itemCursorPos, viewCursorPos, textRect);
 
-                auto displayAt = viewCursorPos;
-                displayAt += {12, 0};
-                painter->drawText(displayAt, text);
+                painter->drawText(textRect, text, aa);
 
             painter->restore();
 
@@ -89,5 +95,41 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem {
 
     private:
         QGraphicsView* _view = nullptr;
+        QGraphicsItem* _toWalk = nullptr;
+
+        qreal _distancesIntoMeters(qreal distance) {
+            auto distanceAsTiles = distance / AppContext::standardTileSize().width();
+            auto meters = distanceAsTiles * AppContext::DEFAULT_TILE_TO_METER_RATIO;
+            return meters;
+        }
+
+        QRectF _adjustText(const QPointF &relativeTo, QPointF dest, QRectF toAdjust) {
+            
+            QPointF correct;
+
+                if(relativeTo.x() < 0) {
+                    correct += {-12, 0};
+                } else {
+                    correct += {12, 0};
+                }
+
+                if(relativeTo.y() < 0) {
+                    correct += {0, -12};
+                } else {
+                    correct += {0, 12};
+                }
+
+            dest += correct;
+
+            qDebug() << correct;
+
+            if(correct.x() < 0 && correct.y() < 0) toAdjust.moveBottomRight(dest);
+            else if(correct.x() >= 0 && correct.y() < 0) toAdjust.moveBottomLeft(dest);
+            else if(correct.x() < 0 && correct.y() >= 0) toAdjust.moveTopRight(dest);
+            else if(correct.x() >= 0 && correct.y() >= 0) toAdjust.moveTopLeft(dest);
+
+            return toAdjust;
+
+        }
 
 };

@@ -220,6 +220,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
         
         auto result = this->_hints->latestEligibleCharacterIdOnSelection();
         auto can = RPZClient::isHostAble() && result.first;
+        //TODO restrict to player only
         
         if(can) {
             this->_toWalk = toAlter.first();
@@ -623,7 +624,7 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
     }
     
     //destroy / create walking helper
-    if(newTool != MapTool::Walking && this->_walkingHelper) {
+    if(this->_tool != MapTool::Walking && this->_walkingHelper) {
         this->_toWalk = nullptr;
         delete this->_walkingHelper;
         this->_walkingHelper = nullptr;
