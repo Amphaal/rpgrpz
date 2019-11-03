@@ -1021,44 +1021,59 @@
         <translation>Dossier</translation>
     </message>
     <message>
-        <location filename="../ui/mapLayout/model/MapLayoutCategory.cpp" line="39"/>
+        <location filename="../ui/mapLayout/model/MapLayoutCategory.cpp" line="38"/>
         <source>Layer %1</source>
         <translation>Calque %1</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="95"/>
+        <location filename="../shared/models/RPZAtom.h" line="105"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="96"/>
+        <location filename="../shared/models/RPZAtom.h" line="106"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="97"/>
+        <location filename="../shared/models/RPZAtom.h" line="107"/>
         <source>Object</source>
         <translation>Objet</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="98"/>
+        <location filename="../shared/models/RPZAtom.h" line="108"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="99"/>
+        <location filename="../shared/models/RPZAtom.h" line="109"/>
         <source>Atom</source>
         <translation>Atome</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="100"/>
+        <location filename="../shared/models/RPZAtom.h" line="110"/>
         <source>Event</source>
         <translation>Evénement</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="101"/>
+        <location filename="../shared/models/RPZAtom.h" line="111"/>
         <source>Player</source>
         <translation>Joueur</translation>
+    </message>
+    <message>
+        <location filename="../shared/models/RPZAtom.h" line="115"/>
+        <source>NPCs</source>
+        <translation>PNJs</translation>
+    </message>
+    <message>
+        <location filename="../shared/models/RPZAtom.h" line="116"/>
+        <source>Events</source>
+        <translation>Evénements</translation>
+    </message>
+    <message>
+        <location filename="../shared/models/RPZAtom.h" line="117"/>
+        <source>Players</source>
+        <translation>Joueurs</translation>
     </message>
     <message>
         <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="191"/>

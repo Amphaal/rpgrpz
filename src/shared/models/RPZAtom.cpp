@@ -25,10 +25,10 @@ bool RPZAtom::isRestrictedAtom() const {
 const QString RPZAtom::toString(const RPZAtom::Type &type, const QString &description) { 
 
     if(RPZAtom::category(type) == RPZAtom::Category::Interactive) {
-        return description.isEmpty() ? atomTypeToText(type) : description;
+        return description.isEmpty() ? _atomTypeToText(type) : description;
     }
 
-    auto out = atomTypeToText(type);
+    auto out = _atomTypeToText(type);
     return description.isEmpty() ?  out : QStringLiteral(u"%1 (%2)").arg(description).arg(out);
     
 };
@@ -37,7 +37,7 @@ const QString RPZAtom::toString() const {
     return toString(this->type(), this->assetName());
 }
 
-const QString RPZAtom::atomTypeToText(const RPZAtom::Type &type) {
+const QString RPZAtom::_atomTypeToText(const RPZAtom::Type &type) {
     
     auto descr = atomTypeDescr.value(
         type, 
@@ -102,6 +102,7 @@ int RPZAtom::brushPenWidth() const { return this->metadata(RPZAtom::Parameter::B
 QPointF RPZAtom::shapeCenter() const { return this->metadata(RPZAtom::Parameter::ShapeCenter).toPointF(); }
 const QColor RPZAtom::defaultPlayerColor() const { return this->metadata(RPZAtom::Parameter::DefaultPlayerColor).value<QColor>(); }
 const RPZCharacter::Id RPZAtom::characterId() const { return this->metadata(RPZAtom::Parameter::CharacterId).toULongLong(); }
+const QString RPZAtom::characterName() const { return this->metadata(RPZAtom::Parameter::CharacterName).toString(); }
 
 QPainterPath RPZAtom::shape() const {
     auto rawShape = this->metadata(RPZAtom::Parameter::Shape).toByteArray();

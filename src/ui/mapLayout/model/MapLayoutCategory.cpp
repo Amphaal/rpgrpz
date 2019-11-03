@@ -1,7 +1,6 @@
 #include "MapLayoutCategory.h"
 #include "MapLayoutAtom.h"
 
-
 MapLayoutCategory::MapLayoutCategory(const RPZAtom::Category &category, int sorter) {
     this->_category = category;
     this->_sorter = sorter;
@@ -15,7 +14,7 @@ MapLayoutCategory::MapLayoutCategory(const RPZAtom::Category &category, int sort
 
         case RPZAtom::Category::Interactive: {
             auto type = (RPZAtom::Type)sorter;
-            this->_name = RPZAtom::toString(type);
+            this->_name = QObject::tr(qUtf8Printable(RPZAtom::atomCategoryTypeDescr.value(type)));
             this->_pixmap = QPixmap(RPZAtom::iconPathByAtomType.value(type));
         }
         break;

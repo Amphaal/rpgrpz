@@ -9,7 +9,7 @@ MapLayoutAtom::MapLayoutAtom(MapLayoutCategory* parent, const RPZAtom &atom) {
     
     //if no hash associated, force descr
     if(this->_assetHash.isEmpty()) {
-        this->setName();
+        this->_setName();
     }
 
     this->updateFrom(atom.editedMetadataWithValues());
@@ -58,9 +58,10 @@ const QSet<int> MapLayoutAtom::updateFrom(const RPZAtom::Updates &updates) {
                 columnsToUpdate += 1;
                 break;
             
+            case RPZAtom::Parameter::CharacterId:
             case RPZAtom::Parameter::EventShortDescription:
             case RPZAtom::Parameter::AssetName:
-                this->setName(variant.toString());
+                this->_setName(variant.toString());
                 columnsToUpdate += 0;
                 break;
 
@@ -93,10 +94,10 @@ const QString MapLayoutAtom::name() const {
     return this->_name;
 }
 
-void MapLayoutAtom::setName(const QString assetName) {
+void MapLayoutAtom::_setName(const QString &descriptor) {
     this->_name = RPZAtom::toString(
         this->_type,
-        assetName
+        descriptor
     );
 }
 

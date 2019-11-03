@@ -51,7 +51,8 @@ class RPZAtom : public Serializable {
             DefaultPlayerColor,
             NPCAttitude,
             NPCShortName,
-            NPCDescription
+            NPCDescription,
+            CharacterName
         };
 
         enum class Category {
@@ -111,6 +112,12 @@ class RPZAtom : public Serializable {
             { RPZAtom::Type::Player, QT_TRANSLATE_NOOP("QObject", "Player") },
         };
 
+        static const inline QHash<RPZAtom::Type, QString> atomCategoryTypeDescr {
+            { RPZAtom::Type::NPC, QT_TRANSLATE_NOOP("QObject", "NPCs") },
+            { RPZAtom::Type::Event, QT_TRANSLATE_NOOP("QObject", "Events") },
+            { RPZAtom::Type::Player, QT_TRANSLATE_NOOP("QObject", "Players") },
+        };
+
         static inline const QList<RPZAtom::Type> assetBasedAtom {
             RPZAtom::Type::Object, 
             RPZAtom::Type::Brush,
@@ -140,7 +147,6 @@ class RPZAtom : public Serializable {
         RPZAtom::Type type() const;
         void changeType(const RPZAtom::Type &type);
 
-        static const QString atomTypeToText(const RPZAtom::Type &type);
         static const QString toString(const RPZAtom::Type &type, const QString &description = QString());
         const QString toString() const;
 
@@ -187,6 +193,7 @@ class RPZAtom : public Serializable {
         QPointF shapeCenter() const;
         const QColor defaultPlayerColor() const;
         const RPZCharacter::Id characterId() const;
+        const QString characterName() const;
 
         QPainterPath shape() const;
         void setShape(const QPainterPath &path);
@@ -229,7 +236,8 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::DefaultPlayerColor, QStringLiteral(u"color") },
             { RPZAtom::Parameter::NPCAttitude, QStringLiteral(u"npc_t") },
             { RPZAtom::Parameter::NPCShortName, QStringLiteral(u"npc_sn") },
-            { RPZAtom::Parameter::NPCDescription, QStringLiteral(u"npc_descr") }
+            { RPZAtom::Parameter::NPCDescription, QStringLiteral(u"npc_descr") },
+            { RPZAtom::Parameter::CharacterName, QStringLiteral(u"char_nm") }
         };
 
         static inline const RPZAtom::Updates _defaultVal = {
@@ -256,10 +264,13 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::DefaultPlayerColor, QColor() },
             { RPZAtom::Parameter::NPCAttitude, 0 },
             { RPZAtom::Parameter::NPCShortName, "" },
-            { RPZAtom::Parameter::NPCDescription, "" }
+            { RPZAtom::Parameter::NPCDescription, "" },
+            { RPZAtom::Parameter::CharacterName, "" }
         };
 
         void _setType(const RPZAtom::Type &type);
+
+        static const QString _atomTypeToText(const RPZAtom::Type &type);
 
 };
 inline uint qHash(const RPZAtom::Category &key, uint seed = 0) {return uint(key) ^ seed;}

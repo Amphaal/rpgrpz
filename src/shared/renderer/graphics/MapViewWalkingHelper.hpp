@@ -12,6 +12,8 @@
 
 #include "src/helpers/StringHelper.hpp"
 
+#include "src/helpers/_appContext.h"
+
 class MapViewWalkingHelper : public QObject, public QGraphicsItem {
     
     Q_OBJECT
@@ -120,8 +122,6 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem {
                 }
 
             dest += correct;
-
-            qDebug() << correct;
 
             if(correct.x() < 0 && correct.y() < 0) toAdjust.moveBottomRight(dest);
             else if(correct.x() >= 0 && correct.y() < 0) toAdjust.moveBottomLeft(dest);

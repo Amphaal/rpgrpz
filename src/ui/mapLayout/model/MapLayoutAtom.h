@@ -28,8 +28,6 @@ class MapLayoutAtom : public MapLayoutItem {
 
         const QString name() const override;
 
-        void setName(const QString assetName = QString());
-
         const QPixmap icon() const override;
 
     private:
@@ -40,5 +38,8 @@ class MapLayoutAtom : public MapLayoutItem {
         bool _isLocked = false;
         RPZAtom::Id _id = 0;
         RPZAsset::Hash _assetHash;
+
+        
+        void _setName(const QString &descriptor = QString());
 
 };
