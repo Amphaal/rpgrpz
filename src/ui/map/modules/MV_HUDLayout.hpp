@@ -5,18 +5,11 @@
 #include "src/helpers/StringHelper.hpp"
 #include "src/shared/hints/MapHint.h"
 
-#include 
-
 class MV_HUDLayout {
     public:
         MV_HUDLayout(QGraphicsView* view) : _view(view), _heavyLoadImage(QPixmap(":/icons/app_64.png")) { }
     
     protected:
-        void extractMapParametersForHUDLayout(const MapHint* hint) {
-            this->_tileToMeterRatio = hint->tileToMeterRatio();
-            this->_stdTileSize = hint->standardTileSize();
-        }
-
         void setupHeavyLoadPlaceholder(int expectedItemsCount) {
             this->_heavyLoadExpectedCount = expectedItemsCount;
             this->_heavyLoadCurrentCount = 0;
@@ -207,11 +200,11 @@ class MV_HUDLayout {
                 //disable render hints from view
                 painter->setRenderHints(this->_view->renderHints(), false);
 
-                auto tileWidth = (int)this->_stdTileSize.width();
+                auto tileWidth = AppContext::standardTileSize().width();
                 auto stops = 5;
                 auto rulerSize = (int)(tileWidth * stops);
                 auto elipseSize = rulerSize + 50;
-                auto ratio = this->_tileToMeterRatio * (1 / currentScale);
+                auto ratio = AppContext::DEFAULT_TILE_TO_METER_RATIO * (1 / currentScale);
 
                 //cover
                 painter->setOpacity(.5);
@@ -244,8 +237,9 @@ class MV_HUDLayout {
                 for(auto stop = 1; stop <= stops; stop++) {
                     
                     auto pos = scalePos;
+                    auto estNewPos = (int)(stop * tileWidth);
                     pos.setX(
-                        pos.x() + (stop * tileWidth)
+                        pos.x() + estNewPos
                     );
 
                     auto txtStr = StringHelper::fromMeters(ratio * stop);
@@ -322,8 +316,9 @@ class MV_HUDLayout {
                 auto centerX = center.x();
                 auto centerY = center.y();
                 
-                auto tileWidth = this->_stdTileSize.width();
-                auto tileHeight = this->_stdTileSize.height();
+                auto stdTileSize = AppContext::standardTileSize();
+                auto tileWidth = stdTileSize.width();
+                auto tileHeight = stdTileSize.height();
 
                 auto size = sceneRect.size();
                 auto numberOfLinesX = (int)(size.width() / tileWidth);

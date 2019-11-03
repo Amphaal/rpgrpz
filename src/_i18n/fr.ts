@@ -645,99 +645,99 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="89"/>
+        <location filename="../ui/mainWindow.cpp" line="92"/>
         <source>Press ALT key to display the menu !</source>
         <translation>Appuyez sur la touche ALT pour afficher le menu !</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="147"/>
+        <location filename="../ui/mainWindow.cpp" line="150"/>
         <source>No</source>
         <translation>Non</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="195"/>
+        <location filename="../ui/mainWindow.cpp" line="198"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="270"/>
+        <location filename="../ui/mainWindow.cpp" line="273"/>
         <source>Toy box</source>
         <translation>Boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="343"/>
+        <location filename="../ui/mainWindow.cpp" line="346"/>
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="342"/>
+        <location filename="../ui/mainWindow.cpp" line="345"/>
         <source>Sheets</source>
         <translation>Fiches</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="357"/>
+        <location filename="../ui/mainWindow.cpp" line="360"/>
         <source>Map Atoms</source>
         <translation>Atomes de la carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="358"/>
+        <location filename="../ui/mainWindow.cpp" line="361"/>
         <source>Atom Editor</source>
         <translation>Editeur d&apos;atomes</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="294"/>
+        <location filename="../ui/mainWindow.cpp" line="297"/>
         <source>Game Hub</source>
         <translation>Hub de jeu</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="496"/>
+        <location filename="../ui/mainWindow.cpp" line="499"/>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="510"/>
+        <location filename="../ui/mainWindow.cpp" line="513"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="512"/>
-        <location filename="../ui/mainWindow.cpp" line="538"/>
-        <location filename="../ui/mainWindow.cpp" line="566"/>
+        <location filename="../ui/mainWindow.cpp" line="515"/>
+        <location filename="../ui/mainWindow.cpp" line="541"/>
+        <location filename="../ui/mainWindow.cpp" line="569"/>
         <source>Game map (*%1)</source>
         <translation>Carte de campagne (*%1)</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="536"/>
+        <location filename="../ui/mainWindow.cpp" line="539"/>
         <source>Load a new map</source>
         <translation>Charger une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="564"/>
+        <location filename="../ui/mainWindow.cpp" line="567"/>
         <source>Save as...</source>
         <translation>Savegarder sous...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="600"/>
+        <location filename="../ui/mainWindow.cpp" line="603"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="655"/>
+        <location filename="../ui/mainWindow.cpp" line="658"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="669"/>
+        <location filename="../ui/mainWindow.cpp" line="672"/>
         <source>Searching for updates...</source>
         <translation>Recherche des mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="669"/>
+        <location filename="../ui/mainWindow.cpp" line="672"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="693"/>
+        <location filename="../ui/mainWindow.cpp" line="696"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
@@ -1011,7 +1011,7 @@
         <translation>Une erreur est survenue : </translation>
     </message>
     <message>
-        <location filename="../ui/map/modules/MV_HUDLayout.hpp" line="283"/>
+        <location filename="../ui/map/modules/MV_HUDLayout.hpp" line="276"/>
         <source>Too far to display grid !</source>
         <translation>Trop éloigné pour afficher la grille !</translation>
     </message>

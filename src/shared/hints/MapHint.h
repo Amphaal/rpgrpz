@@ -7,7 +7,7 @@ class MapHint : public ViewMapHint {
     Q_OBJECT
 
     public:
-        MapHint(const QSizeF &defaultTileSize);
+        MapHint();
 
         //load/unload
         bool isRemote() const;
@@ -18,8 +18,6 @@ class MapHint : public ViewMapHint {
         
         bool ackRemoteness(const RPZUser &connectedUser, RPZClient* client);
         bool ackRemoteness(const QString &tblMapFilePath);
-
-        double tileToMeterRatio() const;
 
     public slots:
         bool loadDefaultRPZMap(); //to invoke

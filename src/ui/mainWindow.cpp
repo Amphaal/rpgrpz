@@ -7,6 +7,9 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
     ProgressTracker::get();
     ConnectivityObserverSynchronizer::get();
 
+    //
+    AppContext::defineStandardTileSize(this);
+
     //init databases
     AssetsDatabase::get();
     CharactersDatabase::get();

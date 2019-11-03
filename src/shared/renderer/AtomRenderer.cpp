@@ -1,6 +1,6 @@
 #include "AtomRenderer.h"
 
-QGraphicsItem* AtomRenderer::createGraphicsItem(const RPZAtom &atom, const RPZAsset &asset, const QSizeF &tileSize, bool isTemporary) {
+QGraphicsItem* AtomRenderer::createGraphicsItem(const RPZAtom &atom, const RPZAsset &asset, bool isTemporary) {
     
     QGraphicsItem* out;
     auto type = atom.type();
@@ -28,7 +28,7 @@ QGraphicsItem* AtomRenderer::createGraphicsItem(const RPZAtom &atom, const RPZAs
         break;
 
         case RPZAtom::Type::Player:
-            out = _createPlayerToken(atom, tileSize);
+            out = _createPlayerToken(atom);
         break;
 
         default: {
@@ -169,7 +169,7 @@ QGraphicsPixmapItem* AtomRenderer::_createUnscalableToken(const RPZAtom &atom) {
 
 }
 
-MapViewToken* AtomRenderer::_createPlayerToken(const RPZAtom &atom, const QSizeF &tileSize) {
-    auto out = new MapViewToken(tileSize, atom.defaultColor());
+MapViewToken* AtomRenderer::_createPlayerToken(const RPZAtom &atom) {
+    auto out = new MapViewToken(AppContext::standardTileSize(), atom.defaultColor());
     return out;
 }

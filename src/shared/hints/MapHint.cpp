@@ -1,6 +1,6 @@
 #include "MapHint.h"
 
-MapHint::MapHint(const QSizeF &defaultTileSize) : ViewMapHint(defaultTileSize), _sysActor(new AlterationActor(Payload::Source::Local_System)) { 
+MapHint::MapHint() : _sysActor(new AlterationActor(Payload::Source::Local_System)) { 
     this->connectToAlterationEmissions();
 }
 
@@ -115,10 +115,6 @@ bool MapHint::loadRPZMap(const QString &filePath) {
         AlterationHandler::get()->queueAlteration(this->_sysActor, payload);
 
     return true;
-}
-
-double MapHint::tileToMeterRatio() const {
-    return AppContext::DEFAULT_TILE_TO_METER_RATIO;
 }
 
 bool  MapHint::ackRemoteness(const QString &tblMapFilePath) {

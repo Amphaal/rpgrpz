@@ -29,7 +29,7 @@ class ViewMapHint : public AtomsStorage {
     Q_OBJECT
 
     public:
-        ViewMapHint(const QSizeF &defaultTileSize);
+        ViewMapHint();
 
         //might be called by another thread, safe
         RPZAtom::Id integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem) const; //safe
@@ -41,7 +41,6 @@ class ViewMapHint : public AtomsStorage {
         const RPZAtom::Id getAtomIdFromGraphicsItem(const QGraphicsItem* toFetch) const; //safe
 
         QGraphicsItem* generateTemporaryItemFromTemplateBuffer(); //safe
-        const QSizeF standardTileSize() const; //safe
 
         const QPair<bool, RPZCharacter::Id> latestEligibleCharacterIdOnSelection() const; //safe
 
@@ -66,7 +65,6 @@ class ViewMapHint : public AtomsStorage {
         //alter template Atom
         mutable QMutex _m_ghostItem;
         QGraphicsItem* _ghostItem = nullptr;
-        QSizeF _defaultTileSize;
         
         mutable QMutex _m_templateToy;
         RPZToy _templateToy;

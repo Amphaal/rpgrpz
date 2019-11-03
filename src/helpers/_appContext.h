@@ -37,13 +37,15 @@ class AppContext {
         
         static void _makeSureDirPathExists(const QString &path);
 
+        static inline QSizeF _tileSize;
+
     public:    
         static AppSettings* settings();
 
         static inline const QString UPNP_DEFAULT_TARGET_PORT = "31137";
         static inline const QString UPNP_REQUEST_DESCRIPTION = APP_NAME;
         static inline const QString RPZ_MAP_FILE_EXT = ".mrpz";
-        static inline const double DEFAULT_TILE_TO_METER_RATIO = 1.5;
+        static inline const double DEFAULT_TILE_TO_METER_RATIO = 1.5; // 1 tile = DEFAULT_TILE_TO_METER_RATIO in meters
         static inline constexpr QSizeF DEFAULT_SCENE_SIZE = {36000, 36000};
         static inline constexpr int TOP_Z_INDEX = 100000;
 
@@ -53,7 +55,8 @@ class AppContext {
         static QHash<QString, QString> getOptionArgs(int argc, char** argv);
         static void configureApp(QCoreApplication &app);
 
-        static QSizeF standardTileSize(QPaintDevice* device);
+        static void defineStandardTileSize(QPaintDevice* device);
+        static QSizeF standardTileSize();
 
         void static initRandomContext();
         void static initCustomContext(const QString &customContextSuffix);

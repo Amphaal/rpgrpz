@@ -11,7 +11,7 @@ class MapViewWalkingHelper : public QGraphicsItem {
     Q_INTERFACES(QGraphicsItem)
     
     public:
-        MapViewWalkingHelper(QGraphicsItem* toWalk, const QSizeF &tileSize) :_toWalk(toWalk) {
+        MapViewWalkingHelper(QGraphicsItem* toWalk) :_toWalk(toWalk) {
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsFocusable, false);
