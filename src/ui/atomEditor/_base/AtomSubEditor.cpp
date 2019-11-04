@@ -1,8 +1,8 @@
 #include "AtomSubEditor.h"
 
-AtomSubEditor::AtomSubEditor(const RPZAtom::Parameter &parameter) :
-    _descr(new AtomEditorLineDescriptor(parameter)),
-    _param(parameter) { 
+AtomSubEditor::AtomSubEditor(const QList<RPZAtom::Parameter> &parameters) :
+    _descr(new AtomEditorLineDescriptor(parameters.first())),
+    _params(parameters) { 
 
     this->setVisible(false);
 
@@ -13,8 +13,8 @@ AtomSubEditor::AtomSubEditor(const RPZAtom::Parameter &parameter) :
 
 }
 
-RPZAtom::Parameter AtomSubEditor::param() {
-    return this->_param;
+const QList<RPZAtom::Parameter> AtomSubEditor::params() {
+    return this->_params;
 }
 
 void AtomSubEditor::_setAsDataEditor(QWidget *dataEditor) {
@@ -31,7 +31,7 @@ bool AtomSubEditor::mustShowBrushPenWidth(const QVariant &brushTypeDefaultValue)
 void AtomSubEditor::_handleVisibilityOnLoad(const RPZAtom::Updates &defaultValues) {
     
     //default behavior if not a penWidth param
-    if(this->_param != RPZAtom::Parameter::BrushPenWidth) return this->setVisible(true);
+    if(!this->_params.contains(RPZAtom::Parameter::BrushPenWidth)) return this->setVisible(true);
 
     //check
     auto brushStyleVal = defaultValues.value(RPZAtom::Parameter::BrushStyle);
@@ -43,17 +43,23 @@ void AtomSubEditor::_handleVisibilityOnLoad(const RPZAtom::Updates &defaultValue
 }
 
 
-QVariant AtomSubEditor::loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) {
+const AtomSubEditor::DefaultValues AtomSubEditor::loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) {
     
     //handle visibility
     this->_handleVisibilityOnLoad(defaultValues);
     
-    //replace descr if empty
-    auto defaultValue = defaultValues.value(this->_param);
-    if(defaultValue.isNull()) {
-        this->_descr->cannotDisplayValue();
-    }
+    AtomSubEditor::DefaultValues editorValues;
 
-    return defaultValue;
+    auto hasEmptyValue = false;
+    for(auto &param : this->_params) {
+        auto associatedValue = defaultValues.value(param);
+        if(associatedValue.isNull()) hasEmptyValue = true;
+        editorValues.insert(param, associatedValue);
+    }
+    
+    //replace descr if has empty
+    if(hasEmptyValue) this->_descr->cannotDisplayValue();
+
+    return editorValues;
 
 }

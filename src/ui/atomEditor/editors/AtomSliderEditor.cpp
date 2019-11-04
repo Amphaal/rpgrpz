@@ -1,6 +1,6 @@
 #include "AtomSliderEditor.h"
 
-AtomSliderEditor::AtomSliderEditor(const RPZAtom::Parameter &parameter, int minimum, int maximum) : AtomSubEditor(parameter) { 
+AtomSliderEditor::AtomSliderEditor(const RPZAtom::Parameter &parameter, int minimum, int maximum) : AtomSubEditor({parameter}) { 
 
     this->_setAsDataEditor(new RPZCustomSlider(Qt::Orientation::Horizontal, this));
     this->slider()->setMinimum(minimum);
@@ -36,7 +36,7 @@ QSlider* AtomSliderEditor::slider() {
     return (QSlider*)this->_dataEditor;
 }
 
-QVariant AtomSliderEditor::loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) {
+const AtomSubEditor::DefaultValues AtomSliderEditor::loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) {
     
     auto defaultValue = AtomSubEditor::loadTemplate(defaultValues, updateMode);
     auto castedVal = defaultValue.toDouble();

@@ -31,8 +31,13 @@ class AtomEditorLineDescriptor : public QWidget {
             { RPZAtom::Parameter::BrushPenWidth, QT_TR_NOOP("Brush width") },
             { RPZAtom::Parameter::BrushStyle, QT_TR_NOOP("Brush tool") },
             { RPZAtom::Parameter::Text, QT_TR_NOOP("Text") },
-            { RPZAtom::Parameter::EventShortDescription, QT_TR_NOOP("Short Description") },
-            { RPZAtom::Parameter::EventDescription, QT_TR_NOOP("Description") }
+            { RPZAtom::Parameter::EventShortDescription, QT_TR_NOOP("Short description") },
+            { RPZAtom::Parameter::EventDescription, QT_TR_NOOP("Description") },
+            { RPZAtom::Parameter::NPCAttitude, QT_TR_NOOP("Attitude") },
+            { RPZAtom::Parameter::NPCHealth, QT_TR_NOOP("Health") },
+            { RPZAtom::Parameter::NPCShortName, QT_TR_NOOP("Short name") },
+            { RPZAtom::Parameter::NPCDescription, QT_TR_NOOP("Description") },
+            { RPZAtom::Parameter::CharacterId, QT_TR_NOOP("Associated character") }
         };
 
         static inline QHash<RPZAtom::Parameter, QString> _valSuffix = {
@@ -56,6 +61,11 @@ class AtomEditorLineDescriptor : public QWidget {
             { RPZAtom::Parameter::BrushStyle, QStringLiteral(u":/icons/app/tabs/config.png") },
             { RPZAtom::Parameter::Text, QStringLiteral(u":/icons/app/tools/text.png") },
             { RPZAtom::Parameter::EventShortDescription, QStringLiteral(u":/icons/app/tools/text.png") },
-            { RPZAtom::Parameter::EventDescription, QStringLiteral(u":/icons/app/tools/text.png") }
+            { RPZAtom::Parameter::EventDescription, QStringLiteral(u":/icons/app/tools/text.png") },
+            { RPZAtom::Parameter::NPCAttitude, QStringLiteral(u"") }, //TODO
+            { RPZAtom::Parameter::NPCHealth, QStringLiteral(u"") }, //TODO
+            { RPZAtom::Parameter::NPCShortName, QStringLiteral(u":/icons/app/tools/text.png") },
+            { RPZAtom::Parameter::NPCDescription, QStringLiteral(u":/icons/app/tools/text.png") },
+            { RPZAtom::Parameter::CharacterId, QStringLiteral(u"") } //TODO
         };
 };

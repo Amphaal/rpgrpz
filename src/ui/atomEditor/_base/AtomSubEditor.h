@@ -13,19 +13,20 @@ class AtomSubEditor : public QWidget {
     Q_OBJECT
 
     public:
-        AtomSubEditor(const RPZAtom::Parameter &parameter);
+        typedef QHash<RPZAtom::Parameter, QVariant> DefaultValues;
+        AtomSubEditor(const QList<RPZAtom::Parameter> &parameters);
         
-        RPZAtom::Parameter param();
-        virtual QVariant loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode = false);
+        const QList<RPZAtom::Parameter> params();
+        virtual const AtomSubEditor::DefaultValues loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode = false);
 
         static bool mustShowBrushPenWidth(const QVariant &brushTypeDefaultValue);
 
     signals:
-        void valueConfirmedForPayload(const RPZAtom::Parameter &parameter, const QVariant &value);
-        void valueConfirmedForPreview(const RPZAtom::Parameter &parameter, const QVariant &value);
+        void valueConfirmedForPayload(const RPZAtom::Updates &updates);
+        void valueConfirmedForPreview(const RPZAtom::Updates &updates);
 
     protected:
-        RPZAtom::Parameter _param;
+        QList<RPZAtom::Parameter> _params;
         QWidget* _dataEditor = nullptr;
         void _setAsDataEditor(QWidget *dataEditor);
 
