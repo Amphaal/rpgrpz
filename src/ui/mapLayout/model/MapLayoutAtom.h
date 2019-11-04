@@ -30,6 +30,8 @@ class MapLayoutAtom : public MapLayoutItem {
 
         const QPixmap icon() const override;
 
+        bool notifyAssetNameChange(const QString newAssetName);
+
     private:
         MapLayoutCategory* _parent = nullptr;
         QString _name;
@@ -39,7 +41,6 @@ class MapLayoutAtom : public MapLayoutItem {
         RPZAtom::Id _id = 0;
         RPZAsset::Hash _assetHash;
 
-        
-        void _setName(const QString &descriptor = QString());
+        RPZAtom::Parameter _nameChangeParam;
 
 };

@@ -6,11 +6,8 @@ MapLayoutAtom::MapLayoutAtom(MapLayoutCategory* parent, const RPZAtom &atom) {
     this->_id = atom.id();
     this->_type = atom.type();
     this->_assetHash = atom.assetHash();
-    
-    //if no hash associated, force descr
-    if(this->_assetHash.isEmpty()) {
-        this->_setName();
-    }
+    this->_nameChangeParam = RPZAtom::descriptorsByAtomType.value(this->_type);
+    this->_name = atom.toString();
 
     this->updateFrom(atom.editedMetadataWithValues());
 
@@ -57,20 +54,40 @@ const QSet<int> MapLayoutAtom::updateFrom(const RPZAtom::Updates &updates) {
                 this->_isLocked = variant.toBool();
                 columnsToUpdate += 1;
                 break;
-            
-            case RPZAtom::Parameter::CharacterId:
-            case RPZAtom::Parameter::EventShortDescription:
-            case RPZAtom::Parameter::AssetName:
-                this->_setName(variant.toString());
-                columnsToUpdate += 0;
-                break;
 
             default:
                 break;
+
         }
+
+        //rename ?        
+        if(param == this->_nameChangeParam && param != RPZAtom::Parameter::Unknown) {
+            
+            this->_name = RPZAtom::toString(
+                this->_type,
+                variant.toString()
+            );
+
+            columnsToUpdate += 0;
+
+        } 
+
     }
 
     return columnsToUpdate;
+
+}
+
+bool MapLayoutAtom::notifyAssetNameChange(const QString newAssetName) {
+
+    if(this->_nameChangeParam != RPZAtom::Parameter::AssetName) return false;
+
+    this->_name = RPZAtom::toString(
+        this->_type,
+        newAssetName
+    );
+
+    return true;
 
 }
 
@@ -92,13 +109,6 @@ const RPZAtom::Id MapLayoutAtom::atomId() const {
 
 const QString MapLayoutAtom::name() const {
     return this->_name;
-}
-
-void MapLayoutAtom::_setName(const QString &descriptor) {
-    this->_name = RPZAtom::toString(
-        this->_type,
-        descriptor
-    );
 }
 
 const QPixmap MapLayoutAtom::icon() const { 

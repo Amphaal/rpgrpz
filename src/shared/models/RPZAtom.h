@@ -28,6 +28,7 @@ class RPZAtom : public Serializable {
     public:
         //order is important for transform handling
         enum class Parameter {
+            Unknown,
             AssetHash,
             AssetName,
             BrushStyle,
@@ -73,7 +74,8 @@ class RPZAtom : public Serializable {
             Background
         };
 
-        enum class BrushType { 
+        enum class BrushType {
+            Unknown, 
             Stamp, 
             Rectangle, 
             Ovale,
@@ -100,6 +102,14 @@ class RPZAtom : public Serializable {
             { RPZAtom::Type::Drawing, QStringLiteral(u":/icons/app/tools/pen.png") },
             { RPZAtom::Type::Text, QStringLiteral(u":/icons/app/tools/text.png") },
             { RPZAtom::Type::Player, QStringLiteral(u":/icons/app/connectivity/cloak.png") },
+        };
+
+        static const inline QHash<RPZAtom::Type, RPZAtom::Parameter> descriptorsByAtomType {
+            { RPZAtom::Type::Player, RPZAtom::Parameter::CharacterName },
+            { RPZAtom::Type::Event, RPZAtom::Parameter::EventShortDescription },
+            { RPZAtom::Type::NPC, RPZAtom::Parameter::NPCShortName },
+            { RPZAtom::Type::Object, RPZAtom::Parameter::AssetName },
+            { RPZAtom::Type::Brush, RPZAtom::Parameter::AssetName }
         };
 
         static const inline QHash<RPZAtom::Type, QString> atomTypeDescr {
@@ -194,6 +204,7 @@ class RPZAtom : public Serializable {
         const QColor defaultPlayerColor() const;
         const RPZCharacter::Id characterId() const;
         const QString characterName() const;
+        const QString NPCShortName() const;
 
         QPainterPath shape() const;
         void setShape(const QPainterPath &path);
@@ -255,7 +266,7 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::Locked, false },
             { RPZAtom::Parameter::AssetRotation, 0.0 },
             { RPZAtom::Parameter::AssetScale, 1.0 },
-            { RPZAtom::Parameter::BrushStyle, 0 },
+            { RPZAtom::Parameter::BrushStyle, (int)RPZAtom::BrushType::Stamp },
             { RPZAtom::Parameter::BrushPenWidth, 1 },
             { RPZAtom::Parameter::ShapeCenter, QVariant() },
             { RPZAtom::Parameter::CharacterId, 0 },

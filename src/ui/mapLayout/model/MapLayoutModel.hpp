@@ -253,8 +253,8 @@ class MapLayoutModel : public MapLayoutModelBase {
 
                 auto index = this->toIndex(id);
                 auto atom = MapLayoutAtom::fromIndex(index);
-                atom->setName(newName);
-                emit dataChanged(index, index, {Qt::DisplayRole});
+                auto acked = atom->notifyAssetNameChange(newName);
+                if(acked) emit dataChanged(index, index, {Qt::DisplayRole});
 
             }
 

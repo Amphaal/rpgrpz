@@ -24,17 +24,48 @@ bool RPZAtom::isRestrictedAtom() const {
 
 const QString RPZAtom::toString(const RPZAtom::Type &type, const QString &description) { 
 
-    if(RPZAtom::category(type) == RPZAtom::Category::Interactive) {
-        return description.isEmpty() ? _atomTypeToText(type) : description;
+    //default if no descriptor
+    if(description.isEmpty()) {
+        switch(type) {
+            
+            case RPZAtom::Type::Player:
+                return QObject::tr("[Unpaired player token]");
+            break;
+
+            default:
+                return _atomTypeToText(type);
+            break;
+
+        }
     }
 
-    auto out = _atomTypeToText(type);
-    return description.isEmpty() ?  out : QStringLiteral(u"%1 (%2)").arg(description).arg(out);
+    //by category, if descriptor
+    switch(RPZAtom::category(type)) {
+        
+        case RPZAtom::Category::Interactive:
+            return description;
+        break;
+
+        case RPZAtom::Category::Layout:
+            return QStringLiteral(u"%1 (%2)")
+                        .arg(description)
+                        .arg(_atomTypeToText(type));
+        break;
+
+    }
     
+    return _atomTypeToText(type);
+
 };
 
 const QString RPZAtom::toString() const {
-    return toString(this->type(), this->assetName());
+    
+    auto type = this->type();
+    auto descriptorParam = RPZAtom::descriptorsByAtomType.value(type);
+    auto descriptor = descriptorParam != RPZAtom::Parameter::Unknown ? this->metadata(descriptorParam).toString() : QString();
+
+    return toString(type, descriptor);
+    
 }
 
 const QString RPZAtom::_atomTypeToText(const RPZAtom::Type &type) {
@@ -103,6 +134,7 @@ QPointF RPZAtom::shapeCenter() const { return this->metadata(RPZAtom::Parameter:
 const QColor RPZAtom::defaultPlayerColor() const { return this->metadata(RPZAtom::Parameter::DefaultPlayerColor).value<QColor>(); }
 const RPZCharacter::Id RPZAtom::characterId() const { return this->metadata(RPZAtom::Parameter::CharacterId).toULongLong(); }
 const QString RPZAtom::characterName() const { return this->metadata(RPZAtom::Parameter::CharacterName).toString(); }
+const QString RPZAtom::NPCShortName() const { return this->metadata(RPZAtom::Parameter::NPCShortName).toString(); }
 
 QPainterPath RPZAtom::shape() const {
     auto rawShape = this->metadata(RPZAtom::Parameter::Shape).toByteArray();

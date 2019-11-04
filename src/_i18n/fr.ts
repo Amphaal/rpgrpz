@@ -1026,52 +1026,52 @@
         <translation>Calque %1</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="105"/>
+        <location filename="../shared/models/RPZAtom.h" line="116"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="106"/>
+        <location filename="../shared/models/RPZAtom.h" line="117"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="107"/>
+        <location filename="../shared/models/RPZAtom.h" line="118"/>
         <source>Object</source>
         <translation>Objet</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="108"/>
+        <location filename="../shared/models/RPZAtom.h" line="119"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="109"/>
+        <location filename="../shared/models/RPZAtom.h" line="120"/>
         <source>Atom</source>
         <translation>Atome</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="110"/>
+        <location filename="../shared/models/RPZAtom.h" line="121"/>
         <source>Event</source>
         <translation>Evénement</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="111"/>
+        <location filename="../shared/models/RPZAtom.h" line="122"/>
         <source>Player</source>
         <translation>Joueur</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="115"/>
+        <location filename="../shared/models/RPZAtom.h" line="126"/>
         <source>NPCs</source>
         <translation>PNJs</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="116"/>
+        <location filename="../shared/models/RPZAtom.h" line="127"/>
         <source>Events</source>
         <translation>Evénements</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="117"/>
+        <location filename="../shared/models/RPZAtom.h" line="128"/>
         <source>Players</source>
         <translation>Joueurs</translation>
     </message>
@@ -1104,6 +1104,11 @@
         <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="200"/>
         <source>Landscapes</source>
         <translation>Paysages</translation>
+    </message>
+    <message>
+        <location filename="../shared/models/RPZAtom.cpp" line="32"/>
+        <source>[Unpaired player token]</source>
+        <translation>[Jeton de joueur vierge]</translation>
     </message>
 </context>
 <context>
