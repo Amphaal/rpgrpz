@@ -20,6 +20,11 @@ void AtomsStorage::_replaceMap(const MapDatabase &map) {
     this->_map = map;
 }
 
+const QString AtomsStorage::snapshotSave(const QString &folderToSaveTo) {
+    QMutexLocker l(&_m_handlingLock);
+    return this->_map.snapshotSave(folderToSaveTo);
+}
+
 PossibleActionsOnAtomList AtomsStorage::getPossibleActions(const QList<RPZAtom::Id> &ids) {
     
     QMutexLocker l(&_m_handlingLock);

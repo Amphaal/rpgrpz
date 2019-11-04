@@ -35,6 +35,9 @@ class JSONDatabase {
         JSONDatabase(const QString &logId);
         const QString dbFilePath() const;
 
+        static void saveAsFile(const QJsonObject &db, const QString &filepath);
+        static void saveAsFile(const QJsonObject &db, QFile &fileHandler);
+
     protected:
         static void updateFrom(QJsonObject &base, const QString &entityKey, const QVariantMap &entity);
         static void updateFrom(QJsonObject &base, const QString &entityKey, const QSet<QString> &entity);

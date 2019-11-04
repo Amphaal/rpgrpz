@@ -22,7 +22,7 @@ class AppContext {
         static inline AppSettings* _settings = nullptr;
 
         static inline QString _appDataLocation;
-        static QString _defaultAppDataLocation();
+        static const QString _defaultAppDataLocation();
         
         static QHash<QString, QString> _getOptionArgs(const QString &argsAsStr);
 
@@ -31,6 +31,7 @@ class AppContext {
         static inline const QString LATEST_LOG_FILE = "/rpgrpz.latest" + DEBUG_APP_FILE_APPENDICE + ".log";
         static inline const QString ASSETS_PATH = "/resources";
         static inline const QString MAPS_PATH = "/maps";
+        static inline const QString MAPS_SERVER_AUTOSAVE_PATH = "/serverAutosaves";
         static inline const QString ASSETS_JSON_COORDINATOR_FILENAME = "/resources.json";
         static inline const QString CHARACTER_JSON_DATABASE_FILENAME = "/characters.json";
         static inline const QString APP_SETTINGS_FILENAME = "/settings.ini";
@@ -62,15 +63,16 @@ class AppContext {
         void static initCustomContext(const QString &customContextSuffix);
         void static init(const QString &customContext = QString());
 
-        static QString getAppDataLocation();
-        static QString getWindowTitle();
-        static QString getAssetsFileCoordinatorLocation();
-        static QString getCharacterDatabaseLocation();
-        static QString getAssetsFolderLocation();
-        static QString getMapsFolderLocation();
-        static QString getDefaultMapFilePath();
-        static QString getLogFileLocation();
-        static QString getLatestLogFileLocation();
+        static const QString getAppDataLocation();
+        static const QString getWindowTitle();
+        static const QString getAssetsFileCoordinatorLocation();
+        static const QString getCharacterDatabaseLocation();
+        static const QString getAssetsFolderLocation();
+        static const QString getMapsFolderLocation();
+        static const QString getDefaultMapFilePath();
+        static const QString getLogFileLocation();
+        static const QString getLatestLogFileLocation();
+        static const QString getServerMapAutosaveFolderLocation();
 
         static void openFileInOS(const QString &cpURL);
         static void openFolderInOS(const QString &cpURL);

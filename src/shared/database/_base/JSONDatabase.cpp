@@ -237,15 +237,26 @@ void JSONDatabase::_updateDbFile(const QJsonObject &updatedFullDatabase) {
 
     if(!this->_destfile) return;
 
-    QJsonDocument doc(updatedFullDatabase);
+    saveAsFile(updatedFullDatabase, *this->_destfile);
+
+    this->log("saved!");
+
+}
+
+void JSONDatabase::saveAsFile(const QJsonObject &db, const QString &filepath) {
+    QFile fh(filepath);
+    saveAsFile(db, fh);
+}
+
+void JSONDatabase::saveAsFile(const QJsonObject &db, QFile &fileHandler) {
+    
+    QJsonDocument doc(db);
     auto format = IS_DEBUG_APP ? QJsonDocument::JsonFormat::Indented : QJsonDocument::JsonFormat::Compact;
     auto bytes = doc.toJson(format);
 
-    this->_destfile->open(QFile::WriteOnly);
-        this->_destfile->write(bytes);
-    this->_destfile->close();
-
-    this->log("saved!");
+    fileHandler.open(QFile::WriteOnly);
+        fileHandler.write(bytes);
+    fileHandler.close();
 
 }
 

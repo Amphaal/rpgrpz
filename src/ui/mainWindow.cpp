@@ -32,10 +32,7 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 }
 
 MainWindow::~MainWindow() {
-    if(this->_rpzServer) {
-        this->_rpzServer->thread()->quit();
-        this->_rpzServer->thread()->wait();
-    }
+    if(this->_rpzServer) this->_rpzServer->thread()->quit();
 
     //unbind network client from ui
     ConnectivityObserver::unbindAll();
@@ -216,12 +213,12 @@ void MainWindow::_initConnectivity() {
         );
 
         QObject::connect(
-            this->_rpzServer, &RPZServer::stopped, 
+            this->_rpzServer, &RPZServer::stopped,  
             serverThread, &QThread::quit
         );
 
         QObject::connect(
-            this->_rpzServer, &RPZServer::stopped,  
+            serverThread, &QThread::finished, 
             this->_rpzServer, &QObject::deleteLater
         );
 

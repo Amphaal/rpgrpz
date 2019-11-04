@@ -62,7 +62,13 @@ AppSettings* AppContext::settings() {
     return _settings;
 }
 
-QString AppContext::_defaultAppDataLocation() {
+const QString AppContext::getWindowTitle() {
+    QString stdTitle = APP_FULL_DENOM;
+    if(IS_DEBUG_APP) stdTitle = "DEBUG - " + stdTitle;
+    return stdTitle;
+}
+
+const QString AppContext::_defaultAppDataLocation() {
     return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 } 
 
@@ -136,6 +142,7 @@ void AppContext::init(const QString &customContext) {
     _makeSureDirPathExists(getAppDataLocation());
     _makeSureDirPathExists(getAssetsFolderLocation());
     _makeSureDirPathExists(getMapsFolderLocation());
+    _makeSureDirPathExists(getServerMapAutosaveFolderLocation());
 
 } 
 
@@ -146,43 +153,42 @@ void AppContext::_makeSureDirPathExists(const QString &path) {
     if(!pathExists) QDir().mkpath(path);
 }
 
-QString AppContext::getAppDataLocation() {
+const QString AppContext::getAppDataLocation() {
     return _appDataLocation;
 }
 
-QString AppContext::getWindowTitle() {
-    QString stdTitle = APP_FULL_DENOM;
-    if(IS_DEBUG_APP) stdTitle = "DEBUG - " + stdTitle;
-    return stdTitle;
-}
-
-QString AppContext::getAssetsFileCoordinatorLocation() {
+const QString AppContext::getAssetsFileCoordinatorLocation() {
     return getAppDataLocation() + ASSETS_JSON_COORDINATOR_FILENAME;
 }
 
-QString AppContext::getCharacterDatabaseLocation() {
+const QString AppContext::getCharacterDatabaseLocation() {
     return getAppDataLocation() + CHARACTER_JSON_DATABASE_FILENAME;
 }
 
-QString AppContext::getAssetsFolderLocation() {
+const QString AppContext::getAssetsFolderLocation() {
     auto dest = getAppDataLocation() + ASSETS_PATH;
     return dest;
 }
 
-QString AppContext::getMapsFolderLocation() {
+const QString AppContext::getMapsFolderLocation() {
     auto dest = getAppDataLocation() + MAPS_PATH;
     return dest;
 }
 
-QString AppContext::getDefaultMapFilePath() {
+const QString AppContext::getServerMapAutosaveFolderLocation() {
+    auto dest = getAppDataLocation() + MAPS_SERVER_AUTOSAVE_PATH;
+    return dest;
+}
+
+const QString AppContext::getDefaultMapFilePath() {
     return getMapsFolderLocation() + "/default" + RPZ_MAP_FILE_EXT;
 }
 
-QString AppContext::getLogFileLocation() {
+const QString AppContext::getLogFileLocation() {
     return getAppDataLocation() + LOG_FILE;
 }
 
-QString AppContext::getLatestLogFileLocation() {
+const QString AppContext::getLatestLogFileLocation() {
     return getAppDataLocation() + LATEST_LOG_FILE;
 }
 

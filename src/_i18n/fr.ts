@@ -645,99 +645,99 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="92"/>
+        <location filename="../ui/mainWindow.cpp" line="89"/>
         <source>Press ALT key to display the menu !</source>
         <translation>Appuyez sur la touche ALT pour afficher le menu !</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="150"/>
+        <location filename="../ui/mainWindow.cpp" line="147"/>
         <source>No</source>
         <translation>Non</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="198"/>
+        <location filename="../ui/mainWindow.cpp" line="195"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="273"/>
+        <location filename="../ui/mainWindow.cpp" line="270"/>
         <source>Toy box</source>
         <translation>Boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="346"/>
+        <location filename="../ui/mainWindow.cpp" line="343"/>
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="345"/>
+        <location filename="../ui/mainWindow.cpp" line="342"/>
         <source>Sheets</source>
         <translation>Fiches</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="360"/>
+        <location filename="../ui/mainWindow.cpp" line="357"/>
         <source>Map Atoms</source>
         <translation>Atomes de la carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="361"/>
+        <location filename="../ui/mainWindow.cpp" line="358"/>
         <source>Atom Editor</source>
         <translation>Editeur d&apos;atomes</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="297"/>
+        <location filename="../ui/mainWindow.cpp" line="294"/>
         <source>Game Hub</source>
         <translation>Hub de jeu</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="499"/>
+        <location filename="../ui/mainWindow.cpp" line="496"/>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="513"/>
+        <location filename="../ui/mainWindow.cpp" line="510"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="515"/>
-        <location filename="../ui/mainWindow.cpp" line="541"/>
-        <location filename="../ui/mainWindow.cpp" line="569"/>
+        <location filename="../ui/mainWindow.cpp" line="512"/>
+        <location filename="../ui/mainWindow.cpp" line="538"/>
+        <location filename="../ui/mainWindow.cpp" line="566"/>
         <source>Game map (*%1)</source>
         <translation>Carte de campagne (*%1)</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="539"/>
+        <location filename="../ui/mainWindow.cpp" line="536"/>
         <source>Load a new map</source>
         <translation>Charger une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="567"/>
+        <location filename="../ui/mainWindow.cpp" line="564"/>
         <source>Save as...</source>
         <translation>Savegarder sous...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="603"/>
+        <location filename="../ui/mainWindow.cpp" line="600"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="658"/>
+        <location filename="../ui/mainWindow.cpp" line="655"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="672"/>
+        <location filename="../ui/mainWindow.cpp" line="669"/>
         <source>Searching for updates...</source>
         <translation>Recherche des mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="672"/>
+        <location filename="../ui/mainWindow.cpp" line="669"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="696"/>
+        <location filename="../ui/mainWindow.cpp" line="693"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
@@ -1147,7 +1147,7 @@
 <context>
     <name>RPZServer</name>
     <message>
-        <location filename="../network/rpz/server/RPZServer.cpp" line="242"/>
+        <location filename="../network/rpz/server/RPZServer.cpp" line="256"/>
         <source>Your software version is different from the server&apos;s one : v%1 (you) / v%2 (server) !</source>
         <translation>Votre version logicielle diffère de la version du serveur : v%1 (vous) / v%2 (serveur) !</translation>
     </message>

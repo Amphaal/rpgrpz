@@ -54,6 +54,8 @@ class AtomsStorage : public AlterationAcknoledger {
         const ResetPayload generateResetPayload() const;
         AtomsStorage::AtomsAreLeft restrictPayload(AtomRelatedPayload &payloadToRestrict);
 
+        const QString snapshotSave(const QString &folderToSaveTo); //safe
+
     public slots:    
         void redo();
         void undo();

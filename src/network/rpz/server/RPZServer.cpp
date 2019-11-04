@@ -1,37 +1,47 @@
 #include "RPZServer.h" 
 
-RPZServer::RPZServer() : JSONLogger(QStringLiteral(u"[Server]")) {
-
-    //connect to new connections (proxy through windowed function to ensure event is handled into the server thread)
-    QObject::connect(
-        this, &QTcpServer::newConnection, 
-        this, &RPZServer::_onNewConnection
-    );
-
-};
+RPZServer::RPZServer() : JSONLogger(QStringLiteral(u"[Server]")) {};
 
 RPZServer::~RPZServer() {
+    
+    if(this->_mapHasLoaded) this->_saveSnapshot();
+
     qDeleteAll(this->_clientSocketById);
     if(this->_hints) delete this->_hints;
+
+}
+
+void RPZServer::_saveSnapshot() {
+    auto savedAt = this->_hints->snapshotSave(AppContext::getServerMapAutosaveFolderLocation()); 
+    this->log(QStringLiteral(u"Map snapshot saved to %1").arg(savedAt));
 }
 
 void RPZServer::run() { 
 
     //init
+    this->_server = new QTcpServer;
     this->_hints = new AtomsStorage(Payload::Source::RPZServer);
 
     this->log("Starting server...");
 
-    auto result = this->listen(QHostAddress::Any, AppContext::UPNP_DEFAULT_TARGET_PORT.toInt());
+    auto result = this->_server->listen(QHostAddress::Any, AppContext::UPNP_DEFAULT_TARGET_PORT.toInt());
 
     if(!result) {
-        qWarning() << "RPZServer : Error while starting to listen >>" << this->errorString();
+        qWarning() << "RPZServer : Error while starting to listen >>" << this->_server->errorString();
         emit error();
         emit stopped();
-    } else {
-        this->log("Succesfully listening");
-        emit listening();
-    }
+        return;
+    } 
+    
+    //connect to new connections (proxy through windowed function to ensure event is handled into the server thread)
+    QObject::connect(
+        this->_server, &QTcpServer::newConnection, 
+        this, &RPZServer::_onNewConnection
+    );
+
+    this->log("Succesfully listening");
+    emit listening();
+
 
 };
 
@@ -62,7 +72,11 @@ void RPZServer::_attributeRoleToUser(JSONSocket* socket, RPZUser &associatedUser
 void RPZServer::_onNewConnection() {
         
         //new connection,store it
-        auto clientSocket = new JSONSocket(this, this, this->nextPendingConnection());
+        auto clientSocket = new JSONSocket(
+            this->_server, 
+            this, 
+            this->_server->nextPendingConnection()
+        );
         
         //create new user with id
         RPZUser user;
@@ -328,6 +342,8 @@ void RPZServer::_broadcastMapChanges(const RPZJSON::Method &method, AlterationPa
 
     //save for history
     this->_hints->handleAlterationRequest(payload);
+
+    if(payload.type() == Payload::Alteration::Reset) this->_mapHasLoaded = true;
 
     //add source for outer calls
     auto source = this->_hints->source();

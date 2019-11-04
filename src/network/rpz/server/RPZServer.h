@@ -33,7 +33,7 @@
 
 #include "src/network/rpz/_any/JSONLogger.hpp"
 
-class RPZServer : public QTcpServer, public JSONLogger { 
+class RPZServer : public QObject, public JSONLogger { 
     
     Q_OBJECT
 
@@ -44,12 +44,18 @@ class RPZServer : public QTcpServer, public JSONLogger {
     public slots:
         void run();
 
+    private slots:
+        void _saveSnapshot();
+
     signals:
         void listening();
         void error();
         void stopped();
 
     private:
+        bool _mapHasLoaded = false;
+        QTcpServer* _server = nullptr; 
+
         RPZMap<RPZUser> _usersById;
         QHash<JSONSocket*, RPZUser::Id> _idsByClientSocket;
         QHash<RPZUser::Id, JSONSocket*> _clientSocketById;
@@ -86,4 +92,5 @@ class RPZServer : public QTcpServer, public JSONLogger {
         void _sendToAll(const RPZJSON::Method &method, const QVariant &data);
         void _sendToAllExcept(JSONSocket* toExclude, const RPZJSON::Method &method, const QVariant &data);
         void _sendToRoleExcept(JSONSocket* toExclude, const RPZUser::Role &role, const RPZJSON::Method &method, const QVariant &data);
+
 };

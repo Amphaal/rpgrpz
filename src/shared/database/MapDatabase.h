@@ -2,6 +2,7 @@
 
 #include <QString>
 #include <QVector>
+#include <QDateTime>
 #include "src/shared/models/RPZAtom.h"
 
 #include "src/shared/models/_base/RPZMap.hpp"
@@ -17,6 +18,7 @@ class MapDatabase : public JSONDatabase {
         MapDatabase();
 
         void saveIntoFile();
+        const QString snapshotSave(const QString &folderToSaveTo);
 
         void addAtom(const RPZAtom &toAdd);
         void addAtoms(const QList<RPZAtom> &toAdd);

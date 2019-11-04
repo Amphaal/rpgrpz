@@ -60,6 +60,22 @@ void MapDatabase::saveIntoFile() {
 
 };
 
+const QString MapDatabase::snapshotSave(const QString &folderToSaveTo) {
+    
+    auto filename = QDateTime::currentDateTime().toString(QStringLiteral(u"dd_MM_yyyy_hh_mm_ss_zzz"));
+    
+    auto fullPath = QStringLiteral(u"%1/%2%3")
+                    .arg(folderToSaveTo)
+                    .arg(filename)
+                    .arg(AppContext::RPZ_MAP_FILE_EXT);
+    
+    this->saveIntoFile();
+    JSONDatabase::saveAsFile(this->db(), fullPath);
+
+    return fullPath;
+
+}
+
 void MapDatabase::addAtoms(const QList<RPZAtom> &toAdd) {
     for(auto const &atom : toAdd) {
         this->addAtom(atom);
