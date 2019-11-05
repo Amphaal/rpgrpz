@@ -1,12 +1,8 @@
 #pragma once
 
-#include "src/ui/atomEditor/_base/AtomEditorLineDescriptor.h"
-#include <QVBoxLayout>
 #include <QComboBox>
 
-#include "src/ui/map/MapView.h"
-#include "src/shared/models/RPZAtom.h"
-#include "src/ui/atomEditor/editors/AtomSliderEditor.h"
+#include "src/ui/atomEditor/_base/AtomSubEditor.h"
 
 class BrushToolEditor : public AtomSubEditor {
 
@@ -63,17 +59,16 @@ class BrushToolEditor : public AtomSubEditor {
             this->layout()->addWidget(this->_combo);
         };
 
-        const AtomSubEditor::FilteredDefaultValues loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) override {
+        void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode) override {
             
-            auto filtered = AtomSubEditor::loadTemplate(defaultValues, updateMode);
+            AtomSubEditor::loadTemplate(defaultValues, editMode);
 
+            auto data = defaultValues[this->_params.first()];
+            auto indexToSelect = this->_combo->findData(data);
+            
             QSignalBlocker b(this->_combo);
-            auto indexToSelect = this->_combo->findData(filtered[this->_params.first()]);
             this->_combo->setCurrentIndex(indexToSelect);
-
-            this->_combo->setEnabled(!updateMode);
-
-            return filtered;
+            this->_combo->setEnabled(editMode == AtomSubEditor::EditMode::Template);
             
         }
 

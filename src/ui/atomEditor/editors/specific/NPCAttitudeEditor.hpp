@@ -58,17 +58,15 @@ class NPCAttitudeEditor : public AtomSubEditor {
             this->layout()->addWidget(this->_combo);
         };
 
-        const AtomSubEditor::FilteredDefaultValues loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) override {
+        void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode) override {
             
-            auto filtered = AtomSubEditor::loadTemplate(defaultValues, updateMode);
+            AtomSubEditor::loadTemplate(defaultValues, editMode);
 
             QSignalBlocker b(this->_combo);
-            auto indexToSelect = this->_combo->findData(filtered[this->_params.first()]);
+            
+            auto data = defaultValues[this->_params.first()];
+            auto indexToSelect = this->_combo->findData(data);
             this->_combo->setCurrentIndex(indexToSelect);
-
-            this->_combo->setEnabled(!updateMode);
-
-            return filtered;
             
         }
 

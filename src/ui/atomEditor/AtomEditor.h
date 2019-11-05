@@ -12,14 +12,18 @@
 
 #include "src/shared/payloads/Payloads.h"
 #include "src/shared/models/RPZAtom.h"
+#include "src/shared/hints/AtomsStorage.h"
 
-#include "src/ui/atomEditor/_base/AtomSubEditor.h"
-#include "src/ui/atomEditor/editors/AtomSliderEditor.h"
-#include "src/ui/atomEditor/editors/NonLinearAtomSliderEditor.hpp"
-#include "src/ui/atomEditor/editors/specific/BrushToolEditor.hpp"
-#include "src/ui/atomEditor/editors/AtomTextEditor.hpp"
-#include "src/ui/atomEditor/editors/AtomShortTextEditor.hpp"
 #include "src/ui/atomEditor/_base/NoEditorMessageWidget.hpp"
+#include "src/ui/atomEditor/_base/AtomSubEditor.h"
+
+#include "src/ui/atomEditor/editors/generic/AtomSliderEditor.h"
+#include "src/ui/atomEditor/editors/generic/NonLinearAtomSliderEditor.hpp"
+#include "src/ui/atomEditor/editors/generic/AtomTextEditor.hpp"
+#include "src/ui/atomEditor/editors/generic/AtomShortTextEditor.hpp"
+
+#include "src/ui/atomEditor/editors/specific/BrushToolEditor.hpp"
+#include "src/ui/atomEditor/editors/specific/CharacterPickerEditor.hpp"
 
 #include "src/shared/async-ui/AlterationActor.hpp"
 
@@ -28,9 +32,6 @@ class AtomEditor : public QGroupBox, public AlterationActor {
     Q_OBJECT
 
     public:
-        enum class EditMode { None, Template, Selection };
-        Q_ENUM(EditMode)
-
         AtomEditor(QWidget* parent = nullptr);
         void buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr);
         void resetParams();
@@ -41,10 +42,10 @@ class AtomEditor : public QGroupBox, public AlterationActor {
         void requiresPreview(const AtomsSelectionDescriptor &selectionDescriptor, const RPZAtom::Parameter &parameter, const QVariant &value);
 
     private:
-        static inline QHash<EditMode, QString> _strEM {
-            { EditMode::None, QT_TR_NOOP("Nothing to modify") },
-            { EditMode::Template, QT_TR_NOOP("Template modification") },
-            { EditMode::Selection, QT_TR_NOOP("Selection modification") }
+        static inline QHash<AtomSubEditor::EditMode, QString> _strEM {
+            { AtomSubEditor::EditMode::None, QT_TR_NOOP("Nothing to modify") },
+            { AtomSubEditor::EditMode::Template, QT_TR_NOOP("Template modification") },
+            { AtomSubEditor::EditMode::Selection, QT_TR_NOOP("Selection modification") }
         };
 
         AtomsSelectionDescriptor _currentSelectionDescr;
@@ -60,10 +61,8 @@ class AtomEditor : public QGroupBox, public AlterationActor {
         void _onPreviewRequested(const RPZAtom::Parameter &parameter, const QVariant &value);
         void _emitPayload(const RPZAtom::Updates &changesToEmit);
 
-        EditMode _currentEditMode = EditMode::None;
+        AtomSubEditor::EditMode _currentEditMode = AtomSubEditor::EditMode::None;
         void _updateEditMode();
 
         void _mustShowBrushPenWidthEditor(const RPZAtom::Updates &updatedValues);
 };
-
-inline uint qHash(const AtomEditor::EditMode &key, uint seed = 0) {return uint(key) ^ seed;}

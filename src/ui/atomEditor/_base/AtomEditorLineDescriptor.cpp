@@ -1,10 +1,12 @@
 #include "AtomEditorLineDescriptor.h"
 
-AtomEditorLineDescriptor::AtomEditorLineDescriptor(const RPZAtom::Parameter &paramType) : AtomEditorLineDescriptor(
+AtomEditorLineDescriptor::AtomEditorLineDescriptor(const RPZAtom::Parameter &paramType, bool supportsBatchEditing) : AtomEditorLineDescriptor(
         _paramDescr.value(paramType), 
         _valSuffix.value(paramType), 
         _icons.value(paramType)
-    ) { }
+    ) { 
+        this->_supportsBatchEditing = supportsBatchEditing;
+    }
 
 AtomEditorLineDescriptor::AtomEditorLineDescriptor(const QString &untranslatedDescription, const QString &suffix, const QString &iconPath) : 
     _suffix(suffix),
@@ -41,6 +43,6 @@ void AtomEditorLineDescriptor::updateValue(double value) {
 
 void AtomEditorLineDescriptor::cannotDisplayValue() {
     this->_valLbl->setText(
-        tr("mult. val.")
+       this->_supportsBatchEditing ? tr("mult. val.") : ""
     );
 }

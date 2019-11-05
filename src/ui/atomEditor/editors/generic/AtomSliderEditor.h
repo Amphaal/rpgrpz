@@ -2,12 +2,12 @@
 
 #include "src/shared/renderer/AtomConverter.h"
 #include "src/ui/atomEditor/_base/AtomSubEditor.h"
-#include "src/ui/atomEditor/editors/custom/RPZCustomSlider.hpp"
+#include "src/ui/atomEditor/_base/RPZCustomSlider.hpp"
 
 class AtomSliderEditor : public AtomSubEditor {
     public:
         AtomSliderEditor(const RPZAtom::Parameter &parameter, int minimum, int maximum);
-        const AtomSubEditor::FilteredDefaultValues loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) override;
+        void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode) override;
         QSlider* slider();
 
     private:

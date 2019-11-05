@@ -12,14 +12,16 @@ class AtomEditorLineDescriptor : public QWidget {
     Q_OBJECT
 
     public:
-        AtomEditorLineDescriptor(const QString &untranslatedDescription, const QString &suffix, const QString &iconPath = QString());
-        AtomEditorLineDescriptor(const RPZAtom::Parameter &paramType);
+        AtomEditorLineDescriptor(const RPZAtom::Parameter &paramType, bool supportsBatchEditing);
         void updateValue(double value);
         void cannotDisplayValue();
     
     private:
+        AtomEditorLineDescriptor(const QString &untranslatedDescription, const QString &suffix, const QString &iconPath = QString());
+
         QString _suffix;
         QLabel* _valLbl = nullptr;
+        bool _supportsBatchEditing = true;
 
         static inline QHash<RPZAtom::Parameter, QString> _paramDescr = {
             { RPZAtom::Parameter::Rotation, QT_TR_NOOP("Rotation") },

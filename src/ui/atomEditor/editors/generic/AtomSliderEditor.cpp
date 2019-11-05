@@ -36,22 +36,20 @@ QSlider* AtomSliderEditor::slider() {
     return (QSlider*)this->_dataEditor;
 }
 
-const AtomSubEditor::FilteredDefaultValues AtomSliderEditor::loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) {
+void AtomSliderEditor::loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode) {
     
-    auto filtered = AtomSubEditor::loadTemplate(defaultValues, updateMode);
+    AtomSubEditor::loadTemplate(defaultValues, editMode);
     
-    auto defaultVal = filtered[this->_params.first()];
-    auto castedVal = filtered[this->_params.first()].toDouble();
+    bool success = false;
+    auto defaultVal = defaultValues[this->_params.first()].toDouble(&success);
 
-    if(!defaultVal.isNull()) {
-        this->_descr->updateValue(castedVal);
+    if(success) {
+        this->_descr->updateValue(defaultVal);
     }
       
     QSignalBlocker b(this->slider());
-    auto sval = this->_toSliderValue(castedVal);
+    auto sval = this->_toSliderValue(defaultVal);
     this->slider()->setValue(sval);
-    
-    return filtered;
 
 }
 

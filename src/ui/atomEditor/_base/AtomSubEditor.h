@@ -13,11 +13,13 @@ class AtomSubEditor : public QWidget {
     Q_OBJECT
 
     public:
-        typedef QHash<RPZAtom::Parameter, QVariant> FilteredDefaultValues;
-        AtomSubEditor(const QList<RPZAtom::Parameter> &parameters);
+        enum class EditMode { None, Template, Selection };
+        Q_ENUM(EditMode)
+
+        AtomSubEditor(const QList<RPZAtom::Parameter> &parameters, bool supportsBatchEditing = true);
         
         const QList<RPZAtom::Parameter> params();
-        virtual const AtomSubEditor::FilteredDefaultValues loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode = false);
+        virtual void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode);
 
         static bool mustShowBrushPenWidth(const QVariant &brushTypeDefaultValue);
 
@@ -32,4 +34,8 @@ class AtomSubEditor : public QWidget {
 
         AtomEditorLineDescriptor* _descr = nullptr;
         virtual void _handleVisibilityOnLoad(const RPZAtom::Updates &defaultValues);
+    
+    private:
+        bool _supportsBatchEditing = true;
 };
+inline uint qHash(const AtomSubEditor::EditMode &key, uint seed = 0) {return uint(key) ^ seed;}

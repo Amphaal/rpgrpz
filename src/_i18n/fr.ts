@@ -55,7 +55,7 @@
 <context>
     <name>AtomEditor</name>
     <message numerus="yes">
-        <location filename="../ui/atomEditor/AtomEditor.cpp" line="214"/>
+        <location filename="../ui/atomEditor/AtomEditor.cpp" line="209"/>
         <source> (%n element(s))</source>
         <translation>
             <numerusform> (%n élément)</numerusform>
@@ -63,17 +63,17 @@
         </translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="45"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="46"/>
         <source>Nothing to modify</source>
         <translation>Rien à modifier</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="46"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="47"/>
         <source>Template modification</source>
         <translation>Modification du modèle</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="47"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="48"/>
         <source>Selection modification</source>
         <translation>Modification de la sélection</translation>
     </message>
@@ -81,83 +81,83 @@
 <context>
     <name>AtomEditorLineDescriptor</name>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.cpp" line="44"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.cpp" line="46"/>
         <source>mult. val.</source>
         <translation>val. mult.</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="25"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="27"/>
         <source>Rotation</source>
         <translation>Rotation</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="26"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="28"/>
         <source>Atom size</source>
         <translation>Taille de l&apos;atome</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="27"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="29"/>
         <source>Texture rotation</source>
         <translation>Rotation de la texture</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="28"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="30"/>
         <source>Texture size</source>
         <translation>Taille de la texture</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="29"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="31"/>
         <source>Pen size</source>
         <translation>Taille du crayon</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="30"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="32"/>
         <source>Text size</source>
         <translation>Taille du texte</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="31"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="33"/>
         <source>Brush width</source>
         <translation>Taille de la brosse</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="32"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="34"/>
         <source>Brush tool</source>
         <translation>Outil de brosse</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="33"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="35"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="34"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="36"/>
         <source>Short description</source>
         <translation>Description courte</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="36"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="38"/>
         <source>Attitude</source>
         <translation>Attitude</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="37"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="39"/>
         <source>Health</source>
         <translation>Santé</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="38"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="40"/>
         <source>Short name</source>
         <translation>Nom court</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="40"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="42"/>
         <source>Associated character</source>
         <translation>Personnage associé</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="35"/>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="39"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="37"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="41"/>
         <source>Description</source>
         <translation>Description</translation>
     </message>
@@ -165,12 +165,12 @@
 <context>
     <name>AtomShortTextEditor</name>
     <message>
-        <location filename="../ui/atomEditor/editors/AtomShortTextEditor.hpp" line="20"/>
+        <location filename="../ui/atomEditor/editors/generic/AtomShortTextEditor.hpp" line="20"/>
         <source>Confirm modification</source>
         <translation>Confirmer la modification</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/AtomShortTextEditor.hpp" line="23"/>
+        <location filename="../ui/atomEditor/editors/generic/AtomShortTextEditor.hpp" line="23"/>
         <source>Type some text...</source>
         <translation>Saisissez du texte...</translation>
     </message>
@@ -178,12 +178,12 @@
 <context>
     <name>AtomTextEditor</name>
     <message>
-        <location filename="../ui/atomEditor/editors/AtomTextEditor.hpp" line="20"/>
+        <location filename="../ui/atomEditor/editors/generic/AtomTextEditor.hpp" line="20"/>
         <source>Confirm modification</source>
         <translation>Confirmer la modification</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/AtomTextEditor.hpp" line="23"/>
+        <location filename="../ui/atomEditor/editors/generic/AtomTextEditor.hpp" line="23"/>
         <source>Type some text...</source>
         <translation>Saisissez du texte...</translation>
     </message>
@@ -204,32 +204,32 @@
 <context>
     <name>BrushToolEditor</name>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="17"/>
+        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="13"/>
         <source>Stamp</source>
         <translation>Tampon</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="18"/>
+        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="14"/>
         <source>Rectangle</source>
         <translation>Rectangulaire</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="19"/>
+        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="15"/>
         <source>Ovale</source>
         <translation>Cercle</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="20"/>
+        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="16"/>
         <source>Round brush</source>
         <translation>Brosse ronde</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="21"/>
+        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="17"/>
         <source>Cutter</source>
         <translation>Biseau</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="22"/>
+        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="18"/>
         <source>Scissors</source>
         <translation>Ciseaux</translation>
     </message>
@@ -283,6 +283,14 @@
         <location filename="../ui/sheets/components/CharacterPicker.hpp" line="193"/>
         <source>Do you really want to delete this character ?</source>
         <translation>Voulez-vous vraiment supprimer cette fiche de personnage ?</translation>
+    </message>
+</context>
+<context>
+    <name>CharacterPickerEditor</name>
+    <message>
+        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="18"/>
+        <source>[No character]</source>
+        <translation>[Aucun personnage]</translation>
     </message>
 </context>
 <context>

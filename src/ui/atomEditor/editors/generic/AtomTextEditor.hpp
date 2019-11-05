@@ -1,25 +1,25 @@
 #pragma once
 
-#include <QLineEdit>
+#include <QTextEdit>
 #include <QPushButton>
 
 #include "src/ui/atomEditor/_base/AtomSubEditor.h"
 
-class AtomShortTextEditor : public AtomSubEditor  {
+class AtomTextEditor : public AtomSubEditor {
     
     Q_OBJECT
 
     public:
-        QLineEdit* lineEdit() {
-            return (QLineEdit*)this->_dataEditor;
+        QTextEdit* textEdit() {
+            return (QTextEdit*)this->_dataEditor;
         }
 
-        AtomShortTextEditor(const RPZAtom::Parameter &parameter) : AtomSubEditor({parameter}), 
+        AtomTextEditor(const RPZAtom::Parameter &parameter) : AtomSubEditor({parameter}), 
             _validateButton(new QPushButton(this)) {
             
             this->_validateButton->setText(tr("Confirm modification"));
-            
-            auto edit = new QLineEdit(this);
+
+            auto edit = new QTextEdit(this);
             edit->setPlaceholderText(tr("Type some text..."));
             this->_setAsDataEditor(edit);
 
@@ -28,7 +28,7 @@ class AtomShortTextEditor : public AtomSubEditor  {
             QObject::connect(
                 this->_validateButton, &QPushButton::pressed,
                 [&]() {
-                    auto out = QVariant(this->lineEdit()->text());
+                    auto out = QVariant(this->textEdit()->toPlainText());
                     emit valueConfirmedForPayload({{this->_params.first(), out}});
                 }
             );
@@ -36,17 +36,16 @@ class AtomShortTextEditor : public AtomSubEditor  {
         }
     
     private:
+
         QPushButton* _validateButton = nullptr;
 
-        const AtomSubEditor::FilteredDefaultValues loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) override {
+        void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode) override {
             
-            auto filtered = AtomSubEditor::loadTemplate(defaultValues, updateMode);
-            auto castedVal = filtered[this->_params.first()].toString();
+            AtomSubEditor::loadTemplate(defaultValues, editMode);
+            auto castedVal = defaultValues[this->_params.first()].toString();
             
-            QSignalBlocker b(this->lineEdit());
-            this->lineEdit()->setText(castedVal);
-
-            return defaultValues;
+            QSignalBlocker b(this->textEdit());
+            this->textEdit()->setText(castedVal);
             
         }
 };

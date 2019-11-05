@@ -1,7 +1,8 @@
 #include "AtomSubEditor.h"
 
-AtomSubEditor::AtomSubEditor(const QList<RPZAtom::Parameter> &parameters) :
-    _descr(new AtomEditorLineDescriptor(parameters.first())),
+AtomSubEditor::AtomSubEditor(const QList<RPZAtom::Parameter> &parameters, bool supportsBatchEditing) :
+    _supportsBatchEditing(supportsBatchEditing),
+    _descr(new AtomEditorLineDescriptor(parameters.first(), supportsBatchEditing)),
     _params(parameters) { 
 
     this->setVisible(false);
@@ -43,23 +44,18 @@ void AtomSubEditor::_handleVisibilityOnLoad(const RPZAtom::Updates &defaultValue
 }
 
 
-const AtomSubEditor::FilteredDefaultValues AtomSubEditor::loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) {
+void AtomSubEditor::loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode) {
     
     //handle visibility
     this->_handleVisibilityOnLoad(defaultValues);
-    
-    AtomSubEditor::FilteredDefaultValues editorValues;
 
     auto hasEmptyValue = false;
     for(auto &param : this->_params) {
         auto associatedValue = defaultValues.value(param);
         if(associatedValue.isNull()) hasEmptyValue = true;
-        editorValues.insert(param, associatedValue);
     }
     
     //replace descr if has empty
     if(hasEmptyValue) this->_descr->cannotDisplayValue();
-
-    return editorValues;
 
 }

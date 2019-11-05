@@ -2,7 +2,7 @@
 
 AtomEditor::AtomEditor(QWidget* parent) : QGroupBox(parent), AlterationActor(Payload::Source::Local_AtomEditor) {
 
-    auto title = _strEM.value(EditMode::None);
+    auto title = _strEM.value(AtomSubEditor::EditMode::None);
     this->setTitle(tr(qUtf8Printable(title)));
     this->setAlignment(Qt::AlignHCenter);
 
@@ -31,7 +31,6 @@ void AtomEditor::buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr
 
     //fetch parameter editors to display
     auto toDisplay = this->_findDefaultValuesToBind();
-    auto isUpdateMode = this->_currentEditMode == EditMode::Selection;
 
     //load those who need to be displayed
     for(auto i = toDisplay.begin(); i != toDisplay.end(); ++i) {
@@ -44,7 +43,7 @@ void AtomEditor::buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr
         if(!editor) continue;
 
         //load template, and display them
-        editor->loadTemplate(toDisplay, isUpdateMode);
+        editor->loadTemplate(toDisplay, this->_currentEditMode);
 
         //add to the visible editors list
         this->_visibleEditors.append(param);
@@ -109,8 +108,9 @@ void AtomEditor::_createEditorsFromAtomParameters() {
 
     this->_editorsByParam.insert(RPZAtom::Parameter::EventShortDescription, new AtomShortTextEditor(RPZAtom::Parameter::EventShortDescription));
     this->_editorsByParam.insert(RPZAtom::Parameter::EventDescription, new AtomTextEditor(RPZAtom::Parameter::EventDescription));
-
-
+    
+    this->_editorsByParam.insert(RPZAtom::Parameter::CharacterId, new CharacterPickerEditor);
+   
     for(auto editor : this->_editorsByParam) {
 
         QObject::connect(
@@ -138,7 +138,7 @@ void AtomEditor::_emitPayload(const RPZAtom::Updates &changesToEmit) {
     //intercept combo change for visibility
     this->_mustShowBrushPenWidthEditor(changesToEmit);
 
-    if(this->_currentEditMode == EditMode::Template) {
+    if(this->_currentEditMode == AtomSubEditor::EditMode::Template) {
         AtomTemplateChangedPayload payload(changesToEmit);
         AlterationHandler::get()->queueAlteration(this, payload);
     } 
@@ -191,13 +191,13 @@ void AtomEditor::_updateEditMode() {
     auto selectedIdsCount = this->_currentSelectionDescr.selectedAtomIds.count();
     
     if(selectedIdsCount) {
-        this->_currentEditMode = EditMode::Selection;
+        this->_currentEditMode = AtomSubEditor::EditMode::Selection;
     }
     else if(!selectedIdsCount && !this->_currentSelectionDescr.templateAtom.isEmpty()) {
-        this->_currentEditMode = EditMode::Template;
+        this->_currentEditMode = AtomSubEditor::EditMode::Template;
     } 
     else {
-        this->_currentEditMode = EditMode::None;
+        this->_currentEditMode = AtomSubEditor::EditMode::None;
     }
 
     //update title
@@ -205,11 +205,11 @@ void AtomEditor::_updateEditMode() {
     
     switch(this->_currentEditMode) {
         
-        case EditMode::Selection:
+        case AtomSubEditor::EditMode::Selection:
             title += tr(" (%n element(s))", "", selectedIdsCount);
         break;
 
-        case EditMode::Template:
+        case AtomSubEditor::EditMode::Template:
             title += QStringLiteral(u" [%1]").arg(this->_currentSelectionDescr.templateAtom.toString());
         break;
 
