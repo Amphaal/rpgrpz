@@ -115,7 +115,7 @@ void AtomEditor::_createEditorsFromAtomParameters() {
 
         QObject::connect(
             editor, &AtomSubEditor::valueConfirmedForPayload,
-            this, &AtomEditor::_emitPayloadCB
+            this, &AtomEditor::_emitPayload
         );
 
         QObject::connect(
@@ -133,15 +133,10 @@ void AtomEditor::_onPreviewRequested(const RPZAtom::Parameter &parameter, const 
     emit requiresPreview(this->_currentSelectionDescr, parameter, value);
 }
 
- void AtomEditor::_emitPayloadCB(const RPZAtom::Parameter &parameter, const QVariant &value) {
-    
-    //intercept combo change for visibility
-    this->_mustShowBrushPenWidthEditor(parameter, value);
-    
-    return _emitPayload({{parameter, value}});
- }
-
 void AtomEditor::_emitPayload(const RPZAtom::Updates &changesToEmit) {
+
+    //intercept combo change for visibility
+    this->_mustShowBrushPenWidthEditor(changesToEmit);
 
     if(this->_currentEditMode == EditMode::Template) {
         AtomTemplateChangedPayload payload(changesToEmit);
@@ -234,16 +229,17 @@ AtomsSelectionDescriptor AtomEditor::currentSelectionDescriptor() {
     return this->_currentSelectionDescr;
 }
 
-void AtomEditor::_mustShowBrushPenWidthEditor(const RPZAtom::Parameter &paramToCheck, const QVariant &defaultValue) {
+void AtomEditor::_mustShowBrushPenWidthEditor(const RPZAtom::Updates &updatedValues) {
 
     //check if param is tool combo
-    if(paramToCheck != RPZAtom::Parameter::BrushStyle) return;
+    if(!updatedValues.contains(RPZAtom::Parameter::BrushStyle)) return;
 
     //check if pen size editor exists
     auto brushPenWidthEditor = this->_editorsByParam.value(RPZAtom::Parameter::BrushPenWidth);
     if(!brushPenWidthEditor) return;
 
     //set visibility
+    auto defaultValue = updatedValues.value(RPZAtom::Parameter::BrushStyle);
     auto mustShow = AtomSubEditor::mustShowBrushPenWidth(defaultValue);
     brushPenWidthEditor->setVisible(mustShow);
 

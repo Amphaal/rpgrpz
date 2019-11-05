@@ -56,24 +56,24 @@ class BrushToolEditor : public AtomSubEditor {
                 this->_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
                 [&](int currentIndex) {
                     auto out = QVariant(currentIndex);
-                    emit valueConfirmedForPayload(this->_param, out);
+                    emit valueConfirmedForPayload({{this->_params.first(), out}});
                 }
             );
 
             this->layout()->addWidget(this->_combo);
         };
 
-        QVariant loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) override {
+        const AtomSubEditor::FilteredDefaultValues loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) override {
             
-            auto defaultValue = AtomSubEditor::loadTemplate(defaultValues, updateMode);
+            auto filtered = AtomSubEditor::loadTemplate(defaultValues, updateMode);
 
             QSignalBlocker b(this->_combo);
-            auto indexToSelect = this->_combo->findData(defaultValue);
+            auto indexToSelect = this->_combo->findData(filtered[this->_params.first()]);
             this->_combo->setCurrentIndex(indexToSelect);
 
             this->_combo->setEnabled(!updateMode);
 
-            return defaultValue;
+            return filtered;
             
         }
 

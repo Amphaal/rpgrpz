@@ -20,16 +20,16 @@ class NPCAttitudeEditor : public AtomSubEditor {
         };
 
         static inline QHash<RPZAtom::NPCType, QString> _AttitudeIcons {
-            { RPZAtom::NPCType::Unknown, QStringLiteral(u"") },//TODO
-            { RPZAtom::NPCType::Neutral, QStringLiteral(u"") },//TODO
-            { RPZAtom::NPCType::Friendly, QStringLiteral(u"") },//TODO
-            { RPZAtom::NPCType::Hostile, QStringLiteral(u"") },//TODO
+            { RPZAtom::NPCType::Unknown, QStringLiteral(u":/icons/app/attitude/unknown.png") },
+            { RPZAtom::NPCType::Neutral, QStringLiteral(u":/icons/app/attitude/neutral.png") },
+            { RPZAtom::NPCType::Friendly, QStringLiteral(u":/icons/app/attitude/friendly.png") },
+            { RPZAtom::NPCType::Hostile, QStringLiteral(u":/icons/app/attitude/hostile.png") }
         };
 
         QComboBox* _combo = nullptr;
 
     public:
-        NPCAttitudeEditor() : AtomSubEditor(RPZAtom::Parameter::NPCAttitude) { 
+        NPCAttitudeEditor() : AtomSubEditor({RPZAtom::Parameter::NPCAttitude}) { 
 
             this->setVisible(false);
 
@@ -51,24 +51,24 @@ class NPCAttitudeEditor : public AtomSubEditor {
                 this->_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
                 [&](int currentIndex) {
                     auto out = QVariant(currentIndex);
-                    emit valueConfirmedForPayload(this->_param, out);
+                    emit valueConfirmedForPayload({{this->_params.first(), out}});
                 }
             );
 
             this->layout()->addWidget(this->_combo);
         };
 
-        QVariant loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) override {
+        const AtomSubEditor::FilteredDefaultValues loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) override {
             
-            auto defaultValue = AtomSubEditor::loadTemplate(defaultValues, updateMode);
+            auto filtered = AtomSubEditor::loadTemplate(defaultValues, updateMode);
 
             QSignalBlocker b(this->_combo);
-            auto indexToSelect = this->_combo->findData(defaultValue);
+            auto indexToSelect = this->_combo->findData(filtered[this->_params.first()]);
             this->_combo->setCurrentIndex(indexToSelect);
 
             this->_combo->setEnabled(!updateMode);
 
-            return defaultValue;
+            return filtered;
             
         }
 

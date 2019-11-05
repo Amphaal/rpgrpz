@@ -14,6 +14,8 @@
         <file>icons/app/connectivity/upload.png</file>
         <file>icons/app/connectivity/downloadG.png</file>
         <file>icons/app/connectivity/uploadG.png</file>
+        <file>icons/app/tools/health.png</file>
+        <file>icons/app/tools/behavior.png</file>
         <file>icons/app/tools/rotate.png</file>
         <file>icons/app/tools/pen.png</file>
         <file>icons/app/tools/reset_view.png</file>
@@ -82,6 +84,10 @@
         <file>icons/app/other/malus.png</file>
         <file>icons/app/other/bonus.png</file>
         <file>icons/app/loader.gif</file>
+        <file>icons/app/attitude/unknown.png</file>
+        <file>icons/app/attitude/friendly.png</file>
+        <file>icons/app/attitude/hostile.png</file>
+        <file>icons/app/attitude/neutral.png</file>
         <file>asset/default.jpg</file>
     </qresource>
 </RCC>

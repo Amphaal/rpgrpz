@@ -16,7 +16,7 @@
 #include "src/ui/atomEditor/_base/AtomSubEditor.h"
 #include "src/ui/atomEditor/editors/AtomSliderEditor.h"
 #include "src/ui/atomEditor/editors/NonLinearAtomSliderEditor.hpp"
-#include "src/ui/atomEditor/editors/BrushToolEditor.hpp"
+#include "src/ui/atomEditor/editors/specific/BrushToolEditor.hpp"
 #include "src/ui/atomEditor/editors/AtomTextEditor.hpp"
 #include "src/ui/atomEditor/editors/AtomShortTextEditor.hpp"
 #include "src/ui/atomEditor/_base/NoEditorMessageWidget.hpp"
@@ -59,12 +59,11 @@ class AtomEditor : public QGroupBox, public AlterationActor {
 
         void _onPreviewRequested(const RPZAtom::Parameter &parameter, const QVariant &value);
         void _emitPayload(const RPZAtom::Updates &changesToEmit);
-        void _emitPayloadCB(const RPZAtom::Parameter &parameter, const QVariant &value);
 
         EditMode _currentEditMode = EditMode::None;
         void _updateEditMode();
 
-        void _mustShowBrushPenWidthEditor(const RPZAtom::Parameter &paramToCheck, const QVariant &defaultValue);
+        void _mustShowBrushPenWidthEditor(const RPZAtom::Updates &updatedValues);
 };
 
 inline uint qHash(const AtomEditor::EditMode &key, uint seed = 0) {return uint(key) ^ seed;}

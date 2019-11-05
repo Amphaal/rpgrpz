@@ -13,17 +13,17 @@ class AtomSubEditor : public QWidget {
     Q_OBJECT
 
     public:
-        typedef QHash<RPZAtom::Parameter, QVariant> DefaultValues;
+        typedef QHash<RPZAtom::Parameter, QVariant> FilteredDefaultValues;
         AtomSubEditor(const QList<RPZAtom::Parameter> &parameters);
         
         const QList<RPZAtom::Parameter> params();
-        virtual const AtomSubEditor::DefaultValues loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode = false);
+        virtual const AtomSubEditor::FilteredDefaultValues loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode = false);
 
         static bool mustShowBrushPenWidth(const QVariant &brushTypeDefaultValue);
 
     signals:
         void valueConfirmedForPayload(const RPZAtom::Updates &updates);
-        void valueConfirmedForPreview(const RPZAtom::Updates &updates);
+        void valueConfirmedForPreview(const RPZAtom::Parameter &parameter, const QVariant &value);
 
     protected:
         QList<RPZAtom::Parameter> _params;

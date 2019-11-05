@@ -62,10 +62,10 @@ class AtomEditorLineDescriptor : public QWidget {
             { RPZAtom::Parameter::Text, QStringLiteral(u":/icons/app/tools/text.png") },
             { RPZAtom::Parameter::EventShortDescription, QStringLiteral(u":/icons/app/tools/text.png") },
             { RPZAtom::Parameter::EventDescription, QStringLiteral(u":/icons/app/tools/text.png") },
-            { RPZAtom::Parameter::NPCAttitude, QStringLiteral(u"") }, //TODO
-            { RPZAtom::Parameter::NPCHealth, QStringLiteral(u"") }, //TODO
+            { RPZAtom::Parameter::NPCAttitude, QStringLiteral(u":/icons/app/tools/behavior.png") },
+            { RPZAtom::Parameter::NPCHealth, QStringLiteral(u":/icons/app/tools/health.png") },
             { RPZAtom::Parameter::NPCShortName, QStringLiteral(u":/icons/app/tools/text.png") },
             { RPZAtom::Parameter::NPCDescription, QStringLiteral(u":/icons/app/tools/text.png") },
-            { RPZAtom::Parameter::CharacterId, QStringLiteral(u"") } //TODO
+            { RPZAtom::Parameter::CharacterId, QStringLiteral(u":/icons/app/connectivity/cloak.png") }
         };
 };

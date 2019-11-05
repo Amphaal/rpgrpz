@@ -43,12 +43,12 @@ void AtomSubEditor::_handleVisibilityOnLoad(const RPZAtom::Updates &defaultValue
 }
 
 
-const AtomSubEditor::DefaultValues AtomSubEditor::loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) {
+const AtomSubEditor::FilteredDefaultValues AtomSubEditor::loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) {
     
     //handle visibility
     this->_handleVisibilityOnLoad(defaultValues);
     
-    AtomSubEditor::DefaultValues editorValues;
+    AtomSubEditor::FilteredDefaultValues editorValues;
 
     auto hasEmptyValue = false;
     for(auto &param : this->_params) {

@@ -7,7 +7,7 @@
 class AtomSliderEditor : public AtomSubEditor {
     public:
         AtomSliderEditor(const RPZAtom::Parameter &parameter, int minimum, int maximum);
-        const AtomSubEditor::DefaultValues loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) override;
+        const AtomSubEditor::FilteredDefaultValues loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) override;
         QSlider* slider();
 
     private:

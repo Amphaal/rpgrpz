@@ -29,7 +29,7 @@ class AtomTextEditor : public AtomSubEditor  {
                 this->_validateButton, &QPushButton::pressed,
                 [&]() {
                     auto out = QVariant(this->textEdit()->toPlainText());
-                    emit valueConfirmedForPayload(this->_param, out);
+                    emit valueConfirmedForPayload({{this->_params.first(), out}});
                 }
             );
 
@@ -39,15 +39,15 @@ class AtomTextEditor : public AtomSubEditor  {
 
         QPushButton* _validateButton = nullptr;
 
-        const AtomSubEditor::DefaultValues loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) override {
+        const AtomSubEditor::FilteredDefaultValues loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) override {
             
-            auto defaultValue = AtomSubEditor::loadTemplate(defaultValues, updateMode);
-            auto castedVal = defaultValue.toString();
+            auto filtered = AtomSubEditor::loadTemplate(defaultValues, updateMode);
+            auto castedVal = filtered[this->_params.first()].toString();
             
             QSignalBlocker b(this->textEdit());
             this->textEdit()->setText(castedVal);
 
-            return defaultValue;
+            return filtered;
             
         }
 };

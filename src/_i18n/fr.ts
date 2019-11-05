@@ -132,11 +132,32 @@
     </message>
     <message>
         <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="34"/>
-        <source>Short Description</source>
-        <translation>Courte description</translation>
+        <source>Short description</source>
+        <translation>Description courte</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="36"/>
+        <source>Attitude</source>
+        <translation>Attitude</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="37"/>
+        <source>Health</source>
+        <translation>Santé</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="38"/>
+        <source>Short name</source>
+        <translation>Nom court</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="40"/>
+        <source>Associated character</source>
+        <translation>Personnage associé</translation>
     </message>
     <message>
         <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="35"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="39"/>
         <source>Description</source>
         <translation>Description</translation>
     </message>
@@ -183,32 +204,32 @@
 <context>
     <name>BrushToolEditor</name>
     <message>
-        <location filename="../ui/atomEditor/editors/BrushToolEditor.hpp" line="17"/>
+        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="17"/>
         <source>Stamp</source>
         <translation>Tampon</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/BrushToolEditor.hpp" line="18"/>
+        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="18"/>
         <source>Rectangle</source>
         <translation>Rectangulaire</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/BrushToolEditor.hpp" line="19"/>
+        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="19"/>
         <source>Ovale</source>
         <translation>Cercle</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/BrushToolEditor.hpp" line="20"/>
+        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="20"/>
         <source>Round brush</source>
         <translation>Brosse ronde</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/BrushToolEditor.hpp" line="21"/>
+        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="21"/>
         <source>Cutter</source>
         <translation>Biseau</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/BrushToolEditor.hpp" line="22"/>
+        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="22"/>
         <source>Scissors</source>
         <translation>Ciseaux</translation>
     </message>
@@ -751,6 +772,29 @@
     </message>
 </context>
 <context>
+    <name>NPCAttitudeEditor</name>
+    <message>
+        <location filename="../ui/atomEditor/editors/specific/NPCAttitudeEditor.hpp" line="16"/>
+        <source>Unknown</source>
+        <translation>Inconnue</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/editors/specific/NPCAttitudeEditor.hpp" line="17"/>
+        <source>Neutral</source>
+        <translation>Neutre</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/editors/specific/NPCAttitudeEditor.hpp" line="18"/>
+        <source>Friendly</source>
+        <translation>Amicale</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/editors/specific/NPCAttitudeEditor.hpp" line="19"/>
+        <source>Hostile</source>
+        <translation>Hostile</translation>
+    </message>
+</context>
+<context>
     <name>NoEditorMessageWidget</name>
     <message>
         <location filename="../ui/atomEditor/_base/NoEditorMessageWidget.hpp" line="19"/>
@@ -1026,52 +1070,52 @@
         <translation>Calque %1</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="116"/>
+        <location filename="../shared/models/RPZAtom.h" line="118"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="117"/>
+        <location filename="../shared/models/RPZAtom.h" line="119"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="118"/>
+        <location filename="../shared/models/RPZAtom.h" line="120"/>
         <source>Object</source>
         <translation>Objet</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="119"/>
+        <location filename="../shared/models/RPZAtom.h" line="121"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="120"/>
+        <location filename="../shared/models/RPZAtom.h" line="122"/>
         <source>Atom</source>
         <translation>Atome</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="121"/>
+        <location filename="../shared/models/RPZAtom.h" line="123"/>
         <source>Event</source>
         <translation>Evénement</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="122"/>
+        <location filename="../shared/models/RPZAtom.h" line="124"/>
         <source>Player</source>
         <translation>Joueur</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="126"/>
+        <location filename="../shared/models/RPZAtom.h" line="128"/>
         <source>NPCs</source>
         <translation>PNJs</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="127"/>
+        <location filename="../shared/models/RPZAtom.h" line="129"/>
         <source>Events</source>
         <translation>Evénements</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="128"/>
+        <location filename="../shared/models/RPZAtom.h" line="130"/>
         <source>Players</source>
         <translation>Joueurs</translation>
     </message>

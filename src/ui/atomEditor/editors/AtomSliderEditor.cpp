@@ -10,7 +10,7 @@ AtomSliderEditor::AtomSliderEditor(const RPZAtom::Parameter &parameter, int mini
         this->slider(), &QAbstractSlider::sliderReleased,
         [&]() {
             auto out = QVariant(this->outputValue());
-            emit valueConfirmedForPayload(this->_param, out);
+            emit valueConfirmedForPayload({{this->_params.first(), out}});
         }
     );
 
@@ -27,7 +27,7 @@ void AtomSliderEditor::_onSliderChanging(int sliderVal) {
     auto outputAsVariant = QVariant(output);
     this->_descr->updateValue(output);
     
-    emit valueConfirmedForPreview(this->_param, outputAsVariant);
+    emit valueConfirmedForPreview(this->_params.first(), outputAsVariant);
     
 };
 
@@ -36,22 +36,23 @@ QSlider* AtomSliderEditor::slider() {
     return (QSlider*)this->_dataEditor;
 }
 
-const AtomSubEditor::DefaultValues AtomSliderEditor::loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) {
+const AtomSubEditor::FilteredDefaultValues AtomSliderEditor::loadTemplate(const RPZAtom::Updates &defaultValues, bool updateMode) {
     
-    auto defaultValue = AtomSubEditor::loadTemplate(defaultValues, updateMode);
-    auto castedVal = defaultValue.toDouble();
+    auto filtered = AtomSubEditor::loadTemplate(defaultValues, updateMode);
+    
+    auto defaultVal = filtered[this->_params.first()];
+    auto castedVal = filtered[this->_params.first()].toDouble();
 
-    if(!defaultValue.isNull()) {
+    if(!defaultVal.isNull()) {
         this->_descr->updateValue(castedVal);
     }
+      
+    QSignalBlocker b(this->slider());
+    auto sval = this->_toSliderValue(castedVal);
+    this->slider()->setValue(sval);
     
-    {
-        QSignalBlocker b(this->slider());
-        auto sval = this->_toSliderValue(castedVal);
-        this->slider()->setValue(sval);
-    }
+    return filtered;
 
-    return defaultValue;
 }
 
 

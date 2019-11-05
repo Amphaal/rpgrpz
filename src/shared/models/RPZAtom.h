@@ -294,6 +294,7 @@ inline uint qHash(const RPZAtom::Category &key, uint seed = 0) {return uint(key)
 inline uint qHash(const RPZAtom::Type &key, uint seed = 0) {return uint(key) ^ seed;}
 inline uint qHash(const RPZAtom::BrushType &key, uint seed = 0) {return uint(key) ^ seed;}
 inline uint qHash(const RPZAtom::Parameter &key, uint seed = 0) {return uint(key) ^ seed;}
+inline uint qHash(const RPZAtom::NPCType &key, uint seed = 0) {return uint(key) ^ seed;}
 
 Q_DECLARE_METATYPE(RPZAtom*)
 Q_DECLARE_METATYPE(RPZAtom)

@@ -52,6 +52,9 @@ const QString RPZAtom::toString(const RPZAtom::Type &type, const QString &descri
                         .arg(_atomTypeToText(type));
         break;
 
+        default:
+        break;
+
     }
     
     return _atomTypeToText(type);
