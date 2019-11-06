@@ -1128,32 +1128,32 @@
         <translation>Joueurs</translation>
     </message>
     <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="191"/>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="194"/>
         <source>Internal</source>
         <translation>Interne</translation>
     </message>
     <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="196"/>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="199"/>
         <source>NPC / Portraits</source>
         <translation>PNJ / Portraits</translation>
     </message>
     <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="197"/>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="200"/>
         <source>Objects</source>
         <translation>Objets</translation>
     </message>
     <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="198"/>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="201"/>
         <source>Brushes</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="199"/>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="202"/>
         <source>Downloaded</source>
         <translation>Téléchargés</translation>
     </message>
     <message>
-        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="200"/>
+        <location filename="../ui/toys/_base/ToysTreeViewItem.h" line="203"/>
         <source>Landscapes</source>
         <translation>Paysages</translation>
     </message>
@@ -1296,17 +1296,17 @@
 <context>
     <name>ToysTreeView</name>
     <message>
-        <location filename="../ui/toys/ToysTreeView.cpp" line="213"/>
+        <location filename="../ui/toys/ToysTreeView.cpp" line="214"/>
         <source>&lt;&lt; Move to &quot;%1&quot;</source>
         <translation>&lt;&lt; Déplacer vers&quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../ui/toys/ToysTreeView.cpp" line="310"/>
+        <location filename="../ui/toys/ToysTreeView.cpp" line="311"/>
         <source>Delete elements in toy box</source>
         <translation>Supprimer des elements de la boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/toys/ToysTreeView.cpp" line="311"/>
+        <location filename="../ui/toys/ToysTreeView.cpp" line="312"/>
         <source>Do you confirm deletion of the %1 selected elements ?</source>
         <translation>Confirmez-vous la suppression des %1 éléments selectionnés ?</translation>
     </message>

@@ -65,6 +65,7 @@ class ToysTreeViewItem : private QObject {
         bool isRoot() const;
         bool isDeletable() const;
         bool isInvokable() const;
+        bool allowsSubFolderCreation() const;
 
         ToysTreeViewItem* ancestor();
         int row() const;
@@ -120,6 +121,7 @@ class ToysTreeViewItem : private QObject {
         bool _isRoot = false;
         bool _isStaticContainer = false;
         bool _isDeletable = false;
+        bool _allowsSubFolderCreation = false;
 
         void _defineAncestor(ToysTreeViewItem* ancestor);
         void _defineFlags();
@@ -134,6 +136,7 @@ class ToysTreeViewItem : private QObject {
         void _defineIsStaticContainer();
         void _defineIsDeletable();
         void _defineIsInvokable();
+        void _defineAllowingSubFolderCreation();
         
         bool _isAssetBased();
         

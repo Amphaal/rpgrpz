@@ -50,6 +50,7 @@ void ToysTreeViewItem::_setType(const ToysTreeViewItem::Type &type) {
     this->_defineIsStaticContainer();
     this->_defineIsDeletable();
     this->_defineIsInvokable();
+    this->_defineAllowingSubFolderCreation();
     
 }
 
@@ -116,6 +117,10 @@ const ToysTreeViewItem::Type ToysTreeViewItem::insertType() const {
 
 const ToysTreeViewItem::Type ToysTreeViewItem::rootStaticContainer() const {
     return this->_rootStaticContainerType;
+}
+
+bool ToysTreeViewItem::allowsSubFolderCreation() const {
+    return this->_allowsSubFolderCreation;
 }
 
 ///////////////////////
@@ -401,6 +406,10 @@ void ToysTreeViewItem::_defineIsInvokable() {
         RPZAtom::assetBasedAtom.contains((RPZAtom::Type)this->_type) || 
         _internalItemsTypes.contains(this->_type)
     );
+}
+
+void ToysTreeViewItem::_defineAllowingSubFolderCreation() {
+    this->_allowsSubFolderCreation = _movableStaticContainerTypes.contains(this->_type) || this->_type == ToysTreeViewItem::Type::Folder;
 }
 
 void ToysTreeViewItem::_defineRootStaticContainer() {

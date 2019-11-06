@@ -54,8 +54,9 @@ void ToysTreeView::contextMenuEvent(QContextMenuEvent *event) {
     
         //get elem under cursor
         auto index = this->indexAt(event->pos());
-        if(index.isValid()) {
-            indexesToProcess.append(index);
+
+        if(index.isValid() && index.flags().testFlag(Qt::ItemFlag::ItemIsEnabled)) {
+            indexesToProcess = {index};
         }
 
     }
@@ -245,7 +246,7 @@ void ToysTreeView::_generateMenu(const QList<QModelIndex> &targetIndexes, const 
         auto firstItem = ToysTreeViewItem::fromIndex(firstItemIndex);
 
         //container actions...
-        if(firstItem->isContainer() && firstItem->type() != ToysTreeViewItem::Type::DownloadedContainer) {
+        if(firstItem->allowsSubFolderCreation()) {
             
             //folder creation
             auto createFolder = RPZActions::createFolder();
