@@ -224,9 +224,15 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
                 
                 //replace all stored users
                 this->_sessionUsers.clear();
+                
+                //inserts
                 for(auto &rUser : data.toList()) {
+                    
                     RPZUser user(rUser.toHash());
                     this->_sessionUsers.insert(user.id(), user);
+
+                    this->_registerTokenAttribution(user);
+
                 }
 
             }
@@ -246,6 +252,8 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
                 //add user to session users
                 this->_sessionUsers.insert(user.id(), user);
 
+                this->_registerTokenAttribution(user);
+
             }
 
             emit userJoinedServer(user);
@@ -264,6 +272,9 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
                 //remove from session users
                 out = this->_sessionUsers.take(idToRemove);
 
+                //from from token list
+                this->_playerIdsWithoutToken.remove(idToRemove);
+
             }
 
             emit userLeftServer(out);
@@ -276,23 +287,24 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
            
             RPZUser updated(data.toHash());
             auto updatedId = updated.id();
-            auto existing = this->_sessionUsers.value(updatedId);
+            auto existing = this->_sessionUsers.value(updatedId); //pickup copy before update
 
             {
                 QMutexLocker l(&this->_m_sessionUsers);
 
-                //remove from session users
+                //replace current session user with updated one
                 this->_sessionUsers.insert(updatedId, updated);
+
+                this->_registerTokenAttribution(updated);
 
             }
 
             emit userDataChanged(updated);
 
-            if(!existing.isEmpty()) {
-                if(existing.whisperTargetName() != updated.whisperTargetName()) {
-                    emit whisperTargetsChanged();
-                }
-            }
+            if(existing.isEmpty()) break;
+            if(existing.whisperTargetName() == updated.whisperTargetName()) break;
+            
+            emit whisperTargetsChanged();
 
         }
         break;
@@ -388,6 +400,19 @@ void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
     emit closed();
 }
 
+void RPZClient::_registerTokenAttribution(const RPZUser &user) {
+    
+    if (user.role() != RPZUser::Role::Player) return;
+    
+    if(!user.playerTokenAtomId()) {
+        this->_playerIdsWithoutToken.insert(user.id());
+    } 
+    
+    else {
+        this->_playerIdsWithoutToken.remove(user.id());
+    }
+
+}
 
 void RPZClient::sendMessage(const RPZMessage &message) {
     auto msg = RPZMessage(message);
@@ -446,4 +471,18 @@ bool RPZClient::isHostAble()  {
 
 void RPZClient::_defineHostAbility(const RPZUser &user) {
     _isHostAble = user.role() == RPZUser::Role::Host;
+}
+
+const QList<RPZCharacter> RPZClient::unpairedUserCharacters() const {
+    
+    QList<RPZCharacter> out;
+
+    QMutexLocker l(&this->_m_sessionUsers);
+    for(auto &userId : this->_playerIdsWithoutToken) {
+        auto &user = this->_sessionUsers[userId];
+        out += user.character();
+    }
+
+    return out;
+
 }

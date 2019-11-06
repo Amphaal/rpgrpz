@@ -9,7 +9,7 @@
 #include "src/shared/models/_base/Serializable.hpp"
 #include "src/shared/commands/MessageInterpreter.h"
 
-#include "src/shared/models/character/RPZCharacter.hpp"
+#include "src/shared/models/RPZAtom.h"
 
 class RPZUser : public Serializable {
 
@@ -30,6 +30,7 @@ class RPZUser : public Serializable {
 
         void setName(const QString &name);
         void setRole(const Role &role);
+        void setPlayerTokenAtom(const RPZAtom::Id &atomId);
         void setCharacter(const RPZCharacter &character);
         void randomiseColor();
 
@@ -39,6 +40,7 @@ class RPZUser : public Serializable {
         QColor color() const;
         QString toString() const;
         const RPZCharacter character() const;
+        const RPZAtom::Id playerTokenAtomId() const;
 
     private:
         void _setColor(const QColor &color = QColor());

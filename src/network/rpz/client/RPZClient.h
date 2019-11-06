@@ -35,6 +35,7 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
 
         const RPZUser identity() const; //safe
         const RPZMap<RPZUser> sessionUsers() const; //safe
+        const QList<RPZCharacter> unpairedUserCharacters() const; //safe
 
         static void resetHostAbility();
         static bool isHostAble();
@@ -90,6 +91,7 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
         mutable QMutex _m_self;
 
         RPZMap<RPZUser> _sessionUsers;
+        QSet<RPZUser::Id> _playerIdsWithoutToken;
         mutable QMutex _m_sessionUsers;
 
         void _initSock();
@@ -104,6 +106,9 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
         void _askForAssets(const QSet<RPZAsset::Hash> &ids);
 
         void _routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data);
+
+        //helper
+        void _registerTokenAttribution(const RPZUser &user); 
 
     private slots:
         void _handleAlterationRequest(const AlterationPayload &payload);

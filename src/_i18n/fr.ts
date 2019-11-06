@@ -849,7 +849,7 @@
         <location filename="../shared/commands/MessageInterpreter.cpp" line="117"/>
         <source>- To whisper : @{toWhisperTo}.
 </source>
-        <translation>- To whisper : @{toWhisperTo}.
+        <translation>- Pour chuchotter : @{destinataire}.
 </translation>
     </message>
     <message>
