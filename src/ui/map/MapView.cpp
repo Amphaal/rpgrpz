@@ -265,6 +265,9 @@ void MapView::drawBackground(QPainter *painter, const QRectF &rect) {
 
 void MapView::contextMenuEvent(QContextMenuEvent *event) {
 
+    //prevent contextual menu if not using default tool
+    if(this->_getCurrentTool() != MapTool::Default) return;
+
     //create menu
     this->_menuHandler->invokeMenu(
         this->selectedIds(), 
@@ -339,22 +342,33 @@ void MapView::keyPressEvent(QKeyEvent * event) {
 }
 
 void MapView::enterEvent(QEvent *event) {
-    if(auto ghost = this->_hints->ghostItem()) {
+
+    this->_isCursorIn = true;
+
+    if(auto ghost = this->_displayableGhostItem()) {
         this->_mightCenterGhostWithCursor();
         ghost->setVisible(true);
     }  
+
 }
 
 void MapView::leaveEvent(QEvent *event) {
-    if(auto ghost = this->_hints->ghostItem()) {
+    
+    //special case for keeping visible when right clicking
+    auto cursorPosInWidget = this->mapFromGlobal(QCursor::pos());
+    if(this->geometry().contains(cursorPosInWidget)) return;
 
-        //special case for keeping visible when right clicking
-        auto cursorPosInWidget = this->mapFromGlobal(QCursor::pos());
-        if(this->geometry().contains(cursorPosInWidget)) return;
+    this->_isCursorIn = false;
 
+    if(auto ghost = this->_displayableGhostItem()) {
         ghost->setVisible(false);
-
     }
+
+}
+
+QGraphicsItem* MapView::_displayableGhostItem() {
+    if(this->_getCurrentTool() != MapTool::Atom) return nullptr;
+    return this->_hints->ghostItem();
 }
 
 ////////////////
@@ -499,6 +513,13 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
                 }
                 break;
 
+                case MapTool::Scroll: {
+
+                    //trigger hand release
+                    QGraphicsView::mouseReleaseEvent(event);
+
+                };
+
                 default:
                 break;
 
@@ -627,7 +648,7 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
         newTool = this->_quickTool;
     }
     
-    //destroy / create walking helper
+    //destroy walking helper
     if(this->_tool != MapTool::Walking && this->_walkingHelper) {
         this->_clearWalkingHelper();
     }
@@ -640,6 +661,10 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
             
             this->setInteractive(false);
             this->setDragMode(QGraphicsView::DragMode::NoDrag);
+
+            if(auto ghost = this->_hints->ghostItem()) {
+                ghost->setVisible(this->_isCursorIn);
+            }
             
             switch(this->_hints->templateAtom().type()) {
                 case RPZAtom::Type::Drawing:
@@ -659,10 +684,17 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
         }
         break;
 
-        case MapTool::Scroll:
+        case MapTool::Scroll: {
+            
             this->setInteractive(false);
             this->setDragMode(QGraphicsView::DragMode::ScrollHandDrag);
-            break;
+            
+            if(auto ghost = this->_hints->ghostItem()) {
+                ghost->setVisible(false); //force hidden if any
+            
+            }
+        }
+        break;
         
         case MapTool::Walking:
             this->setInteractive(false);
@@ -714,7 +746,7 @@ void MapView::onHelperActionTriggered(QAction *action) {
 void MapView::_mightCenterGhostWithCursor() {
     
     //update ghost item position relative to cursor
-    if(auto ghost = this->_hints->ghostItem()) {
+    if(auto ghost = this->_displayableGhostItem()) {
         
         //map cursor pos to widget
         auto cursorPos = this->mapFromGlobal(QCursor::pos());

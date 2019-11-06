@@ -107,10 +107,12 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
             void _notifySelection();
 
         //ghost
+            QGraphicsItem* _displayableGhostItem();
             void _mightCenterGhostWithCursor();
 
         //registered points
             bool _isMousePressed = false;
+            bool _isCursorIn = false;
 
         //tool
             MapTool _tool = MapTool::Default;
