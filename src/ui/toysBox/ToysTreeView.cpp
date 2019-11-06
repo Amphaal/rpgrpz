@@ -253,7 +253,8 @@ void ToysTreeView::_generateMenu(const QList<QModelIndex> &targetIndexes, const 
             QObject::connect(
                 createFolder, &QAction::triggered,
                 [&, firstItem]() {
-                    this->_model->createFolder(firstItemIndex);
+                    auto newFolderIndex = this->_model->createFolder(firstItemIndex);
+                    this->edit(newFolderIndex);
                 }
             );
             menu.addAction(createFolder);

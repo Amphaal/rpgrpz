@@ -19,7 +19,7 @@ QModelIndex ToysTreeViewModel::getStaticContainerTypesIndex(const ToysTreeViewIt
 /// HELPERS ///
 ///////////////
 
-void ToysTreeViewModel::createFolder(const QModelIndex &parentIndex) {
+const QModelIndex ToysTreeViewModel::createFolder(const QModelIndex &parentIndex) {
     
     auto item = ToysTreeViewItem::fromIndex(parentIndex);
 
@@ -27,6 +27,8 @@ void ToysTreeViewModel::createFolder(const QModelIndex &parentIndex) {
         auto folderName = AssetsDatabase::get()->createFolder(item->path());
         new ToysTreeViewItem(item, folderName);
     this->endInsertRows();
+
+    return this->index(0, 0, parentIndex);
 
 }
 

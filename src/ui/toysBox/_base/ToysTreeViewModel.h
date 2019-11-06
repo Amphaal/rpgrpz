@@ -27,7 +27,7 @@ class ToysTreeViewModel : public QAbstractItemModel {
         /// HELPERS ///
         ///////////////
 
-        void createFolder(const QModelIndex &parentIndex);
+        const QModelIndex createFolder(const QModelIndex &parentIndex);
         bool moveItemsToContainer(const QModelIndex &parentIndex, const QList<QModelIndex> &indexesToMove);
         bool insertAssets(const QList<QUrl> &urls, const QModelIndex &parentIndex);
         void removeItems(const QList<QModelIndex> &itemsIndexesToRemove);

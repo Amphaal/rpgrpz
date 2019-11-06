@@ -1301,12 +1301,12 @@
         <translation>&lt;&lt; Déplacer vers&quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/ToysTreeView.cpp" line="311"/>
+        <location filename="../ui/toysBox/ToysTreeView.cpp" line="312"/>
         <source>Delete elements in toy box</source>
         <translation>Supprimer des elements de la boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/ToysTreeView.cpp" line="312"/>
+        <location filename="../ui/toysBox/ToysTreeView.cpp" line="313"/>
         <source>Do you confirm deletion of the %1 selected elements ?</source>
         <translation>Confirmez-vous la suppression des %1 éléments selectionnés ?</translation>
     </message>
