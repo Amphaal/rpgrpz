@@ -2,6 +2,9 @@
 
 MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) : QTreeView(parent) {
     
+    this->_selectionDebouncer.setInterval(200);
+    this->_selectionDebouncer.setSingleShot(true);
+
     this->_model = new MapLayoutModel;
     this->setModel(this->_model);
 
@@ -77,6 +80,15 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
         }
     );
 
+    QObject::connect(
+        &this->_selectionDebouncer, &QTimer::timeout,
+        [=]() {
+            this->_model->propagateSelection(
+                this->selectedIndexes())
+            ;
+        }
+    );
+
 }
 
 void MapLayoutTree::_handleAlterationRequest(const AlterationPayload &payload) {
@@ -135,7 +147,7 @@ void MapLayoutTree::selectionChanged(const QItemSelection &selected, const QItem
     QTreeView::selectionChanged(selected, deselected);
 
     if(!this->_bufSel) {
-        this->_model->propagateSelection(this->selectedIndexes());
+        this->_selectionDebouncer.start();
     }
     
     else {

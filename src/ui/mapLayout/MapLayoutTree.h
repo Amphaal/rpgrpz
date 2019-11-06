@@ -8,6 +8,7 @@
 #include <QMenu>
 #include <QHeaderView>
 #include <QKeyEvent>
+#include <QTimer>
 
 #include "src/shared/commands/RPZActions.h"
 
@@ -39,6 +40,7 @@ class MapLayoutTree : public QTreeView, public AtomSelector {
 
     private:
         bool _bufSel = false;
+        QTimer _selectionDebouncer;
 
         AtomsContextualMenuHandler* _menuHandler = nullptr;
         AtomActionsHandler* _atomActionsHandler = nullptr;
