@@ -56,6 +56,9 @@ void AtomSubEditor::loadTemplate(const RPZAtom::Updates &defaultValues, const At
     }
     
     //replace descr if has empty
-    if(hasEmptyValue) this->_descr->cannotDisplayValue();
+    if(hasEmptyValue) {
+        this->_descr->cannotDisplayValue();
+        if(!this->_supportsBatchEditing) this->_dataEditor->setEnabled(false);
+    }
 
 }

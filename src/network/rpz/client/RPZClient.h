@@ -56,8 +56,8 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
 
         void receivedMessage(const RPZMessage &message);
         void serverResponseReceived(const RPZResponse &reponse);
-        void selfIdentityAcked(const RPZUser &selfUser);
-        void selfIdentityChanged(const RPZUser &updatedSelfUser);
+        void selfIdentityAcked(const RPZUser &identity);
+        void selfIdentityChanged(const RPZUser &updated);
         
         void mapChanged(const AlterationPayload &payload);
 
@@ -87,8 +87,8 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
         QString _userDisplayName;
         RPZCharacter _characterToIncarnate;
 
-        RPZUser _self;
-        mutable QMutex _m_self;
+        RPZUser::Id _myUserId;
+        RPZUser& _myUser();
 
         RPZMap<RPZUser> _sessionUsers;
         QSet<RPZUser::Id> _playerIdsWithoutToken;

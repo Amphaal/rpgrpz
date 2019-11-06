@@ -37,6 +37,7 @@ class BrushToolEditor : public AtomSubEditor {
             this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
             
             this->_combo = new QComboBox;
+            
             for(auto i = _strBT.constBegin(); i != _strBT.constEnd(); i++) {
 
                 auto tool = i.key();
@@ -56,7 +57,7 @@ class BrushToolEditor : public AtomSubEditor {
                 }
             );
 
-            this->layout()->addWidget(this->_combo);
+            this->_setAsDataEditor(this->_combo);
         };
 
         void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode) override {

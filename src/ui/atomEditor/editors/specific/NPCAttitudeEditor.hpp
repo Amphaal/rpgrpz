@@ -36,6 +36,7 @@ class NPCAttitudeEditor : public AtomSubEditor {
             this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
             
             this->_combo = new QComboBox;
+            
             for(auto i = _strAttitude.constBegin(); i != _strAttitude.constEnd(); i++) {
 
                 auto tool = i.key();
@@ -55,7 +56,7 @@ class NPCAttitudeEditor : public AtomSubEditor {
                 }
             );
 
-            this->layout()->addWidget(this->_combo);
+            this->_setAsDataEditor(this->_combo);
         };
 
         void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode) override {

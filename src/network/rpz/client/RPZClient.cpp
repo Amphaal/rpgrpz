@@ -94,6 +94,7 @@ void RPZClient::run() {
     if(this->_userDisplayName.isEmpty()) {
         emit connectionStatus(tr("Username required !"), true);
         emit closed();
+        return;
     }
 
     this->_initSock();
@@ -130,7 +131,7 @@ void RPZClient::_handleAlterationRequest(const AlterationPayload &payload) {
     if(payload.source() == Payload::Source::RPZServer) return;
 
     //prevent alteration propagation to server if not host
-    if(this->_self.role() != RPZUser::Role::Host) return;
+    if(this->_myUser().role() != RPZUser::Role::Host) return;
 
     //ignore alteration requests when socket is not connected
     if(this->_sock->socket()->state() != QAbstractSocket::ConnectedState) return;
@@ -150,8 +151,8 @@ const QString RPZClient::getConnectedSocketAddress() const {
 }
 
 const RPZUser RPZClient::identity() const {
-    QMutexLocker l(&this->_m_self);
-    return this->_self;
+    QMutexLocker l(&this->_m_sessionUsers);
+    return this->_sessionUsers.value(this->_myUserId);
 }
 
 const RPZMap<RPZUser> RPZClient::sessionUsers() const {
@@ -311,15 +312,21 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
 
         case RPZJSON::Method::AckIdentity: {
             
+            RPZUser copy;
+
             {
                 //store our identity
-                QMutexLocker l(&this->_m_self);
-                this->_self = RPZUser(data.toHash());
+                QMutexLocker l(&this->_m_sessionUsers);
+                this->_myUserId = data.toULongLong();
+
+                auto &mUser = this->_myUser();
+                _defineHostAbility(mUser);
+
+                copy = mUser;
+
             }
 
-            _defineHostAbility(this->_self);
-
-            emit selfIdentityAcked(this->_self);
+            emit selfIdentityAcked(copy);
 
         }
         break;
@@ -423,14 +430,19 @@ void RPZClient::sendMapHistory(const ResetPayload &historyPayload) {
     this->_sock->sendToSocket(RPZJSON::Method::MapChangedHeavily, historyPayload);
 }
 
+RPZUser& RPZClient::_myUser() {
+    return this->_sessionUsers[this->_myUserId];
+}
+
 void RPZClient::notifyCharacterChange(const RPZCharacter &changed) {
     
     {
-        QMutexLocker l(&this->_m_self);
-        this->_self.setCharacter(changed);
+        QMutexLocker l(&this->_m_sessionUsers);
+        this->_myUser().setCharacter(changed);
     }
 
-    emit selfIdentityChanged(this->_self);
+    auto copy = this->identity();
+    emit selfIdentityChanged(copy);
 
     this->_sock->sendToSocket(RPZJSON::Method::CharacterChanged, changed);
 }

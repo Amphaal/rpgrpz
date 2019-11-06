@@ -49,6 +49,19 @@ class MapViewToken : public QObject, public QGraphicsItem {
 
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
             
+            if(option->state.testFlag(QStyle::StateFlag::State_Selected)) {
+                painter->save();
+                    
+                    QPen pen;
+                    pen.setWidth(0);
+                    pen.setStyle(Qt::DashLine);
+                    painter->setPen(pen);
+
+                    painter->drawRect(option->exposedRect);
+
+                painter->restore();
+            }
+
             painter->save();
 
                 painter->setRenderHint(QPainter::Antialiasing, true);

@@ -306,13 +306,13 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
 
 void RPZServer::_newUserAcknoledged(JSONSocket* socket, const RPZUser &userToAck) {
     
-    //tell associated user's socket his identity
-    socket->sendToSocket(RPZJSON::Method::AckIdentity, userToAck);
-
     //send whole users database to socket
     auto method = RPZJSON::Method::AllConnectedUsers;
     auto toSend = this->_usersById.toVList();
     this->_sendToAll(method, toSend);
+
+    //tell associated user's socket his identity
+    socket->sendToSocket(RPZJSON::Method::AckIdentity, userToAck.id());
 
     //log
     this->log(method, QStringLiteral(u"Now %1 clients logged").arg(toSend.count()));

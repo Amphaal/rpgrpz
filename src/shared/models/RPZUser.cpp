@@ -80,10 +80,10 @@ const RPZCharacter RPZUser::character() const {
     return RPZCharacter(this->value(QStringLiteral(u"char")).toHash());
 }
 
-void RPZUser::setPlayerTokenAtom(const RPZAtom::Id &atomId) {
+void RPZUser::setPlayerTokenAtom(const SnowFlake::Id &atomId) {
     this->insert(QStringLiteral(u"tokenId"), atomId);
 }
 
-const RPZAtom::Id RPZUser::playerTokenAtomId() const {
+const SnowFlake::Id RPZUser::playerTokenAtomId() const {
     return this->value(QStringLiteral(u"tokenId")).toULongLong();
 }

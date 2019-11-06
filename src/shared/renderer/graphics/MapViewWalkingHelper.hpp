@@ -49,7 +49,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem {
 
     protected:
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
-            
+
             auto viewCursorPos = this->_view->mapFromGlobal(QCursor::pos());
             auto sceneCursorPos = this->_view->mapToScene(viewCursorPos);
             auto itemCursorPos = this->mapFromScene(sceneCursorPos);

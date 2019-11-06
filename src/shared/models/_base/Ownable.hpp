@@ -17,7 +17,7 @@ class Ownable : public Serializable {
         };
 
         RPZUser owner() const { 
-            return RPZUser(this->value(QStringLiteral(u"owner"), RPZUser()).toHash()); 
+            return RPZUser(this->value(QStringLiteral(u"owner")).toHash()); 
         };
 
         void setOwnership(const RPZUser &user) { 

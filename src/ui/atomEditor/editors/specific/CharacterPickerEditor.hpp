@@ -11,16 +11,16 @@ class CharacterPickerEditor : public AtomSubEditor {
     private:    
         QComboBox* _combo = nullptr;
 
-        void _fillCombo(const RPZAtom::Updates &filtered) {
+        void _fillCombo(const RPZAtom::Updates &defaultValues) {
             QSignalBlocker b(this->_combo);
-            
+
             this->_combo->clear();
             this->_combo->addItem(tr("[No character]"), 0); //no character, default
 
-            auto characterId = this->_combo->findData(filtered[this->_params.first()]);
+            auto characterId = defaultValues.value(this->_params.first()).toULongLong();
             
             if(characterId) {
-                auto name = filtered[this->_params.last()].toString();
+                auto name = defaultValues.value(this->_params.last()).toString();
                 this->_combo->addItem(QIcon(":/icons/app/connectivity/cloak.png"), name, characterId);
                 this->_combo->setCurrentIndex(this->_combo->count() - 1);
             }
@@ -48,7 +48,7 @@ class CharacterPickerEditor : public AtomSubEditor {
                 }
             );
 
-            this->layout()->addWidget(this->_combo);
+            this->_setAsDataEditor(this->_combo);
         };
 
         void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode) override {
@@ -57,7 +57,7 @@ class CharacterPickerEditor : public AtomSubEditor {
 
             this->_fillCombo(defaultValues);
 
-            // this->_combo->setEnabled(!updateMode);
+            this->_combo->setEnabled(false);
             
         }
 

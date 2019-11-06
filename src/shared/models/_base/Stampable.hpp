@@ -5,8 +5,6 @@
 
 #include <QPalette>
 
-
-
 class Stampable : public Ownable {
     public:
         typedef SnowFlake::Id Id;

@@ -26,6 +26,7 @@
 class RPZAtom : public Serializable {
 
     public:
+    
         //order is important for transform handling
         enum class Parameter {
             Unknown,

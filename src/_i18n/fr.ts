@@ -1078,52 +1078,52 @@
         <translation>Calque %1</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="118"/>
+        <location filename="../shared/models/RPZAtom.h" line="119"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="119"/>
+        <location filename="../shared/models/RPZAtom.h" line="120"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="120"/>
+        <location filename="../shared/models/RPZAtom.h" line="121"/>
         <source>Object</source>
         <translation>Objet</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="121"/>
+        <location filename="../shared/models/RPZAtom.h" line="122"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="122"/>
+        <location filename="../shared/models/RPZAtom.h" line="123"/>
         <source>Atom</source>
         <translation>Atome</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="123"/>
+        <location filename="../shared/models/RPZAtom.h" line="124"/>
         <source>Event</source>
         <translation>Evénement</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="124"/>
+        <location filename="../shared/models/RPZAtom.h" line="125"/>
         <source>Player</source>
         <translation>Joueur</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="128"/>
+        <location filename="../shared/models/RPZAtom.h" line="129"/>
         <source>NPCs</source>
         <translation>PNJs</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="129"/>
+        <location filename="../shared/models/RPZAtom.h" line="130"/>
         <source>Events</source>
         <translation>Evénements</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="130"/>
+        <location filename="../shared/models/RPZAtom.h" line="131"/>
         <source>Players</source>
         <translation>Joueurs</translation>
     </message>
@@ -1171,27 +1171,27 @@
         <translation>Nom d&apos;utilisateur requis !</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="107"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="108"/>
         <source>Disconnected from server</source>
         <translation>Déconnecté du serveur</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="372"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="391"/>
         <source>Host closed the connection.</source>
         <translation>L&apos;hôte a fermé la connexion.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="375"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="394"/>
         <source>Host could not be found. Please check the hostname and port number.</source>
         <translation>L&apos;hôte n&apos;a pas pu être trouvé. Merci de vérifier le nom d&apos;hôte et le numéro de port.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="378"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="397"/>
         <source>Connection has been refused by remote host.</source>
         <translation>La connexion a été refusée par l&apos;hôte distant.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="381"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="400"/>
         <source>An error has occured : %1</source>
         <translation>Une erreur est survenue : %1</translation>
     </message>
