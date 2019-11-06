@@ -81,6 +81,8 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
 
 void MapLayoutTree::_handleAlterationRequest(const AlterationPayload &payload) {
 
+    if(payload.source() == Payload::Source::Local_MapLayout) return;
+
     auto pl = Payloads::autoCast(payload); 
     auto type = pl->type();
 
@@ -132,14 +134,21 @@ void MapLayoutTree::selectionChanged(const QItemSelection &selected, const QItem
     
     QTreeView::selectionChanged(selected, deselected);
 
-    if(!this->_bufSel) this->_model->propagateSelection(selected.indexes());
-    else this->_bufSel = false;
+    if(!this->_bufSel) {
+        this->_model->propagateSelection(this->selectedIndexes());
+    }
+    
+    else {
+        this->_bufSel = false;
+    }
 
 }
 
 void MapLayoutTree::contextMenuEvent(QContextMenuEvent *event) {
 
     auto ids = MapLayoutModel::fromIndexes(this->selectedIndexes());
+
+    if(!ids.count()) return;
 
     //create menu
     this->_menuHandler->invokeMenu(ids, event->globalPos());
