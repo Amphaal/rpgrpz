@@ -181,7 +181,8 @@
         "qgradient": "cpp",
         "qradialgradient": "cpp",
         "qgraphicsellipseitem": "cpp",
-        "qgraphicsblureffect": "cpp"
+        "qgraphicsblureffect": "cpp",
+        "qslider": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

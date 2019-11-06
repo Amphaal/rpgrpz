@@ -2,35 +2,43 @@
 
 AtomSliderEditor::AtomSliderEditor(const RPZAtom::Parameter &parameter, int minimum, int maximum) : AtomSubEditor({parameter}) { 
 
-    this->_setAsDataEditor(new RPZCustomSlider(Qt::Orientation::Horizontal, this));
+    this->_commitTimer.setInterval(200);
+    this->_commitTimer.setSingleShot(true);
+
+    this->_setAsDataEditor(new QSlider(Qt::Orientation::Horizontal, this));
     this->slider()->setMinimum(minimum);
     this->slider()->setMaximum(maximum);
 
     QObject::connect(
-        this->slider(), &QAbstractSlider::sliderReleased,
-        [&]() {
-            auto out = QVariant(this->outputValue());
-            emit valueConfirmedForPayload({{this->_params.first(), out}});
-        }
+        this->slider(), &QAbstractSlider::valueChanged,
+        this, &AtomSliderEditor::_onValueChanged
     );
 
     QObject::connect(
-        this->slider(), &QAbstractSlider::valueChanged,
-        this, &AtomSliderEditor::_onSliderChanging
+        &this->_commitTimer, &QTimer::timeout,
+        this, &AtomSliderEditor::_confirmPayload
     );
 
 }
 
-void AtomSliderEditor::_onSliderChanging(int sliderVal) {
-    
-    auto output = this->outputValue();
-    auto outputAsVariant = QVariant(output);
-    this->_descr->updateValue(output);
-    
-    emit valueConfirmedForPreview(this->_params.first(), outputAsVariant);
-    
+void AtomSliderEditor::_onValueChanged(int sliderVal) {
+    this->_confirmPreview();
+    this->_commitTimer.start();  
 };
 
+void AtomSliderEditor::_confirmPayload() {
+    auto out = QVariant(this->outputValue());
+    emit valueConfirmedForPayload({{this->_params.first(), out}});
+}
+
+void AtomSliderEditor::_confirmPreview() {
+    
+    auto output = this->outputValue();
+    this->_descr->updateValue(output);
+    
+    emit valueConfirmedForPreview(this->_params.first(), output);
+
+}
 
 QSlider* AtomSliderEditor::slider() {
     return (QSlider*)this->_dataEditor;
@@ -52,7 +60,6 @@ void AtomSliderEditor::loadTemplate(const RPZAtom::Updates &defaultValues, const
     this->slider()->setValue(sval);
 
 }
-
 
 double AtomSliderEditor::outputValue() {
     return this->_toAtomValue(this->slider()->value());

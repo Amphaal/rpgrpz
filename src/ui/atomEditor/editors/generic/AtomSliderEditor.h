@@ -2,7 +2,9 @@
 
 #include "src/shared/renderer/AtomConverter.h"
 #include "src/ui/atomEditor/_base/AtomSubEditor.h"
-#include "src/ui/atomEditor/_base/RPZCustomSlider.hpp"
+
+#include <QTimer>
+#include <QSlider>
 
 class AtomSliderEditor : public AtomSubEditor {
     public:
@@ -11,10 +13,15 @@ class AtomSliderEditor : public AtomSubEditor {
         QSlider* slider();
 
     private:
-        void _onSliderChanging(int sliderVal);
+        void _onValueChanged(int sliderVal);
+        
+        void _confirmPayload();
+        void _confirmPreview();
 
         double outputValue();
         int atomValueToSliderValue(double atomValue);
+
+        QTimer _commitTimer;
 
     protected: 
         virtual double _toAtomValue(int sliderVal);

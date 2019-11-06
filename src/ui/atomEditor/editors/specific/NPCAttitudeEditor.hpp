@@ -51,7 +51,7 @@ class NPCAttitudeEditor : public AtomSubEditor {
             QObject::connect(
                 this->_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
                 [&](int currentIndex) {
-                    auto out = QVariant(currentIndex);
+                    auto out = this->_combo->currentData();
                     emit valueConfirmedForPayload({{this->_params.first(), out}});
                 }
             );

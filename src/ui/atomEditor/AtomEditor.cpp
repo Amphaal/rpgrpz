@@ -234,6 +234,8 @@ void AtomEditor::_mustShowBrushPenWidthEditor(const RPZAtom::Updates &updatedVal
     //check if param is tool combo
     if(!updatedValues.contains(RPZAtom::Parameter::BrushStyle)) return;
 
+    qDebug() << updatedValues[RPZAtom::Parameter::BrushStyle];
+
     //check if pen size editor exists
     auto brushPenWidthEditor = this->_editorsByParam.value(RPZAtom::Parameter::BrushPenWidth);
     if(!brushPenWidthEditor) return;
