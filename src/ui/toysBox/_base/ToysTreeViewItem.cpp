@@ -467,7 +467,7 @@ const QString ToysTreeViewItem::typeDescription(const ToysTreeViewItem::Type &ty
     return QObject::tr(qUtf8Printable(_typeDescriptions.value(type)));
 }
 
-bool ToysTreeViewItem::isAcceptableNameChange(QString &newName) {
+bool ToysTreeViewItem::isAcceptableNameChange(QString newName) {
     
     //strip name from slashes and double quotes
     newName.replace("\"", "");

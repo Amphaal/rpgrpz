@@ -75,7 +75,7 @@ class ToysTreeViewItem : private QObject {
         QList<ToysTreeViewItem*> containerSubItems();
         QList<ToysTreeViewItem*> toySubItems();
         
-        bool isAcceptableNameChange(QString &newName); //sanitize and check if the name change is OK
+        bool isAcceptableNameChange(QString newName); //sanitize and check if the name change is OK
         void rename(const QString &newName); //prefer using rename() with AssetsDatabase for db interaction
         void appendSubItem(ToysTreeViewItem* subItem); //prefer using insertAsset() with AssetsDatabase for parallel db insertion
 

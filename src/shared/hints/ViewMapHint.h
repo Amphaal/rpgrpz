@@ -18,7 +18,7 @@
 #include "src/shared/renderer/AtomRenderer.h"
 
 #include "src/shared/payloads/Payloads.h"
-#include "src/ui/toys/_base/ToysTreeViewModel.h"
+#include "src/ui/toysBox/_base/ToysTreeViewModel.h"
 
 #include "AtomsStorage.h"
 

@@ -13,7 +13,7 @@
 #include <QDragMoveEvent>
 #include <QDropEvent>
 
-#include "src/ui/toys/_base/ToysTreeViewModel.h"
+#include "src/ui/toysBox/_base/ToysTreeViewModel.h"
 #include "src/shared/commands/RPZActions.h"
 
 #include "src/shared/models/toy/RPZToy.hpp"

@@ -33,13 +33,19 @@ void ToysTreeViewModel::createFolder(const QModelIndex &parentIndex) {
 bool ToysTreeViewModel::renameItem(const QString &newName, const QModelIndex &index) {
 
     auto item = ToysTreeViewItem::fromIndex(index);
+    
+    //check name availability
+    auto isNameChangeAcceptable = item->isAcceptableNameChange(newName);
+    if(!isNameChangeAcceptable) return false;
 
+    //if asset
     if(auto asset = item->asset()) {
         AssetsDatabase::get()->renameAsset(newName, asset->hash());
         item->rename(newName);
         return true;
     }
 
+    //if folder
     else if(item->type() == ToysTreeViewItem::Type::Folder) {
         auto success = AssetsDatabase::get()->renameFolder(newName, item->path());
         if(success) item->rename(newName);

@@ -24,7 +24,7 @@
 #include "src/ui/users/players/PlayersListView.hpp"
 #include "src/ui/users/standard/StandardUsersListView.hpp"
 
-#include "src/ui/toys/ToysTreeView.h"
+#include "src/ui/toysBox/ToysTreeView.h"
 
 #include "src/ui/atomEditor/AtomEditionManager.hpp"
 
