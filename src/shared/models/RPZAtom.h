@@ -272,7 +272,7 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::AssetRotation, 0.0 },
             { RPZAtom::Parameter::AssetScale, 1.0 },
             { RPZAtom::Parameter::BrushStyle, (int)RPZAtom::BrushType::Stamp },
-            { RPZAtom::Parameter::BrushPenWidth, 1 },
+            { RPZAtom::Parameter::BrushPenWidth, 10 },
             { RPZAtom::Parameter::ShapeCenter, QVariant() },
             { RPZAtom::Parameter::CharacterId, 0 },
             { RPZAtom::Parameter::EventDescription, "" },
