@@ -223,10 +223,14 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
         //TODO restrict to player only
         
         if(can) {
+            
+            this->_clearWalkingHelper();
+
             this->_toWalk = toAlter.first();
             this->_walkingHelper = new MapViewWalkingHelper(this->_toWalk, this);
             this->scene()->addItem(this->_walkingHelper);
             this->_changeTool(MapTool::Walking);
+            
         }
 
     }
@@ -470,6 +474,8 @@ void MapView::_mightUpdateWalkingHelperPos() {
 //mouse drop
 void MapView::mouseReleaseEvent(QMouseEvent *event) {
 
+    this->_isMousePressed = false;
+
     switch(event->button()) {
         case Qt::MouseButton::LeftButton: {
             
@@ -483,6 +489,9 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
                     //if something moved ?
                     this->_hints->mightNotifyMovement(this->scene()->selectedItems()); 
 
+                    //trigger items selection
+                    QGraphicsView::mouseReleaseEvent(event);
+
                     //update selection
                     this->_notifySelection();
                     this->_ignoreSelectionChangedEvents = false;
@@ -494,8 +503,6 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
                 break;
 
             }
-
-
             
         }
         break;
@@ -504,9 +511,6 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
             break;
     }
 
-    this->_isMousePressed = false;
-
-    QGraphicsView::mouseReleaseEvent(event);
 }
 
 void MapView::wheelEvent(QWheelEvent *event) {
@@ -625,9 +629,7 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
     
     //destroy / create walking helper
     if(this->_tool != MapTool::Walking && this->_walkingHelper) {
-        this->_toWalk = nullptr;
-        delete this->_walkingHelper;
-        this->_walkingHelper = nullptr;
+        this->_clearWalkingHelper();
     }
 
 
@@ -678,6 +680,11 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
 
 }
 
+void MapView::_clearWalkingHelper() {
+    this->_toWalk = nullptr;
+    delete this->_walkingHelper;
+    this->_walkingHelper = nullptr;
+}
 
 //on received action
 void MapView::onActionRequested(const MapAction &action) {
