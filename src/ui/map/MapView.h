@@ -77,7 +77,6 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         void mouseMoveEvent(QMouseEvent *event) override;
         void keyPressEvent(QKeyEvent * event) override;
         void keyReleaseEvent(QKeyEvent *event) override;
-        void resizeEvent(QResizeEvent * event) override;
         void mouseDoubleClickEvent(QMouseEvent *event) override;
 
         void drawBackground(QPainter *painter, const QRectF &rect) override;

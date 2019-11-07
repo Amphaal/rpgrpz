@@ -292,10 +292,6 @@ void MapView::mouseDoubleClickEvent(QMouseEvent *event) {
     this->_hints->notifyFocusedItem(item);
 }
 
-void MapView::resizeEvent(QResizeEvent * event) {
-    this->goToSceneCenter();
-}
-
 void MapView::keyReleaseEvent(QKeyEvent *event) {
 
     switch(event->key()) {
@@ -340,6 +336,7 @@ void MapView::keyPressEvent(QKeyEvent * event) {
     QGraphicsView::keyPressEvent(event);
 
 }
+
 
 void MapView::enterEvent(QEvent *event) {
 
