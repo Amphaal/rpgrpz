@@ -200,7 +200,7 @@ class MV_HUDLayout {
                 //disable render hints from view
                 painter->setRenderHints(this->_view->renderHints(), false);
 
-                auto tileWidth = AppContext::standardTileSize().width();
+                auto tileWidth = AppContext::pointPerCentimeters().width();
                 auto stops = 5;
                 auto rulerSize = (int)(tileWidth * stops);
                 auto elipseSize = rulerSize + 50;
@@ -316,7 +316,7 @@ class MV_HUDLayout {
                 auto centerX = center.x();
                 auto centerY = center.y();
                 
-                auto stdTileSize = AppContext::standardTileSize();
+                auto stdTileSize = AppContext::pointPerCentimeters();
                 auto tileWidth = stdTileSize.width();
                 auto tileHeight = stdTileSize.height();
 

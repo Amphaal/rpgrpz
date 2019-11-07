@@ -35,6 +35,9 @@ RPZAtom* MapDatabase::atomPtr(const RPZAtom::Id &id) {
 
 void MapDatabase::_setupLocalData() {
 
+    //map params
+    this->_mapParams = RPZMapParameters(this->entityAsObject(QStringLiteral(u"params")).toVariantHash());
+
     //atoms
     for(const auto &atomAsJson : this->entityAsArray(QStringLiteral(u"atoms"))) {
         RPZAtom atom(atomAsJson.toObject().toVariantHash());
@@ -55,6 +58,7 @@ void MapDatabase::saveIntoFile() {
 
     updateFrom(db, QStringLiteral(u"atoms"), this->_atomsById.toVList());
     updateFrom(db, QStringLiteral(u"assets"), this->_assetHashes);
+    updateFrom(db, QStringLiteral(u"params"), this->_mapParams);
 
     this->_updateDbFile(db);
 
@@ -93,6 +97,14 @@ void MapDatabase::addAtom(const RPZAtom &toAdd) {
 
 }
 
+void MapDatabase::setMapParams(const RPZMapParameters &newParams) {
+    this->_mapParams = newParams;
+}
+
+const RPZMapParameters MapDatabase::mapParams() const {
+    return this->_mapParams;
+}
+
 void MapDatabase::updateAtom(const RPZAtom &updated) {
     this->_atomsById.insert(updated.id(), updated);
 }
@@ -115,12 +127,13 @@ void MapDatabase::clear() {
 JSONDatabase::Model MapDatabase::_getDatabaseModel() {
     return {
         { { QStringLiteral(u"atoms"), JSONDatabase::EntityType::Array }, &this->_atomsById },
-        { { QStringLiteral(u"assets"), JSONDatabase::EntityType::Array }, &this->_assetHashes }
+        { { QStringLiteral(u"assets"), JSONDatabase::EntityType::Array }, &this->_assetHashes },
+        { { QStringLiteral(u"params"), JSONDatabase::EntityType::Object }, &this->_mapParams },
     };
 };
 
 const JSONDatabase::Version MapDatabase::apiVersion() const {
-    return 7;
+    return 8;
 }
 
 QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> MapDatabase::_getUpdateHandlers() {

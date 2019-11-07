@@ -182,7 +182,10 @@
         "qradialgradient": "cpp",
         "qgraphicsellipseitem": "cpp",
         "qgraphicsblureffect": "cpp",
-        "qslider": "cpp"
+        "qslider": "cpp",
+        "qwindow": "cpp",
+        "qdialog": "cpp",
+        "qdoublespinbox": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

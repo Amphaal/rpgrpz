@@ -5,7 +5,10 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
     this->_walkingCursor = QCursor(QStringLiteral(u":/icons/app/tools/walking.png"));
 
     //default
-    auto sceneRect = QRectF({ -AppContext::DEFAULT_SCENE_SIZE.width()/2, -AppContext::DEFAULT_SCENE_SIZE.height()/2 }, AppContext::DEFAULT_SCENE_SIZE);
+    auto sceneRect = QRectF(
+        { -AppContext::DEFAULT_SCENE_SIZE / 2, -AppContext::DEFAULT_SCENE_SIZE / 2 }, 
+        QSize(AppContext::DEFAULT_SCENE_SIZE, AppContext::DEFAULT_SCENE_SIZE)
+    );
     auto scene = new QGraphicsScene(sceneRect);
     this->setScene(scene);
 

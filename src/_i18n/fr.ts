@@ -780,6 +780,52 @@
     </message>
 </context>
 <context>
+    <name>MapLayoutManager</name>
+    <message>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="9"/>
+        <source>Map parameters</source>
+        <translation>Paramètres de la carte</translation>
+    </message>
+</context>
+<context>
+    <name>MapParametersForm</name>
+    <message>
+        <location filename="../ui/map/MapParametersForm.hpp" line="56"/>
+        <source>Edit map parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/map/MapParametersForm.hpp" line="66"/>
+        <source>Map size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/map/MapParametersForm.hpp" line="19"/>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/map/MapParametersForm.hpp" line="65"/>
+        <source>Movement system</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/map/MapParametersForm.hpp" line="67"/>
+        <source>Grid tile to ingame meters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/map/MapParametersForm.hpp" line="68"/>
+        <source>Grid tile to screen centimeters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/map/MapParametersForm.hpp" line="69"/>
+        <source>Minimum / Maximum camera scaling ratio</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>NPCAttitudeEditor</name>
     <message>
         <location filename="../ui/atomEditor/editors/specific/NPCAttitudeEditor.hpp" line="16"/>
@@ -1161,6 +1207,26 @@
         <location filename="../shared/models/RPZAtom.cpp" line="32"/>
         <source>[Unpaired player token]</source>
         <translation>[Jeton de joueur vierge]</translation>
+    </message>
+    <message>
+        <location filename="../shared/models/RPZMapParameters.hpp" line="24"/>
+        <source>Linear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shared/models/RPZMapParameters.hpp" line="25"/>
+        <source>Grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shared/models/RPZMapParameters.hpp" line="34"/>
+        <source>Players can move freely</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shared/models/RPZMapParameters.hpp" line="35"/>
+        <source>Players can only move from tile to tile</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

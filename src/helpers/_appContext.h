@@ -38,7 +38,7 @@ class AppContext {
         
         static void _makeSureDirPathExists(const QString &path);
 
-        static inline QSizeF _tileSize;
+        static inline QSizeF _ppcm;
 
     public:    
         static AppSettings* settings();
@@ -46,8 +46,6 @@ class AppContext {
         static inline const QString UPNP_DEFAULT_TARGET_PORT = "31137";
         static inline const QString UPNP_REQUEST_DESCRIPTION = APP_NAME;
         static inline const QString RPZ_MAP_FILE_EXT = ".mrpz";
-        static inline const double DEFAULT_TILE_TO_METER_RATIO = 1.5; // 1 tile = DEFAULT_TILE_TO_METER_RATIO in meters
-        static inline constexpr QSizeF DEFAULT_SCENE_SIZE = {36000, 36000};
         static inline constexpr int TOP_Z_INDEX = 100000;
 
         static inline const QString REGEX_YOUTUBE_URL = "(?:youtube\\.com|youtu.be).*?(?:v=|embed\\/)(?<videoId>[\\w\\-]+)";
@@ -57,8 +55,8 @@ class AppContext {
         static QHash<QString, QString> getOptionArgs(int argc, char** argv);
         static void configureApp(QCoreApplication &app);
 
-        static void defineStandardTileSize(QPaintDevice* device);
-        static QSizeF standardTileSize();
+        static void definePPcm(QPaintDevice* device);
+        static QSizeF pointPerCentimeters();
 
         void static initRandomContext();
         void static initCustomContext(const QString &customContextSuffix);

@@ -23,14 +23,15 @@ void AppContext::configureApp(QCoreApplication &app) {
     AppContext::init();
 }
 
-QSizeF AppContext::standardTileSize() {
-    return _tileSize;
+QSizeF AppContext::pointPerCentimeters() {
+    return _ppcm;
+    //TODO AppContext::pointPerCentimeters() to add RPZMapParam
 }
 
-void AppContext::defineStandardTileSize(QPaintDevice* device) {
-    auto x = ((double)device->logicalDpiX() / 2.54) * 1.3;
-    auto y = ((double)device->logicalDpiY() / 2.54) * 1.3;
-    _tileSize = QSizeF(x, y);
+void AppContext::definePPcm(QPaintDevice* device) {
+    auto x = (double)device->logicalDpiX() / 2.54;
+    auto y = (double)device->logicalDpiY() / 2.54;
+    _ppcm = QSizeF(x, y);
 }
 
 void AppContext::installTranslations(QApplication &app) {

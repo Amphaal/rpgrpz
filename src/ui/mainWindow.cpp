@@ -8,7 +8,7 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
     ConnectivityObserverSynchronizer::get();
 
     //
-    AppContext::defineStandardTileSize(this);
+    AppContext::definePPcm(this);
 
     //init databases
     AssetsDatabase::get();

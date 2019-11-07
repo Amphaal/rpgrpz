@@ -5,9 +5,25 @@ MapLayoutManager::MapLayoutManager(QGraphicsView* viewToMimic, AtomsStorage* map
     this->_tree = new MapLayoutTree(mapMaster, this);
     this->_layerSelector = new LayerSelector(this);
     
+    this->_mapParamBtn = new QPushButton(QIcon(QStringLiteral(u":/icons/app/tools/cog.png")), "");
+    this->_mapParamBtn->setToolTip(tr("Map parameters"));
+    QObject::connect(
+        this->_mapParamBtn, &QPushButton::pressed,
+        [=]() {
+            MapParametersForm form(mapMaster, parent);
+            form.exec();
+        }
+    );
+    
     auto layout = new QVBoxLayout;
     this->setLayout(layout);
-    layout->addWidget(this->_layerSelector);
+
+    auto line = new QHBoxLayout;
+    line->addWidget(this->_mapParamBtn, 0);
+    line->addStretch(1);
+    line->addWidget(this->_layerSelector, 0);
+
+    layout->addLayout(line);
     layout->addWidget(this->_tree, 1);
 
     layout->setSpacing(2);

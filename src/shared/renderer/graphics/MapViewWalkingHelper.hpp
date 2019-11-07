@@ -13,6 +13,7 @@
 #include "src/helpers/StringHelper.hpp"
 
 #include "src/helpers/_appContext.h"
+#include "src/shared/hints/AtomsStorage.h"
 
 class MapViewWalkingHelper : public QObject, public QGraphicsItem {
     
@@ -21,12 +22,16 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem {
     Q_INTERFACES(QGraphicsItem)
     
     public:
-        MapViewWalkingHelper(QGraphicsItem* toWalk, QGraphicsView* view) : _view(view), _toWalk(toWalk) {
+        MapViewWalkingHelper(AtomsStorage* reference, QGraphicsItem* toWalk, QGraphicsView* view) : _view(view), _toWalk(toWalk) {
+            
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsFocusable, false);
             this->setPos(toWalk->pos());
             this->setZValue(toWalk->zValue() - 1);
+
+            this->_mapParams = reference->mapParameters();
+
         }
 
         QRectF boundingRect() const override {
@@ -96,12 +101,13 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem {
         }
 
     private:
+        RPZMapParameters _mapParams;
         QGraphicsView* _view = nullptr;
         QGraphicsItem* _toWalk = nullptr;
 
         qreal _distancesIntoMeters(qreal distance) {
-            auto distanceAsTiles = distance / AppContext::standardTileSize().width();
-            auto meters = distanceAsTiles * AppContext::DEFAULT_TILE_TO_METER_RATIO;
+            auto distanceAsTiles = distance / AppContext::pointPerCentimeters().width();
+            auto meters = distanceAsTiles * this->_mapParams.tileToIngameMeters();
             return meters;
         }
 
