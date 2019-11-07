@@ -719,54 +719,54 @@
         <translation>Hub de jeu</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="499"/>
+        <location filename="../ui/mainWindow.cpp" line="504"/>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="513"/>
+        <location filename="../ui/mainWindow.cpp" line="518"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="515"/>
-        <location filename="../ui/mainWindow.cpp" line="541"/>
-        <location filename="../ui/mainWindow.cpp" line="569"/>
+        <location filename="../ui/mainWindow.cpp" line="520"/>
+        <location filename="../ui/mainWindow.cpp" line="546"/>
+        <location filename="../ui/mainWindow.cpp" line="574"/>
         <source>Game map (*%1)</source>
         <translation>Carte de campagne (*%1)</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="539"/>
+        <location filename="../ui/mainWindow.cpp" line="544"/>
         <source>Load a new map</source>
         <translation>Charger une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="567"/>
+        <location filename="../ui/mainWindow.cpp" line="572"/>
         <source>Save as...</source>
         <translation>Savegarder sous...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="591"/>
+        <location filename="../ui/mainWindow.cpp" line="596"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="646"/>
+        <location filename="../ui/mainWindow.cpp" line="651"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="660"/>
+        <location filename="../ui/mainWindow.cpp" line="665"/>
         <source>Searching for updates...</source>
         <translation>Recherche des mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="660"/>
+        <location filename="../ui/mainWindow.cpp" line="665"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="684"/>
+        <location filename="../ui/mainWindow.cpp" line="689"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
@@ -813,7 +813,7 @@
 <context>
     <name>PlayersModel</name>
     <message>
-        <location filename="../ui/users/players/PlayersModel.hpp" line="46"/>
+        <location filename="../ui/users/players/PlayersModel.hpp" line="29"/>
         <source>[%1] as &quot;%2&quot;</source>
         <translation>[%1] en tant que &quot;%2&quot;</translation>
     </message>

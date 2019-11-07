@@ -17,7 +17,7 @@ class PlayersListView : public QListView {
     public:
         PlayersListView(QWidget *parent = nullptr) : QListView(parent) {
             
-            this->setUniformItemSizes(true);
+            this->setUniformItemSizes(false);
             this->setViewMode(ViewMode::ListMode);
             this->setWordWrap(false);
             this->setLayoutMode(LayoutMode::SinglePass);
@@ -25,8 +25,8 @@ class PlayersListView : public QListView {
             this->setResizeMode(ResizeMode::Fixed);
             this->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
             this->setSelectionMode(QAbstractItemView::SelectionMode::NoSelection);
+            this->setFixedWidth(PlayerItemDelegate::DEFAULT_PORTRAIT_SIZE.width() + 2);
             
-            this->setFixedWidth(PlayerItemDelegate::defaultPortraitSize.width() + 2);
             this->setContentsMargins(0, 0, 0, 0);
             this->setSpacing(0);
             this->setVisible(false);
@@ -36,24 +36,27 @@ class PlayersListView : public QListView {
 
             QObject::connect(
                 this->model(), &QAbstractItemModel::modelReset,
-                [=]() {
-                    this->setVisible(
-                        this->model()->rowCount()
-                    );
-                }
+                this, &PlayersListView::_onModelReset
             );
 
             QObject::connect(
                 this, &QAbstractItemView::doubleClicked,
-                [=](const QModelIndex &index) {
-                    RPZUser user(index.data(Qt::UserRole).toHash());
-                    emit requestingFocusOnCharacter(user.id());
-                }
+                this, &PlayersListView::_onPlayerDoubleClick
             );
 
         }
-    
-    private:
 
+    private:
+        void _onModelReset() {
+            this->setVisible(
+                this->model()->rowCount()
+            );
+        }
+        
+        void _onPlayerDoubleClick(const QModelIndex &index) {
+            RPZUser user(index.data(Qt::UserRole).toHash());
+            auto characterId = user.character().id();
+            emit requestingFocusOnCharacter(characterId);
+        }
 
 };

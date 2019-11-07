@@ -14,35 +14,18 @@ class PlayersModel : public BaseUsersModel {
             
             if (!index.isValid() || !this->_users.count()) return QVariant();
             
+            if(role == Qt::SizeHintRole) return PlayerItemDelegate::sizeHint(index);
+
             //check if targeted user exists
             auto expectedId = this->_users.keys().at(index.row());
+            
             auto user = this->_users.value(expectedId);
             if(user.isEmpty()) return QVariant();
 
-            auto character = user.character();
-            
             switch(role) {
-                
-                case Qt::SizeHintRole: {
-                    
-                    auto size = PlayerItemDelegate::defaultPortraitSize;
-
-                    if(auto favGaugesCount = character.favGaugesCount()) {
-
-                        size.setHeight(
-                            size.height() 
-                            + (PlayerItemDelegate::gaugeHeight * favGaugesCount) 
-                            + PlayerItemDelegate::portraitFrameMargin 
-                            + PlayerItemDelegate::portraitFramePenSize
-                            + (favGaugesCount - 1) * PlayerItemDelegate::spaceBetweenGauges
-                            + 2
-                        );
-
-                    }
-                    return size;
-                }
 
                 case Qt::ToolTipRole: {
+                    auto character = user.character();
                     return tr("[%1] as \"%2\"").arg(user.name()).arg(character.name());
                 }
 

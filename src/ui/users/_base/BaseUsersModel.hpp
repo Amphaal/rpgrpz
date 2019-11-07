@@ -13,8 +13,12 @@ class BaseUsersModel : public QAbstractListModel, public ConnectivityObserver {
         BaseUsersModel() { };
 
         int rowCount(const QModelIndex &parent) const override {
+            
             if(parent.isValid()) return 0;
-            return this->_users.count();
+
+            auto count = this->_users.count();
+            return count;
+
         }
 
     protected:
@@ -23,9 +27,11 @@ class BaseUsersModel : public QAbstractListModel, public ConnectivityObserver {
         virtual bool _isUserInvalidForInsert(const RPZUser &user) = 0;
 
         void connectionClosed(bool hasInitialMapLoaded) override {
+            
             this->beginResetModel();
                 this->_users.clear();
             this->endResetModel();
+
         }
 
         void connectingToServer() override {
@@ -63,41 +69,72 @@ class BaseUsersModel : public QAbstractListModel, public ConnectivityObserver {
         }
 
     private:
+        int _getRow(const RPZUser &user) {
+            return this->_users.keys().indexOf(user.id());
+        }
+
+        int _anticipateRow(const RPZUser::Id &userId) {
+            
+            auto keys = this->_users.keys();
+            
+            auto foundExact = keys.indexOf(userId);
+            if(foundExact > -1) return foundExact;
+
+            keys.append(userId);
+            std::sort(keys.begin(), keys.end());
+
+            auto foundInserted = keys.indexOf(userId);
+            if(foundInserted > -1) return foundInserted;
+
+            return 0;
+
+        }
+
         void _onAllUsersReceived() {          
+            
             this->beginResetModel();
 
                 this->_users.clear();
+                
                 for(auto &user : this->_rpzClient->sessionUsers()) {
                     if(this->_isUserInvalidForInsert(user)) continue;
                     this->_users.insert(user.id(), user);
                 }
 
             this->endResetModel();
+
         }
 
         void _onUserJoinedServer(const RPZUser &newUser) {
             if(this->_isUserInvalidForInsert(newUser)) return;
             
-            this->beginResetModel();
+            auto prevision = this->_anticipateRow(newUser.id());
+
+            this->beginInsertRows(QModelIndex(), prevision, prevision);
                 this->_users.insert(newUser.id(), newUser);
-            this->endResetModel();
+            this->endInsertRows();
 
         }
 
         void _onUserLeftServer(const RPZUser &userOut) {
+            
             auto idOut = userOut.id();
             if(!this->_users.contains(idOut)) return;
             
-            this->beginResetModel();
+            auto toRemove = this->_getRow(userOut);
+
+            this->beginRemoveRows(QModelIndex(), toRemove, toRemove);
                 this->_users.remove(idOut);
-            this->endResetModel();
+            this->endRemoveRows();
+
         }
 
         void _onUserDataChanged(const RPZUser &updated) {
+            
             if(this->_isUserInvalidForInsert(updated)) return;
 
-            this->beginResetModel();
-                this->_users.insert(updated.id(), updated);
-            this->endResetModel();
+            auto userIndex = this->index(this->_getRow(updated), 0);
+            emit this->dataChanged(userIndex, userIndex);
+
         }
 };

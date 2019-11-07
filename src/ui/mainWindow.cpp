@@ -450,9 +450,14 @@ void MainWindow::_initAppComponents() {
     QObject::connect(
         this->_playersView, &PlayersListView::requestingFocusOnCharacter,
         [=](const SnowFlake::Id &characterIdToFocus) {
+            
             this->_characterEditor->tryToSelectCharacter(characterIdToFocus);
-            auto tab = (QStackedWidget*)this->_characterEditor->parentWidget();
-            tab->setCurrentWidget(this->_characterEditor);
+           
+            auto tab = (QTabWidget*)this->_characterEditor->parentWidget()->parentWidget();
+            auto editorIndex = tab->indexOf(this->_characterEditor);
+            
+            tab->setCurrentIndex(editorIndex);
+            
         }    
     );
 }
