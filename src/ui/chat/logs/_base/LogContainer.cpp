@@ -1,8 +1,26 @@
 #include "LogContainer.h"
 
-LogText::LogText(const QString &text) : QLabel(text) {
+LogText::LogText(const QString &text) {
+    
     this->setMargin(0);
     this->setWordWrap(true);
+    this->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
+    this->setOpenExternalLinks(true);
+    this->setTextFormat(Qt::RichText);
+
+    //redefine text with rich hyperlinks
+    auto withHyperlinks = text;
+    QRegularExpression r(AppContext::REGEX_URL);
+    auto matches = r.globalMatch(text);
+    
+    while (matches.hasNext()) {
+        QRegularExpressionMatch match = matches.next();
+        auto url = match.captured();
+        withHyperlinks.replace(url, QStringLiteral(u"<a href=\"%1\">%1</a>").arg(url));
+    }
+
+    this->setText(withHyperlinks);
+
 }
 
 LogItem::LogItem() : QWidget(), _hLayout(new QHBoxLayout) {

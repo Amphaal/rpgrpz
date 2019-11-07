@@ -5,6 +5,7 @@
 #include <QHash>
 #include <QString>
 #include <QWidget>
+#include <QRegularExpression>
 
 #include "src/shared/models/_base/Stampable.hpp"
 
@@ -19,6 +20,7 @@ class LogItem : public QWidget {
     private:
         int _position = -1;
         QHBoxLayout* _hLayout = nullptr;
+
 };
 
 class LogText : public QLabel {

@@ -202,7 +202,7 @@ class PlayerItemDelegate : public QStyledItemDelegate {
                 painter->setBrush(brush);
                 
                 //rect
-                QRect indicator(QPoint(), QSize(8, 8));
+                QRect indicator(QPoint(), QSize(10, 10));
                 indicator.moveTopRight(option.rect.topRight() + QPoint(-4, 3));
 
                 //draw
