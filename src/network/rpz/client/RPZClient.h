@@ -32,6 +32,7 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
         ~RPZClient();
         
         const QString getConnectedSocketAddress() const; //safe
+        bool hasReceivedInitialMap() const; //safe
 
         const RPZUser identity() const; //safe
         const RPZMap<RPZUser> sessionUsers() const; //safe
@@ -81,7 +82,8 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
         static void _defineHostAbility(const RPZUser &user);
 
         JSONSocket* _sock = nullptr;   
-        
+        bool _initialMapSetupReceived = false;
+
         QString _domain;
         QString _port;
         QString _userDisplayName;

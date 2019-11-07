@@ -574,10 +574,10 @@ void MapView::_onIdentityReceived(const RPZUser &self) {
     
 }
 
-void MapView::connectionClosed() {
+void MapView::connectionClosed(bool hasInitialMapLoaded) {
 
     //back to default state
-    QMetaObject::invokeMethod(this->_hints, "loadDefaultRPZMap");
+    if(hasInitialMapLoaded) QMetaObject::invokeMethod(this->_hints, "loadDefaultRPZMap");
 
 }
 

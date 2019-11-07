@@ -52,7 +52,7 @@ void RPZStatusBar::connectingToServer() {
     this->_activityIndicators->setVisible(true);
 }
 
-void RPZStatusBar::connectionClosed() {
+void RPZStatusBar::connectionClosed(bool hasInitialMapLoaded) {
     this->_activityIndicators->setVisible(false);
     this->_dlStatus->setVisible(false);
 }

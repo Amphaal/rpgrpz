@@ -73,15 +73,24 @@ ConnectWidget::ConnectWidget(MapHint* hintToControlStateOf, QWidget *parent) : Q
 }
 
 void ConnectWidget::_onConnectButtonPressed() {
+    
+    this->_connectBtn->setEnabled(false);
+    
     switch(this->_state) {
-        case ConnectWidget::State::NotConnected:
+        
+        case ConnectWidget::State::NotConnected: {
             this->_tryConnectToServer();
-            break;
+        }
+        break;
+
         case ConnectWidget::State::Connecting:
-        case ConnectWidget::State::Connected:
-            this->_destroyClient();
-            break;
+        case ConnectWidget::State::Connected: {
+            ConnectivityObserver::disconnectClient();
+        }
+        break;
+
     }
+
 }
 
 void ConnectWidget::_saveValuesAsSettings() {
@@ -107,72 +116,44 @@ void ConnectWidget::_tryConnectToServer() {
     MapHint::mayWantToSavePendingState(this, _toControlStateOf);
 
     this->_saveValuesAsSettings();
-
-    //new connection..
-    this->_destroyClient();
     
     auto selectedCharacter = CharactersDatabase::get()->character(
         this->_getSelectedCharacterId()
     );
     
-    this->_cc = new RPZClient(
+    auto cli = new RPZClient(
         this->_domainTarget->text(),
         this->_nameTarget->text(), 
         selectedCharacter
     );
 
-    //create a separate thread to run the client into
-    auto clientThread = new QThread;
-    clientThread->setObjectName(QStringLiteral(u"RPZClient Thread"));
-    this->_cc->moveToThread(clientThread);
+    //start
+    ConnectivityObserver::connectWithClient(cli);
     
-    //events...
+}
+
+void ConnectWidget::connectingToServer() {
+    
+    this->_changeState(State::Connecting);
+
     QObject::connect(
-        clientThread, &QThread::started, 
-        this->_cc, &RPZClient::run
+        this->_rpzClient, &RPZClient::receivedLogHistory, 
+        this, &ConnectWidget::_onLogHistoryReceived
     );
 
     QObject::connect(
-        this->_cc, &RPZClient::closed, 
-        clientThread, &QThread::quit
-    );
-
-    QObject::connect(
-        clientThread, &QThread::finished,
-        [=]() {
-            this->_cc = nullptr;
-        }
-    );
-
-    QObject::connect(
-        clientThread, &QThread::finished,  
-        this->_cc, &QObject::deleteLater
-    );
-
-    QObject::connect(
-        clientThread, &QThread::finished, 
-        clientThread, &QObject::deleteLater
-    );
-
-    QObject::connect(
-        this->_cc, &RPZClient::receivedLogHistory, 
-        this, &ConnectWidget::_connectingToServer
-    );
-
-    QObject::connect(
-        this->_cc, &RPZClient::connectionStatus, 
+        this->_rpzClient, &RPZClient::connectionStatus, 
         this, &ConnectWidget::_onRPZClientStatus
     );
 
-    this->_changeState(State::Connecting);
+}
 
-    //start
-    emit startingConnection(this->_cc);
-    clientThread->start();
-
+void ConnectWidget::connectionClosed(bool hasInitialMapLoaded) {
+    this->_changeState(State::NotConnected);
 }
 
 void ConnectWidget::_onRPZClientStatus(const QString &statusMsg, bool isError) {
+    
     if(!isError) return;
 
     if(this->_state == State::Connecting) {
@@ -182,19 +163,9 @@ void ConnectWidget::_onRPZClientStatus(const QString &statusMsg, bool isError) {
             QMessageBox::Ok, QMessageBox::Ok);
     }
 
-    this->_changeState(State::NotConnected);
-
 }
-void ConnectWidget::_connectingToServer() {
+void ConnectWidget::_onLogHistoryReceived() {
     this->_changeState(State::Connected);
-}
-
-void ConnectWidget::_destroyClient() {
-    if(this->_cc) {
-        this->_cc->thread()->quit();
-        this->_cc->thread()->wait();
-    }
-    this->_changeState(State::NotConnected);
 }
 
 void ConnectWidget::_changeState(ConnectWidget::State newState) {
@@ -212,7 +183,9 @@ void ConnectWidget::_changeState(ConnectWidget::State newState) {
             btnText = tr("Disconnect from [%1]").arg(this->_domainTarget->text());
             break;
     }
+
     this->_connectBtn->setText(btnText);
+    this->_connectBtn->setEnabled(true);
 
     //inputs state
     auto mustEnableWidgets = newState == ConnectWidget::State::NotConnected;

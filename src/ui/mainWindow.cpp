@@ -35,7 +35,8 @@ MainWindow::~MainWindow() {
     if(this->_rpzServer) this->_rpzServer->thread()->quit();
 
     //unbind network client from ui
-    ConnectivityObserver::unbindAll();
+    ConnectivityObserver::disconnectClient();
+    
 }
 
 
@@ -51,7 +52,7 @@ void MainWindow::_onConnectionToServer() {
     this->_setupAppUI(mode);
 }
 
-void MainWindow::connectionClosed() {
+void MainWindow::connectionClosed(bool hasInitialMapLoaded) {
     this->_setupAppUI(_defaultAppUIMode);
 }
 
@@ -419,12 +420,6 @@ void MainWindow::_initAppComponents() {
     QObject::connect(
         this->_mapHelpers, &QToolBar::actionTriggered,
         this->_mapView, &MapView::onHelperActionTriggered
-    );
-
-    //bind RPZClient to widget once a connection starts
-    QObject::connect(
-        this->_connectWidget, &ConnectWidget::startingConnection, 
-        ConnectivityObserver::bindAll
     );
 
     //on default layer changed

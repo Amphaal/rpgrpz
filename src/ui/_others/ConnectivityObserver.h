@@ -8,17 +8,17 @@ class ConnectivityObserver {
     public:
         ConnectivityObserver();
                 
-        static void bindAll(RPZClient* cc);
-        static void unbindAll();
+        static void connectWithClient(RPZClient* cc);
+        static void disconnectClient();
 
         static const QVector<ConnectivityObserver*> observers();
 
-        void receivedConnectionCloseSignal();
+        void receivedConnectionCloseSignal(bool hasInitialMapLoaded);
 
     protected:
         static inline RPZClient* _rpzClient = nullptr;
         virtual void connectingToServer() {}
-        virtual void connectionClosed() {}
+        virtual void connectionClosed(bool hasInitialMapLoaded) {}
 
     private:
         static inline QVector<ConnectivityObserver*> _observers;
@@ -35,7 +35,7 @@ class ConnectivityObserverSynchronizer : public QObject {
         static ConnectivityObserverSynchronizer* get();
     
     public slots:
-        void triggerConnectionClosed();
+        void triggerConnectionClosed(bool hasInitialMapLoaded);
 
     private:
         ConnectivityObserverSynchronizer() {}

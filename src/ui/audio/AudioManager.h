@@ -44,7 +44,7 @@ class AudioManager : public QWidget, public ConnectivityObserver {
         bool _isLocalOnly = true;
         bool _isNetworkMaster = false;
         void connectingToServer() override;
-        void connectionClosed() override;
+        void connectionClosed(bool hasInitialMapLoaded) override;
 
         void _link();
 

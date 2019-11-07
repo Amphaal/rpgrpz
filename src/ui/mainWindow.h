@@ -53,7 +53,7 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
     
     protected:
         void connectingToServer() override;
-        void connectionClosed() override;
+        void connectionClosed(bool hasInitialMapLoaded) override;
 
     private slots:
         void _onConnectionToServer();

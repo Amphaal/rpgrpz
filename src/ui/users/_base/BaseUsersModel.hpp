@@ -22,7 +22,7 @@ class BaseUsersModel : public QAbstractListModel, public ConnectivityObserver {
 
         virtual bool _isUserInvalidForInsert(const RPZUser &user) = 0;
 
-        void connectionClosed() override {
+        void connectionClosed(bool hasInitialMapLoaded) override {
             this->beginResetModel();
                 this->_users.clear();
             this->endResetModel();

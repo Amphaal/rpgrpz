@@ -100,7 +100,7 @@ void AudioManager::_onAudioPlayStateChanged(bool isPlaying) {
     else this->_cli->pause();
 }
 
-void AudioManager::connectionClosed() {
+void AudioManager::connectionClosed(bool hasInitialMapLoaded) {
     
     if(!this->_isNetworkMaster) {
         this->_stopPlayingMusic();

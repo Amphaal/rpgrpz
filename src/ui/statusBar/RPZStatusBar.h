@@ -41,6 +41,6 @@ class RPZStatusBar : public QStatusBar, public ConnectivityObserver {
         void _installLayout();
 
         virtual void connectingToServer() override;
-        virtual void connectionClosed() override;
+        virtual void connectionClosed(bool hasInitialMapLoaded) override;
 
 }; 

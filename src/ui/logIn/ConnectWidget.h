@@ -15,8 +15,9 @@
 #include "src/shared/hints/MapHint.h"
 
 #include "src/shared/database/CharactersDatabase.h"
+#include "src/ui/_others/ConnectivityObserver.h"
 
-class ConnectWidget : public QWidget {
+class ConnectWidget : public QWidget, public ConnectivityObserver {
 
     Q_OBJECT
 
@@ -26,8 +27,9 @@ class ConnectWidget : public QWidget {
 
         ConnectWidget(MapHint* hintToControlStateOf, QWidget *parent = nullptr);
 
-    signals:
-        void startingConnection(RPZClient* cc);
+    protected:
+        void connectingToServer() override;
+        void connectionClosed(bool hasInitialMapLoaded) override;
 
     private:
         QLineEdit* _domainTarget = nullptr;
@@ -36,18 +38,16 @@ class ConnectWidget : public QWidget {
         
         QPushButton* _connectBtn = nullptr;
 
-        RPZClient* _cc = nullptr;
         ConnectWidget::State _state = ConnectWidget::State::NotConnected;
         
         void _tryConnectToServer();
         void _tryDisconnectingFromServer();
 
         void _changeState(ConnectWidget::State newState);
-        void _destroyClient();
 
         void _onConnectButtonPressed();
         void _onRPZClientStatus(const QString &statusMsg, bool isError);
-        void _connectingToServer();
+        void _onLogHistoryReceived();
 
         void _saveValuesAsSettings();
 

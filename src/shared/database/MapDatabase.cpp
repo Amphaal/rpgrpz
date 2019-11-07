@@ -145,6 +145,14 @@ QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> MapDatabase::_getUpdat
                     shape.boundingRect().center()
                 );
 
+                //increment brushType
+                if(atom.type() == RPZAtom::Type::Brush) {
+                    atom.setMetadata(
+                        RPZAtom::Parameter::BrushStyle, 
+                        (int)atom.brushType() + 1
+                    );
+                }
+
                 db.updateAtom(atom);
 
             }

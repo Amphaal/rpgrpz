@@ -107,7 +107,7 @@ class CharacterEditor : public QWidget, public ConnectivityObserver {
 
         }
 
-        void connectionClosed() override {
+        void connectionClosed(bool hasInitialMapLoaded) override {
             this->_setMode(CharacterPicker::Mode::Local);
         }
 

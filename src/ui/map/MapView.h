@@ -66,7 +66,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         void leaveEvent(QEvent *event) override;
 
         void connectingToServer() override;
-        void connectionClosed() override;
+        void connectionClosed(bool hasInitialMapLoaded) override;
 
         void contextMenuEvent(QContextMenuEvent *event) override;
 

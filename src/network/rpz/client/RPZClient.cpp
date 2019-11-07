@@ -13,6 +13,10 @@ RPZClient::RPZClient(const QString &socketStr, const QString &displayName, const
 
 }
 
+bool RPZClient::hasReceivedInitialMap() const {
+    return this->_initialMapSetupReceived;
+}
+
 void RPZClient::_initSock() {
     this->_sock = new JSONSocket(this, this);
 
@@ -337,7 +341,10 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
         }
         break;
 
-        case RPZJSON::Method::MapChangedHeavily:
+        case RPZJSON::Method::MapChangedHeavily: {
+            this->_initialMapSetupReceived = true;
+        }
+
         case RPZJSON::Method::MapChanged: {
             
             //to sharedPointer for type casts
@@ -402,8 +409,8 @@ void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
     }
 
     this->log(msg);
+    
     emit connectionStatus(msg, true);
-
     emit closed();
 }
 
