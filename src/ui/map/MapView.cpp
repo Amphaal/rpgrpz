@@ -579,6 +579,8 @@ void MapView::connectionClosed(bool hasInitialMapLoaded) {
     //back to default state
     if(hasInitialMapLoaded) QMetaObject::invokeMethod(this->_hints, "loadDefaultRPZMap");
 
+    emit remoteChanged(false);
+
 }
 
 void MapView::_sendMapHistory() {

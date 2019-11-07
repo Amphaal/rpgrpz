@@ -462,9 +462,17 @@ void MainWindow::_initUIMenu() {
     //menu
     auto menuBar = new QMenuBar(this);
     menuBar->addMenu(this->_getFileMenu());
-    menuBar->addMenu(this->_getMapMenu());
+    auto mm = menuBar->addMenu(this->_getMapMenu());
     menuBar->addMenu(this->_getToolsMenu());
     menuBar->addMenu(this->_getHelpMenu());
+
+    //on remote change detected...
+    QObject::connect(
+        this->_mapView, &MapView::remoteChanged,
+        [=](bool isRemote) {
+            mm->setEnabled(!isRemote);
+        }
+    );
 
     //set container
     this->setMenuWidget(menuBar);
@@ -565,18 +573,6 @@ QMenu* MainWindow::_getMapMenu() {
                 QMetaObject::invokeMethod(this->_mapView->hints(), "saveRPZMapAs", 
                     Q_ARG(QString, picked)
                 );
-            }
-        }
-    );
-
-    QList<QAction*> mapActions = { lRPZmAction, sRPZmAction, saRPZmAction };
-
-    //on remote change detected...
-    QObject::connect(
-        this->_mapView, &MapView::remoteChanged,
-        [mapActions](bool isRemote) {
-            for(auto action : mapActions) {
-                action->setEnabled(!isRemote);
             }
         }
     );
