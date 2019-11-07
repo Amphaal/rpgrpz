@@ -369,8 +369,6 @@ class MapLayoutModelBase : public QAbstractItemModel {
             auto row = 0;
 
             for(auto i = this->_categories.begin(); i != this->_categories.end(); i++) {
-                
-                auto &map = i.value();
 
                 //if not yet the searched category
                 if(i.key() != category) {
@@ -378,15 +376,17 @@ class MapLayoutModelBase : public QAbstractItemModel {
                     continue;
                 }
 
-                //search for lower bound
-                auto lb = map.lowerBound(sorter);
-                
-                //if cannot be found, return current row
-                if(lb == map.constEnd()) return row;
-                
-                //add index of lower bound  
-                auto lbIndex = map.keys().indexOf(lb.key());
-                return row + lbIndex + 1;
+                auto keys = i.value().keys();
+
+                //search for exact
+                auto foundExact = keys.indexOf(sorter);
+                if(foundExact > -1) return row + foundExact;
+
+                //else, determine position
+                keys.append(sorter);
+                std::sort(keys.begin(), keys.end());
+                auto foundInserted = keys.indexOf(sorter);
+                if(foundInserted > -1) return row + (int)foundInserted;
                
             }
             
