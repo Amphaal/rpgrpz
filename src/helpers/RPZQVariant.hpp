@@ -10,7 +10,8 @@ class RPZQVariant {
     public:
         enum class Roles {
             AtomId = 1006,
-            YTVideoMetadataPtr = 1007
+            YTVideoMetadataPtr = 1007,
+            GridAlignable = 1100
         };
 
         static YoutubeVideoMetadata* ytVideoMetadata(QListWidgetItem* item) {
@@ -25,6 +26,13 @@ class RPZQVariant {
         }
         static void setAtomId(QGraphicsItem* item, const RPZAtom::Id &id) {
             item->setData((int)RPZQVariant::Roles::AtomId, id);
+        }
+
+        static bool isAlignableOnGrid(const QGraphicsItem* item) {
+            return item->data((int)RPZQVariant::Roles::GridAlignable).toBool();
+        }
+        static void setIsAlignableOnGrid(QGraphicsItem* item, bool isAlignable) {
+            item->setData((int)RPZQVariant::Roles::GridAlignable, isAlignable);
         }
 
 };

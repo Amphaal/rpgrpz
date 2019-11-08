@@ -175,5 +175,6 @@ QGraphicsPixmapItem* AtomRenderer::_createUnscalableToken(const RPZAtom &atom) {
 
 MapViewToken* AtomRenderer::_createPlayerToken(const RPZAtom &atom) {
     auto out = new MapViewToken(_mapParams, atom.defaultPlayerColor());
+    RPZQVariant::setIsAlignableOnGrid(out, true);
     return out;
 }

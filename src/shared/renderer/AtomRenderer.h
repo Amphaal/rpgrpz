@@ -9,6 +9,8 @@
 #include <QApplication>
 #include <QFileInfo>
 
+#include "src/helpers/RPZQVariant.hpp"
+
 class AtomRenderer {
     public:
         static void defineMapParameters(const RPZMapParameters &mapParameters);
