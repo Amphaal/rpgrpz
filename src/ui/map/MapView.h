@@ -109,7 +109,6 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         //ghost
             QGraphicsItem* _displayableGhostItem();
             void _mightCenterGhostWithCursor();
-            void _alignPointToGrid(QPointF &point);
 
         //registered points
             bool _isMousePressed = false;

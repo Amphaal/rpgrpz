@@ -88,6 +88,30 @@ class RPZMapParameters : public QVariantHash {
             return meters;
         }
 
+        
+        void alignPointToGrid(QPointF &point) {
+                        
+                auto q = this->tileWidthInPoints() / 2;
+
+                auto qx = point.x() / q;
+                auto qy = point.y() / q;
+
+                auto qxR = qx >= 0 ? qFloor(qx) : qCeil(qx);
+                auto qyR = qy >= 0 ? qFloor(qy) : qCeil(qy);
+
+                if(!(qxR % 2)) {
+                    if(qx >= 0) qxR++;
+                    else qxR--;
+                }
+                if(!(qyR % 2)) {
+                    if(qy >= 0) qyR++;
+                    else qyR--;
+                }
+
+                point = QPointF(qxR * q, qyR * q);
+
+        }
+
         const RPZMapParameters::MovementSystem movementSystem() const {
             return (RPZMapParameters::MovementSystem)this->_getParam(RPZMapParameters::Values::MovementSystem).toInt();
         }

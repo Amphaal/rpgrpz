@@ -771,35 +771,12 @@ void MapView::_mightCenterGhostWithCursor() {
 
         //if grid movement and alignable, stick to grid
         if(this->_currentMapParameters.movementSystem() == RPZMapParameters::MovementSystem::Grid && RPZQVariant::isAlignableOnGrid(ghost)) {
-            this->_alignPointToGrid(cursorPosInScene);
+            this->_currentMapParameters.alignPointToGrid(cursorPosInScene);
         }
         
         ghost->setPos(cursorPosInScene);
 
     }
-
-}
-
-void MapView::_alignPointToGrid(QPointF &point) {
-                
-        auto q = this->_currentMapParameters.tileWidthInPoints() / 2;
-
-        auto qx = point.x() / q;
-        auto qy = point.y() / q;
-
-        auto qxR = qx >= 0 ? qFloor(qx) : qCeil(qx);
-        auto qyR = qy >= 0 ? qFloor(qy) : qCeil(qy);
-
-        if(!(qxR % 2)) {
-            if(qx >= 0) qxR++;
-            else qxR--;
-        }
-        if(!(qyR % 2)) {
-            if(qy >= 0) qyR++;
-            else qyR--;
-        }
-
-        point = QPointF(qxR * q, qyR * q);
 
 }
 
