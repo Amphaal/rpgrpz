@@ -21,24 +21,24 @@ class RPZMapParameters : public QVariantHash {
         };
 
         static inline const QHash<RPZMapParameters::MovementSystem, QString> MSToStr = {
-            { RPZMapParameters::MovementSystem::Linear, QT_TRANSLATE_NOOP("QObject", "Linear") },
-            { RPZMapParameters::MovementSystem::Grid, QT_TRANSLATE_NOOP("QObject", "Grid") }
+            { RPZMapParameters::MovementSystem::Grid, QT_TRANSLATE_NOOP("QObject", "Grid") },
+            { RPZMapParameters::MovementSystem::Linear, QT_TRANSLATE_NOOP("QObject", "Linear") }
         };
 
         static inline const QHash<RPZMapParameters::MovementSystem, QString> MSToIcon = {
-            { RPZMapParameters::MovementSystem::Linear, QStringLiteral(u":/icons/app/tools/ovale.png") },
-            { RPZMapParameters::MovementSystem::Grid, QStringLiteral(u":/icons/app/tools/grid.png") }
+            { RPZMapParameters::MovementSystem::Grid, QStringLiteral(u":/icons/app/tools/grid.png") },
+            { RPZMapParameters::MovementSystem::Linear, QStringLiteral(u":/icons/app/tools/ovale.png") }
         };
 
         static inline const QHash<RPZMapParameters::MovementSystem, QString> MSToDescr = {
-            { RPZMapParameters::MovementSystem::Linear, QT_TRANSLATE_NOOP("QObject", "Players can move freely") },
-            { RPZMapParameters::MovementSystem::Grid, QT_TRANSLATE_NOOP("QObject", "Players can only move from tile to tile") }
+            { RPZMapParameters::MovementSystem::Grid, QT_TRANSLATE_NOOP("QObject", "Players can only move from tile to tile") },
+            { RPZMapParameters::MovementSystem::Linear, QT_TRANSLATE_NOOP("QObject", "Players can move freely") }
         };
 
         static inline QHash<RPZMapParameters::Values, double> defaultValues = {
             { RPZMapParameters::Values::MapWidth, 36000 },
-            { RPZMapParameters::Values::MinimumZoomScale, 0.1 },
-            { RPZMapParameters::Values::MaximumZoomScale, 100 },
+            { RPZMapParameters::Values::MinimumZoomScale, 0.05 },
+            { RPZMapParameters::Values::MaximumZoomScale, 5 },
             { RPZMapParameters::Values::TileToIngameMeters, 1.5 },
             { RPZMapParameters::Values::TileToScreenCentimeters, 1.3 },
             { RPZMapParameters::Values::MovementSystem, 0 }

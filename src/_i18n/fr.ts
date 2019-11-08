@@ -780,52 +780,6 @@
     </message>
 </context>
 <context>
-    <name>MapLayoutManager</name>
-    <message>
-        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="9"/>
-        <source>Map parameters</source>
-        <translation>Paramètres de la carte</translation>
-    </message>
-</context>
-<context>
-    <name>MapParametersForm</name>
-    <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="57"/>
-        <source>Edit map parameters</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="67"/>
-        <source>Map size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="19"/>
-        <source>Save</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="66"/>
-        <source>Movement system</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="68"/>
-        <source>Grid tile to ingame meters</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="69"/>
-        <source>Grid tile to screen centimeters</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="70"/>
-        <source>Minimum / Maximum camera scaling ratio</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>NPCAttitudeEditor</name>
     <message>
         <location filename="../ui/atomEditor/editors/specific/NPCAttitudeEditor.hpp" line="16"/>
@@ -1109,7 +1063,7 @@
         <translation>Une erreur est survenue : </translation>
     </message>
     <message>
-        <location filename="../ui/map/modules/MV_HUDLayout.hpp" line="276"/>
+        <location filename="../ui/map/modules/MV_HUDLayout.hpp" line="278"/>
         <source>Too far to display grid !</source>
         <translation>Trop éloigné pour afficher la grille !</translation>
     </message>
@@ -1209,24 +1163,64 @@
         <translation>[Jeton de joueur vierge]</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZMapParameters.hpp" line="24"/>
-        <source>Linear</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../shared/models/RPZMapParameters.hpp" line="25"/>
-        <source>Grid</source>
-        <translation type="unfinished"></translation>
+        <source>Linear</source>
+        <translation>Linéaire</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZMapParameters.hpp" line="34"/>
-        <source>Players can move freely</source>
-        <translation type="unfinished"></translation>
+        <location filename="../shared/models/RPZMapParameters.hpp" line="24"/>
+        <source>Grid</source>
+        <translation>Grille</translation>
     </message>
     <message>
         <location filename="../shared/models/RPZMapParameters.hpp" line="35"/>
+        <source>Players can move freely</source>
+        <translation>Les joueurs peuvent se déplacer librement</translation>
+    </message>
+    <message>
+        <location filename="../shared/models/RPZMapParameters.hpp" line="34"/>
         <source>Players can only move from tile to tile</source>
-        <translation type="unfinished"></translation>
+        <translation>Les joueurs peuvent uniquement se déplacer de tuile en tuile</translation>
+    </message>
+    <message>
+        <location filename="../ui/map/MapParametersForm.hpp" line="25"/>
+        <source>Save and reload map</source>
+        <translation>Sauvegarder et recharger la carte</translation>
+    </message>
+    <message>
+        <location filename="../ui/map/MapParametersForm.hpp" line="36"/>
+        <source>Edit map parameters</source>
+        <translation>Modifier les paramètres de la carte</translation>
+    </message>
+    <message>
+        <location filename="../ui/map/MapParametersForm.hpp" line="45"/>
+        <source>Movement system</source>
+        <translation>Système de mouvement</translation>
+    </message>
+    <message>
+        <location filename="../ui/map/MapParametersForm.hpp" line="46"/>
+        <source>Map size</source>
+        <translation>Taille de la carte</translation>
+    </message>
+    <message>
+        <location filename="../ui/map/MapParametersForm.hpp" line="47"/>
+        <source>Grid tile to ingame meters</source>
+        <translation>Tuile de grille en mètres (en jeu)</translation>
+    </message>
+    <message>
+        <location filename="../ui/map/MapParametersForm.hpp" line="48"/>
+        <source>Grid tile to screen centimeters</source>
+        <translation>Tuile de grille en centimètres (écran)</translation>
+    </message>
+    <message>
+        <location filename="../ui/map/MapParametersForm.hpp" line="49"/>
+        <source>Minimum / Maximum camera scaling ratio</source>
+        <translation>Niveau de zoom Minimum / Maximum</translation>
+    </message>
+    <message>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="9"/>
+        <source>Map parameters</source>
+        <translation>Paramètres de la carte</translation>
     </message>
 </context>
 <context>

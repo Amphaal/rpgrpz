@@ -15,16 +15,6 @@ const MapDatabase& AtomsStorage::map() const {
     return this->_map;
 }
 
-const RPZMapParameters AtomsStorage::mapParameters() const {
-    QMutexLocker l(&_m_handlingLock);
-    return this->_map.mapParams();
-}
-
-void AtomsStorage::updateMapParameters(const RPZMapParameters &newParams) {
-    QMutexLocker l(&_m_handlingLock);
-    this->_map.setMapParams(newParams);
-}
-
 void AtomsStorage::_replaceMap(const MapDatabase &map) {
     QMutexLocker l(&_m_handlingLock);
     this->_map = map;
@@ -367,7 +357,12 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
         this->_redoHistory.clear();
 
         this->_map.clear();
-        this->_map.setMapParams(mPayload->mapParameters());
+        auto mParams = mPayload->mapParameters();
+        this->_map.setMapParams(mParams);
+        
+        lock.unlock();
+            emit mapParametersChanged(mParams);
+        lock.relock();
 
     }
 

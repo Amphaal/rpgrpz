@@ -19,4 +19,9 @@ class MapLayoutManager : public QWidget {
         MapLayoutTree* _tree = nullptr;
         LayerSelector* _layerSelector = nullptr;
         QPushButton* _mapParamBtn = nullptr;
+        AtomsStorage* _mapMaster = nullptr;
+
+        RPZMapParameters _currentMapParameters;
+
+        void _handleMapParametersEdition();
 };

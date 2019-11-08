@@ -22,7 +22,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem {
     Q_INTERFACES(QGraphicsItem)
     
     public:
-        MapViewWalkingHelper(AtomsStorage* reference, QGraphicsItem* toWalk, QGraphicsView* view) : _view(view), _toWalk(toWalk) {
+        MapViewWalkingHelper(const RPZMapParameters &params, QGraphicsItem* toWalk, QGraphicsView* view) : _view(view), _toWalk(toWalk) {
             
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
@@ -30,7 +30,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem {
             this->setPos(toWalk->pos());
             this->setZValue(toWalk->zValue() - 1);
 
-            this->_mapParams = reference->mapParameters();
+            this->_mapParams = params;
 
         }
 

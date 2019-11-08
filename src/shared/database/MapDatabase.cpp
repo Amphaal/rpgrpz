@@ -181,6 +181,12 @@ QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> MapDatabase::_getUpdat
         }
     );
 
+    //to v8
+    out.insert(
+        8,
+        [&](QJsonObject &doc) {}
+    );
+
     return out;
 
 }

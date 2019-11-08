@@ -92,6 +92,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         void _onIdentityReceived(const RPZUser &self);
 
     private:
+        RPZMapParameters _currentMapParameters;
         DrawingAssist* _drawingAssist = nullptr;
         MapHint* _hints = nullptr;
         AtomsContextualMenuHandler* _menuHandler = nullptr;

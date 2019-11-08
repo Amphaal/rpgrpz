@@ -80,6 +80,13 @@ void MapView::_handleHintsSignalsAndSlots() {
         this, QOverload<const QList<QGraphicsItem*>&, const RPZAtom::Updates&>::of(&MapView::_onUIUpdateRequest)
     );
 
+    QObject::connect(
+        this->_hints, &AtomsStorage::mapParametersChanged,
+        [=](const RPZMapParameters &mParams) {
+            this->_currentMapParameters = mParams;
+        }
+    );
+
     //call debouncer on selection
     QObject::connect(
         this->scene(), &QGraphicsScene::selectionChanged,
@@ -138,7 +145,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
 
         //clear and change rect
         this->scene()->clear();
-        this->scene()->setSceneRect(this->_hints->mapParameters().sceneRect());
+        this->scene()->setSceneRect(this->_currentMapParameters.sceneRect());
 
         //setup loader
         this->setupHeavyLoadPlaceholder(toAlter.count());
@@ -228,7 +235,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
             this->_clearWalkingHelper();
 
             this->_toWalk = toAlter.first();
-            this->_walkingHelper = new MapViewWalkingHelper(this->_hints, this->_toWalk, this);
+            this->_walkingHelper = new MapViewWalkingHelper(this->_currentMapParameters, this->_toWalk, this);
             this->scene()->addItem(this->_walkingHelper);
             this->_changeTool(MapTool::Walking);
             
@@ -249,7 +256,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
 
 void MapView::drawForeground(QPainter *painter, const QRectF &rect) {
     this->mayUpdateHeavyLoadPlaceholder(painter);
-    this->mayUpdateHUD(painter, rect, this->_hints->mapParameters());
+    this->mayUpdateHUD(painter, rect, this->_currentMapParameters);
 }
 
 void MapView::drawBackground(QPainter *painter, const QRectF &rect) {
@@ -537,7 +544,7 @@ void MapView::wheelEvent(QWheelEvent *event) {
     //make sure no button is pressed
     if(this->_isMousePressed) return;
     
-    this->animateScroll(event);
+    this->animateScroll(event, this->_currentMapParameters);
 
 };
 

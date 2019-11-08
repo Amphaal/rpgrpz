@@ -132,7 +132,7 @@ class MV_Manipulation {
             
         }
 
-        void animateScroll(QWheelEvent *event) {
+        void animateScroll(QWheelEvent *event, const RPZMapParameters &mapParams) {
             
             //cap acceleration to 5% per tick
             auto delta = event->delta();
@@ -145,7 +145,20 @@ class MV_Manipulation {
                 modifier, 
                 [&](qreal base, qreal prc) {
                     
+                    //if factor is 1, e.g. no move, skip
                     auto factor = 1.0 + (prc * base);
+                    if(factor == 1) return;
+
+                    //project scaling
+                    auto transform = this->_view->transform();
+                    transform.scale(factor, factor);
+                    auto projectedScale = transform.m11();
+
+                    //if not between limits, skip
+                    if(projectedScale < mapParams.minimumZoomScale()) return;
+                    if(projectedScale > mapParams.maximumZoomScale()) return;
+
+                    //scale
                     this->_view->scale(factor, factor);
 
                     this->onAnimationManipulationTickDone();

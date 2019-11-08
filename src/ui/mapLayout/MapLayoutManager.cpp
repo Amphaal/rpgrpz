@@ -1,17 +1,21 @@
 #include "MapLayoutManager.h"
 
-MapLayoutManager::MapLayoutManager(QGraphicsView* viewToMimic, AtomsStorage* mapMaster, QWidget *parent) : QWidget(parent) {
+MapLayoutManager::MapLayoutManager(QGraphicsView* viewToMimic, AtomsStorage* mapMaster, QWidget *parent) : QWidget(parent), _mapMaster(mapMaster) {
 
     this->_tree = new MapLayoutTree(mapMaster, this);
     this->_layerSelector = new LayerSelector(this);
     
     this->_mapParamBtn = new QPushButton(QIcon(QStringLiteral(u":/icons/app/tools/cog.png")), "");
-    this->_mapParamBtn->setToolTip(tr("Map parameters"));
+    this->_mapParamBtn->setToolTip(QObject::tr("Map parameters"));
     QObject::connect(
         this->_mapParamBtn, &QPushButton::pressed,
-        [=]() {
-            MapParametersForm form(mapMaster, parent);
-            form.exec();
+        this, &MapLayoutManager::_handleMapParametersEdition
+    );
+
+    QObject::connect(
+        mapMaster, &AtomsStorage::mapParametersChanged,
+        [=](const RPZMapParameters &mParams) {
+            this->_currentMapParameters = mParams;
         }
     );
     
@@ -38,4 +42,10 @@ MapLayoutTree* MapLayoutManager::tree() {
 
 LayerSelector* MapLayoutManager::layerSelector(){
     return this->_layerSelector;
+}
+
+void MapLayoutManager::_handleMapParametersEdition() {
+    MapParametersForm form(this->_currentMapParameters, this->parentWidget());
+    if(!form.exec()) return;
+    //TODO commit
 }

@@ -19,12 +19,14 @@ class MV_HUDLayout {
             this->_heavyLoadExpectedCount = -1;
             this->_heavyLoadCurrentCount = -1;
             this->_heavyLoadColor = QColor();
+            this->_view->update();
         }
 
         void displayHeavyLoadPlaceholder() {
             this->_heavyLoadColor = RandomColor::getRandomColor();
             this->_heavyLoadExpectedCount = 0;
             this->_heavyLoadCurrentCount = 0;
+            this->_view->update();
         }
 
         void mayUpdateHeavyLoadPlaceholder(QPainter* painter) {

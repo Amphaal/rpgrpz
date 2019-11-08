@@ -56,8 +56,8 @@ class AtomsStorage : public AlterationAcknoledger {
 
         const QString snapshotSave(const QString &folderToSaveTo); //safe
 
-        const RPZMapParameters mapParameters() const; //safe
-        void updateMapParameters(const RPZMapParameters &newParams); //safe
+    signals:
+        void mapParametersChanged(const RPZMapParameters &mParams);
 
     public slots:    
         void redo();
