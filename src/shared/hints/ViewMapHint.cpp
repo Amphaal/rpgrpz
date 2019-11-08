@@ -358,6 +358,9 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
         //clear cache of missing qGraphicsItem
         this->_missingAssetHashesFromDb.clear();
 
+        //parameterize atom renderer
+        AtomRenderer::defineMapParameters(this->map().mapParams());
+
         //delete ghost
         QMutexLocker l(&this->_m_ghostItem);
         this->_ghostItem = nullptr;

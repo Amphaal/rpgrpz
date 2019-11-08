@@ -790,12 +790,12 @@
 <context>
     <name>MapParametersForm</name>
     <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="56"/>
+        <location filename="../ui/map/MapParametersForm.hpp" line="57"/>
         <source>Edit map parameters</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="66"/>
+        <location filename="../ui/map/MapParametersForm.hpp" line="67"/>
         <source>Map size</source>
         <translation type="unfinished"></translation>
     </message>
@@ -805,22 +805,22 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="65"/>
+        <location filename="../ui/map/MapParametersForm.hpp" line="66"/>
         <source>Movement system</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="67"/>
+        <location filename="../ui/map/MapParametersForm.hpp" line="68"/>
         <source>Grid tile to ingame meters</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="68"/>
+        <location filename="../ui/map/MapParametersForm.hpp" line="69"/>
         <source>Grid tile to screen centimeters</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="69"/>
+        <location filename="../ui/map/MapParametersForm.hpp" line="70"/>
         <source>Minimum / Maximum camera scaling ratio</source>
         <translation type="unfinished"></translation>
     </message>

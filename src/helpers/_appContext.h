@@ -38,7 +38,7 @@ class AppContext {
         
         static void _makeSureDirPathExists(const QString &path);
 
-        static inline QSizeF _ppcm;
+        static inline qreal _ppcm;
 
     public:    
         static AppSettings* settings();
@@ -56,7 +56,7 @@ class AppContext {
         static void configureApp(QCoreApplication &app);
 
         static void definePPcm(QPaintDevice* device);
-        static QSizeF pointPerCentimeters();
+        static qreal pointPerCentimeters();
 
         void static initRandomContext();
         void static initCustomContext(const QString &customContextSuffix);

@@ -1,5 +1,9 @@
 #include "AtomRenderer.h"
 
+void AtomRenderer::defineMapParameters(const RPZMapParameters &mapParameters) {
+    _mapParams = mapParameters;
+}
+
 QGraphicsItem* AtomRenderer::createGraphicsItem(const RPZAtom &atom, const RPZAsset &asset, bool isTemporary) {
     
     QGraphicsItem* out;
@@ -170,6 +174,6 @@ QGraphicsPixmapItem* AtomRenderer::_createUnscalableToken(const RPZAtom &atom) {
 }
 
 MapViewToken* AtomRenderer::_createPlayerToken(const RPZAtom &atom) {
-    auto out = new MapViewToken(AppContext::pointPerCentimeters(), atom.defaultPlayerColor());
+    auto out = new MapViewToken(_mapParams, atom.defaultPlayerColor());
     return out;
 }

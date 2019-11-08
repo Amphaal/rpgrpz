@@ -44,6 +44,7 @@ class MapParametersForm : public QDialog {
             }
 
             this->_mapSizeSpin = new QSpinBox;
+            this->_mapSizeSpin->setSuffix("p");
 
             this->_gridTileToIngameMetersSpin = new QDoubleSpinBox;
             this->_gridTileToIngameMetersSpin->setSuffix(" m");

@@ -96,7 +96,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         MapHint* _hints = nullptr;
         AtomsContextualMenuHandler* _menuHandler = nullptr;
         AtomActionsHandler* _atomActionsHandler = nullptr;
-        
+
         //helpers
         void _handleHintsSignalsAndSlots();
         void _updateItemValue(QGraphicsItem* item, const RPZAtom::Updates &updates);

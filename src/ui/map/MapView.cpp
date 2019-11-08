@@ -2,15 +2,9 @@
 
 MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this), MV_HUDLayout(this) {
 
-    this->_walkingCursor = QCursor(QStringLiteral(u":/icons/app/tools/walking.png"));
+    this->setScene(new QGraphicsScene); //dummy scene
 
-    //default
-    auto sceneRect = QRectF(
-        { -AppContext::DEFAULT_SCENE_SIZE / 2, -AppContext::DEFAULT_SCENE_SIZE / 2 }, 
-        QSize(AppContext::DEFAULT_SCENE_SIZE, AppContext::DEFAULT_SCENE_SIZE)
-    );
-    auto scene = new QGraphicsScene(sceneRect);
-    this->setScene(scene);
+    this->_walkingCursor = QCursor(QStringLiteral(u":/icons/app/tools/walking.png"));
 
     //init
     this->_hints = new MapHint;
@@ -135,14 +129,18 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
     if(type == Payload::Alteration::Selected) this->scene()->clearSelection();
     if(type == Payload::Alteration::Reset) {
         
+        //reset tool
         this->_resetTool();
 
         //before clearing whole scene
         this->_drawingAssist->clearDrawing(); 
         MapViewAnimator::clearAnimations();
 
+        //clear and change rect
         this->scene()->clear();
+        this->scene()->setSceneRect(this->_hints->mapParameters().sceneRect());
 
+        //setup loader
         this->setupHeavyLoadPlaceholder(toAlter.count());
 
     }
@@ -230,7 +228,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
             this->_clearWalkingHelper();
 
             this->_toWalk = toAlter.first();
-            this->_walkingHelper = new MapViewWalkingHelper(this->_toWalk, this);
+            this->_walkingHelper = new MapViewWalkingHelper(this->_hints, this->_toWalk, this);
             this->scene()->addItem(this->_walkingHelper);
             this->_changeTool(MapTool::Walking);
             
@@ -251,7 +249,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
 
 void MapView::drawForeground(QPainter *painter, const QRectF &rect) {
     this->mayUpdateHeavyLoadPlaceholder(painter);
-    this->mayUpdateHUD(painter, rect);
+    this->mayUpdateHUD(painter, rect, this->_hints->mapParameters());
 }
 
 void MapView::drawBackground(QPainter *painter, const QRectF &rect) {

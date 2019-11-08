@@ -361,10 +361,14 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
     this->_registerPayloadForHistory(payload);
 
     //on reset
-    if(pType == Payload::Alteration::Reset) {
-        this->_map.clear();
+    if(auto mPayload = dynamic_cast<const ResetPayload*>(&payload)) {
+        
         this->_undoHistory.clear();
         this->_redoHistory.clear();
+
+        this->_map.clear();
+        this->_map.setMapParams(mPayload->mapParameters());
+
     }
 
     //reset/insert types

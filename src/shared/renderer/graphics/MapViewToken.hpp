@@ -10,6 +10,8 @@
 #include <QWidget>
 #include <QStyleOptionGraphicsItem>
 
+#include "src/shared/models/RPZMapParameters.hpp"
+
 class MapViewToken : public QObject, public QGraphicsItem {
     
     Q_OBJECT
@@ -18,10 +20,13 @@ class MapViewToken : public QObject, public QGraphicsItem {
     Q_INTERFACES(QGraphicsItem)
 
     public:
-        MapViewToken(const QSizeF &size, const QColor &color) {          
+        MapViewToken(const RPZMapParameters &mapParameters, const QColor &color) {          
             
-            auto startPosComp = QPointF(-size.width() / 2, -size.height() / 2);
-            this->_subRect = QRectF(startPosComp, size);
+            auto tileSize = mapParameters.tileWidthInPoints();
+            auto tokenSize = QSizeF(tileSize, tileSize);
+
+            auto startPosComp = QPointF(-tokenSize.width() / 2, -tokenSize.height() / 2);
+            this->_subRect = QRectF(startPosComp, tokenSize);
 
             auto prc = this->_subRect.width() * 0.03;
             this->_rect = this->_subRect.marginsRemoved(QMarginsF(prc, prc, prc, prc));

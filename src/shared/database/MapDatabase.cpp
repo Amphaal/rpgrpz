@@ -122,6 +122,7 @@ void MapDatabase::removeAtom(const RPZAtom::Id &toRemove) {
 void MapDatabase::clear() {
     this->_atomsById.clear();
     this->_assetHashes.clear();
+    this->_mapParams.clear();
 }
 
 JSONDatabase::Model MapDatabase::_getDatabaseModel() {

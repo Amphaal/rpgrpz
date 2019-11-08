@@ -37,7 +37,7 @@ class MV_HUDLayout {
             this->_mayUpdateHeavyLoadPlaceholder(&p);
         }
 
-        void mayUpdateHUD(QPainter* painter, const QRectF &rect) {
+        void mayUpdateHUD(QPainter* painter, const QRectF &rect, const RPZMapParameters &mapParams) {
 
             if(this->_heavyLoadExpectedCount > -1) return;
 
@@ -46,14 +46,14 @@ class MV_HUDLayout {
                 auto viewportRect = this->_view->rect();
                 auto currentScale = this->_view->transform().m11();
 
-                this->_mayDrawGridIndic(painter, rect, currentScale, viewportRect);
+                this->_mayDrawGridIndic(painter, rect, currentScale, viewportRect, mapParams);
 
                 //ignore transformations
                 QTransform t;
                 painter->setTransform(t);
 
                 this->_mayDrawZoomIndic(painter, viewportRect, currentScale);
-                this->_mayDrawScaleIndic(painter, viewportRect, currentScale);
+                this->_mayDrawScaleIndic(painter, viewportRect, currentScale, mapParams);
 
             painter->restore();
 
@@ -191,7 +191,7 @@ class MV_HUDLayout {
 
         }
 
-        void _mayDrawScaleIndic(QPainter* painter, const QRect &viewportRect, double currentScale) {
+        void _mayDrawScaleIndic(QPainter* painter, const QRect &viewportRect, double currentScale, const RPZMapParameters &mapParams) {
             
             if(!AppContext::settings()->scaleActive()) return;
 
@@ -200,11 +200,11 @@ class MV_HUDLayout {
                 //disable render hints from view
                 painter->setRenderHints(this->_view->renderHints(), false);
 
-                auto tileWidth = AppContext::pointPerCentimeters().width();
+                auto tileWidth = mapParams.tileWidthInPoints();
                 auto stops = 5;
                 auto rulerSize = (int)(tileWidth * stops);
                 auto elipseSize = rulerSize + 50;
-                auto ratio = AppContext::DEFAULT_TILE_TO_METER_RATIO * (1 / currentScale);
+                auto ratio = mapParams.tileToIngameMeters() * (1 / currentScale);
 
                 //cover
                 painter->setOpacity(.5);
@@ -261,7 +261,7 @@ class MV_HUDLayout {
             painter->restore();
         }
 
-        void _mayDrawGridIndic(QPainter* painter, const QRectF &rect, double currentScale, const QRect &viewportRect) {
+        void _mayDrawGridIndic(QPainter* painter, const QRectF &rect, double currentScale, const QRect &viewportRect, const RPZMapParameters &mapParams) {
             
             if(!AppContext::settings()->gridActive()) return;
             
@@ -316,13 +316,11 @@ class MV_HUDLayout {
                 auto centerX = center.x();
                 auto centerY = center.y();
                 
-                auto stdTileSize = AppContext::pointPerCentimeters();
-                auto tileWidth = stdTileSize.width();
-                auto tileHeight = stdTileSize.height();
+                auto tileWidth = mapParams.tileWidthInPoints();
 
                 auto size = sceneRect.size();
                 auto numberOfLinesX = (int)(size.width() / tileWidth);
-                auto numberOfLinesY = (int)(size.height() / tileHeight);
+                auto numberOfLinesY = (int)(size.height() / tileWidth);
 
                 //origin lines
                 auto horizontalOriginLine = QLineF(centerX, sceneTop, centerX, sceneBottom);
@@ -341,7 +339,7 @@ class MV_HUDLayout {
 
                 //vertical
                 for(int y = 1; y <= numberOfLinesY; y++) {
-                    auto step = y * tileHeight;
+                    auto step = y * tileWidth;
                     auto centerYMore = centerY + step;
                     auto centerYLess = centerY - step;
                     painter->drawLine(QLineF(sceneLeft, centerYMore, sceneRight, centerYMore));

@@ -12,7 +12,7 @@ class RPZMapParameters : public QVariantHash {
         };
 
         enum class Values {
-            MapSize,
+            MapWidth,
             MinimumZoomScale,
             MaximumZoomScale,
             TileToIngameMeters,
@@ -36,7 +36,7 @@ class RPZMapParameters : public QVariantHash {
         };
 
         static inline QHash<RPZMapParameters::Values, double> defaultValues = {
-            { RPZMapParameters::Values::MapSize, 36000 },
+            { RPZMapParameters::Values::MapWidth, 36000 },
             { RPZMapParameters::Values::MinimumZoomScale, 0.1 },
             { RPZMapParameters::Values::MaximumZoomScale, 100 },
             { RPZMapParameters::Values::TileToIngameMeters, 1.5 },
@@ -47,8 +47,19 @@ class RPZMapParameters : public QVariantHash {
         RPZMapParameters() {};
         explicit RPZMapParameters(const QVariantHash &hash) : QVariantHash(hash) {};
 
-        const int mapSize() const {
-            return this->_getParam(RPZMapParameters::Values::MapSize).toInt();
+        const int mapWidthInPoints() const {
+            return this->_getParam(RPZMapParameters::Values::MapWidth).toInt();
+        }
+
+        const QRectF sceneRect() const {
+
+            auto mapWidthInPoints = (double)this->mapWidthInPoints();
+
+            return QRectF(
+                { -mapWidthInPoints / 2, -mapWidthInPoints / 2 }, 
+                QSizeF(mapWidthInPoints, mapWidthInPoints)
+            );
+
         }
 
         const double minimumZoomScale() const {
@@ -59,6 +70,10 @@ class RPZMapParameters : public QVariantHash {
             return this->_getParam(RPZMapParameters::Values::MaximumZoomScale).toDouble();
         }
 
+        const qreal tileWidthInPoints() const {
+            return AppContext::pointPerCentimeters() * this->tileToScreenCentimeters();
+        }
+
         const double tileToIngameMeters() const {
             return this->_getParam(RPZMapParameters::Values::TileToIngameMeters).toDouble();
         };
@@ -67,8 +82,14 @@ class RPZMapParameters : public QVariantHash {
             return this->_getParam(RPZMapParameters::Values::TileToScreenCentimeters).toDouble();
         }
 
+        const double distanceIntoIngameMeters(qreal distanceAsPoints) const {
+            auto distanceAsTiles = distanceAsPoints / this->tileWidthInPoints();
+            auto meters = distanceAsTiles * this->tileToIngameMeters();
+            return meters;
+        }
+
         const RPZMapParameters::MovementSystem movementSystem() const {
-            return (RPZMapParameters::MovementSystem)this->value("msys", defaultValues.value(RPZMapParameters::Values::MovementSystem)).toInt();
+            return (RPZMapParameters::MovementSystem)this->_getParam(RPZMapParameters::Values::MovementSystem).toInt();
         }
 
         void setParameter(const RPZMapParameters::Values &valueType, double val) {
@@ -77,7 +98,7 @@ class RPZMapParameters : public QVariantHash {
     
     private:
         static inline QHash<RPZMapParameters::Values, QString> _valuesKeys = {
-                { RPZMapParameters::Values::MapSize, QStringLiteral(u"size") },
+                { RPZMapParameters::Values::MapWidth, QStringLiteral(u"size") },
                 { RPZMapParameters::Values::MinimumZoomScale, QStringLiteral(u"minZS") },
                 { RPZMapParameters::Values::MaximumZoomScale, QStringLiteral(u"maxZS") },
                 { RPZMapParameters::Values::TileToIngameMeters, QStringLiteral(u"ttim") },

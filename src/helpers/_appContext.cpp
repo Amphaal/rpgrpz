@@ -23,15 +23,12 @@ void AppContext::configureApp(QCoreApplication &app) {
     AppContext::init();
 }
 
-QSizeF AppContext::pointPerCentimeters() {
+qreal AppContext::pointPerCentimeters() {
     return _ppcm;
-    //TODO AppContext::pointPerCentimeters() to add RPZMapParam
 }
 
 void AppContext::definePPcm(QPaintDevice* device) {
-    auto x = (double)device->logicalDpiX() / 2.54;
-    auto y = (double)device->logicalDpiY() / 2.54;
-    _ppcm = QSizeF(x, y);
+    _ppcm = (double)device->logicalDpiX() / 2.54;
 }
 
 void AppContext::installTranslations(QApplication &app) {

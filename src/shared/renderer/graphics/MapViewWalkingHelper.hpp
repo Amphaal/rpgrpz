@@ -89,7 +89,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem {
                 QTextOption aa;
                 aa.setWrapMode(QTextOption::NoWrap);
 
-                auto meters = this->_distancesIntoMeters(line.length());
+                auto meters = this->_mapParams.distanceIntoIngameMeters(line.length());
                 auto text = StringHelper::fromMeters(meters);
                 auto textRect = painter->boundingRect(QRectF(), text, aa);
                 textRect = this->_adjustText(itemCursorPos, viewCursorPos, textRect);
@@ -104,12 +104,6 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem {
         RPZMapParameters _mapParams;
         QGraphicsView* _view = nullptr;
         QGraphicsItem* _toWalk = nullptr;
-
-        qreal _distancesIntoMeters(qreal distance) {
-            auto distanceAsTiles = distance / AppContext::pointPerCentimeters().width();
-            auto meters = distanceAsTiles * this->_mapParams.tileToIngameMeters();
-            return meters;
-        }
 
         QRectF _adjustText(const QPointF &relativeTo, QPointF dest, QRectF toAdjust) {
             
