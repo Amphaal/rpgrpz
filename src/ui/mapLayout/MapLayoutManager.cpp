@@ -45,7 +45,15 @@ LayerSelector* MapLayoutManager::layerSelector(){
 }
 
 void MapLayoutManager::_handleMapParametersEdition() {
+    
     MapParametersForm form(this->_currentMapParameters, this->parentWidget());
     if(!form.exec()) return;
-    //TODO commit
+    
+    //get payload, update params
+    auto payload = this->_mapMaster->generateResetPayload();
+    payload.setMapParams(form.getParametersFromWidgets());
+
+    //recommit
+    AlterationHandler::get()->queueAlteration(Payload::Source::Local_MapLayout, payload);
+
 }

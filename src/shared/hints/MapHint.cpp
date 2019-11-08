@@ -156,8 +156,11 @@ void MapHint::_shouldMakeMapDirty(const AlterationPayload &payload) {
     //if not a network alteration type
     if(!payload.isNetworkRoutable()) return;
 
-    //always not dirty if reset
-    if(payload.type() == Payload::Alteration::Reset) return;
+    //ResetPayload is dirty if local hardset of map parameters 
+    if(auto mPayload = dynamic_cast<const ResetPayload*>(&payload)) {
+        auto mapParamsUpdate = mPayload->isFromMapParametersUpdate();
+        if(!mapParamsUpdate) return;
+    }
 
     this->_setMapDirtiness();
 }

@@ -50,6 +50,20 @@ class MapParametersForm : public QDialog {
             layout->addRow(this->_saveBtn);
             
         }
+
+        const RPZMapParameters getParametersFromWidgets() {
+            
+            RPZMapParameters out;
+
+            out.setParameter(RPZMapParameters::Values::MinimumZoomScale, this->_minimumZoomScaleSpin->value());
+            out.setParameter(RPZMapParameters::Values::MaximumZoomScale, this->_maximumZoomScaleSpin->value());
+            out.setParameter(RPZMapParameters::Values::MapWidth, this->_mapSizeSpin->value());
+            out.setParameter(RPZMapParameters::Values::TileToIngameMeters, this->_gridTileToIngameMetersSpin->value());
+            out.setParameter(RPZMapParameters::Values::TileToScreenCentimeters, this->_gridTileToScreenCentimetersSpin->value());
+            out.setParameter(RPZMapParameters::Values::MovementSystem, this->_movementSystemCombo->currentData().toInt());
+
+            return out;
+        }
     
     private:
         QPushButton* _saveBtn = nullptr;
@@ -129,20 +143,6 @@ class MapParametersForm : public QDialog {
             auto index = this->_movementSystemCombo->findData((int)mapParams.movementSystem());
             this->_movementSystemCombo->setCurrentIndex(index);
 
-        }
-
-        const RPZMapParameters _getParametersFromWidgets() {
-            
-            RPZMapParameters out;
-
-            out.setParameter(RPZMapParameters::Values::MinimumZoomScale, this->_minimumZoomScaleSpin->value());
-            out.setParameter(RPZMapParameters::Values::MaximumZoomScale, this->_maximumZoomScaleSpin->value());
-            out.setParameter(RPZMapParameters::Values::MapWidth, this->_mapSizeSpin->value());
-            out.setParameter(RPZMapParameters::Values::TileToIngameMeters, this->_gridTileToIngameMetersSpin->value());
-            out.setParameter(RPZMapParameters::Values::TileToScreenCentimeters, this->_gridTileToScreenCentimetersSpin->value());
-            out.setParameter(RPZMapParameters::Values::MovementSystem, this->_movementSystemCombo->currentData().toInt());
-
-            return out;
         }
 
 };

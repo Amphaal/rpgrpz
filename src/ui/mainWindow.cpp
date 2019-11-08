@@ -25,7 +25,7 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 
     //load default map
     QMetaObject::invokeMethod(this->_mapView->hints(), "loadDefaultRPZMap");
-
+    
     //start the update check
     this->_updateIntegrator->checkForAppUpdates();
 

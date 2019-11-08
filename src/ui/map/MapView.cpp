@@ -769,6 +769,13 @@ void MapView::_mightCenterGhostWithCursor() {
             cursorPosInScene -= ghostCenter;
         }
 
+        //if grid movement, stick to grid
+        if(this->_currentMapParameters.movementSystem() == RPZMapParameters::MovementSystem::Grid) {
+            auto q = this->_currentMapParameters.tileWidthInPoints() / 2;
+            qDebug() << cursorPosInScene.x() / q << " " << cursorPosInScene.y() / q;
+            //TODO align to grid
+        }
+        
         ghost->setPos(cursorPosInScene);
 
     }

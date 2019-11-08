@@ -55,7 +55,7 @@ class AtomsStorage : public AlterationAcknoledger {
         AtomsStorage::AtomsAreLeft restrictPayload(AtomRelatedPayload &payloadToRestrict);
 
         const QString snapshotSave(const QString &folderToSaveTo); //safe
-
+        
     signals:
         void mapParametersChanged(const RPZMapParameters &mParams);
 

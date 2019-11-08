@@ -19,7 +19,16 @@ class ResetPayload : public AtomsWielderPayload {
         const RPZMapParameters mapParameters() const {
             return RPZMapParameters(this->value("mParams").toHash());
         }
-    
+
+        void setMapParams(const RPZMapParameters &mapParams) {
+            this->insert("fromMPUpdate", true);
+            this->_setMapParams(mapParams);
+        }
+
+        bool isFromMapParametersUpdate() const {
+            return this->value("fromMPUpdate").toBool();
+        }
+
     private:
         void _setMapParams(const RPZMapParameters &mapParams) {
             this->insert("mParams", mapParams);
