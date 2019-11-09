@@ -157,15 +157,16 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem {
             
             switch(this->_mapParams.movementSystem()) {
 
+                case RPZMapParameters::MovementSystem::Grid:
                 case RPZMapParameters::MovementSystem::Linear: {
                     return this->_ellispeBoundingRect();
                 }
                 break;
 
-                case RPZMapParameters::MovementSystem::Grid: {
-                    return this->_gridBoundingRect();
-                }
-                break;
+                // case RPZMapParameters::MovementSystem::Grid: {
+                    // return this->_gridBoundingRect();
+                // }
+                // break;
 
             }
             
@@ -179,17 +180,18 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem {
             auto pp = this->_generatePointPos();
 
             switch(this->_mapParams.movementSystem()) {
-
+                
+                case RPZMapParameters::MovementSystem::Grid:
                 case RPZMapParameters::MovementSystem::Linear: {
                     this->_drawRangeEllipse(painter, option, pp); //draw ellipse
                     this->_drawRangeTextIndicator(painter, option, pp); //print range indicator
                 }
                 break;
 
-                case RPZMapParameters::MovementSystem::Grid: {
-                    //TODO
-                }
-                break;
+                // case RPZMapParameters::MovementSystem::Grid: {
+                //     //TODO
+                // }
+                // break;
 
             }
 
