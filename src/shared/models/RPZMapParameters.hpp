@@ -75,6 +75,12 @@ class RPZMapParameters : public QVariantHash {
             return AppContext::pointPerCentimeters() * this->tileToScreenCentimeters();
         }
 
+        
+        const QSizeF tileSizeInPoints() const {
+            auto width = this->tileWidthInPoints();
+            return QSizeF(width, width);
+        }
+
         const double tileToIngameMeters() const {
             return this->_getParam(RPZMapParameters::Values::TileToIngameMeters).toDouble();
         };
@@ -90,12 +96,32 @@ class RPZMapParameters : public QVariantHash {
         }
 
         
-        void alignPointToGrid(QPointF &point) {
+        void alignPointToGridCenter(QPointF &scenePos) const {
+                        
+                auto q = this->tileWidthInPoints();
+
+                auto x = scenePos.x();
+                auto y = scenePos.y();
+
+                auto qx = x / q;
+                auto qy = y / q;
+
+                auto qxR = qFloor(qx);
+                auto qyR = qFloor(qy);
+
+                scenePos = QPointF(qxR * q, qyR * q);
+
+        }
+
+        void alignPointToGrid(QPointF &scenePos) const {
                         
                 auto q = this->tileWidthInPoints() / 2;
 
-                auto qx = point.x() / q;
-                auto qy = point.y() / q;
+                auto x = scenePos.x();
+                auto y = scenePos.y();
+
+                auto qx = x / q;
+                auto qy = y / q;
 
                 auto qxR = qx >= 0 ? qFloor(qx) : qCeil(qx);
                 auto qyR = qy >= 0 ? qFloor(qy) : qCeil(qy);
@@ -109,7 +135,7 @@ class RPZMapParameters : public QVariantHash {
                     else qyR--;
                 }
 
-                point = QPointF(qxR * q, qyR * q);
+                scenePos = QPointF(qxR * q, qyR * q);
 
         }
 

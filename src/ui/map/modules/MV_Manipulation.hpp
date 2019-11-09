@@ -153,12 +153,15 @@ class MV_Manipulation {
 
                     //project scaling
                     auto transform = this->_view->transform();
+                    auto currentScale = transform.m11();
                     transform.scale(factor, factor);
                     auto projectedScale = transform.m11();
 
                     //if not between limits, skip
-                    if(projectedScale < mapParams.minimumZoomScale()) return;
-                    if(projectedScale > mapParams.maximumZoomScale()) return;
+                    auto minimum = mapParams.minimumZoomScale();
+                    auto maximum = mapParams.maximumZoomScale();
+                    if(projectedScale < minimum) factor = minimum / currentScale;
+                    else if(projectedScale > maximum) factor = maximum / currentScale;
 
                     //scale
                     this->_view->scale(factor, factor);
