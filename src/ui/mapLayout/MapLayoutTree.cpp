@@ -5,8 +5,10 @@ MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) : QTreeV
     this->_selectionDebouncer.setInterval(200);
     this->_selectionDebouncer.setSingleShot(true);
 
-    this->_model = new MapLayoutModel;
-    this->setModel(this->_model);
+    this->_preventSelectionNotification = true;
+        this->_model = new MapLayoutModel;
+        this->setModel(this->_model);
+    this->_preventSelectionNotification = false;
 
     this->_menuHandler = new AtomsContextualMenuHandler(mapMaster, this);
     this->_atomActionsHandler = new AtomActionsHandler(mapMaster, this, this);
@@ -84,8 +86,8 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
         &this->_selectionDebouncer, &QTimer::timeout,
         [=]() {
             this->_model->propagateSelection(
-                this->selectedIndexes())
-            ;
+                this->selectedIndexes()
+            );
         }
     );
 
@@ -93,7 +95,7 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
 
 void MapLayoutTree::_handleAlterationRequest(const AlterationPayload &payload) {
 
-    if(payload.source() == Payload::Source::Local_MapLayout) return;
+    this->_preventSelectionNotification = true;
 
     auto pl = Payloads::autoCast(payload); 
     auto type = pl->type();
@@ -107,8 +109,6 @@ void MapLayoutTree::_handleAlterationRequest(const AlterationPayload &payload) {
         case Payload::Alteration::Selected: {
 
             auto mPayload = dynamic_cast<const SelectedPayload*>(pl.data());
-
-            this->_bufSel = true; //tell that next selectionChanged should not trigger reSelection
 
             QItemSelection newSelection;
             for(auto &id : mPayload->targetRPZAtomIds()) {
@@ -140,20 +140,14 @@ void MapLayoutTree::_handleAlterationRequest(const AlterationPayload &payload) {
 
     }
 
+    this->_preventSelectionNotification = false;
+
 }
 
 void MapLayoutTree::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) {
-    
     QTreeView::selectionChanged(selected, deselected);
-
-    if(!this->_bufSel) {
-        this->_selectionDebouncer.start();
-    }
-    
-    else {
-        this->_bufSel = false;
-    }
-
+    if(this->_preventSelectionNotification) return;
+    this->_selectionDebouncer.start();
 }
 
 void MapLayoutTree::contextMenuEvent(QContextMenuEvent *event) {

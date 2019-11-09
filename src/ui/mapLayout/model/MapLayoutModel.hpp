@@ -46,7 +46,7 @@ class MapLayoutModel : public MapLayoutModelBase {
                 
                 //RESET
                 if(type == Payload::Alteration::Reset) {
-                    
+
                     this->beginResetModel();
                         this->_clearAll();
                     this->endResetModel();
@@ -132,6 +132,8 @@ class MapLayoutModel : public MapLayoutModelBase {
             QSet<MapLayoutAtom*> in;
             QSet<MapLayoutAtom*> out;
         };
+
+        QSet<RPZAtom::Id> _bufferedSelectedAtomsIds;
 
         void _handleLayerMoves(const LayerMoves &moves) {
             

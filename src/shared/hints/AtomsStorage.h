@@ -46,7 +46,6 @@ class AtomsStorage : public AlterationAcknoledger {
 
         AtomsStorage(const Payload::Source &boundSource);
         
-        QList<RPZAtom::Id> bufferedSelectedAtomIds() const; //safe
         const AtomsSelectionDescriptor getAtomSelectionDescriptor(const QList<RPZAtom::Id> &selectedIds) const; //safe
         
         PossibleActionsOnAtomList getPossibleActions(const QList<RPZAtom::Id> &ids);

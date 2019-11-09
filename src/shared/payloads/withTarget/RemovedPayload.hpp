@@ -5,8 +5,8 @@
 class RemovedPayload : public MultipleAtomTargetsPayload {
     public:
         explicit RemovedPayload(const QVariantHash &hash) : MultipleAtomTargetsPayload(hash) {}
-        RemovedPayload(const QList<RPZAtom::Id> &RPZAtomIdsToRemove) : MultipleAtomTargetsPayload(Payload::Alteration::Removed, RPZAtomIdsToRemove) {
-            Q_ASSERT(RPZAtomIdsToRemove.count());
-            Q_ASSERT(RPZAtomIdsToRemove.first());
+        RemovedPayload(const QList<RPZAtom::Id> &atomIdsToRemove) : MultipleAtomTargetsPayload(Payload::Alteration::Removed, atomIdsToRemove) {
+            Q_ASSERT(atomIdsToRemove.count() != 0);
+            Q_ASSERT(atomIdsToRemove.first() != 0);
         }
 };

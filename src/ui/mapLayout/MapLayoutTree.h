@@ -39,7 +39,7 @@ class MapLayoutTree : public QTreeView, public AtomSelector {
         void _handleAlterationRequest(const AlterationPayload &payload);
 
     private:
-        bool _bufSel = false;
+        bool _preventSelectionNotification = false;
         QTimer _selectionDebouncer;
 
         AtomsContextualMenuHandler* _menuHandler = nullptr;

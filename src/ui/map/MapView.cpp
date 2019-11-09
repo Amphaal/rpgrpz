@@ -412,7 +412,6 @@ void MapView::mousePressEvent(QMouseEvent *event) {
                 case MapTool::Walking: {
                     auto toWalkTo = this->_walkingHelper->destScenePos();
                     this->_hints->notifyWalk(this->_toWalk, toWalkTo);
-                    // MapViewAnimator::animateMove(this->_walkingHelper, toWalkTo);
                 }
                 break;
 
@@ -431,7 +430,8 @@ void MapView::mousePressEvent(QMouseEvent *event) {
 
                         default: {
                             this->_hints->integrateGraphicsItemAsPayload(
-                                this->_hints->ghostItem()
+                                this->_hints->ghostItem(),
+                                this->_currentMapParameters.movementSystem() == RPZMapParameters::MovementSystem::Grid
                             );
                         }
                         break;
@@ -772,7 +772,7 @@ void MapView::_mightCenterGhostWithCursor() {
         }
 
         //if grid movement and alignable, stick to grid
-        if(this->_currentMapParameters.movementSystem() == RPZMapParameters::MovementSystem::Grid && RPZQVariant::isAlignableOnGrid(ghost)) {
+        if(this->_currentMapParameters.movementSystem() == RPZMapParameters::MovementSystem::Grid && RPZQVariant::isGridBound(ghost)) {
             this->_currentMapParameters.alignPointToGrid(cursorPosInScene);
         }
         

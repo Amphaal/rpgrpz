@@ -28,10 +28,10 @@ class RPZQVariant {
             item->setData((int)RPZQVariant::Roles::AtomId, id);
         }
 
-        static bool isAlignableOnGrid(const QGraphicsItem* item) {
+        static bool isGridBound(const QGraphicsItem* item) {
             return item->data((int)RPZQVariant::Roles::GridAlignable).toBool();
         }
-        static void setIsAlignableOnGrid(QGraphicsItem* item, bool isAlignable) {
+        static void setIsGridBound(QGraphicsItem* item, bool isAlignable) {
             item->setData((int)RPZQVariant::Roles::GridAlignable, isAlignable);
         }
 

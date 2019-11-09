@@ -32,7 +32,7 @@ class ViewMapHint : public AtomsStorage {
         ViewMapHint();
 
         //might be called by another thread, safe
-        RPZAtom::Id integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem) const; //safe
+        RPZAtom::Id integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem, bool checkGridColliding = false) const; //safe
         void notifyWalk(QGraphicsItem* toWalk, const QPointF &newPos); //safe
         const RPZAtom templateAtom() const; //safe
         QGraphicsItem* ghostItem() const; //safe
