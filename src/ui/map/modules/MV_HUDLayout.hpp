@@ -172,7 +172,7 @@ class MV_HUDLayout {
 
                 //zoom indic
                 auto templt = QStringLiteral(u"Zoom : %1x");
-                templt = templt.arg(currentScale, 0, 0, 2, 0);
+                templt = templt.arg(currentScale, 0, 0, 3, 0);
 
                 //background
                 painter->setOpacity(.75);

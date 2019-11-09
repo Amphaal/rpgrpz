@@ -147,6 +147,9 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
         this->scene()->clear();
         this->scene()->setSceneRect(this->_currentMapParameters.sceneRect());
 
+        //reset view
+        this->goToDefaultViewState();
+
         //setup loader
         this->setupHeavyLoadPlaceholder(toAlter.count());
 

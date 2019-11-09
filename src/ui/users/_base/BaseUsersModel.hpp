@@ -134,7 +134,8 @@ class BaseUsersModel : public QAbstractListModel, public ConnectivityObserver {
             if(this->_isUserInvalidForInsert(updated)) return;
 
             auto userIndex = this->index(this->_getRow(updated), 0);
-            emit this->dataChanged(userIndex, userIndex);
+            this->_users.insert(updated.id(), updated); //update existing
+            emit dataChanged(userIndex, userIndex);
 
         }
 };

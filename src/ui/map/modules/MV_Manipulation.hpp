@@ -11,6 +11,8 @@
 
 #include "src/ui/map/_base/AnimationTimeLine.hpp"
 
+#include "src/shared/models/RPZMapParameters.hpp"
+
 class MV_Manipulation {
     public:
         enum class MoveDirection { GoUndefined, GoLeft, GoUp, GoRight, GoDown };

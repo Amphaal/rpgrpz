@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QVariantHash>
+#include <QtMath>
 
 #include "src/helpers/_appContext.h"
 
