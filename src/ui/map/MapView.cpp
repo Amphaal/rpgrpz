@@ -235,12 +235,19 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
         
         if(can) {
             
+            //clear previous walker
             this->_clearWalkingHelper();
 
+            //define tool
             this->_toWalk = toAlter.first();
             this->_walkingHelper = new MapViewWalkingHelper(this->_currentMapParameters, this->_toWalk, this);
             this->_changeTool(MapTool::Walking);
             
+        } 
+        
+        //if cant and is using walking tool, unselect it
+        else if(currentTool == MapTool::Walking) {
+            this->_changeTool(MapTool::Default);
         }
 
     }
