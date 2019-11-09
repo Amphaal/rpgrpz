@@ -118,20 +118,22 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem {
                 this->_mapParams.alignPointToGridCenter(alignedToGridItemCursorPos);
                 alignedToGridItemCursorPos = this->mapFromScene(alignedToGridItemCursorPos);
 
+                //draw dest tile
                 auto destTile = QRectF(alignedToGridItemCursorPos, this->_mapParams.tileSizeInPoints());
-                out = destTile.center();
+                auto itemDestPos = destTile.center();
                 painter->drawRect(destTile);
 
-                QLineF line({0,0}, out);
+                //draw line
+                QLineF line({0,0}, itemDestPos);
                 painter->drawLine(line);
 
             painter->restore();
 
-            return this->mapToScene(out);
+            return this->mapToScene(itemDestPos);
 
         }
 
-        void _drawRangeTextIndicator(QPainter *painter, const QStyleOptionGraphicsItem *option, const MapViewWalkingHelper::PointPos &pp) {
+        void _drawLinearRangeTextIndicator(QPainter *painter, const QStyleOptionGraphicsItem *option, const MapViewWalkingHelper::PointPos &pp) {
             
             painter->save();
 
@@ -147,6 +149,34 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem {
 
                 auto meters = this->_mapParams.distanceIntoIngameMeters(line.length());
                 auto text = StringHelper::fromMeters(meters);
+                auto textRect = painter->boundingRect(QRectF(), text, aa);
+                textRect = this->_adjustText(pp.itemCursorPos, pp.viewCursorPos, textRect);
+
+                painter->drawText(textRect, text, aa);
+
+            painter->restore();
+
+        }
+
+        void _drawGridRangeTextIndicator(QPainter *painter, const QStyleOptionGraphicsItem *option, const MapViewWalkingHelper::PointPos &pp) {
+            
+            painter->save();
+
+                painter->setTransform(QTransform());
+
+                QFont font;
+                font.setPointSize(15);
+                painter->setFont(font);
+                
+                QTextOption aa;
+                aa.setWrapMode(QTextOption::NoWrap);
+
+                auto tileWidth = this->_mapParams.tileWidthInPoints();
+                auto scenePos = this->scenePos();
+                auto x = qAbs(qRound((scenePos.x() - this->_destScenePos.x()) / tileWidth));
+                auto y = qAbs(qRound((scenePos.y() - this->_destScenePos.y()) / tileWidth));
+
+                auto text = QStringLiteral(u"%1x%2").arg(x).arg(y);
                 auto textRect = painter->boundingRect(QRectF(), text, aa);
                 textRect = this->_adjustText(pp.itemCursorPos, pp.viewCursorPos, textRect);
 
@@ -232,14 +262,14 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem {
 
                 case RPZMapParameters::MovementSystem::Linear: {
                     this->_drawRangeEllipse(painter, option, pp); //draw ellipse
-                    this->_drawRangeTextIndicator(painter, option, pp); //print range indicator
+                    this->_drawLinearRangeTextIndicator(painter, option, pp); //print range indicator
                     this->_destScenePos = pp.sceneCursorPos;
                 }
                 break;
 
                 case RPZMapParameters::MovementSystem::Grid: {
                     this->_destScenePos = this->_drawRangeGrid(painter, option, pp); //draw grid
-                    //TODO range indicator
+                    this->_drawGridRangeTextIndicator(painter, option, pp); //print range indicator
                 }
                 break;
 

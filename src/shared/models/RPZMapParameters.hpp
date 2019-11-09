@@ -7,6 +7,7 @@
 
 class RPZMapParameters : public QVariantHash {
     public:
+
         enum class MovementSystem {
             Grid,
             Linear
