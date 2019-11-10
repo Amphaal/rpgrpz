@@ -74,7 +74,8 @@ class RPZAtom : public Serializable {
             NPC, 
             Event, 
             Player,
-            Background
+            Background,
+            POI
         };
 
         enum class BrushType {
@@ -105,6 +106,7 @@ class RPZAtom : public Serializable {
             { RPZAtom::Type::Drawing, QStringLiteral(u":/icons/app/tools/pen.png") },
             { RPZAtom::Type::Text, QStringLiteral(u":/icons/app/tools/text.png") },
             { RPZAtom::Type::Player, QStringLiteral(u":/icons/app/connectivity/cloak.png") },
+            { RPZAtom::Type::POI, QStringLiteral(u":/icons/app/manager/POI.png") }
         };
 
         static const inline QHash<RPZAtom::Type, RPZAtom::Parameter> descriptorsByAtomType {
@@ -112,7 +114,8 @@ class RPZAtom : public Serializable {
             { RPZAtom::Type::Event, RPZAtom::Parameter::EventShortDescription },
             { RPZAtom::Type::NPC, RPZAtom::Parameter::NPCShortName },
             { RPZAtom::Type::Object, RPZAtom::Parameter::AssetName },
-            { RPZAtom::Type::Brush, RPZAtom::Parameter::AssetName }
+            { RPZAtom::Type::Brush, RPZAtom::Parameter::AssetName },
+            { RPZAtom::Type::POI, RPZAtom::Parameter::EventShortDescription }
         };
 
         static const inline QHash<RPZAtom::Type, QString> atomTypeDescr {
@@ -123,12 +126,14 @@ class RPZAtom : public Serializable {
             { RPZAtom::Type::Undefined, QT_TRANSLATE_NOOP("QObject", "Atom") },
             { RPZAtom::Type::Event, QT_TRANSLATE_NOOP("QObject", "Event") },
             { RPZAtom::Type::Player, QT_TRANSLATE_NOOP("QObject", "Player") },
+            { RPZAtom::Type::POI, QT_TRANSLATE_NOOP("QObject", "Point of interest") },
         };
 
         static const inline QHash<RPZAtom::Type, QString> atomCategoryTypeDescr {
             { RPZAtom::Type::NPC, QT_TRANSLATE_NOOP("QObject", "NPCs") },
             { RPZAtom::Type::Event, QT_TRANSLATE_NOOP("QObject", "Events") },
             { RPZAtom::Type::Player, QT_TRANSLATE_NOOP("QObject", "Players") },
+            { RPZAtom::Type::POI, QT_TRANSLATE_NOOP("QObject", "POIs") },
         };
 
         static inline const QList<RPZAtom::Type> assetBasedAtom {
@@ -229,7 +234,8 @@ class RPZAtom : public Serializable {
         };
 
         static inline const QList<RPZAtom::Type> _interactiveHoveringAtoms {
-            RPZAtom::Type::Event
+            RPZAtom::Type::Event,
+            RPZAtom::Type::POI,
         };
 
         static inline const QHash<RPZAtom::Parameter, QString> _str = {

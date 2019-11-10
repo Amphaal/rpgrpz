@@ -259,6 +259,7 @@ void ToysTreeViewItem::_defineFlags() {
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemNeverHasChildren);
             break;
         
+        case ToysTreeViewItem::Type::POI:
         case ToysTreeViewItem::Type::Event:
         case ToysTreeViewItem::Type::FreeDraw:
         case ToysTreeViewItem::Type::Player:

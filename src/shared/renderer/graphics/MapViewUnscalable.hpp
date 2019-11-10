@@ -11,23 +11,62 @@ class MapViewUnscalable : public QGraphicsItem {
     Q_INTERFACES(QGraphicsItem)
 
     public:
+        enum class RefPoint {
+            Center,
+            BottomCenter
+        };
+
         MapViewUnscalable(const RPZAtom &atom) {
             
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIgnoresTransformations, true);
 
-            auto pathToIcon = RPZAtom::iconPathByAtomType.value(atom.type());
+            auto type = atom.type();
+            auto pathToIcon = RPZAtom::iconPathByAtomType.value(type);
             this->_p = QPixmap(pathToIcon);
+
+            switch(type) {
+
+                case RPZAtom::Type::POI: {
+                    this->_refP = RefPoint::BottomCenter;
+                }
+                break;
+
+                case RPZAtom::Type::Event: {
+                    this->_refP = RefPoint::Center;
+                }
+                break;
+
+                default:
+                break;
+
+            }
 
         }
 
         QRectF boundingRect() const override {
             auto rect = QRectF(this->_p.rect());
-            rect.moveCenter({});
+            
+            switch(this->_refP) {
+                
+                case RefPoint::Center: {
+                    rect.moveCenter({});
+                }
+                break;
+
+                case RefPoint::BottomCenter: {
+                    rect.moveCenter({});
+                    rect.moveBottom(0);
+                }
+                break;
+
+            }
+
             return rect;
         }
 
     private:
         QPixmap _p;
+        RefPoint _refP;
 
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
             

@@ -185,6 +185,7 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams(const RPZAtom::Type &type) 
         }
         break;
 
+        case RPZAtom::Type::POI:
         case RPZAtom::Type::Event: {
             out.insert(RPZAtom::Parameter::EventShortDescription);
             out.insert(RPZAtom::Parameter::EventDescription);   

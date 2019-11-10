@@ -27,6 +27,7 @@ QGraphicsItem* AtomRenderer::createGraphicsItem(const RPZAtom &atom, const RPZAs
             out = _createTextItem(atom);
         break;
 
+        case RPZAtom::Type::POI:
         case RPZAtom::Type::Event:
             out = new MapViewUnscalable(atom);
         break;
