@@ -2,7 +2,18 @@
 
 MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) : QTreeView(parent) {
     
-    this->_selectionDebouncer.setInterval(200);
+    auto unselectAction = new QAction;
+    unselectAction->setShortcut(QKeySequence::Cancel);
+    unselectAction->setShortcutContext(Qt::ShortcutContext::WidgetWithChildrenShortcut);
+    QObject::connect(
+        unselectAction, &QAction::triggered,
+        [=]() {
+            this->clearSelection();
+        }
+    );
+    this->addAction(unselectAction);
+
+    this->_selectionDebouncer.setInterval(150);
     this->_selectionDebouncer.setSingleShot(true);
 
     this->_preventSelectionNotification = true;
