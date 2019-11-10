@@ -18,6 +18,12 @@ RPZAtom::Category RPZAtom::category(const RPZAtom::Type &type) {
     return Category::Interactive;
 }
 
+int RPZAtom::staticZIndex() const {
+    auto zIndex = AppContext::TOP_Z_INDEX; 
+    auto type = this->type();
+    return _interactiveHoveringAtoms.contains(type) ? zIndex + (int)type : zIndex;
+}
+
 bool RPZAtom::isRestrictedAtom() const {
     return _restrictedAtom.contains(this->type());
 }

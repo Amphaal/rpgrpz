@@ -5,3 +5,4 @@
 #include "_items/MapViewGraphicsTextItem.hpp"
 #include "MapViewToken.hpp"
 #include "MapViewWalkingHelper.hpp"
+#include "MapViewUnscalable.hpp"

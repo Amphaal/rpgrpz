@@ -152,6 +152,8 @@ class RPZAtom : public Serializable {
         //
         //
 
+        int staticZIndex() const;
+
         RPZAtom();
         explicit RPZAtom(const QVariantHash &hash);
         RPZAtom(RPZAtom::Id id, const RPZAtom::Type &type);
@@ -223,6 +225,10 @@ class RPZAtom : public Serializable {
         };
 
         static inline const QList<RPZAtom::Type> _restrictedAtom {
+            RPZAtom::Type::Event
+        };
+
+        static inline const QList<RPZAtom::Type> _interactiveHoveringAtoms {
             RPZAtom::Type::Event
         };
 

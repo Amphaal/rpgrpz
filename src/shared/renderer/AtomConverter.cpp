@@ -56,17 +56,18 @@ void AtomConverter::updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZA
 
     //if interactive, force ZIndex to max
     if(blueprint.category() == RPZAtom::Category::Interactive) {
-        target->setZValue(AppContext::TOP_Z_INDEX);
+        target->setZValue(blueprint.staticZIndex());
         target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, true);
     }
 
     //update transform origin
     auto shapeCenter = blueprint.shapeCenter();
-    if(!shapeCenter.isNull()) {
-        target->setTransformOriginPoint(shapeCenter);   
-    } else {
+    if(shapeCenter.isNull()) {
         auto center = target->boundingRect().center();
         target->setTransformOriginPoint(center);
+        
+    } else {
+        target->setTransformOriginPoint(shapeCenter);   
     }
 
     //define transparency as it is a dummy

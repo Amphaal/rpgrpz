@@ -28,7 +28,7 @@ QGraphicsItem* AtomRenderer::createGraphicsItem(const RPZAtom &atom, const RPZAs
         break;
 
         case RPZAtom::Type::Event:
-            out = _createUnscalableToken(atom);
+            out = new MapViewUnscalable(atom);
         break;
 
         case RPZAtom::Type::Player:
@@ -161,16 +161,6 @@ QGraphicsPathItem* AtomRenderer::_createDrawingItem(const RPZAtom &atom) {
 
 QGraphicsTextItem* AtomRenderer::_createTextItem(const RPZAtom &atom) {
     return new MapViewGraphicsTextItem(atom.text(), atom.textSize());
-}
-
-QGraphicsPixmapItem* AtomRenderer::_createUnscalableToken(const RPZAtom &atom) {
-    
-    auto pathToIcon = RPZAtom::iconPathByAtomType.value(atom.type());
-    auto out = new MapViewGraphicsPixmapItem(pathToIcon);
-    out->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIgnoresTransformations, true);
-
-    return out;
-
 }
 
 MapViewToken* AtomRenderer::_createPlayerToken(const RPZAtom &atom) {
