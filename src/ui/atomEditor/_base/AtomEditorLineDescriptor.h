@@ -47,9 +47,9 @@ class AtomEditorLineDescriptor : public QWidget {
             { RPZAtom::Parameter::Scale, QStringLiteral(u"x") },
             { RPZAtom::Parameter::AssetRotation, "°" },
             { RPZAtom::Parameter::AssetScale, QStringLiteral(u"x") },
-            { RPZAtom::Parameter::PenWidth, QStringLiteral(u"pt") },
-            { RPZAtom::Parameter::TextSize, QStringLiteral(u"pt") },
-            { RPZAtom::Parameter::BrushPenWidth, QStringLiteral(u"pt") }
+            { RPZAtom::Parameter::PenWidth, QStringLiteral(u"pts") },
+            { RPZAtom::Parameter::TextSize, QStringLiteral(u"pts") },
+            { RPZAtom::Parameter::BrushPenWidth, QStringLiteral(u"pts") }
         };
 
         static inline QHash<RPZAtom::Parameter, QString> _icons = {

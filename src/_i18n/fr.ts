@@ -1205,12 +1205,12 @@
     <message>
         <location filename="../ui/map/MapParametersForm.hpp" line="47"/>
         <source>Grid tile to ingame meters</source>
-        <translation>Tuile de grille en mètres (en jeu)</translation>
+        <translation>Taille en mètres d&apos;une case</translation>
     </message>
     <message>
         <location filename="../ui/map/MapParametersForm.hpp" line="48"/>
         <source>Grid tile to screen centimeters</source>
-        <translation>Tuile de grille en centimètres (écran)</translation>
+        <translation>Taille en centimètres réels d&apos;une case</translation>
     </message>
     <message>
         <location filename="../ui/map/MapParametersForm.hpp" line="49"/>

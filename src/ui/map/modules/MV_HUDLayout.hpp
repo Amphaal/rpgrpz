@@ -321,8 +321,8 @@ class MV_HUDLayout {
                 auto tileWidth = mapParams.tileWidthInPoints();
 
                 auto size = sceneRect.size();
-                auto numberOfLinesX = (int)(size.width() / tileWidth);
-                auto numberOfLinesY = (int)(size.height() / tileWidth);
+                auto numberOfLinesX = (int)((size.width() / tileWidth) / 2);
+                auto numberOfLinesY = (int)((size.height() / tileWidth) / 2);
 
                 //origin lines
                 auto horizontalOriginLine = QLineF(centerX, sceneTop, centerX, sceneBottom);

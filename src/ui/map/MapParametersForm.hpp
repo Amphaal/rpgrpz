@@ -91,7 +91,7 @@ class MapParametersForm : public QDialog {
             this->_maximumZoomScaleSpin->setSingleStep(0.01);
 
             this->_mapSizeSpin = new QSpinBox;
-            this->_mapSizeSpin->setSuffix("p");
+            this->_mapSizeSpin->setSuffix("pts");
             this->_mapSizeSpin->setMinimum(1000);
             this->_mapSizeSpin->setMaximum(100000);
 

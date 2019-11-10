@@ -101,7 +101,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem {
             painter->save();
 
                 QPen pen;
-                pen.setWidth(5);
+                pen.setWidth(1);
                 pen.setCosmetic(true);
                 pen.setColor("#eb6e34");
                 pen.setStyle(Qt::DashLine);
@@ -122,6 +122,9 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem {
                 auto destTile = QRectF(alignedToGridItemCursorPos, this->_mapParams.tileSizeInPoints());
                 auto itemDestPos = destTile.center();
                 painter->drawRect(destTile);
+
+                pen.setWidth(5);
+                painter->setPen(pen);
 
                 //draw line
                 QLineF line({0,0}, itemDestPos);
