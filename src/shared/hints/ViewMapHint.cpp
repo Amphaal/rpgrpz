@@ -154,19 +154,10 @@ QGraphicsItem* ViewMapHint::generateTemporaryItemFromTemplateBuffer() {
     );
 }
 
-RPZAtom::Id ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsItem, bool checkGridColliding) const {
+RPZAtom::Id ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsItem) const {
     
     if(!graphicsItem) return 0;
 
-    //check if grid bound, if it is, must not be coliding with another grid bound item
-    if(checkGridColliding && RPZQVariant::isGridBound(graphicsItem)) {
-        
-        for(auto colliding : graphicsItem->collidingItems()) {
-            if(RPZQVariant::isGridBound(graphicsItem)) return 0;
-        }
-
-    }
-    
     //from ghost item / temporary drawing
     RPZAtom newAtom;
     {

@@ -417,8 +417,13 @@ void MapView::mousePressEvent(QMouseEvent *event) {
                 break;
 
                 case MapTool::Walking: {
+
                     auto toWalkTo = this->_walkingHelper->destScenePos();
+
+                    if(this->_preventMoveOrInsertAtPosition(this->_toWalk, toWalkTo)) break;
+
                     this->_hints->notifyWalk(this->_toWalk, toWalkTo);
+
                 }
                 break;
 
@@ -436,10 +441,12 @@ void MapView::mousePressEvent(QMouseEvent *event) {
                         break;
 
                         default: {
-                            this->_hints->integrateGraphicsItemAsPayload(
-                                this->_hints->ghostItem(),
-                                this->_currentMapParameters.movementSystem() == RPZMapParameters::MovementSystem::Grid
-                            );
+
+                            auto ghost = this->_hints->ghostItem();
+                            if(this->_preventMoveOrInsertAtPosition(ghost)) break;
+
+                            this->_hints->integrateGraphicsItemAsPayload(ghost);
+
                         }
                         break;
 
@@ -462,6 +469,24 @@ void MapView::mousePressEvent(QMouseEvent *event) {
 
     QGraphicsView::mousePressEvent(event);
 }
+
+bool MapView::_preventMoveOrInsertAtPosition(QGraphicsItem *toCheck, const QPointF &toCheckAt) {
+    
+    auto atPosRect = toCheck->sceneBoundingRect();
+    if(!toCheckAt.isNull()) atPosRect.moveCenter(toCheckAt);
+
+    if(this->_currentMapParameters.movementSystem() != RPZMapParameters::MovementSystem::Grid) return false;
+    if(!RPZQVariant::isGridBound(toCheck)) return false;
+
+    for(auto colliding : this->scene()->items(atPosRect)) {
+        if(colliding == toCheck) continue;
+        if(RPZQVariant::isGridBound(colliding)) return true;
+    }
+
+    return false;
+}
+
+    
 
 //on movement
 void MapView::mouseMoveEvent(QMouseEvent *event) {
