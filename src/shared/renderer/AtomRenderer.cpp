@@ -32,8 +32,9 @@ QGraphicsItem* AtomRenderer::createGraphicsItem(const RPZAtom &atom, const RPZAs
             out = new MapViewUnscalable(atom);
         break;
 
+        case RPZAtom::Type::NPC:
         case RPZAtom::Type::Player:
-            out = _createPlayerToken(atom);
+            out = _createToken(atom);
         break;
 
         default: {
@@ -164,8 +165,8 @@ QGraphicsTextItem* AtomRenderer::_createTextItem(const RPZAtom &atom) {
     return new MapViewGraphicsTextItem(atom.text(), atom.textSize());
 }
 
-MapViewToken* AtomRenderer::_createPlayerToken(const RPZAtom &atom) {
-    auto out = new MapViewToken(_mapParams, atom.defaultPlayerColor());
+MapViewToken* AtomRenderer::_createToken(const RPZAtom &atom) {
+    auto out = new MapViewToken(_mapParams, atom);
     RPZQVariant::setIsGridBound(out, true);
     return out;
 }

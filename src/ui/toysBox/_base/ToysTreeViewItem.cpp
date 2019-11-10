@@ -252,10 +252,8 @@ void ToysTreeViewItem::_defineFlags() {
         
         //disabled for now
         case ToysTreeViewItem::Type::Text:
-        case ToysTreeViewItem::Type::NPC_Container:
         case ToysTreeViewItem::Type::BackgroundContainer:
         case ToysTreeViewItem::Type::Background:
-        case ToysTreeViewItem::Type::NPC:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemNeverHasChildren);
             break;
         
@@ -268,15 +266,15 @@ void ToysTreeViewItem::_defineFlags() {
         
         case ToysTreeViewItem::Type::Object:
         case ToysTreeViewItem::Type::FloorBrush:
+        case ToysTreeViewItem::Type::NPC:
         case ToysTreeViewItem::Type::Downloaded:
         // case Background:
-        // case NPC:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
             break;
         
+        case ToysTreeViewItem::Type::NPC_Container:
         case ToysTreeViewItem::Type::FloorBrushContainer:
         case ToysTreeViewItem::Type::ObjectContainer:
-        // case NPC_Container:
         // case BackgroundContainer:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDropEnabled);
             break;

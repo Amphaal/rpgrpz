@@ -13,21 +13,15 @@ class MapLayoutAtom : public MapLayoutItem {
         static MapLayoutAtom* fromIndex(const QModelIndex &index);
 
         void setParent(MapLayoutCategory* parent);
-
         MapLayoutCategory* parent() const;
 
-        const QSet<int> updateFrom(const RPZAtom::Updates &updates);
+        const QHash<int, QSet<int>> updateFrom(const RPZAtom::Updates &updates);
 
         bool isHidden() const;
-
         bool isLocked() const;
-        
         const RPZAsset::Hash assetHash() const;
-        
         const RPZAtom::Id atomId() const;
-
         const QString name() const override;
-
         const QPixmap icon() const override;
 
         bool notifyAssetNameChange(const QString newAssetName);
@@ -40,6 +34,7 @@ class MapLayoutAtom : public MapLayoutItem {
         bool _isLocked = false;
         RPZAtom::Id _id = 0;
         RPZAsset::Hash _assetHash;
+        QString _iconPath;
 
         RPZAtom::Parameter _nameChangeParam;
 

@@ -24,7 +24,7 @@ class AtomRenderer {
         static QGraphicsPathItem* _createBrushItem(const RPZAtom &atom, const RPZAsset &asset);
         static QGraphicsPathItem* _createDrawingItem(const RPZAtom &atom);
         static QGraphicsTextItem* _createTextItem(const RPZAtom &atom);
-        static MapViewToken* _createPlayerToken(const RPZAtom &atom);
+        static MapViewToken* _createToken(const RPZAtom &atom);
 
         static inline RPZMapParameters _mapParams;
 };

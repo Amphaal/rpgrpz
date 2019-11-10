@@ -150,7 +150,8 @@ class ToysTreeViewItem : private QObject {
 
         static const inline QList<ToysTreeViewItem::Type> _movableStaticContainerTypes = {
             ToysTreeViewItem::Type::FloorBrushContainer, 
-            ToysTreeViewItem::Type::ObjectContainer
+            ToysTreeViewItem::Type::ObjectContainer,
+            ToysTreeViewItem::Type::NPC_Container
         };
 
         static const inline QList<ToysTreeViewItem::Type> _staticContainerTypes = {

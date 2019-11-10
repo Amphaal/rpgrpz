@@ -241,9 +241,9 @@ class MapLayoutModel : public MapLayoutModelBase {
             auto atomIndex = this->toIndex(id);
             
             //signal redraw
-            for(auto &col : colsToUpdate) {
-                auto simbling = atomIndex.siblingAtColumn(col);
-                emit dataChanged(simbling, simbling, {Qt::DisplayRole});
+            for(auto i = colsToUpdate.begin(); i != colsToUpdate.end(); i++) {
+                auto simbling = atomIndex.siblingAtColumn(i.key());
+                emit dataChanged(simbling, simbling, i.value().toList().toVector());
             }
 
         }

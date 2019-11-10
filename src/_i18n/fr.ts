@@ -1114,56 +1114,61 @@
     </message>
     <message>
         <location filename="../shared/models/RPZAtom.h" line="129"/>
+        <source>Non-playable character</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shared/models/RPZAtom.h" line="130"/>
         <source>Point of interest</source>
         <translation>Point d&apos;intérêt</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="133"/>
+        <location filename="../shared/models/RPZAtom.h" line="134"/>
         <source>NPCs</source>
         <translation>PNJs</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="134"/>
+        <location filename="../shared/models/RPZAtom.h" line="135"/>
         <source>Events</source>
         <translation>Evénements</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="135"/>
+        <location filename="../shared/models/RPZAtom.h" line="136"/>
         <source>Players</source>
         <translation>Joueurs</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="136"/>
+        <location filename="../shared/models/RPZAtom.h" line="137"/>
         <source>POIs</source>
         <translation>Points d&apos;intérêt</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="197"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="198"/>
         <source>Internal</source>
         <translation>Interne</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="203"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="204"/>
         <source>NPC / Portraits</source>
         <translation>PNJ / Portraits</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="204"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="205"/>
         <source>Objects</source>
         <translation>Objets</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="205"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="206"/>
         <source>Brushes</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="206"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="207"/>
         <source>Downloaded</source>
         <translation>Téléchargés</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="207"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="208"/>
         <source>Landscapes</source>
         <translation>Paysages</translation>
     </message>

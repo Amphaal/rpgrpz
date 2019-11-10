@@ -102,11 +102,11 @@ class RPZAtom : public Serializable {
         
         static const inline QHash<RPZAtom::Type, QString> iconPathByAtomType = {
             { RPZAtom::Type::Event, QStringLiteral(u":/icons/app/manager/event.png") },
-            { RPZAtom::Type::NPC, QStringLiteral(u":/icons/app/manager/npc.png") },
             { RPZAtom::Type::Drawing, QStringLiteral(u":/icons/app/tools/pen.png") },
             { RPZAtom::Type::Text, QStringLiteral(u":/icons/app/tools/text.png") },
             { RPZAtom::Type::Player, QStringLiteral(u":/icons/app/connectivity/cloak.png") },
-            { RPZAtom::Type::POI, QStringLiteral(u":/icons/app/manager/POI.png") }
+            { RPZAtom::Type::POI, QStringLiteral(u":/icons/app/manager/POI.png") },
+            { RPZAtom::Type::NPC, QStringLiteral(u":/icons/app/manager/npc.png") }
         };
 
         static const inline QHash<RPZAtom::Type, RPZAtom::Parameter> descriptorsByAtomType {
@@ -126,6 +126,7 @@ class RPZAtom : public Serializable {
             { RPZAtom::Type::Undefined, QT_TRANSLATE_NOOP("QObject", "Atom") },
             { RPZAtom::Type::Event, QT_TRANSLATE_NOOP("QObject", "Event") },
             { RPZAtom::Type::Player, QT_TRANSLATE_NOOP("QObject", "Player") },
+            { RPZAtom::Type::NPC, QT_TRANSLATE_NOOP("QObject", "Non-playable character") },
             { RPZAtom::Type::POI, QT_TRANSLATE_NOOP("QObject", "Point of interest") },
         };
 
@@ -174,6 +175,9 @@ class RPZAtom : public Serializable {
         RPZAtom::Category category() const;
         static RPZAtom::Category category(const RPZAtom::Type &type);
         bool isRestrictedAtom() const;
+        const QColor NPCAssociatedColor() const;
+        const QString descriptiveIconPath() const;
+        static const QString descriptiveIconPath(const RPZAtom::Type &type, const RPZAtom::NPCType &npcAttitude);
 
         //
         //
@@ -215,6 +219,7 @@ class RPZAtom : public Serializable {
         const RPZCharacter::Id characterId() const;
         const QString characterName() const;
         const QString NPCShortName() const;
+        const RPZAtom::NPCType NPCAttitude() const;
 
         QPainterPath shape() const;
         void setShape(const QPainterPath &path);
@@ -236,6 +241,13 @@ class RPZAtom : public Serializable {
         static inline const QList<RPZAtom::Type> _interactiveHoveringAtoms {
             RPZAtom::Type::Event,
             RPZAtom::Type::POI,
+        };
+        
+        static const inline QHash<RPZAtom::NPCType, QColor> _NPCTypeAssociatedColor {
+            { RPZAtom::NPCType::Unknown, QStringLiteral(u"grey") },
+            { RPZAtom::NPCType::Neutral, QStringLiteral(u"blue") },
+            { RPZAtom::NPCType::Friendly, QStringLiteral(u"green") },
+            { RPZAtom::NPCType::Hostile, QStringLiteral(u"red") }
         };
 
         static inline const QHash<RPZAtom::Parameter, QString> _str = {

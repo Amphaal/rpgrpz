@@ -11,6 +11,7 @@
 #include <QStyleOptionGraphicsItem>
 
 #include "src/shared/models/RPZMapParameters.hpp"
+#include "src/shared/models/RPZAtom.h"
 
 class MapViewToken : public QObject, public QGraphicsItem {
     
@@ -20,7 +21,7 @@ class MapViewToken : public QObject, public QGraphicsItem {
     Q_INTERFACES(QGraphicsItem)
 
     public:
-        MapViewToken(const RPZMapParameters &mapParameters, const QColor &color) {          
+        MapViewToken(const RPZMapParameters &mapParameters, const RPZAtom &atom) {          
             
             auto tileSize = mapParameters.tileWidthInPoints();
             auto tokenSize = QSizeF(tileSize, tileSize);
@@ -28,16 +29,40 @@ class MapViewToken : public QObject, public QGraphicsItem {
             auto startPosComp = QPointF(-tokenSize.width() / 2, -tokenSize.height() / 2);
             this->_subRect = QRectF(startPosComp, tokenSize);
 
-            auto prc = this->_subRect.width() * 0.03;
+            auto prc = this->_subRect.width() * 0.1;
             this->_rect = this->_subRect.marginsRemoved(QMarginsF(prc, prc, prc, prc));
             
+            this->updateColors(atom);
+            
+        }
+
+        void updateColors(const RPZAtom &atom) {
+
+            QColor toApply;
+
+            switch(atom.type()) {
+                
+                case RPZAtom::Type::Player: {
+                    toApply = atom.defaultPlayerColor();
+                }
+                break;
+
+                case RPZAtom::Type::NPC: {
+                    toApply = atom.NPCAssociatedColor();
+                }
+                break;
+
+                default:
+                break;
+
+            }
+
             QRadialGradient radialGrad(this->_rect.center(), this->_rect.width() / 2);
-            radialGrad.setColorAt(0.95, color);
+            radialGrad.setColorAt(0.95, toApply);
             radialGrad.setColorAt(1, Qt::transparent);
             this->_brush = QBrush(radialGrad);
 
-            this->_subBrush = QBrush(QColor::fromRgbF(color.redF(), color.greenF(), color.blueF(), .75));
-            
+            this->_subBrush = QBrush(QColor::fromRgbF(toApply.redF(), toApply.greenF(), toApply.blueF(), .75));
 
         }
 

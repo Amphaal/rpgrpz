@@ -8,6 +8,7 @@ MapLayoutAtom::MapLayoutAtom(MapLayoutCategory* parent, const RPZAtom &atom) {
     this->_assetHash = atom.assetHash();
     this->_nameChangeParam = RPZAtom::descriptorsByAtomType.value(this->_type);
     this->_name = atom.toString();
+    this->_iconPath = atom.descriptiveIconPath();
 
     this->updateFrom(atom.editedMetadataWithValues());
 
@@ -34,9 +35,9 @@ MapLayoutCategory* MapLayoutAtom::parent() const {
     return this->_parent;
 }
 
-const QSet<int> MapLayoutAtom::updateFrom(const RPZAtom::Updates &updates) {
+const QHash<int, QSet<int>> MapLayoutAtom::updateFrom(const RPZAtom::Updates &updates) {
     
-    QSet<int> columnsToUpdate;
+    QHash<int, QSet<int>> colsByDataRoles;
 
     for(auto i = updates.begin(); i != updates.end(); i++) {
         
@@ -47,12 +48,17 @@ const QSet<int> MapLayoutAtom::updateFrom(const RPZAtom::Updates &updates) {
 
             case RPZAtom::Parameter::Hidden:
                 this->_isHidden = variant.toBool();
-                columnsToUpdate += 1;
+                colsByDataRoles[1].insert(Qt::DisplayRole);
                 break;
             
             case RPZAtom::Parameter::Locked:
                 this->_isLocked = variant.toBool();
-                columnsToUpdate += 1;
+                colsByDataRoles[1].insert(Qt::DisplayRole);
+                break;
+            
+            case RPZAtom::Parameter::NPCAttitude:
+                this->_iconPath = RPZAtom::descriptiveIconPath(this->_type, (RPZAtom::NPCType)variant.toInt());
+                colsByDataRoles[0].insert(Qt::DecorationRole);
                 break;
 
             default:
@@ -68,13 +74,13 @@ const QSet<int> MapLayoutAtom::updateFrom(const RPZAtom::Updates &updates) {
                 variant.toString()
             );
 
-            columnsToUpdate += 0;
+            colsByDataRoles[0].insert(Qt::DisplayRole);
 
         } 
 
     }
 
-    return columnsToUpdate;
+    return colsByDataRoles;
 
 }
 
@@ -112,7 +118,7 @@ const QString MapLayoutAtom::name() const {
 }
 
 const QPixmap MapLayoutAtom::icon() const { 
-    return QPixmap(RPZAtom::iconPathByAtomType.value(this->_type)); 
+    return QPixmap(this->_iconPath); 
 }
 
 

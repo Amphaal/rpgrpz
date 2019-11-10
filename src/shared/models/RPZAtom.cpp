@@ -77,6 +77,34 @@ const QString RPZAtom::toString() const {
     
 }
 
+const QString RPZAtom::descriptiveIconPath() const {
+    return descriptiveIconPath(this->type(), this->NPCAttitude());
+}
+
+const QString RPZAtom::descriptiveIconPath(const RPZAtom::Type &type, const RPZAtom::NPCType &npcAttitude) {
+
+    if(type == RPZAtom::Type::NPC) {
+        switch(npcAttitude) {
+
+            case RPZAtom::NPCType::Unknown:
+                return QStringLiteral(u":/icons/app/attitude/unknown.png");
+
+            case RPZAtom::NPCType::Friendly:
+                return QStringLiteral(u":/icons/app/attitude/friendly.png");
+
+            case RPZAtom::NPCType::Hostile:
+                return QStringLiteral(u":/icons/app/attitude/hostile.png");
+            
+            case RPZAtom::NPCType::Neutral:
+                return QStringLiteral(u":/icons/app/attitude/neutral.png");
+
+        }
+    }
+
+    return RPZAtom::iconPathByAtomType.value(type);
+    
+}
+
 const QString RPZAtom::_atomTypeToText(const RPZAtom::Type &type) {
     
     auto descr = atomTypeDescr.value(
@@ -144,6 +172,7 @@ const QColor RPZAtom::defaultPlayerColor() const { return this->metadata(RPZAtom
 const RPZCharacter::Id RPZAtom::characterId() const { return this->metadata(RPZAtom::Parameter::CharacterId).toULongLong(); }
 const QString RPZAtom::characterName() const { return this->metadata(RPZAtom::Parameter::CharacterName).toString(); }
 const QString RPZAtom::NPCShortName() const { return this->metadata(RPZAtom::Parameter::NPCShortName).toString(); }
+const RPZAtom::NPCType RPZAtom::NPCAttitude() const { return (RPZAtom::NPCType)this->metadata(RPZAtom::Parameter::NPCAttitude).toInt(); }
 
 QPainterPath RPZAtom::shape() const {
     auto rawShape = this->metadata(RPZAtom::Parameter::Shape).toByteArray();
@@ -224,6 +253,10 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams(const RPZAtom::Type &type) 
 
 QSet<RPZAtom::Parameter> RPZAtom::customizableParams() const {
     return customizableParams(this->type());
+}
+
+const QColor RPZAtom::NPCAssociatedColor() const {
+    return _NPCTypeAssociatedColor.value(this->NPCAttitude());
 }
 
 bool RPZAtom::isAssetBased() const {
