@@ -504,7 +504,7 @@ ToysTreeViewItem::Type ToysTreeViewItem::pathChunktoType(const QString &chunk) {
     
     auto expected = chunk.startsWith("{") && chunk.endsWith("}");
     if(!expected) {
-        qDebug() << "Assets : ignoring path, as its structure is not expected.";
+        qDebug() << "Assets : ignoring path, as its structure is not expected. >> " << qUtf8Printable(chunk);
         return ToysTreeViewItem::Type::T_Unknown;
     }
     
@@ -515,7 +515,7 @@ ToysTreeViewItem::Type ToysTreeViewItem::pathChunktoType(const QString &chunk) {
     auto castOk = false;
     auto staticCType = (ToysTreeViewItem::Type)cp_chunk.toInt(&castOk);
     if(!castOk) {
-        qDebug() << "Assets : ignoring path, as static container type was impossible to deduce";
+        qDebug() << "Assets : ignoring path, as static container type was impossible to deduce. >> " << qUtf8Printable(cp_chunk);
         return ToysTreeViewItem::Type::T_Unknown;
     }
 

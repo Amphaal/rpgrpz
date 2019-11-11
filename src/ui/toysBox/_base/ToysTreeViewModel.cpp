@@ -541,11 +541,12 @@ QHash<AssetsDatabase::FolderPath, ToysTreeViewItem*> ToysTreeViewModel::_generat
         auto split = ToysTreeViewItem::pathAsList(path);
         
         //make sure first split is a type
-        auto staticCType = ToysTreeViewItem::pathChunktoType(split.takeFirst());
+        auto ctypeStr = split.takeFirst();
+        auto staticCType = ToysTreeViewItem::pathChunktoType(ctypeStr);
 
         //get element from static source
         if(!this->_staticElements.contains(staticCType)) {
-            qDebug() << "Assets : ignoring path, as the static container it points to doesnt exist";
+            qDebug() << "Assets : ignoring path, as the static container it points to doesnt exist >>" << qUtf8Printable(ctypeStr);
             continue;
         }
         auto staticContainerElem = this->_staticElements[staticCType];

@@ -19,8 +19,9 @@ class MiniMapView : public QGraphicsView {
             format.setSampleBuffers(true);
             format.setDirectRendering(true);
             format.setAlpha(true);
-            this->setViewport(new QGLWidget(format));
+            auto vp = new QGLWidget(format, nullptr, (QGLWidget*)master->viewport());
 
+            this->setViewport(vp);
             this->setRenderHints(QPainter::Antialiasing);
 
             //hide scrollbars
@@ -97,7 +98,7 @@ class MiniMapView : public QGraphicsView {
             QObject::connect(
                 this->_master, &MapView::cameraMoved,
                 [=]() {
-                    // this->repaint();
+                    this->setForegroundBrush(Qt::NoBrush); //force foreground re-drawing
                 }
             );
 
@@ -110,24 +111,32 @@ class MiniMapView : public QGraphicsView {
 
         void drawForeground(QPainter *painter, const QRectF &rect) override {
             
-            // painter->save();
+            painter->save();
 
-            // QPen pen;
-            // pen.setWidth(1);
-            // pen.setCosmetic(true);
+                painter->setTransform(QTransform());
 
-            // auto rectA = this->_master->mapToScene(this->viewport()->rect()).boundingRect();
+                QPen pen;
+                pen.setWidth(0);
+                pen.setCosmetic(true);
+                
+                auto viewportMapRect = this->_master->mapToScene(
+                    this->_master->viewport()->rect()
+                ).boundingRect();
+                viewportMapRect = this->mapFromScene(viewportMapRect).boundingRect();
+                
+                //outer rect
+                pen.setColor(Qt::black);
+                painter->setPen(pen);
+                painter->drawRect(viewportMapRect);
 
-            // painter->setPen(pen);
-            // painter->drawRect(rectA);
+                //inner rect
+                viewportMapRect = viewportMapRect.marginsRemoved(QMargins(1, 1, 1, 1));
+                pen.setColor(Qt::white);
+                painter->setPen(pen);
+                painter->drawRect(viewportMapRect);
 
-            // painter->restore();
+            painter->restore();
 
-        }
-
-        void paintEvent(QPaintEvent *event) override {
-            qDebug() << "reprint";
-            QGraphicsView::paintEvent(event);
         }
 
 };
