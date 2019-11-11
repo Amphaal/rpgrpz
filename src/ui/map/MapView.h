@@ -54,6 +54,9 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         MapHint* hints() const;
         const QList<RPZAtom::Id> selectedIds() const override;
 
+        void scrollFromMinimap(QWheelEvent *event);
+        void focusFromMinimap(const QPointF &scenePoint);
+
     public slots:
         void onActionRequested(const MapAction &action);
         void onHelperActionTriggered(QAction *action);

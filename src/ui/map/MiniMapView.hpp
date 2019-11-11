@@ -6,22 +6,27 @@
 
 class MiniMapView : public QGraphicsView {
     public:
-        MiniMapView(MapView* master, QWidget *parent = nullptr) : QGraphicsView(master->scene(), parent), _master(master) {
+        MiniMapView(MapView* master, QWidget *parent = nullptr) : QGraphicsView(parent), _master(master) {
 
+            this->setCursor(Qt::OpenHandCursor);
+
+            //init
+            this->_sceneToMimic = master->scene();
+            this->_dummyScene = new QGraphicsScene;
+
+            //visibility
             this->setVisible(false);
             this->_visibleAsap = AppContext::settings()->minimapActive();
 
             //events
             this->_handleHintsSignalsAndSlots();
-
-            //OpenGL backend activation
-            QGLFormat format;
-            format.setSampleBuffers(true);
-            format.setDirectRendering(true);
-            format.setAlpha(true);
-            auto vp = new QGLWidget(format, nullptr, (QGLWidget*)master->viewport());
-
+            
+            //viewport
+            auto shared = (QGLWidget*)master->viewport();
+            auto vp = new QGLWidget(shared->format(), nullptr, shared);
             this->setViewport(vp);
+
+            //render hints
             this->setRenderHints(QPainter::Antialiasing);
 
             //hide scrollbars
@@ -40,23 +45,25 @@ class MiniMapView : public QGraphicsView {
         void setAsapVisibility(bool visible) {
             this->_visibleAsap = visible;
             if(!this->_alterationOngoing) {
-                this->setVisible(this->_visibleAsap);
-                this->_fitMapInMiniMap();
+                this->_generateMinimap();
             }
         }
 
     private:
+        QGraphicsScene* _dummyScene = nullptr;
+        QGraphicsScene* _sceneToMimic = nullptr;
         MapView* _master = nullptr;
         bool _visibleAsap = false;
         bool _alterationOngoing = false;
+        QPixmap _cachedMinimap;
 
 
-
-        QRectF _getMinimumSizeSceneRect() {
+        QRectF _getMinimumSceneRect() {
+            
             QRectF minimalSize(QPointF(0, 0), QSizeF(640, 640));
-            minimalSize.moveCenter(this->scene()->sceneRect().center());
+            minimalSize.moveCenter(this->_sceneToMimic->sceneRect().center());
 
-            auto itemsBoundingRect = this->scene()->itemsBoundingRect();
+            auto itemsBoundingRect = this->_sceneToMimic->itemsBoundingRect();
             auto rectSize = itemsBoundingRect.size();
 
             if(rectSize.width() < minimalSize.width() || rectSize.height() < minimalSize.height()) {
@@ -67,9 +74,24 @@ class MiniMapView : public QGraphicsView {
             
         }
 
-        void _fitMapInMiniMap() {
-            auto size = this->_getMinimumSizeSceneRect();
-            this->fitInView(size, Qt::AspectRatioMode::KeepAspectRatio);
+        void _generateMinimap() {
+            
+            //set visibility
+            this->setVisible(this->_visibleAsap);
+
+            //fit current in view
+            this->setScene(this->_sceneToMimic);
+            auto minimumRect = this->_getMinimumSceneRect();
+            this->fitInView(minimumRect, Qt::AspectRatioMode::KeepAspectRatio);
+            
+            //snapshot
+            this->_cachedMinimap = this->grab();
+            
+            //display dummy scene
+            this->_dummyScene->setSceneRect(this->_sceneToMimic->sceneRect());
+            this->setScene(this->_dummyScene);
+            this->fitInView(minimumRect, Qt::AspectRatioMode::KeepAspectRatio);
+
         }
 
         void _handleHintsSignalsAndSlots() {
@@ -85,12 +107,8 @@ class MiniMapView : public QGraphicsView {
             QObject::connect(
                 ProgressTracker::get(), &ProgressTracker::heavyAlterationProcessed,
                 [=]() {
-
+                    this->_generateMinimap();
                     this->_alterationOngoing = false;
-                    this->setVisible(this->_visibleAsap);
-
-                    this->_fitMapInMiniMap();
-
                 }
             );
 
@@ -104,16 +122,15 @@ class MiniMapView : public QGraphicsView {
 
         }
 
-    protected:
-        void wheelEvent(QWheelEvent * event) override {};
-        void keyPressEvent(QKeyEvent *event) override {};
-        void mousePressEvent(QMouseEvent *event) override {};
-
-        void drawForeground(QPainter *painter, const QRectF &rect) override {
+        void _drawViewIndic(QPainter *painter) {
             
             painter->save();
 
+                //prevent transforms
                 painter->setTransform(QTransform());
+                
+                //minimap
+                painter->drawPixmap(QPointF(), this->_cachedMinimap);
 
                 QPen pen;
                 pen.setWidth(0);
@@ -137,6 +154,36 @@ class MiniMapView : public QGraphicsView {
 
             painter->restore();
 
+        }
+
+        void _propagateFocusToMaster(QMouseEvent *event) {
+            auto scenePos = this->mapToScene(event->pos());
+            this->_master->focusFromMinimap(scenePos);
+        }
+
+    protected:
+        void keyPressEvent(QKeyEvent *event) override {};
+        
+        void wheelEvent(QWheelEvent * event) override {
+            this->_master->scrollFromMinimap(event);
+        };
+        
+        void mousePressEvent(QMouseEvent *event) override {
+            this->setCursor(Qt::ClosedHandCursor);
+            this->_propagateFocusToMaster(event);
+        };
+
+        void mouseReleaseEvent(QMouseEvent *event) override {
+            this->setCursor(Qt::OpenHandCursor);
+        };
+
+        void mouseMoveEvent(QMouseEvent *event) override {
+            this->_propagateFocusToMaster(event);
+        }
+
+        void drawForeground(QPainter *painter, const QRectF &rect) override {
+            if(this->scene() == this->_sceneToMimic) return;
+            this->_drawViewIndic(painter);                     
         }
 
 };

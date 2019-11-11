@@ -519,6 +519,11 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
         this->_mightUpdateWalkingHelperPos();
     }
 
+    else if(currentTool == MapTool::Scroll && this->_isMousePressed) {
+        emit cameraMoved();
+    }
+
+
     QGraphicsView::mouseMoveEvent(event);
 }
 
@@ -585,6 +590,15 @@ void MapView::wheelEvent(QWheelEvent *event) {
     this->animateScroll(event, this->_currentMapParameters);
 
 };
+
+void MapView::scrollFromMinimap(QWheelEvent *event) {
+    this->animateScroll(event, this->_currentMapParameters);
+}
+
+void MapView::focusFromMinimap(const QPointF &scenePoint) {
+    this->centerOn(scenePoint);
+    this->onViewRectChange();
+}
 
 //////////////////////
 /* END MOUSE EVENTS */
