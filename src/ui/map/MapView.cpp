@@ -18,7 +18,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
     format.setDirectRendering(true);
     format.setAlpha(true);
     this->setViewport(new QGLWidget(format));
-
+    
     //hide scrollbars
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -262,6 +262,10 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
 //////////////////
 // UI rendering //
 //////////////////
+
+void MapView::onViewRectChange() {
+    emit cameraMoved();
+}
 
 void MapView::drawForeground(QPainter *painter, const QRectF &rect) {
     this->mayUpdateHeavyLoadPlaceholder(painter);

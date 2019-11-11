@@ -50,6 +50,8 @@ class MV_Manipulation {
         }
 
     protected:
+        virtual void onViewRectChange() = 0;
+
         void focusItem(QGraphicsItem* toFocus) {
             
             auto bound = toFocus->sceneBoundingRect();
@@ -80,21 +82,14 @@ class MV_Manipulation {
 
             }
 
+            this->onViewRectChange();
+
         }
 
         void goToDefaultViewState() {
-            this->goToSceneCenter();
-            this->goToDefaultZoom();
-        }
-
-        void goToSceneCenter() {
-            auto center = this->_view->scene()->sceneRect().center();
-            this->_view->centerOn(center);
-        }
-        
-        void goToDefaultZoom() {
-            auto corrected = 1 / this->_view->transform().m11();
-            this->_view->scale(corrected, corrected);
+            this->_goToSceneCenter();
+            this->_goToDefaultZoom();
+            this->onViewRectChange();
         }
 
         void addAnimatedMove(const QKeyEvent *event) {
@@ -167,6 +162,7 @@ class MV_Manipulation {
                     this->_view->scale(factor, factor);
 
                     this->onAnimationManipulationTickDone();
+                    this->onViewRectChange();
 
                 }
             );
@@ -223,7 +219,18 @@ class MV_Manipulation {
             }
 
             this->onAnimationManipulationTickDone();
+            this->onViewRectChange();
 
+        }
+
+        void _goToSceneCenter() {
+            auto center = this->_view->scene()->sceneRect().center();
+            this->_view->centerOn(center);
+        }
+        
+        void _goToDefaultZoom() {
+            auto corrected = 1 / this->_view->transform().m11();
+            this->_view->scale(corrected, corrected);
         }
 
         QList<MoveInstruction> _getMoveInstructions(const QSet<MoveDirection> &directions) {

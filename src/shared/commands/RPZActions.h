@@ -5,8 +5,6 @@
 #include <QIcon>
 #include "src/helpers/_appContext.h"
 
-#include "src/ui/map/MiniMapView.hpp"
-
 enum class MapAction { 
     ResetView,
     ResetTool
@@ -51,7 +49,7 @@ class RPZActions {
         static QAction* saveTheMapAs();
         static QAction* activateGridIndicator();
         static QAction* activateScaleIndicator();
-        static QAction* activateMinimap(MiniMapView* toDisplay);
+        static QAction* activateMinimap();
         static QAction* usePingTool();
         static QAction* useMeasurementTool();
         static QAction* useQuickDrawTool();

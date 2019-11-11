@@ -22,11 +22,26 @@ class MapHelpers : public QToolBar {
             this->setIconSize(QSize(16, 16));
             this->setMovable(true);
             this->setFloatable(true);
+            
+            auto minimapAction = RPZActions::activateMinimap();           
+            QObject::connect(
+                minimapAction, &QAction::triggered,
+                [=](auto checked) {
+                    
+                    AppContext::settings()->setValue(
+                        minimapAction->data().toString(), 
+                        checked
+                    );
+
+                    minimap->setAsapVisibility(checked);
+
+                }
+            );
 
             this->addAction(RPZActions::activateGridIndicator());
             this->addAction(RPZActions::activateScaleIndicator());
-            this->addAction(RPZActions::activateMinimap(minimap));
-            
+            this->addAction(minimapAction);
+
         }
         
 };

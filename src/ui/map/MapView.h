@@ -60,6 +60,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
     
     signals:
         void remoteChanged(bool isRemote);
+        void cameraMoved();
 
     protected:
         void enterEvent(QEvent *event) override;
@@ -130,5 +131,6 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
                 void _clearWalkingHelper();
 
         void onAnimationManipulationTickDone() override;
+        void onViewRectChange() override;
         
 };

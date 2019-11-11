@@ -116,7 +116,7 @@ class PlayerItemDelegate : public QStyledItemDelegate {
                 painter->setFont(font);
 
                 //for each gauge...
-                for(auto &gauge : character.gauges()) {
+                for(const auto &gauge : character.gauges()) {
                     
                     //do not display if not visible
                     if(!gauge.isVisibleUnderPortrait()) continue;

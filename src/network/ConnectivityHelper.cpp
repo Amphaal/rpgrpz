@@ -168,7 +168,7 @@ void ConnectivityHelper::_getLocalAddress() {
     QHostAddress localhost(QHostAddress::LocalHost);
     QString rtrn;
 
-    for(auto &address : QNetworkInterface::allAddresses()) {
+    for(const auto &address : QNetworkInterface::allAddresses()) {
         if (address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost) {
             rtrn = address.toString();
             break;

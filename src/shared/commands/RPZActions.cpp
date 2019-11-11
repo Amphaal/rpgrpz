@@ -44,7 +44,7 @@ QAction* RPZActions::useQuickDrawTool() {
 
 }
 
-QAction* RPZActions::activateMinimap(MiniMapView* toDisplay) {
+QAction* RPZActions::activateMinimap() {
    auto action = new QAction(
         QIcon(QStringLiteral(u":/icons/app/tools/minimap.png")), 
         QObject::tr("Display minimap")
@@ -53,20 +53,6 @@ QAction* RPZActions::activateMinimap(MiniMapView* toDisplay) {
     action->setData("minimap");
     action->setCheckable(true);
     action->setChecked(AppContext::settings()->minimapActive());
-
-    QObject::connect(
-        action, &QAction::triggered,
-        [=](auto checked) {
-            
-            AppContext::settings()->setValue(
-                action->data().toString(), 
-                checked
-            );
-
-            toDisplay->setAsapVisibility(checked);
-
-        }
-    );
 
     return action;
 }

@@ -39,7 +39,7 @@ int JSONSocket::sendToSockets(
     auto expected = toSendTo.count();
     int sent = 0;
 
-    for(auto socket : toSendTo) {
+    for(const auto socket : toSendTo) {
         auto success = _sendToSocket(socket, logger, method, data);
         sent += (int)success;
     }

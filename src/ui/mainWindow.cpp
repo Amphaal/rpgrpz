@@ -394,7 +394,7 @@ void MainWindow::_initAppComponents() {
         this->_mapViewContainer->setLayout(new OverlayingLayout);
 
         this->_mapView = new MapView(this);
-        this->_minimap = new MiniMapView(this->_mapView->scene(), this);
+        this->_minimap = new MiniMapView(this->_mapView, this);
 
         this->_mapViewContainer->layout()->addWidget(this->_mapView);
         this->_mapViewContainer->layout()->addWidget(this->_minimap);

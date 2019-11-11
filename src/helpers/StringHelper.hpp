@@ -57,7 +57,7 @@ class StringHelper {
 
         static QString toSuperScript(uint num) {
             QString out;
-            for(auto &character : QString::number(num)) {
+            for(const auto &character : QString::number(num)) {
                 switch(character.digitValue()) {
                     case 0:
                         out += "⁰";

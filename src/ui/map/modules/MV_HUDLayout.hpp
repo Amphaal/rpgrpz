@@ -90,10 +90,6 @@ class MV_HUDLayout {
             painter->restore();
 
         }
-
-        void drawForeground() {
-
-        }
     
     private:
         QGraphicsView* _view = nullptr;
