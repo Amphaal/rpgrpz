@@ -109,7 +109,7 @@ class DrawingAssist {
             if(!this->_tempDrawing) return;
             
             //remove helpers
-            for(auto helper : this->_tempDrawingHelpers) {
+            for(const auto helper : this->_tempDrawingHelpers) {
                 delete helper;
             }
             this->_tempDrawingHelpers.clear();

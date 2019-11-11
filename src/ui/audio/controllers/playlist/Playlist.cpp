@@ -51,7 +51,7 @@ int Playlist::_tempHashDnDFromUrlList(QList<QUrl> &list) {
     this->_tempDnD.clear();
     
     //iterate through
-    for(auto &url : list) {
+    for(const auto &url : list) {
         
         //if is not local file
         if(!url.isValid()) continue;
@@ -96,7 +96,7 @@ void Playlist::dropEvent(QDropEvent *event) {
     QListWidget::dropEvent(event);
 
     //for each link registered
-    for(auto &link : this->_tempDnD) {
+    for(const auto &link : this->_tempDnD) {
         
         //prepare
         auto url = link.second;
@@ -108,7 +108,7 @@ void Playlist::dropEvent(QDropEvent *event) {
 
                     //fetch videos from playlist
                     YoutubeHelper::fromPlaylistUrl(url.toString()).then([=](const QList<YoutubeVideoMetadata*> &mvideoList) {
-                        for(auto mvideo : mvideoList) {
+                        for(const auto mvideo : mvideoList) {
                             this->addYoutubeVideo(mvideo->url());
                         }
                     });

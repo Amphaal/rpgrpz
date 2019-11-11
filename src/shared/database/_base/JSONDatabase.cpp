@@ -129,7 +129,7 @@ bool JSONDatabase::_handleVersionMissmatch(QJsonObject &databaseToUpdate, JSONDa
 
     //apply handlers
     bool updateApplied = false;
-    for(auto targetUpdateVersion : handledAPIVersions) {
+    for(const auto targetUpdateVersion : handledAPIVersions) {
         
         //if patch is for later versions, skip
         if(aimedAPIVersion < targetUpdateVersion) continue;
@@ -175,7 +175,7 @@ QJsonObject JSONDatabase::_emptyDbFile() {
     
     //iterate through model
     auto model = this->_getDatabaseModel();
-    for(auto &key : this->_getDatabaseModel().keys()) {
+    for(const auto &key : this->_getDatabaseModel().keys()) {
         
         QJsonValue val;
         switch (key.second) {
@@ -262,7 +262,7 @@ void JSONDatabase::saveAsFile(const QJsonObject &db, QFile &fileHandler) {
 
 QJsonArray JSONDatabase::diff(QJsonArray &target, QSet<QString> &toRemoveFromTarget) {
     QJsonArray output;
-    for(auto e : target) {
+    for(const auto e : target) {
         auto str = e.toString();
         if(!toRemoveFromTarget.contains(str)) {
             output.append(str);

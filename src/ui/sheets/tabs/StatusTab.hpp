@@ -173,7 +173,7 @@ class StatusTab : public QWidget {
             }
 
             //add new
-            for(auto &gauge : gauges) {
+            for(const auto &gauge : gauges) {
                 if(readyOnly) this->_gaugesLayout->addWidget(new GaugeWidget(gauge));
                 else this->_createGaugeEditor(gauge);
             }

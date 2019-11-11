@@ -68,7 +68,7 @@ class InventoryPicker : public QWidget {
         QVector<RPZInventory*> everyInventoriesExceptArg(const RPZInventory* toExclude) {
             QVector<RPZInventory*> out;
 
-            for(auto &inventory : this->_inventories) {
+            for(const auto &inventory : this->_inventories) {
                 auto ptr = &inventory;
                 if(toExclude == ptr) continue;
                 out += ptr;
@@ -198,7 +198,7 @@ class InventoryPicker : public QWidget {
             this->_inventoryListCombo->setEnabled(true);
             {
                 QSignalBlocker b(this->_inventoryListCombo);
-                for(auto &inventory : this->_inventories) {
+                for(const auto &inventory : this->_inventories) {
                     this->_inventoryListCombo->addItem(this->_icon, inventory.toString());
                 }
             }

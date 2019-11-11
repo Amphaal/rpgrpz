@@ -45,7 +45,7 @@ void ChatWidget::_onReceivedLogHistory(const QVector<RPZMessage> &messages) {
     this->setEnabled(true);
 
     //add list of messages
-    for(auto &msg : messages) {
+    for(const auto &msg : messages) {
         this->_chatLog->handleNonLocalMessage(msg);
     }
 

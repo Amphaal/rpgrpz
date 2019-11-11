@@ -85,7 +85,7 @@ class MapLayoutModel : public MapLayoutModelBase {
                 }
 
                 //clean empty categories
-                for(auto category : alteredCategories) {
+                for(const auto category : alteredCategories) {
                     this->_maybeRemoveCategory(category);
                 }
                 
@@ -158,7 +158,7 @@ class MapLayoutModel : public MapLayoutModelBase {
                 }
 
                 //deletes
-                for(auto &context : contexts) {
+                for(const auto &context : contexts) {
                     
                     //skip if no out
                     if(!context.out.count()) continue;
@@ -166,7 +166,7 @@ class MapLayoutModel : public MapLayoutModelBase {
                     auto end = context.category->atomsCount() - 1;
 
                     this->beginRemoveRows(context.categoryIndex, 0, end);
-                        for(auto outAtom : context.out) {
+                        for(const auto outAtom : context.out) {
                             outAtom->setParent(nullptr);
                         }
                     this->endRemoveRows(); 
@@ -174,7 +174,7 @@ class MapLayoutModel : public MapLayoutModelBase {
                 }
 
                 //inserts + tree clearing + updates
-                for(auto &context : contexts) {
+                for(const auto &context : contexts) {
 
                     //inserts if necessary
                     auto inCount = context.in.count();
@@ -185,7 +185,7 @@ class MapLayoutModel : public MapLayoutModelBase {
                         auto end = begin + inCount;
                         
                         this->beginInsertRows(context.categoryIndex, begin, end);
-                            for(auto inAtom : context.in) {
+                            for(const auto inAtom : context.in) {
                                 inAtom->setParent(context.category);
                             }
                         this->endInsertRows();
@@ -251,7 +251,7 @@ class MapLayoutModel : public MapLayoutModelBase {
     private slots:
         void _onRenamedAsset(const RPZAsset::Hash &id, const QString &newName) {
 
-            for(auto &id : this->_atomsByAssetHash.value(id)) {
+            for(const auto &id : this->_atomsByAssetHash.value(id)) {
 
                 auto index = this->toIndex(id);
                 auto atom = MapLayoutAtom::fromIndex(index);

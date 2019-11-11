@@ -57,7 +57,7 @@ JSONDatabase::Model CharactersDatabase::_getDatabaseModel() {
 void CharactersDatabase::_setupLocalData() {
 
     //fill characters...
-    for(auto i : this->entityAsObject(QStringLiteral(u"characters"))) {
+    for(const auto i : this->entityAsObject(QStringLiteral(u"characters"))) {
         auto character = RPZCharacter(i.toVariant().toHash());
         this->_characters.insert(character.id(), character);
     }

@@ -54,7 +54,7 @@ void AtomEditor::buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr
     auto toHide = _editorsByParam.keys().toSet().subtract(
         toDisplay.keys().toSet()
     );
-    for(auto i : toHide) {
+    for(const auto i : toHide) {
         auto editor = this->_editorsByParam.value(i);
         if(!editor) continue;
         editor->setVisible(false);
@@ -73,7 +73,7 @@ void AtomEditor::resetParams() {
 
     //reset displayed params
     RPZAtom::Updates changes;
-    for(auto param : this->_visibleEditors) {
+    for(const auto param : this->_visibleEditors) {
         changes.insert(
             param, 
             RPZAtom::getDefaultValueForParam(param)
@@ -111,7 +111,7 @@ void AtomEditor::_createEditorsFromAtomParameters() {
     
     this->_editorsByParam.insert(RPZAtom::Parameter::CharacterId, new CharacterPickerEditor);
    
-    for(auto editor : this->_editorsByParam) {
+    for(const auto editor : this->_editorsByParam) {
 
         QObject::connect(
             editor, &AtomSubEditor::valueConfirmedForPayload,
@@ -161,7 +161,7 @@ RPZAtom::Updates AtomEditor::_findDefaultValuesToBind() {
 
     //intersect represented atom types in selection to determine which editors to display
     QSet<RPZAtom::Parameter> paramsToDisplay;
-    for(auto &type : this->_currentSelectionDescr.representedTypes) {
+    for(const auto &type : this->_currentSelectionDescr.representedTypes) {
         
         auto associatedCustomParams = RPZAtom::customizableParams(type);
         
@@ -174,7 +174,7 @@ RPZAtom::Updates AtomEditor::_findDefaultValuesToBind() {
 
     }
 
-    for(auto param : paramsToDisplay) {
+    for(const auto param : paramsToDisplay) {
         out.insert(
             param, 
             this->_currentSelectionDescr.templateAtom.metadata(param)

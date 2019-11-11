@@ -11,7 +11,7 @@ class MultipleAtomTargetsPayload : public AtomRelatedPayload {
             auto list = this->value(QStringLiteral(u"ids")).toList();
 
             QList<RPZAtom::Id> out;
-            for(auto &e : list) {
+            for(const auto &e : list) {
                 auto id = e.toULongLong();
                 out.append(id);
             }
@@ -27,7 +27,7 @@ class MultipleAtomTargetsPayload : public AtomRelatedPayload {
             
             auto targeted = this->targetRPZAtomIds();
 
-            for(auto &id : targeted) {
+            for(const auto &id : targeted) {
                 targeted.removeOne(id);
             }
 
@@ -46,7 +46,7 @@ class MultipleAtomTargetsPayload : public AtomRelatedPayload {
     private:
         void _setTargetRPZAtomIds(const QList<RPZAtom::Id> &targetRPZAtomIds) {
             QVariantList cast;
-            for(auto &id : targetRPZAtomIds) {
+            for(const auto &id : targetRPZAtomIds) {
                 cast.append(
                     QString::number(id)
                 );

@@ -53,7 +53,7 @@ class MapViewAnimator {
 
         static void clearAnimations() {
             
-            for(auto &animations : _ongoingAnimations) {
+            for(const auto &animations : _ongoingAnimations) {
                 qDeleteAll(animations);
             }
 

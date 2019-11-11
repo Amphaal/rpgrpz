@@ -32,7 +32,7 @@ class BulkMetadataChangedPayload : public AtomRelatedPayload {
             
             auto remainingUpdates = this->atomsUpdates();
 
-            for(auto &id : idsToRemove) {
+            for(const auto &id : idsToRemove) {
                 remainingUpdates.remove(id);
             }
 

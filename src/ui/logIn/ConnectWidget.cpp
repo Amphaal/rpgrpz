@@ -215,7 +215,7 @@ void ConnectWidget::_fillCharacterSheetCombo() {
     this->_characterSheetTarget->clear(); //clear content
 
     //for each character in db
-    for(auto &character : CharactersDatabase::get()->characters()) {
+    for(const auto &character : CharactersDatabase::get()->characters()) {
         
         auto id = character.id();
         auto toBeInsertedIndex = this->_characterSheetTarget->count();

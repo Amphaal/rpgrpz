@@ -117,7 +117,7 @@ class CharacterEditor : public QWidget, public ConnectivityObserver {
             auto dbCharacterIds = CharactersDatabase::get()->characters().keys();
             
             RPZMap<RPZCharacter> out;
-            for(auto &remoteUser : this->_rpzClient->sessionUsers()) {
+            for(const auto &remoteUser : this->_rpzClient->sessionUsers()) {
                 
                 //reject if not player
                 if(remoteUser.role() != RPZUser::Role::Player) continue;

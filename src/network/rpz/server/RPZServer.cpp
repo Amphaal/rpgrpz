@@ -193,7 +193,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
 
             //cast
             QSet<RPZAsset::Hash> requested;
-            for(auto &var : data.toList()) {
+            for(const auto &var : data.toList()) {
                 requested += var.toString();
             }
             auto requestedCount = requested.count();
@@ -214,7 +214,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
                 
                 //rebundle
                 QVariantList remaining;
-                for(auto &i : requested) remaining += i;
+                for(const auto &i : requested) remaining += i;
 
                 //send
                 target->sendToSocket(RPZJSON::Method::AvailableAssetsToUpload, remaining);
@@ -222,7 +222,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
             }
 
             //package each asset and send it to user
-            for(auto &assetHash : requested) {
+            for(const auto &assetHash : requested) {
 
                 auto package = AssetsDatabase::get()->prepareAssetPackage(assetHash);
 
@@ -425,7 +425,7 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
 
             //iterate
             QList<QString> notFound;
-            for(auto &recipient : recipients) {
+            for(const auto &recipient : recipients) {
                 
                 //find user from recipident
                 auto userSocket = this->_getUserSocket(recipient);
@@ -496,11 +496,11 @@ void RPZServer::_maySendAndStoreDiceThrows(const QString &text) {
 
     //create message parts
     QList<QString> throwsMsgList;
-    for(auto &dThrow : throws) {
+    for(const auto &dThrow : throws) {
         
         //sub list of values
         QList<QString> sub;
-        for(auto &pair : dThrow.pairedValues) {
+        for(const auto &pair : dThrow.pairedValues) {
             sub += QStringLiteral(u"%1%2")
                         .arg(StringHelper::toSuperScript(pair.second))
                         .arg(pair.first);

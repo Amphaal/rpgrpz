@@ -20,7 +20,7 @@ MessageInterpreter::Command MessageInterpreter::interpretText(const QString &tex
 
 void MessageInterpreter::generateValuesOnDiceThrows(QVector<DiceThrow> &throws) {
     
-    for(auto &dThrow : throws) {
+    for(const auto &dThrow : throws) {
         
         double sum = 0;
         QVector<uint> sout;
@@ -36,7 +36,7 @@ void MessageInterpreter::generateValuesOnDiceThrows(QVector<DiceThrow> &throws) 
         
         //regroup throws
         QMultiHash<uint, bool> buf;
-        for(auto i : sout) {
+        for(const auto i : sout) {
             buf.insertMulti(i, false);
         }
 
@@ -45,7 +45,7 @@ void MessageInterpreter::generateValuesOnDiceThrows(QVector<DiceThrow> &throws) 
         std::sort(keys.begin(), keys.end(), std::greater<int>());
 
         QVector<QPair<uint, int>> out;
-        for(auto face : keys) {
+        for(const auto face : keys) {
             auto count = buf.values(face).count();
             out += { face, count };
         }

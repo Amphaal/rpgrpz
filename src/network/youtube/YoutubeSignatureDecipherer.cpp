@@ -104,7 +104,7 @@ QHash<YoutubeSignatureDecipherer::CipherOperation, YoutubeSignatureDecipherer::Y
     QRegularExpression findCalledFunction(regex);
 
     //find subjacent functions used by decipherer
-    for(auto &call : javascriptDecipheringOperations) {
+    for(const auto &call : javascriptDecipheringOperations) {
         
         //once all are found, break
         if(functionNamesByOperation.count() == 3) break;
@@ -159,7 +159,7 @@ YoutubeSignatureDecipherer::YTDecipheringOperations YoutubeSignatureDecipherer::
     QRegularExpression findFuncAndArgument(regex);
     
     //iterate
-    for(auto &call : javascriptOperations) {
+    for(const auto &call : javascriptOperations) {
 
         //find which function is called
         auto match = findFuncAndArgument.match(call);

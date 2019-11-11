@@ -206,7 +206,7 @@ class MV_Manipulation {
         
         void _runAnimationOnKeyMove(qreal x = 1) {
             
-            for(auto &inst : this->_currentMoveInstructions) {
+            for(const auto &inst : this->_currentMoveInstructions) {
                 
                 //loss acceptable
                 auto castedDelta = (int)(inst.correction * 5 * x);
@@ -236,7 +236,7 @@ class MV_Manipulation {
         QList<MoveInstruction> _getMoveInstructions(const QSet<MoveDirection> &directions) {
             QList<MoveInstruction> out;
 
-            for(auto &direction : directions) {
+            for(const auto &direction : directions) {
                 
                 MoveInstruction temp;
 

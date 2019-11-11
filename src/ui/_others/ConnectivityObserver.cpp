@@ -33,7 +33,7 @@ void ConnectivityObserver::connectWithClient(RPZClient* cc) {
     );
 
     //allow connection bindings on UI
-    for(auto ref : _observers) {
+    for(const auto ref : _observers) {
         ref->connectingToServer();
     }
 
@@ -79,7 +79,7 @@ ConnectivityObserverSynchronizer* ConnectivityObserverSynchronizer::get() {
 }
 
 void ConnectivityObserverSynchronizer::triggerConnectionClosed(bool hasInitialMapLoaded) {
-    for(auto observer : ConnectivityObserver::observers()) {
+    for(const auto observer : ConnectivityObserver::observers()) {
         observer->receivedConnectionCloseSignal(hasInitialMapLoaded);
     }
 }

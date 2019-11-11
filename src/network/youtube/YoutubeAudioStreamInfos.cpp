@@ -6,7 +6,7 @@ YoutubeAudioStreamInfos::YoutubeAudioStreamInfos(const QString &adaptativeStream
     auto streamInfosByType = _generatRawAdaptativeStreamInfos(adaptativeStreamInfosAsStr);
 
     //filter, only audio
-    for(auto &streamInfos : streamInfosByType) {
+    for(const auto &streamInfos : streamInfosByType) {
         auto type = streamInfos.value(QStringLiteral(u"type"));
         
         //exclude
@@ -19,7 +19,7 @@ YoutubeAudioStreamInfos::YoutubeAudioStreamInfos(const QString &adaptativeStream
     }
 
     //alter url parameter if signature is needed
-    for(auto &audioStreamInfos : this->_InfosByAudioMime) { 
+    for(const auto &audioStreamInfos : this->_InfosByAudioMime) { 
         
         //signature
         auto baseSignature = audioStreamInfos.value(QStringLiteral(u"s"));
@@ -86,7 +86,7 @@ QList<QHash<QString, QString>> YoutubeAudioStreamInfos::_generatRawAdaptativeStr
             QString::SplitBehavior::SkipEmptyParts
         );
 
-        for(auto &pair : pairs) {
+        for(const auto &pair : pairs) {
             
             //current key/value pair
             auto kvpAsList = pair.split(

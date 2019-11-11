@@ -174,7 +174,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
             
             //cast
             QVector<RPZAsset::Hash> out;
-            for(auto &e : data.toList()) out += e.toString();
+            for(const auto &e : data.toList()) out += e.toString();
 
             //update ui
             QMetaObject::invokeMethod(ProgressTracker::get(), "downloadIsStarting", 
@@ -214,7 +214,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
         
         case RPZJSON::Method::ChatLogHistory: {
             QVector<RPZMessage> msgs;
-            for(auto &rawMsg : data.toList()) {
+            for(const auto &rawMsg : data.toList()) {
                 RPZMessage msg(rawMsg.toHash());
                 msgs.append(msg);
             }
@@ -231,7 +231,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
                 this->_sessionUsers.clear();
                 
                 //inserts
-                for(auto &rUser : data.toList()) {
+                for(const auto &rUser : data.toList()) {
                     
                     RPZUser user(rUser.toHash());
                     this->_sessionUsers.insert(user.id(), user);
@@ -456,7 +456,7 @@ void RPZClient::notifyCharacterChange(const RPZCharacter &changed) {
 
 void RPZClient::_askForAssets(const QSet<RPZAsset::Hash> &ids) {
     QVariantList list;
-    for(auto &id : ids) list.append(id);
+    for(const auto &id : ids) list.append(id);
     this->_sock->sendToSocket(RPZJSON::Method::AskForAssets, list);
 }
 
@@ -497,7 +497,7 @@ const QList<RPZCharacter> RPZClient::unpairedUserCharacters() const {
     QList<RPZCharacter> out;
 
     QMutexLocker l(&this->_m_sessionUsers);
-    for(auto &userId : this->_playerIdsWithoutToken) {
+    for(const auto &userId : this->_playerIdsWithoutToken) {
         auto &user = this->_sessionUsers[userId];
         out += user.character();
     }

@@ -36,7 +36,7 @@ class InventorySlotModal : public QDialog {
             
             this->setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
 
-            for(auto &slot : toAlter) this->_toBeAltered.insert(slot.second.id(), {slot.first, slot.second});
+            for(const auto &slot : toAlter) this->_toBeAltered.insert(slot.second.id(), {slot.first, slot.second});
 
             QObject::connect(
                 this->_targetsCombo, qOverload<int>(&QComboBox::currentIndexChanged),
@@ -45,7 +45,7 @@ class InventorySlotModal : public QDialog {
 
             {
                 QSignalBlocker b(this->_targetsCombo);
-                for(auto target : targets) {
+                for(const auto target : targets) {
                     this->_addInventoryToCombo(this->_targetsCombo, target);
                 }
             }

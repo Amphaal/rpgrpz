@@ -35,7 +35,7 @@ class StandardUsersModel : public BaseUsersModel {
         }
 
     private:
-        bool _isUserInvalidForInsert(const RPZUser &user) override {
+        bool _isUserInvalidForInsert(const RPZUser &user) const override {
             return user.role() == RPZUser::Role::Player;
         }
 

@@ -33,7 +33,7 @@ void AssetsDatabase::_saveIntoFile() {
 
         //assets
         QVariantHash assets;
-        for(auto &asset : this->_assets) {
+        for(const auto &asset : this->_assets) {
             assets.insert(asset.hash(), asset);
         }
         updateFrom(db, QStringLiteral(u"assets"), assets);
@@ -43,7 +43,7 @@ void AssetsDatabase::_saveIntoFile() {
         for(auto i = this->_paths.begin(); i != this->_paths.end(); i++) {
             
             QVariantList hashes;
-            for(auto &hash : i.value()) hashes += hash;
+            for(const auto &hash : i.value()) hashes += hash;
 
             paths.insert(i.key(), hashes);
 
@@ -81,7 +81,7 @@ void AssetsDatabase::_setupLocalData() {
     //wlink, internal only
     for(auto i = this->_paths.begin(); i != this->_paths.end(); i++) {
         auto path = i.key();
-        for(auto &hashes : i.value()) {
+        for(const auto &hashes : i.value()) {
             this->_w_assetToPath.insert(hashes, i.key());
         }
     }
@@ -241,7 +241,7 @@ void AssetsDatabase::removeFolders(const QList<AssetsDatabase::FolderPath> &path
     QSet<RPZAsset::Hash> hashesToRemove;
 
     //traverse paths
-    for(auto &path : pathsToRemove) {
+    for(const auto &path : pathsToRemove) {
 
         if(!this->_paths.contains(path)) continue;
 
@@ -271,7 +271,7 @@ void AssetsDatabase::moveAssetsTo(const AssetsDatabase::FolderPath &internalPath
 
     //add new wlink and strong link
     auto &dest = this->_paths[internalPathToMoveTo];
-    for(auto &hash : hashesToMove) {
+    for(const auto &hash : hashesToMove) {
         dest += hash;
         this->_w_assetToPath.insert(hash, internalPathToMoveTo);
     }
@@ -306,7 +306,7 @@ void AssetsDatabase::moveFoldersTo(const AssetsDatabase::FolderPath &internalPat
 
 void AssetsDatabase::_reroutePaths(const AssetsDatabase::FolderPath &ancestor, const AssetsDatabase::FolderPath &toReplaceAncestor, const QSet<AssetsDatabase::FolderPath> &subjects) {
     
-    for(auto &oldPath : subjects) {
+    for(const auto &oldPath : subjects) {
 
         //remove old path content
         auto linkedHashes = this->_paths.take(oldPath);
@@ -320,7 +320,7 @@ void AssetsDatabase::_reroutePaths(const AssetsDatabase::FolderPath &ancestor, c
         this->_paths[newPath] += linkedHashes;
 
         //update wlink
-        for(auto &hash : linkedHashes) {
+        for(const auto &hash : linkedHashes) {
             this->_w_assetToPath.insert(hash, newPath);
         }
 
@@ -332,7 +332,7 @@ QSet<AssetsDatabase::FolderPath> AssetsDatabase::_getPathsStartingWith(const Ass
     
     QSet<AssetsDatabase::FolderPath> out;
     
-    for(auto &path : this->_paths.keys()) {
+    for(const auto &path : this->_paths.keys()) {
         if(!path.startsWith(toRequest)) continue;
         out += path;
     }
@@ -345,11 +345,11 @@ AssetsDatabase::StartingWithPathRequestResults AssetsDatabase::_getPathsStarting
     
     //setup request container
     StartingWithPathRequestResults startingWithPath;
-    for(auto &topmost : topmostPathsToMove) startingWithPath.insert(topmost, {});
+    for(const auto &topmost : topmostPathsToMove) startingWithPath.insert(topmost, {});
 
     //iterate
-    for(auto &path : this->_paths.keys()) {
-        for(auto &topmost : topmostPathsToMove) {
+    for(const auto &path : this->_paths.keys()) {
+        for(const auto &topmost : topmostPathsToMove) {
             if(!path.startsWith(topmost)) continue;
             startingWithPath[topmost] += path;
         }
@@ -365,7 +365,7 @@ QPair<AssetsDatabase::HashesByPathToRemove, AssetsDatabase::RemovedAssets> Asset
     HashesByPathToRemove hashesToRemoveFromPaths;
     
     //clear assets
-    for(auto &hash : hashesToRemove) {
+    for(const auto &hash : hashesToRemove) {
 
         if(!this->_assets.contains(hash)) continue;
         if(!onlyRemoveReference) removedAssets += this->_assets.take(hash);
@@ -420,7 +420,7 @@ const QString AssetsDatabase::_parentPath(const AssetsDatabase::FolderPath &toEx
 
 void AssetsDatabase::_removeAssetFiles(const QList<RPZAsset> &toRemoveFromStorage) {
     
-    for(auto &asset : toRemoveFromStorage) {
+    for(const auto &asset : toRemoveFromStorage) {
         
         QFile fileToRemove(asset.filepath(false));
         if(!fileToRemove.exists()) continue;
@@ -456,7 +456,7 @@ QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> AssetsDatabase::_getUp
 
             //iterate assets
             QVariantHash compiled;
-            for(auto &asset : db._assets) {
+            for(const auto &asset : db._assets) {
 
                 //try to read associated asset and define geometry
                 asset.updateAssetGeometryData();

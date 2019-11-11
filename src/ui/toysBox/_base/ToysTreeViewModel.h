@@ -21,7 +21,7 @@ class ToysTreeViewModel : public QAbstractItemModel {
     public:
         ToysTreeViewModel(QObject *parent = nullptr);
         
-        QModelIndex getStaticContainerTypesIndex(const ToysTreeViewItem::Type &staticContainerType); 
+        QModelIndex getStaticContainerTypesIndex(const ToysTreeViewItem::Type &staticContainerType) const; 
 
         ///////////////
         /// HELPERS ///

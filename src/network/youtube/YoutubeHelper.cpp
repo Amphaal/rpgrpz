@@ -203,7 +203,7 @@ QList<QString> YoutubeHelper::_extractVideoIdsFromHTTPRequest(const QByteArray &
 
 QList<YoutubeVideoMetadata*> YoutubeHelper::_videoIdsToMetadataList(const QList<QString> &videoIds) {
     QList<YoutubeVideoMetadata*> out;
-    for(auto &id : videoIds) {
+    for(const auto &id : videoIds) {
         out.append(new YoutubeVideoMetadata(id));
     } 
     return out;

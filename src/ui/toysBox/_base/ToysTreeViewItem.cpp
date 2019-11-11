@@ -142,7 +142,7 @@ bool ToysTreeViewItem::contains(ToysTreeViewItem* toCheck, ToysTreeViewItem* toB
 
 bool ToysTreeViewItem::containsAny(const QList<ToysTreeViewItem*> toCheck) {
     
-    for(auto i : toCheck) {
+    for(const auto i : toCheck) {
         auto doesContain = this->contains(i);
         if(doesContain) return true;
     }
@@ -207,7 +207,7 @@ QList<ToysTreeViewItem*> ToysTreeViewItem::containerSubItems() {
    
     QList<ToysTreeViewItem*> list;
     
-    for(auto &elem : this->_subItems) {
+    for(const auto &elem : this->_subItems) {
         if(elem->isContainer()) list.append(elem);
     }
 
@@ -220,7 +220,7 @@ QList<ToysTreeViewItem*> ToysTreeViewItem::toySubItems() {
     auto filterType = this->insertType();
 
     QList<ToysTreeViewItem*> list; 
-    for(auto &elem : this->_subItems) {
+    for(const auto &elem : this->_subItems) {
         if(filterType == elem->type()) list.append(elem);
     }
 
@@ -318,7 +318,7 @@ void ToysTreeViewItem::_definePath() {
     this->_defineFullPath();
 
     //update subItems paths
-    for(auto &elem : this->_subItems) {
+    for(const auto &elem : this->_subItems) {
         elem->_definePath();
     }
     
@@ -342,7 +342,7 @@ void ToysTreeViewItem::_defineIconPath() {
 void ToysTreeViewItem::_resetSubjacentItemsType(const ToysTreeViewItem::Type &replacingType, ToysTreeViewItem* target) {
     
     //update subItems
-    for(auto elem : target->_subItems) {
+    for(const auto elem : target->_subItems) {
         
         //continue recursive
         if(elem->isContainer()) {
@@ -542,7 +542,7 @@ QSet<ToysTreeViewItem*> ToysTreeViewItem::filterTopMostOnly(QList<ToysTreeViewIt
 
         //iterate
         QSet<ToysTreeViewItem*> obsoletePointers;
-        for(auto &st : higher) {
+        for(const auto &st : higher) {
 
             auto st_path = st->_fullPath;
             auto st_length = st_path.length();

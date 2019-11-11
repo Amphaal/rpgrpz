@@ -16,7 +16,7 @@ class MapLayoutModelBase : public QAbstractItemModel {
             
             QList<RPZAtom::Id> selectedIds;
             
-            for(auto &index : selectedIndexes) {
+            for(const auto &index : selectedIndexes) {
                 if(index.column()) continue;
                 auto id = fromIndex(index);
                 if(id) selectedIds += id;
@@ -53,7 +53,7 @@ class MapLayoutModelBase : public QAbstractItemModel {
 
         const QModelIndexList toIndexes(const QList<RPZAtom::Id> &ids) {
             QModelIndexList out;
-            for(auto &id : ids) {
+            for(const auto &id : ids) {
                 out += this->toIndex(id);
             }
             return out;
@@ -298,7 +298,7 @@ class MapLayoutModelBase : public QAbstractItemModel {
 
         MapLayoutCategory* _getCategory(int row) const {
             
-            for(auto &categoryItems : this->_categories) {
+            for(const auto &categoryItems : this->_categories) {
                 
                 auto count = categoryItems.count();
                 
@@ -319,7 +319,7 @@ class MapLayoutModelBase : public QAbstractItemModel {
 
         int countCategories() const {
             auto total = 0;
-            for(auto &categoryItems : this->_categories) {
+            for(const auto &categoryItems : this->_categories) {
                 total += categoryItems.count();
             }
             return total;
@@ -334,7 +334,7 @@ class MapLayoutModelBase : public QAbstractItemModel {
 
             this->_atomsByAssetHash.clear();  
 
-            for(auto &category : this->_categories) {
+            for(const auto &category : this->_categories) {
                 qDeleteAll(category);
             }
             this->_categories.clear();
@@ -353,8 +353,8 @@ class MapLayoutModelBase : public QAbstractItemModel {
         int _getRow(MapLayoutCategory* category) const {
             auto row = -1;
             
-            for(auto &categoryItems : this->_categories) {
-                for(auto &item : categoryItems) {
+            for(const auto &categoryItems : this->_categories) {
+                for(const auto &item : categoryItems) {
                     row++;
                     if(item == category) return row;
                 }

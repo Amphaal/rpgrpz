@@ -114,13 +114,14 @@ QModelIndexList ToysTreeView::_selectedElementsIndexes() {
     QList<QModelIndex> indexes;
 
     //get list of items
-    for(auto &i : this->selectedIndexes()) {
+    for(const auto &i : this->selectedIndexes()) {
 
         //only first column
         if(i.column() > 0) continue;
 
         //append
         indexes.append(i);
+        
     }
 
     return indexes;
@@ -159,7 +160,7 @@ void ToysTreeView::dragEnterEvent(QDragEnterEvent *event) {
     auto md = event->mimeData();
     if (md->hasUrls()) {
         
-        for(auto &url : md->urls()) {
+        for(const auto &url : md->urls()) {
 
             //if is not local file
             if(!url.isLocalFile()) return;
@@ -206,7 +207,7 @@ void ToysTreeView::_generateStaticContainerMoveActions() {
 
     QList<QAction*> out;
 
-    for(auto &toCreate : ToysTreeViewItem::movableStaticContainerTypes()) {
+    for(const auto &toCreate : ToysTreeViewItem::movableStaticContainerTypes()) {
         
         auto targetIndex = this->_model->getStaticContainerTypesIndex(toCreate);
         auto icon = this->_model->data(targetIndex, Qt::DecorationRole).value<QIcon>();
@@ -263,7 +264,7 @@ void ToysTreeView::_generateMenu(const QList<QModelIndex> &targetIndexes, const 
 
     // check if all selected are deletable type...
     auto areAllDeletable = [targetIndexes]() {
-        for(auto &elemIndex : targetIndexes) {
+        for(const auto &elemIndex : targetIndexes) {
             auto elem = ToysTreeViewItem::fromIndex(elemIndex);
             if(!elem->isDeletable()) return false;
         }

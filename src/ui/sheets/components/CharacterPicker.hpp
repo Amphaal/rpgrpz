@@ -126,7 +126,7 @@ class CharacterPicker : public QWidget {
 
             //add an item for each
             this->_characterListCombo->setEnabled(true);
-            for(auto &character : toLoad) {
+            for(const auto &character : toLoad) {
                 
                 auto id = character.id();
                 auto futureInsertIndex = this->_characterListCombo->count();

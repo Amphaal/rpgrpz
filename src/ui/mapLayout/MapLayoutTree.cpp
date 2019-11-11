@@ -122,7 +122,7 @@ void MapLayoutTree::_handleAlterationRequest(const AlterationPayload &payload) {
             auto mPayload = dynamic_cast<const SelectedPayload*>(pl.data());
 
             QItemSelection newSelection;
-            for(auto &id : mPayload->targetRPZAtomIds()) {
+            for(const auto &id : mPayload->targetRPZAtomIds()) {
                 auto index = this->_model->toIndex(id);
                 newSelection.merge(QItemSelection(index, index), QItemSelectionModel::Select);
             }

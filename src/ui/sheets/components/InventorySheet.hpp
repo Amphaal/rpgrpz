@@ -107,7 +107,7 @@ class InventorySheet : public QTableWidget {
             }
 
             //add slots
-            for(auto &slot : toLoad.inventorySlots()) {
+            for(const auto &slot : toLoad.inventorySlots()) {
                 this->_addRow(slot);
             }
 
@@ -253,19 +253,19 @@ class InventorySheet : public QTableWidget {
 
         int _countSelectedRows() {
             auto selectedRows = 0;
-            for(auto &range : this->selectedRanges()) selectedRows += range.rowCount();
+            for(const auto &range : this->selectedRanges()) selectedRows += range.rowCount();
             return selectedRows;
         }
 
         QSet<int> _selectedRows() {
             QSet<int> out;
-            for(auto &index : this->selectedIndexes()) out += index.row();
+            for(const auto &index : this->selectedIndexes()) out += index.row();
             return out;
         }
 
         QVector<QPair<int, RPZInventorySlot>> _selectedSlots() {
             QVector<QPair<int, RPZInventorySlot>> out;
-            for(auto row : this->_selectedRows()) {
+            for(const auto row : this->_selectedRows()) {
                 out += { row, this->_fromRow(row) };
             }
             return out;
@@ -293,13 +293,13 @@ class InventorySheet : public QTableWidget {
             
             //get rows to delete and desc order them
             QSet<int> rowsToDelete;
-            for(auto &index : selected) {rowsToDelete += index.row();}
+            for(const auto &index : selected) {rowsToDelete += index.row();}
             auto rowsToDeleteL = rowsToDelete.toList();
             std::sort(rowsToDeleteL.begin(), rowsToDeleteL.end(), std::greater<int>());
             
             //remove rows
             this->setSortingEnabled(false);
-            for(auto &row : rowsToDeleteL) {
+            for(const auto &row : rowsToDeleteL) {
                 this->removeRow(row);
             }
             this->setSortingEnabled(true);

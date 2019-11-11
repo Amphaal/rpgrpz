@@ -123,7 +123,7 @@ void MapView::_onUIUpdateRequest(const QHash<QGraphicsItem*, RPZAtom::Updates> &
 }
 
 void MapView::_onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates) {
-    for(auto item : toUpdate) {
+    for(const auto item : toUpdate) {
         this->_updateItemValue(item, updates);
     }
 }
@@ -157,7 +157,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
 
     auto currentTool = this->_getCurrentTool();
 
-    for(auto item : toAlter) {
+    for(const auto item : toAlter) {
         switch(type) {
 
             case Payload::Alteration::Reset: {
@@ -482,7 +482,7 @@ bool MapView::_preventMoveOrInsertAtPosition(QGraphicsItem *toCheck, const QPoin
     if(this->_currentMapParameters.movementSystem() != RPZMapParameters::MovementSystem::Grid) return false;
     if(!RPZQVariant::isGridBound(toCheck)) return false;
 
-    for(auto colliding : this->scene()->items(atPosRect)) {
+    for(const auto colliding : this->scene()->items(atPosRect)) {
         if(colliding == toCheck) continue;
         if(RPZQVariant::isGridBound(colliding)) return true;
     }

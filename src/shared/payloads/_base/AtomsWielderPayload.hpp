@@ -17,7 +17,7 @@ class AtomsWielderPayload : public AtomRelatedPayload {
 
             auto hashes = this->value(QStringLiteral(u"assets")).toList();
 
-            for(auto &i : hashes) out += i.toString();
+            for(const auto &i : hashes) out += i.toString();
             
             return out;
 
@@ -45,7 +45,7 @@ class AtomsWielderPayload : public AtomRelatedPayload {
             
             auto remainingAtoms = this->atoms();
 
-            for(auto &id : idsToRemove) {
+            for(const auto &id : idsToRemove) {
                 remainingAtoms.remove(id);
             }
 

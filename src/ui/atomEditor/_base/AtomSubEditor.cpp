@@ -50,7 +50,7 @@ void AtomSubEditor::loadTemplate(const RPZAtom::Updates &defaultValues, const At
     this->_handleVisibilityOnLoad(defaultValues);
 
     auto hasEmptyValue = false;
-    for(auto &param : this->_params) {
+    for(const auto &param : this->_params) {
         auto associatedValue = defaultValues.value(param);
         if(associatedValue.isNull()) hasEmptyValue = true;
     }

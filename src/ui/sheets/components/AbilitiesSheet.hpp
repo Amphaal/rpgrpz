@@ -100,7 +100,7 @@ class AbilitiesSheet : public QTableWidget {
             }
             
             //fill
-            for(auto &ability : toLoad.abilities()) {
+            for(const auto &ability : toLoad.abilities()) {
                 this->_addRow(ability);
             }
 
@@ -168,13 +168,13 @@ class AbilitiesSheet : public QTableWidget {
             
             //get rows to delete and desc order them
             QSet<int> rowsToDelete;
-            for(auto &index : selected) {rowsToDelete += index.row();}
+            for(const auto &index : selected) {rowsToDelete += index.row();}
             auto rowsToDeleteL = rowsToDelete.toList();
             std::sort(rowsToDeleteL.begin(), rowsToDeleteL.end(), std::greater<int>());
             
             //remove rows
             this->setSortingEnabled(false);
-            for(auto &row : rowsToDeleteL) {
+            for(const auto &row : rowsToDeleteL) {
                 this->removeRow(row);
             }
             this->setSortingEnabled(true);

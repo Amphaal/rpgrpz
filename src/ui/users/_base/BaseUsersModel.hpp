@@ -24,7 +24,7 @@ class BaseUsersModel : public QAbstractListModel, public ConnectivityObserver {
     protected:
         RPZMap<RPZUser> _users;
 
-        virtual bool _isUserInvalidForInsert(const RPZUser &user) = 0;
+        virtual bool _isUserInvalidForInsert(const RPZUser &user) const = 0;
 
         void connectionClosed(bool hasInitialMapLoaded) override {
             
@@ -96,7 +96,7 @@ class BaseUsersModel : public QAbstractListModel, public ConnectivityObserver {
 
                 this->_users.clear();
                 
-                for(auto &user : this->_rpzClient->sessionUsers()) {
+                for(const auto &user : this->_rpzClient->sessionUsers()) {
                     if(this->_isUserInvalidForInsert(user)) continue;
                     this->_users.insert(user.id(), user);
                 }

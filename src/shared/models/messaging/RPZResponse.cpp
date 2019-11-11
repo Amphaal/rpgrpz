@@ -31,7 +31,7 @@ QString RPZResponse::toString() const{
         case ResponseCode::ErrorRecipients: {
 
             QList<QString> rcpts;
-            for(auto &e : this->responseData().toList()) rcpts.append(e.toString());
+            for(const auto &e : this->responseData().toList()) rcpts.append(e.toString());
 
             return QObject::tr("Target users could not be found : ") + rcpts.join(", ");
         }

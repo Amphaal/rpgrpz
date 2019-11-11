@@ -101,7 +101,7 @@ class RPZCharacter : public Serializable {
             QVariantList in;
             int favGaugesCount = 0;
             
-            for(auto &gauge : gauges) {
+            for(const auto &gauge : gauges) {
                 if(gauge.isVisibleUnderPortrait()) favGaugesCount++;
                 in += gauge;
             }
@@ -112,7 +112,7 @@ class RPZCharacter : public Serializable {
         }
         const QVector<RPZGauge> gauges() const {
             QVector<RPZGauge> out;
-            for(auto &gauge : this->value(QStringLiteral(u"g")).toList()) out += RPZGauge(gauge.toHash());
+            for(const auto &gauge : this->value(QStringLiteral(u"g")).toList()) out += RPZGauge(gauge.toHash());
             return out;
         }
         const int favGaugesCount() const {
@@ -121,12 +121,12 @@ class RPZCharacter : public Serializable {
 
         void setAbilities(const QVector<RPZAbility> &abilities) {
             QVariantList in;
-            for(auto &ability : abilities) in += ability;
+            for(const auto &ability : abilities) in += ability;
             this->insert(QStringLiteral(u"ab"), in);
         }
         const QVector<RPZAbility> abilities() const {
             QVector<RPZAbility> out;
-            for(auto &ability : this->value(QStringLiteral(u"ab")).toList()) out += RPZAbility(ability.toHash());
+            for(const auto &ability : this->value(QStringLiteral(u"ab")).toList()) out += RPZAbility(ability.toHash());
             return out;
         }
 
@@ -134,12 +134,12 @@ class RPZCharacter : public Serializable {
 
         void setInventories(const QVector<RPZInventory> &inventories) {
             QVariantList in;
-            for(auto &inventory : inventories) in += inventory;
+            for(const auto &inventory : inventories) in += inventory;
             this->insert(QStringLiteral(u"inv"), in);
         }
         const QVector<RPZInventory> inventories() const {
             QVector<RPZInventory> out;
-            for(auto &inv : this->value(QStringLiteral(u"inv")).toList()) out += RPZInventory(inv.toHash());
+            for(const auto &inv : this->value(QStringLiteral(u"inv")).toList()) out += RPZInventory(inv.toHash());
             return out;
         }
 

@@ -54,7 +54,7 @@ void ViewMapHint::mightNotifyMovement(const QList<QGraphicsItem*> &itemsWhoMight
     
     //generate args for payload
     RPZAtom::ManyUpdates coords;
-    for(auto gi : itemsWhoMightHaveMoved) {
+    for(const auto gi : itemsWhoMightHaveMoved) {
         
         //find id
         auto id = this->getAtomIdFromGraphicsItem(gi);
@@ -239,7 +239,7 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &metadata) {
     setOfGraphicsItemsToReplace = this->_missingAssetHashesFromDb.values(hash).toSet();
     
     //iterate through the list of GI to replace
-    for(auto item : setOfGraphicsItemsToReplace) {
+    for(const auto item : setOfGraphicsItemsToReplace) {
         
         //find id
         auto id = this->getAtomIdFromGraphicsItem(item);
@@ -290,7 +290,7 @@ void ViewMapHint::handlePreviewRequest(const AtomsSelectionDescriptor &selection
         
         QMutexLocker l(&this->_m_GItemsByRPZAtomId);
 
-        for(auto &id : selectionDescriptor.selectedAtomIds) {
+        for(const auto &id : selectionDescriptor.selectedAtomIds) {
             toUpdate += this->_GItemsByRPZAtomId.value(id);
         }
 
@@ -318,7 +318,7 @@ const QList<RPZAtom::Id> ViewMapHint::getAtomIdsFromGraphicsItems(const QList<QG
     
     QList<RPZAtom::Id> list;
 
-    for(auto e : listToFetch) {
+    for(const auto e : listToFetch) {
         auto id = this->getAtomIdFromGraphicsItem(e);
         if(id) list += id;
     }
@@ -466,7 +466,7 @@ void ViewMapHint::_atomAdded(const RPZAtom &added) {
 void ViewMapHint::_basicAlterationDone(const QList<RPZAtom::Id> &updatedIds, const Payload::Alteration &type) {
     QList<QGraphicsItem*> toUpdate;
     
-    for(auto id : updatedIds) {
+    for(const auto id : updatedIds) {
         if(type == Payload::Alteration::Removed) toUpdate += this->_GItemsByRPZAtomId.take(id);
         else toUpdate += this->_GItemsByRPZAtomId.value(id);
     }
@@ -476,7 +476,7 @@ void ViewMapHint::_basicAlterationDone(const QList<RPZAtom::Id> &updatedIds, con
 
 void ViewMapHint::_updatesDone(const QList<RPZAtom::Id> &updatedIds, const RPZAtom::Updates &updates) {
     QList<QGraphicsItem*> toUpdate;
-    for(auto id : updatedIds) {
+    for(const auto id : updatedIds) {
         toUpdate += this->_GItemsByRPZAtomId.value(id);
     }
     emit requestingUIUpdate(toUpdate, updates);

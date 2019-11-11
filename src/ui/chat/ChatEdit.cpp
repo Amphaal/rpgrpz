@@ -60,7 +60,7 @@ void ChatEdit::_sendMessage() {
 void ChatEdit::_onWhisperTargetsChanged() {
     
     QSet<QString> usernamesList;
-    for(auto &user : this->_rpzClient->sessionUsers()) {
+    for(const auto &user : this->_rpzClient->sessionUsers()) {
         usernamesList.insert(QStringLiteral(u"@") + user.whisperTargetName());
     }
 

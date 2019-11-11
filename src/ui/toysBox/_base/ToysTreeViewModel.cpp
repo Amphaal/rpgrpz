@@ -5,7 +5,7 @@ ToysTreeViewModel::ToysTreeViewModel(QObject *parent) : QAbstractItemModel(paren
     this->_injectDbStructure();
 };
 
-QModelIndex ToysTreeViewModel::getStaticContainerTypesIndex(const ToysTreeViewItem::Type &staticContainerType) {
+QModelIndex ToysTreeViewModel::getStaticContainerTypesIndex(const ToysTreeViewItem::Type &staticContainerType) const {
     
     auto indexOf = ToysTreeViewItem::staticContainerTypes().indexOf(staticContainerType);
     
@@ -81,7 +81,7 @@ bool ToysTreeViewModel::insertAssets(const QList<QUrl> &urls, const QModelIndex 
 
     //for each url, insert
     auto allResultsOK = 0;
-    for(auto &url : urls) {
+    for(const auto &url : urls) {
 
         RPZAsset asset(url);
         if(!asset.isValidAsset()) continue;
@@ -108,7 +108,7 @@ void ToysTreeViewModel::removeItems(const QList<QModelIndex> &itemsIndexesToRemo
         QList<RPZAsset::Hash> hashesToRemove;
         QList<ToysTreeViewItem*> itemsToRemove;
 
-        for(auto &index : topmost) {
+        for(const auto &index : topmost) {
             
             this->beginRemoveRows(index.parent(), index.row(), index.row());
             
@@ -130,7 +130,7 @@ void ToysTreeViewModel::removeItems(const QList<QModelIndex> &itemsIndexesToRemo
         AssetsDatabase::get()->removeAssets(hashesToRemove);
 
         //model remove
-        for(auto item : itemsToRemove) {
+        for(const auto item : itemsToRemove) {
             delete item;
         }
     
@@ -153,7 +153,7 @@ bool ToysTreeViewModel::moveItemsToContainer(const QModelIndex &parentIndex, con
     QList<RPZAsset::Hash> assetHashesToMove;
     QList<ToysTreeViewItem*> topmostItems;
 
-    for(auto &index : topMostIndexes) {
+    for(const auto &index : topMostIndexes) {
         
         auto item = ToysTreeViewItem::fromIndex(index);
         topmostItems += item;
@@ -190,7 +190,7 @@ bool ToysTreeViewModel::moveItemsToContainer(const QModelIndex &parentIndex, con
     AssetsDatabase::get()->moveFoldersTo(parentElemPath, folderPathsToMove);
 
     //move model
-    for(auto i : topmostItems) {
+    for(const auto i : topmostItems) {
         parentElem->appendSubItem(i);
     }
 
@@ -404,7 +404,7 @@ QList<ToysTreeViewItem*> ToysTreeViewModel::fromMimeData(const QMimeData *data) 
 
     //iterate through list
     QList<ToysTreeViewItem*> list;
-    for(auto &pointerAsString : pointerList) {
+    for(const auto &pointerAsString : pointerList) {
         auto ptr = (ToysTreeViewItem*)pointerAsString.toULongLong();
         list << ptr;
     }
@@ -455,7 +455,7 @@ QMimeData* ToysTreeViewModel::mimeData(const QModelIndexList &indexes) const {
     QModelIndexList filteredIndexList;
 
     //iterate
-    for(auto &i : indexes) {
+    for(const auto &i : indexes) {
 
         //only first column
         if(i.column() > 0) continue;
@@ -497,14 +497,14 @@ Qt::DropActions ToysTreeViewModel::supportedDropActions() const {
 
 void ToysTreeViewModel::_injectStaticStructure() {
 
-    for(auto &staticType : ToysTreeViewItem::staticContainerTypes()) {
+    for(const auto &staticType : ToysTreeViewItem::staticContainerTypes()) {
 
         auto staticFolderItem = new ToysTreeViewItem(this->_rootItem, staticType);
         this->_staticElements.insert(staticType, staticFolderItem);
 
         if(staticType == ToysTreeViewItem::Type::InternalContainer) {
             
-            for(auto &type : ToysTreeViewItem::internalItemTypes()) {
+            for(const auto &type : ToysTreeViewItem::internalItemTypes()) {
                 auto internalItem = new ToysTreeViewItem(staticFolderItem, type);
             }
 
@@ -535,7 +535,7 @@ QHash<AssetsDatabase::FolderPath, ToysTreeViewItem*> ToysTreeViewModel::_generat
     QHash<AssetsDatabase::FolderPath, ToysTreeViewItem*> containersToFill;
 
     //create folders arbo
-    for(auto &path : paths) {
+    for(const auto &path : paths) {
         
         //split the path
         auto split = ToysTreeViewItem::pathAsList(path);
@@ -571,7 +571,7 @@ ToysTreeViewItem* ToysTreeViewModel::_recursiveElementCreator(ToysTreeViewItem* 
 
     //search if already exist
     ToysTreeViewItem* found = nullptr;
-    for(auto container : parent->containerSubItems()) {
+    for(const auto container : parent->containerSubItems()) {
         if(container->displayName() == part) {
             found = container;
             break;
@@ -599,7 +599,7 @@ QModelIndexList ToysTreeViewModel::_getTopMostIndexes(const QModelIndexList &ind
     
     QModelIndexList higher;
 
-    for(auto &index : indexesList) {
+    for(const auto &index : indexesList) {
 
         //add to higher if empty
         if(!higher.count()) {
@@ -622,7 +622,7 @@ QPair<int, int> ToysTreeViewModel::_anticipateInserts(const QModelIndexList &tbi
     int insertAtBegin = 0;
     int insertAtEnd = 0;
     
-    for(auto &index : tbi) {
+    for(const auto &index : tbi) {
         auto elem = ToysTreeViewItem::fromIndex(index);
         if(elem->type() == ToysTreeViewItem::Type::Folder) insertAtBegin++;
         else insertAtEnd++;
@@ -643,7 +643,7 @@ void ToysTreeViewModel::_generateItemsFromDb(const QHash<AssetsDatabase::FolderP
         auto parent = i.value();
         
         //find items in db and create them
-        for(auto &id : db_paths.value(path)) {
+        for(const auto &id : db_paths.value(path)) {
 
             auto asset = AssetsDatabase::get()->asset(id);
 
