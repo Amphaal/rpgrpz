@@ -68,7 +68,7 @@ class InventoryPicker : public QWidget {
         QVector<RPZInventory*> everyInventoriesExceptArg(const RPZInventory* toExclude) {
             QVector<RPZInventory*> out;
 
-            for(const auto &inventory : this->_inventories) {
+            for(auto &inventory : this->_inventories) {
                 auto ptr = &inventory;
                 if(toExclude == ptr) continue;
                 out += ptr;

@@ -20,7 +20,7 @@ MessageInterpreter::Command MessageInterpreter::interpretText(const QString &tex
 
 void MessageInterpreter::generateValuesOnDiceThrows(QVector<DiceThrow> &throws) {
     
-    for(const auto &dThrow : throws) {
+    for(auto &dThrow : throws) {
         
         double sum = 0;
         QVector<uint> sout;

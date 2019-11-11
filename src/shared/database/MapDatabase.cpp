@@ -81,7 +81,7 @@ const QString MapDatabase::snapshotSave(const QString &folderToSaveTo) {
 }
 
 void MapDatabase::addAtoms(const QList<RPZAtom> &toAdd) {
-    for(const auto const &atom : toAdd) {
+    for(auto const &atom : toAdd) {
         this->addAtom(atom);
     }
 }
@@ -149,7 +149,7 @@ QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> MapDatabase::_getUpdat
             MapDatabase db(doc);
 
             //iterate atoms
-            for(const auto atom : db.atoms()) {
+            for(auto atom : db.atoms()) {
                 
                 auto shape = atom.shape();
 

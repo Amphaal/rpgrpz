@@ -41,7 +41,7 @@ QList<QNetworkConfiguration> ConnectivityHelper::_getDefinedConfiguration() {
 
 void ConnectivityHelper::_pickPreferedConfiguration() {
     
-    for(const auto &conf : this->_getDefinedConfiguration()) {
+    for(auto &conf : this->_getDefinedConfiguration()) {
 
         const auto purpose = conf.purpose();
         const auto type = conf.type();

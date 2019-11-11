@@ -456,7 +456,7 @@ QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> AssetsDatabase::_getUp
 
             //iterate assets
             QVariantHash compiled;
-            for(const auto &asset : db._assets) {
+            for(auto &asset : db._assets) {
 
                 //try to read associated asset and define geometry
                 asset.updateAssetGeometryData();
