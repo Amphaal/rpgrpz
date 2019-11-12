@@ -111,6 +111,11 @@ void AtomEditor::_createEditorsFromAtomParameters() {
     
     this->_editorsByParam.insert(RPZAtom::Parameter::CharacterId, new CharacterPickerEditor);
    
+    this->_editorsByParam.insert(RPZAtom::Parameter::NPCShortName, new AtomShortTextEditor(RPZAtom::Parameter::NPCShortName));
+    this->_editorsByParam.insert(RPZAtom::Parameter::NPCDescription, new AtomTextEditor(RPZAtom::Parameter::NPCDescription));
+    this->_editorsByParam.insert(RPZAtom::Parameter::NPCAttitude, new NPCAttitudeEditor);
+    // this->_editorsByParam.insert(RPZAtom::Parameter::NPCHealth, new NPCAttitudeEditor);
+
     for(const auto editor : this->_editorsByParam) {
 
         QObject::connect(

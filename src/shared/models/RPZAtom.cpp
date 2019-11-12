@@ -256,7 +256,11 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams() const {
 }
 
 const QColor RPZAtom::NPCAssociatedColor() const {
-    return _NPCTypeAssociatedColor.value(this->NPCAttitude());
+    return NPCAssociatedColor(this->NPCAttitude());
+}
+
+const QColor RPZAtom::NPCAssociatedColor(const RPZAtom::NPCType &NPCtype) {
+    return _NPCTypeAssociatedColor.value(NPCtype);
 }
 
 bool RPZAtom::isAssetBased() const {

@@ -55,7 +55,7 @@
 <context>
     <name>AtomEditor</name>
     <message numerus="yes">
-        <location filename="../ui/atomEditor/AtomEditor.cpp" line="209"/>
+        <location filename="../ui/atomEditor/AtomEditor.cpp" line="214"/>
         <source> (%n element(s))</source>
         <translation>
             <numerusform> (%n élément)</numerusform>
@@ -63,17 +63,17 @@
         </translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="46"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="47"/>
         <source>Nothing to modify</source>
         <translation>Rien à modifier</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="47"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="48"/>
         <source>Template modification</source>
         <translation>Modification du modèle</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="48"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="49"/>
         <source>Selection modification</source>
         <translation>Modification de la sélection</translation>
     </message>

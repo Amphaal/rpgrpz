@@ -529,6 +529,7 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
 
 
     QGraphicsView::mouseMoveEvent(event);
+    
 }
 
 void MapView::_mightUpdateWalkingHelperPos() {

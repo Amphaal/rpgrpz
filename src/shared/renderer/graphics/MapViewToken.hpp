@@ -23,6 +23,8 @@ class MapViewToken : public QObject, public QGraphicsItem {
     public:
         MapViewToken(const RPZMapParameters &mapParameters, const RPZAtom &atom) {          
             
+            this->setAcceptHoverEvents(true);
+
             auto tileSize = mapParameters.tileWidthInPoints();
             auto tokenSize = QSizeF(tileSize, tileSize);
 
@@ -32,42 +34,18 @@ class MapViewToken : public QObject, public QGraphicsItem {
             auto prc = this->_subRect.width() * 0.1;
             this->_rect = this->_subRect.marginsRemoved(QMarginsF(prc, prc, prc, prc));
             
-            this->updateColors(atom);
+            this->_changeColor(atom);
             
         }
 
-        void updateColors(const RPZAtom &atom) {
-
-            QColor toApply;
-
-            switch(atom.type()) {
-                
-                case RPZAtom::Type::Player: {
-                    toApply = atom.defaultPlayerColor();
-                }
-                break;
-
-                case RPZAtom::Type::NPC: {
-                    toApply = atom.NPCAssociatedColor();
-                }
-                break;
-
-                default:
-                break;
-
-            }
-
-            QRadialGradient radialGrad(this->_rect.center(), this->_rect.width() / 2);
-            radialGrad.setColorAt(0.95, toApply);
-            radialGrad.setColorAt(1, Qt::transparent);
-            this->_brush = QBrush(radialGrad);
-
-            this->_subBrush = QBrush(QColor::fromRgbF(toApply.redF(), toApply.greenF(), toApply.blueF(), .75));
-
+        void updateColor(const QColor &toApply) {
+            this->_changeColor(toApply);
+            this->update();
         }
 
+
         QRectF boundingRect() const override {
-            return this->_rect;
+            return this->_subRect;
         }
 
     private:
@@ -104,6 +82,49 @@ class MapViewToken : public QObject, public QGraphicsItem {
                 painter->drawEllipse(this->_rect);
 
             painter->restore();
+
+        }
+
+        void _changeColor(const RPZAtom &atom) {
+            
+            QColor toApply;
+
+            switch(atom.type()) {
+                
+                case RPZAtom::Type::Player: {
+                    toApply = atom.defaultPlayerColor();
+                }
+                break;
+
+                case RPZAtom::Type::NPC: {
+                    toApply = atom.NPCAssociatedColor();
+                }
+                break;
+
+                default:
+                break;
+
+            }
+
+            this->_changeColor(toApply);
+
+        }
+
+        void _changeColor(const QColor &toApply) {
+            
+            //main
+            QRadialGradient radialGrad(this->_rect.center(), this->_rect.width() / 2);
+            radialGrad.setColorAt(0.95, toApply);
+            radialGrad.setColorAt(1, Qt::transparent);
+            this->_brush = QBrush(radialGrad);
+
+            //sub
+            this->_subBrush = QBrush(QColor::fromRgbF(
+                toApply.redF(), 
+                toApply.greenF(), 
+                toApply.blueF(), 
+                .75
+            ));
 
         }
     

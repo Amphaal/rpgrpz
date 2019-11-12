@@ -172,10 +172,14 @@ class RPZAtom : public Serializable {
         const QString toString() const;
 
         bool isAssetBased() const;
+        bool isRestrictedAtom() const;
+
         RPZAtom::Category category() const;
         static RPZAtom::Category category(const RPZAtom::Type &type);
-        bool isRestrictedAtom() const;
+       
         const QColor NPCAssociatedColor() const;
+        static const QColor NPCAssociatedColor(const RPZAtom::NPCType &NPCtype);
+        
         const QString descriptiveIconPath() const;
         static const QString descriptiveIconPath(const RPZAtom::Type &type, const RPZAtom::NPCType &npcAttitude);
 
