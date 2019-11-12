@@ -13,7 +13,6 @@
 
 class MapViewGraphicsSvgItem : public QGraphicsSvgItem {
     public:
-        MapViewGraphicsSvgItem(const QString &fileName) : 
-        QGraphicsSvgItem(fileName) {}
+        MapViewGraphicsSvgItem(const QString &fileName) : QGraphicsSvgItem(fileName) {}
     
 };

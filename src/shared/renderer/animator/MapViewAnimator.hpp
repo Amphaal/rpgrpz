@@ -1,6 +1,7 @@
 #pragma once
 
 #include "src/shared/renderer/graphics/MapViewGraphics.h"
+#include "src/network/rpz/client/RPZClient.h"
 
 #include <QPropertyAnimation>
 
@@ -11,7 +12,7 @@ class MapViewAnimator {
         static void animateVisibility(QGraphicsItem *toAnimate, bool isHidden) {
             
             auto currentOpacity = toAnimate->opacity();
-            auto destOpacity = isHidden ? 0.0 : 1.0;
+            auto destOpacity = isHidden ? (RPZClient::isHostAble() ? .5 : 0) : 1.0;
             if(currentOpacity == destOpacity) return;
 
             if(auto canBeAnimated = dynamic_cast<QObject*>(toAnimate)) {

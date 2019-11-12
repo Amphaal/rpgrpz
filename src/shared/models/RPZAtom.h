@@ -173,6 +173,7 @@ class RPZAtom : public Serializable {
 
         bool isAssetBased() const;
         bool isRestrictedAtom() const;
+        bool canBeHidden() const;
 
         RPZAtom::Category category() const;
         static RPZAtom::Category category(const RPZAtom::Type &type);
@@ -246,12 +247,18 @@ class RPZAtom : public Serializable {
             RPZAtom::Type::Event,
             RPZAtom::Type::POI,
         };
+
+        static inline const QList<RPZAtom::Type> _cannotBeHidden {
+            RPZAtom::Type::Event,
+            RPZAtom::Type::POI,
+            RPZAtom::Type::Player
+        };
         
         static const inline QHash<RPZAtom::NPCType, QColor> _NPCTypeAssociatedColor {
-            { RPZAtom::NPCType::Unknown, QStringLiteral(u"grey") },
-            { RPZAtom::NPCType::Neutral, QStringLiteral(u"blue") },
-            { RPZAtom::NPCType::Friendly, QStringLiteral(u"green") },
-            { RPZAtom::NPCType::Hostile, QStringLiteral(u"red") }
+            { RPZAtom::NPCType::Unknown, QStringLiteral(u"#c3b7b4") },
+            { RPZAtom::NPCType::Neutral, QStringLiteral(u"#79b9ff") },
+            { RPZAtom::NPCType::Friendly, QStringLiteral(u"#4bd743") },
+            { RPZAtom::NPCType::Hostile, QStringLiteral(u"#d60003") }
         };
 
         static inline const QHash<RPZAtom::Parameter, QString> _str = {

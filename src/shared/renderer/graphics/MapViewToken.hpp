@@ -23,16 +23,17 @@ class MapViewToken : public QObject, public QGraphicsItem {
     public:
         MapViewToken(const RPZMapParameters &mapParameters, const RPZAtom &atom) {          
             
+            this->_tokenType = atom.type();
             this->setAcceptHoverEvents(true);
 
             auto tileSize = mapParameters.tileWidthInPoints();
             auto tokenSize = QSizeF(tileSize, tileSize);
 
             auto startPosComp = QPointF(-tokenSize.width() / 2, -tokenSize.height() / 2);
-            this->_subRect = QRectF(startPosComp, tokenSize);
+            this->_mainRect = QRectF(startPosComp, tokenSize);
 
-            auto prc = this->_subRect.width() * 0.1;
-            this->_rect = this->_subRect.marginsRemoved(QMarginsF(prc, prc, prc, prc));
+            auto prc = this->_mainRect.width() * 0.1;
+            this->_upperRect = this->_mainRect.marginsRemoved(QMarginsF(prc, prc, prc, prc));
             
             this->_changeColor(atom);
             
@@ -45,17 +46,57 @@ class MapViewToken : public QObject, public QGraphicsItem {
 
 
         QRectF boundingRect() const override {
-            return this->_subRect;
+            return this->_mainRect;
         }
 
     private:
-        QRectF _rect;
-        QRectF _subRect;
+        RPZAtom::Type _tokenType;
 
-        QBrush _brush;
-        QBrush _subBrush;
+        QRectF _upperRect;
+        QRectF _mainRect;
+
+        QBrush _upperBrush;
+        QBrush _mainBrush;
 
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
+            
+            this->_mayPaintSelectionHelper(painter, option);
+
+            painter->save();
+
+                painter->setRenderHint(QPainter::Antialiasing, true);
+                painter->setPen(Qt::NoPen);
+                
+                painter->setBrush(this->_mainBrush);
+                painter->drawRoundedRect(this->_mainRect, 75, 75, Qt::RelativeSize);
+                
+                if(this->_tokenType == RPZAtom::Type::Player) {
+                    
+                    //upper
+                    painter->setBrush(this->_upperBrush);
+                    painter->drawEllipse(this->_upperRect);
+                    
+                    //sign
+                    auto sign = QObject::tr("P", "player sign");
+                    painter->setPen(QColor(Qt::white));
+
+                        auto font = painter->font();
+                        font.setPixelSize((int)(this->_upperRect.height() * .9));
+                        painter->setFont(font);
+
+                        QFontMetrics m(font);
+                        auto signRect = QRectF(m.boundingRect(sign));
+                        signRect.moveCenter(this->_upperRect.center());
+                        
+                    painter->drawText(signRect, sign);
+
+                }
+
+            painter->restore();
+
+        }
+        
+         void _mayPaintSelectionHelper(QPainter *painter, const QStyleOptionGraphicsItem *option) {
             
             if(option->state.testFlag(QStyle::StateFlag::State_Selected)) {
                 painter->save();
@@ -70,20 +111,7 @@ class MapViewToken : public QObject, public QGraphicsItem {
                 painter->restore();
             }
 
-            painter->save();
-
-                painter->setRenderHint(QPainter::Antialiasing, true);
-                painter->setPen(Qt::NoPen);
-                
-                painter->setBrush(this->_subBrush);
-                painter->drawRoundedRect(this->_subRect, 75, 75, Qt::RelativeSize);
-                
-                painter->setBrush(this->_brush);
-                painter->drawEllipse(this->_rect);
-
-            painter->restore();
-
-        }
+         }
 
         void _changeColor(const RPZAtom &atom) {
             
@@ -112,18 +140,27 @@ class MapViewToken : public QObject, public QGraphicsItem {
 
         void _changeColor(const QColor &toApply) {
             
-            //main
-            QRadialGradient radialGrad(this->_rect.center(), this->_rect.width() / 2);
-            radialGrad.setColorAt(0.95, toApply);
-            radialGrad.setColorAt(1, Qt::transparent);
-            this->_brush = QBrush(radialGrad);
+            auto mainOpacity = 1.0;
 
-            //sub
-            this->_subBrush = QBrush(QColor::fromRgbF(
+            if(this->_tokenType == RPZAtom::Type::Player) {
+
+                //upper
+                QRadialGradient radialGrad(this->_upperRect.center(), this->_upperRect.width() / 2);
+                radialGrad.setColorAt(0.95, toApply);
+                radialGrad.setColorAt(1, Qt::transparent);
+                this->_upperBrush = QBrush(radialGrad);
+
+                //
+                mainOpacity = .75;
+
+            }
+
+            //main
+            this->_mainBrush = QBrush(QColor::fromRgbF(
                 toApply.redF(), 
                 toApply.greenF(), 
                 toApply.blueF(), 
-                .75
+                mainOpacity
             ));
 
         }

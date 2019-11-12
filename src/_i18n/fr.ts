@@ -1242,6 +1242,12 @@
         <source>%1 selected atom(s)</source>
         <translation>%1 atome(s) selectionné(s)</translation>
     </message>
+    <message>
+        <location filename="../shared/renderer/graphics/MapViewToken.hpp" line="80"/>
+        <source>P</source>
+        <comment>player sign</comment>
+        <translation>J</translation>
+    </message>
 </context>
 <context>
     <name>RPZClient</name>

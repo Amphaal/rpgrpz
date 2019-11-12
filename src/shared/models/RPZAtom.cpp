@@ -263,6 +263,10 @@ const QColor RPZAtom::NPCAssociatedColor(const RPZAtom::NPCType &NPCtype) {
     return _NPCTypeAssociatedColor.value(NPCtype);
 }
 
+bool RPZAtom::canBeHidden() const {
+    return !_cannotBeHidden.contains(this->type());
+}
+
 bool RPZAtom::isAssetBased() const {
     return assetBasedAtom.contains(this->type());
 }

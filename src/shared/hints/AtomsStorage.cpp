@@ -42,6 +42,7 @@ PossibleActionsOnAtomList AtomsStorage::getPossibleActions(const QList<RPZAtom::
     out.somethingUndoable = this->_canUndo() > -1;
 
     auto containsAnInteractiveAtom = false;
+    auto cannotBeHidden = false;
 
     //iterate
     QList<const RPZAtom*> atomList;
@@ -50,8 +51,8 @@ PossibleActionsOnAtomList AtomsStorage::getPossibleActions(const QList<RPZAtom::
         //get atom
         auto atom = this->_map.atomPtr(id);
 
-        if(atom->category() == RPZAtom::Category::Interactive) 
-            containsAnInteractiveAtom = true;
+        if(atom->category() == RPZAtom::Category::Interactive) containsAnInteractiveAtom = true;
+        if(!atom->canBeHidden()) cannotBeHidden = true;
 
         if(!atom) continue;
 
@@ -67,7 +68,7 @@ PossibleActionsOnAtomList AtomsStorage::getPossibleActions(const QList<RPZAtom::
     //else, activate most
     out.canChangeLayer = areIdsSelected && !containsAnInteractiveAtom;
     out.canCopy = areIdsSelected;
-    out.canChangeVisibility = areIdsSelected && !containsAnInteractiveAtom;
+    out.canChangeVisibility = areIdsSelected && !cannotBeHidden;
     out.canRemove = areIdsSelected;
 
     //determine min/max

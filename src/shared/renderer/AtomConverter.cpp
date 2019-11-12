@@ -178,10 +178,9 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
             
             // on changing visibility
             case RPZAtom::Parameter::Hidden: {
-                if(!isTemporary(itemToUpdate)) {
-                    auto hidden = val.toBool();
-                    MapViewAnimator::animateVisibility(itemToUpdate, hidden);
-                }
+                if(isTemporary(itemToUpdate)) break;
+                auto hidden = val.toBool();
+                MapViewAnimator::animateVisibility(itemToUpdate, hidden);
             }
             break;
 
