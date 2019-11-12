@@ -464,6 +464,9 @@ void MapView::mousePressEvent(QMouseEvent *event) {
 
             }
 
+            //allows rubber band selection
+            QGraphicsView::mousePressEvent(event);
+
         }
         break;
 
@@ -471,7 +474,8 @@ void MapView::mousePressEvent(QMouseEvent *event) {
             break;
     }
 
-    QGraphicsView::mousePressEvent(event);
+
+
 }
 
 bool MapView::_preventMoveOrInsertAtPosition(QGraphicsItem *toCheck, const QPointF &toCheckAt) {

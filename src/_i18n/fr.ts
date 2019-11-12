@@ -1237,6 +1237,11 @@
         <source>Map parameters</source>
         <translation>Paramètres de la carte</translation>
     </message>
+    <message>
+        <location filename="../shared/commands/AtomsContextualMenuHandler.cpp" line="70"/>
+        <source>%1 selected atom(s)</source>
+        <translation>%1 atome(s) selectionné(s)</translation>
+    </message>
 </context>
 <context>
     <name>RPZClient</name>

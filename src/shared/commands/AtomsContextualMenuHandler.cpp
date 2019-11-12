@@ -66,6 +66,11 @@ void AtomsContextualMenuHandler::invokeMenu(const QList<RPZAtom::Id> &toManipula
     //display menu
     QMenu menu(this->_menuParent);
     
+        //selectionCount 
+        auto selectedCountAction = menu.addAction(QObject::tr("%1 selected atom(s)").arg(this->_latestInvokedAtomIds.count()));
+        selectedCountAction->setDisabled(true);
+        menu.addSeparator();
+
         //copy/paste
         menu.addActions(this->_genCopyPasteActions());
         menu.addSeparator();
