@@ -57,6 +57,8 @@ class MiniMapView : public QGraphicsView {
         bool _alterationOngoing = false;
         QPixmap _cachedMinimap;
 
+        bool _isMousePressed = false;
+
         static constexpr QRectF DEFAULT_MINIMAP_RECT { QPointF(-320, -320), QSizeF(640, 640) };
 
         QRectF _getMinimumSceneRect() {
@@ -182,15 +184,18 @@ class MiniMapView : public QGraphicsView {
         };
         
         void mousePressEvent(QMouseEvent *event) override {
+            this->_isMousePressed = true;
             this->setCursor(Qt::ClosedHandCursor);
             this->_propagateFocusToMaster(event);
         };
 
         void mouseReleaseEvent(QMouseEvent *event) override {
+            this->_isMousePressed = false;
             this->setCursor(Qt::OpenHandCursor);
         };
 
         void mouseMoveEvent(QMouseEvent *event) override {
+            if(!this->_isMousePressed) return;
             this->_propagateFocusToMaster(event);
         }
 
