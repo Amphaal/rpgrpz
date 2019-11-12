@@ -57,20 +57,33 @@ class MiniMapView : public QGraphicsView {
         bool _alterationOngoing = false;
         QPixmap _cachedMinimap;
 
+        static constexpr QRectF DEFAULT_MINIMAP_RECT { QPointF(-320, -320), QSizeF(640, 640) };
 
         QRectF _getMinimumSceneRect() {
             
-            QRectF minimalSize(QPointF(0, 0), QSizeF(640, 640));
-            minimalSize.moveCenter(this->_sceneToMimic->sceneRect().center());
+            //get bounds of map, unit it with default
+            auto minimapRect = this->_sceneToMimic->itemsBoundingRect();
+            minimapRect = minimapRect.united(DEFAULT_MINIMAP_RECT); //unite
+            
+            //unit with reversed
+            auto reversed = QRectF(-minimapRect.bottomRight(), -minimapRect.topLeft());
+            minimapRect = minimapRect.united(reversed);
 
-            auto itemsBoundingRect = this->_sceneToMimic->itemsBoundingRect();
-            auto rectSize = itemsBoundingRect.size();
-
-            if(rectSize.width() < minimalSize.width() || rectSize.height() < minimalSize.height()) {
-                return minimalSize;
+            //check rect size
+            auto rectSize = minimapRect.size();
+            auto rectWidth = rectSize.width();
+            auto rectHeight = rectSize.height();     
+            
+            //turn into square
+            if(rectHeight != rectWidth) {
+                auto max = std::max(rectWidth, rectHeight);
+                minimapRect.setSize({max, max});
             }
 
-            return itemsBoundingRect;
+            //move to center of scene, eg (0, 0)
+            minimapRect.moveCenter({}); 
+
+            return minimapRect;
             
         }
 
