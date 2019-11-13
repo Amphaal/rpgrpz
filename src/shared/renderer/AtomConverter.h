@@ -23,7 +23,7 @@ class AtomConverter {
             static void setBrushDrawStyle(QGraphicsItem* item, const RPZAtom::BrushType &style);
 
         static void updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom::Updates &updates);
-        static void updateGraphicsItemFromAtom(QGraphicsItem* target, const RPZAtom &blueprint, bool isTargetTemporary = false);
+        static void setupGraphicsItemFromAtom(QGraphicsItem* target, const RPZAtom &blueprint, bool isTargetTemporary = false);
 
         static RPZAtom graphicsToAtom(QGraphicsItem* blueprint, RPZAtom templateCopy);
 

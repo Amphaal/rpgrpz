@@ -90,6 +90,8 @@
         <file>icons/app/attitude/friendly.png</file>
         <file>icons/app/attitude/hostile.png</file>
         <file>icons/app/attitude/neutral.png</file>
-        <file>asset/default.jpg</file>
+        <file>assets/default.jpg</file>
+        <file>assets/grass.png</file>
+        <file>assets/hidden.png</file>
     </qresource>
 </RCC>

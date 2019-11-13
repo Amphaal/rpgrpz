@@ -73,7 +73,7 @@ class MapViewUnscalable : public QGraphicsItem, public RPZGraphicsItem {
             this->_paint(painter, &result.options, widget);
         }
 
-        bool _drawSelectionHelper() override { 
+        bool _drawSelectionHelper() const override { 
             return true; 
         };
 

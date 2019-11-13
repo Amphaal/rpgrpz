@@ -283,7 +283,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
 
     protected:
 
-        bool _canBeDrawnInMiniMap() override { 
+        bool _canBeDrawnInMiniMap() const override { 
             return false; 
         };
 

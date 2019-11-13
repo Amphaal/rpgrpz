@@ -121,15 +121,23 @@ void MapView::_updateItemValue(QGraphicsItem* item, const RPZAtom::Updates &upda
 }
 
 void MapView::_onUIUpdateRequest(const QHash<QGraphicsItem*, RPZAtom::Updates> &toUpdate) {
+    
     for(auto i = toUpdate.constBegin(); i != toUpdate.constEnd(); i++) {
         this->_updateItemValue(i.key(), i.value());
     }
+
+    MapViewAnimator::triggerQueuedAnimations();
+
 }
 
 void MapView::_onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates) {
+    
     for(const auto item : toUpdate) {
         this->_updateItemValue(item, updates);
     }
+    
+    MapViewAnimator::triggerQueuedAnimations();
+
 }
 
 void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QList<QGraphicsItem*> &toAlter) {

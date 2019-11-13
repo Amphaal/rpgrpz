@@ -4,19 +4,30 @@
 #include "src/network/rpz/client/RPZClient.h"
 
 #include <QPropertyAnimation>
+#include <QQueue>
 
 #include "PathAnimator.hpp"
 
 class MapViewAnimator {
     public:
+
+        static void triggerQueuedAnimations() {
+            while (!_queuedAnimations.isEmpty()) {
+                auto anim = _queuedAnimations.dequeue();
+                anim->start();
+            }
+        }
+
         static void animateVisibility(QGraphicsItem *toAnimate, bool isHidden) {
             
             auto currentOpacity = toAnimate->opacity();
             auto destOpacity = isHidden ? (RPZClient::isHostAble() ? .5 : 0) : 1.0;
             if(currentOpacity == destOpacity) return;
-
-            if(auto canBeAnimated = dynamic_cast<QObject*>(toAnimate)) {
-                _animateVisibility(canBeAnimated, currentOpacity, destOpacity);
+            
+            auto canBeAnimated = dynamic_cast<QObject*>(toAnimate);
+            
+            if(canBeAnimated && toAnimate->scene()) {
+                 _animateVisibility(canBeAnimated, currentOpacity, destOpacity);
             } 
 
             //fallback
@@ -27,8 +38,10 @@ class MapViewAnimator {
         }
 
         static void animatePath(QGraphicsItem *toAnimate, const QPainterPath &pathToAnimate) {
+            
+            auto canBeAnimated = dynamic_cast<MapViewGraphicsPathItem*>(toAnimate);
 
-            if(auto canBeAnimated = dynamic_cast<MapViewGraphicsPathItem*>(toAnimate)) {
+            if(canBeAnimated && toAnimate->scene()) {
                 _animatePath(canBeAnimated, pathToAnimate);
             } 
 
@@ -41,7 +54,9 @@ class MapViewAnimator {
             
             if(currentPos.isNull()) return toAnimate->setPos(newScenePos); //initial set, no animation
 
-            if(auto canBeAnimated = dynamic_cast<QObject*>(toAnimate)) {
+            auto canBeAnimated = dynamic_cast<QObject*>(toAnimate);
+
+            if(canBeAnimated && toAnimate->scene()) {
                 _animateMove(canBeAnimated, currentPos, newScenePos);
             } 
 
@@ -54,11 +69,14 @@ class MapViewAnimator {
 
         static void clearAnimations() {
             
-            for(const auto &animations : _ongoingAnimations) {
-                qDeleteAll(animations);
+            for(auto i = _ongoingAnimations.begin(); i != _ongoingAnimations.end(); i++) {
+                for(auto a : i.value()) {
+                    a->deleteLater();
+                }
             }
 
             _ongoingAnimations.clear();
+            _queuedAnimations.clear();
 
         }
     
@@ -68,6 +86,7 @@ class MapViewAnimator {
         static inline QString _pathProp = QStringLiteral(u"path");
         
         static inline QHash<QObject*, QHash<QString, QPropertyAnimation*>> _ongoingAnimations;
+        static inline QQueue<QPropertyAnimation*> _queuedAnimations;
 
         static void _animateMove(QObject *toAnimate, const QPointF &currentScenePos, const QPointF &newScenePos) {
             
@@ -83,12 +102,13 @@ class MapViewAnimator {
                 existingAnim->setEasingCurve(QEasingCurve::InQuad);
                 existingAnim->setStartValue(currentScenePos);
                 existingAnim->setEndValue(newScenePos);
-                existingAnim->start();
 
                 QObject::connect(
                     existingAnim, &QAbstractAnimation::finished,
                     [=]() { _clearAnimation(toAnimate, _moveProp); }
                 );
+
+                _queuedAnimations.enqueue(existingAnim);
 
             }
 
@@ -115,12 +135,13 @@ class MapViewAnimator {
                 existingAnim->setDuration(500);
                 existingAnim->setStartValue(currentOpacity);
                 existingAnim->setEndValue(destOpacity);
-                existingAnim->start();
 
                 QObject::connect(
                     existingAnim, &QAbstractAnimation::finished,
                     [=]() { _clearAnimation(toAnimate, _visibilityProp); }
                 );
+
+                _queuedAnimations.enqueue(existingAnim);
 
             }
 
@@ -148,12 +169,13 @@ class MapViewAnimator {
                 existingAnim->setEasingCurve(QEasingCurve::InQuad);
                 existingAnim->setStartValue(QVariant::fromValue<QPainterPath>(QPainterPath()));
                 existingAnim->setEndValue(QVariant::fromValue<QPainterPath>(pathToAnimate));
-                existingAnim->start();
 
                 QObject::connect(
                     existingAnim, &QAbstractAnimation::finished,
                     [=]() { _clearAnimation(toAnimate, _pathProp); }
                 );
+
+                _queuedAnimations.enqueue(existingAnim);
 
             }
 

@@ -22,8 +22,7 @@ class MapViewGraphicsRectItem : public QObject, public QGraphicsRectItem, public
     Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
 
     public:
-        MapViewGraphicsRectItem(const QRectF &rect, const QPen &pen, const QBrush &brush) :
-        QGraphicsRectItem(rect) {
+        MapViewGraphicsRectItem(const QRectF &rect, const QPen &pen, const QBrush &brush) : QGraphicsRectItem(rect) {
             this->setBrush(brush);
             this->setPen(pen);
         }

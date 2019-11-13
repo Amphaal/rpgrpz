@@ -5,6 +5,7 @@
 #include <QStyleOptionGraphicsItem>
 
 #include "src/helpers/_appContext.h"
+#include "src/network/rpz/client/RPZClient.h"
 
 class RPZGraphicsItem {
     public:
@@ -16,13 +17,17 @@ class RPZGraphicsItem {
         };
     
     protected:
-        virtual bool _canBeDrawnInMiniMap() { 
+        virtual bool _canBeDrawnInMiniMap() const { 
             return true; 
         };
 
-        virtual bool _drawSelectionHelper() { 
+        virtual bool _drawSelectionHelper() const { 
             return false; 
         };
+
+        virtual const QString _opacityPlaceholder() const {
+            return QStringLiteral(u":/assets/hidden.png");
+        }
 
         ConditionnalPaintingResult conditionnalPaint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) {
             
@@ -39,11 +44,28 @@ class RPZGraphicsItem {
 
             if(!isMapWidget && !this->_canBeDrawnInMiniMap()) out.mustContinue = false;
 
+            if(RPZClient::isHostAble() && isMapWidget) this->_paintOpacityPlaceholder(painter, option);
+
             return out;
 
         };
 
     private:
+
+        void _paintOpacityPlaceholder(QPainter *painter, const QStyleOptionGraphicsItem *option) {
+            
+            if(painter->opacity() == 1) return;
+
+            painter->save();
+
+                painter->setOpacity(1);
+
+                painter->drawPixmap(option->rect, QPixmap(this->_opacityPlaceholder()));
+
+            painter->restore();
+
+        }
+
         void _paintSelectionHelper(QPainter *painter, const QStyleOptionGraphicsItem *option) {
 
             painter->save();

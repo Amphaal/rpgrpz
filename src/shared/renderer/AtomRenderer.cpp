@@ -46,7 +46,7 @@ QGraphicsItem* AtomRenderer::createGraphicsItem(const RPZAtom &atom, const RPZAs
     }
 
     //update
-    AtomConverter::updateGraphicsItemFromAtom(out, atom, isTemporary);        
+    AtomConverter::setupGraphicsItemFromAtom(out, atom, isTemporary);        
 
     //if base is QGraphicsSvgItem, QGraphicsTextItem, and QGraphicsWidget, move handler to main GUI thread
     if(auto signalHandler = out->toGraphicsObject()) {
@@ -99,7 +99,7 @@ QGraphicsRectItem* AtomRenderer::createMissingAssetPlaceholderItem(const RPZAtom
     auto placeholder = new MapViewGraphicsRectItem(shape, pen, brush);
     
     //Update values from atom blueprint
-    AtomConverter::updateGraphicsItemFromAtom(placeholder, atom);
+    AtomConverter::setupGraphicsItemFromAtom(placeholder, atom);
     
     return placeholder;
 }

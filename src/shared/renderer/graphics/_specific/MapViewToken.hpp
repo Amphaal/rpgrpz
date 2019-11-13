@@ -67,9 +67,13 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
         QBrush _upperBrush;
         QBrush _mainBrush;
 
-        bool _drawSelectionHelper() override { 
+        bool _drawSelectionHelper() const override { 
             return true; 
         };
+
+        const QString _opacityPlaceholder() const override {
+            return QStringLiteral(u":/assets/grass.png");
+        }
 
         void _changeColor(const RPZAtom &atom) {
             

@@ -148,7 +148,7 @@ class RPZCharacter : public Serializable {
         const QString notes() const {return this->value(QStringLiteral(u"notes")).toString();}
 
         static const QPixmap getDefaultPortrait() {
-            if(!_defaultPortrait) _defaultPortrait = new QPixmap(":/asset/default.jpg");
+            if(!_defaultPortrait) _defaultPortrait = new QPixmap(":/assets/default.jpg");
             return *_defaultPortrait;
         }
 
