@@ -49,6 +49,7 @@ class ViewMapHint : public AtomsStorage {
         void notifySelectedItems(const QList<QGraphicsItem*> &selectedItems); //safe
         void notifyFocusedItem(QGraphicsItem* focusedItem); //safe
         void setDefaultLayer(int layer); //safe
+        void setDefaultVisibility(int state); //safe
 
         //handle preview alteration before real payload
         void handlePreviewRequest(const AtomsSelectionDescriptor &selectionDescriptor, const RPZAtom::Parameter &parameter, const QVariant &value);

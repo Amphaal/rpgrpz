@@ -47,7 +47,7 @@
 <context>
     <name>AtomEditionManager</name>
     <message>
-        <location filename="../ui/atomEditor/AtomEditionManager.hpp" line="28"/>
+        <location filename="../ui/atomEditor/AtomEditionManager.hpp" line="44"/>
         <source>Reset displayed parameters</source>
         <translation>Réinitialiser les paramètres affichés</translation>
     </message>
@@ -612,9 +612,9 @@
 <context>
     <name>LayerSelector</name>
     <message>
-        <location filename="../ui/mapLayout/_base/LayerSelector.cpp" line="8"/>
-        <source>Default Layer:</source>
-        <translation>Calque par défaut:</translation>
+        <location filename="../ui/atomEditor/_manager/LayerSelector.cpp" line="11"/>
+        <source>Layer</source>
+        <translation>Calque</translation>
     </message>
 </context>
 <context>
@@ -719,54 +719,54 @@
         <translation>Hub de jeu</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="504"/>
+        <location filename="../ui/mainWindow.cpp" line="510"/>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="518"/>
+        <location filename="../ui/mainWindow.cpp" line="524"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="520"/>
-        <location filename="../ui/mainWindow.cpp" line="546"/>
-        <location filename="../ui/mainWindow.cpp" line="574"/>
+        <location filename="../ui/mainWindow.cpp" line="526"/>
+        <location filename="../ui/mainWindow.cpp" line="552"/>
+        <location filename="../ui/mainWindow.cpp" line="580"/>
         <source>Game map (*%1)</source>
         <translation>Carte de campagne (*%1)</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="544"/>
+        <location filename="../ui/mainWindow.cpp" line="550"/>
         <source>Load a new map</source>
         <translation>Charger une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="572"/>
+        <location filename="../ui/mainWindow.cpp" line="578"/>
         <source>Save as...</source>
         <translation>Savegarder sous...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="596"/>
+        <location filename="../ui/mainWindow.cpp" line="602"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="651"/>
+        <location filename="../ui/mainWindow.cpp" line="657"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="665"/>
+        <location filename="../ui/mainWindow.cpp" line="671"/>
         <source>Searching for updates...</source>
         <translation>Recherche des mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="665"/>
+        <location filename="../ui/mainWindow.cpp" line="671"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="689"/>
+        <location filename="../ui/mainWindow.cpp" line="695"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
@@ -1233,7 +1233,7 @@
         <translation>Niveau de zoom Minimum / Maximum</translation>
     </message>
     <message>
-        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="9"/>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="8"/>
         <source>Map parameters</source>
         <translation>Paramètres de la carte</translation>
     </message>
@@ -1247,6 +1247,16 @@
         <source>P</source>
         <comment>player sign</comment>
         <translation>J</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/AtomEditionManager.hpp" line="33"/>
+        <source>Default configuration</source>
+        <translation>Paramétrage par défaut</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/_manager/HiddenCheckbox.hpp" line="10"/>
+        <source>Hidden</source>
+        <translation>Caché</translation>
     </message>
 </context>
 <context>

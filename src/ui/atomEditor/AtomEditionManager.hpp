@@ -2,6 +2,9 @@
 
 #include "AtomEditor.h"
 
+#include "src/ui/atomEditor/_manager/LayerSelector.h"
+#include "src/ui/atomEditor/_manager/HiddenCheckbox.hpp"
+
 class AtomEditionManager : public QWidget {
 
     Q_OBJECT
@@ -10,6 +13,8 @@ class AtomEditionManager : public QWidget {
         AtomEditor* _editor = nullptr;
         QPushButton* _resetButton = nullptr;
         AtomsStorage* _storage = nullptr;
+        HiddenCheckbox* _defaultHiddenCheckbox = nullptr;
+        LayerSelector* _layerSelector = nullptr;
 
         void _handleSubjectChange(const AtomsSelectionDescriptor &atomsSelectDescriptor) {
             this->_resetButton->setEnabled(false);
@@ -25,11 +30,23 @@ class AtomEditionManager : public QWidget {
             _editor(new AtomEditor), 
             _resetButton(new QPushButton) {
             
+            auto defaultGrpBox = new QGroupBox(QObject::tr("Default configuration"));
+            defaultGrpBox->setAlignment(Qt::AlignHCenter);
+            auto defaultLayout = new QHBoxLayout;
+            defaultGrpBox->setLayout(defaultLayout);
+            defaultLayout->setContentsMargins(10, 0, 0, 0);
+            this->_layerSelector = new LayerSelector(this);
+            this->_defaultHiddenCheckbox = new HiddenCheckbox(this);
+            defaultLayout->addWidget(this->_layerSelector);
+            defaultLayout->addStretch(1);
+            defaultLayout->addWidget(this->_defaultHiddenCheckbox);
+
             this->_resetButton->setText(tr("Reset displayed parameters"));
 
             auto layout = new QVBoxLayout;
             this->setLayout(layout);
             
+            layout->addWidget(defaultGrpBox, 0);
             layout->addWidget(this->_editor, 1);
             layout->addWidget(this->_resetButton);
 
@@ -50,6 +67,15 @@ class AtomEditionManager : public QWidget {
         AtomEditor* editor() {
             return this->_editor;
         }
+
+        LayerSelector* layerSelector(){
+            return this->_layerSelector;
+        }
+
+        HiddenCheckbox* hiddenCheckbox() {
+            return this->_defaultHiddenCheckbox;
+        }
+
     
     private slots:
         void _handleAlterationRequest(const AlterationPayload &payload) {

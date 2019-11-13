@@ -44,6 +44,13 @@ int clientApp(int argc, char** argv) {
     AppContext::installTranslations(app);
     AppContext::configureApp(app);
 
+    QObject::connect(
+        &app, &QObject::destroyed,
+        [=]() {
+            delete AppContext::settings();
+        }
+    );
+
     app.setApplicationDisplayName(APP_NAME);
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
     app.setStyle(QStyleFactory::create("Fusion")); 
@@ -58,6 +65,7 @@ int clientApp(int argc, char** argv) {
 
     //wait for the app to close
     return app.exec();
+
 }
 
 ////////////////

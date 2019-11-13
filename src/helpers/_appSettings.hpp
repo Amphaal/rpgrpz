@@ -4,7 +4,7 @@
 
 class AppSettings : public QSettings {
     public:
-        AppSettings(const QString &path): QSettings(path, QSettings::IniFormat) {}
+        AppSettings(const QString &path) : QSettings(path, QSettings::IniFormat) {}
 
         int audioVolume() {
             return this->value(QStringLiteral(u"volume"), 50).toInt();
@@ -16,8 +16,15 @@ class AppSettings : public QSettings {
         int defaultLayer() {
             return this->value(QStringLiteral(u"defaultLayer"), 0).toInt();
         }
-        void setDefaultLayer(int layer = 0) {
+        void setDefaultLayer(int layer) {
             this->setValue(QStringLiteral(u"defaultLayer"), layer);
+        }
+
+        bool hiddenAtomAsDefault() {
+            return this->value(QStringLiteral(u"hiddenAsDefault"), false).toBool();
+        }
+        void setHiddenAtomAsDefault(bool hidden) {
+            this->setValue(QStringLiteral(u"hiddenAsDefault"), hidden);
         }
 
         bool gridActive() {

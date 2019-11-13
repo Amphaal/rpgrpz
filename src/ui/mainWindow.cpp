@@ -424,8 +424,14 @@ void MainWindow::_initAppComponents() {
 
     //on default layer changed
     QObject::connect(
-        this->_mlManager->layerSelector()->spinbox(), qOverload<int>(&QSpinBox::valueChanged),
+        this->_atomEditManager->layerSelector()->spinbox(), qOverload<int>(&QSpinBox::valueChanged),
         this->_mapView->hints(), &ViewMapHint::setDefaultLayer
+    );
+
+    //define default visibility
+    QObject::connect(
+        this->_atomEditManager->hiddenCheckbox(), &QCheckBox::stateChanged,
+        this->_mapView->hints(), &ViewMapHint::setDefaultVisibility
     );
 
     //intercept preview request from editor

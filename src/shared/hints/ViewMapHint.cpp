@@ -4,6 +4,7 @@ ViewMapHint::ViewMapHint() : AtomsStorage(Payload::Source::Local_Map) {
     
     //default layer from settings
     this->setDefaultLayer(AppContext::settings()->defaultLayer());
+    this->setDefaultVisibility((int)AppContext::settings()->hiddenAtomAsDefault());
 
 };
 
@@ -19,6 +20,8 @@ QGraphicsItem* ViewMapHint::ghostItem() const {
 
 void ViewMapHint::setDefaultLayer(int layer) {
     
+    //TODO Restrict to Layout category
+
     RPZAtom::Updates updates;
     updates.insert(RPZAtom::Parameter::Layer, layer);
 
@@ -35,6 +38,28 @@ void ViewMapHint::setDefaultLayer(int layer) {
         emit requestingUIUpdate({ghostItem}, updates);
     }
    
+}
+
+void ViewMapHint::setDefaultVisibility(int state) {
+    
+    //TODO Restrict to hidden able
+
+    RPZAtom::Updates updates;
+    updates.insert(RPZAtom::Parameter::Hidden, (bool)state);
+
+    {
+        QMutexLocker m(&this->_m_templateAtom);
+        this->_templateAtom.setMetadata(updates);
+    }
+
+    this->_m_ghostItem.lock();
+    auto ghostItem = this->_ghostItem;
+    this->_m_ghostItem.unlock();
+
+    if(ghostItem) {
+        emit requestingUIUpdate({ghostItem}, updates);
+    }
+
 }
 
 void ViewMapHint::notifyFocusedItem(QGraphicsItem* focusedItem) {
