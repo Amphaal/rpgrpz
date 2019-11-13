@@ -1243,7 +1243,7 @@
         <translation>%1 atome(s) selectionné(s)</translation>
     </message>
     <message>
-        <location filename="../shared/renderer/graphics/MapViewToken.hpp" line="80"/>
+        <location filename="../shared/renderer/graphics/_specific/MapViewToken.hpp" line="143"/>
         <source>P</source>
         <comment>player sign</comment>
         <translation>J</translation>

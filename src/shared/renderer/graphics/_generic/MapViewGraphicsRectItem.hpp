@@ -13,7 +13,9 @@
 
 #include <QObject>
 
-class MapViewGraphicsRectItem : public QObject, public QGraphicsRectItem {
+#include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
+
+class MapViewGraphicsRectItem : public QObject, public QGraphicsRectItem, public RPZGraphicsItem {
 
     Q_OBJECT
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
@@ -24,6 +26,13 @@ class MapViewGraphicsRectItem : public QObject, public QGraphicsRectItem {
         QGraphicsRectItem(rect) {
             this->setBrush(brush);
             this->setPen(pen);
+        }
+
+    private:
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
+            auto result = this->conditionnalPaint(painter, option, widget);
+            if(!result.mustContinue) return;
+            QGraphicsRectItem::paint(painter, &result.options, widget);
         }
 
 };

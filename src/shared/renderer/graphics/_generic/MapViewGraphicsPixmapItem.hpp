@@ -15,7 +15,9 @@
 #include <QPixmapCache>
 #include <QObject>
 
-class MapViewGraphicsPixmapItem : public QObject, public QGraphicsPixmapItem {
+#include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
+
+class MapViewGraphicsPixmapItem : public QObject, public QGraphicsPixmapItem, public RPZGraphicsItem {
 
     Q_OBJECT
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
@@ -24,4 +26,11 @@ class MapViewGraphicsPixmapItem : public QObject, public QGraphicsPixmapItem {
     public:
         MapViewGraphicsPixmapItem(const RPZAsset &assetMetadata) : QGraphicsPixmapItem(assetMetadata.filepath()) {}
         MapViewGraphicsPixmapItem(const QString &filepath) : QGraphicsPixmapItem(filepath) {}
+
+    private:
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
+            auto result = this->conditionnalPaint(painter, option, widget);
+            if(!result.mustContinue) return;
+            QGraphicsPixmapItem::paint(painter, &result.options, widget);
+        }
 };

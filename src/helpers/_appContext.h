@@ -13,10 +13,12 @@
 #include <QPaintDevice>
 #include <QRegularExpression>
 #include <QUrl>
+#include <QGLWidget>
 
 #include "src/helpers/_appSettings.hpp"
 #include "src/_libs/snowflake/snowflake.h"
 
+class MapView;
 class AppContext {
     private:
         static inline AppSettings* _settings = nullptr;
@@ -39,6 +41,7 @@ class AppContext {
         static void _makeSureDirPathExists(const QString &path);
 
         static inline qreal _ppcm;
+        static inline QGLWidget* _mapGLWidget = nullptr;
 
     public:    
         static AppSettings* settings();
@@ -57,6 +60,9 @@ class AppContext {
 
         static void definePPcm(QPaintDevice* device);
         static qreal pointPerCentimeters();
+
+        static void defineMapWidget(QGLWidget* mapGLWidget);
+        static QGLWidget* mapGLWidget();
 
         void static initRandomContext();
         void static initCustomContext(const QString &customContextSuffix);

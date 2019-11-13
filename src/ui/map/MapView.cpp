@@ -17,8 +17,12 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
     format.setSampleBuffers(true);
     format.setDirectRendering(true);
     format.setAlpha(true);
-    this->setViewport(new QGLWidget(format));
-    
+
+    //define viewport
+    auto vp = new QGLWidget(format);
+    this->setViewport(vp);
+    AppContext::defineMapWidget(vp);
+
     //hide scrollbars
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

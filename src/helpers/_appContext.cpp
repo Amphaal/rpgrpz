@@ -23,6 +23,14 @@ void AppContext::configureApp(QCoreApplication &app) {
     AppContext::init();
 }
 
+void AppContext::defineMapWidget(QGLWidget* mapGLWidget) {
+    _mapGLWidget = mapGLWidget;
+}
+
+QGLWidget* AppContext::mapGLWidget() {
+    return _mapGLWidget;
+}
+
 qreal AppContext::pointPerCentimeters() {
     return _ppcm;
 }

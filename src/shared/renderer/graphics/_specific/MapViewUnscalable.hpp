@@ -1,12 +1,14 @@
 #pragma once
 
-#include "src/shared/renderer/graphics/_items/MapViewGraphicsPixmapItem.hpp"
+#include "src/shared/renderer/graphics/_generic/MapViewGraphicsPixmapItem.hpp"
 #include "src/shared/models/RPZAtom.h"
 
 #include <QStyleOptionGraphicsItem>
 #include <QPainter>
 
-class MapViewUnscalable : public QGraphicsItem {
+#include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
+
+class MapViewUnscalable : public QGraphicsItem, public RPZGraphicsItem {
 
     Q_INTERFACES(QGraphicsItem)
 
@@ -64,25 +66,23 @@ class MapViewUnscalable : public QGraphicsItem {
             return rect;
         }
 
+    protected:
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
+            auto result = this->conditionnalPaint(painter, option, widget);
+            if(!result.mustContinue) return;
+            this->_paint(painter, &result.options, widget);
+        }
+
+        bool _drawSelectionHelper() override { 
+            return true; 
+        };
+
     private:
         QPixmap _p;
         RefPoint _refP;
 
-        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
+        void _paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) {
             
-            if(option->state.testFlag(QStyle::StateFlag::State_Selected)) {
-                painter->save();
-                    
-                    QPen pen;
-                    pen.setWidth(0);
-                    pen.setStyle(Qt::DashLine);
-                    painter->setPen(pen);
-
-                    painter->drawRect(option->exposedRect);
-
-                painter->restore();
-            }
-
             painter->save();
 
                 painter->setRenderHint(QPainter::Antialiasing, true);

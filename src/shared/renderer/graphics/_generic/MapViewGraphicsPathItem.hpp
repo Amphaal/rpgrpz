@@ -12,7 +12,9 @@
 #include <QFont>
 #include <QObject>
 
-class MapViewGraphicsPathItem : public QObject, public QGraphicsPathItem {
+#include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
+
+class MapViewGraphicsPathItem : public QObject, public QGraphicsPathItem, public RPZGraphicsItem {
 
     Q_OBJECT
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
@@ -38,5 +40,12 @@ class MapViewGraphicsPathItem : public QObject, public QGraphicsPathItem {
     private:
         QBrush _sourceBrush;
         QSizeF _sourceBrushSize;
+
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
+            auto result = this->conditionnalPaint(painter, option, widget);
+            if(!result.mustContinue) return;
+            QGraphicsPathItem::paint(painter, &result.options, widget);
+        }
+
 
 };

@@ -15,7 +15,9 @@
 #include "src/helpers/_appContext.h"
 #include "src/shared/hints/AtomsStorage.h"
 
-class MapViewWalkingHelper : public QObject, public QGraphicsItem {
+#include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
+
+class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGraphicsItem {
     
     Q_OBJECT
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
@@ -220,6 +222,29 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem {
 
         }
 
+        void _paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) {
+
+            auto pp = this->_generatePointPos();
+
+            switch(this->_mapParams.movementSystem()) {
+
+                case RPZMapParameters::MovementSystem::Linear: {
+                    this->_drawRangeEllipse(painter, option, pp); //draw ellipse
+                    this->_drawLinearRangeTextIndicator(painter, option, pp); //print range indicator
+                    this->_destScenePos = pp.sceneCursorPos;
+                }
+                break;
+
+                case RPZMapParameters::MovementSystem::Grid: {
+                    this->_destScenePos = this->_drawRangeGrid(painter, option, pp); //draw grid
+                    this->_drawGridRangeTextIndicator(painter, option, pp); //print range indicator
+                }
+                break;
+
+            }
+
+        }
+
     public:
         MapViewWalkingHelper(const RPZMapParameters &params, QGraphicsItem* toWalk, QGraphicsView* view) : QGraphicsItem(toWalk), _view(view) {
             
@@ -257,27 +282,15 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem {
         }
 
     protected:
+
+        bool _canBeDrawnInMiniMap() override { 
+            return false; 
+        };
+
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
-
-            auto pp = this->_generatePointPos();
-
-            switch(this->_mapParams.movementSystem()) {
-
-                case RPZMapParameters::MovementSystem::Linear: {
-                    this->_drawRangeEllipse(painter, option, pp); //draw ellipse
-                    this->_drawLinearRangeTextIndicator(painter, option, pp); //print range indicator
-                    this->_destScenePos = pp.sceneCursorPos;
-                }
-                break;
-
-                case RPZMapParameters::MovementSystem::Grid: {
-                    this->_destScenePos = this->_drawRangeGrid(painter, option, pp); //draw grid
-                    this->_drawGridRangeTextIndicator(painter, option, pp); //print range indicator
-                }
-                break;
-
-            }
-
+            auto result = this->conditionnalPaint(painter, option, widget);
+            if(!result.mustContinue) return;
+            this->_paint(painter, &result.options, widget);
         }
 
 };

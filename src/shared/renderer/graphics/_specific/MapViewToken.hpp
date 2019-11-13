@@ -13,7 +13,9 @@
 #include "src/shared/models/RPZMapParameters.hpp"
 #include "src/shared/models/RPZAtom.h"
 
-class MapViewToken : public QObject, public QGraphicsItem {
+#include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
+
+class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsItem {
     
     Q_OBJECT
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
@@ -49,6 +51,13 @@ class MapViewToken : public QObject, public QGraphicsItem {
             return this->_mainRect;
         }
 
+    protected:
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
+            auto result = this->conditionnalPaint(painter, option, widget);
+            if(!result.mustContinue) return;
+            this->_paint(painter, &result.options, widget);
+        }
+
     private:
         RPZAtom::Type _tokenType;
 
@@ -58,60 +67,9 @@ class MapViewToken : public QObject, public QGraphicsItem {
         QBrush _upperBrush;
         QBrush _mainBrush;
 
-        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
-            
-            this->_mayPaintSelectionHelper(painter, option);
-
-            painter->save();
-
-                painter->setRenderHint(QPainter::Antialiasing, true);
-                painter->setPen(Qt::NoPen);
-                
-                painter->setBrush(this->_mainBrush);
-                painter->drawRoundedRect(this->_mainRect, 75, 75, Qt::RelativeSize);
-                
-                if(this->_tokenType == RPZAtom::Type::Player) {
-                    
-                    //upper
-                    painter->setBrush(this->_upperBrush);
-                    painter->drawEllipse(this->_upperRect);
-                    
-                    //sign
-                    auto sign = QObject::tr("P", "player sign");
-                    painter->setPen(QColor(Qt::white));
-
-                        auto font = painter->font();
-                        font.setPixelSize((int)(this->_upperRect.height() * .9));
-                        painter->setFont(font);
-
-                        QFontMetrics m(font);
-                        auto signRect = QRectF(m.boundingRect(sign));
-                        signRect.moveCenter(this->_upperRect.center());
-                        
-                    painter->drawText(signRect, sign);
-
-                }
-
-            painter->restore();
-
-        }
-        
-         void _mayPaintSelectionHelper(QPainter *painter, const QStyleOptionGraphicsItem *option) {
-            
-            if(option->state.testFlag(QStyle::StateFlag::State_Selected)) {
-                painter->save();
-                    
-                    QPen pen;
-                    pen.setWidth(0);
-                    pen.setStyle(Qt::DashLine);
-                    painter->setPen(pen);
-
-                    painter->drawRect(option->exposedRect);
-
-                painter->restore();
-            }
-
-         }
+        bool _drawSelectionHelper() override { 
+            return true; 
+        };
 
         void _changeColor(const RPZAtom &atom) {
             
@@ -164,7 +122,41 @@ class MapViewToken : public QObject, public QGraphicsItem {
             ));
 
         }
-    
-    
+
+        void _paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) {
+            
+            painter->save();
+
+                painter->setRenderHint(QPainter::Antialiasing, true);
+                painter->setPen(Qt::NoPen);
+                
+                painter->setBrush(this->_mainBrush);
+                painter->drawRoundedRect(this->_mainRect, 75, 75, Qt::RelativeSize);
+                
+                if(this->_tokenType == RPZAtom::Type::Player) {
+                    
+                    //upper
+                    painter->setBrush(this->_upperBrush);
+                    painter->drawEllipse(this->_upperRect);
+                    
+                    //sign
+                    auto sign = QObject::tr("P", "player sign");
+                    painter->setPen(QColor(Qt::white));
+
+                        auto font = painter->font();
+                        font.setPixelSize((int)(this->_upperRect.height() * .9));
+                        painter->setFont(font);
+
+                        QFontMetrics m(font);
+                        auto signRect = QRectF(m.boundingRect(sign));
+                        signRect.moveCenter(this->_upperRect.center());
+                        
+                    painter->drawText(signRect, sign);
+
+                }
+
+            painter->restore();
+
+        }
 
 };
