@@ -41,7 +41,7 @@ class MapViewGraphicsPathItem : public QObject, public QGraphicsPathItem, public
         QSizeF _sourceBrushSize;
 
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
-            auto result = this->conditionnalPaint(painter, option, widget);
+            auto result = this->conditionnalPaint(this, painter, option, widget);
             if(!result.mustContinue) return;
             QGraphicsPathItem::paint(painter, &result.options, widget);
         }

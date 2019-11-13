@@ -6,6 +6,7 @@
 
 #include "src/helpers/_appContext.h"
 #include "src/network/rpz/client/RPZClient.h"
+#include "src/helpers/RPZQVariant.hpp"
 
 class RPZGraphicsItem {
     public:
@@ -29,7 +30,7 @@ class RPZGraphicsItem {
             return QStringLiteral(u":/assets/hidden.png");
         }
 
-        ConditionnalPaintingResult conditionnalPaint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) {
+        ConditionnalPaintingResult conditionnalPaint(QGraphicsItem* base, QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) {
             
             ConditionnalPaintingResult out;
             out.options = *option;
@@ -44,7 +45,7 @@ class RPZGraphicsItem {
 
             if(!isMapWidget && !this->_canBeDrawnInMiniMap()) out.mustContinue = false;
 
-            if(RPZClient::isHostAble() && isMapWidget) this->_paintOpacityPlaceholder(painter, option);
+            if(RPZClient::isHostAble() && isMapWidget && !RPZQVariant::isTemporary(base)) this->_paintOpacityPlaceholder(painter, option);
 
             return out;
 

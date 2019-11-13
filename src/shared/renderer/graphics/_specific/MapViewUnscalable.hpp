@@ -68,7 +68,7 @@ class MapViewUnscalable : public QGraphicsItem, public RPZGraphicsItem {
 
     protected:
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
-            auto result = this->conditionnalPaint(painter, option, widget);
+            auto result = this->conditionnalPaint(this, painter, option, widget);
             if(!result.mustContinue) return;
             this->_paint(painter, &result.options, widget);
         }

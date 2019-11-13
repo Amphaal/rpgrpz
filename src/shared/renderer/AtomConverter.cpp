@@ -1,27 +1,5 @@
 #include "AtomConverter.h"
 
-QVariantHash AtomConverter::brushTransform(QGraphicsItem *item) {
-    return item->data((int)AtomConverter::DataIndex::BrushTransform).toHash();
-}
-void AtomConverter::setBrushTransform(QGraphicsItem *item, const QVariantHash &transforms) {
-    item->setData((int)AtomConverter::DataIndex::BrushTransform, transforms);
-}
-
-bool AtomConverter::isTemporary(QGraphicsItem* item) {
-    return item->data((int)AtomConverter::DataIndex::IsTemporary).toBool();
-}
-void AtomConverter::setIsTemporary(QGraphicsItem* item, bool isTemporary) {
-    item->setData((int)AtomConverter::DataIndex::IsTemporary, isTemporary);
-}
-
-RPZAtom::BrushType AtomConverter::brushDrawStyle(QGraphicsItem* item) {
-    return (RPZAtom::BrushType)item->data((int)AtomConverter::DataIndex::BrushDrawStyle).toInt();
-}
-void AtomConverter::setBrushDrawStyle(QGraphicsItem* item, const RPZAtom::BrushType &style) {
-    item->setData((int)AtomConverter::DataIndex::BrushDrawStyle, (int)style);
-}
-
-
 void AtomConverter::updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom::Updates &updates) {
     //update GI
     for(auto i = updates.begin(); i != updates.end(); i++) {
@@ -47,7 +25,7 @@ void AtomConverter::setupGraphicsItemFromAtom(QGraphicsItem* target, const RPZAt
     target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, RPZClient::isHostAble());
 
     //bind a copy of the template to the item
-    setIsTemporary(target, isTargetTemporary);
+    RPZQVariant::setIsTemporary(target, isTargetTemporary);
 
     //update
     _updateGraphicsItemFromMetadata(target, blueprint);
@@ -106,7 +84,7 @@ void AtomConverter::_bulkTransformApply(QGraphicsItem* itemBrushToUpdate) {
     if(!cItem) return;
 
     //extract transform instructions
-    auto transforms = brushTransform(itemBrushToUpdate);
+    auto transforms = RPZQVariant::brushTransform(itemBrushToUpdate);
     
     QTransform toApply;
 
@@ -135,7 +113,7 @@ void AtomConverter::_bulkTransformApply(QGraphicsItem* itemBrushToUpdate) {
     }
 
     //extract brush type
-    auto type = brushDrawStyle(itemBrushToUpdate);
+    auto type = RPZQVariant::brushDrawStyle(itemBrushToUpdate);
     
     //apply to pen
     if(type == RPZAtom::BrushType::RoundBrush) {
@@ -176,7 +154,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
             
             // on changing visibility
             case RPZAtom::Parameter::Hidden: {
-                if(isTemporary(itemToUpdate)) break;
+                if(RPZQVariant::isTemporary(itemToUpdate)) break;
                 auto hidden = val.toBool();
                 MapViewAnimator::animateVisibility(itemToUpdate, hidden);
             }
@@ -235,7 +213,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
                 if(auto cItem = dynamic_cast<MapViewGraphicsPathItem*>(itemToUpdate)) {
                     
                     auto type = (RPZAtom::BrushType)val.toInt();
-                    setBrushDrawStyle(itemToUpdate, type);
+                    RPZQVariant::setBrushDrawStyle(itemToUpdate, type);
                     
                     //use pen as brush
                     if(type == RPZAtom::BrushType::RoundBrush) {
@@ -262,7 +240,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
                     }
 
                     //define default shape for temporary
-                    if(isTemporary(itemToUpdate)) {
+                    if(RPZQVariant::isTemporary(itemToUpdate)) {
                         
                         QPainterPath path;
 
@@ -297,7 +275,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
                 auto newLayer = val.toInt();
 
                 //always force temporary item on top of his actual set layer index
-                if(isTemporary(itemToUpdate)) newLayer++;
+                if(RPZQVariant::isTemporary(itemToUpdate)) newLayer++;
 
                 itemToUpdate->setZValue(newLayer);
 
@@ -307,9 +285,9 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
             //on asset rotation / scale, store metadata for all-in transform update in main method
             case RPZAtom::Parameter::AssetRotation: {
             case RPZAtom::Parameter::AssetScale: {
-                auto transforms = brushTransform(itemToUpdate);
+                auto transforms = RPZQVariant::brushTransform(itemToUpdate);
                 transforms.insert(QString::number((int)param), val);
-                setBrushTransform(itemToUpdate, transforms);
+                RPZQVariant::setBrushTransform(itemToUpdate, transforms);
                 return true;
             }
             break;
@@ -348,7 +326,7 @@ void AtomConverter::_setParamToAtomFromGraphicsItem(const RPZAtom::Parameter &pa
             auto layer = blueprint->zValue();
 
             //if is a temporary, reset layer to expected value
-            if(isTemporary(blueprint)) layer--;
+            if(RPZQVariant::isTemporary(blueprint)) layer--;
 
             atomToUpdate.setMetadata(param, layer);     
 
@@ -356,7 +334,7 @@ void AtomConverter::_setParamToAtomFromGraphicsItem(const RPZAtom::Parameter &pa
         break;
 
         case RPZAtom::Parameter::BrushStyle: {
-            auto brushStyle = brushDrawStyle(blueprint);
+            auto brushStyle = RPZQVariant::brushDrawStyle(blueprint);
             atomToUpdate.setMetadata(param, (int)brushStyle);
         }
         break;
@@ -392,7 +370,7 @@ void AtomConverter::_setParamToAtomFromGraphicsItem(const RPZAtom::Parameter &pa
         
         case RPZAtom::Parameter::AssetScale:
         case RPZAtom::Parameter::AssetRotation: {
-            auto transforms = brushTransform(blueprint);
+            auto transforms = RPZQVariant::brushTransform(blueprint);
             if(transforms.isEmpty()) return;
 
             auto transform = transforms.value(QString::number((int)param));

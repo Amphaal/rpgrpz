@@ -8,20 +8,10 @@
 #include "src/shared/renderer/animator/MapViewAnimator.hpp"
 
 #include "src/network/rpz/client/RPZClient.h"
+#include "src/helpers/RPZQVariant.hpp"
 
 class AtomConverter {
     public:   
-        enum class DataIndex { BrushTransform = 2555, IsTemporary = 2666, BrushDrawStyle = 2767 };
-
-            static QVariantHash brushTransform(QGraphicsItem *item);
-            static void setBrushTransform(QGraphicsItem *item, const QVariantHash &transforms);
-
-            static bool isTemporary(QGraphicsItem* item);
-            static void setIsTemporary(QGraphicsItem* item, bool isTemporary);
-
-            static RPZAtom::BrushType brushDrawStyle(QGraphicsItem* item);
-            static void setBrushDrawStyle(QGraphicsItem* item, const RPZAtom::BrushType &style);
-
         static void updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom::Updates &updates);
         static void setupGraphicsItemFromAtom(QGraphicsItem* target, const RPZAtom &blueprint, bool isTargetTemporary = false);
 
@@ -36,4 +26,4 @@ class AtomConverter {
         static void _updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom &blueprint);
 
 };
-inline uint qHash(const AtomConverter::DataIndex &key, uint seed = 0) {return uint(key) ^ seed;}
+

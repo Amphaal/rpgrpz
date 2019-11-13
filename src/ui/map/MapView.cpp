@@ -319,7 +319,7 @@ void MapView::mouseDoubleClickEvent(QMouseEvent *event) {
     if(!item) return;
 
     //check item is not temporary !
-    if(AtomConverter::isTemporary(item)) return;
+    if(RPZQVariant::isTemporary(item)) return;
 
     //notify focus
     this->_hints->notifyFocusedItem(item);

@@ -11,7 +11,10 @@ class RPZQVariant {
         enum class Roles {
             AtomId = 1006,
             YTVideoMetadataPtr = 1007,
-            GridAlignable = 1100
+            GridAlignable = 1100,
+            BrushTransform = 2555, 
+            IsTemporary = 2666, 
+            BrushDrawStyle = 2767
         };
 
         static YoutubeVideoMetadata* ytVideoMetadata(QListWidgetItem* item) {
@@ -34,6 +37,28 @@ class RPZQVariant {
         static void setIsGridBound(QGraphicsItem* item, bool isAlignable) {
             item->setData((int)RPZQVariant::Roles::GridAlignable, isAlignable);
         }
+
+        static QVariantHash brushTransform(QGraphicsItem *item) {
+            return item->data((int)RPZQVariant::Roles::BrushTransform).toHash();
+        }
+        static void setBrushTransform(QGraphicsItem *item, const QVariantHash &transforms) {
+            item->setData((int)RPZQVariant::Roles::BrushTransform, transforms);
+        }
+
+        static bool isTemporary(QGraphicsItem* item) {
+            return item->data((int)RPZQVariant::Roles::IsTemporary).toBool();
+        }
+        static void setIsTemporary(QGraphicsItem* item, bool isTemporary) {
+            item->setData((int)RPZQVariant::Roles::IsTemporary, isTemporary);
+        }
+
+        static RPZAtom::BrushType brushDrawStyle(QGraphicsItem* item) {
+            return (RPZAtom::BrushType)item->data((int)RPZQVariant::Roles::BrushDrawStyle).toInt();
+        }
+        static void setBrushDrawStyle(QGraphicsItem* item, const RPZAtom::BrushType &style) {
+            item->setData((int)RPZQVariant::Roles::BrushDrawStyle, (int)style);
+        }
+
 
 };
 inline uint qHash(const RPZQVariant::Roles &key, uint seed = 0) {return uint(key) ^ seed;}

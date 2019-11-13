@@ -19,7 +19,7 @@ class MapViewGraphicsSvgItem : public QGraphicsSvgItem, public RPZGraphicsItem {
     
     private:
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
-            auto result = this->conditionnalPaint(painter, option, widget);
+            auto result = this->conditionnalPaint(this, painter, option, widget);
             if(!result.mustContinue) return;
             QGraphicsSvgItem::paint(painter, &result.options, widget);
         }
