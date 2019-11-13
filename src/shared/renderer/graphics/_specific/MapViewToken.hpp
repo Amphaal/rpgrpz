@@ -29,7 +29,7 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
             this->setAcceptHoverEvents(true);
 
             auto tileSize = mapParameters.tileWidthInPoints();
-            auto tokenSize = QSizeF(tileSize, tileSize);
+            auto tokenSize = QSizeF(tileSize * .95, tileSize * .95);
 
             auto startPosComp = QPointF(-tokenSize.width() / 2, -tokenSize.height() / 2);
             this->_mainRect = QRectF(startPosComp, tokenSize);

@@ -49,7 +49,8 @@ class RPZGraphicsItem {
             painter->save();
                 
                 QPen pen;
-                pen.setWidth(0);
+                pen.setWidth(1);
+                pen.setCosmetic(true);
                 pen.setStyle(Qt::DashLine);
                 painter->setPen(pen);
 
