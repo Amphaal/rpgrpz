@@ -152,10 +152,10 @@ list(APPEND EXT_LIBS
 #override maindir
 IF(NOT DEFINED QT_MAIN_DIR)
     IF(WIN32)
-        SET(QT_MAIN_DIR "C:/Qt/5.13.1")
+        SET(QT_MAIN_DIR "C:/Qt/5.13.2")
     endif()
     IF(APPLE)
-        SET(QT_MAIN_DIR "$ENV{HOME}/Qt/5.13.1")
+        SET(QT_MAIN_DIR "$ENV{HOME}/Qt/5.13.2")
     endif()
 endif()
 

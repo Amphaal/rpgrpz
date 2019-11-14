@@ -1,6 +1,6 @@
 version: "0.alpha.{build}"
 skip_non_tags: true
-image: Visual Studio 2017
+image: Visual Studio 2019
 platform: x64
 environment:
   global:
