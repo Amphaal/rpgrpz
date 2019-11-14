@@ -109,13 +109,12 @@ void MapLayoutTree::_handleAlterationRequest(const AlterationPayload &payload) {
     this->_preventSelectionNotification = true;
 
     auto pl = Payloads::autoCast(payload); 
-    auto type = pl->type();
 
     //handle in database
     this->_model->handleAlterationRequest(pl.data());
 
     //handle in UI
-    switch(type) {
+    switch(pl->type()) {
         
         case Payload::Alteration::Selected: {
 

@@ -175,10 +175,10 @@ QJsonObject JSONDatabase::_emptyDbFile() {
     
     //iterate through model
     auto model = this->_getDatabaseModel();
-    for(const auto &key : this->_getDatabaseModel().keys()) {
+    for(const auto &[key, entityType] : this->_getDatabaseModel().keys()) {
         
         QJsonValue val;
-        switch (key.second) {
+        switch (entityType) {
             case JSONDatabase::EntityType::Object:
                 val = QJsonObject();
                 break;
@@ -188,7 +188,7 @@ QJsonObject JSONDatabase::_emptyDbFile() {
                 break;
         }
         
-        defaultDoc.insert(key.first, val);
+        defaultDoc.insert(key, val);
         
     }
 

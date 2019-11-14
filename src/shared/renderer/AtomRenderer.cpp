@@ -7,9 +7,8 @@ void AtomRenderer::defineMapParameters(const RPZMapParameters &mapParameters) {
 QGraphicsItem* AtomRenderer::createGraphicsItem(const RPZAtom &atom, const RPZAsset &asset, bool isTemporary) {
     
     QGraphicsItem* out;
-    auto type = atom.type();
 
-    switch(type) {
+    switch(atom.type()) {
         
         case RPZAtom::Type::Object:
             out = _createGenericImageBasedItem(atom, asset);

@@ -91,9 +91,7 @@ void AtomConverter::_bulkTransformApply(QGraphicsItem* itemBrushToUpdate) {
     //apply transforms to instruction object
     for(auto i = transforms.begin(); i != transforms.end(); i++) {
         
-        auto param = static_cast<RPZAtom::Parameter>(i.key().toInt());
-        
-        switch(param) {
+        switch(i.key()) {
             case RPZAtom::Parameter::AssetScale: {
                 auto scaleRatio = i.value().toDouble();
                 toApply.scale(scaleRatio, scaleRatio);
@@ -286,7 +284,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
             case RPZAtom::Parameter::AssetRotation: {
             case RPZAtom::Parameter::AssetScale: {
                 auto transforms = RPZQVariant::brushTransform(itemToUpdate);
-                transforms.insert(QString::number((int)param), val);
+                transforms.insert(param, val);
                 RPZQVariant::setBrushTransform(itemToUpdate, transforms);
                 return true;
             }
@@ -370,13 +368,15 @@ void AtomConverter::_setParamToAtomFromGraphicsItem(const RPZAtom::Parameter &pa
         
         case RPZAtom::Parameter::AssetScale:
         case RPZAtom::Parameter::AssetRotation: {
+            
             auto transforms = RPZQVariant::brushTransform(blueprint);
             if(transforms.isEmpty()) return;
 
-            auto transform = transforms.value(QString::number((int)param));
+            auto transform = transforms.value(param);
             if(transform.isNull()) return;
             
             atomToUpdate.setMetadata(param, transform); 
+            
         }
         break;
 

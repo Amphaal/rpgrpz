@@ -96,29 +96,28 @@ void Playlist::dropEvent(QDropEvent *event) {
     QListWidget::dropEvent(event);
 
     //for each link registered
-    for(const auto &link : this->_tempDnD) {
-        
-        //prepare
-        auto url = link.second;
+    for(const auto &[type, url] : this->_tempDnD) {
 
         //defines behavior depending on tag
-        switch(link.first) {
+        switch(type) {
 
             case YoutubeUrlType::YoutubePlaylist: {
 
-                    //fetch videos from playlist
-                    YoutubeHelper::fromPlaylistUrl(url.toString()).then([=](const QList<YoutubeVideoMetadata*> &mvideoList) {
-                        for(const auto mvideo : mvideoList) {
-                            this->addYoutubeVideo(mvideo->url());
-                        }
-                    });
+                //fetch videos from playlist
+                YoutubeHelper::fromPlaylistUrl(url.toString()).then([=](const QList<YoutubeVideoMetadata*> &mvideoList) {
+                    for(const auto mvideo : mvideoList) {
+                        this->addYoutubeVideo(mvideo->url());
+                    }
+                });
 
-                }
-                break;
+            }
+            break;
 
-            case YoutubeUrlType::YoutubeVideo:
+            case YoutubeUrlType::YoutubeVideo: {
                 this->addYoutubeVideo(url.toString());
-                break;
+            }
+            break;
+
         }
 
     }

@@ -307,13 +307,8 @@ bool gst_rpgrpz_bus_cb(GstBus *bus, GstMessage *msg, void* data) {
     //cast cli
     GStreamerClient* cli = static_cast<GStreamerClient*>(data);
 
-    //on message type
-    auto type = GST_MESSAGE_TYPE(msg);
-    // auto test = gst_message_type_get_name (type);
-    // g_print ("%s\n", test);
-
     //switch
-    switch (type) {
+    switch (auto type = GST_MESSAGE_TYPE(msg)) {
         case GST_MESSAGE_ERROR: {
             
             GError *err;

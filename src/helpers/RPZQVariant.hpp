@@ -8,6 +8,8 @@
 
 class RPZQVariant {
     public:
+        typedef QHash<RPZAtom::Parameter, QVariant> AtomTransformationList;
+
         enum class Roles {
             AtomId = 1006,
             YTVideoMetadataPtr = 1007,
@@ -38,11 +40,30 @@ class RPZQVariant {
             item->setData((int)RPZQVariant::Roles::GridAlignable, isAlignable);
         }
 
-        static QVariantHash brushTransform(QGraphicsItem *item) {
-            return item->data((int)RPZQVariant::Roles::BrushTransform).toHash();
+        static auto brushTransform(QGraphicsItem *item) {
+            
+            auto rawHash = item->data((int)RPZQVariant::Roles::BrushTransform).toHash();
+            
+            AtomTransformationList out;
+            
+            for(auto i = rawHash.begin(); i != rawHash.end(); i++) {
+                auto param = static_cast<RPZAtom::Parameter>(i.key().toInt());
+                out.insert(param, i.value());
+            }
+
+            return out;
+
         }
-        static void setBrushTransform(QGraphicsItem *item, const QVariantHash &transforms) {
-            item->setData((int)RPZQVariant::Roles::BrushTransform, transforms);
+        static void setBrushTransform(QGraphicsItem *item, const AtomTransformationList &transforms) {
+
+            QVariantHash out;
+            for(auto i = transforms.begin(); i != transforms.end(); i++) {
+                auto toStr = QString::number((int)i.key());
+                out.insert(toStr, i.value());
+            }
+
+            item->setData((int)RPZQVariant::Roles::BrushTransform, out);
+            
         }
 
         static bool isTemporary(QGraphicsItem* item) {

@@ -398,7 +398,7 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
     auto msgId = msg.id();
     RPZResponse response;
 
-    switch(msg.commandType()) {
+    switch(const auto cmdType = msg.commandType()) {
         
         //on unknown command
         case MessageInterpreter::Command::C_Unknown: {

@@ -821,17 +821,17 @@
 <context>
     <name>Playlist</name>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="140"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="139"/>
         <source>This Youtube video is already in playlist !</source>
         <translation>Cette vidéo Youtube est déjà dans la liste de lecture !</translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="179"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="178"/>
         <source>(Loading metadata...) </source>
         <translation>(Chargement des métadonnées...) </translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="189"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="188"/>
         <source>(Error) </source>
         <translation>(Erreur) </translation>
     </message>
@@ -1173,7 +1173,7 @@
         <translation>Paysages</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.cpp" line="38"/>
+        <location filename="../shared/models/RPZAtom.cpp" line="37"/>
         <source>[Unpaired player token]</source>
         <translation>[Jeton de joueur vierge]</translation>
     </message>

@@ -7,23 +7,22 @@ QString YoutubeSignatureDecipherer::decipher(const QString &signature) {
 
     while(!copyOfOperations.isEmpty()) {
 
-        auto operation = copyOfOperations.dequeue();
-        switch(operation.first) {
+        switch(auto operationPair = copyOfOperations.dequeue(); operationPair.first) {
             
-            case YoutubeSignatureDecipherer::CipherOperation::Reverse: {
+            case CipherOperation::Reverse: {
                 std::reverse(modifiedSignature.begin(), modifiedSignature.end());
             }
             break;
 
-            case YoutubeSignatureDecipherer::CipherOperation::Slice: {
-                auto targetIndex = operation.second.toInt();
+            case CipherOperation::Slice: {
+                auto targetIndex = operationPair.second.toInt();
                 modifiedSignature = modifiedSignature.mid(targetIndex);
             }
             break;
 
-            case YoutubeSignatureDecipherer::CipherOperation::Swap: {
+            case CipherOperation::Swap: {
                 auto firstIndex = 0;
-                auto secondIndex = operation.second.toInt();
+                auto secondIndex = operationPair.second.toInt();
 
                 auto first = QString(modifiedSignature.at(firstIndex));
                 auto second = QString(modifiedSignature.at(secondIndex));
@@ -97,7 +96,7 @@ QList<QString> YoutubeSignatureDecipherer::_findJSDecipheringOperations(const QS
 
 QHash<YoutubeSignatureDecipherer::CipherOperation, YoutubeSignatureDecipherer::YTClientMethod> YoutubeSignatureDecipherer::_findObfuscatedDecipheringOperationsFunctionName(const QString &ytPlayerSourceCode, QList<QString> &javascriptDecipheringOperations) {
     
-    QHash<YoutubeSignatureDecipherer::CipherOperation, YTClientMethod> functionNamesByOperation;
+    QHash<CipherOperation, YTClientMethod> functionNamesByOperation;
     
     //regex
     auto regex = R"(\w+\.(\w+)\()";
@@ -115,15 +114,14 @@ QHash<YoutubeSignatureDecipherer::CipherOperation, YoutubeSignatureDecipherer::Y
         auto calledFunctionName = match.captured(1);
 
         //custom regexes to find decipherer methods
-        auto customRegexes = QHash<YoutubeSignatureDecipherer::CipherOperation, QRegularExpression> {
-            { YoutubeSignatureDecipherer::CipherOperation::Reverse, QRegularExpression(QRegularExpression::escape(calledFunctionName) + ":\\bfunction\\b\\(\\w+\\)")},
-            { YoutubeSignatureDecipherer::CipherOperation::Slice, QRegularExpression(QRegularExpression::escape(calledFunctionName) + ":\\bfunction\\b\\([a],b\\).(\\breturn\\b)?.?\\w+\\.")},
-            { YoutubeSignatureDecipherer::CipherOperation::Swap, QRegularExpression(QRegularExpression::escape(calledFunctionName) + ":\\bfunction\\b\\(\\w+\\,\\w\\).\\bvar\\b.\\bc=a\\b")}
+        QHash<YoutubeSignatureDecipherer::CipherOperation, QRegularExpression> customRegexes {
+            { CipherOperation::Reverse, QRegularExpression(QRegularExpression::escape(calledFunctionName) + ":\\bfunction\\b\\(\\w+\\)")},
+            { CipherOperation::Slice, QRegularExpression(QRegularExpression::escape(calledFunctionName) + ":\\bfunction\\b\\([a],b\\).(\\breturn\\b)?.?\\w+\\.")},
+            { CipherOperation::Swap, QRegularExpression(QRegularExpression::escape(calledFunctionName) + ":\\bfunction\\b\\(\\w+\\,\\w\\).\\bvar\\b.\\bc=a\\b")}
         };
 
         //find...
-        QHash<YoutubeSignatureDecipherer::CipherOperation, QRegularExpression>::iterator i;
-        for (i = customRegexes.begin(); i != customRegexes.end(); ++i) {
+        for (auto i = customRegexes.begin(); i != customRegexes.end(); ++i) {
 
             //if already found, skip
             auto co = i.key();
@@ -148,7 +146,7 @@ QHash<YoutubeSignatureDecipherer::CipherOperation, YoutubeSignatureDecipherer::Y
 }
 
 YoutubeSignatureDecipherer::YTDecipheringOperations YoutubeSignatureDecipherer::_buildOperations(
-        QHash<YoutubeSignatureDecipherer::CipherOperation, YTClientMethod> &functionNamesByOperation,
+        QHash<CipherOperation, YTClientMethod> &functionNamesByOperation,
         QList<QString> &javascriptOperations
     ) {
     
@@ -169,27 +167,16 @@ YoutubeSignatureDecipherer::YTDecipheringOperations YoutubeSignatureDecipherer::
         auto arg = match.captured(2).toInt();
 
         //by operation type
-        auto operationType = functionNamesByOperation.key(calledFunctionName);
-        switch(operationType) {
+        switch(auto operationType = functionNamesByOperation.key(calledFunctionName)) {
             
-            case YoutubeSignatureDecipherer::CipherOperation::Reverse: {
-                operations.enqueue(
-                    QPair<YoutubeSignatureDecipherer::CipherOperation, QVariant>(
-                        operationType, 
-                        QVariant()
-                    )
-                );
+            case CipherOperation::Reverse: {
+                operations.enqueue({operationType, QVariant()});
             }
             break;
 
-            case YoutubeSignatureDecipherer::CipherOperation::Slice:
-            case YoutubeSignatureDecipherer::CipherOperation::Swap: {
-                operations.enqueue(
-                    QPair<YoutubeSignatureDecipherer::CipherOperation, QVariant>(
-                        operationType, 
-                        QVariant(arg)
-                    )
-                );
+            case CipherOperation::Slice:
+            case CipherOperation::Swap: {
+                operations.enqueue({operationType, QVariant(arg)});
             }
             break;
 
@@ -211,16 +198,16 @@ YoutubeSignatureDecipherer::YTDecipheringOperations YoutubeSignatureDecipherer::
 YoutubeSignatureDecipherer::YoutubeSignatureDecipherer(const QString &ytPlayerSourceCode) {
     
     //find deciphering function name
-    auto functionName = YoutubeSignatureDecipherer::_findObfuscatedDecipheringFunctionName(ytPlayerSourceCode);
+    auto functionName = _findObfuscatedDecipheringFunctionName(ytPlayerSourceCode);
 
     //get JS deciphering operations
-    auto javascriptOperations = YoutubeSignatureDecipherer::_findJSDecipheringOperations(ytPlayerSourceCode, functionName);
+    auto javascriptOperations = _findJSDecipheringOperations(ytPlayerSourceCode, functionName);
 
     //find operations functions name
-    auto functionNamesByOperation = YoutubeSignatureDecipherer::_findObfuscatedDecipheringOperationsFunctionName(ytPlayerSourceCode, javascriptOperations);
+    auto functionNamesByOperation = _findObfuscatedDecipheringOperationsFunctionName(ytPlayerSourceCode, javascriptOperations);
 
     //generate operations
-    auto operations = YoutubeSignatureDecipherer::_buildOperations(functionNamesByOperation, javascriptOperations);
+    auto operations = _buildOperations(functionNamesByOperation, javascriptOperations);
 
     //copy operation to object
     this->_operations = operations;
