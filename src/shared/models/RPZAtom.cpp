@@ -9,7 +9,6 @@ RPZAtom::RPZAtom(const RPZAtom::Type &type) : Serializable(SnowFlake::get()->nex
     this->_setType(type);  
 };
 
-
 RPZAtom::Category RPZAtom::category() const {
     return category(this->type());
 }
