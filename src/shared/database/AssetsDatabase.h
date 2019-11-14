@@ -17,7 +17,7 @@ class AssetsDatabase : public QObject, public JSONDatabase {
     Q_OBJECT
 
     public:
-        typedef QString FolderPath; //internal DB arborescence path (only containers)
+        using FolderPath = QString; //internal DB arborescence path (only containers)
 
         enum class StorageContainer {
             NPC = 301,
@@ -90,14 +90,14 @@ class AssetsDatabase : public QObject, public JSONDatabase {
         void _removeAssetFiles(const QList<RPZAsset> &toRemoveFromStorage);
 
         //
-        typedef QHash<AssetsDatabase::FolderPath, QSet<RPZAsset::Hash>> HashesByPathToRemove;
-        typedef QList<RPZAsset> RemovedAssets;
+        using HashesByPathToRemove = QHash<AssetsDatabase::FolderPath, QSet<RPZAsset::Hash>>;
+        using RemovedAssets = QList<RPZAsset>;
 
         void _removeHashesFromPaths(const HashesByPathToRemove &hashesToRemoveFromPaths);
         QPair<HashesByPathToRemove, RemovedAssets> _removeAssets(const QList<RPZAsset::Hash> &hashesToRemove, bool onlyRemoveReference = false);
 
         //
-        typedef QHash<AssetsDatabase::FolderPath, QSet<AssetsDatabase::FolderPath>> StartingWithPathRequestResults;
+        using StartingWithPathRequestResults = QHash<AssetsDatabase::FolderPath, QSet<AssetsDatabase::FolderPath>>;
         QSet<AssetsDatabase::FolderPath> _getPathsStartingWith(const AssetsDatabase::FolderPath &toRequest);
         StartingWithPathRequestResults _getPathsStartingWith(const QList<AssetsDatabase::FolderPath> &toRequest);
 

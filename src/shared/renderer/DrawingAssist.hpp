@@ -7,7 +7,7 @@
 
 class DrawingAssist {
     public:
-        typedef bool IsCommitedDrawing;
+        using IsCommitedDrawing = bool;
 
         DrawingAssist(MapHint* hints, QGraphicsView* view) : _hints(hints), _view(view) { }
 
@@ -75,7 +75,7 @@ class DrawingAssist {
 
         }
         
-        DrawingAssist::IsCommitedDrawing compareItemToCommitedDrawing(QGraphicsItem* itemInserted) {
+        IsCommitedDrawing compareItemToCommitedDrawing(QGraphicsItem* itemInserted) {
             
             if(!this->_commitedDrawingId) return false;
             

@@ -123,7 +123,7 @@ class MapLayoutModel : public MapLayoutModelBase {
         }
         
     private:
-        typedef QHash<RPZAtom::Layer, QPair<QSet<MapLayoutAtom*>, QSet<MapLayoutAtom*>>> LayerMoves;
+        using LayerMoves = QHash<RPZAtom::Layer, QPair<QSet<MapLayoutAtom*>, QSet<MapLayoutAtom*>>>;
         
         struct LayerMoveContext {
             bool isCategoryCreated = false;

@@ -22,7 +22,7 @@ class YoutubeVideoMetadata : public QObject {
     Q_OBJECT
 
     public:
-        typedef QString Id;
+        using Id = QString;
         static YoutubeVideoMetadata* fromVideoUrl(const QString &url);
         static QString urlFromVideoId(const QString &videoId);
         

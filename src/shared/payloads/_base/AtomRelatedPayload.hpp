@@ -4,7 +4,7 @@
 
 class AtomRelatedPayload : public AlterationPayload {
     public:
-        typedef int RemainingAtomIds;
+        using RemainingAtomIds = int;
 
         AtomRelatedPayload() {};
         explicit AtomRelatedPayload(const QVariantHash &hash) : AlterationPayload(hash) {};

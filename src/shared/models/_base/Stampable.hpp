@@ -7,7 +7,7 @@
 
 class Stampable : public Ownable {
     public:
-        typedef SnowFlake::Id Id;
+        using Id = SnowFlake::Id;
 
         Stampable() : Ownable(SnowFlake::get()->nextId()) {
             this->_setTimestamp(QDateTime::currentDateTime());

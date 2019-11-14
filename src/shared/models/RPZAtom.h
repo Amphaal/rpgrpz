@@ -95,10 +95,10 @@ class RPZAtom : public Serializable {
             Friendly
         };
 
-        typedef SnowFlake::Id Id;
-        typedef int Layer;
-        typedef QHash<RPZAtom::Parameter, QVariant> Updates;
-        typedef QHash<RPZAtom::Id, RPZAtom::Updates> ManyUpdates;
+        using Id = SnowFlake::Id;
+        using Layer = int;
+        using Updates = QHash<RPZAtom::Parameter, QVariant>;
+        using ManyUpdates = QHash<RPZAtom::Id, RPZAtom::Updates>;
         
         static const inline QHash<RPZAtom::Type, QString> iconPathByAtomType = {
             { RPZAtom::Type::Event, QStringLiteral(u":/icons/app/manager/event.png") },

@@ -22,7 +22,7 @@
 class SnowFlake {
 
     public:
-        typedef uint64_t Id;
+        using Id = uint64_t;
         static SnowFlake* get();
         SnowFlake::Id nextId();
 

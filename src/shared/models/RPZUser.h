@@ -14,7 +14,7 @@
 class RPZUser : public Serializable {
 
     public:
-        typedef SnowFlake::Id Id;
+        using Id = SnowFlake::Id;
 
         enum class Role { Observer, Host, Player };
 

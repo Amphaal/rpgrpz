@@ -23,8 +23,8 @@ class YoutubeSignatureDecipherer {
         static YoutubeSignatureDecipherer* fromCache(const QString &clientPlayerUrl);
 
     private:
-        typedef QQueue<QPair<YoutubeSignatureDecipherer::CipherOperation, QVariant>> YTDecipheringOperations;
-        typedef QString YTClientMethod;
+        using YTDecipheringOperations = QQueue<QPair<YoutubeSignatureDecipherer::CipherOperation, QVariant>>;
+        using YTClientMethod = QString;
 
         YoutubeSignatureDecipherer(const QString &rawPlayerSourceData);
         

@@ -42,7 +42,7 @@ class AtomsStorage : public AlterationAcknoledger {
     Q_OBJECT
 
     public:
-        typedef bool AtomsAreLeft;
+        using AtomsAreLeft = bool;
 
         AtomsStorage(const Payload::Source &boundSource);
         
@@ -51,7 +51,7 @@ class AtomsStorage : public AlterationAcknoledger {
         PossibleActionsOnAtomList getPossibleActions(const QList<RPZAtom::Id> &ids);
 
         const ResetPayload generateResetPayload() const;
-        AtomsStorage::AtomsAreLeft restrictPayload(AtomRelatedPayload &payloadToRestrict);
+        AtomsAreLeft restrictPayload(AtomRelatedPayload &payloadToRestrict);
 
         const QString snapshotSave(const QString &folderToSaveTo); //safe
         

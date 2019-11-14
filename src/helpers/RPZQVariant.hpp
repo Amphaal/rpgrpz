@@ -8,7 +8,7 @@
 
 class RPZQVariant {
     public:
-        typedef QHash<RPZAtom::Parameter, QVariant> AtomTransformationList;
+        using AtomTransformationList = QHash<RPZAtom::Parameter, QVariant>;
 
         enum class Roles {
             AtomId = 1006,

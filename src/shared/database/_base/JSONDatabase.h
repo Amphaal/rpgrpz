@@ -25,9 +25,9 @@ class JSONDatabase {
             Array
         };
 
-        typedef QHash<QPair<QString, JSONDatabase::EntityType>, void*> Model;
-        typedef std::function<void(QJsonObject&)> UpdateHandler;
-        typedef int Version;
+        using Model = QHash<QPair<QString, JSONDatabase::EntityType>, void*>;
+        using UpdateHandler = std::function<void(QJsonObject&)>;
+        using Version = int;
 
         //remove from the array the elements in the set
         static QJsonArray diff(QJsonArray &target, QSet<QString> &toRemoveFromTarget);

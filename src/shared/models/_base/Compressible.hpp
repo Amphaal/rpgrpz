@@ -6,8 +6,8 @@
 class Compressible : protected QVariantHash {
     
     public:
-        typedef int Parameter;
-        typedef QString KeyName;
+        using Parameter = int;
+        using KeyName = QString;
 
         Compressible() {};
         explicit Compressible(const QVariantHash &hash) : QVariantHash(hash) {}
