@@ -276,7 +276,7 @@ QSet<RPZAtom::Parameter> RPZAtom::legalParameters() const {
     
     //basic
     base.insert(RPZAtom::Parameter::Position);
-    base.insert(RPZAtom::Parameter::Hidden);
+    if(this->canBeHidden()) base.insert(RPZAtom::Parameter::Hidden);
     
     //layout specific
     if(this->category() == RPZAtom::Category::Layout) {

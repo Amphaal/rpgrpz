@@ -40,7 +40,7 @@ class ViewMapHint : public AtomsStorage {
         const QList<RPZAtom::Id> getAtomIdsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const; //safe
         const RPZAtom::Id getAtomIdFromGraphicsItem(const QGraphicsItem* toFetch) const; //safe
 
-        QGraphicsItem* generateTemporaryItemFromTemplateBuffer(); //safe
+        QGraphicsItem* generateGraphicsFromTemplate(bool hiddenAsDefault = false); //safe
 
         const QPair<bool, RPZCharacter::Id> latestEligibleCharacterIdOnSelection() const; //safe
 
@@ -49,7 +49,7 @@ class ViewMapHint : public AtomsStorage {
         void notifySelectedItems(const QList<QGraphicsItem*> &selectedItems); //safe
         void notifyFocusedItem(QGraphicsItem* focusedItem); //safe
         void setDefaultLayer(int layer); //safe
-        void setDefaultVisibility(int state); //safe
+        void setDefaultVisibility(int checkboxState); //safe
 
         //handle preview alteration before real payload
         void handlePreviewRequest(const AtomsSelectionDescriptor &selectionDescriptor, const RPZAtom::Parameter &parameter, const QVariant &value);
@@ -82,9 +82,11 @@ class ViewMapHint : public AtomsStorage {
         QMultiHash<RPZAsset::Hash, QGraphicsItem*> _missingAssetHashesFromDb;
         
         //helpers
-        QGraphicsItem* _generateGhostItem(const RPZToy &toy);
+        QGraphicsItem* _generateGhostItem(const RPZToy &toy, QGraphicsItem* &oldGhostToDelete);
         QGraphicsItem* _buildGraphicsItemFromAtom(const RPZAtom &atomToBuildFrom);
         void _crossBindingAtomWithGI(const RPZAtom &atom, QGraphicsItem* gi);
+        void _updateTemplateAtom(RPZAtom::Updates updates);
+        void _resetTemplate(const RPZToy &from);
 
         //missing assets tracking
         void _replaceMissingAssetPlaceholders(const RPZAsset &metadata); //safe

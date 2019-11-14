@@ -132,7 +132,7 @@ class DrawingAssist {
             this->_destroyTempDrawing();
 
             //create item 
-            this->_tempDrawing = static_cast<MapViewGraphicsPathItem*>(this->_hints->generateTemporaryItemFromTemplateBuffer());
+            this->_tempDrawing = static_cast<MapViewGraphicsPathItem*>(this->_hints->generateGraphicsFromTemplate());
                 
                 //define pos
                 auto centerScenePos = scenePos;

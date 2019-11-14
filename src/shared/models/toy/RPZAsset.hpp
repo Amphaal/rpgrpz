@@ -50,8 +50,9 @@ class RPZAsset : public QVariantHash {
 
         }
 
-        const QSize shape() const { 
-            return JSONSerializer::toQSize(this->value(QStringLiteral(u"shape")).toList()); 
+        const QRectF shapeRect() const { 
+            auto size = JSONSerializer::toQSize(this->value(QStringLiteral(u"shape")).toList()); 
+            return QRectF(QPointF(), size);
         }
         const QPointF shapeCenter() const {
             return JSONSerializer::toPointF(this->value(QStringLiteral(u"center")).toList());

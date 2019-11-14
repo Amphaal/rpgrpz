@@ -18,48 +18,42 @@ QGraphicsItem* ViewMapHint::ghostItem() const {
     return this->_ghostItem;
 }
 
-void ViewMapHint::setDefaultLayer(int layer) {
+
+void ViewMapHint::_updateTemplateAtom(RPZAtom::Updates updates) {
     
-    //TODO Restrict to Layout category
-
-    RPZAtom::Updates updates;
-    updates.insert(RPZAtom::Parameter::Layer, layer);
-
+    //update template
     {
         QMutexLocker m(&this->_m_templateAtom);
         this->_templateAtom.setMetadata(updates);
     }
 
+    //get ghost item ptr
     this->_m_ghostItem.lock();
     auto ghostItem = this->_ghostItem;
     this->_m_ghostItem.unlock();
 
-    if(ghostItem) {
-        emit requestingUIUpdate({ghostItem}, updates);
-    }
-   
+    //if no ghost, skip
+    if(!ghostItem) return;
+
+    //remove illegal parameters from updates
+    auto templateLegals = this->_templateAtom.legalParameters();
+    auto illegals = updates.keys().toSet().subtract(templateLegals);
+    for(const auto &illegal : illegals) updates.remove(illegal);
+
+    //if no more updates, skip
+    if(!updates.count()) return;
+
+    //update ghost
+    emit requestingUIUpdate({ghostItem}, updates);
+
 }
 
-void ViewMapHint::setDefaultVisibility(int state) {
-    
-    //TODO Restrict to hidden able
+void ViewMapHint::setDefaultLayer(int layer) {
+    this->_updateTemplateAtom({{RPZAtom::Parameter::Layer, layer}});
+}
 
-    RPZAtom::Updates updates;
-    updates.insert(RPZAtom::Parameter::Hidden, (bool)state);
-
-    {
-        QMutexLocker m(&this->_m_templateAtom);
-        this->_templateAtom.setMetadata(updates);
-    }
-
-    this->_m_ghostItem.lock();
-    auto ghostItem = this->_ghostItem;
-    this->_m_ghostItem.unlock();
-
-    if(ghostItem) {
-        emit requestingUIUpdate({ghostItem}, updates);
-    }
-
+void ViewMapHint::setDefaultVisibility(int checkboxState) {
+    this->_updateTemplateAtom({{RPZAtom::Parameter::Hidden, (bool)checkboxState}});
 }
 
 void ViewMapHint::notifyFocusedItem(QGraphicsItem* focusedItem) {
@@ -119,64 +113,72 @@ void ViewMapHint::notifySelectedItems(const QList<QGraphicsItem*> &selectedItems
 // Atom insertion helpers //
 /////////////////////////////
 
-QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZToy &toy) {
 
-    if(!toy.isEmpty()){
+void ViewMapHint::_resetTemplate(const RPZToy &from) {
+    
+    if(!from.isEmpty()) {    
+
         QMutexLocker m(&this->_m_templateAtom);
 
-        //update template
-        this->_templateAtom.changeType(toy.atomType());
+        //update atom template
+        this->_templateAtom.changeType(from.atomType());
+        this->_templateAtom.setShape(from.shapeRect());
+        this->_templateAtom.setMetadata(RPZAtom::Parameter::ShapeCenter, from.shapeCenter());
+        this->_templateAtom.setMetadata(RPZAtom::Parameter::AssetHash, from.hash());
+        this->_templateAtom.setMetadata(RPZAtom::Parameter::AssetName, from.name());
 
-        this->_templateAtom.setMetadata(RPZAtom::Parameter::ShapeCenter, toy.shapeCenter());
-        
-        auto sSize = toy.shape();
-        if(!sSize.isEmpty()) {
-            this->_templateAtom.setShape(
-                QRectF(QPointF(), sSize)
-            );
-        } else {
-            this->_templateAtom.setShape(QRectF()); 
-        }
-
-        this->_templateAtom.setMetadata(RPZAtom::Parameter::AssetHash, toy.hash());
-        this->_templateAtom.setMetadata(RPZAtom::Parameter::AssetName, toy.name());
     }
-    
+
+    //update toy template
+    QMutexLocker l2(&this->_m_templateToy);
+    this->_templateToy = from;
+
+}
+
+QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZToy &toy, QGraphicsItem* &oldGhostToDelete) {
+
+    //reset values from template
+    this->_resetTemplate(toy);
+
     QGraphicsItem* toDelete = nullptr;
 
     {
         QMutexLocker m(&this->_m_ghostItem);
 
-        //delete if ghost item exist
-        if(this->_ghostItem) toDelete = this->_ghostItem;
-
-        if(!toy.isEmpty()) {
-            
-            {
-                QMutexLocker l2(&this->_m_templateToy);
-                this->_templateToy = toy;
-            }
-         
-            //add to scene
-            this->_ghostItem = generateTemporaryItemFromTemplateBuffer();
-            this->_ghostItem->setVisible(false); //default to invisible
-            
-        } else this->_ghostItem = nullptr;
+        //request ghost deletion from scene if existing
+        if(this->_ghostItem) {
+            oldGhostToDelete = this->_ghostItem; 
+            this->_ghostItem = nullptr;
+        }
         
+        //generate for scene addition
+        this->_ghostItem = generateGraphicsFromTemplate(true);
+        return this->_ghostItem;
+
     }
 
-    return toDelete;
 }
 
-QGraphicsItem* ViewMapHint::generateTemporaryItemFromTemplateBuffer() {
+QGraphicsItem* ViewMapHint::generateGraphicsFromTemplate(bool hiddenAsDefault) {
+    
     QMutexLocker l1(&this->_m_templateAtom);
     QMutexLocker l2(&this->_m_templateToy);
 
-    return AtomRenderer::createGraphicsItem(
+    //not based on template toy, skip
+    if(this->_templateToy.isEmpty()) return nullptr;
+
+    //generate
+    auto item = AtomRenderer::createGraphicsItem(
         this->_templateAtom, 
         this->_templateToy,
         true
     );
+
+    //auto visibility
+    item->setVisible(!hiddenAsDefault);
+
+    return item;
+    
 }
 
 RPZAtom::Id ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsItem) const {
@@ -187,7 +189,7 @@ RPZAtom::Id ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsI
     RPZAtom newAtom;
     {
         QMutexLocker l1(&this->_m_templateAtom);
-        newAtom = AtomConverter::graphicsToAtom(graphicsItem, this->_templateAtom);
+        newAtom = AtomConverter::cloneAtomTemplateFromGraphics(graphicsItem, this->_templateAtom);
     }
 
     //queue
@@ -441,40 +443,20 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
     else if(auto mPayload = dynamic_cast<const ToySelectedPayload*>(&payload)) {
         
         //generate ghost
-        auto mightDelete = this->_generateGhostItem(mPayload->selectedToy());
+        QGraphicsItem* maybeToDelete = nullptr;
+        auto newGhost = this->_generateGhostItem(mPayload->selectedToy(), maybeToDelete);
         
         //request deletion previous ghost
-        if(mightDelete) {
-            emit requestingUIAlteration(Payload::Alteration::Removed, {mightDelete});
-        }
-
-        this->_m_ghostItem.lock();
-        auto ghostItem = this->_ghostItem;
-        this->_m_ghostItem.unlock();
-
+        if(maybeToDelete) emit requestingUIAlteration(Payload::Alteration::Removed, {maybeToDelete});
+        
         //request addition of new ghost
-        emit requestingUIAlteration(Payload::Alteration::ToySelected, {ghostItem});
+        emit requestingUIAlteration(Payload::Alteration::ToySelected, {newGhost});
+
     }
     
     //if template changed
     else if(auto mPayload = dynamic_cast<const AtomTemplateChangedPayload*>(&payload)) {
-
-        auto updates = mPayload->updates();
-
-        {
-            QMutexLocker m(&this->_m_templateAtom);
-            this->_templateAtom.setMetadata(updates);
-        }
-
-        this->_m_ghostItem.lock();
-        auto ghostItem = this->_ghostItem;
-        this->_m_ghostItem.unlock();
-
-        if(ghostItem) {
-            //says it changed
-            emit requestingUIUpdate({ghostItem}, updates);
-        }
-        
+        this->_updateTemplateAtom(mPayload->updates());        
     }
 
 }

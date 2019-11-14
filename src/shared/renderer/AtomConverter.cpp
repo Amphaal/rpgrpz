@@ -7,22 +7,23 @@ void AtomConverter::updateGraphicsItemFromMetadata(QGraphicsItem* item, const RP
     }
 }
 
-RPZAtom AtomConverter::graphicsToAtom(QGraphicsItem* blueprint, RPZAtom templateCopy) {
+const RPZAtom AtomConverter::cloneAtomTemplateFromGraphics(QGraphicsItem* blueprint, RPZAtom toClone) {
     
-    //update the 3 only parameters who might have changed from the template
-    _setParamToAtomFromGraphicsItem(RPZAtom::Parameter::Position, templateCopy, blueprint);
-    _setParamToAtomFromGraphicsItem(RPZAtom::Parameter::Shape, templateCopy, blueprint);
+    //update the 2 only parameters who might have changed from the template
+    _updateAtomParamFromGraphics(RPZAtom::Parameter::Position, toClone, blueprint);
+    _updateAtomParamFromGraphics(RPZAtom::Parameter::Shape, toClone, blueprint);
                 
     //finally, give it ID for storage
-    templateCopy.shuffleId();
+    toClone.shuffleId();
 
-    return templateCopy;
+    return toClone;
+    
 }
 
 void AtomConverter::setupGraphicsItemFromAtom(QGraphicsItem* target, const RPZAtom &blueprint, bool isTargetTemporary) {
     
     //set movable as default
-    target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, RPZClient::isHostAble());
+    target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, RPZClient::isHostAble() && !isTargetTemporary);
 
     //bind a copy of the template to the item
     RPZQVariant::setIsTemporary(target, isTargetTemporary);
@@ -299,51 +300,9 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
     return false;
 }
 
-void AtomConverter::_setParamToAtomFromGraphicsItem(const RPZAtom::Parameter &param, RPZAtom &atomToUpdate, QGraphicsItem* blueprint) {
+void AtomConverter::_updateAtomParamFromGraphics(const RPZAtom::Parameter &param, RPZAtom &atomToUpdate, QGraphicsItem* blueprint) {
+    
     switch(param) {
-        
-        case RPZAtom::Parameter::Scale: {
-            atomToUpdate.setMetadata(param, blueprint->scale());
-        }
-        break;
-
-        case RPZAtom::Parameter::Rotation: {
-            atomToUpdate.setMetadata(param, blueprint->rotation());
-        }
-        break;
-
-        case RPZAtom::Parameter::TextSize: {
-            if(auto casted = dynamic_cast<QGraphicsTextItem*>(blueprint)) {
-                atomToUpdate.setMetadata(param, casted->font().pointSize());
-            }
-        }
-        break;
-
-        case RPZAtom::Parameter::Layer: {
-
-            auto layer = blueprint->zValue();
-
-            //if is a temporary, reset layer to expected value
-            if(RPZQVariant::isTemporary(blueprint)) layer--;
-
-            atomToUpdate.setMetadata(param, layer);     
-
-        }
-        break;
-
-        case RPZAtom::Parameter::BrushStyle: {
-            auto brushStyle = RPZQVariant::brushDrawStyle(blueprint);
-            atomToUpdate.setMetadata(param, (int)brushStyle);
-        }
-        break;
-
-        case RPZAtom::Parameter::BrushPenWidth:
-        case RPZAtom::Parameter::PenWidth: {
-            if(auto pathItem = dynamic_cast<MapViewGraphicsPathItem*>(blueprint)) {
-                atomToUpdate.setMetadata(param, pathItem->pen().width()); 
-            }
-        }
-        break;
 
         //add shapeCenter too
         case RPZAtom::Parameter::Shape: {
@@ -366,21 +325,6 @@ void AtomConverter::_setParamToAtomFromGraphicsItem(const RPZAtom::Parameter &pa
         }
         break;
         
-        case RPZAtom::Parameter::AssetScale:
-        case RPZAtom::Parameter::AssetRotation: {
-            
-            auto transforms = RPZQVariant::brushTransform(blueprint);
-            if(transforms.isEmpty()) return;
-
-            auto transform = transforms.value(param);
-            if(transform.isNull()) return;
-            
-            atomToUpdate.setMetadata(param, transform); 
-            
-        }
-        break;
-
-        default:
-            break;
     }
+
 }   
