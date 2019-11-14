@@ -24,7 +24,7 @@ build_script:
   - cmd: mkdir build
   - cmd: cd build
   - cmd: conan install .. -s build_type=Release --build missing
-  - cmd: cmake --config Release -DOPENSSL_BIN_DIR="C:\OpenSSL-v111-Win64\bin" -DQT_MAIN_DIR="C:\Qt\5.13" -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 15 2017 Win64" .. 
+  - cmd: cmake --config Release -DOPENSSL_BIN_DIR="C:\OpenSSL-v111-Win64\bin" -DQT_MAIN_DIR="C:\Qt\5.13" -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 16 2019" -A x64" .. 
   - cmd: cd ..
   - cmd: cmake --build ./build --target package --config Release
   - cmd: cmake --build ./build --target zipForDeploy --config Release
