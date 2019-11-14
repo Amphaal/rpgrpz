@@ -5,12 +5,13 @@ AtomSliderEditor::AtomSliderEditor(const RPZAtom::Parameter &parameter, int mini
     this->_commitTimer.setInterval(200);
     this->_commitTimer.setSingleShot(true);
 
-    this->_setAsDataEditor(new QSlider(Qt::Orientation::Horizontal, this));
-    this->slider()->setMinimum(minimum);
-    this->slider()->setMaximum(maximum);
+    this->_slider = new QSlider(Qt::Orientation::Horizontal, this);
+    this->_slider->setMinimum(minimum);
+    this->_slider->setMaximum(maximum);
+    this->layout()->addWidget(this->_slider);
 
     QObject::connect(
-        this->slider(), &QAbstractSlider::valueChanged,
+        this->_slider, &QAbstractSlider::valueChanged,
         this, &AtomSliderEditor::_onValueChanged
     );
 
@@ -40,10 +41,6 @@ void AtomSliderEditor::_confirmPreview() {
 
 }
 
-QSlider* AtomSliderEditor::slider() {
-    return (QSlider*)this->_dataEditor;
-}
-
 void AtomSliderEditor::loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode) {
     
     AtomSubEditor::loadTemplate(defaultValues, editMode);
@@ -55,14 +52,14 @@ void AtomSliderEditor::loadTemplate(const RPZAtom::Updates &defaultValues, const
         this->_descr->updateValue(defaultVal);
     }
       
-    QSignalBlocker b(this->slider());
+    QSignalBlocker b(this->_slider);
     auto sval = this->_toSliderValue(defaultVal);
-    this->slider()->setValue(sval);
+    this->_slider->setValue(sval);
 
 }
 
 double AtomSliderEditor::outputValue() {
-    return this->_toAtomValue(this->slider()->value());
+    return this->_toAtomValue(this->_slider->value());
 }
 
 double AtomSliderEditor::_toAtomValue(int sliderVal) {

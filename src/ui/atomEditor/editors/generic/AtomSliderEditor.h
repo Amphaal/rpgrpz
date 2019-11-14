@@ -10,7 +10,6 @@ class AtomSliderEditor : public AtomSubEditor {
     public:
         AtomSliderEditor(const RPZAtom::Parameter &parameter, int minimum, int maximum);
         void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode) override;
-        QSlider* slider();
 
     private:
         void _onValueChanged(int sliderVal);
@@ -22,6 +21,7 @@ class AtomSliderEditor : public AtomSubEditor {
         int atomValueToSliderValue(double atomValue);
 
         QTimer _commitTimer;
+        QSlider* _slider = nullptr;
 
     protected: 
         virtual double _toAtomValue(int sliderVal);

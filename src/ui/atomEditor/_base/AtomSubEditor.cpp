@@ -18,11 +18,6 @@ const QList<RPZAtom::Parameter> AtomSubEditor::params() {
     return this->_params;
 }
 
-void AtomSubEditor::_setAsDataEditor(QWidget *dataEditor) {
-    this->_dataEditor = dataEditor;
-    this->layout()->addWidget(dataEditor);
-}
-
 bool AtomSubEditor::mustShowBrushPenWidth(const QVariant &brushTypeDefaultValue) {
     auto cast = (RPZAtom::BrushType)brushTypeDefaultValue.toInt();
     return cast == RPZAtom::BrushType::RoundBrush;
@@ -46,6 +41,8 @@ void AtomSubEditor::_handleVisibilityOnLoad(const RPZAtom::Updates &defaultValue
 
 void AtomSubEditor::loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode) {
     
+    this->setEnabled(true);
+
     //handle visibility
     this->_handleVisibilityOnLoad(defaultValues);
 
@@ -58,7 +55,7 @@ void AtomSubEditor::loadTemplate(const RPZAtom::Updates &defaultValues, const At
     //replace descr if has empty
     if(hasEmptyValue) {
         this->_descr->cannotDisplayValue();
-        if(!this->_supportsBatchEditing) this->_dataEditor->setEnabled(false);
+        if(!this->_supportsBatchEditing) this->setEnabled(false);
     }
 
 }

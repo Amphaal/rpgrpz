@@ -5,30 +5,26 @@
 
 #include "src/ui/atomEditor/_base/AtomSubEditor.h"
 
-class AtomShortTextEditor : public AtomSubEditor  {
+class AtomShortTextEditor : public AtomSubEditor {
     
     Q_OBJECT
 
     public:
-        QLineEdit* lineEdit() {
-            return (QLineEdit*)this->_dataEditor;
-        }
-
         AtomShortTextEditor(const RPZAtom::Parameter &parameter) : AtomSubEditor({parameter}), 
             _validateButton(new QPushButton(this)) {
             
             this->_validateButton->setText(tr("Confirm modification"));
             
-            auto edit = new QLineEdit(this);
-            edit->setPlaceholderText(tr("Type some text..."));
-            this->_setAsDataEditor(edit);
+            this->_edit = new QLineEdit(this);
+            this->_edit->setPlaceholderText(tr("Type some text..."));
 
+            this->layout()->addWidget(this->_edit);
             this->layout()->addWidget(this->_validateButton);
 
             QObject::connect(
                 this->_validateButton, &QPushButton::pressed,
                 [&]() {
-                    auto out = QVariant(this->lineEdit()->text());
+                    auto out = QVariant(this->_edit->text());
                     emit valueConfirmedForPayload({{this->_params.first(), out}});
                 }
             );
@@ -36,6 +32,7 @@ class AtomShortTextEditor : public AtomSubEditor  {
         }
     
     private:
+        QLineEdit* _edit = nullptr;
         QPushButton* _validateButton = nullptr;
 
         void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode) override {
@@ -43,8 +40,8 @@ class AtomShortTextEditor : public AtomSubEditor  {
             AtomSubEditor::loadTemplate(defaultValues, editMode);
             auto castedVal = defaultValues[this->_params.first()].toString();
             
-            QSignalBlocker b(this->lineEdit());
-            this->lineEdit()->setText(castedVal);
+            QSignalBlocker b(this->_edit);
+            this->_edit->setText(castedVal);
             
         }
 };

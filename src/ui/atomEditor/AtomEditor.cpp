@@ -91,30 +91,36 @@ void AtomEditor::resetParams() {
 
 }
 
+void AtomEditor::_addEditor(AtomSubEditor* editor) {
+    for(auto &param : editor->params()) {
+        this->_editorsByParam.insert(param, editor);
+    }
+}
+
 void AtomEditor::_createEditorsFromAtomParameters() {
 
-    this->_editorsByParam.insert(RPZAtom::Parameter::BrushStyle, new BrushToolEditor);
-    this->_editorsByParam.insert(RPZAtom::Parameter::BrushPenWidth, new AtomSliderEditor(RPZAtom::Parameter::BrushPenWidth, 1, 500));
+    this->_addEditor(new BrushToolEditor);
+    this->_addEditor(new AtomSliderEditor(RPZAtom::Parameter::BrushPenWidth, 1, 500));
 
-    this->_editorsByParam.insert(RPZAtom::Parameter::Rotation, new AtomSliderEditor(RPZAtom::Parameter::Rotation, 0, 359));
-    this->_editorsByParam.insert(RPZAtom::Parameter::Scale, new NonLinearAtomSliderEditor(RPZAtom::Parameter::Scale, 1, 1000));
+    _addEditor(new AtomSliderEditor(RPZAtom::Parameter::Rotation, 0, 359));
+    _addEditor(new NonLinearAtomSliderEditor(RPZAtom::Parameter::Scale, 1, 1000));
     
-    this->_editorsByParam.insert(RPZAtom::Parameter::AssetRotation, new AtomSliderEditor(RPZAtom::Parameter::AssetRotation, 0, 359));
-    this->_editorsByParam.insert(RPZAtom::Parameter::AssetScale, new NonLinearAtomSliderEditor(RPZAtom::Parameter::AssetScale, 1, 1000));
+    _addEditor(new AtomSliderEditor(RPZAtom::Parameter::AssetRotation, 0, 359));
+    _addEditor(new NonLinearAtomSliderEditor(RPZAtom::Parameter::AssetScale, 1, 1000));
 
-    this->_editorsByParam.insert(RPZAtom::Parameter::PenWidth, new AtomSliderEditor(RPZAtom::Parameter::PenWidth, 1, 50));
-    this->_editorsByParam.insert(RPZAtom::Parameter::TextSize, new AtomSliderEditor(RPZAtom::Parameter::TextSize, 1, 50));
-    this->_editorsByParam.insert(RPZAtom::Parameter::Text, new AtomTextEditor(RPZAtom::Parameter::Text));
+    _addEditor(new AtomSliderEditor(RPZAtom::Parameter::PenWidth, 1, 50));
+    _addEditor(new AtomSliderEditor(RPZAtom::Parameter::TextSize, 1, 50));
+    _addEditor(new AtomTextEditor(RPZAtom::Parameter::Text));
 
-    this->_editorsByParam.insert(RPZAtom::Parameter::EventShortDescription, new AtomShortTextEditor(RPZAtom::Parameter::EventShortDescription));
-    this->_editorsByParam.insert(RPZAtom::Parameter::EventDescription, new AtomTextEditor(RPZAtom::Parameter::EventDescription));
+    _addEditor(new AtomShortTextEditor(RPZAtom::Parameter::EventShortDescription));
+    _addEditor(new AtomTextEditor(RPZAtom::Parameter::EventDescription));
     
-    this->_editorsByParam.insert(RPZAtom::Parameter::CharacterId, new CharacterPickerEditor);
+    _addEditor(new CharacterPickerEditor);
    
-    this->_editorsByParam.insert(RPZAtom::Parameter::NPCShortName, new AtomShortTextEditor(RPZAtom::Parameter::NPCShortName));
-    this->_editorsByParam.insert(RPZAtom::Parameter::NPCDescription, new AtomTextEditor(RPZAtom::Parameter::NPCDescription));
-    this->_editorsByParam.insert(RPZAtom::Parameter::NPCAttitude, new NPCAttitudeEditor);
-    // this->_editorsByParam.insert(RPZAtom::Parameter::NPCHealth, new NPCAttitudeEditor);
+    _addEditor(new AtomShortTextEditor(RPZAtom::Parameter::NPCShortName));
+    _addEditor(new AtomTextEditor(RPZAtom::Parameter::NPCDescription));
+    _addEditor(new NPCAttitudeEditor);
+    _addEditor(new NPCHealthEditor);
 
     for(const auto editor : this->_editorsByParam) {
 

@@ -29,8 +29,6 @@ class AtomSubEditor : public QWidget {
 
     protected:
         QList<RPZAtom::Parameter> _params;
-        QWidget* _dataEditor = nullptr;
-        void _setAsDataEditor(QWidget *dataEditor);
 
         AtomEditorLineDescriptor* _descr = nullptr;
         virtual void _handleVisibilityOnLoad(const RPZAtom::Updates &defaultValues);

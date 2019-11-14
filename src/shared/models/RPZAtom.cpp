@@ -229,6 +229,7 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams(const RPZAtom::Type &type) 
             out.insert(RPZAtom::Parameter::NPCAttitude);
             out.insert(RPZAtom::Parameter::NPCShortName);
             out.insert(RPZAtom::Parameter::NPCHealth);
+            out.insert(RPZAtom::Parameter::MinNPCHealth);
             out.insert(RPZAtom::Parameter::MaxNPCHealth);
             out.insert(RPZAtom::Parameter::NPCDescription);
         }

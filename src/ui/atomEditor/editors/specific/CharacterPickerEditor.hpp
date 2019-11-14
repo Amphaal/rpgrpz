@@ -48,7 +48,8 @@ class CharacterPickerEditor : public AtomSubEditor {
                 }
             );
 
-            this->_setAsDataEditor(this->_combo);
+            this->layout()->addWidget(this->_combo);
+
         };
 
         void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode) override {

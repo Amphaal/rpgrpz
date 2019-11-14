@@ -25,6 +25,7 @@
 #include "src/ui/atomEditor/editors/specific/BrushToolEditor.hpp"
 #include "src/ui/atomEditor/editors/specific/CharacterPickerEditor.hpp"
 #include "src/ui/atomEditor/editors/specific/NPCAttitudeEditor.hpp"
+#include "src/ui/atomEditor/editors/specific/NPCHealthEditor.hpp"
 
 #include "src/shared/async-ui/AlterationActor.hpp"
 
@@ -52,6 +53,8 @@ class AtomEditor : public QGroupBox, public AlterationActor {
         AtomsSelectionDescriptor _currentSelectionDescr;
 
         QMap<RPZAtom::Parameter, AtomSubEditor*> _editorsByParam;
+        void _addEditor(AtomSubEditor* editor);
+
         NoEditorMessageWidget* _noEditorMsgWidget = nullptr;
 
         QList<RPZAtom::Parameter> _visibleEditors;
