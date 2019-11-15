@@ -70,6 +70,10 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
         bool _drawSelectionHelper() const override { 
             return true; 
         };
+        
+        bool _canBeDrawnInMiniMap() const override { 
+            return false; 
+        };
 
         const QString _opacityPlaceholder() const override {
             return QStringLiteral(u":/assets/grass.png");
