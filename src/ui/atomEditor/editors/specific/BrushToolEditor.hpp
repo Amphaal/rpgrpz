@@ -61,16 +61,16 @@ class BrushToolEditor : public AtomSubEditor {
 
         };
 
-        void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode) override {
+        void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::LoadingContext &context) override {
             
-            AtomSubEditor::loadTemplate(defaultValues, editMode);
+            AtomSubEditor::loadTemplate(defaultValues, context);
 
             auto data = defaultValues[this->_params.first()];
             auto indexToSelect = this->_combo->findData(data);
             
             QSignalBlocker b(this->_combo);
             this->_combo->setCurrentIndex(indexToSelect);
-            this->_combo->setEnabled(editMode == AtomSubEditor::EditMode::Template);
+            this->_combo->setEnabled(context.mode == AtomSubEditor::EditMode::Template);
             
         }
 

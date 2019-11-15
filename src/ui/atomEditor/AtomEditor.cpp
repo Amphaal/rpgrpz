@@ -32,6 +32,11 @@ void AtomEditor::buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr
     //fetch parameter editors to display
     auto toDisplay = this->_findDefaultValuesToBind();
 
+    //setup context for loading
+    AtomSubEditor::LoadingContext context;
+    context.mode = this->_currentEditMode;
+    context.numberOfItems = this->_currentSelectionDescr.selectedAtomIds.count();
+
     //load those who need to be displayed
     for(auto i = toDisplay.begin(); i != toDisplay.end(); ++i) {
         
@@ -43,7 +48,7 @@ void AtomEditor::buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr
         if(!editor) continue;
 
         //load template, and display them
-        editor->loadTemplate(toDisplay, this->_currentEditMode);
+        editor->loadTemplate(toDisplay, context);
 
         //add to the visible editors list
         this->_visibleEditors.append(param);

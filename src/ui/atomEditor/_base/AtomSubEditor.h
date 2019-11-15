@@ -16,10 +16,15 @@ class AtomSubEditor : public QWidget {
         enum class EditMode { None, Template, Selection };
         Q_ENUM(EditMode)
 
+        struct LoadingContext {
+            AtomSubEditor::EditMode mode;
+            int numberOfItems;
+        };
+
         AtomSubEditor(const QList<RPZAtom::Parameter> &parameters, bool supportsBatchEditing = true);
         
         const QList<RPZAtom::Parameter> params();
-        virtual void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode);
+        virtual void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::LoadingContext &context);
 
         static bool mustShowBrushPenWidth(const QVariant &brushTypeDefaultValue);
 

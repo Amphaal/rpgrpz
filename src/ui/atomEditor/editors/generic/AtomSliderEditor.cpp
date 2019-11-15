@@ -41,9 +41,9 @@ void AtomSliderEditor::_confirmPreview() {
 
 }
 
-void AtomSliderEditor::loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode) {
+void AtomSliderEditor::loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::LoadingContext &context) {
     
-    AtomSubEditor::loadTemplate(defaultValues, editMode);
+    AtomSubEditor::loadTemplate(defaultValues, context);
     
     bool success = false;
     auto defaultVal = defaultValues[this->_params.first()].toDouble(&success);

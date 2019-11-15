@@ -52,13 +52,15 @@ class CharacterPickerEditor : public AtomSubEditor {
 
         };
 
-        void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode) override {
+        void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::LoadingContext &context) override {
             
-            AtomSubEditor::loadTemplate(defaultValues, editMode);
+            AtomSubEditor::loadTemplate(defaultValues, context);
 
             this->_fillCombo(defaultValues);
 
-            this->_combo->setEnabled(false);
+            //TODO adapt with current players on game
+            auto enabledCombo = false; //context.mode == AtomSubEditor::EditMode::Selection && context.numberOfItems == 1;
+            this->_combo->setEnabled(enabledCombo);
             
         }
 

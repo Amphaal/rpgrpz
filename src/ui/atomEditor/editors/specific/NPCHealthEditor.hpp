@@ -45,9 +45,9 @@ class NPCHealthEditor : public AtomSubEditor {
 
         };
 
-        void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode) override {
+        void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::LoadingContext &context) override {
             
-            AtomSubEditor::loadTemplate(defaultValues, editMode);
+            AtomSubEditor::loadTemplate(defaultValues, context);
 
             for(auto i = this->_spins.begin(); i != this->_spins.end(); i++) {
                 QSignalBlocker b(i.value());

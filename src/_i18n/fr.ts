@@ -55,7 +55,7 @@
 <context>
     <name>AtomEditor</name>
     <message numerus="yes">
-        <location filename="../ui/atomEditor/AtomEditor.cpp" line="220"/>
+        <location filename="../ui/atomEditor/AtomEditor.cpp" line="225"/>
         <source> (%n element(s))</source>
         <translation>
             <numerusform> (%n élément)</numerusform>
@@ -1243,7 +1243,7 @@
         <translation>%1 atome(s) selectionné(s)</translation>
     </message>
     <message>
-        <location filename="../shared/renderer/graphics/_specific/MapViewToken.hpp" line="147"/>
+        <location filename="../shared/renderer/graphics/_specific/MapViewToken.hpp" line="151"/>
         <source>P</source>
         <comment>player sign</comment>
         <translation>J</translation>

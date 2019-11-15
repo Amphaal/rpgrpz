@@ -39,7 +39,7 @@ void AtomSubEditor::_handleVisibilityOnLoad(const RPZAtom::Updates &defaultValue
 }
 
 
-void AtomSubEditor::loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode) {
+void AtomSubEditor::loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::LoadingContext &context) {
     
     this->setEnabled(true);
 

@@ -35,9 +35,9 @@ class AtomTextEditor : public AtomSubEditor {
         QTextEdit* _edit = nullptr;
         QPushButton* _validateButton = nullptr;
 
-        void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode) override {
+        void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::LoadingContext &context) override {
             
-            AtomSubEditor::loadTemplate(defaultValues, editMode);
+            AtomSubEditor::loadTemplate(defaultValues, context);
             auto castedVal = defaultValues[this->_params.first()].toString();
             
             QSignalBlocker b(this->_edit);

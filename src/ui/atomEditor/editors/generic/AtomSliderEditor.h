@@ -9,7 +9,7 @@
 class AtomSliderEditor : public AtomSubEditor {
     public:
         AtomSliderEditor(const RPZAtom::Parameter &parameter, int minimum, int maximum);
-        void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::EditMode &editMode) override;
+        void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::LoadingContext &context) override;
 
     private:
         void _onValueChanged(int sliderVal);
