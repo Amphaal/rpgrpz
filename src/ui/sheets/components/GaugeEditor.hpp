@@ -13,22 +13,22 @@
 #include <QMessageBox>
 
 #include "src/shared/models/character/RPZGauge.hpp"
+#include "src/ui/sheets/components/SimpleGaugeEditor.hpp"
 
-class GaugeEditor : public QWidget {
+class GaugeEditor : public SimpleGaugeEditor {
 
     Q_OBJECT
-    
+
     public:
-        GaugeEditor(const RPZGauge &gauge) : 
+        GaugeEditor(const RPZGauge &gauge) : SimpleGaugeEditor({gauge.gaugeValue(), gauge.minGaugeValue(), gauge.maxGaugeValue()}),
             _barNameEdit(new QLineEdit), 
-            _currentValSpin(new QSpinBox),
-            _minBarValSpin(new QSpinBox),
-            _maxBarValSpin(new QSpinBox),
             _colorPicker(new QPushButton),
             _visibleOnPortraitChk(new QCheckBox) {
                 
                 //bar name 
-                this->_barNameEdit->setPlaceholderText(tr(" Gauge name"));
+                auto gNameDescr = tr(" Gauge name");
+                this->_barNameEdit->setPlaceholderText(gNameDescr);
+                this->_barNameEdit->setToolTip(gNameDescr);
                 this->_barNameEdit->setText(gauge.name());
                 this->_barNameEdit->setMinimumWidth(80);
 
@@ -36,28 +36,9 @@ class GaugeEditor : public QWidget {
                 this->_visibleOnPortraitChk->setText(tr("Fav."));
                 this->_visibleOnPortraitChk->setToolTip(tr("Visible under portrait ?"));
                 this->_visibleOnPortraitChk->setChecked(gauge.isVisibleUnderPortrait());
-                
-                //minimum
-                this->_minBarValSpin->setToolTip(tr("Gauge minimum"));
-                this->_minBarValSpin->setMinimum(-9999);
-                this->_minBarValSpin->setValue(gauge.minGaugeValue());
-                QObject::connect(this->_minBarValSpin, qOverload<int>(&QSpinBox::valueChanged), this, &GaugeEditor::_applyMinMaxLimitsOnSpinBoxes);
-
-                //maximum
-                this->_maxBarValSpin->setToolTip(tr("Gauge maximum"));
-                this->_maxBarValSpin->setMaximum(9999);
-                this->_maxBarValSpin->setValue(gauge.maxGaugeValue());
-                QObject::connect(this->_maxBarValSpin, qOverload<int>(&QSpinBox::valueChanged), this, &GaugeEditor::_applyMinMaxLimitsOnSpinBoxes);
-
-                //current
-                this->_currentValSpin->setToolTip(tr("Gauge value"));
-                this->_currentValSpin->setValue(gauge.gaugeValue());
-                QObject::connect(this->_currentValSpin, qOverload<int>(&QSpinBox::valueChanged), this, &GaugeEditor::_applyMinMaxLimitsOnSpinBoxes);
-
-                //limits
-                this->_applyMinMaxLimitsOnSpinBoxes();
 
                 //color picker
+                this->_colorPicker->setToolTip(tr("Choose a gauge color"));
                 QObject::connect(
                     this->_colorPicker, &QPushButton::pressed,
                     this, &GaugeEditor::_onColorPickerPushed
@@ -74,44 +55,32 @@ class GaugeEditor : public QWidget {
                 );
 
                 //editors layout
-                auto topL = new QHBoxLayout;
-                topL->addWidget(removeBarBtn);
-                topL->addWidget(this->_colorPicker);
-                topL->addWidget(this->_barNameEdit);
-                topL->addWidget(this->_visibleOnPortraitChk);
-                topL->addStretch(1);
-                topL->addWidget(this->_minBarValSpin);
-                topL->addSpacing(10);
-                topL->addWidget(this->_currentValSpin);
-                topL->addWidget(new QLabel("/"));
-                topL->addWidget(this->_maxBarValSpin);
-
-                //layout
-                auto l = new QVBoxLayout;
-                l->setMargin(0);
-                this->setLayout(l);
-                l->addLayout(topL);
+                this->_layoutToInsertTo->insertWidget(0, removeBarBtn);
+                this->_layoutToInsertTo->insertWidget(1, this->_colorPicker);
+                this->_layoutToInsertTo->insertWidget(2, this->_barNameEdit);
+                this->_layoutToInsertTo->insertWidget(3, this->_visibleOnPortraitChk);
+                this->_layoutToInsertTo->insertStretch(4, 1);
 
         }
 
         RPZGauge toGauge() {
+            
+            auto simpleGauge = this->toSimpleGauge();
             RPZGauge g;
 
-            g.setMinGaugeValue(this->_minBarValSpin->value());
-            g.setMaxGaugeValue(this->_maxBarValSpin->value());
-            g.setGaugeValue(this->_currentValSpin->value());
+            g.setMinGaugeValue(simpleGauge.min);
+            g.setMaxGaugeValue(simpleGauge.max);
+            g.setGaugeValue(simpleGauge.current);
             g.setColor(this->_currentColor);
             g.setName(this->_barNameEdit->text()); 
             g.setVisibleUnderPortrait(this->_visibleOnPortraitChk->isChecked());
 
             return g;
+
         }
     
     private:
         QLineEdit* _barNameEdit = nullptr;
-        QSpinBox* _currentValSpin = nullptr;
-        QSpinBox* _minBarValSpin = nullptr;
-        QSpinBox* _maxBarValSpin = nullptr;
         QPushButton* _colorPicker = nullptr;
         QCheckBox* _visibleOnPortraitChk = nullptr;
 
@@ -124,7 +93,7 @@ class GaugeEditor : public QWidget {
             auto toApply = this->_currentColor.name();
 
             //apply to color picker
-            this->_colorPicker->setStyleSheet("background-color: " + toApply);
+            this->_colorPicker->setStyleSheet(QStringLiteral(u"QPushButton { background-color: %1; }").arg(toApply));
 
         }
 
@@ -153,20 +122,6 @@ class GaugeEditor : public QWidget {
             
             if(result != QMessageBox::Yes) return;
             this->deleteLater();
-
-        }
-
-        void _applyMinMaxLimitsOnSpinBoxes() {
-            
-            //min
-            this->_minBarValSpin->setMaximum(this->_currentValSpin->value());
-
-            //max
-            this->_maxBarValSpin->setMinimum(this->_currentValSpin->value());
-
-            //value
-            this->_currentValSpin->setMinimum(this->_minBarValSpin->value());
-            this->_currentValSpin->setMaximum(this->_maxBarValSpin->value());
 
         }
 };

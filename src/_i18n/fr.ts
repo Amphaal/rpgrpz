@@ -419,7 +419,7 @@
 <context>
     <name>GaugeEditor</name>
     <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="31"/>
+        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="29"/>
         <source> Gauge name</source>
         <translation> Nom de la jauge</translation>
     </message>
@@ -435,36 +435,26 @@
     </message>
     <message>
         <location filename="../ui/sheets/components/GaugeEditor.hpp" line="41"/>
-        <source>Gauge minimum</source>
-        <translation>Minimum de la jauge</translation>
+        <source>Choose a gauge color</source>
+        <translation>Choisir la couleur de la jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="47"/>
-        <source>Gauge maximum</source>
-        <translation>Maximum de la jauge</translation>
-    </message>
-    <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="53"/>
-        <source>Gauge value</source>
-        <translation>Valeur de la jauge</translation>
-    </message>
-    <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="70"/>
+        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="51"/>
         <source>Delete gauge</source>
         <translation>Supprimer la jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="136"/>
+        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="105"/>
         <source>Gauge color</source>
         <translation>Couleur de la jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="148"/>
+        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="117"/>
         <source>Gauge deletion</source>
         <translation>Suppresion de jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="149"/>
+        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="118"/>
         <source>Do you really want to delete this gauge ?</source>
         <translation>Voulez-vous vraiment supprimer cette jauge ?</translation>
     </message>
@@ -800,6 +790,14 @@
         <location filename="../ui/atomEditor/editors/specific/NPCAttitudeEditor.hpp" line="19"/>
         <source>Hostile</source>
         <translation>Hostile</translation>
+    </message>
+</context>
+<context>
+    <name>NPCHealthEditor</name>
+    <message>
+        <location filename="../ui/atomEditor/editors/specific/NPCHealthEditor.hpp" line="26"/>
+        <source>Confirm modification</source>
+        <translation>Confirmer la modification</translation>
     </message>
 </context>
 <context>
@@ -1334,6 +1332,24 @@
         <location filename="../ui/statusBar/RPZStatusLabel.cpp" line="14"/>
         <source>&lt;Pending...&gt;</source>
         <translation>&lt;En attente...&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>SimpleGaugeEditor</name>
+    <message>
+        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="43"/>
+        <source>Gauge minimum</source>
+        <translation>Minimum de la jauge</translation>
+    </message>
+    <message>
+        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="51"/>
+        <source>Gauge maximum</source>
+        <translation>Maximum de la jauge</translation>
+    </message>
+    <message>
+        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="59"/>
+        <source>Gauge value</source>
+        <translation>Valeur de la jauge</translation>
     </message>
 </context>
 <context>
