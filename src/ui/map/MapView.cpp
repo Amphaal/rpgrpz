@@ -241,11 +241,17 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
 
     else if(type == Payload::Alteration::Selected) {
         
-        auto result = this->_hints->latestEligibleCharacterIdOnSelection();
-        auto can = RPZClient::isHostAble() && result.first;
-        //TODO restrict to player only
+        auto result = this->_hints->singleSelectionHelper();
         
-        if(can) {
+        auto isWalkable = RPZClient::isHostAble() && result.movableWithWalkingHelper; //TODO restrict to self player only
+        
+        //handle interactible information display
+        if(result.appliable) {
+            this->setForegroundBrush(Qt::NoBrush); //force foreground re-drawing
+        }
+
+        //handle walkables
+        if(isWalkable) {
             
             //clear previous walker
             this->_clearWalkingHelper();

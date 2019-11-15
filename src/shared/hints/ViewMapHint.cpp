@@ -159,7 +159,7 @@ QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZToy &toy, QGraphicsItem*
 
 }
 
-QGraphicsItem* ViewMapHint::generateGraphicsFromTemplate(bool hiddenAsDefault) {
+QGraphicsItem* ViewMapHint::generateGraphicsFromTemplate(bool hiddenAsDefault) const {
     
     QMutexLocker l1(&this->_m_templateAtom);
     QMutexLocker l2(&this->_m_templateToy);
@@ -391,6 +391,10 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
         //delete ghost
         QMutexLocker l(&this->_m_ghostItem);
         this->_ghostItem = nullptr;
+        
+        //reset ssi
+        QMutexLocker l(&this->_m_singleSelectionInteractible);
+        this->_singleSelectionInteractible = SingleSelectionInteractible();
 
     }
 
@@ -400,28 +404,11 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
         AtomsStorage::_handleAlterationRequest(payload);
     }
 
-    //if selected
+    //if selected, analyse selection
     if(auto mPayload = dynamic_cast<const SelectedPayload*>(&payload)) {
-        
-        QPair<bool, RPZCharacter::Id> out;
-        
-        auto targets = mPayload->targetRPZAtomIds();
-        
-        if(targets.count() == 1) {
-            
-            auto id = targets.first();
-                
-            //find corresponding atom
-            auto atom = this->map().atom(id);
-            if(atom.type() == RPZAtom::Type::Player) {
-                out = {true, atom.characterId()};
-            }
-
-        } else out = {false, 0};
-        
-        QMutexLocker l(&this->_m_lecios);
-        this->_lecios = out;
-
+        auto ssi = _generateSSI(mPayload);
+        QMutexLocker l(&this->_m_singleSelectionInteractible);
+        this->_singleSelectionInteractible = ssi;
     }
 
     //if reset (afterward)
@@ -461,9 +448,30 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
 
 }
 
-const QPair<bool, RPZCharacter::Id> ViewMapHint::latestEligibleCharacterIdOnSelection() const {
-    QMutexLocker l(&this->_m_lecios);
-    return this->_lecios;
+const ViewMapHint::SingleSelectionInteractible ViewMapHint::singleSelectionHelper() const {
+    QMutexLocker l(&this->_m_singleSelectionInteractible);
+    return this->_singleSelectionInteractible;
+}
+
+const ViewMapHint::SingleSelectionInteractible ViewMapHint::_generateSSI(const SelectedPayload* payload) const {
+    
+    SingleSelectionInteractible out;
+    
+    //not appliable if multiple
+    auto targets = payload->targetRPZAtomIds();
+    if(targets.count() != 1) return out;
+    
+    //not appliable if atom is not interactive
+    auto id = targets.first();
+    auto atom = this->map().atom(id);
+    if(atom.category() != RPZAtom::Category::Interactive) return out;
+
+    //set values
+    out.appliable = true;
+    out.movableWithWalkingHelper = atom.type() == RPZAtom::Type::Player;
+
+    return out;    
+
 }
 
 void ViewMapHint::_atomAdded(const RPZAtom &added) {

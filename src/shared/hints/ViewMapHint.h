@@ -29,6 +29,12 @@ class ViewMapHint : public AtomsStorage {
     Q_OBJECT
 
     public:
+        struct SingleSelectionInteractible {
+            bool appliable = false;
+            bool movableWithWalkingHelper = false;
+            RPZAtom interactible;
+        };
+
         ViewMapHint();
 
         //might be called by another thread, safe
@@ -40,9 +46,8 @@ class ViewMapHint : public AtomsStorage {
         const QList<RPZAtom::Id> getAtomIdsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const; //safe
         const RPZAtom::Id getAtomIdFromGraphicsItem(const QGraphicsItem* toFetch) const; //safe
 
-        QGraphicsItem* generateGraphicsFromTemplate(bool hiddenAsDefault = false); //safe
-
-        const QPair<bool, RPZCharacter::Id> latestEligibleCharacterIdOnSelection() const; //safe
+        QGraphicsItem* generateGraphicsFromTemplate(bool hiddenAsDefault = false) const; //safe
+        const SingleSelectionInteractible singleSelectionHelper() const; //safe
 
     public slots:
         void mightNotifyMovement(const QList<QGraphicsItem*> &itemsWhoMightHaveMoved); //safe
@@ -76,8 +81,9 @@ class ViewMapHint : public AtomsStorage {
         mutable QMutex _m_GItemsByRPZAtomId;
         QMap<RPZAtom::Id, QGraphicsItem*> _GItemsByRPZAtomId;
 
-        mutable QMutex _m_lecios;
-        QPair<bool, RPZCharacter::Id> _lecios;
+        mutable QMutex _m_singleSelectionInteractible;
+        ViewMapHint::SingleSelectionInteractible _singleSelectionInteractible;
+        const ViewMapHint::SingleSelectionInteractible _generateSSI(const SelectedPayload* payload) const;
 
         QMultiHash<RPZAsset::Hash, QGraphicsItem*> _missingAssetHashesFromDb;
         
