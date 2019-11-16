@@ -18,7 +18,6 @@ QGraphicsItem* ViewMapHint::ghostItem() const {
     return this->_ghostItem;
 }
 
-
 void ViewMapHint::_updateTemplateAtom(RPZAtom::Updates updates) {
     
     //update template
@@ -391,7 +390,10 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
         //delete ghost
         QMutexLocker l(&this->_m_ghostItem);
         this->_ghostItem = nullptr;
-        
+
+        //reset descriptor
+        emit atomDescriptorUpdated();
+
         //reset ssi
         QMutexLocker l2(&this->_m_singleSelectionInteractible);
         this->_singleSelectionInteractible = SingleSelectionInteractible();
@@ -406,9 +408,13 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
 
     //if selected, analyse selection
     if(auto mPayload = dynamic_cast<const SelectedPayload*>(&payload)) {
+        
         auto ssi = _generateSSI(mPayload);
+        emit atomDescriptorUpdated(ssi.interactible);
+
         QMutexLocker l(&this->_m_singleSelectionInteractible);
         this->_singleSelectionInteractible = ssi;
+
     }
 
     //if reset (afterward)
@@ -467,6 +473,7 @@ const ViewMapHint::SingleSelectionInteractible ViewMapHint::_generateSSI(const S
     if(atom.category() != RPZAtom::Category::Interactive) return out;
 
     //set values
+    out.interactible = atom;
     out.appliable = true;
     out.movableWithWalkingHelper = atom.type() == RPZAtom::Type::Player;
 

@@ -5,7 +5,9 @@
 
 class OverlayingLayout : public QLayout {
     public:
-        OverlayingLayout() {}
+        OverlayingLayout() {
+            this->setSpacing(0);
+        }
         ~OverlayingLayout() {
             QLayoutItem *item;
             while ((item = takeAt(0)))
@@ -71,18 +73,43 @@ class OverlayingLayout : public QLayout {
                 QLayoutItem *o = this->_list.at(i);    
                 auto ww = o->widget()->width();
                 auto wh = o->widget()->height(); 
-    
-                if(i == 0) {
-                    QRect geom(rect.x() + i * spacing(), rect.y() + i * spacing(), w, h);
-                    o->setGeometry(geom);
-                } 
-                
-                else {
-                    auto s = bottomRightAnchor;
-                    s.setX(s.x() - ww);
-                    s.setY(s.y() - wh);
-                    QRect geom(s, QSize(ww, ww));
-                    o->setGeometry(geom);
+
+                switch(i) {
+                    
+                    //map
+                    case 0: { 
+                        o->setGeometry({0, 0, w, h});
+                    }
+                    break;
+
+                    //descriptor
+                    case 1: { 
+                        // QRect geom(
+                        //     1, 
+                        //     1, 
+                        //     w, 
+                        //     h
+                        // );
+
+                        // o->setGeometry(geom);
+                    }
+                    break;
+                    
+                    //minimap
+                    case 2: { 
+                        
+                        auto s = bottomRightAnchor;
+                        
+                        s.setX(s.x() - ww);
+                        s.setY(s.y() - wh);
+                        
+                        QRect geom(s, QSize(ww, wh));
+
+                        o->setGeometry(geom);
+
+                    }
+                    break;
+
                 }
 
                 ++i;

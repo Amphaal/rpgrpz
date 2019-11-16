@@ -393,10 +393,13 @@ void MainWindow::_initAppComponents() {
         this->_mapViewContainer = new QWidget(this);
         this->_mapViewContainer->setLayout(new OverlayingLayout);
 
-        this->_mapView = new MapView(this);
-        this->_minimap = new MiniMapView(this->_mapView, this);
+        this->_mapView = new MapView;
+        this->_minimap = new MiniMapView(this->_mapView);
+        this->_interactibleDescr = new MapViewInteractibleDescriptor;
 
         this->_mapViewContainer->layout()->addWidget(this->_mapView);
+        this->_mapViewContainer->layout()->addWidget(this->_interactibleDescr);
+        this->_mapViewContainer->layout()->setAlignment(this->_interactibleDescr, Qt::AlignTop);
         this->_mapViewContainer->layout()->addWidget(this->_minimap);
         
         this->_mapHelpers = new MapHelpers(this->_minimap, this);
@@ -416,6 +419,11 @@ void MainWindow::_initAppComponents() {
     //
     // EVENTS
     //
+
+    QObject::connect(
+        this->_mapView->hints(), &ViewMapHint::atomDescriptorUpdated,
+        this->_interactibleDescr, &MapViewInteractibleDescriptor::updateFromAtom
+    );
 
     QObject::connect(
         this->_mapHelpers, &QToolBar::actionTriggered,

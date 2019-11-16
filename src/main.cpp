@@ -104,6 +104,7 @@ int main(int argc, char** argv) {
         qRegisterMetaType<AlterationPayload>("AlterationPayload");
         qRegisterMetaType<RPZResponse>("RPZResponse");
         qRegisterMetaType<RPZUser>("RPZUser");
+        qRegisterMetaType<RPZUser>("RPZAtom");
         qRegisterMetaType<RPZMessage>("RPZMessage");
         qRegisterMetaType<ResetPayload>("ResetPayload");
         qRegisterMetaType<RPZAssetImportPackage>("RPZAssetImportPackage");

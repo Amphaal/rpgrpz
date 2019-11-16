@@ -709,54 +709,54 @@
         <translation>Hub de jeu</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="510"/>
+        <location filename="../ui/mainWindow.cpp" line="518"/>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="524"/>
+        <location filename="../ui/mainWindow.cpp" line="532"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="526"/>
-        <location filename="../ui/mainWindow.cpp" line="552"/>
-        <location filename="../ui/mainWindow.cpp" line="580"/>
+        <location filename="../ui/mainWindow.cpp" line="534"/>
+        <location filename="../ui/mainWindow.cpp" line="560"/>
+        <location filename="../ui/mainWindow.cpp" line="588"/>
         <source>Game map (*%1)</source>
         <translation>Carte de campagne (*%1)</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="550"/>
+        <location filename="../ui/mainWindow.cpp" line="558"/>
         <source>Load a new map</source>
         <translation>Charger une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="578"/>
+        <location filename="../ui/mainWindow.cpp" line="586"/>
         <source>Save as...</source>
         <translation>Savegarder sous...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="602"/>
+        <location filename="../ui/mainWindow.cpp" line="610"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="657"/>
+        <location filename="../ui/mainWindow.cpp" line="665"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="671"/>
+        <location filename="../ui/mainWindow.cpp" line="679"/>
         <source>Searching for updates...</source>
         <translation>Recherche des mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="671"/>
+        <location filename="../ui/mainWindow.cpp" line="679"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="695"/>
+        <location filename="../ui/mainWindow.cpp" line="703"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>

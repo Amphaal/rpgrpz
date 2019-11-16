@@ -15,6 +15,7 @@
 #include "src/ui/chat/ChatWidget.h"
 #include "src/ui/audio/AudioManager.h"
 #include "src/ui/map/MapView.h"
+#include "src/ui/map/_base/MapViewInteractibleDescriptor.hpp"
 
 #include "src/ui/map/toolbars/MapTools.hpp"
 #include "src/ui/map/toolbars/MapHelpers.hpp"
@@ -75,6 +76,7 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
             QWidget* _mapViewContainer = nullptr;
             MapView* _mapView = nullptr;
             MiniMapView* _minimap = nullptr;
+            MapViewInteractibleDescriptor* _interactibleDescr = nullptr;
 
             MapActions* _mapActions = nullptr;
             MapHelpers* _mapHelpers = nullptr;

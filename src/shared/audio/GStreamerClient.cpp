@@ -5,7 +5,7 @@ GStreamerClient::GStreamerClient(QObject* parent) : QObject(parent), _elapsedTim
     //define volume helper
     this->_volumeTLHelper.setDuration(100);
     this->_volumeTLHelper.setDirection(QTimeLine::Direction::Backward);
-    this->_volumeTLHelper.setEasingCurve(QEasingCurve(QEasingCurve::InCubic));
+    this->_volumeTLHelper.setEasingCurve(QEasingCurve::InCubic);
 
     //inst
     this->_initGst();

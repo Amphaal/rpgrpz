@@ -185,7 +185,8 @@
         "qslider": "cpp",
         "qwindow": "cpp",
         "qdialog": "cpp",
-        "qdoublespinbox": "cpp"
+        "qdoublespinbox": "cpp",
+        "qglwidget": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

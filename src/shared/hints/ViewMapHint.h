@@ -63,6 +63,7 @@ class ViewMapHint : public AtomsStorage {
         void requestingUIAlteration(const Payload::Alteration &type, const QList<QGraphicsItem*> &toAlter);
         void requestingUIUpdate(const QHash<QGraphicsItem*, RPZAtom::Updates> &toUpdate);
         void requestingUIUpdate(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates);
+        void atomDescriptorUpdated(const RPZAtom &base = RPZAtom());
 
     protected:
         virtual void _handleAlterationRequest(const AlterationPayload &payload) override;
