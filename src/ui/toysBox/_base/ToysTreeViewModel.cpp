@@ -1,6 +1,7 @@
 #include "ToysTreeViewModel.h"
 
-ToysTreeViewModel::ToysTreeViewModel(QObject *parent) : QAbstractItemModel(parent), _rootItem(new ToysTreeViewItem) {
+ToysTreeViewModel::ToysTreeViewModel(QObject *parent) : QAbstractItemModel(parent), AlterationActor(Payload::Source::Local_AtomDB), 
+    _rootItem(new ToysTreeViewItem) {
     this->_injectStaticStructure();
     this->_injectDbStructure();
 };
@@ -73,14 +74,14 @@ bool ToysTreeViewModel::integrateAsset(RPZAssetImportPackage &package) {
     return success;
 }
 
-bool ToysTreeViewModel::insertAssets(const QList<QUrl> &urls, const QModelIndex &parentIndex) {
+const QList<RPZAsset> ToysTreeViewModel::insertAssets(const QList<QUrl> &urls, const QModelIndex &parentIndex, bool* ok) {
     
     //data
     auto dest = ToysTreeViewItem::fromIndex(parentIndex);
     this->beginInsertRows(parentIndex, 0, urls.count());
 
     //for each url, insert
-    auto allResultsOK = 0;
+    QList<RPZAsset> okAssets;
     for(const auto &url : urls) {
 
         RPZAsset asset(url);
@@ -89,13 +90,17 @@ bool ToysTreeViewModel::insertAssets(const QList<QUrl> &urls, const QModelIndex 
         AssetsDatabase::get()->addAsset(asset, dest->path()); //db add
         new ToysTreeViewItem(dest, &asset); //model add
 
-        allResultsOK++;
+        okAssets += asset;
 
     }
 
     //end inserting
     this->endInsertRows();
-    return allResultsOK == urls.count();
+    
+    //define is process has succeeded
+    *ok = okAssets.count() == urls.count();
+    
+    return okAssets;
 
 }
 
@@ -384,8 +389,16 @@ bool ToysTreeViewModel::dropMimeData(const QMimeData *data, Qt::DropAction actio
     else if(data->hasFormat("text/uri-list")){
     
         //insert 
-        auto includedUrls = data->urls();
-        return this->insertAssets(includedUrls, parent);
+        bool success = false;
+        auto result = this->insertAssets(data->urls(), parent, &success);
+
+        //indicate change
+        if(success) {
+            AssetChangedPayload payload(result.first());
+            AlterationHandler::get()->queueAlteration(this, payload);
+        }
+
+        return success;
 
     }
 

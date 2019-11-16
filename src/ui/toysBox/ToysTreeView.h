@@ -20,7 +20,7 @@
 
 #include "src/ui/_others/ConnectivityObserver.h"
 
-class ToysTreeView : public QTreeView, public ConnectivityObserver, public AlterationActor {
+class ToysTreeView : public QTreeView, public ConnectivityObserver {
 
     Q_OBJECT
 

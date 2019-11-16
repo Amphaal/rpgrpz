@@ -14,7 +14,7 @@
 
 #include "src/shared/async-ui/AlterationActor.hpp"
 
-class ToysTreeViewModel : public QAbstractItemModel {
+class ToysTreeViewModel : public QAbstractItemModel, public AlterationActor {
     
     Q_OBJECT
     
@@ -29,7 +29,7 @@ class ToysTreeViewModel : public QAbstractItemModel {
 
         const QModelIndex createFolder(const QModelIndex &parentIndex);
         bool moveItemsToContainer(const QModelIndex &parentIndex, const QList<QModelIndex> &indexesToMove);
-        bool insertAssets(const QList<QUrl> &urls, const QModelIndex &parentIndex);
+        const QList<RPZAsset> insertAssets(const QList<QUrl> &urls, const QModelIndex &parentIndex, bool* ok = nullptr);
         void removeItems(const QList<QModelIndex> &itemsIndexesToRemove);
         bool integrateAsset(RPZAssetImportPackage &package);
         bool renameItem(const QString &newName, const QModelIndex &index);

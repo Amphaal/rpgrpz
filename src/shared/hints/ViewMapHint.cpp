@@ -393,7 +393,7 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
         this->_ghostItem = nullptr;
         
         //reset ssi
-        QMutexLocker l(&this->_m_singleSelectionInteractible);
+        QMutexLocker l2(&this->_m_singleSelectionInteractible);
         this->_singleSelectionInteractible = SingleSelectionInteractible();
 
     }

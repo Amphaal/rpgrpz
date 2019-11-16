@@ -1,7 +1,6 @@
 #include "ToysTreeView.h"
 
 ToysTreeView::ToysTreeView(QWidget *parent) : QTreeView(parent), 
-    AlterationActor(Payload::Source::Local_AtomDB),
     _MIMEDb(new QMimeDatabase), 
     _model(new ToysTreeViewModel) {     
     
@@ -107,7 +106,8 @@ void ToysTreeView::_onReceivedAsset(RPZAssetImportPackage package) {
     
     //indicate change
     AssetChangedPayload payload(package);
-    AlterationHandler::get()->queueAlteration(this, payload);
+    AlterationHandler::get()->queueAlteration(this->_model, payload);
+    
 }
 
 QModelIndexList ToysTreeView::_selectedElementsIndexes() {
@@ -380,7 +380,7 @@ void ToysTreeView::selectionChanged(const QItemSelection &selected, const QItemS
     //send
     this->_selectedToy = defSelect;
     ToySelectedPayload payload(this->_selectedToy);
-    AlterationHandler::get()->queueAlteration(this, payload);
+    AlterationHandler::get()->queueAlteration(this->_model, payload);
    
 }
 
