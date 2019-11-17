@@ -255,6 +255,14 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams() const {
     return customizableParams(this->type());
 }
 
+const RPZGauge::MinimalistGauge RPZAtom::NPCGauge() const {
+    return { 
+        this->metadata(RPZAtom::Parameter::NPCHealth).toInt(),
+        this->metadata(RPZAtom::Parameter::MinNPCHealth).toInt(),
+        this->metadata(RPZAtom::Parameter::MaxNPCHealth).toInt()
+    };
+}
+
 const QColor RPZAtom::NPCAssociatedColor() const {
     return NPCAssociatedColor(this->NPCAttitude());
 }

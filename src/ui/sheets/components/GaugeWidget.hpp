@@ -6,35 +6,35 @@
 
 class GaugeWidget : public QProgressBar {
     public:
-        GaugeWidget(const RPZGauge &gauge = RPZGauge()) {
+        GaugeWidget(const RPZGauge::MinimalistGauge &gauge, const QString &name, const QColor &color) : _name(name) {
 
-            auto max = gauge.maxGaugeValue();
-            auto val = gauge.gaugeValue();
-
-            //bar
-            this->setMinimum(gauge.minGaugeValue());
-            this->setMaximum(max);
-            this->setValue(val);
-            this->setFormat("%v/%m ");
-            this->setToolTip(
-                QStringLiteral(u"%1 (%2/%3)")
-                    .arg(gauge.name())
-                    .arg(val)
-                    .arg(max)
-            );
+            this->updateValues(gauge);
             
-            this->_applyColor(gauge.color());
-
-        }
-    
-    private:
-        static inline QString _styleTemplate = "QProgressBar {border: 1px solid grey; border-radius: 3px; text-align: right;} QProgressBar::chunk {background-color: %1;width: 20px;}";
-        
-        void _applyColor(const QColor &color) {
-            
-            //apply to bar
+            //apply colors
             auto formatted = _styleTemplate.arg(color.name());
             this->setStyleSheet(formatted);
 
         }
+
+        GaugeWidget(const RPZGauge &gauge = RPZGauge()) : GaugeWidget(gauge.toMinimalist(), gauge.name(), gauge.color()) {}
+
+        void updateValues(const RPZGauge::MinimalistGauge &gauge) {
+            
+            this->setMinimum(gauge.min);
+            this->setMaximum(gauge.max);
+            this->setValue(gauge.current);
+
+            this->setToolTip(
+                QStringLiteral(u"%1 (%2/%3)")
+                    .arg(this->_name)
+                    .arg(gauge.current)
+                    .arg(gauge.max)
+            );
+        }
+    
+    private:
+        QString _name;
+
+        static inline QString _styleTemplate = "QProgressBar {border: 1px solid grey; border-radius: 3px; text-align: right;} QProgressBar::chunk {background-color: %1;width: 20px;}";
+
 };

@@ -1256,6 +1256,11 @@
         <source>Hidden</source>
         <translation>Caché</translation>
     </message>
+    <message>
+        <location filename="../ui/map/_base/MapViewInteractibleDescriptor.hpp" line="60"/>
+        <source>Health</source>
+        <translation type="unfinished">Santé</translation>
+    </message>
 </context>
 <context>
     <name>RPZClient</name>
@@ -1337,17 +1342,17 @@
 <context>
     <name>SimpleGaugeEditor</name>
     <message>
-        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="43"/>
+        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="39"/>
         <source>Gauge minimum</source>
         <translation>Minimum de la jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="51"/>
+        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="47"/>
         <source>Gauge maximum</source>
         <translation>Maximum de la jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="59"/>
+        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="55"/>
         <source>Gauge value</source>
         <translation>Valeur de la jauge</translation>
     </message>

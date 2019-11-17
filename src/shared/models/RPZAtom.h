@@ -226,6 +226,7 @@ class RPZAtom : public Serializable {
         const QString characterName() const;
         const QString NPCShortName() const;
         const RPZAtom::NPCType NPCAttitude() const;
+        const RPZGauge::MinimalistGauge NPCGauge() const;
 
         QPainterPath shape() const;
         void setShape(const QPainterPath &path);
@@ -321,7 +322,7 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::CharacterName, "" },
             { RPZAtom::Parameter::NPCHealth, -1 },
             { RPZAtom::Parameter::MaxNPCHealth, 10 },
-            { RPZAtom::Parameter::MinNPCHealth, 0 },
+            { RPZAtom::Parameter::MinNPCHealth, -1 },
         };
 
         void _setType(const RPZAtom::Type &type);

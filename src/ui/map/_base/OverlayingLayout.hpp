@@ -84,14 +84,7 @@ class OverlayingLayout : public QLayout {
 
                     //descriptor
                     case 1: { 
-                        // QRect geom(
-                        //     1, 
-                        //     1, 
-                        //     w, 
-                        //     h
-                        // );
-
-                        // o->setGeometry(geom);
+                        //let the widget determine its geometry
                     }
                     break;
                     

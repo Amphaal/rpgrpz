@@ -446,10 +446,51 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
         emit requestingUIAlteration(Payload::Alteration::ToySelected, {newGhost});
 
     }
+
+    //if updated / deleted
+    else if(auto mPayload = dynamic_cast<const BulkMetadataChangedPayload*>(&payload)) { this->_mightUpdateAtomDescriptor(mPayload->atomsUpdates().keys()); }
+    else if(auto mPayload = dynamic_cast<const MultipleAtomTargetsPayload*>(&payload)) { this->_mightUpdateAtomDescriptor(mPayload->targetRPZAtomIds()); }
+    else if(auto mPayload = dynamic_cast<const RemovedPayload*>(&payload)) { this->_mightUpdateAtomDescriptor(mPayload->targetRPZAtomIds()); }
     
     //if template changed
     else if(auto mPayload = dynamic_cast<const AtomTemplateChangedPayload*>(&payload)) {
         this->_updateTemplateAtom(mPayload->updates());        
+    }
+
+}
+
+void ViewMapHint::_mightUpdateAtomDescriptor(const QList<RPZAtom::Id> &idsUpdated) {
+    
+    {
+        QMutexLocker l(&this->_m_singleSelectionInteractible);
+        
+        //if no single selection appliable, no need to update
+        if(!this->_singleSelectionInteractible.appliable) return;
+        
+        //if list of updates does not contain interactible, skip
+        auto interactibleId = this->_singleSelectionInteractible.interactible.id();
+        if(!idsUpdated.contains(interactibleId)) return;
+
+        auto atomPtr = this->map().atomPtr(interactibleId);
+        
+        //deleted, update with empty
+        if(!atomPtr) {
+            
+            this->_singleSelectionInteractible = SingleSelectionInteractible();
+            
+            l.unlock();
+            emit atomDescriptorUpdated();
+        
+        }
+        
+        //existing, update descriptor
+        else {
+            
+            l.unlock();
+            emit atomDescriptorUpdated(*atomPtr);
+        
+        }
+
     }
 
 }

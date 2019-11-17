@@ -65,12 +65,12 @@ class GaugeEditor : public SimpleGaugeEditor {
 
         RPZGauge toGauge() {
             
-            auto simpleGauge = this->toSimpleGauge();
+            auto minimalist = this->toMinimalist();
             RPZGauge g;
 
-            g.setMinGaugeValue(simpleGauge.min);
-            g.setMaxGaugeValue(simpleGauge.max);
-            g.setGaugeValue(simpleGauge.current);
+            g.setMinGaugeValue(minimalist.min);
+            g.setMaxGaugeValue(minimalist.max);
+            g.setGaugeValue(minimalist.current);
             g.setColor(this->_currentColor);
             g.setName(this->_barNameEdit->text()); 
             g.setVisibleUnderPortrait(this->_visibleOnPortraitChk->isChecked());

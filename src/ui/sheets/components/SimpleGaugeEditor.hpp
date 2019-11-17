@@ -12,18 +12,14 @@
 #include <QLabel>
 #include <QMessageBox>
 
+#include "src/shared/models/character/RPZGauge.hpp"
+
 class SimpleGaugeEditor : public QWidget {
 
     Q_OBJECT
 
     public:
-        struct Gauge {
-            int current; 
-            int min; 
-            int max;
-        };
-        
-        void fillValues(const SimpleGaugeEditor::Gauge &gauge) {
+        void fillValues(const RPZGauge::MinimalistGauge &gauge) {
             
             this->_currentValSpin->setValue(gauge.current);
             this->_minBarValSpin->setValue(gauge.min);
@@ -78,13 +74,13 @@ class SimpleGaugeEditor : public QWidget {
 
         }
 
-        SimpleGaugeEditor(const SimpleGaugeEditor::Gauge &setup) : SimpleGaugeEditor() {
+        SimpleGaugeEditor(const RPZGauge::MinimalistGauge &setup) : SimpleGaugeEditor() {
             this->fillValues(setup);
         }
 
-        const SimpleGaugeEditor::Gauge toSimpleGauge() const {
+        const RPZGauge::MinimalistGauge toMinimalist() const {
             
-            SimpleGaugeEditor::Gauge g;
+            RPZGauge::MinimalistGauge g;
 
             g.min = this->_minBarValSpin->value();
             g.max = this->_maxBarValSpin->value();

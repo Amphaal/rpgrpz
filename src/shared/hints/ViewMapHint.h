@@ -94,6 +94,7 @@ class ViewMapHint : public AtomsStorage {
         void _crossBindingAtomWithGI(const RPZAtom &atom, QGraphicsItem* gi);
         void _updateTemplateAtom(RPZAtom::Updates updates);
         void _resetTemplate(const RPZToy &from);
+        void _mightUpdateAtomDescriptor(const QList<RPZAtom::Id> &idsUpdated);
 
         //missing assets tracking
         void _replaceMissingAssetPlaceholders(const RPZAsset &metadata); //safe

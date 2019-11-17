@@ -5,6 +5,13 @@
 
 class RPZGauge : public QVariantHash {
     public:
+        
+        struct MinimalistGauge {
+            int current; 
+            int min; 
+            int max;
+        };
+
         RPZGauge() {}
         explicit RPZGauge(const QVariantHash &hash) : QVariantHash(hash) {}
 
@@ -25,4 +32,12 @@ class RPZGauge : public QVariantHash {
 
         void setGaugeValue(const int &number) {this->insert(QStringLiteral(u"val"), number);}
         const int gaugeValue() const {return this->value(QStringLiteral(u"val"), 15).toInt();}
+
+        const RPZGauge::MinimalistGauge toMinimalist() const {
+            return {
+                this->gaugeValue(),
+                this->minGaugeValue(),
+                this->maxGaugeValue()
+            };
+        }
 };

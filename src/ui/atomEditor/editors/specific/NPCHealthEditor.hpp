@@ -29,7 +29,7 @@ class NPCHealthEditor : public AtomSubEditor {
                 this->_validateButton, &QPushButton::pressed,
                 [=]() {
                     
-                    auto values = this->_gEditor->toSimpleGauge();
+                    auto values = this->_gEditor->toMinimalist();
                     
                     RPZAtom::Updates updates {
                         { RPZAtom::Parameter::NPCHealth, values.current },
