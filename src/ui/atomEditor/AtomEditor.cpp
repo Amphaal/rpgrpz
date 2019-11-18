@@ -117,7 +117,7 @@ void AtomEditor::_createEditorsFromAtomParameters() {
     _addEditor(new AtomSliderEditor(RPZAtom::Parameter::TextSize, 1, 50));
     _addEditor(new AtomTextEditor(RPZAtom::Parameter::Text));
 
-    _addEditor(new OpacitySlider);
+    _addEditor(new AtomSliderEditor(RPZAtom::Parameter::Opacity, 50, 100));
 
     _addEditor(new AtomShortTextEditor(RPZAtom::Parameter::EventShortDescription));
     _addEditor(new AtomTextEditor(RPZAtom::Parameter::EventDescription));

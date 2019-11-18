@@ -63,17 +63,17 @@
         </translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="49"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="48"/>
         <source>Nothing to modify</source>
         <translation>Rien à modifier</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="50"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="49"/>
         <source>Template modification</source>
         <translation>Modification du modèle</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="51"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="50"/>
         <source>Selection modification</source>
         <translation>Modification de la sélection</translation>
     </message>

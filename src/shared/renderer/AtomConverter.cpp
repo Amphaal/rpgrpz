@@ -174,7 +174,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
                 if(RPZQVariant::isTemporary(itemToUpdate)) break;
                 
                 //define cached opacity on item
-                auto opacity = val.toDouble();
+                auto opacity = (double)val.toInt() / 100;
                 RPZQVariant::setCachedOpacity(itemToUpdate, opacity);
 
                 //prevent changing opacity if is hidden

@@ -325,7 +325,7 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::NPCHealth, -1 },
             { RPZAtom::Parameter::MaxNPCHealth, 10 },
             { RPZAtom::Parameter::MinNPCHealth, -1 },
-            { RPZAtom::Parameter::Opacity, 1 }
+            { RPZAtom::Parameter::Opacity, 100 }
         };
 
         void _setType(const RPZAtom::Type &type);

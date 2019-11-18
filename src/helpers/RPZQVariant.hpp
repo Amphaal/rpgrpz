@@ -82,7 +82,7 @@ class RPZQVariant {
             item->setData((int)RPZQVariant::Roles::IsHidden, isHidden);
         }
 
-        static bool cachedOpacity(QGraphicsItem* item) {
+        static double cachedOpacity(QGraphicsItem* item) {
             bool ok = false;
             auto data = item->data((int)RPZQVariant::Roles::CachedOpacity).toDouble(&ok);
             return ok ? data : 1;

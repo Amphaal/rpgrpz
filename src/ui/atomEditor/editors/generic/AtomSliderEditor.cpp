@@ -26,12 +26,12 @@ AtomSliderEditor::AtomSliderEditor(const RPZAtom::Parameter &parameter, int mini
     );
 
     QObject::connect(
-        this->_slider, &QAbstractSlider::valueChanged,
+        this->_spin, qOverload<int>(&QSpinBox ::valueChanged),
         this, &AtomSliderEditor::_onValueChanged
     );
 
     QObject::connect(
-        this->_spin, qOverload<int>(&QSpinBox ::valueChanged),
+        &this->_commitTimer, &QTimer::timeout,
         this, &AtomSliderEditor::_confirmPayload
     );
 
@@ -44,16 +44,19 @@ void AtomSliderEditor::_onValueChanged(int sliderVal) {
 };
 
 void AtomSliderEditor::_confirmPayload() {
-    auto out = QVariant(this->outputValue());
-    emit valueConfirmedForPayload({{this->_params.first(), out}});
+    auto output = this->outputValue();
+    auto param = this->_params.first();
+    emit valueConfirmedForPayload({{param, output}});
 }
 
 void AtomSliderEditor::_confirmPreview() {
     
     auto output = this->outputValue();
+    auto param = this->_params.first();
+
     this->_descr->updateValue(output);
-    
-    emit valueConfirmedForPreview(this->_params.first(), output);
+
+    emit valueConfirmedForPreview(param, output);
 
 }
 

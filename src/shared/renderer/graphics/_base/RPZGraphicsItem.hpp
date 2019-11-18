@@ -45,7 +45,7 @@ class RPZGraphicsItem {
 
             if(!isMapWidget && !this->_canBeDrawnInMiniMap()) out.mustContinue = false;
 
-            if(RPZClient::isHostAble() && isMapWidget && !RPZQVariant::isTemporary(base)) this->_paintOpacityPlaceholder(painter, option);
+            if(RPZClient::isHostAble() && isMapWidget && !RPZQVariant::isTemporary(base)) this->_paintOpacityPlaceholder(base, painter, option);
 
             return out;
 
@@ -53,9 +53,9 @@ class RPZGraphicsItem {
 
     private:
 
-        void _paintOpacityPlaceholder(QPainter *painter, const QStyleOptionGraphicsItem *option) {
+        void _paintOpacityPlaceholder(QGraphicsItem* base, QPainter *painter, const QStyleOptionGraphicsItem *option) {
             
-            if(!RPZQVariant::isHidden(this)) return;
+            if(!RPZQVariant::isHidden(base)) return;
 
             painter->save();
 
