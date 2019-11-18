@@ -44,6 +44,7 @@
         <file>icons/app/tools/ping.png</file>
         <file>icons/app/tools/walking.png</file>
         <file>icons/app/tools/cog.png</file>
+        <file>icons/app/tools/opacity.png</file>
         <file>icons/app/manager/layer.png</file>
         <file>icons/app/manager/npc.png</file>
         <file>icons/app/manager/asset.png</file>

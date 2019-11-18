@@ -57,7 +57,8 @@ class RPZAtom : public Serializable {
             CharacterName,
             NPCHealth,
             MaxNPCHealth,
-            MinNPCHealth
+            MinNPCHealth,
+            Opacity
         };
 
         enum class Category {
@@ -292,6 +293,7 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::NPCHealth, QStringLiteral(u"npc_h") },
             { RPZAtom::Parameter::MaxNPCHealth, QStringLiteral(u"npc_maxh") },
             { RPZAtom::Parameter::MinNPCHealth, QStringLiteral(u"npc_minh") },
+            { RPZAtom::Parameter::Opacity, QStringLiteral(u"o") }
         };
 
         static inline const RPZAtom::Updates _defaultVal = {
@@ -323,6 +325,7 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::NPCHealth, -1 },
             { RPZAtom::Parameter::MaxNPCHealth, 10 },
             { RPZAtom::Parameter::MinNPCHealth, -1 },
+            { RPZAtom::Parameter::Opacity, 1 }
         };
 
         void _setType(const RPZAtom::Type &type);

@@ -55,7 +55,7 @@ class RPZGraphicsItem {
 
         void _paintOpacityPlaceholder(QPainter *painter, const QStyleOptionGraphicsItem *option) {
             
-            if(painter->opacity() == 1) return;
+            if(!RPZQVariant::isHidden(this)) return;
 
             painter->save();
 

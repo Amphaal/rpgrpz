@@ -16,7 +16,9 @@ class RPZQVariant {
             GridAlignable = 1100,
             BrushTransform = 2555, 
             IsTemporary = 2666, 
-            BrushDrawStyle = 2767
+            IsHidden = 2680, 
+            BrushDrawStyle = 2767,
+            CachedOpacity = 6000
         };
 
         static YoutubeVideoMetadata* ytVideoMetadata(QListWidgetItem* item) {
@@ -72,6 +74,23 @@ class RPZQVariant {
         static void setIsTemporary(QGraphicsItem* item, bool isTemporary) {
             item->setData((int)RPZQVariant::Roles::IsTemporary, isTemporary);
         }
+
+        static bool isHidden(QGraphicsItem* item) {
+            return item->data((int)RPZQVariant::Roles::IsHidden).toBool();
+        }
+        static void setIsHidden(QGraphicsItem* item, bool isHidden) {
+            item->setData((int)RPZQVariant::Roles::IsHidden, isHidden);
+        }
+
+        static bool cachedOpacity(QGraphicsItem* item) {
+            bool ok = false;
+            auto data = item->data((int)RPZQVariant::Roles::CachedOpacity).toDouble(&ok);
+            return ok ? data : 1;
+        }
+        static void setCachedOpacity(QGraphicsItem* item, double cached) {
+            item->setData((int)RPZQVariant::Roles::CachedOpacity, cached);
+        }
+
 
         static RPZAtom::BrushType brushDrawStyle(QGraphicsItem* item) {
             return (RPZAtom::BrushType)item->data((int)RPZQVariant::Roles::BrushDrawStyle).toInt();

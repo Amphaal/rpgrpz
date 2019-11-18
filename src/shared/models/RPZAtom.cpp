@@ -191,6 +191,7 @@ void RPZAtom::setShape(const QRectF &rect) {
 //
 
 QSet<RPZAtom::Parameter> RPZAtom::customizableParams(const RPZAtom::Type &type) {
+
     QSet<RPZAtom::Parameter> out;
     
     switch(type) {
@@ -203,6 +204,7 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams(const RPZAtom::Type &type) 
         case RPZAtom::Type::Object: {
             out.insert(RPZAtom::Parameter::Rotation);
             out.insert(RPZAtom::Parameter::Scale);
+            out.insert(RPZAtom::Parameter::Opacity);
         }
         break;
 
@@ -240,6 +242,7 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams(const RPZAtom::Type &type) 
             out.insert(RPZAtom::Parameter::AssetScale);
             out.insert(RPZAtom::Parameter::BrushStyle);
             out.insert(RPZAtom::Parameter::BrushPenWidth);
+            out.insert(RPZAtom::Parameter::Opacity);
         }
         break;
 
@@ -249,6 +252,7 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams(const RPZAtom::Type &type) 
     }
 
     return out;
+
 }
 
 QSet<RPZAtom::Parameter> RPZAtom::customizableParams() const {

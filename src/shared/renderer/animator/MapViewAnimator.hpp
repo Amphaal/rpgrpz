@@ -7,6 +7,7 @@
 #include <QQueue>
 
 #include "PathAnimator.hpp"
+#include "src/helpers/RPZQVariant.hpp"
 
 class MapViewAnimator {
     public:
@@ -18,14 +19,18 @@ class MapViewAnimator {
             }
         }
 
-        static void animateVisibility(QGraphicsItem *toAnimate, bool isHidden) {
+        static void animateVisibility(QGraphicsItem *toAnimate) {
             
+            auto isHidden = RPZQVariant::isHidden(toAnimate);
+            auto cachedOpacity = RPZQVariant::cachedOpacity(toAnimate);
+            auto destOpacity = isHidden ? (RPZClient::isHostAble() ? .5 : 0) : cachedOpacity;
+
+            //prevent animation if opacity is the same
             auto currentOpacity = toAnimate->opacity();
-            auto destOpacity = isHidden ? (RPZClient::isHostAble() ? .5 : 0) : 1.0;
             if(currentOpacity == destOpacity) return;
             
+            //check if animation is available
             auto canBeAnimated = dynamic_cast<QObject*>(toAnimate);
-            
             if(canBeAnimated && toAnimate->scene()) {
                  _animateVisibility(canBeAnimated, currentOpacity, destOpacity);
             } 

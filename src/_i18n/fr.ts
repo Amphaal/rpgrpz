@@ -55,7 +55,7 @@
 <context>
     <name>AtomEditor</name>
     <message numerus="yes">
-        <location filename="../ui/atomEditor/AtomEditor.cpp" line="225"/>
+        <location filename="../ui/atomEditor/AtomEditor.cpp" line="227"/>
         <source> (%n element(s))</source>
         <translation>
             <numerusform> (%n élément)</numerusform>
@@ -63,17 +63,17 @@
         </translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="48"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="49"/>
         <source>Nothing to modify</source>
         <translation>Rien à modifier</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="49"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="50"/>
         <source>Template modification</source>
         <translation>Modification du modèle</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="50"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="51"/>
         <source>Selection modification</source>
         <translation>Modification de la sélection</translation>
     </message>
@@ -154,6 +154,11 @@
         <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="42"/>
         <source>Associated character</source>
         <translation>Personnage associé</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="43"/>
+        <source>Opacity</source>
+        <translation>Transparence</translation>
     </message>
     <message>
         <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="37"/>
@@ -1076,67 +1081,67 @@
         <translation>Calque %1</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="123"/>
+        <location filename="../shared/models/RPZAtom.h" line="124"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="124"/>
+        <location filename="../shared/models/RPZAtom.h" line="125"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="125"/>
+        <location filename="../shared/models/RPZAtom.h" line="126"/>
         <source>Object</source>
         <translation>Objet</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="126"/>
+        <location filename="../shared/models/RPZAtom.h" line="127"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="127"/>
+        <location filename="../shared/models/RPZAtom.h" line="128"/>
         <source>Atom</source>
         <translation>Atome</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="128"/>
+        <location filename="../shared/models/RPZAtom.h" line="129"/>
         <source>Event</source>
         <translation>Evénement</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="129"/>
+        <location filename="../shared/models/RPZAtom.h" line="130"/>
         <source>Player</source>
         <translation>Joueur</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="130"/>
+        <location filename="../shared/models/RPZAtom.h" line="131"/>
         <source>Non-playable character</source>
         <translation>Personnage non-joueur</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="131"/>
+        <location filename="../shared/models/RPZAtom.h" line="132"/>
         <source>Point of interest</source>
         <translation>Point d&apos;intérêt</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="135"/>
+        <location filename="../shared/models/RPZAtom.h" line="136"/>
         <source>NPCs</source>
         <translation>PNJs</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="136"/>
+        <location filename="../shared/models/RPZAtom.h" line="137"/>
         <source>Events</source>
         <translation>Evénements</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="137"/>
+        <location filename="../shared/models/RPZAtom.h" line="138"/>
         <source>Players</source>
         <translation>Joueurs</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="138"/>
+        <location filename="../shared/models/RPZAtom.h" line="139"/>
         <source>POIs</source>
         <translation>Points d&apos;intérêt</translation>
     </message>
@@ -1259,7 +1264,7 @@
     <message>
         <location filename="../ui/map/_base/MapViewInteractibleDescriptor.hpp" line="89"/>
         <source>Health</source>
-        <translation type="unfinished">Santé</translation>
+        <translation>Santé</translation>
     </message>
 </context>
 <context>

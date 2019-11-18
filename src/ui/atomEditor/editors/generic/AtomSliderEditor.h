@@ -5,6 +5,7 @@
 
 #include <QTimer>
 #include <QSlider>
+#include <QSpinBox>
 
 class AtomSliderEditor : public AtomSubEditor {
     public:
@@ -22,6 +23,9 @@ class AtomSliderEditor : public AtomSubEditor {
 
         QTimer _commitTimer;
         QSlider* _slider = nullptr;
+        QSpinBox* _spin = nullptr;
+
+        void _internalWidgetsUpdate(int sliderVal);
 
     protected: 
         virtual double _toAtomValue(int sliderVal);

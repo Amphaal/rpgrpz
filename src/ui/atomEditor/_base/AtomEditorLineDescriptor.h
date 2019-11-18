@@ -39,7 +39,8 @@ class AtomEditorLineDescriptor : public QWidget {
             { RPZAtom::Parameter::NPCHealth, QT_TR_NOOP("Health") },
             { RPZAtom::Parameter::NPCShortName, QT_TR_NOOP("Short name") },
             { RPZAtom::Parameter::NPCDescription, QT_TR_NOOP("Description") },
-            { RPZAtom::Parameter::CharacterId, QT_TR_NOOP("Associated character") }
+            { RPZAtom::Parameter::CharacterId, QT_TR_NOOP("Associated character") },
+            { RPZAtom::Parameter::Opacity, QT_TR_NOOP("Opacity") }
         };
 
         static inline QHash<RPZAtom::Parameter, QString> _valSuffix = {
@@ -49,7 +50,8 @@ class AtomEditorLineDescriptor : public QWidget {
             { RPZAtom::Parameter::AssetScale, QStringLiteral(u"x") },
             { RPZAtom::Parameter::PenWidth, QStringLiteral(u"pts") },
             { RPZAtom::Parameter::TextSize, QStringLiteral(u"pts") },
-            { RPZAtom::Parameter::BrushPenWidth, QStringLiteral(u"pts") }
+            { RPZAtom::Parameter::BrushPenWidth, QStringLiteral(u"pts") },
+            { RPZAtom::Parameter::Opacity, QStringLiteral(u"%") }
         };
 
         static inline QHash<RPZAtom::Parameter, QString> _icons = {
@@ -68,6 +70,7 @@ class AtomEditorLineDescriptor : public QWidget {
             { RPZAtom::Parameter::NPCHealth, QStringLiteral(u":/icons/app/tools/health.png") },
             { RPZAtom::Parameter::NPCShortName, QStringLiteral(u":/icons/app/tools/text.png") },
             { RPZAtom::Parameter::NPCDescription, QStringLiteral(u":/icons/app/tools/text.png") },
-            { RPZAtom::Parameter::CharacterId, QStringLiteral(u":/icons/app/connectivity/cloak.png") }
+            { RPZAtom::Parameter::CharacterId, QStringLiteral(u":/icons/app/connectivity/cloak.png") },
+            { RPZAtom::Parameter::Opacity, QStringLiteral(u":/icons/app/tools/opacity.png") }
         };
 };

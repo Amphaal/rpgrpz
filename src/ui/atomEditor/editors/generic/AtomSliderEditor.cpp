@@ -5,10 +5,20 @@ AtomSliderEditor::AtomSliderEditor(const RPZAtom::Parameter &parameter, int mini
     this->_commitTimer.setInterval(200);
     this->_commitTimer.setSingleShot(true);
 
+    this->_spin = new QSpinBox(this);
+    this->_spin->setMinimum(minimum);
+    this->_spin->setMaximum(maximum);
+
     this->_slider = new QSlider(Qt::Orientation::Horizontal, this);
     this->_slider->setMinimum(minimum);
     this->_slider->setMaximum(maximum);
-    this->layout()->addWidget(this->_slider);
+
+    auto sl = new QHBoxLayout;
+    sl->addWidget(this->_slider, 1);
+    sl->addWidget(this->_spin, 0);
+    
+    auto l = (QVBoxLayout*)this->layout();
+    l->addLayout(sl);
 
     QObject::connect(
         this->_slider, &QAbstractSlider::valueChanged,
@@ -16,13 +26,19 @@ AtomSliderEditor::AtomSliderEditor(const RPZAtom::Parameter &parameter, int mini
     );
 
     QObject::connect(
-        &this->_commitTimer, &QTimer::timeout,
+        this->_slider, &QAbstractSlider::valueChanged,
+        this, &AtomSliderEditor::_onValueChanged
+    );
+
+    QObject::connect(
+        this->_spin, qOverload<int>(&QSpinBox ::valueChanged),
         this, &AtomSliderEditor::_confirmPayload
     );
 
 }
 
 void AtomSliderEditor::_onValueChanged(int sliderVal) {
+    this->_internalWidgetsUpdate(sliderVal);
     this->_confirmPreview();
     this->_commitTimer.start();  
 };
@@ -52,9 +68,18 @@ void AtomSliderEditor::loadTemplate(const RPZAtom::Updates &defaultValues, const
         this->_descr->updateValue(defaultVal);
     }
       
-    QSignalBlocker b(this->_slider);
     auto sval = this->_toSliderValue(defaultVal);
-    this->_slider->setValue(sval);
+    this->_internalWidgetsUpdate(sval);
+
+}
+
+void AtomSliderEditor::_internalWidgetsUpdate(int sliderVal) {
+
+    QSignalBlocker l(this->_slider);
+    QSignalBlocker l2(this->_spin);
+
+    this->_spin->setValue(sliderVal);
+    this->_slider->setValue(sliderVal);
 
 }
 

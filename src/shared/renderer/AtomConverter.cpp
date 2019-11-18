@@ -153,9 +153,36 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
             
             // on changing visibility
             case RPZAtom::Parameter::Hidden: {
+                
+                //prevent if temporary
                 if(RPZQVariant::isTemporary(itemToUpdate)) break;
+                
+                //define visibility
                 auto hidden = val.toBool();
-                MapViewAnimator::animateVisibility(itemToUpdate, hidden);
+                RPZQVariant::setIsHidden(itemToUpdate, hidden);
+
+                //animate
+                MapViewAnimator::animateVisibility(itemToUpdate);
+
+            }
+            break;
+
+            // on changing opacity
+            case RPZAtom::Parameter::Opacity: {
+
+                //prevent if temporary
+                if(RPZQVariant::isTemporary(itemToUpdate)) break;
+                
+                //define cached opacity on item
+                auto opacity = val.toDouble();
+                RPZQVariant::setCachedOpacity(itemToUpdate, opacity);
+
+                //prevent changing opacity if is hidden
+                if(RPZQVariant::isHidden(itemToUpdate)) break;
+                
+                //animate
+                MapViewAnimator::animateVisibility(itemToUpdate);
+
             }
             break;
 

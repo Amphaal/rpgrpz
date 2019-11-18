@@ -26,6 +26,7 @@
 #include "src/ui/atomEditor/editors/specific/CharacterPickerEditor.hpp"
 #include "src/ui/atomEditor/editors/specific/NPCAttitudeEditor.hpp"
 #include "src/ui/atomEditor/editors/specific/NPCHealthEditor.hpp"
+#include "src/ui/atomEditor/editors/specific/OpacitySlider.hpp"
 
 #include "src/shared/async-ui/AlterationActor.hpp"
 
