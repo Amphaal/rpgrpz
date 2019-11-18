@@ -1257,7 +1257,7 @@
         <translation>Caché</translation>
     </message>
     <message>
-        <location filename="../ui/map/_base/MapViewInteractibleDescriptor.hpp" line="60"/>
+        <location filename="../ui/map/_base/MapViewInteractibleDescriptor.hpp" line="89"/>
         <source>Health</source>
         <translation type="unfinished">Santé</translation>
     </message>

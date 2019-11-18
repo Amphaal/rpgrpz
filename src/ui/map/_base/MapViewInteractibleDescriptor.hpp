@@ -15,9 +15,13 @@ class MapViewInteractibleDescriptor : public QWidget {
     Q_OBJECT
 
     private:
+
+        static inline QSize _defaultPortraitSize = RPZCharacter::defaultPortraitSize / 2;
+
         GaugeWidget* _gaugeW = nullptr;
         QLabel* _descrLbl = nullptr;
         QLabel* _portraitLbl = nullptr;
+        QLabel* _attitudeLbl = nullptr;
         QPropertyAnimation* _anim = nullptr;
 
         const QRect _hiddenGeometry() const {
@@ -27,17 +31,27 @@ class MapViewInteractibleDescriptor : public QWidget {
 
         void _updateData(const RPZAtom &atom) {
             
+            auto isNPC = atom.type() == RPZAtom::Type::NPC;
+
             //update text descr
             this->_descrLbl->setText(atom.toString());
             
-            auto isNPC = atom.type() == RPZAtom::Type::NPC;
+            //update attitude 
+            if(isNPC) this->_attitudeLbl->setPixmap(QPixmap(atom.descriptiveIconPath()));
+            else this->_attitudeLbl->setPixmap(QPixmap());
+            this->_attitudeLbl->setVisible(isNPC);
 
             // update portrait
             QPixmap toSet;
             if(isNPC) {
+
                 auto asset = AssetsDatabase::get()->asset(atom.assetHash());
+
                 if(asset) toSet = QPixmap(asset->filepath());
                 else toSet = QPixmap(QStringLiteral(u":/assets/default.jpg"));
+
+                toSet = toSet.scaled(_defaultPortraitSize, Qt::AspectRatioMode::KeepAspectRatio);
+
             }
             this->_portraitLbl->setPixmap(toSet);
             this->_portraitLbl->setVisible(isNPC); 
@@ -55,30 +69,42 @@ class MapViewInteractibleDescriptor : public QWidget {
         }
 
     public:
-        MapViewInteractibleDescriptor() : _descrLbl(new QLabel), _portraitLbl(new QLabel), _anim(new QPropertyAnimation(this, "geometry")) {
-            
-            this->_gaugeW = new GaugeWidget({}, QObject::tr("Health"), Qt::red);
-            this->_portraitLbl->setMinimumSize(1, 1);
-            this->_portraitLbl->setMaximumSize(RPZCharacter::defaultPortraitSize / 2);
 
+
+        MapViewInteractibleDescriptor() : _descrLbl(new QLabel), _portraitLbl(new QLabel), _attitudeLbl(new QLabel), _anim(new QPropertyAnimation(this, "geometry")) {
+            
+            this->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+            this->setAutoFillBackground(true);
+            
+            QPalette pal = palette();
+            pal.setColor(QPalette::Window, Qt::white);
+            this->setPalette(pal);
+
+            this->_attitudeLbl->setVisible(false);
+
+            this->_portraitLbl->setFixedSize(_defaultPortraitSize);
             this->_portraitLbl->setVisible(false);
+            this->_portraitLbl->setStyleSheet("border: 1px solid black");
+
+            this->_gaugeW = new GaugeWidget({}, QObject::tr("Health"), Qt::red);
             this->_gaugeW->setVisible(false);
 
             this->_anim->setEasingCurve(QEasingCurve::InCubic);
             this->_anim->setDuration(250);
 
-            this->setAutoFillBackground(true);
-            QPalette pal = palette();
-            pal.setColor(QPalette::Window, Qt::white);
-            this->setPalette(pal);
+            auto ssLayout = new QHBoxLayout;
+            ssLayout->addWidget(this->_attitudeLbl);
+            ssLayout->addWidget(this->_descrLbl, 1, Qt::AlignLeft);
 
-            this->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
-            
+            auto sLayout = new QVBoxLayout;
+            sLayout->addLayout(ssLayout);
+            sLayout->addWidget(this->_gaugeW);
+            sLayout->addStretch(1);
+
             auto layout = new QHBoxLayout;
-            this->setLayout(layout);
             layout->addWidget(this->_portraitLbl, 0, Qt::AlignTop);
-            layout->addWidget(this->_descrLbl, 0, Qt::AlignTop);
-            layout->addWidget(this->_gaugeW, 0, Qt::AlignTop);
+            layout->addLayout(sLayout);
+            this->setLayout(layout);
 
             //define geometry
             this->setGeometry(this->_hiddenGeometry());

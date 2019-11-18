@@ -7,6 +7,8 @@
 class GaugeWidget : public QProgressBar {
     public:
         GaugeWidget(const RPZGauge::MinimalistGauge &gauge, const QString &name, const QColor &color) : _name(name) {
+            
+            this->setFormat("%v/%m ");
 
             this->updateValues(gauge);
             

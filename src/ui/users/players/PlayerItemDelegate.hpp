@@ -5,7 +5,6 @@
 #include <QRect>
 
 #include "src/shared/models/RPZUser.h"
-#include "src/ui/sheets/components/GaugeWidget.hpp"
 
 class PlayerItemDelegate : public QStyledItemDelegate {
     public:
