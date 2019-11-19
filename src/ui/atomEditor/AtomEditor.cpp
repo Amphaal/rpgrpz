@@ -24,13 +24,22 @@ void AtomEditor::buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr
     this->_currentSelectionDescr = atomsSelectionDescr;
     
     //clear editors
+    for(auto editor : this->_visibleEditors) editor->setVisible(false);
     this->_visibleEditors.clear();
 
     //update edit mode
     this->_updateEditMode();
 
-    //fetch parameter editors to display
-    auto toDisplay = this->_findDefaultValuesToBind();
+    //fetch default values for adaptated params to context
+    auto filteredDefaultValues = this->_findDefaultValuesToBind();
+    
+    //find editors to display
+    QSet<AtomSubEditor*> toDisplay;
+    for(auto const &param : filteredDefaultValues.keys()) {
+        auto editor = this->_editorsByParam.value(param);
+        if(!editor) continue;
+        toDisplay += editor;
+    }
 
     //setup context for loading
     AtomSubEditor::LoadingContext context;
@@ -38,35 +47,19 @@ void AtomEditor::buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr
     context.numberOfItems = this->_currentSelectionDescr.selectedAtomIds.count();
 
     //load those who need to be displayed
-    for(auto i = toDisplay.begin(); i != toDisplay.end(); ++i) {
-        
-        //prepare
-        auto param = i.key();
-
-        //get editor
-        auto editor = this->_editorsByParam.value(param);
-        if(!editor) continue;
+    for(auto editor : toDisplay) {
 
         //load template, and display them
-        editor->loadTemplate(toDisplay, context);
+        editor->loadTemplate(filteredDefaultValues, context);
 
         //add to the visible editors list
-        this->_visibleEditors.append(param);
+        this->_visibleEditors.append(editor);
 
-    }
-
-    //hide the others
-    auto toHide = _editorsByParam.keys().toSet().subtract(
-        toDisplay.keys().toSet()
-    );
-    for(const auto i : toHide) {
-        auto editor = this->_editorsByParam.value(i);
-        if(!editor) continue;
-        editor->setVisible(false);
     }
 
     //if no editor is displayed, show a little message
-    this->_noEditorMsgWidget->setVisible(!this->hasVisibleEditors());
+    auto visibility = !this->hasVisibleEditors();
+    this->_noEditorMsgWidget->setVisible(visibility);
 
 }
 
@@ -78,11 +71,13 @@ void AtomEditor::resetParams() {
 
     //reset displayed params
     RPZAtom::Updates changes;
-    for(const auto param : this->_visibleEditors) {
-        changes.insert(
-            param, 
-            RPZAtom::getDefaultValueForParam(param)
-        );
+    for(auto editor : this->_visibleEditors) {
+        for(auto const &param : editor->params()) {
+            changes.insert(
+                param, 
+                RPZAtom::getDefaultValueForParam(param)
+            );
+        }
     }
 
     //update inner selection accordingly
@@ -104,8 +99,10 @@ void AtomEditor::_addEditor(AtomSubEditor* editor) {
 
 void AtomEditor::_createEditorsFromAtomParameters() {
 
-    this->_addEditor(new BrushToolEditor);
-    this->_addEditor(new AtomSliderEditor(RPZAtom::Parameter::BrushPenWidth, 1, 500));
+    _addEditor(new CharacterPickerEditor);
+
+    _addEditor(new BrushToolEditor);
+    _addEditor(new AtomSliderEditor(RPZAtom::Parameter::BrushPenWidth, 1, 500));
 
     _addEditor(new AtomSliderEditor(RPZAtom::Parameter::Rotation, 0, 359));
     _addEditor(new NonLinearAtomSliderEditor(RPZAtom::Parameter::Scale, QVector<CrossEquities::CrossEquity> {
@@ -129,8 +126,6 @@ void AtomEditor::_createEditorsFromAtomParameters() {
 
     _addEditor(new AtomShortTextEditor(RPZAtom::Parameter::EventShortDescription));
     _addEditor(new AtomTextEditor(RPZAtom::Parameter::EventDescription));
-    
-    _addEditor(new CharacterPickerEditor);
    
     _addEditor(new AtomShortTextEditor(RPZAtom::Parameter::NPCShortName));
     _addEditor(new AtomTextEditor(RPZAtom::Parameter::NPCDescription));
@@ -259,8 +254,6 @@ void AtomEditor::_mustShowBrushPenWidthEditor(const RPZAtom::Updates &updatedVal
 
     //check if param is tool combo
     if(!updatedValues.contains(RPZAtom::Parameter::BrushStyle)) return;
-
-    qDebug() << updatedValues[RPZAtom::Parameter::BrushStyle];
 
     //check if pen size editor exists
     auto brushPenWidthEditor = this->_editorsByParam.value(RPZAtom::Parameter::BrushPenWidth);

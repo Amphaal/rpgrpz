@@ -27,11 +27,16 @@ bool AtomSubEditor::mustShowBrushPenWidth(const QVariant &brushTypeDefaultValue)
 void AtomSubEditor::_handleVisibilityOnLoad(const RPZAtom::Updates &defaultValues) {
     
     //default behavior if not a penWidth param
-    if(!this->_params.contains(RPZAtom::Parameter::BrushPenWidth)) return this->setVisible(true);
+    if(!this->_params.contains(RPZAtom::Parameter::BrushPenWidth)) {
+        this->setVisible(true);
+        return;
+    }
 
     //check
     auto brushStyleVal = defaultValues.value(RPZAtom::Parameter::BrushStyle);
-    if(brushStyleVal.isNull()) return;
+    if(brushStyleVal.isNull()) {
+        return;
+    }
 
     //visibility
     auto mustShow = mustShowBrushPenWidth(brushStyleVal);

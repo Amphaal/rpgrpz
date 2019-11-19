@@ -393,9 +393,9 @@ void MainWindow::_initAppComponents() {
         this->_mapViewContainer = new QWidget(this);
         this->_mapViewContainer->setLayout(new OverlayingLayout);
 
-        this->_mapView = new MapView;
-        this->_minimap = new MiniMapView(this->_mapView);
-        this->_interactibleDescr = new MapViewInteractibleDescriptor;
+        this->_mapView = new MapView(this);
+        this->_minimap = new MiniMapView(this->_mapView, this);
+        this->_interactibleDescr = new MapViewInteractibleDescriptor(this);
 
         this->_mapViewContainer->layout()->addWidget(this->_mapView);
         this->_mapViewContainer->layout()->addWidget(this->_interactibleDescr);

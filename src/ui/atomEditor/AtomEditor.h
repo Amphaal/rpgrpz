@@ -57,7 +57,7 @@ class AtomEditor : public QGroupBox, public AlterationActor {
 
         NoEditorMessageWidget* _noEditorMsgWidget = nullptr;
 
-        QList<RPZAtom::Parameter> _visibleEditors;
+        QList<AtomSubEditor*> _visibleEditors;
 
         RPZAtom::Updates _findDefaultValuesToBind();
         void _createEditorsFromAtomParameters();

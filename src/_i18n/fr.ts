@@ -55,7 +55,7 @@
 <context>
     <name>AtomEditor</name>
     <message numerus="yes">
-        <location filename="../ui/atomEditor/AtomEditor.cpp" line="235"/>
+        <location filename="../ui/atomEditor/AtomEditor.cpp" line="230"/>
         <source> (%n element(s))</source>
         <translation>
             <numerusform> (%n élément)</numerusform>
@@ -1262,7 +1262,7 @@
         <translation>Caché</translation>
     </message>
     <message>
-        <location filename="../ui/map/_base/MapViewInteractibleDescriptor.hpp" line="89"/>
+        <location filename="../ui/map/_base/MapViewInteractibleDescriptor.hpp" line="91"/>
         <source>Health</source>
         <translation>Santé</translation>
     </message>

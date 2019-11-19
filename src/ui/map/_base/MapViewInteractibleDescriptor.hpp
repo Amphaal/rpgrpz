@@ -69,9 +69,11 @@ class MapViewInteractibleDescriptor : public QWidget {
         }
 
     public:
-
-
-        MapViewInteractibleDescriptor() : _descrLbl(new QLabel), _portraitLbl(new QLabel), _attitudeLbl(new QLabel), _anim(new QPropertyAnimation(this, "geometry")) {
+        MapViewInteractibleDescriptor(QWidget *parent = nullptr) : QWidget(parent),
+        _descrLbl(new QLabel), 
+        _portraitLbl(new QLabel), 
+        _attitudeLbl(new QLabel), 
+        _anim(new QPropertyAnimation(this, "geometry")) {
             
             this->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
             this->setAutoFillBackground(true);
