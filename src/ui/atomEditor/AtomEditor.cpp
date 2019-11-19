@@ -192,6 +192,7 @@ RPZAtom::Updates AtomEditor::_findDefaultValuesToBind() {
         }
 
         paramsToDisplay = paramsToDisplay.intersect(associatedCustomParams);
+        if(!paramsToDisplay.count()) break;
 
     }
 
