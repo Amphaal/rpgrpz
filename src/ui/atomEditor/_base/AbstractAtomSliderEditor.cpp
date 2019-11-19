@@ -13,21 +13,17 @@ AbstractAtomSliderEditor::AbstractAtomSliderEditor(const RPZAtom::Parameter &par
 
     //define slider
     this->_slider = new QSlider(Qt::Orientation::Horizontal, this);
-    this->_slider->setMinimum(this->_ceData.v().first().sliderValue);
-    this->_slider->setMaximum(this->_ceData.v().last().sliderValue);
+    this->_slider->setMinimum(this->_ceData.minSlider());
+    this->_slider->setMaximum(this->_ceData.maxSlider());
     QObject::connect(
         this->_slider, &QAbstractSlider::valueChanged,
         this, &AbstractAtomSliderEditor::_onSliderValueChanged
     );
 
-    //generate spin
-    this->_spin = this->_generateSpinBox();
+    this->_widgetLineLayout = new QHBoxLayout;
+    this->_widgetLineLayout->addWidget(this->_slider, 1);
 
-    auto widgetLineLayout = new QHBoxLayout;
-    widgetLineLayout->addWidget(this->_slider, 1);
-    widgetLineLayout->addWidget(this->_spin);
-
-    this->_mainLayout->addLayout(widgetLineLayout);
+    this->_mainLayout->addLayout(this->_widgetLineLayout);
 
 }
 
@@ -47,7 +43,7 @@ void AbstractAtomSliderEditor::loadTemplate(const RPZAtom::Updates &defaultValue
 }
 
 const CrossEquities& AbstractAtomSliderEditor::_crossEquities() const {
-    return this->_crossEquities;
+    return this->_ceData;
 }
 
 void AbstractAtomSliderEditor::_onSliderValueChanged(int sliderVal) {

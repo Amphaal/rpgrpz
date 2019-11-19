@@ -28,14 +28,16 @@ class AbstractAtomSliderEditor : public AtomSubEditor {
         QSlider* _slider = nullptr;
 
     protected: 
+        QHBoxLayout* _widgetLineLayout = nullptr;
         QAbstractSpinBox* _spin = nullptr;
-        const CrossEquities& _crossEquities() const;
-
         virtual QAbstractSpinBox* _generateSpinBox() const = 0;
+
+        void _onSliderValueChanged(int sliderVal);
+
+        const CrossEquities& _crossEquities() const;
         
         virtual void _updateWidgetsFromSliderVal(int sliderVal);
         void _updateWidgetsFromAtomVal(double atomVal);
         
-        void _onSliderValueChanged(int sliderVal);
 
 };

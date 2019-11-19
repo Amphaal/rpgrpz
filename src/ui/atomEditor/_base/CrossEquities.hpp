@@ -9,83 +9,100 @@ class CrossEquities {
             int sliderValue;
         };
 
-        CrossEquities(const QVector<CrossEquity> &equities) : _equities(equities) {
+        CrossEquities(const QVector<CrossEquity> &equities) {
             
-            Q_ASSERT(equities.count() > 1);
+            auto equitiesCount = equities.count();
+            Q_ASSERT(equitiesCount > 1);
 
-            for(auto const & equity : equities) {
-                this->_atomEquities += equity.atomValue;
-                this->_sliderEquities += equity.sliderValue;
+            for(auto i = 1; i < equitiesCount; i++) {
+                
+                auto sub = i - 1;
+                auto bEquity = equities.at(sub);
+                auto eEquity = equities.at(i);
+
+                QPointF begin(bEquity.atomValue, bEquity.sliderValue);
+                QPointF end(eEquity.atomValue, eEquity.sliderValue);
+
+                this->_lines += { begin, end };
+
             }
 
-            this->_limit = this->_atomEquities.count() - 1; //prevent iterating through last pair
+            this->_defineMinMaxes();
+
         }
 
         double toAtomValue(int sliderVal) const {
-            
-            int lowSliderBound = this->_sliderEquities.at(0);
-            double lowAtomBound = this->_atomEquities.at(0);
-
-            auto index = 1;
-            while(true) {
-                
-                if(index >= this->_limit) break; //if limit is reached, skip
-
-                auto s = this->_sliderEquities.at(index);
-
-                if(s > sliderVal) break; //if this equity is bigger than searched value, skip
-
-                lowSliderBound = s;
-                lowAtomBound = this->_atomEquities.at(index);
-
-                index++;
-
-            }
-
-            auto highSliderBound = this->_sliderEquities.at(index);
-
-            //cross multiply
-            return (lowAtomBound * highSliderBound) / lowSliderBound;
-
+            auto func = this->_functionToUseFromSliderValue(sliderVal);
+            auto min = func.y1();
+            auto max = func.y2();
+            auto prc = (sliderVal - min) / (max - min);
+            auto out = func.pointAt(prc).x();
+            return out;
         }
 
         int toSliderValue(double atomVal) const {
-            
-            int lowSliderBound = this->_sliderEquities.at(0);
-            double lowAtomBound = this->_atomEquities.at(0);
-
-            auto index = 1;
-            while(true) {
-                
-                if(index >= this->_limit) break; //if limit is reached, skip
-
-                auto a = this->_atomEquities.at(index);
-
-                if(a > atomVal) break; //if this equity is bigger than searched value, skip
-
-                lowSliderBound = this->_sliderEquities.at(index);
-                lowAtomBound = a;
-
-                index++;
-
-            }
-
-            auto highAtomBound = this->_atomEquities.at(index);
-
-            //cross multiply
-            return (lowSliderBound * highAtomBound) / lowAtomBound;
-
+            auto func = this->_functionToUseFromAtomValue(atomVal);
+            auto min = func.x1();
+            auto max = func.x2();
+            auto prc = (atomVal - min) / (max - min);
+            auto out = qRound(func.pointAt(prc).y());
+            return out;
         }
 
-        const QVector<CrossEquity>& v() const {
-            return this->_equities;
-        }
+        int maxSlider() const { return this->_maxSlider; }
+        int minSlider() const { return this->_minSlider; }
+
+        double maxAtom() const { return this->_maxAtom; }
+        double minAtom() const { return this->_minAtom; }
     
     private:
-        QVector<double> _atomEquities;
-        QVector<int> _sliderEquities;
-        int _limit;
+        int _maxSlider = 0;
+        int _minSlider = 0;
 
-        QVector<CrossEquity> _equities;
+        double _maxAtom = 0;
+        double _minAtom = 0;
+
+        void _defineMinMaxes() {
+            
+            auto min = this->_lines.first();
+            this->_minAtom = min.x1();
+            this->_minSlider = qRound(min.y1());
+
+            auto max = this->_lines.last();
+            this->_maxAtom = max.x2();
+            this->_maxSlider = qRound(max.y2());
+
+        }
+
+        
+        const QLineF& _functionToUseFromAtomValue(double atomVal) const {
+            
+            for(const auto &line : this->_lines) {
+                auto min = line.x1();
+                auto max = line.x2();
+                if(atomVal >= min && atomVal <= max) {
+                    return line;
+                }
+            }
+
+            return this->_lines.first();
+
+        }
+
+        const QLineF& _functionToUseFromSliderValue(int sliderVal) const {
+            
+            for(const auto &line : this->_lines) {
+                auto min = line.y1();
+                auto max = line.y2();
+                if(sliderVal >= min && sliderVal <= max) {
+                    return line;
+                }
+            }
+
+            return this->_lines.first();
+
+        }
+
+        QVector<QLineF> _lines;
 
 };

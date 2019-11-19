@@ -7,15 +7,18 @@
 
 class NonLinearAtomSliderEditor : public AbstractAtomSliderEditor {
     public:
-        NonLinearAtomSliderEditor(const RPZAtom::Parameter &parameter, const CrossEquities &crossEquities) : AbstractAtomSliderEditor(parameter, crossEquities) {}
+        NonLinearAtomSliderEditor(const RPZAtom::Parameter &parameter, const CrossEquities &crossEquities) : AbstractAtomSliderEditor(parameter, crossEquities) {
+            this->_spin = this->_generateSpinBox();
+            this->_widgetLineLayout->addWidget(this->_spin);
+        }
 
     protected: 
         QAbstractSpinBox* _generateSpinBox() const override {
             
             auto spin = new QDoubleSpinBox;
  
-            spin->setMinimum(this->_crossEquities().v().first().atomValue);
-            spin->setMaximum(this->_crossEquities().v().last().atomValue);
+            spin->setMinimum(this->_crossEquities().minAtom());
+            spin->setMaximum(this->_crossEquities().maxAtom());
 
             QObject::connect(
                 spin, qOverload<double>(&QDoubleSpinBox ::valueChanged),

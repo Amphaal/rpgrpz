@@ -17,7 +17,7 @@
 #include "src/ui/atomEditor/_base/NoEditorMessageWidget.hpp"
 #include "src/ui/atomEditor/_base/AtomSubEditor.h"
 
-#include "src/ui/atomEditor/editors/generic/AtomSliderEditor.h"
+#include "src/ui/atomEditor/editors/generic/AtomSliderEditor.hpp"
 #include "src/ui/atomEditor/editors/generic/NonLinearAtomSliderEditor.hpp"
 #include "src/ui/atomEditor/editors/generic/AtomTextEditor.hpp"
 #include "src/ui/atomEditor/editors/generic/AtomShortTextEditor.hpp"

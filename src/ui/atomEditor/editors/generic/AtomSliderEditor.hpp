@@ -5,19 +5,22 @@
 class AtomSliderEditor : public AbstractAtomSliderEditor {
     public:
         AtomSliderEditor(const RPZAtom::Parameter &parameter, int minimum, int maximum) : 
-            AbstractAtomSliderEditor(parameter, QVector<CrossEquities::CrossEquity> { {minimum, minimum}, {maximum, maximum} }) {}
+            AbstractAtomSliderEditor(parameter, QVector<CrossEquities::CrossEquity> { {(double)minimum, minimum}, {(double)maximum, maximum} }) {
+                this->_spin = this->_generateSpinBox();
+                this->_widgetLineLayout->addWidget(this->_spin);
+            }
 
     protected: 
         QAbstractSpinBox* _generateSpinBox() const override {
             
             auto spin = new QSpinBox;
  
-            spin->setMinimum(this->_crossEquities().v().first().sliderValue);
-            spin->setMaximum(this->_crossEquities().v().last().sliderValue);
+            spin->setMinimum(this->_crossEquities().minSlider());
+            spin->setMaximum(this->_crossEquities().maxSlider());
 
             QObject::connect(
                 spin, qOverload<int>(&QSpinBox ::valueChanged),
-                this, &AbstractAtomSliderEditor::_onSliderValueChanged
+                this, &AtomSliderEditor::_onSliderValueChanged
             );
 
             return spin;

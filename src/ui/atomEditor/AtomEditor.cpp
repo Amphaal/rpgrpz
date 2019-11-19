@@ -108,10 +108,18 @@ void AtomEditor::_createEditorsFromAtomParameters() {
     this->_addEditor(new AtomSliderEditor(RPZAtom::Parameter::BrushPenWidth, 1, 500));
 
     _addEditor(new AtomSliderEditor(RPZAtom::Parameter::Rotation, 0, 359));
-    _addEditor(new NonLinearAtomSliderEditor(RPZAtom::Parameter::Scale, 1, 1000));
+    _addEditor(new NonLinearAtomSliderEditor(RPZAtom::Parameter::Scale, QVector<CrossEquities::CrossEquity> {
+        {.1, 1},
+        { 1, 500 },
+        {10.0, 1000 }
+    }));
     
     _addEditor(new AtomSliderEditor(RPZAtom::Parameter::AssetRotation, 0, 359));
-    _addEditor(new NonLinearAtomSliderEditor(RPZAtom::Parameter::AssetScale, 1, 1000));
+    _addEditor(new NonLinearAtomSliderEditor(RPZAtom::Parameter::AssetScale, QVector<CrossEquities::CrossEquity> {
+        {.1, 1},
+        { 1, 500 },
+        {10.0, 1000 }
+    }));
 
     _addEditor(new AtomSliderEditor(RPZAtom::Parameter::PenWidth, 1, 50));
     _addEditor(new AtomSliderEditor(RPZAtom::Parameter::TextSize, 1, 50));
