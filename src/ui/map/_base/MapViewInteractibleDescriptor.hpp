@@ -116,7 +116,7 @@ class MapViewInteractibleDescriptor : public QWidget {
 
             this->_anim->stop();
 
-            if(atom.isEmpty()) {
+            if(atom.isEmpty() || atom.type() != RPZAtom::Type::NPC) {
 
                 this->_anim->setStartValue(this->geometry());
                 this->_anim->setEndValue(this->_hiddenGeometry());
