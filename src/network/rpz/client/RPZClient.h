@@ -15,6 +15,7 @@
 #include "src/shared/models/messaging/RPZMessage.h"
 #include "src/shared/models/messaging/RPZResponse.h"
 #include "src/shared/models/messaging/RPZHandshake.h"
+#include "src/shared/models/RPZQuickDraw.hpp"
 
 #include "src/helpers/_appContext.h"
 #include "src/shared/async-ui/AlterationActor.hpp"
@@ -50,6 +51,7 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
         void setAudioStreamPlayState(bool isPlaying);
         void sendMapHistory(const ResetPayload &historyPayload);
         void notifyCharacterChange(const RPZCharacter &changed);
+        void sendQuickdraw(const RPZQuickDraw &qd);
 
     signals:
         void connectionStatus(const QString &statusMessage, bool isError = false);
@@ -60,7 +62,7 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
         void selfIdentityAcked(const RPZUser &identity);
         void selfIdentityChanged(const RPZUser &updated);
         
-        void mapChanged(const AlterationPayload &payload);
+        void quickDrawReceived(const RPZQuickDraw &qd);
 
         void availableAssetsFromServer(const QVector<RPZAsset::Hash> &availableIds);
         void receivedAsset(const RPZAssetImportPackage &package);
@@ -81,7 +83,7 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
         static inline bool _isHostAble = true;
         static void _defineHostAbility(const RPZUser &user);
 
-        JSONSocket* _sock = nullptr;   
+        JSONSocket* _serverSock = nullptr;   
         bool _initialMapSetupReceived = false;
 
         QString _domain;

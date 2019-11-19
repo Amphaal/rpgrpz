@@ -28,7 +28,8 @@ class RPZJSON : public QObject {
             UserIn,
             UserOut,
             CharacterChanged,
-            UserDataChanged
+            UserDataChanged,
+            QuickDrawHappened
         };
         Q_ENUM(Method)
        
