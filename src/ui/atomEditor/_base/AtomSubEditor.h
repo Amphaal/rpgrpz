@@ -37,6 +37,7 @@ class AtomSubEditor : public QWidget {
 
         AtomEditorLineDescriptor* _descr = nullptr;
         virtual void _handleVisibilityOnLoad(const RPZAtom::Updates &defaultValues);
+        QVBoxLayout* _mainLayout = nullptr;
     
     private:
         bool _supportsBatchEditing = true;

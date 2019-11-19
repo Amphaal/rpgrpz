@@ -45,9 +45,8 @@ class NPCHealthEditor : public AtomSubEditor {
             this->setVisible(false);
             this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
             
-            auto l = (QVBoxLayout*)this->layout();
-            l->addWidget(this->_gEditor, 0, Qt::AlignCenter);
-            l->addWidget(this->_validateButton);
+            this->_mainLayout->addWidget(this->_gEditor, 0, Qt::AlignCenter);
+            this->_mainLayout->addWidget(this->_validateButton);
 
         };
 

@@ -6,10 +6,10 @@ AtomSubEditor::AtomSubEditor(const QList<RPZAtom::Parameter> &parameters, bool s
     _params(parameters) { 
 
     this->setVisible(false);
-
-    this->setLayout(new QVBoxLayout);
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
 
+    this->_mainLayout = new QVBoxLayout;
+    this->setLayout(this->_mainLayout);
     this->layout()->addWidget(this->_descr);
 
 }

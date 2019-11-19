@@ -1,24 +1,46 @@
 #pragma once
 
-#include "AtomSliderEditor.h"
+#include "src/ui/atomEditor/_base/AbstractAtomSliderEditor.h"
 
 #include <QtMath>
+#include <QDoubleSpinBox>
 
-class NonLinearAtomSliderEditor : public AtomSliderEditor {
+class NonLinearAtomSliderEditor : public AbstractAtomSliderEditor {
     public:
-        NonLinearAtomSliderEditor(const RPZAtom::Parameter &parameter, int minimum, int maximum) : AtomSliderEditor(parameter, minimum, maximum) {}
+        NonLinearAtomSliderEditor(const RPZAtom::Parameter &parameter, const CrossEquities &crossEquities) : AbstractAtomSliderEditor(parameter, crossEquities) {}
 
-    private:    
-        //https://www.wolframalpha.com/input/?i=fit+exponential++%5B(1,+0.1),+(500,+1),+(1000,+10)%5D
-        double _toAtomValue(int sliderVal) override {
-            auto eqResult = (double).0999821 * qExp((double)0.00460535 * sliderVal);
-            return round(eqResult * 100) / 100;
+    protected: 
+        QAbstractSpinBox* _generateSpinBox() const override {
+            
+            auto spin = new QDoubleSpinBox;
+ 
+            spin->setMinimum(this->_crossEquities().v().first().atomValue);
+            spin->setMaximum(this->_crossEquities().v().last().atomValue);
+
+            QObject::connect(
+                spin, qOverload<double>(&QDoubleSpinBox ::valueChanged),
+                this, &NonLinearAtomSliderEditor::_onSpinBoxValueChanged
+            );
+
+            return spin;
+
         }
 
-        //https://www.wolframalpha.com/input/?i=fit+log+%5B(.1,+1),+(1,+500),+(10,+1000)%5D
-        int _toSliderValue(double atomValue) override {
-            auto eqResult = (double)216.93 * qLn((double)10.0385 * atomValue);
-            auto roundedResult = round(eqResult * 100) / 100;
-            return roundedResult < 1 ? 1 : (int)roundedResult;
+        void _updateWidgetsFromSliderVal(int sliderVal) override {
+
+            AbstractAtomSliderEditor::_updateWidgetsFromSliderVal(sliderVal);
+
+            auto atomVal = this->toAtomValue(sliderVal);
+
+            QSignalBlocker l(this->_spin);
+            ((QDoubleSpinBox*)this->_spin)->setValue(atomVal);
+            
+        }
+
+    
+    private:
+        void _onSpinBoxValueChanged(double spinValue) {
+            auto sliderVal = this->toSliderValue(spinValue);
+            this->_onSliderValueChanged(sliderVal);
         }
 };
