@@ -309,13 +309,23 @@ void ToysTreeView::_onRowInsert(const QModelIndex &parent, int first, int last) 
 }
 
 void ToysTreeView::_requestDeletion(const QModelIndexList &itemsIndexesToDelete) {
+    
+    //find deletables
+    QModelIndexList deletables;
+    for(auto const &index : itemsIndexesToDelete) {
+        auto item = ToysTreeViewItem::fromIndex(index);
+        if(item->isDeletable()) deletables += index;
+    }
+
+    //if no deletables, skip
+    if(!deletables.count()) return;
 
     auto title = tr("Delete elements in toy box");
-    auto content = tr("Do you confirm deletion of the %1 selected elements ?").arg(itemsIndexesToDelete.count());
+    auto content = tr("Do you confirm deletion of the %1 selected elements ?").arg(deletables.count());
 
     auto userResponse = QMessageBox::warning(this, title, content, QMessageBox::Yes|QMessageBox::No, QMessageBox::No);
     if(userResponse == QMessageBox::Yes) {
-        this->_model->removeItems(itemsIndexesToDelete);
+        this->_model->removeItems(deletables);
     }
 }
 

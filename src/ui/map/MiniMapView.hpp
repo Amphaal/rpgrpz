@@ -33,8 +33,6 @@ class MiniMapView : public QGraphicsView {
             this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
             this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-            //force viewport update mode
-            this->setViewportUpdateMode(QGraphicsView::ViewportUpdateMode::SmartViewportUpdate);
             this->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum); 
 
             this->setDragMode(QGraphicsView::NoDrag);
