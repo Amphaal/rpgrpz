@@ -3,6 +3,7 @@
 #include <QObject>
 
 #include "src/network/rpz/client/RPZClient.h"
+#include "src/helpers/Authorisations.hpp"
 
 class ConnectivityObserver {
     public:

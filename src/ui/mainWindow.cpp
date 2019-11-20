@@ -48,7 +48,7 @@ void MainWindow::connectingToServer() {
 }
 
 void MainWindow::_onConnectionToServer() {
-    auto mode = RPZClient::isHostAble() ? UIMode::Full : UIMode::Player;
+    auto mode = Authorisations::isHostAble() ? UIMode::Full : UIMode::Player;
     this->_setupAppUI(mode);
 }
 

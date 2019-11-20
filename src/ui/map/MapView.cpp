@@ -241,34 +241,44 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
 
     else if(type == Payload::Alteration::Selected) {
         
-        auto result = this->_hints->singleSelectionHelper();
-        
-        auto isWalkable = RPZClient::isHostAble() && result.movableWithWalkingHelper; //TODO restrict to self player only
-        
-        //handle interactible information display
-        if(result.appliable) {
-            this->setForegroundBrush(Qt::NoBrush); //force foreground re-drawing
-        }
+        auto isWalkable = _tryToInvokeWalkableHelper(toAlter.value(0));
 
-        //handle walkables
-        if(isWalkable) {
-            
-            //clear previous walker
-            this->_clearWalkingHelper();
-
-            //define tool
-            this->_toWalk = toAlter.first();
-            this->_walkingHelper = new MapViewWalkingHelper(this->_currentMapParameters, this->_toWalk, this);
-            this->_changeTool(MapTool::Walking);
-            
-        } 
-        
-        //if cant and is using walking tool, unselect it
-        else if(currentTool == MapTool::Walking) {
+        //if cant walk it, and is using walking tool, go back to default tool
+        if(!isWalkable && currentTool == MapTool::Walking) {
             this->_changeTool(MapTool::Default);
         }
 
     }
+
+}
+
+bool MapView::_tryToInvokeWalkableHelper(QGraphicsItem * toBeWalked) {
+    
+    if(!toBeWalked) return false;
+
+    auto result = this->_hints->singleSelectionHelper();
+            
+    //TODO restrict to self player only
+    auto isWalkable = Authorisations::isHostAble() && 
+                      result.interactible.isWalkableAtom() &&
+                      RPZQVariant::allowedToBeWalked(toBeWalked);
+
+    //prevent if not walkable
+    if(!isWalkable) return;
+        
+    //clear previous walker
+    this->_clearWalkingHelper();
+
+    //create walking helper
+    this->_toWalk = toBeWalked;
+    this->_walkingHelper = new MapViewWalkingHelper(
+        this->_currentMapParameters, 
+        this->_toWalk, 
+        this
+    );
+
+    //define tool
+    this->_changeTool(MapTool::Walking);
 
 }
 
@@ -434,25 +444,11 @@ void MapView::mousePressEvent(QMouseEvent *event) {
             switch(this->_getCurrentTool()) {
                 
                 case MapTool::Default: {
-                    this->_ignoreSelectionChangedEvents = true;
-                }
-                break;
-
-                case MapTool::Walking: {
-
-                    auto toWalkTo = this->_walkingHelper->destScenePos();
-
-                    if(this->_preventMoveOrInsertAtPosition(this->_toWalk, toWalkTo)) break;
-
-                    this->_hints->notifyWalk(this->_toWalk, toWalkTo);
-
+                    this->_ignoreSelectionChangedEvents = !this->_isAnySelectableItemsUnderCursor(event->pos());
                 }
                 break;
 
                 case MapTool::Atom: {
-                    
-                    //check if inserts are allowed
-                    if(!RPZClient::isHostAble()) break;
 
                     //conditionnal drawing
                     switch(this->_hints->templateAtom().type()) {
@@ -578,8 +574,21 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
                     QGraphicsView::mouseReleaseEvent(event);
 
                     //update selection
-                    this->_notifySelection();
+                    if(this->_ignoreSelectionChangedEvents) this->_notifySelection();
                     this->_ignoreSelectionChangedEvents = false;
+
+                }
+                break;
+
+                case MapTool::Walking: {
+
+                    auto toWalkTo = this->_walkingHelper->destScenePos();
+
+                    if(!this->_preventMoveOrInsertAtPosition(this->_toWalk, toWalkTo)) {
+                        this->_hints->notifyWalk(this->_toWalk, toWalkTo);
+                    }
+
+                    this->_resetTool();
 
                 }
                 break;
@@ -602,6 +611,18 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
         default:
             break;
     }
+
+}
+
+bool MapView::_isAnySelectableItemsUnderCursor(const QPoint &cursorPosInWindow) const {
+    
+    auto cursorScenePos = this->mapToScene(cursorPosInWindow);
+    
+    for(const auto colliding : this->scene()->items(cursorScenePos)) {
+        if(colliding->flags().testFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable)) return true;
+    }
+
+    return false;
 
 }
 
@@ -698,6 +719,9 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
 
     //end drawing if any
     this->_drawingAssist->mayCommitDrawing();
+
+    //prevent the usage of Atom tool if not host able
+    if(!Authorisations::isHostAble() && newTool == MapTool::Atom) return;
 
     //if quick change asked
     if(quickChange) {

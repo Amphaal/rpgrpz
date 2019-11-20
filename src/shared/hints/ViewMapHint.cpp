@@ -170,7 +170,8 @@ QGraphicsItem* ViewMapHint::generateGraphicsFromTemplate(bool hiddenAsDefault) c
     auto item = AtomRenderer::createGraphicsItem(
         this->_templateAtom, 
         this->_templateToy,
-        true
+        true,
+        false
     );
 
     //auto visibility
@@ -237,7 +238,8 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuil
     else {
         newItem = AtomRenderer::createGraphicsItem(
             atomToBuildFrom, 
-            *asset
+            *asset,
+            this->_hasOwnershipOf(atomToBuildFrom)
         );
     }
 
@@ -250,13 +252,13 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuil
     return newItem;
 }
 
-void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &metadata) {
+void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &asset) {
     
     QList<QGraphicsItem*> newGis;
     QSet<QGraphicsItem*> setOfGraphicsItemsToReplace;
 
-    auto hash = metadata.hash();
-    auto pathToFile = metadata.filepath();
+    auto hash = asset.hash();
+    auto pathToFile = asset.filepath();
 
     if(!this->_missingAssetHashesFromDb.contains(hash)) return; //no assetHash, skip
     if(pathToFile.isNull()) return; //path to file empty, skip
@@ -278,7 +280,8 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &metadata) {
         //create the new graphics item
         auto newGi = AtomRenderer::createGraphicsItem(
             atom, 
-            metadata
+            asset,
+            this->_hasOwnershipOf(atom)
         );
         this->_crossBindingAtomWithGI(atom, newGi);
         newGis.append(newGi);
@@ -314,10 +317,10 @@ void ViewMapHint::handlePreviewRequest(const AtomsSelectionDescriptor &selection
     //selected atoms to change
     else {
         
-        QMutexLocker l(&this->_m_GItemsByRPZAtomId);
+        QMutexLocker l(&this->_m_GItemsById);
 
         for(const auto &id : selectionDescriptor.selectedAtomIds) {
-            toUpdate += this->_GItemsByRPZAtomId.value(id);
+            toUpdate += this->_GItemsById.value(id);
         }
 
     }
@@ -336,7 +339,7 @@ void ViewMapHint::handlePreviewRequest(const AtomsSelectionDescriptor &selection
 
 void ViewMapHint::_crossBindingAtomWithGI(const RPZAtom &atom, QGraphicsItem* gi) {
     auto id = atom.id();
-    this->_GItemsByRPZAtomId.insert(id, gi);
+    this->_GItemsById.insert(id, gi);
     RPZQVariant::setAtomId(gi, id);
 }
 
@@ -378,6 +381,8 @@ const RPZAtom::Id ViewMapHint::getAtomIdFromGraphicsItem(const QGraphicsItem* to
 //alter Scene
 void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
 
+    QMutexLocker l(&this->_m_GItemsById);
+
     //if reset (before)
     if(auto mPayload = dynamic_cast<const ResetPayload*>(&payload)) {
         
@@ -387,9 +392,13 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
         //parameterize atom renderer
         AtomRenderer::defineMapParameters(this->map().mapParams());
 
+        //clear GI lists
+        this->_GItemsById.clear();
+
         //delete ghost
-        QMutexLocker l(&this->_m_ghostItem);
-        this->_ghostItem = nullptr;
+        this->_m_ghostItem.lock();
+            this->_ghostItem = nullptr;
+        this->_m_ghostItem.unlock();
 
         //reset descriptor
         emit atomDescriptorUpdated();
@@ -401,10 +410,7 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
     }
 
     //standard handling
-    {
-        QMutexLocker l(&this->_m_GItemsByRPZAtomId);
-        AtomsStorage::_handleAlterationRequest(payload);
-    }
+    AtomsStorage::_handleAlterationRequest(payload);
 
     //if selected, analyse selection
     if(auto mPayload = dynamic_cast<const SelectedPayload*>(&payload)) {
@@ -429,6 +435,7 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
 
     //if asset changed
     else if(auto mPayload = dynamic_cast<const AssetChangedPayload*>(&payload)) {
+        QMutexLocker l2(&this->_m_GItemsById);
         this->_replaceMissingAssetPlaceholders(mPayload->assetMetadata());
     }
 
@@ -464,8 +471,8 @@ void ViewMapHint::_mightUpdateAtomDescriptor(const QList<RPZAtom::Id> &idsUpdate
     {
         QMutexLocker l(&this->_m_singleSelectionInteractible);
         
-        //if no single selection appliable, no need to update
-        if(!this->_singleSelectionInteractible.appliable) return;
+        //if no single interactive selection, no need to update
+        if(!this->_singleSelectionInteractible.isInteractive) return;
         
         //if list of updates does not contain interactible, skip
         auto interactibleId = this->_singleSelectionInteractible.interactible.id();
@@ -515,8 +522,7 @@ const ViewMapHint::SingleSelectionInteractible ViewMapHint::_generateSSI(const S
 
     //set values
     out.interactible = atom;
-    out.appliable = true;
-    out.movableWithWalkingHelper = atom.type() == RPZAtom::Type::Player;
+    out.isInteractive = true;
 
     return out;    
 
@@ -530,8 +536,8 @@ void ViewMapHint::_basicAlterationDone(const QList<RPZAtom::Id> &updatedIds, con
     QList<QGraphicsItem*> toUpdate;
     
     for(const auto id : updatedIds) {
-        if(type == Payload::Alteration::Removed) toUpdate += this->_GItemsByRPZAtomId.take(id);
-        else toUpdate += this->_GItemsByRPZAtomId.value(id);
+        if(type == Payload::Alteration::Removed) toUpdate += this->_GItemsById.take(id);
+        else toUpdate += this->_GItemsById.value(id);
     }
 
     emit requestingUIAlteration(type, toUpdate);
@@ -540,7 +546,7 @@ void ViewMapHint::_basicAlterationDone(const QList<RPZAtom::Id> &updatedIds, con
 void ViewMapHint::_updatesDone(const QList<RPZAtom::Id> &updatedIds, const RPZAtom::Updates &updates) {
     QList<QGraphicsItem*> toUpdate;
     for(const auto id : updatedIds) {
-        toUpdate += this->_GItemsByRPZAtomId.value(id);
+        toUpdate += this->_GItemsById.value(id);
     }
     emit requestingUIUpdate(toUpdate, updates);
 }
@@ -548,7 +554,7 @@ void ViewMapHint::_updatesDone(const QList<RPZAtom::Id> &updatedIds, const RPZAt
 void ViewMapHint::_updatesDone(const RPZAtom::ManyUpdates &updates) {
     QHash<QGraphicsItem*, RPZAtom::Updates> toUpdate;
     for(auto i = updates.constBegin(); i != updates.constEnd(); i++) {
-        auto gi = this->_GItemsByRPZAtomId.value(i.key());
+        auto gi = this->_GItemsById.value(i.key());
         toUpdate.insert(gi, i.value());
     }
     emit requestingUIUpdate(toUpdate);

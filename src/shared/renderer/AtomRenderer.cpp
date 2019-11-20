@@ -4,7 +4,7 @@ void AtomRenderer::defineMapParameters(const RPZMapParameters &mapParameters) {
     _mapParams = mapParameters;
 }
 
-QGraphicsItem* AtomRenderer::createGraphicsItem(const RPZAtom &atom, const RPZAsset &asset, bool isTemporary) {
+QGraphicsItem* AtomRenderer::createGraphicsItem(const RPZAtom &atom, const RPZAsset &asset, bool isTemporary, bool owned) {
     
     QGraphicsItem* out;
 
@@ -33,7 +33,7 @@ QGraphicsItem* AtomRenderer::createGraphicsItem(const RPZAtom &atom, const RPZAs
 
         case RPZAtom::Type::NPC:
         case RPZAtom::Type::Player:
-            out = _createToken(atom);
+            out = _createToken(atom, owned);
         break;
 
         default: {
@@ -44,8 +44,11 @@ QGraphicsItem* AtomRenderer::createGraphicsItem(const RPZAtom &atom, const RPZAs
         
     }
 
+    //define if teporary
+    RPZQVariant::setIsTemporary(out, isTemporary);
+
     //update
-    AtomConverter::setupGraphicsItemFromAtom(out, atom, isTemporary);        
+    AtomConverter::setupGraphicsItemFromAtom(out, atom);        
 
     //if base is QGraphicsSvgItem, QGraphicsTextItem, and QGraphicsWidget, move handler to main GUI thread
     if(auto signalHandler = out->toGraphicsObject()) {
@@ -164,8 +167,9 @@ QGraphicsTextItem* AtomRenderer::_createTextItem(const RPZAtom &atom) {
     return new MapViewGraphicsTextItem(atom.text(), atom.textSize());
 }
 
-MapViewToken* AtomRenderer::_createToken(const RPZAtom &atom) {
+MapViewToken* AtomRenderer::_createToken(const RPZAtom &atom, bool owned) {
     auto out = new MapViewToken(_mapParams, atom);
     RPZQVariant::setIsGridBound(out, true);
+    out->setOwned(owned);
     return out;
 }

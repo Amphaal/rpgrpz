@@ -22,7 +22,7 @@ class RPZGraphicsItem {
             return true; 
         };
 
-        virtual bool _drawSelectionHelper() const { 
+        virtual bool _mustDrawSelectionHelper() const { 
             return false; 
         };
 
@@ -32,20 +32,27 @@ class RPZGraphicsItem {
 
         ConditionnalPaintingResult conditionnalPaint(QGraphicsItem* base, QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) {
             
+            //init
             ConditionnalPaintingResult out;
             out.options = *option;
 
+            //prepare
             bool isMapWidget = (void*)AppContext::mapGLWidget() == widget;
             auto isSelectedState = option->state.testFlag(QStyle::StateFlag::State_Selected);
 
-            if(isMapWidget && this->_drawSelectionHelper() && isSelectedState) {
+            //if must print selection helper
+            if(isMapWidget && isSelectedState && this->_mustDrawSelectionHelper()) {
                 this->_paintSelectionHelper(painter, option);
                 out.options.state.setFlag(QStyle::StateFlag::State_Selected, false);
             }
 
+            //can continue with expected paint() from inheritor
             if(!isMapWidget && !this->_canBeDrawnInMiniMap()) out.mustContinue = false;
 
-            if(RPZClient::isHostAble() && isMapWidget && !RPZQVariant::isTemporary(base)) this->_paintOpacityPlaceholder(base, painter, option);
+            //can fill with opacity placeholder
+            if(isMapWidget && Authorisations::isHostAble() && !RPZQVariant::isTemporary(base)) {
+                this->_paintOpacityPlaceholder(base, painter, option);
+            }
 
             return out;
 

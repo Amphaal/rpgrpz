@@ -20,13 +20,13 @@ const RPZAtom AtomConverter::cloneAtomTemplateFromGraphics(QGraphicsItem* bluepr
     
 }
 
-void AtomConverter::setupGraphicsItemFromAtom(QGraphicsItem* target, const RPZAtom &blueprint, bool isTargetTemporary) {
-    
-    //set movable as default
-    target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, RPZClient::isHostAble() && !isTargetTemporary);
+void AtomConverter::setupGraphicsItemFromAtom(QGraphicsItem* target, const RPZAtom &blueprint) {
 
-    //bind a copy of the template to the item
-    RPZQVariant::setIsTemporary(target, isTargetTemporary);
+    //set default movable
+    target->setFlag(
+        QGraphicsItem::GraphicsItemFlag::ItemIsMovable, 
+        Authorisations::isHostAble() && !blueprint.isWalkableAtom()
+    );
 
     //update
     _updateGraphicsItemFromMetadata(target, blueprint);
@@ -48,17 +48,27 @@ void AtomConverter::setupGraphicsItemFromAtom(QGraphicsItem* target, const RPZAt
     }
 
     //define transparency as it is a dummy
-    if(isTargetTemporary) {
+    if(RPZQVariant::isTemporary(target)) {
         target->setOpacity(.5);
         target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
+        target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
     }
             
 }
 
 void AtomConverter::_updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom &blueprint) {
-    
+
     //refresh all legal if temporary
-    auto paramsToUpdate = blueprint.legalParameters().toList();
+    auto paramsToUpdate = blueprint.legalParameters();
+
+    //if temporary, remove Hidden and Opacity
+    auto isItemTemporary = RPZQVariant::isTemporary(item);
+    if(isItemTemporary) {
+        paramsToUpdate.remove(RPZAtom::Parameter::Opacity);
+        paramsToUpdate.remove(RPZAtom::Parameter::Hidden);
+    }
+
+    //sort
     std::sort(paramsToUpdate.begin(), paramsToUpdate.end()); 
     
     //update GI
@@ -146,16 +156,13 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
             // on locking change
             case RPZAtom::Parameter::Locked: {
                 auto locked = val.toBool();
-                if(RPZClient::isHostAble()) itemToUpdate->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, !locked);
+                itemToUpdate->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, !locked);
                 itemToUpdate->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, !locked);
             }
             break;
             
             // on changing visibility
             case RPZAtom::Parameter::Hidden: {
-                
-                //prevent if temporary
-                if(RPZQVariant::isTemporary(itemToUpdate)) break;
                 
                 //define visibility
                 auto hidden = val.toBool();
@@ -169,9 +176,6 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
 
             // on changing opacity
             case RPZAtom::Parameter::Opacity: {
-
-                //prevent if temporary
-                if(RPZQVariant::isTemporary(itemToUpdate)) break;
                 
                 //define cached opacity on item
                 auto opacity = (double)val.toInt() / 100;

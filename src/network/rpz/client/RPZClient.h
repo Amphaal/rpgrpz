@@ -23,6 +23,7 @@
 #include "src/shared/audio/StreamPlayStateTracker.hpp"
 
 #include "src/network/rpz/_any/JSONLogger.hpp"
+#include "src/helpers/Authorisations.hpp"
 
 class RPZClient : public QObject, public AlterationActor, public JSONLogger {
 
@@ -38,9 +39,6 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
         const RPZUser identity() const; //safe
         const RPZMap<RPZUser> sessionUsers() const; //safe
         const QList<RPZCharacter> unpairedUserCharacters() const; //safe
-
-        static void resetHostAbility();
-        static bool isHostAble();
 
     public slots:
         void run();
@@ -80,9 +78,6 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
         void audioPlayStateChanged(bool isPlaying);
 
     private:
-        static inline bool _isHostAble = true;
-        static void _defineHostAbility(const RPZUser &user);
-
         JSONSocket* _serverSock = nullptr;   
         bool _initialMapSetupReceived = false;
 

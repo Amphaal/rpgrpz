@@ -13,7 +13,7 @@
 class AtomConverter {
     public:   
         static void updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom::Updates &updates);
-        static void setupGraphicsItemFromAtom(QGraphicsItem* target, const RPZAtom &blueprint, bool isTargetTemporary = false);
+        static void setupGraphicsItemFromAtom(QGraphicsItem* target, const RPZAtom &blueprint);
         static const RPZAtom cloneAtomTemplateFromGraphics(QGraphicsItem* blueprint, RPZAtom toClone);
 
     private:

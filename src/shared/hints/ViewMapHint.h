@@ -30,8 +30,7 @@ class ViewMapHint : public AtomsStorage {
 
     public:
         struct SingleSelectionInteractible {
-            bool appliable = false;
-            bool movableWithWalkingHelper = false;
+            bool isInteractive = false;
             RPZAtom interactible;
         };
 
@@ -79,8 +78,8 @@ class ViewMapHint : public AtomsStorage {
         mutable QMutex _m_templateAtom;
         RPZAtom _templateAtom;
         
-        mutable QMutex _m_GItemsByRPZAtomId;
-        QMap<RPZAtom::Id, QGraphicsItem*> _GItemsByRPZAtomId;
+        mutable QMutex _m_GItemsById;
+        QMap<RPZAtom::Id, QGraphicsItem*> _GItemsById;
 
         mutable QMutex _m_singleSelectionInteractible;
         ViewMapHint::SingleSelectionInteractible _singleSelectionInteractible;

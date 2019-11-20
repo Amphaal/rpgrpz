@@ -38,7 +38,12 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
             this->_upperRect = this->_mainRect.marginsRemoved(QMarginsF(prc, prc, prc, prc));
             
             this->_changeColor(atom);
-            
+
+        }
+
+        void setOwned(bool owned) {
+            //TODO start / remove animation
+            RPZQVariant::setAllowedToBeWalked(this, owned);
         }
 
         void updateColor(const QColor &toApply) {
@@ -67,7 +72,7 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
         QBrush _upperBrush;
         QBrush _mainBrush;
 
-        bool _drawSelectionHelper() const override { 
+        bool _mustDrawSelectionHelper() const override { 
             return true; 
         };
         

@@ -10,7 +10,7 @@
 
 #include "src/helpers/Clipboard.hpp"
 
-#include "src/network/rpz/client/RPZClient.h"
+#include "src/helpers/Authorisations.hpp"
 
 class AtomSelector {
     public:

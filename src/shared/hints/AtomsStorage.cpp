@@ -25,13 +25,23 @@ const QString AtomsStorage::snapshotSave(const QString &folderToSaveTo) {
     return this->_map.snapshotSave(folderToSaveTo);
 }
 
+bool AtomsStorage::_hasOwnershipOf(const RPZAtom &atom) const {
+    if(!this->_ownedTokenIds.contains(atom.id())) return false;
+}
+
+bool AtomsStorage::_isTokenYourOwn(const RPZAtom &atom) const {
+    //TODO also allows if logged, and atom has character id that matches logged user character id
+    if(!atom.isWalkableAtom()) return false;
+    return Authorisations::isHostAble();
+}
+
 PossibleActionsOnAtomList AtomsStorage::getPossibleActions(const QList<RPZAtom::Id> &ids) {
     
     QMutexLocker l(&_m_handlingLock);
     PossibleActionsOnAtomList out;
 
     //no actions possible if not host able
-    if(!RPZClient::isHostAble()) return out;
+    if(!Authorisations::isHostAble()) return out;
 
     //availability
     auto areIdsSelected = !ids.isEmpty();
@@ -354,10 +364,14 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
     //on reset
     if(auto mPayload = dynamic_cast<const ResetPayload*>(&payload)) {
         
+        //clear lists
         this->_undoHistory.clear();
         this->_redoHistory.clear();
-
+        this->_restrictedAtomIds.clear();
+        this->_ownedTokenIds.clear();
         this->_map.clear();
+
+        //set new map params
         auto mParams = mPayload->mapParameters();
         this->_map.setMapParams(mParams);
         
@@ -383,6 +397,11 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
                 this->_restrictedAtomIds += id;
             }
 
+            //check if is user token
+            if(this->_isTokenYourOwn(atom)) {
+                this->_ownedTokenIds += id;
+            }
+
             //handler for inheritors
             this->_atomAdded(atom);
 
@@ -399,11 +418,13 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
         auto updatesById = mPayload->atomsUpdates();
         for (auto i = updatesById.begin(); i != updatesById.end(); i++) {
             
-            auto id = i.key();
-            auto atom = this->_map.atom(i.key());
+            auto const &id = i.key();
+            auto const &updates = i.value();
+
+            auto atom = this->_map.atom(id);
             if(atom.isEmpty()) continue;
 
-            this->_map.updateAtom(id, i.value());
+            this->_syncAtomUpdate(id, updates);
             
         }
 
@@ -428,8 +449,10 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
             if(pType == Payload::Alteration::Removed) {
                 this->_map.removeAtom(id); //remove from db
                 this->_restrictedAtomIds.remove(id); //remove from restricted
+                this->_ownedTokenIds.remove(id); //remove from owned
             }
-            if(pType == Payload::Alteration::MetadataChanged) this->_map.updateAtom(id, maybeUpdates);
+
+            if(pType == Payload::Alteration::MetadataChanged) this->_syncAtomUpdate(id, maybeUpdates);
 
             alteredIds += id;
 
@@ -441,6 +464,17 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
     }
 }
 
+void AtomsStorage::_syncAtomUpdate(const RPZAtom::Id &toUpdate, const RPZAtom::Updates &updates) {
+    
+    //update db
+    this->_map.updateAtom(toUpdate, updates);
+    
+    //rectify
+    if(updates.contains(RPZAtom::Parameter::CharacterId)) {
+        //TODO reattribute ownership
+    }
+
+}
 
 //
 //

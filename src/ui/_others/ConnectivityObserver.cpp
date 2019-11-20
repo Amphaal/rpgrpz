@@ -64,7 +64,7 @@ void ConnectivityObserver::_onClientThreadFinished() {
     _rpzClient->deleteLater();
     _rpzClient = nullptr;
     
-    RPZClient::resetHostAbility();
+    Authorisations::resetHostAbility();
 
     QMetaObject::invokeMethod(ConnectivityObserverSynchronizer::get(), "triggerConnectionClosed", 
         Q_ARG(bool, hasInitialMapLoaded)

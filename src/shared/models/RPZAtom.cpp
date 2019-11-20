@@ -27,6 +27,10 @@ bool RPZAtom::isRestrictedAtom() const {
     return _restrictedAtom.contains(this->type());
 }
 
+bool RPZAtom::isWalkableAtom() const {
+    return _walkables.contains(this->type());
+}
+
 const QString RPZAtom::toString(const RPZAtom::Type &type, const QString &description) { 
 
     //default if no descriptor

@@ -176,6 +176,7 @@ class RPZAtom : public Serializable {
         bool isAssetBased() const;
         bool isRestrictedAtom() const;
         bool canBeHidden() const;
+        bool isWalkableAtom() const;
 
         RPZAtom::Category category() const;
         static RPZAtom::Category category(const RPZAtom::Type &type);
@@ -255,6 +256,11 @@ class RPZAtom : public Serializable {
             RPZAtom::Type::Event,
             RPZAtom::Type::POI,
             RPZAtom::Type::Player
+        };
+
+        static inline const QList<RPZAtom::Type> _walkables {
+            RPZAtom::Type::Player,
+            RPZAtom::Type::NPC
         };
         
         static const inline QHash<RPZAtom::NPCType, QColor> _NPCTypeAssociatedColor {

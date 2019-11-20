@@ -11,7 +11,6 @@
 
 class MapViewAnimator {
     public:
-
         static void triggerQueuedAnimations() {
             while (!_queuedAnimations.isEmpty()) {
                 auto anim = _queuedAnimations.dequeue();
@@ -19,11 +18,9 @@ class MapViewAnimator {
             }
         }
 
-        static void animateVisibility(QGraphicsItem *toAnimate) {
+        static void animateVisibility(QGraphicsItem* toAnimate) {
             
-            auto isHidden = RPZQVariant::isHidden(toAnimate);
-            auto cachedOpacity = RPZQVariant::cachedOpacity(toAnimate);
-            auto destOpacity = isHidden ? (RPZClient::isHostAble() ? .5 : 0) : cachedOpacity;
+            auto destOpacity = _determineOpacity(toAnimate);
 
             //prevent animation if opacity is the same
             auto currentOpacity = toAnimate->opacity();
@@ -92,6 +89,12 @@ class MapViewAnimator {
         
         static inline QHash<QObject*, QHash<QString, QPropertyAnimation*>> _ongoingAnimations;
         static inline QQueue<QPropertyAnimation*> _queuedAnimations;
+
+        static double _determineOpacity(QGraphicsItem* item) {
+            auto isHidden = RPZQVariant::isHidden(item);
+            auto cachedOpacity = RPZQVariant::cachedOpacity(item);
+            return isHidden ? (Authorisations::isHostAble() ? .5 : 0) : cachedOpacity;
+        }
 
         static void _animateMove(QObject *toAnimate, const QPointF &currentScenePos, const QPointF &newScenePos) {
             

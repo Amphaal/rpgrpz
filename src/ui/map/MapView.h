@@ -109,6 +109,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
 
         //Selection
             bool _ignoreSelectionChangedEvents = false;
+            bool _isAnySelectableItemsUnderCursor(const QPoint &cursorPosInWindow) const;
             void _notifySelection();
 
         //ghost
@@ -126,12 +127,13 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
             void _changeTool(MapTool newTool, bool quickChange = false);
             void _resetTool();
         
-            //walking...
-                QCursor _walkingCursor;
-                MapViewWalkingHelper* _walkingHelper = nullptr;
-                QGraphicsItem* _toWalk = nullptr;
-                void _mightUpdateWalkingHelperPos();
-                void _clearWalkingHelper();
+        //walking...
+            QCursor _walkingCursor;
+            MapViewWalkingHelper* _walkingHelper = nullptr;
+            QGraphicsItem* _toWalk = nullptr;
+            void _mightUpdateWalkingHelperPos();
+            void _clearWalkingHelper();
+            bool _tryToInvokeWalkableHelper(QGraphicsItem * toBeWalked);
 
         void onAnimationManipulationTickDone() override;
         void onViewRectChange() override;

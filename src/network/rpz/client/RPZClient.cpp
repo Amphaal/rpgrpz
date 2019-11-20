@@ -330,7 +330,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
                 this->_myUserId = data.toULongLong();
 
                 auto &mUser = this->_myUser();
-                _defineHostAbility(mUser);
+                Authorisations::defineHostAbility(mUser);
 
                 copy = mUser;
 
@@ -488,18 +488,6 @@ void RPZClient::_onSending() {
 
 void RPZClient::_onSent(bool success) {
     QMetaObject::invokeMethod(ProgressTracker::get(), "clientStoppedSending");
-}
-
-void RPZClient::resetHostAbility() {
-    _isHostAble = true;
-}
-
-bool RPZClient::isHostAble()  {
-    return _isHostAble;
-}
-
-void RPZClient::_defineHostAbility(const RPZUser &user) {
-    _isHostAble = user.role() == RPZUser::Role::Host;
 }
 
 const QList<RPZCharacter> RPZClient::unpairedUserCharacters() const {

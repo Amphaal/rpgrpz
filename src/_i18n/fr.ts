@@ -1176,7 +1176,7 @@
         <translation>Paysages</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.cpp" line="37"/>
+        <location filename="../shared/models/RPZAtom.cpp" line="41"/>
         <source>[Unpaired player token]</source>
         <translation>[Jeton de joueur vierge]</translation>
     </message>
