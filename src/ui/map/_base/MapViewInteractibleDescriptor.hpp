@@ -76,17 +76,12 @@ class MapViewInteractibleDescriptor : public QWidget {
         _anim(new QPropertyAnimation(this, "geometry")) {
             
             this->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
-            this->setAutoFillBackground(true);
-            
-            QPalette pal = palette();
-            pal.setColor(QPalette::Window, Qt::white);
-            this->setPalette(pal);
 
             this->_attitudeLbl->setVisible(false);
 
             this->_portraitLbl->setFixedSize(_defaultPortraitSize);
             this->_portraitLbl->setVisible(false);
-            this->_portraitLbl->setStyleSheet("border: 1px solid black");
+            this->_portraitLbl->setStyleSheet("border: 1px solid black; background-color: white;");
 
             this->_gaugeW = new GaugeWidget({}, QObject::tr("Health"), "#ef4e4e");
             this->_gaugeW->setVisible(false);
@@ -135,6 +130,20 @@ class MapViewInteractibleDescriptor : public QWidget {
             }
             
             this->_anim->start();
+
+        }
+
+    protected:
+        void paintEvent(QPaintEvent* event) {
+            
+            QPainter customPainter(this);
+            
+            auto rect = this->rect();
+            customPainter.fillRect(rect, "#fcfcfc");
+
+            rect.moveTopLeft({-1,-1});
+            customPainter.setPen(QPen("#c0c0c0"));
+            customPainter.drawRect(rect);
 
         }
 
