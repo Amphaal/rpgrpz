@@ -86,7 +86,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
                 painter->drawLine(line);
 
                 QBrush brush(Qt::BrushStyle::SolidPattern);
-                brush.setColor("#eb6e34");
+                brush.setColor(AppContext::WALKER_COLOR);
                 painter->setBrush(brush);
 
                 painter->setOpacity(.8);
@@ -105,11 +105,11 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
                 QPen pen;
                 pen.setWidth(1);
                 pen.setCosmetic(true);
-                pen.setColor("#eb6e34");
+                pen.setColor(AppContext::WALKER_COLOR);
                 pen.setStyle(Qt::DashLine);
 
                 QBrush brush(Qt::BrushStyle::SolidPattern);
-                brush.setColor("#eb6e34");
+                brush.setColor(AppContext::WALKER_COLOR);
 
                 painter->setPen(pen);
                 painter->setRenderHint(QPainter::Antialiasing, true);

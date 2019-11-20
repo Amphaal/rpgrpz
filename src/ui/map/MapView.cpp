@@ -85,6 +85,11 @@ void MapView::_handleHintsSignalsAndSlots() {
     );
 
     QObject::connect(
+        this->_hints, &ViewMapHint::changedOwnership,
+        this, &MapView::_onOwnershipChanged
+    );
+
+    QObject::connect(
         this->_hints, &AtomsStorage::mapParametersChanged,
         [=](const RPZMapParameters &mParams) {
             this->_currentMapParameters = mParams;
@@ -128,6 +133,19 @@ void MapView::_onUIUpdateRequest(const QHash<QGraphicsItem*, RPZAtom::Updates> &
 
     MapViewAnimator::triggerQueuedAnimations();
 
+}
+
+void MapView::_configureOwnership(const QList<QGraphicsItem*> &toConfigure, bool owns) {
+    for(auto gi : toConfigure) {
+        if(auto casted = dynamic_cast<MapViewToken*>(gi)) {
+            casted->setOwned(owns);
+        }
+    }
+}
+
+void MapView::_onOwnershipChanged(const QList<QGraphicsItem*> &granted, const QList<QGraphicsItem*> &revoked) {
+    this->_configureOwnership(granted, true);
+    this->_configureOwnership(revoked, false);
 }
 
 void MapView::_onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates) {
@@ -258,13 +276,12 @@ bool MapView::_tryToInvokeWalkableHelper(QGraphicsItem * toBeWalked) {
 
     auto result = this->_hints->singleSelectionHelper();
             
-    //TODO restrict to self player only
     auto isWalkable = Authorisations::isHostAble() && 
                       result.interactible.isWalkableAtom() &&
                       RPZQVariant::allowedToBeWalked(toBeWalked);
 
     //prevent if not walkable
-    if(!isWalkable) return;
+    if(!isWalkable) return false;
         
     //clear previous walker
     this->_clearWalkingHelper();
@@ -279,6 +296,8 @@ bool MapView::_tryToInvokeWalkableHelper(QGraphicsItem * toBeWalked) {
 
     //define tool
     this->_changeTool(MapTool::Walking);
+
+    return true;
 
 }
 
@@ -668,6 +687,9 @@ void MapView::_onIdentityReceived(const RPZUser &self) {
         this->_sendMapHistory();
     }
 
+    //define impersonation
+    this->_hints->defineImpersonatingCharacter(self.character().id());
+
     //if host
     bool is_remote = this->_hints->ackRemoteness(self, _rpzClient);
 
@@ -676,6 +698,9 @@ void MapView::_onIdentityReceived(const RPZUser &self) {
 }
 
 void MapView::connectionClosed(bool hasInitialMapLoaded) {
+
+    //reset impersonating character
+    this->_hints->defineImpersonatingCharacter();
 
     //back to default state
     if(hasInitialMapLoaded) QMetaObject::invokeMethod(this->_hints, "loadDefaultRPZMap");

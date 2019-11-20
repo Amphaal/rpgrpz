@@ -48,6 +48,8 @@ class ViewMapHint : public AtomsStorage {
         QGraphicsItem* generateGraphicsFromTemplate(bool hiddenAsDefault = false) const; //safe
         const SingleSelectionInteractible singleSelectionHelper() const; //safe
 
+        void defineImpersonatingCharacter(const RPZCharacter::Id &toImpersonate = 0);
+
     public slots:
         void mightNotifyMovement(const QList<QGraphicsItem*> &itemsWhoMightHaveMoved); //safe
         void notifySelectedItems(const QList<QGraphicsItem*> &selectedItems); //safe
@@ -63,6 +65,7 @@ class ViewMapHint : public AtomsStorage {
         void requestingUIUpdate(const QHash<QGraphicsItem*, RPZAtom::Updates> &toUpdate);
         void requestingUIUpdate(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates);
         void atomDescriptorUpdated(const RPZAtom &base = RPZAtom());
+        void changedOwnership(const QList<QGraphicsItem*> &granted, const QList<QGraphicsItem*> &revoked);
 
     protected:
         virtual void _handleAlterationRequest(const AlterationPayload &payload) override;
@@ -87,6 +90,14 @@ class ViewMapHint : public AtomsStorage {
 
         QMultiHash<RPZAsset::Hash, QGraphicsItem*> _missingAssetHashesFromDb;
         
+        //owning
+        QSet<RPZAtom::Id> _ownableAtomIds;
+        QSet<RPZAtom::Id> _ownedTokenIds;
+        RPZCharacter::Id _myCharacterId = 0;
+        bool _hasOwnershipOf(const RPZAtom &atom) const;
+        bool _isAtomOwnable(const RPZAtom &atom) const;
+        bool _isTokenYourOwn(const RPZAtom &atom) const;
+
         //helpers
         QGraphicsItem* _generateGhostItem(const RPZToy &toy, QGraphicsItem* &oldGhostToDelete);
         QGraphicsItem* _buildGraphicsItemFromAtom(const RPZAtom &atomToBuildFrom);

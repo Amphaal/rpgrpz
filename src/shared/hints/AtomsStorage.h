@@ -76,15 +76,9 @@ class AtomsStorage : public AlterationAcknoledger {
         virtual void _updatesDone(const QList<RPZAtom::Id> &updatedIds, const RPZAtom::Updates &updates) {};
         virtual void _updatesDone(const RPZAtom::ManyUpdates &updates) {};
 
-        //
-        bool _hasOwnershipOf(const RPZAtom &atom) const;
-
     private:
         mutable QMutex _m_handlingLock;
         MapDatabase _map;
-
-        bool _isTokenYourOwn(const RPZAtom &atom) const;
-        void _syncAtomUpdate(const RPZAtom::Id &toUpdate, const RPZAtom::Updates &updates);
 
         // redo/undo
         QStack<AlterationPayload> _redoHistory;
@@ -97,7 +91,6 @@ class AtomsStorage : public AlterationAcknoledger {
 
         //sets
         QSet<RPZAtom::Id> _restrictedAtomIds;
-        QSet<RPZAtom::Id> _ownedTokenIds;
 
         //duplication
         int _duplicationCount = 0;

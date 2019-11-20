@@ -25,16 +25,6 @@ const QString AtomsStorage::snapshotSave(const QString &folderToSaveTo) {
     return this->_map.snapshotSave(folderToSaveTo);
 }
 
-bool AtomsStorage::_hasOwnershipOf(const RPZAtom &atom) const {
-    if(!this->_ownedTokenIds.contains(atom.id())) return false;
-}
-
-bool AtomsStorage::_isTokenYourOwn(const RPZAtom &atom) const {
-    //TODO also allows if logged, and atom has character id that matches logged user character id
-    if(!atom.isWalkableAtom()) return false;
-    return Authorisations::isHostAble();
-}
-
 PossibleActionsOnAtomList AtomsStorage::getPossibleActions(const QList<RPZAtom::Id> &ids) {
     
     QMutexLocker l(&_m_handlingLock);
@@ -368,7 +358,6 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
         this->_undoHistory.clear();
         this->_redoHistory.clear();
         this->_restrictedAtomIds.clear();
-        this->_ownedTokenIds.clear();
         this->_map.clear();
 
         //set new map params
@@ -397,11 +386,6 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
                 this->_restrictedAtomIds += id;
             }
 
-            //check if is user token
-            if(this->_isTokenYourOwn(atom)) {
-                this->_ownedTokenIds += id;
-            }
-
             //handler for inheritors
             this->_atomAdded(atom);
 
@@ -424,7 +408,8 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
             auto atom = this->_map.atom(id);
             if(atom.isEmpty()) continue;
 
-            this->_syncAtomUpdate(id, updates);
+            //update db
+            this->_map.updateAtom(id, updates); 
             
         }
 
@@ -449,10 +434,11 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
             if(pType == Payload::Alteration::Removed) {
                 this->_map.removeAtom(id); //remove from db
                 this->_restrictedAtomIds.remove(id); //remove from restricted
-                this->_ownedTokenIds.remove(id); //remove from owned
             }
 
-            if(pType == Payload::Alteration::MetadataChanged) this->_syncAtomUpdate(id, maybeUpdates);
+            if(pType == Payload::Alteration::MetadataChanged) {
+                this->_map.updateAtom(id, maybeUpdates); //update db
+            }
 
             alteredIds += id;
 
@@ -462,18 +448,6 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
         else this->_basicAlterationDone(alteredIds, pType);
 
     }
-}
-
-void AtomsStorage::_syncAtomUpdate(const RPZAtom::Id &toUpdate, const RPZAtom::Updates &updates) {
-    
-    //update db
-    this->_map.updateAtom(toUpdate, updates);
-    
-    //rectify
-    if(updates.contains(RPZAtom::Parameter::CharacterId)) {
-        //TODO reattribute ownership
-    }
-
 }
 
 //

@@ -9,6 +9,7 @@
 #include <QPainter>
 #include <QWidget>
 #include <QStyleOptionGraphicsItem>
+#include <QPropertyAnimation>
 
 #include "src/shared/models/RPZMapParameters.hpp"
 #include "src/shared/models/RPZAtom.h"
@@ -20,11 +21,18 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
     Q_OBJECT
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
     Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
+    Q_PROPERTY(qreal rotation READ opacity WRITE setRotation)
     Q_INTERFACES(QGraphicsItem)
 
     public:
-        MapViewToken(const RPZMapParameters &mapParameters, const RPZAtom &atom) {          
+        MapViewToken(const RPZMapParameters &mapParameters, const RPZAtom &atom) :
+            _spinnerAnim(new QPropertyAnimation(this, "rotation")) {          
             
+            this->_spinnerAnim->setDuration(1000);
+            this->_spinnerAnim->setStartValue(0);
+            this->_spinnerAnim->setEndValue(360);
+            this->_spinnerAnim->setLoopCount(-1);
+
             this->_tokenType = atom.type();
             this->setAcceptHoverEvents(true);
 
@@ -42,8 +50,15 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
         }
 
         void setOwned(bool owned) {
-            //TODO start / remove animation
+
+            this->_owned = owned;
             RPZQVariant::setAllowedToBeWalked(this, owned);
+
+            this->_spinnerAnim->stop();
+            if(owned) this->_spinnerAnim->start();
+
+            this->update();
+            
         }
 
         void updateColor(const QColor &toApply) {
@@ -65,12 +80,15 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
 
     private:
         RPZAtom::Type _tokenType;
+        bool _owned = false;
 
         QRectF _upperRect;
         QRectF _mainRect;
 
         QBrush _upperBrush;
         QBrush _mainBrush;
+
+        QPropertyAnimation* _spinnerAnim = nullptr;
 
         bool _mustDrawSelectionHelper() const override { 
             return true; 
@@ -141,6 +159,18 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
             painter->save();
 
                 painter->setRenderHint(QPainter::Antialiasing, true);
+
+                if(this->_owned) {
+                    
+                    QPen pen;
+                    pen.setColor(AppContext::WALKER_COLOR);
+                    pen.setStyle(Qt::DashLine);
+                    painter->setPen(pen);
+                    
+                    painter->drawEllipse(this->_mainRect);
+
+                }
+
                 painter->setPen(Qt::NoPen);
                 
                 painter->setBrush(this->_mainBrush);
@@ -167,6 +197,8 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
                     painter->drawText(signRect, sign);
 
                 }
+
+
 
             painter->restore();
 

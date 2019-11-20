@@ -90,6 +90,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         void _onUIAlterationRequest(const Payload::Alteration &type, const QList<QGraphicsItem*> &toAlter);
         void _onUIUpdateRequest(const QHash<QGraphicsItem*, RPZAtom::Updates> &toUpdate);
         void _onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates);
+        void _onOwnershipChanged(const QList<QGraphicsItem*> &granted, const QList<QGraphicsItem*> &revoked);
 
         //network
         void _sendMapHistory();
@@ -111,6 +112,9 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
             bool _ignoreSelectionChangedEvents = false;
             bool _isAnySelectableItemsUnderCursor(const QPoint &cursorPosInWindow) const;
             void _notifySelection();
+
+        //ownership
+            void _configureOwnership(const QList<QGraphicsItem*> &toConfigure, bool owns);
 
         //ghost
             QGraphicsItem* _displayableGhostItem();

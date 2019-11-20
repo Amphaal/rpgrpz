@@ -18,6 +18,25 @@ QGraphicsItem* ViewMapHint::ghostItem() const {
     return this->_ghostItem;
 }
 
+
+bool ViewMapHint::_hasOwnershipOf(const RPZAtom &atom) const {
+    return this->_ownedTokenIds.contains(atom.id());
+}
+
+bool ViewMapHint::_isAtomOwnable(const RPZAtom &atom) const {
+    return atom.isWalkableAtom();
+}
+
+bool ViewMapHint::_isTokenYourOwn(const RPZAtom &atom) const {
+    //TODO also allows if logged, and atom has character id that matches logged user character id
+    return Authorisations::isHostAble();
+}
+
+void ViewMapHint::defineImpersonatingCharacter(const RPZCharacter::Id &toImpersonate) {
+    this->_myCharacterId = toImpersonate;
+    //TODO reevaluate
+}
+
 void ViewMapHint::_updateTemplateAtom(RPZAtom::Updates updates) {
     
     //update template
@@ -394,6 +413,8 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
 
         //clear GI lists
         this->_GItemsById.clear();
+        this->_ownedTokenIds.clear();
+        this->_ownableAtomIds.clear();
 
         //delete ghost
         this->_m_ghostItem.lock();
@@ -529,14 +550,33 @@ const ViewMapHint::SingleSelectionInteractible ViewMapHint::_generateSSI(const S
 }
 
 void ViewMapHint::_atomAdded(const RPZAtom &added) {
+    
     this->_buildGraphicsItemFromAtom(added);
+    
+    if(this->_isAtomOwnable(added)) {
+        
+        auto id = added.id();
+        this->_ownableAtomIds += id;
+
+        //check if is user token
+        if(this->_isTokenYourOwn(added)) this->_ownedTokenIds += id;
+
+    }
+
 }
 
 void ViewMapHint::_basicAlterationDone(const QList<RPZAtom::Id> &updatedIds, const Payload::Alteration &type) {
     QList<QGraphicsItem*> toUpdate;
     
     for(const auto id : updatedIds) {
-        if(type == Payload::Alteration::Removed) toUpdate += this->_GItemsById.take(id);
+
+        //if removed...
+        if(type == Payload::Alteration::Removed) {
+            toUpdate += this->_GItemsById.take(id);
+            this->_ownableAtomIds.remove(id);
+            this->_ownedTokenIds.remove(id);
+        }
+
         else toUpdate += this->_GItemsById.value(id);
     }
 
@@ -544,20 +584,32 @@ void ViewMapHint::_basicAlterationDone(const QList<RPZAtom::Id> &updatedIds, con
 }
 
 void ViewMapHint::_updatesDone(const QList<RPZAtom::Id> &updatedIds, const RPZAtom::Updates &updates) {
+    
     QList<QGraphicsItem*> toUpdate;
+    
     for(const auto id : updatedIds) {
         toUpdate += this->_GItemsById.value(id);
     }
+
+    //TODO reconfigure ownables
+
     emit requestingUIUpdate(toUpdate, updates);
+
 }
 
 void ViewMapHint::_updatesDone(const RPZAtom::ManyUpdates &updates) {
+    
     QHash<QGraphicsItem*, RPZAtom::Updates> toUpdate;
+    
     for(auto i = updates.constBegin(); i != updates.constEnd(); i++) {
         auto gi = this->_GItemsById.value(i.key());
         toUpdate.insert(gi, i.value());
     }
+
+    //TODO reconfigure ownables
+
     emit requestingUIUpdate(toUpdate);
+
 }
 
 /////////////////////////////////

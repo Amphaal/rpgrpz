@@ -69,10 +69,11 @@ void AtomConverter::_updateGraphicsItemFromMetadata(QGraphicsItem* item, const R
     }
 
     //sort
-    std::sort(paramsToUpdate.begin(), paramsToUpdate.end()); 
+    auto asList = paramsToUpdate.toList();
+    std::sort(asList.begin(), asList.end()); 
     
     //update GI
-    for(const auto param : paramsToUpdate) {
+    for(const auto param : asList) {
         auto val = blueprint.metadata(param);
         _updateGraphicsItemFromMetadata(item, param, val);
     }
