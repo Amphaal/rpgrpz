@@ -158,7 +158,7 @@
     <message>
         <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="43"/>
         <source>Opacity</source>
-        <translation>Transparence</translation>
+        <translation>Opacité</translation>
     </message>
     <message>
         <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="37"/>

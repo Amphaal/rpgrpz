@@ -36,8 +36,11 @@ class AbstractAtomSliderEditor : public AtomSubEditor {
 
         const CrossEquities& _crossEquities() const;
         
-        virtual void _updateWidgetsFromSliderVal(int sliderVal);
-        void _updateWidgetsFromAtomVal(double atomVal);
+        void _updateSlider(int toApply);
+        virtual void _updateSpinner(double toApply) = 0;
+        void _initialSetup(double atomVal);
+
+        void _triggerAlterations();
         
 
 };

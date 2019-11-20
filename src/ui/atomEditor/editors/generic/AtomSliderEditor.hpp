@@ -20,20 +20,23 @@ class AtomSliderEditor : public AbstractAtomSliderEditor {
 
             QObject::connect(
                 spin, qOverload<int>(&QSpinBox ::valueChanged),
-                this, &AtomSliderEditor::_onSliderValueChanged
+                this, &AtomSliderEditor::_onSpinnerValueChanged
             );
 
             return spin;
 
         }
 
-        void _updateWidgetsFromSliderVal(int sliderVal) override {
-
-            AbstractAtomSliderEditor::_updateWidgetsFromSliderVal(sliderVal);
-
+        void _updateSpinner(double toApply) override {
             QSignalBlocker l(this->_spin);
-            ((QSpinBox*)this->_spin)->setValue(sliderVal);
+            ((QSpinBox*)this->_spin)->setValue((int)toApply);
+        }
 
+    private:
+        void _onSpinnerValueChanged(int atomValue) {
+            auto sliderVal = this->toSliderValue(atomValue);
+            this->_updateSlider(sliderVal);
+            this->_triggerAlterations();
         }
 
 };

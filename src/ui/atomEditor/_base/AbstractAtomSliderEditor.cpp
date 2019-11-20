@@ -38,7 +38,7 @@ void AbstractAtomSliderEditor::loadTemplate(const RPZAtom::Updates &defaultValue
         this->_descr->updateValue(defaultVal);
     }
     
-    this->_updateWidgetsFromAtomVal(defaultVal);
+    this->_initialSetup(defaultVal);
 
 }
 
@@ -47,10 +47,15 @@ const CrossEquities& AbstractAtomSliderEditor::_crossEquities() const {
 }
 
 void AbstractAtomSliderEditor::_onSliderValueChanged(int sliderVal) {
-    this->_updateWidgetsFromSliderVal(sliderVal);
+    auto atomVal = this->toAtomValue(sliderVal);
+    this->_updateSpinner(atomVal);
+    this->_triggerAlterations();
+};
+
+void AbstractAtomSliderEditor::_triggerAlterations() {
     this->_confirmPreview();
     this->_commitTimer.start();  
-};
+}
 
 void AbstractAtomSliderEditor::_confirmPayload() {
     auto output = this->outputValue();
@@ -69,14 +74,15 @@ void AbstractAtomSliderEditor::_confirmPreview() {
 
 }
 
-void AbstractAtomSliderEditor::_updateWidgetsFromAtomVal(double atomVal) {
+void AbstractAtomSliderEditor::_initialSetup(double atomVal) {
     auto sval = this->toSliderValue(atomVal);
-    this->_updateWidgetsFromSliderVal(sval);
+    this->_updateSlider(sval);
+    this->_updateSpinner(atomVal);
 }
 
-void AbstractAtomSliderEditor::_updateWidgetsFromSliderVal(int sliderVal) {
+void AbstractAtomSliderEditor::_updateSlider(int toApply) {
     QSignalBlocker l(this->_slider);
-    this->_slider->setValue(sliderVal);
+    this->_slider->setValue(toApply);
 }
 
 double AbstractAtomSliderEditor::toAtomValue(int sliderVal) const {

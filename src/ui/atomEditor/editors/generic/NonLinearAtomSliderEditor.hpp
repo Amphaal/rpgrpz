@@ -29,21 +29,16 @@ class NonLinearAtomSliderEditor : public AbstractAtomSliderEditor {
 
         }
 
-        void _updateWidgetsFromSliderVal(int sliderVal) override {
-
-            AbstractAtomSliderEditor::_updateWidgetsFromSliderVal(sliderVal);
-
-            auto atomVal = this->toAtomValue(sliderVal);
-
+        void _updateSpinner(double toApply) override {
             QSignalBlocker l(this->_spin);
-            ((QDoubleSpinBox*)this->_spin)->setValue(atomVal);
-            
+            ((QDoubleSpinBox*)this->_spin)->setValue(toApply);
         }
 
     
     private:
         void _onSpinBoxValueChanged(double spinValue) {
             auto sliderVal = this->toSliderValue(spinValue);
-            this->_onSliderValueChanged(sliderVal);
+            this->_updateSlider(sliderVal);
+            this->_triggerAlterations();
         }
 };
