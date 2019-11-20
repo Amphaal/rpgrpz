@@ -258,7 +258,7 @@ class RPZAtom : public Serializable {
         };
         
         static const inline QHash<RPZAtom::NPCType, QColor> _NPCTypeAssociatedColor {
-            { RPZAtom::NPCType::Unknown, QStringLiteral(u"#c3b7b4") },
+            { RPZAtom::NPCType::Unknown, QStringLiteral(u"#3b393e") },
             { RPZAtom::NPCType::Neutral, QStringLiteral(u"#79b9ff") },
             { RPZAtom::NPCType::Friendly, QStringLiteral(u"#4bd743") },
             { RPZAtom::NPCType::Hostile, QStringLiteral(u"#d60003") }

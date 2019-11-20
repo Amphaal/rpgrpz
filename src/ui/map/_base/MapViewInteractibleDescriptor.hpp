@@ -88,7 +88,7 @@ class MapViewInteractibleDescriptor : public QWidget {
             this->_portraitLbl->setVisible(false);
             this->_portraitLbl->setStyleSheet("border: 1px solid black");
 
-            this->_gaugeW = new GaugeWidget({}, QObject::tr("Health"), Qt::red);
+            this->_gaugeW = new GaugeWidget({}, QObject::tr("Health"), "#ef4e4e");
             this->_gaugeW->setVisible(false);
 
             this->_anim->setEasingCurve(QEasingCurve::InCubic);

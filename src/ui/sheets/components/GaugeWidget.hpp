@@ -37,6 +37,6 @@ class GaugeWidget : public QProgressBar {
     private:
         QString _name;
 
-        static inline QString _styleTemplate = "QProgressBar {border: 1px solid grey; border-radius: 3px; text-align: right;} QProgressBar::chunk {background-color: %1;width: 20px;}";
+        static inline QString _styleTemplate = "QProgressBar {border: 1px solid grey; border-radius: 3px; text-align: center;} QProgressBar::chunk {background-color: %1;width: 20px;}";
 
 };
