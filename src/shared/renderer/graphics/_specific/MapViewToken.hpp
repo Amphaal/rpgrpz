@@ -24,11 +24,18 @@ class MapViewTokenOutline : public QObject, public QGraphicsItem, public RPZGrap
 
     public:
         MapViewTokenOutline(QGraphicsItem* parentItem, QObject* parentObject) : QObject(parentObject), QGraphicsItem(parentItem) {
+            
+            this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
+            this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
+            this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsFocusable, false);   
+            
+            
             this->_spinnerAnim = new QPropertyAnimation(this, "rotation", this);
             this->_spinnerAnim->setDuration(10000);
             this->_spinnerAnim->setStartValue(0);
             this->_spinnerAnim->setEndValue(360);
             this->_spinnerAnim->setLoopCount(-1);
+            
         }
 
         ~MapViewTokenOutline() {

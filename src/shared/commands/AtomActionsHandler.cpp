@@ -48,6 +48,7 @@ void AtomActionsHandler::pasteAtomsFromClipboard(AtomsStorage* master) {
 
 void AtomActionsHandler::removeAtoms(AtomsStorage* master, const QList<RPZAtom::Id> &ids) {
     if(!Authorisations::isHostAble()) return;
+    if(!ids.count()) return;
     RemovedPayload payload(ids);
     AlterationHandler::get()->queueAlteration(master, payload);
 }
@@ -76,7 +77,6 @@ void AtomActionsHandler::alterAtomsAvailability(AtomsStorage* master, const QLis
 ///
 ///
 ///
-
 
 void AtomActionsHandler::_addRemoveActionToShortcuts(QWidget* toAddShortcutsTo) {
     
