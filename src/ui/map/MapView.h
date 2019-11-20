@@ -107,6 +107,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         void _handleHintsSignalsAndSlots();
         void _updateItemValue(QGraphicsItem* item, const RPZAtom::Updates &updates);
         bool _preventMoveOrInsertAtPosition(QGraphicsItem *toCheck, const QPointF &toCheckAt = QPointF());
+        void _addItemToScene(QGraphicsItem* item);
 
         //Selection
             bool _ignoreSelectionChangedEvents = false;

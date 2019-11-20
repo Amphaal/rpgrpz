@@ -28,7 +28,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     
     this->setRubberBandSelectionMode(Qt::ItemSelectionMode::ContainsItemBoundingRect); //rubberband UC optimization
-    this->setViewportUpdateMode(QGraphicsView::ViewportUpdateMode::SmartViewportUpdate); //force viewport update mode
+
     this->setMouseTracking(true); //activate mouse tracking for ghost 
 
     //thread
@@ -158,6 +158,16 @@ void MapView::_onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const RP
 
 }
 
+void MapView::_addItemToScene(QGraphicsItem* item) {
+
+    this->scene()->addItem(item);
+
+    if(auto token = dynamic_cast<MapViewToken*>(item)) {
+        token->triggerAnimation();
+    }
+
+}
+
 void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QList<QGraphicsItem*> &toAlter) {
     
     //prevent circual selection
@@ -191,14 +201,15 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
         switch(type) {
 
             case Payload::Alteration::Reset: {
-                this->scene()->addItem(item);        
+                this->_addItemToScene(item);      
                 this->incrementHeavyLoadPlaceholder();
             }
             break;
 
             case Payload::Alteration::Added: {
-                this->scene()->addItem(item);
-                
+
+                this->_addItemToScene(item);
+
                 //auto remove temporary drawing
                 auto isCommitedDrawing = this->_drawingAssist->compareItemToCommitedDrawing(item);
                 

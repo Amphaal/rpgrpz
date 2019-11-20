@@ -55,6 +55,11 @@ QGraphicsItem* AtomRenderer::createGraphicsItem(const RPZAtom &atom, const RPZAs
         signalHandler->moveToThread(QApplication::instance()->thread());
     }
 
+    //if directly inherits of QObject
+    if(auto obj = dynamic_cast<QObject*>(out)) {
+        obj->moveToThread(QApplication::instance()->thread());
+    }
+
     return out;
 }
 

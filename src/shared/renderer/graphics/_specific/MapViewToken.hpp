@@ -16,6 +16,74 @@
 
 #include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
 
+class MapViewTokenOutline : public QObject, public QGraphicsItem, public RPZGraphicsItem {
+    
+    Q_OBJECT
+    Q_PROPERTY(qreal rotation READ opacity WRITE setRotation)
+    Q_INTERFACES(QGraphicsItem)
+
+    public:
+        MapViewTokenOutline(QGraphicsItem* parentItem, QObject* parentObject) : QObject(parentObject), QGraphicsItem(parentItem) {
+            this->_spinnerAnim = new QPropertyAnimation(this, "rotation", this);
+            this->_spinnerAnim->setDuration(10000);
+            this->_spinnerAnim->setStartValue(0);
+            this->_spinnerAnim->setEndValue(360);
+            this->_spinnerAnim->setLoopCount(-1);
+        }
+
+        ~MapViewTokenOutline() {
+            this->_spinnerAnim->deleteLater();
+        }
+
+        void triggerAnimation(bool starts) {
+            this->_spinnerAnim->stop();
+            if(starts) this->_spinnerAnim->start();
+        }
+
+        QRectF boundingRect() const override {
+            return this->parentItem()->boundingRect();
+        }
+
+    protected:
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
+            auto result = this->conditionnalPaint(this, painter, option, widget);
+            if(!result.mustContinue) return;
+            this->_paint(painter, &result.options, widget);
+        }
+
+    private:
+        QPropertyAnimation* _spinnerAnim = nullptr;
+
+        bool _mustDrawSelectionHelper() const override { 
+            return false; 
+        };
+        
+        bool _canBeDrawnInMiniMap() const override { 
+            return false; 
+        };
+
+        void _paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) {
+            
+            painter->save();
+
+                painter->setRenderHint(QPainter::Antialiasing, true);
+
+                QPen pen;
+                pen.setWidth(2);
+                pen.setColor(AppContext::WALKER_COLOR);
+                pen.setStyle(Qt::DashLine);
+                painter->setPen(pen);
+                
+                painter->setOpacity(1);
+                painter->drawEllipse(option->rect);
+
+            painter->restore();
+
+        }
+
+};
+
+
 class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsItem {
     
     Q_OBJECT
@@ -25,13 +93,7 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
     Q_INTERFACES(QGraphicsItem)
 
     public:
-        MapViewToken(const RPZMapParameters &mapParameters, const RPZAtom &atom) :
-            _spinnerAnim(new QPropertyAnimation(this, "rotation")) {          
-            
-            this->_spinnerAnim->setDuration(1000);
-            this->_spinnerAnim->setStartValue(0);
-            this->_spinnerAnim->setEndValue(360);
-            this->_spinnerAnim->setLoopCount(-1);
+        MapViewToken(const RPZMapParameters &mapParameters, const RPZAtom &atom) {           
 
             this->_tokenType = atom.type();
             this->setAcceptHoverEvents(true);
@@ -41,6 +103,7 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
 
             auto startPosComp = QPointF(-tokenSize.width() / 2, -tokenSize.height() / 2);
             this->_mainRect = QRectF(startPosComp, tokenSize);
+            this->setTransformOriginPoint(startPosComp);
 
             auto prc = this->_mainRect.width() * 0.1;
             this->_upperRect = this->_mainRect.marginsRemoved(QMarginsF(prc, prc, prc, prc));
@@ -49,16 +112,24 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
 
         }
 
-        void setOwned(bool owned) {
+        ~MapViewToken() {
+            if(this->_outline) this->_outline->deleteLater();
+        }
 
+        void setOwned(bool owned) {
             this->_owned = owned;
             RPZQVariant::setAllowedToBeWalked(this, owned);
+        }
 
-            this->_spinnerAnim->stop();
-            if(owned) this->_spinnerAnim->start();
-
-            this->update();
+        //only use on main thread !
+        void triggerAnimation() {
             
+            if(!this->_outline) {
+                this->_outline = new MapViewTokenOutline(this, this); 
+            }
+
+            // this->_outline->triggerAnimation(this->_owned);
+
         }
 
         void updateColor(const QColor &toApply) {
@@ -79,6 +150,7 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
         }
 
     private:
+        MapViewTokenOutline* _outline = nullptr;
         RPZAtom::Type _tokenType;
         bool _owned = false;
 
@@ -87,8 +159,6 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
 
         QBrush _upperBrush;
         QBrush _mainBrush;
-
-        QPropertyAnimation* _spinnerAnim = nullptr;
 
         bool _mustDrawSelectionHelper() const override { 
             return true; 
@@ -160,21 +230,10 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
 
                 painter->setRenderHint(QPainter::Antialiasing, true);
 
-                if(this->_owned) {
-                    
-                    QPen pen;
-                    pen.setColor(AppContext::WALKER_COLOR);
-                    pen.setStyle(Qt::DashLine);
-                    painter->setPen(pen);
-                    
-                    painter->drawEllipse(this->_mainRect);
-
-                }
-
                 painter->setPen(Qt::NoPen);
                 
                 painter->setBrush(this->_mainBrush);
-                painter->drawRoundedRect(this->_mainRect, 75, 75, Qt::RelativeSize);
+                painter->drawEllipse(this->_mainRect);
                 
                 if(this->_tokenType == RPZAtom::Type::Player) {
                     

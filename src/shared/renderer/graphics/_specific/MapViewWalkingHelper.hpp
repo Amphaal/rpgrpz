@@ -180,11 +180,12 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
                 auto scenePos = this->scenePos();
                 auto x = qAbs(qRound((scenePos.x() - this->_destScenePos.x()) / tileWidth));
                 auto y = qAbs(qRound((scenePos.y() - this->_destScenePos.y()) / tileWidth));
-
+                
                 auto text = QStringLiteral(u"%1x%2").arg(x).arg(y);
                 auto textRect = painter->boundingRect(QRectF(), text, aa);
                 textRect = this->_adjustText(pp.itemCursorPos, pp.viewCursorPos, textRect);
 
+                painter->setOpacity(1);
                 painter->drawText(textRect, text, aa);
 
             painter->restore();

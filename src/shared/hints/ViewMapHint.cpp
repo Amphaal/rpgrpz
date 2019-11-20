@@ -20,7 +20,14 @@ QGraphicsItem* ViewMapHint::ghostItem() const {
 
 
 bool ViewMapHint::_hasOwnershipOf(const RPZAtom &atom) const {
-    return this->_ownedTokenIds.contains(atom.id());
+    
+    if(!this->_isAtomOwnable(atom)) return false;
+
+    auto id = atom.id();
+    auto has = this->_ownedTokenIds.contains(id);
+
+    return has;
+    
 }
 
 bool ViewMapHint::_isAtomOwnable(const RPZAtom &atom) const {
@@ -258,6 +265,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuil
         newItem = AtomRenderer::createGraphicsItem(
             atomToBuildFrom, 
             *asset,
+            false,
             this->_hasOwnershipOf(atomToBuildFrom)
         );
     }
@@ -300,6 +308,7 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &asset) {
         auto newGi = AtomRenderer::createGraphicsItem(
             atom, 
             asset,
+            false,
             this->_hasOwnershipOf(atom)
         );
         this->_crossBindingAtomWithGI(atom, newGi);
@@ -551,17 +560,19 @@ const ViewMapHint::SingleSelectionInteractible ViewMapHint::_generateSSI(const S
 
 void ViewMapHint::_atomAdded(const RPZAtom &added) {
     
-    this->_buildGraphicsItemFromAtom(added);
-    
     if(this->_isAtomOwnable(added)) {
         
         auto id = added.id();
         this->_ownableAtomIds += id;
 
         //check if is user token
-        if(this->_isTokenYourOwn(added)) this->_ownedTokenIds += id;
+        if(this->_isTokenYourOwn(added)) {
+            this->_ownedTokenIds += id;
+        }
 
     }
+
+    this->_buildGraphicsItemFromAtom(added);
 
 }
 

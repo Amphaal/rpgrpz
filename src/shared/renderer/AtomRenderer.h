@@ -15,7 +15,7 @@ class AtomRenderer {
     public:
         static void defineMapParameters(const RPZMapParameters &mapParameters);
 
-        static QGraphicsItem* createGraphicsItem(const RPZAtom &atom, const RPZAsset &asset, bool isTemporary = false, bool owned = false);
+        static QGraphicsItem* createGraphicsItem(const RPZAtom &atom, const RPZAsset &asset, bool isTemporary, bool owned);
         static QGraphicsRectItem* createMissingAssetPlaceholderItem(const RPZAtom &atom);
         static QGraphicsItem* createOutlineRectItem(const QPointF &scenePos);
 
