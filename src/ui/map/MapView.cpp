@@ -284,6 +284,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
 bool MapView::_tryToInvokeWalkableHelper(QGraphicsItem * toBeWalked) {
     
     if(!toBeWalked) return false;
+    if(!this->_isMousePressed) return false;
 
     auto result = this->_hints->singleSelectionHelper();
             
