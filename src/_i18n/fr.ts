@@ -293,9 +293,14 @@
 <context>
     <name>CharacterPickerEditor</name>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="18"/>
-        <source>[No character]</source>
-        <translation>[Aucun personnage]</translation>
+        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="55"/>
+        <source>[Cannot configure...]</source>
+        <translation>[Impossible à configurer...]</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="60"/>
+        <source>[No character associated]</source>
+        <translation>[Aucun personnage associé]</translation>
     </message>
 </context>
 <context>

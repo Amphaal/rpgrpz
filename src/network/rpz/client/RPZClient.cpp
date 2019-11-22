@@ -4,7 +4,7 @@ RPZClient::RPZClient(const QString &socketStr, const QString &displayName, const
     AlterationActor(Payload::Source::RPZClient),
     JSONLogger(QStringLiteral(u"[Client]")), 
     _userDisplayName(displayName),
-    _characterToIncarnate(toIncarnate) { 
+    _handshakeCharacter(toIncarnate) { 
     
     //split socket str
     auto parts = socketStr.split(QStringLiteral(u":"), QString::SplitBehavior::SkipEmptyParts);
@@ -117,7 +117,7 @@ void RPZClient::_onConnected() {
     
     RPZHandshake handshake(
         this->_userDisplayName,
-        this->_characterToIncarnate
+        this->_handshakeCharacter
     );
 
     //tell the server your username
@@ -242,7 +242,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
                     RPZUser user(rUser.toHash());
                     this->_sessionUsers.insert(user.id(), user);
 
-                    this->_registerTokenAttribution(user);
+                    this->_registerAsCharacterized(user);
 
                 }
 
@@ -263,7 +263,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
                 //add user to session users
                 this->_sessionUsers.insert(user.id(), user);
 
-                this->_registerTokenAttribution(user);
+                this->_registerAsCharacterized(user);
 
             }
 
@@ -284,7 +284,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
                 out = this->_sessionUsers.take(idToRemove);
 
                 //from from token list
-                this->_playerIdsWithoutToken.remove(idToRemove);
+                this->_characterizedUserIds.remove(idToRemove);
 
             }
 
@@ -306,7 +306,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
                 //replace current session user with updated one
                 this->_sessionUsers.insert(updatedId, updated);
 
-                this->_registerTokenAttribution(updated);
+                this->_registerAsCharacterized(updated);
 
             }
 
@@ -420,16 +420,16 @@ void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
     emit closed();
 }
 
-void RPZClient::_registerTokenAttribution(const RPZUser &user) {
+void RPZClient::_registerAsCharacterized(const RPZUser &user) {
     
     if (user.role() != RPZUser::Role::Player) return;
     
     if(!user.playerTokenAtomId()) {
-        this->_playerIdsWithoutToken.insert(user.id());
+        this->_characterizedUserIds.insert(user.id());
     } 
     
     else {
-        this->_playerIdsWithoutToken.remove(user.id());
+        this->_characterizedUserIds.remove(user.id());
     }
 
 }
@@ -490,12 +490,12 @@ void RPZClient::_onSent(bool success) {
     QMetaObject::invokeMethod(ProgressTracker::get(), "clientStoppedSending");
 }
 
-const QList<RPZCharacter> RPZClient::unpairedUserCharacters() const {
+const QList<RPZCharacter> RPZClient::sessionCharacters() const {
     
     QList<RPZCharacter> out;
 
     QMutexLocker l(&this->_m_sessionUsers);
-    for(const auto &userId : this->_playerIdsWithoutToken) {
+    for(const auto &userId : this->_characterizedUserIds) {
         auto &user = this->_sessionUsers[userId];
         out += user.character();
     }

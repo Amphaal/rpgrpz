@@ -96,7 +96,6 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
     Q_OBJECT
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
     Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
-    Q_PROPERTY(qreal rotation READ opacity WRITE setRotation)
     Q_INTERFACES(QGraphicsItem)
 
     public:

@@ -135,17 +135,10 @@ void MapView::_onUIUpdateRequest(const QHash<QGraphicsItem*, RPZAtom::Updates> &
 
 }
 
-void MapView::_configureOwnership(const QList<QGraphicsItem*> &toConfigure, bool owns) {
-    for(auto gi : toConfigure) {
-        if(auto casted = dynamic_cast<MapViewToken*>(gi)) {
-            casted->setOwned(owns);
-        }
+void MapView::_onOwnershipChanged(QGraphicsItem* changing, bool owned) {
+    if(auto casted = dynamic_cast<MapViewToken*>(changing)) {
+        casted->setOwned(owned);
     }
-}
-
-void MapView::_onOwnershipChanged(const QList<QGraphicsItem*> &granted, const QList<QGraphicsItem*> &revoked) {
-    this->_configureOwnership(granted, true);
-    this->_configureOwnership(revoked, false);
 }
 
 void MapView::_onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates) {

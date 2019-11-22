@@ -65,7 +65,7 @@ class ViewMapHint : public AtomsStorage {
         void requestingUIUpdate(const QHash<QGraphicsItem*, RPZAtom::Updates> &toUpdate);
         void requestingUIUpdate(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates);
         void atomDescriptorUpdated(const RPZAtom &base = RPZAtom());
-        void changedOwnership(const QList<QGraphicsItem*> &granted, const QList<QGraphicsItem*> &revoked);
+        void changedOwnership(QGraphicsItem* changing, bool owned);
 
     protected:
         virtual void _handleAlterationRequest(const AlterationPayload &payload) override;
@@ -91,12 +91,9 @@ class ViewMapHint : public AtomsStorage {
         QMultiHash<RPZAsset::Hash, QGraphicsItem*> _missingAssetHashesFromDb;
         
         //owning
-        QSet<RPZAtom::Id> _ownableAtomIds;
         QSet<RPZAtom::Id> _ownedTokenIds;
         RPZCharacter::Id _myCharacterId = 0;
         bool _hasOwnershipOf(const RPZAtom &atom) const;
-        bool _isAtomOwnable(const RPZAtom &atom) const;
-        bool _isTokenYourOwn(const RPZAtom &atom) const;
 
         //helpers
         QGraphicsItem* _generateGhostItem(const RPZToy &toy, QGraphicsItem* &oldGhostToDelete);
@@ -115,5 +112,6 @@ class ViewMapHint : public AtomsStorage {
         virtual void _basicAlterationDone(const QList<RPZAtom::Id> &updatedIds, const Payload::Alteration &type) override;
         virtual void _updatesDone(const QList<RPZAtom::Id> &updatedIds, const RPZAtom::Updates &updates) override;
         virtual void _updatesDone(const RPZAtom::ManyUpdates &updates) override;
+        virtual void _ownerChanged(const RPZAtom::Id &target, const RPZCharacter::Id &newOwner) override;
 
 };

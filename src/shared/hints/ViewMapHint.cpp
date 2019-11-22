@@ -18,6 +18,19 @@ QGraphicsItem* ViewMapHint::ghostItem() const {
     return this->_ghostItem;
 }
 
+void ViewMapHint::_ownerChanged(const RPZAtom::Id &target, const RPZCharacter::Id &newOwner) {
+    
+    auto gi = this->_GItemsById.value(target);
+    if(!gi) return;
+
+    auto owns = (this->_myCharacterId && this->_myCharacterId == newOwner) || Authorisations::isHostAble();
+    
+    if(owns) this->_ownedTokenIds.insert(target);
+    else this->_ownedTokenIds.remove(target);
+
+    emit changedOwnership(gi, owns);
+
+}
 
 bool ViewMapHint::_hasOwnershipOf(const RPZAtom &atom) const {
     
@@ -28,15 +41,6 @@ bool ViewMapHint::_hasOwnershipOf(const RPZAtom &atom) const {
 
     return has;
     
-}
-
-bool ViewMapHint::_isAtomOwnable(const RPZAtom &atom) const {
-    return atom.isWalkableAtom();
-}
-
-bool ViewMapHint::_isTokenYourOwn(const RPZAtom &atom) const {
-    //TODO also allows if logged, and atom has character id that matches logged user character id
-    return Authorisations::isHostAble();
 }
 
 void ViewMapHint::defineImpersonatingCharacter(const RPZCharacter::Id &toImpersonate) {
@@ -423,7 +427,6 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
         //clear GI lists
         this->_GItemsById.clear();
         this->_ownedTokenIds.clear();
-        this->_ownableAtomIds.clear();
 
         //delete ghost
         this->_m_ghostItem.lock();
@@ -559,21 +562,7 @@ const ViewMapHint::SingleSelectionInteractible ViewMapHint::_generateSSI(const S
 }
 
 void ViewMapHint::_atomAdded(const RPZAtom &added) {
-    
-    if(this->_isAtomOwnable(added)) {
-        
-        auto id = added.id();
-        this->_ownableAtomIds += id;
-
-        //check if is user token
-        if(this->_isTokenYourOwn(added)) {
-            this->_ownedTokenIds += id;
-        }
-
-    }
-
     this->_buildGraphicsItemFromAtom(added);
-
 }
 
 void ViewMapHint::_basicAlterationDone(const QList<RPZAtom::Id> &updatedIds, const Payload::Alteration &type) {
@@ -584,7 +573,6 @@ void ViewMapHint::_basicAlterationDone(const QList<RPZAtom::Id> &updatedIds, con
         //if removed...
         if(type == Payload::Alteration::Removed) {
             toUpdate += this->_GItemsById.take(id);
-            this->_ownableAtomIds.remove(id);
             this->_ownedTokenIds.remove(id);
         }
 
@@ -602,8 +590,6 @@ void ViewMapHint::_updatesDone(const QList<RPZAtom::Id> &updatedIds, const RPZAt
         toUpdate += this->_GItemsById.value(id);
     }
 
-    //TODO reconfigure ownables
-
     emit requestingUIUpdate(toUpdate, updates);
 
 }
@@ -616,9 +602,7 @@ void ViewMapHint::_updatesDone(const RPZAtom::ManyUpdates &updates) {
         auto gi = this->_GItemsById.value(i.key());
         toUpdate.insert(gi, i.value());
     }
-
-    //TODO reconfigure ownables
-
+    
     emit requestingUIUpdate(toUpdate);
 
 }

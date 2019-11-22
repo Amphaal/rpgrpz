@@ -359,6 +359,7 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
         this->_redoHistory.clear();
         this->_restrictedAtomIds.clear();
         this->_map.clear();
+        this->_ownableAtomIdsByOwner.clear();
 
         //set new map params
         auto mParams = mPayload->mapParameters();
@@ -386,6 +387,14 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
                 this->_restrictedAtomIds += id;
             }
 
+            //add to ownable
+            if(this->_isAtomOwnable(atom)) {
+                auto characterId = atom.characterId();
+                this->_ownableAtomIdsByOwner.insert(id, characterId);
+                this->_ownerChanged(id, characterId);
+            }
+            
+
             //handler for inheritors
             this->_atomAdded(atom);
 
@@ -399,7 +408,9 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
 
     //bulk
     else if(auto mPayload = dynamic_cast<const BulkMetadataChangedPayload*>(&payload)) {
+        
         auto updatesById = mPayload->atomsUpdates();
+        
         for (auto i = updatesById.begin(); i != updatesById.end(); i++) {
             
             auto const &id = i.key();
@@ -408,12 +419,12 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
             auto atom = this->_map.atom(id);
             if(atom.isEmpty()) continue;
 
-            //update db
-            this->_map.updateAtom(id, updates); 
+            this->_syncAtom(id, updates); 
             
         }
 
         this->_updatesDone(updatesById);
+
     }
 
     //multi target format
@@ -434,10 +445,11 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
             if(pType == Payload::Alteration::Removed) {
                 this->_map.removeAtom(id); //remove from db
                 this->_restrictedAtomIds.remove(id); //remove from restricted
+                this->_ownableAtomIdsByOwner.remove(id);
             }
 
             if(pType == Payload::Alteration::MetadataChanged) {
-                this->_map.updateAtom(id, maybeUpdates); //update db
+                this->_syncAtom(id, maybeUpdates);
             }
 
             alteredIds += id;
@@ -448,6 +460,25 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
         else this->_basicAlterationDone(alteredIds, pType);
 
     }
+}
+
+void AtomsStorage::_syncAtom(const RPZAtom::Id &toUpdate, const RPZAtom::Updates &updates) {
+    
+    //update db
+    this->_map.updateAtom(toUpdate, updates); 
+    
+    //check if character id update
+    if(!updates.contains(RPZAtom::Parameter::CharacterId)) return;
+
+    auto updatedCharId = updates.value(RPZAtom::Parameter::CharacterId).toULongLong();
+    auto boundCharId = this->_ownableAtomIdsByOwner.value(toUpdate);
+    
+    this->_ownableAtomIdsByOwner.insert(toUpdate, updatedCharId);
+
+    if(updatedCharId != boundCharId) {
+        this->_ownerChanged(toUpdate, updatedCharId);
+    } 
+
 }
 
 //
@@ -504,6 +535,10 @@ RPZMap<RPZAtom> AtomsStorage::_generateAtomDuplicates(const QList<RPZAtom::Id> &
     }
 
     return newAtoms;
+}
+
+bool AtomsStorage::_isAtomOwnable(const RPZAtom &atom) const {
+    return atom.isWalkableAtom();
 }
 
 QPointF AtomsStorage::_getPositionFromAtomDuplication(const RPZAtom &atomToDuplicate, int duplicateCount) {
