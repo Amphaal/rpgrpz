@@ -136,6 +136,12 @@
         <translation>Description courte</translation>
     </message>
     <message>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="37"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="41"/>
+        <source>GM Notes</source>
+        <translation>Notes pour le MJ</translation>
+    </message>
+    <message>
         <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="38"/>
         <source>Attitude</source>
         <translation>Attitude</translation>
@@ -159,12 +165,6 @@
         <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="43"/>
         <source>Opacity</source>
         <translation>Opacité</translation>
-    </message>
-    <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="37"/>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="41"/>
-        <source>Description</source>
-        <translation>Description</translation>
     </message>
 </context>
 <context>

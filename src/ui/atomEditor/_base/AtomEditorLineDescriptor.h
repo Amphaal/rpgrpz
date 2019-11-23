@@ -34,11 +34,11 @@ class AtomEditorLineDescriptor : public QWidget {
             { RPZAtom::Parameter::BrushStyle, QT_TR_NOOP("Brush tool") },
             { RPZAtom::Parameter::Text, QT_TR_NOOP("Text") },
             { RPZAtom::Parameter::EventShortDescription, QT_TR_NOOP("Short description") },
-            { RPZAtom::Parameter::EventDescription, QT_TR_NOOP("Description") },
+            { RPZAtom::Parameter::EventDescription, QT_TR_NOOP("GM Notes") },
             { RPZAtom::Parameter::NPCAttitude, QT_TR_NOOP("Attitude") },
             { RPZAtom::Parameter::NPCHealth, QT_TR_NOOP("Health") },
             { RPZAtom::Parameter::NPCShortName, QT_TR_NOOP("Short name") },
-            { RPZAtom::Parameter::NPCDescription, QT_TR_NOOP("Description") },
+            { RPZAtom::Parameter::NPCDescription, QT_TR_NOOP("GM Notes") },
             { RPZAtom::Parameter::CharacterId, QT_TR_NOOP("Associated character") },
             { RPZAtom::Parameter::Opacity, QT_TR_NOOP("Opacity") }
         };
