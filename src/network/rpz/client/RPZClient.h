@@ -38,7 +38,7 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
 
         const RPZUser identity() const; //safe
         const RPZMap<RPZUser> sessionUsers() const; //safe
-        const QList<RPZCharacter> sessionCharacters() const; //safe
+        const QList<RPZCharacter> RPZClient::sessionCharacters() const; //safe
 
     public slots:
         void run();
@@ -71,6 +71,8 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
         void userDataChanged(const RPZUser &updatedUser);
         void whisperTargetsChanged();
 
+        void charactersCountChanged();
+
         void receivedLogHistory(const QVector<RPZMessage> &messages);
 
         void audioSourceStateChanged(const StreamPlayStateTracker &state);
@@ -78,6 +80,10 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
         void audioPlayStateChanged(bool isPlaying);
 
     private:
+        enum class CharacterRegistration {
+            In,
+            Out
+        };
         JSONSocket* _serverSock = nullptr;   
         bool _initialMapSetupReceived = false;
 
@@ -93,7 +99,9 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
         RPZMap<RPZUser> _sessionUsers;
         mutable QMutex _m_sessionUsers;
 
-        void _registerAsCharacterized(const RPZUser &user);
+        bool _hasPendingCharactersRegistration = false;
+        void _registerAsCharacterized(const RPZUser &user, const CharacterRegistration &type);
+        void _checkPendingCharactersRegistration();
         QSet<RPZUser::Id> _characterizedUserIds;
 
         void _initSock();

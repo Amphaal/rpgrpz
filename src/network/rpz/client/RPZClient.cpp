@@ -229,7 +229,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
         break;
 
         case RPZJSON::Method::AllConnectedUsers: {
-            
+
             {
                 QMutexLocker l(&this->_m_sessionUsers);
                 
@@ -242,39 +242,42 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
                     RPZUser user(rUser.toHash());
                     this->_sessionUsers.insert(user.id(), user);
 
-                    this->_registerAsCharacterized(user);
+                    this->_registerAsCharacterized(user, CharacterRegistration::In);
 
                 }
 
             }
 
+            this->_checkPendingCharactersRegistration();
             emit allUsersReceived();
             emit whisperTargetsChanged();
+
         }
         break;
 
         case RPZJSON::Method::UserIn: {
             
             RPZUser user(data.toHash());
-            
+
             {
                 QMutexLocker l(&this->_m_sessionUsers);
                 
                 //add user to session users
                 this->_sessionUsers.insert(user.id(), user);
 
-                this->_registerAsCharacterized(user);
-
+                this->_registerAsCharacterized(user, CharacterRegistration::In);
             }
 
+            this->_checkPendingCharactersRegistration();
             emit userJoinedServer(user);
             emit whisperTargetsChanged();
+
         }
         break;
 
         case RPZJSON::Method::UserOut: {
+            
             auto idToRemove = data.toULongLong();
-
             RPZUser out;
 
             {
@@ -284,10 +287,11 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
                 out = this->_sessionUsers.take(idToRemove);
 
                 //from from token list
-                this->_characterizedUserIds.remove(idToRemove);
+                this->_registerAsCharacterized(out, CharacterRegistration::Out);
 
             }
 
+            this->_checkPendingCharactersRegistration();
             emit userLeftServer(out);
             emit whisperTargetsChanged();
 
@@ -305,9 +309,6 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
 
                 //replace current session user with updated one
                 this->_sessionUsers.insert(updatedId, updated);
-
-                this->_registerAsCharacterized(updated);
-
             }
 
             emit userDataChanged(updated);
@@ -395,6 +396,12 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
     QMetaObject::invokeMethod(ProgressTracker::get(), "clientStoppedReceiving");
 }
 
+void RPZClient::_checkPendingCharactersRegistration() {
+    if(!this->_hasPendingCharactersRegistration) return;
+    emit charactersCountChanged();
+    this->_hasPendingCharactersRegistration = false;
+}
+
 void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
     
     QString msg;
@@ -420,17 +427,28 @@ void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
     emit closed();
 }
 
-void RPZClient::_registerAsCharacterized(const RPZUser &user) {
+void RPZClient::_registerAsCharacterized(const RPZUser &user, const CharacterRegistration &type) {
     
-    if (user.role() != RPZUser::Role::Player) return;
+    if(user.role() != RPZUser::Role::Player) return;
+
+    auto id = user.id();
+    if(!id) return;
     
-    if(!user.playerTokenAtomId()) {
-        this->_characterizedUserIds.insert(user.id());
-    } 
-    
-    else {
-        this->_characterizedUserIds.remove(user.id());
+    switch(type) {
+        
+        case CharacterRegistration::In: {
+            this->_characterizedUserIds.insert(id);
+        }
+        break;
+
+        case CharacterRegistration::Out: {
+            this->_characterizedUserIds.remove(id);
+        }
+        break;
+
     }
+
+    this->_hasPendingCharactersRegistration = true;
 
 }
 
@@ -496,7 +514,8 @@ const QList<RPZCharacter> RPZClient::sessionCharacters() const {
 
     QMutexLocker l(&this->_m_sessionUsers);
     for(const auto &userId : this->_characterizedUserIds) {
-        auto &user = this->_sessionUsers[userId];
+        auto user = this->_sessionUsers.value(userId);
+        if(user.isEmpty()) continue;
         out += user.character();
     }
 

@@ -30,7 +30,6 @@ class RPZUser : public Serializable {
 
         void setName(const QString &name);
         void setRole(const Role &role);
-        void setPlayerTokenAtom(const SnowFlake::Id &atomId);
         void setCharacter(const RPZCharacter &character);
         void randomiseColor();
 
@@ -40,7 +39,6 @@ class RPZUser : public Serializable {
         QColor color() const;
         QString toString() const;
         const RPZCharacter character() const;
-        const SnowFlake::Id playerTokenAtomId() const;
 
     private:
         void _setColor(const QColor &color = QColor());

@@ -15,17 +15,23 @@ const MapDatabase& AtomsStorage::map() const {
     return this->_map;
 }
 
-const QList<RPZCharacter::Id> AtomsStorage::unboundCharactersIds(const QList<RPZCharacter::Id> &idsToCheck) {
+const QList<RPZCharacter> AtomsStorage::findUnboundCharacters(const QList<RPZCharacter> &availableCharacters) {
     
-    QList<RPZCharacter::Id> out;
+    QList<RPZCharacter> out;
     
     {
         QMutexLocker l(&_m_handlingLock);
 
-        for(auto const &charId : idsToCheck) {
+        for(auto const &character : availableCharacters) {
+            
+            auto charId = character.id();
+            if(!charId) continue;
+
             auto boundAtomId = this->_ownableAtomIdsByOwner.key(charId);
             if(boundAtomId) continue; //is bound, skip
-            out += charId;
+
+            out += character;
+
         }
 
     }
