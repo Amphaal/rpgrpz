@@ -1,6 +1,5 @@
 #pragma once
 
-#include "src/shared/hints/AtomsStorage.h"
 #include "src/shared/commands/RPZActions.h"
 #include "src/shared/payloads/Payloads.h"
 
@@ -14,7 +13,7 @@
 
 class AtomsContextualMenuHandler {
     public:
-        AtomsContextualMenuHandler(AtomsStorage* mapMaster, QWidget* menuParent);
+        AtomsContextualMenuHandler(QWidget* menuParent);
 
         void invokeMenu(const QList<RPZAtom::Id> &toManipulate, const QPoint &whereToDisplay);
 
@@ -30,7 +29,6 @@ class AtomsContextualMenuHandler {
 
     private:
         QWidget* _menuParent = nullptr;
-        AtomsStorage* _mapMaster = nullptr;  
 
         QList<RPZAtom::Id> _latestInvokedAtomIds;
         PossibleActionsOnAtomList _latestPossibleActions;

@@ -1,6 +1,6 @@
 #include "AtomsContextualMenuHandler.h"
 
-AtomsContextualMenuHandler::AtomsContextualMenuHandler(AtomsStorage* mapMaster, QWidget* menuParent) :  _menuParent(menuParent), _mapMaster(mapMaster) {}
+AtomsContextualMenuHandler::AtomsContextualMenuHandler(QWidget* menuParent) :  _menuParent(menuParent) {}
 
 ///
 ///
@@ -8,7 +8,6 @@ AtomsContextualMenuHandler::AtomsContextualMenuHandler(AtomsStorage* mapMaster, 
 
 void AtomsContextualMenuHandler::_moveAtomsToLayer(int layer) {
     AtomActionsHandler::moveAtomsToLayer(
-        this->_mapMaster, 
         this->_latestInvokedAtomIds,
         layer
     );
@@ -16,17 +15,16 @@ void AtomsContextualMenuHandler::_moveAtomsToLayer(int layer) {
 
 void AtomsContextualMenuHandler::_removeAtoms() {
     AtomActionsHandler::removeAtoms(
-        this->_mapMaster, 
         this->_latestInvokedAtomIds
     );
 }
 
 void AtomsContextualMenuHandler::_undo() {
-    AtomActionsHandler::undoAlteration(this->_mapMaster);
+    AtomActionsHandler::undoAlteration();
 }
 
 void AtomsContextualMenuHandler::_redo() {
-    AtomActionsHandler::redoAlteration(this->_mapMaster);
+    AtomActionsHandler::redoAlteration();
 }
 
 void AtomsContextualMenuHandler::_copy() {
@@ -34,12 +32,11 @@ void AtomsContextualMenuHandler::_copy() {
 }
 
 void AtomsContextualMenuHandler::_paste() {
-    AtomActionsHandler::pasteAtomsFromClipboard(this->_mapMaster);
+    AtomActionsHandler::pasteAtomsFromClipboard();
 }
 
 void AtomsContextualMenuHandler::_setVisibility(bool hide) {
     AtomActionsHandler::alterAtomsVisibility(
-        this->_mapMaster, 
         this->_latestInvokedAtomIds,
         hide
     );
@@ -47,7 +44,6 @@ void AtomsContextualMenuHandler::_setVisibility(bool hide) {
 
 void AtomsContextualMenuHandler::_setAvailability(bool lock) {
     AtomActionsHandler::alterAtomsAvailability(
-        this->_mapMaster, 
         this->_latestInvokedAtomIds,
         lock
     );
@@ -60,7 +56,7 @@ void AtomsContextualMenuHandler::_setAvailability(bool lock) {
 void AtomsContextualMenuHandler::invokeMenu(const QList<RPZAtom::Id> &toManipulate, const QPoint &whereToDisplay) {
 
     //get instr
-    this->_latestPossibleActions = this->_mapMaster->getPossibleActions(toManipulate);
+    this->_latestPossibleActions = HintThread::hint()->getPossibleActions(toManipulate);
     this->_latestInvokedAtomIds = toManipulate;
     
     //display menu

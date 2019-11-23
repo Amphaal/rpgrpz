@@ -1,7 +1,6 @@
 #include "ConnectWidget.h"
 
-ConnectWidget::ConnectWidget(MapHint* hintToControlStateOf, QWidget *parent) : QWidget(parent), 
-    _toControlStateOf(hintToControlStateOf),
+ConnectWidget::ConnectWidget(QWidget *parent) : QWidget(parent), 
     _nameTarget(new QLineEdit(this)),
     _domainTarget(new QLineEdit(this)),
     _connectBtn(new QPushButton(this)),
@@ -113,7 +112,7 @@ void ConnectWidget::_saveValuesAsSettings() {
 void ConnectWidget::_tryConnectToServer() {
 
     //ask for save the map as it may be erased
-    MapHint::mayWantToSavePendingState(this, _toControlStateOf);
+    MapHint::mayWantToSavePendingState(this, HintThread::hint());
 
     this->_saveValuesAsSettings();
     

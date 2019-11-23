@@ -342,42 +342,42 @@
 <context>
     <name>ConnectWidget</name>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="21"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="20"/>
         <source>Player name</source>
         <translation>Nom du joueur</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="27"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="26"/>
         <source>IP or server hostname</source>
         <translation>IP ou nom de serveur</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="32"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="31"/>
         <source>Character to embody</source>
         <translation>Personnage à incarner</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="161"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="160"/>
         <source>Error while connecting to server</source>
         <translation>Erreur à la connexion au serveur</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="177"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="176"/>
         <source>Connect</source>
         <translation>Se connecter</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="180"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="179"/>
         <source>Cancel (Connecting to %1...)</source>
         <translation>Annuler (Connexion à %1...)</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="183"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="182"/>
         <source>Disconnect from [%1]</source>
         <translation>Se déconnecter de [%1]</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="236"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="235"/>
         <source> Log in without a character</source>
         <translation> Se connecter sans fiche</translation>
     </message>
@@ -674,99 +674,99 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="90"/>
+        <location filename="../ui/mainWindow.cpp" line="93"/>
         <source>Press ALT key to display the menu !</source>
         <translation>Appuyez sur la touche ALT pour afficher le menu !</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="148"/>
+        <location filename="../ui/mainWindow.cpp" line="151"/>
         <source>No</source>
         <translation>Non</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="196"/>
+        <location filename="../ui/mainWindow.cpp" line="199"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="271"/>
+        <location filename="../ui/mainWindow.cpp" line="274"/>
         <source>Toy box</source>
         <translation>Boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="344"/>
+        <location filename="../ui/mainWindow.cpp" line="347"/>
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="343"/>
+        <location filename="../ui/mainWindow.cpp" line="346"/>
         <source>Sheets</source>
         <translation>Fiches</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="358"/>
+        <location filename="../ui/mainWindow.cpp" line="361"/>
         <source>Map Atoms</source>
         <translation>Atomes de la carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="359"/>
+        <location filename="../ui/mainWindow.cpp" line="362"/>
         <source>Atom Editor</source>
         <translation>Editeur d&apos;atomes</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="295"/>
+        <location filename="../ui/mainWindow.cpp" line="298"/>
         <source>Game Hub</source>
         <translation>Hub de jeu</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="518"/>
+        <location filename="../ui/mainWindow.cpp" line="521"/>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="532"/>
+        <location filename="../ui/mainWindow.cpp" line="535"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="534"/>
-        <location filename="../ui/mainWindow.cpp" line="560"/>
-        <location filename="../ui/mainWindow.cpp" line="588"/>
+        <location filename="../ui/mainWindow.cpp" line="537"/>
+        <location filename="../ui/mainWindow.cpp" line="563"/>
+        <location filename="../ui/mainWindow.cpp" line="591"/>
         <source>Game map (*%1)</source>
         <translation>Carte de campagne (*%1)</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="558"/>
+        <location filename="../ui/mainWindow.cpp" line="561"/>
         <source>Load a new map</source>
         <translation>Charger une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="586"/>
+        <location filename="../ui/mainWindow.cpp" line="589"/>
         <source>Save as...</source>
         <translation>Savegarder sous...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="610"/>
+        <location filename="../ui/mainWindow.cpp" line="613"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="665"/>
+        <location filename="../ui/mainWindow.cpp" line="668"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="679"/>
+        <location filename="../ui/mainWindow.cpp" line="682"/>
         <source>Searching for updates...</source>
         <translation>Recherche des mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="679"/>
+        <location filename="../ui/mainWindow.cpp" line="682"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="703"/>
+        <location filename="../ui/mainWindow.cpp" line="706"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
@@ -1071,7 +1071,7 @@
         <translation>Une erreur est survenue : </translation>
     </message>
     <message>
-        <location filename="../ui/map/modules/MV_HUDLayout.hpp" line="274"/>
+        <location filename="../ui/map/modules/MV_HUDLayout.hpp" line="273"/>
         <source>Too far to display grid !</source>
         <translation>Trop éloigné pour afficher la grille !</translation>
     </message>
@@ -1246,12 +1246,12 @@
         <translation>Paramètres de la carte</translation>
     </message>
     <message>
-        <location filename="../shared/commands/AtomsContextualMenuHandler.cpp" line="70"/>
+        <location filename="../shared/commands/AtomsContextualMenuHandler.cpp" line="66"/>
         <source>%1 selected atom(s)</source>
         <translation>%1 atome(s) selectionné(s)</translation>
     </message>
     <message>
-        <location filename="../shared/renderer/graphics/_specific/MapViewToken.hpp" line="252"/>
+        <location filename="../shared/renderer/graphics/_specific/MapViewToken.hpp" line="251"/>
         <source>P</source>
         <comment>player sign</comment>
         <translation>J</translation>

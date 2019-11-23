@@ -48,12 +48,14 @@ class AtomsStorage : public AlterationAcknoledger {
         
         const AtomsSelectionDescriptor getAtomSelectionDescriptor(const QList<RPZAtom::Id> &selectedIds) const; //safe
         
-        PossibleActionsOnAtomList getPossibleActions(const QList<RPZAtom::Id> &ids);
+        PossibleActionsOnAtomList getPossibleActions(const QList<RPZAtom::Id> &ids); //safe
 
-        const ResetPayload generateResetPayload() const;
-        AtomsAreLeft restrictPayload(AtomRelatedPayload &payloadToRestrict);
+        const ResetPayload generateResetPayload() const; //safe
+        AtomsAreLeft restrictPayload(AtomRelatedPayload &payloadToRestrict); //safe
 
         const QString snapshotSave(const QString &folderToSaveTo); //safe
+
+        const QList<RPZCharacter::Id> unboundCharactersIds(const QList<RPZCharacter::Id> &idsToCheck); //safe
         
     signals:
         void mapParametersChanged(const RPZMapParameters &mParams);

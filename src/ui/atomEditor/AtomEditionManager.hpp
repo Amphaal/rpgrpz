@@ -5,6 +5,8 @@
 #include "src/ui/atomEditor/_manager/LayerSelector.h"
 #include "src/ui/atomEditor/_manager/HiddenCheckbox.hpp"
 
+#include "src/shared/hints/HintThread.hpp"
+
 class AtomEditionManager : public QWidget {
 
     Q_OBJECT
@@ -12,7 +14,6 @@ class AtomEditionManager : public QWidget {
     private:
         AtomEditor* _editor = nullptr;
         QPushButton* _resetButton = nullptr;
-        AtomsStorage* _storage = nullptr;
         HiddenCheckbox* _defaultHiddenCheckbox = nullptr;
         LayerSelector* _layerSelector = nullptr;
 
@@ -25,8 +26,7 @@ class AtomEditionManager : public QWidget {
         }
 
     public:
-        AtomEditionManager(AtomsStorage* storage, QWidget *parent = nullptr) : QWidget(parent), 
-            _storage(storage), 
+        AtomEditionManager(QWidget *parent = nullptr) : QWidget(parent), 
             _editor(new AtomEditor), 
             _resetButton(new QPushButton) {
             
@@ -104,7 +104,7 @@ class AtomEditionManager : public QWidget {
             //if selection occured
             else if(auto mPayload = dynamic_cast<SelectedPayload*>(casted.data())) {
                 auto selected = mPayload->targetRPZAtomIds();
-                auto descr = this->_storage->getAtomSelectionDescriptor(selected);
+                auto descr = HintThread::hint()->getAtomSelectionDescriptor(selected);
                 this->_handleSubjectChange(descr);
             }
 
@@ -120,7 +120,7 @@ class AtomEditionManager : public QWidget {
                 if(!currSelectionDescr.templateAtom.isEmpty() && !current.count()) return;
 
                 auto truncated = current.subtract(removed).toList();
-                auto descr = this->_storage->getAtomSelectionDescriptor(truncated);
+                auto descr = HintThread::hint()->getAtomSelectionDescriptor(truncated);
 
                 this->_handleSubjectChange(descr);
             }

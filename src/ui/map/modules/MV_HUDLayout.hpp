@@ -3,7 +3,6 @@
 #include <QGraphicsView>
 
 #include "src/helpers/StringHelper.hpp"
-#include "src/shared/hints/MapHint.h"
 
 class MV_HUDLayout {
     public:

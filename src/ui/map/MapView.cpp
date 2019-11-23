@@ -7,10 +7,9 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
     this->_walkingCursor = QCursor(QStringLiteral(u":/icons/app/tools/walking.png"));
 
     //init
-    this->_hints = new MapHint;
-    this->_menuHandler = new AtomsContextualMenuHandler(this->_hints, this);
-    this->_atomActionsHandler = new AtomActionsHandler(this->_hints, this, this);
-    this->_drawingAssist = new DrawingAssist(this->_hints, this);
+    this->_menuHandler = new AtomsContextualMenuHandler(this);
+    this->_atomActionsHandler = new AtomActionsHandler(this, this);
+    this->_drawingAssist = new DrawingAssist(this);
 
     //OpenGL backend activation
     QGLFormat format;
@@ -31,28 +30,11 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
 
     this->setMouseTracking(true); //activate mouse tracking for ghost 
 
-    //thread
-    this->_hints->moveToThread(new QThread);
-    this->_hints->thread()->setObjectName(QStringLiteral(u"MapThread"));
-    this->_hints->thread()->start();
-
     this->_resetTool();
 
     this->_handleHintsSignalsAndSlots();
 
 }
-
-MapView::~MapView() {
-    if(this->_hints) {
-        this->_hints->thread()->quit();
-        this->_hints->thread()->wait();
-    }
-}
-
-MapHint* MapView::hints() const {
-    return this->_hints;
-}
-
 
 void MapView::_handleHintsSignalsAndSlots() {
 
@@ -70,27 +52,27 @@ void MapView::_handleHintsSignalsAndSlots() {
     );
 
     QObject::connect(
-        this->_hints, &ViewMapHint::requestingUIAlteration,
+        HintThread::hint(), &ViewMapHint::requestingUIAlteration,
         this, &MapView::_onUIAlterationRequest
     );
     
     QObject::connect(
-        this->_hints, QOverload<const QHash<QGraphicsItem*, RPZAtom::Updates>&>::of(&ViewMapHint::requestingUIUpdate),
+        HintThread::hint(), QOverload<const QHash<QGraphicsItem*, RPZAtom::Updates>&>::of(&ViewMapHint::requestingUIUpdate),
         this, QOverload<const QHash<QGraphicsItem*, RPZAtom::Updates>&>::of(&MapView::_onUIUpdateRequest)
     );
     
     QObject::connect(
-        this->_hints, QOverload<const QList<QGraphicsItem*>&, const RPZAtom::Updates&>::of(&ViewMapHint::requestingUIUpdate),
+        HintThread::hint(), QOverload<const QList<QGraphicsItem*>&, const RPZAtom::Updates&>::of(&ViewMapHint::requestingUIUpdate),
         this, QOverload<const QList<QGraphicsItem*>&, const RPZAtom::Updates&>::of(&MapView::_onUIUpdateRequest)
     );
 
     QObject::connect(
-        this->_hints, &ViewMapHint::changedOwnership,
+        HintThread::hint(), &ViewMapHint::changedOwnership,
         this, &MapView::_onOwnershipChanged
     );
 
     QObject::connect(
-        this->_hints, &AtomsStorage::mapParametersChanged,
+        HintThread::hint(), &AtomsStorage::mapParametersChanged,
         [=](const RPZMapParameters &mParams) {
             this->_currentMapParameters = mParams;
         }
@@ -113,7 +95,7 @@ void MapView::_handleHintsSignalsAndSlots() {
 //
 
 void MapView::_notifySelection() {
-    this->_hints->notifySelectedItems(
+    HintThread::hint()->notifySelectedItems(
         this->scene()->selectedItems()
     );
 }
@@ -135,9 +117,11 @@ void MapView::_onUIUpdateRequest(const QHash<QGraphicsItem*, RPZAtom::Updates> &
 
 }
 
-void MapView::_onOwnershipChanged(QGraphicsItem* changing, bool owned) {
-    if(auto casted = dynamic_cast<MapViewToken*>(changing)) {
-        casted->setOwned(owned);
+void MapView::_onOwnershipChanged(const QList<QGraphicsItem*> changing, bool owned) {
+    for(auto item : changing) {
+        if(auto casted = dynamic_cast<MapViewToken*>(item)) {
+            casted->setOwned(owned);
+        }
     }
 }
 
@@ -240,7 +224,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
 
             case Payload::Alteration::ToySelected: {
                 auto newTool = item ? MapTool::Atom : MapTool::Default;
-                auto selectedAtom = item ? this->_hints->templateAtom() : RPZAtom();
+                auto selectedAtom = item ? HintThread::hint()->templateAtom() : RPZAtom();
                 if(item) this->scene()->addItem(item);
 
                 //change tool, proceed to unselect items
@@ -248,7 +232,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
 
                 //emit that template selection has changed
                 AtomTemplateSelectedPayload payload(selectedAtom);
-                AlterationHandler::get()->queueAlteration(this->_hints, payload);
+                AlterationHandler::get()->queueAlteration(HintThread::hint(), payload);
             }
             break;
 
@@ -279,7 +263,7 @@ bool MapView::_tryToInvokeWalkableHelper(QGraphicsItem * toBeWalked) {
     if(!toBeWalked) return false;
     if(!this->_isMousePressed) return false;
 
-    auto result = this->_hints->singleSelectionHelper();
+    auto result = HintThread::hint()->singleSelectionHelper();
             
     auto isWalkable = Authorisations::isHostAble() && 
                       result.interactible.isWalkableAtom() &&
@@ -362,7 +346,7 @@ void MapView::mouseDoubleClickEvent(QMouseEvent *event) {
     if(RPZQVariant::isTemporary(item)) return;
 
     //notify focus
-    this->_hints->notifyFocusedItem(item);
+    HintThread::hint()->notifyFocusedItem(item);
 }
 
 void MapView::keyReleaseEvent(QKeyEvent *event) {
@@ -382,7 +366,7 @@ void MapView::keyReleaseEvent(QKeyEvent *event) {
 }
 
 const QList<RPZAtom::Id> MapView::selectedIds() const {
-    return this->_hints->getAtomIdsFromGraphicsItems(
+    return HintThread::hint()->getAtomIdsFromGraphicsItems(
         this->scene()->selectedItems()
     );
 }
@@ -438,7 +422,7 @@ void MapView::leaveEvent(QEvent *event) {
 
 QGraphicsItem* MapView::_displayableGhostItem() {
     if(this->_getCurrentTool() != MapTool::Atom) return nullptr;
-    return this->_hints->ghostItem();
+    return HintThread::hint()->ghostItem();
 }
 
 ////////////////
@@ -475,7 +459,7 @@ void MapView::mousePressEvent(QMouseEvent *event) {
                 case MapTool::Atom: {
 
                     //conditionnal drawing
-                    switch(this->_hints->templateAtom().type()) {
+                    switch(HintThread::hint()->templateAtom().type()) {
 
                         case RPZAtom::Type::Drawing:
                         case RPZAtom::Type::Brush:
@@ -484,10 +468,10 @@ void MapView::mousePressEvent(QMouseEvent *event) {
 
                         default: {
 
-                            auto ghost = this->_hints->ghostItem();
+                            auto ghost = HintThread::hint()->ghostItem();
                             if(this->_preventMoveOrInsertAtPosition(ghost)) break;
 
-                            this->_hints->integrateGraphicsItemAsPayload(ghost);
+                            HintThread::hint()->integrateGraphicsItemAsPayload(ghost);
 
                         }
                         break;
@@ -543,7 +527,7 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
 
     if(currentTool == MapTool::Atom) {
         
-        auto type = this->_hints->templateAtom().type();
+        auto type = HintThread::hint()->templateAtom().type();
         
         switch(type) {
             case RPZAtom::Type::Drawing:
@@ -592,7 +576,7 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
                 case MapTool::Default: {
 
                     //if something moved ?
-                    this->_hints->mightNotifyMovement(this->scene()->selectedItems()); 
+                    HintThread::hint()->mightNotifyMovement(this->scene()->selectedItems()); 
 
                     //trigger items selection
                     QGraphicsView::mouseReleaseEvent(event);
@@ -609,7 +593,7 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
                     auto toWalkTo = this->_walkingHelper->destScenePos();
 
                     if(!this->_preventMoveOrInsertAtPosition(this->_toWalk, toWalkTo)) {
-                        this->_hints->notifyWalk(this->_toWalk, toWalkTo);
+                        HintThread::hint()->notifyWalk(this->_toWalk, toWalkTo);
                     }
 
                     this->_resetTool();
@@ -693,10 +677,10 @@ void MapView::_onIdentityReceived(const RPZUser &self) {
     }
 
     //define impersonation
-    this->_hints->defineImpersonatingCharacter(self.character().id());
+    HintThread::hint()->defineImpersonatingCharacter(self.character().id());
 
     //if host
-    bool is_remote = this->_hints->ackRemoteness(self, _rpzClient);
+    bool is_remote = HintThread::hint()->ackRemoteness(self, _rpzClient);
 
     emit remoteChanged(is_remote);
     
@@ -705,10 +689,10 @@ void MapView::_onIdentityReceived(const RPZUser &self) {
 void MapView::connectionClosed(bool hasInitialMapLoaded) {
 
     //reset impersonating character
-    this->_hints->defineImpersonatingCharacter();
+    HintThread::hint()->defineImpersonatingCharacter();
 
     //back to default state
-    if(hasInitialMapLoaded) QMetaObject::invokeMethod(this->_hints, "loadDefaultRPZMap");
+    if(hasInitialMapLoaded) QMetaObject::invokeMethod(HintThread::hint(), "loadDefaultRPZMap");
 
     emit remoteChanged(false);
 
@@ -717,7 +701,7 @@ void MapView::connectionClosed(bool hasInitialMapLoaded) {
 void MapView::_sendMapHistory() {
     
     //generate payload
-    auto payload = this->_hints->generateResetPayload();
+    auto payload = HintThread::hint()->generateResetPayload();
    
    //send it
     QMetaObject::invokeMethod(this->_rpzClient, "sendMapHistory", 
@@ -798,11 +782,11 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
             this->setInteractive(false);
             this->setDragMode(QGraphicsView::DragMode::NoDrag);
 
-            if(auto ghost = this->_hints->ghostItem()) {
+            if(auto ghost = HintThread::hint()->ghostItem()) {
                 ghost->setVisible(this->_isCursorIn);
             }
             
-            switch(this->_hints->templateAtom().type()) {
+            switch(HintThread::hint()->templateAtom().type()) {
                 case RPZAtom::Type::Drawing:
                     this->setCursor(Qt::CrossCursor);
                     break;
@@ -825,7 +809,7 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
             this->setInteractive(false);
             this->setDragMode(QGraphicsView::DragMode::ScrollHandDrag);
             
-            if(auto ghost = this->_hints->ghostItem()) {
+            if(auto ghost = HintThread::hint()->ghostItem()) {
                 ghost->setVisible(false); //force hidden if any
             
             }

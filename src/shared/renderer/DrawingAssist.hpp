@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/shared/hints/MapHint.h"
+#include "src/shared/hints/HintThread.hpp"
 #include <QGraphicsView>
 
 #include "src/shared/renderer/graphics/MapViewGraphics.h"
@@ -9,7 +9,7 @@ class DrawingAssist {
     public:
         using IsCommitedDrawing = bool;
 
-        DrawingAssist(MapHint* hints, QGraphicsView* view) : _hints(hints), _view(view) { }
+        DrawingAssist(QGraphicsView* view) : _view(view) { }
 
         void addDrawingPoint(const QPoint &cursorPosInWindow) {
             
@@ -71,7 +71,7 @@ class DrawingAssist {
             if(path.elementCount() < 2) return;
 
             //add definitive path
-            this->_commitedDrawingId = this->_hints->integrateGraphicsItemAsPayload(this->_tempDrawing);
+            this->_commitedDrawingId = HintThread::hint()->integrateGraphicsItemAsPayload(this->_tempDrawing);
 
         }
         
@@ -79,7 +79,7 @@ class DrawingAssist {
             
             if(!this->_commitedDrawingId) return false;
             
-            if(this->_hints->getAtomIdFromGraphicsItem(itemInserted) != this->_commitedDrawingId) return false;
+            if(HintThread::hint()->getAtomIdFromGraphicsItem(itemInserted) != this->_commitedDrawingId) return false;
             
             this->_destroyTempDrawing();
 
@@ -96,7 +96,6 @@ class DrawingAssist {
 
     private:
         QGraphicsView* _view = nullptr;
-        MapHint* _hints = nullptr;
         RPZAtom::Id _commitedDrawingId = 0;
 
         //drawing...
@@ -132,7 +131,7 @@ class DrawingAssist {
             this->_destroyTempDrawing();
 
             //create item 
-            this->_tempDrawing = static_cast<MapViewGraphicsPathItem*>(this->_hints->generateGraphicsFromTemplate());
+            this->_tempDrawing = static_cast<MapViewGraphicsPathItem*>(HintThread::hint()->generateGraphicsFromTemplate());
                 
                 //define pos
                 auto centerScenePos = scenePos;
@@ -143,7 +142,7 @@ class DrawingAssist {
             this->_view->scene()->addItem(this->_tempDrawing);
 
             //determine if it must be sticky
-            this->_stickyBrushIsDrawing = this->_hints->templateAtom().brushType() == RPZAtom::BrushType::Cutter;
+            this->_stickyBrushIsDrawing = HintThread::hint()->templateAtom().brushType() == RPZAtom::BrushType::Cutter;
             this->_stickyBrushValidNodeCount = this->_stickyBrushIsDrawing ? this->_tempDrawing->path().elementCount() : 0;
 
             //add outline if sticky
@@ -155,7 +154,7 @@ class DrawingAssist {
 
         void _updateDrawingPathForBrush(const QPointF &pathCoord, QPainterPath &pathToAlter, MapViewGraphicsPathItem* sourceTemplate) {
             
-            switch(this->_hints->templateAtom().brushType()) {
+            switch(HintThread::hint()->templateAtom().brushType()) {
                 
                 case RPZAtom::BrushType::Stamp: {
                     

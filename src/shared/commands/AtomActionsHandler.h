@@ -6,7 +6,7 @@
 #include "src/shared/models/RPZAtom.h"
 #include "src/shared/commands/RPZActions.h"
 
-#include "src/shared/hints/AtomsStorage.h"
+#include "src/shared/hints/HintThread.hpp"
 
 #include "src/helpers/Clipboard.hpp"
 
@@ -20,20 +20,20 @@ class AtomSelector {
 class AtomActionsHandler {
     
     public:
-        AtomActionsHandler(AtomsStorage* master, AtomSelector* selector, QWidget* parent);
+        AtomActionsHandler(AtomSelector* selector, QWidget* parent);
 
         ///
         ///
         ///
 
-        static void undoAlteration(AtomsStorage* master);
-        static void redoAlteration(AtomsStorage* master);
+        static void undoAlteration();
+        static void redoAlteration();
         static void copyToClipboard(const QList<RPZAtom::Id> &ids);
-        static void pasteAtomsFromClipboard(AtomsStorage* master);
-        static void removeAtoms(AtomsStorage* master, const QList<RPZAtom::Id> &ids);
-        static void moveAtomsToLayer(AtomsStorage* master, const QList<RPZAtom::Id> &ids, int targetLayer);
-        static void alterAtomsVisibility(AtomsStorage* master, const QList<RPZAtom::Id> &ids, bool hide);
-        static void alterAtomsAvailability(AtomsStorage* master, const QList<RPZAtom::Id> &ids, bool lock);
+        static void pasteAtomsFromClipboard();
+        static void removeAtoms(const QList<RPZAtom::Id> &ids);
+        static void moveAtomsToLayer(const QList<RPZAtom::Id> &ids, int targetLayer);
+        static void alterAtomsVisibility(const QList<RPZAtom::Id> &ids, bool hide);
+        static void alterAtomsAvailability(const QList<RPZAtom::Id> &ids, bool lock);
 
         ///
         ///
@@ -41,7 +41,6 @@ class AtomActionsHandler {
 
     private:
         AtomSelector* _selector = nullptr;
-        AtomsStorage* _mapMaster = nullptr;
 
         void _addCopyPasteActionsToShortcuts(QWidget* toAddShortcutsTo);
         void _addUndoRedoActionsToShortcuts(QWidget* toAddShortcutsTo);

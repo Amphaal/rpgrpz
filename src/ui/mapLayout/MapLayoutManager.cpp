@@ -1,8 +1,8 @@
 #include "MapLayoutManager.h"
 
-MapLayoutManager::MapLayoutManager(QGraphicsView* viewToMimic, AtomsStorage* mapMaster, QWidget *parent) : QWidget(parent), _mapMaster(mapMaster) {
+MapLayoutManager::MapLayoutManager(QGraphicsView* viewToMimic, QWidget *parent) : QWidget(parent) {
 
-    this->_tree = new MapLayoutTree(mapMaster, this);
+    this->_tree = new MapLayoutTree(this);
 
     this->_mapParamBtn = new QPushButton(QIcon(QStringLiteral(u":/icons/app/tools/cog.png")), "");
     this->_mapParamBtn->setToolTip(QObject::tr("Map parameters"));
@@ -12,7 +12,7 @@ MapLayoutManager::MapLayoutManager(QGraphicsView* viewToMimic, AtomsStorage* map
     );
 
     QObject::connect(
-        mapMaster, &AtomsStorage::mapParametersChanged,
+        HintThread::hint(), &AtomsStorage::mapParametersChanged,
         [=](const RPZMapParameters &mParams) {
             this->_currentMapParameters = mParams;
         }
@@ -44,7 +44,7 @@ void MapLayoutManager::_handleMapParametersEdition() {
     if(!form.exec()) return;
     
     //get payload, update params
-    auto payload = this->_mapMaster->generateResetPayload();
+    auto payload = HintThread::hint()->generateResetPayload();
     payload.setMapParams(form.getParametersFromWidgets());
 
     //recommit

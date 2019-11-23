@@ -12,7 +12,6 @@
 
 #include "src/shared/payloads/Payloads.h"
 #include "src/shared/models/RPZAtom.h"
-#include "src/shared/hints/AtomsStorage.h"
 
 #include "src/ui/atomEditor/_base/NoEditorMessageWidget.hpp"
 #include "src/ui/atomEditor/_base/AtomSubEditor.h"
@@ -28,6 +27,7 @@
 #include "src/ui/atomEditor/editors/specific/NPCHealthEditor.hpp"
 
 #include "src/shared/async-ui/AlterationActor.hpp"
+#include "src/shared/hints/HintThread.hpp"
 
 class AtomEditor : public QGroupBox, public AlterationActor {
 

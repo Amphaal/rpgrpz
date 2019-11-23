@@ -27,7 +27,7 @@ class MapLayoutTree : public QTreeView, public AtomSelector {
     Q_OBJECT
 
     public:
-        MapLayoutTree(AtomsStorage* mapMaster, QWidget* parent = nullptr);
+        MapLayoutTree(QWidget* parent = nullptr);
 
         const QList<RPZAtom::Id> selectedIds() const override;
 

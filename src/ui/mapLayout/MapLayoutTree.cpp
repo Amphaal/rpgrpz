@@ -1,6 +1,6 @@
 #include "MapLayoutTree.h"
 
-MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) : QTreeView(parent) {
+MapLayoutTree::MapLayoutTree(QWidget * parent) : QTreeView(parent) {
     
     auto unselectAction = new QAction;
     unselectAction->setShortcut(QKeySequence::Cancel);
@@ -21,8 +21,8 @@ MapLayoutTree::MapLayoutTree(AtomsStorage* mapMaster, QWidget * parent) : QTreeV
         this->setModel(this->_model);
     this->_preventSelectionNotification = false;
 
-    this->_menuHandler = new AtomsContextualMenuHandler(mapMaster, this);
-    this->_atomActionsHandler = new AtomActionsHandler(mapMaster, this, this);
+    this->_menuHandler = new AtomsContextualMenuHandler(this);
+    this->_atomActionsHandler = new AtomActionsHandler(this, this);
 
     this->setHeaderHidden(true);
     this->setUniformRowHeights(true);

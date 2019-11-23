@@ -22,7 +22,7 @@
 #include "src/ui/map/toolbars/MapTools.hpp"
 #include "src/ui/map/_base/AnimationTimeLine.hpp"
 
-#include "src/shared/hints/MapHint.h"
+#include "src/shared/hints/HintThread.hpp"
 #include "src/shared/models/RPZAtom.h"
 #include "src/ui/_others/ConnectivityObserver.h"
 
@@ -49,9 +49,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
 
     public:
         MapView(QWidget *parent = nullptr);
-        ~MapView();
-
-        MapHint* hints() const;
+        
         const QList<RPZAtom::Id> selectedIds() const override;
 
         void scrollFromMinimap(QWheelEvent *event);
@@ -90,7 +88,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         void _onUIAlterationRequest(const Payload::Alteration &type, const QList<QGraphicsItem*> &toAlter);
         void _onUIUpdateRequest(const QHash<QGraphicsItem*, RPZAtom::Updates> &toUpdate);
         void _onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates);
-        void _onOwnershipChanged(QGraphicsItem* changing, bool owned);
+        void _onOwnershipChanged(const QList<QGraphicsItem*> changing, bool owned);
 
         //network
         void _sendMapHistory();
@@ -99,7 +97,6 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
     private:
         RPZMapParameters _currentMapParameters;
         DrawingAssist* _drawingAssist = nullptr;
-        MapHint* _hints = nullptr;
         AtomsContextualMenuHandler* _menuHandler = nullptr;
         AtomActionsHandler* _atomActionsHandler = nullptr;
 

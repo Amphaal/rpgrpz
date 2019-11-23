@@ -2,6 +2,9 @@
 
 MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 
+    //start hint thread
+    HintThread::init();
+
     //bind AlterationHandler / ProgressTracker / ConnectivityObserverOchestrator to UI Thread
     AlterationHandler::get();
     ProgressTracker::get();
@@ -24,7 +27,7 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
     this->_triggerBarsVisibility();
 
     //load default map
-    QMetaObject::invokeMethod(this->_mapView->hints(), "loadDefaultRPZMap");
+    QMetaObject::invokeMethod(HintThread::hint(), "loadDefaultRPZMap");
     
     //start the update check
     this->_updateIntegrator->checkForAppUpdates();
@@ -129,7 +132,7 @@ void MainWindow::_loadWindowState() {
 void MainWindow::closeEvent(QCloseEvent *event) {
 
     //may save map changes
-    MapHint::mayWantToSavePendingState(this, this->_mapView->hints());
+    MapHint::mayWantToSavePendingState(this, HintThread::hint());
 
     //save window state
     this->_saveWindowState();
@@ -409,9 +412,9 @@ void MainWindow::_initAppComponents() {
     this->_audioManager = new AudioManager(this);
     this->_toys = new ToysTreeView(this);
     this->_mapTools = new MapTools(this);
-    this->_mlManager = new MapLayoutManager(this->_mapView, this->_mapView->hints(), this);
-    this->_connectWidget = new ConnectWidget(this->_mapView->hints(), this);
-    this->_atomEditManager = new AtomEditionManager(this->_mapView->hints(), this);
+    this->_mlManager = new MapLayoutManager(this->_mapView, this);
+    this->_connectWidget = new ConnectWidget(this);
+    this->_atomEditManager = new AtomEditionManager(this);
     this->_characterEditor = new CharacterEditor(this);
     this->_usersView = new StandardUsersListView(this);
     this->_playersView = new PlayersListView(this);
@@ -421,7 +424,7 @@ void MainWindow::_initAppComponents() {
     //
 
     QObject::connect(
-        this->_mapView->hints(), &ViewMapHint::atomDescriptorUpdated,
+        HintThread::hint(), &ViewMapHint::atomDescriptorUpdated,
         this->_interactibleDescr, &MapViewInteractibleDescriptor::updateFromAtom
     );
 
@@ -433,19 +436,19 @@ void MainWindow::_initAppComponents() {
     //on default layer changed
     QObject::connect(
         this->_atomEditManager->layerSelector()->spinbox(), qOverload<int>(&QSpinBox::valueChanged),
-        this->_mapView->hints(), &ViewMapHint::setDefaultLayer
+        HintThread::hint(), &ViewMapHint::setDefaultLayer
     );
 
     //define default visibility
     QObject::connect(
         this->_atomEditManager->hiddenCheckbox(), &QCheckBox::stateChanged,
-        this->_mapView->hints(), &ViewMapHint::setDefaultVisibility
+        HintThread::hint(), &ViewMapHint::setDefaultVisibility
     );
 
     //intercept preview request from editor
     QObject::connect(
         this->_atomEditManager->editor(), &AtomEditor::requiresPreview,
-        this->_mapView->hints(), &ViewMapHint::handlePreviewRequest
+        HintThread::hint(), &ViewMapHint::handlePreviewRequest
     );
 
     //bind toolbar to mapview
@@ -456,7 +459,7 @@ void MainWindow::_initAppComponents() {
 
     //update status bar on map file update
     QObject::connect(
-        this->_mapView->hints(), &MapHint::mapStateChanged,
+        HintThread::hint(), &MapHint::mapStateChanged,
         this->_sb, &RPZStatusBar::updateMapFileLabel
     );
 
@@ -524,7 +527,7 @@ QMenu* MainWindow::_getMapMenu() {
         [=]() {
             
             //save beforehand if it have to
-            MapHint::mayWantToSavePendingState(this, this->_mapView->hints());
+            MapHint::mayWantToSavePendingState(this, HintThread::hint());
 
             //dialog
             auto picked = QFileDialog::getSaveFileName(
@@ -536,7 +539,7 @@ QMenu* MainWindow::_getMapMenu() {
             if(picked.isNull()) return;
 
             //create !
-            QMetaObject::invokeMethod(this->_mapView->hints(), "createNewRPZMapAs", 
+            QMetaObject::invokeMethod(HintThread::hint(), "createNewRPZMapAs", 
                 Q_ARG(QString, picked)
             );
             
@@ -550,7 +553,7 @@ QMenu* MainWindow::_getMapMenu() {
         [=]() {
             
             //save beforehand if it have to
-            MapHint::mayWantToSavePendingState(this, this->_mapView->hints());
+            MapHint::mayWantToSavePendingState(this, HintThread::hint());
             
             //dialog
             auto picked = QFileDialog::getOpenFileName(
@@ -562,7 +565,7 @@ QMenu* MainWindow::_getMapMenu() {
             if(picked.isNull()) return;
 
             //load map
-            QMetaObject::invokeMethod(this->_mapView->hints(), "loadRPZMap", 
+            QMetaObject::invokeMethod(HintThread::hint(), "loadRPZMap", 
                 Q_ARG(QString, picked)
             );
             
@@ -573,7 +576,7 @@ QMenu* MainWindow::_getMapMenu() {
     auto sRPZmAction = RPZActions::saveTheMap();
     QObject::connect(
         sRPZmAction, &QAction::triggered,
-        this->_mapView->hints(), &MapHint::saveRPZMap
+        HintThread::hint(), &MapHint::saveRPZMap
     );
 
     //save as map
@@ -584,12 +587,12 @@ QMenu* MainWindow::_getMapMenu() {
             auto picked = QFileDialog::getSaveFileName(
                 this,
                 tr("Save as..."),
-                this->_mapView->hints()->mapFilePath(), 
+                HintThread::hint()->mapFilePath(), 
                 tr("Game map (*%1)").arg(AppContext::RPZ_MAP_FILE_EXT)
             );
 
             if(!picked.isNull()) {
-                QMetaObject::invokeMethod(this->_mapView->hints(), "saveRPZMapAs", 
+                QMetaObject::invokeMethod(HintThread::hint(), "saveRPZMapAs", 
                     Q_ARG(QString, picked)
                 );
             }

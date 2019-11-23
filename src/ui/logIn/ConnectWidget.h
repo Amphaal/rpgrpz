@@ -12,7 +12,7 @@
 #include "src/helpers/_appContext.h"
 #include "src/network/rpz/client/RPZClient.h"
 
-#include "src/shared/hints/MapHint.h"
+#include "src/shared/hints/HintThread.hpp"
 
 #include "src/shared/database/CharactersDatabase.h"
 #include "src/ui/_others/ConnectivityObserver.h"
@@ -25,7 +25,7 @@ class ConnectWidget : public QWidget, public ConnectivityObserver {
         enum class State { NotConnected, Connecting, Connected };
         Q_ENUM(State)
 
-        ConnectWidget(MapHint* hintToControlStateOf, QWidget *parent = nullptr);
+        ConnectWidget(QWidget *parent = nullptr);
 
     protected:
         void connectingToServer() override;
@@ -50,8 +50,6 @@ class ConnectWidget : public QWidget, public ConnectivityObserver {
         void _onLogHistoryReceived();
 
         void _saveValuesAsSettings();
-
-        MapHint* _toControlStateOf = nullptr; 
 
         void _fillCharacterSheetCombo();
         SnowFlake::Id _getSelectedCharacterId();

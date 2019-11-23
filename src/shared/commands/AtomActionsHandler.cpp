@@ -1,13 +1,9 @@
 #include "AtomActionsHandler.h"
 
-AtomActionsHandler::AtomActionsHandler(AtomsStorage* master, AtomSelector* selector, QWidget* parent) : 
-    _selector(selector), 
-    _mapMaster(master) {
-
+AtomActionsHandler::AtomActionsHandler(AtomSelector* selector, QWidget* parent) : _selector(selector) {
     this->_addCopyPasteActionsToShortcuts(parent);
     this->_addUndoRedoActionsToShortcuts(parent);
     this->_addRemoveActionToShortcuts(parent);
-
 }
 
 const QList<RPZAtom::Id> AtomActionsHandler::fromSelector() {
@@ -18,13 +14,13 @@ const QList<RPZAtom::Id> AtomActionsHandler::fromSelector() {
 ///
 ///
 
-void AtomActionsHandler::undoAlteration(AtomsStorage* master) {
+void AtomActionsHandler::undoAlteration() {
     if(!Authorisations::isHostAble()) return;
-    QMetaObject::invokeMethod(master, "undo");
+    QMetaObject::invokeMethod(HintThread::hint(), "undo");
 }
-void AtomActionsHandler::redoAlteration(AtomsStorage* master) {
+void AtomActionsHandler::redoAlteration() {
     if(!Authorisations::isHostAble()) return;
-    QMetaObject::invokeMethod(master, "redo");
+    QMetaObject::invokeMethod(HintThread::hint(), "redo");
 }
 
 void AtomActionsHandler::copyToClipboard(const QList<RPZAtom::Id> &ids) {
@@ -33,44 +29,44 @@ void AtomActionsHandler::copyToClipboard(const QList<RPZAtom::Id> &ids) {
     Clipboard::set(ids);
 }
 
-void AtomActionsHandler::pasteAtomsFromClipboard(AtomsStorage* master) {
+void AtomActionsHandler::pasteAtomsFromClipboard() {
     
     auto clipboard = Clipboard::get();
 
     if(!clipboard.count()) return;
     if(!Authorisations::isHostAble()) return;
     
-    QMetaObject::invokeMethod(master, "duplicateAtoms", 
+    QMetaObject::invokeMethod(HintThread::hint(), "duplicateAtoms", 
         Q_ARG(QList<RPZAtom::Id>, clipboard)
     );
 
 }
 
-void AtomActionsHandler::removeAtoms(AtomsStorage* master, const QList<RPZAtom::Id> &ids) {
+void AtomActionsHandler::removeAtoms(const QList<RPZAtom::Id> &ids) {
     if(!Authorisations::isHostAble()) return;
     if(!ids.count()) return;
     RemovedPayload payload(ids);
-    AlterationHandler::get()->queueAlteration(master, payload);
+    AlterationHandler::get()->queueAlteration(HintThread::hint(), payload);
 }
 
-void AtomActionsHandler::moveAtomsToLayer(AtomsStorage* master, const QList<RPZAtom::Id> &ids, int targetLayer) {
+void AtomActionsHandler::moveAtomsToLayer(const QList<RPZAtom::Id> &ids, int targetLayer) {
     if(!Authorisations::isHostAble()) return;
     MetadataChangedPayload payload(ids, {{RPZAtom::Parameter::Layer, targetLayer}});
-    AlterationHandler::get()->queueAlteration(master, payload);
+    AlterationHandler::get()->queueAlteration(HintThread::hint(), payload);
 
 }
 
-void AtomActionsHandler::alterAtomsVisibility(AtomsStorage* master, const QList<RPZAtom::Id> &ids, bool hide) {
+void AtomActionsHandler::alterAtomsVisibility(const QList<RPZAtom::Id> &ids, bool hide) {
     if(!Authorisations::isHostAble()) return;
     MetadataChangedPayload payload(ids, {{RPZAtom::Parameter::Hidden, hide}});
-    AlterationHandler::get()->queueAlteration(master, payload);
+    AlterationHandler::get()->queueAlteration(HintThread::hint(), payload);
 
 }
 
-void AtomActionsHandler::alterAtomsAvailability(AtomsStorage* master, const QList<RPZAtom::Id> &ids, bool lock) {
+void AtomActionsHandler::alterAtomsAvailability(const QList<RPZAtom::Id> &ids, bool lock) {
     if(!Authorisations::isHostAble()) return;
     MetadataChangedPayload payload(ids, {{RPZAtom::Parameter::Locked, lock}});
-    AlterationHandler::get()->queueAlteration(master, payload);
+    AlterationHandler::get()->queueAlteration(HintThread::hint(), payload);
 
 }
 
@@ -84,7 +80,7 @@ void AtomActionsHandler::_addRemoveActionToShortcuts(QWidget* toAddShortcutsTo) 
     QObject::connect(
         removeAction, &QAction::triggered,
         [=]() {
-            removeAtoms(this->_mapMaster, this->fromSelector());
+            removeAtoms(this->fromSelector());
         }
     );
 
@@ -107,7 +103,7 @@ void AtomActionsHandler::_addCopyPasteActionsToShortcuts(QWidget* toAddShortcuts
     QObject::connect(
         pasteAction, &QAction::triggered,
         [=]() {
-            pasteAtomsFromClipboard(this->_mapMaster);
+            pasteAtomsFromClipboard();
         }
     );
 
@@ -122,7 +118,7 @@ void AtomActionsHandler::_addUndoRedoActionsToShortcuts(QWidget* toAddShortcutsT
     QObject::connect(
         undoAction, &QAction::triggered,
         [=]() {
-            undoAlteration(this->_mapMaster);
+            undoAlteration();
         }
     );
 
@@ -131,7 +127,7 @@ void AtomActionsHandler::_addUndoRedoActionsToShortcuts(QWidget* toAddShortcutsT
     QObject::connect(
         redoAction, &QAction::triggered,
         [=]() {
-            redoAlteration(this->_mapMaster);
+            redoAlteration();
         }
     );
 
