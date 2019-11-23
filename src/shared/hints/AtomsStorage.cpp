@@ -391,7 +391,7 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
             if(this->_isAtomOwnable(atom)) {
                 auto characterId = atom.characterId();
                 this->_ownableAtomIdsByOwner.insert(id, characterId);
-                this->_ownerChanged(id, characterId);
+                this->_atomOwnerChanged(id, characterId);
             }
             
 
@@ -462,6 +462,11 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
     }
 }
 
+const QHash<RPZAtom::Id, RPZCharacter::Id>& AtomsStorage::_ownables() const {
+    QMutexLocker l(&this->_m_handlingLock);
+    return this->_ownableAtomIdsByOwner;
+}
+
 void AtomsStorage::_syncAtom(const RPZAtom::Id &toUpdate, const RPZAtom::Updates &updates) {
     
     //update db
@@ -476,7 +481,7 @@ void AtomsStorage::_syncAtom(const RPZAtom::Id &toUpdate, const RPZAtom::Updates
     this->_ownableAtomIdsByOwner.insert(toUpdate, updatedCharId);
 
     if(updatedCharId != boundCharId) {
-        this->_ownerChanged(toUpdate, updatedCharId);
+        this->_atomOwnerChanged(toUpdate, updatedCharId);
     } 
 
 }

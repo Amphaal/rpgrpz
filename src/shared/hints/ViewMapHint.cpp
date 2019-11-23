@@ -18,7 +18,21 @@ QGraphicsItem* ViewMapHint::ghostItem() const {
     return this->_ghostItem;
 }
 
-void ViewMapHint::_ownerChanged(const RPZAtom::Id &target, const RPZCharacter::Id &newOwner) {
+const QList<QGraphicsItem*> ViewMapHint::_gis(const QList<RPZAtom::Id> &atomIds) const {
+    
+    QList<QGraphicsItem*> out;
+    
+    for(const auto &id : atomIds) {
+        auto gi = this->_GItemsById.value(id);
+        if(!gi) continue;
+        out += gi;
+    }
+
+    return out;
+
+}
+
+void ViewMapHint::_atomOwnerChanged(const RPZAtom::Id &target, const RPZCharacter::Id &newOwner) {
     
     auto gi = this->_GItemsById.value(target);
     if(!gi) return;
@@ -28,7 +42,7 @@ void ViewMapHint::_ownerChanged(const RPZAtom::Id &target, const RPZCharacter::I
     if(owns) this->_ownedTokenIds.insert(target);
     else this->_ownedTokenIds.remove(target);
 
-    emit changedOwnership(gi, owns);
+    emit changedOwnership({gi}, owns);
 
 }
 
@@ -44,8 +58,43 @@ bool ViewMapHint::_hasOwnershipOf(const RPZAtom &atom) const {
 }
 
 void ViewMapHint::defineImpersonatingCharacter(const RPZCharacter::Id &toImpersonate) {
-    this->_myCharacterId = toImpersonate;
-    //TODO reevaluate
+  
+    QList<QGraphicsItem*> ownedGIs;
+    QList<QGraphicsItem*> notOwnedGIs;
+    
+    QSet<RPZAtom::Id> nowOwned;
+    if(Authorisations::isHostAble()) { //if is host, owns everything
+        nowOwned = nowOwned.fromList(this->_ownables().keys());
+    }
+    else { //if not, owns from specified character to impersonate
+        nowOwned = nowOwned.fromList(this->_ownables().keys(toImpersonate));
+    }
+
+    {
+
+        QMutexLocker l(&this->_m_GItemsById);
+
+        //define character id
+        this->_myCharacterId = toImpersonate;
+        
+        //update owned tokens
+        QSet<RPZAtom::Id> previouslyOwned = this->_ownedTokenIds;
+        this->_ownedTokenIds = nowOwned;
+
+        //find updatables
+        auto notOwnedAnymore = previouslyOwned.subtract(nowOwned);
+        auto newlyOwned = nowOwned.subtract(previouslyOwned);
+
+        //find associated graphics items
+        ownedGIs = this->_gis(newlyOwned.toList());
+        notOwnedGIs = this->_gis(notOwnedAnymore.toList());
+
+    }
+
+    //signals
+    if(ownedGIs.count()) emit changedOwnership(ownedGIs, false);
+    if(notOwnedGIs.count()) emit changedOwnership(notOwnedGIs, false);
+
 }
 
 void ViewMapHint::_updateTemplateAtom(RPZAtom::Updates updates) {

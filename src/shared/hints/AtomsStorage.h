@@ -77,6 +77,7 @@ class AtomsStorage : public AlterationAcknoledger {
         virtual void _updatesDone(const RPZAtom::ManyUpdates &updates) {};
 
         bool _isAtomOwnable(const RPZAtom &atom) const;
+        const QHash<RPZAtom::Id, RPZCharacter::Id>& _ownables() const;
 
     private:
         mutable QMutex _m_handlingLock;
@@ -97,7 +98,7 @@ class AtomsStorage : public AlterationAcknoledger {
         //ownership
         QHash<RPZAtom::Id, RPZCharacter::Id> _ownableAtomIdsByOwner;
         void _syncAtom(const RPZAtom::Id &toUpdate, const RPZAtom::Updates &updates);
-        virtual void _ownerChanged(const RPZAtom::Id &target, const RPZCharacter::Id &newOwner) {};
+        virtual void _atomOwnerChanged(const RPZAtom::Id &target, const RPZCharacter::Id &newOwner) {};
 
         //duplication
         int _duplicationCount = 0;
