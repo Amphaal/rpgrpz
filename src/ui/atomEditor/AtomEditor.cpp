@@ -132,7 +132,8 @@ void AtomEditor::_createEditorsFromAtomParameters() {
     _addEditor(new NPCAttitudeEditor);
     _addEditor(new NPCHealthEditor);
 
-    for(const auto editor : this->_editorsByParam) {
+    //unique editors, prevents multiple binding
+    for(const auto editor : this->_editorsByParam.values().toSet()) { 
 
         QObject::connect(
             editor, &AtomSubEditor::valueConfirmedForPayload,
@@ -159,11 +160,13 @@ void AtomEditor::_emitPayload(const RPZAtom::Updates &changesToEmit) {
     //intercept combo change for visibility
     this->_mustShowBrushPenWidthEditor(changesToEmit);
 
+    //if template mode, update template 
     if(this->_currentEditMode == AtomSubEditor::EditMode::Template) {
         AtomTemplateChangedPayload payload(changesToEmit);
         AlterationHandler::get()->queueAlteration(this, payload);
     } 
     
+    //else, update selection
     else {
 
         MetadataChangedPayload payload(
@@ -172,6 +175,7 @@ void AtomEditor::_emitPayload(const RPZAtom::Updates &changesToEmit) {
         );
 
         AlterationHandler::get()->queueAlteration(this, payload);
+        
     }
 
 }

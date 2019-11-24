@@ -167,6 +167,7 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
 
         }
 
+    private slots:
         void _onComboValueChanged(int index) {
             
             auto sel = this->_combo->currentData().value<DefaultCharacterSelection>();

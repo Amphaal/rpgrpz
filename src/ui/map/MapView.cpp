@@ -126,7 +126,7 @@ void MapView::_onOwnershipChanged(const QList<QGraphicsItem*> changing, bool own
 }
 
 void MapView::_onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates) {
-    
+
     for(const auto item : toUpdate) {
         this->_updateItemValue(item, updates);
     }
@@ -490,8 +490,6 @@ void MapView::mousePressEvent(QMouseEvent *event) {
         default:
             break;
     }
-
-
 
 }
 
