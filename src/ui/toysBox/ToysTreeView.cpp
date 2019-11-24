@@ -135,21 +135,24 @@ QModelIndexList ToysTreeView::_selectedElementsIndexes() {
 void ToysTreeView::startDrag(Qt::DropActions supportedActions) {
     
     auto indexes = this->selectedIndexes();
-    QMimeData *data = model()->mimeData(indexes);
+    auto data = model()->mimeData(indexes);
     if (!data) return;
 
     QDrag drag(this);
-
-    QPixmap pixmap(":/icons/app/rpgrpz_32.png");
-    QPainter paint(&pixmap);
-    paint.setPen(QPen("#000000"));
-    paint.setBrush(QBrush(Qt::white));
-    QRect numberRect(12, 8, 13, 13);
-    paint.drawRect(numberRect);
-    paint.drawText(numberRect, Qt::AlignHCenter | Qt::AlignVCenter, QString::number(indexes.count()));
-    drag.setPixmap(pixmap);
-            
     drag.setMimeData(data);
+
+        //customised cursor
+        QPixmap pixmap(":/icons/app/rpgrpz_32.png");
+        QPainter paint(&pixmap);
+        paint.setPen(QPen("#000000"));
+        paint.setBrush(QBrush(Qt::white));
+        QRect numberRect(12, 8, 13, 13);
+        paint.drawRect(numberRect);
+        paint.drawText(numberRect, Qt::AlignHCenter | Qt::AlignVCenter, QString::number(indexes.count()));
+    
+    drag.setPixmap(pixmap); 
+    
+    //exec
     drag.exec(supportedActions, Qt::MoveAction);
 
 }

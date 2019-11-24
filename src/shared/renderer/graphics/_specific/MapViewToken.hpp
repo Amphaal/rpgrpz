@@ -23,13 +23,13 @@ class MapViewTokenOutline : public QObject, public QGraphicsItem, public RPZGrap
     Q_INTERFACES(QGraphicsItem)
 
     public:
-        MapViewTokenOutline(QGraphicsItem* parentItem, QObject* parentObject) : QObject(parentObject), QGraphicsItem(parentItem) {
+        MapViewTokenOutline(QGraphicsItem* parentItem, QObject* parentObject, bool shouldDisplay) : QObject(parentObject), QGraphicsItem(parentItem), 
+            _shouldDisplay(shouldDisplay) {
             
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsFocusable, false);   
-            
-            
+              
             this->_spinnerAnim = new QPropertyAnimation(this, "rotation", this);
             this->_spinnerAnim->setDuration(10000);
             this->_spinnerAnim->setStartValue(0);
@@ -47,18 +47,25 @@ class MapViewTokenOutline : public QObject, public QGraphicsItem, public RPZGrap
             if(starts) this->_spinnerAnim->start();
         }
 
+        void mayDisplay(bool shouldDisplay) {
+            this->_shouldDisplay = shouldDisplay;
+            this->update();
+        }
+
         QRectF boundingRect() const override {
             return this->parentItem()->boundingRect();
         }
 
     protected:
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
+            if(!this->_shouldDisplay) return;
             auto result = this->conditionnalPaint(this, painter, option, widget);
             if(!result.mustContinue) return;
             this->_paint(painter, &result.options, widget);
         }
 
     private:
+        bool _shouldDisplay = false;
         QPropertyAnimation* _spinnerAnim = nullptr;
 
         bool _mustDrawSelectionHelper() const override { 
@@ -70,7 +77,7 @@ class MapViewTokenOutline : public QObject, public QGraphicsItem, public RPZGrap
         };
 
         void _paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) {
-            
+
             painter->save();
 
                 painter->setRenderHint(QPainter::Antialiasing, true);
@@ -123,15 +130,21 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
         }
 
         void setOwned(bool owned) {
+            
             this->_owned = owned;
             RPZQVariant::setAllowedToBeWalked(this, owned);
+            
+            if(this->_outline) {
+                this->_outline->mayDisplay(owned);
+            }
+
         }
 
         //only use on main thread !
         void triggerAnimation() {
             
             if(!this->_outline) {
-                this->_outline = new MapViewTokenOutline(this, this); 
+                this->_outline = new MapViewTokenOutline(this, this, this->_owned); 
             }
 
             // this->_outline->triggerAnimation(this->_owned);

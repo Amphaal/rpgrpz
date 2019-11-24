@@ -105,7 +105,7 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
 
             //define combo state
             auto allows = context.mode == AtomSubEditor::EditMode::Selection && context.numberOfItems == 1;
-            this->_combo->setEnabled(allows);
+            this->setEnabled(allows);
 
             //check for a bound characterId
             auto characterId = defaultValues.value(this->_params.first()).toULongLong();
@@ -127,6 +127,7 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
         }
 
         void _onComboValueChanged(int index) {
+            
             auto characterId = this->_combo->currentData().toULongLong();
             auto name = characterId ? this->_combo->currentText() : "";
             
@@ -134,6 +135,7 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
                 { this->_params.first(), characterId },
                 { this->_params.last(), name }
             });
+
         }
 
     public:

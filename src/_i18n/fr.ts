@@ -293,12 +293,12 @@
 <context>
     <name>CharacterPickerEditor</name>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="55"/>
+        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="50"/>
         <source>[Cannot configure...]</source>
         <translation>[Impossible à configurer...]</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="60"/>
+        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="56"/>
         <source>[No character associated]</source>
         <translation>[Aucun personnage associé]</translation>
     </message>
@@ -1251,7 +1251,7 @@
         <translation>%1 atome(s) selectionné(s)</translation>
     </message>
     <message>
-        <location filename="../shared/renderer/graphics/_specific/MapViewToken.hpp" line="251"/>
+        <location filename="../shared/renderer/graphics/_specific/MapViewToken.hpp" line="264"/>
         <source>P</source>
         <comment>player sign</comment>
         <translation>J</translation>
@@ -1285,22 +1285,22 @@
         <translation>Déconnecté du serveur</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="404"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="411"/>
         <source>Host closed the connection.</source>
         <translation>L&apos;hôte a fermé la connexion.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="407"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="414"/>
         <source>Host could not be found. Please check the hostname and port number.</source>
         <translation>L&apos;hôte n&apos;a pas pu être trouvé. Merci de vérifier le nom d&apos;hôte et le numéro de port.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="410"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="417"/>
         <source>Connection has been refused by remote host.</source>
         <translation>La connexion a été refusée par l&apos;hôte distant.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="413"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="420"/>
         <source>An error has occured : %1</source>
         <translation>Une erreur est survenue : %1</translation>
     </message>
@@ -1423,17 +1423,17 @@
 <context>
     <name>ToysTreeView</name>
     <message>
-        <location filename="../ui/toysBox/ToysTreeView.cpp" line="215"/>
+        <location filename="../ui/toysBox/ToysTreeView.cpp" line="218"/>
         <source>&lt;&lt; Move to &quot;%1&quot;</source>
         <translation>&lt;&lt; Déplacer vers&quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/ToysTreeView.cpp" line="323"/>
+        <location filename="../ui/toysBox/ToysTreeView.cpp" line="326"/>
         <source>Delete elements in toy box</source>
         <translation>Supprimer des elements de la boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/ToysTreeView.cpp" line="324"/>
+        <location filename="../ui/toysBox/ToysTreeView.cpp" line="327"/>
         <source>Do you confirm deletion of the %1 selected elements ?</source>
         <translation>Confirmez-vous la suppression des %1 éléments selectionnés ?</translation>
     </message>
