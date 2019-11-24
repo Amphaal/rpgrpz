@@ -34,3 +34,5 @@ class ResetPayload : public AtomsWielderPayload {
             this->insert("mParams", mapParams);
         }
 };
+
+Q_DECLARE_METATYPE(ResetPayload)

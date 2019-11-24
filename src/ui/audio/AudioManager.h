@@ -27,7 +27,7 @@ class AudioManager : public QWidget, public ConnectivityObserver {
         YoutubePlayer* player();
 
     private slots:
-        void _onIdentityAck(const RPZUser &user);
+        void _onGameSessionReceived(const RPZGameSession &gameSession);
         void _onSeekingRequested(int seekPosInSecs);
         void _onSeekingRequested(qint64 seekPosInMsecs);
         void _onAudioPlayStateChanged(bool isPlaying);

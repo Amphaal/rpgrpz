@@ -38,8 +38,8 @@ class BaseUsersModel : public QAbstractListModel, public ConnectivityObserver {
             
             //update all users
             QObject::connect(
-                this->_rpzClient, &RPZClient::allUsersReceived,
-                this, &BaseUsersModel::_onAllUsersReceived
+                this->_rpzClient, &RPZClient::gameSessionReceived,
+                this, &BaseUsersModel::_onGameSessionReceived
             );
 
             //on new user
@@ -84,13 +84,13 @@ class BaseUsersModel : public QAbstractListModel, public ConnectivityObserver {
 
         }
 
-        void _onAllUsersReceived() {          
+        void _onGameSessionReceived(const RPZGameSession &gameSession) {          
             
             this->beginResetModel();
 
                 this->_users.clear();
                 
-                for(const auto &user : this->_rpzClient->sessionUsers()) {
+                for(const auto &user : gameSession.users()) {
                     if(this->_isUserInvalidForInsert(user)) continue;
                     this->_users.insert(user.id(), user);
                 }

@@ -9,6 +9,7 @@
 
 class RPZGameSession : public QVariantHash {
     public:
+        RPZGameSession() {}
         explicit RPZGameSession(const QVariantHash &hash) : QVariantHash(hash) {}
         RPZGameSession(const RPZUser::Id &selfUserId, const RPZMap<RPZUser> &users, const RPZMap<RPZMessage> &messages, bool isFullSession) {
             this->_setSelfUserId(selfUserId);
@@ -18,7 +19,7 @@ class RPZGameSession : public QVariantHash {
         }
 
         bool isFullSession() const {
-            this->value("fs").toBool();
+            return this->value("fs").toBool();
         }
 
         const RPZUser::Id selfUserId() const {
@@ -33,8 +34,8 @@ class RPZGameSession : public QVariantHash {
             return this->value("usrs").value<RPZMap<RPZUser>>();
         }
 
-        const QVector<RPZMessage> messages() const {
-            return this->value("msgs").value<QVector<RPZMessage>>();
+        const RPZMap<RPZMessage> messages() const {
+            return this->value("msgs").value<RPZMap<RPZMessage>>();
         }
 
         const ResetPayload mapPayload() const {
@@ -67,3 +68,5 @@ class RPZGameSession : public QVariantHash {
         }
 
 };
+
+Q_DECLARE_METATYPE(RPZGameSession)

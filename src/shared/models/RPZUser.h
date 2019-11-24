@@ -5,6 +5,7 @@
 #include <QVariantHash>
 #include <QHostAddress>
 
+#include "src/shared/models/_base/RPZMap.hpp"
 #include "src/helpers/RandomColor.h"
 #include "src/shared/models/_base/Serializable.hpp"
 #include "src/shared/commands/MessageInterpreter.h"
@@ -44,5 +45,7 @@ class RPZUser : public Serializable {
         void _setColor(const QColor &color = QColor());
 
 };
+
+Q_DECLARE_METATYPE(RPZMap<RPZUser>)
 
 inline uint qHash(const RPZUser::Role &key, uint seed = 0) {return uint(key) ^ seed;}

@@ -3,6 +3,7 @@
 #include <QString>
 #include <QDateTime>
 
+#include "src/shared/models/_base/RPZMap.hpp"
 #include "src/shared/models/RPZUser.h"
 #include "src/shared/models/_base/Stampable.hpp"
 #include "src/shared/commands/MessageInterpreter.h"
@@ -26,3 +27,5 @@ class RPZMessage : public Stampable {
         void _forceCommand(const MessageInterpreter::Command &forced);
         void _interpretTextAsCommand();
 };
+
+Q_DECLARE_METATYPE(RPZMap<RPZMessage>)

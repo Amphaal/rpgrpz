@@ -84,8 +84,8 @@ class CharacterEditor : public QWidget, public ConnectivityObserver {
         void connectingToServer() override {
             
             QObject::connect(
-                this->_rpzClient, &RPZClient::allUsersReceived,
-                this, &CharacterEditor::_onAllUsersReceived
+                this->_rpzClient, &RPZClient::gameSessionReceived,
+                this, &CharacterEditor::_onGameSessionReceived
             );
 
             QObject::connect(
@@ -112,12 +112,12 @@ class CharacterEditor : public QWidget, public ConnectivityObserver {
         }
 
     private slots:
-        void _onAllUsersReceived() {
+        void _onGameSessionReceived(const RPZGameSession &gameSession) {
             
             auto dbCharacterIds = CharactersDatabase::get()->characters().keys();
             
             RPZMap<RPZCharacter> out;
-            for(const auto &remoteUser : this->_rpzClient->sessionUsers()) {
+            for(const auto &remoteUser : gameSession.users()) {
                 
                 //reject if not player
                 if(remoteUser.role() != RPZUser::Role::Player) continue;

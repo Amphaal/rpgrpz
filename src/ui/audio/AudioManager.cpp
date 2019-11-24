@@ -22,9 +22,13 @@ YoutubePlayer* AudioManager::player() {
     return this->_plCtrl;
 }
 
-void AudioManager::_onIdentityAck(const RPZUser &user) {
+void AudioManager::_onGameSessionReceived(const RPZGameSession &gameSession) {
+
+    Q_UNUSED(gameSession);
     
-    this->_isNetworkMaster = user.role() == RPZUser::Role::Host;
+    auto selfUser = this->_rpzClient->identity();
+
+    this->_isNetworkMaster = selfUser.role() == RPZUser::Role::Host;
     this->_plCtrl->setEnabled(this->_isNetworkMaster);
     
     if(!this->_isNetworkMaster) {
@@ -52,8 +56,8 @@ void AudioManager::connectingToServer() {
 
     //on receiving identity
     QObject::connect(
-        _rpzClient, &RPZClient::selfIdentityAcked,
-        this, &AudioManager::_onIdentityAck
+        _rpzClient, &RPZClient::gameSessionReceived,
+        this, &AudioManager::_onGameSessionReceived
     );
 
     //on master requesting audio change
