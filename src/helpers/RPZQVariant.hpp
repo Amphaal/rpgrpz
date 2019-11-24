@@ -19,7 +19,8 @@ class RPZQVariant {
             IsHidden = 2680, 
             BrushDrawStyle = 2767,
             CachedOpacity = 6000,
-            AllowedToWalk = 7000
+            AllowedToWalk = 7000,
+            AllowedToDefineMoveAbility = 8000,
         };
 
         static bool allowedToBeWalked(const QGraphicsItem* item) {
@@ -27,6 +28,14 @@ class RPZQVariant {
         }
         static void setAllowedToBeWalked(QGraphicsItem* item, bool allowed) {
             item->setData((int)RPZQVariant::Roles::AllowedToWalk, allowed);
+        }
+
+
+        static bool allowedToDefineMoveAbility(const QGraphicsItem* item) {
+            return item->data((int)RPZQVariant::Roles::AllowedToDefineMoveAbility).toBool();
+        }
+        static void setAllowedToDefineMoveAbility(QGraphicsItem* item, bool allowed) {
+            item->setData((int)RPZQVariant::Roles::AllowedToDefineMoveAbility, allowed);
         }
 
         static YoutubeVideoMetadata* ytVideoMetadata(QListWidgetItem* item) {

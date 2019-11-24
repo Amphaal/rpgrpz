@@ -491,7 +491,6 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
         emit atomDescriptorUpdated();
 
         //reset ssi
-        QMutexLocker l2(&this->_m_singleSelectionInteractible);
         this->_singleSelectionInteractible = SingleSelectionInteractible();
 
     }
@@ -505,7 +504,6 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
         auto ssi = _generateSSI(mPayload);
         emit atomDescriptorUpdated(ssi.interactible);
 
-        QMutexLocker l(&this->_m_singleSelectionInteractible);
         this->_singleSelectionInteractible = ssi;
 
     }
@@ -553,44 +551,33 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
 }
 
 void ViewMapHint::_mightUpdateAtomDescriptor(const QList<RPZAtom::Id> &idsUpdated) {
+        
+    //if no single interactive selection, no need to update
+    if(!this->_singleSelectionInteractible.isInteractive) return;
     
-    {
-        QMutexLocker l(&this->_m_singleSelectionInteractible);
-        
-        //if no single interactive selection, no need to update
-        if(!this->_singleSelectionInteractible.isInteractive) return;
-        
-        //if list of updates does not contain interactible, skip
-        auto interactibleId = this->_singleSelectionInteractible.interactible.id();
-        if(!idsUpdated.contains(interactibleId)) return;
+    //if list of updates does not contain interactible, skip
+    auto interactibleId = this->_singleSelectionInteractible.interactible.id();
+    if(!idsUpdated.contains(interactibleId)) return;
 
-        auto atomPtr = this->map().atomPtr(interactibleId);
+    auto atomPtr = this->map().atomPtr(interactibleId);
+    
+    //deleted, update with empty
+    if(!atomPtr) {
         
-        //deleted, update with empty
-        if(!atomPtr) {
-            
-            this->_singleSelectionInteractible = SingleSelectionInteractible();
-            
-            l.unlock();
-            emit atomDescriptorUpdated();
-        
-        }
-        
-        //existing, update descriptor
-        else {
-            
-            l.unlock();
-            emit atomDescriptorUpdated(*atomPtr);
-        
-        }
+        this->_singleSelectionInteractible = SingleSelectionInteractible();
 
+        emit atomDescriptorUpdated();
+    
+    }
+    
+    //existing, update descriptor
+    else {
+
+        emit atomDescriptorUpdated(*atomPtr);
+    
     }
 
-}
 
-const ViewMapHint::SingleSelectionInteractible ViewMapHint::singleSelectionHelper() const {
-    QMutexLocker l(&this->_m_singleSelectionInteractible);
-    return this->_singleSelectionInteractible;
 }
 
 const ViewMapHint::SingleSelectionInteractible ViewMapHint::_generateSSI(const SelectedPayload* payload) const {

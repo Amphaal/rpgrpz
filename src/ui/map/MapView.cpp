@@ -263,13 +263,8 @@ bool MapView::_tryToInvokeWalkableHelper(QGraphicsItem * toBeWalked) {
     if(!toBeWalked) return false;
     if(!this->_isMousePressed) return false;
 
-    auto result = HintThread::hint()->singleSelectionHelper();
-
-    auto isWalkable = Authorisations::isHostAble() && 
-                      result.interactible.isWalkableAtom() &&
-                      RPZQVariant::allowedToBeWalked(toBeWalked);
-
     //prevent if not walkable
+    auto isWalkable = RPZQVariant::allowedToBeWalked(toBeWalked);
     if(!isWalkable) return false;
         
     //clear previous walker

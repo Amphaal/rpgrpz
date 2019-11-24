@@ -23,10 +23,9 @@ const RPZAtom AtomConverter::cloneAtomTemplateFromGraphics(QGraphicsItem* bluepr
 void AtomConverter::setupGraphicsItemFromAtom(QGraphicsItem* target, const RPZAtom &blueprint) {
 
     //set default movable
-    target->setFlag(
-        QGraphicsItem::GraphicsItemFlag::ItemIsMovable, 
-        Authorisations::isHostAble() && !blueprint.isWalkableAtom()
-    );
+    auto default_canBeMoved = Authorisations::isHostAble() && !blueprint.isWalkableAtom();
+    target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, default_canBeMoved);
+    RPZQVariant::setAllowedToDefineMoveAbility(target, default_canBeMoved);
 
     //update
     _updateGraphicsItemFromMetadata(target, blueprint);
@@ -156,6 +155,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
 
             // on locking change
             case RPZAtom::Parameter::Locked: {
+                if(!RPZQVariant::allowedToDefineMoveAbility(itemToUpdate)) break;
                 auto locked = val.toBool();
                 itemToUpdate->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, !locked);
                 itemToUpdate->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, !locked);

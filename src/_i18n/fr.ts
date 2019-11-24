@@ -1285,22 +1285,22 @@
         <translation>Déconnecté du serveur</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="411"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="412"/>
         <source>Host closed the connection.</source>
         <translation>L&apos;hôte a fermé la connexion.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="414"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="415"/>
         <source>Host could not be found. Please check the hostname and port number.</source>
         <translation>L&apos;hôte n&apos;a pas pu être trouvé. Merci de vérifier le nom d&apos;hôte et le numéro de port.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="417"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="418"/>
         <source>Connection has been refused by remote host.</source>
         <translation>La connexion a été refusée par l&apos;hôte distant.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="420"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="421"/>
         <source>An error has occured : %1</source>
         <translation>Une erreur est survenue : %1</translation>
     </message>

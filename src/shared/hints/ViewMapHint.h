@@ -46,7 +46,6 @@ class ViewMapHint : public AtomsStorage {
         const RPZAtom::Id getAtomIdFromGraphicsItem(const QGraphicsItem* toFetch) const; //safe
 
         QGraphicsItem* generateGraphicsFromTemplate(bool hiddenAsDefault = false) const; //safe
-        const SingleSelectionInteractible singleSelectionHelper() const; //safe
 
         void defineImpersonatingCharacter(const RPZCharacter::Id &toImpersonate = 0);
 
@@ -84,7 +83,7 @@ class ViewMapHint : public AtomsStorage {
         mutable QMutex _m_GItemsById;
         QMap<RPZAtom::Id, QGraphicsItem*> _GItemsById;
 
-        mutable QMutex _m_singleSelectionInteractible;
+        //atom descriptor
         ViewMapHint::SingleSelectionInteractible _singleSelectionInteractible;
         const ViewMapHint::SingleSelectionInteractible _generateSSI(const SelectedPayload* payload) const;
 

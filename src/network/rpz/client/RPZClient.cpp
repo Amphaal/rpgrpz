@@ -131,11 +131,12 @@ void RPZClient::_onConnected() {
 void RPZClient::_handleAlterationRequest(const AlterationPayload &payload) {
 
     //ignore packages from server
-    if(payload.source() == this->source()) return;
-    if(payload.source() == Payload::Source::RPZServer) return;
+    auto pSource = payload.source();
+    if(pSource == this->source()) return;
+    if(pSource == Payload::Source::RPZServer) return;
 
     //prevent alteration propagation to server if not host
-    if(this->_myUser().role() != RPZUser::Role::Host) return;
+    if(this->_myUser().role() == RPZUser::Role::Observer) return;
 
     //ignore alteration requests when socket is not connected
     if(this->_serverSock->socket()->state() != QAbstractSocket::ConnectedState) return;
