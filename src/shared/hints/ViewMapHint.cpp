@@ -93,8 +93,12 @@ void ViewMapHint::defineImpersonatingCharacter(const RPZCharacter::Id &toImperso
     }
 
     //signals
-    if(ownedGIs.count()) emit changedOwnership(ownedGIs, false);
-    if(notOwnedGIs.count()) emit changedOwnership(notOwnedGIs, false);
+    if(ownedGIs.count()) {
+        emit changedOwnership(ownedGIs, true);
+    }
+    if(notOwnedGIs.count()) {
+        emit changedOwnership(notOwnedGIs, false);
+    }
 
 }
 

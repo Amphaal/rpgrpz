@@ -26,7 +26,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     
-    this->setRubberBandSelectionMode(Qt::ItemSelectionMode::ContainsItemBoundingRect); //rubberband UC optimization
+    this->setRubberBandSelectionMode(Qt::ItemSelectionMode::IntersectsItemBoundingRect); //rubberband UC optimization
 
     this->setMouseTracking(true); //activate mouse tracking for ghost 
 
