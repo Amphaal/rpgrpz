@@ -47,7 +47,7 @@ class ViewMapHint : public AtomsStorage {
 
         QGraphicsItem* generateGraphicsFromTemplate(bool hiddenAsDefault = false) const; //safe
 
-        void defineImpersonatingCharacter(const RPZCharacter::Id &toImpersonate = 0);
+        void defineImpersonatingCharacter(const RPZCharacter::Id &toImpersonate = 0); //safe
 
     public slots:
         void mightNotifyMovement(const QList<QGraphicsItem*> &itemsWhoMightHaveMoved); //safe
@@ -94,6 +94,7 @@ class ViewMapHint : public AtomsStorage {
         RPZCharacter::Id _myCharacterId = 0;
         bool _hasOwnershipOf(const RPZAtom &atom) const;
         const QList<QGraphicsItem*> _gis(const QList<RPZAtom::Id> &atomIds) const; //not safe !
+        void _checkForOwnedTokens();
 
         //helpers
         QGraphicsItem* _generateGhostItem(const RPZToy &toy, QGraphicsItem* &oldGhostToDelete);

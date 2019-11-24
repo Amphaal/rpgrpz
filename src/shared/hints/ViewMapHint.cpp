@@ -58,8 +58,10 @@ bool ViewMapHint::_hasOwnershipOf(const RPZAtom &atom) const {
     
 }
 
-void ViewMapHint::defineImpersonatingCharacter(const RPZCharacter::Id &toImpersonate) {
-  
+void ViewMapHint::_checkForOwnedTokens() {
+    
+    if(!this->_myCharacterId) return;
+
     QList<QGraphicsItem*> ownedGIs;
     QList<QGraphicsItem*> notOwnedGIs;
     
@@ -68,29 +70,20 @@ void ViewMapHint::defineImpersonatingCharacter(const RPZCharacter::Id &toImperso
         nowOwned = nowOwned.fromList(this->_ownables().keys());
     }
     else { //if not, owns from specified character to impersonate
-        nowOwned = nowOwned.fromList(this->_ownables().keys(toImpersonate));
+        nowOwned = nowOwned.fromList(this->_ownables().keys(this->_myCharacterId));
     }
-
-    {
-
-        QMutexLocker l(&this->_m_GItemsById);
-
-        //define character id
-        this->_myCharacterId = toImpersonate;
         
-        //update owned tokens
-        QSet<RPZAtom::Id> previouslyOwned = this->_ownedTokenIds;
-        this->_ownedTokenIds = nowOwned;
+    //update owned tokens
+    QSet<RPZAtom::Id> previouslyOwned = this->_ownedTokenIds;
+    this->_ownedTokenIds = nowOwned;
 
-        //find updatables
-        auto notOwnedAnymore = previouslyOwned.subtract(nowOwned);
-        auto newlyOwned = nowOwned.subtract(previouslyOwned);
+    //find updatables
+    auto notOwnedAnymore = previouslyOwned.subtract(nowOwned);
+    auto newlyOwned = nowOwned.subtract(previouslyOwned);
 
-        //find associated graphics items
-        ownedGIs = this->_gis(newlyOwned.toList());
-        notOwnedGIs = this->_gis(notOwnedAnymore.toList());
-
-    }
+    //find associated graphics items
+    ownedGIs = this->_gis(newlyOwned.toList());
+    notOwnedGIs = this->_gis(notOwnedAnymore.toList());
 
     //signals
     if(ownedGIs.count()) {
@@ -100,6 +93,11 @@ void ViewMapHint::defineImpersonatingCharacter(const RPZCharacter::Id &toImperso
         emit changedOwnership(notOwnedGIs, false);
     }
 
+}
+
+void ViewMapHint::defineImpersonatingCharacter(const RPZCharacter::Id &toImpersonate) {
+    QMutexLocker l(&this->_m_GItemsById);
+    this->_myCharacterId = toImpersonate;  
 }
 
 void ViewMapHint::_updateTemplateAtom(RPZAtom::Updates updates) {
@@ -511,6 +509,9 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
     //if reset (afterward)
     else if(auto mPayload = dynamic_cast<const ResetPayload*>(&payload)) {
         
+        //bind owned tokens
+        this->_checkForOwnedTokens();
+
         //tell UI that download ended
         QMetaObject::invokeMethod(ProgressTracker::get(), "downloadHasEnded", 
             Q_ARG(ProgressTracker::Kind, ProgressTracker::Kind::Map)
