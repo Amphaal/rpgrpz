@@ -108,6 +108,7 @@ int main(int argc, char** argv) {
         qRegisterMetaType<RPZQuickDraw>("RPZQuickDraw");
         qRegisterMetaType<RPZMessage>("RPZMessage");
         qRegisterMetaType<ResetPayload>("ResetPayload");
+        qRegisterMetaType<RPZGameSession>("RPZGameSession");
         qRegisterMetaType<RPZAssetImportPackage>("RPZAssetImportPackage");
         qRegisterMetaType<RPZCharacter>("RPZCharacter");
         qRegisterMetaType<StreamPlayStateTracker>("StreamPlayStateTracker");

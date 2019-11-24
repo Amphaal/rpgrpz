@@ -60,12 +60,6 @@ class BaseUsersModel : public QAbstractListModel, public ConnectivityObserver {
                 this, &BaseUsersModel::_onUserDataChanged
             );
 
-            //on self user data changed
-            QObject::connect(
-                this->_rpzClient, &RPZClient::selfIdentityChanged,
-                this, &BaseUsersModel::_onUserDataChanged
-            );
-
         }
 
     private:

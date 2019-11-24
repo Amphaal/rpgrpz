@@ -17,6 +17,31 @@ bool RPZClient::hasReceivedInitialMap() const {
     return this->_initialMapSetupReceived;
 }
 
+void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
+    
+    QString msg;
+    
+    switch (_socketError) {
+        case QAbstractSocket::RemoteHostClosedError:
+            msg = tr("Host closed the connection.");
+            break;
+        case QAbstractSocket::HostNotFoundError:
+            msg = tr("Host could not be found. Please check the hostname and port number.");
+            break;
+        case QAbstractSocket::ConnectionRefusedError:
+            msg = tr("Connection has been refused by remote host.");
+            break;
+        default:
+            msg = tr("An error has occured : %1").arg(this->_serverSock->socket()->errorString());
+                                   
+    }
+
+    this->log(msg);
+    
+    emit connectionStatus(msg, true);
+    emit closed();
+}
+
 void RPZClient::_initSock() {
     this->_serverSock = new JSONSocket(this, this);
 
@@ -165,6 +190,92 @@ const RPZMap<RPZUser> RPZClient::sessionUsers() const {
     return this->_sessionUsers;
 }
 
+
+void RPZClient::_onMapChangeReceived(AlterationPayload *castedPayload, bool isHeavyChange) {
+    
+    if(isHeavyChange) this->_initialMapSetupReceived = true;
+
+    //if atom weilder, check if assets are missing
+    if(auto mPayload = dynamic_cast<const AtomsWielderPayload*>(castedPayload)) { 
+        
+        //compare assets in map with assets in db 
+        auto missingAssetHashes = mPayload->assetHashes();
+        auto handledMissingAssetHashes = AssetsDatabase::get()->getStoredAssetHashes();
+        missingAssetHashes.subtract(handledMissingAssetHashes);
+        
+        //if missing assets, request them
+        if(auto count = missingAssetHashes.count()) {
+            this->log(QStringLiteral(u"Assets : missing %1 asset(s)").arg(count));
+            this->_askForAssets(missingAssetHashes);
+        }
+
+    }
+
+    //propagate
+    AlterationHandler::get()->queueAlteration(this, *castedPayload);
+
+}
+
+void RPZClient::_checkPendingCharactersRegistration() {
+    if(!this->_hasPendingCharactersRegistration) return;
+    emit charactersCountChanged();
+    this->_hasPendingCharactersRegistration = false;
+}
+
+
+void RPZClient::_mayRegisterAsCharacterized(const RPZUser &user, const CharacterRegistration &type) {
+    
+    if(user.role() != RPZUser::Role::Player) return;
+
+    auto id = user.id();
+    if(!id) return;
+    
+    switch(type) {
+        
+        case CharacterRegistration::In: {
+            this->_characterizedUserIds.insert(id);
+        }
+        break;
+
+        case CharacterRegistration::Out: {
+            this->_characterizedUserIds.remove(id);
+        }
+        break;
+
+    }
+
+    this->_hasPendingCharactersRegistration = true;
+
+}
+
+void RPZClient::_registerSessionUsers(const RPZGameSession &gameSession) {
+    
+    //handle user
+    {
+        QMutexLocker l(&this->_m_sessionUsers);
+        
+        //replace all stored users
+        this->_sessionUsers.clear();
+        
+        //inserts
+        auto users = gameSession.users();
+        for(const auto &user : users) {
+            this->_sessionUsers.insert(user.id(), user);
+            this->_mayRegisterAsCharacterized(user, CharacterRegistration::In);
+        }
+
+        //define self
+        this->_myUserId = gameSession.selfUserId();
+        auto &mUser = this->_myUser();
+        Authorisations::defineHostAbility(mUser);
+
+    }
+
+    this->_checkPendingCharactersRegistration();
+    emit whisperTargetsChanged();
+
+}
+
 void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data) {
     
     QMetaObject::invokeMethod(ProgressTracker::get(), "clientIsReceiving");
@@ -219,39 +330,28 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
         }
         break;
         
-        case RPZJSON::Method::ChatLogHistory: {
-            QVector<RPZMessage> msgs;
-            for(const auto &rawMsg : data.toList()) {
-                RPZMessage msg(rawMsg.toHash());
-                msgs.append(msg);
-            }
-            emit receivedLogHistory(msgs);
-        }
-        break;
-
-        case RPZJSON::Method::AllConnectedUsers: {
-
-            {
-                QMutexLocker l(&this->_m_sessionUsers);
+        case RPZJSON::Method::GameSessionSync: {
+            
+            //get game session
+            auto gs = data.value<RPZGameSession>();
+            
+            //if full session, additionnal actions
+            if(gs.isFullSession()) {
                 
-                //replace all stored users
-                this->_sessionUsers.clear();
+                //stream state
+                emit audioSourceStateChanged(gs.streamState());
                 
-                //inserts
-                for(const auto &rUser : data.toList()) {
-                    
-                    RPZUser user(rUser.toHash());
-                    this->_sessionUsers.insert(user.id(), user);
-
-                    this->_registerAsCharacterized(user, CharacterRegistration::In);
-
-                }
-
+                //map change
+                auto payload = gs.mapPayload();
+                this->_onMapChangeReceived(&payload, true);
+            
             }
 
-            this->_checkPendingCharactersRegistration();
-            emit allUsersReceived();
-            emit whisperTargetsChanged();
+            //handle session users
+            this->_registerSessionUsers(gs);
+
+            //game session emission
+            emit gameSessionReceived(gs);
 
         }
         break;
@@ -266,7 +366,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
                 //add user to session users
                 this->_sessionUsers.insert(user.id(), user);
 
-                this->_registerAsCharacterized(user, CharacterRegistration::In);
+                this->_mayRegisterAsCharacterized(user, CharacterRegistration::In);
             }
 
             this->_checkPendingCharactersRegistration();
@@ -288,7 +388,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
                 out = this->_sessionUsers.take(idToRemove);
 
                 //from from token list
-                this->_registerAsCharacterized(out, CharacterRegistration::Out);
+                this->_mayRegisterAsCharacterized(out, CharacterRegistration::Out);
 
             }
 
@@ -322,59 +422,20 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
         }
         break;
 
-        case RPZJSON::Method::AckIdentity: {
-            
-            RPZUser copy;
-
-            {
-                //store our identity
-                QMutexLocker l(&this->_m_sessionUsers);
-                this->_myUserId = data.toULongLong();
-
-                auto &mUser = this->_myUser();
-                Authorisations::defineHostAbility(mUser);
-
-                copy = mUser;
-
-            }
-
-            emit selfIdentityAcked(copy);
-
-        }
-        break;
-
         case RPZJSON::Method::Message: {
             RPZMessage msg(data.toHash());
             emit receivedMessage(msg);
         }
         break;
 
-        case RPZJSON::Method::MapChangedHeavily: {
-            this->_initialMapSetupReceived = true;
-        }
-
+        case RPZJSON::Method::MapChangedHeavily:
         case RPZJSON::Method::MapChanged: {
-            
-            //to sharedPointer for type casts
-            auto payload = Payloads::autoCast(data.toHash());
 
-            //if atom weilder, check if assets are missing
-            if(auto mPayload = dynamic_cast<AtomsWielderPayload*>(payload.data())) { 
-                
-                //compare assets in map with assets in db 
-                auto missingAssetHashes = mPayload->assetHashes();
-                auto handledMissingAssetHashes = AssetsDatabase::get()->getStoredAssetHashes();
-                missingAssetHashes.subtract(handledMissingAssetHashes);
-                
-                //if missing assets, request them
-                if(auto count = missingAssetHashes.count()) {
-                    this->log(QStringLiteral(u"Assets : missing %1 asset(s)").arg(count));
-                    this->_askForAssets(missingAssetHashes);
-                }
+            auto payload = Payloads::autoCast(data.toHash()); //to sharedPointer for type casts
+            auto isHeavyChange = method == RPZJSON::Method::MapChangedHeavily;
 
-            }
+            this->_onMapChangeReceived(payload.data(), isHeavyChange);
 
-            AlterationHandler::get()->queueAlteration(this, *payload);
         }   
         break;
 
@@ -395,61 +456,6 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
     }
 
     QMetaObject::invokeMethod(ProgressTracker::get(), "clientStoppedReceiving");
-}
-
-void RPZClient::_checkPendingCharactersRegistration() {
-    if(!this->_hasPendingCharactersRegistration) return;
-    emit charactersCountChanged();
-    this->_hasPendingCharactersRegistration = false;
-}
-
-void RPZClient::_error(QAbstractSocket::SocketError _socketError) {
-    
-    QString msg;
-    
-    switch (_socketError) {
-        case QAbstractSocket::RemoteHostClosedError:
-            msg = tr("Host closed the connection.");
-            break;
-        case QAbstractSocket::HostNotFoundError:
-            msg = tr("Host could not be found. Please check the hostname and port number.");
-            break;
-        case QAbstractSocket::ConnectionRefusedError:
-            msg = tr("Connection has been refused by remote host.");
-            break;
-        default:
-            msg = tr("An error has occured : %1").arg(this->_serverSock->socket()->errorString());
-                                   
-    }
-
-    this->log(msg);
-    
-    emit connectionStatus(msg, true);
-    emit closed();
-}
-
-void RPZClient::_registerAsCharacterized(const RPZUser &user, const CharacterRegistration &type) {
-    
-    if(user.role() != RPZUser::Role::Player) return;
-
-    auto id = user.id();
-    if(!id) return;
-    
-    switch(type) {
-        
-        case CharacterRegistration::In: {
-            this->_characterizedUserIds.insert(id);
-        }
-        break;
-
-        case CharacterRegistration::Out: {
-            this->_characterizedUserIds.remove(id);
-        }
-        break;
-
-    }
-
-    this->_hasPendingCharactersRegistration = true;
 
 }
 
@@ -459,7 +465,10 @@ void RPZClient::sendMessage(const RPZMessage &message) {
 }
 
 void RPZClient::sendMapHistory(const ResetPayload &historyPayload) {
-    this->_serverSock->sendToSocket(RPZJSON::Method::MapChangedHeavily, historyPayload);
+    this->_serverSock->sendToSocket(
+        RPZJSON::Method::MapChangedHeavily, 
+        historyPayload
+    );
 }
 
 RPZUser& RPZClient::_myUser() {
@@ -473,10 +482,10 @@ void RPZClient::notifyCharacterChange(const RPZCharacter &changed) {
         this->_myUser().setCharacter(changed);
     }
 
-    auto copy = this->identity();
-    emit selfIdentityChanged(copy);
+    emit userDataChanged(this->identity());
 
     this->_serverSock->sendToSocket(RPZJSON::Method::CharacterChanged, changed);
+
 }
 
 void RPZClient::_askForAssets(const QSet<RPZAsset::Hash> &ids) {

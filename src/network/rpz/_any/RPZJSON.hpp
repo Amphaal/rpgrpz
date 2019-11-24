@@ -9,27 +9,25 @@ class RPZJSON {
     Q_GADGET
     
     public:
-        enum class Method { 
+        enum class Method {
+            Handshake = 0,  
             Message,
             ServerStatus,
             ServerResponse, 
-            Handshake, 
-            AllConnectedUsers, 
-            ChatLogHistory,
             MapChanged,
-            AckIdentity,
+            MapChangedHeavily,
             AskForAssets,
             RequestedAsset,
             AudioStreamUrlChanged,
             AudioStreamPlayingStateChanged,
             AudioStreamPositionChanged,
-            MapChangedHeavily,
             AvailableAssetsToUpload,
             UserIn,
             UserOut,
             CharacterChanged,
             UserDataChanged,
-            QuickDrawHappened
+            QuickDrawHappened,
+            GameSessionSync
         };
         Q_ENUM(Method)
        

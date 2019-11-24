@@ -14,7 +14,7 @@
 
 #include "src/shared/models/messaging/RPZMessage.h"
 #include "src/shared/models/messaging/RPZResponse.h"
-#include "src/shared/models/messaging/RPZHandshake.h"
+#include "src/shared/models/network/RPZHandshake.h"
 #include "src/shared/models/RPZQuickDraw.hpp"
 
 #include "src/helpers/_appContext.h"
@@ -24,6 +24,7 @@
 
 #include "src/network/rpz/_any/JSONLogger.hpp"
 #include "src/helpers/Authorisations.hpp"
+#include "src/shared/models/network/RPZGameSession.hpp"
 
 class RPZClient : public QObject, public AlterationActor, public JSONLogger {
 
@@ -57,23 +58,20 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
 
         void receivedMessage(const RPZMessage &message);
         void serverResponseReceived(const RPZResponse &reponse);
-        void selfIdentityAcked(const RPZUser &identity);
-        void selfIdentityChanged(const RPZUser &updated);
         
         void quickDrawReceived(const RPZQuickDraw &qd);
 
         void availableAssetsFromServer(const QVector<RPZAsset::Hash> &availableIds);
         void receivedAsset(const RPZAssetImportPackage &package);
 
-        void allUsersReceived();
         void userLeftServer(const RPZUser &userOut);
         void userJoinedServer(const RPZUser &newUser);
         void userDataChanged(const RPZUser &updatedUser);
         void whisperTargetsChanged();
+        
+        void gameSessionReceived(const RPZGameSession &gameSession);
 
         void charactersCountChanged();
-
-        void receivedLogHistory(const QVector<RPZMessage> &messages);
 
         void audioSourceStateChanged(const StreamPlayStateTracker &state);
         void audioPositionChanged(qint64 newPosInMsecs);
@@ -95,12 +93,14 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
         RPZUser::Id _myUserId;
         RPZUser& _myUser();
 
+        void _onMapChangeReceived(AlterationPayload *castedPayload, bool isHeavyChange);
+        void _registerSessionUsers(const RPZGameSession &gameSession);
 
         RPZMap<RPZUser> _sessionUsers;
         mutable QMutex _m_sessionUsers;
 
         bool _hasPendingCharactersRegistration = false;
-        void _registerAsCharacterized(const RPZUser &user, const CharacterRegistration &type);
+        void _mayRegisterAsCharacterized(const RPZUser &user, const CharacterRegistration &type);
         void _checkPendingCharactersRegistration();
         QSet<RPZUser::Id> _characterizedUserIds;
 

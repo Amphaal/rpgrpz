@@ -270,23 +270,12 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
             
             //determine which role to give to the socket/user
             this->_attributeRoleToUser(target, targetUser, handshakePkg);
-
-            //distribute user ack events to clients
-            this->_newUserAcknoledged(target, targetUser);
-
-            //send history to the client
-            this->_sendStoredMessages(target);
             
-            //if is not host
-            if(targetUser.role() != RPZUser::Role::Host)  {
-                                
-                //send data played stream informations
-                this->_sendPlayedStream(target); 
+            //tell the others that this user exists
+            this->_sendToAllExcept(target, RPZJSON::Method::UserIn, targetUser); 
 
-                //send stored history
-                this->_sendMapHistory(target);
-
-            }
+            //send game session
+            this->_sendGameSession(target, targetUser);
 
         }
         break;
@@ -304,37 +293,27 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
 // HIGH Helpers
 //
 
-void RPZServer::_newUserAcknoledged(JSONSocket* socket, const RPZUser &userToAck) {
+
+void RPZServer::_sendGameSession(JSONSocket* toSendTo, const RPZUser &associatedUser) {
     
-    //send whole users database to socket
-    auto method = RPZJSON::Method::AllConnectedUsers;
-    auto toSend = this->_usersById.toVList();
-    this->_sendToAll(method, toSend);
+    //standard game session
+    auto isFullSession = associatedUser.role() != RPZUser::Role::Host;
+    RPZGameSession gs(associatedUser.id(), this->_usersById, this->_messages, isFullSession);
+            
+    //if requesting full session data...
+    if(isFullSession)  {
+                        
+        //stream state
+        gs.setStreamState(this->_tracker); 
+        
+        //map payload
+        auto mPayload = this->_hints->generateResetPayload();
+        gs.setMapPayload(mPayload);
 
-    //tell associated user's socket his identity
-    socket->sendToSocket(RPZJSON::Method::AckIdentity, userToAck.id());
+    }
 
-    //log
-    this->log(method, QStringLiteral(u"Now %1 clients logged").arg(toSend.count()));
-
-    //tell the others that this user exists
-    this->_sendToAllExcept(socket, RPZJSON::Method::UserIn, userToAck);
-
-}
-
-void RPZServer::_sendStoredMessages(JSONSocket * clientSocket) {
-    
-    //send messages...
-    auto messagesToSend = this->_messages.toVList();
-    auto method = RPZJSON::Method::ChatLogHistory;
-    clientSocket->sendToSocket(method, messagesToSend);
-
-    //log
-    auto countMsgs = this->_messages.count();
-    auto logMsg = QStringLiteral(u"%1 stored messages sent to \"%2\"")
-                        .arg(countMsgs)
-                        .arg(clientSocket->socket()->peerAddress().toString());
-    this->log(method, logMsg);
+    //send game session
+    toSendTo->sendToSocket(RPZJSON::Method::GameSessionSync, gs);
 
 }
 
@@ -380,16 +359,6 @@ void RPZServer::_broadcastMapChanges(const RPZJSON::Method &method, AlterationPa
     }
 
 
-
-}
-
-void RPZServer::_sendMapHistory(JSONSocket * clientSocket) {
-
-    //generate payload
-    auto payload = this->_hints->generateResetPayload();
-
-    //send it
-    clientSocket->sendToSocket(RPZJSON::Method::MapChangedHeavily, payload);
 
 }
 
@@ -570,9 +539,4 @@ JSONSocket* RPZServer::_getUserSocket(const QString &formatedUsername) {
 RPZUser& RPZServer::_getUser(JSONSocket* socket) {
     auto id = this->_idsByClientSocket.value(socket);
     return this->_usersById[id];
-}
-
-void RPZServer::_sendPlayedStream(JSONSocket* socket) {
-    if(!this->_tracker.isSomethingPlaying()) return;   
-    socket->sendToSocket(RPZJSON::Method::AudioStreamUrlChanged, this->_tracker);
 }

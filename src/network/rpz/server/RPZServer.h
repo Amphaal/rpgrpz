@@ -19,7 +19,8 @@
 #include "src/shared/models/messaging/RPZMessage.h"
 #include "src/shared/models/RPZUser.h"
 #include "src/shared/models/messaging/RPZResponse.h"
-#include "src/shared/models/messaging/RPZHandshake.h"
+#include "src/shared/models/network/RPZHandshake.h"
+#include "src/shared/models/network/RPZGameSession.hpp"
 
 #include "src/shared/database/AssetsDatabase.h"
 
@@ -65,22 +66,21 @@ class RPZServer : public QObject, public JSONLogger {
         
         //music
         StreamPlayStateTracker _tracker;
-        void _sendPlayedStream(JSONSocket* socket);
 
         //users
         RPZUser& _getUser(JSONSocket* socket);
         JSONSocket* _getUserSocket(const QString &formatedUsername);
-        void _newUserAcknoledged(JSONSocket* socket, const RPZUser &userToAck);
         void _attributeRoleToUser(JSONSocket* socket, RPZUser &associatedUser, const RPZHandshake &handshake);
 
         //map atoms
         AtomsStorage* _hints = nullptr;
         void _broadcastMapChanges(const RPZJSON::Method &method, AlterationPayload &payload, JSONSocket * senderSocket);
-        void _sendMapHistory(JSONSocket * clientSocket);
         
+        //game session
+        void _sendGameSession(JSONSocket* toSendTo, const RPZUser &associatedUser);
+
         //messages
         RPZMap<RPZMessage> _messages;
-        void _sendStoredMessages(JSONSocket * clientSocket);
         void _interpretMessage(JSONSocket* sender, RPZMessage &msg);
         void _maySendAndStoreDiceThrows(const QString &text);
         
