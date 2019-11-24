@@ -13,7 +13,11 @@ class HintThread {
 
             QObject::connect(
                 QApplication::instance()->thread(), &QThread::finished,
-                _hint->thread(), &QThread::quit
+                [=]() {
+                    _hint->thread()->quit();
+                    _hint->deleteLater();
+                    _hint = nullptr;
+                }
             );
 
             _hint->thread()->start();
@@ -24,8 +28,6 @@ class HintThread {
             Q_ASSERT(_hint);
             return _hint;
         }
-
-
 
     private:
         static inline MapHint* _hint = nullptr;

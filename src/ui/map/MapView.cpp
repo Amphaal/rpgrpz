@@ -873,7 +873,6 @@ void MapView::_mightCenterGhostWithCursor() {
         
         //map cursor pos to widget
         auto cursorPos = this->mapFromGlobal(QCursor::pos());
-        qDebug() << cursorPos;
         auto ghostCenter = ghost->boundingRect().center();
         QPointF cursorPosInScene;
         

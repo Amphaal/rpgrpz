@@ -518,7 +518,6 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
 
     //if asset changed
     else if(auto mPayload = dynamic_cast<const AssetChangedPayload*>(&payload)) {
-        QMutexLocker l2(&this->_m_GItemsById);
         this->_replaceMissingAssetPlaceholders(mPayload->assetMetadata());
     }
 
