@@ -55,7 +55,7 @@
 <context>
     <name>AtomEditor</name>
     <message numerus="yes">
-        <location filename="../ui/atomEditor/AtomEditor.cpp" line="234"/>
+        <location filename="../ui/atomEditor/AtomEditor.cpp" line="235"/>
         <source> (%n element(s))</source>
         <translation>
             <numerusform> (%n élément)</numerusform>
@@ -293,12 +293,12 @@
 <context>
     <name>CharacterPickerEditor</name>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="79"/>
+        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="76"/>
         <source>[Cannot configure...]</source>
         <translation>[Impossible à configurer...]</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="85"/>
+        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="82"/>
         <source>[No character associated]</source>
         <translation>[Aucun personnage associé]</translation>
     </message>

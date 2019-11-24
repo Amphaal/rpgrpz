@@ -26,13 +26,16 @@ class StandardUsersListView : public QListView {
 
             QObject::connect(
                 this->model(), &QAbstractItemModel::modelReset,
-                [=]() {
-                    this->setVisible(
-                        this->model()->rowCount()
-                    );
-                }
+                this, &StandardUsersListView::_onModelReset
             );
 
+        }
+    
+    private:
+        void _onModelReset() {
+            this->setVisible(
+                this->model()->rowCount()
+            );
         }
 
 };

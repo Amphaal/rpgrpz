@@ -44,15 +44,12 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
             
             QObject::connect(
                 this->_rpzClient, &RPZClient::userDataChanged,
-                this, &CharacterPickerEditor::_mayUpdateCharacterName
+                this, &CharacterPickerEditor::_mayUpdateCharacter
             );
 
             QObject::connect(
                 this->_rpzClient, &RPZClient::charactersCountChanged,
-                [=]() {
-                    this->_availableCharacters = this->_rpzClient->sessionCharacters();
-                    this->_updateComboFromAvailableCharacters();
-                }
+                this, &CharacterPickerEditor::_onCharacterCountChange
             );
 
         }
@@ -92,17 +89,12 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
                 const auto &color = bond.first;
 
                 DefaultCharacterSelection sel { character.id(), character.toString(), color };
-
-                this->_combo->addItem(
-                    QIcon(":/icons/app/connectivity/cloak.png"), 
-                    character.toString(), 
-                    QVariant::fromValue(sel)
-                );
+                this->_addCharacterItem(sel);
 
             }
 
             //find default
-            auto indexFound = this->_combo->findData(this->_defaultCharacter.characterId);
+            auto indexFound = this->_findItemIndexFromId(this->_defaultCharacter.characterId);
             
             //found !
             if(indexFound > -1) {
@@ -111,32 +103,36 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
 
             //not found...
             else {
-
-                this->_combo->addItem(
-                    QIcon(":/icons/app/connectivity/cloak.png"), 
-                    this->_defaultCharacter.characterName, 
-                    QVariant::fromValue(this->_defaultCharacter)
-                );
-
-                //define as default
-                this->_combo->setCurrentIndex(this->_combo->count() - 1);
-
+                this->_addCharacterItem(this->_defaultCharacter, true);
             }
 
         }   
         
-        void _mayUpdateCharacterName(const RPZUser &changed) {
-            
-            //prevent update if not player
-            if(changed.role() != RPZUser::Role::Player) return;
-            
-            //search for character in combo
-            auto character = changed.character();
-            auto index = this->_combo->findData(character.id());
-            if(index == -1) return;
+      
 
-            //update name
-            this->_combo->setItemText(index, character.toString());
+        int _findItemIndexFromId(const RPZCharacter::Id &id) {
+            return this->_combo->findData(id, 257);
+        }
+
+        void _addCharacterItem(const DefaultCharacterSelection &characterDescr, bool selected = false) {
+                
+            this->_combo->addItem(
+                QIcon(":/icons/app/connectivity/cloak.png"), 
+                characterDescr.characterName, 
+                QVariant::fromValue(characterDescr)
+            );
+
+            auto insertedAt = this->_combo->count() - 1;
+
+            this->_combo->setItemData(
+                insertedAt, 
+                characterDescr.characterId, 
+                257
+            );
+
+            if(selected) {
+                this->_combo->setCurrentIndex(insertedAt);
+            }
 
         }
 
@@ -178,6 +174,31 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
                 { RPZAtom::Parameter::DefaultPlayerColor, sel.characterColor }
             });
 
+        }
+
+        void _mayUpdateCharacter(const RPZUser &changed) {
+            
+            //prevent update if not player
+            if(changed.role() != RPZUser::Role::Player) return;
+            
+            //search for character in combo
+            auto character = changed.character();
+            
+            //find index of character
+            auto index = this->_findItemIndexFromId(character.id());
+            if(index == -1) return;
+
+            //update name
+            DefaultCharacterSelection sel { character.id(), character.toString(), changed.color() };
+            
+            this->_combo->setItemText(index, sel.characterName);
+            this->_combo->setItemData(index, QVariant::fromValue(sel));
+
+        }
+
+        void _onCharacterCountChange() {
+            this->_availableCharacters = this->_rpzClient->sessionCharacters();
+            this->_updateComboFromAvailableCharacters();
         }
 
    
