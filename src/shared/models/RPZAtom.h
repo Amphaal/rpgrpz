@@ -25,6 +25,8 @@
 
 class RPZAtom : public Serializable {
 
+    Q_GADGET
+
     public:
     
         //order is important for transform handling
@@ -60,6 +62,7 @@ class RPZAtom : public Serializable {
             MinNPCHealth,
             Opacity
         };
+        Q_ENUM(Parameter)
 
         enum class Category {
             Unknown,

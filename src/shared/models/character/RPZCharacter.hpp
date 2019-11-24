@@ -10,9 +10,12 @@
 #include "RPZGauge.hpp"
 #include "RPZInventory.hpp"
 
+
+
 class RPZCharacter : public Serializable {
     public:
         using Id = SnowFlake::Id;
+        using UserBound = QPair<QColor, RPZCharacter>;
 
         RPZCharacter() {};
         explicit RPZCharacter(const QVariantHash &hash) : Serializable(hash) {};

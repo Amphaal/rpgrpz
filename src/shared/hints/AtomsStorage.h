@@ -55,7 +55,7 @@ class AtomsStorage : public AlterationAcknoledger {
 
         const QString snapshotSave(const QString &folderToSaveTo); //safe
 
-        const QList<RPZCharacter> findUnboundCharacters(const QList<RPZCharacter> &availableCharacters); //safe
+        const QList<RPZCharacter::UserBound> findUnboundCharacters(const QList<RPZCharacter::UserBound> &availableCharacters); //safe
         
     signals:
         void mapParametersChanged(const RPZMapParameters &mParams);

@@ -4,9 +4,9 @@
 #include <QString>
 #include <QVariant>
 
-class RPZJSON : public QObject {
+class RPZJSON {
     
-    Q_OBJECT
+    Q_GADGET
     
     public:
         enum class Method { 
@@ -34,5 +34,3 @@ class RPZJSON : public QObject {
         Q_ENUM(Method)
        
 };
-
-Q_DECLARE_METATYPE(RPZJSON::Method)

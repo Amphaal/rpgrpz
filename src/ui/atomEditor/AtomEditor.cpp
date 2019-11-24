@@ -32,7 +32,7 @@ void AtomEditor::buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr
 
     //fetch default values for adaptated params to context
     auto filteredDefaultValues = this->_findDefaultValuesToBind();
-    
+
     //find editors to display
     QSet<AtomSubEditor*> toDisplay;
     for(auto const &param : filteredDefaultValues.keys()) {
@@ -185,7 +185,7 @@ RPZAtom::Updates AtomEditor::_findDefaultValuesToBind() {
     for(const auto &type : this->_currentSelectionDescr.representedTypes) {
         
         auto associatedCustomParams = RPZAtom::customizableParams(type);
-        
+
         if(paramsToDisplay.empty()) {
             paramsToDisplay = associatedCustomParams;
             continue;

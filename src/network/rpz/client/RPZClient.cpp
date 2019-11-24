@@ -509,15 +509,18 @@ void RPZClient::_onSent(bool success) {
     QMetaObject::invokeMethod(ProgressTracker::get(), "clientStoppedSending");
 }
 
-const QList<RPZCharacter> RPZClient::sessionCharacters() const {
+const QList<RPZCharacter::UserBound> RPZClient::sessionCharacters() const {
     
-    QList<RPZCharacter> out;
+    QList<RPZCharacter::UserBound> out;
 
     QMutexLocker l(&this->_m_sessionUsers);
     for(const auto &userId : this->_characterizedUserIds) {
+        
         auto user = this->_sessionUsers.value(userId);
         if(user.isEmpty()) continue;
-        out += user.character();
+        
+        out += { user.color(), user.character() };
+        
     }
 
     return out;

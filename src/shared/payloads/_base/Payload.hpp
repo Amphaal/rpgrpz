@@ -4,9 +4,9 @@
 
 #include "src/shared/models/RPZUser.h"
 
-class Payload : public QObject {
+class Payload {
 
-    Q_OBJECT
+    Q_GADGET
 
     public:
         enum class Alteration {
@@ -46,6 +46,3 @@ class Payload : public QObject {
         };
     
 };
-
-Q_DECLARE_METATYPE(Payload::Alteration)
-Q_DECLARE_METATYPE(Payload::Source)

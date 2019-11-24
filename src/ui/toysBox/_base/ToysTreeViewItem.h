@@ -11,9 +11,9 @@
 
 #include "src/shared/database/AssetsDatabase.h"
 
-class ToysTreeViewItem : private QObject {
+class ToysTreeViewItem {
 
-    Q_OBJECT
+    Q_GADGET
 
     public:
         enum class Type { 

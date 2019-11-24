@@ -10,6 +10,35 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
 
     Q_OBJECT
 
+    public:
+        struct DefaultCharacterSelection {
+            RPZCharacter::Id characterId = 0;
+            QString characterName;
+            QColor characterColor;
+        };
+
+        CharacterPickerEditor() : AtomSubEditor({RPZAtom::Parameter::CharacterId, RPZAtom::Parameter::CharacterName, RPZAtom::Parameter::DefaultPlayerColor}, false) { 
+
+            this->setVisible(false);
+
+            this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+            
+            this->_combo = new QComboBox;
+            
+            QObject::connect(
+                this->_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+                this, &CharacterPickerEditor::_onComboValueChanged
+            );
+
+            this->layout()->addWidget(this->_combo);
+
+        };
+
+        void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::LoadingContext &context) override {
+            AtomSubEditor::loadTemplate(defaultValues, context);
+            this->_fillComboDefaultValues(defaultValues, context);
+        }
+
     protected:
         void connectingToServer() override {
             
@@ -34,8 +63,8 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
         }
 
     private:
-        QList<RPZCharacter> _availableCharacters;
-        QPair<RPZCharacter::Id, QString> _defaultCharacter;
+        QList<RPZCharacter::UserBound> _availableCharacters;
+        DefaultCharacterSelection _defaultCharacter;
 
         void _updateComboFromAvailableCharacters() {
 
@@ -57,12 +86,23 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
             }
 
             //fill
-            for(const auto &character : fillWith) {
-                this->_combo->addItem(QIcon(":/icons/app/connectivity/cloak.png"), character.toString(), character.id());
+            for(const auto &bond : fillWith) {
+                
+                const auto &character = bond.second;
+                const auto &color = bond.first;
+
+                DefaultCharacterSelection sel { character.id(), character.toString(), color };
+
+                this->_combo->addItem(
+                    QIcon(":/icons/app/connectivity/cloak.png"), 
+                    character.toString(), 
+                    QVariant::fromValue(sel)
+                );
+
             }
 
             //find default
-            auto indexFound = this->_combo->findData(this->_defaultCharacter.first);
+            auto indexFound = this->_combo->findData(this->_defaultCharacter.characterId);
             
             //found !
             if(indexFound > -1) {
@@ -74,8 +114,8 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
 
                 this->_combo->addItem(
                     QIcon(":/icons/app/connectivity/cloak.png"), 
-                    this->_defaultCharacter.second, 
-                    this->_defaultCharacter.first
+                    this->_defaultCharacter.characterName, 
+                    QVariant::fromValue(this->_defaultCharacter)
                 );
 
                 //define as default
@@ -108,12 +148,13 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
             this->setEnabled(allows);
 
             //check for a bound characterId
-            auto characterId = defaultValues.value(this->_params.first()).toULongLong();
+            auto characterId = defaultValues.value(RPZAtom::Parameter::CharacterId).toULongLong();
             
             //define default character
             if(characterId) {
-                auto name = defaultValues.value(this->_params.last()).toString();
-                this->_defaultCharacter = { characterId, name };
+                auto name = defaultValues.value(RPZAtom::Parameter::CharacterName).toString();
+                auto color = defaultValues.value(RPZAtom::Parameter::DefaultPlayerColor).value<QColor>();
+                this->_defaultCharacter = { characterId, name, color };
             } 
             
             //reset default character
@@ -128,37 +169,17 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
 
         void _onComboValueChanged(int index) {
             
-            auto characterId = this->_combo->currentData().toULongLong();
-            auto name = characterId ? this->_combo->currentText() : "";
+            auto sel = this->_combo->currentData().value<DefaultCharacterSelection>();
             
             emit valueConfirmedForPayload({
-                { this->_params.first(), characterId },
-                { this->_params.last(), name }
+                { RPZAtom::Parameter::CharacterId, sel.characterId },
+                { RPZAtom::Parameter::CharacterName, sel.characterName },
+                { RPZAtom::Parameter::DefaultPlayerColor, sel.characterColor }
             });
 
         }
 
-    public:
-        CharacterPickerEditor() : AtomSubEditor({RPZAtom::Parameter::CharacterId, RPZAtom::Parameter::CharacterName}, false) { 
-
-            this->setVisible(false);
-
-            this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
-            
-            this->_combo = new QComboBox;
-            
-            QObject::connect(
-                this->_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-                this, &CharacterPickerEditor::_onComboValueChanged
-            );
-
-            this->layout()->addWidget(this->_combo);
-
-        };
-
-        void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::LoadingContext &context) override {
-            AtomSubEditor::loadTemplate(defaultValues, context);
-            this->_fillComboDefaultValues(defaultValues, context);
-        }
-
+   
 };
+
+Q_DECLARE_METATYPE(CharacterPickerEditor::DefaultCharacterSelection);
