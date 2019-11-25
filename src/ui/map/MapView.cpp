@@ -118,11 +118,29 @@ void MapView::_onUIUpdateRequest(const QHash<QGraphicsItem*, RPZAtom::Updates> &
 }
 
 void MapView::_onOwnershipChanged(const QList<QGraphicsItem*> changing, bool owned) {
-    for(auto item : changing) {
-        if(auto casted = dynamic_cast<MapViewToken*>(item)) {
-            casted->setOwned(owned);
+    
+    //standard handling
+    if(owned || !this->_toWalk) {
+        for(auto item : changing) {
+            if(auto casted = dynamic_cast<MapViewToken*>(item)) casted->setOwned(owned);
         }
+    } 
+    
+    //specific handling when walking helper is being used and losing ownership
+    else {
+        
+        auto foundTBW = false;
+
+        for(auto item : changing) {
+            if(!foundTBW && item == this->_toWalk) foundTBW = true;
+            if(auto casted = dynamic_cast<MapViewToken*>(item)) casted->setOwned(owned);
+        }
+        
+        //if currently walked token has ownership revoked, cancel walking
+        if(foundTBW) this->_changeTool(MapTool::Default);
+
     }
+
 }
 
 void MapView::_onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates) {
