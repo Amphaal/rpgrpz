@@ -657,14 +657,17 @@ void MapView::connectingToServer() {
 
     //when self user send
     QObject::connect(
-        _rpzClient, &RPZClient::selfIdentityAcked,
-        this, &MapView::_onIdentityReceived
+        _rpzClient, &RPZClient::gameSessionReceived,
+        this, &MapView::_onGameSessionReceived
     );
 
 }
-void MapView::_onIdentityReceived(const RPZUser &self) {
+void MapView::_onGameSessionReceived(const RPZGameSession &gameSession) {
     
+    Q_UNUSED(gameSession)
+
     //send map history if host
+    auto self = this->_rpzClient->identity();
     if(self.role() == RPZUser::Role::Host) {
         this->_sendMapHistory();
     }

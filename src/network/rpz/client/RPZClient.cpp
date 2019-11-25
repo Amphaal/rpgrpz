@@ -333,8 +333,14 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
         case RPZJSON::Method::GameSessionSync: {
             
             //get game session
-            auto gs = data.value<RPZGameSession>();
-            
+            RPZGameSession gs(data.toHash());
+
+            //handle session users
+            this->_registerSessionUsers(gs);
+
+            //game session emission
+            emit gameSessionReceived(gs);
+
             //if full session, additionnal actions
             if(gs.isFullSession()) {
                 
@@ -346,12 +352,6 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
                 this->_onMapChangeReceived(&payload, true);
             
             }
-
-            //handle session users
-            this->_registerSessionUsers(gs);
-
-            //game session emission
-            emit gameSessionReceived(gs);
 
         }
         break;

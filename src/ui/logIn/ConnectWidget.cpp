@@ -136,8 +136,8 @@ void ConnectWidget::connectingToServer() {
     this->_changeState(State::Connecting);
 
     QObject::connect(
-        this->_rpzClient, &RPZClient::receivedLogHistory, 
-        this, &ConnectWidget::_onLogHistoryReceived
+        this->_rpzClient, &RPZClient::gameSessionReceived, 
+        this, &ConnectWidget::_onGameSessionReceived
     );
 
     QObject::connect(
@@ -163,8 +163,12 @@ void ConnectWidget::_onRPZClientStatus(const QString &statusMsg, bool isError) {
     }
 
 }
-void ConnectWidget::_onLogHistoryReceived() {
+void ConnectWidget::_onGameSessionReceived(const RPZGameSession &gameSession) {
+    
+    Q_UNUSED(gameSession)
+
     this->_changeState(State::Connected);
+
 }
 
 void ConnectWidget::_changeState(ConnectWidget::State newState) {

@@ -27,36 +27,38 @@ class RPZGameSession : public QVariantHash {
         }
 
         const StreamPlayStateTracker streamState() const {
-            return this->value("ss").value<StreamPlayStateTracker>();
+            return StreamPlayStateTracker(this->value("ss").toHash());
         }
 
         const RPZMap<RPZUser> users() const {
-            return this->value("usrs").value<RPZMap<RPZUser>>();
+            auto map = this->value("usrs").toMap();
+            return RPZMap<RPZUser>::fromVMap(map);
         }
 
         const RPZMap<RPZMessage> messages() const {
-            return this->value("msgs").value<RPZMap<RPZMessage>>();
+            auto map = this->value("msgs").toMap();
+            return RPZMap<RPZMessage>::fromVMap(map);
         }
 
         const ResetPayload mapPayload() const {
-            return this->value("map").value<ResetPayload>();
+            return ResetPayload(this->value("map").toHash());
         }
 
         void setStreamState(const StreamPlayStateTracker &state) {
-            this->insert("ss", QVariant::fromValue(state));
+            this->insert("ss", state);
         } 
         
         void setMapPayload(const ResetPayload &mapPayload) {
-            this->insert("map", QVariant::fromValue(mapPayload));
+            this->insert("map", mapPayload);
         }
     
     private:
         void _setMessages(const RPZMap<RPZMessage> &messages) {
-            this->insert("msgs", QVariant::fromValue(messages));
+            this->insert("msgs", messages.toVMap());
         }
 
         void _setUsers(const RPZMap<RPZUser> &users) {
-            this->insert("usrs", QVariant::fromValue(users));
+            this->insert("usrs", users.toVMap());
         }
 
         void _defineAsFullSession(bool isFullSession) {
@@ -68,5 +70,3 @@ class RPZGameSession : public QVariantHash {
         }
 
 };
-
-Q_DECLARE_METATYPE(RPZGameSession)

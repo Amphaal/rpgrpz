@@ -57,7 +57,7 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
         void connectionClosed(bool hasInitialMapLoaded) override;
 
     private slots:
-        void _onConnectionToServer();
+        void _onGameSessionReceived(const RPZGameSession &gameSession);
 
     private:
         void closeEvent(QCloseEvent *event) override;

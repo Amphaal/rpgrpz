@@ -40,18 +40,19 @@ void ChatWidget::_onRPZClientStatus(const QString &statusMsg, bool isError) {
 
 }
 
-void ChatWidget::_onReceivedLogHistory(const QVector<RPZMessage> &messages) {
+void ChatWidget::_onGameSessionReceived(const RPZGameSession &gameSession) {
 
     this->setEnabled(true);
 
     //add list of messages
-    for(const auto &msg : messages) {
+    for(const auto &msg : gameSession.messages()) {
         this->_chatLog->handleNonLocalMessage(msg);
     }
 
     //welcome msg
     auto response = RPZResponse(0, RPZResponse::ResponseCode::ConnectedToServer, this->serverName);
     this->_chatLog->handleResponse(response);
+    
 }
 
 void ChatWidget::connectingToServer() {
@@ -74,8 +75,8 @@ void ChatWidget::connectingToServer() {
 
     //welcome once all history have been received
     QObject::connect(
-        _rpzClient, &RPZClient::receivedLogHistory, 
-        this, &ChatWidget::_onReceivedLogHistory
+        _rpzClient, &RPZClient::gameSessionReceived, 
+        this, &ChatWidget::_onGameSessionReceived
     );
 
     //on server response

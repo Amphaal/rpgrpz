@@ -111,7 +111,7 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
       
 
         int _findItemIndexFromId(const RPZCharacter::Id &id) {
-            return this->_combo->findData(id, 257);
+            return this->_combo->findData(id);
         }
 
         void _addCharacterItem(const DefaultCharacterSelection &characterDescr, bool selected = false) {
@@ -119,14 +119,14 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
             this->_combo->addItem(
                 QIcon(":/icons/app/connectivity/cloak.png"), 
                 characterDescr.characterName, 
-                QVariant::fromValue(characterDescr)
+                characterDescr.characterId
             );
 
             auto insertedAt = this->_combo->count() - 1;
 
             this->_combo->setItemData(
                 insertedAt, 
-                characterDescr.characterId, 
+                QVariant::fromValue(characterDescr), 
                 257
             );
 
@@ -192,7 +192,7 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
             DefaultCharacterSelection sel { character.id(), character.toString(), changed.color() };
             
             this->_combo->setItemText(index, sel.characterName);
-            this->_combo->setItemData(index, QVariant::fromValue(sel));
+            this->_combo->setItemData(index, QVariant::fromValue(sel), 257);
 
         }
 

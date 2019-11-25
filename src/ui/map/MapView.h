@@ -92,7 +92,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
 
         //network
         void _sendMapHistory();
-        void _onIdentityReceived(const RPZUser &self);
+        void _onGameSessionReceived(const RPZGameSession &gameSession);
 
     private:
         RPZMapParameters _currentMapParameters;

@@ -24,7 +24,7 @@ class RPZMap : public QMap<SnowFlake::Id, T> {
 
         QVariantList toVList() const {
             QVariantList out;
-            for(T &base : this->values()) {
+            for(const auto &base : this->values()) {
                 out.append(base);
             }
             return out;
@@ -37,4 +37,19 @@ class RPZMap : public QMap<SnowFlake::Id, T> {
             }
             return out;
         }
+
+        static RPZMap<T> fromVMap(const QVariantMap &map) {
+            
+            RPZMap<T> out;
+            
+            for(auto i = map.constBegin(); i != map.constEnd(); i++) {
+                auto id = i.key().toULongLong();
+                T casted(i.value().toHash());
+                out.insert(id, casted);
+            }
+
+            return out;
+
+        }
+
 };

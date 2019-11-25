@@ -27,5 +27,3 @@ class RPZMessage : public Stampable {
         void _forceCommand(const MessageInterpreter::Command &forced);
         void _interpretTextAsCommand();
 };
-
-Q_DECLARE_METATYPE(RPZMap<RPZMessage>)

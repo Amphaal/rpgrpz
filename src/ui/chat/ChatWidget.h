@@ -40,6 +40,6 @@ class ChatWidget : public QWidget, public ConnectivityObserver {
         void _instUI();
 
         void _onRPZClientStatus(const QString &statusMsg, bool isError);
-        void _onReceivedLogHistory(const QVector<RPZMessage> &messages);
+        void _onGameSessionReceived(const RPZGameSession &gameSession);
 
 };

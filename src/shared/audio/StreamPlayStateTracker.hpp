@@ -115,5 +115,3 @@ class StreamPlayStateTracker : public QVariantHash {
         }
 
 };
-
-Q_DECLARE_METATYPE(StreamPlayStateTracker)

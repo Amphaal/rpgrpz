@@ -46,6 +46,4 @@ class RPZUser : public Serializable {
 
 };
 
-Q_DECLARE_METATYPE(RPZMap<RPZUser>)
-
 inline uint qHash(const RPZUser::Role &key, uint seed = 0) {return uint(key) ^ seed;}

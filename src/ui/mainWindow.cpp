@@ -45,14 +45,18 @@ MainWindow::~MainWindow() {
 
 void MainWindow::connectingToServer() {
     QObject::connect(
-        _rpzClient, &RPZClient::selfIdentityAcked,
-        this, &MainWindow::_onConnectionToServer
+        _rpzClient, &RPZClient::gameSessionReceived,
+        this, &MainWindow::_onGameSessionReceived
     );
 }
 
-void MainWindow::_onConnectionToServer() {
+void MainWindow::_onGameSessionReceived(const RPZGameSession &gameSession) {
+    
+    Q_UNUSED(gameSession)
+
     auto mode = Authorisations::isHostAble() ? UIMode::Full : UIMode::Player;
     this->_setupAppUI(mode);
+
 }
 
 void MainWindow::connectionClosed(bool hasInitialMapLoaded) {

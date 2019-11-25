@@ -47,7 +47,7 @@ class ConnectWidget : public QWidget, public ConnectivityObserver {
 
         void _onConnectButtonPressed();
         void _onRPZClientStatus(const QString &statusMsg, bool isError);
-        void _onLogHistoryReceived();
+        void _onGameSessionReceived(const RPZGameSession &gameSession);
 
         void _saveValuesAsSettings();
 

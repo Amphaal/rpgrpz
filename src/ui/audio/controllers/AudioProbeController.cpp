@@ -9,6 +9,7 @@ AudioProbeController::AudioProbeController(QWidget * parent) : QGroupBox(tr("Pla
 
     //bind animation to label
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+    this->setLayoutDirection(Qt::LeftToRight);
     this->setAlignment(Qt::AlignHCenter);
     this->_playIconLbl->setMovie(this->_playIcon);
     
