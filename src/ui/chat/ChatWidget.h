@@ -7,8 +7,6 @@
 #include <QStyle>
 #include "src/ui/_others/RestoringSplitter.h"
 
-#include "src/network/rpz/client/RPZClient.h"
-
 #include "src/shared/models/messaging/RPZMessage.h"
 #include "src/shared/models/messaging/RPZResponse.h"
 

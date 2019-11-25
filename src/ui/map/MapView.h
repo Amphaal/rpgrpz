@@ -27,8 +27,6 @@
 #include "src/ui/_others/ConnectivityObserver.h"
 
 #include "src/network/rpz/_any/JSONSocket.h"
-#include "src/network/rpz/client/RPZClient.h"
-
 #include "src/ui/toysBox/ToysTreeView.h"
 
 #include "src/shared/payloads/Payloads.h"
@@ -114,6 +112,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
 
         //ownership
             void _configureOwnership(const QList<QGraphicsItem*> &toConfigure, bool owns);
+            void _mightUpdateTokens();
 
         //ghost
             QGraphicsItem* _displayableGhostItem();

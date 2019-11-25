@@ -95,6 +95,26 @@ void ViewMapHint::_checkForOwnedTokens() {
 
 }
 
+void ViewMapHint::mightUpdateOwnedTokens(const RPZUser &owner) {
+    
+    //check if has character
+    auto character = owner.character();
+    auto charId = character.id();
+    if(!charId) return;
+
+    //check if has ownings
+    auto ownings = this->_ownedBy(charId);
+    if(!ownings.count()) return;
+
+    //send payload
+    MetadataChangedPayload payload(ownings, {
+        { RPZAtom::Parameter::CharacterName, character.toString() },
+        { RPZAtom::Parameter::DefaultPlayerColor, owner.color() }
+    });
+    AlterationHandler::get()->queueAlteration(this, payload);
+
+}
+
 void ViewMapHint::defineImpersonatingCharacter(const RPZCharacter::Id &toImpersonate) {
     QMutexLocker l(&this->_m_GItemsById);
     this->_myCharacterId = toImpersonate;  

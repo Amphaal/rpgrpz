@@ -96,6 +96,7 @@ int main(int argc, char** argv) {
 
         //typedef
         qRegisterMetaType<SnowFlake::Id>("SnowFlake::Id");
+        qRegisterMetaType<SnowFlake::Id>("RPZCharacter::Id");
         qRegisterMetaType<RPZAsset::Hash>("RPZAsset::Hash");
         qRegisterMetaType<RPZAtom::Updates>("RPZAtom::Updates");
         qRegisterMetaType<RPZAtom::ManyUpdates>("RPZAtom::ManyUpdates");

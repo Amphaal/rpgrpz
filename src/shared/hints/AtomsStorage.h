@@ -16,8 +16,7 @@
 #include "src/shared/async-ui/AlterationAcknoledger.h"
 
 #include "src/shared/database/MapDatabase.h"
-
-#include "src/network/rpz/client/RPZClient.h"
+#include "src/helpers/Authorisations.hpp"
 
 struct AtomsSelectionDescriptor {
     QSet<RPZAtom::Type> representedTypes;
@@ -79,7 +78,8 @@ class AtomsStorage : public AlterationAcknoledger {
         virtual void _updatesDone(const RPZAtom::ManyUpdates &updates) {};
 
         bool _isAtomOwnable(const RPZAtom &atom) const;
-        const QHash<RPZAtom::Id, RPZCharacter::Id>& _ownables() const;
+        const QHash<RPZAtom::Id, RPZCharacter::Id>& _ownables() const; //safe
+        const QList<RPZAtom::Id> _ownedBy(const RPZCharacter::Id &owner) const; //safe
 
     private:
         mutable QMutex _m_handlingLock;

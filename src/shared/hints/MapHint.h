@@ -16,7 +16,7 @@ class MapHint : public ViewMapHint {
 
         static void mayWantToSavePendingState(QWidget* parent, MapHint* hint); //must block UI
         
-        bool ackRemoteness(const RPZUser &connectedUser, RPZClient* client);
+        bool ackRemoteness(const RPZUser &connectedUser, const QString &remoteAddress);
         bool ackRemoteness(const QString &tblMapFilePath);
 
     public slots:

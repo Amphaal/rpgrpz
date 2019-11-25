@@ -22,12 +22,12 @@ class HintThread {
 
             _hint->thread()->start();
 
-        }
+        };
 
         static MapHint* hint() {
             Q_ASSERT(_hint);
             return _hint;
-        }
+        };
 
     private:
         static inline MapHint* _hint = nullptr;

@@ -7,7 +7,6 @@
 #include "src/shared/renderer/graphics/MapViewGraphics.h"
 #include "src/shared/renderer/animator/MapViewAnimator.hpp"
 
-#include "src/network/rpz/client/RPZClient.h"
 #include "src/helpers/RPZQVariant.hpp"
 
 class AtomConverter {

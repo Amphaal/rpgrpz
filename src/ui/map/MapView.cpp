@@ -48,7 +48,10 @@ void MapView::_handleHintsSignalsAndSlots() {
     );
     QObject::connect(
         ProgressTracker::get(), &ProgressTracker::heavyAlterationProcessed,
-        [=]() {this->endHeavyLoadPlaceholder();}
+        [=]() {
+            this->endHeavyLoadPlaceholder();
+            this->_mightUpdateTokens();
+        }
     );
 
     QObject::connect(
@@ -87,6 +90,18 @@ void MapView::_handleHintsSignalsAndSlots() {
         }
     );
 
+
+}
+
+void MapView::_mightUpdateTokens() {
+    
+    if(!Authorisations::isHostAble()) return;
+    if(!this->_rpzClient) return;
+        
+    //update token values from owners
+    for(const auto &user : this->_rpzClient->sessionUsers()) {
+        HintThread::hint()->mightUpdateOwnedTokens(user);
+    }
 
 }
 
@@ -697,17 +712,33 @@ void MapView::_onGameSessionReceived(const RPZGameSession &gameSession) {
     
     Q_UNUSED(gameSession)
 
-    //send map history if host
+    //self
     auto self = this->_rpzClient->identity();
-    if(self.role() == RPZUser::Role::Host) {
-        this->_sendMapHistory();
-    }
-
-    //define impersonation
-    HintThread::hint()->defineImpersonatingCharacter(self.character().id());
 
     //if host
-    bool is_remote = HintThread::hint()->ackRemoteness(self, _rpzClient);
+    if(self.role() == RPZUser::Role::Host) {
+
+        //send map history if host
+        this->_sendMapHistory();
+
+        //might update tokens when user updates/log in
+        QObject::connect(
+            this->_rpzClient, &RPZClient::userDataChanged,
+            HintThread::hint(), &MapHint::mightUpdateOwnedTokens
+        );
+        QObject::connect(
+            this->_rpzClient, &RPZClient::userJoinedServer,
+            HintThread::hint(), &MapHint::mightUpdateOwnedTokens
+        );
+
+
+    }
+
+    //if host
+    bool is_remote = HintThread::hint()->ackRemoteness(
+        self, 
+        this->_rpzClient->getConnectedSocketAddress()
+    );
 
     emit remoteChanged(is_remote);
     

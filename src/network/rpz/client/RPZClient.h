@@ -25,6 +25,7 @@
 #include "src/network/rpz/_any/JSONLogger.hpp"
 #include "src/helpers/Authorisations.hpp"
 #include "src/shared/models/network/RPZGameSession.hpp"
+#include "src/shared/hints/HintThread.hpp"
 
 class RPZClient : public QObject, public AlterationActor, public JSONLogger {
 

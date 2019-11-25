@@ -492,6 +492,11 @@ const QHash<RPZAtom::Id, RPZCharacter::Id>& AtomsStorage::_ownables() const {
     return this->_ownableAtomIdsByOwner;
 }
 
+const QList<RPZAtom::Id> AtomsStorage::_ownedBy(const RPZCharacter::Id &owner) const {
+    QMutexLocker l(&this->_m_handlingLock);
+    return this->_ownableAtomIdsByOwner.keys(owner);
+}
+
 void AtomsStorage::_syncAtom(const RPZAtom::Id &toUpdate, const RPZAtom::Updates &updates) {
     
     //update db

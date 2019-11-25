@@ -347,6 +347,12 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
                 //stream state
                 emit audioSourceStateChanged(gs.streamState());
                 
+                //define impersonation
+                auto self = this->identity();
+                QMetaObject::invokeMethod(HintThread::hint(), "defineImpersonatingCharacter",
+                    Q_ARG(RPZCharacter::Id, self.character().id())
+                );
+
                 //map change
                 auto payload = gs.mapPayload();
                 this->_onMapChangeReceived(&payload, true);

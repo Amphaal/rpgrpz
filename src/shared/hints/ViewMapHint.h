@@ -47,7 +47,6 @@ class ViewMapHint : public AtomsStorage {
 
         QGraphicsItem* generateGraphicsFromTemplate(bool hiddenAsDefault = false) const; //safe
 
-        void defineImpersonatingCharacter(const RPZCharacter::Id &toImpersonate = 0); //safe
 
     public slots:
         void mightNotifyMovement(const QList<QGraphicsItem*> &itemsWhoMightHaveMoved); //safe
@@ -55,6 +54,8 @@ class ViewMapHint : public AtomsStorage {
         void notifyFocusedItem(QGraphicsItem* focusedItem); //safe
         void setDefaultLayer(int layer); //safe
         void setDefaultVisibility(int checkboxState); //safe
+        void mightUpdateOwnedTokens(const RPZUser &owner); //safe
+        void defineImpersonatingCharacter(const RPZCharacter::Id &toImpersonate = 0); //safe
 
         //handle preview alteration before real payload
         void handlePreviewRequest(const AtomsSelectionDescriptor &selectionDescriptor, const RPZAtom::Parameter &parameter, const QVariant &value);

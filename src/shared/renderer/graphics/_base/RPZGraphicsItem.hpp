@@ -5,8 +5,8 @@
 #include <QStyleOptionGraphicsItem>
 
 #include "src/helpers/_appContext.h"
-#include "src/network/rpz/client/RPZClient.h"
 #include "src/helpers/RPZQVariant.hpp"
+#include "src/helpers/Authorisations.hpp"
 
 class RPZGraphicsItem {
     public:

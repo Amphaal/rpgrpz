@@ -1,13 +1,13 @@
 #pragma once
 
 #include "src/shared/renderer/graphics/MapViewGraphics.h"
-#include "src/network/rpz/client/RPZClient.h"
 
 #include <QPropertyAnimation>
 #include <QQueue>
 
 #include "PathAnimator.hpp"
 #include "src/helpers/RPZQVariant.hpp"
+#include "src/helpers/Authorisations.hpp"
 
 class MapViewAnimator {
     public:

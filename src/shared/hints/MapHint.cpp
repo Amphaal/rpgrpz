@@ -126,13 +126,13 @@ bool  MapHint::ackRemoteness(const QString &tblMapFilePath) {
 
 }
 
-bool MapHint::ackRemoteness(const RPZUser &connectedUser, RPZClient* client) {
+bool MapHint::ackRemoteness(const RPZUser &connectedUser, const QString &remoteAddress) {
     
     //define remote flag
     this->_isRemote = connectedUser.role() != RPZUser::Role::Host;
 
     //change map descriptor if is a remote session
-    if(this->_isRemote) this->_mapDescriptor = client->getConnectedSocketAddress();
+    if(this->_isRemote) this->_mapDescriptor = remoteAddress;
 
     return this->_ackRemoteness();
 

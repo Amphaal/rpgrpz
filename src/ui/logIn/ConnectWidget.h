@@ -10,7 +10,6 @@
 #include <QComboBox>
 
 #include "src/helpers/_appContext.h"
-#include "src/network/rpz/client/RPZClient.h"
 
 #include "src/shared/hints/HintThread.hpp"
 
