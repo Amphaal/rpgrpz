@@ -25,17 +25,29 @@ class StandardUsersListView : public QListView {
             this->setModel(new StandardUsersModel);
 
             QObject::connect(
+                this->model(), &QAbstractItemModel::rowsRemoved,
+                this, &StandardUsersListView::_onRowRemoved
+            );
+            QObject::connect(
                 this->model(), &QAbstractItemModel::modelReset,
-                this, &StandardUsersListView::_onModelReset
+                this, &StandardUsersListView::_onRowRemoved
+            );
+            QObject::connect(
+                this->model(), &QAbstractItemModel::rowsInserted,
+                this, &StandardUsersListView::_onRowInserted
             );
 
         }
     
     private:
-        void _onModelReset() {
+        void _onRowRemoved() {
             this->setVisible(
                 this->model()->rowCount()
             );
+        }
+
+        void _onRowInserted() {
+            this->setVisible(true);
         }
 
 };

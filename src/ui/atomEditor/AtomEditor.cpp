@@ -157,6 +157,8 @@ void AtomEditor::_onPreviewRequested(const RPZAtom::Parameter &parameter, const 
 
 void AtomEditor::_emitPayload(const RPZAtom::Updates &changesToEmit) {
 
+    qDebug() << changesToEmit;
+
     //intercept combo change for visibility
     this->_mustShowBrushPenWidthEditor(changesToEmit);
 

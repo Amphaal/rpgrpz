@@ -35,8 +35,16 @@ class PlayersListView : public QListView {
             this->setModel(new PlayersModel);
 
             QObject::connect(
+                this->model(), &QAbstractItemModel::rowsRemoved,
+                this, &PlayersListView::_onRowRemoved
+            );
+            QObject::connect(
                 this->model(), &QAbstractItemModel::modelReset,
-                this, &PlayersListView::_onModelReset
+                this, &PlayersListView::_onRowRemoved
+            );
+            QObject::connect(
+                this->model(), &QAbstractItemModel::rowsInserted,
+                this, &PlayersListView::_onRowInserted
             );
 
             QObject::connect(
@@ -47,10 +55,14 @@ class PlayersListView : public QListView {
         }
 
     private:
-        void _onModelReset() {
+        void _onRowRemoved() {
             this->setVisible(
                 this->model()->rowCount()
             );
+        }
+
+        void _onRowInserted() {
+            this->setVisible(true);
         }
         
         void _onPlayerDoubleClick(const QModelIndex &index) {
