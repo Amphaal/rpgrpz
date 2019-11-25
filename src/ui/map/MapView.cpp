@@ -34,6 +34,9 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
 
     this->_handleHintsSignalsAndSlots();
 
+    //force scaling to enable drag mode (bug ?)
+    this->scale(.99, .99);
+
 }
 
 void MapView::_handleHintsSignalsAndSlots() {
@@ -50,6 +53,7 @@ void MapView::_handleHintsSignalsAndSlots() {
         ProgressTracker::get(), &ProgressTracker::heavyAlterationProcessed,
         [=]() {
             this->endHeavyLoadPlaceholder();
+            this->goToDefaultViewState();
             this->_mightUpdateTokens();
         }
     );
