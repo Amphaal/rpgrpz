@@ -208,8 +208,8 @@ void ConnectWidget::_changeState(ConnectWidget::State newState) {
 }
 
 
-SnowFlake::Id ConnectWidget::_getSelectedCharacterId() {
-    return (SnowFlake::Id)this->_characterSheetTarget->currentData().toULongLong();
+RPZCharacter::Id ConnectWidget::_getSelectedCharacterId() {
+    return (RPZCharacter::Id)this->_characterSheetTarget->currentData().toULongLong();
 }
 
 void ConnectWidget::_fillCharacterSheetCombo() {

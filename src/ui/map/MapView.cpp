@@ -351,15 +351,28 @@ void MapView::mouseDoubleClickEvent(QMouseEvent *event) {
     //prevent if not using default tool
     if(this->_getCurrentTool() != MapTool::Default) return;
 
-    //check item
-    auto item = this->itemAt(event->pos());
-    if(!item) return;
+    //find first selectable item
+    QGraphicsItem* focusable = nullptr;
+    auto items = this->items(event->pos());
+    for(const auto item : items) {
+        if(item->flags().testFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable)) {
+            focusable = item;
+            break;
+        }
+    }
+    if(!focusable) return;
 
     //check item is not temporary !
-    if(RPZQVariant::isTemporary(item)) return;
+    if(RPZQVariant::isTemporary(focusable)) return;
 
     //notify focus
-    HintThread::hint()->notifyFocusedItem(item);
+    HintThread::hint()->notifyFocusedItem(focusable);
+
+    //request focus on sheet
+    if(auto characterId = RPZQVariant::boundCharacterId(focusable)) {
+        emit requestingFocusOnCharacter(characterId);
+    }
+
 }
 
 void MapView::keyReleaseEvent(QKeyEvent *event) {

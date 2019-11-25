@@ -17,9 +17,9 @@ class CharactersDatabase : public QObject, public JSONDatabase {
         static CharactersDatabase* get();
 
         const RPZMap<RPZCharacter>& characters() const;
-        const RPZCharacter character(SnowFlake::Id characterId) const;
+        const RPZCharacter character(RPZCharacter::Id characterId) const;
         RPZCharacter addNewCharacter();
-        void removeCharacter(const SnowFlake::Id &toRemove);
+        void removeCharacter(const RPZCharacter::Id &toRemove);
         void updateCharacter(const RPZCharacter &updated);
 
     protected:

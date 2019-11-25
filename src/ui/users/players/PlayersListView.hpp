@@ -12,7 +12,7 @@ class PlayersListView : public QListView {
     Q_OBJECT
 
     signals:
-        void requestingFocusOnCharacter(const SnowFlake::Id &characterIdToFocus);
+        void requestingFocusOnCharacter(const RPZCharacter::Id &characterIdToFocus);
 
     public:
         PlayersListView(QWidget *parent = nullptr) : QListView(parent) {

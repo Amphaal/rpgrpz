@@ -470,17 +470,13 @@ void MainWindow::_initAppComponents() {
     //focus on character
     QObject::connect(
         this->_playersView, &PlayersListView::requestingFocusOnCharacter,
-        [=](const SnowFlake::Id &characterIdToFocus) {
-            
-            this->_characterEditor->tryToSelectCharacter(characterIdToFocus);
-           
-            auto tab = (QTabWidget*)this->_characterEditor->parentWidget()->parentWidget();
-            auto editorIndex = tab->indexOf(this->_characterEditor);
-            
-            tab->setCurrentIndex(editorIndex);
-            
-        }    
+        this, &MainWindow::_onCharacterFocusRequest   
     );
+    QObject::connect(
+        this->_mapView, &MapView::requestingFocusOnCharacter,
+        this, &MainWindow::_onCharacterFocusRequest
+    );
+
 }
 
 void MainWindow::_initUIMenu() {
@@ -511,6 +507,17 @@ void MainWindow::_initUIStatusBar() {
     this->setStatusBar(this->_sb);
 
 }
+
+void MainWindow::_onCharacterFocusRequest(const RPZCharacter::Id &characterIdToFocus) {
+    
+    this->_characterEditor->tryToSelectCharacter(characterIdToFocus);
+    
+    auto tab = (QTabWidget*)this->_characterEditor->parentWidget()->parentWidget();
+    auto editorIndex = tab->indexOf(this->_characterEditor);
+    
+    tab->setCurrentIndex(editorIndex);
+    
+}  
 
 //////////////////
 /// END UI init //

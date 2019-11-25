@@ -308,6 +308,12 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
             }
             break;
 
+            //on character id change
+            case RPZAtom::Parameter::CharacterId: {
+                RPZQVariant::setBoundCharacterId(itemToUpdate, val.toULongLong());
+            }
+            break;
+
             //on layer change
             case RPZAtom::Parameter::Layer: {
                 

@@ -270,22 +270,22 @@
         <translation>Supprimer la fiche</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="117"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="118"/>
         <source>No existing character, create some !</source>
         <translation>Aucun personnage préexistant, créez-en un !</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="118"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="119"/>
         <source>Waiting for sheets from host...</source>
         <translation>En attente de fiches du serveur...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="192"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="193"/>
         <source>Character sheet deletion</source>
         <translation>Suppression de fiches de personnages</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="193"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="194"/>
         <source>Do you really want to delete this character ?</source>
         <translation>Voulez-vous vraiment supprimer cette fiche de personnage ?</translation>
     </message>
@@ -719,54 +719,54 @@
         <translation>Hub de jeu</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="525"/>
+        <location filename="../ui/mainWindow.cpp" line="532"/>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="539"/>
+        <location filename="../ui/mainWindow.cpp" line="546"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="541"/>
-        <location filename="../ui/mainWindow.cpp" line="567"/>
-        <location filename="../ui/mainWindow.cpp" line="595"/>
+        <location filename="../ui/mainWindow.cpp" line="548"/>
+        <location filename="../ui/mainWindow.cpp" line="574"/>
+        <location filename="../ui/mainWindow.cpp" line="602"/>
         <source>Game map (*%1)</source>
         <translation>Carte de campagne (*%1)</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="565"/>
+        <location filename="../ui/mainWindow.cpp" line="572"/>
         <source>Load a new map</source>
         <translation>Charger une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="593"/>
+        <location filename="../ui/mainWindow.cpp" line="600"/>
         <source>Save as...</source>
         <translation>Savegarder sous...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="617"/>
+        <location filename="../ui/mainWindow.cpp" line="624"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="672"/>
+        <location filename="../ui/mainWindow.cpp" line="679"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="686"/>
+        <location filename="../ui/mainWindow.cpp" line="693"/>
         <source>Searching for updates...</source>
         <translation>Recherche des mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="686"/>
+        <location filename="../ui/mainWindow.cpp" line="693"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="710"/>
+        <location filename="../ui/mainWindow.cpp" line="717"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>

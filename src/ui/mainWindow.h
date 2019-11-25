@@ -58,6 +58,7 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
 
     private slots:
         void _onGameSessionReceived(const RPZGameSession &gameSession);
+        void _onCharacterFocusRequest(const RPZCharacter::Id &characterIdToFocus);
 
     private:
         void closeEvent(QCloseEvent *event) override;

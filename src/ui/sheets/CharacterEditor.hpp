@@ -75,9 +75,9 @@ class CharacterEditor : public QWidget, public ConnectivityObserver {
         }
     
     public slots:
-        void tryToSelectCharacter(const SnowFlake::Id &characterIdToFocus) {
-            this->_characterPicker->pickCharacter(characterIdToFocus);
-            this->setFocus(Qt::OtherFocusReason);
+        void tryToSelectCharacter(const RPZCharacter::Id &characterIdToFocus) {
+            auto success = this->_characterPicker->pickCharacter(characterIdToFocus);
+            if(success) this->setFocus(Qt::OtherFocusReason);
         }
 
     protected:
@@ -208,7 +208,7 @@ class CharacterEditor : public QWidget, public ConnectivityObserver {
             }
         }
 
-        void _deleteRequestFromPicker(const SnowFlake::Id toDelete) {
+        void _deleteRequestFromPicker(const RPZCharacter::Id &toDelete) {
             
             if(this->_mode != CharacterPicker::Mode::Local) return;
 
@@ -226,7 +226,7 @@ class CharacterEditor : public QWidget, public ConnectivityObserver {
 
         }
 
-        void _onSelectedCharacterChanged(const SnowFlake::Id selectedId) {
+        void _onSelectedCharacterChanged(const RPZCharacter::Id &selectedId) {
             
             bool enableSave = selectedId;
 

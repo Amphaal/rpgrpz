@@ -21,6 +21,7 @@ class RPZQVariant {
             CachedOpacity = 6000,
             AllowedToWalk = 7000,
             AllowedToDefineMoveAbility = 8000,
+            CharacterId = 8010
         };
 
         static bool allowedToBeWalked(const QGraphicsItem* item) {
@@ -50,6 +51,13 @@ class RPZQVariant {
         }
         static void setAtomId(QGraphicsItem* item, const RPZAtom::Id &id) {
             item->setData((int)RPZQVariant::Roles::AtomId, id);
+        }
+
+        static RPZCharacter::Id boundCharacterId(const QGraphicsItem* item) {
+            return item->data((int)RPZQVariant::Roles::CharacterId).toULongLong();
+        }
+        static void setBoundCharacterId(QGraphicsItem* item, const RPZCharacter::Id &characterId) {
+            item->setData((int)RPZQVariant::Roles::CharacterId, characterId);
         }
 
         static bool isGridBound(const QGraphicsItem* item) {

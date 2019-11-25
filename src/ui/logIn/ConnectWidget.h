@@ -52,5 +52,5 @@ class ConnectWidget : public QWidget, public ConnectivityObserver {
         void _saveValuesAsSettings();
 
         void _fillCharacterSheetCombo();
-        SnowFlake::Id _getSelectedCharacterId();
+        RPZCharacter::Id _getSelectedCharacterId();
 };  

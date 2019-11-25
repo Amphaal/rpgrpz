@@ -62,6 +62,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
     signals:
         void remoteChanged(bool isRemote);
         void cameraMoved();
+        void requestingFocusOnCharacter(const RPZCharacter::Id &characterIdToFocus);
 
     protected:
         void enterEvent(QEvent *event) override;

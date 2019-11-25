@@ -13,9 +13,9 @@ class CharacterPicker : public QWidget {
     Q_OBJECT
 
     signals:
-        void selectionChanged(const SnowFlake::Id selectedId);
+        void selectionChanged(const RPZCharacter::Id &selectedId);
         void requestSave();
-        void requestDelete(const SnowFlake::Id idToRemove);
+        void requestDelete(const RPZCharacter::Id &idToRemove);
         void requestInsert();
 
     public:
@@ -62,7 +62,7 @@ class CharacterPicker : public QWidget {
 
         }
 
-        const SnowFlake::Id currentCharacterId() const {
+        const RPZCharacter::Id currentCharacterId() const {
             return this->_characterListCombo->currentData().toULongLong();
         }
 
@@ -83,14 +83,15 @@ class CharacterPicker : public QWidget {
             this->loadCharacters({}, CharacterPicker::Mode::Remote);
         }
 
-        void pickCharacter(const SnowFlake::Id &characterIdToFocus) {
+        bool pickCharacter(const RPZCharacter::Id &characterIdToFocus) {
 
             auto indexItemToFocus = this->_getIndexOfCharacterId(characterIdToFocus);
             
-            if(indexItemToFocus < 0) return;
-            if(indexItemToFocus == this->_characterListCombo->currentIndex()) return;
+            if(indexItemToFocus < 0) return false;
+            if(indexItemToFocus == this->_characterListCombo->currentIndex()) return true;
 
             this->_characterListCombo->setCurrentIndex(indexItemToFocus);
+            return true;
 
         }
 
@@ -157,18 +158,18 @@ class CharacterPicker : public QWidget {
 
         }
 
-        SnowFlake::Id localCharacterIdFromRemote() {
+        RPZCharacter::Id localCharacterIdFromRemote() {
             return this->_localCharacterIdFromRemote;
         }
 
-        void setLocalCharacterIdFromRemote(SnowFlake::Id localCharacterId) {
+        void setLocalCharacterIdFromRemote(RPZCharacter::Id localCharacterId) {
             this->_localCharacterIdFromRemote = localCharacterId;
         };
     
     private:
-        SnowFlake::Id _localCharacterIdFromRemote = 0;
+        RPZCharacter::Id _localCharacterIdFromRemote = 0;
         CharacterPicker::Mode _mode = CharacterPicker::Mode::Unknown;
-        QVector<SnowFlake::Id> _ids;
+        QVector<RPZCharacter::Id> _ids;
 
         QComboBox* _characterListCombo = nullptr;
         QPushButton* _deleteCharacterBtn = nullptr;
@@ -229,7 +230,7 @@ class CharacterPicker : public QWidget {
             emit selectionChanged(id);
         }
 
-        int _getIndexOfCharacterId(const SnowFlake::Id &characterIdToFind) {
+        int _getIndexOfCharacterId(const RPZCharacter::Id &characterIdToFind) {
             return this->_ids.indexOf(characterIdToFind);
         }
         
