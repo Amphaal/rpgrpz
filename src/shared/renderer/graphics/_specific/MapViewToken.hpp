@@ -49,7 +49,7 @@ class MapViewTokenOutline : public QObject, public QGraphicsItem, public RPZGrap
 
         void mayDisplay(bool shouldDisplay) {
             this->_shouldDisplay = shouldDisplay;
-            this->update();
+            this->triggerAnimation(shouldDisplay);
         }
 
         QRectF boundingRect() const override {
@@ -109,7 +109,6 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
         MapViewToken(const RPZMapParameters &mapParameters, const RPZAtom &atom) {           
 
             this->_tokenType = atom.type();
-            this->setAcceptHoverEvents(true);
 
             auto tileSize = mapParameters.tileWidthInPoints();
             auto tokenSize = QSizeF(tileSize * .95, tileSize * .95);
@@ -147,7 +146,7 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
                 this->_outline = new MapViewTokenOutline(this, this, this->_owned); 
             }
 
-            // this->_outline->triggerAnimation(this->_owned);
+            this->_outline->triggerAnimation(this->_owned);
 
         }
 

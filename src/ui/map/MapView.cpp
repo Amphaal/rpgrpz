@@ -592,7 +592,6 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
         emit cameraMoved();
     }
 
-
     QGraphicsView::mouseMoveEvent(event);
     
 }
