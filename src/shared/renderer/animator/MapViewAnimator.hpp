@@ -41,7 +41,7 @@ class MapViewAnimator {
 
         static void animatePath(QGraphicsItem *toAnimate, const QPainterPath &pathToAnimate) {
             
-            auto canBeAnimated = dynamic_cast<MapViewGraphicsPathItem*>(toAnimate);
+            auto canBeAnimated = dynamic_cast<MapViewDrawing*>(toAnimate);
 
             if(canBeAnimated && toAnimate->scene()) {
                 _animatePath(canBeAnimated, pathToAnimate);
@@ -163,7 +163,7 @@ class MapViewAnimator {
 
         }
 
-        static void _animatePath(MapViewGraphicsPathItem* toAnimate, const QPainterPath &pathToAnimate) {
+        static void _animatePath(MapViewDrawing* toAnimate, const QPainterPath &pathToAnimate) {
             
             auto existingAnim = _ongoingAnimations[toAnimate].value(_pathProp);
 

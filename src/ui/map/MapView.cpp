@@ -248,13 +248,13 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
 
                 //auto remove temporary drawing
                 auto isCommitedDrawing = this->_drawingAssist->compareItemToCommitedDrawing(item);
-                
+                if(isCommitedDrawing) break;
+
                 //if not from temporary drawing, animate path
-                if(!isCommitedDrawing) {
-                    if(auto canBeAnimated = dynamic_cast<MapViewGraphicsPathItem*>(item)) {
-                        MapViewAnimator::animatePath(canBeAnimated, canBeAnimated->path());
-                    } 
-                }
+                if(auto canBeAnimated = dynamic_cast<MapViewDrawing*>(item)) {
+                    MapViewAnimator::animatePath(canBeAnimated, canBeAnimated->path());
+                } 
+
 
             }
             break;
@@ -315,6 +315,8 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
         }
 
     }
+
+    MapViewAnimator::triggerQueuedAnimations();
 
 }
 

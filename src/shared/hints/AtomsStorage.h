@@ -62,7 +62,7 @@ class AtomsStorage : public AlterationAcknoledger {
     public slots:    
         void redo();
         void undo();
-        void duplicateAtoms(const QList<RPZAtom::Id> &RPZAtomIdList);
+        void duplicateAtoms(const QList<RPZAtom::Id> &idsToDuplicate);
         void handleAlterationRequest(const AlterationPayload &payload);
 
     protected:
@@ -104,8 +104,8 @@ class AtomsStorage : public AlterationAcknoledger {
 
         //duplication
         int _duplicationCount = 0;
-        QList<RPZAtom::Id> _latestDuplication;
-        RPZMap<RPZAtom> _generateAtomDuplicates(const QList<RPZAtom::Id> &RPZAtomIdsToDuplicate) const;
+        QSet<RPZAtom::Id> _latestDuplication;
+        RPZMap<RPZAtom> _generateAtomDuplicates(const QSet<RPZAtom::Id> &RPZAtomIdsToDuplicate) const;
         static QPointF _getPositionFromAtomDuplication(const RPZAtom &atomToDuplicate, double distanceFromOriginal);
 
         //

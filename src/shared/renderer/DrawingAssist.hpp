@@ -99,7 +99,7 @@ class DrawingAssist {
         RPZAtom::Id _commitedDrawingId = 0;
 
         //drawing...
-        MapViewGraphicsPathItem* _tempDrawing = nullptr;
+        MapViewDrawing* _tempDrawing = nullptr;
         QList<QGraphicsItem*> _tempDrawingHelpers;
         bool _stickyBrushIsDrawing = false;
         int _stickyBrushValidNodeCount = 0;
@@ -131,7 +131,7 @@ class DrawingAssist {
             this->_destroyTempDrawing();
 
             //create item 
-            this->_tempDrawing = static_cast<MapViewGraphicsPathItem*>(HintThread::hint()->generateGraphicsFromTemplate());
+            this->_tempDrawing = static_cast<MapViewDrawing*>(HintThread::hint()->generateGraphicsFromTemplate());
                 
                 //define pos
                 auto centerScenePos = scenePos;

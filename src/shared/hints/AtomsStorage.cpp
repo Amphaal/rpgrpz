@@ -523,12 +523,14 @@ void AtomsStorage::_syncAtom(const RPZAtom::Id &toUpdate, const RPZAtom::Updates
 //
 //
 
-void AtomsStorage::duplicateAtoms(const QList<RPZAtom::Id> &RPZAtomIdList) {
+void AtomsStorage::duplicateAtoms(const QList<RPZAtom::Id> &idsToDuplicate) {
     
+    auto idsSetToDuplicate = idsToDuplicate.toSet();
+
     //check if a recent duplication have been made, and if it was about the same atoms
-    if(this->_latestDuplication != RPZAtomIdList) { //if not
+    if(this->_latestDuplication != idsSetToDuplicate) { //if not
         //reset duplication cache
-        this->_latestDuplication = RPZAtomIdList;
+        this->_latestDuplication = idsSetToDuplicate;
         this->_duplicationCount = 1;
     } else {
         //else, increment subsequent duplication count
@@ -536,7 +538,7 @@ void AtomsStorage::duplicateAtoms(const QList<RPZAtom::Id> &RPZAtomIdList) {
     }
     
     //generate duplicated atoms
-    auto newAtoms = this->_generateAtomDuplicates(RPZAtomIdList);
+    auto newAtoms = this->_generateAtomDuplicates(idsSetToDuplicate);
     if(!newAtoms.count()) return;
 
     //request insertion
@@ -549,7 +551,7 @@ void AtomsStorage::duplicateAtoms(const QList<RPZAtom::Id> &RPZAtomIdList) {
 }
 
 
-RPZMap<RPZAtom> AtomsStorage::_generateAtomDuplicates(const QList<RPZAtom::Id> &RPZAtomIdsToDuplicate) const {
+RPZMap<RPZAtom> AtomsStorage::_generateAtomDuplicates(const QSet<RPZAtom::Id> &RPZAtomIdsToDuplicate) const {
     
     RPZMap<RPZAtom> newAtoms;
 

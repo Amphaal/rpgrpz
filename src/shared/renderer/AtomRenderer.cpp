@@ -151,7 +151,7 @@ QGraphicsPathItem* AtomRenderer::_createBrushItem(const RPZAtom &atom, const RPZ
     return newPath;
 }
 
-QGraphicsPathItem* AtomRenderer::_createDrawingItem(const RPZAtom &atom) {
+MapViewDrawing* AtomRenderer::_createDrawingItem(const RPZAtom &atom) {
     
     //define a pen
     QPen pen;
@@ -163,7 +163,7 @@ QGraphicsPathItem* AtomRenderer::_createDrawingItem(const RPZAtom &atom) {
     if(!shape.elementCount()) shape.lineTo(.01,.01);
 
     //create path
-    auto newPath = new MapViewGraphicsPathItem(shape, pen);
+    auto newPath = new MapViewDrawing(shape, pen);
     
     return newPath;
 }

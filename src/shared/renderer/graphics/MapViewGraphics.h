@@ -6,3 +6,4 @@
 #include "_specific/MapViewToken.hpp"
 #include "_specific/MapViewWalkingHelper.hpp"
 #include "_specific/MapViewUnscalable.hpp"
+#include "_specific/MapViewDrawing.hpp"
