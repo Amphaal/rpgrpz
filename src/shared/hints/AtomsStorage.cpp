@@ -400,11 +400,14 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
     if(auto mPayload = dynamic_cast<const AtomsWielderPayload*>(&payload)) {
         
         QList<RPZAtom::Id> insertedIds;
-        
-        for (const auto &atom : mPayload->atoms()) {
+
+        auto atoms = mPayload->atoms();
+        for (auto i = atoms.begin(); i != atoms.end(); i++) {
 
             //add to Db
-            auto id = atom.id();
+            auto &id = i.key();
+            auto &atom = i.value();
+
             this->_map.addAtom(atom);
             
             //add to restricted
@@ -550,19 +553,25 @@ RPZMap<RPZAtom> AtomsStorage::_generateAtomDuplicates(const QList<RPZAtom::Id> &
     
     RPZMap<RPZAtom> newAtoms;
 
+    //distance from original
+    auto distFromOrigin = this->_map.mapParams().tileWidthInPoints() * this->_duplicationCount;
+
     //create the new atoms from the selection
     for(const auto &atomId : RPZAtomIdsToDuplicate) {
         
         //skip if RPZAtom::Id does not exist
         auto atom = this->_map.atom(atomId);
         if(atom.isEmpty()) continue;
-        
+
+        //check if is copyable
+        if(!atom.isCopyable()) continue;
+         
         //create copy atom, update its id
         RPZAtom newAtom(atom);
         newAtom.shuffleId();
 
         //find new position for the duplicated atom
-        auto newPos = _getPositionFromAtomDuplication(newAtom, this->_duplicationCount);
+        auto newPos = _getPositionFromAtomDuplication(newAtom, distFromOrigin);
         newAtom.setMetadata(RPZAtom::Parameter::Position, newPos);
 
         //adds it to the final list
@@ -576,20 +585,17 @@ bool AtomsStorage::_isAtomOwnable(const RPZAtom &atom) const {
     return atom.isWalkableAtom();
 }
 
-QPointF AtomsStorage::_getPositionFromAtomDuplication(const RPZAtom &atomToDuplicate, int duplicateCount) {
+QPointF AtomsStorage::_getPositionFromAtomDuplication(const RPZAtom &atomToDuplicate, double distanceFromOriginal) {
     
     auto currPos = atomToDuplicate.pos();
     auto br = atomToDuplicate.shape().boundingRect();
-
-    auto stepWidth = br.width() / _pixelStepPosDuplication;
-    auto stepHeight = br.height() / _pixelStepPosDuplication;
     
     currPos.setX(
-        currPos.x() + (duplicateCount * stepWidth)
+        currPos.x() + distanceFromOriginal
     );
 
     currPos.setY(
-        currPos.y() + (duplicateCount * stepHeight)
+        currPos.y() + distanceFromOriginal
     );
 
     return currPos;

@@ -24,6 +24,8 @@
 
 #include "src/helpers/RPZQVariant.hpp"
 
+using OrderedGraphicsItems = QMap<RPZAtom::Id, QGraphicsItem*>;
+
 class ViewMapHint : public AtomsStorage {
 
     Q_OBJECT
@@ -61,6 +63,7 @@ class ViewMapHint : public AtomsStorage {
         void handlePreviewRequest(const AtomsSelectionDescriptor &selectionDescriptor, const RPZAtom::Parameter &parameter, const QVariant &value);
 
     signals:
+        void requestingUIAlteration(const Payload::Alteration &type, const OrderedGraphicsItems &toAlter);
         void requestingUIAlteration(const Payload::Alteration &type, const QList<QGraphicsItem*> &toAlter);
         void requestingUIUpdate(const QHash<QGraphicsItem*, RPZAtom::Updates> &toUpdate);
         void requestingUIUpdate(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates);

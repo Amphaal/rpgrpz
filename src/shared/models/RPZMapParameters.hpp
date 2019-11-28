@@ -95,7 +95,6 @@ class RPZMapParameters : public QVariantHash {
             auto meters = distanceAsTiles * this->tileToIngameMeters();
             return meters;
         }
-
         
         void alignPointToGridCenter(QPointF &scenePos) const {
                         

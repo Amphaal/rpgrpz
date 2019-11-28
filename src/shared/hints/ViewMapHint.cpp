@@ -357,7 +357,7 @@ QGraphicsItem* ViewMapHint::_buildGraphicsItemFromAtom(const RPZAtom &atomToBuil
 
 void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &asset) {
     
-    QList<QGraphicsItem*> newGis;
+    OrderedGraphicsItems newGis;
     QSet<QGraphicsItem*> setOfGraphicsItemsToReplace;
 
     auto hash = asset.hash();
@@ -388,7 +388,7 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &asset) {
             this->_hasOwnershipOf(atom)
         );
         this->_crossBindingAtomWithGI(atom, newGi);
-        newGis.append(newGi);
+        newGis.insert(id, newGi);
 
     }
 
@@ -627,24 +627,29 @@ void ViewMapHint::_atomAdded(const RPZAtom &added) {
 }
 
 void ViewMapHint::_basicAlterationDone(const QList<RPZAtom::Id> &updatedIds, const Payload::Alteration &type) {
-    QList<QGraphicsItem*> toUpdate;
+    
+    OrderedGraphicsItems toUpdate;
     
     for(const auto id : updatedIds) {
 
+        QGraphicsItem* item = nullptr;
+        
         //if removed...
         if(type == Payload::Alteration::Removed) {
-            toUpdate += this->_GItemsById.take(id);
+            item = this->_GItemsById.take(id);
             this->_ownedTokenIds.remove(id);
         }
+        else item = this->_GItemsById.value(id);
 
-        else toUpdate += this->_GItemsById.value(id);
+        toUpdate.insert(id, item);
+
     }
 
     emit requestingUIAlteration(type, toUpdate);
 }
 
 void ViewMapHint::_updatesDone(const QList<RPZAtom::Id> &updatedIds, const RPZAtom::Updates &updates) {
-    
+
     QList<QGraphicsItem*> toUpdate;
     
     for(const auto id : updatedIds) {

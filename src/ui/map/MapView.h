@@ -85,6 +85,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
 
     private slots:
         void _onUIAlterationRequest(const Payload::Alteration &type, const QList<QGraphicsItem*> &toAlter);
+        void _onUIAlterationRequest(const Payload::Alteration &type, const OrderedGraphicsItems &toAlter);
         void _onUIUpdateRequest(const QHash<QGraphicsItem*, RPZAtom::Updates> &toUpdate);
         void _onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates);
         void _onOwnershipChanged(const QList<QGraphicsItem*> changing, bool owned);

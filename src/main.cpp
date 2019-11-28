@@ -118,10 +118,10 @@ int main(int argc, char** argv) {
         qRegisterMetaType<AtomsSelectionDescriptor>("AtomsSelectionDescriptor");
 
         //containers
-        qRegisterMetaType<QVector<RPZUser>>("QVector<RPZUser>");
         qRegisterMetaType<RPZMap<RPZUser>>("RPZMap<RPZUser>");
         qRegisterMetaType<QList<RPZAtom::Id>>("QList<RPZAtom::Id>");
         qRegisterMetaType<QList<QGraphicsItem*>>("QList<QGraphicsItem*>");
+        qRegisterMetaType<OrderedGraphicsItems>("OrderedGraphicsItems");
         qRegisterMetaType<QList<RPZAsset::Hash>>("QList<RPZAsset::Hash>");
         qRegisterMetaType<QVector<RPZAsset::Hash>>("QVector<RPZAsset::Hash>");
         qRegisterMetaType<QVector<RPZMessage>>("QVector<RPZMessage>");

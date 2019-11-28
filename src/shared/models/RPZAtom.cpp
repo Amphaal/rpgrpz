@@ -31,6 +31,10 @@ bool RPZAtom::isWalkableAtom() const {
     return _walkables.contains(this->type());
 }
 
+bool RPZAtom::isCopyable() const {
+    return !_notCopyable.contains(this->type());
+}
+
 const QString RPZAtom::toString(const RPZAtom::Type &type, const QString &description) { 
 
     //default if no descriptor

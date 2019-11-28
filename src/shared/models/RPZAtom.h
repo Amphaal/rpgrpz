@@ -180,6 +180,7 @@ class RPZAtom : public Serializable {
         bool isRestrictedAtom() const;
         bool canBeHidden() const;
         bool isWalkableAtom() const;
+        bool isCopyable() const;
 
         RPZAtom::Category category() const;
         static RPZAtom::Category category(const RPZAtom::Type &type);
@@ -264,6 +265,10 @@ class RPZAtom : public Serializable {
         static inline const QList<RPZAtom::Type> _walkables {
             RPZAtom::Type::Player,
             RPZAtom::Type::NPC
+        };
+
+        static inline const QList<RPZAtom::Type> _notCopyable {
+            RPZAtom::Type::Player
         };
         
         static const inline QHash<RPZAtom::NPCType, QColor> _NPCTypeAssociatedColor {

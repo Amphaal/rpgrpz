@@ -59,8 +59,12 @@ void MapView::_handleHintsSignalsAndSlots() {
     );
 
     QObject::connect(
-        HintThread::hint(), &ViewMapHint::requestingUIAlteration,
-        this, &MapView::_onUIAlterationRequest
+        HintThread::hint(), QOverload<const Payload::Alteration &, const OrderedGraphicsItems &>::of(&ViewMapHint::requestingUIAlteration),
+        this, QOverload<const Payload::Alteration &, const OrderedGraphicsItems &>::of(&MapView::_onUIAlterationRequest)
+    );
+    QObject::connect(
+        HintThread::hint(), QOverload<const Payload::Alteration &, const QList<QGraphicsItem*>&>::of(&ViewMapHint::requestingUIAlteration),
+        this, QOverload<const Payload::Alteration &, const QList<QGraphicsItem*>&>::of(&MapView::_onUIAlterationRequest)
     );
     
     QObject::connect(
@@ -183,6 +187,20 @@ void MapView::_addItemToScene(QGraphicsItem* item) {
 }
 
 void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QList<QGraphicsItem*> &toAlter) {
+
+    OrderedGraphicsItems re;
+    
+    auto i = 0;
+    for(const auto item : toAlter) {
+        re.insert(i, item);
+        i++;
+    }
+
+    this->_onUIAlterationRequest(type, re);
+
+}
+
+void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const OrderedGraphicsItems &toAlter) {
     
     //prevent circual selection
     QSignalBlocker b(this->scene());
@@ -207,11 +225,15 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
         //setup loader
         this->setupHeavyLoadPlaceholder(toAlter.count());
 
-    }
+    }   
 
     auto currentTool = this->_getCurrentTool();
 
-    for(const auto item : toAlter) {
+    for(auto i = toAlter.begin(); i != toAlter.end(); i++) {
+        
+        auto &id = i.key();
+        auto &item = i.value();
+
         switch(type) {
 
             case Payload::Alteration::Reset: {
@@ -284,7 +306,8 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
 
     else if(type == Payload::Alteration::Selected) {
         
-        auto isWalkable = _tryToInvokeWalkableHelper(toAlter.value(0));
+        auto firstItem = toAlter.values().value(0);
+        auto isWalkable = _tryToInvokeWalkableHelper(firstItem);
 
         //if cant walk it, and is using walking tool, go back to default tool
         if(!isWalkable && currentTool == MapTool::Walking) {
