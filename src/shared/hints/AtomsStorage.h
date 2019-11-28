@@ -104,8 +104,8 @@ class AtomsStorage : public AlterationAcknoledger {
 
         //duplication
         int _duplicationCount = 0;
-        QSet<RPZAtom::Id> _latestDuplication;
-        RPZMap<RPZAtom> _generateAtomDuplicates(const QSet<RPZAtom::Id> &RPZAtomIdsToDuplicate) const;
+        QList<RPZAtom::Id> _latestDuplication;
+        RPZMap<RPZAtom> _generateAtomDuplicates(QList<RPZAtom::Id> RPZAtomIdsToDuplicate) const;
         static QPointF _getPositionFromAtomDuplication(const RPZAtom &atomToDuplicate, double distanceFromOriginal);
 
         //

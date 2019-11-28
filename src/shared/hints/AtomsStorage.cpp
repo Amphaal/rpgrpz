@@ -524,13 +524,11 @@ void AtomsStorage::_syncAtom(const RPZAtom::Id &toUpdate, const RPZAtom::Updates
 //
 
 void AtomsStorage::duplicateAtoms(const QList<RPZAtom::Id> &idsToDuplicate) {
-    
-    auto idsSetToDuplicate = idsToDuplicate.toSet();
 
     //check if a recent duplication have been made, and if it was about the same atoms
-    if(this->_latestDuplication != idsSetToDuplicate) { //if not
+    if(this->_latestDuplication != idsToDuplicate) { //if not
         //reset duplication cache
-        this->_latestDuplication = idsSetToDuplicate;
+        this->_latestDuplication = idsToDuplicate;
         this->_duplicationCount = 1;
     } else {
         //else, increment subsequent duplication count
@@ -538,7 +536,7 @@ void AtomsStorage::duplicateAtoms(const QList<RPZAtom::Id> &idsToDuplicate) {
     }
     
     //generate duplicated atoms
-    auto newAtoms = this->_generateAtomDuplicates(idsSetToDuplicate);
+    auto newAtoms = this->_generateAtomDuplicates(idsToDuplicate);
     if(!newAtoms.count()) return;
 
     //request insertion
@@ -548,15 +546,18 @@ void AtomsStorage::duplicateAtoms(const QList<RPZAtom::Id> &idsToDuplicate) {
     //request selection
     SelectedPayload selected(newAtoms.keys());
     AlterationHandler::get()->queueAlteration(this, selected);
+
 }
 
-
-RPZMap<RPZAtom> AtomsStorage::_generateAtomDuplicates(const QSet<RPZAtom::Id> &RPZAtomIdsToDuplicate) const {
+RPZMap<RPZAtom> AtomsStorage::_generateAtomDuplicates(QList<RPZAtom::Id> RPZAtomIdsToDuplicate) const {
     
     RPZMap<RPZAtom> newAtoms;
 
     //distance from original
     auto distFromOrigin = this->_map.mapParams().tileWidthInPoints() * this->_duplicationCount;
+    
+    //sort for ordered id generation
+    std::sort(RPZAtomIdsToDuplicate.begin(), RPZAtomIdsToDuplicate.end());
 
     //create the new atoms from the selection
     for(const auto &atomId : RPZAtomIdsToDuplicate) {

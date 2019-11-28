@@ -11,7 +11,7 @@ class Serializable : public QVariantHash {
         Serializable() {};
         explicit Serializable(const QVariantHash &hash) : QVariantHash(hash) {}
         
-        Serializable(SnowFlake::Id id) {
+        Serializable(const SnowFlake::Id &id) {
             this->_setId(id);
         };
 
@@ -24,11 +24,12 @@ class Serializable : public QVariantHash {
         };
 
         void shuffleId() {
-            this->_setId(SnowFlake::get()->nextId());
+            auto id = SnowFlake::get()->nextId();
+            this->_setId(id);
         }
     
     private:
-        void _setId(SnowFlake::Id id) {
-            this->insert(QStringLiteral(u"id"), QString::number(id));
+        void _setId(const SnowFlake::Id &id) {
+            this->insert(QStringLiteral(u"id"), id);
         }
 };
