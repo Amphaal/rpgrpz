@@ -53,7 +53,9 @@ class AtomEditor : public QGroupBox, public AlterationActor {
         AtomsSelectionDescriptor _currentSelectionDescr;
 
         QMap<RPZAtom::Parameter, AtomSubEditor*> _editorsByParam;
+        QVector<AtomSubEditor*> _orderedCreation;
         void _addEditor(AtomSubEditor* editor);
+        void _integrateEditors();
 
         NoEditorMessageWidget* _noEditorMsgWidget = nullptr;
 

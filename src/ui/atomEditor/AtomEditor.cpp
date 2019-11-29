@@ -92,13 +92,18 @@ void AtomEditor::resetParams() {
 }
 
 void AtomEditor::_addEditor(AtomSubEditor* editor) {
+    
     for(auto &param : editor->params()) {
         this->_editorsByParam.insert(param, editor);
     }
+
+    this->_orderedCreation += editor;
+
 }
 
 void AtomEditor::_createEditorsFromAtomParameters() {
 
+    _addEditor(new NPCAttitudeEditor);
     _addEditor(new CharacterPickerEditor);
 
     _addEditor(new BrushToolEditor);
@@ -129,12 +134,17 @@ void AtomEditor::_createEditorsFromAtomParameters() {
    
     _addEditor(new AtomShortTextEditor(RPZAtom::Parameter::NPCShortName));
     _addEditor(new AtomTextEditor(RPZAtom::Parameter::NPCDescription));
-    _addEditor(new NPCAttitudeEditor);
     _addEditor(new NPCHealthEditor);
 
-    //unique editors, prevents multiple binding
-    for(const auto editor : this->_editorsByParam.values().toSet()) { 
+    //integrate
+    this->_integrateEditors();
 
+}
+
+void AtomEditor::_integrateEditors() {
+    
+    for(auto editor : this->_orderedCreation) { 
+        
         QObject::connect(
             editor, &AtomSubEditor::valueConfirmedForPayload,
             this, &AtomEditor::_emitPayload
@@ -156,8 +166,6 @@ void AtomEditor::_onPreviewRequested(const RPZAtom::Parameter &parameter, const 
 }
 
 void AtomEditor::_emitPayload(const RPZAtom::Updates &changesToEmit) {
-
-    qDebug() << changesToEmit;
 
     //intercept combo change for visibility
     this->_mustShowBrushPenWidthEditor(changesToEmit);
