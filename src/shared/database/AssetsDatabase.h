@@ -72,7 +72,7 @@ class AssetsDatabase : public QObject, public JSONDatabase {
         static const QString _parentPath(const AssetsDatabase::FolderPath &toExtractParentFrom);
         static const QString _folderName(const AssetsDatabase::FolderPath &toExtractNameFrom);
 
-        void _saveIntoFile();
+        const QJsonObject _updatedInnerDb() override;
     
     private:
         //singleton

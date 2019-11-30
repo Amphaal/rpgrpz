@@ -54,7 +54,7 @@ bool MapHint::saveRPZMap() {
     if(this->_isRemote) return false;
 
     //save into file
-    this->map().saveIntoFile();
+    this->map().save();
 
     //define as clean
     this->_setMapDirtiness(false);
@@ -82,6 +82,7 @@ bool MapHint::saveRPZMapAs(const QString &newFilePath) {
 
     //define descr
     this->_mapDescriptor = QFileInfo(newFilePath).fileName();
+    this->map().changeSourceFile(newFilePath);
     
     //save
     return this->saveRPZMap();

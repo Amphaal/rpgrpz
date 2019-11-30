@@ -69,17 +69,20 @@ CharactersDatabase::CharactersDatabase() : JSONDatabase(QStringLiteral(u"Charact
 }
 
 void CharactersDatabase::_writeCharactersToDb() {
-
-    auto obj = this->db();
-
-        updateFrom(
-            obj, 
-            QStringLiteral(u"characters"), 
-            this->_characters.toVMap()
-        );
-    
-    this->_updateDbFile(obj);
+    this->save();
     emit databaseChanged();
-
 }
 
+const QJsonObject CharactersDatabase::_updatedInnerDb() {
+    
+    auto db = this->db();
+
+    updateFrom(
+        db, 
+        QStringLiteral(u"characters"), 
+        this->_characters.toVMap()
+    );
+
+    return db;
+    
+}

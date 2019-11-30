@@ -34,7 +34,9 @@ class JSONDatabase {
 
         JSONDatabase(const QString &logId);
         const QString dbFilePath() const;
-
+        void changeSourceFile(const QString &newSource);
+        
+        void save(); //update the physical file
         static void saveAsFile(const QJsonObject &db, const QString &filepath);
         static void saveAsFile(const QJsonObject &db, QFile &fileHandler);
 
@@ -48,8 +50,7 @@ class JSONDatabase {
         QJsonObject entityAsObject(const QString &entityKey);
         QJsonArray entityAsArray(const QString &entityKey);
 
-        //update the physical file
-        void _updateDbFile(const QJsonObject &updatedFullDatabase);
+        virtual const QJsonObject _updatedInnerDb() = 0;
 
         virtual void _removeDatabaseLinkedFiles();
 
@@ -75,14 +76,15 @@ class JSONDatabase {
         QFile* _destfile = nullptr;
 
         QJsonObject _emptyDbFile();
-        void _createEmptyDbFile();
 
         QJsonDocument _readAsDocument();
         void _duplicateDbFile(QString destSuffix);
-        void _defineDatabaseObject(const QJsonDocument &document);
+        void _updateDbFile(const QJsonObject &updatedFullDatabase);
 
         const QString _defaultEmptyDoc();
         JSONDatabase::Version _getDbVersion(const QJsonObject &db);
+
+
         
 };
 inline uint qHash(const JSONDatabase::EntityType &key, uint seed = 0) {return uint(key) ^ seed;}

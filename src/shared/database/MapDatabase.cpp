@@ -52,7 +52,7 @@ void MapDatabase::_setupLocalData() {
 
 }
 
-void MapDatabase::saveIntoFile() {
+const QJsonObject MapDatabase::_updatedInnerDb() {
     
     auto db = this->db();
 
@@ -60,9 +60,9 @@ void MapDatabase::saveIntoFile() {
     updateFrom(db, QStringLiteral(u"assets"), this->_assetHashes);
     updateFrom(db, QStringLiteral(u"params"), this->_mapParams);
 
-    this->_updateDbFile(db);
+    return db;
 
-};
+}
 
 const QString MapDatabase::snapshotSave(const QString &folderToSaveTo) {
     
@@ -73,8 +73,7 @@ const QString MapDatabase::snapshotSave(const QString &folderToSaveTo) {
                     .arg(filename)
                     .arg(AppContext::RPZ_MAP_FILE_EXT);
     
-    this->saveIntoFile();
-    JSONDatabase::saveAsFile(this->db(), fullPath);
+    JSONDatabase::saveAsFile(this->_updatedInnerDb(), fullPath);
 
     return fullPath;
 

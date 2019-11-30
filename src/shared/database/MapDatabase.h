@@ -20,7 +20,6 @@ class MapDatabase : public JSONDatabase {
         MapDatabase(const QJsonObject &obj);
         MapDatabase();
 
-        void saveIntoFile();
         const QString snapshotSave(const QString &folderToSaveTo);
 
         void addAtom(const RPZAtom &toAdd);
@@ -40,6 +39,7 @@ class MapDatabase : public JSONDatabase {
 
     protected:
         const JSONDatabase::Version apiVersion() const override;
+        const QJsonObject _updatedInnerDb() override;
 
         RPZMap<RPZAtom> _atomsById;
         QSet<RPZAsset::Hash> _assetHashes;

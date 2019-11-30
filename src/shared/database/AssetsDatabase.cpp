@@ -27,32 +27,32 @@ JSONDatabase::Model AssetsDatabase::_getDatabaseModel() {
     };
 }
 
-void AssetsDatabase::_saveIntoFile() {
+const QJsonObject AssetsDatabase::_updatedInnerDb() {
     
     auto db = this->db();
 
-        //assets
-        QVariantHash assets;
-        for(const auto &asset : this->_assets) {
-            assets.insert(asset.hash(), asset);
-        }
-        updateFrom(db, QStringLiteral(u"assets"), assets);
+    //assets
+    QVariantHash assets;
+    for(const auto &asset : this->_assets) {
+        assets.insert(asset.hash(), asset);
+    }
+    updateFrom(db, QStringLiteral(u"assets"), assets);
 
-        //paths
-        QVariantMap paths;
-        for(auto i = this->_paths.begin(); i != this->_paths.end(); i++) {
-            
-            QVariantList hashes;
-            for(const auto &hash : i.value()) hashes += hash;
+    //paths
+    QVariantMap paths;
+    for(auto i = this->_paths.begin(); i != this->_paths.end(); i++) {
+        
+        QVariantList hashes;
+        for(const auto &hash : i.value()) hashes += hash;
 
-            paths.insert(i.key(), hashes);
+        paths.insert(i.key(), hashes);
 
-        }
-        updateFrom(db, QStringLiteral(u"paths"), paths);
+    }
+    updateFrom(db, QStringLiteral(u"paths"), paths);
 
-    this->_updateDbFile(db);
+    return db;
 
-};
+}
 
 void AssetsDatabase::_setupLocalData() {
 
@@ -148,7 +148,7 @@ void AssetsDatabase::addAsset(const RPZAsset &asset, const AssetsDatabase::Folde
     assetsOfPath.insert(asset.hash());
 
     //save
-    this->_saveIntoFile();
+    this->save();
 
 }
 
@@ -175,7 +175,7 @@ const QString AssetsDatabase::createFolder(const AssetsDatabase::FolderPath &par
     this->_paths.insert(uniquePath, {});
 
     //save
-    this->_saveIntoFile();
+    this->save();
 
     return this->_folderName(uniquePath);
 
@@ -195,7 +195,7 @@ bool AssetsDatabase::renameFolder(const QString &requestedNewFolderName, const A
     this->_reroutePaths(pathToRename, toRequest, oldPathsToReroute);
 
     //save
-    this->_saveIntoFile();
+    this->save();
     return true;
 
 }
@@ -216,7 +216,7 @@ void AssetsDatabase::renameAsset(const QString &newName, const RPZAsset::Hash &h
     );
 
     //save
-    this->_saveIntoFile();
+    this->save();
 
 }
 
@@ -232,7 +232,7 @@ void AssetsDatabase::removeAssets(const QList<RPZAsset::Hash> &hashesToRemove) {
     this->_removeAssetFiles(result.second);
 
     //save
-    this->_saveIntoFile();
+    this->save();
 
 }
 
@@ -257,7 +257,7 @@ void AssetsDatabase::removeFolders(const QList<AssetsDatabase::FolderPath> &path
     this->_removeAssetFiles(result.second);
 
     //save
-    this->_saveIntoFile();
+    this->save();
 
 }
 
@@ -277,7 +277,7 @@ void AssetsDatabase::moveAssetsTo(const AssetsDatabase::FolderPath &internalPath
     }
 
     //save
-    this->_saveIntoFile();
+    this->save();
 
 }
 
@@ -295,7 +295,7 @@ void AssetsDatabase::moveFoldersTo(const AssetsDatabase::FolderPath &internalPat
     }
 
     //save
-    this->_saveIntoFile();
+    this->save();
 
 }
 

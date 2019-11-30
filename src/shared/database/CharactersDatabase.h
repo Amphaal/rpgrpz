@@ -26,6 +26,7 @@ class CharactersDatabase : public QObject, public JSONDatabase {
         const JSONDatabase::Version apiVersion() const override;
         JSONDatabase::Model _getDatabaseModel() override;
         void _setupLocalData() override;
+        const QJsonObject _updatedInnerDb() override;
 
     private:
         static inline CharactersDatabase* _singleton = nullptr;

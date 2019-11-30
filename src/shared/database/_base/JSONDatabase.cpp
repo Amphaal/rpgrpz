@@ -6,6 +6,15 @@ void JSONDatabase::log(const QString &msg) {
     qDebug() << qUtf8Printable(this->_logId) << ":" << qUtf8Printable(msg);
 }
 
+void JSONDatabase::changeSourceFile(const QString &newSource) {
+    
+    if(!_destfile) return;
+    delete this->_destfile;
+
+    this->_destfile = new QFile(newSource);
+
+}
+
 void JSONDatabase::_initDatabaseFromJSONFile(const QString &dbFilePath) {
     
     //read database file as JSON
@@ -14,7 +23,7 @@ void JSONDatabase::_initDatabaseFromJSONFile(const QString &dbFilePath) {
 
     //if file is empty or doesnt exist
     if(!this->_destfile->size() || !this->_destfile->exists()) {
-        this->_createEmptyDbFile();
+        this->_updateDbFile(this->_emptyDbFile());
     }
 
     //try to read the file
@@ -24,8 +33,7 @@ void JSONDatabase::_initDatabaseFromJSONFile(const QString &dbFilePath) {
     if(document.isNull()) {
         this->log("Cannot read database, creating a new one...");
         this->_duplicateDbFile("error");
-        this->_createEmptyDbFile();
-        this->_dbCopy = this->_readAsDocument().object();
+        this->_updateDbFile(this->_emptyDbFile());
         return;
     }
 
@@ -109,7 +117,7 @@ bool JSONDatabase::_handleVersionMissmatch(QJsonObject &databaseToUpdate, JSONDa
         this->log(QStringLiteral(u"Database have not been updated : %1").arg(reason));
         
         if(!IS_DEBUG_APP) {
-            this->_createEmptyDbFile();
+            this->_updateDbFile(this->_emptyDbFile());
             this->log("Empty database created !");
         }
 
@@ -168,6 +176,11 @@ bool JSONDatabase::_handleVersionMissmatch(QJsonObject &databaseToUpdate, JSONDa
 
 }
 
+void JSONDatabase::_updateDbFile(const QJsonObject &updatedFullDatabase) {
+    if(!this->_destfile) return;
+    saveAsFile(updatedFullDatabase, *this->_destfile);
+}
+
 QJsonObject JSONDatabase::_emptyDbFile() {
     
     QJsonObject defaultDoc;
@@ -193,15 +206,6 @@ QJsonObject JSONDatabase::_emptyDbFile() {
     }
 
     return defaultDoc;
-
-}
-
-void JSONDatabase::_createEmptyDbFile() {
-
-    //update or create file
-    this->_updateDbFile(
-        this->_emptyDbFile()
-    );
 
 }
 
@@ -231,13 +235,17 @@ void JSONDatabase::_removeDatabaseLinkedFiles() {
     //to implement from inheritors
 }
 
-void JSONDatabase::_updateDbFile(const QJsonObject &updatedFullDatabase) {
+const QJsonObject JSONDatabase::_updatedInnerDb(){
+    return this->_dbCopy;
+}
+
+void JSONDatabase::save() {
     
-    this->_dbCopy = updatedFullDatabase;
+    //update inner db
+    this->_dbCopy = this->_updatedInnerDb();
 
     if(!this->_destfile) return;
-
-    saveAsFile(updatedFullDatabase, *this->_destfile);
+    saveAsFile(this->_dbCopy, *this->_destfile);
 
     this->log("saved!");
 
