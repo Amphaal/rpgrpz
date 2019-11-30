@@ -30,71 +30,76 @@ class GaugeWidget : public QWidget {
 
         static void drawGauge(QPainter *painter, const QRectF &gaugeRect, const RPZGauge::MinimalistGauge &gauge, const QColor &gaugeColor) {
             
-            //text option
-            QTextOption tOption(Qt::AlignCenter);
+            painter->save();
 
-            //pen
-            QPen pen;
-            pen.setWidth(1);
-            pen.setColor("#111");
+                //text option
+                QTextOption tOption(Qt::AlignCenter);
 
-            //draw outer gauge
-            painter->setPen(pen);
-            painter->setBrush(QBrush("#FFF", Qt::BrushStyle::SolidPattern));
-            painter->drawRoundedRect(gaugeRect, 2, 2);
-            painter->setBrush(Qt::NoBrush);
+                //pen
+                QPen pen;
+                pen.setWidth(1);
+                pen.setColor("#111");
 
-            //determine if gauge must be filled
-            auto gVal = gauge.current;
-            auto gMax = gVal > -1 ? gauge.max : gauge.min;
+                //draw outer gauge
+                painter->setPen(pen);
+                painter->setBrush(QBrush("#FFF", Qt::BrushStyle::SolidPattern));
+                painter->drawRoundedRect(gaugeRect, 2, 2);
+                painter->setBrush(Qt::NoBrush);
 
-            if(gVal) {
-                
-                //rect
-                auto innerGaugeRect = gaugeRect;
-                if(gVal > -1) innerGaugeRect = innerGaugeRect.marginsRemoved(QMargins(1, 1, 0, 0));
+                //determine if gauge must be filled
+                auto gVal = gauge.current;
+                auto gMax = gVal > -1 ? gauge.max : gauge.min;
 
-                //pattern
-                auto pattern = gVal > -1 ? Qt::BrushStyle::SolidPattern : Qt::BrushStyle::FDiagPattern;
-                auto fillBrush = QBrush(gaugeColor, pattern);
-                
-                //matrix
-                if(gVal < 0) {
-                    QTransform matrix;
-                    matrix.scale(.5, .5);
-                    fillBrush.setTransform(matrix);
+                if(gVal) {
+                    
+                    //rect
+                    auto innerGaugeRect = gaugeRect;
+                    if(gVal > -1) innerGaugeRect = innerGaugeRect.marginsRemoved(QMargins(1, 1, 0, 0));
+
+                    //pattern
+                    auto pattern = gVal > -1 ? Qt::BrushStyle::SolidPattern : Qt::BrushStyle::FDiagPattern;
+                    auto fillBrush = QBrush(gaugeColor, pattern);
+                    
+                    //matrix
+                    if(gVal < 0) {
+                        QTransform matrix;
+                        matrix.scale(.5, .5);
+                        fillBrush.setTransform(matrix);
+                    }
+                    
+                    //calculate gauge ratio
+                    double gaugeRatio = 0;
+                    if(gVal && gMax) {
+                        gaugeRatio = (double)gVal / gMax;
+                    }
+
+                    //reduce innerGaugeRect
+                    innerGaugeRect.setWidth(
+                        (int)(gaugeRatio * innerGaugeRect.width())
+                    );
+
+                    //if negative, move to right border
+                    if(gVal < 0) innerGaugeRect.moveTopRight(gaugeRect.topRight());
+                    
+                    painter->setOpacity(.75);
+
+                    //print gauge indicator
+                    painter->fillRect(
+                        innerGaugeRect, 
+                        fillBrush
+                    );
+
                 }
-                
-                //calculate gauge ratio
-                double gaugeRatio = 0;
-                if(gVal && gMax) {
-                    gaugeRatio = (double)gVal / gMax;
-                }
 
-                //reduce innerGaugeRect
-                innerGaugeRect.setWidth(
-                    (int)(gaugeRatio * innerGaugeRect.width())
-                );
+                //define content
+                auto textContent = QStringLiteral(u"%1 / %2").arg(gVal).arg(gMax);
 
-                //if negative, move to right border
-                if(gVal < 0) innerGaugeRect.moveTopRight(gaugeRect.topRight());
-
-                //print gauge indicator
-                painter->fillRect(
-                    innerGaugeRect, 
-                    fillBrush
-                );
-
-            }
-
-            //define content
-            auto textContent = QStringLiteral(u"%1 / %2").arg(gVal).arg(gMax);
-
-            //draw text
-            pen.setColor("#000"); painter->setPen(pen);
-            painter->setCompositionMode(QPainter::CompositionMode::CompositionMode_Xor);         
-            painter->drawText(gaugeRect, textContent, tOption);
+                //draw text
+                pen.setColor("#000"); painter->setPen(pen); painter->setOpacity(1);
+                painter->drawText(gaugeRect, textContent, tOption);
             
+            painter->restore();
+
         }
 
         static void drawGauge(QPainter *painter, const QRectF &gaugeRect, const RPZGauge &gauge) {
