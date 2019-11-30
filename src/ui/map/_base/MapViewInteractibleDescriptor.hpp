@@ -60,7 +60,7 @@ class MapViewInteractibleDescriptor : public QWidget {
             auto mustDisplayGauge = false;
             if(isNPC) {
                 auto gaugeValues = atom.NPCGauge();
-                mustDisplayGauge = gaugeValues.current > -1;
+                mustDisplayGauge = gaugeValues.current != 0 || gaugeValues.min != 0 || gaugeValues.max != 0;
                 if(mustDisplayGauge) this->_gaugeW->updateValues(gaugeValues);
             }
 

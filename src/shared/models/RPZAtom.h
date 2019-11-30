@@ -336,9 +336,9 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::NPCShortName, "" },
             { RPZAtom::Parameter::NPCDescription, "" },
             { RPZAtom::Parameter::CharacterName, "" },
-            { RPZAtom::Parameter::NPCHealth, -1 },
-            { RPZAtom::Parameter::MaxNPCHealth, 10 },
-            { RPZAtom::Parameter::MinNPCHealth, -1 },
+            { RPZAtom::Parameter::NPCHealth, 0 },
+            { RPZAtom::Parameter::MaxNPCHealth, 0 },
+            { RPZAtom::Parameter::MinNPCHealth, 0 },
             { RPZAtom::Parameter::Opacity, 100 }
         };
 

@@ -107,8 +107,6 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
             }
 
         }   
-        
-      
 
         int _findItemIndexFromId(const RPZCharacter::Id &id) {
             return this->_combo->findData(id);

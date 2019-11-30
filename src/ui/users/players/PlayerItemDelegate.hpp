@@ -4,6 +4,8 @@
 #include <QPainter>
 #include <QRect>
 
+#include "src/ui/sheets/components/GaugeWidget.hpp"
+
 #include "src/shared/models/RPZUser.h"
 
 class PlayerItemDelegate : public QStyledItemDelegate {
@@ -120,43 +122,8 @@ class PlayerItemDelegate : public QStyledItemDelegate {
                     //do not display if not visible
                     if(!gauge.isVisibleUnderPortrait()) continue;
 
-                    //draw outer gauge
-                    pen.setColor("#111");
-                    painter->setPen(pen);
-                    painter->drawRoundedRect(gaugeRect, 1, 1);
-
-                    //extract current-max
-                    auto gVal = gauge.gaugeValue();
-                    auto gMax = gauge.maxGaugeValue();
-
-                    //draw gauge values as text
-                    pen.setColor("#000");
-                    painter->setPen(pen);
-                    auto textContent = QStringLiteral(u"%1/%2 ").arg(gVal).arg(gMax);
-                    painter->drawText(gaugeRect, textContent, tOption);
-                
-                    //calculate gauge ratio
-                    double gaugeRatio = 0;
-                    if(gVal && gMax) {
-                        gaugeRatio = (double)gVal / gMax;
-                    }
-
-                    // if gauge ratio is positive, print inner gauge
-                    if(gaugeRatio > 0) {
-                        
-                        auto innerGaugeRect = gaugeRect;
-
-                        //reduce innerGaugeRect
-                        innerGaugeRect.setWidth(
-                            (int)(gaugeRatio * innerGaugeRect.width())
-                        );
-
-                        //print gauge indicator
-                        painter->setOpacity(.5);
-                            painter->fillRect(innerGaugeRect, gauge.color());
-                        painter->setOpacity(1);  
-
-                    }
+                    //print gauge
+                    GaugeWidget::drawGauge(painter, gaugeRect, gauge);
 
                     //prepare for next
                     gaugeRect.translate(0, GAUGE_HEIGHT + SPACE_BETWEEN_GAUGES);

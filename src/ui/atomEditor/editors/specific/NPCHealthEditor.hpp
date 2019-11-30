@@ -51,7 +51,7 @@ class NPCHealthEditor : public AtomSubEditor {
         };
 
         void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::LoadingContext &context) override {
-            
+
             AtomSubEditor::loadTemplate(defaultValues, context);
 
             this->_gEditor->fillValues({

@@ -21,13 +21,13 @@ class SimpleGaugeEditor : public QWidget {
     public:
         void fillValues(const RPZGauge::MinimalistGauge &gauge) {
             
+            //limits
+            this->_applyMinMaxLimitsOnSpinBoxes(gauge);
+
             this->_currentValSpin->setValue(gauge.current);
             this->_minBarValSpin->setValue(gauge.min);
             this->_maxBarValSpin->setValue(gauge.max);
             
-            //limits
-            this->_applyMinMaxLimitsOnSpinBoxes();
-
         };
 
         SimpleGaugeEditor() : 
@@ -40,7 +40,7 @@ class SimpleGaugeEditor : public QWidget {
                 this->_minBarValSpin->setMinimum(-9999);
                 QObject::connect(
                     this->_minBarValSpin, qOverload<int>(&QSpinBox::valueChanged), 
-                    this, &SimpleGaugeEditor::_applyMinMaxLimitsOnSpinBoxes
+                    this, &SimpleGaugeEditor::_applyDefaultMinMaxLimitsOnSpinBoxes
                 );
 
                 //maximum
@@ -48,14 +48,14 @@ class SimpleGaugeEditor : public QWidget {
                 this->_maxBarValSpin->setMaximum(9999);
                 QObject::connect(
                     this->_maxBarValSpin, qOverload<int>(&QSpinBox::valueChanged), 
-                    this, &SimpleGaugeEditor::_applyMinMaxLimitsOnSpinBoxes
+                    this, &SimpleGaugeEditor::_applyDefaultMinMaxLimitsOnSpinBoxes
                 );
 
                 //current
                 this->_currentValSpin->setToolTip(tr("Gauge value"));
                 QObject::connect(
                     this->_currentValSpin, qOverload<int>(&QSpinBox::valueChanged), 
-                    this, &SimpleGaugeEditor::_applyMinMaxLimitsOnSpinBoxes
+                    this, &SimpleGaugeEditor::_applyDefaultMinMaxLimitsOnSpinBoxes
                 );
 
                 //editors layout
@@ -97,17 +97,25 @@ class SimpleGaugeEditor : public QWidget {
         QSpinBox* _minBarValSpin = nullptr;
         QSpinBox* _maxBarValSpin = nullptr;
 
-        void _applyMinMaxLimitsOnSpinBoxes() {
+        void _applyMinMaxLimitsOnSpinBoxes(const RPZGauge::MinimalistGauge &gauge) {
             
             //min
-            this->_minBarValSpin->setMaximum(this->_currentValSpin->value());
+            this->_minBarValSpin->setMaximum(gauge.current);
 
             //max
-            this->_maxBarValSpin->setMinimum(this->_currentValSpin->value());
+            this->_maxBarValSpin->setMinimum(gauge.current);
 
             //value
-            this->_currentValSpin->setMinimum(this->_minBarValSpin->value());
-            this->_currentValSpin->setMaximum(this->_maxBarValSpin->value());
+            this->_currentValSpin->setMinimum(gauge.min);
+            this->_currentValSpin->setMaximum(gauge.max);
 
+        }
+
+        void _applyDefaultMinMaxLimitsOnSpinBoxes() {
+            this->_applyMinMaxLimitsOnSpinBoxes({
+                this->_currentValSpin->value(),
+                this->_minBarValSpin->value(),
+                this->_maxBarValSpin->value()
+            });
         }
 };
