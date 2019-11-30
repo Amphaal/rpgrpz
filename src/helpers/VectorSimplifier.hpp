@@ -2,8 +2,11 @@
 
 #include <QVector>
 #include <QPointF>
+#include <QPainterPath>
+#include <QPen>
+#include <QPainterPathStroker>
 
-class Simplify {
+class VectorSimplifier {
     public:
         static QVector<QPointF> simplify(QVector<QPointF> points, double tolerance = 1.0, bool highestQuality = true) {
             
@@ -15,6 +18,49 @@ class Simplify {
             points = _simplifyDouglasPeucker(points, sqTolerance);
 
             return points;
+
+        }
+        
+        static const QPainterPath createStroke(const QPainterPath& path, const QPen &pen) {
+            
+            QPainterPathStroker stroker;
+            // stroker.setWidth(pen.widthF());
+            // stroker.setJoinStyle(pen.joinStyle());
+            // stroker.setCapStyle(pen.capStyle());
+
+            return stroker.createStroke(path);
+
+        }
+
+        static const QPainterPath simplifyPath(const QPainterPath &sourcePath) {
+            
+            //condense coords
+            QVector<QPointF> toSimplify;
+            for(auto i = 0; i < sourcePath.elementCount(); i++) {
+                
+                auto elem = sourcePath.elementAt(i);
+                if(!elem.isLineTo()) continue;
+
+                toSimplify.push_back({ elem.x, elem.y });
+
+            }
+
+            //simplify
+            auto simplified = simplify(toSimplify);
+            
+            QPainterPath destPath;
+            destPath.moveTo(0,0);
+
+            //fill painterpath
+            for(auto &point : simplified) {
+                destPath.lineTo(point);
+            }
+
+            /*qDebug() << QStringLiteral(u"from %1 to %2")
+                                    .arg(toSimplify.count())
+                                    .arg(simplified.count());*/
+
+            return destPath;
 
         }
 

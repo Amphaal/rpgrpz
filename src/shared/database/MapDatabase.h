@@ -11,6 +11,8 @@
 #include "src/shared/database/_base/JSONDatabase.h"
 #include "src/helpers/JSONSerializer.h"
 
+#include "src/helpers/VectorSimplifier.hpp"
+
 class MapDatabase : public JSONDatabase {
     
     public:

@@ -189,7 +189,8 @@
         "qglwidget": "cpp",
         "qpaintevent": "cpp",
         "deque": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "qpainterpathstroker": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

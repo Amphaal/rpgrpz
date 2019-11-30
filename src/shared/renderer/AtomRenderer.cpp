@@ -76,7 +76,6 @@ QGraphicsItem* AtomRenderer::createOutlineRectItem(const QPointF &scenePos) {
     pen.setWidth(0);
     pen.setJoinStyle(Qt::MiterJoin);
     pen.setCapStyle(Qt::SquareCap);
-    pen.setJoinStyle(Qt::MiterJoin);
 
     //create item
     auto item = new QGraphicsRectItem(rect);

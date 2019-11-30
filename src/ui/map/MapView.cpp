@@ -529,11 +529,12 @@ void MapView::mousePressEvent(QMouseEvent *event) {
                 case MapTool::Atom: {
 
                     //conditionnal drawing
-                    switch(HintThread::hint()->templateAtom().type()) {
+                    auto templateAtom = HintThread::hint()->templateAtom();
+                    switch(templateAtom.type()) {
 
                         case RPZAtom::Type::Drawing:
                         case RPZAtom::Type::Brush:
-                            this->_drawingAssist->addDrawingPoint(event->pos());
+                            this->_drawingAssist->addDrawingPoint(event->pos(), templateAtom);
                         break;
 
                         default: {
@@ -600,7 +601,7 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
         switch(type) {
             case RPZAtom::Type::Drawing:
             case RPZAtom::Type::Brush:
-                this->_drawingAssist->updateDrawingPath(event->pos(), type);
+                this->_drawingAssist->updateDrawingPath(event->pos());
             break;
 
             default:

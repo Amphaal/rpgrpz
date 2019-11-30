@@ -134,7 +134,7 @@ JSONDatabase::Model MapDatabase::_getDatabaseModel() {
 };
 
 const JSONDatabase::Version MapDatabase::apiVersion() const {
-    return 8;
+    return 9;
 }
 
 QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> MapDatabase::_getUpdateHandlers() {
@@ -185,6 +185,41 @@ QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> MapDatabase::_getUpdat
     out.insert(
         8,
         [&](QJsonObject &doc) {}
+    );
+
+    //to v9
+    out.insert(
+        9,
+        [&](QJsonObject &doc) {
+
+            MapDatabase db(doc);
+
+            QList<RPZAtom::BrushType> typesToFix { RPZAtom::BrushType::RoundBrush, RPZAtom::BrushType::Scissors };
+
+            //iterate atoms
+            for(auto atom : db.atoms()) {
+                
+                //restrict
+                if(atom.type() != RPZAtom::Type::Brush) continue;
+                if(!typesToFix.contains(atom.brushType())) continue;
+
+                //update shape
+                atom.setShape(
+                    VectorSimplifier::simplifyPath(atom.shape())
+                );
+
+                db.updateAtom(atom);
+
+            }
+
+            //update json obj
+            updateFrom(
+                doc,
+                QStringLiteral(u"atoms"),
+                db.atoms().toVList()
+            );
+
+        }
     );
 
     return out;

@@ -5,7 +5,7 @@
 
 #include "src/shared/renderer/graphics/MapViewGraphics.h"
 
-#include "src/helpers/simplify.hpp"
+#include "src/helpers/VectorSimplifier.hpp"
 
 class DrawingAssist {
     public:
@@ -13,21 +13,27 @@ class DrawingAssist {
 
         DrawingAssist(QGraphicsView* view) : _view(view) { }
 
-        void addDrawingPoint(const QPoint &cursorPosInWindow) {
-            
+        void addDrawingPoint(const QPoint &cursorPosInWindow, const RPZAtom &drawnFrom) {
+        
             auto scenePos = this->_view->mapToScene(cursorPosInWindow);
 
+            this->_drawnType = drawnFrom.type();
+            this->_brushType = drawnFrom.brushType();
+            this->_stickyBrushIsDrawing = this->_brushType == RPZAtom::BrushType::Cutter;
+
             if(this->_stickyBrushIsDrawing) {
-                this->_savePosAsStickyNode(scenePos, cursorPosInWindow);
+                if(!this->_tempDrawing) this->_beginDrawing(scenePos);
+                else this->_savePosAsStickyNode(scenePos, cursorPosInWindow);
             } 
             
             else {
+                this->_destroyTempDrawing(); //destroy previous
                 this->_beginDrawing(scenePos);
             }
 
         }
 
-        void updateDrawingPath(const QPoint &evtPoint, const RPZAtom::Type &type) {
+        void updateDrawingPath(const QPoint &evtPoint) {
             
             //if no temp, stop
             if(!this->_tempDrawing) return;
@@ -39,7 +45,7 @@ class DrawingAssist {
             auto sceneCoord = this->_view->mapToScene(evtPoint);
             auto pathCoord = this->_tempDrawing->mapFromScene(sceneCoord);
 
-            switch(type) {
+            switch(this->_drawnType) {
                 
                 case RPZAtom::Type::Drawing:
                     existingPath.lineTo(pathCoord);
@@ -73,7 +79,7 @@ class DrawingAssist {
             if(path.elementCount() < 2) return;
 
             //simplify
-            // this->_simplifyItemPath(path, this->_tempDrawing);
+            this->_mightSimplifyItemPath(path, this->_tempDrawing);
 
             //add definitive path
             this->_commitedDrawingId = HintThread::hint()->integrateGraphicsItemAsPayload(this->_tempDrawing);
@@ -83,13 +89,9 @@ class DrawingAssist {
         IsCommitedDrawing compareItemToCommitedDrawing(QGraphicsItem* itemInserted) {
             
             if(!this->_commitedDrawingId) return false;
-            
             if(HintThread::hint()->getAtomIdFromGraphicsItem(itemInserted) != this->_commitedDrawingId) return false;
             
-            this->_destroyTempDrawing();
-
-            this->_commitedDrawingId = 0;
-
+            this->clearDrawing();
             return true;
 
         }
@@ -97,6 +99,8 @@ class DrawingAssist {
         void clearDrawing() {
             this->_destroyTempDrawing();
             this->_commitedDrawingId = 0;
+            this->_drawnType = (RPZAtom::Type)0;
+            this->_brushType = (RPZAtom::BrushType)0;
         }
 
     private:
@@ -104,10 +108,12 @@ class DrawingAssist {
         RPZAtom::Id _commitedDrawingId = 0;
 
         //drawing...
-        MapViewDrawing* _tempDrawing = nullptr;
+        MapViewGraphicsPathItem* _tempDrawing = nullptr;
         QList<QGraphicsItem*> _tempDrawingHelpers;
         bool _stickyBrushIsDrawing = false;
         int _stickyBrushValidNodeCount = 0;
+        RPZAtom::Type _drawnType = (RPZAtom::Type)0;
+        RPZAtom::BrushType _brushType = (RPZAtom::BrushType)0;
 
         void _destroyTempDrawing() {
             if(!this->_tempDrawing) return;
@@ -132,9 +138,6 @@ class DrawingAssist {
 
         void _beginDrawing(const QPointF &scenePos) {
 
-            //destroy temp
-            this->_destroyTempDrawing();
-
             //create item 
             this->_tempDrawing = static_cast<MapViewDrawing*>(HintThread::hint()->generateGraphicsFromTemplate());
                 
@@ -147,7 +150,6 @@ class DrawingAssist {
             this->_view->scene()->addItem(this->_tempDrawing);
 
             //determine if it must be sticky
-            this->_stickyBrushIsDrawing = HintThread::hint()->templateAtom().brushType() == RPZAtom::BrushType::Cutter;
             this->_stickyBrushValidNodeCount = this->_stickyBrushIsDrawing ? this->_tempDrawing->path().elementCount() : 0;
 
             //add outline if sticky
@@ -262,33 +264,25 @@ class DrawingAssist {
             }
         }
 
-        void _simplifyItemPath(const QPainterPath &sourcePath, MapViewDrawing* item) {
+        void _mightSimplifyItemPath(QPainterPath sourcePath, MapViewGraphicsPathItem* item) {
             
-            //condense coords
-            QVector<QPointF> points;
-            for(auto i = 0; i < sourcePath.elementCount(); i++) {
-                
-                auto elem = sourcePath.elementAt(i);
-                if(!elem.isLineTo()) continue;
-
-                points.push_back({ elem.x, elem.y });
-
-            }
-
-            //simplify
-            auto simplifiedPtr = Simplify::simplify(points);
+            if(!this->_mustBeSimplified()) return;
             
-            QPainterPath destPath;
-            destPath.moveTo(0,0);
+            sourcePath = VectorSimplifier::simplifyPath(sourcePath);
+            // sourcePath = sourcePath.simplified(); 
+            // sourcePath = VectorSimplifier::createStroke(sourcePath, item->pen()); 
+            // sourcePath = VectorSimplifier::simplifyPath(sourcePath);
+            // sourcePath = sourcePath.simplified(); 
 
-            //fill painterpath
-            for(auto &point : points) {
-                destPath.lineTo(point);
-            }
+            item->setPath(sourcePath);
 
-            //define
-            item->setPath(destPath);
+        }
 
+        bool _mustBeSimplified() {
+            if(this->_drawnType == RPZAtom::Type::Drawing) return true;
+            if(this->_drawnType != RPZAtom::Type::Brush) return false;
+            if(this->_brushType == RPZAtom::BrushType::RoundBrush || this->_brushType == RPZAtom::BrushType::Scissors) return true;
+            return false;
         }
 
 };
