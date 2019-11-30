@@ -306,22 +306,22 @@
 <context>
     <name>CharacterSheet</name>
     <message>
-        <location filename="../ui/sheets/CharacterSheet.hpp" line="27"/>
+        <location filename="../ui/sheets/CharacterSheet.hpp" line="28"/>
         <source>Lore</source>
         <translation>Lore</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/CharacterSheet.hpp" line="28"/>
+        <location filename="../ui/sheets/CharacterSheet.hpp" line="29"/>
         <source>Status / Abilities</source>
         <translation>Statut / Compétences</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/CharacterSheet.hpp" line="29"/>
+        <location filename="../ui/sheets/CharacterSheet.hpp" line="30"/>
         <source>Inventories</source>
         <translation>Inventaires</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/CharacterSheet.hpp" line="30"/>
+        <location filename="../ui/sheets/CharacterSheet.hpp" line="31"/>
         <source>Notes / Others</source>
         <translation>Notes / Autres</translation>
     </message>
@@ -621,7 +621,7 @@
     <name>LoreTab</name>
     <message>
         <location filename="../ui/sheets/tabs/LoreTab.hpp" line="40"/>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="141"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="143"/>
         <source>Change portrait</source>
         <translation>Changer le portrait</translation>
     </message>
@@ -646,27 +646,27 @@
         <translation>Archétype :</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="59"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="60"/>
         <source>Physical, psycological, environnemental description...</source>
         <translation>Description physique, psychologique, contextuelle...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="60"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="61"/>
         <source>Description :</source>
         <translation>Description :</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="64"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="66"/>
         <source>Evolution of the character during his adventures...</source>
         <translation>Evolution du personnage durant ses aventures...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="65"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="67"/>
         <source>Chronicles :</source>
         <translation>Histoire :</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="143"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="145"/>
         <source>Images (*.png *.jpg *.jpeg)</source>
         <translation>Images (*.png *.jpg *.jpeg)</translation>
     </message>

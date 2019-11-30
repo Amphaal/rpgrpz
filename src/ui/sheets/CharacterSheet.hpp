@@ -20,7 +20,8 @@ class CharacterSheet : public QTabWidget {
         _statusTab(new StatusTab), 
         _inventoriesTab(new InventoriesTab),
         _noteTab(new QTextEdit) {
-
+            
+            this->_noteTab->setAcceptRichText(false);
             this->setVisible(false);
 
             //tabs

@@ -17,6 +17,7 @@ class AtomTextEditor : public AtomSubEditor {
 
             this->_edit = new QTextEdit(this);
             this->_edit->setPlaceholderText(tr("Type some text..."));
+            this->_edit->setAcceptRichText(false);
 
             this->layout()->addWidget(this->_edit);
             this->layout()->addWidget(this->_validateButton);

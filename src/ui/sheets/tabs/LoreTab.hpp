@@ -56,11 +56,13 @@ class LoreTab : public QWidget {
 
                 //character description
                 this->_descriptionEdit = new QTextEdit;
+                this->_descriptionEdit->setAcceptRichText(false);
                 this->_descriptionEdit->setPlaceholderText(tr("Physical, psycological, environnemental description..."));
                 characterTabLayout->addLayout(_addRow(tr("Description :"), this->_descriptionEdit));
 
                 //character story
                 this->_storyEdit = new QTextEdit;
+                this->_storyEdit->setAcceptRichText(false);
                 this->_storyEdit->setPlaceholderText(tr("Evolution of the character during his adventures..."));
                 characterTabLayout->addLayout(_addRow(tr("Chronicles :"), this->_storyEdit), 1);
 

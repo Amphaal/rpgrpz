@@ -5,6 +5,8 @@
 
 #include "src/shared/renderer/graphics/MapViewGraphics.h"
 
+#include "src/helpers/simplify.hpp"
+
 class DrawingAssist {
     public:
         using IsCommitedDrawing = bool;
@@ -69,6 +71,9 @@ class DrawingAssist {
             //if too small stop
             auto path = this->_tempDrawing->path();
             if(path.elementCount() < 2) return;
+
+            //simplify
+            // this->_simplifyItemPath(path, this->_tempDrawing);
 
             //add definitive path
             this->_commitedDrawingId = HintThread::hint()->integrateGraphicsItemAsPayload(this->_tempDrawing);
@@ -255,6 +260,35 @@ class DrawingAssist {
             if(gap.manhattanLength() < 20) {
                 this->mayCommitDrawing();
             }
+        }
+
+        void _simplifyItemPath(const QPainterPath &sourcePath, MapViewDrawing* item) {
+            
+            //condense coords
+            QVector<QPointF> points;
+            for(auto i = 0; i < sourcePath.elementCount(); i++) {
+                
+                auto elem = sourcePath.elementAt(i);
+                if(!elem.isLineTo()) continue;
+
+                points.push_back({ elem.x, elem.y });
+
+            }
+
+            //simplify
+            auto simplifiedPtr = Simplify::simplify(points);
+            
+            QPainterPath destPath;
+            destPath.moveTo(0,0);
+
+            //fill painterpath
+            for(auto &point : points) {
+                destPath.lineTo(point);
+            }
+
+            //define
+            item->setPath(destPath);
+
         }
 
 };
