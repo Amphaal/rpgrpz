@@ -174,10 +174,6 @@ class CharacterEditor : public QWidget, public ConnectivityObserver {
         }
 
     private:
-        RPZMap<RPZCharacter> _remoteDb;
-
-        CharacterPicker::Mode _mode = CharacterPicker::Mode::Unknown;
-
         QPushButton* _saveCharacterBtn = nullptr;
         CharacterPicker* _characterPicker = nullptr;
         CharacterSheet* _sheet = nullptr;

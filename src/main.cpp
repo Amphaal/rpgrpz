@@ -100,7 +100,8 @@ int main(int argc, char** argv) {
         qRegisterMetaType<RPZAsset::Hash>("RPZAsset::Hash");
         qRegisterMetaType<RPZAtom::Updates>("RPZAtom::Updates");
         qRegisterMetaType<RPZAtom::ManyUpdates>("RPZAtom::ManyUpdates");
-
+        qRegisterMetaType<CharacterPicker::SelectedCharacter>("CharacterPicker::SelectedCharacter");
+        
         //QVariantHash derivates
         qRegisterMetaType<AlterationPayload>("AlterationPayload");
         qRegisterMetaType<RPZResponse>("RPZResponse");

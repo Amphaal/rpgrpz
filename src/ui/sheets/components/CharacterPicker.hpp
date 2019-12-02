@@ -8,19 +8,18 @@
 
 #include "src/shared/database/CharactersDatabase.h"
 
-class CharacterPicker : public QWidget {
+class CharacterPicker : public QWidget, public ConnectivityObserver {
 
     Q_OBJECT
 
-    signals:
-        void selectionChanged(const RPZCharacter::Id &selectedId);
-        void requestSave();
-        void requestDelete(const RPZCharacter::Id &idToRemove);
-        void requestInsert();
-
     public:
-        enum class Mode { Unknown, Local, Remote };
-        Q_ENUM(Mode)
+        enum class CharacterOrigin { Unknown, Local, Remote };
+        Q_ENUM(CharacterOrigin)
+
+        struct SelectedCharacter {
+            RPZCharacter::Id id;
+            CharacterOrigin origin;
+        };
 
         CharacterPicker() : 
             _characterListCombo(new QComboBox), 
@@ -40,7 +39,6 @@ class CharacterPicker : public QWidget {
             this->_deleteCharacterBtn->setToolTip(tr("Delete sheet"));
             this->_deleteCharacterBtn->setMaximumWidth(25);
             this->_deleteCharacterBtn->setIcon(QIcon(QStringLiteral(u":/icons/app/other/remove.png")));
-            this->_deleteCharacterBtn->setEnabled(false);
             QObject::connect(
                 this->_deleteCharacterBtn, &QPushButton::pressed,
                 this, &CharacterPicker::_deleteButtonPressed
@@ -60,13 +58,19 @@ class CharacterPicker : public QWidget {
             clLayout->addWidget(this->_deleteCharacterBtn);
             clLayout->addWidget(this->_newCharacterBtn);
 
+            //init
+            this->_initLoad();
+
         }
 
-        const RPZCharacter::Id currentCharacterId() const {
-            return this->_characterListCombo->currentData().toULongLong();
+        const SelectedCharacter currentCharacter() const {
+            return { 
+                this->_characterListCombo->currentData().toULongLong(),
+                (CharacterOrigin)this->_characterListCombo->currentData(257).toInt(),
+            };
         }
 
-        void updateItemText(const RPZCharacter &updatedCharacter) {
+        void updateCharacterDescription(const RPZCharacter &updatedCharacter) {
             
             auto indexItemToUpdate = this->_getIndexOfCharacterId(updatedCharacter.id());
             if(indexItemToUpdate < 0) return;
@@ -76,11 +80,6 @@ class CharacterPicker : public QWidget {
                 updatedCharacter.toString()
             );
 
-        }
-
-        void unloadCharacters() {
-            this->setLocalCharacterIdFromRemote(0);
-            this->loadCharacters({}, CharacterPicker::Mode::Remote);
         }
 
         bool pickCharacter(const RPZCharacter::Id &characterIdToFocus) {
@@ -94,85 +93,32 @@ class CharacterPicker : public QWidget {
             return true;
 
         }
-
-        void loadCharacters(const RPZMap<RPZCharacter> &toLoad, CharacterPicker::Mode mode, bool maintainSelection = false) {
-            
-            //update mode
-            this->_mode = mode;
-            auto isLocal = mode == CharacterPicker::Mode::Local;
-
-            //define buttons
-            this->_newCharacterBtn->setVisible(isLocal); 
-            this->_deleteCharacterBtn->setVisible(isLocal); 
-
-            //store previous selection            
-            auto previousSelectedId = this->currentCharacterId();
-            
-            //clear
-            QSignalBlocker b(this->_characterListCombo);
-            this->_characterListCombo->clear();
-            this->_ids.clear();
-            
-            //if nothing to load
-            if(toLoad.isEmpty()) {
-
-                auto emptyItemText = isLocal ? 
-                    tr("No existing character, create some !") : 
-                    tr("Waiting for sheets from host...");
-                this->_characterListCombo->addItem(emptyItemText);
-                this->_characterListCombo->setEnabled(false);
-                
-                this->_onCurrentCharacterIdChanged();
-                return;
-
-            }
-
-            //add an item for each
-            this->_characterListCombo->setEnabled(true);
-            for(const auto &character : toLoad) {
-                
-                auto id = character.id();
-                auto futureInsertIndex = this->_characterListCombo->count();
-
-                this->_ids += id;
-
-                //pick icon
-                QIcon* iconToUse;
-                if(isLocal) iconToUse = &this->_selfCloakIcon;
-                else iconToUse = this->_localCharacterIdFromRemote == id ? &this->_selfCloakIcon : &this->_standardClockIcon;
-                
-                //add item
-                this->_characterListCombo->addItem(
-                    *iconToUse, 
-                    character.toString(), 
-                    character.id()
-                );
-
-                //default selection
-                if(maintainSelection && id == previousSelectedId) {
-                    this->_characterListCombo->setCurrentIndex(futureInsertIndex);
-                }
-
-            }
-            
-            //signal that picker changed
-            this->_onCurrentCharacterIdChanged();
-
-        }
-
-        RPZCharacter::Id localCharacterIdFromRemote() {
-            return this->_localCharacterIdFromRemote;
-        }
-
-        void setLocalCharacterIdFromRemote(RPZCharacter::Id localCharacterId) {
-            this->_localCharacterIdFromRemote = localCharacterId;
-        };
     
-    private:
-        RPZCharacter::Id _localCharacterIdFromRemote = 0;
-        CharacterPicker::Mode _mode = CharacterPicker::Mode::Unknown;
-        QVector<RPZCharacter::Id> _ids;
+    signals:
+        void selectionChanged(const CharacterPicker::SelectedCharacter &newSelection);
+        void requestCharacterDeletion(const RPZCharacter::Id &idToRemove);
+        void requestNewCharacter();
 
+    protected:
+        void connectingToServer() override {
+
+            this->_loadPlaceholder(true);
+            this->_updateDeletability();
+            this->_updateInsertability();
+
+            QObject::connect(
+                this->_rpzClient, &RPZClient::gameSessionReceived,
+                this, &CharacterPicker::_loadFromRemote
+            );
+
+        }
+
+        void connectionClosed(bool hasInitialMapLoaded) override {
+            this->_initLoad();
+        }
+
+
+    private:
         QComboBox* _characterListCombo = nullptr;
         QPushButton* _deleteCharacterBtn = nullptr;
         QPushButton* _newCharacterBtn = nullptr;
@@ -180,15 +126,120 @@ class CharacterPicker : public QWidget {
         QIcon _standardClockIcon = QIcon(QStringLiteral(u":/icons/app/connectivity/cloak.png"));
         QIcon _selfCloakIcon = QIcon(QStringLiteral(u":/icons/app/connectivity/self_cloak.png"));
 
+        void _loadPlaceholder(bool fromRemote = false) {
+            
+            //clear and disable
+            QSignalBlocker b(this->_characterListCombo);
+            this->_characterListCombo->clear();
+            this->_characterListCombo->setEnabled(false);
+            
+            //placeholder
+            auto text = fromRemote ? tr("Waiting for sheets from host...") :  tr("No existing character, create some !");
+            this->_characterListCombo->addItem(text);
+            
+            //emit
+            this->_selectionChanged();
+
+        }
+
+        void _addItem(const RPZCharacter &characterToAdd, const CharacterOrigin &origin) {
+                
+            this->_characterListCombo->addItem(
+                origin == CharacterOrigin::Local ? this->_selfCloakIcon : this->_standardClockIcon, 
+                characterToAdd.toString(), 
+                characterToAdd.id()
+            );
+
+            this->_characterListCombo->setItemData(
+                this->_characterListCombo->count() - 1, 
+                (int)origin, 
+                257
+            );
+
+        }
+
+        void _initLoad() {
+            this->_updateDeletability();
+            this->_updateInsertability();
+            this->_loadLocalCharacters();
+        }
+
+        void _loadFromRemote(const RPZGameSession &gameSession) {
+
+            Q_UNUSED(gameSession);
+            
+            //maybe load placeholder
+            auto toLoad = this->_rpzClient->sessionCharacters();
+            if(!toLoad.count()) return _loadPlaceholder(true);
+
+            //clear and enable
+            QSignalBlocker b(this->_characterListCombo);
+            this->_characterListCombo->clear();
+            this->_characterListCombo->setEnabled(true);
+
+            //find client character id
+            auto myCharacterId = this->_rpzClient->identity().character().id();
+
+            int preferedSelectionIndex = -1;
+
+            //add an item for each
+            for(const auto &pair : toLoad) {
+                
+                auto character = pair.second;
+
+                //determine origin
+                auto origin = CharacterOrigin::Remote;
+                if(myCharacterId == character.id()) {
+                    origin = CharacterOrigin::Local;
+                    preferedSelectionIndex = this->_characterListCombo->count();
+                }
+                
+                this->_addItem(character, origin);
+
+            }
+            
+            if(preferedSelectionIndex > -1) {
+                this->_characterListCombo->setCurrentIndex(preferedSelectionIndex);
+            }
+
+            //signal that picker changed
+            this->_selectionChanged();
+
+        }
+
+        void _loadLocalCharacters() {
+            
+            //maybe load placeholder
+            auto toLoad = CharactersDatabase::get()->characters();
+            if(!toLoad.count()) return _loadPlaceholder();
+
+            //clear and enable
+            QSignalBlocker b(this->_characterListCombo);
+            this->_characterListCombo->clear();
+            this->_characterListCombo->setEnabled(true);
+
+            //add an item for each
+            for(const auto &character : toLoad) {
+                this->_addItem(character, CharacterOrigin::Local);
+            }
+            
+            //signal that picker changed
+            this->_selectionChanged();
+
+        }
+
         void _addButtonPressed() {
-            this->_autoSave();
-            emit requestInsert();
+            emit requestNewCharacter();
+        }
+
+        bool _isDeletable(const CharacterPicker::SelectedCharacter &selection) {
+            return !this->_rpzClient && selection.id && selection.origin == CharacterOrigin::Local;
         }
 
         void _deleteButtonPressed() {
             
-            auto currentId = this->currentCharacterId();
-            if(!currentId) return;
+            auto cc = this->currentCharacter();
+            if(!this->_isDeletable(cc)) return;
 
             auto result = QMessageBox::warning(
                 this, 
@@ -199,41 +250,36 @@ class CharacterPicker : public QWidget {
             );
             
             if(result == QMessageBox::Yes) {
-                emit requestDelete(currentId);
+                emit requestCharacterDeletion(cc.id);
             }
 
+        }
+
+        void _updateDeletability() {
+            this->_updateDeletability(this->currentCharacter());
+        }
+        void _updateDeletability(const CharacterPicker::SelectedCharacter &cc) {
+            this->_deleteCharacterBtn->setVisible(!this->_rpzClient); 
+            this->_deleteCharacterBtn->setEnabled(this->_isDeletable(cc));
+        }
+
+        void _updateInsertability() {
+            this->_newCharacterBtn->setVisible(!this->_rpzClient); 
         }
         
         void _onSelectedIndexChanged(int index) {
-            this->_autoSave();
-            this->_onCurrentCharacterIdChanged();
-        }
-        
-        //
-
-        void _autoSave() {
-            auto currentId = this->currentCharacterId();
-            if(!currentId) return;
-            
-            if(this->_mode == Mode::Local) {
-                emit requestSave();
-            } 
-            
-            else if(this->_mode == Mode::Remote) {
-                if(this->_localCharacterIdFromRemote != currentId) return;
-                emit requestSave();
-            }
-            
+            this->_selectionChanged();
         }
 
-        void _onCurrentCharacterIdChanged() {
-            auto id = this->currentCharacterId();
-            this->_deleteCharacterBtn->setEnabled(id);
-            emit selectionChanged(id);
+        void _selectionChanged() {
+            auto cc = this->currentCharacter();
+            this->_updateDeletability(cc);
+            emit selectionChanged(cc);
         }
+
 
         int _getIndexOfCharacterId(const RPZCharacter::Id &characterIdToFind) {
-            return this->_ids.indexOf(characterIdToFind);
+            return this->_characterListCombo->findData(characterIdToFind);
         }
         
 };
