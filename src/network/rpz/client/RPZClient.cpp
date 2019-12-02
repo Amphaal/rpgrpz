@@ -227,18 +227,22 @@ void RPZClient::_mayRegisterAsCharacterized(const RPZUser &user, const Character
     
     if(user.role() != RPZUser::Role::Player) return;
 
-    auto id = user.id();
-    if(!id) return;
-    
+    auto userId = user.id();
+    if(!userId) return;
+
+    auto characterId = user.character().id();
+
     switch(type) {
         
         case CharacterRegistration::In: {
-            this->_characterizedUserIds.insert(id);
+            this->_characterizedUserIds.insert(userId);
+            this->_associatedUserIdByCharacterId.insert(characterId, userId);
         }
         break;
 
         case CharacterRegistration::Out: {
-            this->_characterizedUserIds.remove(id);
+            this->_characterizedUserIds.remove(userId);
+            this->_associatedUserIdByCharacterId.remove(characterId);
         }
         break;
 
@@ -539,5 +543,14 @@ const QList<RPZCharacter::UserBound> RPZClient::sessionCharacters() const {
     }
 
     return out;
+
+}
+
+const RPZCharacter RPZClient::sessionCharacter(const RPZCharacter::Id &characterId) const {
+    
+    QMutexLocker l(&this->_m_sessionUsers);
+
+    auto userId = this->_associatedUserIdByCharacterId.value(characterId);
+    return this->_sessionUsers.value(userId).character();
 
 }

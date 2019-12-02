@@ -6,6 +6,8 @@
 #include <QPushButton>
 #include <QMessageBox>
 
+#include "src/ui/_others/ConnectivityObserver.h"
+
 #include "src/shared/database/CharactersDatabase.h"
 
 class CharacterPicker : public QWidget, public ConnectivityObserver {
@@ -59,6 +61,7 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
             clLayout->addWidget(this->_newCharacterBtn);
 
             //init
+            this->_handleLocalDbEvents();
             this->_initLoad();
 
         }
@@ -68,18 +71,6 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
                 this->_characterListCombo->currentData().toULongLong(),
                 (CharacterOrigin)this->_characterListCombo->currentData(257).toInt(),
             };
-        }
-
-        void updateCharacterDescription(const RPZCharacter &updatedCharacter) {
-            
-            auto indexItemToUpdate = this->_getIndexOfCharacterId(updatedCharacter.id());
-            if(indexItemToUpdate < 0) return;
-
-            this->_characterListCombo->setItemText(
-                indexItemToUpdate, 
-                updatedCharacter.toString()
-            );
-
         }
 
         bool pickCharacter(const RPZCharacter::Id &characterIdToFocus) {
@@ -95,7 +86,7 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
         }
     
     signals:
-        void selectionChanged(const CharacterPicker::SelectedCharacter &newSelection);
+        void requestSheetDisplay(const CharacterPicker::SelectedCharacter &newSelection, const RPZCharacter &toDisplay);
         void requestCharacterDeletion(const RPZCharacter::Id &idToRemove);
         void requestNewCharacter();
 
@@ -111,10 +102,88 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
                 this, &CharacterPicker::_loadFromRemote
             );
 
+            QObject::connect(
+                this->_rpzClient, &RPZClient::userJoinedServer,
+                this, &CharacterPicker::_onUserJoinedServer
+            );
+
+            QObject::connect(
+                this->_rpzClient, &RPZClient::userLeftServer,
+                this, &CharacterPicker::_onUserLeftServer
+            );
+
+            QObject::connect(
+                this->_rpzClient, &RPZClient::userDataChanged,
+                this, &CharacterPicker::_onUserDataChanged
+            );
+
         }
 
         void connectionClosed(bool hasInitialMapLoaded) override {
             this->_initLoad();
+        }
+
+    private slots:
+        void _updateCharacter(const RPZCharacter &updatedCharacter) {
+            
+            //try to find item
+            auto indexItemToUpdate = this->_getIndexOfCharacterId(updatedCharacter.id());
+            if(indexItemToUpdate < 0) return;
+
+            //update descr
+            this->_characterListCombo->setItemText(
+                indexItemToUpdate, 
+                updatedCharacter.toString()
+            );
+            
+            //if current selection, request sheet update
+            auto cc = this->currentCharacter();
+            if(cc.id == updatedCharacter.id()) {
+                emit requestSheetDisplay(cc, updatedCharacter);
+            }
+
+        }
+
+        void _removeCharacterId(const RPZCharacter::Id &removedId) {
+            
+            //find index of item
+            auto index = this->_getIndexOfCharacterId(removedId);
+            if(index < 0) return;
+
+            //remove
+            this->_characterListCombo->removeItem(index);
+
+        }
+
+        void _onUserJoinedServer(const RPZUser &newUser) {
+            
+            if(newUser.role() != RPZUser::Role::Player) return;
+            
+            //add item
+            this->_addItem(
+                newUser.character(), 
+                CharacterOrigin::Remote
+            );
+
+        }
+
+        void _onUserLeftServer(const RPZUser &userOut) {
+            
+            if(userOut.role() != RPZUser::Role::Player) return;
+
+            //remove
+            this->_removeCharacterId(userOut.character().id());
+
+        }
+
+        void _onUserDataChanged(const RPZUser &updatedUser) {
+            
+            if(updatedUser.role() != RPZUser::Role::Player) return;
+
+            //update character
+            auto character = updatedUser.character();
+            this->_updateCharacter(character);
+            
         }
 
 
@@ -125,6 +194,30 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
 
         QIcon _standardClockIcon = QIcon(QStringLiteral(u":/icons/app/connectivity/cloak.png"));
         QIcon _selfCloakIcon = QIcon(QStringLiteral(u":/icons/app/connectivity/self_cloak.png"));
+
+        void _handleLocalDbEvents() {
+
+            QObject::connect(
+                CharactersDatabase::get(), &CharactersDatabase::characterAdded,
+                [=](const RPZCharacter &added) {
+                    this->_addItem(
+                        added, 
+                        CharacterOrigin::Local
+                    );
+                }
+            );
+
+            QObject::connect(
+                CharactersDatabase::get(), &CharactersDatabase::characterRemoved,
+                this, &CharacterPicker::_removeCharacterId
+            );
+
+            QObject::connect(
+                CharactersDatabase::get(), &CharactersDatabase::characterUpdated,
+                this, &CharacterPicker::_updateCharacter
+            );
+
+        }
 
         void _loadPlaceholder(bool fromRemote = false) {
             
@@ -272,11 +365,27 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
         }
 
         void _selectionChanged() {
+
             auto cc = this->currentCharacter();
             this->_updateDeletability(cc);
-            emit selectionChanged(cc);
+
+            emit requestSheetDisplay(cc, this->_getCharacter(cc));
+
         }
 
+        const RPZCharacter _getCharacter(const SelectedCharacter &cc) {
+            
+            //empty
+            if(!cc.id || cc.origin == CharacterOrigin::Unknown) return RPZCharacter();
+            if(cc.origin == CharacterOrigin::Remote && !this->_rpzClient) return RPZCharacter();
+            
+            //local
+            if(cc.origin == CharacterOrigin::Local) return CharactersDatabase::get()->character(cc.id);
+
+            //remote
+            if(cc.origin == CharacterOrigin::Remote) return this->_rpzClient->sessionCharacter(cc.id);
+
+        }
 
         int _getIndexOfCharacterId(const RPZCharacter::Id &characterIdToFind) {
             return this->_characterListCombo->findData(characterIdToFind);

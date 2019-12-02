@@ -6,11 +6,9 @@
 #include "CharacterSheet.hpp"
 #include "src/shared/database/CharactersDatabase.h"
 
-#include "src/ui/_others/ConnectivityObserver.h"
-
 #include "src/ui/sheets/components/CharacterPicker.hpp"
 
-class CharacterEditor : public QWidget, public ConnectivityObserver {
+class CharacterEditor : public QWidget {
     
     Q_OBJECT
 
@@ -29,15 +27,15 @@ class CharacterEditor : public QWidget, public ConnectivityObserver {
                     this, &CharacterEditor::_onSelectedCharacterChanged
                 );
                 QObject::connect(
-                    this->_characterPicker, &CharacterPicker::requestSave,
-                    this, &CharacterEditor::_saveCurrentCharacter
+                    this->_characterPicker, &CharacterPicker::requestSheetUpdate,
+                    this, &CharacterEditor::_onSelectedCharacterChanged
                 );
                 QObject::connect(
-                    this->_characterPicker, &CharacterPicker::requestInsert,
+                    this->_characterPicker, &CharacterPicker::requestNewCharacter,
                     this, &CharacterEditor::_insertRequestFromPicker
                 );
                 QObject::connect(
-                    this->_characterPicker, &CharacterPicker::requestDelete,
+                    this->_characterPicker, &CharacterPicker::requestCharacterDeletion,
                     this, &CharacterEditor::_deleteRequestFromPicker
                 );
 
@@ -80,100 +78,9 @@ class CharacterEditor : public QWidget, public ConnectivityObserver {
             if(success) this->setFocus(Qt::OtherFocusReason);
         }
 
-    protected:
-        void connectingToServer() override {
-            
-            QObject::connect(
-                this->_rpzClient, &RPZClient::gameSessionReceived,
-                this, &CharacterEditor::_onGameSessionReceived
-            );
-
-            QObject::connect(
-                this->_rpzClient, &RPZClient::userJoinedServer,
-                this, &CharacterEditor::_onUserJoinedServer
-            );
-
-            QObject::connect(
-                this->_rpzClient, &RPZClient::userLeftServer,
-                this, &CharacterEditor::_onUserLeftServer
-            );
-
-            QObject::connect(
-                this->_rpzClient, &RPZClient::userDataChanged,
-                this, &CharacterEditor::_onUserDataChanged
-            );
-
-            this->_setMode(CharacterPicker::Mode::Remote);
-
-        }
-
-        void connectionClosed(bool hasInitialMapLoaded) override {
-            this->_setMode(CharacterPicker::Mode::Local);
-        }
-
-    private slots:
-        void _onGameSessionReceived(const RPZGameSession &gameSession) {
-            
-            auto dbCharacterIds = CharactersDatabase::get()->characters().keys();
-            
-            RPZMap<RPZCharacter> out;
-            for(const auto &remoteUser : gameSession.users()) {
-                
-                //reject if not player
-                if(remoteUser.role() != RPZUser::Role::Player) continue;
-
-                auto character = remoteUser.character();
-                auto id = character.id();
-                auto remoteCharacterIsInLocalDB = dbCharacterIds.contains(id);
-
-                if(remoteCharacterIsInLocalDB) {
-                    this->_characterPicker->setLocalCharacterIdFromRemote(id);
-                }
-
-                else {
-                    out.insert(id, character);
-                }
-
-            }
-            this->_remoteDb = out;
-
-            this->_loadPickerCharactersFromRemote();
-
-        }
-
-        void _onUserJoinedServer(const RPZUser &newUser) {
-            
-            if(newUser.role() != RPZUser::Role::Player) return;
-
-            auto character = newUser.character();
-            this->_remoteDb.insert(character.id(), character);
-
-            this->_loadPickerCharactersFromRemote();
-
-        }
-
-        void _onUserLeftServer(const RPZUser &userOut) {
-            
-            if(userOut.role() != RPZUser::Role::Player) return;
-
-            this->_remoteDb.remove(userOut.character().id());
-
-            this->_loadPickerCharactersFromRemote();
-
-        }
-
-        void _onUserDataChanged(const RPZUser &updatedUser) {
-            
-            if(updatedUser.role() != RPZUser::Role::Player) return;
-
-            auto character = updatedUser.character();
-            this->_remoteDb.insert(character.id(), character);
-
-            this->_loadPickerCharactersFromRemote();
-
-        }
-
     private:
+        CharacterPicker::SelectedCharacter _currentSelection;
+
         QPushButton* _saveCharacterBtn = nullptr;
         CharacterPicker* _characterPicker = nullptr;
         CharacterSheet* _sheet = nullptr;
@@ -190,11 +97,6 @@ class CharacterEditor : public QWidget, public ConnectivityObserver {
 
             //update DB
             CharactersDatabase::get()->updateCharacter(characterFromSheet);
-            
-            //update label
-            this->_characterPicker->updateItemText(
-                characterFromSheet
-            );
 
             //if remote, tell server that character changed
             if(this->_mode == CharacterPicker::Mode::Remote) {
@@ -309,33 +211,4 @@ class CharacterEditor : public QWidget, public ConnectivityObserver {
 
         }
 
-        void _loadPickerCharactersFromDatabase() {
-            
-            this->_characterPicker->loadCharacters(
-                CharactersDatabase::get()->characters(),
-                CharacterPicker::Mode::Local
-            );
-
-            this->setEnabled(true);
-
-        }
-
-        void _loadPickerCharactersFromRemote() {
-            
-            auto local = CharactersDatabase::get()->character(
-                this->_characterPicker->localCharacterIdFromRemote()
-            );
-            
-            auto remoteCopy = this->_remoteDb;
-            if(!local.isEmpty()) remoteCopy.insert(local.id(), local);
-
-            this->_characterPicker->loadCharacters(
-                remoteCopy,
-                CharacterPicker::Mode::Remote,
-                true
-            );
-
-            this->setEnabled(true);
-
-        }
 };

@@ -20,6 +20,7 @@ RPZCharacter CharactersDatabase::addNewCharacter() {
 
     //update
     this->updateCharacter(character);
+    emit characterAdded(character);
 
     return character;
 
@@ -31,6 +32,7 @@ void CharactersDatabase::removeCharacter(const RPZCharacter::Id &toRemove) {
     this->_characters.remove(toRemove);
 
     this->_writeCharactersToDb();
+    emit characterRemoved(toRemove);
     
 }
 
@@ -40,6 +42,7 @@ void CharactersDatabase::updateCharacter(const RPZCharacter &updated) {
     this->_characters.insert(updated.id(), updated);
 
     this->_writeCharactersToDb();
+    emit characterUpdated(updated);
 
 }
 

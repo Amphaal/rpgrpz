@@ -12,6 +12,9 @@ class CharactersDatabase : public QObject, public JSONDatabase {
 
     signals:
         void databaseChanged();
+        void characterAdded(const RPZCharacter &);
+        void characterRemoved(const RPZCharacter::Id &);
+        void characterUpdated(const RPZCharacter &);
 
     public:
         static CharactersDatabase* get();

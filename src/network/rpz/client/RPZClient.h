@@ -41,6 +41,7 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
         const RPZUser identity() const; //safe
         const RPZMap<RPZUser> sessionUsers() const; //safe
         const QList<RPZCharacter::UserBound> RPZClient::sessionCharacters() const; //safe
+        const RPZCharacter sessionCharacter(const RPZCharacter::Id &characterId) const; //safe
 
     public slots:
         void run();
@@ -104,6 +105,7 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
         void _mayRegisterAsCharacterized(const RPZUser &user, const CharacterRegistration &type);
         void _checkPendingCharactersRegistration();
         QSet<RPZUser::Id> _characterizedUserIds;
+        QHash<RPZCharacter::Id, RPZUser::Id> _associatedUserIdByCharacterId;
 
         void _initSock();
 
