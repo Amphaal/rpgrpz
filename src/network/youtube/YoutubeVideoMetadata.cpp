@@ -79,10 +79,10 @@ void YoutubeVideoMetadata::setExpirationDate(const QDateTime &expiration) {
     this->_validUntil = expiration;
 }
 
-void YoutubeVideoMetadata::setAudioStreamInfos(const YoutubeAudioStreamInfos &adaptativeStreamInfos) {
-    this->_audioStreamInfos = adaptativeStreamInfos;
+void YoutubeVideoMetadata::setAudioStreamInfos(const YoutubeAudioStreamInfos &streamInfos) {
+    this->_audioStreamInfos = streamInfos;
 }
 
-YoutubeAudioStreamInfos* YoutubeVideoMetadata::audioStreams() {
-    return &this->_audioStreamInfos;
+const YoutubeAudioStreamInfos& YoutubeVideoMetadata::audioStreams() const {
+    return this->_audioStreamInfos;
 }

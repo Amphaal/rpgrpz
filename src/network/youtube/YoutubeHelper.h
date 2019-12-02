@@ -14,6 +14,7 @@
 
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonArray>
 
 #include "src/network/youtube/_base/_NetworkHelper.h"
 
@@ -35,4 +36,9 @@ class YoutubeHelper : public NetworkHelper {
         static promise::Defer _getVideoInfosRawData(YoutubeVideoMetadata* metadata);
         static QList<QString> _extractVideoIdsFromHTTPRequest(const QByteArray &requestData);
         static QList<YoutubeVideoMetadata*> _videoIdsToMetadataList(const QList<QString> &videoIds);
+
+        static void _dumpAsJSON(const QUrlQuery &query);
+        static void _dumpAsJSON(const QJsonObject &obj);
+        static void _dumpAsJSON(const QJsonArray &arr);
+        static void _dumpAsJSON(const QJsonDocument &doc);
 };

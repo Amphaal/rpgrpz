@@ -15,6 +15,7 @@ Playlist::Playlist(QWidget* parent) : QListWidget(parent),
     );
 
     this->addYoutubeVideo("https://www.youtube.com/watch?v=-Q5Y037vIyc");
+    this->addYoutubeVideo("https://www.youtube.com/watch?v=AIGROVO4wUg");
 
 }
 

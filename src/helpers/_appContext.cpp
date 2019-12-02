@@ -146,6 +146,7 @@ void AppContext::init(const QString &customContext) {
 
     //create default paths
     _makeSureDirPathExists(getAppDataLocation());
+    _makeSureDirPathExists(getDumpLocation());
     _makeSureDirPathExists(getAssetsFolderLocation());
     _makeSureDirPathExists(getMapsFolderLocation());
     _makeSureDirPathExists(getServerMapAutosaveFolderLocation());
@@ -165,6 +166,10 @@ const QString AppContext::getAppDataLocation() {
 
 const QString AppContext::getAssetsFileCoordinatorLocation() {
     return getAppDataLocation() + ASSETS_JSON_COORDINATOR_FILENAME;
+}
+
+const QString AppContext::getDumpLocation() {
+    return getAppDataLocation() + DUMPS_PATH;
 }
 
 const QString AppContext::getCharacterDatabaseLocation() {

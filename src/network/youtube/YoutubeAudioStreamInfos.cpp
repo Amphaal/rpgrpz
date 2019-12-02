@@ -1,12 +1,33 @@
 #include "YoutubeAudioStreamInfos.h"
 
 YoutubeAudioStreamInfos::YoutubeAudioStreamInfos() {};
-YoutubeAudioStreamInfos::YoutubeAudioStreamInfos(const QString &adaptativeStreamInfosAsStr, YoutubeSignatureDecipherer* decipherer) {
+YoutubeAudioStreamInfos::YoutubeAudioStreamInfos(YoutubeSignatureDecipherer* decipherer, const QString &urlQueryAsRawStr) {
+    auto raw = _generatRawAdaptiveStreamInfosFromUrlQuery(urlQueryAsRawStr);
+    this->_initFromUrlQuery(decipherer, raw);
+}
+
+YoutubeAudioStreamInfos::YoutubeAudioStreamInfos(const QJsonArray &adaptativeFormatsWithUnsignedUrls) {
     
-    auto streamInfosByType = _generatRawAdaptativeStreamInfos(adaptativeStreamInfosAsStr);
+    auto raw = _generatRawAdaptiveStreamInfosFromJSON(adaptativeFormatsWithUnsignedUrls);
+    
+    //filter, only audio
+    for(auto &streamInfos : raw) {
+        auto type = streamInfos.value(QStringLiteral(u"mimeType"));
+        
+        //exclude
+        if(type.isEmpty()) continue;
+        if(!type.contains(QStringLiteral(u"audio"))) continue;
+
+        //add to internal
+        this->_InfosByAudioMime.insert(type, streamInfos);
+    }
+
+}
+
+void YoutubeAudioStreamInfos::_initFromUrlQuery(YoutubeSignatureDecipherer* decipherer, const RawInfosByAudioMime &rawData) {
 
     //filter, only audio
-    for(auto &streamInfos : streamInfosByType) {
+    for(auto &streamInfos : rawData) {
         auto type = streamInfos.value(QStringLiteral(u"type"));
         
         //exclude
@@ -14,7 +35,6 @@ YoutubeAudioStreamInfos::YoutubeAudioStreamInfos(const QString &adaptativeStream
         if(!type.contains(QStringLiteral(u"audio"))) continue;
 
         //add to internal
-        streamInfos.remove(type);
         this->_InfosByAudioMime.insert(type, streamInfos);
     }
 
@@ -49,34 +69,56 @@ YoutubeAudioStreamInfos::YoutubeAudioStreamInfos(const QString &adaptativeStream
 
 }
 
-QPair<QString, QString> YoutubeAudioStreamInfos::getPreferedMineSourcePair() {
+const YoutubeAudioStreamInfos::UrlMimePair YoutubeAudioStreamInfos::getPreferedMineSourcePair() const {
     auto available = this->availableAudioMimes();
     auto mp4Audio = available.filter(QRegularExpression(QStringLiteral(u"opus")));
-    auto selectedMime = mp4Audio.count() ? mp4Audio.at(0) : available.at(0);
+    auto selectedMime = mp4Audio.count() ? mp4Audio.value(0) : available.value(0);
     auto selectedUrl = this->streamUrl(selectedMime);
-    return QPair<QString, QString>(selectedMime, selectedUrl);
+    return {selectedMime, selectedUrl};
 }
 
-QString YoutubeAudioStreamInfos::streamUrl(const QString &mime) {
+const QString YoutubeAudioStreamInfos::streamUrl(const QString &mime) const {
     return this->_InfosByAudioMime
                     .value(mime)
                     .value(QStringLiteral(u"url"));
 }
 
-QList<QString> YoutubeAudioStreamInfos::availableAudioMimes() {
+const QList<QString> YoutubeAudioStreamInfos::availableAudioMimes() const {
     return this->_InfosByAudioMime.keys();
 }
 
-QList<QHash<QString, QString>> YoutubeAudioStreamInfos::_generatRawAdaptativeStreamInfos(const QString &adaptativeStreamInfosAsStr) {
+YoutubeAudioStreamInfos::RawInfosByAudioMime YoutubeAudioStreamInfos::_generatRawAdaptiveStreamInfosFromJSON(const QJsonArray &jsonArray) {
+    
+    RawInfosByAudioMime out;
 
-    auto out = QList<QHash<QString, QString>>();
+    for(auto i = 0; i < jsonArray.count(); i++) {
+
+        QHash<QString, QString> group;
+
+        auto q = jsonArray.at(i).toObject().toVariantHash();
+        for(auto i = q.begin(); i != q.end(); i++) {
+            if(i.value().userType() != QMetaType::QString) continue;
+            group.insert(i.key(), i.value().toString());
+        }
+
+        out += group;
+
+    }
+
+    return out;
+
+}
+
+YoutubeAudioStreamInfos::RawInfosByAudioMime YoutubeAudioStreamInfos::_generatRawAdaptiveStreamInfosFromUrlQuery(const QString &urlQueryAsRawStr) {
+
+    RawInfosByAudioMime out;
 
     //for each group
-    auto itagsDataGroupsAsStr = adaptativeStreamInfosAsStr.split(
+    auto itagsDataGroupsAsStr = urlQueryAsRawStr.split(
         QStringLiteral(u","), 
         QString::SplitBehavior::SkipEmptyParts
     );
-    for( auto &dataGroupAsString : itagsDataGroupsAsStr) {
+    for(auto &dataGroupAsString : itagsDataGroupsAsStr) {
 
         QHash<QString, QString> group;
         

@@ -270,22 +270,22 @@
         <translation>Supprimer la fiche</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="118"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="120"/>
         <source>No existing character, create some !</source>
         <translation>Aucun personnage préexistant, créez-en un !</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="119"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="121"/>
         <source>Waiting for sheets from host...</source>
         <translation>En attente de fiches du serveur...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="193"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="195"/>
         <source>Character sheet deletion</source>
         <translation>Suppression de fiches de personnages</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="194"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="196"/>
         <source>Do you really want to delete this character ?</source>
         <translation>Voulez-vous vraiment supprimer cette fiche de personnage ?</translation>
     </message>
@@ -829,17 +829,17 @@
 <context>
     <name>Playlist</name>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="141"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="142"/>
         <source>This Youtube video is already in playlist !</source>
         <translation>Cette vidéo Youtube est déjà dans la liste de lecture !</translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="180"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="181"/>
         <source>(Loading metadata...) </source>
         <translation>(Chargement des métadonnées...) </translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="190"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="191"/>
         <source>(Error) </source>
         <translation>(Erreur) </translation>
     </message>

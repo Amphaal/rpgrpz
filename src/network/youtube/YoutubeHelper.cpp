@@ -7,6 +7,7 @@ promise::Defer YoutubeHelper::fromPlaylistUrl(const QString &url) {
 };
 
 promise::Defer YoutubeHelper::refreshMetadata(YoutubeVideoMetadata* toRefresh, bool force) {
+    
     if(!force && toRefresh->isMetadataValid()) return promise::resolve(toRefresh);
     
     toRefresh->setFailure(false);
@@ -39,6 +40,7 @@ promise::Defer YoutubeHelper::_getVideoEmbedPageRawData(YoutubeVideoMetadata* me
 }
 
 YoutubeVideoMetadata* YoutubeHelper::_augmentMetadataWithPlayerConfiguration(YoutubeVideoMetadata* metadata, const QByteArray &videoEmbedPageRequestData) {
+    
     //to string for pcre2 usage
     auto str = QString::fromUtf8(videoEmbedPageRequestData);
 
@@ -66,6 +68,7 @@ YoutubeVideoMetadata* YoutubeHelper::_augmentMetadataWithPlayerConfiguration(You
     metadata->setDuration(length);
 
     return metadata;
+    
 }
 
 YoutubeVideoMetadata* YoutubeHelper::_augmentMetadataWithVideoInfos(
@@ -83,31 +86,99 @@ YoutubeVideoMetadata* YoutubeHelper::_augmentMetadataWithVideoInfos(
         throw new std::logic_error("An error occured while fetching video infos");
     }
 
-    //define stream infos
-    auto adaptativeStreamInfosAsStr = videoInfos.queryItemValue("adaptive_fmts", QUrl::ComponentFormattingOption::FullyDecoded);
-    YoutubeAudioStreamInfos adaptativeStreamInfos(adaptativeStreamInfosAsStr, decipherer);
-    metadata->setAudioStreamInfos(adaptativeStreamInfos);
-
     //player response as JSON, check if error
     auto playerResponseAsStr = videoInfos.queryItemValue("player_response", QUrl::ComponentFormattingOption::FullyDecoded);
     auto playerResponse = QJsonDocument::fromJson(playerResponseAsStr.toUtf8());
+    if(playerResponseAsStr.isEmpty() || playerResponse.isNull()) {
+        throw new std::logic_error("An error occured while fetching video infos");
+    }
+
+    //check playability status
     auto playabilityStatus = playerResponse[QStringLiteral(u"playabilityStatus")].toObject();
     auto pStatus = playabilityStatus.value(QStringLiteral(u"reason")).toString();
-    
     if(!pStatus.isNull()) {
         throw new std::logic_error("An error occured while fetching video infos");
     }
 
-    //set expiration flag
+    //get streamingData
     auto streamingData = playerResponse[QStringLiteral(u"streamingData")].toObject();
-    auto expiresIn = streamingData.value(QStringLiteral(u"expiresInSeconds")).toString().toDouble();
-    metadata->setExpirationDate(
-        tsRequest.addSecs((qint64)expiresIn)
-    );
+    if(streamingData.isEmpty()) {
+        throw new std::logic_error("An error occured while fetching video infos");
+    }
+
+    //find expiration
+    auto expiresIn = streamingData.value(QStringLiteral(u"expiresInSeconds")).toString();
+    if(expiresIn.isEmpty()) {
+        throw new std::logic_error("An error occured while fetching video infos");
+    }
+
+    //set expiration date
+    auto expirationDate =  tsRequest.addSecs((qint64)expiresIn.toDouble());
+    metadata->setExpirationDate(expirationDate);
+
+    //find stream infos
+    YoutubeAudioStreamInfos streamInfos;
+
+        //...from video infos
+        auto streamInfosAsStr = videoInfos.queryItemValue("adaptive_fmts", QUrl::ComponentFormattingOption::FullyDecoded);
+        if(!streamInfosAsStr.isEmpty()) {
+            streamInfos = YoutubeAudioStreamInfos(decipherer, streamInfosAsStr);
+        } 
+        
+        //...from streaming data
+        else {
+            
+            //try...
+            auto streamInfosAsJSONArray = streamingData["adaptiveFormats"].toArray();
+            if(!streamInfosAsJSONArray.isEmpty()) {
+                streamInfos = YoutubeAudioStreamInfos(streamInfosAsJSONArray);
+            }
+
+            //failed...
+            else {
+                throw new std::logic_error("An error occured while fetching video infos");
+            }
+
+        }
+
+    //define stream infos    
+    metadata->setAudioStreamInfos(streamInfos);
 
     return metadata;
 }
 
+void YoutubeHelper::_dumpAsJSON(const QUrlQuery &query) {
+    
+    QJsonObject dump;
+    
+    for(const auto &item : query.queryItems(QUrl::ComponentFormattingOption::FullyDecoded)) {
+        dump.insert(item.first, item.second);
+    }
+
+    _dumpAsJSON(dump);
+
+}
+
+void YoutubeHelper::_dumpAsJSON(const QJsonObject &obj) {
+    return _dumpAsJSON(QJsonDocument(obj));
+}
+
+void YoutubeHelper::_dumpAsJSON(const QJsonArray &arr) {
+    return _dumpAsJSON(QJsonDocument(arr));
+}
+
+void YoutubeHelper::_dumpAsJSON(const QJsonDocument &doc) {
+    
+    auto bytes = doc.toJson(QJsonDocument::JsonFormat::Indented);
+
+    QFile fh(AppContext::getDumpLocation() + "/yt.json");
+    fh.open(QFile::WriteOnly);
+        fh.write(bytes);
+    fh.close();
+
+    qDebug() << fh.fileName() << " created !";
+
+}
 
 promise::Defer YoutubeHelper::_downloadVideoInfosAndAugmentMetadata(YoutubeVideoMetadata* metadata) {
     

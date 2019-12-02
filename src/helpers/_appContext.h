@@ -33,6 +33,7 @@ class AppContext {
         static inline const QString LATEST_LOG_FILE = "/rpgrpz.latest" + DEBUG_APP_FILE_APPENDICE + ".log";
         static inline const QString ASSETS_PATH = "/resources";
         static inline const QString MAPS_PATH = "/maps";
+        static inline const QString DUMPS_PATH = "/dumps";
         static inline const QString MAPS_SERVER_AUTOSAVE_PATH = "/serverAutosaves";
         static inline const QString ASSETS_JSON_COORDINATOR_FILENAME = "/resources.json";
         static inline const QString CHARACTER_JSON_DATABASE_FILENAME = "/characters.json";
@@ -82,6 +83,7 @@ class AppContext {
         static const QString getLogFileLocation();
         static const QString getLatestLogFileLocation();
         static const QString getServerMapAutosaveFolderLocation();
+        static const QString getDumpLocation();
 
         static void openFileInOS(const QString &cpURL);
         static void openFolderInOS(const QString &cpURL);

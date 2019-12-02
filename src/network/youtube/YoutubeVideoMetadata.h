@@ -42,10 +42,10 @@ class YoutubeVideoMetadata : public QObject {
         void setTitle(const QString &title);
         void setDuration(int durationInSeconds);
         void setExpirationDate(const QDateTime &expiration);
-        void setAudioStreamInfos(const YoutubeAudioStreamInfos &adaptativeStreamInfos);
+        void setAudioStreamInfos(const YoutubeAudioStreamInfos &streamInfos);
         void setFailure(bool failed);
 
-        YoutubeAudioStreamInfos* audioStreams();
+        const YoutubeAudioStreamInfos& audioStreams() const;
 
     signals:
         void metadataFetching();

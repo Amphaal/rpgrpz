@@ -100,6 +100,8 @@ class CharacterPicker : public QWidget {
             //update mode
             this->_mode = mode;
             auto isLocal = mode == CharacterPicker::Mode::Local;
+
+            //define buttons
             this->_newCharacterBtn->setVisible(isLocal); 
             this->_deleteCharacterBtn->setVisible(isLocal); 
 
