@@ -7,3 +7,4 @@
 #include "_specific/MapViewWalkingHelper.hpp"
 #include "_specific/MapViewUnscalable.hpp"
 #include "_specific/MapViewDrawing.hpp"
+#include "_specific/MapViewFog.hpp"

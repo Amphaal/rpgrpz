@@ -94,5 +94,6 @@
         <file>assets/default.jpg</file>
         <file>assets/grass.png</file>
         <file>assets/hidden.png</file>
+        <file>assets/smoke.png</file>
     </qresource>
 </RCC>

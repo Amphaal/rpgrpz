@@ -50,7 +50,8 @@ class AppContext {
         static inline const QString UPNP_DEFAULT_TARGET_PORT = "31137";
         static inline const QString UPNP_REQUEST_DESCRIPTION = APP_NAME;
         static inline const QString RPZ_MAP_FILE_EXT = ".mrpz";
-        static inline constexpr int TOP_Z_INDEX = 100000;
+        static inline constexpr int HOVERING_ITEMS_Z_INDEX = 100000;
+        static inline constexpr int FOG_Z_INDEX = 200000;
 
         static inline constexpr int MINIMUM_LAYER = -1000;
         static inline constexpr int MAXIMUM_LAYER = 1000;

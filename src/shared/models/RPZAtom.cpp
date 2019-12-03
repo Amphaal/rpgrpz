@@ -18,7 +18,7 @@ RPZAtom::Category RPZAtom::category(const RPZAtom::Type &type) {
 }
 
 int RPZAtom::staticZIndex() const {
-    auto zIndex = AppContext::TOP_Z_INDEX; 
+    auto zIndex = AppContext::HOVERING_ITEMS_Z_INDEX; 
     auto type = this->type();
     return _interactiveHoveringAtoms.contains(type) ? zIndex + (int)type : zIndex;
 }

@@ -19,7 +19,7 @@
 class MapViewTokenOutline : public QObject, public QGraphicsItem, public RPZGraphicsItem {
     
     Q_OBJECT
-    Q_PROPERTY(qreal rotation READ opacity WRITE setRotation)
+    Q_PROPERTY(qreal rotation READ rotation WRITE setRotation)
     Q_INTERFACES(QGraphicsItem)
 
     public:

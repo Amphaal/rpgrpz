@@ -41,6 +41,8 @@
 
 #include "src/shared/renderer/DrawingAssist.hpp"
 
+#include "src/shared/renderer/graphics/MapViewGraphics.h"
+
 class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Manipulation, public MV_HUDLayout, public AtomSelector {
 
     Q_OBJECT
@@ -99,6 +101,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         DrawingAssist* _drawingAssist = nullptr;
         AtomsContextualMenuHandler* _menuHandler = nullptr;
         AtomActionsHandler* _atomActionsHandler = nullptr;
+        MapViewFog* _fog = nullptr;
 
         //helpers
         void _handleHintsSignalsAndSlots();

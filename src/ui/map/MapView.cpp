@@ -2,7 +2,7 @@
 
 MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this), MV_HUDLayout(this) {
 
-    this->setScene(new QGraphicsScene); //dummy scene
+    this->setScene(new QGraphicsScene);
 
     this->_walkingCursor = QCursor(QStringLiteral(u":/icons/app/tools/walking.png"));
 
@@ -218,6 +218,11 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
         //clear and change rect
         this->scene()->clear();
         this->scene()->setSceneRect(this->_currentMapParameters.sceneRect());
+
+        //fog
+        this->_fog = new MapViewFog;
+        this->_addItemToScene(this->_fog);
+        this->_fog->triggerAnimation();
 
         //reset view
         this->goToDefaultViewState();
