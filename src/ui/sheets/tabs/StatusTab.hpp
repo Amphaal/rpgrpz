@@ -23,15 +23,24 @@ class StatusTab : public QWidget {
         StatusTab() {
             
             //state tab
-            auto stateTabLayout = new QVBoxLayout;      
+            auto stateTabLayout = new QVBoxLayout;     
             this->setLayout(stateTabLayout);
                 
                 //level
                 this->_levelSpin = new QSpinBox;
                 this->_levelSpin->setMinimum(-1);
                 this->_levelSpin->setValue(-1);
-                stateTabLayout->addLayout(_addRow(tr("Level"), this->_levelSpin));
 
+                    //level row...
+                    this->_levelRow = new QWidget;
+                    auto levelLayout = new QHBoxLayout;
+                    levelLayout->setMargin(0);
+                    this->_levelRow->setLayout(levelLayout);
+                    stateTabLayout->addWidget(this->_levelRow);
+                    
+                    levelLayout->addWidget(new QLabel(tr("Level")));
+                    levelLayout->addWidget(this->_levelSpin, 1);
+                     
                 //alterations
                 auto alterations = new QGroupBox(tr("Alterations"));
                 auto alterationsLayout = new QFormLayout;
@@ -107,14 +116,9 @@ class StatusTab : public QWidget {
             
             //level
             auto level = toLoad.level();
-            if(!isReadOnly) {
-                this->_levelSpin->setVisible(true);
-            } 
-            else {
-                this->_levelSpin->setVisible(level > -1);
-            }
+            this->_levelRow->setVisible(!isReadOnly || level > -1);
             this->_levelSpin->setValue(level);
-            this->_levelSpin->setReadOnly(isReadOnly);
+            this->_levelSpin->setReadOnly(isReadOnly); 
             
             //bonus
             this->_statusBonusEdit->setText(toLoad.bonus());
@@ -143,11 +147,13 @@ class StatusTab : public QWidget {
     private:
         QLineEdit* _statusBonusEdit = nullptr;
         QLineEdit* _statusMalusEdit = nullptr;
-        QSpinBox* _levelSpin = nullptr;
         AbilitiesSheet* _abilitiesSheet = nullptr;
         QVBoxLayout* _gaugesLayout = nullptr;
         QLabel* _insertGaugeInv = nullptr;
         QPushButton* _addBarBtn = nullptr;
+
+        QWidget* _levelRow = nullptr;
+        QSpinBox* _levelSpin = nullptr;
 
         QVector<RPZGauge> _getGaugeValues() {
             
@@ -210,10 +216,4 @@ class StatusTab : public QWidget {
             
         }
 
-        static QHBoxLayout* _addRow(const QString &descr, QWidget *widget) {
-            auto l = new QHBoxLayout;
-            l->addWidget(new QLabel(descr));
-            l->addWidget(widget, 1);
-            return l;
-        }
 };

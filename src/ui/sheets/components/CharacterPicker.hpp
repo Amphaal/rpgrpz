@@ -60,10 +60,11 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
             clLayout->addWidget(this->_deleteCharacterBtn);
             clLayout->addWidget(this->_newCharacterBtn);
 
-            //init
+        }
+
+        void setup() {
             this->_handleLocalDbEvents();
             this->_initLoad();
-
         }
 
         const SelectedCharacter currentCharacter() const {
@@ -93,7 +94,7 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
     protected:
         void connectingToServer() override {
 
-            this->_loadPlaceholder(true);
+            this->_loadEmpty();
             this->_updateDeletability();
             this->_updateInsertability();
 
@@ -136,8 +137,11 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
                 updatedCharacter.toString()
             );
             
-            //if current selection, request sheet update
+            //prevent recurse if local update
             auto cc = this->currentCharacter();
+            if(cc.origin == CharacterOrigin::Local) return;
+
+            //if current selection, request sheet update
             if(cc.id == updatedCharacter.id()) {
                 emit requestSheetDisplay(cc, updatedCharacter);
             }
@@ -153,12 +157,18 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
             //remove
             this->_characterListCombo->removeItem(index);
 
+            //may display
+            this->_mayTooglePlaceholder();
+
         }
 
         void _onUserJoinedServer(const RPZUser &newUser) {
             
             if(newUser.role() != RPZUser::Role::Player) return;
             
+            //may remove
+            this->_mayTooglePlaceholder();
+
             //add item
             this->_addItem(
                 newUser.character(), 
@@ -200,10 +210,12 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
             QObject::connect(
                 CharactersDatabase::get(), &CharactersDatabase::characterAdded,
                 [=](const RPZCharacter &added) {
-                    this->_addItem(
+                    
+                    this->_addItemAndPick(
                         added, 
                         CharacterOrigin::Local
                     );
+
                 }
             );
 
@@ -219,20 +231,63 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
 
         }
 
-        void _loadPlaceholder(bool fromRemote = false) {
+        void _mayTooglePlaceholder() {
             
-            //clear and disable
             QSignalBlocker b(this->_characterListCombo);
-            this->_characterListCombo->clear();
-            this->_characterListCombo->setEnabled(false);
+
+            //remove placeholder
+            auto itemCount = this->_characterListCombo->count();
+            auto currentId = this->_characterListCombo->currentData().toULongLong();
+            if(itemCount == 1 && currentId == 0) {
+                this->_characterListCombo->removeItem(0);
+                this->_characterListCombo->setEnabled(true); //premptive enabling
+            }
+
+            //add placeholder
+            else if(itemCount == 0) {
+                auto text = this->_rpzClient ? tr("Waiting for sheets from host...") : tr("No existing character, create some !");
+                this->_characterListCombo->addItem(text);
+                this->_characterListCombo->setEnabled(false);
+            }
+
+            //else, just make sure the combo is active
+            else {
+                this->_characterListCombo->setEnabled(true);
+            }
+
+        }
+
+        void _loadEmpty() {
             
+            {
+                //clear and disable
+                QSignalBlocker b(this->_characterListCombo);
+                this->_characterListCombo->clear();
+            }
+
             //placeholder
-            auto text = fromRemote ? tr("Waiting for sheets from host...") :  tr("No existing character, create some !");
-            this->_characterListCombo->addItem(text);
+            this->_mayTooglePlaceholder();
             
             //emit
             this->_selectionChanged();
 
+        }
+
+        void _addItemAndPick(const RPZCharacter &characterToAdd, const CharacterOrigin &origin) {
+                    
+            //may remove placeholder
+            this->_mayTooglePlaceholder();
+
+            QSignalBlocker b(this->_characterListCombo);
+            
+            //add item
+            this->_addItem(characterToAdd, origin);
+            
+            //pick
+            auto latestInsertIndex = this->_characterListCombo->count() - 1;
+            this->_characterListCombo->setCurrentIndex(latestInsertIndex);
+            this->_selectionChanged();
+            
         }
 
         void _addItem(const RPZCharacter &characterToAdd, const CharacterOrigin &origin) {
@@ -263,12 +318,11 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
             
             //maybe load placeholder
             auto toLoad = this->_rpzClient->sessionCharacters();
-            if(!toLoad.count()) return _loadPlaceholder(true);
+            if(!toLoad.count()) return this->_loadEmpty();
 
             //clear and enable
             QSignalBlocker b(this->_characterListCombo);
             this->_characterListCombo->clear();
-            this->_characterListCombo->setEnabled(true);
 
             //find client character id
             auto myCharacterId = this->_rpzClient->identity().character().id();
@@ -291,9 +345,13 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
 
             }
             
+            //default selection if any
             if(preferedSelectionIndex > -1) {
                 this->_characterListCombo->setCurrentIndex(preferedSelectionIndex);
             }
+
+            //placeholder
+            this->_mayTooglePlaceholder();
 
             //signal that picker changed
             this->_selectionChanged();
@@ -304,17 +362,19 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
             
             //maybe load placeholder
             auto toLoad = CharactersDatabase::get()->characters();
-            if(!toLoad.count()) return _loadPlaceholder();
+            if(!toLoad.count()) return this->_loadEmpty();
 
             //clear and enable
             QSignalBlocker b(this->_characterListCombo);
             this->_characterListCombo->clear();
-            this->_characterListCombo->setEnabled(true);
 
             //add an item for each
             for(const auto &character : toLoad) {
                 this->_addItem(character, CharacterOrigin::Local);
             }
+
+            //placeholder
+            this->_mayTooglePlaceholder();
             
             //signal that picker changed
             this->_selectionChanged();
@@ -384,6 +444,9 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
 
             //remote
             if(cc.origin == CharacterOrigin::Remote) return this->_rpzClient->sessionCharacter(cc.id);
+
+            //default
+            return RPZCharacter();
 
         }
 

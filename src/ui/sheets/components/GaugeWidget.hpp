@@ -18,12 +18,17 @@ class GaugeWidget : public QWidget {
         GaugeWidget(const RPZGauge &gauge = RPZGauge()) : GaugeWidget(gauge.toMinimalist(), gauge.name(), gauge.color()) {}
 
         void updateValues(const RPZGauge::MinimalistGauge &values) {
+            
             this->_values = values;
-            auto tooltipText = QStringLiteral(u"%1 : %2 / %3").arg(this->_name)
+
+            auto formatedName = this->_name.isEmpty() ? QObject::tr("[Unamed gauge]") : this->_name;
+            auto tooltipText = QStringLiteral(u"%1 : %2 / %3").arg(formatedName)
                                                             .arg(values.current)
                                                             .arg(values.max);
+
             this->setToolTip(tooltipText);
             this->update();
+
         }
 
 

@@ -8,7 +8,7 @@
 
 #include "src/ui/sheets/components/CharacterPicker.hpp"
 
-class CharacterEditor : public QWidget {
+class CharacterEditor : public QWidget, public ConnectivityObserver {
     
     Q_OBJECT
 
@@ -23,12 +23,8 @@ class CharacterEditor : public QWidget {
 
             //picker        
                 QObject::connect(
-                    this->_characterPicker, &CharacterPicker::selectionChanged,
-                    this, &CharacterEditor::_onSelectedCharacterChanged
-                );
-                QObject::connect(
-                    this->_characterPicker, &CharacterPicker::requestSheetUpdate,
-                    this, &CharacterEditor::_onSelectedCharacterChanged
+                    this->_characterPicker, &CharacterPicker::requestSheetDisplay,
+                    this, &CharacterEditor::_onRequestedSheetToDisplay
                 );
                 QObject::connect(
                     this->_characterPicker, &CharacterPicker::requestNewCharacter,
@@ -42,11 +38,10 @@ class CharacterEditor : public QWidget {
             //save character
             this->_saveCharacterBtn->setToolTip(tr("Save character sheet"));
             this->_saveCharacterBtn->setIcon(QIcon(QStringLiteral(u":/icons/app/other/save.png")));
-            this->_saveCharacterBtn->setVisible(false);
             
             QObject::connect(
                 this->_saveCharacterBtn, &QPushButton::pressed,
-                this, &CharacterEditor::_saveCurrentCharacter
+                this, &CharacterEditor::_maySaveCurrentCharacter
             );
 
             //layout
@@ -64,18 +59,30 @@ class CharacterEditor : public QWidget {
             l->addWidget(this->_saveCharacterBtn, 0, Qt::AlignRight);
 
             //init
-            this->_setMode(CharacterPicker::Mode::Local);
+            this->_characterPicker->setup();
+            this->_defineTitle();
+            this->_defineSavability();
 
         }
 
         ~CharacterEditor() {
-            this->_saveCurrentCharacter();
+            delete this->_characterPicker; //prevent infinite callbacks
+            this->_maySaveCurrentCharacter();
         }
     
     public slots:
         void tryToSelectCharacter(const RPZCharacter::Id &characterIdToFocus) {
             auto success = this->_characterPicker->pickCharacter(characterIdToFocus);
             if(success) this->setFocus(Qt::OtherFocusReason);
+        }
+
+    protected:
+        void connectingToServer() override {
+            this->_defineTitle(true);
+        }
+
+        void connectionClosed(bool hasInitialMapLoaded) override {
+            this->_defineTitle();
         }
 
     private:
@@ -86,8 +93,10 @@ class CharacterEditor : public QWidget {
         CharacterSheet* _sheet = nullptr;
         QGroupBox* _characterPickerGrpBox = nullptr;
 
-        void _saveCurrentCharacter() {
+        void _maySaveCurrentCharacter() {
             
+            if(!this->_isCurrentSelectionSavable()) return;
+
             //prevent save if is read only
             if(this->_sheet->isReadOnlyMode()) return;
 
@@ -99,7 +108,7 @@ class CharacterEditor : public QWidget {
             CharactersDatabase::get()->updateCharacter(characterFromSheet);
 
             //if remote, tell server that character changed
-            if(this->_mode == CharacterPicker::Mode::Remote) {
+            if(this->_rpzClient) {
                 QMetaObject::invokeMethod(this->_rpzClient, "notifyCharacterChange", 
                     Q_ARG(RPZCharacter, characterFromSheet)
                 );
@@ -107,108 +116,41 @@ class CharacterEditor : public QWidget {
         }
 
         void _deleteRequestFromPicker(const RPZCharacter::Id &toDelete) {
-            
-            if(this->_mode != CharacterPicker::Mode::Local) return;
-
+            this->_currentSelection = {}; //back to default to trick the autosave into not saving it back
             CharactersDatabase::get()->removeCharacter(toDelete); 
-            this->_loadPickerCharactersFromDatabase();
-
         }
 
         void _insertRequestFromPicker() {
-            
-            if(this->_mode != CharacterPicker::Mode::Local) return;
-
             CharactersDatabase::get()->addNewCharacter(); 
-            this->_loadPickerCharactersFromDatabase();
-
         }
 
-        void _onSelectedCharacterChanged(const RPZCharacter::Id &selectedId) {
+        void _onRequestedSheetToDisplay(const CharacterPicker::SelectedCharacter &newSelection, const RPZCharacter &toDisplay) {
             
-            bool enableSave = selectedId;
+            //may save previous character
+            this->_maySaveCurrentCharacter();
 
-            auto loadCharacterFromDB = [=]() {
-                this->_sheet->loadCharacter(
-                    CharactersDatabase::get()->character(selectedId),
-                    false
-                );
-            };
-
-            auto loadCharacterFromRemote = [=]() {
-                this->_sheet->loadCharacter(
-                    this->_remoteDb.value(selectedId),
-                    true
-                );
-            };
-
-            switch(this->_mode) {
-                
-                case CharacterPicker::Mode::Local: {
-                    loadCharacterFromDB();
-                }
-                break;
-
-                case CharacterPicker::Mode::Remote: {
-                    
-                    enableSave = enableSave && this->_characterPicker->localCharacterIdFromRemote() == selectedId;
-                    
-                    if(enableSave) {
-                        loadCharacterFromDB();
-                    }
-
-                    else {
-                        loadCharacterFromRemote();
-                    }
-
-                }
-                break;
-
-                default:
-                break;
-
-            }         
-
-            this->_saveCharacterBtn->setVisible(enableSave);
+            //change selection and define savability
+            this->_currentSelection = newSelection;
+            auto isReadOnly = !this->_defineSavability();
+            
+            //load
+            this->_sheet->loadCharacter(toDisplay, isReadOnly);
 
         }
 
-        void _setMode(CharacterPicker::Mode mode) {
-
-            //auto save
-            this->_saveCurrentCharacter();
-
-            //change current mode
-            this->_mode = mode;
-
-            //update grpBox label
-            auto title = mode == CharacterPicker::Mode::Local ? tr("My characters") : tr("Hosted characters");
+        void _defineTitle(bool isRemote = false) {
+            auto title = isRemote ? tr("Hosted characters") : tr("My characters");
             this->_characterPickerGrpBox->setTitle(title);
+        }
 
-            switch(mode) {
+        bool _isCurrentSelectionSavable() {
+            return this->_currentSelection.id && this->_currentSelection.origin == CharacterPicker::CharacterOrigin::Local;
+        }
 
-                case CharacterPicker::Mode::Local: {
-                    
-                    //sync load
-                    this->_loadPickerCharactersFromDatabase();
-
-                }
-                break;
-
-                case CharacterPicker::Mode::Remote: {
-                   
-                    //async load, empty in the inbetween
-                    this->_characterPicker->unloadCharacters();
-                    this->setEnabled(false); 
-
-                }
-                break;
-
-                default:
-                break;
-
-            }
-
+        bool _defineSavability() {
+            bool enableSave = this->_isCurrentSelectionSavable();
+            this->_saveCharacterBtn->setVisible(enableSave);
+            return enableSave;
         }
 
 };

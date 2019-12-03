@@ -242,17 +242,17 @@
 <context>
     <name>CharacterEditor</name>
     <message>
-        <location filename="../ui/sheets/CharacterEditor.hpp" line="45"/>
+        <location filename="../ui/sheets/CharacterEditor.hpp" line="39"/>
         <source>Save character sheet</source>
         <translation>Savegarder la fiche</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/CharacterEditor.hpp" line="287"/>
+        <location filename="../ui/sheets/CharacterEditor.hpp" line="142"/>
         <source>My characters</source>
         <translation>Mes personnages</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/CharacterEditor.hpp" line="287"/>
+        <location filename="../ui/sheets/CharacterEditor.hpp" line="142"/>
         <source>Hosted characters</source>
         <translation>Personnages du serveur</translation>
     </message>
@@ -260,32 +260,32 @@
 <context>
     <name>CharacterPicker</name>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="32"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="33"/>
         <source>Create a new sheet</source>
         <translation>Créer une nouvelle fiche</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="40"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="41"/>
         <source>Delete sheet</source>
         <translation>Supprimer la fiche</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="120"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="248"/>
         <source>No existing character, create some !</source>
         <translation>Aucun personnage préexistant, créez-en un !</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="121"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="248"/>
         <source>Waiting for sheets from host...</source>
         <translation>En attente de fiches du serveur...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="195"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="399"/>
         <source>Character sheet deletion</source>
         <translation>Suppression de fiches de personnages</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="196"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="400"/>
         <source>Do you really want to delete this character ?</source>
         <translation>Voulez-vous vraiment supprimer cette fiche de personnage ?</translation>
     </message>
@@ -1271,6 +1271,11 @@
         <source>Health</source>
         <translation>Santé</translation>
     </message>
+    <message>
+        <location filename="../ui/sheets/components/GaugeWidget.hpp" line="24"/>
+        <source>[Unamed gauge]</source>
+        <translation>[Jauge sans nom]</translation>
+    </message>
 </context>
 <context>
     <name>RPZClient</name>
@@ -1370,52 +1375,52 @@
 <context>
     <name>StatusTab</name>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="33"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="41"/>
         <source>Level</source>
         <translation>Niveau</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="36"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="45"/>
         <source>Alterations</source>
         <translation>Altérations</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="44"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="53"/>
         <source> Under the influence of a potion, filled with determination ...</source>
         <translation> Sous l&apos;effet d&apos;une potion, Rempli de détermination ...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="45"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="54"/>
         <source>State bonus :</source>
         <translation>Bonus d&apos;état :</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="49"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="58"/>
         <source> Broken leg, poisoned ...</source>
         <translation> Jambe cassée, empoisonné ...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="50"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="59"/>
         <source>State malus :</source>
         <translation>Malus d&apos;état :</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="53"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="62"/>
         <source>Gauges</source>
         <translation>Jauges</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="68"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="77"/>
         <source>Add a new gauge</source>
         <translation>Ajouter une nouvelle jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="75"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="84"/>
         <source>No gauge bound to the character</source>
         <translation>Aucune jauge liée au personnage</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="85"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="94"/>
         <source>Abilities</source>
         <translation>Compétences</translation>
     </message>
