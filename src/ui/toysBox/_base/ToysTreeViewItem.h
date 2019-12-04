@@ -26,6 +26,7 @@ class ToysTreeViewItem {
                 FreeDraw = (int)RPZAtom::Type::Drawing,
                 Text = (int)RPZAtom::Type::Text,
                 POI = (int)RPZAtom::Type::POI,
+                FogOfWar = (int)RPZAtom::Type::FogOfWar,
             NPC_Container = (int)AssetsDatabase::StorageContainer::NPC,
                 NPC = (int)RPZAtom::Type::NPC,
             BackgroundContainer = (int)AssetsDatabase::StorageContainer::Background,
@@ -176,7 +177,8 @@ class ToysTreeViewItem {
             ToysTreeViewItem::Type::FreeDraw,
             ToysTreeViewItem::Type::Text,
             ToysTreeViewItem::Type::Player,
-            ToysTreeViewItem::Type::POI
+            ToysTreeViewItem::Type::POI,
+            ToysTreeViewItem::Type::FogOfWar
         };
 
         static const inline QHash<ToysTreeViewItem::Type, QString> _iconPathByElementType = {
@@ -191,7 +193,8 @@ class ToysTreeViewItem {
             { ToysTreeViewItem::Type::DownloadedContainer, QStringLiteral(u":/icons/app/manager/downloaded.png") },
             { ToysTreeViewItem::Type::BackgroundContainer, QStringLiteral(u":/icons/app/manager/background.png") },
             { ToysTreeViewItem::Type::Player, RPZAtom::iconPathByAtomType.value(RPZAtom::Type::Player) },
-            { ToysTreeViewItem::Type::POI, RPZAtom::iconPathByAtomType.value(RPZAtom::Type::POI) }
+            { ToysTreeViewItem::Type::POI, RPZAtom::iconPathByAtomType.value(RPZAtom::Type::POI) },
+            { ToysTreeViewItem::Type::FogOfWar, RPZAtom::iconPathByAtomType.value(RPZAtom::Type::FogOfWar) }
         };
 
         static const inline QHash<ToysTreeViewItem::Type, QString> _typeDescriptions = {
@@ -201,6 +204,7 @@ class ToysTreeViewItem {
             { ToysTreeViewItem::Type::Text, RPZAtom::atomTypeDescr.value(RPZAtom::Type::Text) },
             { ToysTreeViewItem::Type::Player, RPZAtom::atomTypeDescr.value(RPZAtom::Type::Player) },
             { ToysTreeViewItem::Type::POI, RPZAtom::atomTypeDescr.value(RPZAtom::Type::POI) },
+            { ToysTreeViewItem::Type::FogOfWar, RPZAtom::atomTypeDescr.value(RPZAtom::Type::FogOfWar) },
             { ToysTreeViewItem::Type::NPC_Container, QT_TRANSLATE_NOOP("QObject", "NPC / Portraits") },
             { ToysTreeViewItem::Type::ObjectContainer, QT_TRANSLATE_NOOP("QObject", "Objects") },
             { ToysTreeViewItem::Type::FloorBrushContainer, QT_TRANSLATE_NOOP("QObject", "Brushes") },

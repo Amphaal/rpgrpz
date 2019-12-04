@@ -220,7 +220,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
         this->scene()->setSceneRect(this->_currentMapParameters.sceneRect());
 
         //fog
-        this->_fog = new MapViewFog;
+        this->_fog = new MapViewFog(this->scene());
         this->_addItemToScene(this->_fog);
         this->_fog->triggerAnimation();
 

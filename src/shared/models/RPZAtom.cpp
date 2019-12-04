@@ -203,7 +203,8 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams(const RPZAtom::Type &type) 
     QSet<RPZAtom::Parameter> out;
     
     switch(type) {
-
+        
+        case RPZAtom::Type::FogOfWar:
         case RPZAtom::Type::Drawing: {
             out.insert(RPZAtom::Parameter::PenWidth);
         }

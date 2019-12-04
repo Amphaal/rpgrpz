@@ -80,7 +80,8 @@ class RPZAtom : public Serializable {
             Event, 
             Player,
             Background,
-            POI
+            POI,
+            FogOfWar //fake atom
         };
 
         enum class BrushType {
@@ -111,7 +112,8 @@ class RPZAtom : public Serializable {
             { RPZAtom::Type::Text, QStringLiteral(u":/icons/app/tools/text.png") },
             { RPZAtom::Type::Player, QStringLiteral(u":/icons/app/connectivity/cloak.png") },
             { RPZAtom::Type::POI, QStringLiteral(u":/icons/app/manager/POI.png") },
-            { RPZAtom::Type::NPC, QStringLiteral(u":/icons/app/manager/npc.png") }
+            { RPZAtom::Type::NPC, QStringLiteral(u":/icons/app/manager/npc.png") },
+            { RPZAtom::Type::FogOfWar, QStringLiteral(u":/icons/app/manager/fog.png") }
         };
 
         static const inline QHash<RPZAtom::Type, RPZAtom::Parameter> descriptorsByAtomType {
@@ -133,6 +135,7 @@ class RPZAtom : public Serializable {
             { RPZAtom::Type::Player, QT_TRANSLATE_NOOP("QObject", "Player") },
             { RPZAtom::Type::NPC, QT_TRANSLATE_NOOP("QObject", "Non-playable character") },
             { RPZAtom::Type::POI, QT_TRANSLATE_NOOP("QObject", "Point of interest") },
+            { RPZAtom::Type::FogOfWar, QT_TRANSLATE_NOOP("QObject", "Fog of war") },
         };
 
         static const inline QHash<RPZAtom::Type, QString> atomCategoryTypeDescr {
