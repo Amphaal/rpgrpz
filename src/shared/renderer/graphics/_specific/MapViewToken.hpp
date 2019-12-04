@@ -15,6 +15,7 @@
 #include "src/shared/models/RPZAtom.h"
 
 #include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
+#include "src/shared/renderer/graphics/_base/RPZAnimated.hpp"
 
 class MapViewTokenOutline : public QObject, public QGraphicsItem, public RPZGraphicsItem {
     
@@ -98,7 +99,7 @@ class MapViewTokenOutline : public QObject, public QGraphicsItem, public RPZGrap
 };
 
 
-class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsItem {
+class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsItem, public RPZAnimated {
     
     Q_OBJECT
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
@@ -139,8 +140,7 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
 
         }
 
-        //only use on main thread !
-        void triggerAnimation() {
+        void triggerAnimation() override {
             
             if(!this->_outline) {
                 this->_outline = new MapViewTokenOutline(this, this, this->_owned); 

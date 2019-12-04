@@ -13,11 +13,12 @@ QGraphicsItem* AtomRenderer::createGraphicsItem(const RPZAtom &atom, const RPZAs
         case RPZAtom::Type::Object:
             out = _createGenericImageBasedItem(atom, asset);
         break;
-        
+
         case RPZAtom::Type::Brush:
             out = _createBrushItem(atom, asset);
         break;
 
+        case RPZAtom::Type::FogOfWar:
         case RPZAtom::Type::Drawing:
             out = _createDrawingItem(atom);
         break;
@@ -156,6 +157,7 @@ MapViewDrawing* AtomRenderer::_createDrawingItem(const RPZAtom &atom) {
     QPen pen;
     pen.setCapStyle(Qt::RoundCap);
     pen.setJoinStyle(Qt::RoundJoin);
+    if(atom.type() == RPZAtom::Type::FogOfWar) pen.setColor(Qt::transparent);
 
     //define a default shape for ghost items
     auto shape = atom.shape();

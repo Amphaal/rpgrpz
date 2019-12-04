@@ -39,7 +39,8 @@
 #include "src/ui/map/modules/MV_Manipulation.hpp"
 #include "src/ui/map/modules/MV_HUDLayout.hpp"
 
-#include "src/shared/renderer/DrawingAssist.hpp"
+#include "src/shared/renderer/assists/DrawingAssist.hpp"
+#include "src/shared/renderer/assists/FogOfWarAssist.hpp"
 
 #include "src/shared/renderer/graphics/MapViewGraphics.h"
 
@@ -101,7 +102,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         DrawingAssist* _drawingAssist = nullptr;
         AtomsContextualMenuHandler* _menuHandler = nullptr;
         AtomActionsHandler* _atomActionsHandler = nullptr;
-        MapViewFog* _fog = nullptr;
+        FogOfWarAssist* _fowAssist = nullptr;
 
         //helpers
         void _handleHintsSignalsAndSlots();

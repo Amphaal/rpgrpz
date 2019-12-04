@@ -1132,6 +1132,7 @@
     </message>
     <message>
         <location filename="../shared/models/RPZAtom.h" line="138"/>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="55"/>
         <source>Fog of war</source>
         <translation>Brouillard de guerre</translation>
     </message>
@@ -1246,9 +1247,24 @@
         <translation>Niveau de zoom Minimum / Maximum</translation>
     </message>
     <message>
-        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="8"/>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="11"/>
         <source>Map parameters</source>
         <translation>Paramètres de la carte</translation>
+    </message>
+    <message>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="18"/>
+        <source>Fog of war opacity</source>
+        <translation>Opacité du brouillard de guerre</translation>
+    </message>
+    <message>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="31"/>
+        <source>Reverse fog</source>
+        <translation>Inverser le brouillard</translation>
+    </message>
+    <message>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="59"/>
+        <source>FoW opacity</source>
+        <translation>Opacité du BdG</translation>
     </message>
     <message>
         <location filename="../shared/commands/AtomsContextualMenuHandler.cpp" line="66"/>

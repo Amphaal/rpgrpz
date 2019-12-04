@@ -10,6 +10,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
     this->_menuHandler = new AtomsContextualMenuHandler(this);
     this->_atomActionsHandler = new AtomActionsHandler(this, this);
     this->_drawingAssist = new DrawingAssist(this);
+    this->_fowAssist = new FogOfWarAssist(this);
 
     //OpenGL backend activation
     QGLFormat format;
@@ -180,8 +181,8 @@ void MapView::_addItemToScene(QGraphicsItem* item) {
 
     this->scene()->addItem(item);
 
-    if(auto token = dynamic_cast<MapViewToken*>(item)) {
-        token->triggerAnimation();
+    if(auto animated = dynamic_cast<RPZAnimated*>(item)) {
+        animated->triggerAnimation();
     }
 
 }
@@ -220,9 +221,9 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
         this->scene()->setSceneRect(this->_currentMapParameters.sceneRect());
 
         //fog
-        this->_fog = new MapViewFog(this->scene());
-        this->_addItemToScene(this->_fog);
-        this->_fog->triggerAnimation();
+        this->_addItemToScene(
+            this->_fowAssist->generateFOWItem()
+        );
 
         //reset view
         this->goToDefaultViewState();
@@ -536,6 +537,11 @@ void MapView::mousePressEvent(QMouseEvent *event) {
                     //conditionnal drawing
                     auto templateAtom = HintThread::hint()->templateAtom();
                     switch(templateAtom.type()) {
+                        
+                        case RPZAtom::Type::FogOfWar: {
+                            //TODO
+                        }
+                        break;
 
                         case RPZAtom::Type::Drawing:
                         case RPZAtom::Type::Brush:
@@ -604,6 +610,12 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
         auto type = HintThread::hint()->templateAtom().type();
         
         switch(type) {
+
+            case RPZAtom::Type::FogOfWar: {
+                //TODO
+            }
+            break;
+
             case RPZAtom::Type::Drawing:
             case RPZAtom::Type::Brush:
                 this->_drawingAssist->updateDrawingPath(event->pos());
@@ -658,6 +670,12 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
                     if(this->_ignoreSelectionChangedEvents) this->_notifySelection();
                     this->_ignoreSelectionChangedEvents = false;
 
+                }
+                break;
+
+                case MapTool::Atom: {
+                    if(HintThread::hint()->templateAtom().type() != RPZAtom::Type::FogOfWar) break;
+                    //TODO
                 }
                 break;
 

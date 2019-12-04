@@ -19,7 +19,7 @@ class DrawingAssist {
 
             this->_drawnType = drawnFrom.type();
             this->_brushType = drawnFrom.brushType();
-            this->_stickyBrushIsDrawing = this->_brushType == RPZAtom::BrushType::Cutter;
+            this->_stickyBrushIsDrawing = this->_drawnType == RPZAtom::Type::Brush && this->_brushType == RPZAtom::BrushType::Cutter;
 
             if(this->_stickyBrushIsDrawing) {
                 if(!this->_tempDrawing) this->_beginDrawing(scenePos);

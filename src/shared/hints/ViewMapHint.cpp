@@ -549,7 +549,10 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
         
         //generate ghost
         QGraphicsItem* maybeToDelete = nullptr;
-        auto newGhost = this->_generateGhostItem(mPayload->selectedToy(), maybeToDelete);
+        QGraphicsItem* newGhost = nullptr; 
+
+        auto toy = mPayload->selectedToy();
+        newGhost = this->_generateGhostItem(toy, maybeToDelete);
         
         //request deletion previous ghost
         if(maybeToDelete) emit requestingUIAlteration(Payload::Alteration::Removed, {maybeToDelete});

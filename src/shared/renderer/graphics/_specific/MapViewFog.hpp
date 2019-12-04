@@ -8,10 +8,11 @@
 #include <QPainterPath>
 
 #include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
+#include "src/shared/renderer/graphics/_base/RPZAnimated.hpp"
 
 #include "src/helpers/_appContext.h"
 
-class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem {
+class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem, public RPZAnimated {
     
     Q_OBJECT
     Q_PROPERTY(qreal textureHPos READ textureHPos WRITE setTextureHPos)
@@ -42,7 +43,7 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem 
             this->_fogAnim->deleteLater();
         }
 
-        void triggerAnimation() {
+        void triggerAnimation() override {
             this->_fogAnim->start();
         }
 
