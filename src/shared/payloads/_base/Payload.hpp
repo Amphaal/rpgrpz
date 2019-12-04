@@ -21,7 +21,9 @@ class Payload {
             AssetChanged,
             AtomTemplateChanged,
             AtomTemplateSelected,
-            ToySelected
+            ToySelected,
+            FogChanged,
+            FogModeChanged
         }; 
         Q_ENUM(Alteration)
 
@@ -42,7 +44,9 @@ class Payload {
             Payload::Alteration::Removed, 
             Payload::Alteration::Reset,
             Payload::Alteration::MetadataChanged,
-            Payload::Alteration::BulkMetadataChanged
+            Payload::Alteration::BulkMetadataChanged,
+            Payload::Alteration::FogChanged,
+            Payload::Alteration::FogModeChanged
         };
     
 };

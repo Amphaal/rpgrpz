@@ -3,7 +3,7 @@
 #include <QObject>
 #include <QGraphicsItem>
 #include <QPropertyAnimation>
-#include <QGraphicsScene>
+#include <QGraphicsView>
 #include <QComboBox>
 #include <QPainterPath>
 
@@ -19,7 +19,7 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
     Q_INTERFACES(QGraphicsItem)
     
     public:
-        MapViewFog(QGraphicsScene* sceneToBindTo) {
+        MapViewFog(QGraphicsView* view) : _view(view) {
             
             this->setZValue(AppContext::FOG_Z_INDEX);
 
@@ -62,6 +62,30 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             this->update();
         }
 
+        //
+        
+        void setOpacity(qreal value) {
+            this->_fogOpacity = value;
+            this->update();
+        }
+
+        void setReversedMode(bool isReversed) {
+            
+            if(isReversed) {
+                this->_computedPath = QPainterPath();
+                this->_computedPath.addRect(this->scene()->sceneRect());
+                this->_computedPath.addPath(this->_rawPath);
+            } 
+            
+            else {
+                this->_computedPath = this->_rawPath;
+            }
+
+            this->_reversedMode = isReversed;
+            this->update();
+        
+        }
+
     protected:
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
             auto result = this->conditionnalPaint(this, painter, option, widget);
@@ -73,70 +97,27 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
 
             painter->save();
 
-                painter->setClipPath(this->_path);
+                painter->setClipPath(this->_computedPath);
 
                     painter->setPen(Qt::NoPen);
                     painter->setBrush(this->_brush);
                     painter->setTransform(QTransform());
+                    painter->setOpacity(this->_fogOpacity);
 
                     QPainterPath p;
-                    painter->drawRect(option->rect);
+                    painter->drawRect(this->_view->geometry());
 
             painter->restore();
 
         }
 
-        void _initTestCombo() {
-            
-            this->_testCb = new QComboBox;
-            
-            auto addOp = [=](QPainter::CompositionMode mode, QString str) {
-                this->_testCb->addItem(str, (int)mode);
-            };
-
-            addOp(QPainter::CompositionMode_SourceOver, "SourceOver");
-            addOp(QPainter::CompositionMode_DestinationOver, "DestinationOver");
-            addOp(QPainter::CompositionMode_Clear, "Clear");
-            addOp(QPainter::CompositionMode_Source, "Source");
-            addOp(QPainter::CompositionMode_Destination, "Destination");
-            addOp(QPainter::CompositionMode_SourceIn, "SourceIn");
-            addOp(QPainter::CompositionMode_DestinationIn, "DestinationIn");
-            addOp(QPainter::CompositionMode_SourceOut, "SourceOut");
-            addOp(QPainter::CompositionMode_DestinationOut, "DestinationOut");
-            addOp(QPainter::CompositionMode_SourceAtop, "SourceAtop");
-            addOp(QPainter::CompositionMode_DestinationAtop, "DestinationAtop");
-            addOp(QPainter::CompositionMode_Xor, "Xor");
-            addOp(QPainter::CompositionMode_Plus, "Plus");
-            addOp(QPainter::CompositionMode_Multiply, "Multiply");
-            addOp(QPainter::CompositionMode_Screen, "Screen");
-            addOp(QPainter::CompositionMode_Overlay, "Overlay");
-            addOp(QPainter::CompositionMode_Darken, "Darken");
-            addOp(QPainter::CompositionMode_Lighten, "Lighten");
-            addOp(QPainter::CompositionMode_ColorDodge, "ColorDodge");
-            addOp(QPainter::CompositionMode_ColorBurn, "ColorBurn");
-            addOp(QPainter::CompositionMode_HardLight, "HardLight");
-            addOp(QPainter::CompositionMode_SoftLight, "SoftLight");
-            addOp(QPainter::CompositionMode_Difference, "Difference");
-            addOp(QPainter::CompositionMode_Exclusion, "Exclusion");
-
-            QObject::connect(
-                this->_testCb, QOverload<int>::of(&QComboBox::highlighted),
-                [=](int index) {
-                    this->_testMode = (QPainter::CompositionMode)this->_testCb->itemData(index).toInt();
-                }
-            );
-
-            this->_testCb->show();
-
-        }
-
     private:
-        QPainterPath _path;
+        QGraphicsView* _view = nullptr;
+        QPainterPath _rawPath;
+        QPainterPath _computedPath;
         QBrush _brush;
         QPropertyAnimation* _fogAnim = nullptr;
-
-        //test
-        QComboBox* _testCb = nullptr;
-        QPainter::CompositionMode _testMode = (QPainter::CompositionMode)0;
+        qreal _fogOpacity = .5;
+        bool _reversedMode = false;
 
 };

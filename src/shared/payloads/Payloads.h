@@ -13,6 +13,8 @@
 #include "local/AtomTemplateChangedPayload.hpp"
 #include "local/AtomTemplateSelectedPayload.hpp"
 #include "local/ToySelectedPayload.hpp"
+#include "fog/FogChangedPayload.hpp"
+#include "fog/FogModeChangedPayload.hpp"
 
 class Payloads {
     public:
@@ -21,6 +23,14 @@ class Payloads {
             AlterationPayload lowCast(hash);
             
             switch(lowCast.type()) {
+                
+                case Payload::Alteration::FogChanged: {
+                    return QSharedPointer<FogChangedPayload>(new FogChangedPayload(hash));
+                }
+
+                case Payload::Alteration::FogModeChanged: {
+                    return QSharedPointer<FogModeChangedPayload>(new FogModeChangedPayload(hash));
+                }
 
                 case Payload::Alteration::BulkMetadataChanged:
                     return QSharedPointer<BulkMetadataChangedPayload>(new BulkMetadataChangedPayload(hash));

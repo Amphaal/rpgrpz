@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QThread>
+
 #include "src/shared/hints/MapHint.h"
 
 class HintThread {

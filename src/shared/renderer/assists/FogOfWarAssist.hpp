@@ -9,7 +9,7 @@ class FogOfWarAssist {
         FogOfWarAssist(QGraphicsView* view) : _view(view) {}
 
         MapViewFog* generateFOWItem() {
-            return new MapViewFog(this->_view->scene());
+            return new MapViewFog(this->_view);
         }
     
     private:
