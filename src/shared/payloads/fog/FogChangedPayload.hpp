@@ -9,13 +9,14 @@ class FogChangedPayload : public AlterationPayload {
     public:
         enum class ChangeType {
             Added,
-            Removed
+            Removed,
+            Reset
         };
 
         explicit FogChangedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        FogChangedPayload(const QPainterPath &modifyingPath, const ChangeType &type) : AlterationPayload(Payload::Alteration::FogModeChanged) {
-            this->insert(QStringLiteral(u"mp"), JSONSerializer::asBase64(modifyingPath));
+        FogChangedPayload(const ChangeType &type, const QPainterPath &modifyingPath = QPainterPath()) : AlterationPayload(Payload::Alteration::FogModeChanged) {
             this->insert(QStringLiteral(u"t"), (int)type);
+            if(!modifyingPath.isEmpty()) this->insert(QStringLiteral(u"mp"), JSONSerializer::asBase64(modifyingPath));
         }
     
         ChangeType changeType() const {

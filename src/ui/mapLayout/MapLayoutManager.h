@@ -24,6 +24,7 @@ class MapLayoutManager : public QWidget {
         QPushButton* _mapParamBtn = nullptr;
         QSlider* _FoWOpacitySlider = nullptr;
         QCheckBox* _FoWReversedChk = nullptr;
+        QPushButton* _FoWResetBtn = nullptr;
 
         RPZMapParameters _currentMapParameters;
 
@@ -31,4 +32,5 @@ class MapLayoutManager : public QWidget {
         void _changeFogMode(int);
         void _fogOpacityChange(int);
         void _onMapSetup(const RPZMapParameters &mParams, const RPZFogParams &fParams);
+        void _handleFogReset();
 };

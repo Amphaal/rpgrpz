@@ -42,7 +42,7 @@ class AppContext {
         static void _makeSureDirPathExists(const QString &path);
 
         static inline qreal _ppcm;
-        static inline qreal _fogOpacity;
+        static inline qreal _fogOpacity = .5;
         static inline QGLWidget* _mapGLWidget = nullptr;
 
     public:    

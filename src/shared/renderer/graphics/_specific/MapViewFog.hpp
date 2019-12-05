@@ -7,6 +7,8 @@
 #include <QComboBox>
 #include <QPainterPath>
 
+#include "src/shared/models/RPZFogParams.hpp"
+
 #include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
 #include "src/shared/renderer/graphics/_base/RPZAnimated.hpp"
 
@@ -19,7 +21,7 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
     Q_INTERFACES(QGraphicsItem)
     
     public:
-        MapViewFog(QGraphicsView* view) : _view(view) {
+        MapViewFog() {
             
             this->setZValue(AppContext::FOG_Z_INDEX);
 
@@ -62,11 +64,15 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             this->update();
         }
 
+        void defineRectFromView(QGraphicsView *view) {
+            this->_viewRect = view->geometry();
+        }
+
         //
         
-        void setReversedMode(bool isReversed) {
+        void setFogMode(const RPZFogParams::Mode &mode) {
             
-            if(isReversed) {
+            if(mode == RPZFogParams::Mode::PathIsButFog) {
                 this->_computedPath = QPainterPath();
                 this->_computedPath.addRect(this->scene()->sceneRect());
                 this->_computedPath.addPath(this->_rawPath);
@@ -76,7 +82,6 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
                 this->_computedPath = this->_rawPath;
             }
 
-            this->_reversedMode = isReversed;
             this->update();
         
         }
@@ -100,18 +105,17 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
                     painter->setOpacity(AppContext::fogOpacity());
 
                     QPainterPath p;
-                    painter->drawRect(this->_view->geometry());
+                    painter->drawRect(this->_viewRect);
 
             painter->restore();
 
         }
 
     private:
-        QGraphicsView* _view = nullptr;
+        QRectF _viewRect = nullptr;
         QPainterPath _rawPath;
         QPainterPath _computedPath;
         QBrush _brush;
         QPropertyAnimation* _fogAnim = nullptr;
-        bool _reversedMode = false;
 
 };

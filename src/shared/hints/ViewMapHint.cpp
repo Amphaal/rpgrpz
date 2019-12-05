@@ -399,7 +399,7 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &asset) {
     emit requestingUIAlteration(Payload::Alteration::Removed, setOfGraphicsItemsToReplace.toList());
 
     //replace by new
-    emit requestingUIAlteration(Payload::Alteration::Added, newGis);
+    emit requestingUIAlteration(Payload::Alteration::Added, newGis, {});
 }
 
 void ViewMapHint::handlePreviewRequest(const AtomsSelectionDescriptor &selectionDescriptor, const RPZAtom::Parameter &parameter, const QVariant &value) {
@@ -504,6 +504,9 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
         this->_m_ghostItem.lock();
             this->_ghostItem = nullptr;
         this->_m_ghostItem.unlock();
+
+        //reset fog
+        this->_fogItem = new MapViewFog; //do not delete, the old one will be in UI thread ! 
 
         //reset descriptor
         emit atomDescriptorUpdated();
@@ -648,7 +651,12 @@ void ViewMapHint::_basicAlterationDone(const QList<RPZAtom::Id> &updatedIds, con
 
     }
 
-    emit requestingUIAlteration(type, toUpdate);
+    //fog
+    QList<QGraphicsItem*> additionnalResetSetupItems;
+    if(type == Payload::Alteration::Reset) additionnalResetSetupItems += this->_fogItem;
+
+    emit requestingUIAlteration(type, toUpdate, additionnalResetSetupItems);
+
 }
 
 void ViewMapHint::_updatesDone(const QList<RPZAtom::Id> &updatedIds, const RPZAtom::Updates &updates) {

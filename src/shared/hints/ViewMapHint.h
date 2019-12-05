@@ -1,16 +1,10 @@
 #pragma once
 
 #include <QMultiHash>
-
 #include <QGraphicsView>
 #include <QWidget>
-
 #include <QFileInfo>
-
 #include <QMessageBox>
-
-#include <QGraphicsPixmapItem>
-#include <QGraphicsSvgItem>
 #include <QPixmap>
 
 #include "src/shared/models/toy/RPZAsset.hpp"
@@ -49,7 +43,6 @@ class ViewMapHint : public AtomsStorage {
 
         QGraphicsItem* generateGraphicsFromTemplate(bool hiddenAsDefault = false) const; //safe
 
-
     public slots:
         void mightNotifyMovement(const QList<QGraphicsItem*> &itemsWhoMightHaveMoved); //safe
         void notifySelectedItems(const QList<QGraphicsItem*> &selectedItems); //safe
@@ -63,7 +56,7 @@ class ViewMapHint : public AtomsStorage {
         void handlePreviewRequest(const AtomsSelectionDescriptor &selectionDescriptor, const RPZAtom::Parameter &parameter, const QVariant &value);
 
     signals:
-        void requestingUIAlteration(const Payload::Alteration &type, const OrderedGraphicsItems &toAlter);
+        void requestingUIAlteration(const Payload::Alteration &type, const OrderedGraphicsItems &toAlter, const QList<QGraphicsItem*> &additionnalResetSetupItems);
         void requestingUIAlteration(const Payload::Alteration &type, const QList<QGraphicsItem*> &toAlter);
         void requestingUIUpdate(const QHash<QGraphicsItem*, RPZAtom::Updates> &toUpdate);
         void requestingUIUpdate(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates);
@@ -86,6 +79,7 @@ class ViewMapHint : public AtomsStorage {
         
         mutable QMutex _m_GItemsById;
         QMap<RPZAtom::Id, QGraphicsItem*> _GItemsById;
+        MapViewFog* _fogItem = nullptr;
 
         //atom descriptor
         ViewMapHint::SingleSelectionInteractible _singleSelectionInteractible;

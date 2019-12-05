@@ -10,7 +10,6 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
     this->_menuHandler = new AtomsContextualMenuHandler(this);
     this->_atomActionsHandler = new AtomActionsHandler(this, this);
     this->_drawingAssist = new DrawingAssist(this);
-    this->_fowAssist = new FogOfWarAssist(this);
 
     //OpenGL backend activation
     QGLFormat format;
@@ -60,8 +59,8 @@ void MapView::_handleHintsSignalsAndSlots() {
     );
 
     QObject::connect(
-        HintThread::hint(), QOverload<const Payload::Alteration &, const OrderedGraphicsItems &>::of(&ViewMapHint::requestingUIAlteration),
-        this, QOverload<const Payload::Alteration &, const OrderedGraphicsItems &>::of(&MapView::_onUIAlterationRequest)
+        HintThread::hint(), QOverload<const Payload::Alteration &, const OrderedGraphicsItems &, const QList<QGraphicsItem*> &>::of(&ViewMapHint::requestingUIAlteration),
+        this, QOverload<const Payload::Alteration &, const OrderedGraphicsItems &, const QList<QGraphicsItem*> &>::of(&MapView::_onUIAlterationRequest)
     );
     QObject::connect(
         HintThread::hint(), QOverload<const Payload::Alteration &, const QList<QGraphicsItem*>&>::of(&ViewMapHint::requestingUIAlteration),
@@ -197,11 +196,11 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
         i++;
     }
 
-    this->_onUIAlterationRequest(type, re);
+    this->_onUIAlterationRequest(type, re, {});
 
 }
 
-void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const OrderedGraphicsItems &toAlter) {
+void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const OrderedGraphicsItems &toAlter, const QList<QGraphicsItem*> &additionnalResetSetupItems) {
     
     //prevent circual selection
     QSignalBlocker b(this->scene());
@@ -220,10 +219,17 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
         this->scene()->clear();
         this->scene()->setSceneRect(this->_currentMapParameters.sceneRect());
 
-        //fog
-        this->_addItemToScene(
-            this->_fowAssist->generateFOWItem()
-        );
+        //additionnal items to integrate first
+        for(const auto item : additionnalResetSetupItems) {
+           
+            this->_addItemToScene(item);
+
+            //fog 
+            if(auto fog = dynamic_cast<MapViewFog*>(item)) {
+                fog->defineRectFromView(this);
+            }
+
+        }
 
         //reset view
         this->goToDefaultViewState();
@@ -260,7 +266,6 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
                 if(auto canBeAnimated = dynamic_cast<MapViewDrawing*>(item)) {
                     MapViewAnimator::animatePath(canBeAnimated, canBeAnimated->path());
                 } 
-
 
             }
             break;

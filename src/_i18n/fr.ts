@@ -1132,7 +1132,7 @@
     </message>
     <message>
         <location filename="../shared/models/RPZAtom.h" line="138"/>
-        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="55"/>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="58"/>
         <source>Fog of war</source>
         <translation>Brouillard de guerre</translation>
     </message>
@@ -1247,7 +1247,7 @@
         <translation>Niveau de zoom Minimum / Maximum</translation>
     </message>
     <message>
-        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="11"/>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="10"/>
         <source>Map parameters</source>
         <translation>Paramètres de la carte</translation>
     </message>
@@ -1257,14 +1257,36 @@
         <translation>Opacité du brouillard de guerre</translation>
     </message>
     <message>
-        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="31"/>
-        <source>Reverse fog</source>
-        <translation>Inverser le brouillard</translation>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="29"/>
+        <source>Reset</source>
+        <comment>Reset fog</comment>
+        <translation>Réinitialiser</translation>
     </message>
     <message>
-        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="59"/>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="30"/>
+        <source>Reset fog</source>
+        <translation>Réinitialiser le brouillard de guerre</translation>
+    </message>
+    <message>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="38"/>
+        <source>Reverse</source>
+        <comment>Reverse fog</comment>
+        <translation>Inverser</translation>
+    </message>
+    <message>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="39"/>
+        <source>Reverse fog</source>
+        <translation>Inverser le brouillard de guerre</translation>
+    </message>
+    <message>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="62"/>
+        <source>Opacity</source>
+        <comment>FoW opacity</comment>
+        <translation>Opacité</translation>
+    </message>
+    <message>
         <source>FoW opacity</source>
-        <translation>Opacité du BdG</translation>
+        <translation type="vanished">Opacité du BdG</translation>
     </message>
     <message>
         <location filename="../shared/commands/AtomsContextualMenuHandler.cpp" line="66"/>

@@ -2,10 +2,9 @@
 
 MapLayoutManager::MapLayoutManager(QGraphicsView* viewToMimic, QWidget *parent) : QWidget(parent) {
 
+    //tree
     this->_tree = new MapLayoutTree(this);
-    this->_FoWOpacitySlider = new QSlider(this);
-    this->_FoWReversedChk = new QCheckBox(this);
-
+    
     //param btn
     this->_mapParamBtn = new QPushButton(QIcon(QStringLiteral(u":/icons/app/tools/cog.png")), "");
     this->_mapParamBtn->setToolTip(QObject::tr("Map parameters"));
@@ -15,18 +14,29 @@ MapLayoutManager::MapLayoutManager(QGraphicsView* viewToMimic, QWidget *parent) 
     );
 
     //fow slider
+    this->_FoWOpacitySlider = new QSlider(this);
     this->_FoWOpacitySlider->setToolTip(QObject::tr("Fog of war opacity"));
     this->_FoWOpacitySlider->setOrientation(Qt::Orientation::Horizontal);
-    this->_FoWOpacitySlider->setValue(50);
-    this->_FoWOpacitySlider->setMinimum(0);
+    this->_FoWOpacitySlider->setMinimum(25);
     this->_FoWOpacitySlider->setMaximum(100);
+    this->_FoWOpacitySlider->setValue((int)(AppContext::fogOpacity() * 100));
     QObject::connect(
         this->_FoWOpacitySlider, &QSlider::valueChanged,
         this, &MapLayoutManager::_fogOpacityChange
     );
 
+    //fow reset
+    this->_FoWResetBtn = new QPushButton(QObject::tr("Reset", "Reset fog"));
+    this->_FoWResetBtn->setToolTip(QObject::tr("Reset fog"));
+    QObject::connect(
+        this->_FoWResetBtn, &QPushButton::pressed,
+        this, &MapLayoutManager::_handleFogReset
+    );
+
     //fow chk
-    this->_FoWReversedChk->setText(QObject::tr("Reverse fog"));
+    this->_FoWReversedChk = new QCheckBox(this);
+    this->_FoWReversedChk->setText(QObject::tr("Reverse", "Reverse fog"));
+    this->_FoWReversedChk->setToolTip(QObject::tr("Reverse fog"));
     QObject::connect(
         this->_FoWReversedChk, &QCheckBox::stateChanged,
         this, &MapLayoutManager::_changeFogMode
@@ -49,9 +59,10 @@ MapLayoutManager::MapLayoutManager(QGraphicsView* viewToMimic, QWidget *parent) 
     foWGroup->setAlignment(Qt::AlignHCenter);
     auto fowL = new QHBoxLayout;
     foWGroup->setLayout(fowL);
-    fowL->addWidget(new QLabel(QObject::tr("FoW opacity")));
+    fowL->addWidget(new QLabel(QObject::tr("Opacity", "FoW opacity")));
     fowL->addWidget(this->_FoWOpacitySlider, 1);
     fowL->addWidget(this->_FoWReversedChk, 0);
+    fowL->addWidget(this->_FoWResetBtn, 0);
 
     layout->addLayout(line);
     layout->addWidget(this->_tree, 1);
@@ -107,3 +118,13 @@ void MapLayoutManager::_changeFogMode(int) {
     this->_FoWReversedChk->setChecked(fParams.mode() == RPZFogParams::Mode::PathIsButFog);
 
  }
+
+void MapLayoutManager::_handleFogReset() {
+    
+    //payload
+    FogChangedPayload payload(FogChangedPayload::ChangeType::Reset);
+
+    //commit
+    AlterationHandler::get()->queueAlteration(Payload::Source::Local_MapLayout, payload);
+
+}
