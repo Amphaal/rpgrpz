@@ -22,27 +22,20 @@ MapLayoutManager::MapLayoutManager(QGraphicsView* viewToMimic, QWidget *parent) 
     this->_FoWOpacitySlider->setMaximum(100);
     QObject::connect(
         this->_FoWOpacitySlider, &QSlider::valueChanged,
-        [=](int state) {
-            //TODO
-        }
+        this, &MapLayoutManager::_fogOpacityChange
     );
 
     //fow chk
     this->_FoWReversedChk->setText(QObject::tr("Reverse fog"));
     QObject::connect(
         this->_FoWReversedChk, &QCheckBox::stateChanged,
-        [=](int state) {
-            //TODO
-        }
+        this, &MapLayoutManager::_changeFogMode
     );
 
     //events from map
     QObject::connect(
-        HintThread::hint(), &AtomsStorage::mapParametersChanged,
-        [=](const RPZMapParameters &mParams) {
-            this->_currentMapParameters = mParams;
-            //TODO fill fow chk && slider
-        }
+        HintThread::hint(), &AtomsStorage::mapSetup,
+        this, &MapLayoutManager::_onMapSetup
     );
 
     auto layout = new QVBoxLayout;
@@ -87,3 +80,30 @@ void MapLayoutManager::_handleMapParametersEdition() {
     AlterationHandler::get()->queueAlteration(Payload::Source::Local_MapLayout, payload);
 
 }
+
+void MapLayoutManager::_changeFogMode(int) {
+    
+    auto mode = this->_FoWReversedChk->isChecked() ? RPZFogParams::Mode::PathIsButFog : RPZFogParams::Mode::PathIsFog;
+
+    //get payload, update params
+    FogModeChangedPayload payload(mode);
+
+    //commit
+    AlterationHandler::get()->queueAlteration(Payload::Source::Local_MapLayout, payload);
+
+}
+
+ void MapLayoutManager::_fogOpacityChange(int value) {
+    AppContext::defineFogOpacity((double)value / 100);
+ }
+
+ void MapLayoutManager::_onMapSetup(const RPZMapParameters &mParams, const RPZFogParams &fParams) {
+    
+    //define current params
+    this->_currentMapParameters = mParams;
+
+    //define default state
+    QSignalBlocker b2(this->_FoWReversedChk);
+    this->_FoWReversedChk->setChecked(fParams.mode() == RPZFogParams::Mode::PathIsButFog);
+
+ }

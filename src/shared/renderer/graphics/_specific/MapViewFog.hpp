@@ -64,11 +64,6 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
 
         //
         
-        void setOpacity(qreal value) {
-            this->_fogOpacity = value;
-            this->update();
-        }
-
         void setReversedMode(bool isReversed) {
             
             if(isReversed) {
@@ -102,7 +97,7 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
                     painter->setPen(Qt::NoPen);
                     painter->setBrush(this->_brush);
                     painter->setTransform(QTransform());
-                    painter->setOpacity(this->_fogOpacity);
+                    painter->setOpacity(AppContext::fogOpacity());
 
                     QPainterPath p;
                     painter->drawRect(this->_view->geometry());
@@ -117,7 +112,6 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         QPainterPath _computedPath;
         QBrush _brush;
         QPropertyAnimation* _fogAnim = nullptr;
-        qreal _fogOpacity = .5;
         bool _reversedMode = false;
 
 };

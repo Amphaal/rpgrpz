@@ -28,4 +28,7 @@ class MapLayoutManager : public QWidget {
         RPZMapParameters _currentMapParameters;
 
         void _handleMapParametersEdition();
+        void _changeFogMode(int);
+        void _fogOpacityChange(int);
+        void _onMapSetup(const RPZMapParameters &mParams, const RPZFogParams &fParams);
 };

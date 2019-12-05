@@ -20,6 +20,10 @@ const RPZMap<RPZAtom>& MapDatabase::atoms() const {
     return this->_atomsById;
 }
 
+const RPZFogParams MapDatabase::fogParams() const {
+    return this->_fogParams;
+}
+
 const QSet<RPZAsset::Hash>& MapDatabase::usedAssetHashes() const {
     return this->_assetHashes;
 }
@@ -37,6 +41,9 @@ void MapDatabase::_setupLocalData() {
 
     //map params
     this->_mapParams = RPZMapParameters(this->entityAsObject(QStringLiteral(u"params")).toVariantHash());
+
+    //fog
+    this->_fogParams = RPZFogParams(this->entityAsObject(QStringLiteral(u"fog")).toVariantHash());
 
     //atoms
     for(const auto &atomAsJson : this->entityAsArray(QStringLiteral(u"atoms"))) {
@@ -56,6 +63,7 @@ const QJsonObject MapDatabase::_updatedInnerDb() {
     
     auto db = this->db();
 
+    updateFrom(db, QStringLiteral(u"fog"), this->_fogParams);
     updateFrom(db, QStringLiteral(u"atoms"), this->_atomsById.toVList());
     updateFrom(db, QStringLiteral(u"assets"), this->_assetHashes);
     updateFrom(db, QStringLiteral(u"params"), this->_mapParams);
@@ -100,6 +108,10 @@ void MapDatabase::setMapParams(const RPZMapParameters &newParams) {
     this->_mapParams = newParams;
 }
 
+void MapDatabase::setFogParams(const RPZFogParams &fogParams) {
+    this->_fogParams = fogParams;
+}
+
 const RPZMapParameters MapDatabase::mapParams() const {
     return this->_mapParams;
 }
@@ -126,6 +138,7 @@ void MapDatabase::clear() {
 
 JSONDatabase::Model MapDatabase::_getDatabaseModel() {
     return {
+        { { QStringLiteral(u"fog"), JSONDatabase::EntityType::Object }, &this->_fogParams },
         { { QStringLiteral(u"atoms"), JSONDatabase::EntityType::Array }, &this->_atomsById },
         { { QStringLiteral(u"assets"), JSONDatabase::EntityType::Array }, &this->_assetHashes },
         { { QStringLiteral(u"params"), JSONDatabase::EntityType::Object }, &this->_mapParams },

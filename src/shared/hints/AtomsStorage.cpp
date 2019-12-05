@@ -389,9 +389,13 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
         //set new map params
         auto mParams = mPayload->mapParameters();
         this->_map.setMapParams(mParams);
+
+        //set fog params
+        auto fParams = mPayload->fogParameters();
+        this->_map.setFogParams(fParams);
         
         lock.unlock();
-            emit mapParametersChanged(mParams);
+            emit mapSetup(mParams, fParams);
         lock.relock();
 
     }

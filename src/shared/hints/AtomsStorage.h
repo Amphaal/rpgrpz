@@ -57,7 +57,7 @@ class AtomsStorage : public AlterationAcknoledger {
         const QList<RPZCharacter::UserBound> findUnboundCharacters(const QList<RPZCharacter::UserBound> &availableCharacters); //safe
         
     signals:
-        void mapParametersChanged(const RPZMapParameters &mParams);
+        void mapSetup(const RPZMapParameters &mParams, const RPZFogParams &fParams);
 
     public slots:    
         void redo();

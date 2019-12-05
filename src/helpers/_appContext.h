@@ -42,6 +42,7 @@ class AppContext {
         static void _makeSureDirPathExists(const QString &path);
 
         static inline qreal _ppcm;
+        static inline qreal _fogOpacity;
         static inline QGLWidget* _mapGLWidget = nullptr;
 
     public:    
@@ -66,6 +67,9 @@ class AppContext {
 
         static void definePPcm(QPaintDevice* device);
         static qreal pointPerCentimeters();
+
+        static void defineFogOpacity(qreal opacity);
+        static qreal fogOpacity();
 
         static void defineMapWidget(QGLWidget* mapGLWidget);
         static QGLWidget* mapGLWidget();

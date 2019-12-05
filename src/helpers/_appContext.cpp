@@ -31,10 +31,17 @@ QGLWidget* AppContext::mapGLWidget() {
     return _mapGLWidget;
 }
 
+void AppContext::defineFogOpacity(qreal opacity) {
+    _fogOpacity = opacity;
+}
+
+qreal AppContext::fogOpacity() {
+    return _fogOpacity;
+}
+
 qreal AppContext::pointPerCentimeters() {
     return _ppcm;
 }
-
 void AppContext::definePPcm(QPaintDevice* device) {
     _ppcm = (double)device->logicalDpiX() / 2.54;
 }

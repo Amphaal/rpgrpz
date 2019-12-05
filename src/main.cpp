@@ -114,6 +114,7 @@ int main(int argc, char** argv) {
         qRegisterMetaType<RPZAssetImportPackage>("RPZAssetImportPackage");
         qRegisterMetaType<RPZCharacter>("RPZCharacter");
         qRegisterMetaType<StreamPlayStateTracker>("StreamPlayStateTracker");
+        qRegisterMetaType<RPZFogParams>("RPZFogParams");
     
         //struct
         qRegisterMetaType<AtomsSelectionDescriptor>("AtomsSelectionDescriptor");

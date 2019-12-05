@@ -84,8 +84,8 @@ void MapView::_handleHintsSignalsAndSlots() {
     );
 
     QObject::connect(
-        HintThread::hint(), &AtomsStorage::mapParametersChanged,
-        [=](const RPZMapParameters &mParams) {
+        HintThread::hint(), &AtomsStorage::mapSetup,
+        [=](const RPZMapParameters &mParams,  const RPZFogParams &fParams) {
             this->_currentMapParameters = mParams;
         }
     );
