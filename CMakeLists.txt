@@ -18,6 +18,13 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 SET(APP_PUBLISHER "LVWL")
 SET(APP_DEFAULT_URL "https://github.com/Amphaal/rpgrpz")
 SET(APP_PATCHNOTE_URL "https://github.com/Amphaal/rpgrpz/releases")
+SET(SENTRY_ENDPOINT "https://sentry.io/api/1847216/minidump/?sentry_key=a6c37ad053cd4eec98dcdbebfb683fe1")
+
+##crashpad
+SET(CRASHPAD_HANDLER_NAME "crashpad_handler")
+IF(WIN32)
+    SET(CRASHPAD_HANDLER_NAME "${CRASHPAD_HANDLER_NAME}.exe")
+ENDIF()
 
 #set default maintenance tool path
 SET(MAINTENANCE_TOOL_LOCATION "")
@@ -239,6 +246,11 @@ deployqt(${PROJECT_NAME})
 ###############
 # OTHERS COPY #
 ###############
+
+#crashpad handler
+add_custom_command(TARGET ${PROJECT_NAME}   
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CONAN_BIN_DIRS_CRASHPAD}/${CRASHPAD_HANDLER_NAME} $<TARGET_FILE_DIR:${PROJECT_NAME}>/${CRASHPAD_HANDLER_NAME}
+)
 
 #translations
 add_custom_command(TARGET ${PROJECT_NAME}   

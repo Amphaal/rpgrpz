@@ -16,7 +16,7 @@ class MapViewInteractibleDescriptor : public QWidget {
 
     private:
 
-        static inline QSize _defaultPortraitSize = RPZCharacter::defaultPortraitSize / 2;
+        static inline QSize _defaultPortraitSize = RPZCharacter::defaultPortraitSize / 1.5;
 
         GaugeWidget* _gaugeW = nullptr;
         QLabel* _descrLbl = nullptr;

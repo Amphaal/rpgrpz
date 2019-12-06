@@ -1,6 +1,7 @@
 [requires]
 miniupnpc/2.1@rhard/testing
 OpenSSL/1.1.1c@conan/stable
+crashpad/20190903@bincrafters/stable
 
 [generators]
 cmake
