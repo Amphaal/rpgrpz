@@ -507,6 +507,7 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
 
         //reset fog
         this->_fogItem = new MapViewFog; //do not delete, the old one will be in UI thread ! 
+        //TODO init fog
 
         //reset descriptor
         emit atomDescriptorUpdated();
@@ -599,11 +600,8 @@ void ViewMapHint::_mightUpdateAtomDescriptor(const QList<RPZAtom::Id> &idsUpdate
     
     //existing, update descriptor
     else {
-
         emit atomDescriptorUpdated(*atomPtr);
-    
     }
-
 
 }
 

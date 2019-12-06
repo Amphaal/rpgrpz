@@ -112,7 +112,7 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         }
 
     private:
-        QRectF _viewRect = nullptr;
+        QRectF _viewRect;
         QPainterPath _rawPath;
         QPainterPath _computedPath;
         QBrush _brush;

@@ -50,7 +50,7 @@ class MapViewInteractibleDescriptor : public QWidget {
                 if(asset) toSet = QPixmap(asset->filepath());
                 else toSet = QPixmap(QStringLiteral(u":/assets/default.jpg"));
 
-                toSet = toSet.scaled(_defaultPortraitSize, Qt::AspectRatioMode::KeepAspectRatio);
+                toSet = toSet.scaledToHeight(_defaultPortraitSize.height());
 
             }
             this->_portraitLbl->setPixmap(toSet);
@@ -79,7 +79,7 @@ class MapViewInteractibleDescriptor : public QWidget {
 
             this->_attitudeLbl->setVisible(false);
 
-            this->_portraitLbl->setFixedSize(_defaultPortraitSize);
+            this->_portraitLbl->setFixedHeight(_defaultPortraitSize.height());
             this->_portraitLbl->setVisible(false);
             this->_portraitLbl->setStyleSheet("border: 1px solid black; background-color: white;");
 
