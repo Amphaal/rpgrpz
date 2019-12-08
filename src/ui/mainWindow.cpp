@@ -705,7 +705,17 @@ QMenu* MainWindow::_getHelpMenu() {
         }
     );
 
+    //sentry
+    auto testSentryReportAction = RPZActions::sentry();
+    QObject::connect(
+        testSentryReportAction, &QAction::triggered,
+        [&]() {
+            abort(); //must crash and trigger Sentry minidump report push
+        }
+    );
+
     helpMenuItem->addAction(patchnoteAction);
+    helpMenuItem->addAction(testSentryReportAction);
     helpMenuItem->addSeparator();
     helpMenuItem->addAction(this->cfugAction);
 

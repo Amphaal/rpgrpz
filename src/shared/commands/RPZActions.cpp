@@ -237,6 +237,12 @@ QAction* RPZActions::patchnote() {
     );
 }
 
+QAction* RPZActions::sentry() {
+    return new QAction(
+        QObject::tr("Test Sentry bug reporting")
+    );
+}
+
 QAction* RPZActions::checkUpdates() {
     return new QAction(QObject::tr("Check for updates..."));
 }

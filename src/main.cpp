@@ -139,6 +139,7 @@ int main(int argc, char** argv) {
     //message handler
     qInstallMessageHandler(LogWriter::customMO);
 
+    //crashpad activated if release app
     startCrashpad();
 
     ////////////

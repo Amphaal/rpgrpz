@@ -766,7 +766,7 @@
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="717"/>
+        <location filename="../ui/mainWindow.cpp" line="727"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
@@ -976,47 +976,52 @@
         <translation>%1 - Notes de patch</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="241"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="242"/>
+        <source>Test Sentry bug reporting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../shared/commands/RPZActions.cpp" line="247"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="246"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="252"/>
         <source>Open application data folder (%1)</source>
         <translation>Ouvrir le dossier de données de l&apos;application (%1)</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="252"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="258"/>
         <source>Show session log</source>
         <translation>Afficher le journal d&apos;événements de session</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="256"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="262"/>
         <source>Show full log</source>
         <translation>Afficher le journal d&apos;événements</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="260"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="266"/>
         <source>Launch maintenance tool</source>
         <translation>Lancer l&apos;outil de maintenance</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="264"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="270"/>
         <source>Load a map</source>
         <translation>Charger une carte</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="271"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="277"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="278"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="284"/>
         <source>Save map</source>
         <translation>Sauvegarder la carte</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="285"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="291"/>
         <source>Save as map...</source>
         <translation>Sauvegarder la carte sous...</translation>
     </message>

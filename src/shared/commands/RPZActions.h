@@ -22,6 +22,7 @@ enum class MapTool {
 
 class RPZActions {
     public:
+        static QAction* sentry();
         static QAction* redo();
         static QAction* undo();
         static QAction* copy();
