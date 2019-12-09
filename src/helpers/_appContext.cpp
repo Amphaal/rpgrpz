@@ -21,6 +21,7 @@ void AppContext::configureApp(QCoreApplication &app) {
 
     //else default init
     AppContext::init();
+
 }
 
 void AppContext::defineMapWidget(QGLWidget* mapGLWidget) {
@@ -158,8 +159,54 @@ void AppContext::init(const QString &customContext) {
     _makeSureDirPathExists(getMapsFolderLocation());
     _makeSureDirPathExists(getServerMapAutosaveFolderLocation());
 
+    //crashpad activated if release app
+    startCrashpad();
+
 } 
 
+
+bool AppContext::startCrashpad() {
+
+    // Cache directory that will store crashpad information and minidumps
+    auto dbStr = AppContext::getAppDataLocation() + "/crashpad_db";
+    base::FilePath database(dbStr.toStdWString());
+
+    // Path to the out-of-process handler executable
+    auto handlerStr = QString(CRASHPAD_HANDLER_NAME);
+    base::FilePath handler(handlerStr.toStdWString());
+
+    // URL used to submit minidumps to
+    std::string url(SENTRY_ENDPOINT);
+
+    // Optional annotations passed via --annotations to the handler
+    std::map<std::string, std::string> annotations;
+
+    // Optional arguments to pass to the handler
+    std::vector<std::string> arguments;
+    arguments.push_back("--no-rate-limit");
+
+    crashpad::CrashpadClient client;
+    auto success = client.StartHandler(
+        handler,
+        database,
+        database,
+        url,
+        annotations,
+        arguments,
+        /* restartable */ true,
+        /* asynchronous_start */ false
+    );
+
+
+    //set auto upload
+    auto db = crashpad::CrashReportDatabase::Initialize(database);
+    if (db && db->GetSettings()) {
+        auto successAutoUpload = db->GetSettings()->SetUploadsEnabled(true);
+    }
+
+    return success;
+
+}
 
 void AppContext::_makeSureDirPathExists(const QString &path) {
     struct stat buffer;

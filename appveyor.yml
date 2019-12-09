@@ -3,6 +3,11 @@ skip_non_tags: true
 image: Visual Studio 2019
 platform: x64
 environment:
+  nodejs_version: "6"
+  SENTRY_URL: http://zonme.to2x.ovh:9000/
+  SENTRY_API_KEY:
+    secure: 
+
   global:
     APPVEYOR_SAVE_CACHE_ON_ERROR: true
 cache:
@@ -11,6 +16,8 @@ cache:
   - C:\ProgramData\chocolatey\lib
 install:
   #- cmd: choco install pkgconfiglite
+  - npm install
+  - npm install @sentry/cli
   - cmd: set PATH=%PATH%;%PYTHON%/Scripts/
   - cmd: pip.exe install conan
   - cmd: conan user # Create the conan data directory
@@ -33,6 +40,9 @@ artifacts:
     name: IFW_Repo
   - path: build/installer.zip
     name: IFW_Installer
+before_build:
+  - sentry-cli difutil bundle-sources /debugSymbols
+  - sentry-cli upload-dif -o livingwill -p rpgrpz /debugSymbols
 deploy:
   - provider: BinTray
     username: amphaal

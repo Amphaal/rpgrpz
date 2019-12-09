@@ -18,6 +18,10 @@
 #include "src/helpers/_appSettings.hpp"
 #include "src/_libs/snowflake/snowflake.h"
 
+#include "client/crashpad_client.h"
+#include "client/settings.h"
+#include "client/crash_report_database.h"
+
 class MapView;
 class AppContext {
     private:
@@ -44,6 +48,8 @@ class AppContext {
         static inline qreal _ppcm;
         static inline qreal _fogOpacity = .5;
         static inline QGLWidget* _mapGLWidget = nullptr;
+
+        static bool startCrashpad();
 
     public:    
         static AppSettings* settings();

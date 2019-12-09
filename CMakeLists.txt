@@ -18,7 +18,7 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 SET(APP_PUBLISHER "LVWL")
 SET(APP_DEFAULT_URL "https://github.com/Amphaal/rpgrpz")
 SET(APP_PATCHNOTE_URL "https://github.com/Amphaal/rpgrpz/releases")
-SET(SENTRY_ENDPOINT "http://zonme.to2x.ovh:9000/api/2/minidump/?sentry_key=73f53b89266f489ca8a8a7fc970b681c")
+SET(SENTRY_ENDPOINT "http://lvwl.to2x.ovh/api/1/minidump/?sentry_key=ec083db6fedc4b64b0233ddb1fb9551f")
 
 ##crashpad
 SET(CRASHPAD_HANDLER_NAME "crashpad_handler")
@@ -61,6 +61,13 @@ conan_basic_setup(KEEP_RPATHS)
 ################################
 ## CPP Compiler Configuration ##
 ################################
+
+#debug for release
+# IF(CMAKE_BUILD_TYPE STREQUAL "Release")
+#     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Zi")
+#     set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG /OPT:REF /OPT:ICF")
+#     set(PDB_OUTPUT_DIRECTORY "debugSymbols")
+# ENDIF()
 
 SET(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

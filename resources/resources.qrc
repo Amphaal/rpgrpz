@@ -1,6 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
     <qresource>
         <file>icons/app_64.png</file>
+        <file>icons/sentry.png</file>
         <file>icons/app/rpgrpz.png</file>
         <file>icons/app/rpgrpz_32.png</file>
         <file>icons/app/connectivity/user.png</file>

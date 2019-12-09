@@ -239,6 +239,7 @@ QAction* RPZActions::patchnote() {
 
 QAction* RPZActions::sentry() {
     return new QAction(
+        QIcon(":/icons/sentry.png"),
         QObject::tr("Test Sentry bug reporting")
     );
 }

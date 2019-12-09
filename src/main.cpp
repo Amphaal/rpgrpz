@@ -4,7 +4,6 @@
 #include "src/ui/mainWindow.h"
 #include "src/ui/_others/AppLoader.hpp"
 #include "src/helpers/_logWriter.h"
-#include "src/helpers/_crashpad.hpp"
 
 ////////////
 // SERVER //
@@ -138,9 +137,6 @@ int main(int argc, char** argv) {
      
     //message handler
     qInstallMessageHandler(LogWriter::customMO);
-
-    //crashpad activated if release app
-    startCrashpad();
 
     ////////////
     // LAUNCH //
