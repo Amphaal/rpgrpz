@@ -55,7 +55,7 @@ SET(CPACK_IFW_VERBOSE ON)
     install(
         DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/"
         DESTINATION .
-        COMPONENT ${PROJECT_NAME}
+        COMPONENT app
     )
 
 ##############
@@ -76,10 +76,10 @@ SET(CPACK_IFW_VERBOSE ON)
     endif()
 
 # app #
-    cpack_add_component(${PROJECT_NAME}
+    cpack_add_component(app
         DOWNLOADED
     )
-    cpack_ifw_configure_component(${PROJECT_NAME}
+    cpack_ifw_configure_component(app
         FORCED_INSTALLATION
         SCRIPT "src/_ifw/install.js"
         USER_INTERFACES "src/_ifw/install.ui"

@@ -13,7 +13,7 @@ cache:
   - C:\gstreamer\1.0\x86_64
   - C:\ProgramData\chocolatey\bin
   - C:\ProgramData\chocolatey\lib
-  - c:\tools\vcpkg\installed\
+  - C:\tools\vcpkg\installed
 install:
   #- cmd: choco install pkgconfiglite
   - cd c:\tools\vcpkg
@@ -27,7 +27,7 @@ install:
 build_script:
   - cmd: mkdir build
   - cmd: cd build
-  - cmd: cmake --config Release -DCMAKE_TOOLCHAIN_FILE=C:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DOPENSSL_BIN_DIR="C:\OpenSSL-v111-Win64\bin" -DQT_MAIN_DIR="C:\Qt\5.13" -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 16 2019" -A x64 .. 
+  - cmd: cmake --config Release -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 16 2019" -A x64 .. 
   - cmd: cd ..
   - cmd: cmake --build ./build --target package --config Release
   - cmd: cmake --build ./build --target zipForDeploy --config Release

@@ -142,7 +142,7 @@ void ToysTreeView::startDrag(Qt::DropActions supportedActions) {
     drag.setMimeData(data);
 
         //customised cursor
-        QPixmap pixmap(":/icons/app/rpgrpz_32.png");
+        QPixmap pixmap(":/icons/app/app_32.png");
         QPainter paint(&pixmap);
         paint.setPen(QPen("#000000"));
         paint.setBrush(QBrush(Qt::white));

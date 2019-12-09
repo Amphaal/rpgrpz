@@ -8,8 +8,8 @@
 
 #include "src/helpers/_appContext.h"
 
-#include <QtCore/QObject>
-#include <QtCore/QDir>
+#include <QObject>
+#include <QDir>
 
 #include <QTimer>
 #include <QTimeLine>
@@ -22,7 +22,7 @@ struct BufferedSeek {
     gint64 posInNano = 0;
 };
 
-extern bool gst_rpgrpz_bus_cb(GstBus *bus, GstMessage *msg, void* data);
+extern bool gst_client_bus_cb(GstBus *bus, GstMessage *msg, void* data);
 
 class GStreamerClient : public QObject {
 

@@ -160,51 +160,25 @@ void AppContext::init(const QString &customContext) {
     _makeSureDirPathExists(getServerMapAutosaveFolderLocation());
 
     //crashpad activated if release app
-    startCrashpad();
+    initSentry();
 
 } 
 
 
-bool AppContext::startCrashpad() {
+void AppContext::initSentry() {
 
-    // Cache directory that will store crashpad information and minidumps
-    auto dbStr = AppContext::getAppDataLocation() + "/crashpad_db";
-    base::FilePath database(dbStr.toStdWString());
+    auto options = sentry_options_new();
+    sentry_options_set_dsn(options, SENTRY_ENDPOINT);
+    sentry_options_set_environment(options, IS_DEBUG_APP ? "Debug" : "Production");
+    sentry_options_set_release(options, APP_FULL_DENOM);
+    sentry_options_set_debug(options, 1);
 
-    // Path to the out-of-process handler executable
-    auto handlerStr = QString(CRASHPAD_HANDLER_NAME);
-    base::FilePath handler(handlerStr.toStdWString());
-
-    // URL used to submit minidumps to
-    std::string url(SENTRY_ENDPOINT);
-
-    // Optional annotations passed via --annotations to the handler
-    std::map<std::string, std::string> annotations;
-
-    // Optional arguments to pass to the handler
-    std::vector<std::string> arguments;
-    arguments.push_back("--no-rate-limit");
-
-    crashpad::CrashpadClient client;
-    auto success = client.StartHandler(
-        handler,
-        database,
-        database,
-        url,
-        annotations,
-        arguments,
-        /* restartable */ true,
-        /* asynchronous_start */ false
-    );
-
-
-    //set auto upload
-    auto db = crashpad::CrashReportDatabase::Initialize(database);
-    if (db && db->GetSettings()) {
-        auto successAutoUpload = db->GetSettings()->SetUploadsEnabled(true);
-    }
-
-    return success;
+    //crashpad integration
+    sentry_options_set_handler_path(options, CRASHPAD_HANDLER_NAME);
+    auto dbStr = AppContext::getAppDataLocation() + "/sentry_db";
+    sentry_options_set_database_path(options, dbStr.toStdString().c_str());
+    
+    sentry_init(options);
 
 }
 

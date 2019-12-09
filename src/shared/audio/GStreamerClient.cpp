@@ -72,7 +72,7 @@ void GStreamerClient::_initPipeline() {
 
     //event handler
     gst_bus_set_sync_handler(this->_bus, gst_bus_sync_signal_handler, this, NULL);
-    g_object_connect(this->_bus, "signal::sync-message", G_CALLBACK(gst_rpgrpz_bus_cb), this, NULL);
+    g_object_connect(this->_bus, "signal::sync-message", G_CALLBACK(gst_client_bus_cb), this, NULL);
 
 }
 
@@ -302,7 +302,7 @@ void GStreamerClient::stopTimer(const GstMessageType &reason) {
 /////////////
 /////////////
 
-bool gst_rpgrpz_bus_cb(GstBus *bus, GstMessage *msg, void* data) {
+bool gs_client_bus_cb(GstBus *bus, GstMessage *msg, void* data) {
 
     //cast cli
     GStreamerClient* cli = static_cast<GStreamerClient*>(data);

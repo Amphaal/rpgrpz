@@ -2,8 +2,8 @@
     <qresource>
         <file>icons/app_64.png</file>
         <file>icons/sentry.png</file>
-        <file>icons/app/rpgrpz.png</file>
-        <file>icons/app/rpgrpz_32.png</file>
+        <file>icons/app/app.png</file>
+        <file>icons/app/app_32.png</file>
         <file>icons/app/connectivity/user.png</file>
         <file>icons/app/connectivity/server.png</file>
         <file>icons/app/connectivity/port.png</file>

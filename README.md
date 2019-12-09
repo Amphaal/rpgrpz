@@ -11,11 +11,13 @@ Prerequisites to build:
 - cmake, registered in PATH (https://cmake.org/)
 - pkgconfiglite, from choco (https://chocolatey.org/)
 - Visual Studio 2019 CE / VC++ 2019 / Windows 10 SDK from Visual Studio Installer (https://visualstudio.microsoft.com/fr/thank-you-downloading-visual-studio/?sku=Community&rel=16)
-- PATHs
+- latest sentry-native release, unzipped (https://github.com/getsentry/sentry-native/releases)
+- ENV paths
     - GSTREAMER_1_0_ROOT_X86_64 (ex : D:\gstreamer\1.0\x86_64)
     - QTDIR (ex : C:\Qt\5.13.2\msvc2017_64)
     - QT_TOOLS (ex : C:\Qt\Tools)
     - VCPKG_ROOT (ex : F:\vcpkg)
+    - SENTRY_NATIVE_ROOT (ex: F:\sentry-native)
 
 Recommanded:
 - Visual Studio Code, for builtin debugging helpers (https://code.visualstudio.com/)

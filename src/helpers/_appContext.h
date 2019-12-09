@@ -18,9 +18,7 @@
 #include "src/helpers/_appSettings.hpp"
 #include "src/_libs/snowflake/snowflake.h"
 
-#include "client/crashpad_client.h"
-#include "client/settings.h"
-#include "client/crash_report_database.h"
+#include <sentry.h>
 
 class MapView;
 class AppContext {
@@ -33,8 +31,8 @@ class AppContext {
         static QHash<QString, QString> _getOptionArgs(const QString &argsAsStr);
 
         static inline const QString DEBUG_APP_FILE_APPENDICE = IS_DEBUG_APP ? ".debug" : "";
-        static inline const QString LOG_FILE = "/rpgrpz" + DEBUG_APP_FILE_APPENDICE + ".log";
-        static inline const QString LATEST_LOG_FILE = "/rpgrpz.latest" + DEBUG_APP_FILE_APPENDICE + ".log";
+        static inline const QString LOG_FILE = "/app" + DEBUG_APP_FILE_APPENDICE + ".log";
+        static inline const QString LATEST_LOG_FILE = "/app.latest" + DEBUG_APP_FILE_APPENDICE + ".log";
         static inline const QString ASSETS_PATH = "/resources";
         static inline const QString MAPS_PATH = "/maps";
         static inline const QString DUMPS_PATH = "/dumps";
@@ -49,7 +47,7 @@ class AppContext {
         static inline qreal _fogOpacity = .5;
         static inline QGLWidget* _mapGLWidget = nullptr;
 
-        static bool startCrashpad();
+        static void initSentry();
 
     public:    
         static AppSettings* settings();

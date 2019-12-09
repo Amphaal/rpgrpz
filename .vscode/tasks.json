@@ -17,23 +17,23 @@
         },
         {
             "label": "Debug - 1. Download vcpkg packages",
-            "dependsOn" : "Debug - 0a. Create build folder",
+            "dependsOn" : "Debug - 0. Create build folder",
             "group": "test",
             "type": "shell",
-            "command": "vcpkg install miniupnpc openssl",
+            "command": "${env:VCPKG_ROOT}/vcpkg install miniupnpc openssl",
             "options": {
                 "cwd": "${workspaceRoot}/build/Debug"
             }
         },
         {
             "label": "Debug - 2a. Generate Project files",
-            "dependsOn" : "Debug - 1. Download Dependencies",
+            "dependsOn" : "Debug - 1. Download vcpkg packages",
             "group": {
                 "isDefault": true,
                 "kind" : "test"
             },
             "type": "shell",
-            "command": "cmake -DCMAKE_TOOLCHAIN_FILE=${env:VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Debug ../..",
+            "command": "cmake -DCMAKE_BUILD_TYPE=Debug ../..",
             "options": {
                 "cwd": "${workspaceRoot}/build/Debug"
             }

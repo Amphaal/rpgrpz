@@ -1,5 +1,12 @@
+#policies first
+if(COMMAND cmake_policy)
+    cmake_policy(SET CMP0011 NEW)
+    cmake_policy(SET CMP0020 NEW)
+    cmake_policy(SET CMP0003 NEW)
+endif()
+
 project(RPGRPZ)
-cmake_minimum_required(VERSION 3.14.3)
+cmake_minimum_required(VERSION 3.16.0)
 
 #version
 SET(CMAKE_PROJECT_VERSION_MAJOR 0)
@@ -7,14 +14,21 @@ SET(CMAKE_PROJECT_VERSION_MINOR 20)
 SET(CMAKE_PROJECT_VERSION_PATCH 5)
 
 #check required ENV vars
-if(
-    NOT DEFINED $ENV{GSTREAMER_1_0_ROOT_X86_64} OR 
-    NOT DEFINED $ENV{QTDIR} OR
-    NOT DEFINED $ENV{QT_TOOLS} OR
-    NOT DEFINED $ENV{VCPKG_ROOT} 
+list(APPEND ENV_VAR_TO_CHECK
+    GSTREAMER_1_0_ROOT_X86_64
+    QTDIR
+    QT_TOOLS
+    VCPKG_ROOT
+    SENTRY_NATIVE_ROOT
 )
-    message(FATAL_ERROR "A required ENV variable does not exists. Please check README.md for more details !")
-endif()
+foreach(C_ENV IN LISTS ENV_VAR_TO_CHECK)
+    if(NOT DEFINED ENV{${C_ENV}})
+        message(FATAL_ERROR "Required ENV variable ${C_ENV} does not exists. Please check README.md for more details !")
+    endif()
+endforeach()
+
+#vcpkg
+SET(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
 
 #default configuration
 SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/)
@@ -28,7 +42,7 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 SET(APP_PUBLISHER "LVWL")
 SET(APP_DEFAULT_URL "https://github.com/Amphaal/rpgrpz")
 SET(APP_PATCHNOTE_URL "https://github.com/Amphaal/rpgrpz/releases")
-SET(SENTRY_ENDPOINT "http://lvwl.to2x.ovh/api/1/minidump/?sentry_key=ec083db6fedc4b64b0233ddb1fb9551f")
+SET(SENTRY_ENDPOINT "http://ec083db6fedc4b64b0233ddb1fb9551f@lvwl.to2x.ovh:9000/1")
 
 ##crashpad
 SET(CRASHPAD_HANDLER_NAME "crashpad_handler")
@@ -93,7 +107,7 @@ endif (APPLE)
 #########################
 ## Libraries specifics ##
 #########################
- 
+
 #Qt
 SET(CMAKE_AUTOMOC ON)
 SET(CMAKE_AUTORCC ON)
@@ -106,7 +120,7 @@ SET(CMAKE_INCLUDE_CURRENT_DIR ON) #for moc auto
 
 IF(WIN32)
     SET(BUNDLE_TYPE WIN32) #set bundle type
-    SET(RPGRPZ_ICO ${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.rc) #add icon
+    SET(APP_RC_FILE ${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.rc) #add icon
 endif()
 
 IF(APPLE)
@@ -119,9 +133,10 @@ endif()
 
 #default source contains
 SET(SOURCES
-    ${RPGRPZ_ICO}
+    ${APP_RC_FILE}
     resources/resources.qrc
 )
+
 
 #############
 # miniupnpc #
@@ -136,7 +151,7 @@ list(APPEND EXT_LIBS
 # OpenSSL #
 ###########
 
-find_package(OpenSSL REQUIRED COMPONENTS SSL Crypto)
+find_package(openssl REQUIRED COMPONENTS SSL Crypto)
 list(APPEND EXT_LIBS
     OpenSSL::SSL
     OpenSSL::Crypto
@@ -184,6 +199,13 @@ list(APPEND EXT_LIBS
     Qt5::OpenGL
 )
 
+#################
+# Sentry-native #
+#################
+
+#add sentry-native sources
+include_external_msproject(sentry_crashpad $ENV{SENTRY_NATIVE_ROOT}/gen_windows/sentry_crashpad.vcxproj)
+
 #####################
 # list source files #
 #####################
@@ -207,14 +229,21 @@ qt5_create_translation(QM_FILES
 #########################
 
 # Create executable
-add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES} ${QM_FILES})
+add_executable(app ${BUNDLE_TYPE} ${SOURCES} ${QM_FILES})
 
-#link !
-target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
+#sentry
+add_dependencies(app sentry_crashpad)
+target_include_directories(app PUBLIC $ENV{SENTRY_NATIVE_ROOT}/include)
+
+#link the rest !
+target_link_libraries(app ${EXT_LIBS})
+set_target_properties(app PROPERTIES 
+    OUTPUT_NAME ${PROJECT_NAME}
+) 
 
 if(APPLE)
     #add highdpi support / menu behavior via plist template (MACOS)
-    set_target_properties(${PROJECT_NAME} PROPERTIES 
+    set_target_properties(app PROPERTIES 
         MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/templates/_Info.plist
     ) 
 endif()
@@ -222,7 +251,7 @@ endif()
 if(WIN32)
     #accelerate builds times
     include(cotire)
-    cotire(${PROJECT_NAME})
+    cotire(app)
 endif()
 
 #####################
@@ -231,7 +260,7 @@ endif()
 
 #using deployqt to import all the QT ${CMAKE_SHARED_LIBRARY_SUFFIX} requirements based on used components
 include(deployqt)
-deployqt(${PROJECT_NAME})
+deployqt(app)
 
 ###############
 # OTHERS COPY #
@@ -239,13 +268,13 @@ deployqt(${PROJECT_NAME})
 
 #crashpad handler
 #TODO
-#add_custom_command(TARGET ${PROJECT_NAME}   
-#    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CONAN_BIN_DIRS_CRASHPAD}/${CRASHPAD_HANDLER_NAME} $<TARGET_FILE_DIR:${PROJECT_NAME}>/${CRASHPAD_HANDLER_NAME}
+#add_custom_command(TARGET app}   
+#    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CONAN_BIN_DIRS_CRASHPAD}/${CRASHPAD_HANDLER_NAME} $<TARGET_FILE_DIR:app>/${CRASHPAD_HANDLER_NAME}
 #)
 
 #translations
-add_custom_command(TARGET ${PROJECT_NAME}   
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QM_FILES} $<TARGET_FILE_DIR:${PROJECT_NAME}>/translations
+add_custom_command(TARGET app  
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QM_FILES} $<TARGET_FILE_DIR:app>/translations
 )
 
 ######################
@@ -294,19 +323,19 @@ endif()
 
 #import all missing GSTREAMER libs
 foreach(_gstSLib IN ITEMS ${GST_SLIBS})
-    add_custom_command(TARGET ${PROJECT_NAME}
+    add_custom_command(TARGET app
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 
             "${GSTREAMER_SLIB_LOCATION}/${CMAKE_SHARED_LIBRARY_PREFIX}${_gstSLib}${CMAKE_SHARED_LIBRARY_SUFFIX}"
-            "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+            "$<TARGET_FILE_DIR:app>"
     )
 endforeach()
 
 #missing specifics
 IF(WIN32)
-    add_custom_command(TARGET ${PROJECT_NAME}       
+    add_custom_command(TARGET app       
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 
         "${GSTREAMER_LOCATION}/lib/gio/modules/giognutls${CMAKE_SHARED_LIBRARY_SUFFIX}" 
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/gio/giognutls${CMAKE_SHARED_LIBRARY_SUFFIX}
+        $<TARGET_FILE_DIR:app>/gio/giognutls${CMAKE_SHARED_LIBRARY_SUFFIX}
     )
 endif()
 
@@ -326,7 +355,7 @@ IF(NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins)
         gstvolume
         gstwasapi
     )
-    DeployGStreamer(${PROJECT_NAME} "${_gstreamer_plugins}")
+    DeployGStreamer(app "${_gstreamer_plugins}")
 endif()
 
 
@@ -337,20 +366,18 @@ endif()
 if(WIN32)
 
     #override
-    IF(NOT DEFINED OPENSSL_BIN_DIR)
-        SET(OPENSSL_BIN_DIR "$ENV{QT_TOOLS}/OpenSSL/Win_x64/bin")
-    endif()
+    SET(OPENSSL_BIN_DIR "$ENV{QT_TOOLS}/OpenSSL/Win_x64/bin")
 
-    add_custom_command(TARGET ${PROJECT_NAME}       
+    add_custom_command(TARGET app       
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 
         "${OPENSSL_BIN_DIR}/libcrypto-1_1-x64.dll"
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        $<TARGET_FILE_DIR:app>
     )
 
-    add_custom_command(TARGET ${PROJECT_NAME}       
+    add_custom_command(TARGET app      
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 
         "${OPENSSL_BIN_DIR}/libssl-1_1-x64.dll"
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>
+        $<TARGET_FILE_DIR:app>
     )
 
 endif()

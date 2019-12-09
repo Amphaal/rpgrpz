@@ -36,15 +36,33 @@
                     "${env:QTDIR}/include",
                     "${env:QTDIR}/lib",
                     "${env:GSTREAMER_1_0_ROOT_X86_64}/include",
-                    "${env:GSTREAMER_1_0_ROOT_X86_64}/lib"
+                    "${env:GSTREAMER_1_0_ROOT_X86_64}/lib",
+                    "${env:SENTRY_NATIVE_ROOT}/src",
+                    "${env:SENTRY_NATIVE_ROOT}/include"
                 ],
                 "limitSymbolsToIncludedHeaders": true
             },
             "windowsSdkVersion": "10.0.18362.0",
-            "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.23.28105/bin/Hostx64/x64/cl.exe",
+            "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.24.28314/bin/Hostx64/x64/cl.exe",
             "intelliSenseMode": "msvc-x64",
             "cStandard": "c11",
-            "cppStandard": "c++17"
+            "cppStandard": "c++17",
+            "includePath": [
+                "${default}",
+                "D:/gstreamer/1.0/x86_64/include/gstreamer-1.0",
+                "D:/gstreamer/1.0/x86_64/include/glib-2.0",
+                "D:/gstreamer/1.0/x86_64/lib/glib-2.0/include",
+                "${workspaceFolder}",
+                "C:/Qt/5.13.2/msvc2017_64/include/QtCore",
+                "C:/Qt/5.13.2/msvc2017_64/include",
+                "C:/Qt/5.13.2/msvc2017_64/include/QtGui",
+                "C:/Qt/5.13.2/msvc2017_64/include/QtWidgets",
+                "C:/Qt/5.13.2/msvc2017_64/include/QtOpenGL",
+                "F:/sentry-native/crashpad/build/crashpad",
+                "F:/sentry-native/crashpad/build/crashpad/third_party/mini_chromium/mini_chromium",
+                "F:/vcpkg/packages/miniupnpc_x86-windows/include",
+                "F:/sentry-native/include"
+            ]
         }
     ],
     "version": 4

@@ -30,13 +30,18 @@ int serverConsole(int argc, char** argv) {
 
 int clientApp(int argc, char** argv) {
 
+    // prevent multiples instances
     if(!IS_DEBUG_APP) {
-        // prevent multiples instances
-        QString tmpDir = QDir::tempPath();
-        QLockFile lockFile(tmpDir + "/rpgrpz.lock");
+
+        auto lockFn = QString("%1/%2.lock")
+                            .arg(QDir::tempPath())
+                            .arg(APP_NAME);
+        QLockFile lockFile(lockFn);
+                            
         if(!lockFile.tryLock(100)){
             return 1;
         }
+
     }
     
     //setup app
@@ -144,15 +149,11 @@ int main(int argc, char** argv) {
 
     //default
     auto args = AppContext::getOptionArgs(argc, argv);
+    auto code = args.contains(QStringLiteral(u"serverOnly")) ? serverConsole(argc, argv) : clientApp(argc, argv);
 
-    if (args.contains(QStringLiteral(u"serverOnly"))) {
-        
-        //as server console
-        return serverConsole(argc, argv);
+    // make sure everything flushes
+    sentry_shutdown();
 
-    }
-
-    //as client app
-    return clientApp(argc, argv);
+    return code;
 
 }
