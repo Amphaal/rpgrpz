@@ -20,7 +20,7 @@
             "dependsOn" : "Debug - 0a. Create build folder",
             "group": "test",
             "type": "shell",
-            "command": "vcpkg install miniupnpc",
+            "command": "vcpkg install miniupnpc openssl",
             "options": {
                 "cwd": "${workspaceRoot}/build/Debug"
             }

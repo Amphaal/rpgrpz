@@ -6,6 +6,16 @@ SET(CMAKE_PROJECT_VERSION_MAJOR 0)
 SET(CMAKE_PROJECT_VERSION_MINOR 20)
 SET(CMAKE_PROJECT_VERSION_PATCH 5)
 
+#check required ENV vars
+if(
+    NOT DEFINED $ENV{GSTREAMER_1_0_ROOT_X86_64} OR 
+    NOT DEFINED $ENV{QTDIR} OR
+    NOT DEFINED $ENV{QT_TOOLS} OR
+    NOT DEFINED $ENV{VCPKG_ROOT} 
+)
+    message(FATAL_ERROR "A required ENV variable does not exists. Please check README.md for more details !")
+endif()
+
 #default configuration
 SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/)
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -50,13 +60,6 @@ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/templates/_version.h 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/version.h
 )
-
-##################
-## Enable Conan ##
-##################
-
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup(KEEP_RPATHS)
 
 ################################
 ## CPP Compiler Configuration ##
@@ -118,6 +121,15 @@ endif()
 SET(SOURCES
     ${RPGRPZ_ICO}
     resources/resources.qrc
+)
+
+#############
+# miniupnpc #
+#############
+
+find_package(miniupnpc REQUIRED)
+list(APPEND EXT_LIBS
+    miniupnpc
 )
 
 ###########
@@ -198,7 +210,6 @@ qt5_create_translation(QM_FILES
 add_executable(${PROJECT_NAME} ${BUNDLE_TYPE} ${SOURCES} ${QM_FILES})
 
 #link !
-conan_target_link_libraries(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} ${EXT_LIBS})
 
 if(APPLE)
@@ -227,9 +238,10 @@ deployqt(${PROJECT_NAME})
 ###############
 
 #crashpad handler
-add_custom_command(TARGET ${PROJECT_NAME}   
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CONAN_BIN_DIRS_CRASHPAD}/${CRASHPAD_HANDLER_NAME} $<TARGET_FILE_DIR:${PROJECT_NAME}>/${CRASHPAD_HANDLER_NAME}
-)
+#TODO
+#add_custom_command(TARGET ${PROJECT_NAME}   
+#    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CONAN_BIN_DIRS_CRASHPAD}/${CRASHPAD_HANDLER_NAME} $<TARGET_FILE_DIR:${PROJECT_NAME}>/${CRASHPAD_HANDLER_NAME}
+#)
 
 #translations
 add_custom_command(TARGET ${PROJECT_NAME}   
