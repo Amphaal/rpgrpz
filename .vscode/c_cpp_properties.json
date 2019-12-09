@@ -4,17 +4,16 @@
             "name": "Mac",
             "browse": {
                 "path": [
-                    "/Library/Frameworks/GStreamer.framework/Headers",
-                    "/Users/Amphaal/Qt/5.13.2/clang_64/include",
-                    "/Users/Amphaal/Qt/5.13.2/clang_64/lib",
-                    "/Users/Amphaal/.conan/data"
+                    "${env:GSTREAMER_1_0_ROOT_X86_64}/Headers",
+                    "${env:QTDIR}/include",
+                    "${env:QTDIR}/lib"
                 ],
                 "limitSymbolsToIncludedHeaders": true
             },
             "macFrameworkPath": [
                 "/System/Library/Frameworks",
                 "/Library/Frameworks",
-                "/Users/Amphaal/Qt/5.13.2/clang_64/lib"
+                "${env:QTDIR}/lib"
             ],
             "cStandard": "c11",
             "cppStandard": "c++17",
@@ -22,16 +21,7 @@
             "compilerPath": "/usr/bin/clang",
             "includePath": [
                 "${workspaceFolder}",
-                "${workspaceRoot}",
-                "/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/build/1513b3452ef7e2a2dd5f931247c5e02edeb98cc9/miniupnp/miniupnpc",
-                "/Library/Frameworks/GStreamer.framework/Versions/1.0/Headers",
-                "/Users/Amphaal/Qt/5.13.2/clang_64/lib/QtCore.framework/Versions/5/Headers",
-                "/Users/Amphaal/Qt/5.13.2/clang_64/lib/QtWidgets.framework/Versions/5/Headers",
-                "/Users/Amphaal/Qt/5.13.2/clang_64/lib/QtGui.framework/Versions/5/Headers",
-                "/Users/Amphaal/Qt/5.13.2/clang_64/lib/QtNetwork.framework/Versions/5/Headers",
-                "/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/source/miniupnp/miniupnpc",
-                "/Users/Amphaal/Qt/5.13.2/clang_64/lib/QtSvg.framework/Versions/5/Headers",
-                "/Users/Amphaal/Qt/5.13.2/clang_64/lib/QtOpenGL.framework/Versions/5/Headers"
+                "${workspaceRoot}"
             ]
         },
         {
@@ -42,9 +32,9 @@
             ],
             "browse": {
                 "path": [
-                    "C:/.conan",
-                    "C:/Qt/5.13.2/msvc2017_64/include",
-                    "C:/Qt/5.13.2/msvc2017_64/lib",
+                    "${env:VCPKG_ROOT}/packages",
+                    "${env:QTDIR}/include",
+                    "${env:QTDIR}/lib",
                     "${env:GSTREAMER_1_0_ROOT_X86_64}/include",
                     "${env:GSTREAMER_1_0_ROOT_X86_64}/lib"
                 ],
@@ -54,28 +44,7 @@
             "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.23.28105/bin/Hostx64/x64/cl.exe",
             "intelliSenseMode": "msvc-x64",
             "cStandard": "c11",
-            "cppStandard": "c++17",
-            "includePath": [
-                "${workspaceFolder}",
-                "${workspaceFolder}/src/_libs",
-                "${workspaceRoot}",
-                "C:/Users/Amphaal/.conan/data/miniupnpc/2.1/rhard/testing/source/miniupnp/miniupnpc",
-                "C:/Qt/5.13.2/msvc2017_64/include",
-                "C:/Qt/5.13.2/msvc2017_64/include/QtCore",
-                "C:/Qt/5.13.2/msvc2017_64/include/QtNetwork",
-                "C:/Qt/5.13.2/msvc2017_64/include/QtGui",
-                "C:/Qt/5.13.2/msvc2017_64/include/QtWidgets",
-                "C:/Qt/5.13.2/msvc2017_64/include/QtOpenGL",
-                "C:/Qt/5.13.2/msvc2017_64/include/QtSvg",
-                "D:/gstreamer/1.0/x86_64/include",
-                "D:/gstreamer/1.0/x86_64/include/glib-2.0",
-                "D:/gstreamer/1.0/x86_64/lib/glib-2.0/include",
-                "D:/gstreamer/1.0/x86_64/include/gstreamer-1.0",
-                "${workspaceFolder}",
-                "C:/.conan/d6c595/1/include",
-                "C:/.conan/d6c595/1/include/mini_chromium",
-                "C:/.conan/d6c595/1/include/crashpad"
-            ]
+            "cppStandard": "c++17"
         }
     ],
     "version": 4

@@ -6,7 +6,6 @@
         "cwd": "${workspaceRoot}"
     },
     "tasks": [
-        /*DEBUG*/
         {
             "label": "Debug - 0. Create build folder",
             "group": "test",
@@ -17,18 +16,11 @@
             }
         },
         {
-            "label": "Debug - 0a. add Conan remote",
-            "dependsOn" : "Debug - 0. Create build folder",
+            "label": "Debug - 1. Download vcpkg packages",
+            "dependsOn" : "Debug - 0a. Create build folder",
             "group": "test",
             "type": "shell",
-            "command": "conan remote add --force bincrafters https://api.bintray.com/conan/bincrafters/public-conan; conan remote add --force rhard https://api.bintray.com/conan/rhard/conan"
-        },
-        {
-            "label": "Debug - 1. Download Dependencies",
-            "dependsOn" : "Debug - 0a. add Conan remote",
-            "group": "test",
-            "type": "shell",
-            "command": "conan install ../.. -s build_type=Debug --build missing",
+            "command": "vcpkg install miniupnpc",
             "options": {
                 "cwd": "${workspaceRoot}/build/Debug"
             }
@@ -41,7 +33,7 @@
                 "kind" : "test"
             },
             "type": "shell",
-            "command": "cmake -DCMAKE_BUILD_TYPE=Debug ../..",
+            "command": "cmake -DCMAKE_TOOLCHAIN_FILE=${env:VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Debug ../..",
             "options": {
                 "cwd": "${workspaceRoot}/build/Debug"
             }
@@ -50,48 +42,6 @@
             "label": "Debug - 3. Build",
             "type": "shell",
             "command": "cmake --build ./build/Debug --config Debug"
-        },
-        /*RELEASE*/
-        {
-            "label": "Release - 0. Create build folder",
-            "group": "build",
-            "type": "shell",
-            "command": "rm build/Release -r -fo; mkdir build/Release",
-            "osx": {
-                "command": "rm -rf build/Release; mkdir build; mkdir build/Release"
-            }
-        },
-        {
-            "label": "Release - 1. Download Dependencies",
-            "dependsOn" : "Release - 0. Create build folder",
-            "group": "build",
-            "type": "shell",
-            "command": "conan install ../.. -s build_type=Release --build missing",
-            "options": {
-                "cwd": "${workspaceRoot}/build/Release"
-            }
-        },
-        {
-            "label": "Release - 2. Generate Project files",
-            "dependsOn" : "Release - 1. Download Dependencies",
-            "group": "build",
-            "type": "shell",
-            "windows": {
-                "command": "cmake -DCMAKE_BUILD_TYPE=Release ../..",
-            },
-            "options": {
-                "cwd": "${workspaceRoot}/build/Release"
-            }
-        },
-        {
-            "label": "Release - 3. Build",
-            "dependsOn" : "Release - 2. Generate Project files",   
-            "group": {
-                "isDefault": true,
-                "kind" : "build"
-            },
-            "type": "shell",
-            "command" : "cmake --build ./build/Release --config Release --target package"
         }
     ]
 }

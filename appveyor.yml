@@ -4,34 +4,30 @@ image: Visual Studio 2019
 platform: x64
 environment:
   nodejs_version: "6"
-  SENTRY_URL: http://zonme.to2x.ovh:9000/
+  SENTRY_URL: http://lvwl.to2x.ovh:9000/
   SENTRY_API_KEY:
     secure: 
-
   global:
     APPVEYOR_SAVE_CACHE_ON_ERROR: true
 cache:
   - C:\gstreamer\1.0\x86_64
   - C:\ProgramData\chocolatey\bin
   - C:\ProgramData\chocolatey\lib
+  - c:\tools\vcpkg\installed\
 install:
   #- cmd: choco install pkgconfiglite
-  - npm install
-  - npm install @sentry/cli
-  - cmd: set PATH=%PATH%;%PYTHON%/Scripts/
-  - cmd: pip.exe install conan
-  - cmd: conan user # Create the conan data directory
-  - cmd: conan remote add --force bincrafters https://api.bintray.com/conan/bincrafters/public-conan
-  - cmd: conan remote add --force rhard https://api.bintray.com/conan/rhard/conan
-  # - appveyor DownloadFile https://gstreamer.freedesktop.org/data/pkg/windows/1.16.1/gstreamer-1.0-devel-msvc-x86_64-1.16.1.msi
-  # - appveyor DownloadFile https://gstreamer.freedesktop.org/data/pkg/windows/1.16.1/gstreamer-1.0-msvc-x86_64-1.16.1.msi
-  # - msiexec /i gstreamer-1.0-devel-msvc-x86_64-1.16.1.msi /quiet /qn /norestart /log install-devel.log ADDLOCAL=ALL
-  # - msiexec /i gstreamer-1.0-msvc-x86_64-1.16.1.msi /quiet /qn /norestart /log install.log ADDLOCAL=ALL
+  - cd c:\tools\vcpkg
+  - vcpkg install miniupnpc
+  - vcpkg integrate install
+  - npm install -g @sentry/cli --unsafe-perm
+  # - appveyor DownloadFile https://gstreamer.freedesktop.org/data/pkg/windows/1.16.2/gstreamer-1.0-devel-msvc-x86_64-1.16.2.msi
+  # - appveyor DownloadFile https://gstreamer.freedesktop.org/data/pkg/windows/1.16.2/gstreamer-1.0-msvc-x86_64-1.16.2.msi
+  # - msiexec /i gstreamer-1.0-devel-msvc-x86_64-1.16.2.msi /quiet /qn /norestart /log install-devel.log ADDLOCAL=ALL
+  # - msiexec /i gstreamer-1.0-msvc-x86_64-1.16.2.msi /quiet /qn /norestart /log install.log ADDLOCAL=ALL
 build_script:
   - cmd: mkdir build
   - cmd: cd build
-  - cmd: conan install .. -s build_type=Release --build missing
-  - cmd: cmake --config Release -DOPENSSL_BIN_DIR="C:\OpenSSL-v111-Win64\bin" -DQT_MAIN_DIR="C:\Qt\5.13" -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 16 2019" -A x64 .. 
+  - cmd: cmake --config Release -DCMAKE_TOOLCHAIN_FILE=C:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DOPENSSL_BIN_DIR="C:\OpenSSL-v111-Win64\bin" -DQT_MAIN_DIR="C:\Qt\5.13" -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 16 2019" -A x64 .. 
   - cmd: cd ..
   - cmd: cmake --build ./build --target package --config Release
   - cmd: cmake --build ./build --target zipForDeploy --config Release
@@ -41,6 +37,7 @@ artifacts:
   - path: build/installer.zip
     name: IFW_Installer
 before_build:
+  - sentry-cli login
   - sentry-cli difutil bundle-sources /debugSymbols
   - sentry-cli upload-dif -o livingwill -p rpgrpz /debugSymbols
 deploy:

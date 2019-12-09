@@ -136,19 +136,15 @@ list(APPEND EXT_LIBS
 
 #pkgConfig setup
 IF(WIN32)
-    #SET(PKG_CONFIG_EXECUTABLE "C:/msys64/mingw64/bin/x86_64-w64-mingw32-pkg-config.exe") #install pkgconfiglite from Choco
     SET(W32_GSTREAMER_LOCATION $ENV{GSTREAMER_1_0_ROOT_X86_64})
-    IF(NOT DEFINED W32_GSTREAMER_LOCATION)
-        SET(W32_GSTREAMER_LOCATION "C:/gstreamer/1.0/x86_64")
-    endif()
     string(REPLACE "\\" "/" GSTREAMER_LOCATION ${W32_GSTREAMER_LOCATION})
     SET(GSTREAMER_SLIB_LOCATION "${GSTREAMER_LOCATION}/bin")
 endif()
 
 if(APPLE)
     SET(PKG_CONFIG_EXECUTABLE "/usr/local/Cellar/pkg-config/0.29.2/bin/pkg-config")
-    SET(GSTREAMER_LOCATION "/Library/Frameworks/GStreamer.framework/Libraries/pkgconfig")
-    SET(GSTREAMER_SLIB_LOCATION "/Library/Frameworks/GStreamer.framework/Libraries")
+    SET(GSTREAMER_LOCATION "${W32_GSTREAMER_LOCATION}/Libraries/pkgconfig")
+    SET(GSTREAMER_SLIB_LOCATION "${W32_GSTREAMER_LOCATION}/Libraries")
 endif(APPLE)
 
 include(GStreamerHelper)
@@ -163,24 +159,8 @@ list(APPEND EXT_LIBS
 # QT 5 #
 ########
 
-#override maindir
-IF(NOT DEFINED QT_MAIN_DIR)
-    IF(WIN32)
-        SET(QT_MAIN_DIR "C:/Qt/5.13.2")
-    endif()
-    IF(APPLE)
-        SET(QT_MAIN_DIR "$ENV{HOME}/Qt/5.13.2")
-    endif()
-endif()
-
-
-#force official binaires from Qt
-IF(WIN32)
-    SET(Qt5_DIR "${QT_MAIN_DIR}/msvc2017_64/lib/cmake/Qt5")
-endif()
-IF(APPLE)
-    SET(Qt5_DIR "${QT_MAIN_DIR}/clang_64/lib/cmake/Qt5")
-endif()
+SET(Qt5_DIR "$ENV{QTDIR}/lib/cmake/Qt5")
+SET(QT_DEPLOY_BIN_PATH "$ENV{QTDIR}/bin")
 
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL LinguistTools)
 list(APPEND EXT_LIBS
@@ -237,14 +217,6 @@ endif()
 #####################
 # QT LIBRARIES COPY #
 #####################
-
-IF(WIN32)
-    SET(QT_DEPLOY_BIN_PATH "${QT_MAIN_DIR}/msvc2017_64/bin")
-endif()
-
-IF(APPLE)
-    SET(QT_DEPLOY_BIN_PATH "${QT_MAIN_DIR}/clang_64/bin")
-endif()
 
 #using deployqt to import all the QT ${CMAKE_SHARED_LIBRARY_SUFFIX} requirements based on used components
 include(deployqt)
@@ -354,7 +326,7 @@ if(WIN32)
 
     #override
     IF(NOT DEFINED OPENSSL_BIN_DIR)
-        SET(OPENSSL_BIN_DIR "C:/Qt/Tools/OpenSSL/Win_x64/bin")
+        SET(OPENSSL_BIN_DIR "$ENV{QT_TOOLS}/OpenSSL/Win_x64/bin")
     endif()
 
     add_custom_command(TARGET ${PROJECT_NAME}       
