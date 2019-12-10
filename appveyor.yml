@@ -27,10 +27,10 @@ install:
 build_script:
   - cmd: mkdir build
   - cmd: cd build
-  - cmd: cmake --config Release -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 16 2019" -A x64 .. 
+  - cmd: cmake -G "Visual Studio 16 2019" -A x64 .. 
   - cmd: cd ..
-  - cmd: cmake --build ./build --target package --config Release
-  - cmd: cmake --build ./build --target zipForDeploy --config Release
+  - cmd: cmake --build ./build --target package --config RelWithDebInfo
+  - cmd: cmake --build ./build --target zipForDeploy --config RelWithDebInfo
 artifacts:
   - path: build/repository.zip
     name: IFW_Repo

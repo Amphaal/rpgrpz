@@ -24,6 +24,7 @@ set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CAC
 
 #project setup
 project(RPGRPZ)
+string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 cmake_minimum_required(VERSION 3.16.0)
 
 #version
@@ -51,24 +52,6 @@ IF(WIN32)
     SET(CRASHPAD_HANDLER_NAME "${CRASHPAD_HANDLER_NAME}.exe")
 ENDIF()
 
-#set default maintenance tool path
-SET(IS_DEBUG_APP OFF)
-
-#if debug build
-IF(CMAKE_INSTALL_CONFIG_NAME STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "Debug")
-    #define debug
-    SET(IS_DEBUG_APP ON)
-ENDIF()
-
-#force build type for Md / Mt flags attribution
-IF(NOT DEFINED CMAKE_BUILD_TYPE)
-    IF(CMAKE_INSTALL_CONFIG_NAME STREQUAL "Debug")
-        SET(CMAKE_BUILD_TYPE "Debug")
-    else()
-        SET(CMAKE_BUILD_TYPE "Release")
-    endif()
-endif()
-
 #config file to source code
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/templates/_version.h 
@@ -79,12 +62,12 @@ configure_file(
 ## CPP Compiler Configuration ##
 ################################
 
-#debug for release
-# IF(CMAKE_BUILD_TYPE STREQUAL "Release")
-#     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Zi")
-#     set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG /OPT:REF /OPT:ICF")
-#     set(PDB_OUTPUT_DIRECTORY "debugSymbols")
-# ENDIF()
+#add async exception handling
+# string(REGEX REPLACE "/EH[a-z]+" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHa")
+
+#debug symbols for release
+#TODO
 
 SET(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -204,6 +187,7 @@ list(APPEND EXT_LIBS
 
 #add sentry-native sources
 include_external_msproject(sentry_crashpad $ENV{SENTRY_NATIVE_ROOT}/gen_windows/sentry_crashpad.vcxproj)
+include_external_msproject(crashpad_handler $ENV{SENTRY_NATIVE_ROOT}/gen_windows/crashpad_handler.vcxproj)
 
 #####################
 # list source files #
@@ -232,6 +216,7 @@ add_executable(app ${BUNDLE_TYPE} ${SOURCES} ${QM_FILES})
 
 #sentry
 add_dependencies(app sentry_crashpad)
+add_dependencies(app crashpad_handler)
 target_include_directories(app PUBLIC $ENV{SENTRY_NATIVE_ROOT}/include)
 
 #link the rest !
@@ -265,16 +250,16 @@ deployqt(app)
 # OTHERS COPY #
 ###############
 
-SET(SENTRY_BINARIES_DIR $ENV{SENTRY_NATIVE_ROOT}/gen_windows/bin)
+SET(SENTRY_BINARIES_DIR $ENV{SENTRY_NATIVE_ROOT}/gen_windows/bin/x86_64)
 
 #crashpad
 add_custom_command(TARGET app   
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SENTRY_BINARIES_DIR}/${CMAKE_BUILD_TYPE}/${CRASHPAD_HANDLER_NAME} $<TARGET_FILE_DIR:app>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SENTRY_BINARIES_DIR}/$<CONFIG>/${CRASHPAD_HANDLER_NAME} $<TARGET_FILE_DIR:app>
 )
 
 #sentry
 add_custom_command(TARGET app
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SENTRY_BINARIES_DIR}/x86_64/${CMAKE_BUILD_TYPE}/sentry_crashpad.dll $<TARGET_FILE_DIR:app>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SENTRY_BINARIES_DIR}/$<CONFIG>/sentry_crashpad.dll $<TARGET_FILE_DIR:app>
 )
 
 #translations
@@ -391,9 +376,7 @@ endif()
 # add Publish target #
 ######################
 
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
-    include(CMakePublish)
-endif()
+include(CMakePublish)
 
 #################
 # Debug helpers #

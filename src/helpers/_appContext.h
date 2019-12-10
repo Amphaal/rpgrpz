@@ -30,7 +30,12 @@ class AppContext {
         
         static QHash<QString, QString> _getOptionArgs(const QString &argsAsStr);
 
-        static inline const QString DEBUG_APP_FILE_APPENDICE = IS_DEBUG_APP ? ".debug" : "";
+        #ifdef NDEBUG
+            static inline const QString DEBUG_APP_FILE_APPENDICE = ".debug";
+        #else
+            static inline const QString DEBUG_APP_FILE_APPENDICE = "";
+        #endif
+
         static inline const QString LOG_FILE = "/app" + DEBUG_APP_FILE_APPENDICE + ".log";
         static inline const QString LATEST_LOG_FILE = "/app.latest" + DEBUG_APP_FILE_APPENDICE + ".log";
         static inline const QString ASSETS_PATH = "/resources";
@@ -48,6 +53,7 @@ class AppContext {
         static inline QGLWidget* _mapGLWidget = nullptr;
 
         static void initSentry();
+        static void initCrashpad();
 
     public:    
         static AppSettings* settings();

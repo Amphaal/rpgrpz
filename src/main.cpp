@@ -6,6 +6,7 @@
 #include "src/helpers/_logWriter.h"
 
 #include <exception>
+#include <iostream>
 
 ////////////
 // SERVER //
@@ -33,7 +34,7 @@ int serverConsole(int argc, char** argv) {
 int clientApp(int argc, char** argv) {
 
     // prevent multiples instances
-    if(!IS_DEBUG_APP) {
+    #ifndef NDEBUG
 
         auto lockFn = QString("%1/%2.lock")
                             .arg(QDir::tempPath())
@@ -44,7 +45,7 @@ int clientApp(int argc, char** argv) {
             return 1;
         }
 
-    }
+    #endif
     
     //setup app
     QApplication app(argc, argv);
@@ -133,7 +134,7 @@ void _registerMetaTypes() {
     
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv) noexcept {
 
     //log SLL lib loading
     qDebug() << QSslSocket::sslLibraryBuildVersionString();
@@ -149,13 +150,16 @@ int main(int argc, char** argv) {
     // LAUNCH //
     ////////////
 
-    //TODO handle CRT messages
-
     try {
+        
         auto args = AppContext::getOptionArgs(argc, argv);
-        return args.contains(QStringLiteral(u"serverOnly")) ? 
+        auto result = args.contains(QStringLiteral(u"serverOnly")) ? 
                         serverConsole(argc, argv) : 
                         clientApp(argc, argv);
+        
+        sentry_shutdown();
+        return result;
+
     } catch(...) {
         sentry_shutdown();
     }

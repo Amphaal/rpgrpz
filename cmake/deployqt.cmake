@@ -16,19 +16,7 @@ SET(DEPLOYQT_EXECUTABLE ${QT_DEPLOY_BIN_PATH}/${QT_DEPLOY_BIN})
 # build and install the Qt runtime to the specified directory
 function(deployqt target)
 
-    #define default debug symbols import
-    SET(QT_DEPLOY_MUST_BE_DEBUG "")
-
-    # force target
-    string(TOLOWER ${CMAKE_BUILD_TYPE} DEPLOYQT_TARGET)
-    message("Including QT shared \"${CMAKE_BUILD_TYPE}\" dependencies...")
-
     if(WIN32)
-
-        #import .pdb
-        if(DEPLOYQT_TARGET STREQUAL "debug")
-            SET(QT_DEPLOY_MUST_BE_DEBUG "--pdb")
-        endif()
 
         add_custom_command(TARGET ${target} POST_BUILD
             COMMAND "${CMAKE_COMMAND}" -E
@@ -37,27 +25,21 @@ function(deployqt target)
                     --no-compiler-runtime
                     --no-angle
                     --no-opengl-sw
-                    ${QT_DEPLOY_MUST_BE_DEBUG}
-                    --${DEPLOYQT_TARGET}
+                    $<$<CONFIG:DEBUG>:--pdb>
+                    $<$<CONFIG:DEBUG>:--debug>
                     \"$<TARGET_FILE:${target}>/\"
         )
     endif()
 
-    if(APPLE)
+    if(APPLE)    
 
-        #use debug libs
-        if(DEPLOYQT_TARGET STREQUAL "debug")
-            #set(ENV{DYLD_IMAGE_SUFFIX} "_debug")
-            SET(QT_DEPLOY_MUST_BE_DEBUG "-use-debug-libs")
-        endif()
-        
-
+        #debug lib ad default as experimental build
         add_custom_command(TARGET ${target} POST_BUILD
             COMMAND "${CMAKE_COMMAND}" -E
                  env "${DEPLOYQT_EXECUTABLE}"
                     \"$<TARGET_FILE:${target}>/../../../\"
                     -verbose=1
-                    ${QT_DEPLOY_MUST_BE_DEBUG}
+                    -use-debug-libs
         )
 
     endif()

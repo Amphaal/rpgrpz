@@ -33,7 +33,7 @@
                 "kind" : "test"
             },
             "type": "shell",
-            "command": "cmake -DCMAKE_BUILD_TYPE=Debug -A x64 ../..",
+            "command": "cmake -A x64 ../..",
             "options": {
                 "cwd": "${workspaceRoot}/build/Debug"
             }
@@ -41,10 +41,7 @@
         {
             "label": "Debug - 3. Build",
             "type": "shell",
-            "command": "cmake --build .",
-            "options": {
-                "cwd": "${workspaceRoot}/build/Debug"
-            }
+            "command": "cmake --build ./build/Debug --config Debug"
         }
     ]
 }

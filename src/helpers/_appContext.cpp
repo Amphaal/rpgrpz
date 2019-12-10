@@ -77,9 +77,15 @@ AppSettings* AppContext::settings() {
 }
 
 const QString AppContext::getWindowTitle() {
+    
     QString stdTitle = APP_FULL_DENOM;
-    if(IS_DEBUG_APP) stdTitle = "DEBUG - " + stdTitle;
+    
+    #ifdef NDEBUG
+        stdTitle = "DEBUG - " + stdTitle;
+    #endif
+
     return stdTitle;
+
 }
 
 const QString AppContext::_defaultAppDataLocation() {
@@ -169,8 +175,14 @@ void AppContext::initSentry() {
 
     auto options = sentry_options_new();
     sentry_options_set_dsn(options, SENTRY_ENDPOINT);
-    sentry_options_set_environment(options, IS_DEBUG_APP ? "Debug" : "Production");
-    sentry_options_set_release(options, APP_FULL_DENOM);
+
+    QString environement = "Production";
+    #ifdef NDEBUG
+        environement = "Debug";
+    #endif
+    sentry_options_set_environment(options, environement.toStdString().c_str());
+
+    sentry_options_set_release(options, GITHUB_VERSION_NAME);
     sentry_options_set_debug(options, 1);
 
     //crashpad integration
