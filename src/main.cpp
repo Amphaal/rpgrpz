@@ -5,6 +5,8 @@
 #include "src/ui/_others/AppLoader.hpp"
 #include "src/helpers/_logWriter.h"
 
+#include <exception>
+
 ////////////
 // SERVER //
 ////////////
@@ -147,13 +149,15 @@ int main(int argc, char** argv) {
     // LAUNCH //
     ////////////
 
-    //default
-    auto args = AppContext::getOptionArgs(argc, argv);
-    auto code = args.contains(QStringLiteral(u"serverOnly")) ? serverConsole(argc, argv) : clientApp(argc, argv);
+    //TODO handle CRT messages
 
-    // make sure everything flushes
-    sentry_shutdown();
-
-    return code;
+    try {
+        auto args = AppContext::getOptionArgs(argc, argv);
+        return args.contains(QStringLiteral(u"serverOnly")) ? 
+                        serverConsole(argc, argv) : 
+                        clientApp(argc, argv);
+    } catch(...) {
+        sentry_shutdown();
+    }
 
 }

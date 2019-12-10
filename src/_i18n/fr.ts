@@ -766,7 +766,7 @@
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="727"/>
+        <location filename="../ui/mainWindow.cpp" line="728"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
@@ -1494,17 +1494,17 @@
 <context>
     <name>UpdaterUIIntegrator</name>
     <message>
-        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="44"/>
+        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="39"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="74"/>
+        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="69"/>
         <source>Update Available</source>
         <translation>Mise à jour disponible</translation>
     </message>
     <message>
-        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="75"/>
+        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="70"/>
         <source>An update is available for %1. Would you like to install it now ?</source>
         <translation>Une mise à jour est disponible pour %1. Voulez-vous l&apos;installer maintenant ?</translation>
     </message>

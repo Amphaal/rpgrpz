@@ -20,7 +20,7 @@
             "dependsOn" : "Debug - 0. Create build folder",
             "group": "test",
             "type": "shell",
-            "command": "${env:VCPKG_ROOT}/vcpkg install miniupnpc openssl",
+            "command": "${env:VCPKG_ROOT}/vcpkg install miniupnpc openssl --triplet x64-windows; vcpkg integrate install",
             "options": {
                 "cwd": "${workspaceRoot}/build/Debug"
             }
@@ -33,7 +33,7 @@
                 "kind" : "test"
             },
             "type": "shell",
-            "command": "cmake -DCMAKE_BUILD_TYPE=Debug ../..",
+            "command": "cmake -DCMAKE_BUILD_TYPE=Debug -A x64 ../..",
             "options": {
                 "cwd": "${workspaceRoot}/build/Debug"
             }
@@ -41,7 +41,10 @@
         {
             "label": "Debug - 3. Build",
             "type": "shell",
-            "command": "cmake --build ./build/Debug --config Debug"
+            "command": "cmake --build .",
+            "options": {
+                "cwd": "${workspaceRoot}/build/Debug"
+            }
         }
     ]
 }

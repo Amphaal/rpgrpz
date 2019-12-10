@@ -11,7 +11,7 @@
             "request": "launch",
             "args": ["--noServer --customContext=NoServer"],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build/Debug/bin",
+            "cwd": "${workspaceFolder}/build/Debug/bin/Debug",
             "environment": [],
             "osx": {
                 "program": "${workspaceFolder}/build/Debug/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ",
@@ -36,7 +36,7 @@
             },
             "args": ["--noServer --randomContext"],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build/Debug/bin",
+            "cwd": "${workspaceFolder}/build/Debug/bin/Debug",
             "environment": [],
             
             "externalConsole": false
@@ -59,7 +59,7 @@
             },
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build/Debug/bin",
+            "cwd": "${workspaceFolder}/build/Debug/bin/Debug",
             "environment": [],
             
             "externalConsole": false,
@@ -79,7 +79,7 @@
             },
             "args": ["--test"],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build/Debug/bin",
+            "cwd": "${workspaceFolder}/build/Debug/bin/Debug",
             "environment": [
                 {
                     "name": "GST_DEBUG",

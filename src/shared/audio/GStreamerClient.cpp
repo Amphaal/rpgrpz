@@ -302,7 +302,7 @@ void GStreamerClient::stopTimer(const GstMessageType &reason) {
 /////////////
 /////////////
 
-bool gs_client_bus_cb(GstBus *bus, GstMessage *msg, void* data) {
+bool gst_client_bus_cb(GstBus *bus, GstMessage *msg, void* data) {
 
     //cast cli
     GStreamerClient* cli = static_cast<GStreamerClient*>(data);

@@ -5,14 +5,6 @@ if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)
 endif()
 
-project(RPGRPZ)
-cmake_minimum_required(VERSION 3.16.0)
-
-#version
-SET(CMAKE_PROJECT_VERSION_MAJOR 0)
-SET(CMAKE_PROJECT_VERSION_MINOR 20)
-SET(CMAKE_PROJECT_VERSION_PATCH 5)
-
 #check required ENV vars
 list(APPEND ENV_VAR_TO_CHECK
     GSTREAMER_1_0_ROOT_X86_64
@@ -27,8 +19,17 @@ foreach(C_ENV IN LISTS ENV_VAR_TO_CHECK)
     endif()
 endforeach()
 
-#vcpkg
-SET(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
+#define toolchain
+set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+
+#project setup
+project(RPGRPZ)
+cmake_minimum_required(VERSION 3.16.0)
+
+#version
+SET(CMAKE_PROJECT_VERSION_MAJOR 0)
+SET(CMAKE_PROJECT_VERSION_MINOR 20)
+SET(CMAKE_PROJECT_VERSION_PATCH 5)
 
 #default configuration
 SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/)
@@ -51,7 +52,6 @@ IF(WIN32)
 ENDIF()
 
 #set default maintenance tool path
-SET(MAINTENANCE_TOOL_LOCATION "")
 SET(IS_DEBUG_APP OFF)
 
 #if debug build
@@ -137,25 +137,24 @@ SET(SOURCES
     resources/resources.qrc
 )
 
+###########
+# OpenSSL #
+###########
+
+find_package(openssl REQUIRED)
+list(APPEND EXT_LIBS
+    OpenSSL::SSL
+    OpenSSL::Crypto
+    ws2_32
+)
 
 #############
 # miniupnpc #
 #############
 
 find_package(miniupnpc REQUIRED)
-list(APPEND EXT_LIBS
-    miniupnpc
-)
-
-###########
-# OpenSSL #
-###########
-
-find_package(openssl REQUIRED COMPONENTS SSL Crypto)
-list(APPEND EXT_LIBS
-    OpenSSL::SSL
-    OpenSSL::Crypto
-)
+list(APPEND EXT_LIBS ${MINIUPNP_LIBRARY})
+include_directories(${MINIUPNP_INCLUDE_DIR})
 
 ############# 
 # Gstreamer #
@@ -266,11 +265,17 @@ deployqt(app)
 # OTHERS COPY #
 ###############
 
-#crashpad handler
-#TODO
-#add_custom_command(TARGET app}   
-#    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CONAN_BIN_DIRS_CRASHPAD}/${CRASHPAD_HANDLER_NAME} $<TARGET_FILE_DIR:app>/${CRASHPAD_HANDLER_NAME}
-#)
+SET(SENTRY_BINARIES_DIR $ENV{SENTRY_NATIVE_ROOT}/gen_windows/bin)
+
+#crashpad
+add_custom_command(TARGET app   
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SENTRY_BINARIES_DIR}/${CMAKE_BUILD_TYPE}/${CRASHPAD_HANDLER_NAME} $<TARGET_FILE_DIR:app>
+)
+
+#sentry
+add_custom_command(TARGET app
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SENTRY_BINARIES_DIR}/x86_64/${CMAKE_BUILD_TYPE}/sentry_crashpad.dll $<TARGET_FILE_DIR:app>
+)
 
 #translations
 add_custom_command(TARGET app  

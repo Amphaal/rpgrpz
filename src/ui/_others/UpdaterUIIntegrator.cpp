@@ -2,12 +2,7 @@
 
 UpdaterUIIntegrator::UpdaterUIIntegrator(QMainWindow* wParent) : QObject(wParent), _wParent(wParent) {
 
-    if(MAINTENANCE_TOOL_LOCATION == "") {
-        this->_updater = new QtAutoUpdater::Updater(wParent);
-    }
-    else {
-        this->_updater = new QtAutoUpdater::Updater(MAINTENANCE_TOOL_LOCATION, wParent);
-    }
+    this->_updater = new QtAutoUpdater::Updater(wParent);
 
     QObject::connect(
         this->_updater, &QtAutoUpdater::Updater::checkUpdatesDone, 

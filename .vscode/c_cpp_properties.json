@@ -60,8 +60,10 @@
                 "C:/Qt/5.13.2/msvc2017_64/include/QtOpenGL",
                 "F:/sentry-native/crashpad/build/crashpad",
                 "F:/sentry-native/crashpad/build/crashpad/third_party/mini_chromium/mini_chromium",
-                "F:/vcpkg/packages/miniupnpc_x86-windows/include",
-                "F:/sentry-native/include"
+                "F:/vcpkg/packages/miniupnpc_x64-windows/include",
+                "F:/sentry-native/include",
+                "C:/Qt/5.13.2/msvc2017_64/include/QtNetwork",
+                "C:/Qt/5.13.2/msvc2017_64/include/QtSvg"
             ]
         }
     ],

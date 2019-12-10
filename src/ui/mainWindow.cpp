@@ -710,7 +710,8 @@ QMenu* MainWindow::_getHelpMenu() {
     QObject::connect(
         testSentryReportAction, &QAction::triggered,
         [&]() {
-            abort(); //must crash and trigger Sentry minidump report push
+            QList<int> q;
+            q.at(0);
         }
     );
 

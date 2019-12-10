@@ -191,7 +191,17 @@
         "deque": "cpp",
         "stack": "cpp",
         "qpainterpathstroker": "cpp",
-        "qprocess": "cpp"
+        "qprocess": "cpp",
+        "cinttypes": "cpp",
+        "codecvt": "cpp",
+        "cstdarg": "cpp",
+        "hash_map": "cpp",
+        "hash_set": "cpp",
+        "queue": "cpp",
+        "regex": "cpp",
+        "unordered_set": "cpp",
+        "qevent": "cpp",
+        "qkeyevent": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

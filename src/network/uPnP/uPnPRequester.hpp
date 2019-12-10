@@ -23,9 +23,7 @@ class uPnPRequester : public uPnPThread {
         QString description = 0;
         QString targetPort = 0;
 
-        uPnPRequester(const QString &tPort, const QString &descr) : targetPort(tPort), description(descr) { 
-
-        }
+        uPnPRequester(const QString &tPort, const QString &descr) : targetPort(tPort), description(descr) {}
         
         void run() override {
             try {
@@ -72,7 +70,6 @@ class uPnPRequester : public uPnPThread {
 
 
     private:
-
         void _initUPnP() {
 
             #ifdef _WIN32
