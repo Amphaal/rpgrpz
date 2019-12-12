@@ -2,8 +2,8 @@
 
 MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 
-    auto i = 0;
-    auto qq = i / i;
+    int* a = nullptr;
+    *a = 1;
 
     //start hint thread
     HintThread::init();
@@ -714,8 +714,7 @@ QMenu* MainWindow::_getHelpMenu() {
         testSentryReportAction, &QAction::triggered,
         [&]() {
             //must crash and trigger Sentry minidump report push
-            QList<int> a;
-            a.at(0);
+            abort();
         }
     );
 

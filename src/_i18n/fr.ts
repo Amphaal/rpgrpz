@@ -766,7 +766,7 @@
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="732"/>
+        <location filename="../ui/mainWindow.cpp" line="731"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>

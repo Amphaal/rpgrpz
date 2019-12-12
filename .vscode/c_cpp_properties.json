@@ -63,7 +63,8 @@
                 "F:/vcpkg/packages/miniupnpc_x64-windows/include",
                 "F:/sentry-native/include",
                 "C:/Qt/5.13.2/msvc2017_64/include/QtNetwork",
-                "C:/Qt/5.13.2/msvc2017_64/include/QtSvg"
+                "C:/Qt/5.13.2/msvc2017_64/include/QtSvg",
+                "F:/sentry-native/crashpad/build"
             ]
         }
     ],

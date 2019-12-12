@@ -30,7 +30,7 @@ class AppContext {
         
         static QHash<QString, QString> _getOptionArgs(const QString &argsAsStr);
 
-        #ifdef NDEBUG
+        #ifdef _DEBUG
             static inline const QString DEBUG_APP_FILE_APPENDICE = ".debug";
         #else
             static inline const QString DEBUG_APP_FILE_APPENDICE = "";
@@ -52,11 +52,9 @@ class AppContext {
         static inline qreal _fogOpacity = .5;
         static inline QGLWidget* _mapGLWidget = nullptr;
 
-        static void initSentry();
-        static void initCrashpad();
-
     public:    
         static AppSettings* settings();
+        static void initSentry();
 
         static inline const QString UPNP_DEFAULT_TARGET_PORT = "31137";
         static inline const QString UPNP_REQUEST_DESCRIPTION = APP_NAME;

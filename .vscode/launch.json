@@ -59,7 +59,7 @@
             },
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build/Debug/bin/Debug",
+            "cwd": "${workspaceFolder}/build/Debug/bin/Release",
             "environment": [],
             
             "externalConsole": false,

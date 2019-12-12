@@ -21,6 +21,7 @@ int serverConsole(int argc, char** argv) {
     app.run();
 
     return server.exec();
+
 }
 
 ////////////////
@@ -34,7 +35,7 @@ int serverConsole(int argc, char** argv) {
 int clientApp(int argc, char** argv) {
 
     // prevent multiples instances
-    #ifndef NDEBUG
+    #ifndef _DEBUG
 
         auto lockFn = QString("%1/%2.lock")
                             .arg(QDir::tempPath())
@@ -134,7 +135,7 @@ void _registerMetaTypes() {
     
 }
 
-int main(int argc, char** argv) noexcept {
+int main(int argc, char** argv) {
 
     //log SLL lib loading
     qDebug() << QSslSocket::sslLibraryBuildVersionString();
@@ -149,19 +150,18 @@ int main(int argc, char** argv) noexcept {
     ////////////
     // LAUNCH //
     ////////////
-
-    try {
-        
-        auto args = AppContext::getOptionArgs(argc, argv);
-        auto result = args.contains(QStringLiteral(u"serverOnly")) ? 
-                        serverConsole(argc, argv) : 
-                        clientApp(argc, argv);
-        
+    
+    set_terminate([](){
         sentry_shutdown();
-        return result;
+    });
 
-    } catch(...) {
-        sentry_shutdown();
-    }
+    auto args = AppContext::getOptionArgs(argc, argv);
+
+    auto result = args.contains(QStringLiteral(u"serverOnly")) ? 
+                    serverConsole(argc, argv) : 
+                    clientApp(argc, argv);
+    
+    sentry_shutdown();
+    return result; 
 
 }

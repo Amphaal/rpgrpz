@@ -108,7 +108,7 @@ bool JSONDatabase::_handleVersionMissmatch(QJsonObject &databaseToUpdate, JSONDa
     this->log("Database does not match API version !");
 
     //duplicate file to migrate
-    #ifndef NDEBUG
+    #ifndef _DEBUG
         this->_duplicateDbFile("oldVersion");
     #endif
 
@@ -116,7 +116,7 @@ bool JSONDatabase::_handleVersionMissmatch(QJsonObject &databaseToUpdate, JSONDa
         
         this->log(QStringLiteral(u"Database have not been updated : %1").arg(reason));
         
-        #ifndef NDEBUG
+        #ifndef _DEBUG
             this->_updateDbFile(this->_emptyDbFile());
             this->log("Empty database created !");
         #endif
@@ -161,7 +161,7 @@ bool JSONDatabase::_handleVersionMissmatch(QJsonObject &databaseToUpdate, JSONDa
     //force version update
     databaseToUpdate.insert(QStringLiteral(u"version"), aimedAPIVersion);
     
-    #ifdef NDEBUG
+    #ifdef _DEBUG
         this->_duplicateDbFile("oldVersion");
     #else
         this->_updateDbFile(databaseToUpdate); //save into file
@@ -259,7 +259,7 @@ void JSONDatabase::saveAsFile(const QJsonObject &db, QFile &fileHandler) {
 
     //define format
     auto format = QJsonDocument::JsonFormat::Compact;
-    #ifdef NDEBUG
+    #ifdef _DEBUG
         format =  QJsonDocument::JsonFormat::Indented;
     #endif
     

@@ -201,7 +201,9 @@
         "regex": "cpp",
         "unordered_set": "cpp",
         "qevent": "cpp",
-        "qkeyevent": "cpp"
+        "qkeyevent": "cpp",
+        "qlibraryinfo": "cpp",
+        "qdesktopservices": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

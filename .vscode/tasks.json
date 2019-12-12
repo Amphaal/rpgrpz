@@ -41,7 +41,7 @@
         {
             "label": "Debug - 3. Build",
             "type": "shell",
-            "command": "cmake --build ./build/Debug --config Debug"
+            "command": "cmake --build ./build/Debug --config Release"
         }
     ]
 }
