@@ -21,8 +21,12 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
     Q_INTERFACES(QGraphicsItem)
     
     public:
-        MapViewFog() {
+        MapViewFog(const RPZFogParams &params) {
             
+            //init from params
+            this->_rawPath = params.path();
+            this->setFogMode(params.mode(), false);
+
             this->setZValue(AppContext::FOG_Z_INDEX);
 
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
@@ -57,6 +61,16 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             return this->_brush.transform().m31();
         }
 
+        void drawToPoint(const QPointF &dest) {
+            this->_drawnPath.lineTo(dest);
+        }
+
+        QPainterPath commitDrawing() {
+            auto out = this->_drawnPath;
+            this->_drawnPath.clear();
+            return out;
+        }
+
         void setTextureHPos(qreal newPos) {
             QTransform translated;
             translated.translate(newPos, 0);
@@ -70,20 +84,10 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
 
         //
         
-        void setFogMode(const RPZFogParams::Mode &mode) {
-            
-            if(mode == RPZFogParams::Mode::PathIsButFog) {
-                this->_computedPath = QPainterPath();
-                this->_computedPath.addRect(this->scene()->sceneRect());
-                this->_computedPath.addPath(this->_rawPath);
-            } 
-            
-            else {
-                this->_computedPath = this->_rawPath;
-            }
-
-            this->update();
-        
+        void setFogMode(const RPZFogParams::Mode &mode, bool shouldUpdate = true) {
+            this->_mode = mode;
+            this->_updatedComputedPath();
+            if(shouldUpdate) this->update();
         }
 
     protected:
@@ -97,7 +101,10 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
 
             painter->save();
 
-                painter->setClipPath(this->_computedPath);
+                auto clipPath = this->_computedPath;
+                clipPath.addPath(this->_drawnPath);
+
+                painter->setClipPath(clipPath);
 
                     painter->setPen(Qt::NoPen);
                     painter->setBrush(this->_brush);
@@ -112,10 +119,24 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         }
 
     private:
+        RPZFogParams::Mode _mode;
         QRectF _viewRect;
         QPainterPath _rawPath;
+        QPainterPath _drawnPath;
         QPainterPath _computedPath;
         QBrush _brush;
         QPropertyAnimation* _fogAnim = nullptr;
+
+        void _updatedComputedPath() {
+            if(this->_mode == RPZFogParams::Mode::PathIsButFog) {
+                this->_computedPath = QPainterPath();
+                this->_computedPath.addRect(this->scene()->sceneRect());
+                this->_computedPath.addPath(this->_rawPath);
+            } 
+            
+            else {
+                this->_computedPath = this->_rawPath;
+            }
+        }
 
 };

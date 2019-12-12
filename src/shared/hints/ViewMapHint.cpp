@@ -18,6 +18,11 @@ QGraphicsItem* ViewMapHint::ghostItem() const {
     return this->_ghostItem;
 }
 
+MapViewFog* ViewMapHint::fogItem() const {
+    QMutexLocker l(&this->_m_fogItem);
+    return this->_fogItem;
+}
+
 const QList<QGraphicsItem*> ViewMapHint::_gis(const QList<RPZAtom::Id> &atomIds) const {
     
     QList<QGraphicsItem*> out;
@@ -506,9 +511,11 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
         this->_m_ghostItem.unlock();
 
         //reset fog
-        this->_fogItem = new MapViewFog; //do not delete, the old one will be in UI thread ! 
-        //TODO init fog
-
+        {
+            QMutexLocker l(&this->_m_fogItem);
+            this->_fogItem = new MapViewFog(mPayload->fogParameters()); //do not delete, the old one will be in UI thread ! 
+        }
+        
         //reset descriptor
         emit atomDescriptorUpdated();
 

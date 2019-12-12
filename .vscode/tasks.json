@@ -10,9 +10,9 @@
             "label": "Debug - 0. Create build folder",
             "group": "test",
             "type": "shell",
-            "command": "rm build/Debug -r -fo; mkdir build/Debug",
+            "command": "rm _gen -r -fo; mkdir _gen",
             "osx": {
-                "command": "rm -rf build/Debug; mkdir build; mkdir build/Debug"
+                "command": "rm -rf _gen; mkdir build; mkdir _gen"
             }
         },
         {
@@ -22,7 +22,7 @@
             "type": "shell",
             "command": "${env:VCPKG_ROOT}/vcpkg install miniupnpc openssl --triplet x64-windows; vcpkg integrate install",
             "options": {
-                "cwd": "${workspaceRoot}/build/Debug"
+                "cwd": "${workspaceRoot}/_gen"
             }
         },
         {
@@ -33,15 +33,15 @@
                 "kind" : "test"
             },
             "type": "shell",
-            "command": "cmake -A x64 ../..",
+            "command": "cmake -A x64 ..",
             "options": {
-                "cwd": "${workspaceRoot}/build/Debug"
+                "cwd": "${workspaceRoot}/_gen"
             }
         },
         {
             "label": "Debug - 3. Build",
             "type": "shell",
-            "command": "cmake --build ./build/Debug --config Release"
+            "command": "cmake --build ./_gen --config Debug"
         }
     ]
 }

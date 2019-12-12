@@ -2,9 +2,6 @@
 
 MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 
-    int* a = nullptr;
-    *a = 1;
-
     //start hint thread
     HintThread::init();
 

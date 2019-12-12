@@ -544,7 +544,8 @@ void MapView::mousePressEvent(QMouseEvent *event) {
                     switch(templateAtom.type()) {
                         
                         case RPZAtom::Type::FogOfWar: {
-                            //TODO
+                            auto scenePos = this->mapToScene(event->pos());
+                            HintThread::hint()->fogItem()->drawToPoint(scenePos);
                         }
                         break;
 
@@ -617,7 +618,8 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
         switch(type) {
 
             case RPZAtom::Type::FogOfWar: {
-                //TODO
+                auto scenePos = this->mapToScene(event->pos());
+                HintThread::hint()->fogItem()->drawToPoint(scenePos);
             }
             break;
 
@@ -679,8 +681,14 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
                 break;
 
                 case MapTool::Atom: {
+                    
                     if(HintThread::hint()->templateAtom().type() != RPZAtom::Type::FogOfWar) break;
-                    //TODO
+                    
+                    auto drawn = HintThread::hint()->fogItem()->commitDrawing();
+                    FogChangedPayload payload(FogChangedPayload::ChangeType::Added, drawn);
+
+                    AlterationHandler::get()->queueAlteration(HintThread::hint(), payload);
+
                 }
                 break;
 

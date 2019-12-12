@@ -37,6 +37,7 @@ class ViewMapHint : public AtomsStorage {
         void notifyWalk(QGraphicsItem* toWalk, const QPointF &newPos); //safe
         const RPZAtom templateAtom() const; //safe
         QGraphicsItem* ghostItem() const; //safe
+        MapViewFog* fogItem() const; //safe
 
         const QList<RPZAtom::Id> getAtomIdsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const; //safe
         const RPZAtom::Id getAtomIdFromGraphicsItem(const QGraphicsItem* toFetch) const; //safe
@@ -79,6 +80,8 @@ class ViewMapHint : public AtomsStorage {
         
         mutable QMutex _m_GItemsById;
         QMap<RPZAtom::Id, QGraphicsItem*> _GItemsById;
+        
+        mutable QMutex _m_fogItem;
         MapViewFog* _fogItem = nullptr;
 
         //atom descriptor

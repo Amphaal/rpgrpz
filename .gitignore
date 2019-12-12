@@ -1,5 +1,5 @@
 src/version.h
 .vscode/ipch
 nbproject
-/build/
+/_gen/
 .DS_Store

@@ -11,10 +11,10 @@
             "request": "launch",
             "args": ["--noServer --customContext=NoServer"],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build/Debug/bin/Debug",
+            "cwd": "${workspaceFolder}/_gen/bin/Debug",
             "environment": [],
             "osx": {
-                "program": "${workspaceFolder}/build/Debug/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ",
+                "program": "${workspaceFolder}/_gen/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ",
                 "MIMode": "lldb"
             },
             "windows": {
@@ -28,7 +28,7 @@
             "program": "RPGRPZ.exe",
             "request": "launch",
             "osx": {
-                "program": "${workspaceFolder}/build/Debug/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ",
+                "program": "${workspaceFolder}/_gen/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ",
                 "MIMode": "lldb"
             },
             "windows": {
@@ -36,7 +36,7 @@
             },
             "args": ["--noServer --randomContext"],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build/Debug/bin/Debug",
+            "cwd": "${workspaceFolder}/_gen/bin/Debug",
             "environment": [],
             
             "externalConsole": false
@@ -47,7 +47,7 @@
             "program": "RPGRPZ.exe",
             "request": "launch",
             "osx": {
-                "program": "${workspaceFolder}/build/Debug/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ",
+                "program": "${workspaceFolder}/_gen/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ",
                 "MIMode": "lldb",
                 "environment": [{
                         "name" :"DYLD_IMAGE_SUFFIX",
@@ -59,7 +59,7 @@
             },
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build/Debug/bin/Release",
+            "cwd": "${workspaceFolder}/_gen/bin/Debug",
             "environment": [],
             
             "externalConsole": false,
@@ -71,7 +71,7 @@
             "program": "RPGRPZ.exe",
             "request": "launch",
             "osx": {
-                "program": "${workspaceFolder}/build/Debug/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ",
+                "program": "${workspaceFolder}/_gen/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ",
                 "MIMode": "lldb"
             },
             "windows": {
@@ -79,7 +79,7 @@
             },
             "args": ["--test"],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build/Debug/bin/Debug",
+            "cwd": "${workspaceFolder}/_gen/bin/Debug",
             "environment": [
                 {
                     "name": "GST_DEBUG",
