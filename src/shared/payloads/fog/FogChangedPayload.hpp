@@ -15,12 +15,12 @@ class FogChangedPayload : public AlterationPayload {
 
         explicit FogChangedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
         FogChangedPayload(const ChangeType &type, const QPainterPath &modifyingPath = QPainterPath()) : AlterationPayload(Payload::Alteration::FogModeChanged) {
-            this->insert(QStringLiteral(u"t"), (int)type);
+            this->insert(QStringLiteral(u"ct"), (int)type);
             if(!modifyingPath.isEmpty()) this->insert(QStringLiteral(u"mp"), JSONSerializer::asBase64(modifyingPath));
         }
     
         ChangeType changeType() const {
-            return (ChangeType)this->value(QStringLiteral(u"t")).toInt();
+            return (ChangeType)this->value(QStringLiteral(u"ct")).toInt();
         }
 
         const QPainterPath modifyingPath() const {

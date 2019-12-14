@@ -13,6 +13,7 @@
 #include "src/shared/renderer/graphics/_base/RPZAnimated.hpp"
 
 #include "src/helpers/_appContext.h"
+#include "src/helpers/VectorSimplifier.hpp"
 
 class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem, public RPZAnimated {
     
@@ -65,10 +66,18 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             this->_drawnPath.lineTo(dest);
         }
 
+        void initDrawingAtPos(const QPointF &startingPoint) {
+            this->_drawnPath.moveTo(startingPoint);
+        }
+
         QPainterPath commitDrawing() {
-            auto out = this->_drawnPath;
+            
+            auto out = VectorSimplifier::simplifyPath(this->_drawnPath);
+                     
             this->_drawnPath.clear();
+            
             return out;
+
         }
 
         void setTextureHPos(qreal newPos) {
@@ -101,6 +110,7 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
 
             painter->save();
 
+                
                 auto clipPath = this->_computedPath;
                 clipPath.addPath(this->_drawnPath);
 
@@ -128,6 +138,7 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         QPropertyAnimation* _fogAnim = nullptr;
 
         void _updatedComputedPath() {
+            
             if(this->_mode == RPZFogParams::Mode::PathIsButFog) {
                 this->_computedPath = QPainterPath();
                 this->_computedPath.addRect(this->scene()->sceneRect());
@@ -137,6 +148,9 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             else {
                 this->_computedPath = this->_rawPath;
             }
+
+            this->_computedPath.setFillRule(Qt::FillRule::WindingFill);
+
         }
 
 };
