@@ -32,6 +32,10 @@ class VectorSimplifier {
 
         }
 
+        static const QPolygonF simplifyPolygon(const QPolygonF &toSimplify) {
+            return simplify(toSimplify);
+        } 
+
         static const QPainterPath simplifyPath(const QPainterPath &sourcePath) {
             
             //condense coords

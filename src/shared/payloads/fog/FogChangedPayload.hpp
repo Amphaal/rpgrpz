@@ -14,7 +14,7 @@ class FogChangedPayload : public AlterationPayload {
         };
 
         explicit FogChangedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        FogChangedPayload(const ChangeType &type, const QPainterPath &modifyingPath = QPainterPath()) : AlterationPayload(Payload::Alteration::FogModeChanged) {
+        FogChangedPayload(const ChangeType &type, const QPainterPath &modifyingPath = QPainterPath()) : AlterationPayload(Payload::Alteration::FogChanged) {
             this->insert(QStringLiteral(u"ct"), (int)type);
             if(!modifyingPath.isEmpty()) this->insert(QStringLiteral(u"mp"), JSONSerializer::asBase64(modifyingPath));
         }

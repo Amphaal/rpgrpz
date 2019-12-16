@@ -545,7 +545,7 @@ void MapView::mousePressEvent(QMouseEvent *event) {
                         
                         case RPZAtom::Type::FogOfWar: {
                             auto scenePos = this->mapToScene(event->pos());
-                            HintThread::hint()->fogItem()->initDrawingAtPos(scenePos);
+                            HintThread::hint()->fogItem()->drawToPoint(scenePos);
                         }
                         break;
 

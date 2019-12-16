@@ -537,6 +537,37 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
 
     }
 
+    //fog mode
+    else if (auto mPayload = dynamic_cast<const FogModeChangedPayload*>(&payload)) {
+        this->_fogItem->setFogMode(mPayload->mode());
+    }
+
+    //fog
+    else if(auto mPayload = dynamic_cast<const FogChangedPayload*>(&payload)) {
+            
+        switch(mPayload->changeType()) {
+            
+            case FogChangedPayload::ChangeType::Reset: {
+                this->_fogItem->clear();
+            }
+            break;
+
+            case FogChangedPayload::ChangeType::Added: {
+                //TODO
+                this->_fogItem->addPath(mPayload->modifyingPath());
+            }
+            break;
+
+            case FogChangedPayload::ChangeType::Removed: {
+                //TODO
+            }
+            break;
+
+        }
+        
+
+    }
+
     //if reset (afterward)
     else if(auto mPayload = dynamic_cast<const ResetPayload*>(&payload)) {
         

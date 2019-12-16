@@ -26,7 +26,7 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             
             //init from params
             this->_rawPath = params.path();
-            this->setFogMode(params.mode(), false);
+            this->setFogMode(params.mode());
 
             this->setZValue(AppContext::FOG_Z_INDEX);
 
@@ -54,8 +54,8 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             this->_fogAnim->start();
         }
 
-        QRectF QGraphicsItem::boundingRect() const override {
-            return QRectF();
+        QRectF boundingRect() const override {
+            return this->scene() ? this->scene()->sceneRect() : QRectF();
         }
 
         qreal textureHPos() const {
@@ -63,19 +63,38 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         }
 
         void drawToPoint(const QPointF &dest) {
-            this->_drawnPath.lineTo(dest);
-        }
 
-        void initDrawingAtPos(const QPointF &startingPoint) {
-            this->_drawnPath.moveTo(startingPoint);
+            auto c = this->_drawnPoly.count();
+
+            if(c < 2) {
+                this->_drawnPoly << dest;
+                if(c == 0) {
+                    this->_firstDrawnPoint = dest;
+                }
+                this->_latestDrawnPoint = dest;
+                return;
+            }
+
+            auto pl = QPolygonF({
+                this->_firstDrawnPoint,
+                this->_latestDrawnPoint,
+                dest, 
+            });
+
+            this->_latestDrawnPoint = dest;
+            this->_drawnPoly = this->_drawnPoly.united(pl);
+
         }
 
         QPainterPath commitDrawing() {
+
+            auto simplified = this->_drawnPoly;//VectorSimplifier::simplifyPolygon(this->_drawnPoly);  
             
-            auto out = VectorSimplifier::simplifyPath(this->_drawnPath);
-                     
-            this->_drawnPath.clear();
+            this->_drawnPoly.clear();
             
+            QPainterPath out;
+            out.addPolygon(simplified);
+
             return out;
 
         }
@@ -91,12 +110,22 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             this->_viewRect = view->geometry();
         }
 
+        void clear() {
+            this->_drawnPoly.clear();
+            this->_rawPath.clear();
+            this->_updatedComputedPath();
+        }
+
+        void addPath(const QPainterPath &toAdd) {
+            this->_rawPath.addPath(toAdd);
+            this->_updatedComputedPath();
+        }
+
         //
         
-        void setFogMode(const RPZFogParams::Mode &mode, bool shouldUpdate = true) {
+        void setFogMode(const RPZFogParams::Mode &mode) {
             this->_mode = mode;
             this->_updatedComputedPath();
-            if(shouldUpdate) this->update();
         }
 
     protected:
@@ -109,10 +138,9 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         void _paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) {
 
             painter->save();
-
                 
                 auto clipPath = this->_computedPath;
-                clipPath.addPath(this->_drawnPath);
+                clipPath.addPolygon(this->_drawnPoly);
 
                 painter->setClipPath(clipPath);
 
@@ -132,7 +160,9 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         RPZFogParams::Mode _mode;
         QRectF _viewRect;
         QPainterPath _rawPath;
-        QPainterPath _drawnPath;
+        QPolygonF _drawnPoly;
+        QPointF _latestDrawnPoint;
+        QPointF _firstDrawnPoint;
         QPainterPath _computedPath;
         QBrush _brush;
         QPropertyAnimation* _fogAnim = nullptr;
@@ -148,8 +178,6 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             else {
                 this->_computedPath = this->_rawPath;
             }
-
-            this->_computedPath.setFillRule(Qt::FillRule::WindingFill);
 
         }
 
