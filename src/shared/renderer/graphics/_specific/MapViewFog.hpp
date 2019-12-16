@@ -7,6 +7,8 @@
 #include <QComboBox>
 #include <QPainterPath>
 
+#include <clipper.hpp>
+
 #include "src/shared/models/RPZFogParams.hpp"
 
 #include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
@@ -67,30 +69,37 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             auto c = this->_drawnPoly.count();
 
             if(c < 2) {
+                
                 this->_drawnPoly << dest;
+                
                 if(c == 0) {
                     this->_firstDrawnPoint = dest;
                 }
-                this->_latestDrawnPoint = dest;
-                return;
-            }
 
-            auto pl = QPolygonF({
+                this->_latestDrawnPoints.enqueue(dest);
+                return;
+
+            }
+            
+            QPolygonF pl({
                 this->_firstDrawnPoint,
-                this->_latestDrawnPoint,
-                dest, 
+                this->_latestDrawnPoints.dequeue(),
+                this->_latestDrawnPoints.at(0),
+                dest
             });
 
-            this->_latestDrawnPoint = dest;
-            this->_drawnPoly = this->_drawnPoly.united(pl);
+            this->_latestDrawnPoints.enqueue(dest);
+
+            this->_drawnPoly = this->_drawnPoly.united(pl); //BUG, TODO
 
         }
 
         QPainterPath commitDrawing() {
 
-            auto simplified = this->_drawnPoly;//VectorSimplifier::simplifyPolygon(this->_drawnPoly);  
+            auto simplified = VectorSimplifier::simplifyPolygon(this->_drawnPoly);  
             
             this->_drawnPoly.clear();
+            this->_latestDrawnPoints.clear();
             
             QPainterPath out;
             out.addPolygon(simplified);
@@ -106,12 +115,9 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             this->update();
         }
 
-        void defineRectFromView(QGraphicsView *view) {
-            this->_viewRect = view->geometry();
-        }
-
         void clear() {
             this->_drawnPoly.clear();
+            this->_latestDrawnPoints.clear();
             this->_rawPath.clear();
             this->_updatedComputedPath();
         }
@@ -150,7 +156,7 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
                     painter->setOpacity(AppContext::fogOpacity());
 
                     QPainterPath p;
-                    painter->drawRect(this->_viewRect);
+                    painter->drawRect(this->scene()->sceneRect());
 
             painter->restore();
 
@@ -158,10 +164,9 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
 
     private:
         RPZFogParams::Mode _mode;
-        QRectF _viewRect;
         QPainterPath _rawPath;
         QPolygonF _drawnPoly;
-        QPointF _latestDrawnPoint;
+        QQueue<QPointF> _latestDrawnPoints;
         QPointF _firstDrawnPoint;
         QPainterPath _computedPath;
         QBrush _brush;

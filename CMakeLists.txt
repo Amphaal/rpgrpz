@@ -139,6 +139,16 @@ find_package(miniupnpc REQUIRED)
 list(APPEND EXT_LIBS ${MINIUPNP_LIBRARY})
 include_directories(${MINIUPNP_INCLUDE_DIR})
 
+###########
+# clipper # 
+###########
+
+find_library(CLIPPER_LIBRARY polyclipping)
+list(APPEND EXT_LIBS ${CLIPPER_LIBRARY})
+
+find_path(CLIPPER_INCLUDE_DIR NAMES clipper.hpp PATH_SUFFIXES polyclipping)
+include_directories(${CLIPPER_INCLUDE_DIR})
+
 ############# 
 # Gstreamer #
 #############

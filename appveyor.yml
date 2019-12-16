@@ -17,7 +17,7 @@ cache:
 install:
   #- cmd: choco install pkgconfiglite
   - cd c:\tools\vcpkg
-  - vcpkg install miniupnpc openssl --triplet x64-windows
+  - vcpkg install miniupnpc openssl polyclipping --triplet x64-windows
   - vcpkg integrate install
   - npm install -g @sentry/cli --unsafe-perm
   # - appveyor DownloadFile https://gstreamer.freedesktop.org/data/pkg/windows/1.16.2/gstreamer-1.0-devel-msvc-x86_64-1.16.2.msi

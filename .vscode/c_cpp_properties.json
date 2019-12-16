@@ -32,7 +32,7 @@
             ],
             "browse": {
                 "path": [
-                    "${env:VCPKG_ROOT}/packages",
+                    "${env:VCPKG_ROOT}/installed",
                     "${env:QTDIR}/include",
                     "${env:QTDIR}/lib",
                     "${env:GSTREAMER_1_0_ROOT_X86_64}/include",
@@ -60,7 +60,8 @@
                 "C:/Qt/5.13.2/msvc2017_64/include/QtOpenGL",
                 "F:/sentry-native/crashpad/build/crashpad",
                 "F:/sentry-native/crashpad/build/crashpad/third_party/mini_chromium/mini_chromium",
-                "F:/vcpkg/packages/miniupnpc_x64-windows/include",
+                "F:/vcpkg/packages/installed/x64-windows/include",
+                "F:/vcpkg/installed/x64-windows/include/polyclipping",
                 "F:/sentry-native/include",
                 "C:/Qt/5.13.2/msvc2017_64/include/QtNetwork",
                 "C:/Qt/5.13.2/msvc2017_64/include/QtSvg",

@@ -221,14 +221,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
 
         //additionnal items to integrate first
         for(const auto item : additionnalResetSetupItems) {
-           
             this->_addItemToScene(item);
-
-            //fog 
-            if(auto fog = dynamic_cast<MapViewFog*>(item)) {
-                fog->defineRectFromView(this);
-            }
-
         }
 
         //reset view

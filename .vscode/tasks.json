@@ -20,7 +20,7 @@
             "dependsOn" : "Debug - 0. Create build folder",
             "group": "test",
             "type": "shell",
-            "command": "${env:VCPKG_ROOT}/vcpkg install miniupnpc openssl --triplet x64-windows; vcpkg integrate install",
+            "command": "${env:VCPKG_ROOT}/vcpkg install miniupnpc openssl polyclipping --triplet x64-windows; vcpkg integrate install",
             "options": {
                 "cwd": "${workspaceRoot}/_gen"
             }
