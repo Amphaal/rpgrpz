@@ -544,23 +544,7 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
 
     //fog
     else if(auto mPayload = dynamic_cast<const FogChangedPayload*>(&payload)) {
-            
-        switch(auto type = mPayload->changeType()) {
-            
-            case FogChangedPayload::ChangeType::Reset: {
-                this->_fogItem->clear();
-            }
-            break;
-
-            case FogChangedPayload::ChangeType::Added: {
-            case FogChangedPayload::ChangeType::Removed: {
-                this->_fogItem->computePath(type, mPayload->modifyingPath());
-            }
-            break;
-
-        }
-        
-
+        this->_fogItem->computePolys(*mPayload);
     }
 
     //if reset (afterward)

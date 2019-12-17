@@ -512,70 +512,78 @@ void MapView::mousePressEvent(QMouseEvent *event) {
 
     //register last position
     this->_isMousePressed = true;
+    auto btnPressed = event->button();
 
-    switch(event->button()) {
+    if(btnPressed == Qt::MouseButton::MiddleButton) {
+        auto tool = this->_quickTool == MapTool::Default ? MapTool::Scroll : MapTool::Default;
+        this->_changeTool(tool, true);
+        return;
+    }
 
-        case Qt::MouseButton::MiddleButton: {
-            auto tool = this->_quickTool == MapTool::Default ? MapTool::Scroll : MapTool::Default;
-            this->_changeTool(tool, true);
-        }
-        break;
+    auto currentTool = this->_getCurrentTool();
 
-        case Qt::MouseButton::LeftButton: {
+    //for atoms
+    if(currentTool == MapTool::Atom) {
+            
+        //conditionnal drawing
+        auto templateAtom = HintThread::hint()->templateAtom();
+        auto templateType = templateAtom.type();
 
-            switch(this->_getCurrentTool()) {
-                
-                case MapTool::Default: {
-                    this->_ignoreSelectionChangedEvents = !this->_isAnySelectableItemsUnderCursor(event->pos());
-                }
+        //FoW...
+        if(templateType == RPZAtom::Type::FogOfWar) {
+            
+            auto fogItem = HintThread::hint()->fogItem();
+            fogItem->initDrawing(btnPressed == Qt::MouseButton::LeftButton ? FogChangedPayload::ChangeType::Added : FogChangedPayload::ChangeType::Removed);
+
+            auto scenePos = this->mapToScene(event->pos());
+            fogItem->drawToPoint(scenePos);
+
+        } 
+        
+        //any other atoms
+        else if(btnPressed == Qt::MouseButton::LeftButton) {
+            
+            switch(templateAtom.type()) {
+
+                case RPZAtom::Type::Drawing:
+                case RPZAtom::Type::Brush:
+                    this->_drawingAssist->addDrawingPoint(event->pos(), templateAtom);
                 break;
 
-                case MapTool::Atom: {
+                default: {
 
-                    //conditionnal drawing
-                    auto templateAtom = HintThread::hint()->templateAtom();
-                    switch(templateAtom.type()) {
-                        
-                        case RPZAtom::Type::FogOfWar: {
-                            auto scenePos = this->mapToScene(event->pos());
-                            HintThread::hint()->fogItem()->drawToPoint(scenePos);
-                        }
-                        break;
+                    auto ghost = HintThread::hint()->ghostItem();
+                    if(this->_preventMoveOrInsertAtPosition(ghost)) break;
 
-                        case RPZAtom::Type::Drawing:
-                        case RPZAtom::Type::Brush:
-                            this->_drawingAssist->addDrawingPoint(event->pos(), templateAtom);
-                        break;
-
-                        default: {
-
-                            auto ghost = HintThread::hint()->ghostItem();
-                            if(this->_preventMoveOrInsertAtPosition(ghost)) break;
-
-                            HintThread::hint()->integrateGraphicsItemAsPayload(ghost);
-
-                        }
-                        break;
-
-                    }
+                    HintThread::hint()->integrateGraphicsItemAsPayload(ghost);
 
                 }
-                break;
-
-                default:
                 break;
 
             }
 
-            //allows rubber band selection
-            QGraphicsView::mousePressEvent(event);
-
         }
-        break;
 
-        default:
-            break;
     }
+
+    //default
+    else if (btnPressed == Qt::MouseButton::LeftButton) {
+        
+        switch(currentTool) {
+                
+            case MapTool::Default: {
+                this->_ignoreSelectionChangedEvents = !this->_isAnySelectableItemsUnderCursor(event->pos());
+                QGraphicsView::mousePressEvent(event); //allows rubber band selection
+            }
+            break;
+
+            default:
+            break;
+
+        }   
+
+    }
+
 
 }
 

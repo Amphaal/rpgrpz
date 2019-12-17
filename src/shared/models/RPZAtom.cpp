@@ -183,7 +183,7 @@ const RPZAtom::NPCType RPZAtom::NPCAttitude() const { return (RPZAtom::NPCType)t
 
 QPainterPath RPZAtom::shape() const {
     auto rawShape = this->metadata(RPZAtom::Parameter::Shape).toByteArray();
-    return JSONSerializer::fromByteArray(rawShape);
+    return JSONSerializer::toPainterPath(rawShape);
 }
 void RPZAtom::setShape(const QPainterPath &path) { 
     this->setMetadata(RPZAtom::Parameter::Shape, JSONSerializer::asBase64(path));

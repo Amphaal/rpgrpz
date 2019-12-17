@@ -20,6 +20,6 @@ class RPZQuickDraw : public QVariantHash {
         }
 
         const QPainterPath path() const {
-            return JSONSerializer::fromByteArray(this->value("p").toByteArray());
+            return JSONSerializer::toPainterPath(this->value("p").toByteArray());
         }
 };

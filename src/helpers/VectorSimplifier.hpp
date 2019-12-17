@@ -27,42 +27,48 @@ class VectorSimplifier {
 
         }
 
-        
+        static QList<QPolygonF> simplifyPolygon(const QPolygonF &poly) {
+            ClipperLib::Paths outRaw;
+            ClipperLib::SimplifyPolygon(_toPath(poly), outRaw);
+            return toPolys(outRaw);
+        }
 
-        static PainterPathConvert convertPPath(const QPainterPath &sourcePath) {
-            
-            constexpr auto precision = 3;
-
-            //fill raw path
-            ClipperLib::Path rawPath;
-            for(auto i = 0; i < sourcePath.elementCount(); i++) {
-                
-                auto elem = sourcePath.elementAt(i);
-                if(!elem.isLineTo()) continue;
-
-                rawPath.push_back({ (int)(elem.x * precision), (int)(elem.y  * precision)});
-
+        static ClipperLib::Paths toPaths(const QList<QPolygonF> &sourcePolys) {
+            ClipperLib::Paths out;
+            for(const auto &poly : sourcePolys) {
+                out.push_back(_toPath(poly));
             }
+            return out;
+        }
 
-            //simplify as paths
-            PainterPathConvert out;
-            ClipperLib::SimplifyPolygon(rawPath, out.paths);
-
-            //simplified polys
-            for(const auto &path : out.paths) {
+        static QList<QPolygonF> toPolys(const ClipperLib::Paths &paths) {
+            
+            QList<QPolygonF> out;
+            
+            for(const auto &path : paths) {
                 
                 QPolygonF poly;
 
                 for(const auto &point : path) {
                     poly << QPointF({
-                        ((double)point.X) / precision, 
-                        ((double)point.Y) / precision 
+                        ((double)point.X) / _precision, 
+                        ((double)point.Y) / _precision 
                     });
                 }
 
-                out.polys << poly;
+                out << poly;
 
             }
+
+            return out;
+
+        }
+
+        static PainterPathConvert fromPolys(const QList<QPolygonF> &sourcePolys) {
+            
+            PainterPathConvert out;
+            out.polys = sourcePolys;
+            out.paths = toPaths(sourcePolys);
 
             //return both
             return out;
@@ -76,18 +82,19 @@ class VectorSimplifier {
         static const QPainterPath reducePath(const QPainterPath &sourcePath) {
             
             //condense coords
-            QVector<QPointF> toreduce;
+            QVector<QPointF> toReduce;
+            
             for(auto i = 0; i < sourcePath.elementCount(); i++) {
                 
                 auto elem = sourcePath.elementAt(i);
                 if(!elem.isLineTo()) continue;
 
-                toreduce.push_back({ elem.x, elem.y });
+                toReduce.push_back({ elem.x, elem.y });
 
             }
 
             //reduce
-            auto simplified = reduce(toreduce);
+            auto simplified = reduce(toReduce);
             
             QPainterPath destPath;
             destPath.moveTo(0,0);
@@ -97,15 +104,30 @@ class VectorSimplifier {
                 destPath.lineTo(point);
             }
 
-            /*qDebug() << QStringLiteral(u"from %1 to %2")
-                                    .arg(toreduce.count())
-                                    .arg(simplified.count());*/
-
             return destPath;
 
         }
 
-    private:
+    private:  
+        static constexpr int _precision = 3;
+
+        static ClipperLib::Path _toPath(const QPolygonF &sourcePoly) {
+            
+            ClipperLib::Path rawPath;
+            
+            for(const auto &point : sourcePoly) {
+                
+                rawPath.push_back({ 
+                    (int)(point.x() * _precision), 
+                    (int)(point.y()  * _precision)
+                });
+
+            }
+
+            return rawPath;
+
+        }
+
         // square distance between 2 points
         static double _getSqDist(const QPointF &p1, const QPointF &p2) {
 

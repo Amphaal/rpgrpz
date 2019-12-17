@@ -19,9 +19,8 @@ class RPZFogParams : public QVariantHash {
             return (Mode)this->value("m").toInt();
         }
 
-        QPainterPath path() const {
-            auto rawPath = this->value("p").toByteArray();
-            return JSONSerializer::fromByteArray(rawPath);
+        QList<QPolygonF> polys() const {
+            return this->value("polys").value<QList<QPolygonF>>();
         }
 
 };

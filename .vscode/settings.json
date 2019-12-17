@@ -203,7 +203,8 @@
         "qevent": "cpp",
         "qkeyevent": "cpp",
         "qlibraryinfo": "cpp",
-        "qdesktopservices": "cpp"
+        "qdesktopservices": "cpp",
+        "qvariantlist": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }
