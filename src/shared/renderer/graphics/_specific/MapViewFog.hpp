@@ -7,8 +7,6 @@
 #include <QComboBox>
 #include <QPainterPath>
 
-#include <clipper.hpp>
-
 #include "src/shared/models/RPZFogParams.hpp"
 
 #include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
@@ -27,7 +25,7 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         MapViewFog(const RPZFogParams &params) {
             
             //init from params
-            this->_rawPath = params.path();
+            this->_rawData = VectorSimplifier::convertPPath(params.path());
             this->setFogMode(params.mode());
 
             this->setZValue(AppContext::FOG_Z_INDEX);
@@ -52,6 +50,11 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             this->_fogAnim->deleteLater();
         }
 
+        void setFogMode(const RPZFogParams::Mode &mode) {
+            this->_mode = mode;
+            this->_updateComputedPath();
+        }
+
         void triggerAnimation() override {
             this->_fogAnim->start();
         }
@@ -64,42 +67,27 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             return this->_brush.transform().m31();
         }
 
+        void setTextureHPos(qreal newPos) {
+            QTransform translated;
+            translated.translate(newPos, 0);
+            this->_brush.setTransform(translated);
+            this->update();
+        }
+
+        ///
+        ///
+        ///
+
         void drawToPoint(const QPointF &dest) {
-
-            auto c = this->_drawnPoly.count();
-
-            if(c < 2) {
-                
-                this->_drawnPoly << dest;
-                
-                if(c == 0) {
-                    this->_firstDrawnPoint = dest;
-                }
-
-                this->_latestDrawnPoints.enqueue(dest);
-                return;
-
-            }
-            
-            QPolygonF pl({
-                this->_firstDrawnPoint,
-                this->_latestDrawnPoints.dequeue(),
-                this->_latestDrawnPoints.at(0),
-                dest
-            });
-
-            this->_latestDrawnPoints.enqueue(dest);
-
-            this->_drawnPoly = this->_drawnPoly.united(pl); //BUG, TODO
-
+            this->_drawnPoly << dest;
         }
 
         QPainterPath commitDrawing() {
 
-            auto simplified = VectorSimplifier::simplifyPolygon(this->_drawnPoly);  
-            
-            this->_drawnPoly.clear();
-            this->_latestDrawnPoints.clear();
+            auto reduced = VectorSimplifier::reducePolygon(this->_drawnPoly);
+            auto simplified = ;
+
+            this->_clearDrawing();
             
             QPainterPath out;
             out.addPolygon(simplified);
@@ -108,30 +96,31 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
 
         }
 
-        void setTextureHPos(qreal newPos) {
-            QTransform translated;
-            translated.translate(newPos, 0);
-            this->_brush.setTransform(translated);
-            this->update();
-        }
-
         void clear() {
-            this->_drawnPoly.clear();
-            this->_latestDrawnPoints.clear();
-            this->_rawPath.clear();
-            this->_updatedComputedPath();
+            this->_clearDrawing();
+            this->_rawData.paths.clear();
+            this->_rawData.polys.clear();
+            this->_updateComputedPath();
         }
 
-        void addPath(const QPainterPath &toAdd) {
-            this->_rawPath.addPath(toAdd);
-            this->_updatedComputedPath();
-        }
+        void computePath(const FogChangedPayload::ChangeType &type, const QPainterPath &toCompute) {
 
-        //
-        
-        void setFogMode(const RPZFogParams::Mode &mode) {
-            this->_mode = mode;
-            this->_updatedComputedPath();
+            switch(type) {
+
+                case FogChangedPayload::ChangeType::Added: {
+                    //TODO
+                }
+                break;
+
+                case FogChangedPayload::ChangeType::Removed: {
+                    //TODO
+                }
+                break;
+
+            }
+
+            this->_updateComputedPath();
+
         }
 
     protected:
@@ -164,26 +153,30 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
 
     private:
         RPZFogParams::Mode _mode;
-        QPainterPath _rawPath;
-        QPolygonF _drawnPoly;
-        QQueue<QPointF> _latestDrawnPoints;
-        QPointF _firstDrawnPoint;
         QPainterPath _computedPath;
         QBrush _brush;
         QPropertyAnimation* _fogAnim = nullptr;
+        QPolygonF _drawnPoly;
 
-        void _updatedComputedPath() {
+        VectorSimplifier::PainterPathConvert _rawData;
+
+        void _updateComputedPath() {
             
             if(this->_mode == RPZFogParams::Mode::PathIsButFog) {
                 this->_computedPath = QPainterPath();
-                this->_computedPath.addRect(this->scene()->sceneRect());
-                this->_computedPath.addPath(this->_rawPath);
-            } 
+                this->_computedPath.addRect(this->scene()->sceneRect());   
+            }
             
-            else {
-                this->_computedPath = this->_rawPath;
+            for(const auto &poly : this->_rawData.polys) {
+                this->_computedPath.addPolygon(poly);
             }
 
+            this->_computedPath.setFillRule(Qt::FillRule::WindingFill);
+    
+        }
+
+        void _clearDrawing() {
+            this->_drawnPoly.clear();
         }
 
 };

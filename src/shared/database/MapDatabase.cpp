@@ -217,7 +217,7 @@ QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> MapDatabase::_getUpdat
 
                 //update shape
                 atom.setShape(
-                    VectorSimplifier::simplifyPath(atom.shape())
+                    VectorSimplifier::reducePath(atom.shape())
                 );
 
                 db.updateAtom(atom);

@@ -78,8 +78,8 @@ class DrawingAssist {
             auto path = this->_tempDrawing->path();
             if(path.elementCount() < 2) return;
 
-            //simplify
-            this->_mightSimplifyItemPath(path, this->_tempDrawing);
+            //Reduce size
+            this->_mightReduceItemPath(path, this->_tempDrawing);
 
             //add definitive path
             this->_commitedDrawingId = HintThread::hint()->integrateGraphicsItemAsPayload(this->_tempDrawing);
@@ -264,15 +264,11 @@ class DrawingAssist {
             }
         }
 
-        void _mightSimplifyItemPath(QPainterPath sourcePath, MapViewGraphicsPathItem* item) {
+        void _mightReduceItemPath(QPainterPath sourcePath, MapViewGraphicsPathItem* item) {
             
             if(!this->_mustBeSimplified()) return;
             
-            sourcePath = VectorSimplifier::simplifyPath(sourcePath);
-            // sourcePath = sourcePath.simplified(); 
-            // sourcePath = VectorSimplifier::createStroke(sourcePath, item->pen()); 
-            // sourcePath = VectorSimplifier::simplifyPath(sourcePath);
-            // sourcePath = sourcePath.simplified(); 
+            sourcePath = VectorSimplifier::reducePath(sourcePath);
 
             item->setPath(sourcePath);
 

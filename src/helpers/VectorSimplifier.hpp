@@ -4,53 +4,90 @@
 #include <QPointF>
 #include <QPainterPath>
 #include <QPen>
-#include <QPainterPathStroker>
+
+#include <clipper.hpp>
 
 class VectorSimplifier {
     public:
-        static QVector<QPointF> simplify(QVector<QPointF> points, double tolerance = 1.0, bool highestQuality = true) {
+        struct PainterPathConvert {
+            QList<QPolygonF> polys;
+            ClipperLib::Paths paths;
+        };
+
+        static QVector<QPointF> reduce(QVector<QPointF> points, double tolerance = 1.0, bool highestQuality = true) {
             
             if (points.count() <= 2) return points;
 
             auto sqTolerance = tolerance * tolerance;
 
-            points = highestQuality ? points : _simplifyRadialDist(points, sqTolerance);
-            points = _simplifyDouglasPeucker(points, sqTolerance);
+            points = highestQuality ? points : _reduceRadialDist(points, sqTolerance);
+            points = _reduceDouglasPeucker(points, sqTolerance);
 
             return points;
 
         }
+
         
-        static const QPainterPath createStroke(const QPainterPath& path, const QPen &pen) {
+
+        static PainterPathConvert convertPPath(const QPainterPath &sourcePath) {
             
-            QPainterPathStroker stroker;
-            // stroker.setWidth(pen.widthF());
-            // stroker.setJoinStyle(pen.joinStyle());
-            // stroker.setCapStyle(pen.capStyle());
+            constexpr auto precision = 3;
 
-            return stroker.createStroke(path);
-
-        }
-
-        static const QPolygonF simplifyPolygon(const QPolygonF &toSimplify) {
-            return simplify(toSimplify);
-        } 
-
-        static const QPainterPath simplifyPath(const QPainterPath &sourcePath) {
-            
-            //condense coords
-            QVector<QPointF> toSimplify;
+            //fill raw path
+            ClipperLib::Path rawPath;
             for(auto i = 0; i < sourcePath.elementCount(); i++) {
                 
                 auto elem = sourcePath.elementAt(i);
                 if(!elem.isLineTo()) continue;
 
-                toSimplify.push_back({ elem.x, elem.y });
+                rawPath.push_back({ (int)(elem.x * precision), (int)(elem.y  * precision)});
 
             }
 
-            //simplify
-            auto simplified = simplify(toSimplify);
+            //simplify as paths
+            PainterPathConvert out;
+            ClipperLib::SimplifyPolygon(rawPath, out.paths);
+
+            //simplified polys
+            for(const auto &path : out.paths) {
+                
+                QPolygonF poly;
+
+                for(const auto &point : path) {
+                    poly << QPointF({
+                        ((double)point.X) / precision, 
+                        ((double)point.Y) / precision 
+                    });
+                }
+
+                out.polys << poly;
+
+            }
+
+            //return both
+            return out;
+
+        }
+
+        static const QPolygonF reducePolygon(const QPolygonF &toreduce) {
+            return reduce(toreduce);
+        } 
+
+        static const QPainterPath reducePath(const QPainterPath &sourcePath) {
+            
+            //condense coords
+            QVector<QPointF> toreduce;
+            for(auto i = 0; i < sourcePath.elementCount(); i++) {
+                
+                auto elem = sourcePath.elementAt(i);
+                if(!elem.isLineTo()) continue;
+
+                toreduce.push_back({ elem.x, elem.y });
+
+            }
+
+            //reduce
+            auto simplified = reduce(toreduce);
             
             QPainterPath destPath;
             destPath.moveTo(0,0);
@@ -61,7 +98,7 @@ class VectorSimplifier {
             }
 
             /*qDebug() << QStringLiteral(u"from %1 to %2")
-                                    .arg(toSimplify.count())
+                                    .arg(toreduce.count())
                                     .arg(simplified.count());*/
 
             return destPath;
@@ -108,7 +145,7 @@ class VectorSimplifier {
         }
 
         // basic distance-based simplification
-        static QVector<QPointF> _simplifyRadialDist(const QVector<QPointF> &points, double sqTolerance) {
+        static QVector<QPointF> _reduceRadialDist(const QVector<QPointF> &points, double sqTolerance) {
 
             auto prevPoint = points.first();
             QVector<QPointF> newPoints {prevPoint};
@@ -129,7 +166,7 @@ class VectorSimplifier {
 
         }
 
-        static void _simplifyDPStep(const QVector<QPointF> &points, int first, int last, double sqTolerance, QVector<QPointF> &simplified) {
+        static void _reduceDPStep(const QVector<QPointF> &points, int first, int last, double sqTolerance, QVector<QPointF> &simplified) {
             auto maxSqDist = sqTolerance;
             int index;
 
@@ -143,17 +180,17 @@ class VectorSimplifier {
             }
 
             if (maxSqDist > sqTolerance) {
-                if (index - first > 1) _simplifyDPStep(points, first, index, sqTolerance, simplified);
+                if (index - first > 1) _reduceDPStep(points, first, index, sqTolerance, simplified);
                 simplified.append(points.at(index));
-                if (last - index > 1) _simplifyDPStep(points, index, last, sqTolerance, simplified);
+                if (last - index > 1) _reduceDPStep(points, index, last, sqTolerance, simplified);
             }
             
         }
 
         // simplification using Ramer-Douglas-Peucker algorithm
-        static QVector<QPointF> _simplifyDouglasPeucker(const QVector<QPointF> &points, double sqTolerance) {
+        static QVector<QPointF> _reduceDouglasPeucker(const QVector<QPointF> &points, double sqTolerance) {
             QVector<QPointF> simplified { points.at(0) };
-            _simplifyDPStep(points, 0, points.count() - 1, sqTolerance, simplified);
+            _reduceDPStep(points, 0, points.count() - 1, sqTolerance, simplified);
             simplified += points.last();
             return simplified;
         }
