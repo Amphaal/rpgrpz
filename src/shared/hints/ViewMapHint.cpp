@@ -542,11 +542,6 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
         this->_fogItem->setFogMode(mPayload->mode());
     }
 
-    //fog
-    else if(auto mPayload = dynamic_cast<const FogChangedPayload*>(&payload)) {
-        this->_fogItem->computePolys(*mPayload);
-    }
-
     //if reset (afterward)
     else if(auto mPayload = dynamic_cast<const ResetPayload*>(&payload)) {
         
@@ -593,6 +588,10 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
         this->_updateTemplateAtom(mPayload->updates());        
     }
 
+}
+
+void  ViewMapHint::_fogUpdated(const QList<QPolygonF> &updatedFog) {
+    this->_fogItem->updateFog(updatedFog);
 }
 
 void ViewMapHint::_mightUpdateAtomDescriptor(const QList<RPZAtom::Id> &idsUpdated) {

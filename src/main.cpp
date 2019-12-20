@@ -132,6 +132,7 @@ void _registerMetaTypes() {
     qRegisterMetaType<QVector<RPZAsset::Hash>>("QVector<RPZAsset::Hash>");
     qRegisterMetaType<QVector<RPZMessage>>("QVector<RPZMessage>");
     qRegisterMetaType<QHash<QGraphicsItem*,RPZAtom::Updates>>("QHash<QGraphicsItem*,RPZAtom::Updates>");
+    qRegisterMetaType<QList<QPolygonF>>("QList<QPolygonF>");
     
 }
 
@@ -150,17 +151,12 @@ int main(int argc, char** argv) {
     ////////////
     // LAUNCH //
     ////////////
-    
-    set_terminate([](){
-        sentry_shutdown();
-    });
 
     auto args = AppContext::getOptionArgs(argc, argv);
-
+    
     auto result = args.contains(QStringLiteral(u"serverOnly")) ? 
                     serverConsole(argc, argv) : 
                     clientApp(argc, argv);
-    
     sentry_shutdown();
     return result; 
 

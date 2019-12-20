@@ -26,7 +26,7 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         MapViewFog(const RPZFogParams &params) {
             
             //init from params
-            this->_rawData = VectorSimplifier::fromPolys(params.polys());
+            this->_fogPolys = params.polys();
             this->setFogMode(params.mode());
 
             this->setZValue(AppContext::FOG_Z_INDEX);
@@ -98,32 +98,9 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
 
         }
 
-        void computePolys(const FogChangedPayload &payload) {
-            
-            auto type = payload.changeType();
-
-            //handle Reset
-            if(type == FogChangedPayload::ChangeType::Reset) {
-                return this->_clear();
-            }
-            
-            auto m_polys = payload.modifyingPolys();
-
-            //else, prepare clipper
-            auto operation = type == FogChangedPayload::ChangeType::Added ? 
-                                ClipperLib::ClipType::ctUnion : 
-                                ClipperLib::ClipType::ctDifference;
-            ClipperLib::Clipper clipper;
-            clipper.AddPaths(_rawData.paths, ClipperLib::PolyType::ptSubject, true);
-            clipper.AddPaths(VectorSimplifier::toPaths(m_polys), ClipperLib::PolyType::ptClip, true);
-
-            //exec
-            clipper.Execute(operation, this->_rawData.paths, ClipperLib::PolyFillType::pftNonZero);
-            this->_rawData.polys = VectorSimplifier::toPolys(this->_rawData.paths);
-
-            //update
+        void updateFog(const QList<QPolygonF> &polys) {
+            this->_fogPolys = polys;
             this->_updateComputedPath();
-
         }
 
     protected:
@@ -161,31 +138,29 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         FogChangedPayload::ChangeType _drawnOpe;
         QPolygonF _drawnPoly;
 
-        VectorSimplifier::PainterPathConvert _rawData;
+        QList<QPolygonF> _fogPolys;
 
         void _updateComputedPath() {
-            
+            //TODO move to main thread?
             this->_computedPath = QPainterPath();
 
             if(this->_mode == RPZFogParams::Mode::PathIsButFog) {
                 this->_computedPath.addRect(this->scene()->sceneRect());   
             }
             
-            for(const auto &poly : this->_rawData.polys) {
+            for(const auto &poly : this->_fogPolys) {
                 this->_computedPath.addPolygon(poly);
             }
-    
+
         }
 
         void _clearDrawing() {
             this->_drawnPoly.clear();
         }
-
         
         void _clear() {
             this->_clearDrawing();
-            this->_rawData.paths.clear();
-            this->_rawData.polys.clear();
+            this->_fogPolys.clear();
             this->_updateComputedPath();
         }
 

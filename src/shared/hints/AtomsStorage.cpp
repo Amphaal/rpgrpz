@@ -492,6 +492,18 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
         else this->_basicAlterationDone(alteredIds, pType);
 
     }
+
+    //fog update
+    else if(auto mPayload = dynamic_cast<const FogChangedPayload*>(&payload)) {
+        auto newFog = this->_map.alterFog(*mPayload);
+        this->_fogUpdated(newFog);
+    }
+
+    //fog mode change
+    else if(auto mPayload = dynamic_cast<const FogModeChangedPayload*>(&payload)) {
+        this->_map.changeFogMode(mPayload->mode());
+    }
+
 }
 
 const QHash<RPZAtom::Id, RPZCharacter::Id>& AtomsStorage::_ownables() const {

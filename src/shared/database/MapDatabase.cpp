@@ -110,14 +110,51 @@ void MapDatabase::setMapParams(const RPZMapParameters &newParams) {
 
 void MapDatabase::setFogParams(const RPZFogParams &fogParams) {
     this->_fogParams = fogParams;
+    this->_fogBuffer.polys = fogParams.polys();
+    this->_fogBuffer.paths = VectorSimplifier::toPaths(this->_fogBuffer.polys);
 }
 
 const RPZMapParameters MapDatabase::mapParams() const {
     return this->_mapParams;
 }
 
+QList<QPolygonF> MapDatabase::alterFog(const FogChangedPayload &payload) {
+    
+    auto type = payload.changeType();
+
+    //handle Reset
+    if(type == FogChangedPayload::ChangeType::Reset) {
+        this->_fogParams.setPolys({});
+        return {};
+    }
+    
+    //else...
+    auto m_polys = payload.modifyingPolys();
+
+    //else, prepare clipper
+    auto operation = type == FogChangedPayload::ChangeType::Added ? 
+                        ClipperLib::ClipType::ctUnion : 
+                        ClipperLib::ClipType::ctDifference;
+    ClipperLib::Clipper clipper;
+    clipper.AddPaths(this->_fogBuffer.paths, ClipperLib::PolyType::ptSubject, true);
+    clipper.AddPaths(VectorSimplifier::toPaths(m_polys), ClipperLib::PolyType::ptClip, true);
+
+    //exec
+    clipper.Execute(operation, this->_fogBuffer.paths, ClipperLib::PolyFillType::pftNonZero);
+    this->_fogBuffer.polys = VectorSimplifier::toPolys(this->_fogBuffer.paths);
+
+    //update
+    this->_fogParams.setPolys(this->_fogBuffer.polys);
+    return this->_fogBuffer.polys;
+
+}
+
 void MapDatabase::updateAtom(const RPZAtom &updated) {
     this->_atomsById.insert(updated.id(), updated);
+}
+
+void MapDatabase::changeFogMode(const RPZFogParams::Mode &mode) {
+    this->_fogParams.setMode(mode);
 }
 
 void MapDatabase::updateAtom(const RPZAtom::Id &toUpdate, const RPZAtom::Updates &updates) {

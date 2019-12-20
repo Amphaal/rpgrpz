@@ -76,6 +76,7 @@ class AtomsStorage : public AlterationAcknoledger {
         virtual void _basicAlterationDone(const QList<RPZAtom::Id> &updatedIds, const Payload::Alteration &type) {};
         virtual void _updatesDone(const QList<RPZAtom::Id> &updatedIds, const RPZAtom::Updates &updates) {};
         virtual void _updatesDone(const RPZAtom::ManyUpdates &updates) {};
+        virtual void _fogUpdated(const QList<QPolygonF> &updatedFog) {};
 
         bool _isAtomOwnable(const RPZAtom &atom) const;
         const QHash<RPZAtom::Id, RPZCharacter::Id>& _ownables() const; //safe

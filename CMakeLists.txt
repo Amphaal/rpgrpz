@@ -44,7 +44,7 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 SET(APP_PUBLISHER "LVWL")
 SET(APP_DEFAULT_URL "https://github.com/Amphaal/rpgrpz")
 SET(APP_PATCHNOTE_URL "https://github.com/Amphaal/rpgrpz/releases")
-SET(SENTRY_ENDPOINT "http://ec083db6fedc4b64b0233ddb1fb9551f@lvwl.to2x.ovh:9000/1")
+SET(SENTRY_ENDPOINT "https://d3c18187d10d4321b195a9c1603b091a@sentry.io/1860035")
 
 ##crashpad
 SET(CRASHPAD_HANDLER_NAME "crashpad_handler")
@@ -120,17 +120,6 @@ SET(SOURCES
     resources/resources.qrc
 )
 
-###########
-# OpenSSL #
-###########
-
-find_package(openssl REQUIRED)
-list(APPEND EXT_LIBS
-    OpenSSL::SSL
-    OpenSSL::Crypto
-    ws2_32
-)
-
 #############
 # miniupnpc #
 #############
@@ -138,16 +127,6 @@ list(APPEND EXT_LIBS
 find_package(miniupnpc REQUIRED)
 list(APPEND EXT_LIBS ${MINIUPNP_LIBRARY})
 include_directories(${MINIUPNP_INCLUDE_DIR})
-
-###########
-# clipper # 
-###########
-
-find_library(CLIPPER_LIBRARY polyclipping)
-list(APPEND EXT_LIBS ${CLIPPER_LIBRARY})
-
-find_path(CLIPPER_INCLUDE_DIR NAMES clipper.hpp PATH_SUFFIXES polyclipping)
-include_directories(${CLIPPER_INCLUDE_DIR})
 
 ############# 
 # Gstreamer #
@@ -191,6 +170,19 @@ list(APPEND EXT_LIBS
     Qt5::OpenGL
 )
 
+###########
+# OpenSSL #
+###########
+
+SET(OpenSSL_DIR "$ENV{QT_TOOLS}/OpenSSL/Win_x64")
+
+find_package(openssl REQUIRED)
+list(APPEND EXT_LIBS
+    OpenSSL::SSL
+    OpenSSL::Crypto
+    ws2_32
+)
+
 #################
 # Sentry-native #
 #################
@@ -211,10 +203,19 @@ list(APPEND SOURCES
     ${HPP_FILES}
 )
 
-#generate translations
-qt5_create_translation(QM_FILES 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src 
+################
+# translations #
+################
+
+SET(QT_TRANSLATIONS_SCAN_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src)
+list(APPEND QT_TRANSLATIONS_TS_FILES 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/_i18n/fr.ts
+)
+
+#translate at target generation
+qt5_create_translation(QM_FILES 
+    ${QT_TRANSLATIONS_SCAN_DIRECTORY}
+    ${QT_TRANSLATIONS_TS_FILES}
 )
 
 #########################
@@ -366,7 +367,7 @@ endif()
 if(WIN32)
 
     #override
-    SET(OPENSSL_BIN_DIR "$ENV{QT_TOOLS}/OpenSSL/Win_x64/bin")
+    SET(OPENSSL_BIN_DIR "${OpenSSL_DIR}/bin")
 
     add_custom_command(TARGET app       
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 

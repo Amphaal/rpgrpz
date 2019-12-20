@@ -3,10 +3,10 @@ skip_non_tags: true
 image: Visual Studio 2019
 platform: x64
 environment:
-  nodejs_version: "6"
-  SENTRY_URL: http://lvwl.to2x.ovh:9000/
-  SENTRY_API_KEY:
-    secure: 
+  #nodejs_version: "6"
+  #SENTRY_URL: http://lvwl.to2x.ovh:9000/
+  #SENTRY_API_KEY:
+    #secure: 
   global:
     APPVEYOR_SAVE_CACHE_ON_ERROR: true
 cache:
@@ -17,9 +17,9 @@ cache:
 install:
   #- cmd: choco install pkgconfiglite
   - cd c:\tools\vcpkg
-  - vcpkg install miniupnpc openssl polyclipping --triplet x64-windows
+  - vcpkg install miniupnpc --triplet x64-windows
   - vcpkg integrate install
-  - npm install -g @sentry/cli --unsafe-perm
+  #- npm install -g @sentry/cli --unsafe-perm
   # - appveyor DownloadFile https://gstreamer.freedesktop.org/data/pkg/windows/1.16.2/gstreamer-1.0-devel-msvc-x86_64-1.16.2.msi
   # - appveyor DownloadFile https://gstreamer.freedesktop.org/data/pkg/windows/1.16.2/gstreamer-1.0-msvc-x86_64-1.16.2.msi
   # - msiexec /i gstreamer-1.0-devel-msvc-x86_64-1.16.2.msi /quiet /qn /norestart /log install-devel.log ADDLOCAL=ALL
@@ -27,19 +27,19 @@ install:
 build_script:
   - cmd: mkdir build
   - cmd: cd build
-  - cmd: cmake -G "Visual Studio 16 2019" -A x64 .. 
+  - cmd: cmake -DOpenSSL_DIR=C:\OpenSSL-Win64 -G "Visual Studio 16 2019" -A x64 .. 
   - cmd: cd ..
-  - cmd: cmake --build ./build --target package --config RelWithDebInfo
-  - cmd: cmake --build ./build --target zipForDeploy --config RelWithDebInfo
+  - cmd: cmake --build ./build --target package --config Release
+  - cmd: cmake --build ./build --target zipForDeploy --config Release
 artifacts:
   - path: build/repository.zip
     name: IFW_Repo
   - path: build/installer.zip
     name: IFW_Installer
-before_build:
-  - sentry-cli login
-  - sentry-cli difutil bundle-sources /debugSymbols
-  - sentry-cli upload-dif -o livingwill -p rpgrpz /debugSymbols
+#before_build:
+#  - sentry-cli login
+#  - sentry-cli difutil bundle-sources /debugSymbols
+#  - sentry-cli upload-dif -o livingwill -p rpgrpz /debugSymbols
 deploy:
   - provider: BinTray
     username: amphaal

@@ -14,10 +14,17 @@
 #include "src/helpers/JSONSerializer.h"
 
 #include "src/helpers/VectorSimplifier.hpp"
+#include "src/shared/payloads/fog/FogChangedPayload.hpp"
+#include "src/helpers/VectorSimplifier.hpp"
 
 class MapDatabase : public JSONDatabase {
     
     public:
+        struct FogBuffer {
+            QList<QPolygonF> polys;
+            ClipperLib::Paths paths;
+        };
+
         MapDatabase(const QString &filePath);
         MapDatabase(const QJsonObject &obj);
         MapDatabase();
@@ -26,6 +33,8 @@ class MapDatabase : public JSONDatabase {
 
         void setMapParams(const RPZMapParameters &newParams);
         void setFogParams(const RPZFogParams &fogParams);
+        QList<QPolygonF> alterFog(const FogChangedPayload &payload);
+        void changeFogMode(const RPZFogParams::Mode &mode);
 
         void addAtom(const RPZAtom &toAdd);
         void addAtoms(const QList<RPZAtom> &toAdd);
@@ -53,6 +62,7 @@ class MapDatabase : public JSONDatabase {
         RPZFogParams _fogParams;
 
     private:
+        FogBuffer _fogBuffer;
         QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> _getUpdateHandlers() override;
         JSONDatabase::Model _getDatabaseModel() override;
         void _setupLocalData() override;

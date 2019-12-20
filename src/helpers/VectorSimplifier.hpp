@@ -5,15 +5,10 @@
 #include <QPainterPath>
 #include <QPen>
 
-#include <clipper.hpp>
+#include "src/_libs/clipper/clipper.hpp"
 
 class VectorSimplifier {
     public:
-        struct PainterPathConvert {
-            QList<QPolygonF> polys;
-            ClipperLib::Paths paths;
-        };
-
         static QVector<QPointF> reduce(QVector<QPointF> points, double tolerance = 1.0, bool highestQuality = true) {
             
             if (points.count() <= 2) return points;
@@ -29,7 +24,7 @@ class VectorSimplifier {
 
         static QList<QPolygonF> simplifyPolygon(const QPolygonF &poly) {
             ClipperLib::Paths outRaw;
-            ClipperLib::SimplifyPolygon(_toPath(poly), outRaw);
+            ClipperLib::SimplifyPolygon(_toPath(poly), outRaw, ClipperLib::PolyFillType::pftNonZero);
             return toPolys(outRaw);
         }
 
@@ -60,17 +55,6 @@ class VectorSimplifier {
 
             }
 
-            return out;
-
-        }
-
-        static PainterPathConvert fromPolys(const QList<QPolygonF> &sourcePolys) {
-            
-            PainterPathConvert out;
-            out.polys = sourcePolys;
-            out.paths = toPaths(sourcePolys);
-
-            //return both
             return out;
 
         }

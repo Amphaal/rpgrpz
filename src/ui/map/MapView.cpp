@@ -577,7 +577,11 @@ void MapView::mousePressEvent(QMouseEvent *event) {
             }
             break;
 
-            default:
+            case MapTool::Scroll: {
+                QGraphicsView::mousePressEvent(event); //allows move with mouse
+            }
+
+            default: {}
             break;
 
         }   
@@ -661,14 +665,33 @@ void MapView::_mightUpdateWalkingHelperPos() {
 void MapView::mouseReleaseEvent(QMouseEvent *event) {
 
     this->_isMousePressed = false;
+    auto btnPressed = event->button();
+    auto currentTool = this->_getCurrentTool();
 
-    switch(event->button()) {
-        case Qt::MouseButton::LeftButton: {
-            
-            //if was drawing...
+    //as atom
+    if(currentTool == MapTool::Atom) {
+
+        //if fog of war
+        if(HintThread::hint()->templateAtom().type() == RPZAtom::Type::FogOfWar) {
+
+            auto drawn = HintThread::hint()->fogItem()->commitDrawing();
+            FogChangedPayload payload(
+                btnPressed == Qt::MouseButton::LeftButton ? FogChangedPayload::ChangeType::Added : FogChangedPayload::ChangeType::Removed, 
+                drawn
+            );
+            AlterationHandler::get()->queueAlteration(HintThread::hint(), payload);
+
+        }
+
+    } 
+    
+    //if left clicking
+    if(btnPressed == Qt::MouseButton::LeftButton) {
+
+            //commit sticky drawing
             this->_drawingAssist->onMouseRelease();
 
-            switch(this->_getCurrentTool()) {
+            switch(currentTool) {
                 
                 case MapTool::Default: {
 
@@ -681,18 +704,6 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
                     //update selection
                     if(this->_ignoreSelectionChangedEvents) this->_notifySelection();
                     this->_ignoreSelectionChangedEvents = false;
-
-                }
-                break;
-
-                case MapTool::Atom: {
-                    
-                    if(HintThread::hint()->templateAtom().type() != RPZAtom::Type::FogOfWar) break;
-                    
-                    auto drawn = HintThread::hint()->fogItem()->commitDrawing();
-                    FogChangedPayload payload(FogChangedPayload::ChangeType::Added, drawn);
-
-                    AlterationHandler::get()->queueAlteration(HintThread::hint(), payload);
 
                 }
                 break;
@@ -717,17 +728,12 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
 
                 };
 
-                default:
+                default: {}
                 break;
 
             }
             
         }
-        break;
-
-        default:
-            break;
-    }
 
 }
 

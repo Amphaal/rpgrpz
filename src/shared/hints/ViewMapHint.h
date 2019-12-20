@@ -115,5 +115,7 @@ class ViewMapHint : public AtomsStorage {
         virtual void _updatesDone(const QList<RPZAtom::Id> &updatedIds, const RPZAtom::Updates &updates) override;
         virtual void _updatesDone(const RPZAtom::ManyUpdates &updates) override;
         virtual void _atomOwnerChanged(const RPZAtom::Id &target, const RPZCharacter::Id &newOwner) override;
+        virtual void _fogUpdated(const QList<QPolygonF> &updatedFog) override;
+        
 
 };

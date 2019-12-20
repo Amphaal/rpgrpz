@@ -20,10 +20,10 @@
 	#include <netinet/in.h>
 #endif
 #include <ctype.h>
-#include <miniupnpc/miniupnpc.h>
-#include <miniupnpc/upnpcommands.h>
-#include <miniupnpc/portlistingparse.h>
-#include <miniupnpc/upnperrors.h>
+#include <miniupnpc.h>
+#include <upnpcommands.h>
+#include <portlistingparse.h>
+#include <upnperrors.h>
 
 /* protofix() checks if protocol is "UDP" or "TCP"
  * returns NULL if not */
