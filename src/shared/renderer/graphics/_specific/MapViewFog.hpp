@@ -156,12 +156,6 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         void _clearDrawing() {
             this->_drawnPoly.clear();
         }
-        
-        void _clear() {
-            this->_clearDrawing();
-            this->_clipPath.clear();
-            this->_fog.clear();
-        }
 
         void _updateFog(const QList<QPolygonF> &polys) {
             

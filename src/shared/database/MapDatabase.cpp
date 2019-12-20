@@ -119,11 +119,13 @@ const RPZMapParameters MapDatabase::mapParams() const {
 }
 
 QList<QPolygonF> MapDatabase::alterFog(const FogChangedPayload &payload) {
-    
+
     auto type = payload.changeType();
 
     //handle Reset
     if(type == FogChangedPayload::ChangeType::Reset) {
+        this->_fogBuffer.polys.clear();
+        this->_fogBuffer.paths.clear();
         this->_fogParams.setPolys({});
         return {};
     }

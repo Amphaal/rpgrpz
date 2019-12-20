@@ -17,4 +17,7 @@ class JSONSerializer {
         
         static QVariant fromPointF(const QPointF &point);
         static QPointF toPointF(const QVariantList &doubleList);
+
+        static QVariant fromPolygons(const QList<QPolygonF> &polys);
+        static QList<QPolygonF> toPolygons(const QVariantList &rawPolys);
 };

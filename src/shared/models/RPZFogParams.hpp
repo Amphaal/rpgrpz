@@ -24,13 +24,15 @@ class RPZFogParams : public QVariantHash {
         }
 
         QList<QPolygonF> polys() const {
-            //TODO fix
-            return this->value("polys").value<QList<QPolygonF>>();
+            return JSONSerializer::toPolygons(
+                this->value("polys").toList()
+            );
         }
 
         void setPolys(const QList<QPolygonF> &polys) {
-            //TODO fix
-            this->insert("polys", QVariant::fromValue(polys));
+            this->insert("polys", 
+                JSONSerializer::fromPolygons(polys)
+            );
         }
 
 };
