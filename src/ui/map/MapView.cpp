@@ -675,11 +675,17 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
         if(HintThread::hint()->templateAtom().type() == RPZAtom::Type::FogOfWar) {
 
             auto drawn = HintThread::hint()->fogItem()->commitDrawing();
-            FogChangedPayload payload(
-                btnPressed == Qt::MouseButton::LeftButton ? FogChangedPayload::ChangeType::Added : FogChangedPayload::ChangeType::Removed, 
-                drawn
-            );
-            AlterationHandler::get()->queueAlteration(HintThread::hint(), payload);
+           
+            if(drawn.count()) {
+
+                FogChangedPayload payload(
+                    btnPressed == Qt::MouseButton::LeftButton ? FogChangedPayload::ChangeType::Added : FogChangedPayload::ChangeType::Removed, 
+                    drawn
+                );
+
+                AlterationHandler::get()->queueAlteration(HintThread::hint(), payload);
+                
+            }
 
         }
 

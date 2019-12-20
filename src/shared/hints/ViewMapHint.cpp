@@ -498,8 +498,12 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
         //clear cache of missing qGraphicsItem
         this->_missingAssetHashesFromDb.clear();
 
+        //params 
+        auto mParams = mPayload->mapParameters();
+        auto fParams = mPayload->fogParameters();
+
         //parameterize atom renderer
-        AtomRenderer::defineMapParameters(this->map().mapParams());
+        AtomRenderer::defineMapParameters(mParams);
 
         //clear GI lists
         this->_GItemsById.clear();
@@ -513,7 +517,7 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
         //reset fog
         {
             QMutexLocker l(&this->_m_fogItem);
-            this->_fogItem = new MapViewFog(mPayload->fogParameters()); //do not delete, the old one will be in UI thread ! 
+            this->_fogItem = new MapViewFog(fParams, mParams); //do not delete, the old one will be in UI thread ! 
         }
         
         //reset descriptor

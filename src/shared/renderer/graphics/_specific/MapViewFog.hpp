@@ -23,11 +23,15 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
     Q_INTERFACES(QGraphicsItem)
     
     public:
-        MapViewFog(const RPZFogParams &params) {
+        MapViewFog(const RPZFogParams &params, const RPZMapParameters &mapParams) {
             
             //init from params
-            this->_fogPolys = params.polys();
-            this->setFogMode(params.mode());
+
+            this->_maxSizeFog = mapParams.sceneRect();
+            
+            this->_setFogMode(params.mode());
+            this->_updateFog(params.polys());
+            this->_generateClipPath(); 
 
             this->setZValue(AppContext::FOG_Z_INDEX);
 
@@ -35,15 +39,8 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsFocusable, false);  
 
-            QPixmap texture(":/assets/smoke.png");
-            this->_brush.setTexture(texture);
-
-            this->_fogAnim = new QPropertyAnimation(this, "textureHPos", this);
-            this->_fogAnim->setEasingCurve(QEasingCurve::Linear);
-            this->_fogAnim->setDuration(50000);
-            this->_fogAnim->setStartValue(0);
-            this->_fogAnim->setEndValue(texture.width());
-            this->_fogAnim->setLoopCount(-1);
+            this->_texture = QPixmap(":/assets/smoke.png");
+            this->_brush.setTexture(this->_texture);
 
         }
 
@@ -52,16 +49,24 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         }
 
         void setFogMode(const RPZFogParams::Mode &mode) {
-            this->_mode = mode;
-            this->_updateComputedPath();
+            this->_setFogMode(mode);
+            this->_generateClipPath();
         }
 
         void triggerAnimation() override {
+
+            this->_fogAnim = new QPropertyAnimation(this, "textureHPos");
+            this->_fogAnim->setEasingCurve(QEasingCurve::Linear);
+            this->_fogAnim->setDuration(50000);
+            this->_fogAnim->setStartValue(0);
+            this->_fogAnim->setEndValue(this->_texture.width());
+            this->_fogAnim->setLoopCount(-1);
+
             this->_fogAnim->start();
         }
 
         QRectF boundingRect() const override {
-            return this->scene() ? this->scene()->sceneRect() : QRectF();
+            return this->_maxSizeFog;
         }
 
         qreal textureHPos() const {
@@ -81,26 +86,34 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
 
         void initDrawing(const FogChangedPayload::ChangeType &type) {
             this->_drawnOpe = type;
+            this->_clearDrawing();
         }
 
         void drawToPoint(const QPointF &dest) {
             this->_drawnPoly << dest;
+            this->_generateClipPath();
         }
 
         QList<QPolygonF> commitDrawing() {
+            
+            //return empty if too small
+            if(this->_drawnPoly.count() <= 3) return {};
 
+            //reduce...
             auto reduced = VectorSimplifier::reducePolygon(this->_drawnPoly);
+            
+            //simplify
             auto simplified = VectorSimplifier::simplifyPolygon(reduced);
 
-            this->_clearDrawing();
-
+            //return drawing
             return simplified;
 
         }
 
         void updateFog(const QList<QPolygonF> &polys) {
-            this->_fogPolys = polys;
-            this->_updateComputedPath();
+            this->_clearDrawing();
+            this->_updateFog(polys);
+            this->_generateClipPath();
         }
 
     protected:
@@ -113,46 +126,32 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         void _paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) {
 
             painter->save();
-                
-                auto clipPath = this->_computedPath;
-                clipPath.addPolygon(this->_drawnPoly);
 
-                painter->setClipPath(clipPath);
+                    painter->setClipPath(this->_clipPath);
 
                     painter->setPen(Qt::NoPen);
                     painter->setBrush(this->_brush);
                     painter->setTransform(QTransform());
                     painter->setOpacity(AppContext::fogOpacity());
-                    painter->drawRect(this->scene()->sceneRect());
+                    painter->drawRect(this->_maxSizeFog);
 
             painter->restore();
 
         }
 
     private:
+        QPixmap _texture;
         RPZFogParams::Mode _mode;
-        QPainterPath _computedPath;
         QBrush _brush;
         QPropertyAnimation* _fogAnim = nullptr;
         
         FogChangedPayload::ChangeType _drawnOpe;
+        QRectF _maxSizeFog;
+
+        QPainterPath _fog;
+        QPainterPath _clipPath;
+
         QPolygonF _drawnPoly;
-
-        QList<QPolygonF> _fogPolys;
-
-        void _updateComputedPath() {
-            //TODO move to main thread?
-            this->_computedPath = QPainterPath();
-
-            if(this->_mode == RPZFogParams::Mode::PathIsButFog) {
-                this->_computedPath.addRect(this->scene()->sceneRect());   
-            }
-            
-            for(const auto &poly : this->_fogPolys) {
-                this->_computedPath.addPolygon(poly);
-            }
-
-        }
 
         void _clearDrawing() {
             this->_drawnPoly.clear();
@@ -160,8 +159,54 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         
         void _clear() {
             this->_clearDrawing();
-            this->_fogPolys.clear();
-            this->_updateComputedPath();
+            this->_clipPath.clear();
+            this->_fog.clear();
         }
+
+        void _updateFog(const QList<QPolygonF> &polys) {
+            
+            this->_fog.clear();
+            
+            for(auto const &poly : polys) {
+                this->_fog.addPolygon(poly);
+            }
+
+        }
+
+        void _setFogMode(const RPZFogParams::Mode &mode) {
+            this->_mode = mode;
+        }
+
+        void _generateClipPath() {
+
+            QPainterPath clipP;
+
+            if(this->_mode == RPZFogParams::Mode::PathIsFog) {
+                clipP = this->_fog;
+            } else {
+                clipP.addRect(_maxSizeFog);
+                clipP = clipP.subtracted(this->_fog);
+            }
+
+            if(this->_drawnPoly.count()) {
+                
+                QPainterPath dp;
+                dp.addPolygon(this->_drawnPoly);
+                
+                auto mustUnite = this->_drawnOpe == FogChangedPayload::ChangeType::Added;
+                if(this->_mode != RPZFogParams::Mode::PathIsFog) mustUnite = !mustUnite;
+
+                if(mustUnite) {
+                    clipP = clipP.united(dp);
+                } else {
+                    clipP = clipP.subtracted(dp);
+                }
+
+            }
+
+            this->_clipPath = clipP;
+
+        }
+
 
 };

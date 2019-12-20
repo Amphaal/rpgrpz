@@ -62,13 +62,6 @@ configure_file(
 ## CPP Compiler Configuration ##
 ################################
 
-#add async exception handling
-# string(REGEX REPLACE "/EH[a-z]+" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHa")
-
-#debug symbols for release
-#TODO
-
 SET(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 ADD_DEFINITIONS(-DUNICODE)
