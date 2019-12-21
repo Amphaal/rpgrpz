@@ -132,7 +132,7 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
                     painter->setPen(Qt::NoPen);
                     painter->setBrush(this->_brush);
                     painter->setTransform(QTransform());
-                    painter->setOpacity(AppContext::fogOpacity());
+                    painter->setOpacity(Authorisations::isHostAble() ? AppContext::fogOpacity() : 1);
                     painter->drawRect(this->_maxSizeFog);
 
             painter->restore();
