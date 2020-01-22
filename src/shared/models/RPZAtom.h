@@ -60,7 +60,8 @@ class RPZAtom : public Serializable {
             NPCHealth,
             MaxNPCHealth,
             MinNPCHealth,
-            Opacity
+            Opacity,
+            CoveredByFog
         };
         Q_ENUM(Parameter)
 
@@ -208,7 +209,6 @@ class RPZAtom : public Serializable {
 
         QSet<RPZAtom::Parameter> editedMetadata() const;
         RPZAtom::Updates editedMetadataWithValues() const;
-        QSet<RPZAtom::Parameter> legalEditedMetadata() const;
         QSet<RPZAtom::Parameter> legalParameters() const;
         
         QSet<RPZAtom::Parameter> customizableParams() const;
@@ -236,6 +236,7 @@ class RPZAtom : public Serializable {
         const QString NPCShortName() const;
         const RPZAtom::NPCType NPCAttitude() const;
         const RPZGauge::MinimalistGauge NPCGauge() const;
+        bool isCoveredByFog() const;
 
         QPainterPath shape() const;
         void setShape(const QPainterPath &path);
@@ -310,7 +311,8 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::NPCHealth, QStringLiteral(u"npc_h") },
             { RPZAtom::Parameter::MaxNPCHealth, QStringLiteral(u"npc_maxh") },
             { RPZAtom::Parameter::MinNPCHealth, QStringLiteral(u"npc_minh") },
-            { RPZAtom::Parameter::Opacity, QStringLiteral(u"o") }
+            { RPZAtom::Parameter::Opacity, QStringLiteral(u"o") },
+            { RPZAtom::Parameter::CoveredByFog, QStringLiteral("cbf") }
         };
 
         static inline const RPZAtom::Updates _defaultVal = {
@@ -342,7 +344,8 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::NPCHealth, 0 },
             { RPZAtom::Parameter::MaxNPCHealth, 0 },
             { RPZAtom::Parameter::MinNPCHealth, 0 },
-            { RPZAtom::Parameter::Opacity, 100 }
+            { RPZAtom::Parameter::Opacity, 100 },
+            { RPZAtom::Parameter::CoveredByFog, false }
         };
 
         void _setType(const RPZAtom::Type &type);

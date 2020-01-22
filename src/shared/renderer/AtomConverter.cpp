@@ -162,6 +162,18 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
             }
             break;
             
+            //on covering changed
+            case RPZAtom::Parameter::CoveredByFog: {
+                
+                auto isCovered = val.toBool();
+                RPZQVariant::setIsCoveredByFog(itemToUpdate, isCovered);
+
+                //animate
+                MapViewAnimator::animateVisibility(itemToUpdate);
+
+            }
+            break;
+
             // on changing visibility
             case RPZAtom::Parameter::Hidden: {
                 

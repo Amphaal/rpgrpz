@@ -1091,73 +1091,73 @@
         <translation>Calque %1</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="129"/>
+        <location filename="../shared/models/RPZAtom.h" line="130"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="130"/>
+        <location filename="../shared/models/RPZAtom.h" line="131"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="131"/>
+        <location filename="../shared/models/RPZAtom.h" line="132"/>
         <source>Object</source>
         <translation>Objet</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="132"/>
+        <location filename="../shared/models/RPZAtom.h" line="133"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="133"/>
+        <location filename="../shared/models/RPZAtom.h" line="134"/>
         <source>Atom</source>
         <translation>Atome</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="134"/>
+        <location filename="../shared/models/RPZAtom.h" line="135"/>
         <source>Event</source>
         <translation>Evénement</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="135"/>
+        <location filename="../shared/models/RPZAtom.h" line="136"/>
         <source>Player</source>
         <translation>Joueur</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="136"/>
+        <location filename="../shared/models/RPZAtom.h" line="137"/>
         <source>Non-playable character</source>
         <translation>Personnage non-joueur</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="137"/>
+        <location filename="../shared/models/RPZAtom.h" line="138"/>
         <source>Point of interest</source>
         <translation>Point d&apos;intérêt</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="138"/>
+        <location filename="../shared/models/RPZAtom.h" line="139"/>
         <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="58"/>
         <source>Fog of war</source>
         <translation>Brouillard de guerre</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="142"/>
+        <location filename="../shared/models/RPZAtom.h" line="143"/>
         <source>NPCs</source>
         <translation>PNJs</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="143"/>
+        <location filename="../shared/models/RPZAtom.h" line="144"/>
         <source>Events</source>
         <translation>Evénements</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="144"/>
+        <location filename="../shared/models/RPZAtom.h" line="145"/>
         <source>Players</source>
         <translation>Joueurs</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="145"/>
+        <location filename="../shared/models/RPZAtom.h" line="146"/>
         <source>POIs</source>
         <translation>Points d&apos;intérêt</translation>
     </message>

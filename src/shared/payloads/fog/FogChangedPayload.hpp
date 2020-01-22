@@ -32,7 +32,6 @@ class FogChangedPayload : public AlterationPayload {
         }
 
         const QList<QPolygonF> modifyingPolys() const {
-            qDebug() << this->value("mp").toList();
             return JSONSerializer::toPolygons(
                 this->value("mp").toList()
             );

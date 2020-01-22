@@ -118,9 +118,14 @@ void MapView::_mightUpdateTokens() {
 //
 
 void MapView::_notifySelection() {
+
+    auto selected = this->scene()->selectedItems();
+
+    //notify
     HintThread::hint()->notifySelectedItems(
-        this->scene()->selectedItems()
+        selected
     );
+
 }
 
 void MapView::_updateItemValue(QGraphicsItem* item, const RPZAtom::Updates &updates) {
@@ -675,12 +680,17 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
         if(HintThread::hint()->templateAtom().type() == RPZAtom::Type::FogOfWar) {
 
             auto drawn = HintThread::hint()->fogItem()->commitDrawing();
-           
+            
+            //if any drawn
             if(drawn.count()) {
+                
+                //prepare payload
+                //TODO calculate covered and uncovered items by drawing
 
                 FogChangedPayload payload(
                     btnPressed == Qt::MouseButton::LeftButton ? FogChangedPayload::ChangeType::Added : FogChangedPayload::ChangeType::Removed, 
-                    drawn
+                    drawn//,
+                    //TODO add ids of covered and uncovered
                 );
 
                 AlterationHandler::get()->queueAlteration(HintThread::hint(), payload);

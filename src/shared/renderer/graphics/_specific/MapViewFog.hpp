@@ -69,6 +69,10 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             return this->_maxSizeFog;
         }
 
+        QPainterPath shape() const override {
+            return this->_clipPath;
+        }
+
         qreal textureHPos() const {
             return this->_brush.transform().m31();
         }

@@ -93,7 +93,8 @@ class MapViewAnimator {
         static double _determineOpacity(QGraphicsItem* item) {
             auto isHidden = RPZQVariant::isHidden(item);
             auto cachedOpacity = RPZQVariant::cachedOpacity(item);
-            return isHidden ? (Authorisations::isHostAble() ? .5 : 0) : cachedOpacity;
+            auto isCovered = RPZQVariant::isCoveredByFog(item);
+            return isHidden || isCovered ? (Authorisations::isHostAble() ? .5 : 0) : cachedOpacity;
         }
 
         static void _animateMove(QObject *toAnimate, const QPointF &currentScenePos, const QPointF &newScenePos) {

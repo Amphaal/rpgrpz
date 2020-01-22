@@ -43,7 +43,7 @@ class RPZGraphicsItem {
             //if must print selection helper
             if(isMapWidget && isSelectedState && this->_mustDrawSelectionHelper()) {
                 this->_paintSelectionHelper(painter, option);
-                out.options.state.setFlag(QStyle::StateFlag::State_Selected, false);
+                out.options.state.setFlag(QStyle::StateFlag::State_Selected, false); //prevent reprinting by the engine
             }
 
             //can continue with expected paint() from inheritor
@@ -62,7 +62,7 @@ class RPZGraphicsItem {
 
         void _paintOpacityPlaceholder(QGraphicsItem* base, QPainter *painter, const QStyleOptionGraphicsItem *option) {
             
-            if(!RPZQVariant::isHidden(base)) return;
+            if(!RPZQVariant::isHidden(base) && !RPZQVariant::isCoveredByFog(base)) return;
 
             painter->save();
 

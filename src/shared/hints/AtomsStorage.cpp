@@ -496,7 +496,7 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
     //fog update
     else if(auto mPayload = dynamic_cast<const FogChangedPayload*>(&payload)) {
         auto newFog = this->_map.alterFog(*mPayload);
-        this->_fogUpdated(newFog);
+        this->_fogUpdated(newFog); //TODO update to ack covered and uncovered items
     }
 
     //fog mode change

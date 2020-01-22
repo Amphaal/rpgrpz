@@ -180,6 +180,7 @@ const RPZCharacter::Id RPZAtom::characterId() const { return this->metadata(RPZA
 const QString RPZAtom::characterName() const { return this->metadata(RPZAtom::Parameter::CharacterName).toString(); }
 const QString RPZAtom::NPCShortName() const { return this->metadata(RPZAtom::Parameter::NPCShortName).toString(); }
 const RPZAtom::NPCType RPZAtom::NPCAttitude() const { return (RPZAtom::NPCType)this->metadata(RPZAtom::Parameter::NPCAttitude).toInt(); }
+bool RPZAtom::isCoveredByFog() const { return this->metadata(RPZAtom::Parameter::CoveredByFog).toBool(); }
 
 QPainterPath RPZAtom::shape() const {
     auto rawShape = this->metadata(RPZAtom::Parameter::Shape).toByteArray();
@@ -340,13 +341,6 @@ RPZAtom::Updates RPZAtom::editedMetadataWithValues() const {
 
     return out;
 }
-
-QSet<RPZAtom::Parameter> RPZAtom::legalEditedMetadata() const {
-    return this->editedMetadata().intersect(
-        this->legalParameters()
-    );
-}
-
 
 QVariantHash RPZAtom::serializeUpdates(const RPZAtom::Updates &updates) {
     QVariantHash in;

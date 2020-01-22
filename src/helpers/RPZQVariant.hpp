@@ -21,7 +21,8 @@ class RPZQVariant {
             CachedOpacity = 6000,
             AllowedToWalk = 7000,
             AllowedToDefineMoveAbility = 8000,
-            CharacterId = 8010
+            CharacterId = 8010,
+            CoveredByFog = 9000
         };
 
         static bool allowedToBeWalked(const QGraphicsItem* item) {
@@ -105,6 +106,14 @@ class RPZQVariant {
         }
         static void setIsHidden(QGraphicsItem* item, bool isHidden) {
             item->setData((int)RPZQVariant::Roles::IsHidden, isHidden);
+        }
+
+        static void setIsCoveredByFog(QGraphicsItem* item, bool isCovered) {
+            item->setData((int)RPZQVariant::Roles::CoveredByFog, isCovered);
+        }
+
+        static bool isCoveredByFog(QGraphicsItem* item) {
+            return item->data((int)RPZQVariant::Roles::CoveredByFog).toBool();
         }
 
         static double cachedOpacity(QGraphicsItem* item) {
