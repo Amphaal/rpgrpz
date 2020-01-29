@@ -61,9 +61,10 @@ void AssetsDatabase::_setupLocalData() {
     for(auto i = paths.begin(); i != paths.end(); i++) {
         
         auto path = i.key();
-        auto hashes = i.value().toVariant().toStringList().toSet();
+        auto hashes = i.value().toVariant().toStringList();
+        auto hSet = QSet<QString>(hashes.begin(), hashes.end());
         
-        this->_paths.insert(path, hashes);
+        this->_paths.insert(path, hSet);
 
     }
 
@@ -94,7 +95,8 @@ void AssetsDatabase::_removeDatabaseLinkedFiles() {
 }
 
 const QSet<RPZAsset::Hash> AssetsDatabase::getStoredAssetHashes() const {
-    return this->_assets.keys().toSet();
+    auto keys = this->_assets.keys();
+    return QSet<QString>(keys.begin(), keys.end());
 }
 
 const QMap<AssetsDatabase::FolderPath, QSet<RPZAsset::Hash>> AssetsDatabase::paths() const {
@@ -251,7 +253,7 @@ void AssetsDatabase::removeFolders(const QList<AssetsDatabase::FolderPath> &path
     }
 
     //remove referenced assets
-    auto result = this->_removeAssets(hashesToRemove.toList());
+    auto result = this->_removeAssets(hashesToRemove.values());
 
     //remove stored files
     this->_removeAssetFiles(result.second);

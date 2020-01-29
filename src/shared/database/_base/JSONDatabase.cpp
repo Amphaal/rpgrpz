@@ -88,7 +88,7 @@ void JSONDatabase::updateFrom(QJsonObject &base, const QString &entityKey, const
 }
 
 void JSONDatabase::updateFrom(QJsonObject &base, const QString &entityKey, const QSet<QString> &entity) {
-    base.insert(entityKey, QJsonArray::fromStringList(entity.toList()));
+    base.insert(entityKey, QJsonArray::fromStringList(entity.values()));
 }
 
 void JSONDatabase::updateFrom(QJsonObject &base, const QString &entityKey, const QVariantList &entity) {
@@ -133,11 +133,12 @@ bool JSONDatabase::_handleVersionMissmatch(QJsonObject &databaseToUpdate, JSONDa
 
     //remove obsolete handlers
     auto aimedAPIVersion = this->apiVersion();
-    auto handledAPIVersions = handlers.keys().toSet();
+    auto handledAPIVersions = handlers.keys();
+    auto hAPIvSet = QSet<JSONDatabase::Version>(handledAPIVersions.begin(), handledAPIVersions.end());
 
     //apply handlers
     bool updateApplied = false;
-    for(const auto targetUpdateVersion : handledAPIVersions) {
+    for(const auto targetUpdateVersion : hAPIvSet) {
         
         //if patch is for later versions, skip
         if(aimedAPIVersion < targetUpdateVersion) continue;

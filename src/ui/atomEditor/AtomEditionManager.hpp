@@ -113,13 +113,15 @@ class AtomEditionManager : public QWidget {
                 
                 auto currSelectionDescr = this->_editor->currentSelectionDescriptor();
 
-                auto removed = mPayload->targetRPZAtomIds().toSet();
-                auto current = currSelectionDescr.selectedAtomIds.toSet();
+                auto selected = mPayload->targetRPZAtomIds();
+                
+                auto removed = QSet<RPZAtom::Id>(selected.begin(), selected.end());
+                auto current = QSet<RPZAtom::Id>(currSelectionDescr.selectedAtomIds.begin(), currSelectionDescr.selectedAtomIds.end());
                 
                 //if no previous selection and has template atom, keep current description
                 if(!currSelectionDescr.templateAtom.isEmpty() && !current.count()) return;
 
-                auto truncated = current.subtract(removed).toList();
+                auto truncated = current.subtract(removed).values();
                 auto descr = HintThread::hint()->getAtomSelectionDescriptor(truncated);
 
                 this->_handleSubjectChange(descr);

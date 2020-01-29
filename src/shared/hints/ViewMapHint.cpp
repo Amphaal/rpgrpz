@@ -72,10 +72,12 @@ void ViewMapHint::_checkForOwnedTokens() {
     
     QSet<RPZAtom::Id> nowOwned;
     if(Authorisations::isHostAble()) { //if is host, owns everything
-        nowOwned = nowOwned.fromList(this->_ownables().keys());
+        auto oks = this->_ownables().keys();
+        nowOwned = QSet<RPZAtom::Id>(oks.begin(), oks.end());
     }
     else { //if not, owns from specified character to impersonate
-        nowOwned = nowOwned.fromList(this->_ownables().keys(this->_myCharacterId));
+        auto oks = this->_ownables().keys(this->_myCharacterId);
+        nowOwned = QSet<RPZAtom::Id>(oks.begin(), oks.end());
     }
         
     //update owned tokens
@@ -87,8 +89,8 @@ void ViewMapHint::_checkForOwnedTokens() {
     auto newlyOwned = nowOwned.subtract(previouslyOwned);
 
     //find associated graphics items
-    ownedGIs = this->_gis(newlyOwned.toList());
-    notOwnedGIs = this->_gis(notOwnedAnymore.toList());
+    ownedGIs = this->_gis(newlyOwned.values());
+    notOwnedGIs = this->_gis(notOwnedAnymore.values());
 
     //signals
     if(ownedGIs.count()) {
@@ -143,7 +145,8 @@ void ViewMapHint::_updateTemplateAtom(RPZAtom::Updates updates) {
 
     //remove illegal parameters from updates
     auto templateLegals = this->_templateAtom.legalParameters();
-    auto illegals = updates.keys().toSet().subtract(templateLegals);
+    auto illegalsList = updates.keys();
+    auto illegals = QSet<RPZAtom::Parameter>(illegalsList.begin(), illegalsList.end()).subtract(templateLegals);
     for(const auto &illegal : illegals) updates.remove(illegal);
 
     //if no more updates, skip
@@ -372,7 +375,8 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &asset) {
     if(pathToFile.isNull()) return; //path to file empty, skip
     
     //get uniques ids
-    setOfGraphicsItemsToReplace = this->_missingAssetHashesFromDb.values(hash).toSet();
+    auto setOfGraphicsItemsToReplaceList = this->_missingAssetHashesFromDb.values(hash);
+    setOfGraphicsItemsToReplace = QSet<QGraphicsItem*>(setOfGraphicsItemsToReplaceList.begin(), setOfGraphicsItemsToReplaceList.end());
     
     //iterate through the list of GI to replace
     for(const auto item : setOfGraphicsItemsToReplace) {
@@ -401,7 +405,7 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &asset) {
     this->_missingAssetHashesFromDb.remove(hash);
 
     //remove old
-    emit requestingUIAlteration(Payload::Alteration::Removed, setOfGraphicsItemsToReplace.toList());
+    emit requestingUIAlteration(Payload::Alteration::Removed, setOfGraphicsItemsToReplace.values());
 
     //replace by new
     emit requestingUIAlteration(Payload::Alteration::Added, newGis, {});

@@ -14,7 +14,7 @@ Prerequisites to build:
 - latest sentry-native release, unzipped (https://github.com/getsentry/sentry-native/releases)
 - ENV paths
     - GSTREAMER_1_0_ROOT_X86_64 (ex : D:\gstreamer\1.0\x86_64)
-    - QTDIR (ex : C:\Qt\5.13.2\msvc2017_64)
+    - QTDIR (ex : C:\Qt\5.14.1\msvc2017_64)
     - QT_TOOLS (ex : C:\Qt\Tools)
     - VCPKG_ROOT (ex : F:\vcpkg)
     - SENTRY_NATIVE_ROOT (ex: F:\sentry-native)

@@ -68,7 +68,7 @@ void AtomConverter::_updateGraphicsItemFromMetadata(QGraphicsItem* item, const R
     }
 
     //sort
-    auto asList = paramsToUpdate.toList();
+    auto asList = paramsToUpdate.values();
     std::sort(asList.begin(), asList.end()); 
     
     //update GI

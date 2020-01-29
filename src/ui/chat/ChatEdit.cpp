@@ -64,7 +64,7 @@ void ChatEdit::_onWhisperTargetsChanged() {
         usernamesList.insert(QStringLiteral(u"@") + user.whisperTargetName());
     }
 
-    auto model = new QStringListModel(usernamesList.toList());
+    auto model = new QStringListModel(usernamesList.values());
     auto completer = new QCompleter(model);
     completer->setCompletionMode(QCompleter::CompletionMode::PopupCompletion);
     completer->setCaseSensitivity(Qt::CaseInsensitive);

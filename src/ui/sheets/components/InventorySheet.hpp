@@ -294,7 +294,7 @@ class InventorySheet : public QTableWidget {
             //get rows to delete and desc order them
             QSet<int> rowsToDelete;
             for(const auto &index : selected) {rowsToDelete += index.row();}
-            auto rowsToDeleteL = rowsToDelete.toList();
+            auto rowsToDeleteL = rowsToDelete.values();
             std::sort(rowsToDeleteL.begin(), rowsToDeleteL.end(), std::greater<int>());
             
             //remove rows

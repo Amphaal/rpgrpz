@@ -523,7 +523,7 @@ void RPZServer::_sendToRoleExcept(JSONSocket* toExclude, const RPZUser::Role &ro
     toSendTo.remove(toExclude);
     if(!toSendTo.count()) return;
 
-    JSONSocket::sendToSockets(this, toSendTo.toList(), method, data);
+    JSONSocket::sendToSockets(this, toSendTo.values(), method, data);
 
 }
 

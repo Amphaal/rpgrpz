@@ -243,7 +243,7 @@ class MapLayoutModel : public MapLayoutModelBase {
             //signal redraw
             for(auto i = colsToUpdate.begin(); i != colsToUpdate.end(); i++) {
                 auto simbling = atomIndex.siblingAtColumn(i.key());
-                emit dataChanged(simbling, simbling, i.value().toList().toVector());
+                emit dataChanged(simbling, simbling, i.value().values().toVector());
             }
 
         }

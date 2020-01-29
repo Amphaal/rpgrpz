@@ -1081,7 +1081,7 @@
         <translation>Trop éloigné pour afficher la grille !</translation>
     </message>
     <message>
-        <location filename="../shared/database/AssetsDatabase.cpp" line="172"/>
+        <location filename="../shared/database/AssetsDatabase.cpp" line="174"/>
         <source>Folder</source>
         <translation>Dossier</translation>
     </message>

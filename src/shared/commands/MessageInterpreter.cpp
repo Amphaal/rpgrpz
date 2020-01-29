@@ -90,7 +90,7 @@ QList<QString> MessageInterpreter::findRecipentsFromText(const QString &text) {
         out.insert(match.captured(1));
     }
 
-    return out.toList();
+    return out.values();
 }
 
 QString MessageInterpreter::sanitizeText(const QString &text) {
