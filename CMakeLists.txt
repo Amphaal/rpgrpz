@@ -44,7 +44,7 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 SET(APP_PUBLISHER "LVWL")
 SET(APP_DEFAULT_URL "https://github.com/Amphaal/rpgrpz")
 SET(APP_PATCHNOTE_URL "https://github.com/Amphaal/rpgrpz/releases")
-SET(SENTRY_ENDPOINT "http://9224cd6702ba4791a147f192af767519@zonme.to2x.ovh:9000/1")
+SET(SENTRY_ENDPOINT "http://3a471bcc32d94c628a191d3d7d2eabff@zonme.to2x.ovh:9000/2")
 
 ##crashpad
 SET(CRASHPAD_HANDLER_NAME "crashpad_handler")

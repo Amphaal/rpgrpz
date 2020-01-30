@@ -173,24 +173,24 @@ void AppContext::init(const QString &customContext) {
 
 void AppContext::initSentry() {
 
-auto options = sentry_options_new();
-sentry_options_set_dsn(options, SENTRY_ENDPOINT);
+    auto options = sentry_options_new();
+    sentry_options_set_dsn(options, SENTRY_ENDPOINT);
 
-QString environement = "Production";
-#ifdef _DEBUG
-    environement = "Debug";
-#endif
-sentry_options_set_environment(options, environement.toStdString().c_str());
+    QString environement = "Production";
+    #ifdef _DEBUG
+        environement = "Debug";
+    #endif
+    sentry_options_set_environment(options, environement.toStdString().c_str());
 
-sentry_options_set_release(options, GITHUB_VERSION_NAME);
-sentry_options_set_debug(options, 1);
+    sentry_options_set_release(options, GITHUB_VERSION_NAME);
+    sentry_options_set_debug(options, 1);
 
-//crashpad integration
-sentry_options_set_handler_path(options, CRASHPAD_HANDLER_NAME);
-auto dbStr = AppContext::getAppDataLocation() + "/sentry_db";
-sentry_options_set_database_path(options, dbStr.toStdString().c_str());
+    //crashpad integration
+    sentry_options_set_handler_path(options, CRASHPAD_HANDLER_NAME);
+    auto dbStr = AppContext::getAppDataLocation() + "/sentry_db";
+    sentry_options_set_database_path(options, dbStr.toStdString().c_str());
 
-sentry_init(options);
+    sentry_init(options);
 
 
 }

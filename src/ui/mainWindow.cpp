@@ -23,7 +23,6 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 
     //initial show
     this->_loadWindowState();
-
     this->_triggerBarsVisibility();
 
     //load default map
@@ -68,8 +67,13 @@ void MainWindow::keyPressEvent(QKeyEvent * event) {
     switch(event->key()) {
 
         case Qt::Key_Alt: {
-            this->_showBars = !this->_showBars;
+
+            AppContext::settings()->setMainWindowBarsShown(
+                !AppContext::settings()->mainWindowBarsShown()
+            );
+
             this->_triggerBarsVisibility();
+
         }
         break;
 
@@ -81,8 +85,9 @@ void MainWindow::keyPressEvent(QKeyEvent * event) {
 }
 
 void MainWindow::_triggerBarsVisibility() {
-    this->menuBar()->setVisible(this->_showBars);
-    this->statusBar()->setVisible(this->_showBars);
+    auto areShown = AppContext::settings()->mainWindowBarsShown();
+    this->menuBar()->setVisible(areShown);
+    this->statusBar()->setVisible(areShown);
 }
 
 void MainWindow::_barVisibilityToolTip() {

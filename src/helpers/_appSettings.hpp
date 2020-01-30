@@ -38,4 +38,12 @@ class AppSettings : public QSettings {
         bool scaleActive() {
             return this->value(QStringLiteral(u"scale"), false).toBool();
         }
+
+        void setMainWindowBarsShown(bool areShown) {
+            this->setValue(QStringLiteral(u"mw_bars"), areShown);
+        }
+
+        bool mainWindowBarsShown() {
+            return this->value(QStringLiteral(u"mw_bars"), true).toBool();
+        }
 };

@@ -114,7 +114,6 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
 
         UpdaterUIIntegrator* _updateIntegrator = nullptr;
         
-        bool _showBars = false;
         void _triggerBarsVisibility();
         void _barVisibilityToolTip();
 

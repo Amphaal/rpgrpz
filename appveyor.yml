@@ -19,11 +19,16 @@ install:
   - cd c:\tools\vcpkg
   - vcpkg install miniupnpc --triplet x64-windows
   - vcpkg integrate install
-  #- npm install -g @sentry/cli --unsafe-perm
+  # - npm install -g @sentry/cli --unsafe-perm
   # - appveyor DownloadFile https://gstreamer.freedesktop.org/data/pkg/windows/1.16.2/gstreamer-1.0-devel-msvc-x86_64-1.16.2.msi
   # - appveyor DownloadFile https://gstreamer.freedesktop.org/data/pkg/windows/1.16.2/gstreamer-1.0-msvc-x86_64-1.16.2.msi
   # - msiexec /i gstreamer-1.0-devel-msvc-x86_64-1.16.2.msi /quiet /qn /norestart /log install-devel.log ADDLOCAL=ALL
   # - msiexec /i gstreamer-1.0-msvc-x86_64-1.16.2.msi /quiet /qn /norestart /log install.log ADDLOCAL=ALL
+#before_build:
+# https://docs.sentry.io/cli/dif/
+#  - sentry-cli login
+#  - sentry-cli difutil bundle-sources /debugSymbols
+#  - sentry-cli upload-dif -o livingwill -p rpgrpz /debugSymbols
 build_script:
   - cmd: mkdir build
   - cmd: cd build
@@ -36,10 +41,6 @@ artifacts:
     name: IFW_Repo
   - path: build/installer.zip
     name: IFW_Installer
-#before_build:
-#  - sentry-cli login
-#  - sentry-cli difutil bundle-sources /debugSymbols
-#  - sentry-cli upload-dif -o livingwill -p rpgrpz /debugSymbols
 deploy:
   - provider: BinTray
     username: amphaal
