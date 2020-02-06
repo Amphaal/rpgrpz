@@ -1,9 +1,9 @@
 #include "AtomSubEditor.h"
 
 AtomSubEditor::AtomSubEditor(const QList<RPZAtom::Parameter> &parameters, bool supportsBatchEditing) :
-    _supportsBatchEditing(supportsBatchEditing),
+    _params(parameters),
     _descr(new AtomEditorLineDescriptor(parameters.first(), supportsBatchEditing)),
-    _params(parameters) { 
+    _supportsBatchEditing(supportsBatchEditing) { 
 
     this->setVisible(false);
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);

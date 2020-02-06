@@ -96,8 +96,6 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
         }
 
         const QPointF _drawRangeGrid(QPainter *painter, const QStyleOptionGraphicsItem *option, const MapViewWalkingHelper::PointPos &pp) const {
-            
-            QPointF out;
 
             painter->save();
 

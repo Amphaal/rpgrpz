@@ -11,7 +11,9 @@ class RPZMap : public QMap<SnowFlake::Id, T> {
     T element;
     
     public:
-        RPZMap() {}
+        RPZMap() {}    
+        ~RPZMap() {}   
+
         RPZMap(const QList<T> &serializables) {
             for(const auto &s : serializables) {
                 this->insert(s.id(), s);

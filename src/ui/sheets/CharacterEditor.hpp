@@ -88,9 +88,9 @@ class CharacterEditor : public QWidget, public ConnectivityObserver {
     private:
         CharacterPicker::SelectedCharacter _currentSelection;
 
-        QPushButton* _saveCharacterBtn = nullptr;
         CharacterPicker* _characterPicker = nullptr;
         CharacterSheet* _sheet = nullptr;
+        QPushButton* _saveCharacterBtn = nullptr;
         QGroupBox* _characterPickerGrpBox = nullptr;
 
         void _maySaveCurrentCharacter() {

@@ -1,0 +1,10 @@
+msys/git
+mingw64/mingw-w64-x86_64-cmake
+mingw64/mingw-w64-x86_64-ninja
+mingw64/mingw-w64-x86_64-gstreamer
+mingw64/mingw-w64-x86_64-gst-plugins-base
+mingw64/mingw-w64-x86_64-gst-plugins-good
+mingw64/mingw-w64-x86_64-qt-installer-framework
+mingw64/mingw-w64-x86_64-qt5
+mingw64/mingw-w64-x86_64-miniupnpc
+mingw64/mingw-w64-x86_64-clang

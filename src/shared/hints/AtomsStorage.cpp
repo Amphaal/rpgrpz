@@ -607,7 +607,6 @@ bool AtomsStorage::_isAtomOwnable(const RPZAtom &atom) const {
 QPointF AtomsStorage::_getPositionFromAtomDuplication(const RPZAtom &atomToDuplicate, double distanceFromOriginal) {
     
     auto currPos = atomToDuplicate.pos();
-    auto br = atomToDuplicate.shape().boundingRect();
     
     currPos.setX(
         currPos.x() + distanceFromOriginal

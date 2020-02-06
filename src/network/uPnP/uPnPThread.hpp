@@ -3,8 +3,6 @@
 #include <QThread>
 #include <QDebug>
 
-#include "src/_libs/upnpc_custom/upnpc.hpp"
-
 //.hpp for QT bindings to generate
 class uPnPThread : public QThread {
     

@@ -92,8 +92,8 @@ void LogWriter::_openFileAndLog(QString* logFilePath, const QString &channel, co
 
 void LogWriter::_fprintf_to_file(FILE* _fs, const QString &channel, const QMessageLogContext &context, QString msg) {
 
-    const char * file = context.file ? context.file : "";
-    const char * function = context.function ? context.function : "";
+    // const char * file = context.file ? context.file : "";
+    // const char * function = context.function ? context.function : "";
 
     msg = msg.replace("\n", "");
     auto currentTime = QDateTime::currentDateTime().toString(QStringLiteral(u"dd.MM.yyyy-hh:mm:ss.zzz"));

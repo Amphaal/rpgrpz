@@ -43,7 +43,7 @@ void ConnectivityHelper::_pickPreferedConfiguration() {
     
     for(auto &conf : this->_getDefinedConfiguration()) {
 
-        const auto purpose = conf.purpose();
+        // const auto purpose = conf.purpose();
         const auto type = conf.type();
         const auto name = conf.name();
 

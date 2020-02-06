@@ -3,8 +3,8 @@
 ConnectWidget::ConnectWidget(QWidget *parent) : QWidget(parent), 
     _nameTarget(new QLineEdit(this)),
     _domainTarget(new QLineEdit(this)),
-    _connectBtn(new QPushButton(this)),
-    _characterSheetTarget(new QComboBox(this)) {
+    _characterSheetTarget(new QComboBox(this)),
+    _connectBtn(new QPushButton(this)) {
                                                     
     AppContext::settings()->beginGroup(QStringLiteral(u"ConnectWidget"));
 

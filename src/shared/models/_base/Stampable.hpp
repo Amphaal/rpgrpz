@@ -12,6 +12,7 @@ class Stampable : public Ownable {
         Stampable() : Ownable(SnowFlake::get()->nextId()) {
             this->_setTimestamp(QDateTime::currentDateTime());
         }
+        virtual ~Stampable() {};
         explicit Stampable(const QVariantHash &hash) : Ownable(hash) {}
 
         QDateTime timestamp() const {

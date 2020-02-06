@@ -88,8 +88,8 @@ class InventorySlotModal : public QDialog {
 
     private:
         QVector<RPZInventory*> _targets;
-        QComboBox* _recipientCombo = nullptr;
         QComboBox* _targetsCombo = nullptr;
+        QComboBox* _recipientCombo = nullptr;
 
         void _addInventoryToCombo(QComboBox* target, const RPZInventory* toAdd) {
             target->addItem(QIcon(QStringLiteral(u":/icons/app/other/bag.png")), toAdd->toString());
@@ -160,9 +160,9 @@ class InventorySlotSplitModal : public InventorySlotModal {
             const QVector<RPZInventory*> &targets, 
             const QPair<int, RPZInventorySlot> &toAlter
         ) : InventorySlotModal(from, targets, {toAlter}), 
-                _splitterTo(new QSpinBox), 
                 _splitterFrom(new QSpinBox),
-                _movingLbl(new QLabel) {
+                _movingLbl(new QLabel),
+                _splitterTo(new QSpinBox) {
 
             this->setWindowTitle(tr("Split item to inventory"));
             this->_maxFrom = this->toBeAltered().second.howMany();

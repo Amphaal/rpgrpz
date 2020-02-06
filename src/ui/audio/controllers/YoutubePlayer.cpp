@@ -1,8 +1,8 @@
 #include "YoutubePlayer.h"
 
 YoutubePlayer::YoutubePlayer(QWidget * parent) : QGroupBox(tr("Playlist"), parent), 
-    _playlist(new Playlist(this)), 
     _toolbar(new TrackToolbar(this)),
+    _playlist(new Playlist(this)), 
     _linkInserter(new YoutubePlaylistItemInsertor(this)) {
 
     //self

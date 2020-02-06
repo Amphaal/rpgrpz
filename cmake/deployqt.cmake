@@ -1,16 +1,10 @@
-if(NOT DEFINED QT_DEPLOY_BIN_PATH)
-    message(FATAL_ERROR "QT_DEPLOY_BIN_PATH have not been set!")
-endif()
-
+#please make sure it is registered in PATH !
 IF(WIN32)
-    SET(QT_DEPLOY_BIN "windeployqt.exe")
+    SET(DEPLOYQT_EXECUTABLE "windeployqt.exe")
 endif()
 IF(APPLE)
-    SET(QT_DEPLOY_BIN "macdeployqt")
+    SET(DEPLOYQT_EXECUTABLE "macdeployqt")
 endif()
-
-# find the deployqt bin
-SET(DEPLOYQT_EXECUTABLE ${QT_DEPLOY_BIN_PATH}/${QT_DEPLOY_BIN})
 
 # Add commands that copy the Qt runtime to the target's output directory after
 # build and install the Qt runtime to the specified directory

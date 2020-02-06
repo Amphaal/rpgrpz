@@ -88,7 +88,7 @@ void ToysTreeView::_onAssetsAboutToBeDownloaded(const QVector<QString> &availabl
 void ToysTreeView::_onReceivedAsset(RPZAssetImportPackage package) {
     
     //integrate
-    auto success = this->_model->integrateAsset(package);
+    this->_model->integrateAsset(package);
     this->_expectedAssetsDownloaded++;
 
     //update UI for progress
@@ -256,7 +256,7 @@ void ToysTreeView::_generateMenu(const QList<QModelIndex> &targetIndexes, const 
             auto createFolder = RPZActions::createFolder();
             QObject::connect(
                 createFolder, &QAction::triggered,
-                [&, firstItem]() {
+                [&]() {
                     auto newFolderIndex = this->_model->createFolder(firstItemIndex);
                     this->edit(newFolderIndex);
                 }
@@ -360,9 +360,6 @@ void ToysTreeView::keyPressEvent(QKeyEvent * event) {
 void ToysTreeView::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) {
 
     QTreeView::selectionChanged(selected, deselected);
-
-    auto i = selected.count();
-    auto y = deselected.count();
 
     auto selectedElems = this->_selectedElementsIndexes();
     auto indexesCount = selectedElems.count();

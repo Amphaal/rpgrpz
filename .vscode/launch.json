@@ -17,9 +17,6 @@
                 "program": "${workspaceFolder}/_gen/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ",
                 "MIMode": "lldb"
             },
-            "windows": {
-                "type": "cppvsdbg"
-            },
             "externalConsole": false
         },
         {
@@ -30,9 +27,6 @@
             "osx": {
                 "program": "${workspaceFolder}/_gen/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ",
                 "MIMode": "lldb"
-            },
-            "windows": {
-                "type": "cppvsdbg"
             },
             "args": ["--noServer --randomContext"],
             "stopAtEntry": false,
@@ -54,9 +48,6 @@
                         "value": "_debug"
                 }]
             },
-            "windows": {
-                "type": "cppvsdbg"
-            },
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/_gen/bin/Debug",
@@ -73,9 +64,6 @@
             "osx": {
                 "program": "${workspaceFolder}/_gen/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ",
                 "MIMode": "lldb"
-            },
-            "windows": {
-                "type": "cppvsdbg"
             },
             "args": ["--test"],
             "stopAtEntry": false,

@@ -113,8 +113,8 @@ class GaugeWidget : public QWidget {
 
     private:
         RPZGauge::MinimalistGauge _values;
-        QColor _color;
         QString _name;
+        QColor _color;
 
         void paintEvent(QPaintEvent *event) override {
             QPainter p(this);

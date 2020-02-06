@@ -383,6 +383,11 @@ void AtomConverter::_updateAtomParamFromGraphics(const RPZAtom::Parameter &param
         }
         break;
         
+        default: {
+            qWarning() << "Unhandled RPZAtom::Parameter to update from !";
+        }
+        break;
+    
     }
 
 }   

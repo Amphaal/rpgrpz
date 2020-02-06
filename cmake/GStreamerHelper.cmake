@@ -1,12 +1,3 @@
-#check requirements
-if(NOT DEFINED GSTREAMER_LOCATION)
-    message(FATAL_ERROR "GSTREAMER_LOCATION have not been set!")
-endif()
-
-#add search path to pkgConfig searchpath
-list(APPEND CMAKE_PREFIX_PATH ${GSTREAMER_LOCATION})
-set(ENV{PKG_CONFIG_PATH} ${GSTREAMER_LOCATION})
-
 #using pkgConfig, makes sure PKG_CONFIG_EXECUTABLE is set
 find_package(PkgConfig REQUIRED)
 

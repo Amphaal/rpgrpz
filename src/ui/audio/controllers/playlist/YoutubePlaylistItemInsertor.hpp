@@ -28,7 +28,7 @@ class YoutubePlaylistItemInsertor : public QWidget {
             this->_ytUrlEdit->clear();
     
             auto match = this->_ytUrlMatcher->match(url);
-            auto ss = match.isValid();
+
             if(!match.hasMatch()) {
                 QToolTip::showText(this->_ytUrlEdit->mapToGlobal(QPoint()), tr("Invalid Youtube URL !"));
                 return;

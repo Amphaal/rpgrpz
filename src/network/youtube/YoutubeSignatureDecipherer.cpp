@@ -91,7 +91,7 @@ QList<QString> YoutubeSignatureDecipherer::_findJSDecipheringOperations(const QS
 
     // qDebug() << "Youtube : decipherer function body parts >>" << functionBody;
 
-    return javascriptFunctionCalls;
+    return std::move(javascriptFunctionCalls);
 }
 
 QHash<YoutubeSignatureDecipherer::CipherOperation, YoutubeSignatureDecipherer::YTClientMethod> YoutubeSignatureDecipherer::_findObfuscatedDecipheringOperationsFunctionName(const QString &ytPlayerSourceCode, QList<QString> &javascriptDecipheringOperations) {

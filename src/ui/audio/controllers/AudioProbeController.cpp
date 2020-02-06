@@ -1,11 +1,11 @@
 #include "AudioProbeController.h"
 
 AudioProbeController::AudioProbeController(QWidget * parent) : QGroupBox(tr("Playing now"), parent), 
+    toolbar(new VolumeToolbar),
     _descr(new QLabel),
     _playIconLbl(new QLabel),
-    _playIcon(new QMovie(":/icons/app/audio/musicPlaying.gif")),
     _posInTrackLbl(new QLabel),
-    toolbar(new VolumeToolbar) {
+    _playIcon(new QMovie(":/icons/app/audio/musicPlaying.gif")) {
 
     //bind animation to label
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);

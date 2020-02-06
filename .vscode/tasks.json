@@ -10,38 +10,25 @@
             "label": "Debug - 0. Create build folder",
             "group": "test",
             "type": "shell",
-            "command": "rm _gen -r -fo; mkdir _gen",
-            "osx": {
-                "command": "rm -rf _gen; mkdir build; mkdir _gen"
-            }
-        },
-        {
-            "label": "Debug - 1. Download vcpkg packages",
-            "dependsOn" : "Debug - 0. Create build folder",
-            "group": "test",
-            "type": "shell",
-            "command": "${env:VCPKG_ROOT}/vcpkg install miniupnpc --triplet x64-windows; vcpkg integrate install",
-            "options": {
-                "cwd": "${workspaceRoot}/_gen"
-            }
+            "command": "rm -rf _genDebug; mkdir _genDebug",
         },
         {
             "label": "Debug - 2a. Generate Project files",
-            "dependsOn" : "Debug - 1. Download vcpkg packages",
+            "dependsOn" : "Debug - 0. Create build folder",
             "group": {
                 "isDefault": true,
                 "kind" : "test"
             },
             "type": "shell",
-            "command": "cmake -A x64 ..",
+            "command": "cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=./cmake/clang-toolchain.cmake ..",
             "options": {
-                "cwd": "${workspaceRoot}/_gen"
+                "cwd": "${workspaceRoot}/_genDebug"
             }
         },
         {
             "label": "Debug - 3. Build",
             "type": "shell",
-            "command": "cmake --build ./_gen --config Debug"
+            "command": "cmake --build ./_genDebug"
         }
     ]
 }

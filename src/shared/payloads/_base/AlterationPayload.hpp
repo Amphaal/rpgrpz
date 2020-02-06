@@ -54,8 +54,6 @@ class AlterationPayload : public QVariantHash {
         // }
 
     private:      
-        bool _isFromTimeline = false; //client only
-        
         void _setType(const Payload::Alteration &type) {
             this->insert(QStringLiteral(u"t"), (int)type);
         }

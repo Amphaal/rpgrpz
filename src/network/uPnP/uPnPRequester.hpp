@@ -4,6 +4,8 @@
 
 #include <QString>
 
+#include "miniupnpc_custom.hpp"
+
 class uPnPRequester : public uPnPThread {
     
     public:
@@ -23,7 +25,7 @@ class uPnPRequester : public uPnPThread {
         QString description = 0;
         QString targetPort = 0;
 
-        uPnPRequester(const QString &tPort, const QString &descr) : targetPort(tPort), description(descr) {}
+        uPnPRequester(const QString &tPort, const QString &descr) : description(descr), targetPort(tPort) {}
         
         void run() override {
             try {

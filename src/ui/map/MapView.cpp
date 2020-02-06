@@ -241,7 +241,6 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
 
     for(auto i = toAlter.begin(); i != toAlter.end(); i++) {
         
-        auto &id = i.key();
         auto &item = i.value();
 
         switch(type) {

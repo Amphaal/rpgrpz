@@ -45,10 +45,10 @@ class VectorSimplifier {
                 QPolygonF poly;
 
                 for(const auto &point : path) {
-                    poly << QPointF({
+                    poly << QPointF(
                         ((double)point.X) / _precision, 
                         ((double)point.Y) / _precision 
-                    });
+                    );
                 }
 
                 out << poly;

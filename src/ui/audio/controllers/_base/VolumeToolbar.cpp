@@ -2,8 +2,8 @@
 
 VolumeToolbar::VolumeToolbar(QWidget* parent) : QWidget(parent), 
     _audio(new QSlider(Qt::Orientation::Horizontal)), 
-    _volumeStr(new QLabel),
-    _mute(new QToolButton) {
+    _mute(new QToolButton),
+    _volumeStr(new QLabel) {
     
     //audio
     this->_audio->setMinimum(0);

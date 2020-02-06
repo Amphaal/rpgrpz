@@ -12,6 +12,7 @@ class RPZMessage : public Stampable {
     
     public:
         RPZMessage();
+        ~RPZMessage();
         explicit RPZMessage(const QVariantHash &hash);
         RPZMessage(const QString &message, const MessageInterpreter::Command &forceCommand = MessageInterpreter::Command::C_Unknown);
 

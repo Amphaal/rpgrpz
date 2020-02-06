@@ -40,7 +40,7 @@ class RPZClient : public QObject, public AlterationActor, public JSONLogger {
 
         const RPZUser identity() const; //safe
         const RPZMap<RPZUser> sessionUsers() const; //safe
-        const QList<RPZCharacter::UserBound> RPZClient::sessionCharacters() const; //safe
+        const QList<RPZCharacter::UserBound> sessionCharacters() const; //safe
         const RPZCharacter sessionCharacter(const RPZCharacter::Id &characterId) const; //safe
 
     public slots:

@@ -1036,22 +1036,22 @@
         <translation>Nouvel Inventaire</translation>
     </message>
     <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="30"/>
+        <location filename="../shared/models/messaging/RPZMessage.cpp" line="32"/>
         <source> said : </source>
         <translation> a dit : </translation>
     </message>
     <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="30"/>
+        <location filename="../shared/models/messaging/RPZMessage.cpp" line="32"/>
         <source>you said : </source>
         <translation>vous dites : </translation>
     </message>
     <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="35"/>
+        <location filename="../shared/models/messaging/RPZMessage.cpp" line="37"/>
         <source> whispers to you : </source>
         <translation> vous chuchotte : </translation>
     </message>
     <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="39"/>
+        <location filename="../shared/models/messaging/RPZMessage.cpp" line="41"/>
         <source>your whisper to </source>
         <translation>vous chuchottez à </translation>
     </message>

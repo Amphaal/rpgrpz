@@ -249,8 +249,6 @@ QGraphicsItem* ViewMapHint::_generateGhostItem(const RPZToy &toy, QGraphicsItem*
     //reset values from template
     this->_resetTemplate(toy);
 
-    QGraphicsItem* toDelete = nullptr;
-
     {
         QMutexLocker m(&this->_m_ghostItem);
 

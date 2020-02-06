@@ -5,27 +5,13 @@ if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)
 endif()
 
-#check required ENV vars
-list(APPEND ENV_VAR_TO_CHECK
-    GSTREAMER_1_0_ROOT_X86_64
-    QTDIR
-    QT_TOOLS
-    VCPKG_ROOT
-    SENTRY_NATIVE_ROOT
-)
-foreach(C_ENV IN LISTS ENV_VAR_TO_CHECK)
-    if(NOT DEFINED ENV{${C_ENV}})
-        message(FATAL_ERROR "Required ENV variable ${C_ENV} does not exists. Please check README.md for more details !")
-    endif()
-endforeach()
-
-#define toolchain
-set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+#toolchain
+message(STATUS "Using toolchain file: [${CMAKE_TOOLCHAIN_FILE}].")
 
 #project setup
 project(RPGRPZ)
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
-cmake_minimum_required(VERSION 3.16.0)
+cmake_minimum_required(VERSION 3.15.6)
 
 #version
 SET(CMAKE_PROJECT_VERSION_MAJOR 0)
@@ -72,7 +58,7 @@ IF(WIN32)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS) #ctime_s...
 endif()
 
-if (APPLE)
+if(APPLE)
     set(CMAKE_OSX_DEPLOYMENT_TARGET 10.13)
     SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON) #prevent linking errors once app shared
     SET(CMAKE_MACOSX_RPATH ON)
@@ -127,16 +113,8 @@ include_directories(${MINIUPNP_INCLUDE_DIR})
 
 #pkgConfig setup
 IF(WIN32)
-    SET(W32_GSTREAMER_LOCATION $ENV{GSTREAMER_1_0_ROOT_X86_64})
-    string(REPLACE "\\" "/" GSTREAMER_LOCATION ${W32_GSTREAMER_LOCATION})
-    SET(GSTREAMER_SLIB_LOCATION "${GSTREAMER_LOCATION}/bin")
+    list(APPEND CMAKE_PREFIX_PATH "C:/msys64/mingw64/x86_64-w64-mingw32")
 endif()
-
-if(APPLE)
-    SET(PKG_CONFIG_EXECUTABLE "/usr/local/Cellar/pkg-config/0.29.2/bin/pkg-config")
-    SET(GSTREAMER_LOCATION "${W32_GSTREAMER_LOCATION}/Libraries/pkgconfig")
-    SET(GSTREAMER_SLIB_LOCATION "${W32_GSTREAMER_LOCATION}/Libraries")
-endif(APPLE)
 
 include(GStreamerHelper)
 FindGStreamer()
@@ -149,9 +127,6 @@ list(APPEND EXT_LIBS
 ########
 # QT 5 #
 ########
-
-SET(Qt5_DIR "$ENV{QTDIR}/lib/cmake/Qt5")
-SET(QT_DEPLOY_BIN_PATH "$ENV{QTDIR}/bin")
 
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL LinguistTools)
 list(APPEND EXT_LIBS
@@ -166,8 +141,6 @@ list(APPEND EXT_LIBS
 ###########
 # OpenSSL #
 ###########
-
-SET(OpenSSL_DIR "$ENV{QT_TOOLS}/OpenSSL/Win_x64")
 
 find_package(openssl REQUIRED)
 list(APPEND EXT_LIBS
@@ -234,12 +207,6 @@ if(APPLE)
     set_target_properties(app PROPERTIES 
         MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/templates/_Info.plist
     ) 
-endif()
-
-if(WIN32)
-    #accelerate builds times
-    include(cotire)
-    cotire(app)
 endif()
 
 #####################

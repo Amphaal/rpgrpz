@@ -53,11 +53,11 @@ void GStreamerClient::_initPipeline() {
     	this->_unrefPipeline();
         throw std::runtime_error("Unable to init playbin");
     }
-    g_object_set(this->_bin, "async-handling", true, NULL);
+    g_object_set(this->_bin, "async-handling", true, nullptr);
 
     //force sink to prevent usage of wasapi Sink (which is a bad-plugin)
     auto sink = gst_element_factory_make("autoaudiosink", "sink");
-    g_object_set(this->_bin, "audio-sink", sink, NULL);
+    g_object_set(this->_bin, "audio-sink", sink, nullptr);
 
     
     //init bin
@@ -71,8 +71,8 @@ void GStreamerClient::_initPipeline() {
     }
 
     //event handler
-    gst_bus_set_sync_handler(this->_bus, gst_bus_sync_signal_handler, this, NULL);
-    g_object_connect(this->_bus, "signal::sync-message", G_CALLBACK(gst_client_bus_cb), this, NULL);
+    gst_bus_set_sync_handler(this->_bus, gst_bus_sync_signal_handler, this, nullptr);
+    g_object_connect(this->_bus, "signal::sync-message", G_CALLBACK(gst_client_bus_cb), this, nullptr);
 
 }
 
@@ -106,7 +106,7 @@ void GStreamerClient::_changeBinState(const GstState &state) {
 void GStreamerClient::useSource(QString uri) {
 
     //set new source
-    g_object_set(G_OBJECT(this->_bin), "uri", qUtf8Printable(uri), NULL);
+    g_object_set(G_OBJECT(this->_bin), "uri", qUtf8Printable(uri), nullptr);
 
     {
         QMutexLocker l(&this->_m_seek);
@@ -160,7 +160,7 @@ void GStreamerClient::setVolume(double volume) {
     volume = this->_volumeTLHelper.valueForTime((int)volume);
 
     //set new volume
-    g_object_set(G_OBJECT(this->_bin), "volume", volume, NULL);
+    g_object_set(G_OBJECT(this->_bin), "volume", volume, nullptr);
 
 }
 

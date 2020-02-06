@@ -518,7 +518,7 @@ void ToysTreeViewModel::_injectStaticStructure() {
         if(staticType == ToysTreeViewItem::Type::InternalContainer) {
             
             for(const auto &type : ToysTreeViewItem::internalItemTypes()) {
-                auto internalItem = new ToysTreeViewItem(staticFolderItem, type);
+                new ToysTreeViewItem(staticFolderItem, type);
             }
 
         }
@@ -668,7 +668,7 @@ void ToysTreeViewModel::_generateItemsFromDb(const QHash<AssetsDatabase::FolderP
             }
 
             //create
-            auto elem = new ToysTreeViewItem(parent, asset);
+            new ToysTreeViewItem(parent, asset);
 
         }
     }

@@ -31,8 +31,8 @@ class ConnectWidget : public QWidget, public ConnectivityObserver {
         void connectionClosed(bool hasInitialMapLoaded) override;
 
     private:
-        QLineEdit* _domainTarget = nullptr;
         QLineEdit* _nameTarget = nullptr;
+        QLineEdit* _domainTarget = nullptr;
         QComboBox* _characterSheetTarget = nullptr;
         
         QPushButton* _connectBtn = nullptr;

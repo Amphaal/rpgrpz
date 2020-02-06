@@ -1,9 +1,9 @@
 #include "AudioManager.h"
 
 AudioManager::AudioManager(QWidget *parent) : QWidget(parent), 
-    _cli(new GStreamerClient),   
+    _asCtrl(new AudioProbeController),
     _plCtrl(new YoutubePlayer), 
-    _asCtrl(new AudioProbeController) {
+    _cli(new GStreamerClient) {
 
     //UI init
     this->_plCtrl->setEnabled(true);

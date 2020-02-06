@@ -1,6 +1,8 @@
 #include "RPZMessage.h"
 
 RPZMessage::RPZMessage() {};
+RPZMessage::~RPZMessage() {};
+
 RPZMessage::RPZMessage(const QVariantHash &hash) : Stampable(hash) {
     this->_interpretTextAsCommand();
 }

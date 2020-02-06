@@ -56,12 +56,14 @@ void AppContext::installTranslations(QApplication &app) {
     auto qtTranslator = new QTranslator;
     if (qtTranslator->load(locale, "qt", "_", translationsPath)) {
         auto installed = app.installTranslator(qtTranslator);
+        if(installed) qDebug() << "QT translation installed !";
     }
 
     //app
     auto appTranslator = new QTranslator;
     if (appTranslator->load(locale, "", "", translationsPath)) {
         auto installed = app.installTranslator(appTranslator);
+        if(installed) qDebug() << "App translation installed !";
     }
 
 }
