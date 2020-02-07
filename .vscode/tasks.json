@@ -7,20 +7,40 @@
     },
     "tasks": [
         {
-            "label": "Debug - 0. Create build folder",
+            "label": "Debug - 0. Create folders",
             "group": "test",
             "type": "shell",
-            "command": "rm -rf _genDebug; mkdir _genDebug",
+            "command": "rm -rf _genDebug; rm -rf _req; mkdir _genDebug; mkdir _req",
+        },
+        {
+            "label": "Debug - 1a. Compile Sentry Native",
+            "dependsOn": "Debug - 0. Create folders",
+            "group": "test",
+            "type": "shell",
+            "command": "git clone https://github.com/getsentry/sentry-native.git --branch feature/c-ver",
+            "options": {
+                "cwd": "${workspaceRoot}/_req"
+            }
+        },
+        {
+            "label": "Debug - 1b. Generate Sentry Native project",
+            "dependsOn": "Debug - 1a. Compile Sentry Native",
+            "group": "test",
+            "type": "shell",
+            "command": "cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=../../cmake/clang-toolchain.cmake .",
+            "options": {
+                "cwd": "${workspaceRoot}/_req/sentry-native"
+            }
         },
         {
             "label": "Debug - 2a. Generate Project files",
-            "dependsOn" : "Debug - 0. Create build folder",
+            "dependsOn" : "Debug - 1b. Generate Sentry Native project",
             "group": {
                 "isDefault": true,
                 "kind" : "test"
             },
             "type": "shell",
-            "command": "cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=./cmake/clang-toolchain.cmake ..",
+            "command": "cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=./cmake/clang-toolchain.cmake ..",
             "options": {
                 "cwd": "${workspaceRoot}/_genDebug"
             }

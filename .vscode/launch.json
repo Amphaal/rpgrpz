@@ -6,76 +6,35 @@
     "configurations": [
         {
             "name": "No Server",
-            "type": "cppdbg",
-            "program": "RPGRPZ.exe",
+            "type": "lldb",
+            "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
             "request": "launch",
-            "args": ["--noServer --customContext=NoServer"],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/_gen/bin/Debug",
-            "environment": [],
-            "osx": {
-                "program": "${workspaceFolder}/_gen/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ",
-                "MIMode": "lldb"
-            },
-            "externalConsole": false
+            "args": ["--noServer --customContext=NoServer"]
         },
         {
             "name": "Random No Server",
-            "type": "cppdbg",
-            "program": "RPGRPZ.exe",
+            "type": "lldb",
+            "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
             "request": "launch",
-            "osx": {
-                "program": "${workspaceFolder}/_gen/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ",
-                "MIMode": "lldb"
-            },
             "args": ["--noServer --randomContext"],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/_gen/bin/Debug",
-            "environment": [],
-            
-            "externalConsole": false
         },
         {
             "name": "Launch",
-            "type": "cppdbg",
-            "program": "RPGRPZ.exe",
+            "type": "lldb",
+            "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
             "request": "launch",
-            "osx": {
-                "program": "${workspaceFolder}/_gen/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ",
-                "MIMode": "lldb",
-                "environment": [{
-                        "name" :"DYLD_IMAGE_SUFFIX",
-                        "value": "_debug"
-                }]
-            },
             "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/_gen/bin/Debug",
-            "environment": [],
-            
-            "externalConsole": false,
             "preLaunchTask": "Debug - 3. Build"
         },
         {
             "name": "Test",
-            "type": "cppdbg",
-            "program": "RPGRPZ.exe",
+            "type": "lldb",
+            "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
             "request": "launch",
-            "osx": {
-                "program": "${workspaceFolder}/_gen/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ",
-                "MIMode": "lldb"
-            },
             "args": ["--test"],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/_gen/bin/Debug",
-            "environment": [
-                {
-                    "name": "GST_DEBUG",
-                    "value": "3"
-                }
-            ],
-            
-            "externalConsole": false
+            "env": {
+                "GST_DEBUG": "3"
+            }
         }
     ]
 }

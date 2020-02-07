@@ -16,11 +16,10 @@ function(deployqt target)
             COMMAND "${CMAKE_COMMAND}" -E
                 env "${DEPLOYQT_EXECUTABLE}"
                     --verbose 0
-                    --no-compiler-runtime
+                    --release
+                    --compiler-runtime
                     --no-angle
                     --no-opengl-sw
-                    $<$<CONFIG:DEBUG>:--pdb>
-                    $<$<CONFIG:DEBUG>:--debug>
                     \"$<TARGET_FILE:${target}>/\"
         )
     endif()

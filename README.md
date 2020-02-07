@@ -2,9 +2,10 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/jfgl63a0p38h4ru7?svg=true)](https://ci.appveyor.com/project/Amphaal/rpgrpz)
 [ ![Download](https://api.bintray.com/packages/amphaal/rpgrpz/rpgrpz-win/images/download.svg) ](https://dl.bintray.com/amphaal/rpgrpz/)
 
-Windows builds with MSYS2
-MacOS builds obsoletes right now
-Linux builds are WIP
+Supported:
+- Windows : WIP
+- MacOS : Obsolete
+- Linux : WIP
 
 Prerequisites to build:
 - latest sentry-native release, unzipped (https://github.com/getsentry/sentry-native/releases)

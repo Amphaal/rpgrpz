@@ -32,12 +32,6 @@ SET(APP_DEFAULT_URL "https://github.com/Amphaal/rpgrpz")
 SET(APP_PATCHNOTE_URL "https://github.com/Amphaal/rpgrpz/releases")
 SET(SENTRY_ENDPOINT "http://3a471bcc32d94c628a191d3d7d2eabff@zonme.to2x.ovh:9000/2")
 
-##crashpad
-SET(CRASHPAD_HANDLER_NAME "crashpad_handler")
-IF(WIN32)
-    SET(CRASHPAD_HANDLER_NAME "${CRASHPAD_HANDLER_NAME}.exe")
-ENDIF()
-
 #config file to source code
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/templates/_version.h 
@@ -50,13 +44,6 @@ configure_file(
 
 SET(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-ADD_DEFINITIONS(-DUNICODE)
-ADD_DEFINITIONS(-D_UNICODE)
-
-IF(WIN32)
-    add_definitions(-DWIN32_LEAN_AND_MEAN) #std::btye c++17 ambiguity
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS) #ctime_s...
-endif()
 
 if(APPLE)
     set(CMAKE_OSX_DEPLOYMENT_TARGET 10.13)
@@ -114,6 +101,7 @@ include_directories(${MINIUPNP_INCLUDE_DIR})
 #pkgConfig setup
 IF(WIN32)
     list(APPEND CMAKE_PREFIX_PATH "C:/msys64/mingw64/x86_64-w64-mingw32")
+    list(APPEND CMAKE_LIBRARY_PATH "C:/msys64/mingw64/bin")
 endif()
 
 include(GStreamerHelper)
@@ -153,9 +141,11 @@ list(APPEND EXT_LIBS
 # Sentry-native #
 #################
 
-#add sentry-native sources
-include_external_msproject(sentry_crashpad $ENV{SENTRY_NATIVE_ROOT}/gen_windows/sentry_crashpad.vcxproj)
-include_external_msproject(crashpad_handler $ENV{SENTRY_NATIVE_ROOT}/gen_windows/crashpad_handler.vcxproj)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/_req/sentry-native)
+include_directories(${Sentry-Native_SOURCE_DIR}/include)
+list(APPEND EXT_LIBS
+    sentry
+)
 
 #####################
 # list source files #
@@ -191,11 +181,6 @@ qt5_create_translation(QM_FILES
 # Create executable
 add_executable(app ${BUNDLE_TYPE} ${SOURCES} ${QM_FILES})
 
-#sentry
-add_dependencies(app sentry_crashpad)
-add_dependencies(app crashpad_handler)
-target_include_directories(app PUBLIC $ENV{SENTRY_NATIVE_ROOT}/include)
-
 #link the rest !
 target_link_libraries(app ${EXT_LIBS})
 set_target_properties(app PROPERTIES 
@@ -221,46 +206,26 @@ deployqt(app)
 # OTHERS COPY #
 ###############
 
-SET(SENTRY_BINARIES_DIR $ENV{SENTRY_NATIVE_ROOT}/gen_windows/bin/x86_64)
-
-#crashpad
-add_custom_command(TARGET app   
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SENTRY_BINARIES_DIR}/$<CONFIG>/${CRASHPAD_HANDLER_NAME} $<TARGET_FILE_DIR:app>
-)
-
-#sentry
-add_custom_command(TARGET app
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SENTRY_BINARIES_DIR}/$<CONFIG>/sentry_crashpad.dll $<TARGET_FILE_DIR:app>
-)
-
 #translations
 add_custom_command(TARGET app  
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QM_FILES} $<TARGET_FILE_DIR:app>/translations
 )
 
-######################
-# GST LIBRARIES COPY #
-######################
+#miniUPnPc
+find_library(miniupnpc_LIBRARY miniupnpc)
+add_custom_command(TARGET app  
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${miniupnpc_LIBRARY} $<TARGET_FILE_DIR:app>
+)
 
-if(WIN32)
-    #missing deps for gstreamer
-    list(APPEND GST_SLIBS
-        avcodec-58
-        avfilter-7
-        avformat-58
-        avutil-56
-        bz2
-        libgmp-10
-        libgnutls-30
-        libhogweed-4
-        libnettle-6
-        libsoup-2.4-1
-        libtasn1-6
-        libwinpthread-1
-        libxml2-2
-        swresample-3
-    )
-endif()
+#sentry-native (CURL)
+find_library(curl_LIBRARY NAMES curl curl-4 PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
+add_custom_command(TARGET app  
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${curl_LIBRARY} $<TARGET_FILE_DIR:app>
+)
+
+# ######################
+# # GST LIBRARIES COPY #
+# ######################
 
 if(APPLE)
     #missing deps for gstreamer
@@ -282,23 +247,34 @@ if(APPLE)
     )
 endif()
 
-#import all missing GSTREAMER libs
-foreach(_gstSLib IN ITEMS ${GST_SLIBS})
-    add_custom_command(TARGET app
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-            "${GSTREAMER_SLIB_LOCATION}/${CMAKE_SHARED_LIBRARY_PREFIX}${_gstSLib}${CMAKE_SHARED_LIBRARY_SUFFIX}"
-            "$<TARGET_FILE_DIR:app>"
-    )
-endforeach()
-
-#missing specifics
-IF(WIN32)
-    add_custom_command(TARGET app       
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-        "${GSTREAMER_LOCATION}/lib/gio/modules/giognutls${CMAKE_SHARED_LIBRARY_SUFFIX}" 
-        $<TARGET_FILE_DIR:app>/gio/giognutls${CMAKE_SHARED_LIBRARY_SUFFIX}
+if(WIN32)
+    #missing deps for gstreamer
+    list(APPEND GST_SLIBS
+        avcodec-58
+        avfilter-7
+        avformat-58
+        avutil-56
+        libgmp-10
+        libgnutls-30
+        libhogweed-5
+        libnettle-7
+        libsoup-2.4-1
+        libtasn1-6
+        libwinpthread-1
+        libxml2-2
+        swresample-3
     )
 endif()
+
+#import all missing GSTREAMER libs
+foreach(_gstSLib IN ITEMS ${GST_SLIBS})
+    find_library(${_gstSLib}_LIBRARY NAMES "${_gstSLib}" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
+    add_custom_command(TARGET app
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+            ${${_gstSLib}_LIBRARY}
+            $<TARGET_FILE_DIR:app>
+    )
+endforeach()
 
 #copy gstreamer ${CMAKE_SHARED_LIBRARY_SUFFIX}s
 IF(NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins)
@@ -319,7 +295,6 @@ IF(NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins)
     DeployGStreamer(app "${_gstreamer_plugins}")
 endif()
 
-
 ###########
 # OpenSSL #
 ###########
@@ -331,13 +306,13 @@ if(WIN32)
 
     add_custom_command(TARGET app       
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-        "${OPENSSL_BIN_DIR}/libcrypto-1_1-x64.dll"
+        "${CMAKE_LIBRARY_PATH}/libcrypto-1_1-x64.dll"
         $<TARGET_FILE_DIR:app>
     )
 
     add_custom_command(TARGET app      
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-        "${OPENSSL_BIN_DIR}/libssl-1_1-x64.dll"
+        "${CMAKE_LIBRARY_PATH}/libssl-1_1-x64.dll"
         $<TARGET_FILE_DIR:app>
     )
 

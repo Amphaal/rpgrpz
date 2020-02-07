@@ -3,3 +3,4 @@ src/version.h
 nbproject
 /_genDebug/
 .DS_Store
+/_req/
