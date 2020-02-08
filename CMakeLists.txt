@@ -207,20 +207,14 @@ deployqt(app)
 ###############
 
 #translations
-add_custom_command(TARGET app  
+add_custom_command(TARGET app POST_BUILD  
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QM_FILES} $<TARGET_FILE_DIR:app>/translations
 )
 
 #miniUPnPc
 find_library(miniupnpc_LIBRARY miniupnpc)
-add_custom_command(TARGET app  
+add_custom_command(TARGET app POST_BUILD 
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${miniupnpc_LIBRARY} $<TARGET_FILE_DIR:app>
-)
-
-#sentry-native (CURL)
-find_library(curl_LIBRARY NAMES curl curl-4 PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
-add_custom_command(TARGET app  
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${curl_LIBRARY} $<TARGET_FILE_DIR:app>
 )
 
 # ######################
@@ -269,7 +263,7 @@ endif()
 #import all missing GSTREAMER libs
 foreach(_gstSLib IN ITEMS ${GST_SLIBS})
     find_library(${_gstSLib}_LIBRARY NAMES "${_gstSLib}" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
-    add_custom_command(TARGET app
+    add_custom_command(TARGET app POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 
             ${${_gstSLib}_LIBRARY}
             $<TARGET_FILE_DIR:app>
@@ -295,28 +289,17 @@ IF(NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins)
     DeployGStreamer(app "${_gstreamer_plugins}")
 endif()
 
-###########
-# OpenSSL #
-###########
+################
+# missing libs #
+################
 
 if(WIN32)
-
-    #override
-    SET(OPENSSL_BIN_DIR "${OpenSSL_DIR}/bin")
-
-    add_custom_command(TARGET app       
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-        "${CMAKE_LIBRARY_PATH}/libcrypto-1_1-x64.dll"
-        $<TARGET_FILE_DIR:app>
+    STRING(REGEX REPLACE "/" "\\\\\\\\\\\\" ESCAPED_CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH})
+    add_custom_command(TARGET app POST_BUILD
+        COMMAND ntldd -R -D ${CMAKE_LIBRARY_PATH} $<TARGET_FILE:app> | grep -o '${ESCAPED_CMAKE_LIBRARY_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     )
-
-    add_custom_command(TARGET app      
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-        "${CMAKE_LIBRARY_PATH}/libssl-1_1-x64.dll"
-        $<TARGET_FILE_DIR:app>
-    )
-
 endif()
+
 
 ######################
 # add Publish target #
