@@ -5,6 +5,21 @@ if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)
 endif()
 
+#check required ENV vars
+IF(WIN32)
+
+    list(APPEND ENV_VAR_TO_CHECK
+        MSYS2_ROOT
+    )
+
+    foreach(C_ENV IN LISTS ENV_VAR_TO_CHECK)
+        if(NOT DEFINED ENV{${C_ENV}})
+            message(FATAL_ERROR "Required ENV variable ${C_ENV} does not exists. Please check README.md for more details !")
+        endif()
+    endforeach()
+
+endif()
+
 #toolchain
 message(STATUS "Using toolchain file: [${CMAKE_TOOLCHAIN_FILE}].")
 
@@ -44,14 +59,6 @@ configure_file(
 
 SET(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-if(APPLE)
-    set(CMAKE_OSX_DEPLOYMENT_TARGET 10.13)
-    SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON) #prevent linking errors once app shared
-    SET(CMAKE_MACOSX_RPATH ON)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-no_compact_unwind") #prevent warning
-endif (APPLE)
-
 
 #########################
 ## Libraries specifics ##
@@ -100,8 +107,8 @@ include_directories(${MINIUPNP_INCLUDE_DIR})
 
 #pkgConfig setup
 IF(WIN32)
-    list(APPEND CMAKE_PREFIX_PATH "C:/msys64/mingw64/x86_64-w64-mingw32")
-    list(APPEND CMAKE_LIBRARY_PATH "C:/msys64/mingw64/bin")
+    list(APPEND CMAKE_PREFIX_PATH "$ENV{MSYS2_ROOT}/mingw64/x86_64-w64-mingw32")
+    list(APPEND CMAKE_LIBRARY_PATH "$ENV{MSYS2_ROOT}/mingw64/bin")
 endif()
 
 include(GStreamerHelper)
@@ -293,13 +300,13 @@ endif()
 # missing libs #
 ################
 
+#scan for missing lib dependencies, then fetch and copy them
 if(WIN32)
     STRING(REGEX REPLACE "/" "\\\\\\\\\\\\" ESCAPED_CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH})
     add_custom_command(TARGET app POST_BUILD
         COMMAND ntldd -R -D ${CMAKE_LIBRARY_PATH} $<TARGET_FILE:app> | grep -o '${ESCAPED_CMAKE_LIBRARY_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     )
 endif()
-
 
 ######################
 # add Publish target #

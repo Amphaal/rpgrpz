@@ -5,36 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "No Server",
-            "type": "lldb",
-            "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
+            "type": "gdb",
             "request": "launch",
-            "args": ["--noServer --customContext=NoServer"]
-        },
-        {
-            "name": "Random No Server",
-            "type": "lldb",
-            "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
-            "request": "launch",
-            "args": ["--noServer --randomContext"],
-        },
-        {
             "name": "Launch",
-            "type": "lldb",
-            "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
-            "request": "launch",
-            "args": [],
+            "target": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
+            "cwd": "${workspaceRoot}",
+            "valuesFormatting": "parseText",
+            "windows": {
+                "gdbpath": "${env:MSYS2_ROOT}/mingw64/bin/gdb.exe"
+            },
             "preLaunchTask": "Debug - 3. Build"
-        },
-        {
-            "name": "Test",
-            "type": "lldb",
-            "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
-            "request": "launch",
-            "args": ["--test"],
-            "env": {
-                "GST_DEBUG": "3"
-            }
         }
     ]
 }

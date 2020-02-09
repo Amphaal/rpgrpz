@@ -30,9 +30,6 @@ void GStreamerClient::_initGst() {
     auto gio_ = QCoreApplication::applicationDirPath() + "/gio";
     qputenv("GIO_MODULE_DIR", qUtf8Printable(gio_));
 
-    //debug log
-    qputenv("GST_DEBUG", "3");
-
     //setup
     GError* err = NULL;
     gst_init_check(NULL, NULL, &err);

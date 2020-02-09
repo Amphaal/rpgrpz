@@ -28,11 +28,10 @@
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "C:\\msys64\\mingw64\\bin\\clang.exe",
+            "compilerPath": "C:\\msys64\\mingw64\\bin\\gcc.exe",
             "cStandard": "c11",
             "cppStandard": "c++17",
-            "intelliSenseMode": "clang-x64",
-            "configurationProvider": "go2sh.cmake-integration"
+            "intelliSenseMode": "gcc-x64"
         }
     ],
     "version": 4

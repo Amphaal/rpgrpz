@@ -158,6 +158,13 @@ void AppContext::init(const QString &customContext) {
         _appDataLocation = _defaultAppDataLocation();
     }
     
+    //update message handler message handler
+    qInstallMessageHandler(LogWriter::customMO);
+    
+    //log SLL lib loading
+    qDebug() << QSslSocket::sslLibraryBuildVersionString();
+    qDebug() << QSslSocket::sslLibraryVersionString();   
+    
     qDebug() << "Context : using" << _appDataLocation;
 
     //create default paths

@@ -24,6 +24,6 @@ class Clipboard {
         
 
     private:
-        static inline QMutex _m_clipboard;
+        static inline QMutex _m_clipboard = QMutex();
         static inline QList<RPZAtom::Id> _copyClipboard;
 };

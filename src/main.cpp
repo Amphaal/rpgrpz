@@ -3,7 +3,6 @@
 
 #include "src/ui/mainWindow.h"
 #include "src/ui/_others/AppLoader.hpp"
-#include "src/helpers/_logWriter.h"
 
 #include <exception>
 #include <iostream>
@@ -47,11 +46,11 @@ int clientApp(int argc, char** argv) {
         }
 
     #endif
-    
+
     //setup app
     QApplication app(argc, argv);
-    AppContext::installTranslations(app);
     AppContext::configureApp(app);
+    AppContext::installTranslations(app);
 
     QObject::connect(
         &app, &QObject::destroyed,
@@ -138,15 +137,8 @@ void _registerMetaTypes() {
 
 int main(int argc, char** argv) {
 
-    //log SLL lib loading
-    qDebug() << QSslSocket::sslLibraryBuildVersionString();
-    qDebug() << QSslSocket::sslLibraryVersionString();   
-
     //registering metatypes
     _registerMetaTypes();
-     
-    //message handler
-    qInstallMessageHandler(LogWriter::customMO);
 
     ////////////
     // LAUNCH //
@@ -157,7 +149,10 @@ int main(int argc, char** argv) {
     auto result = args.contains(QStringLiteral(u"serverOnly")) ? 
                     serverConsole(argc, argv) : 
                     clientApp(argc, argv);
+
+    //make sure to flush sentry for warnings / safe errors
     sentry_shutdown();
+
     return result; 
 
 }

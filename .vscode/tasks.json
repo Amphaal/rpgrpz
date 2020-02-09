@@ -27,7 +27,7 @@
             "dependsOn": "Debug - 1a. Compile Sentry Native",
             "group": "test",
             "type": "shell",
-            "command": "cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=../../cmake/clang-toolchain.cmake .",
+            "command": "cmake -GNinja -DCMAKE_BUILD_TYPE=Debug .",
             "options": {
                 "cwd": "${workspaceRoot}/_req/sentry-native"
             }
@@ -40,7 +40,7 @@
                 "kind" : "test"
             },
             "type": "shell",
-            "command": "cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=./cmake/clang-toolchain.cmake ..",
+            "command": "cmake -GNinja -DCMAKE_BUILD_TYPE=Debug ..",
             "options": {
                 "cwd": "${workspaceRoot}/_genDebug"
             }

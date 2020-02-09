@@ -4,6 +4,7 @@
 
 #include "src/version.h"
 
+#include <QSslSocket>
 #include <QDir>
 #include <QDesktopServices>
 #include <QProcess>
@@ -17,6 +18,7 @@
 
 #include "src/helpers/_appSettings.hpp"
 #include "src/_libs/snowflake/snowflake.h"
+#include "src/helpers/_logWriter.h"
 
 #include <sentry.h>
 
