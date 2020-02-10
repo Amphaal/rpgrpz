@@ -16,12 +16,12 @@ function(deployqt target)
             COMMAND "${CMAKE_COMMAND}" -E
                 env "${DEPLOYQT_EXECUTABLE}"
                     --verbose 0
-                    --release
                     --compiler-runtime
                     --no-angle
                     --no-opengl-sw
                     \"$<TARGET_FILE:${target}>/\"
         )
+        
     endif()
 
     if(APPLE)    

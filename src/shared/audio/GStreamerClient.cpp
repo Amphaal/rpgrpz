@@ -52,11 +52,10 @@ void GStreamerClient::_initPipeline() {
     }
     g_object_set(this->_bin, "async-handling", true, nullptr);
 
-    //force sink to prevent usage of wasapi Sink (which is a bad-plugin)
-    auto sink = gst_element_factory_make("autoaudiosink", "sink");
-    g_object_set(this->_bin, "audio-sink", sink, nullptr);
+    // //force sink to prevent usage of wasapi Sink (which is a bad-plugin)
+    // auto sink = gst_element_factory_make("autoaudiosink", "sink");
+    // g_object_set(this->_bin, "audio-sink", sink, nullptr);
 
-    
     //init bin
     this->setVolume(AppContext::settings()->audioVolume());
     

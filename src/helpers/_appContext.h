@@ -27,6 +27,9 @@ class AppContext {
     private:
         static inline AppSettings* _settings = nullptr;
 
+        static inline QTranslator _qtTranslator = QTranslator();
+        static inline QTranslator _appTranslator = QTranslator();
+        
         static inline QString _appDataLocation;
         static const QString _defaultAppDataLocation();
         

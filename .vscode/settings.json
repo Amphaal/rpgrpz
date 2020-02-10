@@ -214,7 +214,9 @@
         "qvariantlist": "cpp",
         "qstackedwidget": "cpp",
         "qlockfile": "cpp",
-        "qpainterpath": "cpp"
+        "qpainterpath": "cpp",
+        "__config": "cpp",
+        "__nullptr": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

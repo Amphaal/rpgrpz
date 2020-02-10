@@ -296,6 +296,19 @@ IF(NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins)
     DeployGStreamer(app "${_gstreamer_plugins}")
 endif()
 
+#missing specifics
+IF(WIN32)
+
+    find_library(giognutls_LIBRARY NAMES "giognutls" PATHS "$ENV{MSYS2_ROOT}/mingw64/lib/gio/modules" NO_DEFAULT_PATH)
+
+    add_custom_command(TARGET app       
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+        ${giognutls_LIBRARY}
+        $<TARGET_FILE_DIR:app>/gio/
+    )
+    
+endif()
+
 ################
 # missing libs #
 ################

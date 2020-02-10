@@ -49,20 +49,22 @@ void AppContext::definePPcm(QPaintDevice* device) {
 
 void AppContext::installTranslations(QApplication &app) {
     
-    QString translationsPath(QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-    QLocale locale = QLocale::system();
+    auto translationsPath = app.applicationDirPath() + QDir::separator() + "translations";
+    auto locale = QLocale::system();
+
+    qDebug() << translationsPath.toStdString().c_str();
+    qDebug() << locale;
     
     //Qt
-    auto qtTranslator = new QTranslator;
-    if (qtTranslator->load(locale, "qt", "_", translationsPath)) {
-        auto installed = app.installTranslator(qtTranslator);
+    if (_qtTranslator.load(locale, "qt", "_", translationsPath)) {
+        auto installed = app.installTranslator(&_qtTranslator);
         if(installed) qDebug() << "QT translation installed !";
     }
 
     //app
     auto appTranslator = new QTranslator;
-    if (appTranslator->load(locale, "", "", translationsPath)) {
-        auto installed = app.installTranslator(appTranslator);
+    if (_appTranslator.load(locale, "", "", translationsPath)) {
+        auto installed = app.installTranslator(&_appTranslator);
         if(installed) qDebug() << "App translation installed !";
     }
 
@@ -162,8 +164,8 @@ void AppContext::init(const QString &customContext) {
     qInstallMessageHandler(LogWriter::customMO);
     
     //log SLL lib loading
-    qDebug() << QSslSocket::sslLibraryBuildVersionString();
-    qDebug() << QSslSocket::sslLibraryVersionString();   
+    qDebug() << QSslSocket::sslLibraryBuildVersionString().toStdString().c_str();
+    qDebug() << QSslSocket::sslLibraryVersionString().toStdString().c_str();   
     
     qDebug() << "Context : using" << _appDataLocation;
 
