@@ -73,12 +73,8 @@ void LogWriter::_openFileAndLog(QString* logFilePath, const QString &channel, co
         mod_latest = "w";
     }
 
-    FILE* _fs;
-    auto fdp = logFilePath->toStdString();
-    auto q_lfp = fdp.c_str();
-
     //const auto _fsErr = fopen_s(&_fs, q_lfp, mod_latest);
-    _fs = fopen(q_lfp, mod_latest);
+    auto _fs = fopen(qUtf8Printable(*logFilePath), mod_latest);
     
     if(!_fs) return; //error
     else {

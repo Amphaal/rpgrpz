@@ -1092,11 +1092,13 @@
     </message>
     <message>
         <location filename="../shared/models/RPZAtom.h" line="130"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="203"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
         <location filename="../shared/models/RPZAtom.h" line="131"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="204"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
@@ -1117,11 +1119,13 @@
     </message>
     <message>
         <location filename="../shared/models/RPZAtom.h" line="135"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="202"/>
         <source>Event</source>
         <translation>Evénement</translation>
     </message>
     <message>
         <location filename="../shared/models/RPZAtom.h" line="136"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="205"/>
         <source>Player</source>
         <translation>Joueur</translation>
     </message>
@@ -1132,12 +1136,14 @@
     </message>
     <message>
         <location filename="../shared/models/RPZAtom.h" line="138"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="206"/>
         <source>Point of interest</source>
         <translation>Point d&apos;intérêt</translation>
     </message>
     <message>
         <location filename="../shared/models/RPZAtom.h" line="139"/>
         <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="58"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="207"/>
         <source>Fog of war</source>
         <translation>Brouillard de guerre</translation>
     </message>

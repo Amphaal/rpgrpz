@@ -104,6 +104,8 @@ void GStreamerClient::useSource(QString uri) {
     //set new source
     g_object_set(G_OBJECT(this->_bin), "uri", qUtf8Printable(uri), nullptr);
 
+    qDebug() << "Trying to play : " << qUtf8Printable(uri);
+
     {
         QMutexLocker l(&this->_m_seek);
 
@@ -281,7 +283,7 @@ void GStreamerClient::stopTimer(const GstMessageType &reason) {
     switch(reason) {
         
         case GST_MESSAGE_ERROR:
-            qWarning() << "Error from Stream";
+            qWarning() << "Gstreamer : Error from Stream";
             emit streamError();
         break;
 

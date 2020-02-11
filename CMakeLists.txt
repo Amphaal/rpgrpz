@@ -75,7 +75,12 @@ SET(CMAKE_INCLUDE_CURRENT_DIR ON) #for moc auto
 ##########################
 
 IF(WIN32)
-    SET(BUNDLE_TYPE WIN32) #set bundle type
+    SET(BUNDLE_TYPE "WIN32") #set bundle type
+    
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        SET(BUNDLE_TYPE "") #allows Debug cout/cerr console... from LLDB/GDB
+    endif()
+    
     SET(APP_RC_FILE ${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.rc) #add icon
 endif()
 

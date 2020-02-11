@@ -51,9 +51,6 @@ void AppContext::installTranslations(QApplication &app) {
     
     auto translationsPath = app.applicationDirPath() + QDir::separator() + "translations";
     auto locale = QLocale::system();
-
-    qDebug() << translationsPath.toStdString().c_str();
-    qDebug() << locale;
     
     //Qt
     if (_qtTranslator.load(locale, "qt", "_", translationsPath)) {
@@ -163,8 +160,8 @@ void AppContext::init(const QString &customContext) {
     qInstallMessageHandler(LogWriter::customMO);
     
     //log SLL lib loading
-    qDebug() << QSslSocket::sslLibraryBuildVersionString().toStdString().c_str();
-    qDebug() << QSslSocket::sslLibraryVersionString().toStdString().c_str();   
+    qDebug() << qUtf8Printable(QSslSocket::sslLibraryBuildVersionString());
+    qDebug() << qUtf8Printable(QSslSocket::sslLibraryVersionString());   
     
     qDebug() << "Context : using" << _appDataLocation;
 
@@ -190,7 +187,7 @@ void AppContext::initSentry() {
     #ifdef _DEBUG
         environement = "Debug";
     #endif
-    sentry_options_set_environment(options, environement.toStdString().c_str());
+    sentry_options_set_environment(options, qUtf8Printable(environement));
 
     sentry_options_set_release(options, GITHUB_VERSION_NAME);
     sentry_options_set_debug(options, 1);
@@ -198,7 +195,8 @@ void AppContext::initSentry() {
     //crashpad integration
     sentry_options_set_handler_path(options, CRASHPAD_HANDLER_NAME);
     auto dbStr = AppContext::getAppDataLocation() + "/sentry_db";
-    sentry_options_set_database_path(options, dbStr.toStdString().c_str());
+    sentry_options_set_database_path(options, qUtf8Printable(dbStr));
+    
 
     sentry_init(options);
 
