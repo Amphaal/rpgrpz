@@ -182,29 +182,29 @@ class ToysTreeViewItem {
         };
 
         static const inline QHash<ToysTreeViewItem::Type, QString> _iconPathByElementType = {
-            { ToysTreeViewItem::Type::Event, RPZAtom::iconPathByAtomType.value(RPZAtom::Type::Event) },
-            { ToysTreeViewItem::Type::NPC_Container, RPZAtom::iconPathByAtomType.value(RPZAtom::Type::NPC) },
+            { ToysTreeViewItem::Type::Event, QStringLiteral(u":/icons/app/manager/event.png") },
+            { ToysTreeViewItem::Type::NPC_Container, QStringLiteral(u":/icons/app/manager/npc.png") },
             { ToysTreeViewItem::Type::ObjectContainer, QStringLiteral(u":/icons/app/manager/asset.png") },
             { ToysTreeViewItem::Type::FloorBrushContainer, QStringLiteral(u":/icons/app/manager/brushes.png") },
-            { ToysTreeViewItem::Type::FreeDraw, RPZAtom::iconPathByAtomType.value(RPZAtom::Type::Drawing) },
-            { ToysTreeViewItem::Type::Text, RPZAtom::iconPathByAtomType.value(RPZAtom::Type::Text) },
+            { ToysTreeViewItem::Type::FreeDraw, QStringLiteral(u":/icons/app/tools/pen.png") },
+            { ToysTreeViewItem::Type::Text, QStringLiteral(u":/icons/app/tools/text.png") },
             { ToysTreeViewItem::Type::Folder, QStringLiteral(u":/icons/app/manager/folder.png") }, 
             { ToysTreeViewItem::Type::InternalContainer, QStringLiteral(u":/icons/app/manager/internal.png") },
             { ToysTreeViewItem::Type::DownloadedContainer, QStringLiteral(u":/icons/app/manager/downloaded.png") },
             { ToysTreeViewItem::Type::BackgroundContainer, QStringLiteral(u":/icons/app/manager/background.png") },
-            { ToysTreeViewItem::Type::Player, RPZAtom::iconPathByAtomType.value(RPZAtom::Type::Player) },
-            { ToysTreeViewItem::Type::POI, RPZAtom::iconPathByAtomType.value(RPZAtom::Type::POI) },
-            { ToysTreeViewItem::Type::FogOfWar, RPZAtom::iconPathByAtomType.value(RPZAtom::Type::FogOfWar) }
+            { ToysTreeViewItem::Type::Player, QStringLiteral(u":/icons/app/connectivity/cloak.png") },
+            { ToysTreeViewItem::Type::POI, QStringLiteral(u":/icons/app/manager/POI.png") },
+            { ToysTreeViewItem::Type::FogOfWar, QStringLiteral(u":/icons/app/manager/fog.png") }
         };
 
         static const inline QHash<ToysTreeViewItem::Type, QString> _typeDescriptions = {
             { ToysTreeViewItem::Type::InternalContainer, QT_TRANSLATE_NOOP("QObject", "Internal") },
-            { ToysTreeViewItem::Type::Event, RPZAtom::atomTypeDescr.value(RPZAtom::Type::Event) },
-            { ToysTreeViewItem::Type::FreeDraw, RPZAtom::atomTypeDescr.value(RPZAtom::Type::Drawing) },
-            { ToysTreeViewItem::Type::Text, RPZAtom::atomTypeDescr.value(RPZAtom::Type::Text) },
-            { ToysTreeViewItem::Type::Player, RPZAtom::atomTypeDescr.value(RPZAtom::Type::Player) },
-            { ToysTreeViewItem::Type::POI, RPZAtom::atomTypeDescr.value(RPZAtom::Type::POI) },
-            { ToysTreeViewItem::Type::FogOfWar, RPZAtom::atomTypeDescr.value(RPZAtom::Type::FogOfWar) },
+            { ToysTreeViewItem::Type::Event, QT_TRANSLATE_NOOP("QObject", "Event") },
+            { ToysTreeViewItem::Type::FreeDraw, QT_TRANSLATE_NOOP("QObject", "Drawing") },
+            { ToysTreeViewItem::Type::Text, QT_TRANSLATE_NOOP("QObject", "Text") },
+            { ToysTreeViewItem::Type::Player, QT_TRANSLATE_NOOP("QObject", "Player") },
+            { ToysTreeViewItem::Type::POI, QT_TRANSLATE_NOOP("QObject", "Point of interest") },
+            { ToysTreeViewItem::Type::FogOfWar, QT_TRANSLATE_NOOP("QObject", "Fog of war") },
             { ToysTreeViewItem::Type::NPC_Container, QT_TRANSLATE_NOOP("QObject", "NPC / Portraits") },
             { ToysTreeViewItem::Type::ObjectContainer, QT_TRANSLATE_NOOP("QObject", "Objects") },
             { ToysTreeViewItem::Type::FloorBrushContainer, QT_TRANSLATE_NOOP("QObject", "Brushes") },

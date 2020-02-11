@@ -300,11 +300,12 @@ endif()
 IF(WIN32)
 
     find_library(giognutls_LIBRARY NAMES "giognutls" PATHS "$ENV{MSYS2_ROOT}/mingw64/lib/gio/modules" NO_DEFAULT_PATH)
+    get_filename_component(giognutls_NAME ${giognutls_LIBRARY} NAME)
 
     add_custom_command(TARGET app       
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 
         ${giognutls_LIBRARY}
-        $<TARGET_FILE_DIR:app>/gio/
+        $<TARGET_FILE_DIR:app>/gio/${giognutls_NAME}
     )
     
 endif()

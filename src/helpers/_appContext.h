@@ -36,13 +36,13 @@ class AppContext {
         static QHash<QString, QString> _getOptionArgs(const QString &argsAsStr);
 
         #ifdef _DEBUG
-            static inline const QString DEBUG_APP_FILE_APPENDICE = ".debug";
+            static inline const QString LOG_FILE = "/app.debug.log";
+            static inline const QString LATEST_LOG_FILE = "/app.latest.log";
         #else
-            static inline const QString DEBUG_APP_FILE_APPENDICE = "";
+            static inline const QString LOG_FILE = "/app.log";
+            static inline const QString LATEST_LOG_FILE = "/app.latest.log";
         #endif
 
-        static inline const QString LOG_FILE = "/app" + DEBUG_APP_FILE_APPENDICE + ".log";
-        static inline const QString LATEST_LOG_FILE = "/app.latest" + DEBUG_APP_FILE_APPENDICE + ".log";
         static inline const QString ASSETS_PATH = "/resources";
         static inline const QString MAPS_PATH = "/maps";
         static inline const QString DUMPS_PATH = "/dumps";

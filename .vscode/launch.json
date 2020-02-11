@@ -5,20 +5,27 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "gdb",
-            "request": "launch",
             "name": "Launch",
-            "cwd": "${workspaceRoot}",
-            "valuesFormatting": "parseText",
-            "target": "",
-            "windows": {
-                "gdbpath": "${env:MSYS2_ROOT}/mingw64/bin/gdb.exe",
-                "target": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe"
-            },
             "preLaunchTask": "Debug - 3. Build",
-            "env": {
-                // "GST_DEBUG" : 4
-            }
-        }
+            "type": "cppdbg",
+            "request": "launch",
+            "program" : "",
+            "windows": {
+                "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
+                "miDebuggerPath": "${env:MSYS2_ROOT}/mingw64/bin/gdb.exe"
+            },
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "setupCommands": [
+                {
+                    "description": "Activer l'impression en mode Pretty pour gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
     ]
 }
