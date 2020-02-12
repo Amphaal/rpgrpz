@@ -5,45 +5,35 @@ if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)
 endif()
 
-#check required ENV vars
-IF(WIN32)
+#default configuration
+SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-    list(APPEND ENV_VAR_TO_CHECK
-        MSYS2_ROOT
-    )
+#check env variable presence
+include(CheckEnvVariables)
 
-    foreach(C_ENV IN LISTS ENV_VAR_TO_CHECK)
-        if(NOT DEFINED ENV{${C_ENV}})
-            message(FATAL_ERROR "Required ENV variable ${C_ENV} does not exists. Please check README.md for more details !")
-        endif()
-    endforeach()
+#############
+## STARTUP ##
+#############
 
-endif()
-
-#toolchain
+#pre-startup
+cmake_minimum_required(VERSION 3.15.6)
 message(STATUS "Using toolchain file: [${CMAKE_TOOLCHAIN_FILE}].")
 
 #project setup
-project(RPGRPZ)
-string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
-cmake_minimum_required(VERSION 3.15.6)
-
-#version
-SET(CMAKE_PROJECT_VERSION_MAJOR 0)
-SET(CMAKE_PROJECT_VERSION_MINOR 20)
-SET(CMAKE_PROJECT_VERSION_PATCH 5)
-
-#default configuration
-SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/)
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+project(RPGRPZ
+    VERSION 0.20.5
+    DESCRIPTION "Simple Tabletop RPG experience"
+    HOMEPAGE_URL "https://github.com/Amphaal/rpgrpz"
+    LANGUAGES C CXX
+)
+string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER) #lowered project name
 
 ########################
 ## VERSION.H HANDLING ##
 ########################
 
-#app dest path
 SET(APP_PUBLISHER "LVWL")
-SET(APP_DEFAULT_URL "https://github.com/Amphaal/rpgrpz")
 SET(APP_PATCHNOTE_URL "https://github.com/Amphaal/rpgrpz/releases")
 SET(SENTRY_ENDPOINT "http://3a471bcc32d94c628a191d3d7d2eabff@zonme.to2x.ovh:9000/2")
 
@@ -60,10 +50,6 @@ configure_file(
 SET(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-#########################
-## Libraries specifics ##
-#########################
-
 #Qt
 SET(CMAKE_AUTOMOC ON)
 SET(CMAKE_AUTORCC ON)
@@ -74,34 +60,52 @@ SET(CMAKE_INCLUDE_CURRENT_DIR ON) #for moc auto
 ## Bundle configuration ##
 ##########################
 
+#default source contains
+SET(SOURCES
+    resources/resources.qrc
+)
+
 IF(WIN32)
-    SET(BUNDLE_TYPE "WIN32") #set bundle type
+    #set bundle type
+    SET(BUNDLE_TYPE "WIN32") 
     
+    #allows Debug cout/cerr console... from LLDB/GDB
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        SET(BUNDLE_TYPE "") #allows Debug cout/cerr console... from LLDB/GDB
+        SET(BUNDLE_TYPE "") 
     endif()
     
-    SET(APP_RC_FILE ${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.rc) #add icon
+    #add Windows ressources
+    list(APPEND SOURCES 
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.rc
+    )
 endif()
 
 IF(APPLE)
     #SET(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
     SET(BUNDLE_TYPE MACOSX_BUNDLE) #set bundle type
-    SET(MACOSX_BUNDLE_ICON_FILE "app.icns") #define icon
-    SET(APP_ICO ${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/app.icns) #add icon
-    set_source_files_properties(${APP_ICO} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources") #locate icon in package
+    SET(MACOSX_BUNDLE_ICON_FILE "app.icns") #define icon, parsed into _Info.plist
+
+    #locate icon in package
+    set_source_files_properties(
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/app.icns 
+        PROPERTIES MACOSX_PACKAGE_LOCATION "Resources"
+    ) 
 endif()
 
-#default source contains
-SET(SOURCES
-    ${APP_RC_FILE}
-    resources/resources.qrc
-)
+####################################
+# pkgConfig and find_library setup #
+####################################
+
+IF(WIN32)
+    list(APPEND CMAKE_PREFIX_PATH "$ENV{MSYS2_ROOT}/mingw64/x86_64-w64-mingw32")
+    list(APPEND CMAKE_LIBRARY_PATH "$ENV{MSYS2_ROOT}/mingw64/bin")
+endif()
 
 #############
 # miniupnpc #
 #############
 
+#dev deps and linkage
 find_package(miniupnpc REQUIRED)
 list(APPEND EXT_LIBS ${MINIUPNP_LIBRARY})
 include_directories(${MINIUPNP_INCLUDE_DIR})
@@ -109,12 +113,6 @@ include_directories(${MINIUPNP_INCLUDE_DIR})
 ############# 
 # Gstreamer #
 #############
-
-#pkgConfig setup
-IF(WIN32)
-    list(APPEND CMAKE_PREFIX_PATH "$ENV{MSYS2_ROOT}/mingw64/x86_64-w64-mingw32")
-    list(APPEND CMAKE_LIBRARY_PATH "$ENV{MSYS2_ROOT}/mingw64/bin")
-endif()
 
 include(GStreamerHelper)
 FindGStreamer()
@@ -192,12 +190,9 @@ qt5_create_translation(QM_FILES
 
 # Create executable
 add_executable(app ${BUNDLE_TYPE} ${SOURCES} ${QM_FILES})
-
-#link the rest !
-target_link_libraries(app ${EXT_LIBS})
-set_target_properties(app PROPERTIES 
-    OUTPUT_NAME ${PROJECT_NAME}
-) 
+set_target_properties(app PROPERTIES OUTPUT_NAME ${PROJECT_NAME}) #define executable name 
+target_compile_definitions(app PRIVATE $<$<CONFIG:Debug>:_DEBUG>) #define _DEBUG markup if in DEBUG config
+target_link_libraries(app ${EXT_LIBS}) #link libraries
 
 if(APPLE)
     #add highdpi support / menu behavior via plist template (MACOS)
@@ -210,23 +205,65 @@ endif()
 # QT LIBRARIES COPY #
 #####################
 
-#using deployqt to import all the QT ${CMAKE_SHARED_LIBRARY_SUFFIX} requirements based on used components
-include(deployqt)
-deployqt(app)
+if(WIN32)
+    include(Windeployqt)
+    windeployqt(app)
+endif()
 
-###############
-# OTHERS COPY #
-###############
+if(APPLE)
+    include(Macdeployqt)
+    macdeployqt(app)
+endif()
 
-#translations
+#####################
+# TRANSLATIONS COPY #
+#####################
+
 add_custom_command(TARGET app POST_BUILD  
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QM_FILES} $<TARGET_FILE_DIR:app>/translations
 )
 
-#miniUPnPc
-find_library(miniupnpc_LIBRARY miniupnpc)
-add_custom_command(TARGET app POST_BUILD 
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${miniupnpc_LIBRARY} $<TARGET_FILE_DIR:app>
+install(
+    FILES ${QM_FILES}
+    DESTINATION ./translations/
+    COMPONENT appTranslations
+)
+
+##################
+# miniupnpc COPY #
+##################
+
+#copy lib into a target
+find_library(miniupnpc_BIN_LIBRARY NAMES "miniupnpc" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
+add_custom_command(TARGET app POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${miniupnpc_BIN_LIBRARY} $<TARGET_FILE_DIR:app>
+)
+
+#install
+install(
+    FILES ${miniupnpc_BIN_LIBRARY} 
+    DESTINATION . 
+    COMPONENT miniupnpc
+)
+
+##################
+# OpenSSL COPY #
+##################
+
+find_library(OPENSSL_CPYPTO_BIN_LIBRARY NAMES "crypto-1_1-x64" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
+find_library(OPENSSL_SSL_BIN_LIBRARY NAMES "ssl-1_1-x64" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
+
+#copy lib into a target
+add_custom_command(TARGET app POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_CPYPTO_BIN_LIBRARY} $<TARGET_FILE_DIR:app>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_SSL_BIN_LIBRARY} $<TARGET_FILE_DIR:app>
+)
+
+#install
+install(
+    FILES ${OPENSSL_CPYPTO_BIN_LIBRARY} ${OPENSSL_SSL_BIN_LIBRARY}
+    DESTINATION . 
+    COMPONENT openssl
 )
 
 # ######################
@@ -282,26 +319,32 @@ foreach(_gstSLib IN ITEMS ${GST_SLIBS})
     )
 endforeach()
 
-#copy gstreamer ${CMAKE_SHARED_LIBRARY_SUFFIX}s
-IF(NOT EXISTS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins)
+
+#copy gstreamer plugins  
     #LIST(APPEND _gstreamer_plugins all)
+        
+    #core
     LIST(APPEND _gstreamer_plugins 
-        gstaudioconvert
-        gstautodetect
-        gstaudioresample
-        gstcoreelements
-        gstlibav
-        gstmatroska
         gstplayback
+        gstautodetect
+        gstcoreelements
+    )
+
+    #opus stream read
+    LIST(APPEND _gstreamer_plugins 
+        gstwaveform
         gstsoup
         gsttypefindfunctions
+        gstmatroska
+        gstopus
         gstvolume
-        gstwasapi
+        gstaudioconvert
+        gstaudioresample
     )
-    DeployGStreamer(app "${_gstreamer_plugins}")
-endif()
 
-#missing specifics
+DeployGStreamer(app "${_gstreamer_plugins}")
+
+#platform specifics
 IF(WIN32)
 
     find_library(giognutls_LIBRARY NAMES "giognutls" PATHS "$ENV{MSYS2_ROOT}/mingw64/lib/gio/modules" NO_DEFAULT_PATH)
@@ -309,8 +352,14 @@ IF(WIN32)
 
     add_custom_command(TARGET app       
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-        ${giognutls_LIBRARY}
-        $<TARGET_FILE_DIR:app>/gio/${giognutls_NAME}
+            ${giognutls_LIBRARY} 
+            $<TARGET_FILE_DIR:app>/gio/${giognutls_NAME}
+    )
+
+    install(
+        DIRECTORY ./gio
+        DESTINATION .
+        COMPONENT gst-gio
     )
     
 endif()

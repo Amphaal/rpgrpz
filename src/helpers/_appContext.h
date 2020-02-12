@@ -37,7 +37,7 @@ class AppContext {
 
         #ifdef _DEBUG
             static inline const QString LOG_FILE = "/app.debug.log";
-            static inline const QString LATEST_LOG_FILE = "/app.latest.log";
+            static inline const QString LATEST_LOG_FILE = "/app.debug.latest.log";
         #else
             static inline const QString LOG_FILE = "/app.log";
             static inline const QString LATEST_LOG_FILE = "/app.latest.log";

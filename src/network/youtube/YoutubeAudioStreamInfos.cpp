@@ -69,7 +69,7 @@ void YoutubeAudioStreamInfos::_initFromUrlQuery(YoutubeSignatureDecipherer* deci
 
 }
 
-const YoutubeAudioStreamInfos::UrlMimePair YoutubeAudioStreamInfos::getPreferedMineSourcePair() const {
+const YoutubeAudioStreamInfos::UrlMimePair YoutubeAudioStreamInfos::getPreferedMimeSourcePair() const {
     auto available = this->availableAudioMimes();
     auto mp4Audio = available.filter(QRegularExpression(QStringLiteral(u"opus")));
     auto selectedMime = mp4Audio.count() ? mp4Audio.value(0) : available.value(0);

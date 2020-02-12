@@ -246,7 +246,7 @@ void AudioManager::_onToolbarPlayRequested(YoutubeVideoMetadata* metadata) {
     YoutubeHelper::refreshMetadata(metadata).then([=]() {
 
         auto title = metadata->title();
-        auto streamUrl = metadata->audioStreams().getPreferedMineSourcePair().decodedUrl;
+        auto streamUrl = metadata->audioStreams().getPreferedMimeSourcePair().decodedUrl;
         auto duration = metadata->duration();
 
         //update state

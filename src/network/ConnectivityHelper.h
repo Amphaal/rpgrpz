@@ -37,8 +37,11 @@ class ConnectivityHelper : public QObject
         QNetworkAccessManager* _nam = nullptr;
         QNetworkConfigurationManager* _ncm = nullptr;
         uPnPRequester* _upnpThread = nullptr;
-
+        
+        static inline QString _DebugStringModel = R"(Connectivity : %1 >> %2 [state:%3, type:%4, bearer:%5])";
+        void _SSDebugNetworkConfig(const QString &descr, const QNetworkConfiguration &config);
         void _debugNetworkConfig();
+
         QString _getWaitingText();
         QString _getErrorText();
 

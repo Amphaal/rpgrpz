@@ -196,23 +196,24 @@ QString ConnectivityHelper::_getErrorText() {
     return tr("<Error>");
 };
 
+void ConnectivityHelper::_SSDebugNetworkConfig(const QString &descr, const QNetworkConfiguration &config) {
+    qDebug() << qUtf8Printable(
+                    _DebugStringModel.arg(descr)
+                                     .arg(config.name())
+                                     .arg(config.state())
+                                     .arg(config.type())
+                                     .arg(config.bearerTypeName())
+                );
+}
+
 void ConnectivityHelper::_debugNetworkConfig() {
-    
-    auto _debug = [&](const QString &descr, const QNetworkConfiguration &config) {
-        QString model = R"(Connectivity : %1 >> %2 [state:%3, type:%4, bearer:%5])";
-        model = model.arg(descr)
-                     .arg(config.name())
-                     .arg(config.state())
-                     .arg(config.type())
-                     .arg(config.bearerTypeName());
-        qDebug() << qUtf8Printable(model);
-    };
 
     for (auto &config : this->_getDefinedConfiguration()) {
-        _debug("EXISTING", config);
+        _SSDebugNetworkConfig("EXISTING", config);
     }
 
     //active...
     auto activeConf = this->_nam->configuration();
-    _debug("ACTIVE", activeConf);
+    _SSDebugNetworkConfig("ACTIVE", activeConf);
+
 }

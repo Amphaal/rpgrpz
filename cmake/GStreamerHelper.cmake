@@ -63,8 +63,9 @@ function(_GstThroughLibs target dllLocation libList dest)
             get_filename_component(_dllName ${_libFile} NAME)
 
             #copy lib
-            add_custom_command(TARGET ${target} COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-                ${_libFile} $<TARGET_FILE_DIR:${target}>${dest}${_dllName}
+            add_custom_command(TARGET ${target} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+                    ${_libFile} $<TARGET_FILE_DIR:${target}>${dest}${_dllName}
             )
             #message(STATUS "\"${_gstLib}\" added")
 

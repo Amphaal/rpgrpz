@@ -145,6 +145,7 @@ YoutubeVideoMetadata* YoutubeHelper::_augmentMetadataWithVideoInfos(
     metadata->setAudioStreamInfos(streamInfos);
 
     return metadata;
+    
 }
 
 void YoutubeHelper::_dumpAsJSON(const QUrlQuery &query) {
@@ -215,7 +216,7 @@ promise::Defer YoutubeHelper::_downloadVideoInfosAndAugmentMetadata(YoutubeVideo
 }
 
 QString YoutubeHelper::_getApiUrl(const QString &videoId) {
-    return QStringLiteral(u"https://youtube.googleapis.com/v/") +videoId;
+    return QStringLiteral(u"https://youtube.googleapis.com/v/") + videoId;
 }
 
 promise::Defer YoutubeHelper::_getVideoInfosRawData(YoutubeVideoMetadata* metadata) {

@@ -192,14 +192,11 @@ void AppContext::initSentry() {
     sentry_options_set_release(options, GITHUB_VERSION_NAME);
     sentry_options_set_debug(options, 1);
 
-    //crashpad integration
-    sentry_options_set_handler_path(options, CRASHPAD_HANDLER_NAME);
+    //integration
     auto dbStr = AppContext::getAppDataLocation() + "/sentry_db";
     sentry_options_set_database_path(options, qUtf8Printable(dbStr));
-    
 
     sentry_init(options);
-
 
 }
 

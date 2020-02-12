@@ -29,7 +29,7 @@
                 },
                 // {
                 //     "name" : "GST_DEBUG",
-                //     "value" : "5"
+                //     "value" : "4"
                 // },
             ],
             "setupCommands": [

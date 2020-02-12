@@ -33,7 +33,7 @@ class YoutubeAudioStreamInfos {
 
         const QString streamUrl(const QString &mime) const;
         const QList<QString> availableAudioMimes() const;
-        const UrlMimePair getPreferedMineSourcePair() const;
+        const UrlMimePair getPreferedMimeSourcePair() const;
     
     private:
         InfosByAudioMime _InfosByAudioMime;

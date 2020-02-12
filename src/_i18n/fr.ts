@@ -829,17 +829,17 @@
 <context>
     <name>Playlist</name>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="142"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="145"/>
         <source>This Youtube video is already in playlist !</source>
         <translation>Cette vidéo Youtube est déjà dans la liste de lecture !</translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="181"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="184"/>
         <source>(Loading metadata...) </source>
         <translation>(Chargement des métadonnées...) </translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="191"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="194"/>
         <source>(Error) </source>
         <translation>(Erreur) </translation>
     </message>
