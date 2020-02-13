@@ -157,6 +157,18 @@ list(APPEND EXT_LIBS
     sentry
 )
 
+#
+# Breakpad
+#
+
+pkg_check_modules(BrkpdCli REQUIRED IMPORTED_TARGET
+    breakpad-client
+)
+
+list(APPEND EXT_LIBS
+    PkgConfig::BrkpdCli
+)
+
 #####################
 # list source files #
 #####################
@@ -223,12 +235,6 @@ add_custom_command(TARGET app POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QM_FILES} $<TARGET_FILE_DIR:app>/translations
 )
 
-install(
-    FILES ${QM_FILES}
-    DESTINATION ./translations/
-    COMPONENT appTranslations
-)
-
 ##################
 # miniupnpc COPY #
 ##################
@@ -237,13 +243,6 @@ install(
 find_library(miniupnpc_BIN_LIBRARY NAMES "miniupnpc" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
 add_custom_command(TARGET app POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${miniupnpc_BIN_LIBRARY} $<TARGET_FILE_DIR:app>
-)
-
-#install
-install(
-    FILES ${miniupnpc_BIN_LIBRARY} 
-    DESTINATION . 
-    COMPONENT miniupnpc
 )
 
 ##################
@@ -259,19 +258,26 @@ add_custom_command(TARGET app POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_SSL_BIN_LIBRARY} $<TARGET_FILE_DIR:app>
 )
 
-#install
-install(
-    FILES ${OPENSSL_CPYPTO_BIN_LIBRARY} ${OPENSSL_SSL_BIN_LIBRARY}
-    DESTINATION . 
-    COMPONENT openssl
-)
-
 # ######################
 # # GST LIBRARIES COPY #
 # ######################
 
+#platform specifics
+IF(WIN32)
+
+    find_library(giognutls_LIBRARY NAMES "giognutls" PATHS "$ENV{MSYS2_ROOT}/mingw64/lib/gio/modules" NO_DEFAULT_PATH)
+    get_filename_component(giognutls_NAME ${giognutls_LIBRARY} NAME)
+
+    add_custom_command(TARGET app       
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+            ${giognutls_LIBRARY} 
+            $<TARGET_FILE_DIR:app>/gio/${giognutls_NAME}
+    )
+    
+endif()
+
+#missing deps for gstreamer
 if(APPLE)
-    #missing deps for gstreamer
     list(APPEND GST_SLIBS
         avcodec
         avfilter
@@ -291,7 +297,6 @@ if(APPLE)
 endif()
 
 if(WIN32)
-    #missing deps for gstreamer
     list(APPEND GST_SLIBS
         avcodec-58
         avfilter-7
@@ -306,19 +311,22 @@ if(WIN32)
         libwinpthread-1
         libxml2-2
         swresample-3
+        libjpeg-8
     )
 endif()
 
 #import all missing GSTREAMER libs
 foreach(_gstSLib IN ITEMS ${GST_SLIBS})
     find_library(${_gstSLib}_LIBRARY NAMES "${_gstSLib}" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
+    list(APPEND _gstSLib_FULLPATH
+        ${${_gstSLib}_LIBRARY}
+    )
     add_custom_command(TARGET app POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 
             ${${_gstSLib}_LIBRARY}
             $<TARGET_FILE_DIR:app>
     )
 endforeach()
-
 
 #copy gstreamer plugins  
     #LIST(APPEND _gstreamer_plugins all)
@@ -344,35 +352,25 @@ endforeach()
 
 DeployGStreamer(app "${_gstreamer_plugins}")
 
-#platform specifics
-IF(WIN32)
-
-    find_library(giognutls_LIBRARY NAMES "giognutls" PATHS "$ENV{MSYS2_ROOT}/mingw64/lib/gio/modules" NO_DEFAULT_PATH)
-    get_filename_component(giognutls_NAME ${giognutls_LIBRARY} NAME)
-
-    add_custom_command(TARGET app       
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-            ${giognutls_LIBRARY} 
-            $<TARGET_FILE_DIR:app>/gio/${giognutls_NAME}
-    )
-
-    install(
-        DIRECTORY ./gio
-        DESTINATION .
-        COMPONENT gst-gio
-    )
-    
-endif()
-
 ################
 # missing libs #
 ################
 
 #scan for missing lib dependencies, then fetch and copy them
 if(WIN32)
+    file(GLOB _gst_plugins_dir_content LIST_DIRECTORIES OFF
+        "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins/*"
+    )
+    file(GLOB _gio_dir_content LIST_DIRECTORIES OFF
+        "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gio/*"
+    )
+
     STRING(REGEX REPLACE "/" "\\\\\\\\\\\\" ESCAPED_CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH})
+
     add_custom_command(TARGET app POST_BUILD
         COMMAND ntldd -R -D ${CMAKE_LIBRARY_PATH} $<TARGET_FILE:app> | grep -o '${ESCAPED_CMAKE_LIBRARY_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        COMMAND ntldd -R -D ${CMAKE_LIBRARY_PATH} ${_gst_plugins_dir_content} | grep -o '${ESCAPED_CMAKE_LIBRARY_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        COMMAND ntldd -R -D ${CMAKE_LIBRARY_PATH} ${_gio_dir_content} | grep -o '${ESCAPED_CMAKE_LIBRARY_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}        
     )
 endif()
 

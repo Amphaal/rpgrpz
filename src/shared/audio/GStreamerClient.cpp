@@ -104,7 +104,7 @@ void GStreamerClient::useSource(QString uri) {
     //set new source
     g_object_set(G_OBJECT(this->_bin), "uri", qUtf8Printable(uri), nullptr);
 
-    qDebug() << "Trying to play : " << qUtf8Printable(uri);
+    qDebug() << "Trying to play :" << uri;
 
     {
         QMutexLocker l(&this->_m_seek);

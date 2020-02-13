@@ -43,40 +43,4 @@ function(windeployqt target)
                 \"$<TARGET_FILE:${target}>\"
     )
 
-    # install(CODE ...) doesn't support generator expressions, but
-    # file(GENERATE ...) does - store the path in a file
-    file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${target}_path"
-        CONTENT "$<TARGET_FILE:${target}>"
-    )
-
-    # Before installation, run a series of commands that copy each of the Qt
-    # runtime files to the appropriate directory for installation
-    install(CODE
-        "
-        file(READ \"${CMAKE_CURRENT_BINARY_DIR}/${target}_path\" _file)
-        execute_process(
-            COMMAND \"${CMAKE_COMMAND}\" -E
-                env PATH=\"${_qt_bin_dir}\" \"${WINDEPLOYQT_EXECUTABLE}\"
-                    --dry-run
-                    --compiler-runtime
-                    --no-angle
-                    --no-opengl-sw
-                    --list mapping
-                    \${_file}
-            OUTPUT_VARIABLE _output
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-        )
-        separate_arguments(_files WINDOWS_COMMAND \${_output})
-        while(_files)
-            list(GET _files 0 _src)
-            list(GET _files 1 _dest)
-            execute_process(
-                COMMAND \"${CMAKE_COMMAND}\" -E
-                    copy \${_src} \"\${CMAKE_INSTALL_PREFIX}/\${_dest}\"
-            )
-            list(REMOVE_AT _files 0 1)
-        endwhile()
-        "
-    )
-
 endfunction()
