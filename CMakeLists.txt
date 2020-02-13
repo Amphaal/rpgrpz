@@ -37,7 +37,7 @@ SET(APP_PUBLISHER "LVWL")
 SET(APP_PATCHNOTE_URL "https://github.com/Amphaal/rpgrpz/releases")
 SET(SENTRY_ENDPOINT "http://3a471bcc32d94c628a191d3d7d2eabff@zonme.to2x.ovh:9000/2")
 
-#config file to source code
+#configure header with basic app informations
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/templates/_version.h 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/version.h
@@ -48,47 +48,68 @@ configure_file(
 ################################
 
 SET(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #Qt
 SET(CMAKE_AUTOMOC ON)
 SET(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
+SET(CMAKE_AUTOUIC ON)
 SET(CMAKE_INCLUDE_CURRENT_DIR ON) #for moc auto 
 
-##########################
-## Bundle configuration ##
-##########################
+#################################
+## define bundle configuration ##
+#################################
 
-#default source contains
-SET(SOURCES
-    resources/resources.qrc
-)
-
+#define build type if any
 IF(WIN32)
-    #set bundle type
-    SET(BUNDLE_TYPE "WIN32") 
-    
-    #allows Debug cout/cerr console... from LLDB/GDB
+    SET(APP_BUNDLE_TYPE "WIN32") 
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        SET(BUNDLE_TYPE "") 
+        SET(APP_BUNDLE_TYPE "") #allows Debug cout/cerr console... from LLDB/GDB
     endif()
-    
-    #add Windows ressources
-    list(APPEND SOURCES 
-        ${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.rc
-    )
+ELSEIF(APPLE)
+    #SET(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
+    SET(APP_BUNDLE_TYPE MACOSX_BUNDLE) #set bundle type
 endif()
 
-IF(APPLE)
-    #SET(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
-    SET(BUNDLE_TYPE MACOSX_BUNDLE) #set bundle type
-    SET(MACOSX_BUNDLE_ICON_FILE "app.icns") #define icon, parsed into _Info.plist
 
-    #locate icon in package
-    set_source_files_properties(
-        ${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/app.icns 
-        PROPERTIES MACOSX_PACKAGE_LOCATION "Resources"
+######################################
+## define executables and libraries ##
+######################################
+
+#define app executable
+add_executable(appExec ${APP_BUNDLE_TYPE})
+set_target_properties(appExec PROPERTIES OUTPUT_NAME "${PROJECT_NAME}") #define executable name
+target_compile_definitions(appExec PRIVATE $<$<CONFIG:Debug>:_DEBUG>) #define _DEBUG markup if in DEBUG config
+
+#allows export for debuging
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set_target_properties(appExec PROPERTIES ENABLE_EXPORTS TRUE)
+endif()
+
+#define test executable
+add_executable(testsExec)
+set_target_properties(testsExec PROPERTIES OUTPUT_NAME "${PROJECT_NAME}_tests") #define executable name
+target_sources(testsExec PRIVATE "tests/tests.cpp")
+target_link_libraries(testsExec INTERFACE appExec)
+
+#########################
+## ressources handling ##
+#########################
+
+#default QT ressources
+target_sources(appExec PRIVATE "resources/resources.qrc")
+
+IF(WIN32)  
+    target_sources(appExec PRIVATE "resources/resources.rc") #add Windows ressources (icons)
+ELSEIF(APPLE)   
+    
+    target_sources(appExec PRIVATE "resources/icons/app.icns") #add MacOS icons in output package
+
+    #add highdpi support / menu behavior via plist template
+    set_target_properties(appExec PROPERTIES 
+        MACOSX_BUNDLE_INFO_PLIST "templates/_Info.plist"
+        MACOSX_BUNDLE_ICON_FILE "app.icns"
+        MACOSX_PACKAGE_LOCATION "Resources"
     ) 
 endif()
 
@@ -101,179 +122,88 @@ IF(WIN32)
     list(APPEND CMAKE_LIBRARY_PATH "$ENV{MSYS2_ROOT}/mingw64/bin")
 endif()
 
+#using pkgConfig, set PKG_CONFIG_EXECUTABLE if not found
+find_package(PkgConfig REQUIRED)
+
 #############
 # miniupnpc #
 #############
 
-#dev deps and linkage
+#find miniupnpc
 find_package(miniupnpc REQUIRED)
-list(APPEND EXT_LIBS ${MINIUPNP_LIBRARY})
-include_directories(${MINIUPNP_INCLUDE_DIR})
+
+#link
+target_link_libraries(appExec ${MINIUPNP_LIBRARY})
+target_include_directories(appExec PRIVATE ${MINIUPNP_INCLUDE_DIR})
+
+#copy lib into a target
+find_library(miniupnpc_BIN_LIBRARY NAMES "miniupnpc" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
+add_custom_command(TARGET appExec POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+        ${miniupnpc_BIN_LIBRARY} $<TARGET_FILE_DIR:appExec>
+)
+
+##############
+# googletest #
+##############
+
+#find googletest
+pkg_check_modules(GTest REQUIRED IMPORTED_TARGET
+    gtest_main
+)
+
+#link
+target_link_libraries(testsExec PRIVATE PkgConfig::GTest)
+target_include_directories(testsExec PRIVATE ${GTest_INCLUDE_DIRS})
 
 ############# 
 # Gstreamer #
 #############
 
+#find Gstreamer
 include(GStreamerHelper)
 FindGStreamer()
 
-list(APPEND EXT_LIBS
+#link
+target_link_libraries(appExec     
     PkgConfig::Gst
     PkgConfig::GstPluginsBase
 )
 
-########
-# QT 5 #
-########
-
-find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network Svg OpenGL LinguistTools)
-list(APPEND EXT_LIBS
-    Qt5::Core
-    Qt5::Gui 
-    Qt5::Widgets
-    Qt5::Network
-    Qt5::Svg
-    Qt5::OpenGL
+####define gstreamer plugins to use
+#core
+LIST(APPEND _gstreamer_plugins 
+    gstplayback
+    gstautodetect
+    gstcoreelements
+)
+#opus stream read
+LIST(APPEND _gstreamer_plugins 
+    gstwaveform
+    gstsoup
+    gsttypefindfunctions
+    gstmatroska
+    gstopus
+    gstvolume
+    gstaudioconvert
+    gstaudioresample
 )
 
-###########
-# OpenSSL #
-###########
-
-find_package(openssl REQUIRED)
-list(APPEND EXT_LIBS
-    OpenSSL::SSL
-    OpenSSL::Crypto
-    ws2_32
-)
-
-#################
-# Sentry-native #
-#################
-
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/_req/sentry-native)
-include_directories(${Sentry-Native_SOURCE_DIR}/include)
-list(APPEND EXT_LIBS
-    sentry
-)
-
-#
-# Breakpad
-#
-
-pkg_check_modules(BrkpdCli REQUIRED IMPORTED_TARGET
-    breakpad-client
-)
-
-list(APPEND EXT_LIBS
-    PkgConfig::BrkpdCli
-)
-
-#####################
-# list source files #
-#####################
-
-file(GLOB_RECURSE CPP_FILES src/*.cpp)
-file(GLOB_RECURSE HPP_FILES src/*.hpp)
-
-list(APPEND SOURCES
-    ${CPP_FILES}
-    ${HPP_FILES}
-)
-
-################
-# translations #
-################
-
-SET(QT_TRANSLATIONS_SCAN_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src)
-list(APPEND QT_TRANSLATIONS_TS_FILES 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/_i18n/fr.ts
-)
-
-#translate at target generation
-qt5_create_translation(QM_FILES 
-    ${QT_TRANSLATIONS_SCAN_DIRECTORY}
-    ${QT_TRANSLATIONS_TS_FILES}
-)
-
-#########################
-# Executable Generation #
-#########################
-
-# Create executable
-add_executable(app ${BUNDLE_TYPE} ${SOURCES} ${QM_FILES})
-set_target_properties(app PROPERTIES OUTPUT_NAME ${PROJECT_NAME}) #define executable name 
-target_compile_definitions(app PRIVATE $<$<CONFIG:Debug>:_DEBUG>) #define _DEBUG markup if in DEBUG config
-target_link_libraries(app ${EXT_LIBS}) #link libraries
-
-if(APPLE)
-    #add highdpi support / menu behavior via plist template (MACOS)
-    set_target_properties(app PROPERTIES 
-        MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/templates/_Info.plist
-    ) 
-endif()
-
-#####################
-# QT LIBRARIES COPY #
-#####################
-
-if(WIN32)
-    include(Windeployqt)
-    windeployqt(app)
-endif()
-
-if(APPLE)
-    include(Macdeployqt)
-    macdeployqt(app)
-endif()
-
-#####################
-# TRANSLATIONS COPY #
-#####################
-
-add_custom_command(TARGET app POST_BUILD  
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QM_FILES} $<TARGET_FILE_DIR:app>/translations
-)
-
-##################
-# miniupnpc COPY #
-##################
-
-#copy lib into a target
-find_library(miniupnpc_BIN_LIBRARY NAMES "miniupnpc" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
-add_custom_command(TARGET app POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${miniupnpc_BIN_LIBRARY} $<TARGET_FILE_DIR:app>
-)
-
-##################
-# OpenSSL COPY #
-##################
-
-find_library(OPENSSL_CPYPTO_BIN_LIBRARY NAMES "crypto-1_1-x64" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
-find_library(OPENSSL_SSL_BIN_LIBRARY NAMES "ssl-1_1-x64" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
-
-#copy lib into a target
-add_custom_command(TARGET app POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_CPYPTO_BIN_LIBRARY} $<TARGET_FILE_DIR:app>
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_SSL_BIN_LIBRARY} $<TARGET_FILE_DIR:app>
-)
+#copy gstreamer plugins into output
+DeployGStreamer(appExec "${_gstreamer_plugins}")
 
 # ######################
 # # GST LIBRARIES COPY #
 # ######################
 
-#platform specifics
+#platform specifics missing dependency
 IF(WIN32)
-
     find_library(giognutls_LIBRARY NAMES "giognutls" PATHS "$ENV{MSYS2_ROOT}/mingw64/lib/gio/modules" NO_DEFAULT_PATH)
-    get_filename_component(giognutls_NAME ${giognutls_LIBRARY} NAME)
-
-    add_custom_command(TARGET app       
+    add_custom_command(TARGET appExec       
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 
             ${giognutls_LIBRARY} 
-            $<TARGET_FILE_DIR:app>/gio/${giognutls_NAME}
-    )
-    
+            "$<TARGET_FILE_DIR:appExec>/gio"
+    ) 
 endif()
 
 #missing deps for gstreamer
@@ -294,9 +224,7 @@ if(APPLE)
         tasn1
         xml2
     )
-endif()
-
-if(WIN32)
+elseif(WIN32)
     list(APPEND GST_SLIBS
         avcodec-58
         avfilter-7
@@ -311,46 +239,148 @@ if(WIN32)
         libwinpthread-1
         libxml2-2
         swresample-3
-        libjpeg-8
     )
 endif()
 
 #import all missing GSTREAMER libs
 foreach(_gstSLib IN ITEMS ${GST_SLIBS})
     find_library(${_gstSLib}_LIBRARY NAMES "${_gstSLib}" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
-    list(APPEND _gstSLib_FULLPATH
-        ${${_gstSLib}_LIBRARY}
-    )
-    add_custom_command(TARGET app POST_BUILD
+    add_custom_command(TARGET appExec POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 
             ${${_gstSLib}_LIBRARY}
-            $<TARGET_FILE_DIR:app>
+            $<TARGET_FILE_DIR:appExec>
     )
 endforeach()
 
-#copy gstreamer plugins  
-    #LIST(APPEND _gstreamer_plugins all)
-        
-    #core
-    LIST(APPEND _gstreamer_plugins 
-        gstplayback
-        gstautodetect
-        gstcoreelements
-    )
+########
+# QT 5 #
+########
 
-    #opus stream read
-    LIST(APPEND _gstreamer_plugins 
-        gstwaveform
-        gstsoup
-        gsttypefindfunctions
-        gstmatroska
-        gstopus
-        gstvolume
-        gstaudioconvert
-        gstaudioresample
-    )
+#find Qt5
+find_package(Qt5 REQUIRED COMPONENTS 
+    Core 
+    Gui 
+    Widgets 
+    Network 
+    Svg 
+    OpenGL 
+    LinguistTools
+)
 
-DeployGStreamer(app "${_gstreamer_plugins}")
+#link
+target_link_libraries(appExec
+    Qt5::Core
+    Qt5::Gui 
+    Qt5::Widgets
+    Qt5::Network
+    Qt5::Svg
+    Qt5::OpenGL
+)
+
+# QT LIBRARIES COPY
+if(WIN32)
+    include(Windeployqt)
+    windeployqt(appExec)
+endif()
+
+if(APPLE)
+    include(Macdeployqt)
+    macdeployqt(appExec)
+endif()
+
+#missing libs
+IF(WIN32)
+    find_library(libjpeg_LIBRARY NAMES "libjpeg-8" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH) #for icons handling
+    add_custom_command(TARGET appExec COMMAND ${CMAKE_COMMAND} -E copy_if_different ${libjpeg_LIBRARY} $<TARGET_FILE_DIR:appExec>)
+endif()
+
+###########
+# OpenSSL #
+###########
+
+#find
+find_package(openssl REQUIRED)
+
+#link
+target_link_libraries(appExec
+    OpenSSL::SSL
+    OpenSSL::Crypto
+)
+
+if(WIN32)
+    target_link_libraries(appExec ws2_32) #WSA functions !
+endif()
+
+#find libs
+find_library(OPENSSL_CPYPTO_BIN_LIBRARY NAMES "crypto-1_1-x64" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
+find_library(OPENSSL_SSL_BIN_LIBRARY NAMES "ssl-1_1-x64" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
+
+#copy lib into a target
+add_custom_command(TARGET appExec POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_CPYPTO_BIN_LIBRARY} $<TARGET_FILE_DIR:appExec>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_SSL_BIN_LIBRARY} $<TARGET_FILE_DIR:appExec>
+)
+
+#################
+# Sentry-native #
+#################
+
+#find Sentry-native cmake project
+add_subdirectory(_req/sentry-native)
+
+#link
+target_include_directories(appExec PRIVATE "${Sentry-Native_SOURCE_DIR}/include")
+target_link_libraries(appExec sentry)
+
+############
+# Breakpad #
+############
+
+#find breakpad
+pkg_check_modules(BrkpdCli REQUIRED IMPORTED_TARGET
+    breakpad-client
+)
+
+#link
+target_link_libraries(appExec
+    PkgConfig::BrkpdCli
+)
+
+#####################
+# list source files #
+#####################
+
+file(GLOB_RECURSE APP_CPP_FILES "src/*.cpp")
+file(GLOB_RECURSE APP_HPP_FILES "src/*.hpp")
+
+#defined as public for tests
+target_sources(appExec PUBLIC
+    ${APP_CPP_FILES}
+    ${APP_HPP_FILES}
+)
+
+################
+# translations #
+################
+
+#updates TS files from sources
+list(APPEND APP_TRANSLATION_FILES 
+    "src/_i18n/fr.ts"
+)
+qt5_create_translation(QM_FILES "src"
+    ${APP_TRANSLATION_FILES}
+)
+
+#generate QM files from TS
+target_sources(appExec PUBLIC
+    ${APP_TRANSLATION_FILES}
+)
+
+#copy translations into output
+add_custom_command(TARGET appExec POST_BUILD  
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+        ${QM_FILES} $<TARGET_FILE_DIR:appExec>/translations
+)
 
 ################
 # missing libs #
@@ -367,8 +397,8 @@ if(WIN32)
 
     STRING(REGEX REPLACE "/" "\\\\\\\\\\\\" ESCAPED_CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH})
 
-    add_custom_command(TARGET app POST_BUILD
-        COMMAND ntldd -R -D ${CMAKE_LIBRARY_PATH} $<TARGET_FILE:app> | grep -o '${ESCAPED_CMAKE_LIBRARY_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    add_custom_command(TARGET appExec POST_BUILD
+        COMMAND ntldd -R -D ${CMAKE_LIBRARY_PATH} $<TARGET_FILE:appExec> | grep -o '${ESCAPED_CMAKE_LIBRARY_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         COMMAND ntldd -R -D ${CMAKE_LIBRARY_PATH} ${_gst_plugins_dir_content} | grep -o '${ESCAPED_CMAKE_LIBRARY_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         COMMAND ntldd -R -D ${CMAKE_LIBRARY_PATH} ${_gio_dir_content} | grep -o '${ESCAPED_CMAKE_LIBRARY_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}        
     )

@@ -1,6 +1,3 @@
-#using pkgConfig, makes sure PKG_CONFIG_EXECUTABLE is set
-find_package(PkgConfig REQUIRED)
-
 #linking...
 macro(FindGStreamer)
 

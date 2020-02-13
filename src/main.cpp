@@ -7,8 +7,6 @@
 #include <exception>
 #include <iostream>
 
-#include <breakpad/client/windows/handler/exception_handler.h>
-
 ////////////
 // SERVER //
 ////////////

@@ -22,7 +22,8 @@
                 "C:/msys64/mingw64/include/gstreamer-1.0",
                 "C:/msys64/mingw64/include/glib-2.0",
                 "C:/msys64/mingw64/include/breakpad",
-                "C:/msys64/mingw64/lib/glib-2.0/include"
+                "C:/msys64/mingw64/lib/glib-2.0/include",
+                "C:/msys64/mingw64/include/gtest"
             ],
             "defines": [
                 "_DEBUG",
