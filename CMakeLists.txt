@@ -156,6 +156,14 @@ pkg_check_modules(GTest REQUIRED IMPORTED_TARGET
 target_link_libraries(testsExec PRIVATE PkgConfig::GTest)
 target_include_directories(testsExec PRIVATE ${GTest_INCLUDE_DIRS})
 
+find_library(gtest_main_BIN_LIBRARY NAMES "gtest_main" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
+find_library(gtest_BIN_LIBRARY NAMES "gtest" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
+
+add_custom_command(TARGET appExec POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${gtest_main_BIN_LIBRARY} $<TARGET_FILE_DIR:testsExec>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${gtest_BIN_LIBRARY} $<TARGET_FILE_DIR:testsExec>
+)
+
 ############# 
 # Gstreamer #
 #############
@@ -199,10 +207,9 @@ DeployGStreamer(appExec "${_gstreamer_plugins}")
 #platform specifics missing dependency
 IF(WIN32)
     find_library(giognutls_LIBRARY NAMES "giognutls" PATHS "$ENV{MSYS2_ROOT}/mingw64/lib/gio/modules" NO_DEFAULT_PATH)
-    add_custom_command(TARGET appExec       
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-            ${giognutls_LIBRARY} 
-            "$<TARGET_FILE_DIR:appExec>/gio"
+    add_custom_command(TARGET appExec
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gio       
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${giognutls_LIBRARY} $<TARGET_FILE_DIR:appExec>/gio
     ) 
 endif()
 
@@ -363,17 +370,22 @@ target_sources(appExec PUBLIC
 # translations #
 ################
 
-#updates TS files from sources
+#define translation files
 list(APPEND APP_TRANSLATION_FILES 
     "src/_i18n/fr.ts"
 )
+
+#updates TS files from sources
 qt5_create_translation(QM_FILES "src"
     ${APP_TRANSLATION_FILES}
 )
 
+#generate QM files
+qt5_add_translation(APP_BINARY_TRANSLATION_FILES ${APP_TRANSLATION_FILES})
+
 #generate QM files from TS
 target_sources(appExec PUBLIC
-    ${APP_TRANSLATION_FILES}
+    ${APP_BINARY_TRANSLATION_FILES}
 )
 
 #copy translations into output
@@ -416,5 +428,5 @@ include(CMakePublish)
 
 #include(PrintAllVariables)
 
-#include(PrintTargetProperties)
-#print_target_properties(PkgConfig::GstPluginsBase)
+include(PrintTargetProperties)
+print_target_properties(PkgConfig::GTest)
