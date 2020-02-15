@@ -10,40 +10,18 @@
             "label": "Debug - 0. Create folders",
             "group": "test",
             "type": "shell",
-            "command": "rm -rf _genDebug; rm -rf _req; mkdir _genDebug; mkdir _req",
-        },
-        {
-            "label": "Debug - 1a. Compile Sentry Native",
-            "dependsOn": "Debug - 0. Create folders",
-            "group": "test",
-            "type": "shell",
-            "command": "git clone https://github.com/getsentry/sentry-native.git --branch feature/c-ver",
-            "options": {
-                "cwd": "${workspaceRoot}/_req"
-            }
-        },
-        {
-            "label": "Debug - 1b. Generate Sentry Native project",
-            "dependsOn": "Debug - 1a. Compile Sentry Native",
-            "group": "test",
-            "type": "shell",
-            "windows" : {
-                "command": "cmake -DCMAKE_TOOLCHAIN_FILE=../../cmake/toolchains/clang-mingw64-win.cmake -GNinja -DCMAKE_BUILD_TYPE=Debug .",
-            },
-            "options": {
-                "cwd": "${workspaceRoot}/_req/sentry-native"
-            }
+            "command": "rm -rf _genDebug; mkdir _genDebug;"
         },
         {
             "label": "Debug - 2a. Generate Project files",
-            "dependsOn" : "Debug - 1b. Generate Sentry Native project",
+            "dependsOn": "Debug - 0. Create folders",
             "group": {
                 "isDefault": true,
-                "kind" : "test"
+                "kind": "test"
             },
             "type": "shell",
-            "windows" : {
-                "command": "cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/clang-mingw64-win.cmake -GNinja -DCMAKE_BUILD_TYPE=Debug ..",
+            "windows": {
+                "command": "cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/clang-mingw64-win.cmake -GNinja -DCMAKE_BUILD_TYPE=Debug .."
             },
             "options": {
                 "cwd": "${workspaceRoot}/_genDebug"
@@ -52,7 +30,14 @@
         {
             "label": "Debug - 3. Build",
             "type": "shell",
-            "command": "cmake --build ./_genDebug"
+            "command": "cmake --build ./_genDebug",
+            "problemMatcher": []
+        },
+        {
+            "label": "Zip for deploy",
+            "type": "shell",
+            "command": "cmake --build ./_genDebug --target zipForDeploy",
+            "problemMatcher": []
         }
     ]
 }

@@ -28,6 +28,7 @@ project(RPGRPZ
     LANGUAGES C CXX
 )
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER) #lowered project name
+SET(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME ${PROJECT_NAME_LOWER})
 
 ########################
 ## VERSION.H HANDLING ##
@@ -70,7 +71,6 @@ ELSEIF(APPLE)
     #SET(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
     SET(APP_BUNDLE_TYPE MACOSX_BUNDLE) #set bundle type
 endif()
-
 
 ######################################
 ## define executables and libraries ##
@@ -138,7 +138,7 @@ target_include_directories(appExec PRIVATE ${MINIUPNP_INCLUDE_DIR})
 
 #copy lib into a target
 find_library(miniupnpc_BIN_LIBRARY NAMES "miniupnpc" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
-add_custom_command(TARGET appExec POST_BUILD
+add_custom_command(TARGET appExec #POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different 
         ${miniupnpc_BIN_LIBRARY} $<TARGET_FILE_DIR:appExec>
 )
@@ -159,7 +159,7 @@ target_include_directories(testsExec PRIVATE ${GTest_INCLUDE_DIRS})
 find_library(gtest_main_BIN_LIBRARY NAMES "gtest_main" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
 find_library(gtest_BIN_LIBRARY NAMES "gtest" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
 
-add_custom_command(TARGET appExec POST_BUILD
+add_custom_command(TARGET appExec #POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${gtest_main_BIN_LIBRARY} $<TARGET_FILE_DIR:testsExec>
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${gtest_BIN_LIBRARY} $<TARGET_FILE_DIR:testsExec>
 )
@@ -252,7 +252,7 @@ endif()
 #import all missing GSTREAMER libs
 foreach(_gstSLib IN ITEMS ${GST_SLIBS})
     find_library(${_gstSLib}_LIBRARY NAMES "${_gstSLib}" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
-    add_custom_command(TARGET appExec POST_BUILD
+    add_custom_command(TARGET appExec #POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 
             ${${_gstSLib}_LIBRARY}
             $<TARGET_FILE_DIR:appExec>
@@ -323,7 +323,7 @@ find_library(OPENSSL_CPYPTO_BIN_LIBRARY NAMES "crypto-1_1-x64" PATHS "${CMAKE_LI
 find_library(OPENSSL_SSL_BIN_LIBRARY NAMES "ssl-1_1-x64" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
 
 #copy lib into a target
-add_custom_command(TARGET appExec POST_BUILD
+add_custom_command(TARGET appExec #POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_CPYPTO_BIN_LIBRARY} $<TARGET_FILE_DIR:appExec>
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_SSL_BIN_LIBRARY} $<TARGET_FILE_DIR:appExec>
 )
@@ -332,12 +332,28 @@ add_custom_command(TARGET appExec POST_BUILD
 # Sentry-native #
 #################
 
-#find Sentry-native cmake project
-add_subdirectory(_req/sentry-native)
+#declare git repo
+include(FetchContent)
+FetchContent_Declare(
+  sentry-native
+  GIT_REPOSITORY https://github.com/Amphaal/sentry-native.git
+  GIT_TAG        feature/c-ver
+)
+
+#fetch and add as 
+FetchContent_MakeAvailable(sentry-native)
 
 #link
 target_include_directories(appExec PRIVATE "${Sentry-Native_SOURCE_DIR}/include")
 target_link_libraries(appExec sentry)
+
+#install
+install(TARGETS sentry
+    RUNTIME
+        DESTINATION .
+    PUBLIC_HEADER
+        OPTIONAL
+)
 
 ############
 # Breakpad #
@@ -389,7 +405,7 @@ target_sources(appExec PUBLIC
 )
 
 #copy translations into output
-add_custom_command(TARGET appExec POST_BUILD  
+add_custom_command(TARGET appExec #POST_BUILD  
     COMMAND ${CMAKE_COMMAND} -E copy_if_different 
         ${QM_FILES} $<TARGET_FILE_DIR:appExec>/translations
 )
@@ -400,19 +416,17 @@ add_custom_command(TARGET appExec POST_BUILD
 
 #scan for missing lib dependencies, then fetch and copy them
 if(WIN32)
+    #TODO FIX
     file(GLOB _gst_plugins_dir_content LIST_DIRECTORIES OFF
         "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins/*"
-    )
-    file(GLOB _gio_dir_content LIST_DIRECTORIES OFF
-        "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gio/*"
     )
 
     STRING(REGEX REPLACE "/" "\\\\\\\\\\\\" ESCAPED_CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH})
 
     add_custom_command(TARGET appExec POST_BUILD
         COMMAND ntldd -R -D ${CMAKE_LIBRARY_PATH} $<TARGET_FILE:appExec> | grep -o '${ESCAPED_CMAKE_LIBRARY_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-        COMMAND ntldd -R -D ${CMAKE_LIBRARY_PATH} ${_gst_plugins_dir_content} | grep -o '${ESCAPED_CMAKE_LIBRARY_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-        COMMAND ntldd -R -D ${CMAKE_LIBRARY_PATH} ${_gio_dir_content} | grep -o '${ESCAPED_CMAKE_LIBRARY_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}        
+        COMMAND ntldd -R -D ${CMAKE_LIBRARY_PATH} ${giognutls_LIBRARY} | grep -o '${ESCAPED_CMAKE_LIBRARY_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}        
+        #TODO FIX ##COMMAND ntldd -R -D ${CMAKE_LIBRARY_PATH} ${_gst_plugins_dir_content} | grep -o '${ESCAPED_CMAKE_LIBRARY_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     )
 endif()
 
@@ -428,5 +442,5 @@ include(CMakePublish)
 
 #include(PrintAllVariables)
 
-include(PrintTargetProperties)
-print_target_properties(PkgConfig::GTest)
+#include(PrintTargetProperties)
+#print_target_properties(sentry)

@@ -31,7 +31,7 @@ find_program(MACDEPLOYQT_EXECUTABLE macdeployqt HINTS "${_qt_bin_dir}")
 # Add commands that copy the required Qt files to the application bundle
 # represented by the target
 function(macdeployqt target)
-    add_custom_command(TARGET ${target} POST_BUILD
+    add_custom_command(TARGET ${target} 
         COMMAND "${MACDEPLOYQT_EXECUTABLE}"
             \"$<TARGET_FILE_DIR:${target}>/../..\"
             -always-overwrite

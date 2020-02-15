@@ -33,7 +33,7 @@ find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${_qt_bin_dir}")
 function(windeployqt target)
 
     # Run windeployqt immediately after build
-    add_custom_command(TARGET ${target} POST_BUILD
+    add_custom_command(TARGET ${target} 
         COMMAND "${CMAKE_COMMAND}" -E
             env PATH="${_qt_bin_dir}" "${WINDEPLOYQT_EXECUTABLE}"
                 --verbose 0
