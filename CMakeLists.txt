@@ -138,7 +138,7 @@ target_include_directories(appExec PRIVATE ${MINIUPNP_INCLUDE_DIR})
 
 #copy lib into a target
 find_library(miniupnpc_BIN_LIBRARY NAMES "miniupnpc" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
-add_custom_command(TARGET appExec #POST_BUILD
+add_custom_command(TARGET appExec 
     COMMAND ${CMAKE_COMMAND} -E copy_if_different 
         ${miniupnpc_BIN_LIBRARY} $<TARGET_FILE_DIR:appExec>
 )
@@ -159,7 +159,7 @@ target_include_directories(testsExec PRIVATE ${GTest_INCLUDE_DIRS})
 find_library(gtest_main_BIN_LIBRARY NAMES "gtest_main" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
 find_library(gtest_BIN_LIBRARY NAMES "gtest" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
 
-add_custom_command(TARGET appExec #POST_BUILD
+add_custom_command(TARGET appExec 
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${gtest_main_BIN_LIBRARY} $<TARGET_FILE_DIR:testsExec>
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${gtest_BIN_LIBRARY} $<TARGET_FILE_DIR:testsExec>
 )
@@ -169,13 +169,16 @@ add_custom_command(TARGET appExec #POST_BUILD
 #############
 
 #find Gstreamer
-include(GStreamerHelper)
-FindGStreamer()
+pkg_check_modules(Gst REQUIRED IMPORTED_TARGET
+    gstreamer-1.0
+    gstreamer-controller-1.0
+    gstreamer-net-1.0
+    gstreamer-audio-1.0
+)
 
 #link
 target_link_libraries(appExec     
     PkgConfig::Gst
-    PkgConfig::GstPluginsBase
 )
 
 ####define gstreamer plugins to use
@@ -197,8 +200,30 @@ LIST(APPEND _gstreamer_plugins
     gstaudioresample
 )
 
+#create plugin directory
+add_custom_command(TARGET appExec 
+    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:appExec>/gst-plugins
+)
+
+#get plugin shared libraries location
+pkg_get_variable(GSTREAMER_PLUGINS_DLL_LOCATION gstreamer-1.0 
+    pluginsdir
+)
+
 #copy gstreamer plugins into output
-DeployGStreamer(appExec "${_gstreamer_plugins}")
+foreach(_gstPluginLib IN ITEMS ${_gstreamer_plugins})
+    
+    find_library(${_gstPluginLib}_LIBRARY NAMES "${_gstPluginLib}" PATHS "${GSTREAMER_PLUGINS_DLL_LOCATION}" NO_DEFAULT_PATH)
+    
+    list(APPEND _gstPluginLib_bin ${${_gstPluginLib}_LIBRARY})
+    
+    add_custom_command(TARGET appExec 
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+            ${${_gstPluginLib}_LIBRARY}
+            $<TARGET_FILE_DIR:appExec>/gst-plugins
+    )
+
+endforeach()
 
 # ######################
 # # GST LIBRARIES COPY #
@@ -216,10 +241,6 @@ endif()
 #missing deps for gstreamer
 if(APPLE)
     list(APPEND GST_SLIBS
-        avcodec
-        avfilter
-        avformat
-        avutil
         bz2
         gmp
         gnutls
@@ -227,16 +248,11 @@ if(APPLE)
         intl
         nettle
         soup-2.4
-        swresample
         tasn1
         xml2
     )
 elseif(WIN32)
     list(APPEND GST_SLIBS
-        avcodec-58
-        avfilter-7
-        avformat-58
-        avutil-56
         libgmp-10
         libgnutls-30
         libhogweed-5
@@ -245,14 +261,13 @@ elseif(WIN32)
         libtasn1-6
         libwinpthread-1
         libxml2-2
-        swresample-3
     )
 endif()
 
 #import all missing GSTREAMER libs
 foreach(_gstSLib IN ITEMS ${GST_SLIBS})
     find_library(${_gstSLib}_LIBRARY NAMES "${_gstSLib}" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
-    add_custom_command(TARGET appExec #POST_BUILD
+    add_custom_command(TARGET appExec 
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 
             ${${_gstSLib}_LIBRARY}
             $<TARGET_FILE_DIR:appExec>
@@ -323,7 +338,7 @@ find_library(OPENSSL_CPYPTO_BIN_LIBRARY NAMES "crypto-1_1-x64" PATHS "${CMAKE_LI
 find_library(OPENSSL_SSL_BIN_LIBRARY NAMES "ssl-1_1-x64" PATHS "${CMAKE_LIBRARY_PATH}" NO_DEFAULT_PATH)
 
 #copy lib into a target
-add_custom_command(TARGET appExec #POST_BUILD
+add_custom_command(TARGET appExec 
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_CPYPTO_BIN_LIBRARY} $<TARGET_FILE_DIR:appExec>
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_SSL_BIN_LIBRARY} $<TARGET_FILE_DIR:appExec>
 )
@@ -405,7 +420,7 @@ target_sources(appExec PUBLIC
 )
 
 #copy translations into output
-add_custom_command(TARGET appExec #POST_BUILD  
+add_custom_command(TARGET appExec   
     COMMAND ${CMAKE_COMMAND} -E copy_if_different 
         ${QM_FILES} $<TARGET_FILE_DIR:appExec>/translations
 )
@@ -416,17 +431,13 @@ add_custom_command(TARGET appExec #POST_BUILD
 
 #scan for missing lib dependencies, then fetch and copy them
 if(WIN32)
-    #TODO FIX
-    file(GLOB _gst_plugins_dir_content LIST_DIRECTORIES OFF
-        "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins/*"
-    )
 
     STRING(REGEX REPLACE "/" "\\\\\\\\\\\\" ESCAPED_CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH})
 
     add_custom_command(TARGET appExec POST_BUILD
         COMMAND ntldd -R -D ${CMAKE_LIBRARY_PATH} $<TARGET_FILE:appExec> | grep -o '${ESCAPED_CMAKE_LIBRARY_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         COMMAND ntldd -R -D ${CMAKE_LIBRARY_PATH} ${giognutls_LIBRARY} | grep -o '${ESCAPED_CMAKE_LIBRARY_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}        
-        #TODO FIX ##COMMAND ntldd -R -D ${CMAKE_LIBRARY_PATH} ${_gst_plugins_dir_content} | grep -o '${ESCAPED_CMAKE_LIBRARY_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        COMMAND ntldd -R -D ${CMAKE_LIBRARY_PATH} ${_gstPluginLib_bin} | grep -o '${ESCAPED_CMAKE_LIBRARY_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     )
 endif()
 
@@ -443,4 +454,4 @@ include(CMakePublish)
 #include(PrintAllVariables)
 
 #include(PrintTargetProperties)
-#print_target_properties(sentry)
+#print_target_properties(package)

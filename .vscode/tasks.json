@@ -7,14 +7,14 @@
     },
     "tasks": [
         {
-            "label": "Debug - 0. Create folders",
+            "label": "0. Create folders",
             "group": "test",
             "type": "shell",
             "command": "rm -rf _genDebug; mkdir _genDebug;"
         },
         {
-            "label": "Debug - 2a. Generate Project files",
-            "dependsOn": "Debug - 0. Create folders",
+            "label": "1. Generate Project files",
+            "dependsOn": "0. Create folders",
             "group": {
                 "isDefault": true,
                 "kind": "test"
@@ -28,13 +28,13 @@
             }
         },
         {
-            "label": "Debug - 3. Build",
+            "label": "2. Build",
             "type": "shell",
             "command": "cmake --build ./_genDebug",
             "problemMatcher": []
         },
         {
-            "label": "Zip for deploy",
+            "label": "A. Zip for deploy",
             "type": "shell",
             "command": "cmake --build ./_genDebug --target zipForDeploy",
             "problemMatcher": []

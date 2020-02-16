@@ -9,10 +9,11 @@ Supported:
 
 Prerequisites to build:
 - For Windows + MSYS2
-    - Create env variable MSYS2_ROOT (ex : C:/msys64)
-    - pacman -Syu
-    - pacman -Su
-    - pacman -S --needed - < ./env/msys2_pkglist.txt
+    - Install MSYS2 : https://www.msys2.org/
+    - Create env. variable MSYS2_ROOT (ex : C:/msys64)
+    - Run : pacman -Syu (From msys2_shell.cmd)
+    - Run : pacman -Su (From msys2_shell.cmd)
+    - Run : pacman -S --needed - < ./prerequisites/msys2_pkglist.txt (From msys2_shell.cmd)
 
 Recommanded:
 - Visual Studio Code, for builtin debugging helpers (https://code.visualstudio.com/)

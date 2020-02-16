@@ -73,11 +73,11 @@ void ViewMapHint::_checkForOwnedTokens() {
     QSet<RPZAtom::Id> nowOwned;
     if(Authorisations::isHostAble()) { //if is host, owns everything
         auto oks = this->_ownables().keys();
-        nowOwned = oks.toSet(); // nowOwned = QSet<RPZAtom::Id>(oks.begin(), oks.end());
+        nowOwned = QSet<RPZAtom::Id>(oks.begin(), oks.end());
     }
     else { //if not, owns from specified character to impersonate
         auto oks = this->_ownables().keys(this->_myCharacterId);
-        nowOwned = oks.toSet(); // nowOwned = QSet<RPZAtom::Id>(oks.begin(), oks.end());
+        nowOwned = QSet<RPZAtom::Id>(oks.begin(), oks.end());
     }
         
     //update owned tokens
@@ -146,7 +146,7 @@ void ViewMapHint::_updateTemplateAtom(RPZAtom::Updates updates) {
     //remove illegal parameters from updates
     auto templateLegals = this->_templateAtom.legalParameters();
     auto illegalsList = updates.keys();
-    auto illegals = illegalsList.toSet().subtract(templateLegals); // auto illegals = QSet<RPZAtom::Parameter>(illegalsList.begin(), illegalsList.end()).subtract(templateLegals);
+    auto illegals = QSet<RPZAtom::Parameter>(illegalsList.begin(), illegalsList.end()).subtract(templateLegals);
     for(const auto &illegal : illegals) updates.remove(illegal);
 
     //if no more updates, skip
@@ -374,7 +374,7 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &asset) {
     
     //get uniques ids
     auto setOfGraphicsItemsToReplaceList = this->_missingAssetHashesFromDb.values(hash);
-    setOfGraphicsItemsToReplace = setOfGraphicsItemsToReplaceList.toSet(); // setOfGraphicsItemsToReplace = QSet<QGraphicsItem*>(setOfGraphicsItemsToReplaceList.begin(), setOfGraphicsItemsToReplaceList.end());
+    setOfGraphicsItemsToReplace = QSet<QGraphicsItem*>(setOfGraphicsItemsToReplaceList.begin(), setOfGraphicsItemsToReplaceList.end());
     
     //iterate through the list of GI to replace
     for(const auto item : setOfGraphicsItemsToReplace) {

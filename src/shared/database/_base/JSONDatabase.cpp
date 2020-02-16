@@ -134,7 +134,7 @@ bool JSONDatabase::_handleVersionMissmatch(QJsonObject &databaseToUpdate, JSONDa
     //remove obsolete handlers
     auto aimedAPIVersion = this->apiVersion();
     auto handledAPIVersions = handlers.keys();
-    auto hAPIvSet = handledAPIVersions.toSet(); // auto hAPIvSet = QSet<JSONDatabase::Version>(handledAPIVersions.begin(), handledAPIVersions.end());
+    auto hAPIvSet = QSet<JSONDatabase::Version>(handledAPIVersions.begin(), handledAPIVersions.end());
 
     //apply handlers
     bool updateApplied = false;
