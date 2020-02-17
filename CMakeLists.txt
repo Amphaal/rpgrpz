@@ -98,7 +98,8 @@ endif()
 
 #define test executable
 add_executable(testsExec)
-set_target_properties(testsExec PROPERTIES OUTPUT_NAME "${PROJECT_NAME}_tests") #define executable name
+SET(TEST_EXEC_OUTPUT_NAME "${PROJECT_NAME}_tests")
+set_target_properties(testsExec PROPERTIES OUTPUT_NAME "${TEST_EXEC_OUTPUT_NAME}") #define executable name
 target_sources(testsExec PRIVATE "tests/tests.cpp")
 target_link_libraries(testsExec INTERFACE appExec)
 
