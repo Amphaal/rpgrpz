@@ -3,7 +3,7 @@
 [ ![Download](https://api.bintray.com/packages/amphaal/rpgrpz/rpgrpz-win/images/download.svg) ](https://dl.bintray.com/amphaal/rpgrpz/)
 
 Supported:
-- Windows + MSYS2 : WIP
+- Windows + MSYS2 : OK
 - MacOS : Obsolete
 - Linux : WIP
 

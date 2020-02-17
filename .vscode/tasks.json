@@ -21,7 +21,7 @@
             },
             "type": "shell",
             "windows": {
-                "command": "cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/clang-mingw64-win.cmake -GNinja -DCMAKE_BUILD_TYPE=Debug .."
+                "command": "cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/clang-lld-mingw64-win.cmake -GNinja -DCMAKE_BUILD_TYPE=Debug .."
             },
             "options": {
                 "cwd": "${workspaceRoot}/_genDebug"
@@ -30,7 +30,10 @@
         {
             "label": "2. Build",
             "type": "shell",
-            "command": "cmake --build ./_genDebug",
+            "command": "ninja",
+            "options": {
+                "cwd": "${workspaceRoot}/_genDebug"
+            },
             "problemMatcher": []
         },
         {
