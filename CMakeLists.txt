@@ -88,9 +88,12 @@ add_executable(appExec ${APP_BUNDLE_TYPE})
 set_target_properties(appExec PROPERTIES OUTPUT_NAME "${PROJECT_NAME}") #define executable name
 target_compile_definitions(appExec PRIVATE $<$<CONFIG:Debug>:_DEBUG>) #define _DEBUG markup if in DEBUG config
 
-#allows export for debuging
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set_target_properties(appExec PROPERTIES ENABLE_EXPORTS TRUE)
+    IF(WIN32)  
+        target_link_options(appExec PRIVATE -Wl,-pdb=) # generate pdb files
+    endif()
+else()
+    set_target_properties(appExec PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE) #enable LTO
 endif()
 
 #define test executable
