@@ -128,13 +128,13 @@ endif()
 # pkgConfig and find_library setup #
 ####################################
 
-IF(WIN32)
+
     SET(PKG_CONFIG_USE_CMAKE_PREFIX_PATH TRUE)
     list(APPEND CMAKE_PREFIX_PATH "$ENV{MINGW64_ROOT};$ENV{MINGW64_ROOT}/x86_64-w64-mingw32") #contains libm (math.h), helps gst linkage
     list(APPEND CMAKE_LIBRARY_PATH "$ENV{MINGW64_ROOT}/lib") #helps to find dll.a files for LDD linkage
     list(APPEND CMAKE_INCLUDE_PATH "$ENV{MINGW64_ROOT}/include") #helps to find header files
     list(APPEND CMAKE_PROGRAM_PATH "$ENV{MINGW64_ROOT}/bin") #contains most of .dll files to be installed with executable
-endif()
+
 
 #using pkgConfig, set PKG_CONFIG_EXECUTABLE if not found
 find_package(PkgConfig REQUIRED)
