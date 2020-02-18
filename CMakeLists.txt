@@ -470,14 +470,3 @@ include(CMakePublish)
 
 #include(PrintTargetProperties)
 #print_target_properties(package)
-
-install(CODE [[
-    file(GET_RUNTIME_DEPENDENCIES 
-        RESOLVED_DEPENDENCIES_VAR CACA
-        UNRESOLVED_DEPENDENCIES_VAR CACA2
-        EXECUTABLES appExec
-    )
-]])
-
-
-
