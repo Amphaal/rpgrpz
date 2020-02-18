@@ -69,7 +69,7 @@ SET(CMAKE_INCLUDE_CURRENT_DIR ON) #for moc auto
 #################################
 
 #define build type if any
-IF(WIN32)
+IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     SET(APP_BUNDLE_TYPE "WIN32") 
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         SET(APP_BUNDLE_TYPE "") #allows Debug cout/cerr console... from LLDB/GDB
@@ -88,11 +88,15 @@ add_executable(appExec ${APP_BUNDLE_TYPE})
 set_target_properties(appExec PROPERTIES OUTPUT_NAME "${PROJECT_NAME}") #define executable name
 target_compile_definitions(appExec PRIVATE $<$<CONFIG:Debug>:_DEBUG>) #define _DEBUG markup if in DEBUG config
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    IF(WIN32)  
+#generate
+if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")  
         target_link_options(appExec PRIVATE -Wl,-pdb=) # generate pdb files
     endif()
-else()
+endif()
+
+#optimise for release
+if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     set_target_properties(appExec PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE) #enable LTO
 endif()
 
@@ -128,13 +132,13 @@ endif()
 # pkgConfig and find_library setup #
 ####################################
 
-
+IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")  
     SET(PKG_CONFIG_USE_CMAKE_PREFIX_PATH TRUE)
     list(APPEND CMAKE_PREFIX_PATH "$ENV{MINGW64_ROOT};$ENV{MINGW64_ROOT}/x86_64-w64-mingw32") #contains libm (math.h), helps gst linkage
     list(APPEND CMAKE_LIBRARY_PATH "$ENV{MINGW64_ROOT}/lib") #helps to find dll.a files for LDD linkage
     list(APPEND CMAKE_INCLUDE_PATH "$ENV{MINGW64_ROOT}/include") #helps to find header files
     list(APPEND CMAKE_PROGRAM_PATH "$ENV{MINGW64_ROOT}/bin") #contains most of .dll files to be installed with executable
-
+endif()
 
 #using pkgConfig, set PKG_CONFIG_EXECUTABLE if not found
 find_package(PkgConfig REQUIRED)

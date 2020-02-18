@@ -10,6 +10,11 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
+#define triple
+set(CLANG_TARGET_TRIPLE "x86_64-w64-mingw32")
+set(CMAKE_C_COMPILER_TARGET ${CLANG_TARGET_TRIPLE})
+set(CMAKE_CXX_COMPILER_TARGET ${CLANG_TARGET_TRIPLE})
+
 SET (CMAKE_C_COMPILER             "clang")
 SET (CMAKE_C_FLAGS                "-fuse-ld=lld -Wall -Wno-incompatible-ms-struct -Wno-incompatible-pointer-types -Wno-macro-redefined")
 SET (CMAKE_C_FLAGS_RELEASE        "-O4 -DNDEBUG")
