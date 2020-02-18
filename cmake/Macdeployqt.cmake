@@ -26,7 +26,7 @@ find_package(Qt5Core REQUIRED)
 # the macdeployqt binary
 get_target_property(_qmake_executable Qt5::qmake IMPORTED_LOCATION)
 get_filename_component(_qt_bin_dir "${_qmake_executable}" DIRECTORY)
-find_program(MACDEPLOYQT_EXECUTABLE macdeployqt HINTS "${_qt_bin_dir}")
+find_library(MACDEPLOYQT_EXECUTABLE macdeployqt HINTS "${_qt_bin_dir}")
 
 # Add commands that copy the required Qt files to the application bundle
 # represented by the target

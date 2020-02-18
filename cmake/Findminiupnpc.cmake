@@ -18,18 +18,9 @@ if (MINIUPNP_INCLUDE_DIR AND MINIUPNP_LIBRARY)
 	set(MINIUPNP_FIND_QUIETLY TRUE)
 endif ()
 
-find_path(MINIUPNP_INCLUDE_DIR miniupnpc.h
-  HINTS $ENV{MINGW64_ROOT}/include
-  PATH_SUFFIXES miniupnpc
-)
-
-find_library(MINIUPNP_LIBRARY miniupnpc
-  HINTS $ENV{MINGW64_ROOT}/lib
-)
-
-find_library(MINIUPNP_STATIC_LIBRARY libminiupnpc.a
-  HINTS $ENV{MINGW64_ROOT}/lib
-)
+find_path(MINIUPNP_INCLUDE_DIR miniupnpc.h PATH_SUFFIXES miniupnpc)
+find_library(MINIUPNP_LIBRARY miniupnpc)
+find_library(MINIUPNP_STATIC_LIBRARY libminiupnpc.a)
 
 set(MINIUPNP_INCLUDE_DIRS ${MINIUPNP_INCLUDE_DIR})
 set(MINIUPNP_LIBRARIES ${MINIUPNP_LIBRARY})

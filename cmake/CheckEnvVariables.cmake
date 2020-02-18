@@ -1,5 +1,5 @@
 #check required ENV vars
-IF(WIN32)
+IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     list(APPEND ENV_VAR_TO_CHECK
         MINGW64_ROOT
     )
