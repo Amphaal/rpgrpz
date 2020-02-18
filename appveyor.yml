@@ -23,7 +23,7 @@ install:
   # - appveyor DownloadFile https://gstreamer.freedesktop.org/data/pkg/windows/1.16.2/gstreamer-1.0-mingw-x86_64-1.16.2.msi
   # - msiexec /i gstreamer-1.0-devel-mingw-x86_64-1.16.2.msi /quiet /qn /norestart /log install-devel.log ADDLOCAL=ALL
   # - msiexec /i gstreamer-1.0-mingw-x86_64-1.16.2.msi /quiet /qn /norestart /log install.log ADDLOCAL=ALL
-#before_build:
+#after_build:
 # https://docs.sentry.io/cli/dif/; https://docs.sentry.io/cli/configuration/
 #  - sentry-cli --url http://zonme.to2x.ovh:9000/ login
 #  - sentry-cli difutil bundle-sources /debugSymbols

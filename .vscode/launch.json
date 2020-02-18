@@ -12,7 +12,7 @@
             "program" : "",
             "windows": {
                 "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
-                "miDebuggerPath": "${env:MSYS2_ROOT}/mingw64/bin/gdb.exe"
+                "miDebuggerPath": "${env:MINGW64_ROOT}/bin/gdb.exe"
             },
             "externalConsole": false,
             "internalConsoleOptions": "openOnSessionStart",
@@ -53,7 +53,7 @@
             "program" : "",
             "windows": {
                 "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ_tests.exe",
-                "miDebuggerPath": "${env:MSYS2_ROOT}/mingw64/bin/gdb.exe"
+                "miDebuggerPath": "${env:MINGW64_ROOT}/bin/gdb.exe"
             },
             "externalConsole": false,
             "internalConsoleOptions": "openOnSessionStart",

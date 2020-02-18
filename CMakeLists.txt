@@ -129,9 +129,9 @@ endif()
 ####################################
 
 IF(WIN32)
-    list(APPEND CMAKE_PREFIX_PATH "$ENV{MSYS2_ROOT}/mingw64/x86_64-w64-mingw32") #contains libm (math.h), helps gst linkage
-    list(APPEND CMAKE_LIBRARY_PATH "$ENV{MSYS2_ROOT}/mingw64/lib") #helps to find dll.a files for LDD linkage
-    list(APPEND CMAKE_LIBRARY_RUNTIME_PATH "$ENV{MSYS2_ROOT}/mingw64/bin") #contains most of .dll files to be installed with executable
+    list(APPEND CMAKE_PREFIX_PATH "$ENV{MINGW64_ROOT}/x86_64-w64-mingw32") #contains libm (math.h), helps gst linkage
+    list(APPEND CMAKE_LIBRARY_PATH "$ENV{MINGW64_ROOT}/lib") #helps to find dll.a files for LDD linkage
+    list(APPEND CMAKE_LIBRARY_RUNTIME_PATH "$ENV{MINGW64_ROOT}/bin") #contains most of .dll files to be installed with executable
 endif()
 
 #using pkgConfig, set PKG_CONFIG_EXECUTABLE if not found
@@ -243,7 +243,7 @@ endforeach()
 
 #platform specifics missing dependency
 IF(WIN32)
-    find_library(giognutls_LIBRARY NAMES "giognutls" PATHS "$ENV{MSYS2_ROOT}/mingw64/lib/gio/modules" NO_DEFAULT_PATH)
+    find_library(giognutls_LIBRARY NAMES "giognutls" PATHS "$ENV{MINGW64_ROOT}/lib/gio/modules" NO_DEFAULT_PATH)
     add_custom_command(TARGET appExec
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gio       
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${giognutls_LIBRARY} $<TARGET_FILE_DIR:appExec>/gio
@@ -470,3 +470,14 @@ include(CMakePublish)
 
 #include(PrintTargetProperties)
 #print_target_properties(package)
+
+install(CODE [[
+    file(GET_RUNTIME_DEPENDENCIES 
+        RESOLVED_DEPENDENCIES_VAR CACA
+        UNRESOLVED_DEPENDENCIES_VAR CACA2
+        EXECUTABLES appExec
+    )
+]])
+
+
+

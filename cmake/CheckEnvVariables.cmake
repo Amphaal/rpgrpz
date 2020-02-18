@@ -1,7 +1,7 @@
 #check required ENV vars
 IF(WIN32)
     list(APPEND ENV_VAR_TO_CHECK
-        MSYS2_ROOT
+        MINGW64_ROOT
     )
     foreach(C_ENV IN LISTS ENV_VAR_TO_CHECK)
         if(NOT DEFINED ENV{${C_ENV}})
