@@ -129,9 +129,10 @@ endif()
 ####################################
 
 IF(WIN32)
-    list(APPEND CMAKE_PREFIX_PATH "$ENV{MINGW64_ROOT}/x86_64-w64-mingw32") #contains libm (math.h), helps gst linkage
+    list(APPEND CMAKE_PREFIX_PATH "$ENV{MINGW64_ROOT};$ENV{MINGW64_ROOT}/x86_64-w64-mingw32") #contains libm (math.h), helps gst linkage
     list(APPEND CMAKE_LIBRARY_PATH "$ENV{MINGW64_ROOT}/lib") #helps to find dll.a files for LDD linkage
-    list(APPEND CMAKE_LIBRARY_RUNTIME_PATH "$ENV{MINGW64_ROOT}/bin") #contains most of .dll files to be installed with executable
+    list(APPEND CMAKE_INCLUDE_PATH "$ENV{MINGW64_ROOT}/include") #helps to find header files
+    list(APPEND CMAKE_PROGRAM_PATH "$ENV{MINGW64_ROOT}/bin") #contains most of .dll files to be installed with executable
 endif()
 
 #using pkgConfig, set PKG_CONFIG_EXECUTABLE if not found
@@ -149,7 +150,7 @@ target_link_libraries(appExec ${MINIUPNP_LIBRARY})
 target_include_directories(appExec PRIVATE ${MINIUPNP_INCLUDE_DIR})
 
 #copy lib into a target
-find_library(miniupnpc_BIN_LIBRARY NAMES "miniupnpc" PATHS "${CMAKE_LIBRARY_RUNTIME_PATH}" NO_DEFAULT_PATH)
+find_library(miniupnpc_BIN_LIBRARY NAMES "miniupnpc" PATHS "${CMAKE_PROGRAM_PATH}" NO_DEFAULT_PATH)
 add_custom_command(TARGET appExec 
     COMMAND ${CMAKE_COMMAND} -E copy_if_different 
         ${miniupnpc_BIN_LIBRARY} $<TARGET_FILE_DIR:appExec>
@@ -168,8 +169,8 @@ pkg_check_modules(GTest REQUIRED IMPORTED_TARGET
 target_link_libraries(testsExec PRIVATE PkgConfig::GTest)
 target_include_directories(testsExec PRIVATE ${GTest_INCLUDE_DIRS})
 
-find_library(gtest_main_BIN_LIBRARY NAMES "gtest_main" PATHS "${CMAKE_LIBRARY_RUNTIME_PATH}" NO_DEFAULT_PATH)
-find_library(gtest_BIN_LIBRARY NAMES "gtest" PATHS "${CMAKE_LIBRARY_RUNTIME_PATH}" NO_DEFAULT_PATH)
+find_library(gtest_main_BIN_LIBRARY NAMES "gtest_main" PATHS "${CMAKE_PROGRAM_PATH}" NO_DEFAULT_PATH)
+find_library(gtest_BIN_LIBRARY NAMES "gtest" PATHS "${CMAKE_PROGRAM_PATH}" NO_DEFAULT_PATH)
 
 add_custom_command(TARGET appExec 
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${gtest_main_BIN_LIBRARY} $<TARGET_FILE_DIR:testsExec>
@@ -278,7 +279,7 @@ endif()
 
 #import all missing GSTREAMER libs
 foreach(_gstSLib IN ITEMS ${GST_SLIBS})
-    find_library(${_gstSLib}_LIBRARY NAMES "${_gstSLib}" PATHS "${CMAKE_LIBRARY_RUNTIME_PATH}" NO_DEFAULT_PATH)
+    find_library(${_gstSLib}_LIBRARY NAMES "${_gstSLib}" PATHS "${CMAKE_PROGRAM_PATH}" NO_DEFAULT_PATH)
     add_custom_command(TARGET appExec 
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 
             ${${_gstSLib}_LIBRARY}
@@ -324,7 +325,7 @@ endif()
 
 #missing libs
 IF(WIN32)
-    find_library(libjpeg_LIBRARY NAMES "libjpeg-8" PATHS "${CMAKE_LIBRARY_RUNTIME_PATH}" NO_DEFAULT_PATH) #for icons handling
+    find_library(libjpeg_LIBRARY NAMES "libjpeg-8" PATHS "${CMAKE_PROGRAM_PATH}" NO_DEFAULT_PATH) #for icons handling
     add_custom_command(TARGET appExec 
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 
             ${libjpeg_LIBRARY} $<TARGET_FILE_DIR:appExec>
@@ -349,8 +350,8 @@ if(WIN32)
 endif()
 
 #find libs
-find_library(OPENSSL_CPYPTO_BIN_LIBRARY NAMES "crypto-1_1-x64" PATHS "${CMAKE_LIBRARY_RUNTIME_PATH}" NO_DEFAULT_PATH)
-find_library(OPENSSL_SSL_BIN_LIBRARY NAMES "ssl-1_1-x64" PATHS "${CMAKE_LIBRARY_RUNTIME_PATH}" NO_DEFAULT_PATH)
+find_library(OPENSSL_CPYPTO_BIN_LIBRARY NAMES "crypto-1_1-x64" PATHS "${CMAKE_PROGRAM_PATH}" NO_DEFAULT_PATH)
+find_library(OPENSSL_SSL_BIN_LIBRARY NAMES "ssl-1_1-x64" PATHS "${CMAKE_PROGRAM_PATH}" NO_DEFAULT_PATH)
 
 #copy lib into a target
 add_custom_command(TARGET appExec 
@@ -447,12 +448,12 @@ add_custom_command(TARGET appExec
 #scan for missing lib dependencies, then fetch and copy them
 if(WIN32)
 
-    STRING(REGEX REPLACE "/" "\\\\\\\\\\\\" ESCAPED_CMAKE_LIBRARY_RUNTIME_PATH ${CMAKE_LIBRARY_RUNTIME_PATH})
+    STRING(REGEX REPLACE "/" "\\\\\\\\\\\\" ESCAPED_CMAKE_PROGRAM_PATH ${CMAKE_PROGRAM_PATH})
 
     add_custom_command(TARGET appExec POST_BUILD
-        COMMAND ntldd -R -D ${CMAKE_LIBRARY_RUNTIME_PATH} $<TARGET_FILE:appExec> | grep -o '${ESCAPED_CMAKE_LIBRARY_RUNTIME_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-        COMMAND ntldd -R -D ${CMAKE_LIBRARY_RUNTIME_PATH} ${giognutls_LIBRARY} | grep -o '${ESCAPED_CMAKE_LIBRARY_RUNTIME_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}        
-        COMMAND ntldd -R -D ${CMAKE_LIBRARY_RUNTIME_PATH} ${_gstPluginLib_bin} | grep -o '${ESCAPED_CMAKE_LIBRARY_RUNTIME_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        COMMAND ntldd -R -D ${CMAKE_PROGRAM_PATH} $<TARGET_FILE:appExec> | grep -o '${ESCAPED_CMAKE_PROGRAM_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        COMMAND ntldd -R -D ${CMAKE_PROGRAM_PATH} ${giognutls_LIBRARY} | grep -o '${ESCAPED_CMAKE_PROGRAM_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}        
+        COMMAND ntldd -R -D ${CMAKE_PROGRAM_PATH} ${_gstPluginLib_bin} | grep -o '${ESCAPED_CMAKE_PROGRAM_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     )
 endif()
 
