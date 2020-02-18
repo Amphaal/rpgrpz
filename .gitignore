@@ -2,4 +2,5 @@ src/version.h
 .vscode/ipch
 nbproject
 /_genDebug/
+/_genRelease/
 .DS_Store
