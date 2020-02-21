@@ -30,9 +30,9 @@ build_script:
 #  - sentry-cli difutil bundle-sources /debugSymbols
 #  - sentry-cli upload-dif -o livingwill -p rpgrpz /debugSymbols
 artifacts:
-  - path: build/repository.zip
+  - path: _genRelease/repository.zip
     name: IFW_Repo
-  - path: build/installer.zip
+  - path: _genRelease/installer.zip
     name: IFW_Installer
 # deploy:
 #   - provider: BinTray
