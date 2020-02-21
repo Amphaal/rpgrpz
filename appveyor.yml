@@ -11,7 +11,6 @@ cache:
   - C:\gstreamer\1.0\x86_64
   - C:\ProgramData\chocolatey\bin
   - C:\ProgramData\chocolatey\lib
-  - C:\tools\vcpkg\installed
 install:
   # - choco install pkgconfiglite
   - npm install -g @sentry/cli --unsafe-perm
@@ -22,7 +21,7 @@ install:
 build_script:
   - cmd: mkdir _genRelease
   - cmd: cd _genRelease
-  - cmd: cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DOpenSSL_DIR=C:\OpenSSL-Win64 -G "Ninja".. 
+  - cmd: cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DOpenSSL_DIR=C:\OpenSSL-Win64 -GNinja .. 
   - cmd: cd ..
   - cmd: cmake --build ./_genRelease --target zipForDeploy
 #after_build:
