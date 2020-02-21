@@ -16,9 +16,6 @@ endif()
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-#check env variable presence
-include(CheckEnvVariables)
-
 #############
 ## STARTUP ##
 #############
@@ -36,6 +33,9 @@ project(RPGRPZ
 )
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER) #lowered project name
 SET(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME ${PROJECT_NAME_LOWER})
+
+#check env variable presence, must be after project() !
+include(CheckEnvVariables)
 
 ########################
 ## VERSION.H HANDLING ##
@@ -142,6 +142,9 @@ endif()
 # pkgConfig and find_library setup #
 ####################################
 
+#fetch content handling
+include(FetchContent)
+
 #MINGW64 specific
 IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")  
     
@@ -160,66 +163,143 @@ endif()
 #using pkgConfig, set PKG_CONFIG_EXECUTABLE if not found
 find_package(PkgConfig REQUIRED)
 
-#############
-# miniupnpc #
-#############
+###########
+# OpenSSL #
+###########
 
-#find miniupnpc
-find_package(miniupnpc REQUIRED)
+#find
+find_package(openssl REQUIRED)
 
 #link
-target_link_libraries(appExec ${MINIUPNP_LIBRARY})
-target_include_directories(appExec PRIVATE ${MINIUPNP_INCLUDE_DIR})
+target_link_libraries(appExec
+    OpenSSL::SSL
+    OpenSSL::Crypto
+)
 
-#copy lib into a target
-IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")  
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     
-    find_library(miniupnpc_DLL 
-        NAMES "miniupnpc" 
-        PATHS ${CMAKE_LIBRARY_PATH} 
-        NO_DEFAULT_PATH
+    target_link_libraries(appExec ws2_32) #WSA functions !
+
+    #find libs
+    find_library(OPENSSL_CPYPTO_DLL NAMES "crypto-1_1-x64" PATHS ${CMAKE_LIBRARY_PATH} NO_DEFAULT_PATH)
+    find_library(OPENSSL_SSL_DLL NAMES "ssl-1_1-x64" PATHS ${CMAKE_LIBRARY_PATH} NO_DEFAULT_PATH)
+
+    IF(NOT OPENSSL_CPYPTO_DLL OR NOT OPENSSL_SSL_DLL)
+        message(FATAL_ERROR "Openssl .dll NOT FOUND !")
+    endif()
+
+    #copy lib into a target
+    add_custom_command(TARGET appExec 
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_CPYPTO_DLL} $<TARGET_FILE_DIR:appExec>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_SSL_DLL} $<TARGET_FILE_DIR:appExec>
     )
 
-    IF(NOT miniupnpc_DLL)
-        message(FATAL_ERROR "miniupnpc .dll NOT FOUND !")
+endif()
+
+########
+# QT 5 #
+########
+
+#find Qt5
+find_package(Qt5 REQUIRED COMPONENTS 
+    Core 
+    Gui 
+    Widgets 
+    Network 
+    Svg 
+    OpenGL 
+    LinguistTools
+)
+
+#link
+target_link_libraries(appExec
+    Qt5::Core
+    Qt5::Gui 
+    Qt5::Widgets
+    Qt5::Network
+    Qt5::Svg
+    Qt5::OpenGL
+)
+
+# QT LIBRARIES COPY
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    include(Windeployqt)
+    windeployqt(appExec)
+endif()
+
+if(APPLE)
+    include(Macdeployqt)
+    macdeployqt(appExec)
+endif()
+
+#missing libs
+IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    
+    #for icons handling
+    find_library(libjpeg_LIBRARY 
+        NAMES "libjpeg-8" 
+        PATHS ${CMAKE_LIBRARY_PATH} 
+        NO_DEFAULT_PATH
+    ) 
+    
+    IF(NOT libjpeg_LIBRARY)
+        message(FATAL_ERROR "libjpeg .dll NOT FOUND !")
     endif()
 
     add_custom_command(TARGET appExec 
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-            ${miniupnpc_DLL} $<TARGET_FILE_DIR:appExec>
+            ${libjpeg_LIBRARY} $<TARGET_FILE_DIR:appExec>
     )
 
 endif()
 
-##############
-# googletest #
-##############
+#################
+# Sentry-native #
+#################
 
-#find googletest
-pkg_check_modules(GTest REQUIRED IMPORTED_TARGET
-    gtest_main
+#declare git repo
+FetchContent_Declare(
+  sentry-native
+  GIT_REPOSITORY https://github.com/Amphaal/sentry-native.git
+  GIT_TAG        feature/c-ver
 )
 
+#fetch and add as 
+FetchContent_MakeAvailable(sentry-native)
+
 #link
-target_link_libraries(testsExec PRIVATE PkgConfig::GTest)
-target_include_directories(testsExec PRIVATE ${GTest_INCLUDE_DIRS})
+target_include_directories(appExec PRIVATE "${Sentry-Native_SOURCE_DIR}/include")
+target_link_libraries(appExec sentry)
 
-#copy
-IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")  
-    
-    find_library(gtest_main_DLL NAMES "gtest_main" PATHS ${CMAKE_LIBRARY_PATH} NO_DEFAULT_PATH)
-    find_library(gtest_DLL NAMES "gtest" PATHS ${CMAKE_LIBRARY_PATH} NO_DEFAULT_PATH)
+#install
+install(TARGETS sentry
+    RUNTIME
+        DESTINATION .
+    PUBLIC_HEADER
+        OPTIONAL
+)
 
-    IF(NOT gtest_main_DLL OR NOT gtest_DLL)
-        message(FATAL_ERROR "gtest .dll NOT FOUND !")
-    endif()
+##########
+# Catch2 #
+##########
 
-    add_custom_command(TARGET appExec 
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${gtest_main_DLL} $<TARGET_FILE_DIR:testsExec>
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${gtest_DLL} $<TARGET_FILE_DIR:testsExec>
-    )
+FetchContent_Declare(
+  Catch2
+  GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+  GIT_TAG        master
+)
 
-endif()
+#fetch and add as 
+FetchContent_MakeAvailable(Catch2)
+
+#link
+target_link_libraries(testsExec PRIVATE Catch2)
+
+#install
+install(TARGETS Catch2
+    RUNTIME
+        DESTINATION .
+)
 
 ############# 
 # Gstreamer #
@@ -362,123 +442,36 @@ foreach(_gstSLib IN ITEMS ${GST_SLIBS})
 
 endforeach()
 
-########
-# QT 5 #
-########
+#############
+# miniupnpc #
+#############
 
-#find Qt5
-find_package(Qt5 REQUIRED COMPONENTS 
-    Core 
-    Gui 
-    Widgets 
-    Network 
-    Svg 
-    OpenGL 
-    LinguistTools
-)
+#find miniupnpc
+find_package(miniupnpc REQUIRED)
 
 #link
-target_link_libraries(appExec
-    Qt5::Core
-    Qt5::Gui 
-    Qt5::Widgets
-    Qt5::Network
-    Qt5::Svg
-    Qt5::OpenGL
-)
+target_link_libraries(appExec ${MINIUPNP_LIBRARY})
+target_include_directories(appExec PRIVATE ${MINIUPNP_INCLUDE_DIR})
 
-# QT LIBRARIES COPY
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    include(Windeployqt)
-    windeployqt(appExec)
-endif()
-
-if(APPLE)
-    include(Macdeployqt)
-    macdeployqt(appExec)
-endif()
-
-#missing libs
-IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+#copy lib into a target
+IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")  
     
-    #for icons handling
-    find_library(libjpeg_LIBRARY 
-        NAMES "libjpeg-8" 
+    find_library(miniupnpc_DLL 
+        NAMES "miniupnpc" 
         PATHS ${CMAKE_LIBRARY_PATH} 
         NO_DEFAULT_PATH
-    ) 
-    
-    IF(NOT libjpeg_LIBRARY)
-        message(FATAL_ERROR "libjpeg .dll NOT FOUND !")
+    )
+
+    IF(NOT miniupnpc_DLL)
+        message(FATAL_ERROR "miniupnpc .dll NOT FOUND !")
     endif()
 
     add_custom_command(TARGET appExec 
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-            ${libjpeg_LIBRARY} $<TARGET_FILE_DIR:appExec>
+            ${miniupnpc_DLL} $<TARGET_FILE_DIR:appExec>
     )
 
 endif()
-
-###########
-# OpenSSL #
-###########
-
-#find
-find_package(openssl REQUIRED)
-
-#link
-target_link_libraries(appExec
-    OpenSSL::SSL
-    OpenSSL::Crypto
-)
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    
-    target_link_libraries(appExec ws2_32) #WSA functions !
-
-    #find libs
-    find_library(OPENSSL_CPYPTO_DLL NAMES "crypto-1_1-x64" PATHS ${CMAKE_LIBRARY_PATH} NO_DEFAULT_PATH)
-    find_library(OPENSSL_SSL_DLL NAMES "ssl-1_1-x64" PATHS ${CMAKE_LIBRARY_PATH} NO_DEFAULT_PATH)
-
-    IF(NOT OPENSSL_CPYPTO_DLL OR NOT OPENSSL_SSL_DLL)
-        message(FATAL_ERROR "Openssl .dll NOT FOUND !")
-    endif()
-
-    #copy lib into a target
-    add_custom_command(TARGET appExec 
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_CPYPTO_DLL} $<TARGET_FILE_DIR:appExec>
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_SSL_DLL} $<TARGET_FILE_DIR:appExec>
-    )
-
-endif()
-
-
-#################
-# Sentry-native #
-#################
-
-#declare git repo
-include(FetchContent)
-FetchContent_Declare(
-  sentry-native
-  GIT_REPOSITORY https://github.com/Amphaal/sentry-native.git
-  GIT_TAG        feature/c-ver
-)
-
-#fetch and add as 
-FetchContent_MakeAvailable(sentry-native)
-
-#link
-target_include_directories(appExec PRIVATE "${Sentry-Native_SOURCE_DIR}/include")
-target_link_libraries(appExec sentry)
-
-#install
-install(TARGETS sentry
-    RUNTIME
-        DESTINATION .
-    PUBLIC_HEADER
-        OPTIONAL
-)
 
 ############
 # Breakpad #
@@ -567,4 +560,4 @@ include(CMakePublish)
 #include(PrintAllVariables)
 
 #include(PrintTargetProperties)
-#print_target_properties(package)
+#print_target_properties(Catch2)
