@@ -142,6 +142,9 @@ endif()
 # pkgConfig and find_library setup #
 ####################################
 
+#fetch content handling
+include(FetchContent)
+
 #MINGW64 specific
 IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")  
     
@@ -190,7 +193,6 @@ install(TARGETS sentry
 # Catch2 #
 ##########
 
-include(FetchContent)
 FetchContent_Declare(
   Catch2
   GIT_REPOSITORY https://github.com/catchorg/Catch2.git
