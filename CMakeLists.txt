@@ -16,9 +16,6 @@ endif()
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-#check env variable presence
-include(CheckEnvVariables)
-
 #############
 ## STARTUP ##
 #############
@@ -36,6 +33,9 @@ project(RPGRPZ
 )
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER) #lowered project name
 SET(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME ${PROJECT_NAME_LOWER})
+
+#check env variable presence, must be after project() !
+include(CheckEnvVariables)
 
 ########################
 ## VERSION.H HANDLING ##
