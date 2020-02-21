@@ -21,7 +21,7 @@ install:
 build_script:
   - cmd: mkdir _genRelease
   - cmd: cd _genRelease
-  - cmd: cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DOpenSSL_DIR=C:\OpenSSL-Win64 -GNinja .. 
+  - cmd: cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/win-appveyor.cmake -GNinja .. 
   - cmd: cd ..
   - cmd: cmake --build ./_genRelease --target zipForDeploy
 #after_build:
