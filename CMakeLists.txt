@@ -191,35 +191,28 @@ IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
 endif()
 
-##############
-# googletest #
-##############
+##########
+# Catch2 #
+##########
 
-#find googletest
-pkg_check_modules(GTest REQUIRED IMPORTED_TARGET
-    gtest_main
+include(FetchContent)
+FetchContent_Declare(
+  Catch2
+  GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+  GIT_TAG        master
 )
 
+#fetch and add as 
+FetchContent_MakeAvailable(Catch2)
+
 #link
-target_link_libraries(testsExec PRIVATE PkgConfig::GTest)
-target_include_directories(testsExec PRIVATE ${GTest_INCLUDE_DIRS})
+target_link_libraries(testsExec PRIVATE Catch2)
 
-#copy
-IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")  
-    
-    find_library(gtest_main_DLL NAMES "gtest_main" PATHS ${CMAKE_LIBRARY_PATH} NO_DEFAULT_PATH)
-    find_library(gtest_DLL NAMES "gtest" PATHS ${CMAKE_LIBRARY_PATH} NO_DEFAULT_PATH)
-
-    IF(NOT gtest_main_DLL OR NOT gtest_DLL)
-        message(FATAL_ERROR "gtest .dll NOT FOUND !")
-    endif()
-
-    add_custom_command(TARGET appExec 
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${gtest_main_DLL} $<TARGET_FILE_DIR:testsExec>
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${gtest_DLL} $<TARGET_FILE_DIR:testsExec>
-    )
-
-endif()
+#install
+install(TARGETS Catch2
+    RUNTIME
+        DESTINATION .
+)
 
 ############# 
 # Gstreamer #
@@ -458,7 +451,6 @@ endif()
 #################
 
 #declare git repo
-include(FetchContent)
 FetchContent_Declare(
   sentry-native
   GIT_REPOSITORY https://github.com/Amphaal/sentry-native.git
@@ -567,4 +559,4 @@ include(CMakePublish)
 #include(PrintAllVariables)
 
 #include(PrintTargetProperties)
-#print_target_properties(package)
+#print_target_properties(Catch2)
