@@ -160,36 +160,31 @@ endif()
 #using pkgConfig, set PKG_CONFIG_EXECUTABLE if not found
 find_package(PkgConfig REQUIRED)
 
-#############
-# miniupnpc #
-#############
+#################
+# Sentry-native #
+#################
 
-#find miniupnpc
-find_package(miniupnpc REQUIRED)
+#declare git repo
+FetchContent_Declare(
+  sentry-native
+  GIT_REPOSITORY https://github.com/Amphaal/sentry-native.git
+  GIT_TAG        feature/c-ver
+)
+
+#fetch and add as 
+FetchContent_MakeAvailable(sentry-native)
 
 #link
-target_link_libraries(appExec ${MINIUPNP_LIBRARY})
-target_include_directories(appExec PRIVATE ${MINIUPNP_INCLUDE_DIR})
+target_include_directories(appExec PRIVATE "${Sentry-Native_SOURCE_DIR}/include")
+target_link_libraries(appExec sentry)
 
-#copy lib into a target
-IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")  
-    
-    find_library(miniupnpc_DLL 
-        NAMES "miniupnpc" 
-        PATHS ${CMAKE_LIBRARY_PATH} 
-        NO_DEFAULT_PATH
-    )
-
-    IF(NOT miniupnpc_DLL)
-        message(FATAL_ERROR "miniupnpc .dll NOT FOUND !")
-    endif()
-
-    add_custom_command(TARGET appExec 
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-            ${miniupnpc_DLL} $<TARGET_FILE_DIR:appExec>
-    )
-
-endif()
+#install
+install(TARGETS sentry
+    RUNTIME
+        DESTINATION .
+    PUBLIC_HEADER
+        OPTIONAL
+)
 
 ##########
 # Catch2 #
@@ -445,32 +440,36 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
 endif()
 
+#############
+# miniupnpc #
+#############
 
-#################
-# Sentry-native #
-#################
-
-#declare git repo
-FetchContent_Declare(
-  sentry-native
-  GIT_REPOSITORY https://github.com/Amphaal/sentry-native.git
-  GIT_TAG        feature/c-ver
-)
-
-#fetch and add as 
-FetchContent_MakeAvailable(sentry-native)
+#find miniupnpc
+find_package(miniupnpc REQUIRED)
 
 #link
-target_include_directories(appExec PRIVATE "${Sentry-Native_SOURCE_DIR}/include")
-target_link_libraries(appExec sentry)
+target_link_libraries(appExec ${MINIUPNP_LIBRARY})
+target_include_directories(appExec PRIVATE ${MINIUPNP_INCLUDE_DIR})
 
-#install
-install(TARGETS sentry
-    RUNTIME
-        DESTINATION .
-    PUBLIC_HEADER
-        OPTIONAL
-)
+#copy lib into a target
+IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")  
+    
+    find_library(miniupnpc_DLL 
+        NAMES "miniupnpc" 
+        PATHS ${CMAKE_LIBRARY_PATH} 
+        NO_DEFAULT_PATH
+    )
+
+    IF(NOT miniupnpc_DLL)
+        message(FATAL_ERROR "miniupnpc .dll NOT FOUND !")
+    endif()
+
+    add_custom_command(TARGET appExec 
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+            ${miniupnpc_DLL} $<TARGET_FILE_DIR:appExec>
+    )
+
+endif()
 
 ############
 # Breakpad #

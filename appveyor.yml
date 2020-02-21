@@ -4,7 +4,7 @@ image: Visual Studio 2019
 platform: x64
 configuration: Release
 environment:
-  #nodejs_version: "6"
+  MINGW64_ROOT: "C:\\msys64\\mingw64"
   SENTRY_AUTH_TOKEN:
     secure: zQZbXTbRnxBA1W6zaGe7Erg4A0PMMcAnNmk3x/RGCPSB6GyaVIzAvbHJD6nKkesBEENXwlstV3YOW+PtvPAJ58px7xEhebXSFQ63lw3b2Qo=
 cache:
