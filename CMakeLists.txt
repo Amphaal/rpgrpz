@@ -163,6 +163,96 @@ endif()
 #using pkgConfig, set PKG_CONFIG_EXECUTABLE if not found
 find_package(PkgConfig REQUIRED)
 
+###########
+# OpenSSL #
+###########
+
+#find
+find_package(openssl REQUIRED)
+
+#link
+target_link_libraries(appExec
+    OpenSSL::SSL
+    OpenSSL::Crypto
+)
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    
+    target_link_libraries(appExec ws2_32) #WSA functions !
+
+    #find libs
+    find_library(OPENSSL_CPYPTO_DLL NAMES "crypto-1_1-x64" PATHS ${CMAKE_LIBRARY_PATH} NO_DEFAULT_PATH)
+    find_library(OPENSSL_SSL_DLL NAMES "ssl-1_1-x64" PATHS ${CMAKE_LIBRARY_PATH} NO_DEFAULT_PATH)
+
+    IF(NOT OPENSSL_CPYPTO_DLL OR NOT OPENSSL_SSL_DLL)
+        message(FATAL_ERROR "Openssl .dll NOT FOUND !")
+    endif()
+
+    #copy lib into a target
+    add_custom_command(TARGET appExec 
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_CPYPTO_DLL} $<TARGET_FILE_DIR:appExec>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_SSL_DLL} $<TARGET_FILE_DIR:appExec>
+    )
+
+endif()
+
+########
+# QT 5 #
+########
+
+#find Qt5
+find_package(Qt5 REQUIRED COMPONENTS 
+    Core 
+    Gui 
+    Widgets 
+    Network 
+    Svg 
+    OpenGL 
+    LinguistTools
+)
+
+#link
+target_link_libraries(appExec
+    Qt5::Core
+    Qt5::Gui 
+    Qt5::Widgets
+    Qt5::Network
+    Qt5::Svg
+    Qt5::OpenGL
+)
+
+# QT LIBRARIES COPY
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    include(Windeployqt)
+    windeployqt(appExec)
+endif()
+
+if(APPLE)
+    include(Macdeployqt)
+    macdeployqt(appExec)
+endif()
+
+#missing libs
+IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    
+    #for icons handling
+    find_library(libjpeg_LIBRARY 
+        NAMES "libjpeg-8" 
+        PATHS ${CMAKE_LIBRARY_PATH} 
+        NO_DEFAULT_PATH
+    ) 
+    
+    IF(NOT libjpeg_LIBRARY)
+        message(FATAL_ERROR "libjpeg .dll NOT FOUND !")
+    endif()
+
+    add_custom_command(TARGET appExec 
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+            ${libjpeg_LIBRARY} $<TARGET_FILE_DIR:appExec>
+    )
+
+endif()
+
 #################
 # Sentry-native #
 #################
@@ -351,96 +441,6 @@ foreach(_gstSLib IN ITEMS ${GST_SLIBS})
     )
 
 endforeach()
-
-########
-# QT 5 #
-########
-
-#find Qt5
-find_package(Qt5 REQUIRED COMPONENTS 
-    Core 
-    Gui 
-    Widgets 
-    Network 
-    Svg 
-    OpenGL 
-    LinguistTools
-)
-
-#link
-target_link_libraries(appExec
-    Qt5::Core
-    Qt5::Gui 
-    Qt5::Widgets
-    Qt5::Network
-    Qt5::Svg
-    Qt5::OpenGL
-)
-
-# QT LIBRARIES COPY
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    include(Windeployqt)
-    windeployqt(appExec)
-endif()
-
-if(APPLE)
-    include(Macdeployqt)
-    macdeployqt(appExec)
-endif()
-
-#missing libs
-IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    
-    #for icons handling
-    find_library(libjpeg_LIBRARY 
-        NAMES "libjpeg-8" 
-        PATHS ${CMAKE_LIBRARY_PATH} 
-        NO_DEFAULT_PATH
-    ) 
-    
-    IF(NOT libjpeg_LIBRARY)
-        message(FATAL_ERROR "libjpeg .dll NOT FOUND !")
-    endif()
-
-    add_custom_command(TARGET appExec 
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-            ${libjpeg_LIBRARY} $<TARGET_FILE_DIR:appExec>
-    )
-
-endif()
-
-###########
-# OpenSSL #
-###########
-
-#find
-find_package(openssl REQUIRED)
-
-#link
-target_link_libraries(appExec
-    OpenSSL::SSL
-    OpenSSL::Crypto
-)
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    
-    target_link_libraries(appExec ws2_32) #WSA functions !
-
-    #find libs
-    find_library(OPENSSL_CPYPTO_DLL NAMES "crypto-1_1-x64" PATHS ${CMAKE_LIBRARY_PATH} NO_DEFAULT_PATH)
-    find_library(OPENSSL_SSL_DLL NAMES "ssl-1_1-x64" PATHS ${CMAKE_LIBRARY_PATH} NO_DEFAULT_PATH)
-
-    IF(NOT OPENSSL_CPYPTO_DLL OR NOT OPENSSL_SSL_DLL)
-        message(FATAL_ERROR "Openssl .dll NOT FOUND !")
-    endif()
-
-    #copy lib into a target
-    add_custom_command(TARGET appExec 
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_CPYPTO_DLL} $<TARGET_FILE_DIR:appExec>
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_SSL_DLL} $<TARGET_FILE_DIR:appExec>
-    )
-
-endif()
 
 #############
 # miniupnpc #
