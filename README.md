@@ -4,7 +4,7 @@
 
 Supported (64bits only) :
 - Windows + MSYS2 : OK
-- MacOS : Obsolete
+- MacOS : WIP
 - Linux : WIP
 
 Prerequisites to build:
@@ -14,6 +14,9 @@ Prerequisites to build:
     - Run : pacman -Syu (From msys2_shell.cmd)
     - Run : pacman -Su (From msys2_shell.cmd)
     - Run : pacman -S --needed - < ./prerequisites/msys2_pkglist.txt (From msys2_shell.cmd)
+- For OSX
+    - Install latest XCode from the App Store
+    - Run : brew install $(cat ./prerequisites/osx_packages.txt)
 
 Recommanded:
 - Visual Studio Code, for builtin debugging helpers (https://code.visualstudio.com/)
