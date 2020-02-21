@@ -7,6 +7,8 @@ environment:
   MINGW64_ROOT: "C:\\msys64\\mingw64"
   SENTRY_AUTH_TOKEN:
     secure: zQZbXTbRnxBA1W6zaGe7Erg4A0PMMcAnNmk3x/RGCPSB6GyaVIzAvbHJD6nKkesBEENXwlstV3YOW+PtvPAJ58px7xEhebXSFQ63lw3b2Qo=
+  global:
+    APPVEYOR_SAVE_CACHE_ON_ERROR : true
 cache:
   - C:\gstreamer\1.0\x86_64
   - C:\ProgramData\chocolatey\bin
@@ -14,10 +16,10 @@ cache:
 install:
   # - choco install pkgconfiglite
   # - npm install -g @sentry/cli --unsafe-perm
-  # - appveyor DownloadFile https://gstreamer.freedesktop.org/data/pkg/windows/1.16.2/gstreamer-1.0-devel-mingw-x86_64-1.16.2.msi
-  # - appveyor DownloadFile https://gstreamer.freedesktop.org/data/pkg/windows/1.16.2/gstreamer-1.0-mingw-x86_64-1.16.2.msi
-  # - msiexec /i gstreamer-1.0-devel-mingw-x86_64-1.16.2.msi /quiet /qn /norestart /log install-devel.log ADDLOCAL=ALL
-  # - msiexec /i gstreamer-1.0-mingw-x86_64-1.16.2.msi /quiet /qn /norestart /log install.log ADDLOCAL=ALL
+  - appveyor DownloadFile https://gstreamer.freedesktop.org/data/pkg/windows/1.16.2/gstreamer-1.0-devel-mingw-x86_64-1.16.2.msi
+  - appveyor DownloadFile https://gstreamer.freedesktop.org/data/pkg/windows/1.16.2/gstreamer-1.0-mingw-x86_64-1.16.2.msi
+  - msiexec /i gstreamer-1.0-devel-mingw-x86_64-1.16.2.msi /quiet /qn /norestart /log install-devel.log ADDLOCAL=ALL
+  - msiexec /i gstreamer-1.0-mingw-x86_64-1.16.2.msi /quiet /qn /norestart /log install.log ADDLOCAL=ALL
 build_script:
   - cmd: mkdir _genRelease
   - cmd: cd _genRelease
