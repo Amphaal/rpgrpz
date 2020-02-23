@@ -21,7 +21,7 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 #############
 
 #pre-startup
-cmake_minimum_required(VERSION 3.15.6)
+cmake_minimum_required(VERSION 3.15.4)
 message(STATUS "Using toolchain file: [${CMAKE_TOOLCHAIN_FILE}].")
 
 #project setup
@@ -144,21 +144,6 @@ endif()
 
 #fetch content handling
 include(FetchContent)
-
-#MINGW64 specific
-IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")  
-    
-    list(APPEND CMAKE_PREFIX_PATH 
-        $ENV{MINGW64_ROOT} 
-        $ENV{MINGW64_ROOT}/x86_64-w64-mingw32
-    )
-
-    #.dll are in bin folder
-    list(APPEND CMAKE_LIBRARY_PATH 
-        $ENV{MINGW64_ROOT}/bin
-    )
-
-endif()
 
 #using pkgConfig, set PKG_CONFIG_EXECUTABLE if not found
 find_package(PkgConfig REQUIRED)

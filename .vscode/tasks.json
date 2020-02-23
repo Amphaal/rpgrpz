@@ -7,24 +7,14 @@
     },
     "tasks": [
         {
-            "label": "0. Create folders",
-            "group": "test",
-            "type": "shell",
-            "command": "rm -rf _genDebug; mkdir _genDebug;"
-        },
-        {
             "label": "1. Generate Project files",
-            "dependsOn": "0. Create folders",
             "group": {
                 "isDefault": true,
                 "kind": "test"
             },
             "type": "shell",
             "windows": {
-                "command": "cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/toolchains/clang-lld-mingw64-win.cmake -GNinja -DCMAKE_BUILD_TYPE=Debug .."
-            },
-            "options": {
-                "cwd": "${workspaceRoot}/_genDebug"
+                "command": "cmake -GNinja -B_genDebug -H. -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/msys.cmake -DCMAKE_BUILD_TYPE=Debug"
             }
         },
         {

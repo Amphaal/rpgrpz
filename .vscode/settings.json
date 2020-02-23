@@ -5,8 +5,7 @@
         "MSYSTEM": "MINGW64",
         "MSYS2_PATH_TYPE": "inherit",
         "CHERE_INVOKING": "1",
-        "MSVSCODE": "1",
-        "LD_LIBRARY_PATH" : "/c/msys64/mingw64/bin"
+        "MSVSCODE": "1"
     },
     "files.associations": {
         "*.ts": "xml",
