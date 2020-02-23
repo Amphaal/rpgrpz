@@ -1,0 +1,2 @@
+SET(CMAKE_LIBRARY_PATH ${CMAKE_SYSTEM_LIBRARY_PATH}) #must be defined for peldd
+SET(CMAKE_BUILD_TYPE RelWithDebInfo)

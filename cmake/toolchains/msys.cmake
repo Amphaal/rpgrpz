@@ -8,9 +8,7 @@ list(APPEND CMAKE_PREFIX_PATH
 )
 
 #.dll are in bin folder
-list(APPEND CMAKE_LIBRARY_PATH 
-    $ENV{MINGW64_ROOT}/bin
-)
+SET(CMAKE_LIBRARY_PATH $ENV{MINGW64_ROOT}/bin) #must be defined for peldd
 
 SET (CMAKE_C_COMPILER             "clang")
 SET (CMAKE_C_FLAGS                "-fuse-ld=lld -Wall -Wno-incompatible-ms-struct -Wno-incompatible-pointer-types -Wno-macro-redefined")

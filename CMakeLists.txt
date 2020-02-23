@@ -34,9 +34,6 @@ project(RPGRPZ
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER) #lowered project name
 SET(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME ${PROJECT_NAME_LOWER})
 
-#check env variable presence, must be after project() !
-include(CheckEnvVariables)
-
 ########################
 ## VERSION.H HANDLING ##
 ########################
@@ -238,6 +235,27 @@ IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
 endif()
 
+###########
+# pe-util #
+###########
+
+IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+
+    #declare git repo
+    FetchContent_Declare(
+        pe-util
+        GIT_REPOSITORY https://github.com/Amphaal/pe-util.git
+        GIT_TAG        master
+    )
+
+    #available as target
+    FetchContent_MakeAvailable(pe-util)
+
+    #as dependency
+    add_dependencies(appExec peldd)
+
+endif()
+
 #################
 # Sentry-native #
 #################
@@ -256,13 +274,14 @@ FetchContent_MakeAvailable(sentry-native)
 target_include_directories(appExec PRIVATE "${Sentry-Native_SOURCE_DIR}/include")
 target_link_libraries(appExec sentry)
 
-#install
-install(TARGETS sentry
-    RUNTIME
-        DESTINATION .
-    PUBLIC_HEADER
-        OPTIONAL
-)
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    install(TARGETS sentry
+        RUNTIME
+            DESTINATION .
+        PUBLIC_HEADER
+            OPTIONAL
+    )
+endif()
 
 ##########
 # Catch2 #
@@ -280,11 +299,12 @@ FetchContent_MakeAvailable(Catch2)
 #link
 target_link_libraries(testsExec PRIVATE Catch2)
 
-#install
-install(TARGETS Catch2
-    RUNTIME
-        DESTINATION .
-)
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    install(TARGETS Catch2
+        RUNTIME
+            DESTINATION .
+    )
+endif()
 
 ############# 
 # Gstreamer #
@@ -520,14 +540,15 @@ add_custom_command(TARGET appExec
 #scan for missing lib dependencies, then fetch and copy them
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     
-    SET(MINGW64_DLL_PATH "$ENV{MINGW64_ROOT}/bin")
-    
-    STRING(REGEX REPLACE "/" "\\\\\\\\\\\\" ESCAPED_MINGW64_DLL_PATH ${MINGW64_DLL_PATH})
-
     add_custom_command(TARGET appExec POST_BUILD
-        COMMAND ntldd -R -D ${MINGW64_DLL_PATH} $<TARGET_FILE:appExec> | grep -o '${ESCAPED_MINGW64_DLL_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-        COMMAND ntldd -R -D ${MINGW64_DLL_PATH} ${giognutls_DLL} | grep -o '${ESCAPED_MINGW64_DLL_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}        
-        COMMAND ntldd -R -D ${MINGW64_DLL_PATH} ${_gstPluginLib_bin} | grep -o '${ESCAPED_MINGW64_DLL_PATH}\\\\\\\\.*\\s' | sed 's/\\\\\\\\/\\\\//g' | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        COMMAND $<TARGET_FILE:peldd> -a
+            -p ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} 
+            -p ${CMAKE_LIBRARY_PATH}
+            $<TARGET_FILE:appExec> 
+            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gio/* 
+            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins/*
+            | sed 's/\\\\\\\\/\\\\//g'
+            | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     )
 
 endif()
@@ -545,4 +566,4 @@ include(CMakePublish)
 #include(PrintAllVariables)
 
 #include(PrintTargetProperties)
-#print_target_properties(Catch2)
+#print_target_properties(peldd)
