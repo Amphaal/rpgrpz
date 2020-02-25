@@ -1,3 +1,5 @@
+SET(CMAKE_SYSTEM_NAME "Windows")
+
 list(APPEND CMAKE_PREFIX_PATH 
     /mingw64
     /mingw64/x86_64-w64-mingw32
