@@ -1,5 +1,13 @@
 SET(CMAKE_SYSTEM_NAME "Windows")
 
+# search for programs in the build host directories
+set (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+
+# for libraries and headers in the target directories
+set (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set (CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+set (CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+
 list(APPEND CMAKE_PREFIX_PATH 
     /mingw64
     /mingw64/x86_64-w64-mingw32
