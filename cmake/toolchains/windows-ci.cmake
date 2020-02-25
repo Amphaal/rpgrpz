@@ -1,3 +1,11 @@
+list(APPEND CMAKE_PREFIX_PATH 
+    /mingw64
+    /mingw64/x86_64-w64-mingw32
+)
+
+#.dll are in bin folder
+SET(CMAKE_LIBRARY_PATH /mingw64/bin) #must be defined for peldd
+
 SET(CMAKE_LIBRARY_PATH ${CMAKE_SYSTEM_LIBRARY_PATH}) #must be defined for peldd
 SET(CMAKE_BUILD_TYPE RelWithDebInfo)
 
