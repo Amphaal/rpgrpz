@@ -352,6 +352,8 @@ pkg_get_variable(GSTREAMER_PLUGINS_DLL_LOCATION gstreamer-1.0
     pluginsdir
 )
 
+message("Searching for gst plugins in [${_gstPluginLib}]...")
+
 #copy gstreamer plugins into output
 foreach(_gstPluginLib IN ITEMS ${_gstreamer_plugins})
     
