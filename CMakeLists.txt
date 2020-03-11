@@ -254,6 +254,11 @@ IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     #as dependency
     add_dependencies(appExec peldd)
 
+    set_target_properties(peldd
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/toolsBin"
+    )
+
 endif()
 
 #################
@@ -264,7 +269,7 @@ endif()
 FetchContent_Declare(
   sentry-native
   GIT_REPOSITORY https://github.com/Amphaal/sentry-native.git
-  GIT_TAG        feature/c-ver
+  GIT_TAG        master
 )
 
 #fetch and add as 
@@ -352,7 +357,7 @@ pkg_get_variable(GSTREAMER_PLUGINS_DLL_LOCATION gstreamer-1.0
     pluginsdir
 )
 
-message("Searching for gst plugins in [${_gstPluginLib}]...")
+message("Searching for gst plugins in [${GSTREAMER_PLUGINS_DLL_LOCATION}]...")
 
 #copy gstreamer plugins into output
 foreach(_gstPluginLib IN ITEMS ${_gstreamer_plugins})
