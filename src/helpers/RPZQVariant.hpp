@@ -3,7 +3,7 @@
 #include <QListWidgetItem>
 #include <QGraphicsItem>
 
-#include "src/network/youtube/YoutubeVideoMetadata.h"
+#include <audiotube/YoutubeVideoMetadata.h>
 #include "src/shared/models/RPZAtom.h"
 
 class RPZQVariant {

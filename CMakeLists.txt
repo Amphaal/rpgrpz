@@ -321,6 +321,9 @@ FetchContent_Declare(
   GIT_TAG        master
 )
 
+#fetch and add as 
+FetchContent_MakeAvailable(AudioTube)
+
 #link
 target_link_libraries(appExec audiotube)
 
