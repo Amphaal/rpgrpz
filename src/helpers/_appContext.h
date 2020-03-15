@@ -71,7 +71,6 @@ class AppContext {
         static inline constexpr int MAXIMUM_LAYER = 1000;
         static inline QColor WALKER_COLOR = "#eb6e34";
 
-        static inline const QString REGEX_YOUTUBE_URL = "(?:youtube\\.com|youtu.be).*?(?:v=|embed\\/)(?<videoId>[\\w\\-]+)";
         static inline const QString REGEX_URL = "(https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|www\\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\\.[^\\s]{2,}|https?:\\/\\/(?:www\\.|(?!www))[a-zA-Z0-9]+\\.[^\\s]{2,}|www\\.[a-zA-Z0-9]+\\.[^\\s]{2,})";
 
         static QHash<QString, QString> getOptionArgs(QCoreApplication &source);
@@ -101,7 +100,6 @@ class AppContext {
         static const QString getLogFileLocation();
         static const QString getLatestLogFileLocation();
         static const QString getServerMapAutosaveFolderLocation();
-        static const QString getDumpLocation();
 
         static void openFileInOS(const QString &cpURL);
         static void openFolderInOS(const QString &cpURL);

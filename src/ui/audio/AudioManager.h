@@ -4,14 +4,12 @@
 #include <QString>
 #include <QMainWindow>
 
-#include "src/_libs/promise.hpp"
-
 #include "src/ui/audio/controllers/AudioProbeController.h"
 #include "src/ui/audio/controllers/YoutubePlayer.h"
 
 #include "src/shared/audio/GStreamerClient.h"
 
-#include "src/network/youtube/YoutubeHelper.h"
+#include <YoutubeHelper.h>
 
 #include "src/ui/_others/ConnectivityObserver.h"
 

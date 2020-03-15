@@ -311,6 +311,19 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     )
 endif()
 
+#############
+# AudioTube #
+#############
+
+FetchContent_Declare(
+  AudioTube
+  GIT_REPOSITORY https://github.com/Amphaal/AudioTube.git
+  GIT_TAG        master
+)
+
+#link
+target_link_libraries(appExec audiotube)
+
 ############# 
 # Gstreamer #
 #############
@@ -484,20 +497,6 @@ IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     )
 
 endif()
-
-############
-# Breakpad #
-############
-
-#find breakpad
-pkg_check_modules(BrkpdCli REQUIRED IMPORTED_TARGET
-    breakpad-client
-)
-
-#link
-target_link_libraries(appExec
-    PkgConfig::BrkpdCli
-)
 
 #####################
 # list source files #
