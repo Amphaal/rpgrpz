@@ -107,13 +107,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebI
     set_target_properties(appExec PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE) #enable LTO
 endif()
 
-#define test executable
-add_executable(testsExec)
-SET(TEST_EXEC_OUTPUT_NAME "${PROJECT_NAME}_tests")
-set_target_properties(testsExec PROPERTIES OUTPUT_NAME "${TEST_EXEC_OUTPUT_NAME}") #define executable name
-target_sources(testsExec PRIVATE "tests/tests.cpp")
-target_link_libraries(testsExec INTERFACE appExec)
-
 #########################
 ## ressources handling ##
 #########################
