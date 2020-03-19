@@ -288,29 +288,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     )
 endif()
 
-##########
-# Catch2 #
-##########
-
-FetchContent_Declare(
-  Catch2
-  GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-  GIT_TAG        master
-)
-
-#fetch and add as 
-FetchContent_MakeAvailable(Catch2)
-
-#link
-target_link_libraries(testsExec PRIVATE Catch2)
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    install(TARGETS Catch2
-        RUNTIME
-            DESTINATION .
-    )
-endif()
-
 #############
 # AudioTube #
 #############
