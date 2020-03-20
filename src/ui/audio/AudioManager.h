@@ -50,7 +50,7 @@ class AudioManager : public QWidget, public ConnectivityObserver {
         void _playAudio(const QString &audioSourceUrl, const QString &sourceTitle, qint64 startAtMsecsPos);
         
         void _onToolbarActionRequested(const TrackToolbar::Action &action);
-        void _onToolbarPlayRequested(YoutubeVideoMetadata* playlistItemPtr);
+        void _onToolbarPlayRequested(VideoMetadata* playlistItemPtr);
         void _onPlayerPositionChanged(int positionInSecs);
         void _onStreamPlayEnded();
         void _onStreamError();

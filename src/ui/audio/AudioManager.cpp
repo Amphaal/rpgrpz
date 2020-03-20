@@ -241,7 +241,7 @@ void AudioManager::_onToolbarActionRequested(const TrackToolbar::Action &action)
 
 }
 
-void AudioManager::_onToolbarPlayRequested(YoutubeVideoMetadata* metadata) {
+void AudioManager::_onToolbarPlayRequested(VideoMetadata* metadata) {
 
     YoutubeHelper::refreshMetadata(metadata).then([=]() {
 

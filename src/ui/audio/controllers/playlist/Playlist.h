@@ -36,14 +36,14 @@ class Playlist : public QListWidget {
 
         void addYoutubeVideo(const QString &url);
 
-        YoutubeVideoMetadata* currentPlay();
+        VideoMetadata* currentPlay();
     
     signals:
-        void playRequested(YoutubeVideoMetadata* metadata);
+        void playRequested(VideoMetadata* metadata);
 
     private:
 
-        QSet<YoutubeVideoMetadata::Id> _playlistVideoIds;
+        QSet<VideoMetadata::Id> _playlistVideoIds;
 
         void _onItemDoubleClicked(QListWidgetItem * item);
         QListWidgetItem* _playlistItemToUse = nullptr;

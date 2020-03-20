@@ -104,7 +104,7 @@ void Playlist::dropEvent(QDropEvent *event) {
             case YoutubeUrlType::YoutubePlaylist: {
 
                 //fetch videos from playlist
-                YoutubeHelper::fromPlaylistUrl(url.toString()).then([=](const QList<YoutubeVideoMetadata*> &mvideoList) {
+                YoutubeHelper::fromPlaylistUrl(url.toString()).then([=](const QList<VideoMetadata*> &mvideoList) {
                     for(const auto mvideo : mvideoList) {
                         this->addYoutubeVideo(mvideo->url());
                     }
@@ -131,7 +131,7 @@ void Playlist::dropEvent(QDropEvent *event) {
 void Playlist::addYoutubeVideo(const QString &url) {
     
     //metadata definition
-    auto data = YoutubeVideoMetadata::fromVideoUrl(url);
+    auto data = VideoMetadata::fromVideoUrl(url);
     auto videoId = data->id();
 
     //handle duplicates
@@ -154,7 +154,7 @@ void Playlist::addYoutubeVideo(const QString &url) {
 
     //update text from playlist update
     QObject::connect(
-        data, &YoutubeVideoMetadata::metadataRefreshed,
+        data, &VideoMetadata::metadataRefreshed,
         [=]() {
 
             auto durationStr = StringHelper::secondsToTrackDuration(data->duration());
@@ -172,7 +172,7 @@ void Playlist::addYoutubeVideo(const QString &url) {
     );
 
     QObject::connect(
-        data, &YoutubeVideoMetadata::metadataFetching,
+        data, &VideoMetadata::metadataFetching,
         [=]() {  
             playlistItem->setIcon(*this->_ytIconGrey);
             playlistItem->setText(pos + tr("(Loading metadata...) ") + data->url()); 
@@ -180,7 +180,7 @@ void Playlist::addYoutubeVideo(const QString &url) {
     );
 
     QObject::connect(
-        data, &YoutubeVideoMetadata::streamFailed,
+        data, &VideoMetadata::streamFailed,
         [=]() {
             //add delay for user ack
             QTimer::singleShot(100, [=]() {
@@ -249,7 +249,7 @@ void Playlist::_onItemDoubleClicked(QListWidgetItem * item) {
     this->_requestPlay();
 }
 
-YoutubeVideoMetadata* Playlist::currentPlay() {
+VideoMetadata* Playlist::currentPlay() {
     if(!this->_playlistItemToUse) return nullptr;
     return RPZQVariant::ytVideoMetadata(this->_playlistItemToUse);
 }

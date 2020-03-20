@@ -3,7 +3,7 @@
 #include <QListWidgetItem>
 #include <QGraphicsItem>
 
-#include <audiotube/YoutubeVideoMetadata.h>
+#include <audiotube/VideoMetadata.h>
 #include "src/shared/models/RPZAtom.h"
 
 class RPZQVariant {
@@ -40,11 +40,11 @@ class RPZQVariant {
             item->setData((int)RPZQVariant::Roles::AllowedToDefineMoveAbility, allowed);
         }
 
-        static YoutubeVideoMetadata* ytVideoMetadata(QListWidgetItem* item) {
-            return item->data((int)RPZQVariant::Roles::YTVideoMetadataPtr).value<YoutubeVideoMetadata*>();
+        static VideoMetadata* ytVideoMetadata(QListWidgetItem* item) {
+            return item->data((int)RPZQVariant::Roles::YTVideoMetadataPtr).value<VideoMetadata*>();
         }
-        static void setYTVideoMetadata(QListWidgetItem* item, YoutubeVideoMetadata* metadata) {
-            item->setData((int)RPZQVariant::Roles::YTVideoMetadataPtr, QVariant::fromValue<YoutubeVideoMetadata*>(metadata));
+        static void setYTVideoMetadata(QListWidgetItem* item, VideoMetadata* metadata) {
+            item->setData((int)RPZQVariant::Roles::YTVideoMetadataPtr, QVariant::fromValue<VideoMetadata*>(metadata));
         }
 
         static RPZAtom::Id atomId(const QGraphicsItem* item) {
