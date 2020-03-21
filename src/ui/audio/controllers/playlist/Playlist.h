@@ -17,7 +17,7 @@
 
 #include <QUrlQuery>
 
-#include <audiotube/YoutubeHelper.h>
+#include <audiotube/NetworkFetcher.h>
 
 #include "src/helpers/RPZQVariant.hpp"
 

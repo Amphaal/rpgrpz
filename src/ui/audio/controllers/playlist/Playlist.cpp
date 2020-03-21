@@ -104,7 +104,8 @@ void Playlist::dropEvent(QDropEvent *event) {
             case YoutubeUrlType::YoutubePlaylist: {
 
                 //fetch videos from playlist
-                YoutubeHelper::fromPlaylistUrl(url.toString()).then([=](const QList<VideoMetadata*> &mvideoList) {
+                NetworkFetcher::fromPlaylistUrl(url.toString())
+                .then([=](const QList<VideoMetadata*> &mvideoList) {
                     for(const auto mvideo : mvideoList) {
                         this->addYoutubeVideo(mvideo->url());
                     }

@@ -41,7 +41,7 @@ class YoutubePlaylistItemInsertor : public QWidget {
         YoutubePlaylistItemInsertor(QWidget *parent = nullptr) : QWidget(parent), 
             _ytUrlEdit(new QLineEdit),
             _insertLinkBtn(new QPushButton),
-            _ytUrlMatcher(VideoMetadata::getYoutubeUrlMatcher()) {
+            _ytUrlMatcher(VideoMetadata::getUrlMatcher()) {
             
             this->setLayout(new QHBoxLayout);
 

@@ -9,7 +9,7 @@
 
 #include "src/shared/audio/GStreamerClient.h"
 
-#include <audiotube/YoutubeHelper.h>
+#include <audiotube/NetworkFetcher.h>
 
 #include "src/ui/_others/ConnectivityObserver.h"
 

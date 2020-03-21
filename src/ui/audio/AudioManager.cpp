@@ -243,10 +243,10 @@ void AudioManager::_onToolbarActionRequested(const TrackToolbar::Action &action)
 
 void AudioManager::_onToolbarPlayRequested(VideoMetadata* metadata) {
 
-    YoutubeHelper::refreshMetadata(metadata).then([=]() {
+    NetworkFetcher::refreshMetadata(metadata).then([=]() {
 
         auto title = metadata->title();
-        auto streamUrl = metadata->audioStreams().getPreferedMimeSourcePair().decodedUrl;
+        auto streamUrl = metadata->getBestAvailableStreamUrl().toString();
         auto duration = metadata->duration();
 
         //update state
