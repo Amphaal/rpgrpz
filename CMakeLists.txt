@@ -5,12 +5,12 @@ if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)
 endif()
 
-# #use ccache
-# find_program(CCACHE_PROGRAM ccache)
-# if(CCACHE_PROGRAM)
-#     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
-#     set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK "${CCACHE_PROGRAM}")
-# endif()
+#use ccache
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK "${CCACHE_PROGRAM}")
+endif()
 
 #default configuration
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -269,14 +269,7 @@ endif()
 # AudioTube #
 #############
 
-FetchContent_Declare(
-  AudioTube
-  GIT_REPOSITORY https://github.com/Amphaal/AudioTube.git
-  GIT_TAG        master
-)
-
-#fetch and add as 
-FetchContent_MakeAvailable(AudioTube)
+add_subdirectory("external/audiotube")
 
 #link
 target_link_libraries(appExec audiotube)
