@@ -20,7 +20,7 @@ class MapLayoutAtom : public MapLayoutItem {
         bool isHidden() const;
         bool isLocked() const;
         const RPZAsset::Hash assetHash() const;
-        const RPZAtom::Id atomId() const;
+        RPZAtom::Id atomId() const;
         const QString name() const override;
         const QPixmap icon() const override;
 

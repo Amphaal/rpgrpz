@@ -15,7 +15,7 @@ class RPZQuickDraw : public QVariantHash {
             this->insert("p", JSONSerializer::asBase64(path));
         }
 
-        const RPZUser::Id drawer() const {
+        RPZUser::Id drawer() const {
             return this->value("drwr").toULongLong();
         }
 

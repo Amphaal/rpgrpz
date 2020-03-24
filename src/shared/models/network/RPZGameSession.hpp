@@ -22,7 +22,7 @@ class RPZGameSession : public QVariantHash {
             return this->value("fs").toBool();
         }
 
-        const RPZUser::Id selfUserId() const {
+        RPZUser::Id selfUserId() const {
             return this->value("suid").toULongLong();
         }
 

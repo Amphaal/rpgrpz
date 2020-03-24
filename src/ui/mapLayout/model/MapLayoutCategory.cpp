@@ -25,7 +25,7 @@ MapLayoutCategory::MapLayoutCategory(const RPZAtom::Category &category, int sort
     }
 }
 
-const int MapLayoutCategory::rowOfAtom(MapLayoutAtom* atom) const {
+int MapLayoutCategory::rowOfAtom(MapLayoutAtom* atom) const {
     return this->_atoms.indexOf(atom);
 }
 
@@ -58,7 +58,7 @@ void MapLayoutCategory::removeAsChild(MapLayoutAtom* child) {
     this->_atoms.removeOne(child);
 }
 
-const int MapLayoutCategory::atomsCount() const {
+int MapLayoutCategory::atomsCount() const {
     return this->_atoms.count();
 }
 

@@ -109,7 +109,7 @@ const RPZAsset::Hash MapLayoutAtom::assetHash() const {
     return this->_assetHash;
 }
 
-const RPZAtom::Id MapLayoutAtom::atomId() const {
+RPZAtom::Id MapLayoutAtom::atomId() const {
     return this->_id;
 }
 

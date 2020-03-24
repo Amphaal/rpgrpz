@@ -20,11 +20,11 @@ class MapLayoutCategory : public MapLayoutItem {
 
         void updateSorter(RPZAtom::Layer newLayer);
 
-        const int atomsCount() const;
+        int atomsCount() const;
 
         MapLayoutAtom* atom(int row) const;
 
-        const int rowOfAtom(MapLayoutAtom* atomToFind) const;
+        int rowOfAtom(MapLayoutAtom* atomToFind) const;
 
         const QString name() const override;
 

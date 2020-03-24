@@ -26,7 +26,7 @@ class MapLayoutModelBase : public QAbstractItemModel {
 
         }
 
-        static const RPZAtom::Id fromIndex(const QModelIndex &index) {
+        static RPZAtom::Id fromIndex(const QModelIndex &index) {
             
             auto item = MapLayoutItem::fromIndex(index);
 
