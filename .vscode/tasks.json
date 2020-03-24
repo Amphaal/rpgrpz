@@ -14,7 +14,7 @@
             },
             "type": "shell",
             "windows": {
-                "command": "cmake -GNinja -B_genDebug -H. -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/msys.cmake -DCMAKE_BUILD_TYPE=Debug"
+                "command": "git submodule update --init --recursive && cmake -GNinja -B_genDebug -H. -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/msys.cmake -DCMAKE_BUILD_TYPE=Debug"
             }
         },
         {

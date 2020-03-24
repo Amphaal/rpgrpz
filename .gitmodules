@@ -1,0 +1,7 @@
+[submodule "external/sentry-native"]
+	path = external/sentry-native
+	url = https://github.com/Amphaal/sentry-native
+	branch = master_mingw
+[submodule "external/pe-util"]
+	path = external/pe-util
+	url = https://github.com/Amphaal/pe-util

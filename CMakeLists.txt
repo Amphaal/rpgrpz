@@ -234,15 +234,7 @@ endif()
 
 IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
-    #declare git repo
-    FetchContent_Declare(
-        pe-util
-        GIT_REPOSITORY https://github.com/Amphaal/pe-util.git
-        GIT_TAG        master
-    )
-
-    #available as target
-    FetchContent_MakeAvailable(pe-util)
+    add_subdirectory("external/pe-util")
 
     #as dependency
     add_dependencies(appExec peldd)
@@ -258,15 +250,7 @@ endif()
 # Sentry-native #
 #################
 
-#declare git repo
-FetchContent_Declare(
-  sentry-native
-  GIT_REPOSITORY https://github.com/Amphaal/sentry-native.git
-  GIT_TAG        master
-)
-
-#fetch and add as 
-FetchContent_MakeAvailable(sentry-native)
+add_subdirectory("external/sentry-native")
 
 #link
 target_include_directories(appExec PRIVATE "${Sentry-Native_SOURCE_DIR}/include")
