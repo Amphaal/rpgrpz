@@ -79,7 +79,7 @@ const QString ToysTreeViewItem::displayName() const {
     return this->_name;
 }
 
-const ToysTreeViewItem::Type ToysTreeViewItem::type() const {
+ToysTreeViewItem::Type ToysTreeViewItem::type() const {
     return this->_type;
 }
 
@@ -111,11 +111,11 @@ bool ToysTreeViewItem::isDeletable() const {
     return this->_isDeletable;
 }
 
-const ToysTreeViewItem::Type ToysTreeViewItem::insertType() const {
+ToysTreeViewItem::Type ToysTreeViewItem::insertType() const {
     return this->_insertType;
 }
 
-const ToysTreeViewItem::Type ToysTreeViewItem::rootStaticContainer() const {
+ToysTreeViewItem::Type ToysTreeViewItem::rootStaticContainer() const {
     return this->_rootStaticContainerType;
 }
 

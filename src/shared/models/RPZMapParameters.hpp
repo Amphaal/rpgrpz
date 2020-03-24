@@ -49,7 +49,7 @@ class RPZMapParameters : public QVariantHash {
         RPZMapParameters() {};
         explicit RPZMapParameters(const QVariantHash &hash) : QVariantHash(hash) {};
 
-        const int mapWidthInPoints() const {
+        int mapWidthInPoints() const {
             return this->_getParam(RPZMapParameters::Values::MapWidth).toInt();
         }
 
@@ -64,15 +64,15 @@ class RPZMapParameters : public QVariantHash {
 
         }
 
-        const double minimumZoomScale() const {
+        double minimumZoomScale() const {
             return this->_getParam(RPZMapParameters::Values::MinimumZoomScale).toDouble();
         }
 
-        const double maximumZoomScale() const {
+        double maximumZoomScale() const {
             return this->_getParam(RPZMapParameters::Values::MaximumZoomScale).toDouble();
         }
 
-        const qreal tileWidthInPoints() const {
+        qreal tileWidthInPoints() const {
             return AppContext::pointPerCentimeters() * this->tileToScreenCentimeters();
         }
 
@@ -82,15 +82,15 @@ class RPZMapParameters : public QVariantHash {
             return QSizeF(width, width);
         }
 
-        const double tileToIngameMeters() const {
+        double tileToIngameMeters() const {
             return this->_getParam(RPZMapParameters::Values::TileToIngameMeters).toDouble();
         };
 
-        const double tileToScreenCentimeters() const {
+        double tileToScreenCentimeters() const {
             return this->_getParam(RPZMapParameters::Values::TileToScreenCentimeters).toDouble();
         }
 
-        const double distanceIntoIngameMeters(qreal distanceAsPoints) const {
+        double distanceIntoIngameMeters(qreal distanceAsPoints) const {
             auto distanceAsTiles = distanceAsPoints / this->tileWidthInPoints();
             auto meters = distanceAsTiles * this->tileToIngameMeters();
             return meters;
@@ -139,7 +139,7 @@ class RPZMapParameters : public QVariantHash {
 
         }
 
-        const RPZMapParameters::MovementSystem movementSystem() const {
+        RPZMapParameters::MovementSystem movementSystem() const {
             return (RPZMapParameters::MovementSystem)this->_getParam(RPZMapParameters::Values::MovementSystem).toInt();
         }
 

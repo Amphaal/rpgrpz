@@ -52,9 +52,9 @@ class ToysTreeViewItem {
         ToysTreeViewItem();
         ~ToysTreeViewItem();
 
-        const ToysTreeViewItem::Type type() const;
-        const ToysTreeViewItem::Type insertType() const;
-        const ToysTreeViewItem::Type rootStaticContainer() const;
+        ToysTreeViewItem::Type type() const;
+        ToysTreeViewItem::Type insertType() const;
+        ToysTreeViewItem::Type rootStaticContainer() const;
         const QString iconPath() const;
         const QString displayName() const;
         const QString path() const;

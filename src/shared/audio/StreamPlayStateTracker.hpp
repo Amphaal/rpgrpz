@@ -45,7 +45,7 @@ class StreamPlayStateTracker : public QVariantHash {
     ///
     ///
 
-        const qint64 positionInMsecs() const {
+        qint64 positionInMsecs() const {
             
             auto lu = this->lastUpdate();
             auto pos = this->_posInMsecs();
@@ -64,11 +64,11 @@ class StreamPlayStateTracker : public QVariantHash {
             return pos;
         }
 
-        const int durationInSecs() const {
+        int durationInSecs() const {
             return this->value(QStringLiteral(u"dur"), -1).toInt();
         }
 
-        const bool isPlaying() const {
+        bool isPlaying() const {
             return this->value(QStringLiteral(u"plyn"), false).toBool();
         }
 
@@ -85,8 +85,7 @@ class StreamPlayStateTracker : public QVariantHash {
         };
 
     private:
-
-        const qint64 _posInMsecs() const {
+        qint64 _posInMsecs() const {
             return this->value(QStringLiteral(u"pos"), -1).value<qint64>();
         };
 

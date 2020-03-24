@@ -89,7 +89,7 @@ class RPZCharacter : public Serializable {
         //
 
         void setLevel(int level) {this->insert(QStringLiteral(u"lvl"), level);};
-        const int level() const {
+        int level() const {
             return this->value(QStringLiteral(u"lvl"), -1).toInt();
         }
 
@@ -118,7 +118,7 @@ class RPZCharacter : public Serializable {
             for(const auto &gauge : this->value(QStringLiteral(u"g")).toList()) out += RPZGauge(gauge.toHash());
             return out;
         }
-        const int favGaugesCount() const {
+        int favGaugesCount() const {
             return this->value(QStringLiteral(u"gfavc"), 0).toInt();
         }
 

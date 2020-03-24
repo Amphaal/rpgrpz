@@ -40,7 +40,7 @@ class ViewMapHint : public AtomsStorage {
         MapViewFog* fogItem() const; //safe
 
         const QList<RPZAtom::Id> getAtomIdsFromGraphicsItems(const QList<QGraphicsItem*> &listToFetch) const; //safe
-        const RPZAtom::Id getAtomIdFromGraphicsItem(const QGraphicsItem* toFetch) const; //safe
+        RPZAtom::Id getAtomIdFromGraphicsItem(const QGraphicsItem* toFetch) const; //safe
 
         QGraphicsItem* generateGraphicsFromTemplate(bool hiddenAsDefault = false) const; //safe
 

@@ -467,7 +467,7 @@ const QList<RPZAtom::Id> ViewMapHint::getAtomIdsFromGraphicsItems(const QList<QG
 
 }
 
-const RPZAtom::Id ViewMapHint::getAtomIdFromGraphicsItem(const QGraphicsItem* toFetch) const {
+RPZAtom::Id ViewMapHint::getAtomIdFromGraphicsItem(const QGraphicsItem* toFetch) const {
     
     if(!toFetch) {
         qWarning() << "Cannot fetch Atom Id from this non-existant GraphicsItem...";
