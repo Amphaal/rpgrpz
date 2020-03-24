@@ -26,7 +26,7 @@ class CharactersDatabase : public QObject, public JSONDatabase {
         void updateCharacter(const RPZCharacter &updated);
 
     protected:
-        const JSONDatabase::Version apiVersion() const override;
+        JSONDatabase::Version apiVersion() const override;
         JSONDatabase::Model _getDatabaseModel() override;
         void _setupLocalData() override;
         const QJsonObject _updatedInnerDb() override;

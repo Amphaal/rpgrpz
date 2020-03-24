@@ -1,1 +1,0 @@
-git cmake ninja llvm ccache gstreamer gst-plugins-good gst-plugins-base qt

@@ -184,7 +184,7 @@ JSONDatabase::Model MapDatabase::_getDatabaseModel() {
     };
 };
 
-const JSONDatabase::Version MapDatabase::apiVersion() const {
+JSONDatabase::Version MapDatabase::apiVersion() const {
     return 9;
 }
 

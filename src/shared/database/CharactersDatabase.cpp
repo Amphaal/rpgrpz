@@ -47,7 +47,7 @@ void CharactersDatabase::updateCharacter(const RPZCharacter &updated) {
 }
 
 
-const JSONDatabase::Version CharactersDatabase::apiVersion() const {
+JSONDatabase::Version CharactersDatabase::apiVersion() const {
     return 1;
 }
 

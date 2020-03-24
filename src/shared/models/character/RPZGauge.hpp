@@ -22,16 +22,16 @@ class RPZGauge : public QVariantHash {
         const QColor color() const { return QColor(this->value(QStringLiteral(u"c"), "#00008B").toString());}
 
         void setVisibleUnderPortrait(const bool &isVisible) {this->insert(QStringLiteral(u"v"), isVisible);}
-        const bool isVisibleUnderPortrait() const { return this->value(QStringLiteral(u"v")).toBool();}
+        bool isVisibleUnderPortrait() const { return this->value(QStringLiteral(u"v")).toBool();}
 
         void setMinGaugeValue(const int &number) {this->insert(QStringLiteral(u"min"), number);}
-        const int minGaugeValue() const {return this->value(QStringLiteral(u"min"), 0).toInt();}
+        int minGaugeValue() const {return this->value(QStringLiteral(u"min"), 0).toInt();}
 
         void setMaxGaugeValue(const int &number) {this->insert(QStringLiteral(u"max"), number);}
-        const int maxGaugeValue() const {return this->value(QStringLiteral(u"max"), 30).toInt();}
+        int maxGaugeValue() const {return this->value(QStringLiteral(u"max"), 30).toInt();}
 
         void setGaugeValue(const int &number) {this->insert(QStringLiteral(u"val"), number);}
-        const int gaugeValue() const {return this->value(QStringLiteral(u"val"), 15).toInt();}
+        int gaugeValue() const {return this->value(QStringLiteral(u"val"), 15).toInt();}
 
         const RPZGauge::MinimalistGauge toMinimalist() const {
             return {

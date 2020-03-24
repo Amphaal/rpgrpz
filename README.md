@@ -3,20 +3,22 @@
 [ ![Download](https://api.bintray.com/packages/amphaal/rpgrpz/rpgrpz-win/images/download.svg) ](https://dl.bintray.com/amphaal/rpgrpz/)
 
 Supported (64bits only) :
-- Windows + MSYS2 : OK
+- Windows : OK
 - MacOS : WIP
 - Linux : WIP
 
 Prerequisites to build:
-- For Windows + MSYS2
+- For Windows
     - Install MSYS2 : https://www.msys2.org/
     - Create env. variable MINGW64_ROOT (ex : C:/msys64/mingw64)
     - Run : pacman -Syu (From msys2_shell.cmd)
     - Run : pacman -Su (From msys2_shell.cmd)
-    - Run : pacman -S --needed - < ./prerequisites/msys2_pkglist.txt (From msys2_shell.cmd)
+    - Run : pacman -S --needed - < ./prerequisites/msys2/pkglist_build.txt (From msys2_shell.cmd)
+    - Run : pacman -S --needed - < ./prerequisites/msys2/pkglist_dev.txt (From msys2_shell.cmd)
 - For OSX
     - Install latest XCode from the App Store
-    - Run : brew install $(cat ./prerequisites/osx_packages.txt)
+    - Run : brew install $(cat ./prerequisites/osx/pkglist_build.txt)
+    - Run : brew install $(cat ./prerequisites/osx/pkglist_dev.txt)
 
 Recommanded:
 - Visual Studio Code, for builtin debugging helpers (https://code.visualstudio.com/)

@@ -62,7 +62,7 @@ const QString JSONDatabase::dbFilePath() const {
     return this->_destfile->fileName();
 }
 
-const JSONDatabase::Version JSONDatabase::dbVersion() {
+JSONDatabase::Version JSONDatabase::dbVersion() {
     return _getDbVersion(this->_dbCopy);
 }
 

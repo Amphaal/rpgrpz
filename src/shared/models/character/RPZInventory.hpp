@@ -22,10 +22,10 @@ class RPZInventorySlot : public QVariantHash {
         const QString description() const {return this->value(QStringLiteral(u"d")).toString();}
 
         void setHowMany(const uint &number) {this->insert(QStringLiteral(u"nb"), number);}
-        const uint howMany() const {return this->value(QStringLiteral(u"nb")).toUInt();}
+        uint howMany() const {return this->value(QStringLiteral(u"nb")).toUInt();}
 
         void setWeight(const double &weight) {this->insert(QStringLiteral(u"w"), weight);}
-        const double weight() const {return this->value(QStringLiteral(u"w")).toDouble();}
+        double weight() const {return this->value(QStringLiteral(u"w")).toDouble();}
 };
 
 class RPZInventory : public QVariantHash {

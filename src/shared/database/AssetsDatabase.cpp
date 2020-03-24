@@ -16,7 +16,7 @@ AssetsDatabase* AssetsDatabase::get() {
     return _singleton;
 }
 
-const JSONDatabase::Version AssetsDatabase::apiVersion() const {
+JSONDatabase::Version AssetsDatabase::apiVersion() const {
     return 5;
 }
 

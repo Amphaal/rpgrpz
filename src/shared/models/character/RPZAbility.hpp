@@ -17,5 +17,5 @@ class RPZAbility : public QVariantHash {
         const QString description() const {return this->value(QStringLiteral(u"d")).toString();}
 
         void setFavorite(const bool &isFavorite) {this->insert(QStringLiteral(u"f"), isFavorite);}
-        const bool isFavorite() const { return this->value(QStringLiteral(u"f")).toBool();}
+        bool isFavorite() const { return this->value(QStringLiteral(u"f")).toBool();}
 };

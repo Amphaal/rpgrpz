@@ -231,10 +231,10 @@ class RPZAtom : public Serializable {
         int brushPenWidth() const;
         QPointF shapeCenter() const;
         const QColor defaultPlayerColor() const;
-        const RPZCharacter::Id characterId() const;
+        RPZCharacter::Id characterId() const;
         const QString characterName() const;
         const QString NPCShortName() const;
-        const RPZAtom::NPCType NPCAttitude() const;
+        RPZAtom::NPCType NPCAttitude() const;
         const RPZGauge::MinimalistGauge NPCGauge() const;
         bool isCoveredByFog() const;
 

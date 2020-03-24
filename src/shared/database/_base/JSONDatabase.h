@@ -61,8 +61,8 @@ class JSONDatabase {
         //pure, replace
         virtual void _setupLocalData() = 0;
         virtual JSONDatabase::Model _getDatabaseModel() = 0;
-        virtual const JSONDatabase::Version apiVersion() const = 0;
-        const JSONDatabase::Version dbVersion();
+        virtual JSONDatabase::Version apiVersion() const = 0;
+        JSONDatabase::Version dbVersion();
         
         /*to call from inheritors*/
         void _initDatabaseFromJSONFile(const QString &dbFilePath);

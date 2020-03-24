@@ -176,10 +176,10 @@ RPZAtom::BrushType RPZAtom::brushType() const { return (RPZAtom::BrushType)this-
 int RPZAtom::brushPenWidth() const { return this->metadata(RPZAtom::Parameter::BrushPenWidth).toInt(); }
 QPointF RPZAtom::shapeCenter() const { return this->metadata(RPZAtom::Parameter::ShapeCenter).toPointF(); }
 const QColor RPZAtom::defaultPlayerColor() const { return this->metadata(RPZAtom::Parameter::DefaultPlayerColor).value<QColor>(); }
-const RPZCharacter::Id RPZAtom::characterId() const { return this->metadata(RPZAtom::Parameter::CharacterId).toULongLong(); }
+RPZCharacter::Id RPZAtom::characterId() const { return this->metadata(RPZAtom::Parameter::CharacterId).toULongLong(); }
 const QString RPZAtom::characterName() const { return this->metadata(RPZAtom::Parameter::CharacterName).toString(); }
 const QString RPZAtom::NPCShortName() const { return this->metadata(RPZAtom::Parameter::NPCShortName).toString(); }
-const RPZAtom::NPCType RPZAtom::NPCAttitude() const { return (RPZAtom::NPCType)this->metadata(RPZAtom::Parameter::NPCAttitude).toInt(); }
+RPZAtom::NPCType RPZAtom::NPCAttitude() const { return (RPZAtom::NPCType)this->metadata(RPZAtom::Parameter::NPCAttitude).toInt(); }
 bool RPZAtom::isCoveredByFog() const { return this->metadata(RPZAtom::Parameter::CoveredByFog).toBool(); }
 
 QPainterPath RPZAtom::shape() const {
