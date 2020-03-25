@@ -1,0 +1,7 @@
+version: 2.1
+workflows:
+  CrossMinGW:
+    jobs:
+      build:
+        docker:
+          - image: amphaal/rpgrpz-ci-windows
