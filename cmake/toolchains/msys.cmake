@@ -18,6 +18,9 @@ list(APPEND CMAKE_PREFIX_PATH
 #.dll are in bin folder
 SET(MINGW_DLL_PATH $ENV{MINGW64_ROOT}/bin)
 
+#We want Debug
+SET(CMAKE_BUILD_TYPE Debug)
+
 SET (CMAKE_C_COMPILER             "clang")
 SET (CMAKE_C_FLAGS                "-fuse-ld=lld")
 SET (CMAKE_C_FLAGS_DEBUG          "-O0 -g")

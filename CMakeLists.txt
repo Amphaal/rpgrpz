@@ -95,7 +95,7 @@ target_compile_definitions(appExec PRIVATE $<$<CONFIG:Debug>:_DEBUG>) #define _D
 
 #generate
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-    IF(MINGW)  
+    IF(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")  
         target_link_options(appExec PRIVATE -Wl,-pdb=) # generate pdb files
     endif()
 endif()
@@ -103,6 +103,11 @@ endif()
 #optimise for release
 if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     set_target_properties(appExec PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE) #enable LTO
+endif()
+
+#prevent annoying warnings
+IF(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    target_compile_options(appExec PUBLIC -Wno-unused-parameter)
 endif()
 
 #########################
@@ -223,8 +228,7 @@ IF(MINGW)
     endif()
 
     add_custom_command(TARGET appExec 
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-            ${libjpeg_LIBRARY} $<TARGET_FILE_DIR:appExec>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${libjpeg_LIBRARY} $<TARGET_FILE_DIR:appExec>
     )
 endif()
 
@@ -234,12 +238,9 @@ endif()
 
 #pe-util is required to find all .dll dependencies
 IF(MINGW)
-    add_subdirectory("external/pe-util")
-    add_dependencies(appExec peldd) #as dependency
-    #define a different directory, because we do not want pe-util to be shipped with the app
-    set_target_properties(peldd
-        PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/toolsBin"
+    include(ExternalProject)
+    ExternalProject_Add(peldd
+        GIT_REPOSITORY    "https://github.com/Amphaal/pe-util"
     )
 endif()
 
@@ -332,9 +333,7 @@ foreach(_gstPluginLib IN ITEMS ${_gstreamer_plugins})
     )
     
     add_custom_command(TARGET appExec 
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-            ${${_gstPluginLib}_LIBRARY}
-            $<TARGET_FILE_DIR:appExec>/gst-plugins
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${${_gstPluginLib}_LIBRARY} $<TARGET_FILE_DIR:appExec>/gst-plugins
     )
 
 endforeach()
@@ -407,9 +406,7 @@ foreach(_gstSLib IN ITEMS ${GST_SLIBS})
     endif()
 
     add_custom_command(TARGET appExec 
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-            ${${_gstSLib}_LIBRARY}
-            $<TARGET_FILE_DIR:appExec>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${${_gstSLib}_LIBRARY} $<TARGET_FILE_DIR:appExec>
     )
 
 endforeach()
@@ -462,8 +459,7 @@ target_sources(appExec PUBLIC
 
 #copy translations into output
 add_custom_command(TARGET appExec   
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-        ${QM_FILES} $<TARGET_FILE_DIR:appExec>/translations
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QM_FILES} $<TARGET_FILE_DIR:appExec>/translations
 )
 
 ################
@@ -476,7 +472,7 @@ if(MINGW)
         message(FATAL_ERROR "MINGW_DLL_PATH must be set ! Please use a toolchain file !")
     endif()
     add_custom_command(TARGET appExec POST_BUILD
-        COMMAND $<TARGET_FILE:peldd> -a
+        COMMAND peldd -a
             -p ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} 
             -p ${MINGW_DLL_PATH}
             $<TARGET_FILE:appExec> 

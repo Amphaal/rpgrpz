@@ -6,7 +6,7 @@
     "configurations": [
         {
             "name": "Launch",
-            "preLaunchTask": "2. Build",
+            "preLaunchTask": "3. Build",
             "type": "cppdbg",
             "request": "launch",
             "program" : "",
@@ -47,7 +47,7 @@
         },
         {
             "name": "Launch Tests",
-            "preLaunchTask": "2. Build",
+            "preLaunchTask": "3. Build",
             "type": "cppdbg",
             "request": "launch",
             "program" : "",
