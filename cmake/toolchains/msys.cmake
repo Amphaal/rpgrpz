@@ -16,7 +16,7 @@ list(APPEND CMAKE_PREFIX_PATH
 )
 
 #.dll are in bin folder
-SET(CMAKE_LIBRARY_PATH $ENV{MINGW64_ROOT}/bin)
+list(APPEND MINGW_DLL_PATH $ENV{MINGW64_ROOT}/bin)
 
 SET (CMAKE_C_COMPILER             "clang")
 SET (CMAKE_C_FLAGS                "-fuse-ld=lld")

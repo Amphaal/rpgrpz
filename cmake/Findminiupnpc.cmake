@@ -28,7 +28,7 @@ set(MINIUPNP_STATIC_LIBRARIES ${MINIUPNP_STATIC_LIBRARY})
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(
-  MiniUPnPc DEFAULT_MSG
+  miniupnpc DEFAULT_MSG
   MINIUPNP_INCLUDE_DIR
   MINIUPNP_LIBRARY
 )

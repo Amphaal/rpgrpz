@@ -62,7 +62,7 @@ SET(CMAKE_AUTOUIC ON)
 SET(CMAKE_INCLUDE_CURRENT_DIR ON) #for moc auto 
 
 #make sure _WIN32 preprocessor is used even while cross compiling
-IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+IF(MINGW)
     add_compile_definitions(_WIN32)
 endif()
 
@@ -72,13 +72,11 @@ endif()
 
 #define build type if any
 IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         SET(APP_BUNDLE_TYPE "") #allows Debug cout/cerr console... from LLDB/GDB
     else()
         SET(APP_BUNDLE_TYPE "WIN32") 
     endif()
-
 ELSEIF(APPLE)
 
     #SET(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
@@ -97,7 +95,7 @@ target_compile_definitions(appExec PRIVATE $<$<CONFIG:Debug>:_DEBUG>) #define _D
 
 #generate
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-    IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")  
+    IF(MINGW)  
         target_link_options(appExec PRIVATE -Wl,-pdb=) # generate pdb files
     endif()
 endif()
@@ -152,15 +150,24 @@ target_link_libraries(appExec
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    
     target_link_libraries(appExec ws2_32) #WSA functions !
+endif()
 
+if(MINGW)
     #find libs
-    find_library(OPENSSL_CPYPTO_DLL NAMES "libcrypto-1_1-x64.dll" PATHS ${CMAKE_LIBRARY_PATH} NO_DEFAULT_PATH)
-    find_library(OPENSSL_SSL_DLL NAMES "libssl-1_1-x64.dll" PATHS ${CMAKE_LIBRARY_PATH} NO_DEFAULT_PATH)
+    find_file(OPENSSL_CPYPTO_DLL 
+        NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}crypto-1_1-x64${CMAKE_SHARED_LIBRARY_SUFFIX}
+        PATH_SUFFIXES "bin" 
+    ) 
+    find_file(OPENSSL_SSL_DLL 
+        NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}ssl-1_1-x64${CMAKE_SHARED_LIBRARY_SUFFIX}
+        PATH_SUFFIXES "bin" 
+    ) 
 
     IF(NOT OPENSSL_CPYPTO_DLL OR NOT OPENSSL_SSL_DLL)
         message(FATAL_ERROR "Openssl .dll NOT FOUND !")
+    else()
+        message("Openssl .dll Found ! [${OPENSSL_CPYPTO_DLL} ${OPENSSL_SSL_DLL}]")
     endif()
 
     #copy lib into a target
@@ -168,14 +175,12 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_CPYPTO_DLL} $<TARGET_FILE_DIR:appExec>
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_SSL_DLL} $<TARGET_FILE_DIR:appExec>
     )
-
 endif()
 
 ########
 # QT 5 #
 ########
 
-#find Qt5
 find_package(Qt5 REQUIRED COMPONENTS 
     Core 
     Gui 
@@ -185,8 +190,6 @@ find_package(Qt5 REQUIRED COMPONENTS
     OpenGL 
     LinguistTools
 )
-
-#link
 target_link_libraries(appExec
     Qt5::Core
     Qt5::Gui 
@@ -200,50 +203,44 @@ target_link_libraries(appExec
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     include(Windeployqt)
     windeployqt(appExec)
-endif()
-
-if(APPLE)
+elseif(APPLE)
     include(Macdeployqt)
     macdeployqt(appExec)
 endif()
 
 #missing libs
-IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    
+IF(MINGW)
     #for icons handling
-    find_library(libjpeg_LIBRARY 
-        NAMES "libjpeg-8" 
-        PATHS ${CMAKE_LIBRARY_PATH} 
-        NO_DEFAULT_PATH
+    find_file(libjpeg_LIBRARY 
+        NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}jpeg-8${CMAKE_SHARED_LIBRARY_SUFFIX}
+        PATH_SUFFIXES "bin" 
     ) 
-    
+
     IF(NOT libjpeg_LIBRARY)
         message(FATAL_ERROR "libjpeg .dll NOT FOUND !")
+    else()
+        message("libjpeg_LIBRARY found ! [${libjpeg_LIBRARY}]")
     endif()
 
     add_custom_command(TARGET appExec 
         COMMAND ${CMAKE_COMMAND} -E copy_if_different 
             ${libjpeg_LIBRARY} $<TARGET_FILE_DIR:appExec>
     )
-
 endif()
 
 ###########
 # pe-util #
 ###########
 
-IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-
+#pe-util is required to find all .dll dependencies
+IF(MINGW)
     add_subdirectory("external/pe-util")
-
-    #as dependency
-    add_dependencies(appExec peldd)
-
+    add_dependencies(appExec peldd) #as dependency
+    #define a different directory, because we do not want pe-util to be shipped with the app
     set_target_properties(peldd
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/toolsBin"
     )
-
 endif()
 
 #################
@@ -251,27 +248,14 @@ endif()
 #################
 
 add_subdirectory("external/sentry-native")
-
-#link
 target_include_directories(appExec PRIVATE "${Sentry-Native_SOURCE_DIR}/include")
 target_link_libraries(appExec sentry)
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    install(TARGETS sentry
-        RUNTIME
-            DESTINATION .
-        PUBLIC_HEADER
-            OPTIONAL
-    )
-endif()
 
 #############
 # AudioTube #
 #############
 
 add_subdirectory("external/audiotube")
-
-#link
 target_link_libraries(appExec audiotube)
 
 ############# 
@@ -329,15 +313,18 @@ message("Searching for gst plugins in [${GSTREAMER_PLUGINS_DLL_LOCATION}]...")
 
 #copy gstreamer plugins into output
 foreach(_gstPluginLib IN ITEMS ${_gstreamer_plugins})
-    
-    find_library(${_gstPluginLib}_LIBRARY 
-        NAMES "${_gstPluginLib}" 
+
+    #using find_file because find_library is kinda broken with .dll on MinGW
+    find_file(${_gstPluginLib}_LIBRARY 
+        NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}${_gstPluginLib}${CMAKE_SHARED_LIBRARY_SUFFIX}
         PATHS ${GSTREAMER_PLUGINS_DLL_LOCATION}
         NO_DEFAULT_PATH
     )
 
     IF(NOT ${_gstPluginLib}_LIBRARY)
         message(FATAL_ERROR "${_gstPluginLib}_LIBRARY NOT FOUND !")
+    else()
+        message("${_gstPluginLib}_LIBRARY Found ! [${${_gstPluginLib}_LIBRARY}]")
     endif()
     
     list(APPEND _gstPluginLib_bin 
@@ -357,15 +344,18 @@ endforeach()
 # ######################
 
 #platform specifics missing dependency
-IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    
-    find_library(giognutls_DLL 
-        NAMES "giognutls" 
-        PATH_SUFFIXES "gio/modules"
+IF(MINGW)
+
+    #broken find_library...
+    find_file(giognutls_DLL 
+        NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}giognutls${CMAKE_SHARED_LIBRARY_SUFFIX}
+        PATH_SUFFIXES "lib/gio/modules"
     )
 
     IF(NOT giognutls_DLL)
         message(FATAL_ERROR "giognutls .dll NOT FOUND !")
+    else()
+        message("giognutls_DLL Found ! [${giognutls_DLL}]")
     endif()
 
     add_custom_command(TARGET appExec
@@ -388,30 +378,32 @@ if(APPLE)
         tasn1
         xml2
     )
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+elseif(MINGW)
     list(APPEND GST_SLIBS
-        libgmp-10
-        libgnutls-30
-        libhogweed-5
-        libnettle-7
-        libsoup-2.4-1
-        libtasn1-6
-        libwinpthread-1
-        libxml2-2
+        gmp-10
+        gnutls-30
+        hogweed-5
+        nettle-7
+        soup-2.4-1
+        tasn1-6
+        winpthread-1
+        xml2-2
     )
 endif()
 
 #import all missing GSTREAMER libs
 foreach(_gstSLib IN ITEMS ${GST_SLIBS})
 
-    find_library(${_gstSLib}_LIBRARY 
-        NAMES "${_gstSLib}" 
-        PATHS ${CMAKE_LIBRARY_PATH} 
-        NO_DEFAULT_PATH
+    #broken find_library...
+    find_file(${_gstSLib}_LIBRARY 
+        NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}${_gstSLib}${CMAKE_SHARED_LIBRARY_SUFFIX}
+        PATH_SUFFIXES "bin"
     )
 
     IF(NOT ${_gstSLib}_LIBRARY)
         message(FATAL_ERROR "${_gstSLib}_LIBRARY NOT FOUND !")
+    else()
+        message("${_gstSLib}_LIBRARY Found ! [${${_gstSLib}_LIBRARY}]")
     endif()
 
     add_custom_command(TARGET appExec 
@@ -432,26 +424,6 @@ find_package(miniupnpc REQUIRED)
 #link
 target_link_libraries(appExec ${MINIUPNP_LIBRARY})
 target_include_directories(appExec PRIVATE ${MINIUPNP_INCLUDE_DIR})
-
-#copy lib into a target
-IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")  
-    
-    find_library(miniupnpc_DLL 
-        NAMES "miniupnpc" 
-        PATHS ${CMAKE_LIBRARY_PATH} 
-        NO_DEFAULT_PATH
-    )
-
-    IF(NOT miniupnpc_DLL)
-        message(FATAL_ERROR "miniupnpc .dll NOT FOUND !")
-    endif()
-
-    add_custom_command(TARGET appExec 
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-            ${miniupnpc_DLL} $<TARGET_FILE_DIR:appExec>
-    )
-
-endif()
 
 #####################
 # list source files #
@@ -499,19 +471,20 @@ add_custom_command(TARGET appExec
 ################
 
 #scan for missing lib dependencies, then fetch and copy them
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    
+if(MINGW)
+    if(NOT MINGW_DLL_PATH)
+        message(FATAL_ERROR "MINGW_DLL_PATH must be set ! Please use a toolchain file !")
+    endif()
     add_custom_command(TARGET appExec POST_BUILD
         COMMAND $<TARGET_FILE:peldd> -a
             -p ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} 
-            -p ${CMAKE_LIBRARY_PATH}
+            -p ${MINGW_DLL_PATH}
             $<TARGET_FILE:appExec> 
             ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gio/* 
             ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins/*
             | sed 's/\\\\\\\\/\\\\//g'
             | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     )
-
 endif()
 
 ######################
