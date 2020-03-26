@@ -156,8 +156,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_link_libraries(appExec ws2_32) #WSA functions !
 
     #find libs
-    find_library(OPENSSL_CPYPTO_DLL NAMES "crypto-1_1-x64" PATHS ${CMAKE_LIBRARY_PATH} NO_DEFAULT_PATH)
-    find_library(OPENSSL_SSL_DLL NAMES "ssl-1_1-x64" PATHS ${CMAKE_LIBRARY_PATH} NO_DEFAULT_PATH)
+    find_library(OPENSSL_CPYPTO_DLL NAMES "libcrypto-1_1-x64.dll" PATHS ${CMAKE_LIBRARY_PATH} NO_DEFAULT_PATH)
+    find_library(OPENSSL_SSL_DLL NAMES "libssl-1_1-x64.dll" PATHS ${CMAKE_LIBRARY_PATH} NO_DEFAULT_PATH)
 
     IF(NOT OPENSSL_CPYPTO_DLL OR NOT OPENSSL_SSL_DLL)
         message(FATAL_ERROR "Openssl .dll NOT FOUND !")
@@ -285,6 +285,11 @@ pkg_check_modules(Gst REQUIRED IMPORTED_TARGET
     gstreamer-net-1.0
     gstreamer-audio-1.0
 )
+
+#since mms-bitfields flag from glib is PUBLIC and throws a bunch of warnings...
+IF(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    target_compile_options(PkgConfig::Gst INTERFACE "-Wno-incompatible-ms-struct")
+ENDIF()
 
 #link
 target_link_libraries(appExec     
@@ -521,5 +526,5 @@ include(CMakePublish)
 
 #include(PrintAllVariables)
 
-#include(PrintTargetProperties)
-#print_target_properties(peldd)
+# include(PrintTargetProperties)
+# print_target_properties(PkgConfig::Gst)
