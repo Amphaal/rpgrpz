@@ -93,21 +93,30 @@ add_executable(appExec ${APP_BUNDLE_TYPE})
 set_target_properties(appExec PROPERTIES OUTPUT_NAME "${PROJECT_NAME}") #define executable name
 target_compile_definitions(appExec PRIVATE $<$<CONFIG:Debug>:_DEBUG>) #define _DEBUG markup if in DEBUG config
 
-#generate
+#generate pdb
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     IF(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")  
         target_link_options(appExec PRIVATE -Wl,-pdb=) # generate pdb files
     endif()
 endif()
 
+#warnings for debug
+if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    IF()  
+        target_link_options(appExec PRIVATE 
+            -Wall 
+            -Wextra 
+            -Wpedantic 
+            -Wno-unused-parameter
+        )
+    endif()
+endif()
+
+
+
 #optimise for release
 if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     set_target_properties(appExec PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE) #enable LTO
-endif()
-
-#prevent annoying warnings
-IF(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    target_compile_options(appExec PUBLIC -Wno-unused-parameter)
 endif()
 
 #########################
@@ -240,7 +249,8 @@ endif()
 IF(MINGW)
     include(ExternalProject)
     ExternalProject_Add(peldd
-        GIT_REPOSITORY    "https://github.com/Amphaal/pe-util"
+        GIT_REPOSITORY  "https://github.com/Amphaal/pe-util"
+        INSTALL_COMMAND ""
     )
 endif()
 
@@ -472,7 +482,7 @@ if(MINGW)
         message(FATAL_ERROR "MINGW_DLL_PATH must be set ! Please use a toolchain file !")
     endif()
     add_custom_command(TARGET appExec POST_BUILD
-        COMMAND peldd -a
+        COMMAND peldd-prefix/src/peldd-build/peldd -a
             -p ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} 
             -p ${MINGW_DLL_PATH}
             $<TARGET_FILE:appExec> 
