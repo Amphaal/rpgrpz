@@ -5,7 +5,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                sh 'git clone --recursive-modules https://github.com/Amphaal/rpgrpz.git && cd rpgrpz'
+                sh 'git submodule update --init --recursive'
             }
         }
         stage('Compile') {
