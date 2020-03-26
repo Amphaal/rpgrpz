@@ -1,6 +1,3 @@
-[submodule "external/pe-util"]
-	path = external/pe-util
-	url = https://github.com/Amphaal/pe-util
 [submodule "external/audiotube"]
 	path = external/audiotube
 	url = https://github.com/Amphaal/AudioTube.git
