@@ -2,7 +2,7 @@ SET(CMAKE_SYSTEM_NAME "Windows")
 SET(CMAKE_SYSTEM_VERSION 6.1 CACHE INTERNAL "") #target Windows 7
 
 # search for programs in the build host directories
-set (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM ONLY)
 
 # for libraries and headers in the target directories
 set (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
