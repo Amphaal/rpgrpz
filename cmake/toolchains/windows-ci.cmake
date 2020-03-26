@@ -21,7 +21,6 @@ SET(MINGW_DLL_PATH ${MINGW64_ROOT}/bin)
 
 #We want Release with debug infos
 SET(CMAKE_BUILD_TYPE RelWithDebInfo)
-SET(CMAKE_GENERATOR Ninja)
 
 SET (CMAKE_C_COMPILER             "x86_64-w64-mingw32-clang")
 SET (CMAKE_C_FLAGS                "-fuse-ld=lld")
