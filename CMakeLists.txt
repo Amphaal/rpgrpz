@@ -291,62 +291,60 @@ target_link_libraries(appExec
     PkgConfig::Gst
 )
 
-####define gstreamer plugins to use
-#core
-LIST(APPEND _gstreamer_plugins 
-    gstplayback
-    gstautodetect
-    gstcoreelements
-)
-#opus stream read
-LIST(APPEND _gstreamer_plugins 
-    gstwaveform
-    gstsoup
-    gsttypefindfunctions
-    gstmatroska
-    gstopus
-    gstvolume
-    gstaudioconvert
-    gstaudioresample
-)
-
-#create plugin directory
-add_custom_command(TARGET appExec 
-    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:appExec>/gst-plugins
-)
-
-#get plugin shared libraries location
-pkg_get_variable(GSTREAMER_PLUGINS_DLL_LOCATION gstreamer-1.0 
-    pluginsdir
-)
-
-message("Searching for gst plugins in [${GSTREAMER_PLUGINS_DLL_LOCATION}]...")
-
-#copy gstreamer plugins into output
-foreach(_gstPluginLib IN ITEMS ${_gstreamer_plugins})
-
-    #using find_file because find_library is kinda broken with .dll on MinGW
-    find_file(${_gstPluginLib}_LIBRARY 
-        NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}${_gstPluginLib}${CMAKE_SHARED_LIBRARY_SUFFIX}
-        PATHS ${GSTREAMER_PLUGINS_DLL_LOCATION}
-        NO_DEFAULT_PATH
+IF(MINGW OR APPLE)
+    ####define gstreamer plugins to use
+    #core
+    LIST(APPEND _gstreamer_plugins 
+        gstplayback
+        gstautodetect
+        gstcoreelements
+    )
+    #opus stream read
+    LIST(APPEND _gstreamer_plugins 
+        gstwaveform
+        gstsoup
+        gsttypefindfunctions
+        gstmatroska
+        gstopus
+        gstvolume
+        gstaudioconvert
+        gstaudioresample
     )
 
-    IF(NOT ${_gstPluginLib}_LIBRARY)
-        message(FATAL_ERROR "${_gstPluginLib}_LIBRARY NOT FOUND !")
-    else()
-        message("${_gstPluginLib}_LIBRARY Found ! [${${_gstPluginLib}_LIBRARY}]")
-    endif()
-    
-    list(APPEND _gstPluginLib_bin 
-        ${${_gstPluginLib}_LIBRARY}
-    )
-    
+    #create plugin directory
     add_custom_command(TARGET appExec 
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${${_gstPluginLib}_LIBRARY} $<TARGET_FILE_DIR:appExec>/gst-plugins
+        COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:appExec>/gst-plugins
     )
 
-endforeach()
+    #get plugin shared libraries location
+    pkg_get_variable(GSTREAMER_PLUGINS_DLL_LOCATION gstreamer-1.0 
+        pluginsdir
+    )
+
+    message("Searching for gst plugins in [${GSTREAMER_PLUGINS_DLL_LOCATION}]...")
+
+    #copy gstreamer plugins into output
+    foreach(_gstPluginLib IN ITEMS ${_gstreamer_plugins})
+
+        #using find_file because find_library is kinda broken with .dll on MinGW
+        find_file(${_gstPluginLib}_LIBRARY 
+            NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}${_gstPluginLib}${CMAKE_SHARED_LIBRARY_SUFFIX}
+            PATHS ${GSTREAMER_PLUGINS_DLL_LOCATION}
+            NO_DEFAULT_PATH
+        )
+
+        IF(NOT ${_gstPluginLib}_LIBRARY)
+            message(FATAL_ERROR "${_gstPluginLib}_LIBRARY NOT FOUND !")
+        else()
+            message("${_gstPluginLib}_LIBRARY Found ! [${${_gstPluginLib}_LIBRARY}]")
+        endif()
+
+        add_custom_command(TARGET appExec 
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${${_gstPluginLib}_LIBRARY} $<TARGET_FILE_DIR:appExec>/gst-plugins
+        )
+
+    endforeach()
+endif()
 
 # ######################
 # # GST LIBRARIES COPY #
@@ -400,26 +398,28 @@ elseif(MINGW)
     )
 endif()
 
-#import all missing GSTREAMER libs
-foreach(_gstSLib IN ITEMS ${GST_SLIBS})
+IF(MINGW OR APPLE)
+    #import all missing GSTREAMER libs
+    foreach(_gstSLib IN ITEMS ${GST_SLIBS})
 
-    #broken find_library...
-    find_file(${_gstSLib}_LIBRARY 
-        NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}${_gstSLib}${CMAKE_SHARED_LIBRARY_SUFFIX}
-        PATH_SUFFIXES "bin"
-    )
+        #broken find_library...
+        find_file(${_gstSLib}_LIBRARY 
+            NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}${_gstSLib}${CMAKE_SHARED_LIBRARY_SUFFIX}
+            PATH_SUFFIXES "bin"
+        )
 
-    IF(NOT ${_gstSLib}_LIBRARY)
-        message(FATAL_ERROR "${_gstSLib}_LIBRARY NOT FOUND !")
-    else()
-        message("${_gstSLib}_LIBRARY Found ! [${${_gstSLib}_LIBRARY}]")
-    endif()
+        IF(NOT ${_gstSLib}_LIBRARY)
+            message(FATAL_ERROR "${_gstSLib}_LIBRARY NOT FOUND !")
+        else()
+            message("${_gstSLib}_LIBRARY Found ! [${${_gstSLib}_LIBRARY}]")
+        endif()
 
-    add_custom_command(TARGET appExec 
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${${_gstSLib}_LIBRARY} $<TARGET_FILE_DIR:appExec>
-    )
+        add_custom_command(TARGET appExec 
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${${_gstSLib}_LIBRARY} $<TARGET_FILE_DIR:appExec>
+        )
 
-endforeach()
+    endforeach()
+endif()
 
 #############
 # miniupnpc #
@@ -498,12 +498,3 @@ endif()
 ######################
 
 include(CMakePublish)
-
-#################
-# Debug helpers #
-#################
-
-#include(PrintAllVariables)
-
-# include(PrintTargetProperties)
-# print_target_properties(PkgConfig::Gst)
