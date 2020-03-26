@@ -1,5 +1,6 @@
 #We want Release with debug infos
 SET(CMAKE_BUILD_TYPE RelWithDebInfo)
+SET(CMAKE_GENERATOR Ninja)
 
 SET (CMAKE_C_COMPILER             "clang")
 SET (CMAKE_C_FLAGS                "-fuse-ld=lld")

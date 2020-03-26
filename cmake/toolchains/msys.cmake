@@ -20,6 +20,7 @@ SET(MINGW_DLL_PATH $ENV{MINGW64_ROOT}/bin)
 
 #We want Debug
 SET(CMAKE_BUILD_TYPE Debug)
+SET(CMAKE_GENERATOR Ninja)
 
 SET (CMAKE_C_COMPILER             "clang")
 SET (CMAKE_C_FLAGS                "-fuse-ld=lld")
