@@ -21,7 +21,7 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 #############
 
 #pre-startup
-cmake_minimum_required(VERSION 3.15.4)
+cmake_minimum_required(VERSION 3.17.0)
 message(STATUS "Using toolchain file: [${CMAKE_TOOLCHAIN_FILE}].")
 
 #project setup
