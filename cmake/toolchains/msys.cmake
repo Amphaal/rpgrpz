@@ -3,7 +3,7 @@ if(NOT DEFINED ENV{MINGW64_ROOT})
 endif()
 
 # search for programs in the build host directories
-set (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM ONLY)
 
 # for libraries and headers in the target directories
 set (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
@@ -16,7 +16,7 @@ list(APPEND CMAKE_PREFIX_PATH
 )
 
 #.dll are in bin folder
-list(APPEND MINGW_DLL_PATH $ENV{MINGW64_ROOT}/bin)
+SET(MINGW_DLL_PATH $ENV{MINGW64_ROOT}/bin)
 
 SET (CMAKE_C_COMPILER             "clang")
 SET (CMAKE_C_FLAGS                "-fuse-ld=lld")
