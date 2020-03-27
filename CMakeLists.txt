@@ -52,8 +52,9 @@ configure_file(
 # XCompile #
 ############
 
-SET(CROSSCOMPILING_EMULATOR "/usr/bin/wine")
-SET(CMAKE_CROSSCOMPILING_EMULATOR "/usr/bin/wine")
+message("IS CROSSCOMPILING : ${CMAKE_CROSSCOMPILING}")
+SET(CROSSCOMPILING_EMULATOR "/usr/bin/wine" CACHE INTERNAL "")
+SET(CMAKE_CROSSCOMPILING_EMULATOR "/usr/bin/wine" CACHE INTERNAL "")
 
 #if XCompiling Windows, use emulator
 # IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
