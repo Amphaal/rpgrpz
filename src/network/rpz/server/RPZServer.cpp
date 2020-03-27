@@ -128,7 +128,7 @@ void RPZServer::_onClientSocketDisconnected(JSONSocket* disconnectedSocket) {
     delete disconnectedSocket;
 
     //tell other clients that the user is gone
-    this->_sendToAll(RPZJSON::Method::UserOut, idToRemove);
+    this->_sendToAll(RPZJSON::Method::UserOut, QVariant::fromValue<RPZUser::Id>(idToRemove));
 
 }
 
