@@ -104,19 +104,6 @@ add_executable(appExec ${APP_BUNDLE_TYPE})
 set_target_properties(appExec PROPERTIES OUTPUT_NAME "${PROJECT_NAME}") #define executable name
 target_compile_definitions(appExec PRIVATE $<$<CONFIG:Debug>:_DEBUG>) #define _DEBUG markup if in DEBUG config
 
-IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    message("CAAAAAAAAAAAAAAAAFDSFDSFSDFSDFSDFSDDDDDDDDD")
-    set(CMAKE_CROSSCOMPILING_EMULATOR "/usr/bin/wine") #define executable name
-    set_target_properties(appExec PROPERTIES CROSSCOMPILING_EMULATOR "/usr/bin/wine") #define executable name
-    add_custom_command(
-        OUTPUT "aaaa.txt"
-        COMMAND "/mingw64/bin/moc.exe --help"
-        COMMENT "Unpacking foo.tar"
-        VERBATIM
-    )
-    message("${TEST_CHIT}")
-endif()
-
 #generate pdb
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     IF(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")  
@@ -521,3 +508,17 @@ endif()
 ######################
 
 include(CMakePublish)
+
+IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    message("CAAAAAAAAAAAAAAAAFDSFDSFSDFSDFSDFSDDDDDDDDD")
+    message("${Qt5Core_MOC_EXECUTABLE}")
+    set(CMAKE_CROSSCOMPILING_EMULATOR "/usr/bin/wine") #define executable name
+    set_target_properties(appExec PROPERTIES CROSSCOMPILING_EMULATOR "/usr/bin/wine") #define executable name
+    add_custom_command(
+        OUTPUT "aaaa.txt"
+        COMMAND "/mingw64/bin/moc.exe --help"
+        COMMENT "Unpacking foo.tar"
+        VERBATIM
+    )
+    message("${TEST_CHIT}")
+endif()
