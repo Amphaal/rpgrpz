@@ -104,7 +104,7 @@ target_compile_definitions(appExec PRIVATE $<$<CONFIG:Debug>:_DEBUG>) #define _D
 
 #include manually missing headers 
 IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    target_include_directories(appExec BEFORE PRIVATE "/usr/x86_64-w64-mingw32")
+    target_include_directories(appExec BEFORE PUBLIC "/usr/x86_64-w64-mingw32")
 endif()
 
 #generate pdb
