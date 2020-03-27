@@ -510,15 +510,5 @@ endif()
 include(CMakePublish)
 
 IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    message("CAAAAAAAAAAAAAAAAFDSFDSFSDFSDFSDFSDDDDDDDDD")
-    message("${Qt5Core_MOC_EXECUTABLE}")
-    set(CMAKE_CROSSCOMPILING_EMULATOR "/usr/bin/wine") #define executable name
-    set_target_properties(appExec PROPERTIES CROSSCOMPILING_EMULATOR "/usr/bin/wine") #define executable name
-    add_custom_command(
-        OUTPUT "aaaa.txt"
-        COMMAND "/mingw64/bin/moc.exe --help"
-        COMMENT "Unpacking foo.tar"
-        VERBATIM
-    )
-    message("${TEST_CHIT}")
+    SET(Qt5Core_MOC_EXECUTABLE "/usr/bin/wine /mingw64/bin/moc.exe")
 endif()
