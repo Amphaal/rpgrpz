@@ -257,6 +257,7 @@ endif()
 #################
 
 add_subdirectory("external/sentry-native")
+target_compile_options(sentry PUBLIC -Wno-unused-parameter) #temporary fix
 target_include_directories(appExec PRIVATE "${Sentry-Native_SOURCE_DIR}/include")
 target_link_libraries(appExec sentry)
 
