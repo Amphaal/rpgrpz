@@ -15,8 +15,10 @@ set (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set (CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set (CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
+SET(MINGW_BASE_PREFIX_PATH "/usr/x86_64-w64-mingw32")
+
 list(APPEND CMAKE_PREFIX_PATH 
-    /usr/x86_64-w64-mingw32
+    ${MINGW_BASE_PREFIX_PATH}
     ${MINGW64_ROOT} 
 )
 
@@ -27,9 +29,9 @@ SET(MINGW_DLL_PATH ${MINGW64_ROOT}/bin)
 SET(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 SET (CMAKE_C_COMPILER             "x86_64-w64-mingw32-clang")
-SET (CMAKE_C_FLAGS                "-fuse-ld=lld")
+SET (CMAKE_C_FLAGS                "-I${MINGW_BASE_PREFIX_PATH} -fuse-ld=lld")
 SET (CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g")
 
 SET (CMAKE_CXX_COMPILER             "x86_64-w64-mingw32-clang++")
-SET (CMAKE_CXX_FLAGS                "-fuse-ld=lld")
+SET (CMAKE_CXX_FLAGS                "-I${MINGW_BASE_PREFIX_PATH} -fuse-ld=lld")
 SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
