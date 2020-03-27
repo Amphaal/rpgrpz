@@ -1,10 +1,6 @@
+set(CMAKE_VERBOSE_MAKEFILE ON CACHE BOOL "ON")
 SET(CMAKE_SYSTEM_NAME "Windows")
 SET(CMAKE_SYSTEM_VERSION 6.1 CACHE INTERNAL "") #target Windows 7
-find_program(WINE "wine")
-IF(NOT WINE)
-    message(FATAL_ERROR "Wine could not be found !")
-endif()
-SET(CMAKE_CROSSCOMPILING_EMULATOR ${WINE})
 SET(MINGW64_ROOT "/mingw64")
 
 # search for programs in the build host directories
