@@ -5,18 +5,12 @@
 
 #include <QDebug>
 
-#ifdef __APPLE__
-
-#include <sys/time.h>
-
-#endif
-
 #ifdef _WIN32
-
 #include <stdint.h>
 #include <time.h>
 #include <Windows.h>
-
+#else //APPLE and LINUX
+#include <sys/time.h>
 #endif
 
 class SnowFlake {

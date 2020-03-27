@@ -1,15 +1,6 @@
 #include "snowflake.h"
 
-#ifdef __APPLE__
-
-int SnowFlake::gtod(struct timeval * tp, struct timezone * tzp) {
-    return gettimeofday(tp, tzp);
-}
-
-#endif
-
 #ifdef _WIN32
-
 int SnowFlake::gtod(struct timeval * tp, struct timezone * tzp) {
     // Note: some broken versions only have 8 trailing zero's, the correct epoch has 9 trailing zero's
     // This magic number is the number of 100 nanosecond intervals since January 1, 1601 (UTC)
@@ -29,7 +20,10 @@ int SnowFlake::gtod(struct timeval * tp, struct timezone * tzp) {
     tp->tv_usec = (long) (system_time.wMilliseconds * 1000);
     return 0;
 }
-
+#else
+int SnowFlake::gtod(struct timeval * tp, struct timezone * tzp) {
+    return gettimeofday(tp, tzp);
+}
 #endif
 
 uint64_t SnowFlake::getNextMill() {
