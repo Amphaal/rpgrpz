@@ -20,8 +20,6 @@ list(APPEND CMAKE_PREFIX_PATH
     ${MINGW64_ROOT} 
 )
 
-include_directories(/usr/x86_64-w64-mingw32/include)
-
 #.dll are in bin folder
 SET(MINGW_DLL_PATH ${MINGW64_ROOT}/bin)
 

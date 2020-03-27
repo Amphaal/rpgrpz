@@ -102,6 +102,11 @@ add_executable(appExec ${APP_BUNDLE_TYPE})
 set_target_properties(appExec PROPERTIES OUTPUT_NAME "${PROJECT_NAME}") #define executable name
 target_compile_definitions(appExec PRIVATE $<$<CONFIG:Debug>:_DEBUG>) #define _DEBUG markup if in DEBUG config
 
+#include manually missing headers 
+IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    target_include_directories(appExec BEFORE PRIVATE "/usr/x86_64-w64-mingw32")
+endif()
+
 #generate pdb
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     IF(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")  
