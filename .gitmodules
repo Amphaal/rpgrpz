@@ -1,6 +1,6 @@
 [submodule "external/audiotube"]
 	path = external/audiotube
 	url = https://github.com/Amphaal/AudioTube.git
-[submodule "sentry-native"]
+[submodule "external/sentry-native"]
 	path = external/sentry-native
-	url = https://github.com/getsentry/sentry-native
+	url = https://github.com/Amphaal/sentry-native
