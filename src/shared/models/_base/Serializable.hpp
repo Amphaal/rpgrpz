@@ -30,6 +30,6 @@ class Serializable : public QVariantHash {
     
     private:
         void _setId(const SnowFlake::Id &id) {
-            this->insert(QStringLiteral(u"id"), id);
+            this->insert(QStringLiteral(u"id"), QVariant::fromValue<SnowFlake::Id>(id));
         }
 };
