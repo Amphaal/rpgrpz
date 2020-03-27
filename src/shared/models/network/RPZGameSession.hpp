@@ -66,7 +66,7 @@ class RPZGameSession : public QVariantHash {
         }
 
         void _setSelfUserId(const RPZUser::Id &selfUserId) {
-            this->insert("suid", selfUserId);
+            this->insert("suid", QVariant::fromValue<RPZUser::Id>(selfUserId));
         }
 
 };

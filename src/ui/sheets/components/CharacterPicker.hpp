@@ -295,7 +295,7 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
             this->_characterListCombo->addItem(
                 origin == CharacterOrigin::Local ? this->_selfCloakIcon : this->_standardClockIcon, 
                 characterToAdd.toString(), 
-                characterToAdd.id()
+                QVariant::fromValue<RPZCharacter::Id>(characterToAdd.id())
             );
 
             this->_characterListCombo->setItemData(
@@ -451,7 +451,7 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
         }
 
         int _getIndexOfCharacterId(const RPZCharacter::Id &characterIdToFind) {
-            return this->_characterListCombo->findData(characterIdToFind);
+            return this->_characterListCombo->findData(QVariant::fromValue<RPZCharacter::Id>(characterIdToFind));
         }
         
 };

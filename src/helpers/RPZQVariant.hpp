@@ -51,14 +51,14 @@ class RPZQVariant {
             return item->data((int)RPZQVariant::Roles::AtomId).toULongLong();
         }
         static void setAtomId(QGraphicsItem* item, const RPZAtom::Id &id) {
-            item->setData((int)RPZQVariant::Roles::AtomId, id);
+            item->setData((int)RPZQVariant::Roles::AtomId, QVariant::fromValue<RPZAtom::Id>(id));
         }
 
         static RPZCharacter::Id boundCharacterId(const QGraphicsItem* item) {
             return item->data((int)RPZQVariant::Roles::CharacterId).toULongLong();
         }
         static void setBoundCharacterId(QGraphicsItem* item, const RPZCharacter::Id &characterId) {
-            item->setData((int)RPZQVariant::Roles::CharacterId, characterId);
+            item->setData((int)RPZQVariant::Roles::CharacterId, QVariant::fromValue<RPZCharacter::Id>(characterId));
         }
 
         static bool isGridBound(const QGraphicsItem* item) {
