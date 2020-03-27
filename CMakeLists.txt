@@ -51,11 +51,10 @@ configure_file(
 #if XCompiling Windows, use emulator
 IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
     #MOC
-    set(AUTOMOC_EXECUTABLE "/usr/bin/${CMAKE_CROSSCOMPILING_EMULATOR}")
     add_executable(Qt5::moc IMPORTED)
     set_target_properties(Qt5::moc PROPERTIES
         COMPILE_FLAGS "${MINGW64_ROOT}/bin/moc.exe"
-        IMPORTED_LOCATION ${AUTOMOC_EXECUTABLE}
+        IMPORTED_LOCATION ${CMAKE_CROSSCOMPILING_EMULATOR}
     )
 endif()
 
