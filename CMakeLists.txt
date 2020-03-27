@@ -48,14 +48,6 @@ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/version.h
 )
 
-############
-# XCompile #
-############
-
-message("IS CROSSCOMPILING : ${CMAKE_CROSSCOMPILING}")
-SET(CROSSCOMPILING_EMULATOR "/usr/bin/wine" CACHE INTERNAL "")
-SET(CMAKE_CROSSCOMPILING_EMULATOR "/usr/bin/wine" CACHE INTERNAL "")
-
 #if XCompiling Windows, use emulator
 # IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
 #     #MOC
@@ -111,6 +103,11 @@ endif()
 add_executable(appExec ${APP_BUNDLE_TYPE})
 set_target_properties(appExec PROPERTIES OUTPUT_NAME "${PROJECT_NAME}") #define executable name
 target_compile_definitions(appExec PRIVATE $<$<CONFIG:Debug>:_DEBUG>) #define _DEBUG markup if in DEBUG config
+
+IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    message("CAAAAAAAAAAAAAAAAFDSFDSFSDFSDFSDFSDDDDDDDDD")
+    set_target_properties(appExec PROPERTIES CROSSCOMPILING_EMULATOR "/usr/bin/wine") #define executable name
+endif()
 
 #generate pdb
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
