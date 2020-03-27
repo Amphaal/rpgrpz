@@ -226,7 +226,7 @@ void ConnectWidget::_fillCharacterSheetCombo() {
         this->_characterSheetTarget->addItem(
             QIcon(QStringLiteral(u":/icons/app/connectivity/self_cloak.png")), 
             character.toString(), 
-            id
+            QVariant::fromValue<SnowFlake::Id>(id)
         );
 
         if(previouslySelectedCharacterId == id) {
