@@ -53,7 +53,7 @@ IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
     #MOC
     add_executable(Qt5::moc IMPORTED)
     set_target_properties(Qt5::moc PROPERTIES
-        COMPILE_FLAGS "${MINGW64_ROOT}/bin/moc.exe"
+        IMPORT_SUFFIX " ${MINGW64_ROOT}/bin/moc.exe"
         IMPORTED_LOCATION ${CMAKE_CROSSCOMPILING_EMULATOR}
     )
 endif()
