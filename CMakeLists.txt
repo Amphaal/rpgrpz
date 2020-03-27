@@ -48,6 +48,18 @@ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/version.h
 )
 
+############
+# XCompile #
+############
+
+#if XCompiling Windows, use emulator
+#IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    #MOC
+    set(QT_MOC_EXECUTABLE ${CMAKE_CROSSCOMPILING_EMULATOR} ${MINGW64_ROOT}/bin/moc.exe)
+    add_executable(Qt5::moc IMPORTED)
+    set_property(TARGET Qt5::moc PROPERTY IMPORTED_LOCATION ${QT_MOC_EXECUTABLE})
+#endif()
+
 ################################
 ## CPP Compiler Configuration ##
 ################################
@@ -491,17 +503,6 @@ if(MINGW)
             | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     )
 endif()
-
-############
-# XCompile #
-############
-
-#if XCompiling Windows, use emulator
-#IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    SET(QT_MOC_EXECUTABLE ${CMAKE_CROSSCOMPILING_EMULATOR} CACHE INTERNAL "")
-    SET(QT_RCC_EXECUTABLE ${CMAKE_CROSSCOMPILING_EMULATOR} CACHE INTERNAL "")
-    SET(QT_UIC_EXECUTABLE ${CMAKE_CROSSCOMPILING_EMULATOR} CACHE INTERNAL "")
-#endif()
 
 ######################
 # add Publish target #
