@@ -4,8 +4,8 @@
 
 Supported (64bits only) :
 - Windows : OK
+- Linux : OK
 - MacOS : WIP
-- Linux : WIP
 
 Prerequisites to build:
 - For Windows
@@ -15,6 +15,8 @@ Prerequisites to build:
     - Run : pacman -Su (From msys2_shell.cmd)
     - Run : pacman -S --needed - < ./prerequisites/msys2/pkglist_build.txt (From msys2_shell.cmd)
     - Run : pacman -S --needed - < ./prerequisites/msys2/pkglist_dev.txt (From msys2_shell.cmd)
+- For ArchLinux
+    - Run : pacman -S --needed - < ./prerequisites/arch/pkglist_build.txt
 - For OSX
     - Install latest XCode from the App Store
     - Run : brew install $(cat ./prerequisites/osx/pkglist_build.txt)
