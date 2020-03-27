@@ -52,16 +52,19 @@ configure_file(
 # XCompile #
 ############
 
+SET(CROSSCOMPILING_EMULATOR "/usr/bin/wine")
+SET(CMAKE_CROSSCOMPILING_EMULATOR "/usr/bin/wine")
+
 #if XCompiling Windows, use emulator
-IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    #MOC
-    set(AUTOMOC_EXECUTABLE "/usr/bin/${CMAKE_CROSSCOMPILING_EMULATOR}")
-    set(CMAKE_AUTOMOC_MOC_OPTIONS ${MINGW64_ROOT}/bin/moc.exe)
-    add_executable(Qt5::moc IMPORTED)
-    set_target_properties(Qt5::moc PROPERTIES
-        IMPORTED_LOCATION ${AUTOMOC_EXECUTABLE}
-    )
-endif()
+# IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
+#     #MOC
+#     set(AUTOMOC_EXECUTABLE "/usr/bin/${CMAKE_CROSSCOMPILING_EMULATOR}")
+#     set(CMAKE_AUTOMOC_MOC_OPTIONS ${MINGW64_ROOT}/bin/moc.exe)
+#     add_executable(Qt5::moc IMPORTED)
+#     set_target_properties(Qt5::moc PROPERTIES
+#         IMPORTED_LOCATION ${AUTOMOC_EXECUTABLE}
+#     )
+# endif()
 
 ################################
 ## CPP Compiler Configuration ##

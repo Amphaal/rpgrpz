@@ -1,6 +1,5 @@
 SET(CMAKE_SYSTEM_NAME "Windows")
 SET(CMAKE_SYSTEM_VERSION 6.1 CACHE INTERNAL "") #target Windows 7
-SET(CMAKE_CROSSCOMPILING_EMULATOR "wine")
 SET(MINGW64_ROOT "/mingw64")
 
 # search for programs in the build host directories
