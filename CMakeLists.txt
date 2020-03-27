@@ -106,7 +106,9 @@ target_compile_definitions(appExec PRIVATE $<$<CONFIG:Debug>:_DEBUG>) #define _D
 
 IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
     message("CAAAAAAAAAAAAAAAAFDSFDSFSDFSDFSDFSDDDDDDDDD")
+    set(CMAKE_CROSSCOMPILING_EMULATOR "/usr/bin/wine") #define executable name
     set_target_properties(appExec PROPERTIES CROSSCOMPILING_EMULATOR "/usr/bin/wine") #define executable name
+    add_custom_command(COMMAND "/mingw64/bin/moc.exe --help" VERBATIM)
 endif()
 
 #generate pdb
