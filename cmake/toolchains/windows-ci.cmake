@@ -29,9 +29,9 @@ SET(MINGW_DLL_PATH ${MINGW64_ROOT}/bin)
 SET(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 SET (CMAKE_C_COMPILER             "x86_64-w64-mingw32-clang")
-SET (CMAKE_C_FLAGS                "-I ${MINGW_BASE_PREFIX_PATH}/include -fuse-ld=lld")
+SET (CMAKE_C_FLAGS                "-I ${MINGW_BASE_PREFIX_PATH}/include -I ${MINGW64_ROOT}/include -fuse-ld=lld")
 SET (CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g")
 
 SET (CMAKE_CXX_COMPILER             "x86_64-w64-mingw32-clang++")
-SET (CMAKE_CXX_FLAGS                "-I ${MINGW_BASE_PREFIX_PATH}/include -fuse-ld=lld")
+SET (CMAKE_CXX_FLAGS                "-I ${MINGW_BASE_PREFIX_PATH}/include -I ${MINGW64_ROOT}/include -fuse-ld=lld")
 SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
