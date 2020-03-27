@@ -11,7 +11,7 @@ class RPZQuickDraw : public QVariantHash {
         RPZQuickDraw() {};
         explicit RPZQuickDraw(const QVariantHash &hash) {}
         RPZQuickDraw(const RPZUser::Id &drawerId, const QPainterPath &path) {
-            this->insert("drwr", drawerId);
+            this->insert("drwr", QVariant::fromValue<RPZUser::Id>(drawerId));
             this->insert("p", JSONSerializer::asBase64(path));
         }
 
