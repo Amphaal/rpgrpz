@@ -26,11 +26,11 @@ SET(CMAKE_BUILD_TYPE RelWithDebInfo)
 SET(CMAKE_ASM_MASM_COMPILER "${CMAKE_SOURCE_DIR}/cmake/wrappers/xuasm.sh")
 
 SET(MINGW_FLAGS 
-    "-I ${MINGW_BASE_PREFIX_PATH}/include/c++/9.3.0"
-    "-I ${MINGW_BASE_PREFIX_PATH}/include/c++/9.3.0/x86_64-w64-mingw32"
-    "-I ${MINGW_BASE_PREFIX_PATH}/include"
-    "-I ${MINGW64_ROOT}/include"
-    "-fuse-ld=lld"
+    "-I ${MINGW_BASE_PREFIX_PATH}/include/c++/9.3.0
+    -I ${MINGW_BASE_PREFIX_PATH}/include/c++/9.3.0/x86_64-w64-mingw32
+    -I ${MINGW_BASE_PREFIX_PATH}/include
+    -I ${MINGW64_ROOT}/include
+    -fuse-ld=lld"
 )
 
 SET (CMAKE_C_COMPILER               "x86_64-w64-mingw32-clang")
