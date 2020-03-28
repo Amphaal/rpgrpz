@@ -23,7 +23,9 @@ SET(MINGW_DLL_PATH ${MINGW64_ROOT}/bin)
 #We want Release with debug infos
 SET(CMAKE_BUILD_TYPE RelWithDebInfo)
 
-SET(CMAKE_ASM_MASM_COMPILER         "${CMAKE_SOURCE_DIR}/cmake/wrappers/xuasm.sh")
+SET (CMAKE_ASM_MASM_COMPILER        "${CMAKE_SOURCE_DIR}/cmake/wrappers/xuasm.sh")
+SET (CMAKE_RC_COMPILER              "${CMAKE_SOURCE_DIR}/cmake/wrappers/xwindres.sh")
+
 SET (CMAKE_C_COMPILER               "${CMAKE_SOURCE_DIR}/cmake/wrappers/xclang.sh")
 SET (CMAKE_C_FLAGS                  "-fuse-ld=lld")
 SET (CMAKE_C_FLAGS_RELWITHDEBINFO   "-O2 -g")
