@@ -1,5 +1,6 @@
 SET(CMAKE_SYSTEM_NAME "Windows")
 SET(CMAKE_SYSTEM_VERSION 6.1 CACHE INTERNAL "") #target Windows 7
+SET(WIN32 ON)
 
 # search for programs in the build host directories
 set (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
@@ -27,7 +28,6 @@ SET(CMAKE_ASM_MASM_COMPILER "${CMAKE_SOURCE_DIR}/cmake/wrappers/xuasm.sh")
 
 SET(CMAKE_STANDARD_INCLUDE_DIRECTORIES
     "${MINGW64_ROOT}/include"
-    "${MINGW64_ROOT}/include/c++/9.3.0"
     "${MINGW_BASE_PREFIX_PATH}/include"
     "${MINGW_BASE_PREFIX_PATH}/include/c++/9.3.0"
 )
