@@ -35,14 +35,13 @@ SET (CMAKE_RC_COMPILER                      "${CMAKE_SOURCE_DIR}/cmake/wrappers/
 
 SET (CMAKE_C_COMPILER                       "clang")
 SET (CMAKE_C_LINKER_FLAGS_INIT              "-fuse-ld=lld")
-SET (CMAKE_C_FLAGS                          "-target x86_64-w64-mingw32 --no-standard-includes -L ${MINGW64_ROOT}/lib -L ${MINGW64_ROOT}/x86_64-w64-mingw32/lib")
+SET (CMAKE_C_FLAGS                          "-target x86_64-w64-mingw32")
 SET (CMAKE_C_FLAGS_RELWITHDEBINFO           "-O2 -g")
-SET (CMAKE_C_STANDARD_INCLUDE_DIRECTORIES   ${XCOMPIL_STANDARD_INCLUDE_DIRECTORIES})
-SET (CMAKE_C_STANDARD_LIBRARIES_INIT        ${XCOMPIL_STANDARD_LIBRARIES})
+SET (CMAKE_C_IMPLICIT_LINK_DIRECTORIES      ${XCOMPIL_STANDARD_LIBRARIES})
 
 SET (CMAKE_CXX_COMPILER                     "clang++")
 SET (CMAKE_CXX_LINKER_FLAGS_INIT            "-fuse-ld=lld")
-SET (CMAKE_CXX_FLAGS                        "-target x86_64-w64-mingw32 --no-standard-includes")
+SET (CMAKE_CXX_FLAGS                        "-target x86_64-w64-mingw32")
 SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO         "-O2 -g")
 SET (CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES ${XCOMPIL_STANDARD_INCLUDE_DIRECTORIES})
 SET (CMAKE_CXX_STANDARD_LIBRARIES_INIT      ${XCOMPIL_STANDARD_LIBRARIES})
