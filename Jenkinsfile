@@ -8,7 +8,8 @@ pipeline {
                         docker { image 'amphaal/rpgrpz-ci-windows' }
                     }
                     steps {
-                        sh 'git submodule update --init --remote --merge --recursive'
+                        sh 'git submodule update --init --recursive'
+                        sh 'git submodule update --merge --remote --recursive'
                         sh 'cmake -GNinja -B_genWindows -H. -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/windows-ci.cmake'
                         sh 'ninja -v -C _genWindows'
                         sh 'cmake --build ./_genWindows --target zipForDeploy'
