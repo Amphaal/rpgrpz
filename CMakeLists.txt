@@ -55,6 +55,16 @@ IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set_target_properties(Qt5::moc PROPERTIES
         IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/xmoc.sh
     )
+    #RCC
+    add_executable(Qt5::rcc IMPORTED)
+    set_target_properties(Qt5::rcc PROPERTIES
+        IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/xrcc.sh
+    )
+    #UIC
+    add_executable(Qt5::uic IMPORTED)
+    set_target_properties(Qt5::uic PROPERTIES
+        IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/xuic.sh
+    )
 endif()
 
 ################################
