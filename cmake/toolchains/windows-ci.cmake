@@ -1,6 +1,5 @@
 SET(CMAKE_SYSTEM_NAME "Windows")
 SET(CMAKE_SYSTEM_VERSION 6.1 CACHE INTERNAL "") #target Windows 7
-SET(WIN32 ON)
 
 # search for programs in the build host directories
 set (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
@@ -24,20 +23,11 @@ SET(MINGW_DLL_PATH ${MINGW64_ROOT}/bin)
 #We want Release with debug infos
 SET(CMAKE_BUILD_TYPE RelWithDebInfo)
 
-SET(CMAKE_ASM_MASM_COMPILER "${CMAKE_SOURCE_DIR}/cmake/wrappers/xuasm.sh")
-
-SET(CMAKE_STANDARD_INCLUDE_DIRECTORIES
-    "${MINGW64_ROOT}/include"
-    "${MINGW_BASE_PREFIX_PATH}/include"
-    "${MINGW_BASE_PREFIX_PATH}/include/c++/9.3.0"
-)
-SET(CMAKE_C_STANDARD_INCLUDE_DIRECTORIES ${CMAKE_STANDARD_INCLUDE_DIRECTORIES})
-SET(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES ${CMAKE_STANDARD_INCLUDE_DIRECTORIES})
-
-SET (CMAKE_C_COMPILER               "x86_64-w64-mingw32-clang")
+SET(CMAKE_ASM_MASM_COMPILER         "${CMAKE_SOURCE_DIR}/cmake/wrappers/xuasm.sh")
+SET (CMAKE_C_COMPILER               "${CMAKE_SOURCE_DIR}/cmake/wrappers/xclang.sh")
 SET (CMAKE_C_FLAGS                  "-fuse-ld=lld")
 SET (CMAKE_C_FLAGS_RELWITHDEBINFO   "-O2 -g")
 
-SET (CMAKE_CXX_COMPILER             "x86_64-w64-mingw32-clang++")
+SET (CMAKE_CXX_COMPILER             "${CMAKE_SOURCE_DIR}/cmake/wrappers/xclang++.sh")
 SET (CMAKE_CXX_FLAGS                "-fuse-ld=lld")
 SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
