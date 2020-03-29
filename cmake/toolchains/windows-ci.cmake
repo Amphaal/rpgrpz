@@ -26,7 +26,7 @@ SET (CMAKE_RC_COMPILER                      "${CMAKE_SOURCE_DIR}/cmake/wrappers/
 
 SET (CMAKE_C_COMPILER                       "clang")
 SET (CMAKE_C_FLAGS                          "-target x86_64-w64-mingw32 -fuse-ld=lld")
-SET (CMAKE_EXE_LINKER_FLAGS_INIT            "-L ${MINGW64_ROOT}/include -L ${MINGW64_ROOT}/x86_64-w64-mingw32/lib")
+SET (CMAKE_EXE_LINKER_FLAGS_INIT            "-L ${MINGW64_ROOT}/lib -L ${MINGW64_ROOT}/x86_64-w64-mingw32/lib")
 SET (CMAKE_C_FLAGS_RELWITHDEBINFO           "-O2 -g")
 
 SET (CMAKE_CXX_COMPILER                     "clang++")
