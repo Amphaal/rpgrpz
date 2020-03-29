@@ -15,9 +15,6 @@ list(APPEND CMAKE_PREFIX_PATH
     ${MINGW64_ROOT} 
 )
 
-#.dll are in bin folder
-SET(MINGW_DLL_PATH ${MINGW64_ROOT}/bin)
-
 #We want Release with debug infos
 SET(CMAKE_BUILD_TYPE RelWithDebInfo)
 

@@ -506,19 +506,27 @@ add_custom_command(TARGET appExec
 
 #scan for missing lib dependencies, then fetch and copy them
 if(MINGW)
-    if(NOT MINGW_DLL_PATH)
-        message(FATAL_ERROR "MINGW_DLL_PATH must be set ! Please use a toolchain file !")
+    
+    if(NOT MINGW64_ROOT)
+        message(FATAL_ERROR "MINGW64_ROOT must be set ! Please use a toolchain file !")
     endif()
+    
+    #if on Windows, .bat is generated
+    if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+        SET(PELDD_MAY_REPLACE_ANTISLASHES | sed 's/\\\\\\\\/\\\\//g')
+    endif()
+
     add_custom_command(TARGET appExec POST_BUILD
         COMMAND peldd-prefix/src/peldd-build/peldd -a
             -p ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} 
-            -p ${MINGW_DLL_PATH}
+            -p ${MINGW64_ROOT}/bin
             $<TARGET_FILE:appExec> 
             ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gio/* 
             ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins/*
-            | sed 's/\\\\\\\\/\\\\//g'
+            ${PELDD_MAY_REPLACE_ANTISLASHES}
             | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     )
+
 endif()
 
 ######################
