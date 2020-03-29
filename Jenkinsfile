@@ -18,7 +18,6 @@ pipeline {
                 //         docker { image 'amphaal/rpgrpz-linux-ci' }
                 //     }
                 //     steps {
-                //         sh 'git submodule update --init --recursive'
                 //         sh 'cmake -GNinja -B_genLinux -H. -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/linux-ci.cmake'
                 //         sh 'ninja -C _genLinux'
                 //     }

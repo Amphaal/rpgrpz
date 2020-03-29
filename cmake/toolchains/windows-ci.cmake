@@ -25,6 +25,9 @@ SET (CMAKE_ASM_MASM_COMPILER                "${CMAKE_SOURCE_DIR}/cmake/wrappers/
 SET (CMAKE_RC_COMPILER                      "${CMAKE_SOURCE_DIR}/cmake/wrappers/xwindres.sh")
 SET (CMAKE_C_COMPILER                       "clang")
 SET (CMAKE_CXX_COMPILER                     "clang++")
+SET (CMAKE_AR                               "llvm-ar")
+SET (CMAKE_RANLIB                           "llvm-ranlib")
+SET (CMAKE_NM                               "llvm-nm")
 
 SET (CMAKE_C_FLAGS                          "-target x86_64-w64-mingw32 -fuse-ld=lld")
 SET (CMAKE_CXX_FLAGS                        ${CMAKE_C_FLAGS})
@@ -34,8 +37,6 @@ SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO         ${CMAKE_C_FLAGS_RELWITHDEBINFO})
 
 SET (CMAKE_EXE_LINKER_FLAGS_INIT            "-L ${MINGW64_ROOT}/lib -L ${MINGW64_ROOT}/x86_64-w64-mingw32/lib -L ${MINGW64_ROOT}/lib/gcc/x86_64-w64-mingw32/9.3.0")
 SET (CMAKE_SHARED_LINKER_FLAGS_INIT         ${CMAKE_EXE_LINKER_FLAGS_INIT})
-# SET (CMAKE_STATIC_LINKER_FLAGS_INIT         ${CMAKE_EXE_LINKER_FLAGS_INIT})
-
 
 SET (CMAKE_C_STANDARD_INCLUDE_DIRECTORIES  
     ${MINGW64_ROOT}/include
@@ -44,3 +45,29 @@ SET (CMAKE_C_STANDARD_INCLUDE_DIRECTORIES
     ${MINGW64_ROOT}/x86_64-w64-mingw32/include
 )
 SET (CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES ${CMAKE_C_STANDARD_INCLUDE_DIRECTORIES})
+
+#MOC
+add_executable(Qt5::moc IMPORTED)
+set_target_properties(Qt5::moc PROPERTIES
+    IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/xmoc.sh
+)
+#RCC
+add_executable(Qt5::rcc IMPORTED)
+set_target_properties(Qt5::rcc PROPERTIES
+    IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/xrcc.sh
+)
+#UIC
+add_executable(Qt5::uic IMPORTED)
+set_target_properties(Qt5::uic PROPERTIES
+    IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/xuic.sh
+)
+#lrelease
+add_executable(Qt5::lrelease IMPORTED)
+set_target_properties(Qt5::lrelease PROPERTIES
+    IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/xlrelease.sh
+)
+#lupdate
+add_executable(Qt5::lupdate IMPORTED)
+set_target_properties(Qt5::lupdate PROPERTIES
+    IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/xlupdate.sh
+)
