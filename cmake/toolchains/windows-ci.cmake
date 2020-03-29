@@ -23,12 +23,20 @@ SET(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 SET (CMAKE_ASM_MASM_COMPILER                "${CMAKE_SOURCE_DIR}/cmake/wrappers/xuasm.sh")
 SET (CMAKE_RC_COMPILER                      "${CMAKE_SOURCE_DIR}/cmake/wrappers/xwindres.sh")
-
 SET (CMAKE_C_COMPILER                       "clang")
-SET (CMAKE_C_FLAGS                          "-target x86_64-w64-mingw32 -fuse-ld=lld")
-SET (CMAKE_EXE_LINKER_FLAGS_INIT            "-L ${MINGW64_ROOT}/lib -L ${MINGW64_ROOT}/x86_64-w64-mingw32/lib -L ${MINGW64_ROOT}/lib/gcc/x86_64-w64-mingw32/9.3.0")
-SET (CMAKE_C_FLAGS_RELWITHDEBINFO           "-O2 -g")
-
 SET (CMAKE_CXX_COMPILER                     "clang++")
-SET (CMAKE_CXX_FLAGS                        "-target x86_64-w64-mingw32 -fuse-ld=lld -L ${MINGW64_ROOT}/include -L ${MINGW64_ROOT}/x86_64-w64-mingw32/lib")
-SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO         "-O2 -g")
+
+SET (CMAKE_C_FLAGS                          "-target x86_64-w64-mingw32 -fuse-ld=lld")
+SET (CMAKE_CXX_FLAGS                        ${CMAKE_C_FLAGS})
+
+SET (CMAKE_C_FLAGS_RELWITHDEBINFO           "-O2 -g")
+SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO         ${CMAKE_C_FLAGS_RELWITHDEBINFO})
+
+SET (CMAKE_EXE_LINKER_FLAGS_INIT            "-L ${MINGW64_ROOT}/lib -L ${MINGW64_ROOT}/x86_64-w64-mingw32/lib -L ${MINGW64_ROOT}/lib/gcc/x86_64-w64-mingw32/9.3.0")
+
+SET (CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES   
+    ${MINGW64_ROOT}/include
+    ${MINGW64_ROOT}/x86_64-w64-mingw32/include
+    ${MINGW64_ROOT}/gcc/x86_64-w64-mingw32/9.3.0/include
+)
+SET (CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES ${CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES})
