@@ -24,9 +24,9 @@
     SET(CPACK_IFW_TARGET_DIRECTORY "@ApplicationsDirX64@/${PROJECT_NAME}")
 
     IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        SET(APP_INSTALLER_EXTENSION ".exe")
-    elseIF(APPLE)
-        SET(APP_INSTALLER_EXTENSION ".dmg")
+        SET(CPACK_IFW_PACKAGE_FILE_EXTENSION ".exe")
+    elseif(APPLE)
+        SET(CPACK_IFW_PACKAGE_FILE_EXTENSION ".dmg")
     endif()
 
     #icons
@@ -42,7 +42,6 @@ install(
     DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/"
     DESTINATION .
     PATTERN "*.pdb" EXCLUDE
-    PATTERN "${TEST_EXEC_OUTPUT_NAME}${CMAKE_EXECUTABLE_SUFFIX}" EXCLUDE
 )
 
 INCLUDE(CPack)
@@ -81,26 +80,23 @@ cpack_ifw_add_repository(coreRepo
 
 #source
 SET(CPACK_PACKAGE_FILE_NAME ${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}) #override as CPACK_SYSTEM_NAME may end up wrong (CMAKE bug?)
-SET(APP_PACKAGED_IFW "${CMAKE_BINARY_DIR}/_CPack_Packages/${CPACK_SYSTEM_NAME}/IFW")
-SET(APP_PACKAGED_PATH "${APP_PACKAGED_IFW}/${CPACK_PACKAGE_FILE_NAME}")
-SET(APP_PACKAGED_INSTALLER_PATH "${APP_PACKAGED_PATH}${APP_INSTALLER_EXTENSION}")
-SET(APP_PACKAGED_REPOSITORY_PATH "${APP_PACKAGED_PATH}/repository")
+SET(APP_REPOSITORY ${CMAKE_BINARY_DIR}/_CPack_Packages/${CPACK_SYSTEM_NAME}/IFW/${CPACK_PACKAGE_FILE_NAME}/repository)
 
 #create target to be invoked with bash
 add_custom_target(zipForDeploy DEPENDS package)
 
 #installer
 add_custom_command(TARGET zipForDeploy
-    COMMAND ${CMAKE_COMMAND} -E tar "c" "${CMAKE_BINARY_DIR}/installer.zip" "--format=zip" 
-        ${APP_PACKAGED_INSTALLER_PATH}
-    WORKING_DIRECTORY ${APP_PACKAGED_IFW}
+    COMMAND ${CMAKE_COMMAND} -E tar c installer.zip --format=zip 
+        ${CPACK_PACKAGE_FILE_NAME}${CPACK_IFW_PACKAGE_FILE_EXTENSION}
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     COMMENT "Ziping IFW installer..."
 )
 #repository
 add_custom_command(TARGET zipForDeploy
-    COMMAND ${CMAKE_COMMAND} -E tar "c" "${CMAKE_BINARY_DIR}/repository.zip" "--format=zip" 
-        ${APP_PACKAGED_REPOSITORY_PATH}/Updates.xml
-        ${APP_PACKAGED_REPOSITORY_PATH}/${PROJECT_NAME}
-    WORKING_DIRECTORY ${APP_PACKAGED_REPOSITORY_PATH}
+    COMMAND ${CMAKE_COMMAND} -E tar c ${CMAKE_BINARY_DIR}/repository.zip --format=zip 
+        Updates.xml
+        ${PROJECT_NAME}
+    WORKING_DIRECTORY ${APP_REPOSITORY}
     COMMENT "Ziping IFW repository..."
 )
