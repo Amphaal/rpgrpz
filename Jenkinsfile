@@ -9,7 +9,6 @@ pipeline {
                     }
                     steps {
                         sh 'cmake -GNinja -B_genWindows -H. -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/windows-ci.cmake'
-                        sh 'ninja -C _genWindows'
                         sh 'cmake --build ./_genWindows --target zipForDeploy'
                     }
                 }
