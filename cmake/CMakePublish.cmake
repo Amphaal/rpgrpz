@@ -6,6 +6,7 @@
 
     #if cross compiling windows, use wrappes
     IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        SET(CPACK_IFW_FRAMEWORK_VERSION_FORCED "3.2.0")
         SET(CPACK_IFW_BINARYCREATOR_EXECUTABLE  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/ifw/xbinarycreator.sh)
         SET(CPACK_IFW_REPOGEN_EXECUTABLE        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/ifw/xrepogen.sh)
         SET(CPACK_IFW_INSTALLERBASE_EXECUTABLE  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/ifw/xinstallerbase.sh)
