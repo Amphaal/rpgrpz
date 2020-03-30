@@ -7,26 +7,26 @@ Supported (64bits only) :
 - Linux : OK
 - MacOS : WIP
 
-Prerequisites to build:
+Prepare your build environement:
 - For Windows
     - Install MSYS2 : https://www.msys2.org/
     - Create env. variable MINGW64_ROOT (ex : C:/msys64/mingw64)
-    - Run : pacman -Syu (From msys2_shell.cmd)
-    - Run : pacman -Su (From msys2_shell.cmd)
-    - Run : pacman -S --needed - < ./prerequisites/msys2/pkglist_build.txt (From msys2_shell.cmd)
-    - Run : pacman -S --needed - < ./prerequisites/msys2/pkglist_dev.txt (From msys2_shell.cmd)
+    - Run : `pacman -Syu` (From msys2_shell.cmd)
+    - Run : `pacman -Su` (From msys2_shell.cmd)
+    - Run : `pacman -S --needed - < ./prerequisites/msys2/pkglist_build.txt` (From msys2_shell.cmd)
+    - Run : `pacman -S --needed - < ./prerequisites/msys2/pkglist_dev.txt` (From msys2_shell.cmd)
 - For ArchLinux
-    - Run : pacman -S --needed - < ./prerequisites/arch/pkglist_build.txt
+    - Run : `pacman -S --needed - < ./prerequisites/arch/pkglist_build.txt`
 - For OSX
     - Install latest XCode from the App Store
-    - Run : brew install $(cat ./prerequisites/osx/pkglist_build.txt)
-    - Run : brew install $(cat ./prerequisites/osx/pkglist_dev.txt)
+    - Run : `brew install $(cat ./prerequisites/osx/pkglist_build.txt)`
+    - Run : `brew install $(cat ./prerequisites/osx/pkglist_dev.txt)`
 
 Recommanded:
 - Visual Studio Code, for builtin debugging helpers (https://code.visualstudio.com/)
 
 Instructions for building :
-- "git clone" this repository
+- `git clone --recurse-submodules <this repository URL>`
 - VSCode : Open this project
 - VSCode : Ctrl+Maj+P, then "Tasks : Run Test Task"
 - VSCode : Ctrl+Maj+D, then run "Launch"
