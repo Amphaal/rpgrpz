@@ -95,10 +95,10 @@ add_custom_command(TARGET zipForDeploy
     COMMENT "Ziping IFW installer..."
 )
 # #repository
-# add_custom_command(TARGET zipForDeploy
-#     COMMAND ${CMAKE_COMMAND} -E tar c ${CMAKE_BINARY_DIR}/repository.zip --format=zip 
-#         Updates.xml
-#         ${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME}
-#     WORKING_DIRECTORY ${APP_REPOSITORY}
-#     COMMENT "Ziping IFW repository..."
-# )
+add_custom_command(TARGET zipForDeploy
+    COMMAND ${CMAKE_COMMAND} -E tar c ${CMAKE_BINARY_DIR}/repository.zip --format=zip 
+        Updates.xml
+        ${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME}
+    WORKING_DIRECTORY ${APP_REPOSITORY}
+    COMMENT "Ziping IFW repository..."
+)
