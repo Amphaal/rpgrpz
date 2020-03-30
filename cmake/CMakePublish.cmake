@@ -72,7 +72,7 @@ cpack_ifw_configure_component(${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME}
 
 #repository for updates
 cpack_ifw_add_repository(coreRepo 
-    URL "https://dl.bintray.com/amphaal/rpgrpz"
+    URL "https://dl.bintray.com/amphaal/rpgrpz/ifw-${CPACK_SYSTEM_NAME}"
 )
 
 ########################
@@ -81,15 +81,20 @@ cpack_ifw_add_repository(coreRepo
 
 #source
 SET(CPACK_PACKAGE_FILE_NAME ${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}) #override as CPACK_SYSTEM_NAME may end up wrong (CMAKE bug?)
+SET(CPACK_PACKAGE_FILE_NAME_FULL ${CPACK_PACKAGE_FILE_NAME}${CPACK_IFW_PACKAGE_FILE_EXTENSION})
+
 SET(APP_REPOSITORY ${CMAKE_BINARY_DIR}/_CPack_Packages/${CPACK_SYSTEM_NAME}/IFW/${CPACK_PACKAGE_FILE_NAME}/repository)
+
+SET(APP_PACKAGE_LATEST ${CPACK_PACKAGE_NAME}-latest-${CPACK_SYSTEM_NAME})
+SET(APP_PACKAGE_LATEST_FULL ${APP_PACKAGE_LATEST}${CPACK_IFW_PACKAGE_FILE_EXTENSION})
 
 #create target to be invoked with bash
 add_custom_target(zipForDeploy DEPENDS package)
 
 #installer
 add_custom_command(TARGET zipForDeploy
-    COMMAND ${CMAKE_COMMAND} -E tar c installer.zip --format=zip 
-        ${CPACK_PACKAGE_FILE_NAME}${CPACK_IFW_PACKAGE_FILE_EXTENSION}
+    COMMAND ${CMAKE_COMMAND} -E rename ${CPACK_PACKAGE_FILE_NAME_FULL} ${APP_PACKAGE_LATEST_FULL}
+    COMMAND ${CMAKE_COMMAND} -E tar c installer.zip --format=zip ${APP_PACKAGE_LATEST_FULL}
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     COMMENT "Ziping IFW installer..."
 )
