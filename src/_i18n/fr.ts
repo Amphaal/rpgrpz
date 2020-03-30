@@ -1296,10 +1296,6 @@
         <translation>Opacité</translation>
     </message>
     <message>
-        <source>FoW opacity</source>
-        <translation type="vanished">Opacité du BdG</translation>
-    </message>
-    <message>
         <location filename="../shared/commands/AtomsContextualMenuHandler.cpp" line="66"/>
         <source>%1 selected atom(s)</source>
         <translation>%1 atome(s) selectionné(s)</translation>
