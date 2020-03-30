@@ -465,6 +465,7 @@ target_include_directories(appExec PRIVATE ${MINIUPNP_INCLUDE_DIR})
 
 file(GLOB_RECURSE APP_CPP_FILES "src/*.cpp")
 file(GLOB_RECURSE APP_HPP_FILES "src/*.hpp")
+file(GLOB_RECURSE APP_H_FILES "src/*.h")
 
 #defined as public for tests
 target_sources(appExec PUBLIC
@@ -483,7 +484,9 @@ list(APPEND APP_TRANSLATION_FILES
 
 #updates TS files from sources
 qt5_create_translation(QM_FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${APP_CPP_FILES}
+    ${APP_HPP_FILES}
+    ${APP_H_FILES}
     ${APP_TRANSLATION_FILES}
 )
 
