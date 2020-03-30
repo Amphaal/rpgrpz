@@ -48,10 +48,7 @@ install(
 INCLUDE(CPack)
 
 #configure default component
-cpack_add_component(${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME}
-    HIDDEN
-    REQUIRED
-)
+cpack_add_component(${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME})
 
 ######################################
 # CPACK IFW COMPONENTS CONFIGURATION #
@@ -60,9 +57,8 @@ cpack_add_component(${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME}
 #SET(CPACK_IFW_VERBOSE ON)
 INCLUDE(CPackIFW)
 
-#installer configuration
+# #installer configuration
 cpack_ifw_configure_component(${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME}
-    VIRTUAL
     FORCED_INSTALLATION
     SCRIPT "src/_ifw/install.js"
     USER_INTERFACES "src/_ifw/install.ui"
@@ -70,9 +66,11 @@ cpack_ifw_configure_component(${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME}
     DESCRIPTION ${APP_DESCRIPTION}
 )
 
+message("https://dl.bintray.com/amphaal/rpgrpz/ifw-${CPACK_SYSTEM_NAME}")
+
 #repository for updates
 cpack_ifw_add_repository(coreRepo 
-    URL "https://dl.bintray.com/amphaal/rpgrpz/ifw-${CPACK_SYSTEM_NAME}"
+    URL "https://dl.bintray.com/amphaal/rpgrpz/ifw-${CPACK_SYSTEM_NAME}/"
 )
 
 ########################
@@ -98,11 +96,11 @@ add_custom_command(TARGET zipForDeploy
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     COMMENT "Ziping IFW installer..."
 )
-#repository
-add_custom_command(TARGET zipForDeploy
-    COMMAND ${CMAKE_COMMAND} -E tar c ${CMAKE_BINARY_DIR}/repository.zip --format=zip 
-        Updates.xml
-        ${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME}
-    WORKING_DIRECTORY ${APP_REPOSITORY}
-    COMMENT "Ziping IFW repository..."
-)
+# #repository
+# add_custom_command(TARGET zipForDeploy
+#     COMMAND ${CMAKE_COMMAND} -E tar c ${CMAKE_BINARY_DIR}/repository.zip --format=zip 
+#         Updates.xml
+#         ${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME}
+#     WORKING_DIRECTORY ${APP_REPOSITORY}
+#     COMMENT "Ziping IFW repository..."
+# )
