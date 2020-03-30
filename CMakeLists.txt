@@ -124,10 +124,8 @@ set_target_properties(appExec PROPERTIES OUTPUT_NAME "${PROJECT_NAME}") #define 
 target_compile_definitions(appExec PRIVATE $<$<CONFIG:Debug>:_DEBUG>) #define _DEBUG markup if in DEBUG config
 
 #generate pdb
-if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-    IF(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")  
-        target_link_options(appExec PRIVATE -Wl,-pdb=) # generate pdb files
-    endif()
+IF(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")  
+    target_link_options(appExec PRIVATE -Wl,-pdb=) # generate pdb files
 endif()
 
 #warnings for debug
