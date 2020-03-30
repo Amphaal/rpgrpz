@@ -48,7 +48,7 @@ install(
 INCLUDE(CPack)
 
 #configure default component
-cpack_add_component(${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME})
+cpack_add_component(${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME} DOWNLOADED)
 
 ######################################
 # CPACK IFW COMPONENTS CONFIGURATION #
