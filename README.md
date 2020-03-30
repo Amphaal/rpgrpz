@@ -1,6 +1,6 @@
 # RPG-RPZ
 [![Build Status](http://zonme.to2x.ovh:8090/buildStatus/icon?job=rpgrpz%2Fmaster)](http://zonme.to2x.ovh:8090/job/rpgrpz/job/master/)
-[![Download](https://api.bintray.com/packages/amphaal/rpgrpz/rpgrpz-win/images/download.svg) ](https://dl.bintray.com/amphaal/rpgrpz/)
+[![Download](https://api.bintray.com/packages/amphaal/rpgrpz/install-packages/images/download.svg) ](https://dl.bintray.com/amphaal/rpgrpz/RPGRPZ-latest-win64.exe)
 
 Supported (64bits only) :
 - Windows : OK
