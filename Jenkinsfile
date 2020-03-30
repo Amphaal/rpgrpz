@@ -11,8 +11,8 @@ pipeline {
                         sh 'cmake -GNinja -B_genWindows -H. -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/windows-ci.cmake'
                         sh 'cmake --build ./_genWindows --target zipForDeploy'
                         withCredentials([usernameColonPassword(credentialsId: 'jenkins-bintray-api-key', variable: 'BINTRAY_API_KEY')]) {
-                            // sh 'curl -T _genWindows/installer.zip -uamphaal:$BINTRAY_API_KEY https://api.bintray.com/content/amphaal/rpgrpz/install-packages/latest/'
-                            // sh 'curl -T _genWindows/repository.zip -uamphaal:$BINTRAY_API_KEY https://api.bintray.com/content/amphaal/rpgrpz/ifw-win/latest/'
+                            sh 'curl -T _genWindows/installer.zip -uamphaal:$BINTRAY_API_KEY https://api.bintray.com/content/amphaal/rpgrpz/install-packages/latest/win64?override=1?publish=1?explode=1'
+                            sh 'curl -T _genWindows/repository.zip -uamphaal:$BINTRAY_API_KEY https://api.bintray.com/content/amphaal/rpgrpz/ifw/latest/ifw-win64?override=1?publish=1?explode=1'
                         }
                     }
                 }
