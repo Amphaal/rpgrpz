@@ -4,6 +4,15 @@
 
     SET(CPACK_GENERATOR IFW)
 
+    #if cross compiling windows, use wrappes
+    IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        SET(CPACK_IFW_FRAMEWORK_VERSION_FORCED "3.2.0")
+        SET(CPACK_IFW_BINARYCREATOR_EXECUTABLE  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/ifw/xbinarycreator.sh)
+        SET(CPACK_IFW_REPOGEN_EXECUTABLE        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/ifw/xrepogen.sh)
+        SET(CPACK_IFW_INSTALLERBASE_EXECUTABLE  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/ifw/xinstallerbase.sh)
+        SET(CPACK_IFW_DEVTOOL_EXECUTABLE        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/ifw/xdevtool.sh)
+    ENDIF()
+
     SET(APP_DESCRIPTION ${PROJECT_NAME}
         fr "L'experience JdR simplifiée."
     )
@@ -16,9 +25,9 @@
     SET(CPACK_IFW_TARGET_DIRECTORY "@ApplicationsDirX64@/${PROJECT_NAME}")
 
     IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        SET(APP_INSTALLER_EXTENSION ".exe")
-    elseIF(APPLE)
-        SET(APP_INSTALLER_EXTENSION ".dmg")
+        SET(CPACK_IFW_PACKAGE_FILE_EXTENSION ".exe")
+    elseif(APPLE)
+        SET(CPACK_IFW_PACKAGE_FILE_EXTENSION ".dmg")
     endif()
 
     #icons
@@ -34,7 +43,6 @@ install(
     DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/"
     DESTINATION .
     PATTERN "*.pdb" EXCLUDE
-    PATTERN "${TEST_EXEC_OUTPUT_NAME}${CMAKE_EXECUTABLE_SUFFIX}" EXCLUDE
 )
 
 INCLUDE(CPack)
@@ -64,7 +72,7 @@ cpack_ifw_configure_component(${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME}
 
 #repository for updates
 cpack_ifw_add_repository(coreRepo 
-    URL "https://dl.bintray.com/amphaal/rpgrpz"
+    URL "https://dl.bintray.com/amphaal/rpgrpz/ifw-${CPACK_SYSTEM_NAME}"
 )
 
 ########################
@@ -73,26 +81,28 @@ cpack_ifw_add_repository(coreRepo
 
 #source
 SET(CPACK_PACKAGE_FILE_NAME ${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}) #override as CPACK_SYSTEM_NAME may end up wrong (CMAKE bug?)
-SET(APP_PACKAGED_IFW "${CMAKE_BINARY_DIR}/_CPack_Packages/${CPACK_SYSTEM_NAME}/IFW")
-SET(APP_PACKAGED_PATH "${APP_PACKAGED_IFW}/${CPACK_PACKAGE_FILE_NAME}")
-SET(APP_PACKAGED_INSTALLER_PATH "${APP_PACKAGED_PATH}${APP_INSTALLER_EXTENSION}")
-SET(APP_PACKAGED_REPOSITORY_PATH "${APP_PACKAGED_PATH}/repository")
+SET(CPACK_PACKAGE_FILE_NAME_FULL ${CPACK_PACKAGE_FILE_NAME}${CPACK_IFW_PACKAGE_FILE_EXTENSION})
+
+SET(APP_REPOSITORY ${CMAKE_BINARY_DIR}/_CPack_Packages/${CPACK_SYSTEM_NAME}/IFW/${CPACK_PACKAGE_FILE_NAME}/repository)
+
+SET(APP_PACKAGE_LATEST ${CPACK_PACKAGE_NAME}-latest-${CPACK_SYSTEM_NAME})
+SET(APP_PACKAGE_LATEST_FULL ${APP_PACKAGE_LATEST}${CPACK_IFW_PACKAGE_FILE_EXTENSION})
 
 #create target to be invoked with bash
 add_custom_target(zipForDeploy DEPENDS package)
 
 #installer
 add_custom_command(TARGET zipForDeploy
-    COMMAND ${CMAKE_COMMAND} -E tar "c" "${CMAKE_BINARY_DIR}/installer.zip" "--format=zip" 
-        ${APP_PACKAGED_INSTALLER_PATH}
-    WORKING_DIRECTORY ${APP_PACKAGED_IFW}
+    COMMAND ${CMAKE_COMMAND} -E rename ${CPACK_PACKAGE_FILE_NAME_FULL} ${APP_PACKAGE_LATEST_FULL}
+    COMMAND ${CMAKE_COMMAND} -E tar c installer.zip --format=zip ${APP_PACKAGE_LATEST_FULL}
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     COMMENT "Ziping IFW installer..."
 )
 #repository
 add_custom_command(TARGET zipForDeploy
-    COMMAND ${CMAKE_COMMAND} -E tar "c" "${CMAKE_BINARY_DIR}/repository.zip" "--format=zip" 
-        ${APP_PACKAGED_REPOSITORY_PATH}/Updates.xml
-        ${APP_PACKAGED_REPOSITORY_PATH}/${PROJECT_NAME}
-    WORKING_DIRECTORY ${APP_PACKAGED_REPOSITORY_PATH}
+    COMMAND ${CMAKE_COMMAND} -E tar c ${CMAKE_BINARY_DIR}/repository.zip --format=zip 
+        Updates.xml
+        ${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME}
+    WORKING_DIRECTORY ${APP_REPOSITORY}
     COMMENT "Ziping IFW repository..."
 )

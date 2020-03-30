@@ -8,7 +8,7 @@
 #ifdef _WIN32
 #include <stdint.h>
 #include <time.h>
-#include <Windows.h>
+#include <windows.h>
 #else //APPLE and LINUX
 #include <sys/time.h>
 #endif

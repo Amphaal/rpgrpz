@@ -26,10 +26,11 @@ find_package(Qt5Core REQUIRED)
 # the windeployqt binary
 get_target_property(_qmake_executable Qt5::qmake IMPORTED_LOCATION)
 get_filename_component(_qt_bin_dir "${_qmake_executable}" DIRECTORY)
+set(_windeployqt_ ${_qt_bin_dir}/windeployqt.exe)
 
-#use wine
+#use wrapper
 IF(CMAKE_CROSSCOMPILING)
-    SET(_qt_bin_dir "wine ${_qt_bin_dir}")
+    set(_windeployqt_ ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/xwindeployqt.sh)
 endif()
 
 # Add commands that copy the Qt runtime to the target's output directory after
@@ -38,7 +39,7 @@ function(windeployqt target)
 
     # Run windeployqt immediately after build
     add_custom_command(TARGET ${target} 
-        COMMAND "${_qt_bin_dir}/windeployqt.exe"
+        COMMAND ${_windeployqt_}
                 --verbose 0
                 --compiler-runtime
                 --no-angle

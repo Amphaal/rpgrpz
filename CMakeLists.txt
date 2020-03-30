@@ -8,6 +8,7 @@ endif()
 #use ccache
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
+    message("== Using CCache ! ==")
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
     set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK "${CCACHE_PROGRAM}")
 endif()
@@ -26,7 +27,7 @@ message(STATUS "Using toolchain file: [${CMAKE_TOOLCHAIN_FILE}].")
 
 #project setup
 project(RPGRPZ
-    VERSION 0.20.5
+    VERSION 0.21.0
     DESCRIPTION "Simple Tabletop RPG experience"
     HOMEPAGE_URL "https://github.com/Amphaal/rpgrpz"
     LANGUAGES C CXX
@@ -48,18 +49,32 @@ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/version.h
 )
 
-############
-# XCompile #
-############
-
-#if XCompiling Windows, use emulator
+#if XCompiling Windows, use emulator (cannot be set in toolchain...)
 IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
     #MOC
-    set(AUTOMOC_EXECUTABLE "${CMAKE_CROSSCOMPILING_EMULATOR}")
-    set(CMAKE_AUTOMOC_MOC_OPTIONS ${MINGW64_ROOT}/bin/moc.exe)
     add_executable(Qt5::moc IMPORTED)
     set_target_properties(Qt5::moc PROPERTIES
-        IMPORTED_LOCATION ${AUTOMOC_EXECUTABLE}
+        IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/xmoc.sh
+    )
+    #RCC
+    add_executable(Qt5::rcc IMPORTED)
+    set_target_properties(Qt5::rcc PROPERTIES
+        IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/xrcc.sh
+    )
+    #UIC
+    add_executable(Qt5::uic IMPORTED)
+    set_target_properties(Qt5::uic PROPERTIES
+        IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/xuic.sh
+    )
+    #lrelease
+    add_executable(Qt5::lrelease IMPORTED)
+    set_target_properties(Qt5::lrelease PROPERTIES
+        IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/xlrelease.sh
+    )
+    #lupdate
+    add_executable(Qt5::lupdate IMPORTED)
+    set_target_properties(Qt5::lupdate PROPERTIES
+        IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/xlupdate.sh
     )
 endif()
 
@@ -492,19 +507,27 @@ add_custom_command(TARGET appExec
 
 #scan for missing lib dependencies, then fetch and copy them
 if(MINGW)
-    if(NOT MINGW_DLL_PATH)
-        message(FATAL_ERROR "MINGW_DLL_PATH must be set ! Please use a toolchain file !")
+    
+    if(NOT MINGW64_ROOT)
+        message(FATAL_ERROR "MINGW64_ROOT must be set ! Please use a toolchain file !")
     endif()
+    
+    #if on Windows, .bat is generated
+    if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+        SET(PELDD_MAY_REPLACE_ANTISLASHES | sed 's/\\\\\\\\/\\\\//g')
+    endif()
+
     add_custom_command(TARGET appExec POST_BUILD
         COMMAND peldd-prefix/src/peldd-build/peldd -a
             -p ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} 
-            -p ${MINGW_DLL_PATH}
+            -p ${MINGW64_ROOT}/bin
             $<TARGET_FILE:appExec> 
             ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gio/* 
             ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins/*
-            | sed 's/\\\\\\\\/\\\\//g'
+            ${PELDD_MAY_REPLACE_ANTISLASHES}
             | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     )
+
 endif()
 
 ######################
