@@ -30,7 +30,3 @@ Instructions for building :
 - VSCode : Open this project
 - VSCode : Ctrl+Maj+P, then "Tasks : Run Test Task"
 - VSCode : Ctrl+Maj+D, then run "Launch"
-
-Debug tips:
-- Debug with GDB on Windows : Activate "_NO_DEBUG_HEAP": 1 as Env variable (https://stackoverflow.com/questions/27380443/why-is-gdb-so-slow-in-windows)
-- Debug GSTREAMER : set "GST_DEBUG" : 5 as Env variable (https://gstreamer.freedesktop.org/documentation/tutorials/basic/debugging-tools.html)
