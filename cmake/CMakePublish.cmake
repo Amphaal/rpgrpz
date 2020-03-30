@@ -66,11 +66,9 @@ cpack_ifw_configure_component(${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME}
     DESCRIPTION ${APP_DESCRIPTION}
 )
 
-message("https://dl.bintray.com/amphaal/rpgrpz/ifw-${CPACK_SYSTEM_NAME}")
-
 #repository for updates
 cpack_ifw_add_repository(coreRepo 
-    URL "https://dl.bintray.com/amphaal/rpgrpz/ifw-${CPACK_SYSTEM_NAME}/"
+    URL "https://dl.bintray.com/amphaal/rpgrpz/ifw-${CPACK_SYSTEM_NAME}"
 )
 
 ########################
