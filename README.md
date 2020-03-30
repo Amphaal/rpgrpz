@@ -1,14 +1,12 @@
 # RPG-RPZ
 [![Build Status](http://zonme.to2x.ovh:8090/buildStatus/icon?job=rpgrpz%2Fmaster)](http://zonme.to2x.ovh:8090/job/rpgrpz/job/master/)
 [![Download](https://api.bintray.com/packages/amphaal/rpgrpz/install-packages/images/download.svg) ](https://dl.bintray.com/amphaal/rpgrpz/RPGRPZ-latest-win64.exe)
------
-#### The Windows Installer is available on Bintray https://bintray.com/amphaal/rpgrpz/install-packages#files
 
------
+#### The Windows Installer is available on Bintray https://bintray.com/amphaal/rpgrpz/install-packages#files
 
 Supported (64bits only) :
 - Windows : OK
-- Linux : OK
+- Archlinux : OK
 - MacOS : WIP
 
 Prepare your build environement:
