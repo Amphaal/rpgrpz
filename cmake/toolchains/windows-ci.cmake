@@ -16,7 +16,7 @@ list(APPEND CMAKE_PREFIX_PATH
 )
 
 #We want Release with debug infos
-SET(CMAKE_BUILD_TYPE RelWithDebInfo)
+SET(CMAKE_BUILD_TYPE Release)
 
 SET (CMAKE_ASM_MASM_COMPILER                "${CMAKE_SOURCE_DIR}/cmake/wrappers/xuasm.sh")
 SET (CMAKE_RC_COMPILER                      "${CMAKE_SOURCE_DIR}/cmake/wrappers/xwindres.sh")
