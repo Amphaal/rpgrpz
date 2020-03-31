@@ -87,7 +87,9 @@ bool JSONSocket::_sendToSocket(JSONSocket* socket, JSONLogger* logger, const RPZ
 
         //write data
         out << bytes;
-    
+
+    logger->log(QStringLiteral("Sending %1...").arg(QLocale::system().formattedDataSize(size)));
+
     //ack success
     emit socket->sent(true);
     return true;
@@ -143,6 +145,8 @@ void JSONSocket::_processIncomingData() {
         
         //process batch
         emit batchDownloading(method, fullSize);
+        this->_logger->log(QStringLiteral("Received %1...").arg(QLocale::system().formattedDataSize(fullSize)));
+
         this->_processIncomingAsJson(qUncompress(block));
 
     }

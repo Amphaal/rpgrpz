@@ -40,7 +40,7 @@ void RPZStatusBar::_installComponents() {
     
     this->_serverStateLabel = new RPZStatusLabel(tr("Server"));
     this->_dlStatus = new DownloadStatus;
-    this->_activityIndicators = new ClientActivityIndicator;
+    this->_activityIndicators = new ClientActivityBar;
 };
 
 void RPZStatusBar::updateMapFileLabel(const QString &mapDescriptor, bool isMapDirty) {

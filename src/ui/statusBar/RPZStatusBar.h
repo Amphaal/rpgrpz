@@ -9,7 +9,7 @@
 #include <QFileInfo>
 
 #include "RPZStatusLabel.h"
-#include "ClientActivityIndicator.hpp"
+#include "ClientActivityBar.hpp"
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 #include "src/ui/_others/ConnectivityObserver.h"
 #include "DownloadStatus.hpp"
@@ -34,7 +34,7 @@ class RPZStatusBar : public QStatusBar, public ConnectivityObserver {
         RPZStatusLabel* _upnpStateLabel = nullptr;
         RPZStatusLabel* _serverStateLabel = nullptr;
         RPZStatusLabel* _mapFileLabel = nullptr;
-        ClientActivityIndicator* _activityIndicators = nullptr;
+        ClientActivityBar* _activityIndicators = nullptr;
         DownloadStatus* _dlStatus = nullptr;
 
         void _installComponents();

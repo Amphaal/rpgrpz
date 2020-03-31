@@ -5,6 +5,7 @@
 #include <QDataStream>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QLocale>
 
 #include "RPZJSON.hpp"
 #include "JSONLogger.hpp"
