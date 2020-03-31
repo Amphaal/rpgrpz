@@ -5,76 +5,31 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch",
-            "preLaunchTask": "3. Build",
+            "targetArchitecture": "x64",
             "type": "cppdbg",
+            "preLaunchTask": "3. Build",
+            "name" : "Launch",
             "request": "launch",
-            "program" : "",
+            "cwd": "${workspaceFolder}",
+            "MIMode": "gdb",
             "windows": {
                 "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
                 "miDebuggerPath": "${env:MINGW64_ROOT}/bin/gdb.exe"
             },
-            "externalConsole": false,
-            "internalConsoleOptions": "openOnSessionStart",
-            "MIMode": "gdb",
-            "miDebuggerPath": "gdb.exe",
-            "miDebuggerArgs": "--silent",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [
-                {
-                    "name" : "_NO_DEBUG_HEAP",
-                    "value" : "1"
-                },
-                // {
-                //     "name" : "GST_DEBUG",
-                //     "value" : "4"
-                // },
-            ],
-            "setupCommands": [
-                {
-                    "description": "Activer l'impression en mode Pretty pour gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": false
-                },
-                {
-                    "description": "Reduce gdb verbosity",
-                    "text": "set print thread-events off",
-                    "ignoreFailures": false
-                }
-            ]
         },
         {
-            "name": "Launch Tests",
-            "preLaunchTask": "3. Build",
-            "type": "cppdbg",
-            "request": "launch",
-            "program" : "",
-            "windows": {
-                "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ_tests.exe",
-                "miDebuggerPath": "${env:MINGW64_ROOT}/bin/gdb.exe"
-            },
-            "externalConsole": false,
-            "internalConsoleOptions": "openOnSessionStart",
-            "MIMode": "gdb",
-            "miDebuggerPath": "gdb.exe",
-            "miDebuggerArgs": "--silent",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "setupCommands": [
-                {
-                    "description": "Activer l'impression en mode Pretty pour gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": false
-                },
-                {
-                    "description": "Reduce gdb verbosity",
-                    "text": "set print thread-events off",
-                    "ignoreFailures": false
-                }
-            ]
-        },
+          "targetArchitecture": "x64",
+          "type": "cppdbg",
+          "preLaunchTask": "3. Build",
+          "name" : "Launch - No Server CC",
+          "request": "launch",
+          "cwd": "${workspaceFolder}",
+          "MIMode": "gdb",
+          "windows": {
+              "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
+              "miDebuggerPath": "${env:MINGW64_ROOT}/bin/gdb.exe"
+          },
+          "args": ["--noServer --customContext=NoServer"]
+      }
     ]
 }
