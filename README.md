@@ -19,6 +19,7 @@ Prepare your build environement:
     - Run : `pacman -S --needed - < ./prerequisites/msys2/pkglist_dev.txt` (From msys2_shell.cmd)
 - For ArchLinux
     - Run : `pacman -S --needed - < ./prerequisites/arch/pkglist_build.txt`
+    - Run : `pacman -S --needed - < ./prerequisites/arch/pkglist_dev.txt`
 - For OSX
     - Install latest XCode from the App Store
     - Run : `brew install $(cat ./prerequisites/osx/pkglist_build.txt)`
@@ -26,6 +27,9 @@ Prepare your build environement:
 
 Recommanded:
 - Visual Studio Code, for builtin debugging helpers (https://code.visualstudio.com/)
+
+Building Requirements :
+- CMake 3.10.2 or higher (to comply to Ubuntu 18.04 LTS CMake version)
 
 Instructions for building :
 - `git clone --recurse-submodules <this repository URL>`

@@ -22,7 +22,7 @@ SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 #############
 
 #pre-startup
-cmake_minimum_required(VERSION 3.17.0)
+cmake_minimum_required(VERSION 3.10.2)
 message(STATUS "Using toolchain file: [${CMAKE_TOOLCHAIN_FILE}].")
 
 #project setup
@@ -466,6 +466,7 @@ target_include_directories(appExec PRIVATE ${MINIUPNP_INCLUDE_DIR})
 file(GLOB_RECURSE APP_CPP_FILES "src/*.cpp")
 file(GLOB_RECURSE APP_HPP_FILES "src/*.hpp")
 file(GLOB_RECURSE APP_H_FILES "src/*.h")
+file(GLOB_RECURSE APP_UI_FILES "src/*.ui")
 
 #defined as public for tests
 target_sources(appExec PUBLIC
@@ -487,6 +488,7 @@ qt5_create_translation(QM_FILES
     ${APP_CPP_FILES}
     ${APP_HPP_FILES}
     ${APP_H_FILES}
+    ${APP_UI_FILES}
     ${APP_TRANSLATION_FILES}
 )
 
