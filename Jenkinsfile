@@ -9,11 +9,12 @@ pipeline {
                     }
                     steps {
                         sh 'cmake -GNinja -B_genWindows -H. -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/windows-ci.cmake'
-                        sh 'cmake --build ./_genWindows --target zipForDeploy'
-                        withCredentials([string(credentialsId: 'jenkins-bintray-api-key', variable: 'BINTRAY_API_KEY')]) {
-                            sh 'curl -T _genWindows/installer.zip   -uamphaal:$BINTRAY_API_KEY -H "X-Bintray-Package: install-packages" -H "X-Bintray-Version: latest" -H "X-Bintray-Publish: 1" -H "X-Bintray-Override: 1" -H "X-Bintray-Explode: 1" https://api.bintray.com/content/amphaal/rpgrpz/'
-                            sh 'curl -T _genWindows/repository.zip  -uamphaal:$BINTRAY_API_KEY -H "X-Bintray-Package: ifw"              -H "X-Bintray-Version: latest" -H "X-Bintray-Publish: 1" -H "X-Bintray-Override: 1" -H "X-Bintray-Explode: 1" https://api.bintray.com/content/amphaal/rpgrpz/ifw-win64/'
-                        }
+                        sh 'ninja -C _genWindows'
+                        // sh 'cmake --build ./_genWindows --target zipForDeploy'
+                        // withCredentials([string(credentialsId: 'jenkins-bintray-api-key', variable: 'BINTRAY_API_KEY')]) {
+                        //     sh 'curl -T _genWindows/installer.zip   -uamphaal:$BINTRAY_API_KEY -H "X-Bintray-Package: install-packages" -H "X-Bintray-Version: latest" -H "X-Bintray-Publish: 1" -H "X-Bintray-Override: 1" -H "X-Bintray-Explode: 1" https://api.bintray.com/content/amphaal/rpgrpz/'
+                        //     sh 'curl -T _genWindows/repository.zip  -uamphaal:$BINTRAY_API_KEY -H "X-Bintray-Package: ifw"              -H "X-Bintray-Version: latest" -H "X-Bintray-Publish: 1" -H "X-Bintray-Override: 1" -H "X-Bintray-Explode: 1" https://api.bintray.com/content/amphaal/rpgrpz/ifw-win64/'
+                        // }
                     }
                 }
                 stage('Linux') {

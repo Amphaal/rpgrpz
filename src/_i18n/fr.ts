@@ -1091,14 +1091,14 @@
         <translation>Calque %1</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="130"/>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="203"/>
+        <location filename="../shared/models/RPZAtom.h" line="130"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="131"/>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="204"/>
+        <location filename="../shared/models/RPZAtom.h" line="131"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
@@ -1118,14 +1118,14 @@
         <translation>Atome</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="135"/>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="202"/>
+        <location filename="../shared/models/RPZAtom.h" line="135"/>
         <source>Event</source>
         <translation>Evénement</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="136"/>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="205"/>
+        <location filename="../shared/models/RPZAtom.h" line="136"/>
         <source>Player</source>
         <translation>Joueur</translation>
     </message>
@@ -1135,15 +1135,15 @@
         <translation>Personnage non-joueur</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="138"/>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="206"/>
+        <location filename="../shared/models/RPZAtom.h" line="138"/>
         <source>Point of interest</source>
         <translation>Point d&apos;intérêt</translation>
     </message>
     <message>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="207"/>
         <location filename="../shared/models/RPZAtom.h" line="139"/>
         <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="58"/>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="207"/>
         <source>Fog of war</source>
         <translation>Brouillard de guerre</translation>
     </message>
