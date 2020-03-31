@@ -134,11 +134,11 @@ bool JSONDatabase::_handleVersionMissmatch(QJsonObject &databaseToUpdate, JSONDa
     //remove obsolete handlers
     auto aimedAPIVersion = this->apiVersion();
     auto handledAPIVersions = handlers.keys();
-    auto hAPIvSet = QSet<JSONDatabase::Version>(handledAPIVersions.begin(), handledAPIVersions.end());
+    std::sort(handledAPIVersions.begin(), handledAPIVersions.end());
 
     //apply handlers
     bool updateApplied = false;
-    for(const auto targetUpdateVersion : hAPIvSet) {
+    for(const auto targetUpdateVersion : handledAPIVersions) {
         
         //if patch is for later versions, skip
         if(aimedAPIVersion < targetUpdateVersion) continue;
@@ -162,11 +162,8 @@ bool JSONDatabase::_handleVersionMissmatch(QJsonObject &databaseToUpdate, JSONDa
     //force version update
     databaseToUpdate.insert(QStringLiteral(u"version"), aimedAPIVersion);
     
-    #ifdef _DEBUG
-        this->_duplicateDbFile("oldVersion");
-    #else
-        this->_updateDbFile(databaseToUpdate); //save into file
-    #endif
+    this->_duplicateDbFile("oldVersion");
+    this->_updateDbFile(databaseToUpdate); //save into file
 
     //end...
     this->log("Update complete !");
@@ -223,10 +220,11 @@ QJsonDocument JSONDatabase::_readAsDocument() {
 void JSONDatabase::_duplicateDbFile(QString destSuffix) {
     if(!this->_destfile) return;
 
-    QDir fHandler;
-    const auto withSuffixPath = this->_destfile->fileName() + "_" + destSuffix;
-    fHandler.remove(withSuffixPath); //remove previous instance of the file if exists
-    fHandler.rename(this->_destfile->fileName(), withSuffixPath); //rename current file
+    const auto fn = this->_destfile->fileName();
+    const auto withSuffixPath = fn + "_" + destSuffix;
+
+    QDir().remove(withSuffixPath); //remove previous instance of the file if exists
+    QFile::copy(fn, withSuffixPath);
 }
 
 void JSONDatabase::_removeDatabaseLinkedFiles() {

@@ -30,6 +30,20 @@
               "miDebuggerPath": "${env:MINGW64_ROOT}/bin/gdb.exe"
           },
           "args": ["--noServer --customContext=NoServer"]
-      }
+        },
+        {
+            "targetArchitecture": "x64",
+            "type": "cppdbg",
+            "preLaunchTask": "3. Build",
+            "name" : "Launch - No Server - Random CC",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "MIMode": "gdb",
+            "windows": {
+                "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
+                "miDebuggerPath": "${env:MINGW64_ROOT}/bin/gdb.exe"
+            },
+            "args": ["--noServer --randomContext"]
+          }
     ]
 }
