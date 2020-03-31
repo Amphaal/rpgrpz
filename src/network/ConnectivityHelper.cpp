@@ -129,6 +129,7 @@ void ConnectivityHelper::_onUPnPExtIpFound(const QString &extIp) {
 void ConnectivityHelper::_onUPnPError(int errorCode) {
     qDebug() << "Connectivity : uPnP failed !";
     emit uPnPStateChanged(tr("No"));
+    emit remoteAddressStateChanged(tr("<UPnP Failed>"), RPZStatusLabel::State::Error);
 }
 
 void ConnectivityHelper::_onUPnPSuccess(const QString &protocol, const QString &negociatedPort) {
