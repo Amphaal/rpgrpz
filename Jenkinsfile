@@ -13,10 +13,10 @@ pipeline {
                         SENTRY_PROJECT = 'understory'
                     }
                     steps {
-                        sh 'cmake -GNinja -B_genWindows -H. -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/windows-ci.cmake'
-                        sh 'ninja -C _genWindows'
+                        // sh 'cmake -GNinja -B_genWindows -H. -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/windows-ci.cmake'
+                        // sh 'ninja -C _genWindows'
                         withCredentials([string(credentialsId: 'jenkins-sentry-auth-token', variable: 'SENTRY_AUTH_TOKEN')]) {
-                            sh 'sentry-cli --auth-token $SENTRY_AUTH_TOKEN --wait _genWindows/bin'
+                            sh 'sentry-cli --auth-token $SENTRY_AUTH_TOKEN upload-dif --wait _genWindows/bin'
                         }
                         // sh 'cmake --build ./_genWindows --target zipForDeploy'
                         // withCredentials([string(credentialsId: 'jenkins-bintray-api-key', variable: 'BINTRAY_API_KEY')]) {
