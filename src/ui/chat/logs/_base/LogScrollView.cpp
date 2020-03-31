@@ -3,10 +3,8 @@
 LogScrollView::LogScrollView(QWidget *parent) : QScrollArea(parent) {
     
     this->setWidgetResizable(true);
-    this->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
-    
+    this->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);    
     this->setAutoFillBackground(true);
-    this->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
 
     //bindings...
     QObject::connect(

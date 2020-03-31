@@ -26,7 +26,9 @@ LogText::LogText(const QString &text) {
 LogItem::LogItem() : QWidget(), _hLayout(new QHBoxLayout) {
     this->setLayout(this->_hLayout);
     this->_hLayout->setContentsMargins(10, 3, 10, 3);
+    this->_hLayout->setAlignment(Qt::AlignTop);
     this->setAutoFillBackground(true);
+    this->setSizePolicy(QSizePolicy::Policy::MinimumExpanding, QSizePolicy::Policy::Maximum);
 }
 
 int LogItem::positionInLog() {
