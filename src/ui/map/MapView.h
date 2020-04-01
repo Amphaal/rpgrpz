@@ -87,7 +87,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
 
     private slots:
         void _onUIAlterationRequest(const Payload::Alteration &type, const QList<QGraphicsItem*> &toAlter);
-        void _onUIAlterationRequest(const Payload::Alteration &type, const OrderedGraphicsItems &toAlter, const QList<QGraphicsItem*> &additionnalResetSetupItems);
+        void _onUIAlterationRequest(const Payload::Alteration &type, const OrderedGraphicsItems &toAlter);
         void _onUIUpdateRequest(const QHash<QGraphicsItem*, RPZAtom::Updates> &toUpdate);
         void _onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates);
         void _onOwnershipChanged(const QList<QGraphicsItem*> changing, bool owned);
@@ -107,6 +107,9 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         void _updateItemValue(QGraphicsItem* item, const RPZAtom::Updates &updates);
         bool _preventMoveOrInsertAtPosition(QGraphicsItem *toCheck, const QPointF &toCheckAt = QPointF());
         void _addItemToScene(QGraphicsItem* item);
+
+        //fog
+            void _mayFogUpdateAtoms(const MapViewFog * fogItem);
 
         //Selection
             bool _ignoreSelectionChangedEvents = false;

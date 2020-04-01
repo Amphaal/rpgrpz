@@ -59,8 +59,26 @@ void MapView::_handleHintsSignalsAndSlots() {
     );
 
     QObject::connect(
-        HintThread::hint(), QOverload<const Payload::Alteration &, const OrderedGraphicsItems &, const QList<QGraphicsItem*> &>::of(&ViewMapHint::requestingUIAlteration),
-        this, QOverload<const Payload::Alteration &, const OrderedGraphicsItems &, const QList<QGraphicsItem*> &>::of(&MapView::_onUIAlterationRequest)
+        HintThread::hint(), &ViewMapHint::fogModeChanged,
+        [=](const RPZFogParams::Mode &newMode) {
+            auto fogItem = HintThread::hint()->fogItem();
+            fogItem->setFogMode(newMode);
+            this->_mayFogUpdateAtoms(fogItem);
+        }
+    );
+
+    QObject::connect(
+        HintThread::hint(), &ViewMapHint::fogChanged,
+        [=](const QList<QPolygonF> &updatedFog) {
+            auto fogItem = HintThread::hint()->fogItem();
+            fogItem->updateFog(updatedFog);
+            this->_mayFogUpdateAtoms(fogItem);
+        }
+    );
+
+    QObject::connect(
+        HintThread::hint(), QOverload<const Payload::Alteration &, const OrderedGraphicsItems &>::of(&ViewMapHint::requestingUIAlteration),
+        this, QOverload<const Payload::Alteration &, const OrderedGraphicsItems &>::of(&MapView::_onUIAlterationRequest)
     );
     QObject::connect(
         HintThread::hint(), QOverload<const Payload::Alteration &, const QList<QGraphicsItem*>&>::of(&ViewMapHint::requestingUIAlteration),
@@ -120,7 +138,7 @@ void MapView::_mightUpdateTokens() {
 void MapView::_notifySelection() {
 
     auto selected = this->scene()->selectedItems();
-
+    
     //notify
     HintThread::hint()->notifySelectedItems(
         selected
@@ -201,11 +219,16 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
         i++;
     }
 
-    this->_onUIAlterationRequest(type, re, {});
+    this->_onUIAlterationRequest(type, re);
 
 }
 
-void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const OrderedGraphicsItems &toAlter, const QList<QGraphicsItem*> &additionnalResetSetupItems) {
+void MapView::_mayFogUpdateAtoms(const MapViewFog * fogItem) {
+   //this->scene()->collidingItems(fogItem);
+   //TODO change selectability and visibility on underlying atoms
+}
+
+void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const OrderedGraphicsItems &toAlter) {
     
     //prevent circual selection
     QSignalBlocker b(this->scene());
@@ -224,10 +247,10 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
         this->scene()->clear();
         this->scene()->setSceneRect(this->_currentMapParameters.sceneRect());
 
-        //additionnal items to integrate first
-        for(const auto item : additionnalResetSetupItems) {
-            this->_addItemToScene(item);
-        }
+        //add fog first
+        auto fogItem = HintThread::hint()->fogItem();
+        this->_addItemToScene(fogItem);
+        this->_mayFogUpdateAtoms(fogItem);
 
         //reset view
         this->goToDefaultViewState();
@@ -692,14 +715,10 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
             
             //if any drawn
             if(drawn.count()) {
-                
-                //prepare payload
-                //TODO calculate covered and uncovered items by drawing
 
                 FogChangedPayload payload(
                     btnPressed == Qt::MouseButton::LeftButton ? FogChangedPayload::ChangeType::Added : FogChangedPayload::ChangeType::Removed, 
-                    drawn//,
-                    //TODO add ids of covered and uncovered
+                    drawn
                 );
 
                 AlterationHandler::get()->queueAlteration(HintThread::hint(), payload);

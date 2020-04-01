@@ -405,7 +405,7 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &asset) {
     this->_missingAssetHashesFromDb.remove(hash);
 
     //replace by new
-    emit requestingUIAlteration(Payload::Alteration::Replaced, newGis, {});
+    emit requestingUIAlteration(Payload::Alteration::Replaced, newGis);
 
 }
 
@@ -545,7 +545,7 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
 
     //fog mode
     else if (auto mPayload = dynamic_cast<const FogModeChangedPayload*>(&payload)) {
-        this->_fogItem->setFogMode(mPayload->mode());
+        emit fogModeChanged(mPayload->mode());
     }
 
     //if reset (afterward)
@@ -597,7 +597,7 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
 }
 
 void  ViewMapHint::_fogUpdated(const QList<QPolygonF> &updatedFog) {
-    this->_fogItem->updateFog(updatedFog);
+    emit fogChanged(updatedFog);
 }
 
 void ViewMapHint::_mightUpdateAtomDescriptor(const QList<RPZAtom::Id> &idsUpdated) {
@@ -671,11 +671,7 @@ void ViewMapHint::_basicAlterationDone(const QList<RPZAtom::Id> &updatedIds, con
 
     }
 
-    //fog
-    QList<QGraphicsItem*> additionnalResetSetupItems;
-    if(type == Payload::Alteration::Reset) additionnalResetSetupItems += this->_fogItem;
-
-    emit requestingUIAlteration(type, toUpdate, additionnalResetSetupItems);
+    emit requestingUIAlteration(type, toUpdate);
 
 }
 
