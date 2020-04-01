@@ -23,7 +23,8 @@ class Payload {
             AtomTemplateSelected,
             ToySelected,
             FogChanged,
-            FogModeChanged
+            FogModeChanged,
+            Replaced
         }; 
         Q_ENUM(Alteration)
 

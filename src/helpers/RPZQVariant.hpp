@@ -22,8 +22,16 @@ class RPZQVariant {
             AllowedToWalk = 7000,
             AllowedToDefineMoveAbility = 8000,
             CharacterId = 8010,
-            CoveredByFog = 9000
+            CoveredByFog = 9000,
+            GraphicsItemToReplace = 10100
         };
+
+        static QGraphicsItem* graphicsItemToReplace(const QGraphicsItem* item) {
+            return item->data((int)RPZQVariant::Roles::GraphicsItemToReplace).value<QGraphicsItem*>();
+        }
+        static void setGraphicsItemToReplace(QGraphicsItem* item, QGraphicsItem* toReplace) {
+            item->setData((int)RPZQVariant::Roles::GraphicsItemToReplace, QVariant::fromValue<QGraphicsItem*>(toReplace));
+        }
 
         static bool allowedToBeWalked(const QGraphicsItem* item) {
             return item->data((int)RPZQVariant::Roles::AllowedToWalk).toBool();

@@ -377,10 +377,10 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &asset) {
     setOfGraphicsItemsToReplace = QSet<QGraphicsItem*>(setOfGraphicsItemsToReplaceList.begin(), setOfGraphicsItemsToReplaceList.end());
     
     //iterate through the list of GI to replace
-    for(const auto item : setOfGraphicsItemsToReplace) {
+    for(const auto itemToReplace : setOfGraphicsItemsToReplace) {
         
         //find id
-        auto id = this->getAtomIdFromGraphicsItem(item);
+        auto id = this->getAtomIdFromGraphicsItem(itemToReplace);
         if(!id) continue;
 
         //find corresponding atom
@@ -394,7 +394,9 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &asset) {
             false,
             this->_hasOwnershipOf(atom)
         );
+        
         this->_crossBindingAtomWithGI(atom, newGi);
+        RPZQVariant::setGraphicsItemToReplace(newGi, itemToReplace);
         newGis.insert(id, newGi);
 
     }
@@ -402,11 +404,9 @@ void ViewMapHint::_replaceMissingAssetPlaceholders(const RPZAsset &asset) {
     //clear the id from the missing list
     this->_missingAssetHashesFromDb.remove(hash);
 
-    //remove old
-    emit requestingUIAlteration(Payload::Alteration::Removed, setOfGraphicsItemsToReplace.values());
-
     //replace by new
-    emit requestingUIAlteration(Payload::Alteration::Added, newGis, {});
+    emit requestingUIAlteration(Payload::Alteration::Replaced, newGis, {});
+
 }
 
 void ViewMapHint::handlePreviewRequest(const AtomsSelectionDescriptor &selectionDescriptor, const RPZAtom::Parameter &parameter, const QVariant &value) {

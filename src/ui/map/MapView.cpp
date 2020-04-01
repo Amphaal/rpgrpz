@@ -251,9 +251,19 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
             }
             break;
 
+            case Payload::Alteration::Replaced:
             case Payload::Alteration::Added: {
-
+                
                 this->_addItemToScene(item);
+
+                //replace if must
+                if(type == Payload::Alteration::Replaced) {
+                    auto toReplace = RPZQVariant::graphicsItemToReplace(item);
+                    auto q = item->parentItem();
+                    auto r = toReplace->parentItem();
+                    item->stackBefore(toReplace);
+                    delete toReplace;
+                }
 
                 //auto remove temporary drawing
                 auto isCommitedDrawing = this->_drawingAssist->compareItemToCommitedDrawing(item);
