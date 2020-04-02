@@ -23,6 +23,10 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
     Q_INTERFACES(QGraphicsItem)
     
     public:
+        struct FogChangingVisibility {
+            QList<QGraphicsItem*> nowVisible;
+            QList<QGraphicsItem*> nowInvisible;
+        };
         MapViewFog(const RPZFogParams &params, const RPZMapParameters &mapParams) {
             
             //init from params
@@ -48,9 +52,26 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             this->_fogAnim->deleteLater();
         }
 
-        void setFogMode(const RPZFogParams::Mode &mode) {
+        const FogChangingVisibility coveredAtomItems() {
+            FogChangingVisibility out;
+            out.nowInvisible = _atomItemsFromGraphicsItems(this->collidingItems());
+            _logFogChangingVisibility(out);
+            return out;
+        }
+
+        const FogChangingVisibility setFogMode(const RPZFogParams::Mode &mode) {
             this->_setFogMode(mode);
-            this->_generateClipPath();
+            auto out = this->_generateClipPathWithDiff();
+            _logFogChangingVisibility(out);
+            return out;
+        }
+
+        const FogChangingVisibility updateFog(const QList<QPolygonF> &polys) {
+            this->_clearDrawing();
+            this->_updateFog(polys);
+            auto out = this->_generateClipPathWithDiff();
+            _logFogChangingVisibility(out);
+            return out;
         }
 
         void triggerAnimation() override {
@@ -114,11 +135,6 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
 
         }
 
-        void updateFog(const QList<QPolygonF> &polys) {
-            this->_clearDrawing();
-            this->_updateFog(polys);
-            this->_generateClipPath();
-        }
 
     protected:
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
@@ -157,6 +173,23 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
 
         QPolygonF _drawnPoly;
 
+        const QList<QGraphicsItem*> _atomItemsFromGraphicsItems(const QList<QGraphicsItem*> &toFilter) const {
+            
+            QList<QGraphicsItem*> cAtomItems;
+            
+            for(auto item : toFilter) {
+                if(!dynamic_cast<RPZGraphicsItem*>(item)) continue; //only for main RPZGraphicsItem
+                if(item->parentItem()) continue; //must not have a parent
+                cAtomItems.append(item); 
+            }
+            
+            return cAtomItems;
+
+        }
+        const QList<QGraphicsItem*> _atomItemsFromGraphicsItems(const QSet<QGraphicsItem*> &toFilter) const {
+            return _atomItemsFromGraphicsItems(QList<QGraphicsItem*>(toFilter.begin(), toFilter.end()));
+        }
+
         void _clearDrawing() {
             this->_drawnPoly.clear();
         }
@@ -173,6 +206,37 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
 
         void _setFogMode(const RPZFogParams::Mode &mode) {
             this->_mode = mode;
+        }
+
+        const FogChangingVisibility _generateClipPathWithDiff() {
+            
+            FogChangingVisibility out;
+
+            auto thenColliding = this->collidingItems();
+            auto thenCollidingSet = QSet<QGraphicsItem*>(thenColliding.begin(), thenColliding.end());
+
+            this->_generateClipPath();
+            
+            auto nowColliding = this->collidingItems();
+            auto nowCollidingSet = QSet<QGraphicsItem*>(nowColliding.begin(), nowColliding.end());
+
+            //sort out visible and invisible
+            auto nowInvisibleSet = nowCollidingSet.subtract(thenCollidingSet);
+            auto nowVisibleSet = thenCollidingSet.subtract(nowCollidingSet);
+
+            out.nowInvisible = _atomItemsFromGraphicsItems(nowInvisibleSet);
+            out.nowVisible = _atomItemsFromGraphicsItems(nowVisibleSet);
+
+            return out;
+
+        }
+
+        void _logFogChangingVisibility(const FogChangingVisibility &toLog) {
+            qDebug() << qUtf8Printable(
+                QStringLiteral(u"Fog Updated : %1 visibles, %2 invisibles")
+                        .arg(toLog.nowVisible.count())
+                        .arg(toLog.nowInvisible.count())
+            );
         }
 
         void _generateClipPath() {

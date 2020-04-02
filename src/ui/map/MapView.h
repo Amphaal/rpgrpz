@@ -91,6 +91,8 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         void _onUIUpdateRequest(const QHash<QGraphicsItem*, RPZAtom::Updates> &toUpdate);
         void _onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates);
         void _onOwnershipChanged(const QList<QGraphicsItem*> changing, bool owned);
+        void _onFogModeChanged(const RPZFogParams::Mode &newMode);
+        void _onFogChanged(const QList<QPolygonF> &updatedFog);
 
         //network
         void _sendMapHistory();
@@ -109,7 +111,7 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         void _addItemToScene(QGraphicsItem* item);
 
         //fog
-            void _mayFogUpdateAtoms(const MapViewFog * fogItem);
+            void _mayFogUpdateAtoms(const MapViewFog::FogChangingVisibility &itemsWhoChanged);
 
         //Selection
             bool _ignoreSelectionChangedEvents = false;

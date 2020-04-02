@@ -58,22 +58,16 @@ void MapView::_handleHintsSignalsAndSlots() {
         }
     );
 
+    //TODO define FogCovered on requestingUIAlteration
+
     QObject::connect(
         HintThread::hint(), &ViewMapHint::fogModeChanged,
-        [=](const RPZFogParams::Mode &newMode) {
-            auto fogItem = HintThread::hint()->fogItem();
-            fogItem->setFogMode(newMode);
-            this->_mayFogUpdateAtoms(fogItem);
-        }
+        this, &MapView::_onFogModeChanged
     );
 
     QObject::connect(
         HintThread::hint(), &ViewMapHint::fogChanged,
-        [=](const QList<QPolygonF> &updatedFog) {
-            auto fogItem = HintThread::hint()->fogItem();
-            fogItem->updateFog(updatedFog);
-            this->_mayFogUpdateAtoms(fogItem);
-        }
+        this, &MapView::_onFogChanged
     );
 
     QObject::connect(
@@ -116,7 +110,16 @@ void MapView::_handleHintsSignalsAndSlots() {
         }
     );
 
+}
 
+void MapView::_onFogModeChanged(const RPZFogParams::Mode &newMode) {
+    auto request = HintThread::hint()->fogItem()->setFogMode(newMode);
+    this->_mayFogUpdateAtoms(request);
+}
+
+void MapView::_onFogChanged(const QList<QPolygonF> &updatedFog) {
+    auto request = HintThread::hint()->fogItem()->updateFog(updatedFog);
+    this->_mayFogUpdateAtoms(request);
 }
 
 void MapView::_mightUpdateTokens() {
@@ -223,9 +226,29 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
 
 }
 
-void MapView::_mayFogUpdateAtoms(const MapViewFog * fogItem) {
-   //this->scene()->collidingItems(fogItem);
-   //TODO change selectability and visibility on underlying atoms
+void MapView::_mayFogUpdateAtoms(const MapViewFog::FogChangingVisibility &itemsWhoChanged) {
+
+    //only for players and spectators
+    if(Authorisations::isHostAble()) return;
+
+    //visible
+    RPZAtom::Updates visible { { RPZAtom::Parameter::CoveredByFog, false } };
+    for(auto item : itemsWhoChanged.nowVisible) {
+        AtomConverter::updateGraphicsItemFromMetadata(
+            item,
+            visible
+        );
+    }
+
+    //invisible
+    RPZAtom::Updates invisible { { RPZAtom::Parameter::CoveredByFog, true } };
+    for(auto item : itemsWhoChanged.nowInvisible) {
+        AtomConverter::updateGraphicsItemFromMetadata(
+            item,
+            invisible
+        );
+    }
+ 
 }
 
 void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const OrderedGraphicsItems &toAlter) {
@@ -250,7 +273,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
         //add fog first
         auto fogItem = HintThread::hint()->fogItem();
         this->_addItemToScene(fogItem);
-        this->_mayFogUpdateAtoms(fogItem);
+        this->_mayFogUpdateAtoms(fogItem->coveredAtomItems());
 
         //reset view
         this->goToDefaultViewState();

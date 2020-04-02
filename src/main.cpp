@@ -95,6 +95,7 @@ void _registerMetaTypes() {
     qRegisterMetaType<RPZAtom::Parameter>("RPZAtom::Parameter");
     qRegisterMetaType<ProgressTracker::Kind>("ProgressTracker::Kind");
     qRegisterMetaType<RPZStatusLabel::State>("RPZStatusLabel::State");
+    qRegisterMetaType<RPZFogParams::Mode>("RPZFogParams::Mode");
 
     //typedef
     qRegisterMetaType<SnowFlake::Id>("SnowFlake::Id");
