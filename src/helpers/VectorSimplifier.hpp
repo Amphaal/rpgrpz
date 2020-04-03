@@ -188,7 +188,7 @@ class VectorSimplifier {
 
         static void _reduceDPStep(const QVector<QPointF> &points, int first, int last, double sqTolerance, QVector<QPointF> &simplified) {
             auto maxSqDist = sqTolerance;
-            int index;
+            int index = 0;
 
             for (auto i = first + 1; i < last; i++) {
                 auto sqDist = _getSqSegDist(points.at(i), points.at(first), points.at(last));

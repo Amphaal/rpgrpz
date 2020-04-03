@@ -319,8 +319,6 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
                 //replace if must
                 if(type == Payload::Alteration::Replaced) {
                     auto toReplace = RPZQVariant::graphicsItemToReplace(item);
-                    auto q = item->parentItem();
-                    auto r = toReplace->parentItem();
                     item->stackBefore(toReplace);
                     delete toReplace;
                 }
