@@ -126,6 +126,19 @@ target_compile_definitions(appExec PRIVATE $<$<CONFIG:Debug>:_DEBUG>) #define _D
 #generate pdb
 IF(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")  
     target_link_options(appExec PRIVATE -Wl,-pdb=) # generate pdb files
+
+    # #clang-tidy
+    # find_program(
+    #     CLANG_TIDY_EXE
+    #     NAMES "clang-tidy"
+    #     DOC "Path to clang-tidy executable"
+    # )
+    # if(CLANG_TIDY_EXE)
+    #     set_target_properties(appExec PROPERTIES
+    #         CXX_CLANG_TIDY "${CLANG_TIDY_EXE}"
+    #     )
+    # endif()
+
 endif()
 
 #warnings for debug
