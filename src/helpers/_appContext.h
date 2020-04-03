@@ -63,6 +63,7 @@ class AppContext {
         static inline const QString MAPS_SERVER_AUTOSAVE_PATH = "/serverAutosaves";
         static inline const QString ASSETS_JSON_COORDINATOR_FILENAME = "/resources.json";
         static inline const QString CHARACTER_JSON_DATABASE_FILENAME = "/characters.json";
+        static inline const QString PLAYLIST_JSON_DATABASE_FILENAME = "/playlist.json";
         static inline const QString APP_SETTINGS_FILENAME = "/settings.ini";
         
         static void _makeSureDirPathExists(const QString &path);
@@ -107,6 +108,7 @@ class AppContext {
         static const QString getAppDataLocation();
         static const QString getWindowTitle();
         static const QString getAssetsFileCoordinatorLocation();
+        static const QString getPlaylistFileLocation();
         static const QString getCharacterDatabaseLocation();
         static const QString getAssetsFolderLocation();
         static const QString getMapsFolderLocation();

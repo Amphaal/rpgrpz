@@ -227,6 +227,10 @@ const QString AppContext::getAssetsFileCoordinatorLocation() {
     return getAppDataLocation() + ASSETS_JSON_COORDINATOR_FILENAME;
 }
 
+const QString AppContext::getPlaylistFileLocation() {
+    return getAppDataLocation() + PLAYLIST_JSON_DATABASE_FILENAME;
+}
+
 const QString AppContext::getCharacterDatabaseLocation() {
     return getAppDataLocation() + CHARACTER_JSON_DATABASE_FILENAME;
 }
