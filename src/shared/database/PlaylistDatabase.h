@@ -21,11 +21,18 @@
 
 #include "src/shared/database/_base/JSONDatabase.h"
 
+#include <audiotube/VideoMetadata.h>
+
 class PlaylistDatabase : public JSONDatabase {
     public:
         //singleton
-            static PlaylistDatabase* get();
-    
+        static PlaylistDatabase* get();
+        
+        void addYoutubeId(const VideoMetadata::Id &ytId);
+        void removeYoutubeId(const VideoMetadata::Id &ytId);
+
+        QSet<VideoMetadata::Id> ytIds() const;
+
     protected:
         void _setupLocalData() override;
         JSONDatabase::Model _getDatabaseModel() override;
@@ -38,6 +45,6 @@ class PlaylistDatabase : public JSONDatabase {
         PlaylistDatabase(const QJsonObject &doc);
         static inline PlaylistDatabase* _singleton = nullptr;
 
-        QSet<QString> _ytUrls;
+        QSet<VideoMetadata::Id> _ytIds;
 
 };

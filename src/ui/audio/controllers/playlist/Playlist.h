@@ -39,6 +39,7 @@
 #include <audiotube/NetworkFetcher.h>
 
 #include "src/helpers/RPZQVariant.hpp"
+#include "src/shared/database/PlaylistDatabase.h"
 
 class Playlist : public QListWidget {
 
@@ -61,6 +62,10 @@ class Playlist : public QListWidget {
         void playRequested(VideoMetadata* metadata);
 
     private:
+        void keyPressEvent(QKeyEvent * event) override;
+        void _removeYoutubeVideo(QListWidgetItem* playlistItem);
+        void _addYoutubeVideo(const VideoMetadata::Id &ytVideoId);
+        bool _addYoutubeItem(VideoMetadata* metadata);
 
         QSet<VideoMetadata::Id> _playlistVideoIds;
 

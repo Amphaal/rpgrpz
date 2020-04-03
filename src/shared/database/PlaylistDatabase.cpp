@@ -37,14 +37,28 @@ PlaylistDatabase::PlaylistDatabase() : JSONDatabase(QStringLiteral(u"PlaylistDB"
 
 void PlaylistDatabase::_setupLocalData() {
     //fill URLs
-    for(const auto i : this->entityAsObject(QStringLiteral(u"urls"))) {
-        this->_ytUrls.insert(i.toString());
+    for(const auto i : this->entityAsArray(QStringLiteral(u"ids"))) {
+        this->_ytIds.insert(i.toString());
     }
+}
+
+QSet<QString> PlaylistDatabase::ytIds() const {
+    return this->_ytIds;
+}
+
+void PlaylistDatabase::addYoutubeId(const QString &url) {
+    this->_ytIds.insert(url);
+    this->save();
+}
+
+void PlaylistDatabase::removeYoutubeId(const QString &url) {
+    this->_ytIds.remove(url);
+    this->save();
 }
 
 JSONDatabase::Model PlaylistDatabase::_getDatabaseModel() {
     return {
-        { { QStringLiteral(u"urls"), JSONDatabase::EntityType::Array }, &this->_ytUrls }
+        { { QStringLiteral(u"ids"), JSONDatabase::EntityType::Array }, &this->_ytIds }
     };
 }
 
@@ -57,8 +71,8 @@ const QJsonObject PlaylistDatabase::_updatedInnerDb() {
 
     updateFrom(
         db, 
-        QStringLiteral(u"urls"), 
-        this->_ytUrls
+        QStringLiteral(u"ids"), 
+        this->_ytIds
     );
 
     return db;

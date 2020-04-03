@@ -28,6 +28,8 @@
 #include <QIcon>
 #include <QRegularExpression>
 
+#include <audiotube/VideoMetadata.h>
+
 #include "src/helpers/_appContext.h"
 
 class YoutubePlaylistItemInsertor : public QWidget {
@@ -83,7 +85,4 @@ class YoutubePlaylistItemInsertor : public QWidget {
             this->layout()->addWidget(this->_insertLinkBtn);
         }
     
-
-
-
 };

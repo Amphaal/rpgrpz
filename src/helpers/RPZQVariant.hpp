@@ -67,7 +67,7 @@ class RPZQVariant {
             item->setData((int)RPZQVariant::Roles::AllowedToDefineMoveAbility, allowed);
         }
 
-        static VideoMetadata* ytVideoMetadata(QListWidgetItem* item) {
+        static VideoMetadata* ytVideoMetadata(const QListWidgetItem* item) {
             return item->data((int)RPZQVariant::Roles::YTVideoMetadataPtr).value<VideoMetadata*>();
         }
         static void setYTVideoMetadata(QListWidgetItem* item, VideoMetadata* metadata) {
