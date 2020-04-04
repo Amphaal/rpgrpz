@@ -75,5 +75,12 @@ class Payload {
             Payload::Alteration::MetadataChanged,
             Payload::Alteration::BulkMetadataChanged
         };
+
+        static inline const QList<Payload::Alteration> triggersFoWCheck = { 
+            Payload::Alteration::Added, 
+            Payload::Alteration::Replaced, 
+            Payload::Alteration::MetadataChanged,
+            Payload::Alteration::BulkMetadataChanged
+        };
     
 };

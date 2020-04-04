@@ -42,6 +42,13 @@ int RPZAtom::staticZIndex() const {
     return _interactiveHoveringAtoms.contains(type) ? zIndex + (int)type : zIndex;
 }
 
+bool RPZAtom::mustTriggerFoWCheck(const QList<RPZAtom::Parameter> paramsToCheck) {
+    for(auto param : paramsToCheck) {
+        if(_mustTriggerFoWCheck.contains(param)) return true;
+    }
+    return false;
+}
+
 bool RPZAtom::isRestrictedAtom() const {
     return _restrictedAtom.contains(this->type());
 }

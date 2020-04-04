@@ -214,6 +214,8 @@ class RPZAtom : public Serializable {
         const QString descriptiveIconPath() const;
         static const QString descriptiveIconPath(const RPZAtom::Type &type, const RPZAtom::NPCType &npcAttitude);
 
+        static bool mustTriggerFoWCheck(const QList<RPZAtom::Parameter> paramsToCheck);
+
         //
         //
         //
@@ -299,6 +301,15 @@ class RPZAtom : public Serializable {
             { RPZAtom::NPCType::Neutral, QStringLiteral(u"#79b9ff") },
             { RPZAtom::NPCType::Friendly, QStringLiteral(u"#4bd743") },
             { RPZAtom::NPCType::Hostile, QStringLiteral(u"#d60003") }
+        };
+
+        static const inline QList<RPZAtom::Parameter> _mustTriggerFoWCheck {
+            RPZAtom::Parameter::Scale,
+            RPZAtom::Parameter::Rotation,
+            RPZAtom::Parameter::Text,
+            RPZAtom::Parameter::TextSize,
+            RPZAtom::Parameter::Shape,
+            RPZAtom::Parameter::Position
         };
 
         static inline const QHash<RPZAtom::Parameter, QString> _str = {

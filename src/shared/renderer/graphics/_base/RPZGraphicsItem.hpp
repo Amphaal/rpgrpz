@@ -69,7 +69,7 @@ class RPZGraphicsItem {
             if(!isMapWidget && !this->_canBeDrawnInMiniMap()) out.mustContinue = false;
 
             //can fill with opacity placeholder
-            if(isMapWidget && Authorisations::isHostAble() && !RPZQVariant::isTemporary(base)) {
+            if(isMapWidget && Authorisations::isHostAble() && !RPZQVariant::isTemporary(base) && RPZQVariant::atomId(base)) {
                 this->_paintOpacityPlaceholder(base, painter, option);
             }
 

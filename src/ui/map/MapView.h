@@ -125,12 +125,14 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
 
         //helpers
         void _handleHintsSignalsAndSlots();
-        void _updateItemValue(QGraphicsItem* item, const RPZAtom::Updates &updates);
+        void _updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom::Updates &updates);
+        void _metadataUpdatePostProcess(const QList<QGraphicsItem*> &FoWSensitiveItems);
+
         bool _preventMoveOrInsertAtPosition(QGraphicsItem *toCheck, const QPointF &toCheckAt = QPointF());
         void _addItemToScene(QGraphicsItem* item);
 
         //fog
-            void _mayFogUpdateAtoms(const MapViewFog::FogChangingVisibility &itemsWhoChanged);
+            bool _mayFogUpdateAtoms(const MapViewFog::FogChangingVisibility &itemsWhoChanged) const;
 
         //Selection
             bool _ignoreSelectionChangedEvents = false;

@@ -77,7 +77,7 @@ void MapView::_handleHintsSignalsAndSlots() {
         }
     );
 
-    //TODO define FogCovered on requestingUIAlteration
+    //TODO precalculate FoW on animation + prevent FoW on specific atom types
 
     QObject::connect(
         HintThread::hint(), &ViewMapHint::fogModeChanged,
@@ -168,20 +168,54 @@ void MapView::_notifySelection() {
 
 }
 
-void MapView::_updateItemValue(QGraphicsItem* item, const RPZAtom::Updates &updates) {
+void MapView::_updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom::Updates &updates) {
     AtomConverter::updateGraphicsItemFromMetadata(
         item,
         updates
     );
 }
 
-void MapView::_onUIUpdateRequest(const QHash<QGraphicsItem*, RPZAtom::Updates> &toUpdate) {
+void MapView::_metadataUpdatePostProcess(const QList<QGraphicsItem*> &FoWSensitiveItems) {
     
-    for(auto i = toUpdate.constBegin(); i != toUpdate.constEnd(); i++) {
-        this->_updateItemValue(i.key(), i.value());
+    //may trigger MapViewAnimator::triggerQueuedAnimations(), prevent calling it twice in a row
+    auto mustTriggerAnimations = true;
+    if(FoWSensitiveItems.count()) {
+        auto request = HintThread::hint()->fogItem()->visibilityChangeFromList(FoWSensitiveItems);
+        this->_mayFogUpdateAtoms(request); 
     }
 
-    MapViewAnimator::triggerQueuedAnimations();
+    if(mustTriggerAnimations) MapViewAnimator::triggerQueuedAnimations();
+
+}
+
+void MapView::_onUIUpdateRequest(const QHash<QGraphicsItem*, RPZAtom::Updates> &toUpdate) {
+    
+    QList<QGraphicsItem*> needFoWCheck;
+
+    for(auto i = toUpdate.constBegin(); i != toUpdate.constEnd(); i++) {
+        
+        auto gi = i.key();
+        auto updates = i.value();
+
+        this->_updateGraphicsItemFromMetadata(gi, updates);
+
+        //check FoW changes
+        if(RPZAtom::mustTriggerFoWCheck(updates.keys())) needFoWCheck += gi;
+
+    }
+
+    this->_metadataUpdatePostProcess(needFoWCheck);
+
+}
+
+void MapView::_onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates) {
+    
+    for(const auto item : toUpdate) {
+        this->_updateGraphicsItemFromMetadata(item, updates);
+    }
+    
+    auto mustTriggerFoWCheck = RPZAtom::mustTriggerFoWCheck(updates.keys());
+    this->_metadataUpdatePostProcess(mustTriggerFoWCheck ? toUpdate : QList<QGraphicsItem *>());
 
 }
 
@@ -211,16 +245,6 @@ void MapView::_onOwnershipChanged(const QList<QGraphicsItem*> changing, bool own
 
 }
 
-void MapView::_onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates) {
-
-    for(const auto item : toUpdate) {
-        this->_updateItemValue(item, updates);
-    }
-    
-    MapViewAnimator::triggerQueuedAnimations();
-
-}
-
 void MapView::_addItemToScene(QGraphicsItem* item) {
 
     this->scene()->addItem(item);
@@ -245,10 +269,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
 
 }
 
-void MapView::_mayFogUpdateAtoms(const MapViewFog::FogChangingVisibility &itemsWhoChanged) {
-
-    //only for players and spectators
-    if(Authorisations::isHostAble()) return;
+bool MapView::_mayFogUpdateAtoms(const MapViewFog::FogChangingVisibility &itemsWhoChanged) const {
 
     //visible
     RPZAtom::Updates visible { { RPZAtom::Parameter::CoveredByFog, false } };
@@ -268,6 +289,11 @@ void MapView::_mayFogUpdateAtoms(const MapViewFog::FogChangingVisibility &itemsW
         );
     }
  
+    auto mustTriggerAnimations = itemsWhoChanged.nowInvisible.count() || itemsWhoChanged.nowVisible.count(); 
+    if(mustTriggerAnimations) MapViewAnimator::triggerQueuedAnimations();
+    
+    return mustTriggerAnimations;
+
 }
 
 void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const OrderedGraphicsItems &toAlter) {
@@ -382,10 +408,19 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
     if(type == Payload::Alteration::Reset) {
         
         //update atoms visibility from fog before revealing
-        this->_mayFogUpdateAtoms(HintThread::hint()->fogItem()->coveredAtomItems());
+        this->_mayFogUpdateAtoms(
+            HintThread::hint()->fogItem()->coveredAtomItems()
+        );
 
         ProgressTracker::get()->heavyAlterationEnded();
         
+    }
+
+    //check specific items for fog updates
+    else if(Payload::triggersFoWCheck.contains(type)) {
+        this->_mayFogUpdateAtoms(
+            HintThread::hint()->fogItem()->visibilityChangeFromList(toAlter.values())
+        );
     }
 
     else if(type == Payload::Alteration::Selected) {

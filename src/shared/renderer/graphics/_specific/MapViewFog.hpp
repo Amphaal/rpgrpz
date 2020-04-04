@@ -71,13 +71,28 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             this->_fogAnim->deleteLater();
         }
 
-        const FogChangingVisibility coveredAtomItems() {
+        const FogChangingVisibility coveredAtomItems() const {
             
             FogChangingVisibility out;
             out.nowInvisible = _atomItemsFromGraphicsItems(this->collidingItems());
             
             _logFogChangingVisibility(out);
             
+            return out;
+
+        }
+
+        const FogChangingVisibility visibilityChangeFromList(const QList<QGraphicsItem *> &addedReplacedOrChangedGraphicAtoms) const {
+            
+            MapViewFog::FogChangingVisibility out;
+
+            for(auto item : addedReplacedOrChangedGraphicAtoms) {
+                if(this->collidesWithItem(item)) out.nowInvisible.append(item);
+                else out.nowVisible.append(item);
+            }
+
+            _logFogChangingVisibility(out);
+
             return out;
 
         }
@@ -213,8 +228,8 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             
             for(auto item : toFilter) {
                 if(!dynamic_cast<RPZGraphicsItem*>(item)) continue; //only for main RPZGraphicsItem
-                if(item->parentItem()) continue; //must not have a parent
-                if(RPZQVariant::isTemporary(item)) continue;
+                if(RPZQVariant::isTemporary(item)) continue; //skip if temporary
+                if(!RPZQVariant::atomId(item)) continue; //skip if has no atomId
                 cAtomItems.append(item); 
             }
             
@@ -272,14 +287,6 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
 
         }
 
-        void _logFogChangingVisibility(const FogChangingVisibility &toLog) {
-            qDebug() << qUtf8Printable(
-                QStringLiteral(u"Fog Updated : %1 visibles, %2 invisibles")
-                        .arg(toLog.nowVisible.count())
-                        .arg(toLog.nowInvisible.count())
-            );
-        }
-
         void _generateClipPath() {
 
             QPainterPath clipP;
@@ -309,6 +316,14 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
 
             this->_clipPath = clipP;
 
+        }
+
+        static void _logFogChangingVisibility(const FogChangingVisibility &toLog) {
+            qDebug() << qUtf8Printable(
+                QStringLiteral(u"Fog Updated : %1 visibles, %2 invisibles")
+                        .arg(toLog.nowVisible.count())
+                        .arg(toLog.nowInvisible.count())
+            );
         }
 
 
