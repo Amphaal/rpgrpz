@@ -290,9 +290,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
         this->scene()->setSceneRect(this->_currentMapParameters.sceneRect());
 
         //add fog first
-        auto fogItem = HintThread::hint()->fogItem();
-        this->_addItemToScene(fogItem);
-        this->_mayFogUpdateAtoms(fogItem->coveredAtomItems());
+        this->_addItemToScene(HintThread::hint()->fogItem());
 
         //reset view
         this->goToDefaultViewState();
@@ -382,7 +380,12 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
     }
 
     if(type == Payload::Alteration::Reset) {
+        
+        //update atoms visibility from fog before revealing
+        this->_mayFogUpdateAtoms(HintThread::hint()->fogItem()->coveredAtomItems());
+
         ProgressTracker::get()->heavyAlterationEnded();
+        
     }
 
     else if(type == Payload::Alteration::Selected) {

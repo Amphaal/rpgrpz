@@ -55,6 +55,10 @@ class AlterationPayload : public QVariantHash {
             return Payload::networkAlterations.contains(this->type());
         }
 
+        bool undoRedoAllowed() const {
+            return Payload::allowsRedoUndo.contains(this->type());
+        }
+
         void tagAsFromTimeline() {
             this->insert(QStringLiteral(u"h"), true);
         }

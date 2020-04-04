@@ -179,6 +179,12 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
             return this->_mainRect;
         }
 
+        QPainterPath shape() const override {
+            QPainterPath path;
+            path.addEllipse(this->_mainRect);
+            return path;
+        }
+
     protected:
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
             auto result = this->conditionnalPaint(this, painter, option, widget);

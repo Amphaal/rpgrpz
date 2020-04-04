@@ -22,7 +22,6 @@
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QBoxLayout>
 
-#include <QtGui/QWindow>
 #include <QStyle>
 #include "src/ui/_others/RestoringSplitter.h"
 

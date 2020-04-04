@@ -72,24 +72,39 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         }
 
         const FogChangingVisibility coveredAtomItems() {
+            
             FogChangingVisibility out;
             out.nowInvisible = _atomItemsFromGraphicsItems(this->collidingItems());
+            
             _logFogChangingVisibility(out);
+            
             return out;
+
         }
 
         const FogChangingVisibility setFogMode(const RPZFogParams::Mode &mode) {
+            
             this->_setFogMode(mode);
+            
             auto out = this->_generateClipPathWithDiff();
-            _logFogChangingVisibility(out);
+
             return out;
         }
 
-        const FogChangingVisibility updateFog(const QList<QPolygonF> &polys) {
-            this->_clearDrawing();
-            this->_updateFog(polys);
+        const FogChangingVisibility updateFog(const QList<QPolygonF> &wholeShape) {
+
+            //reset clip shape to before drawing to get an accurate snapshot
+            if(this->_drawnPoly.count()) {
+                this->_clearDrawing();
+                this->_generateClipPath();
+            }
+
+            //reset drawing and update fog shape
+            this->_updateFog(wholeShape);
+            
+            //recreate clip path and diff with drawing
             auto out = this->_generateClipPathWithDiff();
-            _logFogChangingVisibility(out);
+
             return out;
         }
 
@@ -199,6 +214,7 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             for(auto item : toFilter) {
                 if(!dynamic_cast<RPZGraphicsItem*>(item)) continue; //only for main RPZGraphicsItem
                 if(item->parentItem()) continue; //must not have a parent
+                if(RPZQVariant::isTemporary(item)) continue;
                 cAtomItems.append(item); 
             }
             
@@ -213,11 +229,11 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             this->_drawnPoly.clear();
         }
 
-        void _updateFog(const QList<QPolygonF> &polys) {
+        void _updateFog(const QList<QPolygonF> &wholeShape) {
             
             this->_fog.clear();
             
-            for(auto const &poly : polys) {
+            for(auto const &poly : wholeShape) {
                 this->_fog.addPolygon(poly);
             }
 
@@ -226,25 +242,31 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         void _setFogMode(const RPZFogParams::Mode &mode) {
             this->_mode = mode;
         }
+        
+        QSet<QGraphicsItem*> _snapshotColliding() const {
+            auto colliding = this->collidingItems();
+            auto collidingSet = QSet<QGraphicsItem*>(colliding.begin(), colliding.end());
+            return collidingSet;
+        }
 
         const FogChangingVisibility _generateClipPathWithDiff() {
             
             FogChangingVisibility out;
 
-            auto thenColliding = this->collidingItems();
-            auto thenCollidingSet = QSet<QGraphicsItem*>(thenColliding.begin(), thenColliding.end());
-
+            auto thenColliding = _snapshotColliding();
             this->_generateClipPath();
-            
-            auto nowColliding = this->collidingItems();
-            auto nowCollidingSet = QSet<QGraphicsItem*>(nowColliding.begin(), nowColliding.end());
+            auto nowColliding = _snapshotColliding();
 
             //sort out visible and invisible
-            auto nowInvisibleSet = nowCollidingSet.subtract(thenCollidingSet);
-            auto nowVisibleSet = thenCollidingSet.subtract(nowCollidingSet);
+            auto nowInvisible = nowColliding;
+            nowInvisible.subtract(thenColliding);
+            auto nowVisible = thenColliding;
+            nowVisible.subtract(nowColliding);
 
-            out.nowInvisible = _atomItemsFromGraphicsItems(nowInvisibleSet);
-            out.nowVisible = _atomItemsFromGraphicsItems(nowVisibleSet);
+            out.nowInvisible = _atomItemsFromGraphicsItems(nowInvisible);
+            out.nowVisible = _atomItemsFromGraphicsItems(nowVisible);
+
+            _logFogChangingVisibility(out);
 
             return out;
 

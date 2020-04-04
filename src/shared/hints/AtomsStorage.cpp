@@ -198,8 +198,8 @@ void AtomsStorage::_registerPayloadForHistory(const AlterationPayload &payload) 
     //do not register again if payload is already from timeline
     if(payload.isFromTimeline()) return;
 
-    //do nothing if payload is not redo compatible
-    if(!payload.isNetworkRoutable()) return;
+    //do nothing if payload is not allowed to be registered
+    if(!payload.undoRedoAllowed()) return;
 
     //cut branch
     while(this->_payloadHistoryIndex) {
@@ -283,7 +283,7 @@ void AtomsStorage::redo() {
 
 AlterationPayload AtomsStorage::_generateUndoPayload(const AlterationPayload &fromHistoryPayload) {
 
-    switch(fromHistoryPayload.type()) {
+    switch(auto type = fromHistoryPayload.type()) {
 
         case Payload::Alteration::BulkMetadataChanged: {
             
@@ -365,6 +365,7 @@ AlterationPayload AtomsStorage::_generateUndoPayload(const AlterationPayload &fr
         break; 
 
         default:
+            qWarning() << qUtf8Printable(QStringLiteral(u"This payload type %1 is not handled to be reverted !").arg((int)type));
             break;
 
     }

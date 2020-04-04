@@ -68,5 +68,12 @@ class Payload {
             Payload::Alteration::FogChanged,
             Payload::Alteration::FogModeChanged
         };
+
+        static inline const QList<Payload::Alteration> allowsRedoUndo = { 
+            Payload::Alteration::Added, 
+            Payload::Alteration::Removed, 
+            Payload::Alteration::MetadataChanged,
+            Payload::Alteration::BulkMetadataChanged
+        };
     
 };
