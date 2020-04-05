@@ -43,8 +43,19 @@ class RPZQVariant {
             CharacterId = 8010,
             CoveredByFog = 9000,
             FogSensitive = 9010,
-            GraphicsItemToReplace = 10100
+            GraphicsItemToReplace = 10100,
+            MoveAnimationDestinationScenePoint = 11000
         };
+
+        static QVariant moveAnimationDestinationScenePoint(const QGraphicsItem* item) {
+            return item->data((int)RPZQVariant::Roles::MoveAnimationDestinationScenePoint);
+        }
+        static void setMoveAnimationDestinationScenePoint(QGraphicsItem* item, const QPointF &sceneDestPoint) {
+            item->setData((int)RPZQVariant::Roles::MoveAnimationDestinationScenePoint, QVariant::fromValue<QPointF>(sceneDestPoint));
+        }
+        static void deleteMoveAnimationDestinationScenePoint(QGraphicsItem* item) {
+            item->setData((int)RPZQVariant::Roles::MoveAnimationDestinationScenePoint, QVariant());
+        }
 
         static QGraphicsItem* graphicsItemToReplace(const QGraphicsItem* item) {
             return item->data((int)RPZQVariant::Roles::GraphicsItemToReplace).value<QGraphicsItem*>();

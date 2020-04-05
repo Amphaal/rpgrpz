@@ -56,7 +56,7 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             this->_updateFog(params.polys());
             this->_generateClipPath(); 
 
-            this->setZValue(AppContext::FOG_Z_INDEX);
+            this->setZValue(AppContext::HOVERING_ITEMS_Z_INDEX);
 
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
@@ -87,8 +87,21 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             MapViewFog::FogChangingVisibility out;
 
             for(auto item : addedReplacedOrChangedGraphicAtoms) {
-                if(this->collidesWithItem(item)) out.nowInvisible.append(item);
+                
+                auto collidesWithFog = false;
+                auto destScenePosVariant = RPZQVariant::moveAnimationDestinationScenePoint(item);
+                
+                //if item is moving, test on expected position rather than actual
+                if(!destScenePosVariant.isNull()) {
+                    auto destScenePos = destScenePosVariant.value<QPointF>();
+                    auto translatedOriginalShape = item->shape().translated(destScenePos);
+                    collidesWithFog = this->collidesWithPath(translatedOriginalShape);
+                }
+                else collidesWithFog = this->collidesWithItem(item);
+
+                if(collidesWithFog) out.nowInvisible.append(item);
                 else out.nowVisible.append(item);
+
             }
 
             out.nowInvisible = _atomItemsFromGraphicsItems(out.nowInvisible);

@@ -77,8 +77,6 @@ void MapView::_handleHintsSignalsAndSlots() {
         }
     );
 
-    //TODO precalculate FoW on animation + Prevent flicker when auto hidden by FoW + zIndex FoW tweak
-
     QObject::connect(
         HintThread::hint(), &ViewMapHint::fogModeChanged,
         this, &MapView::_onFogModeChanged

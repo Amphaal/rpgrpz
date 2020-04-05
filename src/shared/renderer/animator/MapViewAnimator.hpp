@@ -78,7 +78,7 @@ class MapViewAnimator {
             auto canBeAnimated = dynamic_cast<QObject*>(toAnimate);
 
             if(canBeAnimated && toAnimate->scene()) {
-                _animateMove(canBeAnimated, currentPos, newScenePos);
+                _animateMove(canBeAnimated, toAnimate, currentPos, newScenePos);
             } 
 
             //fallback
@@ -116,7 +116,7 @@ class MapViewAnimator {
                         : RPZQVariant::cachedOpacity(item);
         }
 
-        static void _animateMove(QObject *toAnimate, const QPointF &currentScenePos, const QPointF &newScenePos) {
+        static void _animateMove(QObject* toAnimate, QGraphicsItem* toAnimate_gi, const QPointF &currentScenePos, const QPointF &newScenePos) {
             
             auto existingAnim = _ongoingAnimations[toAnimate].value(_moveProp);
 
@@ -126,6 +126,8 @@ class MapViewAnimator {
                 existingAnim = new QPropertyAnimation(toAnimate, _moveProp.toLocal8Bit());
                 _ongoingAnimations[toAnimate].insert(_moveProp, existingAnim);
 
+                RPZQVariant::setMoveAnimationDestinationScenePoint(toAnimate_gi, newScenePos);
+
                 existingAnim->setDuration(400);
                 existingAnim->setEasingCurve(QEasingCurve::InQuad);
                 existingAnim->setStartValue(currentScenePos);
@@ -133,7 +135,10 @@ class MapViewAnimator {
 
                 QObject::connect(
                     existingAnim, &QAbstractAnimation::finished,
-                    [=]() { _clearAnimation(toAnimate, _moveProp); }
+                    [=]() { 
+                        RPZQVariant::deleteMoveAnimationDestinationScenePoint(toAnimate_gi);
+                        _clearAnimation(toAnimate, _moveProp); 
+                    }
                 );
 
                 _queuedAnimations.enqueue(existingAnim);
