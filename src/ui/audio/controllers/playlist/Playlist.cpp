@@ -155,12 +155,18 @@ void Playlist::dropEvent(QDropEvent *event) {
 void Playlist::_removeYoutubeVideo(QListWidgetItem* playlistItem) {
     
     auto metadata = RPZQVariant::ytVideoMetadata(playlistItem);
+    
+    //remove from local list
     this->_playlistVideoIds.remove(metadata->id());
-    delete metadata;
+    
+    //remove from view
+    delete playlistItem;
 
-    this->removeItemWidget(playlistItem);
-
+    //remove from db
     PlaylistDatabase::get()->removeYoutubeId(metadata->id());
+    
+    //release from memory
+    delete metadata;
 
 }
 
