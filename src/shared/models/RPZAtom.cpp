@@ -313,8 +313,8 @@ const QColor RPZAtom::NPCAssociatedColor(const RPZAtom::NPCType &NPCtype) {
     return _NPCTypeAssociatedColor.value(NPCtype);
 }
 
-bool RPZAtom::canBeHidden() const {
-    return !_cannotBeHidden.contains(this->type());
+bool RPZAtom::canBeManuallyHidden() const {
+    return !_cannotBeManuallyHidden.contains(this->type());
 }
 
 bool RPZAtom::isAssetBased() const {
@@ -327,7 +327,7 @@ QSet<RPZAtom::Parameter> RPZAtom::legalParameters() const {
     
     //basic
     base.insert(RPZAtom::Parameter::Position);
-    if(this->canBeHidden()) base.insert(RPZAtom::Parameter::Hidden);
+    if(this->canBeManuallyHidden()) base.insert(RPZAtom::Parameter::Hidden);
     
     //layout specific
     if(this->category() == RPZAtom::Category::Layout) {

@@ -151,7 +151,7 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
         void setOwned(bool owned) {
             
             this->_owned = owned;
-            RPZQVariant::setAllowedToBeWalked(this, owned);
+            RPZQVariant::setContextuallyOwned(this, owned);
             
             if(this->_outline) {
                 this->_outline->mayDisplay(owned);

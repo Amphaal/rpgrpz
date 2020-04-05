@@ -35,6 +35,26 @@ class RPZGraphicsItem {
             QStyleOptionGraphicsItem options;
             bool mustContinue = true; 
         };
+
+        //if the item is meant to be hidden from the gameboard
+        static bool isGameHidden(const QGraphicsItem* item) {
+            
+            //if is manually hidden
+            auto isHidden = RPZQVariant::isManuallyHidden(item);
+            if(isHidden) return true;
+
+            //if it is not covered
+            auto isCovered = RPZQVariant::isCoveredByFog(item);
+            if(!isCovered) return false;
+
+            //if is host able, no bypass
+            if(Authorisations::isHostAble()) return true;
+
+            //if owned, it must not be hidden from you
+            auto isContextuallyOwned = RPZQVariant::contextuallyOwned(item);
+            return !isContextuallyOwned;
+
+        }
     
     protected:
         virtual bool _canBeDrawnInMiniMap() const { 
@@ -78,10 +98,9 @@ class RPZGraphicsItem {
         };
 
     private:
-
         void _paintOpacityPlaceholder(QGraphicsItem* base, QPainter *painter, const QStyleOptionGraphicsItem *option) {
             
-            if(!RPZQVariant::isHidden(base) && !RPZQVariant::isCoveredByFog(base)) return;
+            if(!isGameHidden(base)) return;
 
             painter->save();
 

@@ -77,7 +77,7 @@ void MapView::_handleHintsSignalsAndSlots() {
         }
     );
 
-    //TODO precalculate FoW on animation + prevent FoW on specific atom types
+    //TODO precalculate FoW on animation + Prevent flicker when auto hidden by FoW + zIndex FoW tweak
 
     QObject::connect(
         HintThread::hint(), &ViewMapHint::fogModeChanged,
@@ -104,8 +104,8 @@ void MapView::_handleHintsSignalsAndSlots() {
     );
     
     QObject::connect(
-        HintThread::hint(), QOverload<const QList<QGraphicsItem*>&, const RPZAtom::Updates&>::of(&ViewMapHint::requestingUIUpdate),
-        this, QOverload<const QList<QGraphicsItem*>&, const RPZAtom::Updates&>::of(&MapView::_onUIUpdateRequest)
+        HintThread::hint(), QOverload<const QList<QGraphicsItem*>&, const RPZAtom::Updates&, bool>::of(&ViewMapHint::requestingUIUpdate),
+        this, QOverload<const QList<QGraphicsItem*>&, const RPZAtom::Updates&, bool>::of(&MapView::_onUIUpdateRequest)
     );
 
     QObject::connect(
@@ -168,13 +168,6 @@ void MapView::_notifySelection() {
 
 }
 
-void MapView::_updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom::Updates &updates) {
-    AtomConverter::updateGraphicsItemFromMetadata(
-        item,
-        updates
-    );
-}
-
 void MapView::_metadataUpdatePostProcess(const QList<QGraphicsItem*> &FoWSensitiveItems) {
     
     //may trigger MapViewAnimator::triggerQueuedAnimations(), prevent calling it twice in a row
@@ -197,7 +190,7 @@ void MapView::_onUIUpdateRequest(const QHash<QGraphicsItem*, RPZAtom::Updates> &
         auto gi = i.key();
         auto updates = i.value();
 
-        this->_updateGraphicsItemFromMetadata(gi, updates);
+        AtomConverter::updateGraphicsItemFromMetadata(gi, updates);
 
         //check FoW changes
         if(RPZAtom::mustTriggerFoWCheck(updates.keys())) needFoWCheck += gi;
@@ -208,13 +201,13 @@ void MapView::_onUIUpdateRequest(const QHash<QGraphicsItem*, RPZAtom::Updates> &
 
 }
 
-void MapView::_onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates) {
+void MapView::_onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates, bool isPreview) {
     
     for(const auto item : toUpdate) {
-        this->_updateGraphicsItemFromMetadata(item, updates);
+        AtomConverter::updateGraphicsItemFromMetadata(item, updates);
     }
     
-    auto mustTriggerFoWCheck = RPZAtom::mustTriggerFoWCheck(updates.keys());
+    auto mustTriggerFoWCheck = isPreview ? false : RPZAtom::mustTriggerFoWCheck(updates.keys());
     this->_metadataUpdatePostProcess(mustTriggerFoWCheck ? toUpdate : QList<QGraphicsItem *>());
 
 }
@@ -445,7 +438,7 @@ bool MapView::_tryToInvokeWalkableHelper(QGraphicsItem * toBeWalked) {
     if(!this->_isMousePressed) return false;
 
     //prevent if not walkable
-    auto isWalkable = RPZQVariant::allowedToBeWalked(toBeWalked);
+    auto isWalkable = RPZQVariant::contextuallyOwned(toBeWalked);
     if(!isWalkable) return false;
         
     //clear previous walker

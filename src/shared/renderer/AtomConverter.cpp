@@ -22,7 +22,7 @@
 void AtomConverter::updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom::Updates &updates) {
     //update GI
     for(auto i = updates.begin(); i != updates.end(); i++) {
-        _updateGraphicsItemFromMetadata(item, i.key(), i.value());
+        _updateGraphicsItemFromAtomParamValue(item, i.key(), i.value());
     }
 }
 
@@ -46,8 +46,13 @@ void AtomConverter::setupGraphicsItemFromAtom(QGraphicsItem* target, const RPZAt
     target->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, default_canBeMoved);
     RPZQVariant::setAllowedToDefineMoveAbility(target, default_canBeMoved);
 
+    //set fog of war sensibility
+    RPZQVariant::setFogSensitive(target, 
+        !RPZAtom::fogOfWarInsensitive.contains(blueprint.type())
+    );
+
     //update
-    _updateGraphicsItemFromMetadata(target, blueprint);
+    _updateGraphicsItemFromBlueprint(target, blueprint);
 
     //if interactive, force ZIndex to max
     if(blueprint.category() == RPZAtom::Category::Interactive) {
@@ -73,8 +78,8 @@ void AtomConverter::setupGraphicsItemFromAtom(QGraphicsItem* target, const RPZAt
     }
             
 }
-
-void AtomConverter::_updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom &blueprint) {
+    
+void AtomConverter::_updateGraphicsItemFromBlueprint(QGraphicsItem* item, const RPZAtom &blueprint) {
 
     //refresh all legal if temporary
     auto paramsToUpdate = blueprint.legalParameters();
@@ -93,12 +98,12 @@ void AtomConverter::_updateGraphicsItemFromMetadata(QGraphicsItem* item, const R
     //update GI
     for(const auto param : asList) {
         auto val = blueprint.metadata(param);
-        _updateGraphicsItemFromMetadata(item, param, val);
+        _updateGraphicsItemFromAtomParamValue(item, param, val);
     }
 
 }
 
-void AtomConverter::_updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom::Parameter &param, const QVariant &val) {
+void AtomConverter::_updateGraphicsItemFromAtomParamValue(QGraphicsItem* item, const RPZAtom::Parameter &param, const QVariant &val) {
     
     if(!item) return;
     
@@ -198,7 +203,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
                 
                 //define visibility
                 auto hidden = val.toBool();
-                RPZQVariant::setIsHidden(itemToUpdate, hidden);
+                RPZQVariant::setIsManuallyHidden(itemToUpdate, hidden);
 
                 //animate
                 MapViewAnimator::animateVisibility(itemToUpdate);
@@ -214,7 +219,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
                 RPZQVariant::setCachedOpacity(itemToUpdate, opacity);
 
                 //prevent changing opacity if is hidden
-                if(RPZQVariant::isHidden(itemToUpdate)) break;
+                if(RPZQVariant::isManuallyHidden(itemToUpdate)) break;
                 
                 //animate
                 MapViewAnimator::animateVisibility(itemToUpdate);

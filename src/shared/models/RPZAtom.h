@@ -171,6 +171,13 @@ class RPZAtom : public Serializable {
             RPZAtom::Type::Background,
             RPZAtom::Type::NPC
         };
+
+        static inline const QList<RPZAtom::Type> fogOfWarInsensitive {
+            RPZAtom::Type::Background,
+            RPZAtom::Type::Brush,
+            RPZAtom::Type::Drawing,
+            RPZAtom::Type::Event
+        };
         
         //
         //
@@ -201,7 +208,7 @@ class RPZAtom : public Serializable {
 
         bool isAssetBased() const;
         bool isRestrictedAtom() const;
-        bool canBeHidden() const;
+        bool canBeManuallyHidden() const;
         bool isWalkableAtom() const;
         bool isCopyable() const;
 
@@ -281,7 +288,7 @@ class RPZAtom : public Serializable {
             RPZAtom::Type::POI,
         };
 
-        static inline const QList<RPZAtom::Type> _cannotBeHidden {
+        static inline const QList<RPZAtom::Type> _cannotBeManuallyHidden {
             RPZAtom::Type::Event,
             RPZAtom::Type::POI,
             RPZAtom::Type::Player

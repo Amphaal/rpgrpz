@@ -91,6 +91,9 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
                 else out.nowVisible.append(item);
             }
 
+            out.nowInvisible = _atomItemsFromGraphicsItems(out.nowInvisible);
+            out.nowVisible = _atomItemsFromGraphicsItems(out.nowVisible);
+
             _logFogChangingVisibility(out);
 
             return out;
@@ -229,6 +232,7 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             for(auto item : toFilter) {
                 if(!dynamic_cast<RPZGraphicsItem*>(item)) continue; //only for main RPZGraphicsItem
                 if(RPZQVariant::isTemporary(item)) continue; //skip if temporary
+                if(!RPZQVariant::fogSensitive(item)) continue; //skip if not fog sensitive
                 if(!RPZQVariant::atomId(item)) continue; //skip if has no atomId
                 cAtomItems.append(item); 
             }

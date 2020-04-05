@@ -39,8 +39,8 @@ class AtomConverter {
         static bool _setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &param, QGraphicsItem* itemToUpdate, const QVariant &val);
         static void _updateAtomParamFromGraphics(const RPZAtom::Parameter &param, RPZAtom &atomToUpdate, QGraphicsItem* blueprint);
 
-        static void _updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom::Parameter &param, const QVariant &val);
-        static void _updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom &blueprint);
+        static void _updateGraphicsItemFromAtomParamValue(QGraphicsItem* item, const RPZAtom::Parameter &param, const QVariant &val);
+        static void _updateGraphicsItemFromBlueprint(QGraphicsItem* item, const RPZAtom &blueprint);
 
 };
 

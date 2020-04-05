@@ -172,7 +172,7 @@ void ViewMapHint::_updateTemplateAtom(RPZAtom::Updates updates) {
     if(!updates.count()) return;
 
     //update ghost
-    emit requestingUIUpdate({ghostItem}, updates);
+    emit requestingUIUpdate({ghostItem}, updates, true);
 
 }
 
@@ -455,7 +455,8 @@ void ViewMapHint::handlePreviewRequest(const AtomsSelectionDescriptor &selection
 
     }
 
-    emit requestingUIUpdate(toUpdate, updates);
+    emit requestingUIUpdate(toUpdate, updates, true);
+
 }
 
 

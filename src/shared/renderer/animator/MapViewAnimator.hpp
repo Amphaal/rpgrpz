@@ -110,10 +110,10 @@ class MapViewAnimator {
         static inline QQueue<QPropertyAnimation*> _queuedAnimations;
 
         static double _determineOpacity(QGraphicsItem* item) {
-            auto isHidden = RPZQVariant::isHidden(item);
-            auto cachedOpacity = RPZQVariant::cachedOpacity(item);
-            auto isCovered = RPZQVariant::isCoveredByFog(item);
-            return isHidden || isCovered ? (Authorisations::isHostAble() ? .5 : 0) : cachedOpacity;
+            auto isHostAble = Authorisations::isHostAble();
+            return RPZGraphicsItem::isGameHidden(item) 
+                        ? (isHostAble ? .5 : 0) 
+                        : RPZQVariant::cachedOpacity(item);
         }
 
         static void _animateMove(QObject *toAnimate, const QPointF &currentScenePos, const QPointF &newScenePos) {

@@ -35,13 +35,14 @@ class RPZQVariant {
             GridAlignable = 1100,
             BrushTransform = 2555, 
             IsTemporary = 2666, 
-            IsHidden = 2680, 
+            IsManuallyHidden = 2680, 
             BrushDrawStyle = 2767,
             CachedOpacity = 6000,
-            AllowedToWalk = 7000,
+            ContextuallyOwned = 7000,
             AllowedToDefineMoveAbility = 8000,
             CharacterId = 8010,
             CoveredByFog = 9000,
+            FogSensitive = 9010,
             GraphicsItemToReplace = 10100
         };
 
@@ -52,13 +53,12 @@ class RPZQVariant {
             item->setData((int)RPZQVariant::Roles::GraphicsItemToReplace, QVariant::fromValue<QGraphicsItem*>(toReplace));
         }
 
-        static bool allowedToBeWalked(const QGraphicsItem* item) {
-            return item->data((int)RPZQVariant::Roles::AllowedToWalk).toBool();
+        static void setContextuallyOwned(QGraphicsItem* item, bool owned) {
+            item->setData((int)RPZQVariant::Roles::ContextuallyOwned, owned);
         }
-        static void setAllowedToBeWalked(QGraphicsItem* item, bool allowed) {
-            item->setData((int)RPZQVariant::Roles::AllowedToWalk, allowed);
+        static bool contextuallyOwned(const QGraphicsItem* item) {
+            return item->data((int)RPZQVariant::Roles::ContextuallyOwned).toBool();
         }
-
 
         static bool allowedToDefineMoveAbility(const QGraphicsItem* item) {
             return item->data((int)RPZQVariant::Roles::AllowedToDefineMoveAbility).toBool();
@@ -128,19 +128,25 @@ class RPZQVariant {
             item->setData((int)RPZQVariant::Roles::IsTemporary, isTemporary);
         }
 
-        static bool isHidden(QGraphicsItem* item) {
-            return item->data((int)RPZQVariant::Roles::IsHidden).toBool();
+        static bool isManuallyHidden(const QGraphicsItem* item) {
+            return item->data((int)RPZQVariant::Roles::IsManuallyHidden).toBool();
         }
-        static void setIsHidden(QGraphicsItem* item, bool isHidden) {
-            item->setData((int)RPZQVariant::Roles::IsHidden, isHidden);
+        static void setIsManuallyHidden(QGraphicsItem* item, bool isHidden) {
+            item->setData((int)RPZQVariant::Roles::IsManuallyHidden, isHidden);
         }
 
         static void setIsCoveredByFog(QGraphicsItem* item, bool isCovered) {
             item->setData((int)RPZQVariant::Roles::CoveredByFog, isCovered);
         }
-
-        static bool isCoveredByFog(QGraphicsItem* item) {
+        static bool isCoveredByFog(const QGraphicsItem* item) {
             return item->data((int)RPZQVariant::Roles::CoveredByFog).toBool();
+        }
+
+        static void setFogSensitive(QGraphicsItem* item, bool isFogSensitive) {
+            item->setData((int)RPZQVariant::Roles::FogSensitive, isFogSensitive);
+        }
+        static bool fogSensitive(const QGraphicsItem* item) {
+            return item->data((int)RPZQVariant::Roles::FogSensitive).toBool();
         }
 
         static double cachedOpacity(QGraphicsItem* item) {
@@ -151,7 +157,6 @@ class RPZQVariant {
         static void setCachedOpacity(QGraphicsItem* item, double cached) {
             item->setData((int)RPZQVariant::Roles::CachedOpacity, cached);
         }
-
 
         static RPZAtom::BrushType brushDrawStyle(QGraphicsItem* item) {
             return (RPZAtom::BrushType)item->data((int)RPZQVariant::Roles::BrushDrawStyle).toInt();
