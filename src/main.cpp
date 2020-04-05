@@ -118,7 +118,7 @@ void _registerMetaTypes() {
 
     //typedef
     qRegisterMetaType<SnowFlake::Id>("SnowFlake::Id");
-    qRegisterMetaType<SnowFlake::Id>("RPZCharacter::Id");
+    qRegisterMetaType<RPZCharacter::Id>("RPZCharacter::Id");
     qRegisterMetaType<RPZAsset::Hash>("RPZAsset::Hash");
     qRegisterMetaType<RPZAtom::Updates>("RPZAtom::Updates");
     qRegisterMetaType<RPZAtom::ManyUpdates>("RPZAtom::ManyUpdates");
@@ -128,7 +128,7 @@ void _registerMetaTypes() {
     qRegisterMetaType<AlterationPayload>("AlterationPayload");
     qRegisterMetaType<RPZResponse>("RPZResponse");
     qRegisterMetaType<RPZUser>("RPZUser");
-    qRegisterMetaType<RPZUser>("RPZAtom");
+    qRegisterMetaType<RPZAtom>("RPZAtom");
     qRegisterMetaType<RPZQuickDraw>("RPZQuickDraw");
     qRegisterMetaType<RPZMessage>("RPZMessage");
     qRegisterMetaType<ResetPayload>("ResetPayload");

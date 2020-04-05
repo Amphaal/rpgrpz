@@ -35,6 +35,7 @@
 
 #include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
 #include "src/shared/renderer/graphics/_base/RPZAnimated.hpp"
+#include "src/shared/renderer/animator/MapViewAnimator.hpp"
 
 class MapViewTokenOutline : public QObject, public QGraphicsItem, public RPZGraphicsItem {
     
@@ -156,6 +157,8 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
             if(this->_outline) {
                 this->_outline->mayDisplay(owned);
             }
+
+            MapViewAnimator::animateVisibility(this);
 
         }
 
