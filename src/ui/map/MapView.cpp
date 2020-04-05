@@ -396,13 +396,15 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
         }
     }
 
-    if(type == Payload::Alteration::Reset) {
-        
-        //update atoms visibility from fog before revealing
-        this->_mayFogUpdateAtoms(
-            HintThread::hint()->fogItem()->coveredAtomItems()
-        );
+    //prevent animations caching while map is being reset 
+    if(Payload::foWPreventAnimation.contains(type)) {
+        MapViewAnimator::setAnimationsAllowed(false);
+    }
 
+    if(type == Payload::Alteration::Reset) {
+            this->_mayFogUpdateAtoms(
+                HintThread::hint()->fogItem()->coveredAtomItems()
+            );
         ProgressTracker::get()->heavyAlterationEnded();
         
     }
@@ -426,6 +428,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
 
     }
 
+    MapViewAnimator::setAnimationsAllowed(true);
     MapViewAnimator::triggerQueuedAnimations();
 
 }

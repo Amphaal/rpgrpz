@@ -89,10 +89,6 @@ void AtomConverter::_updateGraphicsItemFromBlueprint(QGraphicsItem* item, const 
     if(isItemTemporary) {
         paramsToUpdate.remove(RPZAtom::Parameter::Opacity);
         paramsToUpdate.remove(RPZAtom::Parameter::Hidden);
-    } else {
-        //TODO find an alternative
-        //set default opacity to prevent flicker when auto hidden by FoW 
-        // if(!Authorisations::isHostAble()) item->setOpacity(0);
     }
 
     //sort

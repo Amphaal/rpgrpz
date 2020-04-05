@@ -37,6 +37,10 @@ class MapViewAnimator {
             }
         }
 
+        static void setAnimationsAllowed(bool allowed) {
+            _animationsAllowed = allowed;
+        }
+
         static void animateVisibility(QGraphicsItem* toAnimate) {
             
             auto destOpacity = _determineOpacity(toAnimate);
@@ -47,7 +51,7 @@ class MapViewAnimator {
             
             //check if animation is available
             auto canBeAnimated = dynamic_cast<QObject*>(toAnimate);
-            if(canBeAnimated && toAnimate->scene()) {
+            if(canBeAnimated && toAnimate->scene() && _animationsAllowed) {
                  _animateVisibility(canBeAnimated, currentOpacity, destOpacity);
             } 
 
@@ -62,7 +66,7 @@ class MapViewAnimator {
             
             auto canBeAnimated = dynamic_cast<MapViewDrawing*>(toAnimate);
 
-            if(canBeAnimated && toAnimate->scene()) {
+            if(canBeAnimated && toAnimate->scene() && _animationsAllowed) {
                 _animatePath(canBeAnimated, pathToAnimate);
             } 
 
@@ -77,7 +81,7 @@ class MapViewAnimator {
 
             auto canBeAnimated = dynamic_cast<QObject*>(toAnimate);
 
-            if(canBeAnimated && toAnimate->scene()) {
+            if(canBeAnimated && toAnimate->scene() && _animationsAllowed) {
                 _animateMove(canBeAnimated, toAnimate, currentPos, newScenePos);
             } 
 
@@ -102,6 +106,8 @@ class MapViewAnimator {
         }
     
     private:
+        static inline bool _animationsAllowed = true;
+
         static inline QString _visibilityProp = QStringLiteral(u"opacity");
         static inline QString _moveProp = QStringLiteral(u"pos");
         static inline QString _pathProp = QStringLiteral(u"path");
