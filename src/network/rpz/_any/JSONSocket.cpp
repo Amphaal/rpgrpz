@@ -73,7 +73,7 @@ bool JSONSocket::_sendToSocket(JSONSocket* socket, JSONLogger* logger, const RPZ
     emit socket->sending();
 
     //ignore emission when socket is not connected
-    if(socket->socket()->state() != QAbstractSocket::ConnectedState) {
+    if(auto state = socket->socket()->state(); state != QAbstractSocket::ConnectedState) {
         logger->log("cannot send JSON as the socket is not connected");
         emit socket->sent(false);
         return false;

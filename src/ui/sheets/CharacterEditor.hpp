@@ -98,13 +98,23 @@ class CharacterEditor : public QWidget, public ConnectivityObserver {
     protected:
         void connectingToServer() override {
             this->_defineTitle(true);
+
+            //when session is up
+            QObject::connect(
+                _rpzClient, &RPZClient::gameSessionReceived,
+                [=]() {
+                    this->_allowCharacterChangeNotifications = true;
+                }
+            );
         }
 
         void connectionClosed(bool hasInitialMapLoaded) override {
             this->_defineTitle();
+            this->_allowCharacterChangeNotifications = false;
         }
 
     private:
+        bool _allowCharacterChangeNotifications = false;
         CharacterPicker::SelectedCharacter _currentSelection;
 
         CharacterPicker* _characterPicker = nullptr;
@@ -127,7 +137,7 @@ class CharacterEditor : public QWidget, public ConnectivityObserver {
             CharactersDatabase::get()->updateCharacter(characterFromSheet);
 
             //if remote, tell server that character changed
-            if(this->_rpzClient) {
+            if(this->_rpzClient && this->_allowCharacterChangeNotifications) {
                 QMetaObject::invokeMethod(this->_rpzClient, "notifyCharacterChange", 
                     Q_ARG(RPZCharacter, characterFromSheet)
                 );

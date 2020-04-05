@@ -247,12 +247,12 @@
         <translation>Savegarder la fiche</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/CharacterEditor.hpp" line="161"/>
+        <location filename="../ui/sheets/CharacterEditor.hpp" line="171"/>
         <source>My characters</source>
         <translation>Mes personnages</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/CharacterEditor.hpp" line="161"/>
+        <location filename="../ui/sheets/CharacterEditor.hpp" line="171"/>
         <source>Hosted characters</source>
         <translation>Personnages du serveur</translation>
     </message>

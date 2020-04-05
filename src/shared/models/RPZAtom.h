@@ -174,6 +174,7 @@ class RPZAtom : public Serializable {
 
         static inline const QList<RPZAtom::Type> fogOfWarInsensitive {
             RPZAtom::Type::Background,
+            RPZAtom::Type::Object, //TODO maybe to delete when Object <> Brush
             RPZAtom::Type::Brush,
             RPZAtom::Type::Drawing,
             RPZAtom::Type::Event
