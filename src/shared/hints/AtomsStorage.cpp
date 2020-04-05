@@ -182,7 +182,9 @@ const AtomsSelectionDescriptor AtomsStorage::getAtomSelectionDescriptor(const QL
 AtomsStorage::AtomsAreLeft AtomsStorage::restrictPayload(AtomRelatedPayload &payloadToRestrict) {
     
     //no need to touch
-    if(!this->_restrictedAtomIds.count()) return true;
+    if(auto hasRestrictions = this->_restrictedAtomIds.count(); !hasRestrictions) {
+        return true;
+    }
 
     //restrict
     return payloadToRestrict.restrictTargetedAtoms(this->_restrictedAtomIds);

@@ -327,6 +327,7 @@ void RPZServer::_sendGameSession(JSONSocket* toSendTo, const RPZUser &associated
         
         //map payload
         auto mPayload = this->_hints->generateResetPayload();
+        this->_hints->restrictPayload(mPayload);
         gs.setMapPayload(mPayload);
 
     }
