@@ -160,7 +160,7 @@ void MainWindow::_loadWindowState() {
 void MainWindow::closeEvent(QCloseEvent *event) {
 
     //may save map changes
-    MapHint::mayWantToSavePendingState(this, HintThread::hint());
+    HintThread::hint()->mayWantToSavePendingState(this);
 
     //save window state
     this->_saveWindowState();
@@ -514,7 +514,7 @@ void MainWindow::_initUIMenu() {
 
     //on remote change detected...
     QObject::connect(
-        this->_mapView, &MapView::remoteChanged,
+        HintThread::hint(), &MapHint::remoteChanged,
         [=](bool isRemote) {
             mm->setEnabled(!isRemote);
         }
@@ -562,7 +562,7 @@ QMenu* MainWindow::_getMapMenu() {
         [=]() {
             
             //save beforehand if it have to
-            MapHint::mayWantToSavePendingState(this, HintThread::hint());
+            HintThread::hint()->mayWantToSavePendingState(this);
 
             //dialog
             auto picked = QFileDialog::getSaveFileName(
@@ -588,7 +588,7 @@ QMenu* MainWindow::_getMapMenu() {
         [=]() {
             
             //save beforehand if it have to
-            MapHint::mayWantToSavePendingState(this, HintThread::hint());
+            HintThread::hint()->mayWantToSavePendingState(this);
             
             //dialog
             auto picked = QFileDialog::getOpenFileName(

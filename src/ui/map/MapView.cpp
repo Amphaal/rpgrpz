@@ -73,8 +73,6 @@ void MapView::_handleHintsSignalsAndSlots() {
         [=]() {
             this->endHeavyLoadPlaceholder();
             this->goToDefaultViewState();
-            //TODO fix access on map loading when token has already a character that is in the lobby of the current map
-            this->_mightUpdateTokens();
         }
     );
 
@@ -138,18 +136,6 @@ void MapView::_onFogModeChanged(const RPZFogParams::Mode &newMode) {
 void MapView::_onFogChanged(const QList<QPolygonF> &updatedFog) {
     auto request = HintThread::hint()->fogItem()->updateFog(updatedFog);
     this->_mayFogUpdateAtoms(request);
-}
-
-void MapView::_mightUpdateTokens() {
-    
-    if(!Authorisations::isHostAble()) return;
-    if(!this->_rpzClient) return;
-        
-    //update token values from owners
-    for(const auto &user : this->_rpzClient->sessionUsers()) {
-        HintThread::hint()->mightUpdateOwnedTokens(user);
-    }
-
 }
 
 //
@@ -887,84 +873,6 @@ void MapView::focusFromMinimap(const QPointF &scenePoint) {
 //////////////////////
 /* END MOUSE EVENTS */
 //////////////////////
-
-/////////////
-/* NETWORK */
-/////////////
-
-void MapView::connectingToServer() {
-
-    //when self user send
-    QObject::connect(
-        _rpzClient, &RPZClient::gameSessionReceived,
-        this, &MapView::_onGameSessionReceived
-    );
-
-}
-void MapView::_onGameSessionReceived(const RPZGameSession &gameSession) {
-    
-    Q_UNUSED(gameSession)
-
-    //self
-    auto self = this->_rpzClient->identity();
-
-    //if host
-    if(self.role() == RPZUser::Role::Host) {
-
-        //send map history if host
-        this->_sendMapHistory();
-
-        //might update tokens when user updates/log in
-        QObject::connect(
-            this->_rpzClient, &RPZClient::userDataChanged,
-            HintThread::hint(), &MapHint::mightUpdateOwnedTokens
-        );
-        QObject::connect(
-            this->_rpzClient, &RPZClient::userJoinedServer,
-            HintThread::hint(), &MapHint::mightUpdateOwnedTokens
-        );
-
-
-    }
-
-    //if host
-    bool is_remote = HintThread::hint()->ackRemoteness(
-        self, 
-        this->_rpzClient->getConnectedSocketAddress()
-    );
-
-    emit remoteChanged(is_remote);
-    
-}
-
-void MapView::connectionClosed(bool hasInitialMapLoaded) {
-
-    //reset impersonating character
-    HintThread::hint()->defineImpersonatingCharacter();
-
-    //back to default state
-    if(hasInitialMapLoaded) QMetaObject::invokeMethod(HintThread::hint(), "loadDefaultRPZMap");
-
-    emit remoteChanged(false);
-
-}
-
-void MapView::_sendMapHistory() {
-    
-    //generate payload
-    auto payload = HintThread::hint()->generateResetPayload();
-   
-   //send it
-    QMetaObject::invokeMethod(this->_rpzClient, "sendMapHistory", 
-        Q_ARG(ResetPayload, payload)
-    );
-
-}
-
-/////////////////
-/* END NETWORK */
-/////////////////
-
 
 //////////
 /* TOOL */

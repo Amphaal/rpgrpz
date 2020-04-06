@@ -20,8 +20,9 @@
 #pragma once
 
 #include "ViewMapHint.h"
+#include "src/ui/_others/ConnectivityObserver.h"
 
-class MapHint : public ViewMapHint {
+class MapHint : public ViewMapHint, public ConnectivityObserver {
 
     Q_OBJECT
 
@@ -33,7 +34,7 @@ class MapHint : public ViewMapHint {
         bool isMapDirty() const;
         const QString mapFilePath() const;
 
-        static void mayWantToSavePendingState(QWidget* parent, MapHint* hint); //must block UI
+        void mayWantToSavePendingState(QWidget* parent); //must block UI
         
         bool ackRemoteness(const RPZUser &connectedUser, const QString &remoteAddress);
         bool ackRemoteness(const QString &tblMapFilePath);
@@ -47,6 +48,7 @@ class MapHint : public ViewMapHint {
 
     signals:
         void mapStateChanged(const QString &mapDescriptor, bool isMapDirty);
+        void remoteChanged(bool isRemote);
 
     private: 
         bool _ackRemoteness();
@@ -62,4 +64,13 @@ class MapHint : public ViewMapHint {
         void _handleAlterationRequest(const AlterationPayload &payload) final;
 
         AlterationActor* _sysActor = nullptr;
+        
+        //network
+            void connectingToServer() override;
+            void connectionClosed(bool hasInitialMapLoaded) override;
+
+            void _onGameSessionReceived(const RPZGameSession &gameSession);
+            void _mightUpdateTokens();
+            void _sendMapHistory();
+
 };

@@ -176,7 +176,7 @@ void RPZClient::_handleAlterationRequest(const AlterationPayload &payload) {
 
     //ignore packages from server
     auto pSource = payload.source();
-    if(pSource == this->source()) return;
+    if(pSource == this->source()) return; //prevent rehandling
     if(pSource == Payload::Source::RPZServer) return;
 
     //prevent alteration propagation to server if not host
@@ -372,9 +372,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
                 
                 //define impersonation
                 auto self = this->identity();
-                QMetaObject::invokeMethod(HintThread::hint(), "defineImpersonatingCharacter",
-                    Q_ARG(RPZCharacter::Id, self.character().id())
-                );
+                emit characterImpersonated(self.character().id());
 
                 //map change
                 auto payload = gs.mapPayload();

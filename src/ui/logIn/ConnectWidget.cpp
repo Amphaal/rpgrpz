@@ -131,7 +131,7 @@ void ConnectWidget::_saveValuesAsSettings() {
 void ConnectWidget::_tryConnectToServer() {
 
     //ask for save the map as it may be erased
-    MapHint::mayWantToSavePendingState(this, HintThread::hint());
+    HintThread::hint()->mayWantToSavePendingState(this);
 
     this->_saveValuesAsSettings();
     

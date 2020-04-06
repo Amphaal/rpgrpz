@@ -43,7 +43,6 @@
 
 #include "src/shared/hints/HintThread.hpp"
 #include "src/shared/models/RPZAtom.h"
-#include "src/ui/_others/ConnectivityObserver.h"
 
 #include "src/network/rpz/_any/JSONSocket.h"
 #include "src/ui/toysBox/ToysTreeView.h"
@@ -62,7 +61,7 @@
 
 #include "src/shared/renderer/graphics/MapViewGraphics.h"
 
-class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Manipulation, public MV_HUDLayout, public AtomSelector {
+class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayout, public AtomSelector {
 
     Q_OBJECT
 
@@ -79,16 +78,12 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         void onHelperActionTriggered(QAction *action);
     
     signals:
-        void remoteChanged(bool isRemote);
         void cameraMoved();
         void requestingFocusOnCharacter(const RPZCharacter::Id &characterIdToFocus);
 
     protected:
         void enterEvent(QEvent *event) override;
         void leaveEvent(QEvent *event) override;
-
-        void connectingToServer() override;
-        void connectionClosed(bool hasInitialMapLoaded) override;
 
         void contextMenuEvent(QContextMenuEvent *event) override;
 
@@ -113,10 +108,6 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
         void _onFogModeChanged(const RPZFogParams::Mode &newMode);
         void _onFogChanged(const QList<QPolygonF> &updatedFog);
 
-        //network
-        void _sendMapHistory();
-        void _onGameSessionReceived(const RPZGameSession &gameSession);
-
     private:
         RPZMapParameters _currentMapParameters;
         DrawingAssist* _drawingAssist = nullptr;
@@ -140,7 +131,6 @@ class MapView : public QGraphicsView, public ConnectivityObserver, public MV_Man
 
         //ownership
             void _configureOwnership(const QList<QGraphicsItem*> &toConfigure, bool owns);
-            void _mightUpdateTokens();
 
         //ghost
             QGraphicsItem* _displayableGhostItem();
