@@ -240,7 +240,7 @@ class MapLayoutModel : public MapLayoutModelBase {
 
         void _handleUpdates(const RPZAtom::Id &id, const RPZAtom::Updates &updates, LayerMoves &moves) {
             
-            auto atom = this->_atomsByAtomId.value(id);
+            auto atom = this->getMapLayoutAtom(id);
 
             //update category
             if(updates.contains(RPZAtom::Parameter::Layer)) {

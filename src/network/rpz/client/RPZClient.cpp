@@ -188,7 +188,7 @@ void RPZClient::_handleAlterationRequest(const AlterationPayload &payload) {
     //if not routable, instant return 
     if(!payload.isNetworkRoutable()) return;
 
-    // this->payloadTrace(payload);
+    this->payloadTrace(payload);
 
     //send json
     auto method = payload.type() == Payload::Alteration::Reset ? RPZJSON::Method::MapChangedHeavily : RPZJSON::Method::MapChanged;

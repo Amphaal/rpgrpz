@@ -37,7 +37,7 @@ class AlterationActor {
             auto payloadSource = payload.source();
             auto payloadType = payload.type();
 
-            qDebug() << "Alteration :" << this->_source << "|<<" << payloadType << "[" << payloadSource << "]";
+            qDebug() << "<< [" << payloadSource << ":" << this->_source << "] -" << payloadType;
             
         }
 

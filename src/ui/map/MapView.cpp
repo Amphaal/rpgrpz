@@ -73,6 +73,7 @@ void MapView::_handleHintsSignalsAndSlots() {
         [=]() {
             this->endHeavyLoadPlaceholder();
             this->goToDefaultViewState();
+            //TODO fix access on map loading when token has already a character that is in the lobby of the current map
             this->_mightUpdateTokens();
         }
     );

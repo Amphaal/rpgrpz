@@ -36,8 +36,8 @@ void AlterationHandler::queueAlteration(const Payload::Source &senderSource, Alt
     }
 
     auto type = payload.type();
-    qDebug() << payload.source() << type;
-
+    qDebug() << ">> [" << payload.source() << "] -" << type;
+    
     if(type == Payload::Alteration::Reset) {
         QMetaObject::invokeMethod(ProgressTracker::get(), "heavyAlterationStarted");
     }

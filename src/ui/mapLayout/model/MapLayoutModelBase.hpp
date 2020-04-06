@@ -58,7 +58,7 @@ class MapLayoutModelBase : public QAbstractItemModel {
 
         const QModelIndex toIndex(const RPZAtom::Id &id) {
             
-            auto atom = this->_atomsByAtomId.value(id);
+            auto atom = this->getMapLayoutAtom(id);
             auto category = atom->parent();
 
             auto categoryRow = this->_getRow(category);
@@ -240,6 +240,12 @@ class MapLayoutModelBase : public QAbstractItemModel {
         QHash<RPZAsset::Hash, QSet<RPZAtom::Id>> _atomsByAssetHash;
         QMap<RPZAtom::Category, QMap<int, MapLayoutCategory*>> _categories;
 
+        MapLayoutAtom* getMapLayoutAtom(const RPZAtom::Id &id) const {
+            auto out = this->_atomsByAtomId.value(id);
+            Q_ASSERT(out);
+            return out;
+        }
+
         void _createAtom(const RPZAtom &atom, bool triggerRowInsert = true) {
             
             //preapre
@@ -270,7 +276,7 @@ class MapLayoutModelBase : public QAbstractItemModel {
         MapLayoutCategory* _removeAtom(const RPZAtom::Id &toRemove) {
             
             //prepare
-            auto atom = this->_atomsByAtomId.value(toRemove);
+            auto atom = this->getMapLayoutAtom(toRemove);
             auto category = atom->parent();
             auto categoryIndex = this->_getCategoryIndex(category);
             auto begin = category->rowOfAtom(atom);
