@@ -44,7 +44,7 @@ JSONSocket::~JSONSocket() {
 
 bool JSONSocket::sendToSocket(const RPZJSON::Method &method, const QVariant &data) {
     auto success =_sendToSocket(this, this->_logger, method, data);
-    if(success) this->_logger->log(method, "sent");
+    if(success) this->_logger->log(method, ">>");
     return success;
 }
 
@@ -107,7 +107,7 @@ bool JSONSocket::_sendToSocket(JSONSocket* socket, JSONLogger* logger, const RPZ
         //write data
         out << bytes;
 
-    logger->log(QStringLiteral("Sending %1...").arg(QLocale::system().formattedDataSize(size)));
+    // logger->log(QStringLiteral("Sending %1...").arg(QLocale::system().formattedDataSize(size)));
 
     //ack success
     emit socket->sent(true);
@@ -164,7 +164,7 @@ void JSONSocket::_processIncomingData() {
         
         //process batch
         emit batchDownloading(method, fullSize);
-        this->_logger->log(QStringLiteral("Received %1...").arg(QLocale::system().formattedDataSize(fullSize)));
+        // this->_logger->log(QStringLiteral("Received %1...").arg(QLocale::system().formattedDataSize(fullSize)));
 
         this->_processIncomingAsJson(qUncompress(block));
 
@@ -206,6 +206,8 @@ void JSONSocket::_processIncomingAsJson(const QByteArray &data) {
 
     //log
     auto method = (RPZJSON::Method)content.value(_methodKey).toInt();
+
+    this->_logger->log(method, "<<");
 
     //bind
     emit JSONReceived(

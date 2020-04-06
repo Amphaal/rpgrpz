@@ -22,9 +22,11 @@
 AlterationAcknoledger::AlterationAcknoledger(const Payload::Interactor &source) : AlterationInteractor(source) {}
 
 void AlterationAcknoledger::connectToAlterationEmissions() {
+    //force queued connection to respect queue expected behavior
     QObject::connect(
         AlterationHandler::get(), &AlterationHandler::requiresPayloadHandling,
-        this, &AlterationAcknoledger::_ackAlteration
+        this, &AlterationAcknoledger::_ackAlteration,
+        Qt::ConnectionType::QueuedConnection
     );
 }
 
