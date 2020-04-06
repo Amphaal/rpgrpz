@@ -37,15 +37,16 @@
 #include "src/shared/models/RPZQuickDraw.hpp"
 
 #include "src/helpers/_appContext.h"
-#include "src/shared/async-ui/AlterationActor.hpp"
+#include "src/shared/async-ui/AlterationInteractor.hpp"
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 #include "src/shared/audio/StreamPlayStateTracker.hpp"
 
 #include "src/network/rpz/_any/JSONLogger.hpp"
 #include "src/helpers/Authorisations.hpp"
 #include "src/shared/models/network/RPZGameSession.hpp"
+#include "src/shared/async-ui/AlterationHandler.h"
 
-class RPZClient : public QObject, public AlterationActor, public JSONLogger {
+class RPZClient : public QObject, public AlterationInteractor, public JSONLogger {
 
     Q_OBJECT
 

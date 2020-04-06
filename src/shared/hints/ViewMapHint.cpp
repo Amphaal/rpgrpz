@@ -19,7 +19,7 @@
 
 #include "ViewMapHint.h"
 
-ViewMapHint::ViewMapHint() : AtomsStorage(Payload::Source::Local_Map) {
+ViewMapHint::ViewMapHint() : AtomsStorage(Payload::Interactor::Local_Map) {
     
     //default layer from settings
     this->setDefaultLayer(AppContext::settings()->defaultLayer());

@@ -38,8 +38,9 @@
 #include "src/shared/models/toy/RPZToy.hpp"
 
 #include "src/ui/_others/ConnectivityObserver.h"
+#include "src/shared/async-ui/AlterationHandler.h"
 
-class ToysTreeView : public QTreeView, public ConnectivityObserver {
+class ToysTreeView : public QTreeView, public ConnectivityObserver, public AlterationInteractor {
 
     Q_OBJECT
 

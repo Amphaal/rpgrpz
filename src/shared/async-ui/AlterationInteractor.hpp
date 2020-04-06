@@ -23,24 +23,20 @@
 
 #include "src/shared/payloads/Payloads.h"
 
-#include "AlterationHandler.h"
-
-class AlterationHandler;
-
-class AlterationActor {
+class AlterationInteractor {
     public:
-        AlterationActor(const Payload::Source &source) : _source(source) {};
-        Payload::Source source() const { return this->_source; }
+        AlterationInteractor(const Payload::Interactor &interactorId) : _interactorId(interactorId) {};
+        Payload::Interactor interactorId() const { return this->_interactorId; }
 
         void payloadTrace(const AlterationPayload &payload) {
 
             auto payloadSource = payload.source();
             auto payloadType = payload.type();
 
-            qDebug() << "<< [" << payloadSource << ":" << this->_source << "] -" << payloadType;
+            qDebug() << "<< [" << payloadSource << ":" << this->_interactorId << "] -" << payloadType;
             
         }
 
     private:
-        Payload::Source _source = Payload::Source::Undefined;
+        Payload::Interactor _interactorId = Payload::Interactor::Undefined;
 };

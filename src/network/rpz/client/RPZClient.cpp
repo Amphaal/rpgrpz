@@ -20,7 +20,7 @@
 #include "RPZClient.h"
 
 RPZClient::RPZClient(const QString &socketStr, const QString &displayName, const RPZCharacter &toIncarnate) : 
-    AlterationActor(Payload::Source::RPZClient),
+    AlterationInteractor(Payload::Interactor::RPZClient),
     JSONLogger(QStringLiteral(u"[Client]")), 
     _userDisplayName(displayName),
     _handshakeCharacter(toIncarnate) { 
@@ -176,8 +176,8 @@ void RPZClient::_handleAlterationRequest(const AlterationPayload &payload) {
 
     //ignore packages from server
     auto pSource = payload.source();
-    if(pSource == this->source()) return; //prevent rehandling
-    if(pSource == Payload::Source::RPZServer) return;
+    if(pSource == this->interactorId()) return; //prevent rehandling
+    if(pSource == Payload::Interactor::RPZServer) return;
 
     //prevent alteration propagation to server if not host
     if(this->_myUser().role() == RPZUser::Role::Observer) return;

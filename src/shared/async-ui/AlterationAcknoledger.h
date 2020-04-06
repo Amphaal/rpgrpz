@@ -24,14 +24,14 @@
 #include "src/shared/payloads/Payloads.h"
 
 #include "AlterationHandler.h"
-#include "AlterationActor.hpp"
+#include "AlterationInteractor.hpp"
 
-class AlterationAcknoledger : public QObject, public AlterationActor {
+class AlterationAcknoledger : public QObject, public AlterationInteractor {
 
     Q_OBJECT
 
     public:
-        AlterationAcknoledger(const Payload::Source &source);
+        AlterationAcknoledger(const Payload::Interactor &source);
 
     public slots:
         void connectToAlterationEmissions();

@@ -39,7 +39,7 @@ void RPZServer::run() {
 
     //init
     this->_server = new QTcpServer;
-    this->_hints = new AtomsStorage(Payload::Source::RPZServer);
+    this->_hints = new AtomsStorage(Payload::Interactor::RPZServer);
 
     this->log("Starting server...");
 
@@ -345,7 +345,7 @@ void RPZServer::_broadcastMapChanges(const RPZJSON::Method &method, AlterationPa
     if(payload.type() == Payload::Alteration::Reset) this->_mapHasLoaded = true;
 
     //add source for outer calls
-    auto source = this->_hints->source();
+    auto source = this->_hints->interactorId();
     payload.changeSource(source);
 
     //might restrict

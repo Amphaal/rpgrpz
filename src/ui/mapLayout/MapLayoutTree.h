@@ -49,6 +49,7 @@ class MapLayoutTree : public QTreeView, public AtomSelector {
         MapLayoutTree(QWidget* parent = nullptr);
 
         const QList<RPZAtom::Id> selectedIds() const override;
+        MapLayoutModel* mlModel = nullptr;
 
     protected:
         void contextMenuEvent(QContextMenuEvent *event) override;
@@ -63,7 +64,6 @@ class MapLayoutTree : public QTreeView, public AtomSelector {
 
         AtomsContextualMenuHandler* _menuHandler = nullptr;
         AtomActionsHandler* _atomActionsHandler = nullptr;
-        MapLayoutModel* _model = nullptr;
         
         void _handleHintsSignalsAndSlots();
 

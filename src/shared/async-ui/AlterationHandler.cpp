@@ -24,14 +24,14 @@ AlterationHandler* AlterationHandler::get() {
     return _inst; 
 }
 
-void AlterationHandler::queueAlteration(const AlterationActor* sender, AlterationPayload &payload) {
-    return this->queueAlteration(sender->source(), payload);
+void AlterationHandler::queueAlteration(const AlterationInteractor* sender, AlterationPayload &payload) {
+    return this->_queueAlteration(sender->interactorId(), payload);
 }
 
-void AlterationHandler::queueAlteration(const Payload::Source &senderSource, AlterationPayload &payload) {
+void AlterationHandler::_queueAlteration(const Payload::Interactor &senderSource, AlterationPayload &payload) {
     
     //if initial payload emission, apply sender source for send
-    if(payload.source() == Payload::Source::Undefined && senderSource != Payload::Source::Undefined) {
+    if(payload.source() == Payload::Interactor::Undefined && senderSource != Payload::Interactor::Undefined) {
         payload.changeSource(senderSource); 
     }
 

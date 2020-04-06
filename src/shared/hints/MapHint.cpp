@@ -19,7 +19,7 @@
 
 #include "MapHint.h"
 
-MapHint::MapHint() : _sysActor(new AlterationActor(Payload::Source::Local_System)) { 
+MapHint::MapHint() : _sysActor(new AlterationInteractor(Payload::Interactor::Local_System)) { 
     this->connectToAlterationEmissions();
 }
 

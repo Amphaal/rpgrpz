@@ -24,7 +24,7 @@
 #include "src/shared/async-ui/AlterationHandler.h"
 #include "src/shared/database/AssetsDatabase.h"
 
-class MapLayoutModel : public MapLayoutModelBase {
+class MapLayoutModel : public MapLayoutModelBase, public AlterationInteractor {
 
     Q_OBJECT
 
@@ -35,18 +35,18 @@ class MapLayoutModel : public MapLayoutModelBase {
             if(!id) return;
 
             FocusedPayload payload(id);
-            AlterationHandler::get()->queueAlteration(Payload::Source::Local_MapLayout, payload);
+            AlterationHandler::get()->queueAlteration(this, payload);
 
         }
 
         void propagateSelection(const QModelIndexList &selectedIndexes) {
             auto selectedIds = fromIndexes(selectedIndexes);
             SelectedPayload payload(selectedIds);
-            AlterationHandler::get()->queueAlteration(Payload::Source::Local_MapLayout, payload);
+            AlterationHandler::get()->queueAlteration(this, payload);
         }
 
     public:
-        MapLayoutModel() {
+        MapLayoutModel() : AlterationInteractor(Payload::Interactor::Local_MapLayout) {
             
             //on rename
             QObject::connect(

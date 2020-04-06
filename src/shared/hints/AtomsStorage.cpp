@@ -19,7 +19,7 @@
 
 #include "AtomsStorage.h"
 
-AtomsStorage::AtomsStorage(const Payload::Source &boundSource) : AlterationAcknoledger(boundSource) { };
+AtomsStorage::AtomsStorage(const Payload::Interactor &boundSource) : AlterationAcknoledger(boundSource) { };
 
 const ResetPayload AtomsStorage::generateResetPayload() const {
     QMutexLocker l(&_m_handlingLock);

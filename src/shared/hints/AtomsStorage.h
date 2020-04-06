@@ -62,7 +62,7 @@ class AtomsStorage : public AlterationAcknoledger {
     public:
         using AtomsAreLeft = bool;
 
-        AtomsStorage(const Payload::Source &boundSource);
+        AtomsStorage(const Payload::Interactor &boundSource);
         
         const AtomsSelectionDescriptor getAtomSelectionDescriptor(const QList<RPZAtom::Id> &selectedIds) const; //safe
         

@@ -31,9 +31,10 @@
 #include "ToysTreeViewItem.h"
 #include "src/shared/database/AssetsDatabase.h"
 
-#include "src/shared/async-ui/AlterationActor.hpp"
+#include "src/shared/async-ui/AlterationInteractor.hpp"
+#include "src/shared/async-ui/AlterationHandler.h"
 
-class ToysTreeViewModel : public QAbstractItemModel, public AlterationActor {
+class ToysTreeViewModel : public QAbstractItemModel, public AlterationInteractor {
     
     Q_OBJECT
     

@@ -19,7 +19,7 @@
 
 #include "ToysTreeViewModel.h"
 
-ToysTreeViewModel::ToysTreeViewModel(QObject *parent) : QAbstractItemModel(parent), AlterationActor(Payload::Source::Local_AtomDB), 
+ToysTreeViewModel::ToysTreeViewModel(QObject *parent) : QAbstractItemModel(parent), AlterationInteractor(Payload::Interactor::Local_AtomDB), 
     _rootItem(new ToysTreeViewItem) {
     this->_injectStaticStructure();
     this->_injectDbStructure();

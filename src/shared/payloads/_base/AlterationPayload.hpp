@@ -43,12 +43,12 @@ class AlterationPayload : public QVariantHash {
             return (Payload::Alteration)hash.value(QStringLiteral(u"t"), 0).toInt();
         }
 
-        void changeSource(const Payload::Source &newSource) {
+        void changeSource(const Payload::Interactor &newSource) {
             this->insert(QStringLiteral(u"s"), (int)newSource);
         }
 
-        Payload::Source source() const {
-            return (Payload::Source)this->value(QStringLiteral(u"s"), 0).toInt();
+        Payload::Interactor source() const {
+            return (Payload::Interactor)this->value(QStringLiteral(u"s"), 0).toInt();
         }
 
         bool isNetworkRoutable() const {
@@ -84,4 +84,4 @@ class AlterationPayload : public QVariantHash {
 
 Q_DECLARE_METATYPE(AlterationPayload)
 
-inline uint qHash(const Payload::Source &key, uint seed = 0) {return uint(key) ^ seed;}
+inline uint qHash(const Payload::Interactor &key, uint seed = 0) {return uint(key) ^ seed;}

@@ -19,7 +19,7 @@
 
 #include "ToysTreeView.h"
 
-ToysTreeView::ToysTreeView(QWidget *parent) : QTreeView(parent), 
+ToysTreeView::ToysTreeView(QWidget *parent) : QTreeView(parent), AlterationInteractor(Payload::Interactor::Local_ToysTV),
     _MIMEDb(new QMimeDatabase), 
     _model(new ToysTreeViewModel) {     
     
@@ -415,6 +415,8 @@ void ToysTreeView::selectionChanged(const QItemSelection &selected, const QItemS
 
 void ToysTreeView::_handleAlterationRequest(const AlterationPayload &payload) {
     
+    this->payloadTrace(payload);
+
     auto type = payload.type();
     auto listenedForTypes = (type == Payload::Alteration::Selected || type == Payload::Alteration::Reset);
     if(!listenedForTypes) return;

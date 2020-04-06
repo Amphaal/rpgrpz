@@ -107,7 +107,7 @@ void MapLayoutManager::_handleMapParametersEdition() {
     payload.setMapParams(form.getParametersFromWidgets());
 
     //recommit
-    AlterationHandler::get()->queueAlteration(Payload::Source::Local_MapLayout, payload);
+    AlterationHandler::get()->queueAlteration(this->_tree->mlModel, payload);
 
 }
 
@@ -119,7 +119,7 @@ void MapLayoutManager::_changeFogMode(int) {
     FogModeChangedPayload payload(mode);
 
     //commit
-    AlterationHandler::get()->queueAlteration(Payload::Source::Local_MapLayout, payload);
+    AlterationHandler::get()->queueAlteration(this->_tree->mlModel, payload);
 
 }
 
@@ -144,6 +144,6 @@ void MapLayoutManager::_handleFogReset() {
     FogChangedPayload payload(FogChangedPayload::ChangeType::Reset);
 
     //commit
-    AlterationHandler::get()->queueAlteration(Payload::Source::Local_MapLayout, payload);
+    AlterationHandler::get()->queueAlteration(this->_tree->mlModel, payload);
 
 }

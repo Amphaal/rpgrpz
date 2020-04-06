@@ -45,10 +45,10 @@
 #include "src/ui/atomEditor/editors/specific/NPCAttitudeEditor.hpp"
 #include "src/ui/atomEditor/editors/specific/NPCHealthEditor.hpp"
 
-#include "src/shared/async-ui/AlterationActor.hpp"
+#include "src/shared/async-ui/AlterationInteractor.hpp"
 #include "src/shared/hints/HintThread.hpp"
 
-class AtomEditor : public QGroupBox, public AlterationActor {
+class AtomEditor : public QGroupBox, public AlterationInteractor {
 
     Q_OBJECT
 

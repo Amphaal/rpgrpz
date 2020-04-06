@@ -36,8 +36,8 @@ MapLayoutTree::MapLayoutTree(QWidget * parent) : QTreeView(parent) {
     this->_selectionDebouncer.setSingleShot(true);
 
     this->_preventSelectionNotification = true;
-        this->_model = new MapLayoutModel;
-        this->setModel(this->_model);
+        this->mlModel = new MapLayoutModel;
+        this->setModel(this->mlModel);
     this->_preventSelectionNotification = false;
 
     this->_menuHandler = new AtomsContextualMenuHandler(this);
@@ -89,12 +89,12 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
     //focus
     QObject::connect(
         this, &QTreeView::doubleClicked,
-        this->_model, &MapLayoutModel::propagateFocus
+        this->mlModel, &MapLayoutModel::propagateFocus
     );
 
     //after reset
     QObject::connect(
-        this->_model, &QAbstractItemModel::modelReset,
+        this->mlModel, &QAbstractItemModel::modelReset,
         [=]() {
             this->expandAll();
             this->sortByColumn(0, Qt::SortOrder::DescendingOrder);
@@ -102,7 +102,7 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
     );
 
     QObject::connect(
-        this->_model, &QAbstractItemModel::rowsInserted,
+        this->mlModel, &QAbstractItemModel::rowsInserted,
         [=](const QModelIndex &parent, int first, int last) {
             if(parent.isValid()) {
                 this->expand(parent);
@@ -115,7 +115,7 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
     QObject::connect(
         &this->_selectionDebouncer, &QTimer::timeout,
         [=]() {
-            this->_model->propagateSelection(
+            this->mlModel->propagateSelection(
                 this->selectedIndexes()
             );
         }
@@ -125,12 +125,14 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
 
 void MapLayoutTree::_handleAlterationRequest(const AlterationPayload &payload) {
 
+    this->mlModel->payloadTrace(payload);
+
     this->_preventSelectionNotification = true;
 
     auto pl = Payloads::autoCast(payload); 
 
     //handle in database
-    this->_model->handleAlterationRequest(pl.data());
+    this->mlModel->handleAlterationRequest(pl.data());
 
     //handle in UI
     switch(pl->type()) {
@@ -141,7 +143,7 @@ void MapLayoutTree::_handleAlterationRequest(const AlterationPayload &payload) {
 
             QItemSelection newSelection;
             for(const auto &id : mPayload->targetRPZAtomIds()) {
-                auto index = this->_model->toIndex(id);
+                auto index = this->mlModel->toIndex(id);
                 newSelection.merge(QItemSelection(index, index), QItemSelectionModel::Select);
             }
 
@@ -156,7 +158,7 @@ void MapLayoutTree::_handleAlterationRequest(const AlterationPayload &payload) {
 
             auto mPayload = dynamic_cast<const FocusedPayload*>(pl.data());
 
-            auto itemIndex = this->_model->toIndex(mPayload->targetRPZAtomIds().first());
+            auto itemIndex = this->mlModel->toIndex(mPayload->targetRPZAtomIds().first());
             this->selectionModel()->setCurrentIndex(itemIndex, QItemSelectionModel::ClearAndSelect);
 
             this->scrollTo(itemIndex, QAbstractItemView::ScrollHint::EnsureVisible);

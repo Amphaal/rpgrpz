@@ -69,7 +69,6 @@ class AtomEditionManager : public QWidget {
             layout->addWidget(this->_editor, 1);
             layout->addWidget(this->_resetButton);
 
-
             QObject::connect(
                 AlterationHandler::get(), &AlterationHandler::requiresPayloadHandling,
                 this, &AtomEditionManager::_handleAlterationRequest
@@ -94,10 +93,11 @@ class AtomEditionManager : public QWidget {
         HiddenCheckbox* hiddenCheckbox() {
             return this->_defaultHiddenCheckbox;
         }
-
     
     private slots:
         void _handleAlterationRequest(const AlterationPayload &payload) {
+            
+            this->_editor->payloadTrace(payload);
             
             auto casted = Payloads::autoCast(payload);
 

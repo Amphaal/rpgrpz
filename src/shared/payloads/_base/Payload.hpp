@@ -47,17 +47,18 @@ class Payload {
         }; 
         Q_ENUM(Alteration)
 
-        enum class Source {
+        enum class Interactor {
             Undefined,
             Local_MapLayout,
             Local_Map,
             Local_AtomEditor,
             Local_AtomDB,
+            Local_ToysTV,
             RPZServer,
             RPZClient,
             Local_System
         };
-        Q_ENUM(Source)
+        Q_ENUM(Interactor)
         
         static inline const QList<Payload::Alteration> networkAlterations = { 
             Payload::Alteration::Added, 

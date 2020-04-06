@@ -63,7 +63,7 @@ class MapHint : public ViewMapHint, public ConnectivityObserver {
     
         void _handleAlterationRequest(const AlterationPayload &payload) final;
 
-        AlterationActor* _sysActor = nullptr;
+        AlterationInteractor* _sysActor = nullptr;
         
         //network
             void connectingToServer() override;

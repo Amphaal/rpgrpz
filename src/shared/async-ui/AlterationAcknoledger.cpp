@@ -19,7 +19,7 @@
 
 #include "AlterationAcknoledger.h"
 
-AlterationAcknoledger::AlterationAcknoledger(const Payload::Source &source) : AlterationActor(source) {}
+AlterationAcknoledger::AlterationAcknoledger(const Payload::Interactor &source) : AlterationInteractor(source) {}
 
 void AlterationAcknoledger::connectToAlterationEmissions() {
     QObject::connect(
