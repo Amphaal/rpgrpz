@@ -801,8 +801,6 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
 
                 case MapTool::Walking: {
 
-                    auto toWalkTo = this->_walkingHelper->destScenePos();
-
                     HintThread::hint()->notifyWalk(this->_walkingHelper->destinations());
                     
                     this->_resetTool();
