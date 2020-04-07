@@ -53,7 +53,7 @@ class ViewMapHint : public AtomsStorage {
 
         //might be called by another thread, safe
         RPZAtom::Id integrateGraphicsItemAsPayload(QGraphicsItem* ghostItem) const; //safe
-        void notifyWalk(QGraphicsItem* toWalk, const QPointF &newPos); //safe
+        void notifyWalk(const QHash<QGraphicsItem*, QPointF> &toWalk); //safe
         const RPZAtom templateAtom() const; //safe
         QGraphicsItem* ghostItem() const; //safe
         MapViewFog* fogItem() const; //safe

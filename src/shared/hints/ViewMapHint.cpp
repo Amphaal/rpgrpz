@@ -327,10 +327,19 @@ RPZAtom::Id ViewMapHint::integrateGraphicsItemAsPayload(QGraphicsItem* graphicsI
     
 }
 
-void ViewMapHint::notifyWalk(QGraphicsItem* toWalk, const QPointF &newPos) {
-    auto id = this->getAtomIdFromGraphicsItem(toWalk);
-    MetadataChangedPayload payload({id}, {{RPZAtom::Parameter::Position, newPos}});
+void ViewMapHint::notifyWalk(const QHash<QGraphicsItem*, QPointF> &toWalk) {
+    
+    RPZAtom::ManyUpdates updates;
+    for(auto i = toWalk.begin(); i != toWalk.end(); i++) {
+        auto atomId = this->getAtomIdFromGraphicsItem(i.key());
+        updates.insert(atomId, {{RPZAtom::Parameter::Position, i.value()}});
+    }
+    
+    if(!updates.count()) return;
+    
+    BulkMetadataChangedPayload payload(updates);
     AlterationHandler::get()->queueAlteration(this, payload);
+
 }
 
 /////////////////////////////////

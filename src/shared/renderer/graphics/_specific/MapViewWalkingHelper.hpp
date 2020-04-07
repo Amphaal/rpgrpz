@@ -34,6 +34,7 @@
 #include "src/helpers/_appContext.h"
 
 #include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
+#include "src/shared/models/RPZMapParameters.hpp"
 
 class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGraphicsItem {
     
@@ -45,6 +46,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
         RPZMapParameters _mapParams;
         QGraphicsView* _view = nullptr;
         QPointF _destScenePos;
+        QList<QGraphicsItem*> _toWalk;
 
         struct PointPos {
             QPoint viewCursorPos;
@@ -208,7 +210,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
 
         }
 
-        const QRectF _ellispeBoundingRect() const {
+        const QRectF _ellipseBoundingRect() const {
             
             auto pp = this->_generatePointPos();
 
@@ -263,7 +265,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
         }
 
     public:
-        MapViewWalkingHelper(const RPZMapParameters &params, QGraphicsItem* toWalk, QGraphicsView* view) : QGraphicsItem(toWalk), _view(view) {
+        MapViewWalkingHelper(const RPZMapParameters &params, const QList<QGraphicsItem*> &toWalk, QGraphicsView* view) : _toWalk(toWalk), _view(view) {
             
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
@@ -274,12 +276,17 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
 
         }
 
+        const QHash<QGraphicsItem*, QPointF> destinations() const {
+            //TODO
+            return QHash<QGraphicsItem*, QPointF>();
+        }
+
         QRectF boundingRect() const override {
             
             switch(this->_mapParams.movementSystem()) {
 
                 case RPZMapParameters::MovementSystem::Linear: {
-                    return this->_ellispeBoundingRect();
+                    return this->_ellipseBoundingRect();
                 }
                 break;
 
@@ -298,8 +305,34 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
             return this->_destScenePos;
         }
 
-    protected:
+        static bool isToBeWalked(const MapViewWalkingHelper* helper, QGraphicsItem* toCheck) {
+            if(!helper) return false;
+            return helper->_toWalk.contains(toCheck);
+        }
 
+        static bool preventMoveOrInsertAtPosition(const RPZMapParameters &mapParams, const QGraphicsItem* toCheck, const QPointF &toCheckAt = QPointF()) {
+            
+            //check if not a grid system
+            if(mapParams.movementSystem() != RPZMapParameters::MovementSystem::Grid) return false;
+            
+            //check item is not bound to the grid
+            if(!RPZQVariant::isGridBound(toCheck)) return false;
+
+            //determine destination
+            auto atPosRect = toCheck->sceneBoundingRect();
+            if(!toCheckAt.isNull()) atPosRect.moveCenter(toCheckAt);
+
+            //check if we move the item onto another grid bound item
+            for(const auto colliding : toCheck->scene()->items(atPosRect)) {
+                if(colliding == toCheck) continue;
+                if(RPZQVariant::isGridBound(colliding)) return true;
+            }
+
+            return false;
+
+        }
+
+    protected:
         bool _canBeDrawnInMiniMap() const override { 
             return false; 
         };
