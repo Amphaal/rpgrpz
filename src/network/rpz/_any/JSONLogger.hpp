@@ -28,14 +28,16 @@ class JSONLogger {
         JSONLogger(const QString &loggerId) : _loggerId(loggerId) {};
     
         void log(const RPZJSON::Method &method, const QString &msg) {
-            qDebug() << qUtf8Printable(this->_loggerId)
-                        << "-" 
-                        << qUtf8Printable(msg)
-                        << method;
+            qDebug() << "🖧"
+                     << qUtf8Printable(this->_loggerId)
+                     << "-" 
+                     << qUtf8Printable(msg)
+                     << method;
         }
 
         void log(const QString &msg) {
-            qDebug() << qUtf8Printable(this->_loggerId)
+            qDebug() << "🖧" 
+                     << qUtf8Printable(this->_loggerId)
                      << "-" 
                      << qUtf8Printable(msg);
         }

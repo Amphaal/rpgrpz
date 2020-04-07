@@ -47,6 +47,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
         QGraphicsView* _view = nullptr;
         QPointF _destScenePos;
         QList<QGraphicsItem*> _toWalk;
+        bool _singleItemToWalk = false;
 
         struct PointPos {
             QPoint viewCursorPos;
@@ -248,7 +249,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
             switch(this->_mapParams.movementSystem()) {
 
                 case RPZMapParameters::MovementSystem::Linear: {
-                    this->_drawRangeEllipse(painter, option, pp); //draw ellipse
+                    if(this->_singleItemToWalk) this->_drawRangeEllipse(painter, option, pp); //draw ellipse
                     this->_drawLinearRangeTextIndicator(painter, option, pp); //print range indicator
                     this->_destScenePos = pp.sceneCursorPos;
                 }
@@ -273,6 +274,8 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemStacksBehindParent, true);
 
             this->_mapParams = params;
+            this->_singleItemToWalk = toWalk.count() == 1;
+            this->_view->scene()->addItem(this);
 
         }
 
@@ -283,21 +286,10 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
 
         QRectF boundingRect() const override {
             
-            switch(this->_mapParams.movementSystem()) {
+            auto movementSystem = this->_mapParams.movementSystem();
+            if(movementSystem == RPZMapParameters::MovementSystem::Linear && this->_singleItemToWalk) return this->_ellipseBoundingRect();
 
-                case RPZMapParameters::MovementSystem::Linear: {
-                    return this->_ellipseBoundingRect();
-                }
-                break;
-
-                case RPZMapParameters::MovementSystem::Grid: {
-                    return this->_gridBoundingRect();
-                }
-                break;
-
-            }
-            
-            return QRectF();
+            return this->_gridBoundingRect();
 
         }
 
