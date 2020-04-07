@@ -235,7 +235,7 @@ void MapView::_addItemToScene(QGraphicsItem* item) {
     this->scene()->addItem(item);
 
     if(auto animated = dynamic_cast<RPZAnimated*>(item)) {
-        // animated->triggerAnimation();
+        animated->triggerAnimation();
     }
 
 }
