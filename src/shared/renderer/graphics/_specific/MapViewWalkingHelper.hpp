@@ -57,11 +57,21 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
         };
 
         const MapViewWalkingHelper::PointPos _generateCursorPointPos() const {
+            
             PointPos out;
             out.viewCursorPos = this->_view->mapFromGlobal(QCursor::pos());
             out.sceneCursorPos = this->_view->mapToScene(out.viewCursorPos);
-            out.distanceLine = QLineF(this->_toWalkRect.center(), out.sceneCursorPos);
+
+            auto alignedTWRect = this->_toWalkRect.center();
+            auto alignedSCP = out.sceneCursorPos;
+
+            if(this->_mapParams.movementSystem() == RPZMapParameters::MovementSystem::Grid)
+                this->_mapParams.alignPointFromStartPoint(alignedSCP, alignedTWRect);
+
+            out.distanceLine = QLineF(alignedTWRect, alignedSCP);
+            
             return out;
+            
         }
 
         QRectF _adjustText(const QPointF &relativeTo, QPointF dest, QRectF toAdjust) {
@@ -110,7 +120,8 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
         //calculate offset
         QPointF _getOffset(const MapViewWalkingHelper::PointPos &pp, const QGraphicsItem* item) const {
             auto offsetLine = QLineF(pp.distanceLine.p1(), item->scenePos());
-            return offsetLine.translated(-offsetLine.p1()).p2();
+            if(offsetLine.p1() == offsetLine.p2()) return QPointF();
+            return offsetLine.translated(-offsetLine.p1()).p2();       
         }
 
         void _drawRangeEllipse(QPainter *painter, const QStyleOptionGraphicsItem *option, const MapViewWalkingHelper::PointPos &pp) {
@@ -161,26 +172,29 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
 
                 this->_defineWalkerGuide(painter);
 
+                // //TODO replacement for grid alignement ?
+                auto nRc = this->_toWalkRect;
+                nRc.moveCenter(pp.distanceLine.p2());
+
                 //draw line
                 for(auto item : this->_toWalk) {
             
-                    auto alignedToGridItemCursorPos = pp.sceneCursorPos;
-                    this->_mapParams.alignPointToGridCenter(alignedToGridItemCursorPos);
-                    
-                    //draw dest tile
-                    auto destTile = QRectF(alignedToGridItemCursorPos, this->_mapParams.tileSizeInPoints());
-                    auto itemDestPos = destTile.center();
-                    painter->drawRect(destTile);
-
                     //calculate offset
                     auto offset = _getOffset(pp, item);
 
                     //draw line helper
-                    auto line = pp.distanceLine.translated(offset);
+                    auto offsetted = nRc.center() + offset;
+                    auto line = QLineF(item->scenePos(), offsetted);
                     painter->drawLine(line);
 
-                    // QLineF line(item->scenePos(), itemDestPos);
-                    // painter->drawLine(line);
+                    //draw rect
+                    auto inplaceRect = item->boundingRect();
+                    inplaceRect.moveCenter(offsetted);
+                    painter->drawRect(inplaceRect);
+
+                    // add destination
+                    this->_destinations.insert(item, line.p2());
+
                 }
 
             painter->restore();
@@ -264,7 +278,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
 
             //correct
             auto correctedPos = pp.sceneCursorPos;
-            this->_mapParams.alignPointToGridCenter(correctedPos);
+            this->_mapParams.alignPointToGridCrossroad(correctedPos);
 
             auto destTileRect = QRectF(correctedPos, this->_mapParams.tileSizeInPoints()).normalized();
             auto rangeRect = QRectF({}, correctedPos).normalized();
