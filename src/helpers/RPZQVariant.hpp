@@ -44,7 +44,8 @@ class RPZQVariant {
             CoveredByFog = 9000,
             FogSensitive = 9010,
             GraphicsItemToReplace = 10100,
-            MoveAnimationDestinationScenePoint = 11000
+            MoveAnimationDestinationScenePoint = 11000,
+            OverlappingGridBound = 12000
         };
 
         static QVariant moveAnimationDestinationScenePoint(const QGraphicsItem* item) {

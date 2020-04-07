@@ -117,8 +117,6 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
         //helpers
         void _handleHintsSignalsAndSlots();
         void _metadataUpdatePostProcess(const QList<QGraphicsItem*> &FoWSensitiveItems);
-
-        bool _preventMoveOrInsertAtPosition(QGraphicsItem *toCheck, const QPointF &toCheckAt = QPointF());
         void _addItemToScene(QGraphicsItem* item);
 
         //fog
@@ -150,10 +148,9 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
         //walking...
             QCursor _walkingCursor;
             MapViewWalkingHelper* _walkingHelper = nullptr;
-            QGraphicsItem* _toWalk = nullptr;
             void _mightUpdateWalkingHelperPos();
             void _clearWalkingHelper();
-            bool _tryToInvokeWalkableHelper(QGraphicsItem * toBeWalked);
+            bool _tryToInvokeWalkableHelper(const QList<QGraphicsItem*> &toBeWalked);
 
         void onAnimationManipulationTickDone() override;
         void onViewRectChange() override;

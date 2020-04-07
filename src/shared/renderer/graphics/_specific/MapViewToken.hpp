@@ -303,8 +303,6 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
 
                 }
 
-
-
             painter->restore();
 
         }

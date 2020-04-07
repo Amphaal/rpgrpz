@@ -29,6 +29,11 @@ class AlterationInteractor {
         Payload::Interactor interactorId() const { return this->_interactorId; }
 
         void payloadTrace(const AlterationPayload &payload) {
+            
+            //no need for detailed log on debug
+            #ifdef _DEBUG 
+                return;
+            #endif
 
             auto payloadSource = payload.source();
             auto payloadType = payload.type();

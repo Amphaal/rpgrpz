@@ -21,8 +21,8 @@
 
 LockAndVisibilityDelegate::LockAndVisibilityDelegate(QWidget *parent) : QStyledItemDelegate(parent) {
     if(!_hiddenPix && !_lockPix) {
-        _hiddenPix = new QPixmap(":/icons/app/tools/hidden.png");
-        _lockPix = new QPixmap(":/icons/app/tools/lock.png");
+        _hiddenPix = new QPixmap(QStringLiteral(u":/icons/app/tools/hidden.png"));
+        _lockPix = new QPixmap(QStringLiteral(u":/icons/app/tools/lock.png"));
     }
  }
 

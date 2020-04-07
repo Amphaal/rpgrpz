@@ -114,8 +114,35 @@ class RPZMapParameters : public QVariantHash {
             auto meters = distanceAsTiles * this->tileToIngameMeters();
             return meters;
         }
+
+        void alignPointFromStartPoint(QPointF &scenePos, const QPointF &startPoint = QPointF()) const {
+            
+            auto typeDifference = this->tileWidthInPoints();
+            auto limit = typeDifference / 2;
+
+            auto translatedX = scenePos.x() - startPoint.x();
+            auto translatedY = scenePos.y() - startPoint.y();
+
+            auto xLimitCount = translatedX / limit;
+            auto yLimitCount = translatedY / limit;
+
+            auto xLimitCountRounded = xLimitCount >= 0 ? qFloor(xLimitCount) : qCeil(xLimitCount);
+            auto yLimitCountRounded = yLimitCount >= 0 ? qFloor(yLimitCount) : qCeil(yLimitCount);
+            
+            auto baseMultiplierX = (double)xLimitCountRounded / 2;
+            auto baseMultiplierY = (double)yLimitCountRounded / 2;
+            
+            baseMultiplierX += std::modf(baseMultiplierX, nullptr);
+            baseMultiplierY += std::modf(baseMultiplierY, nullptr);
+
+            scenePos = QPointF(
+                baseMultiplierX * typeDifference + startPoint.x(), 
+                baseMultiplierY * typeDifference + startPoint.y()
+            );
+
+        }
         
-        void alignPointToGridCenter(QPointF &scenePos) const {
+        void alignPointToGridCrossroad(QPointF &scenePos) const {
                         
                 auto q = this->tileWidthInPoints();
 

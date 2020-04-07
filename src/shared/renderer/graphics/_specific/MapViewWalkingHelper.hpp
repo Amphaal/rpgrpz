@@ -34,6 +34,7 @@
 #include "src/helpers/_appContext.h"
 
 #include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
+#include "src/shared/models/RPZMapParameters.hpp"
 
 class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGraphicsItem {
     
@@ -44,24 +45,33 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
     private:
         RPZMapParameters _mapParams;
         QGraphicsView* _view = nullptr;
-        QPointF _destScenePos;
-
+        QList<QGraphicsItem*> _toWalk;
+        QRectF _toWalkRect;
+        bool _singleItemToWalk = false;
+        QHash<QGraphicsItem*, QPointF> _destinations;
+        
         struct PointPos {
             QPoint viewCursorPos;
             QPointF sceneCursorPos;
-            QPointF itemCursorPos;
+            QLineF distanceLine;
         };
 
-        const MapViewWalkingHelper::PointPos _generatePointPos() const {
+        const MapViewWalkingHelper::PointPos _generateCursorPointPos() const {
             
             PointPos out;
-
             out.viewCursorPos = this->_view->mapFromGlobal(QCursor::pos());
             out.sceneCursorPos = this->_view->mapToScene(out.viewCursorPos);
-            out.itemCursorPos = this->mapFromScene(out.sceneCursorPos);
 
+            auto alignedTWRect = this->_toWalkRect.center();
+            auto alignedSCP = out.sceneCursorPos;
+
+            if(this->_mapParams.movementSystem() == RPZMapParameters::MovementSystem::Grid)
+                this->_mapParams.alignPointFromStartPoint(alignedSCP, alignedTWRect);
+
+            out.distanceLine = QLineF(alignedTWRect, alignedSCP);
+            
             return out;
-
+            
         }
 
         QRectF _adjustText(const QPointF &relativeTo, QPointF dest, QRectF toAdjust) {
@@ -91,66 +101,118 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
 
         }
 
-        void _drawRangeEllipse(QPainter *painter, const QStyleOptionGraphicsItem *option, const MapViewWalkingHelper::PointPos &pp) const {
+        void _defineWalkerGuide(QPainter *painter) const {
+            QPen pen;
+            pen.setWidth(5);
+            pen.setCosmetic(true);
+            pen.setColor(AppContext::WALKER_COLOR);
+            pen.setStyle(Qt::DashLine);
+            painter->setPen(pen);
+                
+            QBrush brush(Qt::BrushStyle::SolidPattern);
+            brush.setColor(AppContext::WALKER_COLOR);
+            painter->setBrush(brush);
+
+            painter->setRenderHint(QPainter::Antialiasing, true);
+            painter->setOpacity(.8);
+        }
+
+        //calculate offset
+        QPointF _getOffset(const MapViewWalkingHelper::PointPos &pp, const QGraphicsItem* item) const {
+            auto offsetLine = QLineF(pp.distanceLine.p1(), item->scenePos());
+            if(offsetLine.p1() == offsetLine.p2()) return QPointF();
+            return offsetLine.translated(-offsetLine.p1()).p2();       
+        }
+
+        void _drawRangeEllipse(QPainter *painter, const QStyleOptionGraphicsItem *option, const MapViewWalkingHelper::PointPos &pp) {
             
             painter->save();
                 
-                QPen pen;
-                pen.setWidth(0);
-                painter->setPen(pen);
-                painter->setRenderHint(QPainter::Antialiasing, true);
+                this->_defineWalkerGuide(painter);
                 
-                QLineF line({0,0}, pp.itemCursorPos);
-                painter->drawLine(line);
+                for(auto item : this->_toWalk) {
+                    
+                    //calculate offset
+                    auto offset = _getOffset(pp, item);
 
-                QBrush brush(Qt::BrushStyle::SolidPattern);
-                brush.setColor(AppContext::WALKER_COLOR);
-                painter->setBrush(brush);
+                    //draw line helper
+                    auto line = pp.distanceLine.translated(offset);
+                    painter->drawLine(line);
 
-                painter->setOpacity(.8);
-                painter->drawEllipse(option->exposedRect);
+                    //draw helper rect
+                    auto inplaceRect = item->boundingRect();
+                    inplaceRect.translate(pp.sceneCursorPos + offset);
+                    painter->drawEllipse(inplaceRect);
+
+                    //add destination
+                    this->_destinations.insert(item, line.p2());
+
+                }
+
+                //if single walk, display indicator
+                if(this->_singleItemToWalk) {
+                   
+                    //change pen for circle border
+                    auto pen = painter->pen();
+                    pen.setWidth(1);
+                    painter->setPen(pen);
+
+                    //draw ellipse helper
+                    painter->drawEllipse(option->exposedRect);
+
+                } 
 
             painter->restore();
 
         }
 
-        const QPointF _drawRangeGrid(QPainter *painter, const QStyleOptionGraphicsItem *option, const MapViewWalkingHelper::PointPos &pp) const {
+        void _drawRangeGrid(QPainter *painter, const QStyleOptionGraphicsItem *option, const MapViewWalkingHelper::PointPos &pp) {
 
             painter->save();
 
-                QPen pen;
-                pen.setWidth(1);
-                pen.setCosmetic(true);
-                pen.setColor(AppContext::WALKER_COLOR);
-                pen.setStyle(Qt::DashLine);
-
-                QBrush brush(Qt::BrushStyle::SolidPattern);
-                brush.setColor(AppContext::WALKER_COLOR);
-
-                painter->setPen(pen);
-                painter->setRenderHint(QPainter::Antialiasing, true);
-                painter->setOpacity(.8);
-                painter->setBrush(brush);
-                
-                auto alignedToGridItemCursorPos = pp.sceneCursorPos;
-                this->_mapParams.alignPointToGridCenter(alignedToGridItemCursorPos);
-                alignedToGridItemCursorPos = this->mapFromScene(alignedToGridItemCursorPos);
-
-                //draw dest tile
-                auto destTile = QRectF(alignedToGridItemCursorPos, this->_mapParams.tileSizeInPoints());
-                auto itemDestPos = destTile.center();
-                painter->drawRect(destTile);
-
-                pen.setWidth(5);
-                painter->setPen(pen);
+                this->_defineWalkerGuide(painter);
+                this->_destinations.clear();
 
                 //draw line
-                QLineF line({0,0}, itemDestPos);
-                painter->drawLine(line);
+                for(auto item : this->_toWalk) {
+            
+                    //calculate offset
+                    auto offset = _getOffset(pp, item);
+                    auto offsetted = pp.distanceLine.p2() + offset;
+
+                    painter->save();
+
+                    auto able = !isMoveOrInsertPreventedAtPosition(this->_mapParams, item, offsetted);
+                    if(!able) {
+                        //change pen color
+                        auto pen = painter->pen();
+                        pen.setColor("Red");
+                        painter->setPen(pen);
+                    }
+
+                    //draw line helper
+                    auto line = QLineF(item->scenePos(), offsetted);
+                    painter->drawLine(line);
+
+                    //define rect
+                    auto inplaceRect = item->boundingRect();
+                    inplaceRect.moveCenter(offsetted);
+                    
+                    //draw rect or cross
+                    if(able) painter->drawRect(inplaceRect);
+                    else {
+                        painter->drawLine(inplaceRect.topLeft(), inplaceRect.bottomRight());
+                        painter->drawLine(inplaceRect.topRight(), inplaceRect.bottomLeft());
+                    }
+
+                    // add destination
+                    if(able) this->_destinations.insert(item, line.p2());
+
+                    painter->restore();
+                    
+                }
 
             painter->restore();
-
-            return this->mapToScene(itemDestPos);
 
         }
 
@@ -158,7 +220,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
             
             painter->save();
 
-                QLineF line({0,0}, pp.itemCursorPos);
+                QLineF line({0,0}, pp.sceneCursorPos);
                 painter->setTransform(QTransform());
 
                 QFont font;
@@ -171,7 +233,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
                 auto meters = this->_mapParams.distanceIntoIngameMeters(line.length());
                 auto text = StringHelper::fromMeters(meters);
                 auto textRect = painter->boundingRect(QRectF(), text, aa);
-                textRect = this->_adjustText(pp.itemCursorPos, pp.viewCursorPos, textRect);
+                textRect = this->_adjustText(pp.sceneCursorPos, pp.viewCursorPos, textRect);
 
                 painter->drawText(textRect, text, aa);
 
@@ -193,13 +255,13 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
                 aa.setWrapMode(QTextOption::NoWrap);
 
                 auto tileWidth = this->_mapParams.tileWidthInPoints();
-                auto scenePos = this->scenePos();
-                auto x = qAbs(qRound((scenePos.x() - this->_destScenePos.x()) / tileWidth));
-                auto y = qAbs(qRound((scenePos.y() - this->_destScenePos.y()) / tileWidth));
+                auto firstItemScenePos = this->_toWalk.first()->scenePos();
+                auto x = qAbs(qRound((firstItemScenePos.x() - pp.sceneCursorPos.x()) / tileWidth));
+                auto y = qAbs(qRound((firstItemScenePos.y() - pp.sceneCursorPos.y()) / tileWidth));
                 
                 auto text = QStringLiteral(u"%1x%2").arg(x).arg(y);
                 auto textRect = painter->boundingRect(QRectF(), text, aa);
-                textRect = this->_adjustText(pp.itemCursorPos, pp.viewCursorPos, textRect);
+                textRect = this->_adjustText(pp.sceneCursorPos, pp.viewCursorPos, textRect);
 
                 painter->setOpacity(1);
                 painter->drawText(textRect, text, aa);
@@ -208,17 +270,18 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
 
         }
 
-        const QRectF _ellispeBoundingRect() const {
+        const QRectF _ellipseBoundingRect() const {
             
-            auto pp = this->_generatePointPos();
-
-            auto line = QLineF({}, pp.itemCursorPos);
+            auto pp = this->_generateCursorPointPos();
+            auto firstItemScenePos = this->_toWalk.first()->scenePos();
+                
+            auto line = QLineF(firstItemScenePos, pp.sceneCursorPos);
             
             auto sizePart = qAbs(line.length() * 2);
             auto size = QSizeF(sizePart, sizePart);
 
-            QRectF out({}, size);
-            out.moveCenter({});
+            QRectF out(firstItemScenePos, size);
+            out.moveCenter(firstItemScenePos);
 
             return out;
 
@@ -226,12 +289,11 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
 
         const QRectF _gridBoundingRect() const {
             
-            auto pp = this->_generatePointPos();
+            auto pp = this->_generateCursorPointPos();
 
             //correct
             auto correctedPos = pp.sceneCursorPos;
-            this->_mapParams.alignPointToGridCenter(correctedPos);
-            correctedPos = this->mapFromScene(correctedPos);
+            this->_mapParams.alignPointToGridCrossroad(correctedPos);
 
             auto destTileRect = QRectF(correctedPos, this->_mapParams.tileSizeInPoints()).normalized();
             auto rangeRect = QRectF({}, correctedPos).normalized();
@@ -241,20 +303,19 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
 
         void _paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) {
 
-            auto pp = this->_generatePointPos();
+            auto pp = this->_generateCursorPointPos();
 
             switch(this->_mapParams.movementSystem()) {
 
                 case RPZMapParameters::MovementSystem::Linear: {
                     this->_drawRangeEllipse(painter, option, pp); //draw ellipse
-                    this->_drawLinearRangeTextIndicator(painter, option, pp); //print range indicator
-                    this->_destScenePos = pp.sceneCursorPos;
+                    if(_singleItemToWalk) this->_drawLinearRangeTextIndicator(painter, option, pp); //print range indicator
                 }
                 break;
 
                 case RPZMapParameters::MovementSystem::Grid: {
-                    this->_destScenePos = this->_drawRangeGrid(painter, option, pp); //draw grid
-                    this->_drawGridRangeTextIndicator(painter, option, pp); //print range indicator
+                    this->_drawRangeGrid(painter, option, pp); //draw grid
+                    if(_singleItemToWalk) this->_drawGridRangeTextIndicator(painter, option, pp); //print range indicator
                 }
                 break;
 
@@ -262,8 +323,17 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
 
         }
 
+        QRectF _getUnitedRect() const {
+            QRectF out;
+            auto toWalk = this->_toWalk;
+            for(auto item : this->_toWalk) {
+                out = out.united(item->sceneBoundingRect());
+            }
+            return out;
+        }
+
     public:
-        MapViewWalkingHelper(const RPZMapParameters &params, QGraphicsItem* toWalk, QGraphicsView* view) : QGraphicsItem(toWalk), _view(view) {
+        MapViewWalkingHelper(const RPZMapParameters &params, const QList<QGraphicsItem*> &toWalk, QGraphicsView* view) : _toWalk(toWalk), _view(view) {
             
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
@@ -271,35 +341,54 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemStacksBehindParent, true);
 
             this->_mapParams = params;
+            this->_singleItemToWalk = toWalk.count() == 1;
+            this->_toWalkRect = _getUnitedRect();
 
+            this->_view->scene()->addItem(this);
+
+        }
+
+        const QHash<QGraphicsItem*, QPointF> destinations() const {
+            return this->_destinations;
         }
 
         QRectF boundingRect() const override {
             
-            switch(this->_mapParams.movementSystem()) {
+            auto movementSystem = this->_mapParams.movementSystem();
+            if(movementSystem == RPZMapParameters::MovementSystem::Linear && this->_singleItemToWalk) return this->_ellipseBoundingRect();
 
-                case RPZMapParameters::MovementSystem::Linear: {
-                    return this->_ellispeBoundingRect();
-                }
-                break;
-
-                case RPZMapParameters::MovementSystem::Grid: {
-                    return this->_gridBoundingRect();
-                }
-                break;
-
-            }
-            
-            return QRectF();
+            return this->_gridBoundingRect();
 
         }
 
-        const QPointF destScenePos() const {
-            return this->_destScenePos;
+        static bool isToBeWalked(const MapViewWalkingHelper* helper, QGraphicsItem* toCheck) {
+            if(!helper) return false;
+            return helper->_toWalk.contains(toCheck);
+        }
+
+        static bool isMoveOrInsertPreventedAtPosition(const RPZMapParameters &mapParams, const QGraphicsItem* toCheck, const QPointF &toCheckAt = QPointF()) {
+            
+            //check if not a grid system
+            if(mapParams.movementSystem() != RPZMapParameters::MovementSystem::Grid) return false;
+            
+            //check item is not bound to the grid
+            if(!RPZQVariant::isGridBound(toCheck)) return false;
+
+            //determine destination
+            auto atPosRect = toCheck->sceneBoundingRect();
+            if(!toCheckAt.isNull()) atPosRect.moveCenter(toCheckAt);
+
+            //check if we move the item onto another grid bound item
+            for(const auto colliding : toCheck->scene()->items(atPosRect)) {
+                if(colliding == toCheck) continue;
+                if(RPZQVariant::isGridBound(colliding)) return true;
+            }
+
+            return false;
+
         }
 
     protected:
-
         bool _canBeDrawnInMiniMap() const override { 
             return false; 
         };

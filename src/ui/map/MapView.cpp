@@ -200,7 +200,7 @@ void MapView::_onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const RP
 void MapView::_onOwnershipChanged(const QList<QGraphicsItem*> changing, bool owned) {
     
     //standard handling
-    if(owned || !this->_toWalk) {
+    if(owned || !this->_walkingHelper) {
         for(auto item : changing) {
             if(auto casted = dynamic_cast<MapViewToken*>(item)) casted->setOwned(owned);
         }
@@ -212,8 +212,15 @@ void MapView::_onOwnershipChanged(const QList<QGraphicsItem*> changing, bool own
         auto foundTBW = false;
 
         for(auto item : changing) {
-            if(!foundTBW && item == this->_toWalk) foundTBW = true;
-            if(auto casted = dynamic_cast<MapViewToken*>(item)) casted->setOwned(owned);
+
+            //if "to be walked" has changed ownership, tag for tool change
+            if(!foundTBW && MapViewWalkingHelper::isToBeWalked(this->_walkingHelper, item)) foundTBW = true;
+            
+            //change ownership
+            if(auto casted = dynamic_cast<MapViewToken*>(item)) {
+                casted->setOwned(owned);
+            }
+
         }
         
         //if currently walked token has ownership revoked, cancel walking
@@ -355,7 +362,8 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
             case Payload::Alteration::Removed: {
                 
                 //if walked item is about to be deleted, change tool to default
-                if(item == this->_toWalk && currentTool == MapTool::Walking) {
+                auto deletedItemIsToBeWalked = MapViewWalkingHelper::isToBeWalked(this->_walkingHelper, item);
+                if(deletedItemIsToBeWalked && currentTool == MapTool::Walking) {
                     this->_changeTool(MapTool::Default);
                 }
 
@@ -405,8 +413,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
 
     else if(type == Payload::Alteration::Selected) {
         
-        auto firstItem = toAlter.values().value(0);
-        auto isWalkable = _tryToInvokeWalkableHelper(firstItem);
+        auto isWalkable = _tryToInvokeWalkableHelper(toAlter.values());
 
         //if cant walk it, and is using walking tool, go back to default tool
         if(!isWalkable && currentTool == MapTool::Walking) {
@@ -420,23 +427,22 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
 
 }
 
-bool MapView::_tryToInvokeWalkableHelper(QGraphicsItem * toBeWalked) {
+bool MapView::_tryToInvokeWalkableHelper(const QList<QGraphicsItem*> &toBeWalked) {
     
-    if(!toBeWalked) return false;
-    if(!this->_isMousePressed) return false;
+    if(!toBeWalked.count()) return false;
+    
+    //prevent if not all walkables
+    for(auto item : toBeWalked) {
+        if(!RPZQVariant::contextuallyOwned(item)) return false;
+    }
 
-    //prevent if not walkable
-    auto isWalkable = RPZQVariant::contextuallyOwned(toBeWalked);
-    if(!isWalkable) return false;
-        
     //clear previous walker
     this->_clearWalkingHelper();
 
     //create walking helper
-    this->_toWalk = toBeWalked;
     this->_walkingHelper = new MapViewWalkingHelper(
         this->_currentMapParameters, 
-        this->_toWalk, 
+        toBeWalked, 
         this
     );
 
@@ -649,7 +655,7 @@ void MapView::mousePressEvent(QMouseEvent *event) {
                 default: {
 
                     auto ghost = HintThread::hint()->ghostItem();
-                    if(this->_preventMoveOrInsertAtPosition(ghost)) break;
+                    if(MapViewWalkingHelper::isMoveOrInsertPreventedAtPosition(this->_currentMapParameters, ghost)) break;
 
                     HintThread::hint()->integrateGraphicsItemAsPayload(ghost);
 
@@ -686,24 +692,6 @@ void MapView::mousePressEvent(QMouseEvent *event) {
 
 
 }
-
-bool MapView::_preventMoveOrInsertAtPosition(QGraphicsItem *toCheck, const QPointF &toCheckAt) {
-    
-    auto atPosRect = toCheck->sceneBoundingRect();
-    if(!toCheckAt.isNull()) atPosRect.moveCenter(toCheckAt);
-
-    if(this->_currentMapParameters.movementSystem() != RPZMapParameters::MovementSystem::Grid) return false;
-    if(!RPZQVariant::isGridBound(toCheck)) return false;
-
-    for(const auto colliding : this->scene()->items(atPosRect)) {
-        if(colliding == toCheck) continue;
-        if(RPZQVariant::isGridBound(colliding)) return true;
-    }
-
-    return false;
-}
-
-    
 
 //on movement
 void MapView::mouseMoveEvent(QMouseEvent *event) {
@@ -813,12 +801,8 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
 
                 case MapTool::Walking: {
 
-                    auto toWalkTo = this->_walkingHelper->destScenePos();
-
-                    if(!this->_preventMoveOrInsertAtPosition(this->_toWalk, toWalkTo)) {
-                        HintThread::hint()->notifyWalk(this->_toWalk, toWalkTo);
-                    }
-
+                    HintThread::hint()->notifyWalk(this->_walkingHelper->destinations());
+                    
                     this->_resetTool();
 
                 }
@@ -995,7 +979,6 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
 }
 
 void MapView::_clearWalkingHelper() {
-    this->_toWalk = nullptr;
     delete this->_walkingHelper;
     this->_walkingHelper = nullptr;
 }

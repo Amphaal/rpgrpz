@@ -83,8 +83,8 @@ class ClientActivityBar : public QWidget {
 
             //UPLOAD TRACKER
             _upLbl = new ClientActivityIndicator(
-                QPixmap(":/icons/app/connectivity/uploadG.png"),
-                QPixmap(":/icons/app/connectivity/upload.png")
+                QPixmap(QStringLiteral(u":/icons/app/connectivity/uploadG.png")),
+                QPixmap(QStringLiteral(u":/icons/app/connectivity/upload.png"))
             );
             QObject::connect(
                 ProgressTracker::get(), &ProgressTracker::clientSending,
@@ -98,8 +98,8 @@ class ClientActivityBar : public QWidget {
 
             //DOWNLOAD TRACKER
             _downLbl = new ClientActivityIndicator(
-                QPixmap(":/icons/app/connectivity/downloadG.png"),
-                QPixmap(":/icons/app/connectivity/download.png")
+                QPixmap(QStringLiteral(u":/icons/app/connectivity/downloadG.png")),
+                QPixmap(QStringLiteral(u":/icons/app/connectivity/download.png"))
             );
             QObject::connect(
                 ProgressTracker::get(), &ProgressTracker::clientReceiving,
