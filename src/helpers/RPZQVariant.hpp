@@ -100,13 +100,6 @@ class RPZQVariant {
             item->setData((int)RPZQVariant::Roles::CharacterId, QVariant::fromValue<RPZCharacter::Id>(characterId));
         }
 
-        static bool isOverlapping(const QGraphicsItem* item) {
-            return item->data((int)RPZQVariant::Roles::OverlappingGridBound).toBool();
-        }
-        static void setIsOverlapping(QGraphicsItem* item, bool isOverlapping) {
-            item->setData((int)RPZQVariant::Roles::OverlappingGridBound, isOverlapping);
-        }
-
         static bool isGridBound(const QGraphicsItem* item) {
             return item->data((int)RPZQVariant::Roles::GridAlignable).toBool();
         }

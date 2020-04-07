@@ -655,7 +655,7 @@ void MapView::mousePressEvent(QMouseEvent *event) {
                 default: {
 
                     auto ghost = HintThread::hint()->ghostItem();
-                    if(MapViewWalkingHelper::preventMoveOrInsertAtPosition(this->_currentMapParameters, ghost)) break;
+                    if(MapViewWalkingHelper::isMoveOrInsertPreventedAtPosition(this->_currentMapParameters, ghost)) break;
 
                     HintThread::hint()->integrateGraphicsItemAsPayload(ghost);
 

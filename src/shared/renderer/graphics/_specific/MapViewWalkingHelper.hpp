@@ -171,30 +171,45 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
             painter->save();
 
                 this->_defineWalkerGuide(painter);
-
-                // //TODO replacement for grid alignement ?
-                auto nRc = this->_toWalkRect;
-                nRc.moveCenter(pp.distanceLine.p2());
+                this->_destinations.clear();
 
                 //draw line
                 for(auto item : this->_toWalk) {
             
                     //calculate offset
                     auto offset = _getOffset(pp, item);
+                    auto offsetted = pp.distanceLine.p2() + offset;
+
+                    painter->save();
+
+                    auto able = !isMoveOrInsertPreventedAtPosition(this->_mapParams, item, offsetted);
+                    if(!able) {
+                        //change pen color
+                        auto pen = painter->pen();
+                        pen.setColor("Red");
+                        painter->setPen(pen);
+                    }
 
                     //draw line helper
-                    auto offsetted = nRc.center() + offset;
                     auto line = QLineF(item->scenePos(), offsetted);
                     painter->drawLine(line);
 
-                    //draw rect
+                    //define rect
                     auto inplaceRect = item->boundingRect();
                     inplaceRect.moveCenter(offsetted);
-                    painter->drawRect(inplaceRect);
+                    
+                    //draw rect or cross
+                    if(able) painter->drawRect(inplaceRect);
+                    else {
+                        painter->drawLine(inplaceRect.topLeft(), inplaceRect.bottomRight());
+                        painter->drawLine(inplaceRect.topRight(), inplaceRect.bottomLeft());
+                    }
 
                     // add destination
-                    this->_destinations.insert(item, line.p2());
+                    if(able) this->_destinations.insert(item, line.p2());
 
+                    painter->restore();
+                    
                 }
 
             painter->restore();
@@ -334,7 +349,6 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
         }
 
         const QHash<QGraphicsItem*, QPointF> destinations() const {
-            //TODO
             return this->_destinations;
         }
 
@@ -352,7 +366,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
             return helper->_toWalk.contains(toCheck);
         }
 
-        static bool preventMoveOrInsertAtPosition(const RPZMapParameters &mapParams, const QGraphicsItem* toCheck, const QPointF &toCheckAt = QPointF()) {
+        static bool isMoveOrInsertPreventedAtPosition(const RPZMapParameters &mapParams, const QGraphicsItem* toCheck, const QPointF &toCheckAt = QPointF()) {
             
             //check if not a grid system
             if(mapParams.movementSystem() != RPZMapParameters::MovementSystem::Grid) return false;
