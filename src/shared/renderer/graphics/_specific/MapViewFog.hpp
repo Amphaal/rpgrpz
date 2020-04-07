@@ -62,7 +62,7 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsFocusable, false);  
 
-            this->_texture = QPixmap(":/assets/smoke.png");
+            this->_texture = QPixmap(QStringLiteral(u":/assets/smoke.png"));
             this->_brush.setTexture(this->_texture);
 
         }

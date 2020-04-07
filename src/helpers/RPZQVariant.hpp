@@ -44,7 +44,8 @@ class RPZQVariant {
             CoveredByFog = 9000,
             FogSensitive = 9010,
             GraphicsItemToReplace = 10100,
-            MoveAnimationDestinationScenePoint = 11000
+            MoveAnimationDestinationScenePoint = 11000,
+            OverlappingGridBound = 12000
         };
 
         static QVariant moveAnimationDestinationScenePoint(const QGraphicsItem* item) {
@@ -97,6 +98,13 @@ class RPZQVariant {
         }
         static void setBoundCharacterId(QGraphicsItem* item, const RPZCharacter::Id &characterId) {
             item->setData((int)RPZQVariant::Roles::CharacterId, QVariant::fromValue<RPZCharacter::Id>(characterId));
+        }
+
+        static bool isOverlapping(const QGraphicsItem* item) {
+            return item->data((int)RPZQVariant::Roles::OverlappingGridBound).toBool();
+        }
+        static void setIsOverlapping(QGraphicsItem* item, bool isOverlapping) {
+            item->setData((int)RPZQVariant::Roles::OverlappingGridBound, isOverlapping);
         }
 
         static bool isGridBound(const QGraphicsItem* item) {

@@ -99,14 +99,14 @@ class PlayerItemDelegate : public QStyledItemDelegate {
 
             if(!character.malus().isEmpty()) {
                 painter->drawPixmap(startPoint, 
-                    QPixmap(":/icons/app/other/malus.png")
+                    QPixmap(QStringLiteral(u":/icons/app/other/malus.png"))
                 );
                 startPoint = startPoint - QPoint(14, 0);
             }
             
             if(!character.bonus().isEmpty()) {
                 painter->drawPixmap(startPoint, 
-                    QPixmap(":/icons/app/other/bonus.png")
+                    QPixmap(QStringLiteral(u":/icons/app/other/bonus.png"))
                 );
             }
 

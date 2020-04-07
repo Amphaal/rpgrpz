@@ -25,7 +25,7 @@
 
 class MV_HUDLayout {
     public:
-        MV_HUDLayout(QGraphicsView* view) : _view(view), _heavyLoadImage(QPixmap(":/icons/app_64.png")) { }
+        MV_HUDLayout(QGraphicsView* view) : _view(view), _heavyLoadImage(QPixmap(QStringLiteral(u":/icons/app_64.png"))) { }
     
     protected:
         void setupHeavyLoadPlaceholder(int expectedItemsCount) {

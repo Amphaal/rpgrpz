@@ -303,7 +303,13 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
 
                 }
 
-
+            //if overlapping another grid bound
+            if(RPZQVariant::isOverlapping(this)) {
+                painter->drawPixmap(
+                    option->exposedRect.topLeft(), 
+                    QPixmap(QStringLiteral(u":/icons/app/other/overlapping.png"))
+                );
+            }
 
             painter->restore();
 
