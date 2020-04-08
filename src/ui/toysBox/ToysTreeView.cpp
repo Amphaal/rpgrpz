@@ -29,7 +29,6 @@ ToysTreeView::ToysTreeView(QWidget *parent) : QTreeView(parent), AlterationInter
     //model
     this->setModel(this->_model);
     this->setRootIndex(this->_model->index(0, 0));
-    this->expandAll();
     
     //auto expand on insert
     QObject::connect(

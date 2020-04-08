@@ -96,7 +96,6 @@ void MapLayoutTree::_handleHintsSignalsAndSlots() {
     QObject::connect(
         this->mlModel, &QAbstractItemModel::modelReset,
         [=]() {
-            this->expandAll();
             this->sortByColumn(0, Qt::SortOrder::DescendingOrder);
         }
     );
