@@ -46,6 +46,7 @@
         <file>icons/app/tools/walking.png</file>
         <file>icons/app/tools/cog.png</file>
         <file>icons/app/tools/opacity.png</file>
+        <file>icons/app/tools/size.png</file>
         <file>icons/app/manager/layer.png</file>
         <file>icons/app/manager/npc.png</file>
         <file>icons/app/manager/asset.png</file>
@@ -98,5 +99,8 @@
         <file>assets/grass.png</file>
         <file>assets/hidden.png</file>
         <file>assets/smoke.png</file>
+        <file>icons/app/tokenSize/medium.png</file>
+        <file>icons/app/tokenSize/large.png</file>
+        <file>icons/app/tokenSize/xxl.png</file>
     </qresource>
 </RCC>

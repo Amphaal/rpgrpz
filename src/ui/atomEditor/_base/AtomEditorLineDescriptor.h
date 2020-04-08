@@ -92,6 +92,6 @@ class AtomEditorLineDescriptor : public QWidget {
             { RPZAtom::Parameter::NPCDescription, QStringLiteral(u":/icons/app/tools/text.png") },
             { RPZAtom::Parameter::CharacterId, QStringLiteral(u":/icons/app/connectivity/cloak.png") },
             { RPZAtom::Parameter::Opacity, QStringLiteral(u":/icons/app/tools/opacity.png") },
-            { RPZAtom::Parameter::TokenSize, QStringLiteral(u":/icons/app/tools/opacity.png") },
+            { RPZAtom::Parameter::TokenSize, QStringLiteral(u":/icons/app/tools/size.png") },
         };
 };
