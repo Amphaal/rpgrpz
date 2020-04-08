@@ -36,6 +36,7 @@
 #include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
 #include "src/shared/renderer/graphics/_base/RPZAnimated.hpp"
 #include "src/shared/renderer/animator/MapViewAnimator.hpp"
+#include "src/shared/database/AssetsDatabase.h"
 
 class MapViewTokenOutline : public QObject, public QGraphicsItem, public RPZGraphicsItem {
     
@@ -141,6 +142,10 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
             auto prc = this->_mainRect.width() * 0.1;
             this->_upperRect = this->_mainRect.marginsRemoved(QMarginsF(prc, prc, prc, prc));
             
+            //find portrait
+            this->_definePortrait(atom);
+
+            //define color
             this->_changeColor(atom);
 
         }
@@ -164,10 +169,20 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
 
         void triggerAnimation() override {
             
+            //check if allowed
+            auto allowOutline = this->_tokenType == RPZAtom::Type::Player;
+            if(!allowOutline) return;
+
+            //create child outline
             if(!this->_outline) {
-                this->_outline = new MapViewTokenOutline(this, this, this->_owned); 
+                this->_outline = new MapViewTokenOutline(
+                    this, 
+                    this, 
+                    this->_owned
+                ); 
             }
 
+            //trigger animation
             this->_outline->triggerAnimation(this->_owned);
 
         }
@@ -199,6 +214,7 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
         MapViewTokenOutline* _outline = nullptr;
         RPZAtom::Type _tokenType;
         bool _owned = false;
+        QPixmap _portrait;
 
         QRectF _upperRect;
         QRectF _mainRect;
@@ -210,6 +226,18 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
             return true; 
         };
         
+        void _definePortrait(const RPZAtom &atom) {
+            
+            auto hash = atom.assetHash();
+            if(hash.isEmpty()) return;
+
+            auto asset = AssetsDatabase::get()->asset(atom.assetHash());
+            if(!asset) return;
+
+            this->_portrait = QPixmap(asset->filepath());
+
+        }
+
         bool _canBeDrawnInMiniMap() const override { 
             return false; 
         };
@@ -275,35 +303,62 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
             painter->save();
 
                 painter->setRenderHint(QPainter::Antialiasing, true);
-
                 painter->setPen(Qt::NoPen);
-                
                 painter->setBrush(this->_mainBrush);
+
+                //draw outer token
                 painter->drawEllipse(this->_mainRect);
+
+                //draw portrait if any
+                auto drawn = this->_paintPortrait(painter);
                 
-                if(this->_tokenType == RPZAtom::Type::Player) {
-                    
-                    //upper
-                    painter->setBrush(this->_upperBrush);
-                    painter->drawEllipse(this->_upperRect);
-                    
-                    //sign
-                    auto sign = QObject::tr("P", "player sign");
-                    painter->setPen(QColor(Qt::white));
-
-                        auto font = painter->font();
-                        font.setPixelSize((int)(this->_upperRect.height() * .9));
-                        painter->setFont(font);
-
-                        QFontMetrics m(font);
-                        auto signRect = QRectF(m.boundingRect(sign));
-                        signRect.moveCenter(this->_upperRect.center());
-                        
-                    painter->drawText(signRect, sign);
-
-                }
+                //try to draw a placeholder
+                if(!drawn) this->_paintPlaceholder(painter);
 
             painter->restore();
+
+        }
+
+        bool _paintPortrait(QPainter *painter) {
+            
+            if(this->_portrait.isNull()) return false;
+                
+            painter->save();
+
+                QPainterPath path;
+                path.addEllipse(this->_upperRect);
+                painter->setClipPath(path);
+
+                painter->drawPixmap(this->_upperRect.toRect(), this->_portrait);
+
+            painter->restore();
+
+            return true;
+
+        }
+
+        void _paintPlaceholder(QPainter *painter) {
+            
+            //only for player tokens
+            if(this->_tokenType != RPZAtom::Type::Player) return;
+                    
+            //upper
+            painter->setBrush(this->_upperBrush);
+            painter->drawEllipse(this->_upperRect);
+            
+            //sign
+            auto sign = QObject::tr("P", "player sign");
+            painter->setPen(QColor(Qt::white));
+
+                auto font = painter->font();
+                font.setPixelSize((int)(this->_upperRect.height() * .9));
+                painter->setFont(font);
+
+                QFontMetrics m(font);
+                auto signRect = QRectF(m.boundingRect(sign));
+                signRect.moveCenter(this->_upperRect.center());
+                
+            painter->drawText(signRect, sign);
 
         }
 

@@ -22,6 +22,9 @@
 #include <QGraphicsView>
 
 #include "src/helpers/StringHelper.hpp"
+#include "src/helpers/_appContext.h"
+#include "src/shared/models/RPZMapParameters.hpp"
+#include "src/helpers/RandomColor.h"
 
 class MV_HUDLayout {
     public:

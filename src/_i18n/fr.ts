@@ -1081,7 +1081,7 @@
         <translation>Une erreur est survenue : </translation>
     </message>
     <message>
-        <location filename="../ui/map/modules/MV_HUDLayout.hpp" line="292"/>
+        <location filename="../ui/map/modules/MV_HUDLayout.hpp" line="295"/>
         <source>Too far to display grid !</source>
         <translation>Trop éloigné pour afficher la grille !</translation>
     </message>
@@ -1306,7 +1306,7 @@
         <translation>%1 atome(s) selectionné(s)</translation>
     </message>
     <message>
-        <location filename="../shared/renderer/graphics/_specific/MapViewToken.hpp" line="291"/>
+        <location filename="../shared/renderer/graphics/_specific/MapViewToken.hpp" line="350"/>
         <source>P</source>
         <comment>player sign</comment>
         <translation>J</translation>
