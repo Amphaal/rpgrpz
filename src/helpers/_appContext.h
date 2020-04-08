@@ -85,6 +85,7 @@ class AppContext {
         static inline const QString UPNP_REQUEST_DESCRIPTION = APP_NAME;
         static inline const QString RPZ_MAP_FILE_EXT = ".mrpz";
         static inline constexpr int HOVERING_ITEMS_Z_INDEX = 100000;
+        static inline constexpr int WALKER_Z_INDEX = 150000;
 
         static inline constexpr int MINIMUM_LAYER = -1000;
         static inline constexpr int MAXIMUM_LAYER = 1000;

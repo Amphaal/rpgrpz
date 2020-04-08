@@ -338,13 +338,12 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsFocusable, false);            
-            this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemStacksBehindParent, true);
 
             this->_mapParams = params;
             this->_singleItemToWalk = toWalk.count() == 1;
             this->_toWalkRect = _getUnitedRect();
 
-            this->_view->scene()->addItem(this);
+            this->setZValue(AppContext::WALKER_Z_INDEX);
 
         }
 

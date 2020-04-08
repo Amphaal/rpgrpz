@@ -445,6 +445,9 @@ bool MapView::_tryToInvokeWalkableHelper(const QList<QGraphicsItem*> &toBeWalked
         toBeWalked, 
         this
     );
+    
+    //add it to scene
+    this->scene()->addItem(this->_walkingHelper);
 
     //define tool
     this->_changeTool(MapTool::Walking);
