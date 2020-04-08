@@ -166,6 +166,11 @@
         <source>Opacity</source>
         <translation>Opacité</translation>
     </message>
+    <message>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="63"/>
+        <source>Token size</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AtomShortTextEditor</name>
@@ -1097,78 +1102,78 @@
     </message>
     <message>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="222"/>
-        <location filename="../shared/models/RPZAtom.h" line="149"/>
+        <location filename="../shared/models/RPZAtom.h" line="156"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="223"/>
-        <location filename="../shared/models/RPZAtom.h" line="150"/>
+        <location filename="../shared/models/RPZAtom.h" line="157"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="151"/>
+        <location filename="../shared/models/RPZAtom.h" line="158"/>
         <source>Object</source>
         <translation>Objet</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="152"/>
+        <location filename="../shared/models/RPZAtom.h" line="159"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="153"/>
+        <location filename="../shared/models/RPZAtom.h" line="160"/>
         <source>Atom</source>
         <translation>Atome</translation>
     </message>
     <message>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="221"/>
-        <location filename="../shared/models/RPZAtom.h" line="154"/>
+        <location filename="../shared/models/RPZAtom.h" line="161"/>
         <source>Event</source>
         <translation>Evénement</translation>
     </message>
     <message>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="224"/>
-        <location filename="../shared/models/RPZAtom.h" line="155"/>
+        <location filename="../shared/models/RPZAtom.h" line="162"/>
         <source>Player</source>
         <translation>Joueur</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="156"/>
+        <location filename="../shared/models/RPZAtom.h" line="163"/>
         <source>Non-playable character</source>
         <translation>Personnage non-joueur</translation>
     </message>
     <message>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="225"/>
-        <location filename="../shared/models/RPZAtom.h" line="157"/>
+        <location filename="../shared/models/RPZAtom.h" line="164"/>
         <source>Point of interest</source>
         <translation>Point d&apos;intérêt</translation>
     </message>
     <message>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="226"/>
-        <location filename="../shared/models/RPZAtom.h" line="158"/>
+        <location filename="../shared/models/RPZAtom.h" line="165"/>
         <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="77"/>
         <source>Fog of war</source>
         <translation>Brouillard de guerre</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="162"/>
+        <location filename="../shared/models/RPZAtom.h" line="169"/>
         <source>NPCs</source>
         <translation>PNJs</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="163"/>
+        <location filename="../shared/models/RPZAtom.h" line="170"/>
         <source>Events</source>
         <translation>Evénements</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="164"/>
+        <location filename="../shared/models/RPZAtom.h" line="171"/>
         <source>Players</source>
         <translation>Joueurs</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="165"/>
+        <location filename="../shared/models/RPZAtom.h" line="172"/>
         <source>POIs</source>
         <translation>Points d&apos;intérêt</translation>
     </message>

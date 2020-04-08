@@ -59,7 +59,8 @@ class AtomEditorLineDescriptor : public QWidget {
             { RPZAtom::Parameter::NPCShortName, QT_TR_NOOP("Short name") },
             { RPZAtom::Parameter::NPCDescription, QT_TR_NOOP("GM Notes") },
             { RPZAtom::Parameter::CharacterId, QT_TR_NOOP("Associated character") },
-            { RPZAtom::Parameter::Opacity, QT_TR_NOOP("Opacity") }
+            { RPZAtom::Parameter::Opacity, QT_TR_NOOP("Opacity") },
+            { RPZAtom::Parameter::TokenSize, QT_TR_NOOP("Token size") }
         };
 
         static inline QHash<RPZAtom::Parameter, QString> _valSuffix = {
@@ -90,6 +91,7 @@ class AtomEditorLineDescriptor : public QWidget {
             { RPZAtom::Parameter::NPCShortName, QStringLiteral(u":/icons/app/tools/text.png") },
             { RPZAtom::Parameter::NPCDescription, QStringLiteral(u":/icons/app/tools/text.png") },
             { RPZAtom::Parameter::CharacterId, QStringLiteral(u":/icons/app/connectivity/cloak.png") },
-            { RPZAtom::Parameter::Opacity, QStringLiteral(u":/icons/app/tools/opacity.png") }
+            { RPZAtom::Parameter::Opacity, QStringLiteral(u":/icons/app/tools/opacity.png") },
+            { RPZAtom::Parameter::TokenSize, QStringLiteral(u":/icons/app/tools/opacity.png") },
         };
 };

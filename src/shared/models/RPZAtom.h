@@ -80,7 +80,8 @@ class RPZAtom : public Serializable {
             MaxNPCHealth,
             MinNPCHealth,
             Opacity,
-            CoveredByFog
+            CoveredByFog,
+            TokenSize
         };
         Q_ENUM(Parameter)
 
@@ -119,6 +120,12 @@ class RPZAtom : public Serializable {
             Neutral,
             Hostile,
             Friendly
+        };
+
+        enum class TokenSize {
+            Normal,
+            Big,
+            VeryBig
         };
 
         using Id = SnowFlake::Id;
@@ -317,7 +324,8 @@ class RPZAtom : public Serializable {
             RPZAtom::Parameter::Text,
             RPZAtom::Parameter::TextSize,
             RPZAtom::Parameter::Shape,
-            RPZAtom::Parameter::Position
+            RPZAtom::Parameter::Position,
+            RPZAtom::Parameter::TokenSize
         };
 
         static inline const QHash<RPZAtom::Parameter, QString> _str = {
@@ -350,7 +358,8 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::MaxNPCHealth, QStringLiteral(u"npc_maxh") },
             { RPZAtom::Parameter::MinNPCHealth, QStringLiteral(u"npc_minh") },
             { RPZAtom::Parameter::Opacity, QStringLiteral(u"o") },
-            { RPZAtom::Parameter::CoveredByFog, QStringLiteral("cbf") }
+            { RPZAtom::Parameter::CoveredByFog, QStringLiteral("cbf") },
+            { RPZAtom::Parameter::TokenSize, QStringLiteral("t_sz") }
         };
 
         static inline const RPZAtom::Updates _defaultVal = {
@@ -383,7 +392,8 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::MaxNPCHealth, 0 },
             { RPZAtom::Parameter::MinNPCHealth, 0 },
             { RPZAtom::Parameter::Opacity, 100 },
-            { RPZAtom::Parameter::CoveredByFog, false }
+            { RPZAtom::Parameter::CoveredByFog, false },
+            { RPZAtom::Parameter::TokenSize, (int)RPZAtom::TokenSize::Normal }
         };
 
         void _setType(const RPZAtom::Type &type);
