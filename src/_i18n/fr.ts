@@ -270,22 +270,22 @@
         <translation>Supprimer la fiche</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="267"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="271"/>
         <source>No existing character, create some !</source>
         <translation>Aucun personnage préexistant, créez-en un !</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="267"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="271"/>
         <source>Waiting for sheets from host...</source>
         <translation>En attente de fiches du serveur...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="418"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="422"/>
         <source>Character sheet deletion</source>
         <translation>Suppression de fiches de personnages</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="419"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="423"/>
         <source>Do you really want to delete this character ?</source>
         <translation>Voulez-vous vraiment supprimer cette fiche de personnage ?</translation>
     </message>

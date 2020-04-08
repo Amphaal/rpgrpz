@@ -187,12 +187,16 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
             
             //may remove
             this->_mayTooglePlaceholder();
+            
+            auto selectedIndex = this->_characterListCombo->currentIndex();
 
             //add item
             this->_addItem(
                 newUser.character(), 
                 CharacterOrigin::Remote
             );
+
+            if(selectedIndex != this->_characterListCombo->currentIndex()) this->_selectionChanged();
 
         }
 
