@@ -324,10 +324,8 @@ void ToysTreeView::_generateMenu(const QList<QModelIndex> &targetIndexes, const 
 
 //auto expand on row insert
 void ToysTreeView::_onRowInsert(const QModelIndex &parent, int first, int last) {
-    for (; first <= last; ++first) {
-        auto index = this->_model->index(first, 0, parent);
-        this->expand(index);
-    }
+    if(!parent.isValid()) return;
+    this->expand(parent);
 }
 
 void ToysTreeView::_requestDeletion(const QModelIndexList &itemsIndexesToDelete) {
