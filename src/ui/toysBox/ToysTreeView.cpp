@@ -257,7 +257,7 @@ void ToysTreeView::_generateMenu(const QList<QModelIndex> &targetIndexes, const 
     
     //if no items selected, cancel menu creation
     if(!targetIndexes.count()) return;
-    
+
     QMenu menu;
 
     //if single selection
@@ -274,7 +274,7 @@ void ToysTreeView::_generateMenu(const QList<QModelIndex> &targetIndexes, const 
             auto createFolder = RPZActions::createFolder();
             QObject::connect(
                 createFolder, &QAction::triggered,
-                [&]() {
+                [=]() {
                     this->expand(firstItemIndex);
                     auto newFolderIndex = this->_model->createFolder(firstItemIndex);
                     this->edit(newFolderIndex);
@@ -300,7 +300,7 @@ void ToysTreeView::_generateMenu(const QList<QModelIndex> &targetIndexes, const 
         auto deleteItem = RPZActions::remove();
         QObject::connect(
             deleteItem, &QAction::triggered,
-            [&, targetIndexes]() {
+            [=]() {
                 this->_requestDeletion(targetIndexes);
             }
         );
