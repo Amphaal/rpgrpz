@@ -72,6 +72,7 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
 
         void scrollFromMinimap(QWheelEvent *event);
         void focusFromMinimap(const QPointF &scenePoint);
+        void resetTool();
 
     public slots:
         void onActionRequested(const MapAction &action);
@@ -143,7 +144,6 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
             MapTool _quickTool = MapTool::Default;
             MapTool _getCurrentTool() const;
             void _changeTool(MapTool newTool, bool quickChange = false);
-            void _resetTool();
         
         //walking...
             QCursor _walkingCursor;

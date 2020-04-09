@@ -49,7 +49,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
 
     this->setMouseTracking(true); //activate mouse tracking for ghost 
 
-    this->_resetTool();
+    this->resetTool();
 
     this->_handleHintsSignalsAndSlots();
 
@@ -290,7 +290,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
     if(type == Payload::Alteration::Reset) {
         
         //reset tool
-        this->_resetTool();
+        this->resetTool();
 
         //before clearing whole scene
         this->_drawingAssist->clearDrawing(); 
@@ -553,12 +553,12 @@ const QList<RPZAtom::Id> MapView::selectedIds() const {
 void MapView::keyPressEvent(QKeyEvent * event) {
 
     switch(event->key()) {
-
+        
         //ask unselection of current tool
         case Qt::Key::Key_Escape:
-            this->_resetTool();
-            break;
-        
+            this->resetTool();
+            break;  
+
         case Qt::Key::Key_Up:
         case Qt::Key::Key_Down:
         case Qt::Key::Key_Left:
@@ -806,7 +806,7 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
 
                     HintThread::hint()->notifyWalk(this->_walkingHelper->destinations());
                     
-                    this->_resetTool();
+                    this->resetTool();
 
                 }
                 break;
@@ -870,7 +870,7 @@ MapTool MapView::_getCurrentTool() const {
     return this->_quickTool == MapTool::Default ? this->_tool : this->_quickTool;
 }
 
-void MapView::_resetTool() {
+void MapView::resetTool() {
     this->_quickTool = MapTool::Default;
     this->_changeTool(MapTool::Default);
 }
@@ -996,7 +996,7 @@ void MapView::onActionRequested(const MapAction &action) {
             break;
 
         case MapAction::ResetTool:
-            this->_resetTool();
+            this->resetTool();
             break;
 
         default:

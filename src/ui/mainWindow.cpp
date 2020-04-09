@@ -85,6 +85,14 @@ void MainWindow::keyPressEvent(QKeyEvent * event) {
     
     switch(event->key()) {
 
+        //unselect whatever is selected
+        case Qt::Key::Key_Escape: {
+            this->_mapView->resetTool();
+            this->_audioManager->player()->playlist()->clearSelection();
+            this->_toys->clearSelection();
+        }
+        break;
+
         case Qt::Key_Alt: {
 
             AppContext::settings()->setMainWindowBarsShown(
