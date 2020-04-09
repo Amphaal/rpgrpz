@@ -101,17 +101,13 @@ endif()
 #################################
 
 #define build type if any
-IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        SET(APP_BUNDLE_TYPE "") #allows Debug cout/cerr console... from LLDB/GDB
-    else()
+IF(NOT DEFINED APP_BUNDLE_TYPE)
+    IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         SET(APP_BUNDLE_TYPE "WIN32") 
+    ELSEIF(APPLE)
+        #SET(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
+        SET(APP_BUNDLE_TYPE MACOSX_BUNDLE)
     endif()
-ELSEIF(APPLE)
-
-    #SET(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
-    SET(APP_BUNDLE_TYPE MACOSX_BUNDLE) #set bundle type
-
 endif()
 
 ######################################
@@ -143,14 +139,12 @@ endif()
 
 #warnings for debug
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    IF()  
-        target_link_options(appExec PRIVATE 
-            -Wall 
-            -Wextra 
-            -Wpedantic 
-            -Wno-unused-parameter
-        )
-    endif()
+    target_link_options(appExec PRIVATE 
+        -Wall 
+        -Wextra 
+        -Wpedantic 
+        -Wno-unused-parameter
+    )
 endif()
 
 #optimise for release

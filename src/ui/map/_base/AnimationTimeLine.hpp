@@ -87,7 +87,7 @@ class AnimationTimeLine : public QTimeLine {
             //bind
             QObject::connect(
                 this, &QTimeLine::valueChanged,
-                [&, onValueChanged](qreal value) {
+                [=](qreal value) {
                     onValueChanged(this->_currentModifier, value);
                 }
             );

@@ -17,7 +17,9 @@ list(APPEND CMAKE_PREFIX_PATH
     ${MINGW64_ROOT}} 
 )
 
-#We want Debug
+#allows Debug cout/cerr console... from LLDB/GDB
+SET(APP_BUNDLE_TYPE "")
+
 SET(CMAKE_BUILD_TYPE Debug)
 
 SET (CMAKE_ASM_MASM_COMPILER    "uasm")
