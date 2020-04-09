@@ -257,18 +257,16 @@ void AssetsDatabase::removeAssets(const QList<RPZAsset::Hash> &hashesToRemove) {
 
 }
 
-void AssetsDatabase::removeFolders(const QList<AssetsDatabase::FolderPath> &pathsToRemove) {
-    
+void AssetsDatabase::removeFolders(const QList<AssetsDatabase::FolderPath> &topMostPathsToRemove) {
+
     QSet<RPZAsset::Hash> hashesToRemove;
 
     //traverse paths
-    for(const auto &path : pathsToRemove) {
-
-        if(!this->_paths.contains(path)) continue;
-
-        //through assets
-        hashesToRemove += this->_paths.take(path);
-    
+    for(const auto &topMostPath : topMostPathsToRemove) {
+        for(const auto &subpath :  this->_getPathsStartingWith(topMostPath)) {
+            //through assets
+            hashesToRemove += this->_paths.take(subpath);
+        }
     }
 
     //remove referenced assets
@@ -310,7 +308,7 @@ void AssetsDatabase::moveFoldersTo(const AssetsDatabase::FolderPath &internalPat
         
         auto topmost = i.key();
         auto newTopmostPath = internalPathToMoveTo + "/" + _folderName(topmost);
-        
+
         this->_reroutePaths(topmost, newTopmostPath, i.value());
 
     }
@@ -331,7 +329,6 @@ void AssetsDatabase::_reroutePaths(const AssetsDatabase::FolderPath &ancestor, c
 
         //remove old path content
         auto linkedHashes = this->_paths.take(oldPath);
-        if(linkedHashes.isEmpty()) continue;
         
         //build new dest path
         auto newPath = oldPath;

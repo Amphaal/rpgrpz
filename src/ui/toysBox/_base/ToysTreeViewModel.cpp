@@ -128,33 +128,33 @@ void ToysTreeViewModel::removeItems(const QList<QModelIndex> &itemsIndexesToRemo
     auto topmost = this->_getTopMostIndexes(itemsIndexesToRemove);
 
         //create list
-        QList<AssetsDatabase::FolderPath> pathsToRemove;
-        QList<RPZAsset::Hash> hashesToRemove;
-        QList<ToysTreeViewItem*> itemsToRemove;
+        QList<AssetsDatabase::FolderPath> topmostPathsToRemove;
+        QList<RPZAsset::Hash> topmostHashesToRemove;
+        QList<ToysTreeViewItem*> topmostItemsToRemove;
 
         for(const auto &index : topmost) {
             
             this->beginRemoveRows(index.parent(), index.row(), index.row());
             
             auto item = ToysTreeViewItem::fromIndex(index);
-            itemsToRemove += item;
+            topmostItemsToRemove += item;
             
             if(item->type() == ToysTreeViewItem::Type::Folder) {
-                pathsToRemove += item->path();
+                topmostPathsToRemove += item->path();
             } 
             
             else if(auto asset = item->asset()) {
-                hashesToRemove += asset->hash();
+                topmostHashesToRemove += asset->hash();
             }
 
         }
 
         //db remove
-        AssetsDatabase::get()->removeFolders(pathsToRemove);
-        AssetsDatabase::get()->removeAssets(hashesToRemove);
+        AssetsDatabase::get()->removeFolders(topmostPathsToRemove);
+        AssetsDatabase::get()->removeAssets(topmostHashesToRemove);
 
         //model remove
-        for(const auto item : itemsToRemove) {
+        for(const auto item : topmostItemsToRemove) {
             delete item;
         }
     
@@ -166,7 +166,6 @@ bool ToysTreeViewModel::moveItemsToContainer(const QModelIndex &parentIndex, con
     
     //get topmost only
     auto topMostIndexes = this->_getTopMostIndexes(indexesToMove);
-
 
     //parent index to elem
     auto parentElem = ToysTreeViewItem::fromIndex(parentIndex);
@@ -628,12 +627,15 @@ bool ToysTreeViewModel::_indexListContainsIndexOrParent(const QModelIndexList &b
     return this->_indexListContainsIndexOrParent(base, index.parent());
 }
 
-QModelIndexList ToysTreeViewModel::_getTopMostIndexes(const QModelIndexList &indexesList) {
+QModelIndexList ToysTreeViewModel::_getTopMostIndexes(QModelIndexList indexesList) {
     
+    //ensure to be sorted
+    std::sort(indexesList.begin(), indexesList.end());
+
     QModelIndexList higher;
 
     for(const auto &index : indexesList) {
-
+        
         //add to higher if empty
         if(!higher.count()) {
             higher.append(index);

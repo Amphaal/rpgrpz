@@ -98,7 +98,7 @@ class ToysTreeViewModel : public QAbstractItemModel, public AlterationInteractor
         /////////////////////////
 
         mutable QModelIndexList _bufferedDraggedIndexes;
-        QModelIndexList _getTopMostIndexes(const QModelIndexList &indexesList);
+        QModelIndexList _getTopMostIndexes(QModelIndexList indexesList);
         bool _indexListContainsIndexOrParent(const QModelIndexList &base, const QModelIndex &index);
         QPair<int, int> _anticipateInserts(const QModelIndexList &tbi);
 

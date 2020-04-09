@@ -58,7 +58,7 @@ class AssetsDatabase : public QObject, public JSONDatabase {
         void renameAsset(const QString &newName, const RPZAsset::Hash &hash);
 
         void removeAssets(const QList<RPZAsset::Hash> &hashesToRemove);
-        void removeFolders(const QList<AssetsDatabase::FolderPath> &pathsToRemove);
+        void removeFolders(const QList<AssetsDatabase::FolderPath> &topMostPathsToRemove);
 
         void moveAssetsTo(const AssetsDatabase::FolderPath &internalPathToMoveTo, const QList<RPZAsset::Hash> &hashesToMove);
         void moveFoldersTo(const AssetsDatabase::FolderPath &internalPathToMoveTo, const QList<AssetsDatabase::FolderPath> &topmostPathsToMove);
