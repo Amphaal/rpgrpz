@@ -50,15 +50,15 @@ class MapViewInteractibleDescriptor : public QWidget {
 
         void _updateData(const RPZAtom &atom) {
             
-            auto isNPC = atom.type() == RPZAtom::Type::NPC;
+            auto atomType = atom.type();
+            auto isNPC = atomType == RPZAtom::Type::NPC;
 
             //update text descr
             this->_descrLbl->setText(atom.toString());
             
             //update attitude 
             if(isNPC) this->_attitudeLbl->setPixmap(QPixmap(atom.descriptiveIconPath()));
-            else this->_attitudeLbl->setPixmap(QPixmap());
-            this->_attitudeLbl->setVisible(isNPC);
+            else this->_attitudeLbl->setPixmap(RPZAtom::iconPathByAtomType.value(atomType));
 
             // update portrait
             QPixmap toSet;
@@ -82,7 +82,6 @@ class MapViewInteractibleDescriptor : public QWidget {
                 mustDisplayGauge = gaugeValues.current != 0 || gaugeValues.min != 0 || gaugeValues.max != 0;
                 if(mustDisplayGauge) this->_gaugeW->updateValues(gaugeValues);
             }
-
             this->_gaugeW->setVisible(mustDisplayGauge);
 
         }
@@ -93,10 +92,8 @@ class MapViewInteractibleDescriptor : public QWidget {
         _portraitLbl(new QLabel), 
         _attitudeLbl(new QLabel), 
         _anim(new QPropertyAnimation(this, "geometry")) {
-            
-            this->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 
-            this->_attitudeLbl->setVisible(false);
+            this->_attitudeLbl->setVisible(true);
 
             this->_portraitLbl->setFixedHeight(_defaultPortraitSize.height());
             this->_portraitLbl->setVisible(false);
@@ -132,22 +129,23 @@ class MapViewInteractibleDescriptor : public QWidget {
 
             this->_anim->stop();
 
-            if(atom.isEmpty() || atom.type() != RPZAtom::Type::NPC) {
+            QRectF from = this->geometry();
+            QRectF to;
 
-                this->_anim->setStartValue(this->geometry());
-                this->_anim->setEndValue(this->_hiddenGeometry());
-
+            //close descriptor
+            if(atom.isEmpty() || !RPZAtom::mustDisplayDescriptorHint.contains(atom.type())) {
+                to = this->_hiddenGeometry();
             } 
             
+            //update and open
             else {
-
                 this->_updateData(atom);
-
-                this->_anim->setStartValue(this->geometry());
-                this->_anim->setEndValue(QRect({1, 1}, this->sizeHint()));
-
+                this->adjustSize();
+                to = QRect({1, 1}, this->sizeHint());
             }
-            
+
+            this->_anim->setStartValue(from);
+            this->_anim->setEndValue(to);
             this->_anim->start();
 
         }

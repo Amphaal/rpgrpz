@@ -186,6 +186,12 @@ class RPZAtom : public Serializable {
             RPZAtom::Type::Drawing,
             RPZAtom::Type::Event
         };
+
+        static inline const QList<RPZAtom::Type> mustDisplayDescriptorHint {
+            RPZAtom::Type::NPC,
+            RPZAtom::Type::Player,
+            RPZAtom::Type::POI
+        };
         
         //
         //
