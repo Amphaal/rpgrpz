@@ -263,6 +263,7 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams(const RPZAtom::Type &type) 
             out.insert(RPZAtom::Parameter::CharacterId);
             out.insert(RPZAtom::Parameter::CharacterName);
             out.insert(RPZAtom::Parameter::DefaultPlayerColor);
+            out.insert(RPZAtom::Parameter::TokenSize);
         }
         break;
 

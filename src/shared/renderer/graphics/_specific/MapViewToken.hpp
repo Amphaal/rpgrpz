@@ -35,6 +35,8 @@
 
 #include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
 #include "src/shared/renderer/graphics/_base/RPZAnimated.hpp"
+#include "src/shared/renderer/graphics/_base/RPZGridBound.hpp"
+
 #include "src/shared/renderer/animator/MapViewAnimator.hpp"
 #include "src/shared/database/AssetsDatabase.h"
 
@@ -119,7 +121,7 @@ class MapViewTokenOutline : public QObject, public QGraphicsItem, public RPZGrap
 
 };
 
-class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsItem, public RPZAnimated {
+class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsItem, public RPZAnimated, public RPZGridBound {
     
     Q_OBJECT
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
@@ -144,6 +146,15 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
 
         ~MapViewToken() {
             if(this->_outline) this->_outline->deleteLater();
+        }
+
+        void adaptativePointAlignementToGrid(const RPZMapParameters &mapParams, QPointF &pointInSceneCoords) const override {
+            
+            if(mapParams.movementSystem() != RPZMapParameters::MovementSystem::Grid) return;
+
+            if(this->_sizeMultiplier % 2) mapParams.alignPointToGrid(pointInSceneCoords); //if even
+            else mapParams.alignPointToGridCrossroad(pointInSceneCoords); //if odd
+
         }
 
         void updateTokenSize(const RPZAtom::TokenSize &tokenSize) {
@@ -206,7 +217,6 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
             this->_changeColor(toApply);
             this->update();
         }
-
 
         QRectF boundingRect() const override {
             return this->_mainRect;
