@@ -300,10 +300,19 @@ QVariant ToysTreeViewModel::data(const QModelIndex &index, int role) const {
         
         case Qt::DisplayRole: {
             switch(index.column()) {
-                case 0:
+                
+                case 0: {
                     return data->displayName();
-                case 1:
-                    return data->isContainer() ? QString::number(data->toySubItemCount()) : QVariant();
+                }
+                break;
+
+                case 1: {
+                    if(!data->isContainer() || data->type() == ToysTreeViewItem::Type::InternalContainer) return QVariant();
+                    auto subItemsCount = data->toySubItemCount();
+                    return subItemsCount ? QString::number(data->toySubItemCount()) + QStringLiteral(u"🖻") : QVariant();
+                }
+                break;
+
             }
         }
         break;
