@@ -88,9 +88,9 @@ class MapViewInteractibleDescriptor : public QWidget {
 
     public:
         MapViewInteractibleDescriptor(QWidget *parent = nullptr) : QWidget(parent),
-        _descrLbl(new QLabel), 
-        _portraitLbl(new QLabel), 
-        _attitudeLbl(new QLabel), 
+        _descrLbl(new QLabel(this)), 
+        _portraitLbl(new QLabel(this)), 
+        _attitudeLbl(new QLabel(this)), 
         _anim(new QPropertyAnimation(this, "geometry")) {
 
             this->_attitudeLbl->setVisible(true);
