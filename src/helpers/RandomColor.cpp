@@ -22,7 +22,7 @@
 QColor RandomColor::getRandomKellyColor(const RandomColor::Context &context) {
     
     //fill if empty
-    if(!_availableColorsLeft.value(context).isEmpty()) {
+    if(_availableColorsLeft.value(context).isEmpty()) {
         _availableColorsLeft.insert(context, _kellyColors);
     }
 
