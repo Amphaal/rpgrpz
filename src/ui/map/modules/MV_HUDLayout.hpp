@@ -44,7 +44,7 @@ class MV_HUDLayout {
         }
 
         void displayHeavyLoadPlaceholder() {
-            this->_heavyLoadColor = RandomColor::getRandomColor();
+            this->_heavyLoadColor = RandomColor::getRandomKellyColor(RandomColor::Context::LoaderColor);
             this->_heavyLoadExpectedCount = 0;
             this->_heavyLoadCurrentCount = 0;
             this->_view->update();

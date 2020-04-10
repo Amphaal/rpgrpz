@@ -87,7 +87,7 @@ void RPZUser::randomiseColor() {
 }
 
 void RPZUser::_setColor(const QColor &color) {
-    auto colorToUse = color.isValid() ? color.name() : RandomColor::getRandomColor().name();
+    auto colorToUse = color.isValid() ? color.name() : RandomColor::getRandomKellyColor(RandomColor::Context::PlayerColor).name();
     this->insert(QStringLiteral(u"color"), colorToUse);
 }
 

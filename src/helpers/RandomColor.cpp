@@ -19,22 +19,31 @@
 
 #include "RandomColor.h"
 
-QColor RandomColor::getRandomColor() {
+QColor RandomColor::getRandomKellyColor(const RandomColor::Context &context) {
     
-    if(!_rand) {
-        _rand = QRandomGenerator::global()->bounded(1.0);
-    } else {
-        _rand = fmod(_rand + _goldenRatio, 1);
+    //fill if empty
+    if(!_availableColorsLeft.value(context).isEmpty()) {
+        _availableColorsLeft.insert(context, _kellyColors);
     }
 
-    return QColor::fromHsvF(_rand, .5, .95);
+    auto &inC = _availableColorsLeft[context];
+
+    //if single left, return it
+    if(inC.count() == 1) return inC.takeFirst();
+    
+    //find index
+    auto rPicked = QRandomGenerator::global()->bounded(0, inC.count() - 1);
+
+    //return color
+    return inC.takeAt(rPicked);
+
 }
 
-QList<QColor> RandomColor::generateColors(int howMany) {
+QList<QColor> RandomColor::generateColors(const RandomColor::Context &context, int howMany) {
     QList<QColor> list;
 
     for(int i = 0; i < howMany; i++) {
-        auto color = getRandomColor();
+        auto color = getRandomKellyColor(context);
         list.append(color);
     }   
 

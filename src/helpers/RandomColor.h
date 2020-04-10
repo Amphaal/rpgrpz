@@ -27,11 +27,20 @@
 
 class RandomColor {
     public:
-        static QColor getRandomColor();
+        enum Context {
+            PlayerColor,
+            LoaderColor
+        };
 
-        static QList<QColor> generateColors(int howMany = 10);
+        static QColor getRandomKellyColor(const RandomColor::Context &context);
+
+        static QList<QColor> generateColors(const RandomColor::Context &context, int howMany = 22);
 
     private:
-        static inline double _rand = 0;
-        static inline const double _goldenRatio = 0.618033988749895;
+        static inline const QList<QColor> _kellyColors { 
+            "#FFB300", "#803E75", "#FF6800", "#A6BDD7", "#C10020", "#CEA262", "#817066",  //OK
+            "#007D34",  "#F6768E",  "#00538A", "#FF7A5C", "#53377A", "#FF8E00", "#B32851", "#F4C800", "#7F180D", "#93AA00", "#593315", "#F13A13", "#232C16" //No good for defective color vision
+        };
+
+        static inline QHash<RandomColor::Context, QList<QColor>> _availableColorsLeft;
 };
