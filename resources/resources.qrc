@@ -99,6 +99,8 @@
         <file>assets/grass.png</file>
         <file>assets/hidden.png</file>
         <file>assets/smoke.png</file>
+        <file>assets/event.png</file>
+        <file>assets/pointOfInterest.png</file>
         <file>icons/app/tokenSize/medium.png</file>
         <file>icons/app/tokenSize/large.png</file>
         <file>icons/app/tokenSize/xxl.png</file>
