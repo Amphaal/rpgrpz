@@ -305,7 +305,6 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
                 case RPZMapParameters::MovementSystem::Linear: {
                     this->_drawRangeEllipse(painter, option, pp); //draw ellipse
                     if(_singleItemToWalk) this->_drawLinearRangeTextIndicator(painter, option, pp); //print range indicator
-                    painter->drawRect(this->boundingRect());
                 }
                 break;
 
