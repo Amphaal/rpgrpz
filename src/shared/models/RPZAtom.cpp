@@ -207,6 +207,7 @@ const QString RPZAtom::characterName() const { return this->metadata(RPZAtom::Pa
 const QString RPZAtom::NPCShortName() const { return this->metadata(RPZAtom::Parameter::NPCShortName).toString(); }
 RPZAtom::NPCType RPZAtom::NPCAttitude() const { return (RPZAtom::NPCType)this->metadata(RPZAtom::Parameter::NPCAttitude).toInt(); }
 bool RPZAtom::isCoveredByFog() const { return this->metadata(RPZAtom::Parameter::CoveredByFog).toBool(); }
+RPZAtom::TokenSize RPZAtom::tokenSize() const { return (RPZAtom::TokenSize)this->metadata(RPZAtom::Parameter::TokenSize).toInt(); }
 
 QPainterPath RPZAtom::shape() const {
     auto rawShape = this->metadata(RPZAtom::Parameter::Shape).toByteArray();

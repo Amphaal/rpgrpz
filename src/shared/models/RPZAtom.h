@@ -123,7 +123,7 @@ class RPZAtom : public Serializable {
         };
 
         enum class TokenSize {
-            Normal,
+            Normal = 1,
             Big,
             VeryBig
         };
@@ -273,6 +273,7 @@ class RPZAtom : public Serializable {
         RPZAtom::NPCType NPCAttitude() const;
         const RPZGauge::MinimalistGauge NPCGauge() const;
         bool isCoveredByFog() const;
+        RPZAtom::TokenSize tokenSize() const;
 
         QPainterPath shape() const;
         void setShape(const QPainterPath &path);
@@ -406,6 +407,7 @@ inline uint qHash(const RPZAtom::Type &key, uint seed = 0) {return uint(key) ^ s
 inline uint qHash(const RPZAtom::BrushType &key, uint seed = 0) {return uint(key) ^ seed;}
 inline uint qHash(const RPZAtom::Parameter &key, uint seed = 0) {return uint(key) ^ seed;}
 inline uint qHash(const RPZAtom::NPCType &key, uint seed = 0) {return uint(key) ^ seed;}
+inline uint qHash(const RPZAtom::TokenSize &key, uint seed = 0) {return uint(key) ^ seed;}
 
 Q_DECLARE_METATYPE(RPZAtom*)
 Q_DECLARE_METATYPE(RPZAtom)

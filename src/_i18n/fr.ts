@@ -55,7 +55,7 @@
 <context>
     <name>AtomEditor</name>
     <message numerus="yes">
-        <location filename="../ui/atomEditor/AtomEditor.cpp" line="264"/>
+        <location filename="../ui/atomEditor/AtomEditor.cpp" line="265"/>
         <source> (%n element(s))</source>
         <translation>
             <numerusform> (%n élément)</numerusform>
@@ -63,17 +63,17 @@
         </translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="67"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="68"/>
         <source>Nothing to modify</source>
         <translation>Rien à modifier</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="68"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="69"/>
         <source>Template modification</source>
         <translation>Modification du modèle</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="69"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="70"/>
         <source>Selection modification</source>
         <translation>Modification de la sélection</translation>
     </message>
@@ -169,7 +169,7 @@
     <message>
         <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="63"/>
         <source>Token size</source>
-        <translation type="unfinished"></translation>
+        <translation>Taille du jeton</translation>
     </message>
 </context>
 <context>
@@ -1311,7 +1311,7 @@
         <translation>%1 atome(s) selectionné(s)</translation>
     </message>
     <message>
-        <location filename="../shared/renderer/graphics/_specific/MapViewToken.hpp" line="350"/>
+        <location filename="../shared/renderer/graphics/_specific/MapViewToken.hpp" line="368"/>
         <source>P</source>
         <comment>player sign</comment>
         <translation>J</translation>
@@ -1483,6 +1483,24 @@
         <location filename="../ui/sheets/tabs/StatusTab.hpp" line="113"/>
         <source>Abilities</source>
         <translation>Compétences</translation>
+    </message>
+</context>
+<context>
+    <name>TokenSizeEditor</name>
+    <message>
+        <location filename="../ui/atomEditor/editors/specific/TokenSizeEditor.hpp" line="35"/>
+        <source>Normal</source>
+        <translation>Normale</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/editors/specific/TokenSizeEditor.hpp" line="36"/>
+        <source>Big</source>
+        <translation>Grosse</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/editors/specific/TokenSizeEditor.hpp" line="37"/>
+        <source>Very Big</source>
+        <translation>Très grosse</translation>
     </message>
 </context>
 <context>

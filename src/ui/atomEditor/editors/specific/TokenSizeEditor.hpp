@@ -86,6 +86,7 @@ class TokenSizeEditor : public AtomSubEditor {
             auto data = defaultValues[this->_params.first()];
             auto indexToSelect = this->_combo->findData(data);
             this->_combo->setCurrentIndex(indexToSelect);
+            this->_combo->setEnabled(context.mode == AtomSubEditor::EditMode::Template);
             
         }
 
