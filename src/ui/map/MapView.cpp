@@ -445,12 +445,6 @@ bool MapView::_tryToInvokeWalkableHelper(const QList<QGraphicsItem*> &toBeWalked
         toBeWalked, 
         this
     );
-    
-    //add it to scene
-    this->scene()->addItem(this->_walkingHelper);
-
-    //define tool
-    this->_changeTool(MapTool::Walking);
 
     return true;
 
@@ -678,7 +672,14 @@ void MapView::mousePressEvent(QMouseEvent *event) {
                 
             case MapTool::Default: {
                 this->_ignoreSelectionChangedEvents = !this->_isAnySelectableItemsUnderCursor(event->pos());
-                QGraphicsView::mousePressEvent(event); //allows rubber band selection
+                
+                if(!this->_ignoreSelectionChangedEvents && this->_walkingHelper) {
+                    this->_changeTool(MapTool::Walking);
+                } 
+                else {
+                    QGraphicsView::mousePressEvent(event); //allows rubber band selection
+                }
+                
             }
             break;
 
@@ -919,7 +920,6 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
         this->_clearWalkingHelper();
     }
 
-
     //depending on tool
     switch(newTool) {
 
@@ -962,11 +962,17 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
         }
         break;
         
-        case MapTool::Walking:
+        case MapTool::Walking: {
+                
+            //add it to scene
+            this->scene()->addItem(this->_walkingHelper);
+
             this->setInteractive(false);
             this->setDragMode(QGraphicsView::DragMode::NoDrag);
             this->setCursor(this->_walkingCursor);
             break;
+        }
+
 
         case MapTool::Default:
         default:
