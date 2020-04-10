@@ -167,7 +167,7 @@ ELSEIF(APPLE)
 
     #add highdpi support / menu behavior via plist template
     set_target_properties(appExec PROPERTIES 
-        MACOSX_BUNDLE_INFO_PLIST "templates/_Info.plist"
+        MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/templates/_Info.plist"
         MACOSX_BUNDLE_ICON_FILE "app.icns"
         MACOSX_PACKAGE_LOCATION "Resources"
     ) 
@@ -335,7 +335,6 @@ IF(MINGW OR APPLE)
     )
     #opus stream read
     LIST(APPEND _gstreamer_plugins 
-        gstwaveform
         gstsoup
         gsttypefindfunctions
         gstmatroska
@@ -351,19 +350,47 @@ IF(MINGW OR APPLE)
     )
 
     #get plugin shared libraries location
-    pkg_get_variable(GSTREAMER_PLUGINS_DLL_LOCATION gstreamer-1.0 
+    pkg_get_variable(GSTREAMER_PLUGINS_LIB_LOCATION gstreamer-1.0 
         pluginsdir
     )
 
-    message("Searching for gst plugins in [${GSTREAMER_PLUGINS_DLL_LOCATION}]...")
+    IF(MINGW)
+        LIST(APPEND _gstreamer_plugins
+            gstwaveform
+        )
+    endif()
+
+    IF(APPLE)
+        
+        #base plugins
+        pkg_get_variable(GSTREAMER_BASE_PLUGINS_LIB_LOCATION gstreamer-audio-1.0 
+            libdir
+        )
+        SET(GSTREAMER_BASE_PLUGINS_LIB_LOCATION ${GSTREAMER_BASE_PLUGINS_LIB_LOCATION}/gstreamer-1.0)
+
+        #good plugins
+        string(REPLACE "gst-plugins-base" "gst-plugins-good" 
+            GSTREAMER_GOOD_PLUGINS_LIB_LOCATION
+            ${GSTREAMER_BASE_PLUGINS_LIB_LOCATION}
+        )
+
+        list(APPEND GSTREAMER_PLUGINS_LIB_LOCATION 
+            ${GSTREAMER_GOOD_PLUGINS_LIB_LOCATION}
+            ${GSTREAMER_BASE_PLUGINS_LIB_LOCATION}
+        )
+        
+    endif()
+
+    message("Searching for gst plugins in [${GSTREAMER_PLUGINS_LIB_LOCATION}]...")
 
     #copy gstreamer plugins into output
     foreach(_gstPluginLib IN ITEMS ${_gstreamer_plugins})
 
         #using find_file because find_library is kinda broken with .dll on MinGW
         find_file(${_gstPluginLib}_LIBRARY 
-            NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}${_gstPluginLib}${CMAKE_SHARED_LIBRARY_SUFFIX}
-            PATHS ${GSTREAMER_PLUGINS_DLL_LOCATION}
+            NAMES   ${CMAKE_SHARED_LIBRARY_PREFIX}${_gstPluginLib}${CMAKE_SHARED_LIBRARY_SUFFIX}
+                    lib${_gstPluginLib}.so
+            PATHS ${GSTREAMER_PLUGINS_LIB_LOCATION}
             NO_DEFAULT_PATH
         )
 
@@ -407,19 +434,7 @@ IF(MINGW)
 endif()
 
 #missing deps for gstreamer
-if(APPLE)
-    list(APPEND GST_SLIBS
-        bz2
-        gmp
-        gnutls
-        hogweed
-        intl
-        nettle
-        soup-2.4
-        tasn1
-        xml2
-    )
-elseif(MINGW)
+if(MINGW)
     list(APPEND GST_SLIBS
         gmp-10
         gnutls-30
@@ -430,9 +445,7 @@ elseif(MINGW)
         winpthread-1
         xml2-2
     )
-endif()
 
-IF(MINGW OR APPLE)
     #import all missing GSTREAMER libs
     foreach(_gstSLib IN ITEMS ${GST_SLIBS})
 
