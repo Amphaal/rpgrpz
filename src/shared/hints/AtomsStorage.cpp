@@ -623,7 +623,7 @@ RPZMap<RPZAtom> AtomsStorage::_generateAtomDuplicates(QList<RPZAtom::Id> RPZAtom
 }
 
 bool AtomsStorage::_isAtomOwnable(const RPZAtom &atom) const {
-    return atom.isWalkableAtom();
+    return atom.type() == RPZAtom::Type::Player;
 }
 
 QPointF AtomsStorage::_getPositionFromAtomDuplication(const RPZAtom &atomToDuplicate, double distanceFromOriginal) {
