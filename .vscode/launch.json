@@ -12,10 +12,11 @@
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "MIMode": "gdb",
+            "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ",
             "windows": {
                 "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
                 "miDebuggerPath": "${env:MINGW64_ROOT}/bin/gdb.exe"
-            },
+            }
         },
         {
           "targetArchitecture": "x64",
@@ -25,6 +26,7 @@
           "request": "launch",
           "cwd": "${workspaceFolder}",
           "MIMode": "gdb",
+          "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ",
           "windows": {
               "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
               "miDebuggerPath": "${env:MINGW64_ROOT}/bin/gdb.exe"
@@ -39,6 +41,7 @@
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "MIMode": "gdb",
+            "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ",
             "windows": {
                 "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
                 "miDebuggerPath": "${env:MINGW64_ROOT}/bin/gdb.exe"

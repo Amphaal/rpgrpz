@@ -26,9 +26,9 @@ different license and copyright still refer to this GNU General Public License.
 #### The Windows Installer is available on Bintray https://bintray.com/amphaal/rpgrpz/install-packages#files
 
 Supported (64bits only) :
-- Windows : OK
-- Archlinux : OK
-- MacOS : WIP
+- Windows : OK (CI + CD)
+- Archlinux : OK (CI)
+- MacOS : OK (Local)
 
 Prepare your build environement:
 - For Windows
@@ -43,6 +43,7 @@ Prepare your build environement:
     - Run : `pacman -S --needed - < ./prerequisites/arch/pkglist_dev.txt`
 - For OSX
     - Install latest XCode from the App Store
+    - Run : `brew upgrade`
     - Run : `brew install $(cat ./prerequisites/osx/pkglist_build.txt)`
     - Run : `brew install $(cat ./prerequisites/osx/pkglist_dev.txt)`
 
