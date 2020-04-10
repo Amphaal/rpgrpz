@@ -42,11 +42,6 @@ class LogItem : public QWidget {
 
 };
 
-class LogText : public QLabel {
-    public:
-        LogText(const QString &text);
-};
-
 class LogContainer : public QWidget {
     public:
         LogContainer(QWidget *parent = nullptr);

@@ -52,7 +52,6 @@ void MessagesLog::handleResponse(const RPZResponse &response) {
     //add text
     auto txt = new LogText(response.toString());
     newLine->horizontalLayout()->addWidget(txt, 10);
-
     
     //set palette
     newLine->setPalette(response.palette());
@@ -84,9 +83,9 @@ void MessagesLog::_handleMessage(const RPZMessage &msg, bool isLocal) {
     //create new line
     targetLine = LogContainer::_addLine(msg);
         
-    //add text
-    auto txt = new LogText(msg.toString());
-    targetLine->horizontalLayout()->addWidget(txt, 10);
+    //add content
+    auto content = new LogContent(msg);
+    targetLine->horizontalLayout()->addWidget(content, 10);
 
     //define palette to apply
     auto msgPalette = msg.palette();

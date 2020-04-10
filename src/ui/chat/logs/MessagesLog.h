@@ -20,6 +20,8 @@
 #pragma once
 
 #include "src/ui/chat/logs/_base/LogContainer.h"
+#include "src/ui/chat/logs/components/LogContent.hpp"
+#include "src/ui/chat/logs/components/LogText.hpp"
 
 #include "src/shared/models/messaging/RPZMessage.h"
 #include "src/shared/models/messaging/RPZResponse.h"

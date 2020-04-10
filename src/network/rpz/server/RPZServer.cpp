@@ -148,6 +148,16 @@ void RPZServer::_onClientSocketDisconnected(JSONSocket* disconnectedSocket) {
 
     //tell other clients that the user is gone
     this->_sendToAll(RPZJSON::Method::UserOut, QVariant::fromValue<RPZUser::Id>(idToRemove));
+    this->_logUserAsMessage(RPZJSON::Method::UserOut, removedUser); 
+
+}
+
+void RPZServer::_logUserAsMessage(const RPZJSON::Method &method, const RPZUser &user) {
+    
+    RPZMessage msg(method == RPZJSON::Method::UserIn ? "in" : "out", MessageInterpreter::Command::C_UserLog);
+    msg.setOwnership(user);
+
+    this->_messages.insert(msg.id(), msg);
 
 }
 
@@ -291,7 +301,9 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
             this->_attributeRoleToUser(target, targetUser, handshakePkg);
             
             //tell the others that this user exists
-            this->_sendToAllExcept(target, RPZJSON::Method::UserIn, targetUser); 
+            this->_sendToAllExcept(target, RPZJSON::Method::UserIn, targetUser);
+            this->_logUserAsMessage(RPZJSON::Method::UserIn, targetUser); 
+            
 
             //send game session
             this->_sendGameSession(target, targetUser);
