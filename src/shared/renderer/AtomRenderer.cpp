@@ -194,7 +194,6 @@ QGraphicsTextItem* AtomRenderer::_createTextItem(const RPZAtom &atom) {
 
 MapViewToken* AtomRenderer::_createToken(const RPZAtom &atom, bool owned) {
     auto out = new MapViewToken(_mapParams, atom);
-    RPZQVariant::setIsGridBound(out, true);
     out->setOwned(owned);
     return out;
 }

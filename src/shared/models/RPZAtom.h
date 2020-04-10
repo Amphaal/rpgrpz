@@ -80,7 +80,8 @@ class RPZAtom : public Serializable {
             MaxNPCHealth,
             MinNPCHealth,
             Opacity,
-            CoveredByFog
+            CoveredByFog,
+            TokenSize
         };
         Q_ENUM(Parameter)
 
@@ -119,6 +120,12 @@ class RPZAtom : public Serializable {
             Neutral,
             Hostile,
             Friendly
+        };
+
+        enum class TokenSize {
+            Normal = 1,
+            Big,
+            VeryBig
         };
 
         using Id = SnowFlake::Id;
@@ -266,6 +273,7 @@ class RPZAtom : public Serializable {
         RPZAtom::NPCType NPCAttitude() const;
         const RPZGauge::MinimalistGauge NPCGauge() const;
         bool isCoveredByFog() const;
+        RPZAtom::TokenSize tokenSize() const;
 
         QPainterPath shape() const;
         void setShape(const QPainterPath &path);
@@ -317,7 +325,8 @@ class RPZAtom : public Serializable {
             RPZAtom::Parameter::Text,
             RPZAtom::Parameter::TextSize,
             RPZAtom::Parameter::Shape,
-            RPZAtom::Parameter::Position
+            RPZAtom::Parameter::Position,
+            RPZAtom::Parameter::TokenSize
         };
 
         static inline const QHash<RPZAtom::Parameter, QString> _str = {
@@ -350,7 +359,8 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::MaxNPCHealth, QStringLiteral(u"npc_maxh") },
             { RPZAtom::Parameter::MinNPCHealth, QStringLiteral(u"npc_minh") },
             { RPZAtom::Parameter::Opacity, QStringLiteral(u"o") },
-            { RPZAtom::Parameter::CoveredByFog, QStringLiteral("cbf") }
+            { RPZAtom::Parameter::CoveredByFog, QStringLiteral("cbf") },
+            { RPZAtom::Parameter::TokenSize, QStringLiteral("t_sz") }
         };
 
         static inline const RPZAtom::Updates _defaultVal = {
@@ -383,7 +393,8 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::MaxNPCHealth, 0 },
             { RPZAtom::Parameter::MinNPCHealth, 0 },
             { RPZAtom::Parameter::Opacity, 100 },
-            { RPZAtom::Parameter::CoveredByFog, false }
+            { RPZAtom::Parameter::CoveredByFog, false },
+            { RPZAtom::Parameter::TokenSize, (int)RPZAtom::TokenSize::Normal }
         };
 
         void _setType(const RPZAtom::Type &type);
@@ -396,6 +407,7 @@ inline uint qHash(const RPZAtom::Type &key, uint seed = 0) {return uint(key) ^ s
 inline uint qHash(const RPZAtom::BrushType &key, uint seed = 0) {return uint(key) ^ seed;}
 inline uint qHash(const RPZAtom::Parameter &key, uint seed = 0) {return uint(key) ^ seed;}
 inline uint qHash(const RPZAtom::NPCType &key, uint seed = 0) {return uint(key) ^ seed;}
+inline uint qHash(const RPZAtom::TokenSize &key, uint seed = 0) {return uint(key) ^ seed;}
 
 Q_DECLARE_METATYPE(RPZAtom*)
 Q_DECLARE_METATYPE(RPZAtom)

@@ -1031,8 +1031,8 @@ void MapView::_mightCenterGhostWithCursor() {
         }
 
         //if grid movement and alignable, stick to grid
-        if(this->_currentMapParameters.movementSystem() == RPZMapParameters::MovementSystem::Grid && RPZQVariant::isGridBound(ghost)) {
-            this->_currentMapParameters.alignPointToGrid(cursorPosInScene);
+        if(auto gridBound = dynamic_cast<const RPZGridBound*>(ghost)) {
+            gridBound->adaptativePointAlignementToGrid(this->_currentMapParameters, cursorPosInScene);
         }
         
         ghost->setPos(cursorPosInScene);

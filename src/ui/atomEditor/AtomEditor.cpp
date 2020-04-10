@@ -122,6 +122,7 @@ void AtomEditor::_addEditor(AtomSubEditor* editor) {
 
 void AtomEditor::_createEditorsFromAtomParameters() {
 
+    _addEditor(new TokenSizeEditor);
     _addEditor(new NPCAttitudeEditor);
     _addEditor(new CharacterPickerEditor);
 

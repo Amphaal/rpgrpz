@@ -35,6 +35,8 @@
 
 #include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
 #include "src/shared/renderer/graphics/_base/RPZAnimated.hpp"
+#include "src/shared/renderer/graphics/_base/RPZGridBound.hpp"
+
 #include "src/shared/renderer/animator/MapViewAnimator.hpp"
 #include "src/shared/database/AssetsDatabase.h"
 
@@ -119,8 +121,7 @@ class MapViewTokenOutline : public QObject, public QGraphicsItem, public RPZGrap
 
 };
 
-
-class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsItem, public RPZAnimated {
+class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsItem, public RPZAnimated, public RPZGridBound {
     
     Q_OBJECT
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
@@ -131,16 +132,9 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
         MapViewToken(const RPZMapParameters &mapParameters, const RPZAtom &atom) {           
 
             this->_tokenType = atom.type();
-
-            auto tileSize = mapParameters.tileWidthInPoints();
-            auto tokenSize = QSizeF(tileSize * .95, tileSize * .95);
-
-            auto startPosComp = QPointF(-tokenSize.width() / 2, -tokenSize.height() / 2);
-            this->_mainRect = QRectF(startPosComp, tokenSize);
-            this->setTransformOriginPoint(startPosComp);
-
-            auto prc = this->_mainRect.width() * 0.1;
-            this->_upperRect = this->_mainRect.marginsRemoved(QMarginsF(prc, prc, prc, prc));
+            this->_tileWidthInPoints = mapParameters.tileWidthInPoints();
+            
+            this->updateTokenSize(atom.tokenSize());
             
             //find portrait
             this->_definePortrait(atom);
@@ -152,6 +146,38 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
 
         ~MapViewToken() {
             if(this->_outline) this->_outline->deleteLater();
+        }
+
+        void adaptativePointAlignementToGrid(const RPZMapParameters &mapParams, QPointF &pointInSceneCoords) const override {
+            
+            if(mapParams.movementSystem() != RPZMapParameters::MovementSystem::Grid) return;
+
+            if(this->_sizeMultiplier % 2) mapParams.alignPointToGrid(pointInSceneCoords); //if even
+            else mapParams.alignPointToGridCrossroad(pointInSceneCoords); //if odd
+
+        }
+
+        void updateTokenSize(const RPZAtom::TokenSize &tokenSize) {
+            
+            this->_sizeMultiplier = (int)tokenSize;
+
+            //define start pos and transform origin
+            auto tileSize = this->_tileWidthInPoints * this->_sizeMultiplier;
+            QSizeF tokenSizeRef(tileSize * .95, tileSize * .95);
+            QPointF startPosComp(
+                -tokenSizeRef.width() / 2, 
+                -tokenSizeRef.height() / 2
+            );
+            this->setTransformOriginPoint(startPosComp);
+
+            //define main rect
+            this->_mainRect = QRectF(startPosComp, tokenSizeRef);
+
+            //define upper rect
+            auto prc = this->_mainRect.width() * 0.1; //toRemoveForUpperRect
+            QMarginsF margintoRemoveForUpperRect(prc, prc, prc, prc);
+            this->_upperRect = this->_mainRect.marginsRemoved(margintoRemoveForUpperRect);
+
         }
 
         void setOwned(bool owned) {
@@ -192,7 +218,6 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
             this->update();
         }
 
-
         QRectF boundingRect() const override {
             return this->_mainRect;
         }
@@ -212,8 +237,11 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
 
     private:
         MapViewTokenOutline* _outline = nullptr;
+        qreal _tileWidthInPoints = 0;
         RPZAtom::Type _tokenType;
+        int _sizeMultiplier = 1;
         bool _owned = false;
+        
         QPixmap _portrait;
 
         QRectF _upperRect;

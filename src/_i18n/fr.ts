@@ -55,7 +55,7 @@
 <context>
     <name>AtomEditor</name>
     <message numerus="yes">
-        <location filename="../ui/atomEditor/AtomEditor.cpp" line="264"/>
+        <location filename="../ui/atomEditor/AtomEditor.cpp" line="265"/>
         <source> (%n element(s))</source>
         <translation>
             <numerusform> (%n élément)</numerusform>
@@ -63,17 +63,17 @@
         </translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="67"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="68"/>
         <source>Nothing to modify</source>
         <translation>Rien à modifier</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="68"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="69"/>
         <source>Template modification</source>
         <translation>Modification du modèle</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="69"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="70"/>
         <source>Selection modification</source>
         <translation>Modification de la sélection</translation>
     </message>
@@ -165,6 +165,11 @@
         <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="62"/>
         <source>Opacity</source>
         <translation>Opacité</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="63"/>
+        <source>Token size</source>
+        <translation>Taille du jeton</translation>
     </message>
 </context>
 <context>
@@ -1097,78 +1102,78 @@
     </message>
     <message>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="222"/>
-        <location filename="../shared/models/RPZAtom.h" line="149"/>
+        <location filename="../shared/models/RPZAtom.h" line="156"/>
         <source>Drawing</source>
         <translation>Dessin</translation>
     </message>
     <message>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="223"/>
-        <location filename="../shared/models/RPZAtom.h" line="150"/>
+        <location filename="../shared/models/RPZAtom.h" line="157"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="151"/>
+        <location filename="../shared/models/RPZAtom.h" line="158"/>
         <source>Object</source>
         <translation>Objet</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="152"/>
+        <location filename="../shared/models/RPZAtom.h" line="159"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="153"/>
+        <location filename="../shared/models/RPZAtom.h" line="160"/>
         <source>Atom</source>
         <translation>Atome</translation>
     </message>
     <message>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="221"/>
-        <location filename="../shared/models/RPZAtom.h" line="154"/>
+        <location filename="../shared/models/RPZAtom.h" line="161"/>
         <source>Event</source>
         <translation>Evénement</translation>
     </message>
     <message>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="224"/>
-        <location filename="../shared/models/RPZAtom.h" line="155"/>
+        <location filename="../shared/models/RPZAtom.h" line="162"/>
         <source>Player</source>
         <translation>Joueur</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="156"/>
+        <location filename="../shared/models/RPZAtom.h" line="163"/>
         <source>Non-playable character</source>
         <translation>Personnage non-joueur</translation>
     </message>
     <message>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="225"/>
-        <location filename="../shared/models/RPZAtom.h" line="157"/>
+        <location filename="../shared/models/RPZAtom.h" line="164"/>
         <source>Point of interest</source>
         <translation>Point d&apos;intérêt</translation>
     </message>
     <message>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="226"/>
-        <location filename="../shared/models/RPZAtom.h" line="158"/>
+        <location filename="../shared/models/RPZAtom.h" line="165"/>
         <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="77"/>
         <source>Fog of war</source>
         <translation>Brouillard de guerre</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="162"/>
+        <location filename="../shared/models/RPZAtom.h" line="169"/>
         <source>NPCs</source>
         <translation>PNJs</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="163"/>
+        <location filename="../shared/models/RPZAtom.h" line="170"/>
         <source>Events</source>
         <translation>Evénements</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="164"/>
+        <location filename="../shared/models/RPZAtom.h" line="171"/>
         <source>Players</source>
         <translation>Joueurs</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="165"/>
+        <location filename="../shared/models/RPZAtom.h" line="172"/>
         <source>POIs</source>
         <translation>Points d&apos;intérêt</translation>
     </message>
@@ -1306,7 +1311,7 @@
         <translation>%1 atome(s) selectionné(s)</translation>
     </message>
     <message>
-        <location filename="../shared/renderer/graphics/_specific/MapViewToken.hpp" line="350"/>
+        <location filename="../shared/renderer/graphics/_specific/MapViewToken.hpp" line="378"/>
         <source>P</source>
         <comment>player sign</comment>
         <translation>J</translation>
@@ -1478,6 +1483,24 @@
         <location filename="../ui/sheets/tabs/StatusTab.hpp" line="113"/>
         <source>Abilities</source>
         <translation>Compétences</translation>
+    </message>
+</context>
+<context>
+    <name>TokenSizeEditor</name>
+    <message>
+        <location filename="../ui/atomEditor/editors/specific/TokenSizeEditor.hpp" line="35"/>
+        <source>Normal</source>
+        <translation>Normale</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/editors/specific/TokenSizeEditor.hpp" line="36"/>
+        <source>Big</source>
+        <translation>Grosse</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/editors/specific/TokenSizeEditor.hpp" line="37"/>
+        <source>Very Big</source>
+        <translation>Très grosse</translation>
     </message>
 </context>
 <context>

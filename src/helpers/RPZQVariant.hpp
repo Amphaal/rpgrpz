@@ -100,13 +100,6 @@ class RPZQVariant {
             item->setData((int)RPZQVariant::Roles::CharacterId, QVariant::fromValue<RPZCharacter::Id>(characterId));
         }
 
-        static bool isGridBound(const QGraphicsItem* item) {
-            return item->data((int)RPZQVariant::Roles::GridAlignable).toBool();
-        }
-        static void setIsGridBound(QGraphicsItem* item, bool isAlignable) {
-            item->setData((int)RPZQVariant::Roles::GridAlignable, isAlignable);
-        }
-
         static auto brushTransform(QGraphicsItem *item) {
             
             auto rawHash = item->data((int)RPZQVariant::Roles::BrushTransform).toHash();

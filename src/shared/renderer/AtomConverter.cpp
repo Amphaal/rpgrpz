@@ -169,7 +169,15 @@ void AtomConverter::_bulkTransformApply(QGraphicsItem* itemBrushToUpdate) {
 bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &param, QGraphicsItem* itemToUpdate, const QVariant &val) {
     
     switch(param) {
-                        
+            
+            case RPZAtom::Parameter::TokenSize: {
+                if(auto cItem = dynamic_cast<MapViewToken*>(itemToUpdate)) {
+                    auto type = (RPZAtom::TokenSize)val.toInt();
+                    cItem->updateTokenSize(type);
+                }
+            }
+            break;
+
             //on moving
             case RPZAtom::Parameter::Position: {
                 auto destPos = val.toPointF();
