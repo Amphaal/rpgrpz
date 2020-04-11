@@ -67,7 +67,22 @@ void MessagesLog::changeEvent(QEvent *event) {
 }
 
 void MessagesLog::handleRemoteMessage(const RPZMessage &msg) {
-    return this->_handleMessage(msg, false, false);
+    
+    //handle message
+    this->_handleMessage(msg, false, false);
+
+    //remote-only notifications
+    switch(msg.commandType()) {
+
+        case MessageInterpreter::Command::Whisper:
+            NotificationsAudioManager::get()->playWhisper();
+        break;
+
+        default:
+        break;
+    
+    }
+    
 }
 
 void MessagesLog::handleHistoryMessage(const RPZMessage &msg) {
@@ -117,10 +132,6 @@ void MessagesLog::_handleMessage(const RPZMessage &msg, bool isLocal, bool fromH
         
             case MessageInterpreter::Command::C_DiceThrow:
                 NotificationsAudioManager::get()->playDiceThrow();
-            break;
-
-            case MessageInterpreter::Command::Whisper:
-                NotificationsAudioManager::get()->playWhisper();
             break;
 
             default:
