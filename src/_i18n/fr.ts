@@ -704,79 +704,80 @@
         <translation>Boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="383"/>
+        <location filename="../ui/mainWindow.cpp" line="393"/>
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="382"/>
+        <location filename="../ui/mainWindow.cpp" line="392"/>
         <source>Sheets</source>
         <translation>Fiches</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="397"/>
+        <location filename="../ui/mainWindow.cpp" line="407"/>
         <source>Map Atoms</source>
         <translation>Atomes de la carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="398"/>
+        <location filename="../ui/mainWindow.cpp" line="408"/>
         <source>Atom Editor</source>
         <translation>Editeur d&apos;atomes</translation>
     </message>
     <message>
         <location filename="../ui/mainWindow.cpp" line="334"/>
+        <location filename="../ui/mainWindow.cpp" line="340"/>
         <source>Game Hub</source>
         <translation>Hub de jeu</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="564"/>
+        <location filename="../ui/mainWindow.cpp" line="574"/>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="578"/>
+        <location filename="../ui/mainWindow.cpp" line="588"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="580"/>
-        <location filename="../ui/mainWindow.cpp" line="606"/>
-        <location filename="../ui/mainWindow.cpp" line="634"/>
+        <location filename="../ui/mainWindow.cpp" line="590"/>
+        <location filename="../ui/mainWindow.cpp" line="616"/>
+        <location filename="../ui/mainWindow.cpp" line="644"/>
         <source>Game map (*%1)</source>
         <translation>Carte de campagne (*%1)</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="604"/>
+        <location filename="../ui/mainWindow.cpp" line="614"/>
         <source>Load a new map</source>
         <translation>Charger une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="632"/>
+        <location filename="../ui/mainWindow.cpp" line="642"/>
         <source>Save as...</source>
         <translation>Savegarder sous...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="656"/>
+        <location filename="../ui/mainWindow.cpp" line="666"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="711"/>
+        <location filename="../ui/mainWindow.cpp" line="721"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="725"/>
+        <location filename="../ui/mainWindow.cpp" line="735"/>
         <source>Searching for updates...</source>
         <translation>Recherche des mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="725"/>
+        <location filename="../ui/mainWindow.cpp" line="735"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="760"/>
+        <location filename="../ui/mainWindow.cpp" line="770"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
@@ -1327,12 +1328,12 @@
         <translation>[Jauge sans nom]</translation>
     </message>
     <message>
-        <location filename="../ui/chat/logs/components/LogContent.hpp" line="140"/>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="149"/>
         <source>logged in !</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/chat/logs/components/LogContent.hpp" line="144"/>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="153"/>
         <source>logged out.</source>
         <translation type="unfinished"></translation>
     </message>

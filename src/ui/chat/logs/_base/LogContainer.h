@@ -31,13 +31,16 @@
 class LogItem : public QWidget {
     
     public:
-        LogItem();
+        LogItem(const Stampable::Id &boundMsgId);
         int positionInLog(); 
         void setPositionInLog(int position);
         QHBoxLayout* horizontalLayout();
 
+        Stampable::Id boundMsgId() const;
+
     private:
         int _position = -1;
+        Stampable::Id _boundMsgId;
         QHBoxLayout* _hLayout = nullptr;
 
 };

@@ -19,12 +19,17 @@
 
 #include "LogContainer.h"
 
-LogItem::LogItem() : QWidget(), _hLayout(new QHBoxLayout) {
+LogItem::LogItem(const Stampable::Id &boundMsgId) : QWidget(), _hLayout(new QHBoxLayout) {
     this->setLayout(this->_hLayout);
     this->_hLayout->setContentsMargins(10, 3, 10, 3);
     this->_hLayout->setAlignment(Qt::AlignTop);
     this->setAutoFillBackground(true);
     this->setSizePolicy(QSizePolicy::Policy::MinimumExpanding, QSizePolicy::Policy::Maximum);
+    this->_boundMsgId = boundMsgId;
+}
+
+Stampable::Id LogItem::boundMsgId() const {
+    return this->_boundMsgId;
 }
 
 int LogItem::positionInLog() {
@@ -59,7 +64,7 @@ LogItem* LogContainer::_addLine(const Stampable &element, Stampable::Id putUnder
     if(!found) {
 
         //create line
-        found = new LogItem();
+        found = new LogItem(eId);
 
         //if no information about descendant, push last
         if(!putUnder) {

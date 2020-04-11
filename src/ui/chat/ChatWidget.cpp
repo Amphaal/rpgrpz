@@ -31,6 +31,10 @@ ChatWidget::ChatWidget(QWidget *parent) :
     
 }
 
+MessagesLog* ChatWidget::messageLog() {
+    return this->_chatLog;
+}
+
 void ChatWidget::_instUI() {
 
     auto layout = new QVBoxLayout;

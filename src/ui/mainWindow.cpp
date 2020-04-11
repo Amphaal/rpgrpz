@@ -331,7 +331,17 @@ void MainWindow::_initAppUnmovableUI() {
 
     }();
     
-    this->_rightTab->addTab(chatLogWidget, QIcon(QStringLiteral(u":/icons/app/tabs/chat.png")), tr("Game Hub"));
+    auto gameHubTabIndex = this->_rightTab->addTab(chatLogWidget, QIcon(QStringLiteral(u":/icons/app/tabs/chat.png")), tr("Game Hub"));
+    
+    //update gamehub tab name
+    QObject::connect(
+        this->_chatWidget->messageLog(), &MessagesLog::notificationCountUpdated,
+        [=](int newCount) {
+            auto txt = tr("Game Hub");
+            if(newCount) txt = QString("(%1) ").arg(newCount) + txt;
+            this->_rightTab->setTabText(gameHubTabIndex, txt);
+        }
+    );
 
     auto designerWidget = [=]() {
         auto designer = new QWidget(this);

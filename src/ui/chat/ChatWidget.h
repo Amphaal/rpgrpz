@@ -43,6 +43,7 @@ class ChatWidget : public QWidget, public ConnectivityObserver {
         ChatWidget(QWidget *parent = nullptr);
 
         void connectingToServer() override;
+        MessagesLog* messageLog();
 
     private:
         MessagesLog *_chatLog;

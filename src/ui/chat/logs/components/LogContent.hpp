@@ -75,6 +75,14 @@ class LogContent : public QWidget {
 
         void _diceThrowFormating(QHBoxLayout* layout, const RPZMessage &msg) {
             
+            //CR
+            auto cr = new QLabel(QChar(0x2607));
+            cr->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Minimum);
+            cr->setContentsMargins(0, 0, 5, 0);
+                auto crFont = cr->font();
+                crFont.setPointSize(15);
+                cr->setFont(crFont);
+            
             //dice
             auto diceImg = new QLabel(this);
             diceImg->setPixmap(QPixmap(":/icons/app/other/dice.png"));
@@ -88,6 +96,7 @@ class LogContent : public QWidget {
                 result->setFont(font);
 
             //add widgets
+            layout->addWidget(cr);
             layout->addWidget(diceImg);
             layout->addWidget(result);
 

@@ -85,7 +85,7 @@ void MessagesLog::handleLocalMessage(RPZMessage &msg) {
 }
 
 void MessagesLog::_handleMessage(const RPZMessage &msg, bool isLocal) {
-    
+
     //should not exist
     auto targetLine = LogContainer::_getLine(msg);
     if(targetLine) return;
@@ -96,6 +96,12 @@ void MessagesLog::_handleMessage(const RPZMessage &msg, bool isLocal) {
     //add content
     auto content = new LogContent(msg);
     targetLine->horizontalLayout()->addWidget(content, 10);
+    
+    //tag as not seen
+    if(!content->isVisible()) {
+        this->_msgIdsNotSeen.append(msg.id());
+        emit notificationCountUpdated(this->_msgIdsNotSeen.count());
+    };
 
     //define palette to apply
     auto msgPalette = msg.palette();
@@ -109,4 +115,24 @@ void MessagesLog::_handleMessage(const RPZMessage &msg, bool isLocal) {
 
     //apply it
     targetLine->setPalette(msgPalette);
+}
+
+void MessagesLog::paintEvent(QPaintEvent *event) {
+    
+    //default behavior
+    LogContainer::paintEvent(event);
+    
+    //if no message unseen, skip
+    if(!this->_msgIdsNotSeen.count()) return;
+
+    //get lowest visible
+    auto lowestVisible = this->childAt(this->childrenRect().bottomLeft());
+    if(!lowestVisible) return; //should not happen
+
+    //cast
+    auto logI = dynamic_cast<LogItem*>(lowestVisible);
+    if(!logI) return; //should not happen
+
+
+
 }

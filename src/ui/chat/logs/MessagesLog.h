@@ -31,6 +31,9 @@
 #include <QBoxLayout>
 
 class MessagesLog : public LogContainer, public ConnectivityObserver {
+    
+    Q_OBJECT
+    
     public:
         MessagesLog(QWidget *parent = nullptr);
 
@@ -39,8 +42,13 @@ class MessagesLog : public LogContainer, public ConnectivityObserver {
         void handleLocalMessage(RPZMessage &msg);
         void handleNonLocalMessage(const RPZMessage &msg);
 
-    private:
-        void _handleMessage(const RPZMessage &msg, bool isLocal = false);
+    signals:
+        void notificationCountUpdated(int newCount);
 
+    private:
+        QList<Stampable::Id> _msgIdsNotSeen;
+
+        void _handleMessage(const RPZMessage &msg, bool isLocal = false);
         void changeEvent(QEvent *event) override;
+        void paintEvent(QPaintEvent *event) override;
 };
