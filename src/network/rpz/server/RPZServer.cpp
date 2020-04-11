@@ -480,7 +480,7 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
             this->_sendToAllExcept(sender, RPZJSON::Method::Message, msg);
 
             //send dices throws if requested
-            this->_maySendAndStoreDiceThrows(msg.text());
+            this->_maySendAndStoreDiceThrows(msg);
 
         }
         break;
@@ -493,17 +493,17 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
     sender->sendToSocket(RPZJSON::Method::ServerResponse, response);
 }
 
-void RPZServer::_maySendAndStoreDiceThrows(const QString &text) {
+void RPZServer::_maySendAndStoreDiceThrows(const RPZMessage &msg) {
     
     //check if throws are requested
-    auto throws = MessageInterpreter::findDiceThrowsFromText(text);
+    auto throws = MessageInterpreter::findDiceThrowsFromText(msg.text());
     if(throws.isEmpty()) return;
 
     //generate values
     MessageInterpreter::generateValuesOnDiceThrows(throws);
 
     //create message parts
-    QList<QString> throwsMsgList;
+    QList<QString> throwsStrList;
     for(const auto &dThrow : throws) {
         
         //sub list of values
@@ -522,13 +522,14 @@ void RPZServer::_maySendAndStoreDiceThrows(const QString &text) {
         if(sub.count() > 1) joined += QStringLiteral(u" x̄ ") + QString::number(dThrow.avg, 'f', 2);
 
         //add to topmost list
-        throwsMsgList += joined;
+        throwsStrList += joined;
 
     }
 
     //append it
-    auto msg = throwsMsgList.join(", ");
-    RPZMessage dThrowMsg(msg, MessageInterpreter::Command::C_DiceThrow);
+    auto text = throwsStrList.join(", ");
+    RPZMessage dThrowMsg(text, MessageInterpreter::Command::C_DiceThrow);
+    dThrowMsg.setOwnership(msg.owner());
 
     //store message
     this->_messages.insert(dThrowMsg.id(), dThrowMsg);

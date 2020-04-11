@@ -101,7 +101,7 @@ class RPZServer : public QObject, public JSONLogger {
         //messages
         RPZMap<RPZMessage> _messages;
         void _interpretMessage(JSONSocket* sender, RPZMessage &msg);
-        void _maySendAndStoreDiceThrows(const QString &text);
+        void _maySendAndStoreDiceThrows(const RPZMessage &msg);
         void _logUserAsMessage(JSONSocket* userSocket, const RPZJSON::Method &method, const RPZUser &user);
 
         //internal

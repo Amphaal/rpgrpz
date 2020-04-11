@@ -41,28 +41,32 @@ class LogContent : public QWidget {
             layout->setSpacing(0);
             layout->setAlignment(Qt::AlignTop);
 
-            //user format
-            if(auto owner = msg.owner(); owner.id()) _userBoundFormating(layout, msg, owner);
-            
-            //standard
-            else {
-                
-                switch(msg.commandType()) {
-                    case MessageInterpreter::Command::C_DiceThrow: {
-                        this->_diceThrowFormating(layout, msg);
-                    }
-                    break;
+            auto cmdType = msg.commandType();
 
-                    default: {
-                        //normal text
-                        auto toAdd = new LogText(msg.toString(), this);
-                        layout->addWidget(toAdd);
-                    }
-                    break;
-                }
+            //user format
+            if(cmdType == MessageInterpreter::Command::C_DiceThrow) _diceThrowFormating(layout);
+            if(auto owner = msg.owner(); owner.id()) _userBoundFormating(layout, msg, owner, cmdType == MessageInterpreter::Command::C_DiceThrow);
+            
+            //log text
+            QString textStr; 
+            switch(cmdType) {
+                
+                case MessageInterpreter::Command::C_UserLogIn:
+                    textStr = QObject::tr("logged in !");
+                break;
+
+                case MessageInterpreter::Command::C_UserLogOut:
+                    textStr = QObject::tr("logged out.");
+                break;
+
+                default:
+                    textStr = msg.toString();
+                break;
 
             }
+            auto logText = new LogText(textStr, this);
 
+            layout->addWidget(logText);
             this->_defineToolTip(msg);
 
         }
@@ -73,15 +77,7 @@ class LogContent : public QWidget {
             this->setToolTip(QObject::tr("Sent at %1").arg(timestamp));
         }
 
-        void _diceThrowFormating(QHBoxLayout* layout, const RPZMessage &msg) {
-            
-            //CR
-            auto cr = new QLabel(QChar(0x2607));
-            cr->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Minimum);
-            cr->setContentsMargins(0, 0, 5, 0);
-                auto crFont = cr->font();
-                crFont.setPointSize(15);
-                cr->setFont(crFont);
+        void _diceThrowFormating(QHBoxLayout* layout) {
             
             //dice
             auto diceImg = new QLabel(this);
@@ -89,20 +85,12 @@ class LogContent : public QWidget {
             diceImg->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Minimum);
             diceImg->setContentsMargins(0, 0, 5, 0);
             
-            //throw
-            auto result = new LogText(msg.toString(), this);
-                auto font = result->font();
-                font.setBold(true);
-                result->setFont(font);
-
             //add widgets
-            layout->addWidget(cr);
             layout->addWidget(diceImg);
-            layout->addWidget(result);
 
         }
 
-        void _userBoundFormating(QHBoxLayout* layout, const RPZMessage &msg, const RPZUser &owner) {
+    void _userBoundFormating(QHBoxLayout* layout, const RPZMessage &msg, const RPZUser &owner, bool centerAlign) {
                 
                 layout->setContentsMargins(0, 5, 0, 5);
 
@@ -110,7 +98,7 @@ class LogContent : public QWidget {
                 auto companion = new QLabel(this);
                 companion->setPixmap(QPixmap(RPZUser::IconsByRoles.value(owner.role())));
                 companion->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Minimum);
-                companion->setAlignment(Qt::AlignTop);
+                companion->setAlignment(centerAlign ? Qt::AlignVCenter : Qt::AlignTop);
 
                 //color
                 QLabel* colorIndic = nullptr;
@@ -118,7 +106,7 @@ class LogContent : public QWidget {
                     
                     colorIndic = new QLabel(this);
                     colorIndic->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Minimum);
-                    colorIndic->setAlignment(Qt::AlignTop);
+                    colorIndic->setAlignment(centerAlign ? Qt::AlignVCenter : Qt::AlignTop);
 
                     colorIndic->setFixedWidth(10);
                     colorIndic->setFixedHeight(10);
@@ -135,37 +123,16 @@ class LogContent : public QWidget {
                 //name
                 auto name = new QLabel(owner.toString(), this);
                 name->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Minimum);
-                name->setAlignment(Qt::AlignTop);
-                name->setContentsMargins(5, 1, 7, 0);
+                name->setAlignment(centerAlign ? Qt::AlignVCenter : Qt::AlignTop);
+                name->setContentsMargins(5, 0, 7, 2);
                     auto font = name->font();
                     font.setBold(true);
                     name->setFont(font);
-
-                //text
-                QString textStr; 
-                switch(msg.commandType()) {
-                    
-                    case MessageInterpreter::Command::C_UserLogIn:
-                        textStr = QObject::tr("logged in !");
-                    break;
-
-                    case MessageInterpreter::Command::C_UserLogOut:
-                        textStr = QObject::tr("logged out.");
-                    break;
-
-                    default: {
-                        textStr = msg.toString();
-                    }
-                    break;
-
-                }
-                auto toAdd = new LogText(textStr, this);
 
             //add widgets
             layout->addWidget(companion);
             if(colorIndic) layout->addWidget(colorIndic);
             layout->addWidget(name);
-            layout->addWidget(toAdd);
 
         }
 
