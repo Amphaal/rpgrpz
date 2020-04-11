@@ -39,7 +39,7 @@ struct DiceThrow {
 
 class MessageInterpreter {
     public:
-        enum class Command { C_Unknown, Say, Whisper, Help, C_DiceThrow, C_UserLog };
+        enum class Command { C_Unknown, Say, Whisper, Help, C_DiceThrow, C_UserLogIn, C_UserLogOut };
         
         static inline const QHash<QString, Command> _textByCommand = {
             { "/h", Command::Help }

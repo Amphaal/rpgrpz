@@ -21,7 +21,7 @@
 
 #include <QWidget>
 #include <QLabel>
-#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 #include "src/shared/models/messaging/RPZMessage.h"
 #include "LogText.hpp"
@@ -33,21 +33,86 @@ class LogContent : public QWidget {
 
             this->setAutoFillBackground(true);
             this->setSizePolicy(QSizePolicy::Policy::MinimumExpanding, QSizePolicy::Policy::Maximum);
-
-            this->setLayout(new QVBoxLayout);
-            this->layout()->setAlignment(Qt::AlignTop);
             this->setContentsMargins(0, 0, 0, 0);
 
-            switch(msg.commandType()) {
-                case MessageInterpreter::Command::C_UserLog: {
-                    new LogText(msg.text(), this);
-                    //TODO
-                }
-                break;
+            auto layout = new QHBoxLayout;
+            this->setLayout(layout);            
+            layout->setMargin(0);
+            layout->setSpacing(0);
 
-                default:
-                    new LogText(msg.text(), this);
-                break;
+            //user format
+            if(auto owner = msg.owner(); owner.id()) {
+                
+                //specific layout alignment
+                layout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
+
+                    //companion
+                    auto companion = new QLabel(this);
+                    companion->setPixmap(QPixmap(RPZUser::IconsByRoles.value(owner.role())));
+
+                    //color
+                    QLabel* colorIndic = nullptr;
+                    if(auto color = owner.color(); color.isValid()) {
+                        
+                        colorIndic = new QLabel(this);
+
+                        colorIndic->setFixedWidth(10);
+                        colorIndic->setFixedHeight(10);
+                        colorIndic->setFrameShape(QFrame::Panel);
+                        colorIndic->setLineWidth(1);
+                        colorIndic->setAutoFillBackground(true);
+                        colorIndic->setContentsMargins(3, 0, 0, 0);
+                        
+                        QPalette palette;
+                        palette.setColor(QPalette::Window, color);
+                        colorIndic->setPalette(palette);
+                        
+                    } 
+
+                    //name
+                    auto name = new QLabel(owner.toString(), this);
+                    name->setContentsMargins(5, 0, 5, 0);
+                    auto font = name->font();
+                    font.setBold(true);
+                    name->setFont(font);
+
+                    //text
+                    QString textStr; 
+                    switch(msg.commandType()) {
+                        
+                        case MessageInterpreter::Command::C_UserLogIn:
+                            textStr = QObject::tr("logged in !");
+                        break;
+
+                        case MessageInterpreter::Command::C_UserLogOut:
+                            textStr = QObject::tr("logged out.");
+                        break;
+
+                        default: {
+                            textStr = msg.toString();
+                        }
+                        break;
+
+                    }
+                    auto toAdd = new LogText(textStr, this);
+
+                //
+                layout->addWidget(companion);
+                if(colorIndic) layout->addWidget(colorIndic);
+                layout->addWidget(name);
+                layout->addWidget(toAdd);
+
+            } 
+            
+            //standard
+            else {
+                
+                //specific layout alignment
+                layout->setAlignment(Qt::AlignTop);
+                
+                //normal text
+                auto toAdd = new LogText(msg.toString(), this);
+                layout->addWidget(toAdd);
 
             }
 

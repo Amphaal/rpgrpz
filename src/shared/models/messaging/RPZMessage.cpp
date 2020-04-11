@@ -46,26 +46,25 @@ QString RPZMessage::toString() const {
     auto text = this->text();
 
     switch(this->_command) {
-        
-        case MessageInterpreter::Command::Say: {
-            auto textPrefix = ownerExist ? QObject::tr(" said : ") : QObject::tr("you said : ");
-            return base + textPrefix + QChar(0x201C) + text + QChar(0x201D);
-        }
 
         case MessageInterpreter::Command::Whisper: {
+            
             auto textPrefix = QObject::tr(" whispers to you : ");
             
             if(!ownerExist) {
                 auto recipientList = MessageInterpreter::findRecipentsFromText(text).join(", ");
-                textPrefix = QObject::tr("your whisper to ") + recipientList + " : ";
+                textPrefix = QObject::tr(" whisper to ") + recipientList + " : ";
                 text = MessageInterpreter::sanitizeText(text);
             }
 
-            return base + textPrefix + QChar(0x201C) + text + QChar(0x201D);
+            return textPrefix + text;
+
         }
+        break;
 
         default:
             return text;
+            break;
             
     }
 
@@ -92,6 +91,12 @@ QPalette RPZMessage::palette() const {
         case MessageInterpreter::Command::C_DiceThrow:
             palette.setColor(QPalette::Window, "#87CEEB");
             palette.setColor(QPalette::WindowText, "#000080");
+            break;
+
+        case MessageInterpreter::Command::C_UserLogOut:
+        case MessageInterpreter::Command::C_UserLogIn:
+            palette.setColor(QPalette::Window, "#e3dc0b");
+            palette.setColor(QPalette::WindowText, "#000000");
             break;
 
         default:

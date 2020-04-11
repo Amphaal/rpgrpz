@@ -867,7 +867,7 @@
         <location filename="../shared/commands/MessageInterpreter.cpp" line="136"/>
         <source>- To whisper : @{toWhisperTo}.
 </source>
-        <translation>- Pour chuchotter : @{destinataire}.
+        <translation>- Pour chuchoter : @{destinataire}.
 </translation>
     </message>
     <message>
@@ -1046,24 +1046,14 @@
         <translation>Nouvel Inventaire</translation>
     </message>
     <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="51"/>
-        <source> said : </source>
-        <translation> a dit : </translation>
-    </message>
-    <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="51"/>
-        <source>you said : </source>
-        <translation>vous dites : </translation>
-    </message>
-    <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="56"/>
+        <location filename="../shared/models/messaging/RPZMessage.cpp" line="52"/>
         <source> whispers to you : </source>
         <translation> vous chuchote : </translation>
     </message>
     <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="60"/>
-        <source>your whisper to </source>
-        <translation>vous chuchotez à </translation>
+        <location filename="../shared/models/messaging/RPZMessage.cpp" line="56"/>
+        <source> whisper to </source>
+        <translation> chuchotez à </translation>
     </message>
     <message>
         <location filename="../shared/models/messaging/RPZResponse.cpp" line="47"/>
@@ -1337,7 +1327,17 @@
         <translation>[Jauge sans nom]</translation>
     </message>
     <message>
-        <location filename="../ui/chat/logs/components/LogContent.hpp" line="61"/>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="84"/>
+        <source>logged in !</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="88"/>
+        <source>logged out.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="126"/>
         <source>Sent at %1</source>
         <translation>Envoyé à %1</translation>
     </message>
@@ -1378,7 +1378,7 @@
 <context>
     <name>RPZServer</name>
     <message>
-        <location filename="../network/rpz/server/RPZServer.cpp" line="285"/>
+        <location filename="../network/rpz/server/RPZServer.cpp" line="293"/>
         <source>Your software version is different from the server&apos;s one : v%1 (you) / v%2 (server) !</source>
         <translation>Votre version logicielle diffère de la version du serveur : v%1 (vous) / v%2 (serveur) !</translation>
     </message>

@@ -81,6 +81,7 @@ void RPZServer::_attributeRoleToUser(JSONSocket* socket, RPZUser &associatedUser
     else if (wantsToIncarnate) {
         associatedUser.setCharacter(incarnation);
         associatedUser.setRole(RPZUser::Role::Player);
+        associatedUser.randomiseColor();
     }
 
     //add to roles
@@ -100,7 +101,6 @@ void RPZServer::_onNewConnection() {
         //create new user with id
         RPZUser user;
         user.shuffleId();
-        user.randomiseColor();
 
         //add to internal lists
         auto userId = user.id();
@@ -148,16 +148,24 @@ void RPZServer::_onClientSocketDisconnected(JSONSocket* disconnectedSocket) {
 
     //tell other clients that the user is gone
     this->_sendToAll(RPZJSON::Method::UserOut, QVariant::fromValue<RPZUser::Id>(idToRemove));
-    this->_logUserAsMessage(RPZJSON::Method::UserOut, removedUser); 
+    this->_logUserAsMessage(nullptr, RPZJSON::Method::UserOut, removedUser); 
 
 }
 
-void RPZServer::_logUserAsMessage(const RPZJSON::Method &method, const RPZUser &user) {
+void RPZServer::_logUserAsMessage(JSONSocket* userSocket, const RPZJSON::Method &method, const RPZUser &user) {
     
-    RPZMessage msg(method == RPZJSON::Method::UserIn ? "in" : "out", MessageInterpreter::Command::C_UserLog);
+    //define message
+    RPZMessage msg("", method == RPZJSON::Method::UserIn ? 
+                        MessageInterpreter::Command::C_UserLogIn 
+                        : MessageInterpreter::Command::C_UserLogOut);
     msg.setOwnership(user);
 
+    //store it
     this->_messages.insert(msg.id(), msg);
+
+    //broadcast
+    if(userSocket) this->_sendToAllExcept(userSocket, RPZJSON::Method::Message, msg);
+    else this->_sendToAll(RPZJSON::Method::Message, msg);
 
 }
 
@@ -302,9 +310,8 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
             
             //tell the others that this user exists
             this->_sendToAllExcept(target, RPZJSON::Method::UserIn, targetUser);
-            this->_logUserAsMessage(RPZJSON::Method::UserIn, targetUser); 
+            this->_logUserAsMessage(target, RPZJSON::Method::UserIn, targetUser); 
             
-
             //send game session
             this->_sendGameSession(target, targetUser);
 
