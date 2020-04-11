@@ -66,8 +66,12 @@ void MessagesLog::changeEvent(QEvent *event) {
     }
 }
 
-void MessagesLog::handleNonLocalMessage(const RPZMessage &msg) {
-    return this->_handleMessage(msg, false);
+void MessagesLog::handleRemoteMessage(const RPZMessage &msg) {
+    return this->_handleMessage(msg, false, false);
+}
+
+void MessagesLog::handleHistoryMessage(const RPZMessage &msg) {
+    return this->_handleMessage(msg, false, true);
 }
 
 void MessagesLog::handleLocalMessage(RPZMessage &msg) {
@@ -84,7 +88,7 @@ void MessagesLog::handleLocalMessage(RPZMessage &msg) {
 
 }
 
-void MessagesLog::_handleMessage(const RPZMessage &msg, bool isLocal) {
+void MessagesLog::_handleMessage(const RPZMessage &msg, bool isLocal, bool fromHistory) {
 
     //should not exist
     auto targetLine = LogContainer::_getLine(msg);
@@ -105,6 +109,24 @@ void MessagesLog::_handleMessage(const RPZMessage &msg, bool isLocal) {
         auto txtColor = msgPalette.color(QPalette::WindowText);
         txtColor.setAlpha(128);
         msgPalette.setColor(QPalette::WindowText, txtColor);
+    }
+
+    //play sound
+    if(!fromHistory) {
+        switch(msg.commandType()) {
+        
+            case MessageInterpreter::Command::C_DiceThrow:
+                NotificationsAudioManager::get()->playDiceThrow();
+            break;
+
+            case MessageInterpreter::Command::Whisper:
+                NotificationsAudioManager::get()->playWhisper();
+            break;
+
+            default:
+            break;
+        
+        }
     }
 
     //apply palette

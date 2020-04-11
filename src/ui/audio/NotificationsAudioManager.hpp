@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <QSoundEffect>
+#include <QtMultimedia/QSoundEffect>
 
 class NotificationsAudioManager {
     public:
@@ -30,32 +30,31 @@ class NotificationsAudioManager {
         }
 
         void playDiceThrow() {
-            auto effect = new QSoundEffect;
 
             auto randomIndex = QRandomGenerator::global()->bounded(0, _diceEffects.count() - 1);
             auto source = _diceEffects.value(randomIndex);
 
-            effect->setSource(QUrl::fromLocalFile(source));
-            effect->setVolume(.5);
-            effect->play();
+            this->_playEffect(source);
+            
+        }
 
+        void playWhisper() {
+            this->_playEffect(":/audio/privateMessage.wav");
+        }
+
+    private:
+        NotificationsAudioManager() {}
+
+        void _playEffect(const QString &path) {
+            auto effect = new QSoundEffect;
+            effect->setVolume(.25);
+            effect->setSource(QUrl::fromLocalFile(path));
+            effect->play();
             QObject::connect(
                 effect, &QSoundEffect::playingChanged, 
                 effect, &QObject::deleteLater
             );
-            
         }
-
-        void playUserIn()
-
-        void playUserOut()
-
-        void playNewMessage()
-
-        void playWhisper()
-
-    private:
-        NotificationsAudioManager() {}
 
         static inline const QList<QString> _diceEffects {
             ":/audio/dice1.wav",

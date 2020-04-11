@@ -89,8 +89,6 @@ class LogContent : public QWidget {
             //add widgets
             layout->addWidget(diceImg);
 
-            NotificationsAudioManager::get()->playDiceThrow();
-
         }
 
     void _userBoundFormating(QHBoxLayout* layout, const RPZMessage &msg, const RPZUser &owner) {

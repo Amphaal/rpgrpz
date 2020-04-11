@@ -69,7 +69,7 @@ void ChatWidget::_onGameSessionReceived(const RPZGameSession &gameSession) {
 
     //add list of messages
     for(const auto &msg : gameSession.messages()) {
-        this->_chatLog->handleNonLocalMessage(msg);
+        this->_chatLog->handleHistoryMessage(msg);
     }
 
     //welcome msg
@@ -93,7 +93,7 @@ void ChatWidget::connectingToServer() {
     //on message received
     QObject::connect(
         _rpzClient, &RPZClient::receivedMessage, 
-        this->_chatLog, &MessagesLog::handleNonLocalMessage
+        this->_chatLog, &MessagesLog::handleRemoteMessage
     );
 
     //welcome once all history have been received
