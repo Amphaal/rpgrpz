@@ -96,12 +96,6 @@ void MessagesLog::_handleMessage(const RPZMessage &msg, bool isLocal) {
     //add content
     auto content = new LogContent(msg);
     targetLine->horizontalLayout()->addWidget(content, 10);
-    
-    //tag as not seen
-    if(!content->isVisible()) {
-        this->_msgIdsNotSeen.append(msg.id());
-        emit notificationCountUpdated(this->_msgIdsNotSeen.count());
-    };
 
     //define palette to apply
     auto msgPalette = msg.palette();
@@ -113,8 +107,15 @@ void MessagesLog::_handleMessage(const RPZMessage &msg, bool isLocal) {
         msgPalette.setColor(QPalette::WindowText, txtColor);
     }
 
-    //apply it
+    //apply palette
     targetLine->setPalette(msgPalette);
+    
+    //tag as not seen
+    if(!this->isVisible()) {
+        this->_msgIdsNotSeen.append(msg.id());
+        emit notificationCountUpdated(this->_msgIdsNotSeen.count());
+    };
+
 }
 
 void MessagesLog::paintEvent(QPaintEvent *event) {
@@ -123,16 +124,13 @@ void MessagesLog::paintEvent(QPaintEvent *event) {
     LogContainer::paintEvent(event);
     
     //if no message unseen, skip
-    if(!this->_msgIdsNotSeen.count()) return;
+    auto messagesNotSeenCount = this->_msgIdsNotSeen.count();
+    if(!messagesNotSeenCount) return;
 
-    //get lowest visible
-    auto lowestVisible = this->childAt(this->childrenRect().bottomLeft());
-    if(!lowestVisible) return; //should not happen
-
-    //cast
-    auto logI = dynamic_cast<LogItem*>(lowestVisible);
-    if(!logI) return; //should not happen
-
-
+    //since autoscrolled, every time it is visible means the user have seen all messages
+    if(this->isVisible()) {
+        this->_msgIdsNotSeen.clear();
+        emit notificationCountUpdated(0);
+    }
 
 }

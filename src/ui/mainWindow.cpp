@@ -390,7 +390,7 @@ void MainWindow::_setupAppUI(UIMode mode) {
     };
 
     auto addCharacterEditor = [=](QTabWidget* tab) {tab->addTab(this->_characterEditor, QIcon(QStringLiteral(u":/icons/app/tabs/scroll.png")), tr("Sheets"));};
-    auto addAudioManager = [=](QTabWidget* tab) { tab->addTab(this->_audioManager, QIcon(QStringLiteral(u":/icons/app/tabs/playlist.png")), tr("Audio")); };
+    auto addPlaylistAudioManager = [=](QTabWidget* tab) { tab->addTab(this->_audioManager, QIcon(QStringLiteral(u":/icons/app/tabs/playlist.png")), tr("Audio")); };
 
     switch(mode) {
         
@@ -398,7 +398,7 @@ void MainWindow::_setupAppUI(UIMode mode) {
             this->_leftTab->setVisible(true);
 
             removeFromTab(this->_rightTab, this->_audioManager);
-            addAudioManager(this->_leftTab);
+            addPlaylistAudioManager(this->_leftTab);
             this->_audioManager->player()->setVisible(true);
             
             removeFromTab(this->_rightTab, this->_characterEditor);
@@ -418,7 +418,7 @@ void MainWindow::_setupAppUI(UIMode mode) {
             addCharacterEditor(this->_rightTab);
 
             removeFromTab(this->_leftTab, this->_audioManager);
-            addAudioManager(this->_rightTab);
+            addPlaylistAudioManager(this->_rightTab);
             this->_audioManager->player()->setVisible(false);
 
             removeFromTab(this->_rightTab, this->_mlManager);
@@ -455,7 +455,7 @@ void MainWindow::_initAppComponents() {
         this->_mapActions = new MapActions(this);
     
     this->_chatWidget = new ChatWidget(this);
-    this->_audioManager = new AudioManager(this);
+    this->_audioManager = new PlaylistAudioManager(this);
     this->_toys = new ToysTreeView(this);
     this->_mapTools = new MapTools(this);
     this->_mlManager = new MapLayoutManager(this->_mapView, this);

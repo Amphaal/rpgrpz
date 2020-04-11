@@ -1,5 +1,9 @@
 <!DOCTYPE RCC><RCC version="1.0">
     <qresource>
+        <file>audio/dice1.wav</file>
+        <file>audio/dice2.wav</file>
+        <file>audio/dice3.wav</file>
+        <file>audio/dice4.wav</file>
         <file>icons/app_64.png</file>
         <file>icons/sentry.png</file>
         <file>icons/app/app.png</file>

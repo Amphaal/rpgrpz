@@ -24,6 +24,7 @@
 #include <QHBoxLayout>
 
 #include "src/shared/models/messaging/RPZMessage.h"
+#include "src/ui/audio/NotificationsAudioManager.hpp"
 #include "LogText.hpp"
 
 class LogContent : public QWidget {
@@ -45,7 +46,7 @@ class LogContent : public QWidget {
 
             //user format
             if(cmdType == MessageInterpreter::Command::C_DiceThrow) _diceThrowFormating(layout);
-            if(auto owner = msg.owner(); owner.id()) _userBoundFormating(layout, msg, owner, cmdType == MessageInterpreter::Command::C_DiceThrow);
+            if(auto owner = msg.owner(); owner.id()) _userBoundFormating(layout, msg, owner);
             
             //log text
             QString textStr; 
@@ -88,25 +89,27 @@ class LogContent : public QWidget {
             //add widgets
             layout->addWidget(diceImg);
 
+            NotificationsAudioManager::get()->playDiceThrow();
+
         }
 
-    void _userBoundFormating(QHBoxLayout* layout, const RPZMessage &msg, const RPZUser &owner, bool centerAlign) {
+    void _userBoundFormating(QHBoxLayout* layout, const RPZMessage &msg, const RPZUser &owner) {
                 
                 layout->setContentsMargins(0, 5, 0, 5);
 
                 //companion
                 auto companion = new QLabel(this);
                 companion->setPixmap(QPixmap(RPZUser::IconsByRoles.value(owner.role())));
-                companion->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Minimum);
-                companion->setAlignment(centerAlign ? Qt::AlignVCenter : Qt::AlignTop);
+                companion->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum);
+                companion->setAlignment(Qt::AlignTop);
 
                 //color
                 QLabel* colorIndic = nullptr;
                 if(auto color = owner.color(); color.isValid()) {
                     
                     colorIndic = new QLabel(this);
-                    colorIndic->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Minimum);
-                    colorIndic->setAlignment(centerAlign ? Qt::AlignVCenter : Qt::AlignTop);
+                    colorIndic->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum);
+                    colorIndic->setAlignment(Qt::AlignTop);
 
                     colorIndic->setFixedWidth(10);
                     colorIndic->setFixedHeight(10);
@@ -122,9 +125,9 @@ class LogContent : public QWidget {
 
                 //name
                 auto name = new QLabel(owner.toString(), this);
-                name->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Minimum);
-                name->setAlignment(centerAlign ? Qt::AlignVCenter : Qt::AlignTop);
-                name->setContentsMargins(5, 0, 7, 2);
+                name->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum);
+                name->setAlignment(Qt::AlignTop);
+                name->setContentsMargins(5, 0, 7, 1);
                     auto font = name->font();
                     font.setBold(true);
                     name->setFont(font);

@@ -32,7 +32,7 @@
 
 #include "src/ui/logIn/ConnectWidget.h"
 #include "src/ui/chat/ChatWidget.h"
-#include "src/ui/audio/AudioManager.h"
+#include "src/ui/audio/PlaylistAudioManager.h"
 #include "src/ui/map/MapView.h"
 #include "src/ui/map/_base/MapViewInteractibleDescriptor.hpp"
 
@@ -103,7 +103,7 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
             PlayersListView* _playersView = nullptr;
             StandardUsersListView* _usersView = nullptr;
             ConnectWidget* _connectWidget = nullptr;
-            AudioManager* _audioManager = nullptr;
+            PlaylistAudioManager* _audioManager = nullptr;
             ChatWidget* _chatWidget = nullptr;
             ToysTreeView* _toys = nullptr;
             MapTools* _mapTools = nullptr;

@@ -34,12 +34,12 @@
 
 #include "src/shared/audio/StreamPlayStateTracker.hpp"
 
-class AudioManager : public QWidget, public ConnectivityObserver {
+class PlaylistAudioManager : public QWidget, public ConnectivityObserver {
     
     Q_OBJECT
     
     public:
-        AudioManager(QWidget *parent = nullptr);
+        PlaylistAudioManager(QWidget *parent = nullptr);
 
         YoutubePlayer* player();
 
