@@ -1327,17 +1327,17 @@
         <translation>[Jauge sans nom]</translation>
     </message>
     <message>
-        <location filename="../ui/chat/logs/components/LogContent.hpp" line="87"/>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="140"/>
         <source>logged in !</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/chat/logs/components/LogContent.hpp" line="91"/>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="144"/>
         <source>logged out.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/chat/logs/components/LogContent.hpp" line="126"/>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="73"/>
         <source>Sent at %1</source>
         <translation>Envoyé à %1</translation>
     </message>
