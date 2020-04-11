@@ -704,79 +704,80 @@
         <translation>Boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="383"/>
+        <location filename="../ui/mainWindow.cpp" line="393"/>
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="382"/>
+        <location filename="../ui/mainWindow.cpp" line="392"/>
         <source>Sheets</source>
         <translation>Fiches</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="397"/>
+        <location filename="../ui/mainWindow.cpp" line="407"/>
         <source>Map Atoms</source>
         <translation>Atomes de la carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="398"/>
+        <location filename="../ui/mainWindow.cpp" line="408"/>
         <source>Atom Editor</source>
         <translation>Editeur d&apos;atomes</translation>
     </message>
     <message>
         <location filename="../ui/mainWindow.cpp" line="334"/>
+        <location filename="../ui/mainWindow.cpp" line="340"/>
         <source>Game Hub</source>
         <translation>Hub de jeu</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="564"/>
+        <location filename="../ui/mainWindow.cpp" line="574"/>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="578"/>
+        <location filename="../ui/mainWindow.cpp" line="588"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="580"/>
-        <location filename="../ui/mainWindow.cpp" line="606"/>
-        <location filename="../ui/mainWindow.cpp" line="634"/>
+        <location filename="../ui/mainWindow.cpp" line="590"/>
+        <location filename="../ui/mainWindow.cpp" line="616"/>
+        <location filename="../ui/mainWindow.cpp" line="644"/>
         <source>Game map (*%1)</source>
         <translation>Carte de campagne (*%1)</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="604"/>
+        <location filename="../ui/mainWindow.cpp" line="614"/>
         <source>Load a new map</source>
         <translation>Charger une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="632"/>
+        <location filename="../ui/mainWindow.cpp" line="642"/>
         <source>Save as...</source>
         <translation>Savegarder sous...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="656"/>
+        <location filename="../ui/mainWindow.cpp" line="666"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="711"/>
+        <location filename="../ui/mainWindow.cpp" line="721"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="725"/>
+        <location filename="../ui/mainWindow.cpp" line="735"/>
         <source>Searching for updates...</source>
         <translation>Recherche des mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="725"/>
+        <location filename="../ui/mainWindow.cpp" line="735"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="760"/>
+        <location filename="../ui/mainWindow.cpp" line="770"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
@@ -867,7 +868,7 @@
         <location filename="../shared/commands/MessageInterpreter.cpp" line="136"/>
         <source>- To whisper : @{toWhisperTo}.
 </source>
-        <translation>- Pour chuchotter : @{destinataire}.
+        <translation>- Pour chuchoter : @{destinataire}.
 </translation>
     </message>
     <message>
@@ -1046,24 +1047,14 @@
         <translation>Nouvel Inventaire</translation>
     </message>
     <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="51"/>
-        <source> said : </source>
-        <translation> a dit : </translation>
-    </message>
-    <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="51"/>
-        <source>you said : </source>
-        <translation>vous dites : </translation>
-    </message>
-    <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="56"/>
+        <location filename="../shared/models/messaging/RPZMessage.cpp" line="55"/>
         <source> whispers to you : </source>
         <translation> vous chuchote : </translation>
     </message>
     <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="60"/>
-        <source>your whisper to </source>
-        <translation>vous chuchotez à </translation>
+        <location filename="../shared/models/messaging/RPZMessage.cpp" line="59"/>
+        <source> whisper to </source>
+        <translation> chuchote à </translation>
     </message>
     <message>
         <location filename="../shared/models/messaging/RPZResponse.cpp" line="47"/>
@@ -1336,6 +1327,21 @@
         <source>[Unamed gauge]</source>
         <translation>[Jauge sans nom]</translation>
     </message>
+    <message>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="56"/>
+        <source>logged in !</source>
+        <translation>s&apos;est connecté !</translation>
+    </message>
+    <message>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="60"/>
+        <source>logged out.</source>
+        <translation>s&apos;est déconnecté.</translation>
+    </message>
+    <message>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="78"/>
+        <source>Sent at %1</source>
+        <translation>Envoyé à %1</translation>
+    </message>
 </context>
 <context>
     <name>RPZClient</name>
@@ -1373,7 +1379,7 @@
 <context>
     <name>RPZServer</name>
     <message>
-        <location filename="../network/rpz/server/RPZServer.cpp" line="275"/>
+        <location filename="../network/rpz/server/RPZServer.cpp" line="293"/>
         <source>Your software version is different from the server&apos;s one : v%1 (you) / v%2 (server) !</source>
         <translation>Votre version logicielle diffère de la version du serveur : v%1 (vous) / v%2 (serveur) !</translation>
     </message>

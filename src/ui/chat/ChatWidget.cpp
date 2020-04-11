@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #include "ChatWidget.h"
@@ -29,6 +29,10 @@ ChatWidget::ChatWidget(QWidget *parent) :
         //UI...
         this->_instUI();
     
+}
+
+MessagesLog* ChatWidget::messageLog() {
+    return this->_chatLog;
 }
 
 void ChatWidget::_instUI() {
@@ -65,7 +69,7 @@ void ChatWidget::_onGameSessionReceived(const RPZGameSession &gameSession) {
 
     //add list of messages
     for(const auto &msg : gameSession.messages()) {
-        this->_chatLog->handleNonLocalMessage(msg);
+        this->_chatLog->handleHistoryMessage(msg);
     }
 
     //welcome msg
@@ -89,7 +93,7 @@ void ChatWidget::connectingToServer() {
     //on message received
     QObject::connect(
         _rpzClient, &RPZClient::receivedMessage, 
-        this->_chatLog, &MessagesLog::handleNonLocalMessage
+        this->_chatLog, &MessagesLog::handleRemoteMessage
     );
 
     //welcome once all history have been received

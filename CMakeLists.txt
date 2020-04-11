@@ -236,6 +236,7 @@ find_package(Qt5 REQUIRED COMPONENTS
     Svg 
     OpenGL 
     LinguistTools
+    Multimedia
 )
 target_link_libraries(appExec
     Qt5::Core
@@ -244,6 +245,7 @@ target_link_libraries(appExec
     Qt5::Network
     Qt5::Svg
     Qt5::OpenGL
+    Qt5::Multimedia
 )
 
 # QT LIBRARIES COPY

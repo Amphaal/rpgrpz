@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #include "mainWindow.h"
@@ -331,7 +331,17 @@ void MainWindow::_initAppUnmovableUI() {
 
     }();
     
-    this->_rightTab->addTab(chatLogWidget, QIcon(QStringLiteral(u":/icons/app/tabs/chat.png")), tr("Game Hub"));
+    auto gameHubTabIndex = this->_rightTab->addTab(chatLogWidget, QIcon(QStringLiteral(u":/icons/app/tabs/chat.png")), tr("Game Hub"));
+    
+    //update gamehub tab name
+    QObject::connect(
+        this->_chatWidget->messageLog(), &MessagesLog::notificationCountUpdated,
+        [=](int newCount) {
+            auto txt = tr("Game Hub");
+            if(newCount) txt = QString("(%1) ").arg(newCount) + txt;
+            this->_rightTab->setTabText(gameHubTabIndex, txt);
+        }
+    );
 
     auto designerWidget = [=]() {
         auto designer = new QWidget(this);
@@ -380,7 +390,7 @@ void MainWindow::_setupAppUI(UIMode mode) {
     };
 
     auto addCharacterEditor = [=](QTabWidget* tab) {tab->addTab(this->_characterEditor, QIcon(QStringLiteral(u":/icons/app/tabs/scroll.png")), tr("Sheets"));};
-    auto addAudioManager = [=](QTabWidget* tab) { tab->addTab(this->_audioManager, QIcon(QStringLiteral(u":/icons/app/tabs/playlist.png")), tr("Audio")); };
+    auto addPlaylistAudioManager = [=](QTabWidget* tab) { tab->addTab(this->_audioManager, QIcon(QStringLiteral(u":/icons/app/tabs/playlist.png")), tr("Audio")); };
 
     switch(mode) {
         
@@ -388,7 +398,7 @@ void MainWindow::_setupAppUI(UIMode mode) {
             this->_leftTab->setVisible(true);
 
             removeFromTab(this->_rightTab, this->_audioManager);
-            addAudioManager(this->_leftTab);
+            addPlaylistAudioManager(this->_leftTab);
             this->_audioManager->player()->setVisible(true);
             
             removeFromTab(this->_rightTab, this->_characterEditor);
@@ -408,7 +418,7 @@ void MainWindow::_setupAppUI(UIMode mode) {
             addCharacterEditor(this->_rightTab);
 
             removeFromTab(this->_leftTab, this->_audioManager);
-            addAudioManager(this->_rightTab);
+            addPlaylistAudioManager(this->_rightTab);
             this->_audioManager->player()->setVisible(false);
 
             removeFromTab(this->_rightTab, this->_mlManager);
@@ -445,7 +455,7 @@ void MainWindow::_initAppComponents() {
         this->_mapActions = new MapActions(this);
     
     this->_chatWidget = new ChatWidget(this);
-    this->_audioManager = new AudioManager(this);
+    this->_audioManager = new PlaylistAudioManager(this);
     this->_toys = new ToysTreeView(this);
     this->_mapTools = new MapTools(this);
     this->_mlManager = new MapLayoutManager(this->_mapView, this);

@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #pragma once
@@ -53,6 +53,8 @@ class RPZUser : public Serializable {
         void setCharacter(const RPZCharacter &character);
         void randomiseColor();
 
+        QString idAsBase62() const;
+
         QString name() const;
         QString whisperTargetName() const;
         Role role() const;
@@ -62,6 +64,8 @@ class RPZUser : public Serializable {
 
     private:
         void _setColor(const QColor &color = QColor());
+
+        static inline std::string _CODES_b62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 };
 

@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #pragma once
@@ -32,7 +32,7 @@
 
 #include "src/ui/logIn/ConnectWidget.h"
 #include "src/ui/chat/ChatWidget.h"
-#include "src/ui/audio/AudioManager.h"
+#include "src/ui/audio/PlaylistAudioManager.h"
 #include "src/ui/map/MapView.h"
 #include "src/ui/map/_base/MapViewInteractibleDescriptor.hpp"
 
@@ -103,7 +103,7 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
             PlayersListView* _playersView = nullptr;
             StandardUsersListView* _usersView = nullptr;
             ConnectWidget* _connectWidget = nullptr;
-            AudioManager* _audioManager = nullptr;
+            PlaylistAudioManager* _audioManager = nullptr;
             ChatWidget* _chatWidget = nullptr;
             ToysTreeView* _toys = nullptr;
             MapTools* _mapTools = nullptr;

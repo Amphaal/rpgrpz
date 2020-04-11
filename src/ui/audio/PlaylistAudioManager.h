@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #pragma once
@@ -34,12 +34,12 @@
 
 #include "src/shared/audio/StreamPlayStateTracker.hpp"
 
-class AudioManager : public QWidget, public ConnectivityObserver {
+class PlaylistAudioManager : public QWidget, public ConnectivityObserver {
     
     Q_OBJECT
     
     public:
-        AudioManager(QWidget *parent = nullptr);
+        PlaylistAudioManager(QWidget *parent = nullptr);
 
         YoutubePlayer* player();
 

@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #pragma once 
@@ -39,9 +39,11 @@ class RPZMessage : public Stampable {
         MessageInterpreter::Command commandType() const;
         QString toString() const override;
         QPalette palette() const override;
+        void setAsLocal();
 
     private:
         MessageInterpreter::Command _command = MessageInterpreter::Command::C_Unknown;
+        bool _isLocal = false;
         
         void _setText(const QString &text);
         void _forceCommand(const MessageInterpreter::Command &forced);

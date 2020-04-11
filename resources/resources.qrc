@@ -1,5 +1,10 @@
 <!DOCTYPE RCC><RCC version="1.0">
     <qresource>
+        <file>audio/privateMessage.wav</file>
+        <file>audio/dice1.wav</file>
+        <file>audio/dice2.wav</file>
+        <file>audio/dice3.wav</file>
+        <file>audio/dice4.wav</file>
         <file>icons/app_64.png</file>
         <file>icons/sentry.png</file>
         <file>icons/app/app.png</file>
@@ -90,6 +95,7 @@
         <file>icons/app/other/malus.png</file>
         <file>icons/app/other/bonus.png</file>
         <file>icons/app/other/overlapping.png</file>
+        <file>icons/app/other/dice.png</file>
         <file>icons/app/loader.gif</file>
         <file>icons/app/attitude/unknown.png</file>
         <file>icons/app/attitude/friendly.png</file>

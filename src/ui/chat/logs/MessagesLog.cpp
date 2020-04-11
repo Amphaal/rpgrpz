@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #include "MessagesLog.h"
@@ -52,7 +52,6 @@ void MessagesLog::handleResponse(const RPZResponse &response) {
     //add text
     auto txt = new LogText(response.toString());
     newLine->horizontalLayout()->addWidget(txt, 10);
-
     
     //set palette
     newLine->setPalette(response.palette());
@@ -67,16 +66,30 @@ void MessagesLog::changeEvent(QEvent *event) {
     }
 }
 
-void MessagesLog::handleNonLocalMessage(const RPZMessage &msg) {
-    return this->_handleMessage(msg, false);
+void MessagesLog::handleRemoteMessage(const RPZMessage &msg) {
+    return this->_handleMessage(msg, false, false);
 }
 
-void MessagesLog::handleLocalMessage(const RPZMessage &msg) {
-    return this->_handleMessage(msg, true);
+void MessagesLog::handleHistoryMessage(const RPZMessage &msg) {
+    return this->_handleMessage(msg, false, true);
 }
 
-void MessagesLog::_handleMessage(const RPZMessage &msg, bool isLocal) {
+void MessagesLog::handleLocalMessage(RPZMessage &msg) {
     
+    //define as local
+    msg.setAsLocal();
+
+    //fill user infos
+    if(this->_rpzClient) {
+        msg.setOwnership(this->_rpzClient->identity());
+    }
+
+    return this->_handleMessage(msg, true);
+
+}
+
+void MessagesLog::_handleMessage(const RPZMessage &msg, bool isLocal, bool fromHistory) {
+
     //should not exist
     auto targetLine = LogContainer::_getLine(msg);
     if(targetLine) return;
@@ -84,9 +97,9 @@ void MessagesLog::_handleMessage(const RPZMessage &msg, bool isLocal) {
     //create new line
     targetLine = LogContainer::_addLine(msg);
         
-    //add text
-    auto txt = new LogText(msg.toString());
-    targetLine->horizontalLayout()->addWidget(txt, 10);
+    //add content
+    auto content = new LogContent(msg);
+    targetLine->horizontalLayout()->addWidget(content, 10);
 
     //define palette to apply
     auto msgPalette = msg.palette();
@@ -98,6 +111,48 @@ void MessagesLog::_handleMessage(const RPZMessage &msg, bool isLocal) {
         msgPalette.setColor(QPalette::WindowText, txtColor);
     }
 
-    //apply it
+    //play sound
+    if(!fromHistory) {
+        switch(msg.commandType()) {
+        
+            case MessageInterpreter::Command::C_DiceThrow:
+                NotificationsAudioManager::get()->playDiceThrow();
+            break;
+
+            case MessageInterpreter::Command::Whisper:
+                NotificationsAudioManager::get()->playWhisper();
+            break;
+
+            default:
+            break;
+        
+        }
+    }
+
+    //apply palette
     targetLine->setPalette(msgPalette);
+    
+    //tag as not seen
+    if(!this->isVisible()) {
+        this->_msgIdsNotSeen.append(msg.id());
+        emit notificationCountUpdated(this->_msgIdsNotSeen.count());
+    };
+
+}
+
+void MessagesLog::paintEvent(QPaintEvent *event) {
+    
+    //default behavior
+    LogContainer::paintEvent(event);
+    
+    //if no message unseen, skip
+    auto messagesNotSeenCount = this->_msgIdsNotSeen.count();
+    if(!messagesNotSeenCount) return;
+
+    //since autoscrolled, every time it is visible means the user have seen all messages
+    if(this->isVisible()) {
+        this->_msgIdsNotSeen.clear();
+        emit notificationCountUpdated(0);
+    }
+
 }
