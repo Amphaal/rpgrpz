@@ -28,14 +28,29 @@ RPZUser::RPZUser(RPZUser::Id id, const QString &name, const Role &role, const QC
     this->_setColor(color);
 };
 
+QString RPZUser::idAsBase62() const {
+    
+    auto value = this->id();
+    QString out;
+
+    do {
+        auto dd = std::string(1, _CODES_b62[value % 62]);
+        out.insert(0, QString::fromStdString(dd));
+        value /= 62;
+    } while (value > 0);
+
+    return out;
+
+}
+
 void RPZUser::setName(const QString &name) {
     
     //default name
     this->insert(QStringLiteral(u"name"), name);
-    
+
     //whisp name
     auto adapted = MessageInterpreter::usernameToCommandCompatible(name);
-    adapted = adapted + this->color().name();
+    adapted = adapted + "#" + this->idAsBase62();
     this->insert(QStringLiteral(u"wname"), adapted);
         
 };

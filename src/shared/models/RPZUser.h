@@ -53,6 +53,8 @@ class RPZUser : public Serializable {
         void setCharacter(const RPZCharacter &character);
         void randomiseColor();
 
+        QString idAsBase62() const;
+
         QString name() const;
         QString whisperTargetName() const;
         Role role() const;
@@ -62,6 +64,8 @@ class RPZUser : public Serializable {
 
     private:
         void _setColor(const QColor &color = QColor());
+
+        static inline std::string _CODES_b62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 };
 

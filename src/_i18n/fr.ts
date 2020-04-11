@@ -1053,7 +1053,7 @@
     <message>
         <location filename="../shared/models/messaging/RPZMessage.cpp" line="59"/>
         <source> whisper to </source>
-        <translation> chuchotez à </translation>
+        <translation> chuchote à </translation>
     </message>
     <message>
         <location filename="../shared/models/messaging/RPZResponse.cpp" line="47"/>
