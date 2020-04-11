@@ -39,9 +39,11 @@ class RPZMessage : public Stampable {
         MessageInterpreter::Command commandType() const;
         QString toString() const override;
         QPalette palette() const override;
+        void setAsLocal();
 
     private:
         MessageInterpreter::Command _command = MessageInterpreter::Command::C_Unknown;
+        bool _isLocal = false;
         
         void _setText(const QString &text);
         void _forceCommand(const MessageInterpreter::Command &forced);

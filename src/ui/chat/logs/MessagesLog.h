@@ -26,17 +26,19 @@
 #include "src/shared/models/messaging/RPZMessage.h"
 #include "src/shared/models/messaging/RPZResponse.h"
 
+#include "src/ui/_others/ConnectivityObserver.h"
+
 #include <QBoxLayout>
 
-class MessagesLog : public LogContainer {
+class MessagesLog : public LogContainer, public ConnectivityObserver {
     public:
         MessagesLog(QWidget *parent = nullptr);
 
         void handleResponse(const RPZResponse &response);
         
-        void handleLocalMessage(const RPZMessage &msg);
+        void handleLocalMessage(RPZMessage &msg);
         void handleNonLocalMessage(const RPZMessage &msg);
-    
+
     private:
         void _handleMessage(const RPZMessage &msg, bool isLocal = false);
 

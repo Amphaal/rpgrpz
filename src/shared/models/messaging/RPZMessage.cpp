@@ -39,10 +39,13 @@ MessageInterpreter::Command RPZMessage::commandType() const {
     return this->_command;
 }
 
+void RPZMessage::setAsLocal() {
+    this->_isLocal = true;
+}
+
 QString RPZMessage::toString() const {
 
     auto base = Stampable::toString();
-    auto ownerExist = !this->owner().isEmpty();
     auto text = this->text();
 
     switch(this->_command) {
@@ -51,7 +54,7 @@ QString RPZMessage::toString() const {
             
             auto textPrefix = QObject::tr(" whispers to you : ");
             
-            if(!ownerExist) {
+            if(this->_isLocal) {
                 auto recipientList = MessageInterpreter::findRecipentsFromText(text).join(", ");
                 textPrefix = QObject::tr(" whisper to ") + recipientList + " : ";
                 text = MessageInterpreter::sanitizeText(text);

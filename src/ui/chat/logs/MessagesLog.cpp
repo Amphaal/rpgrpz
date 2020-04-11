@@ -70,8 +70,18 @@ void MessagesLog::handleNonLocalMessage(const RPZMessage &msg) {
     return this->_handleMessage(msg, false);
 }
 
-void MessagesLog::handleLocalMessage(const RPZMessage &msg) {
+void MessagesLog::handleLocalMessage(RPZMessage &msg) {
+    
+    //define as local
+    msg.setAsLocal();
+
+    //fill user infos
+    if(this->_rpzClient) {
+        msg.setOwnership(this->_rpzClient->identity());
+    }
+
     return this->_handleMessage(msg, true);
+
 }
 
 void MessagesLog::_handleMessage(const RPZMessage &msg, bool isLocal) {

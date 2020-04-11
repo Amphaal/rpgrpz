@@ -39,29 +39,30 @@ class LogContent : public QWidget {
             this->setLayout(layout);            
             layout->setMargin(0);
             layout->setSpacing(0);
+            layout->setAlignment(Qt::AlignTop);
 
             //user format
             if(auto owner = msg.owner(); owner.id()) {
-                
-                //specific layout alignment
-                layout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 
                     //companion
                     auto companion = new QLabel(this);
                     companion->setPixmap(QPixmap(RPZUser::IconsByRoles.value(owner.role())));
+                    companion->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Minimum);
+                    companion->setAlignment(Qt::AlignTop);
 
                     //color
                     QLabel* colorIndic = nullptr;
                     if(auto color = owner.color(); color.isValid()) {
                         
                         colorIndic = new QLabel(this);
-
+                        colorIndic->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Minimum);
+                        colorIndic->setAlignment(Qt::AlignTop);
+    
                         colorIndic->setFixedWidth(10);
                         colorIndic->setFixedHeight(10);
                         colorIndic->setFrameShape(QFrame::Panel);
                         colorIndic->setLineWidth(1);
                         colorIndic->setAutoFillBackground(true);
-                        colorIndic->setContentsMargins(3, 0, 0, 0);
                         
                         QPalette palette;
                         palette.setColor(QPalette::Window, color);
@@ -71,7 +72,9 @@ class LogContent : public QWidget {
 
                     //name
                     auto name = new QLabel(owner.toString(), this);
-                    name->setContentsMargins(5, 0, 5, 0);
+                    name->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Minimum);
+                    name->setAlignment(Qt::AlignTop);
+                    name->setContentsMargins(5, 2, 10, 0);
                     auto font = name->font();
                     font.setBold(true);
                     name->setFont(font);
@@ -96,7 +99,7 @@ class LogContent : public QWidget {
                     }
                     auto toAdd = new LogText(textStr, this);
 
-                //
+                //add widgets
                 layout->addWidget(companion);
                 if(colorIndic) layout->addWidget(colorIndic);
                 layout->addWidget(name);
@@ -106,9 +109,6 @@ class LogContent : public QWidget {
             
             //standard
             else {
-                
-                //specific layout alignment
-                layout->setAlignment(Qt::AlignTop);
                 
                 //normal text
                 auto toAdd = new LogText(msg.toString(), this);

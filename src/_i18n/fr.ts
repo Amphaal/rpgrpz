@@ -1046,12 +1046,12 @@
         <translation>Nouvel Inventaire</translation>
     </message>
     <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="52"/>
+        <location filename="../shared/models/messaging/RPZMessage.cpp" line="55"/>
         <source> whispers to you : </source>
         <translation> vous chuchote : </translation>
     </message>
     <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="56"/>
+        <location filename="../shared/models/messaging/RPZMessage.cpp" line="59"/>
         <source> whisper to </source>
         <translation> chuchotez à </translation>
     </message>
@@ -1327,12 +1327,12 @@
         <translation>[Jauge sans nom]</translation>
     </message>
     <message>
-        <location filename="../ui/chat/logs/components/LogContent.hpp" line="84"/>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="87"/>
         <source>logged in !</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ui/chat/logs/components/LogContent.hpp" line="88"/>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="91"/>
         <source>logged out.</source>
         <translation type="unfinished"></translation>
     </message>
