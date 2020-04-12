@@ -171,7 +171,7 @@ int main(int argc, char** argv) {
                     clientApp(argc, argv);
 
     //make sure to flush sentry for warnings / safe errors
-    sentry_shutdown();
+    // sentry_shutdown();
 
     return result; 
 

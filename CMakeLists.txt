@@ -289,14 +289,14 @@ IF(MINGW)
     )
 endif()
 
-#################
-# Sentry-native #
-#################
+# #################
+# # Sentry-native #
+# #################
 
-add_subdirectory("external/sentry-native")
-target_compile_options(sentry PUBLIC -Wno-unused-parameter -Wno-format-pedantic) #temporary fix
-target_include_directories(appExec PRIVATE "${Sentry-Native_SOURCE_DIR}/include")
-target_link_libraries(appExec sentry)
+# add_subdirectory("external/sentry-native")
+# target_compile_options(sentry PUBLIC -Wno-unused-parameter -Wno-format-pedantic) #temporary fix
+# target_include_directories(appExec PRIVATE "${Sentry-Native_SOURCE_DIR}/include")
+# target_link_libraries(appExec sentry)
 
 #############
 # AudioTube #

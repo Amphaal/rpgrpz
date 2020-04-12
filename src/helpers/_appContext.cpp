@@ -191,32 +191,32 @@ void AppContext::init(const QString &customContext) {
     _makeSureDirPathExists(getServerMapAutosaveFolderLocation());
 
     //crashpad activated if release app
-    initSentry();
+    // initSentry();
 
 } 
 
 
-void AppContext::initSentry() {
+// void AppContext::initSentry() {
 
-    auto options = sentry_options_new();
-    sentry_options_set_dsn(options, SENTRY_ENDPOINT);
+//     auto options = sentry_options_new();
+//     sentry_options_set_dsn(options, SENTRY_ENDPOINT);
 
-    QString environement = "Production";
-    #ifdef _DEBUG
-        environement = "Debug";
-    #endif
-    sentry_options_set_environment(options, qUtf8Printable(environement));
+//     QString environement = "Production";
+//     #ifdef _DEBUG
+//         environement = "Debug";
+//     #endif
+//     sentry_options_set_environment(options, qUtf8Printable(environement));
 
-    sentry_options_set_release(options, GITHUB_VERSION_NAME);
-    sentry_options_set_debug(options, 1);
+//     sentry_options_set_release(options, GITHUB_VERSION_NAME);
+//     sentry_options_set_debug(options, 1);
 
-    //integration
-    auto dbStr = AppContext::getAppDataLocation() + "/sentry_db";
-    sentry_options_set_database_path(options, qUtf8Printable(dbStr));
+//     //integration
+//     auto dbStr = AppContext::getAppDataLocation() + "/sentry_db";
+//     sentry_options_set_database_path(options, qUtf8Printable(dbStr));
 
-    sentry_init(options);
+//     sentry_init(options);
 
-}
+// }
 
 void AppContext::_makeSureDirPathExists(const QString &path) {
     struct stat buffer;

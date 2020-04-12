@@ -236,7 +236,8 @@
         "__tree": "cpp",
         "__tuple": "cpp",
         "qtcpsocket": "cpp",
-        "qsoundeffect": "cpp"
+        "qsoundeffect": "cpp",
+        "errno.h": "c"
     },
     "terminal.integrated.scrollback": 10000
 }

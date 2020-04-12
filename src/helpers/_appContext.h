@@ -39,7 +39,7 @@
 #include "src/_libs/snowflake/snowflake.h"
 #include "src/helpers/_logWriter.h"
 
-#include <sentry.h>
+// #include <sentry.h>
 
 class MapView;
 class AppContext {
