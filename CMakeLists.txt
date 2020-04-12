@@ -30,7 +30,7 @@ project(RPGRPZ
     VERSION 0.21.1000
     DESCRIPTION "Simple Tabletop RPG experience"
     HOMEPAGE_URL "https://github.com/Amphaal/rpgrpz"
-    LANGUAGES C CXX
+    LANGUAGES CXX
 )
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER) #lowered project name
 SET(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME ${PROJECT_NAME_LOWER})
