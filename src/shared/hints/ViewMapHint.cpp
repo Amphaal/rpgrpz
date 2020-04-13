@@ -72,8 +72,8 @@ void ViewMapHint::_atomOwnerChanged(const RPZAtom::Id &target, const RPZCharacte
 
 bool ViewMapHint::_hasOwnershipOf(const RPZAtom &atom) const {
     
-    if(!this->_isAtomOwnable(atom)) return false;
     if(Authorisations::isHostAble()) return true;
+    if(!this->_isAtomOwnable(atom)) return false;
 
     auto id = atom.id();
     auto has = this->_ownedTokenIds.contains(id);
