@@ -64,10 +64,10 @@ class Playlist : public QListWidget {
     private:
         void keyPressEvent(QKeyEvent * event) override;
         void _removeYoutubeVideo(QListWidgetItem* playlistItem);
-        void _addYoutubeVideo(const VideoMetadata::Id &ytVideoId);
+        void _addYoutubeVideo(const PlayerConfig::VideoId &ytVideoId);
         bool _addYoutubeItem(VideoMetadata* metadata);
 
-        QSet<VideoMetadata::Id> _playlistVideoIds;
+        QSet<PlayerConfig::VideoId> _playlistVideoIds;
 
         void _onItemDoubleClicked(QListWidgetItem * item);
         QListWidgetItem* _playlistItemToUse = nullptr;

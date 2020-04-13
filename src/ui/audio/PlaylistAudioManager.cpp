@@ -264,9 +264,9 @@ void PlaylistAudioManager::_onToolbarPlayRequested(VideoMetadata* metadata) {
 
     NetworkFetcher::refreshMetadata(metadata).then([=]() {
 
-        auto title = metadata->title();
-        auto streamUrl = metadata->getBestAvailableStreamUrl().toString();
-        auto duration = metadata->duration();
+        auto title = metadata->playerConfig().title();
+        auto streamUrl = metadata->audioStreams()->preferedUrl().toString();
+        auto duration = metadata->playerConfig().duration();
 
         //update state
         this->_state.registerNewPlay(streamUrl, title, duration);

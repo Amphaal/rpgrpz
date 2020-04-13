@@ -221,7 +221,7 @@ void Playlist::addYoutubeVideo(const QString &url) {
 
 }
 
-void Playlist::_addYoutubeVideo(const VideoMetadata::Id &ytVideoId) {
+void Playlist::_addYoutubeVideo(const PlayerConfig::VideoId &ytVideoId) {
     auto metadata = VideoMetadata::fromVideoId(ytVideoId);
     auto success = _addYoutubeItem(metadata);
     if(!success) delete metadata;
@@ -253,10 +253,10 @@ bool Playlist::_addYoutubeItem(VideoMetadata* metadata) {
         metadata, &VideoMetadata::metadataRefreshed,
         [=]() {
 
-            auto durationStr = StringHelper::secondsToTrackDuration(metadata->duration());
+            auto durationStr = StringHelper::secondsToTrackDuration(metadata->playerConfig().duration());
 
             auto title = QStringLiteral(u"%1 [%2]")
-                            .arg(metadata->title())
+                            .arg(metadata->playerConfig().title())
                             .arg(durationStr);
 
             playlistItem->setText(pos + title);
