@@ -178,6 +178,16 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
             }
             break;
 
+            case RPZAtom::Parameter::PenColor: {
+                if(auto cItem = dynamic_cast<MapViewGraphicsPathItem*>(itemToUpdate)) {
+                    auto newColor = val.value<QColor>();
+                    auto pen = cItem->pen();
+                    pen.setColor(newColor);
+                    cItem->setPen(pen);
+                }
+            }
+            break;
+
             //on moving
             case RPZAtom::Parameter::Position: {
                 auto destPos = val.toPointF();

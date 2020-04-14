@@ -194,6 +194,7 @@ int RPZAtom::textSize() const { return this->metadata(RPZAtom::Parameter::TextSi
 RPZAtom::Layer RPZAtom::layer() const { return this->metadata(RPZAtom::Parameter::Layer).toInt(); }
 QPointF RPZAtom::pos() const { return this->metadata(RPZAtom::Parameter::Position).toPointF();}
 int RPZAtom::penWidth() const { return this->metadata(RPZAtom::Parameter::PenWidth).toInt(); }
+QColor RPZAtom::penColor() const { return this->metadata(RPZAtom::Parameter::PenColor).value<QColor>(); }
 bool RPZAtom::isHidden() const { return this->metadata(RPZAtom::Parameter::Hidden).toBool(); }
 bool RPZAtom::isLocked() const { return this->metadata(RPZAtom::Parameter::Locked).toBool(); }
 double RPZAtom::assetScale() const { return this->metadata(RPZAtom::Parameter::AssetScale).toDouble();}
@@ -232,9 +233,9 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams(const RPZAtom::Type &type) 
     
     switch(type) {
         
-        case RPZAtom::Type::FogOfWar:
         case RPZAtom::Type::Drawing: {
             out.insert(RPZAtom::Parameter::PenWidth);
+            out.insert(RPZAtom::Parameter::PenColor);
         }
         break;
 

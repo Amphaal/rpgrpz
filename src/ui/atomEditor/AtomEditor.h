@@ -39,6 +39,7 @@
 #include "src/ui/atomEditor/editors/generic/NonLinearAtomSliderEditor.hpp"
 #include "src/ui/atomEditor/editors/generic/AtomTextEditor.hpp"
 #include "src/ui/atomEditor/editors/generic/AtomShortTextEditor.hpp"
+#include "src/ui/atomEditor/editors/generic/ColorPickerEditor.hpp"
 
 #include "src/ui/atomEditor/editors/specific/BrushToolEditor.hpp"
 #include "src/ui/atomEditor/editors/specific/CharacterPickerEditor.hpp"
