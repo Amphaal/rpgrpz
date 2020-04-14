@@ -148,8 +148,13 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
             void _changeTool(MapTool newTool, bool quickChange = false);
             void _onToolRequested(const MapTool &tool, bool enabled);
         
+        //icons
+        QCursor _walkingCursor;
+        QCursor _pingCursor;
+        QCursor _quickDrawCursor;
+        QCursor _measureCursor;
+
         //walking...
-            QCursor _walkingCursor;
             MapViewWalkingHelper* _walkingHelper = nullptr;
             void _mightUpdateWalkingHelperPos();
             void _clearWalkingHelper();

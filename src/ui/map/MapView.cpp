@@ -24,6 +24,9 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
     this->setScene(new QGraphicsScene);
 
     this->_walkingCursor = QCursor(QStringLiteral(u":/icons/app/tools/walking.png"));
+    this->_pingCursor = QCursor(QStringLiteral(u":/icons/app/tools/ping.png"));
+    this->_quickDrawCursor = QCursor(QStringLiteral(u":/icons/app/tools/pencil.png"));
+    this->_measureCursor = QCursor(QStringLiteral(u":/icons/app/tools/measuring.png"));
 
     //init
     this->_menuHandler = new AtomsContextualMenuHandler(this);
@@ -932,18 +935,15 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
         this->_clearWalkingHelper();
     }
 
+    //define interactivity
+    this->setInteractive(newTool == MapTool::Default ? true : false);
+
     //depending on tool
     switch(newTool) {
 
         case MapTool::Atom: {
             
-            this->setInteractive(false);
             this->setDragMode(QGraphicsView::DragMode::NoDrag);
-
-            if(auto ghost = HintThread::hint()->ghostItem()) {
-                ghost->setVisible(this->_isCursorIn);
-            }
-            
             switch(HintThread::hint()->templateAtom().type()) {
                 case RPZAtom::Type::Drawing:
                     this->setCursor(Qt::CrossCursor);
@@ -959,12 +959,15 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
                     break;
             }
 
+            if(auto ghost = HintThread::hint()->ghostItem()) {
+                ghost->setVisible(this->_isCursorIn);
+            }
+
         }
         break;
 
         case MapTool::Scroll: {
             
-            this->setInteractive(false);
             this->setDragMode(QGraphicsView::DragMode::ScrollHandDrag);
             
             if(auto ghost = HintThread::hint()->ghostItem()) {
@@ -975,23 +978,40 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
         break;
         
         case MapTool::Walking: {
-                
+            
+            this->setDragMode(QGraphicsView::DragMode::NoDrag);
+            this->setCursor(this->_walkingCursor);
+
             //add it to scene
             this->scene()->addItem(this->_walkingHelper);
 
-            this->setInteractive(false);
-            this->setDragMode(QGraphicsView::DragMode::NoDrag);
-            this->setCursor(this->_walkingCursor);
-            break;
         }
+        break;
 
+        case MapTool::Ping: {
+            this->setDragMode(QGraphicsView::DragMode::NoDrag);
+            this->setCursor(this->_pingCursor);
+        }
+        break;
+
+        case MapTool::QuickDraw: {
+            this->setDragMode(QGraphicsView::DragMode::NoDrag);
+            this->setCursor(this->_quickDrawCursor);
+        }
+        break;
+
+        case MapTool::Measure: {
+            this->setDragMode(QGraphicsView::DragMode::NoDrag);
+            this->setCursor(this->_measureCursor);
+        }
+        break;
 
         case MapTool::Default:
-        default:
-            this->setInteractive(true);
+        default: {
             this->setDragMode(QGraphicsView::DragMode::RubberBandDrag);
             this->setCursor(Qt::ArrowCursor);
-            break;
+        }
+        break;
     }
 
     //may update ghost pos
