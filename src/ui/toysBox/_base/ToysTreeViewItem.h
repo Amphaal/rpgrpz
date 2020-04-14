@@ -219,7 +219,7 @@ class ToysTreeViewItem {
         static const inline QHash<ToysTreeViewItem::Type, QString> _typeDescriptions = {
             { ToysTreeViewItem::Type::InternalContainer, QT_TRANSLATE_NOOP("QObject", "Internal") },
             { ToysTreeViewItem::Type::Event, QT_TRANSLATE_NOOP("QObject", "Event") },
-            { ToysTreeViewItem::Type::FreeDraw, QT_TRANSLATE_NOOP("QObject", "Drawing") },
+            { ToysTreeViewItem::Type::FreeDraw, QT_TRANSLATE_NOOP("QObject", "Felt pen") },
             { ToysTreeViewItem::Type::Text, QT_TRANSLATE_NOOP("QObject", "Text") },
             { ToysTreeViewItem::Type::Player, QT_TRANSLATE_NOOP("QObject", "Player") },
             { ToysTreeViewItem::Type::POI, QT_TRANSLATE_NOOP("QObject", "Point of interest") },
