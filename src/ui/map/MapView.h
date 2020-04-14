@@ -57,7 +57,8 @@
 #include "src/ui/map/modules/MV_Manipulation.hpp"
 #include "src/ui/map/modules/MV_HUDLayout.hpp"
 
-#include "src/shared/renderer/assists/DrawingAssist.hpp"
+#include "src/shared/renderer/assists/AtomDrawingAssist.hpp"
+#include "src/shared/renderer/assists/QuickDrawingAssist.hpp"
 
 #include "src/shared/renderer/graphics/MapViewGraphics.h"
 
@@ -113,7 +114,8 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
 
     private:
         RPZMapParameters _currentMapParameters;
-        DrawingAssist* _drawingAssist = nullptr;
+        QuickDrawingAssist* _quickDrawingAssist = nullptr;
+        AtomDrawingAssist* _atomDrawingAssist = nullptr;
         AtomsContextualMenuHandler* _menuHandler = nullptr;
         AtomActionsHandler* _atomActionsHandler = nullptr;
 

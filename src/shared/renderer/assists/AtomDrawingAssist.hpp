@@ -26,11 +26,11 @@
 
 #include "src/helpers/VectorSimplifier.hpp"
 
-class DrawingAssist {
+class AtomDrawingAssist {
     public:
         using IsCommitedDrawing = bool;
 
-        DrawingAssist(QGraphicsView* view) : _view(view) { }
+        AtomDrawingAssist(QGraphicsView* view) : _view(view) { }
 
         void addDrawingPoint(const QPoint &cursorPosInWindow, const RPZAtom &drawnFrom) {
         

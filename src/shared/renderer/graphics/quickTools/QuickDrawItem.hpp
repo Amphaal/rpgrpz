@@ -18,3 +18,38 @@
 // different license and copyright still refer to this GNU General Public License.
 
 #pragma once
+
+#include "src/shared/renderer/graphics/_generic/MapViewGraphicsPathItem.hpp"
+#include "src/shared/models/RPZUser.h"
+
+class QuickDrawItem : public MapViewGraphicsPathItem {
+    public:
+        using Id = SnowFlake::Id;
+
+        QuickDrawItem(const QuickDrawItem::Id &id, const QColor &color, const QPainterPath &firstBits = QPainterPath()) : MapViewGraphicsPathItem(QPainterPath(), QPen(), QBrush()) {
+            QPen pen;
+            pen.setColor(color);
+            this->setPen(pen);
+            this->_id = id;
+            this->setPath(firstBits);
+        }
+        QuickDrawItem(const RPZUser &emiter) : QuickDrawItem(SnowFlake::get()->nextId(), emiter.color()) {}
+
+        QuickDrawItem::Id id() const {
+            return this->_id;
+        }
+
+        void addPathBits(const QPainterPath &bits) {
+            //TODO
+        }
+    
+    private:
+        QuickDrawItem() : MapViewGraphicsPathItem(QPainterPath(), QPen(), QBrush()) {
+            this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
+            this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
+            this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsFocusable, false);
+        }
+
+        QuickDrawItem::Id _id;
+
+};

@@ -27,3 +27,6 @@
 #include "_specific/MapViewUnscalable.hpp"
 #include "_specific/MapViewDrawing.hpp"
 #include "_specific/MapViewFog.hpp"
+#include "quickTools/MeasurementBandItem.hpp"
+#include "quickTools/PingItem.hpp"
+#include "quickTools/QuickDrawItem.hpp"

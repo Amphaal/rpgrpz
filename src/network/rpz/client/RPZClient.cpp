@@ -306,7 +306,7 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
     switch(method) {
 
         case RPZJSON::Method::QuickDrawHappened: {
-            auto qd = RPZQuickDraw(data.toHash());
+            RPZQuickDraw qd(data.toHash());
             emit quickDrawReceived(qd);
         }
         break;

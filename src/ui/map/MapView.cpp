@@ -31,7 +31,8 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
     //init
     this->_menuHandler = new AtomsContextualMenuHandler(this);
     this->_atomActionsHandler = new AtomActionsHandler(this, this);
-    this->_drawingAssist = new DrawingAssist(this);
+    this->_atomDrawingAssist = new AtomDrawingAssist(this);
+    this->_quickDrawingAssist = new QuickDrawingAssist(this);
 
     //OpenGL backend activation
     QGLFormat format;
@@ -305,7 +306,8 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
         this->resetTool();
 
         //before clearing whole scene
-        this->_drawingAssist->clearDrawing(); 
+        this->_atomDrawingAssist->clearDrawing();
+        this->_quickDrawingAssist->clearDrawings(); 
         MapViewAnimator::clearAnimations();
 
         //clear and change rect
@@ -350,7 +352,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
                 }
 
                 //auto remove temporary drawing
-                auto isCommitedDrawing = this->_drawingAssist->compareItemToCommitedDrawing(item);
+                auto isCommitedDrawing = this->_atomDrawingAssist->compareItemToCommitedDrawing(item);
                 if(isCommitedDrawing) break;
 
                 //if not from temporary drawing, animate path
@@ -658,7 +660,7 @@ void MapView::mousePressEvent(QMouseEvent *event) {
 
                 case RPZAtom::Type::Drawing:
                 case RPZAtom::Type::Brush:
-                    this->_drawingAssist->addDrawingPoint(event->pos(), templateAtom);
+                    this->_atomDrawingAssist->addDrawingPoint(event->pos(), templateAtom);
                 break;
 
                 default: {
@@ -692,6 +694,11 @@ void MapView::mousePressEvent(QMouseEvent *event) {
                     QGraphicsView::mousePressEvent(event); //allows rubber band selection
                 }
                 
+            }
+            break;
+
+            case MapTool::QuickDraw: {
+                this->_quickDrawingAssist->addDrawingPoint(event->pos());
             }
             break;
 
@@ -734,7 +741,7 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
 
             case RPZAtom::Type::Drawing:
             case RPZAtom::Type::Brush:
-                this->_drawingAssist->updateDrawingPath(event->pos());
+                this->_atomDrawingAssist->updateDrawingPath(event->pos());
             break;
 
             default:
@@ -745,6 +752,10 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
 
     else if(currentTool == MapTool::Walking) {
         this->_mightUpdateWalkingHelperPos();
+    }
+
+    else if(currentTool == MapTool::QuickDraw) {
+        this->_quickDrawingAssist->updateDrawingPath(event->pos());
     }
 
     else if(currentTool == MapTool::Scroll && this->_isMousePressed) {
@@ -796,7 +807,8 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
     if(btnPressed == Qt::MouseButton::LeftButton) {
 
             //commit sticky drawing
-            this->_drawingAssist->onMouseRelease();
+            this->_atomDrawingAssist->onMouseRelease();
+            this->_quickDrawingAssist->onMouseRelease();
 
             switch(currentTool) {
                 
@@ -891,7 +903,8 @@ void MapView::resetTool() {
 void MapView::_changeTool(MapTool newTool, const bool quickChange) {
 
     //end drawing if any
-    this->_drawingAssist->mayCommitDrawing();
+    this->_atomDrawingAssist->mayCommitDrawing();
+    this->_quickDrawingAssist->onMouseRelease();
 
     //prevent the usage of Atom tool if not host able
     if(!Authorisations::isHostAble() && newTool == MapTool::Atom) return;

@@ -34,8 +34,8 @@ class RPZQuickDraw : public QVariantHash {
             this->insert("p", JSONSerializer::asBase64(path));
         }
 
-        RPZUser::Id drawer() const {
-            return this->value("drwr").toULongLong();
+        RPZUser::Id drawerId() const {
+            return this->value("drwr_id").toULongLong();
         }
 
         const QPainterPath path() const {
