@@ -81,7 +81,8 @@ class RPZAtom : public Serializable {
             MinNPCHealth,
             Opacity,
             CoveredByFog,
-            TokenSize
+            TokenSize,
+            PenColor
         };
         Q_ENUM(Parameter)
 
@@ -153,7 +154,7 @@ class RPZAtom : public Serializable {
         };
 
         static const inline QHash<RPZAtom::Type, QString> atomTypeDescr {
-            { RPZAtom::Type::Drawing, QT_TRANSLATE_NOOP("QObject", "Drawing") },
+            { RPZAtom::Type::Drawing, QT_TRANSLATE_NOOP("QObject", "Felt pen") },
             { RPZAtom::Type::Text, QT_TRANSLATE_NOOP("QObject", "Text") },
             { RPZAtom::Type::Object, QT_TRANSLATE_NOOP("QObject", "Object") },
             { RPZAtom::Type::Brush, QT_TRANSLATE_NOOP("QObject", "Brush") },
@@ -267,6 +268,7 @@ class RPZAtom : public Serializable {
         RPZAtom::Layer layer() const;
         QPointF pos() const;
         int penWidth() const;
+        QColor penColor() const;
         bool isHidden() const;
         bool isLocked() const;
         RPZAtom::BrushType brushType() const;
@@ -366,7 +368,8 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::MinNPCHealth, QStringLiteral(u"npc_minh") },
             { RPZAtom::Parameter::Opacity, QStringLiteral(u"o") },
             { RPZAtom::Parameter::CoveredByFog, QStringLiteral("cbf") },
-            { RPZAtom::Parameter::TokenSize, QStringLiteral("t_sz") }
+            { RPZAtom::Parameter::TokenSize, QStringLiteral("t_sz") },
+            { RPZAtom::Parameter::PenColor, QStringLiteral("p_clr") }
         };
 
         static inline const RPZAtom::Updates _defaultVal = {
@@ -400,7 +403,8 @@ class RPZAtom : public Serializable {
             { RPZAtom::Parameter::MinNPCHealth, 0 },
             { RPZAtom::Parameter::Opacity, 100 },
             { RPZAtom::Parameter::CoveredByFog, false },
-            { RPZAtom::Parameter::TokenSize, (int)RPZAtom::TokenSize::Normal }
+            { RPZAtom::Parameter::TokenSize, (int)RPZAtom::TokenSize::Normal },
+            { RPZAtom::Parameter::PenColor, QColor() }
         };
 
         void _setType(const RPZAtom::Type &type);

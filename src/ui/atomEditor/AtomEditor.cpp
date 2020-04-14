@@ -156,6 +156,8 @@ void AtomEditor::_createEditorsFromAtomParameters() {
     _addEditor(new AtomTextEditor(RPZAtom::Parameter::NPCDescription));
     _addEditor(new NPCHealthEditor);
 
+    _addEditor(new ColorPickerEditor(RPZAtom::Parameter::PenColor));
+
     //integrate
     this->_integrateEditors();
 
