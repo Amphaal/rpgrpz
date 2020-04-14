@@ -186,6 +186,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
                     cItem->setPen(pen);
                 }
             }
+            break;
 
             //on moving
             case RPZAtom::Parameter::Position: {
