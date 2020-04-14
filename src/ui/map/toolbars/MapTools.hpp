@@ -50,17 +50,64 @@ class MapTools : public QToolBar {
             this->addAction(RPZActions::useMeasurementTool());
             this->addAction(RPZActions::useQuickDrawTool());
 
+            _inst = this;
+
         }
- 
+
+        static MapTools* get() {
+            return _inst;
+        }
+
+        void onToolChange(const MapTool &tool) {
+            auto associatedAction = _findActionFromTool(tool);
+            this->_uncheckActions(associatedAction);
+        }
+
     signals:
         void toolRequested(const MapTool &tool, bool enabled);
 
     private:
+        static inline MapTools* _inst = nullptr;
+
+        QAction* _findActionFromTool(const MapTool &tool) {
+            for(auto action : this->actions()) {
+                auto actionTool = this->_mapTool(action);
+                if(tool == actionTool) return action;
+            }
+            return nullptr;
+        }
+
+        MapTool _mapTool(QAction *action) {
+            return (MapTool)action->data().toInt();
+        }
+
         void _onToolSelectionChanged(QAction *action) {
-            return emit toolRequested(
-                (MapTool)action->data().toInt(),
-                action->isChecked()
-            );
+            
+            this->_uncheckActions(action);
+
+            auto associatedTool = this->_mapTool(action);
+
+            return emit toolRequested(associatedTool, action->isChecked());
+
+        }
+
+        void _uncheckActions(QAction * toMaintainState = nullptr) {
+            
+            auto allActions = this->actions();
+            
+            //remove from list
+            if(toMaintainState) {
+                auto found = allActions.indexOf(toMaintainState);
+                if(found > -1) allActions.removeAt(found);
+            }
+            
+            //uncheck
+            this->blockSignals(true);
+            for(auto action : allActions) {
+                action->setChecked(false);
+            }
+            this->blockSignals(false);
+
         }
 
 };

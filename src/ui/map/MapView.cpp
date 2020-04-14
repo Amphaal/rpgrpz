@@ -126,6 +126,15 @@ void MapView::_handleHintsSignalsAndSlots() {
         }
     );
 
+    QObject::connect(
+        MapTools::get(), &MapTools::toolRequested,
+        this, &MapView::_onToolRequested
+    );
+
+}
+
+void MapView::_onToolRequested(const MapTool &tool, bool enabled) {
+    this->_changeTool(enabled ? tool : MapTool::Default);
 }
 
 void MapView::_onFogModeChanged(const RPZFogParams::Mode &newMode) {
@@ -903,6 +912,9 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
         }
 
         this->_tool = newTool;
+
+        //notify MapTools
+        MapTools::get()->onToolChange(this->_tool);
         
         if(newTool != MapTool::Walking) {
             this->scene()->clearSelection();

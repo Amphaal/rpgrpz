@@ -61,6 +61,8 @@
 
 #include "src/shared/renderer/graphics/MapViewGraphics.h"
 
+#include "src/ui/map/toolbars/MapTools.hpp"
+
 class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayout, public AtomSelector {
 
     Q_OBJECT
@@ -144,6 +146,7 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
             MapTool _quickTool = MapTool::Default;
             MapTool _getCurrentTool() const;
             void _changeTool(MapTool newTool, bool quickChange = false);
+            void _onToolRequested(const MapTool &tool, bool enabled);
         
         //walking...
             QCursor _walkingCursor;
