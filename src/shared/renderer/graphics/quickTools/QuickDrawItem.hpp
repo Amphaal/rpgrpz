@@ -109,6 +109,8 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsFocusable, false);
 
+            this->setZValue(AppContext::WALKER_Z_INDEX - 10);
+
             QObject::connect(
                 &this->_tmChomp, &QTimer::timeout,
                 this, &QuickDrawItem::_chomp
