@@ -72,7 +72,6 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
             );
             this->_tm.start();
 
-            //TODO add opacity
             //TODO add insert animation for remote
 
         }
@@ -111,6 +110,22 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
             for(auto &p : this->_path) {
                 path.lineTo(p);
             }
+
+            //determine angle
+            QLineF line(moveTo, path.elementAt(0));
+            line = QLineF::fromPolar(10, line.angle());
+            line.translate(moveTo);
+
+            QRadialGradient grad;
+            grad.setColorAt(0, Qt::transparent);
+            grad.setColorAt(1, Qt::black);    
+            grad.setCenter(line.p1());
+            grad.setFocalPoint(line.p2());
+            grad.setRadius(120);
+   
+            QPen p;
+            p.setBrush(grad);
+            this->setPen(p);
 
             //refresh path
             this->setPath(path);

@@ -411,11 +411,10 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
     }
 
     if(type == Payload::Alteration::Reset) {
-            this->_mayFogUpdateAtoms(
-                HintThread::hint()->fogItem()->coveredAtomItems()
-            );
+        this->_mayFogUpdateAtoms(
+            HintThread::hint()->fogItem()->coveredAtomItems()
+        );
         ProgressTracker::get()->heavyAlterationEnded();
-        
     }
 
     //check specific items for fog updates
