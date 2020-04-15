@@ -118,6 +118,7 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
         AtomDrawingAssist* _atomDrawingAssist = nullptr;
         AtomsContextualMenuHandler* _menuHandler = nullptr;
         AtomActionsHandler* _atomActionsHandler = nullptr;
+        MapViewMeasurementHelper* _measurementHelper = nullptr;
 
         //helpers
         void _handleHintsSignalsAndSlots();

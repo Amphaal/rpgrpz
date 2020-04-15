@@ -41,7 +41,7 @@ QAction* RPZActions::useMeasurementTool() {
     );
 
     action->setCheckable(true);
-    action->setEnabled(false);
+    action->setEnabled(true);
     action->setData((int)MapTool::Measure);
 
     return action;

@@ -46,7 +46,7 @@ class MapViewMeasurementHelper : public QObject, public QGraphicsItem, public RP
     private:
         RPZMapParameters _mapParams;
         QGraphicsView* _view = nullptr;
-        QPointF _startPoint;
+        QPointF _startScenePos;
         
         struct PointPos {
             QPoint viewCursorPos;
@@ -64,7 +64,7 @@ class MapViewMeasurementHelper : public QObject, public QGraphicsItem, public RP
                 this->_mapParams.alignPointFromStartPoint(out.sceneCursorPos);
             }
 
-            out.distanceLine = QLineF(this->_startPoint, out.sceneCursorPos);
+            out.distanceLine = QLineF(this->_startScenePos, out.sceneCursorPos);
 
             return out;
             
@@ -101,12 +101,12 @@ class MapViewMeasurementHelper : public QObject, public QGraphicsItem, public RP
             QPen pen;
             pen.setWidth(5);
             pen.setCosmetic(true);
-            pen.setColor(AppContext::WALKER_COLOR);
+            pen.setColor(AppContext::MEASUREMENT_COLOR);
             pen.setStyle(Qt::DashLine);
             painter->setPen(pen);
                 
             QBrush brush(Qt::BrushStyle::SolidPattern);
-            brush.setColor(AppContext::WALKER_COLOR);
+            brush.setColor(AppContext::MEASUREMENT_COLOR);
             painter->setBrush(brush);
 
             painter->setRenderHint(QPainter::Antialiasing, true);
@@ -142,13 +142,6 @@ class MapViewMeasurementHelper : public QObject, public QGraphicsItem, public RP
 
                 //draw line
                 painter->drawLine(pp.distanceLine);
-
-                //define rect
-                auto inplaceRect = QRectF({}, this->_mapParams.tileSizeInPoints());
-                inplaceRect.moveCenter(pp.distanceLine.p2());
-                
-                //draw rect
-                painter->drawRect(inplaceRect);
 
             painter->restore();
 
@@ -193,8 +186,8 @@ class MapViewMeasurementHelper : public QObject, public QGraphicsItem, public RP
                 aa.setWrapMode(QTextOption::NoWrap);
 
                 auto tileWidth = this->_mapParams.tileWidthInPoints();
-                auto x = qAbs(qRound((this->_startPoint.x() - pp.sceneCursorPos.x()) / tileWidth));
-                auto y = qAbs(qRound((this->_startPoint.y() - pp.sceneCursorPos.y()) / tileWidth));
+                auto x = qAbs(qRound((this->_startScenePos.x() - pp.sceneCursorPos.x()) / tileWidth));
+                auto y = qAbs(qRound((this->_startScenePos.y() - pp.sceneCursorPos.y()) / tileWidth));
                 
                 auto text = QStringLiteral(u"%1x%2").arg(x).arg(y);
                 auto textRect = painter->boundingRect(QRectF(), text, aa);
@@ -251,14 +244,15 @@ class MapViewMeasurementHelper : public QObject, public QGraphicsItem, public RP
         }
 
     public:
-        MapViewMeasurementHelper(const RPZMapParameters &params, const QPointF &startPoint, QGraphicsView* view) : _startPoint(startPoint), _view(view) {
+        MapViewMeasurementHelper(const RPZMapParameters &params, const QPoint &evtPosPoint, QGraphicsView* view) : _view(view) {
             
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsFocusable, false);            
 
+            this->_startScenePos = this->_view->mapToScene(evtPosPoint);
             if(this->_mapParams.movementSystem() == RPZMapParameters::MovementSystem::Grid) {
-                this->_mapParams.alignPointFromStartPoint(this->_startPoint);
+                this->_mapParams.alignPointFromStartPoint(this->_startScenePos);
             }
 
             this->_mapParams = params;

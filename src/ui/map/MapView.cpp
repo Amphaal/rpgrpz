@@ -24,9 +24,9 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
     this->setScene(new QGraphicsScene);
 
     this->_walkingCursor = QCursor(QStringLiteral(u":/icons/app/tools/walking.png"));
-    this->_pingCursor = QCursor(QStringLiteral(u":/icons/app/tools/ping.png"));
-    this->_quickDrawCursor = QCursor(QStringLiteral(u":/icons/app/tools/pencil.png"));
-    this->_measureCursor = QCursor(QStringLiteral(u":/icons/app/tools/measuring.png"));
+    this->_pingCursor = QCursor(QStringLiteral(u":/icons/app/tools/ping.png"), 7, 15);
+    this->_quickDrawCursor = QCursor(QStringLiteral(u":/icons/app/tools/pencil.png"), 15, 15);
+    this->_measureCursor = QCursor(QStringLiteral(u":/icons/app/tools/measuring.png"), 15, 15);
 
     //init
     this->_menuHandler = new AtomsContextualMenuHandler(this);
@@ -695,6 +695,13 @@ void MapView::mousePressEvent(QMouseEvent *event) {
                 
             }
             break;
+            
+            case MapTool::Measure : {
+                if(this->_measurementHelper) delete this->_measurementHelper;
+                this->_measurementHelper = new MapViewMeasurementHelper(this->_currentMapParameters, event->pos(), this);
+                this->scene()->addItem(this->_measurementHelper);
+            }
+            break;
 
             case MapTool::QuickDraw: {
                 this->_quickDrawingAssist->addDrawingPoint(event->pos());
@@ -704,6 +711,7 @@ void MapView::mousePressEvent(QMouseEvent *event) {
             case MapTool::Scroll: {
                 QGraphicsView::mousePressEvent(event); //allows move with mouse
             }
+            break;
 
             default: {}
             break;
@@ -834,6 +842,11 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
 
                 }
                 break;
+
+                case MapTool::Measure: {
+                    if(this->_measurementHelper) delete this->_measurementHelper;
+                    this->_measurementHelper = nullptr;
+                }
 
                 case MapTool::Scroll: {
 
