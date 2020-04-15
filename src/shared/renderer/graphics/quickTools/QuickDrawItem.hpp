@@ -21,17 +21,18 @@
 
 #include "src/shared/renderer/graphics/_generic/MapViewGraphicsPathItem.hpp"
 #include "src/shared/models/RPZUser.h"
+#include <QTimer>
 
 class QuickDrawItem : public MapViewGraphicsPathItem {
     public:
         using Id = SnowFlake::Id;
 
-        QuickDrawItem(const QuickDrawItem::Id &id, const QColor &color, const QPainterPath &firstBits = QPainterPath()) : MapViewGraphicsPathItem(QPainterPath(), QPen(), QBrush()) {
+        QuickDrawItem(const QuickDrawItem::Id &id, const QColor &color, const QPainterPath &firstBits = QPainterPath()) : QuickDrawItem() {
             QPen pen;
             pen.setColor(color);
             this->setPen(pen);
             this->_id = id;
-            this->setPath(firstBits);
+            this->addPathBits(firstBits);
         }
         QuickDrawItem(const RPZUser &emiter) : QuickDrawItem(SnowFlake::get()->nextId(), emiter.color()) {}
 
@@ -39,17 +40,82 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
             return this->_id;
         }
 
+        void moveLine(const QPointF &point) {
+            
+            this->_path.enqueue(point);
+
+            auto p = this->path();
+            p.lineTo(point);
+            this->setPath(p);
+
+        }
+
         void addPathBits(const QPainterPath &bits) {
             //TODO
         }
     
     private:
+        QQueue<QPointF> _path;
+        QuickDrawItem::Id _id;
+        QTimer _tm;
+
         QuickDrawItem() : MapViewGraphicsPathItem(QPainterPath(), QPen(), QBrush()) {
+            
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsFocusable, false);
+
+            this->_tm.setInterval(2000);
+            QObject::connect(
+                &this->_tm, &QTimer::timeout,
+                this, &QuickDrawItem::_startChomp
+            );
+            this->_tm.start();
+
+            //TODO add opacity
+            //TODO add insert animation for remote
+
         }
 
-        QuickDrawItem::Id _id;
+        void _startChomp() {
+            
+            //60 fps
+            this->_tm.setInterval(17);
+
+            //if no more left, delete itself
+            auto howManyLeft = this->_path.count();
+            if(!howManyLeft) {
+                this->_tm.stop();
+                return this->deleteLater();
+            }
+
+            //define erasing speed
+            auto decrease = (int)(howManyLeft * 0.005);
+            if(decrease < 5) decrease = 5;
+            if(howManyLeft < decrease) {
+                decrease = howManyLeft;
+            }
+
+            //erase from queue
+            QPointF moveTo;
+            while(decrease) {
+                moveTo = this->_path.dequeue();
+                decrease--;
+            }
+
+            //move start point to latest erased point
+            QPainterPath path;
+            path.moveTo(moveTo);
+
+            //fill QPainterPath
+            for(auto &p : this->_path) {
+                path.lineTo(p);
+            }
+
+            //refresh path
+            this->setPath(path);
+
+        }
+
 
 };

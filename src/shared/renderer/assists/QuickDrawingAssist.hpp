@@ -26,9 +26,12 @@
 
 #include "src/helpers/VectorSimplifier.hpp"
 
-class QuickDrawingAssist : public ConnectivityObserver {
+class QuickDrawingAssist : public QObject, public ConnectivityObserver {
+
+    Q_OBJECT
+
     public:
-        QuickDrawingAssist(QGraphicsView* view) : _view(view) { }
+        QuickDrawingAssist(QGraphicsView* view) : _view(view) {}
 
         void addDrawingPoint(const QPoint &cursorPosInWindow) {
         
@@ -43,18 +46,13 @@ class QuickDrawingAssist : public ConnectivityObserver {
             
             //if no temp, stop
             if(!this->_tempDrawing) return;
-
-            //get existing path
-            auto existingPath = this->_tempDrawing->path();
-
+            
             //define destination coordonate
             auto sceneCoord = this->_view->mapToScene(evtPoint);
             auto pathCoord = this->_tempDrawing->mapFromScene(sceneCoord);
 
-            existingPath.lineTo(pathCoord);
+            _tempDrawing->moveLine(pathCoord);
 
-            //save as new path
-            this->_tempDrawing->setPath(existingPath);
 
         }
 
@@ -82,15 +80,15 @@ class QuickDrawingAssist : public ConnectivityObserver {
         }
 
     private:
+        QGraphicsView* _view = nullptr;
+        QuickDrawItem* _tempDrawing = nullptr;
+        QHash<QuickDrawItem::Id, QuickDrawItem*> _quickDrawings;
+        
         RPZUser _currentUser;
         void _defineSelfUserFromSession(const RPZGameSession &gameSession) {
             Q_UNUSED(gameSession);
             this->_currentUser = this->_rpzClient->identity();
         }
-
-        QGraphicsView* _view = nullptr;
-        QuickDrawItem* _tempDrawing = nullptr;
-        QHash<QuickDrawItem::Id, QuickDrawItem*> _quickDrawings;
 
         void _beginDrawing(const QPointF &scenePos) {
 

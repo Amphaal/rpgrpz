@@ -1347,6 +1347,11 @@
         <source>Sent at %1</source>
         <translation>Envoyé à %1</translation>
     </message>
+    <message>
+        <location filename="../ui/atomEditor/editors/generic/ColorPickerEditor.hpp" line="49"/>
+        <source>Pen color</source>
+        <translation type="unfinished">Couleur</translation>
+    </message>
 </context>
 <context>
     <name>RPZClient</name>
