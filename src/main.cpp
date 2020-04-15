@@ -129,7 +129,7 @@ void _registerMetaTypes() {
     qRegisterMetaType<RPZResponse>("RPZResponse");
     qRegisterMetaType<RPZUser>("RPZUser");
     qRegisterMetaType<RPZAtom>("RPZAtom");
-    qRegisterMetaType<RPZQuickDraw>("RPZQuickDraw");
+    qRegisterMetaType<RPZQuickDrawBits>("RPZQuickDrawBits");
     qRegisterMetaType<RPZMessage>("RPZMessage");
     qRegisterMetaType<ResetPayload>("ResetPayload");
     qRegisterMetaType<RPZGameSession>("RPZGameSession");

@@ -37,7 +37,7 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
         
             auto scenePos = this->_view->mapToScene(cursorPosInWindow);
 
-            this->_tempDrawing = nullptr;
+            this->_resetTempDrawing();
             this->_beginDrawing(scenePos);
 
         }
@@ -51,29 +51,34 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
             auto sceneCoord = this->_view->mapToScene(evtPoint);
             auto pathCoord = this->_tempDrawing->mapFromScene(sceneCoord);
 
-            _tempDrawing->moveLine(pathCoord);
-
+            this->_tempDrawing->moveLine(pathCoord);
 
         }
 
         void onMouseRelease() {
-            //remove from temporary
-            this->_tempDrawing = nullptr;
+            this->_resetTempDrawing();
         }
 
 
         void clearDrawings() {
             qDeleteAll(this->_quickDrawings);
             this->_quickDrawings.clear();
-            this->_tempDrawing = nullptr;
+            this->_resetTempDrawing();
         }
 
     protected:
         virtual void connectingToServer() {
+            
             QObject::connect(
                 this->_rpzClient, &RPZClient::gameSessionReceived,
                 this, &QuickDrawingAssist::_defineSelfUserFromSession
             );
+
+            QObject::connect(
+                this->_rpzClient, &RPZClient::quickDrawBitsReceived,
+                this, &QuickDrawingAssist::_onQuickDrawBitsReceived
+            );
+
         }
         virtual void connectionClosed(bool hasInitialMapLoaded) {
             this->_currentUser.clear();
@@ -82,7 +87,7 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
     private:
         QGraphicsView* _view = nullptr;
         QuickDrawItem* _tempDrawing = nullptr;
-        QHash<QuickDrawItem::Id, QuickDrawItem*> _quickDrawings;
+        QHash<RPZQuickDrawBits::Id, QuickDrawItem*> _quickDrawings;
         
         RPZUser _currentUser;
         void _defineSelfUserFromSession(const RPZGameSession &gameSession) {
@@ -90,28 +95,60 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
             this->_currentUser = this->_rpzClient->identity();
         }
 
-        void _beginDrawing(const QPointF &scenePos) {
+        void _onQuickDrawBitsReceived(const RPZQuickDrawBits &qd) {
+            
+            auto bits = qd.bitsAsPath();
 
+            //find in list
+            auto found = this->_quickDrawings.value(qd.drawId());
+            
+            //if not create it
+            if(!found) {
+                auto associatedUser = this->_rpzClient->sessionUsers().value(qd.drawerId());
+                auto startPos = bits.elementAt(0);
+                found = _createQuickDraw(associatedUser, startPos);
+            }
+            
+            //add bits
+            found->addPathBits(bits, qd.areLastBits());
+
+        }
+
+        void _beginDrawing(const QPointF &scenePos) {
+            this->_tempDrawing = _createQuickDraw(this->_currentUser, scenePos);
+        }
+
+        QuickDrawItem* _createQuickDraw(const RPZUser &emiter, const QPointF &startPos) {
+            
             //create item 
-            this->_tempDrawing = new QuickDrawItem(this->_currentUser);
-            auto _t_Id = this->_tempDrawing->id();
+            auto item = new QuickDrawItem(emiter);
+            auto _t_Id = item->id();
 
             //remove from hash once destroyed
             QObject::connect(
-                this->_tempDrawing, &QObject::destroyed,
+                item, &QObject::destroyed,
                 [=](){
                     this->_quickDrawings.remove(_t_Id);
                 }
             );
 
-            this->_quickDrawings.insert(this->_tempDrawing->id(), this->_tempDrawing);
+            //add to list
+            this->_quickDrawings.insert(
+                item->id(), 
+                item
+            );
                 
             //define pos
-            this->_tempDrawing->setPos(scenePos);
+            item->setPos(startPos);
 
             //add to scene
-            this->_view->scene()->addItem(this->_tempDrawing);
+            this->_view->scene()->addItem(item);
 
+        }
+
+        void _resetTempDrawing() {
+            if(this->_tempDrawing) this->_tempDrawing->registerForDeletion();
+            this->_tempDrawing = nullptr;
         }
 
 };

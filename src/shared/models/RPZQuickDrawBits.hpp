@@ -25,20 +25,33 @@
 #include "src/helpers/JSONSerializer.h"
 #include "src/shared/models/RPZUser.h"
 
-class RPZQuickDraw : public QVariantHash {
+class RPZQuickDrawBits : public QVariantHash {
     public:
-        RPZQuickDraw() {};
-        explicit RPZQuickDraw(const QVariantHash &hash) {}
-        RPZQuickDraw(const RPZUser::Id &drawerId, const QPainterPath &path) {
-            this->insert("drwr", QVariant::fromValue<RPZUser::Id>(drawerId));
-            this->insert("p", JSONSerializer::asBase64(path));
+        using Id = SnowFlake::Id;
+
+        RPZQuickDrawBits() {};
+        explicit RPZQuickDrawBits(const QVariantHash &hash) {}
+        RPZQuickDrawBits(const RPZQuickDrawBits::Id &id, const RPZUser::Id &drawerId, const QPainterPath &bits, bool areLastBits) {
+            this->insert("id", QVariant::fromValue<RPZUser::Id>(id));
+            this->insert("drwr_id", QVariant::fromValue<RPZUser::Id>(drawerId));
+            this->insert("bits", JSONSerializer::asBase64(bits));
+            this->insert("end", areLastBits);
+        }
+
+        RPZQuickDrawBits::Id drawId() const {
+            return this->value("id").toULongLong();
         }
 
         RPZUser::Id drawerId() const {
             return this->value("drwr_id").toULongLong();
         }
 
-        const QPainterPath path() const {
-            return JSONSerializer::toPainterPath(this->value("p").toByteArray());
+        const QPainterPath bitsAsPath() const {
+            return JSONSerializer::toPainterPath(this->value("bits").toByteArray());
         }
+ 
+        bool areLastBits() const {
+            return this->value("end").toBool();
+        }
+
 };

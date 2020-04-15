@@ -20,44 +20,85 @@
 #pragma once
 
 #include "src/shared/renderer/graphics/_generic/MapViewGraphicsPathItem.hpp"
-#include "src/shared/models/RPZUser.h"
+#include "src/shared/models/RPZQuickDrawBits.hpp"
+
 #include <QTimer>
 
 class QuickDrawItem : public MapViewGraphicsPathItem {
     public:
-        using Id = SnowFlake::Id;
 
-        QuickDrawItem(const QuickDrawItem::Id &id, const QColor &color, const QPainterPath &firstBits = QPainterPath()) : QuickDrawItem() {
+
+        QuickDrawItem(const RPZQuickDrawBits::Id &id, const QColor &color) : QuickDrawItem() {
             QPen pen;
+            pen.setWidth(5);
             pen.setColor(color);
             this->setPen(pen);
             this->_id = id;
-            this->addPathBits(firstBits);
         }
         QuickDrawItem(const RPZUser &emiter) : QuickDrawItem(SnowFlake::get()->nextId(), emiter.color()) {}
 
-        QuickDrawItem::Id id() const {
+        RPZQuickDrawBits::Id id() const {
             return this->_id;
         }
 
         void moveLine(const QPointF &point) {
             
             this->_path.enqueue(point);
+            this->_pathPush.enqueue(point);
 
             auto p = this->path();
             p.lineTo(point);
             this->setPath(p);
 
+            //reset timing before chomping
+            this->_tmChomp.setInterval(2000);
+            this->_tmChomp.start();
+
         }
 
-        void addPathBits(const QPainterPath &bits) {
-            //TODO
+        QPainterPath dequeuePushPoints() {
+            
+            auto copy = this->_pathPush;
+            this->_pathPush.clear();
+
+            QPainterPath out;
+            for(auto &point : copy) {
+                out.lineTo(point);
+            }
+
+            return out;
+            
+        }
+
+        void addPathBits(const QPainterPath &bits, bool isLastBit) {
+            
+            if(this->_registeredForDeletion) return;
+            if(isLastBit) this->_registeredForDeletion = true;
+
+            //fill buffer
+            for(auto i = 0; i < bits.elementCount(); i++) {
+                this->_pathPush.enqueue(bits.elementAt(i));
+            }
+
+            //restart timer if stopped
+            if(!this->_tmPush.isActive()) {
+                this->_tmPush.start();
+            }
+            
+        }
+
+        void registerForDeletion() {
+            this->_registeredForDeletion = true;
         }
     
     private:
+        QQueue<QPointF> _pathPush;
         QQueue<QPointF> _path;
-        QuickDrawItem::Id _id;
-        QTimer _tm;
+        RPZQuickDrawBits::Id _id;
+        QTimer _tmChomp;
+        QTimer _tmPush;
+        bool _registeredForDeletion = false;
+        static inline int _defaultTimerInterval = 17; //60 fps
 
         QuickDrawItem() : MapViewGraphicsPathItem(QPainterPath(), QPen(), QBrush()) {
             
@@ -65,35 +106,69 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsFocusable, false);
 
-            this->_tm.setInterval(2000);
             QObject::connect(
-                &this->_tm, &QTimer::timeout,
-                this, &QuickDrawItem::_startChomp
+                &this->_tmChomp, &QTimer::timeout,
+                this, &QuickDrawItem::_chomp
             );
-            this->_tm.start();
 
-            //TODO add insert animation for remote
+            //fixed timing
+            this->_tmPush.setInterval(_defaultTimerInterval);
+            QObject::connect(
+                &this->_tmPush, &QTimer::timeout,
+                this, &QuickDrawItem::_push
+            );
 
         }
 
-        void _startChomp() {
+        void _push() {
             
-            //60 fps
-            this->_tm.setInterval(17);
+            //check remainings
+            auto howManyLeft = this->_pathPush.count();
+            if(!howManyLeft) {
+                this->_tmPush.stop();
+                return;
+            }
+
+            //define erasing speed
+            auto decrease = _pointDecreaseRate(howManyLeft);
+
+            auto p = this->path();
+
+            //dequeue from buffer and enqueue
+            QPointF moveTo;
+            while(decrease) {
+                moveTo = this->_pathPush.dequeue();
+                this->_path.enqueue(moveTo);
+                p.lineTo(moveTo);
+                decrease--;
+            }
+
+            //update path
+            this->setPath(p);
+
+        }
+
+        void _chomp() {
+            
+            //set default timing
+            this->_tmChomp.setInterval(_defaultTimerInterval);
 
             //if no more left, delete itself
             auto howManyLeft = this->_path.count();
             if(!howManyLeft) {
-                this->_tm.stop();
-                return this->deleteLater();
+                
+                //if no more left and registered for deletion
+                if(this->_registeredForDeletion) {
+                    this->_tmChomp.stop();
+                    this->deleteLater();
+                }
+
+                return; 
+
             }
 
             //define erasing speed
-            auto decrease = (int)(howManyLeft * 0.005);
-            if(decrease < 5) decrease = 5;
-            if(howManyLeft < decrease) {
-                decrease = howManyLeft;
-            }
+            auto decrease = _pointDecreaseRate(howManyLeft);
 
             //erase from queue
             QPointF moveTo;
@@ -123,7 +198,7 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
             grad.setFocalPoint(line.p2());
             grad.setRadius(120);
    
-            QPen p;
+            auto p = this->pen();
             p.setBrush(grad);
             this->setPen(p);
 
@@ -131,6 +206,17 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
             this->setPath(path);
 
         }
+
+        int _pointDecreaseRate(int remainingPoints) {
+            auto decrease = (int)(remainingPoints * 0.005);
+            if(decrease < 5) decrease = 5;
+            if(remainingPoints < decrease) {
+                decrease = remainingPoints;
+            }
+            return decrease;
+        }
+
+
 
 
 };

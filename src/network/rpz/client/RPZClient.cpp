@@ -306,8 +306,8 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
     switch(method) {
 
         case RPZJSON::Method::QuickDrawHappened: {
-            RPZQuickDraw qd(data.toHash());
-            emit quickDrawReceived(qd);
+            RPZQuickDrawBits qd(data.toHash());
+            emit quickDrawBitsReceived(qd);
         }
         break;
 
@@ -525,7 +525,7 @@ void RPZClient::changeAudioPosition(qint64 newPositionInMsecs) {
     this->_serverSock->sendToSocket(RPZJSON::Method::AudioStreamPositionChanged, newPositionInMsecs);
 }
 
-void RPZClient::sendQuickdraw(const RPZQuickDraw &qd) {
+void RPZClient::sendQuickdraw(const RPZQuickDrawBits &qd) {
     this->_serverSock->sendToSocket(RPZJSON::Method::QuickDrawHappened, qd);
 }
 

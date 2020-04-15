@@ -175,6 +175,11 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
 
     switch(method) {
         
+        case RPZJSON::Method::QuickDrawHappened: {
+            this->_sendToAllExcept(target, method, data); //notify everyone else
+        }
+        break;
+
         case RPZJSON::Method::CharacterChanged: {
             
             //update character of the user
@@ -201,7 +206,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
             StreamPlayStateTracker tracker(data.toHash());
             this->_tracker = tracker;
 
-            this->_sendToAllExcept(target, RPZJSON::Method::AudioStreamUrlChanged, this->_tracker);
+            this->_sendToAllExcept(target, method, this->_tracker);
 
         }
         break;
@@ -211,7 +216,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
             auto isPlaying = data.toBool();
             this->_tracker.updatePlayingState(isPlaying);
             
-            this->_sendToAllExcept(target, RPZJSON::Method::AudioStreamPlayingStateChanged, data);
+            this->_sendToAllExcept(target, method, data);
 
         }
         break;
@@ -221,7 +226,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
             auto newPosInMs = data.value<qint64>();
             this->_tracker.updatePositionInMSecs(newPosInMs);
 
-            this->_sendToAllExcept(target, RPZJSON::Method::AudioStreamPositionChanged, data);
+            this->_sendToAllExcept(target, method, data);
 
         }
         break;
