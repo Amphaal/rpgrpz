@@ -80,8 +80,9 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
 
 
         void clearDrawings() {
-            qDeleteAll(this->_quickDrawings);
-            this->_quickDrawings.clear();
+            for(auto i : this->_quickDrawings) {
+                i->deleteLater();
+            }
             this->_resetTempDrawing();
         }
 
@@ -127,7 +128,7 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
         }
 
         bool _allowNetworkInteraction() const {
-            return _tempDrawing && _rpzClient && _currentUser.isEmpty();
+            return _tempDrawing && _rpzClient && !_currentUser.isEmpty();
         }
 
         void _sendQuickDrawNetworkUpdate() {
@@ -141,15 +142,19 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
             
             //prepare
             auto bits = this->_tempDrawing->dequeuePushPoints();
+
             RPZQuickDrawBits qd(
+                this->_tempDrawing->pos(),
                 this->_tempDrawing->id(),
                 this->_currentUser.id(),
                 bits,
                 areLastFromCurrentQD
             );
-
+            
             //send to network
-            this->_rpzClient->sendQuickdraw(qd);
+            QMetaObject::invokeMethod(this->_rpzClient, "sendQuickdraw", 
+                Q_ARG(RPZQuickDrawBits, qd)
+            );
 
         }
 
@@ -163,7 +168,7 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
             //if not create it
             if(!found) {
                 auto associatedUser = this->_rpzClient->sessionUsers().value(qd.drawerId());
-                auto startPos = bits.elementAt(0);
+                auto startPos = qd.scenePos();
                 found = _createQuickDraw(associatedUser, startPos);
             }
             

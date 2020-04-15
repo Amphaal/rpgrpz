@@ -40,6 +40,7 @@
 #include "src/shared/models/messaging/RPZResponse.h"
 #include "src/shared/models/network/RPZHandshake.h"
 #include "src/shared/models/network/RPZGameSession.hpp"
+#include "src/shared/models/RPZQuickDrawBits.hpp"
 
 #include "src/shared/database/AssetsDatabase.h"
 

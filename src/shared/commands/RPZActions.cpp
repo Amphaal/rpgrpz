@@ -27,7 +27,7 @@ QAction* RPZActions::usePingTool() {
     );
     
     action->setCheckable(true);
-    action->setEnabled(true);
+    action->setEnabled(false);
     action->setData((int)MapTool::Ping);
 
     return action;
@@ -41,7 +41,7 @@ QAction* RPZActions::useMeasurementTool() {
     );
 
     action->setCheckable(true);
-    action->setEnabled(true);
+    action->setEnabled(false);
     action->setData((int)MapTool::Measure);
 
     return action;

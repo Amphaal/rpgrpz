@@ -26,15 +26,6 @@
 
 class QuickDrawItem : public MapViewGraphicsPathItem {
     public:
-
-
-        QuickDrawItem(const RPZQuickDrawBits::Id &id, const QColor &color) : QuickDrawItem() {
-            QPen pen;
-            pen.setWidth(5);
-            pen.setColor(color);
-            this->setPen(pen);
-            this->_id = id;
-        }
         QuickDrawItem(const RPZUser &emiter) : QuickDrawItem(SnowFlake::get()->nextId(), emiter.color()) {}
 
         RPZQuickDrawBits::Id id() const {
@@ -51,8 +42,7 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
             this->setPath(p);
 
             //reset timing before chomping
-            this->_tmChomp.setInterval(2000);
-            this->_tmChomp.start();
+            this->_waitToChomp();
 
         }
 
@@ -92,6 +82,7 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
         }
     
     private:
+        QColor _color;
         QQueue<QPointF> _pathPush;
         QQueue<QPointF> _path;
         RPZQuickDrawBits::Id _id;
@@ -99,6 +90,18 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
         QTimer _tmPush;
         bool _registeredForDeletion = false;
         static inline int _defaultTimerInterval = 17; //60 fps
+
+        QuickDrawItem(const RPZQuickDrawBits::Id &id, const QColor &color) : QuickDrawItem() {
+            
+            this->_color = color;
+            this->_id = id;
+            
+            QPen pen;
+            pen.setWidth(5);
+            pen.setColor(this->_color);
+            this->setPen(pen);
+
+        }
 
         QuickDrawItem() : MapViewGraphicsPathItem(QPainterPath(), QPen(), QBrush()) {
             
@@ -125,8 +128,15 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
             //check remainings
             auto howManyLeft = this->_pathPush.count();
             if(!howManyLeft) {
+                
+                //stop push timer
                 this->_tmPush.stop();
+                
+                //start chomp timer
+                this->_waitToChomp();
+
                 return;
+
             }
 
             //define erasing speed
@@ -147,6 +157,11 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
             this->setPath(p);
 
         }
+
+        void _waitToChomp() {
+                this->_tmChomp.setInterval(2000);
+                this->_tmChomp.start();
+            }
 
         void _chomp() {
             
@@ -196,7 +211,7 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
             //define gradient
             QRadialGradient grad;
             grad.setColorAt(0, Qt::transparent);
-            grad.setColorAt(1, p.color());    
+            grad.setColorAt(1, this->_color);    
             grad.setCenter(line.p1());
             grad.setFocalPoint(line.p2());
             grad.setRadius(120);
@@ -218,8 +233,5 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
             }
             return decrease;
         }
-
-
-
 
 };
