@@ -55,7 +55,7 @@
 <context>
     <name>AtomEditor</name>
     <message numerus="yes">
-        <location filename="../ui/atomEditor/AtomEditor.cpp" line="264"/>
+        <location filename="../ui/atomEditor/AtomEditor.cpp" line="267"/>
         <source> (%n element(s))</source>
         <translation>
             <numerusform> (%n élément)</numerusform>
@@ -63,17 +63,17 @@
         </translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="67"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="69"/>
         <source>Nothing to modify</source>
         <translation>Rien à modifier</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="68"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="70"/>
         <source>Template modification</source>
         <translation>Modification du modèle</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="69"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="71"/>
         <source>Selection modification</source>
         <translation>Modification de la sélection</translation>
     </message>
@@ -165,6 +165,16 @@
         <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="62"/>
         <source>Opacity</source>
         <translation>Opacité</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="63"/>
+        <source>Token size</source>
+        <translation>Taille du jeton</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="64"/>
+        <source>Pen color</source>
+        <translation>Couleur</translation>
     </message>
 </context>
 <context>
@@ -699,79 +709,80 @@
         <translation>Boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="383"/>
+        <location filename="../ui/mainWindow.cpp" line="393"/>
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="382"/>
+        <location filename="../ui/mainWindow.cpp" line="392"/>
         <source>Sheets</source>
         <translation>Fiches</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="397"/>
+        <location filename="../ui/mainWindow.cpp" line="407"/>
         <source>Map Atoms</source>
         <translation>Atomes de la carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="398"/>
+        <location filename="../ui/mainWindow.cpp" line="408"/>
         <source>Atom Editor</source>
         <translation>Editeur d&apos;atomes</translation>
     </message>
     <message>
         <location filename="../ui/mainWindow.cpp" line="334"/>
+        <location filename="../ui/mainWindow.cpp" line="340"/>
         <source>Game Hub</source>
         <translation>Hub de jeu</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="564"/>
+        <location filename="../ui/mainWindow.cpp" line="574"/>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="578"/>
+        <location filename="../ui/mainWindow.cpp" line="588"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="580"/>
-        <location filename="../ui/mainWindow.cpp" line="606"/>
-        <location filename="../ui/mainWindow.cpp" line="634"/>
+        <location filename="../ui/mainWindow.cpp" line="590"/>
+        <location filename="../ui/mainWindow.cpp" line="616"/>
+        <location filename="../ui/mainWindow.cpp" line="644"/>
         <source>Game map (*%1)</source>
         <translation>Carte de campagne (*%1)</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="604"/>
+        <location filename="../ui/mainWindow.cpp" line="614"/>
         <source>Load a new map</source>
         <translation>Charger une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="632"/>
+        <location filename="../ui/mainWindow.cpp" line="642"/>
         <source>Save as...</source>
         <translation>Savegarder sous...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="656"/>
+        <location filename="../ui/mainWindow.cpp" line="666"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="711"/>
+        <location filename="../ui/mainWindow.cpp" line="721"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="725"/>
+        <location filename="../ui/mainWindow.cpp" line="735"/>
         <source>Searching for updates...</source>
         <translation>Recherche des mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="725"/>
+        <location filename="../ui/mainWindow.cpp" line="735"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="760"/>
+        <location filename="../ui/mainWindow.cpp" line="770"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
@@ -862,7 +873,7 @@
         <location filename="../shared/commands/MessageInterpreter.cpp" line="136"/>
         <source>- To whisper : @{toWhisperTo}.
 </source>
-        <translation>- Pour chuchotter : @{destinataire}.
+        <translation>- Pour chuchoter : @{destinataire}.
 </translation>
     </message>
     <message>
@@ -1041,24 +1052,14 @@
         <translation>Nouvel Inventaire</translation>
     </message>
     <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="51"/>
-        <source> said : </source>
-        <translation> a dit : </translation>
-    </message>
-    <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="51"/>
-        <source>you said : </source>
-        <translation>vous dites : </translation>
-    </message>
-    <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="56"/>
+        <location filename="../shared/models/messaging/RPZMessage.cpp" line="55"/>
         <source> whispers to you : </source>
         <translation> vous chuchote : </translation>
     </message>
     <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="60"/>
-        <source>your whisper to </source>
-        <translation>vous chuchotez à </translation>
+        <location filename="../shared/models/messaging/RPZMessage.cpp" line="59"/>
+        <source> whisper to </source>
+        <translation> chuchote à </translation>
     </message>
     <message>
         <location filename="../shared/models/messaging/RPZResponse.cpp" line="47"/>
@@ -1097,78 +1098,78 @@
     </message>
     <message>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="222"/>
-        <location filename="../shared/models/RPZAtom.h" line="149"/>
-        <source>Drawing</source>
-        <translation>Dessin</translation>
+        <location filename="../shared/models/RPZAtom.h" line="157"/>
+        <source>Felt pen</source>
+        <translation>Feutre</translation>
     </message>
     <message>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="223"/>
-        <location filename="../shared/models/RPZAtom.h" line="150"/>
+        <location filename="../shared/models/RPZAtom.h" line="158"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="151"/>
+        <location filename="../shared/models/RPZAtom.h" line="159"/>
         <source>Object</source>
         <translation>Objet</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="152"/>
+        <location filename="../shared/models/RPZAtom.h" line="160"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="153"/>
+        <location filename="../shared/models/RPZAtom.h" line="161"/>
         <source>Atom</source>
         <translation>Atome</translation>
     </message>
     <message>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="221"/>
-        <location filename="../shared/models/RPZAtom.h" line="154"/>
+        <location filename="../shared/models/RPZAtom.h" line="162"/>
         <source>Event</source>
         <translation>Evénement</translation>
     </message>
     <message>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="224"/>
-        <location filename="../shared/models/RPZAtom.h" line="155"/>
+        <location filename="../shared/models/RPZAtom.h" line="163"/>
         <source>Player</source>
         <translation>Joueur</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="156"/>
+        <location filename="../shared/models/RPZAtom.h" line="164"/>
         <source>Non-playable character</source>
         <translation>Personnage non-joueur</translation>
     </message>
     <message>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="225"/>
-        <location filename="../shared/models/RPZAtom.h" line="157"/>
+        <location filename="../shared/models/RPZAtom.h" line="165"/>
         <source>Point of interest</source>
         <translation>Point d&apos;intérêt</translation>
     </message>
     <message>
         <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="226"/>
-        <location filename="../shared/models/RPZAtom.h" line="158"/>
+        <location filename="../shared/models/RPZAtom.h" line="166"/>
         <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="77"/>
         <source>Fog of war</source>
         <translation>Brouillard de guerre</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="162"/>
+        <location filename="../shared/models/RPZAtom.h" line="170"/>
         <source>NPCs</source>
         <translation>PNJs</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="163"/>
+        <location filename="../shared/models/RPZAtom.h" line="171"/>
         <source>Events</source>
         <translation>Evénements</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="164"/>
+        <location filename="../shared/models/RPZAtom.h" line="172"/>
         <source>Players</source>
         <translation>Joueurs</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="165"/>
+        <location filename="../shared/models/RPZAtom.h" line="173"/>
         <source>POIs</source>
         <translation>Points d&apos;intérêt</translation>
     </message>
@@ -1306,7 +1307,7 @@
         <translation>%1 atome(s) selectionné(s)</translation>
     </message>
     <message>
-        <location filename="../shared/renderer/graphics/_specific/MapViewToken.hpp" line="350"/>
+        <location filename="../shared/renderer/graphics/_specific/MapViewToken.hpp" line="378"/>
         <source>P</source>
         <comment>player sign</comment>
         <translation>J</translation>
@@ -1322,7 +1323,7 @@
         <translation>Caché</translation>
     </message>
     <message>
-        <location filename="../ui/map/_base/MapViewInteractibleDescriptor.hpp" line="105"/>
+        <location filename="../ui/map/_base/MapViewInteractibleDescriptor.hpp" line="102"/>
         <source>Health</source>
         <translation>Santé</translation>
     </message>
@@ -1330,6 +1331,26 @@
         <location filename="../ui/sheets/components/GaugeWidget.hpp" line="43"/>
         <source>[Unamed gauge]</source>
         <translation>[Jauge sans nom]</translation>
+    </message>
+    <message>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="56"/>
+        <source>logged in !</source>
+        <translation>s&apos;est connecté !</translation>
+    </message>
+    <message>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="60"/>
+        <source>logged out.</source>
+        <translation>s&apos;est déconnecté.</translation>
+    </message>
+    <message>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="78"/>
+        <source>Sent at %1</source>
+        <translation>Envoyé à %1</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/editors/generic/ColorPickerEditor.hpp" line="49"/>
+        <source>Pen color</source>
+        <translation type="unfinished">Couleur</translation>
     </message>
 </context>
 <context>
@@ -1368,7 +1389,7 @@
 <context>
     <name>RPZServer</name>
     <message>
-        <location filename="../network/rpz/server/RPZServer.cpp" line="275"/>
+        <location filename="../network/rpz/server/RPZServer.cpp" line="298"/>
         <source>Your software version is different from the server&apos;s one : v%1 (you) / v%2 (server) !</source>
         <translation>Votre version logicielle diffère de la version du serveur : v%1 (vous) / v%2 (serveur) !</translation>
     </message>
@@ -1478,6 +1499,24 @@
         <location filename="../ui/sheets/tabs/StatusTab.hpp" line="113"/>
         <source>Abilities</source>
         <translation>Compétences</translation>
+    </message>
+</context>
+<context>
+    <name>TokenSizeEditor</name>
+    <message>
+        <location filename="../ui/atomEditor/editors/specific/TokenSizeEditor.hpp" line="35"/>
+        <source>Normal</source>
+        <translation>Normale</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/editors/specific/TokenSizeEditor.hpp" line="36"/>
+        <source>Big</source>
+        <translation>Grosse</translation>
+    </message>
+    <message>
+        <location filename="../ui/atomEditor/editors/specific/TokenSizeEditor.hpp" line="37"/>
+        <source>Very Big</source>
+        <translation>Très grosse</translation>
     </message>
 </context>
 <context>

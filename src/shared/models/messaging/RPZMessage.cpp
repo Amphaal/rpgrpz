@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #include "RPZMessage.h"
@@ -39,33 +39,35 @@ MessageInterpreter::Command RPZMessage::commandType() const {
     return this->_command;
 }
 
+void RPZMessage::setAsLocal() {
+    this->_isLocal = true;
+}
+
 QString RPZMessage::toString() const {
 
     auto base = Stampable::toString();
-    auto ownerExist = !this->owner().isEmpty();
     auto text = this->text();
 
     switch(this->_command) {
-        
-        case MessageInterpreter::Command::Say: {
-            auto textPrefix = ownerExist ? QObject::tr(" said : ") : QObject::tr("you said : ");
-            return base + textPrefix + QChar(0x201C) + text + QChar(0x201D);
-        }
 
         case MessageInterpreter::Command::Whisper: {
+            
             auto textPrefix = QObject::tr(" whispers to you : ");
             
-            if(!ownerExist) {
+            if(this->_isLocal) {
                 auto recipientList = MessageInterpreter::findRecipentsFromText(text).join(", ");
-                textPrefix = QObject::tr("your whisper to ") + recipientList + " : ";
+                textPrefix = QObject::tr(" whisper to ") + recipientList + " : ";
                 text = MessageInterpreter::sanitizeText(text);
             }
 
-            return base + textPrefix + QChar(0x201C) + text + QChar(0x201D);
+            return textPrefix + text;
+
         }
+        break;
 
         default:
             return text;
+            break;
             
     }
 
@@ -92,6 +94,12 @@ QPalette RPZMessage::palette() const {
         case MessageInterpreter::Command::C_DiceThrow:
             palette.setColor(QPalette::Window, "#87CEEB");
             palette.setColor(QPalette::WindowText, "#000080");
+            break;
+
+        case MessageInterpreter::Command::C_UserLogOut:
+        case MessageInterpreter::Command::C_UserLogIn:
+            palette.setColor(QPalette::Window, "#e3dc0b");
+            palette.setColor(QPalette::WindowText, "#000000");
             break;
 
         default:

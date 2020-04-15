@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #pragma once
@@ -35,6 +35,7 @@
 
 #include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
 #include "src/shared/models/RPZMapParameters.hpp"
+#include "src/shared/renderer/graphics/_specific/MapViewToken.hpp"
 
 class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGraphicsItem {
     
@@ -271,17 +272,14 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
         }
 
         const QRectF _ellipseBoundingRect() const {
-            
+
             auto pp = this->_generateCursorPointPos();
-            auto firstItemScenePos = this->_toWalk.first()->scenePos();
-                
-            auto line = QLineF(firstItemScenePos, pp.sceneCursorPos);
             
-            auto sizePart = qAbs(line.length() * 2);
+            auto sizePart = qAbs(pp.distanceLine.length() * 2);
             auto size = QSizeF(sizePart, sizePart);
 
-            QRectF out(firstItemScenePos, size);
-            out.moveCenter(firstItemScenePos);
+            QRectF out(pp.distanceLine.p1(), size);
+            out.moveCenter(pp.distanceLine.p1());
 
             return out;
 
@@ -291,13 +289,10 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
             
             auto pp = this->_generateCursorPointPos();
 
-            //correct
-            auto correctedPos = pp.sceneCursorPos;
-            this->_mapParams.alignPointToGridCrossroad(correctedPos);
+            auto dest = this->_toWalkRect;
+            dest.moveCenter(pp.distanceLine.p2());
 
-            auto destTileRect = QRectF(correctedPos, this->_mapParams.tileSizeInPoints()).normalized();
-            auto rangeRect = QRectF({}, correctedPos).normalized();
-            return destTileRect.united(rangeRect);
+            return this->_toWalkRect.united(dest);
 
         }
 
@@ -371,7 +366,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
             if(mapParams.movementSystem() != RPZMapParameters::MovementSystem::Grid) return false;
             
             //check item is not bound to the grid
-            if(!RPZQVariant::isGridBound(toCheck)) return false;
+            if(!dynamic_cast<const RPZGridBound*>(toCheck)) return false;
 
             //determine destination
             auto atPosRect = toCheck->sceneBoundingRect();
@@ -380,7 +375,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
             //check if we move the item onto another grid bound item
             for(const auto colliding : toCheck->scene()->items(atPosRect)) {
                 if(colliding == toCheck) continue;
-                if(RPZQVariant::isGridBound(colliding)) return true;
+                if(dynamic_cast<const RPZGridBound*>(colliding)) return true;
             }
 
             return false;

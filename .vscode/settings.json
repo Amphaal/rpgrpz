@@ -235,7 +235,11 @@
         "__threading_support": "cpp",
         "__tree": "cpp",
         "__tuple": "cpp",
-        "qtcpsocket": "cpp"
+        "qtcpsocket": "cpp",
+        "qsoundeffect": "cpp",
+        "errno.h": "c",
+        "qcolordialog": "cpp",
+        "qcolor": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

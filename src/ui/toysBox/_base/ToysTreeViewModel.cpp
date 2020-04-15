@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #include "ToysTreeViewModel.h"
@@ -300,10 +300,19 @@ QVariant ToysTreeViewModel::data(const QModelIndex &index, int role) const {
         
         case Qt::DisplayRole: {
             switch(index.column()) {
-                case 0:
+                
+                case 0: {
                     return data->displayName();
-                case 1:
-                    return data->isContainer() ? QString::number(data->toySubItemCount()) : QVariant();
+                }
+                break;
+
+                case 1: {
+                    if(!data->isContainer() || data->type() == ToysTreeViewItem::Type::InternalContainer) return QVariant();
+                    auto subItemsCount = data->toySubItemCount();
+                    return subItemsCount ? QString::number(data->toySubItemCount()) + QStringLiteral(u"🖻") : QVariant();
+                }
+                break;
+
             }
         }
         break;

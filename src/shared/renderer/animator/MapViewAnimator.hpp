@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #pragma once
@@ -62,12 +62,10 @@ class MapViewAnimator {
 
         }
 
-        static void animatePath(QGraphicsItem *toAnimate, const QPainterPath &pathToAnimate) {
-            
-            auto canBeAnimated = dynamic_cast<MapViewDrawing*>(toAnimate);
+        static void animatePath(MapViewDrawing *toAnimate, const QPainterPath &pathToAnimate) {
 
-            if(canBeAnimated && toAnimate->scene() && _animationsAllowed) {
-                _animatePath(canBeAnimated, pathToAnimate);
+            if(toAnimate && toAnimate->scene() && _animationsAllowed) {
+                _animatePath(toAnimate, pathToAnimate);
             } 
 
         }

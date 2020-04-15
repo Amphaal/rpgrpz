@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #include "AtomEditor.h"
@@ -122,6 +122,7 @@ void AtomEditor::_addEditor(AtomSubEditor* editor) {
 
 void AtomEditor::_createEditorsFromAtomParameters() {
 
+    _addEditor(new TokenSizeEditor);
     _addEditor(new NPCAttitudeEditor);
     _addEditor(new CharacterPickerEditor);
 
@@ -154,6 +155,8 @@ void AtomEditor::_createEditorsFromAtomParameters() {
     _addEditor(new AtomShortTextEditor(RPZAtom::Parameter::NPCShortName));
     _addEditor(new AtomTextEditor(RPZAtom::Parameter::NPCDescription));
     _addEditor(new NPCHealthEditor);
+
+    _addEditor(new ColorPickerEditor(RPZAtom::Parameter::PenColor));
 
     //integrate
     this->_integrateEditors();

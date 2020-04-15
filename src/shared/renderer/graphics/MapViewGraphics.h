@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #include "_generic/MapViewGraphicsPathItem.hpp"
@@ -23,7 +23,10 @@
 #include "_generic/MapViewGraphicsSvgItem.hpp"
 #include "_generic/MapViewGraphicsTextItem.hpp"
 #include "_specific/MapViewToken.hpp"
-#include "_specific/MapViewWalkingHelper.hpp"
 #include "_specific/MapViewUnscalable.hpp"
 #include "_specific/MapViewDrawing.hpp"
 #include "_specific/MapViewFog.hpp"
+#include "quickTools/MapViewWalkingHelper.hpp"
+#include "quickTools/MapViewMeasurementHelper.hpp"
+#include "quickTools/PingItem.hpp"
+#include "quickTools/QuickDrawItem.hpp"

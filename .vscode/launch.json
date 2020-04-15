@@ -21,7 +21,6 @@
         {
           "targetArchitecture": "x64",
           "type": "cppdbg",
-          "preLaunchTask": "3. Build",
           "name" : "Launch - No Server CC",
           "request": "launch",
           "cwd": "${workspaceFolder}",
@@ -36,7 +35,6 @@
         {
             "targetArchitecture": "x64",
             "type": "cppdbg",
-            "preLaunchTask": "3. Build",
             "name" : "Launch - No Server - Random CC",
             "request": "launch",
             "cwd": "${workspaceFolder}",

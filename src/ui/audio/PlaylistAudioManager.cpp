@@ -12,14 +12,14 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
-#include "AudioManager.h"
+#include "PlaylistAudioManager.h"
 
-AudioManager::AudioManager(QWidget *parent) : QWidget(parent), 
+PlaylistAudioManager::PlaylistAudioManager(QWidget *parent) : QWidget(parent), 
     _asCtrl(new AudioProbeController),
     _plCtrl(new YoutubePlayer), 
     _cli(new GStreamerClient) {
@@ -37,11 +37,11 @@ AudioManager::AudioManager(QWidget *parent) : QWidget(parent),
     this->_link();
 }
 
-YoutubePlayer* AudioManager::player() {
+YoutubePlayer* PlaylistAudioManager::player() {
     return this->_plCtrl;
 }
 
-void AudioManager::_onGameSessionReceived(const RPZGameSession &gameSession) {
+void PlaylistAudioManager::_onGameSessionReceived(const RPZGameSession &gameSession) {
 
     Q_UNUSED(gameSession);
     
@@ -66,7 +66,7 @@ void AudioManager::_onGameSessionReceived(const RPZGameSession &gameSession) {
     
 }
 
-void AudioManager::connectingToServer() {
+void PlaylistAudioManager::connectingToServer() {
     
     //reset state
     this->_isLocalOnly = false;
@@ -76,30 +76,30 @@ void AudioManager::connectingToServer() {
     //on receiving identity
     QObject::connect(
         _rpzClient, &RPZClient::gameSessionReceived,
-        this, &AudioManager::_onGameSessionReceived
+        this, &PlaylistAudioManager::_onGameSessionReceived
     );
 
     //on master requesting audio change
     QObject::connect(
         _rpzClient, &RPZClient::audioSourceStateChanged,
-        this, &AudioManager::_onAudioSourceStateChanged
+        this, &PlaylistAudioManager::_onAudioSourceStateChanged
     );
 
     //on master seeking
     QObject::connect(
         _rpzClient, &RPZClient::audioPositionChanged,
-        this, qOverload<qint64>(&AudioManager::_onSeekingRequested)
+        this, qOverload<qint64>(&PlaylistAudioManager::_onSeekingRequested)
     );
 
     //on master pausing / playing
     QObject::connect(
         _rpzClient, &RPZClient::audioPlayStateChanged,
-        this, &AudioManager::_onAudioPlayStateChanged
+        this, &PlaylistAudioManager::_onAudioPlayStateChanged
     );
 
 }
 
-void AudioManager::_onAudioSourceStateChanged(const StreamPlayStateTracker &state) {
+void PlaylistAudioManager::_onAudioSourceStateChanged(const StreamPlayStateTracker &state) {
 
     //update state
     this->_state = state;
@@ -113,7 +113,7 @@ void AudioManager::_onAudioSourceStateChanged(const StreamPlayStateTracker &stat
 
 }
 
-void AudioManager::_onAudioPlayStateChanged(bool isPlaying) {
+void PlaylistAudioManager::_onAudioPlayStateChanged(bool isPlaying) {
     
     //update state
     this->_state.updatePlayingState(isPlaying);
@@ -123,7 +123,7 @@ void AudioManager::_onAudioPlayStateChanged(bool isPlaying) {
     else this->_cli->pause();
 }
 
-void AudioManager::connectionClosed(bool hasInitialMapLoaded) {
+void PlaylistAudioManager::connectionClosed(bool hasInitialMapLoaded) {
     
     if(!this->_isNetworkMaster) {
         this->_stopPlayingMusic();
@@ -136,24 +136,24 @@ void AudioManager::connectionClosed(bool hasInitialMapLoaded) {
 }
 
 
-void AudioManager::_link() {
+void PlaylistAudioManager::_link() {
     
     //on play requested from playlist
     QObject::connect(
         this->_plCtrl->playlist(), &Playlist::playRequested,
-        this, &AudioManager::_onToolbarPlayRequested
+        this, &PlaylistAudioManager::_onToolbarPlayRequested
     );
 
         //on action required from toolbar
     QObject::connect(
         this->_plCtrl->toolbar(), &TrackToolbar::actionRequired,
-        this, &AudioManager::_onToolbarActionRequested
+        this, &PlaylistAudioManager::_onToolbarActionRequested
     );
 
     //on seeking from toolbar
     QObject::connect(
         this->_plCtrl->toolbar(), &TrackToolbar::seeking,
-        this, qOverload<int>(&AudioManager::_onSeekingRequested)
+        this, qOverload<int>(&PlaylistAudioManager::_onSeekingRequested)
     );
 
     //volume change from toolbar
@@ -165,19 +165,19 @@ void AudioManager::_link() {
     //player position changed
     QObject::connect(
         this->_cli, &GStreamerClient::positionChanged,
-        this, &AudioManager::_onPlayerPositionChanged
+        this, &PlaylistAudioManager::_onPlayerPositionChanged
     );
 
     //on stream play ended
     QObject::connect(
         this->_cli, &GStreamerClient::streamEnded,
-        this, &AudioManager::_onStreamPlayEnded
+        this, &PlaylistAudioManager::_onStreamPlayEnded
     );
 
     //on stream error while trying to play it
     QObject::connect(
         this->_cli, &GStreamerClient::streamError,
-        this, &AudioManager::_onStreamError
+        this, &PlaylistAudioManager::_onStreamError
     );
 
     //on cli play state changed
@@ -188,7 +188,7 @@ void AudioManager::_link() {
 
 }
 
-void AudioManager::_playAudio(const QString &audioSourceUrl, const QString &sourceTitle, qint64 startAtMsecsPos) {
+void PlaylistAudioManager::_playAudio(const QString &audioSourceUrl, const QString &sourceTitle, qint64 startAtMsecsPos) {
     
     //if start is not > -1, should not play because stream ended!
     if(startAtMsecsPos == -1) return;
@@ -212,7 +212,7 @@ void AudioManager::_playAudio(const QString &audioSourceUrl, const QString &sour
 // events helpers
 //
 
-void AudioManager::_onToolbarActionRequested(const TrackToolbar::Action &action) {
+void PlaylistAudioManager::_onToolbarActionRequested(const TrackToolbar::Action &action) {
     
     switch(action) {
         
@@ -260,13 +260,13 @@ void AudioManager::_onToolbarActionRequested(const TrackToolbar::Action &action)
 
 }
 
-void AudioManager::_onToolbarPlayRequested(VideoMetadata* metadata) {
+void PlaylistAudioManager::_onToolbarPlayRequested(VideoMetadata* metadata) {
 
     NetworkFetcher::refreshMetadata(metadata).then([=]() {
 
-        auto title = metadata->title();
-        auto streamUrl = metadata->getBestAvailableStreamUrl().toString();
-        auto duration = metadata->duration();
+        auto title = metadata->playerConfig().title();
+        auto streamUrl = metadata->audioStreams()->preferedUrl().toString();
+        auto duration = metadata->playerConfig().duration();
 
         //update state
         this->_state.registerNewPlay(streamUrl, title, duration);
@@ -291,7 +291,7 @@ void AudioManager::_onToolbarPlayRequested(VideoMetadata* metadata) {
 
 }
 
-void AudioManager::_onStreamError() {
+void PlaylistAudioManager::_onStreamError() {
    
     //reset state
     this->_state.clear();
@@ -305,7 +305,7 @@ void AudioManager::_onStreamError() {
     currentPlay->setFailure(true);
 }
 
-void AudioManager::_stopPlayingMusic() {
+void PlaylistAudioManager::_stopPlayingMusic() {
     
     //reset state
     this->_state.clear();
@@ -319,7 +319,7 @@ void AudioManager::_stopPlayingMusic() {
 
 }
 
-void AudioManager::_onStreamPlayEnded() {
+void PlaylistAudioManager::_onStreamPlayEnded() {
     
     this->_stopPlayingMusic();
     
@@ -330,7 +330,7 @@ void AudioManager::_onStreamPlayEnded() {
 
 }
 
-void AudioManager::_onPlayerPositionChanged(int positionInSecs) {
+void PlaylistAudioManager::_onPlayerPositionChanged(int positionInSecs) {
     
     //update UI
     if(this->_isNetworkMaster || this->_isLocalOnly) {
@@ -341,7 +341,7 @@ void AudioManager::_onPlayerPositionChanged(int positionInSecs) {
 
 }
 
-void AudioManager::_onSeekingRequested(qint64 seekPosInMsecs) {
+void PlaylistAudioManager::_onSeekingRequested(qint64 seekPosInMsecs) {
     
     //seek audio client
     this->_cli->seek(seekPosInMsecs);
@@ -358,6 +358,6 @@ void AudioManager::_onSeekingRequested(qint64 seekPosInMsecs) {
 
 }
 
-void AudioManager::_onSeekingRequested(int seekPosInSecs) {
+void PlaylistAudioManager::_onSeekingRequested(int seekPosInSecs) {
     this->_onSeekingRequested((qint64)seekPosInSecs * 1000);
 }

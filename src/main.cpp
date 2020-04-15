@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #include <QLockFile>
@@ -129,7 +129,7 @@ void _registerMetaTypes() {
     qRegisterMetaType<RPZResponse>("RPZResponse");
     qRegisterMetaType<RPZUser>("RPZUser");
     qRegisterMetaType<RPZAtom>("RPZAtom");
-    qRegisterMetaType<RPZQuickDraw>("RPZQuickDraw");
+    qRegisterMetaType<RPZQuickDrawBits>("RPZQuickDrawBits");
     qRegisterMetaType<RPZMessage>("RPZMessage");
     qRegisterMetaType<ResetPayload>("ResetPayload");
     qRegisterMetaType<RPZGameSession>("RPZGameSession");
@@ -171,7 +171,7 @@ int main(int argc, char** argv) {
                     clientApp(argc, argv);
 
     //make sure to flush sentry for warnings / safe errors
-    sentry_shutdown();
+    // sentry_shutdown();
 
     return result; 
 

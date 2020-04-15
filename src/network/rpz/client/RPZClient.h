@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #pragma once
@@ -34,7 +34,7 @@
 #include "src/shared/models/messaging/RPZMessage.h"
 #include "src/shared/models/messaging/RPZResponse.h"
 #include "src/shared/models/network/RPZHandshake.h"
-#include "src/shared/models/RPZQuickDraw.hpp"
+#include "src/shared/models/RPZQuickDrawBits.hpp"
 
 #include "src/helpers/_appContext.h"
 #include "src/shared/async-ui/AlterationInteractor.hpp"
@@ -71,7 +71,7 @@ class RPZClient : public QObject, public AlterationInteractor, public JSONLogger
         void setAudioStreamPlayState(bool isPlaying);
         void sendMapHistory(const ResetPayload &historyPayload);
         void notifyCharacterChange(const RPZCharacter &changed);
-        void sendQuickdraw(const RPZQuickDraw &qd);
+        void sendQuickdraw(const RPZQuickDrawBits &qd);
 
     signals:
         void connectionStatus(const QString &statusMessage, bool isError = false);
@@ -80,7 +80,7 @@ class RPZClient : public QObject, public AlterationInteractor, public JSONLogger
         void receivedMessage(const RPZMessage &message);
         void serverResponseReceived(const RPZResponse &reponse);
         
-        void quickDrawReceived(const RPZQuickDraw &qd);
+        void quickDrawBitsReceived(const RPZQuickDrawBits &qd);
 
         void availableAssetsFromServer(const QVector<RPZAsset::Hash> &availableIds);
         void receivedAsset(const RPZAssetImportPackage &package);

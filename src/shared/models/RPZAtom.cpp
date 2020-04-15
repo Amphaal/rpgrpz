@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #include "RPZAtom.h"
@@ -194,6 +194,7 @@ int RPZAtom::textSize() const { return this->metadata(RPZAtom::Parameter::TextSi
 RPZAtom::Layer RPZAtom::layer() const { return this->metadata(RPZAtom::Parameter::Layer).toInt(); }
 QPointF RPZAtom::pos() const { return this->metadata(RPZAtom::Parameter::Position).toPointF();}
 int RPZAtom::penWidth() const { return this->metadata(RPZAtom::Parameter::PenWidth).toInt(); }
+QColor RPZAtom::penColor() const { return this->metadata(RPZAtom::Parameter::PenColor).value<QColor>(); }
 bool RPZAtom::isHidden() const { return this->metadata(RPZAtom::Parameter::Hidden).toBool(); }
 bool RPZAtom::isLocked() const { return this->metadata(RPZAtom::Parameter::Locked).toBool(); }
 double RPZAtom::assetScale() const { return this->metadata(RPZAtom::Parameter::AssetScale).toDouble();}
@@ -207,6 +208,7 @@ const QString RPZAtom::characterName() const { return this->metadata(RPZAtom::Pa
 const QString RPZAtom::NPCShortName() const { return this->metadata(RPZAtom::Parameter::NPCShortName).toString(); }
 RPZAtom::NPCType RPZAtom::NPCAttitude() const { return (RPZAtom::NPCType)this->metadata(RPZAtom::Parameter::NPCAttitude).toInt(); }
 bool RPZAtom::isCoveredByFog() const { return this->metadata(RPZAtom::Parameter::CoveredByFog).toBool(); }
+RPZAtom::TokenSize RPZAtom::tokenSize() const { return (RPZAtom::TokenSize)this->metadata(RPZAtom::Parameter::TokenSize).toInt(); }
 
 QPainterPath RPZAtom::shape() const {
     auto rawShape = this->metadata(RPZAtom::Parameter::Shape).toByteArray();
@@ -231,9 +233,9 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams(const RPZAtom::Type &type) 
     
     switch(type) {
         
-        case RPZAtom::Type::FogOfWar:
         case RPZAtom::Type::Drawing: {
             out.insert(RPZAtom::Parameter::PenWidth);
+            out.insert(RPZAtom::Parameter::PenColor);
         }
         break;
 
@@ -262,6 +264,7 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams(const RPZAtom::Type &type) 
             out.insert(RPZAtom::Parameter::CharacterId);
             out.insert(RPZAtom::Parameter::CharacterName);
             out.insert(RPZAtom::Parameter::DefaultPlayerColor);
+            out.insert(RPZAtom::Parameter::TokenSize);
         }
         break;
 
@@ -272,6 +275,7 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams(const RPZAtom::Type &type) 
             out.insert(RPZAtom::Parameter::MinNPCHealth);
             out.insert(RPZAtom::Parameter::MaxNPCHealth);
             out.insert(RPZAtom::Parameter::NPCDescription);
+            out.insert(RPZAtom::Parameter::TokenSize);
         }
         break;
 

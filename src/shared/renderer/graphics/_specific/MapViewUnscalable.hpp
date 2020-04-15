@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #pragma once
@@ -24,11 +24,16 @@
 
 #include <QStyleOptionGraphicsItem>
 #include <QPainter>
+#include <QPropertyAnimation>
 
 #include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
+#include "src/shared/renderer/graphics/_base/RPZAnimated.hpp"
 
-class MapViewUnscalable : public QGraphicsItem, public RPZGraphicsItem {
-
+class MapViewUnscalable : public QObject, public QGraphicsItem, public RPZGraphicsItem, public RPZAnimated {
+    
+    Q_OBJECT
+    Q_PROPERTY(qreal scale READ scale WRITE setScale)
+    Q_PROPERTY(qreal rotation READ rotation WRITE setRotation)
     Q_INTERFACES(QGraphicsItem)
 
     public:
@@ -41,11 +46,11 @@ class MapViewUnscalable : public QGraphicsItem, public RPZGraphicsItem {
             
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIgnoresTransformations, true);
 
-            auto type = atom.type();
-            auto pathToIcon = RPZAtom::iconPathByAtomType.value(type);
-            this->_p = QPixmap(pathToIcon);
+            this->_type = atom.type();
+            auto assetPath = _assetPathByAtomType.value(this->_type);
+            this->_p = QPixmap(assetPath).scaled(QSize(48, 48), Qt::AspectRatioMode::KeepAspectRatio);
 
-            switch(type) {
+            switch(this->_type) {
 
                 case RPZAtom::Type::POI: {
                     this->_refP = RefPoint::BottomCenter;
@@ -60,6 +65,37 @@ class MapViewUnscalable : public QGraphicsItem, public RPZGraphicsItem {
                 default:
                 break;
 
+            }
+
+        }
+
+        void triggerAnimation() override {
+            
+            //scaling
+            auto scale = new QPropertyAnimation(this, "scale");
+            scale->setEasingCurve(QEasingCurve::InOutQuad);
+            scale->setDuration(2000);
+            scale->setKeyValues({
+                {0, 0.85},
+                {0.5, 1},
+                {1, 0.85}
+            });
+            scale->setLoopCount(-1);
+            scale->setCurrentTime(QRandomGenerator::global()->bounded(0, scale->duration()));
+            scale->start(QAbstractAnimation::DeleteWhenStopped);
+
+            //rotation
+            if(this->_type == RPZAtom::Type::Event) {
+                auto rotate = new QPropertyAnimation(this, "rotation");
+                rotate->setEasingCurve(QEasingCurve::Linear);
+                rotate->setDuration(3000);
+                rotate->setKeyValues({
+                    {0, 0},
+                    {1, 360}
+                });
+                rotate->setLoopCount(-1);
+                rotate->setCurrentTime(QRandomGenerator::global()->bounded(0, rotate->duration()));
+                rotate->start(QAbstractAnimation::DeleteWhenStopped);
             }
 
         }
@@ -98,7 +134,8 @@ class MapViewUnscalable : public QGraphicsItem, public RPZGraphicsItem {
 
     private:
         QPixmap _p;
-        RefPoint _refP;
+        MapViewUnscalable::RefPoint _refP;
+        RPZAtom::Type _type;
 
         void _paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) {
             
@@ -110,5 +147,10 @@ class MapViewUnscalable : public QGraphicsItem, public RPZGraphicsItem {
             painter->restore();
 
         }
+
+        static const inline QHash<RPZAtom::Type, QString> _assetPathByAtomType = {
+            { RPZAtom::Type::Event, QStringLiteral(u":/assets/event.png") },
+            { RPZAtom::Type::POI, QStringLiteral(u":/assets/pointOfInterest.png") },
+        };
 
 };

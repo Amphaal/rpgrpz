@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #pragma once
@@ -39,7 +39,7 @@ struct DiceThrow {
 
 class MessageInterpreter {
     public:
-        enum class Command { C_Unknown, Say, Whisper, Help, C_DiceThrow };
+        enum class Command { C_Unknown, Say, Whisper, Help, C_DiceThrow, C_UserLogIn, C_UserLogOut };
         
         static inline const QHash<QString, Command> _textByCommand = {
             { "/h", Command::Help }

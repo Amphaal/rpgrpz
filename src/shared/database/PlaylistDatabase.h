@@ -12,26 +12,26 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #pragma once
 
 #include "src/shared/database/_base/JSONDatabase.h"
 
-#include <audiotube/VideoMetadata.h>
+#include <audiotube/PlayerConfig.h>
 
 class PlaylistDatabase : public JSONDatabase {
     public:
         //singleton
         static PlaylistDatabase* get();
         
-        void addYoutubeId(const VideoMetadata::Id &ytId);
-        void removeYoutubeId(const VideoMetadata::Id &ytId);
+        void addYoutubeId(const PlayerConfig::VideoId &ytId);
+        void removeYoutubeId(const PlayerConfig::VideoId &ytId);
 
-        QSet<VideoMetadata::Id> ytIds() const;
+        QSet<PlayerConfig::VideoId> ytIds() const;
 
     protected:
         void _setupLocalData() override;
@@ -45,6 +45,6 @@ class PlaylistDatabase : public JSONDatabase {
         PlaylistDatabase(const QJsonObject &doc);
         static inline PlaylistDatabase* _singleton = nullptr;
 
-        QSet<VideoMetadata::Id> _ytIds;
+        QSet<PlayerConfig::VideoId> _ytIds;
 
 };

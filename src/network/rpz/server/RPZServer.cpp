@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #include "RPZServer.h" 
@@ -81,6 +81,7 @@ void RPZServer::_attributeRoleToUser(JSONSocket* socket, RPZUser &associatedUser
     else if (wantsToIncarnate) {
         associatedUser.setCharacter(incarnation);
         associatedUser.setRole(RPZUser::Role::Player);
+        associatedUser.randomiseColor();
     }
 
     //add to roles
@@ -100,7 +101,6 @@ void RPZServer::_onNewConnection() {
         //create new user with id
         RPZUser user;
         user.shuffleId();
-        user.randomiseColor();
 
         //add to internal lists
         auto userId = user.id();
@@ -148,6 +148,24 @@ void RPZServer::_onClientSocketDisconnected(JSONSocket* disconnectedSocket) {
 
     //tell other clients that the user is gone
     this->_sendToAll(RPZJSON::Method::UserOut, QVariant::fromValue<RPZUser::Id>(idToRemove));
+    this->_logUserAsMessage(nullptr, RPZJSON::Method::UserOut, removedUser); 
+
+}
+
+void RPZServer::_logUserAsMessage(JSONSocket* userSocket, const RPZJSON::Method &method, const RPZUser &user) {
+    
+    //define message
+    RPZMessage msg("", method == RPZJSON::Method::UserIn ? 
+                        MessageInterpreter::Command::C_UserLogIn 
+                        : MessageInterpreter::Command::C_UserLogOut);
+    msg.setOwnership(user);
+
+    //store it
+    this->_messages.insert(msg.id(), msg);
+
+    //broadcast
+    if(userSocket) this->_sendToAllExcept(userSocket, RPZJSON::Method::Message, msg);
+    else this->_sendToAll(RPZJSON::Method::Message, msg);
 
 }
 
@@ -157,6 +175,11 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
 
     switch(method) {
         
+        case RPZJSON::Method::QuickDrawHappened: {
+            this->_sendToAllExcept(target, method, data); //notify everyone else
+        }
+        break;
+
         case RPZJSON::Method::CharacterChanged: {
             
             //update character of the user
@@ -183,7 +206,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
             StreamPlayStateTracker tracker(data.toHash());
             this->_tracker = tracker;
 
-            this->_sendToAllExcept(target, RPZJSON::Method::AudioStreamUrlChanged, this->_tracker);
+            this->_sendToAllExcept(target, method, this->_tracker);
 
         }
         break;
@@ -193,7 +216,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
             auto isPlaying = data.toBool();
             this->_tracker.updatePlayingState(isPlaying);
             
-            this->_sendToAllExcept(target, RPZJSON::Method::AudioStreamPlayingStateChanged, data);
+            this->_sendToAllExcept(target, method, data);
 
         }
         break;
@@ -203,7 +226,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
             auto newPosInMs = data.value<qint64>();
             this->_tracker.updatePositionInMSecs(newPosInMs);
 
-            this->_sendToAllExcept(target, RPZJSON::Method::AudioStreamPositionChanged, data);
+            this->_sendToAllExcept(target, method, data);
 
         }
         break;
@@ -291,8 +314,9 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
             this->_attributeRoleToUser(target, targetUser, handshakePkg);
             
             //tell the others that this user exists
-            this->_sendToAllExcept(target, RPZJSON::Method::UserIn, targetUser); 
-
+            this->_sendToAllExcept(target, RPZJSON::Method::UserIn, targetUser);
+            this->_logUserAsMessage(target, RPZJSON::Method::UserIn, targetUser); 
+            
             //send game session
             this->_sendGameSession(target, targetUser);
 
@@ -461,7 +485,7 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
             this->_sendToAllExcept(sender, RPZJSON::Method::Message, msg);
 
             //send dices throws if requested
-            this->_maySendAndStoreDiceThrows(msg.text());
+            this->_maySendAndStoreDiceThrows(msg);
 
         }
         break;
@@ -474,17 +498,17 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg){
     sender->sendToSocket(RPZJSON::Method::ServerResponse, response);
 }
 
-void RPZServer::_maySendAndStoreDiceThrows(const QString &text) {
+void RPZServer::_maySendAndStoreDiceThrows(const RPZMessage &msg) {
     
     //check if throws are requested
-    auto throws = MessageInterpreter::findDiceThrowsFromText(text);
+    auto throws = MessageInterpreter::findDiceThrowsFromText(msg.text());
     if(throws.isEmpty()) return;
 
     //generate values
     MessageInterpreter::generateValuesOnDiceThrows(throws);
 
     //create message parts
-    QList<QString> throwsMsgList;
+    QList<QString> throwsStrList;
     for(const auto &dThrow : throws) {
         
         //sub list of values
@@ -503,13 +527,14 @@ void RPZServer::_maySendAndStoreDiceThrows(const QString &text) {
         if(sub.count() > 1) joined += QStringLiteral(u" x̄ ") + QString::number(dThrow.avg, 'f', 2);
 
         //add to topmost list
-        throwsMsgList += joined;
+        throwsStrList += joined;
 
     }
 
     //append it
-    auto msg = throwsMsgList.join(", ");
-    RPZMessage dThrowMsg(msg, MessageInterpreter::Command::C_DiceThrow);
+    auto text = throwsStrList.join(", ");
+    RPZMessage dThrowMsg(text, MessageInterpreter::Command::C_DiceThrow);
+    dThrowMsg.setOwnership(msg.owner());
 
     //store message
     this->_messages.insert(dThrowMsg.id(), dThrowMsg);

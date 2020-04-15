@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #pragma once
@@ -40,6 +40,7 @@
 #include "src/shared/models/messaging/RPZResponse.h"
 #include "src/shared/models/network/RPZHandshake.h"
 #include "src/shared/models/network/RPZGameSession.hpp"
+#include "src/shared/models/RPZQuickDrawBits.hpp"
 
 #include "src/shared/database/AssetsDatabase.h"
 
@@ -101,8 +102,9 @@ class RPZServer : public QObject, public JSONLogger {
         //messages
         RPZMap<RPZMessage> _messages;
         void _interpretMessage(JSONSocket* sender, RPZMessage &msg);
-        void _maySendAndStoreDiceThrows(const QString &text);
-        
+        void _maySendAndStoreDiceThrows(const RPZMessage &msg);
+        void _logUserAsMessage(JSONSocket* userSocket, const RPZJSON::Method &method, const RPZUser &user);
+
         //internal
         void _onNewConnection();
         void _onClientSocketDisconnected(JSONSocket* disconnectedSocket);

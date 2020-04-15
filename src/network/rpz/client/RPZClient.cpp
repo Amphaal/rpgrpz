@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #include "RPZClient.h"
@@ -306,8 +306,8 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
     switch(method) {
 
         case RPZJSON::Method::QuickDrawHappened: {
-            auto qd = RPZQuickDraw(data.toHash());
-            emit quickDrawReceived(qd);
+            RPZQuickDrawBits qd(data.toHash());
+            emit quickDrawBitsReceived(qd);
         }
         break;
 
@@ -525,7 +525,7 @@ void RPZClient::changeAudioPosition(qint64 newPositionInMsecs) {
     this->_serverSock->sendToSocket(RPZJSON::Method::AudioStreamPositionChanged, newPositionInMsecs);
 }
 
-void RPZClient::sendQuickdraw(const RPZQuickDraw &qd) {
+void RPZClient::sendQuickdraw(const RPZQuickDrawBits &qd) {
     this->_serverSock->sendToSocket(RPZJSON::Method::QuickDrawHappened, qd);
 }
 

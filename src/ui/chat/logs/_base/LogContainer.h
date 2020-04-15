@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #pragma once
@@ -31,20 +31,18 @@
 class LogItem : public QWidget {
     
     public:
-        LogItem();
+        LogItem(const Stampable::Id &boundMsgId);
         int positionInLog(); 
         void setPositionInLog(int position);
         QHBoxLayout* horizontalLayout();
 
+        Stampable::Id boundMsgId() const;
+
     private:
         int _position = -1;
+        Stampable::Id _boundMsgId;
         QHBoxLayout* _hLayout = nullptr;
 
-};
-
-class LogText : public QLabel {
-    public:
-        LogText(const QString &text);
 };
 
 class LogContainer : public QWidget {

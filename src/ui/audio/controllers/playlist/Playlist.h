@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #pragma once
@@ -64,10 +64,10 @@ class Playlist : public QListWidget {
     private:
         void keyPressEvent(QKeyEvent * event) override;
         void _removeYoutubeVideo(QListWidgetItem* playlistItem);
-        void _addYoutubeVideo(const VideoMetadata::Id &ytVideoId);
+        void _addYoutubeVideo(const PlayerConfig::VideoId &ytVideoId);
         bool _addYoutubeItem(VideoMetadata* metadata);
 
-        QSet<VideoMetadata::Id> _playlistVideoIds;
+        QSet<PlayerConfig::VideoId> _playlistVideoIds;
 
         void _onItemDoubleClicked(QListWidgetItem * item);
         QListWidgetItem* _playlistItemToUse = nullptr;

@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #pragma once
@@ -59,7 +59,9 @@ class AtomEditorLineDescriptor : public QWidget {
             { RPZAtom::Parameter::NPCShortName, QT_TR_NOOP("Short name") },
             { RPZAtom::Parameter::NPCDescription, QT_TR_NOOP("GM Notes") },
             { RPZAtom::Parameter::CharacterId, QT_TR_NOOP("Associated character") },
-            { RPZAtom::Parameter::Opacity, QT_TR_NOOP("Opacity") }
+            { RPZAtom::Parameter::Opacity, QT_TR_NOOP("Opacity") },
+            { RPZAtom::Parameter::TokenSize, QT_TR_NOOP("Token size") },
+            { RPZAtom::Parameter::PenColor, QT_TR_NOOP("Pen color") }
         };
 
         static inline QHash<RPZAtom::Parameter, QString> _valSuffix = {
@@ -90,6 +92,8 @@ class AtomEditorLineDescriptor : public QWidget {
             { RPZAtom::Parameter::NPCShortName, QStringLiteral(u":/icons/app/tools/text.png") },
             { RPZAtom::Parameter::NPCDescription, QStringLiteral(u":/icons/app/tools/text.png") },
             { RPZAtom::Parameter::CharacterId, QStringLiteral(u":/icons/app/connectivity/cloak.png") },
-            { RPZAtom::Parameter::Opacity, QStringLiteral(u":/icons/app/tools/opacity.png") }
+            { RPZAtom::Parameter::Opacity, QStringLiteral(u":/icons/app/tools/opacity.png") },
+            { RPZAtom::Parameter::TokenSize, QStringLiteral(u":/icons/app/tools/size.png") },
+            { RPZAtom::Parameter::PenColor, QStringLiteral(u":/icons/app/tools/pen.png") },
         };
 };

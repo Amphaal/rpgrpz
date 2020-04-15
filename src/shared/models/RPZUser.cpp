@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #include "RPZUser.h"
@@ -28,14 +28,29 @@ RPZUser::RPZUser(RPZUser::Id id, const QString &name, const Role &role, const QC
     this->_setColor(color);
 };
 
+QString RPZUser::idAsBase62() const {
+    
+    auto value = this->id();
+    QString out;
+
+    do {
+        auto dd = std::string(1, _CODES_b62[value % 62]);
+        out.insert(0, QString::fromStdString(dd));
+        value /= 62;
+    } while (value > 0);
+
+    return out;
+
+}
+
 void RPZUser::setName(const QString &name) {
     
     //default name
     this->insert(QStringLiteral(u"name"), name);
-    
+
     //whisp name
     auto adapted = MessageInterpreter::usernameToCommandCompatible(name);
-    adapted = adapted + this->color().name();
+    adapted = adapted + "#" + this->idAsBase62();
     this->insert(QStringLiteral(u"wname"), adapted);
         
 };
@@ -87,7 +102,7 @@ void RPZUser::randomiseColor() {
 }
 
 void RPZUser::_setColor(const QColor &color) {
-    auto colorToUse = color.isValid() ? color.name() : RandomColor::getRandomColor().name();
+    auto colorToUse = color.isValid() ? color.name() : RandomColor::getRandomKellyColor(RandomColor::Context::PlayerColor).name();
     this->insert(QStringLiteral(u"color"), colorToUse);
 }
 

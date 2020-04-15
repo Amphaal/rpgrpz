@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #include "Playlist.h"
@@ -221,7 +221,7 @@ void Playlist::addYoutubeVideo(const QString &url) {
 
 }
 
-void Playlist::_addYoutubeVideo(const VideoMetadata::Id &ytVideoId) {
+void Playlist::_addYoutubeVideo(const PlayerConfig::VideoId &ytVideoId) {
     auto metadata = VideoMetadata::fromVideoId(ytVideoId);
     auto success = _addYoutubeItem(metadata);
     if(!success) delete metadata;
@@ -253,10 +253,10 @@ bool Playlist::_addYoutubeItem(VideoMetadata* metadata) {
         metadata, &VideoMetadata::metadataRefreshed,
         [=]() {
 
-            auto durationStr = StringHelper::secondsToTrackDuration(metadata->duration());
+            auto durationStr = StringHelper::secondsToTrackDuration(metadata->playerConfig().duration());
 
             auto title = QStringLiteral(u"%1 [%2]")
-                            .arg(metadata->title())
+                            .arg(metadata->playerConfig().title())
                             .arg(durationStr);
 
             playlistItem->setText(pos + title);

@@ -4,5 +4,5 @@
 	branch = master
 [submodule "external/sentry-native"]
 	path = external/sentry-native
-	url = https://github.com/Amphaal/sentry-native
-	branch = m_fork
+	url = https://github.com/getsentry/sentry-native
+	branch = master

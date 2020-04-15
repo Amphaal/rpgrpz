@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #include "_appContext.h"
@@ -191,32 +191,32 @@ void AppContext::init(const QString &customContext) {
     _makeSureDirPathExists(getServerMapAutosaveFolderLocation());
 
     //crashpad activated if release app
-    initSentry();
+    // initSentry();
 
 } 
 
 
-void AppContext::initSentry() {
+// void AppContext::initSentry() {
 
-    auto options = sentry_options_new();
-    sentry_options_set_dsn(options, SENTRY_ENDPOINT);
+//     auto options = sentry_options_new();
+//     sentry_options_set_dsn(options, SENTRY_ENDPOINT);
 
-    QString environement = "Production";
-    #ifdef _DEBUG
-        environement = "Debug";
-    #endif
-    sentry_options_set_environment(options, qUtf8Printable(environement));
+//     QString environement = "Production";
+//     #ifdef _DEBUG
+//         environement = "Debug";
+//     #endif
+//     sentry_options_set_environment(options, qUtf8Printable(environement));
 
-    sentry_options_set_release(options, GITHUB_VERSION_NAME);
-    sentry_options_set_debug(options, 1);
+//     sentry_options_set_release(options, GITHUB_VERSION_NAME);
+//     sentry_options_set_debug(options, 1);
 
-    //integration
-    auto dbStr = AppContext::getAppDataLocation() + "/sentry_db";
-    sentry_options_set_database_path(options, qUtf8Printable(dbStr));
+//     //integration
+//     auto dbStr = AppContext::getAppDataLocation() + "/sentry_db";
+//     sentry_options_set_database_path(options, qUtf8Printable(dbStr));
 
-    sentry_init(options);
+//     sentry_init(options);
 
-}
+// }
 
 void AppContext::_makeSureDirPathExists(const QString &path) {
     struct stat buffer;

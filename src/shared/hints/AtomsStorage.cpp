@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #include "AtomsStorage.h"
@@ -623,7 +623,7 @@ RPZMap<RPZAtom> AtomsStorage::_generateAtomDuplicates(QList<RPZAtom::Id> RPZAtom
 }
 
 bool AtomsStorage::_isAtomOwnable(const RPZAtom &atom) const {
-    return atom.isWalkableAtom();
+    return atom.type() == RPZAtom::Type::Player;
 }
 
 QPointF AtomsStorage::_getPositionFromAtomDuplication(const RPZAtom &atomToDuplicate, double distanceFromOriginal) {

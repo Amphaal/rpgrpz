@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #include "ViewMapHint.h"
@@ -72,8 +72,8 @@ void ViewMapHint::_atomOwnerChanged(const RPZAtom::Id &target, const RPZCharacte
 
 bool ViewMapHint::_hasOwnershipOf(const RPZAtom &atom) const {
     
-    if(!this->_isAtomOwnable(atom)) return false;
     if(Authorisations::isHostAble()) return true;
+    if(!this->_isAtomOwnable(atom)) return false;
 
     auto id = atom.id();
     auto has = this->_ownedTokenIds.contains(id);

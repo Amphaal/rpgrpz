@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #include "RPZActions.h"
@@ -41,7 +41,7 @@ QAction* RPZActions::useMeasurementTool() {
     );
 
     action->setCheckable(true);
-    action->setEnabled(false);
+    action->setEnabled(true);
     action->setData((int)MapTool::Measure);
 
     return action;
@@ -56,7 +56,7 @@ QAction* RPZActions::useQuickDrawTool() {
     );
 
     action->setCheckable(true);
-    action->setEnabled(false);
+    action->setEnabled(true);
     action->setData((int)MapTool::QuickDraw);
 
     return action;

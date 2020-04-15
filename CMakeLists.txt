@@ -27,10 +27,10 @@ message(STATUS "Using toolchain file: [${CMAKE_TOOLCHAIN_FILE}].")
 
 #project setup
 project(RPGRPZ
-    VERSION 0.21.1000
+    VERSION 0.22.1
     DESCRIPTION "Simple Tabletop RPG experience"
     HOMEPAGE_URL "https://github.com/Amphaal/rpgrpz"
-    LANGUAGES C CXX
+    LANGUAGES CXX
 )
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER) #lowered project name
 SET(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME ${PROJECT_NAME_LOWER})
@@ -236,6 +236,7 @@ find_package(Qt5 REQUIRED COMPONENTS
     Svg 
     OpenGL 
     LinguistTools
+    Multimedia
 )
 target_link_libraries(appExec
     Qt5::Core
@@ -244,6 +245,7 @@ target_link_libraries(appExec
     Qt5::Network
     Qt5::Svg
     Qt5::OpenGL
+    Qt5::Multimedia
 )
 
 # QT LIBRARIES COPY
@@ -287,14 +289,14 @@ IF(MINGW)
     )
 endif()
 
-#################
-# Sentry-native #
-#################
+# #################
+# # Sentry-native #
+# #################
 
-add_subdirectory("external/sentry-native")
-target_compile_options(sentry PUBLIC -Wno-unused-parameter -Wno-format-pedantic) #temporary fix
-target_include_directories(appExec PRIVATE "${Sentry-Native_SOURCE_DIR}/include")
-target_link_libraries(appExec sentry)
+# add_subdirectory("external/sentry-native")
+# target_compile_options(sentry PUBLIC -Wno-unused-parameter -Wno-format-pedantic) #temporary fix
+# target_include_directories(appExec PRIVATE "${Sentry-Native_SOURCE_DIR}/include")
+# target_link_libraries(appExec sentry)
 
 #############
 # AudioTube #

@@ -12,42 +12,24 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #include "LogContainer.h"
 
-LogText::LogText(const QString &text) {
-    
-    this->setMargin(0);
-    this->setWordWrap(true);
-    this->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
-    this->setOpenExternalLinks(true);
-    this->setTextFormat(Qt::RichText);
-
-    //redefine text with rich hyperlinks
-    auto withHyperlinks = text;
-    QRegularExpression r(AppContext::REGEX_URL);
-    auto matches = r.globalMatch(text);
-    
-    while (matches.hasNext()) {
-        QRegularExpressionMatch match = matches.next();
-        auto url = match.captured();
-        withHyperlinks.replace(url, QStringLiteral(u"<a href=\"%1\">%1</a>").arg(url));
-    }
-
-    this->setText(withHyperlinks);
-
-}
-
-LogItem::LogItem() : QWidget(), _hLayout(new QHBoxLayout) {
+LogItem::LogItem(const Stampable::Id &boundMsgId) : QWidget(), _hLayout(new QHBoxLayout) {
     this->setLayout(this->_hLayout);
     this->_hLayout->setContentsMargins(10, 3, 10, 3);
     this->_hLayout->setAlignment(Qt::AlignTop);
     this->setAutoFillBackground(true);
     this->setSizePolicy(QSizePolicy::Policy::MinimumExpanding, QSizePolicy::Policy::Maximum);
+    this->_boundMsgId = boundMsgId;
+}
+
+Stampable::Id LogItem::boundMsgId() const {
+    return this->_boundMsgId;
 }
 
 int LogItem::positionInLog() {
@@ -82,7 +64,7 @@ LogItem* LogContainer::_addLine(const Stampable &element, Stampable::Id putUnder
     if(!found) {
 
         //create line
-        found = new LogItem();
+        found = new LogItem(eId);
 
         //if no information about descendant, push last
         if(!putUnder) {

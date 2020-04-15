@@ -12,9 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical resources available within the source code may 
+// Any graphical or audio resources available within the source code may 
 // use a different license and copyright : please refer to their metadata
-// for further details. Graphical resources without explicit references to a
+// for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
 #include "AtomConverter.h"
@@ -169,7 +169,25 @@ void AtomConverter::_bulkTransformApply(QGraphicsItem* itemBrushToUpdate) {
 bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &param, QGraphicsItem* itemToUpdate, const QVariant &val) {
     
     switch(param) {
-                        
+            
+            case RPZAtom::Parameter::TokenSize: {
+                if(auto cItem = dynamic_cast<MapViewToken*>(itemToUpdate)) {
+                    auto type = (RPZAtom::TokenSize)val.toInt();
+                    cItem->updateTokenSize(type);
+                }
+            }
+            break;
+
+            case RPZAtom::Parameter::PenColor: {
+                if(auto cItem = dynamic_cast<MapViewGraphicsPathItem*>(itemToUpdate)) {
+                    auto newColor = val.value<QColor>();
+                    auto pen = cItem->pen();
+                    pen.setColor(newColor);
+                    cItem->setPen(pen);
+                }
+            }
+            break;
+
             //on moving
             case RPZAtom::Parameter::Position: {
                 auto destPos = val.toPointF();
