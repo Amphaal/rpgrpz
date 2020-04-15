@@ -191,14 +191,17 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
             line = QLineF::fromPolar(10, line.angle());
             line.translate(moveTo);
 
+            auto p = this->pen();
+
+            //define gradient
             QRadialGradient grad;
             grad.setColorAt(0, Qt::transparent);
-            grad.setColorAt(1, Qt::black);    
+            grad.setColorAt(1, p.color());    
             grad.setCenter(line.p1());
             grad.setFocalPoint(line.p2());
             grad.setRadius(120);
    
-            auto p = this->pen();
+            //update pen
             p.setBrush(grad);
             this->setPen(p);
 

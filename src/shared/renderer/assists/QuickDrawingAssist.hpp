@@ -35,7 +35,7 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
             this->_tmQDUpdater.setInterval(1000);
             QObject::connect(
                 &this->_tmQDUpdater, &QTimer::timeout,
-                this, &QuickDrawingAssist::_maySendQuickDrawNetworkUpdate
+                this, &QuickDrawingAssist::_sendQuickDrawNetworkUpdate
             );
         }
 
@@ -130,7 +130,11 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
             return _tempDrawing && _rpzClient && _currentUser.isEmpty();
         }
 
-        void _maySendQuickDrawNetworkUpdate(bool areLastFromCurrentQD = false) {
+        void _sendQuickDrawNetworkUpdate() {
+            return _maySendQuickDrawNetworkUpdate(false);
+        }
+
+        void _maySendQuickDrawNetworkUpdate(bool areLastFromCurrentQD) {
             
             //prevent
             if(!this->_allowNetworkInteraction()) return;
@@ -197,6 +201,8 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
 
             //add to scene
             this->_view->scene()->addItem(item);
+
+            return item;
 
         }
 
