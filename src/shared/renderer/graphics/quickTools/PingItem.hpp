@@ -17,28 +17,4 @@
 // for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
-#pragma once 
-
-#include <QVariantHash>
-#include <QPainterPath>
-
-#include "src/helpers/JSONSerializer.h"
-#include "src/shared/models/RPZUser.h"
-
-class RPZQuickDraw : public QVariantHash {
-    public:
-        RPZQuickDraw() {};
-        explicit RPZQuickDraw(const QVariantHash &hash) {}
-        RPZQuickDraw(const RPZUser::Id &drawerId, const QPainterPath &path) {
-            this->insert("drwr", QVariant::fromValue<RPZUser::Id>(drawerId));
-            this->insert("p", JSONSerializer::asBase64(path));
-        }
-
-        RPZUser::Id drawer() const {
-            return this->value("drwr").toULongLong();
-        }
-
-        const QPainterPath path() const {
-            return JSONSerializer::toPainterPath(this->value("p").toByteArray());
-        }
-};
+#pragma once

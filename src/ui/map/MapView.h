@@ -57,9 +57,12 @@
 #include "src/ui/map/modules/MV_Manipulation.hpp"
 #include "src/ui/map/modules/MV_HUDLayout.hpp"
 
-#include "src/shared/renderer/assists/DrawingAssist.hpp"
+#include "src/shared/renderer/assists/AtomDrawingAssist.hpp"
+#include "src/shared/renderer/assists/QuickDrawingAssist.hpp"
 
 #include "src/shared/renderer/graphics/MapViewGraphics.h"
+
+#include "src/ui/map/toolbars/MapTools.hpp"
 
 class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayout, public AtomSelector {
 
@@ -111,7 +114,8 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
 
     private:
         RPZMapParameters _currentMapParameters;
-        DrawingAssist* _drawingAssist = nullptr;
+        QuickDrawingAssist* _quickDrawingAssist = nullptr;
+        AtomDrawingAssist* _atomDrawingAssist = nullptr;
         AtomsContextualMenuHandler* _menuHandler = nullptr;
         AtomActionsHandler* _atomActionsHandler = nullptr;
 
@@ -144,9 +148,15 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
             MapTool _quickTool = MapTool::Default;
             MapTool _getCurrentTool() const;
             void _changeTool(MapTool newTool, bool quickChange = false);
+            void _onToolRequested(const MapTool &tool, bool enabled);
         
+        //icons
+        QCursor _walkingCursor;
+        QCursor _pingCursor;
+        QCursor _quickDrawCursor;
+        QCursor _measureCursor;
+
         //walking...
-            QCursor _walkingCursor;
             MapViewWalkingHelper* _walkingHelper = nullptr;
             void _mightUpdateWalkingHelperPos();
             void _clearWalkingHelper();

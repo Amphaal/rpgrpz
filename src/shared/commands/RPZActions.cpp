@@ -56,7 +56,7 @@ QAction* RPZActions::useQuickDrawTool() {
     );
 
     action->setCheckable(true);
-    action->setEnabled(false);
+    action->setEnabled(true);
     action->setData((int)MapTool::QuickDraw);
 
     return action;

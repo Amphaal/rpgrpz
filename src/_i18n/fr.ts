@@ -1347,6 +1347,11 @@
         <source>Sent at %1</source>
         <translation>Envoyé à %1</translation>
     </message>
+    <message>
+        <location filename="../ui/atomEditor/editors/generic/ColorPickerEditor.hpp" line="49"/>
+        <source>Pen color</source>
+        <translation type="unfinished">Couleur</translation>
+    </message>
 </context>
 <context>
     <name>RPZClient</name>
@@ -1384,7 +1389,7 @@
 <context>
     <name>RPZServer</name>
     <message>
-        <location filename="../network/rpz/server/RPZServer.cpp" line="293"/>
+        <location filename="../network/rpz/server/RPZServer.cpp" line="298"/>
         <source>Your software version is different from the server&apos;s one : v%1 (you) / v%2 (server) !</source>
         <translation>Votre version logicielle diffère de la version du serveur : v%1 (vous) / v%2 (serveur) !</translation>
     </message>

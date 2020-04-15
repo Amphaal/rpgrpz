@@ -442,22 +442,22 @@ void MainWindow::_initAppComponents() {
         this->_mapViewContainer = new QWidget(this);
         this->_mapViewContainer->setLayout(new OverlayingLayout);
 
+        this->_mapTools = new MapTools(this);
+        this->_mapActions = new MapActions(this);
         this->_mapView = new MapView(this);
         this->_minimap = new MiniMapView(this->_mapView, this);
+        this->_mapHelpers = new MapHelpers(this->_minimap, this);
+        
         this->_interactibleDescr = new MapViewInteractibleDescriptor(this);
 
         this->_mapViewContainer->layout()->addWidget(this->_mapView);
         this->_mapViewContainer->layout()->addWidget(this->_interactibleDescr);
         this->_mapViewContainer->layout()->setAlignment(this->_interactibleDescr, Qt::AlignTop);
         this->_mapViewContainer->layout()->addWidget(this->_minimap);
-        
-        this->_mapHelpers = new MapHelpers(this->_minimap, this);
-        this->_mapActions = new MapActions(this);
     
     this->_chatWidget = new ChatWidget(this);
     this->_audioManager = new PlaylistAudioManager(this);
     this->_toys = new ToysTreeView(this);
-    this->_mapTools = new MapTools(this);
     this->_mlManager = new MapLayoutManager(this->_mapView, this);
     this->_connectWidget = new ConnectWidget(this);
     this->_atomEditManager = new AtomEditionManager(this);

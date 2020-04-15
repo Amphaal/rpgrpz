@@ -24,11 +24,15 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
     this->setScene(new QGraphicsScene);
 
     this->_walkingCursor = QCursor(QStringLiteral(u":/icons/app/tools/walking.png"));
+    this->_pingCursor = QCursor(QStringLiteral(u":/icons/app/tools/ping.png"));
+    this->_quickDrawCursor = QCursor(QStringLiteral(u":/icons/app/tools/pencil.png"));
+    this->_measureCursor = QCursor(QStringLiteral(u":/icons/app/tools/measuring.png"));
 
     //init
     this->_menuHandler = new AtomsContextualMenuHandler(this);
     this->_atomActionsHandler = new AtomActionsHandler(this, this);
-    this->_drawingAssist = new DrawingAssist(this);
+    this->_atomDrawingAssist = new AtomDrawingAssist(this);
+    this->_quickDrawingAssist = new QuickDrawingAssist(this);
 
     //OpenGL backend activation
     QGLFormat format;
@@ -126,6 +130,15 @@ void MapView::_handleHintsSignalsAndSlots() {
         }
     );
 
+    QObject::connect(
+        MapTools::get(), &MapTools::toolRequested,
+        this, &MapView::_onToolRequested
+    );
+
+}
+
+void MapView::_onToolRequested(const MapTool &tool, bool enabled) {
+    this->_changeTool(enabled ? tool : MapTool::Default);
 }
 
 void MapView::_onFogModeChanged(const RPZFogParams::Mode &newMode) {
@@ -293,7 +306,8 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
         this->resetTool();
 
         //before clearing whole scene
-        this->_drawingAssist->clearDrawing(); 
+        this->_atomDrawingAssist->clearDrawing();
+        this->_quickDrawingAssist->clearDrawings(); 
         MapViewAnimator::clearAnimations();
 
         //clear and change rect
@@ -338,7 +352,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
                 }
 
                 //auto remove temporary drawing
-                auto isCommitedDrawing = this->_drawingAssist->compareItemToCommitedDrawing(item);
+                auto isCommitedDrawing = this->_atomDrawingAssist->compareItemToCommitedDrawing(item);
                 if(isCommitedDrawing) break;
 
                 //if not from temporary drawing, animate path
@@ -397,11 +411,10 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
     }
 
     if(type == Payload::Alteration::Reset) {
-            this->_mayFogUpdateAtoms(
-                HintThread::hint()->fogItem()->coveredAtomItems()
-            );
+        this->_mayFogUpdateAtoms(
+            HintThread::hint()->fogItem()->coveredAtomItems()
+        );
         ProgressTracker::get()->heavyAlterationEnded();
-        
     }
 
     //check specific items for fog updates
@@ -646,7 +659,7 @@ void MapView::mousePressEvent(QMouseEvent *event) {
 
                 case RPZAtom::Type::Drawing:
                 case RPZAtom::Type::Brush:
-                    this->_drawingAssist->addDrawingPoint(event->pos(), templateAtom);
+                    this->_atomDrawingAssist->addDrawingPoint(event->pos(), templateAtom);
                 break;
 
                 default: {
@@ -680,6 +693,11 @@ void MapView::mousePressEvent(QMouseEvent *event) {
                     QGraphicsView::mousePressEvent(event); //allows rubber band selection
                 }
                 
+            }
+            break;
+
+            case MapTool::QuickDraw: {
+                this->_quickDrawingAssist->addDrawingPoint(event->pos());
             }
             break;
 
@@ -722,7 +740,7 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
 
             case RPZAtom::Type::Drawing:
             case RPZAtom::Type::Brush:
-                this->_drawingAssist->updateDrawingPath(event->pos());
+                this->_atomDrawingAssist->updateDrawingPath(event->pos());
             break;
 
             default:
@@ -733,6 +751,10 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
 
     else if(currentTool == MapTool::Walking) {
         this->_mightUpdateWalkingHelperPos();
+    }
+
+    else if(currentTool == MapTool::QuickDraw) {
+        this->_quickDrawingAssist->updateDrawingPath(event->pos());
     }
 
     else if(currentTool == MapTool::Scroll && this->_isMousePressed) {
@@ -784,7 +806,8 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
     if(btnPressed == Qt::MouseButton::LeftButton) {
 
             //commit sticky drawing
-            this->_drawingAssist->onMouseRelease();
+            this->_atomDrawingAssist->onMouseRelease();
+            this->_quickDrawingAssist->onMouseRelease();
 
             switch(currentTool) {
                 
@@ -879,7 +902,8 @@ void MapView::resetTool() {
 void MapView::_changeTool(MapTool newTool, const bool quickChange) {
 
     //end drawing if any
-    this->_drawingAssist->mayCommitDrawing();
+    this->_atomDrawingAssist->mayCommitDrawing();
+    this->_quickDrawingAssist->onMouseRelease();
 
     //prevent the usage of Atom tool if not host able
     if(!Authorisations::isHostAble() && newTool == MapTool::Atom) return;
@@ -903,6 +927,9 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
         }
 
         this->_tool = newTool;
+
+        //notify MapTools
+        MapTools::get()->onToolChange(this->_tool);
         
         if(newTool != MapTool::Walking) {
             this->scene()->clearSelection();
@@ -920,18 +947,15 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
         this->_clearWalkingHelper();
     }
 
+    //define interactivity
+    this->setInteractive(newTool == MapTool::Default ? true : false);
+
     //depending on tool
     switch(newTool) {
 
         case MapTool::Atom: {
             
-            this->setInteractive(false);
             this->setDragMode(QGraphicsView::DragMode::NoDrag);
-
-            if(auto ghost = HintThread::hint()->ghostItem()) {
-                ghost->setVisible(this->_isCursorIn);
-            }
-            
             switch(HintThread::hint()->templateAtom().type()) {
                 case RPZAtom::Type::Drawing:
                     this->setCursor(Qt::CrossCursor);
@@ -947,12 +971,15 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
                     break;
             }
 
+            if(auto ghost = HintThread::hint()->ghostItem()) {
+                ghost->setVisible(this->_isCursorIn);
+            }
+
         }
         break;
 
         case MapTool::Scroll: {
             
-            this->setInteractive(false);
             this->setDragMode(QGraphicsView::DragMode::ScrollHandDrag);
             
             if(auto ghost = HintThread::hint()->ghostItem()) {
@@ -963,23 +990,40 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
         break;
         
         case MapTool::Walking: {
-                
+            
+            this->setDragMode(QGraphicsView::DragMode::NoDrag);
+            this->setCursor(this->_walkingCursor);
+
             //add it to scene
             this->scene()->addItem(this->_walkingHelper);
 
-            this->setInteractive(false);
-            this->setDragMode(QGraphicsView::DragMode::NoDrag);
-            this->setCursor(this->_walkingCursor);
-            break;
         }
+        break;
 
+        case MapTool::Ping: {
+            this->setDragMode(QGraphicsView::DragMode::NoDrag);
+            this->setCursor(this->_pingCursor);
+        }
+        break;
+
+        case MapTool::QuickDraw: {
+            this->setDragMode(QGraphicsView::DragMode::NoDrag);
+            this->setCursor(this->_quickDrawCursor);
+        }
+        break;
+
+        case MapTool::Measure: {
+            this->setDragMode(QGraphicsView::DragMode::NoDrag);
+            this->setCursor(this->_measureCursor);
+        }
+        break;
 
         case MapTool::Default:
-        default:
-            this->setInteractive(true);
+        default: {
             this->setDragMode(QGraphicsView::DragMode::RubberBandDrag);
             this->setCursor(Qt::ArrowCursor);
-            break;
+        }
+        break;
     }
 
     //may update ghost pos

@@ -27,8 +27,7 @@ class PathAnimator : public QPropertyAnimation {
         PathAnimator(QObject *target, const QByteArray &prop) : QPropertyAnimation(target, prop) {}
 
         QVariant interpolated(const QVariant &from, const QVariant &to, qreal progress) const override {
-            
-            auto fromPath = from.value<QPainterPath>();
+
             auto toPath = to.value<QPainterPath>();
 
             QPainterPath interpolatedPath;
