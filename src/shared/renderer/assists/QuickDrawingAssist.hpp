@@ -31,7 +31,13 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
     Q_OBJECT
 
     public:
-        QuickDrawingAssist(QGraphicsView* view) : _view(view) {}
+        QuickDrawingAssist(QGraphicsView* view) : _view(view) {
+            this->_tmQDUpdater.setInterval(1000);
+            QObject::connect(
+                &this->_tmQDUpdater, &QTimer::timeout,
+                this, &QuickDrawingAssist::_maySendQuickDrawNetworkUpdate
+            );
+        }
 
         void addDrawingPoint(const QPoint &cursorPosInWindow) {
         
@@ -39,6 +45,11 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
 
             this->_resetTempDrawing();
             this->_beginDrawing(scenePos);
+
+            //begin feeding qd to network if allowed
+            if(this->_allowNetworkInteraction()) {
+                this->_tmQDUpdater.start();
+            }
 
         }
 
@@ -56,7 +67,15 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
         }
 
         void onMouseRelease() {
+            
+            //stop sending data to network
+            this->_tmQDUpdater.stop();
+            
+            //may send last bits to network 
+            this->_maySendQuickDrawNetworkUpdate(true);
+            
             this->_resetTempDrawing();
+
         }
 
 
@@ -81,18 +100,53 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
 
         }
         virtual void connectionClosed(bool hasInitialMapLoaded) {
+            
             this->_currentUser.clear();
+
+            //stop sending data to network
+            this->_tmQDUpdater.stop();
+
+            //everything but temporary must be registered to deletion
+            for(auto qdi : _quickDrawings) {
+                if(qdi == this->_tempDrawing) continue;
+                qdi->registerForDeletion();
+            }
+
         }
 
     private:
         QGraphicsView* _view = nullptr;
         QuickDrawItem* _tempDrawing = nullptr;
         QHash<RPZQuickDrawBits::Id, QuickDrawItem*> _quickDrawings;
-        
+        QTimer _tmQDUpdater;
         RPZUser _currentUser;
+
         void _defineSelfUserFromSession(const RPZGameSession &gameSession) {
             Q_UNUSED(gameSession);
             this->_currentUser = this->_rpzClient->identity();
+        }
+
+        bool _allowNetworkInteraction() const {
+            return _tempDrawing && _rpzClient && _currentUser.isEmpty();
+        }
+
+        void _maySendQuickDrawNetworkUpdate(bool areLastFromCurrentQD = false) {
+            
+            //prevent
+            if(!this->_allowNetworkInteraction()) return;
+            
+            //prepare
+            auto bits = this->_tempDrawing->dequeuePushPoints();
+            RPZQuickDrawBits qd(
+                this->_tempDrawing->id(),
+                this->_currentUser.id(),
+                bits,
+                areLastFromCurrentQD
+            );
+
+            //send to network
+            this->_rpzClient->sendQuickdraw(qd);
+
         }
 
         void _onQuickDrawBitsReceived(const RPZQuickDrawBits &qd) {

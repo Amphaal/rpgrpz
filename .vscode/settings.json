@@ -238,7 +238,8 @@
         "qtcpsocket": "cpp",
         "qsoundeffect": "cpp",
         "errno.h": "c",
-        "qcolordialog": "cpp"
+        "qcolordialog": "cpp",
+        "qcolor": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }
