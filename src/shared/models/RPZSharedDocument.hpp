@@ -25,7 +25,6 @@
 #include <QFileInfo>
 #include <QUrl>
 #include <QDebug>
-#include <QMimeDatabase>
 
 class RPZSharedDocument : public QVariantHash {
     public:
@@ -33,8 +32,8 @@ class RPZSharedDocument : public QVariantHash {
 
         RPZSharedDocument();
         RPZSharedDocument(const QVariantHash &hash) : QVariantHash(hash) {};
-        RPZSharedDocument(const QUrl &localFileUrl, const QMimeDatabase &mimeDb) {
-            this->_inst(localFileUrl, mimeDb);
+        RPZSharedDocument(const QUrl &localFileUrl) {
+            this->_inst(localFileUrl);
         }
 
         QString documentName() const {
@@ -53,14 +52,29 @@ class RPZSharedDocument : public QVariantHash {
             return this->_localInstSuccess;
         }
 
-        QString docMimeType() const {
-            return this->value(QStringLiteral(u"mime")).toString(); 
+        QString documentExt() const {
+            return this->value(QStringLiteral(u"ext")).toString(); 
+        }
+
+        QString writeAsTemporaryFile() const {
+            
+            auto filePath = AppContext::getFileSharingFolderLocation() + "/" + this->documentFileHash() + "." + this->documentExt();
+            
+            QFile fHandler(filePath);
+            auto opened = fHandler.open(QIODevice::WriteOnly);
+            if(opened) {
+                fHandler.write(this->document());
+                fHandler.close();
+            }
+
+            return filePath;
+
         }
 
     private:
         bool _localInstSuccess = false;
 
-        void _inst(const QUrl &localFileUrl, const QMimeDatabase &mimeDb) {
+        void _inst(const QUrl &localFileUrl) {
             
             //check if url is local
             if(!localFileUrl.isLocalFile()) {
@@ -85,14 +99,14 @@ class RPZSharedDocument : public QVariantHash {
 
             //override file if exists
             auto hash = RPZSharedDocument::_getFileHash(bytes);
-            auto mime = mimeDb.mimeTypeForUrl(localFileUrl).name();
+            auto ext = fi.suffix();
             auto name = fi.completeBaseName();
 
             //insert in obj
             this->insert(QStringLiteral(u"fileH"), hash);
             this->insert(QStringLiteral(u"nm"), name);
             this->insert(QStringLiteral(u"doc"), bytes);
-            this->insert(QStringLiteral(u"mime"), mime);
+            this->insert(QStringLiteral(u"ext"), ext);
 
             //
             this->_localInstSuccess = true;

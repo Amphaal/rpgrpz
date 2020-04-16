@@ -189,6 +189,7 @@ void AppContext::init(const QString &customContext) {
     _makeSureDirPathExists(getAssetsFolderLocation());
     _makeSureDirPathExists(getMapsFolderLocation());
     _makeSureDirPathExists(getServerMapAutosaveFolderLocation());
+    _makeSureDirPathExists(getFileSharingFolderLocation());
 
     //crashpad activated if release app
     // initSentry();
@@ -234,6 +235,10 @@ const QString AppContext::getAssetsFileCoordinatorLocation() {
 
 const QString AppContext::getPlaylistFileLocation() {
     return getAppDataLocation() + PLAYLIST_JSON_DATABASE_FILENAME;
+}
+
+const QString AppContext::getFileSharingFolderLocation() {
+    return getAppDataLocation() + FILE_SHARING_PATH;  
 }
 
 const QString AppContext::getCharacterDatabaseLocation() {
