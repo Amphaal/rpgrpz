@@ -25,13 +25,16 @@
 #include <QMimeData>
 #include <QDragEnterEvent>
 #include <QMimeDatabase>
+#include <QListWidgetItem>
+#include <QFileInfo>
+#include <QFileIconProvider>
 
 #include "src/ui/_others/ConnectivityObserver.h"
 
 class DocShareListView : public QListWidget, public ConnectivityObserver {
     public:
         DocShareListView(QWidget *parent = nullptr) : QListWidget(parent) {
-
+            this->setAcceptDrops(true);
         }
 
     protected:
@@ -45,50 +48,45 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
     private:
         QMimeDatabase _MIMEDb;
 
-        void dragEnterEvent(QDragEnterEvent *event) override {
-            
-            //must not be a widget source
-            if(event->source()) return;
-
-            //must have urls included
-            auto md = event->mimeData();
-            if(!md->hasUrls()) return;
-
-            for(const auto &url : md->urls()) {
-
-                //if is not local file
-                if(!url.isLocalFile()) return;
-                
-            }
-
-            //if no error, accept
-            this->setState(DraggingState); //mandatory for external drop visual features
-            event->accept();
-
+        Qt::DropActions supportedDropActions() const override {
+            return (
+                Qt::DropAction::MoveAction 
+                | Qt::DropAction::CopyAction
+            );
         }
 
-        void startDrag(Qt::DropActions supportedActions) override {
+        
+        void dragEnterEvent(QDragEnterEvent *event) override {
 
-            auto indexes = this->selectedIndexes();
-            auto data = model()->mimeData(indexes);
-            if (!data) return;
+            QWidget::dragEnterEvent(event);
 
-            QDrag drag(this);
-            drag.setMimeData(data);
+            //if dragged from OS
+            if (!event->mimeData()->hasUrls()) return;
+                
+            //create list of handled urls
+            event->setDropAction(Qt::DropAction::MoveAction);
+            event->acceptProposedAction();
+        
+        }
 
-                //customised cursor
-                QPixmap pixmap(":/icons/app/app_32.png");
-                QPainter paint(&pixmap);
-                paint.setPen(QPen("#000000"));
-                paint.setBrush(QBrush(Qt::white));
-                QRect numberRect(12, 8, 13, 13);
-                paint.drawRect(numberRect);
-                paint.drawText(numberRect, Qt::AlignHCenter | Qt::AlignVCenter, QString::number(indexes.count()));
-            
-            drag.setPixmap(pixmap); 
-            
-            //exec
-            drag.exec(supportedActions, Qt::MoveAction);
+        void dragMoveEvent(QDragMoveEvent * event) override {
+            event->accept();
+        }
+
+        void dropEvent(QDropEvent *event) override {
+    
+            QListWidget::dropEvent(event);
+
+            //for each link registered
+            for(const auto &url : event->mimeData()->urls()) {
+
+                auto filename = url.fileName();
+                QFileInfo fi(filename);
+                auto icon = QFileIconProvider().icon(fi);
+                auto playlistItem = new QListWidgetItem(icon, filename);   
+                this->addItem(playlistItem);
+
+            }
 
         }
 
