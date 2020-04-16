@@ -332,7 +332,8 @@ void MainWindow::_initAppUnmovableUI() {
     }();
     
     auto gameHubTabIndex = this->_rightTab->addTab(chatLogWidget, QIcon(QStringLiteral(u":/icons/app/tabs/chat.png")), tr("Game Hub"));
-    
+    this->_rightTab->addTab(this->_docShareManager, QIcon(QStringLiteral(u":/icons/app/tabs/fileShare.png")), tr("Documents Share"));
+
     //update gamehub tab name
     QObject::connect(
         this->_chatWidget->messageLog(), &MessagesLog::notificationCountUpdated,
@@ -455,6 +456,7 @@ void MainWindow::_initAppComponents() {
         this->_mapViewContainer->layout()->setAlignment(this->_interactibleDescr, Qt::AlignTop);
         this->_mapViewContainer->layout()->addWidget(this->_minimap);
     
+    this->_docShareManager = new DocShareListView(this);
     this->_chatWidget = new ChatWidget(this);
     this->_audioManager = new PlaylistAudioManager(this);
     this->_toys = new ToysTreeView(this);

@@ -45,6 +45,7 @@
 #include "src/ui/users/standard/StandardUsersListView.hpp"
 
 #include "src/ui/toysBox/ToysTreeView.h"
+#include "src/ui/docShare/DocShareListView.hpp"
 
 #include "src/ui/atomEditor/AtomEditionManager.hpp"
 
@@ -110,6 +111,7 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
             MapLayoutManager* _mlManager = nullptr;
             AtomEditionManager* _atomEditManager = nullptr;
             CharacterEditor* _characterEditor = nullptr;
+            DocShareListView* _docShareManager = nullptr;
 
         void _initAppUnmovableUI();
         QTabWidget* _leftTab = nullptr;
