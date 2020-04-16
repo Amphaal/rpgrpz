@@ -27,9 +27,9 @@
 #include <QMimeDatabase>
 #include <QListWidgetItem>
 #include <QFileInfo>
-#include <QFileIconProvider>
 
 #include "src/ui/_others/ConnectivityObserver.h"
+#include "src/shared/models/RPZSharedDocument.hpp"
 
 class DocShareListView : public QListWidget, public ConnectivityObserver {
     public:
@@ -46,7 +46,9 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
         }
 
     private:
+        QHash<RPZSharedDocument::FileHash, RPZSharedDocument> _store;
         QMimeDatabase _MIMEDb;
+        static inline int HashRole = 3000; 
 
         Qt::DropActions supportedDropActions() const override {
             return (
@@ -55,6 +57,44 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
             );
         }
 
+        void _mayStoreAsDocument(const QUrl &fileUrl) {
+            
+            //try to create a shared document
+            RPZSharedDocument doc(fileUrl, this->_MIMEDb);
+            if(!doc.isSuccess()) return;
+
+            //override file if exists
+            auto hash = doc.documentFileHash();
+            auto alreadyExists = this->_store.contains(hash);
+            this->_store.insert(hash, doc);
+
+            if(alreadyExists) {
+                qDebug() << qUtf8Printable(QStringLiteral("File Share : %1 already stored, replacing existing !").arg(fileUrl.toString()));
+                return;
+            }
+
+            this->_addItem(doc);
+
+        }
+
+        void _addItem(const RPZSharedDocument &doc) {
+            
+            auto docMime = this->_MIMEDb.mimeTypeForName(doc.docMimeType());
+            
+            auto icon = QIcon::fromTheme(docMime.iconName());
+            if(icon.isNull()) icon = QIcon::fromTheme(docMime.genericIconName());
+
+            //TODO icon ?
+
+            auto filename = doc.documentName();
+            
+            auto playlistItem = new QListWidgetItem(icon, filename);
+            playlistItem->setData(DocShareListView::HashRole, doc.documentFileHash());
+            this->addItem(playlistItem);
+
+            qDebug() << qUtf8Printable(QStringLiteral("File Share : %1 added.").arg(filename));
+
+        }
         
         void dragEnterEvent(QDragEnterEvent *event) override {
 
@@ -79,13 +119,7 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
 
             //for each link registered
             for(const auto &url : event->mimeData()->urls()) {
-
-                auto filename = url.fileName();
-                QFileInfo fi(filename);
-                auto icon = QFileIconProvider().icon(fi);
-                auto playlistItem = new QListWidgetItem(icon, filename);   
-                this->addItem(playlistItem);
-
+                _mayStoreAsDocument(url);
             }
 
         }
