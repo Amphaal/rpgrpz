@@ -42,6 +42,10 @@ class NotificationsAudioManager {
             this->_playEffect(":/audio/privateMessage.wav");
         }
 
+        void playPing() {
+            this->_playEffect(":/audio/ping.wav");
+        }
+
     private:
         NotificationsAudioManager() {}
 
