@@ -82,7 +82,6 @@ class RPZServer : public QObject, public JSONLogger {
         QHash<JSONSocket*, RPZUser::Id> _idsByClientSocket;
         QHash<RPZUser::Id, JSONSocket*> _clientSocketById;
         QHash<QString, RPZUser::Id> _formatedUsernamesByUserId;
-        RPZSharedDocument::NameStore _sharedDocuments;
         
         QHash<RPZUser::Role, QSet<JSONSocket*>> _socketsByRole;
         

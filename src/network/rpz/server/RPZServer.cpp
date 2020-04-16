@@ -174,7 +174,25 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
     QMetaObject::invokeMethod(ProgressTracker::get(), "serverIsActive");
 
     switch(method) {
-        
+
+        case RPZJSON::Method::SharedDocumentRequested: {
+            
+            //TODO
+
+            //notify everyone else
+            target->sendToSocket(RPZJSON::Method::RequestedSharedDocument, data); 
+
+        }
+
+        case RPZJSON::Method::DefinedSharedDocuments:
+        case RPZJSON::Method::AddedSharedDocuments: {
+
+            //notify everyone else
+            this->_sendToAllExcept(target, method, data); 
+
+        }
+        break;
+
         case RPZJSON::Method::QuickDrawHappened: {
             this->_sendToAllExcept(target, method, data); //notify everyone else
         }

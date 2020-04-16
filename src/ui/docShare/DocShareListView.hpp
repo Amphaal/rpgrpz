@@ -57,6 +57,11 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
                 this, &DocShareListView::_mayAddTemporaryItem
             );
 
+            QObject::connect(
+                this->_rpzClient, &RPZClient::sharedDocumentReceived,
+                this, &DocShareListView::_addItem
+            );
+
         }
         void connectionClosed(bool hasInitialMapLoaded) override {
             //TODO
@@ -64,6 +69,7 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
 
     private:
         RPZSharedDocument::Store _store;
+        QHash<QListWidgetItem*, RPZSharedDocument::FileHash> _itemByHash;
         QMimeDatabase _MIMEDb;
         QFileIconProvider _iconProvider;
         static inline int HashRole = 3000; 
@@ -81,10 +87,12 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
             //if host
             if(Authorisations::isHostAble()) {
                 
+                auto namesStore = RPZSharedDocument::toVariantNamesStore(this->_store);
+
                 //send shared documents
                 QMetaObject::invokeMethod(
                     this->_rpzClient, "defineSharedDocuments", 
-                    Q_ARG(RPZSharedDocument::NameStore, this->_store)
+                    Q_ARG(QVariantHash, namesStore)
                 );
 
             }
@@ -134,18 +142,16 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
 
             if(alreadyExists) return;
 
-            this->_addItem(doc);
+            auto item = this->_addItem(doc);
+            this->_itemByHash.insert(item, hash);
 
         }
 
-        RPZSharedDocument::NameStore storeAsNameStore() const {
-
-        }
-
-        void _addItem(const RPZSharedDocument &doc) {
+        QListWidgetItem* _addItem(const RPZSharedDocument &doc) {
             
             auto temporaryFilePath = doc.writeAsTemporaryFile();
             auto filename = doc.documentName();
+            auto hash = doc.documentFileHash();
 
             //icon
             QFileInfo tempFi(temporaryFilePath);
@@ -153,12 +159,23 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
             
             //create item
             auto playlistItem = new QListWidgetItem(icon, filename);
-            playlistItem->setData(DocShareListView::HashRole, doc.documentFileHash());
+            playlistItem->setData(DocShareListView::HashRole, hash);
             playlistItem->setData(DocShareListView::FilePathRole, temporaryFilePath);
             
             //add it
             this->addItem(playlistItem);
             qDebug() << qUtf8Printable(QStringLiteral("File Share : \"%1\" added.").arg(filename));
+
+            //
+            if(this->_rpzClient && Authorisations::isHostAble()) {
+                QMetaObject::invokeMethod(
+                    this->_rpzClient, "addSharedDocument", 
+                    Q_ARG(RPZSharedDocument::FileHash, hash),
+                    Q_ARG(RPZSharedDocument::DocumentName, filename)
+                );
+            }
+
+            return playlistItem;
 
         }
 
@@ -170,6 +187,8 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
             
             auto playlistItem = new QListWidgetItem(icon, fileName);
             playlistItem->setData(DocShareListView::HashRole, hash);
+
+            this->_itemByHash.insert(playlistItem, hash);
 
         }
         

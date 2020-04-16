@@ -123,7 +123,8 @@ void _registerMetaTypes() {
     qRegisterMetaType<RPZAtom::Updates>("RPZAtom::Updates");
     qRegisterMetaType<RPZAtom::ManyUpdates>("RPZAtom::ManyUpdates");
     qRegisterMetaType<RPZSharedDocument::FileHash>("RPZSharedDocument::FileHash");
-    qRegisterMetaType<RPZSharedDocument::NameStore>("RPZSharedDocument::NameStore");
+    qRegisterMetaType<RPZSharedDocument::DocumentName>("RPZSharedDocument::DocumentName");
+    qRegisterMetaType<RPZSharedDocument::NamesStore>("RPZSharedDocument::NamesStore");
     qRegisterMetaType<CharacterPicker::SelectedCharacter>("CharacterPicker::SelectedCharacter");
     
     //QVariantHash derivates

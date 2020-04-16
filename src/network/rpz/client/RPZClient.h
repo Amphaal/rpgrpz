@@ -73,6 +73,9 @@ class RPZClient : public QObject, public AlterationInteractor, public JSONLogger
         void sendMapHistory(const ResetPayload &historyPayload);
         void notifyCharacterChange(const RPZCharacter &changed);
         void sendQuickdraw(const RPZQuickDrawBits &qd);
+        void addSharedDocument(const RPZSharedDocument::FileHash &hash, const RPZSharedDocument::DocumentName &documentName);
+        void defineSharedDocuments(const RPZSharedDocument::NamesStore &namesStore);
+        void requestSharedDocument(const RPZSharedDocument::FileHash &hash);
 
     signals:
         void connectionStatus(const QString &statusMessage, bool isError = false);
@@ -101,6 +104,7 @@ class RPZClient : public QObject, public AlterationInteractor, public JSONLogger
         void audioPlayStateChanged(bool isPlaying);
 
         void sharedDocumentAvailable(const RPZSharedDocument::FileHash &documentHash, const QString &documentName);
+        void sharedDocumentReceived(const RPZSharedDocument &sharedDocument);
 
     private:
         enum class CharacterRegistration {
