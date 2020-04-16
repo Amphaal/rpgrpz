@@ -45,6 +45,7 @@
 #include "src/helpers/Authorisations.hpp"
 #include "src/shared/models/network/RPZGameSession.hpp"
 #include "src/shared/async-ui/AlterationHandler.h"
+#include "src/shared/models/RPZSharedDocument.hpp"
 
 class RPZClient : public QObject, public AlterationInteractor, public JSONLogger {
 
@@ -98,6 +99,8 @@ class RPZClient : public QObject, public AlterationInteractor, public JSONLogger
         void audioSourceStateChanged(const StreamPlayStateTracker &state);
         void audioPositionChanged(qint64 newPosInMsecs);
         void audioPlayStateChanged(bool isPlaying);
+
+        void sharedDocumentAvailable(const RPZSharedDocument::FileHash &documentHash, const QString &documentName);
 
     private:
         enum class CharacterRegistration {

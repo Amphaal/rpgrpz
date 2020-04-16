@@ -51,6 +51,7 @@
 #include "src/shared/audio/StreamPlayStateTracker.hpp"
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 #include "src/helpers/StringHelper.hpp"
+#include "src/shared/models/RPZSharedDocument.hpp"
 
 #include "src/network/rpz/_any/JSONLogger.hpp"
 
@@ -81,6 +82,7 @@ class RPZServer : public QObject, public JSONLogger {
         QHash<JSONSocket*, RPZUser::Id> _idsByClientSocket;
         QHash<RPZUser::Id, JSONSocket*> _clientSocketById;
         QHash<QString, RPZUser::Id> _formatedUsernamesByUserId;
+        RPZSharedDocument::NameStore _sharedDocuments;
         
         QHash<RPZUser::Role, QSet<JSONSocket*>> _socketsByRole;
         

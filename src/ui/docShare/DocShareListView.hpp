@@ -41,19 +41,29 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
                 this, &QListWidget::itemDoubleClicked,
                 this, &DocShareListView::_onItemDoubleClick
             );
-
+            
         }
 
     protected:
         void connectingToServer() override {
-            //TODO
+            
+            QObject::connect(
+                this->_rpzClient, &RPZClient::gameSessionReceived,
+                this, &DocShareListView::_onGameSessionReceived
+            );
+
+            QObject::connect(
+                this->_rpzClient, &RPZClient::sharedDocumentAvailable,
+                this, &DocShareListView::_mayAddTemporaryItem
+            );
+
         }
         void connectionClosed(bool hasInitialMapLoaded) override {
             //TODO
         }
 
     private:
-        QHash<RPZSharedDocument::FileHash, RPZSharedDocument> _store;
+        RPZSharedDocument::Store _store;
         QMimeDatabase _MIMEDb;
         QFileIconProvider _iconProvider;
         static inline int HashRole = 3000; 
@@ -66,12 +76,48 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
             );
         }
 
+        void _onGameSessionReceived(const RPZGameSession &gs) {
+            
+            //if host
+            if(Authorisations::isHostAble()) {
+                
+                //send shared documents
+                QMetaObject::invokeMethod(
+                    this->_rpzClient, "defineSharedDocuments", 
+                    Q_ARG(RPZSharedDocument::NameStore, this->_store)
+                );
+
+            }
+
+            else {
+                //iterate
+                auto sharedDocs = gs.sharedDocuments();
+                for(auto i = sharedDocs.begin(); i != sharedDocs.end(); i++) {
+                    
+                    auto &hash = i.key();
+                    auto &name = i.value();
+
+                    this->_mayAddTemporaryItem(hash, name);
+
+                }
+            }
+
+        }
+
         void _onItemDoubleClick(QListWidgetItem *item) {
             
             auto pathToFile = item->data(DocShareListView::FilePathRole).toString();
-            if(pathToFile.isEmpty()) return;
+            if(!pathToFile.isEmpty()) return AppContext::openFileInOS(pathToFile);
 
-            AppContext::openFileInOS(pathToFile);
+            //file path is empty, request file
+            if(!this->_rpzClient) return;
+
+            auto hash = item->data(DocShareListView::HashRole).toString();
+            QMetaObject::invokeMethod(this->_rpzClient, "requestSharedDocument", 
+                Q_ARG(QString, hash)
+            );
+
+            //TODO prevent multiple requests
 
         }
 
@@ -92,6 +138,10 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
 
         }
 
+        RPZSharedDocument::NameStore storeAsNameStore() const {
+
+        }
+
         void _addItem(const RPZSharedDocument &doc) {
             
             auto temporaryFilePath = doc.writeAsTemporaryFile();
@@ -109,6 +159,17 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
             //add it
             this->addItem(playlistItem);
             qDebug() << qUtf8Printable(QStringLiteral("File Share : \"%1\" added.").arg(filename));
+
+        }
+
+        void _mayAddTemporaryItem(const RPZSharedDocument::FileHash &hash, const QString &fileName) {
+            
+            if(this->_store.contains(hash)) return;
+
+            auto icon = this->_iconProvider.icon(QFileInfo());
+            
+            auto playlistItem = new QListWidgetItem(icon, fileName);
+            playlistItem->setData(DocShareListView::HashRole, hash);
 
         }
         

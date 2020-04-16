@@ -341,7 +341,13 @@ void RPZServer::_sendGameSession(JSONSocket* toSendTo, const RPZUser &associated
     
     //standard game session
     auto isFullSession = associatedUser.role() != RPZUser::Role::Host;
-    RPZGameSession gs(associatedUser.id(), this->_usersById, this->_messages, isFullSession);
+    RPZGameSession gs(
+        associatedUser.id(), 
+        this->_usersById, 
+        this->_messages, 
+        this->_sharedDocuments,
+        isFullSession
+    );
             
     //if requesting full session data...
     if(isFullSession)  {

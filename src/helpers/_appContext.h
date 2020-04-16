@@ -125,6 +125,8 @@ class AppContext {
         static const QString getServerMapAutosaveFolderLocation();
         static const QString getFileSharingFolderLocation();
 
+        static void clearFileSharingFolder();
+
         static void openFileInOS(const QString &cpURL);
         static void openFolderInOS(const QString &cpURL);
 
