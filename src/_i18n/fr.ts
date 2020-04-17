@@ -416,14 +416,6 @@
     </message>
 </context>
 <context>
-    <name>DocShareListView</name>
-    <message>
-        <location filename="../ui/docShare/DocShareListView.hpp" line="252"/>
-        <source> (available)</source>
-        <translation> (disponible)</translation>
-    </message>
-</context>
-<context>
     <name>DownloadStatus</name>
     <message>
         <location filename="../ui/statusBar/DownloadStatus.hpp" line="115"/>
@@ -1366,9 +1358,14 @@
         <translation>Couleur</translation>
     </message>
     <message>
-        <location filename="../ui/docShare/DocShareListView.hpp" line="153"/>
+        <location filename="../ui/docShare/DocShareListView.hpp" line="155"/>
         <source> (downloading...)</source>
         <translation> (téléchargement...)</translation>
+    </message>
+    <message>
+        <location filename="../ui/docShare/DocShareListView.hpp" line="254"/>
+        <source> (available)</source>
+        <translation> (disponible)</translation>
     </message>
 </context>
 <context>
@@ -1407,7 +1404,7 @@
 <context>
     <name>RPZServer</name>
     <message>
-        <location filename="../network/rpz/server/RPZServer.cpp" line="317"/>
+        <location filename="../network/rpz/server/RPZServer.cpp" line="322"/>
         <source>Your software version is different from the server&apos;s one : v%1 (you) / v%2 (server) !</source>
         <translation>Votre version logicielle diffère de la version du serveur : v%1 (vous) / v%2 (serveur) !</translation>
     </message>
