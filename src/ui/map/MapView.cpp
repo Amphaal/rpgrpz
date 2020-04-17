@@ -697,7 +697,7 @@ void MapView::mousePressEvent(QMouseEvent *event) {
             break;
             
             case MapTool::Measure : {
-                if(this->_measurementHelper) delete this->_measurementHelper;
+                this->_clearMeasurementHelper();
                 this->_measurementHelper = new MapViewMeasurementHelper(this->_currentMapParameters, event->pos(), this);
                 this->scene()->addItem(this->_measurementHelper);
             }
@@ -844,8 +844,7 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
                 break;
 
                 case MapTool::Measure: {
-                    if(this->_measurementHelper) delete this->_measurementHelper;
-                    this->_measurementHelper = nullptr;
+                    this->_clearMeasurementHelper();
                 }
 
                 case MapTool::Scroll: {
@@ -862,6 +861,11 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
             
         }
 
+}
+
+void MapView::_clearMeasurementHelper() {
+    if(this->_measurementHelper) delete this->_measurementHelper;
+    this->_measurementHelper = nullptr;
 }
 
 bool MapView::_isAnySelectableItemsUnderCursor(const QPoint &cursorPosInWindow) const {
@@ -917,6 +921,7 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
     //end drawing if any
     this->_atomDrawingAssist->mayCommitDrawing();
     this->_quickDrawingAssist->onMouseRelease();
+    this->_clearMeasurementHelper();
 
     //prevent the usage of Atom tool if not host able
     if(!Authorisations::isHostAble() && newTool == MapTool::Atom) return;

@@ -161,6 +161,7 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
             MapViewWalkingHelper* _walkingHelper = nullptr;
             void _mightUpdateWalkingHelperPos();
             void _clearWalkingHelper();
+            void _clearMeasurementHelper();
             bool _tryToInvokeWalkableHelper(const QList<QGraphicsItem*> &toBeWalked);
 
         void onAnimationManipulationTickDone() override;
