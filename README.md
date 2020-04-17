@@ -30,6 +30,9 @@ Supported (64bits only) :
 - Archlinux : OK
 - MacOS : WIP
 
+[![CodeFactor](https://www.codefactor.io/repository/github/amphaal/rpgrpz/badge/master)](https://www.codefactor.io/repository/github/amphaal/rpgrpz/overview/master)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f538689970114dcabc56a64124ee0f12)](https://app.codacy.com/manual/Amphaal/rpgrpz?utm_source=github.com&utm_medium=referral&utm_content=Amphaal/rpgrpz&utm_campaign=Badge_Grade_Dashboard)
+
 Prepare your build environement:
 - For Windows
     - Install MSYS2 : https://www.msys2.org/
