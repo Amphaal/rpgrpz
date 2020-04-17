@@ -360,11 +360,14 @@ void RPZServer::_sendGameSession(JSONSocket* toSendTo, const RPZUser &associated
     
     //standard game session
     auto isFullSession = associatedUser.role() != RPZUser::Role::Host;
+    auto associatedUserId = associatedUser.id();
+    auto sharedDocsNamesStore = SharedDocHint::getNamesStore();
+
     RPZGameSession gs(
-        associatedUser.id(), 
+        associatedUserId, 
         this->_usersById, 
         this->_messages, 
-        SharedDocHint::getNamesStore(),
+        sharedDocsNamesStore,
         isFullSession
     );
             

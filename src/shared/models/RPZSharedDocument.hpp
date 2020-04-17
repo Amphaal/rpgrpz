@@ -43,30 +43,24 @@ class RPZSharedDocument : public QVariantHash {
 
             RPZSharedDocument::NamesStore out;
 
-            for(auto i = hash.begin(); i != hash.end(); i++) {
-                
+            for(auto i = hash.begin(); i != hash.end(); i++) {   
                 auto &hash = i.key();
                 auto name = i.value().toString();
-
                 out.insert(hash, name);
-
             }
 
             return out;
 
         }
 
-        static QVariantHash toVariantNamesStore(const RPZSharedDocument::Store &store) {
+        static QVariantHash toVariantNamesStore(const RPZSharedDocument::NamesStore &namesStore) {
             
             QVariantHash out;
 
-            for(auto i = store.begin(); i != store.end(); i++) {
-                
+            for(auto i = namesStore.begin(); i != namesStore.end(); i++) {
                 auto &hash = i.key();
-                auto name = i.value().documentName();
-
+                auto name = i.value();
                 out.insert(hash, name);
-
             }
 
             return out;

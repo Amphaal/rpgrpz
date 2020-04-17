@@ -118,8 +118,8 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
             if(Authorisations::isHostAble()) return;
                 
             //iterate through shared docs
-            auto sharedDocs = gs.sharedDocuments();
-            for(auto i = sharedDocs.begin(); i != sharedDocs.end(); i++) {
+            auto namesStore = gs.sharedDocumentsNS();
+            for(auto i = namesStore.begin(); i != namesStore.end(); i++) {
                 
                 auto &hash = i.key();
                 auto &name = i.value();

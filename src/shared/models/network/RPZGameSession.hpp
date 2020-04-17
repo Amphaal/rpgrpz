@@ -35,13 +35,14 @@ class RPZGameSession : public QVariantHash {
             const RPZUser::Id &selfUserId, 
             const RPZMap<RPZUser> &users, 
             const RPZMap<RPZMessage> &messages, 
-            const RPZSharedDocument::NamesStore &sharedDocuments, 
+            const RPZSharedDocument::NamesStore &sharedDocumentsNS, 
             bool isFullSession
         ) {
             this->_setSelfUserId(selfUserId);
             this->_setMessages(messages);
             this->_setUsers(users);
             this->_defineAsFullSession(isFullSession);
+            this->_setSharedDocumentsNS(sharedDocumentsNS);
         }
 
         bool isFullSession() const {
@@ -70,8 +71,8 @@ class RPZGameSession : public QVariantHash {
             return ResetPayload(this->value("map").toHash());
         }
 
-        const RPZSharedDocument::NamesStore sharedDocuments() const {
-            return this->value("shrd_docs").value<RPZSharedDocument::NamesStore>();
+        const RPZSharedDocument::NamesStore sharedDocumentsNS() const {
+            return RPZSharedDocument::toNamesStore(this->value("shrd_docs").toHash());
         }
 
         void setStreamState(const StreamPlayStateTracker &state) {
@@ -87,8 +88,8 @@ class RPZGameSession : public QVariantHash {
             this->insert("msgs", messages.toVMap());
         }
 
-        void _setSharedDocuments(const RPZSharedDocument::NamesStore &sharedDocuments) {
-            this->insert("shrd_docs", QVariant::fromValue(sharedDocuments));
+        void _setSharedDocumentsNS(const RPZSharedDocument::NamesStore &sharedDocuments) {
+            this->insert("shrd_docs", RPZSharedDocument::toVariantNamesStore(sharedDocuments));
         }
 
         void _setUsers(const RPZMap<RPZUser> &users) {
