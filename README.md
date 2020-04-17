@@ -1,6 +1,8 @@
 # RPG-RPZ
-[![Build Status](http://zonme.to2x.ovh:8090/buildStatus/icon?job=rpgrpz%2Fmaster)](http://zonme.to2x.ovh:8090/job/rpgrpz/job/master/)
 [![Download](https://api.bintray.com/packages/amphaal/rpgrpz/install-packages/images/download.svg) ](https://dl.bintray.com/amphaal/rpgrpz/RPGRPZ-latest-win64.exe)
+[![Build Status](http://zonme.to2x.ovh:8090/buildStatus/icon?job=rpgrpz%2Fmaster)](http://zonme.to2x.ovh:8090/job/rpgrpz/job/master/)
+[![CodeFactor](https://www.codefactor.io/repository/github/amphaal/rpgrpz/badge/master)](https://www.codefactor.io/repository/github/amphaal/rpgrpz/overview/master)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f538689970114dcabc56a64124ee0f12)](https://app.codacy.com/manual/Amphaal/rpgrpz?utm_source=github.com&utm_medium=referral&utm_content=Amphaal/rpgrpz&utm_campaign=Badge_Grade_Dashboard)
 
 ```
 RPG-RPZ
@@ -29,9 +31,6 @@ Supported (64bits only) :
 - Windows : OK
 - Archlinux : OK
 - MacOS : WIP
-
-[![CodeFactor](https://www.codefactor.io/repository/github/amphaal/rpgrpz/badge/master)](https://www.codefactor.io/repository/github/amphaal/rpgrpz/overview/master)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f538689970114dcabc56a64124ee0f12)](https://app.codacy.com/manual/Amphaal/rpgrpz?utm_source=github.com&utm_medium=referral&utm_content=Amphaal/rpgrpz&utm_campaign=Badge_Grade_Dashboard)
 
 Prepare your build environement:
 - For Windows
