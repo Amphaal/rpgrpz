@@ -122,6 +122,9 @@ void _registerMetaTypes() {
     qRegisterMetaType<RPZAsset::Hash>("RPZAsset::Hash");
     qRegisterMetaType<RPZAtom::Updates>("RPZAtom::Updates");
     qRegisterMetaType<RPZAtom::ManyUpdates>("RPZAtom::ManyUpdates");
+    qRegisterMetaType<RPZSharedDocument::FileHash>("RPZSharedDocument::FileHash");
+    qRegisterMetaType<RPZSharedDocument::DocumentName>("RPZSharedDocument::DocumentName");
+    qRegisterMetaType<RPZSharedDocument::NamesStore>("RPZSharedDocument::NamesStore");
     qRegisterMetaType<CharacterPicker::SelectedCharacter>("CharacterPicker::SelectedCharacter");
     
     //QVariantHash derivates
@@ -138,6 +141,7 @@ void _registerMetaTypes() {
     qRegisterMetaType<StreamPlayStateTracker>("StreamPlayStateTracker");
     qRegisterMetaType<RPZFogParams>("RPZFogParams");
     qRegisterMetaType<RPZMapParameters>("RPZMapParameters");
+    qRegisterMetaType<RPZSharedDocument>("RPZSharedDocument");
     
     //struct
     qRegisterMetaType<AtomsSelectionDescriptor>("AtomsSelectionDescriptor");

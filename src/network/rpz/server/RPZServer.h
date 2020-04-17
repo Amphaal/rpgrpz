@@ -51,6 +51,9 @@
 #include "src/shared/audio/StreamPlayStateTracker.hpp"
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 #include "src/helpers/StringHelper.hpp"
+#include "src/shared/models/RPZSharedDocument.hpp"
+
+#include "src/shared/hints/SharedDocHint.hpp"
 
 #include "src/network/rpz/_any/JSONLogger.hpp"
 

@@ -19,8 +19,7 @@
 
 #include "ToysTreeView.h"
 
-ToysTreeView::ToysTreeView(QWidget *parent) : QTreeView(parent), AlterationInteractor(Payload::Interactor::Local_ToysTV),
-    _MIMEDb(new QMimeDatabase), 
+ToysTreeView::ToysTreeView(QWidget *parent) : QTreeView(parent), AlterationInteractor(Payload::Interactor::Local_ToysTV), 
     _model(new ToysTreeViewModel) {     
     
     //generate raw actions
@@ -187,7 +186,7 @@ void ToysTreeView::dragEnterEvent(QDragEnterEvent *event) {
             if(!url.isLocalFile()) return;
             
             //if mime of url is image
-            auto mimeOfFile = this->_MIMEDb->mimeTypeForUrl(url).name();
+            auto mimeOfFile = this->_MIMEDb.mimeTypeForUrl(url).name();
             if(!mimeOfFile.startsWith("image")) return;
         }
 

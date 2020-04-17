@@ -416,6 +416,14 @@
     </message>
 </context>
 <context>
+    <name>DocShareListView</name>
+    <message>
+        <location filename="../ui/docShare/DocShareListView.hpp" line="252"/>
+        <source> (available)</source>
+        <translation> (disponible)</translation>
+    </message>
+</context>
+<context>
     <name>DownloadStatus</name>
     <message>
         <location filename="../ui/statusBar/DownloadStatus.hpp" line="115"/>
@@ -709,80 +717,85 @@
         <translation>Boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="393"/>
+        <location filename="../ui/mainWindow.cpp" line="394"/>
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="392"/>
+        <location filename="../ui/mainWindow.cpp" line="393"/>
         <source>Sheets</source>
         <translation>Fiches</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="407"/>
+        <location filename="../ui/mainWindow.cpp" line="408"/>
         <source>Map Atoms</source>
         <translation>Atomes de la carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="408"/>
+        <location filename="../ui/mainWindow.cpp" line="409"/>
         <source>Atom Editor</source>
         <translation>Editeur d&apos;atomes</translation>
     </message>
     <message>
         <location filename="../ui/mainWindow.cpp" line="334"/>
-        <location filename="../ui/mainWindow.cpp" line="340"/>
+        <location filename="../ui/mainWindow.cpp" line="341"/>
         <source>Game Hub</source>
         <translation>Hub de jeu</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="574"/>
+        <location filename="../ui/mainWindow.cpp" line="335"/>
+        <source>Documents Share</source>
+        <translation>Partage de documents</translation>
+    </message>
+    <message>
+        <location filename="../ui/mainWindow.cpp" line="576"/>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="588"/>
+        <location filename="../ui/mainWindow.cpp" line="590"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="590"/>
-        <location filename="../ui/mainWindow.cpp" line="616"/>
-        <location filename="../ui/mainWindow.cpp" line="644"/>
+        <location filename="../ui/mainWindow.cpp" line="592"/>
+        <location filename="../ui/mainWindow.cpp" line="618"/>
+        <location filename="../ui/mainWindow.cpp" line="646"/>
         <source>Game map (*%1)</source>
         <translation>Carte de campagne (*%1)</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="614"/>
+        <location filename="../ui/mainWindow.cpp" line="616"/>
         <source>Load a new map</source>
         <translation>Charger une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="642"/>
+        <location filename="../ui/mainWindow.cpp" line="644"/>
         <source>Save as...</source>
         <translation>Savegarder sous...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="666"/>
+        <location filename="../ui/mainWindow.cpp" line="668"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="721"/>
+        <location filename="../ui/mainWindow.cpp" line="723"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="735"/>
+        <location filename="../ui/mainWindow.cpp" line="737"/>
         <source>Searching for updates...</source>
         <translation>Recherche des mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="735"/>
+        <location filename="../ui/mainWindow.cpp" line="737"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="770"/>
+        <location filename="../ui/mainWindow.cpp" line="772"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
@@ -845,17 +858,17 @@
 <context>
     <name>Playlist</name>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="209"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="208"/>
         <source>This Youtube video is already in playlist !</source>
         <translation>Cette vidéo Youtube est déjà dans la liste de lecture !</translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="274"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="273"/>
         <source>(Loading metadata...) </source>
         <translation>(Chargement des métadonnées...) </translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="284"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="283"/>
         <source>(Error) </source>
         <translation>(Erreur) </translation>
     </message>
@@ -1350,7 +1363,12 @@
     <message>
         <location filename="../ui/atomEditor/editors/generic/ColorPickerEditor.hpp" line="49"/>
         <source>Pen color</source>
-        <translation type="unfinished">Couleur</translation>
+        <translation>Couleur</translation>
+    </message>
+    <message>
+        <location filename="../ui/docShare/DocShareListView.hpp" line="153"/>
+        <source> (downloading...)</source>
+        <translation> (téléchargement...)</translation>
     </message>
 </context>
 <context>
@@ -1389,7 +1407,7 @@
 <context>
     <name>RPZServer</name>
     <message>
-        <location filename="../network/rpz/server/RPZServer.cpp" line="298"/>
+        <location filename="../network/rpz/server/RPZServer.cpp" line="317"/>
         <source>Your software version is different from the server&apos;s one : v%1 (you) / v%2 (server) !</source>
         <translation>Votre version logicielle diffère de la version du serveur : v%1 (vous) / v%2 (serveur) !</translation>
     </message>
@@ -1522,17 +1540,17 @@
 <context>
     <name>ToysTreeView</name>
     <message>
-        <location filename="../ui/toysBox/ToysTreeView.cpp" line="236"/>
+        <location filename="../ui/toysBox/ToysTreeView.cpp" line="235"/>
         <source>&lt;&lt; Move to &quot;%1&quot;</source>
         <translation>&lt;&lt; Déplacer vers&quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/ToysTreeView.cpp" line="343"/>
+        <location filename="../ui/toysBox/ToysTreeView.cpp" line="342"/>
         <source>Delete elements in toy box</source>
         <translation>Supprimer des elements de la boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/ToysTreeView.cpp" line="344"/>
+        <location filename="../ui/toysBox/ToysTreeView.cpp" line="343"/>
         <source>Do you confirm deletion of the %1 selected elements ?</source>
         <translation>Confirmez-vous la suppression des %1 éléments selectionnés ?</translation>
     </message>

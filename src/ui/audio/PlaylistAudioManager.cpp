@@ -47,7 +47,7 @@ void PlaylistAudioManager::_onGameSessionReceived(const RPZGameSession &gameSess
     
     auto selfUser = this->_rpzClient->identity();
 
-    this->_isNetworkMaster = selfUser.role() == RPZUser::Role::Host;
+    this->_isNetworkMaster = Authorisations::isHostAble();
     this->_plCtrl->setEnabled(this->_isNetworkMaster);
     
     if(!this->_isNetworkMaster) {
