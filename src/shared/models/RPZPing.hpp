@@ -17,40 +17,27 @@
 // for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
-#pragma once
+#pragma once 
 
-#include <QTcpSocket>
-#include <QString>
-#include <QVariant>
+#include <QVariantHash>
+#include <QPainterPath>
 
-class RPZJSON {
-    
-    Q_GADGET
-    
+#include "src/helpers/JSONSerializer.h"
+#include "src/shared/models/RPZUser.h"
+
+class RPZPing : public QVariantHash {
     public:
-        enum class Method {
-            Handshake = 0,  
-            Message,
-            ServerStatus,
-            ServerResponse, 
-            MapChanged,
-            MapChangedHeavily,
-            AskForAssets,
-            RequestedAsset,
-            AudioStreamUrlChanged,
-            AudioStreamPlayingStateChanged,
-            AudioStreamPositionChanged,
-            AvailableAssetsToUpload,
-            UserIn,
-            UserOut,
-            CharacterChanged,
-            UserDataChanged,
-            QuickDrawHappened,
-            GameSessionSync,
-            SharedDocumentAvailable,
-            SharedDocumentRequested,
-            PingHappened
-        };
-        Q_ENUM(Method)
-       
+        RPZPing() {};
+        explicit RPZPing(const QVariantHash &hash) : QVariantHash(hash) {}
+        RPZPing(const QPointF &scenePos, const RPZUser::Id &emiterId) {
+            this->insert("pos", JSONSerializer::fromPointF(scenePos));
+            this->insert("emiter_id", QVariant::fromValue<RPZUser::Id>(emiterId));
+        }
+        QPointF scenePos() const {
+            return JSONSerializer::toPointF(this->value("pos").toList());
+        }
+
+        RPZUser::Id emiterId() const {
+            return this->value("emiter_id").toULongLong();
+        }
 };

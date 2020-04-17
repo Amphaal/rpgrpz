@@ -240,7 +240,8 @@
         "errno.h": "c",
         "qcolordialog": "cpp",
         "qcolor": "cpp",
-        "qfileiconprovider": "cpp"
+        "qfileiconprovider": "cpp",
+        "qstyleoptiongraphicsitem": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

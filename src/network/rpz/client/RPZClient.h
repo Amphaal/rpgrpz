@@ -46,6 +46,7 @@
 #include "src/shared/models/network/RPZGameSession.hpp"
 #include "src/shared/async-ui/AlterationHandler.h"
 #include "src/shared/models/RPZSharedDocument.hpp"
+#include "src/shared/models/RPZPing.hpp"
 
 class RPZClient : public QObject, public AlterationInteractor, public JSONLogger {
 
@@ -75,6 +76,7 @@ class RPZClient : public QObject, public AlterationInteractor, public JSONLogger
         void sendQuickdraw(const RPZQuickDrawBits &qd);
         void addSharedDocument(const RPZSharedDocument::FileHash &hash, const RPZSharedDocument::DocumentName &documentName);
         void requestSharedDocument(const RPZSharedDocument::FileHash &hash);
+        void notifyPing(const QPointF &pingPosition);
 
     signals:
         void connectionStatus(const QString &statusMessage, bool isError = false);
@@ -104,6 +106,8 @@ class RPZClient : public QObject, public AlterationInteractor, public JSONLogger
 
         void sharedDocumentAvailable(const RPZSharedDocument::FileHash &documentHash, const QString &documentName);
         void sharedDocumentReceived(const RPZSharedDocument &sharedDocument);
+
+        void pingHappened(const RPZPing &ping);
 
     private:
         enum class CharacterRegistration {

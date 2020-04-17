@@ -59,6 +59,7 @@
 
 #include "src/shared/renderer/assists/AtomDrawingAssist.hpp"
 #include "src/shared/renderer/assists/QuickDrawingAssist.hpp"
+#include "src/shared/renderer/assists/PingAssist.hpp"
 
 #include "src/shared/renderer/graphics/MapViewGraphics.h"
 
@@ -116,6 +117,7 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
         RPZMapParameters _currentMapParameters;
         QuickDrawingAssist* _quickDrawingAssist = nullptr;
         AtomDrawingAssist* _atomDrawingAssist = nullptr;
+        PingAssist* _pingAssist = nullptr;
         AtomsContextualMenuHandler* _menuHandler = nullptr;
         AtomActionsHandler* _atomActionsHandler = nullptr;
         MeasurementHelper* _measurementHelper = nullptr;

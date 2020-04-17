@@ -33,6 +33,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
     this->_atomActionsHandler = new AtomActionsHandler(this, this);
     this->_atomDrawingAssist = new AtomDrawingAssist(this);
     this->_quickDrawingAssist = new QuickDrawingAssist(this);
+    this->_pingAssist = new PingAssist(this);
 
     //OpenGL backend activation
     QGLFormat format;
@@ -704,8 +705,7 @@ void MapView::mousePressEvent(QMouseEvent *event) {
             break;
 
             case MapTool::Ping : {
-                auto ping = new PingItem(event->pos(), QColor(), this);
-                this->scene()->addItem(ping);
+                this->_pingAssist->generatePing(event->pos());
             }
             break;
 

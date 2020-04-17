@@ -175,6 +175,11 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
 
     switch(method) {
 
+        case RPZJSON::Method::PingHappened: {
+            this->_sendToAllExcept(target, method, data); //notify everyone else
+        }
+        break;
+
         case RPZJSON::Method::SharedDocumentRequested: {
             
             //TODO

@@ -142,7 +142,8 @@ void _registerMetaTypes() {
     qRegisterMetaType<RPZFogParams>("RPZFogParams");
     qRegisterMetaType<RPZMapParameters>("RPZMapParameters");
     qRegisterMetaType<RPZSharedDocument>("RPZSharedDocument");
-    
+    qRegisterMetaType<RPZPing>("RPZPing");
+
     //struct
     qRegisterMetaType<AtomsSelectionDescriptor>("AtomsSelectionDescriptor");
 
