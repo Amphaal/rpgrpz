@@ -420,7 +420,7 @@
     <message>
         <location filename="../ui/docShare/DocShareListView.hpp" line="252"/>
         <source> (available)</source>
-        <translation type="unfinished"></translation>
+        <translation> (disponible)</translation>
     </message>
 </context>
 <context>
@@ -1363,12 +1363,12 @@
     <message>
         <location filename="../ui/atomEditor/editors/generic/ColorPickerEditor.hpp" line="49"/>
         <source>Pen color</source>
-        <translation type="unfinished">Couleur</translation>
+        <translation>Couleur</translation>
     </message>
     <message>
         <location filename="../ui/docShare/DocShareListView.hpp" line="153"/>
         <source> (downloading...)</source>
-        <translation type="unfinished"></translation>
+        <translation> (téléchargement...)</translation>
     </message>
 </context>
 <context>
