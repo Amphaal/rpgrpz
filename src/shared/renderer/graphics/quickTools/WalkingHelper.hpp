@@ -37,7 +37,7 @@
 #include "src/shared/models/RPZMapParameters.hpp"
 #include "src/shared/renderer/graphics/_specific/MapViewToken.hpp"
 
-class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGraphicsItem {
+class WalkingHelper : public QObject, public QGraphicsItem, public RPZGraphicsItem {
     
     Q_OBJECT
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
@@ -57,7 +57,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
             QLineF distanceLine;
         };
 
-        const MapViewWalkingHelper::PointPos _generateCursorPointPos() const {
+        const WalkingHelper::PointPos _generateCursorPointPos() const {
             
             PointPos out;
             out.viewCursorPos = this->_view->mapFromGlobal(QCursor::pos());
@@ -119,13 +119,13 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
         }
 
         //calculate offset
-        QPointF _getOffset(const MapViewWalkingHelper::PointPos &pp, const QGraphicsItem* item) const {
+        QPointF _getOffset(const WalkingHelper::PointPos &pp, const QGraphicsItem* item) const {
             auto offsetLine = QLineF(pp.distanceLine.p1(), item->scenePos());
             if(offsetLine.p1() == offsetLine.p2()) return QPointF();
             return offsetLine.translated(-offsetLine.p1()).p2();       
         }
 
-        void _drawRangeEllipse(QPainter *painter, const QStyleOptionGraphicsItem *option, const MapViewWalkingHelper::PointPos &pp) {
+        void _drawRangeEllipse(QPainter *painter, const QStyleOptionGraphicsItem *option, const WalkingHelper::PointPos &pp) {
             
             painter->save();
                 
@@ -167,7 +167,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
 
         }
 
-        void _drawRangeGrid(QPainter *painter, const QStyleOptionGraphicsItem *option, const MapViewWalkingHelper::PointPos &pp) {
+        void _drawRangeGrid(QPainter *painter, const QStyleOptionGraphicsItem *option, const WalkingHelper::PointPos &pp) {
 
             painter->save();
 
@@ -217,7 +217,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
 
         }
 
-        void _drawLinearRangeTextIndicator(QPainter *painter, const QStyleOptionGraphicsItem *option, const MapViewWalkingHelper::PointPos &pp) {
+        void _drawLinearRangeTextIndicator(QPainter *painter, const QStyleOptionGraphicsItem *option, const WalkingHelper::PointPos &pp) {
             
             painter->save();
 
@@ -242,7 +242,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
 
         }
 
-        void _drawGridRangeTextIndicator(QPainter *painter, const QStyleOptionGraphicsItem *option, const MapViewWalkingHelper::PointPos &pp) {
+        void _drawGridRangeTextIndicator(QPainter *painter, const QStyleOptionGraphicsItem *option, const WalkingHelper::PointPos &pp) {
             
             painter->save();
 
@@ -328,7 +328,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
         }
 
     public:
-        MapViewWalkingHelper(const RPZMapParameters &params, const QList<QGraphicsItem*> &toWalk, QGraphicsView* view) : _toWalk(toWalk), _view(view) {
+        WalkingHelper(const RPZMapParameters &params, const QList<QGraphicsItem*> &toWalk, QGraphicsView* view) : _toWalk(toWalk), _view(view) {
             
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
@@ -355,7 +355,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
 
         }
 
-        static bool isToBeWalked(const MapViewWalkingHelper* helper, QGraphicsItem* toCheck) {
+        static bool isToBeWalked(const WalkingHelper* helper, QGraphicsItem* toCheck) {
             if(!helper) return false;
             return helper->_toWalk.contains(toCheck);
         }

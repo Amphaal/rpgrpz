@@ -227,7 +227,7 @@ void MapView::_onOwnershipChanged(const QList<QGraphicsItem*> changing, bool own
         for(auto item : changing) {
 
             //if "to be walked" has changed ownership, tag for tool change
-            if(!foundTBW && MapViewWalkingHelper::isToBeWalked(this->_walkingHelper, item)) foundTBW = true;
+            if(!foundTBW && WalkingHelper::isToBeWalked(this->_walkingHelper, item)) foundTBW = true;
             
             //change ownership
             if(auto casted = dynamic_cast<MapViewToken*>(item)) {
@@ -376,7 +376,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
             case Payload::Alteration::Removed: {
                 
                 //if walked item is about to be deleted, change tool to default
-                auto deletedItemIsToBeWalked = MapViewWalkingHelper::isToBeWalked(this->_walkingHelper, item);
+                auto deletedItemIsToBeWalked = WalkingHelper::isToBeWalked(this->_walkingHelper, item);
                 if(deletedItemIsToBeWalked && currentTool == MapTool::Walking) {
                     this->_changeTool(MapTool::Default);
                 }
@@ -453,7 +453,7 @@ bool MapView::_tryToInvokeWalkableHelper(const QList<QGraphicsItem*> &toBeWalked
     this->_clearWalkingHelper();
 
     //create walking helper
-    this->_walkingHelper = new MapViewWalkingHelper(
+    this->_walkingHelper = new WalkingHelper(
         this->_currentMapParameters, 
         toBeWalked, 
         this
@@ -665,7 +665,7 @@ void MapView::mousePressEvent(QMouseEvent *event) {
                 default: {
 
                     auto ghost = HintThread::hint()->ghostItem();
-                    if(MapViewWalkingHelper::isMoveOrInsertPreventedAtPosition(this->_currentMapParameters, ghost)) break;
+                    if(WalkingHelper::isMoveOrInsertPreventedAtPosition(this->_currentMapParameters, ghost)) break;
 
                     HintThread::hint()->integrateGraphicsItemAsPayload(ghost);
 
@@ -698,8 +698,14 @@ void MapView::mousePressEvent(QMouseEvent *event) {
             
             case MapTool::Measure : {
                 this->_clearMeasurementHelper();
-                this->_measurementHelper = new MapViewMeasurementHelper(this->_currentMapParameters, event->pos(), this);
+                this->_measurementHelper = new MeasurementHelper(this->_currentMapParameters, event->pos(), this);
                 this->scene()->addItem(this->_measurementHelper);
+            }
+            break;
+
+            case MapTool::Ping : {
+                auto ping = new PingItem(event->pos(), QColor(), this);
+                this->scene()->addItem(ping);
             }
             break;
 
