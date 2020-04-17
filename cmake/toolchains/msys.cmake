@@ -14,7 +14,7 @@ set (CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
 list(APPEND CMAKE_PREFIX_PATH 
     ${MINGW64_ROOT}/x86_64-w64-mingw32
-    ${MINGW64_ROOT}} 
+    ${MINGW64_ROOT} 
 )
 
 #allows Debug cout/cerr console... from LLDB/GDB
