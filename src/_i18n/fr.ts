@@ -1358,12 +1358,12 @@
         <translation>Couleur</translation>
     </message>
     <message>
-        <location filename="../ui/docShare/DocShareListView.hpp" line="155"/>
+        <location filename="../ui/docShare/DocShareListView.cpp" line="119"/>
         <source> (downloading...)</source>
         <translation> (téléchargement...)</translation>
     </message>
     <message>
-        <location filename="../ui/docShare/DocShareListView.hpp" line="254"/>
+        <location filename="../ui/docShare/DocShareListView.cpp" line="218"/>
         <source> (available)</source>
         <translation> (disponible)</translation>
     </message>
