@@ -114,29 +114,18 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
 
         void _onGameSessionReceived(const RPZGameSession &gs) {
             
-            //if host
-            if(Authorisations::isHostAble()) {
-
-                //send shared documents
-                QMetaObject::invokeMethod(
-                    this->_rpzClient, "defineSharedDocuments", 
-                    Q_ARG(RPZSharedDocument::NamesStore, SharedDocHint::getNamesStore())
-                );
-
-            }
-
-            else {
+            // prfevent shared documents insert if host
+            if(Authorisations::isHostAble()) return;
                 
-                //iterate through shared docs
-                auto sharedDocs = gs.sharedDocuments();
-                for(auto i = sharedDocs.begin(); i != sharedDocs.end(); i++) {
-                    
-                    auto &hash = i.key();
-                    auto &name = i.value();
+            //iterate through shared docs
+            auto sharedDocs = gs.sharedDocuments();
+            for(auto i = sharedDocs.begin(); i != sharedDocs.end(); i++) {
+                
+                auto &hash = i.key();
+                auto &name = i.value();
 
-                    this->_mayAddTemporaryItem(hash, name);
-
-                }
+                //add them
+                this->_mayAddTemporaryItem(hash, name);
 
             }
 

@@ -74,7 +74,6 @@ class RPZClient : public QObject, public AlterationInteractor, public JSONLogger
         void notifyCharacterChange(const RPZCharacter &changed);
         void sendQuickdraw(const RPZQuickDrawBits &qd);
         void addSharedDocument(const RPZSharedDocument::FileHash &hash, const RPZSharedDocument::DocumentName &documentName);
-        void defineSharedDocuments(const RPZSharedDocument::NamesStore &namesStore);
         void requestSharedDocument(const RPZSharedDocument::FileHash &hash);
 
     signals:

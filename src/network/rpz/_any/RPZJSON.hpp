@@ -47,10 +47,8 @@ class RPZJSON {
             UserDataChanged,
             QuickDrawHappened,
             GameSessionSync,
-            DefinedSharedDocuments,
-            AddedSharedDocuments,
-            SharedDocumentRequested,
-            RequestedSharedDocument
+            SharedDocumentAvailable,
+            SharedDocumentRequested
         };
         Q_ENUM(Method)
        

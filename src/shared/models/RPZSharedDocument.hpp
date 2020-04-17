@@ -33,7 +33,7 @@ class RPZSharedDocument : public QVariantHash {
         using NamesStore = QHash<RPZSharedDocument::FileHash, RPZSharedDocument::DocumentName>;
         using Store = QHash<RPZSharedDocument::FileHash, RPZSharedDocument>;
 
-        RPZSharedDocument();
+        RPZSharedDocument() {};
         RPZSharedDocument(const QVariantHash &hash) : QVariantHash(hash) {};
         RPZSharedDocument(const QUrl &localFileUrl) {
             this->_inst(localFileUrl);
@@ -165,3 +165,4 @@ class RPZSharedDocument : public QVariantHash {
         }
 
 };
+Q_DECLARE_METATYPE(RPZSharedDocument)

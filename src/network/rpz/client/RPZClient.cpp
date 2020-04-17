@@ -304,6 +304,21 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
     QMetaObject::invokeMethod(ProgressTracker::get(), "clientIsReceiving");
 
     switch(method) {
+        
+        case RPZJSON::Method::SharedDocumentAvailable: {
+            auto pair = data.toList();
+            emit sharedDocumentAvailable(
+                pair.value(0).toString(), 
+                pair.value(1).toString()
+            );
+        }
+        break;
+
+        case RPZJSON::Method::SharedDocumentRequested: {
+            RPZSharedDocument sd(data.toHash());
+            emit sharedDocumentReceived(sd);
+        }
+        break;
 
         case RPZJSON::Method::QuickDrawHappened: {
             RPZQuickDrawBits qd(data.toHash());
@@ -497,6 +512,29 @@ void RPZClient::sendMapHistory(const ResetPayload &historyPayload) {
         historyPayload
     );
 }
+
+void RPZClient::addSharedDocument(const RPZSharedDocument::FileHash &hash, const RPZSharedDocument::DocumentName &documentName) {
+    
+    //out
+    QVariantList out;
+    out.append(hash);
+    out.append(documentName);
+
+    //send
+    this->_serverSock->sendToSocket(
+        RPZJSON::Method::SharedDocumentAvailable,
+        out
+    );
+
+}
+
+void RPZClient::requestSharedDocument(const RPZSharedDocument::FileHash &hash) {
+    this->_serverSock->sendToSocket(
+        RPZJSON::Method::SharedDocumentRequested,
+        hash
+    );
+}
+
 
 RPZUser& RPZClient::_myUser() {
     return this->_sessionUsers[this->_myUserId];

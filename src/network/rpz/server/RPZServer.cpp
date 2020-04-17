@@ -178,14 +178,15 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
         case RPZJSON::Method::SharedDocumentRequested: {
             
             //TODO
+            auto requestedHash = data.toString(); 
+            auto document = SharedDocHint::getSharedDocument(requestedHash);
 
             //notify everyone else
-            target->sendToSocket(RPZJSON::Method::RequestedSharedDocument, data); 
+            target->sendToSocket(RPZJSON::Method::SharedDocumentRequested, document); 
 
         }
 
-        case RPZJSON::Method::DefinedSharedDocuments:
-        case RPZJSON::Method::AddedSharedDocuments: {
+        case RPZJSON::Method::SharedDocumentAvailable: {
 
             //notify everyone else
             this->_sendToAllExcept(target, method, data); 
