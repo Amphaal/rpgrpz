@@ -30,9 +30,8 @@ class RPZSharedDocument : public QVariantHash {
     public:
         using FileHash = QString;
         using DocumentName = QString;
-
-        using Store = QHash<RPZSharedDocument::FileHash, RPZSharedDocument>;
         using NamesStore = QHash<RPZSharedDocument::FileHash, RPZSharedDocument::DocumentName>;
+        using Store = QHash<RPZSharedDocument::FileHash, RPZSharedDocument>;
 
         RPZSharedDocument();
         RPZSharedDocument(const QVariantHash &hash) : QVariantHash(hash) {};

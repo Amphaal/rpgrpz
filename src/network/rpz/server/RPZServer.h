@@ -53,6 +53,8 @@
 #include "src/helpers/StringHelper.hpp"
 #include "src/shared/models/RPZSharedDocument.hpp"
 
+#include "src/shared/hints/SharedDocHint.hpp"
+
 #include "src/network/rpz/_any/JSONLogger.hpp"
 
 class RPZServer : public QObject, public JSONLogger { 

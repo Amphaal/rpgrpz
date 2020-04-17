@@ -363,7 +363,7 @@ void RPZServer::_sendGameSession(JSONSocket* toSendTo, const RPZUser &associated
         associatedUser.id(), 
         this->_usersById, 
         this->_messages, 
-        this->_sharedDocuments,
+        SharedDocHint::getNamesStore(),
         isFullSession
     );
             

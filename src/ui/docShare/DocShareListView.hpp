@@ -31,6 +31,7 @@
 
 #include "src/ui/_others/ConnectivityObserver.h"
 #include "src/shared/models/RPZSharedDocument.hpp"
+#include "src/shared/hints/SharedDocHint.hpp"
 
 class DocShareListView : public QListWidget, public ConnectivityObserver {
     public:
@@ -59,21 +60,50 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
 
             QObject::connect(
                 this->_rpzClient, &RPZClient::sharedDocumentReceived,
-                this, &DocShareListView::_addItem
+                this, &DocShareListView::_updateItemFromNetwork
             );
 
         }
         void connectionClosed(bool hasInitialMapLoaded) override {
-            //TODO
+            
+            QList<RPZSharedDocument::FileHash> hashesToDelete;
+
+            //iterate
+            for(auto i = this->_itemByHash.begin(); i != this->_itemByHash.end(); i++) {
+                
+                auto &hash = i.key();
+                auto &item = i.value();
+                
+                //add for removal if in a non-local state
+                auto state = (DownloadState)item->data(DocShareListView::DownloadStateRole).toInt();
+                if(state == Downloading || state == Downloadable) hashesToDelete += hash;
+
+            }
+
+            //remove from registry dans from view
+            for(auto &hash : hashesToDelete) {
+                auto item = this->_itemByHash.take(hash);
+                delete item;
+            }
+
         }
 
     private:
-        RPZSharedDocument::Store _store;
-        QHash<QListWidgetItem*, RPZSharedDocument::FileHash> _itemByHash;
+        QHash<RPZSharedDocument::FileHash, QListWidgetItem*> _itemByHash;
+        
         QMimeDatabase _MIMEDb;
         QFileIconProvider _iconProvider;
+        
         static inline int HashRole = 3000; 
         static inline int FilePathRole = 3100; 
+        static inline int DownloadStateRole = 3200;
+        static inline int DocumentNameRole = 3300; 
+
+        enum DownloadState {
+            Downloaded,
+            Downloading,
+            Downloadable
+        };
 
         Qt::DropActions supportedDropActions() const override {
             return (
@@ -86,19 +116,18 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
             
             //if host
             if(Authorisations::isHostAble()) {
-                
-                auto namesStore = RPZSharedDocument::toVariantNamesStore(this->_store);
 
                 //send shared documents
                 QMetaObject::invokeMethod(
                     this->_rpzClient, "defineSharedDocuments", 
-                    Q_ARG(QVariantHash, namesStore)
+                    Q_ARG(RPZSharedDocument::NamesStore, SharedDocHint::getNamesStore())
                 );
 
             }
 
             else {
-                //iterate
+                
+                //iterate through shared docs
                 auto sharedDocs = gs.sharedDocuments();
                 for(auto i = sharedDocs.begin(); i != sharedDocs.end(); i++) {
                     
@@ -108,24 +137,36 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
                     this->_mayAddTemporaryItem(hash, name);
 
                 }
+
             }
 
         }
 
         void _onItemDoubleClick(QListWidgetItem *item) {
             
+            //check if downloading
+            auto state = (DownloadState)item->data(DocShareListView::DownloadStateRole).toInt();
+            if(state == DownloadState::Downloading) return;
+
+            //try to open associated file
             auto pathToFile = item->data(DocShareListView::FilePathRole).toString();
             if(!pathToFile.isEmpty()) return AppContext::openFileInOS(pathToFile);
 
-            //file path is empty, request file
+            //file path is empty, check client exists
             if(!this->_rpzClient) return;
 
+            //get data
             auto hash = item->data(DocShareListView::HashRole).toString();
+            auto fileName = item->data(DocShareListView::DocumentNameRole).toString();
+
+            //update state
+            item->setData(DocShareListView::DownloadStateRole, DownloadState::Downloading);
+            item->setText(fileName + QObject::tr(" (downloading...)"));
+            
+            //ask for file
             QMetaObject::invokeMethod(this->_rpzClient, "requestSharedDocument", 
                 Q_ARG(QString, hash)
             );
-
-            //TODO prevent multiple requests
 
         }
 
@@ -137,33 +178,55 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
 
             //override file if exists
             auto hash = doc.documentFileHash();
-            auto alreadyExists = this->_store.contains(hash);
-            this->_store.insert(hash, doc);
+            auto alreadyExists = SharedDocHint::containsHash(hash);
 
             if(alreadyExists) return;
-
-            auto item = this->_addItem(doc);
-            this->_itemByHash.insert(item, hash);
+            this->_addItem(doc);
 
         }
 
-        QListWidgetItem* _addItem(const RPZSharedDocument &doc) {
+        void _updateItemFromNetwork(const RPZSharedDocument &doc) {
+            
+            auto hash = doc.documentFileHash();
+
+            //update item state
+            auto item = this->_itemByHash.value(hash);
+            this->_updateItem(doc, item);
+            
+        }
+
+        void _updateItem(const RPZSharedDocument &doc, QListWidgetItem* item) {
             
             auto temporaryFilePath = doc.writeAsTemporaryFile();
-            auto filename = doc.documentName();
-            auto hash = doc.documentFileHash();
+            auto docName = doc.documentName();
+
+            item->setData(DocShareListView::FilePathRole, temporaryFilePath);
+            item->setData(DocShareListView::DownloadStateRole, DownloadState::Downloaded);
+            item->setData(DocShareListView::DocumentNameRole, docName);
 
             //icon
             QFileInfo tempFi(temporaryFilePath);
             auto icon = this->_iconProvider.icon(tempFi);
+            item->setIcon(icon);
+            item->setText(docName);
+
+            SharedDocHint::insertIntoStore(doc);
+
+        }
+
+        void _addItem(const RPZSharedDocument &doc) {
             
             //create item
-            auto playlistItem = new QListWidgetItem(icon, filename);
+            auto playlistItem = new QListWidgetItem;
+            auto hash = doc.documentFileHash();
             playlistItem->setData(DocShareListView::HashRole, hash);
-            playlistItem->setData(DocShareListView::FilePathRole, temporaryFilePath);
+            
+            //update item
+            this->_updateItem(doc, playlistItem);
             
             //add it
             this->addItem(playlistItem);
+            auto filename = playlistItem->text();
             qDebug() << qUtf8Printable(QStringLiteral("File Share : \"%1\" added.").arg(filename));
 
             //
@@ -175,20 +238,38 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
                 );
             }
 
-            return playlistItem;
+            //add to registry
+            this->_itemByHash.insert(hash, playlistItem);
+            
+            //update names store
+            SharedDocHint::updateNamesStore(hash, filename);
 
         }
 
         void _mayAddTemporaryItem(const RPZSharedDocument::FileHash &hash, const QString &fileName) {
             
-            if(this->_store.contains(hash)) return;
+            if(SharedDocHint::containsHash(hash)) return;
 
+            auto playlistItem = new QListWidgetItem;
+
+            //default icon
             auto icon = this->_iconProvider.icon(QFileInfo());
-            
-            auto playlistItem = new QListWidgetItem(icon, fileName);
-            playlistItem->setData(DocShareListView::HashRole, hash);
+            playlistItem->setIcon(icon);
 
-            this->_itemByHash.insert(playlistItem, hash);
+            playlistItem->setData(DocShareListView::HashRole, hash);
+            playlistItem->setData(DocShareListView::DownloadStateRole, DownloadState::Downloadable);
+            playlistItem->setData(DocShareListView::DocumentNameRole, fileName);
+
+            playlistItem->setText(fileName + tr(" (available)"));
+
+            //add to register
+            this->_itemByHash.insert(hash, playlistItem);
+
+            //update names store
+            SharedDocHint::updateNamesStore(hash, fileName);
+
+            //add to view
+            this->addItem(playlistItem);
 
         }
         
