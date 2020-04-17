@@ -239,7 +239,8 @@
         "qsoundeffect": "cpp",
         "errno.h": "c",
         "qcolordialog": "cpp",
-        "qcolor": "cpp"
+        "qcolor": "cpp",
+        "qfileiconprovider": "cpp"
     },
     "terminal.integrated.scrollback": 10000
 }

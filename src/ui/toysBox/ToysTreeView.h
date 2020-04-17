@@ -68,7 +68,7 @@ class ToysTreeView : public QTreeView, public ConnectivityObserver, public Alter
 
         void connectingToServer() override;
 
-        QMimeDatabase* _MIMEDb = nullptr;
+        QMimeDatabase _MIMEDb;
         ToysTreeViewModel* _model = nullptr;
 
         /////////////////////

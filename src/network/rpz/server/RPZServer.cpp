@@ -174,7 +174,26 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
     QMetaObject::invokeMethod(ProgressTracker::get(), "serverIsActive");
 
     switch(method) {
-        
+
+        case RPZJSON::Method::SharedDocumentRequested: {
+            
+            //TODO
+            auto requestedHash = data.toString(); 
+            auto document = SharedDocHint::getSharedDocument(requestedHash);
+
+            //notify everyone else
+            target->sendToSocket(RPZJSON::Method::SharedDocumentRequested, document); 
+
+        }
+
+        case RPZJSON::Method::SharedDocumentAvailable: {
+
+            //notify everyone else
+            this->_sendToAllExcept(target, method, data); 
+
+        }
+        break;
+
         case RPZJSON::Method::QuickDrawHappened: {
             this->_sendToAllExcept(target, method, data); //notify everyone else
         }
@@ -341,7 +360,16 @@ void RPZServer::_sendGameSession(JSONSocket* toSendTo, const RPZUser &associated
     
     //standard game session
     auto isFullSession = associatedUser.role() != RPZUser::Role::Host;
-    RPZGameSession gs(associatedUser.id(), this->_usersById, this->_messages, isFullSession);
+    auto associatedUserId = associatedUser.id();
+    auto sharedDocsNamesStore = SharedDocHint::getNamesStore();
+
+    RPZGameSession gs(
+        associatedUserId, 
+        this->_usersById, 
+        this->_messages, 
+        sharedDocsNamesStore,
+        isFullSession
+    );
             
     //if requesting full session data...
     if(isFullSession)  {

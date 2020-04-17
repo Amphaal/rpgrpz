@@ -114,7 +114,6 @@ void Playlist::dragMoveEvent(QDragMoveEvent * event) {
     event->accept();
 }
 
-
 void Playlist::dropEvent(QDropEvent *event) {
     
     QListWidget::dropEvent(event);

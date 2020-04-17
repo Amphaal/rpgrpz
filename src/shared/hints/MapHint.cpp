@@ -242,7 +242,7 @@ void MapHint::_onGameSessionReceived(const RPZGameSession &gameSession) {
     auto self = this->_rpzClient->identity();
 
     //if host
-    if(self.role() == RPZUser::Role::Host) {
+    if(Authorisations::isHostAble()) {
 
         //send map history if host
         this->_sendMapHistory();

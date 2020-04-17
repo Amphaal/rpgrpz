@@ -46,7 +46,9 @@ class RPZJSON {
             CharacterChanged,
             UserDataChanged,
             QuickDrawHappened,
-            GameSessionSync
+            GameSessionSync,
+            SharedDocumentAvailable,
+            SharedDocumentRequested
         };
         Q_ENUM(Method)
        

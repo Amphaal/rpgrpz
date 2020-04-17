@@ -138,6 +138,19 @@ QHash<QString, QString> AppContext::_getOptionArgs(const QString &argsAsStr) {
     return out;
 }
 
+void AppContext::clearFileSharingFolder() {
+    
+    QDir dir(getFileSharingFolderLocation());
+    dir.setNameFilters(QStringList() << "*.*");
+    dir.setFilter(QDir::Files);
+    
+    foreach(QString dirFile, dir.entryList())
+    {
+        dir.remove(dirFile);
+    }
+
+}
+
 QHash<QString, QString> AppContext::getOptionArgs(int argc, char** argv) {
     
     if(argc < 2) return QHash<QString, QString>();
@@ -189,6 +202,9 @@ void AppContext::init(const QString &customContext) {
     _makeSureDirPathExists(getAssetsFolderLocation());
     _makeSureDirPathExists(getMapsFolderLocation());
     _makeSureDirPathExists(getServerMapAutosaveFolderLocation());
+    _makeSureDirPathExists(getFileSharingFolderLocation());
+
+    clearFileSharingFolder();
 
     //crashpad activated if release app
     // initSentry();
@@ -234,6 +250,10 @@ const QString AppContext::getAssetsFileCoordinatorLocation() {
 
 const QString AppContext::getPlaylistFileLocation() {
     return getAppDataLocation() + PLAYLIST_JSON_DATABASE_FILENAME;
+}
+
+const QString AppContext::getFileSharingFolderLocation() {
+    return getAppDataLocation() + FILE_SHARING_PATH;  
 }
 
 const QString AppContext::getCharacterDatabaseLocation() {
