@@ -33,7 +33,7 @@ class PlaylistDatabase : public JSONDatabase {
 
         QSet<PlayerConfig::VideoId> ytIds() const;
 
-    protected:
+ protected:
         void _setupLocalData() override;
         JSONDatabase::Model _getDatabaseModel() override;
         JSONDatabase::Version apiVersion() const override;

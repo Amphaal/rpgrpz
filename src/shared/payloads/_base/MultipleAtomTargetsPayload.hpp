@@ -56,7 +56,7 @@ class MultipleAtomTargetsPayload : public AtomRelatedPayload {
 
         };
 
-    protected:
+ protected:
         explicit MultipleAtomTargetsPayload(const QVariantHash &hash) : AtomRelatedPayload(hash) {}
         MultipleAtomTargetsPayload(const Payload::Alteration &alteration, const QList<RPZAtom::Id> &targetedRPZAtomIds) : AtomRelatedPayload(alteration) {
             this->_setTargetRPZAtomIds(targetedRPZAtomIds);

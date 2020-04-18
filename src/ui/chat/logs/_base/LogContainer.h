@@ -50,7 +50,7 @@ class LogContainer : public QWidget {
         LogContainer(QWidget *parent = nullptr);
         void clearLines();
     
-    protected:
+ protected:
         LogItem* _getLine(const Stampable &element);
         LogItem* _getLine(Stampable::Id elementId);
         LogItem* _addLine(const Stampable &element, Stampable::Id putUnder = 0);

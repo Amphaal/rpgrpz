@@ -270,7 +270,7 @@ class MapViewMeasurementHelper : public QObject, public QGraphicsItem, public RP
 
         }
 
-    protected:
+ protected:
         bool _canBeDrawnInMiniMap() const override { 
             return false; 
         };

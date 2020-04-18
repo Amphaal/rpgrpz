@@ -40,7 +40,7 @@ class ChatEdit : public QWidget, public ConnectivityObserver {
     signals:
         void askedToSendMessage(const QString &msg);
     
-    protected:
+ protected:
         void changeEvent(QEvent *event) override;
         void connectingToServer() override;
 

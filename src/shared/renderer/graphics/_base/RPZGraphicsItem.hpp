@@ -56,7 +56,7 @@ class RPZGraphicsItem {
 
         }
     
-    protected:
+ protected:
         virtual bool _canBeDrawnInMiniMap() const { 
             return true; 
         };

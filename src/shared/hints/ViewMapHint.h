@@ -85,7 +85,7 @@ class ViewMapHint : public AtomsStorage {
         void fogModeChanged(const RPZFogParams::Mode &newMode);
         void fogChanged(const QList<QPolygonF> &updatedFog);
 
-    protected:
+ protected:
         virtual void _handleAlterationRequest(const AlterationPayload &payload) override;
 
  private:

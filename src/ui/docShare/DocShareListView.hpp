@@ -45,7 +45,7 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
             
         }
 
-    protected:
+ protected:
         void connectingToServer() override {
             
             QObject::connect(

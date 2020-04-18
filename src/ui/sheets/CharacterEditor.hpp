@@ -95,7 +95,7 @@ class CharacterEditor : public QWidget, public ConnectivityObserver {
             if(success) this->setFocus(Qt::OtherFocusReason);
         }
 
-    protected:
+ protected:
         void connectingToServer() override {
             this->_defineTitle(true);
 

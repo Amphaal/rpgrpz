@@ -131,7 +131,7 @@ class AbilitiesSheet : public QTableWidget {
 
         }
 
-    protected:
+ protected:
         void keyPressEvent(QKeyEvent *event) override {
             switch(event->key()) {
                 case Qt::Key_Delete:

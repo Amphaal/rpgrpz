@@ -201,7 +201,7 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         }
 
 
-    protected:
+ protected:
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
             auto result = this->conditionnalPaint(this, painter, option, widget);
             if(!result.mustContinue) return;

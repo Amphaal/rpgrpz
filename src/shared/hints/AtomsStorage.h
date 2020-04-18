@@ -86,7 +86,7 @@ class AtomsStorage : public AlterationAcknoledger {
         void duplicateAtoms(const QList<RPZAtom::Id> &idsToDuplicate);
         void handleAlterationRequest(const AlterationPayload &payload);
 
-    protected:
+ protected:
         MapDatabase& map();
         const MapDatabase& map() const;
         void _replaceMap(const MapDatabase &map);

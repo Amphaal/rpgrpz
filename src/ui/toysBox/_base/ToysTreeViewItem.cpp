@@ -20,18 +20,16 @@
 #include "ToysTreeViewItem.h"
 
 ToysTreeViewItem::ToysTreeViewItem(ToysTreeViewItem* ancestor, const ToysTreeViewItem::Type &type, const QString &name) {
-    
-    //define type
+    // define type
     this->_setType(type);
 
-    //define name (fullpath redefinition included)
+    // define name (fullpath redefinition included)
     this->rename(name);
 
-   //if a ancestor is defined, add self to its inner list
-    if(ancestor) {
+    // if a ancestor is defined, add self to its inner list
+    if (ancestor) {
         ancestor->appendSubItem(this);
     }
-
 }
 
 ToysTreeViewItem::ToysTreeViewItem(ToysTreeViewItem* ancestor, const QString &folderName) :
@@ -40,18 +38,14 @@ ToysTreeViewItem::ToysTreeViewItem(ToysTreeViewItem* ancestor, const QString &fo
 ToysTreeViewItem::ToysTreeViewItem(ToysTreeViewItem* ancestor, const ToysTreeViewItem::Type &type) :
     ToysTreeViewItem(ancestor, type, ToysTreeViewItem::typeDescription(type)) {}
 
-ToysTreeViewItem::ToysTreeViewItem(ToysTreeViewItem* ancestor, const RPZAsset* asset) : 
-    ToysTreeViewItem(ancestor, ancestor->insertType(), asset->name()) {
- 
+ToysTreeViewItem::ToysTreeViewItem(ToysTreeViewItem* ancestor, const RPZAsset* asset) : ToysTreeViewItem(ancestor, ancestor->insertType(), asset->name()) {
     this->_hash = asset->hash();
-
 }
 
-ToysTreeViewItem::ToysTreeViewItem() : ToysTreeViewItem(nullptr, ToysTreeViewItem::Type::Root) {};
+ToysTreeViewItem::ToysTreeViewItem() : ToysTreeViewItem(nullptr, ToysTreeViewItem::Type::Root) {}
 
-ToysTreeViewItem::~ToysTreeViewItem(){
-    
-    if(this->_ancestor) {
+ToysTreeViewItem::~ToysTreeViewItem() {
+    if (this->_ancestor) {
         this->_ancestor->unrefSubItem(this);
     }
 
@@ -59,7 +53,7 @@ ToysTreeViewItem::~ToysTreeViewItem(){
 }
 
 void ToysTreeViewItem::_setType(const ToysTreeViewItem::Type &type) {
-    this->_type = type; 
+    this->_type = type;
 
     // types-related definitions
     this->_defineIconPath();
@@ -70,7 +64,6 @@ void ToysTreeViewItem::_setType(const ToysTreeViewItem::Type &type) {
     this->_defineIsDeletable();
     this->_defineIsInvokable();
     this->_defineAllowingSubFolderCreation();
-    
 }
 
 ///////////////////
@@ -82,7 +75,7 @@ const RPZAsset* ToysTreeViewItem::asset() const {
 }
 const RPZAsset ToysTreeViewItem::assetCopy() const {
     auto asset = this->asset();
-    if(asset) return *asset;
+    if (asset) return *asset;
     return RPZAsset();
 }
 
@@ -147,27 +140,25 @@ bool ToysTreeViewItem::allowsSubFolderCreation() const {
 ///////////////////////
 
 bool ToysTreeViewItem::contains(ToysTreeViewItem* toCheck, ToysTreeViewItem* toBeChecked) {
-    if(!toBeChecked) toBeChecked = this;
-    
-    //check if self
-    if(toBeChecked == toCheck) return true;
+    if (!toBeChecked) toBeChecked = this;
 
-    //check subItems
+    // check if self
+    if (toBeChecked == toCheck) return true;
+
+    // check subItems
     auto currentDoesContainInSubItemren = toBeChecked->_subItems.contains(toCheck);
-    if(currentDoesContainInSubItemren) return true;
+    if (currentDoesContainInSubItemren) return true;
 
     return false;
 }
 
 bool ToysTreeViewItem::containsAny(const QList<ToysTreeViewItem*> toCheck) {
-    
-    for(const auto i : toCheck) {
+    for (const auto i : toCheck) {
         auto doesContain = this->contains(i);
-        if(doesContain) return true;
+        if (doesContain) return true;
     }
 
     return false;
-
 }
 
 ToysTreeViewItem* ToysTreeViewItem::subItem(int row) {
@@ -191,66 +182,58 @@ int ToysTreeViewItem::row() const {
 }
 
 void ToysTreeViewItem::appendSubItem(ToysTreeViewItem* subItem) {
-    
     subItem->_defineAncestor(this);
 
-    //add to list
-    if(subItem->type() == ToysTreeViewItem::Type::Folder) {
+    // add to list
+    if (subItem->type() == ToysTreeViewItem::Type::Folder) {
         this->_subItems.prepend(subItem);
     } else {
         this->_subItems.append(subItem);
     }
-    
-    //increment count
-    if(!subItem->isContainer()) this->_toySubItemCount++;
-};
 
+    // increment count
+    if (!subItem->isContainer()) this->_toySubItemCount++;
+}
 
 void ToysTreeViewItem::unrefSubItem(ToysTreeViewItem* subItem) {
-
-    //find subItem in subelements
+    // find subItem in subelements
     auto foundIndex = this->_subItems.indexOf(subItem);
-    
-    //if found
-    if (foundIndex > -1) {
 
-        //unref
+    // if found
+    if (foundIndex > -1) {
+        // unref
         this->_subItems.removeAt(foundIndex);
 
-        //unincrement
-        if(!subItem->isContainer()) _toySubItemCount--;
+        // unincrement
+        if (!subItem->isContainer()) _toySubItemCount--;
     }
 }
 
 QList<ToysTreeViewItem*> ToysTreeViewItem::containerSubItems() {
-   
     QList<ToysTreeViewItem*> list;
-    
-    for(const auto &elem : this->_subItems) {
-        if(elem->isContainer()) list.append(elem);
+
+    for (const auto &elem : this->_subItems) {
+        if (elem->isContainer()) list.append(elem);
     }
 
     return list;
-
 }
 
 QList<ToysTreeViewItem*> ToysTreeViewItem::toySubItems() {
-    
     auto filterType = this->insertType();
 
-    QList<ToysTreeViewItem*> list; 
-    for(const auto &elem : this->_subItems) {
-        if(filterType == elem->type()) list.append(elem);
+    QList<ToysTreeViewItem*> list;
+    for (const auto &elem : this->_subItems) {
+        if (filterType == elem->type()) list.append(elem);
     }
 
     return list;
-
 }
 
 void ToysTreeViewItem::rename(const QString &newName) {
     this->_name = newName;
 
-    //redefine paths
+    // redefine paths
     this->_definePath();
 }
 
@@ -260,22 +243,20 @@ void ToysTreeViewItem::rename(const QString &newName) {
 //////////////
 
 void ToysTreeViewItem::_defineFlags() {
-
-    //flags definition
-    switch(this->_type) {
-        
+    // flags definition
+    switch (this->_type) {
         case ToysTreeViewItem::Type::InternalContainer:
         case ToysTreeViewItem::Type::DownloadedContainer:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled);
             break;
-        
-        //disabled for now
+
+        // disabled for now
         case ToysTreeViewItem::Type::Text:
         case ToysTreeViewItem::Type::BackgroundContainer:
         case ToysTreeViewItem::Type::Background:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemNeverHasChildren);
             break;
-        
+
         case ToysTreeViewItem::Type::POI:
         case ToysTreeViewItem::Type::Event:
         case ToysTreeViewItem::Type::FreeDraw:
@@ -283,7 +264,7 @@ void ToysTreeViewItem::_defineFlags() {
         case ToysTreeViewItem::Type::FogOfWar:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsSelectable);
             break;
-        
+
         case ToysTreeViewItem::Type::Object:
         case ToysTreeViewItem::Type::FloorBrush:
         case ToysTreeViewItem::Type::NPC:
@@ -291,18 +272,18 @@ void ToysTreeViewItem::_defineFlags() {
         // case Background:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
             break;
-        
+
         case ToysTreeViewItem::Type::NPC_Container:
         case ToysTreeViewItem::Type::FloorBrushContainer:
         case ToysTreeViewItem::Type::ObjectContainer:
         // case BackgroundContainer:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDropEnabled);
             break;
-        
+
         case ToysTreeViewItem::Type::Folder:
             this->_flags = QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
             break;
-        
+
         default:
             this->_flags = 0;
             break;
@@ -310,38 +291,31 @@ void ToysTreeViewItem::_defineFlags() {
 }
 
 void ToysTreeViewItem::_definePath() {
-
-    //assimilated root, let default...
-    if(!this->_ancestor) {
+    // assimilated root, let default...
+    if (!this->_ancestor) {
         this->_path.clear();
         return;
     }
 
-    //generate path
+    // generate path
     QString path;
-    if(this->_isContainer) {
-        
-        //if is static, dont use name
-        if(this->_isStaticContainer) {      
+    if (this->_isContainer) {
+        // if is static, dont use name
+        if (this->_isStaticContainer) {
             path = QStringLiteral(u"/{%1}").arg((int)this->type());
-        } 
-        
-        //use name for other container types
-        else {
+        } else {  // use name for other container types
             path = "/" + this->displayName();
         }
-
     }
 
-    //return
+    // return
     this->_path = this->_ancestor->path() + path;
     this->_defineFullPath();
 
-    //update subItems paths
-    for(const auto &elem : this->_subItems) {
+    // update subItems paths
+    for (const auto &elem : this->_subItems) {
         elem->_definePath();
     }
-    
 }
 
 bool ToysTreeViewItem::_isAssetBased() {
@@ -349,9 +323,9 @@ bool ToysTreeViewItem::_isAssetBased() {
 }
 
 void ToysTreeViewItem::_defineFullPath() {
-    this->_fullPath = this->_isAssetBased() ? 
-                            this->_path + "/" + this->_name : 
-                            this->_path;
+    this->_fullPath = this->_isAssetBased() ?
+                    this->_path + "/" + this->_name :
+                    this->_path;
 }
 
 
@@ -360,48 +334,39 @@ void ToysTreeViewItem::_defineIconPath() {
 }
 
 void ToysTreeViewItem::_resetSubjacentItemsType(const ToysTreeViewItem::Type &replacingType, ToysTreeViewItem* target) {
-    
-    //update subItems
-    for(const auto elem : target->_subItems) {
-        
-        //continue recursive
-        if(elem->isContainer()) {
+    // update subItems
+    for (const auto elem : target->_subItems) {
+        // continue recursive
+        if (elem->isContainer()) {
             ToysTreeViewItem::_resetSubjacentItemsType(replacingType, elem);
-        } 
-        
-        //stop and set new type
-        else if(!elem->_isAssetBased()) {
+        } else if (!elem->_isAssetBased()) {  // stop and set new type
             elem->_setType(replacingType);
         }
-
     }
-
 }
 
 void ToysTreeViewItem::_defineAncestor(ToysTreeViewItem* ancestor) {
-    
-    //if already existing ancestor, tell him to deref subItem
-    if(this->_ancestor) {
+    // if already existing ancestor, tell him to deref subItem
+    if (this->_ancestor) {
         this->_ancestor->unrefSubItem(this);
 
-        //reset type if base insert type is different from ancestor's
+        // reset type if base insert type is different from ancestor's
         auto replacingType = ancestor->insertType();
-        if(this->insertType() != replacingType) {
-
-            //update self
-            if(this->_isAssetBased()) {
+        if (this->insertType() != replacingType) {
+            // update self
+            if (this->_isAssetBased()) {
                 this->_setType(replacingType);
             }
 
-            //update subItems
+            // update subItems
             ToysTreeViewItem::_resetSubjacentItemsType(replacingType, this);
         }
     }
 
-    //set new ancestor
+    // set new ancestor
     this->_ancestor = ancestor;
 
-    //paths-related redefinitions
+    // paths-related redefinitions
     this->_definePath();
     this->_defineRootStaticContainer();
     this->_defineInsertType();
@@ -422,7 +387,7 @@ void ToysTreeViewItem::_defineIsDeletable() {
 
 void ToysTreeViewItem::_defineIsInvokable() {
     this->_isInvokable = (
-        RPZAtom::assetBasedAtom.contains((RPZAtom::Type)this->_type) || 
+        RPZAtom::assetBasedAtom.contains((RPZAtom::Type)this->_type) ||
         _internalItemsTypes.contains(this->_type)
     );
 }
@@ -432,33 +397,30 @@ void ToysTreeViewItem::_defineAllowingSubFolderCreation() {
 }
 
 void ToysTreeViewItem::_defineRootStaticContainer() {
-     
-    //if no ancestor, let default
-    if(!this->_ancestor){
+    // if no ancestor, let default
+    if (!this->_ancestor) {
         this->_rootStaticContainerType = ToysTreeViewItem::Type::T_Unknown;
         return;
     }
 
-    //if self is bound
-    if(this->_isStaticContainer) {
+    // if self is bound
+    if (this->_isStaticContainer) {
         this->_rootStaticContainerType = this->_type;
         return;
     }
 
-    //fetch the information from ancestor
-    this->_rootStaticContainerType = this->_ancestor->_isStaticContainer ? 
-            this->_ancestor->type() : 
+    // fetch the information from ancestor
+    this->_rootStaticContainerType = this->_ancestor->_isStaticContainer ?
+            this->_ancestor->type() :
             this->_ancestor->rootStaticContainer();
 }
 
 
 void ToysTreeViewItem::_defineInsertType() {
-
     this->_insertType = _elemTypeByContainerType.value(
-        this->_rootStaticContainerType, 
+        this->_rootStaticContainerType,
         ToysTreeViewItem::Type::T_Unknown
     );
-
 }
 
 //////////////////
@@ -487,33 +449,29 @@ const QString ToysTreeViewItem::typeDescription(const ToysTreeViewItem::Type &ty
 }
 
 bool ToysTreeViewItem::isAcceptableNameChange(QString newName) {
-    
-    //strip name from slashes and double quotes
+    // strip name from slashes and double quotes
     newName.replace("\"", "");
     newName.replace("/", "");
 
-    //if empty name
-    if(newName.isEmpty()) return false;
+    // if empty name
+    if (newName.isEmpty()) return false;
 
-    //if same name, no changes
-    if(this->displayName() == newName) return false;
+    // if same name, no changes
+    if (this->displayName() == newName) return false;
 
     return true;
-    
 }
 
 void ToysTreeViewItem::sortByPathLengthDesc(QList<ToysTreeViewItem*> &listToSort) {
-    
-    //sort algorythm
+    // sort algorythm
     struct {
-        bool operator()(ToysTreeViewItem* a, ToysTreeViewItem* b) const {   
+        bool operator()(ToysTreeViewItem* a, ToysTreeViewItem* b) const {
             return a->_fullPath.count("/") > b->_fullPath.count("/");
-        }   
+        }
     } pathLength;
 
-    //sort
+    // sort
     std::sort(listToSort.begin(), listToSort.end(), pathLength);
-
 }
 
 QList<QString> ToysTreeViewItem::pathAsList(const QString &path) {
@@ -521,20 +479,18 @@ QList<QString> ToysTreeViewItem::pathAsList(const QString &path) {
 }
 
 ToysTreeViewItem::Type ToysTreeViewItem::pathChunktoType(const QString &chunk) {
-    
     auto expected = chunk.startsWith("{") && chunk.endsWith("}");
-    if(!expected) {
+    if (!expected) {
         qDebug() << "Assets : ignoring path, as its structure is not expected. >> " << qUtf8Printable(chunk);
         return ToysTreeViewItem::Type::T_Unknown;
     }
-    
-    //type cast and get element type
+    // type cast and get element type
     auto cp_chunk = chunk;
     cp_chunk.replace("{", "");
     cp_chunk.replace("}", "");
     auto castOk = false;
     auto staticCType = (ToysTreeViewItem::Type)cp_chunk.toInt(&castOk);
-    if(!castOk) {
+    if (!castOk) {
         qDebug() << "Assets : ignoring path, as static container type was impossible to deduce. >> " << qUtf8Printable(cp_chunk);
         return ToysTreeViewItem::Type::T_Unknown;
     }
@@ -543,53 +499,49 @@ ToysTreeViewItem::Type ToysTreeViewItem::pathChunktoType(const QString &chunk) {
 }
 
 QSet<ToysTreeViewItem*> ToysTreeViewItem::filterTopMostOnly(QList<ToysTreeViewItem*> elemsToFilter) {
-
     QSet<ToysTreeViewItem*> higher;
-    while(elemsToFilter.count()) {
-
-        //take first
-        if(!higher.count()) {
+    while (elemsToFilter.count()) {
+        // take first
+        if (!higher.count()) {
             higher.insert(elemsToFilter.takeFirst());
             continue;
         }
 
-        //compare
+        // compare
         auto toCompareTo = elemsToFilter.takeFirst();
             auto compare_path = toCompareTo->_fullPath;
             auto compare_length = compare_path.length();
-        
+
         auto isForeigner = true;
 
-        //iterate
+        // iterate
         QSet<ToysTreeViewItem*> obsoletePointers;
-        for(const auto &st : higher) {
-
+        for (const auto &st : higher) {
             auto st_path = st->_fullPath;
             auto st_length = st_path.length();
 
             auto outputArrayContainsBuffered = st_path.startsWith(compare_path);
 
-            //if 
-            if(isForeigner && (outputArrayContainsBuffered || compare_path.startsWith(st_path))) {
+            // if
+            if (isForeigner && (outputArrayContainsBuffered || compare_path.startsWith(st_path))) {
                 isForeigner = false;
             }
 
-            //must be deleted, compared path must be prefered
-            if(outputArrayContainsBuffered && st_length > compare_length) {
+            // must be deleted, compared path must be prefered
+            if (outputArrayContainsBuffered && st_length > compare_length) {
                 obsoletePointers.insert(st);
             }
         }
 
-        //if no presence or better than a stored one
-        if(isForeigner || obsoletePointers.count()) {
+        // if no presence or better than a stored one
+        if (isForeigner || obsoletePointers.count()) {
             higher.insert(toCompareTo);
         }
 
-        //if obsolete pointers have been marked, remove them from the higherList and add the compared one to it
-        if(obsoletePointers.count()) {
+        // if obsolete pointers have been marked, remove them from the higherList and add the compared one to it
+        if (obsoletePointers.count()) {
             higher.subtract(obsoletePointers);
         }
-
     }
 
     return higher;

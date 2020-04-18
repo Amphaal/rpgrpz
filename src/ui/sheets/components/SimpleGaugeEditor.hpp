@@ -108,7 +108,7 @@ class SimpleGaugeEditor : public QWidget {
             return g;
         }
     
-    protected:
+ protected:
         QHBoxLayout* _layoutToInsertTo = nullptr;
 
  private:

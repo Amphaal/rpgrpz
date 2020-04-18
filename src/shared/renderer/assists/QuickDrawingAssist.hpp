@@ -86,7 +86,7 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
             this->_resetTempDrawing();
         }
 
-    protected:
+ protected:
         virtual void connectingToServer() {
             
             QObject::connect(

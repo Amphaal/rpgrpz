@@ -21,6 +21,8 @@
 
 #include <QPainterPath>
 
+#include <algorithm>
+
 #include "src/shared/models/RPZAtom.h"
 
 #include "src/shared/renderer/graphics/MapViewGraphics.h"

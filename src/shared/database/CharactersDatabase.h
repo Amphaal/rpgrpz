@@ -44,7 +44,7 @@ class CharactersDatabase : public QObject, public JSONDatabase {
         void removeCharacter(const RPZCharacter::Id &toRemove);
         void updateCharacter(const RPZCharacter &updated);
 
-    protected:
+ protected:
         JSONDatabase::Version apiVersion() const override;
         JSONDatabase::Model _getDatabaseModel() override;
         void _setupLocalData() override;

@@ -68,7 +68,7 @@ class MV_Manipulation {
 
         }
 
-    protected:
+ protected:
         virtual void onViewRectChange() = 0;
 
         void focusItem(QGraphicsItem* toFocus) {

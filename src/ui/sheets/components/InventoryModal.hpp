@@ -99,7 +99,7 @@ class InventorySlotModal : public QDialog {
         return this->_targets.value(i);
     }
 
-    protected:
+ protected:
         QVBoxLayout* _helperLayout = nullptr;
         QMap<QString, QPair<int, RPZInventorySlot>> _toBeAltered;
         virtual void _loadHelpersFromTargetInventorySelection() = 0;

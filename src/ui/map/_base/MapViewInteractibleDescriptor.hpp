@@ -150,7 +150,7 @@ class MapViewInteractibleDescriptor : public QWidget {
 
         }
 
-    protected:
+ protected:
         void paintEvent(QPaintEvent* event) {
             
             QPainter customPainter(this);

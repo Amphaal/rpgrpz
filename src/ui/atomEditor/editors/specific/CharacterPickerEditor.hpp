@@ -58,7 +58,7 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
             this->_fillComboDefaultValues(defaultValues, context);
         }
 
-    protected:
+ protected:
         void connectingToServer() override {
             
             QObject::connect(

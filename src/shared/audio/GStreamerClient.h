@@ -92,7 +92,7 @@ class GStreamerClient : public QObject {
         void playStateChanged(bool isPlaying);
         void bufferingPercentChanged(int bufferPrc);
 
-    protected:
+ protected:
         void _initGst();
     
  private:

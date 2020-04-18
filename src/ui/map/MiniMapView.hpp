@@ -193,7 +193,7 @@ class MiniMapView : public QGraphicsView {
             this->_master->focusFromMinimap(scenePos);
         }
 
-    protected:
+ protected:
         void keyPressEvent(QKeyEvent *event) override {};
         
         void wheelEvent(QWheelEvent * event) override {

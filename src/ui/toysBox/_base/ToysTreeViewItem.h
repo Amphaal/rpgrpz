@@ -25,6 +25,8 @@
 #include <QModelIndex>
 #include <QDebug>
 
+#include <algorithm>
+
 #include "src/shared/models/RPZAtom.h"
 #include "src/shared/models/toy/RPZAsset.hpp"
 
@@ -110,7 +112,7 @@ class ToysTreeViewItem {
 
         friend QDebug operator<<(QDebug debug, const ToysTreeViewItem &c);
 
-    protected:
+ protected:
         ToysTreeViewItem(ToysTreeViewItem* ancestor, const ToysTreeViewItem::Type &type, const QString &name);
 
         QList<ToysTreeViewItem*> _subItems;

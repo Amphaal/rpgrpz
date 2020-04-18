@@ -83,7 +83,7 @@ class ToysTreeViewModel : public QAbstractItemModel, public AlterationInteractor
         /// END REIMPLEMENTATION ///
         ////////////////////////////
 
-    protected:
+ protected:
         /////////////////////
         /// DROP HANDLING ///
         /////////////////////

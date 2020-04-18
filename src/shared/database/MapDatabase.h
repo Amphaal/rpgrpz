@@ -71,7 +71,7 @@ class MapDatabase : public JSONDatabase {
         const RPZMap<RPZAtom>& atoms() const;
         const QSet<RPZAsset::Hash>& usedAssetHashes() const;
 
-    protected:
+ protected:
         JSONDatabase::Version apiVersion() const override;
         const QJsonObject _updatedInnerDb() override;
 

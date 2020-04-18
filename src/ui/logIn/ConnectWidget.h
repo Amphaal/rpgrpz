@@ -45,7 +45,7 @@ class ConnectWidget : public QWidget, public ConnectivityObserver {
 
         ConnectWidget(QWidget *parent = nullptr);
 
-    protected:
+ protected:
         void connectingToServer() override;
         void connectionClosed(bool hasInitialMapLoaded) override;
 

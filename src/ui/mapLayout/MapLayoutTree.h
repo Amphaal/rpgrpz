@@ -51,7 +51,7 @@ class MapLayoutTree : public QTreeView, public AtomSelector {
         const QList<RPZAtom::Id> selectedIds() const override;
         MapLayoutModel* mlModel = nullptr;
 
-    protected:
+ protected:
         void contextMenuEvent(QContextMenuEvent *event) override;
         void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
 

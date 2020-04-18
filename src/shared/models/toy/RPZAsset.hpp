@@ -127,7 +127,7 @@ class RPZAsset : public QVariantHash {
             this->insert(QStringLiteral(u"name"), newName);
         }
 
-    protected:
+ protected:
         bool _integrateFrom(const QByteArray &assetAsRawBytes, const RPZAsset &asset) const {
 
             auto dest = asset.filepath(false);

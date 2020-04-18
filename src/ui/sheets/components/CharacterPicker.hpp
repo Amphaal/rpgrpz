@@ -110,7 +110,7 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
         void requestCharacterDeletion(const RPZCharacter::Id &idToRemove);
         void requestNewCharacter();
 
-    protected:
+ protected:
         void connectingToServer() override {
 
             this->_loadEmpty();

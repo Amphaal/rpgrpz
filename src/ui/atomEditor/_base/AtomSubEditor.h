@@ -51,7 +51,7 @@ class AtomSubEditor : public QWidget {
         void valueConfirmedForPayload(const RPZAtom::Updates &updates);
         void valueConfirmedForPreview(const RPZAtom::Parameter &parameter, const QVariant &value);
 
-    protected:
+ protected:
         QList<RPZAtom::Parameter> _params;
 
         AtomEditorLineDescriptor* _descr = nullptr;

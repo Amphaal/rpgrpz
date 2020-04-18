@@ -35,7 +35,7 @@ class ConnectivityObserver {
 
         void receivedConnectionCloseSignal(bool hasInitialMapLoaded);
 
-    protected:
+ protected:
         static inline RPZClient* _rpzClient = nullptr;
         virtual void connectingToServer() {}
         virtual void connectionClosed(bool hasInitialMapLoaded) {}

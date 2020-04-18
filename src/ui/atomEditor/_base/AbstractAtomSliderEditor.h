@@ -46,7 +46,7 @@ class AbstractAtomSliderEditor : public AtomSubEditor {
         QTimer _commitTimer;
         QSlider* _slider = nullptr;
 
-    protected: 
+ protected: 
         QHBoxLayout* _widgetLineLayout = nullptr;
         QAbstractSpinBox* _spin = nullptr;
         virtual QAbstractSpinBox* _generateSpinBox() const = 0;

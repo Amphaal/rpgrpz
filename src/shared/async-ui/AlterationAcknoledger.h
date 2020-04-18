@@ -36,7 +36,7 @@ class AlterationAcknoledger : public QObject, public AlterationInteractor {
     public slots:
         void connectToAlterationEmissions();
 
-    protected:
+ protected:
         virtual void _handleAlterationRequest(const AlterationPayload &payload) = 0;
 
     private slots:

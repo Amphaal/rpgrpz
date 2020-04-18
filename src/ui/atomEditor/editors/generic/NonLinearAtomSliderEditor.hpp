@@ -31,7 +31,7 @@ class NonLinearAtomSliderEditor : public AbstractAtomSliderEditor {
             this->_widgetLineLayout->addWidget(this->_spin);
         }
 
-    protected: 
+ protected: 
         QAbstractSpinBox* _generateSpinBox() const override {
             
             auto spin = new QDoubleSpinBox;

@@ -75,7 +75,7 @@ class AtomsWielderPayload : public AtomRelatedPayload {
 
         };
 
-        protected:
+     protected:
             explicit AtomsWielderPayload(const QVariantHash &hash) : AtomRelatedPayload(hash) {}
             AtomsWielderPayload(const MapDatabase &map) : AtomRelatedPayload(Payload::Alteration::Reset) {
                 this->_setAssetHashes(map.usedAssetHashes());

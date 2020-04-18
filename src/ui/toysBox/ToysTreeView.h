@@ -52,7 +52,7 @@ class ToysTreeView : public QTreeView, public ConnectivityObserver, public Alter
         void _onReceivedAsset(RPZAssetImportPackage package);
         void _handleAlterationRequest(const AlterationPayload &payload);
 
-    protected:
+ protected:
         void contextMenuEvent(QContextMenuEvent *event) override;
         void keyPressEvent(QKeyEvent * event) override;
         void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;

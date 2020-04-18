@@ -235,7 +235,7 @@ class MapLayoutModelBase : public QAbstractItemModel {
 
         }
 
-    protected:
+ protected:
         QHash<RPZAtom::Id, MapLayoutAtom*> _atomsByAtomId;
         QHash<RPZAsset::Hash, QSet<RPZAtom::Id>> _atomsByAssetHash;
         QMap<RPZAtom::Category, QMap<int, MapLayoutCategory*>> _categories;

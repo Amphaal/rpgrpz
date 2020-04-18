@@ -24,7 +24,7 @@
 
 class RPZTestable {
 
-    protected:
+ protected:
         QPainter::CompositionMode _testMode = (QPainter::CompositionMode)0;
         void _initTestCombo() {
             

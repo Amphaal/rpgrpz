@@ -40,7 +40,7 @@ class BaseUsersModel : public QAbstractListModel, public ConnectivityObserver {
 
         }
 
-    protected:
+ protected:
         RPZMap<RPZUser> _users;
 
         virtual bool _isUserInvalidForInsert(const RPZUser &user) const = 0;

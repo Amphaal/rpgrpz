@@ -36,7 +36,7 @@ class AtomsContextualMenuHandler {
 
         void invokeMenu(const QList<RPZAtom::Id> &toManipulate, const QPoint &whereToDisplay);
 
-    protected:
+ protected:
         void _moveAtomsToLayer(int layer);
         void _removeAtoms();
         void _undo();
