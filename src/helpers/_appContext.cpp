@@ -19,28 +19,24 @@
 
 #include "_appContext.h"
 
-void AppContext::configureApp(QCoreApplication &app) {
-    
-    //context preparation
-    app.setApplicationName(QString(APP_NAME));
-    app.setOrganizationName(QString(APP_PUBLISHER));
-    
-    //define context
+void AppContext::configureApp(QCoreApplication* app) {
+    // context preparation
+    app->setApplicationName(QString(APP_NAME));
+    app->setOrganizationName(QString(APP_PUBLISHER));
+
+    // define context
     auto args = AppContext::getOptionArgs(app);
 
-    //if custom context is set
-    if(args.contains(QStringLiteral(u"randomContext"))) {
+    // if custom context is set
+    if (args.contains(QStringLiteral(u"randomContext"))) {
         return AppContext::initRandomContext();
-    } 
-    
-    else if(args.contains(QStringLiteral(u"customContext"))) {
+    } else if (args.contains(QStringLiteral(u"customContext"))) {
         auto customContext = args.value(QStringLiteral(u"customContext"));
         return AppContext::initCustomContext(customContext);
     }
 
-    //else default init
+    // else default init
     AppContext::init();
-
 }
 
 void AppContext::defineMapWidget(QGLWidget* mapGLWidget) {
@@ -63,57 +59,52 @@ qreal AppContext::pointPerCentimeters() {
     return _ppcm;
 }
 void AppContext::definePPcm(QPaintDevice* device) {
-    _ppcm = (double)device->logicalDpiX() / 2.54;
+    _ppcm = static_cast<double>(device->logicalDpiX()) / 2.54;
 }
 
-void AppContext::installTranslations(QApplication &app) {
-    
-    auto translationsPath = app.applicationDirPath() + QDir::separator() + "translations";
+void AppContext::installTranslations(QApplication* app) {
+    auto translationsPath = app->applicationDirPath() + QDir::separator() + "translations";
     auto locale = QLocale::system();
-    
-    //Qt
+
+    // Qt
     if (_qtTranslator.load(locale, "qt", "_", translationsPath)) {
-        auto installed = app.installTranslator(&_qtTranslator);
-        if(installed) qDebug() << "QT translation installed !";
+        auto installed = app->installTranslator(&_qtTranslator);
+        if (installed) qDebug() << "QT translation installed !";
     }
 
-    //app
+    // app
     if (_appTranslator.load(locale, "", "", translationsPath)) {
-        auto installed = app.installTranslator(&_appTranslator);
-        if(installed) qDebug() << "App translation installed !";
+        auto installed = app->installTranslator(&_appTranslator);
+        if (installed) qDebug() << "App translation installed !";
     }
-
 }
 
 AppSettings* AppContext::settings() {
-
-    if(!_settings) {
+    if (!_settings) {
         auto path = getAppDataLocation() + APP_SETTINGS_FILENAME;
         _settings = new AppSettings(path);
     }
-    
+
     return _settings;
 }
 
 const QString AppContext::getWindowTitle() {
-    
     QString stdTitle = APP_FULL_DENOM;
-    
+
     #ifdef _DEBUG
         stdTitle = "DEBUG - " + stdTitle;
     #endif
 
     return stdTitle;
-
 }
 
 const QString AppContext::_defaultAppDataLocation() {
     return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-} 
+}
 
-QHash<QString, QString> AppContext::getOptionArgs(QCoreApplication &source) {
-    auto args = source.arguments();
-    if(args.count() < 2) return QHash<QString, QString>();
+QHash<QString, QString> AppContext::getOptionArgs(QCoreApplication* source) {
+    auto args = source->arguments();
+    if (args.count() < 2) return QHash<QString, QString>();
     return _getOptionArgs(args.value(1));
 }
 
@@ -124,7 +115,7 @@ QHash<QString, QString> AppContext::_getOptionArgs(const QString &argsAsStr) {
 
     auto splitMatches = split.globalMatch(argsAsStr);
     while (splitMatches.hasNext()) {
-        QRegularExpressionMatch splitMatch = splitMatches.next(); //next
+        QRegularExpressionMatch splitMatch = splitMatches.next();  // next
 
         auto arg = splitMatch.captured();
         auto kvpSplit = arg.split("=", QString::SkipEmptyParts);
@@ -134,44 +125,33 @@ QHash<QString, QString> AppContext::_getOptionArgs(const QString &argsAsStr) {
 
         out.insert(key, value);
     }
-    
+
     return out;
 }
 
 void AppContext::clearFileSharingFolder() {
-    
     QDir dir(getFileSharingFolderLocation());
     dir.setNameFilters(QStringList() << "*.*");
     dir.setFilter(QDir::Files);
-    
-    foreach(QString dirFile, dir.entryList())
-    {
+
+    foreach(QString dirFile, dir.entryList()) {
         dir.remove(dirFile);
     }
-
 }
 
 QHash<QString, QString> AppContext::getOptionArgs(int argc, char** argv) {
-    
-    if(argc < 2) return QHash<QString, QString>();
-
-    return _getOptionArgs(
-        QString(argv[1])
-    );
-
+    if (argc < 2) return QHash<QString, QString>();
+    return _getOptionArgs(QString(argv[1]));
 }
 
 void AppContext::initRandomContext() {
-    
     auto templateStr = QStringLiteral(u"%1/r_%2");
-    auto randomSF = QString::number(
-        SnowFlake::get()->nextId()
-    );
+    auto randomSF = QString::number(SnowFlake::get()->nextId());
 
     auto randomPath = templateStr
                         .arg(_defaultAppDataLocation())
                         .arg(randomSF);
-                        
+
     init(randomPath);
 }
 
@@ -181,23 +161,22 @@ void AppContext::initCustomContext(const QString &customContextSuffix) {
 }
 
 void AppContext::init(const QString &customContext) {
-    
-    if(!customContext.isEmpty()) {
+    if (!customContext.isEmpty()) {
         _appDataLocation = customContext;
     } else {
         _appDataLocation = _defaultAppDataLocation();
     }
-    
-    //update message handler message handler
+
+    // update message handler message handler
     qInstallMessageHandler(LogWriter::customMO);
-    
-    //log SLL lib loading
+
+    // log SLL lib loading
     qDebug() << qUtf8Printable(QSslSocket::sslLibraryBuildVersionString());
-    qDebug() << qUtf8Printable(QSslSocket::sslLibraryVersionString());   
-    
+    qDebug() << qUtf8Printable(QSslSocket::sslLibraryVersionString());
+
     qDebug() << "Context : using" << _appDataLocation;
 
-    //create default paths
+    // create default paths
     _makeSureDirPathExists(getAppDataLocation());
     _makeSureDirPathExists(getAssetsFolderLocation());
     _makeSureDirPathExists(getMapsFolderLocation());
@@ -206,11 +185,9 @@ void AppContext::init(const QString &customContext) {
 
     clearFileSharingFolder();
 
-    //crashpad activated if release app
+    // crashpad activated if release app
     // initSentry();
-
-} 
-
+}
 
 // void AppContext::initSentry() {
 
@@ -237,7 +214,7 @@ void AppContext::init(const QString &customContext) {
 void AppContext::_makeSureDirPathExists(const QString &path) {
     struct stat buffer;
     auto pathExists = (stat(qUtf8Printable(path), &buffer) == 0);
-    if(!pathExists) QDir().mkpath(path);
+    if (!pathExists) QDir().mkpath(path);
 }
 
 const QString AppContext::getAppDataLocation() {
