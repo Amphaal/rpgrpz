@@ -502,7 +502,7 @@ target_sources(appExec PUBLIC
 
 #define translation files
 list(APPEND APP_TRANSLATION_FILES 
-    "src/_i18n/fr.xml"
+    "src/_i18n/fr.ts"
 )
 
 #updates TS files from sources
