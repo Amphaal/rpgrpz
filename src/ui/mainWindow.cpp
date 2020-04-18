@@ -20,11 +20,10 @@
 #include "mainWindow.h"
 
 MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
-
-    //start hint thread
+    // start hint thread
     HintThread::init();
 
-    //bind AlterationHandler / ProgressTracker / ConnectivityObserverOchestrator to UI Thread
+    // bind AlterationHandler / ProgressTracker / ConnectivityObserverOchestrator to UI Thread
     AlterationHandler::get();
     ProgressTracker::get();
     ConnectivityObserverSynchronizer::get();
@@ -32,34 +31,31 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
     //
     AppContext::definePPcm(this);
 
-    //init databases
+    // init databases
     AssetsDatabase::get();
     CharactersDatabase::get();
 
-    //init...
+    // init...
     this->_initUI();
     this->_initConnectivity();
 
-    //initial show
+    // initial show
     this->_loadWindowState();
     this->_triggerBarsVisibility();
 
-    //load default map
+    // load default map
     QMetaObject::invokeMethod(HintThread::hint(), "loadDefaultRPZMap");
-    
-    //start the update check
-    this->_updateIntegrator->checkForAppUpdates();
 
+    // start the update check
+    this->_updateIntegrator->checkForAppUpdates();
 }
 
 MainWindow::~MainWindow() {
-    if(this->_rpzServer) this->_rpzServer->thread()->quit();
+    if (this->_rpzServer) this->_rpzServer->thread()->quit();
 
-    //unbind network client from ui
+    // unbind network client from ui
     ConnectivityObserver::disconnectClient();
-    
 }
-
 
 void MainWindow::connectingToServer() {
     QObject::connect(
@@ -69,12 +65,9 @@ void MainWindow::connectingToServer() {
 }
 
 void MainWindow::_onGameSessionReceived(const RPZGameSession &gameSession) {
-    
     Q_UNUSED(gameSession)
-
     auto mode = Authorisations::isHostAble() ? UIMode::Full : UIMode::Player;
     this->_setupAppUI(mode);
-
 }
 
 void MainWindow::connectionClosed(bool hasInitialMapLoaded) {
@@ -82,10 +75,8 @@ void MainWindow::connectionClosed(bool hasInitialMapLoaded) {
 }
 
 void MainWindow::keyPressEvent(QKeyEvent * event) {
-    
-    switch(event->key()) {
-
-        //unselect whatever is selected
+    switch (event->key()) {
+        // unselect whatever is selected
         case Qt::Key::Key_Escape: {
             this->_mapView->resetTool();
             this->_audioManager->player()->playlist()->clearSelection();
@@ -94,21 +85,17 @@ void MainWindow::keyPressEvent(QKeyEvent * event) {
         break;
 
         case Qt::Key_Alt: {
-
             AppContext::settings()->setMainWindowBarsShown(
                 !AppContext::settings()->mainWindowBarsShown()
             );
 
             this->_triggerBarsVisibility();
-
         }
         break;
 
         default:
         break;
-
     }
-    
 }
 
 void MainWindow::_triggerBarsVisibility() {
@@ -118,20 +105,18 @@ void MainWindow::_triggerBarsVisibility() {
 }
 
 void MainWindow::_barVisibilityToolTip() {
-    
-    //fix tooltip pos
+    // fix tooltip pos
     auto pos = this->geometry().bottomRight();
     pos.setY(pos.y() - 37);
 
-    //display it
+    // display it
     QToolTip::showText(
-        pos, 
+        pos,
         tr("Press ALT key to display the menu !"),
         this,
         this->geometry(),
         3000
     );
-
 }
 
 void MainWindow::_saveWindowState() {
@@ -142,15 +127,14 @@ void MainWindow::_saveWindowState() {
 }
 
 void MainWindow::_loadWindowState() {
-
-    //default state to save
-    if(!AppContext::settings()->childGroups().contains(QStringLiteral(u"mainWindow"))) {
+    // default state to save
+    if (!AppContext::settings()->childGroups().contains(QStringLiteral(u"mainWindow"))) {
         this->showMaximized();
         this->_saveWindowState();
         return;
     }
 
-    //load...
+    // load...
     AppContext::settings()->beginGroup(QStringLiteral(u"mainWindow"));
     this->restoreGeometry(
         AppContext::settings()->value(QStringLiteral(u"windowGeometry")).toByteArray()
@@ -161,27 +145,24 @@ void MainWindow::_loadWindowState() {
     AppContext::settings()->endGroup();
 
     this->show();
-
 }
 
-//handle clean close
+// handle clean close
 void MainWindow::closeEvent(QCloseEvent *event) {
-
-    //may save map changes
+    // may save map changes
     HintThread::hint()->mayWantToSavePendingState(this);
 
-    //save window state
+    // save window state
     this->_saveWindowState();
-    
-    //normal close
+
+    // normal close
     QMainWindow::closeEvent(event);
 }
 
 void MainWindow::_initConnectivity() {
-    
-    //check if we must use server capabilities
+    // check if we must use server capabilities
     auto appArgs = AppContext::getOptionArgs(QApplication::instance());
-    if(appArgs.contains(QStringLiteral(u"noServer"))) {    
+    if (appArgs.contains(QStringLiteral(u"noServer"))) {
         this->_mustLaunchServer = false;
         qDebug() << "RPZServer : No server to start because the user said so.";
         this->_sb->updateServerStateLabel(tr("No"), RPZStatusLabel::State::Finished);
@@ -190,15 +171,15 @@ void MainWindow::_initConnectivity() {
     ////////////////////////////
     /// Connectivity helper ! //
     ////////////////////////////
-    
+
     this->_ipHelper = new ConnectivityHelper(this);
 
     QObject::connect(
-        this->_ipHelper, &ConnectivityHelper::remoteAddressStateChanged, 
+        this->_ipHelper, &ConnectivityHelper::remoteAddressStateChanged,
         this->_sb, &RPZStatusBar::updateExtIPLabel
     );
     QObject::connect(
-        this->_ipHelper, &ConnectivityHelper::uPnPStateChanged, 
+        this->_ipHelper, &ConnectivityHelper::uPnPStateChanged,
         this->_sb, &RPZStatusBar::updateUPnPLabel
     );
 
@@ -208,70 +189,64 @@ void MainWindow::_initConnectivity() {
     /// RPZServer ! //
     ////////////////////
 
-    //si serveur est local et lié à l'app
-    if(this->_mustLaunchServer) {    
-
+    // si serveur est local et lié à l'app
+    if (this->_mustLaunchServer) {
         this->_rpzServer = new RPZServer;
 
         this->_sb->bindServerIndicators();
 
-        //tell the UI when the server is up
+        // tell the UI when the server is up
         QObject::connect(
             this->_rpzServer, &RPZServer::listening,
             [&]() {
                 QMetaObject::invokeMethod(this->_sb, "updateServerStateLabel",
-                    Q_ARG(QString, "OK"), 
+                    Q_ARG(QString, "OK"),
                     Q_ARG(RPZStatusLabel::State, RPZStatusLabel::State::Finished)
                 );
             }
         );
 
-        //tell the UI when the server is down
+        // tell the UI when the server is down
         QObject::connect(
             this->_rpzServer, &RPZServer::error,
             [&]() {
-
                 QMetaObject::invokeMethod(this->_sb, "updateServerStateLabel",
-                    Q_ARG(QString, tr("Error")), 
+                    Q_ARG(QString, tr("Error")),
                     Q_ARG(RPZStatusLabel::State, RPZStatusLabel::State::Error)
                 );
-
                 this->_rpzServer = nullptr;
-
             }
         );
 
-        //create a separate thread to run the server into
+        // create a separate thread to run the server into
         auto serverThread = new QThread;
         serverThread->setObjectName(QStringLiteral(u"RPZServer Thread"));
         this->_rpzServer->moveToThread(serverThread);
-        
-        //events...
+
+        // events...
         QObject::connect(
-            serverThread, &QThread::started, 
+            serverThread, &QThread::started,
             this->_rpzServer, &RPZServer::run
         );
 
         QObject::connect(
-            this->_rpzServer, &RPZServer::stopped,  
+            this->_rpzServer, &RPZServer::stopped,
             serverThread, &QThread::quit
         );
 
         QObject::connect(
-            serverThread, &QThread::finished, 
+            serverThread, &QThread::finished,
             this->_rpzServer, &QObject::deleteLater
         );
 
         QObject::connect(
-            serverThread, &QThread::finished, 
+            serverThread, &QThread::finished,
             serverThread, &QObject::deleteLater
         );
 
-        //start
+        // start
         serverThread->start();
-
     }
-
 }
 
 
@@ -280,43 +255,40 @@ void MainWindow::_initConnectivity() {
 //////////////
 
 void MainWindow::_initUI() {
-    
     this->setWindowTitle(AppContext::getWindowTitle());
     this->setWindowIcon(QIcon(QStringLiteral(u":/icons/app/app_32.png")));
 
-    //central widget
+    // central widget
     auto centralW = new RestoringSplitter("MainWindowSplitter");
     centralW->setContentsMargins(5, 5, 5, 5);
     this->setCentralWidget(centralW);
 
-    //specific componements
+    // specific componements
     this->_initUIStatusBar();
     this->_initAppComponents();
     this->_initAppUnmovableUI();
     this->_setupAppUI(_defaultAppUIMode);
     this->_initUIMenu();
 
-    //visibility
+    // visibility
     this->_triggerBarsVisibility();
 
-    //default focus
+    // default focus
     this->_mapView->setFocus();
-}   
+}
 
 void MainWindow::_initAppUnmovableUI() {
-    
-    //left tabs
+    // left tabs
     this->_leftTab = new QTabWidget(this);
     this->_leftTab->addTab(this->_toys, QIcon(QStringLiteral(u":/icons/app/tabs/box.png")), tr("Toy box"));
 
-    //right tabs
+    // right tabs
     this->_rightTab = new QTabWidget(this);
     this->_rightTab->setLayoutDirection(Qt::LayoutDirection::RightToLeft);
-    
+
     auto chatLogWidget = [=]() {
-        
         auto logLayout = new QVBoxLayout;
-        logLayout->addWidget(this->_connectWidget); 
+        logLayout->addWidget(this->_connectWidget);
         logLayout->addWidget(this->_usersView);
         logLayout->addWidget(this->_chatWidget, 1);
 
@@ -328,18 +300,17 @@ void MainWindow::_initAppUnmovableUI() {
         auto CCw = new QWidget(this);
         CCw->setLayout(CCwLayout);
         return CCw;
-
     }();
-    
+
     auto gameHubTabIndex = this->_rightTab->addTab(chatLogWidget, QIcon(QStringLiteral(u":/icons/app/tabs/chat.png")), tr("Game Hub"));
     this->_rightTab->addTab(this->_docShareManager, QIcon(QStringLiteral(u":/icons/app/tabs/fileShare.png")), tr("Documents Share"));
 
-    //update gamehub tab name
+    // update gamehub tab name
     QObject::connect(
         this->_chatWidget->messageLog(), &MessagesLog::notificationCountUpdated,
         [=](int newCount) {
             auto txt = tr("Game Hub");
-            if(newCount) txt = QString("(%1) ").arg(newCount) + txt;
+            if (newCount) txt = QString("(%1) ").arg(newCount) + txt;
             this->_rightTab->setTabText(gameHubTabIndex, txt);
         }
     );
@@ -361,14 +332,14 @@ void MainWindow::_initAppUnmovableUI() {
             toolbarLayout->addStretch(0);
             toolbarLayout->addWidget(this->_mapTools);
             toolbarLayout->addWidget(this->_mapActions);
-            
+
         layout->addWidget(toolbar, 0, Qt::AlignTop);
         layout->addWidget(this->_mapViewContainer, 1);
 
         return designer;
     }();
 
-    //final
+    // final
     auto centralWidget = (RestoringSplitter*)this->centralWidget();
     centralWidget->addWidget(this->_leftTab);
     centralWidget->addWidget(designerWidget);
@@ -377,42 +348,37 @@ void MainWindow::_initAppUnmovableUI() {
     centralWidget->setStretchFactor(1, 1);
     centralWidget->setStretchFactor(2, 0);
     centralWidget->restore();
-
 }
 
 void MainWindow::_setupAppUI(UIMode mode) {
-    
-    if(mode == this->_currentAppUIMode) return;
+    if (mode == this->_currentAppUIMode) return;
 
     auto removeFromTab = [](QTabWidget* tab, QWidget* toRemove) {
         auto index = tab->indexOf(toRemove);
-        if(index == -1) return;
+        if (index == -1) return;
         tab->removeTab(index);
     };
 
     auto addCharacterEditor = [=](QTabWidget* tab) {tab->addTab(this->_characterEditor, QIcon(QStringLiteral(u":/icons/app/tabs/scroll.png")), tr("Sheets"));};
     auto addPlaylistAudioManager = [=](QTabWidget* tab) { tab->addTab(this->_audioManager, QIcon(QStringLiteral(u":/icons/app/tabs/playlist.png")), tr("Audio")); };
 
-    switch(mode) {
-        
+    switch (mode) {
         case UIMode::Full: {
             this->_leftTab->setVisible(true);
 
             removeFromTab(this->_rightTab, this->_audioManager);
             addPlaylistAudioManager(this->_leftTab);
             this->_audioManager->player()->setVisible(true);
-            
+
             removeFromTab(this->_rightTab, this->_characterEditor);
             addCharacterEditor(this->_leftTab);
 
             this->_rightTab->insertTab(0, this->_mlManager, QIcon(QStringLiteral(u":/icons/app/tabs/atom.png")), tr("Map Atoms"));
             this->_rightTab->insertTab(0, this->_atomEditManager, QIcon(QStringLiteral(u":/icons/app/tabs/config.png")), tr("Atom Editor"));
-
         }
         break;
 
         case UIMode::Player: {
-
             this->_leftTab->setVisible(false);
 
             removeFromTab(this->_leftTab, this->_characterEditor);
@@ -424,22 +390,18 @@ void MainWindow::_setupAppUI(UIMode mode) {
 
             removeFromTab(this->_rightTab, this->_mlManager);
             removeFromTab(this->_rightTab, this->_atomEditManager);
-
         }
         break;
 
         default:
         break;
-
     }
 
     this->_currentAppUIMode = mode;
-
 }
 
 void MainWindow::_initAppComponents() {
-    
-    //init components
+    // init components
         this->_mapViewContainer = new QWidget(this);
         this->_mapViewContainer->setLayout(new OverlayingLayout);
 
@@ -448,14 +410,14 @@ void MainWindow::_initAppComponents() {
         this->_mapView = new MapView(this);
         this->_minimap = new MiniMapView(this->_mapView, this);
         this->_mapHelpers = new MapHelpers(this->_minimap, this);
-        
+
         this->_interactibleDescr = new MapViewInteractibleDescriptor(this);
 
         this->_mapViewContainer->layout()->addWidget(this->_mapView);
         this->_mapViewContainer->layout()->addWidget(this->_interactibleDescr);
         this->_mapViewContainer->layout()->setAlignment(this->_interactibleDescr, Qt::AlignTop);
         this->_mapViewContainer->layout()->addWidget(this->_minimap);
-    
+
     this->_docShareManager = new DocShareListView(this);
     this->_chatWidget = new ChatWidget(this);
     this->_audioManager = new PlaylistAudioManager(this);
@@ -466,7 +428,7 @@ void MainWindow::_initAppComponents() {
     this->_characterEditor = new CharacterEditor(this);
     this->_usersView = new StandardUsersListView(this);
     this->_playersView = new PlayersListView(this);
-    
+
     //
     // EVENTS
     //
@@ -481,58 +443,56 @@ void MainWindow::_initAppComponents() {
         this->_mapView, &MapView::onHelperActionTriggered
     );
 
-    //on default layer changed
+    // on default layer changed
     QObject::connect(
         this->_atomEditManager->layerSelector()->spinbox(), qOverload<int>(&QSpinBox::valueChanged),
         HintThread::hint(), &ViewMapHint::setDefaultLayer
     );
 
-    //define default visibility
+    // define default visibility
     QObject::connect(
         this->_atomEditManager->hiddenCheckbox(), &QCheckBox::stateChanged,
         HintThread::hint(), &ViewMapHint::setDefaultVisibility
     );
 
-    //intercept preview request from editor
+    // intercept preview request from editor
     QObject::connect(
         this->_atomEditManager->editor(), &AtomEditor::requiresPreview,
         HintThread::hint(), &ViewMapHint::handlePreviewRequest
     );
 
-    //bind toolbar to mapview
+    // bind toolbar to mapview
     QObject::connect(
         this->_mapActions, &MapActions::actionRequested,
         this->_mapView, &MapView::onActionRequested
     );
 
-    //update status bar on map file update
+    // update status bar on map file update
     QObject::connect(
         HintThread::hint(), &MapHint::mapStateChanged,
         this->_sb, &RPZStatusBar::updateMapFileLabel
     );
 
-    //focus on character
+    // focus on character
     QObject::connect(
         this->_playersView, &PlayersListView::requestingFocusOnCharacter,
-        this, &MainWindow::_onCharacterFocusRequest   
+        this, &MainWindow::_onCharacterFocusRequest
     );
     QObject::connect(
         this->_mapView, &MapView::requestingFocusOnCharacter,
         this, &MainWindow::_onCharacterFocusRequest
     );
-
 }
 
 void MainWindow::_initUIMenu() {
-    
-    //menu
+    // menu
     auto menuBar = new QMenuBar(this);
     menuBar->addMenu(this->_getFileMenu());
     auto mm = menuBar->addMenu(this->_getMapMenu());
     menuBar->addMenu(this->_getToolsMenu());
     menuBar->addMenu(this->_getHelpMenu());
 
-    //on remote change detected...
+    // on remote change detected...
     QObject::connect(
         HintThread::hint(), &MapHint::remoteChanged,
         [=](bool isRemote) {
@@ -540,28 +500,23 @@ void MainWindow::_initUIMenu() {
         }
     );
 
-    //set container
+    // set container
     this->setMenuWidget(menuBar);
-
 }
 
 void MainWindow::_initUIStatusBar() {
-
     this->_sb = new RPZStatusBar(this);
     this->setStatusBar(this->_sb);
-
 }
 
 void MainWindow::_onCharacterFocusRequest(const RPZCharacter::Id &characterIdToFocus) {
-    
     this->_characterEditor->tryToSelectCharacter(characterIdToFocus);
-    
+
     auto tab = (QTabWidget*)this->_characterEditor->parentWidget()->parentWidget();
     auto editorIndex = tab->indexOf(this->_characterEditor);
-    
+
     tab->setCurrentIndex(editorIndex);
-    
-}  
+}
 
 //////////////////
 /// END UI init //
@@ -572,69 +527,64 @@ void MainWindow::_onCharacterFocusRequest(const RPZCharacter::Id &characterIdToF
 //////////////////////
 
 QMenu* MainWindow::_getMapMenu() {
-
     auto mapMenuItem = new QMenu(tr("Map"), this);
 
-    //create map
+    // create map
     auto cmRPZmAction = RPZActions::createANewMap();
     QObject::connect(
         cmRPZmAction, &QAction::triggered,
         [=]() {
-            
-            //save beforehand if it have to
+            // save beforehand if it have to
             HintThread::hint()->mayWantToSavePendingState(this);
 
-            //dialog
+            // dialog
             auto picked = QFileDialog::getSaveFileName(
-                this, 
-                tr("Create a new map"), 
-                AppContext::getMapsFolderLocation(), 
+                this,
+                tr("Create a new map"),
+                AppContext::getMapsFolderLocation(),
                 tr("Game map (*%1)").arg(AppContext::RPZ_MAP_FILE_EXT)
             );
-            if(picked.isNull()) return;
+            if (picked.isNull()) return;
 
-            //create !
-            QMetaObject::invokeMethod(HintThread::hint(), "createNewRPZMapAs", 
+            // create !
+            QMetaObject::invokeMethod(HintThread::hint(), "createNewRPZMapAs",
                 Q_ARG(QString, picked)
             );
-            
         }
     );
 
-    //load map
+    // load map
     auto lRPZmAction = RPZActions::loadAMap();
     QObject::connect(
         lRPZmAction, &QAction::triggered,
         [=]() {
-            
-            //save beforehand if it have to
+            // save beforehand if it have to
             HintThread::hint()->mayWantToSavePendingState(this);
-            
-            //dialog
+
+            // dialog
             auto picked = QFileDialog::getOpenFileName(
-                this, 
-                tr("Load a new map"), 
-                AppContext::getMapsFolderLocation(), 
+                this,
+                tr("Load a new map"),
+                AppContext::getMapsFolderLocation(),
                 tr("Game map (*%1)").arg(AppContext::RPZ_MAP_FILE_EXT)
             );
-            if(picked.isNull()) return;
+            if (picked.isNull()) return;
 
-            //load map
-            QMetaObject::invokeMethod(HintThread::hint(), "loadRPZMap", 
+            // load map
+            QMetaObject::invokeMethod(HintThread::hint(), "loadRPZMap",
                 Q_ARG(QString, picked)
             );
-            
         }
     );
-    
-    //save map
+
+    // save map
     auto sRPZmAction = RPZActions::saveTheMap();
     QObject::connect(
         sRPZmAction, &QAction::triggered,
         HintThread::hint(), &MapHint::saveRPZMap
     );
 
-    //save as map
+    // save as map
     auto saRPZmAction = RPZActions::saveTheMapAs();
     QObject::connect(
         saRPZmAction, &QAction::triggered,
@@ -642,12 +592,12 @@ QMenu* MainWindow::_getMapMenu() {
             auto picked = QFileDialog::getSaveFileName(
                 this,
                 tr("Save as..."),
-                HintThread::hint()->mapFilePath(), 
+                HintThread::hint()->mapFilePath(),
                 tr("Game map (*%1)").arg(AppContext::RPZ_MAP_FILE_EXT)
             );
 
-            if(!picked.isNull()) {
-                QMetaObject::invokeMethod(HintThread::hint(), "saveRPZMapAs", 
+            if (!picked.isNull()) {
+                QMetaObject::invokeMethod(HintThread::hint(), "saveRPZMapAs",
                     Q_ARG(QString, picked)
                 );
             }
@@ -664,17 +614,16 @@ QMenu* MainWindow::_getMapMenu() {
 }
 
 QMenu* MainWindow::_getToolsMenu() {
-
     auto toolsMenuItem = new QMenu(tr("Tools"), this);
 
-    //maintenance tool
+    // maintenance tool
     auto openMaintenanceToolAction = RPZActions::openMaintenanceTool();
     QObject::connect(
         openMaintenanceToolAction, &QAction::triggered,
         this->_updateIntegrator, &UpdaterUIIntegrator::openMaintenanceTool
     );
 
-    //full log
+    // full log
     auto openLogAction = RPZActions::openFullLog();
     QObject::connect(
         openLogAction, &QAction::triggered,
@@ -685,7 +634,7 @@ QMenu* MainWindow::_getToolsMenu() {
         }
     );
 
-    //latest log
+    // latest log
     auto openLatestLogAction = RPZActions::openLatestLog();
     QObject::connect(
         openLatestLogAction, &QAction::triggered,
@@ -696,7 +645,7 @@ QMenu* MainWindow::_getToolsMenu() {
         }
     );
 
-    //data folder
+    // data folder
     auto openDataFolderAction = RPZActions::openInternalDataFolder();
     QObject::connect(
         openDataFolderAction, &QAction::triggered,
@@ -707,7 +656,7 @@ QMenu* MainWindow::_getToolsMenu() {
         }
     );
 
-    //layout
+    // layout
     toolsMenuItem->addAction(openMaintenanceToolAction);
     toolsMenuItem->addSeparator();
     toolsMenuItem->addAction(openDataFolderAction);
@@ -719,17 +668,16 @@ QMenu* MainWindow::_getToolsMenu() {
 }
 
 QMenu* MainWindow::_getHelpMenu() {
-
     auto helpMenuItem = new QMenu(tr("Help"), this);
 
-    //for checking the upgrades available
+    // for checking the upgrades available
     this->cfugAction = RPZActions::checkUpdates();
     QObject::connect(
         this->cfugAction, &QAction::triggered,
         this->_updateIntegrator, &UpdaterUIIntegrator ::requireUpdateCheckFromUser
     );
 
-    //on updater state changed
+    // on updater state changed
     QObject::connect(
         this->_updateIntegrator, &UpdaterUIIntegrator::stateChanged,
         [&](const bool isSearching) {
@@ -739,7 +687,7 @@ QMenu* MainWindow::_getHelpMenu() {
         }
     );
 
-    //patchnote
+    // patchnote
     auto patchnoteAction = RPZActions::patchnote();
     QObject::connect(
         patchnoteAction, &QAction::triggered,
@@ -749,12 +697,12 @@ QMenu* MainWindow::_getHelpMenu() {
         }
     );
 
-    //sentry
+    // sentry
     auto testSentryReportAction = RPZActions::sentry();
     QObject::connect(
         testSentryReportAction, &QAction::triggered,
         [&]() {
-            //must crash and trigger Sentry minidump report push
+            // must crash and trigger Sentry minidump report push
             abort();
         }
     );
@@ -765,13 +713,12 @@ QMenu* MainWindow::_getHelpMenu() {
     helpMenuItem->addAction(this->cfugAction);
 
     return helpMenuItem;
-};
+}
 
 QMenu* MainWindow::_getFileMenu() {
-
     auto fileMenuItem = new QMenu(tr("File"), this);
 
-    //quit
+    // quit
     auto quitAction = RPZActions::quit();
     QObject::connect(
         quitAction, &QAction::triggered,
@@ -781,7 +728,7 @@ QMenu* MainWindow::_getFileMenu() {
     fileMenuItem->addAction(quitAction);
 
     return fileMenuItem;
-};
+}
 
 //////////////////////////
 /// END Menu components //
