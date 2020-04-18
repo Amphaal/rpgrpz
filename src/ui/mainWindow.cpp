@@ -180,7 +180,7 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 void MainWindow::_initConnectivity() {
     
     //check if we must use server capabilities
-    auto appArgs = AppContext::getOptionArgs(*QApplication::instance());
+    auto appArgs = AppContext::getOptionArgs(QApplication::instance());
     if(appArgs.contains(QStringLiteral(u"noServer"))) {    
         this->_mustLaunchServer = false;
         qDebug() << "RPZServer : No server to start because the user said so.";
