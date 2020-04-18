@@ -89,7 +89,7 @@ class AtomsStorage : public AlterationAcknoledger {
         const MapDatabase& map() const;
         void _replaceMap(const MapDatabase &map);
 
-        virtual void _handleAlterationRequest(const AlterationPayload &payload) override;
+        void _handleAlterationRequest(const AlterationPayload &payload) override;
         virtual void _atomAdded(const RPZAtom &added) {};
 
         virtual void _basicAlterationDone(const QList<RPZAtom::Id> &updatedIds, const Payload::Alteration &type) {};

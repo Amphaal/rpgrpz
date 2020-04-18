@@ -9,7 +9,7 @@
     },
     "terminal.integrated.scrollback": 10000,
     "files.associations": {
-        "qstylefactory": "cpp",
-        "new": "cpp"
-    }
+        "*.ts": "xml",
+    },
+    "C_Cpp.autoAddFileAssociations": false
 }

@@ -132,11 +132,11 @@ class ViewMapHint : public AtomsStorage {
         //augmenting AtomsStorage
         void _atomAdded(const RPZAtom &added) override;
 
-        virtual void _basicAlterationDone(const QList<RPZAtom::Id> &updatedIds, const Payload::Alteration &type) override;
-        virtual void _updatesDone(const QList<RPZAtom::Id> &updatedIds, const RPZAtom::Updates &updates) override;
-        virtual void _updatesDone(const RPZAtom::ManyUpdates &updates) override;
-        virtual void _atomOwnerChanged(const RPZAtom::Id &target, const RPZCharacter::Id &newOwner) override;
-        virtual void _fogUpdated(const QList<QPolygonF> &updatedFog) override;
+        void _basicAlterationDone(const QList<RPZAtom::Id> &updatedIds, const Payload::Alteration &type) override;
+        void _updatesDone(const QList<RPZAtom::Id> &updatedIds, const RPZAtom::Updates &updates) override;
+        void _updatesDone(const RPZAtom::ManyUpdates &updates) override;
+        void _atomOwnerChanged(const RPZAtom::Id &target, const RPZCharacter::Id &newOwner) override;
+        void _fogUpdated(const QList<QPolygonF> &updatedFog) override;
         
 
 };
