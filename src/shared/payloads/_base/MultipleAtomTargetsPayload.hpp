@@ -24,7 +24,7 @@
 #include <QList>
 
 class MultipleAtomTargetsPayload : public AtomRelatedPayload {
-    public:   
+ public:   
         QList<RPZAtom::Id> targetRPZAtomIds() const {
             
             auto list = this->value(QStringLiteral(u"ids")).toList();
@@ -62,7 +62,7 @@ class MultipleAtomTargetsPayload : public AtomRelatedPayload {
             this->_setTargetRPZAtomIds(targetedRPZAtomIds);
         }
     
-    private:
+ private:
         void _setTargetRPZAtomIds(const QList<RPZAtom::Id> &targetRPZAtomIds) {
             QVariantList cast;
             for(const auto &id : targetRPZAtomIds) {

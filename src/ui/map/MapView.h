@@ -68,7 +68,7 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
 
     Q_OBJECT
 
-    public:
+ public:
         MapView(QWidget *parent = nullptr);
         
         const QList<RPZAtom::Id> selectedIds() const override;
@@ -112,7 +112,7 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
         void _onFogModeChanged(const RPZFogParams::Mode &newMode);
         void _onFogChanged(const QList<QPolygonF> &updatedFog);
 
-    private:
+ private:
         RPZMapParameters _currentMapParameters;
         QuickDrawingAssist* _quickDrawingAssist = nullptr;
         AtomDrawingAssist* _atomDrawingAssist = nullptr;

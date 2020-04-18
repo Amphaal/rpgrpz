@@ -35,7 +35,7 @@ class AbilitiesSheet : public QTableWidget {
 
     Q_OBJECT
     
-    public:
+ public:
         AbilitiesSheet() : QTableWidget(0, 4) {
             
             this->_addRowAction = new QAction(
@@ -161,7 +161,7 @@ class AbilitiesSheet : public QTableWidget {
 
         }
     
-    private:
+ private:
         bool _readOnly = false;
 
         QAction* _addRowAction = nullptr;

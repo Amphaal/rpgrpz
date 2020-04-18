@@ -24,7 +24,7 @@
 
 class CheckBoxDelegate : public QStyledItemDelegate {
 
-    public: 
+ public: 
         CheckBoxDelegate(QObject *parent = nullptr) : QStyledItemDelegate(parent) { }
 
         QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override {

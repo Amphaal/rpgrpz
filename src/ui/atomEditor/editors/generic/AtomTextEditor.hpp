@@ -28,7 +28,7 @@ class AtomTextEditor : public AtomSubEditor {
     
     Q_OBJECT
 
-    public:
+ public:
         AtomTextEditor(const RPZAtom::Parameter &parameter) : AtomSubEditor({parameter}), 
             _validateButton(new QPushButton(this)) {
             
@@ -51,7 +51,7 @@ class AtomTextEditor : public AtomSubEditor {
 
         }
     
-    private:
+ private:
         QTextEdit* _edit = nullptr;
         QPushButton* _validateButton = nullptr;
 

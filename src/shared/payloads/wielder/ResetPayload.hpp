@@ -22,7 +22,7 @@
 #include "src/shared/payloads/_base/AtomsWielderPayload.hpp"
 
 class ResetPayload : public AtomsWielderPayload {
-    public:
+ public:
         ResetPayload() {}
         explicit ResetPayload(const QVariantHash &hash) : AtomsWielderPayload(hash) {}
         ResetPayload(const MapDatabase &map) : AtomsWielderPayload(map) {
@@ -57,7 +57,7 @@ class ResetPayload : public AtomsWielderPayload {
             return this->value("fromMPUpdate").toBool();
         }
 
-    private:
+ private:
         void _setMapParams(const RPZMapParameters &mapParams) {
             this->insert("mParams", mapParams);
         }

@@ -35,7 +35,7 @@ class AssetsDatabase : public QObject, public JSONDatabase {
     
     Q_OBJECT
 
-    public:
+ public:
         using FolderPath = QString; //internal DB arborescence path (only containers)
 
         enum class StorageContainer {
@@ -93,7 +93,7 @@ class AssetsDatabase : public QObject, public JSONDatabase {
 
         const QJsonObject _updatedInnerDb() override;
     
-    private:
+ private:
         //singleton
         AssetsDatabase();
         AssetsDatabase(const QJsonObject &doc);

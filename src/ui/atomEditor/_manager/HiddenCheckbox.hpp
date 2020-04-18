@@ -24,7 +24,7 @@
 #include "src/helpers/_appContext.h"
 
 class HiddenCheckbox : public QCheckBox {
-    public:
+ public:
         HiddenCheckbox(QWidget* parent) : QCheckBox(parent) {
             this->setText(QObject::tr("Hidden"));
             this->setChecked(AppContext::settings()->hiddenAtomAsDefault());

@@ -38,7 +38,7 @@ class ToysTreeViewModel : public QAbstractItemModel, public AlterationInteractor
     
     Q_OBJECT
     
-    public:
+ public:
         ToysTreeViewModel(QObject *parent = nullptr);
         
         QModelIndex getStaticContainerTypesIndex(const ToysTreeViewItem::Type &staticContainerType) const; 
@@ -102,7 +102,7 @@ class ToysTreeViewModel : public QAbstractItemModel, public AlterationInteractor
         bool _indexListContainsIndexOrParent(const QModelIndexList &base, const QModelIndex &index);
         QPair<int, int> _anticipateInserts(const QModelIndexList &tbi);
 
-    private:
+ private:
         ToysTreeViewItem* _rootItem = nullptr;
         QHash<ToysTreeViewItem::Type, ToysTreeViewItem*> _staticElements;  
 

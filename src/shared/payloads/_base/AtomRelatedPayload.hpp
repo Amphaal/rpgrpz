@@ -22,7 +22,7 @@
 #include "AlterationPayload.hpp"
 
 class AtomRelatedPayload : public AlterationPayload {
-    public:
+ public:
         using RemainingAtomIds = int;
 
         AtomRelatedPayload() {};

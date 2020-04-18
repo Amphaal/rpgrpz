@@ -22,7 +22,7 @@
 #include <QVariantHash>
 
 class RPZAbility : public QVariantHash {
-    public:
+ public:
         RPZAbility() {}
         explicit RPZAbility(const QVariantHash &hash) : QVariantHash(hash) {}
 

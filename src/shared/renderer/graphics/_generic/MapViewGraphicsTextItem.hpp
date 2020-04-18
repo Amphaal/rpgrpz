@@ -33,14 +33,14 @@
 #include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
 
 class MapViewGraphicsTextItem : public QGraphicsTextItem, public RPZGraphicsItem {
-    public:
+ public:
         MapViewGraphicsTextItem(const QString &text, int textSize) : QGraphicsTextItem(text) {
             auto font = QFont();
             font.setPointSize(textSize);
             this->setFont(font);
         }
     
-    private:
+ private:
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
             auto result = this->conditionnalPaint(this, painter, option, widget);
             if(!result.mustContinue) return;

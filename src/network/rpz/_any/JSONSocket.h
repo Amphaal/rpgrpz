@@ -33,7 +33,7 @@ class JSONSocket : public QObject {
 
     Q_OBJECT
 
-    public:
+ public:
         JSONSocket(QObject* parent, JSONLogger* logger, QTcpSocket * socketToHandle = nullptr);
         ~JSONSocket();
         
@@ -55,7 +55,7 @@ class JSONSocket : public QObject {
         void sent(bool success);
 
 
-    private:
+ private:
         bool _batchComplete = false;
         bool _ackHeader = false;
 

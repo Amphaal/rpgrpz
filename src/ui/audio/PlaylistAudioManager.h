@@ -38,7 +38,7 @@ class PlaylistAudioManager : public QWidget, public ConnectivityObserver {
     
     Q_OBJECT
     
-    public:
+ public:
         PlaylistAudioManager(QWidget *parent = nullptr);
 
         YoutubePlayer* player();
@@ -50,7 +50,7 @@ class PlaylistAudioManager : public QWidget, public ConnectivityObserver {
         void _onAudioPlayStateChanged(bool isPlaying);
         void _onAudioSourceStateChanged(const StreamPlayStateTracker &state);
 
-    private:
+ private:
         AudioProbeController* _asCtrl = nullptr;
         YoutubePlayer* _plCtrl = nullptr;
 

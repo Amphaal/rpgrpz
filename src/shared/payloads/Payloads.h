@@ -36,7 +36,7 @@
 #include "fog/FogModeChangedPayload.hpp"
 
 class Payloads {
-    public:
+ public:
         static QSharedPointer<AlterationPayload> autoCast(const QVariantHash &hash) {
             
             AlterationPayload lowCast(hash);

@@ -24,7 +24,7 @@
 #include <QHash>
 
 class AnimationTimeLine : public QTimeLine {
-    public:
+ public:
         enum class Type { Zoom };
         Q_ENUM(Type)
 
@@ -71,7 +71,7 @@ class AnimationTimeLine : public QTimeLine {
 
 
 
-    private:
+ private:
         //static
         static inline QHash<AnimationTimeLine::Type, AnimationTimeLine*> _handlers;
 

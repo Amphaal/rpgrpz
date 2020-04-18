@@ -33,7 +33,7 @@ class PlayersListView : public QListView {
     signals:
         void requestingFocusOnCharacter(const RPZCharacter::Id &characterIdToFocus);
 
-    public:
+ public:
         PlayersListView(QWidget *parent = nullptr) : QListView(parent) {
             
             this->setUniformItemSizes(false);
@@ -73,7 +73,7 @@ class PlayersListView : public QListView {
 
         }
 
-    private:
+ private:
         void _onRowRemoved() {
             this->setVisible(
                 this->model()->rowCount()

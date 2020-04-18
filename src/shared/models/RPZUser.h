@@ -32,7 +32,7 @@
 #include "src/shared/models/character/RPZCharacter.hpp"
 
 class RPZUser : public Serializable {
-     public:
+  public:
         using Id = SnowFlake::Id;
 
         enum class Role { Observer, Host, Player };
@@ -61,7 +61,7 @@ class RPZUser : public Serializable {
         QString toString() const;
         const RPZCharacter character() const;
 
-    private:
+ private:
         void _setColor(const QColor &color = QColor());
 
         static inline std::string _CODES_b62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";

@@ -41,7 +41,7 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
     Q_PROPERTY(qreal textureHPos READ textureHPos WRITE setTextureHPos)
     Q_INTERFACES(QGraphicsItem)
     
-    public:
+ public:
         struct FogChangingVisibility {
             QList<QGraphicsItem*> nowVisible;
             QList<QGraphicsItem*> nowInvisible;
@@ -224,7 +224,7 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
 
         }
 
-    private:
+ private:
         QPixmap _texture;
         RPZFogParams::Mode _mode;
         QBrush _brush;

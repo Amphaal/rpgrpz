@@ -28,7 +28,7 @@
 #include "MapLayoutCategory.h"
 
 class MapLayoutModelBase : public QAbstractItemModel {
-    public:
+ public:
         MapLayoutModelBase() {}
 
         static const QList<RPZAtom::Id> fromIndexes(const QModelIndexList &selectedIndexes) {
@@ -374,7 +374,7 @@ class MapLayoutModelBase : public QAbstractItemModel {
             return this->index(this->_getRow(category), 0);
         }
 
-    private:
+ private:
         int _getRow(MapLayoutCategory* category) const {
             auto row = -1;
             

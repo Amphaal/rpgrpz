@@ -25,7 +25,7 @@ class ProgressTracker : public QObject {
     
     Q_OBJECT
     
-    public:
+ public:
         enum class Kind { Map, Asset };
         Q_ENUM(Kind)
 
@@ -96,7 +96,7 @@ class ProgressTracker : public QObject {
         void downloadProgress(const ProgressTracker::Kind &kind, qint64 progress);
         void downloadEnded(const ProgressTracker::Kind &kind);
     
-    private:
+ private:
         static inline ProgressTracker* _inst = nullptr;
 
 };

@@ -22,7 +22,7 @@
 #include "src/shared/payloads/_base/AtomRelatedPayload.hpp"
 
 class BulkMetadataChangedPayload : public AtomRelatedPayload {
-    public:
+ public:
         explicit BulkMetadataChangedPayload(const QVariantHash &hash) : AtomRelatedPayload(hash) { }
         BulkMetadataChangedPayload(const RPZAtom::ManyUpdates &changes) : AtomRelatedPayload(Payload::Alteration::BulkMetadataChanged) { 
             this->_defineAtomsUpdates(changes);
@@ -60,7 +60,7 @@ class BulkMetadataChangedPayload : public AtomRelatedPayload {
 
         };
     
-    private:
+ private:
         void _defineAtomsUpdates(const RPZAtom::ManyUpdates &changes) {
             
             QVariantHash hash;

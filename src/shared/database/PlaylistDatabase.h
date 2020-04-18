@@ -24,7 +24,7 @@
 #include <audiotube/PlayerConfig.h>
 
 class PlaylistDatabase : public JSONDatabase {
-    public:
+ public:
         //singleton
         static PlaylistDatabase* get();
         
@@ -39,7 +39,7 @@ class PlaylistDatabase : public JSONDatabase {
         JSONDatabase::Version apiVersion() const override;
         const QJsonObject _updatedInnerDb() override;
 
-    private:
+ private:
         //singleton
         PlaylistDatabase();
         PlaylistDatabase(const QJsonObject &doc);

@@ -34,7 +34,7 @@ class MapHelpers : public QToolBar {
 
     Q_OBJECT
 
-    public:    
+ public:    
         MapHelpers(MiniMapView* minimap, QWidget * parent = nullptr) : QToolBar(parent) {  
 
             this->layout()->setMargin(0);

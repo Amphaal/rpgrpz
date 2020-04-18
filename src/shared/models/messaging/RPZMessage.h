@@ -29,7 +29,7 @@
 
 class RPZMessage : public Stampable {
     
-    public:
+ public:
         RPZMessage();
         ~RPZMessage();
         explicit RPZMessage(const QVariantHash &hash);
@@ -41,7 +41,7 @@ class RPZMessage : public Stampable {
         QPalette palette() const override;
         void setAsLocal();
 
-    private:
+ private:
         MessageInterpreter::Command _command = MessageInterpreter::Command::C_Unknown;
         bool _isLocal = false;
         

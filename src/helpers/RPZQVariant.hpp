@@ -26,7 +26,7 @@
 #include "src/shared/models/RPZAtom.h"
 
 class RPZQVariant {
-    public:
+ public:
         using AtomTransformationList = QHash<RPZAtom::Parameter, QVariant>;
 
         enum class Roles {

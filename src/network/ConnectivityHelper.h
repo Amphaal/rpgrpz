@@ -42,7 +42,7 @@ class ConnectivityHelper : public QObject
 {
     Q_OBJECT
 
-    public:
+ public:
         ConnectivityHelper(QObject *parent = nullptr);
         ~ConnectivityHelper();
         void init();
@@ -52,7 +52,7 @@ class ConnectivityHelper : public QObject
         void remoteAddressStateChanged(const QString &stateText, RPZStatusLabel::State state = RPZStatusLabel::State::Finished);
         void uPnPStateChanged(const QString &stateText, RPZStatusLabel::State state = RPZStatusLabel::State::Finished);
 
-    private:
+ private:
         QNetworkAccessManager* _nam = nullptr;
         QNetworkConfigurationManager* _ncm = nullptr;
         uPnPRequester* _upnpThread = nullptr;

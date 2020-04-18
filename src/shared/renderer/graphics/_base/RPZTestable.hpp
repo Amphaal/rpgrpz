@@ -70,7 +70,7 @@ class RPZTestable {
 
         }
 
-    private:
+ private:
         QComboBox* _testCb = nullptr;
         
 

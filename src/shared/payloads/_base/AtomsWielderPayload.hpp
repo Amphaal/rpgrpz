@@ -27,7 +27,7 @@
 #include "src/shared/database/MapDatabase.h"
 
 class AtomsWielderPayload : public AtomRelatedPayload {
-    public:
+ public:
         AtomsWielderPayload() {}
 
         const QSet<RPZAsset::Hash> assetHashes() const {
@@ -87,7 +87,7 @@ class AtomsWielderPayload : public AtomRelatedPayload {
                 this->_setAtoms(atoms);
             }
 
-        private:
+     private:
             void _setAssetHashes(const QList<RPZAtom> &toExtractFrom) {
                 
                 QVariantList vList;

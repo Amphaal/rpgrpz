@@ -39,13 +39,13 @@
 
 class ChatWidget : public QWidget, public ConnectivityObserver {
 
-    public:
+ public:
         ChatWidget(QWidget *parent = nullptr);
 
         void connectingToServer() override;
         MessagesLog* messageLog();
 
-    private:
+ private:
         MessagesLog *_chatLog;
         ChatEdit *_chatEdit;
 

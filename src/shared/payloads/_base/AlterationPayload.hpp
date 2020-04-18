@@ -28,7 +28,7 @@
 
 class AlterationPayload : public QVariantHash { 
 
-    public:
+ public:
         AlterationPayload() {}
         explicit AlterationPayload(const QVariantHash &hash) : QVariantHash(hash) {}
         AlterationPayload(const Payload::Alteration &type) {
@@ -76,7 +76,7 @@ class AlterationPayload : public QVariantHash {
         //     return debug;
         // }
 
-    private:      
+ private:      
         void _setType(const Payload::Alteration &type) {
             this->insert(QStringLiteral(u"t"), (int)type);
         }

@@ -47,7 +47,7 @@ class GStreamerClient : public QObject {
 
     Q_OBJECT
     
-    public:
+ public:
         GStreamerClient(QObject* parent = nullptr);
         ~GStreamerClient();
         
@@ -95,7 +95,7 @@ class GStreamerClient : public QObject {
     protected:
         void _initGst();
     
-    private:
+ private:
         //volume
         QTimeLine _volumeTLHelper;
 };

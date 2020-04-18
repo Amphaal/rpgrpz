@@ -23,7 +23,7 @@
 #include <QtMultimedia/QSoundEffect>
 
 class NotificationsAudioManager {
-    public:
+ public:
         static NotificationsAudioManager* get() {
             if(!_instance) _instance = new NotificationsAudioManager();
             return _instance;
@@ -42,7 +42,7 @@ class NotificationsAudioManager {
             this->_playEffect(":/audio/privateMessage.wav");
         }
 
-    private:
+ private:
         NotificationsAudioManager() {}
 
         void _playEffect(const QString &path) {

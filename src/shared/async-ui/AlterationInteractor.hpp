@@ -24,7 +24,7 @@
 #include "src/shared/payloads/Payloads.h"
 
 class AlterationInteractor {
-    public:
+ public:
         AlterationInteractor(const Payload::Interactor &interactorId) : _interactorId(interactorId) {};
         Payload::Interactor interactorId() const { return this->_interactorId; }
 
@@ -42,6 +42,6 @@ class AlterationInteractor {
             
         }
 
-    private:
+ private:
         Payload::Interactor _interactorId = Payload::Interactor::Undefined;
 };

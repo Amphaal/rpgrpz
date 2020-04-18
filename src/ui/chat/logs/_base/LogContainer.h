@@ -30,7 +30,7 @@
 
 class LogItem : public QWidget {
     
-    public:
+ public:
         LogItem(const Stampable::Id &boundMsgId);
         int positionInLog(); 
         void setPositionInLog(int position);
@@ -38,7 +38,7 @@ class LogItem : public QWidget {
 
         Stampable::Id boundMsgId() const;
 
-    private:
+ private:
         int _position = -1;
         Stampable::Id _boundMsgId;
         QHBoxLayout* _hLayout = nullptr;
@@ -46,7 +46,7 @@ class LogItem : public QWidget {
 };
 
 class LogContainer : public QWidget {
-    public:
+ public:
         LogContainer(QWidget *parent = nullptr);
         void clearLines();
     
@@ -56,7 +56,7 @@ class LogContainer : public QWidget {
         LogItem* _addLine(const Stampable &element, Stampable::Id putUnder = 0);
         QVBoxLayout* _getLayout();
     
-    private:
+ private:
         QHash<Stampable::Id, LogItem*> _linesBySerializableId;
         QVBoxLayout* _vLayout = nullptr;
 };

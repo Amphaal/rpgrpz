@@ -44,7 +44,7 @@ class ToysTreeView : public QTreeView, public ConnectivityObserver, public Alter
 
     Q_OBJECT
 
-    public:
+ public:
         ToysTreeView(QWidget *parent = nullptr);
 
     private slots:
@@ -60,7 +60,7 @@ class ToysTreeView : public QTreeView, public ConnectivityObserver, public Alter
         void dragMoveEvent(QDragMoveEvent *event) override;
         void startDrag(Qt::DropActions supportedActions) override;
 
-    private:
+ private:
         QModelIndexList _selectedElementsIndexes();
 
         int _expectedAssetsTBDownloaded = 0;

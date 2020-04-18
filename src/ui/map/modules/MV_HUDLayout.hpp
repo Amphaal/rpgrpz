@@ -27,7 +27,7 @@
 #include "src/helpers/RandomColor.h"
 
 class MV_HUDLayout {
-    public:
+ public:
         MV_HUDLayout(QGraphicsView* view) : _view(view), _heavyLoadImage(QPixmap(QStringLiteral(u":/icons/app_64.png"))) { }
     
     protected:
@@ -112,7 +112,7 @@ class MV_HUDLayout {
 
         }
     
-    private:
+ private:
         QGraphicsView* _view = nullptr;
 
         //background / foreground

@@ -33,7 +33,7 @@ class CharacterSheet : public QTabWidget {
     
     Q_OBJECT
     
-    public:
+ public:
         CharacterSheet() : 
         _characterTab(new LoreTab), 
         _statusTab(new StatusTab), 
@@ -102,7 +102,7 @@ class CharacterSheet : public QTabWidget {
 
         }
 
-    private:
+ private:
         bool _readOnly = false;
         RPZCharacter _loadedCharacter;
 

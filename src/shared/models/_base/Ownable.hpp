@@ -27,7 +27,7 @@
 
 class Ownable : public Serializable {
 
-    public:
+ public:
         Ownable() {};
         explicit Ownable(const QVariantHash &hash) : Serializable(hash) {}
         Ownable(SnowFlake::Id id) : Serializable(id) {}

@@ -27,7 +27,7 @@ class Payload {
 
     Q_GADGET
 
-    public:
+ public:
         enum class Alteration {
             Unknown,
             Focused,

@@ -32,7 +32,7 @@ class RPZStatusLabel : public QWidget {
 
     Q_OBJECT
 
-    public:
+ public:
         enum State {Finished = 0, Waiting, Processing, Error };
 
         RPZStatusLabel(const QString &description, QWidget* parent = nullptr);
@@ -41,7 +41,7 @@ class RPZStatusLabel : public QWidget {
         void setWaiting(bool waiting);
         QLabel* dataLabel();
 
-    private:
+ private:
         QLabel* _descriptionLbl = nullptr;
         QLabel* _dataLbl = nullptr;
         QLabel* _loaderLbl = nullptr;

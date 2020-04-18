@@ -34,7 +34,7 @@ class ToysTreeViewItem {
 
     Q_GADGET
 
-    public:
+ public:
         enum class Type { 
             T_Unknown = 0,
             Root = 100,
@@ -124,7 +124,7 @@ class ToysTreeViewItem {
 
         void unrefSubItem(ToysTreeViewItem* subItem);
 
-    private:
+ private:
         ToysTreeViewItem::Type _type = ToysTreeViewItem::Type::T_Unknown;
         ToysTreeViewItem::Type _insertType = ToysTreeViewItem::Type::T_Unknown;
         ToysTreeViewItem::Type _rootStaticContainerType = ToysTreeViewItem::Type::T_Unknown;

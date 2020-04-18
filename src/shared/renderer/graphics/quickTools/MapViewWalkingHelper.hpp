@@ -43,7 +43,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
     Q_INTERFACES(QGraphicsItem)
     
-    private:
+ private:
         RPZMapParameters _mapParams;
         QGraphicsView* _view = nullptr;
         QList<QGraphicsItem*> _toWalk;
@@ -327,7 +327,7 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
             return out;
         }
 
-    public:
+ public:
         MapViewWalkingHelper(const RPZMapParameters &params, const QList<QGraphicsItem*> &toWalk, QGraphicsView* view) : _toWalk(toWalk), _view(view) {
             
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);

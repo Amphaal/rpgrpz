@@ -27,7 +27,7 @@
 #include "src/_libs/clipper/clipper.hpp"
 
 class VectorSimplifier {
-    public:
+ public:
         static QVector<QPointF> reduce(QVector<QPointF> points, double tolerance = 1.0, bool highestQuality = true) {
             
             if (points.count() <= 2) return points;
@@ -111,7 +111,7 @@ class VectorSimplifier {
 
         }
 
-    private:  
+ private:  
         static constexpr int _precision = 3;
 
         static ClipperLib::Path _toPath(const QPolygonF &sourcePoly) {

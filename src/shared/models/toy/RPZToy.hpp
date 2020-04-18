@@ -23,7 +23,7 @@
 #include "src/shared/models/RPZAtom.h"
 
 class RPZToy : public RPZAsset {
-    public:
+ public:
         RPZToy() {}
         explicit RPZToy(const QVariantHash &hash) : RPZAsset(hash) {}
         RPZToy(const RPZAsset &asset, const RPZAtom::Type &type = RPZAtom::Type::Undefined) : RPZAsset(asset) {

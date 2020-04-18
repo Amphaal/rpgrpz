@@ -33,10 +33,10 @@
 #include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
 
 class MapViewGraphicsSvgItem : public QGraphicsSvgItem, public RPZGraphicsItem {
-    public:
+ public:
         MapViewGraphicsSvgItem(const QString &fileName) : QGraphicsSvgItem(fileName) {}
     
-    private:
+ private:
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
             auto result = this->conditionnalPaint(this, painter, option, widget);
             if(!result.mustContinue) return;

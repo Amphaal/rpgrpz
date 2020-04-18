@@ -23,7 +23,7 @@
 #include <QMap>
 
 class RPZInventorySlot : public QVariantHash {
-    public:
+ public:
         RPZInventorySlot() {}
         explicit RPZInventorySlot(const QVariantHash &hash) : QVariantHash(hash) {}
 
@@ -48,7 +48,7 @@ class RPZInventorySlot : public QVariantHash {
 };
 
 class RPZInventory : public QVariantHash {
-    public:
+ public:
         RPZInventory() {}
         explicit RPZInventory(const QVariantHash &hash) : QVariantHash(hash) {}
 

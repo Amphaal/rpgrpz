@@ -27,13 +27,13 @@
 
 class LockAndVisibilityDelegate  : public QStyledItemDelegate {
     
-    public:
+ public:
         LockAndVisibilityDelegate(QWidget *parent = nullptr);
 
         void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
         QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     
-    private:
+ private:
         static inline QPixmap* _hiddenPix = nullptr;
         static inline QPixmap* _lockPix = nullptr;
 };

@@ -65,7 +65,7 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
     
     Q_OBJECT
     
-    public:
+ public:
         enum class UIMode { Unset, Full, Player };
         Q_ENUM(UIMode)
 
@@ -80,7 +80,7 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
         void _onGameSessionReceived(const RPZGameSession &gameSession);
         void _onCharacterFocusRequest(const RPZCharacter::Id &characterIdToFocus);
 
-    private:
+ private:
         void closeEvent(QCloseEvent *event) override;
         
         void _initUI();

@@ -23,7 +23,7 @@
 #include <QPainterPath>
 
 class PathAnimator : public QPropertyAnimation {
-    public:
+ public:
         PathAnimator(QObject *target, const QByteArray &prop) : QPropertyAnimation(target, prop) {}
 
         QVariant interpolated(const QVariant &from, const QVariant &to, qreal progress) const override {

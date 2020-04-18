@@ -27,7 +27,7 @@ class BrushToolEditor : public AtomSubEditor {
 
     Q_OBJECT
 
-    private:    
+ private:    
         static inline QMap<RPZAtom::BrushType, QString> _strBT {
             { RPZAtom::BrushType::Stamp, QT_TR_NOOP("Stamp") },
             { RPZAtom::BrushType::Rectangle, QT_TR_NOOP("Rectangle") },
@@ -48,7 +48,7 @@ class BrushToolEditor : public AtomSubEditor {
 
         QComboBox* _combo = nullptr;
 
-    public:
+ public:
         BrushToolEditor() : AtomSubEditor({RPZAtom::Parameter::BrushStyle}) { 
 
             this->setVisible(false);

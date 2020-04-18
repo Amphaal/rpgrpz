@@ -38,7 +38,7 @@
 
 class MapDatabase : public JSONDatabase {
     
-    public:
+ public:
         struct FogBuffer {
             QList<QPolygonF> polys;
             ClipperLib::Paths paths;
@@ -80,7 +80,7 @@ class MapDatabase : public JSONDatabase {
         RPZMapParameters _mapParams;
         RPZFogParams _fogParams;
 
-    private:
+ private:
         FogBuffer _fogBuffer;
         QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> _getUpdateHandlers() override;
         JSONDatabase::Model _getDatabaseModel() override;

@@ -37,7 +37,7 @@ class LoreTab : public QWidget {
 
     Q_OBJECT
 
-    public:
+ public:
         LoreTab() {
 
             //character tab
@@ -129,7 +129,7 @@ class LoreTab : public QWidget {
 
         }
 
-    private:
+ private:
         QPixmap _customPortrait;
         QString _customPortraitExt;
 

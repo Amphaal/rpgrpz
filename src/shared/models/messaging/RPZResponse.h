@@ -22,7 +22,7 @@
 #include "src/shared/models/_base/Stampable.hpp"
 
 class RPZResponse : public Stampable {
-    public:
+ public:
         enum class ResponseCode {
             UnknownCommand, 
             HelpManifest, 
@@ -43,7 +43,7 @@ class RPZResponse : public Stampable {
         QString toString() const override;
         QPalette palette() const override;
 
-    private:
+ private:
         void _setAnswerer(Stampable::Id answererStampableId);
         void _setResponseCode(const ResponseCode &code);
         void _setResponseData(const QVariant &data);

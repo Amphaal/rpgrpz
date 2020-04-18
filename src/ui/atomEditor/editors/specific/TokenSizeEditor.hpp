@@ -30,7 +30,7 @@ class TokenSizeEditor : public AtomSubEditor {
 
     Q_OBJECT
 
-    private:    
+ private:    
         static inline QMap<RPZAtom::TokenSize, QString> _strTokenSize {
             { RPZAtom::TokenSize::Normal, QT_TR_NOOP("Normal") },
             { RPZAtom::TokenSize::Big, QT_TR_NOOP("Big") },
@@ -45,7 +45,7 @@ class TokenSizeEditor : public AtomSubEditor {
 
         QComboBox* _combo = nullptr;
 
-    public:
+ public:
         TokenSizeEditor() : AtomSubEditor({RPZAtom::Parameter::TokenSize}) { 
 
             this->setVisible(false);

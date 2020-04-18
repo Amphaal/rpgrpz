@@ -45,7 +45,7 @@ class MapLayoutTree : public QTreeView, public AtomSelector {
 
     Q_OBJECT
 
-    public:
+ public:
         MapLayoutTree(QWidget* parent = nullptr);
 
         const QList<RPZAtom::Id> selectedIds() const override;
@@ -58,7 +58,7 @@ class MapLayoutTree : public QTreeView, public AtomSelector {
     private slots:
         void _handleAlterationRequest(const AlterationPayload &payload);
 
-    private:
+ private:
         bool _preventSelectionNotification = false;
         QTimer _selectionDebouncer;
 

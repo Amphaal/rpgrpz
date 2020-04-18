@@ -32,13 +32,13 @@
 #include "src/helpers/Authorisations.hpp"
 
 class AtomSelector {
-    public:
+ public:
         virtual const QList<RPZAtom::Id> selectedIds() const = 0;
 };
 
 class AtomActionsHandler {
     
-    public:
+ public:
         AtomActionsHandler(AtomSelector* selector, QWidget* parent);
 
         ///
@@ -58,7 +58,7 @@ class AtomActionsHandler {
         ///
         ///
 
-    private:
+ private:
         AtomSelector* _selector = nullptr;
 
         void _addCopyPasteActionsToShortcuts(QWidget* toAddShortcutsTo);

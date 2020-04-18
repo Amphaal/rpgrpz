@@ -28,7 +28,7 @@
 #include "src/helpers/Authorisations.hpp"
 
 class RPZGraphicsItem {
-    public:
+ public:
         RPZGraphicsItem() {}
 
         struct ConditionnalPaintingResult {
@@ -97,7 +97,7 @@ class RPZGraphicsItem {
 
         };
 
-    private:
+ private:
         void _paintOpacityPlaceholder(QGraphicsItem* base, QPainter *painter, const QStyleOptionGraphicsItem *option) {
             
             if(!isGameHidden(base)) return;

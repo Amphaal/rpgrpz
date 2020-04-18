@@ -32,7 +32,7 @@
 
 
 class RPZCharacter : public Serializable {
-    public:
+ public:
         using Id = SnowFlake::Id;
         using UserBound = QPair<QColor, RPZCharacter>;
 
@@ -174,7 +174,7 @@ class RPZCharacter : public Serializable {
             return *_defaultPortrait;
         }
 
-    private:
+ private:
         static inline QPixmap* _defaultPortrait = nullptr;
 
 };

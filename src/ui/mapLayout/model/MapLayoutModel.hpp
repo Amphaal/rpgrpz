@@ -45,7 +45,7 @@ class MapLayoutModel : public MapLayoutModelBase, public AlterationInteractor {
             AlterationHandler::get()->queueAlteration(this, payload);
         }
 
-    public:
+ public:
         MapLayoutModel() : AlterationInteractor(Payload::Interactor::Local_MapLayout) {
             
             //on rename
@@ -141,7 +141,7 @@ class MapLayoutModel : public MapLayoutModelBase, public AlterationInteractor {
             
         }
         
-    private:
+ private:
         using LayerMoves = QHash<RPZAtom::Layer, QPair<QSet<MapLayoutAtom*>, QSet<MapLayoutAtom*>>>;
         
         struct LayerMoveContext {

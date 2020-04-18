@@ -51,7 +51,7 @@ class RPZClient : public QObject, public AlterationInteractor, public JSONLogger
 
     Q_OBJECT
 
-    public:
+ public:
         RPZClient(const QString &socketStr, const QString &displayName, const RPZCharacter &toIncarnate);
         ~RPZClient();
         
@@ -105,7 +105,7 @@ class RPZClient : public QObject, public AlterationInteractor, public JSONLogger
         void sharedDocumentAvailable(const RPZSharedDocument::FileHash &documentHash, const QString &documentName);
         void sharedDocumentReceived(const RPZSharedDocument &sharedDocument);
 
-    private:
+ private:
         enum class CharacterRegistration {
             In,
             Out

@@ -42,11 +42,11 @@ class MapViewGraphicsPixmapItem : public QObject, public QGraphicsPixmapItem, pu
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
     Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
 
-    public:
+ public:
         MapViewGraphicsPixmapItem(const RPZAsset &assetMetadata) : QGraphicsPixmapItem(assetMetadata.filepath()) {}
         MapViewGraphicsPixmapItem(const QString &filepath) : QGraphicsPixmapItem(filepath) {}
 
-    private:
+ private:
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
             auto result = this->conditionnalPaint(this, painter, option, widget);
             if(!result.mustContinue) return;

@@ -26,7 +26,7 @@
 
 class Serializable : public QVariantHash {
     
-    public:
+ public:
         Serializable() {};
         explicit Serializable(const QVariantHash &hash) : QVariantHash(hash) {}
         
@@ -47,7 +47,7 @@ class Serializable : public QVariantHash {
             this->_setId(id);
         }
     
-    private:
+ private:
         void _setId(const SnowFlake::Id &id) {
             //must be saved as string to prevent parser lack of precision on double conversion
             this->insert(QStringLiteral(u"id"),  QString::number(id));

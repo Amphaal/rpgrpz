@@ -25,7 +25,7 @@
 
 class ToySelectedPayload : public AlterationPayload {
     
-    public:
+ public:
         explicit ToySelectedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
         ToySelectedPayload(const RPZToy &toy) : AlterationPayload(Payload::Alteration::ToySelected) {
             this->insert(QStringLiteral(u"toy"), toy);

@@ -33,14 +33,14 @@ class AlterationHandler : public QObject {
     
     Q_OBJECT
 
-    public:
+ public:
         static AlterationHandler* get();
         void queueAlteration(const AlterationInteractor* sender, AlterationPayload &payload);
 
     signals:
         void requiresPayloadHandling(const AlterationPayload &payload);
 
-    private:
+ private:
         static inline AlterationHandler* _inst = nullptr;
         void _queueAlteration(const Payload::Interactor &senderSource, AlterationPayload &payload);
 

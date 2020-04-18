@@ -35,7 +35,7 @@ class TrackToolbar : public QWidget {
     
     Q_OBJECT
 
-    public:
+ public:
         enum class Action { Rewind, Forward, Play, Pause };
         Q_ENUM(Action)
 
@@ -49,7 +49,7 @@ class TrackToolbar : public QWidget {
         void actionRequired(const TrackToolbar::Action &action);
         void seeking(int posInSecs);
 
-    private:
+ private:
         static inline const QString _defaultNoTime = "--"; 
         static inline const QString _trackPlayStateTemplator = " %1 / %2 ";
 

@@ -27,7 +27,7 @@
 #include <QDebug>
 
 class RPZSharedDocument : public QVariantHash {
-    public:
+ public:
         using FileHash = QString;
         using DocumentName = QString;
         using NamesStore = QHash<RPZSharedDocument::FileHash, RPZSharedDocument::DocumentName>;
@@ -102,7 +102,7 @@ class RPZSharedDocument : public QVariantHash {
 
         }
 
-    private:
+ private:
         bool _localInstSuccess = false;
 
         void _inst(const QUrl &localFileUrl) {

@@ -24,7 +24,7 @@
 #include "src/shared/models/RPZSharedDocument.hpp"
 
 class SharedDocHint {
-    public:
+ public:
         static RPZSharedDocument::NamesStore getNamesStore() {
             QMutexLocker m(&_mNS);
             return _namesStore;
@@ -55,7 +55,7 @@ class SharedDocHint {
             return _store.value(hash);
         }
 
-    private:
+ private:
         static inline QMutex _mNS;
         static inline RPZSharedDocument::NamesStore _namesStore;
         

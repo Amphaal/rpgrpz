@@ -28,7 +28,7 @@
 #include "src/shared/models/RPZUser.h"
 
 class PlayerItemDelegate : public QStyledItemDelegate {
-    public:
+ public:
 
         static inline const QSize DEFAULT_PORTRAIT_SIZE = QSize(120, 160);
 
@@ -82,7 +82,7 @@ class PlayerItemDelegate : public QStyledItemDelegate {
             return sizeHint(index);
         }
 
-    private:
+ private:
         static inline const int GAUGE_HEIGHT = 14;
         static inline const int GAUGE_SIDE_MARGIN = 1;
         static inline const int SPACE_BETWEEN_GAUGES = 2;

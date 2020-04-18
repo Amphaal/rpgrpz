@@ -59,7 +59,7 @@ class AtomsStorage : public AlterationAcknoledger {
 
     Q_OBJECT
 
-    public:
+ public:
         using AtomsAreLeft = bool;
 
         AtomsStorage(const Payload::Interactor &boundSource);
@@ -101,7 +101,7 @@ class AtomsStorage : public AlterationAcknoledger {
         const QHash<RPZAtom::Id, RPZCharacter::Id>& _ownables() const; //safe
         const QList<RPZAtom::Id> _ownedBy(const RPZCharacter::Id &owner) const; //safe
 
-    private:
+ private:
         mutable QMutex _m_handlingLock;
         MapDatabase _map;
 

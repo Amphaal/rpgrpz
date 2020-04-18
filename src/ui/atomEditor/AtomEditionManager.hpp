@@ -30,7 +30,7 @@ class AtomEditionManager : public QWidget {
 
     Q_OBJECT
 
-    private:
+ private:
         AtomEditor* _editor = nullptr;
         QPushButton* _resetButton = nullptr;
         HiddenCheckbox* _defaultHiddenCheckbox = nullptr;
@@ -44,7 +44,7 @@ class AtomEditionManager : public QWidget {
             );
         }
 
-    public:
+ public:
         AtomEditionManager(QWidget *parent = nullptr) : QWidget(parent), 
             _editor(new AtomEditor), 
             _resetButton(new QPushButton) {

@@ -24,7 +24,7 @@
 
 class LogText : public QLabel {
 
-    public:
+ public:
         LogText(const QString &txt, QWidget* parent = nullptr) : QLabel(parent) {
         
             this->setMargin(0);

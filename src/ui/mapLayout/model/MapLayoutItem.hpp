@@ -23,7 +23,7 @@
 #include <QPixmap>
 
 class MapLayoutItem {
-    public:
+ public:
         MapLayoutItem() {}
         virtual ~MapLayoutItem() {} //dynamic_cast
 

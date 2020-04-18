@@ -39,7 +39,7 @@ class YoutubePlaylistItemInsertor : public QWidget {
     signals:
         void insertionRequested(const QString &ytUrl);
 
-    private:
+ private:
         QLineEdit* _ytUrlEdit = nullptr;
         QPushButton* _insertLinkBtn = nullptr;
         QRegularExpression _ytUrlMatcher;
@@ -58,7 +58,7 @@ class YoutubePlaylistItemInsertor : public QWidget {
             emit insertionRequested(url);
         }
 
-    public:
+ public:
         YoutubePlaylistItemInsertor(QWidget *parent = nullptr) : QWidget(parent), 
             _ytUrlEdit(new QLineEdit),
             _insertLinkBtn(new QPushButton),

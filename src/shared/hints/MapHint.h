@@ -26,7 +26,7 @@ class MapHint : public ViewMapHint, public ConnectivityObserver {
 
     Q_OBJECT
 
-    public:
+ public:
         MapHint();
 
         //load/unload
@@ -50,7 +50,7 @@ class MapHint : public ViewMapHint, public ConnectivityObserver {
         void mapStateChanged(const QString &mapDescriptor, bool isMapDirty);
         void remoteChanged(bool isRemote);
 
-    private: 
+ private: 
         bool _ackRemoteness();
 
         QString _mapDescriptor;

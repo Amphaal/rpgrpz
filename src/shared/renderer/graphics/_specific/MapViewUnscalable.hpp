@@ -36,7 +36,7 @@ class MapViewUnscalable : public QObject, public QGraphicsItem, public RPZGraphi
     Q_PROPERTY(qreal rotation READ rotation WRITE setRotation)
     Q_INTERFACES(QGraphicsItem)
 
-    public:
+ public:
         enum class RefPoint {
             Center,
             BottomCenter
@@ -132,7 +132,7 @@ class MapViewUnscalable : public QObject, public QGraphicsItem, public RPZGraphi
             return true; 
         };
 
-    private:
+ private:
         QPixmap _p;
         MapViewUnscalable::RefPoint _refP;
         RPZAtom::Type _type;

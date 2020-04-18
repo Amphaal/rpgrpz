@@ -25,7 +25,7 @@
 #include <QPalette>
 
 class Stampable : public Ownable {
-    public:
+ public:
         using Id = SnowFlake::Id;
 
         Stampable() : Ownable(SnowFlake::get()->nextId()) {
@@ -51,7 +51,7 @@ class Stampable : public Ownable {
             return palette;
         }
 
-    private:
+ private:
         void _setTimestamp(const QDateTime &dt) {
             this->insert(QStringLiteral(u"dt"), dt);
         }

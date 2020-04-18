@@ -27,7 +27,7 @@ class RPZJSON {
     
     Q_GADGET
     
-    public:
+ public:
         enum class Method {
             Handshake = 0,  
             Message,

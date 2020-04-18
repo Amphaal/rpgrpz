@@ -54,7 +54,7 @@ class AtomEditor : public QGroupBox, public AlterationInteractor {
 
     Q_OBJECT
 
-    public:
+ public:
         AtomEditor(QWidget* parent = nullptr);
         void buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr);
         void resetParams();
@@ -64,7 +64,7 @@ class AtomEditor : public QGroupBox, public AlterationInteractor {
     signals:
         void requiresPreview(const AtomsSelectionDescriptor &selectionDescriptor, const RPZAtom::Parameter &parameter, const QVariant &value);
 
-    private:
+ private:
         static inline QHash<AtomSubEditor::EditMode, QString> _strEM {
             { AtomSubEditor::EditMode::None, QT_TR_NOOP("Nothing to modify") },
             { AtomSubEditor::EditMode::Template, QT_TR_NOOP("Template modification") },

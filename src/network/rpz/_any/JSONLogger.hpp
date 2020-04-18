@@ -24,7 +24,7 @@
 #include "RPZJSON.hpp"
 
 class JSONLogger {
-    public:
+ public:
         JSONLogger(const QString &loggerId) : _loggerId(loggerId) {};
     
         void log(const RPZJSON::Method &method, const QString &msg) {
@@ -43,6 +43,6 @@ class JSONLogger {
         }
 
 
-    private:
+ private:
         QString _loggerId;
 };

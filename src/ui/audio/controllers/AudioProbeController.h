@@ -35,7 +35,7 @@ class AudioProbeController : public QGroupBox {
 
     Q_OBJECT
 
-    public:
+ public:
         AudioProbeController(QWidget * parent = nullptr);
         
         void updatePlayedMusic(const QString &musicName);
@@ -44,7 +44,7 @@ class AudioProbeController : public QGroupBox {
         
         VolumeToolbar* toolbar = nullptr;
         
-    private:
+ private:
         static inline const QString _defaultNoTime = "--"; 
 
         QLabel* _descr = nullptr;

@@ -28,7 +28,7 @@
 #include <QSpinBox>
 
 class AbstractAtomSliderEditor : public AtomSubEditor {
-    public:
+ public:
         AbstractAtomSliderEditor(const RPZAtom::Parameter &parameter, const CrossEquities &crossEquities);
                 
         void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::LoadingContext &context) override;
@@ -37,7 +37,7 @@ class AbstractAtomSliderEditor : public AtomSubEditor {
         double toAtomValue(int sliderVal) const;
         int toSliderValue(double atomVal) const;
 
-    private:
+ private:
         CrossEquities _ceData;
         
         void _confirmPayload();

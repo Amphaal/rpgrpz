@@ -29,7 +29,7 @@
 
 class LogContent : public QWidget {
 
-    public:
+ public:
         LogContent(const RPZMessage &msg) {
 
             this->setAutoFillBackground(true);
@@ -72,7 +72,7 @@ class LogContent : public QWidget {
 
         }
 
-    private:
+ private:
         void _defineToolTip(const RPZMessage &msg) {
             auto timestamp = msg.timestamp().toString(QStringLiteral(u"dd.MM.yyyy-hh:mm:ss"));
             this->setToolTip(QObject::tr("Sent at %1").arg(timestamp));

@@ -23,7 +23,7 @@
  
 class StandardUsersModel : public BaseUsersModel {
     
-    public:
+ public:
         StandardUsersModel() { };
 
         QVariant data(const QModelIndex &index, int role) const override {
@@ -53,7 +53,7 @@ class StandardUsersModel : public BaseUsersModel {
 
         }
 
-    private:
+ private:
         bool _isUserInvalidForInsert(const RPZUser &user) const override {
             return user.role() == RPZUser::Role::Player;
         }

@@ -33,12 +33,12 @@
 #include "src/shared/hints/HintThread.hpp"
 
 class MapLayoutManager : public QWidget {
-    public:
+ public:
         MapLayoutManager(QGraphicsView* viewToMimic, QWidget *parent = nullptr);
 
         MapLayoutTree* tree();
     
-    private:
+ private:
         MapLayoutTree* _tree = nullptr;
         QPushButton* _mapParamBtn = nullptr;
         QSlider* _FoWOpacitySlider = nullptr;

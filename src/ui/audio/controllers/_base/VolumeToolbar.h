@@ -36,10 +36,10 @@ class VolumeToolbar : public QWidget {
     signals:
         void askForVolumeChange(int newVolume);
 
-    public:
+ public:
         VolumeToolbar(QWidget* parent = nullptr);
     
-    private:
+ private:
         QSlider* _audio = nullptr;
         QToolButton* _mute = nullptr;
         QLabel* _volumeStr = nullptr;

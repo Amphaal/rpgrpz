@@ -32,7 +32,7 @@ class MapTools : public QToolBar {
 
     Q_OBJECT
 
-    public:    
+ public:    
         MapTools(QWidget * parent = nullptr) : QToolBar(parent) {
             
             //self
@@ -66,7 +66,7 @@ class MapTools : public QToolBar {
     signals:
         void toolRequested(const MapTool &tool, bool enabled);
 
-    private:
+ private:
         static inline MapTools* _inst = nullptr;
 
         QAction* _findActionFromTool(const MapTool &tool) {

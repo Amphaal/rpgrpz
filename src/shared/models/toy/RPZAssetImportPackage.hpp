@@ -24,7 +24,7 @@
 #include <QByteArray>
 
 class RPZAssetImportPackage : public RPZAsset {
-    public:
+ public:
         RPZAssetImportPackage() {}
         explicit RPZAssetImportPackage(const QVariantHash &hash) : RPZAsset(hash) {}
         RPZAssetImportPackage(const RPZAsset &asset) : RPZAsset(asset) {
@@ -79,7 +79,7 @@ class RPZAssetImportPackage : public RPZAsset {
             );
         }
     
-    private:
+ private:
         bool _isSuccessful = false;
 
         void _clearAssetAsBytes() {

@@ -25,7 +25,7 @@
 #include <QTimer>
 
 class QuickDrawItem : public MapViewGraphicsPathItem {
-    public:
+ public:
         QuickDrawItem(const RPZUser &emiter) : QuickDrawItem(SnowFlake::get()->nextId(), emiter.color()) {}
 
         RPZQuickDrawBits::Id id() const {
@@ -81,7 +81,7 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
             this->_registeredForDeletion = true;
         }
     
-    private:
+ private:
         QColor _color;
         QQueue<QPointF> _pathPush;
         QQueue<QPointF> _path;

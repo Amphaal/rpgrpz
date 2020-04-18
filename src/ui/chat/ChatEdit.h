@@ -34,7 +34,7 @@ class ChatEdit : public QWidget, public ConnectivityObserver {
 
     Q_OBJECT
 
-    public:
+ public:
         ChatEdit(QWidget * parent = nullptr);
     
     signals:
@@ -44,7 +44,7 @@ class ChatEdit : public QWidget, public ConnectivityObserver {
         void changeEvent(QEvent *event) override;
         void connectingToServer() override;
 
-    private:
+ private:
         QLineEdit* _msgEdit = nullptr;
         QPushButton* _sendMsgBtn = nullptr;
 

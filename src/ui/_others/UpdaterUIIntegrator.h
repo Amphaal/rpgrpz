@@ -33,7 +33,7 @@ class UpdaterUIIntegrator : public QObject {
     signals:
         void stateChanged(const bool isSearching);
 
-    public:
+ public:
         UpdaterUIIntegrator(QMainWindow* wParent);
         void openMaintenanceTool();
     
@@ -41,7 +41,7 @@ class UpdaterUIIntegrator : public QObject {
         void requireUpdateCheckFromUser();
         void checkForAppUpdates();
 
-    private:
+ private:
         QMainWindow* _wParent = nullptr;
         QtAutoUpdater::Updater* _updater;
         bool _userNotificationOnUpdateCheck = false;

@@ -30,13 +30,13 @@ class YoutubePlayer : public QGroupBox {
     
     Q_OBJECT
     
-    public:
+ public:
         YoutubePlayer(QWidget * parent = nullptr);
 
         TrackToolbar* toolbar();
         Playlist* playlist();    
 
-    private:
+ private:
         TrackToolbar* _toolbar = nullptr;
         Playlist* _playlist = nullptr;    
         YoutubePlaylistItemInsertor* _linkInserter = nullptr;

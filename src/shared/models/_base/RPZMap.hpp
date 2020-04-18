@@ -29,7 +29,7 @@ class RPZMap : public QMap<SnowFlake::Id, T> {
     static_assert(std::is_base_of<Serializable, T>::value, "Must derive from Serializable");
     T element;
     
-    public:
+ public:
         RPZMap() {}    
         ~RPZMap() {}   
 

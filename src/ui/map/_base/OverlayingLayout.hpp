@@ -23,7 +23,7 @@
 #include <QWidget>
 
 class OverlayingLayout : public QLayout {
-    public:
+ public:
         OverlayingLayout() {
             this->setSpacing(0);
         }
@@ -129,6 +129,6 @@ class OverlayingLayout : public QLayout {
             }
         }
 
-    private:
+ private:
         QList<QLayoutItem*> _list;
 };

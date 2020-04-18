@@ -31,7 +31,7 @@
 #include "AtomActionsHandler.h"
 
 class AtomsContextualMenuHandler {
-    public:
+ public:
         AtomsContextualMenuHandler(QWidget* menuParent);
 
         void invokeMenu(const QList<RPZAtom::Id> &toManipulate, const QPoint &whereToDisplay);
@@ -46,7 +46,7 @@ class AtomsContextualMenuHandler {
         void _setVisibility(bool hide);
         void _setAvailability(bool lock);
 
-    private:
+ private:
         QWidget* _menuParent = nullptr;
 
         QList<RPZAtom::Id> _latestInvokedAtomIds;

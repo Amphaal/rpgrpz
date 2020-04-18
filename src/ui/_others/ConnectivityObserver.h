@@ -25,7 +25,7 @@
 #include "src/helpers/Authorisations.hpp"
 
 class ConnectivityObserver {
-    public:
+ public:
         ConnectivityObserver();
                 
         static void connectWithClient(RPZClient* cc);
@@ -40,7 +40,7 @@ class ConnectivityObserver {
         virtual void connectingToServer() {}
         virtual void connectionClosed(bool hasInitialMapLoaded) {}
 
-    private:
+ private:
         static inline QVector<ConnectivityObserver*> _observers;
         static void _onClientThreadFinished();
 
@@ -51,13 +51,13 @@ class ConnectivityObserverSynchronizer : public QObject {
 
     Q_OBJECT
 
-    public:
+ public:
         static ConnectivityObserverSynchronizer* get();
     
     public slots:
         void triggerConnectionClosed(bool hasInitialMapLoaded);
 
-    private:
+ private:
         ConnectivityObserverSynchronizer() {}
         static inline ConnectivityObserverSynchronizer* _inst = nullptr;
         

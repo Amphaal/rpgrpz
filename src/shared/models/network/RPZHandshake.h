@@ -25,7 +25,7 @@
 #include "src/shared/models/character/RPZCharacter.hpp"
 
 class RPZHandshake : public QVariantHash {
-    public:
+ public:
         explicit RPZHandshake(const QVariantHash &hash);
         RPZHandshake(const QString &requestedUsername, const RPZCharacter &toIncarnate);
 

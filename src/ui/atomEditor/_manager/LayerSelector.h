@@ -30,11 +30,11 @@ class LayerSelector : public QWidget {
     
     Q_OBJECT
     
-    public:
+ public:
         LayerSelector(QWidget *parent = nullptr);
         ~LayerSelector();
         QSpinBox* spinbox();
 
-    private:
+ private:
         QSpinBox* _spinbox = nullptr;
 };

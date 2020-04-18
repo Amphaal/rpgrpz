@@ -23,6 +23,6 @@
 #include "src/shared/models/RPZMapParameters.hpp"
 
 class RPZGridBound {
-    public:
+ public:
         virtual void adaptativePointAlignementToGrid(const RPZMapParameters &mapParams, QPointF &pointInSceneCoords) const = 0;
 };

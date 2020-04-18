@@ -30,7 +30,7 @@ class NPCAttitudeEditor : public AtomSubEditor {
 
     Q_OBJECT
 
-    private:    
+ private:    
         static inline QMap<RPZAtom::NPCType, QString> _strAttitude {
             { RPZAtom::NPCType::Unknown, QT_TR_NOOP("Unknown") },
             { RPZAtom::NPCType::Neutral, QT_TR_NOOP("Neutral") },
@@ -47,7 +47,7 @@ class NPCAttitudeEditor : public AtomSubEditor {
 
         QComboBox* _combo = nullptr;
 
-    public:
+ public:
         NPCAttitudeEditor() : AtomSubEditor({RPZAtom::Parameter::NPCAttitude}) { 
 
             this->setVisible(false);

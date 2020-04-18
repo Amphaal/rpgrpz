@@ -25,7 +25,7 @@
 #include <QString>
 
 class AtomTemplateChangedPayload : public AlterationPayload {
-    public:
+ public:
         explicit AtomTemplateChangedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
         AtomTemplateChangedPayload(const RPZAtom::Updates &changes) : AlterationPayload(Payload::Alteration::AtomTemplateChanged) {
             this->_setMetadataChanges(changes);
@@ -45,7 +45,7 @@ class AtomTemplateChangedPayload : public AlterationPayload {
 
         }
 
-    private:
+ private:
         void _setMetadataChanges(const RPZAtom::Updates &changes) {
             
             QVariantHash in;

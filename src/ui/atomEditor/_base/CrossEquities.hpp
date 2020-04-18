@@ -22,7 +22,7 @@
 #include <QVector>
 
 class CrossEquities {
-    public:
+ public:
         struct CrossEquity {
             double atomValue;
             int sliderValue;
@@ -74,7 +74,7 @@ class CrossEquities {
         double maxAtom() const { return this->_maxAtom; }
         double minAtom() const { return this->_minAtom; }
     
-    private:
+ private:
         int _maxSlider = 0;
         int _minSlider = 0;
 

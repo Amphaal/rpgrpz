@@ -29,7 +29,7 @@
 #include "src/helpers/Authorisations.hpp"
 
 class MapViewAnimator {
-    public:
+ public:
         static void triggerQueuedAnimations() {
             while (!_queuedAnimations.isEmpty()) {
                 auto anim = _queuedAnimations.dequeue();
@@ -103,7 +103,7 @@ class MapViewAnimator {
 
         }
     
-    private:
+ private:
         static inline bool _animationsAllowed = true;
 
         static inline QString _visibilityProp = QStringLiteral(u"opacity");

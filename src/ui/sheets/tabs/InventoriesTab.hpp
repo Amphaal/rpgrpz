@@ -29,7 +29,7 @@
 #include "src/ui/sheets/components/InventoryPicker.hpp"
 
 class InventoriesTab : public QWidget {
-    public:
+ public:
         InventoriesTab() : _inventoryPicker(new InventoryPicker), _inventoryEditor(new InventoryEditor) {
            
             auto inventoryTabLayout = new QVBoxLayout;
@@ -66,7 +66,7 @@ class InventoriesTab : public QWidget {
             this->_inventoryPicker->loadCharacter(toLoad, isReadOnly);
         }
 
-    private:
+ private:
         bool _readOnly = false;
 
         InventoryPicker* _inventoryPicker = nullptr;

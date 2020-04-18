@@ -23,7 +23,7 @@
 #include <QTime>
 
 class StringHelper {
-    public:
+ public:
 
         static QString fromMeters(double meters) {
 

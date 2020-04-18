@@ -28,7 +28,7 @@ class NoEditorMessageWidget : public QWidget {
     
     Q_OBJECT
 
-    public:
+ public:
         NoEditorMessageWidget() {
     
             auto layout = new QVBoxLayout;

@@ -31,7 +31,7 @@ class AtomSubEditor : public QWidget {
 
     Q_OBJECT
 
-    public:
+ public:
         enum class EditMode { None, Template, Selection };
         Q_ENUM(EditMode)
 
@@ -58,7 +58,7 @@ class AtomSubEditor : public QWidget {
         virtual void _handleVisibilityOnLoad(const RPZAtom::Updates &defaultValues);
         QVBoxLayout* _mainLayout = nullptr;
     
-    private:
+ private:
         bool _supportsBatchEditing = true;
 };
 inline uint qHash(const AtomSubEditor::EditMode &key, uint seed = 0) {return uint(key) ^ seed;}

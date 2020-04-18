@@ -25,7 +25,7 @@
 
 class FogChangedPayload : public AlterationPayload {
     
-    public:
+ public:
         enum class ChangeType {
             Added,
             Removed,

@@ -29,7 +29,7 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
 
     Q_OBJECT
 
-    public:
+ public:
         struct DefaultCharacterSelection {
             RPZCharacter::Id characterId = 0;
             QString characterName;
@@ -78,7 +78,7 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
             this->_updateComboFromAvailableCharacters();
         }
 
-    private:
+ private:
         QList<RPZCharacter::UserBound> _availableCharacters;
         DefaultCharacterSelection _defaultCharacter;
 

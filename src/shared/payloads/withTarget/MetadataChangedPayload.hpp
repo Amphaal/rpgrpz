@@ -25,7 +25,7 @@
 #include <QString>
 
 class MetadataChangedPayload : public MultipleAtomTargetsPayload {
-    public:
+ public:
         explicit MetadataChangedPayload(const QVariantHash &hash) : MultipleAtomTargetsPayload(hash) {}
         MetadataChangedPayload(const QList<RPZAtom::Id> &targetedRPZAtomIds, const RPZAtom::Updates &changes) : MultipleAtomTargetsPayload(Payload::Alteration::MetadataChanged, targetedRPZAtomIds) {
             Q_ASSERT(targetedRPZAtomIds.count());
@@ -39,7 +39,7 @@ class MetadataChangedPayload : public MultipleAtomTargetsPayload {
             return RPZAtom::unserializeUpdates(this->args().toHash());
         }
 
-    private:
+ private:
         void _setMetadataChanges(const RPZAtom::Updates &changes) {
             this->insert(QStringLiteral(u"args"), 
                 RPZAtom::serializeUpdates(changes)

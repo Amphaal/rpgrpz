@@ -39,7 +39,7 @@ class InventorySheet : public QTableWidget {
     
     Q_OBJECT
     
-    public:
+ public:
         InventorySheet() : QTableWidget(0, 5) {
 
             this->_addRowAction = new QAction(
@@ -178,7 +178,7 @@ class InventorySheet : public QTableWidget {
 
         }
 
-    private:
+ private:
         bool _readOnly = false;
         QVector<RPZInventory*> _inventoryTargets;
         const RPZInventory* _self = nullptr;

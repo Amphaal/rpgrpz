@@ -45,7 +45,7 @@ class Playlist : public QListWidget {
 
     Q_OBJECT
 
-    public:
+ public:
         enum class YoutubeUrlType { YoutubePlaylist, YoutubeVideo };
         Q_ENUM(YoutubeUrlType)
 
@@ -61,7 +61,7 @@ class Playlist : public QListWidget {
     signals:
         void playRequested(VideoMetadata* metadata);
 
-    private:
+ private:
         void keyPressEvent(QKeyEvent * event) override;
         void _removeYoutubeVideo(QListWidgetItem* playlistItem);
         void _addYoutubeVideo(const PlayerConfig::VideoId &ytVideoId);

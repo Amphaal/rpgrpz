@@ -40,7 +40,7 @@ class MapViewGraphicsPathItem : public QObject, public QGraphicsPathItem, public
     Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
     Q_PROPERTY(QPainterPath path READ path WRITE setPath)
 
-    public:
+ public:
         MapViewGraphicsPathItem(const QPainterPath &path, const QPen &pen, const QBrush &brush = QBrush()) : QGraphicsPathItem(path),
         _sourceBrush(brush) {
             this->_sourceBrushSize = QSizeF(this->_sourceBrush.texture().size());
@@ -55,7 +55,7 @@ class MapViewGraphicsPathItem : public QObject, public QGraphicsPathItem, public
             return this->_sourceBrushSize;
         }
 
-    private:
+ private:
         QBrush _sourceBrush;
         QSizeF _sourceBrushSize;
 

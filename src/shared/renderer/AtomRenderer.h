@@ -31,14 +31,14 @@
 #include "src/helpers/RPZQVariant.hpp"
 
 class AtomRenderer {
-    public:
+ public:
         static void defineMapParameters(const RPZMapParameters &mapParameters);
 
         static QGraphicsItem* createGraphicsItem(const RPZAtom &atom, const RPZAsset &asset, bool isTemporary, bool owned);
         static QGraphicsRectItem* createMissingAssetPlaceholderItem(const RPZAtom &atom);
         static QGraphicsItem* createOutlineRectItem(const QPointF &scenePos);
 
-    private:
+ private:
         static QGraphicsItem* _createGenericImageBasedItem(const RPZAtom &atom, const RPZAsset &asset);
         static QGraphicsPathItem* _createBrushItem(const RPZAtom &atom, const RPZAsset &asset);
         static MapViewDrawing* _createDrawingItem(const RPZAtom &atom);

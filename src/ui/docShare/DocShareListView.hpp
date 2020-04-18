@@ -34,7 +34,7 @@
 #include "src/shared/hints/SharedDocHint.hpp"
 
 class DocShareListView : public QListWidget, public ConnectivityObserver {
-    public:
+ public:
         DocShareListView(QWidget *parent = nullptr) : QListWidget(parent) {
             this->setAcceptDrops(true);
 
@@ -88,7 +88,7 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
 
         }
 
-    private:
+ private:
         QHash<RPZSharedDocument::FileHash, QListWidgetItem*> _itemByHash;
         
         QMimeDatabase _MIMEDb;

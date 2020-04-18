@@ -26,7 +26,7 @@ class PlayersModel : public BaseUsersModel {
     
     Q_OBJECT
 
-    public:
+ public:
         PlayersModel() { };
 
         QVariant data(const QModelIndex &index, int role) const override {
@@ -58,7 +58,7 @@ class PlayersModel : public BaseUsersModel {
 
         }
 
-    private:
+ private:
         bool _isUserInvalidForInsert(const RPZUser &user) const override {
             return user.role() != RPZUser::Role::Player;
         }

@@ -24,7 +24,7 @@
 
 class MapLayoutAtom;
 class MapLayoutCategory : public MapLayoutItem {
-    public:
+ public:
         MapLayoutCategory(const RPZAtom::Category &category, int sorter);
         int sorter() const;
         RPZAtom::Category category() const;
@@ -49,7 +49,7 @@ class MapLayoutCategory : public MapLayoutItem {
 
         const QPixmap icon() const override;
 
-    private:
+ private:
         QVector<MapLayoutAtom*> _atoms;
         int _sorter = 0;
         RPZAtom::Category _category = (RPZAtom::Category)0;

@@ -25,9 +25,9 @@
 #include <QScrollBar>
 
 class LogScrollView : public QScrollArea {
-    public:
+ public:
         LogScrollView(QWidget *parent = nullptr);
 
-    private:
+ private:
         void _scrollUpdate();
 };

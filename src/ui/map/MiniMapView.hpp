@@ -24,7 +24,7 @@
 #include <QPen>
 
 class MiniMapView : public QGraphicsView {
-    public:
+ public:
         MiniMapView(MapView* master, QWidget *parent = nullptr) : QGraphicsView(parent), _master(master) {
 
             this->setCursor(Qt::OpenHandCursor);
@@ -66,7 +66,7 @@ class MiniMapView : public QGraphicsView {
             }
         }
 
-    private:
+ private:
         QGraphicsScene* _dummyScene = nullptr;
         QGraphicsScene* _sceneToMimic = nullptr;
         MapView* _master = nullptr;

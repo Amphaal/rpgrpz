@@ -33,7 +33,7 @@
 #include "src/shared/models/RPZMapParameters.hpp"
 
 class MV_Manipulation {
-    public:
+ public:
         enum class MoveDirection { GoUndefined, GoLeft, GoUp, GoRight, GoDown };
         
         MV_Manipulation(QGraphicsView* view) : _view(view) {
@@ -190,7 +190,7 @@ class MV_Manipulation {
 
         virtual void onAnimationManipulationTickDone() {} //overidable
 
-    private:
+ private:
         struct MoveInstruction {
             QScrollBar* affectedScroll;
             int correction;

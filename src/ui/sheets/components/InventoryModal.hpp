@@ -42,7 +42,7 @@ class InventorySlotModal : public QDialog {
     
     Q_OBJECT
 
-    public:
+ public:
         InventorySlotModal(
             const RPZInventory* from, 
             const QVector<RPZInventory*> &targets, 
@@ -104,7 +104,7 @@ class InventorySlotModal : public QDialog {
         QMap<QString, QPair<int, RPZInventorySlot>> _toBeAltered;
         virtual void _loadHelpersFromTargetInventorySelection() = 0;
 
-    private:
+ private:
         QVector<RPZInventory*> _targets;
         QComboBox* _targetsCombo = nullptr;
         QComboBox* _recipientCombo = nullptr;
@@ -119,7 +119,7 @@ class InventorySlotMoveModal : public InventorySlotModal {
     
     Q_OBJECT
     
-    public:
+ public:
         InventorySlotMoveModal(
             const RPZInventory* from, 
             const QVector<RPZInventory*> &targets, 
@@ -164,7 +164,7 @@ class InventorySlotMoveModal : public InventorySlotModal {
 
         }
     
-    private:
+ private:
         QFormLayout* _subLayout = nullptr;
 };
 
@@ -172,7 +172,7 @@ class InventorySlotSplitModal : public InventorySlotModal {
     
     Q_OBJECT
     
-    public:
+ public:
         InventorySlotSplitModal(
             const RPZInventory* from, 
             const QVector<RPZInventory*> &targets, 
@@ -233,7 +233,7 @@ class InventorySlotSplitModal : public InventorySlotModal {
             return this->_moving;
         }
 
-    private:
+ private:
         uint _moving = 0;
         uint _maxFrom = -1;
         uint _minTo = -1; 

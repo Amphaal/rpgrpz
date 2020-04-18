@@ -26,7 +26,7 @@
 #include "src/shared/models/RPZUser.h"
 
 class RPZQuickDrawBits : public QVariantHash {
-    public:
+ public:
         using Id = SnowFlake::Id;
 
         RPZQuickDrawBits() {};

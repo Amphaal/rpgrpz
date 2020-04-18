@@ -30,12 +30,12 @@ class AtomEditorLineDescriptor : public QWidget {
 
     Q_OBJECT
 
-    public:
+ public:
         AtomEditorLineDescriptor(const RPZAtom::Parameter &paramType, bool supportsBatchEditing);
         void updateValue(double value);
         void cannotDisplayValue();
     
-    private:
+ private:
         AtomEditorLineDescriptor(const QString &untranslatedDescription, const QString &suffix, const QString &iconPath = QString());
 
         QString _suffix;

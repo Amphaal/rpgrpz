@@ -20,6 +20,6 @@
 #pragma once
 
 class RPZAnimated {
-    public:
+ public:
         virtual void triggerAnimation() = 0; //only to be used on main thread !
 };

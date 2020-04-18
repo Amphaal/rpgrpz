@@ -28,7 +28,7 @@
 
 class BaseUsersModel : public QAbstractListModel, public ConnectivityObserver {
     
-    public:
+ public:
         BaseUsersModel() { };
 
         int rowCount(const QModelIndex &parent) const override {
@@ -81,7 +81,7 @@ class BaseUsersModel : public QAbstractListModel, public ConnectivityObserver {
 
         }
 
-    private:
+ private:
         int _getRow(const RPZUser &user) {
             return this->_users.keys().indexOf(user.id());
         }

@@ -34,7 +34,7 @@ class MessagesLog : public LogContainer, public ConnectivityObserver {
     
     Q_OBJECT
     
-    public:
+ public:
         MessagesLog(QWidget *parent = nullptr);
 
         void handleResponse(const RPZResponse &response);
@@ -46,7 +46,7 @@ class MessagesLog : public LogContainer, public ConnectivityObserver {
     signals:
         void notificationCountUpdated(int newCount);
 
-    private:
+ private:
         QList<Stampable::Id> _msgIdsNotSeen;
 
         void _handleMessage(const RPZMessage &msg, bool isLocal = false, bool fromHistory = false);

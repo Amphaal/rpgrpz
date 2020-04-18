@@ -24,7 +24,7 @@
 #include <QPushButton>
 
 class ColorPickerEditor : public AtomSubEditor {
-    public:
+ public:
         ColorPickerEditor(const RPZAtom::Parameter &parameter) : AtomSubEditor({parameter}), 
         _colorSelectBtn(new QPushButton(this)) {
 
@@ -37,7 +37,7 @@ class ColorPickerEditor : public AtomSubEditor {
 
             }
 
-    private:
+ private:
         QPushButton* _colorSelectBtn = nullptr;
         QColor _currentColor;
 

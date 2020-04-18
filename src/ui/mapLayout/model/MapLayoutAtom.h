@@ -25,7 +25,7 @@
 
 class MapLayoutCategory;
 class MapLayoutAtom : public MapLayoutItem {
-    public:
+ public:
         MapLayoutAtom(MapLayoutCategory* parent, const RPZAtom &atom);
         ~MapLayoutAtom();
 
@@ -45,7 +45,7 @@ class MapLayoutAtom : public MapLayoutItem {
 
         bool notifyAssetNameChange(const QString newAssetName);
 
-    private:
+ private:
         MapLayoutCategory* _parent = nullptr;
         QString _name;
         RPZAtom::Type _type = (RPZAtom::Type)0;

@@ -22,7 +22,7 @@
 #include "src/ui/atomEditor/_base/AbstractAtomSliderEditor.h"
 
 class AtomSliderEditor : public AbstractAtomSliderEditor {
-    public:
+ public:
         AtomSliderEditor(const RPZAtom::Parameter &parameter, int minimum, int maximum) : 
             AbstractAtomSliderEditor(parameter, QVector<CrossEquities::CrossEquity> { {(double)minimum, minimum}, {(double)maximum, maximum} }) {
                 this->_spin = this->_generateSpinBox();
@@ -51,7 +51,7 @@ class AtomSliderEditor : public AbstractAtomSliderEditor {
             ((QSpinBox*)this->_spin)->setValue((int)toApply);
         }
 
-    private:
+ private:
         void _onSpinnerValueChanged(int atomValue) {
             auto sliderVal = this->toSliderValue(atomValue);
             this->_updateSlider(sliderVal);

@@ -33,7 +33,7 @@
 #include "src/helpers/JSONSerializer.h"
 
 class RPZAsset : public QVariantHash {
-    public:
+ public:
         using Hash = QString; //file hash of the asset
 
         RPZAsset() {}
@@ -145,7 +145,7 @@ class RPZAsset : public QVariantHash {
 
         }
 
-    private:
+ private:
         void _setHash(const RPZAsset::Hash &hash) {
             this->insert(QStringLiteral(u"hash"), hash);
         }

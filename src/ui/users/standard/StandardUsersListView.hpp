@@ -26,7 +26,7 @@
 #include <QAbstractItemModel>
 
 class StandardUsersListView : public QListView {
-    public:
+ public:
         StandardUsersListView(QWidget *parent = nullptr) : QListView(parent) {
             
             this->setUniformItemSizes(true);
@@ -58,7 +58,7 @@ class StandardUsersListView : public QListView {
 
         }
     
-    private:
+ private:
         void _onRowRemoved() {
             this->setVisible(
                 this->model()->rowCount()

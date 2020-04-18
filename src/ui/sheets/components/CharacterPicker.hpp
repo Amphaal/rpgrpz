@@ -33,7 +33,7 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
 
     Q_OBJECT
 
-    public:
+ public:
         enum class CharacterOrigin { Unknown, Local, Remote };
         Q_ENUM(CharacterOrigin)
 
@@ -220,7 +220,7 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
         }
 
 
-    private:
+ private:
         QComboBox* _characterListCombo = nullptr;
         QPushButton* _deleteCharacterBtn = nullptr;
         QPushButton* _newCharacterBtn = nullptr;

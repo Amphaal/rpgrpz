@@ -25,7 +25,7 @@ class InventoryEditor : public QWidget {
 
     Q_OBJECT
 
-    public:
+ public:
         InventoryEditor() : _inventoryNameEdit(new QLineEdit), _inventory(new InventorySheet) {
             
             this->_inventoryNameEdit->setPlaceholderText(
@@ -58,7 +58,7 @@ class InventoryEditor : public QWidget {
 
         }
     
-    private:
+ private:
         QLineEdit* _inventoryNameEdit = nullptr;
         InventorySheet* _inventory = nullptr;
 };

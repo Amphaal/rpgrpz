@@ -35,7 +35,7 @@ class CharactersDatabase : public QObject, public JSONDatabase {
         void characterRemoved(const RPZCharacter::Id &);
         void characterUpdated(const RPZCharacter &);
 
-    public:
+ public:
         static CharactersDatabase* get();
 
         const RPZMap<RPZCharacter>& characters() const;
@@ -50,7 +50,7 @@ class CharactersDatabase : public QObject, public JSONDatabase {
         void _setupLocalData() override;
         const QJsonObject _updatedInnerDb() override;
 
-    private:
+ private:
         static inline CharactersDatabase* _singleton = nullptr;
         
         RPZMap<RPZCharacter> _characters;

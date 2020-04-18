@@ -39,7 +39,7 @@ class ConnectWidget : public QWidget, public ConnectivityObserver {
 
     Q_OBJECT
 
-    public:
+ public:
         enum class State { NotConnected, Connecting, Connected };
         Q_ENUM(State)
 
@@ -49,7 +49,7 @@ class ConnectWidget : public QWidget, public ConnectivityObserver {
         void connectingToServer() override;
         void connectionClosed(bool hasInitialMapLoaded) override;
 
-    private:
+ private:
         QLineEdit* _nameTarget = nullptr;
         QLineEdit* _domainTarget = nullptr;
         QComboBox* _characterSheetTarget = nullptr;

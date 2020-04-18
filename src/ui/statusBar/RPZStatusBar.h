@@ -37,7 +37,7 @@ class RPZStatusBar : public QStatusBar, public ConnectivityObserver {
 
     Q_OBJECT
 
-    public:
+ public:
         RPZStatusBar(QWidget * parent = nullptr);
 
         void bindServerIndicators();
@@ -48,7 +48,7 @@ class RPZStatusBar : public QStatusBar, public ConnectivityObserver {
         void updateExtIPLabel(const QString &stateText, RPZStatusLabel::State state);
         void updateMapFileLabel(const QString &mapDescriptor, bool isMapDirty);
 
-    private:
+ private:
         RPZStatusLabel* _extIpLabel = nullptr;
         RPZStatusLabel* _upnpStateLabel = nullptr;
         RPZStatusLabel* _serverStateLabel = nullptr;

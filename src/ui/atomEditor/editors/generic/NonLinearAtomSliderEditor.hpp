@@ -25,7 +25,7 @@
 #include <QDoubleSpinBox>
 
 class NonLinearAtomSliderEditor : public AbstractAtomSliderEditor {
-    public:
+ public:
         NonLinearAtomSliderEditor(const RPZAtom::Parameter &parameter, const CrossEquities &crossEquities) : AbstractAtomSliderEditor(parameter, crossEquities) {
             this->_spin = this->_generateSpinBox();
             this->_widgetLineLayout->addWidget(this->_spin);
@@ -54,7 +54,7 @@ class NonLinearAtomSliderEditor : public AbstractAtomSliderEditor {
         }
 
     
-    private:
+ private:
         void _onSpinBoxValueChanged(double spinValue) {
             auto sliderVal = this->toSliderValue(spinValue);
             this->_updateSlider(sliderVal);

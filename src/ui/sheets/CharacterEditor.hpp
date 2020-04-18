@@ -31,7 +31,7 @@ class CharacterEditor : public QWidget, public ConnectivityObserver {
     
     Q_OBJECT
 
-    public:
+ public:
         CharacterEditor(QWidget *parent = nullptr) : QWidget(parent),
             _characterPicker(new CharacterPicker), 
             _sheet(new CharacterSheet), 
@@ -113,7 +113,7 @@ class CharacterEditor : public QWidget, public ConnectivityObserver {
             this->_allowCharacterChangeNotifications = false;
         }
 
-    private:
+ private:
         bool _allowCharacterChangeNotifications = false;
         CharacterPicker::SelectedCharacter _currentSelection;
 

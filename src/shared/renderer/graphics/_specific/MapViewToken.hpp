@@ -46,7 +46,7 @@ class MapViewTokenOutline : public QObject, public QGraphicsItem, public RPZGrap
     Q_PROPERTY(qreal rotation READ rotation WRITE setRotation)
     Q_INTERFACES(QGraphicsItem)
 
-    public:
+ public:
         MapViewTokenOutline(QGraphicsItem* parentItem, QObject* parentObject, bool shouldDisplay) : QObject(parentObject), QGraphicsItem(parentItem), 
             _shouldDisplay(shouldDisplay) {
             
@@ -88,7 +88,7 @@ class MapViewTokenOutline : public QObject, public QGraphicsItem, public RPZGrap
             this->_paint(painter, &result.options, widget);
         }
 
-    private:
+ private:
         bool _shouldDisplay = false;
         QPropertyAnimation* _spinnerAnim = nullptr;
 
@@ -128,7 +128,7 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
     Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
     Q_INTERFACES(QGraphicsItem)
 
-    public:
+ public:
         MapViewToken(const RPZMapParameters &mapParameters, const RPZAtom &atom) {           
 
             this->_tokenType = atom.type();
@@ -235,7 +235,7 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
             this->_paint(painter, &result.options, widget);
         }
 
-    private:
+ private:
         MapViewTokenOutline* _outline = nullptr;
         qreal _tileWidthInPoints = 0;
         RPZAtom::Type _tokenType;

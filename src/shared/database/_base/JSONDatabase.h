@@ -38,7 +38,7 @@
 
 class JSONDatabase {
 
-    public:
+ public:
         enum class EntityType {
             Object,
             Array
@@ -89,7 +89,7 @@ class JSONDatabase {
 
         void log(const QString &msg);
 
-    private:
+ private:
         QString _logId;
         QJsonObject _dbCopy;
         QFile* _destfile = nullptr;

@@ -26,7 +26,7 @@
 
 class RPZMapParameters : public QVariantHash {
     
-    public:
+ public:
         enum class MovementSystem {
             Grid,
             Linear
@@ -193,7 +193,7 @@ class RPZMapParameters : public QVariantHash {
             this->insert(_valuesKeys.value(valueType), val);
         }
     
-    private:
+ private:
         static inline QHash<RPZMapParameters::Values, QString> _valuesKeys = {
                 { RPZMapParameters::Values::MapWidth, QStringLiteral(u"size") },
                 { RPZMapParameters::Values::MinimumZoomScale, QStringLiteral(u"minZS") },

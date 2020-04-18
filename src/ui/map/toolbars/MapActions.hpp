@@ -32,7 +32,7 @@ class MapActions : public QToolBar {
 
     Q_OBJECT
 
-    public:       
+ public:       
         MapActions(QWidget * parent = nullptr) : QToolBar(parent) {
             
             //self
@@ -61,7 +61,7 @@ class MapActions : public QToolBar {
     signals:
         void actionRequested(const MapAction &action);
 
-    private:        
+ private:        
         void _onActionSelectionChanged(QAction *action) {
             return emit actionRequested((MapAction)action->data().toInt());
         }

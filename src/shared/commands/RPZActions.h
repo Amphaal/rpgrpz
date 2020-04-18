@@ -40,7 +40,7 @@ enum class MapTool {
 };
 
 class RPZActions {
-    public:
+ public:
         static QAction* sentry();
         static QAction* redo();
         static QAction* undo();

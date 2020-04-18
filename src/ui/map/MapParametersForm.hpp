@@ -32,7 +32,7 @@
 
 class MapParametersForm : public QDialog {
     
-    public:
+ public:
         MapParametersForm(const RPZMapParameters &mapParams, QWidget* parent) : 
             QDialog(parent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint) { 
             
@@ -84,7 +84,7 @@ class MapParametersForm : public QDialog {
             return out;
         }
     
-    private:
+ private:
         QPushButton* _saveBtn = nullptr;
 
         QDoubleSpinBox* _minimumZoomScaleSpin = nullptr;

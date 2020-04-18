@@ -29,12 +29,12 @@
 #include "src/helpers/RPZQVariant.hpp"
 
 class AtomConverter {
-    public:   
+ public:   
         static void updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom::Updates &updates);
         static void setupGraphicsItemFromAtom(QGraphicsItem* target, const RPZAtom &blueprint);
         static const RPZAtom cloneAtomTemplateFromGraphics(QGraphicsItem* blueprint, RPZAtom toClone);
 
-    private:
+ private:
         static void _bulkTransformApply(QGraphicsItem* itemBrushToUpdate);
         static bool _setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &param, QGraphicsItem* itemToUpdate, const QVariant &val);
         static void _updateAtomParamFromGraphics(const RPZAtom::Parameter &param, RPZAtom &atomToUpdate, QGraphicsItem* blueprint);

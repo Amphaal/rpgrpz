@@ -43,7 +43,7 @@ class ViewMapHint : public AtomsStorage {
 
     Q_OBJECT
 
-    public:
+ public:
         struct SingleSelectionInteractible {
             bool isInteractive = false;
             RPZAtom interactible;
@@ -88,7 +88,7 @@ class ViewMapHint : public AtomsStorage {
     protected:
         virtual void _handleAlterationRequest(const AlterationPayload &payload) override;
 
-    private:
+ private:
         //alter template Atom
         mutable QMutex _m_ghostItem;
         QGraphicsItem* _ghostItem = nullptr;

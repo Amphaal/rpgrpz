@@ -34,7 +34,7 @@
 
 class uPnPRequester : public uPnPThread {
     
-    public:
+ public:
         struct UPNPUrls urls;
         struct IGDdatas data;
         struct UPNPDev * devlist = 0;
@@ -97,7 +97,7 @@ class uPnPRequester : public uPnPThread {
         }
 
 
-    private:
+ private:
         void _initUPnP() {
 
             #ifdef _WIN32

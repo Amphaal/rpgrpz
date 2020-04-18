@@ -40,13 +40,13 @@ class MapViewGraphicsRectItem : public QObject, public QGraphicsRectItem, public
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
     Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
 
-    public:
+ public:
         MapViewGraphicsRectItem(const QRectF &rect, const QPen &pen, const QBrush &brush) : QGraphicsRectItem(rect) {
             this->setBrush(brush);
             this->setPen(pen);
         }
 
-    private:
+ private:
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
             auto result = this->conditionnalPaint(this, painter, option, widget);
             if(!result.mustContinue) return;

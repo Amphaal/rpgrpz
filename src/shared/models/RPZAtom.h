@@ -46,7 +46,7 @@ class RPZAtom : public Serializable {
 
     Q_GADGET
 
-    public:
+ public:
     
         //order is important for transform handling
         enum class Parameter {
@@ -287,7 +287,7 @@ class RPZAtom : public Serializable {
         void setShape(const QPainterPath &path);
         void setShape(const QRectF &rect);
 
-    private:
+ private:
         static inline const QList<RPZAtom::Type> _layoutAtom {
             RPZAtom::Type::Drawing,
             RPZAtom::Type::Text,

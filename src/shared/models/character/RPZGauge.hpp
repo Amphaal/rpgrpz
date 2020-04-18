@@ -23,7 +23,7 @@
 #include <QColor>
 
 class RPZGauge : public QVariantHash {
-    public:
+ public:
         
         struct MinimalistGauge {
             int current; 

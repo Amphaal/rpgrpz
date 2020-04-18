@@ -30,7 +30,7 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
 
     Q_OBJECT
 
-    public:
+ public:
         QuickDrawingAssist(QGraphicsView* view) : _view(view) {
             this->_tmQDUpdater.setInterval(1000);
             QObject::connect(
@@ -115,7 +115,7 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
 
         }
 
-    private:
+ private:
         QGraphicsView* _view = nullptr;
         QuickDrawItem* _tempDrawing = nullptr;
         QHash<RPZQuickDrawBits::Id, QuickDrawItem*> _quickDrawings;

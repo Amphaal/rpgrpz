@@ -26,7 +26,7 @@
 
 class StreamPlayStateTracker : public QVariantHash {
     
-    public: 
+ public: 
         StreamPlayStateTracker() {};
         explicit StreamPlayStateTracker(const QVariantHash &hash) : QVariantHash(hash) {};
 
@@ -103,7 +103,7 @@ class StreamPlayStateTracker : public QVariantHash {
             return this->value(QStringLiteral(u"lu")).toDateTime();
         };
 
-    private:
+ private:
         qint64 _posInMsecs() const {
             return this->value(QStringLiteral(u"pos"), -1).value<qint64>();
         };

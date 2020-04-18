@@ -31,11 +31,11 @@ class NPCHealthEditor : public AtomSubEditor {
 
     Q_OBJECT
 
-    private:    
+ private:    
         SimpleGaugeEditor* _gEditor = nullptr;
         QPushButton* _validateButton = nullptr;
 
-    public:
+ public:
         NPCHealthEditor() : AtomSubEditor({RPZAtom::Parameter::NPCHealth, RPZAtom::Parameter::MinNPCHealth, RPZAtom::Parameter::MinNPCHealth}) { 
             
             this->_gEditor = new SimpleGaugeEditor;

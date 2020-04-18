@@ -36,7 +36,7 @@ class InventoryPicker : public QWidget {
         void selectionChanged(const RPZInventory* selected);
         void requestSave(RPZInventory* toSave);
 
-    public:
+ public:
         InventoryPicker() : 
             _inventoryListCombo(new QComboBox), 
             _deleteInventoryBtn(new QPushButton),
@@ -121,7 +121,7 @@ class InventoryPicker : public QWidget {
             );
         }
     
-    private:
+ private:
         bool _readOnly = false;
         QIcon _icon = QIcon(QStringLiteral(u":/icons/app/other/bag.png"));
 

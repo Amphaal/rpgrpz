@@ -27,7 +27,7 @@
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 
 class ClientActivityIndicator : public QLabel {
-    public:
+ public:
         ClientActivityIndicator(const QPixmap &offState, const QPixmap &onState) : _off(offState), _on(onState) {
 
             this->setContentsMargins(0, 0, 0, 0);
@@ -53,7 +53,7 @@ class ClientActivityIndicator : public QLabel {
             if(!_lingerTimer.isActive()) _setOff();
         }
     
-    private:
+ private:
         QPixmap _on;
         QPixmap _off;
 
@@ -73,7 +73,7 @@ class ClientActivityIndicator : public QLabel {
 };
 
 class ClientActivityBar : public QWidget {
-    public:
+ public:
         ClientActivityBar() {
 
             this->setVisible(false);
@@ -113,7 +113,7 @@ class ClientActivityBar : public QWidget {
 
         };
     
-    private:
+ private:
         ClientActivityIndicator* _upLbl = nullptr;
         ClientActivityIndicator* _downLbl = nullptr;
         

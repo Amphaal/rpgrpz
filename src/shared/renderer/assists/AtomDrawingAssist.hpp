@@ -27,7 +27,7 @@
 #include "src/helpers/VectorSimplifier.hpp"
 
 class AtomDrawingAssist {
-    public:
+ public:
         using IsCommitedDrawing = bool;
 
         AtomDrawingAssist(QGraphicsView* view) : _view(view) { }
@@ -122,7 +122,7 @@ class AtomDrawingAssist {
             this->_brushType = (RPZAtom::BrushType)0;
         }
 
-    private:
+ private:
         QGraphicsView* _view = nullptr;
         RPZAtom::Id _commitedDrawingId = 0;
 

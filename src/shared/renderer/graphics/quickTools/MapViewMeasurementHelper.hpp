@@ -43,7 +43,7 @@ class MapViewMeasurementHelper : public QObject, public QGraphicsItem, public RP
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
     Q_INTERFACES(QGraphicsItem)
     
-    private:
+ private:
         RPZMapParameters _mapParams;
         QGraphicsView* _view = nullptr;
         QPointF _startScenePos;
@@ -243,7 +243,7 @@ class MapViewMeasurementHelper : public QObject, public QGraphicsItem, public RP
 
         }
 
-    public:
+ public:
         MapViewMeasurementHelper(const RPZMapParameters &params, const QPoint &evtPosPoint, QGraphicsView* view) : _view(view) {
             
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);

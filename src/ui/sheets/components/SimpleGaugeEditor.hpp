@@ -37,7 +37,7 @@ class SimpleGaugeEditor : public QWidget {
 
     Q_OBJECT
 
-    public:
+ public:
         void fillValues(const RPZGauge::MinimalistGauge &gauge) {
             
             //limits
@@ -111,7 +111,7 @@ class SimpleGaugeEditor : public QWidget {
     protected:
         QHBoxLayout* _layoutToInsertTo = nullptr;
 
-    private:
+ private:
         QSpinBox* _currentValSpin = nullptr;
         QSpinBox* _minBarValSpin = nullptr;
         QSpinBox* _maxBarValSpin = nullptr;

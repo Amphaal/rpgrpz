@@ -61,7 +61,7 @@ class RPZServer : public QObject, public JSONLogger {
     
     Q_OBJECT
 
-    public:
+ public:
         RPZServer();
         ~RPZServer();
     
@@ -76,7 +76,7 @@ class RPZServer : public QObject, public JSONLogger {
         void error();
         void stopped();
 
-    private:
+ private:
         bool _mapHasLoaded = false;
         QTcpServer* _server = nullptr; 
 

@@ -28,7 +28,7 @@
 #include "src/shared/models/RPZSharedDocument.hpp"
 
 class RPZGameSession : public QVariantHash {
-    public:
+ public:
         RPZGameSession() {}
         explicit RPZGameSession(const QVariantHash &hash) : QVariantHash(hash) {}
         RPZGameSession(
@@ -83,7 +83,7 @@ class RPZGameSession : public QVariantHash {
             this->insert("map", mapPayload);
         }
     
-    private:
+ private:
         void _setMessages(const RPZMap<RPZMessage> &messages) {
             this->insert("msgs", messages.toVMap());
         }

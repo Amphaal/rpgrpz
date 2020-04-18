@@ -24,7 +24,7 @@
 #include "src/shared/hints/MapHint.h"
 
 class HintThread {
-    public:
+ public:
         static void init() {
 
             _hint = new MapHint;
@@ -50,7 +50,7 @@ class HintThread {
             return _hint;
         };
 
-    private:
+ private:
         static inline MapHint* _hint = nullptr;
 
 };

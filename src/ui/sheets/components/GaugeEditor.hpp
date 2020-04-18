@@ -38,7 +38,7 @@ class GaugeEditor : public SimpleGaugeEditor {
 
     Q_OBJECT
 
-    public:
+ public:
         GaugeEditor(const RPZGauge &gauge) : SimpleGaugeEditor({gauge.gaugeValue(), gauge.minGaugeValue(), gauge.maxGaugeValue()}),
             _barNameEdit(new QLineEdit), 
             _colorPicker(new QPushButton),
@@ -98,7 +98,7 @@ class GaugeEditor : public SimpleGaugeEditor {
 
         }
     
-    private:
+ private:
         QLineEdit* _barNameEdit = nullptr;
         QPushButton* _colorPicker = nullptr;
         QCheckBox* _visibleOnPortraitChk = nullptr;

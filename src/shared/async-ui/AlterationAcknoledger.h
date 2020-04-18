@@ -30,7 +30,7 @@ class AlterationAcknoledger : public QObject, public AlterationInteractor {
 
     Q_OBJECT
 
-    public:
+ public:
         AlterationAcknoledger(const Payload::Interactor &source);
 
     public slots:

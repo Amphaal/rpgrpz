@@ -25,7 +25,7 @@
 
 class RPZFogParams : public QVariantHash {
 
-    public:
+ public:
         enum class Mode {
             PathIsFog,
             PathIsButFog

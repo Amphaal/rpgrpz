@@ -32,7 +32,7 @@
 
 int serverConsole(int argc, char** argv) {
     QCoreApplication server(argc, argv);
-    AppContext::configureApp(server);
+    AppContext::configureApp(&server);
     RPZServer app;
     app.run();
     return server.exec();
@@ -63,8 +63,8 @@ int clientApp(int argc, char** argv) {
 
     // setup app
     QApplication app(argc, argv);
-    AppContext::configureApp(app);
-    AppContext::installTranslations(app);
+    AppContext::configureApp(&app);
+    AppContext::installTranslations(&app);
 
     QObject::connect(
         &app, &QObject::destroyed,

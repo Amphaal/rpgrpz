@@ -38,7 +38,7 @@ class StatusTab : public QWidget {
     
     Q_OBJECT
     
-    public:
+ public:
         StatusTab() {
             
             //state tab
@@ -163,7 +163,7 @@ class StatusTab : public QWidget {
         }
 
 
-    private:
+ private:
         QLineEdit* _statusBonusEdit = nullptr;
         QLineEdit* _statusMalusEdit = nullptr;
         AbilitiesSheet* _abilitiesSheet = nullptr;

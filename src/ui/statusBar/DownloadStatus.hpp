@@ -30,7 +30,7 @@ class DownloadStatus : public QProgressBar {
 
     Q_OBJECT
 
-    public:
+ public:
         DownloadStatus() {
             
             this->setVisible(false);
@@ -87,7 +87,7 @@ class DownloadStatus : public QProgressBar {
 
         }
     
-    private:
+ private:
         QString _tooltipDescriptionTemplatePrefilled;
 
         void _setStyleForKind(const ProgressTracker::Kind &kind) {

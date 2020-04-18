@@ -40,19 +40,17 @@ QVariant JSONSerializer::fromQSize(const QSize &size) {
 }
 
 QSize JSONSerializer::toQSize(const QVariantList &integerList) {
-    if(integerList.count() != 2) return QSize();
+    if (integerList.count() != 2) return QSize();
     return QSize(
-        integerList.at(0).toInt(), 
-        integerList.at(1).toInt()
-    );
+        integerList.at(0).toInt(),
+        integerList.at(1).toInt());
 }
 
 QPointF JSONSerializer::toPointF(const QVariantList &doubleList) {
-    if(doubleList.count() != 2) return QPointF();
+    if (doubleList.count() != 2) return QPointF();
     return QPointF(
-        doubleList.value(0).toReal(), 
-        doubleList.value(1).toReal()
-    );
+        doubleList.value(0).toReal(),
+        doubleList.value(1).toReal());
 }
 
 QVariant JSONSerializer::fromPointF(const QPointF &point) {
@@ -60,37 +58,25 @@ QVariant JSONSerializer::fromPointF(const QPointF &point) {
 }
 
 QVariant JSONSerializer::fromPolygons(const QList<QPolygonF> &polys) {
-    
     QVariantList in;
-    for(auto const &poly : polys) {
-        
+    for (auto const &poly : polys) {
         QVariantList vPoly;
-        for(auto const &point : poly) {
+        for (auto const &point : poly) {
             vPoly.insert(vPoly.size(), JSONSerializer::fromPointF(point));
         }
-
         in.insert(in.size(), vPoly);
-
     }
-
     return in;
-
 }
 
 QList<QPolygonF> JSONSerializer::toPolygons(const QVariantList &rawPolys) {
-
     QList<QPolygonF> out;
-    for(auto const &vPoly : rawPolys) {
-
+    for (auto const &vPoly : rawPolys) {
         QPolygonF poly;
-        for(auto const &vPoint: vPoly.toList()) {
+        for (auto const &vPoint : vPoly.toList()) {
             poly.insert(poly.size(), JSONSerializer::toPointF(vPoint.toList()));
         }
-
         out.insert(out.size(), poly);
-
     }
-
     return out;
-
 }

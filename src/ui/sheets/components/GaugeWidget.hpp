@@ -28,7 +28,7 @@
 #include "src/shared/models/character/RPZGauge.hpp"
 
 class GaugeWidget : public QWidget {
-    public:
+ public:
         GaugeWidget(const RPZGauge::MinimalistGauge &gauge, const QString &name, const QColor &color) : _name(name), _color(color) {
             this->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Fixed);
             this->setFixedHeight(15);
@@ -130,7 +130,7 @@ class GaugeWidget : public QWidget {
             drawGauge(painter, gaugeRect, gauge.toMinimalist(), gauge.color());
         }
 
-    private:
+ private:
         RPZGauge::MinimalistGauge _values;
         QString _name;
         QColor _color;
