@@ -31,15 +31,11 @@
 ////////////
 
 int serverConsole(int argc, char** argv) {
-    
     QCoreApplication server(argc, argv);
     AppContext::configureApp(server);
-
     RPZServer app;
     app.run();
-
     return server.exec();
-
 }
 
 ////////////////
@@ -51,7 +47,6 @@ int serverConsole(int argc, char** argv) {
 ////////////
 
 int clientApp(int argc, char** argv) {
-
     // prevent multiples instances
     #ifndef _DEBUG
 
@@ -59,14 +54,14 @@ int clientApp(int argc, char** argv) {
                             .arg(QDir::tempPath())
                             .arg(APP_NAME);
         QLockFile lockFile(lockFn);
-                            
-        if(!lockFile.tryLock(100)){
+
+        if (!lockFile.tryLock(100)) {
             return 1;
         }
 
     #endif
 
-    //setup app
+    // setup app
     QApplication app(argc, argv);
     AppContext::configureApp(app);
     AppContext::installTranslations(app);
@@ -75,24 +70,22 @@ int clientApp(int argc, char** argv) {
         &app, &QObject::destroyed,
         [=]() {
             delete AppContext::settings();
-        }
-    );
+    });
 
     app.setApplicationDisplayName(APP_NAME);
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
-    app.setStyle(QStyleFactory::create("Fusion")); 
+    app.setStyle(QStyleFactory::create("Fusion"));
 
-    //set cache limit to max
+    // set cache limit to max
     QPixmapCache::setCacheLimit(INT_MAX);
 
-    //fetch main window
+    // fetch main window
     AppLoader loader;
     MainWindow mw;
     loader.finish(&mw);
 
-    //wait for the app to close
+    // wait for the app to close
     return app.exec();
-
 }
 
 ////////////////
@@ -100,23 +93,19 @@ int clientApp(int argc, char** argv) {
 ////////////////
 
 void _registerMetaTypes() {
-   
-   //native
+    // native
     qRegisterMetaType<QPainterPath>("QPainterPath");
-
-    //gst
+    // gst
     qRegisterMetaType<GstMessageType>("GstMessageType");
     qRegisterMetaType<gint64>("gint64");
-
-    //enum
+    // enum
     qRegisterMetaType<RPZJSON::Method>("RPZJSON::Method");
     qRegisterMetaType<Payload::Alteration>("Payload::Alteration");
     qRegisterMetaType<RPZAtom::Parameter>("RPZAtom::Parameter");
     qRegisterMetaType<ProgressTracker::Kind>("ProgressTracker::Kind");
     qRegisterMetaType<RPZStatusLabel::State>("RPZStatusLabel::State");
     qRegisterMetaType<RPZFogParams::Mode>("RPZFogParams::Mode");
-
-    //typedef
+    // typedef
     qRegisterMetaType<SnowFlake::Id>("SnowFlake::Id");
     qRegisterMetaType<RPZCharacter::Id>("RPZCharacter::Id");
     qRegisterMetaType<RPZAsset::Hash>("RPZAsset::Hash");
@@ -126,8 +115,7 @@ void _registerMetaTypes() {
     qRegisterMetaType<RPZSharedDocument::DocumentName>("RPZSharedDocument::DocumentName");
     qRegisterMetaType<RPZSharedDocument::NamesStore>("RPZSharedDocument::NamesStore");
     qRegisterMetaType<CharacterPicker::SelectedCharacter>("CharacterPicker::SelectedCharacter");
-    
-    //QVariantHash derivates
+    // QVariantHash derivates
     qRegisterMetaType<AlterationPayload>("AlterationPayload");
     qRegisterMetaType<RPZResponse>("RPZResponse");
     qRegisterMetaType<RPZUser>("RPZUser");
@@ -142,11 +130,9 @@ void _registerMetaTypes() {
     qRegisterMetaType<RPZFogParams>("RPZFogParams");
     qRegisterMetaType<RPZMapParameters>("RPZMapParameters");
     qRegisterMetaType<RPZSharedDocument>("RPZSharedDocument");
-    
-    //struct
+    // struct
     qRegisterMetaType<AtomsSelectionDescriptor>("AtomsSelectionDescriptor");
-
-    //containers
+    // containers
     qRegisterMetaType<RPZMap<RPZUser>>("RPZMap<RPZUser>");
     qRegisterMetaType<QList<RPZAtom::Id>>("QList<RPZAtom::Id>");
     qRegisterMetaType<QList<QGraphicsItem*>>("QList<QGraphicsItem*>");
@@ -156,12 +142,10 @@ void _registerMetaTypes() {
     qRegisterMetaType<QVector<RPZMessage>>("QVector<RPZMessage>");
     qRegisterMetaType<QHash<QGraphicsItem*,RPZAtom::Updates>>("QHash<QGraphicsItem*,RPZAtom::Updates>");
     qRegisterMetaType<QList<QPolygonF>>("QList<QPolygonF>");
-    
 }
 
 int main(int argc, char** argv) {
-
-    //registering metatypes
+    // registering metatypes
     _registerMetaTypes();
 
     ////////////
@@ -169,14 +153,13 @@ int main(int argc, char** argv) {
     ////////////
 
     auto args = AppContext::getOptionArgs(argc, argv);
-    
-    auto result = args.contains(QStringLiteral(u"serverOnly")) ? 
-                    serverConsole(argc, argv) : 
+
+    auto result = args.contains(QStringLiteral(u"serverOnly")) ?
+                    serverConsole(argc, argv) :
                     clientApp(argc, argv);
 
-    //make sure to flush sentry for warnings / safe errors
+    // make sure to flush sentry for warnings / safe errors
     // sentry_shutdown();
 
-    return result; 
-
+    return result;
 }

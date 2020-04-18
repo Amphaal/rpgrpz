@@ -32,8 +32,7 @@
 #include "src/shared/models/character/RPZCharacter.hpp"
 
 class RPZUser : public Serializable {
-
-    public:
+     public:
         using Id = SnowFlake::Id;
 
         enum class Role { Observer, Host, Player };

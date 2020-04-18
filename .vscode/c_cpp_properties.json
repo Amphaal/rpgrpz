@@ -46,8 +46,10 @@
             },
             "includePath": [
                 "${default}",
+                "${workspaceFolder}/**",
                 "/usr/local/Cellar/qt/5.14.1/lib/QtCore.framework/Versions/5/Headers",
-                "/usr/local/Cellar/qt/5.14.1/lib/QtWidgets.framework/Versions/5/Headers"
+                "/usr/local/Cellar/qt/5.14.1/lib/QtWidgets.framework/Versions/5/Headers",
+                "/usr/local/Cellar/qt/5.14.1/lib/QtGui.framework/Versions/5/Headers"
             ]
         }
     ],

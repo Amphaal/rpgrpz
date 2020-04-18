@@ -25,7 +25,7 @@
 #include "src/shared/models/RPZAtom.h"
 
 class Clipboard {
-    public:
+     public:
         static void clear() {
             QMutexLocker m(&_m_clipboard);
             _copyClipboard.clear();
@@ -40,9 +40,8 @@ class Clipboard {
             QMutexLocker m(&_m_clipboard);
             _copyClipboard = ids;
         }
-        
 
-    private:
+     private:
         static inline QMutex _m_clipboard = QMutex();
         static inline QList<RPZAtom::Id> _copyClipboard;
 };
