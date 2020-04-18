@@ -697,105 +697,105 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="129"/>
+        <location filename="../ui/mainWindow.cpp" line="115"/>
         <source>Press ALT key to display the menu !</source>
         <translation>Appuyez sur la touche ALT pour afficher le menu !</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="187"/>
+        <location filename="../ui/mainWindow.cpp" line="168"/>
         <source>No</source>
         <translation>Non</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="235"/>
+        <location filename="../ui/mainWindow.cpp" line="214"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="310"/>
+        <location filename="../ui/mainWindow.cpp" line="283"/>
         <source>Toy box</source>
         <translation>Boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="394"/>
+        <location filename="../ui/mainWindow.cpp" line="363"/>
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="393"/>
+        <location filename="../ui/mainWindow.cpp" line="362"/>
         <source>Sheets</source>
         <translation>Fiches</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="408"/>
+        <location filename="../ui/mainWindow.cpp" line="376"/>
         <source>Map Atoms</source>
         <translation>Atomes de la carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="409"/>
+        <location filename="../ui/mainWindow.cpp" line="377"/>
         <source>Atom Editor</source>
         <translation>Editeur d&apos;atomes</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="334"/>
-        <location filename="../ui/mainWindow.cpp" line="341"/>
+        <location filename="../ui/mainWindow.cpp" line="305"/>
+        <location filename="../ui/mainWindow.cpp" line="312"/>
         <source>Game Hub</source>
         <translation>Hub de jeu</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="335"/>
+        <location filename="../ui/mainWindow.cpp" line="306"/>
         <source>Documents Share</source>
         <translation>Partage de documents</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="576"/>
+        <location filename="../ui/mainWindow.cpp" line="530"/>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="590"/>
+        <location filename="../ui/mainWindow.cpp" line="543"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="592"/>
-        <location filename="../ui/mainWindow.cpp" line="618"/>
-        <location filename="../ui/mainWindow.cpp" line="646"/>
+        <location filename="../ui/mainWindow.cpp" line="545"/>
+        <location filename="../ui/mainWindow.cpp" line="569"/>
+        <location filename="../ui/mainWindow.cpp" line="596"/>
         <source>Game map (*%1)</source>
         <translation>Carte de campagne (*%1)</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="616"/>
+        <location filename="../ui/mainWindow.cpp" line="567"/>
         <source>Load a new map</source>
         <translation>Charger une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="644"/>
+        <location filename="../ui/mainWindow.cpp" line="594"/>
         <source>Save as...</source>
         <translation>Savegarder sous...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="668"/>
+        <location filename="../ui/mainWindow.cpp" line="617"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="723"/>
+        <location filename="../ui/mainWindow.cpp" line="671"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="737"/>
+        <location filename="../ui/mainWindow.cpp" line="685"/>
         <source>Searching for updates...</source>
         <translation>Recherche des mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="737"/>
+        <location filename="../ui/mainWindow.cpp" line="685"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="772"/>
+        <location filename="../ui/mainWindow.cpp" line="719"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
@@ -1374,32 +1374,32 @@
 <context>
     <name>RPZClient</name>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="143"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="135"/>
         <source>Username required !</source>
         <translation>Nom d&apos;utilisateur requis !</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="156"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="147"/>
         <source>Disconnected from server</source>
         <translation>Déconnecté du serveur</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="45"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="42"/>
         <source>Host closed the connection.</source>
         <translation>L&apos;hôte a fermé la connexion.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="48"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="45"/>
         <source>Host could not be found. Please check the hostname and port number.</source>
         <translation>L&apos;hôte n&apos;a pas pu être trouvé. Merci de vérifier le nom d&apos;hôte et le numéro de port.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="51"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="48"/>
         <source>Connection has been refused by remote host.</source>
         <translation>La connexion a été refusée par l&apos;hôte distant.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="54"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="51"/>
         <source>An error has occured : %1</source>
         <translation>Une erreur est survenue : %1</translation>
     </message>
