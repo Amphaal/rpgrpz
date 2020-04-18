@@ -28,6 +28,8 @@
 #include <QLabel>
 #include <QString>
 
+#include <algorithm>
+
 #include "ToysTreeViewItem.h"
 #include "src/shared/database/AssetsDatabase.h"
 

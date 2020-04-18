@@ -20,7 +20,6 @@
 #pragma once
 
 #include <QHash>
-#include <set>
 #include <QVector>
 #include <QStack>
 #include <QVariantList>
@@ -28,6 +27,9 @@
 #include <QDebug>
 #include <QMutex>
 #include <QMutexLocker>
+
+#include <set>
+#include <algorithm>
 
 #include "src/shared/models/RPZAtom.h"
 #include "src/shared/payloads/Payloads.h"
