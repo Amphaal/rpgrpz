@@ -30,11 +30,25 @@
             ],
             "compilerPath": "C:\\msys64\\mingw64\\bin\\clang++.exe",
             "cStandard": "c11",
-            "cppStandard": "c++17",
+            "cppStandard": "c++20",
             "intelliSenseMode": "clang-x64"
         },
         {
-            "name": "MacOs"
+            "name": "MacOS",
+            "cStandard": "c11",
+            "cppStandard": "c++20",
+            "intelliSenseMode": "clang-x64",
+            "browse": {
+                "path": [
+                    "/usr/local/opt/qt"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "${default}",
+                "/usr/local/Cellar/qt/5.14.1/lib/QtCore.framework/Versions/5/Headers",
+                "/usr/local/Cellar/qt/5.14.1/lib/QtWidgets.framework/Versions/5/Headers"
+            ]
         }
     ],
     "version": 4
