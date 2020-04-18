@@ -9,9 +9,7 @@
         {
             "label": "1. Fetch submodules",
             "type": "shell",
-            "windows": {
-                "command": "git submodule update --init --recursive"
-            }
+            "command": "git submodule update --init --recursive"
         },
         {
             "label": "2. Generate Project files",
@@ -23,6 +21,9 @@
             "type": "shell",
             "windows": {
                 "command": "cmake -GNinja -B_genDebug -H. -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/msys.cmake"
+            },
+            "osx": {
+                "command": "cmake -GNinja -B_genDebug -H. -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/osx.cmake"
             }
         },
         {

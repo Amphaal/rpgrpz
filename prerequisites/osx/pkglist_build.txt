@@ -1,1 +1,1 @@
-git cmake ninja llvm gstreamer gst-plugins-good gst-plugins-base qt
+git cmake ninja llvm gstreamer gst-plugins-good gst-plugins-base qt miniupnpc
