@@ -17,11 +17,11 @@
 // for further details. Resources without explicit references to a
 // different license and copyright still refer to this GPL.
 
-#include <exception>
-#include <iostream>
-
 #include <QLockFile>
 #include <QStyleFactory>
+
+#include <exception>
+#include <iostream>
 
 #include "src/ui/mainWindow.h"
 #include "src/ui/_others/AppLoader.hpp"
@@ -111,10 +111,14 @@ void _registerMetaTypes() {
     qRegisterMetaType<RPZAsset::Hash>("RPZAsset::Hash");
     qRegisterMetaType<RPZAtom::Updates>("RPZAtom::Updates");
     qRegisterMetaType<RPZAtom::ManyUpdates>("RPZAtom::ManyUpdates");
-    qRegisterMetaType<RPZSharedDocument::FileHash>("RPZSharedDocument::FileHash");
-    qRegisterMetaType<RPZSharedDocument::DocumentName>("RPZSharedDocument::DocumentName");
-    qRegisterMetaType<RPZSharedDocument::NamesStore>("RPZSharedDocument::NamesStore");
-    qRegisterMetaType<CharacterPicker::SelectedCharacter>("CharacterPicker::SelectedCharacter");
+    qRegisterMetaType<RPZSharedDocument::FileHash>
+        ("RPZSharedDocument::FileHash");
+    qRegisterMetaType<RPZSharedDocument::DocumentName>
+        ("RPZSharedDocument::DocumentName");
+    qRegisterMetaType<RPZSharedDocument::NamesStore>
+        ("RPZSharedDocument::NamesStore");
+    qRegisterMetaType<CharacterPicker::SelectedCharacter>
+        ("CharacterPicker::SelectedCharacter");
     // QVariantHash derivates
     qRegisterMetaType<AlterationPayload>("AlterationPayload");
     qRegisterMetaType<RPZResponse>("RPZResponse");
@@ -140,7 +144,8 @@ void _registerMetaTypes() {
     qRegisterMetaType<QList<RPZAsset::Hash>>("QList<RPZAsset::Hash>");
     qRegisterMetaType<QVector<RPZAsset::Hash>>("QVector<RPZAsset::Hash>");
     qRegisterMetaType<QVector<RPZMessage>>("QVector<RPZMessage>");
-    qRegisterMetaType<QHash<QGraphicsItem*,RPZAtom::Updates>>("QHash<QGraphicsItem*,RPZAtom::Updates>");
+    qRegisterMetaType<QHash<QGraphicsItem*, RPZAtom::Updates>>
+        ("QHash<QGraphicsItem*,RPZAtom::Updates>");
     qRegisterMetaType<QList<QPolygonF>>("QList<QPolygonF>");
 }
 
