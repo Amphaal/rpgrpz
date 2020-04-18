@@ -22,67 +22,59 @@
 MessagesLog::MessagesLog(QWidget *parent) : LogContainer(parent) {
     // this->_getLayout()->setDirection(QBoxLayout::Direction::BottomToTop);
     this->layout()->setAlignment(Qt::AlignBottom);
-};
+}
 
 void MessagesLog::handleResponse(const RPZResponse &response) {
-
     auto respToId = response.answerer();
 
-    //if respond to a message, "ungrey" the responded
-    if(respToId) {
-        
+    // if respond to a message, "ungrey" the responded
+    if (respToId) {
         auto existingLine = LogContainer::_getLine(respToId);
         auto existingPalette = existingLine->palette();
-        
+
         auto txtColor = existingPalette.color(QPalette::WindowText);
         txtColor.setAlpha(255);
         existingPalette.setColor(QPalette::WindowText, txtColor);
 
         existingLine->setPalette(existingPalette);
-
     }
 
-    //if response code is ask, stop here
+    // if response code is ask, stop here
     auto respCode = response.responseCode();
-    if(respCode == RPZResponse::ResponseCode::Ack) return;
+    if (respCode == RPZResponse::ResponseCode::Ack) return;
 
-    //get new line
+    // get new line
     auto newLine = LogContainer::_addLine(response, respToId);
-    
-    //add text
+
+    // add text
     auto txt = new LogText(response.toString());
     newLine->horizontalLayout()->addWidget(txt, 10);
-    
-    //set palette
-    newLine->setPalette(response.palette());
 
+    // set palette
+    newLine->setPalette(response.palette());
 }
 
 void MessagesLog::changeEvent(QEvent *event) {
-    if(event->type() != QEvent::EnabledChange) return;
+    if (event->type() != QEvent::EnabledChange) return;
 
-    if(!this->isEnabled()) {
+    if (!this->isEnabled()) {
         this->clearLines();
     }
 }
 
 void MessagesLog::handleRemoteMessage(const RPZMessage &msg) {
-    
-    //handle message
+    // handle message
     this->_handleMessage(msg, false, false);
 
-    //remote-only notifications
-    switch(msg.commandType()) {
-
+    // remote-only notifications
+    switch (msg.commandType()) {
         case MessageInterpreter::Command::Whisper:
             NotificationsAudioManager::get()->playWhisper();
         break;
 
         default:
         break;
-    
     }
-    
 }
 
 void MessagesLog::handleHistoryMessage(const RPZMessage &msg) {
@@ -90,80 +82,72 @@ void MessagesLog::handleHistoryMessage(const RPZMessage &msg) {
 }
 
 void MessagesLog::handleLocalMessage(RPZMessage &msg) {
-    
-    //define as local
+    // define as local
     msg.setAsLocal();
 
-    //fill user infos
-    if(this->_rpzClient) {
+    // fill user infos
+    if (this->_rpzClient) {
         msg.setOwnership(this->_rpzClient->identity());
     }
 
     return this->_handleMessage(msg, true);
-
 }
 
 void MessagesLog::_handleMessage(const RPZMessage &msg, bool isLocal, bool fromHistory) {
-
-    //should not exist
+    // should not exist
     auto targetLine = LogContainer::_getLine(msg);
-    if(targetLine) return;
+    if (targetLine) return;
 
-    //create new line
+    // create new line
     targetLine = LogContainer::_addLine(msg);
-        
-    //add content
+
+    // add content
     auto content = new LogContent(msg);
     targetLine->horizontalLayout()->addWidget(content, 10);
 
-    //define palette to apply
+    // define palette to apply
     auto msgPalette = msg.palette();
-    
-    //if is local, expect a server response and add opacity to signal it to the user
-    if(isLocal) {
+
+    // if is local, expect a server response and add opacity to signal it to the user
+    if (isLocal) {
         auto txtColor = msgPalette.color(QPalette::WindowText);
         txtColor.setAlpha(128);
         msgPalette.setColor(QPalette::WindowText, txtColor);
     }
 
-    //play sound
-    if(!fromHistory) {
-        switch(msg.commandType()) {
-        
+    // play sound
+    if (!fromHistory) {
+        switch (msg.commandType()) {
             case MessageInterpreter::Command::C_DiceThrow:
                 NotificationsAudioManager::get()->playDiceThrow();
             break;
 
             default:
             break;
-        
         }
     }
 
-    //apply palette
+    // apply palette
     targetLine->setPalette(msgPalette);
-    
-    //tag as not seen
-    if(!this->isVisible()) {
+
+    // tag as not seen
+    if (!this->isVisible()) {
         this->_msgIdsNotSeen.append(msg.id());
         emit notificationCountUpdated(this->_msgIdsNotSeen.count());
-    };
-
+    }
 }
 
 void MessagesLog::paintEvent(QPaintEvent *event) {
-    
-    //default behavior
+    // default behavior
     LogContainer::paintEvent(event);
-    
-    //if no message unseen, skip
-    auto messagesNotSeenCount = this->_msgIdsNotSeen.count();
-    if(!messagesNotSeenCount) return;
 
-    //since autoscrolled, every time it is visible means the user have seen all messages
-    if(this->isVisible()) {
+    // if no message unseen, skip
+    auto messagesNotSeenCount = this->_msgIdsNotSeen.count();
+    if (!messagesNotSeenCount) return;
+
+    // since autoscrolled, every time it is visible means the user have seen all messages
+    if (this->isVisible()) {
         this->_msgIdsNotSeen.clear();
         emit notificationCountUpdated(0);
     }
-
 }

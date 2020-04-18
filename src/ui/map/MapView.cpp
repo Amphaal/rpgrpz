@@ -67,15 +67,13 @@ void MapView::_handleHintsSignalsAndSlots() {
         [=]() {
             Clipboard::clear();
             this->displayHeavyLoadPlaceholder();
-        }
-    );
+    });
     QObject::connect(
         ProgressTracker::get(), &ProgressTracker::heavyAlterationProcessed,
         [=]() {
             this->endHeavyLoadPlaceholder();
             this->goToDefaultViewState();
-        }
-    );
+    });
 
     QObject::connect(
         HintThread::hint(), &ViewMapHint::fogModeChanged,
@@ -115,8 +113,7 @@ void MapView::_handleHintsSignalsAndSlots() {
         HintThread::hint(), &AtomsStorage::mapSetup,
         [=](const RPZMapParameters &mParams,  const RPZFogParams &fParams) {
             this->_currentMapParameters = mParams;
-        }
-    );
+    });
 
     // call debouncer on selection
     QObject::connect(
@@ -124,11 +121,12 @@ void MapView::_handleHintsSignalsAndSlots() {
         [=]() {
             if (this->_ignoreSelectionChangedEvents) return;
             this->_notifySelection();
-        }
-    );
+    });
 
-    QObject::connect(MapTools::get(), &MapTools::toolRequested,
-                     this, &MapView::_onToolRequested);
+    QObject::connect(
+        MapTools::get(), &MapTools::toolRequested,
+        this, &MapView::_onToolRequested
+    );
 }
 
 void MapView::_onToolRequested(const MapTool &tool, bool enabled) {
@@ -153,9 +151,7 @@ void MapView::_notifySelection() {
     auto selected = this->scene()->selectedItems();
 
     // notify
-    HintThread::hint()->notifySelectedItems(
-        selected
-    );
+    HintThread::hint()->notifySelectedItems(selected);
 }
 
 void MapView::_metadataUpdatePostProcess(const QList<QGraphicsItem*> &FoWSensitiveItems) {
@@ -369,14 +365,15 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
     }
 
     if (type == Payload::Alteration::Reset) {
-        this->_mayFogUpdateAtoms(
-            HintThread::hint()->fogItem()->coveredAtomItems()
-        );
+        auto coveredItems = HintThread::hint()->fogItem()->coveredAtomItems();
+        this->_mayFogUpdateAtoms(coveredItems);
         ProgressTracker::get()->heavyAlterationEnded();
+
     } else if (Payload::triggersFoWCheck.contains(type)) {  // check specific items for fog updates
-        this->_mayFogUpdateAtoms(
-            HintThread::hint()->fogItem()->visibilityChangeFromList(toAlter.values())
-        );
+        auto changedItemsList = toAlter.values();
+        auto updates = HintThread::hint()->fogItem()->visibilityChangeFromList(changedItemsList);
+        this->_mayFogUpdateAtoms(updates);
+
     } else if (type == Payload::Alteration::Selected) {
         auto isWalkable = _tryToInvokeWalkableHelper(toAlter.values());
 
@@ -446,10 +443,7 @@ void MapView::contextMenuEvent(QContextMenuEvent *event) {
     if (this->_getCurrentTool() != MapTool::Default) return;
 
     // create menu
-    this->_menuHandler->invokeMenu(
-        this->selectedIds(),
-        event->globalPos()
-    );
+    this->_menuHandler->invokeMenu(this->selectedIds(), event->globalPos());
 }
 
 void MapView::mouseDoubleClickEvent(QMouseEvent *event) {
@@ -692,11 +686,8 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
 
             // if any drawn
             if (drawn.count()) {
-                FogChangedPayload payload(
-                    btnPressed == Qt::MouseButton::LeftButton ? FogChangedPayload::ChangeType::Added : FogChangedPayload::ChangeType::Removed,
-                    drawn
-                );
-
+                auto changeType = btnPressed == Qt::MouseButton::LeftButton ? FogChangedPayload::ChangeType::Added : FogChangedPayload::ChangeType::Removed;
+                FogChangedPayload payload(changeType, drawn);
                 AlterationHandler::get()->queueAlteration(HintThread::hint(), payload);
             }
         }

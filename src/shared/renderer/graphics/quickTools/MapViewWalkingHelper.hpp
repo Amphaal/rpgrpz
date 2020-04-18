@@ -140,7 +140,6 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
 
                 // add destination
                 this->_destinations.insert(item, line.p2());
-
             }
 
             // if single walk, display indicator
