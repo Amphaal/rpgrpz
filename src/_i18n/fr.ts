@@ -55,7 +55,7 @@
 <context>
     <name>AtomEditor</name>
     <message numerus="yes">
-        <location filename="../ui/atomEditor/AtomEditor.cpp" line="267"/>
+        <location filename="../ui/atomEditor/AtomEditor.cpp" line="237"/>
         <source> (%n element(s))</source>
         <translation>
             <numerusform> (%n élément)</numerusform>
@@ -418,7 +418,7 @@
 <context>
     <name>DocShareListView</name>
     <message>
-        <location filename="../ui/docShare/DocShareListView.hpp" line="252"/>
+        <location filename="../ui/docShare/DocShareListView.hpp" line="227"/>
         <source> (available)</source>
         <translation> (disponible)</translation>
     </message>
@@ -536,62 +536,62 @@
 <context>
     <name>InventorySheet</name>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="47"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="48"/>
         <source>Add item</source>
         <translation>Ajouter un objet</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="51"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="52"/>
         <source>Delete selected items</source>
         <translation>Supprimer les objets selectionnés</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="55"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="56"/>
         <source>Move to...</source>
         <translation>Déplacer vers...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="59"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="60"/>
         <source>Split to...</source>
         <translation>Diviser vers...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="87"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="88"/>
         <source>Name*</source>
         <translation>Nom*</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="88"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="89"/>
         <source>Category</source>
         <translation>Catégorie</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="89"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="90"/>
         <source>Nbr</source>
         <translation>Nbr</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="90"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="91"/>
         <source>Wgt</source>
         <translation>Pds</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="91"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="92"/>
         <source>Description</source>
         <translation>Description</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="93"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="94"/>
         <source>Required!</source>
         <translation>Requis!</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="305"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="286"/>
         <source>Items deletion</source>
         <translation>Suppression d&apos;objets</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="306"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="287"/>
         <source>Do you really want to delete these items ?</source>
         <translation>Voulez-vous vraiment supprimer ces objets ?</translation>
     </message>
@@ -858,17 +858,17 @@
 <context>
     <name>Playlist</name>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="208"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="176"/>
         <source>This Youtube video is already in playlist !</source>
         <translation>Cette vidéo Youtube est déjà dans la liste de lecture !</translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="273"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="236"/>
         <source>(Loading metadata...) </source>
         <translation>(Chargement des métadonnées...) </translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="283"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="246"/>
         <source>(Error) </source>
         <translation>(Erreur) </translation>
     </message>
@@ -1366,7 +1366,7 @@
         <translation>Couleur</translation>
     </message>
     <message>
-        <location filename="../ui/docShare/DocShareListView.hpp" line="153"/>
+        <location filename="../ui/docShare/DocShareListView.hpp" line="138"/>
         <source> (downloading...)</source>
         <translation> (téléchargement...)</translation>
     </message>

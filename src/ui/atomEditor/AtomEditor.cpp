@@ -20,66 +20,60 @@
 #include "AtomEditor.h"
 
 AtomEditor::AtomEditor(QWidget* parent) : QGroupBox(parent), AlterationInteractor(Payload::Interactor::Local_AtomEditor) {
-
     auto title = _strEM.value(AtomSubEditor::EditMode::None);
     this->setTitle(tr(qUtf8Printable(title)));
     this->setAlignment(Qt::AlignHCenter);
 
     this->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
     this->setLayout(new QVBoxLayout);
-    
-    //create params editors
+
+    // create params editors
     this->_createEditorsFromAtomParameters();
 
-    //message indicating no editors available
+    // message indicating no editors available
     this->_noEditorMsgWidget = new NoEditorMessageWidget;
     this->layout()->addWidget(this->_noEditorMsgWidget);
-
 }
 
 void AtomEditor::buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr) {
-    
-    //modify atom list
+    // modify atom list
     this->_currentSelectionDescr = atomsSelectionDescr;
-    
-    //clear editors
-    for(auto editor : this->_visibleEditors) editor->setVisible(false);
+
+    // clear editors
+    for (auto editor : this->_visibleEditors) editor->setVisible(false);
     this->_visibleEditors.clear();
 
-    //update edit mode
+    // update edit mode
     this->_updateEditMode();
 
-    //fetch default values for adaptated params to context
+    // fetch default values for adaptated params to context
     auto filteredDefaultValues = this->_findDefaultValuesToBind();
 
-    //find editors to display
+    // find editors to display
     QSet<AtomSubEditor*> toDisplay;
-    for(auto const &param : filteredDefaultValues.keys()) {
+    for (auto const &param : filteredDefaultValues.keys()) {
         auto editor = this->_editorsByParam.value(param);
-        if(!editor) continue;
+        if (!editor) continue;
         toDisplay += editor;
     }
 
-    //setup context for loading
+    // setup context for loading
     AtomSubEditor::LoadingContext context;
     context.mode = this->_currentEditMode;
     context.numberOfItems = this->_currentSelectionDescr.selectedAtomIds.count();
 
-    //load those who need to be displayed
-    for(auto editor : toDisplay) {
-
-        //load template, and display them
+    // load those who need to be displayed
+    for (auto editor : toDisplay) {
+        // load template, and display them
         editor->loadTemplate(filteredDefaultValues, context);
 
-        //add to the visible editors list
+        // add to the visible editors list
         this->_visibleEditors.append(editor);
-
     }
 
-    //if no editor is displayed, show a little message
+    // if no editor is displayed, show a little message
     auto visibility = !this->hasVisibleEditors();
     this->_noEditorMsgWidget->setVisible(visibility);
-
 }
 
 //
@@ -87,41 +81,36 @@ void AtomEditor::buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr
 //
 
 void AtomEditor::resetParams() {
-
-    //reset displayed params
+    // reset displayed params
     RPZAtom::Updates changes;
-    for(auto editor : this->_visibleEditors) {
-        for(auto const &param : editor->params()) {
+    for (auto editor : this->_visibleEditors) {
+        for (auto const &param : editor->params()) {
             changes.insert(
-                param, 
+                param,
                 RPZAtom::getDefaultValueForParam(param)
             );
         }
     }
 
-    //update inner selection accordingly
+    // update inner selection accordingly
     this->_currentSelectionDescr.templateAtom.setMetadata(changes);
 
-    //rebuild
+    // rebuild
     this->buildEditor(this->_currentSelectionDescr);
 
-    //emit modifications
+    // emit modifications
     this->_emitPayload(changes);
-
 }
 
 void AtomEditor::_addEditor(AtomSubEditor* editor) {
-    
-    for(auto &param : editor->params()) {
+    for (auto &param : editor->params()) {
         this->_editorsByParam.insert(param, editor);
     }
 
     this->_orderedCreation += editor;
-
 }
 
 void AtomEditor::_createEditorsFromAtomParameters() {
-
     _addEditor(new TokenSizeEditor);
     _addEditor(new NPCAttitudeEditor);
     _addEditor(new CharacterPickerEditor);
@@ -135,7 +124,7 @@ void AtomEditor::_createEditorsFromAtomParameters() {
         { 1, 500 },
         {10.0, 1000 }
     }));
-    
+
     _addEditor(new AtomSliderEditor(RPZAtom::Parameter::AssetRotation, 0, 359));
     _addEditor(new NonLinearAtomSliderEditor(RPZAtom::Parameter::AssetScale, QVector<CrossEquities::CrossEquity> {
         {.1, 1},
@@ -151,22 +140,19 @@ void AtomEditor::_createEditorsFromAtomParameters() {
 
     _addEditor(new AtomShortTextEditor(RPZAtom::Parameter::EventShortDescription));
     _addEditor(new AtomTextEditor(RPZAtom::Parameter::EventDescription));
-   
+
     _addEditor(new AtomShortTextEditor(RPZAtom::Parameter::NPCShortName));
     _addEditor(new AtomTextEditor(RPZAtom::Parameter::NPCDescription));
     _addEditor(new NPCHealthEditor);
 
     _addEditor(new ColorPickerEditor(RPZAtom::Parameter::PenColor));
 
-    //integrate
+    // integrate
     this->_integrateEditors();
-
 }
 
 void AtomEditor::_integrateEditors() {
-    
-    for(auto editor : this->_orderedCreation) { 
-        
+    for (auto editor : this->_orderedCreation) {
         QObject::connect(
             editor, &AtomSubEditor::valueConfirmedForPayload,
             this, &AtomEditor::_emitPayload
@@ -178,9 +164,7 @@ void AtomEditor::_integrateEditors() {
         );
 
         this->layout()->addWidget(editor);
-
     }
-
 }
 
 void AtomEditor::_onPreviewRequested(const RPZAtom::Parameter &parameter, const QVariant &value) {
@@ -188,53 +172,43 @@ void AtomEditor::_onPreviewRequested(const RPZAtom::Parameter &parameter, const 
 }
 
 void AtomEditor::_emitPayload(const RPZAtom::Updates &changesToEmit) {
-
-    //intercept combo change for visibility
+    // intercept combo change for visibility
     this->_mustShowBrushPenWidthEditor(changesToEmit);
 
-    //if template mode, update template 
-    if(this->_currentEditMode == AtomSubEditor::EditMode::Template) {
+    // if template mode, update template
+    if (this->_currentEditMode == AtomSubEditor::EditMode::Template) {
         AtomTemplateChangedPayload payload(changesToEmit);
         AlterationHandler::get()->queueAlteration(this, payload);
-    } 
-    
-    //else, update selection
-    else {
-
+    } else {  // else, update selection
         MetadataChangedPayload payload(
-            this->_currentSelectionDescr.selectedAtomIds, 
+            this->_currentSelectionDescr.selectedAtomIds,
             changesToEmit
         );
 
         AlterationHandler::get()->queueAlteration(this, payload);
-        
     }
-
 }
 
 RPZAtom::Updates AtomEditor::_findDefaultValuesToBind() {
-    
     RPZAtom::Updates out;
 
-    //intersect represented atom types in selection to determine which editors to display
+    // intersect represented atom types in selection to determine which editors to display
     QSet<RPZAtom::Parameter> paramsToDisplay;
-    for(const auto &type : this->_currentSelectionDescr.representedTypes) {
-        
+    for (const auto &type : this->_currentSelectionDescr.representedTypes) {
         auto associatedCustomParams = RPZAtom::customizableParams(type);
 
-        if(paramsToDisplay.empty()) {
+        if (paramsToDisplay.empty()) {
             paramsToDisplay = associatedCustomParams;
             continue;
         }
 
         paramsToDisplay = paramsToDisplay.intersect(associatedCustomParams);
-        if(!paramsToDisplay.count()) break;
-
+        if (!paramsToDisplay.count()) break;
     }
 
-    for(const auto param : paramsToDisplay) {
+    for (const auto param : paramsToDisplay) {
         out.insert(
-            param, 
+            param,
             this->_currentSelectionDescr.templateAtom.metadata(param)
         );
     }
@@ -244,25 +218,21 @@ RPZAtom::Updates AtomEditor::_findDefaultValuesToBind() {
 
 
 void AtomEditor::_updateEditMode() {
-    
-    //determine edit mode
+    // determine edit mode
     auto selectedIdsCount = this->_currentSelectionDescr.selectedAtomIds.count();
-    
-    if(selectedIdsCount) {
+
+    if (selectedIdsCount) {
         this->_currentEditMode = AtomSubEditor::EditMode::Selection;
-    }
-    else if(!selectedIdsCount && !this->_currentSelectionDescr.templateAtom.isEmpty()) {
+    } else if (!selectedIdsCount && !this->_currentSelectionDescr.templateAtom.isEmpty()) {
         this->_currentEditMode = AtomSubEditor::EditMode::Template;
-    } 
-    else {
+    } else {
         this->_currentEditMode = AtomSubEditor::EditMode::None;
     }
 
-    //update title
+    // update title
     auto title = tr(qUtf8Printable(_strEM.value(this->_currentEditMode)));
-    
-    switch(this->_currentEditMode) {
-        
+
+    switch (this->_currentEditMode) {
         case AtomSubEditor::EditMode::Selection:
             title += tr(" (%n element(s))", "", selectedIdsCount);
         break;
@@ -273,7 +243,6 @@ void AtomEditor::_updateEditMode() {
 
         default:
         break;
-
     }
 
     this->setTitle(title);
@@ -288,17 +257,15 @@ AtomsSelectionDescriptor AtomEditor::currentSelectionDescriptor() {
 }
 
 void AtomEditor::_mustShowBrushPenWidthEditor(const RPZAtom::Updates &updatedValues) {
+    // check if param is tool combo
+    if (!updatedValues.contains(RPZAtom::Parameter::BrushStyle)) return;
 
-    //check if param is tool combo
-    if(!updatedValues.contains(RPZAtom::Parameter::BrushStyle)) return;
-
-    //check if pen size editor exists
+    // check if pen size editor exists
     auto brushPenWidthEditor = this->_editorsByParam.value(RPZAtom::Parameter::BrushPenWidth);
-    if(!brushPenWidthEditor) return;
+    if (!brushPenWidthEditor) return;
 
-    //set visibility
+    // set visibility
     auto defaultValue = updatedValues.value(RPZAtom::Parameter::BrushStyle);
     auto mustShow = AtomSubEditor::mustShowBrushPenWidth(defaultValue);
     brushPenWidthEditor->setVisible(mustShow);
-
 }
