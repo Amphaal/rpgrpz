@@ -24,14 +24,14 @@
 #include <QIcon>
 #include "src/helpers/_appContext.h"
 
-enum class MapAction { 
+enum class MapAction {
     ResetView,
     ResetTool
 };
 
 enum class MapTool {
-    Default, 
-    Atom, 
+    Default,
+    Atom,
     Scroll,
     Ping,
     Measure,

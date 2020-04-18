@@ -28,133 +28,114 @@
 
 class AtomsWielderPayload : public AtomRelatedPayload {
  public:
-        AtomsWielderPayload() {}
+    AtomsWielderPayload() {}
 
-        const QSet<RPZAsset::Hash> assetHashes() const {
-            
-            QSet<RPZAsset::Hash> out;
+    const QSet<RPZAsset::Hash> assetHashes() const {
+        QSet<RPZAsset::Hash> out;
 
-            auto hashes = this->value(QStringLiteral(u"assets")).toList();
+        auto hashes = this->value(QStringLiteral(u"assets")).toList();
 
-            for(const auto &i : hashes) out += i.toString();
-            
-            return out;
+        for (const auto &i : hashes) out += i.toString();
 
-        }
-            
-        const RPZMap<RPZAtom> atoms() const {
-            
-            RPZMap<RPZAtom> out;
-            
-            auto atoms = this->value(QStringLiteral(u"atoms")).toMap();
-            
-            for(auto i = atoms.begin(); i != atoms.end(); ++i) {    
-                
-                auto snowflakeId = i.key().toULongLong();
-                RPZAtom atom(i.value().toHash());
-                out.insert(snowflakeId, atom);
+        return out;
+    }
 
-            }
-            
-            return out;
+    const RPZMap<RPZAtom> atoms() const {
+        RPZMap<RPZAtom> out;
 
+        auto atoms = this->value(QStringLiteral(u"atoms")).toMap();
+
+        for (auto i = atoms.begin(); i != atoms.end(); ++i) {
+            auto snowflakeId = i.key().toULongLong();
+            RPZAtom atom(i.value().toHash());
+            out.insert(snowflakeId, atom);
         }
 
-        AtomRelatedPayload::RemainingAtomIds restrictTargetedAtoms(const QSet<RPZAtom::Id> &idsToRemove) override {
-            
-            auto remainingAtoms = this->atoms();
+        return out;
+    }
 
-            for(const auto &id : idsToRemove) {
-                remainingAtoms.remove(id);
-            }
+    AtomRelatedPayload::RemainingAtomIds restrictTargetedAtoms(const QSet<RPZAtom::Id> &idsToRemove) override {
+        auto remainingAtoms = this->atoms();
 
-            this->_setAtoms(remainingAtoms);
-            this->_setAssetHashes(remainingAtoms);
+        for (const auto &id : idsToRemove) {
+            remainingAtoms.remove(id);
+        }
 
-            return remainingAtoms.count();
+        this->_setAtoms(remainingAtoms);
+        this->_setAssetHashes(remainingAtoms);
 
-        };
+        return remainingAtoms.count();
+    };
 
-     protected:
-            explicit AtomsWielderPayload(const QVariantHash &hash) : AtomRelatedPayload(hash) {}
-            AtomsWielderPayload(const MapDatabase &map) : AtomRelatedPayload(Payload::Alteration::Reset) {
-                this->_setAssetHashes(map.usedAssetHashes());
-                this->_setAtoms(map.atoms().toVMap());
-            }
+ protected:
+    explicit AtomsWielderPayload(const QVariantHash &hash) : AtomRelatedPayload(hash) {}
+    explicit AtomsWielderPayload(const MapDatabase &map) : AtomRelatedPayload(Payload::Alteration::Reset) {
+        this->_setAssetHashes(map.usedAssetHashes());
+        this->_setAtoms(map.atoms().toVMap());
+    }
 
-            AtomsWielderPayload(const QList<RPZAtom> &atoms) : AtomRelatedPayload(Payload::Alteration::Added) {
-                this->_setAssetHashes(atoms);
-                this->_setAtoms(atoms);
-            }
+    explicit AtomsWielderPayload(const QList<RPZAtom> &atoms) : AtomRelatedPayload(Payload::Alteration::Added) {
+        this->_setAssetHashes(atoms);
+        this->_setAtoms(atoms);
+    }
 
-     private:
-            void _setAssetHashes(const QList<RPZAtom> &toExtractFrom) {
-                
-                QVariantList vList;
-                
-                for (auto &atom : toExtractFrom) {
-                    vList += atom.assetHash();
-                }
+ private:
+    void _setAssetHashes(const QList<RPZAtom> &toExtractFrom) {
+        QVariantList vList;
 
-                this->_setAssetHashes(vList);
-                
-            }
+        for (auto &atom : toExtractFrom) {
+            vList += atom.assetHash();
+        }
 
-            void _setAssetHashes(const RPZMap<RPZAtom> &toExtractFrom) {
-                
-                QVariantList vList;
-                
-                for (auto &atom : toExtractFrom) {
-                    vList += atom.assetHash();
-                }
+        this->_setAssetHashes(vList);
+    }
 
-                this->_setAssetHashes(vList);
-                
-            }
+    void _setAssetHashes(const RPZMap<RPZAtom> &toExtractFrom) {
+        QVariantList vList;
+
+        for (auto &atom : toExtractFrom) {
+            vList += atom.assetHash();
+        }
+
+        this->_setAssetHashes(vList);
+    }
 
 
-            void _setAssetHashes(const QSet<RPZAsset::Hash> &hashes) {
-                
-                QVariantList vList;
-                
-                for (auto &hash : hashes) {
-                    vList += hash;
-                }
+    void _setAssetHashes(const QSet<RPZAsset::Hash> &hashes) {
+        QVariantList vList;
 
-                this->_setAssetHashes(vList);
-                
-            }
+        for (auto &hash : hashes) {
+            vList += hash;
+        }
 
-            void _setAtoms(const RPZMap<RPZAtom> &atoms) {
-                
-                QVariantMap vMap;
+        this->_setAssetHashes(vList);
+    }
 
-                for (auto &atom : atoms) {
-                    vMap.insert(atom.idAsStr(), atom);
-                }
+    void _setAtoms(const RPZMap<RPZAtom> &atoms) {
+        QVariantMap vMap;
 
-                this->_setAtoms(vMap);
+        for (auto &atom : atoms) {
+            vMap.insert(atom.idAsStr(), atom);
+        }
 
-            }
+        this->_setAtoms(vMap);
+    }
 
-            void _setAtoms(const QList<RPZAtom> &atoms) {
-                
-                QVariantMap vMap;
+    void _setAtoms(const QList<RPZAtom> &atoms) {
+        QVariantMap vMap;
 
-                for (auto &atom : atoms) {
-                    vMap.insert(atom.idAsStr(), atom);
-                }
+        for (auto &atom : atoms) {
+            vMap.insert(atom.idAsStr(), atom);
+        }
 
-                this->_setAtoms(vMap);
+        this->_setAtoms(vMap);
+    }
 
-            }
+    void _setAssetHashes(const QVariantList &hashes) {
+        this->insert(QStringLiteral(u"assets"), hashes);
+    }
 
-            void _setAssetHashes(const QVariantList &hashes) {
-                this->insert(QStringLiteral(u"assets"), hashes);
-            }
-
-            void _setAtoms(const QVariantMap &atoms) {
-                this->insert(QStringLiteral(u"atoms"), atoms);
-            }
-
+    void _setAtoms(const QVariantMap &atoms) {
+        this->insert(QStringLiteral(u"atoms"), atoms);
+    }
 };
