@@ -36,35 +36,32 @@
 #include "src/helpers/VectorSimplifier.hpp"
 
 class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem, public RPZAnimated {
-    
     Q_OBJECT
     Q_PROPERTY(qreal textureHPos READ textureHPos WRITE setTextureHPos)
     Q_INTERFACES(QGraphicsItem)
-    
+
  public:
         struct FogChangingVisibility {
             QList<QGraphicsItem*> nowVisible;
             QList<QGraphicsItem*> nowInvisible;
         };
         MapViewFog(const RPZFogParams &params, const RPZMapParameters &mapParams) {
-            
-            //init from params
+            // init from params
 
             this->_maxSizeFog = mapParams.sceneRect();
-            
+
             this->_setFogMode(params.mode());
             this->_updateFog(params.polys());
-            this->_generateClipPath(); 
+            this->_generateClipPath();
 
             this->setZValue(AppContext::HOVERING_ITEMS_Z_INDEX);
 
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
-            this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsFocusable, false);  
+            this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsFocusable, false);
 
             this->_texture = QPixmap(QStringLiteral(u":/assets/smoke.png"));
             this->_brush.setTexture(this->_texture);
-
         }
 
         ~MapViewFog() {
@@ -72,36 +69,33 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         }
 
         const FogChangingVisibility coveredAtomItems() const {
-            
             FogChangingVisibility out;
             out.nowInvisible = _atomItemsFromGraphicsItems(this->collidingItems());
-            
-            _logFogChangingVisibility(out);
-            
-            return out;
 
+            _logFogChangingVisibility(out);
+
+            return out;
         }
 
         const FogChangingVisibility visibilityChangeFromList(const QList<QGraphicsItem *> &addedReplacedOrChangedGraphicAtoms) const {
-            
             MapViewFog::FogChangingVisibility out;
 
-            for(auto item : addedReplacedOrChangedGraphicAtoms) {
-                
+            for (auto item : addedReplacedOrChangedGraphicAtoms) {
                 auto collidesWithFog = false;
                 auto destScenePosVariant = RPZQVariant::moveAnimationDestinationScenePoint(item);
-                
-                //if item is moving, test on expected position rather than actual
-                if(!destScenePosVariant.isNull()) {
+
+                // if item is moving, test on expected position rather than actual
+                if (!destScenePosVariant.isNull()) {
                     auto destScenePos = destScenePosVariant.value<QPointF>();
                     auto translatedOriginalShape = item->shape().translated(destScenePos);
                     collidesWithFog = this->collidesWithPath(translatedOriginalShape);
+                } else {
+                    collidesWithFog = this->collidesWithItem(item);
                 }
-                else collidesWithFog = this->collidesWithItem(item);
 
-                if(collidesWithFog) out.nowInvisible.append(item);
-                else out.nowVisible.append(item);
-
+                if (collidesWithFog) out.nowInvisible.append(item);
+                else
+                    out.nowVisible.append(item);
             }
 
             out.nowInvisible = _atomItemsFromGraphicsItems(out.nowInvisible);
@@ -110,37 +104,33 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             _logFogChangingVisibility(out);
 
             return out;
-
         }
 
         const FogChangingVisibility setFogMode(const RPZFogParams::Mode &mode) {
-            
             this->_setFogMode(mode);
-            
+
             auto out = this->_generateClipPathWithDiff();
 
             return out;
         }
 
         const FogChangingVisibility updateFog(const QList<QPolygonF> &wholeShape) {
-
-            //reset clip shape to before drawing to get an accurate snapshot
-            if(this->_drawnPoly.count()) {
+            // reset clip shape to before drawing to get an accurate snapshot
+            if (this->_drawnPoly.count()) {
                 this->_clearDrawing();
                 this->_generateClipPath();
             }
 
-            //reset drawing and update fog shape
+            // reset drawing and update fog shape
             this->_updateFog(wholeShape);
-            
-            //recreate clip path and diff with drawing
+
+            // recreate clip path and diff with drawing
             auto out = this->_generateClipPathWithDiff();
 
             return out;
         }
 
         void triggerAnimation() override {
-
             this->_fogAnim = new QPropertyAnimation(this, "textureHPos");
             this->_fogAnim->setEasingCurve(QEasingCurve::Linear);
             this->_fogAnim->setDuration(50000);
@@ -185,31 +175,28 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         }
 
         QList<QPolygonF> commitDrawing() {
-            
-            //return empty if too small
-            if(this->_drawnPoly.count() <= 3) return {};
+            // return empty if too small
+            if (this->_drawnPoly.count() <= 3) return {};
 
-            //reduce...
+            // reduce...
             auto reduced = VectorSimplifier::reducePolygon(this->_drawnPoly);
-            
-            //simplify
+
+            // simplify
             auto simplified = VectorSimplifier::simplifyPolygon(reduced);
 
-            //return drawing
+            // return drawing
             return simplified;
-
         }
 
 
  protected:
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
             auto result = this->conditionnalPaint(this, painter, option, widget);
-            if(!result.mustContinue) return;
+            if (!result.mustContinue) return;
             this->_paint(painter, &result.options, widget);
         }
 
         void _paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) {
-
             painter->save();
 
                     painter->setClipPath(this->_clipPath);
@@ -221,7 +208,6 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
                     painter->drawRect(this->_maxSizeFog);
 
             painter->restore();
-
         }
 
  private:
@@ -229,7 +215,7 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         RPZFogParams::Mode _mode;
         QBrush _brush;
         QPropertyAnimation* _fogAnim = nullptr;
-        
+
         FogChangedPayload::ChangeType _drawnOpe;
         QRectF _maxSizeFog;
 
@@ -239,19 +225,17 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         QPolygonF _drawnPoly;
 
         const QList<QGraphicsItem*> _atomItemsFromGraphicsItems(const QList<QGraphicsItem*> &toFilter) const {
-            
             QList<QGraphicsItem*> cAtomItems;
-            
-            for(auto item : toFilter) {
-                if(!dynamic_cast<RPZGraphicsItem*>(item)) continue; //only for main RPZGraphicsItem
-                if(RPZQVariant::isTemporary(item)) continue; //skip if temporary
-                if(!RPZQVariant::fogSensitive(item)) continue; //skip if not fog sensitive
-                if(!RPZQVariant::atomId(item)) continue; //skip if has no atomId
-                cAtomItems.append(item); 
-            }
-            
-            return cAtomItems;
 
+            for (auto item : toFilter) {
+                if (!dynamic_cast<RPZGraphicsItem*>(item)) continue;  // only for main RPZGraphicsItem
+                if (RPZQVariant::isTemporary(item)) continue;  // skip if temporary
+                if (!RPZQVariant::fogSensitive(item)) continue;  // skip if not fog sensitive
+                if (!RPZQVariant::atomId(item)) continue;  // skip if has no atomId
+                cAtomItems.append(item);
+            }
+
+            return cAtomItems;
         }
         const QList<QGraphicsItem*> _atomItemsFromGraphicsItems(const QSet<QGraphicsItem*> &toFilter) const {
             return _atomItemsFromGraphicsItems(QList<QGraphicsItem*>(toFilter.begin(), toFilter.end()));
@@ -262,19 +246,17 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         }
 
         void _updateFog(const QList<QPolygonF> &wholeShape) {
-            
             this->_fog.clear();
-            
-            for(auto const &poly : wholeShape) {
+
+            for (auto const &poly : wholeShape) {
                 this->_fog.addPolygon(poly);
             }
-
         }
 
         void _setFogMode(const RPZFogParams::Mode &mode) {
             this->_mode = mode;
         }
-        
+
         QSet<QGraphicsItem*> _snapshotColliding() const {
             auto colliding = this->collidingItems();
             auto collidingSet = QSet<QGraphicsItem*>(colliding.begin(), colliding.end());
@@ -282,14 +264,13 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
         }
 
         const FogChangingVisibility _generateClipPathWithDiff() {
-            
             FogChangingVisibility out;
 
             auto thenColliding = _snapshotColliding();
             this->_generateClipPath();
             auto nowColliding = _snapshotColliding();
 
-            //sort out visible and invisible
+            // sort out visible and invisible
             auto nowInvisible = nowColliding;
             nowInvisible.subtract(thenColliding);
             auto nowVisible = thenColliding;
@@ -301,38 +282,33 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
             _logFogChangingVisibility(out);
 
             return out;
-
         }
 
         void _generateClipPath() {
-
             QPainterPath clipP;
 
-            if(this->_mode == RPZFogParams::Mode::PathIsFog) {
+            if (this->_mode == RPZFogParams::Mode::PathIsFog) {
                 clipP = this->_fog;
             } else {
                 clipP.addRect(_maxSizeFog);
                 clipP = clipP.subtracted(this->_fog);
             }
 
-            if(this->_drawnPoly.count()) {
-                
+            if (this->_drawnPoly.count()) {
                 QPainterPath dp;
                 dp.addPolygon(this->_drawnPoly);
-                
-                auto mustUnite = this->_drawnOpe == FogChangedPayload::ChangeType::Added;
-                if(this->_mode != RPZFogParams::Mode::PathIsFog) mustUnite = !mustUnite;
 
-                if(mustUnite) {
+                auto mustUnite = this->_drawnOpe == FogChangedPayload::ChangeType::Added;
+                if (this->_mode != RPZFogParams::Mode::PathIsFog) mustUnite = !mustUnite;
+
+                if (mustUnite) {
                     clipP = clipP.united(dp);
                 } else {
                     clipP = clipP.subtracted(dp);
                 }
-
             }
 
             this->_clipPath = clipP;
-
         }
 
         static void _logFogChangingVisibility(const FogChangingVisibility &toLog) {
@@ -342,6 +318,4 @@ class MapViewFog : public QObject, public QGraphicsItem, public RPZGraphicsItem,
                         .arg(toLog.nowInvisible.count())
             );
         }
-
-
 };

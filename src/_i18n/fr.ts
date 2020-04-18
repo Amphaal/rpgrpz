@@ -270,32 +270,32 @@
 <context>
     <name>CharacterPicker</name>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="52"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="47"/>
         <source>Create a new sheet</source>
         <translation>Créer une nouvelle fiche</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="60"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="55"/>
         <source>Delete sheet</source>
         <translation>Supprimer la fiche</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="271"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="242"/>
         <source>No existing character, create some !</source>
         <translation>Aucun personnage préexistant, créez-en un !</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="271"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="242"/>
         <source>Waiting for sheets from host...</source>
         <translation>En attente de fiches du serveur...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="422"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="376"/>
         <source>Character sheet deletion</source>
         <translation>Suppression de fiches de personnages</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="423"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="377"/>
         <source>Do you really want to delete this character ?</source>
         <translation>Voulez-vous vraiment supprimer cette fiche de personnage ?</translation>
     </message>
@@ -803,7 +803,7 @@
 <context>
     <name>MapHint</name>
     <message>
-        <location filename="../shared/hints/MapHint.cpp" line="64"/>
+        <location filename="../shared/hints/MapHint.cpp" line="61"/>
         <source>Do you want to save changes done to this map ?</source>
         <translation>Voulez-vous sauvegardez les modifications faites à cette carte ?</translation>
     </message>
@@ -1100,7 +1100,7 @@
         <translation>Trop éloigné pour afficher la grille !</translation>
     </message>
     <message>
-        <location filename="../shared/database/AssetsDatabase.cpp" line="193"/>
+        <location filename="../shared/database/AssetsDatabase.cpp" line="170"/>
         <source>Folder</source>
         <translation>Dossier</translation>
     </message>
@@ -1110,13 +1110,13 @@
         <translation>Calque %1</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="222"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="224"/>
         <location filename="../shared/models/RPZAtom.h" line="157"/>
         <source>Felt pen</source>
         <translation>Feutre</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="223"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="225"/>
         <location filename="../shared/models/RPZAtom.h" line="158"/>
         <source>Text</source>
         <translation>Texte</translation>
@@ -1137,13 +1137,13 @@
         <translation>Atome</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="221"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="223"/>
         <location filename="../shared/models/RPZAtom.h" line="162"/>
         <source>Event</source>
         <translation>Evénement</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="224"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="226"/>
         <location filename="../shared/models/RPZAtom.h" line="163"/>
         <source>Player</source>
         <translation>Joueur</translation>
@@ -1154,13 +1154,13 @@
         <translation>Personnage non-joueur</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="225"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="227"/>
         <location filename="../shared/models/RPZAtom.h" line="165"/>
         <source>Point of interest</source>
         <translation>Point d&apos;intérêt</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="226"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="228"/>
         <location filename="../shared/models/RPZAtom.h" line="166"/>
         <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="77"/>
         <source>Fog of war</source>
@@ -1187,37 +1187,37 @@
         <translation>Points d&apos;intérêt</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="220"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="222"/>
         <source>Internal</source>
         <translation>Interne</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="227"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="229"/>
         <source>NPC / Portraits</source>
         <translation>PNJ / Portraits</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="228"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="230"/>
         <source>Objects</source>
         <translation>Objets</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="229"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="231"/>
         <source>Brushes</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="230"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="232"/>
         <source>Downloaded</source>
         <translation>Téléchargés</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="231"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="233"/>
         <source>Landscapes</source>
         <translation>Paysages</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.cpp" line="71"/>
+        <location filename="../shared/models/RPZAtom.cpp" line="69"/>
         <source>[Unpaired player token]</source>
         <translation>[Jeton de joueur vierge]</translation>
     </message>
@@ -1320,7 +1320,7 @@
         <translation>%1 atome(s) selectionné(s)</translation>
     </message>
     <message>
-        <location filename="../shared/renderer/graphics/_specific/MapViewToken.hpp" line="378"/>
+        <location filename="../shared/renderer/graphics/_specific/MapViewToken.hpp" line="347"/>
         <source>P</source>
         <comment>player sign</comment>
         <translation>J</translation>
@@ -1407,7 +1407,7 @@
 <context>
     <name>RPZServer</name>
     <message>
-        <location filename="../network/rpz/server/RPZServer.cpp" line="317"/>
+        <location filename="../network/rpz/server/RPZServer.cpp" line="280"/>
         <source>Your software version is different from the server&apos;s one : v%1 (you) / v%2 (server) !</source>
         <translation>Votre version logicielle diffère de la version du serveur : v%1 (vous) / v%2 (serveur) !</translation>
     </message>
@@ -1540,17 +1540,17 @@
 <context>
     <name>ToysTreeView</name>
     <message>
-        <location filename="../ui/toysBox/ToysTreeView.cpp" line="235"/>
+        <location filename="../ui/toysBox/ToysTreeView.cpp" line="212"/>
         <source>&lt;&lt; Move to &quot;%1&quot;</source>
         <translation>&lt;&lt; Déplacer vers&quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/ToysTreeView.cpp" line="342"/>
+        <location filename="../ui/toysBox/ToysTreeView.cpp" line="311"/>
         <source>Delete elements in toy box</source>
         <translation>Supprimer des elements de la boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/ToysTreeView.cpp" line="343"/>
+        <location filename="../ui/toysBox/ToysTreeView.cpp" line="312"/>
         <source>Do you confirm deletion of the %1 selected elements ?</source>
         <translation>Confirmez-vous la suppression des %1 éléments selectionnés ?</translation>
     </message>
