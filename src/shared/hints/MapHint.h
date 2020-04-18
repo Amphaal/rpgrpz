@@ -39,14 +39,14 @@ class MapHint : public ViewMapHint, public ConnectivityObserver {
         bool ackRemoteness(const RPZUser &connectedUser, const QString &remoteAddress);
         bool ackRemoteness(const QString &tblMapFilePath);
 
-    public slots:
+ public slots:
         bool loadDefaultRPZMap(); //to invoke
         bool loadRPZMap(const QString &filePath); //to invoke
         bool saveRPZMap(); //to invoke, unless from mayWantToSavePendingState()
         bool saveRPZMapAs(const QString &newFilePath); //to invoke
         bool createNewRPZMapAs(const QString &newFilePath); //to invoke
 
-    signals:
+ signals:
         void mapStateChanged(const QString &mapDescriptor, bool isMapDirty);
         void remoteChanged(bool isRemote);
 

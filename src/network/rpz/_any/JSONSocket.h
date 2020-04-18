@@ -47,7 +47,7 @@ class JSONSocket : public QObject {
             const QVariant &data
         );
 
-    signals:
+ signals:
         void JSONReceived(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data);
         void ackedBatch(RPZJSON::Method method, qint64 batchSize);
         void batchDownloading(RPZJSON::Method method, qint64 downloaded);

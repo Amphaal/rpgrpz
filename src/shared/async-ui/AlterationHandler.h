@@ -37,7 +37,7 @@ class AlterationHandler : public QObject {
         static AlterationHandler* get();
         void queueAlteration(const AlterationInteractor* sender, AlterationPayload &payload);
 
-    signals:
+ signals:
         void requiresPayloadHandling(const AlterationPayload &payload);
 
  private:

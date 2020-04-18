@@ -43,7 +43,7 @@ class MessagesLog : public LogContainer, public ConnectivityObserver {
         void handleRemoteMessage(const RPZMessage &msg);
         void handleHistoryMessage(const RPZMessage &msg);
 
-    signals:
+ signals:
         void notificationCountUpdated(int newCount);
 
  private:

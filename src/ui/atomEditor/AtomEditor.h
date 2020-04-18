@@ -61,7 +61,7 @@ class AtomEditor : public QGroupBox, public AlterationInteractor {
         bool hasVisibleEditors();
         AtomsSelectionDescriptor currentSelectionDescriptor();
     
-    signals:
+ signals:
         void requiresPreview(const AtomsSelectionDescriptor &selectionDescriptor, const RPZAtom::Parameter &parameter, const QVariant &value);
 
  private:

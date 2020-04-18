@@ -33,7 +33,7 @@ class VolumeToolbar : public QWidget {
     
     Q_OBJECT
 
-    signals:
+ signals:
         void askForVolumeChange(int newVolume);
 
  public:

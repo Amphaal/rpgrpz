@@ -30,7 +30,7 @@ class PlayersListView : public QListView {
 
     Q_OBJECT
 
-    signals:
+ signals:
         void requestingFocusOnCharacter(const RPZCharacter::Id &characterIdToFocus);
 
  public:

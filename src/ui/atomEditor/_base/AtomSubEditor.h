@@ -47,7 +47,7 @@ class AtomSubEditor : public QWidget {
 
         static bool mustShowBrushPenWidth(const QVariant &brushTypeDefaultValue);
 
-    signals:
+ signals:
         void valueConfirmedForPayload(const RPZAtom::Updates &updates);
         void valueConfirmedForPreview(const RPZAtom::Parameter &parameter, const QVariant &value);
 

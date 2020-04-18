@@ -76,7 +76,7 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
         void connectingToServer() override;
         void connectionClosed(bool hasInitialMapLoaded) override;
 
-    private slots:
+ private slots:
         void _onGameSessionReceived(const RPZGameSession &gameSession);
         void _onCharacterFocusRequest(const RPZCharacter::Id &characterIdToFocus);
 

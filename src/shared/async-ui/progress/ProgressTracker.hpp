@@ -34,7 +34,7 @@ class ProgressTracker : public QObject {
             return _inst; 
         }
 
-    public slots:
+ public slots:
         void heavyAlterationStarted() {
             emit heavyAlterationProcessing();
         }
@@ -79,7 +79,7 @@ class ProgressTracker : public QObject {
             emit downloadEnded(kind);
         }
 
-    signals:
+ signals:
         void heavyAlterationProcessing();
         void heavyAlterationProcessed();
         

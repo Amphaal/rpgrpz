@@ -58,7 +58,7 @@ class MapActions : public QToolBar {
 
         }
  
-    signals:
+ signals:
         void actionRequested(const MapAction &action);
 
  private:        

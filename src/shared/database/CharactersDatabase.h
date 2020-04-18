@@ -29,7 +29,7 @@ class CharactersDatabase : public QObject, public JSONDatabase {
     
     Q_OBJECT
 
-    signals:
+ signals:
         void databaseChanged();
         void characterAdded(const RPZCharacter &);
         void characterRemoved(const RPZCharacter::Id &);

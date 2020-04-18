@@ -58,7 +58,7 @@ class Playlist : public QListWidget {
 
         VideoMetadata* currentPlay();
     
-    signals:
+ signals:
         void playRequested(VideoMetadata* metadata);
 
  private:

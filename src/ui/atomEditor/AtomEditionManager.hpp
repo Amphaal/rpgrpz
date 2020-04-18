@@ -94,7 +94,7 @@ class AtomEditionManager : public QWidget {
             return this->_defaultHiddenCheckbox;
         }
     
-    private slots:
+ private slots:
         void _handleAlterationRequest(const AlterationPayload &payload) {
             
             this->_editor->payloadTrace(payload);

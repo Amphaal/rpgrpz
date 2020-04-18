@@ -75,7 +75,7 @@ class AssetsDatabase : public QObject, public JSONDatabase {
         bool importAsset(RPZAssetImportPackage &package);
         const RPZAssetImportPackage prepareAssetPackage(const RPZAsset::Hash &hash) const;
 
-    signals:
+ signals:
         void assetRenamed(const RPZAsset::Hash &id, const QString &newName);
 
  protected:

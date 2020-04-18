@@ -30,14 +30,14 @@ class UpdaterUIIntegrator : public QObject {
     
     Q_OBJECT
     
-    signals:
+ signals:
         void stateChanged(const bool isSearching);
 
  public:
         UpdaterUIIntegrator(QMainWindow* wParent);
         void openMaintenanceTool();
     
-    public slots:
+ public slots:
         void requireUpdateCheckFromUser();
         void checkForAppUpdates();
 

@@ -63,7 +63,7 @@ class MapTools : public QToolBar {
             this->_uncheckActions(associatedAction);
         }
 
-    signals:
+ signals:
         void toolRequested(const MapTool &tool, bool enabled);
 
  private:

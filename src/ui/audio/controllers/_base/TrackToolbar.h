@@ -45,7 +45,7 @@ class TrackToolbar : public QWidget {
         void newTrack(int lengthInSeconds);
         void endTrack();
 
-    signals:
+ signals:
         void actionRequired(const TrackToolbar::Action &action);
         void seeking(int posInSecs);
 

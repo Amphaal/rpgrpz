@@ -33,13 +33,13 @@ class AlterationAcknoledger : public QObject, public AlterationInteractor {
  public:
         AlterationAcknoledger(const Payload::Interactor &source);
 
-    public slots:
+ public slots:
         void connectToAlterationEmissions();
 
  protected:
         virtual void _handleAlterationRequest(const AlterationPayload &payload) = 0;
 
-    private slots:
+ private slots:
         void _ackAlteration(const AlterationPayload &payload);
 
 };

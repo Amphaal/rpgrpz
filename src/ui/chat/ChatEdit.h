@@ -37,7 +37,7 @@ class ChatEdit : public QWidget, public ConnectivityObserver {
  public:
         ChatEdit(QWidget * parent = nullptr);
     
-    signals:
+ signals:
         void askedToSendMessage(const QString &msg);
     
  protected:

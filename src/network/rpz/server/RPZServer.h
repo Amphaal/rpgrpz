@@ -65,13 +65,13 @@ class RPZServer : public QObject, public JSONLogger {
         RPZServer();
         ~RPZServer();
     
-    public slots:
+ public slots:
         void run();
 
-    private slots:
+ private slots:
         void _saveSnapshot();
 
-    signals:
+ signals:
         void listening();
         void error();
         void stopped();

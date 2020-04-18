@@ -75,7 +75,7 @@ class CharacterSheet : public QTabWidget {
             return this->_readOnly;
         }
 
-    public slots:
+ public slots:
         void loadCharacter(const RPZCharacter& toLoad, bool isReadOnly) {
             
             this->_readOnly = isReadOnly;

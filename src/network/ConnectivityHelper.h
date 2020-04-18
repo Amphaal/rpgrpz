@@ -47,7 +47,7 @@ class ConnectivityHelper : public QObject
         ~ConnectivityHelper();
         void init();
 
-    signals:
+ signals:
         void localAddressStateChanged(const QString &stateText, RPZStatusLabel::State state = RPZStatusLabel::State::Finished);
         void remoteAddressStateChanged(const QString &stateText, RPZStatusLabel::State state = RPZStatusLabel::State::Finished);
         void uPnPStateChanged(const QString &stateText, RPZStatusLabel::State state = RPZStatusLabel::State::Finished);

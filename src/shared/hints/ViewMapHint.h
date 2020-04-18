@@ -63,7 +63,7 @@ class ViewMapHint : public AtomsStorage {
 
         QGraphicsItem* generateGraphicsFromTemplate(bool hiddenAsDefault = false) const; //safe
 
-    public slots:
+ public slots:
         void mightNotifyMovement(const QList<QGraphicsItem*> &itemsWhoMightHaveMoved); //safe
         void notifySelectedItems(const QList<QGraphicsItem*> &selectedItems); //safe
         void notifyFocusedItem(QGraphicsItem* focusedItem); //safe
@@ -75,7 +75,7 @@ class ViewMapHint : public AtomsStorage {
         //handle preview alteration before real payload
         void handlePreviewRequest(const AtomsSelectionDescriptor &selectionDescriptor, const RPZAtom::Parameter &parameter, const QVariant &value);
 
-    signals:
+ signals:
         void requestingUIAlteration(const Payload::Alteration &type, const OrderedGraphicsItems &toAlter);
         void requestingUIAlteration(const Payload::Alteration &type, const QList<QGraphicsItem*> &toAlter);
         void requestingUIUpdate(const QHash<QGraphicsItem*, RPZAtom::Updates> &toUpdate);
@@ -86,7 +86,7 @@ class ViewMapHint : public AtomsStorage {
         void fogChanged(const QList<QPolygonF> &updatedFog);
 
  protected:
-        virtual void _handleAlterationRequest(const AlterationPayload &payload) override;
+        void _handleAlterationRequest(const AlterationPayload &payload) override;
 
  private:
         //alter template Atom

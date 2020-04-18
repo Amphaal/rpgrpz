@@ -80,12 +80,12 @@ class GStreamerClient : public QObject {
 
         void _freeSeekBuffer();
 
-    public slots:
+ public slots:
         void stopTimer(const GstMessageType &reason);
         void downloadBufferChanging(int prcProgress);
         bool _seek(gint64 seekInNanoSecs);
 
-    signals:
+ signals:
         void positionChanged(int positionInSecs);
         void streamEnded();
         void streamError();

@@ -47,7 +47,7 @@ class ToysTreeView : public QTreeView, public ConnectivityObserver, public Alter
  public:
         ToysTreeView(QWidget *parent = nullptr);
 
-    private slots:
+ private slots:
         void _onAssetsAboutToBeDownloaded(const QVector<QString> &availableIds);
         void _onReceivedAsset(RPZAssetImportPackage package);
         void _handleAlterationRequest(const AlterationPayload &payload);

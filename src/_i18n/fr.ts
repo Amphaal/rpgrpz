@@ -4,42 +4,42 @@
 <context>
     <name>AbilitiesSheet</name>
     <message>
-        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="43"/>
+        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="42"/>
         <source>Add a new ability</source>
         <translation>Ajouter une nouvelle compétence</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="48"/>
+        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="47"/>
         <source>Remove selected abilities</source>
         <translation>Supprimer les compétences selectionnées</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="68"/>
+        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="67"/>
         <source>Name</source>
         <translation>Nom</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="69"/>
+        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="68"/>
         <source>Category</source>
         <translation>Catégorie</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="70"/>
+        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="69"/>
         <source>Favorite</source>
         <translation>Favoris</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="71"/>
+        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="70"/>
         <source>Description</source>
         <translation>Description</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="181"/>
+        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="174"/>
         <source>Deletion of abilities</source>
         <translation>Suppression des compétences</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="182"/>
+        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="175"/>
         <source>Do you really want to delete those abilities ?</source>
         <translation>Voulez-vous vraiment supprimer ces compétences ?</translation>
     </message>
@@ -303,12 +303,12 @@
 <context>
     <name>CharacterPickerEditor</name>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="95"/>
+        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="89"/>
         <source>[Cannot configure...]</source>
         <translation>[Impossible à configurer...]</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="101"/>
+        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="92"/>
         <source>[No character associated]</source>
         <translation>[Aucun personnage associé]</translation>
     </message>
@@ -352,42 +352,42 @@
 <context>
     <name>ConnectWidget</name>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="39"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="35"/>
         <source>Player name</source>
         <translation>Nom du joueur</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="45"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="41"/>
         <source>IP or server hostname</source>
         <translation>IP ou nom de serveur</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="50"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="46"/>
         <source>Character to embody</source>
         <translation>Personnage à incarner</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="179"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="163"/>
         <source>Error while connecting to server</source>
         <translation>Erreur à la connexion au serveur</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="199"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="180"/>
         <source>Connect</source>
         <translation>Se connecter</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="202"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="183"/>
         <source>Cancel (Connecting to %1...)</source>
         <translation>Annuler (Connexion à %1...)</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="205"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="186"/>
         <source>Disconnect from [%1]</source>
         <translation>Se déconnecter de [%1]</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="258"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="234"/>
         <source> Log in without a character</source>
         <translation> Se connecter sans fiche</translation>
     </message>
@@ -395,22 +395,22 @@
 <context>
     <name>ConnectivityHelper</name>
     <message>
-        <location filename="../network/ConnectivityHelper.cpp" line="150"/>
+        <location filename="../network/ConnectivityHelper.cpp" line="142"/>
         <source>No</source>
         <translation>Non</translation>
     </message>
     <message>
-        <location filename="../network/ConnectivityHelper.cpp" line="151"/>
+        <location filename="../network/ConnectivityHelper.cpp" line="143"/>
         <source>&lt;UPnP Failed&gt;</source>
         <translation>&lt;Erreur UPnP&gt;</translation>
     </message>
     <message>
-        <location filename="../network/ConnectivityHelper.cpp" line="212"/>
+        <location filename="../network/ConnectivityHelper.cpp" line="197"/>
         <source>&lt;Searching...&gt;</source>
         <translation>&lt;Recherche...&gt;</translation>
     </message>
     <message>
-        <location filename="../network/ConnectivityHelper.cpp" line="216"/>
+        <location filename="../network/ConnectivityHelper.cpp" line="201"/>
         <source>&lt;Error&gt;</source>
         <translation>&lt;Erreur&gt;</translation>
     </message>
@@ -599,17 +599,17 @@
 <context>
     <name>InventorySlotMoveModal</name>
     <message>
-        <location filename="../ui/sheets/components/InventoryModal.hpp" line="132"/>
+        <location filename="../ui/sheets/components/InventoryModal.hpp" line="118"/>
         <source>Move items to inventory</source>
         <translation>Déplacer les objets vers l&apos;inventaire</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventoryModal.hpp" line="158"/>
+        <location filename="../ui/sheets/components/InventoryModal.hpp" line="141"/>
         <source>• &quot;%1&quot; (%2 to move) :</source>
         <translation>• &quot;%1&quot; (%2 à déplacer) :</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventoryModal.hpp" line="159"/>
+        <location filename="../ui/sheets/components/InventoryModal.hpp" line="142"/>
         <source>%1 (Current number) =&gt; %2 (New Total)</source>
         <translation>%1 (Nombre actuel) =&gt; %2 (Nouveau Total)</translation>
     </message>
@@ -617,17 +617,17 @@
 <context>
     <name>InventorySlotSplitModal</name>
     <message>
-        <location filename="../ui/sheets/components/InventoryModal.hpp" line="185"/>
+        <location filename="../ui/sheets/components/InventoryModal.hpp" line="158"/>
         <source>Split item to inventory</source>
         <translation>Diviser l&apos;objet vers l&apos;inventaire</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventoryModal.hpp" line="193"/>
+        <location filename="../ui/sheets/components/InventoryModal.hpp" line="166"/>
         <source>Current number of items</source>
         <translation>Nombre actuel d&apos;objets</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventoryModal.hpp" line="196"/>
+        <location filename="../ui/sheets/components/InventoryModal.hpp" line="169"/>
         <source>Total number of items in dest. inventory</source>
         <translation>Nombre total d&apos;objets dans l&apos;inventaire de destination</translation>
     </message>
@@ -1095,7 +1095,7 @@
         <translation>Une erreur est survenue : </translation>
     </message>
     <message>
-        <location filename="../ui/map/modules/MV_HUDLayout.hpp" line="295"/>
+        <location filename="../ui/map/modules/MV_HUDLayout.hpp" line="276"/>
         <source>Too far to display grid !</source>
         <translation>Trop éloigné pour afficher la grille !</translation>
     </message>
@@ -1336,7 +1336,7 @@
         <translation>Caché</translation>
     </message>
     <message>
-        <location filename="../ui/map/_base/MapViewInteractibleDescriptor.hpp" line="102"/>
+        <location filename="../ui/map/_base/MapViewInteractibleDescriptor.hpp" line="94"/>
         <source>Health</source>
         <translation>Santé</translation>
     </message>
@@ -1469,52 +1469,52 @@
 <context>
     <name>StatusTab</name>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="60"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="57"/>
         <source>Level</source>
         <translation>Niveau</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="64"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="61"/>
         <source>Alterations</source>
         <translation>Altérations</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="72"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="69"/>
         <source> Under the influence of a potion, filled with determination ...</source>
         <translation> Sous l&apos;effet d&apos;une potion, Rempli de détermination ...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="73"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="70"/>
         <source>State bonus :</source>
         <translation>Bonus d&apos;état :</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="77"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="74"/>
         <source> Broken leg, poisoned ...</source>
         <translation> Jambe cassée, empoisonné ...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="78"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="75"/>
         <source>State malus :</source>
         <translation>Malus d&apos;état :</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="81"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="78"/>
         <source>Gauges</source>
         <translation>Jauges</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="96"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="93"/>
         <source>Add a new gauge</source>
         <translation>Ajouter une nouvelle jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="103"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="100"/>
         <source>No gauge bound to the character</source>
         <translation>Aucune jauge liée au personnage</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="113"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="110"/>
         <source>Abilities</source>
         <translation>Compétences</translation>
     </message>

@@ -36,7 +36,7 @@ class YoutubePlaylistItemInsertor : public QWidget {
     
     Q_OBJECT
 
-    signals:
+ signals:
         void insertionRequested(const QString &ytUrl);
 
  private:
