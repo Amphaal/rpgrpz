@@ -37,5 +37,4 @@ class Authorisations {
 
     private:
         static inline bool _isHostAble = true;
-
 };
