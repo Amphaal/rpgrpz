@@ -19,21 +19,19 @@
 
 #include "MapHint.h"
 
-MapHint::MapHint() : _sysActor(new AlterationInteractor(Payload::Interactor::Local_System)) { 
+MapHint::MapHint() : _sysActor(new AlterationInteractor(Payload::Interactor::Local_System)) {
     this->connectToAlterationEmissions();
 }
 
-void MapHint::_handleAlterationRequest(const AlterationPayload &payload) { 
-
+void MapHint::_handleAlterationRequest(const AlterationPayload &payload) {
     ViewMapHint::_handleAlterationRequest(payload);
 
-    if(payload.type() == Payload::Alteration::Reset) {
+    if (payload.type() == Payload::Alteration::Reset) {
         this->_mightUpdateTokens();
     }
-    
-    //define dirty
+
+    // define dirty
     this->_shouldMakeMapDirty(payload);
-    
 }
 
 ////////////////////
@@ -54,87 +52,79 @@ const QString MapHint::mapFilePath() const {
 }
 
 void MapHint::mayWantToSavePendingState(QWidget* parent) {
-    
-    if(!this->isMapDirty() || this->isRemote()) return;
+    if (!this->isMapDirty() || this->isRemote()) return;
 
-    //popup
+    // popup
     auto result = QMessageBox::warning(
-        parent, 
-        this->map().dbFilePath(), 
-        tr("Do you want to save changes done to this map ?"), 
+        parent,
+        this->map().dbFilePath(),
+        tr("Do you want to save changes done to this map ?"),
         QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes
     );
 
-    //save state
-    if(result == QMessageBox::Yes) {
+    // save state
+    if (result == QMessageBox::Yes) {
         this->saveRPZMap();
     }
-
 }
 
 bool MapHint::saveRPZMap() {
+    if (this->_isRemote) return false;
 
-    if(this->_isRemote) return false;
-
-    //save into file
+    // save into file
     this->map().save();
 
-    //define as clean
+    // define as clean
     this->_setMapDirtiness(false);
 
     return true;
 }
 
 bool MapHint::createNewRPZMapAs(const QString &newFilePath) {
-    
-    //reject request if remoted
-    if(this->_isRemote) return false;
+    // reject request if remoted
+    if (this->_isRemote) return false;
 
-    //define descr
+    // define descr
     this->_mapDescriptor = QFileInfo(newFilePath).fileName();
 
-    //load
+    // load
     return this->loadRPZMap(newFilePath);
-
 }
 
 bool MapHint::saveRPZMapAs(const QString &newFilePath) {
-    
-    //reject request if remoted
-    if(this->_isRemote) return false;
+    // reject request if remoted
+    if (this->_isRemote) return false;
 
-    //define descr
+    // define descr
     this->_mapDescriptor = QFileInfo(newFilePath).fileName();
     this->map().changeSourceFile(newFilePath);
-    
-    //save
-    return this->saveRPZMap();
 
+    // save
+    return this->saveRPZMap();
 }
 
 bool MapHint::loadDefaultRPZMap() {
     auto fp = this->mapFilePath();
     this->ackRemoteness(fp);
-	return this->loadRPZMap(fp);
+    return this->loadRPZMap(fp);
 }
 
 bool MapHint::loadRPZMap(const QString &filePath) {
-    
-    if(this->_isRemote) return false;
+    if (this->_isRemote) return false;
 
         qDebug() << qUtf8Printable(QStringLiteral(u"Loading map \"%1\"...").arg(filePath));
 
-        //tells UI that map is loading
+        // tells UI that map is loading
         QMetaObject::invokeMethod(ProgressTracker::get(), "heavyAlterationStarted");
 
-        //load file and parse it
+        // load file and parse it
         this->_mapDescriptor = QFileInfo(filePath).fileName();
         this->_setMapDirtiness(false);
 
-        //fill database
+        // fill database
         this->_replaceMap(MapDatabase(filePath));
 
-        //create payload and queue it
+        // create payload and queue it
         ResetPayload payload(this->map());
         AlterationHandler::get()->queueAlteration(this->_sysActor, payload);
 
@@ -142,48 +132,41 @@ bool MapHint::loadRPZMap(const QString &filePath) {
 }
 
 bool  MapHint::ackRemoteness(const QString &tblMapFilePath) {
-    
     this->_isRemote = false;
     this->_mapDescriptor = tblMapFilePath;
 
     return this->_ackRemoteness();
-
 }
 
 bool MapHint::ackRemoteness(const RPZUser &connectedUser, const QString &remoteAddress) {
-    
-    //define remote flag
+    // define remote flag
     this->_isRemote = connectedUser.role() != RPZUser::Role::Host;
 
-    //change map descriptor if is a remote session
-    if(this->_isRemote) this->_mapDescriptor = remoteAddress;
+    // change map descriptor if is a remote session
+    if (this->_isRemote) this->_mapDescriptor = remoteAddress;
 
     return this->_ackRemoteness();
-
 }
 
 bool MapHint::_ackRemoteness() {
-    
-    //anyway, unset dirty
+    // anyway, unset dirty
     this->_setMapDirtiness(false);
-    
-    //return remoteness
-    return this->_isRemote;
 
+    // return remoteness
+    return this->_isRemote;
 }
 
 void MapHint::_shouldMakeMapDirty(const AlterationPayload &payload) {
+    // if remote, never dirty
+    if (this->_isRemote) return;
 
-    //if remote, never dirty
-    if(this->_isRemote) return;
+    // if not a network alteration type
+    if (!payload.isNetworkRoutable()) return;
 
-    //if not a network alteration type
-    if(!payload.isNetworkRoutable()) return;
-
-    //ResetPayload is dirty if local hardset of map parameters 
-    if(auto mPayload = dynamic_cast<const ResetPayload*>(&payload)) {
+    // ResetPayload is dirty if local hardset of map parameters
+    if (auto mPayload = dynamic_cast<const ResetPayload*>(&payload)) {
         auto mapParamsUpdate = mPayload->isFromMapParametersUpdate();
-        if(!mapParamsUpdate) return;
+        if (!mapParamsUpdate) return;
     }
 
     this->_setMapDirtiness();
@@ -191,14 +174,12 @@ void MapHint::_shouldMakeMapDirty(const AlterationPayload &payload) {
 
 
 void MapHint::_setMapDirtiness(bool dirty) {
-    
     this->_isMapDirty = dirty;
-    
+
     emit mapStateChanged(
-        this->_mapDescriptor, 
+        this->_mapDescriptor,
         this->_isMapDirty
     );
-
 }
 
 
@@ -207,8 +188,7 @@ void MapHint::_setMapDirtiness(bool dirty) {
 ////////////////////////
 
 void MapHint::connectingToServer() {
-
-    //when self user send
+    // when self user send
     QObject::connect(
         _rpzClient, &RPZClient::gameSessionReceived,
         this, &MapHint::_onGameSessionReceived
@@ -218,36 +198,31 @@ void MapHint::connectingToServer() {
         _rpzClient, &RPZClient::characterImpersonated,
         this, &MapHint::defineImpersonatingCharacter
     );
-
 }
 
 
 void MapHint::connectionClosed(bool hasInitialMapLoaded) {
-
-    //reset impersonating character
+    // reset impersonating character
     this->defineImpersonatingCharacter();
 
-    //back to default state
-    if(hasInitialMapLoaded) this->loadDefaultRPZMap();
+    // back to default state
+    if (hasInitialMapLoaded) this->loadDefaultRPZMap();
 
     emit remoteChanged(false);
-
 }
 
 void MapHint::_onGameSessionReceived(const RPZGameSession &gameSession) {
-    
     Q_UNUSED(gameSession)
 
-    //self
+    // self
     auto self = this->_rpzClient->identity();
 
-    //if host
-    if(Authorisations::isHostAble()) {
-
-        //send map history if host
+    // if host
+    if (Authorisations::isHostAble()) {
+        // send map history if host
         this->_sendMapHistory();
 
-        //might update tokens when user updates/log in
+        // might update tokens when user updates/log in
         QObject::connect(
             this->_rpzClient, &RPZClient::userDataChanged,
             this, &MapHint::mightUpdateOwnedTokens
@@ -256,39 +231,33 @@ void MapHint::_onGameSessionReceived(const RPZGameSession &gameSession) {
             this->_rpzClient, &RPZClient::userJoinedServer,
             this, &MapHint::mightUpdateOwnedTokens
         );
-
     }
 
-    //if host
+    // if host
     bool is_remote = this->ackRemoteness(
-        self, 
+        self,
         this->_rpzClient->getConnectedSocketAddress()
     );
 
     emit remoteChanged(is_remote);
-    
 }
 
 void MapHint::_sendMapHistory() {
-    
-    //generate payload
+    // generate payload
     auto payload = this->generateResetPayload();
-   
-   //send it
-    QMetaObject::invokeMethod(this->_rpzClient, "sendMapHistory", 
+
+    // send it
+    QMetaObject::invokeMethod(this->_rpzClient, "sendMapHistory",
         Q_ARG(ResetPayload, payload)
     );
-
 }
 
 void MapHint::_mightUpdateTokens() {
-    
-    if(!this->_rpzClient) return;
-    if(!Authorisations::isHostAble()) return;
-        
-    //update token values from owners
-    for(const auto &user : this->_rpzClient->sessionUsers()) {
+    if (!this->_rpzClient) return;
+    if (!Authorisations::isHostAble()) return;
+
+    // update token values from owners
+    for (const auto &user : this->_rpzClient->sessionUsers()) {
         this->mightUpdateOwnedTokens(user);
     }
-
 }
