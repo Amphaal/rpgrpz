@@ -20,24 +20,24 @@
 #include "PlaylistDatabase.h"
 
 PlaylistDatabase* PlaylistDatabase::get() {
-    if(!_singleton) {
+    if (!_singleton) {
         _singleton = new PlaylistDatabase();
     }
     return _singleton;
 }
 
-PlaylistDatabase::PlaylistDatabase(const QJsonObject &doc) : JSONDatabase(QStringLiteral(u"PlaylistDB")) { 
+PlaylistDatabase::PlaylistDatabase(const QJsonObject &doc) : JSONDatabase(QStringLiteral(u"PlaylistDB")) {
     this->_setupFromDbCopy(doc);
 }
 PlaylistDatabase::PlaylistDatabase() : JSONDatabase(QStringLiteral(u"PlaylistDB")) {
     this->_initDatabaseFromJSONFile(
         AppContext::getPlaylistFileLocation()
     );
-};
+}
 
 void PlaylistDatabase::_setupLocalData() {
-    //fill URLs
-    for(const auto i : this->entityAsArray(QStringLiteral(u"ids"))) {
+    // fill URLs
+    for (const auto i : this->entityAsArray(QStringLiteral(u"ids"))) {
         this->_ytIds.insert(i.toString());
     }
 }
@@ -70,11 +70,10 @@ const QJsonObject PlaylistDatabase::_updatedInnerDb() {
     auto db = this->db();
 
     updateFrom(
-        db, 
-        QStringLiteral(u"ids"), 
+        db,
+        QStringLiteral(u"ids"),
         this->_ytIds
     );
 
     return db;
-    
 }

@@ -77,7 +77,7 @@ class AtomsStorage : public AlterationAcknoledger {
     const QList<RPZCharacter::UserBound> findUnboundCharacters(const QList<RPZCharacter::UserBound> &availableCharacters);  // safe
 
     void handleAlterationRequest(const AlterationPayload &payload);
- 
+
  public slots:
     void redo();
     void undo();

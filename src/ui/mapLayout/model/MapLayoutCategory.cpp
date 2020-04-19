@@ -24,7 +24,7 @@ MapLayoutCategory::MapLayoutCategory(const RPZAtom::Category &category, int sort
     this->_category = category;
     this->_sorter = sorter;
 
-    switch(category) {
+    switch (category) {
         case RPZAtom::Category::Layout: {
             this->_updateLayerName(sorter);
             this->_pixmap = QPixmap(QStringLiteral(u":/icons/app/manager/layer.png"));
@@ -40,7 +40,6 @@ MapLayoutCategory::MapLayoutCategory(const RPZAtom::Category &category, int sort
 
         default:
         break;
-
     }
 }
 
@@ -63,7 +62,7 @@ RPZAtom::Category MapLayoutCategory::category() const {return this->_category;}
 MapLayoutCategory* MapLayoutCategory::fromIndex(const QModelIndex &index) {
     auto ip = index.internalPointer();
     return static_cast<MapLayoutCategory*>(ip);
-};
+}
 
 bool MapLayoutCategory::operator<(const MapLayoutCategory &other) const {
     return this->sorter() < other.sorter();
@@ -71,7 +70,7 @@ bool MapLayoutCategory::operator<(const MapLayoutCategory &other) const {
 
 void MapLayoutCategory::addAsChild(MapLayoutAtom* child) {
     this->_atoms.append(child);
-};
+}
 
 void MapLayoutCategory::removeAsChild(MapLayoutAtom* child) {
     this->_atoms.removeOne(child);
@@ -91,4 +90,4 @@ const QString MapLayoutCategory::name() const {
 
 const QPixmap MapLayoutCategory::icon() const {
     return this->_pixmap;
-};
+}

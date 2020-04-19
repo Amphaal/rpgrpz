@@ -50,7 +50,6 @@ VolumeToolbar::VolumeToolbar(QWidget* parent) : QWidget(parent), _audio(new QSli
     layout->addWidget(this->_mute);
     layout->addWidget(this->_audio, 1);
     layout->addWidget(this->_volumeStr);
-
 }
 
 void VolumeToolbar::_onAudioChange(int newSliderVal) {

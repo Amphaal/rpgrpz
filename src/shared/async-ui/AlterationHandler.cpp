@@ -20,8 +20,8 @@
 #include "AlterationHandler.h"
 
 AlterationHandler* AlterationHandler::get() {
-    if(!_inst) _inst = new AlterationHandler;
-    return _inst; 
+    if (!_inst) _inst = new AlterationHandler;
+    return _inst;
 }
 
 void AlterationHandler::queueAlteration(const AlterationInteractor* sender, AlterationPayload &payload) {
@@ -29,19 +29,17 @@ void AlterationHandler::queueAlteration(const AlterationInteractor* sender, Alte
 }
 
 void AlterationHandler::_queueAlteration(const Payload::Interactor &senderSource, AlterationPayload &payload) {
-    
-    //if initial payload emission, apply sender source for send
-    if(payload.source() == Payload::Interactor::Undefined && senderSource != Payload::Interactor::Undefined) {
-        payload.changeSource(senderSource); 
+    // if initial payload emission, apply sender source for send
+    if (payload.source() == Payload::Interactor::Undefined && senderSource != Payload::Interactor::Undefined) {
+        payload.changeSource(senderSource);
     }
 
     auto type = payload.type();
     qDebug() << ">> [" << payload.source() << "] -" << type;
-    
-    if(type == Payload::Alteration::Reset) {
+
+    if (type == Payload::Alteration::Reset) {
         QMetaObject::invokeMethod(ProgressTracker::get(), "heavyAlterationStarted");
     }
 
     emit requiresPayloadHandling(payload);
-    
 }

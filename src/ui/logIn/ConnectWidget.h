@@ -36,39 +36,38 @@
 #include "src/ui/_others/ConnectivityObserver.h"
 
 class ConnectWidget : public QWidget, public ConnectivityObserver {
-
     Q_OBJECT
 
  public:
-        enum class State { NotConnected, Connecting, Connected };
-        Q_ENUM(State)
+    enum class State { NotConnected, Connecting, Connected };
+    Q_ENUM(State)
 
-        ConnectWidget(QWidget *parent = nullptr);
+    explicit ConnectWidget(QWidget *parent = nullptr);
 
  protected:
-        void connectingToServer() override;
-        void connectionClosed(bool hasInitialMapLoaded) override;
+    void connectingToServer() override;
+    void connectionClosed(bool hasInitialMapLoaded) override;
 
  private:
-        QLineEdit* _nameTarget = nullptr;
-        QLineEdit* _domainTarget = nullptr;
-        QComboBox* _characterSheetTarget = nullptr;
-        
-        QPushButton* _connectBtn = nullptr;
+    QLineEdit* _nameTarget = nullptr;
+    QLineEdit* _domainTarget = nullptr;
+    QComboBox* _characterSheetTarget = nullptr;
 
-        ConnectWidget::State _state = ConnectWidget::State::NotConnected;
-        
-        void _tryConnectToServer();
-        void _tryDisconnectingFromServer();
+    QPushButton* _connectBtn = nullptr;
 
-        void _changeState(ConnectWidget::State newState);
+    ConnectWidget::State _state = ConnectWidget::State::NotConnected;
 
-        void _onConnectButtonPressed();
-        void _onRPZClientStatus(const QString &statusMsg, bool isError);
-        void _onGameSessionReceived(const RPZGameSession &gameSession);
+    void _tryConnectToServer();
+    void _tryDisconnectingFromServer();
 
-        void _saveValuesAsSettings();
+    void _changeState(ConnectWidget::State newState);
 
-        void _fillCharacterSheetCombo();
-        RPZCharacter::Id _getSelectedCharacterId();
-};  
+    void _onConnectButtonPressed();
+    void _onRPZClientStatus(const QString &statusMsg, bool isError);
+    void _onGameSessionReceived(const RPZGameSession &gameSession);
+
+    void _saveValuesAsSettings();
+
+    void _fillCharacterSheetCombo();
+    RPZCharacter::Id _getSelectedCharacterId();
+};
