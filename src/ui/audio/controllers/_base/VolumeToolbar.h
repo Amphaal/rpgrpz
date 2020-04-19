@@ -30,15 +30,14 @@
 #include "src/helpers/_appContext.h"
 
 class VolumeToolbar : public QWidget {
-    
     Q_OBJECT
 
  signals:
-        void askForVolumeChange(int newVolume);
+    void askForVolumeChange(int newVolume);
 
  public:
-        VolumeToolbar(QWidget* parent = nullptr);
-    
+    explicit VolumeToolbar(QWidget* parent = nullptr);
+
  private:
         QSlider* _audio = nullptr;
         QToolButton* _mute = nullptr;

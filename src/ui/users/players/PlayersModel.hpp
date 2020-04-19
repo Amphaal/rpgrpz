@@ -23,43 +23,37 @@
 #include "PlayerItemDelegate.hpp"
 
 class PlayersModel : public BaseUsersModel {
-    
     Q_OBJECT
 
  public:
-        PlayersModel() { };
+    PlayersModel() {}
 
-        QVariant data(const QModelIndex &index, int role) const override {
-            
-            if (!index.isValid() || !this->_users.count()) return QVariant();
-            
-            if(role == Qt::SizeHintRole) return PlayerItemDelegate::sizeHint(index);
+    QVariant data(const QModelIndex &index, int role) const override {
+        if (!index.isValid() || !this->_users.count()) return QVariant();
+        if (role == Qt::SizeHintRole) return PlayerItemDelegate::sizeHint(index);
 
-            //check if targeted user exists
-            auto expectedId = this->_users.keys().at(index.row());
-            
-            auto user = this->_users.value(expectedId);
-            if(user.isEmpty()) return QVariant();
+        // check if targeted user exists
+        auto expectedId = this->_users.keys().at(index.row());
 
-            switch(role) {
+        auto user = this->_users.value(expectedId);
+        if (user.isEmpty()) return QVariant();
 
-                case Qt::ToolTipRole: {
-                    auto character = user.character();
-                    return tr("[%1] as \"%2\"").arg(user.name()).arg(character.name());
-                }
-
-                case Qt::UserRole: {
-                    return user;
-                }
-
+        switch (role) {
+            case Qt::ToolTipRole: {
+                auto character = user.character();
+                return tr("[%1] as \"%2\"").arg(user.name()).arg(character.name());
             }
 
-            return QVariant();
-
+            case Qt::UserRole: {
+                return user;
+            }
         }
+
+        return QVariant();
+    }
 
  private:
-        bool _isUserInvalidForInsert(const RPZUser &user) const override {
-            return user.role() != RPZUser::Role::Player;
-        }
+    bool _isUserInvalidForInsert(const RPZUser &user) const override {
+        return user.role() != RPZUser::Role::Player;
+    }
 };
