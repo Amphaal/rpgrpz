@@ -79,7 +79,7 @@ class PingAssist : public QObject, public ConnectivityObserver {
 
     void _addPing(const QPointF &scenePosPoint, RPZUser &user) {
         NotificationsAudioManager::get()->playPing();
-        auto ping = new PingItem(scenePosPoint, user.color(), this->_view);
+        auto ping = new PingItem(scenePosPoint, user.color());
         this->_view->scene()->addItem(ping);
     }
 };
