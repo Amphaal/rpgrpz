@@ -47,7 +47,7 @@
 <context>
     <name>AtomEditionManager</name>
     <message>
-        <location filename="../ui/atomEditor/AtomEditionManager.hpp" line="60"/>
+        <location filename="../ui/atomEditor/AtomEditionManager.hpp" line="103"/>
         <source>Reset displayed parameters</source>
         <translation>Réinitialiser les paramètres affichés</translation>
     </message>
@@ -257,12 +257,12 @@
         <translation>Savegarder la fiche</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/CharacterEditor.hpp" line="161"/>
+        <location filename="../ui/sheets/CharacterEditor.hpp" line="160"/>
         <source>My characters</source>
         <translation>Mes personnages</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/CharacterEditor.hpp" line="161"/>
+        <location filename="../ui/sheets/CharacterEditor.hpp" line="160"/>
         <source>Hosted characters</source>
         <translation>Personnages du serveur</translation>
     </message>
@@ -280,22 +280,22 @@
         <translation>Supprimer la fiche</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="242"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="240"/>
         <source>No existing character, create some !</source>
         <translation>Aucun personnage préexistant, créez-en un !</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="242"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="240"/>
         <source>Waiting for sheets from host...</source>
         <translation>En attente de fiches du serveur...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="376"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="374"/>
         <source>Character sheet deletion</source>
         <translation>Suppression de fiches de personnages</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="377"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="375"/>
         <source>Do you really want to delete this character ?</source>
         <translation>Voulez-vous vraiment supprimer cette fiche de personnage ?</translation>
     </message>
@@ -316,22 +316,22 @@
 <context>
     <name>CharacterSheet</name>
     <message>
-        <location filename="../ui/sheets/CharacterSheet.hpp" line="47"/>
+        <location filename="../ui/sheets/CharacterSheet.hpp" line="41"/>
         <source>Lore</source>
         <translation>Lore</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/CharacterSheet.hpp" line="48"/>
+        <location filename="../ui/sheets/CharacterSheet.hpp" line="42"/>
         <source>Status / Abilities</source>
         <translation>Statut / Compétences</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/CharacterSheet.hpp" line="49"/>
+        <location filename="../ui/sheets/CharacterSheet.hpp" line="43"/>
         <source>Inventories</source>
         <translation>Inventaires</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/CharacterSheet.hpp" line="50"/>
+        <location filename="../ui/sheets/CharacterSheet.hpp" line="44"/>
         <source>Notes / Others</source>
         <translation>Notes / Autres</translation>
     </message>
@@ -1241,37 +1241,37 @@
         <translation>Les joueurs peuvent uniquement se déplacer de tuile en tuile</translation>
     </message>
     <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="44"/>
+        <location filename="../ui/map/MapParametersForm.hpp" line="42"/>
         <source>Save and reload map</source>
         <translation>Sauvegarder et recharger la carte</translation>
     </message>
     <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="55"/>
+        <location filename="../ui/map/MapParametersForm.hpp" line="52"/>
         <source>Edit map parameters</source>
         <translation>Modifier les paramètres de la carte</translation>
     </message>
     <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="64"/>
+        <location filename="../ui/map/MapParametersForm.hpp" line="61"/>
         <source>Movement system</source>
         <translation>Système de mouvement</translation>
     </message>
     <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="65"/>
+        <location filename="../ui/map/MapParametersForm.hpp" line="62"/>
         <source>Map size</source>
         <translation>Taille de la carte</translation>
     </message>
     <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="66"/>
+        <location filename="../ui/map/MapParametersForm.hpp" line="63"/>
         <source>Grid tile to ingame meters</source>
         <translation>Taille en mètres d&apos;une case</translation>
     </message>
     <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="67"/>
+        <location filename="../ui/map/MapParametersForm.hpp" line="64"/>
         <source>Grid tile to screen centimeters</source>
         <translation>Taille en centimètres réels d&apos;une case</translation>
     </message>
     <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="68"/>
+        <location filename="../ui/map/MapParametersForm.hpp" line="65"/>
         <source>Minimum / Maximum camera scaling ratio</source>
         <translation>Niveau de zoom Minimum / Maximum</translation>
     </message>
@@ -1325,7 +1325,7 @@
         <translation>J</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditionManager.hpp" line="49"/>
+        <location filename="../ui/atomEditor/AtomEditionManager.hpp" line="92"/>
         <source>Default configuration</source>
         <translation>Paramétrage par défaut</translation>
     </message>
@@ -1365,12 +1365,12 @@
         <translation>Couleur</translation>
     </message>
     <message>
-        <location filename="../ui/docShare/DocShareListView.cpp" line="119"/>
+        <location filename="../ui/docShare/DocShareListView.cpp" line="104"/>
         <source> (downloading...)</source>
         <translation> (téléchargement...)</translation>
     </message>
     <message>
-        <location filename="../ui/docShare/DocShareListView.cpp" line="218"/>
+        <location filename="../ui/docShare/DocShareListView.cpp" line="191"/>
         <source> (available)</source>
         <translation> (disponible)</translation>
     </message>

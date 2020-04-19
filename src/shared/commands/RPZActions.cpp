@@ -88,8 +88,7 @@ QAction* RPZActions::activateGridIndicator() {
                 action->data().toString(),
                 checked
             );
-        }
-    );
+    });
 
     return action;
 }
@@ -110,8 +109,7 @@ QAction* RPZActions::activateScaleIndicator() {
                 action->data().toString(),
                 checked
             );
-        }
-    );
+    });
 
     return action;
 }

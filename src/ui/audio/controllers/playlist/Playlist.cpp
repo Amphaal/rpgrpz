@@ -226,16 +226,14 @@ bool Playlist::_addYoutubeItem(VideoMetadata* metadata) {
 
             // define active YT icon
             playlistItem->setIcon(*this->_ytIcon);
-        }
-    );
+    });
 
     QObject::connect(
         metadata, &VideoMetadata::metadataFetching,
         [=]() {
             playlistItem->setIcon(*this->_ytIconGrey);
             playlistItem->setText(pos + tr("(Loading metadata...) ") + url);
-        }
-    );
+    });
 
     QObject::connect(
         metadata, &VideoMetadata::streamFailed,
@@ -245,8 +243,7 @@ bool Playlist::_addYoutubeItem(VideoMetadata* metadata) {
                 playlistItem->setIcon(*this->_ytIconErr);
                 playlistItem->setText(pos + tr("(Error) ") + url);
             });
-        }
-    );
+    });
 
     this->addItem(playlistItem);
 

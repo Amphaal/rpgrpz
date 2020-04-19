@@ -38,8 +38,7 @@ ChatEdit::ChatEdit(QWidget * parent) : QWidget(parent),
         this->_msgEdit, &QLineEdit::returnPressed, 
         [&]() {
             this->_sendMsgBtn->click();
-        }
-    );
+    });
 
 }
 

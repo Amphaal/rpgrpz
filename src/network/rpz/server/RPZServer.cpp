@@ -102,8 +102,7 @@ void RPZServer::_onNewConnection() {
         clientSocket->socket(), &QAbstractSocket::disconnected,
         [&, clientSocket]() {
             this->_onClientSocketDisconnected(clientSocket);
-        }
-    );
+    });
 
     // on data reception
     QObject::connect(

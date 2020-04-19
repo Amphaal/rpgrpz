@@ -203,8 +203,7 @@ void MainWindow::_initConnectivity() {
                     Q_ARG(QString, "OK"),
                     Q_ARG(RPZStatusLabel::State, RPZStatusLabel::State::Finished)
                 );
-            }
-        );
+        });
 
         // tell the UI when the server is down
         QObject::connect(
@@ -215,8 +214,7 @@ void MainWindow::_initConnectivity() {
                     Q_ARG(RPZStatusLabel::State, RPZStatusLabel::State::Error)
                 );
                 this->_rpzServer = nullptr;
-            }
-        );
+        });
 
         // create a separate thread to run the server into
         auto serverThread = new QThread;
@@ -312,8 +310,7 @@ void MainWindow::_initAppUnmovableUI() {
             auto txt = tr("Game Hub");
             if (newCount) txt = QString("(%1) ").arg(newCount) + txt;
             this->_rightTab->setTabText(gameHubTabIndex, txt);
-        }
-    );
+    });
 
     auto designerWidget = [=]() {
         auto designer = new QWidget(this);
@@ -497,8 +494,7 @@ void MainWindow::_initUIMenu() {
         HintThread::hint(), &MapHint::remoteChanged,
         [=](bool isRemote) {
             mm->setEnabled(!isRemote);
-        }
-    );
+    });
 
     // set container
     this->setMenuWidget(menuBar);
@@ -550,8 +546,7 @@ QMenu* MainWindow::_getMapMenu() {
             QMetaObject::invokeMethod(HintThread::hint(), "createNewRPZMapAs",
                 Q_ARG(QString, picked)
             );
-        }
-    );
+    });
 
     // load map
     auto lRPZmAction = RPZActions::loadAMap();
@@ -574,8 +569,7 @@ QMenu* MainWindow::_getMapMenu() {
             QMetaObject::invokeMethod(HintThread::hint(), "loadRPZMap",
                 Q_ARG(QString, picked)
             );
-        }
-    );
+    });
 
     // save map
     auto sRPZmAction = RPZActions::saveTheMap();
@@ -601,8 +595,7 @@ QMenu* MainWindow::_getMapMenu() {
                     Q_ARG(QString, picked)
                 );
             }
-        }
-    );
+    });
 
     mapMenuItem->addAction(cmRPZmAction);
     mapMenuItem->addAction(lRPZmAction);
@@ -631,8 +624,7 @@ QMenu* MainWindow::_getToolsMenu() {
             AppContext::openFileInOS(
                 AppContext::getLogFileLocation()
             );
-        }
-    );
+    });
 
     // latest log
     auto openLatestLogAction = RPZActions::openLatestLog();
@@ -642,8 +634,7 @@ QMenu* MainWindow::_getToolsMenu() {
             AppContext::openFileInOS(
                 AppContext::getLatestLogFileLocation()
             );
-        }
-    );
+    });
 
     // data folder
     auto openDataFolderAction = RPZActions::openInternalDataFolder();
@@ -653,8 +644,7 @@ QMenu* MainWindow::_getToolsMenu() {
             AppContext::openFolderInOS(
                 AppContext::getAppDataLocation()
             );
-        }
-    );
+    });
 
     // layout
     toolsMenuItem->addAction(openMaintenanceToolAction);
@@ -684,8 +674,7 @@ QMenu* MainWindow::_getHelpMenu() {
             this->cfugAction->setEnabled(!isSearching);
             auto descr = isSearching ? tr("Searching for updates...") : tr("Check for updates...");
             this->cfugAction->setText(descr);
-        }
-    );
+    });
 
     // patchnote
     auto patchnoteAction = RPZActions::patchnote();
@@ -694,8 +683,7 @@ QMenu* MainWindow::_getHelpMenu() {
         [&]() {
             auto destUrl = QUrl(APP_PATCHNOTE_URL);
             QDesktopServices::openUrl(destUrl);
-        }
-    );
+    });
 
     // sentry
     auto testSentryReportAction = RPZActions::sentry();
@@ -704,8 +692,7 @@ QMenu* MainWindow::_getHelpMenu() {
         [&]() {
             // must crash and trigger Sentry minidump report push
             abort();
-        }
-    );
+    });
 
     helpMenuItem->addAction(patchnoteAction);
     helpMenuItem->addAction(testSentryReportAction);

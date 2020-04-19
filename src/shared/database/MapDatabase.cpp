@@ -231,8 +231,7 @@ QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> MapDatabase::_getUpdat
                 QStringLiteral(u"atoms"),
                 db.atoms().toVList()
             );
-        }
-    );
+    });
 
     // to v8
     out.insert(
@@ -268,8 +267,7 @@ QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> MapDatabase::_getUpdat
                 QStringLiteral(u"atoms"),
                 db.atoms().toVList()
             );
-        }
-    );
+    });
 
     return out;
 }
