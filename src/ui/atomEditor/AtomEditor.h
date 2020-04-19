@@ -51,45 +51,44 @@
 #include "src/shared/hints/HintThread.hpp"
 
 class AtomEditor : public QGroupBox, public AlterationInteractor {
-
     Q_OBJECT
 
  public:
-        AtomEditor(QWidget* parent = nullptr);
-        void buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr);
-        void resetParams();
-        bool hasVisibleEditors();
-        AtomsSelectionDescriptor currentSelectionDescriptor();
-    
+    explicit AtomEditor(QWidget* parent = nullptr);
+    void buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr);
+    void resetParams();
+    bool hasVisibleEditors();
+    AtomsSelectionDescriptor currentSelectionDescriptor();
+
  signals:
-        void requiresPreview(const AtomsSelectionDescriptor &selectionDescriptor, const RPZAtom::Parameter &parameter, const QVariant &value);
+    void requiresPreview(const AtomsSelectionDescriptor &selectionDescriptor, const RPZAtom::Parameter &parameter, const QVariant &value);
 
  private:
-        static inline QHash<AtomSubEditor::EditMode, QString> _strEM {
-            { AtomSubEditor::EditMode::None, QT_TR_NOOP("Nothing to modify") },
-            { AtomSubEditor::EditMode::Template, QT_TR_NOOP("Template modification") },
-            { AtomSubEditor::EditMode::Selection, QT_TR_NOOP("Selection modification") }
-        };
+    static inline QHash<AtomSubEditor::EditMode, QString> _strEM {
+        { AtomSubEditor::EditMode::None, QT_TR_NOOP("Nothing to modify") },
+        { AtomSubEditor::EditMode::Template, QT_TR_NOOP("Template modification") },
+        { AtomSubEditor::EditMode::Selection, QT_TR_NOOP("Selection modification") }
+    };
 
-        AtomsSelectionDescriptor _currentSelectionDescr;
+    AtomsSelectionDescriptor _currentSelectionDescr;
 
-        QMap<RPZAtom::Parameter, AtomSubEditor*> _editorsByParam;
-        QVector<AtomSubEditor*> _orderedCreation;
-        void _addEditor(AtomSubEditor* editor);
-        void _integrateEditors();
+    QMap<RPZAtom::Parameter, AtomSubEditor*> _editorsByParam;
+    QVector<AtomSubEditor*> _orderedCreation;
+    void _addEditor(AtomSubEditor* editor);
+    void _integrateEditors();
 
-        NoEditorMessageWidget* _noEditorMsgWidget = nullptr;
+    NoEditorMessageWidget* _noEditorMsgWidget = nullptr;
 
-        QList<AtomSubEditor*> _visibleEditors;
+    QList<AtomSubEditor*> _visibleEditors;
 
-        RPZAtom::Updates _findDefaultValuesToBind();
-        void _createEditorsFromAtomParameters();
+    RPZAtom::Updates _findDefaultValuesToBind();
+    void _createEditorsFromAtomParameters();
 
-        void _onPreviewRequested(const RPZAtom::Parameter &parameter, const QVariant &value);
-        void _emitPayload(const RPZAtom::Updates &changesToEmit);
+    void _onPreviewRequested(const RPZAtom::Parameter &parameter, const QVariant &value);
+    void _emitPayload(const RPZAtom::Updates &changesToEmit);
 
-        AtomSubEditor::EditMode _currentEditMode = AtomSubEditor::EditMode::None;
-        void _updateEditMode();
+    AtomSubEditor::EditMode _currentEditMode = AtomSubEditor::EditMode::None;
+    void _updateEditMode();
 
-        void _mustShowBrushPenWidthEditor(const RPZAtom::Updates &updatedValues);
+    void _mustShowBrushPenWidthEditor(const RPZAtom::Updates &updatedValues);
 };

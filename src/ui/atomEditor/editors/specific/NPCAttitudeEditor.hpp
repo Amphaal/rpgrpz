@@ -19,76 +19,68 @@
 
 #pragma once
 
-#include "src/ui/atomEditor/_base/AtomEditorLineDescriptor.h"
 #include <QVBoxLayout>
 #include <QComboBox>
+
+#include "src/ui/atomEditor/_base/AtomEditorLineDescriptor.h"
 
 #include "src/shared/models/RPZAtom.h"
 #include "src/ui/atomEditor/_base/AtomSubEditor.h"
 
 class NPCAttitudeEditor : public AtomSubEditor {
-
     Q_OBJECT
 
- private:    
-        static inline QMap<RPZAtom::NPCType, QString> _strAttitude {
-            { RPZAtom::NPCType::Unknown, QT_TR_NOOP("Unknown") },
-            { RPZAtom::NPCType::Neutral, QT_TR_NOOP("Neutral") },
-            { RPZAtom::NPCType::Friendly, QT_TR_NOOP("Friendly") },
-            { RPZAtom::NPCType::Hostile, QT_TR_NOOP("Hostile") },
-        };
+ private:
+    static inline QMap<RPZAtom::NPCType, QString> _strAttitude {
+        { RPZAtom::NPCType::Unknown, QT_TR_NOOP("Unknown") },
+        { RPZAtom::NPCType::Neutral, QT_TR_NOOP("Neutral") },
+        { RPZAtom::NPCType::Friendly, QT_TR_NOOP("Friendly") },
+        { RPZAtom::NPCType::Hostile, QT_TR_NOOP("Hostile") },
+    };
 
-        static inline QHash<RPZAtom::NPCType, QString> _AttitudeIcons {
-            { RPZAtom::NPCType::Unknown, QStringLiteral(u":/icons/app/attitude/unknown.png") },
-            { RPZAtom::NPCType::Neutral, QStringLiteral(u":/icons/app/attitude/neutral.png") },
-            { RPZAtom::NPCType::Friendly, QStringLiteral(u":/icons/app/attitude/friendly.png") },
-            { RPZAtom::NPCType::Hostile, QStringLiteral(u":/icons/app/attitude/hostile.png") }
-        };
+    static inline QHash<RPZAtom::NPCType, QString> _AttitudeIcons {
+        { RPZAtom::NPCType::Unknown, QStringLiteral(u":/icons/app/attitude/unknown.png") },
+        { RPZAtom::NPCType::Neutral, QStringLiteral(u":/icons/app/attitude/neutral.png") },
+        { RPZAtom::NPCType::Friendly, QStringLiteral(u":/icons/app/attitude/friendly.png") },
+        { RPZAtom::NPCType::Hostile, QStringLiteral(u":/icons/app/attitude/hostile.png") }
+    };
 
-        QComboBox* _combo = nullptr;
+    QComboBox* _combo = nullptr;
 
  public:
-        NPCAttitudeEditor() : AtomSubEditor({RPZAtom::Parameter::NPCAttitude}) { 
+    NPCAttitudeEditor() : AtomSubEditor({RPZAtom::Parameter::NPCAttitude}) {
+        this->setVisible(false);
 
-            this->setVisible(false);
+        this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
 
-            this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
-            
-            this->_combo = new QComboBox;
-            
-            for(auto i = _strAttitude.constBegin(); i != _strAttitude.constEnd(); i++) {
+        this->_combo = new QComboBox;
 
-                auto tool = i.key();
-                
-                auto translatedName = tr(qUtf8Printable(i.value()));
-                auto associatedIcon = QIcon(_AttitudeIcons.value(tool));
+        for (auto i = _strAttitude.constBegin(); i != _strAttitude.constEnd(); i++) {
+            auto tool = i.key();
 
-                this->_combo->addItem(associatedIcon, translatedName, (int)tool);
+            auto translatedName = tr(qUtf8Printable(i.value()));
+            auto associatedIcon = QIcon(_AttitudeIcons.value(tool));
 
-            }
-
-            QObject::connect(
-                this->_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
-                [&](int currentIndex) {
-                    auto out = this->_combo->currentData();
-                    emit valueConfirmedForPayload({{this->_params.first(), out}});
-                }
-            );
-
-            this->layout()->addWidget(this->_combo);
-
-        };
-
-        void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::LoadingContext &context) override {
-            
-            AtomSubEditor::loadTemplate(defaultValues, context);
-
-            QSignalBlocker b(this->_combo);
-            
-            auto data = defaultValues[this->_params.first()];
-            auto indexToSelect = this->_combo->findData(data);
-            this->_combo->setCurrentIndex(indexToSelect);
-            
+            this->_combo->addItem(associatedIcon, translatedName, (int)tool);
         }
 
+        QObject::connect(
+            this->_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            [&](int currentIndex) {
+                auto out = this->_combo->currentData();
+                emit valueConfirmedForPayload({{this->_params.first(), out}});
+        });
+
+        this->layout()->addWidget(this->_combo);
+    }
+
+    void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::LoadingContext &context) override {
+        AtomSubEditor::loadTemplate(defaultValues, context);
+
+        QSignalBlocker b(this->_combo);
+
+        auto data = defaultValues[this->_params.first()];
+        auto indexToSelect = this->_combo->findData(data);
+        this->_combo->setCurrentIndex(indexToSelect);
+    }
 };

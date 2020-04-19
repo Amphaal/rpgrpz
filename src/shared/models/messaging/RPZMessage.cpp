@@ -19,17 +19,17 @@
 
 #include "RPZMessage.h"
 
-RPZMessage::RPZMessage() {};
-RPZMessage::~RPZMessage() {};
+RPZMessage::RPZMessage() {}
+RPZMessage::~RPZMessage() {}
 
 RPZMessage::RPZMessage(const QVariantHash &hash) : Stampable(hash) {
     this->_interpretTextAsCommand();
 }
 
-RPZMessage::RPZMessage(const QString &message, const MessageInterpreter::Command &forceCommand) : Stampable() { 
-    if((int)forceCommand) this->_forceCommand(forceCommand);
+RPZMessage::RPZMessage(const QString &message, const MessageInterpreter::Command &forceCommand) : Stampable() {
+    if ((int)forceCommand) this->_forceCommand(forceCommand);
     this->_setText(message);
-};
+}
 
 QString RPZMessage::text() const {
     return this->value(QStringLiteral(u"txt")).toString();
@@ -44,53 +44,44 @@ void RPZMessage::setAsLocal() {
 }
 
 QString RPZMessage::toString() const {
-
     auto base = Stampable::toString();
     auto text = this->text();
 
-    switch(this->_command) {
-
+    switch (this->_command) {
         case MessageInterpreter::Command::Whisper: {
-            
             auto textPrefix = QObject::tr(" whispers to you : ");
-            
-            if(this->_isLocal) {
+
+            if (this->_isLocal) {
                 auto recipientList = MessageInterpreter::findRecipentsFromText(text).join(", ");
                 textPrefix = QObject::tr(" whisper to ") + recipientList + " : ";
                 text = MessageInterpreter::sanitizeText(text);
             }
 
             return textPrefix + text;
-
         }
         break;
 
         default:
             return text;
-            break;
-            
     }
-
-};
+}
 
 QPalette RPZMessage::palette() const {
-    
-    //default palette
+    // default palette
     auto palette = Stampable::palette();
 
-    //switch by resp code...
-    switch(this->_command) {
-        
+    // switch by resp code...
+    switch (this->_command) {
         case MessageInterpreter::Command::Whisper:
             palette.setColor(QPalette::Window, "#f2e8f9");
             palette.setColor(QPalette::WindowText, "#a12ded");
             break;
-        
+
         case MessageInterpreter::Command::Say:
             palette.setColor(QPalette::Window, "#FFFFFF");
             palette.setColor(QPalette::WindowText, "#000000");
             break;
-        
+
         case MessageInterpreter::Command::C_DiceThrow:
             palette.setColor(QPalette::Window, "#87CEEB");
             palette.setColor(QPalette::WindowText, "#000080");
@@ -107,7 +98,6 @@ QPalette RPZMessage::palette() const {
     }
 
     return palette;
-
 }
 
 void RPZMessage::_setText(const QString &text) {

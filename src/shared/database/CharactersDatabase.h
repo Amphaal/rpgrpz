@@ -26,7 +26,6 @@
 #include "src/shared/models/_base/RPZMap.hpp"
 
 class CharactersDatabase : public QObject, public JSONDatabase {
-    
     Q_OBJECT
 
  signals:
@@ -52,11 +51,10 @@ class CharactersDatabase : public QObject, public JSONDatabase {
 
  private:
         static inline CharactersDatabase* _singleton = nullptr;
-        
+
         RPZMap<RPZCharacter> _characters;
-        
+
         CharactersDatabase();
 
         void _writeCharactersToDb();
-        
 };

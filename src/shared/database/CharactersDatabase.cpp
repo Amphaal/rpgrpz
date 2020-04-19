@@ -20,9 +20,9 @@
 #include "CharactersDatabase.h"
 
 CharactersDatabase* CharactersDatabase::get() {
-    if(!_singleton) _singleton = new CharactersDatabase;
+    if (!_singleton) _singleton = new CharactersDatabase;
     return _singleton;
-};
+}
 
 const RPZMap<RPZCharacter>& CharactersDatabase::characters() const {
     return this->_characters;
@@ -33,38 +33,31 @@ const RPZCharacter CharactersDatabase::character(RPZCharacter::Id characterId) c
 }
 
 RPZCharacter CharactersDatabase::addNewCharacter() {
-    
     RPZCharacter character;
     character.shuffleId();
 
-    //update
+    // update
     this->updateCharacter(character);
     emit characterAdded(character);
 
     return character;
-
 }
 
 void CharactersDatabase::removeCharacter(const RPZCharacter::Id &toRemove) {
-    
-    //remove...
+    // remove...
     this->_characters.remove(toRemove);
 
     this->_writeCharactersToDb();
     emit characterRemoved(toRemove);
-    
 }
 
 void CharactersDatabase::updateCharacter(const RPZCharacter &updated) {
-    
-    //update...
+    // update...
     this->_characters.insert(updated.id(), updated);
 
     this->_writeCharactersToDb();
     emit characterUpdated(updated);
-
 }
-
 
 JSONDatabase::Version CharactersDatabase::apiVersion() const {
     return 1;
@@ -77,13 +70,11 @@ JSONDatabase::Model CharactersDatabase::_getDatabaseModel() {
 }
 
 void CharactersDatabase::_setupLocalData() {
-
-    //fill characters...
-    for(const auto i : this->entityAsObject(QStringLiteral(u"characters"))) {
+    // fill characters...
+    for (const auto i : this->entityAsObject(QStringLiteral(u"characters"))) {
         auto character = RPZCharacter(i.toVariant().toHash());
         this->_characters.insert(character.id(), character);
     }
-
 }
 
 CharactersDatabase::CharactersDatabase() : JSONDatabase(QStringLiteral(u"CharacterDB")) {
@@ -96,15 +87,13 @@ void CharactersDatabase::_writeCharactersToDb() {
 }
 
 const QJsonObject CharactersDatabase::_updatedInnerDb() {
-    
     auto db = this->db();
 
     updateFrom(
-        db, 
-        QStringLiteral(u"characters"), 
+        db,
+        QStringLiteral(u"characters"),
         this->_characters.toVMap()
     );
 
     return db;
-    
 }

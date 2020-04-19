@@ -64,7 +64,7 @@ class RPZClient : public QObject, public AlterationInteractor, public JSONLogger
     const RPZCharacter sessionCharacter(const RPZCharacter::Id &characterId) const;  // safe
 
     void run();
- 
+
  public slots:
     void sendMessage(const RPZMessage &message);
     void defineAudioSourceState(const StreamPlayStateTracker &state);

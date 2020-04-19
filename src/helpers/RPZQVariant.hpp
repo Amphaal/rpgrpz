@@ -101,12 +101,11 @@ class RPZQVariant {
     }
 
     static auto brushTransform(QGraphicsItem *item) {
-        
         auto rawHash = item->data((int)RPZQVariant::Roles::BrushTransform).toHash();
-        
+
         AtomTransformationList out;
-        
-        for(auto i = rawHash.begin(); i != rawHash.end(); i++) {
+
+        for (auto i = rawHash.begin(); i != rawHash.end(); i++) {
             auto param = static_cast<RPZAtom::Parameter>(i.key().toInt());
             out.insert(param, i.value());
         }
