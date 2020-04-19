@@ -634,7 +634,7 @@
 <context>
     <name>LayerSelector</name>
     <message>
-        <location filename="../ui/atomEditor/_manager/LayerSelector.cpp" line="30"/>
+        <location filename="../ui/atomEditor/_manager/LayerSelector.cpp" line="29"/>
         <source>Layer</source>
         <translation>Calque</translation>
     </message>
@@ -841,7 +841,7 @@
 <context>
     <name>NoEditorMessageWidget</name>
     <message>
-        <location filename="../ui/atomEditor/_base/NoEditorMessageWidget.hpp" line="38"/>
+        <location filename="../ui/atomEditor/_base/NoEditorMessageWidget.hpp" line="36"/>
         <source>No modifications are possible !</source>
         <translation>Aucune modification possible !</translation>
     </message>
@@ -849,7 +849,7 @@
 <context>
     <name>PlayersModel</name>
     <message>
-        <location filename="../ui/users/players/PlayersModel.hpp" line="48"/>
+        <location filename="../ui/users/players/PlayersModel.hpp" line="44"/>
         <source>[%1] as &quot;%2&quot;</source>
         <translation>[%1] en tant que &quot;%2&quot;</translation>
     </message>
