@@ -76,10 +76,12 @@ class AtomsStorage : public AlterationAcknoledger {
 
     const QList<RPZCharacter::UserBound> findUnboundCharacters(const QList<RPZCharacter::UserBound> &availableCharacters);  // safe
 
+    void handleAlterationRequest(const AlterationPayload &payload);
+ 
+ public slots:
     void redo();
     void undo();
     void duplicateAtoms(const QList<RPZAtom::Id> &idsToDuplicate);
-    void handleAlterationRequest(const AlterationPayload &payload);
 
  signals:
         void mapSetup(const RPZMapParameters &mParams, const RPZFogParams &fParams);

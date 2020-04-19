@@ -257,14 +257,13 @@ void GStreamerClient::_requestPosition() {
     emit positionChanged(posSec);
 }
 
-void GStreamerClient::downloadBufferChanging(int prcProgress) {
+void GStreamerClient::_downloadBufferChanging(int prcProgress) {
     this->_downloadBufferOK = prcProgress == 100;
     // qDebug() << "Download buffer..." << prcProgress;
     emit bufferingPercentChanged(prcProgress);
 }
 
-
-void GStreamerClient::stopTimer(const GstMessageType &reason) {
+void GStreamerClient::_stopTimer(const GstMessageType &reason) {
     this->_elapsedTimer->stop();
 
     switch (reason) {
@@ -299,7 +298,7 @@ bool gst_client_bus_cb(GstBus *bus, GstMessage *msg, void* data) {
             g_clear_error(&err);
             g_free(debug_info);
 
-            QMetaObject::invokeMethod(cli, "stopTimer",
+            QMetaObject::invokeMethod(cli, "_stopTimer",
                 Q_ARG(GstMessageType, type)
             );
         }
@@ -356,7 +355,7 @@ bool gst_client_bus_cb(GstBus *bus, GstMessage *msg, void* data) {
         break;
 
         case GST_MESSAGE_EOS: {
-            QMetaObject::invokeMethod(cli, "stopTimer",
+            QMetaObject::invokeMethod(cli, "_stopTimer",
                 Q_ARG(GstMessageType, type)
             );
         }
@@ -366,7 +365,7 @@ bool gst_client_bus_cb(GstBus *bus, GstMessage *msg, void* data) {
             gint percent;
             gst_message_parse_buffering(msg, &percent);
 
-            QMetaObject::invokeMethod(cli, "downloadBufferChanging",
+            QMetaObject::invokeMethod(cli, "_downloadBufferChanging",
                 Q_ARG(int, percent)
             );
         }

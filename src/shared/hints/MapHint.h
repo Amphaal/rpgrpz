@@ -38,6 +38,7 @@ class MapHint : public ViewMapHint, public ConnectivityObserver {
     bool ackRemoteness(const RPZUser &connectedUser, const QString &remoteAddress);
     bool ackRemoteness(const QString &tblMapFilePath);
 
+ public slots:
     bool loadDefaultRPZMap();  // to invoke
     bool loadRPZMap(const QString &filePath);  // to invoke
     bool saveRPZMap();  // to invoke, unless from mayWantToSavePendingState()

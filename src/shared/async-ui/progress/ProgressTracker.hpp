@@ -33,6 +33,7 @@ class ProgressTracker : public QObject {
         return _inst;
     }
 
+ public slots:
     void heavyAlterationStarted() {
         emit heavyAlterationProcessing();
     }

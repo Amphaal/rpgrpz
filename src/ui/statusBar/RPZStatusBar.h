@@ -41,6 +41,7 @@ class RPZStatusBar : public QStatusBar, public ConnectivityObserver {
 
     void bindServerIndicators();
 
+ public slots:
     void updateServerStateLabel(const QString &stateText, RPZStatusLabel::State state);
     void updateUPnPLabel(const QString &stateText, RPZStatusLabel::State state);
     void updateExtIPLabel(const QString &stateText, RPZStatusLabel::State state);

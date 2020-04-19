@@ -22,27 +22,26 @@
 ConnectivityObserver::ConnectivityObserver() {
     _observers.append(this);
 }
-        
-void ConnectivityObserver::connectWithClient(RPZClient* cc) {
 
-    //prevent if client exists
-    if(_rpzClient) return;
+void ConnectivityObserver::connectWithClient(RPZClient* cc) {
+    // prevent if client exists
+    if (_rpzClient) return;
 
     _rpzClient = cc;
 
-    //create a separate thread to run the client into
+    // create a separate thread to run the client into
     auto clientThread = new QThread;
     clientThread->setObjectName(QStringLiteral(u"RPZClient Thread"));
     _rpzClient->moveToThread(clientThread);
-    
-    //events...
+
+    // events...
     QObject::connect(
-        clientThread, &QThread::started, 
+        clientThread, &QThread::started,
         _rpzClient, &RPZClient::run
     );
 
     QObject::connect(
-        _rpzClient, &RPZClient::closed, 
+        _rpzClient, &RPZClient::closed,
         clientThread, &QThread::quit
     );
 
@@ -51,18 +50,17 @@ void ConnectivityObserver::connectWithClient(RPZClient* cc) {
         &ConnectivityObserver::_onClientThreadFinished
     );
 
-    //allow connection bindings on UI
-    for(const auto ref : _observers) {
+    // allow connection bindings on UI
+    for (const auto ref : _observers) {
         ref->connectingToServer();
     }
 
-    //start
+    // start
     clientThread->start();
-
 }
 
 void ConnectivityObserver::disconnectClient() {
-    if(_rpzClient && _rpzClient->thread()->isRunning()) {
+    if (_rpzClient && _rpzClient->thread()->isRunning()) {
         _rpzClient->thread()->quit();
     }
 }
@@ -76,29 +74,26 @@ void ConnectivityObserver::receivedConnectionCloseSignal(bool hasInitialMapLoade
 }
 
 void ConnectivityObserver::_onClientThreadFinished() {
-
     auto hasInitialMapLoaded = _rpzClient->hasReceivedInitialMap();
 
     _rpzClient->thread()->deleteLater();
     _rpzClient->deleteLater();
     _rpzClient = nullptr;
-    
+
     Authorisations::resetHostAbility();
 
-    QMetaObject::invokeMethod(ConnectivityObserverSynchronizer::get(), "triggerConnectionClosed", 
+    QMetaObject::invokeMethod(ConnectivityObserverSynchronizer::get(), "triggerConnectionClosed",
         Q_ARG(bool, hasInitialMapLoaded)
     );
-
 }
 
-
 ConnectivityObserverSynchronizer* ConnectivityObserverSynchronizer::get() {
-    if(!_inst) _inst = new ConnectivityObserverSynchronizer;
+    if (!_inst) _inst = new ConnectivityObserverSynchronizer;
     return _inst;
 }
 
 void ConnectivityObserverSynchronizer::triggerConnectionClosed(bool hasInitialMapLoaded) {
-    for(const auto observer : ConnectivityObserver::observers()) {
+    for (const auto observer : ConnectivityObserver::observers()) {
         observer->receivedConnectionCloseSignal(hasInitialMapLoaded);
     }
 }

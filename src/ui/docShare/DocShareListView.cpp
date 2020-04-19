@@ -161,8 +161,7 @@ void DocShareListView::_addItem(const RPZSharedDocument &doc) {
 
     //
     if (this->_rpzClient && Authorisations::isHostAble()) {
-        QMetaObject::invokeMethod(
-            this->_rpzClient, "addSharedDocument",
+        QMetaObject::invokeMethod(this->_rpzClient, "addSharedDocument",
             Q_ARG(RPZSharedDocument::FileHash, hash),
             Q_ARG(RPZSharedDocument::DocumentName, filename)
         );

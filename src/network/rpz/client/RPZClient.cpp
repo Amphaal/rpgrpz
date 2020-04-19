@@ -499,14 +499,12 @@ void RPZClient::requestSharedDocument(const RPZSharedDocument::FileHash &hash) {
 }
 
 void RPZClient::notifyPing(const QPointF &pingPosition) {
-    
     RPZPing ping(pingPosition, this->_myUserId);
-    
+
     this->_serverSock->sendToSocket(
         RPZJSON::Method::PingHappened,
         ping
     );
-    
 }
 
 RPZUser& RPZClient::_myUser() {

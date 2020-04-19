@@ -51,6 +51,7 @@ class ConnectivityObserverSynchronizer : public QObject {
  public:
     static ConnectivityObserverSynchronizer* get();
 
+ public slots:
     void triggerConnectionClosed(bool hasInitialMapLoaded);
 
  private:

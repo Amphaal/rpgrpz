@@ -78,10 +78,6 @@ class GStreamerClient : public QObject {
 
     void _freeSeekBuffer();
 
-    void stopTimer(const GstMessageType &reason);
-    void downloadBufferChanging(int prcProgress);
-    bool _seek(gint64 seekInNanoSecs);
-
  signals:
     void positionChanged(int positionInSecs);
     void streamEnded();
@@ -95,4 +91,9 @@ class GStreamerClient : public QObject {
  private:
     // volume
     QTimeLine _volumeTLHelper;
+
+ private slots:
+    void _stopTimer(const GstMessageType &reason);
+    void _downloadBufferChanging(int prcProgress);
+    bool _seek(gint64 seekInNanoSecs);
 };

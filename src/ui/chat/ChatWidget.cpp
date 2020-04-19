@@ -19,16 +19,11 @@
 
 #include "ChatWidget.h"
 
-ChatWidget::ChatWidget(QWidget *parent) : 
-            QWidget(parent),
-            _chatLog(new MessagesLog),
-            _chatEdit(new ChatEdit) {
+ChatWidget::ChatWidget(QWidget *parent) : QWidget(parent), _chatLog(new MessagesLog),  _chatEdit(new ChatEdit) {
+    this->setEnabled(false);
 
-        this->setEnabled(false);
-
-        //UI...
-        this->_instUI();
-    
+    // UI...
+    this->_instUI();
 }
 
 MessagesLog* ChatWidget::messageLog() {
@@ -36,88 +31,80 @@ MessagesLog* ChatWidget::messageLog() {
 }
 
 void ChatWidget::_instUI() {
-
     auto layout = new QVBoxLayout;
     layout->setMargin(0);
-    
+
     auto scroller = new LogScrollView;
     scroller->setWidget(this->_chatLog);
-    
+
     layout->addWidget(scroller);
     layout->addWidget(this->_chatEdit);
 
     this->setLayout(layout);
     this->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
-
 }
 
-void ChatWidget::_onRPZClientStatus(const QString &statusMsg, bool isError) {    
-    
+void ChatWidget::_onRPZClientStatus(const QString &statusMsg, bool isError) {
     auto respCode = isError ? RPZResponse::ResponseCode::Error : RPZResponse::ResponseCode::Status;
 
-    //out log
+    // out log
     RPZResponse response(0, respCode, statusMsg);
     this->_chatLog->handleResponse(response);
 
     this->setEnabled(false);
-
 }
 
 void ChatWidget::_onGameSessionReceived(const RPZGameSession &gameSession) {
-
     this->setEnabled(true);
 
-    //add list of messages
-    for(const auto &msg : gameSession.messages()) {
+    // add list of messages
+    for (const auto &msg : gameSession.messages()) {
         this->_chatLog->handleHistoryMessage(msg);
     }
 
-    //welcome msg
+    // welcome msg
     auto response = RPZResponse(0, RPZResponse::ResponseCode::ConnectedToServer, this->serverName);
     this->_chatLog->handleResponse(response);
-    
 }
 
 void ChatWidget::connectingToServer() {
-    
     this->serverName = _rpzClient->getConnectedSocketAddress();
-    
+
     this->_chatLog->clearLines();
 
-    //on error from client
+    // on error from client
     QObject::connect(
-        _rpzClient, &RPZClient::connectionStatus, 
+        _rpzClient, &RPZClient::connectionStatus,
         this, &ChatWidget::_onRPZClientStatus
     );
-    
-    //on message received
+
+    // on message received
     QObject::connect(
-        _rpzClient, &RPZClient::receivedMessage, 
+        _rpzClient, &RPZClient::receivedMessage,
         this->_chatLog, &MessagesLog::handleRemoteMessage
     );
 
-    //welcome once all history have been received
+    // welcome once all history have been received
     QObject::connect(
-        _rpzClient, &RPZClient::gameSessionReceived, 
+        _rpzClient, &RPZClient::gameSessionReceived,
         this, &ChatWidget::_onGameSessionReceived
     );
 
-    //on server response
+    // on server response
     QObject::connect(
-        _rpzClient, &RPZClient::serverResponseReceived, 
+        _rpzClient, &RPZClient::serverResponseReceived,
         this->_chatLog, &MessagesLog::handleResponse
     );
 
-    //on message send request 
+    // on message send request
     this->_chatEdit->disconnect();
     QObject::connect(
         this->_chatEdit, &ChatEdit::askedToSendMessage,
-        [=](const QString &msg) {      
+        [=](const QString &msg) {
             RPZMessage message(msg);
             this->_chatLog->handleLocalMessage(message);
             QMetaObject::invokeMethod(this->_rpzClient, "sendMessage", Q_ARG(RPZMessage, message));
         }
-        
-    );
 
+    );
 }
