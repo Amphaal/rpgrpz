@@ -19,10 +19,10 @@
 
 #pragma once
 
+#include <QString>
+
 #include "src/shared/payloads/_base/MultipleAtomTargetsPayload.hpp"
 #include "src/shared/models/RPZAtom.h"
-
-#include <QString>
 
 class MetadataChangedPayload : public MultipleAtomTargetsPayload {
  public:
@@ -32,7 +32,6 @@ class MetadataChangedPayload : public MultipleAtomTargetsPayload {
             Q_ASSERT(changes.count());
 
             this->_setMetadataChanges(changes);
-            
         }
 
         RPZAtom::Updates updates() const {
@@ -41,7 +40,7 @@ class MetadataChangedPayload : public MultipleAtomTargetsPayload {
 
  private:
         void _setMetadataChanges(const RPZAtom::Updates &changes) {
-            this->insert(QStringLiteral(u"args"), 
+            this->insert(QStringLiteral(u"args"),
                 RPZAtom::serializeUpdates(changes)
             );
         }

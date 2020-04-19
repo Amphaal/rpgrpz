@@ -28,8 +28,6 @@
 #include <QMimeData>
 #include <QTimer>
 
-#include "src/helpers/StringHelper.hpp"
-
 #include <QHash>
 #include <QPair>
 #include <QToolTip>
@@ -38,56 +36,57 @@
 
 #include <audiotube/NetworkFetcher.h>
 
+#include "src/helpers/StringHelper.hpp"
+
 #include "src/helpers/RPZQVariant.hpp"
 #include "src/shared/database/PlaylistDatabase.h"
 
 class Playlist : public QListWidget {
-
     Q_OBJECT
 
  public:
-        enum class YoutubeUrlType { YoutubePlaylist, YoutubeVideo };
-        Q_ENUM(YoutubeUrlType)
+    enum class YoutubeUrlType { YoutubePlaylist, YoutubeVideo };
+    Q_ENUM(YoutubeUrlType)
 
-        Playlist(QWidget* parent = nullptr);
+    explicit Playlist(QWidget* parent = nullptr);
 
-        void playNext();
-        void playPrevious();
+    void playNext();
+    void playPrevious();
 
-        void addYoutubeVideo(const QString &url);
+    void addYoutubeVideo(const QString &url);
 
-        VideoMetadata* currentPlay();
-    
+    VideoMetadata* currentPlay();
+
  signals:
-        void playRequested(VideoMetadata* metadata);
+    void playRequested(VideoMetadata* metadata);
 
  private:
-        void keyPressEvent(QKeyEvent * event) override;
-        void _removeYoutubeVideo(QListWidgetItem* playlistItem);
-        void _addYoutubeVideo(const PlayerConfig::VideoId &ytVideoId);
-        bool _addYoutubeItem(VideoMetadata* metadata);
+    void keyPressEvent(QKeyEvent * event) override;
+    void _removeYoutubeVideo(QListWidgetItem* playlistItem);
+    void _addYoutubeVideo(const PlayerConfig::VideoId &ytVideoId);
+    bool _addYoutubeItem(VideoMetadata* metadata);
 
-        QSet<PlayerConfig::VideoId> _playlistVideoIds;
+    QSet<PlayerConfig::VideoId> _playlistVideoIds;
 
-        void _onItemDoubleClicked(QListWidgetItem * item);
-        QListWidgetItem* _playlistItemToUse = nullptr;
+    void _onItemDoubleClicked(QListWidgetItem * item);
+    QListWidgetItem* _playlistItemToUse = nullptr;
 
-        //drag and drop
-            QMimeDatabase _MIMEDb;
-            Qt::DropActions supportedDropActions() const override;
-            void dragEnterEvent(QDragEnterEvent *event) override;
-            void dragMoveEvent(QDragMoveEvent * event) override;
-            void dropEvent(QDropEvent *event) override;
+    // drag and drop
+        QMimeDatabase _MIMEDb;
+        Qt::DropActions supportedDropActions() const override;
+        void dragEnterEvent(QDragEnterEvent *event) override;
+        void dragMoveEvent(QDragMoveEvent * event) override;
+        void dropEvent(QDropEvent *event) override;
 
-            //d&d temp
-            QList<QPair<YoutubeUrlType, QUrl>> _tempDnD;
-            int _tempHashDnDFromUrlList(QList<QUrl> &list);  
+        // d&d temp
+        QList<QPair<YoutubeUrlType, QUrl>> _tempDnD;
+        int _tempHashDnDFromUrlList(QList<QUrl> &list);
 
-        bool _defaultPlay();
-        void _requestPlay();
+    bool _defaultPlay();
+    void _requestPlay();
 
-        //icons
-        QIcon* _ytIconGrey = nullptr;
-        QIcon* _ytIcon = nullptr;
-        QIcon* _ytIconErr = nullptr;
+    // icons
+    QIcon* _ytIconGrey = nullptr;
+    QIcon* _ytIcon = nullptr;
+    QIcon* _ytIconErr = nullptr;
 };

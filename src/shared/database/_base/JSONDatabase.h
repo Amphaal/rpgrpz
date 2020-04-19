@@ -19,9 +19,6 @@
 
 #pragma once
 
-#include <algorithm>
-#include <vector>
-
 #include <QString>
 #include <QFile>
 #include <QDir>
@@ -33,77 +30,76 @@
 #include <QJsonValue>
 #include <QJsonArray>
 
+#include <algorithm>
+#include <vector>
+
 #include "src/helpers/_appContext.h"
 #include "src/shared/models/_base/RPZMap.hpp"
 
 class JSONDatabase {
-
  public:
-        enum class EntityType {
-            Object,
-            Array
-        };
+    enum class EntityType {
+        Object,
+        Array
+    };
 
-        using Model = QHash<QPair<QString, JSONDatabase::EntityType>, void*>;
-        using UpdateHandler = std::function<void(QJsonObject&)>;
-        using Version = int;
+    using Model = QHash<QPair<QString, JSONDatabase::EntityType>, void*>;
+    using UpdateHandler = std::function<void(QJsonObject&)>;
+    using Version = int;
 
-        //remove from the array the elements in the set
-        static QJsonArray diff(QJsonArray &target, QSet<QString> &toRemoveFromTarget);
+    // remove from the array the elements in the set
+    static QJsonArray diff(QJsonArray &target, QSet<QString> &toRemoveFromTarget);
 
-        JSONDatabase(const QString &logId);
-        const QString dbFilePath() const;
-        void changeSourceFile(const QString &newSource);
-        
-        void save(); //update the physical file
-        static void saveAsFile(const QJsonObject &db, const QString &filepath);
-        static void saveAsFile(const QJsonObject &db, QFile &fileHandler);
+    explicit JSONDatabase(const QString &logId);
+    const QString dbFilePath() const;
+    void changeSourceFile(const QString &newSource);
+
+    void save();  // update the physical file
+    static void saveAsFile(const QJsonObject &db, const QString &filepath);
+    static void saveAsFile(const QJsonObject &db, QFile &fileHandler);
 
  protected:
-        static void updateFrom(QJsonObject &base, const QString &entityKey, const QVariantMap &entity);
-        static void updateFrom(QJsonObject &base, const QString &entityKey, const QSet<QString> &entity);
-        static void updateFrom(QJsonObject &base, const QString &entityKey, const QVariantHash &entity);
-        static void updateFrom(QJsonObject &base, const QString &entityKey, const QVariantList &entity);
+    static void updateFrom(QJsonObject &base, const QString &entityKey, const QVariantMap &entity);
+    static void updateFrom(QJsonObject &base, const QString &entityKey, const QSet<QString> &entity);
+    static void updateFrom(QJsonObject &base, const QString &entityKey, const QVariantHash &entity);
+    static void updateFrom(QJsonObject &base, const QString &entityKey, const QVariantList &entity);
 
-        const QJsonObject& db();
-        QJsonObject entityAsObject(const QString &entityKey);
-        QJsonArray entityAsArray(const QString &entityKey);
+    const QJsonObject& db();
+    QJsonObject entityAsObject(const QString &entityKey);
+    QJsonArray entityAsArray(const QString &entityKey);
 
-        virtual const QJsonObject _updatedInnerDb() = 0;
+    virtual const QJsonObject _updatedInnerDb() = 0;
 
-        virtual void _removeDatabaseLinkedFiles();
+    virtual void _removeDatabaseLinkedFiles();
 
-        //create new file formated for new API expected version if possible
-        virtual QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> _getUpdateHandlers();
-        bool _handleVersionMissmatch(QJsonObject &databaseToUpdate, JSONDatabase::Version databaseToUpdateVersion);
+    // create new file formated for new API expected version if possible
+    virtual QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> _getUpdateHandlers();
+    bool _handleVersionMissmatch(QJsonObject &databaseToUpdate, JSONDatabase::Version databaseToUpdateVersion);
 
-        //pure, replace
-        virtual void _setupLocalData() = 0;
-        virtual JSONDatabase::Model _getDatabaseModel() = 0;
-        virtual JSONDatabase::Version apiVersion() const = 0;
-        JSONDatabase::Version dbVersion();
-        
-        /*to call from inheritors*/
-        void _initDatabaseFromJSONFile(const QString &dbFilePath);
-        void _setupFromDbCopy(const QJsonObject &copy);
+    // pure, replace
+    virtual void _setupLocalData() = 0;
+    virtual JSONDatabase::Model _getDatabaseModel() = 0;
+    virtual JSONDatabase::Version apiVersion() const = 0;
+    JSONDatabase::Version dbVersion();
 
-        void log(const QString &msg);
+    /*to call from inheritors*/
+    void _initDatabaseFromJSONFile(const QString &dbFilePath);
+    void _setupFromDbCopy(const QJsonObject &copy);
+
+    void log(const QString &msg);
 
  private:
-        QString _logId;
-        QJsonObject _dbCopy;
-        QFile* _destfile = nullptr;
+    QString _logId;
+    QJsonObject _dbCopy;
+    QFile* _destfile = nullptr;
 
-        QJsonObject _emptyDbFile();
+    QJsonObject _emptyDbFile();
 
-        QJsonDocument _readAsDocument();
-        void _duplicateDbFile(QString destSuffix);
-        void _updateDbFile(const QJsonObject &updatedFullDatabase);
+    QJsonDocument _readAsDocument();
+    void _duplicateDbFile(QString destSuffix);
+    void _updateDbFile(const QJsonObject &updatedFullDatabase);
 
-        const QString _defaultEmptyDoc();
-        JSONDatabase::Version _getDbVersion(const QJsonObject &db);
-
-
-        
+    const QString _defaultEmptyDoc();
+    JSONDatabase::Version _getDbVersion(const QJsonObject &db);
 };
 inline uint qHash(const JSONDatabase::EntityType &key, uint seed = 0) {return uint(key) ^ seed;}

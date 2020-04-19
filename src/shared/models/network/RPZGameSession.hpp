@@ -19,8 +19,9 @@
 
 #pragma once
 
-#include "src/helpers/_appContext.h"
 #include <QVariantHash>
+
+#include "src/helpers/_appContext.h"
 
 #include "src/shared/payloads/Payloads.h"
 #include "src/shared/models/RPZUser.h"
@@ -32,10 +33,10 @@ class RPZGameSession : public QVariantHash {
         RPZGameSession() {}
         explicit RPZGameSession(const QVariantHash &hash) : QVariantHash(hash) {}
         RPZGameSession(
-            const RPZUser::Id &selfUserId, 
-            const RPZMap<RPZUser> &users, 
-            const RPZMap<RPZMessage> &messages, 
-            const RPZSharedDocument::NamesStore &sharedDocumentsNS, 
+            const RPZUser::Id &selfUserId,
+            const RPZMap<RPZUser> &users,
+            const RPZMap<RPZMessage> &messages,
+            const RPZSharedDocument::NamesStore &sharedDocumentsNS,
             bool isFullSession
         ) {
             this->_setSelfUserId(selfUserId);
@@ -77,12 +78,12 @@ class RPZGameSession : public QVariantHash {
 
         void setStreamState(const StreamPlayStateTracker &state) {
             this->insert("ss", state);
-        } 
-        
+        }
+
         void setMapPayload(const ResetPayload &mapPayload) {
             this->insert("map", mapPayload);
         }
-    
+
  private:
         void _setMessages(const RPZMap<RPZMessage> &messages) {
             this->insert("msgs", messages.toVMap());
@@ -103,5 +104,4 @@ class RPZGameSession : public QVariantHash {
         void _setSelfUserId(const RPZUser::Id &selfUserId) {
             this->insert("suid", QVariant::fromValue<RPZUser::Id>(selfUserId));
         }
-
 };

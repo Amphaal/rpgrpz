@@ -86,93 +86,93 @@
         <translation>val. mult.</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="46"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="45"/>
         <source>Rotation</source>
         <translation>Rotation</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="47"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="46"/>
         <source>Atom size</source>
         <translation>Taille de l&apos;atome</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="48"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="47"/>
         <source>Texture rotation</source>
         <translation>Rotation de la texture</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="49"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="48"/>
         <source>Texture size</source>
         <translation>Taille de la texture</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="50"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="49"/>
         <source>Pen size</source>
         <translation>Taille du crayon</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="51"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="50"/>
         <source>Text size</source>
         <translation>Taille du texte</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="52"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="51"/>
         <source>Brush width</source>
         <translation>Taille de la brosse</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="53"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="52"/>
         <source>Brush tool</source>
         <translation>Outil de brosse</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="54"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="53"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="55"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="54"/>
         <source>Short description</source>
         <translation>Description courte</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="56"/>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="60"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="55"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="59"/>
         <source>GM Notes</source>
         <translation>Notes pour le MJ</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="57"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="56"/>
         <source>Attitude</source>
         <translation>Attitude</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="58"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="57"/>
         <source>Health</source>
         <translation>Santé</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="59"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="58"/>
         <source>Short name</source>
         <translation>Nom court</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="61"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="60"/>
         <source>Associated character</source>
         <translation>Personnage associé</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="62"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="61"/>
         <source>Opacity</source>
         <translation>Opacité</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="63"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="62"/>
         <source>Token size</source>
         <translation>Taille du jeton</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="64"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.h" line="63"/>
         <source>Pen color</source>
         <translation>Couleur</translation>
     </message>
@@ -211,7 +211,7 @@
         <translation>Joué actuellement</translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/AudioProbeController.cpp" line="68"/>
+        <location filename="../ui/audio/controllers/AudioProbeController.cpp" line="65"/>
         <source>Nothing playing</source>
         <translation>Pas de lecture</translation>
     </message>
@@ -219,32 +219,32 @@
 <context>
     <name>BrushToolEditor</name>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="32"/>
+        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="31"/>
         <source>Stamp</source>
         <translation>Tampon</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="33"/>
+        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="32"/>
         <source>Rectangle</source>
         <translation>Rectangulaire</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="34"/>
+        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="33"/>
         <source>Ovale</source>
         <translation>Cercle</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="35"/>
+        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="34"/>
         <source>Round brush</source>
         <translation>Brosse ronde</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="36"/>
+        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="35"/>
         <source>Cutter</source>
         <translation>Biseau</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="37"/>
+        <location filename="../ui/atomEditor/editors/specific/BrushToolEditor.hpp" line="36"/>
         <source>Scissors</source>
         <translation>Ciseaux</translation>
     </message>
@@ -339,12 +339,12 @@
 <context>
     <name>ChatEdit</name>
     <message>
-        <location filename="../ui/chat/ChatEdit.cpp" line="24"/>
+        <location filename="../ui/chat/ChatEdit.cpp" line="22"/>
         <source>Send Message</source>
         <translation>Envoyer Message</translation>
     </message>
     <message>
-        <location filename="../ui/chat/ChatEdit.cpp" line="59"/>
+        <location filename="../ui/chat/ChatEdit.cpp" line="53"/>
         <source> Message to send</source>
         <translation> Message à envoyer</translation>
     </message>
@@ -425,17 +425,17 @@
 <context>
     <name>DownloadStatus</name>
     <message>
-        <location filename="../ui/statusBar/DownloadStatus.hpp" line="115"/>
+        <location filename="../ui/statusBar/DownloadStatus.hpp" line="103"/>
         <source>Assets download</source>
         <translation>Téléchargement d&apos;assets</translation>
     </message>
     <message>
-        <location filename="../ui/statusBar/DownloadStatus.hpp" line="117"/>
+        <location filename="../ui/statusBar/DownloadStatus.hpp" line="105"/>
         <source>Map download</source>
         <translation>Téléchargement de carte</translation>
     </message>
     <message>
-        <location filename="../ui/statusBar/DownloadStatus.hpp" line="119"/>
+        <location filename="../ui/statusBar/DownloadStatus.hpp" line="107"/>
         <source>Download</source>
         <translation>Téléchargement</translation>
     </message>
@@ -494,7 +494,7 @@
 <context>
     <name>InventoryEditor</name>
     <message>
-        <location filename="../ui/sheets/components/InventoryEditor.hpp" line="32"/>
+        <location filename="../ui/sheets/components/InventoryEditor.hpp" line="30"/>
         <source> Description / location of the inventory (Equiped, My bag, Chest...) </source>
         <translation> Description / emplacement de l&apos;inventaire (Equipé, Mon sac, Coffre...) </translation>
     </message>
@@ -642,53 +642,53 @@
 <context>
     <name>LoreTab</name>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="59"/>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="162"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="57"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="154"/>
         <source>Change portrait</source>
         <translation>Changer le portrait</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="68"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="66"/>
         <source> Usual character name [Required!]</source>
         <translation> Nom usuel du personnage [Requis!]</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="69"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="67"/>
         <source>Character name :</source>
         <translation>Nom du personnage :</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="73"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="71"/>
         <source> Short and gross characterization (Paladin Loyal Good, Bounty hunter...)</source>
         <translation> Courte et grossière caractérisation du personnage (Paladin Loyal Bon, Chasseur de Prime...)</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="74"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="72"/>
         <source>Archtype :</source>
         <translation>Archétype :</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="79"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="77"/>
         <source>Physical, psycological, environnemental description...</source>
         <translation>Description physique, psychologique, contextuelle...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="80"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="78"/>
         <source>Description :</source>
         <translation>Description :</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="85"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="83"/>
         <source>Evolution of the character during his adventures...</source>
         <translation>Evolution du personnage durant ses aventures...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="86"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="84"/>
         <source>Chronicles :</source>
         <translation>Histoire :</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="164"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="156"/>
         <source>Images (*.png *.jpg *.jpeg)</source>
         <translation>Images (*.png *.jpg *.jpeg)</translation>
     </message>
@@ -833,7 +833,7 @@
 <context>
     <name>NPCHealthEditor</name>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/NPCHealthEditor.hpp" line="45"/>
+        <location filename="../ui/atomEditor/editors/specific/NPCHealthEditor.hpp" line="44"/>
         <source>Confirm modification</source>
         <translation>Confirmer la modification</translation>
     </message>
@@ -875,21 +875,21 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../shared/commands/MessageInterpreter.cpp" line="135"/>
+        <location filename="../shared/commands/MessageInterpreter.cpp" line="129"/>
         <source>Server %1 :
 </source>
         <translation>Serveur %1 :
 </translation>
     </message>
     <message>
-        <location filename="../shared/commands/MessageInterpreter.cpp" line="136"/>
+        <location filename="../shared/commands/MessageInterpreter.cpp" line="130"/>
         <source>- To whisper : @{toWhisperTo}.
 </source>
         <translation>- Pour chuchoter : @{destinataire}.
 </translation>
     </message>
     <message>
-        <location filename="../shared/commands/MessageInterpreter.cpp" line="137"/>
+        <location filename="../shared/commands/MessageInterpreter.cpp" line="131"/>
         <source>- To throw dices : {numberOfThrows}D{diceFace}. Exemple : 1d5, 2D20, 3D16.</source>
         <translation>- Pour lancer des dés : {nombreDeLancers}D{faceDuDé}. Exemple : 1d5, 2D20, 3D16.</translation>
     </message>
@@ -1074,22 +1074,22 @@
         <translation> chuchote à </translation>
     </message>
     <message>
-        <location filename="../shared/models/messaging/RPZResponse.cpp" line="47"/>
+        <location filename="../shared/models/messaging/RPZResponse.cpp" line="45"/>
         <source>Server has not understood your command. Type &quot;/h&quot; for help.</source>
         <translation>Le serveur n&apos;a pas compris la commande. Entrez &quot;/h&quot; pour afficher l&apos;aide.</translation>
     </message>
     <message>
-        <location filename="../shared/models/messaging/RPZResponse.cpp" line="55"/>
+        <location filename="../shared/models/messaging/RPZResponse.cpp" line="52"/>
         <source>Target users could not be found : </source>
         <translation>Les utilisateurs destinataires n&apos;ont pas pu être trouvé : </translation>
     </message>
     <message>
-        <location filename="../shared/models/messaging/RPZResponse.cpp" line="59"/>
+        <location filename="../shared/models/messaging/RPZResponse.cpp" line="56"/>
         <source>Logged to the server (%1)</source>
         <translation>Connecté au serveur (%1)</translation>
     </message>
     <message>
-        <location filename="../shared/models/messaging/RPZResponse.cpp" line="63"/>
+        <location filename="../shared/models/messaging/RPZResponse.cpp" line="60"/>
         <source>Error has occured : </source>
         <translation>Une erreur est survenue : </translation>
     </message>
@@ -1109,109 +1109,109 @@
         <translation>Calque %1</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="224"/>
-        <location filename="../shared/models/RPZAtom.h" line="157"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="223"/>
+        <location filename="../shared/models/RPZAtom.h" line="155"/>
         <source>Felt pen</source>
         <translation>Feutre</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="225"/>
-        <location filename="../shared/models/RPZAtom.h" line="158"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="224"/>
+        <location filename="../shared/models/RPZAtom.h" line="156"/>
         <source>Text</source>
         <translation>Texte</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="159"/>
+        <location filename="../shared/models/RPZAtom.h" line="157"/>
         <source>Object</source>
         <translation>Objet</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="160"/>
+        <location filename="../shared/models/RPZAtom.h" line="158"/>
         <source>Brush</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="161"/>
+        <location filename="../shared/models/RPZAtom.h" line="159"/>
         <source>Atom</source>
         <translation>Atome</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="223"/>
-        <location filename="../shared/models/RPZAtom.h" line="162"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="222"/>
+        <location filename="../shared/models/RPZAtom.h" line="160"/>
         <source>Event</source>
         <translation>Evénement</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="226"/>
-        <location filename="../shared/models/RPZAtom.h" line="163"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="225"/>
+        <location filename="../shared/models/RPZAtom.h" line="161"/>
         <source>Player</source>
         <translation>Joueur</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="164"/>
+        <location filename="../shared/models/RPZAtom.h" line="162"/>
         <source>Non-playable character</source>
         <translation>Personnage non-joueur</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="227"/>
-        <location filename="../shared/models/RPZAtom.h" line="165"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="226"/>
+        <location filename="../shared/models/RPZAtom.h" line="163"/>
         <source>Point of interest</source>
         <translation>Point d&apos;intérêt</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="228"/>
-        <location filename="../shared/models/RPZAtom.h" line="166"/>
-        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="77"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="227"/>
+        <location filename="../shared/models/RPZAtom.h" line="164"/>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="76"/>
         <source>Fog of war</source>
         <translation>Brouillard de guerre</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="170"/>
+        <location filename="../shared/models/RPZAtom.h" line="168"/>
         <source>NPCs</source>
         <translation>PNJs</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="171"/>
+        <location filename="../shared/models/RPZAtom.h" line="169"/>
         <source>Events</source>
         <translation>Evénements</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="172"/>
+        <location filename="../shared/models/RPZAtom.h" line="170"/>
         <source>Players</source>
         <translation>Joueurs</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.h" line="173"/>
+        <location filename="../shared/models/RPZAtom.h" line="171"/>
         <source>POIs</source>
         <translation>Points d&apos;intérêt</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="222"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="221"/>
         <source>Internal</source>
         <translation>Interne</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="229"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="228"/>
         <source>NPC / Portraits</source>
         <translation>PNJ / Portraits</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="230"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="229"/>
         <source>Objects</source>
         <translation>Objets</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="231"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="230"/>
         <source>Brushes</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="232"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="231"/>
         <source>Downloaded</source>
         <translation>Téléchargés</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="233"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="232"/>
         <source>Landscapes</source>
         <translation>Paysages</translation>
     </message>
@@ -1276,39 +1276,39 @@
         <translation>Niveau de zoom Minimum / Maximum</translation>
     </message>
     <message>
-        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="29"/>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="28"/>
         <source>Map parameters</source>
         <translation>Paramètres de la carte</translation>
     </message>
     <message>
-        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="37"/>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="36"/>
         <source>Fog of war opacity</source>
         <translation>Opacité du brouillard de guerre</translation>
     </message>
     <message>
-        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="48"/>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="47"/>
         <source>Reset</source>
         <comment>Reset fog</comment>
         <translation>Réinitialiser</translation>
     </message>
     <message>
-        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="49"/>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="48"/>
         <source>Reset fog</source>
         <translation>Réinitialiser le brouillard de guerre</translation>
     </message>
     <message>
-        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="57"/>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="56"/>
         <source>Reverse</source>
         <comment>Reverse fog</comment>
         <translation>Inverser</translation>
     </message>
     <message>
-        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="58"/>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="57"/>
         <source>Reverse fog</source>
         <translation>Inverser le brouillard de guerre</translation>
     </message>
     <message>
-        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="81"/>
+        <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="80"/>
         <source>Opacity</source>
         <comment>FoW opacity</comment>
         <translation>Opacité</translation>
@@ -1447,7 +1447,7 @@
 <context>
     <name>RPZStatusLabel</name>
     <message>
-        <location filename="../ui/statusBar/RPZStatusLabel.cpp" line="33"/>
+        <location filename="../ui/statusBar/RPZStatusLabel.cpp" line="32"/>
         <source>&lt;Pending...&gt;</source>
         <translation>&lt;En attente...&gt;</translation>
     </message>
@@ -1455,17 +1455,17 @@
 <context>
     <name>SimpleGaugeEditor</name>
     <message>
-        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="52"/>
+        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="51"/>
         <source>Gauge minimum</source>
         <translation>Minimum de la jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="60"/>
+        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="59"/>
         <source>Gauge maximum</source>
         <translation>Maximum de la jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="68"/>
+        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="67"/>
         <source>Gauge value</source>
         <translation>Valeur de la jauge</translation>
     </message>
@@ -1562,17 +1562,17 @@
 <context>
     <name>UpdaterUIIntegrator</name>
     <message>
-        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="58"/>
+        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="55"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="88"/>
+        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="82"/>
         <source>Update Available</source>
         <translation>Mise à jour disponible</translation>
     </message>
     <message>
-        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="89"/>
+        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="83"/>
         <source>An update is available for %1. Would you like to install it now ?</source>
         <translation>Une mise à jour est disponible pour %1. Voulez-vous l&apos;installer maintenant ?</translation>
     </message>
@@ -1588,17 +1588,17 @@
 <context>
     <name>YoutubePlaylistItemInsertor</name>
     <message>
-        <location filename="../ui/audio/controllers/playlist/YoutubePlaylistItemInsertor.hpp" line="54"/>
+        <location filename="../ui/audio/controllers/playlist/YoutubePlaylistItemInsertor.hpp" line="53"/>
         <source>Invalid Youtube URL !</source>
         <translation>URL Youtube invalide !</translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/YoutubePlaylistItemInsertor.hpp" line="69"/>
+        <location filename="../ui/audio/controllers/playlist/YoutubePlaylistItemInsertor.hpp" line="67"/>
         <source>Paste here a Youtube URL...</source>
         <translation>Collez ici une URL Youtube...</translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/YoutubePlaylistItemInsertor.hpp" line="77"/>
+        <location filename="../ui/audio/controllers/playlist/YoutubePlaylistItemInsertor.hpp" line="75"/>
         <source>Click to add to playlist</source>
         <translation>Cliquez pour ajouter à la liste de lecture</translation>
     </message>

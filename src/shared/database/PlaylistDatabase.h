@@ -19,32 +19,31 @@
 
 #pragma once
 
-#include "src/shared/database/_base/JSONDatabase.h"
-
 #include <audiotube/PlayerConfig.h>
+
+#include "src/shared/database/_base/JSONDatabase.h"
 
 class PlaylistDatabase : public JSONDatabase {
  public:
-        //singleton
-        static PlaylistDatabase* get();
-        
-        void addYoutubeId(const PlayerConfig::VideoId &ytId);
-        void removeYoutubeId(const PlayerConfig::VideoId &ytId);
+    // singleton
+    static PlaylistDatabase* get();
 
-        QSet<PlayerConfig::VideoId> ytIds() const;
+    void addYoutubeId(const PlayerConfig::VideoId &ytId);
+    void removeYoutubeId(const PlayerConfig::VideoId &ytId);
+
+    QSet<PlayerConfig::VideoId> ytIds() const;
 
  protected:
-        void _setupLocalData() override;
-        JSONDatabase::Model _getDatabaseModel() override;
-        JSONDatabase::Version apiVersion() const override;
-        const QJsonObject _updatedInnerDb() override;
+    void _setupLocalData() override;
+    JSONDatabase::Model _getDatabaseModel() override;
+    JSONDatabase::Version apiVersion() const override;
+    const QJsonObject _updatedInnerDb() override;
 
  private:
-        //singleton
-        PlaylistDatabase();
-        PlaylistDatabase(const QJsonObject &doc);
-        static inline PlaylistDatabase* _singleton = nullptr;
+    // singleton
+    PlaylistDatabase();
+    explicit PlaylistDatabase(const QJsonObject &doc);
+    static inline PlaylistDatabase* _singleton = nullptr;
 
-        QSet<PlayerConfig::VideoId> _ytIds;
-
+    QSet<PlayerConfig::VideoId> _ytIds;
 };
