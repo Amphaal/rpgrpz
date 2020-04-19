@@ -31,24 +31,23 @@
 #include "src/ui/_others/ConnectivityObserver.h"
 
 class ChatEdit : public QWidget, public ConnectivityObserver {
-
     Q_OBJECT
 
  public:
-        ChatEdit(QWidget * parent = nullptr);
-    
+    explicit ChatEdit(QWidget * parent = nullptr);
+
  signals:
-        void askedToSendMessage(const QString &msg);
-    
+    void askedToSendMessage(const QString &msg);
+
  protected:
-        void changeEvent(QEvent *event) override;
-        void connectingToServer() override;
+    void changeEvent(QEvent *event) override;
+    void connectingToServer() override;
 
  private:
-        QLineEdit* _msgEdit = nullptr;
-        QPushButton* _sendMsgBtn = nullptr;
+    QLineEdit* _msgEdit = nullptr;
+    QPushButton* _sendMsgBtn = nullptr;
 
-        void _sendMessage();
-        
-        void _onWhisperTargetsChanged();
+    void _sendMessage();
+
+    void _onWhisperTargetsChanged();
 };

@@ -24,17 +24,17 @@
 class RPZResponse : public Stampable {
  public:
         enum class ResponseCode {
-            UnknownCommand, 
-            HelpManifest, 
-            Ack, 
+            UnknownCommand,
+            HelpManifest,
+            Ack,
             Error,
             ErrorRecipients,
-            ConnectedToServer, 
+            ConnectedToServer,
             Status
         };
-        
+
         RPZResponse();
-        RPZResponse(Stampable::Id answererTo, const ResponseCode &code = ResponseCode::Ack, const QVariant &data = QVariant());
+        explicit RPZResponse(Stampable::Id answererTo, const ResponseCode &code = ResponseCode::Ack, const QVariant &data = QVariant());
         explicit RPZResponse(const QVariantHash &hash);
 
         ResponseCode responseCode() const;

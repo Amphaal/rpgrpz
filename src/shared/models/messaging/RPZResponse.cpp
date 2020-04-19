@@ -22,8 +22,8 @@
 RPZResponse::RPZResponse() : Stampable() {}
 RPZResponse::RPZResponse(Stampable::Id answererTo, const ResponseCode &code, const QVariant &data) : Stampable() {
     this->_setResponseCode(code);
-    if(answererTo) this->_setAnswerer(answererTo);
-    if(!data.isNull()) this->_setResponseData(data);
+    if (answererTo) this->_setAnswerer(answererTo);
+    if (!data.isNull()) this->_setResponseData(data);
 }
 RPZResponse::RPZResponse(const QVariantHash &hash) : Stampable(hash) {}
 
@@ -39,18 +39,15 @@ Stampable::Id RPZResponse::answerer() const {
     return this->value(QStringLiteral(u"aswr")).toULongLong();
 }
 
-QString RPZResponse::toString() const{
-    
-    switch(this->responseCode()) {
-
+QString RPZResponse::toString() const {
+    switch (this->responseCode()) {
         case ResponseCode::UnknownCommand: {
             return QObject::tr("Server has not understood your command. Type \"/h\" for help.");
         }
 
         case ResponseCode::ErrorRecipients: {
-
             QList<QString> rcpts;
-            for(const auto &e : this->responseData().toList()) rcpts.append(e.toString());
+            for (const auto &e : this->responseData().toList()) rcpts.append(e.toString());
 
             return QObject::tr("Target users could not be found : ") + rcpts.join(", ");
         }
@@ -66,18 +63,15 @@ QString RPZResponse::toString() const{
         default: {
             return this->responseData().toString();
         }
-    };
-
-};
+    }
+}
 
 QPalette RPZResponse::palette() const {
-    
-    //default palette
+    // default palette
     auto palette = Stampable::palette();
 
-    //switch by resp code...
-    switch(this->responseCode()) {
-        
+    // switch by resp code...
+    switch (this->responseCode()) {
         case ResponseCode::Error:
         case ResponseCode::ErrorRecipients:
             palette.setColor(QPalette::Window, "#f9dad4");

@@ -38,25 +38,23 @@
 
 
 class ChatWidget : public QWidget, public ConnectivityObserver {
-
  public:
-        ChatWidget(QWidget *parent = nullptr);
+    explicit ChatWidget(QWidget *parent = nullptr);
 
-        void connectingToServer() override;
-        MessagesLog* messageLog();
+    void connectingToServer() override;
+    MessagesLog* messageLog();
 
  private:
-        MessagesLog *_chatLog;
-        ChatEdit *_chatEdit;
+    MessagesLog *_chatLog;
+    ChatEdit *_chatEdit;
 
-        QString serverName;
+    QString serverName;
 
-        void _sendMessage();
+    void _sendMessage();
 
-        //ui helpers
-        void _instUI();
+    // ui helpers
+    void _instUI();
 
-        void _onRPZClientStatus(const QString &statusMsg, bool isError);
-        void _onGameSessionReceived(const RPZGameSession &gameSession);
-
+    void _onRPZClientStatus(const QString &statusMsg, bool isError);
+    void _onGameSessionReceived(const RPZGameSession &gameSession);
 };

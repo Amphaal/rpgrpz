@@ -19,34 +19,30 @@
 
 #include "RPZStatusLabel.h"
 
-RPZStatusLabel::RPZStatusLabel(const QString &description, QWidget* parent) : QWidget(parent), 
-    _descriptionLbl(new QLabel(description + ":")), 
+RPZStatusLabel::RPZStatusLabel(const QString &description, QWidget* parent) : QWidget(parent),
+    _descriptionLbl(new QLabel(description + ":")),
     _dataLbl(new QLabel),
     _loaderLbl(new QLabel) {
-
     this->setLayout(new QHBoxLayout);
     this->layout()->setContentsMargins(0, 0, 0, 0);
     this->layout()->addWidget(this->_descriptionLbl);
     this->layout()->addWidget(this->_dataLbl);
-    
-    //default state
+
+    // default state
     this->updateState(tr("<Pending...>"), Waiting);
 }
 
 void RPZStatusLabel::updateState(const QString &stateText, RPZStatusLabel::State state) {
-    
     auto mustWait = (state == Processing);
     this->setWaiting(mustWait);
 
     this->_dataLbl->setText(stateText);
-};
+}
 
 void RPZStatusLabel::setWaiting(bool waiting) {
-    
-    //unset waiting
-    if(!waiting) {
-
-        if(this->_loader) {
+    // unset waiting
+    if (!waiting) {
+        if (this->_loader) {
             delete this->_loader;
             this->_loader = nullptr;
             delete this->_loaderLbl;
@@ -54,22 +50,17 @@ void RPZStatusLabel::setWaiting(bool waiting) {
         }
 
         return;
-    }
+    } else {
+        // if loader already displayed, do nothing
+        if (this->_loader) return;
 
-    else {
-
-        //if loader already displayed, do nothing
-        if(this->_loader) return;
-
-        //add load spinner
+        // add load spinner
         this->_loader = new QMovie(":/icons/app/loader.gif");
         this->_loaderLbl = new QLabel();
         this->_loaderLbl->setMovie(this->_loader);
         this->_loader->start();
         ((QHBoxLayout*)this->layout())->insertWidget(0, this->_loaderLbl);
-
     }
-
 }
 
 QLabel* RPZStatusLabel::dataLabel() {

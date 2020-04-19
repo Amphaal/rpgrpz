@@ -20,58 +20,54 @@
 #include "MessageInterpreter.h"
 
 MessageInterpreter::Command MessageInterpreter::interpretText(const QString &text) {
-    //initial trim
+    // initial trim
     auto cp_text = text;
     cp_text = cp_text.trimmed();
-    
-    //if has whisper command
-    if(_hasWhispRegex.match(cp_text).hasMatch()) return Command::Whisper;
 
-    //if not a command
-    if(!cp_text.startsWith("/")) return Command::Say;
+    // if has whisper command
+    if (_hasWhispRegex.match(cp_text).hasMatch()) return Command::Whisper;
 
-    //extract command
+    // if not a command
+    if (!cp_text.startsWith("/")) return Command::Say;
+
+    // extract command
     auto command = cp_text.split(" ", QString::SplitBehavior::SkipEmptyParts).value(0);
 
-    //returns command   
+    // returns command
     return _textByCommand.value(command);
 }
 
 void MessageInterpreter::generateValuesOnDiceThrows(QVector<DiceThrow> &throws) {
-    
-    for(auto &dThrow : throws) {
-        
+    for (auto &dThrow : throws) {
         double sum = 0;
         QVector<uint> sout;
-        
-        for(uint i = 1; i <= dThrow.howMany; i++) {
-            auto rand = QRandomGenerator::global()->bounded((uint)1, dThrow.face + 1); //generate throw
-            sout += rand; //add value
-            sum += rand; //sum
+
+        for (uint i = 1; i <= dThrow.howMany; i++) {
+            auto rand = QRandomGenerator::global()->bounded((uint)1, dThrow.face + 1);  // generate throw
+            sout += rand;  // add value
+            sum += rand;  // sum
         }
 
-        dThrow.values = sout; //stores all values
-        if(dThrow.howMany > 0) dThrow.avg = sum / dThrow.howMany; //calculate avg
-        
-        //regroup throws
+        dThrow.values = sout;  // stores all values
+        if (dThrow.howMany > 0) dThrow.avg = sum / dThrow.howMany;  // calculate avg
+
+        // regroup throws
         QMultiHash<uint, bool> buf;
-        for(const auto i : sout) {
+        for (const auto i : sout) {
             buf.insertMulti(i, false);
         }
 
-        //order keys desc
+        // order keys desc
         auto keys = buf.uniqueKeys();
         std::sort(keys.begin(), keys.end(), std::greater<int>());
 
         QVector<QPair<uint, int>> out;
-        for(const auto face : keys) {
+        for (const auto face : keys) {
             auto count = buf.values(face).count();
             out += { face, count };
         }
         dThrow.pairedValues = out;
-
     }
-
 }
 
 QVector<DiceThrow> MessageInterpreter::findDiceThrowsFromText(const QString &text) {
@@ -79,10 +75,10 @@ QVector<DiceThrow> MessageInterpreter::findDiceThrowsFromText(const QString &tex
 
     auto matches = _mustLaunchDice.globalMatch(text);
     while (matches.hasNext()) {
-        auto match = matches.next(); //next
-        
+        auto match = matches.next();  // next
+
         auto face = match.captured(2).toUInt();
-        if(face < 2) continue;
+        if (face < 2) continue;
 
         auto howMany = match.captured(1).toUInt();
         auto name = match.captured(0);
@@ -99,13 +95,12 @@ QVector<DiceThrow> MessageInterpreter::findDiceThrowsFromText(const QString &tex
 }
 
 QList<QString> MessageInterpreter::findRecipentsFromText(const QString &text) {
-    
     auto matches = _hasWhispRegex.globalMatch(text);
     QSet<QString> out;
 
-    //iterate
+    // iterate
     while (matches.hasNext()) {
-        auto match = matches.next(); //next
+        auto match = matches.next();  // next
         out.insert(match.captured(1));
     }
 
@@ -120,9 +115,8 @@ QString MessageInterpreter::sanitizeText(const QString &text) {
 }
 
 bool MessageInterpreter::isSendable(const QString &textToSend) {
-    
-    //if has whisper
-    if(_hasWhispRegex.match(textToSend).hasMatch()) {
+    // if has whisper
+    if (_hasWhispRegex.match(textToSend).hasMatch()) {
         auto q = sanitizeText(textToSend);
         return !q.isEmpty();
     }

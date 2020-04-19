@@ -19,10 +19,9 @@
 
 #include "AbstractAtomSliderEditor.h"
 
-AbstractAtomSliderEditor::AbstractAtomSliderEditor(const RPZAtom::Parameter &parameter, const CrossEquities &crossEquities) : AtomSubEditor({parameter}),
-    _ceData(crossEquities) { 
-
-    //debouncer
+AbstractAtomSliderEditor::AbstractAtomSliderEditor(const RPZAtom::Parameter &parameter, const CrossEquities &crossEquities)
+    : AtomSubEditor({parameter}),  _ceData(crossEquities) {
+    // debouncer
     this->_commitTimer.setInterval(200);
     this->_commitTimer.setSingleShot(true);
     QObject::connect(
@@ -30,7 +29,7 @@ AbstractAtomSliderEditor::AbstractAtomSliderEditor(const RPZAtom::Parameter &par
         this, &AbstractAtomSliderEditor::_confirmPayload
     );
 
-    //define slider
+    // define slider
     this->_slider = new QSlider(Qt::Orientation::Horizontal, this);
     this->_slider->setMinimum(this->_ceData.minSlider());
     this->_slider->setMaximum(this->_ceData.maxSlider());
@@ -43,22 +42,19 @@ AbstractAtomSliderEditor::AbstractAtomSliderEditor(const RPZAtom::Parameter &par
     this->_widgetLineLayout->addWidget(this->_slider, 1);
 
     this->_mainLayout->addLayout(this->_widgetLineLayout);
-
 }
 
 void AbstractAtomSliderEditor::loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::LoadingContext &context) {
-    
     AtomSubEditor::loadTemplate(defaultValues, context);
-    
+
     bool success = false;
     auto defaultVal = defaultValues[this->_params.first()].toDouble(&success);
 
-    if(success) {
+    if (success) {
         this->_descr->updateValue(defaultVal);
     }
-    
-    this->_initialSetup(defaultVal);
 
+    this->_initialSetup(defaultVal);
 }
 
 const CrossEquities& AbstractAtomSliderEditor::_crossEquities() const {
@@ -69,11 +65,11 @@ void AbstractAtomSliderEditor::_onSliderValueChanged(int sliderVal) {
     auto atomVal = this->toAtomValue(sliderVal);
     this->_updateSpinner(atomVal);
     this->_triggerAlterations();
-};
+}
 
 void AbstractAtomSliderEditor::_triggerAlterations() {
     this->_confirmPreview();
-    this->_commitTimer.start();  
+    this->_commitTimer.start();
 }
 
 void AbstractAtomSliderEditor::_confirmPayload() {
@@ -83,14 +79,12 @@ void AbstractAtomSliderEditor::_confirmPayload() {
 }
 
 void AbstractAtomSliderEditor::_confirmPreview() {
-    
     auto output = this->outputValue();
     auto param = this->_params.first();
 
     this->_descr->updateValue(output);
 
     emit valueConfirmedForPreview(param, output);
-
 }
 
 void AbstractAtomSliderEditor::_initialSetup(double atomVal) {
