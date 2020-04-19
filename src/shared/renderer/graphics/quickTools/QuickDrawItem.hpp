@@ -119,10 +119,9 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
             // check remainings
             auto howManyLeft = this->_pathPush.count();
             if (!howManyLeft) {
-                
                 // stop push timer
                 this->_tmPush.stop();
-                
+
                 // start chomp timer
                 this->_waitToChomp();
 

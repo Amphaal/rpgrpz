@@ -37,87 +37,85 @@
 #include "src/shared/async-ui/AlterationHandler.h"
 
 class ToysTreeViewModel : public QAbstractItemModel, public AlterationInteractor {
-    
     Q_OBJECT
-    
+
  public:
-        ToysTreeViewModel(QObject *parent = nullptr);
-        
-        QModelIndex getStaticContainerTypesIndex(const ToysTreeViewItem::Type &staticContainerType) const; 
+    explicit ToysTreeViewModel(QObject *parent = nullptr);
 
-        ///////////////
-        /// HELPERS ///
-        ///////////////
+    QModelIndex getStaticContainerTypesIndex(const ToysTreeViewItem::Type &staticContainerType) const;
 
-        const QModelIndex createFolder(const QModelIndex &parentIndex);
-        bool moveItemsToContainer(const QModelIndex &parentIndex, const QList<QModelIndex> &indexesToMove);
-        const QList<RPZAsset> insertAssets(const QList<QUrl> &urls, const QModelIndex &parentIndex, bool* ok = nullptr);
-        void removeItems(const QList<QModelIndex> &itemsIndexesToRemove);
-        bool integrateAsset(RPZAssetImportPackage &package);
-        bool renameItem(const QString &newName, const QModelIndex &index);
-        
-        ///////////////////
-        /// END HELPERS ///
-        ///////////////////
+    ///////////////
+    /// HELPERS ///
+    ///////////////
 
-        ////////////////////////
-        /// REIMPLEMENTATION ///
-        ////////////////////////
+    const QModelIndex createFolder(const QModelIndex &parentIndex);
+    bool moveItemsToContainer(const QModelIndex &parentIndex, const QList<QModelIndex> &indexesToMove);
+    const QList<RPZAsset> insertAssets(const QList<QUrl> &urls, const QModelIndex &parentIndex, bool* ok = nullptr);
+    void removeItems(const QList<QModelIndex> &itemsIndexesToRemove);
+    bool integrateAsset(RPZAssetImportPackage &package);
+    bool renameItem(const QString &newName, const QModelIndex &index);
 
-        //index
-        QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
+    ///////////////////
+    /// END HELPERS ///
+    ///////////////////
 
-        //parent
-        QModelIndex parent(const QModelIndex &index) const override;
+    ////////////////////////
+    /// REIMPLEMENTATION ///
+    ////////////////////////
 
-        //flags
-        Qt::ItemFlags flags(const QModelIndex &index) const override;
+    // index
+    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
 
-        //data
-        QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-        bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
-        int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-        int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    // parent
+    QModelIndex parent(const QModelIndex &index) const override;
 
-        ////////////////////////////
-        /// END REIMPLEMENTATION ///
-        ////////////////////////////
+    // flags
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
+
+    // data
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+
+    ////////////////////////////
+    /// END REIMPLEMENTATION ///
+    ////////////////////////////
 
  protected:
-        /////////////////////
-        /// DROP HANDLING ///
-        /////////////////////
+    /////////////////////
+    /// DROP HANDLING ///
+    /////////////////////
 
-        static QList<ToysTreeViewItem*> fromMimeData(const QMimeData *data);
+    static QList<ToysTreeViewItem*> fromMimeData(const QMimeData *data);
 
-        bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
-        bool canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const override;
-        QMimeData* mimeData(const QModelIndexList &indexes) const override;
-        Qt::DropActions supportedDropActions() const override;
+    bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
+    bool canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const override;
+    QMimeData* mimeData(const QModelIndexList &indexes) const override;
+    Qt::DropActions supportedDropActions() const override;
 
-        /////////////////////////
-        /// END DROP HANDLING ///
-        /////////////////////////
+    /////////////////////////
+    /// END DROP HANDLING ///
+    /////////////////////////
 
-        mutable QModelIndexList _bufferedDraggedIndexes;
-        QModelIndexList _getTopMostIndexes(QModelIndexList indexesList);
-        bool _indexListContainsIndexOrParent(const QModelIndexList &base, const QModelIndex &index);
-        QPair<int, int> _anticipateInserts(const QModelIndexList &tbi);
+    mutable QModelIndexList _bufferedDraggedIndexes;
+    QModelIndexList _getTopMostIndexes(QModelIndexList indexesList);
+    bool _indexListContainsIndexOrParent(const QModelIndexList &base, const QModelIndex &index);
+    QPair<int, int> _anticipateInserts(const QModelIndexList &tbi);
 
  private:
-        ToysTreeViewItem* _rootItem = nullptr;
-        QHash<ToysTreeViewItem::Type, ToysTreeViewItem*> _staticElements;  
+    ToysTreeViewItem* _rootItem = nullptr;
+    QHash<ToysTreeViewItem::Type, ToysTreeViewItem*> _staticElements;
 
-        void _injectStaticStructure();
-        void _injectDbStructure();              
-            
-            //returns last elem by path created
-            QHash<AssetsDatabase::FolderPath, ToysTreeViewItem*> _generateFolderTreeFromDb();
+    void _injectStaticStructure();
+    void _injectDbStructure();
 
-            //iterate through paths chunks and create missing folders at each pass, returns last folder found/created
-            ToysTreeViewItem* _recursiveElementCreator(ToysTreeViewItem* parent, QList<QString> &pathChunks); 
+        // returns last elem by path created
+        QHash<AssetsDatabase::FolderPath, ToysTreeViewItem*> _generateFolderTreeFromDb();
 
-            //from definitive paths, fetch items from db and generate elements
-            void _generateItemsFromDb(const QHash<AssetsDatabase::FolderPath, ToysTreeViewItem*> &pathsToFillWithItems);
+        // iterate through paths chunks and create missing folders at each pass, returns last folder found/created
+        ToysTreeViewItem* _recursiveElementCreator(ToysTreeViewItem* parent, QList<QString> &pathChunks);
 
+        // from definitive paths, fetch items from db and generate elements
+        void _generateItemsFromDb(const QHash<AssetsDatabase::FolderPath, ToysTreeViewItem*> &pathsToFillWithItems);
 };
