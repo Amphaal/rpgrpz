@@ -19,56 +19,55 @@
 
 #pragma once
 
-#include "src/shared/commands/RPZActions.h"
-#include "src/shared/payloads/Payloads.h"
-
 #include <QAction>
 #include <QWidget>
 #include <QMenu>
 
 #include <QMetaObject>
 
+#include "src/shared/commands/RPZActions.h"
+#include "src/shared/payloads/Payloads.h"
+
 #include "AtomActionsHandler.h"
 
 class AtomsContextualMenuHandler {
  public:
-        AtomsContextualMenuHandler(QWidget* menuParent);
+    explicit AtomsContextualMenuHandler(QWidget* menuParent);
 
-        void invokeMenu(const QList<RPZAtom::Id> &toManipulate, const QPoint &whereToDisplay);
+    void invokeMenu(const QList<RPZAtom::Id> &toManipulate, const QPoint &whereToDisplay);
 
  protected:
-        void _moveAtomsToLayer(int layer);
-        void _removeAtoms();
-        void _undo();
-        void _redo();
-        void _copy();
-        void _paste();
-        void _setVisibility(bool hide);
-        void _setAvailability(bool lock);
+    void _moveAtomsToLayer(int layer);
+    void _removeAtoms();
+    void _undo();
+    void _redo();
+    void _copy();
+    void _paste();
+    void _setVisibility(bool hide);
+    void _setAvailability(bool lock);
 
  private:
-        QWidget* _menuParent = nullptr;
+    QWidget* _menuParent = nullptr;
 
-        QList<RPZAtom::Id> _latestInvokedAtomIds;
-        PossibleActionsOnAtomList _latestPossibleActions;
+    QList<RPZAtom::Id> _latestInvokedAtomIds;
+    PossibleActionsOnAtomList _latestPossibleActions;
 
-        QAction* _removeAction = nullptr;
-        QAction* _copyAction = nullptr;
-        QAction* _pasteAction = nullptr;
-        QAction* _riseAction = nullptr;
-        QAction* _lowerAction = nullptr;
-        QAction* _undoAction = nullptr;
-        QAction* _redoAction = nullptr;
-        QAction* _showAction = nullptr;
-        QAction* _hideAction = nullptr;
-        QAction* _lockAction = nullptr;
-        QAction* _unlockAction = nullptr;
+    QAction* _removeAction = nullptr;
+    QAction* _copyAction = nullptr;
+    QAction* _pasteAction = nullptr;
+    QAction* _riseAction = nullptr;
+    QAction* _lowerAction = nullptr;
+    QAction* _undoAction = nullptr;
+    QAction* _redoAction = nullptr;
+    QAction* _showAction = nullptr;
+    QAction* _hideAction = nullptr;
+    QAction* _lockAction = nullptr;
+    QAction* _unlockAction = nullptr;
 
-        QAction* _genRemoveAction();
-        QList<QAction*> _genLayerActions();
-        QList<QAction*> _genUndoRedoActions();
-        QList<QAction*> _genCopyPasteActions();
-        QList<QAction*> _genVisibilityActions();
-        QList<QAction*> _genAvailabilityActions();
-
+    QAction* _genRemoveAction();
+    QList<QAction*> _genLayerActions();
+    QList<QAction*> _genUndoRedoActions();
+    QList<QAction*> _genCopyPasteActions();
+    QList<QAction*> _genVisibilityActions();
+    QList<QAction*> _genAvailabilityActions();
 };

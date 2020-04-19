@@ -56,5 +56,4 @@ class MapLayoutAtom : public MapLayoutItem {
         QString _iconPath;
 
         RPZAtom::Parameter _nameChangeParam;
-
 };

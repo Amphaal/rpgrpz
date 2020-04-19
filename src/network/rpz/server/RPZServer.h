@@ -29,7 +29,6 @@
 #include <QJsonArray>
 #include <QStringList>
 #include <QHash>
-#include <QVector>
 
 #include "src/network/rpz/_any/JSONSocket.h"
 
@@ -50,71 +49,67 @@
 #include "src/shared/commands/MessageInterpreter.h"
 #include "src/shared/audio/StreamPlayStateTracker.hpp"
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
-#include "src/helpers/StringHelper.hpp"
+
 #include "src/shared/models/RPZSharedDocument.hpp"
 
 #include "src/shared/hints/SharedDocHint.hpp"
 
 #include "src/network/rpz/_any/JSONLogger.hpp"
 
-class RPZServer : public QObject, public JSONLogger { 
-    
+class RPZServer : public QObject, public JSONLogger {
     Q_OBJECT
 
  public:
-        RPZServer();
-        ~RPZServer();
-    
- public slots:
-        void run();
+    RPZServer();
+    ~RPZServer();
 
- private slots:
-        void _saveSnapshot();
+    void run();
 
  signals:
-        void listening();
-        void error();
-        void stopped();
+    void listening();
+    void error();
+    void stopped();
 
  private:
-        bool _mapHasLoaded = false;
-        QTcpServer* _server = nullptr; 
+    bool _mapHasLoaded = false;
+    QTcpServer* _server = nullptr;
 
-        RPZMap<RPZUser> _usersById;
-        QHash<JSONSocket*, RPZUser::Id> _idsByClientSocket;
-        QHash<RPZUser::Id, JSONSocket*> _clientSocketById;
-        QHash<QString, RPZUser::Id> _formatedUsernamesByUserId;
-        
-        QHash<RPZUser::Role, QSet<JSONSocket*>> _socketsByRole;
-        
-        //music
-        StreamPlayStateTracker _tracker;
+    void _saveSnapshot();
 
-        //users
-        RPZUser& _getUser(JSONSocket* socket);
-        JSONSocket* _getUserSocket(const QString &formatedUsername);
-        void _attributeRoleToUser(JSONSocket* socket, RPZUser &associatedUser, const RPZHandshake &handshake);
+    RPZMap<RPZUser> _usersById;
+    QHash<JSONSocket*, RPZUser::Id> _idsByClientSocket;
+    QHash<RPZUser::Id, JSONSocket*> _clientSocketById;
+    QHash<QString, RPZUser::Id> _formatedUsernamesByUserId;
 
-        //map atoms
-        AtomsStorage* _hints = nullptr;
-        void _broadcastMapChanges(const RPZJSON::Method &method, AlterationPayload &payload, JSONSocket * senderSocket);
-        
-        //game session
-        void _sendGameSession(JSONSocket* toSendTo, const RPZUser &associatedUser);
+    QHash<RPZUser::Role, QSet<JSONSocket*>> _socketsByRole;
 
-        //messages
-        RPZMap<RPZMessage> _messages;
-        void _interpretMessage(JSONSocket* sender, RPZMessage &msg);
-        void _maySendAndStoreDiceThrows(const RPZMessage &msg);
-        void _logUserAsMessage(JSONSocket* userSocket, const RPZJSON::Method &method, const RPZUser &user);
+    // music
+    StreamPlayStateTracker _tracker;
 
-        //internal
-        void _onNewConnection();
-        void _onClientSocketDisconnected(JSONSocket* disconnectedSocket);
-        void _routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data);
-        
-        void _sendToAll(const RPZJSON::Method &method, const QVariant &data);
-        void _sendToAllExcept(JSONSocket* toExclude, const RPZJSON::Method &method, const QVariant &data);
-        void _sendToRoleExcept(JSONSocket* toExclude, const RPZUser::Role &role, const RPZJSON::Method &method, const QVariant &data);
+    // users
+    RPZUser& _getUser(JSONSocket* socket);
+    JSONSocket* _getUserSocket(const QString &formatedUsername);
+    void _attributeRoleToUser(JSONSocket* socket, RPZUser &associatedUser, const RPZHandshake &handshake);
 
+    // map atoms
+    AtomsStorage* _hints = nullptr;
+    void _broadcastMapChanges(const RPZJSON::Method &method, AlterationPayload &payload, JSONSocket * senderSocket);
+
+    // game session
+    void _sendGameSession(JSONSocket* toSendTo, const RPZUser &associatedUser);
+
+    // messages
+    RPZMap<RPZMessage> _messages;
+    void _interpretMessage(JSONSocket* sender, RPZMessage &msg);
+    void _maySendAndStoreDiceThrows(const RPZMessage &msg);
+    void _logUserAsMessage(JSONSocket* userSocket, const RPZJSON::Method &method, const RPZUser &user);
+
+    // internal
+    void _onNewConnection();
+    void _onClientSocketDisconnected(JSONSocket* disconnectedSocket);
+    void _routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data);
+
+    void _sendToAll(const RPZJSON::Method &method, const QVariant &data);
+    void _sendToAllExcept(JSONSocket* toExclude, const RPZJSON::Method &method, const QVariant &data);
+    void _sendToRoleExcept(JSONSocket* toExclude, const RPZUser::Role &role, const RPZJSON::Method &method, const QVariant &data);
 };

@@ -42,29 +42,26 @@
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 
 class MapLayoutTree : public QTreeView, public AtomSelector {
-
     Q_OBJECT
 
  public:
-        MapLayoutTree(QWidget* parent = nullptr);
+    explicit MapLayoutTree(QWidget* parent = nullptr);
 
-        const QList<RPZAtom::Id> selectedIds() const override;
-        MapLayoutModel* mlModel = nullptr;
+    const QList<RPZAtom::Id> selectedIds() const override;
+    MapLayoutModel* mlModel = nullptr;
 
  protected:
-        void contextMenuEvent(QContextMenuEvent *event) override;
-        void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
-
- private slots:
-        void _handleAlterationRequest(const AlterationPayload &payload);
+    void contextMenuEvent(QContextMenuEvent *event) override;
+    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
 
  private:
-        bool _preventSelectionNotification = false;
-        QTimer _selectionDebouncer;
+    bool _preventSelectionNotification = false;
+    QTimer _selectionDebouncer;
 
-        AtomsContextualMenuHandler* _menuHandler = nullptr;
-        AtomActionsHandler* _atomActionsHandler = nullptr;
-        
-        void _handleHintsSignalsAndSlots();
+    AtomsContextualMenuHandler* _menuHandler = nullptr;
+    AtomActionsHandler* _atomActionsHandler = nullptr;
 
+    void _handleHintsSignalsAndSlots();
+
+    void _handleAlterationRequest(const AlterationPayload &payload);
 };

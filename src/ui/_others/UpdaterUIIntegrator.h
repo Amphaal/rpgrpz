@@ -19,32 +19,31 @@
 
 #pragma once
 
-#include "src/helpers/_appContext.h"
-
 #include <QDebug>
 #include <QMessageBox>
 #include <QMainWindow>
+
+#include "src/helpers/_appContext.h"
+
 #include "src/_libs/autoupdatercore/updater.h"
 
 class UpdaterUIIntegrator : public QObject {
-    
     Q_OBJECT
-    
+
  signals:
-        void stateChanged(const bool isSearching);
+    void stateChanged(const bool isSearching);
 
  public:
-        UpdaterUIIntegrator(QMainWindow* wParent);
-        void openMaintenanceTool();
-    
- public slots:
-        void requireUpdateCheckFromUser();
-        void checkForAppUpdates();
+    explicit UpdaterUIIntegrator(QMainWindow* wParent);
+    void openMaintenanceTool();
+
+    void requireUpdateCheckFromUser();
+    void checkForAppUpdates();
 
  private:
-        QMainWindow* _wParent = nullptr;
-        QtAutoUpdater::Updater* _updater;
-        bool _userNotificationOnUpdateCheck = false;
+    QMainWindow* _wParent = nullptr;
+    QtAutoUpdater::Updater* _updater;
+    bool _userNotificationOnUpdateCheck = false;
 
-        void _onUpdateChecked(const bool hasUpdate, const bool hasError);
+    void _onUpdateChecked(const bool hasUpdate, const bool hasError);
 };

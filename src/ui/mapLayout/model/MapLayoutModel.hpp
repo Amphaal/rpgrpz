@@ -27,21 +27,6 @@
 class MapLayoutModel : public MapLayoutModelBase, public AlterationInteractor {
     Q_OBJECT
 
- public slots:
-    void propagateFocus(const QModelIndex &focusedIndex) {
-        auto id = fromIndex(focusedIndex);
-        if (!id) return;
-
-        FocusedPayload payload(id);
-        AlterationHandler::get()->queueAlteration(this, payload);
-    }
-
-    void propagateSelection(const QModelIndexList &selectedIndexes) {
-        auto selectedIds = fromIndexes(selectedIndexes);
-        SelectedPayload payload(selectedIds);
-        AlterationHandler::get()->queueAlteration(this, payload);
-    }
-
  public:
         MapLayoutModel() : AlterationInteractor(Payload::Interactor::Local_MapLayout) {
             // on rename
@@ -49,6 +34,20 @@ class MapLayoutModel : public MapLayoutModelBase, public AlterationInteractor {
                 AssetsDatabase::get(), &AssetsDatabase::assetRenamed,
                 this, &MapLayoutModel::_onRenamedAsset
             );
+        }
+
+        void propagateFocus(const QModelIndex &focusedIndex) {
+            auto id = fromIndex(focusedIndex);
+            if (!id) return;
+
+            FocusedPayload payload(id);
+            AlterationHandler::get()->queueAlteration(this, payload);
+        }
+
+        void propagateSelection(const QModelIndexList &selectedIndexes) {
+            auto selectedIds = fromIndexes(selectedIndexes);
+            SelectedPayload payload(selectedIds);
+            AlterationHandler::get()->queueAlteration(this, payload);
         }
 
         void handleAlterationRequest(const AlterationPayload* payload) {
@@ -219,7 +218,6 @@ class MapLayoutModel : public MapLayoutModelBase, public AlterationInteractor {
         }
     }
 
- private slots:
     void _onRenamedAsset(const RPZAsset::Hash &id, const QString &newName) {
         for (const auto &id : this->_atomsByAssetHash.value(id)) {
             auto index = this->toIndex(id);

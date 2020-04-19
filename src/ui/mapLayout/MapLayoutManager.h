@@ -34,22 +34,22 @@
 
 class MapLayoutManager : public QWidget {
  public:
-        MapLayoutManager(QGraphicsView* viewToMimic, QWidget *parent = nullptr);
+    explicit MapLayoutManager(QGraphicsView* viewToMimic, QWidget *parent = nullptr);
 
-        MapLayoutTree* tree();
-    
+    MapLayoutTree* tree();
+
  private:
-        MapLayoutTree* _tree = nullptr;
-        QPushButton* _mapParamBtn = nullptr;
-        QSlider* _FoWOpacitySlider = nullptr;
-        QCheckBox* _FoWReversedChk = nullptr;
-        QPushButton* _FoWResetBtn = nullptr;
+    MapLayoutTree* _tree = nullptr;
+    QPushButton* _mapParamBtn = nullptr;
+    QSlider* _FoWOpacitySlider = nullptr;
+    QCheckBox* _FoWReversedChk = nullptr;
+    QPushButton* _FoWResetBtn = nullptr;
 
-        RPZMapParameters _currentMapParameters;
+    RPZMapParameters _currentMapParameters;
 
-        void _handleMapParametersEdition();
-        void _changeFogMode(int);
-        void _fogOpacityChange(int);
-        void _onMapSetup(const RPZMapParameters &mParams, const RPZFogParams &fParams);
-        void _handleFogReset();
+    void _handleMapParametersEdition();
+    void _changeFogMode(int);
+    void _fogOpacityChange(int);
+    void _onMapSetup(const RPZMapParameters &mParams, const RPZFogParams &fParams);
+    void _handleFogReset();
 };

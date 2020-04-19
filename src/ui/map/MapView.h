@@ -75,7 +75,6 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
     void focusFromMinimap(const QPointF &scenePoint);
     void resetTool();
 
- public slots:
     void onActionRequested(const MapAction &action);
     void onHelperActionTriggered(QAction *action);
 
@@ -101,15 +100,6 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
     void drawBackground(QPainter *painter, const QRectF &rect) override;
     void drawForeground(QPainter *painter, const QRectF &rect) override;
 
- private slots:
-    void _onUIAlterationRequest(const Payload::Alteration &type, const QList<QGraphicsItem*> &toAlter);
-    void _onUIAlterationRequest(const Payload::Alteration &type, const OrderedGraphicsItems &toAlter);
-    void _onUIUpdateRequest(const QHash<QGraphicsItem*, RPZAtom::Updates> &toUpdate);
-    void _onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates, bool isPreview);
-    void _onOwnershipChanged(const QList<QGraphicsItem*> changing, bool owned);
-    void _onFogModeChanged(const RPZFogParams::Mode &newMode);
-    void _onFogChanged(const QList<QPolygonF> &updatedFog);
-
  private:
     RPZMapParameters _currentMapParameters;
     QuickDrawingAssist* _quickDrawingAssist = nullptr;
@@ -118,6 +108,14 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
     AtomsContextualMenuHandler* _menuHandler = nullptr;
     AtomActionsHandler* _atomActionsHandler = nullptr;
     MeasurementHelper* _measurementHelper = nullptr;
+
+    void _onUIAlterationRequest(const Payload::Alteration &type, const QList<QGraphicsItem*> &toAlter);
+    void _onUIAlterationRequest(const Payload::Alteration &type, const OrderedGraphicsItems &toAlter);
+    void _onUIUpdateRequest(const QHash<QGraphicsItem*, RPZAtom::Updates> &toUpdate);
+    void _onUIUpdateRequest(const QList<QGraphicsItem*> &toUpdate, const RPZAtom::Updates &updates, bool isPreview);
+    void _onOwnershipChanged(const QList<QGraphicsItem*> changing, bool owned);
+    void _onFogModeChanged(const RPZFogParams::Mode &newMode);
+    void _onFogChanged(const QList<QPolygonF> &updatedFog);
 
     // helpers
     void _handleHintsSignalsAndSlots();

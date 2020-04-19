@@ -115,7 +115,6 @@ class MapViewInteractibleDescriptor : public QWidget {
         this->setGeometry(this->_hiddenGeometry());
     }
 
- public slots:
     void updateFromAtom(const RPZAtom &atom) {
         this->_anim->stop();
 

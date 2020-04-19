@@ -17,7 +17,7 @@
 // for further details. Resources without explicit references to a
 // different license and copyright still refer to this GPL.
 
-#pragma once 
+#pragma once
 
 #include <QWidget>
 #include <QTabWidget>
@@ -30,77 +30,66 @@
 #include "src/shared/models/character/RPZCharacter.hpp"
 
 class CharacterSheet : public QTabWidget {
-    
     Q_OBJECT
-    
+
  public:
-        CharacterSheet() : 
-        _characterTab(new LoreTab), 
-        _statusTab(new StatusTab), 
-        _inventoriesTab(new InventoriesTab),
-        _noteTab(new QTextEdit) {
-            
-            this->_noteTab->setAcceptRichText(false);
-            this->setVisible(false);
+    CharacterSheet() : _characterTab(new LoreTab), _statusTab(new StatusTab), _inventoriesTab(new InventoriesTab), _noteTab(new QTextEdit) {
+        this->_noteTab->setAcceptRichText(false);
+        this->setVisible(false);
 
-            //tabs
-            this->addTab(this->_characterTab, QIcon(QStringLiteral(u":/icons/app/tabs/feather.png")), tr("Lore"));
-            this->addTab(_defineScroller(this->_statusTab), QIcon(QStringLiteral(u":/icons/app/tabs/status.png")), tr("Status / Abilities"));
-            this->addTab(this->_inventoriesTab, QIcon(QStringLiteral(u":/icons/app/tabs/chest.png")), tr("Inventories"));
-            this->addTab(this->_noteTab, QIcon(QStringLiteral(u":/icons/app/tabs/noting.png")), tr("Notes / Others"));
+        // tabs
+        this->addTab(this->_characterTab, QIcon(QStringLiteral(u":/icons/app/tabs/feather.png")), tr("Lore"));
+        this->addTab(_defineScroller(this->_statusTab), QIcon(QStringLiteral(u":/icons/app/tabs/status.png")), tr("Status / Abilities"));
+        this->addTab(this->_inventoriesTab, QIcon(QStringLiteral(u":/icons/app/tabs/chest.png")), tr("Inventories"));
+        this->addTab(this->_noteTab, QIcon(QStringLiteral(u":/icons/app/tabs/noting.png")), tr("Notes / Others"));
+    }
 
-        };
+    RPZCharacter generateCharacter() {
+        auto out = this->_loadedCharacter;
+        if (!out.id()) return out;
 
-        RPZCharacter generateCharacter() {
-            
-            auto out = this->_loadedCharacter;
-            if(!out.id()) return out;
+        // lore
+        this->_characterTab->updateCharacter(out);
 
-            //lore
-            this->_characterTab->updateCharacter(out);
+        // status
+        this->_statusTab->updateCharacter(out);
 
-            //status
-            this->_statusTab->updateCharacter(out);
+        // inventory
+        this->_inventoriesTab->updateCharacter(out);
 
-            //inventory
-            this->_inventoriesTab->updateCharacter(out);
+        // note
+        out.setNotes(this->_noteTab->toPlainText());
 
-            //note 
-            out.setNotes(this->_noteTab->toPlainText());
-            
-            return out;
+        return out;
+    }
+
+    bool isReadOnlyMode() const {
+        return this->_readOnly;
+    }
+
+    void loadCharacter(const RPZCharacter& toLoad, bool isReadOnly) {
+        this->_readOnly = isReadOnly;
+
+        // self
+        this->_loadedCharacter = toLoad;
+        auto characterExists = !toLoad.isEmpty();
+        this->setVisible(characterExists);
+
+        // lore
+        this->_characterTab->loadCharacter(toLoad, isReadOnly);
+
+        // status
+        this->_statusTab->loadCharacter(toLoad, isReadOnly);
+
+        // inventory
+        this->_inventoriesTab->loadCharacter(toLoad, isReadOnly);
+
+        // note
+        this->setTabEnabled(3, !isReadOnly);
+        if (!isReadOnly) {
+            this->_noteTab->setPlainText(toLoad.notes());
         }
-
-        bool isReadOnlyMode() const {
-            return this->_readOnly;
-        }
-
- public slots:
-        void loadCharacter(const RPZCharacter& toLoad, bool isReadOnly) {
-            
-            this->_readOnly = isReadOnly;
-
-            //self
-            this->_loadedCharacter = toLoad;
-            auto characterExists = !toLoad.isEmpty();
-            this->setVisible(characterExists);
-
-            //lore
-            this->_characterTab->loadCharacter(toLoad, isReadOnly);
-
-            //status
-            this->_statusTab->loadCharacter(toLoad, isReadOnly);
-
-            //inventory
-            this->_inventoriesTab->loadCharacter(toLoad, isReadOnly);
-
-            //note 
-            this->setTabEnabled(3, !isReadOnly);
-            if(!isReadOnly) {
-                this->_noteTab->setPlainText(toLoad.notes());
-            } 
-
-        }
+    }
 
  private:
         bool _readOnly = false;
@@ -121,5 +110,4 @@ class CharacterSheet : public QTabWidget {
             scroller->setPalette(pal);
             return scroller;
         }
-
 };

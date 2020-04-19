@@ -63,7 +63,6 @@ class RPZClient : public QObject, public AlterationInteractor, public JSONLogger
     const QList<RPZCharacter::UserBound> sessionCharacters() const;  // safe
     const RPZCharacter sessionCharacter(const RPZCharacter::Id &characterId) const;  // safe
 
- public slots:
     void run();
 
     void sendMessage(const RPZMessage &message);
@@ -149,6 +148,5 @@ class RPZClient : public QObject, public AlterationInteractor, public JSONLogger
 
     void _routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data);
 
- private slots:
     void _handleAlterationRequest(const AlterationPayload &payload);
 };

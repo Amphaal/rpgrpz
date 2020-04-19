@@ -41,53 +41,50 @@
 #include "src/shared/async-ui/AlterationHandler.h"
 
 class ToysTreeView : public QTreeView, public ConnectivityObserver, public AlterationInteractor {
-
     Q_OBJECT
 
  public:
-        ToysTreeView(QWidget *parent = nullptr);
-
- private slots:
-        void _onAssetsAboutToBeDownloaded(const QVector<QString> &availableIds);
-        void _onReceivedAsset(RPZAssetImportPackage package);
-        void _handleAlterationRequest(const AlterationPayload &payload);
+    explicit ToysTreeView(QWidget *parent = nullptr);
 
  protected:
-        void contextMenuEvent(QContextMenuEvent *event) override;
-        void keyPressEvent(QKeyEvent * event) override;
-        void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
-        void dragEnterEvent(QDragEnterEvent *event) override;
-        void dragMoveEvent(QDragMoveEvent *event) override;
-        void startDrag(Qt::DropActions supportedActions) override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
+    void keyPressEvent(QKeyEvent * event) override;
+    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dragMoveEvent(QDragMoveEvent *event) override;
+    void startDrag(Qt::DropActions supportedActions) override;
 
  private:
-        QModelIndexList _selectedElementsIndexes();
+    QModelIndexList _selectedElementsIndexes();
 
-        int _expectedAssetsTBDownloaded = 0;
-        int _expectedAssetsDownloaded = 0;
+    int _expectedAssetsTBDownloaded = 0;
+    int _expectedAssetsDownloaded = 0;
 
-        void connectingToServer() override;
+    void connectingToServer() override;
 
-        QMimeDatabase _MIMEDb;
-        ToysTreeViewModel* _model = nullptr;
+    QMimeDatabase _MIMEDb;
+    ToysTreeViewModel* _model = nullptr;
 
-        /////////////////////
-        // Contextual menu //
-        /////////////////////
+    void _onAssetsAboutToBeDownloaded(const QVector<QString> &availableIds);
+    void _onReceivedAsset(RPZAssetImportPackage package);
+    void _handleAlterationRequest(const AlterationPayload &payload);
 
-        void _generateMenu(const QList<QModelIndex> &targetIndexes, const QPoint &whereToDisplay);
+    /////////////////////
+    // Contextual menu //
+    /////////////////////
 
-        QList<QAction*> _staticContainerMoveActions;
-        void _generateStaticContainerMoveActions();
+    void _generateMenu(const QList<QModelIndex> &targetIndexes, const QPoint &whereToDisplay);
 
-        /////////////////////////
-        // END Contextual menu //
-        /////////////////////////
+    QList<QAction*> _staticContainerMoveActions;
+    void _generateStaticContainerMoveActions();
 
-        //auto expand on row insert
-        void _onRowInsert(const QModelIndex &parent, int first, int last);
-        void _requestDeletion(const QModelIndexList &itemsIndexesToDelete);
+    /////////////////////////
+    // END Contextual menu //
+    /////////////////////////
 
-        RPZToy _selectedToy;
+    // auto expand on row insert
+    void _onRowInsert(const QModelIndex &parent, int first, int last);
+    void _requestDeletion(const QModelIndexList &itemsIndexesToDelete);
 
+    RPZToy _selectedToy;
 };

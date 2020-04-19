@@ -61,82 +61,80 @@
 #include "src/ui/map/MiniMapView.hpp"
 #include "src/ui/map/_base/OverlayingLayout.hpp"
 
-class MainWindow : public QMainWindow, public ConnectivityObserver { 
-    
+class MainWindow : public QMainWindow, public ConnectivityObserver {
     Q_OBJECT
-    
+
  public:
-        enum class UIMode { Unset, Full, Player };
-        Q_ENUM(UIMode)
+    enum class UIMode { Unset, Full, Player };
+    Q_ENUM(UIMode)
 
-        MainWindow();
-        ~MainWindow();
-    
+    MainWindow();
+    ~MainWindow();
+
  protected:
-        void connectingToServer() override;
-        void connectionClosed(bool hasInitialMapLoaded) override;
-
- private slots:
-        void _onGameSessionReceived(const RPZGameSession &gameSession);
-        void _onCharacterFocusRequest(const RPZCharacter::Id &characterIdToFocus);
+    void connectingToServer() override;
+    void connectionClosed(bool hasInitialMapLoaded) override;
 
  private:
-        void closeEvent(QCloseEvent *event) override;
-        
-        void _initUI();
+    void _onGameSessionReceived(const RPZGameSession &gameSession);
+    void _onCharacterFocusRequest(const RPZCharacter::Id &characterIdToFocus);
 
-        void _saveWindowState();
-        void _loadWindowState();
+    void closeEvent(QCloseEvent *event) override;
 
-        ConnectivityHelper* _ipHelper = nullptr;
-        RPZServer* _rpzServer = nullptr;
-        bool _mustLaunchServer = true;
-        void _initConnectivity();
+    void _initUI();
 
-        void _initAppComponents();
-            QWidget* _mapViewContainer = nullptr;
-            MapView* _mapView = nullptr;
-            MiniMapView* _minimap = nullptr;
-            MapViewInteractibleDescriptor* _interactibleDescr = nullptr;
+    void _saveWindowState();
+    void _loadWindowState();
 
-            MapActions* _mapActions = nullptr;
-            MapHelpers* _mapHelpers = nullptr;
-            PlayersListView* _playersView = nullptr;
-            StandardUsersListView* _usersView = nullptr;
-            ConnectWidget* _connectWidget = nullptr;
-            PlaylistAudioManager* _audioManager = nullptr;
-            ChatWidget* _chatWidget = nullptr;
-            ToysTreeView* _toys = nullptr;
-            MapTools* _mapTools = nullptr;
-            MapLayoutManager* _mlManager = nullptr;
-            AtomEditionManager* _atomEditManager = nullptr;
-            CharacterEditor* _characterEditor = nullptr;
-            DocShareListView* _docShareManager = nullptr;
+    ConnectivityHelper* _ipHelper = nullptr;
+    RPZServer* _rpzServer = nullptr;
+    bool _mustLaunchServer = true;
+    void _initConnectivity();
 
-        void _initAppUnmovableUI();
-        QTabWidget* _leftTab = nullptr;
-        QTabWidget* _rightTab = nullptr;
+    void _initAppComponents();
+        QWidget* _mapViewContainer = nullptr;
+        MapView* _mapView = nullptr;
+        MiniMapView* _minimap = nullptr;
+        MapViewInteractibleDescriptor* _interactibleDescr = nullptr;
 
-        UIMode _currentAppUIMode = UIMode::Unset;
-        const UIMode _defaultAppUIMode = UIMode::Full;
-        void _setupAppUI(UIMode mode);
+        MapActions* _mapActions = nullptr;
+        MapHelpers* _mapHelpers = nullptr;
+        PlayersListView* _playersView = nullptr;
+        StandardUsersListView* _usersView = nullptr;
+        ConnectWidget* _connectWidget = nullptr;
+        PlaylistAudioManager* _audioManager = nullptr;
+        ChatWidget* _chatWidget = nullptr;
+        ToysTreeView* _toys = nullptr;
+        MapTools* _mapTools = nullptr;
+        MapLayoutManager* _mlManager = nullptr;
+        AtomEditionManager* _atomEditManager = nullptr;
+        CharacterEditor* _characterEditor = nullptr;
+        DocShareListView* _docShareManager = nullptr;
 
-        /*statusbar*/
-        RPZStatusBar* _sb = nullptr;
-        void _initUIStatusBar();
+    void _initAppUnmovableUI();
+    QTabWidget* _leftTab = nullptr;
+    QTabWidget* _rightTab = nullptr;
 
-        /*menu*/
-        void _initUIMenu();
-        QAction *cfugAction = nullptr;
-        QMenu* _getToolsMenu();
-        QMenu* _getFileMenu();
-        QMenu* _getHelpMenu();
-        QMenu* _getMapMenu();
+    UIMode _currentAppUIMode = UIMode::Unset;
+    const UIMode _defaultAppUIMode = UIMode::Full;
+    void _setupAppUI(UIMode mode);
 
-        UpdaterUIIntegrator* _updateIntegrator = nullptr;
-        
-        void _triggerBarsVisibility();
-        void _barVisibilityToolTip();
+    /*statusbar*/
+    RPZStatusBar* _sb = nullptr;
+    void _initUIStatusBar();
 
-        void keyPressEvent(QKeyEvent * event) override;
+    /*menu*/
+    void _initUIMenu();
+    QAction *cfugAction = nullptr;
+    QMenu* _getToolsMenu();
+    QMenu* _getFileMenu();
+    QMenu* _getHelpMenu();
+    QMenu* _getMapMenu();
+
+    UpdaterUIIntegrator* _updateIntegrator = nullptr;
+
+    void _triggerBarsVisibility();
+    void _barVisibilityToolTip();
+
+    void keyPressEvent(QKeyEvent * event) override;
 };

@@ -34,32 +34,29 @@
 #include "DownloadStatus.hpp"
 
 class RPZStatusBar : public QStatusBar, public ConnectivityObserver {
-
     Q_OBJECT
 
  public:
-        RPZStatusBar(QWidget * parent = nullptr);
+    explicit RPZStatusBar(QWidget * parent = nullptr);
 
-        void bindServerIndicators();
+    void bindServerIndicators();
 
- public slots:
-        void updateServerStateLabel(const QString &stateText, RPZStatusLabel::State state);
-        void updateUPnPLabel(const QString &stateText, RPZStatusLabel::State state);
-        void updateExtIPLabel(const QString &stateText, RPZStatusLabel::State state);
-        void updateMapFileLabel(const QString &mapDescriptor, bool isMapDirty);
+    void updateServerStateLabel(const QString &stateText, RPZStatusLabel::State state);
+    void updateUPnPLabel(const QString &stateText, RPZStatusLabel::State state);
+    void updateExtIPLabel(const QString &stateText, RPZStatusLabel::State state);
+    void updateMapFileLabel(const QString &mapDescriptor, bool isMapDirty);
 
  private:
-        RPZStatusLabel* _extIpLabel = nullptr;
-        RPZStatusLabel* _upnpStateLabel = nullptr;
-        RPZStatusLabel* _serverStateLabel = nullptr;
-        RPZStatusLabel* _mapFileLabel = nullptr;
-        ClientActivityBar* _activityIndicators = nullptr;
-        DownloadStatus* _dlStatus = nullptr;
+    RPZStatusLabel* _extIpLabel = nullptr;
+    RPZStatusLabel* _upnpStateLabel = nullptr;
+    RPZStatusLabel* _serverStateLabel = nullptr;
+    RPZStatusLabel* _mapFileLabel = nullptr;
+    ClientActivityBar* _activityIndicators = nullptr;
+    DownloadStatus* _dlStatus = nullptr;
 
-        void _installComponents();
-        void _installLayout();
+    void _installComponents();
+    void _installLayout();
 
-        void connectingToServer() override;
-        void connectionClosed(bool hasInitialMapLoaded) override;
-
-}; 
+    void connectingToServer() override;
+    void connectionClosed(bool hasInitialMapLoaded) override;
+};

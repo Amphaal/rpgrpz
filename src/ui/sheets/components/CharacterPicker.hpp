@@ -133,72 +133,6 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
         this->_initLoad();
     }
 
- private slots:
-        void _updateCharacter(const RPZCharacter &updatedCharacter) {
-            // try to find item
-            auto indexItemToUpdate = this->_getIndexOfCharacterId(updatedCharacter.id());
-            if (indexItemToUpdate < 0) return;
-
-            // update descr
-            this->_characterListCombo->setItemText(
-                indexItemToUpdate,
-                updatedCharacter.toString()
-            );
-
-            // prevent recurse if local update
-            auto cc = this->currentCharacter();
-            if (cc.origin == CharacterOrigin::Local) return;
-
-            // if current selection, request sheet update
-            if (cc.id == updatedCharacter.id()) {
-                emit requestSheetDisplay(cc, updatedCharacter);
-            }
-        }
-
-        void _removeCharacterId(const RPZCharacter::Id &removedId) {
-            // find index of item
-            auto index = this->_getIndexOfCharacterId(removedId);
-            if (index < 0) return;
-
-            // remove
-            this->_characterListCombo->removeItem(index);
-
-            // may display
-            this->_mayTooglePlaceholder();
-        }
-
-        void _onUserJoinedServer(const RPZUser &newUser) {
-            if (newUser.role() != RPZUser::Role::Player) return;
-
-            // may remove
-            this->_mayTooglePlaceholder();
-
-            auto selectedIndex = this->_characterListCombo->currentIndex();
-
-            // add item
-            this->_addItem(
-                newUser.character(),
-                CharacterOrigin::Remote
-            );
-
-            if (selectedIndex != this->_characterListCombo->currentIndex()) this->_selectionChanged();
-        }
-
-        void _onUserLeftServer(const RPZUser &userOut) {
-            if (userOut.role() != RPZUser::Role::Player) return;
-
-            // remove
-            this->_removeCharacterId(userOut.character().id());
-        }
-
-        void _onUserDataChanged(const RPZUser &updatedUser) {
-            if (updatedUser.role() != RPZUser::Role::Player) return;
-
-            // update character
-            auto character = updatedUser.character();
-            this->_updateCharacter(character);
-        }
-
  private:
     QComboBox* _characterListCombo = nullptr;
     QPushButton* _deleteCharacterBtn = nullptr;
@@ -206,6 +140,71 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
 
     QIcon _standardClockIcon = QIcon(QStringLiteral(u":/icons/app/connectivity/cloak.png"));
     QIcon _selfCloakIcon = QIcon(QStringLiteral(u":/icons/app/connectivity/self_cloak.png"));
+
+    void _updateCharacter(const RPZCharacter &updatedCharacter) {
+        // try to find item
+        auto indexItemToUpdate = this->_getIndexOfCharacterId(updatedCharacter.id());
+        if (indexItemToUpdate < 0) return;
+
+        // update descr
+        this->_characterListCombo->setItemText(
+            indexItemToUpdate,
+            updatedCharacter.toString()
+        );
+
+        // prevent recurse if local update
+        auto cc = this->currentCharacter();
+        if (cc.origin == CharacterOrigin::Local) return;
+
+        // if current selection, request sheet update
+        if (cc.id == updatedCharacter.id()) {
+            emit requestSheetDisplay(cc, updatedCharacter);
+        }
+    }
+
+    void _removeCharacterId(const RPZCharacter::Id &removedId) {
+        // find index of item
+        auto index = this->_getIndexOfCharacterId(removedId);
+        if (index < 0) return;
+
+        // remove
+        this->_characterListCombo->removeItem(index);
+
+        // may display
+        this->_mayTooglePlaceholder();
+    }
+
+    void _onUserJoinedServer(const RPZUser &newUser) {
+        if (newUser.role() != RPZUser::Role::Player) return;
+
+        // may remove
+        this->_mayTooglePlaceholder();
+
+        auto selectedIndex = this->_characterListCombo->currentIndex();
+
+        // add item
+        this->_addItem(
+            newUser.character(),
+            CharacterOrigin::Remote
+        );
+
+        if (selectedIndex != this->_characterListCombo->currentIndex()) this->_selectionChanged();
+    }
+
+    void _onUserLeftServer(const RPZUser &userOut) {
+        if (userOut.role() != RPZUser::Role::Player) return;
+
+        // remove
+        this->_removeCharacterId(userOut.character().id());
+    }
+
+    void _onUserDataChanged(const RPZUser &updatedUser) {
+        if (updatedUser.role() != RPZUser::Role::Player) return;
+
+        // update character
+        auto character = updatedUser.character();
+        this->_updateCharacter(character);
+    }
 
     void _handleLocalDbEvents() {
         QObject::connect(
@@ -215,8 +214,7 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
                     added,
                     CharacterOrigin::Local
                 );
-            }
-        );
+        });
 
         QObject::connect(
             CharactersDatabase::get(), &CharactersDatabase::characterRemoved,

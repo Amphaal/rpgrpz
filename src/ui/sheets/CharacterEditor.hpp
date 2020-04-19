@@ -83,92 +83,91 @@ class CharacterEditor : public QWidget, public ConnectivityObserver {
         this->_maySaveCurrentCharacter();
     }
 
- public slots:
-        void tryToSelectCharacter(const RPZCharacter::Id &characterIdToFocus) {
-            auto success = this->_characterPicker->pickCharacter(characterIdToFocus);
-            if (success) this->setFocus(Qt::OtherFocusReason);
-        }
+    void tryToSelectCharacter(const RPZCharacter::Id &characterIdToFocus) {
+        auto success = this->_characterPicker->pickCharacter(characterIdToFocus);
+        if (success) this->setFocus(Qt::OtherFocusReason);
+    }
 
  protected:
-        void connectingToServer() override {
-            this->_defineTitle(true);
+    void connectingToServer() override {
+        this->_defineTitle(true);
 
-            // when session is up
-            QObject::connect(
-                _rpzClient, &RPZClient::gameSessionReceived,
-                [=]() {
-                    this->_allowCharacterChangeNotifications = true;
-            });
-        }
+        // when session is up
+        QObject::connect(
+            _rpzClient, &RPZClient::gameSessionReceived,
+            [=]() {
+                this->_allowCharacterChangeNotifications = true;
+        });
+    }
 
-        void connectionClosed(bool hasInitialMapLoaded) override {
-            this->_defineTitle();
-            this->_allowCharacterChangeNotifications = false;
-        }
+    void connectionClosed(bool hasInitialMapLoaded) override {
+        this->_defineTitle();
+        this->_allowCharacterChangeNotifications = false;
+    }
 
  private:
-        bool _allowCharacterChangeNotifications = false;
-        CharacterPicker::SelectedCharacter _currentSelection;
+    bool _allowCharacterChangeNotifications = false;
+    CharacterPicker::SelectedCharacter _currentSelection;
 
-        CharacterPicker* _characterPicker = nullptr;
-        CharacterSheet* _sheet = nullptr;
-        QPushButton* _saveCharacterBtn = nullptr;
-        QGroupBox* _characterPickerGrpBox = nullptr;
+    CharacterPicker* _characterPicker = nullptr;
+    CharacterSheet* _sheet = nullptr;
+    QPushButton* _saveCharacterBtn = nullptr;
+    QGroupBox* _characterPickerGrpBox = nullptr;
 
-        void _maySaveCurrentCharacter() {
-            if (!this->_isCurrentSelectionSavable()) return;
+    void _maySaveCurrentCharacter() {
+        if (!this->_isCurrentSelectionSavable()) return;
 
-            // prevent save if is read only
-            if (this->_sheet->isReadOnlyMode()) return;
+        // prevent save if is read only
+        if (this->_sheet->isReadOnlyMode()) return;
 
-            // make sure character have id
-            auto characterFromSheet = this->_sheet->generateCharacter();
-            if (!characterFromSheet.id()) return;
+        // make sure character have id
+        auto characterFromSheet = this->_sheet->generateCharacter();
+        if (!characterFromSheet.id()) return;
 
-            // update DB
-            CharactersDatabase::get()->updateCharacter(characterFromSheet);
+        // update DB
+        CharactersDatabase::get()->updateCharacter(characterFromSheet);
 
-            // if remote, tell server that character changed
-            if (this->_rpzClient && this->_allowCharacterChangeNotifications) {
-                QMetaObject::invokeMethod(this->_rpzClient, "notifyCharacterChange",
-                    Q_ARG(RPZCharacter, characterFromSheet)
-                );
-            }
+        // if remote, tell server that character changed
+        if (this->_rpzClient && this->_allowCharacterChangeNotifications) {
+            QMetaObject::invokeMethod(this->_rpzClient, "notifyCharacterChange",
+                Q_ARG(RPZCharacter, characterFromSheet)
+            );
         }
+    }
 
-        void _deleteRequestFromPicker(const RPZCharacter::Id &toDelete) {
-            this->_currentSelection = {};  // back to default to trick the autosave into not saving it back
-            CharactersDatabase::get()->removeCharacter(toDelete);
-        }
+    void _deleteRequestFromPicker(const RPZCharacter::Id &toDelete) {
+        this->_currentSelection = {};  // back to default to trick the autosave into not saving it back
+        CharactersDatabase::get()->removeCharacter(toDelete);
+    }
 
-        void _insertRequestFromPicker() {
-            CharactersDatabase::get()->addNewCharacter();
-        }
+    void _insertRequestFromPicker() {
+        CharactersDatabase::get()->addNewCharacter();
+    }
 
-        void _onRequestedSheetToDisplay(const CharacterPicker::SelectedCharacter &newSelection, const RPZCharacter &toDisplay) {
-            // may save previous character
-            this->_maySaveCurrentCharacter();
+    void _onRequestedSheetToDisplay(const CharacterPicker::SelectedCharacter &newSelection, const RPZCharacter &toDisplay) {
+        // may save previous character
+        this->_maySaveCurrentCharacter();
 
-            // change selection and define savability
-            this->_currentSelection = newSelection;
-            auto isReadOnly = !this->_defineSavability();
+        // change selection and define savability
+        this->_currentSelection = newSelection;
+        auto isReadOnly = !this->_defineSavability();
 
-            // load
-            this->_sheet->loadCharacter(toDisplay, isReadOnly);
-        }
+        // load
+        this->_sheet->loadCharacter(toDisplay, isReadOnly);
+    }
 
-        void _defineTitle(bool isRemote = false) {
-            auto title = isRemote ? tr("Hosted characters") : tr("My characters");
-            this->_characterPickerGrpBox->setTitle(title);
-        }
+    void _defineTitle(bool isRemote = false) {
+        auto title = isRemote ? tr("Hosted characters") : tr("My characters");
+        this->_characterPickerGrpBox->setTitle(title);
+    }
 
-        bool _isCurrentSelectionSavable() {
-            return this->_currentSelection.id && this->_currentSelection.origin == CharacterPicker::CharacterOrigin::Local;
-        }
+    bool _isCurrentSelectionSavable() {
+        return this->_currentSelection.id && this->_currentSelection.origin == CharacterPicker::CharacterOrigin::Local;
+    }
 
-        bool _defineSavability() {
-            bool enableSave = this->_isCurrentSelectionSavable();
-            this->_saveCharacterBtn->setVisible(enableSave);
-            return enableSave;
-        }
+    bool _defineSavability() {
+        bool enableSave = this->_isCurrentSelectionSavable();
+        this->_saveCharacterBtn->setVisible(enableSave);
+        return enableSave;
+    }
 };

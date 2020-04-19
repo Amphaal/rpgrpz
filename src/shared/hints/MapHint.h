@@ -23,34 +23,32 @@
 #include "src/ui/_others/ConnectivityObserver.h"
 
 class MapHint : public ViewMapHint, public ConnectivityObserver {
-
     Q_OBJECT
 
  public:
-        MapHint();
+    MapHint();
 
-        //load/unload
-        bool isRemote() const;
-        bool isMapDirty() const;
-        const QString mapFilePath() const;
+    // load/unload
+    bool isRemote() const;
+    bool isMapDirty() const;
+    const QString mapFilePath() const;
 
-        void mayWantToSavePendingState(QWidget* parent); //must block UI
-        
-        bool ackRemoteness(const RPZUser &connectedUser, const QString &remoteAddress);
-        bool ackRemoteness(const QString &tblMapFilePath);
+    void mayWantToSavePendingState(QWidget* parent);  // must block UI
 
- public slots:
-        bool loadDefaultRPZMap(); //to invoke
-        bool loadRPZMap(const QString &filePath); //to invoke
-        bool saveRPZMap(); //to invoke, unless from mayWantToSavePendingState()
-        bool saveRPZMapAs(const QString &newFilePath); //to invoke
-        bool createNewRPZMapAs(const QString &newFilePath); //to invoke
+    bool ackRemoteness(const RPZUser &connectedUser, const QString &remoteAddress);
+    bool ackRemoteness(const QString &tblMapFilePath);
+
+    bool loadDefaultRPZMap();  // to invoke
+    bool loadRPZMap(const QString &filePath);  // to invoke
+    bool saveRPZMap();  // to invoke, unless from mayWantToSavePendingState()
+    bool saveRPZMapAs(const QString &newFilePath);  // to invoke
+    bool createNewRPZMapAs(const QString &newFilePath);  // to invoke
 
  signals:
         void mapStateChanged(const QString &mapDescriptor, bool isMapDirty);
         void remoteChanged(bool isRemote);
 
- private: 
+ private:
         bool _ackRemoteness();
 
         QString _mapDescriptor;
@@ -60,17 +58,16 @@ class MapHint : public ViewMapHint, public ConnectivityObserver {
 
         void _setMapDirtiness(bool dirty = true);
         void _shouldMakeMapDirty(const AlterationPayload &payload);
-    
+
         void _handleAlterationRequest(const AlterationPayload &payload) final;
 
         AlterationInteractor* _sysActor = nullptr;
-        
-        //network
+
+        // network
             void connectingToServer() override;
             void connectionClosed(bool hasInitialMapLoaded) override;
 
             void _onGameSessionReceived(const RPZGameSession &gameSession);
             void _mightUpdateTokens();
             void _sendMapHistory();
-
 };

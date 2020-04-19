@@ -27,19 +27,16 @@
 #include "AlterationInteractor.hpp"
 
 class AlterationAcknoledger : public QObject, public AlterationInteractor {
-
     Q_OBJECT
 
  public:
-        AlterationAcknoledger(const Payload::Interactor &source);
+    explicit AlterationAcknoledger(const Payload::Interactor &source);
 
- public slots:
-        void connectToAlterationEmissions();
+    void connectToAlterationEmissions();
 
  protected:
-        virtual void _handleAlterationRequest(const AlterationPayload &payload) = 0;
+    virtual void _handleAlterationRequest(const AlterationPayload &payload) = 0;
 
- private slots:
-        void _ackAlteration(const AlterationPayload &payload);
-
+ private:
+    void _ackAlteration(const AlterationPayload &payload);
 };

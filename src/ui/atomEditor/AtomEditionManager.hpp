@@ -43,6 +43,49 @@ class AtomEditionManager : public QWidget {
         );
     }
 
+    void _handleAlterationRequest(const AlterationPayload &payload) {
+        this->_editor->payloadTrace(payload);
+
+        auto casted = Payloads::autoCast(payload);
+
+        // if ghost item selection occured
+        if (auto mPayload = dynamic_cast<AtomTemplateSelectedPayload*>(casted.data())) {
+            auto atom_template = mPayload->selectedTemplate();
+            AtomsSelectionDescriptor descr;
+
+            if (!atom_template.isEmpty()) {
+                auto type = atom_template.type();
+                descr.representedTypes.insert(type);
+
+                descr.templateAtom = atom_template;
+            }
+
+            this->_handleSubjectChange(descr);
+        } else if (auto mPayload = dynamic_cast<SelectedPayload*>(casted.data())) {  // if selection occured
+            auto selected = mPayload->targetRPZAtomIds();
+            auto descr = HintThread::hint()->getAtomSelectionDescriptor(selected);
+            this->_handleSubjectChange(descr);
+        } else if (auto mPayload = dynamic_cast<RemovedPayload*>(casted.data())) {  // if deletion happened
+            auto currSelectionDescr = this->_editor->currentSelectionDescriptor();
+
+            auto selected = mPayload->targetRPZAtomIds();
+
+            auto removed = QSet<RPZAtom::Id>(selected.begin(), selected.end());
+            auto current = QSet<RPZAtom::Id>(currSelectionDescr.selectedAtomIds.begin(), currSelectionDescr.selectedAtomIds.end());
+
+            // if no previous selection and has template atom, keep current description
+            if (!currSelectionDescr.templateAtom.isEmpty() && !current.count()) return;
+
+            auto truncated = current.subtract(removed).values();
+            auto descr = HintThread::hint()->getAtomSelectionDescriptor(truncated);
+
+            this->_handleSubjectChange(descr);
+        } else if (dynamic_cast<RemovedPayload*>(casted.data())) {  // on reset
+            AtomsSelectionDescriptor descr;
+            this->_handleSubjectChange(descr);
+        }
+    }
+
  public:
     explicit AtomEditionManager(QWidget *parent = nullptr) : QWidget(parent), _editor(new AtomEditor), _resetButton(new QPushButton) {
         // setup
@@ -89,49 +132,5 @@ class AtomEditionManager : public QWidget {
 
     HiddenCheckbox* hiddenCheckbox() {
         return this->_defaultHiddenCheckbox;
-    }
-
- private slots:
-    void _handleAlterationRequest(const AlterationPayload &payload) {
-        this->_editor->payloadTrace(payload);
-
-        auto casted = Payloads::autoCast(payload);
-
-        // if ghost item selection occured
-        if (auto mPayload = dynamic_cast<AtomTemplateSelectedPayload*>(casted.data())) {
-            auto atom_template = mPayload->selectedTemplate();
-            AtomsSelectionDescriptor descr;
-
-            if (!atom_template.isEmpty()) {
-                auto type = atom_template.type();
-                descr.representedTypes.insert(type);
-
-                descr.templateAtom = atom_template;
-            }
-
-            this->_handleSubjectChange(descr);
-        } else if (auto mPayload = dynamic_cast<SelectedPayload*>(casted.data())) {  // if selection occured
-            auto selected = mPayload->targetRPZAtomIds();
-            auto descr = HintThread::hint()->getAtomSelectionDescriptor(selected);
-            this->_handleSubjectChange(descr);
-        } else if (auto mPayload = dynamic_cast<RemovedPayload*>(casted.data())) {  // if deletion happened
-            auto currSelectionDescr = this->_editor->currentSelectionDescriptor();
-
-            auto selected = mPayload->targetRPZAtomIds();
-
-            auto removed = QSet<RPZAtom::Id>(selected.begin(), selected.end());
-            auto current = QSet<RPZAtom::Id>(currSelectionDescr.selectedAtomIds.begin(), currSelectionDescr.selectedAtomIds.end());
-
-            // if no previous selection and has template atom, keep current description
-            if (!currSelectionDescr.templateAtom.isEmpty() && !current.count()) return;
-
-            auto truncated = current.subtract(removed).values();
-            auto descr = HintThread::hint()->getAtomSelectionDescriptor(truncated);
-
-            this->_handleSubjectChange(descr);
-        } else if (dynamic_cast<RemovedPayload*>(casted.data())) {  // on reset
-            AtomsSelectionDescriptor descr;
-            this->_handleSubjectChange(descr);
-        }
     }
 };

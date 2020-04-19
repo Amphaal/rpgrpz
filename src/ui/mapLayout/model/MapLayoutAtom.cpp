@@ -21,7 +21,6 @@
 #include "MapLayoutAtom.h"
 
 MapLayoutAtom::MapLayoutAtom(MapLayoutCategory* parent, const RPZAtom &atom) {
-    
     this->_id = atom.id();
     this->_type = atom.type();
     this->_assetHash = atom.assetHash();
@@ -32,7 +31,6 @@ MapLayoutAtom::MapLayoutAtom(MapLayoutCategory* parent, const RPZAtom &atom) {
     this->updateFrom(atom.editedMetadataWithValues());
 
     this->setParent(parent);
-
 }
 
 MapLayoutAtom::~MapLayoutAtom() {
@@ -42,12 +40,12 @@ MapLayoutAtom::~MapLayoutAtom() {
 MapLayoutAtom* MapLayoutAtom::fromIndex(const QModelIndex &index) {
     auto ip = index.internalPointer();
     return static_cast<MapLayoutAtom*>(ip);
-};
+}
 
 void MapLayoutAtom::setParent(MapLayoutCategory* parent) {
-    if(this->_parent) this->_parent->removeAsChild(this);
+    if (this->_parent) this->_parent->removeAsChild(this);
     this->_parent = parent;
-    if(parent) parent->addAsChild(this);
+    if (parent) parent->addAsChild(this);
 }
 
 MapLayoutCategory* MapLayoutAtom::parent() const {
@@ -55,26 +53,23 @@ MapLayoutCategory* MapLayoutAtom::parent() const {
 }
 
 const QHash<int, QSet<int>> MapLayoutAtom::updateFrom(const RPZAtom::Updates &updates) {
-    
     QHash<int, QSet<int>> colsByDataRoles;
 
-    for(auto i = updates.begin(); i != updates.end(); i++) {
-        
+    for (auto i = updates.begin(); i != updates.end(); i++) {
         auto param = i.key();
         auto variant = i.value();
-        
-        switch (param) {
 
+        switch (param) {
             case RPZAtom::Parameter::Hidden:
                 this->_isHidden = variant.toBool();
                 colsByDataRoles[1].insert(Qt::DisplayRole);
                 break;
-            
+
             case RPZAtom::Parameter::Locked:
                 this->_isLocked = variant.toBool();
                 colsByDataRoles[1].insert(Qt::DisplayRole);
                 break;
-            
+
             case RPZAtom::Parameter::NPCAttitude:
                 this->_iconPath = RPZAtom::descriptiveIconPath(this->_type, (RPZAtom::NPCType)variant.toInt());
                 colsByDataRoles[0].insert(Qt::DecorationRole);
@@ -82,30 +77,24 @@ const QHash<int, QSet<int>> MapLayoutAtom::updateFrom(const RPZAtom::Updates &up
 
             default:
                 break;
-
         }
 
-        //rename ?        
-        if(param == this->_nameChangeParam && param != RPZAtom::Parameter::Unknown) {
-            
+        // rename ?
+        if (param == this->_nameChangeParam && param != RPZAtom::Parameter::Unknown) {
             this->_name = RPZAtom::toString(
                 this->_type,
                 variant.toString()
             );
 
             colsByDataRoles[0].insert(Qt::DisplayRole);
-
-        } 
-
+        }
     }
 
     return colsByDataRoles;
-
 }
 
 bool MapLayoutAtom::notifyAssetNameChange(const QString newAssetName) {
-
-    if(this->_nameChangeParam != RPZAtom::Parameter::AssetName) return false;
+    if (this->_nameChangeParam != RPZAtom::Parameter::AssetName) return false;
 
     this->_name = RPZAtom::toString(
         this->_type,
@@ -113,7 +102,6 @@ bool MapLayoutAtom::notifyAssetNameChange(const QString newAssetName) {
     );
 
     return true;
-
 }
 
 bool MapLayoutAtom::isHidden() const {
@@ -136,8 +124,6 @@ const QString MapLayoutAtom::name() const {
     return this->_name;
 }
 
-const QPixmap MapLayoutAtom::icon() const { 
-    return QPixmap(this->_iconPath); 
+const QPixmap MapLayoutAtom::icon() const {
+    return QPixmap(this->_iconPath);
 }
-
-
