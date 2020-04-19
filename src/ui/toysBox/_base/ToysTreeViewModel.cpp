@@ -394,7 +394,7 @@ QList<ToysTreeViewItem*> ToysTreeViewModel::fromMimeData(const QMimeData *data) 
     // iterate through list
     QList<ToysTreeViewItem*> list;
     for (const auto &pointerAsString : pointerList) {
-        auto ptr = (ToysTreeViewItem*)pointerAsString.toULongLong();
+        auto ptr = reinterpret_cast<ToysTreeViewItem*>(pointerAsString.toULongLong());
         list.append(ptr);
     }
 

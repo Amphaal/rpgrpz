@@ -19,18 +19,17 @@
 
 #pragma once
 
-#include "src/shared/renderer/graphics/_generic/MapViewGraphicsPixmapItem.hpp"
-#include "src/shared/models/RPZAtom.h"
-
 #include <QStyleOptionGraphicsItem>
 #include <QPainter>
 #include <QPropertyAnimation>
+
+#include "src/shared/renderer/graphics/_generic/MapViewGraphicsPixmapItem.hpp"
+#include "src/shared/models/RPZAtom.h"
 
 #include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
 #include "src/shared/renderer/graphics/_base/RPZAnimated.hpp"
 
 class MapViewUnscalable : public QObject, public QGraphicsItem, public RPZGraphicsItem, public RPZAnimated {
-    
     Q_OBJECT
     Q_PROPERTY(qreal scale READ scale WRITE setScale)
     Q_PROPERTY(qreal rotation READ rotation WRITE setRotation)
@@ -42,16 +41,14 @@ class MapViewUnscalable : public QObject, public QGraphicsItem, public RPZGraphi
             BottomCenter
         };
 
-        MapViewUnscalable(const RPZAtom &atom) {
-            
+        explicit MapViewUnscalable(const RPZAtom &atom) {
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIgnoresTransformations, true);
 
             this->_type = atom.type();
             auto assetPath = _assetPathByAtomType.value(this->_type);
             this->_p = QPixmap(assetPath).scaled(QSize(48, 48), Qt::AspectRatioMode::KeepAspectRatio);
 
-            switch(this->_type) {
-
+            switch (this->_type) {
                 case RPZAtom::Type::POI: {
                     this->_refP = RefPoint::BottomCenter;
                 }
@@ -64,14 +61,11 @@ class MapViewUnscalable : public QObject, public QGraphicsItem, public RPZGraphi
 
                 default:
                 break;
-
             }
-
         }
 
         void triggerAnimation() override {
-            
-            //scaling
+            // scaling
             auto scale = new QPropertyAnimation(this, "scale");
             scale->setEasingCurve(QEasingCurve::InOutQuad);
             scale->setDuration(2000);
@@ -84,8 +78,8 @@ class MapViewUnscalable : public QObject, public QGraphicsItem, public RPZGraphi
             scale->setCurrentTime(QRandomGenerator::global()->bounded(0, scale->duration()));
             scale->start(QAbstractAnimation::DeleteWhenStopped);
 
-            //rotation
-            if(this->_type == RPZAtom::Type::Event) {
+            // rotation
+            if (this->_type == RPZAtom::Type::Event) {
                 auto rotate = new QPropertyAnimation(this, "rotation");
                 rotate->setEasingCurve(QEasingCurve::Linear);
                 rotate->setDuration(3000);
@@ -97,14 +91,12 @@ class MapViewUnscalable : public QObject, public QGraphicsItem, public RPZGraphi
                 rotate->setCurrentTime(QRandomGenerator::global()->bounded(0, rotate->duration()));
                 rotate->start(QAbstractAnimation::DeleteWhenStopped);
             }
-
         }
 
         QRectF boundingRect() const override {
             auto rect = QRectF(this->_p.rect());
-            
-            switch(this->_refP) {
-                
+
+            switch (this->_refP) {
                 case RefPoint::Center: {
                     rect.moveCenter({});
                 }
@@ -115,7 +107,6 @@ class MapViewUnscalable : public QObject, public QGraphicsItem, public RPZGraphi
                     rect.moveBottom(0);
                 }
                 break;
-
             }
 
             return rect;
@@ -124,12 +115,12 @@ class MapViewUnscalable : public QObject, public QGraphicsItem, public RPZGraphi
  protected:
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
             auto result = this->conditionnalPaint(this, painter, option, widget);
-            if(!result.mustContinue) return;
+            if (!result.mustContinue) return;
             this->_paint(painter, &result.options, widget);
         }
 
-        bool _mustDrawSelectionHelper() const override { 
-            return true; 
+        bool _mustDrawSelectionHelper() const override {
+            return true;
         };
 
  private:
@@ -138,19 +129,16 @@ class MapViewUnscalable : public QObject, public QGraphicsItem, public RPZGraphi
         RPZAtom::Type _type;
 
         void _paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) {
-            
             painter->save();
 
                 painter->setRenderHint(QPainter::Antialiasing, true);
                 painter->drawPixmap(this->boundingRect(), this->_p, this->_p.rect());
 
             painter->restore();
-
         }
 
         static const inline QHash<RPZAtom::Type, QString> _assetPathByAtomType = {
             { RPZAtom::Type::Event, QStringLiteral(u":/assets/event.png") },
             { RPZAtom::Type::POI, QStringLiteral(u":/assets/pointOfInterest.png") },
         };
-
 };

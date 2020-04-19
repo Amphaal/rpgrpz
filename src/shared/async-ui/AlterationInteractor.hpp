@@ -25,23 +25,24 @@
 
 class AlterationInteractor {
  public:
-        AlterationInteractor(const Payload::Interactor &interactorId) : _interactorId(interactorId) {};
-        Payload::Interactor interactorId() const { return this->_interactorId; }
+    explicit AlterationInteractor(const Payload::Interactor &interactorId) : _interactorId(interactorId) {}
 
-        void payloadTrace(const AlterationPayload &payload) {
-            
-            //no need for detailed log on debug
-            #ifdef _DEBUG 
-                return;
-            #endif
+    Payload::Interactor interactorId() const {
+        return this->_interactorId;
+    }
 
-            auto payloadSource = payload.source();
-            auto payloadType = payload.type();
+    void payloadTrace(const AlterationPayload &payload) {
+        // no need for detailed log on debug
+        #ifdef _DEBUG
+            return;
+        #endif
 
-            qDebug() << "<< [" << payloadSource << ":" << this->_interactorId << "] -" << payloadType;
-            
-        }
+        auto payloadSource = payload.source();
+        auto payloadType = payload.type();
+
+        qDebug() << "<< [" << payloadSource << ":" << this->_interactorId << "] -" << payloadType;
+    }
 
  private:
-        Payload::Interactor _interactorId = Payload::Interactor::Undefined;
+    Payload::Interactor _interactorId = Payload::Interactor::Undefined;
 };

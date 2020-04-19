@@ -23,7 +23,7 @@
 
 class AddedPayload : public AtomsWielderPayload {
  public:
-        explicit AddedPayload(const QVariantHash &hash) : AtomsWielderPayload(hash) {}
-        AddedPayload(const RPZAtom &atom) : AtomsWielderPayload(QList<RPZAtom>({atom})) {}  
-        AddedPayload(const QList<RPZAtom> &atoms) : AtomsWielderPayload(atoms) {}  
+explicit AddedPayload(const QVariantHash &hash) : AtomsWielderPayload(hash) {}
+explicit AddedPayload(const RPZAtom &atom) : AtomsWielderPayload(QList<RPZAtom>({atom})) {}
+explicit AddedPayload(const QList<RPZAtom> &atoms) : AtomsWielderPayload(atoms) {}
 };
