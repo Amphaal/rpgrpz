@@ -26,8 +26,8 @@
 
 class LogScrollView : public QScrollArea {
  public:
-        LogScrollView(QWidget *parent = nullptr);
+    explicit LogScrollView(QWidget *parent = nullptr);
 
  private:
-        void _scrollUpdate();
+    void _scrollUpdate();
 };

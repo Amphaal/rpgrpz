@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <QBoxLayout>
+
 #include "src/ui/chat/logs/_base/LogContainer.h"
 #include "src/ui/chat/logs/components/LogContent.hpp"
 #include "src/ui/chat/logs/components/LogText.hpp"
@@ -28,28 +30,25 @@
 
 #include "src/ui/_others/ConnectivityObserver.h"
 
-#include <QBoxLayout>
-
 class MessagesLog : public LogContainer, public ConnectivityObserver {
-    
     Q_OBJECT
-    
- public:
-        MessagesLog(QWidget *parent = nullptr);
 
-        void handleResponse(const RPZResponse &response);
-        
-        void handleLocalMessage(RPZMessage &msg);
-        void handleRemoteMessage(const RPZMessage &msg);
-        void handleHistoryMessage(const RPZMessage &msg);
+ public:
+    explicit MessagesLog(QWidget *parent = nullptr);
+
+    void handleResponse(const RPZResponse &response);
+
+    void handleLocalMessage(RPZMessage &msg);
+    void handleRemoteMessage(const RPZMessage &msg);
+    void handleHistoryMessage(const RPZMessage &msg);
 
  signals:
-        void notificationCountUpdated(int newCount);
+    void notificationCountUpdated(int newCount);
 
  private:
-        QList<Stampable::Id> _msgIdsNotSeen;
+    QList<Stampable::Id> _msgIdsNotSeen;
 
-        void _handleMessage(const RPZMessage &msg, bool isLocal = false, bool fromHistory = false);
-        void changeEvent(QEvent *event) override;
-        void paintEvent(QPaintEvent *event) override;
+    void _handleMessage(const RPZMessage &msg, bool isLocal = false, bool fromHistory = false);
+    void changeEvent(QEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 };

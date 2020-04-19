@@ -56,37 +56,34 @@ QVBoxLayout* LogContainer::_getLayout() {
 }
 
 LogItem* LogContainer::_addLine(const Stampable &element, Stampable::Id putUnder) {
-    
     auto eId = element.id();
     auto found = this->_linesBySerializableId.value(eId);
 
-    //if non existant
-    if(!found) {
-
-        //create line
+    // if non existant
+    if (!found) {
+        // create line
         found = new LogItem(eId);
 
-        //if no information about descendant, push last
-        if(!putUnder) {
+        // if no information about descendant, push last
+        if (!putUnder) {
             this->layout()->addWidget(found);
-        }
-        else {
-            //add carriage return symbol
+        } else {
+            // add carriage return symbol
             auto cr = new QLabel(QChar(0x2607));
             found->layout()->setAlignment(Qt::AlignLeft);
             found->layout()->addWidget(cr);
 
-            //find position to put the line under
+            // find position to put the line under
             auto targetPos = this->_linesBySerializableId.value(putUnder)->positionInLog();
-            
-            //add at pos
+
+            // add at pos
             this->_vLayout->insertWidget(targetPos + 1, found);
         }
-        
-        //set position
+
+        // set position
         found->setPositionInLog(this->layout()->count()-1);
-        
-        //add to store
+
+        // add to store
         this->_linesBySerializableId.insert(eId, found);
     }
 
@@ -102,13 +99,12 @@ LogItem* LogContainer::_getLine(Stampable::Id elementId) {
 }
 
 void LogContainer::clearLines() {
-    
-    //clear UI
-    while(auto item = this->layout()->takeAt(0)) {
+    // clear UI
+    while (auto item = this->layout()->takeAt(0)) {
         delete item->widget();
         this->layout()->removeItem(item);
     }
 
-    //clear storage
+    // clear storage
     this->_linesBySerializableId.clear();
 }

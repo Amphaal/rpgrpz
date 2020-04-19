@@ -29,41 +29,37 @@
 #include "src/shared/commands/RPZActions.h"
 
 class MapActions : public QToolBar {
-
     Q_OBJECT
 
- public:       
-        MapActions(QWidget * parent = nullptr) : QToolBar(parent) {
-            
-            //self
-            this->layout()->setMargin(0);
-            this->setIconSize(QSize(16, 16));
-            this->setMovable(true);
-            this->setFloatable(true);
+ public:
+    explicit MapActions(QWidget * parent = nullptr) : QToolBar(parent) {
+        // self
+        this->layout()->setMargin(0);
+        this->setIconSize(QSize(16, 16));
+        this->setMovable(true);
+        this->setFloatable(true);
 
-            QObject::connect(
-                this, &QToolBar::actionTriggered,
-                this, &MapActions::_onActionSelectionChanged
-            );
+        QObject::connect(
+            this, &QToolBar::actionTriggered,
+            this, &MapActions::_onActionSelectionChanged
+        );
 
-            this->addSeparator();
+        this->addSeparator();
 
-            //reset tool
-            auto resetTool = RPZActions::resetTool();
-            this->addAction(resetTool);
+        // reset tool
+        auto resetTool = RPZActions::resetTool();
+        this->addAction(resetTool);
 
-            //reset view
-            auto resetV = RPZActions::resetView();
-            this->addAction(resetV);
+        // reset view
+        auto resetV = RPZActions::resetView();
+        this->addAction(resetV);
+    }
 
-        }
- 
  signals:
-        void actionRequested(const MapAction &action);
+    void actionRequested(const MapAction &action);
 
- private:        
-        void _onActionSelectionChanged(QAction *action) {
-            return emit actionRequested((MapAction)action->data().toInt());
-        }
-
+ private:
+    void _onActionSelectionChanged(QAction *action) {
+        return emit actionRequested((MapAction)action->data().toInt());
+    }
 };

@@ -37,69 +37,65 @@
 
 class Payloads {
  public:
-        static QSharedPointer<AlterationPayload> autoCast(const QVariantHash &hash) {
-            
-            AlterationPayload lowCast(hash);
-            
-            switch(lowCast.type()) {
-                
-                case Payload::Alteration::FogChanged: {
-                    return QSharedPointer<FogChangedPayload>(new FogChangedPayload(hash));
-                }
+    static QSharedPointer<AlterationPayload> autoCast(const QVariantHash &hash) {
+        AlterationPayload lowCast(hash);
 
-                case Payload::Alteration::FogModeChanged: {
-                    return QSharedPointer<FogModeChangedPayload>(new FogModeChangedPayload(hash));
-                }
-
-                case Payload::Alteration::BulkMetadataChanged:
-                    return QSharedPointer<BulkMetadataChangedPayload>(new BulkMetadataChangedPayload(hash));
-                break;
-
-                case Payload::Alteration::AtomTemplateChanged:
-                    return QSharedPointer<AtomTemplateChangedPayload>(new AtomTemplateChangedPayload(hash));
-                break;
-
-                case Payload::Alteration::AtomTemplateSelected:
-                    return QSharedPointer<AtomTemplateSelectedPayload>(new AtomTemplateSelectedPayload(hash));
-                break;
-
-                case Payload::Alteration::AssetChanged:
-                    return QSharedPointer<AssetChangedPayload>(new AssetChangedPayload(hash));
-                break;
-
-                case Payload::Alteration::ToySelected:
-                    return QSharedPointer<ToySelectedPayload>(new ToySelectedPayload(hash));
-                break;
-
-                case Payload::Alteration::Added:
-                    return QSharedPointer<AddedPayload>(new AddedPayload(hash));
-                break;
-
-                case Payload::Alteration::Reset:
-                    return QSharedPointer<ResetPayload>(new ResetPayload(hash));
-                break;
-
-                case Payload::Alteration::Focused:
-                    return QSharedPointer<FocusedPayload>(new FocusedPayload(hash));
-                break;
-
-                case Payload::Alteration::Removed:
-                    return QSharedPointer<RemovedPayload>(new RemovedPayload(hash));
-                break;
-
-                case Payload::Alteration::Selected:
-                    return QSharedPointer<SelectedPayload>(new SelectedPayload(hash));
-                break;
-
-                case Payload::Alteration::MetadataChanged:
-                    return QSharedPointer<MetadataChangedPayload>(new MetadataChangedPayload(hash));
-                break;
-
-                default:
-                    return QSharedPointer<AlterationPayload>(new AlterationPayload(hash));
-                break;
-                
+        switch (lowCast.type()) {
+            case Payload::Alteration::FogChanged: {
+                return QSharedPointer<FogChangedPayload>(new FogChangedPayload(hash));
             }
 
+            case Payload::Alteration::FogModeChanged: {
+                return QSharedPointer<FogModeChangedPayload>(new FogModeChangedPayload(hash));
+            }
+
+            case Payload::Alteration::BulkMetadataChanged:
+                return QSharedPointer<BulkMetadataChangedPayload>(new BulkMetadataChangedPayload(hash));
+            break;
+
+            case Payload::Alteration::AtomTemplateChanged:
+                return QSharedPointer<AtomTemplateChangedPayload>(new AtomTemplateChangedPayload(hash));
+            break;
+
+            case Payload::Alteration::AtomTemplateSelected:
+                return QSharedPointer<AtomTemplateSelectedPayload>(new AtomTemplateSelectedPayload(hash));
+            break;
+
+            case Payload::Alteration::AssetChanged:
+                return QSharedPointer<AssetChangedPayload>(new AssetChangedPayload(hash));
+            break;
+
+            case Payload::Alteration::ToySelected:
+                return QSharedPointer<ToySelectedPayload>(new ToySelectedPayload(hash));
+            break;
+
+            case Payload::Alteration::Added:
+                return QSharedPointer<AddedPayload>(new AddedPayload(hash));
+            break;
+
+            case Payload::Alteration::Reset:
+                return QSharedPointer<ResetPayload>(new ResetPayload(hash));
+            break;
+
+            case Payload::Alteration::Focused:
+                return QSharedPointer<FocusedPayload>(new FocusedPayload(hash));
+            break;
+
+            case Payload::Alteration::Removed:
+                return QSharedPointer<RemovedPayload>(new RemovedPayload(hash));
+            break;
+
+            case Payload::Alteration::Selected:
+                return QSharedPointer<SelectedPayload>(new SelectedPayload(hash));
+            break;
+
+            case Payload::Alteration::MetadataChanged:
+                return QSharedPointer<MetadataChangedPayload>(new MetadataChangedPayload(hash));
+            break;
+
+            default:
+                return QSharedPointer<AlterationPayload>(new AlterationPayload(hash));
+            break;
         }
+    }
 };
