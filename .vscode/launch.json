@@ -15,7 +15,7 @@
             "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ",
             "osx": {
                 "MIMode": "lldb",
-                "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ",
+                "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ"
             },
             "windows": {
                 "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",

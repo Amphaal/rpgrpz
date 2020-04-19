@@ -34,107 +34,97 @@
 #include "src/shared/models/character/RPZGauge.hpp"
 
 class SimpleGaugeEditor : public QWidget {
-
     Q_OBJECT
 
  public:
-        void fillValues(const RPZGauge::MinimalistGauge &gauge) {
-            
-            //limits
-            this->_applyMinMaxLimitsOnSpinBoxes(gauge);
+    void fillValues(const RPZGauge::MinimalistGauge &gauge) {
+        // limits
+        this->_applyMinMaxLimitsOnSpinBoxes(gauge);
 
-            this->_currentValSpin->setValue(gauge.current);
-            this->_minBarValSpin->setValue(gauge.min);
-            this->_maxBarValSpin->setValue(gauge.max);
-            
-        };
+        this->_currentValSpin->setValue(gauge.current);
+        this->_minBarValSpin->setValue(gauge.min);
+        this->_maxBarValSpin->setValue(gauge.max);
+    }
 
-        SimpleGaugeEditor() : 
-            _currentValSpin(new QSpinBox),
-            _minBarValSpin(new QSpinBox),
-            _maxBarValSpin(new QSpinBox) {
-                
-                //minimum
-                this->_minBarValSpin->setToolTip(tr("Gauge minimum"));
-                this->_minBarValSpin->setMinimum(-9999);
-                QObject::connect(
-                    this->_minBarValSpin, qOverload<int>(&QSpinBox::valueChanged), 
-                    this, &SimpleGaugeEditor::_applyDefaultMinMaxLimitsOnSpinBoxes
-                );
+    SimpleGaugeEditor() : _currentValSpin(new QSpinBox), _minBarValSpin(new QSpinBox), _maxBarValSpin(new QSpinBox) {
 
-                //maximum
-                this->_maxBarValSpin->setToolTip(tr("Gauge maximum"));
-                this->_maxBarValSpin->setMaximum(9999);
-                QObject::connect(
-                    this->_maxBarValSpin, qOverload<int>(&QSpinBox::valueChanged), 
-                    this, &SimpleGaugeEditor::_applyDefaultMinMaxLimitsOnSpinBoxes
-                );
+            // minimum
+            this->_minBarValSpin->setToolTip(tr("Gauge minimum"));
+            this->_minBarValSpin->setMinimum(-9999);
+            QObject::connect(
+                this->_minBarValSpin, qOverload<int>(&QSpinBox::valueChanged),
+                this, &SimpleGaugeEditor::_applyDefaultMinMaxLimitsOnSpinBoxes
+            );
 
-                //current
-                this->_currentValSpin->setToolTip(tr("Gauge value"));
-                QObject::connect(
-                    this->_currentValSpin, qOverload<int>(&QSpinBox::valueChanged), 
-                    this, &SimpleGaugeEditor::_applyDefaultMinMaxLimitsOnSpinBoxes
-                );
+            // maximum
+            this->_maxBarValSpin->setToolTip(tr("Gauge maximum"));
+            this->_maxBarValSpin->setMaximum(9999);
+            QObject::connect(
+                this->_maxBarValSpin, qOverload<int>(&QSpinBox::valueChanged),
+                this, &SimpleGaugeEditor::_applyDefaultMinMaxLimitsOnSpinBoxes
+            );
 
-                //editors layout
-                this->_layoutToInsertTo = new QHBoxLayout;
-                this->_layoutToInsertTo->addWidget(this->_minBarValSpin);
-                this->_layoutToInsertTo->addSpacing(10);
-                this->_layoutToInsertTo->addWidget(this->_currentValSpin);
-                this->_layoutToInsertTo->addWidget(new QLabel("/"));
-                this->_layoutToInsertTo->addWidget(this->_maxBarValSpin);
+            // current
+            this->_currentValSpin->setToolTip(tr("Gauge value"));
+            QObject::connect(
+                this->_currentValSpin, qOverload<int>(&QSpinBox::valueChanged),
+                this, &SimpleGaugeEditor::_applyDefaultMinMaxLimitsOnSpinBoxes
+            );
 
-                //layout
-                auto l = new QVBoxLayout;
-                l->setMargin(0);
-                this->setLayout(l);
-                l->addLayout(this->_layoutToInsertTo);
+            // editors layout
+            this->_layoutToInsertTo = new QHBoxLayout;
+            this->_layoutToInsertTo->addWidget(this->_minBarValSpin);
+            this->_layoutToInsertTo->addSpacing(10);
+            this->_layoutToInsertTo->addWidget(this->_currentValSpin);
+            this->_layoutToInsertTo->addWidget(new QLabel("/"));
+            this->_layoutToInsertTo->addWidget(this->_maxBarValSpin);
 
-        }
+            // layout
+            auto l = new QVBoxLayout;
+            l->setMargin(0);
+            this->setLayout(l);
+            l->addLayout(this->_layoutToInsertTo);
+    }
 
-        SimpleGaugeEditor(const RPZGauge::MinimalistGauge &setup) : SimpleGaugeEditor() {
-            this->fillValues(setup);
-        }
+    explicit SimpleGaugeEditor(const RPZGauge::MinimalistGauge &setup) : SimpleGaugeEditor() {
+        this->fillValues(setup);
+    }
 
-        const RPZGauge::MinimalistGauge toMinimalist() const {
-            
-            RPZGauge::MinimalistGauge g;
+    const RPZGauge::MinimalistGauge toMinimalist() const {
+        RPZGauge::MinimalistGauge g;
 
-            g.min = this->_minBarValSpin->value();
-            g.max = this->_maxBarValSpin->value();
-            g.current = this->_currentValSpin->value();
+        g.min = this->_minBarValSpin->value();
+        g.max = this->_maxBarValSpin->value();
+        g.current = this->_currentValSpin->value();
 
-            return g;
-        }
-    
+        return g;
+    }
+
  protected:
-        QHBoxLayout* _layoutToInsertTo = nullptr;
+    QHBoxLayout* _layoutToInsertTo = nullptr;
 
  private:
-        QSpinBox* _currentValSpin = nullptr;
-        QSpinBox* _minBarValSpin = nullptr;
-        QSpinBox* _maxBarValSpin = nullptr;
+    QSpinBox* _currentValSpin = nullptr;
+    QSpinBox* _minBarValSpin = nullptr;
+    QSpinBox* _maxBarValSpin = nullptr;
 
-        void _applyMinMaxLimitsOnSpinBoxes(const RPZGauge::MinimalistGauge &gauge) {
-            
-            //min
-            this->_minBarValSpin->setMaximum(gauge.current);
+    void _applyMinMaxLimitsOnSpinBoxes(const RPZGauge::MinimalistGauge &gauge) {
+        // min
+        this->_minBarValSpin->setMaximum(gauge.current);
 
-            //max
-            this->_maxBarValSpin->setMinimum(gauge.current);
+        // max
+        this->_maxBarValSpin->setMinimum(gauge.current);
 
-            //value
-            this->_currentValSpin->setMinimum(gauge.min);
-            this->_currentValSpin->setMaximum(gauge.max);
+        // value
+        this->_currentValSpin->setMinimum(gauge.min);
+        this->_currentValSpin->setMaximum(gauge.max);
+    }
 
-        }
-
-        void _applyDefaultMinMaxLimitsOnSpinBoxes() {
-            this->_applyMinMaxLimitsOnSpinBoxes({
-                this->_currentValSpin->value(),
-                this->_minBarValSpin->value(),
-                this->_maxBarValSpin->value()
-            });
-        }
+    void _applyDefaultMinMaxLimitsOnSpinBoxes() {
+        this->_applyMinMaxLimitsOnSpinBoxes({
+            this->_currentValSpin->value(),
+            this->_minBarValSpin->value(),
+            this->_maxBarValSpin->value()
+        });
+    }
 };

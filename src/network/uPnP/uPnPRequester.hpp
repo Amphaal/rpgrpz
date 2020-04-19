@@ -38,7 +38,7 @@ class uPnPRequester : public uPnPThread {
     struct IGDdatas data;
     struct UPNPDev * devlist = 0;
     char lanaddr[64] = "unset"; /* my ip address on the LAN */
-    int i;
+    int i = -1;
     char * rootdescurl = 0;
     char * multicastif = 0;
     char * minissdpdpath = 0;
