@@ -24,23 +24,25 @@
 
 class NotificationsAudioManager {
  public:
-        static NotificationsAudioManager* get() {
-            if(!_instance) _instance = new NotificationsAudioManager();
-            return _instance;
-        }
+    static NotificationsAudioManager* get() {
+        if (!_instance) _instance = new NotificationsAudioManager();
+        return _instance;
+    }
 
-        void playDiceThrow() {
+    void playDiceThrow() {
+        auto randomIndex = QRandomGenerator::global()->bounded(0, _diceEffects.count() - 1);
+        auto source = _diceEffects.value(randomIndex);
 
-            auto randomIndex = QRandomGenerator::global()->bounded(0, _diceEffects.count() - 1);
-            auto source = _diceEffects.value(randomIndex);
+        this->_playEffect(source);
+    }
 
-            this->_playEffect(source);
-            
-        }
+    void playWhisper() {
+        this->_playEffect(":/audio/privateMessage.wav");
+    }
 
-        void playWhisper() {
-            this->_playEffect(":/audio/privateMessage.wav");
-        }
+    void playPing() {
+        this->_playEffect(":/audio/ping.wav");
+    }
 
  private:
         NotificationsAudioManager() {}
@@ -51,7 +53,7 @@ class NotificationsAudioManager {
             effect->setSource(QUrl::fromLocalFile(path));
             effect->play();
             QObject::connect(
-                effect, &QSoundEffect::playingChanged, 
+                effect, &QSoundEffect::playingChanged,
                 effect, &QObject::deleteLater
             );
         }

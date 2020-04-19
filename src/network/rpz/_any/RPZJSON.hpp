@@ -48,7 +48,8 @@ class RPZJSON {
             QuickDrawHappened,
             GameSessionSync,
             SharedDocumentAvailable,
-            SharedDocumentRequested
+            SharedDocumentRequested,
+            PingHappened
         };
         Q_ENUM(Method)
        

@@ -45,7 +45,7 @@
 #include "src/ui/users/standard/StandardUsersListView.hpp"
 
 #include "src/ui/toysBox/ToysTreeView.h"
-#include "src/ui/docShare/DocShareListView.hpp"
+#include "src/ui/docShare/DocShareListView.h"
 
 #include "src/ui/atomEditor/AtomEditionManager.hpp"
 

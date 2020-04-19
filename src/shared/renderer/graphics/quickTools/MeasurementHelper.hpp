@@ -37,9 +37,8 @@
 #include "src/shared/models/RPZMapParameters.hpp"
 #include "src/shared/renderer/graphics/_specific/MapViewToken.hpp"
 
-class MapViewMeasurementHelper : public QObject, public QGraphicsItem, public RPZGraphicsItem {
+class MeasurementHelper : public QObject, public QGraphicsItem, public RPZGraphicsItem {
     Q_OBJECT
-    Q_PROPERTY(QPointF pos READ pos WRITE setPos)
     Q_INTERFACES(QGraphicsItem)
 
  private:
@@ -53,7 +52,7 @@ class MapViewMeasurementHelper : public QObject, public QGraphicsItem, public RP
         QLineF distanceLine;
     };
 
-    const MapViewMeasurementHelper::PointPos _generateCursorPointPos() const {
+    const MeasurementHelper::PointPos _generateCursorPointPos() const {
         PointPos out;
         out.viewCursorPos = this->_view->mapFromGlobal(QCursor::pos());
         out.sceneCursorPos = this->_view->mapToScene(out.viewCursorPos);
@@ -108,7 +107,7 @@ class MapViewMeasurementHelper : public QObject, public QGraphicsItem, public RP
         painter->setOpacity(.8);
     }
 
-    void _drawRangeEllipse(QPainter *painter, const QStyleOptionGraphicsItem *option, const MapViewMeasurementHelper::PointPos &pp) {
+    void _drawRangeEllipse(QPainter *painter, const QStyleOptionGraphicsItem *option, const MeasurementHelper::PointPos &pp) {
         painter->save();
 
             this->_defineWalkerGuide(painter);
@@ -127,7 +126,7 @@ class MapViewMeasurementHelper : public QObject, public QGraphicsItem, public RP
         painter->restore();
     }
 
-    void _drawRangeGrid(QPainter *painter, const QStyleOptionGraphicsItem *option, const MapViewMeasurementHelper::PointPos &pp) {
+    void _drawRangeGrid(QPainter *painter, const QStyleOptionGraphicsItem *option, const MeasurementHelper::PointPos &pp) {
         painter->save();
 
             this->_defineWalkerGuide(painter);
@@ -138,7 +137,7 @@ class MapViewMeasurementHelper : public QObject, public QGraphicsItem, public RP
         painter->restore();
     }
 
-    void _drawLinearRangeTextIndicator(QPainter *painter, const QStyleOptionGraphicsItem *option, const MapViewMeasurementHelper::PointPos &pp) {
+    void _drawLinearRangeTextIndicator(QPainter *painter, const QStyleOptionGraphicsItem *option, const MeasurementHelper::PointPos &pp) {
         painter->save();
 
             QLineF line({0, 0}, pp.sceneCursorPos);
@@ -161,7 +160,7 @@ class MapViewMeasurementHelper : public QObject, public QGraphicsItem, public RP
         painter->restore();
     }
 
-    void _drawGridRangeTextIndicator(QPainter *painter, const QStyleOptionGraphicsItem *option, const MapViewMeasurementHelper::PointPos &pp) {
+    void _drawGridRangeTextIndicator(QPainter *painter, const QStyleOptionGraphicsItem *option, const MeasurementHelper::PointPos &pp) {
         painter->save();
 
             painter->setTransform(QTransform());
@@ -223,7 +222,7 @@ class MapViewMeasurementHelper : public QObject, public QGraphicsItem, public RP
     }
 
  public:
-    MapViewMeasurementHelper(const RPZMapParameters &params, const QPoint &evtPosPoint, QGraphicsView* view) : _view(view) {
+    MeasurementHelper(const RPZMapParameters &params, const QPoint &evtPosPoint, QGraphicsView* view) : _view(view) {
         this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
         this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
         this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsFocusable, false);

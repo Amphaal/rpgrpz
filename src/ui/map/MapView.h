@@ -59,6 +59,7 @@
 
 #include "src/shared/renderer/assists/AtomDrawingAssist.hpp"
 #include "src/shared/renderer/assists/QuickDrawingAssist.hpp"
+#include "src/shared/renderer/assists/PingAssist.hpp"
 
 #include "src/shared/renderer/graphics/MapViewGraphics.h"
 
@@ -113,9 +114,10 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
     RPZMapParameters _currentMapParameters;
     QuickDrawingAssist* _quickDrawingAssist = nullptr;
     AtomDrawingAssist* _atomDrawingAssist = nullptr;
+    PingAssist* _pingAssist = nullptr;
     AtomsContextualMenuHandler* _menuHandler = nullptr;
     AtomActionsHandler* _atomActionsHandler = nullptr;
-    MapViewMeasurementHelper* _measurementHelper = nullptr;
+    MeasurementHelper* _measurementHelper = nullptr;
 
     // helpers
     void _handleHintsSignalsAndSlots();
@@ -155,9 +157,10 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
     QCursor _measureCursor;
 
     // walking...
-        MapViewWalkingHelper* _walkingHelper = nullptr;
+        WalkingHelper* _walkingHelper = nullptr;
         void _mightUpdateWalkingHelperPos();
         void _clearWalkingHelper();
+        void _clearMeasurementHelper();
         bool _tryToInvokeWalkableHelper(const QList<QGraphicsItem*> &toBeWalked);
 
     void onAnimationManipulationTickDone() override;

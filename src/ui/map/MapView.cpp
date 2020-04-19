@@ -32,6 +32,7 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
     this->_atomActionsHandler = new AtomActionsHandler(this, this);
     this->_atomDrawingAssist = new AtomDrawingAssist(this);
     this->_quickDrawingAssist = new QuickDrawingAssist(this);
+    this->_pingAssist = new PingAssist(this);
 
     // OpenGL backend activation
     QGLFormat format;
@@ -332,7 +333,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
 
             case Payload::Alteration::Removed: {
                 // if walked item is about to be deleted, change tool to default
-                auto deletedItemIsToBeWalked = MapViewWalkingHelper::isToBeWalked(this->_walkingHelper, item);
+                auto deletedItemIsToBeWalked = WalkingHelper::isToBeWalked(this->_walkingHelper, item);
                 if (deletedItemIsToBeWalked && currentTool == MapTool::Walking) {
                     this->_changeTool(MapTool::Default);
                 }
@@ -400,7 +401,7 @@ bool MapView::_tryToInvokeWalkableHelper(const QList<QGraphicsItem*> &toBeWalked
     this->_clearWalkingHelper();
 
     // create walking helper
-    this->_walkingHelper = new MapViewWalkingHelper(
+    this->_walkingHelper = new WalkingHelper(
         this->_currentMapParameters,
         toBeWalked,
         this
@@ -585,7 +586,7 @@ void MapView::mousePressEvent(QMouseEvent *event) {
 
                 default: {
                     auto ghost = HintThread::hint()->ghostItem();
-                    if (MapViewWalkingHelper::isMoveOrInsertPreventedAtPosition(this->_currentMapParameters, ghost)) break;
+                    if (WalkingHelper::isMoveOrInsertPreventedAtPosition(this->_currentMapParameters, ghost)) break;
 
                     HintThread::hint()->integrateGraphicsItemAsPayload(ghost);
                 }
@@ -607,9 +608,14 @@ void MapView::mousePressEvent(QMouseEvent *event) {
             break;
 
             case MapTool::Measure : {
-                if (this->_measurementHelper) delete this->_measurementHelper;
-                this->_measurementHelper = new MapViewMeasurementHelper(this->_currentMapParameters, event->pos(), this);
+                this->_clearMeasurementHelper();
+                this->_measurementHelper = new MeasurementHelper(this->_currentMapParameters, event->pos(), this);
                 this->scene()->addItem(this->_measurementHelper);
+            }
+            break;
+
+            case MapTool::Ping : {
+                this->_pingAssist->generatePing(event->pos());
             }
             break;
 
@@ -701,6 +707,11 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
         this->_quickDrawingAssist->onMouseRelease();
 
         switch (currentTool) {
+            case MapTool::Measure: {
+                this->_clearMeasurementHelper();
+            }
+            break;
+
             case MapTool::Default: {
                 // if something moved ?
                 HintThread::hint()->mightNotifyMovement(this->scene()->selectedItems());
@@ -736,6 +747,11 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
             break;
         }
     }
+}
+
+void MapView::_clearMeasurementHelper() {
+    if (this->_measurementHelper) delete this->_measurementHelper;
+    this->_measurementHelper = nullptr;
 }
 
 bool MapView::_isAnySelectableItemsUnderCursor(const QPoint &cursorPosInWindow) const {
@@ -787,6 +803,7 @@ void MapView::_changeTool(MapTool newTool, const bool quickChange) {
     // end drawing if any
     this->_atomDrawingAssist->mayCommitDrawing();
     this->_quickDrawingAssist->onMouseRelease();
+    this->_clearMeasurementHelper();
 
     // prevent the usage of Atom tool if not host able
     if (!Authorisations::isHostAble() && newTool == MapTool::Atom) return;

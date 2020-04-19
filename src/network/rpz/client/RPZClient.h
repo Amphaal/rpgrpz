@@ -46,106 +46,109 @@
 #include "src/shared/models/network/RPZGameSession.hpp"
 #include "src/shared/async-ui/AlterationHandler.h"
 #include "src/shared/models/RPZSharedDocument.hpp"
+#include "src/shared/models/RPZPing.hpp"
 
 class RPZClient : public QObject, public AlterationInteractor, public JSONLogger {
-
     Q_OBJECT
 
  public:
-        RPZClient(const QString &socketStr, const QString &displayName, const RPZCharacter &toIncarnate);
-        ~RPZClient();
-        
-        const QString getConnectedSocketAddress() const; //safe
-        bool hasReceivedInitialMap() const; //safe
+    RPZClient(const QString &socketStr, const QString &displayName, const RPZCharacter &toIncarnate);
+    ~RPZClient();
 
-        const RPZUser identity() const; //safe
-        const RPZMap<RPZUser> sessionUsers() const; //safe
-        const QList<RPZCharacter::UserBound> sessionCharacters() const; //safe
-        const RPZCharacter sessionCharacter(const RPZCharacter::Id &characterId) const; //safe
+    const QString getConnectedSocketAddress() const;  // safe
+    bool hasReceivedInitialMap() const;  // safe
+
+    const RPZUser identity() const;  // safe
+    const RPZMap<RPZUser> sessionUsers() const;  // safe
+    const QList<RPZCharacter::UserBound> sessionCharacters() const;  // safe
+    const RPZCharacter sessionCharacter(const RPZCharacter::Id &characterId) const;  // safe
 
  public slots:
-        void run();
+    void run();
 
-        void sendMessage(const RPZMessage &message);
-        void defineAudioSourceState(const StreamPlayStateTracker &state);
-        void changeAudioPosition(qint64 newPositionInMsecs);
-        void setAudioStreamPlayState(bool isPlaying);
-        void sendMapHistory(const ResetPayload &historyPayload);
-        void notifyCharacterChange(const RPZCharacter &changed);
-        void sendQuickdraw(const RPZQuickDrawBits &qd);
-        void addSharedDocument(const RPZSharedDocument::FileHash &hash, const RPZSharedDocument::DocumentName &documentName);
-        void requestSharedDocument(const RPZSharedDocument::FileHash &hash);
+    void sendMessage(const RPZMessage &message);
+    void defineAudioSourceState(const StreamPlayStateTracker &state);
+    void changeAudioPosition(qint64 newPositionInMsecs);
+    void setAudioStreamPlayState(bool isPlaying);
+    void sendMapHistory(const ResetPayload &historyPayload);
+    void notifyCharacterChange(const RPZCharacter &changed);
+    void sendQuickdraw(const RPZQuickDrawBits &qd);
+    void addSharedDocument(const RPZSharedDocument::FileHash &hash, const RPZSharedDocument::DocumentName &documentName);
+    void requestSharedDocument(const RPZSharedDocument::FileHash &hash);
+    void notifyPing(const QPointF &pingPosition);
 
  signals:
-        void connectionStatus(const QString &statusMessage, bool isError = false);
-        void closed();
+    void connectionStatus(const QString &statusMessage, bool isError = false);
+    void closed();
 
-        void receivedMessage(const RPZMessage &message);
-        void serverResponseReceived(const RPZResponse &reponse);
-        
-        void quickDrawBitsReceived(const RPZQuickDrawBits &qd);
+    void receivedMessage(const RPZMessage &message);
+    void serverResponseReceived(const RPZResponse &reponse);
 
-        void availableAssetsFromServer(const QVector<RPZAsset::Hash> &availableIds);
-        void receivedAsset(const RPZAssetImportPackage &package);
+    void quickDrawBitsReceived(const RPZQuickDrawBits &qd);
 
-        void userLeftServer(const RPZUser &userOut);
-        void userJoinedServer(const RPZUser &newUser);
-        void userDataChanged(const RPZUser &updatedUser);
-        void whisperTargetsChanged();
-        
-        void gameSessionReceived(const RPZGameSession &gameSession);
-        void characterImpersonated(const RPZCharacter::Id &impersonatedCharacterId);
+    void availableAssetsFromServer(const QVector<RPZAsset::Hash> &availableIds);
+    void receivedAsset(const RPZAssetImportPackage &package);
 
-        void charactersCountChanged();
+    void userLeftServer(const RPZUser &userOut);
+    void userJoinedServer(const RPZUser &newUser);
+    void userDataChanged(const RPZUser &updatedUser);
+    void whisperTargetsChanged();
 
-        void audioSourceStateChanged(const StreamPlayStateTracker &state);
-        void audioPositionChanged(qint64 newPosInMsecs);
-        void audioPlayStateChanged(bool isPlaying);
+    void gameSessionReceived(const RPZGameSession &gameSession);
+    void characterImpersonated(const RPZCharacter::Id &impersonatedCharacterId);
 
-        void sharedDocumentAvailable(const RPZSharedDocument::FileHash &documentHash, const QString &documentName);
-        void sharedDocumentReceived(const RPZSharedDocument &sharedDocument);
+    void charactersCountChanged();
+
+    void audioSourceStateChanged(const StreamPlayStateTracker &state);
+    void audioPositionChanged(qint64 newPosInMsecs);
+    void audioPlayStateChanged(bool isPlaying);
+
+    void sharedDocumentAvailable(const RPZSharedDocument::FileHash &documentHash, const QString &documentName);
+    void sharedDocumentReceived(const RPZSharedDocument &sharedDocument);
+
+    void pingHappened(const RPZPing &ping);
 
  private:
-        enum class CharacterRegistration {
-            In,
-            Out
-        };
-        JSONSocket* _serverSock = nullptr;   
-        bool _initialMapSetupReceived = false;
+    enum class CharacterRegistration {
+        In,
+        Out
+    };
+    JSONSocket* _serverSock = nullptr;
+    bool _initialMapSetupReceived = false;
 
-        QString _domain;
-        QString _port;
-        QString _userDisplayName;
-        RPZCharacter _handshakeCharacter;
+    QString _domain;
+    QString _port;
+    QString _userDisplayName;
+    RPZCharacter _handshakeCharacter;
 
-        RPZUser::Id _myUserId;
-        RPZUser& _myUser();
+    RPZUser::Id _myUserId;
+    RPZUser& _myUser();
 
-        void _onMapChangeReceived(AlterationPayload *castedPayload, bool isHeavyChange);
-        void _registerSessionUsers(const RPZGameSession &gameSession);
+    void _onMapChangeReceived(AlterationPayload *castedPayload, bool isHeavyChange);
+    void _registerSessionUsers(const RPZGameSession &gameSession);
 
-        RPZMap<RPZUser> _sessionUsers;
-        mutable QMutex _m_sessionUsers;
+    RPZMap<RPZUser> _sessionUsers;
+    mutable QMutex _m_sessionUsers;
 
-        bool _hasPendingCharactersRegistration = false;
-        void _mayRegisterAsCharacterized(const RPZUser &user, const CharacterRegistration &type);
-        void _checkPendingCharactersRegistration();
-        QSet<RPZUser::Id> _characterizedUserIds;
-        QHash<RPZCharacter::Id, RPZUser::Id> _associatedUserIdByCharacterId;
+    bool _hasPendingCharactersRegistration = false;
+    void _mayRegisterAsCharacterized(const RPZUser &user, const CharacterRegistration &type);
+    void _checkPendingCharactersRegistration();
+    QSet<RPZUser::Id> _characterizedUserIds;
+    QHash<RPZCharacter::Id, RPZUser::Id> _associatedUserIdByCharacterId;
 
-        void _initSock();
+    void _initSock();
 
-        void _onConnected();
-        void _error(QAbstractSocket::SocketError _socketError);
-        void _onDisconnect();
-        void _onSending();
-        void _onSent(bool success);
-        void _onBatchAcked(RPZJSON::Method method, qint64 batchSize);
-        void _onBatchDownloading(RPZJSON::Method method, qint64 downloaded);
-        void _askForAssets(const QSet<RPZAsset::Hash> &ids);
+    void _onConnected();
+    void _error(QAbstractSocket::SocketError _socketError);
+    void _onDisconnect();
+    void _onSending();
+    void _onSent(bool success);
+    void _onBatchAcked(RPZJSON::Method method, qint64 batchSize);
+    void _onBatchDownloading(RPZJSON::Method method, qint64 downloaded);
+    void _askForAssets(const QSet<RPZAsset::Hash> &ids);
 
-        void _routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data);
+    void _routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data);
 
  private slots:
-        void _handleAlterationRequest(const AlterationPayload &payload);
+    void _handleAlterationRequest(const AlterationPayload &payload);
 };

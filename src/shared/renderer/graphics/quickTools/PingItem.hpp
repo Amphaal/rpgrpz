@@ -18,3 +18,160 @@
 // different license and copyright still refer to this GPL.
 
 #pragma once
+
+#include <QGraphicsView>
+#include <QGraphicsItem>
+#include <QPointF>
+#include <QPainter>
+#include <QDebug>
+#include <QSizeF>
+#include <QFont>
+#include <QStyleOptionGraphicsItem>
+#include <QTextOption>
+#include <QTimer>
+#include <QPropertyAnimation>
+
+#include "src/helpers/_appContext.h"
+
+#include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
+
+class PingItem : public QObject, public QGraphicsItem, public RPZGraphicsItem {
+    
+    Q_OBJECT
+    Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
+    Q_INTERFACES(QGraphicsItem)
+    
+    private:
+        QGraphicsView* _view = nullptr;
+        QPointF _sceneEvtPoint;
+        QColor _pingColor;
+        QTimer _tmAutoFadeout;
+        QPropertyAnimation* _animFadeout = nullptr;
+
+        static inline int _msTimeoutAutoFade = 10000;
+        static inline int _msFadeDuration = 2000;
+
+        void _paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) {
+            
+            auto &sceneRect = option->exposedRect;
+            auto isInScene = sceneRect.contains(this->_sceneEvtPoint);
+
+            painter->save();
+                
+                painter->setBrush(this->_pingColor);
+
+                if(isInScene) {
+                    this->_paintPing(painter);
+                }
+                else {
+                    this->_paintPingIndicator(painter, sceneRect);
+                }
+
+            painter->restore();
+
+        }
+
+        void _paintPing(QPainter *painter) {
+            
+            QRectF out({}, QSizeF(60, 60));
+            out.moveCenter(this->_sceneEvtPoint);
+            
+            painter->drawRect(out);
+            
+            this->_mightStartFadeout();
+        }
+
+        void _paintPingIndicator(QPainter *painter, const QRectF &displayedSceneRect) {
+            
+            //resize
+            QRectF out({}, QSizeF(40, 40));
+
+            //find line and angle
+            QLineF line(
+                displayedSceneRect.center(),
+                this->_sceneEvtPoint
+            );
+            QRectF lineRect(line.p1(), line.p2());
+
+            //intersect to get angle points
+            auto intersected = displayedSceneRect.intersected(lineRect);
+            
+            //move to angle
+            auto angle = line.angle();
+
+            if(angle > 0 && angle <= 90) {
+                out.moveTopRight(intersected.topRight());
+            } 
+
+            else if (angle > 90 && angle <= 180) {
+                out.moveTopLeft(intersected.topLeft());
+            } 
+            
+            else if (angle > 180 && angle <= 270) {
+                out.moveBottomLeft(intersected.bottomLeft());
+            } 
+            
+            else {
+                out.moveBottomRight(intersected.bottomRight());
+            }
+            
+            painter->drawRect(out);
+
+        }
+
+        void _mightStartFadeout() {
+            if(this->_animFadeout->state() != QAbstractAnimation::State::Running) 
+                this->_animFadeout->start();
+        }
+
+    public:
+        ~PingItem() {
+            if(_animFadeout) delete _animFadeout;
+        }
+
+        PingItem(const QPointF &scenePosPoint, const QColor &pingColor, QGraphicsView* view) : _view(view) {
+            
+            this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
+            this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
+            this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsFocusable, false);            
+
+            this->setZValue(AppContext::WALKER_Z_INDEX);
+
+            this->_sceneEvtPoint = scenePosPoint;
+            this->_pingColor = pingColor;
+
+            //start auto fadeout after
+            this->_tmAutoFadeout.setInterval(_msTimeoutAutoFade);
+            this->_tmAutoFadeout.start();
+
+            //define fadeout animation
+            this->_animFadeout = new QPropertyAnimation(this, "opacity");
+            this->_animFadeout->setEasingCurve(QEasingCurve::Linear);
+            this->_animFadeout->setDuration(_msFadeDuration);
+            this->_animFadeout->setStartValue(1);
+            this->_animFadeout->setEndValue(0);
+
+            QObject::connect(
+                &this->_tmAutoFadeout, &QTimer::timeout,
+                this, &PingItem::_mightStartFadeout
+            );
+
+            QObject::connect(
+                this->_animFadeout, &QPropertyAnimation::finished,
+                this, &QObject::deleteLater
+            );
+
+        }
+
+        QRectF boundingRect() const override {
+            return this->_view->mapToScene(this->_view->rect()).boundingRect();
+        }
+
+    protected:
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override {
+            auto result = this->conditionnalPaint(this, painter, option, widget);
+            if(!result.mustContinue) return;
+            this->_paint(painter, &result.options, widget);
+        }
+
+};

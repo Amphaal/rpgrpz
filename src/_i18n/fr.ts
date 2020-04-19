@@ -1370,6 +1370,11 @@
         <source> (downloading...)</source>
         <translation> (téléchargement...)</translation>
     </message>
+    <message>
+        <location filename="../ui/docShare/DocShareListView.cpp" line="218"/>
+        <source> (available)</source>
+        <translation> (disponible)</translation>
+    </message>
 </context>
 <context>
     <name>RPZClient</name>

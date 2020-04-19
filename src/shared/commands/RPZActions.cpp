@@ -26,7 +26,7 @@ QAction* RPZActions::usePingTool() {
     );
 
     action->setCheckable(true);
-    action->setEnabled(false);
+    action->setEnabled(true);
     action->setData((int)MapTool::Ping);
 
     return action;

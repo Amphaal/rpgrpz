@@ -280,6 +280,12 @@ void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
     QMetaObject::invokeMethod(ProgressTracker::get(), "clientIsReceiving");
 
     switch (method) {
+        case RPZJSON::Method::PingHappened: {
+            RPZPing ping(data.toHash());
+            emit pingHappened(ping);
+        }
+        break;
+
         case RPZJSON::Method::SharedDocumentAvailable: {
             auto pair = data.toList();
             emit sharedDocumentAvailable(
@@ -492,6 +498,16 @@ void RPZClient::requestSharedDocument(const RPZSharedDocument::FileHash &hash) {
     );
 }
 
+void RPZClient::notifyPing(const QPointF &pingPosition) {
+    
+    RPZPing ping(pingPosition, this->_myUserId);
+    
+    this->_serverSock->sendToSocket(
+        RPZJSON::Method::PingHappened,
+        ping
+    );
+    
+}
 
 RPZUser& RPZClient::_myUser() {
     return this->_sessionUsers[this->_myUserId];
