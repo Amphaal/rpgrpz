@@ -47,7 +47,7 @@
 <context>
     <name>AtomEditionManager</name>
     <message>
-        <location filename="../ui/atomEditor/AtomEditionManager.hpp" line="63"/>
+        <location filename="../ui/atomEditor/AtomEditionManager.hpp" line="60"/>
         <source>Reset displayed parameters</source>
         <translation>Réinitialiser les paramètres affichés</translation>
     </message>
@@ -1326,7 +1326,7 @@
         <translation>J</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditionManager.hpp" line="52"/>
+        <location filename="../ui/atomEditor/AtomEditionManager.hpp" line="49"/>
         <source>Default configuration</source>
         <translation>Paramétrage par défaut</translation>
     </message>
@@ -1341,7 +1341,7 @@
         <translation>Santé</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/GaugeWidget.hpp" line="43"/>
+        <location filename="../ui/sheets/components/GaugeWidget.hpp" line="42"/>
         <source>[Unamed gauge]</source>
         <translation>[Jauge sans nom]</translation>
     </message>
@@ -1451,17 +1451,17 @@
 <context>
     <name>SimpleGaugeEditor</name>
     <message>
-        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="58"/>
+        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="52"/>
         <source>Gauge minimum</source>
         <translation>Minimum de la jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="66"/>
+        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="60"/>
         <source>Gauge maximum</source>
         <translation>Maximum de la jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="74"/>
+        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="68"/>
         <source>Gauge value</source>
         <translation>Valeur de la jauge</translation>
     </message>
