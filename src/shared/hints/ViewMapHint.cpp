@@ -512,7 +512,7 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
         this->_singleSelectionInteractible = ssi;
     } else if (auto mPayload = dynamic_cast<const FogModeChangedPayload*>(&payload)) {  // fog mode
         emit fogModeChanged(mPayload->mode());
-    } else if (auto mPayload = dynamic_cast<const ResetPayload*>(&payload)) {  // if reset (afterward)
+    } else if (dynamic_cast<const ResetPayload*>(&payload)) {  // if reset (afterward)
         // bind owned tokens
         this->_checkForOwnedTokens();
 

@@ -314,7 +314,6 @@ class uPnPRequester : public uPnPThread {
         char lastconnerr[64];
         unsigned int uptime = 0;
         unsigned int brUp, brDown;
-        time_t timenow, timestarted;
         int r;
         if (UPNP_GetConnectionTypeInfo(urls.controlURL,
                                     data.first.servicetype,
@@ -328,6 +327,7 @@ class uPnPRequester : public uPnPThread {
         else
             qDebug() << "UPNP Info : Status :" << status << ", uptime=" << uptime << ", LastConnectionError :" << lastconnerr << "";
         if (uptime > 0) {
+            time_t timenow, timestarted;
             timenow = time(NULL);
             timestarted = timenow - uptime;
             char tt[26];

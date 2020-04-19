@@ -201,9 +201,9 @@ class MapLayoutModelBase : public QAbstractItemModel {
             if (!base) return 0;
 
             // category
-            if (auto category = dynamic_cast<MapLayoutCategory*>(base)) {
+            if (dynamic_cast<MapLayoutCategory*>(base)) {
                 return QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled);
-            } else if (auto atom = dynamic_cast<MapLayoutAtom*>(base)) {  // atom
+            } else if (dynamic_cast<MapLayoutAtom*>(base)) {  // atom
                 return QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsSelectable);
             }
 

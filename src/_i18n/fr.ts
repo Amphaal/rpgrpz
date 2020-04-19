@@ -55,7 +55,7 @@
 <context>
     <name>AtomEditor</name>
     <message numerus="yes">
-        <location filename="../ui/atomEditor/AtomEditor.cpp" line="237"/>
+        <location filename="../ui/atomEditor/AtomEditor.cpp" line="236"/>
         <source> (%n element(s))</source>
         <translation>
             <numerusform> (%n élément)</numerusform>
@@ -180,12 +180,12 @@
 <context>
     <name>AtomShortTextEditor</name>
     <message>
-        <location filename="../ui/atomEditor/editors/generic/AtomShortTextEditor.hpp" line="35"/>
+        <location filename="../ui/atomEditor/editors/generic/AtomShortTextEditor.hpp" line="32"/>
         <source>Confirm modification</source>
         <translation>Confirmer la modification</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/generic/AtomShortTextEditor.hpp" line="38"/>
+        <location filename="../ui/atomEditor/editors/generic/AtomShortTextEditor.hpp" line="35"/>
         <source>Type some text...</source>
         <translation>Saisissez du texte...</translation>
     </message>
@@ -193,12 +193,12 @@
 <context>
     <name>AtomTextEditor</name>
     <message>
-        <location filename="../ui/atomEditor/editors/generic/AtomTextEditor.hpp" line="35"/>
+        <location filename="../ui/atomEditor/editors/generic/AtomTextEditor.hpp" line="32"/>
         <source>Confirm modification</source>
         <translation>Confirmer la modification</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/generic/AtomTextEditor.hpp" line="38"/>
+        <location filename="../ui/atomEditor/editors/generic/AtomTextEditor.hpp" line="35"/>
         <source>Type some text...</source>
         <translation>Saisissez du texte...</translation>
     </message>
@@ -452,42 +452,42 @@
 <context>
     <name>GaugeEditor</name>
     <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="48"/>
+        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="44"/>
         <source> Gauge name</source>
         <translation> Nom de la jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="55"/>
+        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="51"/>
         <source>Fav.</source>
         <translation>Fav.</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="56"/>
+        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="52"/>
         <source>Visible under portrait ?</source>
         <translation>Visible sous le portrait ?</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="60"/>
+        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="56"/>
         <source>Choose a gauge color</source>
         <translation>Choisir la couleur de la jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="70"/>
+        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="66"/>
         <source>Delete gauge</source>
         <translation>Supprimer la jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="124"/>
+        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="114"/>
         <source>Gauge color</source>
         <translation>Couleur de la jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="136"/>
+        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="124"/>
         <source>Gauge deletion</source>
         <translation>Suppresion de jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="137"/>
+        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="125"/>
         <source>Do you really want to delete this gauge ?</source>
         <translation>Voulez-vous vraiment supprimer cette jauge ?</translation>
     </message>
@@ -1346,22 +1346,22 @@
         <translation>[Jauge sans nom]</translation>
     </message>
     <message>
-        <location filename="../ui/chat/logs/components/LogContent.hpp" line="56"/>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="55"/>
         <source>logged in !</source>
         <translation>s&apos;est connecté !</translation>
     </message>
     <message>
-        <location filename="../ui/chat/logs/components/LogContent.hpp" line="60"/>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="59"/>
         <source>logged out.</source>
         <translation>s&apos;est déconnecté.</translation>
     </message>
     <message>
-        <location filename="../ui/chat/logs/components/LogContent.hpp" line="78"/>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="75"/>
         <source>Sent at %1</source>
         <translation>Envoyé à %1</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/generic/ColorPickerEditor.hpp" line="49"/>
+        <location filename="../ui/atomEditor/editors/generic/ColorPickerEditor.hpp" line="46"/>
         <source>Pen color</source>
         <translation>Couleur</translation>
     </message>

@@ -40,8 +40,6 @@ YoutubePlayer* PlaylistAudioManager::player() {
 void PlaylistAudioManager::_onGameSessionReceived(const RPZGameSession &gameSession) {
     Q_UNUSED(gameSession);
 
-    auto selfUser = this->_rpzClient->identity();
-
     this->_isNetworkMaster = Authorisations::isHostAble();
     this->_plCtrl->setEnabled(this->_isNetworkMaster);
 

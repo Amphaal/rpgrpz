@@ -160,6 +160,7 @@ void MapView::_metadataUpdatePostProcess(const QList<QGraphicsItem*> &FoWSensiti
     if (FoWSensitiveItems.count()) {
         auto request = HintThread::hint()->fogItem()->visibilityChangeFromList(FoWSensitiveItems);
         this->_mayFogUpdateAtoms(request);
+        if (!request.nowInvisible.count() && !request.nowVisible.count()) mustTriggerAnimations = false;
     }
 
     if (mustTriggerAnimations) MapViewAnimator::triggerQueuedAnimations();

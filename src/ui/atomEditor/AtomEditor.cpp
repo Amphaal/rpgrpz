@@ -119,18 +119,17 @@ void AtomEditor::_createEditorsFromAtomParameters() {
     _addEditor(new AtomSliderEditor(RPZAtom::Parameter::BrushPenWidth, 1, 500));
 
     _addEditor(new AtomSliderEditor(RPZAtom::Parameter::Rotation, 0, 359));
-    _addEditor(new NonLinearAtomSliderEditor(RPZAtom::Parameter::Scale, QVector<CrossEquities::CrossEquity> {
-        {.1, 1},
+
+    CrossEquities defaultEquities({
+        { .1, 1 },
         { 1, 500 },
-        {10.0, 1000 }
-    }));
+        { 10.0, 1000 }
+    });
+    _addEditor(new NonLinearAtomSliderEditor(RPZAtom::Parameter::Scale, defaultEquities));
 
     _addEditor(new AtomSliderEditor(RPZAtom::Parameter::AssetRotation, 0, 359));
-    _addEditor(new NonLinearAtomSliderEditor(RPZAtom::Parameter::AssetScale, QVector<CrossEquities::CrossEquity> {
-        {.1, 1},
-        { 1, 500 },
-        {10.0, 1000 }
-    }));
+
+    _addEditor(new NonLinearAtomSliderEditor(RPZAtom::Parameter::AssetScale, defaultEquities));
 
     _addEditor(new AtomSliderEditor(RPZAtom::Parameter::PenWidth, 1, 50));
     _addEditor(new AtomSliderEditor(RPZAtom::Parameter::TextSize, 1, 50));
@@ -223,7 +222,7 @@ void AtomEditor::_updateEditMode() {
 
     if (selectedIdsCount) {
         this->_currentEditMode = AtomSubEditor::EditMode::Selection;
-    } else if (!selectedIdsCount && !this->_currentSelectionDescr.templateAtom.isEmpty()) {
+    } else if (!this->_currentSelectionDescr.templateAtom.isEmpty()) {
         this->_currentEditMode = AtomSubEditor::EditMode::Template;
     } else {
         this->_currentEditMode = AtomSubEditor::EditMode::None;
