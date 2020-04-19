@@ -25,12 +25,11 @@
 #include "src/helpers/_appContext.h"
 
 class RestoringSplitter : public QSplitter {
-    
  public:
-        RestoringSplitter(const QString &id, QWidget * parent = nullptr);
+    explicit RestoringSplitter(const QString &id, QWidget * parent = nullptr);
 
-        void restore();
+    void restore();
 
  private:
-        const QString _id;
+    const QString _id;
 };

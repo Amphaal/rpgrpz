@@ -81,7 +81,7 @@
 <context>
     <name>AtomEditorLineDescriptor</name>
     <message>
-        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.cpp" line="65"/>
+        <location filename="../ui/atomEditor/_base/AtomEditorLineDescriptor.cpp" line="59"/>
         <source>mult. val.</source>
         <translation>val. mult.</translation>
     </message>
@@ -1104,7 +1104,7 @@
         <translation>Dossier</translation>
     </message>
     <message>
-        <location filename="../ui/mapLayout/model/MapLayoutCategory.cpp" line="57"/>
+        <location filename="../ui/mapLayout/model/MapLayoutCategory.cpp" line="56"/>
         <source>Layer %1</source>
         <translation>Calque %1</translation>
     </message>

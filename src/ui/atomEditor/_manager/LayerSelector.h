@@ -27,14 +27,13 @@
 #include "src/helpers/_appContext.h"
 
 class LayerSelector : public QWidget {
-    
     Q_OBJECT
-    
+
  public:
-        LayerSelector(QWidget *parent = nullptr);
-        ~LayerSelector();
-        QSpinBox* spinbox();
+    explicit LayerSelector(QWidget *parent = nullptr);
+    ~LayerSelector();
+    QSpinBox* spinbox();
 
  private:
-        QSpinBox* _spinbox = nullptr;
+    QSpinBox* _spinbox = nullptr;
 };

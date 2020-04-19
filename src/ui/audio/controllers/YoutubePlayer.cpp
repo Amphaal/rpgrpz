@@ -19,31 +19,28 @@
 
 #include "YoutubePlayer.h"
 
-YoutubePlayer::YoutubePlayer(QWidget * parent) : QGroupBox(tr("Playlist"), parent), 
-    _toolbar(new TrackToolbar(this)),
-    _playlist(new Playlist(this)), 
-    _linkInserter(new YoutubePlaylistItemInsertor(this)) {
-
-    //self
+YoutubePlayer::YoutubePlayer(QWidget * parent) : QGroupBox(tr("Playlist"), parent), _toolbar(new TrackToolbar(this)),
+    _playlist(new Playlist(this)), _linkInserter(new YoutubePlaylistItemInsertor(this)) {
+    // self
     this->setEnabled(false);
     this->setLayout(new QVBoxLayout);
 
-    //groupbox
+    // groupbox
     this->setAlignment(Qt::AlignHCenter);
 
-    //on action from toolbar
+    // on action from toolbar
     QObject::connect(
         this->_toolbar, &TrackToolbar::actionRequired,
         this, &YoutubePlayer::_onToolbarActionRequested
     );
 
-    //on youtube url insertion
+    // on youtube url insertion
     QObject::connect(
         this->_linkInserter, &YoutubePlaylistItemInsertor::insertionRequested,
         this->_playlist, &Playlist::addYoutubeVideo
     );
 
-    //inner list
+    // inner list
     this->layout()->addWidget(this->_toolbar);
     this->layout()->addWidget(this->_linkInserter);
     this->layout()->addWidget(this->_playlist);
@@ -58,18 +55,16 @@ Playlist* YoutubePlayer::playlist() {
 }
 
 void YoutubePlayer::_onToolbarActionRequested(const TrackToolbar::Action &action) {
-    switch(action) {
-
+    switch (action) {
         case TrackToolbar::Action::Forward:
             this->_playlist->playNext();
             break;
-            
+
         case TrackToolbar::Action::Rewind:
             this->_playlist->playPrevious();
             break;
 
         default:
             break;
-
     }
 }

@@ -32,23 +32,22 @@
 #include "src/helpers/StringHelper.hpp"
 
 class AudioProbeController : public QGroupBox {
-
     Q_OBJECT
 
  public:
-        AudioProbeController(QWidget * parent = nullptr);
-        
-        void updatePlayedMusic(const QString &musicName);
-        void changeTrackState(bool isPlaying);
-        void changeTrackPosition(int posInSecs);
-        
-        VolumeToolbar* toolbar = nullptr;
-        
- private:
-        static inline const QString _defaultNoTime = "--"; 
+    explicit AudioProbeController(QWidget * parent = nullptr);
 
-        QLabel* _descr = nullptr;
-        QLabel* _playIconLbl = nullptr;
-        QLabel* _posInTrackLbl = nullptr;
-        QMovie* _playIcon = nullptr;
+    void updatePlayedMusic(const QString &musicName);
+    void changeTrackState(bool isPlaying);
+    void changeTrackPosition(int posInSecs);
+
+    VolumeToolbar* toolbar = nullptr;
+
+ private:
+    static inline const QString _defaultNoTime = "--";
+
+    QLabel* _descr = nullptr;
+    QLabel* _playIconLbl = nullptr;
+    QLabel* _posInTrackLbl = nullptr;
+    QMovie* _playIcon = nullptr;
 };

@@ -58,9 +58,8 @@ class SharedDocHint {
  private:
         static inline QMutex _mNS;
         static inline RPZSharedDocument::NamesStore _namesStore;
-        
+
         static inline QMutex _mS;
         static inline RPZSharedDocument::Store _store;
-
 };
 

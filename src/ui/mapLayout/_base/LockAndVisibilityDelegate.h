@@ -26,14 +26,13 @@
 #include "src/ui/mapLayout/model/MapLayoutAtom.h"
 
 class LockAndVisibilityDelegate  : public QStyledItemDelegate {
-    
  public:
-        LockAndVisibilityDelegate(QWidget *parent = nullptr);
+    explicit LockAndVisibilityDelegate(QWidget *parent = nullptr);
 
-        void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-        QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-    
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+
  private:
-        static inline QPixmap* _hiddenPix = nullptr;
-        static inline QPixmap* _lockPix = nullptr;
+    static inline QPixmap* _hiddenPix = nullptr;
+    static inline QPixmap* _lockPix = nullptr;
 };

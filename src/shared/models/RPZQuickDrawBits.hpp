@@ -29,7 +29,7 @@ class RPZQuickDrawBits : public QVariantHash {
  public:
         using Id = SnowFlake::Id;
 
-        RPZQuickDrawBits() {};
+        RPZQuickDrawBits() {}
         explicit RPZQuickDrawBits(const QVariantHash &hash) : QVariantHash(hash) {}
         RPZQuickDrawBits(const QPointF &scenePos, const RPZQuickDrawBits::Id &id, const RPZUser::Id &drawerId, const QPainterPath &bits, bool areLastBits) {
             this->insert("pos", JSONSerializer::fromPointF(scenePos));
@@ -54,9 +54,8 @@ class RPZQuickDrawBits : public QVariantHash {
         const QPainterPath bitsAsPath() const {
             return JSONSerializer::toPainterPath(this->value("bits").toByteArray());
         }
- 
+
         bool areLastBits() const {
             return this->value("end").toBool();
         }
-
 };
