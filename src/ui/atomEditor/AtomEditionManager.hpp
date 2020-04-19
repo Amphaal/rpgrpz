@@ -129,7 +129,7 @@ class AtomEditionManager : public QWidget {
             auto descr = HintThread::hint()->getAtomSelectionDescriptor(truncated);
 
             this->_handleSubjectChange(descr);
-        } else if (auto mPayload = dynamic_cast<RemovedPayload*>(casted.data())) {  // on reset
+        } else if (dynamic_cast<RemovedPayload*>(casted.data())) {  // on reset
             AtomsSelectionDescriptor descr;
             this->_handleSubjectChange(descr);
         }

@@ -116,7 +116,7 @@ class MapLayoutModelBase : public QAbstractItemModel {
             }
 
             // category, root is parent
-            if (auto category = dynamic_cast<MapLayoutCategory*>(base)) {
+            if (dynamic_cast<MapLayoutCategory*>(base)) {
                 return QModelIndex();
             } else if (auto atom = dynamic_cast<MapLayoutAtom*>(base)) {  // atom, category is parent
                 auto category = atom->parent();
