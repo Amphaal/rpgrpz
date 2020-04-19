@@ -26,25 +26,21 @@
 #include <QString>
 #include <QMovie>
 
-
-
 class RPZStatusLabel : public QWidget {
-
     Q_OBJECT
 
  public:
-        enum State {Finished = 0, Waiting, Processing, Error };
+    enum State {Finished = 0, Waiting, Processing, Error };
 
-        RPZStatusLabel(const QString &description, QWidget* parent = nullptr);
+    explicit RPZStatusLabel(const QString &description, QWidget* parent = nullptr);
 
-        void updateState(const QString &stateText, RPZStatusLabel::State state = Finished);
-        void setWaiting(bool waiting);
-        QLabel* dataLabel();
+    void updateState(const QString &stateText, RPZStatusLabel::State state = Finished);
+    void setWaiting(bool waiting);
+    QLabel* dataLabel();
 
  private:
-        QLabel* _descriptionLbl = nullptr;
-        QLabel* _dataLbl = nullptr;
-        QLabel* _loaderLbl = nullptr;
-        QMovie* _loader = nullptr;
-       
+    QLabel* _descriptionLbl = nullptr;
+    QLabel* _dataLbl = nullptr;
+    QLabel* _loaderLbl = nullptr;
+    QMovie* _loader = nullptr;
 };

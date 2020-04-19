@@ -20,11 +20,10 @@
 #include "MapLayoutManager.h"
 
 MapLayoutManager::MapLayoutManager(QGraphicsView* viewToMimic, QWidget *parent) : QWidget(parent) {
-
-    //tree
+    // tree
     this->_tree = new MapLayoutTree(this);
-    
-    //param btn
+
+    // param btn
     this->_mapParamBtn = new QPushButton(QIcon(QStringLiteral(u":/icons/app/tools/cog.png")), "");
     this->_mapParamBtn->setToolTip(QObject::tr("Map parameters"));
     QObject::connect(
@@ -32,7 +31,7 @@ MapLayoutManager::MapLayoutManager(QGraphicsView* viewToMimic, QWidget *parent) 
         this, &MapLayoutManager::_handleMapParametersEdition
     );
 
-    //fow slider
+    // fow slider
     this->_FoWOpacitySlider = new QSlider(this);
     this->_FoWOpacitySlider->setToolTip(QObject::tr("Fog of war opacity"));
     this->_FoWOpacitySlider->setOrientation(Qt::Orientation::Horizontal);
@@ -44,7 +43,7 @@ MapLayoutManager::MapLayoutManager(QGraphicsView* viewToMimic, QWidget *parent) 
         this, &MapLayoutManager::_fogOpacityChange
     );
 
-    //fow reset
+    // fow reset
     this->_FoWResetBtn = new QPushButton(QObject::tr("Reset", "Reset fog"));
     this->_FoWResetBtn->setToolTip(QObject::tr("Reset fog"));
     QObject::connect(
@@ -52,7 +51,7 @@ MapLayoutManager::MapLayoutManager(QGraphicsView* viewToMimic, QWidget *parent) 
         this, &MapLayoutManager::_handleFogReset
     );
 
-    //fow chk
+    // fow chk
     this->_FoWReversedChk = new QCheckBox(this);
     this->_FoWReversedChk->setText(QObject::tr("Reverse", "Reverse fog"));
     this->_FoWReversedChk->setToolTip(QObject::tr("Reverse fog"));
@@ -61,7 +60,7 @@ MapLayoutManager::MapLayoutManager(QGraphicsView* viewToMimic, QWidget *parent) 
         this, &MapLayoutManager::_changeFogMode
     );
 
-    //events from map
+    // events from map
     QObject::connect(
         HintThread::hint(), &AtomsStorage::mapSetup,
         this, &MapLayoutManager::_onMapSetup
@@ -98,52 +97,44 @@ MapLayoutTree* MapLayoutManager::tree() {
 }
 
 void MapLayoutManager::_handleMapParametersEdition() {
-    
     MapParametersForm form(this->_currentMapParameters, this->parentWidget());
-    if(!form.exec()) return;
-    
-    //get payload, update params
+    if (!form.exec()) return;
+
+    // get payload, update params
     auto payload = HintThread::hint()->generateResetPayload();
     payload.setMapParams(form.getParametersFromWidgets());
 
-    //recommit
+    // recommit
     AlterationHandler::get()->queueAlteration(this->_tree->mlModel, payload);
-
 }
 
 void MapLayoutManager::_changeFogMode(int) {
-    
     auto mode = this->_FoWReversedChk->isChecked() ? RPZFogParams::Mode::PathIsButFog : RPZFogParams::Mode::PathIsFog;
 
-    //get payload, update params
+    // get payload, update params
     FogModeChangedPayload payload(mode);
 
-    //commit
+    // commit
     AlterationHandler::get()->queueAlteration(this->_tree->mlModel, payload);
-
 }
 
- void MapLayoutManager::_fogOpacityChange(int value) {
+void MapLayoutManager::_fogOpacityChange(int value) {
     AppContext::defineFogOpacity((double)value / 100);
- }
+}
 
- void MapLayoutManager::_onMapSetup(const RPZMapParameters &mParams, const RPZFogParams &fParams) {
-    
-    //define current params
+void MapLayoutManager::_onMapSetup(const RPZMapParameters &mParams, const RPZFogParams &fParams) {
+    // define current params
     this->_currentMapParameters = mParams;
 
-    //define default state
+    // define default state
     QSignalBlocker b2(this->_FoWReversedChk);
     this->_FoWReversedChk->setChecked(fParams.mode() == RPZFogParams::Mode::PathIsButFog);
-
- }
+}
 
 void MapLayoutManager::_handleFogReset() {
-    
-    //payload
+    // payload
     FogChangedPayload payload(FogChangedPayload::ChangeType::Reset);
 
-    //commit
+    // commit
     AlterationHandler::get()->queueAlteration(this->_tree->mlModel, payload);
-
 }

@@ -18,18 +18,17 @@
 // different license and copyright still refer to this GPL.
 
 #include "RPZUser.h"
-        
-RPZUser::RPZUser() {};
+
+RPZUser::RPZUser() {}
 RPZUser::RPZUser(const QVariantHash &hash) : Serializable(hash) {}
 
-RPZUser::RPZUser(RPZUser::Id id, const QString &name, const Role &role, const QColor &color) : Serializable(id) { 
+RPZUser::RPZUser(RPZUser::Id id, const QString &name, const Role &role, const QColor &color) : Serializable(id) {
     this->setName(name);
     this->setRole(role);
     this->_setColor(color);
-};
+}
 
 QString RPZUser::idAsBase62() const {
-    
     auto value = this->id();
     QString out;
 
@@ -40,57 +39,49 @@ QString RPZUser::idAsBase62() const {
     } while (value > 0);
 
     return out;
-
 }
 
 void RPZUser::setName(const QString &name) {
-    
-    //default name
+    // default name
     this->insert(QStringLiteral(u"name"), name);
 
-    //whisp name
+    // whisp name
     auto adapted = MessageInterpreter::usernameToCommandCompatible(name);
     adapted = adapted + "#" + this->idAsBase62();
     this->insert(QStringLiteral(u"wname"), adapted);
-        
-};
+}
 
 void RPZUser::setRole(const Role &role) {
     this->insert(QStringLiteral(u"role"), (int)role);
-};
+}
 
-
-QString RPZUser::name() const { 
-
+QString RPZUser::name() const {
     auto name = this->value(QStringLiteral(u"name")).toString();
-    if(!name.isEmpty()) return name;
+    if (!name.isEmpty()) return name;
 
     return NULL;
-    
-};
+}
 
 RPZUser::Role RPZUser::role() const {
-    return (Role)this->value(QStringLiteral(u"role"), 0).toInt(); 
-};
+    return (Role)this->value(QStringLiteral(u"role"), 0).toInt();
+}
 
-QColor RPZUser::color() const { 
+QColor RPZUser::color() const {
     auto colorAsStr = this->value(QStringLiteral(u"color")).toString();
-    return colorAsStr.isEmpty() ? QColor() : QColor(colorAsStr); 
-};
+    return colorAsStr.isEmpty() ? QColor() : QColor(colorAsStr);
+}
 
 QString RPZUser::toString() const {
-    
     auto name = this->name();
-    if(!name.isNull()) {
+    if (!name.isNull()) {
         return this->name();
-    } 
-    
+    }
+
     if (auto id = this->id()) {
         return QString::number(id);
-    } 
-    
-    return "Moi";
+    }
 
+    return "Moi";
 }
 
 QString RPZUser::whisperTargetName() const {

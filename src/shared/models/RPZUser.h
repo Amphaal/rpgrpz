@@ -18,11 +18,13 @@
 // different license and copyright still refer to this GPL.
 
 #pragma once
- 
+
 #include <QString>
 #include <QColor>
 #include <QVariantHash>
 #include <QHostAddress>
+
+#include <string>
 
 #include "src/shared/models/_base/RPZMap.hpp"
 #include "src/helpers/RandomColor.h"
@@ -32,40 +34,39 @@
 #include "src/shared/models/character/RPZCharacter.hpp"
 
 class RPZUser : public Serializable {
-  public:
-        using Id = SnowFlake::Id;
+ public:
+    using Id = SnowFlake::Id;
 
-        enum class Role { Observer, Host, Player };
+    enum class Role { Observer, Host, Player };
 
-        static const inline QHash<RPZUser::Role, QString> IconsByRoles { 
-            { Role::Observer, QStringLiteral(u":/icons/app/connectivity/observer.png") },
-            { Role::Host, QStringLiteral(u":/icons/app/connectivity/crown.png") },
-            { Role::Player, QStringLiteral(u":/icons/app/connectivity/cloak.png") }
-        };
-        
-        RPZUser();
-        explicit RPZUser(const QVariantHash &hash);
-        RPZUser(RPZUser::Id id, const QString &name, const Role &role, const QColor &color);
+    static const inline QHash<RPZUser::Role, QString> IconsByRoles {
+        { Role::Observer, QStringLiteral(u":/icons/app/connectivity/observer.png") },
+        { Role::Host, QStringLiteral(u":/icons/app/connectivity/crown.png") },
+        { Role::Player, QStringLiteral(u":/icons/app/connectivity/cloak.png") }
+    };
 
-        void setName(const QString &name);
-        void setRole(const Role &role);
-        void setCharacter(const RPZCharacter &character);
-        void randomiseColor();
+    RPZUser();
+    explicit RPZUser(const QVariantHash &hash);
+    RPZUser(RPZUser::Id id, const QString &name, const Role &role, const QColor &color);
 
-        QString idAsBase62() const;
+    void setName(const QString &name);
+    void setRole(const Role &role);
+    void setCharacter(const RPZCharacter &character);
+    void randomiseColor();
 
-        QString name() const;
-        QString whisperTargetName() const;
-        Role role() const;
-        QColor color() const;
-        QString toString() const;
-        const RPZCharacter character() const;
+    QString idAsBase62() const;
+
+    QString name() const;
+    QString whisperTargetName() const;
+    Role role() const;
+    QColor color() const;
+    QString toString() const;
+    const RPZCharacter character() const;
 
  private:
-        void _setColor(const QColor &color = QColor());
+    void _setColor(const QColor &color = QColor());
 
-        static inline std::string _CODES_b62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
+    static inline std::string _CODES_b62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 };
 
 inline uint qHash(const RPZUser::Role &key, uint seed = 0) {return uint(key) ^ seed;}
