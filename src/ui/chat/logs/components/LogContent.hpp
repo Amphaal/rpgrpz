@@ -28,113 +28,103 @@
 #include "LogText.hpp"
 
 class LogContent : public QWidget {
-
  public:
-        LogContent(const RPZMessage &msg) {
+    explicit LogContent(const RPZMessage &msg) {
+        this->setAutoFillBackground(true);
+        this->setSizePolicy(QSizePolicy::Policy::MinimumExpanding, QSizePolicy::Policy::Maximum);
+        this->setContentsMargins(0, 0, 0, 0);
 
-            this->setAutoFillBackground(true);
-            this->setSizePolicy(QSizePolicy::Policy::MinimumExpanding, QSizePolicy::Policy::Maximum);
-            this->setContentsMargins(0, 0, 0, 0);
+        auto layout = new QHBoxLayout;
+        this->setLayout(layout);
+        layout->setMargin(0);
+        layout->setSpacing(0);
+        layout->setAlignment(Qt::AlignTop);
 
-            auto layout = new QHBoxLayout;
-            this->setLayout(layout);            
-            layout->setMargin(0);
-            layout->setSpacing(0);
-            layout->setAlignment(Qt::AlignTop);
+        auto cmdType = msg.commandType();
 
-            auto cmdType = msg.commandType();
+        // user format
+        if (cmdType == MessageInterpreter::Command::C_DiceThrow) _diceThrowFormating(layout);
 
-            //user format
-            if(cmdType == MessageInterpreter::Command::C_DiceThrow) _diceThrowFormating(layout);
-            if(auto owner = msg.owner(); owner.id()) _userBoundFormating(layout, msg, owner);
-            
-            //log text
-            QString textStr; 
-            switch(cmdType) {
-                
-                case MessageInterpreter::Command::C_UserLogIn:
-                    textStr = QObject::tr("logged in !");
-                break;
+        auto owner = msg.owner();
+        if (owner.id()) _userBoundFormating(layout, msg, owner);
 
-                case MessageInterpreter::Command::C_UserLogOut:
-                    textStr = QObject::tr("logged out.");
-                break;
+        // log text
+        QString textStr;
+        switch (cmdType) {
+            case MessageInterpreter::Command::C_UserLogIn:
+                textStr = QObject::tr("logged in !");
+            break;
 
-                default:
-                    textStr = msg.toString();
-                break;
+            case MessageInterpreter::Command::C_UserLogOut:
+                textStr = QObject::tr("logged out.");
+            break;
 
-            }
-            auto logText = new LogText(textStr, this);
-
-            layout->addWidget(logText);
-            this->_defineToolTip(msg);
-
+            default:
+                textStr = msg.toString();
+            break;
         }
+        auto logText = new LogText(textStr, this);
+
+        layout->addWidget(logText);
+        this->_defineToolTip(msg);
+    }
 
  private:
-        void _defineToolTip(const RPZMessage &msg) {
-            auto timestamp = msg.timestamp().toString(QStringLiteral(u"dd.MM.yyyy-hh:mm:ss"));
-            this->setToolTip(QObject::tr("Sent at %1").arg(timestamp));
-        }
+    void _defineToolTip(const RPZMessage &msg) {
+        auto timestamp = msg.timestamp().toString(QStringLiteral(u"dd.MM.yyyy-hh:mm:ss"));
+        this->setToolTip(QObject::tr("Sent at %1").arg(timestamp));
+    }
 
-        void _diceThrowFormating(QHBoxLayout* layout) {
-            
-            //dice
-            auto diceImg = new QLabel(this);
-            diceImg->setPixmap(QPixmap(":/icons/app/other/dice.png"));
-            diceImg->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Minimum);
-            diceImg->setContentsMargins(0, 0, 5, 0);
-            
-            //add widgets
-            layout->addWidget(diceImg);
+    void _diceThrowFormating(QHBoxLayout* layout) {
+        // dice
+        auto diceImg = new QLabel(this);
+        diceImg->setPixmap(QPixmap(":/icons/app/other/dice.png"));
+        diceImg->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Minimum);
+        diceImg->setContentsMargins(0, 0, 5, 0);
 
-        }
+        // add widgets
+        layout->addWidget(diceImg);
+    }
 
-    void _userBoundFormating(QHBoxLayout* layout, const RPZMessage &msg, const RPZUser &owner) {
-                
-                layout->setContentsMargins(0, 5, 0, 5);
+void _userBoundFormating(QHBoxLayout* layout, const RPZMessage &msg, const RPZUser &owner) {
+            layout->setContentsMargins(0, 5, 0, 5);
 
-                //companion
-                auto companion = new QLabel(this);
-                companion->setPixmap(QPixmap(RPZUser::IconsByRoles.value(owner.role())));
-                companion->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum);
-                companion->setAlignment(Qt::AlignTop);
+            // companion
+            auto companion = new QLabel(this);
+            companion->setPixmap(QPixmap(RPZUser::IconsByRoles.value(owner.role())));
+            companion->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum);
+            companion->setAlignment(Qt::AlignTop);
 
-                //color
-                QLabel* colorIndic = nullptr;
-                if(auto color = owner.color(); color.isValid()) {
-                    
-                    colorIndic = new QLabel(this);
-                    colorIndic->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum);
-                    colorIndic->setAlignment(Qt::AlignTop);
+            // color
+            QLabel* colorIndic = nullptr;
+            if (auto color = owner.color(); color.isValid()) {
+                colorIndic = new QLabel(this);
+                colorIndic->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum);
+                colorIndic->setAlignment(Qt::AlignTop);
 
-                    colorIndic->setFixedWidth(10);
-                    colorIndic->setFixedHeight(10);
-                    colorIndic->setFrameShape(QFrame::Panel);
-                    colorIndic->setLineWidth(1);
-                    colorIndic->setAutoFillBackground(true);
-                    
-                    QPalette palette;
-                    palette.setColor(QPalette::Window, color);
-                    colorIndic->setPalette(palette);
-                    
-                } 
+                colorIndic->setFixedWidth(10);
+                colorIndic->setFixedHeight(10);
+                colorIndic->setFrameShape(QFrame::Panel);
+                colorIndic->setLineWidth(1);
+                colorIndic->setAutoFillBackground(true);
 
-                //name
-                auto name = new QLabel(owner.toString(), this);
-                name->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum);
-                name->setAlignment(Qt::AlignTop);
-                name->setContentsMargins(5, 0, 7, 1);
-                    auto font = name->font();
-                    font.setBold(true);
-                    name->setFont(font);
+                QPalette palette;
+                palette.setColor(QPalette::Window, color);
+                colorIndic->setPalette(palette);
+            }
 
-            //add widgets
-            layout->addWidget(companion);
-            if(colorIndic) layout->addWidget(colorIndic);
-            layout->addWidget(name);
+            // name
+            auto name = new QLabel(owner.toString(), this);
+            name->setSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum);
+            name->setAlignment(Qt::AlignTop);
+            name->setContentsMargins(5, 0, 7, 1);
+                auto font = name->font();
+                font.setBold(true);
+                name->setFont(font);
 
-        }
-
+        // add widgets
+        layout->addWidget(companion);
+        if (colorIndic) layout->addWidget(colorIndic);
+        layout->addWidget(name);
+    }
 };
