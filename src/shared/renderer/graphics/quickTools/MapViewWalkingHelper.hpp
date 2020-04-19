@@ -294,7 +294,6 @@ class MapViewWalkingHelper : public QObject, public QGraphicsItem, public RPZGra
 
     QRectF _getUnitedRect() const {
         QRectF out;
-        auto toWalk = this->_toWalk;
         for (auto item : this->_toWalk) {
             out = out.united(item->sceneBoundingRect());
         }

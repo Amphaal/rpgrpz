@@ -27,7 +27,7 @@
 
 class MiniMapView : public QGraphicsView {
  public:
-    MiniMapView(MapView* master, QWidget *parent = nullptr) : QGraphicsView(parent), _master(master) {
+    explicit MiniMapView(MapView* master, QWidget *parent = nullptr) : QGraphicsView(parent), _master(master) {
         this->setCursor(Qt::OpenHandCursor);
 
         // init
@@ -57,7 +57,6 @@ class MiniMapView : public QGraphicsView {
 
         this->setDragMode(QGraphicsView::NoDrag);
         this->setFixedSize(QSize(240, 240));
-
     }
 
     void setAsapVisibility(bool visible) {
@@ -151,7 +150,7 @@ class MiniMapView : public QGraphicsView {
 
             // prevent transforms
             painter->setTransform(QTransform());
-            
+
             // minimap
             painter->drawPixmap(QPointF(), this->_cachedMinimap);
 
@@ -163,7 +162,7 @@ class MiniMapView : public QGraphicsView {
                 this->_master->viewport()->rect()
             ).boundingRect();
             viewportMapRect = this->mapFromScene(viewportMapRect).boundingRect();
-            
+
             // outer rect
             pen.setColor(Qt::black);
             painter->setPen(pen);
@@ -210,5 +209,4 @@ class MiniMapView : public QGraphicsView {
         if (this->scene() == this->_sceneToMimic) return;
         this->_drawViewIndic(painter);
     }
-
 };

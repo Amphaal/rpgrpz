@@ -23,29 +23,25 @@
 #include "src/helpers/_appContext.h"
 
 class LogText : public QLabel {
-
  public:
-        LogText(const QString &txt, QWidget* parent = nullptr) : QLabel(parent) {
-        
-            this->setMargin(0);
-            this->setWordWrap(true);
-            this->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
-            this->setOpenExternalLinks(true);
-            this->setTextFormat(Qt::RichText);
+    explicit LogText(const QString &txt, QWidget* parent = nullptr) : QLabel(parent) {
+        this->setMargin(0);
+        this->setWordWrap(true);
+        this->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
+        this->setOpenExternalLinks(true);
+        this->setTextFormat(Qt::RichText);
 
-            //redefine text with rich hyperlinks
-            auto withHyperlinks = txt;
-            QRegularExpression r(AppContext::REGEX_URL);
-            auto matches = r.globalMatch(withHyperlinks);
-            
-            while (matches.hasNext()) {
-                QRegularExpressionMatch match = matches.next();
-                auto url = match.captured();
-                withHyperlinks.replace(url, QStringLiteral(u"<a href=\"%1\">%1</a>").arg(url));
-            }
+        // redefine text with rich hyperlinks
+        auto withHyperlinks = txt;
+        QRegularExpression r(AppContext::REGEX_URL);
+        auto matches = r.globalMatch(withHyperlinks);
 
-            this->setText(withHyperlinks);
-            
+        while (matches.hasNext()) {
+            QRegularExpressionMatch match = matches.next();
+            auto url = match.captured();
+            withHyperlinks.replace(url, QStringLiteral(u"<a href=\"%1\">%1</a>").arg(url));
         }
 
+        this->setText(withHyperlinks);
+    }
 };
