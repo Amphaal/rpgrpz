@@ -204,7 +204,7 @@ void MapView::_onOwnershipChanged(const QList<QGraphicsItem*> changing, bool own
 
         for (auto item : changing) {
             // if "to be walked" has changed ownership, tag for tool change
-            if (!foundTBW && MapViewWalkingHelper::isToBeWalked(this->_walkingHelper, item)) foundTBW = true;
+            if (!foundTBW && WalkingHelper::isToBeWalked(this->_walkingHelper, item)) foundTBW = true;
 
             // change ownership
             if (auto casted = dynamic_cast<MapViewToken*>(item)) {
@@ -728,12 +728,6 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
             case MapTool::Walking: {
                 HintThread::hint()->notifyWalk(this->_walkingHelper->destinations());
                 this->resetTool();
-            }
-            break;
-
-            case MapTool::Measure: {
-                if (this->_measurementHelper) delete this->_measurementHelper;
-                this->_measurementHelper = nullptr;
             }
             break;
 

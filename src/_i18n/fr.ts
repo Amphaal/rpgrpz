@@ -418,9 +418,8 @@
 <context>
     <name>DocShareListView</name>
     <message>
-        <location filename="../ui/docShare/DocShareListView.hpp" line="227"/>
         <source> (available)</source>
-        <translation> (disponible)</translation>
+        <translation type="vanished"> (disponible)</translation>
     </message>
 </context>
 <context>
@@ -1366,7 +1365,7 @@
         <translation>Couleur</translation>
     </message>
     <message>
-        <location filename="../ui/docShare/DocShareListView.hpp" line="138"/>
+        <location filename="../ui/docShare/DocShareListView.cpp" line="119"/>
         <source> (downloading...)</source>
         <translation> (téléchargement...)</translation>
     </message>
@@ -1412,7 +1411,7 @@
 <context>
     <name>RPZServer</name>
     <message>
-        <location filename="../network/rpz/server/RPZServer.cpp" line="280"/>
+        <location filename="../network/rpz/server/RPZServer.cpp" line="285"/>
         <source>Your software version is different from the server&apos;s one : v%1 (you) / v%2 (server) !</source>
         <translation>Votre version logicielle diffère de la version du serveur : v%1 (vous) / v%2 (serveur) !</translation>
     </message>
