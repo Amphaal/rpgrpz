@@ -47,7 +47,6 @@ class SimpleGaugeEditor : public QWidget {
     }
 
     SimpleGaugeEditor() : _currentValSpin(new QSpinBox), _minBarValSpin(new QSpinBox), _maxBarValSpin(new QSpinBox) {
-
             // minimum
             this->_minBarValSpin->setToolTip(tr("Gauge minimum"));
             this->_minBarValSpin->setMinimum(-9999);
