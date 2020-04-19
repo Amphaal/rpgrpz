@@ -1,2 +1,2 @@
 #!/bin/bash
-wine /mingw64/bin/lrelease.exe $*
+wine /mingw64/bin/lrelease.exe "$*"

@@ -34,20 +34,20 @@ Supported (64bits only) :
 
 Prepare your build environement:
 - For Windows
-    - Install MSYS2 : https://www.msys2.org/
-    - Create env. variable MINGW64_ROOT (ex : C:/msys64/mingw64)
-    - Run : `pacman -Syu` (From msys2_shell.cmd)
-    - Run : `pacman -Su` (From msys2_shell.cmd)
-    - Run : `pacman -S --needed - < ./prerequisites/msys2/pkglist_build.txt` (From msys2_shell.cmd)
-    - Run : `pacman -S --needed - < ./prerequisites/msys2/pkglist_dev.txt` (From msys2_shell.cmd)
+  - Install MSYS2 : https://www.msys2.org/
+  - Create env. variable MINGW64_ROOT (ex : C:/msys64/mingw64)
+  - Run : `pacman -Syu` (From msys2_shell.cmd)
+  - Run : `pacman -Su` (From msys2_shell.cmd)
+  - Run : `pacman -S --needed - < ./prerequisites/msys2/pkglist_build.txt` (From msys2_shell.cmd)
+  - Run : `pacman -S --needed - < ./prerequisites/msys2/pkglist_dev.txt` (From msys2_shell.cmd)
 - For ArchLinux
-    - Run : `pacman -S --needed - < ./prerequisites/arch/pkglist_build.txt`
-    - Run : `pacman -S --needed - < ./prerequisites/arch/pkglist_dev.txt`
+  - Run : `pacman -S --needed - < ./prerequisites/arch/pkglist_build.txt`
+  - Run : `pacman -S --needed - < ./prerequisites/arch/pkglist_dev.txt`
 - For OSX
-    - Install latest XCode from the App Store
-    - Run : `brew upgrade`
-    - Run : `brew install $(cat ./prerequisites/osx/pkglist_build.txt)`
-    - Run : `brew install $(cat ./prerequisites/osx/pkglist_dev.txt)`
+  - Install latest XCode from the App Store
+  - Run : `brew upgrade`
+  - Run : `brew install $(cat ./prerequisites/osx/pkglist_build.txt)`
+  - Run : `brew install $(cat ./prerequisites/osx/pkglist_dev.txt)`
 
 Recommanded:
 - Visual Studio Code, for builtin debugging helpers (https://code.visualstudio.com/)

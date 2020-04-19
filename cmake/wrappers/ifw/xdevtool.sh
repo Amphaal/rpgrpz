@@ -1,2 +1,2 @@
 #!/bin/bash
-wine /mingw64/bin/devtool.exe $*
+wine /mingw64/bin/devtool.exe "$*"

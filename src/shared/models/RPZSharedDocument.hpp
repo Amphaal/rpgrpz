@@ -34,16 +34,16 @@ class RPZSharedDocument : public QVariantHash {
         using Store = QHash<RPZSharedDocument::FileHash, RPZSharedDocument>;
 
         RPZSharedDocument() {};
-        RPZSharedDocument(const QVariantHash &hash) : QVariantHash(hash) {};
-        RPZSharedDocument(const QUrl &localFileUrl) {
+        explicit RPZSharedDocument(const QVariantHash &hash) : QVariantHash(hash) {}
+        explicit RPZSharedDocument(const QUrl &localFileUrl) {
             this->_inst(localFileUrl);
         }
-        
+
         static RPZSharedDocument::NamesStore toNamesStore(const QVariantHash &hash) {
 
             RPZSharedDocument::NamesStore out;
 
-            for(auto i = hash.begin(); i != hash.end(); i++) {   
+            for(auto i = hash.begin(); i != hash.end(); i++) {
                 auto &hash = i.key();
                 auto name = i.value().toString();
                 out.insert(hash, name);

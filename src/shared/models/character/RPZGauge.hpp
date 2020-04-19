@@ -26,8 +26,8 @@ class RPZGauge : public QVariantHash {
  public:
         
         struct MinimalistGauge {
-            int current; 
-            int min; 
+            int current;
+            int min;
             int max;
         };
 
