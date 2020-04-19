@@ -24,11 +24,9 @@ void AtomRenderer::defineMapParameters(const RPZMapParameters &mapParameters) {
 }
 
 QGraphicsItem* AtomRenderer::createGraphicsItem(const RPZAtom &atom, const RPZAsset &asset, bool isTemporary, bool owned) {
-    
     QGraphicsItem* out;
 
-    switch(atom.type()) {
-        
+    switch (atom.type()) {
         case RPZAtom::Type::Object:
             out = _createGenericImageBasedItem(atom, asset);
         break;
@@ -61,22 +59,21 @@ QGraphicsItem* AtomRenderer::createGraphicsItem(const RPZAtom &atom, const RPZAs
             return nullptr;
         }
         break;
-        
     }
 
-    //define if teporary
+    // define if teporary
     RPZQVariant::setIsTemporary(out, isTemporary);
 
-    //update
-    AtomConverter::setupGraphicsItemFromAtom(out, atom);        
+    // update
+    AtomConverter::setupGraphicsItemFromAtom(out, atom);
 
-    //if base is QGraphicsSvgItem, QGraphicsTextItem, and QGraphicsWidget, move handler to main GUI thread
-    if(auto signalHandler = out->toGraphicsObject()) {
+    // if base is QGraphicsSvgItem, QGraphicsTextItem, and QGraphicsWidget, move handler to main GUI thread
+    if (auto signalHandler = out->toGraphicsObject()) {
         signalHandler->moveToThread(QApplication::instance()->thread());
     }
 
-    //if directly inherits of QObject
-    if(auto obj = dynamic_cast<QObject*>(out)) {
+    // if directly inherits of QObject
+    if (auto obj = dynamic_cast<QObject*>(out)) {
         obj->moveToThread(QApplication::instance()->thread());
     }
 
@@ -84,107 +81,101 @@ QGraphicsItem* AtomRenderer::createGraphicsItem(const RPZAtom &atom, const RPZAs
 }
 
 QGraphicsItem* AtomRenderer::createOutlineRectItem(const QPointF &scenePos) {
-    
-    //rect...
+    // rect...
     QRectF rect(
-        scenePos - QPointF(1,1), 
-        scenePos + QPointF(1,1)
+        scenePos - QPointF(1, 1),
+        scenePos + QPointF(1, 1)
     );
-    
-    //pen...
+
+    // pen...
     QPen pen;
     pen.setWidth(0);
     pen.setJoinStyle(Qt::MiterJoin);
     pen.setCapStyle(Qt::SquareCap);
 
-    //create item
+    // create item
     auto item = new QGraphicsRectItem(rect);
     item->setPen(pen);
-    item->setZValue(AppContext::HOVERING_ITEMS_Z_INDEX); //hover on top
-    
+    item->setZValue(AppContext::HOVERING_ITEMS_Z_INDEX);  // hover on top
+
     return item;
 }
 
 
 QGraphicsRectItem* AtomRenderer::createMissingAssetPlaceholderItem(const RPZAtom &atom) {
-
-    //pen to draw the rect with
+    // pen to draw the rect with
     QPen pen;
     pen.setStyle(Qt::DashLine);
     pen.setJoinStyle(Qt::MiterJoin);
     pen.setColor(Qt::GlobalColor::red);
     pen.setWidth(0);
 
-    //background brush
+    // background brush
     QBrush brush(QColor(255, 0, 0, 128));
 
-    //shape
+    // shape
     auto shape = atom.shape().boundingRect();
 
-    //create graphics item
+    // create graphics item
     auto placeholder = new MapViewGraphicsRectItem(shape, pen, brush);
-    
-    //Update values from atom blueprint
+
+    // Update values from atom blueprint
     AtomConverter::setupGraphicsItemFromAtom(placeholder, atom);
-    
+
     return placeholder;
 }
 
 
 QGraphicsItem* AtomRenderer::_createGenericImageBasedItem(const RPZAtom &atom, const RPZAsset &asset) {
-
-    //get file infos
+    // get file infos
     auto filepathToAsset = asset.filepath();
-    
-    //define graphicsitem
+
+    // define graphicsitem
     QGraphicsItem* item = nullptr;
-    if(asset.fileExtension() == "svg") {
+    if (asset.fileExtension() == "svg") {
         item = new MapViewGraphicsSvgItem(filepathToAsset);
-    } 
-    else {
+    } else {
         item = new MapViewGraphicsPixmapItem(asset);
-    };
+    }
 
     return item;
 }
 
 QGraphicsPathItem* AtomRenderer::_createBrushItem(const RPZAtom &atom, const RPZAsset &asset) {
-
-    //define a ped
+    // define a ped
     QPen pen;
     pen.setCapStyle(Qt::RoundCap);
     pen.setJoinStyle(Qt::RoundJoin);
     pen.setColor(QColor(255, 255, 255, 0));
 
-    //define a default shape for ghost items
+    // define a default shape for ghost items
     auto shape = atom.shape();
     shape.setFillRule(Qt::FillRule::WindingFill);
 
-    //configure brush
+    // configure brush
     QBrush brush;
     brush.setTexture(asset.filepath());
-    
-    //create path
+
+    // create path
     auto newPath = new MapViewGraphicsPathItem(shape, pen, brush);
-    
+
     return newPath;
 }
 
 MapViewDrawing* AtomRenderer::_createDrawingItem(const RPZAtom &atom) {
-    
-    //define a pen
+    // define a pen
     QPen pen;
     pen.setCapStyle(Qt::RoundCap);
     pen.setJoinStyle(Qt::RoundJoin);
-    if(atom.type() == RPZAtom::Type::FogOfWar) pen.setColor(Qt::transparent);
+    if (atom.type() == RPZAtom::Type::FogOfWar) pen.setColor(Qt::transparent);
 
-    //define a default shape for ghost items
+    // define a default shape for ghost items
     auto shape = atom.shape();
-    if(!shape.elementCount()) shape.lineTo(.01,.01);
+    if (!shape.elementCount()) shape.lineTo(.01, .01);
 
-    //create path
+    // create path
     auto newPath = new MapViewDrawing(shape, pen);
-    
+
     return newPath;
 }
 

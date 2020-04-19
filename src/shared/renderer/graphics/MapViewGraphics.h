@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "_specific/MapViewDrawing.hpp"
 #include "_generic/MapViewGraphicsPathItem.hpp"
 #include "_generic/MapViewGraphicsPixmapItem.hpp"
 #include "_generic/MapViewGraphicsRectItem.hpp"
@@ -26,7 +27,6 @@
 #include "_generic/MapViewGraphicsTextItem.hpp"
 #include "_specific/MapViewToken.hpp"
 #include "_specific/MapViewUnscalable.hpp"
-#include "_specific/MapViewDrawing.hpp"
 #include "_specific/MapViewFog.hpp"
 #include "quickTools/WalkingHelper.hpp"
 #include "quickTools/MeasurementHelper.hpp"

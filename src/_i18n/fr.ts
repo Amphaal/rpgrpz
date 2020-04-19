@@ -63,17 +63,17 @@
         </translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="69"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="68"/>
         <source>Nothing to modify</source>
         <translation>Rien à modifier</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="70"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="69"/>
         <source>Template modification</source>
         <translation>Modification du modèle</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditor.h" line="71"/>
+        <location filename="../ui/atomEditor/AtomEditor.h" line="70"/>
         <source>Selection modification</source>
         <translation>Modification de la sélection</translation>
     </message>
@@ -1054,7 +1054,7 @@
         <translation>Sauvegarder la carte sous...</translation>
     </message>
     <message>
-        <location filename="../shared/models/character/RPZCharacter.hpp" line="44"/>
+        <location filename="../shared/models/character/RPZCharacter.hpp" line="42"/>
         <source>New character [#%1]</source>
         <translation>Nouveau personnage [#%1]</translation>
     </message>
@@ -1064,12 +1064,12 @@
         <translation>Nouvel Inventaire</translation>
     </message>
     <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="55"/>
+        <location filename="../shared/models/messaging/RPZMessage.cpp" line="52"/>
         <source> whispers to you : </source>
         <translation> vous chuchote : </translation>
     </message>
     <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="59"/>
+        <location filename="../shared/models/messaging/RPZMessage.cpp" line="56"/>
         <source> whisper to </source>
         <translation> chuchote à </translation>
     </message>

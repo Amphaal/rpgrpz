@@ -23,5 +23,6 @@
 
 class MapViewDrawing : public MapViewGraphicsPathItem {
  public:
-        MapViewDrawing(const QPainterPath &path, const QPen &pen, const QBrush &brush = QBrush()) : MapViewGraphicsPathItem(path, pen, brush) {}
+        MapViewDrawing(const QPainterPath &path, const QPen &pen, const QBrush &brush = QBrush())
+                : MapViewGraphicsPathItem(path, pen, brush) {}
 };

@@ -26,60 +26,59 @@
 
 #include "Payload.hpp"
 
-class AlterationPayload : public QVariantHash { 
-
+class AlterationPayload : public QVariantHash {
  public:
-        AlterationPayload() {}
-        explicit AlterationPayload(const QVariantHash &hash) : QVariantHash(hash) {}
-        AlterationPayload(const Payload::Alteration &type) {
-            this->_setType(type);
-        }
+    AlterationPayload() {}
+    explicit AlterationPayload(const QVariantHash &hash) : QVariantHash(hash) {}
+    explicit AlterationPayload(const Payload::Alteration &type) {
+        this->_setType(type);
+    }
 
-        Payload::Alteration type() const {
-            return extractType(*this);
-        }
+    Payload::Alteration type() const {
+        return extractType(*this);
+    }
 
-        static Payload::Alteration extractType(const QVariantHash &hash) {
-            return (Payload::Alteration)hash.value(QStringLiteral(u"t"), 0).toInt();
-        }
+    static Payload::Alteration extractType(const QVariantHash &hash) {
+        return (Payload::Alteration)hash.value(QStringLiteral(u"t"), 0).toInt();
+    }
 
-        void changeSource(const Payload::Interactor &newSource) {
-            this->insert(QStringLiteral(u"s"), (int)newSource);
-        }
+    void changeSource(const Payload::Interactor &newSource) {
+        this->insert(QStringLiteral(u"s"), (int)newSource);
+    }
 
-        Payload::Interactor source() const {
-            return (Payload::Interactor)this->value(QStringLiteral(u"s"), 0).toInt();
-        }
+    Payload::Interactor source() const {
+        return (Payload::Interactor)this->value(QStringLiteral(u"s"), 0).toInt();
+    }
 
-        bool isNetworkRoutable() const {
-            return Payload::networkAlterations.contains(this->type());
-        }
+    bool isNetworkRoutable() const {
+        return Payload::networkAlterations.contains(this->type());
+    }
 
-        bool undoRedoAllowed() const {
-            return Payload::allowsRedoUndo.contains(this->type());
-        }
+    bool undoRedoAllowed() const {
+        return Payload::allowsRedoUndo.contains(this->type());
+    }
 
-        void tagAsFromTimeline() {
-            this->insert(QStringLiteral(u"h"), true);
-        }
+    void tagAsFromTimeline() {
+        this->insert(QStringLiteral(u"h"), true);
+    }
 
-        bool isFromTimeline() const {
-            return this->value(QStringLiteral(u"h")).toBool();
-        }
+    bool isFromTimeline() const {
+        return this->value(QStringLiteral(u"h")).toBool();
+    }
 
-        //necessary for dynamic_cast operations
-        virtual ~AlterationPayload() {}
+    // necessary for dynamic_cast operations
+    virtual ~AlterationPayload() {}
 
-        // friend QDebug operator<<(QDebug debug, const AlterationPayload &c) {
-        //     QDebugStateSaver saver(debug);
-        //     debug.nospace() << c.type() << ", keys : " << c.keys();
-        //     return debug;
-        // }
+    // friend QDebug operator<<(QDebug debug, const AlterationPayload &c) {
+    //     QDebugStateSaver saver(debug);
+    //     debug.nospace() << c.type() << ", keys : " << c.keys();
+    //     return debug;
+    // }
 
- private:      
-        void _setType(const Payload::Alteration &type) {
-            this->insert(QStringLiteral(u"t"), (int)type);
-        }
+ private:
+    void _setType(const Payload::Alteration &type) {
+        this->insert(QStringLiteral(u"t"), (int)type);
+    }
 };
 
 Q_DECLARE_METATYPE(AlterationPayload)

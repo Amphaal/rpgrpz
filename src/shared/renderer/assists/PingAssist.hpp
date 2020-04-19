@@ -19,8 +19,9 @@
 
 #pragma once
 
-#include "src/shared/hints/HintThread.hpp"
 #include <QGraphicsView>
+
+#include "src/shared/hints/HintThread.hpp"
 
 #include "src/shared/renderer/graphics/MapViewGraphics.h"
 #include "src/ui/audio/NotificationsAudioManager.hpp"
@@ -28,63 +29,57 @@
 #include "src/shared/models/RPZPing.hpp"
 
 class PingAssist : public QObject, public ConnectivityObserver {
-
     Q_OBJECT
 
-    public:
-        PingAssist(QGraphicsView* view) : _view(view) {}
+ public:
+    explicit PingAssist(QGraphicsView* view) : _view(view) {}
 
-        void generatePing(const QPoint viewPosPoint) {
-            
-            auto scenePos = this->_view->mapToScene(viewPosPoint);
+    void generatePing(const QPoint viewPosPoint) {
+        auto scenePos = this->_view->mapToScene(viewPosPoint);
 
-            if(this->_networkAllowed) {
-                QMetaObject::invokeMethod(this->_rpzClient, "notifyPing", 
-                    Q_ARG(QPointF, scenePos)
-                );
-            }
-
-            auto user = this->_networkAllowed ? this->_rpzClient->identity() : RPZUser();
-            this->_addPing(scenePos, user);
-
-        }
-
-    protected:
-        virtual void connectingToServer() {
-            
-            QObject::connect(
-                this->_rpzClient, &RPZClient::pingHappened,
-                this, &PingAssist::_addPingFromNetwork
+        if (this->_networkAllowed) {
+            QMetaObject::invokeMethod(this->_rpzClient, "notifyPing",
+                Q_ARG(QPointF, scenePos)
             );
-
-            QObject::connect(
-                this->_rpzClient, &RPZClient::gameSessionReceived,
-                this, &PingAssist::_onGameSessionReceived
-            );
-
-        }
-        virtual void connectionClosed(bool hasInitialMapLoaded) {
-            this->_networkAllowed = false;
         }
 
-    private:
-        bool _networkAllowed = false;
-        QGraphicsView* _view = nullptr;
+        auto user = this->_networkAllowed ? this->_rpzClient->identity() : RPZUser();
+        this->_addPing(scenePos, user);
+    }
 
-        void _onGameSessionReceived(const RPZGameSession &gameSession) {
-            Q_UNUSED(gameSession);
-            this->_networkAllowed = true;
-        }
+ protected:
+    virtual void connectingToServer() {
+        QObject::connect(
+            this->_rpzClient, &RPZClient::pingHappened,
+            this, &PingAssist::_addPingFromNetwork
+        );
 
-        void _addPingFromNetwork(const RPZPing &ping) {
-            auto user = this->_rpzClient->sessionUsers().value(ping.emiterId());
-            this->_addPing(ping.scenePos(), user);
-        }
+        QObject::connect(
+            this->_rpzClient, &RPZClient::gameSessionReceived,
+            this, &PingAssist::_onGameSessionReceived
+        );
+    }
+    virtual void connectionClosed(bool hasInitialMapLoaded) {
+        this->_networkAllowed = false;
+    }
 
-        void _addPing(const QPointF &scenePosPoint, RPZUser &user) {
-            NotificationsAudioManager::get()->playPing();
-            auto ping = new PingItem(scenePosPoint, user.color(), this->_view);
-            this->_view->scene()->addItem(ping);
-        }
+ private:
+    bool _networkAllowed = false;
+    QGraphicsView* _view = nullptr;
 
+    void _onGameSessionReceived(const RPZGameSession &gameSession) {
+        Q_UNUSED(gameSession);
+        this->_networkAllowed = true;
+    }
+
+    void _addPingFromNetwork(const RPZPing &ping) {
+        auto user = this->_rpzClient->sessionUsers().value(ping.emiterId());
+        this->_addPing(ping.scenePos(), user);
+    }
+
+    void _addPing(const QPointF &scenePosPoint, RPZUser &user) {
+        NotificationsAudioManager::get()->playPing();
+        auto ping = new PingItem(scenePosPoint, user.color(), this->_view);
+        this->_view->scene()->addItem(ping);
+    }
 };
