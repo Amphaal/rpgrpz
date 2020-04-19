@@ -19,14 +19,14 @@
 
 #pragma once
 
+#include <QApplication>
+#include <QFileInfo>
+
 #include "AtomConverter.h"
 
 #include "src/shared/renderer/graphics/MapViewGraphics.h"
 
 #include "src/shared/models/toy/RPZToy.hpp"
-
-#include <QApplication>
-#include <QFileInfo>
 
 #include "src/helpers/RPZQVariant.hpp"
 
