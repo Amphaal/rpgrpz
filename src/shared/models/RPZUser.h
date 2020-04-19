@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
  
@@ -32,8 +32,7 @@
 #include "src/shared/models/character/RPZCharacter.hpp"
 
 class RPZUser : public Serializable {
-
-    public:
+  public:
         using Id = SnowFlake::Id;
 
         enum class Role { Observer, Host, Player };
@@ -62,7 +61,7 @@ class RPZUser : public Serializable {
         QString toString() const;
         const RPZCharacter character() const;
 
-    private:
+ private:
         void _setColor(const QColor &color = QColor());
 
         static inline std::string _CODES_b62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";

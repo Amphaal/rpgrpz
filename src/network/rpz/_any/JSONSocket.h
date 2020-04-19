@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -33,7 +33,7 @@ class JSONSocket : public QObject {
 
     Q_OBJECT
 
-    public:
+ public:
         JSONSocket(QObject* parent, JSONLogger* logger, QTcpSocket * socketToHandle = nullptr);
         ~JSONSocket();
         
@@ -47,7 +47,7 @@ class JSONSocket : public QObject {
             const QVariant &data
         );
 
-    signals:
+ signals:
         void JSONReceived(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data);
         void ackedBatch(RPZJSON::Method method, qint64 batchSize);
         void batchDownloading(RPZJSON::Method method, qint64 downloaded);
@@ -55,7 +55,7 @@ class JSONSocket : public QObject {
         void sent(bool success);
 
 
-    private:
+ private:
         bool _batchComplete = false;
         bool _ackHeader = false;
 

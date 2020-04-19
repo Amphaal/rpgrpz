@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -26,7 +26,7 @@ class MapHint : public ViewMapHint, public ConnectivityObserver {
 
     Q_OBJECT
 
-    public:
+ public:
         MapHint();
 
         //load/unload
@@ -39,18 +39,18 @@ class MapHint : public ViewMapHint, public ConnectivityObserver {
         bool ackRemoteness(const RPZUser &connectedUser, const QString &remoteAddress);
         bool ackRemoteness(const QString &tblMapFilePath);
 
-    public slots:
+ public slots:
         bool loadDefaultRPZMap(); //to invoke
         bool loadRPZMap(const QString &filePath); //to invoke
         bool saveRPZMap(); //to invoke, unless from mayWantToSavePendingState()
         bool saveRPZMapAs(const QString &newFilePath); //to invoke
         bool createNewRPZMapAs(const QString &newFilePath); //to invoke
 
-    signals:
+ signals:
         void mapStateChanged(const QString &mapDescriptor, bool isMapDirty);
         void remoteChanged(bool isRemote);
 
-    private: 
+ private: 
         bool _ackRemoteness();
 
         QString _mapDescriptor;

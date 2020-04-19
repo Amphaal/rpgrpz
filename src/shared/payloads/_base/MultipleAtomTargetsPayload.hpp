@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -24,7 +24,7 @@
 #include <QList>
 
 class MultipleAtomTargetsPayload : public AtomRelatedPayload {
-    public:   
+ public:   
         QList<RPZAtom::Id> targetRPZAtomIds() const {
             
             auto list = this->value(QStringLiteral(u"ids")).toList();
@@ -56,13 +56,13 @@ class MultipleAtomTargetsPayload : public AtomRelatedPayload {
 
         };
 
-    protected:
+ protected:
         explicit MultipleAtomTargetsPayload(const QVariantHash &hash) : AtomRelatedPayload(hash) {}
         MultipleAtomTargetsPayload(const Payload::Alteration &alteration, const QList<RPZAtom::Id> &targetedRPZAtomIds) : AtomRelatedPayload(alteration) {
             this->_setTargetRPZAtomIds(targetedRPZAtomIds);
         }
     
-    private:
+ private:
         void _setTargetRPZAtomIds(const QList<RPZAtom::Id> &targetRPZAtomIds) {
             QVariantList cast;
             for(const auto &id : targetRPZAtomIds) {

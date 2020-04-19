@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -35,7 +35,7 @@ class TrackToolbar : public QWidget {
     
     Q_OBJECT
 
-    public:
+ public:
         enum class Action { Rewind, Forward, Play, Pause };
         Q_ENUM(Action)
 
@@ -45,11 +45,11 @@ class TrackToolbar : public QWidget {
         void newTrack(int lengthInSeconds);
         void endTrack();
 
-    signals:
+ signals:
         void actionRequired(const TrackToolbar::Action &action);
         void seeking(int posInSecs);
 
-    private:
+ private:
         static inline const QString _defaultNoTime = "--"; 
         static inline const QString _trackPlayStateTemplator = " %1 / %2 ";
 

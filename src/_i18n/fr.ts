@@ -4,42 +4,42 @@
 <context>
     <name>AbilitiesSheet</name>
     <message>
-        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="43"/>
+        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="42"/>
         <source>Add a new ability</source>
         <translation>Ajouter une nouvelle compétence</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="48"/>
+        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="47"/>
         <source>Remove selected abilities</source>
         <translation>Supprimer les compétences selectionnées</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="68"/>
+        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="67"/>
         <source>Name</source>
         <translation>Nom</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="69"/>
+        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="68"/>
         <source>Category</source>
         <translation>Catégorie</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="70"/>
+        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="69"/>
         <source>Favorite</source>
         <translation>Favoris</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="71"/>
+        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="70"/>
         <source>Description</source>
         <translation>Description</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="181"/>
+        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="174"/>
         <source>Deletion of abilities</source>
         <translation>Suppression des compétences</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="182"/>
+        <location filename="../ui/sheets/components/AbilitiesSheet.hpp" line="175"/>
         <source>Do you really want to delete those abilities ?</source>
         <translation>Voulez-vous vraiment supprimer ces compétences ?</translation>
     </message>
@@ -47,7 +47,7 @@
 <context>
     <name>AtomEditionManager</name>
     <message>
-        <location filename="../ui/atomEditor/AtomEditionManager.hpp" line="63"/>
+        <location filename="../ui/atomEditor/AtomEditionManager.hpp" line="60"/>
         <source>Reset displayed parameters</source>
         <translation>Réinitialiser les paramètres affichés</translation>
     </message>
@@ -55,7 +55,7 @@
 <context>
     <name>AtomEditor</name>
     <message numerus="yes">
-        <location filename="../ui/atomEditor/AtomEditor.cpp" line="267"/>
+        <location filename="../ui/atomEditor/AtomEditor.cpp" line="236"/>
         <source> (%n element(s))</source>
         <translation>
             <numerusform> (%n élément)</numerusform>
@@ -180,12 +180,12 @@
 <context>
     <name>AtomShortTextEditor</name>
     <message>
-        <location filename="../ui/atomEditor/editors/generic/AtomShortTextEditor.hpp" line="35"/>
+        <location filename="../ui/atomEditor/editors/generic/AtomShortTextEditor.hpp" line="32"/>
         <source>Confirm modification</source>
         <translation>Confirmer la modification</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/generic/AtomShortTextEditor.hpp" line="38"/>
+        <location filename="../ui/atomEditor/editors/generic/AtomShortTextEditor.hpp" line="35"/>
         <source>Type some text...</source>
         <translation>Saisissez du texte...</translation>
     </message>
@@ -193,12 +193,12 @@
 <context>
     <name>AtomTextEditor</name>
     <message>
-        <location filename="../ui/atomEditor/editors/generic/AtomTextEditor.hpp" line="35"/>
+        <location filename="../ui/atomEditor/editors/generic/AtomTextEditor.hpp" line="32"/>
         <source>Confirm modification</source>
         <translation>Confirmer la modification</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/generic/AtomTextEditor.hpp" line="38"/>
+        <location filename="../ui/atomEditor/editors/generic/AtomTextEditor.hpp" line="35"/>
         <source>Type some text...</source>
         <translation>Saisissez du texte...</translation>
     </message>
@@ -252,17 +252,17 @@
 <context>
     <name>CharacterEditor</name>
     <message>
-        <location filename="../ui/sheets/CharacterEditor.hpp" line="58"/>
+        <location filename="../ui/sheets/CharacterEditor.hpp" line="53"/>
         <source>Save character sheet</source>
         <translation>Savegarder la fiche</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/CharacterEditor.hpp" line="171"/>
+        <location filename="../ui/sheets/CharacterEditor.hpp" line="161"/>
         <source>My characters</source>
         <translation>Mes personnages</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/CharacterEditor.hpp" line="171"/>
+        <location filename="../ui/sheets/CharacterEditor.hpp" line="161"/>
         <source>Hosted characters</source>
         <translation>Personnages du serveur</translation>
     </message>
@@ -270,32 +270,32 @@
 <context>
     <name>CharacterPicker</name>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="52"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="47"/>
         <source>Create a new sheet</source>
         <translation>Créer une nouvelle fiche</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="60"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="55"/>
         <source>Delete sheet</source>
         <translation>Supprimer la fiche</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="271"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="242"/>
         <source>No existing character, create some !</source>
         <translation>Aucun personnage préexistant, créez-en un !</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="271"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="242"/>
         <source>Waiting for sheets from host...</source>
         <translation>En attente de fiches du serveur...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="422"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="376"/>
         <source>Character sheet deletion</source>
         <translation>Suppression de fiches de personnages</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="423"/>
+        <location filename="../ui/sheets/components/CharacterPicker.hpp" line="377"/>
         <source>Do you really want to delete this character ?</source>
         <translation>Voulez-vous vraiment supprimer cette fiche de personnage ?</translation>
     </message>
@@ -303,12 +303,12 @@
 <context>
     <name>CharacterPickerEditor</name>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="95"/>
+        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="89"/>
         <source>[Cannot configure...]</source>
         <translation>[Impossible à configurer...]</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="101"/>
+        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="92"/>
         <source>[No character associated]</source>
         <translation>[Aucun personnage associé]</translation>
     </message>
@@ -352,42 +352,42 @@
 <context>
     <name>ConnectWidget</name>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="39"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="35"/>
         <source>Player name</source>
         <translation>Nom du joueur</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="45"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="41"/>
         <source>IP or server hostname</source>
         <translation>IP ou nom de serveur</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="50"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="46"/>
         <source>Character to embody</source>
         <translation>Personnage à incarner</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="179"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="163"/>
         <source>Error while connecting to server</source>
         <translation>Erreur à la connexion au serveur</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="199"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="180"/>
         <source>Connect</source>
         <translation>Se connecter</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="202"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="183"/>
         <source>Cancel (Connecting to %1...)</source>
         <translation>Annuler (Connexion à %1...)</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="205"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="186"/>
         <source>Disconnect from [%1]</source>
         <translation>Se déconnecter de [%1]</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="258"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="234"/>
         <source> Log in without a character</source>
         <translation> Se connecter sans fiche</translation>
     </message>
@@ -395,24 +395,32 @@
 <context>
     <name>ConnectivityHelper</name>
     <message>
-        <location filename="../network/ConnectivityHelper.cpp" line="150"/>
+        <location filename="../network/ConnectivityHelper.cpp" line="142"/>
         <source>No</source>
         <translation>Non</translation>
     </message>
     <message>
-        <location filename="../network/ConnectivityHelper.cpp" line="151"/>
+        <location filename="../network/ConnectivityHelper.cpp" line="143"/>
         <source>&lt;UPnP Failed&gt;</source>
         <translation>&lt;Erreur UPnP&gt;</translation>
     </message>
     <message>
-        <location filename="../network/ConnectivityHelper.cpp" line="212"/>
+        <location filename="../network/ConnectivityHelper.cpp" line="197"/>
         <source>&lt;Searching...&gt;</source>
         <translation>&lt;Recherche...&gt;</translation>
     </message>
     <message>
-        <location filename="../network/ConnectivityHelper.cpp" line="216"/>
+        <location filename="../network/ConnectivityHelper.cpp" line="201"/>
         <source>&lt;Error&gt;</source>
         <translation>&lt;Erreur&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>DocShareListView</name>
+    <message>
+        <location filename="../ui/docShare/DocShareListView.hpp" line="227"/>
+        <source> (available)</source>
+        <translation> (disponible)</translation>
     </message>
 </context>
 <context>
@@ -444,42 +452,42 @@
 <context>
     <name>GaugeEditor</name>
     <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="48"/>
+        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="44"/>
         <source> Gauge name</source>
         <translation> Nom de la jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="55"/>
+        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="51"/>
         <source>Fav.</source>
         <translation>Fav.</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="56"/>
+        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="52"/>
         <source>Visible under portrait ?</source>
         <translation>Visible sous le portrait ?</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="60"/>
+        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="56"/>
         <source>Choose a gauge color</source>
         <translation>Choisir la couleur de la jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="70"/>
+        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="66"/>
         <source>Delete gauge</source>
         <translation>Supprimer la jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="124"/>
+        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="114"/>
         <source>Gauge color</source>
         <translation>Couleur de la jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="136"/>
+        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="124"/>
         <source>Gauge deletion</source>
         <translation>Suppresion de jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="137"/>
+        <location filename="../ui/sheets/components/GaugeEditor.hpp" line="125"/>
         <source>Do you really want to delete this gauge ?</source>
         <translation>Voulez-vous vraiment supprimer cette jauge ?</translation>
     </message>
@@ -495,32 +503,32 @@
 <context>
     <name>InventoryPicker</name>
     <message>
-        <location filename="../ui/sheets/components/InventoryPicker.hpp" line="47"/>
+        <location filename="../ui/sheets/components/InventoryPicker.hpp" line="42"/>
         <source>Create new inventory</source>
         <translation>Créer un nouvel inventaire</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventoryPicker.hpp" line="55"/>
+        <location filename="../ui/sheets/components/InventoryPicker.hpp" line="50"/>
         <source>Delete inventory</source>
         <translation>Supprimer l&apos;inventaire</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventoryPicker.hpp" line="148"/>
+        <location filename="../ui/sheets/components/InventoryPicker.hpp" line="139"/>
         <source>Inventory deletion</source>
         <translation>Suppression d&apos;inventaire</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventoryPicker.hpp" line="149"/>
+        <location filename="../ui/sheets/components/InventoryPicker.hpp" line="140"/>
         <source>Do you really want to delete this inventory ?</source>
         <translation>Voulez-vous vraiment supprimer cet inventaire ?</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventoryPicker.hpp" line="209"/>
+        <location filename="../ui/sheets/components/InventoryPicker.hpp" line="196"/>
         <source>No existing inventory</source>
         <translation>Aucun inventaire préexistant</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventoryPicker.hpp" line="210"/>
+        <location filename="../ui/sheets/components/InventoryPicker.hpp" line="197"/>
         <source>No existing inventory, create some !</source>
         <translation>Aucun inventaire préexistant, créez-en un !</translation>
     </message>
@@ -528,62 +536,62 @@
 <context>
     <name>InventorySheet</name>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="47"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="48"/>
         <source>Add item</source>
         <translation>Ajouter un objet</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="51"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="52"/>
         <source>Delete selected items</source>
         <translation>Supprimer les objets selectionnés</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="55"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="56"/>
         <source>Move to...</source>
         <translation>Déplacer vers...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="59"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="60"/>
         <source>Split to...</source>
         <translation>Diviser vers...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="87"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="88"/>
         <source>Name*</source>
         <translation>Nom*</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="88"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="89"/>
         <source>Category</source>
         <translation>Catégorie</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="89"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="90"/>
         <source>Nbr</source>
         <translation>Nbr</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="90"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="91"/>
         <source>Wgt</source>
         <translation>Pds</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="91"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="92"/>
         <source>Description</source>
         <translation>Description</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="93"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="94"/>
         <source>Required!</source>
         <translation>Requis!</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="305"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="286"/>
         <source>Items deletion</source>
         <translation>Suppression d&apos;objets</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventorySheet.hpp" line="306"/>
+        <location filename="../ui/sheets/components/InventorySheet.hpp" line="287"/>
         <source>Do you really want to delete these items ?</source>
         <translation>Voulez-vous vraiment supprimer ces objets ?</translation>
     </message>
@@ -591,17 +599,17 @@
 <context>
     <name>InventorySlotMoveModal</name>
     <message>
-        <location filename="../ui/sheets/components/InventoryModal.hpp" line="132"/>
+        <location filename="../ui/sheets/components/InventoryModal.hpp" line="118"/>
         <source>Move items to inventory</source>
         <translation>Déplacer les objets vers l&apos;inventaire</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventoryModal.hpp" line="158"/>
+        <location filename="../ui/sheets/components/InventoryModal.hpp" line="141"/>
         <source>• &quot;%1&quot; (%2 to move) :</source>
         <translation>• &quot;%1&quot; (%2 à déplacer) :</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventoryModal.hpp" line="159"/>
+        <location filename="../ui/sheets/components/InventoryModal.hpp" line="142"/>
         <source>%1 (Current number) =&gt; %2 (New Total)</source>
         <translation>%1 (Nombre actuel) =&gt; %2 (Nouveau Total)</translation>
     </message>
@@ -609,17 +617,17 @@
 <context>
     <name>InventorySlotSplitModal</name>
     <message>
-        <location filename="../ui/sheets/components/InventoryModal.hpp" line="185"/>
+        <location filename="../ui/sheets/components/InventoryModal.hpp" line="158"/>
         <source>Split item to inventory</source>
         <translation>Diviser l&apos;objet vers l&apos;inventaire</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventoryModal.hpp" line="193"/>
+        <location filename="../ui/sheets/components/InventoryModal.hpp" line="166"/>
         <source>Current number of items</source>
         <translation>Nombre actuel d&apos;objets</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/InventoryModal.hpp" line="196"/>
+        <location filename="../ui/sheets/components/InventoryModal.hpp" line="169"/>
         <source>Total number of items in dest. inventory</source>
         <translation>Nombre total d&apos;objets dans l&apos;inventaire de destination</translation>
     </message>
@@ -689,105 +697,105 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="129"/>
+        <location filename="../ui/mainWindow.cpp" line="115"/>
         <source>Press ALT key to display the menu !</source>
         <translation>Appuyez sur la touche ALT pour afficher le menu !</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="187"/>
+        <location filename="../ui/mainWindow.cpp" line="168"/>
         <source>No</source>
         <translation>Non</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="235"/>
+        <location filename="../ui/mainWindow.cpp" line="214"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="310"/>
+        <location filename="../ui/mainWindow.cpp" line="283"/>
         <source>Toy box</source>
         <translation>Boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="394"/>
+        <location filename="../ui/mainWindow.cpp" line="363"/>
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="393"/>
+        <location filename="../ui/mainWindow.cpp" line="362"/>
         <source>Sheets</source>
         <translation>Fiches</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="408"/>
+        <location filename="../ui/mainWindow.cpp" line="376"/>
         <source>Map Atoms</source>
         <translation>Atomes de la carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="409"/>
+        <location filename="../ui/mainWindow.cpp" line="377"/>
         <source>Atom Editor</source>
         <translation>Editeur d&apos;atomes</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="334"/>
-        <location filename="../ui/mainWindow.cpp" line="341"/>
+        <location filename="../ui/mainWindow.cpp" line="305"/>
+        <location filename="../ui/mainWindow.cpp" line="312"/>
         <source>Game Hub</source>
         <translation>Hub de jeu</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="335"/>
+        <location filename="../ui/mainWindow.cpp" line="306"/>
         <source>Documents Share</source>
         <translation>Partage de documents</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="576"/>
+        <location filename="../ui/mainWindow.cpp" line="530"/>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="590"/>
+        <location filename="../ui/mainWindow.cpp" line="543"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="592"/>
-        <location filename="../ui/mainWindow.cpp" line="618"/>
-        <location filename="../ui/mainWindow.cpp" line="646"/>
+        <location filename="../ui/mainWindow.cpp" line="545"/>
+        <location filename="../ui/mainWindow.cpp" line="569"/>
+        <location filename="../ui/mainWindow.cpp" line="596"/>
         <source>Game map (*%1)</source>
         <translation>Carte de campagne (*%1)</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="616"/>
+        <location filename="../ui/mainWindow.cpp" line="567"/>
         <source>Load a new map</source>
         <translation>Charger une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="644"/>
+        <location filename="../ui/mainWindow.cpp" line="594"/>
         <source>Save as...</source>
         <translation>Savegarder sous...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="668"/>
+        <location filename="../ui/mainWindow.cpp" line="617"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="723"/>
+        <location filename="../ui/mainWindow.cpp" line="671"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="737"/>
+        <location filename="../ui/mainWindow.cpp" line="685"/>
         <source>Searching for updates...</source>
         <translation>Recherche des mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="737"/>
+        <location filename="../ui/mainWindow.cpp" line="685"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="772"/>
+        <location filename="../ui/mainWindow.cpp" line="719"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
@@ -795,7 +803,7 @@
 <context>
     <name>MapHint</name>
     <message>
-        <location filename="../shared/hints/MapHint.cpp" line="64"/>
+        <location filename="../shared/hints/MapHint.cpp" line="61"/>
         <source>Do you want to save changes done to this map ?</source>
         <translation>Voulez-vous sauvegardez les modifications faites à cette carte ?</translation>
     </message>
@@ -850,17 +858,17 @@
 <context>
     <name>Playlist</name>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="208"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="176"/>
         <source>This Youtube video is already in playlist !</source>
         <translation>Cette vidéo Youtube est déjà dans la liste de lecture !</translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="273"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="236"/>
         <source>(Loading metadata...) </source>
         <translation>(Chargement des métadonnées...) </translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="283"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="246"/>
         <source>(Error) </source>
         <translation>(Erreur) </translation>
     </message>
@@ -887,162 +895,162 @@
         <translation>- Pour lancer des dés : {nombreDeLancers}D{faceDuDé}. Exemple : 1d5, 2D20, 3D16.</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="26"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="25"/>
         <source>Notify interest point to players</source>
         <translation>Notifier un point d&apos;interêt aux joueurs</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="40"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="38"/>
         <source>Measure distances</source>
         <translation>Mesurer les distances</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="55"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="51"/>
         <source>Quick draw</source>
         <translation>Dessin Rapide</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="69"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="64"/>
         <source>Display minimap</source>
         <translation>Afficher la minimap</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="83"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="77"/>
         <source>Display grid indicators</source>
         <translation>Afficher la grille</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="107"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="99"/>
         <source>Display scale indicators</source>
         <translation>Afficher les indicateurs d&apos;échelle</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="129"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="120"/>
         <source>Redo</source>
         <translation>Rétablir</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="137"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="128"/>
         <source>Undo</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="145"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="136"/>
         <source>Copy</source>
         <translation>Copier</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="153"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="144"/>
         <source>Paste</source>
         <translation>Coller</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="163"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="154"/>
         <source>Create a folder</source>
         <translation>Créer un dossier</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="170"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="161"/>
         <source>Remove</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="179"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="170"/>
         <source>Raise (Layer %1)</source>
         <translation>Remonter (Calque %1)</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="189"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="180"/>
         <source>Lower (Layer %1)</source>
         <translation>Abaisser (Calque %1)</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="201"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="192"/>
         <source>Show</source>
         <translation>Montrer</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="208"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="199"/>
         <source>Hide</source>
         <translation>Cacher</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="215"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="206"/>
         <source>Reset the view</source>
         <translation>Réinitialiser la vue</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="223"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="214"/>
         <source>Back to Select tool</source>
         <translation>Retour à l&apos;outil de sélection</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="231"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="222"/>
         <source>Lock</source>
         <translation>Verrouiller</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="238"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="229"/>
         <source>Unlock</source>
         <translation>Déverrouiller</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="245"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="236"/>
         <source>Quit</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="254"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="245"/>
         <source>%1 - Patch Notes</source>
         <translation>%1 - Notes de patch</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="262"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="253"/>
         <source>Test Sentry bug reporting</source>
         <translation>Tester l&apos;envoi d&apos;un rapport de bug</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="267"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="258"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="272"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="263"/>
         <source>Open application data folder (%1)</source>
         <translation>Ouvrir le dossier de données de l&apos;application (%1)</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="278"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="269"/>
         <source>Show session log</source>
         <translation>Afficher le journal d&apos;événements de session</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="282"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="273"/>
         <source>Show full log</source>
         <translation>Afficher le journal d&apos;événements</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="286"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="277"/>
         <source>Launch maintenance tool</source>
         <translation>Lancer l&apos;outil de maintenance</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="290"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="281"/>
         <source>Load a map</source>
         <translation>Charger une carte</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="297"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="288"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="304"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="295"/>
         <source>Save map</source>
         <translation>Sauvegarder la carte</translation>
     </message>
     <message>
-        <location filename="../shared/commands/RPZActions.cpp" line="311"/>
+        <location filename="../shared/commands/RPZActions.cpp" line="302"/>
         <source>Save as map...</source>
         <translation>Sauvegarder la carte sous...</translation>
     </message>
@@ -1087,12 +1095,12 @@
         <translation>Une erreur est survenue : </translation>
     </message>
     <message>
-        <location filename="../ui/map/modules/MV_HUDLayout.hpp" line="295"/>
+        <location filename="../ui/map/modules/MV_HUDLayout.hpp" line="276"/>
         <source>Too far to display grid !</source>
         <translation>Trop éloigné pour afficher la grille !</translation>
     </message>
     <message>
-        <location filename="../shared/database/AssetsDatabase.cpp" line="193"/>
+        <location filename="../shared/database/AssetsDatabase.cpp" line="170"/>
         <source>Folder</source>
         <translation>Dossier</translation>
     </message>
@@ -1102,13 +1110,13 @@
         <translation>Calque %1</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="222"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="224"/>
         <location filename="../shared/models/RPZAtom.h" line="157"/>
         <source>Felt pen</source>
         <translation>Feutre</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="223"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="225"/>
         <location filename="../shared/models/RPZAtom.h" line="158"/>
         <source>Text</source>
         <translation>Texte</translation>
@@ -1129,13 +1137,13 @@
         <translation>Atome</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="221"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="223"/>
         <location filename="../shared/models/RPZAtom.h" line="162"/>
         <source>Event</source>
         <translation>Evénement</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="224"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="226"/>
         <location filename="../shared/models/RPZAtom.h" line="163"/>
         <source>Player</source>
         <translation>Joueur</translation>
@@ -1146,13 +1154,13 @@
         <translation>Personnage non-joueur</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="225"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="227"/>
         <location filename="../shared/models/RPZAtom.h" line="165"/>
         <source>Point of interest</source>
         <translation>Point d&apos;intérêt</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="226"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="228"/>
         <location filename="../shared/models/RPZAtom.h" line="166"/>
         <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="77"/>
         <source>Fog of war</source>
@@ -1179,57 +1187,57 @@
         <translation>Points d&apos;intérêt</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="220"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="222"/>
         <source>Internal</source>
         <translation>Interne</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="227"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="229"/>
         <source>NPC / Portraits</source>
         <translation>PNJ / Portraits</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="228"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="230"/>
         <source>Objects</source>
         <translation>Objets</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="229"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="231"/>
         <source>Brushes</source>
         <translation>Terrains</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="230"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="232"/>
         <source>Downloaded</source>
         <translation>Téléchargés</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="231"/>
+        <location filename="../ui/toysBox/_base/ToysTreeViewItem.h" line="233"/>
         <source>Landscapes</source>
         <translation>Paysages</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZAtom.cpp" line="71"/>
+        <location filename="../shared/models/RPZAtom.cpp" line="69"/>
         <source>[Unpaired player token]</source>
         <translation>[Jeton de joueur vierge]</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZMapParameters.hpp" line="46"/>
+        <location filename="../shared/models/RPZMapParameters.hpp" line="45"/>
         <source>Linear</source>
         <translation>Linéaire</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZMapParameters.hpp" line="45"/>
+        <location filename="../shared/models/RPZMapParameters.hpp" line="44"/>
         <source>Grid</source>
         <translation>Grille</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZMapParameters.hpp" line="56"/>
+        <location filename="../shared/models/RPZMapParameters.hpp" line="55"/>
         <source>Players can move freely</source>
         <translation>Les joueurs peuvent se déplacer librement</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZMapParameters.hpp" line="55"/>
+        <location filename="../shared/models/RPZMapParameters.hpp" line="54"/>
         <source>Players can only move from tile to tile</source>
         <translation>Les joueurs peuvent uniquement se déplacer de tuile en tuile</translation>
     </message>
@@ -1307,18 +1315,18 @@
         <translation>Opacité</translation>
     </message>
     <message>
-        <location filename="../shared/commands/AtomsContextualMenuHandler.cpp" line="85"/>
+        <location filename="../shared/commands/AtomsContextualMenuHandler.cpp" line="84"/>
         <source>%1 selected atom(s)</source>
         <translation>%1 atome(s) selectionné(s)</translation>
     </message>
     <message>
-        <location filename="../shared/renderer/graphics/_specific/MapViewToken.hpp" line="378"/>
+        <location filename="../shared/renderer/graphics/_specific/MapViewToken.hpp" line="347"/>
         <source>P</source>
         <comment>player sign</comment>
         <translation>J</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/AtomEditionManager.hpp" line="52"/>
+        <location filename="../ui/atomEditor/AtomEditionManager.hpp" line="49"/>
         <source>Default configuration</source>
         <translation>Paramétrage par défaut</translation>
     </message>
@@ -1328,37 +1336,37 @@
         <translation>Caché</translation>
     </message>
     <message>
-        <location filename="../ui/map/_base/MapViewInteractibleDescriptor.hpp" line="102"/>
+        <location filename="../ui/map/_base/MapViewInteractibleDescriptor.hpp" line="94"/>
         <source>Health</source>
         <translation>Santé</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/GaugeWidget.hpp" line="43"/>
+        <location filename="../ui/sheets/components/GaugeWidget.hpp" line="42"/>
         <source>[Unamed gauge]</source>
         <translation>[Jauge sans nom]</translation>
     </message>
     <message>
-        <location filename="../ui/chat/logs/components/LogContent.hpp" line="56"/>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="55"/>
         <source>logged in !</source>
         <translation>s&apos;est connecté !</translation>
     </message>
     <message>
-        <location filename="../ui/chat/logs/components/LogContent.hpp" line="60"/>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="59"/>
         <source>logged out.</source>
         <translation>s&apos;est déconnecté.</translation>
     </message>
     <message>
-        <location filename="../ui/chat/logs/components/LogContent.hpp" line="78"/>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="75"/>
         <source>Sent at %1</source>
         <translation>Envoyé à %1</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/generic/ColorPickerEditor.hpp" line="49"/>
+        <location filename="../ui/atomEditor/editors/generic/ColorPickerEditor.hpp" line="46"/>
         <source>Pen color</source>
         <translation>Couleur</translation>
     </message>
     <message>
-        <location filename="../ui/docShare/DocShareListView.cpp" line="119"/>
+        <location filename="../ui/docShare/DocShareListView.hpp" line="138"/>
         <source> (downloading...)</source>
         <translation> (téléchargement...)</translation>
     </message>
@@ -1371,32 +1379,32 @@
 <context>
     <name>RPZClient</name>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="143"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="135"/>
         <source>Username required !</source>
         <translation>Nom d&apos;utilisateur requis !</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="156"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="147"/>
         <source>Disconnected from server</source>
         <translation>Déconnecté du serveur</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="45"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="42"/>
         <source>Host closed the connection.</source>
         <translation>L&apos;hôte a fermé la connexion.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="48"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="45"/>
         <source>Host could not be found. Please check the hostname and port number.</source>
         <translation>L&apos;hôte n&apos;a pas pu être trouvé. Merci de vérifier le nom d&apos;hôte et le numéro de port.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="51"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="48"/>
         <source>Connection has been refused by remote host.</source>
         <translation>La connexion a été refusée par l&apos;hôte distant.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="54"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="51"/>
         <source>An error has occured : %1</source>
         <translation>Une erreur est survenue : %1</translation>
     </message>
@@ -1404,7 +1412,7 @@
 <context>
     <name>RPZServer</name>
     <message>
-        <location filename="../network/rpz/server/RPZServer.cpp" line="322"/>
+        <location filename="../network/rpz/server/RPZServer.cpp" line="280"/>
         <source>Your software version is different from the server&apos;s one : v%1 (you) / v%2 (server) !</source>
         <translation>Votre version logicielle diffère de la version du serveur : v%1 (vous) / v%2 (serveur) !</translation>
     </message>
@@ -1448,17 +1456,17 @@
 <context>
     <name>SimpleGaugeEditor</name>
     <message>
-        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="58"/>
+        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="52"/>
         <source>Gauge minimum</source>
         <translation>Minimum de la jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="66"/>
+        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="60"/>
         <source>Gauge maximum</source>
         <translation>Maximum de la jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="74"/>
+        <location filename="../ui/sheets/components/SimpleGaugeEditor.hpp" line="68"/>
         <source>Gauge value</source>
         <translation>Valeur de la jauge</translation>
     </message>
@@ -1466,52 +1474,52 @@
 <context>
     <name>StatusTab</name>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="60"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="57"/>
         <source>Level</source>
         <translation>Niveau</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="64"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="61"/>
         <source>Alterations</source>
         <translation>Altérations</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="72"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="69"/>
         <source> Under the influence of a potion, filled with determination ...</source>
         <translation> Sous l&apos;effet d&apos;une potion, Rempli de détermination ...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="73"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="70"/>
         <source>State bonus :</source>
         <translation>Bonus d&apos;état :</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="77"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="74"/>
         <source> Broken leg, poisoned ...</source>
         <translation> Jambe cassée, empoisonné ...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="78"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="75"/>
         <source>State malus :</source>
         <translation>Malus d&apos;état :</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="81"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="78"/>
         <source>Gauges</source>
         <translation>Jauges</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="96"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="93"/>
         <source>Add a new gauge</source>
         <translation>Ajouter une nouvelle jauge</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="103"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="100"/>
         <source>No gauge bound to the character</source>
         <translation>Aucune jauge liée au personnage</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="113"/>
+        <location filename="../ui/sheets/tabs/StatusTab.hpp" line="110"/>
         <source>Abilities</source>
         <translation>Compétences</translation>
     </message>
@@ -1537,17 +1545,17 @@
 <context>
     <name>ToysTreeView</name>
     <message>
-        <location filename="../ui/toysBox/ToysTreeView.cpp" line="235"/>
+        <location filename="../ui/toysBox/ToysTreeView.cpp" line="212"/>
         <source>&lt;&lt; Move to &quot;%1&quot;</source>
         <translation>&lt;&lt; Déplacer vers&quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/ToysTreeView.cpp" line="342"/>
+        <location filename="../ui/toysBox/ToysTreeView.cpp" line="311"/>
         <source>Delete elements in toy box</source>
         <translation>Supprimer des elements de la boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/ToysTreeView.cpp" line="343"/>
+        <location filename="../ui/toysBox/ToysTreeView.cpp" line="312"/>
         <source>Do you confirm deletion of the %1 selected elements ?</source>
         <translation>Confirmez-vous la suppression des %1 éléments selectionnés ?</translation>
     </message>

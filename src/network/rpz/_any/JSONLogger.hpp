@@ -12,37 +12,37 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
-#pragma once 
+#pragma once
 
 #include <QString>
 #include <QDebug>
+
 #include "RPZJSON.hpp"
 
 class JSONLogger {
-    public:
-        JSONLogger(const QString &loggerId) : _loggerId(loggerId) {};
-    
+ public:
+       explicit JSONLogger(const QString &loggerId) : _loggerId(loggerId) {}
+
         void log(const RPZJSON::Method &method, const QString &msg) {
             qDebug() << "🖧"
                      << qUtf8Printable(this->_loggerId)
-                     << "-" 
+                     << "-"
                      << qUtf8Printable(msg)
                      << method;
         }
 
         void log(const QString &msg) {
-            qDebug() << "🖧" 
+            qDebug() << "🖧"
                      << qUtf8Printable(this->_loggerId)
-                     << "-" 
+                     << "-"
                      << qUtf8Printable(msg);
         }
 
-
-    private:
+ private:
         QString _loggerId;
 };

@@ -12,15 +12,14 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
 #include <QHash>
-#include <set>
 #include <QVector>
 #include <QStack>
 #include <QVariantList>
@@ -28,6 +27,9 @@
 #include <QDebug>
 #include <QMutex>
 #include <QMutexLocker>
+
+#include <set>
+#include <algorithm>
 
 #include "src/shared/models/RPZAtom.h"
 #include "src/shared/payloads/Payloads.h"
@@ -59,7 +61,7 @@ class AtomsStorage : public AlterationAcknoledger {
 
     Q_OBJECT
 
-    public:
+ public:
         using AtomsAreLeft = bool;
 
         AtomsStorage(const Payload::Interactor &boundSource);
@@ -75,21 +77,21 @@ class AtomsStorage : public AlterationAcknoledger {
 
         const QList<RPZCharacter::UserBound> findUnboundCharacters(const QList<RPZCharacter::UserBound> &availableCharacters); //safe
         
-    signals:
+ signals:
         void mapSetup(const RPZMapParameters &mParams, const RPZFogParams &fParams);
 
-    public slots:    
+ public slots:    
         void redo();
         void undo();
         void duplicateAtoms(const QList<RPZAtom::Id> &idsToDuplicate);
         void handleAlterationRequest(const AlterationPayload &payload);
 
-    protected:
+ protected:
         MapDatabase& map();
         const MapDatabase& map() const;
         void _replaceMap(const MapDatabase &map);
 
-        virtual void _handleAlterationRequest(const AlterationPayload &payload) override;
+        void _handleAlterationRequest(const AlterationPayload &payload) override;
         virtual void _atomAdded(const RPZAtom &added) {};
 
         virtual void _basicAlterationDone(const QList<RPZAtom::Id> &updatedIds, const Payload::Alteration &type) {};
@@ -101,7 +103,7 @@ class AtomsStorage : public AlterationAcknoledger {
         const QHash<RPZAtom::Id, RPZCharacter::Id>& _ownables() const; //safe
         const QList<RPZAtom::Id> _ownedBy(const RPZCharacter::Id &owner) const; //safe
 
-    private:
+ private:
         mutable QMutex _m_handlingLock;
         MapDatabase _map;
 

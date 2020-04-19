@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -38,19 +38,19 @@ class PlaylistAudioManager : public QWidget, public ConnectivityObserver {
     
     Q_OBJECT
     
-    public:
+ public:
         PlaylistAudioManager(QWidget *parent = nullptr);
 
         YoutubePlayer* player();
 
-    private slots:
+ private slots:
         void _onGameSessionReceived(const RPZGameSession &gameSession);
         void _onSeekingRequested(int seekPosInSecs);
         void _onSeekingRequested(qint64 seekPosInMsecs);
         void _onAudioPlayStateChanged(bool isPlaying);
         void _onAudioSourceStateChanged(const StreamPlayStateTracker &state);
 
-    private:
+ private:
         AudioProbeController* _asCtrl = nullptr;
         YoutubePlayer* _plCtrl = nullptr;
 

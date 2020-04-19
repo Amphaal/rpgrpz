@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -23,7 +23,7 @@
 #include <QPainterPath>
 
 class PathAnimator : public QPropertyAnimation {
-    public:
+ public:
         PathAnimator(QObject *target, const QByteArray &prop) : QPropertyAnimation(target, prop) {}
 
         QVariant interpolated(const QVariant &from, const QVariant &to, qreal progress) const override {

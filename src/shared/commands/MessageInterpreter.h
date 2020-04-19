@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -38,7 +38,7 @@ struct DiceThrow {
 };
 
 class MessageInterpreter {
-    public:
+ public:
         enum class Command { C_Unknown, Say, Whisper, Help, C_DiceThrow, C_UserLogIn, C_UserLogOut };
         
         static inline const QHash<QString, Command> _textByCommand = {
@@ -60,7 +60,7 @@ class MessageInterpreter {
         static QVector<DiceThrow> findDiceThrowsFromText(const QString &text);
         static void generateValuesOnDiceThrows(QVector<DiceThrow> &throws);
 
-    private:
+ private:
         static inline const QRegularExpression _hasWhispRegex = QRegularExpression("@(.+?)(?:$|\\s)");
         static inline const QRegularExpression _hasCommandRegex = QRegularExpression("\\/(\\w+)");
         static inline const QRegularExpression _mustLaunchDice = QRegularExpression("([1-9]|1[0-6])[dD](\\d+)");

@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 
 #pragma once
@@ -23,30 +23,28 @@
 #include <QtMultimedia/QSoundEffect>
 
 class NotificationsAudioManager {
-    public:
-        static NotificationsAudioManager* get() {
-            if(!_instance) _instance = new NotificationsAudioManager();
-            return _instance;
-        }
+ public:
+    static NotificationsAudioManager* get() {
+        if (!_instance) _instance = new NotificationsAudioManager();
+        return _instance;
+    }
 
-        void playDiceThrow() {
+    void playDiceThrow() {
+        auto randomIndex = QRandomGenerator::global()->bounded(0, _diceEffects.count() - 1);
+        auto source = _diceEffects.value(randomIndex);
 
-            auto randomIndex = QRandomGenerator::global()->bounded(0, _diceEffects.count() - 1);
-            auto source = _diceEffects.value(randomIndex);
+        this->_playEffect(source);
+    }
 
-            this->_playEffect(source);
-            
-        }
+    void playWhisper() {
+        this->_playEffect(":/audio/privateMessage.wav");
+    }
 
-        void playWhisper() {
-            this->_playEffect(":/audio/privateMessage.wav");
-        }
+    void playPing() {
+        this->_playEffect(":/audio/ping.wav");
+    }
 
-        void playPing() {
-            this->_playEffect(":/audio/ping.wav");
-        }
-
-    private:
+ private:
         NotificationsAudioManager() {}
 
         void _playEffect(const QString &path) {
@@ -55,7 +53,7 @@ class NotificationsAudioManager {
             effect->setSource(QUrl::fromLocalFile(path));
             effect->play();
             QObject::connect(
-                effect, &QSoundEffect::playingChanged, 
+                effect, &QSoundEffect::playingChanged,
                 effect, &QObject::deleteLater
             );
         }

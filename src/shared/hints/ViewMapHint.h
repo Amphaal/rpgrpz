@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -43,7 +43,7 @@ class ViewMapHint : public AtomsStorage {
 
     Q_OBJECT
 
-    public:
+ public:
         struct SingleSelectionInteractible {
             bool isInteractive = false;
             RPZAtom interactible;
@@ -63,7 +63,7 @@ class ViewMapHint : public AtomsStorage {
 
         QGraphicsItem* generateGraphicsFromTemplate(bool hiddenAsDefault = false) const; //safe
 
-    public slots:
+ public slots:
         void mightNotifyMovement(const QList<QGraphicsItem*> &itemsWhoMightHaveMoved); //safe
         void notifySelectedItems(const QList<QGraphicsItem*> &selectedItems); //safe
         void notifyFocusedItem(QGraphicsItem* focusedItem); //safe
@@ -75,7 +75,7 @@ class ViewMapHint : public AtomsStorage {
         //handle preview alteration before real payload
         void handlePreviewRequest(const AtomsSelectionDescriptor &selectionDescriptor, const RPZAtom::Parameter &parameter, const QVariant &value);
 
-    signals:
+ signals:
         void requestingUIAlteration(const Payload::Alteration &type, const OrderedGraphicsItems &toAlter);
         void requestingUIAlteration(const Payload::Alteration &type, const QList<QGraphicsItem*> &toAlter);
         void requestingUIUpdate(const QHash<QGraphicsItem*, RPZAtom::Updates> &toUpdate);
@@ -85,10 +85,10 @@ class ViewMapHint : public AtomsStorage {
         void fogModeChanged(const RPZFogParams::Mode &newMode);
         void fogChanged(const QList<QPolygonF> &updatedFog);
 
-    protected:
-        virtual void _handleAlterationRequest(const AlterationPayload &payload) override;
+ protected:
+        void _handleAlterationRequest(const AlterationPayload &payload) override;
 
-    private:
+ private:
         //alter template Atom
         mutable QMutex _m_ghostItem;
         QGraphicsItem* _ghostItem = nullptr;
@@ -132,11 +132,11 @@ class ViewMapHint : public AtomsStorage {
         //augmenting AtomsStorage
         void _atomAdded(const RPZAtom &added) override;
 
-        virtual void _basicAlterationDone(const QList<RPZAtom::Id> &updatedIds, const Payload::Alteration &type) override;
-        virtual void _updatesDone(const QList<RPZAtom::Id> &updatedIds, const RPZAtom::Updates &updates) override;
-        virtual void _updatesDone(const RPZAtom::ManyUpdates &updates) override;
-        virtual void _atomOwnerChanged(const RPZAtom::Id &target, const RPZCharacter::Id &newOwner) override;
-        virtual void _fogUpdated(const QList<QPolygonF> &updatedFog) override;
+        void _basicAlterationDone(const QList<RPZAtom::Id> &updatedIds, const Payload::Alteration &type) override;
+        void _updatesDone(const QList<RPZAtom::Id> &updatedIds, const RPZAtom::Updates &updates) override;
+        void _updatesDone(const RPZAtom::ManyUpdates &updates) override;
+        void _atomOwnerChanged(const RPZAtom::Id &target, const RPZCharacter::Id &newOwner) override;
+        void _fogUpdated(const QList<QPolygonF> &updatedFog) override;
         
 
 };

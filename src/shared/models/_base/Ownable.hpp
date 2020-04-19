@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -26,20 +26,19 @@
 #include "src/shared/models/RPZUser.h"
 
 class Ownable : public Serializable {
-
-    public:
-        Ownable() {};
+ public:
+        Ownable() {}
         explicit Ownable(const QVariantHash &hash) : Serializable(hash) {}
-        Ownable(SnowFlake::Id id) : Serializable(id) {}
+        explicit Ownable(SnowFlake::Id id) : Serializable(id) {}
         Ownable(SnowFlake::Id id, const RPZUser &user) : Ownable(id) {
             this->setOwnership(user);
-        };
+        }
 
-        RPZUser owner() const { 
-            return RPZUser(this->value(QStringLiteral(u"owner")).toHash()); 
-        };
+        RPZUser owner() const {
+            return RPZUser(this->value(QStringLiteral(u"owner")).toHash());
+        }
 
-        void setOwnership(const RPZUser &user) { 
+        void setOwnership(const RPZUser &user) {
             this->insert(QStringLiteral(u"owner"), user);
-        };
+        }
 };

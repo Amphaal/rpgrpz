@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -65,22 +65,22 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
     
     Q_OBJECT
     
-    public:
+ public:
         enum class UIMode { Unset, Full, Player };
         Q_ENUM(UIMode)
 
         MainWindow();
         ~MainWindow();
     
-    protected:
+ protected:
         void connectingToServer() override;
         void connectionClosed(bool hasInitialMapLoaded) override;
 
-    private slots:
+ private slots:
         void _onGameSessionReceived(const RPZGameSession &gameSession);
         void _onCharacterFocusRequest(const RPZCharacter::Id &characterIdToFocus);
 
-    private:
+ private:
         void closeEvent(QCloseEvent *event) override;
         
         void _initUI();

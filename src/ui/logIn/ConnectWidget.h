@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -39,17 +39,17 @@ class ConnectWidget : public QWidget, public ConnectivityObserver {
 
     Q_OBJECT
 
-    public:
+ public:
         enum class State { NotConnected, Connecting, Connected };
         Q_ENUM(State)
 
         ConnectWidget(QWidget *parent = nullptr);
 
-    protected:
+ protected:
         void connectingToServer() override;
         void connectionClosed(bool hasInitialMapLoaded) override;
 
-    private:
+ private:
         QLineEdit* _nameTarget = nullptr;
         QLineEdit* _domainTarget = nullptr;
         QComboBox* _characterSheetTarget = nullptr;

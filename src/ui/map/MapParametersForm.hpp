@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -32,7 +32,7 @@
 
 class MapParametersForm : public QDialog {
     
-    public:
+ public:
         MapParametersForm(const RPZMapParameters &mapParams, QWidget* parent) : 
             QDialog(parent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint) { 
             
@@ -84,7 +84,7 @@ class MapParametersForm : public QDialog {
             return out;
         }
     
-    private:
+ private:
         QPushButton* _saveBtn = nullptr;
 
         QDoubleSpinBox* _minimumZoomScaleSpin = nullptr;

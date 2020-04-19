@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -28,7 +28,7 @@
 #include "src/shared/models/RPZSharedDocument.hpp"
 
 class RPZGameSession : public QVariantHash {
-    public:
+ public:
         RPZGameSession() {}
         explicit RPZGameSession(const QVariantHash &hash) : QVariantHash(hash) {}
         RPZGameSession(
@@ -83,7 +83,7 @@ class RPZGameSession : public QVariantHash {
             this->insert("map", mapPayload);
         }
     
-    private:
+ private:
         void _setMessages(const RPZMap<RPZMessage> &messages) {
             this->insert("msgs", messages.toVMap());
         }

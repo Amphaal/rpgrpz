@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -35,7 +35,7 @@ class AssetsDatabase : public QObject, public JSONDatabase {
     
     Q_OBJECT
 
-    public:
+ public:
         using FolderPath = QString; //internal DB arborescence path (only containers)
 
         enum class StorageContainer {
@@ -75,10 +75,10 @@ class AssetsDatabase : public QObject, public JSONDatabase {
         bool importAsset(RPZAssetImportPackage &package);
         const RPZAssetImportPackage prepareAssetPackage(const RPZAsset::Hash &hash) const;
 
-    signals:
+ signals:
         void assetRenamed(const RPZAsset::Hash &id, const QString &newName);
 
-    protected:
+ protected:
         JSONDatabase::Version apiVersion() const override;
         void _removeDatabaseLinkedFiles() override;
     
@@ -93,7 +93,7 @@ class AssetsDatabase : public QObject, public JSONDatabase {
 
         const QJsonObject _updatedInnerDb() override;
     
-    private:
+ private:
         //singleton
         AssetsDatabase();
         AssetsDatabase(const QJsonObject &doc);

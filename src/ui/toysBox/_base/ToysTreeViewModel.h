@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -28,6 +28,8 @@
 #include <QLabel>
 #include <QString>
 
+#include <algorithm>
+
 #include "ToysTreeViewItem.h"
 #include "src/shared/database/AssetsDatabase.h"
 
@@ -38,7 +40,7 @@ class ToysTreeViewModel : public QAbstractItemModel, public AlterationInteractor
     
     Q_OBJECT
     
-    public:
+ public:
         ToysTreeViewModel(QObject *parent = nullptr);
         
         QModelIndex getStaticContainerTypesIndex(const ToysTreeViewItem::Type &staticContainerType) const; 
@@ -81,7 +83,7 @@ class ToysTreeViewModel : public QAbstractItemModel, public AlterationInteractor
         /// END REIMPLEMENTATION ///
         ////////////////////////////
 
-    protected:
+ protected:
         /////////////////////
         /// DROP HANDLING ///
         /////////////////////
@@ -102,7 +104,7 @@ class ToysTreeViewModel : public QAbstractItemModel, public AlterationInteractor
         bool _indexListContainsIndexOrParent(const QModelIndexList &base, const QModelIndex &index);
         QPair<int, int> _anticipateInserts(const QModelIndexList &tbi);
 
-    private:
+ private:
         ToysTreeViewItem* _rootItem = nullptr;
         QHash<ToysTreeViewItem::Type, ToysTreeViewItem*> _staticElements;  
 

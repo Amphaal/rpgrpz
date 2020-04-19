@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -54,17 +54,17 @@ class AtomEditor : public QGroupBox, public AlterationInteractor {
 
     Q_OBJECT
 
-    public:
+ public:
         AtomEditor(QWidget* parent = nullptr);
         void buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr);
         void resetParams();
         bool hasVisibleEditors();
         AtomsSelectionDescriptor currentSelectionDescriptor();
     
-    signals:
+ signals:
         void requiresPreview(const AtomsSelectionDescriptor &selectionDescriptor, const RPZAtom::Parameter &parameter, const QVariant &value);
 
-    private:
+ private:
         static inline QHash<AtomSubEditor::EditMode, QString> _strEM {
             { AtomSubEditor::EditMode::None, QT_TR_NOOP("Nothing to modify") },
             { AtomSubEditor::EditMode::Template, QT_TR_NOOP("Template modification") },

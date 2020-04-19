@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -38,7 +38,7 @@
 
 class JSONDatabase {
 
-    public:
+ public:
         enum class EntityType {
             Object,
             Array
@@ -59,7 +59,7 @@ class JSONDatabase {
         static void saveAsFile(const QJsonObject &db, const QString &filepath);
         static void saveAsFile(const QJsonObject &db, QFile &fileHandler);
 
-    protected:
+ protected:
         static void updateFrom(QJsonObject &base, const QString &entityKey, const QVariantMap &entity);
         static void updateFrom(QJsonObject &base, const QString &entityKey, const QSet<QString> &entity);
         static void updateFrom(QJsonObject &base, const QString &entityKey, const QVariantHash &entity);
@@ -89,7 +89,7 @@ class JSONDatabase {
 
         void log(const QString &msg);
 
-    private:
+ private:
         QString _logId;
         QJsonObject _dbCopy;
         QFile* _destfile = nullptr;

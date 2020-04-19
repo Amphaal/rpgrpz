@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -40,7 +40,7 @@ class MapViewGraphicsPathItem : public QObject, public QGraphicsPathItem, public
     Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
     Q_PROPERTY(QPainterPath path READ path WRITE setPath)
 
-    public:
+ public:
         MapViewGraphicsPathItem(const QPainterPath &path, const QPen &pen, const QBrush &brush = QBrush()) : QGraphicsPathItem(path),
         _sourceBrush(brush) {
             this->_sourceBrushSize = QSizeF(this->_sourceBrush.texture().size());
@@ -55,7 +55,7 @@ class MapViewGraphicsPathItem : public QObject, public QGraphicsPathItem, public
             return this->_sourceBrushSize;
         }
 
-    private:
+ private:
         QBrush _sourceBrush;
         QSizeF _sourceBrushSize;
 

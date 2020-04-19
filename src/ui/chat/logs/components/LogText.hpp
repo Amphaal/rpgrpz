@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -23,29 +23,25 @@
 #include "src/helpers/_appContext.h"
 
 class LogText : public QLabel {
+ public:
+    explicit LogText(const QString &txt, QWidget* parent = nullptr) : QLabel(parent) {
+        this->setMargin(0);
+        this->setWordWrap(true);
+        this->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
+        this->setOpenExternalLinks(true);
+        this->setTextFormat(Qt::RichText);
 
-    public:
-        LogText(const QString &txt, QWidget* parent = nullptr) : QLabel(parent) {
-        
-            this->setMargin(0);
-            this->setWordWrap(true);
-            this->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
-            this->setOpenExternalLinks(true);
-            this->setTextFormat(Qt::RichText);
+        // redefine text with rich hyperlinks
+        auto withHyperlinks = txt;
+        QRegularExpression r(AppContext::REGEX_URL);
+        auto matches = r.globalMatch(withHyperlinks);
 
-            //redefine text with rich hyperlinks
-            auto withHyperlinks = txt;
-            QRegularExpression r(AppContext::REGEX_URL);
-            auto matches = r.globalMatch(withHyperlinks);
-            
-            while (matches.hasNext()) {
-                QRegularExpressionMatch match = matches.next();
-                auto url = match.captured();
-                withHyperlinks.replace(url, QStringLiteral(u"<a href=\"%1\">%1</a>").arg(url));
-            }
-
-            this->setText(withHyperlinks);
-            
+        while (matches.hasNext()) {
+            QRegularExpressionMatch match = matches.next();
+            auto url = match.captured();
+            withHyperlinks.replace(url, QStringLiteral(u"<a href=\"%1\">%1</a>").arg(url));
         }
 
+        this->setText(withHyperlinks);
+    }
 };

@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once 
 
@@ -25,31 +25,30 @@
 #include "src/_libs/snowflake/snowflake.h"
 
 class Serializable : public QVariantHash {
-    
-    public:
-        Serializable() {};
+ public:
+        Serializable() {}
         explicit Serializable(const QVariantHash &hash) : QVariantHash(hash) {}
-        
-        Serializable(const SnowFlake::Id &id) {
+
+        explicit Serializable(const SnowFlake::Id &id) {
             this->_setId(id);
-        };
+        }
 
-        SnowFlake::Id id() const { 
-            return this->value(QStringLiteral(u"id")).toULongLong(); 
-        };
+        SnowFlake::Id id() const {
+            return this->value(QStringLiteral(u"id")).toULongLong();
+        }
 
-        QString idAsStr() const { 
-            return QString::number(this->id()); 
-        };
+        QString idAsStr() const {
+            return QString::number(this->id());
+        }
 
         void shuffleId() {
             auto id = SnowFlake::get()->nextId();
             this->_setId(id);
         }
-    
-    private:
+
+ private:
         void _setId(const SnowFlake::Id &id) {
-            //must be saved as string to prevent parser lack of precision on double conversion
+            // must be saved as string to prevent parser lack of precision on double conversion
             this->insert(QStringLiteral(u"id"),  QString::number(id));
         }
 };

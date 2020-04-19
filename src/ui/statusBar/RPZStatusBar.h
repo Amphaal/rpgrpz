@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -37,18 +37,18 @@ class RPZStatusBar : public QStatusBar, public ConnectivityObserver {
 
     Q_OBJECT
 
-    public:
+ public:
         RPZStatusBar(QWidget * parent = nullptr);
 
         void bindServerIndicators();
 
-    public slots:
+ public slots:
         void updateServerStateLabel(const QString &stateText, RPZStatusLabel::State state);
         void updateUPnPLabel(const QString &stateText, RPZStatusLabel::State state);
         void updateExtIPLabel(const QString &stateText, RPZStatusLabel::State state);
         void updateMapFileLabel(const QString &mapDescriptor, bool isMapDirty);
 
-    private:
+ private:
         RPZStatusLabel* _extIpLabel = nullptr;
         RPZStatusLabel* _upnpStateLabel = nullptr;
         RPZStatusLabel* _serverStateLabel = nullptr;
@@ -59,7 +59,7 @@ class RPZStatusBar : public QStatusBar, public ConnectivityObserver {
         void _installComponents();
         void _installLayout();
 
-        virtual void connectingToServer() override;
-        virtual void connectionClosed(bool hasInitialMapLoaded) override;
+        void connectingToServer() override;
+        void connectionClosed(bool hasInitialMapLoaded) override;
 
 }; 

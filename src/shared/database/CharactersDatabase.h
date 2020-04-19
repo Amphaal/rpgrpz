@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -29,13 +29,13 @@ class CharactersDatabase : public QObject, public JSONDatabase {
     
     Q_OBJECT
 
-    signals:
+ signals:
         void databaseChanged();
         void characterAdded(const RPZCharacter &);
         void characterRemoved(const RPZCharacter::Id &);
         void characterUpdated(const RPZCharacter &);
 
-    public:
+ public:
         static CharactersDatabase* get();
 
         const RPZMap<RPZCharacter>& characters() const;
@@ -44,13 +44,13 @@ class CharactersDatabase : public QObject, public JSONDatabase {
         void removeCharacter(const RPZCharacter::Id &toRemove);
         void updateCharacter(const RPZCharacter &updated);
 
-    protected:
+ protected:
         JSONDatabase::Version apiVersion() const override;
         JSONDatabase::Model _getDatabaseModel() override;
         void _setupLocalData() override;
         const QJsonObject _updatedInnerDb() override;
 
-    private:
+ private:
         static inline CharactersDatabase* _singleton = nullptr;
         
         RPZMap<RPZCharacter> _characters;

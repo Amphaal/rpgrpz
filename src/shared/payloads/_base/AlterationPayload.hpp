@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -28,7 +28,7 @@
 
 class AlterationPayload : public QVariantHash { 
 
-    public:
+ public:
         AlterationPayload() {}
         explicit AlterationPayload(const QVariantHash &hash) : QVariantHash(hash) {}
         AlterationPayload(const Payload::Alteration &type) {
@@ -76,7 +76,7 @@ class AlterationPayload : public QVariantHash {
         //     return debug;
         // }
 
-    private:      
+ private:      
         void _setType(const Payload::Alteration &type) {
             this->insert(QStringLiteral(u"t"), (int)type);
         }

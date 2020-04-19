@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -24,13 +24,12 @@
 #include "src/shared/models/RPZFogParams.hpp"
 
 class FogModeChangedPayload : public AlterationPayload {
-    
-    public:
+ public:
         explicit FogModeChangedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        FogModeChangedPayload(const RPZFogParams::Mode &mode) : AlterationPayload(Payload::Alteration::FogModeChanged) {
+        explicit FogModeChangedPayload(const RPZFogParams::Mode &mode) : AlterationPayload(Payload::Alteration::FogModeChanged) {
             this->insert(QStringLiteral(u"m"), (int)mode);
         }
-    
+
         RPZFogParams::Mode mode() const {
             return (RPZFogParams::Mode)this->value(QStringLiteral(u"m")).toInt();
         }

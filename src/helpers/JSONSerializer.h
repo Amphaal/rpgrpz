@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -27,16 +27,16 @@
 #include <QPointF>
 
 class JSONSerializer {
-    public:
-        static QByteArray asBase64(const QPainterPath &path);
-        static QPainterPath toPainterPath(const QByteArray &base64);
+ public:
+    static QByteArray asBase64(const QPainterPath &path);
+    static QPainterPath toPainterPath(const QByteArray &base64);
 
-        static QVariant fromQSize(const QSize &size);
-        static QSize toQSize(const QVariantList &integerList);
-        
-        static QVariant fromPointF(const QPointF &point);
-        static QPointF toPointF(const QVariantList &doubleList);
+    static QVariant fromQSize(const QSize &size);
+    static QSize toQSize(const QVariantList &integerList);
 
-        static QVariant fromPolygons(const QList<QPolygonF> &polys);
-        static QList<QPolygonF> toPolygons(const QVariantList &rawPolys);
+    static QVariant fromPointF(const QPointF &point);
+    static QPointF toPointF(const QVariantList &doubleList);
+
+    static QVariant fromPolygons(const QList<QPolygonF> &polys);
+    static QList<QPolygonF> toPolygons(const QVariantList &rawPolys);
 };

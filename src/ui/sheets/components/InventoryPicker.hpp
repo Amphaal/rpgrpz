@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -29,20 +29,15 @@
 #include "src/shared/models/character/RPZInventory.hpp"
 
 class InventoryPicker : public QWidget {
-
     Q_OBJECT
 
-    signals:
+ signals:
         void selectionChanged(const RPZInventory* selected);
         void requestSave(RPZInventory* toSave);
 
-    public:
-        InventoryPicker() : 
-            _inventoryListCombo(new QComboBox), 
-            _deleteInventoryBtn(new QPushButton),
-            _newInventoryBtn(new QPushButton) {
-            
-            //add new inventory
+ public:
+        InventoryPicker() : _inventoryListCombo(new QComboBox), _deleteInventoryBtn(new QPushButton), _newInventoryBtn(new QPushButton) {
+            // add new inventory
             this->_newInventoryBtn->setIcon(QIcon(QStringLiteral(u":/icons/app/other/add.png")));
             this->_newInventoryBtn->setToolTip(tr("Create new inventory"));
             this->_newInventoryBtn->setMaximumWidth(25);
@@ -51,7 +46,7 @@ class InventoryPicker : public QWidget {
                 this, &InventoryPicker::_addButtonPressed
             );
 
-            //delete inventory
+            // delete inventory
             this->_deleteInventoryBtn->setToolTip(tr("Delete inventory"));
             this->_deleteInventoryBtn->setMaximumWidth(25);
             this->_deleteInventoryBtn->setIcon(QIcon(QStringLiteral(u":/icons/app/other/remove.png")));
@@ -61,35 +56,34 @@ class InventoryPicker : public QWidget {
                 this, &InventoryPicker::_deleteButtonPressed
             );
 
-            //on selected inventory changed
+            // on selected inventory changed
             QObject::connect(
                 this->_inventoryListCombo, qOverload<int>(&QComboBox::currentIndexChanged),
                 this, &InventoryPicker::_onSelectedIndexChanged
             );
-            
-            //layout
+
+            // layout
             auto clLayout = new QHBoxLayout;
             this->setLayout(clLayout);
-            this->setContentsMargins(0,0,0,0);
+            this->setContentsMargins(0, 0, 0, 0);
             clLayout->addWidget(this->_inventoryListCombo, 1);
             clLayout->addWidget(this->_deleteInventoryBtn);
             clLayout->addWidget(this->_newInventoryBtn);
-
         }
 
         RPZInventory* currentInventory() {
             auto id = this->_inventoryListCombo->currentIndex();
             auto inventoriesCount = this->_inventories.count();
-            if(id >= inventoriesCount) return nullptr;
+            if (id >= inventoriesCount) return nullptr;
             return &this->_inventories[id];
         }
 
         QVector<RPZInventory*> everyInventoriesExceptArg(const RPZInventory* toExclude) {
             QVector<RPZInventory*> out;
 
-            for(auto &inventory : this->_inventories) {
+            for (auto &inventory : this->_inventories) {
                 auto ptr = &inventory;
-                if(toExclude == ptr) continue;
+                if (toExclude == ptr) continue;
                 out += ptr;
             }
 
@@ -102,26 +96,24 @@ class InventoryPicker : public QWidget {
         }
 
         void loadCharacter(const RPZCharacter &character, bool isReadOnly) {
-            
             this->_readOnly = isReadOnly;
 
             this->_loadInventories(character.inventories());
 
             this->_newInventoryBtn->setVisible(!isReadOnly);
             this->_deleteInventoryBtn->setVisible(!isReadOnly);
-
         }
 
         void updateBufferedItemString() {
-            if(!this->_bufferedSelectedInventory) return;
+            if (!this->_bufferedSelectedInventory) return;
 
             this->_inventoryListCombo->setItemText(
                 this->_bufferedSelectedIndex,
                 this->_bufferedSelectedInventory->toString()
             );
         }
-    
-    private:
+
+ private:
         bool _readOnly = false;
         QIcon _icon = QIcon(QStringLiteral(u":/icons/app/other/bag.png"));
 
@@ -139,36 +131,32 @@ class InventoryPicker : public QWidget {
         }
 
         void _deleteButtonPressed() {
-            
             auto currentChar = this->currentInventory();
-            if(!currentChar) return;
+            if (!currentChar) return;
 
             auto result = QMessageBox::warning(
-                this, 
-                tr("Inventory deletion"), 
+                this,
+                tr("Inventory deletion"),
                 tr("Do you really want to delete this inventory ?"),
-                QMessageBox::Yes|QMessageBox::No, 
+                QMessageBox::Yes|QMessageBox::No,
                 QMessageBox::No
             );
-            
-            if(result == QMessageBox::Yes) {
 
+            if (result == QMessageBox::Yes) {
                 this->_inventories.remove(this->_bufferedSelectedIndex);
-                
+
                 this->_bufferedSelectedInventory = nullptr;
                 this->_bufferedSelectedIndex = -1;
                 this->_reloadInventories();
-
             }
-
         }
 
         bool _autoSave() {
-            if(!this->_bufferedSelectedInventory) return false;
-            if(this->_readOnly) return false;
+            if (!this->_bufferedSelectedInventory) return false;
+            if (this->_readOnly) return false;
 
             emit requestSave(this->_bufferedSelectedInventory);
-            
+
             this->updateBufferedItemString();
 
             return true;
@@ -179,59 +167,55 @@ class InventoryPicker : public QWidget {
 
             auto newInventory = this->currentInventory();
             this->_deleteInventoryBtn->setEnabled(newInventory);
-            
+
             this->_bufferedSelectedInventory = newInventory;
             this->_bufferedSelectedIndex = index;
 
             emit selectionChanged(newInventory);
         }
-        
+
         void _reloadInventories() {
             this->_loadInventories(this->_inventories);
         }
 
         void _loadInventories(const QVector<RPZInventory> &inventories) {
-            
-            //clear
+            // clear
             {
                 QSignalBlocker b(this->_inventoryListCombo);
                 this->_inventoryListCombo->clear();
             }
-            
+
             this->_bufferedSelectedInventory = nullptr;
             this->_bufferedSelectedIndex = -1;
 
             this->_inventories = inventories;
-            
-            //if no inventory in DB
-            if(this->_inventories.isEmpty()) {
-                this->_inventoryListCombo->addItem(this->_readOnly ? 
-                    tr("No existing inventory") : 
+
+            // if no inventory in DB
+            if (this->_inventories.isEmpty()) {
+                this->_inventoryListCombo->addItem(this->_readOnly ?
+                    tr("No existing inventory") :
                     tr("No existing inventory, create some !")
                 );
                 this->_inventoryListCombo->setEnabled(false);
                 return;
             }
 
-            //add an item for each
+            // add an item for each
             this->_inventoryListCombo->setEnabled(true);
             {
                 QSignalBlocker b(this->_inventoryListCombo);
-                for(const auto &inventory : this->_inventories) {
+                for (const auto &inventory : this->_inventories) {
                     this->_inventoryListCombo->addItem(this->_icon, inventory.toString());
                 }
             }
 
-            //make sure to trigger event after refresh
+            // make sure to trigger event after refresh
             auto last = this->_inventories.count() - 1;
             auto ci = this->_inventoryListCombo->currentIndex();
-            if(last != ci) {
+            if (last != ci) {
                 this->_inventoryListCombo->setCurrentIndex(last);
             } else {
                 this->_onSelectedIndexChanged(ci);
             }
-            
         }
-
-
 };

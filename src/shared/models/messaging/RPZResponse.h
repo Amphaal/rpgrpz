@@ -12,17 +12,17 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
 #include "src/shared/models/_base/Stampable.hpp"
 
 class RPZResponse : public Stampable {
-    public:
+ public:
         enum class ResponseCode {
             UnknownCommand, 
             HelpManifest, 
@@ -43,7 +43,7 @@ class RPZResponse : public Stampable {
         QString toString() const override;
         QPalette palette() const override;
 
-    private:
+ private:
         void _setAnswerer(Stampable::Id answererStampableId);
         void _setResponseCode(const ResponseCode &code);
         void _setResponseData(const QVariant &data);

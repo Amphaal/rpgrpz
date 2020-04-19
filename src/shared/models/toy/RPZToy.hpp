@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -23,10 +23,10 @@
 #include "src/shared/models/RPZAtom.h"
 
 class RPZToy : public RPZAsset {
-    public:
+ public:
         RPZToy() {}
         explicit RPZToy(const QVariantHash &hash) : RPZAsset(hash) {}
-        RPZToy(const RPZAsset &asset, const RPZAtom::Type &type = RPZAtom::Type::Undefined) : RPZAsset(asset) {
+        explicit RPZToy(const RPZAsset &asset, const RPZAtom::Type &type = RPZAtom::Type::Undefined) : RPZAsset(asset) {
             this->insert(QStringLiteral(u"at"), (int)type);
         }
 

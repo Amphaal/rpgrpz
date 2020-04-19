@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once 
 
@@ -27,23 +27,23 @@
 #include <QDebug>
 
 class RPZSharedDocument : public QVariantHash {
-    public:
+ public:
         using FileHash = QString;
         using DocumentName = QString;
         using NamesStore = QHash<RPZSharedDocument::FileHash, RPZSharedDocument::DocumentName>;
         using Store = QHash<RPZSharedDocument::FileHash, RPZSharedDocument>;
 
         RPZSharedDocument() {};
-        RPZSharedDocument(const QVariantHash &hash) : QVariantHash(hash) {};
-        RPZSharedDocument(const QUrl &localFileUrl) {
+        explicit RPZSharedDocument(const QVariantHash &hash) : QVariantHash(hash) {}
+        explicit RPZSharedDocument(const QUrl &localFileUrl) {
             this->_inst(localFileUrl);
         }
-        
+
         static RPZSharedDocument::NamesStore toNamesStore(const QVariantHash &hash) {
 
             RPZSharedDocument::NamesStore out;
 
-            for(auto i = hash.begin(); i != hash.end(); i++) {   
+            for(auto i = hash.begin(); i != hash.end(); i++) {
                 auto &hash = i.key();
                 auto name = i.value().toString();
                 out.insert(hash, name);
@@ -102,7 +102,7 @@ class RPZSharedDocument : public QVariantHash {
 
         }
 
-    private:
+ private:
         bool _localInstSuccess = false;
 
         void _inst(const QUrl &localFileUrl) {

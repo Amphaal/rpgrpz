@@ -12,18 +12,18 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
 #include "src/shared/payloads/_base/AtomsWielderPayload.hpp"
 
 class AddedPayload : public AtomsWielderPayload {
-    public:
-        explicit AddedPayload(const QVariantHash &hash) : AtomsWielderPayload(hash) {}
-        AddedPayload(const RPZAtom &atom) : AtomsWielderPayload(QList<RPZAtom>({atom})) {}  
-        AddedPayload(const QList<RPZAtom> &atoms) : AtomsWielderPayload(atoms) {}  
+ public:
+explicit AddedPayload(const QVariantHash &hash) : AtomsWielderPayload(hash) {}
+explicit AddedPayload(const RPZAtom &atom) : AtomsWielderPayload(QList<RPZAtom>({atom})) {}
+explicit AddedPayload(const QList<RPZAtom> &atoms) : AtomsWielderPayload(atoms) {}
 };

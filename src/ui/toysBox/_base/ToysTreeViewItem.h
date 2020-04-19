@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -24,6 +24,8 @@
 #include <QHash>
 #include <QModelIndex>
 #include <QDebug>
+
+#include <algorithm>
 
 #include "src/shared/models/RPZAtom.h"
 #include "src/shared/models/toy/RPZAsset.hpp"
@@ -34,7 +36,7 @@ class ToysTreeViewItem {
 
     Q_GADGET
 
-    public:
+ public:
         enum class Type { 
             T_Unknown = 0,
             Root = 100,
@@ -110,7 +112,7 @@ class ToysTreeViewItem {
 
         friend QDebug operator<<(QDebug debug, const ToysTreeViewItem &c);
 
-    protected:
+ protected:
         ToysTreeViewItem(ToysTreeViewItem* ancestor, const ToysTreeViewItem::Type &type, const QString &name);
 
         QList<ToysTreeViewItem*> _subItems;
@@ -124,7 +126,7 @@ class ToysTreeViewItem {
 
         void unrefSubItem(ToysTreeViewItem* subItem);
 
-    private:
+ private:
         ToysTreeViewItem::Type _type = ToysTreeViewItem::Type::T_Unknown;
         ToysTreeViewItem::Type _insertType = ToysTreeViewItem::Type::T_Unknown;
         ToysTreeViewItem::Type _rootStaticContainerType = ToysTreeViewItem::Type::T_Unknown;

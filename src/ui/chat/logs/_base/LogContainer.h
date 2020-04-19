@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -30,7 +30,7 @@
 
 class LogItem : public QWidget {
     
-    public:
+ public:
         LogItem(const Stampable::Id &boundMsgId);
         int positionInLog(); 
         void setPositionInLog(int position);
@@ -38,7 +38,7 @@ class LogItem : public QWidget {
 
         Stampable::Id boundMsgId() const;
 
-    private:
+ private:
         int _position = -1;
         Stampable::Id _boundMsgId;
         QHBoxLayout* _hLayout = nullptr;
@@ -46,17 +46,17 @@ class LogItem : public QWidget {
 };
 
 class LogContainer : public QWidget {
-    public:
+ public:
         LogContainer(QWidget *parent = nullptr);
         void clearLines();
     
-    protected:
+ protected:
         LogItem* _getLine(const Stampable &element);
         LogItem* _getLine(Stampable::Id elementId);
         LogItem* _addLine(const Stampable &element, Stampable::Id putUnder = 0);
         QVBoxLayout* _getLayout();
     
-    private:
+ private:
         QHash<Stampable::Id, LogItem*> _linesBySerializableId;
         QVBoxLayout* _vLayout = nullptr;
 };

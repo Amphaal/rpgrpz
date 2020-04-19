@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -26,7 +26,7 @@ class PlayersModel : public BaseUsersModel {
     
     Q_OBJECT
 
-    public:
+ public:
         PlayersModel() { };
 
         QVariant data(const QModelIndex &index, int role) const override {
@@ -58,7 +58,7 @@ class PlayersModel : public BaseUsersModel {
 
         }
 
-    private:
+ private:
         bool _isUserInvalidForInsert(const RPZUser &user) const override {
             return user.role() != RPZUser::Role::Player;
         }

@@ -12,20 +12,19 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #include "RPZActions.h"
 
 QAction* RPZActions::usePingTool() {
-    
     auto action = new QAction(
-        QIcon(QStringLiteral(u":/icons/app/tools/ping.png")), 
+        QIcon(QStringLiteral(u":/icons/app/tools/ping.png")),
         QObject::tr("Notify interest point to players")
     );
-    
+
     action->setCheckable(true);
     action->setEnabled(true);
     action->setData((int)MapTool::Ping);
@@ -34,9 +33,8 @@ QAction* RPZActions::usePingTool() {
 }
 
 QAction* RPZActions::useMeasurementTool() {
-    
     auto action = new QAction(
-        QIcon(QStringLiteral(u":/icons/app/tools/measuring.png")), 
+        QIcon(QStringLiteral(u":/icons/app/tools/measuring.png")),
         QObject::tr("Measure distances")
     );
 
@@ -45,13 +43,11 @@ QAction* RPZActions::useMeasurementTool() {
     action->setData((int)MapTool::Measure);
 
     return action;
-
 }
 
 QAction* RPZActions::useQuickDrawTool() {
-    
     auto action = new QAction(
-        QIcon(QStringLiteral(u":/icons/app/tools/pencil.png")), 
+        QIcon(QStringLiteral(u":/icons/app/tools/pencil.png")),
         QObject::tr("Quick draw")
     );
 
@@ -60,12 +56,11 @@ QAction* RPZActions::useQuickDrawTool() {
     action->setData((int)MapTool::QuickDraw);
 
     return action;
-
 }
 
 QAction* RPZActions::activateMinimap() {
-   auto action = new QAction(
-        QIcon(QStringLiteral(u":/icons/app/tools/minimap.png")), 
+    auto action = new QAction(
+        QIcon(QStringLiteral(u":/icons/app/tools/minimap.png")),
         QObject::tr("Display minimap")
     );
 
@@ -77,9 +72,8 @@ QAction* RPZActions::activateMinimap() {
 }
 
 QAction* RPZActions::activateGridIndicator() {
-    
     auto action = new QAction(
-        QIcon(QStringLiteral(u":/icons/app/tools/grid.png")), 
+        QIcon(QStringLiteral(u":/icons/app/tools/grid.png")),
         QObject::tr("Display grid indicators")
     );
 
@@ -91,19 +85,17 @@ QAction* RPZActions::activateGridIndicator() {
         action, &QAction::triggered,
         [=](auto checked) {
             AppContext::settings()->setValue(
-                action->data().toString(), 
+                action->data().toString(),
                 checked
             );
         }
     );
 
     return action;
-
 }
 QAction* RPZActions::activateScaleIndicator() {
-    
     auto action = new QAction(
-        QIcon(QStringLiteral(u":/icons/app/tools/ruler.png")), 
+        QIcon(QStringLiteral(u":/icons/app/tools/ruler.png")),
         QObject::tr("Display scale indicators")
     );
 
@@ -115,14 +107,13 @@ QAction* RPZActions::activateScaleIndicator() {
         action, &QAction::triggered,
         [=](auto checked) {
             AppContext::settings()->setValue(
-                action->data().toString(), 
+                action->data().toString(),
                 checked
             );
         }
     );
 
     return action;
-
 }
 
 QAction* RPZActions::redo() {
@@ -159,14 +150,14 @@ QAction* RPZActions::paste() {
 
 QAction* RPZActions::createFolder() {
     return new QAction(
-        QIcon(QStringLiteral(u":/icons/app/manager/folder.png")), 
+        QIcon(QStringLiteral(u":/icons/app/manager/folder.png")),
         QObject::tr("Create a folder")
     );
 }
 
 QAction* RPZActions::remove() {
     auto action = new QAction(
-        QIcon(QStringLiteral(u":/icons/app/tools/bin.png")), 
+        QIcon(QStringLiteral(u":/icons/app/tools/bin.png")),
         QObject::tr("Remove")
     );
     action->setShortcut(QKeySequence::Delete);

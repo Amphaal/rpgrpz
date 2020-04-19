@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -33,14 +33,14 @@ class AlterationHandler : public QObject {
     
     Q_OBJECT
 
-    public:
+ public:
         static AlterationHandler* get();
         void queueAlteration(const AlterationInteractor* sender, AlterationPayload &payload);
 
-    signals:
+ signals:
         void requiresPayloadHandling(const AlterationPayload &payload);
 
-    private:
+ private:
         static inline AlterationHandler* _inst = nullptr;
         void _queueAlteration(const Payload::Interactor &senderSource, AlterationPayload &payload);
 

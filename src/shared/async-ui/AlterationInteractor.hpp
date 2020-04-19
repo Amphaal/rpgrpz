@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -24,24 +24,25 @@
 #include "src/shared/payloads/Payloads.h"
 
 class AlterationInteractor {
-    public:
-        AlterationInteractor(const Payload::Interactor &interactorId) : _interactorId(interactorId) {};
-        Payload::Interactor interactorId() const { return this->_interactorId; }
+ public:
+    explicit AlterationInteractor(const Payload::Interactor &interactorId) : _interactorId(interactorId) {}
 
-        void payloadTrace(const AlterationPayload &payload) {
-            
-            //no need for detailed log on debug
-            #ifdef _DEBUG 
-                return;
-            #endif
+    Payload::Interactor interactorId() const {
+        return this->_interactorId;
+    }
 
-            auto payloadSource = payload.source();
-            auto payloadType = payload.type();
+    void payloadTrace(const AlterationPayload &payload) {
+        // no need for detailed log on debug
+        #ifdef _DEBUG
+            return;
+        #endif
 
-            qDebug() << "<< [" << payloadSource << ":" << this->_interactorId << "] -" << payloadType;
-            
-        }
+        auto payloadSource = payload.source();
+        auto payloadType = payload.type();
 
-    private:
-        Payload::Interactor _interactorId = Payload::Interactor::Undefined;
+        qDebug() << "<< [" << payloadSource << ":" << this->_interactorId << "] -" << payloadType;
+    }
+
+ private:
+    Payload::Interactor _interactorId = Payload::Interactor::Undefined;
 };

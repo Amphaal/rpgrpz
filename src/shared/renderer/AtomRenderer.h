@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -31,14 +31,14 @@
 #include "src/helpers/RPZQVariant.hpp"
 
 class AtomRenderer {
-    public:
+ public:
         static void defineMapParameters(const RPZMapParameters &mapParameters);
 
         static QGraphicsItem* createGraphicsItem(const RPZAtom &atom, const RPZAsset &asset, bool isTemporary, bool owned);
         static QGraphicsRectItem* createMissingAssetPlaceholderItem(const RPZAtom &atom);
         static QGraphicsItem* createOutlineRectItem(const QPointF &scenePos);
 
-    private:
+ private:
         static QGraphicsItem* _createGenericImageBasedItem(const RPZAtom &atom, const RPZAsset &asset);
         static QGraphicsPathItem* _createBrushItem(const RPZAtom &atom, const RPZAsset &asset);
         static MapViewDrawing* _createDrawingItem(const RPZAtom &atom);

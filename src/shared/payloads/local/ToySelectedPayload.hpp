@@ -12,27 +12,27 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
-#include "src/shared/payloads/_base/AlterationPayload.hpp"
 #include <QPair>
+
+#include "src/shared/payloads/_base/AlterationPayload.hpp"
+
 #include "src/shared/models/toy/RPZToy.hpp"
 
 class ToySelectedPayload : public AlterationPayload {
-    
-    public:
+ public:
         explicit ToySelectedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        ToySelectedPayload(const RPZToy &toy) : AlterationPayload(Payload::Alteration::ToySelected) {
+        explicit ToySelectedPayload(const RPZToy &toy) : AlterationPayload(Payload::Alteration::ToySelected) {
             this->insert(QStringLiteral(u"toy"), toy);
         }
-    
+
         RPZToy selectedToy() const {
             return RPZToy(this->value(QStringLiteral(u"toy")).toHash());
         }
-
 };

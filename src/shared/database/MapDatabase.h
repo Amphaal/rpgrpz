@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -38,7 +38,7 @@
 
 class MapDatabase : public JSONDatabase {
     
-    public:
+ public:
         struct FogBuffer {
             QList<QPolygonF> polys;
             ClipperLib::Paths paths;
@@ -71,7 +71,7 @@ class MapDatabase : public JSONDatabase {
         const RPZMap<RPZAtom>& atoms() const;
         const QSet<RPZAsset::Hash>& usedAssetHashes() const;
 
-    protected:
+ protected:
         JSONDatabase::Version apiVersion() const override;
         const QJsonObject _updatedInnerDb() override;
 
@@ -80,7 +80,7 @@ class MapDatabase : public JSONDatabase {
         RPZMapParameters _mapParams;
         RPZFogParams _fogParams;
 
-    private:
+ private:
         FogBuffer _fogBuffer;
         QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> _getUpdateHandlers() override;
         JSONDatabase::Model _getDatabaseModel() override;

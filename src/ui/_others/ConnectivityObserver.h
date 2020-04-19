@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once 
 
@@ -25,7 +25,7 @@
 #include "src/helpers/Authorisations.hpp"
 
 class ConnectivityObserver {
-    public:
+ public:
         ConnectivityObserver();
                 
         static void connectWithClient(RPZClient* cc);
@@ -35,12 +35,12 @@ class ConnectivityObserver {
 
         void receivedConnectionCloseSignal(bool hasInitialMapLoaded);
 
-    protected:
+ protected:
         static inline RPZClient* _rpzClient = nullptr;
         virtual void connectingToServer() {}
         virtual void connectionClosed(bool hasInitialMapLoaded) {}
 
-    private:
+ private:
         static inline QVector<ConnectivityObserver*> _observers;
         static void _onClientThreadFinished();
 
@@ -51,13 +51,13 @@ class ConnectivityObserverSynchronizer : public QObject {
 
     Q_OBJECT
 
-    public:
+ public:
         static ConnectivityObserverSynchronizer* get();
     
-    public slots:
+ public slots:
         void triggerConnectionClosed(bool hasInitialMapLoaded);
 
-    private:
+ private:
         ConnectivityObserverSynchronizer() {}
         static inline ConnectivityObserverSynchronizer* _inst = nullptr;
         

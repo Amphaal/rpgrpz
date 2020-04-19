@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -27,7 +27,7 @@
 #include "src/shared/async-ui/progress/ProgressTracker.hpp"
 
 class ClientActivityIndicator : public QLabel {
-    public:
+ public:
         ClientActivityIndicator(const QPixmap &offState, const QPixmap &onState) : _off(offState), _on(onState) {
 
             this->setContentsMargins(0, 0, 0, 0);
@@ -53,7 +53,7 @@ class ClientActivityIndicator : public QLabel {
             if(!_lingerTimer.isActive()) _setOff();
         }
     
-    private:
+ private:
         QPixmap _on;
         QPixmap _off;
 
@@ -73,7 +73,7 @@ class ClientActivityIndicator : public QLabel {
 };
 
 class ClientActivityBar : public QWidget {
-    public:
+ public:
         ClientActivityBar() {
 
             this->setVisible(false);
@@ -113,7 +113,7 @@ class ClientActivityBar : public QWidget {
 
         };
     
-    private:
+ private:
         ClientActivityIndicator* _upLbl = nullptr;
         ClientActivityIndicator* _downLbl = nullptr;
         

@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #include "RPZAtom.h"
 
@@ -23,28 +23,28 @@ RPZAtom::RPZAtom() {}
 RPZAtom::RPZAtom(const QVariantHash &hash) : Serializable(hash) {}
 RPZAtom::RPZAtom(RPZAtom::Id id, const RPZAtom::Type &type) : Serializable(id) {
     this->_setType(type);
-};
+}
 RPZAtom::RPZAtom(const RPZAtom::Type &type) : Serializable(SnowFlake::get()->nextId()) {
-    this->_setType(type);  
-};
+    this->_setType(type);
+}
 
 RPZAtom::Category RPZAtom::category() const {
     return category(this->type());
 }
 RPZAtom::Category RPZAtom::category(const RPZAtom::Type &type) {
-    if(_layoutAtom.contains(type)) return Category::Layout;
+    if (_layoutAtom.contains(type)) return Category::Layout;
     return Category::Interactive;
 }
 
 int RPZAtom::staticZIndex() const {
-    auto zIndex = AppContext::HOVERING_ITEMS_Z_INDEX; 
+    auto zIndex = AppContext::HOVERING_ITEMS_Z_INDEX;
     auto type = this->type();
     return _interactiveHoveringAtoms.contains(type) ? zIndex + (int)type : zIndex;
 }
 
 bool RPZAtom::mustTriggerFoWCheck(const QList<RPZAtom::Parameter> paramsToCheck) {
-    for(auto param : paramsToCheck) {
-        if(_mustTriggerFoWCheck.contains(param)) return true;
+    for (auto param : paramsToCheck) {
+        if (_mustTriggerFoWCheck.contains(param)) return true;
     }
     return false;
 }
@@ -61,12 +61,10 @@ bool RPZAtom::isCopyable() const {
     return !_notCopyable.contains(this->type());
 }
 
-const QString RPZAtom::toString(const RPZAtom::Type &type, const QString &description) { 
-
-    //default if no descriptor
-    if(description.isEmpty()) {
-        switch(type) {
-            
+const QString RPZAtom::toString(const RPZAtom::Type &type, const QString &description) {
+    // default if no descriptor
+    if (description.isEmpty()) {
+        switch (type) {
             case RPZAtom::Type::Player:
                 return QObject::tr("[Unpaired player token]");
             break;
@@ -74,13 +72,11 @@ const QString RPZAtom::toString(const RPZAtom::Type &type, const QString &descri
             default:
                 return _atomTypeToText(type);
             break;
-
         }
     }
 
-    //by category, if descriptor
-    switch(RPZAtom::category(type)) {
-        
+    // by category, if descriptor
+    switch (RPZAtom::category(type)) {
         case RPZAtom::Category::Interactive:
             return description;
         break;
@@ -93,21 +89,17 @@ const QString RPZAtom::toString(const RPZAtom::Type &type, const QString &descri
 
         default:
         break;
-
     }
-    
-    return _atomTypeToText(type);
 
-};
+    return _atomTypeToText(type);
+}
 
 const QString RPZAtom::toString() const {
-    
     auto type = this->type();
     auto descriptorParam = RPZAtom::descriptorsByAtomType.value(type);
     auto descriptor = descriptorParam != RPZAtom::Parameter::Unknown ? this->metadata(descriptorParam).toString() : QString();
 
     return toString(type, descriptor);
-    
 }
 
 const QString RPZAtom::descriptiveIconPath() const {
@@ -115,10 +107,8 @@ const QString RPZAtom::descriptiveIconPath() const {
 }
 
 const QString RPZAtom::descriptiveIconPath(const RPZAtom::Type &type, const RPZAtom::NPCType &npcAttitude) {
-
-    if(type == RPZAtom::Type::NPC) {
-        switch(npcAttitude) {
-
+    if (type == RPZAtom::Type::NPC) {
+        switch (npcAttitude) {
             case RPZAtom::NPCType::Unknown:
                 return QStringLiteral(u":/icons/app/attitude/unknown.png");
 
@@ -127,26 +117,22 @@ const QString RPZAtom::descriptiveIconPath(const RPZAtom::Type &type, const RPZA
 
             case RPZAtom::NPCType::Hostile:
                 return QStringLiteral(u":/icons/app/attitude/hostile.png");
-            
+
             case RPZAtom::NPCType::Neutral:
                 return QStringLiteral(u":/icons/app/attitude/neutral.png");
-
         }
     }
 
     return RPZAtom::iconPathByAtomType.value(type);
-    
 }
 
 const QString RPZAtom::_atomTypeToText(const RPZAtom::Type &type) {
-    
     auto descr = atomTypeDescr.value(
-        type, 
+        type,
         atomTypeDescr.value(RPZAtom::Type::Undefined)
     );
 
     return QObject::tr(qUtf8Printable(descr));
-
 }
 
 QVariant RPZAtom::getDefaultValueForParam(const RPZAtom::Parameter &param) {
@@ -167,13 +153,13 @@ void RPZAtom::setMetadata(const RPZAtom::Parameter &key, RPZAtom &base) {
 
 
 void RPZAtom::setMetadata(const RPZAtom::Updates &metadata) {
-    for(auto i = metadata.constBegin(); i != metadata.constEnd(); i++) {
+    for (auto i = metadata.constBegin(); i != metadata.constEnd(); i++) {
         this->setMetadata(i.key(), i.value());
     }
 }
 
 void RPZAtom::setMetadata(const RPZAtom::Parameter &key, const QVariant &value) {
-    if(value.isNull()) return this->unsetMetadata(key);
+    if (value.isNull()) return this->unsetMetadata(key);
     this->insert(
         _str.value(key),
         toSerialized(key, value)
@@ -214,7 +200,7 @@ QPainterPath RPZAtom::shape() const {
     auto rawShape = this->metadata(RPZAtom::Parameter::Shape).toByteArray();
     return JSONSerializer::toPainterPath(rawShape);
 }
-void RPZAtom::setShape(const QPainterPath &path) { 
+void RPZAtom::setShape(const QPainterPath &path) {
     this->setMetadata(RPZAtom::Parameter::Shape, JSONSerializer::asBase64(path));
 }
 void RPZAtom::setShape(const QRectF &rect) {
@@ -228,11 +214,9 @@ void RPZAtom::setShape(const QRectF &rect) {
 //
 
 QSet<RPZAtom::Parameter> RPZAtom::customizableParams(const RPZAtom::Type &type) {
-
     QSet<RPZAtom::Parameter> out;
-    
-    switch(type) {
-        
+
+    switch (type) {
         case RPZAtom::Type::Drawing: {
             out.insert(RPZAtom::Parameter::PenWidth);
             out.insert(RPZAtom::Parameter::PenColor);
@@ -256,7 +240,7 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams(const RPZAtom::Type &type) 
         case RPZAtom::Type::POI:
         case RPZAtom::Type::Event: {
             out.insert(RPZAtom::Parameter::EventShortDescription);
-            out.insert(RPZAtom::Parameter::EventDescription);   
+            out.insert(RPZAtom::Parameter::EventDescription);
         }
         break;
 
@@ -290,11 +274,9 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams(const RPZAtom::Type &type) 
 
         default:
             break;
-
     }
 
     return out;
-
 }
 
 QSet<RPZAtom::Parameter> RPZAtom::customizableParams() const {
@@ -302,7 +284,7 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams() const {
 }
 
 const RPZGauge::MinimalistGauge RPZAtom::NPCGauge() const {
-    return { 
+    return {
         this->metadata(RPZAtom::Parameter::NPCHealth).toInt(),
         this->metadata(RPZAtom::Parameter::MinNPCHealth).toInt(),
         this->metadata(RPZAtom::Parameter::MaxNPCHealth).toInt()
@@ -326,20 +308,19 @@ bool RPZAtom::isAssetBased() const {
 }
 
 QSet<RPZAtom::Parameter> RPZAtom::legalParameters() const {
-    
     auto base = this->customizableParams();
-    
-    //basic
+
+    // basic
     base.insert(RPZAtom::Parameter::Position);
-    if(this->canBeManuallyHidden()) base.insert(RPZAtom::Parameter::Hidden);
-    
-    //layout specific
-    if(this->category() == RPZAtom::Category::Layout) {
+    if (this->canBeManuallyHidden()) base.insert(RPZAtom::Parameter::Hidden);
+
+    // layout specific
+    if (this->category() == RPZAtom::Category::Layout) {
         base.insert(RPZAtom::Parameter::Layer);
         base.insert(RPZAtom::Parameter::Locked);
     }
 
-    if(this->isAssetBased()) {
+    if (this->isAssetBased()) {
         base.insert(RPZAtom::Parameter::Shape);
         base.insert(RPZAtom::Parameter::ShapeCenter);
         base.insert(RPZAtom::Parameter::AssetHash);
@@ -347,19 +328,16 @@ QSet<RPZAtom::Parameter> RPZAtom::legalParameters() const {
     }
 
     return base;
-
 }
 
 QSet<RPZAtom::Parameter> RPZAtom::editedMetadata() const {
-    
-    //existing metadata
+    // existing metadata
     QSet<RPZAtom::Parameter> existing;
     for (auto i = _str.constBegin(); i != _str.constEnd(); ++i) {
-        if(this->contains(i.value())) existing.insert(i.key());
+        if (this->contains(i.value())) existing.insert(i.key());
     }
 
     return existing;
-
 }
 
 RPZAtom::Updates RPZAtom::editedMetadataWithValues() const {
@@ -375,12 +353,11 @@ RPZAtom::Updates RPZAtom::editedMetadataWithValues() const {
 QVariantHash RPZAtom::serializeUpdates(const RPZAtom::Updates &updates) {
     QVariantHash in;
     for (auto i = updates.constBegin(); i != updates.constEnd(); ++i) {
-        
         auto param = i.key();
         auto unserializedVal = i.value();
-        
+
         in.insert(
-            QString::number((int)param), 
+            QString::number((int)param),
             toSerialized(param, unserializedVal)
         );
     }
@@ -395,7 +372,7 @@ RPZAtom::Updates RPZAtom::unserializeUpdates(const QVariantHash &serializedUpdat
         auto serializedVal = i.value();
 
         out.insert(
-            param, 
+            param,
             fromSerialized(param, serializedVal)
         );
     }
@@ -404,7 +381,7 @@ RPZAtom::Updates RPZAtom::unserializeUpdates(const QVariantHash &serializedUpdat
 }
 
 QVariant RPZAtom::toSerialized(const RPZAtom::Parameter &param, const QVariant &unserialized) {
-    switch(param) {
+    switch (param) {
         case RPZAtom::Parameter::ShapeCenter:
         case RPZAtom::Parameter::Position: {
             return JSONSerializer::fromPointF(unserialized.toPointF());
@@ -417,7 +394,7 @@ QVariant RPZAtom::toSerialized(const RPZAtom::Parameter &param, const QVariant &
 }
 
 QVariant RPZAtom::fromSerialized(const RPZAtom::Parameter &param, const QVariant &serialized) {
-    switch(param) {
+    switch (param) {
         case RPZAtom::Parameter::ShapeCenter:
         case RPZAtom::Parameter::Position: {
             return JSONSerializer::toPointF(serialized.toList());

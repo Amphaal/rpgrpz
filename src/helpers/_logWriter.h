@@ -12,38 +12,53 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
 #include <QApplication>
 #include <stdio.h>
 #include <stdlib.h>
+
 #include <QDateTime>
-#include <mutex>
 
 #include <algorithm>
 
 #include "_appContext.h"
 
 class LogWriter {
-    public:
-        static void customMO(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+ public:
+    static void customMO(
+        QtMsgType type,
+        const QMessageLogContext &context,
+        const QString &msg);
 
-    private:
-        static inline std::mutex _m;
-        
-        static void _fprtint(const QString &channel, const QMessageLogContext &context, QString msg);
-        static void _openFileAndLog(QString* logFilePath, const QString &channel, const QMessageLogContext &context, const QString &msg, bool* sessionlogToken = nullptr);
-            static void _fprintf_to_file(FILE* _fs, const QString &channel, const QMessageLogContext &context, QString msg);
+ private:
+    static inline std::mutex _m;
 
-        static inline QString* _fullLogFilePath = nullptr;
-        static QString* _getFullLogFilePath();
+    static void _fprtint(
+        const QString &channel,
+        const QMessageLogContext &context,
+        QString msg);
+    static void _openFileAndLog(
+        QString* logFilePath,
+        const QString &channel,
+        const QMessageLogContext &context,
+        const QString &msg,
+        bool* sessionlogToken = nullptr);
+    static void _fprintf_to_file(
+        FILE* _fs,
+        const QString &channel,
+        const QMessageLogContext &context,
+        QString msg);
 
-        static inline bool _latest_been_inst = false;
-        static inline QString* _sessionLogFilePath = nullptr;
-        static QString* _getSessionLogFilePath();
+    static inline QString* _fullLogFilePath = nullptr;
+    static QString* _getFullLogFilePath();
+
+    static inline bool _latest_been_inst = false;
+    static inline QString* _sessionLogFilePath = nullptr;
+    static QString* _getSessionLogFilePath();
 };

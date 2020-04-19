@@ -12,53 +12,53 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
 #include "src/shared/payloads/_base/AtomsWielderPayload.hpp"
 
 class ResetPayload : public AtomsWielderPayload {
-    public:
-        ResetPayload() {}
-        explicit ResetPayload(const QVariantHash &hash) : AtomsWielderPayload(hash) {}
-        ResetPayload(const MapDatabase &map) : AtomsWielderPayload(map) {
-            this->_setMapParams(map.mapParams());
-            this->setFogParams(map.fogParams());
-        }
-        
-        friend QDebug operator<<(QDebug debug, const ResetPayload &c) {
-            QDebugStateSaver saver(debug);
-            debug.nospace() << c.type() << ", count:" << c.atoms().count();
-            return debug;
-        }
-    
-        const RPZMapParameters mapParameters() const {
-            return RPZMapParameters(this->value("mParams").toHash());
-        }
-        
-        const RPZFogParams fogParameters() const {
-            return RPZFogParams(this->value("fParams").toHash());
-        };
+ public:
+    ResetPayload() {}
+    explicit ResetPayload(const QVariantHash &hash) : AtomsWielderPayload(hash) {}
+    explicit ResetPayload(const MapDatabase &map) : AtomsWielderPayload(map) {
+        this->_setMapParams(map.mapParams());
+        this->setFogParams(map.fogParams());
+    }
 
-        void setMapParams(const RPZMapParameters &mapParams) {
-            this->insert("fromMPUpdate", true);
-            this->_setMapParams(mapParams);
-        }
+    friend QDebug operator<<(QDebug debug, const ResetPayload &c) {
+        QDebugStateSaver saver(debug);
+        debug.nospace() << c.type() << ", count:" << c.atoms().count();
+        return debug;
+    }
 
-        void setFogParams(const RPZFogParams &fogParams) {
-            this->insert("fParams", fogParams);
-        }
+    const RPZMapParameters mapParameters() const {
+        return RPZMapParameters(this->value("mParams").toHash());
+    }
 
-        bool isFromMapParametersUpdate() const {
-            return this->value("fromMPUpdate").toBool();
-        }
+    const RPZFogParams fogParameters() const {
+        return RPZFogParams(this->value("fParams").toHash());
+    }
 
-    private:
-        void _setMapParams(const RPZMapParameters &mapParams) {
-            this->insert("mParams", mapParams);
-        }
+    void setMapParams(const RPZMapParameters &mapParams) {
+        this->insert("fromMPUpdate", true);
+        this->_setMapParams(mapParams);
+    }
+
+    void setFogParams(const RPZFogParams &fogParams) {
+        this->insert("fParams", fogParams);
+    }
+
+    bool isFromMapParametersUpdate() const {
+        return this->value("fromMPUpdate").toBool();
+    }
+
+ private:
+    void _setMapParams(const RPZMapParameters &mapParams) {
+        this->insert("mParams", mapParams);
+    }
 };

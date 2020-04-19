@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -24,14 +24,14 @@
 #include <QIcon>
 #include "src/helpers/_appContext.h"
 
-enum class MapAction { 
+enum class MapAction {
     ResetView,
     ResetTool
 };
 
 enum class MapTool {
-    Default, 
-    Atom, 
+    Default,
+    Atom,
     Scroll,
     Ping,
     Measure,
@@ -40,7 +40,7 @@ enum class MapTool {
 };
 
 class RPZActions {
-    public:
+ public:
         static QAction* sentry();
         static QAction* redo();
         static QAction* undo();

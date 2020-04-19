@@ -12,50 +12,53 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
 #include "src/ui/atomEditor/_base/AbstractAtomSliderEditor.h"
 
 class AtomSliderEditor : public AbstractAtomSliderEditor {
-    public:
-        AtomSliderEditor(const RPZAtom::Parameter &parameter, int minimum, int maximum) : 
-            AbstractAtomSliderEditor(parameter, QVector<CrossEquities::CrossEquity> { {(double)minimum, minimum}, {(double)maximum, maximum} }) {
-                this->_spin = this->_generateSpinBox();
-                this->_widgetLineLayout->addWidget(this->_spin);
-            }
-
-    protected: 
-        QAbstractSpinBox* _generateSpinBox() const override {
-            
-            auto spin = new QSpinBox;
- 
-            spin->setMinimum(this->_crossEquities().minSlider());
-            spin->setMaximum(this->_crossEquities().maxSlider());
-
-            QObject::connect(
-                spin, qOverload<int>(&QSpinBox ::valueChanged),
-                this, &AtomSliderEditor::_onSpinnerValueChanged
-            );
-
-            return spin;
-
+ public:
+    AtomSliderEditor(const RPZAtom::Parameter &parameter, int minimum, int maximum) :
+        AbstractAtomSliderEditor(
+            parameter,
+            CrossEquities({
+                { (double)minimum, minimum },
+                { (double)maximum, maximum }
+            })
+        ) {
+            this->_spin = this->_generateSpinBox();
+            this->_widgetLineLayout->addWidget(this->_spin);
         }
 
-        void _updateSpinner(double toApply) override {
-            QSignalBlocker l(this->_spin);
-            ((QSpinBox*)this->_spin)->setValue((int)toApply);
-        }
+ protected:
+    QAbstractSpinBox* _generateSpinBox() const override {
+        auto spin = new QSpinBox;
 
-    private:
-        void _onSpinnerValueChanged(int atomValue) {
-            auto sliderVal = this->toSliderValue(atomValue);
-            this->_updateSlider(sliderVal);
-            this->_triggerAlterations();
-        }
+        spin->setMinimum(this->_crossEquities().minSlider());
+        spin->setMaximum(this->_crossEquities().maxSlider());
 
+        QObject::connect(
+            spin, qOverload<int>(&QSpinBox ::valueChanged),
+            this, &AtomSliderEditor::_onSpinnerValueChanged
+        );
+
+        return spin;
+    }
+
+    void _updateSpinner(double toApply) override {
+        QSignalBlocker l(this->_spin);
+        ((QSpinBox*)this->_spin)->setValue((int)toApply);
+    }
+
+ private:
+    void _onSpinnerValueChanged(int atomValue) {
+        auto sliderVal = this->toSliderValue(atomValue);
+        this->_updateSlider(sliderVal);
+        this->_triggerAlterations();
+    }
 };

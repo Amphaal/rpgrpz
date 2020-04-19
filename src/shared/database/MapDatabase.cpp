@@ -12,20 +12,18 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #include "MapDatabase.h"
 
 MapDatabase::MapDatabase(const QString &filePath) : JSONDatabase(QStringLiteral(u"MapDB")) {
-    
     this->_initDatabaseFromJSONFile(filePath);
-    
-    this->log(QStringLiteral(u"read %1 atoms").arg(this->_atomsById.count()));
 
-};
+    this->log(QStringLiteral(u"read %1 atoms").arg(this->_atomsById.count()));
+}
 MapDatabase::MapDatabase(const QJsonObject &obj) : JSONDatabase(QStringLiteral(u"MapDB")) {
     this->_setupFromDbCopy(obj);
 }
@@ -52,34 +50,31 @@ const RPZAtom MapDatabase::atom(const RPZAtom::Id &id) const {
 }
 
 RPZAtom* MapDatabase::atomPtr(const RPZAtom::Id &id) {
-    if(!this->_atomsById.contains(id)) return nullptr;
+    if (!this->_atomsById.contains(id)) return nullptr;
     return &this->_atomsById[id];
 }
 
 void MapDatabase::_setupLocalData() {
-
-    //map params
+    // map params
     this->_mapParams = RPZMapParameters(this->entityAsObject(QStringLiteral(u"params")).toVariantHash());
 
-    //fog
+    // fog
     this->_fogParams = RPZFogParams(this->entityAsObject(QStringLiteral(u"fog")).toVariantHash());
 
-    //atoms
-    for(const auto &atomAsJson : this->entityAsArray(QStringLiteral(u"atoms"))) {
+    // atoms
+    for (const auto &atomAsJson : this->entityAsArray(QStringLiteral(u"atoms"))) {
         RPZAtom atom(atomAsJson.toObject().toVariantHash());
         this->_atomsById.insert(atom.id(), atom);
     }
 
-    //hashes
-    for(const auto &id : this->entityAsArray(QStringLiteral(u"assets"))) {
+    // hashes
+    for (const auto &id : this->entityAsArray(QStringLiteral(u"assets"))) {
         auto hash = id.toString();
         this->_assetHashes += hash;
     }
-
 }
 
 const QJsonObject MapDatabase::_updatedInnerDb() {
-    
     auto db = this->db();
 
     updateFrom(db, QStringLiteral(u"fog"), this->_fogParams);
@@ -88,39 +83,34 @@ const QJsonObject MapDatabase::_updatedInnerDb() {
     updateFrom(db, QStringLiteral(u"params"), this->_mapParams);
 
     return db;
-
 }
 
 const QString MapDatabase::snapshotSave(const QString &folderToSaveTo) {
-    
     auto filename = QDateTime::currentDateTime().toString(QStringLiteral(u"dd_MM_yyyy_hh_mm_ss_zzz"));
-    
+
     auto fullPath = QStringLiteral(u"%1/%2%3")
                     .arg(folderToSaveTo)
                     .arg(filename)
                     .arg(AppContext::RPZ_MAP_FILE_EXT);
-    
+
     JSONDatabase::saveAsFile(this->_updatedInnerDb(), fullPath);
 
     return fullPath;
-
 }
 
 void MapDatabase::addAtoms(const QList<RPZAtom> &toAdd) {
-    for(auto const &atom : toAdd) {
+    for (auto const &atom : toAdd) {
         this->addAtom(atom);
     }
 }
 
 void MapDatabase::addAtom(const RPZAtom &toAdd) {
-    
     this->_atomsById.insert(toAdd.id(), toAdd);
 
     auto hash = toAdd.assetHash();
-    if(!hash.isEmpty()) {
+    if (!hash.isEmpty()) {
         this->_assetHashes += hash;
     }
-
 }
 
 void MapDatabase::setMapParams(const RPZMapParameters &newParams) {
@@ -138,36 +128,34 @@ const RPZMapParameters MapDatabase::mapParams() const {
 }
 
 QList<QPolygonF> MapDatabase::alterFog(const FogChangedPayload &payload) {
-
     auto type = payload.changeType();
 
-    //handle Reset
-    if(type == FogChangedPayload::ChangeType::Reset) {
+    // handle Reset
+    if (type == FogChangedPayload::ChangeType::Reset) {
         this->_fogBuffer.polys.clear();
         this->_fogBuffer.paths.clear();
         this->_fogParams.setPolys({});
         return {};
     }
-    
-    //else...
+
+    // else...
     auto m_polys = payload.modifyingPolys();
 
-    //else, prepare clipper
-    auto operation = type == FogChangedPayload::ChangeType::Added ? 
-                        ClipperLib::ClipType::ctUnion : 
+    // else, prepare clipper
+    auto operation = type == FogChangedPayload::ChangeType::Added ?
+                        ClipperLib::ClipType::ctUnion :
                         ClipperLib::ClipType::ctDifference;
     ClipperLib::Clipper clipper;
     clipper.AddPaths(this->_fogBuffer.paths, ClipperLib::PolyType::ptSubject, true);
     clipper.AddPaths(VectorSimplifier::toPaths(m_polys), ClipperLib::PolyType::ptClip, true);
 
-    //exec
+    // exec
     clipper.Execute(operation, this->_fogBuffer.paths, ClipperLib::PolyFillType::pftNonZero);
     this->_fogBuffer.polys = VectorSimplifier::toPolys(this->_fogBuffer.paths);
 
-    //update
+    // update
     this->_fogParams.setPolys(this->_fogBuffer.polys);
     return this->_fogBuffer.polys;
-
 }
 
 void MapDatabase::updateAtom(const RPZAtom &updated) {
@@ -179,7 +167,7 @@ void MapDatabase::changeFogMode(const RPZFogParams::Mode &mode) {
 }
 
 void MapDatabase::updateAtom(const RPZAtom::Id &toUpdate, const RPZAtom::Updates &updates) {
-    if(!this->_atomsById.contains(toUpdate)) return;
+    if (!this->_atomsById.contains(toUpdate)) return;
     this->_atomsById[toUpdate].setMetadata(updates);
 }
 
@@ -201,97 +189,87 @@ JSONDatabase::Model MapDatabase::_getDatabaseModel() {
         { { QStringLiteral(u"assets"), JSONDatabase::EntityType::Array }, &this->_assetHashes },
         { { QStringLiteral(u"params"), JSONDatabase::EntityType::Object }, &this->_mapParams },
     };
-};
+}
 
 JSONDatabase::Version MapDatabase::apiVersion() const {
     return 9;
 }
 
 QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler> MapDatabase::_getUpdateHandlers() {
-    
     auto out = QHash<JSONDatabase::Version, JSONDatabase::UpdateHandler>();
 
-    //to v7
+    // to v7
     out.insert(
         7,
         [&](QJsonObject &doc) {
-            
             MapDatabase db(doc);
 
-            //iterate atoms
-            for(auto atom : db.atoms()) {
-                
+            // iterate atoms
+            for (auto atom : db.atoms()) {
                 auto shape = atom.shape();
 
-                //add center
+                // add center
                 atom.setMetadata(
-                    RPZAtom::Parameter::ShapeCenter, 
+                    RPZAtom::Parameter::ShapeCenter,
                     shape.boundingRect().center()
                 );
 
-                //increment brushType
-                if(atom.type() == RPZAtom::Type::Brush) {
+                // increment brushType
+                if (atom.type() == RPZAtom::Type::Brush) {
                     atom.setMetadata(
-                        RPZAtom::Parameter::BrushStyle, 
+                        RPZAtom::Parameter::BrushStyle,
                         (int)atom.brushType() + 1
                     );
                 }
 
                 db.updateAtom(atom);
-
             }
 
-            //update json obj
+            // update json obj
             updateFrom(
                 doc,
                 QStringLiteral(u"atoms"),
                 db.atoms().toVList()
             );
-
         }
     );
 
-    //to v8
+    // to v8
     out.insert(
         8,
         [&](QJsonObject &doc) {}
     );
 
-    //to v9
+    // to v9
     out.insert(
         9,
         [&](QJsonObject &doc) {
-
             MapDatabase db(doc);
 
             QList<RPZAtom::BrushType> typesToFix { RPZAtom::BrushType::RoundBrush, RPZAtom::BrushType::Scissors };
 
-            //iterate atoms
-            for(auto atom : db.atoms()) {
-                
-                //restrict
-                if(atom.type() != RPZAtom::Type::Brush) continue;
-                if(!typesToFix.contains(atom.brushType())) continue;
+            // iterate atoms
+            for (auto atom : db.atoms()) {
+                // restrict
+                if (atom.type() != RPZAtom::Type::Brush) continue;
+                if (!typesToFix.contains(atom.brushType())) continue;
 
-                //update shape
+                // update shape
                 atom.setShape(
                     VectorSimplifier::reducePath(atom.shape())
                 );
 
                 db.updateAtom(atom);
-
             }
 
-            //update json obj
+            // update json obj
             updateFrom(
                 doc,
                 QStringLiteral(u"atoms"),
                 db.atoms().toVList()
             );
-
         }
     );
 
     return out;
-
 }

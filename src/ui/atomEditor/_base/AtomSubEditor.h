@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -31,7 +31,7 @@ class AtomSubEditor : public QWidget {
 
     Q_OBJECT
 
-    public:
+ public:
         enum class EditMode { None, Template, Selection };
         Q_ENUM(EditMode)
 
@@ -47,18 +47,18 @@ class AtomSubEditor : public QWidget {
 
         static bool mustShowBrushPenWidth(const QVariant &brushTypeDefaultValue);
 
-    signals:
+ signals:
         void valueConfirmedForPayload(const RPZAtom::Updates &updates);
         void valueConfirmedForPreview(const RPZAtom::Parameter &parameter, const QVariant &value);
 
-    protected:
+ protected:
         QList<RPZAtom::Parameter> _params;
 
         AtomEditorLineDescriptor* _descr = nullptr;
         virtual void _handleVisibilityOnLoad(const RPZAtom::Updates &defaultValues);
         QVBoxLayout* _mainLayout = nullptr;
     
-    private:
+ private:
         bool _supportsBatchEditing = true;
 };
 inline uint qHash(const AtomSubEditor::EditMode &key, uint seed = 0) {return uint(key) ^ seed;}

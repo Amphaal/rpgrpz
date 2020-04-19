@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -27,13 +27,13 @@
 
 class LockAndVisibilityDelegate  : public QStyledItemDelegate {
     
-    public:
+ public:
         LockAndVisibilityDelegate(QWidget *parent = nullptr);
 
         void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
         QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     
-    private:
+ private:
         static inline QPixmap* _hiddenPix = nullptr;
         static inline QPixmap* _lockPix = nullptr;
 };

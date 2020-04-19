@@ -12,14 +12,16 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
 #include <QPainterPath>
+
+#include <algorithm>
 
 #include "src/shared/models/RPZAtom.h"
 
@@ -29,12 +31,12 @@
 #include "src/helpers/RPZQVariant.hpp"
 
 class AtomConverter {
-    public:   
+ public:   
         static void updateGraphicsItemFromMetadata(QGraphicsItem* item, const RPZAtom::Updates &updates);
         static void setupGraphicsItemFromAtom(QGraphicsItem* target, const RPZAtom &blueprint);
         static const RPZAtom cloneAtomTemplateFromGraphics(QGraphicsItem* blueprint, RPZAtom toClone);
 
-    private:
+ private:
         static void _bulkTransformApply(QGraphicsItem* itemBrushToUpdate);
         static bool _setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &param, QGraphicsItem* itemToUpdate, const QVariant &val);
         static void _updateAtomParamFromGraphics(const RPZAtom::Parameter &param, RPZAtom &atomToUpdate, QGraphicsItem* blueprint);

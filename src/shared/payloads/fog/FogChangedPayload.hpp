@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -24,8 +24,7 @@
 #include "src/helpers/JSONSerializer.h"
 
 class FogChangedPayload : public AlterationPayload {
-    
-    public:
+ public:
         enum class ChangeType {
             Added,
             Removed,
@@ -33,19 +32,18 @@ class FogChangedPayload : public AlterationPayload {
         };
 
         explicit FogChangedPayload(const QVariantHash &hash) : AlterationPayload(hash) {}
-        FogChangedPayload(const ChangeType &type, const QList<QPolygonF> &modifyingPolys = QList<QPolygonF>()) : AlterationPayload(Payload::Alteration::FogChanged) {
-            
+        explicit FogChangedPayload(const ChangeType &type, const QList<QPolygonF> &modifyingPolys = QList<QPolygonF>())
+            : AlterationPayload(Payload::Alteration::FogChanged) {
             this->insert(QStringLiteral(u"ct"), (int)type);
-            
-            if(!modifyingPolys.isEmpty()) {
+
+            if (!modifyingPolys.isEmpty()) {
                 this->insert(
-                    QStringLiteral(u"mp"), 
+                    QStringLiteral(u"mp"),
                     JSONSerializer::fromPolygons(modifyingPolys)
                 );
             }
-
         }
-    
+
         ChangeType changeType() const {
             return (ChangeType)this->value(QStringLiteral(u"ct")).toInt();
         }

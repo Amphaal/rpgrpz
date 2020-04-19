@@ -12,17 +12,17 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
 #include "src/shared/payloads/_base/MultipleAtomTargetsPayload.hpp"
 
 class SelectedPayload : public MultipleAtomTargetsPayload {
-    public:
+ public:
         explicit SelectedPayload(const QVariantHash &hash) : MultipleAtomTargetsPayload(hash) {}
-        SelectedPayload(const QList<RPZAtom::Id> &selectedRPZAtomIds) : MultipleAtomTargetsPayload(Payload::Alteration::Selected, selectedRPZAtomIds) {}
+        explicit SelectedPayload(const QList<RPZAtom::Id> &selectedRPZAtomIds) : MultipleAtomTargetsPayload(Payload::Alteration::Selected, selectedRPZAtomIds) {}
 };

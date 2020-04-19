@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -29,40 +29,29 @@
 #include "src/shared/commands/RPZActions.h"
 #include "src/ui/map/MiniMapView.hpp"
 
-
 class MapHelpers : public QToolBar {
-
     Q_OBJECT
 
-    public:    
-        MapHelpers(MiniMapView* minimap, QWidget * parent = nullptr) : QToolBar(parent) {  
+ public:
+    explicit MapHelpers(MiniMapView* minimap, QWidget * parent = nullptr) : QToolBar(parent) {
+        this->layout()->setMargin(0);
+        this->setIconSize(QSize(16, 16));
+        this->setMovable(true);
+        this->setFloatable(true);
 
-            this->layout()->setMargin(0);
-            this->setIconSize(QSize(16, 16));
-            this->setMovable(true);
-            this->setFloatable(true);
-            
-            auto minimapAction = RPZActions::activateMinimap();           
-            QObject::connect(
-                minimapAction, &QAction::triggered,
-                [=](auto checked) {
-                    
-                    AppContext::settings()->setValue(
-                        minimapAction->data().toString(), 
-                        checked
-                    );
+        auto minimapAction = RPZActions::activateMinimap();
+        QObject::connect(
+            minimapAction, &QAction::triggered,
+            [=](auto checked) {
+                AppContext::settings()->setValue(
+                    minimapAction->data().toString(),
+                    checked
+                );
+                minimap->setAsapVisibility(checked);
+        });
 
-                    minimap->setAsapVisibility(checked);
-
-                }
-            );
-
-            this->addAction(RPZActions::activateGridIndicator());
-            this->addAction(RPZActions::activateScaleIndicator());
-            this->addAction(minimapAction);
-
-        }
-        
+        this->addAction(RPZActions::activateGridIndicator());
+        this->addAction(RPZActions::activateScaleIndicator());
+        this->addAction(minimapAction);
+    }
 };
-
-

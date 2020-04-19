@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -34,7 +34,7 @@ class MessagesLog : public LogContainer, public ConnectivityObserver {
     
     Q_OBJECT
     
-    public:
+ public:
         MessagesLog(QWidget *parent = nullptr);
 
         void handleResponse(const RPZResponse &response);
@@ -43,10 +43,10 @@ class MessagesLog : public LogContainer, public ConnectivityObserver {
         void handleRemoteMessage(const RPZMessage &msg);
         void handleHistoryMessage(const RPZMessage &msg);
 
-    signals:
+ signals:
         void notificationCountUpdated(int newCount);
 
-    private:
+ private:
         QList<Stampable::Id> _msgIdsNotSeen;
 
         void _handleMessage(const RPZMessage &msg, bool isLocal = false, bool fromHistory = false);

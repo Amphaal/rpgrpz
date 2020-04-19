@@ -12,10 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Any graphical or audio resources available within the source code may 
+// Any graphical or audio resources available within the source code may
 // use a different license and copyright : please refer to their metadata
 // for further details. Resources without explicit references to a
-// different license and copyright still refer to this GNU General Public License.
+// different license and copyright still refer to this GPL.
 
 #pragma once
 
@@ -25,7 +25,7 @@
 #include <QString>
 
 class MetadataChangedPayload : public MultipleAtomTargetsPayload {
-    public:
+ public:
         explicit MetadataChangedPayload(const QVariantHash &hash) : MultipleAtomTargetsPayload(hash) {}
         MetadataChangedPayload(const QList<RPZAtom::Id> &targetedRPZAtomIds, const RPZAtom::Updates &changes) : MultipleAtomTargetsPayload(Payload::Alteration::MetadataChanged, targetedRPZAtomIds) {
             Q_ASSERT(targetedRPZAtomIds.count());
@@ -39,7 +39,7 @@ class MetadataChangedPayload : public MultipleAtomTargetsPayload {
             return RPZAtom::unserializeUpdates(this->args().toHash());
         }
 
-    private:
+ private:
         void _setMetadataChanges(const RPZAtom::Updates &changes) {
             this->insert(QStringLiteral(u"args"), 
                 RPZAtom::serializeUpdates(changes)
