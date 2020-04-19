@@ -127,8 +127,8 @@ class RPZMapParameters : public QVariantHash {
         auto baseMultiplierX = (double)xLimitCountRounded / 2;
         auto baseMultiplierY = (double)yLimitCountRounded / 2;
 
-        baseMultiplierX += std::modf(baseMultiplierX, 0);
-        baseMultiplierY += std::modf(baseMultiplierY, 0);
+        baseMultiplierX += std::modf(baseMultiplierX, nullptr);
+        baseMultiplierY += std::modf(baseMultiplierY, nullptr);
 
         scenePos = QPointF(
             baseMultiplierX * typeDifference + startPoint.x(),
