@@ -330,8 +330,9 @@ class uPnPRequester : public uPnPThread {
             time_t timenow, timestarted;
             timenow = time(NULL);
             timestarted = timenow - uptime;
-            char tt[26];
-            ctime_s(tt, sizeof(tt), &timestarted);
+            auto tt = ctime(&timestarted);
+            // char tt[26];
+            // ctime_s(tt, sizeof(tt), &timestarted);
             qDebug() << "UPNP Info :  Time started :" << tt;
         }
         if (UPNP_GetLinkLayerMaxBitRates(urls.controlURL_CIF, data.CIF.servicetype,
