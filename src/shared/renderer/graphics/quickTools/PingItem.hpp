@@ -46,7 +46,7 @@ class PingItem : public QObject, public QGraphicsItem, public RPZGraphicsItem {
     QPropertyAnimation* _animOpacityFadeout = nullptr;
     QPropertyAnimation* _animSizeFadeout = nullptr;
 
-    static inline int _msFadeDuration = 2000;
+    static inline int _msFadeDuration = 4000;
 
     void _paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) {
         painter->save();
@@ -60,28 +60,46 @@ class PingItem : public QObject, public QGraphicsItem, public RPZGraphicsItem {
     }
 
     void _paintPing(QPainter *painter, const QStyleOptionGraphicsItem *option) {
-        QRectF out = option->exposedRect;
+        for (const auto &path : pingPaths(option->exposedRect)) {
+            painter->drawPath(path);
+        }
+    }
 
-        QPainterPath circles;
-        circles.addEllipse(out.marginsRemoved(QMarginsF(5, 5, 5, 5)));
-        circles.addEllipse(out.marginsRemoved(QMarginsF(10, 10, 10, 10)));
-        circles.addEllipse(out.marginsRemoved(QMarginsF(15, 15, 15, 15)));
-        circles.addEllipse(out.marginsRemoved(QMarginsF(20, 20, 20, 20)));
-        circles.addEllipse(out.marginsRemoved(QMarginsF(25, 25, 25, 25)));
-
-        QPainterPath cross;
-        cross.setFillRule(Qt::FillRule::WindingFill);
-        cross.addRect(out.marginsRemoved(QMarginsF(0, 29, 0, 29)));  // left
-        cross.addRect(out.marginsRemoved(QMarginsF(29, 0, 29, 0)));  // top
-
-        painter->drawPath(circles);
-        painter->drawPath(cross);
+    static QMarginsF _getMargin(double margin) {
+        return {margin, margin, margin, margin};
     }
 
  public:
     ~PingItem() {
         if (_animOpacityFadeout) delete _animOpacityFadeout;
         if (_animSizeFadeout) delete _animSizeFadeout;
+    }
+
+    QColor color() const {
+        return this->_pingColor;
+    }
+
+    static QList<QPainterPath> pingPaths(const QRectF &containedWithin) {
+        auto circleStep = .05 * containedWithin.width();
+        auto crossStep = .475 * containedWithin.width();
+
+        QPainterPath circles;
+        circles.addEllipse(containedWithin.marginsRemoved(_getMargin(circleStep * 2)));
+        circles.addEllipse(containedWithin.marginsRemoved(_getMargin(circleStep * 3)));
+        circles.addEllipse(containedWithin.marginsRemoved(_getMargin(circleStep * 4)));
+        circles.addEllipse(containedWithin.marginsRemoved(_getMargin(circleStep * 5)));
+        circles.addEllipse(containedWithin.marginsRemoved(_getMargin(circleStep * 7)));
+        circles.addEllipse(containedWithin.marginsRemoved(_getMargin(circleStep * 8)));
+
+        QPainterPath cross;
+        cross.setFillRule(Qt::FillRule::WindingFill);
+        cross.addRect(containedWithin.marginsRemoved(QMarginsF(0, crossStep, 0, crossStep)));  // left
+        cross.addRect(containedWithin.marginsRemoved(QMarginsF(crossStep, 0, crossStep, 0)));  // top
+
+        return {
+            circles,
+            cross
+        };
     }
 
     PingItem(const QPointF &scenePosPoint, const QColor &pingColor) {
@@ -95,17 +113,20 @@ class PingItem : public QObject, public QGraphicsItem, public RPZGraphicsItem {
 
         // define fadeout animation
         this->_animOpacityFadeout = new QPropertyAnimation(this, "opacity");
-        this->_animOpacityFadeout->setEasingCurve(QEasingCurve::Linear);
+        this->_animOpacityFadeout->setEasingCurve(QEasingCurve::OutQuint);
         this->_animOpacityFadeout->setDuration(_msFadeDuration);
-        this->_animOpacityFadeout->setStartValue(1);
-        this->_animOpacityFadeout->setEndValue(0);
+        this->_animOpacityFadeout->setKeyValues({
+            {0, 0},
+            {.9, 1},
+            {1, 0}
+        });
 
         // define scaling animation
         this->_animSizeFadeout = new QPropertyAnimation(this, "scale");
-        this->_animSizeFadeout->setEasingCurve(QEasingCurve::Linear);
-        this->_animSizeFadeout->setDuration(_msFadeDuration);
-        this->_animSizeFadeout->setStartValue(1);
-        this->_animSizeFadeout->setEndValue(10);
+        this->_animSizeFadeout->setEasingCurve(QEasingCurve::OutQuint);
+        this->_animSizeFadeout->setDuration(2000);
+        this->_animSizeFadeout->setStartValue(10);
+        this->_animSizeFadeout->setEndValue(1);
 
         this->_animOpacityFadeout->start();
         this->_animSizeFadeout->start();

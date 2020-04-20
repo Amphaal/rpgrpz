@@ -33,18 +33,22 @@
 
 #include "src/helpers/_appContext.h"
 
-#include "src/shared/renderer/graphics/_base/RPZGraphicsItem.hpp"
+#include "src/shared/renderer/graphics/MapViewGraphics.h"
 
 class PingIndicatorItem : public QObject, public QGraphicsItem, public RPZGraphicsItem {
     Q_OBJECT
+    Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
     Q_INTERFACES(QGraphicsItem)
 
  private:
     QGraphicsView* _view = nullptr;
-    QPointF _sceneEvtPoint;
-    QColor _pingColor;
     QTimer _tmAutoFadeout;
-    QPropertyAnimation* _animFadeout = nullptr;
+    QPropertyAnimation* _animFade = nullptr;
+
+    QPointF _toWatchScenePos;
+    QColor _color;
+    bool _hasFadeOut = false;
+    bool _hasFadein = false;
 
     static inline int _msTimeoutAutoFade = 10000;
     static inline int _msFadeDuration = 2000;
@@ -53,88 +57,119 @@ class PingIndicatorItem : public QObject, public QGraphicsItem, public RPZGraphi
         return false;
     }
 
-    void _paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) {
+    bool _isWatchedDisplayed(const QStyleOptionGraphicsItem *option) {
         auto &sceneRect = option->exposedRect;
-        auto isInScene = sceneRect.contains(this->_sceneEvtPoint);
+        auto isInScene = sceneRect.contains(this->_toWatchScenePos);
+        return isInScene;
+    }
+
+    void _paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) {
+        // prevent painting if watched item is displayed
+        if (_isWatchedDisplayed(option)) {
+            _mightStartFadeout();
+            return;
+        }
+
+        // start fadein
+        if (!_hasFadein && this->_animFade->state() != QAbstractAnimation::State::Running) {
+            this->_animFade->start();
+            _hasFadein = true;
+        }
 
         painter->save();
 
-            painter->setBrush(this->_pingColor);
+            painter->setBrush(this->_color);
+            painter->setPen(Qt::NoPen);
 
-            this->_paintPingIndicator(painter, sceneRect);
+            this->_paintPingIndicator(painter, option);
 
         painter->restore();
     }
 
-    void _paintPing(QPainter *painter) {
-        QRectF out({}, QSizeF(60, 60));
-        out.moveCenter(this->_sceneEvtPoint);
+    void _paintPingIndicator(QPainter *painter, const QStyleOptionGraphicsItem *option) {
+        // find border point to draw arrow
+        QLineF watchLine(this->_toWatchScenePos, option->exposedRect.center());  // find watch line
 
-        painter->drawRect(out);
+        // find intersect point
+        auto intersectPoint = _getIntersectionPoint(watchLine, option->exposedRect);
+        if (intersectPoint.isNull()) return;
 
-        this->_mightStartFadeout();
-    }
+        watchLine.setP1(intersectPoint);  // update watchline to intersect point
 
-    void _paintPingIndicator(QPainter *painter, const QRectF &displayedSceneRect) {
-        // resize
-        QRectF out({}, QSizeF(40, 40));
-
-        // find line and angle
-        QLineF line(
-            displayedSceneRect.center(),
-            this->_sceneEvtPoint
-        );
-        QRectF lineRect(line.p1(), line.p2());
-
-        // intersect to get angle points
-        auto intersected = displayedSceneRect.intersected(lineRect);
-
-        // move to angle
-        auto angle = line.angle();
-
-        if (angle > 0 && angle <= 90) {
-            out.moveTopRight(intersected.topRight());
-        } else if (angle > 90 && angle <= 180) {
-            out.moveTopLeft(intersected.topLeft());
-        } else if (angle > 180 && angle <= 270) {
-            out.moveBottomLeft(intersected.bottomLeft());
-        } else {
-            out.moveBottomRight(intersected.bottomRight());
+        // draw indicator
+        auto indicatorVector = watchLine;
+        indicatorVector.setLength(35);
+        QRectF indicatorRect({}, QSizeF(40, 40));
+        indicatorRect.moveCenter(indicatorVector.p2());
+        for (const auto &path : PingItem::pingPaths(indicatorRect)) {
+            painter->drawPath(path);
         }
 
-        painter->drawRect(out);
+        // define arrow vector
+        auto arrowVector = watchLine;
+        arrowVector.setLength(12);
+        arrowVector = QLineF(arrowVector.p2(), arrowVector.p1());
+
+        // draw arrow
+        QPainterPath arrow;
+        arrow.moveTo(arrowVector.p2());  // start from the tip
+        arrow.lineTo(arrowVector.normalVector().p2());  // normal angle
+        arrow.lineTo(QLineF(arrowVector.p2(), arrowVector.normalVector().p2()).normalVector().p2());  // anti-normal angle
+        painter->drawPath(arrow);
+    }
+
+    QPointF _getIntersectionPoint(const QLineF &watchLine, const QRectF &exposedRect) const {
+        QPointF out;
+        QList<QLineF> borderLines;
+        borderLines += { exposedRect.topRight(), exposedRect.bottomRight() };
+        borderLines += { exposedRect.bottomRight(), exposedRect.bottomLeft() };
+        borderLines += { exposedRect.bottomLeft(), exposedRect.topLeft() };
+        borderLines += { exposedRect.topLeft(), exposedRect.topRight() };
+
+        for (const auto &borderLine : borderLines) {
+            auto intersectType = watchLine.intersects(borderLine, &out);
+            if (intersectType == QLineF::IntersectionType::BoundedIntersection) return out;
+        }
+
+        return {};
     }
 
     void _mightStartFadeout() {
-        if (this->_animFadeout->state() != QAbstractAnimation::State::Running)
-            this->_animFadeout->start();
+        if (!_hasFadeOut) {
+            this->_animFade->setEasingCurve(QEasingCurve::Linear);
+            this->_animFade->setDuration(_msFadeDuration);
+            this->_animFade->setStartValue(this->opacity());
+            this->_animFade->setEndValue(0);
+            this->_animFade->start();
+            _hasFadeOut = true;
+        }
     }
 
  public:
     ~PingIndicatorItem() {
-        if (_animFadeout) delete _animFadeout;
+        if (_animFade) delete _animFade;
     }
 
-    PingIndicatorItem(const QPointF &scenePosPoint, const QColor &pingColor, QGraphicsView* view) : _view(view) {
+    PingIndicatorItem(const PingItem* toWatch, QGraphicsView* view) : _view(view) {
         this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
         this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
         this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsFocusable, false);
 
         this->setZValue(AppContext::WALKER_Z_INDEX);
 
-        this->_sceneEvtPoint = scenePosPoint;
-        this->_pingColor = pingColor;
+        this->_toWatchScenePos = toWatch->pos();
+        this->_color = toWatch->color();
 
         // start auto fadeout after
         this->_tmAutoFadeout.setInterval(_msTimeoutAutoFade);
         this->_tmAutoFadeout.start();
 
         // define fadeout animation
-        this->_animFadeout = new QPropertyAnimation(this, "opacity");
-        this->_animFadeout->setEasingCurve(QEasingCurve::Linear);
-        this->_animFadeout->setDuration(_msFadeDuration);
-        this->_animFadeout->setStartValue(1);
-        this->_animFadeout->setEndValue(0);
+        this->_animFade = new QPropertyAnimation(this, "opacity");
+        this->_animFade->setEasingCurve(QEasingCurve::InQuad);
+        this->_animFade->setDuration(_msFadeDuration);
+        this->_animFade->setStartValue(0);
+        this->_animFade->setEndValue(1);
 
         QObject::connect(
             &this->_tmAutoFadeout, &QTimer::timeout,
@@ -142,11 +177,13 @@ class PingIndicatorItem : public QObject, public QGraphicsItem, public RPZGraphi
         );
 
         QObject::connect(
-            this->_animFadeout, &QPropertyAnimation::finished,
-            this, &QObject::deleteLater
-        );
+            this->_animFade, &QPropertyAnimation::finished,
+            [=]() {
+                if (_hasFadeOut) this->deleteLater();
+        });
     }
 
+    // always display in view
     QRectF boundingRect() const override {
         return this->_view->mapToScene(this->_view->rect()).boundingRect();
     }
