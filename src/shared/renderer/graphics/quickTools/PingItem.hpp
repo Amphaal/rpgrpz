@@ -38,118 +38,108 @@
 class PingItem : public QObject, public QGraphicsItem, public RPZGraphicsItem {
     Q_OBJECT
     Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
+    Q_PROPERTY(qreal scale READ scale WRITE setScale)
     Q_INTERFACES(QGraphicsItem)
 
  private:
-    QGraphicsView* _view = nullptr;
-    QPointF _sceneEvtPoint;
     QColor _pingColor;
-    QTimer _tmAutoFadeout;
-    QPropertyAnimation* _animFadeout = nullptr;
+    QPropertyAnimation* _animOpacityFadeout = nullptr;
+    QPropertyAnimation* _animSizeFadeout = nullptr;
 
-    static inline int _msTimeoutAutoFade = 10000;
-    static inline int _msFadeDuration = 2000;
+    static inline int _msFadeDuration = 4000;
 
     void _paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) {
-        auto &sceneRect = option->exposedRect;
-        auto isInScene = sceneRect.contains(this->_sceneEvtPoint);
-
         painter->save();
 
             painter->setBrush(this->_pingColor);
+            painter->setPen(Qt::NoPen);
 
-            if (isInScene) {
-                this->_paintPing(painter);
-            } else {
-                this->_paintPingIndicator(painter, sceneRect);
-            }
+            this->_paintPing(painter, option);
 
         painter->restore();
     }
 
-    void _paintPing(QPainter *painter) {
-        QRectF out({}, QSizeF(60, 60));
-        out.moveCenter(this->_sceneEvtPoint);
-
-        painter->drawRect(out);
-
-        this->_mightStartFadeout();
-    }
-
-    void _paintPingIndicator(QPainter *painter, const QRectF &displayedSceneRect) {
-        // resize
-        QRectF out({}, QSizeF(40, 40));
-
-        // find line and angle
-        QLineF line(
-            displayedSceneRect.center(),
-            this->_sceneEvtPoint
-        );
-        QRectF lineRect(line.p1(), line.p2());
-
-        // intersect to get angle points
-        auto intersected = displayedSceneRect.intersected(lineRect);
-
-        // move to angle
-        auto angle = line.angle();
-
-        if (angle > 0 && angle <= 90) {
-            out.moveTopRight(intersected.topRight());
-        } else if (angle > 90 && angle <= 180) {
-            out.moveTopLeft(intersected.topLeft());
-        } else if (angle > 180 && angle <= 270) {
-            out.moveBottomLeft(intersected.bottomLeft());
-        } else {
-            out.moveBottomRight(intersected.bottomRight());
+    void _paintPing(QPainter *painter, const QStyleOptionGraphicsItem *option) {
+        for (const auto &path : pingPaths(option->exposedRect)) {
+            painter->drawPath(path);
         }
-
-        painter->drawRect(out);
     }
 
-    void _mightStartFadeout() {
-        if (this->_animFadeout->state() != QAbstractAnimation::State::Running)
-            this->_animFadeout->start();
+    static QMarginsF _getMargin(double margin) {
+        return {margin, margin, margin, margin};
     }
 
  public:
     ~PingItem() {
-        if (_animFadeout) delete _animFadeout;
+        if (_animOpacityFadeout) delete _animOpacityFadeout;
+        if (_animSizeFadeout) delete _animSizeFadeout;
     }
 
-    PingItem(const QPointF &scenePosPoint, const QColor &pingColor, QGraphicsView* view) : _view(view) {
+    QColor color() const {
+        return this->_pingColor;
+    }
+
+    static QList<QPainterPath> pingPaths(const QRectF &containedWithin) {
+        auto circleStep = .05 * containedWithin.width();
+        auto crossStep = .475 * containedWithin.width();
+
+        QPainterPath circles;
+        circles.addEllipse(containedWithin.marginsRemoved(_getMargin(circleStep * 2)));
+        circles.addEllipse(containedWithin.marginsRemoved(_getMargin(circleStep * 3)));
+        circles.addEllipse(containedWithin.marginsRemoved(_getMargin(circleStep * 4)));
+        circles.addEllipse(containedWithin.marginsRemoved(_getMargin(circleStep * 5)));
+        circles.addEllipse(containedWithin.marginsRemoved(_getMargin(circleStep * 7)));
+        circles.addEllipse(containedWithin.marginsRemoved(_getMargin(circleStep * 8)));
+
+        QPainterPath cross;
+        cross.setFillRule(Qt::FillRule::WindingFill);
+        cross.addRect(containedWithin.marginsRemoved(QMarginsF(0, crossStep, 0, crossStep)));  // left
+        cross.addRect(containedWithin.marginsRemoved(QMarginsF(crossStep, 0, crossStep, 0)));  // top
+
+        return {
+            circles,
+            cross
+        };
+    }
+
+    PingItem(const QPointF &scenePosPoint, const QColor &pingColor) {
         this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsMovable, false);
         this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
         this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsFocusable, false);
 
         this->setZValue(AppContext::WALKER_Z_INDEX);
-
-        this->_sceneEvtPoint = scenePosPoint;
+        this->setPos(scenePosPoint);
         this->_pingColor = pingColor;
 
-        // start auto fadeout after
-        this->_tmAutoFadeout.setInterval(_msTimeoutAutoFade);
-        this->_tmAutoFadeout.start();
-
         // define fadeout animation
-        this->_animFadeout = new QPropertyAnimation(this, "opacity");
-        this->_animFadeout->setEasingCurve(QEasingCurve::Linear);
-        this->_animFadeout->setDuration(_msFadeDuration);
-        this->_animFadeout->setStartValue(1);
-        this->_animFadeout->setEndValue(0);
+        this->_animOpacityFadeout = new QPropertyAnimation(this, "opacity");
+        this->_animOpacityFadeout->setEasingCurve(QEasingCurve::OutQuint);
+        this->_animOpacityFadeout->setDuration(_msFadeDuration);
+        this->_animOpacityFadeout->setKeyValues({
+            {0, 0},
+            {.9, 1},
+            {1, 0}
+        });
+
+        // define scaling animation
+        this->_animSizeFadeout = new QPropertyAnimation(this, "scale");
+        this->_animSizeFadeout->setEasingCurve(QEasingCurve::OutQuint);
+        this->_animSizeFadeout->setDuration(2000);
+        this->_animSizeFadeout->setStartValue(10);
+        this->_animSizeFadeout->setEndValue(1);
+
+        this->_animOpacityFadeout->start();
+        this->_animSizeFadeout->start();
 
         QObject::connect(
-            &this->_tmAutoFadeout, &QTimer::timeout,
-            this, &PingItem::_mightStartFadeout
-        );
-
-        QObject::connect(
-            this->_animFadeout, &QPropertyAnimation::finished,
+            this->_animOpacityFadeout, &QPropertyAnimation::finished,
             this, &QObject::deleteLater
         );
     }
 
     QRectF boundingRect() const override {
-        return this->_view->mapToScene(this->_view->rect()).boundingRect();
+        QRectF rect({-30, -30}, QSizeF(60, 60));
+        return rect;
     }
 
  protected:
