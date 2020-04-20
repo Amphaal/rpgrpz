@@ -302,7 +302,7 @@ void MainWindow::_initAppUnmovableUI() {
 
     auto gameHubTabIndex = this->_rightTab->addTab(chatLogWidget, QIcon(QStringLiteral(u":/icons/app/tabs/chat.png")), tr("Game Hub"));
     this->_rightTab->addTab(this->_docShareManager, QIcon(QStringLiteral(u":/icons/app/tabs/fileShare.png")), tr("Documents Share"));
-
+    
     // update gamehub tab name
     QObject::connect(
         this->_chatWidget->messageLog(), &MessagesLog::notificationCountUpdated,
@@ -370,8 +370,8 @@ void MainWindow::_setupAppUI(UIMode mode) {
             removeFromTab(this->_rightTab, this->_characterEditor);
             addCharacterEditor(this->_leftTab);
 
-            this->_rightTab->insertTab(0, this->_mlManager, QIcon(QStringLiteral(u":/icons/app/tabs/atom.png")), tr("Map Atoms"));
-            this->_rightTab->insertTab(0, this->_atomEditManager, QIcon(QStringLiteral(u":/icons/app/tabs/config.png")), tr("Atom Editor"));
+            this->_rightTab->addTab(this->_mlManager, QIcon(QStringLiteral(u":/icons/app/tabs/atom.png")), tr("Map Atoms"));
+            this->_rightTab->addTab(this->_atomEditManager, QIcon(QStringLiteral(u":/icons/app/tabs/config.png")), tr("Atom Editor"));
         }
         break;
 
