@@ -1568,6 +1568,14 @@
     </message>
 </context>
 <context>
+    <name>TrackToolbar</name>
+    <message>
+        <location filename="../ui/audio/controllers/_base/TrackToolbar.cpp" line="37"/>
+        <source>Toogle automatic replay for a single track</source>
+        <translation>Activer/Désactiver la lecture automatique pour une piste unique</translation>
+    </message>
+</context>
+<context>
     <name>UpdaterUIIntegrator</name>
     <message>
         <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="55"/>

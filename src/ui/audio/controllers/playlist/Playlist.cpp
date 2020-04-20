@@ -25,7 +25,7 @@ Playlist::Playlist(QWidget* parent) : QListWidget(parent),
     _ytIconErr(new QIcon(QStringLiteral(u":/icons/app/audio/youtubeError.png"))) {
     // self
     this->setAcceptDrops(true);
-    this->setSelectionMode(QAbstractItemView::SingleSelection);
+    this->setSelectionMode(QAbstractItemView::SelectionMode::ExtendedSelection);
 
     QObject::connect(
         this, &QListWidget::itemDoubleClicked,

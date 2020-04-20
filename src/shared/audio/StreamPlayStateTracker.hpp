@@ -24,10 +24,20 @@
 
 #include <QVariantHash>
 
+#include <audiotube/NetworkFetcher.h>
+
 class StreamPlayStateTracker : public QVariantHash {
  public:
     StreamPlayStateTracker() {}
     explicit StreamPlayStateTracker(const QVariantHash &hash) : QVariantHash(hash) {}
+
+    void registerNewPlay(VideoMetadata* metadata) {
+        return registerNewPlay(
+            metadata->audioStreams()->preferedUrl().toString(),
+            metadata->playerConfig().title(),
+            metadata->playerConfig().duration()
+        );
+    }
 
     void registerNewPlay(const QString &audioSourceUrl, const QString &sourceTitle, int durationInSecs) {
         this->_setPosInMsecs(0);
@@ -36,6 +46,11 @@ class StreamPlayStateTracker : public QVariantHash {
         this->_setTitle(sourceTitle);
         this->_setIsPlaying(true);
         this->_refreshUpdateTS();
+    }
+
+    void registerReplay() {
+        this->_setPosInMsecs(0);
+        this->_setIsPlaying(true);
     }
 
     void updatePlayingState(bool isPlaying) {

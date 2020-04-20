@@ -122,7 +122,7 @@ void PlaylistAudioManager::_link() {
     // on play requested from playlist
     QObject::connect(
         this->_plCtrl->playlist(), &Playlist::playRequested,
-        this, &PlaylistAudioManager::_onToolbarPlayRequested
+        this, &PlaylistAudioManager::_onPlayRequested
     );
 
     // on action required from toolbar
@@ -229,28 +229,26 @@ void PlaylistAudioManager::_onToolbarActionRequested(const TrackToolbar::Action 
     }
 }
 
-void PlaylistAudioManager::_onToolbarPlayRequested(VideoMetadata* metadata) {
+void PlaylistAudioManager::_applyPlayRequestFromState() {
+    // update UI
+    this->_plCtrl->toolbar()->newTrack(this->_state.durationInSecs());
+
+    // play audio cli
+    this->_playAudio(this->_state.url(), this->_state.title(), 0);
+
+    // tells others users what to listen to
+    if (this->_isNetworkMaster) {
+        // send to client
+        QMetaObject::invokeMethod(this->_rpzClient, "defineAudioSourceState",
+            Q_ARG(StreamPlayStateTracker, this->_state)
+        );
+    }
+}
+
+void PlaylistAudioManager::_onPlayRequested(VideoMetadata* metadata) {
     NetworkFetcher::refreshMetadata(metadata).then([=]() {
-        auto title = metadata->playerConfig().title();
-        auto streamUrl = metadata->audioStreams()->preferedUrl().toString();
-        auto duration = metadata->playerConfig().duration();
-
-        // update state
-        this->_state.registerNewPlay(streamUrl, title, duration);
-
-        // update UI
-        this->_plCtrl->toolbar()->newTrack(duration);
-
-        // play audio cli
-        this->_playAudio(streamUrl, title, 0);
-
-        // tells others users what to listen to
-        if (this->_isNetworkMaster) {
-            // send to client
-            QMetaObject::invokeMethod(this->_rpzClient, "defineAudioSourceState",
-                Q_ARG(StreamPlayStateTracker, this->_state)
-            );
-        }
+        this->_state.registerNewPlay(metadata);  // update state
+        this->_applyPlayRequestFromState();
     });
 }
 
@@ -280,11 +278,20 @@ void PlaylistAudioManager::_stopPlayingMusic() {
 }
 
 void PlaylistAudioManager::_onStreamPlayEnded() {
-    this->_stopPlayingMusic();
-
     // auto play
     if (this->_isNetworkMaster || this->_isLocalOnly) {
-        this->_plCtrl->playlist()->playNext();
+        switch (this->_plCtrl->toolbar()->repeatBehavior()) {
+            case TrackToolbar::RepeatBehavior::RepeatAll: {
+                this->_stopPlayingMusic();
+                this->_plCtrl->playlist()->playNext();
+            }
+            break;
+            case TrackToolbar::RepeatBehavior::RepeatOne: {
+                this->_state.registerReplay();
+                this->_applyPlayRequestFromState();
+            }
+            break;
+        }
     }
 }
 

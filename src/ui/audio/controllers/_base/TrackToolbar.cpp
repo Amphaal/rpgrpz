@@ -19,8 +19,9 @@
 
 #include "TrackToolbar.h"
 
-TrackToolbar::TrackToolbar(QWidget* parent) : QWidget(parent), _playBtn(new QToolButton), _rewindBtn(new QToolButton), _forwardBtn(new QToolButton),
-    _trackStateSlider(new QSlider(Qt::Orientation::Horizontal)), _trackPlayStateLbl(new QLabel) {
+TrackToolbar::TrackToolbar(QWidget* parent) : QWidget(parent), _playBtn(new QToolButton), _rewindBtn(new QToolButton),
+    _forwardBtn(new QToolButton), _trackStateSlider(new QSlider(Qt::Orientation::Horizontal)), _trackPlayStateLbl(new QLabel),
+    _replayBtn(new QToolButton) {
     this->_playBtn->setCheckable(true);
 
     this->endTrack();
@@ -30,6 +31,17 @@ TrackToolbar::TrackToolbar(QWidget* parent) : QWidget(parent), _playBtn(new QToo
         this->_playBtn, &QAbstractButton::clicked,
         this, &TrackToolbar::_tooglePlayButtonState
     );
+
+    this->_replayBtn->setIcon(QIcon(QStringLiteral(u":/icons/app/audio/repeatOne.png")));
+    this->_replayBtn->setCheckable(true);
+    this->_replayBtn->setToolTip(tr("Toogle automatic replay for a single track"));
+    QObject::connect(
+        this->_replayBtn, &QAbstractButton::toggled,
+        [=](bool checked) {
+            this->_repeatBehavior = checked
+                ? TrackToolbar::RepeatBehavior::RepeatOne
+                : TrackToolbar::RepeatBehavior::RepeatAll;
+    });
 
     // rewind
     this->_rewindBtn->setIcon(QIcon(QStringLiteral(u":/icons/app/audio/rewind.png")));
@@ -78,6 +90,7 @@ TrackToolbar::TrackToolbar(QWidget* parent) : QWidget(parent), _playBtn(new QToo
     this->layout()->addWidget(this->_forwardBtn);
     this->layout()->addWidget(this->_trackStateSlider);
     this->layout()->addWidget(this->_trackPlayStateLbl);
+    this->layout()->addWidget(this->_replayBtn);
 }
 
 void TrackToolbar::_updateTrackTimeStateDescriptor(int stateInSeconds) {
@@ -88,6 +101,10 @@ void TrackToolbar::_updateTrackTimeStateDescriptor(int stateInSeconds) {
     this->_trackPlayStateLbl->setText(
         this->_playStateDescriptor.arg(current)
     );
+}
+
+TrackToolbar::RepeatBehavior TrackToolbar::repeatBehavior() const {
+    return this->_repeatBehavior;
 }
 
 void TrackToolbar::updatePlayerPosition(int posInSeconds) {

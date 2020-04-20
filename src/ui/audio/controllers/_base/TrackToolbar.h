@@ -36,6 +36,7 @@ class TrackToolbar : public QWidget {
 
  public:
     enum class Action { Rewind, Forward, Play, Pause };
+    enum class RepeatBehavior { RepeatAll, RepeatOne };
     Q_ENUM(Action)
 
     explicit TrackToolbar(QWidget* parent = nullptr);
@@ -44,6 +45,8 @@ class TrackToolbar : public QWidget {
     void newTrack(int lengthInSeconds);
     void endTrack();
 
+    TrackToolbar::RepeatBehavior repeatBehavior() const;
+
  signals:
         void actionRequired(const TrackToolbar::Action &action);
         void seeking(int posInSecs);
@@ -51,16 +54,18 @@ class TrackToolbar : public QWidget {
  private:
     static inline const QString _defaultNoTime = "--";
     static inline const QString _trackPlayStateTemplator = " %1 / %2 ";
+    static inline TrackToolbar::RepeatBehavior _repeatBehavior = RepeatBehavior::RepeatAll;
 
-    QToolButton* _playBtn;
     QIcon _playIcon = QIcon(QStringLiteral(u":/icons/app/audio/play.png"));
     QIcon _pauseIcon = QIcon(QStringLiteral(u":/icons/app/audio/pause.png"));
 
-    QToolButton* _rewindBtn;
-    QToolButton* _forwardBtn;
+    QToolButton* _playBtn = nullptr;
+    QToolButton* _replayBtn = nullptr;
+    QToolButton* _rewindBtn = nullptr;
+    QToolButton* _forwardBtn = nullptr;
 
-    QSlider* _trackStateSlider;
-    QLabel* _trackPlayStateLbl;
+    QSlider* _trackStateSlider = nullptr;
+    QLabel* _trackPlayStateLbl = nullptr;
     QString _playStateDescriptor;
 
     void _setPlayButtonState(bool isPlaying);
