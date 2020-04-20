@@ -260,6 +260,9 @@ QSet<RPZAtom::Parameter> RPZAtom::customizableParams(const RPZAtom::Type &type) 
             out.insert(RPZAtom::Parameter::MaxNPCHealth);
             out.insert(RPZAtom::Parameter::NPCDescription);
             out.insert(RPZAtom::Parameter::TokenSize);
+            out.insert(RPZAtom::Parameter::CharacterId);
+            out.insert(RPZAtom::Parameter::CharacterName);
+            out.insert(RPZAtom::Parameter::DefaultPlayerColor);
         }
         break;
 

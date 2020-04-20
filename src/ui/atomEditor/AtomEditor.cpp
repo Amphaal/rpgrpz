@@ -61,6 +61,7 @@ void AtomEditor::buildEditor(const AtomsSelectionDescriptor &atomsSelectionDescr
     AtomSubEditor::LoadingContext context;
     context.mode = this->_currentEditMode;
     context.numberOfItems = this->_currentSelectionDescr.selectedAtomIds.count();
+    context.representedTypes = this->_currentSelectionDescr.representedTypes;
 
     // load those who need to be displayed
     for (auto editor : toDisplay) {
