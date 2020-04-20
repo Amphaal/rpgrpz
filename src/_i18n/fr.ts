@@ -416,13 +416,6 @@
     </message>
 </context>
 <context>
-    <name>DocShareListView</name>
-    <message>
-        <source> (available)</source>
-        <translation type="vanished"> (disponible)</translation>
-    </message>
-</context>
-<context>
     <name>DownloadStatus</name>
     <message>
         <location filename="../ui/statusBar/DownloadStatus.hpp" line="103"/>
@@ -857,19 +850,34 @@
 <context>
     <name>Playlist</name>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="176"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="181"/>
         <source>This Youtube video is already in playlist !</source>
         <translation>Cette vidéo Youtube est déjà dans la liste de lecture !</translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="235"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="240"/>
         <source>(Loading metadata...) </source>
         <translation>(Chargement des métadonnées...) </translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="244"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="249"/>
         <source>(Error) </source>
         <translation>(Erreur) </translation>
+    </message>
+    <message>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="329"/>
+        <source>Delete %1 track(s) from playlist</source>
+        <translation>Supprimer %1 piste(s) de la liste de lecture</translation>
+    </message>
+    <message>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="347"/>
+        <source>Tracks deletion</source>
+        <translation>Suppression de pistes</translation>
+    </message>
+    <message>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="348"/>
+        <source>Do you really want to delete theses %1 tracks ?</source>
+        <translation>Voulez-vous vraiment supprimer ces %1 pistes ?</translation>
     </message>
 </context>
 <context>

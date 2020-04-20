@@ -31,6 +31,9 @@
 #include <QHash>
 #include <QPair>
 #include <QToolTip>
+#include <QMenu>
+#include <QAction>
+#include <QMessageBox>
 
 #include <QUrlQuery>
 
@@ -65,6 +68,12 @@ class Playlist : public QListWidget {
     void _removeYoutubeVideo(QListWidgetItem* playlistItem);
     void _addYoutubeVideo(const PlayerConfig::VideoId &ytVideoId);
     bool _addYoutubeItem(VideoMetadata* metadata);
+    void contextMenuEvent(QContextMenuEvent *event) override;
+    
+    void _deleteSelectedTracks();
+    QAction* _getDeleteTrackAction(QObject * parent);
+    void _onCMTrackDeletionRequest(bool checked = false);
+    bool _askTrackDeletion();
 
     QSet<PlayerConfig::VideoId> _playlistVideoIds;
 

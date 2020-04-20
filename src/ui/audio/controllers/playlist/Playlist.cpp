@@ -145,9 +145,7 @@ void Playlist::keyPressEvent(QKeyEvent * event) {
     // switch
     switch (event->key()) {
         case Qt::Key::Key_Delete: {
-            for (auto selected : this->selectedItems()) {
-                this->_removeYoutubeVideo(selected);
-            }
+            this->_deleteSelectedTracks();
         }
         break;
 
@@ -161,6 +159,13 @@ void Playlist::keyPressEvent(QKeyEvent * event) {
     }
 
     QListWidget::keyPressEvent(event);
+}
+
+void Playlist::_deleteSelectedTracks() {
+    if (!_askTrackDeletion()) return;
+    for (auto selected : this->selectedItems()) {
+        this->_removeYoutubeVideo(selected);
+    }
 }
 
 void Playlist::addYoutubeVideo(const QString &url) {
@@ -308,4 +313,41 @@ void Playlist::_onItemDoubleClicked(QListWidgetItem * item) {
 VideoMetadata* Playlist::currentPlay() {
     if (!this->_playlistItemToUse) return nullptr;
     return RPZQVariant::ytVideoMetadata(this->_playlistItemToUse);
+}
+
+void Playlist::contextMenuEvent(QContextMenuEvent *event) {
+    // display menu
+    QMenu menu(this);
+    menu.addAction(_getDeleteTrackAction(&menu));
+    menu.exec(event->globalPos());
+}
+
+QAction* Playlist::_getDeleteTrackAction(QObject * parent) {
+    auto action = new QAction(parent);
+    auto selectedItems = this->selectedItems();
+    action->setText(
+        tr("Delete %1 track(s) from playlist").arg(selectedItems.count())
+    );
+    action->setIcon(QIcon(QStringLiteral(u":/icons/app/tools/bin.png")));
+    QObject::connect(
+        action, &QAction::triggered,
+        this, &Playlist::_onCMTrackDeletionRequest
+    );
+    return action;
+}
+
+void Playlist::_onCMTrackDeletionRequest(bool checked) {
+    Q_UNUSED(checked);
+    this->_deleteSelectedTracks();
+}
+
+bool Playlist::_askTrackDeletion() {
+    auto result = QMessageBox::warning(
+        this,
+        tr("Tracks deletion"),
+        tr("Do you really want to delete theses %1 tracks ?").arg(this->selectedItems().count()),
+        QMessageBox::Yes|QMessageBox::No,
+        QMessageBox::No
+    );
+    return result == QMessageBox::Yes ? true : false;
 }
