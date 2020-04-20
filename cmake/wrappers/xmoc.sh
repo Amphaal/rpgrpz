@@ -1,2 +1,2 @@
 #!/bin/bash
-wine /mingw64/bin/moc.exe "$*"
+wine /mingw64/bin/moc.exe $*
