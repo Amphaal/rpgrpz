@@ -63,6 +63,7 @@ class JSONDatabase {
     static void updateFrom(QJsonObject &base, const QString &entityKey, const QSet<QString> &entity);
     static void updateFrom(QJsonObject &base, const QString &entityKey, const QVariantHash &entity);
     static void updateFrom(QJsonObject &base, const QString &entityKey, const QVariantList &entity);
+    static void updateFrom(QJsonObject &base, const QString &entityKey, const QHash<QString, QString> &entity);
 
     const QJsonObject& db();
     QJsonObject entityAsObject(const QString &entityKey);

@@ -31,6 +31,9 @@ class PlaylistDatabase : public JSONDatabase {
     void addYoutubeId(const PlayerConfig::VideoId &ytId);
     void removeYoutubeId(const PlayerConfig::VideoId &ytId);
 
+    QString trackName(const PlayerConfig::VideoId &ytId);
+    void setTrackName(const PlayerConfig::VideoId &ytId, const QString &name);
+
     QSet<PlayerConfig::VideoId> ytIds() const;
 
  protected:
@@ -46,4 +49,5 @@ class PlaylistDatabase : public JSONDatabase {
     static inline PlaylistDatabase* _singleton = nullptr;
 
     QSet<PlayerConfig::VideoId> _ytIds;
+    QHash<PlayerConfig::VideoId, QString> _trackNameById;
 };

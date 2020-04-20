@@ -850,7 +850,7 @@
 <context>
     <name>Playlist</name>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="181"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="178"/>
         <source>This Youtube video is already in playlist !</source>
         <translation>Cette vidéo Youtube est déjà dans la liste de lecture !</translation>
     </message>

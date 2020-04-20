@@ -39,10 +39,7 @@ Playlist::Playlist(QWidget* parent) : QListWidget(parent),
 }
 
 Qt::DropActions Playlist::supportedDropActions() const {
-    return (
-        Qt::DropAction::MoveAction
-        | Qt::DropAction::CopyAction
-    );
+    return (Qt::DropAction::MoveAction | Qt::DropAction::CopyAction);
 }
 
 void Playlist::dragEnterEvent(QDragEnterEvent *event) {
@@ -200,6 +197,8 @@ void Playlist::_addYoutubeVideo(const PlayerConfig::VideoId &ytVideoId) {
 bool Playlist::_addYoutubeItem(VideoMetadata* metadata) {
     auto url = metadata->url();
     auto id = metadata->id();
+    auto title = PlaylistDatabase::get()->trackName(id);
+    if (title.isEmpty()) title = url;
 
     // handle duplicates
     if (this->_playlistVideoIds.contains(id)) {
@@ -208,8 +207,7 @@ bool Playlist::_addYoutubeItem(VideoMetadata* metadata) {
     this->_playlistVideoIds.insert(id);
 
     // prepare item
-    auto pos = QString::number(this->_playlistVideoIds.count()) + ". ";
-    auto playlistItem = new QListWidgetItem(pos + url);
+    auto playlistItem = new QListWidgetItem(title);
 
     // define inner data
     RPZQVariant::setYTVideoMetadata(playlistItem, metadata);
@@ -223,11 +221,13 @@ bool Playlist::_addYoutubeItem(VideoMetadata* metadata) {
         [=]() {
             auto durationStr = StringHelper::secondsToTrackDuration(metadata->playerConfig().duration());
 
-            auto title = QStringLiteral(u"%1 [%2]")
-                            .arg(metadata->playerConfig().title())
+            auto metadataTitle = metadata->playerConfig().title();
+            auto completeTitle = QStringLiteral(u"%1 [%2]")
+                            .arg(metadataTitle)
                             .arg(durationStr);
 
-            playlistItem->setText(pos + title);
+            playlistItem->setText(completeTitle);
+            PlaylistDatabase::get()->setTrackName(id, metadataTitle);
 
             // define active YT icon
             playlistItem->setIcon(*this->_ytIcon);
@@ -237,7 +237,7 @@ bool Playlist::_addYoutubeItem(VideoMetadata* metadata) {
         metadata, &VideoMetadata::metadataFetching,
         [=]() {
             playlistItem->setIcon(*this->_ytIconGrey);
-            playlistItem->setText(pos + tr("(Loading metadata...) ") + url);
+            playlistItem->setText(tr("(Loading metadata...) ") + title);
     });
 
     QObject::connect(
@@ -246,7 +246,7 @@ bool Playlist::_addYoutubeItem(VideoMetadata* metadata) {
             // add delay for user ack
             QTimer::singleShot(100, [=]() {
                 playlistItem->setIcon(*this->_ytIconErr);
-                playlistItem->setText(pos + tr("(Error) ") + url);
+                playlistItem->setText(tr("(Error) ") + url);
             });
     });
 

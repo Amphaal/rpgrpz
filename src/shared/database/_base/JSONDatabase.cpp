@@ -102,6 +102,14 @@ void JSONDatabase::updateFrom(QJsonObject &base, const QString &entityKey, const
     base.insert(entityKey, QJsonObject::fromVariantMap(entity));
 }
 
+void JSONDatabase::updateFrom(QJsonObject &base, const QString &entityKey, const QHash<QString, QString> &entity) {
+    QJsonObject out;
+    for (auto i = entity.begin(); i != entity.end(); i++) {
+        out.insert(i.key(), i.value());
+    }
+    base.insert(entityKey, out);
+}
+
 void JSONDatabase::updateFrom(QJsonObject &base, const QString &entityKey, const QSet<QString> &entity) {
     base.insert(entityKey, QJsonArray::fromStringList(entity.values()));
 }

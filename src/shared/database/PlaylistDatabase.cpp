@@ -40,6 +40,12 @@ void PlaylistDatabase::_setupLocalData() {
     for (const auto i : this->entityAsArray(QStringLiteral(u"ids"))) {
         this->_ytIds.insert(i.toString());
     }
+
+    // fill names
+    auto names = this->entityAsObject(QStringLiteral(u"names"));
+    for (auto i = names.begin(); i != names.end(); i++) {
+        this->_trackNameById.insert(i.key(), i.value().toString());
+    }
 }
 
 QSet<QString> PlaylistDatabase::ytIds() const {
@@ -58,8 +64,18 @@ void PlaylistDatabase::removeYoutubeId(const QString &url) {
 
 JSONDatabase::Model PlaylistDatabase::_getDatabaseModel() {
     return {
-        { { QStringLiteral(u"ids"), JSONDatabase::EntityType::Array }, &this->_ytIds }
+        { { QStringLiteral(u"ids"), JSONDatabase::EntityType::Array }, &this->_ytIds },
+        { { QStringLiteral(u"names"), JSONDatabase::EntityType::Object }, &this->_trackNameById },
     };
+}
+
+QString PlaylistDatabase::trackName(const PlayerConfig::VideoId &ytId) {
+    return this->_trackNameById.value(ytId);
+}
+
+void PlaylistDatabase::setTrackName(const PlayerConfig::VideoId &ytId, const QString &name) {
+    this->_trackNameById.insert(ytId, name);
+    this->save();
 }
 
 JSONDatabase::Version PlaylistDatabase::apiVersion() const {
@@ -73,6 +89,12 @@ const QJsonObject PlaylistDatabase::_updatedInnerDb() {
         db,
         QStringLiteral(u"ids"),
         this->_ytIds
+    );
+
+    updateFrom(
+        db,
+        QStringLiteral(u"names"),
+        this->_trackNameById
     );
 
     return db;
