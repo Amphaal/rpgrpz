@@ -3,4 +3,6 @@ src/version.h
 nbproject
 /_genDebug/
 /_genRelease/
+/_genLinux/
+/_genWindows/
 .DS_Store
