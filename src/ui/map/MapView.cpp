@@ -196,7 +196,8 @@ void MapView::_onOwnershipChanged(const QList<QGraphicsItem*> changing, bool own
     // standard handling
     if (owned || !this->_walkingHelper) {
         for (auto item : changing) {
-            if (auto casted = dynamic_cast<MapViewToken*>(item)) casted->setOwned(owned);
+            if (auto casted = dynamic_cast<MapViewToken*>(item))
+                casted->setOwned(owned);
         }
     } else {
         // specific handling when walking helper is being used and losing ownership

@@ -257,28 +257,16 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
         }
 
         void _changeColor(const RPZAtom &atom) {
-            QColor toApply;
-
-            switch (atom.type()) {
-                case RPZAtom::Type::Player: {
-                    toApply = atom.defaultPlayerColor();
-                }
-                break;
-
-                case RPZAtom::Type::NPC: {
-                    toApply = atom.NPCAssociatedColor();
-                }
-                break;
-
-                default:
-                break;
-            }
-
+            QColor toApply = atom.defaultPlayerColor();
+            if (atom.type() == RPZAtom::Type::NPC && !toApply.isValid())
+                toApply = atom.NPCAssociatedColor();
             this->_changeColor(toApply);
         }
 
         void _changeColor(const QColor &toApply) {
             auto mainOpacity = 1.0;
+            qDebug() << toApply.name();
+
 
             if (this->_tokenType == RPZAtom::Type::Player) {
                 // upper
@@ -305,6 +293,7 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
 
                 painter->setRenderHint(QPainter::Antialiasing, true);
                 painter->setPen(Qt::NoPen);
+
                 painter->setBrush(this->_mainBrush);
 
                 // draw outer token

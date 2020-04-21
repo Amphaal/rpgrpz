@@ -55,7 +55,7 @@
 <context>
     <name>AtomEditor</name>
     <message numerus="yes">
-        <location filename="../ui/atomEditor/AtomEditor.cpp" line="236"/>
+        <location filename="../ui/atomEditor/AtomEditor.cpp" line="237"/>
         <source> (%n element(s))</source>
         <translation>
             <numerusform> (%n élément)</numerusform>
@@ -303,12 +303,12 @@
 <context>
     <name>CharacterPickerEditor</name>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="89"/>
+        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="94"/>
         <source>[Cannot configure...]</source>
         <translation>[Impossible à configurer...]</translation>
     </message>
     <message>
-        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="92"/>
+        <location filename="../ui/atomEditor/editors/specific/CharacterPickerEditor.hpp" line="97"/>
         <source>[No character associated]</source>
         <translation>[Aucun personnage associé]</translation>
     </message>
@@ -1327,7 +1327,7 @@
         <translation>%1 atome(s) selectionné(s)</translation>
     </message>
     <message>
-        <location filename="../shared/renderer/graphics/_specific/MapViewToken.hpp" line="347"/>
+        <location filename="../shared/renderer/graphics/_specific/MapViewToken.hpp" line="337"/>
         <source>P</source>
         <comment>player sign</comment>
         <translation>J</translation>

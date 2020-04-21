@@ -263,6 +263,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
                 if (auto cItem = dynamic_cast<MapViewToken*>(itemToUpdate)) {
                     auto color = val.value<QColor>();
                     cItem->updateColor(color);
+                    // TODO(amphaal) diferenciate from NPCAttitude
                 }
             }
             break;
@@ -272,6 +273,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
                     auto attitude = (RPZAtom::NPCType)val.toInt();
                     auto color =  RPZAtom::NPCAssociatedColor(attitude);
                     cItem->updateColor(color);
+                    // TODO(amphaal) diferenciate from DefaultPlayerColor
                 }
             }
             break;

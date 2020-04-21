@@ -76,13 +76,14 @@ bool ViewMapHint::_hasOwnershipOf(const RPZAtom &atom) const {
 }
 
 void ViewMapHint::_checkForOwnedTokens() {
-    if (!this->_myCharacterId) return;
+    auto isHostAble = Authorisations::isHostAble();
+    if (!isHostAble && !this->_myCharacterId) return;
 
     QList<QGraphicsItem*> ownedGIs;
     QList<QGraphicsItem*> notOwnedGIs;
 
     QSet<RPZAtom::Id> nowOwned;
-    if (Authorisations::isHostAble()) {  // if is host, owns everything
+    if (isHostAble) {  // if is host, owns everything
         auto oks = this->_ownables().keys();
         nowOwned = QSet<RPZAtom::Id>(oks.begin(), oks.end());
     } else {  // if not, owns from specified character to impersonate
