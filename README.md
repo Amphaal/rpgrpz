@@ -8,7 +8,7 @@
 ## RPG-RPZ is mutating ! 
 ![Build Status](https://github.com/Amphaal/rpgrpz/blob/master/resources/transition.png)
 
-The Alpha stage of RPG-RPZ is over since the 1.0.0 release. Thus, this repository will be in maintenance mode and will not implement more functionalities. The definitive version of RPG-RPZ is now available through https://github.com/Amphaal/Understory.
+The Alpha stage of RPG-RPZ is over since the 1.0.0 release. Thus, this repository will be in maintenance mode and will not implement more functionalities. The future and definitive version of RPG-RPZ will be available through https://github.com/Amphaal/Understory.
 
 ## License
     RPG-RPZ
