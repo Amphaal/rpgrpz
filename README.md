@@ -5,6 +5,12 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/amphaal/rpgrpz/badge/master)](https://www.codefactor.io/repository/github/amphaal/rpgrpz/overview/master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/f538689970114dcabc56a64124ee0f12)](https://app.codacy.com/manual/Amphaal/rpgrpz?utm_source=github.com&utm_medium=referral&utm_content=Amphaal/rpgrpz&utm_campaign=Badge_Grade_Dashboard)
 
+## RPG-RPZ is mutating ! 
+![Build Status](https://github.com/Amphaal/rpgrpz/blob/master/resources/transition.png)
+
+The Alpha stage of RPG-RPZ is over since the 1.0.0 release. Thus, this repository will be in maintenance mode and will not implement more functionalities. The definitive version of RPG-RPZ is now available through https://github.com/Amphaal/Understory.
+
+## License
     RPG-RPZ
     A simple Pen & Paper experience
     Copyright (C) 2019-2020 Guillaume Vara
@@ -23,6 +29,8 @@
     use a different license and copyright : please refer to their metadata
     for further details. Graphical resources without explicit references to a
     different license and copyright still refer to this GPL.
+
+## Build RPG-RPZ
 
 Supported (64bits only) :
 
