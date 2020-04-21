@@ -302,7 +302,7 @@ void MainWindow::_initAppUnmovableUI() {
 
     auto gameHubTabIndex = this->_rightTab->addTab(chatLogWidget, QIcon(QStringLiteral(u":/icons/app/tabs/chat.png")), tr("Game Hub"));
     this->_rightTab->addTab(this->_docShareManager, QIcon(QStringLiteral(u":/icons/app/tabs/fileShare.png")), tr("Documents Share"));
-    
+
     // update gamehub tab name
     QObject::connect(
         this->_chatWidget->messageLog(), &MessagesLog::notificationCountUpdated,

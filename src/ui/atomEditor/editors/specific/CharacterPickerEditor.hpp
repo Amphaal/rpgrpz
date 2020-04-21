@@ -51,6 +51,7 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
     }
 
     void loadTemplate(const RPZAtom::Updates &defaultValues, const AtomSubEditor::LoadingContext &context) override {
+        this->_restrictToBoundCharacters = context.representedTypes.contains(RPZAtom::Type::Player);
         AtomSubEditor::loadTemplate(defaultValues, context);
         this->_fillComboDefaultValues(defaultValues, context);
     }
@@ -76,9 +77,13 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
  private:
     QList<RPZCharacter::UserBound> _availableCharacters;
     DefaultCharacterSelection _defaultCharacter;
+    bool _restrictToBoundCharacters = false;
 
     void _updateComboFromAvailableCharacters() {
-        auto fillWith = HintThread::hint()->findUnboundCharacters(this->_availableCharacters);
+        // restrict 1 player by PC, but not for other types (NPC typically)
+        auto fillWith = _restrictToBoundCharacters ?
+            HintThread::hint()->findUnboundCharacters(this->_availableCharacters) :
+            this->_availableCharacters;
 
         // clear combo
         QSignalBlocker b(this->_combo);

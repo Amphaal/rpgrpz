@@ -262,7 +262,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
             case RPZAtom::Parameter::DefaultPlayerColor: {
                 if (auto cItem = dynamic_cast<MapViewToken*>(itemToUpdate)) {
                     auto color = val.value<QColor>();
-                    cItem->updateColor(color);
+                    cItem->updateCharacterBoundColor(color);
                 }
             }
             break;
@@ -270,8 +270,7 @@ bool AtomConverter::_setParamToGraphicsItemFromAtom(const RPZAtom::Parameter &pa
             case RPZAtom::Parameter::NPCAttitude: {
                 if (auto cItem = dynamic_cast<MapViewToken*>(itemToUpdate)) {
                     auto attitude = (RPZAtom::NPCType)val.toInt();
-                    auto color =  RPZAtom::NPCAssociatedColor(attitude);
-                    cItem->updateColor(color);
+                    cItem->updateColorFromAttitude(attitude);
                 }
             }
             break;

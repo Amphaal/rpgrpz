@@ -53,13 +53,16 @@ const QList<QGraphicsItem*> ViewMapHint::_gis(const QList<RPZAtom::Id> &atomIds)
 }
 
 void ViewMapHint::_atomOwnerChanged(const RPZAtom::Id &target, const RPZCharacter::Id &newOwner) {
+    // check an item exists
     auto gi = this->_GItemsById.value(target);
     if (!gi) return;
 
-    auto owns = (this->_myCharacterId && this->_myCharacterId == newOwner) || Authorisations::isHostAble();
+    // do the user own this atom ?
+    auto owns = Authorisations::isHostAble() || (this->_myCharacterId && this->_myCharacterId == newOwner);
 
+    // if so, add to owned list
     if (owns) this->_ownedTokenIds.insert(target);
-    else
+    else  // if not, remove from it
         this->_ownedTokenIds.remove(target);
 
     emit changedOwnership({gi}, owns);
@@ -76,13 +79,14 @@ bool ViewMapHint::_hasOwnershipOf(const RPZAtom &atom) const {
 }
 
 void ViewMapHint::_checkForOwnedTokens() {
-    if (!this->_myCharacterId) return;
+    auto isHostAble = Authorisations::isHostAble();
+    if (!isHostAble && !this->_myCharacterId) return;
 
     QList<QGraphicsItem*> ownedGIs;
     QList<QGraphicsItem*> notOwnedGIs;
 
     QSet<RPZAtom::Id> nowOwned;
-    if (Authorisations::isHostAble()) {  // if is host, owns everything
+    if (isHostAble) {  // if is host, owns everything
         auto oks = this->_ownables().keys();
         nowOwned = QSet<RPZAtom::Id>(oks.begin(), oks.end());
     } else {  // if not, owns from specified character to impersonate

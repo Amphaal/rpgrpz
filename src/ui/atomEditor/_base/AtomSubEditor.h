@@ -37,6 +37,7 @@ class AtomSubEditor : public QWidget {
     struct LoadingContext {
         AtomSubEditor::EditMode mode;
         int numberOfItems;
+        QSet<RPZAtom::Type> representedTypes;
     };
 
     explicit AtomSubEditor(const QList<RPZAtom::Parameter> &parameters, bool supportsBatchEditing = true);

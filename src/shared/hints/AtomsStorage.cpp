@@ -396,15 +396,15 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
                 this->_restrictedAtomIds += id;
             }
 
+            // handler for inheritors
+            this->_atomAdded(atom);
+
             // add to ownable
             if (this->_isAtomOwnable(atom)) {
                 auto characterId = atom.characterId();
                 this->_ownableAtomIdsByOwner.insert(id, characterId);
                 this->_atomOwnerChanged(id, characterId);
             }
-
-            // handler for inheritors
-            this->_atomAdded(atom);
 
             insertedIds += id;
         }
@@ -550,7 +550,8 @@ RPZMap<RPZAtom> AtomsStorage::_generateAtomDuplicates(QList<RPZAtom::Id> RPZAtom
 }
 
 bool AtomsStorage::_isAtomOwnable(const RPZAtom &atom) const {
-    return atom.type() == RPZAtom::Type::Player;
+    auto type = atom.type();
+    return type == RPZAtom::Type::Player || type == RPZAtom::Type::NPC;
 }
 
 QPointF AtomsStorage::_getPositionFromAtomDuplication(const RPZAtom &atomToDuplicate, double distanceFromOriginal) {

@@ -197,8 +197,16 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
             this->_outline->triggerAnimation(this->_owned);
         }
 
-        void updateColor(const QColor &toApply) {
-            this->_changeColor(toApply);
+        void updateColorFromAttitude(const RPZAtom::NPCType &attitude) {
+            auto color = RPZAtom::NPCAssociatedColor(attitude);
+            this->_attitudeColor = color;
+            this->_changeColorFromState();
+            this->update();
+        }
+
+        void updateCharacterBoundColor(const QColor &toApply) {
+            this->_characterBoundColor = toApply;
+            this->_changeColorFromState();
             this->update();
         }
 
@@ -234,6 +242,9 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
         QBrush _upperBrush;
         QBrush _mainBrush;
 
+        QColor _attitudeColor;
+        QColor _characterBoundColor;
+
         bool _mustDrawSelectionHelper() const override {
             return true;
         };
@@ -257,33 +268,23 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
         }
 
         void _changeColor(const RPZAtom &atom) {
-            QColor toApply;
-
-            switch (atom.type()) {
-                case RPZAtom::Type::Player: {
-                    toApply = atom.defaultPlayerColor();
-                }
-                break;
-
-                case RPZAtom::Type::NPC: {
-                    toApply = atom.NPCAssociatedColor();
-                }
-                break;
-
-                default:
-                break;
-            }
-
-            this->_changeColor(toApply);
+            this->_characterBoundColor = atom.defaultPlayerColor();
+            this->_attitudeColor = atom.NPCAssociatedColor();
+            this->_changeColorFromState();
         }
 
-        void _changeColor(const QColor &toApply) {
+        void _changeColorFromState() {
             auto mainOpacity = 1.0;
+
+            // find color to use
+            auto colorToApply = this->_characterBoundColor.isValid() ?
+                    this->_characterBoundColor
+                    : this->_attitudeColor;
 
             if (this->_tokenType == RPZAtom::Type::Player) {
                 // upper
                 QRadialGradient radialGrad(this->_upperRect.center(), this->_upperRect.width() / 2);
-                radialGrad.setColorAt(0.95, toApply);
+                radialGrad.setColorAt(0.95, colorToApply);
                 radialGrad.setColorAt(1, Qt::transparent);
                 this->_upperBrush = QBrush(radialGrad);
 
@@ -292,12 +293,8 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
             }
 
             // main
-            this->_mainBrush = QBrush(QColor::fromRgbF(
-                toApply.redF(),
-                toApply.greenF(),
-                toApply.blueF(),
-                mainOpacity
-            ));
+            colorToApply.setAlphaF(mainOpacity);
+            this->_mainBrush = QBrush(colorToApply);
         }
 
         void _paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) {
@@ -305,6 +302,7 @@ class MapViewToken : public QObject, public QGraphicsItem, public RPZGraphicsIte
 
                 painter->setRenderHint(QPainter::Antialiasing, true);
                 painter->setPen(Qt::NoPen);
+
                 painter->setBrush(this->_mainBrush);
 
                 // draw outer token
