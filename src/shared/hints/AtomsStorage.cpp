@@ -396,15 +396,15 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
                 this->_restrictedAtomIds += id;
             }
 
+            // handler for inheritors
+            this->_atomAdded(atom);
+
             // add to ownable
             if (this->_isAtomOwnable(atom)) {
                 auto characterId = atom.characterId();
                 this->_ownableAtomIdsByOwner.insert(id, characterId);
                 this->_atomOwnerChanged(id, characterId);
             }
-
-            // handler for inheritors
-            this->_atomAdded(atom);
 
             insertedIds += id;
         }

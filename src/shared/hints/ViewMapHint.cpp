@@ -53,13 +53,16 @@ const QList<QGraphicsItem*> ViewMapHint::_gis(const QList<RPZAtom::Id> &atomIds)
 }
 
 void ViewMapHint::_atomOwnerChanged(const RPZAtom::Id &target, const RPZCharacter::Id &newOwner) {
+    // check an item exists
     auto gi = this->_GItemsById.value(target);
     if (!gi) return;
 
-    auto owns = (this->_myCharacterId && this->_myCharacterId == newOwner) || Authorisations::isHostAble();
+    // do the user own this atom ?
+    auto owns = Authorisations::isHostAble() || (this->_myCharacterId && this->_myCharacterId == newOwner);
 
+    // if so, add to owned list
     if (owns) this->_ownedTokenIds.insert(target);
-    else
+    else  // if not, remove from it
         this->_ownedTokenIds.remove(target);
 
     emit changedOwnership({gi}, owns);
