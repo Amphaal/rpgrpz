@@ -283,10 +283,13 @@ endif()
 
 #pe-util is required to find all .dll dependencies
 IF(MINGW)
-    include(ExternalProject)
-    ExternalProject_Add(peldd
-        GIT_REPOSITORY  "https://github.com/Amphaal/pe-util"
-        INSTALL_COMMAND ""
+    FetchContent_Declare(peldd
+        GIT_REPOSITORY  "https://github.com/Amphaal/pe-util.git"
+    )
+    FetchContent_MakeAvailable(peldd)
+    set_target_properties(peldd
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "binTools"
     )
 endif()
 
@@ -545,7 +548,7 @@ if(MINGW)
     endif()
 
     add_custom_command(TARGET appExec POST_BUILD
-        COMMAND peldd-prefix/src/peldd-build/peldd -a
+        COMMAND $<TARGET_FILE:peldd> -a
             -p ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} 
             -p ${MINGW64_ROOT}/bin
             $<TARGET_FILE:appExec> 

@@ -7,17 +7,11 @@
     },
     "tasks": [
         {
-            "label": "1. Fetch submodules",
-            "type": "shell",
-            "command": "git submodule update --init --recursive"
-        },
-        {
             "label": "2. Generate Project files",
             "group": {
                 "isDefault": true,
                 "kind": "test"
             },
-            "dependsOn": "1. Fetch submodules",
             "type": "shell",
             "windows": {
                 "command": "cmake -GNinja -B_genDebug -H. -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/msys.cmake"
