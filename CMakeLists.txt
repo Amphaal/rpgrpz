@@ -545,13 +545,14 @@ if(MINGW)
     endif()
     
     #if on Windows, .bat is generated
-    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
         SET(PELDD_MAY_REPLACE_ANTISLASHES | sed 's/\\\\\\\\/\\\\//g')
     endif()
 
     #generate requirements
     add_custom_command(TARGET appExec POST_BUILD
-        COMMAND ${MAY_USE_WINE} $<TARGET_FILE:peldd> -a
+        COMMAND 
+            ${MAY_USE_WINE} $<TARGET_FILE:peldd> -a
             -p ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} 
             -p ${MINGW64_ROOT}/bin
             $<TARGET_FILE:appExec> 
@@ -562,9 +563,11 @@ if(MINGW)
             lib_requirements.txt
     )
 
-    #copy required libs
+    # #copy required libs
     add_custom_command(TARGET appExec POST_BUILD
-        COMMAND cat lib_requirements.txt | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        COMMAND 
+            tr -d "\\r" < lib_requirements.txt
+            | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         DEPENDS 
             lib_requirements.txt
     )
