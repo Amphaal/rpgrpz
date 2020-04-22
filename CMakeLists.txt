@@ -50,7 +50,9 @@ configure_file(
 )
 
 #if XCompiling Windows, use emulator (cannot be set in toolchain...)
+SET(MAY_USE_WINE "")
 IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    SET(MAY_USE_WINE "wine")
     #MOC
     add_executable(Qt5::moc IMPORTED)
     set_target_properties(Qt5::moc PROPERTIES
@@ -290,7 +292,6 @@ IF(MINGW)
     set_target_properties(peldd
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "binTools"
-        CMAKE_CXX_COMPILER_TARGET ""
     )
 endif()
 
@@ -549,7 +550,7 @@ if(MINGW)
     endif()
 
     add_custom_command(TARGET appExec POST_BUILD
-        COMMAND $<TARGET_FILE:peldd> -a
+        COMMAND ${MAY_USE_WINE} $<TARGET_FILE:peldd> -a
             -p ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} 
             -p ${MINGW64_ROOT}/bin
             $<TARGET_FILE:appExec> 
