@@ -543,11 +543,6 @@ if(MINGW)
     if(NOT MINGW64_ROOT)
         message(FATAL_ERROR "MINGW64_ROOT must be set ! Please use a toolchain file !")
     endif()
-    
-    #if on Windows, .bat is generated
-    if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
-        SET(PELDD_MAY_REPLACE_ANTISLASHES | sed 's/\\\\\\\\/\\\\//g')
-    endif()
 
     #generate requirements
     add_custom_command(TARGET appExec POST_BUILD
@@ -557,17 +552,20 @@ if(MINGW)
             -p ${MINGW64_ROOT}/bin
             $<TARGET_FILE:appExec> 
             ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gio/* 
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins/* 
-            ${PELDD_MAY_REPLACE_ANTISLASHES} > lib_requirements.txt
+            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins/*
+            | sed -f ${CMAKE_CURRENT_SOURCE_DIR}/cmake/antislash-to-slash.sed
+            | tr -d '\\015' 
+            > lib_requirements.txt
+        DEPENDS 
+            ${CMAKE_CURRENT_SOURCE_DIR}/cmake/antislash-to-slash.sed
         BYPRODUCTS
             lib_requirements.txt
     )
 
-    # #copy required libs
+    #copy required libs
     add_custom_command(TARGET appExec POST_BUILD
         COMMAND 
-            tr -d '\\015' < lib_requirements.txt
-            | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+            cat lib_requirements.txt | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         DEPENDS 
             lib_requirements.txt
     )
