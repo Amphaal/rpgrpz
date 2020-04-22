@@ -566,7 +566,7 @@ if(MINGW)
     # #copy required libs
     add_custom_command(TARGET appExec POST_BUILD
         COMMAND 
-            tr -d "\\r" < lib_requirements.txt
+            tr -d '\\015' < lib_requirements.txt
             | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         DEPENDS 
             lib_requirements.txt
