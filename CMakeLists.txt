@@ -290,6 +290,7 @@ IF(MINGW)
     set_target_properties(peldd
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "binTools"
+        CMAKE_CXX_COMPILER_TARGET ""
     )
 endif()
 

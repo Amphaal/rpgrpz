@@ -26,8 +26,11 @@ SET (CMAKE_AR                               "llvm-ar")
 SET (CMAKE_RANLIB                           "llvm-ranlib")
 SET (CMAKE_NM                               "llvm-nm")
 
-SET (CMAKE_C_FLAGS                          "-target x86_64-w64-mingw32 -fuse-ld=lld")
+SET (CMAKE_C_FLAGS                          "-fuse-ld=lld")
 SET (CMAKE_CXX_FLAGS                        ${CMAKE_C_FLAGS})
+
+SET (CMAKE_C_COMPILER_TARGET                "x86_64-w64-mingw32")
+SET (CMAKE_CXX_COMPILER_TARGET              ${CMAKE_C_COMPILER_TARGET})
 
 SET (CMAKE_EXE_LINKER_FLAGS_INIT            "-L ${MINGW64_ROOT}/lib -L ${MINGW64_ROOT}/x86_64-w64-mingw32/lib -L ${MINGW64_ROOT}/lib/gcc/x86_64-w64-mingw32/9.3.0 -lpthread")
 SET (CMAKE_SHARED_LINKER_FLAGS_INIT         ${CMAKE_EXE_LINKER_FLAGS_INIT})
