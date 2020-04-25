@@ -61,7 +61,7 @@ class YoutubePlaylistItemInsertor : public QWidget {
     explicit YoutubePlaylistItemInsertor(QWidget *parent = nullptr) : QWidget(parent),
         _ytUrlEdit(new QLineEdit),
         _insertLinkBtn(new QPushButton),
-        _ytUrlMatcher(VideoMetadata::getUrlMatcher()) {
+        _ytUrlMatcher(AudioTube::Regexes::YoutubeIdFinder) {
         this->setLayout(new QHBoxLayout);
 
         this->_ytUrlEdit->setPlaceholderText(tr("Paste here a Youtube URL..."));

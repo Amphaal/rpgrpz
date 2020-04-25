@@ -58,16 +58,16 @@ class Playlist : public QListWidget {
 
     void addYoutubeVideo(const QString &url);
 
-    VideoMetadata* currentPlay();
+    AudioTube::VideoMetadata* currentPlay();
 
  signals:
-    void playRequested(VideoMetadata* metadata);
+    void playRequested(AudioTube::VideoMetadata* metadata);
 
  private:
     void keyPressEvent(QKeyEvent * event) override;
     void _removeYoutubeVideo(QListWidgetItem* playlistItem);
-    void _addYoutubeVideo(const PlayerConfig::VideoId &ytVideoId);
-    bool _addYoutubeItem(VideoMetadata* metadata);
+    void _addYoutubeVideo(const AudioTube::PlayerConfig::VideoId &ytVideoId);
+    bool _addYoutubeItem(AudioTube::VideoMetadata* metadata);
     void contextMenuEvent(QContextMenuEvent *event) override;
     
     void _deleteSelectedTracks();
@@ -75,7 +75,7 @@ class Playlist : public QListWidget {
     void _onCMTrackDeletionRequest(bool checked = false);
     bool _askTrackDeletion();
 
-    QSet<PlayerConfig::VideoId> _playlistVideoIds;
+    QSet<AudioTube::PlayerConfig::VideoId> _playlistVideoIds;
 
     void _onItemDoubleClicked(QListWidgetItem * item);
     QListWidgetItem* _playlistItemToUse = nullptr;

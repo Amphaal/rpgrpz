@@ -67,7 +67,7 @@ class PlaylistAudioManager : public QWidget, public ConnectivityObserver {
     void _applyPlayRequestFromState();
 
     void _onToolbarActionRequested(const TrackToolbar::Action &action);
-    void _onPlayRequested(VideoMetadata* playlistItemPtr);
+    void _onPlayRequested(AudioTube::VideoMetadata* playlistItemPtr);
     void _onPlayerPositionChanged(int positionInSecs);
     void _onStreamPlayEnded();
     void _onStreamError();

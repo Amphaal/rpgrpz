@@ -79,11 +79,11 @@ class RPZQVariant {
         item->setData((int)RPZQVariant::Roles::AllowedToDefineMoveAbility, allowed);
     }
 
-    static VideoMetadata* ytVideoMetadata(const QListWidgetItem* item) {
-        return item->data((int)RPZQVariant::Roles::YTVideoMetadataPtr).value<VideoMetadata*>();
+    static AudioTube::VideoMetadata* ytVideoMetadata(const QListWidgetItem* item) {
+        return item->data((int)RPZQVariant::Roles::YTVideoMetadataPtr).value<AudioTube::VideoMetadata*>();
     }
-    static void setYTVideoMetadata(QListWidgetItem* item, VideoMetadata* metadata) {
-        item->setData((int)RPZQVariant::Roles::YTVideoMetadataPtr, QVariant::fromValue<VideoMetadata*>(metadata));
+    static void setYTVideoMetadata(QListWidgetItem* item, AudioTube::VideoMetadata* metadata) {
+        item->setData((int)RPZQVariant::Roles::YTVideoMetadataPtr, QVariant::fromValue<AudioTube::VideoMetadata*>(metadata));
     }
 
     static RPZAtom::Id atomId(const QGraphicsItem* item) {

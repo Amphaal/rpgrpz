@@ -28,13 +28,13 @@ class PlaylistDatabase : public JSONDatabase {
     // singleton
     static PlaylistDatabase* get();
 
-    void addYoutubeId(const PlayerConfig::VideoId &ytId);
-    void removeYoutubeId(const PlayerConfig::VideoId &ytId);
+    void addYoutubeId(const AudioTube::PlayerConfig::VideoId &ytId);
+    void removeYoutubeId(const AudioTube::PlayerConfig::VideoId &ytId);
 
-    QString trackName(const PlayerConfig::VideoId &ytId);
-    void setTrackName(const PlayerConfig::VideoId &ytId, const QString &name);
+    QString trackName(const AudioTube::PlayerConfig::VideoId &ytId);
+    void setTrackName(const AudioTube::PlayerConfig::VideoId &ytId, const QString &name);
 
-    QSet<PlayerConfig::VideoId> ytIds() const;
+    QSet<AudioTube::PlayerConfig::VideoId> ytIds() const;
 
  protected:
     void _setupLocalData() override;
@@ -48,6 +48,6 @@ class PlaylistDatabase : public JSONDatabase {
     explicit PlaylistDatabase(const QJsonObject &doc);
     static inline PlaylistDatabase* _singleton = nullptr;
 
-    QSet<PlayerConfig::VideoId> _ytIds;
-    QHash<PlayerConfig::VideoId, QString> _trackNameById;
+    QSet<AudioTube::PlayerConfig::VideoId> _ytIds;
+    QHash<AudioTube::PlayerConfig::VideoId, QString> _trackNameById;
 };

@@ -245,8 +245,8 @@ void PlaylistAudioManager::_applyPlayRequestFromState() {
     }
 }
 
-void PlaylistAudioManager::_onPlayRequested(VideoMetadata* metadata) {
-    NetworkFetcher::refreshMetadata(metadata).then([=]() {
+void PlaylistAudioManager::_onPlayRequested(AudioTube::VideoMetadata* metadata) {
+    AudioTube::NetworkFetcher::refreshMetadata(metadata).then([=]() {
         this->_state.registerNewPlay(metadata);  // update state
         this->_applyPlayRequestFromState();
     });

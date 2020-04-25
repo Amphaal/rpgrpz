@@ -31,7 +31,7 @@ class StreamPlayStateTracker : public QVariantHash {
     StreamPlayStateTracker() {}
     explicit StreamPlayStateTracker(const QVariantHash &hash) : QVariantHash(hash) {}
 
-    void registerNewPlay(VideoMetadata* metadata) {
+    void registerNewPlay(AudioTube::VideoMetadata* metadata) {
         return registerNewPlay(
             metadata->audioStreams()->preferedUrl().toString(),
             metadata->playerConfig().title(),

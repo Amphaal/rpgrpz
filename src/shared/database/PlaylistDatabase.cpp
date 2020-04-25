@@ -69,11 +69,11 @@ JSONDatabase::Model PlaylistDatabase::_getDatabaseModel() {
     };
 }
 
-QString PlaylistDatabase::trackName(const PlayerConfig::VideoId &ytId) {
+QString PlaylistDatabase::trackName(const AudioTube::PlayerConfig::VideoId &ytId) {
     return this->_trackNameById.value(ytId);
 }
 
-void PlaylistDatabase::setTrackName(const PlayerConfig::VideoId &ytId, const QString &name) {
+void PlaylistDatabase::setTrackName(const AudioTube::PlayerConfig::VideoId &ytId, const QString &name) {
     this->_trackNameById.insert(ytId, name);
     this->save();
 }
