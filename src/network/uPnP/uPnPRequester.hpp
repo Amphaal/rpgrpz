@@ -62,13 +62,12 @@ class uPnPRequester : public uPnPThread {
             }
 
             auto resultTCP = this->SetRedirectAndTest(this->lanaddr, this->targetPort, this->targetPort, "TCP", "0", 0);
-            auto resultUDP = this->SetRedirectAndTest(this->lanaddr, this->targetPort, this->targetPort, "UDP", "0", 0);
 
-            if (resultTCP != 0 || resultUDP != 0) {
+            if (resultTCP != 0) {
                 emit uPnPError(-999);
                 return;
             } else {
-                emit uPnPSuccess("TCP+UDP", this->targetPort);
+                emit uPnPSuccess("TCP", this->targetPort);
             }
         } catch(...) {
             qDebug() << "UPNP run : exception caught while processing";
