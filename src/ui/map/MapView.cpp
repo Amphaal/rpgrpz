@@ -61,21 +61,23 @@ MapView::MapView(QWidget *parent) : QGraphicsView(parent), MV_Manipulation(this)
     this->scale(.99, .99);
 }
 
+void MapView::_onHeavyAlterationStarted() {
+    Clipboard::clear();
+    this->displayHeavyLoadPlaceholder();
+}
+
+void MapView::_heavyAlterationFinished() {
+    this->endHeavyLoadPlaceholder();
+    this->goToDefaultViewState();
+    emit heavyAlterationFinished();
+}
+
 void MapView::_handleHintsSignalsAndSlots() {
     // on map loading, set/unset placeholder...
     QObject::connect(
-        ProgressTracker::get(), &ProgressTracker::heavyAlterationProcessing,
-        [=]() {
-            Clipboard::clear();
-            this->displayHeavyLoadPlaceholder();
-    });
-    QObject::connect(
-        ProgressTracker::get(), &ProgressTracker::heavyAlterationProcessed,
-        [=]() {
-            this->endHeavyLoadPlaceholder();
-            this->goToDefaultViewState();
-    });
-
+        HintThread::hint(), &MapHint::heavyAlterationStarted,
+        this, &MapView::_onHeavyAlterationStarted
+    );
     QObject::connect(
         HintThread::hint(), &ViewMapHint::fogModeChanged,
         this, &MapView::_onFogModeChanged
@@ -370,7 +372,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const Orde
     if (type == Payload::Alteration::Reset) {
         auto coveredItems = HintThread::hint()->fogItem()->coveredAtomItems();
         this->_mayFogUpdateAtoms(coveredItems);
-        ProgressTracker::get()->heavyAlterationEnded();
+        this->_heavyAlterationFinished();
 
     } else if (Payload::triggersFoWCheck.contains(type)) {  // check specific items for fog updates
         auto changedItemsList = toAlter.values();

@@ -23,7 +23,7 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
     // start hint thread
     HintThread::init();
 
-    // bind AlterationHandler / ProgressTracker / ConnectivityObserverOchestrator to UI Thread
+    // bind AlterationHandler / ConnectivityObserverOchestrator to UI Thread
     AlterationHandler::get();
     ConnectivityObserverSynchronizer::get();
 

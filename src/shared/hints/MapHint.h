@@ -46,29 +46,30 @@ class MapHint : public ViewMapHint, public ConnectivityObserver {
     bool createNewRPZMapAs(const QString &newFilePath);  // to invoke
 
  signals:
-        void mapStateChanged(const QString &mapDescriptor, bool isMapDirty);
-        void remoteChanged(bool isRemote);
+    void mapStateChanged(const QString &mapDescriptor, bool isMapDirty);
+    void remoteChanged(bool isRemote);
+    void heavyAlterationStarted();
 
  private:
-        bool _ackRemoteness();
+    bool _ackRemoteness();
 
-        QString _mapDescriptor;
+    QString _mapDescriptor;
 
-        bool _isRemote = false;
-        bool _isMapDirty = false;
+    bool _isRemote = false;
+    bool _isMapDirty = false;
 
-        void _setMapDirtiness(bool dirty = true);
-        void _shouldMakeMapDirty(const AlterationPayload &payload);
+    void _setMapDirtiness(bool dirty = true);
+    void _shouldMakeMapDirty(const AlterationPayload &payload);
 
-        void _handleAlterationRequest(const AlterationPayload &payload) final;
+    void _handleAlterationRequest(const AlterationPayload &payload) final;
 
-        AlterationInteractor* _sysActor = nullptr;
+    AlterationInteractor* _sysActor = nullptr;
 
-        // network
-            void connectingToServer() override;
-            void connectionClosed(bool hasInitialMapLoaded) override;
+    // network
+        void connectingToServer() override;
+        void connectionClosed(bool hasInitialMapLoaded) override;
 
-            void _onGameSessionReceived(const RPZGameSession &gameSession);
-            void _mightUpdateTokens();
-            void _sendMapHistory();
+        void _onGameSessionReceived(const RPZGameSession &gameSession);
+        void _mightUpdateTokens();
+        void _sendMapHistory();
 };

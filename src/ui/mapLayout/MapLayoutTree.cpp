@@ -19,7 +19,7 @@
 
 #include "MapLayoutTree.h"
 
-MapLayoutTree::MapLayoutTree(QWidget * parent) : QTreeView(parent) {
+MapLayoutTree::MapLayoutTree(MapView* associatedMapView, QWidget * parent) : QTreeView(parent) {
     auto unselectAction = new QAction;
     unselectAction->setShortcut(QKeySequence::Cancel);
     unselectAction->setShortcutContext(Qt::ShortcutContext::WidgetWithChildrenShortcut);
@@ -58,18 +58,21 @@ MapLayoutTree::MapLayoutTree(QWidget * parent) : QTreeView(parent) {
     this->setSelectionMode(QAbstractItemView::ExtendedSelection);
     this->setDragDropMode(QAbstractItemView::DragDropMode::NoDragDrop);
 
-    this->_handleHintsSignalsAndSlots();
+    this->_handleHintsSignalsAndSlots(associatedMapView);
 }
 
-void MapLayoutTree::_handleHintsSignalsAndSlots() {
+void MapLayoutTree::_onHeavyAlterationStarted() {
+    this->setEnabled(false);
+}
+
+void MapLayoutTree::_handleHintsSignalsAndSlots(MapView* associatedMapView) {
     // on map loading, disable
     QObject::connect(
-        ProgressTracker::get(), &ProgressTracker::heavyAlterationProcessing,
-        [=]() {
-            this->setEnabled(false);
-    });
+        HintThread::hint(), &MapHint::heavyAlterationStarted,
+        this, &MapLayoutTree::_onHeavyAlterationStarted
+    );
     QObject::connect(
-        ProgressTracker::get(), &ProgressTracker::heavyAlterationProcessed,
+        associatedMapView, &MapView::heavyAlterationFinished,
         [=]() {
             this->setEnabled(true);
     });

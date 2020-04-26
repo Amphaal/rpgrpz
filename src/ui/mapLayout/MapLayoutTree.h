@@ -40,11 +40,13 @@
 
 #include "src/shared/commands/AtomsContextualMenuHandler.h"
 
+#include "src/ui/map/MapView.h"
+
 class MapLayoutTree : public QTreeView, public AtomSelector {
     Q_OBJECT
 
  public:
-    explicit MapLayoutTree(QWidget* parent = nullptr);
+    explicit MapLayoutTree(MapView* associatedMapView, QWidget* parent = nullptr);
 
     const QList<RPZAtom::Id> selectedIds() const override;
     MapLayoutModel* mlModel = nullptr;
@@ -53,6 +55,9 @@ class MapLayoutTree : public QTreeView, public AtomSelector {
     void contextMenuEvent(QContextMenuEvent *event) override;
     void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
 
+ private slots:
+    void _onHeavyAlterationStarted();
+
  private:
     bool _preventSelectionNotification = false;
     QTimer _selectionDebouncer;
@@ -60,7 +65,7 @@ class MapLayoutTree : public QTreeView, public AtomSelector {
     AtomsContextualMenuHandler* _menuHandler = nullptr;
     AtomActionsHandler* _atomActionsHandler = nullptr;
 
-    void _handleHintsSignalsAndSlots();
+    void _handleHintsSignalsAndSlots(MapView* associatedMapView);
 
     void _handleAlterationRequest(const AlterationPayload &payload);
 };
