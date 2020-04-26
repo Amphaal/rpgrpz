@@ -204,7 +204,7 @@ void MapHint::connectingToServer() {
 }
 
 
-void MapHint::connectionClosed(bool hasInitialMapLoaded) {
+void MapHint::connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) {
     // reset impersonating character
     this->defineImpersonatingCharacter();
 

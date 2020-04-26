@@ -118,7 +118,7 @@ class ClientActivityBar : public QWidget, public ConnectivityObserver  {
         );
     }
 
-    void connectionClosed(bool hasInitialMapLoaded) override {
+    void connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) override {
         this->_upLbl->onActivityOff();
         this->_downLbl->onActivityOff();
     }

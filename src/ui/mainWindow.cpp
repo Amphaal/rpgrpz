@@ -69,7 +69,7 @@ void MainWindow::_onGameSessionReceived(const RPZGameSession &gameSession) {
     this->_setupAppUI(mode);
 }
 
-void MainWindow::connectionClosed(bool hasInitialMapLoaded) {
+void MainWindow::connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) {
     this->_setupAppUI(_defaultAppUIMode);
 }
 

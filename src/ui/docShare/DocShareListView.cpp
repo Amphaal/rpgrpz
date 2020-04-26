@@ -44,7 +44,7 @@ void DocShareListView::connectingToServer() {
         this, &DocShareListView::_updateItemFromNetwork
     );
 }
-void DocShareListView::connectionClosed(bool hasInitialMapLoaded) {
+void DocShareListView::connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) {
     QList<RPZSharedDocument::FileHash> hashesToDelete;
 
     // iterate

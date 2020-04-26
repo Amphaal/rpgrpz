@@ -52,6 +52,7 @@ class RPZClient :  public JSONSocket, public AlterationInteractor, public JSONLo
 
  public:
     RPZClient(const QString &socketStr, const QString &displayName, const RPZCharacter &toIncarnate);
+    ~RPZClient();
 
     const QString getConnectedSocketAddress() const;  // safe
     bool hasReceivedInitialMap() const;  // safe
@@ -75,9 +76,10 @@ class RPZClient :  public JSONSocket, public AlterationInteractor, public JSONLo
     void requestSharedDocument(const RPZSharedDocument::FileHash &hash);
     void notifyPing(const QPointF &pingPosition);
 
+    void quit();
+
  signals:
-    void connectionStatus(const QString &statusMessage, bool isError = false);
-    void ended();
+    void ended(const QString &errorMessage);
 
     void receivedMessage(const RPZMessage &message);
     void serverResponseReceived(const RPZResponse &reponse);
@@ -136,7 +138,6 @@ class RPZClient :  public JSONSocket, public AlterationInteractor, public JSONLo
     void _initSock();
 
     void _onConnected();
-    void _onDisconnect();
     void _onError(QAbstractSocket::SocketError _socketError);
 
     void _askForAssets(const QSet<RPZAsset::Hash> &ids);

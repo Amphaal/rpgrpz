@@ -72,7 +72,7 @@ void RPZStatusBar::connectingToServer() {
     this->_activityIndicators->setVisible(true);
 }
 
-void RPZStatusBar::connectionClosed(bool hasInitialMapLoaded) {
+void RPZStatusBar::connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) {
     this->_activityIndicators->setVisible(false);
     this->_dlStatus->setVisible(false);
 }

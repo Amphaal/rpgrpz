@@ -350,6 +350,14 @@
     </message>
 </context>
 <context>
+    <name>ChatWidget</name>
+    <message>
+        <location filename="../ui/chat/ChatWidget.cpp" line="69"/>
+        <source>Disconnected from server</source>
+        <translation type="unfinished">Déconnecté du serveur</translation>
+    </message>
+</context>
+<context>
     <name>ConnectWidget</name>
     <message>
         <location filename="../ui/logIn/ConnectWidget.cpp" line="35"/>
@@ -367,27 +375,27 @@
         <translation>Personnage à incarner</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="163"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="161"/>
         <source>Error while connecting to server</source>
         <translation>Erreur à la connexion au serveur</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="180"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="178"/>
         <source>Connect</source>
         <translation>Se connecter</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="183"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="181"/>
         <source>Cancel (Connecting to %1...)</source>
         <translation>Annuler (Connexion à %1...)</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="186"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="184"/>
         <source>Disconnect from [%1]</source>
         <translation>Se déconnecter de [%1]</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="234"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="232"/>
         <source> Log in without a character</source>
         <translation> Se connecter sans fiche</translation>
     </message>
@@ -1381,32 +1389,31 @@
 <context>
     <name>RPZClient</name>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="92"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="93"/>
         <source>Username required !</source>
         <translation>Nom d&apos;utilisateur requis !</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="104"/>
         <source>Disconnected from server</source>
-        <translation>Déconnecté du serveur</translation>
+        <translation type="vanished">Déconnecté du serveur</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="43"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="51"/>
         <source>Host closed the connection.</source>
         <translation>L&apos;hôte a fermé la connexion.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="46"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="54"/>
         <source>Host could not be found. Please check the hostname and port number.</source>
         <translation>L&apos;hôte n&apos;a pas pu être trouvé. Merci de vérifier le nom d&apos;hôte et le numéro de port.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="49"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="57"/>
         <source>Connection has been refused by remote host.</source>
         <translation>La connexion a été refusée par l&apos;hôte distant.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="52"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="60"/>
         <source>An error has occured : %1</source>
         <translation>Une erreur est survenue : %1</translation>
     </message>

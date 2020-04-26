@@ -38,7 +38,7 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
 
  protected:
     void connectingToServer() override;
-    void connectionClosed(bool hasInitialMapLoaded) override;
+    void connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) override;
 
  private:
     QHash<RPZSharedDocument::FileHash, QListWidgetItem*> _itemByHash;

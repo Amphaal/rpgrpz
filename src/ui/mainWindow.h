@@ -72,7 +72,7 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
 
  protected:
     void connectingToServer() override;
-    void connectionClosed(bool hasInitialMapLoaded) override;
+    void connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) override;
 
  private:
     void _onGameSessionReceived(const RPZGameSession &gameSession);

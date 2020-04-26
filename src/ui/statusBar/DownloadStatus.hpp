@@ -54,7 +54,7 @@ class DownloadStatus : public QProgressBar, public ConnectivityObserver {
             this, &DownloadStatus::_onDownloadProgress
         );
     }
-    void connectionClosed(bool hasInitialMapLoaded) override {
+    void connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) override {
         this->_onDownloadEnded();
     }
 

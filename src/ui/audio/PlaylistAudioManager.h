@@ -58,7 +58,7 @@ class PlaylistAudioManager : public QWidget, public ConnectivityObserver {
     bool _isLocalOnly = true;
     bool _isNetworkMaster = false;
     void connectingToServer() override;
-    void connectionClosed(bool hasInitialMapLoaded) override;
+    void connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) override;
 
     void _link();
 

@@ -80,7 +80,7 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
     }
 
  protected:
-    virtual void connectingToServer() {
+    void connectingToServer() override {
         QObject::connect(
             this->_rpzClient, &RPZClient::gameSessionReceived,
             this, &QuickDrawingAssist::_defineSelfUserFromSession
@@ -91,7 +91,7 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
             this, &QuickDrawingAssist::_onQuickDrawBitsReceived
         );
     }
-    virtual void connectionClosed(bool hasInitialMapLoaded) {
+    void connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) override {
         this->_currentUser.clear();
 
         // stop sending data to network

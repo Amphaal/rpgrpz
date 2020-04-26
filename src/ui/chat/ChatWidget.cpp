@@ -44,11 +44,9 @@ void ChatWidget::_instUI() {
     this->setLayoutDirection(Qt::LayoutDirection::LeftToRight);
 }
 
-void ChatWidget::_onRPZClientStatus(const QString &statusMsg, bool isError) {
-    auto respCode = isError ? RPZResponse::ResponseCode::Error : RPZResponse::ResponseCode::Status;
-
+void ChatWidget::_onRPZClientEnded(const QString &statusMsg) {
     // out log
-    RPZResponse response(0, respCode, statusMsg);
+    RPZResponse response(0, RPZResponse::ResponseCode::Error, statusMsg);
     this->_chatLog->handleResponse(response);
 
     this->setEnabled(false);
@@ -67,6 +65,10 @@ void ChatWidget::_onGameSessionReceived(const RPZGameSession &gameSession) {
     this->_chatLog->handleResponse(response);
 }
 
+void ChatWidget::connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) {
+    this->_onRPZClientEnded(tr("Disconnected from server"));
+}
+
 void ChatWidget::connectingToServer() {
     this->serverName = _rpzClient->getConnectedSocketAddress();
 
@@ -74,14 +76,8 @@ void ChatWidget::connectingToServer() {
 
     // on error from client
     QObject::connect(
-        _rpzClient, &RPZClient::connectionStatus,
-        this, &ChatWidget::_onRPZClientStatus
-    );
-
-    // on message received
-    QObject::connect(
-        _rpzClient, &RPZClient::receivedMessage,
-        this->_chatLog, &MessagesLog::handleRemoteMessage
+        _rpzClient, &RPZClient::ended,
+        this, &ChatWidget::_onRPZClientEnded
     );
 
     // welcome once all history have been received
@@ -90,20 +86,33 @@ void ChatWidget::connectingToServer() {
         this, &ChatWidget::_onGameSessionReceived
     );
 
+    // on message received
+    QObject::connect(
+        _rpzClient, &RPZClient::receivedMessage,
+        this, &ChatWidget::_onMessageReceived
+    );
+
     // on server response
     QObject::connect(
         _rpzClient, &RPZClient::serverResponseReceived,
-        this->_chatLog, &MessagesLog::handleResponse
+        this, &ChatWidget::_onServerResponseReceived
     );
 
     // on message send request
+    this->_chatEdit->disconnect();  // disconnect previous message sending handling
     QObject::connect(
         this->_chatEdit, &ChatEdit::askedToSendMessage,
         [=](const QString &msg) {
             RPZMessage message(msg);
             this->_chatLog->handleLocalMessage(message);
             QMetaObject::invokeMethod(this->_rpzClient, "sendMessage", Q_ARG(RPZMessage, message));
-        }
+    });
+}
 
-    );
+void ChatWidget::_onMessageReceived(const RPZMessage &message) {
+    this->_chatLog->handleRemoteMessage(message);
+}
+
+void ChatWidget::_onServerResponseReceived(const RPZResponse &reponse) {
+    this->_chatLog->handleResponse(reponse);
 }

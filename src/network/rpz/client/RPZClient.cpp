@@ -31,8 +31,16 @@ RPZClient::RPZClient(const QString &socketStr, const QString &displayName, const
     this->_port = parts.value(1, AppContext::UPNP_DEFAULT_TARGET_PORT);
 }
 
+RPZClient::~RPZClient() {
+    this->log("disconnected from server");
+}
+
 bool RPZClient::hasReceivedInitialMap() const {
     return this->_initialMapSetupReceived;
+}
+
+void RPZClient::quit() {
+    emit ended(QString());
 }
 
 void RPZClient::_onError(QAbstractSocket::SocketError _socketError) {
@@ -54,9 +62,7 @@ void RPZClient::_onError(QAbstractSocket::SocketError _socketError) {
     }
 
     this->log(msg);
-
-    emit connectionStatus(msg, true);
-    emit ended();
+    emit ended(msg);
 }
 
 void RPZClient::_initSock() {
@@ -68,11 +74,6 @@ void RPZClient::_initSock() {
     QObject::connect(
         this, &QAbstractSocket::connected,
         this, &RPZClient::_onConnected
-    );
-
-    QObject::connect(
-        this, &QAbstractSocket::disconnected,
-        this, &RPZClient::_onDisconnect
     );
 
     QObject::connect(
@@ -89,8 +90,7 @@ void RPZClient::_initSock() {
 void RPZClient::run() {
     // prerequisites
     if (this->_userDisplayName.isEmpty()) {
-        emit connectionStatus(tr("Username required !"), true);
-        emit ended();
+        emit ended(tr("Username required !"));
         return;
     }
 
@@ -98,11 +98,6 @@ void RPZClient::run() {
 
     // connect...
     this->connectToHost(this->_domain, this->_port.toInt());
-}
-
-void RPZClient::_onDisconnect() {
-    emit connectionStatus(tr("Disconnected from server"));
-    this->log("disconnected from server");
 }
 
 void RPZClient::_onConnected() {
@@ -275,8 +270,7 @@ void RPZClient::_onPayloadReceived(const RPZJSON::Method &method, const QVariant
         break;
 
         case RPZJSON::Method::ServerStatus: {
-            emit connectionStatus(data.toString(), true);
-            this->disconnectFromHost();
+            emit ended(data.toString());
         }
         break;
 

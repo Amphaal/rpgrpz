@@ -67,7 +67,7 @@ class RPZStatusBar : public QStatusBar, public ConnectivityObserver {
     void _installLayout();
 
     void connectingToServer() override;
-    void connectionClosed(bool hasInitialMapLoaded) override;
+    void connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) override;
 
     void _updateServerStateLabel(const QString &stateText, RPZStatusLabel::State state);
 };
