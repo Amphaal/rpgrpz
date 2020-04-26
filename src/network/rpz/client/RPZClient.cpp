@@ -62,7 +62,7 @@ void RPZClient::_onError(QAbstractSocket::SocketError _socketError) {
 void RPZClient::_initSock() {
     QObject::connect(
         this, &JSONSocket::PayloadReceived,
-        this, &RPZClient::_routeIncomingJSON
+        this, &RPZClient::_onPayloadReceived
     );
 
     QObject::connect(
@@ -84,10 +84,6 @@ void RPZClient::_initSock() {
         AlterationHandler::get(), &AlterationHandler::requiresPayloadHandling,
         this, &RPZClient::_handleAlterationRequest
     );
-}
-
-RPZClient::~RPZClient() {
-    if (this) delete this;
 }
 
 void RPZClient::run() {
@@ -237,7 +233,9 @@ void RPZClient::_registerSessionUsers(const RPZGameSession &gameSession) {
     emit whisperTargetsChanged();
 }
 
-void RPZClient::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data) {
+void RPZClient::_onPayloadReceived(const RPZJSON::Method &method, const QVariant &data) {
+    auto target = dynamic_cast<JSONSocket*>(this->sender());
+
     switch (method) {
         case RPZJSON::Method::PingHappened: {
             RPZPing ping(data.toHash());

@@ -52,7 +52,6 @@ class RPZClient :  public JSONSocket, public AlterationInteractor, public JSONLo
 
  public:
     RPZClient(const QString &socketStr, const QString &displayName, const RPZCharacter &toIncarnate);
-    ~RPZClient();
 
     const QString getConnectedSocketAddress() const;  // safe
     bool hasReceivedInitialMap() const;  // safe
@@ -142,6 +141,6 @@ class RPZClient :  public JSONSocket, public AlterationInteractor, public JSONLo
 
     void _askForAssets(const QSet<RPZAsset::Hash> &ids);
 
-    void _routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data);
+    void _onPayloadReceived(const RPZJSON::Method &method, const QVariant &data);
     void _handleAlterationRequest(const AlterationPayload &payload);
 };
