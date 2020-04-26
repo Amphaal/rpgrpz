@@ -19,7 +19,7 @@
 
 #include "RPZServer.h"
 
-RPZServer::RPZServer() :  JSONLogger(QStringLiteral(u"[Server]")), _hints(new AtomsStorage(Payload::Interactor::RPZServer)) {}
+RPZServer::RPZServer() : JSONLogger(QStringLiteral(u"[Server]")) {}
 
 RPZServer::~RPZServer() {
     if (this->_mapHasLoaded) this->_saveSnapshot();
@@ -33,6 +33,8 @@ void RPZServer::_saveSnapshot() {
 }
 
 void RPZServer::run() {
+    this->_hints = new AtomsStorage(Payload::Interactor::RPZServer);
+
     // init
     this->log("Starting server...");
     auto result = this->listen(QHostAddress::Any, AppContext::UPNP_DEFAULT_TARGET_PORT.toInt());

@@ -35,7 +35,10 @@ class DownloadStatus : public QProgressBar, public ConnectivityObserver {
         this->setContentsMargins(0, 0, 0, 0);
         this->setMinimum(0);
         this->setMaximumHeight(8);
+    }
 
+ protected:
+    void connectingToServer() override {
         QObject::connect(
             this->_rpzClient, &JSONSocket::JSONReceivingStarted,
             this, &DownloadStatus::_onDownloadStarted
@@ -50,6 +53,9 @@ class DownloadStatus : public QProgressBar, public ConnectivityObserver {
             this->_rpzClient, &JSONSocket::JSONDownloading,
             this, &DownloadStatus::_onDownloadProgress
         );
+    }
+    void connectionClosed(bool hasInitialMapLoaded) override {
+        this->_onDownloadEnded();
     }
 
  private slots:

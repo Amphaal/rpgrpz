@@ -97,7 +97,6 @@ void ChatWidget::connectingToServer() {
     );
 
     // on message send request
-    this->_chatEdit->disconnect();
     QObject::connect(
         this->_chatEdit, &ChatEdit::askedToSendMessage,
         [=](const QString &msg) {

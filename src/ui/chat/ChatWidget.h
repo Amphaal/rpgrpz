@@ -40,9 +40,10 @@
 class ChatWidget : public QWidget, public ConnectivityObserver {
  public:
     explicit ChatWidget(QWidget *parent = nullptr);
-
-    void connectingToServer() override;
     MessagesLog* messageLog();
+
+ protected:
+     void connectingToServer() override;
 
  private:
     MessagesLog *_chatLog;
