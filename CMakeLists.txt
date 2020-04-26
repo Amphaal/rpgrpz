@@ -27,7 +27,7 @@ message(STATUS "Using toolchain file: [${CMAKE_TOOLCHAIN_FILE}].")
 
 #project setup
 project(RPGRPZ
-    VERSION 1.0.0
+    VERSION 1.0.1
     DESCRIPTION "Simple Tabletop RPG experience"
     HOMEPAGE_URL "https://github.com/Amphaal/rpgrpz"
     LANGUAGES CXX
