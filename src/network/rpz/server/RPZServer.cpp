@@ -35,17 +35,16 @@ void RPZServer::_saveSnapshot() {
 void RPZServer::run() {
     // init
     this->log("Starting server...");
-    auto result = this->_server->listen(QHostAddress::Any, AppContext::UPNP_DEFAULT_TARGET_PORT.toInt());
+    auto result = this->listen(QHostAddress::Any, AppContext::UPNP_DEFAULT_TARGET_PORT.toInt());
 
     if (!result) {
-        qWarning() << "RPZServer : Error while starting to listen >>" << this->_server->errorString();
+        qWarning() << "RPZServer : Error while starting to listen >>" << this->errorString();
         emit failed();
         return;
     }
 
-    // connect to new connections (proxy through windowed function to ensure event is handled into the server thread)
     QObject::connect(
-        this->_server, &QTcpServer::newConnection,
+        this, &QTcpServer::newConnection,
         this, &RPZServer::_onNewConnection
     );
 
@@ -54,7 +53,7 @@ void RPZServer::run() {
 }
 
 void RPZServer::_attributeRoleToUser(JSONSocket* socket, RPZUser &associatedUser, const RPZHandshake &handshake) {
-    auto isLocalConnection = socket->socket()->localAddress().isLoopback();
+    auto isLocalConnection = socket->localAddress().isLoopback();
     auto noHost = !this->_socketsByRole.value(RPZUser::Role::Host).count();
 
     auto incarnation = handshake.incarnatingAs();
@@ -73,13 +72,15 @@ void RPZServer::_attributeRoleToUser(JSONSocket* socket, RPZUser &associatedUser
     this->_socketsByRole[associatedUser.role()].insert(socket);
 }
 
+void RPZServer::incomingConnection(qintptr socketDescriptor) {
+    auto socket = new JSONSocket(this, this);
+    socket->setSocketDescriptor(socketDescriptor);
+    addPendingConnection(socket);
+}
+
 void RPZServer::_onNewConnection() {
     // new connection,store it
-    auto clientSocket = new JSONSocket(
-        this->_server,
-        this,
-        this->_server->nextPendingConnection()
-    );
+    auto clientSocket = dynamic_cast<JSONSocket*>(this->nextPendingConnection());
 
     // create new user with id
     RPZUser user;
@@ -93,23 +94,24 @@ void RPZServer::_onNewConnection() {
 
     // clear on client disconnect
     QObject::connect(
-        clientSocket->socket(), &QAbstractSocket::disconnected,
-        [&, clientSocket]() {
-            this->_onClientSocketDisconnected(clientSocket);
-    });
+        clientSocket, &QAbstractSocket::disconnected,
+        this, &RPZServer::_onClientSocketDisconnected
+    );
 
     // on data reception
     QObject::connect(
         clientSocket, &JSONSocket::PayloadReceived,
-        this, &RPZServer::_routeIncomingJSON
+        this, &RPZServer::_onClientPayloadReceived
     );
 
     // signals new connection
-    auto newIp = clientSocket->socket()->peerAddress().toString();
+    auto newIp = clientSocket->peerAddress().toString();
     this->log(QStringLiteral(u"New connection from %1").arg(newIp));
 }
 
-void RPZServer::_onClientSocketDisconnected(JSONSocket* disconnectedSocket) {
+void RPZServer::_onClientSocketDisconnected() {
+    auto disconnectedSocket = dynamic_cast<JSONSocket*>(this->sender());
+
     // remove socket / user from inner db
     auto idToRemove = this->_idsByClientSocket.take(disconnectedSocket);
     this->_clientSocketById.remove(idToRemove);
@@ -121,7 +123,7 @@ void RPZServer::_onClientSocketDisconnected(JSONSocket* disconnectedSocket) {
     this->_socketsByRole[role].remove(disconnectedSocket);
     if (!this->_socketsByRole.count(role)) this->_socketsByRole.remove(role);
 
-    auto disconnectingAddress = disconnectedSocket->socket()->peerAddress().toString();
+    auto disconnectingAddress = disconnectedSocket->peerAddress().toString();
     this->log(QStringLiteral(u"%1 disconnected !").arg(disconnectingAddress));
 
     delete disconnectedSocket;
@@ -147,7 +149,9 @@ void RPZServer::_logUserAsMessage(JSONSocket* userSocket, const RPZJSON::Method 
         this->_sendToAll(RPZJSON::Method::Message, msg);
 }
 
-void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data) {
+void RPZServer::_onClientPayloadReceived(const RPZJSON::Method &method, const QVariant &data) {
+    // find target
+    auto target = dynamic_cast<JSONSocket*>(this->sender());
     emit isActive();
 
     switch (method) {

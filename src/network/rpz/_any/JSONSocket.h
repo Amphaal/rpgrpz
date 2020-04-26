@@ -29,14 +29,11 @@
 #include "RPZJSON.hpp"
 #include "JSONLogger.hpp"
 
-class JSONSocket : public QObject {
+class JSONSocket : public QTcpSocket {
     Q_OBJECT
 
  public:
-    JSONSocket(QObject* parent, JSONLogger* logger, QTcpSocket * socketToHandle = nullptr);
-    ~JSONSocket();
-
-    QTcpSocket* socket();
+    JSONSocket(QObject* parent, JSONLogger* logger);
 
     bool sendToSocket(const RPZJSON::Method &method, const QVariant &data);
     static int sendToSockets(
@@ -47,7 +44,7 @@ class JSONSocket : public QObject {
     );
 
  signals:
-    void PayloadReceived(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data);
+    void PayloadReceived(const RPZJSON::Method &method, const QVariant &data);
 
     void JSONReceivingStarted(RPZJSON::Method method, qint64 totalToDownload);
     void JSONDownloading(qint64 batchDownloaded);
@@ -63,8 +60,6 @@ class JSONSocket : public QObject {
     bool _ackHeader = false;
 
     JSONLogger* _logger = nullptr;
-    bool _isWrapper = false;
-    QTcpSocket* _innerSocket = nullptr;
 
     void _processIncomingData();
     void _processIncomingAsJson(const QByteArray &data);

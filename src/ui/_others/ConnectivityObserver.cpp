@@ -41,7 +41,7 @@ void ConnectivityObserver::connectWithClient(RPZClient* cc) {
     );
 
     QObject::connect(
-        _rpzClient, &RPZClient::closed,
+        _rpzClient, &RPZClient::ended,
         clientThread, &QThread::quit
     );
 

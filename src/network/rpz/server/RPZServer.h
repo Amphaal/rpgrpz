@@ -71,9 +71,15 @@ class RPZServer : public QTcpServer, public JSONLogger {
     void isActive();
     void isInactive();
 
+ protected:
+    void incomingConnection(qintptr socketDescriptor) override;
+
+ private slots:
+    void _onClientSocketDisconnected();
+    void _onClientPayloadReceived(const RPZJSON::Method &method, const QVariant &data);
+
  private:
     bool _mapHasLoaded = false;
-    QTcpServer* _server = nullptr;
 
     void _saveSnapshot();
 
@@ -104,12 +110,11 @@ class RPZServer : public QTcpServer, public JSONLogger {
     void _interpretMessage(JSONSocket* sender, RPZMessage &msg);
     void _maySendAndStoreDiceThrows(const RPZMessage &msg);
     void _logUserAsMessage(JSONSocket* userSocket, const RPZJSON::Method &method, const RPZUser &user);
-
+    
     // internal
     void _onNewConnection();
-    void _onClientSocketDisconnected(JSONSocket* disconnectedSocket);
-    void _routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data);
 
+    //sending helpers  
     void _sendToAll(const RPZJSON::Method &method, const QVariant &data);
     void _sendToAllExcept(JSONSocket* toExclude, const RPZJSON::Method &method, const QVariant &data);
     void _sendToRoleExcept(JSONSocket* toExclude, const RPZUser::Role &role, const RPZJSON::Method &method, const QVariant &data);

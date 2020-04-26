@@ -19,30 +19,16 @@
 
 #include "JSONSocket.h"
 
-JSONSocket::JSONSocket(QObject* parent, JSONLogger* logger, QTcpSocket* socketToHandle) : QObject(parent), _logger(logger) {
-    if (socketToHandle) {
-        this->_isWrapper = true;
-        this->_innerSocket = socketToHandle;
-    } else {
-        this->_innerSocket = new QTcpSocket;
-    }
-
+JSONSocket::JSONSocket(QObject* parent, JSONLogger* logger) : QTcpSocket(parent), _logger(logger) {
     QObject::connect(
-        this->_innerSocket, &QIODevice::readyRead,
+        this, &QIODevice::readyRead,
         this, &JSONSocket::_processIncomingData
     );
 
     QObject::connect(
-        this->_innerSocket, &QIODevice::bytesWritten,
+        this, &QIODevice::bytesWritten,
         this, &JSONSocket::_onBytesWritten
     );
-}
-
-JSONSocket::~JSONSocket() {
-    if (!this->_isWrapper) {
-        this->_innerSocket->close();
-        delete this->_innerSocket;
-    }
 }
 
 void JSONSocket::_onBytesWritten(qint64 bytes) {
@@ -70,7 +56,7 @@ int JSONSocket::sendToSockets(JSONLogger* logger, const QList<JSONSocket*> toSen
 
 bool JSONSocket::_sendToSocket(JSONSocket* socket, JSONLogger* logger, const RPZJSON::Method &method, const QVariant &data) {
     // ignore emission when socket is not connected
-    if (auto state = socket->socket()->state(); state != QAbstractSocket::ConnectedState) {
+    if (auto state = socket->state(); state != QAbstractSocket::ConnectedState) {
         logger->log("cannot send JSON as the socket is not connected");
         emit socket->JSONSendingFailed();
         return false;
@@ -97,7 +83,7 @@ bool JSONSocket::_sendToSocket(JSONSocket* socket, JSONLogger* logger, const RPZ
     emit socket->JSONSendingStarted(method, size);
 
     // send !
-    QDataStream out(socket->socket());
+    QDataStream out(socket);
     out.setVersion(QDataStream::Qt_5_13);
 
         // write header
@@ -115,7 +101,7 @@ bool JSONSocket::_sendToSocket(JSONSocket* socket, JSONLogger* logger, const RPZ
 
 void JSONSocket::_processIncomingData() {
     // process incoming data
-    QDataStream in(this->_innerSocket);
+    QDataStream in(this);
     in.setVersion(QDataStream::Qt_5_13);
 
     while (!in.atEnd()) {
@@ -149,7 +135,7 @@ void JSONSocket::_processIncomingData() {
         if (!this->_batchComplete) {
             // update progress
             if (this->_ackHeader) {
-                auto waitingBytes = this->_innerSocket->bytesAvailable();
+                auto waitingBytes = this->bytesAvailable();
                 emit JSONDownloading(waitingBytes);
             }
 
@@ -201,9 +187,5 @@ void JSONSocket::_processIncomingAsJson(const QByteArray &data) {
     this->_logger->log(method, "<<");
 
     // bind
-    emit PayloadReceived(this, method, content.value(_dataKey).toVariant());
-}
-
-QTcpSocket * JSONSocket::socket() {
-    return this->_innerSocket;
+    emit PayloadReceived(method, content.value(_dataKey).toVariant());
 }

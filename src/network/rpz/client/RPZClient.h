@@ -47,7 +47,7 @@
 #include "src/shared/models/RPZSharedDocument.hpp"
 #include "src/shared/models/RPZPing.hpp"
 
-class RPZClient : public QObject, public AlterationInteractor, public JSONLogger {
+class RPZClient :  public JSONSocket, public AlterationInteractor, public JSONLogger {
     Q_OBJECT
 
  public:
@@ -78,7 +78,7 @@ class RPZClient : public QObject, public AlterationInteractor, public JSONLogger
 
  signals:
     void connectionStatus(const QString &statusMessage, bool isError = false);
-    void closed();
+    void ended();
 
     void receivedMessage(const RPZMessage &message);
     void serverResponseReceived(const RPZResponse &reponse);
@@ -112,7 +112,6 @@ class RPZClient : public QObject, public AlterationInteractor, public JSONLogger
         In,
         Out
     };
-    JSONSocket* _serverSock = nullptr;
     bool _initialMapSetupReceived = false;
 
     QString _domain;
@@ -138,15 +137,11 @@ class RPZClient : public QObject, public AlterationInteractor, public JSONLogger
     void _initSock();
 
     void _onConnected();
-    void _error(QAbstractSocket::SocketError _socketError);
     void _onDisconnect();
-    void _onSending();
-    void _onSent(bool success);
-    void _onBatchAcked(RPZJSON::Method method, qint64 batchSize);
-    void _onBatchDownloading(RPZJSON::Method method, qint64 downloaded);
+    void _onError(QAbstractSocket::SocketError _socketError);
+
     void _askForAssets(const QSet<RPZAsset::Hash> &ids);
 
     void _routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data);
-
     void _handleAlterationRequest(const AlterationPayload &payload);
 };
