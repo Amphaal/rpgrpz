@@ -31,6 +31,11 @@ JSONSocket::JSONSocket(QObject* parent, JSONLogger* logger, QTcpSocket* socketTo
         this->_innerSocket, &QIODevice::readyRead,
         this, &JSONSocket::_processIncomingData
     );
+
+    QObject::connect(
+        this->_innerSocket, &QIODevice::bytesWritten,
+        this, &JSONSocket::_onBytesWritten
+    );
 }
 
 JSONSocket::~JSONSocket() {
@@ -38,6 +43,10 @@ JSONSocket::~JSONSocket() {
         this->_innerSocket->close();
         delete this->_innerSocket;
     }
+}
+
+void JSONSocket::_onBytesWritten(qint64 bytes) {
+    emit JSONUploading(bytes);
 }
 
 bool JSONSocket::sendToSocket(const RPZJSON::Method &method, const QVariant &data) {
@@ -60,19 +69,17 @@ int JSONSocket::sendToSockets(JSONLogger* logger, const QList<JSONSocket*> toSen
 }
 
 bool JSONSocket::_sendToSocket(JSONSocket* socket, JSONLogger* logger, const RPZJSON::Method &method, const QVariant &data) {
-    emit socket->sending();
-
     // ignore emission when socket is not connected
     if (auto state = socket->socket()->state(); state != QAbstractSocket::ConnectedState) {
         logger->log("cannot send JSON as the socket is not connected");
-        emit socket->sent(false);
+        emit socket->JSONSendingFailed();
         return false;
     }
 
     // checks
     if (data.isNull()) {
         logger->log("cannot send JSON as input values are unexpected");
-        emit socket->sent(false);
+        emit socket->JSONSendingFailed();
         return false;
     }
 
@@ -82,13 +89,16 @@ bool JSONSocket::_sendToSocket(JSONSocket* socket, JSONLogger* logger, const RPZ
     json_payload.insert(QStringLiteral(u"_d"), data.toJsonValue());
     QJsonDocument payload_doc(json_payload);
 
+    // json to bytes
+    auto bytes = qCompress(payload_doc.toJson(QJsonDocument::Compact));
+    auto size = bytes.size();
+
+    // tell that sending has begun
+    emit socket->JSONSendingStarted(method, size);
+
     // send !
     QDataStream out(socket->socket());
     out.setVersion(QDataStream::Qt_5_13);
-
-        // json to bytes
-        auto bytes = qCompress(payload_doc.toJson(QJsonDocument::Compact));
-        auto size = bytes.size();
 
         // write header
         out << (quint32)method;
@@ -97,10 +107,9 @@ bool JSONSocket::_sendToSocket(JSONSocket* socket, JSONLogger* logger, const RPZ
         // write data
         out << bytes;
 
-    // logger->log(QStringLiteral("Sending %1...").arg(QLocale::system().formattedDataSize(size)));
-
     // ack success
-    emit socket->sent(true);
+    emit socket->JSONUploaded();
+    // logger->log(QStringLiteral("Sending %1...").arg(QLocale::system().formattedDataSize(size)));
     return true;
 }
 
@@ -128,7 +137,7 @@ void JSONSocket::_processIncomingData() {
         // tell that download started, prevent resend on same batch
         if (!this->_ackHeader) {
             this->_ackHeader = true;
-            emit ackedBatch(method, fullSize);
+            emit JSONReceivingStarted(method, fullSize);
         }
 
         // handle as transaction
@@ -141,7 +150,7 @@ void JSONSocket::_processIncomingData() {
             // update progress
             if (this->_ackHeader) {
                 auto waitingBytes = this->_innerSocket->bytesAvailable();
-                emit batchDownloading(method, waitingBytes);
+                emit JSONDownloading(waitingBytes);
             }
 
             // break the loop, effectively waiting for more bytes
@@ -149,9 +158,8 @@ void JSONSocket::_processIncomingData() {
         }
 
         // process batch
-        emit batchDownloading(method, fullSize);
+        emit JSONDownloaded();
         // this->_logger->log(QStringLiteral("Received %1...").arg(QLocale::system().formattedDataSize(fullSize)));
-
         this->_processIncomingAsJson(qUncompress(block));
     }
 }
@@ -193,7 +201,7 @@ void JSONSocket::_processIncomingAsJson(const QByteArray &data) {
     this->_logger->log(method, "<<");
 
     // bind
-    emit JSONReceived(this, method, content.value(_dataKey).toVariant());
+    emit PayloadReceived(this, method, content.value(_dataKey).toVariant());
 }
 
 QTcpSocket * JSONSocket::socket() {

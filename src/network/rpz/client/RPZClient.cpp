@@ -62,7 +62,7 @@ void RPZClient::_initSock() {
     this->_serverSock = new JSONSocket(this, this);
 
     QObject::connect(
-        this->_serverSock, &JSONSocket::JSONReceived,
+        this->_serverSock, &JSONSocket::PayloadReceived,
         this, &RPZClient::_routeIncomingJSON
     );
 

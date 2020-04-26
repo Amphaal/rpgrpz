@@ -106,7 +106,7 @@ void RPZServer::_onNewConnection() {
 
     // on data reception
     QObject::connect(
-        clientSocket, &JSONSocket::JSONReceived,
+        clientSocket, &JSONSocket::PayloadReceived,
         this, &RPZServer::_routeIncomingJSON
     );
 
