@@ -158,15 +158,12 @@ void MapView::_notifySelection() {
 }
 
 void MapView::_metadataUpdatePostProcess(const QList<QGraphicsItem*> &FoWSensitiveItems) {
-    // may trigger MapViewAnimator::triggerQueuedAnimations(), prevent calling it twice in a row
-    auto mustTriggerAnimations = true;
     if (FoWSensitiveItems.count()) {
         auto request = HintThread::hint()->fogItem()->visibilityChangeFromList(FoWSensitiveItems);
         this->_mayFogUpdateAtoms(request);
-        if (!request.nowInvisible.count() && !request.nowVisible.count()) mustTriggerAnimations = false;
     }
 
-    if (mustTriggerAnimations) MapViewAnimator::triggerQueuedAnimations();
+    MapViewAnimator::triggerQueuedAnimations();
 }
 
 void MapView::_onUIUpdateRequest(const QHash<QGraphicsItem*, RPZAtom::Updates> &toUpdate) {
@@ -237,7 +234,7 @@ void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const QLis
     this->_onUIAlterationRequest(type, re);
 }
 
-bool MapView::_mayFogUpdateAtoms(const MapViewFog::FogChangingVisibility &itemsWhoChanged) const {
+void MapView::_mayFogUpdateAtoms(const MapViewFog::FogChangingVisibility &itemsWhoChanged) const {
     // visible
     RPZAtom::Updates visible { { RPZAtom::Parameter::CoveredByFog, false } };
     for (auto item : itemsWhoChanged.nowVisible) {
@@ -256,10 +253,7 @@ bool MapView::_mayFogUpdateAtoms(const MapViewFog::FogChangingVisibility &itemsW
         );
     }
 
-    auto mustTriggerAnimations = itemsWhoChanged.nowInvisible.count() || itemsWhoChanged.nowVisible.count();
-    if (mustTriggerAnimations) MapViewAnimator::triggerQueuedAnimations();
-
-    return mustTriggerAnimations;
+    MapViewAnimator::triggerQueuedAnimations();
 }
 
 void MapView::_onUIAlterationRequest(const Payload::Alteration &type, const OrderedGraphicsItems &toAlter) {

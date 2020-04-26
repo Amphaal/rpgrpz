@@ -127,7 +127,7 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
     void _addItemToScene(QGraphicsItem* item);
 
     // fog
-        bool _mayFogUpdateAtoms(const MapViewFog::FogChangingVisibility &itemsWhoChanged) const;
+        void _mayFogUpdateAtoms(const MapViewFog::FogChangingVisibility &itemsWhoChanged) const;
 
     // Selection
         bool _ignoreSelectionChangedEvents = false;
