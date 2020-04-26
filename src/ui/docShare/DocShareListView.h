@@ -33,6 +33,8 @@
 #include "src/shared/hints/SharedDocHint.hpp"
 
 class DocShareListView : public QListWidget, public ConnectivityObserver {
+    Q_OBJECT
+
  public:
     explicit DocShareListView(QWidget *parent = nullptr);
 
@@ -40,11 +42,17 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
     void connectingToServer() override;
     void connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) override;
 
+ private slots:
+    void _onGameSessionReceived(const RPZGameSession &gs);
+    void _updateItemFromNetwork(const RPZSharedDocument &doc);
+    void _mayAddTemporaryItem(const RPZSharedDocument::FileHash &hash, const QString &fileName);
+
  private:
     QHash<RPZSharedDocument::FileHash, QListWidgetItem*> _itemByHash;
 
     QMimeDatabase _MIMEDb;
     QFileIconProvider _iconProvider;
+    bool _allowDrop = true;
 
     static inline int HashRole = 3000;
     static inline int FilePathRole = 3100;
@@ -57,15 +65,11 @@ class DocShareListView : public QListWidget, public ConnectivityObserver {
         Downloadable
     };
 
-    void _onGameSessionReceived(const RPZGameSession &gs);
-    void _updateItemFromNetwork(const RPZSharedDocument &doc);
-
     void _onItemDoubleClick(QListWidgetItem *item);
 
     void _mayStoreAsDocument(const QUrl &fileUrl);
     void _updateItem(const RPZSharedDocument &doc, QListWidgetItem* item);
     void _addItem(const RPZSharedDocument &doc);
-    void _mayAddTemporaryItem(const RPZSharedDocument::FileHash &hash, const QString &fileName);
 
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dragMoveEvent(QDragMoveEvent * event) override;

@@ -45,6 +45,9 @@ void DocShareListView::connectingToServer() {
     );
 }
 void DocShareListView::connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) {
+    // allow drops
+    _allowDrop = true;
+
     QList<RPZSharedDocument::FileHash> hashesToDelete;
 
     // iterate
@@ -69,8 +72,11 @@ Qt::DropActions DocShareListView::supportedDropActions() const {
 }
 
 void DocShareListView::_onGameSessionReceived(const RPZGameSession &gs) {
-    // prfevent shared documents insert if host
-    if (Authorisations::isHostAble()) return;
+    // prevent drop for non hosts
+    _allowDrop = Authorisations::isHostAble();
+
+    // prevent shared documents autoload if host
+    if (_allowDrop) return;
 
     // iterate through shared docs
     auto namesStore = gs.sharedDocumentsNS();
@@ -211,7 +217,8 @@ void DocShareListView::dragEnterEvent(QDragEnterEvent *event) {
 }
 
 void DocShareListView::dragMoveEvent(QDragMoveEvent * event)  {
-    event->accept();
+    if(_allowDrop) event->accept();
+    else event->ignore();
 }
 
 void DocShareListView::dropEvent(QDropEvent *event) {
