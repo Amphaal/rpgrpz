@@ -146,24 +146,22 @@ void ConnectWidget::connectingToServer() {
     );
 
     QObject::connect(
-        this->_rpzClient, &RPZClient::connectionStatus,
-        this, &ConnectWidget::_onRPZClientStatus
+        this->_rpzClient, &RPZClient::ended,
+        this, &ConnectWidget::_onRPZClientEnded
     );
 }
 
-void ConnectWidget::connectionClosed(bool hasInitialMapLoaded) {
+void ConnectWidget::connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) {
     this->_changeState(State::NotConnected);
 }
 
-void ConnectWidget::_onRPZClientStatus(const QString &statusMsg, bool isError) {
-    if (!isError) return;
-
-    if (this->_state == State::Connecting) {
-        QMessageBox::information(this,
-            tr("Error while connecting to server"),
-            statusMsg,
-            QMessageBox::Ok, QMessageBox::Ok);
-    }
+void ConnectWidget::_onRPZClientEnded(const QString &statusMsg) {
+    if (this->_state != State::Connecting) return;
+    QMessageBox::information(this,
+        tr("Error while connecting to server"),
+        statusMsg,
+        QMessageBox::Ok, QMessageBox::Ok
+    );
 }
 
 void ConnectWidget::_onGameSessionReceived(const RPZGameSession &gameSession) {

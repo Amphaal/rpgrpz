@@ -66,6 +66,12 @@ class MiniMapView : public QGraphicsView {
         }
     }
 
+ private slots:
+    void _onHeavyAlterationStarted() {
+        this->_alterationOngoing = true;
+        this->setVisible(false);
+    }
+
  private:
     QGraphicsScene* _dummyScene = nullptr;
     QGraphicsScene* _sceneToMimic = nullptr;
@@ -125,13 +131,11 @@ class MiniMapView : public QGraphicsView {
     void _handleHintsSignalsAndSlots() {
         // on map loading, set/unset placeholder...
         QObject::connect(
-            ProgressTracker::get(), &ProgressTracker::heavyAlterationProcessing,
-            [=]() {
-                this->_alterationOngoing = true;
-                this->setVisible(false);
-        });
+            HintThread::hint(), &MapHint::heavyAlterationStarted,
+            this, &MiniMapView::_onHeavyAlterationStarted
+        );
         QObject::connect(
-            ProgressTracker::get(), &ProgressTracker::heavyAlterationProcessed,
+            this->_master, &MapView::heavyAlterationFinished,
             [=]() {
                 this->_generateMinimap();
                 this->_alterationOngoing = false;

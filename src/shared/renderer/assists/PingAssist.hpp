@@ -49,7 +49,7 @@ class PingAssist : public QObject, public ConnectivityObserver {
     }
 
  protected:
-    virtual void connectingToServer() {
+    void connectingToServer() override {
         QObject::connect(
             this->_rpzClient, &RPZClient::pingHappened,
             this, &PingAssist::_addPingFromNetwork
@@ -60,7 +60,7 @@ class PingAssist : public QObject, public ConnectivityObserver {
             this, &PingAssist::_onGameSessionReceived
         );
     }
-    virtual void connectionClosed(bool hasInitialMapLoaded) {
+    void connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) override {
         this->_networkAllowed = false;
     }
 

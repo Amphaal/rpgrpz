@@ -25,46 +25,44 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLocale>
+#include <QQueue>
+#include <QPair>
 
 #include "RPZJSON.hpp"
 #include "JSONLogger.hpp"
 
-class JSONSocket : public QObject {
+class JSONSocket : public QTcpSocket {
     Q_OBJECT
 
  public:
-    JSONSocket(QObject* parent, JSONLogger* logger, QTcpSocket * socketToHandle = nullptr);
-    ~JSONSocket();
-
-    QTcpSocket* socket();
+    JSONSocket(QObject* parent, JSONLogger* logger);
 
     bool sendToSocket(const RPZJSON::Method &method, const QVariant &data);
-    static int sendToSockets(
-        JSONLogger* logger,
-        const QList<JSONSocket*> toSendTo,
-        const RPZJSON::Method &method,
-        const QVariant &data
-    );
 
  signals:
-    void JSONReceived(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data);
-    void ackedBatch(RPZJSON::Method method, qint64 batchSize);
-    void batchDownloading(RPZJSON::Method method, qint64 downloaded);
-    void sending();
-    void sent(bool success);
+    void PayloadReceived(const RPZJSON::Method &method, const QVariant &data);
+
+    void JSONReceivingStarted(RPZJSON::Method method, qint64 totalToDownload);
+    void JSONDownloading(qint64 totalBytesDownloadedForBatch);
+    void JSONDownloaded();
+
+    void JSONSendingFailed();
+    void JSONSendingStarted(RPZJSON::Method method, qint64 totalToUpload);
+    void JSONUploading(qint64 bytesUploaded);
+    void JSONUploaded();
 
  private:
     bool _batchComplete = false;
     bool _ackHeader = false;
 
     JSONLogger* _logger = nullptr;
-    bool _isWrapper = false;
-    QTcpSocket* _innerSocket = nullptr;
 
     void _processIncomingData();
     void _processIncomingAsJson(const QByteArray &data);
 
-    static bool _sendToSocket(JSONSocket* socket, JSONLogger* logger, const RPZJSON::Method &method, const QVariant &data);
+    bool _send(const RPZJSON::Method &method, const QVariant &data);
+    void _onBytesWritten(qint64 bytes);
+    QQueue<QPair<RPZJSON::Method, qint64>> _waitingTBU;
 
     static inline QString _dataKey = QStringLiteral(u"_d");
     static inline QString _methodKey = QStringLiteral(u"_m");

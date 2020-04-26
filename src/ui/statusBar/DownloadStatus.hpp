@@ -24,9 +24,9 @@
 #include <QLocale>
 #include <QStyleOptionProgressBar>
 
-#include "src/shared/async-ui/progress/ProgressTracker.hpp"
+#include "src/ui/_others/ConnectivityObserver.h"
 
-class DownloadStatus : public QProgressBar {
+class DownloadStatus : public QProgressBar, public ConnectivityObserver {
     Q_OBJECT
 
  public:
@@ -35,86 +35,65 @@ class DownloadStatus : public QProgressBar {
         this->setContentsMargins(0, 0, 0, 0);
         this->setMinimum(0);
         this->setMaximumHeight(8);
+    }
+
+ protected:
+    void connectingToServer() override {
+        QObject::connect(
+            this->_rpzClient, &JSONSocket::JSONReceivingStarted,
+            this, &DownloadStatus::_onDownloadStarted
+        );
 
         QObject::connect(
-            ProgressTracker::get(), &ProgressTracker::downloadStarted,
-            [=](const ProgressTracker::Kind &kind, qint64 size) {
-                auto tempDescr = _tooltipDescriptionTemplate.arg(kindToText(kind))
-                    .arg("%1")
-                    .arg(valToText(kind, size));
-
-                // store prefilled
-                this->_tooltipDescriptionTemplatePrefilled = tempDescr;
-
-                // add missing value
-                tempDescr = tempDescr.arg(valToText(kind, 0));
-                this->setToolTip(tempDescr);
-
-                // set style
-                this->_setStyleForKind(kind);
-
-                // at last set visible
-                this->setMaximum((int)size);
-                this->setValue(0);
-                this->setVisible(true);
-        });
+            this->_rpzClient, &JSONSocket::JSONDownloaded,
+            this, &DownloadStatus::_onDownloadEnded
+        );
 
         QObject::connect(
-            ProgressTracker::get(), &ProgressTracker::downloadEnded,
-            [=](const ProgressTracker::Kind &kind) {
-                this->setVisible(false);
-        });
+            this->_rpzClient, &JSONSocket::JSONDownloading,
+            this, &DownloadStatus::_onDownloadProgress
+        );
+    }
+    void connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) override {
+        this->_onDownloadEnded();
+    }
 
-        QObject::connect(
-            ProgressTracker::get(), &ProgressTracker::downloadProgress,
-            [=](const ProgressTracker::Kind &kind, qint64 progress) {
-                auto toolTipText = this->_tooltipDescriptionTemplatePrefilled
-                                            .arg(valToText(kind, progress));
+ private slots:
+    void _onDownloadStarted(RPZJSON::Method method, qint64 totalToDownload) {
+        if (!RPZJSON::mayBeHeavyPayload(method)) return;
 
-                this->setToolTip(toolTipText);
+        this->_pendingMethod = method;
 
-                this->setValue((int)progress);
-        });
+        this->setToolTip(QString());
+
+        // at last set visible
+        this->setMaximum((int)totalToDownload);
+        this->setValue(0);
+        this->setVisible(true);
+    }
+
+    void _onDownloadProgress(qint64 totalBytesDownloadedForBatch) {
+        auto methodToStr = QVariant::fromValue(this->_pendingMethod).toString();
+        auto locale = QLocale::system();
+        auto pending = locale.formattedDataSize(totalBytesDownloadedForBatch);
+        auto total = locale.formattedDataSize(this->maximum());
+
+        auto toolTipText = this->_tooltipDescriptionTemplate
+                            .arg(methodToStr)
+                            .arg(pending)
+                            .arg(total);
+        this->setToolTip(toolTipText);
+
+        this->setValue((int)totalBytesDownloadedForBatch);
+    }
+
+    void _onDownloadEnded() {
+        this->setValue(this->maximum());
+        this->setVisible(false);
     }
 
  private:
-    QString _tooltipDescriptionTemplatePrefilled;
-
-    void _setStyleForKind(const ProgressTracker::Kind &kind) {
-        QString style;
-
-        switch (kind) {
-            case ProgressTracker::Kind::Asset:
-                // style += "QProgressBar { border: 2px solid grey; border-radius: 5px;}";
-                // style += "QProgressBar::chunk {background-color: #05B8CC; width: 20px;}";
-                break;
-            case ProgressTracker::Kind::Map:
-                // default style
-                break;
-        }
-
-        this->setStyleSheet(style);
-    }
-
     static inline QString _tooltipDescriptionTemplate = QStringLiteral(u"%1 : %2/%3");
-    static QString kindToText(const ProgressTracker::Kind &kind) {
-        switch (kind) {
-            case ProgressTracker::Kind::Asset:
-                return tr("Assets download");
-            case ProgressTracker::Kind::Map:
-                return tr("Map download");
-            default:
-                return tr("Download");
-                break;
-        }
-    }
 
-    static QString valToText(const ProgressTracker::Kind &kind, unsigned long long size) {
-        switch (kind) {
-            case ProgressTracker::Kind::Map:
-                return QLocale::system().formattedDataSize(size);
-            default:
-                return QString::number(size);
-        }
-    }
+    RPZJSON::Method _pendingMethod = RPZJSON::Method::M_Unknown;
 };

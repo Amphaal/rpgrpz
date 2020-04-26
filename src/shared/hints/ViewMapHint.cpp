@@ -514,18 +514,17 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
         emit atomDescriptorUpdated(ssi.interactible);
 
         this->_singleSelectionInteractible = ssi;
+
     } else if (auto mPayload = dynamic_cast<const FogModeChangedPayload*>(&payload)) {  // fog mode
         emit fogModeChanged(mPayload->mode());
+
     } else if (dynamic_cast<const ResetPayload*>(&payload)) {  // if reset (afterward)
         // bind owned tokens
         this->_checkForOwnedTokens();
 
-        // tell UI that download ended
-        QMetaObject::invokeMethod(ProgressTracker::get(), "downloadHasEnded",
-            Q_ARG(ProgressTracker::Kind, ProgressTracker::Kind::Map)
-        );
     } else if (auto mPayload = dynamic_cast<const AssetChangedPayload*>(&payload)) {  // if asset changed
         this->_replaceMissingAssetPlaceholders(mPayload->assetMetadata());
+
     } else if (auto mPayload = dynamic_cast<const ToySelectedPayload*>(&payload)) {  // if asset selected
         // generate ghost
         QGraphicsItem* maybeToDelete = nullptr;
@@ -539,12 +538,16 @@ void ViewMapHint::_handleAlterationRequest(const AlterationPayload &payload) {
 
         // request addition of new ghost
         emit requestingUIAlteration(Payload::Alteration::ToySelected, {newGhost});
+
     } else if (auto mPayload = dynamic_cast<const BulkMetadataChangedPayload*>(&payload)) {  // if updated / deleted
         this->_mightUpdateAtomDescriptor(mPayload->atomsUpdates().keys());
+
     } else if (auto mPayload = dynamic_cast<const MultipleAtomTargetsPayload*>(&payload)) {
         this->_mightUpdateAtomDescriptor(mPayload->targetRPZAtomIds());
+
     } else if (auto mPayload = dynamic_cast<const RemovedPayload*>(&payload)) {
         this->_mightUpdateAtomDescriptor(mPayload->targetRPZAtomIds());
+
     } else if (auto mPayload = dynamic_cast<const AtomTemplateChangedPayload*>(&payload)) {  // if template changed
         this->_updateTemplateAtom(mPayload->updates());
     }

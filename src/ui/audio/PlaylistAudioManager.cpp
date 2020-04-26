@@ -107,7 +107,7 @@ void PlaylistAudioManager::_onAudioPlayStateChanged(bool isPlaying) {
         this->_cli->pause();
 }
 
-void PlaylistAudioManager::connectionClosed(bool hasInitialMapLoaded) {
+void PlaylistAudioManager::connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) {
     if (!this->_isNetworkMaster) {
         this->_stopPlayingMusic();
     }

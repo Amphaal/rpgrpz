@@ -102,7 +102,6 @@ void _registerMetaTypes() {
     qRegisterMetaType<RPZJSON::Method>("RPZJSON::Method");
     qRegisterMetaType<Payload::Alteration>("Payload::Alteration");
     qRegisterMetaType<RPZAtom::Parameter>("RPZAtom::Parameter");
-    qRegisterMetaType<ProgressTracker::Kind>("ProgressTracker::Kind");
     qRegisterMetaType<RPZStatusLabel::State>("RPZStatusLabel::State");
     qRegisterMetaType<RPZFogParams::Mode>("RPZFogParams::Mode");
     // typedef

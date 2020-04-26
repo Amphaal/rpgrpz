@@ -28,7 +28,8 @@ class RPZJSON {
 
  public:
     enum class Method {
-        Handshake = 0,
+        M_Unknown = 0,
+        Handshake,
         Message,
         ServerStatus,
         ServerResponse,
@@ -51,4 +52,16 @@ class RPZJSON {
         PingHappened
     };
     Q_ENUM(Method)
+
+    static bool mayBeHeavyPayload(const RPZJSON::Method &method) {
+        return _heavyPayloadMethods.contains(method);
+    }
+
+ private:
+    static inline QList<RPZJSON::Method> _heavyPayloadMethods {
+        RPZJSON::Method::MapChangedHeavily,
+        RPZJSON::Method::RequestedAsset,
+        RPZJSON::Method::SharedDocumentRequested,
+        RPZJSON::Method::GameSessionSync
+    };
 };

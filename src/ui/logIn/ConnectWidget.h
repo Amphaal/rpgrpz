@@ -46,7 +46,7 @@ class ConnectWidget : public QWidget, public ConnectivityObserver {
 
  protected:
     void connectingToServer() override;
-    void connectionClosed(bool hasInitialMapLoaded) override;
+    void connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) override;
 
  private:
     QLineEdit* _nameTarget = nullptr;
@@ -63,7 +63,7 @@ class ConnectWidget : public QWidget, public ConnectivityObserver {
     void _changeState(ConnectWidget::State newState);
 
     void _onConnectButtonPressed();
-    void _onRPZClientStatus(const QString &statusMsg, bool isError);
+    void _onRPZClientEnded(const QString &statusMsg);
     void _onGameSessionReceived(const RPZGameSession &gameSession);
 
     void _saveValuesAsSettings();

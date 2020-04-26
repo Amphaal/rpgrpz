@@ -69,7 +69,7 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
         );
     }
 
-    void connectionClosed(bool hasInitialMapLoaded) override {
+    void connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) override {
         this->_availableCharacters.clear();
         this->_updateComboFromAvailableCharacters();
     }
