@@ -31,6 +31,12 @@ RPZStatusBar::RPZStatusBar(QWidget * parent) : QStatusBar(parent) {
     // install...
     this->_installComponents();
     this->_installLayout();
+
+    // update status bar on map file update
+    QObject::connect(
+        HintThread::hint(), &MapHint::mapStateChanged,
+        this, &RPZStatusBar::_updateMapFileLabel
+    );
 }
 
 void RPZStatusBar::_installComponents() {
@@ -57,7 +63,7 @@ void RPZStatusBar::_installComponents() {
     this->_activityIndicators = new ClientActivityBar;
 }
 
-void RPZStatusBar::updateMapFileLabel(const QString &mapDescriptor, bool isMapDirty) {
+void RPZStatusBar::_updateMapFileLabel(const QString &mapDescriptor, bool isMapDirty) {
     auto reflectDirtiness = mapDescriptor + (isMapDirty ? "*" : "");
     this->_mapFileLabel->updateState(reflectDirtiness);
 }
@@ -71,18 +77,26 @@ void RPZStatusBar::connectionClosed(bool hasInitialMapLoaded) {
     this->_dlStatus->setVisible(false);
 }
 
-void RPZStatusBar::bindServerIndicators() {
+void RPZStatusBar::setBoundServer(RPZServer* server) {
     QObject::connect(
-        ProgressTracker::get(), &ProgressTracker::serverActive,
-        [=]() {
-            this->_serverStateLabel->dataLabel()->setStyleSheet("color:green");
-    });
+        server, &RPZServer::listening,
+        this, &RPZStatusBar::_updateServerState_Listening
+    );
 
     QObject::connect(
-        ProgressTracker::get(), &ProgressTracker::serverInactive,
-        [=]() {
-            this->_serverStateLabel->dataLabel()->setStyleSheet("color:black");
-    });
+        server, &RPZServer::failed,
+        this, &RPZStatusBar::_updateServerState_Failed
+    );
+
+    QObject::connect(
+        server, &RPZServer::isActive,
+        this, &RPZStatusBar::_onServerIsActive
+    );
+
+    QObject::connect(
+        server, &RPZServer::isInactive,
+        this, &RPZStatusBar::_onServerIsInactive
+    );
 }
 
 void RPZStatusBar::_installLayout() {
@@ -111,7 +125,7 @@ void RPZStatusBar::_installLayout() {
 ///
 ///
 
-void RPZStatusBar::updateServerStateLabel(const QString &stateText, RPZStatusLabel::State state) {
+void RPZStatusBar::_updateServerStateLabel(const QString &stateText, RPZStatusLabel::State state) {
     this->_serverStateLabel->updateState(
         stateText,
         state
@@ -134,4 +148,24 @@ void RPZStatusBar::updateExtIPLabel(const QString &stateText, RPZStatusLabel::St
         state == RPZStatusLabel::State::Finished ? asHTMLLink() : stateText,
         state
     );
+}
+
+void RPZStatusBar::_updateServerState_Listening() {
+    this->_updateServerStateLabel(QStringLiteral("OK"), RPZStatusLabel::State::Finished);
+}
+
+void RPZStatusBar::_updateServerState_Failed() {
+    this->_updateServerStateLabel(tr("Error"), RPZStatusLabel::State::Error);
+}
+
+void RPZStatusBar::updateServerState_NoServer() {
+    this->_updateServerStateLabel(tr("No"), RPZStatusLabel::State::Finished);
+}
+
+void RPZStatusBar::_onServerIsActive() {
+    this->_serverStateLabel->dataLabel()->setStyleSheet("color:green");
+}
+
+void RPZStatusBar::_onServerIsInactive() {
+    this->_serverStateLabel->dataLabel()->setStyleSheet("color:black");
 }

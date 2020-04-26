@@ -25,8 +25,6 @@
 
 #include "AlterationInteractor.hpp"
 
-#include "src/shared/async-ui/progress/ProgressTracker.hpp"
-
 class AlterationInteractor;
 
 class AlterationHandler : public QObject {

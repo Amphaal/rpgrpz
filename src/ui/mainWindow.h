@@ -55,7 +55,6 @@
 
 #include "src/ui/statusBar/RPZStatusLabel.h"
 
-#include "src/shared/async-ui/progress/ProgressTracker.hpp"
 #include "src/ui/sheets/CharacterEditor.hpp"
 
 #include "src/ui/map/MiniMapView.hpp"

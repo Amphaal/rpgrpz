@@ -39,7 +39,6 @@
 #include "src/ui/mapLayout/model/MapLayoutModel.hpp"
 
 #include "src/shared/commands/AtomsContextualMenuHandler.h"
-#include "src/shared/async-ui/progress/ProgressTracker.hpp"
 
 class MapLayoutTree : public QTreeView, public AtomSelector {
     Q_OBJECT

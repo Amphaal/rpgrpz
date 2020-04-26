@@ -48,7 +48,6 @@
 
 #include "src/shared/commands/MessageInterpreter.h"
 #include "src/shared/audio/StreamPlayStateTracker.hpp"
-#include "src/shared/async-ui/progress/ProgressTracker.hpp"
 
 #include "src/shared/models/RPZSharedDocument.hpp"
 
@@ -56,7 +55,7 @@
 
 #include "src/network/rpz/_any/JSONLogger.hpp"
 
-class RPZServer : public QObject, public JSONLogger {
+class RPZServer : public QTcpServer, public JSONLogger {
     Q_OBJECT
 
  public:
@@ -67,8 +66,10 @@ class RPZServer : public QObject, public JSONLogger {
 
  signals:
     void listening();
-    void error();
-    void stopped();
+    void failed();
+
+    void isActive();
+    void isInactive();
 
  private:
     bool _mapHasLoaded = false;

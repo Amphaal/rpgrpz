@@ -38,7 +38,6 @@
 
 #include "src/helpers/_appContext.h"
 #include "src/shared/async-ui/AlterationInteractor.hpp"
-#include "src/shared/async-ui/progress/ProgressTracker.hpp"
 #include "src/shared/audio/StreamPlayStateTracker.hpp"
 
 #include "src/network/rpz/_any/JSONLogger.hpp"

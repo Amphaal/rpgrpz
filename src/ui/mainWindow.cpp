@@ -25,7 +25,6 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 
     // bind AlterationHandler / ProgressTracker / ConnectivityObserverOchestrator to UI Thread
     AlterationHandler::get();
-    ProgressTracker::get();
     ConnectivityObserverSynchronizer::get();
 
     //
@@ -165,7 +164,7 @@ void MainWindow::_initConnectivity() {
     if (appArgs.contains(QStringLiteral(u"noServer"))) {
         this->_mustLaunchServer = false;
         qDebug() << "RPZServer : No server to start because the user said so.";
-        this->_sb->updateServerStateLabel(tr("No"), RPZStatusLabel::State::Finished);
+        this->_sb->updateServerState_NoServer();
     }
 
     ////////////////////////////
@@ -193,26 +192,12 @@ void MainWindow::_initConnectivity() {
     if (this->_mustLaunchServer) {
         this->_rpzServer = new RPZServer;
 
-        this->_sb->bindServerIndicators();
-
-        // tell the UI when the server is up
-        QObject::connect(
-            this->_rpzServer, &RPZServer::listening,
-            [&]() {
-                QMetaObject::invokeMethod(this->_sb, "updateServerStateLabel",
-                    Q_ARG(QString, "OK"),
-                    Q_ARG(RPZStatusLabel::State, RPZStatusLabel::State::Finished)
-                );
-        });
+        this->_sb->setBoundServer(this->_rpzServer);
 
         // tell the UI when the server is down
         QObject::connect(
-            this->_rpzServer, &RPZServer::error,
+            this->_rpzServer, &RPZServer::failed,
             [&]() {
-                QMetaObject::invokeMethod(this->_sb, "updateServerStateLabel",
-                    Q_ARG(QString, tr("Error")),
-                    Q_ARG(RPZStatusLabel::State, RPZStatusLabel::State::Error)
-                );
                 this->_rpzServer = nullptr;
         });
 
@@ -228,7 +213,7 @@ void MainWindow::_initConnectivity() {
         );
 
         QObject::connect(
-            this->_rpzServer, &RPZServer::stopped,
+            this->_rpzServer, &RPZServer::failed,
             serverThread, &QThread::quit
         );
 
@@ -462,12 +447,6 @@ void MainWindow::_initAppComponents() {
     QObject::connect(
         this->_mapActions, &MapActions::actionRequested,
         this->_mapView, &MapView::onActionRequested
-    );
-
-    // update status bar on map file update
-    QObject::connect(
-        HintThread::hint(), &MapHint::mapStateChanged,
-        this->_sb, &RPZStatusBar::updateMapFileLabel
     );
 
     // focus on character

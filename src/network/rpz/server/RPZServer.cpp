@@ -19,13 +19,12 @@
 
 #include "RPZServer.h"
 
-RPZServer::RPZServer() : JSONLogger(QStringLiteral(u"[Server]")) {}
+RPZServer::RPZServer() :  JSONLogger(QStringLiteral(u"[Server]")), _hints(new AtomsStorage(Payload::Interactor::RPZServer)) {}
 
 RPZServer::~RPZServer() {
     if (this->_mapHasLoaded) this->_saveSnapshot();
-
     qDeleteAll(this->_clientSocketById);
-    if (this->_hints) delete this->_hints;
+    if(this->_hints) delete this->_hints;
 }
 
 void RPZServer::_saveSnapshot() {
@@ -35,17 +34,12 @@ void RPZServer::_saveSnapshot() {
 
 void RPZServer::run() {
     // init
-    this->_server = new QTcpServer;
-    this->_hints = new AtomsStorage(Payload::Interactor::RPZServer);
-
     this->log("Starting server...");
-
     auto result = this->_server->listen(QHostAddress::Any, AppContext::UPNP_DEFAULT_TARGET_PORT.toInt());
 
     if (!result) {
         qWarning() << "RPZServer : Error while starting to listen >>" << this->_server->errorString();
-        emit error();
-        emit stopped();
+        emit failed();
         return;
     }
 
@@ -154,7 +148,7 @@ void RPZServer::_logUserAsMessage(JSONSocket* userSocket, const RPZJSON::Method 
 }
 
 void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data) {
-    QMetaObject::invokeMethod(ProgressTracker::get(), "serverIsActive");
+    emit isActive();
 
     switch (method) {
         case RPZJSON::Method::PingHappened: {
@@ -312,7 +306,7 @@ void RPZServer::_routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &me
             break;
     }
 
-    QMetaObject::invokeMethod(ProgressTracker::get(), "serverIsInactive");
+    emit isInactive();
 }
 
 //

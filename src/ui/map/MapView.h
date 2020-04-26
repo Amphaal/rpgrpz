@@ -52,7 +52,6 @@
 #include "src/shared/renderer/AtomConverter.h"
 
 #include "src/shared/commands/AtomsContextualMenuHandler.h"
-#include "src/shared/async-ui/progress/ProgressTracker.hpp"
 
 #include "src/ui/map/modules/MV_Manipulation.hpp"
 #include "src/ui/map/modules/MV_HUDLayout.hpp"

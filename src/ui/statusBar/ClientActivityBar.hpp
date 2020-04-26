@@ -24,8 +24,6 @@
 #include <QLabel>
 #include <QTimer>
 
-#include "src/shared/async-ui/progress/ProgressTracker.hpp"
-
 class ClientActivityIndicator : public QLabel {
  public:
     ClientActivityIndicator(const QPixmap &offState, const QPixmap &onState) : _off(offState), _on(onState) {

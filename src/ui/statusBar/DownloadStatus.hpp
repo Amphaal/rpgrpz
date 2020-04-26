@@ -24,8 +24,6 @@
 #include <QLocale>
 #include <QStyleOptionProgressBar>
 
-#include "src/shared/async-ui/progress/ProgressTracker.hpp"
-
 class DownloadStatus : public QProgressBar {
     Q_OBJECT
 
