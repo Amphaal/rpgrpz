@@ -80,6 +80,19 @@ void RPZServer::incomingConnection(qintptr socketDescriptor) {
     addPendingConnection(socket);
 }
 
+int RPZServer::_sendToSockets(const QList<JSONSocket*> toSendTo, const RPZJSON::Method &method, const QVariant &data) {
+    auto expected = toSendTo.count();
+    int sent = 0;
+
+    for (const auto socket : toSendTo) {
+        auto success = socket->sendToSocket(method, data);
+        sent += (int)success;
+    }
+
+    this->log(method, QStringLiteral(u"sent to [%1/%2] clients").arg(sent).arg(expected));
+    return sent;
+}
+
 void RPZServer::_onNewConnection() {
     // new connection,store it
     auto clientSocket = dynamic_cast<JSONSocket*>(this->nextPendingConnection());
@@ -518,22 +531,24 @@ void RPZServer::_maySendAndStoreDiceThrows(const RPZMessage &msg) {
 
 void RPZServer::_sendToAllExcept(JSONSocket* toExclude, const RPZJSON::Method &method, const QVariant &data) {
     auto toSendTo = this->_clientSocketById.values();
+
     toSendTo.removeOne(toExclude);
     if (!toSendTo.count()) return;
 
-    JSONSocket::sendToSockets(this, toSendTo, method, data);
+    this->_sendToSockets(toSendTo, method, data);
 }
 
 void RPZServer::_sendToRoleExcept(JSONSocket* toExclude, const RPZUser::Role &role, const RPZJSON::Method &method, const QVariant &data) {
     auto toSendTo = this->_socketsByRole.value(role);
+
     toSendTo.remove(toExclude);
     if (!toSendTo.count()) return;
 
-    JSONSocket::sendToSockets(this, toSendTo.values(), method, data);
+    this->_sendToSockets(toSendTo.values(), method, data);
 }
 
 void RPZServer::_sendToAll(const RPZJSON::Method &method, const QVariant &data) {
-    JSONSocket::sendToSockets(this, this->_clientSocketById.values(), method, data);
+    this->_sendToSockets(this->_clientSocketById.values(), method, data);
 }
 
 JSONSocket* RPZServer::_getUserSocket(const QString &formatedUsername) {

@@ -110,12 +110,17 @@ class RPZServer : public QTcpServer, public JSONLogger {
     void _interpretMessage(JSONSocket* sender, RPZMessage &msg);
     void _maySendAndStoreDiceThrows(const RPZMessage &msg);
     void _logUserAsMessage(JSONSocket* userSocket, const RPZJSON::Method &method, const RPZUser &user);
-    
+
     // internal
     void _onNewConnection();
 
-    //sending helpers  
+    // sending helpers
     void _sendToAll(const RPZJSON::Method &method, const QVariant &data);
     void _sendToAllExcept(JSONSocket* toExclude, const RPZJSON::Method &method, const QVariant &data);
     void _sendToRoleExcept(JSONSocket* toExclude, const RPZUser::Role &role, const RPZJSON::Method &method, const QVariant &data);
+    int _sendToSockets(
+        const QList<JSONSocket*> toSendTo,
+        const RPZJSON::Method &method,
+        const QVariant &data
+    );
 };

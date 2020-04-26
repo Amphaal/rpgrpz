@@ -62,7 +62,6 @@ class DownloadStatus : public QProgressBar, public ConnectivityObserver {
     void _onDownloadStarted(RPZJSON::Method method, qint64 totalToDownload) {
         if (!RPZJSON::mayBeHeavyPayload(method)) return;
 
-        this->_pendingDownloaded = 0;
         this->_pendingMethod = method;
 
         this->setToolTip(QString());
@@ -73,12 +72,10 @@ class DownloadStatus : public QProgressBar, public ConnectivityObserver {
         this->setVisible(true);
     }
 
-    void _onDownloadProgress(qint64 batchDownloaded) {
-        this->_pendingDownloaded += batchDownloaded;
-
+    void _onDownloadProgress(qint64 totalBytesDownloadedForBatch) {
         auto methodToStr = QVariant::fromValue(this->_pendingMethod).toString();
         auto locale = QLocale::system();
-        auto pending = locale.formattedDataSize(this->_pendingDownloaded);
+        auto pending = locale.formattedDataSize(totalBytesDownloadedForBatch);
         auto total = locale.formattedDataSize(this->maximum());
 
         auto toolTipText = this->_tooltipDescriptionTemplate
@@ -87,7 +84,7 @@ class DownloadStatus : public QProgressBar, public ConnectivityObserver {
                             .arg(total);
         this->setToolTip(toolTipText);
 
-        this->setValue((int)this->_pendingDownloaded);
+        this->setValue((int)totalBytesDownloadedForBatch);
     }
 
     void _onDownloadEnded() {
@@ -99,5 +96,4 @@ class DownloadStatus : public QProgressBar, public ConnectivityObserver {
     static inline QString _tooltipDescriptionTemplate = QStringLiteral(u"%1 : %2/%3");
 
     RPZJSON::Method _pendingMethod = RPZJSON::Method::M_Unknown;
-    qint64 _pendingDownloaded = 0;
 };

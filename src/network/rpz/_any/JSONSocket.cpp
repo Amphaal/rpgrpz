@@ -24,48 +24,44 @@ JSONSocket::JSONSocket(QObject* parent, JSONLogger* logger) : QTcpSocket(parent)
         this, &QIODevice::readyRead,
         this, &JSONSocket::_processIncomingData
     );
-
     QObject::connect(
         this, &QIODevice::bytesWritten,
         this, &JSONSocket::_onBytesWritten
     );
 }
 
-void JSONSocket::_onBytesWritten(qint64 bytes) {
-    emit JSONUploading(bytes);
-}
-
 bool JSONSocket::sendToSocket(const RPZJSON::Method &method, const QVariant &data) {
-    auto success = _sendToSocket(this, this->_logger, method, data);
+    auto success = this->_send(method, data);
     if (success) this->_logger->log(method, ">>");
     return success;
 }
 
-int JSONSocket::sendToSockets(JSONLogger* logger, const QList<JSONSocket*> toSendTo, const RPZJSON::Method &method, const QVariant &data) {
-    auto expected = toSendTo.count();
-    int sent = 0;
-
-    for (const auto socket : toSendTo) {
-        auto success = _sendToSocket(socket, logger, method, data);
-        sent += (int)success;
+void JSONSocket::_onBytesWritten(qint64 bytes) {
+    while(bytes) {
+        auto &wtbu = this->_waitingTBU.head();
+        emit JSONUploading(bytes);
+        if (bytes >= wtbu.second) {
+            emit JSONUploaded();
+            bytes -= wtbu.second;
+            this->_waitingTBU.dequeue();
+        } else {
+            bytes = 0;
+        }
     }
-
-    logger->log(method, QStringLiteral(u"sent to [%1/%2] clients").arg(sent).arg(expected));
-    return sent;
 }
 
-bool JSONSocket::_sendToSocket(JSONSocket* socket, JSONLogger* logger, const RPZJSON::Method &method, const QVariant &data) {
+bool JSONSocket::_send(const RPZJSON::Method &method, const QVariant &data) {
     // ignore emission when socket is not connected
-    if (auto state = socket->state(); state != QAbstractSocket::ConnectedState) {
-        logger->log("cannot send JSON as the socket is not connected");
-        emit socket->JSONSendingFailed();
+    if (auto state = this->state(); state != QAbstractSocket::ConnectedState) {
+        this->_logger->log("cannot send JSON as the socket is not connected");
+        emit JSONSendingFailed();
         return false;
     }
 
     // checks
     if (data.isNull()) {
-        logger->log("cannot send JSON as input values are unexpected");
-        emit socket->JSONSendingFailed();
+        this->_logger->log("cannot send JSON as input values are unexpected");
+        emit JSONSendingFailed();
         return false;
     }
 
@@ -79,11 +75,10 @@ bool JSONSocket::_sendToSocket(JSONSocket* socket, JSONLogger* logger, const RPZ
     auto bytes = qCompress(payload_doc.toJson(QJsonDocument::Compact));
     auto size = bytes.size();
 
-    // tell that sending has begun
-    emit socket->JSONSendingStarted(method, size);
+    auto beforeBTW = this->bytesToWrite();
 
     // send !
-    QDataStream out(socket);
+    QDataStream out(this);
     out.setVersion(QDataStream::Qt_5_13);
 
         // write header
@@ -93,9 +88,13 @@ bool JSONSocket::_sendToSocket(JSONSocket* socket, JSONLogger* logger, const RPZ
         // write data
         out << bytes;
 
-    // ack success
-    emit socket->JSONUploaded();
-    // logger->log(QStringLiteral("Sending %1...").arg(QLocale::system().formattedDataSize(size)));
+    auto afterBTW = this->bytesToWrite();
+    auto payloadTotalSize = afterBTW - beforeBTW;
+
+    // tell that sending has begun
+    emit JSONSendingStarted(method, payloadTotalSize);
+    this->_waitingTBU.enqueue({method, payloadTotalSize});
+
     return true;
 }
 
@@ -117,11 +116,10 @@ void JSONSocket::_processIncomingData() {
         quint32 methodAsInt, jsonSize;
         in >> methodAsInt >> jsonSize;
 
-        auto method = (RPZJSON::Method)methodAsInt;
-        auto fullSize = jsonSize + 8;
-
         // tell that download started, prevent resend on same batch
         if (!this->_ackHeader) {
+            auto method = (RPZJSON::Method)methodAsInt;
+            auto fullSize = jsonSize;
             this->_ackHeader = true;
             emit JSONReceivingStarted(method, fullSize);
         }
@@ -143,10 +141,16 @@ void JSONSocket::_processIncomingData() {
             return;
         }
 
-        // process batch
+        // log
+        auto compressedSize = block.count();
+        emit JSONDownloading(compressedSize);
         emit JSONDownloaded();
-        // this->_logger->log(QStringLiteral("Received %1...").arg(QLocale::system().formattedDataSize(fullSize)));
-        this->_processIncomingAsJson(qUncompress(block));
+
+        // payload is complete, decompress it
+        auto decompressed = qUncompress(block);
+
+        // process batch
+        this->_processIncomingAsJson(decompressed);
     }
 }
 
