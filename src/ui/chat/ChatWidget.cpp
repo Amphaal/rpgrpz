@@ -45,6 +45,8 @@ void ChatWidget::_instUI() {
 }
 
 void ChatWidget::_onRPZClientEnded(const QString &statusMsg) {
+    if(statusMsg.isEmpty()) return;
+
     // out log
     RPZResponse response(0, RPZResponse::ResponseCode::Error, statusMsg);
     this->_chatLog->handleResponse(response);

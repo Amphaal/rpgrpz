@@ -45,11 +45,24 @@ void ConnectivityObserver::connectWithClient(RPZClient* cc) {
         ConnectivityObserverSynchronizer::get(), &ConnectivityObserverSynchronizer::onClientEnded
     );
 
+    // set client to nullptr once finished
     QObject::connect(
-        _rpzClient->thread(), &QThread::finished,
+        clientThread, &QThread::finished,
         [&](){
             _rpzClient = nullptr;
         }
+    );
+
+    // delete client once finished
+    QObject::connect(
+        clientThread, &QThread::finished,
+        _rpzClient, &QObject::deleteLater
+    );
+
+    // delete self once finished
+    QObject::connect(
+        clientThread, &QThread::finished,
+        clientThread, &QObject::deleteLater
     );
 
     // allow connection bindings on UI
@@ -81,11 +94,9 @@ ConnectivityObserverSynchronizer* ConnectivityObserverSynchronizer::get() {
 
 void ConnectivityObserverSynchronizer::onClientEnded(const QString &errorMessage) {
     auto client = dynamic_cast<RPZClient*>(this->sender());
-
     auto hasInitialMapLoaded = client->hasReceivedInitialMap();
 
-    client->thread()->deleteLater();
-    client->deleteLater();
+    client->thread()->quit();
 
     Authorisations::resetHostAbility();
 

@@ -128,7 +128,7 @@ void RPZServer::_onClientSocketDisconnected() {
     auto disconnectingAddress = disconnectedSocket->peerAddress().toString();
     this->log(QStringLiteral(u"%1 disconnected !").arg(disconnectingAddress));
 
-    delete disconnectedSocket;
+    disconnectedSocket->deleteLater();
 
     // tell other clients that the user is gone
     this->_sendToAll(RPZJSON::Method::UserOut, QVariant::fromValue<RPZUser::Id>(idToRemove));

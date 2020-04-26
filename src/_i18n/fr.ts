@@ -352,9 +352,9 @@
 <context>
     <name>ChatWidget</name>
     <message>
-        <location filename="../ui/chat/ChatWidget.cpp" line="69"/>
+        <location filename="../ui/chat/ChatWidget.cpp" line="71"/>
         <source>Disconnected from server</source>
-        <translation type="unfinished">Déconnecté du serveur</translation>
+        <translation>Déconnecté du serveur</translation>
     </message>
 </context>
 <context>
@@ -421,21 +421,6 @@
         <location filename="../network/ConnectivityHelper.cpp" line="201"/>
         <source>&lt;Error&gt;</source>
         <translation>&lt;Erreur&gt;</translation>
-    </message>
-</context>
-<context>
-    <name>DownloadStatus</name>
-    <message>
-        <source>Assets download</source>
-        <translation type="vanished">Téléchargement d&apos;assets</translation>
-    </message>
-    <message>
-        <source>Map download</source>
-        <translation type="vanished">Téléchargement de carte</translation>
-    </message>
-    <message>
-        <source>Download</source>
-        <translation type="vanished">Téléchargement</translation>
     </message>
 </context>
 <context>
@@ -697,14 +682,6 @@
         <location filename="../ui/mainWindow.cpp" line="114"/>
         <source>Press ALT key to display the menu !</source>
         <translation>Appuyez sur la touche ALT pour afficher le menu !</translation>
-    </message>
-    <message>
-        <source>No</source>
-        <translation type="vanished">Non</translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation type="vanished">Erreur</translation>
     </message>
     <message>
         <location filename="../ui/mainWindow.cpp" line="266"/>
@@ -1394,10 +1371,6 @@
         <translation>Nom d&apos;utilisateur requis !</translation>
     </message>
     <message>
-        <source>Disconnected from server</source>
-        <translation type="vanished">Déconnecté du serveur</translation>
-    </message>
-    <message>
         <location filename="../network/rpz/client/RPZClient.cpp" line="51"/>
         <source>Host closed the connection.</source>
         <translation>L&apos;hôte a fermé la connexion.</translation>
@@ -1456,12 +1429,12 @@
     <message>
         <location filename="../ui/statusBar/RPZStatusBar.cpp" line="158"/>
         <source>Error</source>
-        <translation type="unfinished">Erreur</translation>
+        <translation>Erreur</translation>
     </message>
     <message>
         <location filename="../ui/statusBar/RPZStatusBar.cpp" line="162"/>
         <source>No</source>
-        <translation type="unfinished">Non</translation>
+        <translation>Non</translation>
     </message>
 </context>
 <context>
