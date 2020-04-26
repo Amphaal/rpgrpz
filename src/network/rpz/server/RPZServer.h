@@ -48,7 +48,6 @@
 
 #include "src/shared/commands/MessageInterpreter.h"
 #include "src/shared/audio/StreamPlayStateTracker.hpp"
-#include "src/shared/async-ui/progress/ProgressTracker.hpp"
 
 #include "src/shared/models/RPZSharedDocument.hpp"
 
@@ -56,7 +55,7 @@
 
 #include "src/network/rpz/_any/JSONLogger.hpp"
 
-class RPZServer : public QObject, public JSONLogger {
+class RPZServer : public QTcpServer, public JSONLogger {
     Q_OBJECT
 
  public:
@@ -67,12 +66,20 @@ class RPZServer : public QObject, public JSONLogger {
 
  signals:
     void listening();
-    void error();
-    void stopped();
+    void failed();
+
+    void isActive();
+    void isInactive();
+
+ protected:
+    void incomingConnection(qintptr socketDescriptor) override;
+
+ private slots:
+    void _onClientSocketDisconnected();
+    void _onClientPayloadReceived(const RPZJSON::Method &method, const QVariant &data);
 
  private:
     bool _mapHasLoaded = false;
-    QTcpServer* _server = nullptr;
 
     void _saveSnapshot();
 
@@ -106,10 +113,14 @@ class RPZServer : public QObject, public JSONLogger {
 
     // internal
     void _onNewConnection();
-    void _onClientSocketDisconnected(JSONSocket* disconnectedSocket);
-    void _routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data);
 
+    // sending helpers
     void _sendToAll(const RPZJSON::Method &method, const QVariant &data);
     void _sendToAllExcept(JSONSocket* toExclude, const RPZJSON::Method &method, const QVariant &data);
     void _sendToRoleExcept(JSONSocket* toExclude, const RPZUser::Role &role, const RPZJSON::Method &method, const QVariant &data);
+    int _sendToSockets(
+        const QList<JSONSocket*> toSendTo,
+        const RPZJSON::Method &method,
+        const QVariant &data
+    );
 };

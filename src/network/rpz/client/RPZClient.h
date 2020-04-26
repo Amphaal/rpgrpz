@@ -38,7 +38,6 @@
 
 #include "src/helpers/_appContext.h"
 #include "src/shared/async-ui/AlterationInteractor.hpp"
-#include "src/shared/async-ui/progress/ProgressTracker.hpp"
 #include "src/shared/audio/StreamPlayStateTracker.hpp"
 
 #include "src/network/rpz/_any/JSONLogger.hpp"
@@ -48,12 +47,12 @@
 #include "src/shared/models/RPZSharedDocument.hpp"
 #include "src/shared/models/RPZPing.hpp"
 
-class RPZClient : public QObject, public AlterationInteractor, public JSONLogger {
+class RPZClient :  public JSONSocket, public AlterationInteractor, public JSONLogger {
     Q_OBJECT
 
  public:
     RPZClient(const QString &socketStr, const QString &displayName, const RPZCharacter &toIncarnate);
-    ~RPZClient();
+   ~RPZClient();
 
     const QString getConnectedSocketAddress() const;  // safe
     bool hasReceivedInitialMap() const;  // safe
@@ -77,9 +76,10 @@ class RPZClient : public QObject, public AlterationInteractor, public JSONLogger
     void requestSharedDocument(const RPZSharedDocument::FileHash &hash);
     void notifyPing(const QPointF &pingPosition);
 
+    void quit();
+
  signals:
-    void connectionStatus(const QString &statusMessage, bool isError = false);
-    void closed();
+    void ended(const QString &errorMessage);
 
     void receivedMessage(const RPZMessage &message);
     void serverResponseReceived(const RPZResponse &reponse);
@@ -113,7 +113,6 @@ class RPZClient : public QObject, public AlterationInteractor, public JSONLogger
         In,
         Out
     };
-    JSONSocket* _serverSock = nullptr;
     bool _initialMapSetupReceived = false;
 
     QString _domain;
@@ -139,15 +138,10 @@ class RPZClient : public QObject, public AlterationInteractor, public JSONLogger
     void _initSock();
 
     void _onConnected();
-    void _error(QAbstractSocket::SocketError _socketError);
-    void _onDisconnect();
-    void _onSending();
-    void _onSent(bool success);
-    void _onBatchAcked(RPZJSON::Method method, qint64 batchSize);
-    void _onBatchDownloading(RPZJSON::Method method, qint64 downloaded);
+    void _onError(QAbstractSocket::SocketError _socketError);
+
     void _askForAssets(const QSet<RPZAsset::Hash> &ids);
 
-    void _routeIncomingJSON(JSONSocket* target, const RPZJSON::Method &method, const QVariant &data);
-
+    void _onPayloadReceived(const RPZJSON::Method &method, const QVariant &data);
     void _handleAlterationRequest(const AlterationPayload &payload);
 };

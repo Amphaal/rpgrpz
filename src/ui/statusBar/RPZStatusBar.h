@@ -29,9 +29,11 @@
 
 #include "RPZStatusLabel.h"
 #include "ClientActivityBar.hpp"
-#include "src/shared/async-ui/progress/ProgressTracker.hpp"
-#include "src/ui/_others/ConnectivityObserver.h"
 #include "DownloadStatus.hpp"
+
+#include "src/ui/_others/ConnectivityObserver.h"
+#include "src/network/rpz/server/RPZServer.h"
+#include "src/shared/hints/HintThread.hpp"
 
 class RPZStatusBar : public QStatusBar, public ConnectivityObserver {
     Q_OBJECT
@@ -39,13 +41,19 @@ class RPZStatusBar : public QStatusBar, public ConnectivityObserver {
  public:
     explicit RPZStatusBar(QWidget * parent = nullptr);
 
-    void bindServerIndicators();
+    void setBoundServer(RPZServer* server);
+    void updateServerState_NoServer();
 
  public slots:
-    void updateServerStateLabel(const QString &stateText, RPZStatusLabel::State state);
     void updateUPnPLabel(const QString &stateText, RPZStatusLabel::State state);
     void updateExtIPLabel(const QString &stateText, RPZStatusLabel::State state);
-    void updateMapFileLabel(const QString &mapDescriptor, bool isMapDirty);
+
+ private slots:
+    void _updateServerState_Listening();
+    void _updateServerState_Failed();
+    void _onServerIsActive();
+    void _onServerIsInactive();
+    void _updateMapFileLabel(const QString &mapDescriptor, bool isMapDirty);
 
  private:
     RPZStatusLabel* _extIpLabel = nullptr;
@@ -59,5 +67,7 @@ class RPZStatusBar : public QStatusBar, public ConnectivityObserver {
     void _installLayout();
 
     void connectingToServer() override;
-    void connectionClosed(bool hasInitialMapLoaded) override;
+    void connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) override;
+
+    void _updateServerStateLabel(const QString &stateText, RPZStatusLabel::State state);
 };

@@ -19,9 +19,9 @@
 
 #include "MapLayoutManager.h"
 
-MapLayoutManager::MapLayoutManager(QGraphicsView* viewToMimic, QWidget *parent) : QWidget(parent) {
+MapLayoutManager::MapLayoutManager(MapView* viewToMimic, QWidget *parent) : QWidget(parent) {
     // tree
-    this->_tree = new MapLayoutTree(this);
+    this->_tree = new MapLayoutTree(viewToMimic, this);
 
     // param btn
     this->_mapParamBtn = new QPushButton(QIcon(QStringLiteral(u":/icons/app/tools/cog.png")), "");

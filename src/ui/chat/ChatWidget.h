@@ -38,11 +38,21 @@
 
 
 class ChatWidget : public QWidget, public ConnectivityObserver {
+    Q_OBJECT
+
  public:
     explicit ChatWidget(QWidget *parent = nullptr);
-
-    void connectingToServer() override;
     MessagesLog* messageLog();
+
+ protected:
+     void connectingToServer() override;
+     void connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) override;
+
+ private slots:
+    void _onRPZClientEnded(const QString &statusMsg);
+    void _onGameSessionReceived(const RPZGameSession &gameSession);
+    void _onMessageReceived(const RPZMessage &message);
+    void _onServerResponseReceived(const RPZResponse &reponse);
 
  private:
     MessagesLog *_chatLog;
@@ -54,7 +64,4 @@ class ChatWidget : public QWidget, public ConnectivityObserver {
 
     // ui helpers
     void _instUI();
-
-    void _onRPZClientStatus(const QString &statusMsg, bool isError);
-    void _onGameSessionReceived(const RPZGameSession &gameSession);
 };

@@ -34,7 +34,7 @@
 
 class MapLayoutManager : public QWidget {
  public:
-    explicit MapLayoutManager(QGraphicsView* viewToMimic, QWidget *parent = nullptr);
+    explicit MapLayoutManager(MapView* associatedMapView, QWidget *parent = nullptr);
 
     MapLayoutTree* tree();
 

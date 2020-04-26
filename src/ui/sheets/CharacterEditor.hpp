@@ -100,7 +100,7 @@ class CharacterEditor : public QWidget, public ConnectivityObserver {
         });
     }
 
-    void connectionClosed(bool hasInitialMapLoaded) override {
+    void connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) override {
         this->_defineTitle();
         this->_allowCharacterChangeNotifications = false;
     }

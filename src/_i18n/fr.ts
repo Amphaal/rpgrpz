@@ -350,6 +350,14 @@
     </message>
 </context>
 <context>
+    <name>ChatWidget</name>
+    <message>
+        <location filename="../ui/chat/ChatWidget.cpp" line="71"/>
+        <source>Disconnected from server</source>
+        <translation>Déconnecté du serveur</translation>
+    </message>
+</context>
+<context>
     <name>ConnectWidget</name>
     <message>
         <location filename="../ui/logIn/ConnectWidget.cpp" line="35"/>
@@ -367,27 +375,27 @@
         <translation>Personnage à incarner</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="163"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="161"/>
         <source>Error while connecting to server</source>
         <translation>Erreur à la connexion au serveur</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="180"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="178"/>
         <source>Connect</source>
         <translation>Se connecter</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="183"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="181"/>
         <source>Cancel (Connecting to %1...)</source>
         <translation>Annuler (Connexion à %1...)</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="186"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="184"/>
         <source>Disconnect from [%1]</source>
         <translation>Se déconnecter de [%1]</translation>
     </message>
     <message>
-        <location filename="../ui/logIn/ConnectWidget.cpp" line="234"/>
+        <location filename="../ui/logIn/ConnectWidget.cpp" line="232"/>
         <source> Log in without a character</source>
         <translation> Se connecter sans fiche</translation>
     </message>
@@ -413,24 +421,6 @@
         <location filename="../network/ConnectivityHelper.cpp" line="201"/>
         <source>&lt;Error&gt;</source>
         <translation>&lt;Erreur&gt;</translation>
-    </message>
-</context>
-<context>
-    <name>DownloadStatus</name>
-    <message>
-        <location filename="../ui/statusBar/DownloadStatus.hpp" line="103"/>
-        <source>Assets download</source>
-        <translation>Téléchargement d&apos;assets</translation>
-    </message>
-    <message>
-        <location filename="../ui/statusBar/DownloadStatus.hpp" line="105"/>
-        <source>Map download</source>
-        <translation>Téléchargement de carte</translation>
-    </message>
-    <message>
-        <location filename="../ui/statusBar/DownloadStatus.hpp" line="107"/>
-        <source>Download</source>
-        <translation>Téléchargement</translation>
     </message>
 </context>
 <context>
@@ -689,105 +679,95 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="115"/>
+        <location filename="../ui/mainWindow.cpp" line="114"/>
         <source>Press ALT key to display the menu !</source>
         <translation>Appuyez sur la touche ALT pour afficher le menu !</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="168"/>
-        <source>No</source>
-        <translation>Non</translation>
-    </message>
-    <message>
-        <location filename="../ui/mainWindow.cpp" line="213"/>
-        <source>Error</source>
-        <translation>Erreur</translation>
-    </message>
-    <message>
-        <location filename="../ui/mainWindow.cpp" line="281"/>
+        <location filename="../ui/mainWindow.cpp" line="266"/>
         <source>Toy box</source>
         <translation>Boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="360"/>
+        <location filename="../ui/mainWindow.cpp" line="345"/>
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="359"/>
+        <location filename="../ui/mainWindow.cpp" line="344"/>
         <source>Sheets</source>
         <translation>Fiches</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="373"/>
+        <location filename="../ui/mainWindow.cpp" line="358"/>
         <source>Map Atoms</source>
         <translation>Atomes de la carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="374"/>
+        <location filename="../ui/mainWindow.cpp" line="359"/>
         <source>Atom Editor</source>
         <translation>Editeur d&apos;atomes</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="303"/>
-        <location filename="../ui/mainWindow.cpp" line="310"/>
+        <location filename="../ui/mainWindow.cpp" line="288"/>
+        <location filename="../ui/mainWindow.cpp" line="295"/>
         <source>Game Hub</source>
         <translation>Hub de jeu</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="304"/>
+        <location filename="../ui/mainWindow.cpp" line="289"/>
         <source>Documents Share</source>
         <translation>Partage de documents</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="526"/>
+        <location filename="../ui/mainWindow.cpp" line="505"/>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="539"/>
+        <location filename="../ui/mainWindow.cpp" line="518"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="541"/>
-        <location filename="../ui/mainWindow.cpp" line="564"/>
-        <location filename="../ui/mainWindow.cpp" line="590"/>
+        <location filename="../ui/mainWindow.cpp" line="520"/>
+        <location filename="../ui/mainWindow.cpp" line="543"/>
+        <location filename="../ui/mainWindow.cpp" line="569"/>
         <source>Game map (*%1)</source>
         <translation>Carte de campagne (*%1)</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="562"/>
+        <location filename="../ui/mainWindow.cpp" line="541"/>
         <source>Load a new map</source>
         <translation>Charger une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="588"/>
+        <location filename="../ui/mainWindow.cpp" line="567"/>
         <source>Save as...</source>
         <translation>Savegarder sous...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="610"/>
+        <location filename="../ui/mainWindow.cpp" line="589"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="661"/>
+        <location filename="../ui/mainWindow.cpp" line="640"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="675"/>
+        <location filename="../ui/mainWindow.cpp" line="654"/>
         <source>Searching for updates...</source>
         <translation>Recherche des mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="675"/>
+        <location filename="../ui/mainWindow.cpp" line="654"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="706"/>
+        <location filename="../ui/mainWindow.cpp" line="685"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
@@ -795,7 +775,7 @@
 <context>
     <name>MapHint</name>
     <message>
-        <location filename="../shared/hints/MapHint.cpp" line="61"/>
+        <location filename="../shared/hints/MapHint.cpp" line="67"/>
         <source>Do you want to save changes done to this map ?</source>
         <translation>Voulez-vous sauvegardez les modifications faites à cette carte ?</translation>
     </message>
@@ -1373,12 +1353,12 @@
         <translation>Couleur</translation>
     </message>
     <message>
-        <location filename="../ui/docShare/DocShareListView.cpp" line="104"/>
+        <location filename="../ui/docShare/DocShareListView.cpp" line="110"/>
         <source> (downloading...)</source>
         <translation> (téléchargement...)</translation>
     </message>
     <message>
-        <location filename="../ui/docShare/DocShareListView.cpp" line="190"/>
+        <location filename="../ui/docShare/DocShareListView.cpp" line="196"/>
         <source> (available)</source>
         <translation> (disponible)</translation>
     </message>
@@ -1386,32 +1366,27 @@
 <context>
     <name>RPZClient</name>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="135"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="93"/>
         <source>Username required !</source>
         <translation>Nom d&apos;utilisateur requis !</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="147"/>
-        <source>Disconnected from server</source>
-        <translation>Déconnecté du serveur</translation>
-    </message>
-    <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="42"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="51"/>
         <source>Host closed the connection.</source>
         <translation>L&apos;hôte a fermé la connexion.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="45"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="54"/>
         <source>Host could not be found. Please check the hostname and port number.</source>
         <translation>L&apos;hôte n&apos;a pas pu être trouvé. Merci de vérifier le nom d&apos;hôte et le numéro de port.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="48"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="57"/>
         <source>Connection has been refused by remote host.</source>
         <translation>La connexion a été refusée par l&apos;hôte distant.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="51"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="60"/>
         <source>An error has occured : %1</source>
         <translation>Une erreur est survenue : %1</translation>
     </message>
@@ -1419,7 +1394,7 @@
 <context>
     <name>RPZServer</name>
     <message>
-        <location filename="../network/rpz/server/RPZServer.cpp" line="284"/>
+        <location filename="../network/rpz/server/RPZServer.cpp" line="297"/>
         <source>Your software version is different from the server&apos;s one : v%1 (you) / v%2 (server) !</source>
         <translation>Votre version logicielle diffère de la version du serveur : v%1 (vous) / v%2 (serveur) !</translation>
     </message>
@@ -1427,29 +1402,39 @@
 <context>
     <name>RPZStatusBar</name>
     <message>
-        <location filename="../ui/statusBar/RPZStatusBar.cpp" line="38"/>
+        <location filename="../ui/statusBar/RPZStatusBar.cpp" line="44"/>
         <source>External IP</source>
         <translation>IP Externe</translation>
     </message>
     <message>
-        <location filename="../ui/statusBar/RPZStatusBar.cpp" line="39"/>
+        <location filename="../ui/statusBar/RPZStatusBar.cpp" line="45"/>
         <source>Copy IP</source>
         <translation>Copier l&apos;IP</translation>
     </message>
     <message>
-        <location filename="../ui/statusBar/RPZStatusBar.cpp" line="49"/>
+        <location filename="../ui/statusBar/RPZStatusBar.cpp" line="55"/>
         <source>IP copied !</source>
         <translation>IP copiée !</translation>
     </message>
     <message>
-        <location filename="../ui/statusBar/RPZStatusBar.cpp" line="52"/>
+        <location filename="../ui/statusBar/RPZStatusBar.cpp" line="58"/>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../ui/statusBar/RPZStatusBar.cpp" line="55"/>
+        <location filename="../ui/statusBar/RPZStatusBar.cpp" line="61"/>
         <source>Server</source>
         <translation>Serveur</translation>
+    </message>
+    <message>
+        <location filename="../ui/statusBar/RPZStatusBar.cpp" line="158"/>
+        <source>Error</source>
+        <translation>Erreur</translation>
+    </message>
+    <message>
+        <location filename="../ui/statusBar/RPZStatusBar.cpp" line="162"/>
+        <source>No</source>
+        <translation>Non</translation>
     </message>
 </context>
 <context>
@@ -1552,17 +1537,17 @@
 <context>
     <name>ToysTreeView</name>
     <message>
-        <location filename="../ui/toysBox/ToysTreeView.cpp" line="212"/>
+        <location filename="../ui/toysBox/ToysTreeView.cpp" line="199"/>
         <source>&lt;&lt; Move to &quot;%1&quot;</source>
         <translation>&lt;&lt; Déplacer vers&quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/ToysTreeView.cpp" line="311"/>
+        <location filename="../ui/toysBox/ToysTreeView.cpp" line="298"/>
         <source>Delete elements in toy box</source>
         <translation>Supprimer des elements de la boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/toysBox/ToysTreeView.cpp" line="312"/>
+        <location filename="../ui/toysBox/ToysTreeView.cpp" line="299"/>
         <source>Do you confirm deletion of the %1 selected elements ?</source>
         <translation>Confirmez-vous la suppression des %1 éléments selectionnés ?</translation>
     </message>

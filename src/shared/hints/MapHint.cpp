@@ -24,9 +24,15 @@ MapHint::MapHint() : _sysActor(new AlterationInteractor(Payload::Interactor::Loc
 }
 
 void MapHint::_handleAlterationRequest(const AlterationPayload &payload) {
+    auto isReset = payload.type() == Payload::Alteration::Reset;
+
+    if (isReset) {
+        emit heavyAlterationStarted();
+    }
+
     ViewMapHint::_handleAlterationRequest(payload);
 
-    if (payload.type() == Payload::Alteration::Reset) {
+    if (isReset) {
         this->_mightUpdateTokens();
     }
 
@@ -114,9 +120,6 @@ bool MapHint::loadRPZMap(const QString &filePath) {
 
         qDebug() << qUtf8Printable(QStringLiteral(u"Loading map \"%1\"...").arg(filePath));
 
-        // tells UI that map is loading
-        QMetaObject::invokeMethod(ProgressTracker::get(), "heavyAlterationStarted");
-
         // load file and parse it
         this->_mapDescriptor = QFileInfo(filePath).fileName();
         this->_setMapDirtiness(false);
@@ -201,7 +204,7 @@ void MapHint::connectingToServer() {
 }
 
 
-void MapHint::connectionClosed(bool hasInitialMapLoaded) {
+void MapHint::connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) {
     // reset impersonating character
     this->defineImpersonatingCharacter();
 

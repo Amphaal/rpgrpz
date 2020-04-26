@@ -41,13 +41,28 @@ void ConnectivityObserver::connectWithClient(RPZClient* cc) {
     );
 
     QObject::connect(
-        _rpzClient, &RPZClient::closed,
-        clientThread, &QThread::quit
+        _rpzClient, &RPZClient::ended,
+        ConnectivityObserverSynchronizer::get(), &ConnectivityObserverSynchronizer::onClientEnded
     );
 
+    // set client to nullptr once finished
     QObject::connect(
-        _rpzClient->thread(), &QThread::finished,
-        &ConnectivityObserver::_onClientThreadFinished
+        clientThread, &QThread::finished,
+        [&](){
+            _rpzClient = nullptr;
+        }
+    );
+
+    // delete client once finished
+    QObject::connect(
+        clientThread, &QThread::finished,
+        _rpzClient, &QObject::deleteLater
+    );
+
+    // delete self once finished
+    QObject::connect(
+        clientThread, &QThread::finished,
+        clientThread, &QObject::deleteLater
     );
 
     // allow connection bindings on UI
@@ -60,31 +75,16 @@ void ConnectivityObserver::connectWithClient(RPZClient* cc) {
 }
 
 void ConnectivityObserver::disconnectClient() {
-    if (_rpzClient && _rpzClient->thread()->isRunning()) {
-        _rpzClient->thread()->quit();
-    }
+    if (!_rpzClient || !_rpzClient->thread()->isRunning()) return;
+    QMetaObject::invokeMethod(_rpzClient, "quit");
 }
 
 const QVector<ConnectivityObserver*> ConnectivityObserver::observers() {
     return _observers;
 }
 
-void ConnectivityObserver::receivedConnectionCloseSignal(bool hasInitialMapLoaded) {
-    this->connectionClosed(hasInitialMapLoaded);
-}
-
-void ConnectivityObserver::_onClientThreadFinished() {
-    auto hasInitialMapLoaded = _rpzClient->hasReceivedInitialMap();
-
-    _rpzClient->thread()->deleteLater();
-    _rpzClient->deleteLater();
-    _rpzClient = nullptr;
-
-    Authorisations::resetHostAbility();
-
-    QMetaObject::invokeMethod(ConnectivityObserverSynchronizer::get(), "triggerConnectionClosed",
-        Q_ARG(bool, hasInitialMapLoaded)
-    );
+void ConnectivityObserver::receivedConnectionCloseSignal(bool hasInitialMapLoaded, const QString &errorMessage) {
+    this->connectionClosed(hasInitialMapLoaded, errorMessage);
 }
 
 ConnectivityObserverSynchronizer* ConnectivityObserverSynchronizer::get() {
@@ -92,8 +92,15 @@ ConnectivityObserverSynchronizer* ConnectivityObserverSynchronizer::get() {
     return _inst;
 }
 
-void ConnectivityObserverSynchronizer::triggerConnectionClosed(bool hasInitialMapLoaded) {
+void ConnectivityObserverSynchronizer::onClientEnded(const QString &errorMessage) {
+    auto client = dynamic_cast<RPZClient*>(this->sender());
+    auto hasInitialMapLoaded = client->hasReceivedInitialMap();
+
+    client->thread()->quit();
+
+    Authorisations::resetHostAbility();
+
     for (const auto observer : ConnectivityObserver::observers()) {
-        observer->receivedConnectionCloseSignal(hasInitialMapLoaded);
+        observer->receivedConnectionCloseSignal(hasInitialMapLoaded, errorMessage);
     }
 }

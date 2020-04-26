@@ -55,7 +55,6 @@
 
 #include "src/ui/statusBar/RPZStatusLabel.h"
 
-#include "src/shared/async-ui/progress/ProgressTracker.hpp"
 #include "src/ui/sheets/CharacterEditor.hpp"
 
 #include "src/ui/map/MiniMapView.hpp"
@@ -73,7 +72,7 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
 
  protected:
     void connectingToServer() override;
-    void connectionClosed(bool hasInitialMapLoaded) override;
+    void connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) override;
 
  private:
     void _onGameSessionReceived(const RPZGameSession &gameSession);

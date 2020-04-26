@@ -129,7 +129,7 @@ class CharacterPicker : public QWidget, public ConnectivityObserver {
         );
     }
 
-    void connectionClosed(bool hasInitialMapLoaded) override {
+    void connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) override {
         this->_initLoad();
     }
 

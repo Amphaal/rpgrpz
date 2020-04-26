@@ -52,7 +52,6 @@
 #include "src/shared/renderer/AtomConverter.h"
 
 #include "src/shared/commands/AtomsContextualMenuHandler.h"
-#include "src/shared/async-ui/progress/ProgressTracker.hpp"
 
 #include "src/ui/map/modules/MV_Manipulation.hpp"
 #include "src/ui/map/modules/MV_HUDLayout.hpp"
@@ -81,6 +80,7 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
  signals:
     void cameraMoved();
     void requestingFocusOnCharacter(const RPZCharacter::Id &characterIdToFocus);
+    void heavyAlterationFinished();
 
  protected:
     void enterEvent(QEvent *event) override;
@@ -100,6 +100,9 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
     void drawBackground(QPainter *painter, const QRectF &rect) override;
     void drawForeground(QPainter *painter, const QRectF &rect) override;
 
+ private slots:
+    void _onHeavyAlterationStarted();
+
  private:
     RPZMapParameters _currentMapParameters;
     QuickDrawingAssist* _quickDrawingAssist = nullptr;
@@ -116,6 +119,7 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
     void _onOwnershipChanged(const QList<QGraphicsItem*> changing, bool owned);
     void _onFogModeChanged(const RPZFogParams::Mode &newMode);
     void _onFogChanged(const QList<QPolygonF> &updatedFog);
+    void _heavyAlterationFinished();
 
     // helpers
     void _handleHintsSignalsAndSlots();
@@ -123,7 +127,7 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
     void _addItemToScene(QGraphicsItem* item);
 
     // fog
-        bool _mayFogUpdateAtoms(const MapViewFog::FogChangingVisibility &itemsWhoChanged) const;
+        void _mayFogUpdateAtoms(const MapViewFog::FogChangingVisibility &itemsWhoChanged) const;
 
     // Selection
         bool _ignoreSelectionChangedEvents = false;
