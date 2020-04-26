@@ -99,19 +99,6 @@ void ToysTreeView::_onReceivedAsset(RPZAssetImportPackage package) {
     this->_model->integrateAsset(package);
     this->_expectedAssetsDownloaded++;
 
-    // update UI for progress
-    QMetaObject::invokeMethod(ProgressTracker::get(), "downloadIsProgressing",
-        Q_ARG(ProgressTracker::Kind, ProgressTracker::Kind::Asset),
-        Q_ARG(qint64, this->_expectedAssetsDownloaded)
-    );
-
-    // if upload is finished, update UI
-    if (this->_expectedAssetsTBDownloaded == this->_expectedAssetsDownloaded) {
-        QMetaObject::invokeMethod(ProgressTracker::get(), "downloadHasEnded",
-            Q_ARG(ProgressTracker::Kind, ProgressTracker::Kind::Asset)
-        );
-    }
-
     // indicate change
     AssetChangedPayload payload(package);
     AlterationHandler::get()->queueAlteration(this->_model, payload);

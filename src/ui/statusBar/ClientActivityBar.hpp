@@ -24,7 +24,11 @@
 #include <QLabel>
 #include <QTimer>
 
+#include "src/ui/_others/ConnectivityObserver.h"
+
 class ClientActivityIndicator : public QLabel {
+    Q_OBJECT
+
  public:
     ClientActivityIndicator(const QPixmap &offState, const QPixmap &onState) : _off(offState), _on(onState) {
         this->setContentsMargins(0, 0, 0, 0);
@@ -37,7 +41,9 @@ class ClientActivityIndicator : public QLabel {
         });
     }
 
-    void onActivityOn() {
+ public slots:
+    void onActivityOn(qint64 bytes) {
+        Q_UNUSED(bytes)
         _activityPending = true;
         _lingerTimer.start(_indicatorLingerMs);
         _setOn();
@@ -66,7 +72,7 @@ class ClientActivityIndicator : public QLabel {
     }
 };
 
-class ClientActivityBar : public QWidget {
+class ClientActivityBar : public QWidget, public ConnectivityObserver  {
  public:
     ClientActivityBar() {
         this->setVisible(false);
@@ -79,14 +85,7 @@ class ClientActivityBar : public QWidget {
             QPixmap(QStringLiteral(u":/icons/app/connectivity/uploadG.png")),
             QPixmap(QStringLiteral(u":/icons/app/connectivity/upload.png"))
         );
-        QObject::connect(
-            ProgressTracker::get(), &ProgressTracker::clientSending,
-            _upLbl, &ClientActivityIndicator::onActivityOn
-        );
-        QObject::connect(
-            ProgressTracker::get(), &ProgressTracker::clientSent,
-            _upLbl, &ClientActivityIndicator::onActivityOff
-        );
+
         this->layout()->addWidget(_upLbl);
 
         // DOWNLOAD TRACKER
@@ -94,15 +93,34 @@ class ClientActivityBar : public QWidget {
             QPixmap(QStringLiteral(u":/icons/app/connectivity/downloadG.png")),
             QPixmap(QStringLiteral(u":/icons/app/connectivity/download.png"))
         );
+
+        this->layout()->addWidget(_downLbl);
+    }
+
+ protected:
+    void connectingToServer() override {
         QObject::connect(
-            ProgressTracker::get(), &ProgressTracker::clientReceiving,
+            this->_rpzClient, &JSONSocket::JSONUploading,
+            _upLbl, &ClientActivityIndicator::onActivityOn
+        );
+        QObject::connect(
+            this->_rpzClient, &JSONSocket::JSONUploaded,
+            _upLbl, &ClientActivityIndicator::onActivityOff
+        );
+
+        QObject::connect(
+            this->_rpzClient, &JSONSocket::JSONDownloading,
             _downLbl, &ClientActivityIndicator::onActivityOn
         );
         QObject::connect(
-            ProgressTracker::get(), &ProgressTracker::clientReceived,
+            this->_rpzClient, &JSONSocket::JSONDownloaded,
             _downLbl, &ClientActivityIndicator::onActivityOff
         );
-        this->layout()->addWidget(_downLbl);
+    }
+
+    void connectionClosed(bool hasInitialMapLoaded) override {
+        this->_upLbl->onActivityOff();
+        this->_downLbl->onActivityOff();
     }
 
  private:
