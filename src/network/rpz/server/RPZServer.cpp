@@ -107,8 +107,6 @@ void RPZServer::_onNewConnection() {
     this->_idsByClientSocket.insert(clientSocket, userId);
     this->_clientSocketById.insert(userId, clientSocket);
 
-    qDebug() << this->_clientSocketById;
-
     // clear on client disconnect
     QObject::connect(
         clientSocket, &QAbstractSocket::disconnected,
@@ -182,9 +180,9 @@ void RPZServer::_onClientPayloadReceived(const RPZJSON::Method &method, const QV
             auto document = SharedDocHint::getSharedDocument(requestedHash);
 
             // notify everyone else
-            qDebug() << this->_clientSocketById;
             target->sendToSocket(RPZJSON::Method::SharedDocumentRequested, document);
         }
+        break;
 
         case RPZJSON::Method::SharedDocumentAvailable: {
             // notify everyone else

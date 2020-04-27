@@ -52,7 +52,7 @@ class RPZClient :  public JSONSocket, public AlterationInteractor, public JSONLo
 
  public:
     RPZClient(const QString &socketStr, const QString &displayName, const RPZCharacter &toIncarnate);
-   ~RPZClient();
+    ~RPZClient();
 
     const QString getConnectedSocketAddress() const;  // safe
     bool hasReceivedInitialMap() const;  // safe
