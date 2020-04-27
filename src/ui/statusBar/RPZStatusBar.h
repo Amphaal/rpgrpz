@@ -26,6 +26,7 @@
 #include <QApplication>
 #include <QToolTip>
 #include <QFileInfo>
+#include <QPushButton>
 
 #include "RPZStatusLabel.h"
 #include "ClientActivityBar.hpp"
@@ -34,6 +35,7 @@
 #include "src/ui/_others/ConnectivityObserver.h"
 #include "src/network/rpz/server/RPZServer.h"
 #include "src/shared/hints/HintThread.hpp"
+#include "src/ui/serverLogs/ServerLogs.hpp"
 
 class RPZStatusBar : public QStatusBar, public ConnectivityObserver {
     Q_OBJECT
@@ -62,6 +64,8 @@ class RPZStatusBar : public QStatusBar, public ConnectivityObserver {
     RPZStatusLabel* _mapFileLabel = nullptr;
     ClientActivityBar* _activityIndicators = nullptr;
     DownloadStatus* _dlStatus = nullptr;
+    QPushButton* _serverLogsBtn = nullptr;
+    ServerLogs* _serverLogs = nullptr;
 
     void _installComponents();
     void _installLayout();

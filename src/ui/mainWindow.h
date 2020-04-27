@@ -60,6 +60,8 @@
 #include "src/ui/map/MiniMapView.hpp"
 #include "src/ui/map/_base/OverlayingLayout.hpp"
 
+#include "src/network/rpz/server/ServerHosted.hpp"
+
 class MainWindow : public QMainWindow, public ConnectivityObserver {
     Q_OBJECT
 
@@ -86,7 +88,6 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
     void _loadWindowState();
 
     ConnectivityHelper* _ipHelper = nullptr;
-    RPZServer* _rpzServer = nullptr;
     bool _mustLaunchServer = true;
     void _initConnectivity();
 
