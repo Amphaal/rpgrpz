@@ -36,6 +36,7 @@ class JSONSocket : public QTcpSocket {
 
  public:
     JSONSocket(QObject* parent, JSONLogger* logger);
+    ~JSONSocket();
 
     bool sendToSocket(const RPZJSON::Method &method, const QVariant &data);
 

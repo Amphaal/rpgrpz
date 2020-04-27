@@ -29,7 +29,10 @@
 class JSONSerializer {
  public:
     static QByteArray asBase64(const QPainterPath &path);
+    static QByteArray asBase64(const QByteArray &raw);
+
     static QPainterPath toPainterPath(const QByteArray &base64);
+    static QByteArray toBytes(const QByteArray &base64);
 
     static QVariant fromQSize(const QSize &size);
     static QSize toQSize(const QVariantList &integerList);

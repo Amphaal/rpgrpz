@@ -35,6 +35,14 @@ QPainterPath JSONSerializer::toPainterPath(const QByteArray &base64) {
     return returned;
 }
 
+QByteArray JSONSerializer::toBytes(const QByteArray &base64) {
+    return QByteArray::fromBase64(base64);
+}
+
+QByteArray JSONSerializer::asBase64(const QByteArray &raw) {
+    return raw.toBase64();
+}
+
 QVariant JSONSerializer::fromQSize(const QSize &size) {
     return QVariantList { size.width(), size.height() };
 }

@@ -47,12 +47,21 @@ class SharedDocHint {
 
         static void insertIntoStore(const RPZSharedDocument &sd) {
             QMutexLocker m(&_mS);
-            _store.insert(sd.documentFileHash(), sd);
+
+            // add to store
+            auto documentHash = sd.documentFileHash();
+            _store.insert(documentHash, sd);
+
+            // update name store
+            updateNamesStore(documentHash, sd.documentName());
+
+            qDebug() << "File Share :"<< sd << "added.";
         }
 
         static RPZSharedDocument getSharedDocument(const RPZSharedDocument::FileHash &hash) {
             QMutexLocker m(&_mS);
-            return _store.value(hash);
+            auto doc = _store.value(hash);
+            return doc;
         }
 
  private:

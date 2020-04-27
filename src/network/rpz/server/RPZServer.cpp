@@ -182,6 +182,7 @@ void RPZServer::_onClientPayloadReceived(const RPZJSON::Method &method, const QV
             // notify everyone else
             target->sendToSocket(RPZJSON::Method::SharedDocumentRequested, document);
         }
+        break;
 
         case RPZJSON::Method::SharedDocumentAvailable: {
             // notify everyone else

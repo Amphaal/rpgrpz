@@ -163,7 +163,6 @@ void DocShareListView::_addItem(const RPZSharedDocument &doc) {
     // add it
     this->addItem(playlistItem);
     auto filename = playlistItem->text();
-    qDebug() << qUtf8Printable(QStringLiteral("File Share : \"%1\" added.").arg(filename));
 
     //
     if (this->_rpzClient && Authorisations::isHostAble()) {
@@ -175,9 +174,6 @@ void DocShareListView::_addItem(const RPZSharedDocument &doc) {
 
     // add to registry
     this->_itemByHash.insert(hash, playlistItem);
-
-    // update names store
-    SharedDocHint::updateNamesStore(hash, filename);
 }
 
 void DocShareListView::_mayAddTemporaryItem(const RPZSharedDocument::FileHash &hash, const QString &fileName) {

@@ -30,6 +30,10 @@ JSONSocket::JSONSocket(QObject* parent, JSONLogger* logger) : QTcpSocket(parent)
     );
 }
 
+JSONSocket::~JSONSocket() {
+    this->disconnectFromHost();  // force disconnection before destruction for event handling
+}
+
 bool JSONSocket::sendToSocket(const RPZJSON::Method &method, const QVariant &data) {
     auto success = this->_send(method, data);
     if (success) this->_logger->log(method, ">>");

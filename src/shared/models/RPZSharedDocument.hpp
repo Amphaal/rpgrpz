@@ -26,6 +26,9 @@
 #include <QUrl>
 #include <QDebug>
 
+#include "src/helpers/_appContext.h"
+#include "src/helpers/JSONSerializer.h"
+
 class RPZSharedDocument : public QVariantHash {
  public:
     using FileHash = QString;
@@ -37,6 +40,19 @@ class RPZSharedDocument : public QVariantHash {
     explicit RPZSharedDocument(const QVariantHash &hash) : QVariantHash(hash) {}
     explicit RPZSharedDocument(const QUrl &localFileUrl) {
         this->_inst(localFileUrl);
+    }
+
+    friend QDebug operator<<(QDebug debug, const RPZSharedDocument &c) {
+        QDebugStateSaver saver(debug);
+
+        auto frtd_bs = QLocale::system().formattedDataSize(c.documentBytesSize());
+        debug.nospace() << QStringLiteral("%1.%2 [%3 - %4]")
+            .arg(c.documentName())
+            .arg(c.documentExt())
+            .arg(c.documentFileHash())
+            .arg(frtd_bs);
+
+        return debug;
     }
 
     static RPZSharedDocument::NamesStore toNamesStore(const QVariantHash &hash) {
@@ -68,7 +84,12 @@ class RPZSharedDocument : public QVariantHash {
     }
 
     QByteArray document() const {
-        return this->value(QStringLiteral(u"doc")).toByteArray();
+        auto base64 = this->value(QStringLiteral(u"doc")).toByteArray();
+        return JSONSerializer::toBytes(base64);
+    }
+
+    double documentBytesSize() const {
+        return this->value(QStringLiteral("docS")).toDouble();
     }
 
     RPZSharedDocument::FileHash documentFileHash() const {
@@ -115,21 +136,31 @@ class RPZSharedDocument : public QVariantHash {
             return;
         }
 
-        // read file
-        QFile reader(fullPath);
-        reader.open(QFile::ReadOnly);
-            auto bytes = reader.readAll();
-        reader.close();
+        QByteArray base64Bytes;
+        RPZSharedDocument::FileHash hash;
+        {
+            // read file and extract raw bytes
+            QFile reader(fullPath);
+            reader.open(QFile::ReadOnly);
+                auto bytes = reader.readAll();
+            reader.close();
+
+            // encode
+            base64Bytes = JSONSerializer::asBase64(bytes);
+
+            // get hash from raw bytes
+            hash = RPZSharedDocument::_getFileHash(bytes);
+        }
 
         // override file if exists
-        auto hash = RPZSharedDocument::_getFileHash(bytes);
         auto ext = fi.suffix();
         auto name = fi.completeBaseName();
 
         // insert in obj
         this->insert(QStringLiteral(u"fileH"), hash);
         this->insert(QStringLiteral(u"nm"), name);
-        this->insert(QStringLiteral(u"doc"), bytes);
+        this->insert(QStringLiteral(u"doc"), base64Bytes);
+        this->insert(QStringLiteral(u"docS"), base64Bytes.count());
         this->insert(QStringLiteral(u"ext"), ext);
 
         //
