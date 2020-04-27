@@ -1394,7 +1394,7 @@
 <context>
     <name>RPZServer</name>
     <message>
-        <location filename="../network/rpz/server/RPZServer.cpp" line="298"/>
+        <location filename="../network/rpz/server/RPZServer.cpp" line="326"/>
         <source>Your software version is different from the server&apos;s one : v%1 (you) / v%2 (server) !</source>
         <translation>Votre version logicielle diffère de la version du serveur : v%1 (vous) / v%2 (serveur) !</translation>
     </message>
@@ -1422,17 +1422,17 @@
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../ui/statusBar/RPZStatusBar.cpp" line="73"/>
+        <location filename="../ui/statusBar/RPZStatusBar.cpp" line="66"/>
         <source>Server</source>
         <translation>Serveur</translation>
     </message>
     <message>
-        <location filename="../ui/statusBar/RPZStatusBar.cpp" line="174"/>
+        <location filename="../ui/statusBar/RPZStatusBar.cpp" line="176"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../ui/statusBar/RPZStatusBar.cpp" line="178"/>
+        <location filename="../ui/statusBar/RPZStatusBar.cpp" line="180"/>
         <source>No</source>
         <translation>Non</translation>
     </message>
@@ -1448,7 +1448,27 @@
 <context>
     <name>ServerLogs</name>
     <message>
-        <location filename="../ui/serverLogs/ServerLogs.hpp" line="44"/>
+        <location filename="../ui/serverLogs/ServerLogs.hpp" line="117"/>
+        <source>Package Type</source>
+        <translation>Type de package</translation>
+    </message>
+    <message>
+        <location filename="../ui/serverLogs/ServerLogs.hpp" line="118"/>
+        <source>Targeted User</source>
+        <translation>Utilisateur Cible</translation>
+    </message>
+    <message>
+        <location filename="../ui/serverLogs/ServerLogs.hpp" line="119"/>
+        <source>Upload State</source>
+        <translation>Etat de l&apos;upload</translation>
+    </message>
+    <message>
+        <location filename="../ui/serverLogs/ServerLogs.hpp" line="120"/>
+        <source>Elapsed Time</source>
+        <translation>Temps écoulé</translation>
+    </message>
+    <message>
+        <location filename="../ui/serverLogs/ServerLogs.hpp" line="35"/>
         <source>Server logs</source>
         <translation>Logs du serveur</translation>
     </message>

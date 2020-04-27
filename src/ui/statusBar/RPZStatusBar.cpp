@@ -61,7 +61,7 @@ void RPZStatusBar::_installComponents() {
     this->_serverLogsBtn = new QPushButton("Logs");
     this->_serverLogsBtn->setVisible(false);
     this->_serverLogsBtn->setMaximumWidth(30);
-    this->_serverLogsBtn->setMaximumHeight(15);
+    this->_serverLogsBtn->setMaximumHeight(18);
 
     this->_serverStateLabel = new RPZStatusLabel(tr("Server"));
     this->_dlStatus = new DownloadStatus;
@@ -90,9 +90,8 @@ void RPZStatusBar::setBoundServer(RPZServer* server) {
     this->_serverLogsBtn->setVisible(true);
     QObject::connect(
         this->_serverLogsBtn, &QPushButton::pressed,
-        [&]() {
-            auto toogle = !this->_serverLogs->isVisible();
-            this->_serverLogs->setVisible(toogle);
+        [=]() {
+            this->_serverLogs->show();
         }
     );
 

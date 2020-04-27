@@ -119,9 +119,37 @@ void RPZServer::_onNewConnection() {
         this, &RPZServer::_onClientPayloadReceived
     );
 
+    // audit
+    QObject::connect(
+        clientSocket, &JSONSocket::JSONSendingStarted,
+        this, &RPZServer::_onSendingToClientStarted
+    );
+    QObject::connect(
+        clientSocket, &JSONSocket::JSONUploading,
+        this, &RPZServer::_onUploadingToClient
+    );
+    QObject::connect(
+        clientSocket, &JSONSocket::JSONUploaded,
+        this, &RPZServer::_onJSONUploadedToClient
+    );
+
     // signals new connection
     auto newIp = clientSocket->peerAddress().toString();
     this->log(QStringLiteral(u"New connection from %1").arg(newIp));
+}
+
+void RPZServer::_onSendingToClientStarted(RPZJSON::Method method, qint64 totalToUpload) {
+    auto socket = dynamic_cast<JSONSocket*>(this->sender());
+    auto sentTo = this->_getUser(socket);
+    emit startUploadToClient(method, totalToUpload, sentTo);
+}
+
+void RPZServer::_onUploadingToClient(qint64 bytesUploaded) {
+    emit uploadingToClient(bytesUploaded);
+}
+
+void RPZServer::_onJSONUploadedToClient() {
+    emit uploadedToClient();
 }
 
 void RPZServer::_onClientSocketDisconnected() {

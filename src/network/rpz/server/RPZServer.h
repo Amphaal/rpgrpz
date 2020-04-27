@@ -71,12 +71,20 @@ class RPZServer : public QTcpServer, public JSONLogger {
     void isActive();
     void isInactive();
 
+    void startUploadToClient(RPZJSON::Method method, qint64 totalToUpload, const RPZUser &sentTo);
+    void uploadingToClient(qint64 bytesUploaded);
+    void uploadedToClient();
+
  protected:
     void incomingConnection(qintptr socketDescriptor) override;
 
  private slots:
     void _onClientSocketDisconnected();
     void _onClientPayloadReceived(const RPZJSON::Method &method, const QVariant &data);
+
+    void _onSendingToClientStarted(RPZJSON::Method method, qint64 totalToUpload);
+    void _onUploadingToClient(qint64 bytesUploaded);
+    void _onJSONUploadedToClient();
 
  private:
     bool _mapHasLoaded = false;
