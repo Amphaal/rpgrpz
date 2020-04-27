@@ -26,6 +26,9 @@
 #include <QUrl>
 #include <QDebug>
 
+#include "src/helpers/_appContext.h"
+#include "src/helpers/JSONSerializer.h"
+
 class RPZSharedDocument : public QVariantHash {
  public:
     using FileHash = QString;
@@ -133,20 +136,31 @@ class RPZSharedDocument : public QVariantHash {
             return;
         }
 
-        // read file
-        QFile reader(fullPath);
-        auto bytes = JSONSerializer::asBase64(reader);
+        QByteArray base64Bytes;
+        RPZSharedDocument::FileHash hash;
+        {
+            // read file and extract raw bytes
+            QFile reader(fullPath);
+            reader.open(QFile::ReadOnly);
+                auto bytes = reader.readAll();
+            reader.close();
+
+            // encode
+            base64Bytes = JSONSerializer::asBase64(bytes);
+
+            // get hash from raw bytes
+            hash = RPZSharedDocument::_getFileHash(bytes);
+        }
 
         // override file if exists
-        auto hash = RPZSharedDocument::_getFileHash(bytes);
         auto ext = fi.suffix();
         auto name = fi.completeBaseName();
 
         // insert in obj
         this->insert(QStringLiteral(u"fileH"), hash);
         this->insert(QStringLiteral(u"nm"), name);
-        this->insert(QStringLiteral(u"doc"), bytes);
-        this->insert(QStringLiteral(u"docS"), bytes.count());
+        this->insert(QStringLiteral(u"doc"), base64Bytes);
+        this->insert(QStringLiteral(u"docS"), base64Bytes.count());
         this->insert(QStringLiteral(u"ext"), ext);
 
         //
