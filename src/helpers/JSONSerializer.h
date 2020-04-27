@@ -25,11 +25,15 @@
 #include <QVariantList>
 #include <QSize>
 #include <QPointF>
+#include <QFile>
 
 class JSONSerializer {
  public:
     static QByteArray asBase64(const QPainterPath &path);
+    static QByteArray asBase64(QFile &fileReader);
+
     static QPainterPath toPainterPath(const QByteArray &base64);
+    static QByteArray toBytes(const QByteArray &base64);
 
     static QVariant fromQSize(const QSize &size);
     static QSize toQSize(const QVariantList &integerList);

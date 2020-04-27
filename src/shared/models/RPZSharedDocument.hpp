@@ -39,6 +39,19 @@ class RPZSharedDocument : public QVariantHash {
         this->_inst(localFileUrl);
     }
 
+    friend QDebug operator<<(QDebug debug, const RPZSharedDocument &c) {
+        QDebugStateSaver saver(debug);
+
+        auto frtd_bs = QLocale::system().formattedDataSize(c.documentBytesSize());
+        debug.nospace() << QStringLiteral("%1.%2 [%3 - %4]")
+            .arg(c.documentName())
+            .arg(c.documentExt())
+            .arg(c.documentFileHash())
+            .arg(frtd_bs);
+
+        return debug;
+    }
+
     static RPZSharedDocument::NamesStore toNamesStore(const QVariantHash &hash) {
         RPZSharedDocument::NamesStore out;
 
@@ -68,7 +81,12 @@ class RPZSharedDocument : public QVariantHash {
     }
 
     QByteArray document() const {
-        return this->value(QStringLiteral(u"doc")).toByteArray();
+        auto base64 = this->value(QStringLiteral(u"doc")).toByteArray();
+        return JSONSerializer::toBytes(base64);
+    }
+
+    double documentBytesSize() const {
+        return this->value(QStringLiteral("docS")).toDouble();
     }
 
     RPZSharedDocument::FileHash documentFileHash() const {
@@ -117,9 +135,7 @@ class RPZSharedDocument : public QVariantHash {
 
         // read file
         QFile reader(fullPath);
-        reader.open(QFile::ReadOnly);
-            auto bytes = reader.readAll();
-        reader.close();
+        auto bytes = JSONSerializer::asBase64(reader);
 
         // override file if exists
         auto hash = RPZSharedDocument::_getFileHash(bytes);
@@ -130,6 +146,7 @@ class RPZSharedDocument : public QVariantHash {
         this->insert(QStringLiteral(u"fileH"), hash);
         this->insert(QStringLiteral(u"nm"), name);
         this->insert(QStringLiteral(u"doc"), bytes);
+        this->insert(QStringLiteral(u"docS"), bytes.count());
         this->insert(QStringLiteral(u"ext"), ext);
 
         //

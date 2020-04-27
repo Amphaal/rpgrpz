@@ -1358,7 +1358,7 @@
         <translation> (téléchargement...)</translation>
     </message>
     <message>
-        <location filename="../ui/docShare/DocShareListView.cpp" line="196"/>
+        <location filename="../ui/docShare/DocShareListView.cpp" line="192"/>
         <source> (available)</source>
         <translation> (disponible)</translation>
     </message>
@@ -1394,7 +1394,7 @@
 <context>
     <name>RPZServer</name>
     <message>
-        <location filename="../network/rpz/server/RPZServer.cpp" line="297"/>
+        <location filename="../network/rpz/server/RPZServer.cpp" line="300"/>
         <source>Your software version is different from the server&apos;s one : v%1 (you) / v%2 (server) !</source>
         <translation>Votre version logicielle diffère de la version du serveur : v%1 (vous) / v%2 (serveur) !</translation>
     </message>
