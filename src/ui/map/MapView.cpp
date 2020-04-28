@@ -726,7 +726,6 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
 
             case MapTool::Walking: {
                 HintThread::hint()->notifyWalk(this->_walkingHelper->destinations());
-                this->resetTool();
             }
             break;
 

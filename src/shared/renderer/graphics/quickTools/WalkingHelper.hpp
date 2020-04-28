@@ -46,7 +46,6 @@ class WalkingHelper : public QObject, public QGraphicsItem, public RPZGraphicsIt
     RPZMapParameters _mapParams;
     QGraphicsView* _view = nullptr;
     QList<QGraphicsItem*> _toWalk;
-    QRectF _toWalkRect;
     bool _singleItemToWalk = false;
     QHash<QGraphicsItem*, QPointF> _destinations;
 
@@ -61,7 +60,7 @@ class WalkingHelper : public QObject, public QGraphicsItem, public RPZGraphicsIt
         out.viewCursorPos = this->_view->mapFromGlobal(QCursor::pos());
         out.sceneCursorPos = this->_view->mapToScene(out.viewCursorPos);
 
-        auto alignedTWRect = this->_toWalkRect.center();
+        auto alignedTWRect = _getUnitedRect().center();
         auto alignedSCP = out.sceneCursorPos;
 
         if (this->_mapParams.movementSystem() == RPZMapParameters::MovementSystem::Grid)
@@ -268,10 +267,11 @@ class WalkingHelper : public QObject, public QGraphicsItem, public RPZGraphicsIt
     const QRectF _gridBoundingRect() const {
         auto pp = this->_generateCursorPointPos();
 
-        auto dest = this->_toWalkRect;
+        auto from = _getUnitedRect();
+        auto dest = from;
         dest.moveCenter(pp.distanceLine.p2());
 
-        return this->_toWalkRect.united(dest);
+        return from.united(dest);
     }
 
     void _paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) {
@@ -308,7 +308,6 @@ class WalkingHelper : public QObject, public QGraphicsItem, public RPZGraphicsIt
 
         this->_mapParams = params;
         this->_singleItemToWalk = toWalk.count() == 1;
-        this->_toWalkRect = _getUnitedRect();
 
         this->setZValue(AppContext::WALKER_Z_INDEX);
     }
