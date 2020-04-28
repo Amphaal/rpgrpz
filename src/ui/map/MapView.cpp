@@ -596,7 +596,7 @@ void MapView::mousePressEvent(QMouseEvent *event) {
             case MapTool::Default: {
                 this->_ignoreSelectionChangedEvents = !this->_isAnySelectableItemsUnderCursor(event->pos());
 
-                if (!this->_ignoreSelectionChangedEvents && this->_walkingHelper) {
+                if (!this->_ignoreSelectionChangedEvents && this->_walkingHelper && this->scene()->selectedItems().count()) {
                     this->_changeTool(MapTool::Walking);
                 } else {
                     QGraphicsView::mousePressEvent(event);  // allows rubber band selection
@@ -661,8 +661,10 @@ void MapView::mouseMoveEvent(QMouseEvent *event) {
 
     } else if (currentTool == MapTool::Walking) {
         this->_mightUpdateWalkingHelperPos();
+
     } else if (currentTool == MapTool::QuickDraw) {
         this->_quickDrawingAssist->updateDrawingPath(event->pos());
+
     } else if (currentTool == MapTool::Scroll && this->_isMousePressed) {
         emit cameraMoved();
     }
