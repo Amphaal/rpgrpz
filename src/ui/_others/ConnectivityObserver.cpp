@@ -45,23 +45,14 @@ void ConnectivityObserver::bindObservedClient(RPZClient* cc) {
         ConnectivityObserverSynchronizer::get(), &ConnectivityObserverSynchronizer::onClientEnded
     );
 
-    // set client to nullptr once finished
-    QObject::connect(
-        clientThread, &QThread::finished,
-        [&](){
-            _rpzClient = nullptr;
-        }
-    );
-
-    // delete client once finished
     QObject::connect(
         clientThread, &QThread::finished,
         _rpzClient, &QObject::deleteLater
     );
 
-    // delete self once finished
+    // delete thread once client is destroyed
     QObject::connect(
-        clientThread, &QThread::finished,
+        _rpzClient, &QThread::destroyed,
         clientThread, &QObject::deleteLater
     );
 
@@ -86,11 +77,14 @@ void ConnectivityObserver::endClient(const QString &errorMessage) {
     }
 }
 
-void ConnectivityObserver::shutdownClient(bool beBlocking) {
+void ConnectivityObserver::shutdownClient() {
     if (!_rpzClient || !_rpzClient->thread()->isRunning()) return;
-    QMetaObject::invokeMethod(_rpzClient, "disconnectClient");  // force disconnection before destruction for event handling
-    _rpzClient->thread()->quit();
-    if (beBlocking) _rpzClient->thread()->wait();
+
+    auto client = _rpzClient;
+    _rpzClient = nullptr;
+
+    client->thread()->quit();
+    client->thread()->wait();
 }
 
 ConnectivityObserverSynchronizer* ConnectivityObserverSynchronizer::get() {

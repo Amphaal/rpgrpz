@@ -53,9 +53,6 @@ class JSONSocket : public QTcpSocket {
     void JSONUploadInterrupted();
     void JSONUploaded();
 
- protected:
-    qint64 writeData(const char *data, qint64 size) override;
-
  private:
     static inline const qint64 _maxUploadChunkSize = 64 * 1024;  // 64 KB
     bool _batchComplete = false;

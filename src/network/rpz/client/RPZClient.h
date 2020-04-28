@@ -76,8 +76,6 @@ class RPZClient : public JSONSocket, public AlterationInteractor, public JSONLog
     void requestSharedDocument(const RPZSharedDocument::FileHash &hash);
     void notifyPing(const QPointF &pingPosition);
 
-    void disconnectClient();
-
  signals:
     void ended(const QString &errorMessage);
 
@@ -119,6 +117,8 @@ class RPZClient : public JSONSocket, public AlterationInteractor, public JSONLog
     QString _port;
     QString _userDisplayName;
     RPZCharacter _handshakeCharacter;
+
+    void _end(const QString &msg);
 
     RPZUser::Id _myUserId;
     RPZUser& _myUser();

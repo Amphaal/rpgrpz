@@ -31,7 +31,7 @@ class ConnectivityObserver {
     static void bindObservedClient(RPZClient* cc);
 
     static void endClient(const QString &errorMessage);
-    static void shutdownClient(bool beBlocking = false);
+    static void shutdownClient();
 
  protected:
     static inline RPZClient* _rpzClient = nullptr;

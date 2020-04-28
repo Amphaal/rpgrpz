@@ -51,7 +51,7 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 
 MainWindow::~MainWindow() {
     // unbind network client from ui
-    ConnectivityObserver::shutdownClient(true);
+    ConnectivityObserver::shutdownClient();
 
     // stop server if hosted on client
     ServerHosted::stop();

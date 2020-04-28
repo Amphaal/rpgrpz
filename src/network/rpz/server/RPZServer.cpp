@@ -23,7 +23,6 @@ RPZServer::RPZServer() : JSONLogger(QStringLiteral(u"[Server]")) {}
 
 RPZServer::~RPZServer() {
     if (this->_mapHasLoaded) this->_saveSnapshot();
-    qDeleteAll(this->_clientSocketById);
     if(this->_hints) delete this->_hints;
 }
 

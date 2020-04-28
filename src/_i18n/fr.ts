@@ -1366,7 +1366,7 @@
 <context>
     <name>RPZClient</name>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="93"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="99"/>
         <source>Username required !</source>
         <translation>Nom d&apos;utilisateur requis !</translation>
     </message>
@@ -1394,7 +1394,7 @@
 <context>
     <name>RPZServer</name>
     <message>
-        <location filename="../network/rpz/server/RPZServer.cpp" line="334"/>
+        <location filename="../network/rpz/server/RPZServer.cpp" line="333"/>
         <source>Your software version is different from the server&apos;s one : v%1 (you) / v%2 (server) !</source>
         <translation>Votre version logicielle diffère de la version du serveur : v%1 (vous) / v%2 (serveur) !</translation>
     </message>

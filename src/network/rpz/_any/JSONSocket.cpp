@@ -31,6 +31,9 @@ JSONSocket::JSONSocket(QObject* parent, JSONLogger* logger) : QTcpSocket(parent)
 }
 
 JSONSocket::~JSONSocket() {
+    // force stopping network interactions before complete deletion so that slots in this thread receive populated sender pointer
+    this->abort();
+
     // if upload buffer is not empty
     if (this->_waitingTBU.count()) {
         emit JSONUploadInterrupted();
@@ -41,16 +44,6 @@ bool JSONSocket::sendToSocket(const RPZJSON::Method &method, const QVariant &dat
     auto success = this->_send(method, data);
     if (success) this->_logger->log(method, ">>");
     return success;
-}
-
-qint64 JSONSocket::writeData(const char *data, qint64 size) {
-    qint64 totalWritten = 0;
-    while (size) {
-        auto chunkSize = qMin(size, _maxUploadChunkSize);
-        totalWritten += QTcpSocket::writeData(data, chunkSize);
-        size = size - chunkSize;
-    }
-    return totalWritten;
 }
 
 void JSONSocket::_onBytesWritten(qint64 bytes) {
