@@ -31,7 +31,13 @@ JSONSocket::JSONSocket(QObject* parent, JSONLogger* logger) : QTcpSocket(parent)
 }
 
 JSONSocket::~JSONSocket() {
-    this->disconnectFromHost();  // force disconnection before destruction for event handling
+    // force stopping network interactions before complete deletion so that slots in this thread receive populated sender pointer
+    this->abort();
+
+    // if upload buffer is not empty
+    if (this->_waitingTBU.count()) {
+        emit JSONUploadInterrupted();
+    }
 }
 
 bool JSONSocket::sendToSocket(const RPZJSON::Method &method, const QVariant &data) {
@@ -41,7 +47,7 @@ bool JSONSocket::sendToSocket(const RPZJSON::Method &method, const QVariant &dat
 }
 
 void JSONSocket::_onBytesWritten(qint64 bytes) {
-    while(bytes) {
+    while (bytes) {
         auto &wtbu = this->_waitingTBU.head();
         emit JSONUploading(bytes);
         if (bytes >= wtbu.second) {
@@ -76,8 +82,8 @@ bool JSONSocket::_send(const RPZJSON::Method &method, const QVariant &data) {
     QJsonDocument payload_doc(json_payload);
 
     // json to bytes
-    auto bytes = qCompress(payload_doc.toJson(QJsonDocument::Compact));
-    auto size = bytes.size();
+    auto compressedPayload = qCompress(payload_doc.toJson(QJsonDocument::Compact));
+    auto compressedPayloadSize = compressedPayload.size();
 
     auto beforeBTW = this->bytesToWrite();
 
@@ -87,10 +93,16 @@ bool JSONSocket::_send(const RPZJSON::Method &method, const QVariant &data) {
 
         // write header
         out << (quint32)method;
-        out << (quint32)size;
+        out << (quint32)compressedPayloadSize;
 
-        // write data
-        out << bytes;
+        // write chunks of data
+        while (auto size = compressedPayload.count()) {
+            auto chunkSize = qMin(size, _maxUploadChunkSize);
+            auto chunk = compressedPayload.left(chunkSize);
+            out << chunk;
+            compressedPayload.remove(0, chunkSize);
+        }
+        // out << bytes;
 
     auto afterBTW = this->bytesToWrite();
     auto payloadTotalSize = afterBTW - beforeBTW;
@@ -117,20 +129,25 @@ void JSONSocket::_processIncomingData() {
         in.startTransaction();
 
         // determine method from first byte
-        quint32 methodAsInt, jsonSize;
-        in >> methodAsInt >> jsonSize;
+        quint32 methodAsInt, compressedPayloadSize;
+        in >> methodAsInt >> compressedPayloadSize;
 
         // tell that download started, prevent resend on same batch
         if (!this->_ackHeader) {
             auto method = (RPZJSON::Method)methodAsInt;
-            auto fullSize = jsonSize;
             this->_ackHeader = true;
-            emit JSONReceivingStarted(method, fullSize);
+            emit JSONReceivingStarted(method, compressedPayloadSize);
         }
 
-        // handle as transaction
-        QByteArray block;
-        in >> block;
+        // handle chunks of payload
+        QByteArray compressedPayload;
+        auto howManyChunksExpected = ceil((double)compressedPayloadSize / _maxUploadChunkSize);
+        while (howManyChunksExpected) {
+            QByteArray chunk;
+            in >> chunk;
+            compressedPayload.append(chunk);
+            howManyChunksExpected--;
+        }
 
         // break loop if batch is not complete
         this->_batchComplete = in.commitTransaction();
@@ -146,12 +163,11 @@ void JSONSocket::_processIncomingData() {
         }
 
         // log
-        auto compressedSize = block.count();
-        emit JSONDownloading(compressedSize);
+        emit JSONDownloading(compressedPayloadSize);
         emit JSONDownloaded();
 
         // payload is complete, decompress it
-        auto decompressed = qUncompress(block);
+        auto decompressed = qUncompress(compressedPayload);
 
         // process batch
         this->_processIncomingAsJson(decompressed);

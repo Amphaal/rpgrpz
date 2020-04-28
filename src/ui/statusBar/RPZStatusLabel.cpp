@@ -23,6 +23,7 @@ RPZStatusLabel::RPZStatusLabel(const QString &description, QWidget* parent) : QW
     _descriptionLbl(new QLabel(description + ":")),
     _dataLbl(new QLabel),
     _loaderLbl(new QLabel) {
+
     this->setLayout(new QHBoxLayout);
     this->layout()->setContentsMargins(0, 0, 0, 0);
     this->layout()->addWidget(this->_descriptionLbl);

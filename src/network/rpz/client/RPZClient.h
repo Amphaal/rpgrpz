@@ -47,7 +47,7 @@
 #include "src/shared/models/RPZSharedDocument.hpp"
 #include "src/shared/models/RPZPing.hpp"
 
-class RPZClient :  public JSONSocket, public AlterationInteractor, public JSONLogger {
+class RPZClient : public JSONSocket, public AlterationInteractor, public JSONLogger {
     Q_OBJECT
 
  public:
@@ -75,8 +75,6 @@ class RPZClient :  public JSONSocket, public AlterationInteractor, public JSONLo
     void addSharedDocument(const RPZSharedDocument::FileHash &hash, const RPZSharedDocument::DocumentName &documentName);
     void requestSharedDocument(const RPZSharedDocument::FileHash &hash);
     void notifyPing(const QPointF &pingPosition);
-
-    void quit();
 
  signals:
     void ended(const QString &errorMessage);
@@ -119,6 +117,8 @@ class RPZClient :  public JSONSocket, public AlterationInteractor, public JSONLo
     QString _port;
     QString _userDisplayName;
     RPZCharacter _handshakeCharacter;
+
+    void _end(const QString &msg);
 
     RPZUser::Id _myUserId;
     RPZUser& _myUser();

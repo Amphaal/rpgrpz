@@ -61,6 +61,19 @@ class StringHelper {
         return durationStr;
     }
 
+    static QString millisecsToDuration(qint64 durationInMilliseconds) {
+        QString durationStr;
+
+        auto millisecondsPart = durationInMilliseconds % 1000;
+        auto secondsPart = durationInMilliseconds / 1000;
+
+        if (secondsPart < 1) durationStr = QString::number(millisecondsPart) + "ms";
+        else
+            durationStr = QString::number(secondsPart) + "," + QString::number(millisecondsPart) + "s";
+
+        return durationStr;
+    }
+
     static QString fromSecondsToTime(int lengthInSeconds) {
         return QTime::fromMSecsSinceStartOfDay(lengthInSeconds * 1000)
             .toString(QStringLiteral(u"hh:mm:ss"));

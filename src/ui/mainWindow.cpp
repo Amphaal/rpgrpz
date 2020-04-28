@@ -50,10 +50,11 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 }
 
 MainWindow::~MainWindow() {
-    if (this->_rpzServer) this->_rpzServer->thread()->quit();
-
     // unbind network client from ui
-    ConnectivityObserver::disconnectClient();
+    ConnectivityObserver::shutdownClient();
+
+    // stop server if hosted on client
+    ServerHosted::stop();
 }
 
 void MainWindow::connectingToServer() {
@@ -188,47 +189,10 @@ void MainWindow::_initConnectivity() {
     /// RPZServer ! //
     ////////////////////
 
-    // si serveur est local et lié à l'app
+    // may launch server
     if (this->_mustLaunchServer) {
-        this->_rpzServer = new RPZServer;
-
-        this->_sb->setBoundServer(this->_rpzServer);
-
-        // tell the UI when the server is down
-        QObject::connect(
-            this->_rpzServer, &RPZServer::failed,
-            [&]() {
-                this->_rpzServer = nullptr;
-        });
-
-        // create a separate thread to run the server into
-        auto serverThread = new QThread;
-        serverThread->setObjectName(QStringLiteral(u"RPZServer Thread"));
-        this->_rpzServer->moveToThread(serverThread);
-
-        // events...
-        QObject::connect(
-            serverThread, &QThread::started,
-            this->_rpzServer, &RPZServer::run
-        );
-
-        QObject::connect(
-            this->_rpzServer, &RPZServer::failed,
-            serverThread, &QThread::quit
-        );
-
-        QObject::connect(
-            serverThread, &QThread::finished,
-            this->_rpzServer, &QObject::deleteLater
-        );
-
-        QObject::connect(
-            serverThread, &QThread::finished,
-            serverThread, &QObject::deleteLater
-        );
-
-        // start
-        serverThread->start();
+        ServerHosted::start();
+        this->_sb->setBoundServer(ServerHosted::instance());
     }
 }
 

@@ -28,17 +28,15 @@ class ConnectivityObserver {
  public:
     ConnectivityObserver();
 
-    static void connectWithClient(RPZClient* cc);
-    static void disconnectClient();
+    static void bindObservedClient(RPZClient* cc);
 
-    static const QVector<ConnectivityObserver*> observers();
-
-    void receivedConnectionCloseSignal(bool hasInitialMapLoaded, const QString &errorMessage);
+    static void endClient(const QString &errorMessage);
+    static void shutdownClient();
 
  protected:
     static inline RPZClient* _rpzClient = nullptr;
     virtual void connectingToServer() {}
-    virtual void connectionClosed(bool hasInitialMapLoaded, const QString &errMessage) {}
+    virtual void connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) {}
 
  private:
     static inline QVector<ConnectivityObserver*> _observers;

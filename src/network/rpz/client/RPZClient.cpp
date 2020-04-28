@@ -39,10 +39,6 @@ bool RPZClient::hasReceivedInitialMap() const {
     return this->_initialMapSetupReceived;
 }
 
-void RPZClient::quit() {
-    emit ended(QString());
-}
-
 void RPZClient::_onError(QAbstractSocket::SocketError _socketError) {
     QString msg;
 
@@ -61,6 +57,10 @@ void RPZClient::_onError(QAbstractSocket::SocketError _socketError) {
             break;
     }
 
+    this->_end(msg);
+}
+
+void RPZClient::_end(const QString &msg) {
     this->log(msg);
     emit ended(msg);
 }
@@ -90,8 +90,7 @@ void RPZClient::_initSock() {
 void RPZClient::run() {
     // prerequisites
     if (this->_userDisplayName.isEmpty()) {
-        emit ended(tr("Username required !"));
-        return;
+        return this->_end(tr("Username required !"));
     }
 
     this->_initSock();
@@ -270,7 +269,7 @@ void RPZClient::_onPayloadReceived(const RPZJSON::Method &method, const QVariant
         break;
 
         case RPZJSON::Method::ServerStatus: {
-            emit ended(data.toString());
+            this->_end(data.toString());
         }
         break;
 

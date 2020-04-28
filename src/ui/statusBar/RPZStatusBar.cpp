@@ -58,6 +58,11 @@ void RPZStatusBar::_installComponents() {
     this->_mapFileLabel = new RPZStatusLabel(tr("Map"));
     this->_upnpStateLabel = new RPZStatusLabel("uPnP");
 
+    this->_serverLogsBtn = new QPushButton("Logs");
+    this->_serverLogsBtn->setVisible(false);
+    this->_serverLogsBtn->setMaximumWidth(30);
+    this->_serverLogsBtn->setMaximumHeight(18);
+
     this->_serverStateLabel = new RPZStatusLabel(tr("Server"));
     this->_dlStatus = new DownloadStatus;
     this->_activityIndicators = new ClientActivityBar;
@@ -78,6 +83,18 @@ void RPZStatusBar::connectionClosed(bool hasInitialMapLoaded, const QString &err
 }
 
 void RPZStatusBar::setBoundServer(RPZServer* server) {
+    if(!server) return;
+
+    // init server logs modal to setup bindings
+    this->_serverLogs = new ServerLogs(server, this);
+    this->_serverLogsBtn->setVisible(true);
+    QObject::connect(
+        this->_serverLogsBtn, &QPushButton::pressed,
+        [=]() {
+            this->_serverLogs->show();
+        }
+    );
+
     QObject::connect(
         server, &RPZServer::listening,
         this, &RPZStatusBar::_updateServerState_Listening
@@ -105,6 +122,7 @@ void RPZStatusBar::_installLayout() {
     auto leftPart = new QWidget;
     leftPart->setLayout(new QHBoxLayout);
     leftPart->layout()->setMargin(0);
+    leftPart->layout()->addWidget(this->_serverLogsBtn);
     leftPart->layout()->addWidget(this->_serverStateLabel);
     leftPart->layout()->addWidget(new QLabel(" | "));
     leftPart->layout()->addWidget(this->_extIpLabel);

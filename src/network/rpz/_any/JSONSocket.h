@@ -28,6 +28,8 @@
 #include <QQueue>
 #include <QPair>
 
+#include <cmath>
+
 #include "RPZJSON.hpp"
 #include "JSONLogger.hpp"
 
@@ -50,9 +52,11 @@ class JSONSocket : public QTcpSocket {
     void JSONSendingFailed();
     void JSONSendingStarted(RPZJSON::Method method, qint64 totalToUpload);
     void JSONUploading(qint64 bytesUploaded);
+    void JSONUploadInterrupted();
     void JSONUploaded();
 
  private:
+    static inline const int _maxUploadChunkSize = 64 * 1024;  // 64 KB
     bool _batchComplete = false;
     bool _ackHeader = false;
 
