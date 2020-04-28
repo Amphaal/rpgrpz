@@ -4,6 +4,27 @@
     // Pour plus d'informations, visitez : https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+        
+        {
+            "name": "(Windows) Launch",
+            "preLaunchTask": "3. Build",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "externalConsole": true,
+            "environment": []
+        },
+        {
+            "name" : "(Windows) Launch - No Server CC",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
+            "externalConsole": true,
+            "args": ["--noServer --customContext=NoServer"]
+        },
         {
             "targetArchitecture": "x64",
             "type": "cppdbg",
@@ -17,6 +38,7 @@
                 "MIMode": "lldb",
                 "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ"
             },
+            "externalConsole": false,
             "windows": {
                 "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
                 "miDebuggerPath": "${env:MINGW64_ROOT}/bin/gdb.exe"
