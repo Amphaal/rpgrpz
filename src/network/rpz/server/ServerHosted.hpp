@@ -66,7 +66,9 @@ class ServerHosted {
     }
 
     static void stop() {
-        if (_rpzServer) _rpzServer->thread()->quit();
+        if (!_rpzServer) return;
+        _rpzServer->thread()->quit();
+        _rpzServer->thread()->wait();
     }
 
     static RPZServer* instance() {

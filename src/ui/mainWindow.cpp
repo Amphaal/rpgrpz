@@ -50,11 +50,11 @@ MainWindow::MainWindow() : _updateIntegrator(new UpdaterUIIntegrator(this)) {
 }
 
 MainWindow::~MainWindow() {
+    // unbind network client from ui
+    ConnectivityObserver::shutdownClient(true);
+
     // stop server if hosted on client
     ServerHosted::stop();
-
-    // unbind network client from ui
-    ConnectivityObserver::disconnectClient();
 }
 
 void MainWindow::connectingToServer() {

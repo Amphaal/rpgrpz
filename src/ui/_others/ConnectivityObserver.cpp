@@ -23,7 +23,7 @@ ConnectivityObserver::ConnectivityObserver() {
     _observers.append(this);
 }
 
-void ConnectivityObserver::connectWithClient(RPZClient* cc) {
+void ConnectivityObserver::bindObservedClient(RPZClient* cc) {
     // prevent if client exists
     if (_rpzClient) return;
 
@@ -74,17 +74,23 @@ void ConnectivityObserver::connectWithClient(RPZClient* cc) {
     clientThread->start();
 }
 
-void ConnectivityObserver::disconnectClient() {
+void ConnectivityObserver::endClient(const QString &errorMessage) {
+    auto hasInitialMapLoaded = _rpzClient->hasReceivedInitialMap();
+
+    ConnectivityObserver::shutdownClient();
+
+    Authorisations::resetHostAbility();
+
+    for (const auto observer : _observers) {
+        observer->connectionClosed(hasInitialMapLoaded, errorMessage);
+    }
+}
+
+void ConnectivityObserver::shutdownClient(bool beBlocking) {
     if (!_rpzClient || !_rpzClient->thread()->isRunning()) return;
-    QMetaObject::invokeMethod(_rpzClient, "quit");
-}
-
-const QVector<ConnectivityObserver*> ConnectivityObserver::observers() {
-    return _observers;
-}
-
-void ConnectivityObserver::receivedConnectionCloseSignal(bool hasInitialMapLoaded, const QString &errorMessage) {
-    this->connectionClosed(hasInitialMapLoaded, errorMessage);
+    QMetaObject::invokeMethod(_rpzClient, "disconnectClient");  // force disconnection before destruction for event handling
+    _rpzClient->thread()->quit();
+    if (beBlocking) _rpzClient->thread()->wait();
 }
 
 ConnectivityObserverSynchronizer* ConnectivityObserverSynchronizer::get() {
@@ -93,14 +99,5 @@ ConnectivityObserverSynchronizer* ConnectivityObserverSynchronizer::get() {
 }
 
 void ConnectivityObserverSynchronizer::onClientEnded(const QString &errorMessage) {
-    auto client = dynamic_cast<RPZClient*>(this->sender());
-    auto hasInitialMapLoaded = client->hasReceivedInitialMap();
-
-    client->thread()->quit();
-
-    Authorisations::resetHostAbility();
-
-    for (const auto observer : ConnectivityObserver::observers()) {
-        observer->receivedConnectionCloseSignal(hasInitialMapLoaded, errorMessage);
-    }
+    ConnectivityObserver::endClient(errorMessage);
 }

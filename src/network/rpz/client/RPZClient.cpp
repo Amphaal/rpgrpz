@@ -39,10 +39,6 @@ bool RPZClient::hasReceivedInitialMap() const {
     return this->_initialMapSetupReceived;
 }
 
-void RPZClient::quit() {
-    emit ended(QString());
-}
-
 void RPZClient::_onError(QAbstractSocket::SocketError _socketError) {
     QString msg;
 
@@ -63,6 +59,10 @@ void RPZClient::_onError(QAbstractSocket::SocketError _socketError) {
 
     this->log(msg);
     emit ended(msg);
+}
+
+void RPZClient::disconnectClient() {
+    this->disconnectFromHost();
 }
 
 void RPZClient::_initSock() {

@@ -26,6 +26,7 @@
 
 #include "src/ui/_others/ConnectivityObserver.h"
 #include "src/network/rpz/server/RPZServer.h"
+#include "src/helpers/StringHelper.hpp"
 
 class ServerLogs : public QDialog {
     Q_OBJECT
@@ -53,6 +54,11 @@ class ServerLogs : public QDialog {
         QObject::connect(
             toListenTo, &RPZServer::uploadedToClient,
             this, &ServerLogs::_onUploadedToClient
+        );
+
+        QObject::connect(
+            toListenTo, &RPZServer::clientUploadInterrupted,
+            this, &ServerLogs::_onClientUploadInterrupted
         );
     }
 
@@ -101,6 +107,10 @@ class ServerLogs : public QDialog {
         if (_waitingRow > -1) _waitingRow--;
     }
 
+    void _onClientUploadInterrupted() {
+        if (_waitingRow > -1) _waitingRow--;
+    }
+
  private:
     QTableWidget* _loglist = nullptr;
     static inline int CurrentUploadedRole = 257;
@@ -113,6 +123,8 @@ class ServerLogs : public QDialog {
     }
 
     void _initTable() {
+        this->_loglist->setSelectionMode(QAbstractItemView::SelectionMode::NoSelection);
+
         this->_loglist->setHorizontalHeaderLabels({
             tr("Package Type"),
             tr("Targeted User"),
@@ -131,8 +143,8 @@ class ServerLogs : public QDialog {
     void _updateTimeText(const QDateTime &currentTime, int rowToUpdate) {
         auto item = this->_loglist->item(rowToUpdate, 3);  // time
         auto startedAt = item->data(StartedAtRole).toDateTime();
-        auto elapsed = startedAt.secsTo(currentTime);
-        item->setText(QStringLiteral("%1s").arg(elapsed));
+        auto elapsed = startedAt.msecsTo(currentTime);
+        item->setText(StringHelper::millisecsToDuration(elapsed));
     }
 
     void _updateUploadCompletionText() {

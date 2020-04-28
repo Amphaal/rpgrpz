@@ -132,10 +132,18 @@ void RPZServer::_onNewConnection() {
         clientSocket, &JSONSocket::JSONUploaded,
         this, &RPZServer::_onJSONUploadedToClient
     );
+    QObject::connect(
+        clientSocket, &JSONSocket::JSONUploadInterrupted,
+        this, &RPZServer::_onClientUploadInterrupted
+    );
 
     // signals new connection
     auto newIp = clientSocket->peerAddress().toString();
     this->log(QStringLiteral(u"New connection from %1").arg(newIp));
+}
+
+void RPZServer::_onClientUploadInterrupted() {
+    emit clientUploadInterrupted();
 }
 
 void RPZServer::_onSendingToClientStarted(RPZJSON::Method method, qint64 totalToUpload) {

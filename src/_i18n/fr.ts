@@ -1371,22 +1371,22 @@
         <translation>Nom d&apos;utilisateur requis !</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="51"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="47"/>
         <source>Host closed the connection.</source>
         <translation>L&apos;hôte a fermé la connexion.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="54"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="50"/>
         <source>Host could not be found. Please check the hostname and port number.</source>
         <translation>L&apos;hôte n&apos;a pas pu être trouvé. Merci de vérifier le nom d&apos;hôte et le numéro de port.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="57"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="53"/>
         <source>Connection has been refused by remote host.</source>
         <translation>La connexion a été refusée par l&apos;hôte distant.</translation>
     </message>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="60"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="56"/>
         <source>An error has occured : %1</source>
         <translation>Une erreur est survenue : %1</translation>
     </message>
@@ -1394,7 +1394,7 @@
 <context>
     <name>RPZServer</name>
     <message>
-        <location filename="../network/rpz/server/RPZServer.cpp" line="326"/>
+        <location filename="../network/rpz/server/RPZServer.cpp" line="334"/>
         <source>Your software version is different from the server&apos;s one : v%1 (you) / v%2 (server) !</source>
         <translation>Votre version logicielle diffère de la version du serveur : v%1 (vous) / v%2 (serveur) !</translation>
     </message>
@@ -1448,27 +1448,27 @@
 <context>
     <name>ServerLogs</name>
     <message>
-        <location filename="../ui/serverLogs/ServerLogs.hpp" line="117"/>
+        <location filename="../ui/serverLogs/ServerLogs.hpp" line="129"/>
         <source>Package Type</source>
         <translation>Type de package</translation>
     </message>
     <message>
-        <location filename="../ui/serverLogs/ServerLogs.hpp" line="118"/>
+        <location filename="../ui/serverLogs/ServerLogs.hpp" line="130"/>
         <source>Targeted User</source>
         <translation>Utilisateur Cible</translation>
     </message>
     <message>
-        <location filename="../ui/serverLogs/ServerLogs.hpp" line="119"/>
+        <location filename="../ui/serverLogs/ServerLogs.hpp" line="131"/>
         <source>Upload State</source>
         <translation>Etat de l&apos;upload</translation>
     </message>
     <message>
-        <location filename="../ui/serverLogs/ServerLogs.hpp" line="120"/>
+        <location filename="../ui/serverLogs/ServerLogs.hpp" line="132"/>
         <source>Elapsed Time</source>
         <translation>Temps écoulé</translation>
     </message>
     <message>
-        <location filename="../ui/serverLogs/ServerLogs.hpp" line="35"/>
+        <location filename="../ui/serverLogs/ServerLogs.hpp" line="36"/>
         <source>Server logs</source>
         <translation>Logs du serveur</translation>
     </message>

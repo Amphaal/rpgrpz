@@ -95,7 +95,7 @@ void ConnectWidget::_onConnectButtonPressed() {
 
         case ConnectWidget::State::Connecting:
         case ConnectWidget::State::Connected: {
-            ConnectivityObserver::disconnectClient();
+            ConnectivityObserver::endClient(QString());
         }
         break;
     }
@@ -134,7 +134,7 @@ void ConnectWidget::_tryConnectToServer() {
     );
 
     // start
-    ConnectivityObserver::connectWithClient(cli);
+    ConnectivityObserver::bindObservedClient(cli);
 }
 
 void ConnectWidget::connectingToServer() {
