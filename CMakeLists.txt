@@ -291,7 +291,11 @@ endif()
 # AudioTube #
 #############
 
-add_subdirectory("external/audiotube")
+FetchContent_Declare(audiotube
+    GIT_REPOSITORY  "https://github.com/Amphaal/AudioTube.git"
+)
+FetchContent_MakeAvailable(audiotube)
+
 target_link_libraries(appExec audiotube)
 
 ############# 
