@@ -106,9 +106,8 @@ endif()
 #define build type if any
 IF(NOT DEFINED APP_BUNDLE_TYPE)
     IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        SET(APP_BUNDLE_TYPE "WIN32") 
+        SET(APP_BUNDLE_TYPE WIN32) 
     ELSEIF(APPLE)
-        #SET(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
         SET(APP_BUNDLE_TYPE MACOSX_BUNDLE)
     endif()
 endif()
@@ -125,19 +124,6 @@ target_compile_definitions(appExec PRIVATE $<$<CONFIG:Debug>:_DEBUG>) #define _D
 #generate pdb
 IF(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")  
     target_link_options(appExec PRIVATE -Wl,-pdb=) # generate pdb files
-
-    # #clang-tidy
-    # find_program(
-    #     CLANG_TIDY_EXE
-    #     NAMES "clang-tidy"
-    #     DOC "Path to clang-tidy executable"
-    # )
-    # if(CLANG_TIDY_EXE)
-    #     set_target_properties(appExec PROPERTIES
-    #         CXX_CLANG_TIDY "${CLANG_TIDY_EXE}"
-    #     )
-    # endif()
-
 endif()
 
 #warnings for debug
@@ -165,14 +151,14 @@ target_sources(appExec PRIVATE "resources/resources.qrc")
 IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")  
     target_sources(appExec PRIVATE "resources/resources.rc") #add Windows ressources (icons)
 ELSEIF(APPLE)   
-    
     target_sources(appExec PRIVATE "resources/icons/app.icns") #add MacOS icons in output package
-
-    #add highdpi support / menu behavior via plist template
+    set_source_files_properties("resources/icons/app.icns"
+        PROPERTIES 
+        MACOSX_PACKAGE_LOCATION "Resources"
+    )
     set_target_properties(appExec PROPERTIES 
         MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/templates/_Info.plist"
         MACOSX_BUNDLE_ICON_FILE "app.icns"
-        MACOSX_PACKAGE_LOCATION "Resources"
     ) 
 endif()
 
@@ -255,9 +241,6 @@ target_link_libraries(appExec
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     include(Windeployqt)
     windeployqt(appExec)
-elseif(APPLE)
-    include(Macdeployqt)
-    macdeployqt(appExec)
 endif()
 
 #missing libs
@@ -316,12 +299,13 @@ target_link_libraries(appExec audiotube)
 #############
 
 #find Gstreamer
-pkg_check_modules(Gst REQUIRED IMPORTED_TARGET
+LIST(APPEND GST_MODULES_TO_IMPORT 
     gstreamer-1.0
     gstreamer-controller-1.0
     gstreamer-net-1.0
     gstreamer-audio-1.0
 )
+pkg_check_modules(Gst REQUIRED IMPORTED_TARGET ${GST_MODULES_TO_IMPORT})
 
 #since mms-bitfields flag from glib is PUBLIC and throws a bunch of warnings...
 IF(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -333,7 +317,7 @@ target_link_libraries(appExec
     PkgConfig::Gst
 )
 
-IF(MINGW OR APPLE)
+IF(MINGW)
     ####define gstreamer plugins to use
     #core
     LIST(APPEND _gstreamer_plugins 
@@ -368,27 +352,6 @@ IF(MINGW OR APPLE)
         )
     endif()
 
-    IF(APPLE)
-        
-        #base plugins
-        pkg_get_variable(GSTREAMER_BASE_PLUGINS_LIB_LOCATION gstreamer-audio-1.0 
-            libdir
-        )
-        SET(GSTREAMER_BASE_PLUGINS_LIB_LOCATION ${GSTREAMER_BASE_PLUGINS_LIB_LOCATION}/gstreamer-1.0)
-
-        #good plugins
-        string(REPLACE "gst-plugins-base" "gst-plugins-good" 
-            GSTREAMER_GOOD_PLUGINS_LIB_LOCATION
-            ${GSTREAMER_BASE_PLUGINS_LIB_LOCATION}
-        )
-
-        list(APPEND GSTREAMER_PLUGINS_LIB_LOCATION 
-            ${GSTREAMER_GOOD_PLUGINS_LIB_LOCATION}
-            ${GSTREAMER_BASE_PLUGINS_LIB_LOCATION}
-        )
-        
-    endif()
-
     message("Searching for gst plugins in [${GSTREAMER_PLUGINS_LIB_LOCATION}]...")
 
     #copy gstreamer plugins into output
@@ -396,7 +359,7 @@ IF(MINGW OR APPLE)
 
         #using find_file because find_library is kinda broken with .dll on MinGW
         find_file(${_gstPluginLib}_LIBRARY 
-            NAMES   ${CMAKE_SHARED_LIBRARY_PREFIX}${_gstPluginLib}${CMAKE_SHARED_LIBRARY_SUFFIX}
+            NAMES   lib${_gstPluginLib}.dll
                     lib${_gstPluginLib}.so
             PATHS ${GSTREAMER_PLUGINS_LIB_LOCATION}
             NO_DEFAULT_PATH
@@ -420,23 +383,25 @@ endif()
 # ######################
 
 #platform specifics missing dependency
-IF(MINGW)
+IF(MINGW OR APPLE)
 
     #broken find_library...
-    find_file(giognutls_DLL 
-        NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}giognutls${CMAKE_SHARED_LIBRARY_SUFFIX}
+    find_file(giognutls_LIB 
+        NAMES 
+            libgiognutls.so
+            libgiognutls.dll
         PATH_SUFFIXES "lib/gio/modules"
     )
 
-    IF(NOT giognutls_DLL)
-        message(FATAL_ERROR "giognutls .dll NOT FOUND !")
+    IF(NOT giognutls_LIB)
+        message(FATAL_ERROR "giognutls lib NOT FOUND !")
     else()
-        message("giognutls_DLL Found ! [${giognutls_DLL}]")
+        message("giognutls lib found ! [${giognutls_LIB}]")
     endif()
 
     add_custom_command(TARGET appExec
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gio       
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${giognutls_DLL} $<TARGET_FILE_DIR:appExec>/gio
+        COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:appExec>/gio       
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${giognutls_LIB} $<TARGET_FILE_DIR:appExec>/gio
     ) 
 
 endif()
@@ -530,6 +495,7 @@ target_sources(appExec PUBLIC
 
 #copy translations into output
 add_custom_command(TARGET appExec   
+    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:appExec>/translations       
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QM_FILES} $<TARGET_FILE_DIR:appExec>/translations
 )
 
