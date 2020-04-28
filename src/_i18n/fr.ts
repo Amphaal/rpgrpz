@@ -1366,7 +1366,7 @@
 <context>
     <name>RPZClient</name>
     <message>
-        <location filename="../network/rpz/client/RPZClient.cpp" line="99"/>
+        <location filename="../network/rpz/client/RPZClient.cpp" line="93"/>
         <source>Username required !</source>
         <translation>Nom d&apos;utilisateur requis !</translation>
     </message>

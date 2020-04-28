@@ -360,6 +360,7 @@ void AtomsStorage::_handleAlterationRequest(const AlterationPayload &payload) {
     // on reset
     if (auto mPayload = dynamic_cast<const ResetPayload*>(&payload)) {
         // clear lists
+        this->_payloadHistoryIndex = 0;
         this->_undoHistory.clear();
         this->_redoHistory.clear();
         this->_restrictedAtomIds.clear();
