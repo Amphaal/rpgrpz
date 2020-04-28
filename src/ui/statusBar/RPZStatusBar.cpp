@@ -87,7 +87,6 @@ void RPZStatusBar::setBoundServer(RPZServer* server) {
 
     // init server logs modal to setup bindings
     this->_serverLogs = new ServerLogs(server, this);
-    this->_serverLogsBtn->setVisible(true);
     QObject::connect(
         this->_serverLogsBtn, &QPushButton::pressed,
         [=]() {
@@ -170,6 +169,7 @@ void RPZStatusBar::updateExtIPLabel(const QString &stateText, RPZStatusLabel::St
 
 void RPZStatusBar::_updateServerState_Listening() {
     this->_updateServerStateLabel(QStringLiteral("OK"), RPZStatusLabel::State::Finished);
+    this->_serverLogsBtn->setVisible(true);
 }
 
 void RPZStatusBar::_updateServerState_Failed() {
