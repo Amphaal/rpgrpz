@@ -15,8 +15,6 @@ list(APPEND CMAKE_PREFIX_PATH
     ${MINGW64_ROOT}
 )
 
-SET(OPENSSL_ROOT_DIR ${MINGW64_ROOT})
-
 #We want Release with debug infos
 SET(CMAKE_BUILD_TYPE Release)
 
