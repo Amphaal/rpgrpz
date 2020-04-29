@@ -35,20 +35,21 @@ class MessagesLog : public LogContainer, public ConnectivityObserver {
 
  public:
     explicit MessagesLog(QWidget *parent = nullptr);
+    void setIsUserVisible(bool isVisibleByUser);
 
     void handleResponse(const RPZResponse &response);
 
     void handleLocalMessage(RPZMessage &msg);
     void handleRemoteMessage(const RPZMessage &msg);
     void handleHistoryMessage(const RPZMessage &msg);
- 
+
  signals:
     void notificationCountUpdated(int newCount);
 
  private:
+    bool _isVisibleByUser = false;
     QList<Stampable::Id> _msgIdsNotSeen;
 
     void _handleMessage(const RPZMessage &msg, bool isLocal = false, bool fromHistory = false);
     void changeEvent(QEvent *event) override;
-    void paintEvent(QPaintEvent *event) override;
 };

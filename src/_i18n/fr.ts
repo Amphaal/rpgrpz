@@ -689,28 +689,28 @@
         <translation>Boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="309"/>
+        <location filename="../ui/mainWindow.cpp" line="320"/>
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="308"/>
+        <location filename="../ui/mainWindow.cpp" line="319"/>
         <source>Sheets</source>
         <translation>Fiches</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="322"/>
+        <location filename="../ui/mainWindow.cpp" line="333"/>
         <source>Map Atoms</source>
         <translation>Atomes de la carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="323"/>
+        <location filename="../ui/mainWindow.cpp" line="334"/>
         <source>Atom Editor</source>
         <translation>Editeur d&apos;atomes</translation>
     </message>
     <message>
         <location filename="../ui/mainWindow.cpp" line="252"/>
-        <location filename="../ui/mainWindow.cpp" line="259"/>
+        <location filename="../ui/mainWindow.cpp" line="270"/>
         <source>Game Hub</source>
         <translation>Hub de jeu</translation>
     </message>
@@ -720,54 +720,54 @@
         <translation>Partage de documents</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="469"/>
+        <location filename="../ui/mainWindow.cpp" line="480"/>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="482"/>
+        <location filename="../ui/mainWindow.cpp" line="493"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="484"/>
-        <location filename="../ui/mainWindow.cpp" line="507"/>
-        <location filename="../ui/mainWindow.cpp" line="533"/>
+        <location filename="../ui/mainWindow.cpp" line="495"/>
+        <location filename="../ui/mainWindow.cpp" line="518"/>
+        <location filename="../ui/mainWindow.cpp" line="544"/>
         <source>Game map (*%1)</source>
         <translation>Carte de campagne (*%1)</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="505"/>
+        <location filename="../ui/mainWindow.cpp" line="516"/>
         <source>Load a new map</source>
         <translation>Charger une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="531"/>
+        <location filename="../ui/mainWindow.cpp" line="542"/>
         <source>Save as...</source>
         <translation>Savegarder sous...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="553"/>
+        <location filename="../ui/mainWindow.cpp" line="564"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="604"/>
+        <location filename="../ui/mainWindow.cpp" line="615"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="618"/>
+        <location filename="../ui/mainWindow.cpp" line="629"/>
         <source>Searching for updates...</source>
         <translation>Recherche des mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="618"/>
+        <location filename="../ui/mainWindow.cpp" line="629"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="649"/>
+        <location filename="../ui/mainWindow.cpp" line="660"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>

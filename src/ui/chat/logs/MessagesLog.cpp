@@ -131,22 +131,16 @@ void MessagesLog::_handleMessage(const RPZMessage &msg, bool isLocal, bool fromH
     targetLine->setPalette(msgPalette);
 
     // tag as not seen
-    if (!this->isVisible()) {
+    if (!this->_isVisibleByUser) {
         this->_msgIdsNotSeen.append(msg.id());
-        emit notificationCountUpdated(this->_msgIdsNotSeen.count());
+        auto unseenMessagesCount = this->_msgIdsNotSeen.count();
+        emit notificationCountUpdated(unseenMessagesCount);
     }
 }
 
-void MessagesLog::paintEvent(QPaintEvent *event) {
-    // default behavior
-    LogContainer::paintEvent(event);
-
-    // if no message unseen, skip
-    auto messagesNotSeenCount = this->_msgIdsNotSeen.count();
-    if (!messagesNotSeenCount) return;
-
-    // since autoscrolled, every time it is visible means the user have seen all messages
-    if (this->isVisible()) {
+void MessagesLog::setIsUserVisible(bool isVisibleByUser) {
+    this->_isVisibleByUser = isVisibleByUser;
+    if(this->_isVisibleByUser) {
         this->_msgIdsNotSeen.clear();
         emit notificationCountUpdated(0);
     }

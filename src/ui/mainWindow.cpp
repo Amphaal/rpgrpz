@@ -252,6 +252,17 @@ void MainWindow::_initAppUnmovableUI() {
     auto gameHubTabIndex = this->_rightTab->addTab(chatLogWidget, QIcon(QStringLiteral(u":/icons/app/tabs/chat.png")), tr("Game Hub"));
     this->_rightTab->addTab(this->_docShareManager, QIcon(QStringLiteral(u":/icons/app/tabs/fileShare.png")), tr("Documents Share"));
 
+    // alert messageLog for notifications
+    auto updateUserVisble = [=](int currentIndex = 0) {
+        auto isGameHubVisible = this->_rightTab->currentIndex() == gameHubTabIndex;
+        this->_chatWidget->messageLog()->setIsUserVisible(isGameHubVisible);
+    };
+    updateUserVisble();
+    QObject::connect(
+        this->_rightTab, &QTabWidget::currentChanged,
+        updateUserVisble
+    );
+
     // update gamehub tab name
     QObject::connect(
         this->_chatWidget->messageLog(), &MessagesLog::notificationCountUpdated,
