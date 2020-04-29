@@ -178,7 +178,7 @@ find_package(PkgConfig REQUIRED)
 ###########
 
 #find
-find_package(OpenSSL)
+find_package(OpenSSL REQUIRED)
 
 #link
 target_link_libraries(appExec
