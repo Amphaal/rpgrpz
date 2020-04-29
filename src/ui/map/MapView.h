@@ -111,6 +111,7 @@ class MapView : public QGraphicsView, public MV_Manipulation, public MV_HUDLayou
     AtomsContextualMenuHandler* _menuHandler = nullptr;
     AtomActionsHandler* _atomActionsHandler = nullptr;
     MeasurementHelper* _measurementHelper = nullptr;
+    bool _preventTemporaryContextMenu = false;
 
     void _onUIAlterationRequest(const Payload::Alteration &type, const QList<QGraphicsItem*> &toAlter);
     void _onUIAlterationRequest(const Payload::Alteration &type, const OrderedGraphicsItems &toAlter);

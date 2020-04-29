@@ -438,6 +438,11 @@ void MapView::drawBackground(QPainter *painter, const QRectF &rect) {
 ////////////
 
 void MapView::contextMenuEvent(QContextMenuEvent *event) {
+    if(this->_preventTemporaryContextMenu) {
+        this->_preventTemporaryContextMenu = false;
+        return;
+    }
+
     // prevent contextual menu if not using default tool
     if (this->_getCurrentTool() != MapTool::Default) return;
 
@@ -738,6 +743,10 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
             default: {}
             break;
         }
+
+    } else if (btnPressed == Qt::MouseButton::RightButton) {
+        this->_changeTool(MapTool::Default);
+        this->_preventTemporaryContextMenu = true;
     }
 }
 
