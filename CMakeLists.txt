@@ -178,12 +178,16 @@ find_package(PkgConfig REQUIRED)
 ###########
 
 #find
-find_package(OpenSSL REQUIRED)
+# find_package(OpenSSL REQUIRED)
+find_library(OpenSSL_SSL ssl)
+find_library(OpenSSL_Crypto crypto)
+message(OpenSSL : ${OpenSSL_SSL})
+message(OpenSSL : ${OpenSSL_Crypto})
 
 #link
 target_link_libraries(appExec
-    OpenSSL::SSL
-    OpenSSL::Crypto
+    OpenSSL_SSL
+    OpenSSL_Crypto
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
