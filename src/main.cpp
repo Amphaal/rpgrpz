@@ -72,7 +72,7 @@ int clientApp(int argc, char** argv) {
             delete AppContext::settings();
     });
 
-    app.setApplicationDisplayName(APP_NAME);
+    app.setApplicationDisplayName(AppContext::getWindowTitle());
     app.setAttribute(Qt::AA_UseHighDpiPixmaps);
     app.setStyle(QStyleFactory::create("Fusion"));
 

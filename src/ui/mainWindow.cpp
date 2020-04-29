@@ -202,7 +202,6 @@ void MainWindow::_initConnectivity() {
 //////////////
 
 void MainWindow::_initUI() {
-    this->setWindowTitle(AppContext::getWindowTitle());
     this->setWindowIcon(QIcon(QStringLiteral(u":/icons/app/app_32.png")));
 
     // central widget
