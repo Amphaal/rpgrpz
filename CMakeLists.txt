@@ -177,19 +177,6 @@ find_package(PkgConfig REQUIRED)
 # OpenSSL #
 ###########
 
-#find
-find_package(OpenSSL REQUIRED)
-
-#link
-target_link_libraries(appExec
-    OpenSSL_SSL
-    OpenSSL_Crypto
-)
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    target_link_libraries(appExec ws2_32) #WSA functions !
-endif()
-
 if(MINGW)
     #find libs
     find_file(OPENSSL_CPYPTO_DLL 
@@ -212,6 +199,19 @@ if(MINGW)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_CPYPTO_DLL} $<TARGET_FILE_DIR:appExec>
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_SSL_DLL} $<TARGET_FILE_DIR:appExec>
     )
+endif()
+
+#find
+find_package(OpenSSL REQUIRED)
+
+#link
+target_link_libraries(appExec
+    OpenSSL::SSL
+    OpenSSL::Crypto
+)
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    target_link_libraries(appExec ws2_32) #WSA functions !
 endif()
 
 ########
