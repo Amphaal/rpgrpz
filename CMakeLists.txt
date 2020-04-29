@@ -179,8 +179,8 @@ find_package(PkgConfig REQUIRED)
 
 #find
 # find_package(OpenSSL REQUIRED)
-find_library(OpenSSL_SSL ssl)
-find_library(OpenSSL_Crypto crypto)
+find_library(OpenSSL_SSL libssl)
+find_library(OpenSSL_Crypto libcrypto)
 message(OpenSSL : ${OpenSSL_SSL})
 message(OpenSSL : ${OpenSSL_Crypto})
 
