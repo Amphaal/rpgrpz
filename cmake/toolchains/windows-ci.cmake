@@ -1,18 +1,18 @@
 SET(CMAKE_SYSTEM_NAME "Windows")
 SET(CMAKE_SYSTEM_VERSION 6.1 CACHE INTERNAL "") #target Windows 7
 
-# # search for programs in the build host directories
-# set (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+# search for programs in the build host directories
+set (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 
-# # for libraries and headers in the target directories
-# set (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-# set (CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
-# set (CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+# for libraries and headers in the target directories
+set (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set (CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+set (CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
 SET(MINGW64_ROOT "/mingw64")
 
 list(APPEND CMAKE_PREFIX_PATH 
-    /mingw64
+    ${MINGW64_ROOT}
 )
 
 #We want Release with debug infos
