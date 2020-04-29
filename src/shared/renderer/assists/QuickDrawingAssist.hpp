@@ -130,6 +130,7 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
 
         // prepare
         auto bits = this->_tempDrawing->dequeuePushPoints();
+        if(!bits.elementCount()) return;
 
         RPZQuickDrawBits qd(
             this->_tempDrawing->pos(),
@@ -149,13 +150,14 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
         auto bits = qd.bitsAsPath();
 
         // find in list
-        auto found = this->_quickDrawings.value(qd.drawId());
+        auto drawId = qd.drawId();
+        auto found = this->_quickDrawings.value(drawId);
 
         // if not create it
         if (!found) {
             auto associatedUser = this->_rpzClient->sessionUsers().value(qd.drawerId());
             auto startPos = qd.scenePos();
-            found = _createQuickDraw(associatedUser, startPos);
+            found = _createQuickDraw(associatedUser, startPos, drawId);
         }
 
         // add bits
@@ -166,9 +168,9 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
         this->_tempDrawing = _createQuickDraw(this->_currentUser, scenePos);
     }
 
-    QuickDrawItem* _createQuickDraw(const RPZUser &emiter, const QPointF &startPos) {
+    QuickDrawItem* _createQuickDraw(const RPZUser &emiter, const QPointF &startPos, const RPZQuickDrawBits::Id &drawId = 0) {
         // create item
-        auto item = new QuickDrawItem(emiter);
+        auto item = new QuickDrawItem(emiter, startPos, drawId);
         auto _t_Id = item->id();
 
         // remove from hash once destroyed
@@ -183,9 +185,6 @@ class QuickDrawingAssist : public QObject, public ConnectivityObserver {
             item->id(),
             item
         );
-
-        // define pos
-        item->setPos(startPos);
 
         // add to scene
         this->_view->scene()->addItem(item);

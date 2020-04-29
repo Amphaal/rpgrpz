@@ -26,14 +26,27 @@
 
 class QuickDrawItem : public MapViewGraphicsPathItem {
  public:
-        explicit QuickDrawItem(const RPZUser &emiter) : QuickDrawItem(SnowFlake::get()->nextId(), emiter.color()) {}
+        QuickDrawItem(const RPZUser &emiter, const QPointF startPos, RPZQuickDrawBits::Id id = 0) : QuickDrawItem() {
+            if(!id) id = SnowFlake::get()->nextId();
+
+            this->_color = emiter.color();
+            this->_id = id;
+
+            QPen pen;
+            pen.setWidth(5);
+            pen.setColor(this->_color);
+            this->setPen(pen);
+
+            // define pos
+            this->setPos(startPos);
+        }
 
         RPZQuickDrawBits::Id id() const {
             return this->_id;
         }
 
         void moveLine(const QPointF &point) {
-            this->_path.enqueue(point);
+            this->_pathChomp.enqueue(point);
             this->_pathPush.enqueue(point);
 
             auto p = this->path();
@@ -45,10 +58,17 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
         }
 
         QPainterPath dequeuePushPoints() {
+            QPainterPath out;
+            if(!this->_pathPush.count()) return out;
+
+            // duplicate and clear
             auto copy = this->_pathPush;
             this->_pathPush.clear();
 
-            QPainterPath out;
+            // use first point as start point
+            out.moveTo(copy.dequeue());
+
+            // lineTo for the rest
             for (auto &point : copy) {
                 out.lineTo(point);
             }
@@ -78,22 +98,12 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
  private:
         QColor _color;
         QQueue<QPointF> _pathPush;
-        QQueue<QPointF> _path;
+        QQueue<QPointF> _pathChomp;
         RPZQuickDrawBits::Id _id;
         QTimer _tmChomp;
         QTimer _tmPush;
         bool _registeredForDeletion = false;
         static inline int _defaultTimerInterval = 17;  // 60 fps
-
-        QuickDrawItem(const RPZQuickDrawBits::Id &id, const QColor &color) : QuickDrawItem() {
-            this->_color = color;
-            this->_id = id;
-
-            QPen pen;
-            pen.setWidth(5);
-            pen.setColor(this->_color);
-            this->setPen(pen);
-        }
 
         QuickDrawItem() : MapViewGraphicsPathItem(QPainterPath(), QPen(), QBrush()) {
             this->setFlag(QGraphicsItem::GraphicsItemFlag::ItemIsSelectable, false);
@@ -137,7 +147,7 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
             QPointF moveTo;
             while (decrease) {
                 moveTo = this->_pathPush.dequeue();
-                this->_path.enqueue(moveTo);
+                this->_pathChomp.enqueue(moveTo);
                 p.lineTo(moveTo);
                 decrease--;
             }
@@ -156,7 +166,7 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
             this->_tmChomp.setInterval(_defaultTimerInterval);
 
             // if no more left, delete itself
-            auto howManyLeft = this->_path.count();
+            auto howManyLeft = this->_pathChomp.count();
             if (!howManyLeft) {
                 // if no more left and registered for deletion
                 if (this->_registeredForDeletion) {
@@ -173,7 +183,7 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
             // erase from queue
             QPointF moveTo;
             while (decrease) {
-                moveTo = this->_path.dequeue();
+                moveTo = this->_pathChomp.dequeue();
                 decrease--;
             }
 
@@ -182,7 +192,7 @@ class QuickDrawItem : public MapViewGraphicsPathItem {
             path.moveTo(moveTo);
 
             // fill QPainterPath
-            for (auto &p : this->_path) {
+            for (auto &p : this->_pathChomp) {
                 path.lineTo(p);
             }
 
