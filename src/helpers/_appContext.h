@@ -33,7 +33,7 @@
 #include <QUrl>
 #include <QGLWidget>
 
-#include "src/version.h"
+#include <version.h>
 
 #include "src/helpers/_appSettings.hpp"
 #include "src/_libs/snowflake/snowflake.h"

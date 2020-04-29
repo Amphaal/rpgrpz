@@ -46,7 +46,7 @@ SET(SENTRY_ENDPOINT "http://3a471bcc32d94c628a191d3d7d2eabff@zonme.to2x.ovh:9000
 #configure header with basic app informations
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/templates/_version.h 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/version.h
+    version.h
 )
 
 #if XCompiling Windows, use emulator (cannot be set in toolchain...)
