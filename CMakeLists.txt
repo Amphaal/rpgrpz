@@ -179,8 +179,8 @@ find_package(PkgConfig REQUIRED)
 
 #find
 # find_package(OpenSSL REQUIRED)
-find_library(OpenSSL_SSL libssl.dll.a)
-find_library(OpenSSL_Crypto libcrypto.dll.a)
+find_library(OpenSSL_SSL "/mingw64/lib/libssl.dll.a")
+find_library(OpenSSL_Crypto "/mingw64/lib/libcrypto.dll.a")
 message(OpenSSL : ${OpenSSL_SSL})
 message(OpenSSL : ${OpenSSL_Crypto})
 
