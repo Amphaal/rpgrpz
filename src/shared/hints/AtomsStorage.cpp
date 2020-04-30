@@ -41,13 +41,28 @@ const QList<RPZCharacter::UserBound> AtomsStorage::findUnboundCharacters(const Q
         QMutexLocker l(&_m_handlingLock);
 
         for (auto const &bond : availableCharacters) {
+            // get character Id
             auto charId = bond.second.id();
             if (!charId) continue;
 
-            auto boundAtomId = this->_ownableAtomIdsByOwner.key(charId);
-            if (boundAtomId) continue;  // is bound, skip
+            auto playerBound = false;
 
-            out += bond;
+            // iterate through atoms bound to character
+            auto boundAtomIds = this->_ownableAtomIdsByOwner.keys(charId);
+            for(auto &id : boundAtomIds) {
+                // get associated atom
+                auto atom = this->_map.atomPtr(id);
+                if (!atom) continue;
+
+                // check if player atom
+                if (atom->type() == RPZAtom::Type::Player) {
+                    playerBound = true;
+                    break;
+                }
+            }
+
+            // if not player bound, add to unbound list
+            if(!playerBound) out += bond;
         }
     }
 
