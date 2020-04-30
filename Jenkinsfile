@@ -10,7 +10,7 @@ pipeline {
                     environment {
                         SENTRY_URL = 'http://zonme.to2x.ovh:9000'
                         SENTRY_ORG = 'lvwl'
-                        SENTRY_PROJECT = 'understory'
+                        SENTRY_PROJECT = 'rpgrpz'
                     }
                     steps {
                         sh 'cmake -GNinja -B_genWindows -H. -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/windows-ci.cmake'
