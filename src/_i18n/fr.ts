@@ -1209,59 +1209,74 @@
         <translation>[Jeton de joueur vierge]</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZMapParameters.hpp" line="45"/>
+        <location filename="../shared/models/RPZMapParameters.hpp" line="47"/>
         <source>Linear</source>
         <translation>Linéaire</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZMapParameters.hpp" line="44"/>
+        <location filename="../shared/models/RPZMapParameters.hpp" line="46"/>
         <source>Grid</source>
         <translation>Grille</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZMapParameters.hpp" line="55"/>
+        <location filename="../shared/models/RPZMapParameters.hpp" line="57"/>
         <source>Players can move freely</source>
         <translation>Les joueurs peuvent se déplacer librement</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZMapParameters.hpp" line="54"/>
+        <location filename="../shared/models/RPZMapParameters.hpp" line="56"/>
         <source>Players can only move from tile to tile</source>
         <translation>Les joueurs peuvent uniquement se déplacer de tuile en tuile</translation>
     </message>
     <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="42"/>
-        <source>Save and reload map</source>
-        <translation>Sauvegarder et recharger la carte</translation>
+        <location filename="../ui/map/MapParametersForm.hpp" line="46"/>
+        <source>Confirm and reload map</source>
+        <translation>Confirmer et recharger la carte</translation>
     </message>
     <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="52"/>
+        <location filename="../ui/map/MapParametersForm.hpp" line="56"/>
         <source>Edit map parameters</source>
         <translation>Modifier les paramètres de la carte</translation>
     </message>
     <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="61"/>
+        <location filename="../ui/map/MapParametersForm.hpp" line="69"/>
         <source>Movement system</source>
         <translation>Système de mouvement</translation>
     </message>
     <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="62"/>
+        <location filename="../ui/map/MapParametersForm.hpp" line="70"/>
         <source>Map size</source>
         <translation>Taille de la carte</translation>
     </message>
     <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="63"/>
+        <location filename="../ui/map/MapParametersForm.hpp" line="71"/>
         <source>Grid tile to ingame meters</source>
         <translation>Taille en mètres d&apos;une case</translation>
     </message>
     <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="64"/>
+        <location filename="../ui/map/MapParametersForm.hpp" line="72"/>
         <source>Grid tile to screen centimeters</source>
         <translation>Taille en centimètres réels d&apos;une case</translation>
     </message>
     <message>
-        <location filename="../ui/map/MapParametersForm.hpp" line="65"/>
+        <location filename="../ui/map/MapParametersForm.hpp" line="73"/>
         <source>Minimum / Maximum camera scaling ratio</source>
         <translation>Niveau de zoom Minimum / Maximum</translation>
+    </message>
+    <message>
+        <location filename="../ui/map/MapParametersForm.hpp" line="74"/>
+        <source>Initial view point</source>
+        <translation>Point de vue initial</translation>
+    </message>
+    <message>
+        <location filename="../ui/map/MapParametersForm.hpp" line="126"/>
+        <source>Update with current</source>
+        <translation>Mise à jour avec actuel</translation>
+    </message>
+    <message>
+        <location filename="../ui/map/MapParametersForm.hpp" line="188"/>
+        <source>Centered at {%1 : %2}</source>
+        <translation>Centré sur {%1 : %2}</translation>
     </message>
     <message>
         <location filename="../ui/mapLayout/MapLayoutManager.cpp" line="28"/>

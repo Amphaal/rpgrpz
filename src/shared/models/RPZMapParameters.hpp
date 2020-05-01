@@ -23,6 +23,7 @@
 #include <QtMath>
 
 #include "src/helpers/_appContext.h"
+#include "src/helpers/JSONSerializer.h"
 
 class RPZMapParameters : public QVariantHash {
  public:
@@ -37,7 +38,8 @@ class RPZMapParameters : public QVariantHash {
         MaximumZoomScale,
         TileToIngameMeters,
         TileToScreenCentimeters,
-        MovementSystem
+        MovementSystem,
+        InitialViewPoint
     };
 
     static inline const QHash<RPZMapParameters::MovementSystem, QString> MSToStr = {
@@ -55,13 +57,14 @@ class RPZMapParameters : public QVariantHash {
         { RPZMapParameters::MovementSystem::Linear, QT_TRANSLATE_NOOP("QObject", "Players can move freely") }
     };
 
-    static inline QHash<RPZMapParameters::Values, double> defaultValues = {
-        { RPZMapParameters::Values::MapWidth, 36000 },
-        { RPZMapParameters::Values::MinimumZoomScale, 0.05 },
-        { RPZMapParameters::Values::MaximumZoomScale, 5 },
-        { RPZMapParameters::Values::TileToIngameMeters, 1.5 },
-        { RPZMapParameters::Values::TileToScreenCentimeters, 1.3 },
-        { RPZMapParameters::Values::MovementSystem, 0 }
+    static inline QHash<RPZMapParameters::Values, QVariant> defaultValues = {
+        { RPZMapParameters::Values::MapWidth, (double)36000 },
+        { RPZMapParameters::Values::MinimumZoomScale, (double)0.05 },
+        { RPZMapParameters::Values::MaximumZoomScale, (double)5 },
+        { RPZMapParameters::Values::TileToIngameMeters, (double)1.5 },
+        { RPZMapParameters::Values::TileToScreenCentimeters, (double)1.3 },
+        { RPZMapParameters::Values::MovementSystem, (int)0 },
+        { RPZMapParameters::Values::InitialViewPoint, QPointF() },
     };
 
     RPZMapParameters() {}
@@ -69,6 +72,12 @@ class RPZMapParameters : public QVariantHash {
 
     int mapWidthInPoints() const {
         return this->_getParam(RPZMapParameters::Values::MapWidth).toInt();
+    }
+
+    const QPointF initialViewPoint() const {
+        return JSONSerializer::toPointF(
+            this->_getParam(RPZMapParameters::Values::InitialViewPoint).toList()
+        );
     }
 
     const QRectF sceneRect() const {
@@ -181,7 +190,7 @@ class RPZMapParameters : public QVariantHash {
         return (RPZMapParameters::MovementSystem)this->_getParam(RPZMapParameters::Values::MovementSystem).toInt();
     }
 
-    void setParameter(const RPZMapParameters::Values &valueType, double val) {
+    void setParameter(const RPZMapParameters::Values &valueType, const QVariant &val) {
         this->insert(_valuesKeys.value(valueType), val);
     }
 
@@ -192,7 +201,8 @@ class RPZMapParameters : public QVariantHash {
             { RPZMapParameters::Values::MaximumZoomScale, QStringLiteral(u"maxZS") },
             { RPZMapParameters::Values::TileToIngameMeters, QStringLiteral(u"ttim") },
             { RPZMapParameters::Values::TileToScreenCentimeters, QStringLiteral(u"ttsc") },
-            { RPZMapParameters::Values::MovementSystem, QStringLiteral(u"msys") }
+            { RPZMapParameters::Values::MovementSystem, QStringLiteral(u"msys") },
+            { RPZMapParameters::Values::InitialViewPoint, QStringLiteral(u"ivp") }
         };
 
     QVariant _getParam(const RPZMapParameters::Values &valType) const {

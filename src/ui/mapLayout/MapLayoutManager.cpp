@@ -19,9 +19,9 @@
 
 #include "MapLayoutManager.h"
 
-MapLayoutManager::MapLayoutManager(MapView* viewToMimic, QWidget *parent) : QWidget(parent) {
+MapLayoutManager::MapLayoutManager(MapView* associatedMapView, QWidget *parent) : QWidget(parent), _associatedMapView(associatedMapView) {
     // tree
-    this->_tree = new MapLayoutTree(viewToMimic, this);
+    this->_tree = new MapLayoutTree(this->_associatedMapView, this);
 
     // param btn
     this->_mapParamBtn = new QPushButton(QIcon(QStringLiteral(u":/icons/app/tools/cog.png")), "");
@@ -97,7 +97,7 @@ MapLayoutTree* MapLayoutManager::tree() {
 }
 
 void MapLayoutManager::_handleMapParametersEdition() {
-    MapParametersForm form(this->_currentMapParameters, this->parentWidget());
+    MapParametersForm form(this->_currentMapParameters, this->_associatedMapView, this->parentWidget());
     if (!form.exec()) return;
 
     // get payload, update params

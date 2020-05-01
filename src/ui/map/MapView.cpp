@@ -69,6 +69,11 @@ void MapView::_onHeavyAlterationStarted() {
 void MapView::_heavyAlterationFinished() {
     this->endHeavyLoadPlaceholder();
     this->goToDefaultViewState();
+
+    // go to initial point view
+    auto p = this->_currentMapParameters.initialViewPoint();
+    this->centerOn(p);
+
     emit heavyAlterationFinished();
 }
 

@@ -45,6 +45,7 @@ class MapLayoutManager : public QWidget {
     QCheckBox* _FoWReversedChk = nullptr;
     QPushButton* _FoWResetBtn = nullptr;
 
+    MapView* _associatedMapView = nullptr;
     RPZMapParameters _currentMapParameters;
 
     void _handleMapParametersEdition();

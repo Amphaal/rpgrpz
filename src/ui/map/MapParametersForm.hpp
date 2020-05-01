@@ -27,19 +27,23 @@
 #include <QDoubleSpinBox>
 #include <QPushButton>
 #include <QIcon>
+#include <QLabel>
+#include <QGraphicsView>
 
 #include "src/shared/models/RPZMapParameters.hpp"
+#include "src/helpers/JSONSerializer.h"
 
 class MapParametersForm : public QDialog {
  public:
-    MapParametersForm(const RPZMapParameters &mapParams, QWidget* parent) :
-        QDialog(parent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint) {
+    MapParametersForm(const RPZMapParameters &mapParams, QGraphicsView* toFetchCurrentViewPointFrom, QWidget* parent) :
+        QDialog(parent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint),
+        _toFetchCurrentViewPointFrom(toFetchCurrentViewPointFrom) {
         // init
         this->_init();
         this->_load(mapParams);
 
         // layout
-        this->_saveBtn = new QPushButton(QObject::tr("Save and reload map"));
+        this->_saveBtn = new QPushButton(QObject::tr("Confirm and reload map"));
         this->_saveBtn->setAutoDefault(false);
         this->_saveBtn->setDefault(false);
         QObject::connect(
@@ -58,11 +62,16 @@ class MapParametersForm : public QDialog {
         minmaxScaleL->addWidget(this->_minimumZoomScaleSpin);
         minmaxScaleL->addWidget(this->_maximumZoomScaleSpin);
 
+        auto initialViewPointL = new QHBoxLayout;
+        initialViewPointL->addWidget(this->_currentViewPointLbl);
+        initialViewPointL->addWidget(this->_getViewPointBtn);
+
         layout->addRow(QObject::tr("Movement system"), this->_movementSystemCombo);
         layout->addRow(QObject::tr("Map size"), this->_mapSizeSpin);
         layout->addRow(QObject::tr("Grid tile to ingame meters"), this->_gridTileToIngameMetersSpin);
         layout->addRow(QObject::tr("Grid tile to screen centimeters"), this->_gridTileToScreenCentimetersSpin);
         layout->addRow(QObject::tr("Minimum / Maximum camera scaling ratio"), minmaxScaleL);
+        layout->addRow(QObject::tr("Initial view point"), initialViewPointL);
         layout->addRow(this->_saveBtn);
     }
 
@@ -75,12 +84,18 @@ class MapParametersForm : public QDialog {
         out.setParameter(RPZMapParameters::Values::TileToIngameMeters, this->_gridTileToIngameMetersSpin->value());
         out.setParameter(RPZMapParameters::Values::TileToScreenCentimeters, this->_gridTileToScreenCentimetersSpin->value());
         out.setParameter(RPZMapParameters::Values::MovementSystem, this->_movementSystemCombo->currentData().toInt());
+        out.setParameter(RPZMapParameters::Values::InitialViewPoint, JSONSerializer::fromPointF(this->_mapViewPoint));
 
         return out;
     }
 
  private:
     QPushButton* _saveBtn = nullptr;
+
+    QPushButton* _getViewPointBtn = nullptr;
+    QPointF _mapViewPoint;
+    QLabel* _currentViewPointLbl = nullptr;
+    QGraphicsView* _toFetchCurrentViewPointFrom = nullptr;
 
     QDoubleSpinBox* _minimumZoomScaleSpin = nullptr;
     QDoubleSpinBox* _maximumZoomScaleSpin = nullptr;
@@ -107,6 +122,14 @@ class MapParametersForm : public QDialog {
         this->_mapSizeSpin->setSuffix("pts");
         this->_mapSizeSpin->setMinimum(1000);
         this->_mapSizeSpin->setMaximum(100000);
+
+        this->_getViewPointBtn = new QPushButton(QObject::tr("Update with current"));
+        QObject::connect(
+            this->_getViewPointBtn, &QPushButton::pressed,
+            this, &MapParametersForm::_updateViewPointFromCurrent
+        );
+
+        this->_currentViewPointLbl = new QLabel;
 
         this->_gridTileToIngameMetersSpin = new QDoubleSpinBox;
         this->_gridTileToIngameMetersSpin->setSuffix(" m");
@@ -148,8 +171,23 @@ class MapParametersForm : public QDialog {
         this->_mapSizeSpin->setValue(mapParams.mapWidthInPoints());
         this->_gridTileToIngameMetersSpin->setValue(mapParams.tileToIngameMeters());
         this->_gridTileToScreenCentimetersSpin->setValue(mapParams.tileToScreenCentimeters());
+        this->_updateInitialViewPoint(mapParams.initialViewPoint());
 
         auto index = this->_movementSystemCombo->findData((int)mapParams.movementSystem());
         this->_movementSystemCombo->setCurrentIndex(index);
+    }
+
+    void _updateViewPointFromCurrent() {
+        auto widgetCenter = this->_toFetchCurrentViewPointFrom->viewport()->rect().center();
+        auto scenePoint = this->_toFetchCurrentViewPointFrom->mapToScene(widgetCenter);
+        this->_updateInitialViewPoint(scenePoint);
+    }
+
+    void _updateInitialViewPoint(const QPointF &newInitialViewPoint) {
+        this->_mapViewPoint = newInitialViewPoint;
+        auto pointDescr = QObject::tr("Centered at {%1 : %2}")
+                            .arg(QString::number(this->_mapViewPoint.x()))
+                            .arg(QString::number(this->_mapViewPoint.y()));
+        this->_currentViewPointLbl->setText(pointDescr);
     }
 };
