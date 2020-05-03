@@ -749,7 +749,7 @@ void MapView::mouseReleaseEvent(QMouseEvent *event) {
             break;
         }
 
-    } else if (btnPressed == Qt::MouseButton::RightButton) {
+    } else if (btnPressed == Qt::MouseButton::RightButton && currentTool != MapTool::Default) {
         this->_changeTool(MapTool::Default);
         this->_preventTemporaryContextMenu = true;
     }
