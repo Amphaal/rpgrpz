@@ -58,7 +58,7 @@ class MeasurementHelper : public QObject, public QGraphicsItem, public RPZGraphi
         out.sceneCursorPos = this->_view->mapToScene(out.viewCursorPos);
 
         if (this->_mapParams.movementSystem() == RPZMapParameters::MovementSystem::Grid) {
-            this->_mapParams.alignPointFromStartPoint(out.sceneCursorPos);
+            this->_mapParams.alignPointToGridTile(out.sceneCursorPos);
         }
 
         out.distanceLine = QLineF(this->_startScenePos, out.sceneCursorPos);
@@ -229,7 +229,7 @@ class MeasurementHelper : public QObject, public QGraphicsItem, public RPZGraphi
 
         this->_startScenePos = this->_view->mapToScene(evtPosPoint);
         if (this->_mapParams.movementSystem() == RPZMapParameters::MovementSystem::Grid) {
-            this->_mapParams.alignPointFromStartPoint(this->_startScenePos);
+            this->_mapParams.alignPointToGridTile(this->_startScenePos);
         }
 
         this->_mapParams = params;

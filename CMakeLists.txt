@@ -416,8 +416,8 @@ if(MINGW)
     list(APPEND GST_SLIBS
         gmp-10
         gnutls-30
-        hogweed-5
-        nettle-7
+        hogweed-6
+        nettle-8
         soup-2.4-1
         tasn1-6
         winpthread-1

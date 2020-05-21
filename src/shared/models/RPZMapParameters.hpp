@@ -25,6 +25,8 @@
 #include "src/helpers/_appContext.h"
 #include "src/helpers/JSONSerializer.h"
 
+#include "src/ui/debug/DebugDisplay.hpp"
+
 class RPZMapParameters : public QVariantHash {
  public:
     enum class MovementSystem {
@@ -120,29 +122,49 @@ class RPZMapParameters : public QVariantHash {
         return meters;
     }
 
-    void alignPointFromStartPoint(QPointF &scenePos, const QPointF &startPoint = QPointF()) const {
+    void alignPointToGridTile(QPointF &toAlignToGrid, QSizeF reference = QSizeF()) const {
         auto typeDifference = this->tileWidthInPoints();
-        auto limit = typeDifference / 2;
 
-        auto translatedX = scenePos.x() - startPoint.x();
-        auto translatedY = scenePos.y() - startPoint.y();
+        // prevent zero
+        auto x = toAlignToGrid.x();
+        auto y = toAlignToGrid.y();
+        if(x == 0) x = .01;
+        if(y == 0) y = .01;
 
-        auto xLimitCount = translatedX / limit;
-        auto yLimitCount = translatedY / limit;
+        // check if corrections need to be made
+        if(reference.isNull()) reference = tileSizeInPoints();
+        auto mustCorrect = [=](qreal val) {
+            auto closest = static_cast<int>(val / typeDifference);
+            return (closest % 2) != 0;
+        };
+        auto mustCorrectX = mustCorrect(reference.width());
+        auto mustCorrectY = mustCorrect(reference.height());
 
-        auto xLimitCountRounded = xLimitCount >= 0 ? qFloor(xLimitCount) : qCeil(xLimitCount);
-        auto yLimitCountRounded = yLimitCount >= 0 ? qFloor(yLimitCount) : qCeil(yLimitCount);
+        auto xLimitCount = x / typeDifference;
+        auto yLimitCount = y / typeDifference;
 
-        auto baseMultiplierX = (double)xLimitCountRounded / 2;
-        auto baseMultiplierY = (double)yLimitCountRounded / 2;
+        if(mustCorrectX) xLimitCount += .5;
+        if(mustCorrectY) yLimitCount += .5;
 
-        baseMultiplierX += std::modf(baseMultiplierX, nullptr);
-        baseMultiplierY += std::modf(baseMultiplierY, nullptr);
-
-        scenePos = QPointF(
-            baseMultiplierX * typeDifference + startPoint.x(),
-            baseMultiplierY * typeDifference + startPoint.y()
+        // define tile rect
+        QRectF tile(
+            QPointF(qCeil(xLimitCount) * typeDifference, qCeil(yLimitCount) * typeDifference),
+            QPointF(qFloor(xLimitCount) * typeDifference, qFloor(yLimitCount) * typeDifference)
         );
+
+        tile.moveTo({
+            mustCorrectX ? tile.x() - typeDifference / 2 : tile.x(),
+            mustCorrectY ? tile.y() - typeDifference / 2 : tile.y()
+        });
+
+        #ifdef _DEBUG
+            DebugDisplay::updatePoint(toAlignToGrid);
+            DebugDisplay::updateIndex(xLimitCount, yLimitCount);
+            DebugDisplay::updateCorrect(mustCorrectX, mustCorrectY);
+        #endif
+
+        // update point
+        toAlignToGrid = tile.center();
     }
 
     void alignPointToGridCrossroad(QPointF &scenePos) const {

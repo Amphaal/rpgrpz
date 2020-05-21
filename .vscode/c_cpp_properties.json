@@ -28,7 +28,7 @@
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "C:\\msys64\\mingw64\\bin\\clang++.exe",
+            "compilerPath": "C:/msys64/mingw64/bin/clang++.exe",
             "cStandard": "c11",
             "cppStandard": "c++20",
             "intelliSenseMode": "clang-x64"

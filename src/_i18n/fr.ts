@@ -1209,22 +1209,22 @@
         <translation>[Jeton de joueur vierge]</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZMapParameters.hpp" line="47"/>
+        <location filename="../shared/models/RPZMapParameters.hpp" line="49"/>
         <source>Linear</source>
         <translation>Linéaire</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZMapParameters.hpp" line="46"/>
+        <location filename="../shared/models/RPZMapParameters.hpp" line="48"/>
         <source>Grid</source>
         <translation>Grille</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZMapParameters.hpp" line="57"/>
+        <location filename="../shared/models/RPZMapParameters.hpp" line="59"/>
         <source>Players can move freely</source>
         <translation>Les joueurs peuvent se déplacer librement</translation>
     </message>
     <message>
-        <location filename="../shared/models/RPZMapParameters.hpp" line="56"/>
+        <location filename="../shared/models/RPZMapParameters.hpp" line="58"/>
         <source>Players can only move from tile to tile</source>
         <translation>Les joueurs peuvent uniquement se déplacer de tuile en tuile</translation>
     </message>

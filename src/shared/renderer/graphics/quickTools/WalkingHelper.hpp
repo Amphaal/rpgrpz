@@ -60,13 +60,14 @@ class WalkingHelper : public QObject, public QGraphicsItem, public RPZGraphicsIt
         out.viewCursorPos = this->_view->mapFromGlobal(QCursor::pos());
         out.sceneCursorPos = this->_view->mapToScene(out.viewCursorPos);
 
-        auto alignedTWRect = _getUnitedRect().center();
+        auto unitedRect = _getUnitedRect();
         auto alignedSCP = out.sceneCursorPos;
 
-        if (this->_mapParams.movementSystem() == RPZMapParameters::MovementSystem::Grid)
-            this->_mapParams.alignPointFromStartPoint(alignedSCP, alignedTWRect);
+        if (this->_mapParams.movementSystem() == RPZMapParameters::MovementSystem::Grid) {
+            this->_mapParams.alignPointToGridTile(alignedSCP, unitedRect.size());
+        }
 
-        out.distanceLine = QLineF(alignedTWRect, alignedSCP);
+        out.distanceLine = QLineF(unitedRect.center(), alignedSCP);
 
         return out;
     }
