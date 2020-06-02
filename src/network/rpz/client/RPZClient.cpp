@@ -26,7 +26,7 @@ RPZClient::RPZClient(const QString &socketStr, const QString &displayName, const
     _userDisplayName(displayName),
     _handshakeCharacter(toIncarnate) {
     // split socket str
-    auto parts = socketStr.split(QStringLiteral(u":"), QString::SplitBehavior::SkipEmptyParts);
+    auto parts = socketStr.split(QStringLiteral(u":"), Qt::SkipEmptyParts);
     this->_domain = parts.value(0, QStringLiteral(u"localhost"));
     this->_port = parts.value(1, AppContext::UPNP_DEFAULT_TARGET_PORT);
 }

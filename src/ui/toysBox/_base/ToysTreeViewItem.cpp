@@ -285,7 +285,7 @@ void ToysTreeViewItem::_defineFlags() {
             break;
 
         default:
-            this->_flags = 0;
+            this->_flags = Qt::ItemFlag::NoItemFlags;
             break;
     }
 }
@@ -475,7 +475,7 @@ void ToysTreeViewItem::sortByPathLengthDesc(QList<ToysTreeViewItem*> &listToSort
 }
 
 QList<QString> ToysTreeViewItem::pathAsList(const QString &path) {
-    return path.split("/", QString::SplitBehavior::SkipEmptyParts);
+    return path.split("/", Qt::SkipEmptyParts);
 }
 
 ToysTreeViewItem::Type ToysTreeViewItem::pathChunktoType(const QString &chunk) {

@@ -31,7 +31,7 @@ MessageInterpreter::Command MessageInterpreter::interpretText(const QString &tex
     if (!cp_text.startsWith("/")) return Command::Say;
 
     // extract command
-    auto command = cp_text.split(" ", QString::SplitBehavior::SkipEmptyParts).value(0);
+    auto command = cp_text.split(" ", Qt::SkipEmptyParts).value(0);
 
     // returns command
     return _textByCommand.value(command);
@@ -54,7 +54,7 @@ void MessageInterpreter::generateValuesOnDiceThrows(QVector<DiceThrow> &throws) 
         // regroup throws
         QMultiHash<uint, bool> buf;
         for (const auto i : sout) {
-            buf.insertMulti(i, false);
+            buf.insert(i, false);
         }
 
         // order keys desc

@@ -135,7 +135,7 @@ class ToysTreeViewItem {
     QString _path;
     QString _fullPath;
     QString _iconPath;
-    Qt::ItemFlags _flags = 0;
+    Qt::ItemFlags _flags;
     int _toySubItemCount = 0;
 
     bool _isInvokable = false;

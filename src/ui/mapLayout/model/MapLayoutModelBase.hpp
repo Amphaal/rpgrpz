@@ -190,15 +190,15 @@ class MapLayoutModelBase : public QAbstractItemModel {
 
         Qt::ItemFlags flags(const QModelIndex &index) const override {
             // if not first column
-            if (index.column()) return 0;
+            if (index.column()) return Qt::NoItemFlags;
 
             // root
             if (!index.isValid()) {
-                return 0;
+                return Qt::NoItemFlags;
             }
 
             auto base = MapLayoutItem::fromIndex(index);
-            if (!base) return 0;
+            if (!base) return Qt::NoItemFlags;
 
             // category
             if (dynamic_cast<MapLayoutCategory*>(base)) {
@@ -207,7 +207,7 @@ class MapLayoutModelBase : public QAbstractItemModel {
                 return QFlags<Qt::ItemFlag>(Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsSelectable);
             }
 
-            return 0;
+            return Qt::NoItemFlags;
         }
 
  protected:
