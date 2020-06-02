@@ -239,14 +239,14 @@ QModelIndex ToysTreeViewModel::parent(const QModelIndex &index) const {
 // flags
 Qt::ItemFlags ToysTreeViewModel::flags(const QModelIndex &index) const {
     // if unvalid
-    if (!index.isValid()) return 0;
+    if (!index.isValid()) return Qt::ItemFlag::NoItemFlags;
 
     // if not first column
-    if (index.column()) return 0;
+    if (index.column()) return Qt::ItemFlag::NoItemFlags;
 
     // if no data pointer, return
     auto data = ToysTreeViewItem::fromIndex(index);
-    if (!data) return 0;
+    if (!data) return Qt::ItemFlag::NoItemFlags;
 
     // fetch flags
     return data->flags();

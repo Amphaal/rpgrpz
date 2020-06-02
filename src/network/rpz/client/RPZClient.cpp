@@ -77,7 +77,7 @@ void RPZClient::_initSock() {
     );
 
     QObject::connect(
-        this, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error),
+        this, &QAbstractSocket::errorOccurred,
         this, &RPZClient::_onError
     );
 

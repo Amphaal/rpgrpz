@@ -118,7 +118,7 @@ QHash<QString, QString> AppContext::_getOptionArgs(const QString &argsAsStr) {
         QRegularExpressionMatch splitMatch = splitMatches.next();  // next
 
         auto arg = splitMatch.captured();
-        auto kvpSplit = arg.split("=", QString::SkipEmptyParts);
+        auto kvpSplit = arg.split("=", Qt::SkipEmptyParts);
 
         auto key = kvpSplit.value(0).mid(2).trimmed();
         QString value = kvpSplit.count() > 1 ? kvpSplit.value(1).trimmed() : "";
