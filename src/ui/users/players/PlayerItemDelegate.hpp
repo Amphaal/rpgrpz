@@ -142,6 +142,7 @@ class PlayerItemDelegate : public QStyledItemDelegate {
             auto portrait = RPZCharacter::getPortrait(character);
             QRect portraitRect(option.rect.topLeft(), DEFAULT_PORTRAIT_SIZE);
 
+            painter->setRenderHints(QPainter::RenderHint::HighQualityAntialiasing | QPainter::RenderHint::SmoothPixmapTransform);
             painter->drawPixmap(portraitRect, portrait);
 
         painter->restore();

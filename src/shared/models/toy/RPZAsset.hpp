@@ -51,13 +51,13 @@ class RPZAsset : public QVariantHash {
         // search in cache
         auto idToSearch = asset.hash() + QStringLiteral(u"_ico");
         auto isFound = QPixmapCache::find(idToSearch, &cached);
-        if (isFound) return cached;
+        if (isFound && cached.size() == sizeToApply) return cached;
 
         // get asset from filepath
         QPixmap pixmap(asset.filepath());
 
         // resize it to hint
-        pixmap = pixmap.scaled(sizeToApply, Qt::AspectRatioMode::KeepAspectRatio);
+        pixmap = pixmap.scaled(sizeToApply, Qt::AspectRatioMode::KeepAspectRatio, Qt::SmoothTransformation);
 
         // cache pixmap and return it
         QPixmapCache::insert(idToSearch, pixmap);

@@ -134,7 +134,7 @@ class MV_Manipulation {
 
     void animateScroll(QWheelEvent *event, const RPZMapParameters &mapParams) {
         // cap acceleration to 5% per tick
-        auto delta = event->angleDelta().x();
+        auto delta = event->angleDelta().y();
         auto modifier = ((double)delta / 5000);
         modifier = std::clamp(modifier, -.05, .05);
 

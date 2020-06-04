@@ -64,6 +64,8 @@ QString RPZMessage::toString() const {
         default:
             return text;
     }
+
+    return QString();
 }
 
 QPalette RPZMessage::palette() const {
