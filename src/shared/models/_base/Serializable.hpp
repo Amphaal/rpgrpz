@@ -17,7 +17,7 @@
 // for further details. Resources without explicit references to a
 // different license and copyright still refer to this GPL.
 
-#pragma once 
+#pragma once
 
 #include <QVariantHash>
 #include <QMap>
@@ -48,7 +48,7 @@ class Serializable : public QVariantHash {
 
  private:
         void _setId(const SnowFlake::Id &id) {
-            // must be saved as string to prevent parser lack of precision on double conversion
-            this->insert(QStringLiteral(u"id"),  QString::number(id));
+            // must be saved as string to prevent JSON parser lack of precision on double conversion
+            this->insert(QStringLiteral(u"id"), QString::number(id));
         }
 };

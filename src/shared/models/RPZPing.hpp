@@ -17,7 +17,7 @@
 // for further details. Resources without explicit references to a
 // different license and copyright still refer to this GNU General Public License.
 
-#pragma once 
+#pragma once
 
 #include <QVariantHash>
 #include <QPainterPath>
@@ -26,12 +26,12 @@
 #include "src/shared/models/RPZUser.h"
 
 class RPZPing : public QVariantHash {
-    public:
-        RPZPing() {};
+ public:
+        RPZPing() {}
         explicit RPZPing(const QVariantHash &hash) : QVariantHash(hash) {}
         RPZPing(const QPointF &scenePos, const RPZUser::Id &emiterId) {
             this->insert("pos", JSONSerializer::fromPointF(scenePos));
-            this->insert("emiter_id", QVariant::fromValue<RPZUser::Id>(emiterId));
+            this->insert("emiter_id", QString::number(emiterId));  // must be saved as string to prevent JSON parser lack of precision on double conversion
         }
         QPointF scenePos() const {
             return JSONSerializer::toPointF(this->value("pos").toList());

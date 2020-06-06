@@ -183,7 +183,7 @@ bool AssetsDatabase::renameFolder(const QString &requestedNewFolderName, const A
     if (requestedNewFolderName.contains(QStringLiteral(u"/"))) return false;
 
     // check if path already exists
-    auto toRequest = _parentPath(pathToRename) + requestedNewFolderName;
+    auto toRequest = _parentPath(pathToRename) + "/" + requestedNewFolderName;
     if (this->_paths.contains(toRequest)) return false;
 
     // get all paths starting with renamed path

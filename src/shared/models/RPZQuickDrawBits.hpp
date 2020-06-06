@@ -17,7 +17,7 @@
 // for further details. Resources without explicit references to a
 // different license and copyright still refer to this GPL.
 
-#pragma once 
+#pragma once
 
 #include <QVariantHash>
 #include <QPainterPath>
@@ -33,8 +33,8 @@ class RPZQuickDrawBits : public QVariantHash {
         explicit RPZQuickDrawBits(const QVariantHash &hash) : QVariantHash(hash) {}
         RPZQuickDrawBits(const QPointF &scenePos, const RPZQuickDrawBits::Id &id, const RPZUser::Id &drawerId, const QPainterPath &bits, bool areLastBits) {
             this->insert("pos", JSONSerializer::fromPointF(scenePos));
-            this->insert("id", QVariant::fromValue<RPZUser::Id>(id));
-            this->insert("drwr_id", QVariant::fromValue<RPZUser::Id>(drawerId));
+            this->insert("id", QString::number(id));  // must be saved as string to prevent JSON parser lack of precision on double conversion
+            this->insert("drwr_id", QString::number(drawerId));  // must be saved as string to prevent JSON parser lack of precision on double conversion
             this->insert("bits", JSONSerializer::asBase64(bits));
             this->insert("end", areLastBits);
         }

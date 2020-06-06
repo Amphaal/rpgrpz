@@ -32,7 +32,8 @@ class Authorisations {
     }
 
     static void defineHostAbility(const RPZUser &user) {
-        _isHostAble = user.role() == RPZUser::Role::Host;
+        auto role = user.role();
+        _isHostAble = role == RPZUser::Role::Host;
     }
 
  private:

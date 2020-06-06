@@ -518,7 +518,7 @@ QHash<AssetsDatabase::FolderPath, ToysTreeViewItem*> ToysTreeViewModel::_generat
 
         // get element from static source
         if (!this->_staticElements.contains(staticCType)) {
-            qDebug() << "Assets : ignoring path, as the static container it points to doesnt exist >>" << qUtf8Printable(ctypeStr);
+            qDebug() << "Assets : ignoring path, as the static container it points to does not exist >>" << qUtf8Printable(ctypeStr);
             continue;
         }
         auto staticContainerElem = this->_staticElements[staticCType];
@@ -615,7 +615,7 @@ void ToysTreeViewModel::_generateItemsFromDb(const QHash<AssetsDatabase::FolderP
         for (const auto &id : db_paths.value(path)) {
             auto asset = AssetsDatabase::get()->asset(id);
 
-            // if ID doesnt exist
+            // if ID does not exist
             if (!asset) {
                 qDebug() << "Assets : cannot insert an item as its ID is not found in the assets DB";
                 continue;

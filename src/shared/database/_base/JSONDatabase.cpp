@@ -37,7 +37,7 @@ void JSONDatabase::_initDatabaseFromJSONFile(const QString &dbFilePath) {
     if (this->_destfile) delete this->_destfile;
     this->_destfile = new QFile(dbFilePath);
 
-    // if file is empty or doesnt exist
+    // if file is empty or does not exist
     if (!this->_destfile->size() || !this->_destfile->exists()) {
         this->_updateDbFile(this->_emptyDbFile());
     }
