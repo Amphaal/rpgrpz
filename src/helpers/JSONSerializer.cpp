@@ -20,11 +20,26 @@
 #include "JSONSerializer.h"
 #include "src/shared/models/RPZAtom.h"
 
-QByteArray JSONSerializer::asBase64(const QPainterPath &path) {
-    QByteArray bArray;
-    QDataStream stream(&bArray, QIODevice::WriteOnly);
+QString JSONSerializer::asBase64(QFile &file, int* fileContentSize, QString* fileHash) {
+    // read
+    file.open(QFile::ReadOnly);
+        auto raw = file.readAll();
+        if(fileContentSize) *fileContentSize = raw.count();
+        if(fileHash) *fileHash = _getFileHash(raw);
+    file.close();
+
+    return _asBase64(raw);
+}
+
+QString JSONSerializer::asBase64(const QPainterPath &path) {
+    QByteArray raw;
+    QDataStream stream(&raw, QIODevice::WriteOnly);
     stream << path;
-    return bArray.toBase64();
+    return _asBase64(raw);
+}
+
+QString JSONSerializer::_asBase64(const QByteArray &raw) {
+    return QString::fromUtf8(raw.toBase64());
 }
 
 QPainterPath JSONSerializer::toPainterPath(const QByteArray &base64) {
@@ -37,10 +52,6 @@ QPainterPath JSONSerializer::toPainterPath(const QByteArray &base64) {
 
 QByteArray JSONSerializer::toBytes(const QByteArray &base64) {
     return QByteArray::fromBase64(base64);
-}
-
-QByteArray JSONSerializer::asBase64(const QByteArray &raw) {
-    return raw.toBase64();
 }
 
 QVariant JSONSerializer::fromQSize(const QSize &size) {
@@ -87,4 +98,18 @@ QList<QPolygonF> JSONSerializer::toPolygons(const QVariantList &rawPolys) {
         out.insert(out.size(), poly);
     }
     return out;
+}
+
+QString JSONSerializer::_getFileHash(const QByteArray &raw) {
+    auto hash = QCryptographicHash::hash(raw, QCryptographicHash::Keccak_224).toHex();
+    return QString::fromUtf8(hash);
+}
+
+QString JSONSerializer::getFileHash(QFile &file) {
+    // read
+    file.open(QFile::ReadOnly);
+        auto raw = file.readAll();
+    file.close();
+
+    return _getFileHash(raw);
 }

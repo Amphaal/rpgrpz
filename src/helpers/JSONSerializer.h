@@ -24,12 +24,16 @@
 #include <QVariant>
 #include <QVariantList>
 #include <QSize>
+#include <QFile>
 #include <QPointF>
 
 class JSONSerializer {
  public:
-    static QByteArray asBase64(const QPainterPath &path);
-    static QByteArray asBase64(const QByteArray &raw);
+    // must cast back to UTF8 to allow correct parsing for Qt's JSON engine
+    static QString asBase64(const QPainterPath &path);
+    static QString asBase64(QFile &file, int* fileContentSize = nullptr, QString* fileHash = nullptr);
+
+    static QString getFileHash(QFile &file);
 
     static QPainterPath toPainterPath(const QByteArray &base64);
     static QByteArray toBytes(const QByteArray &base64);
@@ -42,4 +46,7 @@ class JSONSerializer {
 
     static QVariant fromPolygons(const QList<QPolygonF> &polys);
     static QList<QPolygonF> toPolygons(const QVariantList &rawPolys);
+ private:
+    static QString _asBase64(const QByteArray &raw);
+    static QString _getFileHash(const QByteArray &raw);
 };

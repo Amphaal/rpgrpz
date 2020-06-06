@@ -34,15 +34,10 @@ class RPZAssetImportPackage : public RPZAsset {
         // check asset file existance
         if (!assetFile.exists()) return;
 
-        // read
-        assetFile.open(QFile::ReadOnly);
-            auto asBase64 = assetFile.readAll().toBase64();
-        assetFile.close();
-
         // add to content
         this->insert(
             QStringLiteral(u"_content"),
-            QString(asBase64)
+            JSONSerializer::asBase64(assetFile)
         );
 
         this->_isSuccessful = true;

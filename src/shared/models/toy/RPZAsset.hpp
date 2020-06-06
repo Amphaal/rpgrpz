@@ -173,7 +173,7 @@ class RPZAsset : public QVariantHash {
         auto name = fInfo.baseName();
 
         // hash
-        auto hash = _getFileHash(fileReader);
+        auto hash = JSONSerializer::getFileHash(fileReader);
 
         // move
         auto expectedStoragePath = _getFilePathToAsset(hash, ext);
@@ -193,19 +193,6 @@ class RPZAsset : public QVariantHash {
             qDebug() << "Assets : cannot copy asset to storage, it already exists !";
         }
         return success;
-    }
-
-    static RPZAsset::Hash _getFileHash(QFile &fileReader) {
-        // read file
-        fileReader.open(QFile::ReadOnly);
-            auto bytes = fileReader.readAll();
-        fileReader.close();
-
-        // read signature...
-        auto hexHash = QCryptographicHash::hash(bytes, QCryptographicHash::Keccak_224).toHex();
-        RPZAsset::Hash hash = QString::fromUtf8(hexHash);
-
-        return hash;
     }
 
     static QString _getFilePathToAsset(const RPZAsset::Hash &id, const QString &ext) {

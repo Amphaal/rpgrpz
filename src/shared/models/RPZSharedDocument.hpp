@@ -130,53 +130,30 @@ class RPZSharedDocument : public QVariantHash {
         // check if file exists
         auto fullPath = localFileUrl.toLocalFile();
         QFileInfo fi(fullPath);
-
         if (!fi.exists()) {
             qDebug() << qUtf8Printable(QStringLiteral("File Share : %1 does not exist anymore !").arg(localFileUrl.toString()));
             return;
         }
 
-        QByteArray base64Bytes;
-        RPZSharedDocument::FileHash hash;
-        {
-            // read file and extract raw bytes
-            QFile reader(fullPath);
-            reader.open(QFile::ReadOnly);
-                auto bytes = reader.readAll();
-            reader.close();
-
-            // encode
-            base64Bytes = JSONSerializer::asBase64(bytes);
-
-            // get hash from raw bytes
-            hash = RPZSharedDocument::_getFileHash(bytes);
-        }
+        // read file and extract raw bytes
+        QFile reader(fullPath);
+        QString fileHash;
+        int docS;
+        auto base64 = JSONSerializer::asBase64(reader, &docS, &fileHash);
 
         // override file if exists
         auto ext = fi.suffix();
         auto name = fi.completeBaseName();
 
         // insert in obj
-        this->insert(QStringLiteral(u"fileH"), hash);
+        this->insert(QStringLiteral(u"fileH"), fileHash);
         this->insert(QStringLiteral(u"nm"), name);
-        this->insert(QStringLiteral(u"doc"), base64Bytes);
-        this->insert(QStringLiteral(u"docS"), base64Bytes.count());
+        this->insert(QStringLiteral(u"doc"), base64);
+        this->insert(QStringLiteral(u"docS"), docS);
         this->insert(QStringLiteral(u"ext"), ext);
 
         //
         this->_localInstSuccess = true;
-    }
-
-    static RPZSharedDocument::FileHash _getFileHash(const QByteArray &fileBytes) {
-        // read signature...
-        auto hash = QString::fromUtf8(
-            QCryptographicHash::hash(
-                fileBytes,
-                QCryptographicHash::Keccak_224
-            ).toHex()
-        );
-
-        return hash;
     }
 };
 Q_DECLARE_METATYPE(RPZSharedDocument)
