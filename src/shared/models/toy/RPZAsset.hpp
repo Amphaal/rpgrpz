@@ -190,7 +190,7 @@ class RPZAsset : public QVariantHash {
     static bool _moveFileToStore(QFile &fileReader, const QString &destFilePath) {
         auto success = fileReader.copy(destFilePath);
         if (!success) {
-            qDebug() << "Assets : cannot copy asset to storage, it already exists !";
+            qDebug() << QString("Assets : cannot copy asset to storage [%1], it already exists !").arg(destFilePath);
         }
         return success;
     }
