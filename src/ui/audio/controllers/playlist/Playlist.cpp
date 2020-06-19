@@ -219,9 +219,9 @@ bool Playlist::_addYoutubeItem(AudioTube::VideoMetadata* metadata) {
     QObject::connect(
         metadata, &AudioTube::VideoMetadata::metadataRefreshed,
         [=]() {
-            auto durationStr = StringHelper::secondsToTrackDuration(metadata->playerConfig().duration());
+            auto durationStr = StringHelper::secondsToTrackDuration(metadata->playerConfig()->duration());
 
-            auto metadataTitle = metadata->playerConfig().title();
+            auto metadataTitle = metadata->playerConfig()->title();
             auto completeTitle = QStringLiteral(u"%1 [%2]")
                             .arg(metadataTitle)
                             .arg(durationStr);
