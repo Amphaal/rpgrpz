@@ -167,7 +167,7 @@ class CharacterPickerEditor : public AtomSubEditor, public ConnectivityObserver 
         auto sel = this->_combo->currentData(257).value<DefaultCharacterSelection>();
 
         emit valueConfirmedForPayload({
-            { RPZAtom::Parameter::CharacterId, QVariant::fromValue<RPZCharacter::Id>(sel.characterId) },
+            { RPZAtom::Parameter::CharacterId, QString::number(sel.characterId) },  // must be saved as string to prevent JSON parser lack of precision on double conversion
             { RPZAtom::Parameter::CharacterName, sel.characterName },
             { RPZAtom::Parameter::DefaultPlayerColor, sel.characterColor }
         });
