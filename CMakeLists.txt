@@ -299,6 +299,17 @@ FetchContent_MakeAvailable(audiotube)
 
 target_link_libraries(appExec audiotube)
 
+#########
+# Dicer #
+#########
+
+FetchContent_Declare(dicer
+    GIT_REPOSITORY  "https://github.com/Amphaal/Dicer.git"
+)
+FetchContent_MakeAvailable(dicer)
+
+target_link_libraries(appExec dicer)
+
 ############# 
 # Gstreamer #
 #############

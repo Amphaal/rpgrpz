@@ -48,16 +48,16 @@ void PlaylistDatabase::_setupLocalData() {
     }
 }
 
-QSet<QString> PlaylistDatabase::ytIds() const {
+QSet<PlaylistDatabase::VideoId> PlaylistDatabase::ytIds() const {
     return this->_ytIds;
 }
 
-void PlaylistDatabase::addYoutubeId(const QString &url) {
+void PlaylistDatabase::addYoutubeId(const PlaylistDatabase::VideoId &url) {
     this->_ytIds.insert(url);
     this->save();
 }
 
-void PlaylistDatabase::removeYoutubeId(const QString &url) {
+void PlaylistDatabase::removeYoutubeId(const PlaylistDatabase::VideoId &url) {
     this->_ytIds.remove(url);
     this->save();
 }
@@ -69,11 +69,11 @@ JSONDatabase::Model PlaylistDatabase::_getDatabaseModel() {
     };
 }
 
-QString PlaylistDatabase::trackName(const AudioTube::PlayerConfig::VideoId &ytId) {
+QString PlaylistDatabase::trackName(const PlaylistDatabase::VideoId &ytId) {
     return this->_trackNameById.value(ytId);
 }
 
-void PlaylistDatabase::setTrackName(const AudioTube::PlayerConfig::VideoId &ytId, const QString &name) {
+void PlaylistDatabase::setTrackName(const PlaylistDatabase::VideoId &ytId, const QString &name) {
     this->_trackNameById.insert(ytId, name);
     this->save();
 }

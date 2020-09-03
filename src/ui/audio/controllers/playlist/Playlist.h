@@ -66,7 +66,7 @@ class Playlist : public QListWidget {
  private:
     void keyPressEvent(QKeyEvent * event) override;
     void _removeYoutubeVideo(QListWidgetItem* playlistItem);
-    void _addYoutubeVideo(const AudioTube::PlayerConfig::VideoId &ytVideoId);
+    void _addYoutubeVideo(const PlaylistDatabase::VideoId &ytVideoId);
     bool _addYoutubeItem(AudioTube::VideoMetadata* metadata);
     void contextMenuEvent(QContextMenuEvent *event) override;
     
@@ -75,7 +75,7 @@ class Playlist : public QListWidget {
     void _onCMTrackDeletionRequest(bool checked = false);
     bool _askTrackDeletion();
 
-    QSet<AudioTube::PlayerConfig::VideoId> _playlistVideoIds;
+    QSet<PlaylistDatabase::VideoId> _playlistVideoIds;
 
     void _onItemDoubleClicked(QListWidgetItem * item);
     QListWidgetItem* _playlistItemToUse = nullptr;

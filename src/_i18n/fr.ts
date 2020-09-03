@@ -679,95 +679,95 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="138"/>
+        <location filename="../ui/mainWindow.cpp" line="115"/>
         <source>Press ALT key to display the menu !</source>
         <translation>Appuyez sur la touche ALT pour afficher le menu !</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="252"/>
+        <location filename="../ui/mainWindow.cpp" line="229"/>
         <source>Toy box</source>
         <translation>Boite à jouets</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="342"/>
+        <location filename="../ui/mainWindow.cpp" line="319"/>
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="341"/>
+        <location filename="../ui/mainWindow.cpp" line="318"/>
         <source>Sheets</source>
         <translation>Fiches</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="355"/>
+        <location filename="../ui/mainWindow.cpp" line="332"/>
         <source>Map Atoms</source>
         <translation>Atomes de la carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="356"/>
+        <location filename="../ui/mainWindow.cpp" line="333"/>
         <source>Atom Editor</source>
         <translation>Editeur d&apos;atomes</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="274"/>
-        <location filename="../ui/mainWindow.cpp" line="292"/>
+        <location filename="../ui/mainWindow.cpp" line="251"/>
+        <location filename="../ui/mainWindow.cpp" line="269"/>
         <source>Game Hub</source>
         <translation>Hub de jeu</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="275"/>
+        <location filename="../ui/mainWindow.cpp" line="252"/>
         <source>Documents Share</source>
         <translation>Partage de documents</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="502"/>
+        <location filename="../ui/mainWindow.cpp" line="479"/>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="515"/>
+        <location filename="../ui/mainWindow.cpp" line="492"/>
         <source>Create a new map</source>
         <translation>Créer une nouvelle carte</translation>
     </message>
     <message>
+        <location filename="../ui/mainWindow.cpp" line="494"/>
         <location filename="../ui/mainWindow.cpp" line="517"/>
-        <location filename="../ui/mainWindow.cpp" line="540"/>
-        <location filename="../ui/mainWindow.cpp" line="566"/>
+        <location filename="../ui/mainWindow.cpp" line="543"/>
         <source>Game map (*%1)</source>
         <translation>Carte de campagne (*%1)</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="538"/>
+        <location filename="../ui/mainWindow.cpp" line="515"/>
         <source>Load a new map</source>
         <translation>Charger une nouvelle carte</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="564"/>
+        <location filename="../ui/mainWindow.cpp" line="541"/>
         <source>Save as...</source>
         <translation>Savegarder sous...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="586"/>
+        <location filename="../ui/mainWindow.cpp" line="563"/>
         <source>Tools</source>
         <translation>Outils</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="637"/>
+        <location filename="../ui/mainWindow.cpp" line="614"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="651"/>
+        <location filename="../ui/mainWindow.cpp" line="628"/>
         <source>Searching for updates...</source>
         <translation>Recherche des mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="651"/>
+        <location filename="../ui/mainWindow.cpp" line="628"/>
         <source>Check for updates...</source>
         <translation>Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/mainWindow.cpp" line="682"/>
+        <location filename="../ui/mainWindow.cpp" line="659"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
@@ -835,27 +835,27 @@
         <translation>Cette vidéo Youtube est déjà dans la liste de lecture !</translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="240"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="236"/>
         <source>(Loading metadata...) </source>
         <translation>(Chargement des métadonnées...) </translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="249"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="243"/>
         <source>(Error) </source>
         <translation>(Erreur) </translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="329"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="323"/>
         <source>Delete %1 track(s) from playlist</source>
         <translation>Supprimer %1 piste(s) de la liste de lecture</translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="347"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="341"/>
         <source>Tracks deletion</source>
         <translation>Suppression de pistes</translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="348"/>
+        <location filename="../ui/audio/controllers/playlist/Playlist.cpp" line="342"/>
         <source>Do you really want to delete theses %1 tracks ?</source>
         <translation>Voulez-vous vraiment supprimer ces %1 pistes ?</translation>
     </message>
@@ -1632,17 +1632,17 @@
 <context>
     <name>YoutubePlaylistItemInsertor</name>
     <message>
-        <location filename="../ui/audio/controllers/playlist/YoutubePlaylistItemInsertor.hpp" line="53"/>
+        <location filename="../ui/audio/controllers/playlist/YoutubePlaylistItemInsertor.hpp" line="52"/>
         <source>Invalid Youtube URL !</source>
         <translation>URL Youtube invalide !</translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/YoutubePlaylistItemInsertor.hpp" line="67"/>
+        <location filename="../ui/audio/controllers/playlist/YoutubePlaylistItemInsertor.hpp" line="65"/>
         <source>Paste here a Youtube URL...</source>
         <translation>Collez ici une URL Youtube...</translation>
     </message>
     <message>
-        <location filename="../ui/audio/controllers/playlist/YoutubePlaylistItemInsertor.hpp" line="75"/>
+        <location filename="../ui/audio/controllers/playlist/YoutubePlaylistItemInsertor.hpp" line="73"/>
         <source>Click to add to playlist</source>
         <translation>Cliquez pour ajouter à la liste de lecture</translation>
     </message>

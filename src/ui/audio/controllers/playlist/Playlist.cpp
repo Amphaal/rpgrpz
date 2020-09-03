@@ -102,10 +102,10 @@ void Playlist::dropEvent(QDropEvent *event) {
         switch (type) {
             case YoutubeUrlType::YoutubePlaylist: {
                 // fetch videos from playlist
-                AudioTube::NetworkFetcher::fromPlaylistUrl(url.toString())
+                AudioTube::NetworkFetcher::fromPlaylistUrl(url.toString().toStdString())
                 .then([=](const QList<AudioTube::VideoMetadata*> &mvideoList) {
                     for (const auto mvideo : mvideoList) {
-                        this->addYoutubeVideo(mvideo->url());
+                        this->addYoutubeVideo(QString::fromStdString(mvideo->url()));
                     }
                 });
             }
@@ -126,13 +126,13 @@ void Playlist::_removeYoutubeVideo(QListWidgetItem* playlistItem) {
     auto metadata = RPZQVariant::ytVideoMetadata(playlistItem);
 
     // remove from local list
-    this->_playlistVideoIds.remove(metadata->id());
+    this->_playlistVideoIds.remove(QString::fromStdString(metadata->id()));
 
     // remove from view
     delete playlistItem;
 
     // remove from db
-    PlaylistDatabase::get()->removeYoutubeId(metadata->id());
+    PlaylistDatabase::get()->removeYoutubeId(QString::fromStdString(metadata->id()));
 
     // release from memory
     delete metadata;
@@ -170,7 +170,7 @@ void Playlist::addYoutubeVideo(const QString &url) {
 
     // metadata definition
     try {
-        metadata = AudioTube::VideoMetadata::fromVideoUrl(url);
+        metadata = AudioTube::VideoMetadata::fromVideoUrl(url.toStdString());
 
         auto success = _addYoutubeItem(metadata);
         if (!success) {
@@ -179,7 +179,7 @@ void Playlist::addYoutubeVideo(const QString &url) {
             return;
         }
 
-        PlaylistDatabase::get()->addYoutubeId(metadata->id());
+        PlaylistDatabase::get()->addYoutubeId(QString::fromStdString(metadata->id()));
     }
     catch(...) {
         qWarning() << qUtf8Printable(QStringLiteral(u"Youtube Playlist : %1 is not a valid Youtube URL").arg(url));
@@ -188,15 +188,15 @@ void Playlist::addYoutubeVideo(const QString &url) {
     }
 }
 
-void Playlist::_addYoutubeVideo(const AudioTube::PlayerConfig::VideoId &ytVideoId) {
-    auto metadata = AudioTube::VideoMetadata::fromVideoId(ytVideoId);
+void Playlist::_addYoutubeVideo(const PlaylistDatabase::VideoId &ytVideoId) {
+    auto metadata = AudioTube::VideoMetadata::fromVideoId(ytVideoId.toStdString());
     auto success = _addYoutubeItem(metadata);
     if (!success) delete metadata;
 }
 
 bool Playlist::_addYoutubeItem(AudioTube::VideoMetadata* metadata) {
-    auto url = metadata->url();
-    auto id = metadata->id();
+    auto url = QString::fromStdString(metadata->url());
+    auto id = QString::fromStdString(metadata->id());
     auto title = PlaylistDatabase::get()->trackName(id);
     if (title.isEmpty()) title = url;
 
@@ -216,38 +216,32 @@ bool Playlist::_addYoutubeItem(AudioTube::VideoMetadata* metadata) {
     playlistItem->setIcon(*this->_ytIconGrey);
 
     // update text from playlist update
-    QObject::connect(
-        metadata, &AudioTube::VideoMetadata::metadataRefreshed,
-        [=]() {
+    metadata->setOnMetadataRefreshed([=]() {
             auto durationStr = StringHelper::secondsToTrackDuration(metadata->playerConfig()->duration());
 
             auto metadataTitle = metadata->playerConfig()->title();
             auto completeTitle = QStringLiteral(u"%1 [%2]")
-                            .arg(metadataTitle)
+                            .arg(QString::fromStdString(metadataTitle))
                             .arg(durationStr);
 
             playlistItem->setText(completeTitle);
-            PlaylistDatabase::get()->setTrackName(id, metadataTitle);
+            PlaylistDatabase::get()->setTrackName(id, QString::fromStdString(metadataTitle));
 
             // define active YT icon
             playlistItem->setIcon(*this->_ytIcon);
     });
 
-    QObject::connect(
-        metadata, &AudioTube::VideoMetadata::metadataFetching,
-        [=]() {
-            playlistItem->setIcon(*this->_ytIconGrey);
-            playlistItem->setText(tr("(Loading metadata...) ") + title);
+    metadata->setOnMetadataFetching([=]() {
+        playlistItem->setIcon(*this->_ytIconGrey);
+        playlistItem->setText(tr("(Loading metadata...) ") + title);
     });
 
-    QObject::connect(
-        metadata, &AudioTube::VideoMetadata::streamFailed,
-        [=]() {
-            // add delay for user ack
-            QTimer::singleShot(100, [=]() {
-                playlistItem->setIcon(*this->_ytIconErr);
-                playlistItem->setText(tr("(Error) ") + url);
-            });
+    metadata->setOnStreamFailed([=]() {
+        // add delay for user ack
+        QTimer::singleShot(100, [=]() {
+            playlistItem->setIcon(*this->_ytIconErr);
+            playlistItem->setText(tr("(Error) ") + url);
+        });
     });
 
     this->addItem(playlistItem);

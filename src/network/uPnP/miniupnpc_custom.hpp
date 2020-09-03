@@ -32,6 +32,7 @@
 
 #ifdef _WIN32
     #include <time.h>
+    #include <winsock2.h>
     #include <windows.h>
 #else
 /* for IPPROTO_TCP / IPPROTO_UDP */

@@ -1,20 +1,20 @@
 #pragma once
 
+#include <QDebug>
+
 #include <stdexcept>
 #include <mutex>
 
-#include <QDebug>
-
 #ifdef _WIN32
-#include <stdint.h>
-#include <time.h>
-#include <windows.h>
-#else //APPLE and LINUX
-#include <sys/time.h>
+       #include <stdint.h>
+       #include <time.h>
+       #include <winsock2.h>
+       #include <windows.h>
+#else  // APPLE and LINUX
+       #include <sys/time.h>
 #endif
 
 class SnowFlake {
-
  public:
         using Id = uint64_t;
         static SnowFlake* get();

@@ -25,6 +25,8 @@
 #include <audiotube/VideoMetadata.h>
 #include "src/shared/models/RPZAtom.h"
 
+Q_DECLARE_METATYPE(AudioTube::VideoMetadata*)
+
 class RPZQVariant {
  public:
     using AtomTransformationList = QHash<RPZAtom::Parameter, QVariant>;

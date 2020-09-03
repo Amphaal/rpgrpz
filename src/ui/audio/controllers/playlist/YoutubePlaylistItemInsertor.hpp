@@ -41,15 +41,14 @@ class YoutubePlaylistItemInsertor : public QWidget {
  private:
     QLineEdit* _ytUrlEdit = nullptr;
     QPushButton* _insertLinkBtn = nullptr;
-    QRegularExpression _ytUrlMatcher;
 
     void _handleLinkInsertionAttempt() {
         auto url = this->_ytUrlEdit->text();
         this->_ytUrlEdit->clear();
 
-        auto match = this->_ytUrlMatcher.match(url);
+        auto matches = AudioTube::Regexes::YoutubeIdFinder.match(url.toStdString());
 
-        if (!match.hasMatch()) {
+        if (!matches) {
             QToolTip::showText(this->_ytUrlEdit->mapToGlobal(QPoint()), tr("Invalid Youtube URL !"));
             return;
         }
@@ -60,8 +59,7 @@ class YoutubePlaylistItemInsertor : public QWidget {
  public:
     explicit YoutubePlaylistItemInsertor(QWidget *parent = nullptr) : QWidget(parent),
         _ytUrlEdit(new QLineEdit),
-        _insertLinkBtn(new QPushButton),
-        _ytUrlMatcher(AudioTube::Regexes::YoutubeIdFinder) {
+        _insertLinkBtn(new QPushButton) {
         this->setLayout(new QHBoxLayout);
 
         this->_ytUrlEdit->setPlaceholderText(tr("Paste here a Youtube URL..."));
