@@ -1062,12 +1062,12 @@
         <translation>Nouvel Inventaire</translation>
     </message>
     <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="60"/>
+        <location filename="../shared/models/messaging/RPZMessage.cpp" line="72"/>
         <source> whispers to you : </source>
         <translation> vous chuchote : </translation>
     </message>
     <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="64"/>
+        <location filename="../shared/models/messaging/RPZMessage.cpp" line="76"/>
         <source> whisper to </source>
         <translation> chuchote à </translation>
     </message>
@@ -1368,7 +1368,7 @@
         <translation>s&apos;est déconnecté.</translation>
     </message>
     <message>
-        <location filename="../ui/chat/logs/components/LogContent.hpp" line="75"/>
+        <location filename="../ui/chat/logs/components/LogContent.hpp" line="85"/>
         <source>Sent at %1</source>
         <translation>Envoyé à %1</translation>
     </message>
@@ -1424,7 +1424,7 @@
         <translation>Votre version logicielle diffère de la version du serveur : v%1 (vous) / v%2 (serveur) !</translation>
     </message>
     <message>
-        <location filename="../network/rpz/server/RPZServer.cpp" line="544"/>
+        <location filename="../network/rpz/server/RPZServer.cpp" line="545"/>
         <source>Cannot interpret throw command !</source>
         <translation>Impossible d&apos;interpréter la commande !</translation>
     </message>

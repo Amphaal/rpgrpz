@@ -59,6 +59,16 @@ class LogContent : public QWidget {
                 textStr = QObject::tr("logged out.");
             break;
 
+            case MessageInterpreter::Command::C_DiceThrow : {
+                textStr = msg.toString();
+
+                // add single result as bold if any
+                if(!msg.haveDiceThrowResult()) break;
+                auto srAsStr = QString::number(msg.diceThrowResult(), 'g', 2);
+                textStr += " => <b>" + srAsStr + "</b>";
+            }
+            break;
+
             default:
                 textStr = msg.toString();
             break;

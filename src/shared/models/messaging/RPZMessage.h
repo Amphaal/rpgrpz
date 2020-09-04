@@ -43,6 +43,10 @@ class RPZMessage : public Stampable {
     void setAsDiceThrowCommand();
     bool isDiceThrowCommand() const;
 
+    void setDiceThrowResult(double result);
+    bool haveDiceThrowResult() const;
+    double diceThrowResult() const;
+
  private:
     MessageInterpreter::Command _command = MessageInterpreter::Command::C_Unknown;
     bool _isLocal = false;

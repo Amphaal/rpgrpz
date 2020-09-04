@@ -531,8 +531,9 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg) {
                     sendAndStore();
 
                     // prepare results message
-                    RPZMessage dThrowMsg(QString::fromStdString(resolved.asString), MessageInterpreter::Command::C_DiceThrow);
+                    RPZMessage dThrowMsg(QString::fromStdString(resolved.commandAndResultAsString()), MessageInterpreter::Command::C_DiceThrow);
                     dThrowMsg.setOwnership(msg.owner());
+                    if(resolved.hasSingleResult()) dThrowMsg.setDiceThrowResult(resolved.singleResult());
 
                     this->_messages.insert(dThrowMsg.id(), dThrowMsg);      // store results
                     this->_sendToAll(RPZJSON::Method::Message, dThrowMsg);  // send to all

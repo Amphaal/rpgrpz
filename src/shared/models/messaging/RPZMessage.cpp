@@ -47,6 +47,18 @@ MessageInterpreter::Command RPZMessage::commandType() const {
     return this->_command;
 }
 
+void RPZMessage::setDiceThrowResult(double result) {
+    this->insert(QStringLiteral(u"dtr"), result);
+}
+
+bool RPZMessage::haveDiceThrowResult() const {
+    return this->contains(QStringLiteral(u"dtr"));
+}
+
+double RPZMessage::diceThrowResult() const {
+    return this->value(QStringLiteral(u"dtr")).toDouble();
+}
+
 void RPZMessage::setAsLocal() {
     this->_isLocal = true;
 }
