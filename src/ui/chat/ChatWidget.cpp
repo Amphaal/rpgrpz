@@ -107,7 +107,7 @@ void ChatWidget::connectingToServer() {
         [=](const QString &msg, bool isDiceThrowCommand) {
             // generate message
             RPZMessage message(msg);
-            message.setAsDiceThrowCommand();
+            if(isDiceThrowCommand) message.setAsDiceThrowCommand();
 
             // handle
             this->_chatLog->handleLocalMessage(message);
