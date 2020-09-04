@@ -20,7 +20,7 @@
 #include "ChatEdit.h"
 
 ChatEdit::ChatEdit(QWidget * parent) : QWidget(parent),
-    _msgEdit(new QLineEdit), _sendMsgBtn(new QPushButton), _useDicerBtn(new QPushButton) {
+    _msgEdit(new LineEditHistoriable), _sendMsgBtn(new QPushButton), _useDicerBtn(new QPushButton) {
     // layout
     this->setLayout(new QHBoxLayout);
     this->layout()->setMargin(0);
@@ -58,35 +58,54 @@ void ChatEdit::connectingToServer() {
     );
 }
 
+void ChatEdit::connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) {
+    this->_completer = nullptr;
+    this->_msgEdit->setCompleter(this->_completer);
+}
+
 void ChatEdit::changeEvent(QEvent *event) {
     if (event->type() != QEvent::EnabledChange) return;
 
     // define msgEdit
     if (this->isEnabled()) {
         this->_msgEdit->setPlaceholderText(tr(" Message to send"));
-        this->_msgEdit->setText("");
+        this->_msgEdit->clearAndResetHistoryIndex();
     } else {
         this->_msgEdit->setPlaceholderText("");
     }
 }
 
 void ChatEdit::_defineMsgSendBtn() {
-    if(_useDicerBtn->isChecked()) {
+    if(this->_requestingThrowCommand()) {
         _sendMsgBtn->setText(tr("Roll Dices !"));
+        this->_msgEdit->setCompleter(nullptr);
     } else {
         _sendMsgBtn->setText(tr("Send Message"));
+        this->_msgEdit->setCompleter(this->_completer);
     }
+
+    this->_msgEdit->clearAndResetHistoryIndex();
+}
+
+bool ChatEdit::_requestingThrowCommand() const {
+    return this->_useDicerBtn->isChecked();
 }
 
 void ChatEdit::_sendCommand() {
     auto textCommand = this->_msgEdit->text();
+    auto isThrowCommand = this->_requestingThrowCommand();
 
     // check if is sendable
     if (!MessageInterpreter::isSendable(textCommand)) return;
 
     // empty input and ask for send
-    this->_msgEdit->setText("");
-    emit askedToSendCommand(textCommand, _useDicerBtn->isChecked());
+    if(isThrowCommand) {
+        this->_msgEdit->addTextToHistory();
+    }
+
+    this->_msgEdit->clearAndResetHistoryIndex();
+
+    emit askedToSendCommand(textCommand, isThrowCommand);
 }
 
 void ChatEdit::_onWhisperTargetsChanged() {
@@ -96,10 +115,8 @@ void ChatEdit::_onWhisperTargetsChanged() {
     }
 
     auto model = new QStringListModel(usernamesList.values());
-    auto completer = new QCompleter(model);
-    completer->setCompletionMode(QCompleter::CompletionMode::PopupCompletion);
-    completer->setCaseSensitivity(Qt::CaseInsensitive);
-    completer->setFilterMode(Qt::MatchFlag::MatchContains);
-
-    this->_msgEdit->setCompleter(completer);
+    this->_completer = new QCompleter(model);
+    this->_completer->setCompletionMode(QCompleter::CompletionMode::PopupCompletion);
+    this->_completer->setCaseSensitivity(Qt::CaseInsensitive);
+    this->_completer->setFilterMode(Qt::MatchFlag::MatchContains);
 }

@@ -21,13 +21,13 @@
 
 #include <QWidget>
 #include <QtWidgets/QPushButton>
-#include <QLineEdit>
 #include <QString>
 #include <QHBoxLayout>
 #include <QEvent>
 #include <QCompleter>
 #include <QStringListModel>
 
+#include "src/ui/chat/LineEditHistoriable.hpp"
 #include "src/ui/_others/ConnectivityObserver.h"
 
 class ChatEdit : public QWidget, public ConnectivityObserver {
@@ -42,14 +42,18 @@ class ChatEdit : public QWidget, public ConnectivityObserver {
  protected:
     void changeEvent(QEvent *event) override;
     void connectingToServer() override;
+    void connectionClosed(bool hasInitialMapLoaded, const QString &errorMessage) override;
 
  private:
-    QLineEdit* _msgEdit = nullptr;
+    LineEditHistoriable* _msgEdit = nullptr;
     QPushButton* _sendMsgBtn = nullptr;
     QPushButton* _useDicerBtn = nullptr;
+    QCompleter* _completer = nullptr;
 
     void _sendCommand();
     void _defineMsgSendBtn();
+
+    bool _requestingThrowCommand() const;
 
     void _onWhisperTargetsChanged();
 };

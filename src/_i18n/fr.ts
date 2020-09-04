@@ -339,7 +339,7 @@
 <context>
     <name>ChatEdit</name>
     <message>
-        <location filename="../ui/chat/ChatEdit.cpp" line="77"/>
+        <location filename="../ui/chat/ChatEdit.cpp" line="83"/>
         <source>Send Message</source>
         <translation>Envoyer Message</translation>
     </message>
@@ -349,12 +349,12 @@
         <translation>Utiliser une commande de lancer de dés</translation>
     </message>
     <message>
-        <location filename="../ui/chat/ChatEdit.cpp" line="66"/>
+        <location filename="../ui/chat/ChatEdit.cpp" line="71"/>
         <source> Message to send</source>
         <translation> Message à envoyer</translation>
     </message>
     <message>
-        <location filename="../ui/chat/ChatEdit.cpp" line="75"/>
+        <location filename="../ui/chat/ChatEdit.cpp" line="80"/>
         <source>Roll Dices !</source>
         <translation>Lancer !</translation>
     </message>
