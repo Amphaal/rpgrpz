@@ -31,15 +31,6 @@
 
 #include "src/helpers/_appContext.h"
 
-struct DiceThrow {
-    uint face = 0;
-    uint howMany = 0;
-    QVector<uint> values;
-    QVector<QPair<uint, int>> pairedValues;
-    QString name;
-    double avg = 0;
-};
-
 class MessageInterpreter {
  public:
         enum class Command { C_Unknown, Say, Whisper, Help, C_DiceThrow, C_UserLogIn, C_UserLogOut };
@@ -60,11 +51,7 @@ class MessageInterpreter {
 
         static QString usernameToCommandCompatible(const QString &username);
 
-        static QVector<DiceThrow> findDiceThrowsFromText(const QString &text);
-        static void generateValuesOnDiceThrows(QVector<DiceThrow> &throws);
-
  private:
         static inline const QRegularExpression _hasWhispRegex = QRegularExpression("@(.+?)(?:$|\\s)");
         static inline const QRegularExpression _hasCommandRegex = QRegularExpression("\\/(\\w+)");
-        static inline const QRegularExpression _mustLaunchDice = QRegularExpression("([1-9]|1[0-6])[dD](\\d+)");
 };

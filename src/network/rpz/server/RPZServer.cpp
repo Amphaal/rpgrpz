@@ -105,6 +105,7 @@ void RPZServer::_onNewConnection() {
     this->_usersById.insert(userId, user);
     this->_idsByClientSocket.insert(clientSocket, userId);
     this->_clientSocketById.insert(userId, clientSocket);
+    this->_playersContexts.insert(clientSocket, {});
 
     // clear on client disconnect
     QObject::connect(
@@ -167,6 +168,9 @@ void RPZServer::_onClientSocketDisconnected() {
     this->_clientSocketById.remove(idToRemove);
     auto removedUser = this->_usersById.take(idToRemove);
     this->_formatedUsernamesByUserId.remove(removedUser.whisperTargetName());
+
+    // remove from dice throw contexts
+    this->_playersContexts.remove(disconnectedSocket);
 
     // desalocate host role
     auto role = removedUser.role();
@@ -496,14 +500,53 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg) {
         // on standard message
         case MessageInterpreter::Command::Say:
         default: {
-            // store message
-            this->_messages.insert(msgId, msg);
+            //
+            // Prepare helper methods
+            //
+                auto sendAndStore = [&msgId, &msg, &sender, this]() {
+                    // store message
+                    this->_messages.insert(msgId, msg);
 
-            // push to all sockets
-            this->_sendToAllExcept(sender, RPZJSON::Method::Message, msg);
+                    // push to all sockets
+                    this->_sendToAllExcept(sender, RPZJSON::Method::Message, msg);
+                };
 
-            // send dices throws if requested
-            this->_maySendAndStoreDiceThrows(msg);
+                auto reponseAsError = [&response, &msgId](const QString &errStr) {
+                    response = RPZResponse(msgId, RPZResponse::ResponseCode::DiceThrowError, errStr);
+                };
+            //
+            //
+            //
+
+            // if is dice throw, ask server to interpret before anything else
+            if (msg.isDiceThrowCommand()) {
+                auto &playerContext = _playersContexts[sender];
+
+                try {
+                    // resolve dice throw
+                    auto extract = Dicer::Parser::parseThrowCommand(&this->_gameContext, &playerContext, msg.text().toStdString());
+                    auto resolved = Dicer::Resolver::resolve(&this->_gameContext, &playerContext, extract);
+
+                    // store send command and commit to others connected peers as it has not thrown
+                    sendAndStore();
+
+                    // prepare results message
+                    RPZMessage dThrowMsg(QString::fromStdString(resolved.asString), MessageInterpreter::Command::C_DiceThrow);
+                    dThrowMsg.setOwnership(msg.owner());
+
+                    this->_messages.insert(dThrowMsg.id(), dThrowMsg);      // store results
+                    this->_sendToAll(RPZJSON::Method::Message, dThrowMsg);  // send to all
+                //
+                } catch(const Dicer::DicerException &ex) {
+                    reponseAsError(QString(ex.what()));
+                //
+                } catch(...) {  // default
+                    reponseAsError(tr("Cannot interpret throw command !"));
+                }
+
+            } else {
+                sendAndStore();
+            }
         }
         break;
     }
@@ -514,52 +557,6 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg) {
     // send response
     sender->sendToSocket(RPZJSON::Method::ServerResponse, response);
 }
-
-void RPZServer::_maySendAndStoreDiceThrows(const RPZMessage &msg) {
-    // check if throws are requested
-    auto throws = MessageInterpreter::findDiceThrowsFromText(msg.text());
-    if (throws.isEmpty()) return;
-
-    // generate values
-    MessageInterpreter::generateValuesOnDiceThrows(throws);
-
-    // create message parts
-    QList<QString> throwsStrList;
-    for (const auto &dThrow : throws) {
-        // sub list of values
-        QList<QString> sub;
-        for (const auto &pair : dThrow.pairedValues) {
-            sub += QStringLiteral(u"%1%2")
-                        .arg(StringHelper::toSuperScript(pair.second))
-                        .arg(pair.first);
-        }
-        auto subJoin = sub.join(", ");
-
-        // join values
-        auto joined = QStringLiteral(u"%1 : {%2}").arg(dThrow.name).arg(subJoin);
-
-        // display avg if multiple values
-        if (sub.count() > 1) joined += QStringLiteral(u" x̄ ") + QString::number(dThrow.avg, 'f', 2);
-
-        // add to topmost list
-        throwsStrList += joined;
-    }
-
-    // append it
-    auto text = throwsStrList.join(", ");
-    RPZMessage dThrowMsg(text, MessageInterpreter::Command::C_DiceThrow);
-    dThrowMsg.setOwnership(msg.owner());
-
-    // store message
-    this->_messages.insert(dThrowMsg.id(), dThrowMsg);
-
-    // send to all
-    this->_sendToAll(RPZJSON::Method::Message, dThrowMsg);
-}
-
-//
-//
-//
 
 //
 // LOW Helpers

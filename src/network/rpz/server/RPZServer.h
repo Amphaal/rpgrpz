@@ -55,6 +55,10 @@
 
 #include "src/network/rpz/_any/JSONLogger.hpp"
 
+#include <dicer/Contexts.hpp>
+#include <dicer/Resolver.hpp>
+#include <dicer/Parser.hpp>
+
 class RPZServer : public QTcpServer, public JSONLogger {
     Q_OBJECT
 
@@ -115,10 +119,13 @@ class RPZServer : public QTcpServer, public JSONLogger {
     // game session
     void _sendGameSession(JSONSocket* toSendTo, const RPZUser &associatedUser);
 
+    // dices throws
+    Dicer::GameContext _gameContext;
+    QHash<JSONSocket*, Dicer::PlayerContext> _playersContexts;
+
     // messages
     RPZMap<RPZMessage> _messages;
     void _interpretMessage(JSONSocket* sender, RPZMessage &msg);
-    void _maySendAndStoreDiceThrows(const RPZMessage &msg);
     void _logUserAsMessage(JSONSocket* userSocket, const RPZJSON::Method &method, const RPZUser &user);
 
     // internal

@@ -339,14 +339,24 @@
 <context>
     <name>ChatEdit</name>
     <message>
-        <location filename="../ui/chat/ChatEdit.cpp" line="22"/>
+        <location filename="../ui/chat/ChatEdit.cpp" line="77"/>
         <source>Send Message</source>
         <translation>Envoyer Message</translation>
     </message>
     <message>
-        <location filename="../ui/chat/ChatEdit.cpp" line="53"/>
+        <location filename="../ui/chat/ChatEdit.cpp" line="34"/>
+        <source>Use a dice throw command</source>
+        <translation>Utiliser une commande de lancer de dés</translation>
+    </message>
+    <message>
+        <location filename="../ui/chat/ChatEdit.cpp" line="66"/>
         <source> Message to send</source>
         <translation> Message à envoyer</translation>
+    </message>
+    <message>
+        <location filename="../ui/chat/ChatEdit.cpp" line="75"/>
+        <source>Roll Dices !</source>
+        <translation>Lancer !</translation>
     </message>
 </context>
 <context>
@@ -863,21 +873,21 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../shared/commands/MessageInterpreter.cpp" line="129"/>
+        <location filename="../shared/commands/MessageInterpreter.cpp" line="72"/>
         <source>Server %1 :
 </source>
         <translation>Serveur %1 :
 </translation>
     </message>
     <message>
-        <location filename="../shared/commands/MessageInterpreter.cpp" line="130"/>
+        <location filename="../shared/commands/MessageInterpreter.cpp" line="73"/>
         <source>- To whisper : @{toWhisperTo}.
 </source>
         <translation>- Pour chuchoter : @{destinataire}.
 </translation>
     </message>
     <message>
-        <location filename="../shared/commands/MessageInterpreter.cpp" line="131"/>
+        <location filename="../shared/commands/MessageInterpreter.cpp" line="74"/>
         <source>- To throw dices : {numberOfThrows}D{diceFace}. Exemple : 1d5, 2D20, 3D16.</source>
         <translation>- Pour lancer des dés : {nombreDeLancers}D{faceDuDé}. Exemple : 1d5, 2D20, 3D16.</translation>
     </message>
@@ -1052,12 +1062,12 @@
         <translation>Nouvel Inventaire</translation>
     </message>
     <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="52"/>
+        <location filename="../shared/models/messaging/RPZMessage.cpp" line="60"/>
         <source> whispers to you : </source>
         <translation> vous chuchote : </translation>
     </message>
     <message>
-        <location filename="../shared/models/messaging/RPZMessage.cpp" line="56"/>
+        <location filename="../shared/models/messaging/RPZMessage.cpp" line="64"/>
         <source> whisper to </source>
         <translation> chuchote à </translation>
     </message>
@@ -1409,9 +1419,14 @@
 <context>
     <name>RPZServer</name>
     <message>
-        <location filename="../network/rpz/server/RPZServer.cpp" line="333"/>
+        <location filename="../network/rpz/server/RPZServer.cpp" line="337"/>
         <source>Your software version is different from the server&apos;s one : v%1 (you) / v%2 (server) !</source>
         <translation>Votre version logicielle diffère de la version du serveur : v%1 (vous) / v%2 (serveur) !</translation>
+    </message>
+    <message>
+        <location filename="../network/rpz/server/RPZServer.cpp" line="544"/>
+        <source>Cannot interpret throw command !</source>
+        <translation>Impossible d&apos;interpréter la commande !</translation>
     </message>
 </context>
 <context>

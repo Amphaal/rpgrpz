@@ -8,7 +8,6 @@
 #ifdef _WIN32
        #include <stdint.h>
        #include <time.h>
-       #include <winsock2.h>
        #include <windows.h>
 #else  // APPLE and LINUX
        #include <sys/time.h>

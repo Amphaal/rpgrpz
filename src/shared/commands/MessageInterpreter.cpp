@@ -37,63 +37,6 @@ MessageInterpreter::Command MessageInterpreter::interpretText(const QString &tex
     return _textByCommand.value(command);
 }
 
-void MessageInterpreter::generateValuesOnDiceThrows(QVector<DiceThrow> &throws) {
-    for (auto &dThrow : throws) {
-        double sum = 0;
-        QVector<uint> sout;
-
-        for (uint i = 1; i <= dThrow.howMany; i++) {
-            auto rand = QRandomGenerator::global()->bounded((uint)1, dThrow.face + 1);  // generate throw
-            sout += rand;  // add value
-            sum += rand;  // sum
-        }
-
-        dThrow.values = sout;  // stores all values
-        if (dThrow.howMany > 0) dThrow.avg = sum / dThrow.howMany;  // calculate avg
-
-        // regroup throws
-        QMultiHash<uint, bool> buf;
-        for (const auto i : sout) {
-            buf.insert(i, false);
-        }
-
-        // order keys desc
-        auto keys = buf.uniqueKeys();
-        std::sort(keys.begin(), keys.end(), std::greater<int>());
-
-        QVector<QPair<uint, int>> out;
-        for (const auto face : keys) {
-            auto count = buf.values(face).count();
-            out += { face, count };
-        }
-        dThrow.pairedValues = out;
-    }
-}
-
-QVector<DiceThrow> MessageInterpreter::findDiceThrowsFromText(const QString &text) {
-    QVector<DiceThrow> out;
-
-    auto matches = _mustLaunchDice.globalMatch(text);
-    while (matches.hasNext()) {
-        auto match = matches.next();  // next
-
-        auto face = match.captured(2).toUInt();
-        if (face < 2) continue;
-
-        auto howMany = match.captured(1).toUInt();
-        auto name = match.captured(0);
-
-        DiceThrow diceThrow;
-        diceThrow.howMany = howMany;
-        diceThrow.face = face;
-        diceThrow.name = name;
-
-        out += diceThrow;
-    }
-
-    return out;
-}
-
 QList<QString> MessageInterpreter::findRecipentsFromText(const QString &text) {
     auto matches = _hasWhispRegex.globalMatch(text);
     QSet<QString> out;

@@ -30,7 +30,8 @@ class RPZResponse : public Stampable {
             Error,
             ErrorRecipients,
             ConnectedToServer,
-            Status
+            Status,
+            DiceThrowError
         };
 
         RPZResponse();

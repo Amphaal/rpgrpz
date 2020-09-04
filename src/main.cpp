@@ -17,11 +17,6 @@
 // for further details. Resources without explicit references to a
 // different license and copyright still refer to this GPL.
 
-#ifdef _WIN32
-    #include <winsock2.h>
-    #include <windows.h>
-#endif
-
 #include <QLockFile>
 #include <QStyleFactory>
 

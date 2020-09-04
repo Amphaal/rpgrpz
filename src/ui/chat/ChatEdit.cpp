@@ -19,23 +19,35 @@
 
 #include "ChatEdit.h"
 
-ChatEdit::ChatEdit(QWidget * parent) : QWidget(parent), _msgEdit(new QLineEdit), _sendMsgBtn(new QPushButton(tr("Send Message"))) {
+ChatEdit::ChatEdit(QWidget * parent) : QWidget(parent),
+    _msgEdit(new QLineEdit), _sendMsgBtn(new QPushButton), _useDicerBtn(new QPushButton) {
     // layout
     this->setLayout(new QHBoxLayout);
     this->layout()->setMargin(0);
     this->layout()->addWidget(this->_msgEdit);
+    this->layout()->addWidget(this->_useDicerBtn);
     this->layout()->addWidget(this->_sendMsgBtn);
+
+    // define btns
+    _useDicerBtn->setCheckable(true);
+    _useDicerBtn->setIcon(QIcon(QStringLiteral(u":/icons/app/other/dice.png")));
+    _useDicerBtn->setToolTip(tr("Use a dice throw command"));
+    _defineMsgSendBtn();
 
     // on click
     QObject::connect(
         this->_sendMsgBtn, &QPushButton::clicked,
-        this, &ChatEdit::_sendMessage
+        this, &ChatEdit::_sendCommand
     );
     QObject::connect(
         this->_msgEdit, &QLineEdit::returnPressed,
         [&]() {
             this->_sendMsgBtn->click();
     });
+    QObject::connect(
+        this->_useDicerBtn, &QPushButton::clicked,
+        this, &ChatEdit::_defineMsgSendBtn
+    );
 }
 
 void ChatEdit::connectingToServer() {
@@ -49,6 +61,7 @@ void ChatEdit::connectingToServer() {
 void ChatEdit::changeEvent(QEvent *event) {
     if (event->type() != QEvent::EnabledChange) return;
 
+    // define msgEdit
     if (this->isEnabled()) {
         this->_msgEdit->setPlaceholderText(tr(" Message to send"));
         this->_msgEdit->setText("");
@@ -57,7 +70,15 @@ void ChatEdit::changeEvent(QEvent *event) {
     }
 }
 
-void ChatEdit::_sendMessage() {
+void ChatEdit::_defineMsgSendBtn() {
+    if(_useDicerBtn->isChecked()) {
+        _sendMsgBtn->setText(tr("Roll Dices !"));
+    } else {
+        _sendMsgBtn->setText(tr("Send Message"));
+    }
+}
+
+void ChatEdit::_sendCommand() {
     auto textCommand = this->_msgEdit->text();
 
     // check if is sendable
@@ -65,7 +86,7 @@ void ChatEdit::_sendMessage() {
 
     // empty input and ask for send
     this->_msgEdit->setText("");
-    emit askedToSendMessage(textCommand);
+    emit askedToSendCommand(textCommand, _useDicerBtn->isChecked());
 }
 
 void ChatEdit::_onWhisperTargetsChanged() {

@@ -37,7 +37,7 @@ class ChatEdit : public QWidget, public ConnectivityObserver {
     explicit ChatEdit(QWidget * parent = nullptr);
 
  signals:
-    void askedToSendMessage(const QString &msg);
+    void askedToSendCommand(const QString &command, bool isDiceThrowCommand);
 
  protected:
     void changeEvent(QEvent *event) override;
@@ -46,8 +46,10 @@ class ChatEdit : public QWidget, public ConnectivityObserver {
  private:
     QLineEdit* _msgEdit = nullptr;
     QPushButton* _sendMsgBtn = nullptr;
+    QPushButton* _useDicerBtn = nullptr;
 
-    void _sendMessage();
+    void _sendCommand();
+    void _defineMsgSendBtn();
 
     void _onWhisperTargetsChanged();
 };

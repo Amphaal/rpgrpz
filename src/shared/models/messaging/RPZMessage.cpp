@@ -31,6 +31,14 @@ RPZMessage::RPZMessage(const QString &message, const MessageInterpreter::Command
     this->_setText(message);
 }
 
+void RPZMessage::setAsDiceThrowCommand() {
+    this->insert(QStringLiteral(u"dtc"), true);
+}
+
+bool RPZMessage::isDiceThrowCommand() const {
+    return this->value(QStringLiteral(u"dtc")).toBool();
+}
+
 QString RPZMessage::text() const {
     return this->value(QStringLiteral(u"txt")).toString();
 }

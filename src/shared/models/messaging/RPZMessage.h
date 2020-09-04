@@ -40,6 +40,9 @@ class RPZMessage : public Stampable {
     QPalette palette() const override;
     void setAsLocal();
 
+    void setAsDiceThrowCommand();
+    bool isDiceThrowCommand() const;
+
  private:
     MessageInterpreter::Command _command = MessageInterpreter::Command::C_Unknown;
     bool _isLocal = false;

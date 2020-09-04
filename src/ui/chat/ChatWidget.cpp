@@ -103,9 +103,13 @@ void ChatWidget::connectingToServer() {
     // on message send request
     this->_chatEdit->disconnect();  // disconnect previous message sending handling
     QObject::connect(
-        this->_chatEdit, &ChatEdit::askedToSendMessage,
-        [=](const QString &msg) {
+        this->_chatEdit, &ChatEdit::askedToSendCommand,
+        [=](const QString &msg, bool isDiceThrowCommand) {
+            // generate message
             RPZMessage message(msg);
+            message.setAsDiceThrowCommand();
+
+            // handle
             this->_chatLog->handleLocalMessage(message);
             QMetaObject::invokeMethod(this->_rpzClient, "sendMessage", Q_ARG(RPZMessage, message));
     });
