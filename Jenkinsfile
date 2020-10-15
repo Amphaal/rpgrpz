@@ -26,7 +26,7 @@ pipeline {
                 }
                 stage('Linux') {
                     agent {
-                        docker { image 'amphaal/rpgrpz-linux-ci' }
+                        docker { image 'amphaal/rpgrpz-ci-linux' }
                     }
                     steps {
                         sh 'cmake -GNinja -B_genLinux -H. -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/linux-ci.cmake'
