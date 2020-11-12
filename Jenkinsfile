@@ -1,7 +1,7 @@
 pipeline {
     agent none
     stages {
-        stage('Configure && Build') {
+        // stage('Configure && Build') {
             // parallel {
                 stage('MinGW') {
                     agent {
@@ -34,6 +34,6 @@ pipeline {
                 //     }
                 // }
             // }
-        }
+        // }
     }
 }
