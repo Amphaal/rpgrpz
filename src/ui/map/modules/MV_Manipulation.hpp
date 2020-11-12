@@ -48,7 +48,7 @@ class MV_Manipulation {
         this->_moveAnimator.setDuration(300);
         this->_moveAnimator.setUpdateInterval(10);
         this->_moveAnimator.setDirection(QTimeLine::Direction::Backward);
-        this->_moveAnimator.setCurveShape(QTimeLine::CurveShape::EaseOutCurve);
+        this->_moveAnimator.setCurveShape(QEasingCurve::OutCurve);
 
         // on finished, reset any move
         QObject::connect(

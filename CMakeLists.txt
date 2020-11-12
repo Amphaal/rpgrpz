@@ -49,37 +49,6 @@ configure_file(
     version.h
 )
 
-#if XCompiling Windows, use emulator (cannot be set in toolchain...)
-SET(MAY_USE_WINE "")
-IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    SET(MAY_USE_WINE "wine")
-    #MOC
-    add_executable(Qt5::moc IMPORTED)
-    set_target_properties(Qt5::moc PROPERTIES
-        IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/xmoc.sh
-    )
-    #RCC
-    add_executable(Qt5::rcc IMPORTED)
-    set_target_properties(Qt5::rcc PROPERTIES
-        IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/xrcc.sh
-    )
-    #UIC
-    add_executable(Qt5::uic IMPORTED)
-    set_target_properties(Qt5::uic PROPERTIES
-        IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/xuic.sh
-    )
-    #lrelease
-    add_executable(Qt5::lrelease IMPORTED)
-    set_target_properties(Qt5::lrelease PROPERTIES
-        IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/xlrelease.sh
-    )
-    #lupdate
-    add_executable(Qt5::lupdate IMPORTED)
-    set_target_properties(Qt5::lupdate PROPERTIES
-        IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/cmake/wrappers/xlupdate.sh
-    )
-endif()
-
 ################################
 ## CPP Compiler Configuration ##
 ################################
@@ -269,14 +238,16 @@ endif()
 
 #pe-util is required to find all .dll dependencies
 IF(MINGW)
-    FetchContent_Declare(peldd
+    include(ExternalProject)
+    ExternalProject_Add(peldd
         GIT_REPOSITORY  "https://github.com/Amphaal/pe-util.git"
+        INSTALL_COMMAND ""
     )
-    FetchContent_MakeAvailable(peldd)
-    set_target_properties(peldd
-        PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "binTools"
-    )
+
+    #define exec
+    ExternalProject_Get_Property(peldd BINARY_DIR)
+    set(PELDD_EXEC "${BINARY_DIR}/peldd")
+
 endif()
 
 # #################
@@ -529,7 +500,7 @@ if(MINGW)
     #generate requirements
     add_custom_command(TARGET appExec POST_BUILD
         COMMAND 
-            ${MAY_USE_WINE} $<TARGET_FILE:peldd> -a
+            ${PELDD_EXEC} -a
             -p ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} 
             -p ${MINGW64_ROOT}/bin
             $<TARGET_FILE:appExec> 

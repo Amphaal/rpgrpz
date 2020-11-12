@@ -19,14 +19,11 @@ list(APPEND CMAKE_PREFIX_PATH
 #We want Release with debug infos
 SET(CMAKE_BUILD_TYPE Release)
 
-SET (CMAKE_ASM_MASM_COMPILER                "${CMAKE_SOURCE_DIR}/cmake/wrappers/xuasm.sh")
-SET (CMAKE_RC_COMPILER                      "${CMAKE_SOURCE_DIR}/cmake/wrappers/xwindres.sh")
 SET (CMAKE_C_COMPILER                       "clang")
 SET (CMAKE_CXX_COMPILER                     "clang++")
 SET (CMAKE_AR                               "llvm-ar")
 SET (CMAKE_RANLIB                           "llvm-ranlib")
 SET (CMAKE_NM                               "llvm-nm")
-SET (CMAKE_RC_COMPILER                      "llvm-rc")
 
 SET (CMAKE_C_FLAGS                          "-fuse-ld=lld")
 SET (CMAKE_CXX_FLAGS                        ${CMAKE_C_FLAGS})

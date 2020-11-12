@@ -71,7 +71,7 @@ class AnimationTimeLine : public QTimeLine {
         // set to 30fps
         this->setUpdateInterval(10);
         this->setDirection(QTimeLine::Direction::Backward);
-        this->setCurveShape(QTimeLine::CurveShape::EaseOutCurve);
+        this->setEasingCurve(QEasingCurve::OutCurve);
 
         // bind
         QObject::connect(
