@@ -44,26 +44,3 @@
 #include <upnpcommands.h>
 #include <portlistingparse.h>
 #include <upnperrors.h>
-
-/* protofix() checks if protocol is "UDP" or "TCP"
- * returns NULL if not */
-static const char * protofix(const char * proto) {
-    static const char proto_tcp[4] = { 'T', 'C', 'P', 0};
-    static const char proto_udp[4] = { 'U', 'D', 'P', 0};
-    int i, b;
-    for (i = 0, b = 1; i < 4; i++)
-        b = b && (
-                    (proto[i] == proto_tcp[i])
-                    || (proto[i] == (proto_tcp[i] | 32))
-                );
-    if (b)
-        return proto_tcp;
-    for (i = 0, b = 1; i < 4; i++)
-        b = b && (
-                    (proto[i] == proto_udp[i])
-                    || (proto[i] == (proto_udp[i] | 32))
-                );
-    if (b)
-        return proto_udp;
-    return 0;
-}

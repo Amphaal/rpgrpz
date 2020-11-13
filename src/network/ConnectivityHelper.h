@@ -68,7 +68,7 @@ class ConnectivityHelper : public QObject {
     void _pickPreferedConfiguration();
 
     void _onUPnPSuccess(const QString &protocol, const QString &negociatedPort);
-    void _onUPnPError(int errorCode);
+    void _onUPnPError();
     QString _upnp_extIp;
     void _onUPnPExtIpFound(const QString &extIp);
     void networkChanged(const QNetworkAccessManager::NetworkAccessibility accessible);
