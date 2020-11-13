@@ -157,7 +157,7 @@ endif()
 target_sources(appExec PRIVATE "resources/resources.qrc")
 
 IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")  
-    target_sources(appExec PRIVATE "resources/resources.rc") #add Windows ressources (icons)
+    target_sources(appExec PRIVATE "resources/icons/resources.rc") #add Windows ressources (icons)
 ELSEIF(APPLE)   
     target_sources(appExec PRIVATE "resources/icons/app.icns") #add MacOS icons in output package
     set_source_files_properties("resources/icons/app.icns"
