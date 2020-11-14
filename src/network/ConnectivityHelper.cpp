@@ -19,9 +19,7 @@
 
 #include "ConnectivityHelper.h"
 
-ConnectivityHelper::ConnectivityHelper(QObject *parent) : QObject(parent),
-        _nam(new QNetworkAccessManager),
-        _ncm(new QNetworkConfigurationManager) {
+ConnectivityHelper::ConnectivityHelper(QObject *parent) : QObject(parent) {
     this->_pickPreferedConfiguration();
 
     QObject::connect(
@@ -46,12 +44,6 @@ void ConnectivityHelper::_mustReInit(const QNetworkConfiguration &config) {
     if (mustReInit || mustReInit_2) {
         this->init();
     }
-}
-
-QList<QNetworkConfiguration> ConnectivityHelper::_getDefinedConfiguration() {
-    auto filter = QNetworkConfiguration::StateFlags(QNetworkConfiguration::Defined);
-    auto filteredConfs = this->_ncm->allConfigurations(filter);
-    return filteredConfs;
 }
 
 void ConnectivityHelper::_pickPreferedConfiguration() {
@@ -90,15 +82,13 @@ ConnectivityHelper::~ConnectivityHelper()  {
 }
 
 void ConnectivityHelper::_clearUPnPRequester() {
-    this->_upnp_extIp = "";
+    if (!this->_upnpThread) return;
 
-    if (this->_upnpThread) {
-        this->_upnpThread->exit();
-        this->_upnpThread->wait();
-        this->_upnpThread->disconnect();
-        delete this->_upnpThread;
-        this->_upnpThread = 0;
-    }
+    this->_upnpThread->exit();
+    this->_upnpThread->wait();
+    this->_upnpThread->disconnect();
+    delete this->_upnpThread;
+    this->_upnpThread = 0;
 }
 
 void ConnectivityHelper::_tryNegociateUPnPPort() {
@@ -109,7 +99,7 @@ void ConnectivityHelper::_tryNegociateUPnPPort() {
              << "as"
              << qUtf8Printable(AppContext::UPNP_REQUEST_DESCRIPTION);
 
-    this->_upnpThread = new uPnPRequester(
+    this->_upnpThread = new uPnPThread(
         AppContext::UPNP_DEFAULT_TARGET_PORT,
         AppContext::UPNP_REQUEST_DESCRIPTION
     );
@@ -124,17 +114,7 @@ void ConnectivityHelper::_tryNegociateUPnPPort() {
         this, &ConnectivityHelper::_onUPnPError
     );
 
-    QObject::connect(
-        this->_upnpThread, &uPnPThread::uPnPExtIpFound,
-        this, &ConnectivityHelper::_onUPnPExtIpFound
-    );
-
     this->_upnpThread->start();
-}
-
-void ConnectivityHelper::_onUPnPExtIpFound(const QString &extIp) {
-    this->_upnp_extIp = extIp;
-    emit remoteAddressStateChanged(extIp);
 }
 
 void ConnectivityHelper::_onUPnPError() {
@@ -143,7 +123,7 @@ void ConnectivityHelper::_onUPnPError() {
     emit remoteAddressStateChanged(tr("<UPnP Failed>"), RPZStatusLabel::State::Error);
 }
 
-void ConnectivityHelper::_onUPnPSuccess(const QString &protocol, const QString &negociatedPort) {
+void ConnectivityHelper::_onUPnPSuccess(const QString &extIP, const QString &protocol, const QString &negociatedPort) {
     auto out = QStringLiteral(u"OK [port: %1]");
     out = out.arg(negociatedPort);
 
@@ -151,6 +131,7 @@ void ConnectivityHelper::_onUPnPSuccess(const QString &protocol, const QString &
              << qUtf8Printable(protocol)
              << qUtf8Printable(out);
 
+    emit remoteAddressStateChanged(extIP);
     emit uPnPStateChanged(out);
 }
 
@@ -169,54 +150,14 @@ void ConnectivityHelper::networkChanged(const QNetworkAccessManager::NetworkAcce
     }
 }
 
-void ConnectivityHelper::_getLocalAddress() {
-    QHostAddress localhost(QHostAddress::LocalHost);
-    QString rtrn;
-
-    for (const auto &address : QNetworkInterface::allAddresses()) {
-        if (address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost) {
-            rtrn = address.toString();
-            break;
-        }
-    }
-
-    if (rtrn.isNull()) {
-        qDebug() << "Connectivity : Local IP not found !";
-        emit localAddressStateChanged(this->_getErrorText(), RPZStatusLabel::State::Error);
-    } else {
-        qDebug() << "Connectivity : Local IP" << rtrn;
-        emit localAddressStateChanged(rtrn);
-    }
-}
-
 ///
 ///
 ///
 
-QString ConnectivityHelper::_getWaitingText() {
+const QString ConnectivityHelper::_getWaitingText() const {
     return tr("<Searching...>");
 }
 
-QString ConnectivityHelper::_getErrorText() {
+const QString ConnectivityHelper::_getErrorText() const {
     return tr("<Error>");
-}
-
-void ConnectivityHelper::_SSDebugNetworkConfig(const QString &descr, const QNetworkConfiguration &config) {
-    qDebug() << qUtf8Printable(
-                    _DebugStringModel.arg(descr)
-                                     .arg(config.name())
-                                     .arg(config.state())
-                                     .arg(config.type())
-                                     .arg(config.bearerTypeName())
-                );
-}
-
-void ConnectivityHelper::_debugNetworkConfig() {
-    for (auto &config : this->_getDefinedConfiguration()) {
-        _SSDebugNetworkConfig("EXISTING", config);
-    }
-
-    // active...
-    auto activeConf = this->_nam->configuration();
-    _SSDebugNetworkConfig("ACTIVE", activeConf);
 }

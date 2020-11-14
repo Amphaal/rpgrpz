@@ -7,7 +7,7 @@
         
         {
             "name": "(Windows) Launch",
-            "preLaunchTask": "3. Build",
+            "preLaunchTask": "2. Build",
             "type": "cppvsdbg",
             "request": "launch",
             "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
@@ -28,7 +28,7 @@
         {
             "targetArchitecture": "x64",
             "type": "cppdbg",
-            "preLaunchTask": "3. Build",
+            "preLaunchTask": "2. Build",
             "name" : "Launch",
             "request": "launch",
             "cwd": "${workspaceFolder}",

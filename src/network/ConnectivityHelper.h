@@ -24,14 +24,8 @@
 #include <QLabel>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QHostAddress>
-#include <QNetworkReply>
-#include <QNetworkInterface>
-#include <QNetworkSession>
-#include <QNetworkAccessManager>
-#include <QNetworkConfigurationManager>
 
-#include "src/network/uPnP/uPnPRequester.hpp"
+#include "src/network/uPnPThread.hpp"
 
 #include "src/helpers/_appContext.h"
 
@@ -51,29 +45,23 @@ class ConnectivityHelper : public QObject {
     void uPnPStateChanged(const QString &stateText, RPZStatusLabel::State state = RPZStatusLabel::State::Finished);
 
  private:
-    QNetworkAccessManager* _nam = nullptr;
-    QNetworkConfigurationManager* _ncm = nullptr;
-    uPnPRequester* _upnpThread = nullptr;
+    uPnPThread* _upnpThread = nullptr;
 
     static inline QString _DebugStringModel = R"(Connectivity : %1 >> %2 [state:%3, type:%4, bearer:%5])";
+    const QString _getWaitingText() const;
+    const QString _getErrorText() const;
+
     void _SSDebugNetworkConfig(const QString &descr, const QNetworkConfiguration &config);
     void _debugNetworkConfig();
 
-    QString _getWaitingText();
-    QString _getErrorText();
 
-    void _getLocalAddress();
     void _tryNegociateUPnPPort();
     void _clearUPnPRequester();
     void _pickPreferedConfiguration();
 
-    void _onUPnPSuccess(const QString &protocol, const QString &negociatedPort);
+    void _onUPnPSuccess(const QString &localIP, const QString &extIP, const QString &protocol, const QString &negociatedPort);
     void _onUPnPError();
-    QString _upnp_extIp;
-    void _onUPnPExtIpFound(const QString &extIp);
     void networkChanged(const QNetworkAccessManager::NetworkAccessibility accessible);
 
     void _mustReInit(const QNetworkConfiguration &config);
-
-    QList<QNetworkConfiguration> _getDefinedConfiguration();
 };

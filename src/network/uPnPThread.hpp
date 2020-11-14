@@ -22,12 +22,32 @@
 #include <QThread>
 #include <QDebug>
 
+#include <nw-candy/uPnPHandler.h>
+
 // .hpp for QT bindings to generate
-class uPnPThread : public QThread {
+class uPnPThread : public QThread, public NetworkCandy::uPnPHandler {
     Q_OBJECT
+
+ public:
+    uPnPThread(const QString &targetPort, const QString &description)
+        : NetworkCandy::uPnPHandler(targetPort.toStdString(), description.toStdString()) {}
+
+    void run() override {
+        auto result = this->ensurePortMapping();
+        if (!result) emit uPnPError();
+        else  uPnPSuccess(
+            QString::fromStdString(this->localIP()),
+            QString::fromStdString(this->externalIP()),
+            QString::fromStdString(NetworkCandy::uPnPHandler::PROTOCOL),
+            QString::fromStdString(this->portToMap())
+        );
+    }
+
+    ~uPnPThread() {
+        this->mayDeletePortMapping();
+    }
 
  signals:
     void uPnPError();
-    void uPnPExtIpFound(const QString &extIP);
-    void uPnPSuccess(const QString &protocol, const QString &negociatedPort);
+    void uPnPSuccess(const QString &localIP, const QString &extIP, const QString &protocol, const QString &negociatedPort);
 };

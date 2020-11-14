@@ -217,10 +217,6 @@ target_link_libraries(appExec
     OpenSSL::Crypto
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    target_link_libraries(appExec ws2_32) #WSA functions !
-endif()
-
 ########
 # QT 5 #
 ########
@@ -285,38 +281,34 @@ IF(MINGW)
     #define exec
     ExternalProject_Get_Property(peldd BINARY_DIR)
     set(PELDD_EXEC "${BINARY_DIR}/peldd")
-
 endif()
 
 # #################
 # # Sentry-native #
 # #################
 
-# add_subdirectory("external/sentry-native")
-# target_compile_options(sentry PUBLIC -Wno-unused-parameter -Wno-format-pedantic) #temporary fix
-# target_include_directories(appExec PRIVATE "${Sentry-Native_SOURCE_DIR}/include")
-# target_link_libraries(appExec sentry)
+add_subdirectory(sentry-native)
+target_link_libraries(appExec sentry)
+
+################
+# NetworkCandy #
+################
+
+add_subdirectory(NetworkCandy)
+target_link_libraries(appExec nw-candy)
 
 #############
 # AudioTube #
 #############
 
-FetchContent_Declare(audiotube
-    GIT_REPOSITORY  "https://github.com/Amphaal/AudioTube.git"
-)
-FetchContent_MakeAvailable(audiotube)
-
+add_subdirectory(Audiotube)
 target_link_libraries(appExec audiotube)
 
 #########
 # Dicer #
 #########
 
-FetchContent_Declare(dicer
-    GIT_REPOSITORY  "https://github.com/Amphaal/Dicer.git"
-)
-FetchContent_MakeAvailable(dicer)
-
+add_subdirectory(Dicer)
 target_link_libraries(appExec dicer)
 
 ############# 
@@ -465,17 +457,6 @@ if(MINGW)
 
     endforeach()
 endif()
-
-#############
-# miniupnpc #
-#############
-
-#find miniupnpc
-find_package(miniupnpc REQUIRED)
-
-#link
-target_link_libraries(appExec ${MINIUPNP_LIBRARY})
-target_include_directories(appExec PRIVATE ${MINIUPNP_INCLUDE_DIR})
 
 #####################
 # list source files #

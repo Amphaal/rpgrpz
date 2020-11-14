@@ -22,7 +22,6 @@
 #include <QString>
 #include <QColor>
 #include <QVariantHash>
-#include <QHostAddress>
 
 #include <string>
 

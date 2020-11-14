@@ -17,12 +17,15 @@
                 "C:/msys64/mingw64/include/QtWidgets",
                 "C:/msys64/mingw64/include/QtGui",
                 "C:/msys64/mingw64/include/QtOpenGL",
-                "C:/msys64/mingw64/include/miniupnpc",
                 "C:/msys64/mingw64/include/QtSvg",
                 "C:/msys64/mingw64/include/gstreamer-1.0",
                 "C:/msys64/mingw64/include/glib-2.0",
                 "C:/msys64/mingw64/lib/glib-2.0/include",
-                "${workspaceFolder}/_genDebug"
+                "${workspaceFolder}/_genDebug",
+                "${workspaceFolder}/sentry-native",
+                "${workspaceFolder}/Dicer",
+                "${workspaceFolder}/AudioTube",
+                "${workspaceFolder}/NetworkCandy/nw-candy/include"
             ],
             "defines": [
                 "_DEBUG",
@@ -53,7 +56,6 @@
                 "/usr/local/Cellar/qt/5.14.1/lib/QtNetwork.framework/Versions/5/Headers",
                 "/usr/local/Cellar/qt/5.14.1/lib/QtGui.framework/Versions/5/Headers",
                 "/usr/local/Cellar/qt/5.14.1/lib/QtOpenGL.framework/Versions/5/Headers",
-                "/usr/local/Cellar/miniupnpc/2.1/include/miniupnpc",
                 "/usr/local/Cellar/qt/5.14.1/lib/QtSvg.framework/Versions/5/Headers",
                 "/usr/local/Cellar/gstreamer/1.16.2/include/gstreamer-1.0",
                 "/usr/local/Cellar/glib/2.64.2/include/glib-2.0",

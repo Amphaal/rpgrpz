@@ -20,6 +20,7 @@
 #pragma once
 
 #include <sys/stat.h>
+#include <sentry.h>
 
 #include <QSslSocket>
 #include <QDir>
@@ -46,8 +47,8 @@ class AppContext {
  private:
     static inline AppSettings* _settings = nullptr;
 
-    static inline QTranslator _qtTranslator = QTranslator();
-    static inline QTranslator _appTranslator = QTranslator();
+    static inline QTranslator _qtTranslator;
+    static inline QTranslator _appTranslator;
 
     static inline QString _appDataLocation;
     static const QString _defaultAppDataLocation();
