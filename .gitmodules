@@ -1,0 +1,12 @@
+[submodule "AudioTube"]
+	path = AudioTube
+	url = https://github.com/Amphaal/AudioTube.git
+[submodule "Dicer"]
+	path = Dicer
+	url = https://github.com/Amphaal/Dicer.git
+[submodule "sentry-native"]
+	path = sentry-native
+	url = https://github.com/getsentry/sentry-native
+[submodule "NetworkCandy"]
+	path = NetworkCandy
+	url = https://github.com/Amphaal/NetworkCandy
