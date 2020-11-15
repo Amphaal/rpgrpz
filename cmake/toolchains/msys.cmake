@@ -32,6 +32,8 @@ SET (CMAKE_RANLIB               "llvm-ranlib")
 SET (CMAKE_NM                   "llvm-nm")
 SET (CMAKE_RC_COMPILER          "llvm-rc")
 
+SET (CMAKE_EXE_LINKER_FLAGS     "-Wl,/force:multiple")
+
 SET (CMAKE_C_FLAGS              "-fuse-ld=lld")
 SET (CMAKE_CXX_FLAGS            ${CMAKE_C_FLAGS})
 

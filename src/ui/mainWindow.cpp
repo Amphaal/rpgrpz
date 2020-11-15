@@ -183,7 +183,7 @@ void MainWindow::_initConnectivity() {
         this->_sb, &RPZStatusBar::updateUPnPLabel
     );
 
-    this->_ipHelper->init();
+    this->_ipHelper->startWorking();
 
     ////////////////////
     /// RPZServer ! //

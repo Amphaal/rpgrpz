@@ -21,33 +21,30 @@
 
 #include <QThread>
 #include <QDebug>
+#include <QCoreApplication>
 
-#include <nw-candy/uPnPHandler.h>
+#include <nw-candy/ConnectivityManager.h>
 
 // .hpp for QT bindings to generate
-class uPnPThread : public QThread, private NetworkCandy::uPnPHandler {
+class CMThread : public QThread, private NetworkCandy::ConnectivityManager {
     Q_OBJECT
 
  public:
-    uPnPThread(const QString &targetPort, const QString &description)
-        : NetworkCandy::uPnPHandler(targetPort.toStdString(), description.toStdString()) {}
+    CMThread() {}
 
     void run() override {
-        auto result = this->ensurePortMapping();
-        if (!result) emit uPnPError();
-        else  uPnPSuccess(
-            QString::fromStdString(this->localIP()),
-            QString::fromStdString(this->externalIP()),
-            QString::fromStdString(NetworkCandy::uPnPHandler::PROTOCOL),
-            QString::fromStdString(this->portToMap())
-        );
-    }
-
-    ~uPnPThread() {
-        this->mayDeletePortMapping();
+        this->initCOM();
+        emit connectivityChanged(this->isConnectedToInternet());
+        exec();
+        this->releaseCOM();
     }
 
  signals:
-    void uPnPError();
-    void uPnPSuccess(const QString &localIP, const QString &extIP, const QString &protocol, const QString &negociatedPort);
+    void connectivityChanged(bool isConnectedToInternet);
+
+ private:
+    void _connectivityChanged(bool isConnectedToInternet) final {
+        NetworkCandy::ConnectivityManager::_connectivityChanged(isConnectedToInternet);
+        emit connectivityChanged(isConnectedToInternet);
+    }
 };

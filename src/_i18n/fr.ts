@@ -413,22 +413,22 @@
 <context>
     <name>ConnectivityHelper</name>
     <message>
-        <location filename="../network/ConnectivityHelper.cpp" line="142"/>
+        <location filename="../network/ConnectivityHelper.cpp" line="87"/>
         <source>No</source>
         <translation>Non</translation>
     </message>
     <message>
-        <location filename="../network/ConnectivityHelper.cpp" line="143"/>
+        <location filename="../network/ConnectivityHelper.cpp" line="88"/>
         <source>&lt;UPnP Failed&gt;</source>
         <translation>&lt;Erreur UPnP&gt;</translation>
     </message>
     <message>
-        <location filename="../network/ConnectivityHelper.cpp" line="197"/>
+        <location filename="../network/ConnectivityHelper.cpp" line="127"/>
         <source>&lt;Searching...&gt;</source>
         <translation>&lt;Recherche...&gt;</translation>
     </message>
     <message>
-        <location filename="../network/ConnectivityHelper.cpp" line="201"/>
+        <location filename="../network/ConnectivityHelper.cpp" line="131"/>
         <source>&lt;Error&gt;</source>
         <translation>&lt;Erreur&gt;</translation>
     </message>
