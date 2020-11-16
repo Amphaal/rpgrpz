@@ -423,12 +423,12 @@
         <translation>&lt;Erreur UPnP&gt;</translation>
     </message>
     <message>
-        <location filename="../network/ConnectivityHelper.cpp" line="127"/>
+        <location filename="../network/ConnectivityHelper.cpp" line="125"/>
         <source>&lt;Searching...&gt;</source>
         <translation>&lt;Recherche...&gt;</translation>
     </message>
     <message>
-        <location filename="../network/ConnectivityHelper.cpp" line="131"/>
+        <location filename="../network/ConnectivityHelper.cpp" line="129"/>
         <source>&lt;Error&gt;</source>
         <translation>&lt;Erreur&gt;</translation>
     </message>

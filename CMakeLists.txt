@@ -130,8 +130,8 @@ target_compile_definitions(appExec PRIVATE $<$<CONFIG:Debug>:_DEBUG>) #define _D
 
 #generate pdb
 IF(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")  
-    # target_link_options(appExec PRIVATE -Wl,-pdb=) # generate pdb files
-    # target_compile_options(appExec PRIVATE -gcodeview) #use codeview for pdbs
+    target_link_options(appExec PRIVATE -Wl,-pdb=) # generate pdb files
+    target_compile_options(appExec PRIVATE -gcodeview) #use codeview for pdbs
 endif()
 
 #warnings for debug
