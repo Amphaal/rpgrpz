@@ -27,7 +27,7 @@ message(STATUS "Using toolchain file: [${CMAKE_TOOLCHAIN_FILE}].")
 
 #project setup
 project(RPGRPZ
-    VERSION 1.0.18
+    VERSION 1.0.19
     DESCRIPTION "Simple Tabletop RPG experience"
     HOMEPAGE_URL "https://github.com/Amphaal/rpgrpz"
     LANGUAGES CXX
@@ -212,7 +212,7 @@ endif()
 find_package(OpenSSL REQUIRED)
 
 #link
-target_link_libraries(appExec
+target_link_libraries(appExec PRIVATE
     OpenSSL::SSL
     OpenSSL::Crypto
 )
@@ -231,7 +231,7 @@ find_package(Qt5 REQUIRED COMPONENTS
     LinguistTools
     Multimedia
 )
-target_link_libraries(appExec
+target_link_libraries(appExec PRIVATE
     Qt5::Core
     Qt5::Gui 
     Qt5::Widgets
@@ -288,28 +288,28 @@ endif()
 # #################
 
 add_subdirectory(sentry-native)
-target_link_libraries(appExec sentry)
+target_link_libraries(appExec PRIVATE sentry)
 
 ################
 # NetworkCandy #
 ################
 
 add_subdirectory(NetworkCandy)
-target_link_libraries(appExec nw-candy)
+target_link_libraries(appExec PRIVATE nw-candy)
 
 #############
 # AudioTube #
 #############
 
 add_subdirectory(Audiotube)
-target_link_libraries(appExec audiotube)
+target_link_libraries(appExec PRIVATE audiotube)
 
 #########
 # Dicer #
 #########
 
 add_subdirectory(Dicer)
-target_link_libraries(appExec dicer)
+target_link_libraries(appExec PRIVATE dicer)
 
 ############# 
 # Gstreamer #
@@ -330,7 +330,7 @@ IF(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 ENDIF()
 
 #link
-target_link_libraries(appExec     
+target_link_libraries(appExec PRIVATE     
     PkgConfig::Gst
 )
 
