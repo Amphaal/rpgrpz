@@ -191,9 +191,13 @@ void AppContext::init(const QString &customContext) {
 
 void AppContext::initSentry() {
     auto options = sentry_options_new();
-    // sentry_options_set_dsn(options, SENTRY_ENDPOINT);
+    sentry_options_set_dsn(options, SENTRY_ENDPOINT);
 
-    QString environement = _DEBUG ? "Debug" : "Production";
+    #ifdef _DEBUG
+        QString environement = "Debug";
+    #else
+        QString environement = "Production";
+    #endif
     sentry_options_set_environment(options, qUtf8Printable(environement));
 
     sentry_options_set_release(options, GITHUB_VERSION_NAME);

@@ -41,7 +41,7 @@ SET(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME ${PROJECT_NAME_LOWER})
 
 SET(APP_PUBLISHER "LVWL")
 SET(APP_PATCHNOTE_URL "https://github.com/Amphaal/rpgrpz/releases")
-SET(SENTRY_ENDPOINT "http://a796bce0168a425b83886dbdad462095@zonme.to2x.ovh:9000/3")
+SET(SENTRY_ENDPOINT "https://ecb72ca256e744b990fd4f50aa52ea6f@o333337.ingest.sentry.io/5517405")
 
 #configure header with basic app informations
 configure_file(
