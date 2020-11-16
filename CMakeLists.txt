@@ -301,7 +301,7 @@ target_link_libraries(appExec PRIVATE nw-candy)
 # AudioTube #
 #############
 
-add_subdirectory(Audiotube)
+add_subdirectory(AudioTube)
 target_link_libraries(appExec PRIVATE audiotube)
 
 #########
