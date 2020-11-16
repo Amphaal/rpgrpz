@@ -548,4 +548,10 @@ endif()
 # add Publish target #
 ######################
 
+# print version
+add_custom_command(TARGET appExec 
+    COMMAND printf "${CMAKE_PROJECT_VERSION}" > version
+)
+
+# publish script
 include(CMakePublish)
