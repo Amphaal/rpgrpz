@@ -17,7 +17,7 @@ list(APPEND CMAKE_PREFIX_PATH
 )
 
 #We want Release with debug infos
-SET(CMAKE_BUILD_TYPE Release)
+SET(CMAKE_BUILD_TYPE RelWithDebInfo)
 
 SET (CMAKE_C_COMPILER                       "clang")
 SET (CMAKE_CXX_COMPILER                     "clang++")
