@@ -62,20 +62,32 @@ void AppContext::definePPcm(QPaintDevice* device) {
     _ppcm = static_cast<double>(device->logicalDpiX()) / 2.54;
 }
 
+AppContext::~AppContext() {
+    if(_settings) delete _settings;
+    if(_qtTranslator) delete _qtTranslator;
+    if(_appTranslator) delete _appTranslator;
+}
+
 void AppContext::installTranslations(QApplication* app) {
     auto translationsPath = app->applicationDirPath() + QDir::separator() + "translations";
     auto locale = QLocale::system();
 
     // Qt
-    if (_qtTranslator.load(locale, "qt", "_", translationsPath)) {
-        auto installed = app->installTranslator(&_qtTranslator);
-        if (installed) qDebug() << "QT translation installed !";
+    if(!_qtTranslator) {
+        _qtTranslator = new QTranslator;
+        if (_qtTranslator->load(locale, "qt", "_", translationsPath)) {
+            auto installed = app->installTranslator(_qtTranslator);
+            if (installed) qDebug() << "QT translation installed !";
+        }
     }
 
     // app
-    if (_appTranslator.load(locale, "", "", translationsPath)) {
-        auto installed = app->installTranslator(&_appTranslator);
-        if (installed) qDebug() << "App translation installed !";
+    if(!_appTranslator) {
+        _appTranslator = new QTranslator;
+        if (_appTranslator->load(locale, "", "", translationsPath)) {
+            auto installed = app->installTranslator(_appTranslator);
+            if (installed) qDebug() << "App translation installed !";
+        }
     }
 }
 

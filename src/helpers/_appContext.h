@@ -46,9 +46,8 @@ class MapView;
 class AppContext {
  private:
     static inline AppSettings* _settings = nullptr;
-
-    static inline QTranslator _qtTranslator;
-    static inline QTranslator _appTranslator;
+    static inline QTranslator* _qtTranslator = nullptr;
+    static inline QTranslator* _appTranslator = nullptr;
 
     static inline QString _appDataLocation;
     static const QString _defaultAppDataLocation();
@@ -80,6 +79,8 @@ class AppContext {
     static inline QGLWidget* _mapGLWidget = nullptr;
 
  public:
+    ~AppContext();
+
     static AppSettings* settings();
     static void initSentry();
 
