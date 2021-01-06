@@ -176,11 +176,12 @@ class MeasurementHelper : public QObject, public QGraphicsItem, public RPZGraphi
             auto x = qAbs(qRound((this->_startScenePos.x() - pp.sceneCursorPos.x()) / tileWidth));
             auto y = qAbs(qRound((this->_startScenePos.y() - pp.sceneCursorPos.y()) / tileWidth));
             auto squared = qSqrt(x*x + y*y);
+            auto squaredMeters = squared * _mapParams.tileToIngameMeters();
 
-            auto text = QStringLiteral(u"%1x%2 (%3)")
+            auto text = QStringLiteral(u"%1x%2 [%4m]")
                 .arg(x)
                 .arg(y)
-                .arg(squared, 0, 'f', 1);
+                .arg(squaredMeters, 0, 'f', 1);
             auto textRect = painter->boundingRect(QRectF(), text, aa);
             textRect = this->_adjustText(pp.sceneCursorPos, pp.viewCursorPos, textRect);
 
