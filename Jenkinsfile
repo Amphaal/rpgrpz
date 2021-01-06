@@ -16,8 +16,8 @@ pipeline {
                         sh 'cmake -GNinja -B_genWindows -H. -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/windows-ci.cmake'
                         sh 'cmake --build ./_genWindows --target zipForDeploy'
                         withCredentials([string(credentialsId: 'jenkins-sentry-auth-token', variable: 'SENTRY_AUTH_TOKEN')]) {
-                            sh 'sentry-cli --auth-token $SENTRY_AUTH_TOKEN releases new -p rpgrpz (cat _genWindows/version)'
-                            sh 'sentry-cli --auth-token $SENTRY_AUTH_TOKEN releases set-commits --auto (cat _genWindows/version)'
+                            sh 'sentry-cli --auth-token $SENTRY_AUTH_TOKEN releases new -p rpgrpz $(cat _genWindows/version)'
+                            sh 'sentry-cli --auth-token $SENTRY_AUTH_TOKEN releases set-commits --auto $(cat _genWindows/version)'
                             sh 'sentry-cli --auth-token $SENTRY_AUTH_TOKEN upload-dif --wait _genWindows/bin'
                         }
                         withCredentials([string(credentialsId: 'jenkins-bintray-api-key', variable: 'BINTRAY_API_KEY')]) {
