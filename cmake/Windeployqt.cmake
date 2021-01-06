@@ -47,6 +47,7 @@ function(windeployqt target)
                 --no-angle
                 --no-opengl-sw
                 \"$<TARGET_FILE:${target}>\"
+        COMMENT "Deploy Qt components along executable ${target}"
     )
 
 endfunction()

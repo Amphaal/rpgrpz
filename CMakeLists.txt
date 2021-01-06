@@ -504,6 +504,7 @@ target_sources(appExec PUBLIC
 add_custom_command(TARGET appExec   
     COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:appExec>/translations       
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QM_FILES} $<TARGET_FILE_DIR:appExec>/translations
+    COMMENT "Copy translation files"
 )
 
 ################
@@ -533,6 +534,7 @@ if(MINGW)
             ${CMAKE_CURRENT_SOURCE_DIR}/cmake/antislash-to-slash.sed
         BYPRODUCTS
             lib_requirements.txt
+        COMMENT "Find executable dependencies"
     )
 
     #copy required libs
@@ -541,6 +543,7 @@ if(MINGW)
             cat lib_requirements.txt | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         DEPENDS 
             lib_requirements.txt
+        COMMENT "Copy found depedencies along executable"
     )
 
 endif()
@@ -552,6 +555,7 @@ endif()
 # print version
 add_custom_command(TARGET appExec 
     COMMAND printf "${CMAKE_PROJECT_VERSION}" > version
+    COMMENT "Create blank file containing appExec version"
 )
 
 # publish script
