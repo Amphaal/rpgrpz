@@ -170,7 +170,7 @@ class LoreTab : public QWidget {
 
         // resize Pixmap and apply
         QPixmap newPortrait(portraitFP);
-        this->_customPortrait = newPortrait.scaled(RPZCharacter::defaultPortraitSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        this->_customPortrait = newPortrait.scaled(RPZCharacter::defaultPortraitSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
         this->_imgLbl->setPixmap(this->_customPortrait);
 
         QFileInfo fi(portraitFP);

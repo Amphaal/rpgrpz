@@ -139,11 +139,24 @@ class PlayerItemDelegate : public QStyledItemDelegate {
                 painter->setOpacity(0.5);
             }
 
-            auto portrait = RPZCharacter::getPortrait(character);
-            QRect portraitRect(option.rect.topLeft(), DEFAULT_PORTRAIT_SIZE);
+            auto portraitPixmap = RPZCharacter::getPortrait(character);
+            auto uiPortraitRect = QRect(option.rect.topLeft(), DEFAULT_PORTRAIT_SIZE);
+            
+            // compute centered
+            auto centeredPixmapRect = portraitPixmap.rect();
+            // {
+            //     auto xOvermargin = (centeredPixmapRect.width() - uiPortraitRect.width()) / 2;
+            //     auto yOvermargin = (centeredPixmapRect.height() - uiPortraitRect.height()) / 2;
+
+            //     if(xOvermargin < 0) xOvermargin = 0;
+            //     if(yOvermargin < 0) yOvermargin = 0;
+
+            //     if(xOvermargin || yOvermargin) 
+            //         centeredPixmapRect = centeredPixmapRect.marginsRemoved({xOvermargin, yOvermargin, xOvermargin, yOvermargin});
+            // }
 
             painter->setRenderHints(QPainter::RenderHint::Antialiasing | QPainter::RenderHint::SmoothPixmapTransform);
-            painter->drawPixmap(portraitRect, portrait);
+            painter->drawPixmap(uiPortraitRect, portraitPixmap, centeredPixmapRect);
 
         painter->restore();
     }
