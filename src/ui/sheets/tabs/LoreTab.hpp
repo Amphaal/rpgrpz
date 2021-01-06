@@ -53,13 +53,21 @@ class LoreTab : public QWidget {
                 this->_imgLbl->setMaximumSize(RPZCharacter::defaultPortraitSize);
                 pLayout->addWidget(this->_imgLbl, 0, Qt::AlignCenter);
 
-                // portrait change button
-                this->_changePortraitBtn = new QPushButton(tr("Change portrait"));
-                pLayout->addWidget(this->_changePortraitBtn, 0, Qt::AlignCenter);
-                QObject::connect(
-                    this->_changePortraitBtn, &QPushButton::pressed,
-                    this, &LoreTab::_changePortrait
-                );
+                auto phL = new QHBoxLayout;
+                pLayout->addLayout(phL);
+
+                    // portrait change button
+                    this->_changePortraitBtn = new QPushButton(tr("Change portrait"));
+                    QObject::connect(
+                        this->_changePortraitBtn, &QPushButton::pressed,
+                        this, &LoreTab::_changePortrait
+                    );
+                    phL->addWidget(this->_changePortraitBtn, false, Qt::AlignRight);
+
+                    // portrait label
+                    auto prtrtLbl = new QLabel(tr("(forced to 4/3 format)"));
+                    prtrtLbl->setFont(QFont { "Times", 7 });
+                    phL->addWidget(prtrtLbl, false, Qt::AlignLeft);
 
             // character name
             this->_sheetNameEdit = new QLineEdit;

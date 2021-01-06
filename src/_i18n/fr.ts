@@ -635,53 +635,58 @@
 <context>
     <name>LoreTab</name>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="57"/>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="154"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="60"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="162"/>
         <source>Change portrait</source>
         <translation>Changer le portrait</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="66"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="68"/>
+        <source>(forced to 4/3 format)</source>
+        <translation>(forcé au format 4/3)</translation>
+    </message>
+    <message>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="74"/>
         <source> Usual character name [Required!]</source>
         <translation> Nom usuel du personnage [Requis!]</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="67"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="75"/>
         <source>Character name :</source>
         <translation>Nom du personnage :</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="71"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="79"/>
         <source> Short and gross characterization (Paladin Loyal Good, Bounty hunter...)</source>
         <translation> Courte et grossière caractérisation du personnage (Paladin Loyal Bon, Chasseur de Prime...)</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="72"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="80"/>
         <source>Archtype :</source>
         <translation>Archétype :</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="77"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="85"/>
         <source>Physical, psycological, environnemental description...</source>
         <translation>Description physique, psychologique, contextuelle...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="78"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="86"/>
         <source>Description :</source>
         <translation>Description :</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="83"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="91"/>
         <source>Evolution of the character during his adventures...</source>
         <translation>Evolution du personnage durant ses aventures...</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="84"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="92"/>
         <source>Chronicles :</source>
         <translation>Histoire :</translation>
     </message>
     <message>
-        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="156"/>
+        <location filename="../ui/sheets/tabs/LoreTab.hpp" line="164"/>
         <source>Images (*.png *.jpg *.jpeg)</source>
         <translation>Images (*.png *.jpg *.jpeg)</translation>
     </message>
