@@ -4,11 +4,9 @@
 
     SET(CPACK_GENERATOR IFW)
 
-    # force version if crosscompiling (detection not working)
-    if(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        SET(CPACK_IFW_FRAMEWORK_VERSION_FORCED  "4.0.1" CACHE INTERNAL "")
-        SET(CPACK_IFW_FRAMEWORK_VERSION         "4.0.1" CACHE INTERNAL "")
-    endif()
+    # force version
+    SET(CPACK_IFW_FRAMEWORK_VERSION_FORCED  "4.0.1" CACHE INTERNAL "")
+    SET(CPACK_IFW_FRAMEWORK_VERSION         "4.0.1" CACHE INTERNAL "")
 
     SET(APP_DESCRIPTION ${PROJECT_NAME}
         fr "L'experience JdR simplifiée."
