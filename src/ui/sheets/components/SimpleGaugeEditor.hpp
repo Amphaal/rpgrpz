@@ -111,12 +111,8 @@ class SimpleGaugeEditor : public QWidget {
         // min
         this->_minBarValSpin->setMaximum(gauge.current);
 
-        // max
-        this->_maxBarValSpin->setMinimum(gauge.current);
-
         // value
         this->_currentValSpin->setMinimum(gauge.min);
-        this->_currentValSpin->setMaximum(gauge.max);
     }
 
     void _applyDefaultMinMaxLimitsOnSpinBoxes() {
