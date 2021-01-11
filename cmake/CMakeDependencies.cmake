@@ -30,7 +30,7 @@ macro(DeployPEDependencies target component pattern)
     # generate requirements
     add_custom_command(TARGET ${target}
         COMMAND 
-            ${PELDD_EXEC} -a
+            ${PELDD_EXEC} -t
             -p ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} 
             -p ${MINGW64_ROOT}/bin
             ${pattern}
@@ -47,10 +47,19 @@ macro(DeployPEDependencies target component pattern)
     # copy required libs
     add_custom_command(TARGET ${target}
         COMMAND 
-            cat PEDeps_${component}_.txt | xargs cp -n -t ${CMAKE_BINARY_DIR}/PEDeps_${component}
+            ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/PEDeps_${component}
+        COMMAND 
+            cat PEDeps_${component}_.txt | xargs -i cp {} ${CMAKE_BINARY_DIR}/PEDeps_${component}
         DEPENDS 
             PEDeps_${component}_.txt
         COMMENT "Copy found depedencies along executable"
+    )
+
+    # install
+    install(
+        DIRECTORY ${CMAKE_BINARY_DIR}/PEDeps_${component}/
+        TYPE BIN
+        COMPONENT ${component}
     )
 
 endmacro()

@@ -488,12 +488,18 @@ HandleQtTranslation(appExec
 
 include(CMakeDependencies)
 
+# GST
 list(APPEND GST_DEPS_FOLDERS
     ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gio/*
-    ${CMAKE_BINARY_DIR}/gst-plugins
+    ${CMAKE_BINARY_DIR}/gst-plugins/*
 )
+DeployPEDependencies(appExec "GStreamer" "${GST_DEPS_FOLDERS}")
 
-DeployPEDependencies(appExec "GStreamer" ${GST_DEPS_FOLDERS})
+# QT
+list(APPEND QT_DEPS_FOLDERS
+    ${CMAKE_BINARY_DIR}/QtRuntime/*.dll
+)
+DeployPEDependencies(appExec "Qt" "${QT_DEPS_FOLDERS}")
 
 ######################
 # add Publish target #

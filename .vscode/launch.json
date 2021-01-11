@@ -4,27 +4,6 @@
     // Pour plus d'informations, visitez : https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
-        {
-            "name": "(Windows) Launch",
-            "preLaunchTask": "2. Build",
-            "type": "cppvsdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/_genDebug/out/RPGRPZ.exe",
-            "args": [],
-            "cwd": "${workspaceFolder}",
-            "externalConsole": true,
-            "environment": []
-        },
-        {
-            "name" : "(Windows) Launch - No Server CC",
-            "type": "cppvsdbg",
-            "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/_genDebug/out/RPGRPZ.exe",
-            "externalConsole": true,
-            "args": ["--noServer --customContext=NoServer"]
-        },
         {
             "targetArchitecture": "x64",
             "type": "cppdbg",
