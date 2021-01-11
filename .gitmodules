@@ -1,9 +1,9 @@
 [submodule "AudioTube"]
 	path = deps/AudioTube
-	url = https://github.com/Amphaal/AudioTube.git
+	url = https://github.com/Amphaal/AudioTube
 [submodule "Dicer"]
 	path = deps/Dicer
-	url = https://github.com/Amphaal/Dicer.git
+	url = https://github.com/Amphaal/Dicer
 [submodule "sentry-native"]
 	path = deps/sentry-native
 	url = https://github.com/getsentry/sentry-native
