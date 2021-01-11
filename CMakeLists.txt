@@ -211,18 +211,21 @@ endif()
 #############
 
 add_subdirectory(deps/snowflake)
+target_link_libraries(appExec PRIVATE snowflake)
 
 ###########
 # clipper #
 ###########
 
 add_subdirectory(deps/clipper)
+target_link_libraries(appExec PRIVATE clipper)
 
 ############################
 # autoupdatercore (for Qt) #
 ############################
 
 add_subdirectory(deps/autoupdatercore)
+target_link_libraries(appExec PRIVATE autoupdatercore)
 
 #################
 # Sentry-native #
@@ -407,10 +410,14 @@ list(APPEND TR_SOURCE_FILES
     ${APP_UI_FILES}
 )
 
+list(APPEND TR_FILES
+    "src/_i18n/fr.ts"
+)
+
 include(QtTranslation)
 HandleQtTranslation(appExec 
-    ${TR_SOURCE_FILES} 
-    "src/_i18n/fr.ts"
+    "${TR_SOURCE_FILES}"
+    "${TR_FILES}"
 )
 
 ########################

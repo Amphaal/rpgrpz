@@ -1,5 +1,5 @@
 
-function(HandleQtTranslation target sourceFiles translationFiles)
+macro(HandleQtTranslation target sourceFiles translationFiles)
 
     #updates TS files from sources
     qt5_create_translation(QM_FILES
@@ -22,4 +22,4 @@ function(HandleQtTranslation target sourceFiles translationFiles)
         COMMENT "Copy Qt translation files"
     )
 
-endfunction()
+endmacro()

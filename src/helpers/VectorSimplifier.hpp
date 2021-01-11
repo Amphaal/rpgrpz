@@ -24,7 +24,7 @@
 #include <QPainterPath>
 #include <QPen>
 
-#include <clipper/clipper.hpp>
+#include <clipper.hpp>
 
 class VectorSimplifier {
  public:
