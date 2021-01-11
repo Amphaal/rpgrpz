@@ -8,7 +8,7 @@ endif()
 macro(DeployQt target)
     
     # Run windeployqt immediately after build to determine Qt dependencies
-    add_custom_command(TARGET ${target} POST_BUILD
+    add_custom_command(TARGET ${target}
         COMMAND ${WINDEPLOYQT}
                 --verbose 0
                 --no-angle

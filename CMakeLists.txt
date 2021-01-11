@@ -317,16 +317,16 @@ target_link_libraries(appExec PRIVATE audiotube)
 add_subdirectory(deps/Dicer)
 target_link_libraries(appExec PRIVATE dicer)
 
-############# 
-# Gstreamer #
-#############
+####################
+# Gstreamer - base #
+####################
 
 #find Gstreamer
 pkg_check_modules(Gst REQUIRED IMPORTED_TARGET 
     gstreamer-1.0
-    gstreamer-controller-1.0
-    gstreamer-net-1.0
-    gstreamer-audio-1.0
+    # gstreamer-controller-1.0
+    # gstreamer-net-1.0
+    # gstreamer-audio-1.0
 )
 
 #link
@@ -334,105 +334,115 @@ target_link_libraries(appExec PRIVATE
     PkgConfig::Gst
 )
 
-IF(MINGW)
-    ####define gstreamer plugins to use
+######################
+# Gstreamer - GnuTLS #
+######################
+
+# find module
+find_file(giognutls_LIB 
+    NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}giognutls${CMAKE_SHARED_LIBRARY_SUFFIX}
+    PATH_SUFFIXES "lib/gio/modules"
+    REQUIRED
+)
+
+# ensure it is copied at expected relative path (even when debugging !)
+add_custom_command(TARGET appExec
+    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:appExec>/gio       
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${giognutls_LIB} $<TARGET_FILE_DIR:appExec>/gio
+) 
+
+# install
+install(
+    DIRECTORY $<TARGET_FILE_DIR:appExec>/gio
+    TYPE BIN
+    COMPONENT "GStreamer"
+)
+
+#######################
+# Gstreamer - plugins #
+#######################
+
+#get plugin shared libraries location
+pkg_get_variable(GSTREAMER_PLUGINS_LIB_LOCATION gstreamer-1.0 
+    pluginsdir
+)
+
+# define gstreamer plugins to use
     #core
-    LIST(APPEND _gstreamer_plugins 
-        gstplayback
-        gstautodetect
-        gstcoreelements
+    LIST(APPEND REQUIRED_GST_PLUGINS 
+        playback
+        autodetect
+        coreelements
     )
     #opus stream read
-    LIST(APPEND _gstreamer_plugins 
-        gstsoup
-        gsttypefindfunctions
-        gstmatroska
-        gstopus
-        gstvolume
-        gstaudioconvert
-        gstaudioresample
+    LIST(APPEND REQUIRED_GST_PLUGINS 
+        soup
+        typefindfunctions
+        matroska
+        opus
+        volume
+        audioconvert
+        audioresample
+    )
+    #windows specific ?
+    LIST(APPEND REQUIRED_GST_PLUGINS
+        waveform
     )
 
-    #create plugin directory
+#create plugin directory
+add_custom_command(TARGET appExec 
+    COMMAND ${CMAKE_COMMAND} -E make_directory 
+        ${CMAKE_BINARY_DIR}/gst-plugins
+)
+
+#copy gstreamer plugins into output
+foreach(_gstPluginLib IN ITEMS ${REQUIRED_GST_PLUGINS})
+
+    #using find_file because find_library is kinda broken with .dll on MinGW
+    find_file(${_gstPluginLib}_LIBRARY 
+        NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}gst${_gstPluginLib}${CMAKE_SHARED_LIBRARY_SUFFIX}
+        PATHS ${GSTREAMER_PLUGINS_LIB_LOCATION}
+        NO_DEFAULT_PATH
+        REQUIRED
+    )
+
     add_custom_command(TARGET appExec 
-        COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:appExec>/gst-plugins
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+            ${${_gstPluginLib}_LIBRARY} 
+            ${CMAKE_BINARY_DIR}/gst-plugins
     )
 
-    #get plugin shared libraries location
-    pkg_get_variable(GSTREAMER_PLUGINS_LIB_LOCATION gstreamer-1.0 
-        pluginsdir
-    )
+endforeach()
 
-    IF(MINGW)
-        LIST(APPEND _gstreamer_plugins
-            gstwaveform
-        )
-    endif()
+####################
+# Gstreamer - else #
+####################
 
-    message("Searching for gst plugins in [${GSTREAMER_PLUGINS_LIB_LOCATION}]...")
+# #missing deps for gstreamer
+# list(APPEND GST_SLIBS
+#     gmp-10
+#     gnutls-30
+#     hogweed-6
+#     nettle-8
+#     soup-2.4-1
+#     tasn1-6
+#     xml2-2
+# )
 
-    #copy gstreamer plugins into output
-    foreach(_gstPluginLib IN ITEMS ${_gstreamer_plugins})
+# #import all missing GSTREAMER libs
+# foreach(_gstSLib IN ITEMS ${GST_SLIBS})
 
-        #using find_file because find_library is kinda broken with .dll on MinGW
-        find_file(${_gstPluginLib}_LIBRARY 
-            NAMES   lib${_gstPluginLib}.dll
-                    lib${_gstPluginLib}.so
-            PATHS ${GSTREAMER_PLUGINS_LIB_LOCATION}
-            NO_DEFAULT_PATH
-        )
+#     #broken find_library...
+#     find_file(${_gstSLib}_LIBRARY 
+#         NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}${_gstSLib}${CMAKE_SHARED_LIBRARY_SUFFIX}
+#         REQUIRED
+#     )
 
-        IF(NOT ${_gstPluginLib}_LIBRARY)
-            message(FATAL_ERROR "${_gstPluginLib}_LIBRARY NOT FOUND !")
-        else()
-            message("${_gstPluginLib}_LIBRARY Found ! [${${_gstPluginLib}_LIBRARY}]")
-        endif()
+#     add_custom_command(TARGET appExec 
+#         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${${_gstSLib}_LIBRARY} $<TARGET_FILE_DIR:appExec>
+#     )
 
-        add_custom_command(TARGET appExec 
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${${_gstPluginLib}_LIBRARY} $<TARGET_FILE_DIR:appExec>/gst-plugins
-        )
-
-    endforeach()
-endif()
-
-# ######################
-# # GST LIBRARIES COPY #
-# ######################
-
-#missing deps for gstreamer
-if(MINGW)
-    list(APPEND GST_SLIBS
-        gmp-10
-        gnutls-30
-        hogweed-6
-        nettle-8
-        soup-2.4-1
-        tasn1-6
-        winpthread-1
-        xml2-2
-    )
-
-    #import all missing GSTREAMER libs
-    foreach(_gstSLib IN ITEMS ${GST_SLIBS})
-
-        #broken find_library...
-        find_file(${_gstSLib}_LIBRARY 
-            NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}${_gstSLib}${CMAKE_SHARED_LIBRARY_SUFFIX}
-            PATH_SUFFIXES "bin"
-        )
-
-        IF(NOT ${_gstSLib}_LIBRARY)
-            message(FATAL_ERROR "${_gstSLib}_LIBRARY NOT FOUND !")
-        else()
-            message("${_gstSLib}_LIBRARY Found ! [${${_gstSLib}_LIBRARY}]")
-        endif()
-
-        add_custom_command(TARGET appExec 
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${${_gstSLib}_LIBRARY} $<TARGET_FILE_DIR:appExec>
-        )
-
-    endforeach()
-endif()
+# endforeach()
 
 #####################
 # list source files #
@@ -476,7 +486,14 @@ HandleQtTranslation(appExec
 # Runtime dependencies #
 ########################
 
-# include(CMakeDependencies)
+include(CMakeDependencies)
+
+list(APPEND GST_DEPS_FOLDERS
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gio/*
+    ${CMAKE_BINARY_DIR}/gst-plugins
+)
+
+DeployPEDependencies(appExec "GStreamer" ${GST_DEPS_FOLDERS})
 
 ######################
 # add Publish target #

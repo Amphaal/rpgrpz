@@ -1,8 +1,12 @@
-if(MINGW)
+###########
+# pe-util #
+###########
 
-    ###########
-    # pe-util #
-    ###########
+if(MINGW)
+    # check if mingw root is set
+    if(NOT MINGW64_ROOT)
+        message(FATAL_ERROR "MINGW64_ROOT must be set ! Please use a toolchain file !")
+    endif()
 
     #pe-util is required to find all .dll dependencies
     include(ExternalProject)
@@ -15,46 +19,43 @@ if(MINGW)
     #define exec
     ExternalProject_Get_Property(peldd BINARY_DIR)
     set(PELDD_EXEC "${BINARY_DIR}/peldd")
+endif()
 
-    ################
-    # missing libs #
-    ################
+################
+# missing libs #
+################
 
-    #scan for missing lib dependencies, then fetch and copy them
-    if(NOT MINGW64_ROOT)
-        message(FATAL_ERROR "MINGW64_ROOT must be set ! Please use a toolchain file !")
-    endif()
+macro(DeployPEDependencies target component pattern)
 
-    #generate requirements
-    add_custom_command(TARGET appExec POST_BUILD
+    # generate requirements
+    add_custom_command(TARGET ${target}
         COMMAND 
             ${PELDD_EXEC} -a
             -p ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} 
             -p ${MINGW64_ROOT}/bin
-            $<TARGET_FILE:appExec> 
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gio/* 
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins/*
-            | sed -f ${CMAKE_CURRENT_SOURCE_DIR}/cmake/antislash-to-slash.sed
-            | tr -d '\\015' 
-            > lib_requirements.txt
-        DEPENDS 
-            ${CMAKE_CURRENT_SOURCE_DIR}/cmake/antislash-to-slash.sed
+            ${pattern}
+            > PEDeps_${component}.txt
         BYPRODUCTS
-            lib_requirements.txt
-        COMMENT "Find executable dependencies"
+            PEDeps_${component}.txt
+        COMMENT "Find dependencies"
     )
 
-    #copy required libs
-    add_custom_command(TARGET appExec POST_BUILD
+    # normalize paths
+    include(PathNormalizer)
+    NormalizePath(${target} "PEDeps_${component}.txt" "PEDeps_${component}_.txt")
+
+    # copy required libs
+    add_custom_command(TARGET ${target}
         COMMAND 
-            cat lib_requirements.txt | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+            cat PEDeps_${component}_.txt | xargs cp -n -t ${CMAKE_BINARY_DIR}/PEDeps_${component}
         DEPENDS 
-            lib_requirements.txt
+            PEDeps_${component}_.txt
         COMMENT "Copy found depedencies along executable"
     )
 
-    ##
-    ##
-    ##
+endmacro()
 
-endif()
+##
+##
+##
+
