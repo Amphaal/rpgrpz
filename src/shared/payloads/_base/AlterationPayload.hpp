@@ -21,7 +21,7 @@
 
 #include <QVariantHash>
 
-#include "src/_libs/snowflake/snowflake.h"
+#include <snowflake/snowflake.h>
 #include "src/shared/models/RPZAtom.h"
 
 #include "Payload.hpp"

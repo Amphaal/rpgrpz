@@ -14,7 +14,10 @@ if(CCACHE_PROGRAM)
 endif()
 
 #default configuration
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH 
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Qt
+)
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 #############
@@ -53,49 +56,12 @@ configure_file(
 ## CPP Compiler Configuration ##
 ################################
 
-IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")	
-    #MOC	
-    add_executable(Qt5::moc IMPORTED)	
-    find_program(XC_MOC moc REQUIRED)
-    message("[${XC_MOC}]")
-    set_target_properties(Qt5::moc PROPERTIES	
-        IMPORTED_LOCATION ${XC_MOC}	
-    )	
-    #RCC	
-    add_executable(Qt5::rcc IMPORTED)
-    find_program(XC_RCC rcc REQUIRED)
-    message("[${XC_RCC}]")
-    set_target_properties(Qt5::rcc PROPERTIES	
-        IMPORTED_LOCATION ${XC_RCC}	
-    )	
-    #UIC	
-    add_executable(Qt5::uic IMPORTED)
-    find_program(XC_UIC uic REQUIRED)
-    message("[${XC_UIC}]")
-    set_target_properties(Qt5::uic PROPERTIES	
-        IMPORTED_LOCATION ${XC_UIC}	
-    )	
-    #lrelease	
-    add_executable(Qt5::lrelease IMPORTED)
-    find_program(XC_LRELEASE lrelease REQUIRED)
-    message("[${XC_LRELEASE}]")
-    set_target_properties(Qt5::lrelease PROPERTIES	
-        IMPORTED_LOCATION ${XC_LRELEASE}
-    )	
-    #lupdate	
-    add_executable(Qt5::lupdate IMPORTED)
-    find_program(XC_LUPDATE lupdate REQUIRED)
-    message("[${XC_LUPDATE}]")
-    set_target_properties(Qt5::lupdate PROPERTIES	
-        IMPORTED_LOCATION ${XC_LUPDATE}	
-    )	
-endif()
-
 SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_C_STANDARD 11)
 
 #Qt
+include(XCQt)
 SET(CMAKE_AUTOMOC ON)
 SET(CMAKE_AUTORCC ON)
 SET(CMAKE_AUTOUIC ON)
@@ -184,30 +150,6 @@ find_package(PkgConfig REQUIRED)
 # OpenSSL #
 ###########
 
-if(MINGW)
-    #find libs
-    find_file(OPENSSL_CPYPTO_DLL 
-        NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}crypto-1_1-x64${CMAKE_SHARED_LIBRARY_SUFFIX}
-        PATH_SUFFIXES "bin" 
-    ) 
-    find_file(OPENSSL_SSL_DLL 
-        NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}ssl-1_1-x64${CMAKE_SHARED_LIBRARY_SUFFIX}
-        PATH_SUFFIXES "bin" 
-    ) 
-
-    IF(NOT OPENSSL_CPYPTO_DLL OR NOT OPENSSL_SSL_DLL)
-        message(FATAL_ERROR "Openssl .dll NOT FOUND !")
-    else()
-        message("Openssl .dll Found ! [${OPENSSL_CPYPTO_DLL} ${OPENSSL_SSL_DLL}]")
-    endif()
-
-    #copy lib into a target
-    add_custom_command(TARGET appExec 
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_CPYPTO_DLL} $<TARGET_FILE_DIR:appExec>
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_SSL_DLL} $<TARGET_FILE_DIR:appExec>
-    )
-endif()
-
 #find
 find_package(OpenSSL REQUIRED)
 
@@ -242,10 +184,8 @@ target_link_libraries(appExec PRIVATE
 )
 
 # QT LIBRARIES COPY
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    include(Windeployqt)
-    windeployqt(appExec)
-endif()
+include(DeployQt)
+DeployQt(appExec)
 
 #missing libs
 IF(MINGW)
@@ -266,30 +206,18 @@ IF(MINGW)
     )
 endif()
 
-###########
-# pe-util #
-###########
-
-#pe-util is required to find all .dll dependencies
-IF(MINGW)
-    include(ExternalProject)
-    ExternalProject_Add(peldd
-        GIT_REPOSITORY  "https://github.com/Amphaal/pe-util.git"
-        INSTALL_COMMAND ""
-        UPDATE_DISCONNECTED 1 # prevents from it always being built in search for tag change
-    )
-
-    #define exec
-    ExternalProject_Get_Property(peldd BINARY_DIR)
-    set(PELDD_EXEC "${BINARY_DIR}/peldd")
-endif()
-
-# #################
-# # Sentry-native #
-# #################
+#################
+# Sentry-native #
+#################
 
 add_subdirectory(sentry-native)
 target_link_libraries(appExec PRIVATE sentry)
+
+# track version
+add_custom_command(TARGET appExec 
+    COMMAND printf "${CMAKE_PROJECT_VERSION}" > version
+    COMMENT "Create file containing app version for sentry-native version tracking"
+)
 
 ################
 # NetworkCandy #
@@ -400,30 +328,6 @@ endif()
 # # GST LIBRARIES COPY #
 # ######################
 
-#platform specifics missing dependency
-IF(MINGW OR APPLE)
-
-    #broken find_library...
-    find_file(giognutls_LIB 
-        NAMES 
-            libgiognutls.so
-            libgiognutls.dll
-        PATH_SUFFIXES "lib/gio/modules"
-    )
-
-    IF(NOT giognutls_LIB)
-        message(FATAL_ERROR "giognutls lib NOT FOUND !")
-    else()
-        message("giognutls lib found ! [${giognutls_LIB}]")
-    endif()
-
-    add_custom_command(TARGET appExec
-        COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:appExec>/gio       
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${giognutls_LIB} $<TARGET_FILE_DIR:appExec>/gio
-    ) 
-
-endif()
-
 #missing deps for gstreamer
 if(MINGW)
     list(APPEND GST_SLIBS
@@ -478,85 +382,28 @@ target_sources(appExec PUBLIC
 # translations #
 ################
 
-#define translation files
-list(APPEND APP_TRANSLATION_FILES 
-    "src/_i18n/fr.ts"
-)
-
-#updates TS files from sources
-qt5_create_translation(QM_FILES
+list(APPEND TR_SOURCE_FILES
     ${APP_CPP_FILES}
     ${APP_HPP_FILES}
     ${APP_H_FILES}
     ${APP_UI_FILES}
-    ${APP_TRANSLATION_FILES}
 )
 
-#generate QM files
-qt5_add_translation(APP_BINARY_TRANSLATION_FILES ${APP_TRANSLATION_FILES})
-
-#generate QM files from TS
-target_sources(appExec PUBLIC
-    ${APP_BINARY_TRANSLATION_FILES}
+include(QtTranslation)
+HandleQtTranslation(appExec 
+    ${TR_SOURCE_FILES} 
+    "src/_i18n/fr.ts"
 )
 
-#copy translations into output
-add_custom_command(TARGET appExec   
-    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:appExec>/translations       
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QM_FILES} $<TARGET_FILE_DIR:appExec>/translations
-    COMMENT "Copy translation files"
-)
+########################
+# Runtime dependencies #
+########################
 
-################
-# missing libs #
-################
-
-#scan for missing lib dependencies, then fetch and copy them
-if(MINGW)
-    
-    if(NOT MINGW64_ROOT)
-        message(FATAL_ERROR "MINGW64_ROOT must be set ! Please use a toolchain file !")
-    endif()
-
-    #generate requirements
-    add_custom_command(TARGET appExec POST_BUILD
-        COMMAND 
-            ${PELDD_EXEC} -a
-            -p ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} 
-            -p ${MINGW64_ROOT}/bin
-            $<TARGET_FILE:appExec> 
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gio/* 
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins/*
-            | sed -f ${CMAKE_CURRENT_SOURCE_DIR}/cmake/antislash-to-slash.sed
-            | tr -d '\\015' 
-            > lib_requirements.txt
-        DEPENDS 
-            ${CMAKE_CURRENT_SOURCE_DIR}/cmake/antislash-to-slash.sed
-        BYPRODUCTS
-            lib_requirements.txt
-        COMMENT "Find executable dependencies"
-    )
-
-    #copy required libs
-    add_custom_command(TARGET appExec POST_BUILD
-        COMMAND 
-            cat lib_requirements.txt | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-        DEPENDS 
-            lib_requirements.txt
-        COMMENT "Copy found depedencies along executable"
-    )
-
-endif()
+include(CMakeDependencies)
 
 ######################
 # add Publish target #
 ######################
-
-# print version
-add_custom_command(TARGET appExec 
-    COMMAND printf "${CMAKE_PROJECT_VERSION}" > version
-    COMMENT "Create blank file containing appExec version"
-)
 
 # publish script
 include(CMakePublish)

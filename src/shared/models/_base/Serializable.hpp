@@ -22,7 +22,7 @@
 #include <QVariantHash>
 #include <QMap>
 
-#include "src/_libs/snowflake/snowflake.h"
+#include <snowflake/snowflake.h>
 
 class Serializable : public QVariantHash {
  public:

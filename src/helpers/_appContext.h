@@ -37,10 +37,8 @@
 #include <version.h>
 
 #include "src/helpers/_appSettings.hpp"
-#include "src/_libs/snowflake/snowflake.h"
+#include <snowflake/snowflake.h>
 #include "src/helpers/_logWriter.h"
-
-// #include <sentry.h>
 
 class MapView;
 class AppContext {

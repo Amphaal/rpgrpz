@@ -25,7 +25,8 @@
                 "${workspaceFolder}/sentry-native",
                 "${workspaceFolder}/Dicer",
                 "${workspaceFolder}/AudioTube",
-                "${workspaceFolder}/NetworkCandy/nw-candy/include"
+                "${workspaceFolder}/NetworkCandy/nw-candy/include",
+                "${workspaceFolder}/deps"
             ],
             "defines": [
                 "_DEBUG",

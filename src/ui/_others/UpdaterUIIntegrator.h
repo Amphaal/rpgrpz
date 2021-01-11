@@ -25,7 +25,7 @@
 
 #include "src/helpers/_appContext.h"
 
-#include "src/_libs/autoupdatercore/updater.h"
+#include <autoupdatercore/updater.h>
 
 class UpdaterUIIntegrator : public QObject {
     Q_OBJECT
