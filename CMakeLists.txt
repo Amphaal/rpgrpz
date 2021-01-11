@@ -49,7 +49,7 @@ SET(SENTRY_ENDPOINT "https://ecb72ca256e744b990fd4f50aa52ea6f@o333337.ingest.sen
 #configure header with basic app informations
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/templates/_version.h 
-    version.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/version.h
 )
 
 ################################
@@ -206,11 +206,29 @@ IF(MINGW)
     )
 endif()
 
+#############
+# snowflake #
+#############
+
+add_subdirectory(deps/snowflake)
+
+###########
+# clipper #
+###########
+
+add_subdirectory(deps/clipper)
+
+############################
+# autoupdatercore (for Qt) #
+############################
+
+add_subdirectory(deps/autoupdatercore)
+
 #################
 # Sentry-native #
 #################
 
-add_subdirectory(sentry-native)
+add_subdirectory(deps/sentry-native)
 target_link_libraries(appExec PRIVATE sentry)
 
 # track version
@@ -223,21 +241,21 @@ add_custom_command(TARGET appExec
 # NetworkCandy #
 ################
 
-add_subdirectory(NetworkCandy)
+add_subdirectory(deps/NetworkCandy)
 target_link_libraries(appExec PRIVATE nw-candy)
 
 #############
 # AudioTube #
 #############
 
-add_subdirectory(AudioTube)
+add_subdirectory(deps/AudioTube)
 target_link_libraries(appExec PRIVATE audiotube)
 
 #########
 # Dicer #
 #########
 
-add_subdirectory(Dicer)
+add_subdirectory(deps/Dicer)
 target_link_libraries(appExec PRIVATE dicer)
 
 ############# 

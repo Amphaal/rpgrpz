@@ -19,6 +19,8 @@
 
 #include "_appContext.h"
 
+#include <sentry.h>
+
 void AppContext::configureApp(QCoreApplication* app) {
     // context preparation
     app->setApplicationName(QString(APP_NAME));

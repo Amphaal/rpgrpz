@@ -20,7 +20,6 @@
 #pragma once
 
 #include <sys/stat.h>
-#include <sentry.h>
 
 #include <QSslSocket>
 #include <QDir>
@@ -34,10 +33,10 @@
 #include <QUrl>
 #include <QGLWidget>
 
-#include <version.h>
+#include "src/version.h"
 
 #include "src/helpers/_appSettings.hpp"
-#include <snowflake/snowflake.h>
+#include <snowflake.h>
 #include "src/helpers/_logWriter.h"
 
 class MapView;
