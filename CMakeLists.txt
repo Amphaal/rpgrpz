@@ -18,7 +18,7 @@ list(APPEND CMAKE_MODULE_PATH
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Qt
 )
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+# SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 #############
 ## STARTUP ##
@@ -96,8 +96,16 @@ target_compile_definitions(appExec PRIVATE $<$<CONFIG:Debug>:_DEBUG>) #define _D
 
 #generate pdb
 IF(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")  
+    
     target_link_options(appExec PRIVATE -Wl,-pdb=) # generate pdb files
     target_compile_options(appExec PRIVATE -gcodeview) #use codeview for pdbs
+    
+    # add .pdb to install
+    install(FILES "$<TARGET_FILE_BASE_NAME:appExec>.pdb"
+        COMPONENT "CrashHandling"
+        TYPE BIN
+    )
+
 endif()
 
 #warnings for debug
@@ -114,6 +122,11 @@ endif()
 if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     set_target_properties(appExec PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE) #enable LTO
 endif()
+
+# install it obviously
+install(TARGETS appExec
+    COMPONENT "RPGRPZApp"
+)
 
 #########################
 ## ressources handling ##
@@ -187,25 +200,6 @@ target_link_libraries(appExec PRIVATE
 include(DeployQt)
 DeployQt(appExec)
 
-#missing libs
-IF(MINGW)
-    #for icons handling
-    find_file(libjpeg_LIBRARY 
-        NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}jpeg-8${CMAKE_SHARED_LIBRARY_SUFFIX}
-        PATH_SUFFIXES "bin" 
-    ) 
-
-    IF(NOT libjpeg_LIBRARY)
-        message(FATAL_ERROR "libjpeg .dll NOT FOUND !")
-    else()
-        message("libjpeg_LIBRARY found ! [${libjpeg_LIBRARY}]")
-    endif()
-
-    add_custom_command(TARGET appExec 
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${libjpeg_LIBRARY} $<TARGET_FILE_DIR:appExec>
-    )
-endif()
-
 #############
 # snowflake #
 #############
@@ -231,13 +225,23 @@ target_link_libraries(appExec PRIVATE autoupdatercore)
 # Sentry-native #
 #################
 
-add_subdirectory(deps/sentry-native)
+add_subdirectory(deps/sentry-native EXCLUDE_FROM_ALL)
 target_link_libraries(appExec PRIVATE sentry)
 
 # track version
 add_custom_command(TARGET appExec 
     COMMAND printf "${CMAKE_PROJECT_VERSION}" > version
     COMMENT "Create file containing app version for sentry-native version tracking"
+)
+
+# add crashpad_handler next to app
+set_target_properties(crashpad_handler PROPERTIES 
+    RUNTIME_OUTPUT_DIRECTORY $<TARGET_FILE_DIR:appExec>
+)
+
+# install it as well
+install(TARGETS crashpad_handler 
+    COMPONENT "CrashHandling"
 )
 
 ################
@@ -415,6 +419,8 @@ list(APPEND TR_FILES
 )
 
 include(QtTranslation)
+
+#quote marks required to discriminate between both lists
 HandleQtTranslation(appExec 
     "${TR_SOURCE_FILES}"
     "${TR_FILES}"
@@ -424,7 +430,7 @@ HandleQtTranslation(appExec
 # Runtime dependencies #
 ########################
 
-include(CMakeDependencies)
+# include(CMakeDependencies)
 
 ######################
 # add Publish target #
