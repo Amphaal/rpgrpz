@@ -17,6 +17,7 @@ endif()
 list(APPEND CMAKE_MODULE_PATH 
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Qt
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/helpers
 )
 # SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
@@ -36,7 +37,6 @@ project(RPGRPZ
     LANGUAGES CXX
 )
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER) #lowered project name
-SET(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME ${PROJECT_NAME_LOWER})
 
 ########################
 ## VERSION.H HANDLING ##
@@ -101,9 +101,10 @@ IF(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     target_compile_options(appExec PRIVATE -gcodeview) #use codeview for pdbs
     
     # add .pdb to install
-    install(FILES "$<TARGET_FILE_BASE_NAME:appExec>.pdb"
-        COMPONENT "CrashHandling"
+    install(
+        FILES ${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_BASE_NAME:appExec>.pdb
         TYPE BIN
+        COMPONENT "CrashHandling"
     )
 
 endif()
@@ -123,10 +124,39 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebI
     set_target_properties(appExec PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE) #enable LTO
 endif()
 
-# install it obviously
+#################
+## install app ##
+#################
+
+#app
+SET(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME "App")
 install(TARGETS appExec
-    COMPONENT "RPGRPZApp"
+    COMPONENT "App"
 )
+
+#spdlog
+if(MINGW)
+    find_file(MINGW_SPDLOG libspdlog.dll REQUIRED)
+    install(FILES ${MINGW_SPDLOG}
+        TYPE BIN
+        COMPONENT "Runtime"
+    )
+endif()
+
+#runtime
+if(MINGW)
+    find_file(MINGW_STDLIB libstdc++-6.dll REQUIRED)
+    find_file(MINGW_GCC_SEH libgcc_s_seh-1.dll REQUIRED)
+    find_file(MINGW_WINPTHREAD libwinpthread-1.dll REQUIRED)
+    install(
+        FILES 
+            ${MINGW_STDLIB}
+            ${MINGW_GCC_SEH}
+            ${MINGW_WINPTHREAD}
+        TYPE BIN
+        COMPONENT "Runtime"
+    )
+endif()
 
 #########################
 ## ressources handling ##
@@ -171,6 +201,19 @@ target_link_libraries(appExec PRIVATE
     OpenSSL::SSL
     OpenSSL::Crypto
 )
+
+#install
+if(MINGW)
+    find_file(MINGW_OPENSSL_SSL libssl-1_1-x64.dll REQUIRED)
+    find_file(MINGW_OPENSSL_CRYPTO libcrypto-1_1-x64.dll REQUIRED)
+    install(
+        FILES
+            ${MINGW_OPENSSL_SSL} 
+            ${MINGW_OPENSSL_CRYPTO}
+        TYPE BIN
+        COMPONENT "OpenSSL"
+    )
+endif()
 
 ########
 # QT 5 #
@@ -251,6 +294,15 @@ install(TARGETS crashpad_handler
 add_subdirectory(deps/NetworkCandy)
 target_link_libraries(appExec PRIVATE nw-candy)
 
+# install 
+if(MINGW)
+    find_file(MINGW_MINIUPNPC libminiupnpc.dll REQUIRED)
+    install(FILES ${MINGW_MINIUPNPC}
+        TYPE BIN
+        COMPONENT "Runtime"
+    )
+endif()
+
 #############
 # AudioTube #
 #############
@@ -270,18 +322,12 @@ target_link_libraries(appExec PRIVATE dicer)
 #############
 
 #find Gstreamer
-LIST(APPEND GST_MODULES_TO_IMPORT 
+pkg_check_modules(Gst REQUIRED IMPORTED_TARGET 
     gstreamer-1.0
     gstreamer-controller-1.0
     gstreamer-net-1.0
     gstreamer-audio-1.0
 )
-pkg_check_modules(Gst REQUIRED IMPORTED_TARGET ${GST_MODULES_TO_IMPORT})
-
-#since mms-bitfields flag from glib is PUBLIC and throws a bunch of warnings...
-IF(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    target_compile_options(PkgConfig::Gst INTERFACE "-Wno-incompatible-ms-struct")
-ENDIF()
 
 #link
 target_link_libraries(appExec PRIVATE     

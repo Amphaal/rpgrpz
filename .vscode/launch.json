@@ -10,7 +10,7 @@
             "preLaunchTask": "2. Build",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
+            "program": "${workspaceFolder}/_genDebug/RPGRPZ.exe",
             "args": [],
             "cwd": "${workspaceFolder}",
             "externalConsole": true,
@@ -21,7 +21,7 @@
             "type": "cppvsdbg",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
+            "program": "${workspaceFolder}/_genDebug/RPGRPZ.exe",
             "externalConsole": true,
             "args": ["--noServer --customContext=NoServer"]
         },
@@ -33,14 +33,14 @@
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "MIMode": "gdb",
-            "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ",
+            "program": "${workspaceFolder}/_genDebug/RPGRPZ",
             "osx": {
                 "MIMode": "lldb",
-                "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.app/Contents/MacOS/RPGRPZ"
+                "program": "${workspaceFolder}/_genDebug/RPGRPZ.app/Contents/MacOS/RPGRPZ"
             },
             "externalConsole": false,
             "windows": {
-                "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
+                "program": "${workspaceFolder}/_genDebug/RPGRPZ.exe",
                 "miDebuggerPath": "${env:MINGW64_ROOT}/bin/gdb.exe"
             }
         },
@@ -51,9 +51,9 @@
           "request": "launch",
           "cwd": "${workspaceFolder}",
           "MIMode": "gdb",
-          "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ",
+          "program": "${workspaceFolder}/_genDebug/RPGRPZ",
           "windows": {
-              "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
+              "program": "${workspaceFolder}/_genDebug/RPGRPZ.exe",
               "miDebuggerPath": "${env:MINGW64_ROOT}/bin/gdb.exe"
           },
           "args": ["--noServer --customContext=NoServer"]
@@ -65,9 +65,9 @@
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "MIMode": "gdb",
-            "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ",
+            "program": "${workspaceFolder}/_genDebug/RPGRPZ",
             "windows": {
-                "program": "${workspaceFolder}/_genDebug/bin/RPGRPZ.exe",
+                "program": "${workspaceFolder}/_genDebug/RPGRPZ.exe",
                 "miDebuggerPath": "${env:MINGW64_ROOT}/bin/gdb.exe"
             },
             "args": ["--noServer --randomContext"]
