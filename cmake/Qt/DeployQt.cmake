@@ -13,22 +13,15 @@ macro(DeployQt target)
                 --verbose 0
                 --no-angle
                 --no-opengl-sw
-                --list mapping
-                --dry-run
+                --dir QtRuntime
                 --translations fr,en
                 $<TARGET_FILE:${target}>
-                > QtDeps.txt
-        BYPRODUCTS "QtDeps.txt"
-        COMMENT "List Qt components along executable ${target}"
+        COMMENT "Create dummy folder with matching Qt runtime components"
     )
 
-    # normalize output
-    include(PathNormalizer)
-    NormalizePath(${target} "QtDeps.txt" "QtDeps_.txt")
-
-    # custom install of those deps
-    install(
-        SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Qt/DeployQtScript.cmake"
+    # install rule
+    install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/QtRuntime/"
+        TYPE BIN
         COMPONENT "Qt"
     )
 
