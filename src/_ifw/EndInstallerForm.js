@@ -5,8 +5,7 @@ function Component() {
 
 Component.prototype.getPathToApp = function() {
     var appName = installer.value("Title");
-    var exePath = installer.value("TargetDir") + "/" + appName + ".exe";
-
+    var exePath = installer.value("TargetDir") + "/bin/" + appName + ".exe";
     return exePath;
 }
 
@@ -22,9 +21,7 @@ Component.prototype.createOperations = function() {
 Component.prototype.installationFinishedPageIsShown = function() {
     try {
         if (installer.isInstaller() && installer.status == QInstaller.Success) {
-
             installer.addWizardPageItem( component, "EndInstallerForm", QInstaller.InstallationFinished );
-            
         }
     } catch(e) {
         console.log(e);
@@ -34,13 +31,10 @@ Component.prototype.installationFinishedPageIsShown = function() {
 Component.prototype.installationFinished = function() {
     try {
         if (installer.isInstaller() && installer.status == QInstaller.Success) {
-
-            //LaunchBox
             var isLaunchBoxChecked = component.userInterface("EndInstallerForm").LaunchBox.checked;
             if (isLaunchBoxChecked) {
-            QDesktopServices.openUrl("file:///" + Component.prototype.getPathToApp());
+                QDesktopServices.openUrl("file:///" + Component.prototype.getPathToApp());
             }
-
         }
     } catch(e) {
         console.log(e);

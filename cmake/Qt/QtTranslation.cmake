@@ -1,14 +1,14 @@
 
-macro(HandleQtTranslation target sourceFiles translationFiles)
+function(HandleQtTranslation target sourceFiles)
 
     #updates TS files from sources
     qt5_create_translation(QM_FILES
         ${sourceFiles}
-        ${translationFiles}
+        ${ARGN}
     )
 
     #generate QM files
-    qt5_add_translation(APP_BINARY_TRANSLATION_FILES ${translationFiles})
+    qt5_add_translation(APP_BINARY_TRANSLATION_FILES ${ARGN})
 
     #generate QM files from TS
     target_sources(${target} PUBLIC
@@ -22,4 +22,4 @@ macro(HandleQtTranslation target sourceFiles translationFiles)
         COMMENT "Copy Qt translation files"
     )
 
-endmacro()
+endfunction()

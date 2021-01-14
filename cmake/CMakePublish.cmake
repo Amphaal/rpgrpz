@@ -3,17 +3,13 @@
 ##########################
 
     SET(CPACK_GENERATOR IFW)
+    SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJECT_NAME})
 
     # force version
     SET(CPACK_IFW_FRAMEWORK_VERSION_FORCED  "4.0.1" CACHE INTERNAL "")
     SET(CPACK_IFW_FRAMEWORK_VERSION         "4.0.1" CACHE INTERNAL "")
 
-    SET(APP_DESCRIPTION ${PROJECT_NAME}
-        fr "L'experience JdR simplifiée."
-    )
-
     SET(CPACK_IFW_PACKAGE_WIZARD_STYLE "Modern")
-    SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJECT_NAME})
     SET(CPACK_IFW_PACKAGE_PUBLISHER ${APP_PUBLISHER})
     SET(CPACK_IFW_PACKAGE_START_MENU_DIRECTORY ${APP_PUBLISHER})
     SET(CPACK_IFW_PRODUCT_URL ${APP_PATCHNOTE_URL})
@@ -34,29 +30,80 @@
 ##############
 
 INCLUDE(CPack)
+INCLUDE(CPackIFW)
 
-# configure default component
-cpack_add_component("App" DOWNLOADED)
-cpack_add_component("CrashHandling" DOWNLOADED)
-cpack_add_component("Runtime" DOWNLOADED)
-cpack_add_component("OpenSSL" DOWNLOADED)
-cpack_add_component("GStreamer" DOWNLOADED)
+# Runtime 
+cpack_ifw_configure_component("Runtime"
+    DISPLAY_NAME 
+        "Runtime" 
+        fr "Composants de base"
+    DESCRIPTION 
+        "Essential components used by ${PROJECT_NAME} and other libraries"
+        fr "Composants essentiels utilisés par ${PROJECT_NAME} et autres librairies"
+    SORTING_PRIORITY 99
+    VERSION "1.0.0"
+    FORCED_INSTALLATION
+)
+
+# App
+cpack_ifw_configure_component("App"
+    DISPLAY_NAME ${PROJECT_NAME}
+    DESCRIPTION 
+        ${PROJECT_DESCRIPTION}
+        fr "L'experience JdR simplifiée !"
+    SCRIPT "src/_ifw/EndInstallerForm.js"
+    SORTING_PRIORITY 100
+    USER_INTERFACES "src/_ifw/EndInstallerForm.ui"
+    TRANSLATIONS ${CMAKE_BINARY_DIR}/EndInstallerForm_fr.qm
+    FORCED_INSTALLATION
+)
+
+# Qt
+cpack_ifw_configure_component("Qt"
+    DISPLAY_NAME "Qt ${Qt5Core_VERSION_STRING}"
+    DESCRIPTION 
+        "Essential framework used by ${PROJECT_NAME}"
+        fr "Framework essentiel utilisé par ${PROJECT_NAME}"
+    SORTING_PRIORITY 98
+    VERSION ${Qt5Core_VERSION_STRING}
+    FORCED_INSTALLATION
+)
+
+# OpenSSL
+cpack_ifw_configure_component("OpenSSL"
+    DISPLAY_NAME "OpenSSL ${OPENSSL_VERSION}"
+    DESCRIPTION
+        "Library allowing secure networking"
+        fr "Librairie permettant de sécuriser les communications"
+    SORTING_PRIORITY 97
+    VERSION ${OPENSSL_VERSION}
+    FORCED_INSTALLATION
+)
+
+# GStreamer
+cpack_ifw_configure_component("GStreamer"
+    DISPLAY_NAME "GStreamer ${Gst_VERSION}"
+    DESCRIPTION
+        "Library used for audio streaming"
+        fr "Librairie permettant les fonctionnalités de streaming audio"
+    SORTING_PRIORITY 96
+    VERSION ${Gst_VERSION}
+    FORCED_INSTALLATION
+)
+
+# Crashpad
+cpack_ifw_configure_component("Crashpad"
+    DESCRIPTION
+        "Utility that allows automatic bugs reports"
+        fr "Utilitaire qui permet la génération de rapports de bugs automatiques"
+    SORTING_PRIORITY 95
+    VERSION "0.4.4" # forcing version on sentry-native
+    FORCED_INSTALLATION
+)
 
 ######################################
 # CPACK IFW COMPONENTS CONFIGURATION #
 ######################################
-
-#SET(CPACK_IFW_VERBOSE ON)
-INCLUDE(CPackIFW)
-
-# installer configuration
-cpack_ifw_configure_component(${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME}
-    FORCED_INSTALLATION
-    SCRIPT "src/_ifw/install.js"
-    USER_INTERFACES "src/_ifw/install.ui"
-    #TRANSLATIONS "${CMAKE_BINARY_DIR}/fr.qm"
-    DESCRIPTION ${APP_DESCRIPTION}
-)
 
 # repository for updates
 cpack_ifw_add_repository(coreRepo 
@@ -99,4 +146,5 @@ add_custom_command(TARGET zipForDeploy
     COMMAND ${CMAKE_COMMAND} -E rm -r
         ${CPACK_PACKAGES_DIR} 
         ${APP_PACKAGE_LATEST_FULL}
+    COMMENT "Cleanup CPack files..."
 )

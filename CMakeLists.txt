@@ -288,7 +288,7 @@ set_target_properties(crashpad_handler PROPERTIES
 
 # install it as well
 install(TARGETS crashpad_handler 
-    COMPONENT "CrashHandling"
+    COMPONENT "Crashpad"
 )
 
 ################
@@ -419,7 +419,6 @@ install(FILES ${GST_ALL_USED_PLUGINS}
 file(GLOB_RECURSE APP_CPP_FILES "src/*.cpp")
 file(GLOB_RECURSE APP_HPP_FILES "src/*.hpp")
 file(GLOB_RECURSE APP_H_FILES "src/*.h")
-file(GLOB_RECURSE APP_UI_FILES "src/*.ui")
 
 # defined as public for tests
 target_sources(appExec PUBLIC
@@ -431,23 +430,32 @@ target_sources(appExec PUBLIC
 # translations #
 ################
 
-list(APPEND TR_SOURCE_FILES
+include(QtTranslation)
+
+# app sources
+list(APPEND TS_SOURCE_FILES
     ${APP_CPP_FILES}
     ${APP_HPP_FILES}
     ${APP_H_FILES}
-    ${APP_UI_FILES}
 )
-
-list(APPEND TR_FILES
+list(APPEND TS_FILES
     "src/_i18n/fr.ts"
 )
-
-include(QtTranslation)
-
-# quote marks required to discriminate between both lists
 HandleQtTranslation(appExec 
-    "${TR_SOURCE_FILES}"
-    "${TR_FILES}"
+    "${TS_SOURCE_FILES}"
+    ${TS_FILES}
+)
+
+# IFW sources
+list(APPEND TS_INSTALL_SOURCE_FILES
+    "src/_ifw/EndInstallerForm.ui"
+)
+list(APPEND TS_INSTALL_FILES
+    "src/_i18n/EndInstallerForm_fr.ts"
+)
+HandleQtTranslation(appExec
+    "${TS_INSTALL_SOURCE_FILES}"
+    ${TS_INSTALL_FILES}
 )
 
 ########################

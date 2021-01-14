@@ -434,14 +434,6 @@
     </message>
 </context>
 <context>
-    <name>EndInstallerForm</name>
-    <message>
-        <location filename="../_ifw/install.ui" line="29"/>
-        <source>Launch at close</source>
-        <translation>Lancer automatiquement à la fermeture</translation>
-    </message>
-</context>
-<context>
     <name>GaugeEditor</name>
     <message>
         <location filename="../ui/sheets/components/GaugeEditor.hpp" line="44"/>
