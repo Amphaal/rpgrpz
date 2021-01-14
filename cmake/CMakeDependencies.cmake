@@ -8,12 +8,18 @@ if(MINGW)
         message(FATAL_ERROR "MINGW64_ROOT must be set ! Please use a toolchain file !")
     endif()
 
+    # use different separator to allow injection of whitelisted elements
+    string(REPLACE ";" "|" PEUTIL_WHITELIST_EXTENSIONS_SAFE "${PEUTIL_WHITELIST_EXTENSIONS}")
+
     #pe-util is required to find all .dll dependencies
     include(ExternalProject)
     ExternalProject_Add(peldd
         GIT_REPOSITORY  "https://github.com/Amphaal/pe-util.git"
         INSTALL_COMMAND ""
-        UPDATE_DISCONNECTED 1 # prevents from it always being built in search for tag change
+        CMAKE_ARGS -DPEUTIL_DEFAULT_SEARCH_PATH=${MINGW64_ROOT}/bin
+                   -DPEUTIL_WHITELIST_EXTENSIONS=${PEUTIL_WHITELIST_EXTENSIONS_SAFE}
+        LIST_SEPARATOR |
+        UPDATE_DISCONNECTED 1 # prevents from it always being built in search for tag change*
     )
 
     #define exec
@@ -25,34 +31,22 @@ endif()
 # missing libs #
 ################
 
-macro(DeployPEDependencies target component pattern)
+function(DeployPEDependencies target component)
 
-    # generate requirements
-    add_custom_command(TARGET ${target}
-        COMMAND 
-            ${PELDD_EXEC} -t
-            -p ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} 
-            -p ${MINGW64_ROOT}/bin
-            ${pattern}
-            > PEDeps_${component}.txt
-        BYPRODUCTS
-            PEDeps_${component}.txt
-        COMMENT "Find dependencies"
+    # define output directory for main script
+    set(PEDeps_${component}_DIR ${CMAKE_BINARY_DIR}/PEDeps_${component} PARENT_SCOPE)
+
+    # generate script for copying dependencies of target
+    string(REPLACE ";" " " pattern_ "${ARGN}")
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/deps.sh
+        PEDeps_${component}.sh
+        NEWLINE_STYLE LF
     )
 
-    # normalize paths
-    include(PathNormalizer)
-    NormalizePath(${target} "PEDeps_${component}.txt" "PEDeps_${component}_.txt")
-
-    # copy required libs
-    add_custom_command(TARGET ${target}
-        COMMAND 
-            ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/PEDeps_${component}
-        COMMAND 
-            cat PEDeps_${component}_.txt | xargs -i cp {} ${CMAKE_BINARY_DIR}/PEDeps_${component}
-        DEPENDS 
-            PEDeps_${component}_.txt
-        COMMENT "Copy found depedencies along executable"
+    # run script once target is built
+    add_custom_command(TARGET ${target} POST_BUILD
+        COMMAND bash PEDeps_${component}.sh
     )
 
     # install
@@ -62,7 +56,7 @@ macro(DeployPEDependencies target component pattern)
         COMPONENT ${component}
     )
 
-endmacro()
+endfunction()
 
 ##
 ##
