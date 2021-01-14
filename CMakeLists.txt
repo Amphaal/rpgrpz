@@ -1,11 +1,11 @@
-#policies first
+# policies first
 if(COMMAND cmake_policy)
     cmake_policy(SET CMP0011 NEW)
     cmake_policy(SET CMP0020 NEW)
     cmake_policy(SET CMP0003 NEW)
 endif()
 
-#use ccache
+# use ccache
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
     message("== Using CCache ! ==")
@@ -13,19 +13,22 @@ if(CCACHE_PROGRAM)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK "${CCACHE_PROGRAM}")
 endif()
 
-#default configuration
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+# default configuration
+list(APPEND CMAKE_MODULE_PATH 
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Qt
+)
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out)
 
 #############
 ## STARTUP ##
 #############
 
-#pre-startup
+# pre-startup
 cmake_minimum_required(VERSION 3.10.2)
 message(STATUS "Using toolchain file: [${CMAKE_TOOLCHAIN_FILE}].")
 
-#project setup
+# project setup
 project(RPGRPZ
     VERSION 1.0.20
     DESCRIPTION "Simple Tabletop RPG experience"
@@ -33,7 +36,6 @@ project(RPGRPZ
     LANGUAGES CXX
 )
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER) #lowered project name
-SET(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME ${PROJECT_NAME_LOWER})
 
 ########################
 ## VERSION.H HANDLING ##
@@ -43,65 +45,28 @@ SET(APP_PUBLISHER "LVWL")
 SET(APP_PATCHNOTE_URL "https://github.com/Amphaal/rpgrpz/releases")
 SET(SENTRY_ENDPOINT "https://ecb72ca256e744b990fd4f50aa52ea6f@o333337.ingest.sentry.io/5517405")
 
-#configure header with basic app informations
+# configure header with basic app informations
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/templates/_version.h 
-    version.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/version.h
 )
 
 ################################
 ## CPP Compiler Configuration ##
 ################################
 
-IF(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Windows")	
-    #MOC	
-    add_executable(Qt5::moc IMPORTED)	
-    find_program(XC_MOC moc REQUIRED)
-    message("[${XC_MOC}]")
-    set_target_properties(Qt5::moc PROPERTIES	
-        IMPORTED_LOCATION ${XC_MOC}	
-    )	
-    #RCC	
-    add_executable(Qt5::rcc IMPORTED)
-    find_program(XC_RCC rcc REQUIRED)
-    message("[${XC_RCC}]")
-    set_target_properties(Qt5::rcc PROPERTIES	
-        IMPORTED_LOCATION ${XC_RCC}	
-    )	
-    #UIC	
-    add_executable(Qt5::uic IMPORTED)
-    find_program(XC_UIC uic REQUIRED)
-    message("[${XC_UIC}]")
-    set_target_properties(Qt5::uic PROPERTIES	
-        IMPORTED_LOCATION ${XC_UIC}	
-    )	
-    #lrelease	
-    add_executable(Qt5::lrelease IMPORTED)
-    find_program(XC_LRELEASE lrelease REQUIRED)
-    message("[${XC_LRELEASE}]")
-    set_target_properties(Qt5::lrelease PROPERTIES	
-        IMPORTED_LOCATION ${XC_LRELEASE}
-    )	
-    #lupdate	
-    add_executable(Qt5::lupdate IMPORTED)
-    find_program(XC_LUPDATE lupdate REQUIRED)
-    message("[${XC_LUPDATE}]")
-    set_target_properties(Qt5::lupdate PROPERTIES	
-        IMPORTED_LOCATION ${XC_LUPDATE}	
-    )	
-endif()
-
 SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_C_STANDARD 11)
 
-#Qt
+# Qt
+include(XCQt)
 SET(CMAKE_AUTOMOC ON)
 SET(CMAKE_AUTORCC ON)
 SET(CMAKE_AUTOUIC ON)
 SET(CMAKE_INCLUDE_CURRENT_DIR ON) #for moc auto 
 
-#make sure _WIN32 preprocessor is used even while cross compiling
+# make sure _WIN32 preprocessor is used even while cross compiling
 IF(MINGW)
     add_compile_definitions(_WIN32)
 endif()
@@ -110,7 +75,7 @@ endif()
 ## define bundle configuration ##
 #################################
 
-#define build type if any
+# define build type if any
 IF(NOT DEFINED APP_BUNDLE_TYPE)
     IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         SET(APP_BUNDLE_TYPE WIN32) 
@@ -123,18 +88,27 @@ endif()
 ## define executables and libraries ##
 ######################################
 
-#define app executable
+# define app executable
 add_executable(appExec ${APP_BUNDLE_TYPE})
 set_target_properties(appExec PROPERTIES OUTPUT_NAME "${PROJECT_NAME}") #define executable name
 target_compile_definitions(appExec PRIVATE $<$<CONFIG:Debug>:_DEBUG>) #define _DEBUG markup if in DEBUG config
 
-#generate pdb
+# generate pdb
 IF(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")  
+    
     target_link_options(appExec PRIVATE -Wl,-pdb=) # generate pdb files
     target_compile_options(appExec PRIVATE -gcodeview) #use codeview for pdbs
+    
+    # add .pdb to install
+    install(
+        FILES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<TARGET_FILE_BASE_NAME:appExec>.pdb
+        TYPE BIN
+        COMPONENT "App"
+    )
+
 endif()
 
-#warnings for debug
+# warnings for debug
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     target_link_options(appExec PRIVATE 
         -Wall 
@@ -144,16 +118,55 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     )
 endif()
 
-#optimise for release
+# optimise for release
 if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     set_target_properties(appExec PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE) #enable LTO
+endif()
+
+#################
+## install app ##
+#################
+
+# app
+SET(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME "App")
+install(TARGETS appExec
+    COMPONENT "App"
+)
+
+# spdlog
+if(MINGW)
+    find_file(MINGW_SPDLOG libspdlog.dll REQUIRED)
+    install(FILES ${MINGW_SPDLOG}
+        TYPE BIN
+        COMPONENT "Runtime"
+    )
+endif()
+
+# runtime
+if(MINGW)
+    find_file(MINGW_STDLIB libstdc++-6.dll REQUIRED)
+    find_file(MINGW_GCC_SEH libgcc_s_seh-1.dll REQUIRED)
+    find_file(MINGW_WINPTHREAD libwinpthread-1.dll REQUIRED)
+    install(
+        FILES 
+            ${MINGW_STDLIB}
+            ${MINGW_GCC_SEH}
+            ${MINGW_WINPTHREAD}
+        TYPE BIN
+        COMPONENT "Runtime"
+    )
+    list(APPEND PEUTIL_WHITELIST_EXTENSIONS 
+        "libstdc++-6.dll"
+        "libgcc_s_seh-1.dll"
+        "libwinpthread-1.dll"
+    )
 endif()
 
 #########################
 ## ressources handling ##
 #########################
 
-#default QT ressources
+# default QT ressources
 target_sources(appExec PRIVATE "resources/resources.qrc")
 
 IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")  
@@ -174,48 +187,37 @@ endif()
 # pkgConfig and find_library setup #
 ####################################
 
-#fetch content handling
+# fetch content handling
 include(FetchContent)
 
-#using pkgConfig, set PKG_CONFIG_EXECUTABLE if not found
+# using pkgConfig, set PKG_CONFIG_EXECUTABLE if not found
 find_package(PkgConfig REQUIRED)
 
 ###########
 # OpenSSL #
 ###########
 
-if(MINGW)
-    #find libs
-    find_file(OPENSSL_CPYPTO_DLL 
-        NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}crypto-1_1-x64${CMAKE_SHARED_LIBRARY_SUFFIX}
-        PATH_SUFFIXES "bin" 
-    ) 
-    find_file(OPENSSL_SSL_DLL 
-        NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}ssl-1_1-x64${CMAKE_SHARED_LIBRARY_SUFFIX}
-        PATH_SUFFIXES "bin" 
-    ) 
-
-    IF(NOT OPENSSL_CPYPTO_DLL OR NOT OPENSSL_SSL_DLL)
-        message(FATAL_ERROR "Openssl .dll NOT FOUND !")
-    else()
-        message("Openssl .dll Found ! [${OPENSSL_CPYPTO_DLL} ${OPENSSL_SSL_DLL}]")
-    endif()
-
-    #copy lib into a target
-    add_custom_command(TARGET appExec 
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_CPYPTO_DLL} $<TARGET_FILE_DIR:appExec>
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${OPENSSL_SSL_DLL} $<TARGET_FILE_DIR:appExec>
-    )
-endif()
-
-#find
+# find
 find_package(OpenSSL REQUIRED)
 
-#link
+# link
 target_link_libraries(appExec PRIVATE
     OpenSSL::SSL
     OpenSSL::Crypto
 )
+
+# install
+if(MINGW)
+    find_file(MINGW_OPENSSL_SSL libssl-1_1-x64.dll REQUIRED)
+    find_file(MINGW_OPENSSL_CRYPTO libcrypto-1_1-x64.dll REQUIRED)
+    install(
+        FILES
+            ${MINGW_OPENSSL_SSL} 
+            ${MINGW_OPENSSL_CRYPTO}
+        TYPE BIN
+        COMPONENT "OpenSSL"
+    )
+endif()
 
 ########
 # QT 5 #
@@ -242,222 +244,173 @@ target_link_libraries(appExec PRIVATE
 )
 
 # QT LIBRARIES COPY
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    include(Windeployqt)
-    windeployqt(appExec)
-endif()
+include(DeployQt)
+DeployQt(appExec)
 
-#missing libs
-IF(MINGW)
-    #for icons handling
-    find_file(libjpeg_LIBRARY 
-        NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}jpeg-8${CMAKE_SHARED_LIBRARY_SUFFIX}
-        PATH_SUFFIXES "bin" 
-    ) 
+#############
+# snowflake #
+#############
 
-    IF(NOT libjpeg_LIBRARY)
-        message(FATAL_ERROR "libjpeg .dll NOT FOUND !")
-    else()
-        message("libjpeg_LIBRARY found ! [${libjpeg_LIBRARY}]")
-    endif()
-
-    add_custom_command(TARGET appExec 
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${libjpeg_LIBRARY} $<TARGET_FILE_DIR:appExec>
-    )
-endif()
+add_subdirectory(deps/snowflake)
+target_link_libraries(appExec PRIVATE snowflake)
 
 ###########
-# pe-util #
+# clipper #
 ###########
 
-#pe-util is required to find all .dll dependencies
-IF(MINGW)
-    include(ExternalProject)
-    ExternalProject_Add(peldd
-        GIT_REPOSITORY  "https://github.com/Amphaal/pe-util.git"
-        INSTALL_COMMAND ""
-        UPDATE_DISCONNECTED 1 # prevents from it always being built in search for tag change
-    )
+add_subdirectory(deps/clipper)
+target_link_libraries(appExec PRIVATE clipper)
 
-    #define exec
-    ExternalProject_Get_Property(peldd BINARY_DIR)
-    set(PELDD_EXEC "${BINARY_DIR}/peldd")
-endif()
+############################
+# autoupdatercore (for Qt) #
+############################
 
-# #################
-# # Sentry-native #
-# #################
+add_subdirectory(deps/autoupdatercore)
+target_link_libraries(appExec PRIVATE autoupdatercore)
 
-add_subdirectory(sentry-native)
+#################
+# Sentry-native #
+#################
+
+add_subdirectory(deps/sentry-native EXCLUDE_FROM_ALL)
 target_link_libraries(appExec PRIVATE sentry)
+
+# track version into file
+execute_process(
+    COMMAND printf "${CMAKE_PROJECT_VERSION}"
+    OUTPUT_FILE ${CMAKE_BINARY_DIR}/version
+)
+
+# add crashpad_handler next to app
+set_target_properties(crashpad_handler PROPERTIES 
+    RUNTIME_OUTPUT_DIRECTORY $<TARGET_FILE_DIR:appExec>
+)
+
+# install it as well
+install(TARGETS crashpad_handler 
+    COMPONENT "Crashpad"
+)
 
 ################
 # NetworkCandy #
 ################
 
-add_subdirectory(NetworkCandy)
+add_subdirectory(deps/NetworkCandy)
 target_link_libraries(appExec PRIVATE nw-candy)
+
+# install 
+if(MINGW)
+    find_file(MINGW_MINIUPNPC libminiupnpc.dll REQUIRED)
+    install(FILES ${MINGW_MINIUPNPC}
+        TYPE BIN
+        COMPONENT "Runtime"
+    )
+endif()
 
 #############
 # AudioTube #
 #############
 
-add_subdirectory(AudioTube)
+add_subdirectory(deps/AudioTube)
 target_link_libraries(appExec PRIVATE audiotube)
 
 #########
 # Dicer #
 #########
 
-add_subdirectory(Dicer)
+add_subdirectory(deps/Dicer)
 target_link_libraries(appExec PRIVATE dicer)
 
-############# 
-# Gstreamer #
-#############
+####################
+# Gstreamer - base #
+####################
 
-#find Gstreamer
-LIST(APPEND GST_MODULES_TO_IMPORT 
+# find Gstreamer
+pkg_check_modules(Gst REQUIRED IMPORTED_TARGET 
     gstreamer-1.0
-    gstreamer-controller-1.0
-    gstreamer-net-1.0
-    gstreamer-audio-1.0
 )
-pkg_check_modules(Gst REQUIRED IMPORTED_TARGET ${GST_MODULES_TO_IMPORT})
 
-#since mms-bitfields flag from glib is PUBLIC and throws a bunch of warnings...
-IF(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    target_compile_options(PkgConfig::Gst INTERFACE "-Wno-incompatible-ms-struct")
-ENDIF()
-
-#link
+# link
 target_link_libraries(appExec PRIVATE     
     PkgConfig::Gst
 )
 
-IF(MINGW)
-    ####define gstreamer plugins to use
-    #core
-    LIST(APPEND _gstreamer_plugins 
-        gstplayback
-        gstautodetect
-        gstcoreelements
+######################
+# Gstreamer - GnuTLS #
+######################
+
+# find module
+find_file(giognutls_LIB 
+    NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}giognutls${CMAKE_SHARED_LIBRARY_SUFFIX}
+    PATH_SUFFIXES "lib/gio/modules"
+    REQUIRED
+)
+
+# copy file
+file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gio)
+file(COPY ${giognutls_LIB} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gio)
+
+# install
+install(
+    DIRECTORY $<TARGET_FILE_DIR:appExec>/gio
+    TYPE BIN
+    COMPONENT "GStreamer"
+)
+
+#######################
+# Gstreamer - plugins #
+#######################
+
+# get plugin shared libraries location
+pkg_get_variable(GSTREAMER_PLUGINS_LIB_LOCATION gstreamer-1.0 
+    pluginsdir
+)
+
+# define gstreamer plugins to use
+    # core
+    LIST(APPEND REQUIRED_GST_PLUGINS 
+        playback
+        autodetect
+        coreelements
     )
-    #opus stream read
-    LIST(APPEND _gstreamer_plugins 
-        gstsoup
-        gsttypefindfunctions
-        gstmatroska
-        gstopus
-        gstvolume
-        gstaudioconvert
-        gstaudioresample
+    # opus stream read
+    LIST(APPEND REQUIRED_GST_PLUGINS 
+        soup
+        typefindfunctions
+        matroska
+        opus
+        volume
+        audioconvert
+        audioresample
     )
-
-    #create plugin directory
-    add_custom_command(TARGET appExec 
-        COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:appExec>/gst-plugins
-    )
-
-    #get plugin shared libraries location
-    pkg_get_variable(GSTREAMER_PLUGINS_LIB_LOCATION gstreamer-1.0 
-        pluginsdir
-    )
-
-    IF(MINGW)
-        LIST(APPEND _gstreamer_plugins
-            gstwaveform
-        )
-    endif()
-
-    message("Searching for gst plugins in [${GSTREAMER_PLUGINS_LIB_LOCATION}]...")
-
-    #copy gstreamer plugins into output
-    foreach(_gstPluginLib IN ITEMS ${_gstreamer_plugins})
-
-        #using find_file because find_library is kinda broken with .dll on MinGW
-        find_file(${_gstPluginLib}_LIBRARY 
-            NAMES   lib${_gstPluginLib}.dll
-                    lib${_gstPluginLib}.so
-            PATHS ${GSTREAMER_PLUGINS_LIB_LOCATION}
-            NO_DEFAULT_PATH
-        )
-
-        IF(NOT ${_gstPluginLib}_LIBRARY)
-            message(FATAL_ERROR "${_gstPluginLib}_LIBRARY NOT FOUND !")
-        else()
-            message("${_gstPluginLib}_LIBRARY Found ! [${${_gstPluginLib}_LIBRARY}]")
-        endif()
-
-        add_custom_command(TARGET appExec 
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${${_gstPluginLib}_LIBRARY} $<TARGET_FILE_DIR:appExec>/gst-plugins
-        )
-
-    endforeach()
-endif()
-
-# ######################
-# # GST LIBRARIES COPY #
-# ######################
-
-#platform specifics missing dependency
-IF(MINGW OR APPLE)
-
-    #broken find_library...
-    find_file(giognutls_LIB 
-        NAMES 
-            libgiognutls.so
-            libgiognutls.dll
-        PATH_SUFFIXES "lib/gio/modules"
+    # windows specific ?
+    LIST(APPEND REQUIRED_GST_PLUGINS
+        waveform
     )
 
-    IF(NOT giognutls_LIB)
-        message(FATAL_ERROR "giognutls lib NOT FOUND !")
-    else()
-        message("giognutls lib found ! [${giognutls_LIB}]")
-    endif()
+# copy gstreamer plugins into output
+foreach(_gstPluginLib IN ITEMS ${REQUIRED_GST_PLUGINS})
 
-    add_custom_command(TARGET appExec
-        COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:appExec>/gio       
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${giognutls_LIB} $<TARGET_FILE_DIR:appExec>/gio
-    ) 
-
-endif()
-
-#missing deps for gstreamer
-if(MINGW)
-    list(APPEND GST_SLIBS
-        gmp-10
-        gnutls-30
-        hogweed-6
-        nettle-8
-        soup-2.4-1
-        tasn1-6
-        winpthread-1
-        xml2-2
+    # using find_file because find_library is kinda broken with .dll on MinGW
+    find_file(${_gstPluginLib}_LIBRARY 
+        NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}gst${_gstPluginLib}${CMAKE_SHARED_LIBRARY_SUFFIX}
+        PATHS ${GSTREAMER_PLUGINS_LIB_LOCATION}
+        NO_DEFAULT_PATH
+        REQUIRED
     )
 
-    #import all missing GSTREAMER libs
-    foreach(_gstSLib IN ITEMS ${GST_SLIBS})
+    list(APPEND GST_ALL_USED_PLUGINS
+        ${${_gstPluginLib}_LIBRARY} 
+    )
+    
+endforeach()
 
-        #broken find_library...
-        find_file(${_gstSLib}_LIBRARY 
-            NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}${_gstSLib}${CMAKE_SHARED_LIBRARY_SUFFIX}
-            PATH_SUFFIXES "bin"
-        )
-
-        IF(NOT ${_gstSLib}_LIBRARY)
-            message(FATAL_ERROR "${_gstSLib}_LIBRARY NOT FOUND !")
-        else()
-            message("${_gstSLib}_LIBRARY Found ! [${${_gstSLib}_LIBRARY}]")
-        endif()
-
-        add_custom_command(TARGET appExec 
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${${_gstSLib}_LIBRARY} $<TARGET_FILE_DIR:appExec>
-        )
-
-    endforeach()
-endif()
+# install
+include(GNUInstallDirs)
+install(FILES ${GST_ALL_USED_PLUGINS}
+    DESTINATION ${CMAKE_INSTALL_BINDIR}/gst-plugins
+    COMPONENT "GStreamer"
+)
 
 #####################
 # list source files #
@@ -466,9 +419,8 @@ endif()
 file(GLOB_RECURSE APP_CPP_FILES "src/*.cpp")
 file(GLOB_RECURSE APP_HPP_FILES "src/*.hpp")
 file(GLOB_RECURSE APP_H_FILES "src/*.h")
-file(GLOB_RECURSE APP_UI_FILES "src/*.ui")
 
-#defined as public for tests
+# defined as public for tests
 target_sources(appExec PUBLIC
     ${APP_CPP_FILES}
     ${APP_HPP_FILES}
@@ -478,85 +430,55 @@ target_sources(appExec PUBLIC
 # translations #
 ################
 
-#define translation files
-list(APPEND APP_TRANSLATION_FILES 
-    "src/_i18n/fr.ts"
-)
+include(QtTranslation)
 
-#updates TS files from sources
-qt5_create_translation(QM_FILES
+# app sources
+list(APPEND TS_SOURCE_FILES
     ${APP_CPP_FILES}
     ${APP_HPP_FILES}
     ${APP_H_FILES}
-    ${APP_UI_FILES}
-    ${APP_TRANSLATION_FILES}
+)
+list(APPEND TS_FILES
+    "src/_i18n/fr.ts"
+)
+HandleQtTranslation(appExec 
+    "${TS_SOURCE_FILES}"
+    ${TS_FILES}
 )
 
-#generate QM files
-qt5_add_translation(APP_BINARY_TRANSLATION_FILES ${APP_TRANSLATION_FILES})
-
-#generate QM files from TS
-target_sources(appExec PUBLIC
-    ${APP_BINARY_TRANSLATION_FILES}
+# IFW sources
+list(APPEND TS_INSTALL_SOURCE_FILES
+    "src/_ifw/EndInstallerForm.ui"
+)
+list(APPEND TS_INSTALL_FILES
+    "src/_i18n/EndInstallerForm_fr.ts"
+)
+HandleQtTranslation(appExec
+    "${TS_INSTALL_SOURCE_FILES}"
+    ${TS_INSTALL_FILES}
 )
 
-#copy translations into output
-add_custom_command(TARGET appExec   
-    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:appExec>/translations       
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QM_FILES} $<TARGET_FILE_DIR:appExec>/translations
-    COMMENT "Copy translation files"
+########################
+# Runtime dependencies #
+########################
+
+include(CMakeDependencies)
+
+# QT
+DeployPEDependencies(appExec "Qt"
+    ${CMAKE_BINARY_DIR}/QtRuntime/**/*.dll
 )
 
-################
-# missing libs #
-################
-
-#scan for missing lib dependencies, then fetch and copy them
-if(MINGW)
-    
-    if(NOT MINGW64_ROOT)
-        message(FATAL_ERROR "MINGW64_ROOT must be set ! Please use a toolchain file !")
-    endif()
-
-    #generate requirements
-    add_custom_command(TARGET appExec POST_BUILD
-        COMMAND 
-            ${PELDD_EXEC} -a
-            -p ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} 
-            -p ${MINGW64_ROOT}/bin
-            $<TARGET_FILE:appExec> 
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gio/* 
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gst-plugins/*
-            | sed -f ${CMAKE_CURRENT_SOURCE_DIR}/cmake/antislash-to-slash.sed
-            | tr -d '\\015' 
-            > lib_requirements.txt
-        DEPENDS 
-            ${CMAKE_CURRENT_SOURCE_DIR}/cmake/antislash-to-slash.sed
-        BYPRODUCTS
-            lib_requirements.txt
-        COMMENT "Find executable dependencies"
-    )
-
-    #copy required libs
-    add_custom_command(TARGET appExec POST_BUILD
-        COMMAND 
-            cat lib_requirements.txt | xargs cp -n -t ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-        DEPENDS 
-            lib_requirements.txt
-        COMMENT "Copy found depedencies along executable"
-    )
-
-endif()
+# GST
+DeployPEDependencies(appExec "GStreamer"
+    ${PEDeps_Qt_DIR}/*.dll
+    ${giognutls_LIB}
+    ${GST_ALL_USED_PLUGINS}
+)
 
 ######################
 # add Publish target #
 ######################
-
-# print version
-add_custom_command(TARGET appExec 
-    COMMAND printf "${CMAKE_PROJECT_VERSION}" > version
-    COMMENT "Create blank file containing appExec version"
-)
 
 # publish script
 include(CMakePublish)

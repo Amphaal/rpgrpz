@@ -1,5 +1,15 @@
 #include "snowflake.h"
 
+#include <iostream>
+
+#ifdef _WIN32
+       #include <stdint.h>
+       #include <time.h>
+       #include <windows.h>
+#else  // APPLE and LINUX
+       #include <sys/time.h>
+#endif
+
 #ifdef _WIN32
 int SnowFlake::gtod(struct timeval * tp, struct timezone * tzp) {
     // Note: some broken versions only have 8 trailing zero's, the correct epoch has 9 trailing zero's
@@ -46,11 +56,11 @@ uint64_t SnowFlake::getNewstmp() {
 
 SnowFlake::SnowFlake(int datacenter_Id, int machine_Id) {
     if ((uint64_t)datacenter_Id > max_datacenter_num_ || datacenter_Id < 0) {
-        qDebug() << "datacenterId can't be greater than max_datacenter_num_ or less than 0";
+        std::cout << "datacenterId can't be greater than max_datacenter_num_ or less than 0" << std::endl;
         exit(0);
     }
     if ((uint64_t)machine_Id > max_machine_num_ || machine_Id < 0) {
-        qDebug() << "machineId can't be greater than max_machine_num_or less than 0";
+        std::cout << "machineId can't be greater than max_machine_num_or less than 0" << std::endl;
         exit(0);
     }
     datacenterId = datacenter_Id;
@@ -68,7 +78,7 @@ SnowFlake::Id SnowFlake::nextId() {
     std::unique_lock<std::mutex> lock(mutex_);
     uint64_t currStmp = getNewstmp();
     if (currStmp < lastStmp) {
-        qDebug() << "Clock moved backwards.  Refusing to generate id";
+        std::cout << "Clock moved backwards.  Refusing to generate id" << std::endl;
         exit(0);
     }
 

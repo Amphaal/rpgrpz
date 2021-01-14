@@ -3,17 +3,13 @@
 ##########################
 
     SET(CPACK_GENERATOR IFW)
+    SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJECT_NAME})
 
     # force version
     SET(CPACK_IFW_FRAMEWORK_VERSION_FORCED  "4.0.1" CACHE INTERNAL "")
     SET(CPACK_IFW_FRAMEWORK_VERSION         "4.0.1" CACHE INTERNAL "")
 
-    SET(APP_DESCRIPTION ${PROJECT_NAME}
-        fr "L'experience JdR simplifiée."
-    )
-
     SET(CPACK_IFW_PACKAGE_WIZARD_STYLE "Modern")
-    SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PROJECT_NAME})
     SET(CPACK_IFW_PACKAGE_PUBLISHER ${APP_PUBLISHER})
     SET(CPACK_IFW_PACKAGE_START_MENU_DIRECTORY ${APP_PUBLISHER})
     SET(CPACK_IFW_PRODUCT_URL ${APP_PATCHNOTE_URL})
@@ -25,7 +21,7 @@
         SET(CPACK_IFW_PACKAGE_FILE_EXTENSION ".dmg")
     endif()
 
-    #icons
+    # icons
     SET(CPACK_IFW_PACKAGE_LOGO "${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/app_64.png")
     SET(CPACK_IFW_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/package.ico")
 
@@ -33,35 +29,83 @@
 ### INSTALL ##
 ##############
 
-#install output content as is, probably overriding previous install() instructions
-install(
-    DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/"
-    DESTINATION .
-    PATTERN "*.pdb" EXCLUDE
+INCLUDE(CPack)
+INCLUDE(CPackIFW)
+
+# Runtime 
+cpack_ifw_configure_component("Runtime"
+    DISPLAY_NAME 
+        "Runtime" 
+        fr "Composants de base"
+    DESCRIPTION 
+        "Essential components used by ${PROJECT_NAME} and other libraries"
+        fr "Composants essentiels utilisés par ${PROJECT_NAME} et autres librairies"
+    SORTING_PRIORITY 99
+    VERSION "1.0.0"
+    FORCED_INSTALLATION
 )
 
-INCLUDE(CPack)
+# App
+cpack_ifw_configure_component("App"
+    DISPLAY_NAME ${PROJECT_NAME}
+    DESCRIPTION 
+        ${PROJECT_DESCRIPTION}
+        fr "L'experience JdR simplifiée !"
+    SCRIPT "src/_ifw/EndInstallerForm.js"
+    SORTING_PRIORITY 100
+    USER_INTERFACES "src/_ifw/EndInstallerForm.ui"
+    TRANSLATIONS ${CMAKE_BINARY_DIR}/EndInstallerForm_fr.qm
+    FORCED_INSTALLATION
+)
 
-#configure default component
-cpack_add_component(${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME} DOWNLOADED)
+# Qt
+cpack_ifw_configure_component("Qt"
+    DISPLAY_NAME "Qt ${Qt5Core_VERSION_STRING}"
+    DESCRIPTION 
+        "Essential framework used by ${PROJECT_NAME}"
+        fr "Framework essentiel utilisé par ${PROJECT_NAME}"
+    SORTING_PRIORITY 98
+    VERSION ${Qt5Core_VERSION_STRING}
+    FORCED_INSTALLATION
+)
+
+# OpenSSL
+cpack_ifw_configure_component("OpenSSL"
+    DISPLAY_NAME "OpenSSL ${OPENSSL_VERSION}"
+    DESCRIPTION
+        "Library allowing secure networking"
+        fr "Librairie permettant de sécuriser les communications"
+    SORTING_PRIORITY 97
+    VERSION ${OPENSSL_VERSION}
+    FORCED_INSTALLATION
+)
+
+# GStreamer
+cpack_ifw_configure_component("GStreamer"
+    DISPLAY_NAME "GStreamer ${Gst_VERSION}"
+    DESCRIPTION
+        "Library used for audio streaming"
+        fr "Librairie permettant les fonctionnalités de streaming audio"
+    SORTING_PRIORITY 96
+    VERSION ${Gst_VERSION}
+    FORCED_INSTALLATION
+)
+
+# Crashpad
+cpack_ifw_configure_component("Crashpad"
+    DESCRIPTION
+        "Utility that allows automatic bugs reports"
+        fr "Utilitaire qui permet la génération de rapports de bugs automatiques"
+    SORTING_PRIORITY 95
+    VERSION "0.4.4" # forcing version on sentry-native
+    FORCED_INSTALLATION
+)
 
 ######################################
 # CPACK IFW COMPONENTS CONFIGURATION #
 ######################################
 
-#SET(CPACK_IFW_VERBOSE ON)
-INCLUDE(CPackIFW)
-
-# #installer configuration
-cpack_ifw_configure_component(${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME}
-    FORCED_INSTALLATION
-    SCRIPT "src/_ifw/install.js"
-    USER_INTERFACES "src/_ifw/install.ui"
-    #TRANSLATIONS "${CMAKE_BINARY_DIR}/fr.qm"
-    DESCRIPTION ${APP_DESCRIPTION}
-)
-
-#repository for updates
+# repository for updates
 cpack_ifw_add_repository(coreRepo 
     URL "https://dl.bintray.com/amphaal/rpgrpz/ifw-${CPACK_SYSTEM_NAME}"
 )
@@ -70,30 +114,37 @@ cpack_ifw_add_repository(coreRepo
 ## ZIP FOR DEPLOYMENT ## 
 ########################
 
-#source
+# source
 SET(CPACK_PACKAGE_FILE_NAME ${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}) #override as CPACK_SYSTEM_NAME may end up wrong (CMAKE bug?)
 SET(CPACK_PACKAGE_FILE_NAME_FULL ${CPACK_PACKAGE_FILE_NAME}${CPACK_IFW_PACKAGE_FILE_EXTENSION})
 
-SET(APP_REPOSITORY ${CMAKE_BINARY_DIR}/_CPack_Packages/${CPACK_SYSTEM_NAME}/IFW/${CPACK_PACKAGE_FILE_NAME}/repository)
+SET(CPACK_PACKAGES_DIR ${CMAKE_BINARY_DIR}/_CPack_Packages)
+SET(APP_REPOSITORY ${CPACK_PACKAGES_DIR}/${CPACK_SYSTEM_NAME}/IFW/${CPACK_PACKAGE_FILE_NAME}/repository)
 
 SET(APP_PACKAGE_LATEST ${CPACK_PACKAGE_NAME}-latest-${CPACK_SYSTEM_NAME})
 SET(APP_PACKAGE_LATEST_FULL ${APP_PACKAGE_LATEST}${CPACK_IFW_PACKAGE_FILE_EXTENSION})
 
-#create target to be invoked with bash
+# create target to be invoked with bash
 add_custom_target(zipForDeploy DEPENDS package)
 
-#installer
+# zip installer
 add_custom_command(TARGET zipForDeploy
     COMMAND ${CMAKE_COMMAND} -E rename ${CPACK_PACKAGE_FILE_NAME_FULL} ${APP_PACKAGE_LATEST_FULL}
     COMMAND ${CMAKE_COMMAND} -E tar c installer.zip --format=zip ${APP_PACKAGE_LATEST_FULL}
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     COMMENT "Ziping IFW installer..."
 )
-# #repository
+# zip repository
 add_custom_command(TARGET zipForDeploy
-    COMMAND ${CMAKE_COMMAND} -E tar c ${CMAKE_BINARY_DIR}/repository.zip --format=zip 
-        Updates.xml
-        ${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME}
+    COMMAND ${CMAKE_COMMAND} -E tar c ${CMAKE_BINARY_DIR}/repository.zip --format=zip .
     WORKING_DIRECTORY ${APP_REPOSITORY}
     COMMENT "Ziping IFW repository..."
+)
+
+# cleanup
+add_custom_command(TARGET zipForDeploy
+    COMMAND ${CMAKE_COMMAND} -E rm -r
+        ${CPACK_PACKAGES_DIR} 
+        ${APP_PACKAGE_LATEST_FULL}
+    COMMENT "Cleanup CPack files..."
 )

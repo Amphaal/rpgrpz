@@ -35,7 +35,7 @@
 
 #include <QGraphicsItem>
 
-#include "src/_libs/snowflake/snowflake.h"
+#include <snowflake.h>
 #include "src/shared/models/_base/Ownable.hpp"
 #include "src/helpers/JSONSerializer.h"
 
