@@ -25,7 +25,7 @@
         SET(CPACK_IFW_PACKAGE_FILE_EXTENSION ".dmg")
     endif()
 
-    #icons
+    # icons
     SET(CPACK_IFW_PACKAGE_LOGO "${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/app_64.png")
     SET(CPACK_IFW_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/package.ico")
 
@@ -35,8 +35,12 @@
 
 INCLUDE(CPack)
 
-#configure default component
-cpack_add_component(${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME} DOWNLOADED)
+# configure default component
+cpack_add_component("App" DOWNLOADED)
+cpack_add_component("CrashHandling" DOWNLOADED)
+cpack_add_component("Runtime" DOWNLOADED)
+cpack_add_component("OpenSSL" DOWNLOADED)
+cpack_add_component("GStreamer" DOWNLOADED)
 
 ######################################
 # CPACK IFW COMPONENTS CONFIGURATION #
@@ -45,7 +49,7 @@ cpack_add_component(${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME} DOWNLOADED)
 #SET(CPACK_IFW_VERBOSE ON)
 INCLUDE(CPackIFW)
 
-# #installer configuration
+# installer configuration
 cpack_ifw_configure_component(${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME}
     FORCED_INSTALLATION
     SCRIPT "src/_ifw/install.js"
@@ -54,7 +58,7 @@ cpack_ifw_configure_component(${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME}
     DESCRIPTION ${APP_DESCRIPTION}
 )
 
-#repository for updates
+# repository for updates
 cpack_ifw_add_repository(coreRepo 
     URL "https://dl.bintray.com/amphaal/rpgrpz/ifw-${CPACK_SYSTEM_NAME}"
 )
@@ -63,30 +67,36 @@ cpack_ifw_add_repository(coreRepo
 ## ZIP FOR DEPLOYMENT ## 
 ########################
 
-#source
+# source
 SET(CPACK_PACKAGE_FILE_NAME ${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}) #override as CPACK_SYSTEM_NAME may end up wrong (CMAKE bug?)
 SET(CPACK_PACKAGE_FILE_NAME_FULL ${CPACK_PACKAGE_FILE_NAME}${CPACK_IFW_PACKAGE_FILE_EXTENSION})
 
-SET(APP_REPOSITORY ${CMAKE_BINARY_DIR}/_CPack_Packages/${CPACK_SYSTEM_NAME}/IFW/${CPACK_PACKAGE_FILE_NAME}/repository)
+SET(CPACK_PACKAGES_DIR ${CMAKE_BINARY_DIR}/_CPack_Packages)
+SET(APP_REPOSITORY ${CPACK_PACKAGES_DIR}/${CPACK_SYSTEM_NAME}/IFW/${CPACK_PACKAGE_FILE_NAME}/repository)
 
 SET(APP_PACKAGE_LATEST ${CPACK_PACKAGE_NAME}-latest-${CPACK_SYSTEM_NAME})
 SET(APP_PACKAGE_LATEST_FULL ${APP_PACKAGE_LATEST}${CPACK_IFW_PACKAGE_FILE_EXTENSION})
 
-#create target to be invoked with bash
+# create target to be invoked with bash
 add_custom_target(zipForDeploy DEPENDS package)
 
-#installer
+# zip installer
 add_custom_command(TARGET zipForDeploy
     COMMAND ${CMAKE_COMMAND} -E rename ${CPACK_PACKAGE_FILE_NAME_FULL} ${APP_PACKAGE_LATEST_FULL}
     COMMAND ${CMAKE_COMMAND} -E tar c installer.zip --format=zip ${APP_PACKAGE_LATEST_FULL}
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     COMMENT "Ziping IFW installer..."
 )
-# #repository
+# zip repository
 add_custom_command(TARGET zipForDeploy
-    COMMAND ${CMAKE_COMMAND} -E tar c ${CMAKE_BINARY_DIR}/repository.zip --format=zip 
-        Updates.xml
-        ${CMAKE_INSTALL_DEFAULT_COMPONENT_NAME}
+    COMMAND ${CMAKE_COMMAND} -E tar c ${CMAKE_BINARY_DIR}/repository.zip --format=zip .
     WORKING_DIRECTORY ${APP_REPOSITORY}
     COMMENT "Ziping IFW repository..."
+)
+
+# cleanup
+add_custom_command(TARGET zipForDeploy
+    COMMAND ${CMAKE_COMMAND} -E rm -r
+        ${CPACK_PACKAGES_DIR} 
+        ${APP_PACKAGE_LATEST_FULL}
 )

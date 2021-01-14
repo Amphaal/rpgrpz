@@ -103,7 +103,7 @@ IF(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     install(
         FILES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<TARGET_FILE_BASE_NAME:appExec>.pdb
         TYPE BIN
-        COMPONENT "CrashHandling"
+        COMPONENT "App"
     )
 
 endif()
@@ -276,7 +276,10 @@ add_subdirectory(deps/sentry-native EXCLUDE_FROM_ALL)
 target_link_libraries(appExec PRIVATE sentry)
 
 # track version into file
-execute_process(COMMAND printf "${CMAKE_PROJECT_VERSION}" > version)
+execute_process(
+    COMMAND printf "${CMAKE_PROJECT_VERSION}"
+    OUTPUT_FILE ${CMAKE_BINARY_DIR}/version
+)
 
 # add crashpad_handler next to app
 set_target_properties(crashpad_handler PROPERTIES 
@@ -402,6 +405,13 @@ foreach(_gstPluginLib IN ITEMS ${REQUIRED_GST_PLUGINS})
     
 endforeach()
 
+# install
+include(GNUInstallDirs)
+install(FILES ${GST_ALL_USED_PLUGINS}
+    DESTINATION ${CMAKE_INSTALL_BINDIR}/gst-plugins
+    COMPONENT "GStreamer"
+)
+
 #####################
 # list source files #
 #####################
@@ -452,13 +462,10 @@ DeployPEDependencies(appExec "Qt"
 )
 
 # GST
-list(APPEND GST_DEPS_FOLDERS
-    ${PEDeps_Qt_DIR}/*.dll
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/gio/*.dll
-    ${GST_ALL_USED_PLUGINS}
-)
 DeployPEDependencies(appExec "GStreamer"
-    ${GST_DEPS_FOLDERS}
+    ${PEDeps_Qt_DIR}/*.dll
+    ${giognutls_LIB}
+    ${GST_ALL_USED_PLUGINS}
 )
 
 ######################
