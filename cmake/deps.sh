@@ -7,10 +7,10 @@ shopt -s globstar
 mkdir -p ${CMAKE_BINARY_DIR}/PEDeps_${component}
 
 # find all targets libraries
-targets=`ls ${pattern_}` 
+targets=$(ls ${pattern_})
 
 # find dependencies
-deps=`${PELDD_EXEC} -t --ignore-errors $targets`
+deps=$(${PELDD_EXEC} -t --ignore-errors $targets)
 
 # copy dependencies
 echo "$deps" | tr -d '\r' | xargs -i cp {} ${CMAKE_BINARY_DIR}/PEDeps_${component}
