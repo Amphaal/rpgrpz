@@ -135,7 +135,7 @@ install(TARGETS appExec
 
 # spdlog
 if(MINGW)
-    find_file(MINGW_SPDLOG libspdlog.dll HINTS "bin" REQUIRED)
+    find_file(MINGW_SPDLOG libspdlog.dll REQUIRED)
     install(FILES ${MINGW_SPDLOG}
         TYPE BIN
         COMPONENT "Runtime"
