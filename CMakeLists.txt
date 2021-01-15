@@ -272,7 +272,10 @@ target_link_libraries(appExec PRIVATE autoupdatercore)
 # Sentry-native #
 #################
 
+SET(SENTRY_BUILD_SHARED_LIBS ON CACHE INTERNAL "")
 add_subdirectory(deps/sentry-native EXCLUDE_FROM_ALL)
+
+# link
 target_link_libraries(appExec PRIVATE sentry)
 
 # track version into file
@@ -281,14 +284,19 @@ execute_process(
     OUTPUT_FILE ${CMAKE_BINARY_DIR}/version
 )
 
-# add crashpad_handler next to app
+# install
+install(FILES 
+    $<TARGET_FILE:sentry>
+    TYPE BIN
+    COMPONENT "SentryNative"
+)
+
+# add crashpad_handler next to app, and to install process
 set_target_properties(crashpad_handler PROPERTIES 
     RUNTIME_OUTPUT_DIRECTORY $<TARGET_FILE_DIR:appExec>
 )
-
-# install it as well
 install(TARGETS crashpad_handler 
-    COMPONENT "Crashpad"
+    COMPONENT "SentryNative"
 )
 
 ################
@@ -314,6 +322,10 @@ endif()
 # add as shared lib
 SET(AUDIOTUBE_SHARED ON CACHE INTERNAL "")
 add_subdirectory(deps/AudioTube)
+get_directory_property(AUDIOTUBE_PROJECT_VERSION
+    DIRECTORY deps/AudioTube 
+    DEFINITION PROJECT_VERSION
+)
 
 # link
 target_link_libraries(appExec PRIVATE audiotube)

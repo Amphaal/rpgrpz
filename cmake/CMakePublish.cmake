@@ -32,7 +32,7 @@ INCLUDE(CPackIFW)
 # App
 cpack_add_component("App" DOWNLOADED)
 cpack_ifw_configure_component("App"
-    DISPLAY_NAME "${PROJECT_NAME} PROJECT_VERSION"
+    DISPLAY_NAME "${PROJECT_NAME} ${CMAKE_PROJECT_VERSION}"
     DESCRIPTION 
         ${PROJECT_DESCRIPTION}
         fr "L'experience JdR simplifiée !"
@@ -60,12 +60,12 @@ cpack_ifw_configure_component("Runtime"
 # AudioTube
 cpack_add_component("AudioTube" DOWNLOADED)
 cpack_ifw_configure_component("AudioTube"
-    DISPLAY_NAME "AudioTube ${AudioTube_VERSION}"
+    DISPLAY_NAME "AudioTube ${AUDIOTUBE_PROJECT_VERSION}"
     DESCRIPTION 
         "Component that allows fetching Youtube audio sources"
-        fr "Composant qui permet la récupération de l'audio depuis Youtube"
+        fr "Composant qui permet la récupération de flux audio depuis Youtube"
     SORTING_PRIORITY 99
-    VERSION ${AudioTube_VERSION}
+    VERSION ${AUDIOTUBE_PROJECT_VERSION}
     FORCED_INSTALLATION
 )
 
@@ -105,9 +105,10 @@ cpack_ifw_configure_component("GStreamer"
     FORCED_INSTALLATION
 )
 
-# Crashpad
-cpack_add_component("Crashpad" DOWNLOADED)
-cpack_ifw_configure_component("Crashpad"
+# sentry-native
+cpack_add_component("SentryNative" DOWNLOADED)
+cpack_ifw_configure_component("SentryNative"
+    DISPLAY_NAME "Sentry-Native 0.4.4"
     DESCRIPTION
         "Utility that allows automatic bugs reports"
         fr "Utilitaire qui permet la génération de rapports de bugs automatiques"
