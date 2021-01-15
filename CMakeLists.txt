@@ -330,9 +330,7 @@ pkg_check_modules(Gst REQUIRED IMPORTED_TARGET gstreamer-1.0)
 message("GStreamer found at : [${Gst_LIBRARY_DIRS}]") # helps if pkfconf uses the wrong search path
 
 # link
-target_link_libraries(appExec PRIVATE     
-    PkgConfig::Gst
-)
+target_link_libraries(appExec PRIVATE PkgConfig::Gst)
 
 ######################
 # Gstreamer - GnuTLS #
