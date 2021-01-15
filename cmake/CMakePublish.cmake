@@ -56,7 +56,7 @@ cpack_ifw_configure_component("App"
     SCRIPT "src/_ifw/EndInstallerForm.js"
     SORTING_PRIORITY 100
     USER_INTERFACES "src/_ifw/EndInstallerForm.ui"
-    TRANSLATIONS ${CMAKE_BINARY_DIR}/EndInstallerForm_fr.qm
+    # TRANSLATIONS ${CMAKE_BINARY_DIR}/EndInstallerForm_fr.qm
     FORCED_INSTALLATION
 )
 
