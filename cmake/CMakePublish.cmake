@@ -33,6 +33,7 @@ INCLUDE(CPack)
 INCLUDE(CPackIFW)
 
 # Runtime 
+cpack_add_component("Runtime" DOWNLOADED)
 cpack_ifw_configure_component("Runtime"
     DISPLAY_NAME 
         "Runtime" 
@@ -46,6 +47,7 @@ cpack_ifw_configure_component("Runtime"
 )
 
 # App
+cpack_add_component("App" DOWNLOADED)
 cpack_ifw_configure_component("App"
     DISPLAY_NAME ${PROJECT_NAME}
     DESCRIPTION 
@@ -59,6 +61,7 @@ cpack_ifw_configure_component("App"
 )
 
 # Qt
+cpack_add_component("Qt" DOWNLOADED)
 cpack_ifw_configure_component("Qt"
     DISPLAY_NAME "Qt ${Qt5Core_VERSION_STRING}"
     DESCRIPTION 
@@ -70,6 +73,7 @@ cpack_ifw_configure_component("Qt"
 )
 
 # OpenSSL
+cpack_add_component("OpenSSL" DOWNLOADED)
 cpack_ifw_configure_component("OpenSSL"
     DISPLAY_NAME "OpenSSL ${OPENSSL_VERSION}"
     DESCRIPTION
@@ -81,6 +85,7 @@ cpack_ifw_configure_component("OpenSSL"
 )
 
 # GStreamer
+cpack_add_component("GStreamer" DOWNLOADED)
 cpack_ifw_configure_component("GStreamer"
     DISPLAY_NAME "GStreamer ${Gst_VERSION}"
     DESCRIPTION
@@ -92,6 +97,7 @@ cpack_ifw_configure_component("GStreamer"
 )
 
 # Crashpad
+cpack_add_component("Crashpad" DOWNLOADED)
 cpack_ifw_configure_component("Crashpad"
     DESCRIPTION
         "Utility that allows automatic bugs reports"
