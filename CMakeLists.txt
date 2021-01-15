@@ -326,6 +326,7 @@ target_link_libraries(appExec PRIVATE dicer)
 ####################
 
 # find Gstreamer
+message("GStreamer found at : [${Gst_LIBRARY_DIRS}]") # helps if pkfconf uses the wrong search path
 pkg_check_modules(Gst REQUIRED IMPORTED_TARGET 
     gstreamer-1.0
 )
