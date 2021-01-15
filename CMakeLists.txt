@@ -438,7 +438,8 @@ list(APPEND TS_SOURCE_FILES
 list(APPEND TS_FILES
     "src/_i18n/fr.ts"
 )
-HandleQtTranslation(appExec 
+HandleQtTranslation(appExec
+    "App"
     "${TS_SOURCE_FILES}"
     ${TS_FILES}
 )
@@ -451,6 +452,7 @@ list(APPEND TS_INSTALL_FILES
     "src/_i18n/EndInstallerForm_fr.ts"
 )
 HandleQtTranslation(appExec
+    OFF
     "${TS_INSTALL_SOURCE_FILES}"
     ${TS_INSTALL_FILES}
 )

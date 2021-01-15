@@ -1,25 +1,32 @@
+function(HandleQtTranslation target installComponent filesToScan)
 
-function(HandleQtTranslation target sourceFiles)
+    SET(TS_FILES ${ARGN})
 
     #updates TS files from sources
     qt5_create_translation(QM_FILES
-        ${sourceFiles}
-        ${ARGN}
+        ${filesToScan}
+        ${TS_FILES}
     )
-
-    #generate QM files
-    qt5_add_translation(APP_BINARY_TRANSLATION_FILES ${ARGN})
 
     #generate QM files from TS
-    target_sources(${target} PUBLIC
-        ${APP_BINARY_TRANSLATION_FILES}
+    target_sources(${target} PRIVATE
+        ${QM_FILES}
     )
 
-    #copy translations into output
-    add_custom_command(TARGET ${target}   
-        COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${target}>/translations       
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QM_FILES} $<TARGET_FILE_DIR:${target}>/translations
-        COMMENT "Copy Qt translation files"
-    )
+    if(installComponent)
+        #copy translations into output (for debug purposes)
+        add_custom_command(TARGET ${target}   
+            COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${target}>/translations       
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${QM_FILES} $<TARGET_FILE_DIR:${target}>/translations
+            COMMENT "Copy Qt translation files"
+        )
+
+        #install
+        include(GNUInstallDirs)
+        install(FILES ${QM_FILES}
+            DESTINATION ${CMAKE_INSTALL_BINDIR}/translations
+            COMPONENT ${installComponent}
+        )
+    endif()
 
 endfunction()
