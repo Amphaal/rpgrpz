@@ -5,16 +5,14 @@ else()
 endif()
 
 # search for programs in the build host directories
-set (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM ONLY)
+set (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 
 # for libraries and headers in the target directories
 set (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set (CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set (CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
-list(APPEND CMAKE_PREFIX_PATH 
-    ${MINGW64_ROOT} 
-)
+list(APPEND CMAKE_PREFIX_PATH    ${MINGW64_ROOT})
 
 #allows Debug cout/cerr console... from LLDB/GDB
 SET(APP_BUNDLE_TYPE "")
