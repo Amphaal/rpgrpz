@@ -311,8 +311,18 @@ endif()
 # AudioTube #
 #############
 
+# add as shared lib
+SET(AUDIOTUBE_SHARED ON CACHE INTERNAL "")
 add_subdirectory(deps/AudioTube)
+
+# link
 target_link_libraries(appExec PRIVATE audiotube)
+
+# install
+install(FILES $<TARGET_FILE:audiotube>
+    TYPE BIN
+    COMPONENT "AudioTube"
+)
 
 #########
 # Dicer #

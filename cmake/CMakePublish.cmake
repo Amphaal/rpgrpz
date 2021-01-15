@@ -29,6 +29,20 @@ SET(CPACK_IFW_VERBOSE ON)
 INCLUDE(CPack)
 INCLUDE(CPackIFW)
 
+# App
+cpack_add_component("App" DOWNLOADED)
+cpack_ifw_configure_component("App"
+    DISPLAY_NAME "${PROJECT_NAME} PROJECT_VERSION"
+    DESCRIPTION 
+        ${PROJECT_DESCRIPTION}
+        fr "L'experience JdR simplifiée !"
+    SCRIPT "src/_ifw/EndInstallerForm.js"
+    SORTING_PRIORITY 1000
+    USER_INTERFACES "src/_ifw/EndInstallerForm.ui"
+    # TRANSLATIONS ${CMAKE_BINARY_DIR}/EndInstallerForm_fr.qm
+    FORCED_INSTALLATION
+)
+
 # Runtime 
 cpack_add_component("Runtime" DOWNLOADED)
 cpack_ifw_configure_component("Runtime"
@@ -38,22 +52,20 @@ cpack_ifw_configure_component("Runtime"
     DESCRIPTION 
         "Essential components used by ${PROJECT_NAME} and other libraries"
         fr "Composants essentiels utilisés par ${PROJECT_NAME} et autres librairies"
-    SORTING_PRIORITY 99
+    SORTING_PRIORITY 900
     VERSION "1.0.0"
     FORCED_INSTALLATION
 )
 
-# App
-cpack_add_component("App" DOWNLOADED)
-cpack_ifw_configure_component("App"
-    DISPLAY_NAME ${PROJECT_NAME}
+# AudioTube
+cpack_add_component("AudioTube" DOWNLOADED)
+cpack_ifw_configure_component("AudioTube"
+    DISPLAY_NAME "AudioTube ${AudioTube_VERSION}"
     DESCRIPTION 
-        ${PROJECT_DESCRIPTION}
-        fr "L'experience JdR simplifiée !"
-    SCRIPT "src/_ifw/EndInstallerForm.js"
-    SORTING_PRIORITY 100
-    USER_INTERFACES "src/_ifw/EndInstallerForm.ui"
-    # TRANSLATIONS ${CMAKE_BINARY_DIR}/EndInstallerForm_fr.qm
+        "Component that allows fetching Youtube audio sources"
+        fr "Composant qui permet la récupération de l'audio depuis Youtube"
+    SORTING_PRIORITY 99
+    VERSION ${AudioTube_VERSION}
     FORCED_INSTALLATION
 )
 
@@ -135,7 +147,7 @@ add_custom_command(TARGET zipForDeploy
     COMMAND ${CMAKE_COMMAND} -E tar c ${CMAKE_BINARY_DIR}/repository.zip --format=zip .
     WORKING_DIRECTORY ${APP_REPOSITORY}
     COMMENT "Ziping IFW repository..."
-
+)
 
 # zip installer
 add_custom_command(TARGET zipForDeploy
