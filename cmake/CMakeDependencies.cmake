@@ -39,7 +39,7 @@ function(DeployPEDependencies target component)
     # generate script for copying dependencies of target
     string(REPLACE ";" " " pattern_ "${ARGN}")
     configure_file(
-        ${CMAKE_SOURCE_DIR}/cmake/deps.sh
+        ${CMAKE_SOURCE_DIR}/cmake/CMakeDependencies.in.sh
         PEDeps_${component}.sh
         NEWLINE_STYLE LF
     )
