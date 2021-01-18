@@ -1,3 +1,5 @@
+if(NOT CMakeDependencies_INCLUDED)
+
 ###########
 # pe-util #
 ###########
@@ -33,11 +35,15 @@ endif()
 
 function(DeployPEDependencies target component)
 
+    #add as dependency to ensure peldd is built beforehand
+    add_dependencies(${target} peldd)
+
     # define output directory for main script
     set(PEDeps_${component}_DIR ${CMAKE_BINARY_DIR}/PEDeps_${component} PARENT_SCOPE)
 
     # generate script for copying dependencies of target
     string(REPLACE ";" " " pattern_ "${ARGN}")
+
     configure_file(
         ${CMAKE_SOURCE_DIR}/cmake/CMakeDependencies.in.sh
         PEDeps_${component}.sh
@@ -62,3 +68,6 @@ endfunction()
 ##
 ##
 
+endif()
+
+SET(CMakeDependencies_INCLUDED ON)
