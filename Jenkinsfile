@@ -18,7 +18,7 @@ pipeline {
                         withCredentials([string(credentialsId: 'jenkins-sentry-auth-token', variable: 'SENTRY_AUTH_TOKEN')]) {
                             sh 'sentry-cli --auth-token $SENTRY_AUTH_TOKEN releases new -p rpgrpz $(cat _genWindows/version)'
                             sh 'sentry-cli --auth-token $SENTRY_AUTH_TOKEN releases set-commits --auto $(cat _genWindows/version)'
-                            sh 'sentry-cli --auth-token $SENTRY_AUTH_TOKEN upload-dif --wait _genWindows/bin'
+                            sh 'sentry-cli --auth-token $SENTRY_AUTH_TOKEN upload-dif --wait _genWindows/out/RPGRPZ.exe _genWindows/out/RPGRPZ.pdb'
                         }
                         withCredentials([string(credentialsId: 'jenkins-bintray-api-key', variable: 'BINTRAY_API_KEY')]) {
                             sh 'curl -T _genWindows/installer.zip   -uamphaal:$BINTRAY_API_KEY -H "X-Bintray-Package: install-packages" -H "X-Bintray-Version: latest" -H "X-Bintray-Publish: 1" -H "X-Bintray-Override: 1" -H "X-Bintray-Explode: 1" https://api.bintray.com/content/amphaal/rpgrpz/'
