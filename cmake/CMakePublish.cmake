@@ -108,12 +108,12 @@ cpack_ifw_configure_component("GStreamer"
 # sentry-native
 cpack_add_component("SentryNative" DOWNLOADED)
 cpack_ifw_configure_component("SentryNative"
-    DISPLAY_NAME "Sentry-Native 0.4.4"
+    DISPLAY_NAME "Sentry-Native ${SENTRY_NATIVE_PROJECT_VERSION}"
     DESCRIPTION
         "Utility that allows automatic bugs reports"
         fr "Utilitaire qui permet la génération de rapports de bugs automatiques"
     SORTING_PRIORITY 95
-    VERSION "0.4.4" # forcing version on sentry-native
+    VERSION ${SENTRY_NATIVE_PROJECT_VERSION}
     FORCED_INSTALLATION
 )
 

@@ -275,6 +275,12 @@ target_link_libraries(appExec PRIVATE autoupdatercore)
 SET(SENTRY_BUILD_SHARED_LIBS ON CACHE INTERNAL "")
 add_subdirectory(deps/sentry-native EXCLUDE_FROM_ALL)
 
+# get version
+get_directory_property(SENTRY_NATIVE_PROJECT_VERSION
+    DIRECTORY deps/sentry-native 
+    DEFINITION PROJECT_VERSION
+)
+
 # link
 target_link_libraries(appExec PRIVATE sentry)
 
