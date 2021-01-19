@@ -130,6 +130,7 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
     QMenu* _getFileMenu();
     QMenu* _getHelpMenu();
     QMenu* _getMapMenu();
+    QMenu* _getDisplayMenu();
 
     UpdaterUIIntegrator* _updateIntegrator = nullptr;
 

@@ -440,6 +440,7 @@ void MainWindow::_initUIMenu() {
     menuBar->addMenu(this->_getFileMenu());
     auto mm = menuBar->addMenu(this->_getMapMenu());
     menuBar->addMenu(this->_getToolsMenu());
+    menuBar->addMenu(this->_getDisplayMenu());
     menuBar->addMenu(this->_getHelpMenu());
 
     // on remote change detected...
@@ -664,10 +665,32 @@ QMenu* MainWindow::_getFileMenu() {
         quitAction, &QAction::triggered,
         this, &MainWindow::close
     );
-
     fileMenuItem->addAction(quitAction);
 
     return fileMenuItem;
+}
+
+QMenu* MainWindow::_getDisplayMenu() {
+
+    auto displayMenuItem = new QMenu(tr("Display"), this);
+
+    // fullscreen mode button
+    auto fullscreenAction = new QAction(tr("Fullscreen Mode"));
+    fullscreenAction->setShortcut(QKeySequence("F11"));
+    fullscreenAction->setShortcutVisibleInContextMenu(true);
+    QObject::connect(
+        fullscreenAction, &QAction::triggered,
+        [=]() {
+          if(!this->isFullScreen()) {
+            this->showFullScreen();
+          } else {
+              this->showMaximized();
+          }
+        }
+    );
+    displayMenuItem->addAction(fullscreenAction);
+
+    return displayMenuItem;
 }
 
 //////////////////////////

@@ -93,21 +93,6 @@ add_executable(appExec ${APP_BUNDLE_TYPE})
 set_target_properties(appExec PROPERTIES OUTPUT_NAME "${PROJECT_NAME}") #define executable name
 target_compile_definitions(appExec PRIVATE $<$<CONFIG:Debug>:_DEBUG>) #define _DEBUG markup if in DEBUG config
 
-# generate pdb
-IF(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")  
-    
-    target_link_options(appExec PRIVATE -Wl,-pdb=) # generate pdb files
-    target_compile_options(appExec PRIVATE -gcodeview) #use codeview for pdbs
-    
-    # add .pdb to install
-    install(
-        FILES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<TARGET_FILE_BASE_NAME:appExec>.pdb
-        TYPE BIN
-        COMPONENT "App"
-    )
-
-endif()
-
 # warnings for debug
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     target_link_options(appExec PRIVATE 
@@ -304,6 +289,21 @@ set_target_properties(crashpad_handler PROPERTIES
 install(TARGETS crashpad_handler 
     COMPONENT "SentryNative"
 )
+
+# generate pdb
+IF(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")  
+    
+    target_link_options(appExec PRIVATE -Wl,-pdb=) # generate pdb files
+    target_compile_options(appExec PRIVATE -gcodeview) #use codeview for pdbs
+    
+    # add .pdb to install
+    install(
+        FILES ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$<TARGET_FILE_BASE_NAME:appExec>.pdb
+        TYPE BIN
+        COMPONENT "App"
+    )
+
+endif()
 
 ################
 # NetworkCandy #
