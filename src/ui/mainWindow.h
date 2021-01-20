@@ -132,10 +132,11 @@ class MainWindow : public QMainWindow, public ConnectivityObserver {
     QMenu* _getMapMenu();
     QMenu* _getDisplayMenu();
 
+    QToolBar* _getMenuToolbar();
+
     UpdaterUIIntegrator* _updateIntegrator = nullptr;
 
     void _triggerBarsVisibility();
-    void _barVisibilityToolTip();
 
     void keyPressEvent(QKeyEvent * event) override;
 };

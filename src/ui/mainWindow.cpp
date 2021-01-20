@@ -84,15 +84,6 @@ void MainWindow::keyPressEvent(QKeyEvent * event) {
         }
         break;
 
-        case Qt::Key_Alt: {
-            AppContext::settings()->setMainWindowBarsShown(
-                !AppContext::settings()->mainWindowBarsShown()
-            );
-
-            this->_triggerBarsVisibility();
-        }
-        break;
-
         default:
         break;
     }
@@ -102,21 +93,6 @@ void MainWindow::_triggerBarsVisibility() {
     auto areShown = AppContext::settings()->mainWindowBarsShown();
     this->menuBar()->setVisible(areShown);
     this->statusBar()->setVisible(areShown);
-}
-
-void MainWindow::_barVisibilityToolTip() {
-    // fix tooltip pos
-    auto pos = this->geometry().bottomRight();
-    pos.setY(pos.y() - 37);
-
-    // display it
-    QToolTip::showText(
-        pos,
-        tr("Press ALT key to display the menu !"),
-        this,
-        this->geometry(),
-        3000
-    );
 }
 
 void MainWindow::_saveWindowState() {
@@ -136,12 +112,12 @@ void MainWindow::_loadWindowState() {
 
     // load...
     AppContext::settings()->beginGroup(QStringLiteral(u"mainWindow"));
-    this->restoreGeometry(
-        AppContext::settings()->value(QStringLiteral(u"windowGeometry")).toByteArray()
-    );
-    this->restoreState(
-        AppContext::settings()->value(QStringLiteral(u"windowState")).toByteArray()
-    );
+        this->restoreGeometry(
+            AppContext::settings()->value(QStringLiteral(u"windowGeometry")).toByteArray()
+        );
+        this->restoreState(
+            AppContext::settings()->value(QStringLiteral(u"windowState")).toByteArray()
+        );
     AppContext::settings()->endGroup();
 
     this->show();
@@ -288,6 +264,7 @@ void MainWindow::_initAppUnmovableUI() {
             toolbarLayout->addStretch(0);
             toolbarLayout->addWidget(this->_mapTools);
             toolbarLayout->addWidget(this->_mapActions);
+            toolbarLayout->addWidget(this->_getMenuToolbar());
 
         layout->addWidget(toolbar, 0, Qt::AlignTop);
         layout->addWidget(this->_mapViewContainer, 1);
@@ -691,6 +668,39 @@ QMenu* MainWindow::_getDisplayMenu() {
     displayMenuItem->addAction(fullscreenAction);
 
     return displayMenuItem;
+}
+
+QToolBar* MainWindow::_getMenuToolbar() {
+    auto menuToolbar = new QToolBar();
+    menuToolbar->layout()->setMargin(0);
+    menuToolbar->setIconSize(QSize(16, 16));
+    menuToolbar->setMovable(true);
+    menuToolbar->setFloatable(true);
+
+    //
+    menuToolbar->addSeparator();
+
+    //
+    auto hideAction = new QAction(QIcon(QStringLiteral(u":/icons/app/tools/menu.png")), tr("Hide menus and status bar"));
+    hideAction->setCheckable(true);
+    hideAction->setChecked(AppContext::settings()->mainWindowBarsShown());
+
+        //
+        menuToolbar->addAction(hideAction);
+        QObject::connect(
+            hideAction, &QAction::triggered,
+            [=]() {
+                // invert setting status
+                AppContext::settings()->setMainWindowBarsShown(
+                    !AppContext::settings()->mainWindowBarsShown()
+                );
+
+                //
+                this->_triggerBarsVisibility();
+            }
+        );
+
+    return menuToolbar;
 }
 
 //////////////////////////
