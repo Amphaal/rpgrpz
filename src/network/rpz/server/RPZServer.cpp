@@ -450,8 +450,8 @@ void RPZServer::_interpretMessage(JSONSocket* sender, RPZMessage &msg) {
         // on help
         case MessageInterpreter::Command::Help: {
             response = RPZResponse(msgId,
-            RPZResponse::ResponseCode::HelpManifest,
-            MessageInterpreter::help()
+                RPZResponse::ResponseCode::HelpManifest,
+                MessageInterpreter::help()
             );
         }
         break;

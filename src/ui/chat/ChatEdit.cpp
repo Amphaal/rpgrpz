@@ -31,7 +31,7 @@ ChatEdit::ChatEdit(QWidget * parent) : QWidget(parent),
     // define btns
     _useDicerBtn->setCheckable(true);
     _useDicerBtn->setIcon(QIcon(QStringLiteral(u":/icons/app/other/dice.png")));
-    _useDicerBtn->setToolTip(tr("Use a dice throw command"));
+    _useDicerBtn->setToolTip(tr("Force a dice throw command"));
     _defineMsgSendBtn();
 
     // on click
@@ -76,7 +76,7 @@ void ChatEdit::changeEvent(QEvent *event) {
 }
 
 void ChatEdit::_defineMsgSendBtn() {
-    if(this->_requestingThrowCommand()) {
+    if(this->_explicitlyRequestingThrowCommand()) {
         _sendMsgBtn->setText(tr("Roll Dices !"));
         this->_msgEdit->setCompleter(nullptr);
     } else {
@@ -87,25 +87,36 @@ void ChatEdit::_defineMsgSendBtn() {
     this->_msgEdit->clearAndResetHistoryIndex();
 }
 
-bool ChatEdit::_requestingThrowCommand() const {
+bool ChatEdit::_explicitlyRequestingThrowCommand() const {
     return this->_useDicerBtn->isChecked();
 }
 
 void ChatEdit::_sendCommand() {
     auto textCommand = this->_msgEdit->text();
-    auto isThrowCommand = this->_requestingThrowCommand();
+    auto asksThrowCommand = this->_explicitlyRequestingThrowCommand();
 
     // check if is sendable
     if (!MessageInterpreter::isSendable(textCommand)) return;
 
     // empty input and ask for send
-    if(isThrowCommand) {
+    if(asksThrowCommand) {
         this->_msgEdit->addTextToHistory();
+    } else {
+        // trim text
+        auto trimmed = textCommand.trimmed();
+
+        // check with implicit format
+        if(trimmed.startsWith('{') && trimmed.endsWith('}')) {
+            // force throw command
+            asksThrowCommand = true;
+            textCommand = trimmed.mid(1, trimmed.length() - 2); // remove format markers
+            qDebug() << textCommand;
+        }
     }
 
     this->_msgEdit->clearAndResetHistoryIndex();
 
-    emit askedToSendCommand(textCommand, isThrowCommand);
+    emit askedToSendCommand(textCommand, asksThrowCommand);
 }
 
 void ChatEdit::_onWhisperTargetsChanged() {

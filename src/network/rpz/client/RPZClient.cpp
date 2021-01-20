@@ -409,8 +409,7 @@ void RPZClient::_onPayloadReceived(const RPZJSON::Method &method, const QVariant
 }
 
 void RPZClient::sendMessage(const RPZMessage &message) {
-    auto msg = RPZMessage(message);
-    this->sendToSocket(RPZJSON::Method::Message, msg);
+    this->sendToSocket(RPZJSON::Method::Message, message);
 }
 
 void RPZClient::sendMapHistory(const ResetPayload &historyPayload) {

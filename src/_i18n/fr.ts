@@ -345,8 +345,8 @@
     </message>
     <message>
         <location filename="../ui/chat/ChatEdit.cpp" line="34"/>
-        <source>Use a dice throw command</source>
-        <translation>Utiliser une commande de lancer de dés</translation>
+        <source>Force a dice throw command</source>
+        <translation>Forcer une commande de lancer de dés</translation>
     </message>
     <message>
         <location filename="../ui/chat/ChatEdit.cpp" line="71"/>
@@ -880,25 +880,6 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../shared/commands/MessageInterpreter.cpp" line="72"/>
-        <source>Server %1 :
-</source>
-        <translation>Serveur %1 :
-</translation>
-    </message>
-    <message>
-        <location filename="../shared/commands/MessageInterpreter.cpp" line="73"/>
-        <source>- To whisper : @{toWhisperTo}.
-</source>
-        <translation>- Pour chuchoter : @{destinataire}.
-</translation>
-    </message>
-    <message>
-        <location filename="../shared/commands/MessageInterpreter.cpp" line="74"/>
-        <source>- To throw dices : {numberOfThrows}D{diceFace}. Exemple : 1d5, 2D20, 3D16.</source>
-        <translation>- Pour lancer des dés : {nombreDeLancers}D{faceDuDé}. Exemple : 1d5, 2D20, 3D16.</translation>
-    </message>
-    <message>
         <location filename="../shared/commands/RPZActions.cpp" line="25"/>
         <source>Notify interest point to players</source>
         <translation>Notifier un point d&apos;interêt aux joueurs</translation>
@@ -1393,6 +1374,21 @@
         <location filename="../ui/docShare/DocShareListView.cpp" line="192"/>
         <source> (available)</source>
         <translation> (disponible)</translation>
+    </message>
+    <message>
+        <location filename="../shared/commands/MessageInterpreter.cpp" line="72"/>
+        <source>Server %1 :</source>
+        <translation>Serveur %1 :</translation>
+    </message>
+    <message>
+        <location filename="../shared/commands/MessageInterpreter.cpp" line="73"/>
+        <source>- To whisper : @{toWhisperTo}.</source>
+        <translation>- Pour chuchoter : @{destinataire}.</translation>
+    </message>
+    <message>
+        <location filename="../shared/commands/MessageInterpreter.cpp" line="74"/>
+        <source>- To throw dices : {DicerThrowCommand}. Please visit https://github.com/Amphaal/Dicer/blob/master/tests/tests.cpp for more infos.</source>
+        <translation>- Pour lancer des dés : {CommandeDeLancerDicer}. Pour plus d&apos;infos : https://github.com/Amphaal/Dicer/blob/master/tests/tests.cpp .</translation>
     </message>
 </context>
 <context>

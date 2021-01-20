@@ -69,9 +69,9 @@ bool MessageInterpreter::isSendable(const QString &textToSend) {
 
 QString MessageInterpreter::help()  {
     QString help;
-    help += QObject::tr("Server %1 :\n").arg(APP_FULL_DENOM);
-    help += QObject::tr("- To whisper : @{toWhisperTo}.\n");
-    help += QObject::tr("- To throw dices : {numberOfThrows}D{diceFace}. Exemple : 1d5, 2D20, 3D16.");
+    help += QObject::tr("Server %1 :").arg(APP_FULL_DENOM) + "<br/>";
+    help += QObject::tr("- To whisper : @{toWhisperTo}.") + "<br/>";
+    help += QObject::tr("- To throw dices : {DicerThrowCommand}. Please visit https://github.com/Amphaal/Dicer/blob/master/tests/tests.cpp for more infos.");
     return help;
 }
 

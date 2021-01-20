@@ -53,7 +53,7 @@ class ChatEdit : public QWidget, public ConnectivityObserver {
     void _sendCommand();
     void _defineMsgSendBtn();
 
-    bool _requestingThrowCommand() const;
+    bool _explicitlyRequestingThrowCommand() const;
 
     void _onWhisperTargetsChanged();
 };
