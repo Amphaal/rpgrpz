@@ -13,7 +13,7 @@ The Alpha stage of RPG-RPZ is over since the 1.0.0 release. Thus, this repositor
 ## License
     RPG-RPZ
     A simple Pen & Paper experience
-    Copyright (C) 2019-2020 Guillaume Vara
+    Copyright (C) 2019-2021 Guillaume Vara <guillaume.vara@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
