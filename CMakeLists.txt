@@ -251,7 +251,7 @@ target_link_libraries(appExec PRIVATE clipper)
 # autoupdatercore (for Qt) #
 ############################
 
-add_subdirectory(deps/autoupdatercore)
+add_subdirectory(deps)
 target_link_libraries(appExec PRIVATE autoupdatercore)
 
 #################

@@ -20,7 +20,9 @@
 #include "UpdaterUIIntegrator.h"
 
 UpdaterUIIntegrator::UpdaterUIIntegrator(QMainWindow* wParent) : QObject(wParent), _wParent(wParent) {
-    this->_updater = new QtAutoUpdater::Updater(APP_MAINTENANCETOOL_PATH, wParent);
+    this->_updater = QtAutoUpdater::Updater::create("qtifw", {
+            {"path", APP_MAINTENANCETOOL_PATH}
+        }, wParent);
 
     QObject::connect(
         this->_updater, &QtAutoUpdater::Updater::checkUpdatesDone,
@@ -29,7 +31,7 @@ UpdaterUIIntegrator::UpdaterUIIntegrator(QMainWindow* wParent) : QObject(wParent
 }
 
 void UpdaterUIIntegrator::openMaintenanceTool() {
-    this->_updater->runUpdaterOnExit();
+    this->_updater->runUpdater(QtAutoUpdater::Updater::InstallModeFlag::OnExit);
     this->_wParent->close();
 }
 
@@ -43,55 +45,67 @@ void UpdaterUIIntegrator::requireUpdateCheckFromUser() {
 }
 
 void UpdaterUIIntegrator::checkForAppUpdates() {
-    emit stateChanged(true);
+    emit updateSeekingChanged(true);
     this->_updater->checkForUpdates();
 }
 
-void UpdaterUIIntegrator::_onUpdateChecked(const bool hasUpdate, const bool hasError) {
+void UpdaterUIIntegrator::_onUpdateChecked(QtAutoUpdater::Updater::State result) {
     // if the user asks directly to check updates
+    bool mustNotifyNonProceeding = true;
     if (this->_userNotificationOnUpdateCheck) {
-        this->_userNotificationOnUpdateCheck = false;
+        this->_userNotificationOnUpdateCheck ^= true;
+        mustNotifyNonProceeding ^= true;
+    }
 
-        auto title = QString(APP_NAME) + " - " + tr("Check for updates...");
-        auto content = QString::fromUtf8(this->_updater->errorLog());
+    // prepare
+    bool proceed = false;
+    auto title = tr("%1 - Check for updates...").arg(APP_NAME);
+    
+    // cases
+    switch(result) {
+        case QtAutoUpdater::Updater::State::NoUpdates: {
+            if(mustNotifyNonProceeding) QMessageBox::information(this->_wParent,
+                title,
+                tr("No updates available."),
+                QMessageBox::Ok,
+                QMessageBox::Ok
+            );
+        }
+        break;
 
-        if (!hasUpdate && !hasError) {
-            QMessageBox::information(
-                this->_wParent,
+        case QtAutoUpdater::Updater::State::Error: {
+            if(mustNotifyNonProceeding) QMessageBox::information(this->_wParent,
                 title,
-                content,
-                QMessageBox::Ok, QMessageBox::Ok
+                tr("Error while fetching updates !"),
+                QMessageBox::Ok,
+                QMessageBox::Ok
             );
-        } else if (hasError) {
-            QMessageBox::warning(
-                this->_wParent,
-                title,
-                content,
-                QMessageBox::Ok, QMessageBox::Ok
-            );
+        }
+        break;
+
+        case QtAutoUpdater::Updater::State::NewUpdates : {
+            proceed = true;
         }
     }
 
     // no update, no go
-    if (!hasUpdate) {
-        emit stateChanged(false);
+    if (!proceed) {
+        emit updateSeekingChanged(false);
         return;
     }
 
     // if has update
-    auto title = QString(APP_NAME) + " - " + tr("Update Available");
-    auto content = tr("An update is available for %1. Would you like to install it now ?").arg(APP_NAME);
-
-    auto msgboxRslt = QMessageBox::information(
-        this->_wParent,
-        title,
-        content,
-        QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes
+    auto msgboxRslt = QMessageBox::information(this->_wParent,
+        tr("%1 - Update Available").arg(APP_NAME),
+        tr("An update is available for %1. Would you like to install it now ?").arg(APP_NAME),
+        QMessageBox::Yes | QMessageBox::No, 
+        QMessageBox::Yes
     );
 
+    // determine behavior
     if (msgboxRslt == QMessageBox::Yes) {
         this->openMaintenanceTool();
     } else {
-        emit stateChanged(false);
+        emit updateSeekingChanged(false);
     }
 }

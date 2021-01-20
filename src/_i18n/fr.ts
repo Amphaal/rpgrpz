@@ -1628,17 +1628,27 @@
 <context>
     <name>UpdaterUIIntegrator</name>
     <message>
-        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="55"/>
-        <source>Check for updates...</source>
-        <translation>Vérifier les mises à jour...</translation>
+        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="62"/>
+        <source>%1 - Check for updates...</source>
+        <translation>%1 - Vérifier les mises à jour...</translation>
     </message>
     <message>
-        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="82"/>
-        <source>Update Available</source>
-        <translation>Mise à jour disponible</translation>
+        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="69"/>
+        <source>No updates available.</source>
+        <translation>Pas de mises à jour disponibles.</translation>
     </message>
     <message>
-        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="83"/>
+        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="79"/>
+        <source>Error while fetching updates !</source>
+        <translation>Une erreur est survenue durant la récupération des mises à jour !</translation>
+    </message>
+    <message>
+        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="99"/>
+        <source>%1 - Update Available</source>
+        <translation>%1 - Mise à jour disponible</translation>
+    </message>
+    <message>
+        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="100"/>
         <source>An update is available for %1. Would you like to install it now ?</source>
         <translation>Une mise à jour est disponible pour %1. Voulez-vous l&apos;installer maintenant ?</translation>
     </message>

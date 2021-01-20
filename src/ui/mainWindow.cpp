@@ -600,7 +600,7 @@ QMenu* MainWindow::_getHelpMenu() {
 
     // on updater state changed
     QObject::connect(
-        this->_updateIntegrator, &UpdaterUIIntegrator::stateChanged,
+        this->_updateIntegrator, &UpdaterUIIntegrator::updateSeekingChanged,
         [&](const bool isSearching) {
             this->cfugAction->setEnabled(!isSearching);
             auto descr = isSearching ? tr("Searching for updates...") : tr("Check for updates...");

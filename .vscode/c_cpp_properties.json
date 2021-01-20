@@ -21,7 +21,8 @@
                 "C:/msys64/mingw64/include/gstreamer-1.0",
                 "C:/msys64/mingw64/include/glib-2.0",
                 "C:/msys64/mingw64/lib/glib-2.0/include",
-                "${workspaceFolder}/deps/snowflake"
+                "${workspaceFolder}/deps/snowflake",
+                "C:/msys64/mingw64/include/QtCore/5.15.2"
             ],
             "defines": [
                 "_DEBUG",
