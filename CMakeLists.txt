@@ -291,7 +291,7 @@ install(TARGETS crashpad_handler
 )
 
 # generate pdb
-IF(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")  
+IF(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")  
     
     target_link_options(appExec PRIVATE -Wl,-pdb=) # generate pdb files
     target_compile_options(appExec PRIVATE -gcodeview) #use codeview for pdbs
