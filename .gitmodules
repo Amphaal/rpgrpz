@@ -10,3 +10,6 @@
 [submodule "deps/sentry-native"]
 	path = deps/sentry-native
 	url = https://github.com/getsentry/sentry-native
+[submodule "deps/QtAutoUpdater"]
+	path = deps/QtAutoUpdater
+	url = https://github.com/Skycoder42/QtAutoUpdater
