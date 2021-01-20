@@ -28,3 +28,4 @@
 #define GITHUB_VERSION_NAME "rpgrpz@1.0.22"
 #define APP_DEFAULT_URL "https://github.com/Amphaal/rpgrpz"
 #define SENTRY_ENDPOINT "https://ecb72ca256e744b990fd4f50aa52ea6f@o333337.ingest.sentry.io/5517405"
+#define APP_MAINTENANCETOOL_PATH "../maintenancetool"

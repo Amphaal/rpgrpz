@@ -20,7 +20,7 @@
 #include "UpdaterUIIntegrator.h"
 
 UpdaterUIIntegrator::UpdaterUIIntegrator(QMainWindow* wParent) : QObject(wParent), _wParent(wParent) {
-    this->_updater = new QtAutoUpdater::Updater(wParent);
+    this->_updater = new QtAutoUpdater::Updater(APP_MAINTENANCETOOL_PATH, wParent);
 
     QObject::connect(
         this->_updater, &QtAutoUpdater::Updater::checkUpdatesDone,
