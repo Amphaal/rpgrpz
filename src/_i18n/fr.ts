@@ -1643,12 +1643,12 @@
         <translation>Une erreur est survenue durant la récupération des mises à jour !</translation>
     </message>
     <message>
-        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="99"/>
+        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="103"/>
         <source>%1 - Update Available</source>
         <translation>%1 - Mise à jour disponible</translation>
     </message>
     <message>
-        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="100"/>
+        <location filename="../ui/_others/UpdaterUIIntegrator.cpp" line="104"/>
         <source>An update is available for %1. Would you like to install it now ?</source>
         <translation>Une mise à jour est disponible pour %1. Voulez-vous l&apos;installer maintenant ?</translation>
     </message>

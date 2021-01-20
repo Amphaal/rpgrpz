@@ -85,7 +85,11 @@ void UpdaterUIIntegrator::_onUpdateChecked(QtAutoUpdater::Updater::State result)
 
         case QtAutoUpdater::Updater::State::NewUpdates : {
             proceed = true;
-        }
+        } 
+        break;
+
+        default:
+        break;
     }
 
     // no update, no go
