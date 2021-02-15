@@ -26,6 +26,8 @@
 #include "src/ui/mainWindow.h"
 #include "src/ui/_others/AppLoader.hpp"
 
+#include <spdlog/spdlog.h>
+
 ////////////
 // SERVER //
 ////////////
@@ -153,6 +155,9 @@ void _registerMetaTypes() {
 int main(int argc, char** argv) {
     // registering metatypes
     _registerMetaTypes();
+    
+    //
+    spdlog::set_level(spdlog::level::debug);
 
     ////////////
     // LAUNCH //
