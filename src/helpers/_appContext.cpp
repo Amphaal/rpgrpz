@@ -199,11 +199,11 @@ void AppContext::init(const QString &customContext) {
 
     clearFileSharingFolder();
 
-    // crashpad activated if release app
-    initSentry();
+    // crashpad activated
+    _initSentry();
 }
 
-void AppContext::initSentry() {
+void AppContext::_initSentry() {
     auto options = sentry_options_new();
     sentry_options_set_dsn(options, SENTRY_ENDPOINT);
 
@@ -221,7 +221,14 @@ void AppContext::initSentry() {
     auto dbStr = AppContext::getAppDataLocation() + "/sentry_db";
     sentry_options_set_database_path(options, qUtf8Printable(dbStr));
 
-    sentry_init(options);
+    //
+    int errorCode = sentry_init(options);
+    if(!errorCode) _isSentryOn = true;
+}
+
+void AppContext::mayShutdownSentry() {
+    if(!_isSentryOn) return;
+    sentry_shutdown();
 }
 
 void AppContext::_makeSureDirPathExists(const QString &path) {

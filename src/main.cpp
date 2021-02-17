@@ -155,9 +155,6 @@ void _registerMetaTypes() {
 int main(int argc, char** argv) {
     // registering metatypes
     _registerMetaTypes();
-    
-    //
-    spdlog::set_level(spdlog::level::debug);
 
     ////////////
     // LAUNCH //
@@ -170,7 +167,7 @@ int main(int argc, char** argv) {
                     clientApp(argc, argv);
 
     // make sure to flush sentry for warnings / safe errors
-    // sentry_shutdown();
+    AppContext::mayShutdownSentry();
 
     return result;
 }

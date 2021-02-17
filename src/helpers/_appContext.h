@@ -75,11 +75,14 @@ class AppContext {
     static inline qreal _fogOpacity = .5;
     static inline QGLWidget* _mapGLWidget = nullptr;
 
+    static inline bool _isSentryOn = false;
+    static void _initSentry();
+
  public:
     ~AppContext();
 
+    static void mayShutdownSentry();
     static AppSettings* settings();
-    static void initSentry();
 
     static inline const QString UPNP_DEFAULT_TARGET_PORT = "31137";
     static inline const QString UPNP_REQUEST_DESCRIPTION = APP_NAME;
