@@ -26,8 +26,6 @@
 #include "src/ui/mainWindow.h"
 #include "src/ui/_others/AppLoader.hpp"
 
-#include <spdlog/spdlog.h>
-
 ////////////
 // SERVER //
 ////////////

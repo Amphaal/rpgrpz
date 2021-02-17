@@ -19,114 +19,126 @@
 
 #include "_logWriter.h"
 
-QString* LogWriter::_getFullLogFilePath() {
-    if (!_fullLogFilePath) {
-        _fullLogFilePath = new QString(AppContext::getLogFileLocation());
-    }
-    return _fullLogFilePath;
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/basic_file_sink.h>
+
+void LogWriter::initFromContext() {
+    //
+    _fullLogFilePath = AppContext::getLogFileLocation().toStdString();
+    _sessionLogFilePath = AppContext::getLatestLogFileLocation().toStdString();
+
+    // define default spdlog behavior
+    spdlog::default_logger()->set_level(spdlog::level::trace);
+    spdlog::default_logger()->flush_on(spdlog::level::trace);
+
+    // add file sinks
+    auto &sinks = spdlog::default_logger()->sinks();
+    auto fullLog_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(_fullLogFilePath);
+    auto sessionLog_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(_sessionLogFilePath);
+    sinks.push_back(fullLog_sink);
+    sinks.push_back(sessionLog_sink);
 }
 
-QString* LogWriter::_getSessionLogFilePath() {
-    if (!_sessionLogFilePath) {
-        auto flLocation = AppContext::getLatestLogFileLocation();
-        _sessionLogFilePath = new QString(flLocation);
-    }
-    return _sessionLogFilePath;
-}
 
-void LogWriter::customMO(
-    QtMsgType type,
-    const QMessageLogContext &context,
-    const QString &msg
-) {
-    // lock
-    std::unique_lock<std::mutex> lock(_m);
-
+void LogWriter::sentryLogHandler(sentry_level_t level, const char *message, va_list args, void *userdata) {
     // channel
-    QString channel = QStringLiteral(u"Default");
+    std::string channel = "Default";
+    switch (level){
+        case SENTRY_LEVEL_DEBUG :
+            channel = "Debug";
+        break;
+        case SENTRY_LEVEL_INFO :
+            channel = "Info";
+        break;
+        case SENTRY_LEVEL_WARNING : 
+            channel = "Warning";
+        break;
+        case SENTRY_LEVEL_ERROR : 
+            channel = "Error";
+        break;
+        case SENTRY_LEVEL_FATAL : 
+            channel = "Fatal";
+        break;
+    }
+
+    //
+    char buff[512];
+    vsnprintf(buff, sizeof(buff), message, args);
+    QString msg = buff;
+    msg.prepend("[sentry] ");
+
+    //
+    _fillSinks(channel.c_str(), msg);
+}
+
+void LogWriter::customMO(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
+    // channel
+    std::string channel = "Default";
     switch (type) {
         case QtDebugMsg:
-            channel = QStringLiteral(u"Debug");
+            channel = "Debug";
             break;
         case QtInfoMsg:
-            channel = QStringLiteral(u"Info");
+            channel = "Info";
             break;
         case QtWarningMsg:
-            channel = QStringLiteral(u"Warning");
+            channel = "Warning";
             break;
         case QtCriticalMsg:
-            channel = QStringLiteral(u"Critical");
+            channel = "Critical";
             break;
         case QtFatalMsg:
-            channel = QStringLiteral(u"Fatal");
+            channel = "Fatal";
             break;
     }
+    
+    //
+    _fillSinks(channel.c_str(), msg);
+}
 
+void LogWriter::_fillSinks(const char* channel, const QString &msg) {
+    // lock
+    std::unique_lock<std::mutex> lock(_m);
+    
     // std console print
-    _fprtint(channel, context, msg);
+    _fprintf(channel, msg);
 
     // full log
-    auto flfp = _getFullLogFilePath();
-    _openFileAndLog(flfp, channel, context, msg);
+    _openFileAndLog(_fullLogFilePath.c_str(), channel, msg);
 
     // session log
-    auto slfp = _getSessionLogFilePath();
-    _openFileAndLog(slfp, channel, context, msg, &_latest_been_inst);
+    _openFileAndLog(_sessionLogFilePath.c_str(), channel, msg, &_latest_been_inst);
 }
 
-
-void LogWriter::_fprtint(
-    const QString &channel,
-    const QMessageLogContext &context,
-    QString msg
-) {
-    msg = msg.replace("\n", "");
-    auto currentTime = QDateTime::currentDateTime()
-        .toString(QStringLiteral(u"dd.MM.yyyy-hh:mm:ss.zzz"));
-
-    fprintf(stderr, "%s %s | %s\n",
-        qUtf8Printable(currentTime),
-        qUtf8Printable(channel),
-        qUtf8Printable(msg));
-}
-
-void LogWriter::_openFileAndLog(
-    QString* logFilePath,
-    const QString &channel,
-    const QMessageLogContext &context,
-    const QString &msg, bool* sessionlogToken
-) {
+void LogWriter::_openFileAndLog(const char* logFilePath, const char* channel,const QString &msg, bool* sessionlogToken) {
     // latest log
     auto mod_latest = "a+";
     if (sessionlogToken && !*sessionlogToken) {
         mod_latest = "w";
     }
 
-    // const auto _fsErr = fopen_s(&_fs, q_lfp, mod_latest);
-    auto _fs = fopen(qUtf8Printable(*logFilePath), mod_latest);
+    // open file
+    auto _fs = fopen(logFilePath, mod_latest);
 
     if (!_fs) return;  // error
     if (sessionlogToken) *sessionlogToken = true;
 
-    _fprintf_to_file(_fs, channel, context, msg);
+    // print to file
+    _fprintf(channel, msg, _fs);
+
+    // close file
     fclose(_fs);
 }
 
-void LogWriter::_fprintf_to_file(
-    FILE* _fs,
-    const QString &channel,
-    const QMessageLogContext &context,
-    QString msg
-) {
-    // const char * file = context.file ? context.file : "";
-    // const char * function = context.function ? context.function : "";
-
-    msg = msg.replace("\n", "");
+void LogWriter::_fprintf(const char* channel, const QString &msg, FILE* _fs) {
+    if(!_fs) _fs = stdout;
+    
     auto currentTime = QDateTime::currentDateTime()
         .toString(QStringLiteral(u"dd.MM.yyyy-hh:mm:ss.zzz"));
 
     fprintf(_fs, "%s %s | %s\n",
         qUtf8Printable(currentTime),
         qUtf8Printable(channel),
-        qUtf8Printable(msg));
+        qUtf8Printable(msg)
+    );
 }

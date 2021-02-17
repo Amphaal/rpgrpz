@@ -19,8 +19,6 @@
 
 #include "_appContext.h"
 
-#include <sentry.h>
-
 void AppContext::configureApp(QCoreApplication* app) {
     // context preparation
     app->setApplicationName(QString(APP_NAME));
@@ -29,16 +27,18 @@ void AppContext::configureApp(QCoreApplication* app) {
     // define context
     auto args = AppContext::getOptionArgs(app);
 
-    // if custom context is set
+    //
     if (args.contains(QStringLiteral(u"randomContext"))) {
-        return AppContext::initRandomContext();
+        // if custom context is set
+        AppContext::_initRandomContext();
     } else if (args.contains(QStringLiteral(u"customContext"))) {
+        // if custom context is set
         auto customContext = args.value(QStringLiteral(u"customContext"));
-        return AppContext::initCustomContext(customContext);
+        AppContext::_initCustomContext(customContext);
+    } else {
+        // else default init
+        AppContext::_init();
     }
-
-    // else default init
-    AppContext::init();
 }
 
 void AppContext::defineMapWidget(QGLWidget* mapGLWidget) {
@@ -158,7 +158,7 @@ QHash<QString, QString> AppContext::getOptionArgs(int argc, char** argv) {
     return _getOptionArgs(QString(argv[1]));
 }
 
-void AppContext::initRandomContext() {
+void AppContext::_initRandomContext() {
     auto templateStr = QStringLiteral(u"%1/r_%2");
     auto randomSF = QString::number(SnowFlake::get()->nextId());
 
@@ -166,20 +166,23 @@ void AppContext::initRandomContext() {
                         .arg(_defaultAppDataLocation())
                         .arg(randomSF);
 
-    init(randomPath);
+    _init(randomPath);
 }
 
-void AppContext::initCustomContext(const QString &customContextSuffix) {
+void AppContext::_initCustomContext(const QString &customContextSuffix) {
     auto fullContextPath = _defaultAppDataLocation() + "/" + customContextSuffix;
-    init(fullContextPath);
+    _init(fullContextPath);
 }
 
-void AppContext::init(const QString &customContext) {
+void AppContext::_init(const QString &customContext) {
     if (!customContext.isEmpty()) {
         _appDataLocation = customContext;
     } else {
         _appDataLocation = _defaultAppDataLocation();
     }
+
+    // now setup logger from context
+    LogWriter::initFromContext();
 
     // update message handler message handler
     qInstallMessageHandler(LogWriter::customMO);
@@ -220,6 +223,9 @@ void AppContext::_initSentry() {
     // integration
     auto dbStr = AppContext::getAppDataLocation() + "/sentry_db";
     sentry_options_set_database_path(options, qUtf8Printable(dbStr));
+
+    // define logger
+    sentry_options_set_logger(options, &LogWriter::sentryLogHandler, nullptr);
 
     //
     int errorCode = sentry_init(options);

@@ -23,6 +23,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <sentry.h>
+
 #include <QDateTime>
 
 #include <algorithm>
@@ -31,34 +33,24 @@
 
 class LogWriter {
  public:
-    static void customMO(
-        QtMsgType type,
-        const QMessageLogContext &context,
-        const QString &msg);
+    static void initFromContext();
+
+    static void customMO(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+    static void sentryLogHandler(sentry_level_t level, const char *message, va_list args, void *userdata);
 
  private:
     static inline std::mutex _m;
 
-    static void _fprtint(
-        const QString &channel,
-        const QMessageLogContext &context,
-        QString msg);
+    static void _fillSinks(const char* channel, const QString &msg);
+    static void _fprintf(const char* channel, const QString &msg, FILE* _fs = nullptr);
+
     static void _openFileAndLog(
-        QString* logFilePath,
-        const QString &channel,
-        const QMessageLogContext &context,
+        const char* logFilePath,
+        const char* channel,
         const QString &msg,
         bool* sessionlogToken = nullptr);
-    static void _fprintf_to_file(
-        FILE* _fs,
-        const QString &channel,
-        const QMessageLogContext &context,
-        QString msg);
-
-    static inline QString* _fullLogFilePath = nullptr;
-    static QString* _getFullLogFilePath();
 
     static inline bool _latest_been_inst = false;
-    static inline QString* _sessionLogFilePath = nullptr;
-    static QString* _getSessionLogFilePath();
+    static inline std::string _fullLogFilePath;
+    static inline std::string _sessionLogFilePath;
 };

@@ -75,6 +75,10 @@ class AppContext {
     static inline qreal _fogOpacity = .5;
     static inline QGLWidget* _mapGLWidget = nullptr;
 
+    static void _init(const QString &customContext = QString());
+    static void _initRandomContext();
+    static void _initCustomContext(const QString &customContextSuffix);
+
     static inline bool _isSentryOn = false;
     static void _initSentry();
 
@@ -109,10 +113,6 @@ class AppContext {
 
     static void defineMapWidget(QGLWidget* mapGLWidget);
     static QGLWidget* mapGLWidget();
-
-    static void initRandomContext();
-    static void initCustomContext(const QString &customContextSuffix);
-    static void init(const QString &customContext = QString());
 
     static const QString getAppDataLocation();
     static const QString getWindowTitle();
