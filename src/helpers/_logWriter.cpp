@@ -62,13 +62,12 @@ void LogWriter::sentryLogHandler(sentry_level_t level, const char *message, va_l
     }
 
     //
-    char buff[512];
-    vsnprintf(buff, sizeof(buff), message, args);
-    QString msg = buff;
-    msg.prepend("[sentry] ");
+    vsnprintf(_sentryLogBuff, sizeof(_sentryLogBuff), message, args);
+    _sentryLogStr = _sentryLogBuff;
+    _sentryLogStr.prepend("[sentry] ");
 
     //
-    _fillSinks(channel.c_str(), msg);
+    _fillSinks(channel.c_str(), _sentryLogStr);
 }
 
 void LogWriter::customMO(QtMsgType type, const QMessageLogContext &context, const QString &msg) {

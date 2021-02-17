@@ -39,6 +39,9 @@ class LogWriter {
     static void sentryLogHandler(sentry_level_t level, const char *message, va_list args, void *userdata);
 
  private:
+    static inline char _sentryLogBuff[512];
+    static inline QString _sentryLogStr;
+
     static inline std::mutex _m;
 
     static void _fillSinks(const char* channel, const QString &msg);
