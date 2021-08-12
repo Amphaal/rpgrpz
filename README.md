@@ -10,6 +10,16 @@
 
 The Alpha stage of RPG-RPZ is over since the 1.0.0 release. Thus, this repository will be in maintenance mode and will not implement more functionalities. The future and definitive version of RPG-RPZ will be available through https://github.com/Amphaal/Understory.
 
+## Features
+- Server / Client architecture based on TCP/IP standard, handling uPnP port-forwarding
+- Create your own maps and import your assets. Including drawing tools !
+- Simple and automatic ressources, assets, maps and character sheets share and update between players and game masters
+- Allows synchronised audio streaming for game masters via Youtube links and playlist
+- Allows ingame chat and dices throws with simple macros
+- As players and game masters, take control of PC and NPC tokens, move, draw and ping on maps
+- Simple fog implementation
+- ... and much more !
+
 ## License
     RPG-RPZ
     A simple Pen & Paper experience
