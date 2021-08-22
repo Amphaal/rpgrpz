@@ -117,6 +117,7 @@ endif()
 SET(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME "App")
 install(TARGETS appExec
     COMPONENT "App"
+    BUNDLE DESTINATION "."
 )
 
 # spdlog
@@ -209,7 +210,7 @@ endif()
 # QT 5 #
 ########
 
-find_package(Qt5 REQUIRED COMPONENTS 
+find_package(Qt6 REQUIRED COMPONENTS 
     Core 
     Gui 
     Widgets 
@@ -217,16 +218,16 @@ find_package(Qt5 REQUIRED COMPONENTS
     Svg 
     OpenGL 
     LinguistTools
-    Multimedia
+    #Multimedia
 )
 target_link_libraries(appExec PRIVATE
-    Qt5::Core
-    Qt5::Gui 
-    Qt5::Widgets
-    Qt5::Network
-    Qt5::Svg
-    Qt5::OpenGL
-    Qt5::Multimedia
+    Qt6::Core
+    Qt6::Gui 
+    Qt6::Widgets
+    Qt6::Network
+    Qt6::Svg
+    Qt6::OpenGL
+    #Qt6::Multimedia
 )
 
 # QT LIBRARIES COPY

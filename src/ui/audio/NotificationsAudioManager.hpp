@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include <QtMultimedia/QSoundEffect>
+// #include <QtMultimedia/QSoundEffect>
 
 class NotificationsAudioManager {
  public:
@@ -48,14 +48,17 @@ class NotificationsAudioManager {
         NotificationsAudioManager() {}
 
         void _playEffect(const QString &path) {
-            auto effect = new QSoundEffect;
-            effect->setVolume(.25);
-            effect->setSource(QUrl::fromLocalFile(path));
-            effect->play();
-            QObject::connect(
-                effect, &QSoundEffect::playingChanged,
-                effect, &QObject::deleteLater
-            );
+            // auto effect = new QSoundEffect;
+            // effect->setVolume(.25);
+            // effect->setSource(QUrl::fromLocalFile(path));
+            // effect->play();
+            // QObject::connect(
+            //     effect, &QSoundEffect::playingChanged,
+            //     effect, &QObject::deleteLater
+            // );
+
+
+            // disabled until Qt6 bundles back QtMultimedia ?
         }
 
         static inline const QList<QString> _diceEffects {

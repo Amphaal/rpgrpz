@@ -72,12 +72,12 @@ cpack_ifw_configure_component("AudioTube"
 # Qt
 cpack_add_component("Qt" DOWNLOADED)
 cpack_ifw_configure_component("Qt"
-    DISPLAY_NAME "Qt ${Qt5Core_VERSION_STRING}"
+    DISPLAY_NAME "Qt ${Qt6Core_VERSION_STRING}"
     DESCRIPTION 
         "Essential framework used by ${PROJECT_NAME}"
         fr "Framework essentiel utilisé par ${PROJECT_NAME}"
     SORTING_PRIORITY 98
-    VERSION ${Qt5Core_VERSION_STRING}
+    VERSION ${Qt6Core_VERSION_STRING}
     FORCED_INSTALLATION
 )
 
