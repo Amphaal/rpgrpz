@@ -20,7 +20,8 @@
 
 #pragma once
 
-// #include <QtMultimedia/QSoundEffect>
+#include <QRandomGenerator>
+#include <QList>
 
 class NotificationsAudioManager {
  public:
@@ -48,17 +49,7 @@ class NotificationsAudioManager {
         NotificationsAudioManager() {}
 
         void _playEffect(const QString &path) {
-            // auto effect = new QSoundEffect;
-            // effect->setVolume(.25);
-            // effect->setSource(QUrl::fromLocalFile(path));
-            // effect->play();
-            // QObject::connect(
-            //     effect, &QSoundEffect::playingChanged,
-            //     effect, &QObject::deleteLater
-            // );
-
-
-            // disabled until Qt6 bundles back QtMultimedia ?
+            // TODO Use GStreamer as Wav player
         }
 
         static inline const QList<QString> _diceEffects {

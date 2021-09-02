@@ -218,7 +218,6 @@ find_package(Qt6 REQUIRED COMPONENTS
     Svg 
     OpenGL 
     LinguistTools
-    #Multimedia
 )
 target_link_libraries(appExec PRIVATE
     Qt6::Core
@@ -227,7 +226,6 @@ target_link_libraries(appExec PRIVATE
     Qt6::Network
     Qt6::Svg
     Qt6::OpenGL
-    #Qt6::Multimedia
 )
 
 # QT LIBRARIES COPY

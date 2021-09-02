@@ -13,12 +13,15 @@ if(MINGW)
     # use different separator to allow injection of whitelisted elements
     string(REPLACE ";" "|" PEUTIL_WHITELIST_EXTENSIONS_SAFE "${PEUTIL_WHITELIST_EXTENSIONS}")
 
+    # safe root
+    string(REPLACE "\\" "/" MINGW64_ROOT_SAFE "${MINGW64_ROOT}")
+
     #pe-util is required to find all .dll dependencies
     include(ExternalProject)
     ExternalProject_Add(peldd
         GIT_REPOSITORY  "https://github.com/Amphaal/pe-util.git"
         INSTALL_COMMAND ""
-        CMAKE_ARGS -DPEUTIL_DEFAULT_SEARCH_PATH=${MINGW64_ROOT}/bin
+        CMAKE_ARGS -DPEUTIL_DEFAULT_SEARCH_PATH=${MINGW64_ROOT_SAFE}/bin
                    -DPEUTIL_WHITELIST_EXTENSIONS=${PEUTIL_WHITELIST_EXTENSIONS_SAFE}
         LIST_SEPARATOR |
         UPDATE_DISCONNECTED 1 # prevents from it always being built in search for tag change*
