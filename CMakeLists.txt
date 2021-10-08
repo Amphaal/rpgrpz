@@ -42,7 +42,7 @@ string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER) #lowered project name
 ########################
 
 SET(APP_PUBLISHER "LVWL")
-SET(APP_PATCHNOTE_URL "https://github.com/Amphaal/rpgrpz/releases")
+SET(APP_PATCHNOTE_URL ${PROJECT_HOMEPAGE_URL}/releases)
 SET(SENTRY_ENDPOINT "https://ecb72ca256e744b990fd4f50aa52ea6f@o333337.ingest.sentry.io/5517405")
 SET(APP_MAINTENANCETOOL_PATH "../maintenancetool")
 
