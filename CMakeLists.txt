@@ -42,7 +42,7 @@ string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER) #lowered project name
 ########################
 
 SET(APP_PUBLISHER "LVWL")
-SET(APP_PATCHNOTE_URL "https://github.com/Amphaal/rpgrpz/releases")
+SET(APP_PATCHNOTE_URL ${PROJECT_HOMEPAGE_URL}/releases)
 SET(SENTRY_ENDPOINT "https://ecb72ca256e744b990fd4f50aa52ea6f@o333337.ingest.sentry.io/5517405")
 SET(APP_MAINTENANCETOOL_PATH "../maintenancetool")
 
@@ -117,6 +117,7 @@ endif()
 SET(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME "App")
 install(TARGETS appExec
     COMPONENT "App"
+    BUNDLE DESTINATION "."
 )
 
 # spdlog
@@ -206,10 +207,10 @@ if(MINGW)
 endif()
 
 ########
-# QT 5 #
+# QT 6 #
 ########
 
-find_package(Qt5 REQUIRED COMPONENTS 
+find_package(Qt6 REQUIRED COMPONENTS 
     Core 
     Gui 
     Widgets 
@@ -217,16 +218,14 @@ find_package(Qt5 REQUIRED COMPONENTS
     Svg 
     OpenGL 
     LinguistTools
-    Multimedia
 )
 target_link_libraries(appExec PRIVATE
-    Qt5::Core
-    Qt5::Gui 
-    Qt5::Widgets
-    Qt5::Network
-    Qt5::Svg
-    Qt5::OpenGL
-    Qt5::Multimedia
+    Qt6::Core
+    Qt6::Gui 
+    Qt6::Widgets
+    Qt6::Network
+    Qt6::Svg
+    Qt6::OpenGL
 )
 
 # QT LIBRARIES COPY
@@ -365,9 +364,14 @@ target_link_libraries(appExec PRIVATE PkgConfig::Gst)
 # Gstreamer - GnuTLS #
 ######################
 
+SET(GNTLS_LIB_EXT ${CMAKE_SHARED_LIBRARY_SUFFIX})
+if(APPLE)
+    SET(GNTLS_LIB_EXT ".so")
+endif()
+
 # find module
 find_file(giognutls_LIB 
-    NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}giognutls${CMAKE_SHARED_LIBRARY_SUFFIX}
+    NAMES ${CMAKE_SHARED_LIBRARY_PREFIX}giognutls${GNTLS_LIB_EXT}
     PATH_SUFFIXES "lib/gio/modules"
     REQUIRED
 )
@@ -392,6 +396,17 @@ pkg_get_variable(GSTREAMER_PLUGINS_LIB_LOCATION gstreamer-1.0
     pluginsdir
 )
 
+# plugins are in separate folders on MacOS
+if(APPLE)
+    # since gst-plugins-good has no .pc file associated, just hack plugin folder logic
+    string(REPLACE "/gstreamer/" "/gst-plugins-base/" GSTREAMER_PLUGINS_LIB_LOCATION_BASE ${GSTREAMER_PLUGINS_LIB_LOCATION})
+    string(REPLACE "/gstreamer/" "/gst-plugins-good/" GSTREAMER_PLUGINS_LIB_LOCATION_GOOD ${GSTREAMER_PLUGINS_LIB_LOCATION})
+    LIST(APPEND GSTREAMER_PLUGINS_LIB_LOCATION
+        ${GSTREAMER_PLUGINS_LIB_LOCATION_BASE}
+        ${GSTREAMER_PLUGINS_LIB_LOCATION_GOOD}
+    )
+endif()
+
 # define gstreamer plugins to use
     # core
     LIST(APPEND REQUIRED_GST_PLUGINS 
@@ -409,10 +424,13 @@ pkg_get_variable(GSTREAMER_PLUGINS_LIB_LOCATION gstreamer-1.0
         audioconvert
         audioresample
     )
-    # windows specific ?
-    LIST(APPEND REQUIRED_GST_PLUGINS
-        waveform
-    )
+
+    # windows specific
+    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        LIST(APPEND REQUIRED_GST_PLUGINS
+            waveform
+        )
+    endif()
 
 # copy gstreamer plugins into output
 foreach(_gstPluginLib IN ITEMS ${REQUIRED_GST_PLUGINS})
@@ -490,19 +508,21 @@ HandleQtTranslation(appExec
 # Runtime dependencies #
 ########################
 
-include(CMakeDependencies)
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    include(CMakeDependencies)
 
-# QT
-DeployPEDependencies(appExec "Qt"
-    ${CMAKE_BINARY_DIR}/QtRuntime/**/*.dll
-)
+    # QT
+    DeployPEDependencies(appExec "Qt"
+        ${CMAKE_BINARY_DIR}/QtRuntime/**/*.dll
+    )
 
-# GST
-DeployPEDependencies(appExec "GStreamer"
-    ${PEDeps_Qt_DIR}/*.dll
-    ${giognutls_LIB}
-    ${GST_ALL_USED_PLUGINS}
-)
+    # GST
+    DeployPEDependencies(appExec "GStreamer"
+        ${PEDeps_Qt_DIR}/*.dll
+        ${giognutls_LIB}
+        ${GST_ALL_USED_PLUGINS}
+    )
+endif()
 
 ######################
 # add Publish target #

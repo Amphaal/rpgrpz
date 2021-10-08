@@ -24,7 +24,8 @@
             },
             "osx": {
                 "command": "cmake -GNinja -B_genDebug -H. -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/osx.cmake"
-            }
+            },
+            "problemMatcher": []
         },
         {
             "label": "2. Build",

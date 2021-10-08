@@ -3,7 +3,7 @@ function(HandleQtTranslation target installComponent filesToScan)
     SET(TS_FILES ${ARGN})
 
     #updates TS files from sources
-    qt5_create_translation(QM_FILES
+    qt_create_translation(QM_FILES
         ${filesToScan}
         ${TS_FILES}
     )

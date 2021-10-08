@@ -3,6 +3,10 @@ mingw64/mingw-w64-x86_64-gstreamer
 mingw64/mingw-w64-x86_64-gst-plugins-base
 mingw64/mingw-w64-x86_64-gst-plugins-good
 mingw64/mingw-w64-x86_64-qt-installer-framework
-mingw64/mingw-w64-x86_64-qt5
+mingw64/mingw-w64-x86_64-qt6-base
+mingw64/mingw-w64-x86_64-qt6-translations
+mingw64/mingw-w64-x86_64-qt6-imageformats
+mingw64/mingw-w64-x86_64-qt6-tools
+mingw64/mingw-w64-x86_64-qt6-svg
 mingw64/mingw-w64-x86_64-miniupnpc
 mingw64/mingw-w64-x86_64-spdlog

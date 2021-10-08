@@ -1,6 +1,6 @@
 #find helper
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    find_program(WINDEPLOYQT "windeployqt" REQUIRED)
+    find_program(WINDEPLOYQT "windeployqt-qt6" REQUIRED)
 endif()
 
 # Add commands that copy the Qt runtime to the target's output directory after

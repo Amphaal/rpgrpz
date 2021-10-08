@@ -4,23 +4,24 @@
             "name": "Win32",
             "browse": {
                 "path": [
-                    "C:/msys64/mingw64/include/c++",
-                    "C:/msys64/mingw64/include",
-                    "C:/msys64/mingw64/lib"
+                    "${env:MINGW64_ROOT}/include/c++",
+                    "${env:MINGW64_ROOT}/include",
+                    "${env:MINGW64_ROOT}/lib"
                 ],
                 "limitSymbolsToIncludedHeaders": true
             },
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:/msys64/mingw64/include/QtNetwork",
-                "C:/msys64/mingw64/include/QtCore",
-                "C:/msys64/mingw64/include/QtWidgets",
-                "C:/msys64/mingw64/include/QtGui",
-                "C:/msys64/mingw64/include/QtOpenGL",
-                "C:/msys64/mingw64/include/QtSvg",
-                "C:/msys64/mingw64/include/gstreamer-1.0",
-                "C:/msys64/mingw64/include/glib-2.0",
-                "C:/msys64/mingw64/lib/glib-2.0/include",
+                "${env:MINGW64_ROOT}/include/qt6",
+                "${env:MINGW64_ROOT}/include/qt6/QtNetwork",
+                "${env:MINGW64_ROOT}/include/qt6/QtCore",
+                "${env:MINGW64_ROOT}/include/qt6/QtWidgets",
+                "${env:MINGW64_ROOT}/include/qt6/QtGui",
+                "${env:MINGW64_ROOT}/include/qt6/QtOpenGL",
+                "${env:MINGW64_ROOT}/include/qt6/QtSvg",
+                "${env:MINGW64_ROOT}/include/gstreamer-1.0",
+                "${env:MINGW64_ROOT}/include/glib-2.0",
+                "${env:MINGW64_ROOT}/lib/glib-2.0/include",
                 "${workspaceFolder}/deps/snowflake"
             ],
             "defines": [
@@ -29,7 +30,7 @@
                 "_UNICODE",
                 "SPDLOG_FMT_EXTERNAL"
             ],
-            "compilerPath": "C:/msys64/mingw64/bin/clang++.exe",
+            "compilerPath": "${env:MINGW64_ROOT}/bin/clang++.exe",
             "cStandard": "c11",
             "cppStandard": "c++20",
             "intelliSenseMode": "clang-x64"
